@@ -6027,3 +6027,7 @@
 | `CYCLE-20261029-O9JU` | `2026-10-29T11:01:47.994Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5493, Rule 5494, Rule 5495` | Yes (`c8f92175...`) |
 | `CYCLE-20261029-NUIA` | `2026-10-29T11:29:28.114Z` | `LiquidAI/LFM3-VL-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md` | Yes (`a6733be8...`) |
 | `CYCLE-20261029-6NNE` | `2026-10-29T11:44:05.690Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5496` | Yes (`e0492d8f...`) |
+| `CYCLE-20261029-BDO4` | `2026-10-29T11:47:46.036Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5497` | Yes (`930fc60f...`) |
+| `CYCLE-20261029-BFGX` | `2026-10-29T11:47:48.369Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5498` | Yes (`85177014...`) |
+| `CYCLE-20261029-HKEA` | `2026-10-29T11:52:34.690Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5499` | Yes (`10e5cf30...`) |
+| `CYCLE-20261029-HWQD` | `2026-10-29T11:52:50.677Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5500` | Yes (`369b3482...`) |

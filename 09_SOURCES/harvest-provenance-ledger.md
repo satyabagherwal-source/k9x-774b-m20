@@ -6036,3 +6036,7 @@ Every entry in this ledger must capture:
 | `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `2ecb50c2` | Multi-dimensional audit evidence | 2026-10-29T11:01:47.998Z |
 | `learn-huggingface-liquidai-lfm3-vl-2b` | `https://huggingface.co/LiquidAI/LFM3-VL-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-29T11:29:28.117Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `ecc86c07` | Multi-dimensional audit evidence | 2026-10-29T11:44:05.694Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `5842bc45` | Multi-dimensional audit evidence | 2026-10-29T11:47:46.039Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `244d8dc8` | Multi-dimensional audit evidence | 2026-10-29T11:47:48.372Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `1c0e6c8d` | Multi-dimensional audit evidence | 2026-10-29T11:52:34.694Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `ecd3935b` | Multi-dimensional audit evidence | 2026-10-29T11:52:50.681Z |

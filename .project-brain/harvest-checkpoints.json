@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T11:44:05.703Z",
+  "last_updated": "2026-10-29T11:52:50.690Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "4707d3ed96ad179955a89e15acb4958a1eda9dee0598ee3766618fd8ef533a59",
-      "verified_at": "2026-10-28T15:23:02.951Z",
+      "content_hash": "851770144d79fcc403218d3828fd90c1c30c612487dd379d320c97f832ac9ff0",
+      "verified_at": "2026-10-29T11:47:48.380Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T15:23:02.951Z"
+      "last_updated": "2026-10-29T11:47:48.380Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -4476,14 +4476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "bfe4ea994114de6c6c3d3886a1a066a88387bcd477835ca6c40f5e03186461f7",
-      "verified_at": "2026-10-27T23:10:09.330Z",
+      "content_hash": "10e5cf306ef1822cf55468af5601ce482f28b8a925ab76f7a703df32aff81466",
+      "verified_at": "2026-10-29T11:52:34.703Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T23:10:09.330Z"
+      "last_updated": "2026-10-29T11:52:34.703Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -4791,14 +4791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-neuron-core-neuron-ai",
-      "content_hash": "4a37f099d616bbcb9852285d51c0e0525e1bc88539950fa07b44753a9418a1b9",
-      "verified_at": "2026-10-27T18:59:49.234Z",
+      "content_hash": "930fc60f231c2be03c614ddda645652076eb30416b415f05af9389231d1bf55c",
+      "verified_at": "2026-10-29T11:47:46.048Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T18:59:49.234Z"
+      "last_updated": "2026-10-29T11:47:46.048Z"
     },
     "GeekyAnts/NativeBase": {
       "repository": "GeekyAnts/NativeBase",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "2a59b0e1a1dd032596b49b84c738c2f0d5c805da26cd157cb4def6b56b8cf3ab",
-      "verified_at": "2026-10-28T18:42:00.745Z",
+      "content_hash": "369b3482dcc7888e7b1449a31329a90a78c998e583d1155e2928f9cc6c9fce29",
+      "verified_at": "2026-10-29T11:52:50.689Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:42:00.745Z"
+      "last_updated": "2026-10-29T11:52:50.689Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",

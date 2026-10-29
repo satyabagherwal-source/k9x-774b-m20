@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "74088ac3",
+    "sourceVersion": "244d8dc8",
     "license": "NOASSERTION",
-    "contentHash": "4707d3ed96ad179955a89e15acb4958a1eda9dee0598ee3766618fd8ef533a59",
-    "lastHarvestedAt": "2026-10-28T15:23:02.945Z",
+    "contentHash": "851770144d79fcc403218d3828fd90c1c30c612487dd379d320c97f832ac9ff0",
+    "lastHarvestedAt": "2026-10-29T11:47:48.372Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "ca36bfa1",
+    "sourceVersion": "1c0e6c8d",
     "license": "NOASSERTION",
-    "contentHash": "bfe4ea994114de6c6c3d3886a1a066a88387bcd477835ca6c40f5e03186461f7",
-    "lastHarvestedAt": "2026-10-27T23:10:09.321Z",
+    "contentHash": "10e5cf306ef1822cf55468af5601ce482f28b8a925ab76f7a703df32aff81466",
+    "lastHarvestedAt": "2026-10-29T11:52:34.694Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -3113,10 +3113,10 @@
     "repository": "neuron-core/neuron-ai",
     "platform": "github",
     "sourceUrl": "https://github.com/neuron-core/neuron-ai",
-    "sourceVersion": "179c6818",
+    "sourceVersion": "5842bc45",
     "license": "MIT",
-    "contentHash": "4a37f099d616bbcb9852285d51c0e0525e1bc88539950fa07b44753a9418a1b9",
-    "lastHarvestedAt": "2026-10-27T18:59:49.220Z",
+    "contentHash": "930fc60f231c2be03c614ddda645652076eb30416b415f05af9389231d1bf55c",
+    "lastHarvestedAt": "2026-10-29T11:47:46.039Z",
     "learningId": "learn-github-neuron-core-neuron-ai"
   },
   "geekyants-nativebase": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "5c280571",
+    "sourceVersion": "ecd3935b",
     "license": "NOASSERTION",
-    "contentHash": "2a59b0e1a1dd032596b49b84c738c2f0d5c805da26cd157cb4def6b56b8cf3ab",
-    "lastHarvestedAt": "2026-10-28T18:42:00.736Z",
+    "contentHash": "369b3482dcc7888e7b1449a31329a90a78c998e583d1155e2928f9cc6c9fce29",
+    "lastHarvestedAt": "2026-10-29T11:52:50.681Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {

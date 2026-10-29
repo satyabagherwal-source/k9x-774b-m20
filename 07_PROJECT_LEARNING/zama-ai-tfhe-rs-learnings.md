@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `5c280571`  
+> **Source Version**: `ecd3935b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T18:42:00.118Z  
+> **Timestamp**: 2026-10-29T11:52:49.974Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T18:42:00.110Z  
+> **Harvest Timestamp**: 2026-10-29T11:47:41.718Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1927,451 +1927,384 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5c280571` (2026-10-28)
-**Commit Message**: chore(transciphering): generate otp masks in counter mode (#4105)
+### Incident Patch 1: `ecd3935b` (2026-10-29)
+**Commit Message**: chore(gpu): run initcheck and synchcheck (#4113)
 
-**File**: `tfhe/src/high_level_api/transciphering/one_time_pad.rs` (modified, +9/-1)
+**File**: `.github/workflows/gpu_memory_sanitizer_h100_2gpu_par.yml` (modified, +25/-5)
 ```diff
-@@ -88,6 +88,13 @@ impl OneTimePadFheSecretMask {
+@@ -1,4 +1,4 @@
+-# Run compute-sanitizer memcheck and racecheck in parallel on a 2xH100 machine
++# Run compute-sanitizer memcheck in parallel with racecheck, initcheck and synccheck on a 2xH100 machine
+ name: gpu_memory_sanitizer_h100_2gpu_par
  
-     /// Generate a fresh FHE-encrypted pad of `n_bits` bits server-side using
-     /// OPRF machinery.
-+    ///
-+    /// Pads are generated in counter mode, so the pad generated for a seed is a prefix of all
-+    /// the pads generated with the same seed and more bits. See
-+    /// [`TranscipheringOneTimePadFheSecretMask::new_random`] for details.
-+    ///
-+    /// The same seed should never be used to encrypt different data, since the generated masks
-+    /// would share their bits.
-     pub fn new_random(seed: impl OprfSeed, n_bits: u64) -> crate::Result<Self> {
-         try_with_internal_keys(|keys| match keys {
-             Some(InternalServerKey::Cpu(cpu_key)) => {
-@@ -99,7 +106,8 @@ impl OneTimePadFheSecretMask {
-                         transciphering_key,
-                         shortint_sks,
-                         n_bits,
--                    ),
-+                    )
-+                    .map_err(|e| format!("{e}"))?,
-                     cpu_key.tag.clone(),
-                 ))
-             }
+ env:
+@@ -53,6 +53,7 @@ jobs:
+               - tfhe/Cargo.toml
+               - tfhe/build.rs
+               - backends/tfhe-cuda-backend/**
++              - scripts/check_memory_errors.sh
+               - tfhe/src/core_crypto/gpu/**
+               - tfhe/src/integer/gpu/**
+               - tfhe/src/shortint/parameters/**
+@@ -145,7 +146,9 @@ jobs:
+       - name: Install cargo-nextest
+         run: make install_cargo_nextest
+ 
+-      - name: Run memcheck and racecheck in parallel
++      # memcheck runs alone on GPU0. racecheck, initcheck and synccheck share the same
++      # narrow test set and GTest binary, so they run one after the other on GPU1.
++      - name: Run memcheck in parallel with racecheck, initcheck and synccheck
+         run: |
+           run_memcheck() {
+             local rc=0
+@@ -158,15 +161,32 @@ jobs:
+             CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_racecheck_relaxed_pbs128 || rc=$?
+             echo "${rc}" > /tmp/racecheck.rc
+           }
++          run_initcheck() {
++            local rc=0
++            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_initcheck || rc=$?
++            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_initcheck_relaxed_pbs128 || rc=$?
++            echo "${rc}" > /tmp/initcheck.rc
++          }
++          run_synccheck() {
++            local rc=0
++            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_synccheck || rc=$?
++            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_synccheck_relaxed_pbs128 || rc=$?
++            echo "${rc}" > /tmp/synccheck.rc
++          }
++          run_gpu1_lane() {
++            run_racecheck 2>&1 | sed -u 's/^/[racecheck] /'
++            run_initcheck 2>&1 | sed -u 's/^/[initcheck] /'
++            run_synccheck 2>&1 | sed -u 's/^/[synccheck] /'
++          }
+           run_memcheck 2>&1 | sed -u 's/^/[memcheck]  /' &
+           PID0=$!
+-          run_racecheck 2>&1 | sed -u 's/^/[racecheck] /' &
++          run_gpu1_lane &
+           PID1=$!
+           wait "${PID0}" || true
+           wait "${PID1}" || true
+ 
+           STATUS=0
+-          for lane in memcheck racecheck; do
++          for lane in memcheck racecheck initcheck synccheck; do
+             rc="$(cat "/tmp/${lane}.rc" 2>/dev/null || true)"
+             rc="${rc:-1}"
+             if [ "${rc}" -eq 0 ]; then
+@@ -198,7 +218,7 @@ jobs:
+         uses: rtCamp/action-slack-notify@33ca3be66c6f378fe1610fd1d5258632dbed5e58
+         env:
+           SLACK_COLOR: ${{ needs.cuda-tests-linux.result }}
+-          SLACK_MESSAGE: "GPU Memory Sanitizer (memcheck + racecheck parallel) finished with status: ${{ needs.cuda-tests-linux.result }}. (${{ env.PULL_REQUEST_MD_LINK }}[action run](${{ env.ACTION_RUN_URL }}))"
++          SLACK_MESSAGE: "GPU Memory Sanitizer (memcheck + racecheck/initcheck/synccheck parallel) finished with status: ${{ needs.cuda-tests-linux.result }}. (${{ env.PULL_REQUEST_MD_LINK }}[action run](${{ env.ACTION_RUN_URL }}))"
+ 
+   teardown-instance:
+     name: gpu_memory_sanitizer_h100_2gpu_par/teardown-instance
 ```
 
-**File**: `tfhe/src/transciphering/ciphers/one_time_pad/fhe.rs` (modified, +43/-5)
+**File**: `Makefile` (modified, +37/-2)
 ```diff
-@@ -1,3 +1,4 @@
-+use rayon::iter::{IntoParallelIterator, ParallelIterator};
- use serde::{Deserialize, Serialize};
- use tfhe_versionable::Versionize;
+@@ -1056,17 +1056,34 @@ test_high_level_api_gpu_memcheck: install_cargo_nextest
+ 	export RUSTFLAGS="-C target-cpu=x86-64" && \
+ 	export CARGO_PROFILE="$(CARGO_PROFILE)" && scripts/check_memory_errors.sh --memcheck
  
-@@ -12,6 +13,17 @@ use crate::transciphering::{
-     FheKeyStream, InsufficientKeystream, StreamCipherKind, Transcipherer, TranscipheringServerKey,
- };
+-.PHONY: test_gpu_racecheck # Run compute-sanitizer racecheck on GPU tests (Rust u128 PBS + CUDA backend GTest PBS/KS)
+-test_gpu_racecheck: install_cargo_nextest
++.PHONY: build_gpu_sanitizer_gtest # Build the CUDA backend GTest binary used by the compute-sanitizer targets
++build_gpu_sanitizer_gtest:
+ 	mkdir -p "$(TFHECUDA_BUILD)" && \
+ 		cd "$(TFHECUDA_BUILD)" && \
+ 		cmake .. -DCMAKE_BUILD_TYPE=Release -DTFHE_CUDA_BACKEND_BUILD_TESTS=ON && \
+ 		"$(MAKE)" -j "$(CPU_COUNT)" test_tfhe_cuda_backend
++
++.PHONY: test_gpu_racecheck # Run compute-sanitizer racecheck on GPU tests (Rust u128 PBS + CUDA backend GTest PBS/KS)
++test_gpu_racecheck: install_cargo_nextest build_gpu_sanitizer_gtest
+ 	export RUSTFLAGS="-C target-cpu=x86-64" && \
+ 	export CARGO_PROFILE="$(CARGO_PROFILE)" && \
+ 	SANITIZER_GTEST_EXE="$(CURDIR)/$(TFHECUDA_BUILD)/tests_and_benchmarks/tests/test_tfhe_cuda_backend" \
+ 		scripts/check_memory_errors.sh --racecheck
  
-+#[derive(Debug)]
-+pub struct InvalidMaskSize;
++.PHONY: test_gpu_initcheck # Run compute-sanitizer initcheck on GPU tests (Rust u128 PBS + CUDA backend GTest PBS/KS)
++test_gpu_initcheck: install_cargo_nextest build_gpu_sanitizer_gtest
++	export RUSTFLAGS="-C target-cpu=x86-64" && \
++	export CARGO_PROFILE="$(CARGO_PROFILE)" && \
++	SANITIZER_GTEST_EXE="$(CURDIR)/$(TFHECUDA_BUILD)/tests_and_benchmarks/tests/test_tfhe_cuda_backend" \
++		scripts/check_memory_errors.sh --initcheck
 +
-+impl std::fmt::Display for InvalidMaskSize {
-+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-+        write!(f, "The requested mask size is invalid")
-+    }
-+}
++.PHONY: test_gpu_synccheck # Run compute-sanitizer synccheck on GPU tests (Rust u128 PBS + CUDA backend GTest PBS/KS)
++test_gpu_synccheck: install_cargo_nextest build_gpu_sanitizer_gtest
++	export RUSTFLAGS="-C target-cpu=x86-64" && \
++	export CARGO_PROFILE="$(CARGO_PROFILE)" && \
++	SANITIZER_GTEST_EXE="$(CURDIR)/$(TFHECUDA_BUILD)/tests_and_benchmarks/tests/test_tfhe_cuda_backend" \
++		scripts/check_memory_errors.sh --synccheck
 +
-+impl std::error::Error for InvalidMaskSize {}
-+
- #[derive(Clone, Serialize, Deserialize, Versionize)]
- #[versionize(OneTimePadFheSecretMaskVersions)]
- pub struct OneTimePadFheSecretMask {
-@@ -45,17 +57,43 @@ impl OneTimePadFheSecretMask {
-         Self::try_new(secret_mask).unwrap()
-     }
+ # The relaxed flavor is opted into process-wide, and the 128-bit PBS panics on any
+ # shape other than the noise-squashing one, so the filter is narrowed to the single
+ # classical PBS128 test instead of the default racecheck set. Needs an sm_90 GPU.
+@@ -1079,6 +1096,24 @@ test_gpu_racecheck_relaxed_pbs128: install_cargo_nextest
+ 	export SANITIZER_TEST_EXCLUDES_GPU_RACECHECK='' && \
+ 		scripts/check_memory_errors.sh --racecheck
  
-+    /// Generate a mask of `n_bits` encrypted random bits with the OPRF of `transciphering_key`.
-+    ///
-+    /// The mask is generated in counter mode: the ciphertext at index `i` is generated
-+    /// independently, from `seed ‖ i`, with `i` as a little-endian `u32`. As a result, the mask
-+    /// generated for a given seed with some number of bits is a prefix of all the masks generated
-+    /// with the same seed and more bits. This allows a mask to be decrypted and regenerated with
-+    /// different lengths, as long as the regenerated length is shorter.
-+    ///
-+    /// The same seed should never be used to encrypt different data, since the generated masks
-+    /// would share their bits.
-     pub fn new_random(
-         seed: impl OprfSeed,
-         transciphering_key: &TranscipheringServerKey,
-         sks: &ServerKey,
-         n_bits: u64,
--    ) -> Self {
--        let encrypted_bits = transciphering_key
--            .oprf_key()
--            .generate_random_boolean_sequence(seed, n_bits, sks);
-+    ) -> Result<Self, InvalidMaskSize> {
-+        let seed = seed.into_vec();
++.PHONY: test_gpu_initcheck_relaxed_pbs128 # Run compute-sanitizer initcheck on the 128-bit PBS with the relaxed (host-driven TBC) flavor
++test_gpu_initcheck_relaxed_pbs128: install_cargo_nextest
++	export RUSTFLAGS="-C target-cpu=x86-64" && \
++	export CARGO_PROFILE="$(CARGO_PROFILE)" && \
++	export TFHE_RS_GPU_PBS128_RELAXED=1 && \
++	export SANITIZER_TEST_FILTER_GPU_INITCHECK='test_bootstrap_u128_with_squashing' && \
++	export SANITIZER_TEST_EXCLUDES_GPU_INITCHECK='' && \
++		scripts/check_memory_errors.sh --initcheck
 +
-+        let oprf_key = transciphering_key.oprf_key();
++.PHONY: test_gpu_synccheck_relaxed_pbs128 # Run compute-sanitizer synccheck on the 128-bit PBS with the relaxed (host-driven TBC) flavor
++test_gpu_synccheck_relaxed_pbs128: install_cargo_nextest
++	export RUSTFLAGS="-C target-cpu=x86-64" && \
++	export CARGO_PROFILE="$(CARGO_PROFILE)" && \
++	export TFHE_RS_GPU_PBS128_RELAXED=1 && \
++	export SANITIZER_TEST_FILTER_GPU_SYNCCHECK='test_bootstrap_u128_with_squashing' && \
++	export SANITIZER_TEST_EXCLUDES_GPU_SYNCCHECK='' && \
++		scripts/check_memory_errors.sh --synccheck
 +
-+        // Generate mask bits following RFC030:
-+        // Each call to the prf generates only 1 ciphertext, and the seed is suffixed
-+        // by the ciphertext index stored on 32bits.
-+        let n_blocks = u32::try_from(n_bits).map_err(|_| InvalidMaskSize)?;
-+        let secret_mask = (0..n_blocks)
-+            .into_par_iter()
-+            .map(|i| {
-+                let mut block_seed = seed.clone();
-+                block_seed.extend_from_slice(&(i).to_le_bytes());
-+                oprf_key
-+                    .generate_random_boolean_sequence(block_seed, 1, sks)
-+                    .pop()
-+                    .unwrap()
-+            })
-+            .collect();
- 
--        Self::new(encrypted_bits)
-+        Ok(Self::new(secret_mask))
-     }
- 
-     /// Single bit per [`Ciphertext`].
+ .PHONY: test_zk_pok_gpu_sanitizer # Run compute-sanitizer memcheck on Rust zk-pok GPU tests
+ test_zk_pok_gpu_sanitizer: install_cargo_nextest
+ 	export RUSTFLAGS="-C target-cpu=x86-64" && \
 ```
 
-**File**: `tfhe/src/transciphering/ciphers/one_time_pad/test.rs` (modified, +29/-0)
+**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap_classic.cuh` (modified, +14/-9)
 ```diff
-@@ -6,6 +6,7 @@ use crate::shortint::parameters::test_params::{
-     TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
-     TEST_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M128,
- };
-+use crate::shortint::parameters::TranscipheringParameters;
- use crate::shortint::prelude::*;
- use crate::transciphering::ciphers::kreyvium::KreyviumPlainState;
- use crate::transciphering::ciphers::one_time_pad::fhe::{
-@@ -16,6 +17,7 @@ use crate::transciphering::ciphers::one_time_pad::{
- };
- use crate::transciphering::{
-     InsufficientKeystream, StreamCipher, StreamCipherKind, TranscipherError, Transcipherer,
-+    TranscipheringPrivateKey, TranscipheringServerKey,
- };
+@@ -372,9 +372,13 @@ device_programmable_bootstrap_specialized_2_2_params(
+                          (glwe_dimension * polynomial_size + 1) +
+                      threadIdx.y * polynomial_size];
  
- /// Reference implementation: LSB-first bit `first_bit + i` of `mask` becomes LSB-first bit
-@@ -590,6 +592,33 @@ fn one_time_pad_fhe_mask_encrypt_decrypt_round_trip() {
++  // The mask (threadIdx.y < glwe_dimension) and body threads take different
++  // paths below, so the block is synchronized once here for all of them
++  __syncthreads();
+   if (blockIdx.z == 0) {
+     if (threadIdx.y < glwe_dimension) {
+-      sample_extract_mask<Torus, params>(block_lwe_array_out, accumulator);
++      sample_extract_mask<Torus, params, false>(block_lwe_array_out,
++                                                accumulator);
+ 
+       if (num_many_lut > 1) {
+         for (int i = 1; i < num_many_lut; i++) {
+@@ -386,12 +390,11 @@ device_programmable_bootstrap_specialized_2_2_params(
+                                       (glwe_dimension * polynomial_size + 1) +
+                                   threadIdx.y * polynomial_size];
+ 
+-          sample_extract_mask<Torus, params>(next_block_lwe_array_out,
+-                                             accumulator, 1, i * lut_stride);
++          sample_extract_mask<Torus, params, false>(
++              next_block_lwe_array_out, accumulator, 1, i * lut_stride);
+         }
+       }
+     } else if (threadIdx.y == glwe_dimension) {
+-      __syncthreads();
+       sample_extract_body<Torus, params>(block_lwe_array_out, accumulator, 0);
+ 
+       if (num_many_lut > 1) {
+@@ -712,16 +715,19 @@ device_programmable_bootstrap_specialized_2_2_params_throughput(
      }
+   }
+ 
+-  // Sample extraction follows the same logic than other pbs
++  // Sample extraction follows the same logic than other pbs. The mask
++  // (threadIdx.y < glwe_dimension) and body threads take different paths
++  // below, so the block is synchronized once here for all of them
++  __syncthreads();
+   if (blockIdx.z == 0) {
+     auto block_lwe_array_out =
+         &lwe_array_out[lwe_output_indexes[blockIdx.x] *
+                            (glwe_dimension * polynomial_size + 1) +
+                        threadIdx.y * polynomial_size];
+ 
+     if (threadIdx.y < glwe_dimension) {
+-      sample_extract_mask<Torus, params>(block_lwe_array_out,
+-                                         final_accumulator);
++      sample_extract_mask<Torus, params, false>(block_lwe_array_out,
++                                                final_accumulator);
+ 
+       if (num_many_lut > 1) {
+         for (int n = 1; n < num_many_lut; n++) {
+@@ -732,12 +738,11 @@ device_programmable_bootstrap_specialized_2_2_params_throughput(
+               &next_lwe_array_out[lwe_output_indexes[blockIdx.x] *
+                                       (glwe_dimension * polynomial_size + 1) +
+                                   threadIdx.y * polynomial_size];
+-          sample_extract_mask<Torus, params>(
++          sample_extract_mask<Torus, params, false>(
+               next_block_lwe_array_out, final_accumulator, 1, n * lut_stride);
+         }
+       }
+     } else if (threadIdx.y == glwe_dimension) {
+-      __syncthreads();
+       sample_extract_body<Torus, params>(block_lwe_array_out, final_accumulator,
+                                          0);
+ 
+```
+
+**File**: `backends/tfhe-cuda-backend/cuda/src/polynomial/functions.cuh` (modified, +8/-3)
+```diff
+@@ -477,7 +477,10 @@ __device__ void sample_extract_body(Torus *lwe_array_out, Torus const *glwe,
  }
  
-+/// Check that masks generated with the same seed but different size share the same prefix
-+#[test]
-+fn one_time_pad_fhe_new_random_prefix() {
-+    let (cks, sks) = gen_keys(TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128);
-+    let private_key = TranscipheringPrivateKey::new(&cks, TranscipheringParameters::SameAsCompute);
-+    let transciphering_key = TranscipheringServerKey::new(&private_key, &cks).unwrap();
-+
-+    let seed: [u8; 32] = rand::thread_rng().gen();
-+    println!("one_time_pad_fhe_new_random_prefix seed={seed:02x?}");
-+
-+    let decrypted_mask = |n_bits| -> Vec<u64> {
-+        OneTimePadFheSecretMask::new_random(seed.as_slice(), &transciphering_key, &sks, n_bits)
-+            .unwrap()
-+            .ciphertexts()
-+            .iter()
-+            .map(|ct| cks.decrypt(ct))
-+            .collect()
-+    };
-+
-+    let short = decrypted_mask(16);
-+    let long = decrypted_mask(40);
-+
-+    assert_eq!(short.len(), 16);
-+    assert_eq!(long.len(), 40);
-+    assert_eq!(short, long[..16], "seed={seed:02x?}");
-+}
-+
- #[test]
- fn one_time_pad_plain_secret_mask_conformance() {
-     use crate::conformance::ParameterSetConformant;
+ // Extracts the mask from the nth-LWE in a GLWE.
+-template <typename Torus, class params>
++// With block_sync = false the caller must synchronize the block before the
++// call and must not write to glwe concurrently; this is needed when only part
++// of the block executes the extraction (barriers would otherwise diverge).
++template <typename Torus, class params, bool block_sync = true>
+ __device__ void sample_extract_mask(Torus *lwe_array_out, Torus const *glwe,
+                                     uint32_t glwe_dimension = 1,
+                                     uint32_t nth = 0) {
+@@ -486,7 +489,8 @@ __device__ void sample_extract_mask(Torus *lwe_array_out, Torus const *glwe,
+         (Torus *)lwe_array_out + (ptrdiff_t)(z * params::degree);
+     Torus *glwe_slice = (Torus *)glwe + (ptrdiff_t)(z * params::degree);
+ 
+-    __syncthreads();
++    if constexpr (block_sync)
++      __syncthreads();
+     // Reverse the glwe
+     // Set ACC = -ACC
+     int tid = threadIdx.x;
+@@ -497,7 +501,8 @@ __device__ void sample_extract_mask(Torus *lwe_array_out, Torus const *glwe,
+       result[i] = SEL(-x, x, tid >= params::degree - nth);
+       tid = tid + params::degree / params::opt;
+     }
+-    __syncthreads();
++    if constexpr (block_sync)
++      __syncthreads();
+ 
+     // Perform ACC * X
+     // (equivalent to multiply_by_monomial_negacyclic_inplace(1))
 ```
 
----
-
-### Incident Patch 2: `6c60ae37` (2026-10-28)
-**Commit Message**: chore(tfhe-lints): bump dylint 6.3.0 (#4121)
-
-**File**: `utils/tfhe-lints/Cargo.lock` (modified, +71/-64)
+**File**: `ci/gpu_workflows_table.py` (modified, +2/-0)
 ```diff
-@@ -145,9 +145,9 @@ dependencies = [
- 
- [[package]]
- name = "cc"
--version = "1.4.7"
-+version = "1.10.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "54413ede23c2daf518f35156dfde027feb2374004d63bd497f983c8db9c0e313"
-+checksum = "86e055fa6e3e40ad6187ba25b6855eeb635d5271f8e0f0e1e9a5826b8d75bea0"
- dependencies = [
-  "find-msvc-tools",
-  "jobserver",
-@@ -163,8 +163,8 @@ checksum = "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
- 
- [[package]]
- name = "clippy_utils"
--version = "0.1.100"
--source = "git+https://github.com/rust-lang/rust-clippy?rev=21baba9c10c5d179915cae82e6247bc2337872fb#21baba9c10c5d179915cae82e6247bc2337872fb"
-+version = "0.1.101"
-+source = "git+https://github.com/rust-lang/rust-clippy?rev=a7fb0ed8a7b593daa6fb8c3d5e161cd9e0d06fb8#a7fb0ed8a7b593daa6fb8c3d5e161cd9e0d06fb8"
- dependencies = [
-  "arrayvec",
-  "itertools",
-@@ -220,31 +220,31 @@ dependencies = [
- 
- [[package]]
- name = "defmt"
--version = "1.1.1"
-+version = "1.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e2953bfe4f93bbd20cc71198842756f77d161884c99ebbabc41d80231ded88d1"
-+checksum = "e4a0795ac740cb54d7b3775c9c17345f6aaecf884c01733b39d6017738e0e3e1"
- dependencies = [
-  "bitflags 1.3.2",
-  "defmt-macros",
+@@ -236,6 +236,8 @@ def parse_workflow(path: Path, slab: dict) -> dict:
+     "test_signed_integer_fake_multi_gpu",
+     "test_high_level_api_noise_squash_relaxed_pbs128_gpu",
+     "test_gpu_racecheck_relaxed_pbs128",
++    "test_gpu_initcheck_relaxed_pbs128",
++    "test_gpu_synccheck_relaxed_pbs128",
  ]
  
- [[package]]
- name = "defmt-macros"
--version = "1.1.1"
-+version = "1.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bad9c72e7ca2137e0dc3813245a0d282fd6daad32fd800af018306a9169b5fe8"
-+checksum = "840bb056bd99c495c9188198a258ab787c79f306d864db3e6e8451442d6d8366"
- dependencies = [
-  "defmt-parser",
-  "proc-macro2",
-  "quote",
-- "syn 2.0.119",
-+ "syn 3.0.9",
- ]
- 
- [[package]]
- name = "defmt-parser"
--version = "1.0.0"
-+version = "1.1.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "10d60334b3b2e7c9d91ef8150abfb6fa4c1c39ebbcf4a81c2e346aad939fee3e"
-+checksum = "71958f69fb2de856c5dd51ac9377e986ca1aa5919f931bf5395a807277f889a0"
- dependencies = [
-  "thiserror 2.0.21",
- ]
-@@ -288,9 +288,9 @@ dependencies = [
- 
- [[package]]
- name = "dylint"
--version = "6.1.0"
-+version = "6.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "36143945826ac0fcdcfbe5428074d84cac9510aa28584435a71e51f22d644119"
-+checksum = "a34a586a3d22e87c5cd6b0b45158c4d4ec3a7fc2ea49800c8f3127eea239538b"
- dependencies = [
-  "anstyle",
-  "anyhow",
-@@ -306,9 +306,9 @@ dependencies = [
- 
- [[package]]
- name = "dylint_internal"
--version = "6.1.0"
-+version = "6.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d2d852b4a08f8591389714911e6b381bcd3da3778650a05baef91a801869917e"
-+checksum = "7bc061f49eb5a4d2a440a8b40a65e3d8860f92516d118090573cfadf8c0d2fa4"
- dependencies = [
-  "anstyle",
-  "anyhow",
-@@ -317,6 +317,7 @@ dependencies = [
-  "git2",
-  "home",
-  "log",
-+ "pastey",
-  "regex",
-  "semver",
-  "serde",
-@@ -330,9 +331,9 @@ dependencies = [
- 
- [[package]]
- name = "dylint_linting"
--version = "6.1.0"
-+version = "6.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5a7c61575df18252a32cd5fbd4224454b62a37352cf18943476370c991ca6b8c"
-+checksum = "1d190d4d3c83bd2e7a9ed94eaf98d58dbb89afbabd2bf4ad2d75c76a0c383718"
- dependencies = [
-  "cargo_metadata",
-  "dylint_internal",
-@@ -345,9 +346,9 @@ dependencies = [
- 
- [[package]]
- name = "dylint_testing"
--version = "6.1.0"
-+version = "6.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1a33b8cd0529c5a22ade9665181c9c3471316db3e44b6a47b3a5516672a99081"
-+checksum = "0abbaa51fb13d56446702ca2105dcf0fd390183d1ba3ea210d08b216c0805a09"
- dependencies = [
-  "anyhow",
-  "cargo_metadata",
-@@ -362,9 +363,9 @@ dependencies = [
- 
- [[package]]
- name = "either"
--version = "1.18.0"
-+version = "1.19.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "252afb9ae5eaa683babdc6a068b3f5726eb19e05070c731f9b2a23a7c3e8ed34"
-+checksum = "0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be"
- 
- [[package]]
- name = "env_filter"
-@@ -411,9 +412,9 @@ dependencies = [
- 
- [[package]]
- name = "equivalent"
--version = "1.0.2"
-+version = "1.0.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
-+checksum = "00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826"
- 
- [[package]]
- name = "errno"
-@@ -443,9 +444,9 @@ dependencies = [
- 
- [[package]]
- name = "find-msvc-tools"
--version = "0.1.13"
-+version = "0.1.15"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ef25905e51abafe4dcea6c15fec58c57b601cdbd0ee53d22ea1d3016c587d39b"
-+checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
- 
- [[package]]
- name = "generic-array"
-@@ -554,9 +555,9 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
- 
- [[package]]
- name = "jiff"
--version = "0.2.37"
-+version = "0.2.38"
- source = "registry+https://github
-```
-
-**File**: `utils/tfhe-lints/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -3,5 +3,5 @@ members = ["common", "lints", "snapshot"]
- resolver = "3"
- 
- [workspace.dependencies]
--clippy_utils = { git = "https://github.com/rust-lang/rust-clippy", rev = "21baba9c10c5d179915cae82e6247bc2337872fb" }
--dylint_linting = "6.1.0"
-+clippy_utils = { git = "https://github.com/rust-lang/rust-clippy", rev = "a7fb0ed8a7b593daa6fb8c3d5e161cd9e0d06fb8" }
-+dylint_linting = "6.3.0"
-```
-
-**File**: `utils/tfhe-lints/Makefile` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ TFHE_LINTS_TOOLCHAIN := $(shell sed -n 's/^channel = "\(.*\)"$$/\1/p' utils/tfhe
- 
- .PHONY: install_cargo_dylint # Install custom tfhe-rs lints
- install_cargo_dylint: install_tfhe_lints_toolchain
--	cargo +$(TFHE_LINTS_TOOLCHAIN) install --locked cargo-dylint dylint-link --version 6.1.0
-+	cargo +$(TFHE_LINTS_TOOLCHAIN) install --locked cargo-dylint dylint-link --version 6.3.0
- 
- .PHONY: install_tfhe_lints_toolchain # Install the nightly toolchain required by tfhe-lints (from utils/tfhe-lints/rust-toolchain)
- install_tfhe_lints_toolchain:
-```
-
-**File**: `utils/tfhe-lints/common/src/lib.rs` (modified, +3/-2)
-```diff
-@@ -2,15 +2,16 @@
- #![warn(unused_extern_crates)]
- 
- extern crate rustc_ast;
-+extern crate rustc_attr_ir;
- extern crate rustc_errors;
- extern crate rustc_hir;
- extern crate rustc_lint;
- extern crate rustc_middle;
- extern crate rustc_span;
- 
- use rustc_ast::tokenstream::TokenTree;
-+use rustc_attr_ir::AttrArgs;
- use rustc_errors::{Diag, DiagDecorator, MultiSpan};
--use rustc_hir::AttrArgs;
- use rustc_hir::def_id::DefId;
- use rustc_lint::{LateContext, Lint, LintContext};
- use rustc_middle::ty::{AliasTyKind, Ty, TyKind};
-@@ -50,7 +51,7 @@ pub fn span_lint(
-     cx: &LateContext<'_>,
-     lint: &'static Lint,
-     span: impl Into<MultiSpan>,
--    decorate: impl FnOnce(&mut Diag<'_, ()>),
-+    decorate: impl FnOnce(&mut Diag),
- ) {
-     cx.emit_span_lint(lint, span, DiagDecorator(decorate));
- }
-```
-
-**File**: `utils/tfhe-lints/lints/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@ dylint_linting = { workspace = true }
- tfhe-lints-common = { path = "../common" }
- 
- [dev-dependencies]
--dylint_testing = "6.1.0"
-+dylint_testing = "6.3.0"
- serde = { version = "1.0", features = ["derive"] }
- tfhe-versionable = { path = "../../tfhe-versionable" }
  
 ```
 
-**File**: `utils/tfhe-lints/lints/src/invalid_versionize_dispatch.rs` (modified, +1/-1)
+**File**: `scripts/check_memory_errors.sh` (modified, +56/-14)
 ```diff
-@@ -5,7 +5,7 @@ use rustc_hir::def::Res;
- use rustc_hir::def_id::DefId;
- use rustc_hir::{Item, ItemKind, QPath, TyKind, VariantData};
- use rustc_lint::{LateContext, LateLintPass};
--use rustc_session::{declare_lint, impl_lint_pass};
-+use rustc_lint_defs::{declare_lint, impl_lint_pass};
- use rustc_span::{Ident, Symbol};
+@@ -5,6 +5,8 @@ set -euo pipefail
+ RUN_VALGRIND=0
+ RUN_MEMCHECK=0
+ RUN_RACECHECK=0
++RUN_INITCHECK=0
++RUN_SYNCCHECK=0
  
- use tfhe_lints_common::{get_def_id_from_ty, is_allowed_lint, span_lint, symbols_list_from_str};
-```
-
-**File**: `utils/tfhe-lints/lints/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@
- extern crate rustc_errors;
- extern crate rustc_hir;
- extern crate rustc_lint;
-+extern crate rustc_lint_defs;
- extern crate rustc_middle;
- extern crate rustc_session;
- extern crate rustc_span;
-```
-
-**File**: `utils/tfhe-lints/lints/src/serialize_without_versionize.rs` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ use std::sync::{Arc, OnceLock};
- use rustc_hir::def_id::DefId;
- use rustc_hir::{Impl, Item, ItemKind};
- use rustc_lint::{LateContext, LateLintPass};
--use rustc_session::{declare_lint, impl_lint_pass};
-+use rustc_lint_defs::{declare_lint, impl_lint_pass};
+ while [ -n "${1:-}" ]; do
+    case "$1" in
+@@ -25,6 +27,14 @@ while [ -n "${1:-}" ]; do
+             RUN_RACECHECK=1
+             ;;
  
- use tfhe_lints_common::{get_def_id_from_ty, is_allowed_lint, span_lint, symbols_list_from_str};
++        "--initcheck" )
++            RUN_INITCHECK=1
++            ;;
++
++        "--synccheck" )
++            RUN_SYNCCHECK=1
++            ;;
++
+         *)
+             echo "Unknown param : $1"
+             exit 1
+@@ -33,8 +43,9 @@ while [ -n "${1:-}" ]; do
+    shift
+ done
  
+-if [[ "${RUN_VALGRIND}" == "0" && "${RUN_MEMCHECK}" == "0" && "${RUN_RACECHECK}" == "0" ]]; then
+-  echo "Usage: check_memory_errors.sh [--gpu] [--memcheck] [--racecheck] [--cpu]"
++if [[ "${RUN_VALGRIND}" == "0" && "${RUN_MEMCHECK}" == "0" && "${RUN_RACECHECK}" == "0" \
++      && "${RUN_INITCHECK}" == "0" && "${RUN_SYNCCHECK}" == "0" ]]; then
++  echo "Usage: check_memory_errors.sh [--gpu] [--memcheck] [--racecheck] [--initcheck] [--synccheck] [--cpu]"
+   exit 1
+ fi
+ 
+@@ -49,6 +60,11 @@ SANITIZER_TEST_EXCLUDES_GPU="${SANITIZER_TEST_EXCLUDES_GPU:-array|modulus_switch
+ # Racecheck runs only the two u128 PBS tests — they use is_sanitizer_run() to limit to 2 iterations
+ SANITIZER_TEST_FILTER_GPU_RACECHECK="${SANITIZER_TEST_FILTER_GPU_RACECHECK:-test_bootstrap_u128_with_squashing|test_multibit_bootstrap_u128_with_squashing|test_compressed_ct_list_gpu_many_sizes}"
+ SANITIZER_TEST_EXCLUDES_GPU_RACECHECK="${SANITIZER_TEST_EXCLUDES_GPU_RACECHECK:-}"
++# Initcheck and synccheck default to the same narrow test set as racecheck
++SANITIZER_TEST_FILTER_GPU_INITCHECK="${SANITIZER_TEST_FILTER_GPU_INITCHECK:-${SANITIZER_TEST_FILTER_GPU_RACECHECK}}"
++SANITIZER_TEST_EXCLUDES_GPU_INITCHECK="${SANITIZER_TEST_EXCLUDES_GPU_INITCHECK:-${SANITIZER_TEST_EXCLUDES_GPU_RACECHECK}}"
++SANITIZER_TEST_FILTER_GPU_SYNCCHECK="${SANITIZER_TEST_FILTER_GPU_SYNCCHECK:-${SANITIZER_TEST_FILTER_GPU_RACECHECK}}"
++SANITIZER_TEST_EXCLUDES_GPU_SYNCCHECK="${SANITIZER_TEST_EXCLUDES_GPU_SYNCCHECK:-${SANITIZER_TEST_EXCLUDES_GPU_RACECHECK}}"
+ SANITIZER_TEST_EXE_GLOB="${SANITIZER_TEST_EXE_GLOB:-tfhe-*}"
+ SANITIZER_TEST_TIMEOUT="${SANITIZER_TEST_TIMEOUT:-1800}"
+ SANITIZER_LAUNCH_TIMEOUT="${SANITIZER_LAUNCH_TIMEOUT:-600}"
+@@ -115,19 +131,33 @@ run_compute_sanitizer_tool() {
+   local CS_TOOL="$1"
+   export TFHE_RS_COMPUTE_SANITIZER=1
+ 
+-  # Select the right filter: racecheck uses a narrower set (only u128 PBS tests)
++  # Select the right filter: racecheck, initcheck and synccheck use a narrower set (only u128 PBS tests)
+   local TEST_FILTER="${SANITIZER_TEST_FILTER_GPU}"
+   local TEST_EXCLUDES="${SANITIZER_TEST_EXCLUDES_GPU}"
+-  if [[ "${CS_TOOL}" == "racecheck" ]]; then
+-    TEST_FILTER="${SANITIZER_TEST_FILTER_GPU_RACECHECK}"
+-    TEST_EXCLUDES="${SANITIZER_TEST_EXCLUDES_GPU_RACECHECK}"
+-  fi
++  case "${CS_TOOL}" in
++    racecheck)
++      TEST_FILTER="${SANITIZER_TEST_FILTER_GPU_RACECHECK}"
++      TEST_EXCLUDES="${SANITIZER_TEST_EXCLUDES_GPU_RACECHECK}"
++      ;;
++    initcheck)
++      TEST_FILTER="${SANITIZER_TEST_FILTER_GPU_INITCHECK}"
++      TEST_EXCLUDES="${SANITIZER_TEST_EXCLUDES_GPU_INITCHECK}"
++      ;;
++    synccheck)
++      TEST_FILTER="${SANITIZER_TEST_FILTER_GPU_SYNCCHECK}"
++      TEST_EXCLUDES="${SANITIZER_TEST_EXCLUDES_GPU_SYNCCHECK}"
++      ;;
++  esac
++
++  # Per-tool temporary files so that sanitizer runs launched in parallel don't clobber each other
++  local TEST_LIST="/tmp/test_list_${CS_TOOL}.txt"
++  local SANITIZER_LOG="/tmp/sanitizer_output_${CS_TOOL}.log"
+ 
+   # List the tests into a temporary file using the GPU feature set
+   RUSTFLAGS="$RUSTFLAGS" cargo nextest list --cargo-profile "${CARGO_PROFILE}" \
+-            --features="${SANITIZER_CARGO_FEATURES_GPU}" -p "${SANITIZER_CARGO_PACKAGE}" &> /tmp/test_list.txt
++            --features="${SANITIZER_CARGO_FEATURES_GPU}" -p "${SANITIZER_CARGO_PACKAGE}" &> "${TEST_LIST}"
+ 
+-  TESTS_TO_RUN=$(sed -e $'s/\x1b\[[0-9;]*m//g' < /tmp/test_list.txt \
++  TESTS_TO_RUN=$(sed -e $'s/\x1b\[[0-9;]*m//g' < "${TEST_LIST}" \
+       | grep -E "${TEST_FILTER}" \
+       | { if [[ -n "${TEST_EXCLUDES}" ]]; then grep -vE "${TEST_EXCLUDES}"; else cat; fi; } \
+       | grep -o '[^ ]\+$')
+@@ -149,7 +179,7 @@ run_compute_sanitizer_tool() {
+         echo "Running compute-sanitizer (${CS_TOOL}) on [${IDX}/${TOTAL}] $(date '+%Y-%m-%d %H:%M:%S'): $t"
+         CS_EXIT=0
+ 
+-        # memcheck supports --leak-check; racecheck does not
++        # memcheck supports --leak-check; the other tools do not
+         CS_EXTRA_ARGS=""
+         if [[ "${CS_TOOL}" == "memcheck" ]]; then
+           CS_EXTRA_ARGS="--leak-check=full"
+@@ -160,8 +190,8 @@ run_compute_sanitizer_tool() {
+             compute-sanitizer --tool "${CS_TOOL}" ${CS_EXTRA_ARGS} \
+             --error-exitcode=1 --launch-timeout "${SANITIZER_LAUNCH_TIMEOUT}" \
+             --target-processes=all \
+-            "$EXECUTABLE" --exact "$t" > /tmp/sanitizer_output.log 2>&1 || CS_EXIT=$?
+-        cat /tmp/sanitizer_output.log
++            "$EXECUTABLE
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4121** (2026-10-28): chore(tfhe-lints): bump dylint 6.3.0 (@nsarlin-zama)
 - **PR #4115** (2026-10-28): chore(deps-dev): bump fast-uri from 3.1.7 to 3.1.9 in /tfhe/web_wasm_parallel_tests (@dependabot[bot])
+- **PR #4113** (2026-10-29): chore(gpu): run initcheck and synccheck besides racecheck in ci (@agnesLeroy)
 - **PR #4111** (2026-10-27): chore(deps-dev): bump fast-uri from 3.1.8 to 3.1.9 in /utils/wasm-par-mq/web_tests (@dependabot[bot])
 - **PR #4108** (2026-10-26): chore: move CODEOWNERS back because reviewable does not check all locations (@IceTDrinker)
 - **PR #4107** (2026-10-26): chore(data-extractor): update tokio to 1.54.1 (@nsarlin-zama)
-- **PR #4106** (2026-10-26): chore(deps): bump zizmorcore/zizmor-action from 0.6.4 to 0.7.1 (@dependabot[bot])
 
 ---
 
@@ -2391,36 +2324,55 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transciphering): generate otp masks in counter mode (#4105)
+## X. gpu): run initcheck and synchcheck (#4113)
 
 **RULE**:
-When implementing operations in `tfhe/src/high_level_api/transciphering/one_time_pad.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/gpu_memory_sanitizer_h100_2gpu_par.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5c280571`: transciphering): generate otp masks in counter mode (#4105). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ecd3935b`: gpu): run initcheck and synchcheck (#4113). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/transciphering/one_time_pad.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/gpu_memory_sanitizer_h100_2gpu_par.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    ///
-    /// Pads are generated in counter mode, so the pad generated for a seed is a prefix of all
-    /// the pads generated with the same seed and more bits. See
-    /// [`TranscipheringOneTimePadFheSecretMask::new_random`] for details.
-    ///
-    /// The same seed should never be used to encrypt different data, since the generated masks
-    /// would share their bits.
-                    )
-                    .map_err(|e| format!("{e}"))?,
+# Run compute-sanitizer memcheck in parallel with racecheck, initcheck and synccheck on a 2xH100 machine
+              - scripts/check_memory_errors.sh
+      # memcheck runs alone on GPU0. racecheck, initcheck and synccheck share the same
+      # narrow test set and GTest binary, so they run one after the other on GPU1.
+      - name: Run memcheck in parallel with racecheck, initcheck and synccheck
+          run_initcheck() {
+            local rc=0
+            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_initcheck || rc=$?
+            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_initcheck_relaxed_pbs128 || rc=$?
+            echo "${rc}" > /tmp/initcheck.rc
+          }
+          run_synccheck() {
+            local rc=0
+            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_synccheck || rc=$?
+            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_synccheck_relaxed_pbs128 || rc=$?
+            echo "${rc}" > /tmp/synccheck.rc
+          }
+          run_gpu1_lane() {
+            run_racecheck 2>&1 | sed -u 's/^/[racecheck] /'
+            run_initcheck 2>&1 | sed -u 's/^/[initcheck] /'
+            run_synccheck 2>&1 | sed -u 's/^/[synccheck] /'
+          }
+          run_gpu1_lane &
+          f
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                    ),
+# Run compute-sanitizer memcheck and racecheck in parallel on a 2xH100 machine
+      - name: Run memcheck and racecheck in parallel
+          run_racecheck 2>&1 | sed -u 's/^/[racecheck] /' &
+          for lane in memcheck racecheck; do
+          SLACK_MESSAGE: "GPU Memory Sanitizer (memcheck + racecheck parallel) finished with status: ${{ needs.cuda-tests-linux.result }}. (${{ env.PULL_REQUEST_MD_LINK }}[action run](${{ env.ACTION_RUN_URL }}))"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5c280571` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ecd3935b` are properly handled with clean fallback behavior.

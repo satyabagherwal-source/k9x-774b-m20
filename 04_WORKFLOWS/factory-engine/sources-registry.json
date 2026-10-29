@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T11:44:08.241Z",
-    "lastVerified": "2026-10-29T11:44:08.241Z",
+    "lastChecked": "2026-10-29T11:52:53.220Z",
+    "lastVerified": "2026-10-29T11:52:53.220Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -219,22 +219,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T02:07:29.193Z",
-    "lastVerified": "2026-10-29T02:07:29.193Z",
+    "lastChecked": "2026-10-29T11:47:46.359Z",
+    "lastVerified": "2026-10-29T11:47:46.359Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "4707d3ed96ad179955a89e15acb4958a1eda9dee0598ee3766618fd8ef533a59",
+    "contentHash": "851770144d79fcc403218d3828fd90c1c30c612487dd379d320c97f832ac9ff0",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "74088ac3"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1488,22 +1487,21 @@
     "lastVerified": "2026-10-28T21:50:16.352Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "tfhe-rs",
+    "name": "zama-ai/tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T22:33:00.408Z",
-    "lastVerified": "2026-10-28T22:33:00.408Z",
+    "lastChecked": "2026-10-29T11:47:41.718Z",
+    "lastVerified": "2026-10-29T11:47:41.718Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "2a59b0e1a1dd032596b49b84c738c2f0d5c805da26cd157cb4def6b56b8cf3ab",
+    "contentHash": "369b3482dcc7888e7b1449a31329a90a78c998e583d1155e2928f9cc6c9fce29",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5c280571"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -1513,11 +1511,21 @@
     "lastVerified": "2026-10-28T22:45:48.224Z"
   },
   "falkordb-falkordb": {
-    "name": "FalkorDB",
+    "name": "FalkorDB/FalkorDB",
     "officialUrl": "https://github.com/FalkorDB/FalkorDB",
-    "lastChecked": "2026-10-28T05:17:38.048Z",
-    "revisionIdentifier": "ca36bfa1",
-    "lastVerified": "2026-10-28T05:17:38.048Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-29T11:47:31.915Z",
+    "lastVerified": "2026-10-29T11:47:31.915Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "10e5cf306ef1822cf55468af5601ce482f28b8a925ab76f7a703df32aff81466",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 13,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
     "name": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -3025,11 +3033,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "neuron-core-neuron-ai": {
-    "name": "neuron-ai",
+    "name": "neuron-core/neuron-ai",
     "officialUrl": "https://github.com/neuron-core/neuron-ai",
-    "lastChecked": "2026-10-28T11:32:23.144Z",
-    "revisionIdentifier": "179c6818",
-    "lastVerified": "2026-10-28T11:32:23.144Z"
+    "sourceType": "github",
+    "technology": "PHP",
+    "lastChecked": "2026-10-29T11:47:43.999Z",
+    "lastVerified": "2026-10-29T11:47:43.999Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-neuron-core-neuron-ai",
+    "contentHash": "930fc60f231c2be03c614ddda645652076eb30416b415f05af9389231d1bf55c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "kuberwastaken-claurst": {
     "name": "claurst",
@@ -3386,9 +3404,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-10-28T12:36:51.747Z",
+    "lastChecked": "2026-10-29T11:47:34.131Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-10-28T12:36:51.747Z"
+    "lastVerified": "2026-10-29T11:47:34.131Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -8109,5 +8127,19 @@
     "lastChecked": "2026-10-29T11:43:48.120Z",
     "revisionIdentifier": "7ac5e96c",
     "lastVerified": "2026-10-29T11:43:48.120Z"
+  },
+  "serpapi-google-search-results-ruby": {
+    "name": "google-search-results-ruby",
+    "officialUrl": "https://github.com/serpapi/google-search-results-ruby",
+    "lastChecked": "2026-10-29T11:47:29.085Z",
+    "revisionIdentifier": "11326ef3",
+    "lastVerified": "2026-10-29T11:47:29.085Z"
+  },
+  "react-native-maps-react-native-maps": {
+    "name": "react-native-maps",
+    "officialUrl": "https://github.com/react-native-maps/react-native-maps",
+    "lastChecked": "2026-10-29T11:47:31.705Z",
+    "revisionIdentifier": "39c6fd17",
+    "lastVerified": "2026-10-29T11:47:31.705Z"
   }
 }

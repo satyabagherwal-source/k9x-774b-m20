@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T11:44:05.618Z",
+  "last_updated": "2026-10-29T11:52:50.589Z",
   "total_verified_learnings": 1163,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8527,8 +8527,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "74088ac3",
-      "content_hash": "4707d3ed96ad179955a89e15acb4958a1eda9dee0598ee3766618fd8ef533a59",
+      "source_version": "244d8dc8",
+      "content_hash": "851770144d79fcc403218d3828fd90c1c30c612487dd379d320c97f832ac9ff0",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8796,6 +8796,11 @@
           "number": 5326,
           "title": "docs(viz gallery): offer the qsv-clientd tray in the live how-tos (#4954)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5498,
+          "title": "add Codacy badge",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8803,7 +8808,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T15:23:02.895Z",
+      "verified_at": "2026-10-29T11:47:48.251Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11980,8 +11985,8 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "ca36bfa1",
-      "content_hash": "bfe4ea994114de6c6c3d3886a1a066a88387bcd477835ca6c40f5e03186461f7",
+      "source_version": "1c0e6c8d",
+      "content_hash": "10e5cf306ef1822cf55468af5601ce482f28b8a925ab76f7a703df32aff81466",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
@@ -12019,6 +12024,11 @@
           "number": 5049,
           "title": "build(asan): give the module its own pinned nightly, not RediSearch's (#3536)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5499,
+          "title": "index): a column's build state, and indexer batches that fill it (#2351)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12026,7 +12036,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T23:10:09.224Z",
+      "verified_at": "2026-10-29T11:52:34.594Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40132,8 +40142,8 @@
       "slug": "neuron-core-neuron-ai",
       "platform": "github",
       "source_url": "https://github.com/neuron-core/neuron-ai",
-      "source_version": "179c6818",
-      "content_hash": "4a37f099d616bbcb9852285d51c0e0525e1bc88539950fa07b44753a9418a1b9",
+      "source_version": "5842bc45",
+      "content_hash": "930fc60f231c2be03c614ddda645652076eb30416b415f05af9389231d1bf55c",
       "dossier_path": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "promoted_rules": [
@@ -40151,6 +40161,11 @@
           "number": 4369,
           "title": "batch embeddings and sentence splitter",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5497,
+          "title": "Merge pull request #703 from neuron-core/dependabot/npm_and_yarn/npm-a51ffcc4f6",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40158,7 +40173,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:59:49.125Z",
+      "verified_at": "2026-10-29T11:47:45.935Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56818,8 +56833,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "5c280571",
-      "content_hash": "2a59b0e1a1dd032596b49b84c738c2f0d5c805da26cd157cb4def6b56b8cf3ab",
+      "source_version": "ecd3935b",
+      "content_hash": "369b3482dcc7888e7b1449a31329a90a78c998e583d1155e2928f9cc6c9fce29",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -56887,6 +56902,11 @@
           "number": 5368,
           "title": "transciphering): generate otp masks in counter mode (#4105)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5500,
+          "title": "gpu): run initcheck and synchcheck (#4113)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56894,7 +56914,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:42:00.642Z",
+      "verified_at": "2026-10-29T11:52:50.563Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -148167,6 +148187,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T11:44:05.600Z"
+    },
+    "rule-5497": {
+      "learning_id": "rule-5497",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5497,
+      "title": "Merge pull request #703 from neuron-core/dependabot/npm_and_yarn/npm-a51ffcc4f6",
+      "source_url": "https://github.com/neuron-core/neuron-ai",
+      "source_version": "5842bc45",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T11:47:45.935Z"
+    },
+    "rule-5498": {
+      "learning_id": "rule-5498",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5498,
+      "title": "add Codacy badge",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "244d8dc8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T11:47:48.251Z"
+    },
+    "rule-5499": {
+      "learning_id": "rule-5499",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5499,
+      "title": "index): a column's build state, and indexer batches that fill it (#2351)",
+      "source_url": "https://github.com/FalkorDB/FalkorDB",
+      "source_version": "1c0e6c8d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T11:52:34.594Z"
+    },
+    "rule-5500": {
+      "learning_id": "rule-5500",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5500,
+      "title": "gpu): run initcheck and synchcheck (#4113)",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "ecd3935b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T11:52:50.563Z"
     }
   },
   "aliases": {

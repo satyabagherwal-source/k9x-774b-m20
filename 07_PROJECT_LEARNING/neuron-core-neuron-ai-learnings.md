@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source**: github ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
-> **Source Version**: `179c6818`  
+> **Source Version**: `5842bc45`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T18:59:49.018Z  
+> **Timestamp**: 2026-10-29T11:47:45.370Z  
 > **Learning ID**: `learn-github-neuron-core-neuron-ai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T18:59:48.912Z  
+> **Harvest Timestamp**: 2026-10-29T11:47:43.999Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -540,77 +540,174 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `179c6818` (2026-10-27)
-**Commit Message**: doc
+### Incident Patch 1: `5842bc45` (2026-10-28)
+**Commit Message**: Merge pull request #703 from neuron-core/dependabot/npm_and_yarn/npm-a51ffcc4f6
 
-**File**: `README.md` (modified, +2/-2)
+Bump the npm group with 3 updates
+
+**File**: `package-lock.json` (modified, +109/-109)
 ```diff
-@@ -81,8 +81,8 @@ skill before you write any Neuron code instead of relying on what you remember a
- the framework;
- 
- - Third: work out what kind of app this is. Look at composer.json
--and the project structure to tell whether it is a Laravel app or a Symfony app, then
--activate the matching skill: neuron-laravel-integration or neuron-symfony-integration.
-+and the project structure to see whether it is an application based on Laravel, Symfony, or another framework,
-+then activate the matching skill: neuron-laravel-integration or neuron-symfony-integration.
- If Neuron is already part of the app go through the skill's foundations checklist
- item by item. Report what differs from the recommended setup;
- 
+@@ -240,13 +240,13 @@
+       }
+     },
+     "node_modules/@ai-sdk/gateway": {
+-      "version": "4.0.115",
+-      "resolved": "https://registry.npmjs.org/@ai-sdk/gateway/-/gateway-4.0.115.tgz",
+-      "integrity": "sha512-Xn+gDWM4Ti2FzYmxhlZtjEuGBGZlOYaQMpwcVRSN4c9qCMUszD5F5TAbkxgLV/tHKeMfEX+WEuTCl6Kkj2r73A==",
++      "version": "4.0.123",
++      "resolved": "https://registry.npmjs.org/@ai-sdk/gateway/-/gateway-4.0.123.tgz",
++      "integrity": "sha512-IC6w1vADmRyOfB7Kl9A7348p5pazYodb2humlQAahSJSBW9MGCoafbM8h8+rgukYBSV8gjcZoAxPxPX5RQK8mw==",
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@ai-sdk/provider": "4.0.28",
+-        "@ai-sdk/provider-utils": "5.0.61",
++        "@ai-sdk/provider": "4.0.33",
++        "@ai-sdk/provider-utils": "5.0.67",
+         "@vercel/oidc": "3.2.0"
+       },
+       "engines": {
+@@ -415,13 +415,13 @@
+       }
+     },
+     "node_modules/@ai-sdk/mcp": {
+-      "version": "2.0.77",
+-      "resolved": "https://registry.npmjs.org/@ai-sdk/mcp/-/mcp-2.0.77.tgz",
+-      "integrity": "sha512-gv+dj2lHmWnUWy3i1h7OloTs2T9yM0nLoRpTAZl/dqMihtHokdVtGGDh3+Bvs5YdIKezT98qCj/hSi5m/WRQ/g==",
++      "version": "2.0.83",
++      "resolved": "https://registry.npmjs.org/@ai-sdk/mcp/-/mcp-2.0.83.tgz",
++      "integrity": "sha512-XcDGqrMvbJHZOE5GS/RFLCYGMgH+4CDqQMWtpu9ddzdujbCJU3dDLCT5h573ba4tJedv9K9UiAggawbayT+4IA==",
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@ai-sdk/provider": "4.0.28",
+-        "@ai-sdk/provider-utils": "5.0.61",
++        "@ai-sdk/provider": "4.0.33",
++        "@ai-sdk/provider-utils": "5.0.67",
+         "cross-spawn": "^7.0.6",
+         "pkce-challenge": "^5.0.1"
+       },
+@@ -555,9 +555,9 @@
+       }
+     },
+     "node_modules/@ai-sdk/provider": {
+-      "version": "4.0.28",
+-      "resolved": "https://registry.npmjs.org/@ai-sdk/provider/-/provider-4.0.28.tgz",
+-      "integrity": "sha512-6ThcmkJQXSMlBrf6mirIjUUS04Q5/kApbYTOzd5lZfYXLa1XPpnDLxP/G96/DKc00fDIUOW9S2ls0mSzb0+l9w==",
++      "version": "4.0.33",
++      "resolved": "https://registry.npmjs.org/@ai-sdk/provider/-/provider-4.0.33.tgz",
++      "integrity": "sha512-C6ylMuAXjgqKJllp6ODIJwUltK/tm3ZmIj4V2fqENP3Y8gif2DyeJSsTcDwFrXppgEKcrBisi/BWx2tYeoeCAw==",
+       "license": "Apache-2.0",
+       "dependencies": {
+         "json-schema": "^0.4.0"
+@@ -567,12 +567,12 @@
+       }
+     },
+     "node_modules/@ai-sdk/provider-utils": {
+-      "version": "5.0.61",
+-      "resolved": "https://registry.npmjs.org/@ai-sdk/provider-utils/-/provider-utils-5.0.61.tgz",
+-      "integrity": "sha512-Y+Z3539UXw0ctFDNepTtG23VqBQHr2A6yI2qUxvQcg75DJYgJoD2F9U2Vp5OgQjX7lxto1BLgFtKuOhzrr52vQ==",
++      "version": "5.0.67",
++      "resolved": "https://registry.npmjs.org/@ai-sdk/provider-utils/-/provider-utils-5.0.67.tgz",
++      "integrity": "sha512-EUzV6GXutGcesWKOY8tRKgijfuv1LUBpqAquMh5k0n74NCjDbca5d5ZG12qhVtM2X5UwM4B2ZMP2XpnAwZlA8Q==",
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@ai-sdk/provider": "4.0.28",
++        "@ai-sdk/provider": "4.0.33",
+         "@standard-schema/spec": "^1.1.0",
+         "@workflow/serde": "4.1.0",
+         "eventsource-parser": "^3.0.8",
+@@ -586,15 +586,15 @@
+       }
+     },
+     "node_modules/@ai-sdk/react": {
+-      "version": "4.0.146",
+-      "resolved": "https://registry.npmjs.org/@ai-sdk/react/-/react-4.0.146.tgz",
+-      "integrity": "sha512-acYAJHpuq/6FBRAgFLZVZpg3hptDN+oKWIR0ufPHLQDVCZHQlfvryiDEFYGbeV35olnn7KA1dDHIN2EY3it4iw==",
++      "version": "4.0.154",
++      "resolved": "https://registry.npmjs.org/@ai-sdk/react/-/react-4.0.154.tgz",
++      "integrity": "sha512-kaKzm0PBWcKA4CJ9MhM2Sv8HLuL3mG/1Bw4B8OEAH0blyGn0dv/62RP4xUTLZaA4dzlKp4ODs40vHoM/J9Jxzg==",
+       "license": "Apache-2.0",
+       "dependencies": {
+-        "@ai-sdk/mcp": "2.0.77",
+-        "@ai-sdk/provider": "4.0.28",
+-        "@ai-sdk/provider-utils": "5.0.61",
+-        "ai": "7.0.142",
++        "@ai-sdk/mcp": "2.0.83",
++        "@ai-sdk/provider": "4.0.33",
++        "@ai-sdk/provider-utils": "5.0.67",
++        "ai": "7.0.150",
+         "swr": "^2.4.1",
+         "throttleit": "2.1.0"
+       },
+@@ -1944,9 +1944,9 @@
+       }
+     },
+     "node_modules/@oxc-project/types": {
+-      "version": "0.153.0",
+-      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.153.0.tgz",
+-      "integrity": "sha512-jSNrRIyvPVLL5E1z/tS5zLAprosGz/FuI1PWwEOz59j3E4TTTzSpqKb/RDGqJhhW0QHYISGXxq582wGx6T11Tw==",
++      "version": "0.155.0",
++      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.155.0.tgz",
++      "integrity": "sha512-SeE8JPwW1xs1tHeNycjUtUBdhorRa8o4jlvjwk49R7/Z291i+4DQa7JJIgOm/TaYQZx+QrPQbVJ/9c8dMIZN8Q==",
+       "dev": true,
+       "license": "MIT",
+       "funding": {
+@@ -2597,9 +2597,9 @@
+       "license": "MIT"
+     },
+     "node_modules/@rolldown/binding-android-arm-eabi": {
+-      "version": "1.2.13",
+-      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.13.tgz",
+-      "integrity": "sha512-Vu/N
+```
+
+**File**: `tests/Integration/Frontend/package.json` (modified, +2/-2)
+```diff
+@@ -8,7 +8,7 @@
+   "dependencies": {
+     "@ag-ui/client": "~1.0.3",
+     "@ag-ui/core": "~1.0.0",
+-    "@ai-sdk/react": "^4.0.146",
++    "@ai-sdk/react": "^4.0.154",
+     "@copilotkit/react-core": "^1.79.1",
+     "@copilotkit/runtime": "^1.79.1",
+     "@neuron-core/streaming": "0.3.0",
+@@ -24,6 +24,6 @@
+     "@types/react-dom": "^19.3.0",
+     "@vitejs/plugin-react": "^6.1.1",
+     "pusher-js": "^8.6.0",
+-    "vite": "^8.3.4"
++    "vite": "^8.3.5"
+   }
+ }
 ```
 
 ---
 
-### Incident Patch 2: `4f3487d8` (2026-10-27)
-**Commit Message**: doc
+### Incident Patch 2: `c0ae3131` (2026-10-28)
+**Commit Message**: Merge pull request #702 from neuron-core/dependabot/github_actions/github-actions-0c219a018e
 
-**File**: `README.md` (modified, +18/-10)
+Bump docker/login-action from 4.6.0 to 4.7.0 in the github-actions group
+
+**File**: `.github/workflows/tests.yml` (modified, +1/-1)
 ```diff
-@@ -70,18 +70,26 @@ Copy & paste this initial prompt to tell your coding agent how to install and co
- You are going to set up Neuron AI, a PHP framework for building agentic applications,
- in this project, and you must follow three steps in order.
+@@ -107,7 +107,7 @@ jobs:
+               uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
  
--- First: install the framework: check composer.json, and if neuron-core/neuron-ai is not already required, run `composer require neuron-core/neuron-ai`.
--
--- Second: install the agent skills that ship with the package by running `npx skills add ./vendor/neuron-core/neuron-ai/skills -y` from the project root. The skills are symlinked, so they stay current whenever Neuron is
--updated through Composer. From then on, load the relevant skill before you write any Neuron code instead of relying on what you remember about the framework, because your memory may
--describe an older version.
--
--- Third: work out what kind of app this is. Look at composer.json and the project structure to tell whether it is a Laravel app or a Symfony app, then
-+- First: install the framework: check composer.json, and if neuron-core/neuron-ai is not
-+already required, run `composer require neuron-core/neuron-ai`;
-+
-+- Second: install the agent skills that ship
-+with the package by running `npx --yes skills add ./vendor/neuron-core/neuron-ai/skills -y` from
-+the project root. Add this command to `post-update-cmd` in the composer.json file, so they
-+stay updated whenever Neuron is updated through Composer. From then on, load the relevant
-+skill before you write any Neuron code instead of relying on what you remember about
-+the framework;
-+
-+- Third: work out what kind of app this is. Look at composer.json
-+and the project structure to tell whether it is a Laravel app or a Symfony app, then
- activate the matching skill: neuron-laravel-integration or neuron-symfony-integration.
-+If Neuron is already part of the app go through the skill's foundations checklist
-+item by item. Report what differs from the recommended setup;
- 
--If Neuron is already part of the app go through the skill's foundations checklist item by item. Report what differs from the recommended setup. If Neuron is not
--in the app yet, follow the same checklist to do the first setup. If the app uses neither framework, start from a plain PHP agent using the neuron-agent skill.
--Finish with a short summary of what you installed and what you found.
-+If Neuron is not in the app yet, follow the same checklist to do the first setup.
-+If the app uses neither framework, start from a plain PHP agent using
-+the neuron-agent skill. Finish with a short summary of what you installed
-+and what you found.
- ```
- 
- ## Requirements
+             - name: Login to Docker Hub
+-              uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
++              uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
+               # This condition skips the step if the event is a Pull Request
+               if: github.event_name != 'pull_request'
+               with:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #703** (2026-10-28): Bump the npm group with 3 updates (@dependabot[bot])
+- **PR #702** (2026-10-28): Bump docker/login-action from 4.6.0 to 4.7.0 in the github-actions group (@dependabot[bot])
+- **PR #697** (closed): Add deed.page toolkit to publish a web page (@f-o-x11)
 - **PR #694** (2026-10-25): Bump Weaviate test image to 1.39.13 (@dudanogueira)
 - **PR #692** (2026-10-25): Bump the npm group with 10 updates (@dependabot[bot])
 - **PR #691** (2026-10-16): Bump the github-actions group with 4 updates (@dependabot[bot])
-- **PR #690** (2026-10-16): Bump the npm group with 3 updates (@dependabot[bot])
-- **PR #688** (2026-10-12): fix MySQLSchemaTool FK introspection under ONLY_FULL_GROUP_BY (@cironapo)
-- **PR #687** (2026-10-08): Fix static analysis (@ilvalerione)
 
 ---
 
@@ -630,30 +727,64 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in README.md
+## X. Merge pull request #703 from neuron-core/dependabot/npm_and_yarn/npm-a51ffcc4f6
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `179c6818`: doc. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5842bc45`: Merge pull request #703 from neuron-core/dependabot/npm_and_yarn/npm-a51ffcc4f6. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
 // Verified production-grade fix pattern:
-and the project structure to see whether it is an application based on Laravel, Symfony, or another framework,
-then activate the matching skill: neuron-laravel-integration or neuron-symfony-integration.
+      "version": "4.0.123",
+      "resolved": "https://registry.npmjs.org/@ai-sdk/gateway/-/gateway-4.0.123.tgz",
+      "integrity": "sha512-IC6w1vADmRyOfB7Kl9A7348p5pazYodb2humlQAahSJSBW9MGCoafbM8h8+rgukYBSV8gjcZoAxPxPX5RQK8mw==",
+        "@ai-sdk/provider": "4.0.33",
+        "@ai-sdk/provider-utils": "5.0.67",
+      "version": "2.0.83",
+      "resolved": "https://registry.npmjs.org/@ai-sdk/mcp/-/mcp-2.0.83.tgz",
+      "integrity": "sha512-XcDGqrMvbJHZOE5GS/RFLCYGMgH+4CDqQMWtpu9ddzdujbCJU3dDLCT5h573ba4tJedv9K9UiAggawbayT+4IA==",
+        "@ai-sdk/provider": "4.0.33",
+        "@ai-sdk/provider-utils": "5.0.67",
+      "version": "4.0.33",
+      "resolved": "https://registry.npmjs.org/@ai-sdk/provider/-/provider-4.0.33.tgz",
+      "integrity": "sha512-C6ylMuAXjgqKJllp6ODIJwUltK/tm3ZmIj4V2fqENP3Y8gif2DyeJSsTcDwFrXppgEKcrBisi/BWx2tYeoeCAw==",
+      "version": "5.0.67",
+      "resolved": "https://registry.npmjs.org/@ai-sdk/provider-utils/-/provider-utils-5.0.67.tgz",
+      "integrity": "sha512-EUzV6GXutGcesWKOY8tRKgijfuv1LUBpqAquMh5k0n74NCjDbca5d5ZG12qhVtM2X5UwM4B2ZMP2XpnAwZlA8Q==",
+        "@ai-sdk/provider": "4.0.33",
+      "version": "4.0.154",
+      "resolved": "https://registry.npmj
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
 // Anti-pattern to NEVER write (induced failure mode):
-and the project structure to tell whether it is a Laravel app or a Symfony app, then
-activate the matching skill: neuron-laravel-integration or neuron-symfony-integration.
+      "version": "4.0.115",
+      "resolved": "https://registry.npmjs.org/@ai-sdk/gateway/-/gateway-4.0.115.tgz",
+      "integrity": "sha512-Xn+gDWM4Ti2FzYmxhlZtjEuGBGZlOYaQMpwcVRSN4c9qCMUszD5F5TAbkxgLV/tHKeMfEX+WEuTCl6Kkj2r73A==",
+        "@ai-sdk/provider": "4.0.28",
+        "@ai-sdk/provider-utils": "5.0.61",
+      "version": "2.0.77",
+      "resolved": "https://registry.npmjs.org/@ai-sdk/mcp/-/mcp-2.0.77.tgz",
+      "integrity": "sha512-gv+dj2lHmWnUWy3i1h7OloTs2T9yM0nLoRpTAZl/dqMihtHokdVtGGDh3+Bvs5YdIKezT98qCj/hSi5m/WRQ/g==",
+        "@ai-sdk/provider": "4.0.28",
+        "@ai-sdk/provider-utils": "5.0.61",
+      "version": "4.0.28",
+      "resolved": "https://registry.npmjs.org/@ai-sdk/provider/-/provider-4.0.28.tgz",
+      "integrity": "sha512-6ThcmkJQXSMlBrf6mirIjUUS04Q5/kApbYTOzd5lZfYXLa1XPpnDLxP/G96/DKc00fDIUOW9S2ls0mSzb0+l9w==",
+      "version": "5.0.61",
+      "resolved": "https://registry.npmjs.org/@ai-sdk/provider-utils/-/provider-utils-5.0.61.tgz",
+      "integrity": "sha512-Y+Z3539UXw0ctFDNepTtG23VqBQHr2A6yI2qUxvQcg75DJYgJoD2F9U2Vp5OgQjX7lxto1BLgFtKuOhzrr52vQ==",
+        "@ai-sdk/provider": "4.0.28",
+      "version": "4.0.146",
+      "resolved": "https://registry.npmj
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `179c6818` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5842bc45` are properly handled with clean fallback behavior.

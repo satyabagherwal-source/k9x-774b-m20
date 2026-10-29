@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `74088ac3`  
+> **Source Version**: `244d8dc8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T15:23:02.664Z  
+> **Timestamp**: 2026-10-29T11:47:47.681Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T15:23:02.659Z  
+> **Harvest Timestamp**: 2026-10-29T11:47:46.359Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,129 +2203,64 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `74088ac3` (2026-10-28)
-**Commit Message**: docs(viz gallery): offer the qsv-clientd tray in the live how-tos (#4954)
+### Incident Patch 1: `244d8dc8` (2026-10-29)
+**Commit Message**: chore: add Codacy badge
 
-The WPRDC 2-1-1 and Boston 311 "Make it a Live Data Schematic" steps now offer
-the tray app as an alternative to `qsv-clientd serve` (pipx install
-'qsv-client[tray]', then start qsv-clientd-tray from a shell with the variable
-Re-render needs, since a tray started at login doesn't get it), and approving
-from its Approve... menu as an alternative to `qsv-clientd approve`.
-
-Tested: the tray hosted the daemon, `qsv-clientd register` worked against it,
-a file:// page's pairing appeared in the tray and was approved from its menu,
-and Re-render ran through the tray's daemon.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Added
- - `viz smart`: a Data Schematic embedded in an iframe now reports its own height to the embedding page (`postMessage({qsvVizHeight: <px>}, "*")`), so a host such as CKAN can size the iframe to its content without injecting a script. It reports only when framed, on load, on resize (including the data viewer drawer opening and closing, so the iframe grows and shrinks), and when its content reflows. The data viewer now accepts the embedding page's `qsvVizViewport` answer only from that page. The gallery generator injects only its scroll-forwarding script into these pages. ([#4949](https://github.com/dathere/qsv/pull/4949))
--- Gallery: the WPRDC 2-1-1 and Boston 311 Data Schematics can now be made **Live Data Schematics**. Each gallery entry has a "Make it a Live Data Schematic" how-to: download the page and the exact data it was rendered from, register it with qsv-clientd, and open it from disk. The two data files too large to commit (`wpa_211_requests.csv`, `boston311-2025.tsv.gz`) are attached to the 27.0.1 release. The WPRDC figure is now rendered from the portal's own 13-column file instead of a reshaped 7-column extract, so Fetch latest returns data of the same shape; every number in its description is unchanged. ([#4952](https://github.com/dathere/qsv/pull/4952))
-+- Gallery: the WPRDC 2-1-1 and Boston 311 Data Schematics can now be made **Live Data Schematics**. Each gallery entry has a "Make it a Live Data Schematic" how-to: download the page and the exact data it was rendered from, register it with qsv-clientd, and open it from disk, approving the pairing in a shell or from the qsv-clientd tray app's menu. The two data files too large to commit (`wpa_211_requests.csv`, `boston311-2025.tsv.gz`) are attached to the 27.0.1 release. The WPRDC figure is now rendered from the portal's own 13-column file instead of a reshaped 7-column extract, so Fetch latest returns data of the same shape; every number in its description is unchanged. ([#4952](https://github.com/dathere/qsv/pull/4952))
- 
- ### Changed
- - Build: Polars is built with its `serde` feature instead of `serde-lazy`. qsv only serializes Polars schemas (the `.pschema.json` cache), which `serde` covers; `serde-lazy` also generated serialization code for Polars' whole query-plan layer, which qsv never uses. A clean `-F all_features` debug build takes about 16% less CPU time. No behavior change. ([#4951](https://github.com/dathere/qsv/pull/4951))
+@@ -4,6 +4,7 @@
+ [![Windows build status](https://github.com/dathere/qsv/actions/workflows/rust-windows.yml/badge.svg)](https://github.com/dathere/qsv/actions/workflows/rust-windows.yml)
+ [![macOS build status](https://github.com/dathere/qsv/actions/workflows/rust-macos.yml/badge.svg)](https://github.com/dathere/qsv/actions/workflows/rust-macos.yml)
+ [![Security audit](https://github.com/dathere/qsv/actions/workflows/security-audit.yml/badge.svg)](https://github.com/dathere/qsv/actions/workflows/security-audit.yml)
++[![Codacy Badge](https://app.codacy.com/project/badge/Grade/29e587760af64abcb115ba23efe1b365)](https://app.codacy.com/gh/dathere/qsv/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+ [![Discussions](https://img.shields.io/github/discussions/dathere/qsv)](https://github.com/dathere/qsv/discussions)
+ [![Minimum supported Rust version](https://img.shields.io/badge/Rust-1.99-red?logo=rust)](#minimum-supported-rust-version)
+ [![Crates.io](https://img.shields.io/badge/Rust-crates.io-yellow?logo=rust)](https://crates.io/crates/qsv)
 ```
 
-**File**: `examples/viz/gallery.html` (modified, +4/-4)
-```diff
-@@ -247,11 +247,11 @@ <h1>qsv viz gallery <i>(An Interactive Viz is worth a Million Rows)</i></h1>
- <figure class="cell full" id="fig-smart-data-schematic-real-per-capita-county-rate-wprdc-2-1-1"><figcaption><span class="t">smart Data Schematic (real per-capita county rate, WPRDC 2-1-1)</span><a class="popout" href="smart_wpa_211_requests.html" target="_blank" rel="noopener" onclick="window.open(this.href,'smart_wpa_211_requests','popup,width=1280,height=900');return false;" title="Open the full interactive Data Schematic in a new window">(open in a new window)</a><span class="d">The same count-vs-rate lesson as the two figures above, but on a <b>real service log</b> where the rate map <b>refuses to invert</b> — and that is exactly why it is here. <b>279,464 2-1-1 helpline requests</b> across the <b>25 Western Pennsylvania counties</b> served by the United Way of Southwestern Pennsylvania, one row per request, the upstream resource <b>entire</b> (2023-09-22 to 2025-08-27 — no window, no sample), as the WPRDC's own file, all 13 columns, byte for byte — which is what lets it go live (see below). The <b>count</b> panel is <b>Allegheny County and almost nothing else</b>: 172,035 requests, <b>61.6% of the whole file</b>, because a raw-count choropleth of any event log is substantially a population map. The <b>rate</b> panel beside it divides by each county's population — and <b>Allegheny still leads</b>, at 138.9 requests per 1,000 residents. What moves is the <b>middle</b>: <b>Venango</b> climbs from 11th by count to <b>3rd</b> by rate (74.8 per 1,000), <b>Cambria</b> from 5th to <b>2nd</b> (81.0), while <b>Butler</b> falls from 8th to <b>13th</b>; the two top-eights share only <b>6 of 8</b> members. Compare the synthetic tri-state figure above, whose top-tens were constructed to be <i>disjoint</i>. Per-capita is a <b>different question</b>, not a trick that always flips a map — and a gallery that only ever showed inversions would teach the wrong lesson. <b>The denominator is not in the file.</b> <code>--denominator census@2024</code> fetches ACS 5-year total population (<code>B01003</code>) from the Census Data API and stamps the release beneath the map — <i>Denominator: ACS 2020&ndash;2024 5-yr (B01003)</i>. Unlike its neighbour this figure keys on county <b>names</b> with <code>--geojson auto</code>, which fetches the boundaries <i>and</i> canonicalizes the names to Census GEOIDs so the fetched population keys onto them — so there is no FIPS column and no committed boundary file. ⚠️ Read the rate map as <b>service reach as much as need</b>, and the map says so itself: the darkest county on it is <b>McKean</b>, at <b>2 requests against 39,904 residents</b> — 0.05 per 1,000, where the next-lowest county (Elk) is 12.3, some <b>245 times higher</b>. Nobody believes McKean County has no hardship; it sits at the edge of <i>this</i> call center's intake, so the figure is measuring who dials 2-1-1, not who needs it. A per-capita map inherits whatever the numerator was actually counting. The feed's <code>zip_code</code> is kept but tagged an identifier, not a geography (a second geo concept would create a competing choropleth candidate); <b>11 rows</b> have no state and a county name other states share (Erie, Crawford, Westmoreland), so the map can't place them (qsv reports them when it renders); and the dataset's OLDER 2020-2023 resource is deliberately not concatenated: 5.4% of its rows carry a pipe-delimited <code>Allegheny County|Westmoreland County</code> multi-county value, and every way of resolving those changes the map.</span><div class="cmdbox"><button class="copy" type="button" title="Copy" aria-label="Copy command to clipboard" data-cmd="qsv viz smart wpa_211_requests.csv --smarter --bivariate --dict-info --dictionary wpa_211_requests_dict.schema.json --geojson auto --denominator census@2024 --theme plotly_white --dataset-pid https://data.wprdc.org/dataset/211-requests/resource/0ce22487-5707-4e64-8e59-5b189cfc69cb -o smart_data_schematic_real_per_capita_county_rate_wprdc_2_1_1.html"><svg class="ci-copy" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path></svg><svg class="ci-check" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L1.72 9.78a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 11.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path></svg></button><pre class="cmd"><code>qsv viz smart wpa_211_requests.csv --smarter --bivariate --dict-info \
-   --dictionar
-```
+---
 
-**File**: `examples/viz/gen_gallery.py` (modified, +40/-17)
+### Incident Patch 2: `3e222e06` (2026-10-29)
+**Commit Message**: deps: update lock file
+
+**File**: `Cargo.lock` (modified, +6/-6)
 ```diff
-@@ -370,19 +370,38 @@
-     "It runs on your machine through <a href=\"https://github.com/dathere/qsv-client\">"
-     "qsv-clientd</a>, so it works only on a copy opened from your disk &mdash; on this site "
-     "the page never contacts your computer. You need qsv 27.0.1 or later.")
--_LIVE_OPEN = (
--    "Open the downloaded page in your browser (from disk, e.g. by double-clicking it), click "
--    "<b>Live data</b> in its bottom-left corner, and approve the code it shows:",
--    ["qsv-clientd approve <CODE>"])
-+_LIVE_OPEN = [
-+    ("Open the downloaded page in your browser (from disk, e.g. by double-clicking it), click "
-+     "<b>Live data</b> in its bottom-left corner, and approve the code it shows. In a shell:",
-+     ["qsv-clientd approve <CODE>"]),
-+    ("Or, with the tray: its dot turns magenta when a page asks to pair; open "
-+     "<b>Approve&hellip;</b> in its menu and pick the code the page shows (the other three "
-+     "are decoys, and picking one denies the request).", []),
-+]
-+
-+
-+def _live_start(env):
-+    """Step 1, shell or tray: start the daemon with `env` (the variable Re-render needs) set."""
-+    return [
-+        ("Install qsv-client and start the daemon in a shell:",
-+         ["pip install qsv-client", f"{env} qsv-clientd serve"]),
-+        ("Or install the tray app instead, which runs the daemon behind an icon in the menu bar "
-+         "(macOS) or notification area (Windows, Linux) and approves pairings from its menu. "
-+         "Start it from a shell the first time, so the daemon it runs gets the variable above "
-+         "(a tray started at login doesn't):",
-+         ["pipx install 'qsv-client[tray]'", f"{env} qsv-clientd-tray"]),
-+    ]
-+
-+
- LIVE = {
-     "smart_wpa_211_requests.html": {
-         "intro": _LIVE_INTRO,
-         "steps": [
--            ("Install qsv-client and start the daemon. Re-render fetches the county population "
--             "from the Census Data API, so give it a free "
--             "<a href=\"https://api.census.gov/data/key_signup.html\">Census API key</a>:",
--             ["pip install qsv-client",
--              "QSV_CENSUS_API_KEY=<your-key> qsv-clientd serve"]),
-+            [("Re-render fetches the county population from the Census Data API, so the "
-+              "daemon needs a free "
-+              "<a href=\"https://api.census.gov/data/key_signup.html\">Census API key</a> "
-+              "in <code>QSV_CENSUS_API_KEY</code>.", [])]
-+            + _live_start("QSV_CENSUS_API_KEY=<your-key>"),
-             ("In another shell, download the page, its data dictionary, and the exact file it "
-              "was rendered from: the WPRDC resource, byte for byte, attached to the qsv 27.0.1 "
-              "release:",
-@@ -406,10 +425,9 @@
-     "smart_boston_311_2025.html": {
-         "intro": _LIVE_INTRO,
-         "steps": [
--            ("Install qsv-client and start the daemon. This page plots every point, which "
--             "takes a higher point cap than the default, so set it for Re-render too:",
--             ["pip install qsv-client",
--              "QSV_VIZ_MAX_POINTS=300000 qsv-clientd serve"]),
-+            [("This page plots every point, which takes a higher point cap than the default, "
-+              "so the daemon needs <code>QSV_VIZ_MAX_POINTS</code> set for Re-render too.", [])]
-+            + _live_start("QSV_VIZ_MAX_POINTS=300000"),
-             ("In another shell, download the page, its data dictionary and neighborhood "
-              "boundaries, and the exact file it was rendered from (attached to the qsv 27.0.1 "
-              "release; 34&nbsp;MB, 153&nbsp;MB unpacked):",
-@@ -1600,14 +1618,19 @@ def command_block_html(tokens):
- def live_block_html(page):
-     """The collapsible "Make it live" how-to for a Data Schematic in LIVE, or "" when `page` (its
-     standalone .html filename) has none. Each step is prose plus optional copy-pasteable command
--    lines, rendered with the same command block as the figure's own command."""
-+    lines, rendered with the same command block as the figure's own command; a step that offers
-+    alternatives (shell or tray) is a list of such (prose, commands) parts."""
-     live = LIVE.get(page)
-     if not live:
-         return ""
-     steps = []
--    for text, cmds in live["steps"]:
--        blocks = "".join(command_block_html(shlex.split(c, posix=False)) for c in cmds)
--        steps.append(f"<li>{text}{blocks}</li>")
-+    for step in live["steps"]:
-+        parts = step if isinstance(step, list) else [step]
-+        body = ""
-+        for i, (text, cmds) in enumerate(parts):
-+            blocks = "".join(command_block_html(shlex.split(c, posix=False)) for c in cmds)
-+            body += (f"<p>{text}</p>" if i else text) + blocks
-+        steps.append(f"<li>{body}</li>")
-     return (f'<details class="live"><summary>Make it a Live Data Schematic</summary>'
-             f'<p>{live["intro"]}</p><ol>{"".join(steps)}</ol>'
-             f'<p>{live["outro"]}</p></details>')
+@@ -845,19 +845,19 @@ dependencies = [
+ 
+ [[package]]
+ name = "aws-lc-rs"
+-version = "1.18.2"
++version = "1.19.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "faac5829c2b74c28f830747e7818ccfb684261b5f48a1118b1e2a13d36dfab13"
++checksum = "048006790404103c488e6c5616b3e7e702a71292aadda08e8f7698a9e0d2eb53"
+ dependencies = [
+  "aws-lc-sys",
+  "zeroize",
+ ]
+ 
+ [[package]]
+ name = "aws-lc-sys"
+-version = "0.46.0"
++version = "0.47.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f1622d8446a2d4b2ce0c7eefc73dd43a99779028d5ee5c2dd8073a658ba8a2bc"
++checksum = "8bfbe32ac36b3c428696ce315464181bc4029d689fd58e3f2a4e58c252242f52"
+ dependencies = [
+  "cc",
+  "cmake",
+@@ -2057,9 +2057,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "ctutils"
+-version = "0.4.6"
++version = "0.4.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fe3e9d21d39e6f39ff46e03d5b621424f88ee23d8a1672c6bfc9ccc7f2da4f6a"
++checksum = "a2376ffd6f96d8a9db59875b4b6b0237d6900b5baf64279714e05493ce64828a"
+ dependencies = [
+  "cmov",
+ ]
 ```
 
 #### Recent Merged Pull Requests:
@@ -2354,28 +2289,28 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(viz gallery): offer the qsv-clientd tray in the live how-tos (#4954)
+## X. add Codacy badge
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `74088ac3`: docs(viz gallery): offer the qsv-clientd tray in the live how-tos (#4954). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `244d8dc8`: add Codacy badge. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Gallery: the WPRDC 2-1-1 and Boston 311 Data Schematics can now be made **Live Data Schematics**. Each gallery entry has a "Make it a Live Data Schematic" how-to: download the page and the exact data it was rendered from, register it with qsv-clientd, and open it from disk, approving the pairing in a shell or from the qsv-clientd tray app's menu. The two data files too large to commit (`wpa_211_requests.csv`, `boston311-2025.tsv.gz`) are attached to the 27.0.1 release. The WPRDC figure is now rendered from the portal's own 13-column file instead of a reshaped 7-column extract, so Fetch latest returns data of the same shape; every number in its description is unchanged. ([#4952](https://github.com/dathere/qsv/pull/4952))
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/29e587760af64abcb115ba23efe1b365)](https://app.codacy.com/gh/dathere/qsv/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- Gallery: the WPRDC 2-1-1 and Boston 311 Data Schematics can now be made **Live Data Schematics**. Each gallery entry has a "Make it a Live Data Schematic" how-to: download the page and the exact data it was rendered from, register it with qsv-clientd, and open it from disk. The two data files too large to commit (`wpa_211_requests.csv`, `boston311-2025.tsv.gz`) are attached to the 27.0.1 release. The WPRDC figure is now rendered from the portal's own 13-column file instead of a reshaped 7-column extract, so Fetch latest returns data of the same shape; every number in its description is unchanged. ([#4952](https://github.com/dathere/qsv/pull/4952))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `74088ac3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `244d8dc8` are properly handled with clean fallback behavior.

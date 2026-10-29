@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `ca36bfa1`  
+> **Source Version**: `1c0e6c8d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T23:10:08.770Z  
+> **Timestamp**: 2026-10-29T11:52:33.996Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T23:10:07.930Z  
+> **Harvest Timestamp**: 2026-10-29T11:47:31.915Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10494 stars
+- **Stars / Engagement**: 10499 stars
 
 ---
 
@@ -2305,13 +2305,13 @@ def render(cmp: Comparison) -> list[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3518** (2026-10-26): **6.x regression: UNWIND + unlabeled start node + variable-length path + WHERE returns 0 rows (Unwind dropped from plan)**
-  *Symptoms*: **Version:** FalkorDB 6.0.3 (`falkordb/falkordb:6.0.3`, currently `latest`). Works correctly on 4.22.2, so this is a regression.  **Bug:** `UNWIND` feeding an **unlabeled** start node with an inline property filter, followed by a variable-length traversal and a `WHERE` on both ends, returns 0 rows. The `Unwind` operation and the start-node filter are missing from the 6.x plan.  **Repro** ``` GRAPH.QUERY g "CREATE (:A {k:1,g:'x'})-[:R]->(:B {g:'x'})-[:R]->(:B {g:'x'})" GRAPH.QUERY g "UNWIND [1] AS u MATCH (o {k:u})-[:R*1..2]->(n:B) WHERE n.g = o.g RETURN count(n)" ```  | Query | 6.0.3 | 4.22.2 | |---|---|---| | Unlabeled origin (above) | **0** | 2 | | Labeled origin `(o:A {k:u})` (control) | 2 | 2 | | No `UNWIND`: `MATCH (o {k:1})-[:R*1..2]->(n:B) WHERE n.g=o.g` (control) | 2 | 2 |  Reproduced 3/3 on fresh graphs. Expected: 2.  **Plans:** - 6.0.3: `Aggregate > Filter > Conditional Variable Length Traverse (o)-[_anon_0:R*1..2]->(n) > Node By Label Scan (n:B)`. There is no `Unwind`, and `o` is never bound. - 4.22.2: `... Conditional Variable Length Traverse (n)-[@anon_0:R*1..2]->(o) > Node By Label Scan (n:B) > Unwind`.  **Impact:** Graphiti's `node_bfs_search` uses this exact pattern (`UNWIND $uuids AS origin_uuid MATCH (origin {uuid: origin_uuid})-[:RELATES_TO|MENTIONS*1..$depth]->(n:Entity) WHERE n.group_id = origin.group_id`), so BFS search silently returns nothing on 6.x. Workaround: label the origin node, or add `WITH DISTINCT origin, n` before the `WHERE`. 
+- **Issue #3556** (2026-10-28): **[Rust] Variables named _anon* are treated as anonymous, and * projections drop variables starting with _**
+  *Symptoms*: ### Summary  User variables whose names start with `_anon` are treated as anonymous, so they can't be referenced: a later use gets a new, unbound variable. Separately, `*` projections drop every variable whose name starts with `_`.  ### Reproduction (release build, `main` @ c652e505e)  Graph: `CREATE (:Person {name:'Alice', age: 40})-[:KNOWS]->(:Person {name:'Bob', age: 35})`  | query | C (`edge-c`) | Rust | |---|---|---| | `MATCH (_anon_x:Person) RETURN _anon_x.name` | `'Alice', 'Bob'` | `Variable _anon_x not found` | | `MATCH (_anonymous:Person) RETURN _anonymous.name` | `'Alice', 'Bob'` | `Variable _anonymous not found` | | `UNWIND [1,2] AS _anon_v RETURN _anon_v` | `1, 2` | **`null, null`** | | `MATCH (_x:Person) WITH * RETURN _x.name` | `'Alice', 'Bob'` | `'_x' not defined` | | `MATCH (_x:Person) RETURN *` | column `_x`, 2 rows | `RETURN * is not allowed when there are no variables in scope` |  ### Mechanism  The parser names unnamed nodes and relationships `_anon_N` ([cypher.rs:3027](https://github.com/FalkorDB/FalkorDB/blob/c652e505e7be43f9948263fd64afc56e72253501/graph/src/parser/cypher.rs#L3027), [3063](https://github.com/FalkorDB/FalkorDB/blob/c652e505e7be43f9948263fd64afc56e72253501/graph/src/parser/cypher.rs#L3063), [3140](https://github.com/FalkorDB/FalkorDB/blob/c652e505e7be43f9948263fd64afc56e72253501/graph/src/parser/cypher.rs#L3140)), and later stages recognise an anonymous entity by that name prefix, not by a flag:  - `define_name_in_scope` never reuses a na
 
-- **Issue #3484** (2026-10-27): **[Rust] 6.0.3 drops the RANGE index of an attribute that also has a FULLTEXT index when it loads a v4.22.x RDB**
-  *Symptoms*: ### Summary  When 6.0.3 loads an RDB that v4.22.2 saved, it drops the RANGE index of each attribute that also has a FULLTEXT index. The FULLTEXT index stays. A RANGE index on an attribute without a FULLTEXT index also stays. Node and relationship indexes both lose the RANGE index. The load shows no error and no log line.  A 6.0.3 save and load of its own RDB keeps both index types. The loss occurs only on the v4.22.x to 6.0.3 path.  ### Reproduction  Start `falkordb/falkordb:v4.22.2` on an empty directory:  ```sh mkdir -p data docker run -d --name v4 -e REDIS_ARGS="--appendonly no --save ''" \   -v "$PWD/data:/var/lib/falkordb/data" falkordb/falkordb:v4.22.2 ```  Then run:  ``` GRAPH.QUERY g "CREATE INDEX FOR (n:E) ON (n.g, n.h)" GRAPH.QUERY g "CREATE FULLTEXT INDEX FOR (n:E) ON (n.g)" GRAPH.QUERY g "CREATE INDEX FOR ()-[r:R]-() ON (r.g)" GRAPH.QUERY g "CREATE FULLTEXT INDEX FOR ()-[r:R]-() ON (r.g)" GRAPH.QUERY g "CREATE (:E {g:'a', h:1})-[:R {g:'b'}]->(:E {g:'c', h:2})" SAVE ```  Stop the server. Start `falkordb/falkordb:6.0.3` on the same `dump.rdb`. The 6.0.3 image runs as uid 999, so make the directory writable first:  ```sh chmod -R a+rwX ./data docker run -d --name v6 -e REDIS_ARGS="--appendonly no --save ''" \   -v "$PWD/data:/var/lib/falkordb/data" falkordb/falkordb:6.0.3 ```  Then run:  ``` GRAPH.QUERY g "CALL db.indexes() YIELD label, types, entitytype RETURN entitytype, label, types" GRAPH.EXPLAIN g "MATCH (n:E) WHERE n.g = 'a' RETURN count(n)" GRAPH.EXPLAIN g "MA
+- **Issue #3554** (2026-10-28): **[Rust] A variable read only by a WITH's ORDER BY stays in scope after the WITH**
+  *Symptoms*: ### Summary  A `WITH`'s `ORDER BY` may read variables from before the projection. To allow that, the binder copies such a variable into the new scope, but it never removes the copy, so the variable stays visible to every later clause. Copies made for the `WITH`'s `WHERE`, `SKIP` and `LIMIT` are removed.  ### Reproduction (release build, `main` @ c652e505e)  Graph: `CREATE (:Person {name:'Alice', age: 40})-[:KNOWS]->(:Person {name:'Bob', age: 35})`  | query | C (`edge-c`) | Rust | |---|---|---| | `MATCH (n:Person) WITH n.name AS name ORDER BY n.age RETURN n.name, name` | `'n' not defined` | **`['Bob','Bob'], ['Alice','Alice']`** | | `MATCH (n:Person) WITH n.name AS name ORDER BY n.age RETURN *` | columns: `name` | **columns: `n`, `name`** | | `MATCH (n:Person) WITH n.name AS name WHERE n.age > 0 RETURN n.name, name` | `'n' not defined` | `'n' not defined` |  ### Mechanism  While a projection's `ORDER BY`/`WHERE`/`SKIP`/`LIMIT` is bound, `resolve_name` resolves a name the new scope lacks from the parent scope and inserts a copy into the new scope's env, recording it in `copy_from_parent` ([binder.rs:2234-2248](https://github.com/FalkorDB/FalkorDB/blob/c652e505e7be43f9948263fd64afc56e72253501/graph/src/planner/binder.rs#L2234-L2248)).  `bind_projection` removes those copies again ([binder.rs:1257-1268](https://github.com/FalkorDB/FalkorDB/blob/c652e505e7be43f9948263fd64afc56e72253501/graph/src/planner/binder.rs#L1257-L1268)), but only keys missing from `env_keys_before_filter`, 
   **Post-Mortem & Fix Analysis**:
-  > **Triage — Bug.** Set the issue type to Bug and added the `bug` label.  Reproduced the migration: created node and relationship RANGE plus FULLTEXT indexes on `falkordb/falkordb:v4.22.2`, saved the RDB, and loaded it into the current Rust `falkordb/falkordb:edge-rs` image. `db.indexes()` retained only FULLTEXT for the overlapping `g` attribute on both entities (the unrelated node `h` RANGE index remained); `GRAPH.EXPLAIN` used a node label scan and an all-node scan/conditional traverse for the affected lookups. This is not fixed in Rust, so I did not apply `fixed-rust`. #3248 is related but not a duplicate: it tracks incorrect lookups when both index types coexist in memory, whereas this issue is loss of the RANGE index during cross-version RDB load.
+  > Duplicate of #3005.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2328,237 +2328,1004 @@ def render(cmp: Comparison) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `428e7885` (2026-10-27)
-**Commit Message**: build(asan): give the module its own pinned nightly, not RediSearch's (#3536)
+### Incident Patch 1: `d1a73f65` (2026-10-28)
+**Commit Message**: feat(index): a column's build state, and indexer batches that fill it (#2351)
 
-The ASan image built the module with RediSearch's .rust-nightly
-(nightly-2026-01-05, rustc 1.94). parking_lot 0.13 / lock_api 0.5 need
-rustc 1.95, so #3487's dependency bump failed only in this image. Pin the
-module to nightly-2026-10-20 instead; redisearch_rs still builds with its own
-pin through the recipe's +toolchain modifier.
+* feat(index): a column's build state, and build steps that fill it
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+A native index column is now `Building { next }` or `Ready`. A build step
+reads the next batch of the label's nodes, or the type's edges, from the
+cursor `next` at their current values, adds them to the column, and moves
+the cursor past them. The step that reaches the end flips the column
+`Ready`. An edge step finishes the multi-edge pair it stops in, so a pair
+is never split between steps. While a column is `Building`,
+`query_numeric` returns `None` and the read falls through to RediSearch.
+Live writes maintain a `Building` column as they do a `Ready` one.
 
-**File**: `build/runtime/Dockerfile.asan` (modified, +11/-8)
+`CREATE INDEX` creates the column `Building` and takes one step with no
+limit on its batch, so the column is `Ready` when it returns, as before. A
+step into an empty column bulk-builds its tree, as the one-pass build did.
+The RDB-load populate is unchanged.
+
+Tuples now move as `EncodedTuples`, split by `KeySpace`, through one seam,
+`IndexColumn::push_encoded`. Only the scalar half is filled.
+
+The step tests compare against the RDB-load populate, which shares no code
+with the steps: 
+
+**File**: `graph/src/graph/graph.rs` (modified, +44/-6)
 ```diff
-@@ -34,7 +34,15 @@ RUN git clone --depth 1 --branch ${REDIS_ASAN_VER} https://github.com/redis/redi
- # directly. The dep-layer caching cargo-chef provides isn't worth the extra
- # plumbing for the one-off ASAN image.
- FROM $BUILD_IMAGE AS builder
--RUN rustup install nightly && rustup default nightly
-+# The module's own nightly, pinned so the image is reproducible. It is
-+# independent of RediSearch's `.rust-nightly`: the redisearch recipe below
-+# builds redisearch_rs with that pin, and this one only has to meet the
-+# module's dependencies' MSRV (parking_lot 0.13 needs rustc 1.95). Linking
-+# archives from two nightlies is the pairing the fuzz job already uses
-+# (stable-built RediSearch into a nightly module); each archive's std carries
-+# its own crate hashes, so the symbols do not collide.
-+ARG MODULE_NIGHTLY=nightly-2026-10-20
-+RUN rustup install "$MODULE_NIGHTLY" && rustup default "$MODULE_NIGHTLY"
- # OpenSSL dev: RediSearch 8.6's CMake find_package(OpenSSL) + link-time
- # libssl/libcrypto. (Also added to build/Dockerfile, but the cached base image
- # predates that, so install here too.)
-@@ -70,13 +78,8 @@ COPY . .
- # pass them via `env`.
- ARG TARGETARCH
- RUN set -eux; \
--    # Build the module with the SAME pinned nightly that the RediSearch recipe used for
--    # redisearch_rs (RediSearch's .rust-nightly), not the floating `nightly`
--    # alias defaulted above — so the -Zsanitizer toolchain matches across both
--    # archives. The pin is read from the RediSearch checkout, which `COPY . .`
--    # re-copies identically from the submodule. The native-deps redisearch
--    # recipe already installed this toolchain (with rust-src) during the SAN build.
--    rustup default "$(cat deps/RediSearch/.rust-nightly)"; \
-+    # Back on the module nightly: the redisearch recipe ran under its own pin.
-+    rustup default "$MODULE_NIGHTLY"; \
-     case "$TARGETARCH" in \
-       amd64) RT=x86_64-unknown-linux-gnu ;; \
-       arm64) RT=aarch64-unknown-linux-gnu ;; \
+@@ -83,7 +83,7 @@ use thiserror::Error;
+ 
+ #[cfg(feature = "index-falkordb")]
+ use crate::index::falkordb::{
+-    falkordb_index::FalkorDbIndex,
++    falkordb_index::{BuildCursor, FalkorDbIndex, IndexKey},
+     graph_writes::{self, index_only_writes},
+ };
+ use crate::index::index_docs::IndexDocs;
+@@ -445,8 +445,8 @@ pub struct Graph {
+     /// forks them copy-on-write and the committed-version swap publishes graph +
+     /// index atomically.
+     ///
+-    /// `pub(crate)` for `index::falkordb`: `graph_writes` reads it to stage changes, and
+-    /// `FalkorDbIndex::apply` updates it.
++    /// `pub(crate)` for `index::falkordb`: `graph_writes` reads it to stage changes and to read
++    /// build batches, and `FalkorDbIndex::apply` updates it.
+     #[cfg(feature = "index-falkordb")]
+     pub(crate) falkordb_index: FalkorDbIndex,
+ }
+@@ -3782,6 +3782,20 @@ impl Graph {
+         )
+     }
+ 
++    /// One indexer batch on this version: read the next entities of column `key` of `entity` at
++    /// the values this version holds, at most `entities` nodes or edges, add it to the column and
++    /// move the column's cursor. `false`, changing nothing, if the column is not `Building`.
++    #[cfg(feature = "index-falkordb")]
++    pub(crate) fn index_batch(
++        &mut self,
++        entity: EntityType,
++        key: &IndexKey,
++        entities: usize,
++    ) -> bool {
++        graph_writes::read_indexer_batch_of(self, entity, key, entities)
++            .is_some_and(|batch| self.falkordb_index.apply_indexer_batch(batch))
++    }
++
+     /// Apply a unit of work's staged native-index changes (`docs.native`) to this version's index.
+     /// A no-op without the `index-falkordb` feature, which has no native index. `self` must be the
+     /// private version the changes were staged against.
+@@ -3790,7 +3804,21 @@ impl Graph {
+         docs: &mut IndexDocs,
+     ) {
+         #[cfg(feature = "index-falkordb")]
+-        self.falkordb_index.apply(&mut docs.native);
++        {
++            // A `Building` column asks where a written entity sits in build order: a node by its
++            // id, an edge by its endpoints, which an edge this unit deleted no longer has.
++            let endpoints = &self.edge_endpoints;
++            self.falkordb_index
++                .apply(&mut docs.native, |entity, id| match entity {
++                    EntityType::Node => Some(BuildCursor::Node(NodeId::from(id))),
++                    EntityType::Relationship => {
++                        endpoints.get(id).map(|(src, dst)| BuildCursor::Edge {
++                            src: NodeId::from(src),
++                            dst: NodeId::from(dst),
++                        })
++                    }
++                });
++        }
+         #[cfg(not(feature = "index-falkordb"))]
+         let _ = docs;
+     }
+@@ -4085,7 +4113,7 @@ impl Graph {
+     }
+ 
+     /// Node ids for `query` from the index numeric column, or `None` to fall through to RediSearch
+-    /// (non-numeric / composite / missing column). Wraps
++    /// (non-numeric / composite / missing or `Building` column). Wraps
+     /// [`FalkorDbIndex::query_numeric`], mapping raw ids to `NodeId`. `use<>` keeps the returned
+     /// iterator free of the `&self` borrow — it owns its tree snapshot, so it outlives this
+     /// borrow.
+@@ -4105,7 +4133,7 @@ impl Graph {
+     /// index (`endpoints_for_edge`), like RediSearch's edge read (which instead reads them from its
+     /// 24-byte key). Endpoints are resolved eagerly into an owned iterator because the edge scan op
+     /// only holds a temporary graph borrow, so the result must not borrow `self`. `None` (fall back to
+-    /// RediSearch) for non-numeric/composite predicates or a missing column.
++    /// RediSearch) for non-numeric/composite predicates or a missing or `Building` column.
+     #[cfg(feature = "index-falkordb")]
+     pub fn query_index_numeric_edges(
+         &self,
+@@ -5043,6 +5071,16 @@ impl Graph {
+     pub fn build_global_attrs(&self) -> Vec<Arc<String>> {
+         self.attrs_name.iter().cloned().collect()
+     }
++
++    /// [`Self::index_batch`] of the first `Building` column. For tests of one column.
++    #[cfg(all(test, feature = "index-falkordb"))]
++    pub(crate) fn index_next_batch(
++        &mut self,
++        entities: usize,
++    ) -> bool {
++        graph_writes::read_indexer_batch(self, entities)
++            .is_some_and(|batch| self.falkordb_index.apply_indexer_batch(batch))
++    }
+ }
+ 
+ #[cfg(test)]
+```
+
+**File**: `graph/src/graph/graph/falkordb_index_tests.rs` (modified, +798/-8)
+```diff
+@@ -1,14 +1,20 @@
+ //! The native index as the graph maintains it: each test drives a real `Graph` write path
+-//! and checks the index column it should have changed.
++//! and checks the index column it should have changed. The build's tests drive indexer batches
++//! between writes.
+ 
+-use super::Graph;
++use super::{Graph, NodeId, RelationshipId};
+ use crate::entity_type::EntityType;
+-use crate::index::IndexType;
++use crate::index::Field;
++use crate::index::falkordb::encode::encode_numeric;
++use crate::index::falkordb::falkordb_index::{BuildCursor, ColumnState};
+ use crate::index::falkordb::graph_writes;
+ use crate::index::index_docs::IndexDocs;
++use crate::index::{IndexQuery, IndexType};
+ use crate::runtime::value::Value;
+ use roaring::RoaringTreemap;
+ use rustc_hash::FxHashMap;
++use std::collections::HashMap;
++use std::ffi::CString;
+ use std::sync::Arc;
+ 
+ /// Run one graph write with its own [`IndexDocs`] and apply its native-index changes straight
+@@ -35,6 +41,32 @@ fn reserve_nodes(
+         .expect("reserved")
+ }
+ 
++/// Run indexer batches of at most `entities` nodes or edges on `g` itself until no column is
++/// `Building`. Returns how many batches it took.
++fn build_to_end(
++    g: &mut Graph,
++    entities: usize,
++) -> usize {
++    let mut batches = 0;
++    while g.falkordb_index.has_building_columns() {
++        graph_writes::run_indexer_batch(g, entities);
++        batches += 1;
++        assert!(batches < 100_000, "the build never finishes");
++    }
++    batches
++}
++
++/// `attr = v`, as the read path asks it.
++fn eq(
++    attr: &Arc<String>,
++    v: i64,
++) -> IndexQuery<Value> {
++    IndexQuery::Equal {
++        key: attr.clone(),
++        value: Value::Int(v),
++    }
++}
++
+ /// `Graph::new` builds GraphBLAS matrices, which need GraphBLAS initialized
+ /// first (done at Redis module-load in production, never from a bare unit
+ /// test).
+@@ -87,12 +119,13 @@ fn new_version_isolates_the_falkordb_index() {
+     assert_eq!(writer.version, committed.version + 1);
+ }
+ 
+-/// CREATE INDEX bulk-builds the column from real graph state: three
++/// CREATE INDEX builds the column from real graph state: three
+ /// `:Person {age}` nodes, then a range scan returns the right ids in
+-/// `(value, id)` order. Drives the native half of `Graph::create_index`
+-/// (`graph_writes::create_index` and its `get_label_matrix` →
+-/// `get_node_attribute_by_idx` reads) directly, bypassing the RediSearch FFI
+-/// (uninitialised in a unit test).
++/// `(value, id)` order. The column is built by one indexer batch over every node
++/// (its `get_label_matrix` → `get_node_attribute_by_idx` reads), so it is
++/// `Ready` and serves reads when CREATE INDEX returns. Drives the native half of
++/// `Graph::create_index` directly, bypassing the RediSearch FFI (uninitialised
++/// in a unit test).
+ #[test]
+ fn create_index_builds_the_column_from_live_nodes() {
+     ensure_graphblas();
+@@ -135,6 +168,17 @@ fn create_index_builds_the_column_from_live_nodes() {
+         &label,
+         std::slice::from_ref(&attr),
+     );
++    assert_eq!(
++        g.falkordb_index
++            .column_state(EntityType::Node, &label, &attr),
++        Some(ColumnState::Ready)
++    );
++    assert!(
++        g.falkordb_index
++            .query_numeric(EntityType::Node, &label, &eq(&attr, 20))
++            .is_some(),
++        "a Ready column serves reads"
++    );
+ 
+     let scan = |lo: Option<i64>, hi: Option<i64>| -> Vec<u64> {
+         let lo = lo.map(Value::Int);
+@@ -151,6 +195,45 @@ fn create_index_builds_the_column_from_live_nodes() {
+     assert_eq!(scan(None, None), vec![ids[0], ids[1], ids[2]]);
+ }
+ 
++/// RDB load creates each native column empty and `Ready`, and its populate rebuilds the column
++/// once every entity is in. Afterwards each column is `Ready` and holds what the graph's values
++/// say, for nodes and for edges.
++#[test]
++fn rdb_load_populate_builds_each_column() {
++    let (mut g, label, v, ty, w) = scan_fixture();
++    let range = |attr: &Arc<String>| -> HashMap<Arc<String>, Vec<Arc<Field>>> {
++        let field = Field::new(CString::new(attr.as_str()).unwrap(), IndexType::Range, None);
++        HashMap::from([(attr.clone(), vec![Arc::new(field)])])
++    };
++    for (entity, l, a) in [
++        (EntityType::Node, &label, &v),
++        (EntityType::Relationship, &ty, &w),
++    ] {
++        g.falkordb_index
++            .create_unpopulated(&IndexType::Range, entity, l, std::slice::from_ref(a));
++        graph_writes::populate(&mut g, entity, l, &range(a));
++        assert_eq!(
++            g.falkordb_index.column_state(entity, l, a),
++            Some(ColumnState::Ready),
++            "{entity:?}"
++        );
++    }
++    let node_values: Vec<i64> = (0..10).map(|i| i * 10).collect();
++    let nodes = one_pass(&g, EntityType::Node, &label, &v, &node_values);
++    assert_eq!(nodes.1.len(), 9, "ten nodes, one deleted");
++    assert_eq!(
++        contents(&g, EntityType::Node, &label, &v, &node_values),
++        nodes
++    );
++    let edge_valu
+```
+
+**File**: `graph/src/index/falkordb/falkordb_index.rs` (modified, +389/-42)
+```diff
+@@ -13,11 +13,12 @@ use std::collections::HashMap;
+ use std::sync::Arc;
+ 
+ use crate::entity_type::EntityType;
++use crate::graph::graph::NodeId;
+ use crate::index::{IndexQuery, IndexType};
+ use crate::runtime::value::Value;
+ 
+ use super::encode::encode_numeric;
+-use super::numeric::{DocIter, NumericIndex};
++use super::numeric::{DocIter, EncodedTuples, NumericIndex};
+ use super::pending_writes::{IndexWrite, PendingIndexWrites, last_write_wins};
+ 
+ /// Identifies one index column: `(label, attribute)`.
+@@ -97,23 +98,37 @@ impl IndexColumn {
+         }
+     }
+ 
+-    /// Add already-encoded tuples (a unit of work's collapsed adds).
++    /// Append the tuple `(value, id)` takes in *this* column to `out`, if the kind indexes
++    /// `value`. The one place a value becomes a column's tuples, so a kind that gives
++    /// a value several keys changes only this.
++    pub fn push_encoded(
++        &self,
++        value: &Value,
++        id: u64,
++        out: &mut EncodedTuples,
++    ) {
++        if let Some(key) = self.encode_value(value) {
++            out.scalar.push((key, id));
++        }
++    }
++
++    /// Add already-encoded tuples (a unit of work's collapsed adds, or an indexer batch).
+     pub fn add_encoded(
+         &mut self,
+-        pairs: &mut [(u64, u64)],
++        tuples: &mut EncodedTuples,
+     ) {
+         match self {
+-            Self::Numeric(idx) => idx.add_encoded(pairs),
++            Self::Numeric(idx) => idx.add_encoded(tuples),
+         }
+     }
+ 
+     /// Remove already-encoded tuples (a unit of work's collapsed removes).
+     pub fn remove_encoded(
+         &mut self,
+-        pairs: &mut [(u64, u64)],
++        tuples: &mut EncodedTuples,
+     ) {
+         match self {
+-            Self::Numeric(idx) => idx.remove_encoded(pairs),
++            Self::Numeric(idx) => idx.remove_encoded(tuples),
+         }
+     }
+ 
+@@ -126,20 +141,103 @@ impl IndexColumn {
+     }
+ }
+ 
+-/// One column's index.
++/// Build state of a column.
++///
++/// A column is filled by indexer batches. Each reads the label's next entities from the cursor at
++/// the values they hold *then*
++/// ([`graph_writes::read_indexer_batch_of`](super::graph_writes::read_indexer_batch_of)), adds
++/// them, and moves the cursor past them
++/// ([`apply_indexer_batch`](FalkorDbIndex::apply_indexer_batch)). The batch that reaches the end
++/// flips the column [`Ready`](Self::Ready). While [`Building`](Self::Building), the read path
++/// returns `None` and falls through to RediSearch. `CREATE INDEX` takes one batch over every
++/// entity, so its column is `Ready` when it returns.
++///
++/// A `Building` column holds exactly the current tuples of the entities below its cursor, and
++/// nothing at or above it. Live writes keep that true ([`FalkorDbIndex::apply`]). An addition for
++/// an entity below the cursor is applied, and one for an entity at or above it is not, since the
++/// batch that reaches the entity reads its value then. Every removal is applied, because an id's
++/// place can move past the cursor within one unit of work: an edge behind it is deleted and its
++/// id reused by an edge ahead of it, so the place no longer tells whether the column holds the
++/// deleted edge's tuples. Removing a tuple the column does not hold changes nothing. Additions are
++/// dropped before a unit's changes collapse to the last per tuple, so a tuple the unit removed and
++/// added back, as the reused id's new edge can, is still removed. This is how C populates an index
++/// (`src/index/index_construct.c`), in batches interleaved with writes.
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub(crate) enum ColumnState {
++    /// Some of the label's entities are not indexed yet — reads fall through to RediSearch. `next`
++    /// is where the next indexer batch resumes.
++    Building { next: BuildCursor },
++    /// Every entity is indexed — the column serves reads.
++    Ready,
++}
++
++/// Where a building column's next indexer batch resumes: the first entity no batch has indexed
++/// yet. Also an entity's place in that order, to compare with it ([`Self::precedes`]).
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub(crate) enum BuildCursor {
++    /// A node column's next node.
++    Node(NodeId),
++    /// An edge column's next `(src, dst)` pair, so a source with more edges than one batch reads
++    /// can be resumed partway, as C does. A batch always finishes the multi-edge pair it stops in,
++    /// so every edge of an earlier pair is indexed.
++    Edge { src: NodeId, dst: NodeId },
++}
++
++impl BuildCursor {
++    /// Whether this entity's place comes before `next`, a column's cursor: whether a batch has
++    /// indexed it. A node by its id; an edge by its `(src, dst)` pair, the order batches read
++    /// edges in.
++    pub(crate) fn precedes(
++        self,
++        next: Self,
++    ) -> bool {
++        match (self, next) {
++            (Self::Node(at), Self::Node(next)) => u64::from(at) < u64::from(next),
++            (
++                Self::Edge { src, 
+```
+
+**File**: `graph/src/index/falkordb/graph_writes.rs` (modified, +189/-54)
+```diff
+@@ -34,6 +34,8 @@ use crate::graph::graph::{Graph, LabelId, NodeId, RelationshipId, TypeId};
+ use crate::index::{Field, IndexType};
+ use crate::runtime::value::Value;
+ 
++use super::falkordb_index::{BuildCursor, ColumnState, IndexColumn, IndexKey, IndexerBatch};
++use super::numeric::EncodedTuples;
+ use super::pending_writes::IndexChanges;
+ 
+ /// Measurement gate: `true` when `FALKORDB_INDEX_ONLY=1`. The native index then maintains node
+@@ -398,6 +400,10 @@ pub fn edges_deleted(
+ /// soon as CREATE INDEX returns. Only a Range index has native columns; any other type does
+ /// nothing.
+ ///
++/// Each column is created `Building` and filled by one indexer batch with no limit on its size
++/// ([`read_indexer_batch_of`]), which reaches the end and flips it `Ready`. A batch into an empty
++/// column bulk-builds its tree, so this costs what building the column in one pass does.
++///
+ /// Built here on the write thread, with the graph borrowed. It is never built through the
+ /// RediSearch populate, which reaches the graph through the `Indexer`'s back-pointer. This index
+ /// is part of the graph version, and keeping that reference out is the point.
+@@ -410,14 +416,69 @@ pub fn create_index(
+ ) {
+     if *index_type == IndexType::Range {
+         for attr in attrs {
+-            build_column(g, entity, label, attr);
++            build_in_one_batch(g, entity, label, attr);
+         }
+     }
+ }
+ 
++/// Create column `(entity, label, attr)` `Building`, replacing any column there, and fill it with
++/// one indexer batch with no limit on its size, which reaches the end and flips it `Ready`.
++fn build_in_one_batch(
++    g: &mut Graph,
++    entity: EntityType,
++    label: &Arc<String>,
++    attr: &Arc<String>,
++) {
++    g.falkordb_index.create_building(entity, label, attr);
++    g.index_batch(entity, &(label.clone(), attr.clone()), usize::MAX);
++}
++
++// ---- Indexer batches ----
++//
++// A `Building` column is filled by indexer batches. Each reads the label's next entities from the
++// cursor, at their values in a version, and adds them to the column in that same version. See
++// `ColumnState`.
++
++/// Read an indexer batch of column `key` of `entity` from `g`: its next `entities` nodes or edges,
++/// at their values in `g`, encoded and sorted. `None` if the column is not `Building`. The batch
++/// is added to `g` itself (`Graph::index_batch`).
++pub(crate) fn read_indexer_batch_of(
++    g: &Graph,
++    entity: EntityType,
++    key: &IndexKey,
++    entities: usize,
++) -> Option<IndexerBatch> {
++    let ColumnState::Building { next } = g.falkordb_index.column_state(entity, &key.0, &key.1)?
++    else {
++        return None;
++    };
++    Some(read_batch(g, entity, key.clone(), next, entities))
++}
++
++/// The batch of column `key` of `entity` from cursor `from` on.
++fn read_batch(
++    g: &Graph,
++    entity: EntityType,
++    key: IndexKey,
++    from: BuildCursor,
++    entities: usize,
++) -> IndexerBatch {
++    let column = g
++        .falkordb_index
++        .column(entity, &key.0, &key.1)
++        .expect("a Building column exists");
++    let (tuples, next) = scan(g, &key.0, &key.1, from, entities, column);
++    IndexerBatch {
++        entity,
++        key,
++        tuples,
++        next,
++    }
++}
++
+ /// Index population after an RDB load: build every column that a population snapshot of
+-/// `label` covers. `fields` maps each attribute to its index fields, and an attribute has a
+-/// native column when one of its fields is a Range field.
++/// `label` covers, as CREATE INDEX does ([`create_index`]). `fields` maps each attribute to its
++/// index fields, and an attribute has a native column when one of its fields is a Range field.
+ pub fn populate(
+     g: &mut Graph,
+     entity: EntityType,
+@@ -426,7 +487,7 @@ pub fn populate(
+ ) {
+     for (attr, attr_fields) in fields {
+         if attr_fields.iter().any(|f| f.ty == IndexType::Range) {
+-            build_column(g, entity, label, attr);
++            build_in_one_batch(g, entity, label, attr);
+         }
+     }
+ }
+@@ -460,25 +521,6 @@ fn remove_node_under_label(
+     }
+ }
+ 
+-/// Build the column for `(entity, label, attr)` from the live graph, replacing any existing one.
+-///
+-/// One attribute at a time: the `(value, id)` pairs live only until their column is built.
+-/// Collecting every attribute first would hold one `Value` per entity per attribute at once,
+-/// multiplying the peak for no benefit.
+-fn build_column(
+-    g: &mut Graph,
+-    entity: EntityType,
+-    label: &Arc<String>,
+-    attr: &Arc<String>,
+-) {
+-    let pairs = match entity {
+-        EntityType::Node => collect_node_entries(g, label, attr),
+-        EntityType::Relationship => collect_edge_entries(g, label, attr),
+-    };
+-    g.falkordb_index
+-        .build_numeric(entity, label, attr, pairs.iter().map(|(v, id)| (v, *id)));
+-}
+-
+ /// The node's label ids, reusing `out`'s allocation across nodes.
+ ///
+ /// Exists so a call resolves labels **once per node**. [`Graph::get_node_label_ids`] walks the
+@@ -5
+```
+
+**File**: `graph/src/index/falkordb/numeric.rs` (modified, +72/-27)
+```diff
+@@ -88,6 +88,45 @@ impl Iterator for UnionIter {
+     }
+ }
+ 
++/// Encoded `(key, doc)` tuples for one column: what everything that moves a column's tuples in
++/// encoded form carries (a unit of work's collapsed adds and removes, an indexer batch).
++#[derive(Default, Debug, Clone, PartialEq, Eq)]
++pub struct EncodedTuples {
++    pub scalar: Vec<(u64, u64)>,
++}
++
++impl EncodedTuples {
++    /// Tuples of scalar values.
++    #[must_use]
++    pub fn scalars(scalar: Vec<(u64, u64)>) -> Self {
++        Self { scalar }
++    }
++
++    /// Whether there are no tuples.
++    #[must_use]
++    pub fn is_empty(&self) -> bool {
++        self.scalar.is_empty()
++    }
++
++    /// How many tuples there are.
++    #[must_use]
++    pub fn len(&self) -> usize {
++        self.scalar.len()
++    }
++
++    /// Empty the tuples, keeping their capacity for reuse.
++    pub fn clear(&mut self) {
++        self.scalar.clear();
++    }
++
++    /// Sort the tuples ascending and drop duplicates: the **sorted and unique** shape a tree's
++    /// bulk build requires.
++    pub fn sort_dedup(&mut self) {
++        self.scalar.sort_unstable();
++        self.scalar.dedup();
++    }
++}
++
+ /// A numeric property index over one `(label, attribute)`: entity ids keyed by
+ /// the order-preserving encoding of their value, so `n.x <predicate> v` is a
+ /// tree range scan. Non-numeric and `NaN` values are not indexed (parity with
+@@ -108,23 +147,6 @@ impl NumericIndex {
+         Self::default()
+     }
+ 
+-    /// Bulk-build from `(value, id)` pairs in any order. Non-numeric / `NaN`
+-    /// values are dropped. Far cheaper than repeated [`add`](Self::add) for
+-    /// initial population — one sort + bottom-up page build, no per-item
+-    /// traversal.
+-    #[must_use]
+-    pub fn from_entries<'a>(entries: impl IntoIterator<Item = (&'a Value, u64)>) -> Self {
+-        let mut pairs: Vec<(u64, u64)> = entries
+-            .into_iter()
+-            .filter_map(|(v, id)| encode_numeric(v).map(|k| (k, id)))
+-            .collect();
+-        pairs.sort_unstable();
+-        pairs.dedup();
+-        Self {
+-            tree: Tree::from_sorted(&pairs),
+-        }
+-    }
+-
+     /// Index `id` under `value`. A no-op for non-numeric / `NaN` values and
+     /// idempotent for an already-present `(value, id)`.
+     pub fn add(
+@@ -197,24 +219,29 @@ impl NumericIndex {
+         out.extend(entries.filter_map(|(v, id)| encode_numeric(&v).map(|k| (k, id))));
+     }
+ 
+-    /// Add already-encoded tuples — the adds a unit of work's staged writes collapsed to. Tuples
+-    /// are never re-encoded: re-encoding a decoded key would be a second trip through a
+-    /// many-to-one map.
++    /// Add already-encoded tuples: the adds a unit of work's staged writes collapsed to, or an
++    /// indexer batch. Tuples are never re-encoded: re-encoding a decoded key would be a second trip
++    /// through a many-to-one map. Into an empty index the tuples are bulk-built, bottom-up from
++    /// the sorted tuples, rather than merged in.
+     pub fn add_encoded(
+         &mut self,
+-        pairs: &mut [(u64, u64)],
++        tuples: &mut EncodedTuples,
+     ) {
+-        pairs.sort_unstable();
+-        self.tree.insert_batch(pairs);
++        tuples.sort_dedup();
++        if self.tree.is_empty() {
++            self.tree = Tree::from_sorted(&tuples.scalar);
++        } else {
++            self.tree.insert_batch(&tuples.scalar);
++        }
+     }
+ 
+-    /// Remove already-encoded tuples — the removes a unit of work's staged writes collapsed to.
++    /// Remove already-encoded tuples: the removes a unit of work's staged writes collapsed to.
+     pub fn remove_encoded(
+         &mut self,
+-        pairs: &mut [(u64, u64)],
++        tuples: &mut EncodedTuples,
+     ) {
+-        pairs.sort_unstable();
+-        self.tree.remove_batch(pairs);
++        tuples.sort_dedup();
++        self.tree.remove_batch(&tuples.scalar);
+     }
+ 
+     /// Whether the index holds no tuples.
+@@ -397,6 +424,24 @@ impl NumericIndex {
+     fn empty(&self) -> DocIter {
+         DocIter::One(self.tree.range(1, 0))
+     }
++
++    /// Bulk-build from `(value, id)` pairs in any order. Non-numeric / `NaN`
++    /// values are dropped. Far cheaper than repeated [`add`](Self::add) for
++    /// initial population — one sort + bottom-up page build, no per-item
++    /// traversal. The tree's tests compare it with incremental adds.
++    #[cfg(test)]
++    #[must_use]
++    pub fn from_entries<'a>(entries: impl IntoIterator<Item = (&'a Value, u64)>) -> Self {
++        let mut pairs: Vec<(u64, u64)> = entries
++            .into_iter()
++            .filter_map(|(v, id)| encode_numeric(v).map(|k| (k, id)))
++            .collect();
++        pairs.sort_unstable();
++        pairs.dedup();
++        Self {
++            tree: Tree::from_sorted(&pairs),
++        }
++    }
+ }
+ 
+ #[cfg(test)]
+```
+
+**File**: `graph/src/index/falkordb/pending_writes.rs` (modified, +28/-0)
+```diff
+@@ -209,6 +209,34 @@ mod tests {
+         assert_eq!(adds, vec![(1, 7)]);
+     }
+ 
++    /// Long runs of changes to the same tuples, interleaved with each other and with tuples changed
++    /// once: each tuple must end at its last change, which only a sort that keeps the order of
++    /// equal elements guarantees. Short logs are sorted by insertion either way, so this one is
++    /// long.
++    #[test]
++    fn the_last_change_wins_in_a_long_log() {
++        let (mut removes, mut adds) = (Vec::new(), Vec::new());
++        let mut log = Vec::new();
++        for round in 0..40 {
++            for tuple in 0..10 {
++                log.push(w(tuple, 7, (round + tuple) % 2 == 0));
++            }
++            log.push(w(100 + round, 8, true));
++        }
++        last_write_wins(&mut log, &mut removes, &mut adds);
++        // Round 39 is the last: tuple t ends added when 39 + t is even.
++        let ends = |added: bool| -> Vec<(u64, u64)> {
++            (0..10)
++                .filter(|t| ((39 + t) % 2 == 0) == added)
++                .map(|t| (t, 7))
++                .collect()
++        };
++        assert_eq!(removes, ends(false));
++        let mut want = ends(true);
++        want.extend((0..40).map(|round| (100 + round, 8)));
++        assert_eq!(adds, want);
++    }
++
+     #[test]
+     fn untouched_tuples_pass_through_sorted() {
+         let (mut removes, mut adds) = (vec![(9, 9)], vec![(9, 9)]);
 ```
 
 ---
 
-### Incident Patch 2: `b29a2885` (2026-10-26)
-**Commit Message**: fix: MERGE no longer matches an edge of a DETACH DELETEd node (#3452) (#3463)
+### Incident Patch 2: `a299692a` (2026-10-28)
+**Commit Message**: fix(index): hand the indexer lock over fairly between population batches (#3548) (#3550)
 
-* fix: MERGE no longer matches an edge of a DETACH DELETEd node (#3452)
+parking_lot 0.13 (#3487) removed automatic eventual fairness: an unlock
+no longer hands the lock to a thread parked on it. Index population holds
+the indexer mutex for each 10,000-entity batch and the next batch takes
+it again at once, so a CREATE INDEX or DROP INDEX parked on it waited
+out the whole population instead of one batch, while holding the graph's
+write lock and Redis's GIL. Populations the DDL had made stale ran to the
+end, and test_index_create's test12_multi_index_creation failed at :701.
 
-DETACH DELETE of a committed node only marks the node deleted; its edges
-are dropped at commit. ExpandInto skipped pending-deleted edges but not
-pending-deleted endpoints, so in
-`MATCH (a:A), (b:B) DETACH DELETE a MERGE (a)-[r:R]->(b)` the MERGE
-matched the doomed edge, created nothing and returned it.
+End each batch with MutexGuard::unlock_fair, which hands the mutex to a
+parked waiter if there is one. parking_lot stays at 0.13.
 
-ExpandInto now yields no row when either bound endpoint is pending
-deleted. The MERGE then takes its create branch, which refuses a deleted
-endpoint ("endpoint was not found"), as CREATE already does and as
-MERGE does for a deleted node without edges (#651). The emptiness of the
-deleted-node set is checked once per batch, so rows pay nothing when
-nothing was deleted.
+Closes #3548
+
+**File**: `graph/src/graph/graph.rs` (modified, +5/-1)
+```diff
+@@ -741,7 +741,11 @@ fn populate_index_batch(
+                 } else {
+                     do_recurse = true;
+                 }
+-                // guard dropped here
++                // Hand the lock to a waiter, if any. The next batch re-takes it at once,
++                // and parking_lot (0.13+) lets a plain unlock's next locker barge ahead of
++                // a parked CREATE/DROP INDEX or index commit, which then waits out the
++                // whole population (#3548).
++                MutexGuard::unlock_fair(guard);
+             }
+ 
+             if do_recurse {
+```
+
+---
+
+### Incident Patch 3: `1c0e6c8d` (2026-10-29)
+**Commit Message**: fix: UDF node objects see a node deleted in the same query as the runtime does (#3454) (#3464)
+
+* fix: UDF node objects see a node deleted in the same query as the runtime does (#3454)
+
+create_js_node took only the committed graph, so a node deleted earlier
+in the query reached a UDF with no labels and no attributes, while
+labels(n) / n.name in the same row read the delete-time snapshot. The
+same held for an edge's source/target and a path's nodes.
+
+create_js_node now takes the runtime, like create_js_edge, and reads
+labels and attributes through Runtime::get_node_labels/get_node_attrs
+when it has one. value_to_js, create_js_edge and create_js_path pass
+theirs through; the traversal helpers that run on the committed graph
+pass None as before.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* refactor: check pending-deleted endpoints directly in ExpandInto
+* perf: UDF node objects read the committed graph unless the runtime differs (#3454)
 
-expand_row already has the Pending; the precomputed flag bought nothing
-(16.5-16.7 ms vs 17.0-17.1 ms median on the 100k-pair MATCH, 52.7-53.4 vs
-53.1-53.3 ms on MERGE, 3 interleaved rounds of 40). Review on #3463.
+Reading every node through Runtime::get_node_labels/get_node_attrs
+built an OrderSet and an OrderMap per node, about 12% on a 100k-node
+UDF scan. create_js_node now takes the runtime path only when it can
+change the answer: the node is in the deleted snapshot or has staged
+label/attribute changes. Runtime::
 
-Co-Authored-By: Claude Opus 5.5 <[RE
-
-**File**: `graph/src/runtime/ops/expand_into.rs` (modified, +7/-0)
+**File**: `graph/src/runtime/pending.rs` (modified, +22/-0)
 ```diff
-@@ -151,6 +151,13 @@ impl<'a> ExpandIntoOp<'a> {
-                 ));
-             }
-         };
-+        // A node deleted earlier in this commit segment matches nothing: its
-+        // edges are only dropped at commit (`DETACH DELETE` defers them), so
-+        // without this check e.g. `DETACH DELETE a MERGE (a)-[:R]->(b)` would
-+        // match an edge that is about to disappear.
-+        if pending.is_node_deleted(src) || pending.is_node_deleted(dst) {
-+            return Ok(None);
+@@ -752,6 +752,28 @@ impl Pending {
+         None
+     }
+ 
++    /// Whether this query has staged a label or attribute change for node
++    /// `id`, i.e. whether [`Self::update_node_labels`] or
++    /// [`Self::update_node_attrs`] would change what the committed graph says.
++    /// O(1): an empty map is skipped before hashing.
++    #[must_use]
++    pub fn node_has_changes(
++        &self,
++        id: NodeId,
++    ) -> bool {
++        fn has<V>(
++            m: &FxHashMap<u64, V>,
++            id: u64,
++        ) -> bool {
++            !m.is_empty() && m.contains_key(&id)
 +        }
++        let raw_id: u64 = id.into();
++        has(&self.set_labels, raw_id)
++            || has(&self.remove_labels, raw_id)
++            || has(&self.new_nodes_attrs, raw_id)
++            || has(&self.existing_nodes_attrs, raw_id)
++    }
++
+     /// Overlay this query's staged label changes onto `labels`.
+     ///
+     /// Adds are applied before removals, but the two sets are disjoint per node
+```
+
+**File**: `graph/src/runtime/runtime.rs` (modified, +15/-0)
+```diff
+@@ -1769,6 +1769,21 @@ impl<'a> Runtime<'a> {
+         values
+     }
  
-         if synthetic_label {
-             let has_all_labels = rp
++    /// Whether node `id` reads differently through this runtime than from the
++    /// committed graph: it was deleted earlier in the query (answered from the
++    /// snapshot) or has staged label/attribute changes. When it does not, a
++    /// caller can read the committed graph directly and skip building the
++    /// [`Self::get_node_labels`] / [`Self::get_node_attrs`] copies.
++    #[must_use]
++    pub fn node_differs_from_committed(
++        &self,
++        id: NodeId,
++    ) -> bool {
++        let deleted = self.deleted_nodes.borrow();
++        (!deleted.is_empty() && deleted.contains_key(&id))
++            || self.pending.borrow().node_has_changes(id)
++    }
++
+     pub fn get_node_labels(
+         &self,
+         id: NodeId,
 ```
 
-**File**: `tests/flow/test_graph_merge.py` (modified, +30/-0)
+**File**: `graph/src/udf/js_classes.rs` (modified, +71/-38)
 ```diff
-@@ -863,6 +863,36 @@ def test39_equal_patterns_in_separate_merge_clauses(self):
-         self.env.assertEqual(res.nodes_created, 2)
-         g.delete()
+@@ -126,14 +126,19 @@ fn collect_edges(
+ }
  
-+    def test42_merge_edge_of_detach_deleted_node(self):
-+        """
-+        DETACH DELETE defers a node's edges to commit, but a MERGE later in
-+        the same query must not match one of them: the endpoint is gone, so
-+        the MERGE has to create, and creating on a deleted node is an error
-+        https://github.com/FalkorDB/FalkorDB/issues/3452
-+        """
+ /// Create a JS Node object with id, labels, attributes properties and getNeighbors() method.
++///
++/// Labels and attributes are read through the runtime when one is given, so a
++/// node created, updated or deleted earlier in the same query looks the same
++/// to the UDF as it does to `labels(n)` / `n.prop`; otherwise from the
++/// committed graph.
+ pub fn create_js_node<'js>(
+     ctx: &Ctx<'js>,
+     node_id: u64,
+     graph: &Arc<AtomicRefCell<Graph>>,
++    runtime: Option<&Runtime<'_>>,
+ ) -> Result<JsValue<'js>, String> {
+     let obj = Object::new(ctx.clone()).map_err(|e| format!("JS object error: {e}"))?;
+ 
+-    let g = graph.borrow();
+     let nid = NodeId::from(node_id);
+ 
+     // Hidden type markers
+@@ -146,37 +151,22 @@ pub fn create_js_node<'js>(
+     obj.set("id", node_id)
+         .map_err(|e| format!("JS set error: {e}"))?;
+ 
+-    // .labels - array of label strings
+-    let labels_arr = Array::new(ctx.clone()).map_err(|e| format!("JS array error: {e}"))?;
+-    for (i, label_name) in g.get_node_labels(nid).enumerate() {
+-        labels_arr
+-            .set(i, label_name.as_str())
+-            .map_err(|e| format!("JS set error: {e}"))?;
+-    }
+-    obj.set("labels", labels_arr)
+-        .map_err(|e| format!("JS set error: {e}"))?;
+-
+-    // .attributes - object with all node properties
+-    let attrs_obj = Object::new(ctx.clone()).map_err(|e| format!("JS object error: {e}"))?;
+-    for (attr_name, value) in g.get_node_all_attrs(nid) {
+-        let js_val = type_convert::value_to_js(ctx, &value, graph, None)?;
+-        // Also expose the property directly on the node (node.name), unless it
+-        // would shadow a reserved field.
+-        let name = attr_name.as_str();
+-        if !matches!(name, "id" | "labels" | "attributes" | "getNeighbors")
+-            && !name.starts_with("__falkor")
+-        {
+-            obj.set(name, js_val.clone())
+-                .map_err(|e| format!("JS set error: {e}"))?;
+-        }
+-        attrs_obj
+-            .set(name, js_val)
+-            .map_err(|e| format!("JS set error: {e}"))?;
++    // .labels and .attributes: through the runtime only when it can change
++    // the answer, otherwise straight from the committed graph.
++    if let Some(rt) = runtime.filter(|rt| rt.node_differs_from_committed(nid)) {
++        set_node_labels(ctx, &obj, rt.get_node_labels(nid).into_iter())?;
++        set_node_attrs(
++            ctx,
++            &obj,
++            rt.get_node_attrs(nid).into_iter(),
++            graph,
++            runtime,
++        )?;
++    } else {
++        let g = graph.borrow();
++        set_node_labels(ctx, &obj, g.get_node_labels(nid))?;
++        set_node_attrs(ctx, &obj, g.get_node_all_attrs(nid), graph, None)?;
+     }
+-    obj.set("attributes", attrs_obj)
+-        .map_err(|e| format!("JS set error: {e}"))?;
+-
+-    drop(g);
+ 
+     // .getNeighbors(config?) method. A single shared JS function reads the
+     // node id from `this.__falkor_node_id`; it is eval'd ONCE per context —
+@@ -209,6 +199,49 @@ pub fn create_js_node<'js>(
+     Ok(obj.into_value())
+ }
+ 
++/// Set a JS node's `.labels` array.
++fn set_node_labels<'js>(
++    ctx: &Ctx<'js>,
++    obj: &Object<'js>,
++    labels: impl Iterator<Item = Arc<String>>,
++) -> Result<(), String> {
++    let labels_arr = Array::new(ctx.clone()).map_err(|e| format!("JS array error: {e}"))?;
++    for (i, label_name) in labels.enumerate() {
++        labels_arr
++            .set(i, label_name.as_str())
++            .map_err(|e| format!("JS set error: {e}"))?;
++    }
++    obj.set("labels", labels_arr)
++        .map_err(|e| format!("JS set error: {e}"))
++}
 +
-+        queries = ["""MATCH (a:A), (b:B) DETACH DELETE a
-+                      MERGE (a)-[r:R]->(b) RETURN count(r)""",
-+                   """MATCH (a:A), (b:B) DETACH DELETE b
-+                      MERGE (a)-[r:R]->(b) RETURN count(r)""",
-+                   """MATCH (a:A), (b:B) DETACH DELETE a
-+                      MERGE (a)-[r:R]-(b) RETURN count(r)""",
-+                   """MATCH (a:A), (b:B) DETACH DELETE a
-+                      MERGE (a)-[:R]->(b)"""]
++/// Set a JS node's `.attributes` object, and each property directly on the
++/// node (node.name) unless it would shadow a reserved field.
++fn set_node_attrs<'js>(
++    ctx: &Ctx<'js>,
++    obj: &Object<'js>,
++    attrs: impl Iterator<Item = (Arc<String>, Value)>,
++    graph: &Arc<AtomicRefCell<Graph>>,
++    runtime: Option<&Runtime<'_>>,
++) -> Result<(), String> {
++    let attrs_obj = Object::new(ctx.clone()).map_err(|e| format!("JS object error: {e}"))?;
++    for (attr_name, value) in attrs {
++        let js_val = type_convert::value_to_js(ctx, &value, graph, runtime)?;
++        let name = attr_name.as_str();
++        if !matches!(name, "id" | "labels" | "attributes" | "getNeighbors")
++            && !name.starts_with("__falkor")
++        {
++            obj.set(name, js_val.clone())
++                .map_err(|e| format!("JS set error: {e}"))?;
++        }
++        attrs_obj
++            .set(name, js_val)
++            .map_err(|e| format!("JS set error: {e}"))?;
++    }
++    obj.set("attributes", attrs_obj)
++        .map_err(|e| format!("JS set error: {e}"))
++}
 +
-+        con = self.env.getConnection()
-+        for q in queries:
-+            self.graph.query("MATCH (n) DETACH DELETE n")
-+            self.graph.query("CREATE (:A)-[:R]->(:B)")
-+
-+            msg = assert_error_reply(self.env, con, "GRAPH.QUERY", GRAPH_ID, q)
-+            self.env.assertContains("endpoint was not found", msg or "")
-+
-+            # the failed query left the graph as it was
-+            actual = self.graph.query("""MATCH (a:A)-[r:R]->(b:B)
-+                                         RETURN count(r)""")
-+            self.env.assertEqual(actual.result_set, [[1]])
-+
-     def test40_merge_path_over_bound_endpoints_keeps_every_match(self):
-         # With every node bound and no named relationship, MERGE kept only the
-         # first match. A path variable still tells parallel edges apart (#3040).
+ /// Create a JS Edge object with id, type, source, target, attributes.
+ pub fn create_js_edge<'js>(
+     ctx: &Ctx<'js>,
+@@ -254,8 +287,8 @@ pub fn create_js_edge<'js>(
+         .map_err(|e| format!("JS set error: {e}"))?;
+ 
+     // .source and .tar
 ```
 
----
-
-### Incident Patch 3: `ca36bfa1` (2026-10-27)
-**Commit Message**: fix: a null grouping key that shares a slot with an accumulator no longer crashes the reply (#3150) (#3522)
-
-`AggregateOp::next` unbound the aggregates' accumulator slots after it had
-written the grouping keys. The binder may give an accumulator the slot id
-of a key (`RETURN null AS x, count(1) AS n`: both are id 0), so the unbind
-cleared the key's bound bit; a null value in an unbound slot is dropped from
-the batch, and `reply_compact` then unwrapped `None` and the server exited.
-
-Unbind the accumulators first, then write the keys and the outputs, so
-every key and every output is bound on the emitted row.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `graph/src/runtime/ops/aggregate.rs` (modified, +10/-6)
+**File**: `graph/src/udf/type_convert.rs` (modified, +1/-1)
 ```diff
-@@ -1181,6 +1181,16 @@ impl<'a> Iterator for AggregateOp<'a> {
-                     combined.insert(name, val.clone());
-                     agg_outputs.push((name, val));
-                 }
-+                // Unbind internal accumulator variables so they don't leak
-+                // to downstream operators and collide with variables in
-+                // subsequent scopes that reuse the same slot IDs. This comes
-+                // before any key is written: the binder may give an
-+                // accumulator the slot id of a grouping key, and unbinding
-+                // after the key is written would drop that key (a null key
-+                // then vanishes from the batch, #3150).
-+                for (_, tree) in self.agg {
-+                    unbind_agg_accumulators(&tree.root(), &mut acc);
-+                }
-                 // Insert pre-projection key variable values into acc so
-                 // downstream operators can find them, but skip any slot that
-                 // is already occupied by an aggregation output to avoid
-@@ -1197,12 +1207,6 @@ impl<'a> Iterator for AggregateOp<'a> {
-                     }
-                 }
-                 acc.merge(&key);
--                // Unbind internal accumulator variables so they don't leak
--                // to downstream operators and collide with variables in
--                // subsequent scopes that reuse the same slot IDs.
--                for (_, tree) in self.agg {
--                    unbind_agg_accumulators(&tree.root(), &mut acc);
--                }
-                 // Re-bind aggregate output names last: an accumulator slot id
-                 // can coincide with another aggregate's output name (the binder
-                 // may reuse slot IDs), and the unbind above would otherwise
+@@ -181,7 +181,7 @@ fn value_to_js_level<'js>(
+             Ok(obj.into_value())
+         }
+         Value::Node(node_id) => {
+-            crate::udf::js_classes::create_js_node(ctx, (*node_id).into(), graph)
++            crate::udf::js_classes::create_js_node(ctx, (*node_id).into(), graph, runtime)
+         }
+         Value::Relationship(rel_id) => {
+             let (src, dst) = runtime.map_or_else(
 ```
 
-**File**: `tests/flow/test_aggregation.py` (modified, +29/-0)
+**File**: `tests/flow/test_udf.py` (modified, +21/-0)
 ```diff
-@@ -498,3 +498,32 @@ def kind(v):
-                 self.env.assertEqual(sorted(r[1] for r in res), expected, message=q)
-         finally:
-             g.delete()
+@@ -1061,6 +1061,27 @@ def test_edge_object(self):
+         self.env.assertEqual(res["attributes"]["id"], "edge_custom_id")
+         self.env.assertEqual(res["attributes"]["role"], "dev")
+ 
++    def test_deleted_entities_seen_as_runtime_sees_them(self):
++        # Regression for #3454: a node deleted earlier in the same query must
++        # look the same to a UDF as it does to labels(n) / n.name, both when
++        # passed directly and as an edge endpoint (e.source).
++        script = """
++        function inspect_node(n) { return [n.labels, n.attributes.name]; }
++        function inspect_src(e) { return [e.source.labels, e.source.attributes.name]; }
++        falkor.register('inspect_node', inspect_node);
++        falkor.register('inspect_src', inspect_src);
++        """
++        self.db.udf_load("deleted", script, True)
 +
-+    def test_null_key_sharing_an_accumulator_slot(self):
-+        # The binder may give an aggregate's accumulator the slot id of a
-+        # grouping key. Unbinding the accumulator after the key was written
-+        # left the key unbound, and a null key then dropped out of the batch,
-+        # so the reply hit an unwrap on None and the server exited (#3150).
-+        g = self.db.select_graph("agg_null_key")
-+        try:
-+            g.query("""CREATE (:Invitation {id: 'inv1', email: 'm@x.org', created_at: 1}),
-+                              (:K:Node {id: 'k', tier: 1})-[:P {w: 1}]->(:D:Node {id: 'd'})""")
-+            for q, expected in [
-+                ("RETURN null AS x, count(1) AS n", [[None, 1]]),
-+                ("RETURN null AS x, collect(1) AS c", [[None, [1]]]),
-+                ("MATCH (n:D) RETURN n.id AS k, n.missing AS x, count(n) AS c", [['d', None, 1]]),
-+                ("MATCH (n:D) WITH n, 1 AS hops RETURN n.id AS id, min(hops), n.tier AS tier",
-+                 [['d', 1, None]]),
-+                ("""MATCH (inv:Invitation {id: 'inv1'})
-+                    OPTIONAL MATCH (u:User) WHERE u.email = inv.email
-+                    OPTIONAL MATCH (newer:Invitation)
-+                        WHERE newer.email = inv.email AND newer.created_at > inv.created_at
-+                    RETURN inv.id, u IS NOT NULL, u.a, u.b, collect(newer)""",
-+                 [['inv1', False, None, None, []]]),
-+                # keys must not be overwritten by one another either
-+                ("WITH 1 AS a, 2 AS b RETURN b AS x, a AS y, count(*)", [[2, 1, 1]]),
-+            ]:
-+                res = g.query(q).result_set
-+                self.env.assertEqual(res, expected, message=q)
-+        finally:
-+            g.delete()
++        self.graph.query("CREATE (:P {name: 'A'})-[:R]->(:Q {name: 'B'})")
++
++        q = """MATCH (n:P)-[r:R]->()
++               DETACH DELETE n
++               RETURN labels(n), n.name, deleted.inspect_node(n), deleted.inspect_src(r)"""
++        res = self.graph.query(q)
++        self.env.assertEqual(res.nodes_deleted, 1)
++        self.env.assertEqual(res.result_set, [[['P'], 'A', [['P'], 'A'], [['P'], 'A']]])
++
+     def test_load_invalid_invocations(self):
+         """
+         Test invalid invocations of GRAPH.UDF LOAD:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3536** (2026-10-27): build(asan): give the module its own pinned nightly, not RediSearch's (#3537) (@AviAvni)
-- **PR #3525** (closed): fix: parse a chained unary minus such as `RETURN - -5` (#2309) (@AviAvni)
-- **PR #3522** (2026-10-27): fix: null grouping key sharing a slot with an accumulator crashes the reply (#3150) (@AviAvni)
-- **PR #3514** (2026-10-27): fix: loading a C-written RDB keeps every index type of an attribute (#3484) (@AviAvni)
-- **PR #3513** (2026-10-26): fix(index): numeric 0 dropped from index on RDB reload — bump RediSearch + regression tests (@swilly22)
-- **PR #3502** (2026-10-27): feat(threadpool): named workers, and a shutdown with a time limit (@DvirDukhan)
+- **PR #3586** (2026-10-29): fix: algo.MSF sizes its id mapping by active nodes, not the highest node id (#3444) (@AviAvni)
+- **PR #3552** (2026-10-29): ci: a C release moves :latest only when GitHub marks it latest (@DvirDukhan)
+- **PR #3550** (2026-10-28): fix(index): hand the indexer lock over fairly between population batches (@DvirDukhan)
+- **PR #3549** (closed): fix(deps): pin parking_lot to 0.12.5; Dependabot skips 0.13 (@DvirDukhan)
+- **PR #3543** (2026-10-28): 4.22.3 (@DvirDukhan)
+- **PR #3539** (2026-10-28): fix(traverse-order): score fixed multi-hop edges as variable length (@DvirDukhan)
 
 ---
 
@@ -2578,45 +3345,55 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(asan): give the module its own pinned nightly, not RediSearch's (#3536)
+## X. index): a column's build state, and indexer batches that fill it (#2351)
 
 **RULE**:
-When implementing operations in `build/runtime/Dockerfile.asan`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `graph/src/graph/graph.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `428e7885`: build(asan): give the module its own pinned nightly, not RediSearch's (#3536). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d1a73f65`: index): a column's build state, and indexer batches that fill it (#2351). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/runtime/Dockerfile.asan`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/graph/graph.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# The module's own nightly, pinned so the image is reproducible. It is
-# independent of RediSearch's `.rust-nightly`: the redisearch recipe below
-# builds redisearch_rs with that pin, and this one only has to meet the
-# module's dependencies' MSRV (parking_lot 0.13 needs rustc 1.95). Linking
-# archives from two nightlies is the pairing the fuzz job already uses
-# (stable-built RediSearch into a nightly module); each archive's std carries
-# its own crate hashes, so the symbols do not collide.
-ARG MODULE_NIGHTLY=nightly-2026-10-20
-RUN rustup install "$MODULE_NIGHTLY" && rustup default "$MODULE_NIGHTLY"
-    # Back on the module nightly: the redisearch recipe ran under its own pin.
-    rustup default "$MODULE_NIGHTLY"; \
+    falkordb_index::{BuildCursor, FalkorDbIndex, IndexKey},
+    /// `pub(crate)` for `index::falkordb`: `graph_writes` reads it to stage changes and to read
+    /// build batches, and `FalkorDbIndex::apply` updates it.
+    /// One indexer batch on this version: read the next entities of column `key` of `entity` at
+    /// the values this version holds, at most `entities` nodes or edges, add it to the column and
+    /// move the column's cursor. `false`, changing nothing, if the column is not `Building`.
+    #[cfg(feature = "index-falkordb")]
+    pub(crate) fn index_batch(
+        &mut self,
+        entity: EntityType,
+        key: &IndexKey,
+        entities: usize,
+    ) -> bool {
+        graph_writes::read_indexer_batch_of(self, entity, key, entities)
+            .is_some_and(|batch| self.falkordb_index.apply_indexer_batch(batch))
+    }
+
+        {
+            // A `Building` column asks where a written entity sits in build order: a node by its
+            // id, an edge by its endpoints, which an edge this unit deleted no longer has.
+            let endpoints = &self.edge_endpoints;
+            self.falkordb_index
+                .apply(&mut docs.native, |entity, id| match entity
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-RUN rustup install nightly && rustup default nightly
-    # Build the module with the SAME pinned nightly that the RediSearch recipe used for
-    # redisearch_rs (RediSearch's .rust-nightly), not the floating `nightly`
-    # alias defaulted above — so the -Zsanitizer toolchain matches across both
-    # archives. The pin is read from the RediSearch checkout, which `COPY . .`
-    # re-copies identically from the submodule. The native-deps redisearch
-    # recipe already installed this toolchain (with rust-src) during the SAN build.
-    rustup default "$(cat deps/RediSearch/.rust-nightly)"; \
+    falkordb_index::FalkorDbIndex,
+    /// `pub(crate)` for `index::falkordb`: `graph_writes` reads it to stage changes, and
+    /// `FalkorDbIndex::apply` updates it.
+        self.falkordb_index.apply(&mut docs.native);
+    /// (non-numeric / composite / missing column). Wraps
+    /// RediSearch) for non-numeric/composite predicates or a missing column.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `428e7885` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d1a73f65` are properly handled with clean fallback behavior.
