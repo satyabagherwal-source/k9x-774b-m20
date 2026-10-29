@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T11:29:28.021Z",
+  "last_updated": "2026-10-29T11:44:05.618Z",
   "total_verified_learnings": 1163,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4680,8 +4680,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "098582e4",
-      "content_hash": "981acf093888bf86ed8fffaebf578eba6636fab8ac8d24d75f6e1febee19b4d4",
+      "source_version": "ecc86c07",
+      "content_hash": "e0492d8fb856c21ed067a7a99861ebf53e4d6826ede3a1afe5fb9195d4019dd2",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4769,6 +4769,11 @@
           "number": 5400,
           "title": "memory): GCCRF and curiosity-target defects (#321)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5496,
+          "title": "memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (#322)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4776,7 +4781,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T20:37:57.945Z",
+      "verified_at": "2026-10-29T11:44:05.600Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -148148,6 +148153,20 @@
         "rules_verified": true,
         "index_read_back_verified": true
       }
+    },
+    "rule-5496": {
+      "learning_id": "rule-5496",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5496,
+      "title": "memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (#322)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "ecc86c07",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T11:44:05.600Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `098582e4`  
+> **Source Version**: `ecc86c07`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T20:37:57.428Z  
+> **Timestamp**: 2026-10-29T11:44:05.070Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T20:37:56.866Z  
+> **Harvest Timestamp**: 2026-10-29T11:44:03.262Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,477 +1799,342 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `098582e4` (2026-10-28)
-**Commit Message**: fix(memory): GCCRF and curiosity-target defects (#321)
+### Incident Patch 1: `ecc86c07` (2026-10-29)
+**Commit Message**: feat(memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (#322)
 
-* fix(memory): GCCRF and curiosity-target defects
+An opt-out observational layer under the curiosity and dream system that
+changes no behaviour. Migration v79 adds retrieval_hits, surfacing_events,
+decision_traces and evidence_meta. Every owner memory search records its
+top-K chunk ids, ranks, fused score and channel ranks under a keyed digest
+(HMAC-SHA256, node-local key; query text is never stored). Voiced curiosity
+findings, proactive-recall facts, anticipation briefs and the daily dream
+digest record a `delivered` row; curiosity.dismiss labels it `explicit`.
+In shadow mode the dream engine also records what seed ranking and mode
+selection would be with the GCCRF term zeroed, next to the legacy decision
+(same random draws, so divergence reflects the weights only).
 
-Port the curiosity/GCCRF defect fixes from Astra's audit onto main, each
-verified to still exist on main first.
+Config memory.curiosity.evidence { mode, retentionDays, topK } with defaults
+observe / 90 / 10; a bad mode falls back to observe. Pruning is chunked with
+event-loop yields on the consolidation tick. curiosity.status reports the
+row counts. The writer re-binds after an atomic reindex swaps the database.
 
-GCCRF (gccrf-reward.ts):
-- density: one shared RBF bandwidth over raw cosine distance
-  (gccrf.densityBandwidth, default 0.3) replaces the per-query min/max
-  stretch that made every neighbourhood look the same
-- novelty: restore the 4/(1-alpha^2) prefactor of Nedergaard & Morales
-  eq. 23 (I_-1 = -log p as the limit, with a guard window around -1);
-  without it the ordering reversed for alpha < -1 and the young-agent end
-  of the schedule rewarded the most familiar material
-- KNN: exclude the assessed chunk and stale/archived index rows by
-  overfetching the index-wide vec0 MATCH and post-filtering with one PK IN
-  lookup; no recency window, no per-call embedding parse; the brute-force
-  fallback ranks the same corpus
-- progress preserves zero (raw delta-eta clamped, not EMA-normalized to
-  0.5); region EMAs seeded at the first observed eta
-- maturity from completed dream cycles only (chunks/500 and age/30 dropped)
-- FSHO alpha coupling consumed only behind memory.
+Gate (benchmarks/live-recall/evidence-gate.mts) on a VACUUM INTO copy of a
+real 
 
-**File**: `docs/memory/curiosity-and-search.md` (modified, +2/-2)
+**File**: `benchmarks/live-recall/evidence-gate.mts` (added, +499/-0)
 ```diff
-@@ -43,7 +43,7 @@ When a new chunk is indexed, `assessChunk()` uses the internal GCCRF reward func
- | E·μ (Empowerment)           | Knowledge agency gated by uncertainty              | 0.20   |
- | S (Strategic Alignment)     | Alignment with active exploration targets          | 0.10   |
- 
--Additionally, **contradiction detection** runs separately — it identifies chunks with high cosine similarity but different content hashes (conflicting information). Contradictions are stored for target generation but do not influence the reward score.
-+Additionally, **contradiction detection** runs separately: it flags chunks with high cosine similarity (0.85 to 0.98) but different content hashes as _candidate_ conflicts. Near-identical embeddings (cosine >= 0.98) with different bytes are duplicates or paraphrases and score 0. This is a candidate signal for target generation, not an adjudication that the two chunks contradict each other; contradictions do not influence the reward score.
- 
- ```typescript
- type SurpriseAssessment = {
-@@ -203,7 +203,7 @@ flowchart LR
- `assessDreamInsight()` checks each new dream insight against existing curiosity state:
- 
- - **Gap filling** — If the insight's embedding is close to a knowledge gap target, the target is resolved
--- **Contradiction detection** — If the insight contradicts existing knowledge regions
-+- **Contradiction closure**: a `simulation` insight with confidence >= 0.7 resolves a contradiction target only when it is scoped to that target: it was dreamed from one of the chunks the contradiction was detected on, or it lands in the target's region (cosine >= 0.6 to the centroid) and its text names a term of the region label. An unrelated simulation leaves every contradiction target open. The normal closure path for targets remains the PLAN-54 research loop above.
- - **Frontier opening** — If the insight represents genuinely novel territory, a new `frontier` target is created
- 
- ---
-```
-
-**File**: `docs/memory/curiosity-reward.md` (modified, +16/-12)
-```diff
-@@ -16,13 +16,19 @@ When new information arrives, GCCRF measures how far it is from what the agent a
- 
- For each knowledge region, the agent tracks whether it's getting less surprised over time. If prediction errors are decreasing in a region, the agent is learning. This component rewards active learning zones and deprioritizes areas where the agent is stuck or already understands.
- 
-+Progress **preserves zero**: a region whose error is not moving contributes 0, not the normalizer's resting value of 0.5. The raw Δη (a bounded difference of two per-region η EMAs, both seeded at the first observed η rather than at a constant) is clamped to `[0, 1]` directly; the running normalizer still records it for telemetry.
-+
- ### 3. Information-Theoretic Novelty ("How rare is this part of my knowledge space?")
- 
- This is GCCRF's most distinctive feature. It uses density estimation to determine how crowded or sparse a region of knowledge space is.
- 
--**The developmental twist**: A young agent (few dream cycles completed) is rewarded for exploring _common_ things -- building foundational understanding, like a baby fixating on faces. As the agent matures, it shifts to being rewarded for exploring _rare_ things -- frontier territory, like a researcher seeking the unknown.
-+Density is an RBF kernel over the raw cosine distances to the K nearest neighbours with one **shared bandwidth** (`gccrf.densityBandwidth`, default 0.3). The bandwidth is deliberately not fitted per query: a per-query min/max stretch (the previous behaviour) made every neighbourhood look identical, so a chunk sitting on top of fifty near-duplicates scored the same density as one far from everything. The assessed chunk is excluded from its own neighbourhood, and archived chunks still present in the vector index are filtered out.
-+
-+The shaped term is the alpha-family novelty of Nedergaard & Morales (eq. 23) **with its prefactor**: `I_α(p) = 4 / (1 - α²) · (p^(-(α+1)/2) - 1)`, with `I_-1(p) = -log p` as the limit (a small window around α = -1 uses the log form because the prefactor is numerically unstable there). The prefactor matters: without it the ordering flips for α < -1, and the "young agent" end of the schedule rewarded the most familiar material (the bare power term at α = -3 is `p - 1`). With it, `I_α` is decreasing in density for every α.
- 
--This transition happens automatically through **alpha annealing**: a parameter that smoothly shifts the density reward from "common is interesting" to "rare is interesting" over the agent's lifetime.
-+**The developmental twist**: a young agent (few dream cycles completed) gets a _bounded, forgiving_ novelty bonus: at α = -3 the term is `(1 - p) / 2`, between 0 and 0.5, so common and rare material differ only mildly. As the agent matures the bonus becomes _sharply frontier-seeking_: at α = 0 it is `4 (1/√p - 1)`, unbounded as density falls. The per-component normalizer absorbs the scale change; what anneals is how strongly rarity is preferred, never the direction.
-+
-+This transition happens automatically through **alpha annealing**, a parameter that moves from -3 to 0 over the agent's completed dream cycles.
- 
- ### 4. Empowerment ("Does knowing this give me more agency?")
- 
-@@ -66,7 +72,7 @@ The alpha parameter controls the agent's developmental stage:
- | -1.5 to -0.5 | Adolescent | Transitioning from common to novel        |
- | -0.5 to 0.0  | Mature     | Curious about rare, frontier things       |
- 
--Maturity is tied to **dream cycles completed**, not raw data volume. This prevents bulk file imports from "speedrunning" the agent's childhood -- maturity tracks actual consolidation and reflection.
-+Maturity is tied to **dream cycles completed** and nothing else: `maturity = min(1, completed_cycles / expectedMatureCycles)`. Chunk count and calendar age used to count too (500 chunks or 30 days meant "mature"), which let a node with a large import and almost no completed cycles jump straight to the frontier-seeking regime. Removing those shortcuts means an upgraded node with many chunks but few completed cycles moves back toward the young regime until its dreams catch up.
- 
- ## Configuration
- 
-@@ -82,6 +88,11 @@ GCCRF configuration is set in the `memory.gccrf` section of the Bitterbot config
- | `empowermentK`         | `30`                             | Neighbors for empowerment computation                             |
- | `muGain`               | `5.0`                            | Interoceptive modulator sensitivity                               |
- | `muThreshold`          | `0.3`                            | Interoceptive modulator threshold                                 |
-+| `densityBandwidth`     | `0.3`                            | Shared RBF bandwidth over cosine distance for KDE density         |
-+
-+FSHO alpha coupling is switched on with `memory.curiosity.fshoCoupling: true` (default `false`, see below).
-+
-+Normalizer statistics and per-region η EMAs are stamped with a scoring version (`gccrf_state.scori
-```
-
-**File**: `src/config/zod-schema.ts` (modified, +1/-0)
-```diff
-@@ -52,6 +52,7 @@ const MemorySchema = z
-         z
-           .object({
-             enabled: z.boolean().optional(),
-+            fshoCoupling: z.boolean().optional(),
-             research: z
-               .union([
-                 z
-```
-
-**File**: `src/memory/curiosity-correctness.test.ts` (added, +391/-0)
-```diff
-@@ -0,0 +1,391 @@
+@@ -0,0 +1,499 @@
 +/**
-+ * Regression tests for the GCCRF / curiosity-target defects found in the
-+ * 2026-10 audit (one `it` per defect, in audit order where possible):
++ * PLAN-59 Phase 0 engineering gate: evidence telemetry against a copy of a real store.
 + *
-+ *  1. an unrelated simulation insight closed every open contradiction target
-+ *  2. paraphrases (identical embeddings, different hash) scored as contradictions
-+ *  3. per-query min/max stretch erased absolute distance from the density term
-+ *  4. KNN returned the assessed chunk as its own nearest neighbour
-+ *  5. no-progress normalized to 0.5 instead of 0
-+ *  6. the progress history read the OLDEST 50 samples
-+ *  7. rebuild clamped progress non-negative before the stale (< -0.3) detector ran
-+ *  8. FSHO alpha coupling was computed but never consumed
-+ *  9. maturity came from chunk count / calendar age, not completed dream cycles
-+ * 10. GCCRF target generation re-inserted the same (type, region) target every run
-+ * 11. `curiosity_stagnant` fired on every single sub-0.2 score
-+ * 12. the novelty term dropped the 4/(1-α²) prefactor, which reverses the
-+ *     ordering for α < -1 (young agents rewarded the most familiar material)
++ * Never touches the live database. `--copy-from` opens the live file READ-ONLY
++ * and takes a `VACUUM INTO` snapshot under the gate work dir; `--db` points at
++ * an existing copy. Any `--db` path under ~/.bitterbot is refused.
++ *
++ * Measures and prints (JSON + a markdown table):
++ *   1. migration wall time on the copy (v78 -> v79 on a 2026-10 store);
++ *   2. search wall time p50/p95 with evidence mode `off` vs `observe`, the same
++ *      real queries, `--reps` repetitions each, interleaved per query;
++ *   3. observation neutrality: the ordered chunk-id list is identical between
++ *      the two modes for every query and repetition (hard fail otherwise);
++ *   4. rows written == min(topK, returned) per observe search; zero rows after
++ *      the off-mode pass;
++ *   5. prune removes rows older than retention and leaves newer ones;
++ *   6. stats() matches COUNT(*).
++ *
++ * Queries: a jsonl file with a `query` (journal replay, extract-journal-queries.mts)
++ * or `question` (make-questions.mts) field per line, loaded exactly as run.mts
++ * and replay-judge.mts load theirs. The file is private; only counts, hashes,
++ * ranks and timings leave this script.
++ *
++ *   node --import tsx benchmarks/live-recall/evidence-gate.mts \
++ *     --copy-from ~/.bitterbot/memory/main.sqlite \
++ *     --queries ~/.bitterbot/benchmarks/live-recall/journal-queries-2026-10-27.jsonl \
++ *     --reps 3 [--max-results 10] [--out <json>] [--work-dir <dir>] [--keep]
 + */
++import { execSync } from "node:child_process";
++import { createHash } from "node:crypto";
++import { existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
++import { homedir } from "node:os";
++import { dirname, join, resolve } from "node:path";
++import { performance } from "node:perf_hooks";
 +import { DatabaseSync } from "node:sqlite";
-+import { afterEach, describe, expect, it } from "vitest";
-+import { CuriosityEngine, deriveStableRegionId } from "./curiosity-engine.js";
-+import type { DreamInsight } from "./dream-types.js";
-+import { GCCRFRewardFunction, informationGeometricNovelty } from "./gccrf-reward.js";
-+import { HormonalStateManager } from "./hormonal.js";
++import { parseArgs } from "node:util";
++import { resolveApiKeyForProvider } from "../../src/agents/model-auth.js";
++import type { BitterbotConfig } from "../../src/config/config.js";
++import { loadConfig } from "../../src/config/io.js";
++import { EvidenceTelemetry } from "../../src/memory/evidence-telemetry.js";
++import { MemoryIndexManager } from "../../src/memory/manager.js";
++import { runMigrations } from "../../src/memory/migrations.js";
++import type { MemorySearchResult } from "../../src/memory/types.js";
 +
-+const databases: DatabaseSync[] = [];
++const DEFAULT_WORK_DIR =
++  "/tmp/claude-1000/-mnt-d-Bitterbot-bitterbot-desktop/50d3c3a2-52de-4c6c-b556-d6fde8b9c93d/scratchpad/plan59-gate";
 +
-+function fixture(): DatabaseSync {
-+  const db = new DatabaseSync(":memory:");
-+  databases.push(db);
-+  db.exec(`CREATE TABLE chunks (
-+    id TEXT PRIMARY KEY, hash TEXT, embedding TEXT, model TEXT DEFAULT 'test',
-+    lifecycle_state TEXT DEFAULT 'active', updated_at INTEGER, created_at INTEGER,
-+    semantic_type TEXT DEFAULT 'fact', importance_score REAL DEFAULT 0.5,
-+    access_count INTEGER DEFAULT 0, text TEXT DEFAULT '')`);
-+  return db;
-+}
-+
-+function insert(
-+  db: DatabaseSync,
-+  id: string,
-+  embedding: number[],
-+  text = "memory systems knowledge",
-+) {
-+  db.prepare(
-+    "INSERT INTO chunks(id, hash, embedding, updated_at, created_at, text) VALUES (?, ?, ?, ?, ?, ?)",
-+  ).run(id, id, JSON.stringify(embedding), Date.now(), Date.now(), text);
-+}
-+
-+function insight(overrides: Partial<DreamInsight>): DreamInsight {
-+  return {
-+    id: "dream",
-+    content: "unrelated hypothesis",
-+    embedding: [0, 1],
-+    confidence: 0.99,
-+    mode: "simulation",
-+    sourceChunkIds: [],
-+    sourceClusterIds: [],
-+    dreamCycleId: "cycle",
-+    importanceScore: 0.5,
-+    accessCount: 0,
-+    lastAccessedAt: null,
-+    createdAt: Date.now(),
-+    updatedAt: Date.now(),
-+    ...overrides,
-+  };
-+}
-+
-+afterEach(() => {
-+  for (const db of databases.splice(0)) {
-+    db.close();
-+  }
++const { values: args } = parseArgs({
++  options: {
++    "copy-from": { type: "string" },
++    db: { type: "string" },
++    queries: { type: "string" },
++    reps: { type: "string", default: "3" },
++    "max-results": { type: "string", default: "10" },
++    "top-k": { type: "string", default: "10" },
++    out: { type: "string" },
++    "work-dir": { type: "string", default: DEFAULT_WORK_DIR },
++    keep: { type: "boolean", default: false },
++  },
++  strict: true,
 +});
 +
-+describe("GCCRF reward defects", () => {
-+  it("3. distinguishes nearby and distant neighbourhoods with identical relative spacing", () => {
-+    const density = (offset: number) => {
-+      const db = fixture();
-+      for (let i = 0; i < 50; i++) {
-+        const d = offset + i * 0.002;
-+        insert(db, `n${i}`, [1 - d, Math.sqrt(1 - (1 - d) ** 2)]);
-+      }
-+      return new GCCRFRewardFunction(db).compute([1, 0], new Map(), []).density;
-+    };
-+    // Same internal spacing; the old per-query stretch gave both the same density.
-+    expect(density(0.01)).toBeGreaterThan(0.9);
-+    expect(density(0.7)).toBeLessThan(0.1);
-+  });
++if ((!args["copy-from"] && !args.db) || !args.queries) {
++  throw new Error(
++    "usage: (--copy-from <live sqlite> | --db <copy>) --queries <jsonl> [--reps 3] [--max-results 10]",
++  );
++}
++const reps = Math.max(1, Number(args.reps));
++const maxResults = Number(args["max-results"]);
++const topK = Number(args["top-k"]);
++const workDir = resolve(args["work-dir"]!);
++mkdirSync(workDir, { recursive: true });
 +
-+  it("3b. falls back to the default bandwidth on an invalid config value", () => {
-+    const db = fixture();
-+    expect(
-+      new GCCRFRewardFunction(db, { densityBandwidth: NaN }).getConfig().densityBandwidth,
-+    ).toBe(0.3);
-+    expect(new GCCRFRewardFunction(db, { densityBandwidth: -1 }).getConfig().densityBandwidth).toBe(
-+      0.3,
-+    );
-+  });
++const bitterbotHome = resolve(join(homedir(), ".bitterbot"));
++const underHome = (p: string) =>
++  resolve(p).startsWith(`${bitterbotHome}/`) || resolve(p) === bitterbotHome;
++if (args.db && underHome(args.db)) {
++  throw new Error(
++    `refusing to operate on ${args.db}: paths under ~/.bitterbot are never written by the gate`,
++  );
++}
++if (resolve(workDir).startsWith(`${bitterbotHome}/`)) {
++  throw new Error(`refusing a work dir under ~/.bitterbot`);
++}
 +
-+  it("5 + 9. preserves zero progress and does not infer maturity from 500 imported memories", () => {
-+    const db = fixture();
-+    for (let i = 0; i < 500; i++) {
-+      insert(db, String(i), []);
-+    }
-+    const reward = new GCCRFRewardFunction(db);
-+    for (let i = 0; i < 100; i++) {
-+      expect(reward.compute([1, 0], new Map([["r", [1, 0]]]), []).components.deltaEta).toBe(0);
-+    }
-+    expect(reward.getMaturity()).toBe(0);
-+    expect(reward.getCurrentAlpha()).toBe(-3);
-+  });
++const sha = (s: string | Buffer) => createHash("sha256").update(s).digest("hex");
++const ms = (x: number) => Number(x.toFixed(2));
++function percentile(sorted: number[], p: number): number {
++  if (sorted.length === 0) {
++    return 0;
++  }
++  const idx = Math.min(sorted.length - 1, Math.max(0, Math.ceil((p / 100) * sorted.length) - 1));
++  return sorted[idx]!;
++}
++function gitCommit(): string | null {
++  try {
++    const head = execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
++    const dirty = execSync("git status --porcelain --untracked-files=no", {
++      encoding: "utf-8",
++    }).trim();
++    return dirty ? `${head}+dirty` : head;
++  } catch {
++    return null;
++  }
++}
 +
-+  it("9b. maturity follows completed dream cycles only", () => {
-+    const db = fixture();
-+    db.exec("CREATE TABLE dream_cycles (id TEXT, completed_at INTEGER)");
-+    for (let i = 0; i < 50; i++) {
-+      db.prepare("INSERT INTO dream_cycles VALUES (?, ?)").run(String(i), i < 40 ? 1 : null);
-+    }
-+    const reward = new GCCRFRewardFunction(db, { expectedMatureCycles: 100 });
-+    expect(reward.getMaturity()).toBeCloseTo(0.4);
-+    expect(reward.getCurrentAlpha()).toBeCloseTo(-3 + 3 * 0.4);
-+  });
++// ── 0. snapshot ──
++let copyPath: string;
++let snapshotMs: number | null = null;
++if (args["copy-from"]) {
++  const src = resolve(args["copy-from"]);
++  copyPath = join(workDir, `store-copy-${Date.now()}.sqlite`);
++  if (existsSync(copyPath)) {
++    rmSync(copyPath);
++  }
++  const t0 = performance.now();
 +
-+  it("8. consumes FSHO coupling only when enabled, and the EMA survives a restart", () => {
-+    const db 
 ```
 
-**File**: `src/memory/curiosity-engine.region-identity.test.ts` (modified, +8/-7)
+**File**: `docs/docs.json` (modified, +1/-0)
 ```diff
-@@ -35,13 +35,14 @@ describe("deriveStableRegionId (F8)", () => {
-   });
- });
- 
--// The learning-progress formula that rebuildRegions now applies: for a region
--// that persisted (same stable id), learning_progress = max(0, priorError -
--// newError) — the reduction in prediction error, i.e. the GCCRF learning
--// signal, which was previously hardcoded to 0.
-+// The learning-progress formula that rebuildRegions applies: for a region that
-+// persisted (same stable id), learning_progress = clamp(priorError - newError,
-+// -1, 1) — the SIGNED change in prediction error. It used to be clamped at 0,
-+// which meant the stale-region detector (learning_progress < -0.3) could never
-+// fire off the rebuild value.
- describe("learning-progress formula (F8)", () => {
-   const lp = (priorError: number | undefined, newError: number): number =>
--    priorError == null ? 0 : Math.max(0, priorError - newError);
-+    priorError == null ? 0 : Math.max(-1, Math.min(1, priorError - newError));
- 
-   it("is 0 for a brand-new region (no prior)", () => {
-     expect(lp(undefined, 0.4)).toBe(0);
-@@ -51,7 +52,7 @@ describe("learning-progress formula (F8)", () => {
-     expect(lp(0.6, 0.4)).toBeCloseTo(0.2);
-   });
- 
--  it("clamps to 0 when error rises (no negative learning)", () => {
--    expect(lp(0.3, 0.5)).toBe(0);
-+  it("goes negative when error rises (region is drifting / going stale)", () => {
-+    expect(lp(0.3, 0.5)).toBeCloseTo(-0.2);
-   });
- });
+@@ -723,6 +723,7 @@
+                   "memory/dream-engine",
+                   "memory/curiosity-and-search",
+                   "memory/curiosity-reward",
++                  "memory/evidence-telemetry",
+                   "memory/emotional-system",
+                   "memory/biological-identity"
+                 ]
 ```
 
-**File**: `src/memory/curiosity-engine.ts` (modified, +133/-24)
+**File**: `docs/gateway/configuration-reference.md` (modified, +23/-0)
 ```diff
-@@ -44,6 +44,11 @@ const log = createSubsystemLogger("memory/curiosity");
- // seconds of synchronous work. Cap the batch (the backlog drains across cycles)
- // and yield to the event loop every few chunks so it never freezes the gateway
- // (which would stall WS requests and bounce the Control UI's connection).
-+/**
-+ * Cosine similarity at or above which two differently-hashed chunks are treated
-+ * as duplicates/paraphrases rather than contradiction candidates.
-+ */
-+const PARAPHRASE_SIMILARITY = 0.98;
- const PENDING_SCORE_BATCH = 50;
- const PENDING_SCORE_YIELD_EVERY = 8;
- // Greedy region clustering is O(n^2) over every active chunk and is unbounded,
-@@ -123,11 +128,14 @@ export class CuriosityEngine {
-     };
-     ensureCuriositySchema(db);
+@@ -1943,6 +1943,29 @@ The same notice is not repeated within 30 minutes.
  
--    // Initialize GCCRF reward function as the single scoring engine
--    this.gccrfReward = new GCCRFRewardFunction(
--      db,
--      config?.gccrf as Partial<GCCRFConfig> | undefined,
--    );
-+    // Initialize GCCRF reward function as the single scoring engine.
-+    // memory.curiosity.fshoCoupling is the documented switch for FSHO alpha
-+    // coupling; it wins over a stray gccrf.fshoCoupling key.
-+    const gccrfConfig = (config?.gccrf ?? {}) as Partial<GCCRFConfig>;
-+    this.gccrfReward = new GCCRFRewardFunction(db, {
-+      ...gccrfConfig,
-+      ...(config?.fshoCoupling != null ? { fshoCoupling: config.fshoCoupling } : {}),
-+    });
-   }
+ ---
  
-   /** Update the database handle after a reindex swaps the underlying file. */
-@@ -189,8 +197,16 @@ export class CuriosityEngine {
-       /* targets table may not exist yet */
-     }
- 
--    // Compute GCCRF reward (the single scoring path)
--    const gccrfResult = this.gccrfReward.compute(chunkEmbedding, regionCentroids, strategicTargets);
-+    // Compute GCCRF reward (the single scoring path). The chunk id lets KNN
-+    // leave the chunk out of its own neighbourhood.
-+    const gccrfResult = this.gccrfReward.compute(
-+      chunkEmbedding,
-+      regionCentroids,
-+      strategicTargets,
-+      {
-+        chunkId,
++## Memory
++
++The memory subsystems (`memory.dream`, `memory.consolidation`, `memory.curiosity`, ...) are documented with the memory system itself; see [How the memory works](/memory/how-the-memory-works) and [Curiosity and search](/memory/curiosity-and-search). One key is listed here because it is a telemetry switch rather than a behaviour:
++
++### `memory.curiosity.evidence`
++
++```json5
++{
++  memory: {
++    curiosity: {
++      evidence: {
++        mode: "observe", // "off" | "observe" | "shadow" (default "observe")
++        retentionDays: 90, // prune rows older than this on the consolidation tick
++        topK: 10, // retrieval rows kept per search
 +      },
-+    );
++    },
++  },
++}
++```
++
++- `off`: nothing is written. `observe`: retrieval hits and surfacing events. `shadow`: also dream-engine decision traces.
++- Observation changes no behaviour in any mode. Query text is never stored; queries and session keys appear only as node-keyed digests. See [Evidence telemetry](/memory/evidence-telemetry).
++
+ ## Browser
  
-     // Contradiction detection (unique signal not in GCCRF)
-     const neighbors = this.getNeighborChunks(chunkEmbedding, chunkId, 10);
-@@ -300,8 +316,11 @@ export class CuriosityEngine {
- 
-     const regionsBuilt = await this.rebuildRegions();
-     const expired = this.expireTargets();
--    const targetsGenerated = this.detectGapsAndGenerateTargets();
-+    // Learning progress is computed BEFORE gap detection so the stale-region
-+    // detector (learning_progress < -0.3) sees this cycle's signed drift
-+    // instead of last cycle's value (or the rebuild's placeholder).
-     this.computeRegionLearningProgress();
-+    const targetsGenerated = this.detectGapsAndGenerateTargets();
- 
-     // GCCRF-enhanced: retire satisfied targets and generate new ones from GCCRF signals
-     const gccrfRetired = this.retireGCCRFTargets();
-@@ -626,7 +645,7 @@ export class CuriosityEngine {
-     if (insight.embedding.length > 0) {
-       const targets = this.db
-         .prepare(
--          `SELECT id, type, description, region_id FROM curiosity_targets
-+          `SELECT id, type, description, region_id, metadata FROM curiosity_targets
-            WHERE resolved_at IS NULL AND expires_at > ?
-            ORDER BY priority DESC LIMIT 20`,
-         )
-@@ -635,6 +654,7 @@ export class CuriosityEngine {
-         type: string;
-         description: string;
-         region_id: string | null;
-+        metadata: string | null;
-       }>;
- 
-       // If the insight is highly relevant to a gap target's region, mark it resolved
-@@ -656,9 +676,13 @@ export class CuriosityEngine {
-           }
-         }
- 
--        // High-confidence contradictions from simulation mode
-+        // High-confidence contradictions from simulation mode. Only a
-+        // simulation that is actually about this target may close it: one that
-+        // re-processed the chunks the contradiction was detected on, or one
-+        // that lands in the target's region and names it. An unrelated
-+        // simulation used to close every open contradiction target at once.
-         if (target.type === "contradiction" && insight.mode === "simulation") {
--          if (insight.confidence >= 0.7) {
-+          if (insight.confidence >= 0.7 && this.simulationAddressesTarget(insight, target)) {
-             this.resolveTarget(target.id);
-             result.contradictions++;
-           }
-@@ -907,6 +931,49 @@ export class CuriosityEngine {
-     }
-   }
- 
-+  /**
-+   * Whether a simulation insight is scoped to a contradiction target: it was
-+   * dreamed from one of the chunks the contradiction was detected on, or it
-+   * sits in the target's region (cosine >= 0.6 to the centroid) and its text
-+   * references a term of that region's label.
-+   */
-+  private simulationAddressesTarget(
-+    insight: DreamInsight,
-+    target: { region_id: string | null; metadata: string | null },
-+  ): boolean {
-+    let meta: { chunkIds?: unknown } = {};
-+    try {
-+     
+ ```json5
 ```
 
-**File**: `src/memory/curiosity-types.ts` (modified, +7/-0)
+**File**: `docs/memory/curiosity-and-search.md` (modified, +1/-1)
 ```diff
-@@ -127,6 +127,13 @@ export type CuriosityConfig = {
-   maxQueryHistory?: number;
-   /** Score threshold below which a query indicates a gap. Default: 0.5. */
-   gapScoreThreshold?: number;
-+  /**
-+   * Let the dream engine's FSHO order parameter modulate GCCRF's alpha
-+   * schedule (`effective_alpha = base_alpha + 0.5 * (R_avg - 0.5)`). Default:
-+   * false. Off, FSHO R is tracked for telemetry only and novelty uses the pure
-+   * dream-cycle maturity schedule.
-+   */
-+  fshoCoupling?: boolean;
-   /** GCCRF reward function configuration. When provided, GCCRF replaces heuristic scoring. */
-   gccrf?:
-     | import("./gccrf-reward.js").GCCRFConfig
+@@ -112,7 +112,7 @@ Maximum active targets: 10 (configurable). Expired targets are cleaned up during
+ 
+ Budget: `maxPerDay` (10) questions per UTC day, +2 when dopamine > 0.65, −2 when cortisol > 0.65 (cortisol also raises the confidence floor by 0.1). Pause state lives in `memory_meta`.
+ 
+-Use ledger (`src/memory/curiosity-use.ts`): memory search and proactive recall call `recordCuriosityUse` for any self-learned chunk they return; `curiosityRoiByRegion` feeds step 1. RPCs: `curiosity.status`, `curiosity.list`, `curiosity.pause`, `curiosity.resume`, `curiosity.dismiss`, `curiosity.ask`, `curiosity.runNow`; the same from the terminal as [`bitterbot curiosity`](/cli/curiosity).
++Use ledger (`src/memory/curiosity-use.ts`): memory search and proactive recall call `recordCuriosityUse` for any self-learned chunk they return; `curiosityRoiByRegion` feeds step 1. Evidence layer (`memory.curiosity.evidence`, default `observe`): every owner search writes its top-K chunk ids under a keyed query digest, every voiced finding, proactive-recall fact and dream brief writes a `delivered` row, and a dismiss labels it `explicit`; see [Evidence telemetry](/memory/evidence-telemetry). RPCs: `curiosity.status`, `curiosity.list`, `curiosity.pause`, `curiosity.resume`, `curiosity.dismiss`, `curiosity.ask`, `curiosity.runNow`; the same from the terminal as [`bitterbot curiosity`](/cli/curiosity).
+ 
+ Private names come from the knowledge graph's `person`, `organization` and `project` entities. A "person" that is not a name ("here", "commands", a peer id) is filed as a `concept` at write time (`looksLikePersonName`) and migration v75 reclassified existing rows, so the filter blocks people, not ordinary words.
+ 
 ```
 
-**File**: `src/memory/gccrf-knn.test.ts` (modified, +36/-1)
+**File**: `docs/memory/curiosity-reward.md` (modified, +4/-0)
 ```diff
-@@ -33,13 +33,21 @@ describe("GCCRF knnSearch (vec0 MATCH)", () => {
-     db.enableLoadExtension(true);
-     sqliteVec.load(db);
-     // The GCCRF constructor adds a curiosity_reward column to chunks.
--    db.exec("CREATE TABLE chunks (id TEXT PRIMARY KEY, embedding TEXT, lifecycle_state TEXT)");
-+    db.exec(
-+      "CREATE TABLE chunks (id TEXT PRIMARY KEY, embedding TEXT, lifecycle_state TEXT, updated_at INTEGER)",
-+    );
-     // Same shape as production chunks_vec: vec0 default (L2) metric.
-     db.exec("CREATE VIRTUAL TABLE chunks_vec USING vec0(id TEXT PRIMARY KEY, embedding FLOAT[4])");
-     const ins = db.prepare("INSERT INTO chunks_vec(id, embedding) VALUES (?, ?)");
-     ins.run("a", blob(a));
-     ins.run("b", blob(b));
-     ins.run("c", blob(c));
-+    // Every index row has a live chunk: the MATCH results are post-filtered
-+    // against active chunks so stale index rows cannot count as neighbours.
-+    const chunk = db.prepare("INSERT INTO chunks VALUES (?, ?, 'active', 1)");
-+    chunk.run("a", JSON.stringify(a));
-+    chunk.run("b", JSON.stringify(b));
-+    chunk.run("c", JSON.stringify(c));
-     reward = new GCCRFRewardFunction(db);
-   });
+@@ -6,6 +6,10 @@ The Geodesic Crystal-Field Curiosity Reward Function (GCCRF) is Bitterbot's intr
  
-@@ -60,6 +68,33 @@ describe("GCCRF knnSearch (vec0 MATCH)", () => {
-     expect(knn[2]!.similarity).toBeCloseTo(0, 3); // orthogonal
-   });
+ Unlike simple keyword matching or random exploration, the curiosity engine computes curiosity from five neuroscience-grounded components that together model how biological curiosity actually works. The GCCRF reward function is invoked internally by `CuriosityEngine.assessChunk()` — there is no separate scoring path.
  
-+  it("excludes the assessed chunk and stale index rows, and agrees with the fallback", () => {
-+    // An index row with no chunk behind it (deleted since) must not be a neighbour.
-+    db.prepare("INSERT INTO chunks_vec(id, embedding) VALUES (?, ?)").run("orphan", blob(a));
-+    type Search = {
-+      knnSearch: (
-+        e: number[],
-+        k: number,
-+        c: { chunkId: string },
-+      ) => Array<{ id: string; similarity: number }>;
-+    };
-+    const native = (reward as unknown as Search).knnSearch(a, 2, { chunkId: "a" });
-+    expect(native.map((n) => n.id)).toEqual(["c", "b"]);
++## Where the score is read, and how that is measured
 +
-+    // Same corpus, same ranking without the extension (brute-force fallback).
-+    db.exec("ALTER TABLE chunks_vec RENAME TO hidden_vectors");
-+    try {
-+      const fallback = (reward as unknown as Search).knnSearch(a, 2, { chunkId: "a" });
-+      expect(fallback.map((n) => n.id)).toEqual(native.map((n) => n.id));
-+      for (let i = 0; i < native.length; i++) {
-+        expect(fallback[i]!.similarity).toBeCloseTo(native[i]!.similarity, 5);
-+      }
-+    } finally {
-+      db.exec("ALTER TABLE hidden_vectors RENAME TO chunks_vec");
-+      db.prepare("DELETE FROM chunks_vec WHERE id = 'orphan'").run();
-+    }
-+  });
++Every place on main that reads the score is listed in [Evidence telemetry](/memory/evidence-telemetry), together with the surfaces the agent uses to put self-learned material in front of the owner. With `memory.curiosity.evidence.mode: "shadow"` the two dream-engine readers (mode selection weight and seed ranking) also record what they would have decided with the GCCRF term removed, next to what they did decide. This is observation only: the score keeps steering exactly as described on this page in every mode.
 +
-   it("falls back without throwing when the vec table is missing", () => {
-     const bare = new DatabaseSync(":memory:");
-     bare.exec(
+ ## The Five Components
+ 
+ ### 1. Prediction Error ("How surprising is this?")
+```
+
+**File**: `docs/memory/evidence-telemetry.md` (added, +185/-0)
+```diff
+@@ -0,0 +1,185 @@
++# Evidence Telemetry
++
++An observational layer under the curiosity and dream system. It records what retrieval surfaced, what the agent proactively surfaced to the owner and what came of it, and (in shadow mode) what a "GCCRF as diagnostic only" routing would have decided in the dream engine next to what the legacy routing actually decided. It changes no behaviour in any mode: retrieval order, dream seeds, dream mode choice, hormone events and target closure are exactly what they were before it existed. Later phases read these tables; this phase only writes them.
++
++Code: `src/memory/evidence-telemetry.ts` (writer), migration v79 in `src/memory/migrations.ts`, call sites in `src/memory/manager.ts` and `src/memory/dream-engine.ts`.
++
++## Modes and defaults
++
++`memory.curiosity.evidence` in `bitterbot.json`:
++
++```json5
++{
++  memory: {
++    curiosity: {
++      evidence: {
++        mode: "observe", // "off" | "observe" | "shadow"; default "observe"
++        retentionDays: 90, // rows older than this are pruned on the consolidation tick
++        topK: 10, // at most this many retrieval rows per search
++      },
++    },
++  },
++}
++```
++
++- `off`: nothing is written. The tables still exist (the migration creates them) and old rows are still pruned.
++- `observe` (default): retrieval hits and surfacing events.
++- `shadow`: observe plus decision traces from the dream engine.
++
++A mode that is not one of the three falls back to `observe` with a warning; a non-positive `retentionDays` or `topK` falls back to the default. The layer works whether or not `memory.curiosity.enabled` is on; `evidence.mode: "off"` is its own switch.
++
++## The three tables
++
++### `retrieval_hits`
++
++One row per returned result, at most `topK` per search, written in one transaction after the final ordering (fusion, boosts, superseded demotion) is fixed. Guest searches (`guestSearch`) are never recorded.
++
++| column               | meaning                                                                                             |
++| -------------------- | --------------------------------------------------------------------------------------------------- |
++| `query_id`           | random id shared by the rows of one search                                                          |
++| `query_digest`       | HMAC-SHA256 (first 32 hex chars) of the trimmed query under the node-local key                      |
++| `session_digest`     | same digest of the session key, or NULL when the call had none                                      |
++| `caller`             | short call-site tag (`memory_search`, `deep_recall`, `rlm_context`) or NULL                         |
++| `query_len`          | length of the query in characters                                                                   |
++| `chunk_id`, `rank`   | the chunk and its 1-based position in the returned list                                             |
++| `fused_score`        | the score as returned                                                                               |
++| `channel_ranks_json` | per-channel 1-based ranks (`vector`, `keyword`, `graph`) where the channels are in scope            |
++| `injected`, `cited`  | NULL in Phase 0 (no cheap signal exists yet; later phases fill them)                                |
++| `embedding_model`    | the query embedding model                                                                           |
++| `scoring_version`    | `gccrf_state.scoring_version` at write time (`gccrf-v2`), so rows can be split by scorer generation |
++| `created_at`         | epoch ms                                                                                            |
++
++Indexes: `created_at`; `(chunk_id, created_at)`; `query_id`.
++
++### `surfacing_events`
++
++What the agent put in front of the owner, and separately what the owner did about it.
++
++| column             | meaning                                                                                                   |
++| ------------------ | --------------------------------------------------------------------------------------------------------- |
++| `event_id`         | idempotency key (`INSERT OR IGNORE`), for example `cf:<finding id>:<hour bucket>`                         |
++| `kind`             | `curiosity_finding`, `proactive_recall`, `dream_brief`, `dream_digest`, `curiosity_target`                |
++| `ref_id`           | the surfaced item (finding id, chunk id, brief id, notification key)                                      |
++| `arm`              | `legacy` in Phase 0; later phases add arms                                                                |
++| `opportunity_id`   | the curiosity target a finding answered, so a dismiss by target id finds the delivery                     |
++| `session_digest`   | digest of the conversation the item was surfaced in, when known                                           |
++| `stage`            | `eligible`, `assigned`, `de
+```
+
+**File**: `src/agents/rlm/context-builder.ts` (modified, +1/-0)
+```diff
+@@ -630,6 +630,7 @@ export async function buildDeepRecallContext(params: {
+         const results = await params.memoryManager.search(q, {
+           maxResults: 20,
+           tagSuperseded: params.tagSuperseded === true,
++          caller: "rlm_context",
+         });
+         for (const r of results) {
+           const key = r.snippet.slice(0, 100);
+```
+
+**File**: `src/agents/tools/deep-recall-tool.ts` (modified, +3/-0)
+```diff
+@@ -501,6 +501,7 @@ export function createDeepRecallTool(options: {
+             maxResults: 5,
+             // PLAN-55: superseded tags carry ledger values; owner only.
+             tagSuperseded: options.senderIsOwner === true,
++            caller: "deep_recall",
+           });
+           // Only shortcut if we have 3+ genuinely high-confidence results.
+           // manager.search may ignore minScore (e.g. RRF strategy), so filter here.
+@@ -550,6 +551,7 @@ export function createDeepRecallTool(options: {
+           const results = await mgr.search(q, {
+             maxResults: opts?.maxResults ?? 10,
+             tagSuperseded: options.senderIsOwner === true,
++            caller: "deep_recall",
+           });
+           return results.map((r) => ({
+             snippet: r.snippet,
+@@ -655,6 +657,7 @@ export function createDeepRecallTool(options: {
+           const quickResults = await memManager.search(query, {
+             maxResults: 10,
+             tagSuperseded: options.senderIsOwner === true,
++            caller: "deep_recall",
+           });
+           if (quickResults.length >= 3 && memManager.db) {
+             const db = memManager.db;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #322** (2026-10-29): feat(memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (@VGIL77)
 - **PR #321** (2026-10-28): fix(memory): GCCRF and curiosity-target defects (@VGIL77)
 - **PR #320** (2026-10-28): fix(p2p): fail-closed skill ingest and publish gates (@VGIL77)
 - **PR #318** (2026-10-28): feat(benchmarks): LongMemEval runner on the official protocol (@VGIL77)
 - **PR #317** (2026-10-27): bench(live-recall): replay the agent's real memory_search queries under each boost scale (@VGIL77)
 - **PR #316** (2026-10-27): fix(gateway): restarted gateway outlives its parent's lock instead of dying at the 5 s timeout (@VGIL77)
-- **PR #315** (2026-10-27): fix(memory): bound post-fusion boosts to the RRF scale; held-out live-memory benchmark; evidence-level LongMemEval metrics (@VGIL77)
 
 ---
 
@@ -2289,30 +2154,48 @@ GCCRF (gccrf-reward.ts):
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory): GCCRF and curiosity-target defects (#321)
+## X. memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (#322)
 
 **RULE**:
-When implementing operations in `docs/memory/curiosity-and-search.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `benchmarks/live-recall/evidence-gate.mts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `098582e4`: memory): GCCRF and curiosity-target defects (#321). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ecc86c07`: memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (#322). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/curiosity-and-search.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/live-recall/evidence-gate.mts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-Additionally, **contradiction detection** runs separately: it flags chunks with high cosine similarity (0.85 to 0.98) but different content hashes as _candidate_ conflicts. Near-identical embeddings (cosine >= 0.98) with different bytes are duplicates or paraphrases and score 0. This is a candidate signal for target generation, not an adjudication that the two chunks contradict each other; contradictions do not influence the reward score.
-- **Contradiction closure**: a `simulation` insight with confidence >= 0.7 resolves a contradiction target only when it is scoped to that target: it was dreamed from one of the chunks the contradiction was detected on, or it lands in the target's region (cosine >= 0.6 to the centroid) and its text names a term of the region label. An unrelated simulation leaves every contradiction target open. The normal closure path for targets remains the PLAN-54 research loop above.
+/**
+ * PLAN-59 Phase 0 engineering gate: evidence telemetry against a copy of a real store.
+ *
+ * Never touches the live database. `--copy-from` opens the live file READ-ONLY
+ * and takes a `VACUUM INTO` snapshot under the gate work dir; `--db` points at
+ * an existing copy. Any `--db` path under ~/.bitterbot is refused.
+ *
+ * Measures and prints (JSON + a markdown table):
+ *   1. migration wall time on the copy (v78 -> v79 on a 2026-10 store);
+ *   2. search wall time p50/p95 with evidence mode `off` vs `observe`, the same
+ *      real queries, `--reps` repetitions each, interleaved per query;
+ *   3. observation neutrality: the ordered chunk-id list is identical between
+ *      the two modes for every query and repetition (hard fail otherwise);
+ *   4. rows written == min(topK, returned) per observe search; zero rows after
+ *      the off-mode pass;
+ *   5. prune removes rows older than retention and leaves newer ones;
+ *   6. stats() matches COUNT(*).
+ *
+ * Queries: a jsonl file with a `query` (journal replay, extract-journal-queries.mts)
+ * or `question` (make-questions.mts) field per line, loaded exactly as run.mts
+ * and replay-judge.mts load theirs. The file is private; only
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-Additionally, **contradiction detection** runs separately — it identifies chunks with high cosine similarity but different content hashes (conflicting information). Contradictions are stored for target generation but do not influence the reward score.
-- **Contradiction detection** — If the insight contradicts existing knowledge regions
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `098582e4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ecc86c07` are properly handled with clean fallback behavior.

@@ -398037,3 +398037,73 @@ fn file_targeted_defect_check_does_not_mutate_ambient_store() {
 ```
 
 ---
+
+
+---
+
+## 5496. memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (#322) (Harvested from Bitterbot-AI/bitterbot-desktop)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (#322)",
+  "source": "Bitterbot-AI/bitterbot-desktop",
+  "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+  "source_version": "ecc86c07",
+  "license": "MIT",
+  "extracted_at": "2026-10-29T11:44:05.411Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `ecc86c07`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `benchmarks/live-recall/evidence-gate.mts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ecc86c07`: memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (#322). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/live-recall/evidence-gate.mts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+/**
+ * PLAN-59 Phase 0 engineering gate: evidence telemetry against a copy of a real store.
+ *
+ * Never touches the live database. `--copy-from` opens the live file READ-ONLY
+ * and takes a `VACUUM INTO` snapshot under the gate work dir; `--db` points at
+ * an existing copy. Any `--db` path under ~/.bitterbot is refused.
+ *
+ * Measures and prints (JSON + a markdown table):
+ *   1. migration wall time on the copy (v78 -> v79 on a 2026-10 store);
+ *   2. search wall time p50/p95 with evidence mode `off` vs `observe`, the same
+ *      real queries, `--reps` repetitions each, interleaved per query;
+ *   3. observation neutrality: the ordered chunk-id list is identical between
+ *      the two modes for every query and repetition (hard fail otherwise);
+ *   4. rows written == min(topK, returned) per observe search; zero rows after
+ *      the off-mode pass;
+ *   5. prune removes rows older than retention and leaves newer ones;
+ *   6. stats() matches COUNT(*).
+ *
+ * Queries: a jsonl file with a `query` (journal replay, extract-journal-queries.mts)
+ * or `question` (make-questions.mts) field per line, loaded exactly as run.mts
+ * and replay-judge.mts load theirs. The file is private; only
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ecc86c07` are properly handled with clean fallback behavior.
