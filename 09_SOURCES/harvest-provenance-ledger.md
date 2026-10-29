@@ -6051,3 +6051,4 @@ Every entry in this ledger must capture:
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `87adc84b` | Multi-dimensional audit evidence | 2026-10-29T12:19:47.454Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6ea1cb4c` | Multi-dimensional audit evidence | 2026-10-29T12:19:52.897Z |
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `40e3eb97` | Multi-dimensional audit evidence | 2026-10-29T12:26:02.778Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `0550f8b3` | Multi-dimensional audit evidence | 2026-10-29T16:23:51.090Z |

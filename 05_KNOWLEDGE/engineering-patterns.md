@@ -399247,3 +399247,86 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `255f50fe` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5513. Generalize ARC world-model guidance (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Generalize ARC world-model guidance",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "0550f8b3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-29T16:23:50.801Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `0550f8b3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e57ff918`: Generalize ARC world-model guidance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- `declarations[0]` holds every class declaration of the world model, because
+  the solver runs it alone to build input states. Existing datasets declare
+  one class, `Obj(x: int, y: int, orientation: int, ...)`; add another class
+  only for a distinct kind of object the transformation needs. Each class
+  whose instances are annotated objects takes `x: int, y: int,
+  orientation: int` first, and its body assigns every parameter to `this` and
+  sets an initial `this.tag = 'lNNNN'`. Add only the descriptive properties
+  the transformation needs, such as categorical colors.
+- The remaining declarations are declarative class-level rules, written with
+  the class reference `$Class` (for example `$Obj`), using `if` for
+  conditions and `$Class.x@first` for a property's value before the rules
+  ran. One rule set must explain the training pairs and every new pair: no
+  per-pair or per-instance cases, puzzle IDs, or hard-coded grids. Properties
+  created by rules stay absent from input states rather than receiving
+  artificial defaults.
+  over every instance of a class, derive properties from other rules or from
+  relations between objects, and use higher-order operations on class
+  populat
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+- `declarations[0]` is the class `Obj(x: int, y: int, orientation: int, ...)`.
+  Its body assigns every parameter to `this` and sets an initial
+  `this.tag = 'lNNNN'`. Add only the descriptive properties the
+  transformation needs, such as categorical colors.
+- The remaining declarations are declarative `$Obj` rules, using `if` for
+  conditions and `$Obj.x@first` for a property's value before the rules ran.
+  One rule set must explain the training pairs and every new pair: no per-pair
+  or per-instance cases, puzzle IDs, or hard-coded grids. Properties created by rules stay
+  absent from input states rather than receiving artificial defaults.
+  over every `Obj`, derive properties from other rules or from relations
+  between objects, and use higher-order operations such as `Obj.filter`,
+  `map`, `reduce`, `some`, `every`, `find`, and reasoning selections where
+  they express the rule. Avoid `for` loops, imperative steps, and manual
+  bookkeeping.
+- `implementation` is `<instance_name> = Obj(x=<input_x>, y=<input_y>,
+  orientation=<input_orientation>, ...)`, with named arguments matching the
+  class parameters.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e57ff918` are properly handled with clean fallback behavior.

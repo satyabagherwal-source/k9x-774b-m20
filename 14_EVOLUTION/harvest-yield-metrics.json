@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T12:26:02.781Z",
-  "total_cycles_completed": 6019,
-  "total_learnings_persisted": 6019,
-  "total_rules_promoted": 5477,
+  "last_updated": "2026-10-29T16:23:51.095Z",
+  "total_cycles_completed": 6020,
+  "total_learnings_persisted": 6020,
+  "total_rules_promoted": 5478,
   "history": [
-    {
-      "timestamp": "2026-10-28T16:27:16.866Z",
-      "repository": "kubearmor/KubeArmor",
-      "learningId": "learn-github-kubearmor-kubearmor",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T16:33:36.323Z",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-29T12:26:02.781Z",
       "repository": "fallow-rs/fallow",
       "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T16:23:51.095Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

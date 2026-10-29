@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T12:26:09.502Z",
-    "lastVerified": "2026-10-29T12:26:09.502Z",
+    "lastChecked": "2026-10-29T16:23:53.643Z",
+    "lastVerified": "2026-10-29T16:23:53.643Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -393,12 +393,12 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T12:08:55.686Z",
-    "lastVerified": "2026-10-29T12:08:55.686Z",
+    "lastChecked": "2026-10-29T16:13:45.373Z",
+    "lastVerified": "2026-10-29T16:13:45.373Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "4b554aa73d9ace51ae6474332af790fbb1a9b3a404a2dba7a98e8a2d32152bfe",
+    "contentHash": "747b8c632f9f7512dd302258e6a96d78b8f9a68147061f53381ee5ccb22e6717",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -1935,9 +1935,9 @@
   "sayanarijit-xplr": {
     "name": "xplr",
     "officialUrl": "https://github.com/sayanarijit/xplr",
-    "lastChecked": "2026-10-28T05:54:59.182Z",
+    "lastChecked": "2026-10-29T16:13:26.387Z",
     "revisionIdentifier": "50824d0d",
-    "lastVerified": "2026-10-28T05:54:59.182Z"
+    "lastVerified": "2026-10-29T16:13:26.387Z"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1983,9 +1983,9 @@
   "mitmproxy-mitmproxy": {
     "name": "mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
-    "lastChecked": "2026-10-28T23:18:49.407Z",
+    "lastChecked": "2026-10-29T16:13:36.456Z",
     "revisionIdentifier": "df14a286",
-    "lastVerified": "2026-10-28T23:18:49.407Z"
+    "lastVerified": "2026-10-29T16:13:36.456Z"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -3385,9 +3385,9 @@
   "parthsarthi03-raptor": {
     "name": "raptor",
     "officialUrl": "https://github.com/parthsarthi03/raptor",
-    "lastChecked": "2026-10-28T12:22:20.054Z",
+    "lastChecked": "2026-10-29T16:13:38.860Z",
     "revisionIdentifier": "7da1d48a",
-    "lastVerified": "2026-10-28T12:22:20.054Z"
+    "lastVerified": "2026-10-29T16:13:38.860Z"
   },
   "svenstaro-miniserve": {
     "name": "miniserve",
@@ -3743,9 +3743,9 @@
   "go-eagle-eagle": {
     "name": "eagle",
     "officialUrl": "https://github.com/go-eagle/eagle",
-    "lastChecked": "2026-10-28T13:23:19.558Z",
+    "lastChecked": "2026-10-29T16:13:33.923Z",
     "revisionIdentifier": "b1301b09",
-    "lastVerified": "2026-10-28T13:23:19.558Z"
+    "lastVerified": "2026-10-29T16:13:33.923Z"
   },
   "erikgrinaker-toydb": {
     "name": "toydb",
@@ -8247,5 +8247,19 @@
     "lastChecked": "2026-10-29T12:25:59.543Z",
     "revisionIdentifier": "69e998da",
     "lastVerified": "2026-10-29T12:25:59.543Z"
+  },
+  "sarfrz-novacrawl": {
+    "name": "NovaCrawl",
+    "officialUrl": "https://github.com/SArfrz/NovaCrawl",
+    "lastChecked": "2026-10-29T16:13:29.627Z",
+    "revisionIdentifier": "68c95079df",
+    "lastVerified": "2026-10-29T16:13:29.627Z"
+  },
+  "zacharee-bifrost": {
+    "name": "Bifrost",
+    "officialUrl": "https://github.com/zacharee/Bifrost",
+    "lastChecked": "2026-10-29T16:13:32.334Z",
+    "revisionIdentifier": "ed73a034",
+    "lastVerified": "2026-10-29T16:13:32.334Z"
   }
 }

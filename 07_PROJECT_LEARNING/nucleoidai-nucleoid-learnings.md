@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `0c9e11ad`  
+> **Source Version**: `0550f8b3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T12:08:55.692Z  
+> **Timestamp**: 2026-10-29T16:23:50.441Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T12:08:55.686Z  
+> **Harvest Timestamp**: 2026-10-29T16:13:45.373Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -371,7 +371,7 @@ pub fn compile(source: &str) -> Result<Program> {
 ```
 import "dotenv/config";
 import { start } from "./src/app";
-import * as terminal from "./src/lib/terminal";
+import * as milestone from "./src/milestone";
 
 start(process.argv[2])
   .then((difference: number) => {
@@ -379,7 +379,7 @@ start(process.argv[2])
     process.exitCode = Math.min(difference, 255);
   })
   .catch((error) => {
-    terminal.failure(error);
+    milestone.failure(error);
     process.exitCode = 1;
   });
 
@@ -387,13 +387,12 @@ start(process.argv[2])
 
 ### Core Architecture Module: `arc/src/analyzer.ts`
 ```
-import * as Matrix from "./lib/Matrix";
 import * as nucleoid from "./lib/nucleoid";
 import * as llm from "./lib/llm";
-import * as terminal from "./lib/terminal";
+import * as milestone from "./milestone";
 
 export async function declarations({ puzzle_id, train_dataset }) {
-  terminal.step("Inferring declarations");
+  milestone.inferring_declarations();
 
   const { declarations, output_canvas } = await llm.generate({
     puzzle_id,
@@ -410,8 +409,7 @@ export async function declarations({ puzzle_id, train_dataset }) {
     ],
   });
 
-  terminal.code("Declarations", declarations);
-  terminal.step(`Output canvas ${output_canvas}`);
+  milestone.declarations_inferred({ declarations, output_canvas });
 
   return { declarations, output_canvas };
 }
@@ -422,7 +420,7 @@ export async function instances({
   input_matrix,
   output_matrix,
 }) {
-  terminal.step("Segmenting training objects");
+  milestone.segmenting_training_objects();
 
   const { instances } = await llm.generate({
     puzzle_id,
@@ -450,16 +448,7 @@ export async function instances({
     ],
   });
 
-  instances.forEach((instance, index: number) => {
-    terminal.grid(
-      `Object ${index + 1} · Input`,
-      instance.input_instance_matrix
-    );
-    terminal.grid(
-      `Object ${index + 1} · Output`,
-      instance.output_instance_matrix
-    );
-  });
+  milestone.training_objects_segmented({ instances });
 
   return { instances };
 }
@@ -471,7 +460,7 @@ export async function value({
   input_instance_matrix,
   output_instance_matrix,
 }) {
-  terminal.step(`Constructing ${instance_name}`);
+  milestone.constructing_instance({ instance_name });
 
   const { implementation } = await llm.generate({
     puzzle_id,
@@ -494,7 +483,7 @@ export async function value({
     ],
   });
 
-  terminal.step("Evaluating declarative rules");
+  milestone.evaluating_rules();
   const input_value = await nucleoid.run(
     [declarations[0], implementation].join("\n\n")
   );
@@ -502,11 +491,14 @@ export async function value({
     [...declarations, implementation].join("\n\n")
   );
 
-  terminal.grid("Input crop", Matrix.crop(input_instance_matrix));
-  terminal.grid("Output crop", Matrix.crop(output_instance_matrix));
-  terminal.code(`Implementation · ${instance_name}`, implementation);
-  terminal.value("Input state", input_value);
-  terminal.value("Output state", output_value);
+  milestone.instance_constructed({
+    instance_name,
+    implementation,
+    input_instance_matrix,
+    output_instance_matrix,
+    input_value,
+    output_value,
+  });
 
   return { implementation, input_value, output_value };
 }
@@ -521,14 +513,10 @@ import * as analyzer from "./analyzer";
 import * as visualizer from "./visualizer";
 import * as Matrix from "./lib/Matrix";
 import * as nucleoid from "./lib/nucleoid";
-import * as terminal from "./lib/terminal";
+import * as milestone from "./milestone";
 
 // Genesis puzzle_id: 3aa6fb7a
 export async function start(puzzle_id: string = "9af7a82c") {
-  if (!/^[0-9a-f]{8}$/.test(puzzle_id)) {
-    throw new Error("Puzzle ID must be eight lowercase hexadecimal characters");
-  }
-
   const puzzle = JSON.parse(
     await readFile(
       join(__dirname, "..", "data", "training", `${puzzle_id}.json`),
@@ -539,6 +527,7 @@ export async function start(puzzle_id: string = "9af7a82c") {
     train,
     test: [{ input: test_input_matrix }],
   } = puzzle;
+
   const training_input = {
     dataset: train.map(({ input, output }) => ({
       input_matrix: input,
@@ -548,13 +537,12 @@ export async function start(puzzle_id: string = "9af7a82c") {
   };
 
   const startedAt: number = performance.now();
-  terminal.header({ version: await nucleoid.version() });
-  terminal.puzzle({ train, testInput: test_input_matrix });
-  terminal.section(
-    1,
-    "Analyze",
-    "Infer reusable objects and transformation rules"
-  );
+  milestone.start({
+    version: await nucleoid.version(),
+    train,
+    test_input_matrix,
+  });
+  milestone.analysis();
 
   let instance_index: number = 0;
 
@@ -570,9 +558,7 @@ export async function start(puzzle_id: string = "9af7a82c") {
 
   for (const [index, dataset] of train_dataset.dataset.entries()) {
     const { input_matrix, output_matrix } = dataset;
-    terminal.step(
-      `Training pair ${index + 1} / ${train_dataset.dataset.length}`
-    );
+    milestone.training_pair({ index, total: train_dataset.dataset.length });
 
     const { instances } = await analyzer.instances({
       puzzle_id,
@@ -607,11 +593,7 @@ export async function start(puzzle_id: string = "9af7a82c") {
     }
   }
 
-  terminal.section(
-    2,
-    "Visualize",
-    "Apply the learned world model to the test input"
-  );
+  milestone.visualization();
 
   const { instances } = await visualizer.instances({
     puzzle_id,
@@ -659,15 +641,13 @@ export async function start(puzzle_id: string = "9af7a82c") {
   result_matrix = Matrix.canvas(result_matrix, output_canvas);
 
   const test_output_matrix = puzzle.test[0].output;
-  terminal.section(3, "Compare", "Expected and predicted canvases");
-  terminal.grid("Expected", test_output_matrix);
-  terminal.grid("Result", result_matrix);
+  milestone.comparison({ test_output_matrix, result_matrix });
 
   const difference: number = Matrix.difference(
     result_matrix,
     test_output_matrix
   );
-  terminal.summary(difference, performance.now() - startedAt);
+  milestone.summary({ difference, duration: performance.now() - startedAt });
 
   return difference;
 }
@@ -961,30 +941,85 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b4d6504c` (2026-10-29)
-**Commit Message**: Require reasons in proposal rejection records
+### Incident Patch 1: `e57ff918` (2026-10-29)
+**Commit Message**: Generalize ARC world-model guidance
 
-Ensure every rejected proposal records the evaluator's decisive finding in the relevant abstract, NUC index entries, outcome metadata, and commit message, and reports the same reason to the user.
+Update ARC dataset instructions to support multiple object classes, class-level rules, and constructing instances of the appropriate class.
 
-**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +10/-0)
+**File**: `.claude/agents/arc-dataset.agent.md` (modified, +23/-17)
 ```diff
-@@ -266,6 +266,16 @@ commit the rejected proposal documentation and its index/outcome metadata.
- Rejected proposals are not exempt from commits. Follow the
- [shared rejection workflow](../../rules/proposals.instructions.md#record-rejected-outcomes-caller-only).
+@@ -77,21 +77,27 @@ formatting exactly:
  
-+Always include the rejection reason wherever the rejection is recorded: one
-+short statement of the evaluator's decisive finding, such as the failed check
-+with its minimal reproducing program, or each increased case with its
-+before/after token counts. For a new proposal, state it in the Abstract's
-+rejection bullet, in both NUC index entries as `Rejected: <reason>`, and in the
-+rejection commit message; keep the full evidence in the proposal's evaluation
-+outcome. For a rejected revision of an accepted or active NUC, keep its status
-+and index entries, and give the reason in its outcome metadata and the commit
-+message. Report the same reason to the user.
-+
- Commit only rejection documentation, never the rejected candidate's language
- changes or session baseline/report artifacts. Keep implementation changes in
- the isolated candidate; stage explicit proposal/index paths, use a path-limited
+ ## Model the world
+ 
+-- `declarations[0]` is the class `Obj(x: int, y: int, orientation: int, ...)`.
+-  Its body assigns every parameter to `this` and sets an initial
+-  `this.tag = 'lNNNN'`. Add only the descriptive properties the
+-  transformation needs, such as categorical colors.
+-- The remaining declarations are declarative `$Obj` rules, using `if` for
+-  conditions and `$Obj.x@first` for a property's value before the rules ran.
+-  One rule set must explain the training pairs and every new pair: no per-pair
+-  or per-instance cases, puzzle IDs, or hard-coded grids. Properties created by rules stay
+-  absent from input states rather than receiving artificial defaults.
++- `declarations[0]` holds every class declaration of the world model, because
++  the solver runs it alone to build input states. Existing datasets declare
++  one class, `Obj(x: int, y: int, orientation: int, ...)`; add another class
++  only for a distinct kind of object the transformation needs. Each class
++  whose instances are annotated objects takes `x: int, y: int,
++  orientation: int` first, and its body assigns every parameter to `this` and
++  sets an initial `this.tag = 'lNNNN'`. Add only the descriptive properties
++  the transformation needs, such as categorical colors.
++- The remaining declarations are declarative class-level rules, written with
++  the class reference `$Class` (for example `$Obj`), using `if` for
++  conditions and `$Class.x@first` for a property's value before the rules
++  ran. One rule set must explain the training pairs and every new pair: no
++  per-pair or per-instance cases, puzzle IDs, or hard-coded grids. Properties
++  created by rules stay absent from input states rather than receiving
++  artificial defaults.
+ - Always prefer declarative, higher-order logic. State each relationship once
+-  over every `Obj`, derive properties from other rules or from relations
+-  between objects, and use higher-order operations such as `Obj.filter`,
+-  `map`, `reduce`, `some`, `every`, `find`, and reasoning selections where
+-  they express the rule. Avoid `for` loops, imperative steps, and manual
+-  bookkeeping.
++  over every instance of a class, derive properties from other rules or from
++  relations between objects, and use higher-order operations on class
++  populations, such as `Obj.filter`, `map`, `reduce`, `some`, `every`,
++  `find`, and reasoning selections, where they express the rule. Avoid `for`
++  loops, imperative steps, and manual bookkeeping.
+ - A tag is `l` followed by four digits and names a geometry. Reuse the tag an
+   existing dataset uses for the same geometry; otherwise mint one unused
+   elsewhere.
+@@ -156,9 +162,9 @@ the feature; you never start a NUC.
+ - `instance_name` is `obj` plus 12 random lowercase hexadecimal characters,
+   unique across all datasets
+   (`node -e "console.log(require('crypto').randomBytes(6).toString('hex'))"`).
+-- `implementation` is `<instance_name> = Obj(x=<input_x>, y=<input_y>,
+-  orientation=<input_orientation>, ...)`, with named arguments matching the
+-  class parameters.
++- `implementation` is `<instance_name> = <Class>(x=<input_x>, y=<input_y>,
++  orientation=<input_orientation>, ...)`, constructing the instance's class
++  (`Obj` in existing datasets) with named arguments matching its parameters.
+ - Never hand-write `input_value` or `output_value`. As `arc/src/analyzer.ts`
+   does, run the Nucleoid executable (`NUCLEOID_EXECUTABLE`, else the debug
+   build in `target/debug/`; build it with `cargo build` if missing) as
+```
+
+**File**: `.claude/rules/arc.instructions.md` (modified, +3/-3)
+```diff
+@@ -54,9 +54,9 @@ symbolic execution. Avoid unstructured textual reasoning as the world model.
+ 
+ Always prefer declarative, higher-order logic. State each transformation once
+ as rules over every object and the relations between objects: class-level
+-`$Obj` rules and conditions, properties derived from other rules, and
+-higher-order operations such as `filter`, `map`, `reduce`, `some`, `every`,
+-`find`, and reasoning selections. Avoid imperative loops, per-instance or
++rules and conditions on each class of the world model (for example `$Obj`),
++properties derived from other rules, and higher-order operations such as
++`filter`, `map`, `reduce`, `some`, `every`, `find`, and reasoning selections. Avoid imperative loops, per-instance or
+ per-case steps, and manual bookkeeping. When accepted Nucleoid cannot express
+ such a formulation, request the enhancement it needs, which `/arc-purposal`
+ carries through `/nuc-proposal`, rather than settling for an imperative or
 ```
 
 #### Recent Merged Pull Requests:
@@ -1013,37 +1048,61 @@ Ensure every rejected proposal records the evaluator's decisive finding in the r
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Require reasons in proposal rejection records
+## X. Generalize ARC world-model guidance
 
 **RULE**:
-When implementing operations in `.claude/skills/nuc-proposal/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b4d6504c`: Require reasons in proposal rejection records. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e57ff918`: Generalize ARC world-model guidance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/nuc-proposal/SKILL.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Always include the rejection reason wherever the rejection is recorded: one
-short statement of the evaluator's decisive finding, such as the failed check
-with its minimal reproducing program, or each increased case with its
-before/after token counts. For a new proposal, state it in the Abstract's
-rejection bullet, in both NUC index entries as `Rejected: <reason>`, and in the
-rejection commit message; keep the full evidence in the proposal's evaluation
-outcome. For a rejected revision of an accepted or active NUC, keep its status
-and index entries, and give the reason in its outcome metadata and the commit
-message. Report the same reason to the user.
-
+- `declarations[0]` holds every class declaration of the world model, because
+  the solver runs it alone to build input states. Existing datasets declare
+  one class, `Obj(x: int, y: int, orientation: int, ...)`; add another class
+  only for a distinct kind of object the transformation needs. Each class
+  whose instances are annotated objects takes `x: int, y: int,
+  orientation: int` first, and its body assigns every parameter to `this` and
+  sets an initial `this.tag = 'lNNNN'`. Add only the descriptive properties
+  the transformation needs, such as categorical colors.
+- The remaining declarations are declarative class-level rules, written with
+  the class reference `$Class` (for example `$Obj`), using `if` for
+  conditions and `$Class.x@first` for a property's value before the rules
+  ran. One rule set must explain the training pairs and every new pair: no
+  per-pair or per-instance cases, puzzle IDs, or hard-coded grids. Properties
+  created by rules stay absent from input states rather than receiving
+  artificial defaults.
+  over every instance of a class, derive properties from other rules or from
+  relations between objects, and use higher-order operations on class
+  populat
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- `declarations[0]` is the class `Obj(x: int, y: int, orientation: int, ...)`.
+  Its body assigns every parameter to `this` and sets an initial
+  `this.tag = 'lNNNN'`. Add only the descriptive properties the
+  transformation needs, such as categorical colors.
+- The remaining declarations are declarative `$Obj` rules, using `if` for
+  conditions and `$Obj.x@first` for a property's value before the rules ran.
+  One rule set must explain the training pairs and every new pair: no per-pair
+  or per-instance cases, puzzle IDs, or hard-coded grids. Properties created by rules stay
+  absent from input states rather than receiving artificial defaults.
+  over every `Obj`, derive properties from other rules or from relations
+  between objects, and use higher-order operations such as `Obj.filter`,
+  `map`, `reduce`, `some`, `every`, `find`, and reasoning selections where
+  they express the rule. Avoid `for` loops, imperative steps, and manual
+  bookkeeping.
+- `implementation` is `<instance_name> = Obj(x=<input_x>, y=<input_y>,
+  orientation=<input_orientation>, ...)`, with named arguments matching the
+  class parameters.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b4d6504c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e57ff918` are properly handled with clean fallback behavior.

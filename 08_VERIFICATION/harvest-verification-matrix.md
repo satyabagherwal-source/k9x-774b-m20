@@ -6042,3 +6042,4 @@
 | `CYCLE-20261029-GK8R` | `2026-10-29T12:19:47.451Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md` | Yes (`4fbdccf5...`) |
 | `CYCLE-20261029-GOFY` | `2026-10-29T12:19:52.894Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5511` | Yes (`52b116ed...`) |
 | `CYCLE-20261029-OLUF` | `2026-10-29T12:26:02.775Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5512` | Yes (`d7d4c713...`) |
+| `CYCLE-20261029-6FCE` | `2026-10-29T16:23:51.086Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5513` | Yes (`747b8c63...`) |
