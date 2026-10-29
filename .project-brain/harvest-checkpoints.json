@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T12:01:49.121Z",
+  "last_updated": "2026-10-29T12:08:56.246Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "ab57601d992c08bb9c795bb61728bb0a2d8446af3c5205be0e4bfcfd35fb5710",
-      "verified_at": "2026-10-28T16:05:27.308Z",
+      "content_hash": "4b554aa73d9ace51ae6474332af790fbb1a9b3a404a2dba7a98e8a2d32152bfe",
+      "verified_at": "2026-10-29T12:08:56.246Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T16:05:27.308Z"
+      "last_updated": "2026-10-29T12:08:56.246Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4641,14 +4641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-metalbear-co-mirrord",
-      "content_hash": "4cb21338bfb23c3afb3b557dafd5d2c821e2fc1e3322bf4999e95b4990ba65f4",
-      "verified_at": "2026-10-28T05:30:50.365Z",
+      "content_hash": "ab89e548536cafc6b1ac95c16e97cd5668fe96a50bdfe8a136e64101e3d34872",
+      "verified_at": "2026-10-29T12:08:42.827Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T05:30:50.365Z"
+      "last_updated": "2026-10-29T12:08:42.827Z"
     },
     "openkruise/kruise": {
       "repository": "openkruise/kruise",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "a35fe5a0ddf983daab3329e9a8f115a0c85fc81000cdeeed20431d05cdca07c8",
-      "verified_at": "2026-10-28T22:45:52.275Z",
+      "content_hash": "c17c3265685a5588e113cb2bc9389af6c0b2598d3f99ff2f4808d92024d7b9d6",
+      "verified_at": "2026-10-29T12:08:54.472Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:45:52.275Z"
+      "last_updated": "2026-10-29T12:08:54.472Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",

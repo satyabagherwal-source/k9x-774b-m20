@@ -6032,3 +6032,6 @@
 | `CYCLE-20261029-HKEA` | `2026-10-29T11:52:34.690Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5499` | Yes (`10e5cf30...`) |
 | `CYCLE-20261029-HWQD` | `2026-10-29T11:52:50.677Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5500` | Yes (`369b3482...`) |
 | `CYCLE-20261029-TG6T` | `2026-10-29T12:01:49.109Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5501` | Yes (`f44d9d40...`) |
+| `CYCLE-20261029-2BEO` | `2026-10-29T12:08:42.816Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5502` | Yes (`ab89e548...`) |
+| `CYCLE-20261029-2KE6` | `2026-10-29T12:08:54.462Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5503` | Yes (`c17c3265...`) |
+| `CYCLE-20261029-2LRF` | `2026-10-29T12:08:56.235Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5504` | Yes (`4b554aa7...`) |

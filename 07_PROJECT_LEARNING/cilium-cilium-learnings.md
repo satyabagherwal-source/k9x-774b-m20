@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `dbe91960`  
+> **Source Version**: `e5827d55`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T22:45:51.881Z  
+> **Timestamp**: 2026-10-29T12:08:53.952Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T22:45:51.660Z  
+> **Harvest Timestamp**: 2026-10-29T12:08:53.764Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1259,13 +1259,11 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49691** (2026-10-28): **docs: document Standalone DNS Proxy trust limitation**
-  *Symptoms*: Describe how node host-network access to the unauthenticated localhost gRPC API permits DNS mapping injection, FQDN egress-policy bypass, and node DNS policy disclosure for Standalone DNS Proxy.  ```release-note docs: document Standalone DNS Proxy trust limitation ``` AIL: 1  Reported-by: @r0binak
-  **Post-Mortem & Fix Analysis**:
-  > /test
+- **Issue #49700** (2026-10-29): **cilium-cli: Avoid connectivity setup hangs on stalled exec requests**
+  *Symptoms*: Please ensure your pull request adheres to the following guidelines:  - [ ] For first time contributors, read [Submitting a pull request] - [x] All code is covered by unit and/or runtime tests where feasible. - [ ] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [x] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. - [x] All commits are signed off. See the section [Developer’s Certificate of Origin] - [x] Provide a title or release-note blurb suitable for the release notes. - [ ] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [x] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level].       Example: "This PR was prepared with AIL:N. I personally checked X." - [ ] Thanks for contributing!  <!-- Description of change -->  On AKS, `cilium connectivity test` first runs `nslookup` remotely inside a test client Pod. It queries `localhost` against the DNS server in a test echo Pod to confirm that the client Pod can reach the server and receive a response.  This is a follow-up to cilium/cilium#49473, which notes that `konnectivity-agent` can restart during connectivit
 
-- **Issue #49679** (2026-10-28): **fix(deps): update module golang.org/x/net to v0.62.0 [security] (v1.19)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [golang.org/x/net](https://pkg.go.dev/golang.org/x/net) | [`v0.60.0` → `v0.62.0`](https://cs.opensource.google/go/x/net/+/refs/tags/v0.60.0...refs/tags/v0.62.0) | ![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2fnet/v0.62.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/golang.org%2fx%2fnet/v0.60.0/v0.62.0?slim=true) |  ---  ### Avoid quadratic complexity when coalescing text nodes in html in golang.org/x/net [CVE-2026-78661](https://nvd.nist.gov/vuln/detail/CVE-2026-78661) / [GO-2026-6860](https://pkg.go.dev/vuln/GO-2026-6860)  <details> <summary>More information</summary>  #### Details When coalescing adjacent text nodes in addText and fosterParent, appending to an existing TextNode's Data via string concatenation (n.Data += text) reallocated and copied the accumulated string on every token. Inputs containing many short text runs separated by ignored end tags (such as "a</x>") caused O(n^2) allocations and byte copies.  Accumulate coalesced text in per-node byte slices during parsing and materialize Data strings once at the end of parse.  #### Severity Unknown  #### References - [https://go.dev/cl/849365](https://go.dev/cl/849365) - [https://go.dev/issue/82224](https://go.dev/issue/82224) - [https://groups.google.com/g/go
+- **Issue #49698** (2026-10-29): **chore(deps): update auto-merge-trusted-deps (v1.18)**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [actions/setup-python](https://redirect.github.com/actions/setup-python) | action | minor | `v7.0.0` → `v7.1.0` | | [bufbuild/buf](https://redirect.github.com/bufbuild/buf) |  | minor | `v1.74.0` → `v1.75.0` | | [cert-manager/cert-manager](https://redirect.github.com/cert-manager/cert-manager) |  | patch | `v1.21.2` → `v1.21.3` | | [docker.io/library/alpine](https://hub.docker.com/_/alpine) ([source](https://redirect.github.com/alpinelinux/docker-alpine)) | stage | patch | `3.22.6` → `3.22.7` | | [docker.io/library/alpine](https://hub.docker.com/_/alpine) ([source](https://redirect.github.com/alpinelinux/docker-alpine)) | final | patch | `3.22.6` → `3.22.7` | | [docker.io/library/busybox](https://hub.docker.com/_/busybox) ([source](https://redirect.github.com/docker-library/busybox)) |  | digest | `bdf57e5` → `a7dbc31` | | [docker.io/library/golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) | stage | digest | `672c944` → `670bb5a` | | [docker.io/library/golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) | final | digest | `672c944` → `670bb5a` | | [docker.io/library/ubuntu](https://hub.docker.com/_/ubuntu) ([source](https://git.launchpad.net/cloud-images/+oci/ubuntu-base)) | stage | digest | `68ee220` → `fe81560` | | [docker/login-action](https://redirect.github.com/docker/log
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1282,220 +1280,537 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dbe91960` (2026-10-02)
-**Commit Message**: fqdn: move mark-alive check into TestZombiesDumpAlive
+### Incident Patch 1: `80240cc5` (2026-10-27)
+**Commit Message**: chore(deps): update module github.com/go-jose/go-jose/v4 to v4.1.6 [security]
 
-TestZombiesDumpAlive already tests a CT GC run that marks zombies
-alive. Add the missing follow-up there and drop the same check from
-the new test, which now only covers the grace-period boundary and is
-renamed to TestZombiesGracePeriod.
+Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
 
-Signed-off-by: henockt <[REDACTED_EMAIL]>
-
-**File**: `pkg/fqdn/cache_test.go` (modified, +33/-46)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -1065,6 +1065,16 @@ func TestZombiesDumpAlive(t *testing.T) {
- 	cidrMatcher = func(a netip.Addr) bool { return prefix.Contains(a) }
- 	alive = zombies.DumpAlive(cidrMatcher)
- 	require.Empty(t, alive)
+@@ -206,7 +206,7 @@ require (
+ 	github.com/gaissmai/bart v0.26.1 // indirect
+ 	github.com/go-errors/errors v1.5.1 // indirect
+ 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.5 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/go-logr/zapr v1.3.0 // indirect
+ 	github.com/go-openapi/analysis v1.0.1 // indirect
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -259,8 +259,8 @@ github.com/go-errors/errors v1.5.1/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3Bop
+ github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
+ github.com/go-gorp/gorp/v3 v3.1.0 h1:ItKF/Vbuj31dmV4jxA1qblpSwkl9g1typ24xoe70IGs=
+ github.com/go-gorp/gorp/v3 v3.1.0/go.mod h1:dLEjIyyRNiXvNZ8PSmzpt1GsWAUK8kjVhEpjH8TixEw=
+-github.com/go-jose/go-jose/v4 v4.1.5 h1:RjgjO2LOtWOJKUC5wpwY9LR3B3vwVAz6JS2YHfYU6eA=
+-github.com/go-jose/go-jose/v4 v4.1.5/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
+ github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
+ github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
+```
+
+**File**: `vendor/github.com/go-jose/go-jose/v4/crypter.go` (modified, +15/-0)
+```diff
+@@ -428,6 +428,13 @@ func (ctx *genericEncrypter) Options() EncrypterOptions {
+ 	}
+ }
+ 
++func validateContentEncryptionKeySize(cek []byte, cipher contentCipher) error {
++	if len(cek) != cipher.keySize() {
++		return ErrInvalidKeySize
++	}
++	return nil
++}
 +
-+	// A later CT GC run that does not mark 1.1.1.1 and 2.2.2.2 alive
-+	// supersedes the earlier mark, they are no longer alive. 1.1.1.2 only
-+	// survives because CT GC has not completed two runs since it was added.
-+	now = now.Add(5 * time.Minute)
-+	zombies.SetCTGCTime(now, now.Add(5*time.Minute))
-+	alive = zombies.DumpAlive(nil)
-+	assertZombiesContain(t, alive, map[string][]string{
-+		"1.1.1.2": {"test2.com"},
-+	})
- }
+ // Decrypt and validate the object and return the plaintext. This
+ // function does not support multi-recipient. If you desire multi-recipient
+ // decryption use DecryptMulti instead.
+@@ -495,6 +502,10 @@ func (obj JSONWebEncryption) Decrypt(decryptionKey interface{}) ([]byte, error)
+ 	if err != nil {
+ 		return nil, ErrCryptoFailure
+ 	}
++	err = validateContentEncryptionKeySize(cek, cipher)
++	if err != nil {
++		return nil, ErrCryptoFailure
++	}
  
- func TestOverlimitPreferNewerEntries(t *testing.T) {
-@@ -1552,14 +1562,10 @@ func TestZombieDeepCopyDoesNotShareNames(t *testing.T) {
- 		"mutating the copy must not affect the original")
- }
+ 	// Found a valid CEK -- let's try to decrypt.
+ 	plaintext, err = cipher.decrypt(cek, authData, parts)
+@@ -572,6 +583,10 @@ func (obj JSONWebEncryption) DecryptMulti(decryptionKey interface{}) (int, Heade
+ 		if err != nil {
+ 			continue
+ 		}
++		err = validateContentEncryptionKeySize(cek, cipher)
++		if err != nil {
++			continue
++		}
  
--// TestZombieLivenessConditions pins the liveness boundaries of isConnectionAlive.
--// A zombie is dead only once all of these hold:
--// 1. CT GC ran after DeletePendingAt plus the configured grace period,
--// 2. that CT GC run did not mark the zombie alive, and
--// 3. CT GC has run at least twice since the zombie was added.
--//
--// This test pins the exact boundaries of conditions 1 and 2.
--func TestZombieLivenessConditions(t *testing.T) {
-+// TestZombiesGracePeriod pins the grace-period deletion condition of
-+// isConnectionAlive. a zombie may only be deleted once CT GC has run strictly
-+// after DeletePendingAt plus the configured grace period.
-+func TestZombiesGracePeriod(t *testing.T) {
- 	logger := hivetest.Logger(t)
- 
- 	grace := 5 * time.Minute
-@@ -1573,45 +1579,26 @@ func TestZombieLivenessConditions(t *testing.T) {
- 	now := time.Now()
- 	addr := netip.MustParseAddr("1.1.1.1")
- 
--	// newZombie returns a mapping with a single zombie whose DeletePendingAt
--	// is now, i.e. it becomes eligible for deletion once CT GC passes
--	// now+grace.
--	newZombie := func() *DNSZombieMappings {
--		zombies := NewDNSZombieMappings(logger, defaults.ToFQDNsMaxDeferredConnectionDeletes, defaults.ToFQDNsMaxIPsPerHost)
--		zombies.Upsert(now, addr, "test.com")
--		return zombies
--	}
--	isAlive := func(zombies *DNSZombieMappings) bool {
-+	// The zombie's DeletePendingAt is now, i.e. it becomes eligible for
-+	// deletion once CT GC passes now+grace.
-+	zombies := NewDNSZombieMappings(logger, defaults.ToFQDNsMaxDeferredConnectionDeletes, defaults.ToFQDNsMaxIPsPerHost)
-+	zombies.Upsert(now, addr, "test.com")
-+	isAlive := func() bool {
- 		return len(zombies.DumpAlive(nil)) == 1
+ 		// Found a valid CEK -- let's try to decrypt.
+ 		plaintext, err = cipher.decrypt(cek, authData, parts)
+```
+
+**File**: `vendor/github.com/go-jose/go-jose/v4/jwe.go` (modified, +9/-9)
+```diff
+@@ -202,15 +202,6 @@ func (parsed *rawJSONWebEncryption) sanitized(
+ 		}
  	}
  
--	t.Run("grace period boundary", func(t *testing.T) {
--		zombies := newZombie()
--		// Two CT GC runs, the last one at exactly DeletePendingAt+grace:
--		// not *after* the grace period, so the zombie stays alive.
--		zombies.SetCTGCTime(now.Add(grace-time.Minute), now.Add(2*grace))
--		zombies.SetCTGCTime(now.Add(grace), now.Add(2*grace))
--		require.True(t, isAlive(zombies), "zombie must stay alive until CT GC runs strictly after DeletePendingAt+grace")
+-	// Note: this must be called _after_ we parse the protected header,
+-	// otherwise fields from the protected header will not get picked up.
+-	var err error
+-	mergedHeaders := obj.mergedHeaders(nil)
+-	obj.Header, err = mergedHeaders.sanitized()
+-	if err != nil {
+-		return nil, fmt.Errorf("go-jose/go-jose: cannot sanitize merged headers: %v (%v)", err, mergedHeaders)
+-	}
 -
--		// One nanosecond past the grace period the zombie is dead.
--		zombies.SetCTGCTime(now.Add(grace+time.Nanosecond), now.Add(2*grace))
--		require.False(t, isAlive(zombies))
--		alive, dead := zombies.GC()
--		require.Empty(t, alive)
--		assertZombiesContain(t, dead, map[string][]string{"1.1.1.1": {"test.com"}})
--	})
--
--	t.Run("mark alive precedence", func(t *testing.T) {
--		zombies := newZombie()
--		// Both CT GC runs are past the grace period, but the second run marks
--		// the zombie alive: AliveAt >= lastCTGCUpdate keeps it alive.
--		zombies.SetCTGCTime(now.Add(grace+time.Hour), now.Add(grace+2*time.Hour))
--		zombies.MarkAlive(now.Add(grace+2*time.Hour), addr)
--		zombies.SetCTGCTime(now.Add(grace+2*time.Hour), now.Add(grace+3*time.Hour))
--		require.True(t, isAlive(zombies), "zombie marked alive by CT GC must survive")
--
--		// A later CT GC run without a MarkAlive kills it.
--		zombies.SetCTGCTime(now.Add(grace+3*time.Hour), now.Add(grace+4*time.Hour))
--		require.False(t, isAlive(zombies))
--	})
-+	// Two CT GC runs, the last one at exactly DeletePendingAt+grace. not
-+	// after the grace period, so the zombie stays alive. Two runs also
-+	// satisfy the two-GC-runs deletion condition, so from here on only the
-+	// grace period keeps the zombie alive.
-+	zombies.SetCTGCTime(now.Add(grace-time.Minute), now.Add(2*grace))
-+	zombies.SetCTGCTime(now.Add(grace), now.Add(2*grace))
-+	require.True(t, isAlive(), "zombie must stay alive until CT GC runs strictly after DeletePendingAt+grace")
+ 	if len(parsed.Recipients) == 0 {
+ 		obj.recipients = []recipientInfo{
+ 			{
+@@ -264,6 +255,15 @@ func (parsed *rawJSONWebEncryption) sanitized(
+ 		}
+ 	}
+ 
++	// Note: this must be called _after_ we parse the protected header,
++	// otherwise fields from the protected header will not get picked up.
++	mergedHeaders := obj.mergedHeaders(nil)
++	var err error
++	obj.Header, err = mergedHeaders.sanitized()
++	if err != nil {
++		return nil, fmt.Errorf("go-jose/go-jose: cannot sanitize merged headers: %w", err)
++	}
 +
-+	// One nanosecond past the grace period the zombie is dead.
-+	zombies.SetCTGCTime(now.Add(grace+time.Nanosecond), now.Add(2*grace))
-+	require.False(t, isAlive())
-+	alive, dead := zombies.GC()
-+	require.Empty(t, alive)
-+	assertZombiesContain(t, dead, map[string][]string{"1.1.1.1": {"test.com"}})
+ 	obj.iv = parsed.Iv.bytes()
+ 	obj.ciphertext = parsed.Ciphertext.bytes()
+ 	obj.tag = parsed.Tag.bytes()
+```
+
+**File**: `vendor/github.com/go-jose/go-jose/v4/jwk.go` (modified, +43/-8)
+```diff
+@@ -177,13 +177,29 @@ func (k JSONWebKey) MarshalJSON() ([]byte, error) {
+ // UnmarshalJSON reads a key from its JSON representation.
+ //
+ // Returns ErrUnsupportedKeyType for unrecognized or unsupported "kty" header values.
+-func (k *JSONWebKey) UnmarshalJSON(data []byte) (err error) {
++//
++// Directly unmarshaling a JWK is not safe for untrusted input.
++func (k *JSONWebKey) UnmarshalJSON(data []byte) error {
++	return k.unmarshalJSON(data, true)
++}
++
++// unmarshalJSON reads a key from its JSON representation.
++//
++// If allowPrivate is false, a JWK with private key material is rejected and the
++// function is safe for use against untrusted input.
++func (k *JSONWebKey) unmarshalJSON(data []byte, allowPrivate bool) (err error) {
+ 	var raw rawJSONWebKey
+ 	err = json.Unmarshal(data, &raw)
+ 	if err != nil {
+ 		return err
+ 	}
+ 
++	if !allowPrivate &&
++		(raw.K != nil || raw.D != nil || raw.P != nil || raw.Q != nil ||
++			raw.Dp != nil || raw.Dq != nil || raw.Qi != nil) {
++		return errors.New("go-jose/go-jose: JWK contains private parameters")
++	}
++
+ 	certs, err := parseCertificateChain(raw.X5c)
+ 	if err != nil {
+ 		return fmt.Errorf("go-jose/go-jose: failed to unmarshal x5c field: %s", err)
+@@ -505,13 +521,25 @@ func (k *JSONWebKey) Valid() bool {
+ 	return true
  }
+ 
++// MaxRSAModulusBits is the largest RSA modulus size, in bits, that will be
++// accepted when parsing a JWK. Applications that need larger keys can raise
++// this limit.
++//
++// If modifying MaxRSAModulusBits, do it before any parsing occurs.
++var MaxRSAModulusBits = 4096
++
+ func (key rawJSONWebKey) rsaPublicKey() (*rsa.PublicKey, error) {
+ 	if key.N == nil || key.E == nil {
+ 		return nil, fmt.Errorf("go-jose/go-jose: invalid RSA key, missing n/e values")
+ 	}
+ 
++	n := key.N.bigInt()
++	if n.BitLen() > MaxRSAModulusBits {
++		return nil, fmt.Errorf("go-jose/go-jose: invalid RSA key, modulus too large")
++	}
++
+ 	return &rsa.PublicKey{
+-		N: key.N.bigInt(),
++		N: n,
+ 		E: key.E.toInt(),
+ 	}, nil
+ }
+@@ -673,16 +701,23 @@ func (key rawJSONWebKey) rsaPrivateKey() (*rsa.PrivateKey, error) {
+ 		return nil, fmt.Errorf("go-jose/go-jose: invalid RSA private key, missing %s value(s)", strings.Join(missing, ", "))
+ 	}
+ 
++	n := key.N.bigInt()
++	if n.BitLen() > MaxRSAModulusBits {
++		return nil, fmt.Errorf("go-jose/go-jose: invalid RSA key, modulus too large")
++	}
++
++	p, q := key.P.bigInt(), key.Q.bigInt()
++	if p.BitLen()+q.BitLen() > n.BitLen()+1 || new(big.Int).Mul(p, q).Cmp(n) != 0 {
++		return nil, errors.New("go-jose/go-jose: invalid RSA private key, p * q != n")
++	}
++
+ 	rv := &rsa.PrivateKey{
+ 		PublicKey: rsa.PublicKey{
+-			N: key.N.bigInt(),
++			N: n,
+ 			E: key.E.toInt(),
+ 		},
+-		D: key.D.bigInt(),
+-		Primes: []*big.Int{
+-			key.P.bigInt(),
+-			key.Q.bigInt(),
+-		},
++		D:      key.D.bigInt(),
++		Primes: []*big.Int{p, q},
+ 	}
+ 
+ 	if key.Dp != nil {
+```
+
+**File**: `vendor/github.com/go-jose/go-jose/v4/jws.go` (modified, +16/-13)
+```diff
+@@ -275,17 +275,18 @@ func (parsed *rawJSONWebSignature) sanitized(signatureAlgorithms []SignatureAlgo
+ 			Signature: parsed.Signature,
+ 		}
+ 
++		mergedHeaders := signature.mergedHeaders()
++		alg := mergedHeaders.getSignatureAlgorithm()
++		if !containsSignatureAlgorithm(signatureAlgorithms, alg) {
++			return nil, newErrUnexpectedSignatureAlgorithm(alg, signatureAlgorithms)
++		}
++
+ 		var err error
+-		signature.Header, err = signature.mergedHeaders().sanitized()
++		signature.Header, err = mergedHeaders.sanitized()
+ 		if err != nil {
+ 			return nil, err
+ 		}
+ 
+-		alg := SignatureAlgorithm(signature.Header.Algorithm)
+-		if !containsSignatureAlgorithm(signatureAlgorithms, alg) {
+-			return nil, newErrUnexpectedSignatureAlgorithm(alg, signatureAlgorithms)
+-		}
+-
+ 		if signature.header != nil {
+ 			signature.Unprotected, err = signature.header.sanitized()
+ 			if err != nil {
+@@ -323,17 +324,20 @@ func (parsed *rawJSONWebSignature) sanitized(signatureAlgorithms []SignatureAlgo
+ 			return nil, ErrUnprotectedNonce
+ 		}
+ 
+-		var err error
+-		obj.Signatures[i].Header, err = obj.Signatures[i].mergedHeaders().sanitized()
+-		if err != nil {
+-			return nil, err
+-		}
++		obj.Signatures[i].header = sig.Header
+ 
+-		alg := SignatureAlgorithm(obj.Signatures[i].Header.Algorithm)
++		mergedHeaders := obj.Signatures[i].mergedHeaders()
++		alg := mergedHeaders.getSignatureAlgorithm()
+ 		if !containsSignatureAlgorithm(signatureAlgorithms, alg) {
+ 			return nil, newErrUnexpectedSignatureAlgorithm(alg, signatureAlgorithms)
+ 		}
+ 
++		var err error
++		obj.Signatures[i].Header, err = mergedHeaders.sanitized()
++		if err != nil {
++			return nil, err
++		}
++
+ 		if obj.Signatures[i].header != nil {
+ 			obj.Signatures[i].Unprotected, err = obj.Signatures[i].header.sanitized()
+ 			if err != nil {
+@@ -359,7 +363,6 @@ func (parsed *rawJSONWebSignature) sanitized(signatureAlgorithms []SignatureAlgo
+ 		// Copy value of sig
+ 		original := sig
+ 
+-		obj.Signatures[i].header = sig.Header
+ 		obj.Signatures[i].original = &original
+ 	}
+ 
+```
+
+**File**: `vendor/github.com/go-jose/go-jose/v4/jwt/errors.go` (modified, +1/-1)
+```diff
+@@ -47,7 +47,7 @@ var ErrNotValidYet = errors.New("go-jose/go-jose/jwt: validation failed, token n
+ var ErrExpired = errors.New("go-jose/go-jose/jwt: validation failed, token is expired (exp)")
+ 
+ // ErrIssuedInTheFuture indicates that the iat field is in the future.
+-var ErrIssuedInTheFuture = errors.New("go-jose/go-jose/jwt: validation field, token issued in the future (iat)")
++var ErrIssuedInTheFuture = errors.New("go-jose/go-jose/jwt: validation failed, token issued in the future (iat)")
+ 
+ // ErrInvalidContentType indicates that token requires JWT cty header.
+ var ErrInvalidContentType = errors.New("go-jose/go-jose/jwt: expected content type to be JWT (cty header)")
+```
+
+**File**: `vendor/github.com/go-jose/go-jose/v4/shared.go` (modified, +11/-20)
+```diff
+@@ -297,9 +297,10 @@ func (parsed rawHeader) getEPK() (*JSONWebKey, error) {
+ 	if v == nil {
+ 		return nil, nil
+ 	}
+-	var epk *JSONWebKey
+-	err := json.Unmarshal(*v, &epk)
+-	if err != nil {
++	// RFC 7518 Section 4.6.1.1: the "epk" header is the ephemeral public key
++	// of the originator. Reject private key material before parsing it.
++	epk := new(JSONWebKey)
++	if err := epk.unmarshalJSON(*v, false); err != nil {
+ 		return nil, err
+ 	}
+ 	return epk, nil
+@@ -325,20 +326,6 @@ func (parsed rawHeader) getTag() (*byteBuffer, error) {
+ 	return parsed.getByteBuffer(headerTag)
+ }
+ 
+-// getJWK extracts parsed "jwk" from the raw JSON.
+-func (parsed rawHeader) getJWK() (*JSONWebKey, error) {
+-	v := parsed[headerJWK]
+-	if v == nil {
+-		return nil, nil
+-	}
+-	var jwk *JSONWebKey
+-	err := json.Unmarshal(*v, &jwk)
+-	if err != nil {
+-		return nil, err
+-	}
+-	return jwk, nil
+-}
+-
+ // getCritical extracts parsed "crit" from the raw JSON. If omitted, it
+ // returns an empty slice.
+ func (parsed rawHeader) getCritical() ([]string, error) {
+@@ -424,10 +411,14 @@ func (parsed rawHeader) sanitized() (h Header, err error) {
+ 		}
+ 		switch k {
+ 		case headerJWK:
+-			var jwk *JSONWebKey
+-			err = json.Unmarshal(*v, &jwk)
++			// RFC 7515 Section 4.1.3 and RFC 7516 Section 4.1.5: the "jwk"
++			// header is the public key that corresponds to the key used to
++			// sign the JWS or encrypt the JWE. Reject private key material
++			// before parsing it.
++			jwk := new(JSONWebKey)
++			err = jwk.unmarshalJSON(*v, false)
+ 			if err != nil {
+-				err = fmt.Errorf("failed to unmarshal JWK: %v: %#v", err, string(*v))
++				err = fmt.Errorf("failed to unmarshal JWK: %w", err)
+ 				return
+ 			}
+ 			h.JSONWebKey = jwk
 ```
 
 ---
 
-### Incident Patch 2: `e9759b52` (2026-09-03)
-**Commit Message**: fqdn: test zombie liveness boundaries
+### Incident Patch 2: `9f4b6952` (2026-10-29)
+**Commit Message**: images: update cilium-{runtime,builder}
 
-Add tests for the grace-period deadline and the mark-alive boundary of
-isConnectionAlive ahead of the FQDN garbage collection refactor.
+Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
 
-Ref: #45849
-
-Signed-off-by: henockt <[REDACTED_EMAIL]>
-
-**File**: `pkg/fqdn/cache_test.go` (modified, +65/-0)
+**File**: `.devcontainer/devcontainer.json` (modified, +1/-1)
 ```diff
-@@ -19,6 +19,7 @@ import (
+@@ -1,6 +1,6 @@
+ {
+   "name": "Cilium",
+-  "image": "quay.io/cilium/cilium-builder:28c9845c5392a7eb9868b4fe7ec8c4eb77a18446@sha256:3e5cc4cfed3498f518e2dcc2ecae035d2ec89751f3ec0b33e2d6171d3f69ceef",
++  "image": "quay.io/cilium/cilium-builder:ec89b8ac6f3b5aabde010f9b352e9f082031ec58@sha256:2bbf9d8cf4e381672f1b8b8179b3261f2cf7e8b5bb7f01ca3ac589712da44870",
+   "workspaceFolder": "/go/src/github.com/cilium/cilium",
+   "workspaceMount": "source=${localWorkspaceFolder},target=/go/src/github.com/cilium/cilium,type=bind",
+   // This container is based on the cilium-builder image, so contrib/scripts/builder.sh can run commands
+```
+
+**File**: `.github/actions/set-runtime-image/runtime-image.txt` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-quay.io/cilium/cilium-runtime:4ac5c7c3a318788dd09baf75e0e1bea17ca9dbcd@sha256:dc71a8063db8f1ae572b8ac8832de251f24efaaae0544ee359e54a7b4159df7d
+\ No newline at end of file
++quay.io/cilium/cilium-runtime:d78d9ff8fb7d3b0054b419186215685bbad72f5a@sha256:f6d4110270f3a2ec9956b7fffbfc3a2e262fee0d5cfa90eb5b41d1fa53fa7eaf
+\ No newline at end of file
+```
+
+**File**: `images/cilium/Dockerfile` (modified, +2/-2)
+```diff
+@@ -3,8 +3,8 @@
+ # Copyright Authors of Cilium
+ # SPDX-License-Identifier: Apache-2.0
  
- 	"github.com/cilium/cilium/pkg/defaults"
- 	"github.com/cilium/cilium/pkg/ip"
-+	"github.com/cilium/cilium/pkg/option"
- )
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:28c9845c5392a7eb9868b4fe7ec8c4eb77a18446@sha256:3e5cc4cfed3498f518e2dcc2ecae035d2ec89751f3ec0b33e2d6171d3f69ceef
+-ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:4ac5c7c3a318788dd09baf75e0e1bea17ca9dbcd@sha256:dc71a8063db8f1ae572b8ac8832de251f24efaaae0544ee359e54a7b4159df7d
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:ec89b8ac6f3b5aabde010f9b352e9f082031ec58@sha256:2bbf9d8cf4e381672f1b8b8179b3261f2cf7e8b5bb7f01ca3ac589712da44870
++ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:d78d9ff8fb7d3b0054b419186215685bbad72f5a@sha256:f6d4110270f3a2ec9956b7fffbfc3a2e262fee0d5cfa90eb5b41d1fa53fa7eaf
+ #
+ # cilium-envoy from github.com/cilium/proxy
+ #
+```
+
+**File**: `images/hubble-relay/Dockerfile` (modified, +1/-1)
+```diff
+@@ -7,7 +7,7 @@
+ # $ cosign verify $IMAGE_NAME --certificate-oidc-issuer https://accounts.google.com --certificate-identity keyless@distroless.iam.gserviceaccount.com
+ ARG BASE_IMAGE=gcr.io/distroless/static:nonroot@sha256:18f4cc26c9ffa7f20a359298be7deadac5c607c8e03a02b8119f1a5fc2f82c99
+ ARG GOLANG_IMAGE=docker.io/library/golang:1.27.3@sha256:2920bb124f1a2e12a1d39f0cab756ae0068441ee1da7655dec7f5e374944095b
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:28c9845c5392a7eb9868b4fe7ec8c4eb77a18446@sha256:3e5cc4cfed3498f518e2dcc2ecae035d2ec89751f3ec0b33e2d6171d3f69ceef
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:ec89b8ac6f3b5aabde010f9b352e9f082031ec58@sha256:2bbf9d8cf4e381672f1b8b8179b3261f2cf7e8b5bb7f01ca3ac589712da44870
  
- // TestUpdateLookup tests that we can insert DNS data and retrieve it. We
-@@ -1550,3 +1551,67 @@ func TestZombieDeepCopyDoesNotShareNames(t *testing.T) {
- 	require.Equal(t, []string{"alpha.example.com", "zeta.example.com"}, zombie.Names.Sorted(),
- 		"mutating the copy must not affect the original")
+ # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
+ # Represents the plataform where the build is happening, do not mix with
+```
+
+**File**: `images/operator/Dockerfile` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@
+ ARG BASE_IMAGE=scratch
+ ARG GOLANG_IMAGE=docker.io/library/golang:1.27.3@sha256:2920bb124f1a2e12a1d39f0cab756ae0068441ee1da7655dec7f5e374944095b
+ ARG ALPINE_IMAGE=docker.io/library/alpine:3.24.3@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:28c9845c5392a7eb9868b4fe7ec8c4eb77a18446@sha256:3e5cc4cfed3498f518e2dcc2ecae035d2ec89751f3ec0b33e2d6171d3f69ceef
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:ec89b8ac6f3b5aabde010f9b352e9f082031ec58@sha256:2bbf9d8cf4e381672f1b8b8179b3261f2cf7e8b5bb7f01ca3ac589712da44870
+ 
+ # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
+ # Represents the plataform where the build is happening, do not mix with
+```
+
+---
+
+### Incident Patch 3: `59e3e7c8` (2026-10-27)
+**Commit Message**: bpf: host: switch cilium_tail_call_buffer* to auxvar
+
+Follow commit 7ec72d10c03d ("bpf: lxc: switch cilium_tail_call_buffer*
+to auxvar") which did the same for bpf_lxc.
+
+In combination with commit b9a846dcf7a5 ("lib/auxvars.h: Let `AUX()`
+zero value.") this also automatically clears the CT state before doing
+the CT lookup.
+
+AIL: 0
+Signed-off-by: Tobias Klauser <[REDACTED_EMAIL]>
+
+**File**: `bpf/bpf_host.c` (modified, +8/-31)
+```diff
+@@ -22,6 +22,7 @@
+ 
+ #define	NODEPORT_USE_NAT_46x64		1
+ 
++#include "lib/auxvars.h"
+ #include "lib/common.h"
+ #include "lib/config_map.h"
+ #include "lib/edt.h"
+@@ -83,19 +84,8 @@ static __always_inline bool allow_vlan(__u32 vlan_id)
+ 	return false;
  }
-+
-+// TestZombieLivenessConditions pins the liveness boundaries of isConnectionAlive.
-+// A zombie is dead only once all of these hold:
-+// 1. CT GC ran after DeletePendingAt plus the configured grace period,
-+// 2. that CT GC run did not mark the zombie alive, and
-+// 3. CT GC has run at least twice since the zombie was added.
-+//
-+// This test pins the exact boundaries of conditions 1 and 2.
-+func TestZombieLivenessConditions(t *testing.T) {
-+	logger := hivetest.Logger(t)
-+
-+	grace := 5 * time.Minute
-+	oldGrace := option.Config.ToFQDNsIdleConnectionGracePeriod
-+	option.Config.ToFQDNsIdleConnectionGracePeriod = grace
-+
-+	t.Cleanup(func() {
-+		option.Config.ToFQDNsIdleConnectionGracePeriod = oldGrace
-+	})
-+
-+	now := time.Now()
-+	addr := netip.MustParseAddr("1.1.1.1")
-+
-+	// newZombie returns a mapping with a single zombie whose DeletePendingAt
-+	// is now, i.e. it becomes eligible for deletion once CT GC passes
-+	// now+grace.
-+	newZombie := func() *DNSZombieMappings {
-+		zombies := NewDNSZombieMappings(logger, defaults.ToFQDNsMaxDeferredConnectionDeletes, defaults.ToFQDNsMaxIPsPerHost)
-+		zombies.Upsert(now, addr, "test.com")
-+		return zombies
-+	}
-+	isAlive := func(zombies *DNSZombieMappings) bool {
-+		return len(zombies.DumpAlive(nil)) == 1
-+	}
-+
-+	t.Run("grace period boundary", func(t *testing.T) {
-+		zombies := newZombie()
-+		// Two CT GC runs, the last one at exactly DeletePendingAt+grace:
-+		// not *after* the grace period, so the zombie stays alive.
-+		zombies.SetCTGCTime(now.Add(grace-time.Minute), now.Add(2*grace))
-+		zombies.SetCTGCTime(now.Add(grace), now.Add(2*grace))
-+		require.True(t, isAlive(zombies), "zombie must stay alive until CT GC runs strictly after DeletePendingAt+grace")
-+
-+		// One nanosecond past the grace period the zombie is dead.
-+		zombies.SetCTGCTime(now.Add(grace+time.Nanosecond), now.Add(2*grace))
-+		require.False(t, isAlive(zombies))
-+		alive, dead := zombies.GC()
-+		require.Empty(t, alive)
-+		assertZombiesContain(t, dead, map[string][]string{"1.1.1.1": {"test.com"}})
-+	})
-+
-+	t.Run("mark alive precedence", func(t *testing.T) {
-+		zombies := newZombie()
-+		// Both CT GC runs are past the grace period, but the second run marks
-+		// the zombie alive: AliveAt >= lastCTGCUpdate keeps it alive.
-+		zombies.SetCTGCTime(now.Add(grace+time.Hour), now.Add(grace+2*time.Hour))
-+		zombies.MarkAlive(now.Add(grace+2*time.Hour), addr)
-+		zombies.SetCTGCTime(now.Add(grace+2*time.Hour), now.Add(grace+3*time.Hour))
-+		require.True(t, isAlive(zombies), "zombie marked alive by CT GC must survive")
-+
-+		// A later CT GC run without a MarkAlive kills it.
-+		zombies.SetCTGCTime(now.Add(grace+3*time.Hour), now.Add(grace+4*time.Hour))
-+		require.False(t, isAlive(zombies))
-+	})
-+}
+ 
+-struct {
+-	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
+-	__type(key, __u32);
+-	__type(value, struct ct_buffer6);
+-	__uint(max_entries, 1);
+-} cilium_tail_call_buffer6 __section_maps_btf;
+-
+-struct {
+-	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
+-	__type(key, __u32);
+-	__type(value, struct ct_buffer4);
+-	__uint(max_entries, 1);
+-} cilium_tail_call_buffer4 __section_maps_btf;
++DEFINE_AUX(struct ct_buffer4, cilium_tail_call_buffer4);
++DEFINE_AUX(struct ct_buffer6, cilium_tail_call_buffer6);
+ 
+ #if defined(ENABLE_IPV4) || defined(ENABLE_IPV6)
+ static __always_inline int rewrite_dmac_to_host(struct __ctx_buff *ctx)
+@@ -158,9 +148,9 @@ handle_ipv6(struct __ctx_buff *ctx, __u32 secctx __maybe_unused,
+ 	bool __maybe_unused need_hostfw = false;
+ 	bool __maybe_unused is_host_id = false;
+ 	bool __maybe_unused skip_host_firewall = false;
+-	int ret, zero __maybe_unused = 0;
+ 	void *data, *data_end;
+ 	struct ipv6hdr *ip6;
++	int ret;
+ 
+ 	if (!revalidate_data(ctx, &data, &data_end, &ip6))
+ 		return DROP_INVALID;
+@@ -228,9 +218,7 @@ handle_ipv6(struct __ctx_buff *ctx, __u32 secctx __maybe_unused,
+ 	if (skip_host_firewall)
+ 		goto skip_host_firewall;
+ 
+-	ct_buffer = map_lookup_elem(&cilium_tail_call_buffer6, &zero);
+-	if (!ct_buffer)
+-		return DROP_INVALID_TC_BUFFER;
++	ct_buffer = AUX(cilium_tail_call_buffer6);
+ 
+ 	if (from_host) {
+ 		if (ipv6_host_policy_egress_lookup(ctx, secctx, ipcache_srcid, ip6, ct_buffer)) {
+@@ -302,13 +290,9 @@ handle_ipv6_cont(struct __ctx_buff *ctx, __u32 secctx, const bool from_host,
+ 	from_host_raw = ctx_load_and_clear_meta(ctx, CB_FROM_HOST);
+ 
+ 	if (from_host_raw & FROM_HOST_FLAG_NEED_HOSTFW) {
+-		struct ct_buffer6 *ct_buffer;
+-		__u32 zero = 0;
++		struct ct_buffer6 *ct_buffer = AUX_REUSE(cilium_tail_call_buffer6);
+ 		__u32 remote_id = world_ipv6_id();
+ 
+-		ct_buffer = map_lookup_elem(&cilium_tail_call_buffer6, &zero);
+-		if (!ct_buffer)
+-			return DROP_INVALID_TC_BUFFER;
+ 		if (ct_buffer->tuple.saddr.d1 == 0 && ct_buffer->tuple.saddr.d2 == 0)
+ 			/* The map value is zeroed so the map update didn't happen somehow. */
+ 			return DROP_INVALID_TC_BUFFER;
+@@ -622,7 +606,6 @@ handle_ipv4(struct __ctx_buff *ctx, __u32 secctx __maybe_unused,
+ 	bool __maybe_unused is_host_id = false;
+ 	void *data, *data_end;
+ 	struct iphdr *ip4;
+-	int zero __maybe_unused = 0;
+ 
+ 	if (!revalidate_data(ctx, &data, &data_end, &ip4))
+ 		return DROP_INVALID;
+@@ -678,9 +661,7 @@ handle_ipv4(struct __ctx_buff *ctx, __u32 secctx __maybe_unused,
+ #endif /* ENABLE_NODEPORT */
+ 
+ #ifdef ENABLE_HOST_FIREWALL
+-	ct_buffer = map_lookup_elem(&cilium_tail_call_buffer4, &zero);
+-	if (!ct_buffer)
+-		return DROP_INVALID_TC_BUFFER;
++	ct_buffer = AUX(cilium_tail_call_buffer4);
+ 
+ 	if (from_host) {
+ 		/* We're on the egress path of cilium_host. */
+@@ -750,13 +731,9 @@ handle_ipv4_cont(struct __ctx_buff *ctx, __u32 secctx, const bool from_host,
+ 	from_host_raw = ctx_load_and_clear_meta(ctx, CB_FROM_HOST);
+ 
+ 	if (from_host_raw & FROM_HOST_FLAG_NEED_HOSTFW) {
+-		struct ct_buffer4 *ct_buffer;
+-		__u32 zero = 0;
++		struct ct_buffer4 *ct_buffer = AUX_REUSE(cilium_tail_call_buffer4);
+ 		__u32 remote_id = 0;
+ 
+-		ct_buffer = map_lookup_elem(&cilium_tail_call_buffer4, &zero);
+-		if (!ct_buffer)
+-			return DROP_INVALID_TC_BUFFER;
+ 		if (ct_buffer->tuple.saddr == 0)
+ 			/* The map value is zeroed so the map update didn't happen somehow. */
+ 			return DROP_INVALID_TC_BUFFER;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49700** (closed): cilium-cli: Avoid connectivity setup hangs on stalled exec requests (@weizhoublue)
+- **PR #49698** (2026-10-29): chore(deps): update auto-merge-trusted-deps (v1.18) (@cilium-renovate[bot])
+- **PR #49697** (2026-10-29): chore(deps): update auto-merge-trusted-deps (v1.19) (@cilium-renovate[bot])
+- **PR #49696** (2026-10-29): chore(deps): update auto-merge-trusted-deps (v1.20) (@cilium-renovate[bot])
+- **PR #49695** (2026-10-29): chore(deps): update auto-merge-trusted-deps (main) (@cilium-renovate[bot])
 - **PR #49691** (2026-10-28): docs: document Standalone DNS Proxy trust limitation (@vipul-21)
-- **PR #49679** (2026-10-28): fix(deps): update module golang.org/x/net to v0.62.0 [security] (v1.19) (@cilium-renovate[bot])
-- **PR #49676** (2026-10-28): cilium-cli/connectivity: remove unused client-egress-to-echo-port-range manifest (@tklauser)
-- **PR #49672** (2026-10-28): gha/conformance-gke: Lower test concurrency to 3 (@aanm)
-- **PR #49662** (closed): ipam: Only release ENI prefixes acknowledged by the agent (@norbjert)
-- **PR #49658** (2026-10-28): chore(deps): update module github.com/go-jose/go-jose/v4 to v4.1.6 [security] (v1.18) (@cilium-renovate[bot])
 
 ---
 
@@ -1515,72 +1830,28 @@ Signed-off-by: henockt <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fqdn: move mark-alive check into TestZombiesDumpAlive
+## X. deps): update module github.com/go-jose/go-jose/v4 to v4.1.6 [security]
 
 **RULE**:
-When implementing operations in `pkg/fqdn/cache_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dbe91960`: fqdn: move mark-alive check into TestZombiesDumpAlive. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `80240cc5`: deps): update module github.com/go-jose/go-jose/v4 to v4.1.6 [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/fqdn/cache_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-	// A later CT GC run that does not mark 1.1.1.1 and 2.2.2.2 alive
-	// supersedes the earlier mark, they are no longer alive. 1.1.1.2 only
-	// survives because CT GC has not completed two runs since it was added.
-	now = now.Add(5 * time.Minute)
-	zombies.SetCTGCTime(now, now.Add(5*time.Minute))
-	alive = zombies.DumpAlive(nil)
-	assertZombiesContain(t, alive, map[string][]string{
-		"1.1.1.2": {"test2.com"},
-	})
-// TestZombiesGracePeriod pins the grace-period deletion condition of
-// isConnectionAlive. a zombie may only be deleted once CT GC has run strictly
-// after DeletePendingAt plus the configured grace period.
-func TestZombiesGracePeriod(t *testing.T) {
-	// The zombie's DeletePendingAt is now, i.e. it becomes eligible for
-	// deletion once CT GC passes now+grace.
-	zombies := NewDNSZombieMappings(logger, defaults.ToFQDNsMaxDeferredConnectionDeletes, defaults.ToFQDNsMaxIPsPerHost)
-	zombies.Upsert(now, addr, "test.com")
-	isAlive := func() bool {
-	// Two CT GC runs, the last one at exactly DeletePendingAt+grace. not
-	// after the grace period, so the zombie stays alive. Two runs also
-	// satisfy the two-GC-runs deletion condition, so from here on only the
-	// grace period keeps the 
+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// TestZombieLivenessConditions pins the liveness boundaries of isConnectionAlive.
-// A zombie is dead only once all of these hold:
-// 1. CT GC ran after DeletePendingAt plus the configured grace period,
-// 2. that CT GC run did not mark the zombie alive, and
-// 3. CT GC has run at least twice since the zombie was added.
-//
-// This test pins the exact boundaries of conditions 1 and 2.
-func TestZombieLivenessConditions(t *testing.T) {
-	// newZombie returns a mapping with a single zombie whose DeletePendingAt
-	// is now, i.e. it becomes eligible for deletion once CT GC passes
-	// now+grace.
-	newZombie := func() *DNSZombieMappings {
-		zombies := NewDNSZombieMappings(logger, defaults.ToFQDNsMaxDeferredConnectionDeletes, defaults.ToFQDNsMaxIPsPerHost)
-		zombies.Upsert(now, addr, "test.com")
-		return zombies
-	}
-	isAlive := func(zombies *DNSZombieMappings) bool {
-	t.Run("grace period boundary", func(t *testing.T) {
-		zombies := newZombie()
-		// Two CT GC runs, the last one at exactly DeletePendingAt+grace:
-		// not *after* the grace period, so the zombie stays alive.
-		zombies.SetCTGCTime(now.Add(grace-time.Minute), now.Add(2*grace))
-		zombies.SetCTGCTime(now.Add(grace), now.Add(2*grace))
+	github.com/go-jose/go-jose/v4 v4.1.5 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dbe91960` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `80240cc5` are properly handled with clean fallback behavior.

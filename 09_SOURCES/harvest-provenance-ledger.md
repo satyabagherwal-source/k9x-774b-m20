@@ -6041,3 +6041,6 @@ Every entry in this ledger must capture:
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `1c0e6c8d` | Multi-dimensional audit evidence | 2026-10-29T11:52:34.694Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `ecd3935b` | Multi-dimensional audit evidence | 2026-10-29T11:52:50.681Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `36d6c793` | Multi-dimensional audit evidence | 2026-10-29T12:01:49.113Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `1cd28b29` | Multi-dimensional audit evidence | 2026-10-29T12:08:42.819Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `e5827d55` | Multi-dimensional audit evidence | 2026-10-29T12:08:54.465Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `0c9e11ad` | Multi-dimensional audit evidence | 2026-10-29T12:08:56.238Z |

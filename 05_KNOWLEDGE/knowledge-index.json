@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T12:01:49.030Z",
+  "last_updated": "2026-10-29T12:08:56.177Z",
   "total_verified_learnings": 1163,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6474,8 +6474,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "dbe91960",
-      "content_hash": "a35fe5a0ddf983daab3329e9a8f115a0c85fc81000cdeeed20431d05cdca07c8",
+      "source_version": "e5827d55",
+      "content_hash": "c17c3265685a5588e113cb2bc9389af6c0b2598d3f99ff2f4808d92024d7b9d6",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -6628,6 +6628,11 @@
           "number": 5442,
           "title": "fqdn: move mark-alive check into TestZombiesDumpAlive",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5503,
+          "title": "deps): update module github.com/go-jose/go-jose/v4 to v4.1.6 [security]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6635,7 +6640,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:45:52.199Z",
+      "verified_at": "2026-10-29T12:08:54.389Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37276,8 +37281,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "55b79d17",
-      "content_hash": "4cb21338bfb23c3afb3b557dafd5d2c821e2fc1e3322bf4999e95b4990ba65f4",
+      "source_version": "1cd28b29",
+      "content_hash": "ab89e548536cafc6b1ac95c16e97cd5668fe96a50bdfe8a136e64101e3d34872",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -37315,6 +37320,11 @@
           "number": 5187,
           "title": "Merge pull request #5082 from metalbear-co/meowchinist/cor-1692-add-the-paid-fea",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5502,
+          "title": "up): keep forwarding a service's output past bytes that aren't UTF-8",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37322,7 +37332,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T05:30:50.297Z",
+      "verified_at": "2026-10-29T12:08:42.742Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40900,8 +40910,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "62f695c4",
-      "content_hash": "ab57601d992c08bb9c795bb61728bb0a2d8446af3c5205be0e4bfcfd35fb5710",
+      "source_version": "0c9e11ad",
+      "content_hash": "4b554aa73d9ace51ae6474332af790fbb1a9b3a404a2dba7a98e8a2d32152bfe",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -41024,6 +41034,11 @@
           "number": 5336,
           "title": "Clarify ARC dataset and proposal references",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5504,
+          "title": "Require reasons in proposal rejection records",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41031,7 +41046,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T16:05:27.239Z",
+      "verified_at": "2026-10-29T12:08:56.162Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -148262,6 +148277,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T12:01:49.003Z"
+    },
+    "rule-5502": {
+      "learning_id": "rule-5502",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5502,
+      "title": "up): keep forwarding a service's output past bytes that aren't UTF-8",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "1cd28b29",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T12:08:42.742Z"
+    },
+    "rule-5503": {
+      "learning_id": "rule-5503",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5503,
+      "title": "deps): update module github.com/go-jose/go-jose/v4 to v4.1.6 [security]",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "e5827d55",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T12:08:54.389Z"
+    },
+    "rule-5504": {
+      "learning_id": "rule-5504",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5504,
+      "title": "Require reasons in proposal rejection records",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "0c9e11ad",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T12:08:56.162Z"
     }
   },
   "aliases": {

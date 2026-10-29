@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `55b79d17`  
+> **Source Version**: `1cd28b29`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T05:30:49.970Z  
+> **Timestamp**: 2026-10-29T12:08:42.264Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T05:30:49.823Z  
+> **Harvest Timestamp**: 2026-10-29T12:08:41.014Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5387 stars
+- **Stars / Engagement**: 5390 stars
 
 ---
 
@@ -1535,707 +1535,581 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `55b79d17` (2026-10-27)
-**Commit Message**: Merge pull request #5082 from metalbear-co/meowchinist/cor-1692-add-the-paid-feature-gate-error-gate-hit-recording-and-free
+### Incident Patch 1: `c1878fdf` (2026-10-28)
+**Commit Message**: fix(up): keep forwarding a service's output past bytes that aren't UTF-8
 
-COR-1692: Report paid feature gates and show upgrade errors
+`up` read each service's output with `lines()`, which fails on the first
+byte that isn't valid UTF-8. Forwarding then stopped and dropped the
+pipe, so the service's next write failed and `up` reported it as a
+crash. A .NET service logging `£` under a hidden console does that: it
+writes in the console's code page, where `£` is 0x9C.
 
-**File**: `changelog.d/+paid-feature-errors.added.md` (added, +2/-0)
+Lines are now read as bytes and decoded lossily, so a bad byte shows as
+U+FFFD and the rest of the output still arrives.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/+up-non-utf8-output.fixed.md` (added, +1/-0)
 ```diff
-@@ -0,0 +1,2 @@
-+Paid-feature errors identify the configuration key and required plan, with billing guidance for cluster administrators.
-+Local paid-feature refusals are reported to operators that support license-gate reporting.
+@@ -0,0 +1 @@
++`mirrord up` no longer stops showing a service's output, and reports the service as crashed, when the service prints text that isn't UTF-8, such as a Windows console code page's `£`.
 ```
 
-**File**: `mirrord/analytics/src/lib.rs` (modified, +14/-0)
+**File**: `mirrord/up/src/process.rs` (modified, +58/-4)
 ```diff
-@@ -332,6 +332,12 @@ impl<T: CollectAnalytics> From<T> for AnalyticValue {
- }
+@@ -430,16 +430,29 @@ async fn wait_for_first_exit(
  
- pub trait Reporter: Sized {
-+    /// Workstation identity is exported only with telemetry consent. Non-CLI reporters need not
-+    /// invent one for operator reports.
-+    fn machine_id(&self) -> Option<Uuid> {
-+        None
-+    }
+ /// Prints each line of `stream` prefixed with the service's name. On a session's stdout, also
+ /// picks up the readiness marker and the branch databases report, which is not printed.
++///
++/// Lines are decoded lossily: a program may write in another encoding (a Windows console's code
++/// page, say), and one bad byte must not stop the forwarding, which would close the pipe on the
++/// program's next write.
+ async fn forward_output(
+     stream: impl AsyncRead + Unpin,
+     name: Arc<str>,
+     session: Option<SessionOutput>,
+ ) {
+-    let mut lines = BufReader::new(stream).lines();
++    let mut reader = BufReader::new(stream);
++    let mut buffer = Vec::new();
+     let mut counted = false;
+     loop {
+-        match lines.next_line().await {
+-            Ok(Some(line)) => {
++        buffer.clear();
++        match reader.read_until(b'\n', &mut buffer).await {
++            Ok(0) => break,
++            Ok(_) => {
++                let line = String::from_utf8_lossy(
++                    buffer
++                        .strip_suffix(b"\n")
++                        .map(|line| line.strip_suffix(b"\r").unwrap_or(line))
++                        .unwrap_or(&buffer),
++                );
+                 if let Some(session) = &session {
+                     if counted.not() && line.trim() == SESSION_READY_MESSAGE {
+                         counted = true;
+@@ -460,7 +473,6 @@ async fn forward_output(
+                 }
+                 println!("{name}: {line}");
+             }
+-            Ok(None) => break,
+             Err(error) => {
+                 eprintln!("{name} output error: {error}");
+                 break;
+@@ -611,6 +623,48 @@ async fn supervise_with_second_signal(
+ #[cfg(test)]
+ mod test_support;
+ 
++#[cfg(test)]
++mod output_tests {
++    use super::*;
 +
-     fn get_mut(&mut self) -> &mut Analytics;
- 
-     fn set_operator_properties(&mut self, operator_properties: AnalyticsOperatorProperties);
-@@ -398,6 +404,7 @@ pub struct AnalyticsReporter {
-     watch: drain::Watch,
-     target: ReportTarget,
-     session_key: Option<String>,
-+    machine_id: Uuid,
- }
- 
- impl AnalyticsReporter {
-@@ -428,6 +435,7 @@ impl AnalyticsReporter {
-             watch,
-             target: ReportTarget::ClientSession,
-             session_key,
-+            machine_id,
-         }
-     }
- 
-@@ -456,6 +464,7 @@ impl AnalyticsReporter {
-             watch,
-             target: ReportTarget::TuiEvent,
-             session_key: None,
-+            machine_id,
-         }
-     }
- 
-@@ -515,6 +524,7 @@ impl AnalyticsReporter {
-             watch,
-             target,
-             session_key: None,
-+            machine_id,
-         }
-     }
- 
-@@ -566,6 +576,10 @@ impl AnalyticsReporter {
- }
- 
- impl Reporter for AnalyticsReporter {
-+    fn machine_id(&self) -> Option<Uuid> {
-+        self.enabled.then_some(self.machine_id)
-+    }
++    /// A line in another encoding (`£` in a Windows console's code page 850, here) doesn't stop
++    /// the forwarding: the readiness marker after it is still read.
++    #[tokio::test]
++    async fn a_line_that_is_not_utf8_does_not_stop_the_forwarding() {
++        let readiness = Arc::new(Readiness {
++            count: AtomicUsize::new(0),
++            total: 1,
++            start: Instant::now(),
++            tracker: ReadyTracker::default(),
++        });
++        let started = Arc::new(AtomicBool::new(false));
++        let (closed, _receiver) = oneshot::channel();
++        let output = [
++            b"price: \x9c5\r\n".as_slice(),
++            SESSION_READY_MESSAGE.as_bytes(),
++            b"\n",
++        ]
++        .concat();
 +
-     fn get_mut(&mut self) -> &mut Analytics {
-         &mut self.analytics
-     }
-```
-
-**File**: `mirrord/cli/src/connection.rs` (modified, +58/-1)
-```diff
-@@ -91,12 +91,58 @@ where
-         .await?
-         .ok_or(CliError::OperatorNotInstalled)?;
-     api.check_license_validity(&subtask)?;
--    api.check_serverless_sessions_manager_served()?;
-+    if let Err(error) = api.check_serverless_sessions_manager_served() {
-+        if let OperatorApiError::LocalFeatureNotLicensed { feature, .. } = &error {
-+            report_local_feature_gate(api, *feature, layer_config, progress, analytics).await;
-+        }
-+        return Err(error.into());
-+    }
-     subtask.success(Some("operator sessions-manager available"));
- 
-     Ok(api.client().clone())
- }
- 
-+/// Operations using Kubernetes credentials directly need a mirrord certificate only to
-+/// attribute a local paid refusal. Credential or reporting failures must not hide the refusal
-+/// or delay it indefinitely.
-+#[mirrord_macros::boxed_future]
-+pub(crate) async fn report_local_feature_gate<P, R>(
-+    operator_api: OperatorApi<NoClientCert>,
-+    feature: NewOperatorFeature,
-+    config: &LayerConfig,
-+    progress: &P,
-+    analytics: &mut R,
-+) where
-+    P: Progress,
-+    R: Reporter,
-+{
-+    if operator_api
-+        .operator()
-+        .spec
-+        .supported_features()
-+        .contains(&NewOperatorFeature::LicenseGateReporting)
-+        .not()
-+    {
-+        return;
-+    }
++        forward_output(
++            output.as_slice(),
++            Arc::from("shop"),
++            Some(SessionOutput {
++                readiness: readiness.clone(),
++                started: started.clone(),
++                _closed: closed,
++            }),
++        )
++        .await;
 +
-+    let report = async {
-+        let api = operator_api
-+            .with_client_certificate(analytics, progress, config)
-+            .await
-+            .into_certified()?;
-+        api.cli_gated_feature(feature).await;
-+        Ok::<(), OperatorApiError>(())
-+    };
-+    match tokio::time::timeout(Duration::from_secs(2), report).await {
-+        Ok(Ok(())) => {}
-+        Ok(Err(error)) => {
-+            tracing::debug!(%feature, %error, "Could not prepare credentials for paid-feature reporting");
-+        }
-+        Err(_) => tracing::debug!(%feature, "Paid-feature reporting timed out"),
++        assert!(
++            started.load(Ordering::Relaxed),
++            "the readiness marker comes after the bad byte, so it must still be read"
++        );
++        assert_eq!(readiness.count.load(Ordering::Relaxed), 1);
 +    }
 +}
 +
- /// Whether a session with a given config can use the mirrord operator, before anything is
- /// reported about it. Sessions (`try_connect_using_operator`) and `mirrord up`'s check before
- /// launch both decide through [`operator_availability`], each reporting the outcome its own way:
-@@ -236,6 +282,17 @@ where
-         );
-     }
+ #[cfg(all(test, windows))]
+ mod windows_tests;
  
-+    if layer_config.multi_cluster == Some(true)
-+        && let Err(error @ OperatorApiError::LocalFeatureNotLicensed { .. }) = api
-+            .operator()
-+            .spec
-+            .require_feature(NewOperatorFeature::MultiClusterPrimary)
-+    {
-+        api.cli_gated_feature(NewOperatorFeature::MultiClusterPrimary)
-+            .await;
-+        return Err(error.into());
-+    }
-+
-     let is_multi_cluster = api
-         .operator()
-         .spec
-```
-
-**File**: `mirrord/cli/src/error.rs` (modified, +36/-17)
-```diff
-@@ -1,9 +1,6 @@
- use std::{ffi::NulError, io, num::ParseIntError, path::PathBuf};
- 
--use kube::{
--    self,
--    core::{Status, response::StatusSummary},
--};
-+use kube::{self, Error, client::AuthError};
- use miette::Diagnostic;
- use mirrord_auth::error::{ApiKeyError, CredentialStoreError};
- use mirrord_config::config::ConfigError;
-@@ -16,7 +13,8 @@ use mirrord_kube::{api::kubernetes::KubeEnvironment, error::KubeApiError};
- use mirrord_mcp::McpError;
- use mirrord_operator::{
-     client::error::{HttpError, OperatorApiError, OperatorOperation},
--    crd::preview::PreviewPodLogs,
-+    crd::{NewOperatorFeature, preview::PreviewPodLogs},
-+    types::PaidFeatureGate,
- };
- use mirrord_progress::messages::AGENT_OPERATOR_HINT;
- use mirrord_protocol_io::ProtocolError;
-@@ -536,6 +534,23 @@ pub(crate) enum CliError {
-     ))]
-     OperatorApiForbidden(OperatorOperation, String),
- 
-+    #[error("{gate}")]
-+    #[diagnostic(help(
-+        "Ask your cluster administrator to add a license at https://app.metalbear.com/billing?utm_source=licensegate&utm_medium=cli&utm_content={}",
-+        gate.feature_config_key
-+    ))]
-+    LocalPaidFeatureRequiresPlan {
-+        feature: NewOperatorFeature,
-+        gate: PaidFeatureGate,
-+    },
-+
-+    #[error("{gate}")]
-+    #[diagnostic(help(
-+        "Ask your cluster administrator to add a license at https://app.metalbear.com/billing?utm_source=licensegate&utm_medium=cli&utm_content={}",
-+        gate.feature_config_key
-+    ))]
-+    PaidFeatureRequiresPlan { gate: PaidFeatureGate },
-+
-     #[error(
-         "mirrord operator license expired. Visit https://app.metalbear.com to renew your license"
-     )]
-@@ -1014,8 +1029,6 @@ impl CliError {
-         error: KubeApiError,
-         fallback: F,
-     ) -> Self {
--        use kube::{Error, client::AuthError};
--
-         match error {
-             KubeApiError::KubeError(Error::Auth(AuthError::AuthExecStart(error))) => {
-                 Self::KubeAuthExecFailed(error)
-@@ -1054,7 +1067,17 @@ impl From<mirrord_up::UpError> for CliError {
- 
- impl From<OperatorApiError> for CliError {
-     fn from(value: OperatorApiError) -> Self {
--        use kube::{Error, client::AuthError};
-+        let status = match &value {
-+            OperatorApiError::KubeError {
-+                error: Error::Api(status),
-+                ..
-+            }
-+            | OperatorApiError::StatusFailure { status, .. } => Some(status.as_ref()),
-+            _ => None,
-+        };
-+        if let Some(gate) = status.and_then(PaidFeatureGate::from_status) {
-+            return Self::PaidFeatureRequiresPlan { gate };
-+        }
- 
-         match value {
-             OperatorApiError::BranchCreationFailed { operation, message } => {
-@@ -1084,6 +1107,10 @@ impl From<OperatorApiError> for CliError {
-                     }
-                 },
-             },
-+            OperatorApiError::LocalFeatureNotLicensed { feature, gate } => {
-+                Self::LocalPaidFeatureRequiresPlan { feature, gate }
-+            }
-+            OperatorApiError::FeatureNotLicensed { gate } => Self::PaidFeatureRequiresPlan { gate },
-             OperatorApiError::ServerlessSessionsManagerNotServed => {
-                 Self::ServerlessSessionsManagerNotServed
-             }
-@@ -1126,15 +1153,7 @@ impl From<OperatorApiError> for CliError {
-                 Self::OperatorApiForbidden(operation, status.message)
-             }
-             OperatorApiError::StatusFailure { operation, status } => {
--                let error = kube::Error::Api(Box::new(Status {
--                    status: Some(StatusSummary::Failure),
--                    message: status.message,
--                    reason: status.reason,
--                    code: status.code,
--                    ..Default::default()
--                }));
--
--                Self::OperatorApiFailed(operation, error)
-+                Self::OperatorApiFailed(operation, Error::Api(status))
-             }
-             OperatorApiError::NoLicense => Self::OperatorLicenseExpired,
-             OperatorApiError::ClientCertError(error) => Self::OperatorClientCertError(error),
-```
-
-**File**: `mirrord/cli/src/preview.rs` (modified, +126/-60)
-```diff
-@@ -45,7 +45,10 @@ use mirrord_config::{
- };
- use mirrord_kube::api::runtime::RuntimeDataProvider;
- use mirrord_operator::{
--    client::{NoClientCert, OperatorApi, connect_params::BranchDbNames, temporal_mirror_warning},
-+    client::{
-+        NoClientCert, OperatorApi, connect_params::BranchDbNames, error::OperatorApiError,
-+        temporal_mirror_warning,
-+    },
-     crd::{
-         MirrordOperatorSpec, NewOperatorFeature, TARGET_NAMESPACE_ANNOTATION, TargetCrd,
-         preview::{
-@@ -69,6 +72,7 @@ use crate::{
-         ManifestSourceArgs, PreviewArgs, PreviewCommand, PreviewCommonArgs, PreviewDiffArgs,
-         PreviewLogsArgs, PreviewStartArgs, PreviewStatusArgs, PreviewStopArgs,
-     },
-+    connection::report_local_feature_gate,
-     data::UserData,
-     error::{CliError, CliResult, format_preview_logs},
- };
-@@ -154,6 +158,7 @@ async fn preview_start(
-         supplied_objects,
-         false,
-         &progress,
-+        analytics,
-     )
-     .await?
-     .start(&mut progress)
-@@ -208,6 +213,8 @@ struct PreparedPreview {
-     layer_config: LayerConfig,
-     operator_api: OperatorApi<NoClientCert>,
-     api: Api<PreviewSession>,
-+    /// Retained through startup so refusals during branch preparation can also be reported.
-+    analytics: AnalyticsReporter,
-     /// The "preparing preview session" task, which [`PreparedPreview::start`] finishes once the
-     /// session resource is created.
-     subtask: ProgressTracker,
-@@ -227,6 +234,10 @@ impl PreparedPreview {
-     /// `sources.chart` is rendered here. With `auto_queue_splitting`, `feature.split_queues` are
-     /// defaults the operator drops what it can't serve of, so they aren't checked against its
-     /// features.
-+    #[allow(
-+        clippy::too_many_arguments,
-+        reason = "The prepared session owns its reporter so branch refusals during startup can be attributed."
-+    )]
-     async fn prepare(
-         mut layer_config: LayerConfig,
-         operator_api: OperatorApi<NoClientCert>,
-@@ -235,62 +246,80 @@ impl PreparedPreview {
-         mut supplied_objects: Option<Vec<resources::SuppliedObject>>,
-         auto_queue_splitting: bool,
-         progress: &ProgressTracker,
-+        mut analytics: AnalyticsReporter,
-     ) -> CliResult<Self> {
--        operator_api.check_feature_support(&layer_config, auto_queue_splitting)?;
-+        let is_cronjob_target = matches!(layer_config.target.path, Some(Target::CronJob(_)));
-+        let feature_support = async {
-+            operator_api.check_feature_support(&layer_config, auto_queue_splitting)?;
- 
--        if !sources.is_empty() {
--            require_spec_resources_support(&operator_api.operator().spec)?;
--        }
--        // The chart renders under the target's namespace, which the kube client resolves when the
--        // config leaves it out, so this waits for the connection. Rendering still touches nothing
--        // in the cluster.
--        if let Some(chart) = &sources.chart {
--            let rendered = render_chart(
--                chart,
--                &layer_config,
--                target_namespace(&operator_api, &layer_config),
--                progress,
--            )
--            .await?;
--            supplied_objects.get_or_insert_default().extend(rendered);
--        }
-+            if !sources.is_empty() {
-+                require_spec_resources_support(&operator_api.operator().spec)?;
-+            }
-+            // The chart renders under the target's namespace, which the kube client resolves when the
-+            // config leaves it out, so this waits for the connection. Rendering still touches nothing
-+            // in the cluster.
-+            if let Some(chart) = &sources.chart {
-+                let rendered = render_chart(
-+                    chart,
-+                    &layer_config,
-+                    target_namespace(&operator_api, &layer_config),
-+                    progress,
-+                )
-+                .await?;
-+                supplied_objects.get_or_insert_default().extend(rendered);
-+            }
- 
--        let is_cronjob_target = matches!(layer_config.target.path, Some(Target::CronJob(_)));
--        if is_cronjob_target {
--            operator_api
--                .operator()
--                .spec
--                .require_feature(NewOperatorFeature::PreviewCronJobTarget)?;
--        }
--        if let Some(Target::Label(label_target)) = &layer_config.target.path {
--            operator_api
--                .operator()
--                .spec
--                .require_feature(NewOperatorFeature::PreviewLabelTarget)?;
--
--            // Branch preparation reads a single workload out of the target and a label selector
--            // names none, so it would fail later. Refuse here, before the existing session with the
--            // same key is replaced, so a bad config never tears down a running preview.
--            if !layer_config.feature.db_branches.is_empty() {
--                return Err(CliError::UnsupportedTargetConfig(format!(
-- 
-```
-
-**File**: `mirrord/cli/src/preview/up.rs` (modified, +19/-3)
-```diff
-@@ -22,7 +22,10 @@ use mirrord_config::{
-     util::GIT_BRANCH,
- };
- use mirrord_operator::{
--    client::{required_branching_feature, split_config_branches::entries_from_response},
-+    client::{
-+        error::OperatorApiError, required_branching_feature,
-+        split_config_branches::entries_from_response,
-+    },
-     crd::NewOperatorFeature,
- };
- use mirrord_progress::{Progress, ProgressTracker};
-@@ -32,7 +35,7 @@ use mirrord_up::{
- 
- use super::{
-     PreparedPreview, StopMode, create_preview_api, load_manifests, manifest_sources,
--    preview_namespace, preview_stop,
-+    preview_namespace, preview_stop, report_local_feature_gate,
- };
- use crate::{
-     config::{
-@@ -348,7 +351,19 @@ async fn prepare_service(
-         if off.is_empty().not() {
-             if default_db_branches.not() {
-                 for feature in off.iter().filter_map(|(_, feature)| *feature) {
--                    operator_api.operator().spec.require_feature(feature)?;
-+                    if let Err(error) = operator_api.operator().spec.require_feature(feature) {
-+                        if let OperatorApiError::LocalFeatureNotLicensed { feature, .. } = &error {
-+                            report_local_feature_gate(
-+                                operator_api,
-+                                *feature,
-+                                &config,
-+                                progress,
-+                                &mut analytics,
-+                            )
-+                            .await;
-+                        }
-+                        return Err(error.into());
-+                    }
-                 }
-             }
-             progress.warning(&format!(
-@@ -427,6 +442,7 @@ async fn prepare_service(
-         supplied_objects,
-         auto_queue_splitting,
-         progress,
-+        analytics,
-     )
-     .await
- }
-```
-
-**File**: `mirrord/cli/src/up/db_branches.rs` (modified, +51/-17)
-```diff
-@@ -27,7 +27,7 @@ use mirrord_up::SubprocessCfg;
- 
- use super::UpCliError;
- use crate::{
--    connection::{OperatorAvailability, operator_availability},
-+    connection::{OperatorAvailability, operator_availability, report_local_feature_gate},
-     error::CliError,
- };
- 
-@@ -126,8 +126,9 @@ pub(super) async fn check_db_branches(
-                 .db_branches
-                 .split_config_request()?
-                 .clone();
--            let api = apis.get(&operator_key(&service.config))?.as_ref()?;
--            Some((service, request, api))
-+            let key = operator_key(&service.config);
-+            apis.get(&key)?.as_ref()?;
-+            Some((service, request, key))
-         })
-         .collect::<Vec<_>>();
-     let requested = requesting
-@@ -144,27 +145,56 @@ pub(super) async fn check_db_branches(
-     // The lookups are independent, so they run at once: the run waits about one round trip to
-     // the operator instead of one per service. `join_all` keeps the results in service order, so
-     // the failure reported below is still the first failing service's.
--    let lookups = join_all(requesting.iter().map(|(service, request, api)| async move {
--        let response = api
--            .lookup_split_config_db_branches(&service.config, request)
--            .await?;
--        // The session applies the answer to its config the same way. Applied to a copy
--        // here, it rejects what the session would (e.g. an env override clashing with a
--        // branch's connection variable), before any session starts.
--        apply_resolved_entries(&mut service.config.clone(), &response)?;
--        Ok::<_, OperatorApiError>(response)
-+    let lookups = join_all(requesting.iter().map(|(service, request, key)| {
-+        let api = apis
-+            .get(key)
-+            .and_then(Option::as_ref)
-+            .expect("requesting services have a usable operator");
-+        async move {
-+            let response = api
-+                .lookup_split_config_db_branches(&service.config, request)
-+                .await?;
-+            // The session applies the answer to its config the same way. Applied to a copy
-+            // here, it rejects what the session would (e.g. an env override clashing with a
-+            // branch's connection variable), before any session starts.
-+            apply_resolved_entries(&mut service.config.clone(), &response)?;
-+            Ok::<_, OperatorApiError>(response)
-+        }
-     }))
-     .await;
- 
-     // Entry id -> the (cluster, namespace) pairs it resolved in, and the services in each. A
-     // branch is named for its namespace and lives in its cluster, so each pair is one branch. The
-     // cluster is the API server URL, since two kube contexts can name one cluster.
-     let mut entry_namespaces: BTreeMap<String, BTreeMap<_, Vec<Arc<str>>>> = BTreeMap::new();
--    for ((service, _, api), lookup) in requesting.into_iter().zip(lookups) {
--        let response = lookup.map_err(|error| UpCliError::DbBranches {
--            service: service.service_name.clone(),
--            error: Box::new(error.into()),
--        })?;
-+    for ((service, _, key), lookup) in requesting.into_iter().zip(lookups) {
-+        let response = match lookup {
-+            Ok(response) => response,
-+            Err(error) => {
-+                if service.default_db_branches.not()
-+                    && let OperatorApiError::LocalFeatureNotLicensed { feature, .. } = &error
-+                {
-+                    // Lookups share a Kubernetes-only client. Only the refusal that stops the
-+                    // run needs credentials for reporting; no resource action follows it.
-+                    let api = apis
-+                        .remove(&key)
-+                        .flatten()
-+                        .expect("requesting services have a usable operator");
-+                    report_local_feature_gate(
-+                        api,
-+                        *feature,
-+                        &service.config,
-+                        &NullProgress,
-+                        &mut NullReporter::default(),
-+                    )
-+                    .await;
-+                }
-+                return Err(UpCliError::DbBranches {
-+                    service: service.service_name.clone(),
-+                    error: Box::new(error.into()),
-+                });
-+            }
-+        };
- 
-         if response.entries.is_empty() {
-             println!(
-@@ -175,6 +205,10 @@ pub(super) async fn check_db_branches(
-             continue;
-         }
- 
-+        let api = apis
-+            .get(&key)
-+            .and_then(Option::as_ref)
-+            .expect("requesting services have a usable operator");
-         let namespace = service
-             .config
-             .target
-```
-
-**File**: `mirrord/operator/src/client.rs` (modified, +166/-40)
-```diff
-@@ -58,14 +58,16 @@ use semver::Version;
- use serde::{Deserialize, Serialize, de::DeserializeOwned};
- use tower::{buffer::BufferLayer, retry::RetryLayer};
- use tracing::Level;
-+use uuid::Uuid;
- 
- use crate::{
-     client::{
-         database_branches::{
--            CreatedBranches, DatabaseBranchParams, UnifiedDatabaseBranchParams, create_branches,
--            create_mongodb_branches, create_mysql_branches, create_pg_branches,
--            ensure_branch_migrations, list_existing_branches, list_reusable_mongodb_branches,
--            list_reusable_mysql_branches, list_reusable_pg_branches, ownership_label_selector,
-+            CreatedBranches, DatabaseBranchParams, TARGET_NAMESPACE_ANNOTATION,
-+            UnifiedDatabaseBranchParams, create_branches, create_mongodb_branches,
-+            create_mysql_branches, create_pg_branches, ensure_branch_migrations,
-+            list_existing_branches, list_reusable_mongodb_branches, list_reusable_mysql_branches,
-+            list_reusable_pg_branches, ownership_label_selector,
-             relay_source_compatibility_warnings, reused_branch_connection_sources,
-             wait_for_pending_branches,
-         },
-@@ -93,7 +95,7 @@ use crate::{
-     },
-     types::{
-         CLIENT_CERT_HEADER, CLIENT_HOSTNAME_HEADER, CLIENT_NAME_HEADER, CONNECT_PARAMS_HEADER,
--        MIRRORD_CLI_VERSION_HEADER, SESSION_ID_HEADER,
-+        FeatureGateHitRequest, MIRRORD_CLI_VERSION_HEADER, PaidFeatureGate, SESSION_ID_HEADER,
-     },
- };
- 
-@@ -300,6 +302,7 @@ pub struct OperatorApi<C> {
-     operator: MirrordOperatorCrd,
-     /// Named kubeconfig context used to create [`Self::client`].
-     kube_context: Option<String>,
-+    machine_id: Option<Uuid>,
-     /// URL of the API server [`Self::client`] talks to. Unlike [`Self::kube_context`], it tells
-     /// clusters apart: two contexts can name one cluster.
-     cluster_url: String,
-@@ -378,6 +381,7 @@ impl OperatorApi<NoClientCert> {
-                     client_cert: NoClientCert { base_config },
-                     operator,
-                     kube_context,
-+                    machine_id: reporter.machine_id(),
-                     cluster_url,
-                 }));
-             }
-@@ -481,6 +485,7 @@ impl OperatorApi<NoClientCert> {
-                 },
-                 operator: self.operator,
-                 kube_context: self.kube_context,
-+                machine_id: self.machine_id,
-                 cluster_url: self.cluster_url,
-             },
- 
-@@ -491,6 +496,7 @@ impl OperatorApi<NoClientCert> {
-                 },
-                 operator: self.operator,
-                 kube_context: self.kube_context,
-+                machine_id: self.machine_id,
-                 cluster_url: self.cluster_url,
-             },
-         }
-@@ -541,6 +547,7 @@ impl OperatorApi<NoClientCert> {
-         let previous_client = self.client.clone();
-         let operator_crd = self.operator.clone();
-         let kube_context = self.kube_context.clone();
-+        let machine_id = self.machine_id;
-         let cluster_url = self.cluster_url.clone();
- 
-         let result = async move {
-@@ -572,6 +579,7 @@ impl OperatorApi<NoClientCert> {
-                 },
-                 operator: operator_crd,
-                 kube_context,
-+                machine_id,
-                 cluster_url,
-             },
-         }
-@@ -593,6 +601,7 @@ impl OperatorApi<MaybeClientCert> {
-             client_cert: PreparedClientCert { cert },
-             operator: self.operator,
-             kube_context: self.kube_context,
-+            machine_id: self.machine_id,
-             cluster_url: self.cluster_url,
-         })
-     }
-@@ -668,10 +677,13 @@ where
-     pub fn check_serverless_sessions_manager_served(&self) -> OperatorApiResult<()> {
-         self.operator
-             .spec
--            .supported_features()
--            .contains(&NewOperatorFeature::ServerlessSessionsManager)
--            .then_some(())
--            .ok_or(OperatorApiError::ServerlessSessionsManagerNotServed)
-+            .require_feature(NewOperatorFeature::ServerlessSessionsManager)
-+            .map_err(|error| match error {
-+                OperatorApiError::UnsupportedFeature { .. } => {
-+                    OperatorApiError::ServerlessSessionsManagerNotServed
-+                }
-+                error => error,
-+            })
-     }
- 
-     /// Create a new CI api key by generating a random key pair, creating a certificate
-@@ -863,7 +875,11 @@ where
-                 // config conflict) in its own words; it is shown as it is, not inside kube's
-                 // wrapping of the response.
-                 kube::Error::Api(response) => {
--                    OperatorApiError::SplitConfigDbBranches(response.message)
-+                    if let Some(gate) = PaidFeatureGate::from_status(&response) {
-+                        OperatorApiError::FeatureNotLicensed { gate }
-+                    } else {
-+                        OperatorApiError::SplitConfigDbBranches(response.message)
-+         
 ```
 
 ---
 
-### Incident Patch 2: `d342c848` (2026-10-27)
-**Commit Message**: Merge branch 'main' into meowchinist/cor-1692-add-the-paid-feature-gate-error-gate-hit-recording-and-free
+### Incident Patch 2: `0c2daf35` (2026-10-28)
+**Commit Message**: fix(layer): keep ancestors local only to calls that describe them
 
-**File**: `.github/actions/next-release-version/version.py` (modified, +3/-3)
+The working directory's ancestors were in the default-local set, so
+opening one gave a local fd. An `openat` relative to a local fd goes to
+the local directory, because the layer only follows remote fds, so
+`openat(fd, "remote-only.txt")` missed the target while
+`open("/workspace/remote-only.txt")` reached it.
+
+The ancestors now live in their own set, `default_local_entries`, which
+`ensure_remote` checks only for a `PathUse::Describe` call: `stat`,
+`access`, `readlink`, `realpath` and `statfs`. That still covers Node's
+`realpathSync`, which only `lstat`s each ancestor. Opening an ancestor,
+`readdir` included, follows the usual rules again.
+
+The doc comment on `cwd_ancestor_patterns` also says why root never
+becomes a pattern, and why it would be harmless if it did.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/+cwd-ancestors-local.fixed.md` (modified, +1/-1)
 ```diff
-@@ -22,9 +22,9 @@
- 
- import tomlkit
- 
--# Fragments whose only effect is invisible to users, in towncrier category order of
--# increasing significance. Anything outside this set warrants a minor bump.
--PATCH_CATEGORIES = frozenset({"internal", "fixed"})
-+# Fragments that only warrant a patch release: work invisible to users, bug fixes and
-+# security fixes. Anything outside this set warrants a minor bump.
-+PATCH_CATEGORIES = frozenset({"internal", "fixed", "security"})
- 
- # Fragments recording work that no user can observe. A release made up entirely of
- # these is optional, hence `--release-on-internal-only`.
+@@ -1 +1 @@
+-The folders above the working directory are now read locally by default on Linux and macOS, so resolving a local path no longer fails when the target doesn't have those folders.
++Calls that describe a folder above the working directory, such as `stat` and `access`, now stay local by default on Linux and macOS, so resolving a local path no longer fails when the target doesn't have those folders.
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
+**File**: `mirrord/layer-lib/src/file/filter.rs` (modified, +79/-16)
 ```diff
-@@ -881,7 +881,7 @@ Releases are fully automated. Under normal circumstances no manual steps are req
-    - There is at least one entry in `changelog.d/`.
-    - The last release is older than 7 days.
- 2. When both conditions are met, the [Auto Release PR workflow](/.github/workflows/auto-release-pr.yaml) opens (or updates) a PR from `releases/<version>` to `main`. The PR:
--   - Bumps the workspace version in `Cargo.toml` (patch bump if all changes are `fixed`/`internal`; minor bump otherwise).
-+   - Bumps the workspace version in `Cargo.toml` (patch bump if all changes are `fixed`/`security`/`internal`; minor bump otherwise).
-    - Updates `Cargo.lock`.
-    - Generates `CHANGELOG.md` by consuming the `changelog.d/` fragments.
- 3. Review the release PR, fix any changelog issues or typos, then merge it.
+@@ -42,6 +42,16 @@ pub fn generate_local_set() -> RegexSet {
+         .expect("Building local path regex set failed")
+ }
+ 
++/// Paths whose entry mirrord describes locally by default, while opening them follows the usual
++/// rules. See [`read_local_by_default::entry_regex_set_builder`] for why the two differ.
++#[cfg(unix)]
++pub fn generate_local_entry_set() -> RegexSet {
++    read_local_by_default::entry_regex_set_builder()
++        .case_insensitive(true)
++        .build()
++        .expect("Building local entry regex set failed")
++}
++
+ /// List of files that mirrord should use remotely read only
+ pub fn generate_remote_ro_set() -> RegexSet {
+     let patterns = read_remote_by_default::PATHS;
+@@ -91,6 +101,10 @@ pub struct FileFilter {
+     pub local: RegexSet,
+     pub not_found: RegexSet,
+     pub default_local: RegexSet,
++    /// Like `default_local`, but only for calls that describe a path without opening it. Built
++    /// by [`generate_local_entry_set`].
++    #[cfg(unix)]
++    pub default_local_entries: RegexSet,
+     pub default_remote_ro: RegexSet,
+     pub default_not_found: RegexSet,
+     pub mode: FsModeConfig,
+@@ -133,6 +147,8 @@ impl FileFilter {
+         let not_found = make("not_found", not_found)?;
+ 
+         let default_local = generate_local_set();
++        #[cfg(unix)]
++        let default_local_entries = generate_local_entry_set();
+         let default_remote_ro = generate_remote_ro_set();
+         let default_not_found = generate_not_found_set();
+ 
+@@ -142,6 +158,8 @@ impl FileFilter {
+             local,
+             not_found,
+             default_local,
++            #[cfg(unix)]
++            default_local_entries,
+             default_remote_ro,
+             default_not_found,
+             mode,
+@@ -364,30 +382,72 @@ mod tests {
+         assert_eq!(mode, Some(FileMode::ReadOnly(false)));
+     }
+ 
+-    /// The working directory's patterns, built the way [`super::generate_local_set`] builds them.
++    /// The working directory used by the tests below.
++    #[cfg(unix)]
++    const CWD: &str = "/workspace/demo/svc";
++
++    /// `patterns` built the way [`super::generate_local_set`] builds its own.
+     #[cfg(unix)]
+-    fn cwd_set(cwd: &str) -> regex::RegexSet {
+-        regex::RegexSetBuilder::new(super::read_local_by_default::cwd_patterns(
+-            std::path::Path::new(cwd),
++    fn set(patterns: impl IntoIterator<Item = String>) -> regex::RegexSet {
++        regex::RegexSetBuilder::new(patterns)
++            .case_insensitive(true)
++            .build()
++            .expect("the working directory patterns are valid regexes")
++    }
++
++    /// What [`CWD`] adds to [`super::generate_local_set`].
++    #[cfg(unix)]
++    fn cwd_set() -> regex::RegexSet {
++        set(super::read_local_by_default::cwd_pattern(
++            std::path::Path::new(CWD),
++        ))
++    }
++
++    /// What [`CWD`] adds to [`super::generate_local_entry_set`].
++    #[cfg(unix)]
++    fn ancestor_set() -> regex::RegexSet {
++        set(super::read_local_by_default::cwd_ancestor_patterns(
++            std::path::Path::new(CWD),
+         ))
+-        .case_insensitive(true)
+-        .build()
+-        .expect("the working directory patterns are valid regexes")
+     }
+ 
+-    /// Resolving a path under the working directory walks its ancestors (Node's `realpathSync`
+-    /// `lstat`s each one), so they stay local even when the target doesn't have them.
++    /// The working directory and everything under it is local, whatever the call does with it.
++    #[cfg(unix)]
++    #[rstest]
++    #[case::cwd("/workspace/demo/svc")]
++    #[case::under_cwd("/workspace/demo/svc/app.mjs")]
++    fn the_working_directory_is_local(#[case] path: &str) {
++        assert!(
++            cwd_set().is_match(path),
++            "{path} is in the working directory, so it must be local"
++        );
++    }
++
++    /// Resolving a path under the working directory describes each ancestor (Node's
++    /// `realpathSync` `lstat`s each one), so they're described locally even when the target
++    /// doesn't have them.
+     #[cfg(unix)]
+     #[rstest]
+     #[case::parent("/workspace/demo")]
+     #[case::grandparent("/workspace")]
+     #[case::trailing_slash("/workspace/")]
+-    #[case::cwd("/workspace/demo/svc")]
+-    #[case::under_cwd("/workspace/demo/svc/app.mjs")]
+-    fn the_working_directory_and_its_ancestors_are_local(#[case] path: &str) {
++    fn the_ancestors_are_described_locally(#[case] path: &str) {
+         assert!(
+-            cwd_set("/workspace/demo/svc").is_match(path),
+-            "{path} is on the way to the working directory, so it must be local"
++            ancestor_set().is_match(path),
++            "{path} is on the way to the working directory, so describing it must stay local"
++        );
++    }
++
++    /// Opening an ancestor follows the usual rules, so `openat` through its fd can still reach
++    /// the target's entries.
++    #[cfg(unix)]
++    #[rstest]
++    #[case::parent("/workspace/demo")]
++    #[case::grandparent("/worksp
 ```
 
-**File**: `changelog.d/+security-patch-bump.internal.md` (added, +1/-0)
+**File**: `mirrord/layer-lib/src/file/unix/read_local_by_default.rs` (modified, +42/-22)
+```diff
+@@ -87,8 +87,8 @@ pub fn regex_set_builder() -> RegexSetBuilder {
+     .map(|s| s.to_string())
+     .collect();
+ 
+-    if let Ok(cwd) = env::current_dir() {
+-        patterns.extend(cwd_patterns(&cwd));
++    if let Some(cwd) = env::current_dir().ok().and_then(|cwd| cwd_pattern(&cwd)) {
++        patterns.push(cwd);
+     }
+     if let Ok(executable) = env::current_exe() {
+         patterns.push(format!("{}$", regex::escape(&executable.to_string_lossy())));
+@@ -105,31 +105,51 @@ pub fn regex_set_builder() -> RegexSetBuilder {
+     RegexSetBuilder::new(patterns)
+ }
+ 
+-/// The patterns that keep the working directory local: everything under it, and each of its
+-/// ancestors by exact match.
++/// Path patterns whose entry is described locally by default, while opening them, or anything
++/// under them, still follows the usual rules. These are the working directory's ancestors.
+ ///
+ /// Resolving a path under the working directory walks its ancestors first: Node's
+ /// `realpathSync` calls `lstat` on `/workspace`, then `/workspace/app`, and so on. If an ancestor
+-/// went to the remote, a target without that directory fails the whole walk with `ENOENT`. The
+-/// exact match keeps only the directory itself local, so its other entries still follow the
+-/// usual rules.
++/// went to the remote, a target without that directory fails the whole walk with `ENOENT`.
+ ///
+-/// Root gives no patterns: a lot of containers use it as `WORKDIR`, and making *everything*
++/// Only calls that describe the entry (`stat`, `access`, `readlink`, `realpath`, `statfs`) use
++/// these. Opening an ancestor stays with the usual rules on purpose: an `openat` relative to a
++/// local directory fd goes to the local directory, because the layer can only follow remote fds.
++/// So a local fd for `/workspace` would send `openat(fd, "remote-only.txt")` to the local disk,
++/// while `open("/workspace/remote-only.txt")` reaches the target.
++pub fn entry_regex_set_builder() -> RegexSetBuilder {
++    let patterns = env::current_dir()
++        .map(|cwd| cwd_ancestor_patterns(&cwd))
++        .unwrap_or_default();
++
++    RegexSetBuilder::new(patterns)
++}
++
++/// The pattern that keeps the working directory and everything under it local.
++///
++/// Root gives no pattern: a lot of containers use it as `WORKDIR`, and making *everything*
+ /// local is confusing. It's also local by default already.
+-pub(crate) fn cwd_patterns(cwd: &Path) -> Vec<String> {
+-    if cwd.as_os_str().as_encoded_bytes() == b"/" {
+-        return Vec::new();
+-    }
++pub(crate) fn cwd_pattern(cwd: &Path) -> Option<String> {
++    (cwd.as_os_str().as_encoded_bytes() != b"/").then(|| format!("^{}(/|$)", trimmed(cwd)))
++}
+ 
+-    // `current_dir` may or may not end in '/', so trim it and add our own.
+-    let escape = |dir: &Path| regex::escape(dir.to_string_lossy().trim_end_matches('/'));
++/// One exact-match pattern per ancestor of the working directory, so only the directory itself
++/// matches, and its other entries still follow the usual rules.
++///
++/// Root is never among them: it's the one ancestor without a parent. Even if it got through, it
++/// would only repeat the `^/$` root entry in [`regex_set_builder`], since `/` trims to `^/?$`.
++/// The root that must stay out is root as the working directory, whose `^/(/|$)` would make
++/// every path local, and [`cwd_pattern`] skips that.
++pub(crate) fn cwd_ancestor_patterns(cwd: &Path) -> Vec<String> {
++    cwd.ancestors()
++        .skip(1)
++        .filter(|ancestor| ancestor.parent().is_some())
++        .map(|ancestor| format!("^{}/?$", trimmed(ancestor)))
++        .collect()
++}
+ 
+-    let mut patterns = vec![format!("^{}(/|$)", escape(cwd))];
+-    patterns.extend(
+-        cwd.ancestors()
+-            .skip(1)
+-            .filter(|ancestor| ancestor.parent().is_some())
+-            .map(|ancestor| format!("^{}/?$", escape(ancestor))),
+-    );
+-    patterns
++/// `dir` escaped for a regex, without a trailing '/', so a pattern can add its own whether
++/// `current_dir` ends in one or not.
++fn trimmed(dir: &Path) -> String {
++    regex::escape(dir.to_string_lossy().trim_end_matches('/'))
+ }
+```
+
+**File**: `mirrord/layer/src/file/ops.rs` (modified, +72/-23)
+```diff
+@@ -72,8 +72,24 @@ impl PathExt for Path {
+     }
+ }
+ 
++/// What an operation does with the path it's given. Only
++/// [`FileFilter::default_local_entries`] looks at it.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub enum PathUse {
++    /// Describes the entry itself without opening it: `stat`, `access`, `readlink`, `realpath`
++    /// or `statfs`.
++    Describe,
++    /// Anything else: opens it, or creates, removes or renames it.
++    Other,
++}
++
+ /// Checks whether the given [`Path`] should be accessed remotely.
+-pub fn ensure_remote(file_filter: &FileFilter, path: &Path, write: bool) -> Detour<()> {
++pub fn ensure_remote(
++    file_filter: &FileFilter,
++    path: &Path,
++    write: bool,
++    path_use: PathUse,
++) -> Detour<()> {
+     // TODO(gabriela): rewrite this using `FileFilter::check`!
+ 
+     let text = path.to_str().unwrap_or_default();
+@@ -101,6 +117,9 @@ pub fn ensure_remote(file_filter: &FileFilter, path: &Path, write: bool) -> Deto
+         _ if file_filter.default_local.is_match(text) => {
+             Err(DetourError::Bypass(Bypass::ignored_file(text)))
+         }
++        _ if path_use == PathUse::Describe && file_filter.default_local_entries.is_match(text) => {
++            Err(DetourError::Bypass(Bypass::ignored_file(text)))
++        }
+         FsModeConfig::LocalWithOverrides => Err(DetourError::Bypass(Bypass::ignored_file(text))),
+         FsModeConfig::Write => Ok(()),
+         FsModeConfig::Read if write => Err(DetourError::Bypass(Bypass::ReadOnly(text.into()))),
+@@ -116,11 +135,11 @@ pub fn ensure_remote(file_filter: &FileFilter, path: &Path, write: bool) -> Deto
+ /// 3. Bypass if the new path should be accessed locally.
+ ///
+ /// Returns the remapped path.
+-fn common_path_check(path: PathBuf, write: bool) -> Detour<PathBuf> {
++fn common_path_check(path: PathBuf, write: bool, path_use: PathUse) -> Detour<PathBuf> {
+     path.ensure_not_relative_or_not_found()?;
+ 
+     let path = crate::setup().file_remapper().change_path(path);
+-    ensure_remote(crate::setup().file_filter(), &path, write)?;
++    ensure_remote(crate::setup().file_filter(), &path, write, path_use)?;
+     Ok(path)
+ }
+ 
+@@ -149,8 +168,8 @@ fn ensure_not_prefetched(path: &Path) -> Detour<()> {
+ /// or answer for the local filesystem rather than the target's (`statfs`). So do the ones that
+ /// change the remote namespace (`unlink`, `rename`, `mkdir`), which still take effect in the
+ /// target.
+-fn prefetchable_path_check(path: PathBuf, write: bool) -> Detour<PathBuf> {
+-    let path = common_path_check(path, write)?;
++fn prefetchable_path_check(path: PathBuf, write: bool, path_use: PathUse) -> Detour<PathBuf> {
++    let path = common_path_check(path, write, path_use)?;
+     ensure_not_prefetched(&path)?;
+ 
+     Ok(path)
+@@ -298,7 +317,7 @@ fn close_remote_file_on_failure(fd: u64) -> Result<()> {
+ /// [`OPEN_FILES`].
+ #[mirrord_layer_macro::instrument(level = Level::TRACE, ret)]
+ pub(crate) fn open(path: Detour<PathBuf>, open_options: OpenOptionsInternal) -> Detour<RawFd> {
+-    let path = prefetchable_path_check(path?, open_options.is_write())?;
++    let path = prefetchable_path_check(path?, open_options.is_write(), PathUse::Other)?;
+ 
+     let OpenFileResponse { fd: remote_fd } = RemoteFile::remote_open(path.clone(), open_options)
+         .on_error(|fail| match fail {
+@@ -442,7 +461,7 @@ pub(crate) fn pread(local_fd: RawFd, buffer_size: u64, offset: u64) -> Detour<Re
+ /// Resolves the symbolic link `path`.
+ #[mirrord_layer_macro::instrument(level = Level::TRACE, ret)]
+ pub(crate) fn read_link(path: Detour<PathBuf>) -> Detour<ReadLinkFileResponse> {
+-    let path = common_path_check(path?, false)?;
++    let path = common_path_check(path?, false, PathUse::Describe)?;
+ 
+     let requesting_path = ReadLinkFileRequest { path };
+ 
+@@ -456,7 +475,7 @@ pub(crate) fn read_link(path: Detour<PathBuf>) -> Detour<ReadLinkFileResponse> {
+ 
+ #[mirrord_layer_macro::instrument(level = Level::TRACE, ret)]
+ pub(crate) fn mkdir(path: Detour<PathBuf>, mode: u32) -> Detour<()> {
+-    let path = common_path_check(path?, true)?;
++    let path = common_path_check(path?, true, PathUse::Other)?;
+ 
+     let mkdir = MakeDirRequest {
+         pathname: path,
+@@ -499,7 +518,7 @@ pub(crate) fn mkdirat(dirfd: RawFd, path: Detour<PathBuf>, mode: u32) -> Detour<
+ 
+ #[mirrord_layer_macro::instrument(level = Level::TRACE, ret)]
+ pub(crate) fn rmdir(path: Detour<PathBuf>) -> Detour<()> {
+-    let path = common_path_check(path?, true)?;
++    let path = common_path_check(path?, true, PathUse::Other)?;
+ 
+     let rmdir = RemoveDirRequest { pathname: path };
+ 
+@@ -513,7 +532,7 @@ pub(crate) fn rmdir(path: Detour<PathBuf>) -> Detour<()> {
+ 
+ #[mirrord_layer_macro::instrument(level = Level::TRACE, ret)]
+ pub(crate) fn unlink(path: Detour<PathBuf>) -> Detour<()> {
+-    let path = common_path_check(path?, true)?;
++    let path = common_path_check(path?, true, PathUse::Other)?;
+ 
+     let unlink = UnlinkRequest { pathname: path };
+ 
+@@ -535,7 +554,7 @@ pub(cr
+```
+
+---
+
+### Incident Patch 3: `db96479e` (2026-10-28)
+**Commit Message**: Fix stale CI and contributing docs
+
+**File**: `.github/workflows/README.md` (modified, +2/-2)
+```diff
+@@ -28,14 +28,14 @@ graph TD
+ 
+ ## 2. Release Process Flow (`release.yaml`)
+ 
+-**Trigger**: Pushing a tag (e.g. `1.2.3`).
++**Trigger**: Merging a release PR (from a `releases/<version>` branch) into `main`. See "Release mirrord" in `CONTRIBUTING.md`.
+ 
+ This workflow handles the official release process. It builds signed artifacts for all platforms and publishes them.
+ 
+ ```mermaid
+ %%{init: {'theme': 'neutral', 'themeVariables': {'lineColor': '#00f'}}}%%
+ graph TD
+-    A["Push Tag v*"] --> B["Release Workflow (release.yaml)"]
++    A["Merge Release PR"] --> B["Release Workflow (release.yaml)"]
+     
+     subgraph "Linux & Mac"
+         B --> C["Build Linux (x64/arm64)"]
+```
+
+**File**: `.github/workflows/check-lint.yaml` (modified, +1/-1)
+```diff
+@@ -127,7 +127,7 @@ jobs:
+           chmod +x /tmp/vale/vale
+           mv /tmp/vale/vale /usr/local/bin
+       - name: check root markdown files
+-        run: vale $(find . -maxdepth 1 -name '*.md' -not -name CLAUDE.md -not -name CHANGELOG.md) --output=report.tmpl
++        run: vale $(find . -maxdepth 1 -name '*.md' -not -name CHANGELOG.md) --output=report.tmpl
+       - name: check changelog.d files
+         run: vale $(git ls-files 'changelog.d/*.md') --output=report.tmpl
+   cargo-lint:
+```
+
+**File**: `CONTRIBUTING.md` (modified, +8/-4)
+```diff
+@@ -595,8 +595,9 @@ reconciling resources created by the other. The marker is set via the `OPERATOR_
+ environment variable and defaults to `mirrord-operator`. Its value is used as a special label on
+ operator-managed resources (agents, copy-targets, preview sessions, etc.).
+ 
+-The operator reads this env var at **compile time** (via `option_env!`), while the CLI reads it at
+-**runtime** (via `std::env::var`).
++Both the operator and the CLI read this env var at runtime. The CLI labels the resources it creates
++with the marker only when the variable is set, so to have an operator running with a custom marker
++pick up a session's resources, run the CLI with the same `OPERATOR_ISOLATION_MARKER`.
+ 
+ # New Hook Guidelines
+ 
+@@ -732,7 +733,7 @@ an exception in the [typos configuration file](typos.toml) at the root of the re
+ 
+ ## Prose Checks (Vale)
+ 
+-mirrord uses [Vale](https://vale.sh) to enforce writing style in Markdown files and Rust doc comments. It runs in CI on changed files. To run it locally:
++mirrord uses [Vale](https://vale.sh) to enforce writing style in Markdown files and Rust doc comments. CI runs it on the Markdown files at the root of the repository, except `CHANGELOG.md`, and on every Markdown file in `changelog.d/`. To run it locally:
+ 
+ ```bash
+ vale .
+@@ -769,9 +770,12 @@ Add a changelog file in `changelog.d/` named `<identifier>.<category>.md`
+ - Use `+some-name` if no issue exists
+ - Don't use Linear issues or private repository issue numbers
+ 
+-**Category:**
++**Category** (the types in [towncrier.toml](towncrier.toml)):
+ - `added` for new functionality
+ - `fixed` for fixed bugs
++- `security` for security fixes
++- `deprecated` for functionality that a later release will remove
++- `removed` for removed functionality
+ - `internal` for anything users don't care about, e.g. changes in tests or CI
+ - `changed` for anything else
+ 
+```
+
+**File**: `changelog.d/+stale-docs.internal.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Release version bump now treats `security` changelog fragments as patch-level.
++Correct the contributing guide on `OPERATOR_ISOLATION_MARKER`, which the operator reads at runtime, on the files Vale checks, and on the changelog fragment types. The workflows README now says that merging a release pull request starts a release.
+```
+
+**File**: `mirrord/cli/src/preview.rs` (modified, +1/-1)
+```diff
+@@ -638,7 +638,7 @@ impl PreparedPreview {
+ 
+         let session_name = PreviewSession::make_resource_name(&config_target, key.to_owned());
+ 
+-        // Operators compiled with a custom OPERATOR_ISOLATION_MARKER only reconcile preview
++        // Operators running with a custom OPERATOR_ISOLATION_MARKER only reconcile preview
+         // sessions labeled with their marker (see the label selector in the preview-env
+         // controller). The runtime env var check here allows developers to label the session
+         // so it gets picked up by an isolated operator instead of the production one.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5158** (2026-10-27): release: treat security changelog fragments as patch-level (@aviramha)
-- **PR #5156** (closed): DO NOT MERGE: MBE-2246 CI verification (@hank-metalbear)
-- **PR #5153** (2026-10-27): agent: remove java agent from jdk java options by default (@gememma)
-- **PR #5152** (2026-10-27): Release 3.280.0 (@cubby-mb[bot])
-- **PR #5148** (2026-10-27): Fix undefined permissions on the local placeholder file for remote files (COR-2035) (@linear-code[bot])
-- **PR #5147** (2026-10-27): Document which CI jobs actually test the CLI package (@skreborn)
+- **PR #5169** (2026-10-28): Configurable agent http2 recv header limit (@0x00A5)
+- **PR #5168** (2026-10-28): Keep forwarding `mirrord up` service output past bytes that aren't UTF-8 (@cristeigabriela)
+- **PR #5167** (2026-10-28): Let the dirty iptables E2E test pull an explicitly set agent image (@aviramha)
+- **PR #5166** (2026-10-28): Bump pulldown-cmark to 0.13.5 for RUSTSEC-2026-0414 (@hank-metalbear)
+- **PR #5163** (2026-10-28): Run operator e2e on releases/* branches (@skreborn)
+- **PR #5161** (2026-10-28): Fix stale CI and contributing docs (@skreborn)
 
 ---
 
@@ -2255,22 +2129,21 @@ COR-1692: Report paid feature gates and show upgrade errors
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #5082 from metalbear-co/meowchinist/cor-1692-add-the-paid-fea
+## X. up): keep forwarding a service's output past bytes that aren't UTF-8
 
 **RULE**:
-When implementing operations in `changelog.d/+paid-feature-errors.added.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/+up-non-utf8-output.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `55b79d17`: Merge pull request #5082 from metalbear-co/meowchinist/cor-1692-add-the-paid-feature-gate-error-gate-hit-recording-and-free. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c1878fdf`: up): keep forwarding a service's output past bytes that aren't UTF-8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+paid-feature-errors.added.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+up-non-utf8-output.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Paid-feature errors identify the configuration key and required plan, with billing guidance for cluster administrators.
-Local paid-feature refusals are reported to operators that support license-gate reporting.
+`mirrord up` no longer stops showing a service's output, and reports the service as crashed, when the service prints text that isn't UTF-8, such as a Windows console code page's `£`.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2280,4 +2153,4 @@ Local paid-feature refusals are reported to operators that support license-gate 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `55b79d17` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c1878fdf` are properly handled with clean fallback behavior.

@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "62f695c4",
+    "sourceVersion": "0c9e11ad",
     "license": "Apache-2.0",
-    "contentHash": "ab57601d992c08bb9c795bb61728bb0a2d8446af3c5205be0e4bfcfd35fb5710",
-    "lastHarvestedAt": "2026-10-28T16:05:27.302Z",
+    "contentHash": "4b554aa73d9ace51ae6474332af790fbb1a9b3a404a2dba7a98e8a2d32152bfe",
+    "lastHarvestedAt": "2026-10-29T12:08:56.238Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "55b79d17",
+    "sourceVersion": "1cd28b29",
     "license": "MIT",
-    "contentHash": "4cb21338bfb23c3afb3b557dafd5d2c821e2fc1e3322bf4999e95b4990ba65f4",
-    "lastHarvestedAt": "2026-10-28T05:30:50.358Z",
+    "contentHash": "ab89e548536cafc6b1ac95c16e97cd5668fe96a50bdfe8a136e64101e3d34872",
+    "lastHarvestedAt": "2026-10-29T12:08:42.819Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "dbe91960",
+    "sourceVersion": "e5827d55",
     "license": "Apache-2.0",
-    "contentHash": "a35fe5a0ddf983daab3329e9a8f115a0c85fc81000cdeeed20431d05cdca07c8",
-    "lastHarvestedAt": "2026-10-28T22:45:52.270Z",
+    "contentHash": "c17c3265685a5588e113cb2bc9389af6c0b2598d3f99ff2f4808d92024d7b9d6",
+    "lastHarvestedAt": "2026-10-29T12:08:54.465Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {

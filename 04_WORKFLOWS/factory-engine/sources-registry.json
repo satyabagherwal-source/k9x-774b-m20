@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T12:01:51.653Z",
-    "lastVerified": "2026-10-29T12:01:51.653Z",
+    "lastChecked": "2026-10-29T12:08:58.771Z",
+    "lastVerified": "2026-10-29T12:08:58.771Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -388,22 +388,21 @@
     "lastVerified": "2026-10-28T20:37:50.893Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T11:29:12.817Z",
-    "lastVerified": "2026-10-29T11:29:12.817Z",
+    "lastChecked": "2026-10-29T12:08:55.686Z",
+    "lastVerified": "2026-10-29T12:08:55.686Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "ab57601d992c08bb9c795bb61728bb0a2d8446af3c5205be0e4bfcfd35fb5710",
+    "contentHash": "4b554aa73d9ace51ae6474332af790fbb1a9b3a404a2dba7a98e8a2d32152bfe",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "62f695c4"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1656,14 +1655,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T22:45:51.660Z",
-    "lastVerified": "2026-10-28T22:45:51.660Z",
+    "lastChecked": "2026-10-29T12:08:53.764Z",
+    "lastVerified": "2026-10-29T12:08:53.764Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "a35fe5a0ddf983daab3329e9a8f115a0c85fc81000cdeeed20431d05cdca07c8",
+    "contentHash": "c17c3265685a5588e113cb2bc9389af6c0b2598d3f99ff2f4808d92024d7b9d6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1690,14 +1689,14 @@
     "officialUrl": "https://github.com/metalbear-co/mirrord",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T05:30:49.823Z",
-    "lastVerified": "2026-10-28T05:30:49.823Z",
+    "lastChecked": "2026-10-29T12:08:41.014Z",
+    "lastVerified": "2026-10-29T12:08:41.014Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "4cb21338bfb23c3afb3b557dafd5d2c821e2fc1e3322bf4999e95b4990ba65f4",
+    "contentHash": "ab89e548536cafc6b1ac95c16e97cd5668fe96a50bdfe8a136e64101e3d34872",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3155,9 +3154,9 @@
   "featureform-featureform": {
     "name": "featureform",
     "officialUrl": "https://github.com/featureform/featureform",
-    "lastChecked": "2026-10-28T11:52:40.770Z",
+    "lastChecked": "2026-10-29T12:08:48.265Z",
     "revisionIdentifier": "dc8b9fca",
-    "lastVerified": "2026-10-28T11:52:40.770Z"
+    "lastVerified": "2026-10-29T12:08:48.265Z"
   },
   "mfontanini-presenterm": {
     "name": "mfontanini/presenterm",
@@ -3504,9 +3503,9 @@
   "argoproj-argo-events": {
     "name": "argo-events",
     "officialUrl": "https://github.com/argoproj/argo-events",
-    "lastChecked": "2026-10-28T12:57:01.580Z",
+    "lastChecked": "2026-10-29T12:08:43.232Z",
     "revisionIdentifier": "d00d3409",
-    "lastVerified": "2026-10-28T12:57:01.580Z"
+    "lastVerified": "2026-10-29T12:08:43.232Z"
   },
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
@@ -8155,5 +8154,19 @@
     "lastChecked": "2026-10-29T11:56:19.366Z",
     "revisionIdentifier": "6ba9aead",
     "lastVerified": "2026-10-29T11:56:19.366Z"
+  },
+  "bourd-dev-seo-skills": {
+    "name": "seo-skills",
+    "officialUrl": "https://github.com/bourd-dev/seo-skills",
+    "lastChecked": "2026-10-29T12:08:38.097Z",
+    "revisionIdentifier": "4b0005f6e6",
+    "lastVerified": "2026-10-29T12:08:38.097Z"
+  },
+  "gitliveapp-firebase-kotlin-sdk": {
+    "name": "firebase-kotlin-sdk",
+    "officialUrl": "https://github.com/GitLiveApp/firebase-kotlin-sdk",
+    "lastChecked": "2026-10-29T12:08:40.663Z",
+    "revisionIdentifier": "077d6624",
+    "lastVerified": "2026-10-29T12:08:40.663Z"
   }
 }
