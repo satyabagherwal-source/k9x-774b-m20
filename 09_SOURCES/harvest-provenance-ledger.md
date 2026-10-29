@@ -6006,3 +6006,4 @@ Every entry in this ledger must capture:
 | `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `643f50b3` | Multi-dimensional audit evidence | 2026-10-29T00:02:34.489Z |
 | `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-29T00:02:37.189Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `2dbf3197` | Multi-dimensional audit evidence | 2026-10-29T00:02:39.978Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-29T00:09:08.321Z |

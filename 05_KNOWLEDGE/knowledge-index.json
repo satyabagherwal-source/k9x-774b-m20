@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T00:02:39.931Z",
+  "last_updated": "2026-10-29T00:09:08.238Z",
   "total_verified_learnings": 1160,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -66174,7 +66174,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
-      "content_hash": "35d3a5f79821eee36984d463bbd7f471800a2b05403cf13ed20319d8219199e4",
+      "content_hash": "fcb0563f9b22bce7ee765c7fd479ad864e1bfeac70a899629b13e640c8c67f91",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
       "promoted_rules": [
@@ -66214,7 +66214,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T18:08:49.716Z",
+      "verified_at": "2026-10-29T00:09:08.223Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
