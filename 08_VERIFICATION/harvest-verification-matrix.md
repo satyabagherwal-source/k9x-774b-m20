@@ -6077,3 +6077,4 @@
 | `CYCLE-20261029-KOLM` | `2026-10-29T23:34:50.506Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5555` | Yes (`e07e3b20...`) |
 | `CYCLE-20261029-KV2M` | `2026-10-29T23:34:58.894Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5556` | Yes (`6ecc4d2c...`) |
 | `CYCLE-20261029-KZJE` | `2026-10-29T23:35:04.682Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5557` | Yes (`ef0ec722...`) |
+| `CYCLE-20261029-TEV3` | `2026-10-29T23:41:37.791Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5558` | Yes (`5cc1f7c7...`) |

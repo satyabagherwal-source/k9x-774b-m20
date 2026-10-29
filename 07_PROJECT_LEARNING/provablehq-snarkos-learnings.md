@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `1f4eee02`  
+> **Source Version**: `22c4a97a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T17:42:55.417Z  
+> **Timestamp**: 2026-10-29T23:41:37.247Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T17:42:55.408Z  
+> **Harvest Timestamp**: 2026-10-29T23:41:35.944Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Decentralized Operating System for ZK Applications
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4531 stars
+- **Stars / Engagement**: 4530 stars
 
 ---
 
@@ -1966,16 +1966,13 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4585** (2026-10-29): **[Bug] Block sync stalls for good when a validator peer drops rate-limited block requests**
+  *Symptoms*: ## 🐛 Bug Report  A validator that syncs blocks from a validator peer can stall for good. Two behaviors combine:  1. **The gateway drops excess block requests without a reply.** A validator counts the `BlockRequest`s from each peer over `CACHE_REQUESTS_INTERVAL` (2 seconds). From the `max_cache_duplicates()`-th request on, it returns `Ok(true)` and does nothing. It sends no response and logs nothing. The limit is the square of the current committee size, so it is 16 on a 4-validator devnet.    - [`gateway.rs#L650-L655`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/bft/src/gateway.rs#L650-L655)    - [`gateway.rs#L400-L403`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/bft/src/gateway.rs#L400-L403) 2. **A dropped request never times out while its peer answers other requests.** `handle_block_request_timeouts` keeps a request whose peer sent any block response in the last `BLOCK_REQUEST_TIMEOUT` (60 seconds). It added this exemption in 71f5f74c0 ("do not ban responsive peers"). The peer keeps answering newer requests, so the dropped ones are never re-issued.    - [`block_sync.rs#L1247-L1249`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/sync/src/block_sync.rs#L1247-L1249)    - [`block_sync.rs#L1384-L1389`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/sync/src/block_sync.rs#L1384-L1389)  The syncing node the
+
 - **Issue #4466** (2026-09-29): **[Bug] Spurious ERROR log: Attempted to decrease GC round from 36 to 34**
   *Symptoms*: ## 🐛 Bug Report  Link to testrun: https://app.circleci.com/pipelines/gh/ProvableHQ/snarkOS/4270/workflows/6fe7a02c-9a65-48f9-86f1-b2438b7f6616/jobs/90558?utm_campaign=vcs-integration-link&utm_medium=referral&utm_source=github-checks-link  [ci-runner] 2026-09-17T17:42:01Z ❌ Test failed! Validator #1 logs contain errors. 2026-09-17T17:41:13.258841Z ERROR Block synchronization failed — Failed to garbage collect certificates — Attempted to decrease GC round from 36 to 34 
   **Post-Mortem & Fix Analysis**:
   > Likely already solved by 67810a9.
-
-- **Issue #4407** (2026-09-02): **[Bug] There are 1 surplus live tasks**
-  *Symptoms*: ## 🐛 Bug Report  Our good old friend has returned.  Example failure: https://app.circleci.com/pipelines/gh/ProvableHQ/snarkOS/4133/workflows/4789b13b-832a-46b2-a997-5109a89c889a/jobs/86849 
-  **Post-Mortem & Fix Analysis**:
-  > From what I can tell, this is fixed in `staging,` and it's the nature of this specific test script that caused (and will keep causing until the next release) the failure, as it involves a node upgrade, and the version being upgraded doesn't have the fix just yet.
-  > Closing per @ljedrz's diagnosis above: this is fixed in `staging`, and the remaining CI failures are an artifact of the test script upgrading from a release that predates the fix.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1992,43 +1989,120 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5375fc14` (2026-10-28)
-**Commit Message**: Merge pull request #4584 from aleo-labs-protocol/fix/client-solution-limit
+### Incident Patch 1: `e141be4e` (2026-10-29)
+**Commit Message**: Merge pull request #4588 from aleo-labs-protocol/fix/block-sync-dropped-requests
 
-**File**: `node/src/client/mod.rs` (modified, +7/-9)
+Re-issue block requests that a responsive peer skipped
+
+**File**: `node/bft/src/gateway.rs` (modified, +1/-0)
 ```diff
-@@ -365,15 +365,13 @@ impl<N: Network, C: ConsensusStorage<N>> Client<N, C> {
-                     let _node = node.clone();
-                     // For each solution, spawn a task to verify it.
-                     tokio::task::spawn_blocking(move || {
--                        // Retrieve the latest epoch hash.
--                        if let Ok(epoch_hash) = _node.ledger.latest_epoch_hash() {
--                            // Check if the prover has reached their solution limit.
--                            // While snarkVM will ultimately abort any excess solutions for safety, performing this check
--                            // here prevents the to-be aborted solutions from propagating through the network.
--                            let prover_address = solution.address();
--                            if _node.ledger.is_solution_limit_reached(&prover_address, 0) {
--                                debug!("Invalid Solution '{}' - Prover '{prover_address}' has reached their solution limit for the current epoch", fmt_id(solution.id()));
--                            }
-+                        // Check if the prover has reached their solution limit.
-+                        // While snarkVM will ultimately abort any excess solutions for safety, performing this check
-+                        // here prevents the to-be aborted solutions from propagating through the network.
-+                        let prover_address = solution.address();
-+                        if _node.ledger.is_solution_limit_reached(&prover_address, 0) {
-+                            debug!("Invalid Solution '{}' - Prover '{prover_address}' has reached their solution limit for the current epoch", fmt_id(solution.id()));
-+                        } else if let Ok(epoch_hash) = _node.ledger.latest_epoch_hash() {
-                             // Retrieve the latest proof target.
-                             let proof_target = _node.ledger.latest_block().header().proof_target();
-                             // Ensure that the solution is valid for the given epoch.
+@@ -692,6 +692,7 @@ impl<N: Network> Gateway<N> {
+             Event::BlockRequest(_) => {
+                 let num_events = self.cache.insert_inbound_block_request(peer_ip, CACHE_REQUESTS_INTERVAL);
+                 if num_events >= self.max_cache_duplicates() {
++                    trace!("{CONTEXT} Dropping a block request from '{peer_ip}' (rate limit exceeded)");
+                     return Ok(true);
+                 }
+             }
+```
+
+**File**: `node/sync/src/block_sync.rs` (modified, +125/-18)
+```diff
+@@ -242,11 +242,12 @@ pub struct BlockSync<N: Network> {
+     /// Tracks failed requests that need to be re-issued.
+     failed_requests: Mutex<FailedRequests<N::BlockHash>>,
+ 
+-    /// Tracks the last time each peer delivered a successful block response.
++    /// Tracks, for each peer, the last time it delivered a successful block response,
++    /// and the latest timestamp of any request it answered.
+     ///
+     /// Used in `handle_block_request_timeouts` to avoid banning peers that are actively
+     /// responding but cannot keep up with the request rate.
+-    last_response_at: Mutex<HashMap<SocketAddr, Instant>>,
++    last_response_at: Mutex<HashMap<SocketAddr, (Instant, Instant)>>,
+ }
+ 
+ impl<N: Network> BlockSync<N> {
+@@ -1202,6 +1203,7 @@ impl<N: Network> BlockSync<N> {
+ 
+         // Retrieve the request entry for the candidate block.
+         let (expected_hash, expected_previous_hash, sync_ips) = &entry.request;
++        let request_timestamp = entry.timestamp;
+ 
+         // Ensure the candidate block hash matches the expected hash.
+         if let Some(expected_hash) = expected_hash
+@@ -1244,9 +1246,17 @@ impl<N: Network> BlockSync<N> {
+ 
+         trace!("Received a new and valid block response for height {height}");
+ 
+-        // Record that this peer is actively responding. Used by `handle_block_request_timeouts`
+-        // to avoid banning peers that are slow but making progress.
+-        self.last_response_at.lock().insert(peer_ip, Instant::now());
++        // Record that this peer is actively responding, and the latest request it answered.
++        // Used by `handle_block_request_timeouts` to avoid banning peers that are slow but making progress.
++        let now = Instant::now();
++        self.last_response_at
++            .lock()
++            .entry(peer_ip)
++            .and_modify(|(received_at, answered_at)| {
++                *received_at = now;
++                *answered_at = (*answered_at).max(request_timestamp);
++            })
++            .or_insert((now, request_timestamp));
+ 
+         // Notify the sync loop that something changed.
+         self.response_notify.notify_one();
+@@ -1345,16 +1355,20 @@ impl<N: Network> BlockSync<N> {
+     ///
+     /// Timed-out requests will be marked as "failed" and re-issued on the next call to `prepare_block_requests`.
+     pub fn handle_block_request_timeouts(&self) {
+-        // Snapshot last-response times before locking `requests`. A request whose assigned peer
+-        // has responded within `BLOCK_REQUEST_TIMEOUT` is not timed out, even if its own timer
+-        // has elapsed — the peer is keeping up with a backlog and timing this request out would
+-        // just churn it through `failed_requests` and lose its place in the queue.
+-        let responsive_peers: HashSet<SocketAddr> = {
++        // Snapshot, before locking `requests`, the peers that responded within `BLOCK_REQUEST_TIMEOUT`
++        // and the latest timestamp of any request each one answered. A request is not timed out, even
++        // if its own timer has elapsed, while an assigned peer is responsive and has not answered a
++        // request sent after it — the peer is keeping up with a backlog and timing this request out
++        // would just churn it through `failed_requests` and lose its place in the queue. A peer that
++        // answered a later request has skipped this one.
++        let responsive_peers: HashMap<SocketAddr, Instant> = {
+             let last_response_at = self.last_response_at.lock();
+             let now = Instant::now();
+             last_response_at
+                 .iter()
+-                .filter_map(|(peer, t)| (now.duration_since(*t) <= BLOCK_REQUEST_TIMEOUT).then_some(*peer))
++                .filter_map(|(peer, (received_at, answered_at))| {
++                    (now.duration_since(*received_at) <= BLOCK_REQUEST_TIMEOUT).then_some((*peer, *answered_at))
++                })
+                 .collect()
+         };
+ 
+@@ -1382,8 +1396,10 @@ impl<N: Network> BlockSync<N> {
+                 let timer_elapsed = now.duration_since(e.timestamp) > BLOCK_REQUEST_TIMEOUT;
+                 // Determine if the request is complete.
+                 let is_complete = e.sync_ips().is_empty() && e.response.is_some();
+-                // If any assigned peer is still actively responding, the request is not stuck.
+-                let has_responsive_peer = e.sync_ips().iter().any(|ip| responsive_peers.contains(ip));
++                // If any assigned peer is still actively responding and has not skipped this request, it is not stuck.
++                let has_responsive_peer = e.sync_ips().iter().any(|ip| {
++                    responsive_peers.get(ip).is_some_and(|answered_at| *answered_at <= e.timestamp)
++                });
+ 
+                 // Determine if the request has timed out.
+                 let is_timeout = timer_elapsed && !is_complete && !has_responsive_peer;
+@@ -1401,9 +1417,9 @@ impl<N: Network> BlockSync<N> {
+                     trace
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4584** (2026-10-28): client: drop solutions from provers at their solution limit (@cbeck88)
-- **PR #4582** (2026-10-27): metrics: count transaction verification, memory-pool admission and gossip per call site (@cbeck88)
-- **PR #4581** (closed): Verify unconfirmed transactions before gossiping them (@cbeck88)
-- **PR #4579** (2026-10-26): chore(deps): bump ureq from 3.4.0 to 3.5.0 in the cargo-minor group (@dependabot[bot])
-- **PR #4578** (2026-10-26): chore(deps): bump lru from 0.18.2 to 0.19.0 (@dependabot[bot])
-- **PR #4577** (2026-10-26): fix(devnet.sh): run the build command without eval (@cbeck88)
+- **PR #4595** (closed): Move fastsync into snarkOS as snarkos-ledger-distribution (@cbeck88-ai-dev)
+- **PR #4593** (closed): Move fastsync into snarkOS as snarkos-ledger-distribution (@cbeck88-ai-dev)
+- **PR #4592** (2026-10-29): Merge testnet into staging (@aleo-labs-merge-bot[bot])
+- **PR #4591** (closed): [testnet] Move past open advisories (@cbeck88)
+- **PR #4590** (closed): ci: check advisories on pull requests outside staging (@cbeck88)
+- **PR #4589** (2026-10-28): Move testnet CI to GitHub Actions and remove CircleCI (@cbeck88)
 
 ---
 
@@ -2048,42 +2122,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4584 from aleo-labs-protocol/fix/client-solution-limit
+## X. Merge pull request #4588 from aleo-labs-protocol/fix/block-sync-dropped-requests
 
 **RULE**:
-When implementing operations in `node/src/client/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `node/bft/src/gateway.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5375fc14`: Merge pull request #4584 from aleo-labs-protocol/fix/client-solution-limit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e141be4e`: Merge pull request #4588 from aleo-labs-protocol/fix/block-sync-dropped-requests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/src/client/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/bft/src/gateway.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                        // Check if the prover has reached their solution limit.
-                        // While snarkVM will ultimately abort any excess solutions for safety, performing this check
-                        // here prevents the to-be aborted solutions from propagating through the network.
-                        let prover_address = solution.address();
-                        if _node.ledger.is_solution_limit_reached(&prover_address, 0) {
-                            debug!("Invalid Solution '{}' - Prover '{prover_address}' has reached their solution limit for the current epoch", fmt_id(solution.id()));
-                        } else if let Ok(epoch_hash) = _node.ledger.latest_epoch_hash() {
+                    trace!("{CONTEXT} Dropping a block request from '{peer_ip}' (rate limit exceeded)");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                        // Retrieve the latest epoch hash.
-                        if let Ok(epoch_hash) = _node.ledger.latest_epoch_hash() {
-                            // Check if the prover has reached their solution limit.
-                            // While snarkVM will ultimately abort any excess solutions for safety, performing this check
-                            // here prevents the to-be aborted solutions from propagating through the network.
-                            let prover_address = solution.address();
-                            if _node.ledger.is_solution_limit_reached(&prover_address, 0) {
-                                debug!("Invalid Solution '{}' - Prover '{prover_address}' has reached their solution limit for the current epoch", fmt_id(solution.id()));
-                            }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5375fc14` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e141be4e` are properly handled with clean fallback behavior.

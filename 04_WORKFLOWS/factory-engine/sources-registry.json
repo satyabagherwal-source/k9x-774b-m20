@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T23:35:07.235Z",
-    "lastVerified": "2026-10-29T23:35:07.235Z",
+    "lastChecked": "2026-10-29T23:41:40.329Z",
+    "lastVerified": "2026-10-29T23:41:40.329Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -232,8 +232,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T22:48:55.215Z",
-    "lastVerified": "2026-10-29T22:48:55.215Z",
+    "lastChecked": "2026-10-29T23:41:36.433Z",
+    "lastVerified": "2026-10-29T23:41:36.433Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -999,22 +999,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "provablehq-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T01:49:57.648Z",
-    "lastVerified": "2026-10-29T01:49:57.648Z",
+    "lastChecked": "2026-10-29T23:41:35.944Z",
+    "lastVerified": "2026-10-29T23:41:35.944Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "bc6905ed852da8d96a08791329b631066ab219bca4d3f14d909344059718202e",
+    "contentHash": "5cc1f7c77d8c26226f31348c7d4cd767ca6e46c51d849cdb669036d5e31baff3",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "1f4eee02"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -2590,9 +2589,9 @@
   "asciinema-asciinema": {
     "name": "asciinema",
     "officialUrl": "https://github.com/asciinema/asciinema",
-    "lastChecked": "2026-10-28T08:25:18.428Z",
+    "lastChecked": "2026-10-29T23:41:21.405Z",
     "revisionIdentifier": "cf66ef4c",
-    "lastVerified": "2026-10-28T08:25:18.428Z"
+    "lastVerified": "2026-10-29T23:41:21.405Z"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
     "name": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -4224,9 +4223,9 @@
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
     "officialUrl": "https://github.com/skyzh/mini-lsm",
-    "lastChecked": "2026-10-28T14:15:27.377Z",
+    "lastChecked": "2026-10-29T23:41:33.862Z",
     "revisionIdentifier": "2f7ce315",
-    "lastVerified": "2026-10-28T14:15:27.377Z"
+    "lastVerified": "2026-10-29T23:41:33.862Z"
   },
   "embassy-rs-embassy": {
     "name": "embassy-rs/embassy",
@@ -4622,9 +4621,9 @@
   "infracost-infracost": {
     "name": "infracost",
     "officialUrl": "https://github.com/infracost/infracost",
-    "lastChecked": "2026-10-28T15:03:23.528Z",
+    "lastChecked": "2026-10-29T23:41:28.915Z",
     "revisionIdentifier": "98c9711f",
-    "lastVerified": "2026-10-28T15:03:23.528Z"
+    "lastVerified": "2026-10-29T23:41:28.915Z"
   },
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
@@ -8650,5 +8649,19 @@
     "lastChecked": "2026-10-29T23:34:49.625Z",
     "revisionIdentifier": "2a5fe83a",
     "lastVerified": "2026-10-29T23:34:49.625Z"
+  },
+  "logiover-website-seo-audit-crawler": {
+    "name": "website-seo-audit-crawler",
+    "officialUrl": "https://github.com/logiover/website-seo-audit-crawler",
+    "lastChecked": "2026-10-29T23:41:23.897Z",
+    "revisionIdentifier": "9b22241e56",
+    "lastVerified": "2026-10-29T23:41:23.897Z"
+  },
+  "leetcode-mafia-cheetah": {
+    "name": "cheetah",
+    "officialUrl": "https://github.com/leetcode-mafia/cheetah",
+    "lastChecked": "2026-10-29T23:41:26.400Z",
+    "revisionIdentifier": "e66db5be",
+    "lastVerified": "2026-10-29T23:41:26.400Z"
   }
 }

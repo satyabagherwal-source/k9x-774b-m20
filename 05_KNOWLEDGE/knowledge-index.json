@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T23:35:04.630Z",
+  "last_updated": "2026-10-29T23:41:37.732Z",
   "total_verified_learnings": 1169,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -66160,13 +66160,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "1f4eee02",
-      "content_hash": "1d9b2ae0dc011a9dd30b1e2fc797e4be684b21983545208cc37aee4d9d1a169a",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "22c4a97a",
+      "content_hash": "5cc1f7c77d8c26226f31348c7d4cd767ca6e46c51d849cdb669036d5e31baff3",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -66232,6 +66232,11 @@
           "number": 5385,
           "title": "Merge pull request #4534 from aleo-labs-protocol/feat/upgrade-schedule-handshake",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5558,
+          "title": "Merge pull request #4588 from aleo-labs-protocol/fix/block-sync-dropped-requests",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -66239,7 +66244,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T19:46:53.190Z",
+      "verified_at": "2026-10-29T23:41:37.716Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149494,6 +149499,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T23:35:04.618Z"
+    },
+    "rule-5558": {
+      "learning_id": "rule-5558",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5558,
+      "title": "Merge pull request #4588 from aleo-labs-protocol/fix/block-sync-dropped-requests",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "22c4a97a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T23:41:37.717Z"
     }
   },
   "aliases": {
