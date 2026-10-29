@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T16:23:51.095Z",
-  "total_cycles_completed": 6020,
-  "total_learnings_persisted": 6020,
-  "total_rules_promoted": 5478,
+  "last_updated": "2026-10-29T16:36:47.144Z",
+  "total_cycles_completed": 6023,
+  "total_learnings_persisted": 6023,
+  "total_rules_promoted": 5483,
   "history": [
-    {
-      "timestamp": "2026-10-28T16:33:36.323Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T16:33:38.307Z",
-      "repository": "Dicklesworthstone/destructive_command_guard",
-      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T16:33:47.486Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T16:33:53.377Z",
       "repository": "StarRocks/starrocks",
@@ -1403,6 +1382,27 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T16:36:36.738Z",
+      "repository": "liketrek/TREK",
+      "learningId": "learn-github-liketrek-trek",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T16:36:46.089Z",
+      "repository": "vinceglb/FileKit",
+      "learningId": "learn-github-vinceglb-filekit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T16:36:47.144Z",
+      "repository": "mistralai/Mistral-Large-4-1T-A52B",
+      "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

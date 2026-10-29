@@ -4680,3 +4680,9 @@ https://huggingface.co/LiquidAI/LFM3-VL-2B
 # --- Automatically Discovered by AI Scout Engine [2026-10-29T12:19:27.372Z] ---
 # [HUGGINGFACE-AI-MODELS] unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF (3450 score) - Verified Hugging Face Model: unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF (145 like
 https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-29T16:36:27.902Z] ---
+# [AI-AGENTS] liketrek/TREK (8306 score) - The most complete open-source travel planner: real-time collaboration, bookings,
+https://github.com/liketrek/TREK
+# [HUGGINGFACE-AI-MODELS] mistralai/Mistral-Large-4-1T-A52B (11478 score) - Verified Hugging Face Model: mistralai/Mistral-Large-4-1T-A52B (1120 likes, 278 
+https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B

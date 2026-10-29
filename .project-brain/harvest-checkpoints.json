@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T16:23:51.100Z",
+  "last_updated": "2026-10-29T16:36:47.148Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -12306,14 +12306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vinceglb-filekit",
-      "content_hash": "acd78bf0f571bc6b6767e89c95c382e99b34eb732898014f7281edafbcf581db",
-      "verified_at": "2026-10-25T19:19:10.412Z",
+      "content_hash": "8d0579e6ca3908819becf799320e972ab48d8e4385c0c106f13926173f519bdf",
+      "verified_at": "2026-10-29T16:36:46.093Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T19:19:10.412Z"
+      "last_updated": "2026-10-29T16:36:46.093Z"
     },
     "nsh07/Tomato": {
       "repository": "nsh07/Tomato",
@@ -17249,6 +17249,36 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-29T12:19:43.271Z"
+    },
+    "liketrek/TREK": {
+      "repository": "liketrek/TREK",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-liketrek-trek",
+      "content_hash": "c1e44fe3944e29d3124c5809da2669bfcd509b12456ef5fd3588f9741542777e",
+      "verified_at": "2026-10-29T16:36:36.741Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-29T16:36:36.741Z"
+    },
+    "mistralai/Mistral-Large-4-1T-A52B": {
+      "repository": "mistralai/Mistral-Large-4-1T-A52B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
+      "content_hash": "cbd4bc23066f9da24561958bad582c88a3e9ceb1f2bf0a9eda39ea9409285ce4",
+      "verified_at": "2026-10-29T16:36:47.147Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-29T16:36:47.147Z"
     }
   },
   "repos": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T16:23:51.012Z",
-  "total_verified_learnings": 1164,
+  "last_updated": "2026-10-29T16:36:47.052Z",
+  "total_verified_learnings": 1166,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -54894,8 +54894,8 @@
       "slug": "vinceglb-filekit",
       "platform": "github",
       "source_url": "https://github.com/vinceglb/FileKit",
-      "source_version": "75099ba5",
-      "content_hash": "acd78bf0f571bc6b6767e89c95c382e99b34eb732898014f7281edafbcf581db",
+      "source_version": "ddc09b4a",
+      "content_hash": "8d0579e6ca3908819becf799320e972ab48d8e4385c0c106f13926173f519bdf",
       "dossier_path": "07_PROJECT_LEARNING/vinceglb-filekit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vinceglb-filekit-learnings.md",
       "promoted_rules": [
@@ -54913,6 +54913,11 @@
           "number": 4422,
           "title": "🔀 Merge pull request #684 from vinceglb/feature/walk-size-recursively",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5515,
+          "title": "🔀 Merge pull request #700 from vinceglb/fix/web-serializer-jvm-open-cleanup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54920,7 +54925,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T19:19:10.356Z",
+      "verified_at": "2026-10-29T16:36:45.966Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -148518,6 +148523,152 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T16:23:50.994Z"
+    },
+    "learn-github-liketrek-trek": {
+      "learning_id": "learn-github-liketrek-trek",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "liketrek/TREK",
+      "repository": "liketrek/TREK",
+      "slug": "liketrek-trek",
+      "platform": "github",
+      "source_url": "https://github.com/liketrek/TREK",
+      "source_version": "a0943f82",
+      "content_hash": "c1e44fe3944e29d3124c5809da2669bfcd509b12456ef5fd3588f9741542777e",
+      "dossier_path": "07_PROJECT_LEARNING/liketrek-trek-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/liketrek-trek-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5514,
+          "title": "assistant): answer the model's own calls of server tools when a thread is replay",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-29T16:36:36.619Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5514": {
+      "learning_id": "rule-5514",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5514,
+      "title": "assistant): answer the model's own calls of server tools when a thread is replay",
+      "source_url": "https://github.com/liketrek/TREK",
+      "source_version": "a0943f82",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T16:36:36.619Z"
+    },
+    "rule-5515": {
+      "learning_id": "rule-5515",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5515,
+      "title": "🔀 Merge pull request #700 from vinceglb/fix/web-serializer-jvm-open-cleanup",
+      "source_url": "https://github.com/vinceglb/FileKit",
+      "source_version": "ddc09b4a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T16:36:45.966Z"
+    },
+    "learn-huggingface-mistralai-mistral-large-4-1t-a52b": {
+      "learning_id": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mistralai/Mistral-Large-4-1T-A52B",
+      "repository": "mistralai/Mistral-Large-4-1T-A52B",
+      "slug": "hf-mistralai-mistral-large-4-1t-a52b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
+      "source_version": "hf-mistralai-mistral-large-4-1t-a52b",
+      "content_hash": "cbd4bc23066f9da24561958bad582c88a3e9ceb1f2bf0a9eda39ea9409285ce4",
+      "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5516,
+          "title": "Precision-Island Quantization Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5517,
+          "title": "Sparse Expert Routing Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5518,
+          "title": "Multimodal Projector Precision Preservation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-29T16:36:47.025Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5516": {
+      "learning_id": "rule-5516",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5516,
+      "title": "Precision-Island Quantization Boundary",
+      "source_url": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
+      "source_version": "hf-mistralai-mistral-large-4-1t-a52b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T16:36:47.025Z"
+    },
+    "rule-5517": {
+      "learning_id": "rule-5517",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5517,
+      "title": "Sparse Expert Routing Isolation",
+      "source_url": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
+      "source_version": "hf-mistralai-mistral-large-4-1t-a52b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T16:36:47.025Z"
+    },
+    "rule-5518": {
+      "learning_id": "rule-5518",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5518,
+      "title": "Multimodal Projector Precision Preservation",
+      "source_url": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
+      "source_version": "hf-mistralai-mistral-large-4-1t-a52b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T16:36:47.025Z"
     }
   },
   "aliases": {

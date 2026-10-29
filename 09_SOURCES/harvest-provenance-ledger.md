@@ -6052,3 +6052,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6ea1cb4c` | Multi-dimensional audit evidence | 2026-10-29T12:19:52.897Z |
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `40e3eb97` | Multi-dimensional audit evidence | 2026-10-29T12:26:02.778Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `0550f8b3` | Multi-dimensional audit evidence | 2026-10-29T16:23:51.090Z |
+| `learn-github-liketrek-trek` | `https://github.com/liketrek/TREK` | `a0943f82` | Multi-dimensional audit evidence | 2026-10-29T16:36:36.732Z |
+| `learn-github-vinceglb-filekit` | `https://github.com/vinceglb/FileKit` | `ddc09b4a` | Multi-dimensional audit evidence | 2026-10-29T16:36:46.083Z |
+| `learn-huggingface-mistralai-mistral-large-4-1t-a52b` | `https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-29T16:36:47.138Z |

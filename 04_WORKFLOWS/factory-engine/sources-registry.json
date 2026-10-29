@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T16:23:53.643Z",
-    "lastVerified": "2026-10-29T16:23:53.643Z",
+    "lastChecked": "2026-10-29T16:36:49.679Z",
+    "lastVerified": "2026-10-29T16:36:49.679Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -134,8 +134,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-29T12:13:30.423Z",
-    "lastVerified": "2026-10-29T12:13:30.423Z",
+    "lastChecked": "2026-10-29T16:36:48.554Z",
+    "lastVerified": "2026-10-29T16:36:48.554Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2037,8 +2037,8 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T23:30:46.322Z",
-    "lastVerified": "2026-10-28T23:30:46.322Z",
+    "lastChecked": "2026-10-29T16:36:43.664Z",
+    "lastVerified": "2026-10-29T16:36:43.664Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -3430,9 +3430,9 @@
   "llphant-llphant": {
     "name": "LLPhant",
     "officialUrl": "https://github.com/LLPhant/LLPhant",
-    "lastChecked": "2026-10-28T12:36:56.691Z",
+    "lastChecked": "2026-10-29T16:36:46.045Z",
     "revisionIdentifier": "6305ae46",
-    "lastVerified": "2026-10-28T12:36:56.691Z"
+    "lastVerified": "2026-10-29T16:36:46.045Z"
   },
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
@@ -3788,9 +3788,9 @@
   "kubeshop-botkube": {
     "name": "botkube",
     "officialUrl": "https://github.com/kubeshop/botkube",
-    "lastChecked": "2026-10-28T13:30:10.325Z",
+    "lastChecked": "2026-10-29T16:36:41.085Z",
     "revisionIdentifier": "ee94e191",
-    "lastVerified": "2026-10-28T13:30:10.325Z"
+    "lastVerified": "2026-10-29T16:36:41.085Z"
   },
   "materializeinc-materialize": {
     "name": "MaterializeInc/materialize",
@@ -8261,5 +8261,56 @@
     "lastChecked": "2026-10-29T16:13:32.334Z",
     "revisionIdentifier": "ed73a034",
     "lastVerified": "2026-10-29T16:13:32.334Z"
+  },
+  "liketrek-trek": {
+    "name": "liketrek/TREK",
+    "officialUrl": "https://github.com/liketrek/TREK",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-29T16:36:34.745Z",
+    "lastVerified": "2026-10-29T16:36:34.745Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-liketrek-trek",
+    "contentHash": "c1e44fe3944e29d3124c5809da2669bfcd509b12456ef5fd3588f9741542777e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 24,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vinceglb-filekit": {
+    "name": "vinceglb/FileKit",
+    "officialUrl": "https://github.com/vinceglb/FileKit",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-29T16:36:44.855Z",
+    "lastVerified": "2026-10-29T16:36:44.855Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-vinceglb-filekit",
+    "contentHash": "8d0579e6ca3908819becf799320e972ab48d8e4385c0c106f13926173f519bdf",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-mistralai-mistral-large-4-1t-a52b": {
+    "name": "mistralai/Mistral-Large-4-1T-A52B",
+    "officialUrl": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-29T16:36:36.003Z",
+    "lastVerified": "2026-10-29T16:36:36.003Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
+    "contentHash": "cbd4bc23066f9da24561958bad582c88a3e9ceb1f2bf0a9eda39ea9409285ce4",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

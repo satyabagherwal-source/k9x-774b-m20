@@ -8183,10 +8183,10 @@
     "repository": "vinceglb/FileKit",
     "platform": "github",
     "sourceUrl": "https://github.com/vinceglb/FileKit",
-    "sourceVersion": "75099ba5",
+    "sourceVersion": "ddc09b4a",
     "license": "MIT",
-    "contentHash": "acd78bf0f571bc6b6767e89c95c382e99b34eb732898014f7281edafbcf581db",
-    "lastHarvestedAt": "2026-10-25T19:19:10.405Z",
+    "contentHash": "8d0579e6ca3908819becf799320e972ab48d8e4385c0c106f13926173f519bdf",
+    "lastHarvestedAt": "2026-10-29T16:36:46.083Z",
     "learningId": "learn-github-vinceglb-filekit"
   },
   "nsh07-tomato": {
@@ -11468,5 +11468,25 @@
     "contentHash": "7eee584774bb7ea48f050275e3d282ce7ec65ca9ec48bf238fc979bec4bb25ae",
     "lastHarvestedAt": "2026-10-29T12:19:43.264Z",
     "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf"
+  },
+  "liketrek-trek": {
+    "repository": "liketrek/TREK",
+    "platform": "github",
+    "sourceUrl": "https://github.com/liketrek/TREK",
+    "sourceVersion": "a0943f82",
+    "license": "AGPL-3.0",
+    "contentHash": "c1e44fe3944e29d3124c5809da2669bfcd509b12456ef5fd3588f9741542777e",
+    "lastHarvestedAt": "2026-10-29T16:36:36.732Z",
+    "learningId": "learn-github-liketrek-trek"
+  },
+  "hf-mistralai-mistral-large-4-1t-a52b": {
+    "repository": "mistralai/Mistral-Large-4-1T-A52B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
+    "sourceVersion": "hf-mistralai-mistral-large-4-1t-a52b",
+    "license": "Open-Source",
+    "contentHash": "cbd4bc23066f9da24561958bad582c88a3e9ceb1f2bf0a9eda39ea9409285ce4",
+    "lastHarvestedAt": "2026-10-29T16:36:47.138Z",
+    "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b"
   }
 }

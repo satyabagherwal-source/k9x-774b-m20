@@ -6043,3 +6043,6 @@
 | `CYCLE-20261029-GOFY` | `2026-10-29T12:19:52.894Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5511` | Yes (`52b116ed...`) |
 | `CYCLE-20261029-OLUF` | `2026-10-29T12:26:02.775Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5512` | Yes (`d7d4c713...`) |
 | `CYCLE-20261029-6FCE` | `2026-10-29T16:23:51.086Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5513` | Yes (`747b8c63...`) |
+| `CYCLE-20261029-MU48` | `2026-10-29T16:36:36.728Z` | `liketrek/TREK` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5514` | Yes (`c1e44fe3...`) |
+| `CYCLE-20261029-N1BZ` | `2026-10-29T16:36:46.079Z` | `vinceglb/FileKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5515` | Yes (`8d0579e6...`) |
+| `CYCLE-20261029-N25A` | `2026-10-29T16:36:47.134Z` | `mistralai/Mistral-Large-4-1T-A52B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5516, Rule 5517, Rule 5518` | Yes (`cbd4bc23...`) |

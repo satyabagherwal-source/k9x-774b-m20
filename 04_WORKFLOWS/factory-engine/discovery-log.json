@@ -19726,5 +19726,32 @@
     "downloads": 90640,
     "qualityScore": 3450,
     "discoveredAt": "2026-10-29T12:19:27.371Z"
+  },
+  {
+    "name": "TREK",
+    "fullName": "liketrek/TREK",
+    "url": "https://github.com/liketrek/TREK",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The most complete open-source travel planner: real-time collaboration, bookings, budgets, packing lists, journals, offline PWA, SSO and an AI-ready MCP server, with planet-wide place search and routing built in.",
+    "stars": 15222,
+    "forks": 1310,
+    "openIssues": 26,
+    "language": "TypeScript",
+    "qualityScore": 8306,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-29T16:32:47.782Z"
+  },
+  {
+    "name": "mistralai/Mistral-Large-4-1T-A52B",
+    "fullName": "mistralai/Mistral-Large-4-1T-A52B",
+    "url": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: mistralai/Mistral-Large-4-1T-A52B (1120 likes, 278 downloads)",
+    "likes": 1120,
+    "downloads": 278,
+    "qualityScore": 11478,
+    "discoveredAt": "2026-10-29T16:34:19.550Z"
   }
 ]
