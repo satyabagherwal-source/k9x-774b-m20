@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T02:07:31.206Z",
+  "last_updated": "2026-10-29T11:01:48.007Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17204,6 +17204,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-29T01:11:08.575Z"
+    },
+    "fabio-rovai/open-ontologies": {
+      "repository": "fabio-rovai/open-ontologies",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-fabio-rovai-open-ontologies",
+      "content_hash": "c8f921755d9731df7233374b7534ed9f651be64d9b7caf47326920d494a49662",
+      "verified_at": "2026-10-29T11:01:48.006Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-29T11:01:48.006Z"
     }
   },
   "repos": {

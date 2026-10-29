@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T02:07:31.121Z",
-  "total_verified_learnings": 1161,
+  "last_updated": "2026-10-29T11:01:47.921Z",
+  "total_verified_learnings": 1162,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -148036,6 +148036,91 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T02:07:31.103Z"
+    },
+    "learn-github-fabio-rovai-open-ontologies": {
+      "learning_id": "learn-github-fabio-rovai-open-ontologies",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "fabio-rovai/open-ontologies",
+      "repository": "fabio-rovai/open-ontologies",
+      "slug": "fabio-rovai-open-ontologies",
+      "platform": "github",
+      "source_url": "https://github.com/fabio-rovai/open-ontologies",
+      "source_version": "2ecb50c2",
+      "content_hash": "c8f921755d9731df7233374b7534ed9f651be64d9b7caf47326920d494a49662",
+      "dossier_path": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5493,
+          "title": "Three-State Verification Invariant on Indistinguishable Value Domains",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5494,
+          "title": "Formal Proof Boundary Byte-Purity Invariant (TCB Isolation)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5495,
+          "title": "Isolation of Schema-Only vs Instance-Loaded Execution Stores",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-29T11:01:47.903Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5493": {
+      "learning_id": "rule-5493",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5493,
+      "title": "Three-State Verification Invariant on Indistinguishable Value Domains",
+      "source_url": "https://github.com/fabio-rovai/open-ontologies",
+      "source_version": "2ecb50c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T11:01:47.903Z"
+    },
+    "rule-5494": {
+      "learning_id": "rule-5494",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5494,
+      "title": "Formal Proof Boundary Byte-Purity Invariant (TCB Isolation)",
+      "source_url": "https://github.com/fabio-rovai/open-ontologies",
+      "source_version": "2ecb50c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T11:01:47.903Z"
+    },
+    "rule-5495": {
+      "learning_id": "rule-5495",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5495,
+      "title": "Isolation of Schema-Only vs Instance-Loaded Execution Stores",
+      "source_url": "https://github.com/fabio-rovai/open-ontologies",
+      "source_version": "2ecb50c2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T11:01:47.903Z"
     }
   },
   "aliases": {

@@ -19687,5 +19687,20 @@
     "downloads": 714,
     "qualityScore": 2154,
     "discoveredAt": "2026-10-29T01:06:36.090Z"
+  },
+  {
+    "name": "open-ontologies",
+    "fullName": "fabio-rovai/open-ontologies",
+    "url": "https://github.com/fabio-rovai/open-ontologies",
+    "type": "github",
+    "domain": "devops-cloud-infrastructure",
+    "description": "Plan, apply and roll back changes to a production ontology, with a blast radius report and a proof an auditor can re-check.",
+    "stars": 2014,
+    "forks": 243,
+    "openIssues": 1,
+    "language": "Rust",
+    "qualityScore": 1232,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-29T10:57:11.579Z"
   }
 ]

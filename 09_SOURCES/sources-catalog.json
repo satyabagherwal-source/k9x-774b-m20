@@ -11438,5 +11438,15 @@
     "contentHash": "bd786a3e6aa6e87e506424a43277e5eda85a1b8b7a668d6377386a83855c7cec",
     "lastHarvestedAt": "2026-10-29T01:11:08.566Z",
     "learningId": "learn-huggingface-liquidai-lfm3-omni-2b"
+  },
+  "fabio-rovai-open-ontologies": {
+    "repository": "fabio-rovai/open-ontologies",
+    "platform": "github",
+    "sourceUrl": "https://github.com/fabio-rovai/open-ontologies",
+    "sourceVersion": "2ecb50c2",
+    "license": "MIT",
+    "contentHash": "c8f921755d9731df7233374b7534ed9f651be64d9b7caf47326920d494a49662",
+    "lastHarvestedAt": "2026-10-29T11:01:47.998Z",
+    "learningId": "learn-github-fabio-rovai-open-ontologies"
   }
 }

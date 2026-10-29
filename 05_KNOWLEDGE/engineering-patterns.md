@@ -397709,3 +397709,331 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `9aa1f674` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5493. Three-State Verification Invariant on Indistinguishable Value Domains (Harvested from fabio-rovai/open-ontologies)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Three-State Verification Invariant on Indistinguishable Value Domains",
+  "source": "fabio-rovai/open-ontologies",
+  "source_url": "https://github.com/fabio-rovai/open-ontologies",
+  "source_version": "2ecb50c2",
+  "license": "MIT",
+  "extracted_at": "2026-10-29T11:01:46.965Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fabio-rovai-open-ontologies",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies) (Revision: `2ecb50c2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an underlying storage, parsing, or serialization layer wide-casts or collapses distinct domain datatypes into a single coarse representation (e.g., store converts `xsd:nonNegativeInteger` to `xsd:integer`, or string-escaped numbers to generic floats), the validator MUST NOT evaluate constraints over those datatypes as either `true` or `false`. It MUST refuse evaluation, transition the verdict to an explicit ternary state (`Undetermined` / `Refused` / `Skipped`), record the unpreserved constraint in audit metadata, and suppress binary verdict assertion.
+
+**WHY**:
+Evaluating a shape or constraint against a store that widened or dropped domain precision yields catastrophic false-positive cleans or false-positive violations:
+1. In positive disjunctions (`sh:or`), a value widened to `xsd:integer` fails to match `xsd:nonNegativeInteger`, causing an erroneous violation against conforming data.
+2. In negative constraints (`sh:not`), widened values fail the negated target shape and incorrectly evaluate to `conforms: true` (a silent defect escaping to production).
+3. In cardinality-qualified shapes (`sh:qualifiedValueShape`), valid values fail type assertions, triggering erroneous `minCount` violations.
+
+**WHEN TO APPLY**:
+Apply to all validation pipelines, semantic rule engines, schema parsers, or deserialization boundaries where the underlying storage layer loses type granularity (e.g., JSON parsers reading 64-bit integers as `f64`, RDF engines coercing sub-datatypes to root types, dynamic SQL query layers mapping precision decimals to generic doubles).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+/// Pure validation guard preventing verdict collapse on widened storage types.
+pub fn evaluate_datatype_clause(
+    store_indistinguishable: bool,
+    target_datatype: &str,
+    property_key: &str,
+    alternatives: &mut std::collections::HashMap<String, Vec<String>>,
+    unpreserved: &mut std::collections::HashMap<String, String>,
+) -> Option<String> {
+    if store_indistinguishable {
+        // MUST NOT evaluate. Mark property as unpreserved and withhold binary judgement.
+        unpreserved.insert(property_key.to_string(), target_datatype.to_string());
+        return None;
+    }
+    Some(format!("DATATYPE(?val) = <{}>", target_datatype))
+}
+
+pub fn finalize_constraint_evaluation(
+    alternatives: &mut std::collections::HashMap<String, Vec<String>>,
+    unpreserved: &std::collections::HashMap<String, String>,
+    skipped: &mut Vec<serde_json::Value>,
+    shape_iri: &str,
+    constraint_name: &str,
+) {
+    for (prop, dt) in unpreserved {
+        // Strip out the alternative so it never generates a false-positive or false-negative SPARQL clause
+        alternatives.remove(prop);
+        skipped.push(serde_json::json!({
+            "shape": shape_iri,
+            "constraint": constraint_name,
+            "property": prop,
+            "unpreserved_datatype": dt,
+            "reason": "store widens derived type; cannot decide without false clean or false violation"
+        }));
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Attempting to evaluate despite store widening.
+// Causes `sh:not [ sh:datatype xsd:nonNegativeInteger ]` to return conforms: true
+// on values that are strictly non-negative integers!
+if row.contains_key("datatype") {
+    let dt = &row["datatype"];
+    // DANGEROUS: If store widens `xsd:nonNegativeInteger` to `xsd:integer`,
+    // `DATATYPE(?val)` will evaluate to `xsd:integer`, failing the equality check
+    // even when the original payload was valid.
+    clauses.push(format!("DATATYPE(?val) = <{}>", dt));
+}
+```
+
+**VERIFICATION METHOD**:
+Run property and boundary test suites verifying that schemas with unpreserved datatypes yield `conforms: null`, zero spurious violations, and non-empty `skipped_constraints`:
+```rust
+#[test]
+fn unpreserved_datatype_returns_null_verdict_and_audit_entry() {
+    let report = run_shacl_validation(
+        "ex:s a sh:NodeShape ; sh:property [ sh:path ex:p ; sh:datatype xsd:nonNegativeInteger ] .",
+        "ex:inst ex:p 42 ."
+    );
+    assert!(report["conforms"].is_null(), "Verdict must be undetermined");
+    assert_eq!(report["violation_count"], 0);
+    assert!(report["skipped_constraints"].as_array().unwrap().iter().any(|s| s["constraint"] == "sh:datatype"));
+}
+```
+
+---
+
+
+---
+
+## 5494. Formal Proof Boundary Byte-Purity Invariant (TCB Isolation) (Harvested from fabio-rovai/open-ontologies)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Formal Proof Boundary Byte-Purity Invariant (TCB Isolation)",
+  "source": "fabio-rovai/open-ontologies",
+  "source_url": "https://github.com/fabio-rovai/open-ontologies",
+  "source_version": "2ecb50c2",
+  "license": "MIT",
+  "extracted_at": "2026-10-29T11:01:47.325Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fabio-rovai-open-ontologies",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies) (Revision: `2ecb50c2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+The Trusted Computing Base (TCB) core responsible for generating formal proof certificates, proof terms, or state transitions destined for interactive theorem provers (Lean 4, Isabelle, Coq, or formal SMT boundary proofs) MUST operate strictly on byte slices (`&[u8]`) and fixed-width primitives. It MUST NOT perform heap allocations via strings, MUST NOT invoke string-formatting machinery (`core::fmt`, `format!`), and MUST NOT import high-level domain abstractions or third-party crates.
+
+**WHY**:
+Formal code extraction frameworks (such as Aeneas for Lean 4, or bounded model checkers like Kani/CBMC) verify algorithms by compiling ASTs directly into functional definitions. Importing `core::fmt`, dynamic heap-allocated strings, or external parsing crates forces the formal verification tool to recursively ingest and model the entire standard library formatting architecture, memory allocators, and Unicode tables. This explodes verification search spaces, invalidates formal proof obligations, and breaks automated translation.
+
+**WHEN TO APPLY**:
+Apply to all cryptographic commitment boundaries, proof certificate emitters, AST serializers for formal verifiers, or security-critical validation cores where correctness must be mathematically proved in Lean, Coq, or Kani.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+/// Bare-metal Trusted Computing Base (TCB) boundary function.
+/// Compatible with Aeneas -> Lean 4 formal extraction.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CertificatePosition {
+    Subject,
+    Predicate,
+    Object,
+}
+
+#[inline(always)]
+pub fn is_ascii_whitespace_or_delimiter(b: u8) -> bool {
+    b == b'\t' || b == b'\n' || b == b'\r' || b == b' '
+}
+
+pub fn field_is_verifiable_ascii(field: &[u8]) -> bool {
+    if field.is_empty() {
+        return false;
+    }
+    let mut i = 0;
+    while i < field.len() {
+        if is_ascii_whitespace_or_delimiter(field[i]) {
+            return false;
+        }
+        i += 1;
+    }
+    true
+}
+
+/// Appends a structured certificate line atomically.
+/// Guarantees all-or-nothing: if any token is invalid, buffer remains intact.
+pub fn append_certificate_triple(
+    buffer: &mut Vec<u8>,
+    sub: &[u8],
+    pred: &[u8],
+    obj: &[u8],
+) -> Result<(), CertificatePosition> {
+    if !field_is_verifiable_ascii(sub) {
+        return Err(CertificatePosition::Subject);
+    }
+    if !field_is_verifiable_ascii(pred) {
+        return Err(CertificatePosition::Predicate);
+    }
+    if !field_is_verifiable_ascii(obj) {
+        return Err(CertificatePosition::Object);
+    }
+
+    buffer.extend_from_slice(sub);
+    buffer.push(b'\t');
+    buffer.extend_from_slice(pred);
+    buffer.push(b'\t');
+    buffer.extend_from_slice(obj);
+    buffer.push(b'\n');
+    Ok(())
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Calling format! or returning dynamic heap error types in a TCB module.
+// This completely kills formal verification tools (Aeneas, Kani, CBMC) by pulling in
+// core::fmt, dynamic formatting tables, and complex allocator logic.
+pub fn append_certificate_line_polluted(out: &mut String, s: &str, p: &str, o: &str) -> anyhow::Result<()> {
+    if s.contains('\t') {
+        // Pulls formatting strings and heap allocations into the formal boundary!
+        anyhow::bail!("Invalid subject token format: {}", s);
+    }
+    out.push_str(&format!("{}\t{}\t{}\n", s, p, o));
+    Ok(())
+}
+```
+
+**VERIFICATION METHOD**:
+Implement Aeneas extraction harnesses in CI alongside property tests verifying byte-level checks exactly equal character-level checks on all UTF-8 inputs:
+```rust
+#[test]
+fn tcb_byte_validator_matches_char_validator() {
+    let test_inputs: &[&[u8]] = &[b"<http://example.org/a>", b"\"hello world\"", b"bad\ttoken\n"];
+    for input in test_inputs {
+        let byte_res = field_is_verifiable_ascii(input);
+        let str_res = std::str::from_utf8(input).map(|s| !s.chars().any(|c| c.is_ascii_whitespace())).unwrap_or(false);
+        assert_eq!(byte_res, str_res, "Byte and char predicates diverged on {:?}", input);
+    }
+}
+```
+
+---
+
+
+---
+
+## 5495. Isolation of Schema-Only vs Instance-Loaded Execution Stores (Harvested from fabio-rovai/open-ontologies)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Isolation of Schema-Only vs Instance-Loaded Execution Stores",
+  "source": "fabio-rovai/open-ontologies",
+  "source_url": "https://github.com/fabio-rovai/open-ontologies",
+  "source_version": "2ecb50c2",
+  "license": "MIT",
+  "extracted_at": "2026-10-29T11:01:47.714Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fabio-rovai-open-ontologies",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies) (Revision: `2ecb50c2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an operational command or audit API (e.g., `defects`, `lint`, `validate`) evaluates an isolated input file, it MUST instantiate an independent, clean, in-memory store for that file's lifecycle. It MUST NOT execute the check within the ambient persistent or shared state store.
+
+**WHY**:
+Running an isolated file check inside a persistent database or long-lived shared graph pollutes the main state with temporary triples from the file being inspected. Furthermore, the check judges the file not in isolation, but combined with whatever legacy triples previously existed in the database, yielding non-reproducible defect findings and subtle data leaks across requests.
+
+**WHEN TO APPLY**:
+Apply to all multi-tenant services, CLI utilities with daemon proxies, and background lint/defect auditors where commands can target either specific file paths or ambient system state.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+pub fn execute_defect_check(
+    ambient_graph: &std::sync::Arc<GraphStore>,
+    file_path: Option<&str>,
+    limit: usize,
+) -> Result<serde_json::Value, EngineError> {
+    let target_graph = match file_path {
+        None => {
+            // Ambient check requested: evaluate shared graph
+            ambient_graph.clone()
+        }
+        Some(path) => {
+            // File-isolated check: allocate a completely fresh, isolated store
+            let content = GraphStore::read_as_turtle(path)?;
+            let isolated_store = std::sync::Arc::new(GraphStore::new());
+            isolated_store.load_turtle(&content, None)?;
+            isolated_store
+        }
+    };
+
+    Defects::check_with_limit(&target_graph, limit)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Loading target file directly into ambient persistent graph.
+// Result: Leaves file's triples behind in persistent storage and contaminates subsequent queries!
+pub fn execute_defect_check_leaky(
+    ambient_graph: &std::sync::Arc<GraphStore>,
+    file_path: Option<&str>,
+) -> Result<serde_json::Value, EngineError> {
+    if let Some(path) = file_path {
+        let content = std::fs::read_to_string(path)?;
+        // CRITICAL BUG: Contaminates ambient persistent store!
+        ambient_graph.load_turtle(&content, None)?;
+    }
+    Defects::check(ambient_graph)
+}
+```
+
+**VERIFICATION METHOD**:
+Write a state-leak regression test ensuring ambient store triple counts are identical before and after executing a file-targeted defect check:
+```rust
+#[test]
+fn file_targeted_defect_check_does_not_mutate_ambient_store() {
+    let ambient = Arc::new(GraphStore::new());
+    ambient.load_turtle("ex:root ex:pred ex:obj .", None).unwrap();
+    let initial_count = ambient.len();
+
+    let temp_file = "test_target.ttl";
+    std::fs::write(temp_file, "ex:temp ex:a ex:b .").unwrap();
+
+    let _ = execute_defect_check(&ambient, Some(temp_file), 50).unwrap();
+    assert_eq!(ambient.len(), initial_count, "Ambient store was contaminated by file check!");
+}
+```
+
+---

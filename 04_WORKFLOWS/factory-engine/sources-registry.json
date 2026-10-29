@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T02:07:33.746Z",
-    "lastVerified": "2026-10-29T02:07:33.746Z",
+    "lastChecked": "2026-10-29T11:01:50.553Z",
+    "lastVerified": "2026-10-29T11:01:50.553Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -323,9 +323,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-29T01:50:02.581Z",
+    "lastChecked": "2026-10-29T10:59:08.055Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-29T01:50:02.581Z"
+    "lastVerified": "2026-10-29T10:59:08.055Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1295,9 +1295,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-10-28T22:07:46.057Z",
+    "lastChecked": "2026-10-29T10:59:03.227Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-10-28T22:07:46.057Z"
+    "lastVerified": "2026-10-29T10:59:03.227Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -2863,9 +2863,9 @@
   "vearch-vearch": {
     "name": "vearch",
     "officialUrl": "https://github.com/vearch/vearch",
-    "lastChecked": "2026-10-28T11:02:14.340Z",
+    "lastChecked": "2026-10-29T10:59:05.582Z",
     "revisionIdentifier": "bae78b18",
-    "lastVerified": "2026-10-28T11:02:14.340Z"
+    "lastVerified": "2026-10-29T10:59:05.582Z"
   },
   "imsnif-bandwhich": {
     "name": "bandwhich",
@@ -3252,9 +3252,9 @@
   "dosco-graphjin": {
     "name": "graphjin",
     "officialUrl": "https://github.com/dosco/graphjin",
-    "lastChecked": "2026-10-28T12:08:49.596Z",
+    "lastChecked": "2026-10-29T10:59:00.649Z",
     "revisionIdentifier": "b60d3fc5",
-    "lastVerified": "2026-10-28T12:08:49.596Z"
+    "lastVerified": "2026-10-29T10:59:00.649Z"
   },
   "seekstorm-seekstorm": {
     "name": "SeekStorm",
@@ -8034,5 +8034,36 @@
     "lastChecked": "2026-10-29T02:07:19.151Z",
     "revisionIdentifier": "06950e25",
     "lastVerified": "2026-10-29T02:07:19.151Z"
+  },
+  "davo20019-seo-analysis": {
+    "name": "seo-analysis",
+    "officialUrl": "https://github.com/davo20019/seo-analysis",
+    "lastChecked": "2026-10-29T10:58:55.579Z",
+    "revisionIdentifier": "902c09fd",
+    "lastVerified": "2026-10-29T10:58:55.579Z"
+  },
+  "amosgyamfi-open-swiftui-animations": {
+    "name": "open-swiftui-animations",
+    "officialUrl": "https://github.com/amosgyamfi/open-swiftui-animations",
+    "lastChecked": "2026-10-29T10:58:58.043Z",
+    "revisionIdentifier": "abc1d4ce",
+    "lastVerified": "2026-10-29T10:58:58.043Z"
+  },
+  "fabio-rovai-open-ontologies": {
+    "name": "fabio-rovai/open-ontologies",
+    "officialUrl": "https://github.com/fabio-rovai/open-ontologies",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-29T10:58:57.460Z",
+    "lastVerified": "2026-10-29T10:58:57.460Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-fabio-rovai-open-ontologies",
+    "contentHash": "c8f921755d9731df7233374b7534ed9f651be64d9b7caf47326920d494a49662",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

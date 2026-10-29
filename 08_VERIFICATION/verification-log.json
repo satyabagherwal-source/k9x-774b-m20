@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-X5HX",
-    "timestamp": "2026-10-27T20:25:14.517Z",
-    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-    "contentHash": "54c2d11b82afe63c9212309843b5a00fccc119ec6fd3323be2ebd76965de0b54",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-5O3U",
     "timestamp": "2026-10-27T20:31:51.882Z",
     "repository": "herdrdev/herdr",
@@ -7492,6 +7477,21 @@
     "contentHash": "050b40df3ed00819aa91af1d4a7025af8408528e83d7f5c956a6494dd19b8a9b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-O9JU",
+    "timestamp": "2026-10-29T11:01:47.994Z",
+    "repository": "fabio-rovai/open-ontologies",
+    "learningId": "learn-github-fabio-rovai-open-ontologies",
+    "contentHash": "c8f921755d9731df7233374b7534ed9f651be64d9b7caf47326920d494a49662",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

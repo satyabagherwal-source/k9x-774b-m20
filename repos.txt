@@ -4668,3 +4668,7 @@ https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B
 # --- Automatically Discovered by AI Scout Engine [2026-10-29T01:08:44.092Z] ---
 # [HUGGINGFACE-AI-MODELS] LiquidAI/LFM3-Omni-2B (2154 score) - Verified Hugging Face Model: LiquidAI/LFM3-Omni-2B (144 likes, 714 downloads)
 https://huggingface.co/LiquidAI/LFM3-Omni-2B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-29T10:58:47.581Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] fabio-rovai/open-ontologies (1232 score) - Plan, apply and roll back changes to a production ontology, with a blast radius 
+https://github.com/fabio-rovai/open-ontologies
