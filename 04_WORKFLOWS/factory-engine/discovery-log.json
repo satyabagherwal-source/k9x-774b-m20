@@ -19768,5 +19768,17 @@
     "qualityScore": 866,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-29T16:44:40.868Z"
+  },
+  {
+    "name": "Diffuspace/Clover-35B-A3B-Preview",
+    "fullName": "Diffuspace/Clover-35B-A3B-Preview",
+    "url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Diffuspace/Clover-35B-A3B-Preview (139 likes, 1030 downloads)",
+    "likes": 139,
+    "downloads": 1030,
+    "qualityScore": 2420,
+    "discoveredAt": "2026-10-29T22:04:39.364Z"
   }
 ]

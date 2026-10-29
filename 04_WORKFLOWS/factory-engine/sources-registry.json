@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T17:40:40.398Z",
-    "lastVerified": "2026-10-29T17:40:40.398Z",
+    "lastChecked": "2026-10-29T22:11:52.431Z",
+    "lastVerified": "2026-10-29T22:11:52.431Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -331,9 +331,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-29T17:03:38.272Z",
+    "lastChecked": "2026-10-29T22:07:07.735Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-29T17:03:38.272Z"
+    "lastVerified": "2026-10-29T22:07:07.735Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -466,9 +466,9 @@
   "smallstep-cli": {
     "name": "cli",
     "officialUrl": "https://github.com/smallstep/cli",
-    "lastChecked": "2026-10-29T00:22:56.728Z",
+    "lastChecked": "2026-10-29T22:07:02.773Z",
     "revisionIdentifier": "824bfd6b",
-    "lastVerified": "2026-10-29T00:22:56.728Z"
+    "lastVerified": "2026-10-29T22:07:02.773Z"
   },
   "milvus-io-milvus": {
     "name": "milvus-io/milvus",
@@ -3800,9 +3800,9 @@
   "erikgrinaker-toydb": {
     "name": "toydb",
     "officialUrl": "https://github.com/erikgrinaker/toydb",
-    "lastChecked": "2026-10-28T13:23:24.510Z",
+    "lastChecked": "2026-10-29T22:07:05.221Z",
     "revisionIdentifier": "2d7cd32e",
-    "lastVerified": "2026-10-28T13:23:24.510Z"
+    "lastVerified": "2026-10-29T22:07:05.221Z"
   },
   "sharkdp-pastel": {
     "name": "pastel",
@@ -4178,9 +4178,9 @@
   "vinceanalytics-vince": {
     "name": "vince",
     "officialUrl": "https://github.com/vinceanalytics/vince",
-    "lastChecked": "2026-10-28T14:15:22.343Z",
+    "lastChecked": "2026-10-29T22:07:00.238Z",
     "revisionIdentifier": "fc06f7a2",
-    "lastVerified": "2026-10-28T14:15:22.343Z"
+    "lastVerified": "2026-10-29T22:07:00.238Z"
   },
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
@@ -8467,6 +8467,37 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "magnetoid-seo-crawler": {
+    "name": "SEO-Crawler",
+    "officialUrl": "https://github.com/magnetoid/SEO-Crawler",
+    "lastChecked": "2026-10-29T22:06:55.256Z",
+    "revisionIdentifier": "ebce8aa942",
+    "lastVerified": "2026-10-29T22:06:55.256Z"
+  },
+  "bernaferrari-figmatocode": {
+    "name": "FigmaToCode",
+    "officialUrl": "https://github.com/bernaferrari/FigmaToCode",
+    "lastChecked": "2026-10-29T22:06:57.747Z",
+    "revisionIdentifier": "f5c4831d",
+    "lastVerified": "2026-10-29T22:06:57.747Z"
+  },
+  "hf-diffuspace-clover-35b-a3b-preview": {
+    "name": "Diffuspace/Clover-35B-A3B-Preview",
+    "officialUrl": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-29T22:06:52.793Z",
+    "lastVerified": "2026-10-29T22:06:52.793Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
+    "contentHash": "0ae39dc48e2bf53608c737e88651bf7651662320a18cff731dcab3a06b044855",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

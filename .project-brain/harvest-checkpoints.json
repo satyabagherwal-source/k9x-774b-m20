@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T17:40:37.852Z",
+  "last_updated": "2026-10-29T22:11:49.884Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17294,6 +17294,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-29T16:51:00.662Z"
+    },
+    "Diffuspace/Clover-35B-A3B-Preview": {
+      "repository": "Diffuspace/Clover-35B-A3B-Preview",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
+      "content_hash": "0ae39dc48e2bf53608c737e88651bf7651662320a18cff731dcab3a06b044855",
+      "verified_at": "2026-10-29T22:11:49.884Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-29T22:11:49.884Z"
     }
   },
   "repos": {

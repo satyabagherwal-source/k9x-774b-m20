@@ -6069,3 +6069,4 @@ Every entry in this ledger must capture:
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `8197b045` | Multi-dimensional audit evidence | 2026-10-29T17:23:45.549Z |
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `a0468502` | Multi-dimensional audit evidence | 2026-10-29T17:40:32.349Z |
 | `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `d554f264` | Multi-dimensional audit evidence | 2026-10-29T17:40:37.842Z |
+| `learn-huggingface-diffuspace-clover-35b-a3b-preview` | `https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview` | `hf-diffusp` | Multi-dimensional audit evidence | 2026-10-29T22:11:49.875Z |

@@ -11498,5 +11498,15 @@
     "contentHash": "eeb19dbf8ec3e3d6395e8aea81e71779c8f67643c0449f8d2b3a8e8313ab7ed3",
     "lastHarvestedAt": "2026-10-29T16:51:00.656Z",
     "learningId": "learn-github-jakeschincariol-arena-skill"
+  },
+  "hf-diffuspace-clover-35b-a3b-preview": {
+    "repository": "Diffuspace/Clover-35B-A3B-Preview",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+    "sourceVersion": "hf-diffuspace-clover-35b-a3b-preview",
+    "license": "Open-Source",
+    "contentHash": "0ae39dc48e2bf53608c737e88651bf7651662320a18cff731dcab3a06b044855",
+    "lastHarvestedAt": "2026-10-29T22:11:49.875Z",
+    "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview"
   }
 }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T17:40:37.761Z",
-  "total_verified_learnings": 1167,
+  "last_updated": "2026-10-29T22:11:49.796Z",
+  "total_verified_learnings": 1168,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -149039,6 +149039,91 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T17:40:37.741Z"
+    },
+    "learn-huggingface-diffuspace-clover-35b-a3b-preview": {
+      "learning_id": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Diffuspace/Clover-35B-A3B-Preview",
+      "repository": "Diffuspace/Clover-35B-A3B-Preview",
+      "slug": "hf-diffuspace-clover-35b-a3b-preview",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+      "content_hash": "0ae39dc48e2bf53608c737e88651bf7651662320a18cff731dcab3a06b044855",
+      "dossier_path": "07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5537,
+          "title": "Dynamic Block-Diffusion Progress Guarantee Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5538,
+          "title": "High-Capacity MoE Block Coreset Sparsity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5539,
+          "title": "Asymmetric Hybrid Linear-Attention / GQA State Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-29T22:11:49.777Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5537": {
+      "learning_id": "rule-5537",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5537,
+      "title": "Dynamic Block-Diffusion Progress Guarantee Invariant",
+      "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T22:11:49.777Z"
+    },
+    "rule-5538": {
+      "learning_id": "rule-5538",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5538,
+      "title": "High-Capacity MoE Block Coreset Sparsity Invariant",
+      "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T22:11:49.777Z"
+    },
+    "rule-5539": {
+      "learning_id": "rule-5539",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5539,
+      "title": "Asymmetric Hybrid Linear-Attention / GQA State Invariant",
+      "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T22:11:49.777Z"
     }
   },
   "aliases": {

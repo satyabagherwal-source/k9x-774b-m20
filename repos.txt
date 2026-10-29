@@ -4690,3 +4690,7 @@ https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B
 # --- Automatically Discovered by AI Scout Engine [2026-10-29T16:47:59.130Z] ---
 # [AI-AGENTS] Jakeschincariol/arena-skill (866 score) - When Claude keeps giving you bad answers, make 100 versions of it fight to the d
 https://github.com/Jakeschincariol/arena-skill
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-29T22:06:47.383Z] ---
+# [HUGGINGFACE-AI-MODELS] Diffuspace/Clover-35B-A3B-Preview (2420 score) - Verified Hugging Face Model: Diffuspace/Clover-35B-A3B-Preview (139 likes, 1030 
+https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview
