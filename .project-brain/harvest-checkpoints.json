@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-29T01:43:16.164Z",
+  "last_updated": "2026-10-29T01:49:59.431Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "56f8e0f9f7d5f134fd538eb7fc3729eefe3ce401f0014998cf5d1d64e7e70f34",
-      "verified_at": "2026-10-28T21:29:53.528Z",
+      "content_hash": "edee7dd8b0db065770e88498259b996a817a303d13b52440921daed728fb07bc",
+      "verified_at": "2026-10-29T01:49:55.119Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T21:29:53.528Z"
+      "last_updated": "2026-10-29T01:49:55.119Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -5316,14 +5316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-okteto-okteto",
-      "content_hash": "2ac18930a7f0de830889fa2dec5075e87713e9bc64f802d9393057ae3bdb0c5b",
-      "verified_at": "2026-10-28T11:32:27.461Z",
+      "content_hash": "3978f573b551cad0ed65b6c7c52ade6445f5d61eb3fea30516df386405237fdb",
+      "verified_at": "2026-10-29T01:49:59.431Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T11:32:27.461Z"
+      "last_updated": "2026-10-29T01:49:59.431Z"
     },
     "supervc-stack/VectorChord": {
       "repository": "supervc-stack/VectorChord",
@@ -12096,14 +12096,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tableproapp-tablepro",
-      "content_hash": "2c205e048914e5d7df869a20befef19f87191fcaaa9ae76a1a1a1643285386f8",
-      "verified_at": "2026-10-25T17:42:43.084Z",
+      "content_hash": "b6054ad5243cc11d07a0a2ffa3f35d0f36fe7a6b3ee3b218cea0e8e0efc60792",
+      "verified_at": "2026-10-29T01:49:56.956Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T17:42:43.084Z"
+      "last_updated": "2026-10-29T01:49:56.956Z"
     },
     "twostraws/ControlRoom": {
       "repository": "twostraws/ControlRoom",

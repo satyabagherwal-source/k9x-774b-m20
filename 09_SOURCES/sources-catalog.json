@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "07ea16b4",
+    "sourceVersion": "a998f06c",
     "license": "MIT",
-    "contentHash": "85734e854871c5a85ffc83db5006f35738dbd196621e06cc36432fb923f7f913",
-    "lastHarvestedAt": "2026-10-28T04:35:28.732Z",
+    "contentHash": "edee7dd8b0db065770e88498259b996a817a303d13b52440921daed728fb07bc",
+    "lastHarvestedAt": "2026-10-29T01:49:55.104Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "4aef91ec",
+    "sourceVersion": "75f7d7b4",
     "license": "Apache-2.0",
-    "contentHash": "2ac18930a7f0de830889fa2dec5075e87713e9bc64f802d9393057ae3bdb0c5b",
-    "lastHarvestedAt": "2026-10-28T11:32:27.455Z",
+    "contentHash": "3978f573b551cad0ed65b6c7c52ade6445f5d61eb3fea30516df386405237fdb",
+    "lastHarvestedAt": "2026-10-29T01:49:59.422Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {
@@ -8043,10 +8043,10 @@
     "repository": "TableProApp/TablePro",
     "platform": "github",
     "sourceUrl": "https://github.com/TableProApp/TablePro",
-    "sourceVersion": "94367b10",
+    "sourceVersion": "dcbce8af",
     "license": "AGPL-3.0",
-    "contentHash": "2c205e048914e5d7df869a20befef19f87191fcaaa9ae76a1a1a1643285386f8",
-    "lastHarvestedAt": "2026-10-25T17:42:43.078Z",
+    "contentHash": "b6054ad5243cc11d07a0a2ffa3f35d0f36fe7a6b3ee3b218cea0e8e0efc60792",
+    "lastHarvestedAt": "2026-10-29T01:49:56.948Z",
     "learningId": "learn-github-tableproapp-tablepro"
   },
   "twostraws-controlroom": {

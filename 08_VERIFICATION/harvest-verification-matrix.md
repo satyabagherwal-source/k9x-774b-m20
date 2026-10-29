@@ -6016,3 +6016,6 @@
 | `CYCLE-20261029-29H9` | `2026-10-29T01:24:49.149Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5483` | Yes (`8595aef2...`) |
 | `CYCLE-20261029-PWEQ` | `2026-10-29T01:43:11.954Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5484` | Yes (`269d7541...`) |
 | `CYCLE-20261029-PZNB` | `2026-10-29T01:43:16.151Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5485` | Yes (`a01cf617...`) |
+| `CYCLE-20261029-YJH7` | `2026-10-29T01:49:55.099Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5407` | Yes (`edee7dd8...`) |
+| `CYCLE-20261029-YKWG` | `2026-10-29T01:49:56.944Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5486` | Yes (`b6054ad5...`) |
+| `CYCLE-20261029-YMT6` | `2026-10-29T01:49:59.418Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5487` | Yes (`3978f573...`) |

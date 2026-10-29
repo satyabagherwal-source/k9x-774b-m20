@@ -6025,3 +6025,6 @@ Every entry in this ledger must capture:
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `35fa93a9` | Multi-dimensional audit evidence | 2026-10-29T01:24:49.153Z |
 | `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `b7a0a29d` | Multi-dimensional audit evidence | 2026-10-29T01:43:11.957Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `456aea76` | Multi-dimensional audit evidence | 2026-10-29T01:43:16.155Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `a998f06c` | Multi-dimensional audit evidence | 2026-10-29T01:49:55.104Z |
+| `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `dcbce8af` | Multi-dimensional audit evidence | 2026-10-29T01:49:56.948Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `75f7d7b4` | Multi-dimensional audit evidence | 2026-10-29T01:49:59.422Z |

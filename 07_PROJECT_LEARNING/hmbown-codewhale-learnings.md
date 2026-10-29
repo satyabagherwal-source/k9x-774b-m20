@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `07ea16b4`  
+> **Source Version**: `a998f06c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T04:35:28.156Z  
+> **Timestamp**: 2026-10-29T01:49:54.650Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T04:35:28.148Z  
+> **Harvest Timestamp**: 2026-10-29T01:49:53.130Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source agent for the terminal written in Rust. Use any provider or model. Issues & PRs always welcome
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41135 stars
+- **Stars / Engagement**: 41138 stars
 
 ---
 
@@ -803,6 +803,255 @@ pub enum ConstitutionValidity {
 pub enum RuntimePostureSource {
     /// Not yet reviewed.
     #[default]
+```
+
+### Core Architecture Module: `crates/config/src/state_dirs.rs`
+```
+use crate::config_migration::default_config_path;
+use crate::external_credentials::quote_os_path;
+use crate::path_io::{
+    checked_path_exists, normalize_config_file_path, normalize_project_workspace,
+};
+use crate::provider_toml::CONFIG_FILE_NAME;
+use anyhow::Context as _;
+use anyhow::{Result, bail};
+use codewhale_paths::{CODEWHALE_APP_DIR, LEGACY_APP_DIR};
+use std::ffi::{OsStr, OsString};
+use std::path::{Path, PathBuf};
+
+/// Resolve the primary CodeWhale home directory.
+///
+/// `$CODEWHALE_HOME` takes precedence when set. Otherwise defaults to
+/// `$HOME/.codewhale`. This is the write target for new product state.
+pub fn codewhale_home() -> Result<PathBuf> {
+    codewhale_paths::codewhale_home()
+        .map_err(anyhow::Error::new)?
+        .context("failed to resolve home directory")
+}
+
+/// Whether `$CODEWHALE_HOME` is set to a non-empty value.
+///
+/// An explicit CodeWhale home is an isolation boundary: state/config resolvers
+/// must not fall back to ambient legacy `~/.deepseek` data outside that root.
+pub fn codewhale_home_is_explicit() -> bool {
+    codewhale_paths::codewhale_home_is_explicit()
+}
+
+/// Resolve the legacy DeepSeek home directory (`$HOME/.deepseek`).
+///
+/// Always returns the legacy path regardless of whether it exists.
+pub fn legacy_deepseek_home() -> Result<PathBuf> {
+    codewhale_paths::legacy_deepseek_home().context("failed to resolve home directory")
+}
+
+/// Reject state subdirs that could escape the state root via path injection.
+///
+/// `ensure_state_dir` / `resolve_state_dir` are public APIs taking an arbitrary
+/// subdir string; every in-tree caller passes a hardcoded single component
+/// (e.g. `"sessions"`, `"."`). This validates defensively so a future caller
+/// can never traverse out of the state root via `..` components or an absolute
+/// path. Nested relative paths such as `"a/b"` are permitted.
+pub(crate) fn ensure_safe_state_subdir(subdir: &str) -> Result<()> {
+    if subdir.is_empty() {
+        bail!("state subdir must not be empty");
+    }
+    let path = std::path::Path::new(subdir);
+    if path.is_absolute() {
+        bail!("state subdir must not be an absolute path: {subdir}");
+    }
+    if path.components().any(|c| {
+        matches!(
+            c,
+            std::path::Component::RootDir | std::path::Component::Prefix(_)
+        )
+    }) {
+        bail!("state subdir must not contain a root or prefix: {subdir}");
+    }
+    if path
+        .components()
+        .any(|c| matches!(c, std::path::Component::ParentDir))
+    {
+        bail!("state subdir must not contain parent-dir (..) components: {subdir}");
+    }
+    Ok(())
+}
+
+/// Resolve a state subdirectory, preferring the CodeWhale root if
+/// it already exists, otherwise falling back to the legacy root.
+///
+/// This is the read-path resolver: it returns the primary path when
+/// migration has occurred or on a fresh install, but keeps reading
+/// from the legacy path for users who haven't migrated yet.
+pub fn resolve_state_dir(subdir: &str) -> Result<PathBuf> {
+    ensure_safe_state_subdir(subdir)?;
+    let explicit_codewhale_home = codewhale_home_is_explicit();
+    let primary = codewhale_home()?.join(subdir);
+    if explicit_codewhale_home || primary.exists() {
+        return Ok(primary);
+    }
+    let legacy = legacy_deepseek_home()?.join(subdir);
+    if legacy.exists() {
+        return Ok(legacy);
+    }
+    // Neither exists — return primary for first-write creation.
+    Ok(primary)
+}
+
+/// Ensure a state subdirectory exists under the primary CodeWhale root,
+/// creating it if necessary. This is the write-path resolver.
+///
+/// On the first creation of a real subdirectory (not the root sentinel `"."`),
+/// if a legacy `~/.deepseek/<subdir>` exists but the primary
+/// `~/.codewhale/<subdir>` does not, the legacy directory is relocated into
+/// the primary location so the user keeps their data and the legacy tree
+/// stops growing (#3240). After migration, [`resolve_state_dir`] finds the
+/// data in the primary location; the read resolver itself is unchanged.
+pub fn ensure_state_dir(subdir: &str) -> Result<PathBuf> {
+    let (dir, migration) = ensure_state_dir_with_migration(subdir)?;
+    if let Some(migration) = migration {
+        eprintln!("{}", migration.user_notice());
+    }
+    Ok(dir)
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StateMigrationKind {
+    Relocated,
+    Copied,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct StateMigration {
+    pub subdir: String,
+    pub legacy_path: PathBuf,
+    pub primary_path: PathBuf,
+    pub kind: StateMigrationKind,
+}
+
+impl StateMigration {
+    pub fn user_notice(&self) -> String {
+        let action = match self.kind {
+            StateMigrationKind::Relocated => "relocated",
+            StateMigrationKind::Copied => "copied",
+        };
+        let legacy_detail = match self.kind {
+            StateMigrationKind::Relocated => {
+                "The legacy .deepseek copy for this state path was removed by the move."
+            }
+            StateMigrationKind::Copied => {
+                "The legacy .deepseek copy was left in place because a direct move failed."
+            }
+        };
+
+        format!(
+            "Codewhale migrated legacy state ({action}):\n  {} -> {}\nYour data was preserved. Use .codewhale as the canonical state location from now on.\n{legacy_detail}\nIf no other apps use it, you can remove the legacy .deepseek tree after confirming everything looks right.",
+            self.legacy_path.display(),
+            self.primary_path.display(),
+        )
+    }
+}
+
+/// Variant of [`ensure_state_dir`] that exposes whether a legacy state path was
+/// migrated. Most callers should use [`ensure_state_dir`]; this is kept for
+/// tests and future UI surfaces that want to render the notice themselves.
+pub fn ensure_state_dir_with_migration(subdir: &str) -> Result<(PathBuf, Option<StateMigration>)> {
+    ensure_safe_state_subdir(subdir)?;
+    let explicit_codewhale_home = codewhale_home_is_explicit();
+    let dir = codewhale_home()?.join(subdir);
+    let migration = if explicit_codewhale_home {
+        None
+    } else {
+        match migrate_legacy_state_dir(&dir, subdir)? {
+            LegacyStateMigration::NotNeeded => None,
+            LegacyStateMigration::Migrated(migration) => Some(migration),
+            // Creating an empty primary here would make it authoritative and
+            // hide the legacy data for good. Keep using the legacy directory
+            // (the read resolver does the same) and retry on the next call.
+            LegacyStateMigration::Failed { legacy } => return Ok((legacy, None)),
+        }
+    };
+    std::fs::create_dir_all(&dir)
+        .with_context(|| format!("failed to create {}/", dir.display()))?;
+    Ok((dir, migration))
+}
+
+pub(crate) enum LegacyStateMigration {
+    NotNeeded,
+    Migrated(StateMigration),
+    /// Neither the move nor the copy completed. The primary was left absent,
+    /// so the legacy directory stays authoritative and migration retries.
+    Failed {
+        legacy: PathBuf,
+    },
+}
+
+/// One-time relocation of a legacy `~/.deepseek/<subdir>` state directory into
+/// the primary `~/.codewhale/<subdir>` location (#3240). No-op once the primary
+/// exists, for the root sentinel `"."` (a whole-tree move is owned by the
+/// config-file migration), or when no legacy directory is present.
+pub(crate) fn migrate_legacy_state_dir(
+    primary: &Path,
+    subdir: &str,
+) -> Result<LegacyStateMigration> {
+    if primary.exists() || subdir == "." || subdir.is_empty() {
+        return Ok(LegacyStateMigration::NotNeeded);
+    }
+    let legacy = match legacy_deepseek_home() {
+        Ok(home) => home.join(subdir),
+        Err(_) => return Ok(LegacyStateMigration::NotNeeded),
+    };
+    if !legacy.exists() {
+        return Ok(LegacyStateMigration::NotNeeded);
+    }
+    // The primary's parent (the ~/.codewhale root) must exist for the rename.
+    if let Some(parent) = primary.parent()
+        && let Err(err) = std::fs::create_dir_all(parent)
+    {
+        tracing::warn!(
+            target: "config::migration",
+            "Could not create {} for state migration ({}); writing to primary anyway",
+            parent.display(),
+            err
+        );
+    }
+    match std::fs::rename(&legacy, primary) {
+        Ok(()) => {
+            tracing::info!(
+                target: "config::migration",
+                "Migrated legacy state directory {} -> {} (relocated). The .deepseek copy was removed.",
+                legacy.display(),
+                primary.display()
+            );
+            return Ok(LegacyStateMigration::Migrated(StateMigration {
+                subdir: subdir.to_string(),
+                legacy_path: legacy,
+                primary_path: primary.to_path_buf(),
+                kind: StateMigrationKind::Relocated,
+            }));
+        }
+        Err(err) => {
+            // Cross-device rename or permission issue: fall back to a
+            // recursive copy so the user keeps their data. The legacy tree is
+            // left in place; it stops growing because writes now target the
+            // primary path.
+            match copy_dir_into_place(&legacy, primary) {
+                Ok(()) => {
+                    tracing::info!(
+                        target: "config::migration",
+                        "Migrated legacy state directory {} -> {} (copied; rename failed: {err}). \
+                         The legacy .deepseek copy was left in place.",
+                        legacy.display(),
+                        primary.display()
+                    );
+                    return Ok(LegacyStateMigration::Migrated(StateMigration {
+                        subdir: subdir.to_string(),
+                        legacy_path: legacy,
+                        primary_path: primary.to_path_buf(),
+                        kind: StateMigrationKind::Copied,
+                    }));
+                }
+                Err(copy_err) => {
+                    // A concurrent process may have completed t
 ```
 
 ### Core Architecture Module: `crates/core/src/context_reference.rs`
@@ -1764,24 +2013,19 @@ pub enum PrefixCheck {
 const TOOL_CATALOG_CACHE_CA
 ```
 
-### Core Architecture Module: `crates/core/src/request.rs`
-```
-//! Compatibility path for the shared protocol request types.
-pub use codewhale_protocol::request::*;
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7102** (2026-10-27): **install.sh downloads the same binary twice, and installs a second identical copy**
-  *Symptoms*: ### Before you start  - [x] I searched existing issues and this is not a duplicate. 我已搜索过现有 issue。  ### What happened? 发生了什么？  Two costs, both from the same alias, and I am reporting them as two separate questions because they have very different risk profiles.  **1. `curl -fsSL https://codewhale.net/install.sh | sh` downloads the same bytes twice.** The script fetches three files and verifies each one separately:  ```sh download "$release_base/$manifest_asset" "$tmpdir/$manifest_asset" download "$release_base/$cli_asset"      "$tmpdir/codewhale" download "$release_base/$shim_asset"     "$tmpdir/codew" ```  On v0.10.2, `codewhale-linux-x64` and `codew-linux-x64` are both 105.1 MiB (110.3 MB) and carry the same SHA-256, so a fresh Linux x64 install transfers ~210 MiB — and ~257 MiB on Windows x64 — to install one program. Grouping the published manifest by digest gives one digest for three names, on all seven targets:  ``` 28ac984a…  codew-linux-x64  codewhale-linux-x64  codewhale-tui-linux-x64 b7c55e36…  codew-linux-arm64  codewhale-linux-arm64  codewhale-tui-linux-arm64 … (7/7 targets, v0.10.2) ```  **2. It then installs those bytes twice**, as two independent 105.1 MiB files, so the install directory also carries ~210 MiB for one program.  Neither is a surprise on the release side — `release-artifacts.yml` builds the alias asset with `cp` plus a `cmp` self-check ("Materialize codew command alias"), and the `codewhale-tui-*` names are kept so installed v0.9.4 clients can sti
+- **Issue #7114** (2026-10-28): **/provider on main: 'browse all' does not toggle, and a fresh home shows a broken 'Antigravity (legacy)' row**
+  *Symptoms*: ## What a new user hits  On a fresh `CODEWHALE_HOME` with no keys (Ollama running), `/provider` on main opens the *configured* view containing only:  ```    ▸ Antigravity (legacy, disabled)    legacy      Ollama *                      local · not checked ```  - The first row is a retired provider with `! provider admission failed: saved session requires custom provider 'antigravity', but…` and `Endpoint: https://legacy-antigravity.invalid`, in a home that never had Antigravity configured. - The footer advertises `A browse all`, but neither `A` nor `a` switches to the catalog view (title stays `Provider`, action stays `browse all`). Up/Down work. Only `/` search finds DeepSeek, OpenRouter, StepFun etc.  So a new user without a key cannot discover how to add DeepSeek/OpenRouter/Anthropic/OpenAI from the picker.  ## Compare 0.10.2  Installed `codewhale 0.10.2 (3400ebb5c93b)`, fresh home: `/provider` opens the full list (`DeepSeek … needs key`, `Fireworks AI … needs key`, … `OpenAI Codex (ChatGPT) needs sign-in`), footer `A configured`. No Antigravity row.  ## Repro  1. `HOME=$(mktemp -d) CODEWHALE_HOME=$(mktemp -d) codewhale` (main `715bb2ed02` release build), 160x48 tmux pane. 2. `/provider` Enter → configured view as above. 3. Press `a` (and `A`) → no change.  Notes from source: `toggle_view` is reached for `KeyCode::Char(c)` only when `key.modifiers.is_empty()` (`crates/tui/src/tui/provider_picker.rs` ~4899), so Shift+A never toggles on terminals that report SHIFT; lowercase 
+  **Post-Mortem & Fix Analysis**:
+  > Fixed on main in c21e0b1e14 (the /provider list now opens on every provider, with no Antigravity row); ships in 0.10.3.
 
-- **Issue #7096** (2026-10-27): **Endpoint identity is keyed to the base URL: opencode-go's 1M window falls back to 128K after the host migration**
-  *Symptoms*: ### Before you start  - [x] I searched existing issues and this is not a duplicate. 我已搜索过现有 issue。  ### What happened? 发生了什么？  `/setup` reports a **128K** context window for `opencode-go / deepseek-v4.1-flash`. models.dev documents `limit.context = 1000000` for the same id.  The descriptor still points at the old host:  ``` provider_descriptors.json   opencode-go.base_url = https://opencode.ai/zen/go/v1 official docs + models.dev  https://opencode.ai/inference/go/openai/v1 ```  The models.dev row holds the correct 1M limit on disk. It is rejected during catalog merging, because `complete_from` only inherits facts when the lower row's base-URL fingerprint matches the provider roster's. Two hosts produce two fingerprints, nothing is inherited, and the window falls back to `LEGACY_DEEPSEEK_CONTEXT_WINDOW_TOKENS` (128,000).  Both hosts serve the same backend: `zen/go/v1/models` and `inference/go/v1/models` return the same model list, differing only in `created`.      ### Steps to reproduce 复现步骤  1. Run `/setup`, select `opencode-go`, open the model list: `deepseek-v4.1-flash` shows 128K. 2. But models.dev documents 1,000,000 for the same id.  ### Codewhale version 版本  codewhale 0.10.2  ### Where did it happen? 在哪里出现？  TUI (terminal interface)  ### Operating system 操作系统  Linux  ### How did you get Codewhale? 获取方式  Official script (codewhale.net/install.sh)  ### Provider and model 提供商和模型  opencode-go / deepseek-v4.1-flash  ### Terminal and shell 终端  xfce4-terminal  ### codewhale do
+- **Issue #7113** (2026-10-28): **Ollama 32K local models fail on the second turn: input budget ~5K (regression of #5820)**
+  *Symptoms*: ## What a new user hits  Main now adopts a running local Ollama on first launch when no cloud key exists (good). On that route the **second turn fails**:  ``` Note Context recovery failed: The summary for making room was incomplete: provider stop reason length; the partial summary was not accepted. Original conversation was preserved. Error The request still exceeds this model's context budget and automatic recovery did not complete. The conversation is saved; retry or choose a larger context route. ```  while the footer reads `context 33%` and `/context report` says `Window: 32768 tokens (16.2% used)`, `Overflow guard: 5468 tokens`.  ## Repro (isolated, no keys)  1. Ollama running with `qwen3:4b` (reports `context_length: 32768` in `/api/ps`, 262144 in `/api/show`). 2. `HOME=$(mktemp -d) CODEWHALE_HOME=$(mktemp -d) codewhale` (release build of main `715bb2ed02` + working tree, `codewhale 0.10.2 (dev)`), in a tiny git repo. 3. TUI shows `Provider switched: deepseek → ollama`, footer `Ollama · qwen3:4b · thinking: max`. 4. Turn 1: "Read calc.py and add a subtract function" → completes (+2 −2 patch). 5. Turn 2: "Write a file notes.md with a 10-item list of python tips." → "Making room in the conversation… 55s", then the error above. No file written.  Log (`$CODEWHALE_HOME/logs/tui-*.log`):  ``` WARN compaction: auto-compaction refused under pressure reason=RetainedFloor { floor: 8082, threshold: 5120 } billed=Some(6319) INFO engine.turn: engine turn completion settled status=Fa
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1798,110 +2042,29 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cf10ca14` (2026-10-28)
-**Commit Message**: fix(security): bound MCP catalog revalidation and harden hunk patch parsing
+### Incident Patch 1: `7b47cf99` (2026-10-28)
+**Commit Message**: feat(tui): vendored terminal kit on design tokens 2.3.0 (Accent role)
 
-Pre-launch security review 2026-10-27 (two of its findings, plus hygiene):
+Copies the token migration from upstream codewhale-hq/codewhale-ratatui
+528a9c4 into vendor/codewhale-ratatui, before the 0.10.3 tag:
 
-- mcp: a server-supplied list ttlMs had no floor, so ttlMs 0 made the
-  catalog stale on every 5s tick, and revalidation runs discovery while
-  holding the MCP pool lock. Any configured server could keep every MCP
-  operation waiting. Catalog TTLs are now clamped to at least 60s.
-  Still open: running discovery outside the lock, and rate-limiting
-  list_changed-driven revalidation.
-- runtime_api/git: validated_patch sliced the first byte off each @@
-  range token, which panicked on a multi-byte character and fired the
-  process panic hook. It now strips the expected -/+ sign and refuses
-  anything else as a malformed @@ line.
-- .gitignore: ignore private key and certificate files, with an
-  exception for the existing test-only fixture key.
+- roles.rs regenerated from tokens 2.3.0 (19 roles: `Accent` for links,
+  focus and selection; `Primary` is filled-action ink; diff tints from
+  diff_add/diff_remove); vendor/codewhale-design/tokens.rs 1.1.2 -> 2.3.0;
+  theme.rs, tui_palettes.rs and assets/tui-palettes.json match upstream.
+- The kit's Primary-to-Accent call sites are applied to the Engine's own
+  copy (base snapshot 2ad795b plus its patches); the other upstream
+  commits since that snapshot are not taken.
+- The 16 named TUI palettes map Accent to the same accent_primary slot
+  the old Primary read, so the built-in themes keep their colours.
+- crates/tui: the infoline Info/policy ink and two test fixtures move
+  from Role::Primary to Role::Accent.
+- UPSTREAM.json records a `tokens_update` section (commit, scope, local
+  changes, sha256 of the 47 changed files); the original snapshot hashes
+  are left as provenance, as pet_update does.
 
-Verified: scripts/dev-test.sh runtime_api/git.rs git_ -> 146 tests run:
-146 passed (includes git_routes_drive_a_real_workspace_repo and
-git_write_preconditions_reject_stale_state); scripts/dev-test.sh mcp.rs
-mcp:: -> 405 tests run: 405 passed. No new tests, per repo policy.
-
-Co-Authored-By: Clau
-
-**File**: `.gitignore` (modified, +9/-0)
-```diff
-@@ -181,3 +181,12 @@ orca-evidence/
- # Portable pet build entry points are source.
- !pet/**/*.sh
- !pet/verify.sh
-+
-+# Private keys and certificates never belong in the tree.
-+*.pem
-+*.key
-+*.p12
-+*.p8
-+id_rsa*
-+id_ed25519*
-+!docs/cloud-facts/fixtures/test-only-signing-key.pem
-```
-
-**File**: `crates/tui/src/mcp.rs` (modified, +3/-1)
-```diff
-@@ -1738,6 +1738,7 @@ pub(crate) trait McpTransport: Send + Sync {
- const MAX_MCP_CATALOG_PAGES: usize = 64;
- const MAX_MCP_CATALOG_ITEMS: usize = 4_096;
- const MAX_MCP_CATALOG_BYTES: usize = 32 * 1024 * 1024;
-+const MIN_MCP_CATALOG_TTL_MS: u64 = 60_000;
- const MAX_MCP_CATALOG_TTL_MS: u64 = 86_400_000;
- 
- pub(crate) fn is_mcp_list_changed_method(method: &str) -> bool {
-@@ -2466,7 +2467,8 @@ impl McpConnection {
-         self.prompts = prompts.unwrap_or_default();
-         self.skills = skills.unwrap_or_default();
-         self.catalog_fresh_until = budget.ttl_ms.map(|ttl| {
--            std::time::Instant::now() + Duration::from_millis(ttl.min(MAX_MCP_CATALOG_TTL_MS))
-+            std::time::Instant::now()
-+                + Duration::from_millis(ttl.clamp(MIN_MCP_CATALOG_TTL_MS, MAX_MCP_CATALOG_TTL_MS))
-         });
-         self.catalog_stale = false;
-         Ok(())
-```
-
-**File**: `crates/tui/src/runtime_api/git.rs` (modified, +2/-2)
-```diff
-@@ -1928,8 +1928,8 @@ fn validated_patch(patch: &str, path: &str) -> Result<(), ApiError> {
-             if !(seen_old && seen_new) {
-                 return refuse(&format!("must start with --- a/{path} and +++ b/{path}"));
-             }
--            let mut counts = range.split_whitespace().take(2).map(|side| {
--                let side = &side[1..];
-+            let mut counts = range.split_whitespace().zip(['-', '+']).map(|(side, sign)| {
-+                let side = side.strip_prefix(sign)?;
-                 match side.split_once(',') {
-                     Some((_, count)) => count.parse::<usize>().ok(),
-                     None => side.parse::<usize>().ok().map(|_| 1),
-```
-
----
-
-### Incident Patch 2: `0e9c5beb` (2026-10-28)
-**Commit Message**: fix(sandbox): protect git hooks, git config and .codewhale from sandboxed writes
-
-Security review E5 (codewhale-ops/security/PRE-LAUNCH-REVIEW-20261027.md;
-founder-accepted D13, 2026-10-27). In workspace-write mode a sandboxed
-command could write .git/hooks/* or .git/config (for example
-core.hooksPath), which later runs outside the sandbox on the next git
-operation; and .codewhale/ was protected only if it already existed.
-
-- Every writable root now gets `.git/hooks` and `.git/config` as
-  read-only subpaths when it holds a git dir; a linked worktree's
-  gitdir/commondir roots get their own `hooks` and `config`.
-- Workspace roots (cwd and configured writable roots) always protect
-  `.codewhale/`, even before it exists. Seatbelt rules work on
-  nonexistent paths; their parameter now resolves through the
-  canonical parent so /var vs /private/var cannot slip past.
-- bwrap can only bind existing paths: prepare_bwrap creates the
-  workspace's `.codewhale/` first, and read-only exceptions may now be
-  files (`.git/config`), not only directories.
-- The seatbelt policy test matched the old single-exclusion text
-  exactly; it now checks the root-plus-first-exclusion prefix.
-
-Verified with 
+Verified on a Linux Boat VM from a fresh clone of origin/main 786a0e4b33
+plus t
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
@@ -1909,133 +2072,1163 @@ Verified with
  
  ## [Unreleased]
  
-+- **Sandboxed commands cannot plant git hooks or edit git config:** in workspace-write mode, `.git/hooks` and `.git/config` (and a linked worktree's shared `hooks` and `config`) are read-only to sandboxed commands, so a command cannot leave a hook or `core.hooksPath` that later runs outside the sandbox. The workspace's `.codewhale/` is protected even before it exists (on Linux it is created first, because bubblewrap can only protect existing paths). `git commit` and ordinary file writes are unaffected; `git config` writes and hook edits need an approved unsandboxed command.
- - **Interrupted session hint stays visible (#7095):** when a plain `codewhale` launch finds an in-flight session snapshot, the "Run `codewhale --continue` to resume it" hint now appears in the TUI's status line instead of being printed to the terminal just before the TUI covered it.
- - **Crate split S24a (internal):** the workshop byte-budget slot moves to `codewhale-runtime`, `AutoRouteDecisionEvidence` to `codewhale-models`, and cost-status session persistence to a tui `usage_persistence` module, so billing no longer reaches the session manager or model routing. No behavior change. (CW-6129)
- - **Nested and deletable threads (Runtime API):** a fork (including a backtrack fork) records `parent_thread_id`, `POST /v1/threads` accepts one naming an existing thread, and `GET /v1/threads/summary` returns it so clients can nest child conversations. `DELETE /v1/threads/{id}` removes an idle thread with its turns, items, events and goal, and its saved session unless another thread shares it or a terminal holds it open; a running thread answers 409.
++- **Terminal kit on design tokens 2.3.0:** the vendored `codewhale-ratatui` now follows design tokens 2.3.0: an `Accent` role carries the one blue for links, focus and selection, and `Primary` is the ink of filled actions (upstream codewhale-hq/codewhale-ratatui 528a9c4). The built-in TUI themes keep their colours; only surfaces drawn in the kit's own roles take the 2.3.0 values.
+ - **Fleet workers run the same Codewhale:** `codewhale fleet run` and Runtime API Fleet runs (`POST /v1/fleet/runs`) now start workers from the running `codewhale` binary instead of whichever `codewhale` is first on `PATH`, so they work with a minimal `PATH` and never pick up a stale copy. `CODEWHALE_FLEET_CODEWHALE_BINARY` still overrides it. (#7119)
+ - **Pinned marketplace archives:** a Codewhale or Claude marketplace entry whose tarball source carries a `sha256` now installs only when the downloaded bytes match it; a mismatch, a malformed pin or a pin on a non-archive source refuses the install with nothing written. The pin also applies to direct installs as `https://…/x.tar.gz#sha256=<hex>`. (E2, CW-6732)
+ - **Sandboxed commands cannot plant git hooks or edit git config:** in workspace-write mode, `.git/hooks` and `.git/config` (and a linked worktree's shared `hooks` and `config`) are read-only to sandboxed commands, so a command cannot leave a hook or `core.hooksPath` that later runs outside the sandbox. The workspace's `.codewhale/` is protected even before it exists (on Linux it is created first, because bubblewrap can only protect existing paths). `git commit` and ordinary file writes are unaffected; `git config` writes and hook edits need an approved unsandboxed command.
 ```
 
-**File**: `crates/sandbox/src/bwrap.rs` (modified, +1/-1)
+**File**: `crates/tui/src/tui/infoline.rs` (modified, +1/-1)
 ```diff
-@@ -348,7 +348,7 @@ fn safe_mounts(writable_roots: &[WritableRoot]) -> (Vec<PathBuf>, Vec<PathBuf>)
-         writable.insert(canonical_root.clone());
- 
-         for exception in &root.read_only_subpaths {
--            let Some(canonical_exception) = existing_directory(exception) else {
-+            let Some(canonical_exception) = exception.canonicalize().ok() else {
-                 continue;
-             };
-             if canonical_exception.starts_with(&canonical_root) {
+@@ -161,7 +161,7 @@ pub(super) fn ink_role(ink: ChromeInk) -> Role {
+         | ChromeInk::PolicyPlan
+         | ChromeInk::PolicyOperate
+         | ChromeInk::Identity
+-        | ChromeInk::Info => Role::Primary,
++        | ChromeInk::Info => Role::Accent,
+         ChromeInk::MetadataValue => Role::Foreground,
+         ChromeInk::Metadata => Role::Muted,
+         ChromeInk::MetadataHint => Role::Hint,
 ```
 
-**File**: `crates/sandbox/src/lib.rs` (modified, +3/-0)
+**File**: `crates/tui/src/tui/infoline/tests.rs` (modified, +1/-1)
 ```diff
-@@ -885,6 +885,9 @@ impl SandboxManager {
-         let writable_roots = if self.readable_paths.is_some() {
-             vec![policy::WritableRoot::new(spec.cwd.clone())]
+@@ -554,7 +554,7 @@ fn infoline_preserves_every_live_chrome_ink_and_untouched_host_style() {
+         let mut buf = ratatui::buffer::Buffer::empty(Rect::new(0, 0, 40, 5));
+         let existing = Style::default()
+             .fg(super::source_theme(false)
+-                .color(codewhale_ratatui::Role::Primary)
++                .color(codewhale_ratatui::Role::Accent)
+                 .unwrap())
+             .bg(Color::Rgb(30, 40, 50))
+             .add_modifier(Modifier::ITALIC);
+```
+
+**File**: `crates/tui/src/tui/phase_strip/posture_tests.rs` (modified, +1/-1)
+```diff
+@@ -65,7 +65,7 @@ fn posture_retains_every_host_ink_including_the_pinned_right_fact() {
+             buf.area,
+             Style::default()
+                 .fg(crate::tui::infoline::source_theme(false)
+-                    .color(codewhale_ratatui::Role::Primary)
++                    .color(codewhale_ratatui::Role::Accent)
+                     .unwrap())
+                 .bg(Color::Rgb(30, 40, 50))
+                 .add_modifier(Modifier::ITALIC),
+```
+
+**File**: `vendor/codewhale-ratatui/COMPONENTS.md` (modified, +2/-2)
+```diff
+@@ -16,8 +16,8 @@ Source snapshots inspected for this crosswalk:
+   pins `bc1044887b4ef973e444b6f8f83f9389daffee2a`; see
+   [its provenance](assets/whale-motion/PROVENANCE.md).
+ - **Design authority:** `codewhale-design` at
+-  `642795c1f9ef465b8d4f4df8584d23be28af6e9f`, `DIRECTION.md` and
+-  `tokens.json` version **1.1.2**. This kit vendors its token release in
++  `4c046da67b0d3d441eb9dfcbdec85620b480e0f2`, `DIRECTION.md` and
++  `tokens.json` version **2.3.0**. This kit vendors its token release in
+   [vendor/codewhale-design](vendor/codewhale-design).
+ - **Kit baseline:** `d02d14799b046fb6c9fdd3969c36ec9202251f34`, with the
+   native component extraction represented below.
+```
+
+**File**: `vendor/codewhale-ratatui/UPSTREAM.json` (modified, +54/-0)
+```diff
+@@ -204,5 +204,59 @@
+     "merged_exports": {
+       "src/components/mod.rs": "0ea81b474b2137b177c5535e7523ed6b312ea972630ac94f5131883246496e8e"
+     }
++  },
++  "tokens_update": {
++    "commit": "528a9c4494f688b40bd642da7ca9aac80dc0c980",
++    "scope": "Design tokens 2.3.0 role migration only: the Accent role, regenerated roles, the vendored tokens.rs, the named-palette export with Accent, and the Primary-to-Accent call sites.",
++    "local_changes": "Applied to the base snapshot and existing Engine patches without taking the other upstream commits since 2ad795b. roles.rs, theme.rs, tui_palettes.rs, assets/tui-palettes.json and vendor/codewhale-design/tokens.rs match upstream at this commit; other listed files carry the same Primary-to-Accent rename on the Engine's copy. Where a pet_update file is listed here, this hash supersedes it.",
++    "files": {
++      "COMPONENTS.md": "d614d691d35eba578daf7516b99c393bb2a72ff4f711f5ee8bc0312de7733040",
++      "assets/tui-palettes.json": "c36f0323e5d0328d61c5d6e80e997ce6e2a2414fab9c70c9e1493d20eb653465",
++      "src/avatar_sprite.rs": "2d8f1a4a495431ff83977b3043171ba9f974bfb6d3790f4fe73cb2988b148837",
++      "src/color.rs": "7350c380faa2a14c33b8a7e0a3b81b41b9e79f594cbf7eda1c56c20eb7f8a94b",
++      "src/components/approval.rs": "c3ce15788c8b5c709d573b2657335eb759f08e1a39f142abcc2d0bbb73ae0c60",
++      "src/components/artifacts.rs": "d8977c46e66098cce10884573224fa296cd621a54d7b1cdd5f107f9cd27586ea",
++      "src/components/attention.rs": "bdaca3a4f2805deeaccd2dbc2eab43a1c20ae9bb273e1f2d090882609f3a720f",
++      "src/components/dot_whale.rs": "883be447918aaf1795bb846a30047ad3c489ab276385964bcff6c11c3dd959f6",
++      "src/components/empty.rs": "bc89617805648d5c4a82414a617f42731111f503390a8410acb53d19ba38def3",
++      "src/components/habitat.rs": "5a75bce9037d2faf327f96da9464112170ae3147466d86e4403ca37f55fcfc70",
++      "src/components/instrument.rs": "3418a7c6858fa739f4e84530931d1ba4c28910e33bd83531e409aca5d030be16",
++      "src/components/list.rs": "f345638461b4c3931b3ac86b9300b80859a4c2324f0edce962d198f7593861d2",
++      "src/components/motion.rs": "ec19554be3b844dde56ddfe3d38436f821d790773157accb6b75fa753b3b4f6d",
++      "src/components/native_chrome.rs": "4e830a145a2d9a2651d4cffa0cb704b4b3322efaebdd8fe8d49667578dca39ae",
++      "src/components/pending_input.rs": "d2bd8c7f7c715e426b2c2600a83a8f1df74344514d21d0c005f9abb2d4116d40",
++      "src/components/pet_mode.rs": "d1366ca9fb645e85c9f04f8cfc5970401b73f9523057a0eee6b40992f3a964de",
++      "src/components/picker.rs": "b6349f3bdc076b3cc169fc6998b8312b6058f3fa2d9751da97cd54d603e11968",
++      "src/components/segmented.rs": "846c85499f55f0e67bcf9fa8731beff48a3f227e33f9ec6ae52a146e47191f01",
++      "src/components/settings.rs": "b131c4e6ebb84e9dcee439bb71a0443ccb492d1c2d7115fadfb0cdc889d89ceb",
++      "src/components/subagents.rs": "cac111451d9e90d14f6f84627762157092a58abbad952a3d96fbac29a190a8c3",
++      "src/components/surface.rs": "a95e18d4f9c05334f86366ebafe63bc1f081a5cd1c97960b0a679d7b2b872568",
++      "src/components/tabs.rs": "8562450f6aa280469d66bf898718b9c06b8b4f5dedb3fd205c6478354901b0e8",
++      "src/components/text_input.rs": "439dad781a794affb1a2f203e1d70854fb18a3fedb657ccd5bf668d81e71a0f4",
++      "src/components/toggle.rs": "8a7218869bebe36ec08708b75da7f70e4ecee70368cd2bb77d7bf44f8d46826a",
++      "src/components/transcript.rs": "ea999949b1becf187c58845fd289ffdcee7c48ac223146d4afb49d3e89bd1547",
++      "src/components/tree.rs": "0a063a638b14c47652b56b2dac1096398b6579a15b4d1794645a2d6824a0601a",
++      "src/components/workbar.rs": "2fd780b1cb80a04de8b999c5c182a9a7ff86a8c431f9606eb41f5adb3d31970d",
++      "src/components/workbench.rs": "9d6679b6011bce0a8f8c4f4b5e756ada266dbd0ad7b8d1a875db632b28908096",
++      "src/components/workspace.rs": "f4e4de88a84a0a93b4852dde55a414fecba2f17136c836be726bade4420875e0",
++      "src/gallery/approval.rs": "2017b278ac6c9b25cc93c54958ae378d79bc65bb8cd13966082749b4eaad3c7a",
++      "src/gallery/atmosphere.rs": "0ce88be0b53565552e2d3bfacce12685303c0acf6f85fd7f77764b872558d3a3",
++      "src/gallery/display.rs": "9d34e9712399cd9b396f7a27bdead0bd14b3263c1aa31da3dbaf5f5185df6db8",
++      "src/gallery/native_views.rs": "bbcecc9102afefa915c001e04f3a9445b255e8855dd4abd36ef0ac00f38b6512",
++      "src/gallery/ocean.rs": "faa6c9b3fc87baa9d2228f839b7e21a35ad8306b53dbdc38b58e7162152348ee",
++      "src/gallery/posture.rs": "988957612b58af20cd43e004c8f56e9804c82a0e107af384b9ef76557150966f",
++      "src/gallery/scenes.rs": "41127cf56af9ea8a6df2cacc219327fae3d783e68e77044c19d2686aeba9f833",
++      "src/gallery/showcase.rs": "f213d7565978a1b23bc3ccf0203e1323bef38a2701a32a88c82e05c63fab1d9f",
++      "src/gallery/surface.rs": "ce6bd31293c909f2d09182d8255d0f7109556953540abfa0ef5c3c3e54cd1060",
++      "src/gallery/transcript.rs": "cf111d85def21fb26a702a85953645cc238fc24f0b90acef0fdfd189f7bb8652",
++      "src/gallery/workbench.rs": "c475a64e8b06c1dc72f26478afdb8792c6427cc06fa2d10fd46d6a27244a3bd7",
++  
+```
+
+**File**: `vendor/codewhale-ratatui/assets/tui-palettes.json` (modified, +76/-0)
+```diff
+@@ -59,6 +59,11 @@
+         30,
+         51
+       ],
++      [
++        106,
++        166,
++        220
++      ],
+       [
+         79,
+         209,
+@@ -365,6 +370,11 @@
+         16,
+         25
+       ],
++      [
++        106,
++        166,
++        220
++      ],
+       [
+         79,
+         209,
+@@ -671,6 +681,11 @@
+         31,
+         35
+       ],
++      [
++        103,
++        184,
++        214
++      ],
+       [
+         127,
+         214,
+@@ -977,6 +992,11 @@
+         240,
+         233
+       ],
++      [
++        0,
++        102,
++        132
++      ],
+       [
+         31,
+         122,
+@@ -1267,6 +1287,11 @@
+         220
+       ],
+       "Color::Reset",
++      [
++        106,
++        166,
++        220
++      ],
+       [
+         79,
+         209,
+@@ -1537,6 +1562,11 @@
+         178
+       ],
+       "Color::Reset",
++      [
++        21,
++        53,
++        178
++      ],
+       [
+         8,
+         118,
+@@ -1779,6 +1809,7 @@
+       "Color::Reset",
+       "Color::Blue",
+       "Color::Reset",
++      "Color::Blue",
+       "Color::Cyan",
+       "Color::Yellow",
+       "Color::Red",
+@@ -1893,6 +1924,11 @@
+         10,
+         10
+       ],
++      [
++        220,
++        220,
++        220
++      ],
+       [
+         180,
+         180,
+@@ -2199,6 +2235,11 @@
+         30,
+         46
+       ],
++      [
++        137,
++        180,
++        250
++      ],
+       [
+         116,
+         199,
+@@ -2505,6 +2546,11 @@
+         27,
+         38
+       ],
++      [
++        122,
++        162,
++        247
++      ],
+       [
+         125,
+         207,
+@@ -2811,6 +2857,11 @@
+         42,
+         54
+       ],
++      [
++        189,
++        147,
++        249
++      ],
+       [
+         139,
+         233,
+@@ -3117,6 +3168,11 @@
+         40,
+         40
+       ],
++      [
++        131,
++        165,
++        152
++      ],
+       [
+         142,
+         192,
+@@ -3423,6 +3479,11 @@
+         23,
+         21
+       ],
++      [
++        204,
++        120,
++        92
++      ],
+       [
+         93,
+         184,
+@@ -3729,6 +3790,11 @@
+         10,
+         0
+       ],
++      [
++        0,
++        204,
++        0
++      ],
+       [
+         0,
+         153,
+@@ -4035,6 +4101,11 @@
+         246,
+         227
+       ],
++      [
++        38,
++        139,
++        210
++      ],
+       [
+         41,
+         158,
+@@ -4341,6 +4412,11 @@
+         18,
+         28
+       ],
++      [
++        255,
++        158,
++        205
++      ],
+       [
+         154,
+         236,
+```
+
+**File**: `vendor/codewhale-ratatui/src/avatar_sprite.rs` (modified, +1/-1)
+```diff
+@@ -161,7 +161,7 @@ impl Paint for Sprite<'_> {
+                     } else {
+                         "#"
+                     };
+-                    cell.set_symbol(symbol).set_style(theme.fg(Role::Primary));
++                    cell.set_symbol(symbol).set_style(theme.fg(Role::Accent));
+                     continue;
+                 }
+                 let bg = color::resolvable_rgb(cell.bg);
+```
+
+---
+
+### Incident Patch 2: `fed2140d` (2026-10-28)
+**Commit Message**: fix(tui): preserve and surface interrupted sessions
+
+Retain crash checkpoints, discover recoverable sessions in the picker, and promote only under the session lease with workspace and saved-state checks. Preserve the shared legacy slot and fail closed when damaged recovery could otherwise be overwritten.
+
+Verified on macOS with the locked hermetic TUI checks: checkpoint 78 passed, continue 12 passed, picker rename 1 passed, picker archive 1 passed. The linker reported a compact-unwind size warning. Legacy-slot cleanup and old-writer coordination remain limited.
+
+**File**: `crates/tui/src/lib.rs` (modified, +59/-110)
+```diff
+@@ -10064,14 +10064,14 @@ async fn prepare_mounted_session(
+                 .ok_or_else(|| anyhow!("No saved sessions found for this workspace"))?
+                 .id
          } else {
-+            if matches!(spec.sandbox_policy, SandboxPolicy::WorkspaceWrite { .. }) {
-+                let _ = std::fs::create_dir(spec.cwd.join(".codewhale"));
-+            }
-             spec.sandbox_policy.get_writable_roots(&spec.cwd)
+-            manager.resolve_session_id_prefix(&selector)?
++            manager.resolve_recoverable_session_id_prefix(&selector)?
          };
-         let command = bwrap::build_bwrap_command_with_read_paths(
+         // Under the existing inactive-session guard, promote any crash
+         // checkpoint first: the mount below stamps a newer document, and the
+         // later attach would then discard the checkpoint as stale. Then
+         // capture the complete document and separate local goal.
+         let _source_lease = manager.reserve_session_for_external_write(&id)?;
+-        let stale_checkpoint = manager.promote_interrupted_checkpoint(&id);
++        let stale_checkpoint = manager.promote_interrupted_checkpoint(&id, Some(&selection_workspace))?;
+         let saved = manager.load_session_snapshot_bounded(&id, MAX_CANONICAL_HISTORY_BYTES)?;
+         if stale_checkpoint {
+             let _ = manager.clear_session_checkpoint(&id);
+@@ -12960,23 +12960,17 @@ fn default_mouse_capture_enabled(
+     true
+ }
+ 
+-/// A loadable crash-recovery checkpoint candidate: session content, file
+-/// age, and which slot it came from (per-session file or the legacy single
+-/// slot).
++/// A crash-recovery checkpoint candidate: session metadata and file age.
+ struct RecentCheckpoint {
+-    session: session_manager::SavedSession,
++    metadata: session_manager::SessionMetadata,
+     age: std::time::Duration,
+-    source: session_manager::CheckpointSource,
+ }
+ 
+-const CHECKPOINT_MAX_AGE: std::time::Duration = std::time::Duration::from_secs(24 * 3600);
+-
+-/// Load all recent crash-recovery checkpoints, pruning stale ones first.
++/// Load crash-recovery checkpoints.
+ ///
+ /// Candidates are the per-session checkpoint files plus the legacy
+-/// single-slot `checkpoints/latest.json` (compatibility read). Files older
+-/// than 24 hours are removed; unreadable files are skipped. The result is
+-/// sorted most recent first.
++/// single-slot `checkpoints/latest.json` (compatibility read). Unreadable
++/// files are skipped. The result is sorted most recent first.
+ fn load_recent_checkpoints(manager: &session_manager::SessionManager) -> Vec<RecentCheckpoint> {
+     let refs = manager.list_checkpoints().unwrap_or_default();
+     let mut recent = Vec::new();
+@@ -12986,39 +12980,16 @@ fn load_recent_checkpoints(manager: &session_manager::SessionManager) -> Vec<Rec
+         // take that session's only crash-recovery record while it runs. The
+         // legacy slot is checked by the session it names, before anything
+         // prunes, promotes or migrates it over that session's live state.
+-        let owner = match &checkpoint_ref.source {
+-            session_manager::CheckpointSource::Session(id) => Some(id.clone()),
+-            session_manager::CheckpointSource::Legacy => {
+-                manager.legacy_checkpoint_origin().ok().flatten()
+-            }
+-        };
+-        if owner.is_some_and(|id| manager.is_session_live_anywhere(&id)) {
+-            continue;
+-        }
+-        let Ok(age) = std::time::SystemTime::now().duration_since(checkpoint_ref.modified) else {
++        let Ok(Some(metadata)) = manager.checkpoint_metadata(&checkpoint_ref) else {
+             continue;
+         };
+-        if age > CHECKPOINT_MAX_AGE {
+-            let _ = match &checkpoint_ref.source {
+-                session_manager::CheckpointSource::Session(id) => {
+-                    manager.clear_session_checkpoint(id)
+-                }
+-                session_manager::CheckpointSource::Legacy => manager.clear_legacy_checkpoint(),
+-            };
++        if manager.is_session_live_anywhere(&metadata.id) {
+             continue;
+         }
+-        let loaded = match &checkpoint_ref.source {
+-            session_manager::CheckpointSource::Session(id) => manager.load_session_checkpoint(id),
+-            session_manager::CheckpointSource::Legacy => manager.load_legacy_checkpoint(),
+-        };
+-        let Ok(Some(session)) = loaded else {
++        let Ok(age) = std::time::SystemTime::now().duration_since(checkpoint_ref.modified) else {
+             continue;
+         };
+-        recent.push(RecentCheckpoint {
+-            session,
+-            age,
+-            source: checkpoint_ref.source,
+-        });
++        recent.push(RecentCheckpoint { metadata, age });
+     }
+     // `list_checkpoints` sorts newest-first already; keep it explicit here so
+     // selection does not silently depend on the manager's ordering.
+@@ -13041,9 +13012,9 @@ fn checkpoint_age_label(age: std::time::Duration) -> String {
+ /// workspace.
+ ///
+ /// Candidates are all per-session checkpoint files plus the legacy
+-/// single-slot `checkpoints/latest.json`; each must be younger than 24 hours
+-/// **and its workspace must match the resolved launch workspace after
+-/// canonicalisation** — the newest matching candidate wins. If no candidate
++/// single-slot
 ```
 
-**File**: `crates/sandbox/src/policy.rs` (modified, +21/-3)
+**File**: `crates/tui/src/session_manager.rs` (modified, +324/-92)
 ```diff
-@@ -317,20 +317,25 @@ impl SandboxPolicy {
-                 ..
-             } => {
-                 let mut roots: Vec<PathBuf> = writable_roots.clone();
-+                let mut workspace_roots = roots.clone();
+@@ -1617,7 +1617,6 @@ pub enum CheckpointSource {
+ #[derive(Debug, Clone)]
+ pub struct CheckpointRef {
+     pub source: CheckpointSource,
+-    #[cfg_attr(not(test), expect(dead_code))]
+     pub path: PathBuf,
+     pub modified: std::time::SystemTime,
+ }
+@@ -1944,12 +1943,6 @@ impl SessionManager {
+     /// must tell a malformed id apart (a 400, not a 409) validate first or
+     /// reserve the lease, which reports `InvalidInput`.
+     ///
+-    /// Known limitation: startup's stale-checkpoint pruning
+-    /// (`load_recent_checkpoints` in `lib.rs`) still clears a checkpoint
+-    /// older than a day after this released probe. A session that attached
+-    /// in that gap and is mid-turn refreshes its checkpoint, so only a
+-    /// day-old checkpoint of a session attached in the same instant is
+-    /// exposed.
+     #[must_use]
+     pub fn is_session_live_anywhere(&self, session_id: &str) -> bool {
+         if is_live_session(session_id) {
+@@ -3158,10 +3151,14 @@ impl SessionManager {
+     }
  
-                 // Add the current working directory
-                 if let Ok(canonical_cwd) = cwd.canonicalize() {
-                     roots.push(canonical_cwd);
-                 } else {
-                     roots.push(cwd.to_path_buf());
-                 }
-+                workspace_roots.extend(roots.last().cloned());
- 
-                 // Git worktrees keep mutable metadata outside the worktree
-                 // directory. Allow only the gitdir and commondir derived from
-                 // a workspace `.git` pointer, preserving the workspace boundary
-                 // for all other external paths.
-+                let mut git_dir_roots = Vec::new();
-                 for root in roots.clone() {
--                    roots.extend(resolve_git_worktree_writable_roots(&root));
-+                    let git_dirs = resolve_git_worktree_writable_roots(&root);
-+                    git_dir_roots.extend(git_dirs.iter().cloned());
-+                    roots.extend(git_dirs);
-                 }
- 
-                 // Add /tmp unless excluded
-@@ -352,15 +357,28 @@ impl SandboxPolicy {
-                     .map(|root| {
-                         let mut read_only_subpaths = Vec::new();
- 
--                        // Protect .codewhale/ and .deepseek/ directories from modification
-+                        // Protect .codewhale/ and .deepseek/ from modification, and
-+                        // the git hooks and config that later run or configure
-+                        // commands outside the sandbox. A workspace root protects
-+                        // .codewhale/ even before it exists.
-+                        let workspace = workspace_roots.contains(&root);
-                         let codewhale_dir = root.join(".codewhale");
--                        if codewhale_dir.is_dir() {
-+                        if workspace || codewhale_dir.is_dir() {
-                             read_only_subpaths.push(codewhale_dir);
-                         }
-                         let deepseek_dir = root.join(".deepseek");
-                         if deepseek_dir.is_dir() {
-                             read_only_subpaths.push(deepseek_dir);
-                         }
-+                        let git_dir = if git_dir_roots.contains(&root) {
-+                            root.clone()
-+                        } else {
-+                            root.join(".git")
-+                        };
-+                        if git_dir.is_dir() {
-+                            read_only_subpaths.push(git_dir.join("hooks"));
-+                            read_only_subpaths.push(git_dir.join("config"));
-+                        }
- 
-                         WritableRoot {
-                             root,
+     fn read_checkpoint_file(&self, path: &Path) -> std::io::Result<Option<SavedSession>> {
+-        if !path.exists() {
+-            return Ok(None);
+-        }
+-        let content = fs::read_to_string(path)?;
++        use std::io::Read as _;
++        let mut file = match open_private_read_file(path) {
++            Ok(file) => file,
++            Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(None),
++            Err(error) => return Err(error),
++        };
++        let mut content = String::new();
++        file.read_to_string(&mut content)?;
+         let mut session: SavedSession = serde_json::from_str(&content)
+             .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+         if session.schema_version > CURRENT_SESSION_SCHEMA_VERSION {
+@@ -3173,6 +3170,9 @@ impl SessionManager {
+                 ),
+             ));
+         }
++        if let Some(journal) = &session.journal {
++            validate_saved_journal(journal)?;
++        }
+         // A crash after retirement but before checkpoint removal must not
+         // offer the deleted origin for recovery. Optional accounting damage
+         // still permits recovery and is projected as incomplete below.
+@@ -3194,7 +3194,71 @@ impl SessionManager {
+         session_id: &str,
+     ) -> std::io::Result<Option<SavedSession>> {
+         let path = self.validated_checkpoint_path(session_id)?;
+-        self.read_checkpoint_file(&path)
++        let session = self.read_checkpoint_file(&path)?;
++        if session
++            .as_ref()
++            .is_some_and(|session| session.metadata.id != session_id)
++        {
++            return Err(io::Error::new(
++                io::ErrorKind::InvalidData,
++                "checkpoint identity mismatch",
++            ));
++        }
++        Ok(session)
++    }
++
++    pub(crate) fn load_recovery_checkpoint(
++        &self,
++        session_id: &str,
++    ) -> std::io::Result<Option<SavedSession>> {
++        Ok(self
++            .recovery_checkpoint_with_source(session_id, true)?
++            .map(|(session, _)| session))
++    }
++
++    fn recovery_checkpoint_with_source(
++        &self,
++        session_id: &str,
++        allow_damaged_current: bool,
++    ) -> std::io::Result<Option<(SavedSession, bool)>> {
++        self.validated_checkpoint_path(session_id)?;
++        let current = self.load_session_checkpoint(session_id);
++        let legacy = match self.legacy_checkpoint_origin() {
++            Ok(Some(origin)) if origin == session_id => self
++                .load_legacy_checkpoint()
++                .unwrap_or_else(|error| {
++                    tracing::warn!(%error, "legacy checkpoint could not be read; preserving it");
++                    None
++                })
++                .filter(|session| session.metadata.id == session_id),
++            Ok(_) => None,
++            Err(error) => {
++                tracing::warn!(%error, "legacy checkpoint could not be read; preserving it");
++                None
++            }
++        };
++        let current = match current {
++            Ok(current) => current,
++            Err(_) if allow_damaged_current && legacy.is_some() => None,
++            Err(error) => {
++                return Err(io::Error::new(
++                    error.kind(),
++                    format!(
++                        "checkpoint {} is unreadable and has been preserved. Review the available conversation preview and preserve this recovery file before resuming: {error}",
++                        self.validated_checkpoint_path(session_id)?.display()
++                    ),
++                ));
++            }
++        };
++        Ok(match (current, legacy) {
++            (Some(current), Some(legacy))
++                if legacy.metadata.updated_at > current.metadata.updated_at =>
++            {
++                Some((legacy, true))
++            }
++            (Some(current), _) => Some((current, false)),
++            (None, legacy) => legacy.map(|session| (session,
 ```
 
-**File**: `crates/sandbox/src/seatbelt.rs` (modified, +9/-1)
+**File**: `crates/tui/src/session_manager/test_cases_01.rs` (modified, +7/-1)
 ```diff
-@@ -479,7 +479,15 @@ fn generate_params(policy: &SandboxPolicy, cwd: &Path) -> Vec<(String, PathBuf)>
+@@ -514,6 +514,9 @@
+         )
+         .expect("owned legacy checkpoint");
  
-         // Add parameters for read-only subpaths
-         for (subpath_index, subpath) in root.read_only_subpaths.iter().enumerate() {
--            let canonical_subpath = subpath.canonicalize().unwrap_or_else(|_| subpath.clone());
-+            let canonical_subpath = subpath.canonicalize().unwrap_or_else(|_| {
-+                match (
-+                    subpath.parent().map(Path::canonicalize),
-+                    subpath.file_name(),
-+                ) {
-+                    (Some(Ok(parent)), Some(name)) => parent.join(name),
-+                    _ => subpath.clone(),
-+                }
-+            });
-             params.push((
-                 format!("WRITABLE_ROOT_{index}_RO_{subpath_index}"),
-                 canonical_subpath,
-```
-
-**File**: `crates/sandbox/src/seatbelt/tests.rs` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@ fn file_provider_extensions_intersect_each_workspace_root_and_exclusions() {
- 
-     for root_index in 0..=1 {
-         let expected = format!(
--            r#"(require-all (extension "com.apple.app-sandbox.read-write") (subpath (param "WRITABLE_ROOT_{root_index}")) (require-not (subpath (param "WRITABLE_ROOT_{root_index}_RO_0"))))"#
-+            r#"(require-all (extension "com.apple.app-sandbox.read-write") (subpath (param "WRITABLE_ROOT_{root_index}")) (require-not (subpath (param "WRITABLE_ROOT_{root_index}_RO_0")))"#
-         );
++        assert!(manager.delete_session("retired-recovery").is_err());
++        assert!(legacy_path.exists());
++        fs::remove_file(&legacy_path).expect("remove legacy checkpoint");
+         manager.delete_session("retired-recovery").expect("delete");
+         assert!(manager.load_legacy_checkpoint().expect("legacy").is_none());
          assert!(
-             workspace_write.contains(&expected),
+@@ -833,7 +836,10 @@
+         let (ledger, _) = manager.late_usage_paths(id).expect("ledger paths");
+         assert!(!SessionManager::late_usage_is_deleted(&ledger).expect("not retired"));
+ 
+-        // Explicit deletion remains the user's decision.
++        assert!(manager.delete_session(id).is_err());
++        assert_eq!(fs::read(&snapshot).unwrap(), original);
++        assert_eq!(fs::read(&legacy).unwrap(), corrupt);
++        fs::remove_file(&legacy).expect("remove damaged legacy fixture");
+         manager.delete_session(id).expect("explicit delete");
+         assert!(!snapshot.exists());
+     }
+```
+
+**File**: `crates/tui/src/session_manager/test_cases_03.rs` (modified, +59/-29)
+```diff
+@@ -567,6 +567,57 @@
+                 .any(|r| r.source == CheckpointSource::Session(session.metadata.id.clone()))
+         );
+         assert!(refs.iter().any(|r| r.source == CheckpointSource::Legacy));
++        let (sessions, recovery, warning) =
++            manager.list_sessions_with_recovery().expect("recovery list");
++        assert!(warning.is_some());
++        assert_eq!(sessions.len(), 1);
++        assert_eq!(sessions[0].id, session.metadata.id);
++        assert!(recovery.contains(&session.metadata.id));
++        assert!(
++            manager
++                .load_recovery_checkpoint(&session.metadata.id)
++                .unwrap()
++                .is_some()
++        );
++        let mut collision = session.clone();
++        collision.metadata.id = format!("{}-other", session.metadata.id);
++        manager.save_checkpoint(&collision).expect("save colliding checkpoint");
++        assert_eq!(
++            manager
++                .resolve_recoverable_session_id_prefix(&session.metadata.id)
++                .unwrap_err()
++                .kind(),
++            io::ErrorKind::InvalidInput
++        );
++        manager.clear_session_checkpoint(&collision.metadata.id).unwrap();
++        let (restored, lease) = manager
++            .attach_session_by_prefix(&session.metadata.id[..8])
++            .expect("attach checkpoint-only session");
++        assert_eq!(restored.session.metadata.id, session.metadata.id);
++        drop(lease);
++        let mut legacy = session.clone();
++        legacy.metadata.id = "legacy-only".to_string();
++        let damaged = manager.save_checkpoint(&legacy).expect("save checkpoint");
++        fs::write(&damaged, b"{").expect("damage checkpoint");
++        fs::write(
++            checkpoints.join("latest.json"),
++            serde_json::to_vec(&legacy).unwrap(),
++        )
++        .expect("write legacy checkpoint");
++        let (sessions, recovery, warning) =
++            manager.list_sessions_with_recovery().expect("recovery list");
++        assert!(warning.is_some());
++        assert!(sessions.iter().any(|entry| entry.id == "legacy-only"));
++        assert!(recovery.contains("legacy-only"));
++        assert_eq!(
++            manager.load_recovery_checkpoint("legacy-only").unwrap().unwrap().metadata.id,
++            "legacy-only"
++        );
++        assert!(manager.attach_session("legacy-only").is_err());
++        assert_eq!(fs::read(&damaged).unwrap(), b"{");
++        assert!(manager.load_session("legacy-only").is_err());
++        assert!(manager.attach_session("legacy-only").is_err());
++        assert_eq!(fs::read(&damaged).unwrap(), b"{");
+     }
+ 
+     /// A session owned by a *prior* process instance with a crash-recovery
+@@ -703,6 +754,14 @@
+         manager
+             .save_checkpoint(&interrupted)
+             .expect("save checkpoint");
++        let (listed, recovery, warning) =
++            manager.list_sessions_with_recovery().expect("list recovery");
++        assert!(warning.is_none());
++        assert_eq!(listed.iter().filter(|session| session.id == id).count(), 1);
++        assert!(recovery.contains(&id));
++        let foreign = tmp.path().join("another-workspace");
++        assert!(manager.attach_session_in_workspace(&id, Some(&foreign)).is_err());
++        assert!(manager.load_session_checkpoint(&id).unwrap().is_some());
+ 
+         let (recovery, lease) = manager.attach_session(&id).expect("attach");
+         assert_eq!(
+@@ -957,35 +1016,6 @@
+         assert!(session_recovery_hint(&workspace, Some("sess-prior")).is_none());
+     }
+ 
+-    #[test]
+-    fn legacy_migration_never_overwrites_existing_per_session_checkpoint() {
+-        let tmp = tempdir().expect("tempdir");
+-        let manager = SessionManager::new(tmp.path().join("sessions")).expect("new");
+-        let mut session = create_saved_session(
+-            &[make_test_message("user", "original")],
+-            "test-model",
+-            tmp.path(),
+-            0,
+-            None,
+-        );
+-        manager.save_checkpoint(&session).expect("save checkpoint");
+-
+-        session.messages = vec![make_test_message("user", "stale legacy copy")];
+-        let written = manager
+-            .write_session_checkpoint_if_absent(&session)
+-            .expect("migration attempt");
+-        assert!(!written, "migration must not overwrite an existing file");
+-        let loaded = manager
+-            .load_session_checkpoint(&session.metadata.id)
+-            .expect("load")
+-            .expect("checkpoint exists");
+-        assert_eq!(
+-            loaded.messages,
+-            vec![make_test_message("user", "original")],
+-            "existing per-session checkpoint content must be preserved"
+-        );
+-    }
+-
+     #[test]
+     fn workspace_scope_matches_subdirectories_in_same_git_checkout() {
+         let tmp = tempdir().expect("tempdir");
+```
+
+**File**: `crates/tui/src/tui/session_picker.rs` (modified, +181/-16)
+```diff
+@@ -1,7 +1,7 @@
+ //! Session resume picker view for the TUI.
+ 
+ use std::cell::{Cell, RefCell};
+-use std::collections::VecDeque;
++use std::collections::{HashSet, VecDeque};
+ use std::path::{Path, PathBuf};
+ use std::sync::{Arc, Mutex};
+ 
+@@ -98,7 +98,7 @@ struct PendingPreview {
+ }
+ 
+ /// One session-store listing, or why the store could not be listed.
+-type SessionListing = Result<Vec<SessionMetadata>, String>;
++type SessionListing = Result<(Vec<SessionMetadata>, HashSet<String>, Option<String>), String>;
+ 
+ /// The session-store listing running off the event loop (U08-09). The
+ /// store's metadata scan grows with every saved session, so the picker opens
+@@ -119,6 +119,7 @@ enum ListNotice<'a> {
+ pub struct SessionPickerView {
+     /// Every session loaded from disk. The picker filters from this set.
+     sessions: Vec<SessionMetadata>,
++    recovery_sessions: HashSet<String>,
+     /// The store listing still in flight, if any.
+     pending_list: Option<PendingSessionList>,
+     /// The store could not be listed. Shown instead of "no saved sessions",
+@@ -205,17 +206,25 @@ impl SessionPickerView {
+     /// Install a finished store listing. A failure is shown as a failure —
+     /// never as an empty store — and the list stays empty.
+     fn apply_session_list(&mut self, listed: SessionListing, select: Option<String>) {
++        self.preview_generation = self.preview_generation.wrapping_add(1);
++        self.pending_preview = None;
++        self.preview_cache = PreviewCache::default();
+         match listed {
+-            Ok(sessions) => {
++            Ok((sessions, recovery_sessions, warning)) => {
+                 self.sessions = sessions;
++                self.recovery_sessions = recovery_sessions;
+                 self.load_error = None;
++                self.status = warning.map(|error| {
++                    tr(self.locale, MessageId::SessionsLoadFailed).replace("{error}", &error)
++                });
+                 self.apply_sort_and_filter();
+                 if let Some(session_id) = select {
+                     self.select_with_fallback(&session_id);
+                 }
+             }
+             Err(error) => {
+                 self.sessions.clear();
++                self.recovery_sessions.clear();
+                 self.load_error =
+                     Some(tr(self.locale, MessageId::SessionsOpenFailed).replace("{error}", &error));
+                 self.apply_sort_and_filter();
+@@ -259,6 +268,7 @@ impl SessionPickerView {
+     fn from_session_list(workspace: &Path, locale: Locale, sessions: Vec<SessionMetadata>) -> Self {
+         let mut view = Self {
+             sessions,
++            recovery_sessions: HashSet::new(),
+             pending_list: None,
+             load_error: None,
+             filtered: Vec::new(),
+@@ -439,8 +449,16 @@ impl SessionPickerView {
+     }
+ 
+     fn apply_sort_and_filter(&mut self) {
+-        let query = self.view_query();
+-        self.filtered = crate::session_projection::select_sessions(&self.sessions, &query)
++        let mut query = self.view_query();
++        let mut sessions = self.sessions.clone();
++        if query.hide_empty_auto_created {
++            sessions.retain(|session| {
++                self.recovery_sessions.contains(&session.id)
++                    || !crate::session_manager::is_empty_auto_created_session(session)
++            });
++            query.hide_empty_auto_created = false;
++        }
++        self.filtered = crate::session_projection::select_sessions(&sessions, &query)
+             .into_iter()
+             .cloned()
+             .collect();
+@@ -624,6 +642,7 @@ impl SessionPickerView {
+             return None;
+         }
+         self.sessions.retain(|s| s.id != session.id);
++        self.recovery_sessions.remove(&session.id);
+         self.apply_sort_and_filter();
+         self.refresh_preview();
+         self.status = Some(
+@@ -636,6 +655,32 @@ impl SessionPickerView {
+         })
+     }
+ 
++    fn reserve_recovery_for_edit(
++        &mut self,
++        manager: &SessionManager,
++        session: &SessionMetadata,
++    ) -> std::io::Result<Option<crate::session_manager::SessionLease>> {
++        let lease = if self.current_session_id.as_deref() == Some(session.id.as_str()) {
++            None
++        } else {
++            let lease = manager.reserve_session_for_external_write(&session.id)?;
++            manager.promote_interrupted_checkpoint(&session.id, Some(&session.workspace))?;
++            Some(lease)
++        };
++        let saved = manager.load_session(&session.id)?;
++        if !crate::session_manager::workspace_scope_matches(
++            &saved.metadata.workspace,
++            &session.workspace,
++        ) {
++            return Err(std::io::Error::new(
++                std::io::ErrorKind::PermissionDenied,
++                "session belongs to another workspace",
++            ));
++        }
++        self.recovery_sessions.remove(&session.id);
++        Ok(lease)
++    }
++
+     /// Archive or restore the selected sessi
+```
+
+**File**: `crates/tui/src/tui/ui/handlers.rs` (modified, +5/-2)
+```diff
+@@ -2028,7 +2028,10 @@ pub(crate) async fn handle_view_events(
+                     });
+                 }
+             }
+-            ViewEvent::SessionSelected { session_id } => {
++            ViewEvent::SessionSelected {
++                session_id,
++                workspace,
++            } => {
+                 let manager = match SessionManager::default_location() {
+                     Ok(manager) => manager,
+                     Err(err) => {
+@@ -2040,7 +2043,7 @@ pub(crate) async fn handle_view_events(
+ 
+                 // Another window's open session is refused, not attached
+                 // as a second autosaving writer.
+-                match manager.attach_session(&session_id) {
++                match manager.attach_session_in_workspace(&session_id, Some(&workspace)) {
+                     Ok((recovery, lease)) => {
+                         let session = recovery.session;
+                         let next_config = config.clone();
+```
+
+**File**: `crates/tui/src/tui/views/mod.rs` (modified, +1/-0)
+```diff
+@@ -774,6 +774,7 @@ pub enum ViewEvent {
+     },
+     SessionSelected {
+         session_id: String,
++        workspace: std::path::PathBuf,
+     },
+     SessionRenamed {
+         metadata: Box<crate::session_manager::SessionMetadata>,
+```
+
+---
+
+### Incident Patch 3: `a5dd8a18` (2026-10-28)
+**Commit Message**: fix(plugins): enforce marketplace sha256 pins (E2, B15)
+
+Security finding E2 / 0.10.3 checklist B15: the Codewhale catalog parser
+dropped any digest for tarball sources (`sha256: None`), and the Claude
+parser recorded `archive.sha256` with an UNVERIFIED_PIN warning but never
+checked it, so a catalog could not pin the bytes it installs.
+
+A Codewhale catalog entry may now carry `sha256`; the Claude `archive`
+source's `sha256` takes the same path. The pin is folded into the install
+spec as a URL fragment (`#sha256=<hex>`, or `&sha256=` after `#path=`),
+so it reaches every remote install route (install, InstallExact with
+expected_content_hash, update) and the .installed-from marker.
+install_remote_bytes compares sha256(bytes) with the pin before staging
+and returns PluginArchiveMismatch (Runtime API 409) with nothing written.
+A non-string, malformed, or non-archive pin is an INVALID_SHA256 /
+INVALID_SOURCE error, so the candidate is not installable (fail closed).
+Direct installs accept the same `#sha256=` fragment.
+
+The bundled first-party catalog still names the unpinned
+releases/latest Computer Use URL; it is re-pinned once the cu-plugin
+release asset exists.
+
+Re-applied onto S19's l
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ## [Unreleased]
+ 
++- **Pinned marketplace archives:** a Codewhale or Claude marketplace entry whose tarball source carries a `sha256` now installs only when the downloaded bytes match it; a mismatch, a malformed pin or a pin on a non-archive source refuses the install with nothing written. The pin also applies to direct installs as `https://…/x.tar.gz#sha256=<hex>`. (E2, CW-6732)
+ - **Sandboxed commands cannot plant git hooks or edit git config:** in workspace-write mode, `.git/hooks` and `.git/config` (and a linked worktree's shared `hooks` and `config`) are read-only to sandboxed commands, so a command cannot leave a hook or `core.hooksPath` that later runs outside the sandbox. The workspace's `.codewhale/` is protected even before it exists (on Linux it is created first, because bubblewrap can only protect existing paths). `git commit` and ordinary file writes are unaffected; `git config` writes and hook edits need an approved unsandboxed command.
+ - **Interrupted session hint stays visible (#7095):** when a plain `codewhale` launch finds an in-flight session snapshot, the "Run `codewhale --continue` to resume it" hint now appears in the TUI's status line instead of being printed to the terminal just before the TUI covered it.
+ - **`codewhale-plugins` crate:** plugin discovery, review, install and marketplace parsing move out of `codewhale-tui` into a new crate; MCP server config types move to `codewhale-mcp`, and the skill parse core and recommendations to `codewhale-skill-install`. Review and trust behavior is unchanged. (S19, CW-6129)
+```
+
+**File**: `crates/plugins/src/install/mod.rs` (modified, +74/-20)
+```diff
+@@ -66,6 +66,16 @@ pub struct PluginContentMismatch {
+     pub actual: String,
+ }
+ 
++#[derive(Debug, Error)]
++#[error(
++    "plugin archive {url} does not match its pinned sha256: expected {expected}, downloaded bytes hash {actual}; nothing was installed"
++)]
++pub struct PluginArchiveMismatch {
++    pub url: String,
++    pub expected: String,
++    pub actual: String,
++}
++
+ use crate::manifest::PluginManifest;
+ use codewhale_net::network_policy::NetworkPolicy;
+ use codewhale_skill_install::install::{
+@@ -200,7 +210,7 @@ impl PluginInstallSource {
+             let source = InstallSource::parse(trimmed)?;
+             return match source {
+                 InstallSource::GitHubRepo(_) | InstallSource::DirectUrl(_) => {
+-                    remote_bundle_path(&source)?;
++                    remote_fragment(&source)?;
+                     Ok(Self::Remote(source))
+                 }
+                 InstallSource::Registry(_) => {
+@@ -223,34 +233,68 @@ impl PluginInstallSource {
+         }
+         Ok(Self::LocalPath(path))
+     }
++
++    pub(crate) fn pin_archive_spec(spec: &str, sha256: &str) -> Result<(String, String), String> {
++        let digest = sha256.trim().to_ascii_lowercase();
++        if digest.len() != 64 || !digest.bytes().all(|ch| ch.is_ascii_hexdigit()) {
++            return Err(format!(
++                "archive sha256 pin `{sha256}` must be 64 hexadecimal characters"
++            ));
++        }
++        let spec = spec.trim();
++        let separator = if spec.contains('#') { '&' } else { '#' };
++        let pinned = format!("{spec}{separator}sha256={digest}");
++        match Self::parse(&pinned) {
++            Ok(Self::Remote(InstallSource::DirectUrl(_))) => Ok((pinned, digest)),
++            Ok(_) => Err("a sha256 pin applies only to an http(s) archive URL source".to_string()),
++            Err(err) => Err(format!("cannot pin `{spec}` to a sha256: {err}")),
++        }
++    }
+ }
+ 
+-/// Select one manifest-rooted bundle from a repository archive. The fragment
+-/// is local extraction metadata, never a path sent to or executed by a server.
+-fn remote_bundle_path(source: &InstallSource) -> Result<Option<String>> {
++/// Read a repository archive's fragment: `path=` selects one manifest-rooted
++/// bundle and `sha256=` pins the archive bytes. The fragment is local install
++/// metadata, never sent to or executed by a server.
++fn remote_fragment(source: &InstallSource) -> Result<(Option<String>, Option<String>)> {
+     let InstallSource::DirectUrl(raw) = source else {
+-        return Ok(None);
++        return Ok((None, None));
+     };
+     let url = reqwest::Url::parse(raw).context("invalid plugin archive URL")?;
+     let Some(fragment) = url.fragment() else {
+-        return Ok(None);
++        return Ok((None, None));
+     };
+-    let path = fragment
+-        .strip_prefix("path=")
+-        .context("plugin archive fragment must be #path=<bundle-directory>")?;
+-    if path.is_empty()
+-        || !path.split('/').all(|part| {
+-            !part.is_empty()
+-                && part != "."
+-                && part != ".."
+-                && part
+-                    .bytes()
+-                    .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, b'-' | b'_' | b'.'))
+-        })
++    let (mut path, mut sha256) = (None, None);
++    for part in fragment.split('&') {
++        match part.split_once('=') {
++            Some(("path", value)) if path.is_none() => path = Some(value),
++            Some(("sha256", value)) if sha256.is_none() => sha256 = Some(value),
++            _ => bail!(
++                "plugin archive fragment must be #path=<bundle-directory>, #sha256=<hex>, or both joined by &"
++            ),
++        }
++    }
++    if let Some(path) = path
++        && (path.is_empty()
++            || !path.split('/').all(|part| {
++                !part.is_empty()
++                    && part != "."
++                    && part != ".."
++                    && part
++                        .bytes()
++                        .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, b'-' | b'_' | b'.'))
++            }))
+     {
+         bail!("plugin archive bundle path must contain only safe relative directory names");
+     }
+-    Ok(Some(path.to_string()))
++    if let Some(digest) = sha256
++        && (digest.len() != 64
++            || !digest
++                .bytes()
++                .all(|ch| ch.is_ascii_digit() || (b'a'..=b'f').contains(&ch)))
++    {
++        bail!("plugin archive sha256 pin must be 64 lowercase hexadecimal characters");
++    }
++    Ok((path.map(str::to_string), sha256.map(str::to_string)))
+ }
+ 
+ /// Serialize a source for the `.installed-from` marker. Must round-trip
+@@ -572,7 +616,17 @@ fn install_remote_bytes(
+     expected_content_hash: Option<&str>,
+ ) -> Result<PluginInstallOutcome> {
+     let checksum = sha256_hex(bytes);
+-    let bundle_path = remote_bundle_path(remote)?;
++    let (bundle_path, pinned_sha256) = remote_fragment(remote)?;
++    if let Some(pinned) = pinned_sha256
++      
+```
+
+**File**: `crates/plugins/src/marketplace/parsers/claude.rs` (modified, +15/-10)
+```diff
+@@ -556,18 +556,23 @@ fn normalize_claude_source(
+             let Some(url) = field("url") else {
+                 return invalid("archive source requires `url`", value, &mut diags);
+             };
+-            if let Some(pin) = field("sha256") {
+-                diags.push(MarketplaceDiagnostic::warning(
+-                    "UNVERIFIED_PIN",
+-                    format!("archive sha256 pin `{pin}` is recorded but not verified during fetch"),
+-                    None,
+-                    None,
+-                ));
+-            }
++            let (spec, sha256) = match obj.get("sha256").filter(|pin| !pin.is_null()) {
++                None => (url.to_string(), None),
++                Some(pin) => match pin
++                    .as_str()
++                    .ok_or_else(|| "archive `sha256` must be a string".to_string())
++                    .and_then(|pin| {
++                        crate::install::PluginInstallSource::pin_archive_spec(url, pin)
++                    })
++                {
++                    Ok((spec, digest)) => (spec, Some(digest)),
++                    Err(reason) => return invalid(&reason, value, &mut diags),
++                },
++            };
+             (
+-                MarketplaceSourceSpec::ArchiveUrl { url: url.to_string(), sha256: field("sha256").map(ToString::to_string) },
++                MarketplaceSourceSpec::ArchiveUrl { url: url.to_string(), sha256 },
+                 MarketplaceInstallPlan::Supported {
+-                    spec: url.to_string(),
++                    spec,
+                     source_kind: "Tarball archive URL".to_string(),
+                 },
+                 diags,
+```
+
+**File**: `crates/plugins/src/marketplace/parsers/codewhale.rs` (modified, +27/-3)
+```diff
+@@ -3,7 +3,8 @@
+ //! This is Codewhale's own documented catalog format. It is deliberately
+ //! the smallest of the supported formats: entries carry a `name` and a
+ //! `source` that is exactly the install spec `/plugin install` accepts
+-//! (`github:owner/repo`, `path:dir`, an http(s) tarball URL).
++//! (`github:owner/repo`, `path:dir`, an http(s) tarball URL). A tarball
++//! entry may add `sha256`; the install refuses archive bytes that differ.
+ //!
+ //! ```json
+ //! {
+@@ -39,6 +40,7 @@ const ENTRY_FIELDS: &[&str] = &[
+     "author",
+     "icon",
+     "platforms",
++    "sha256",
+ ];
+ 
+ pub fn parse_codewhale_catalog(document: MarketplaceDocument) -> MarketplaceCatalog {
+@@ -204,7 +206,7 @@ fn parse_codewhale_entry(
+         return None;
+     };
+ 
+-    let install_plan = match PluginInstallSource::parse(source) {
++    let mut install_plan = match PluginInstallSource::parse(source) {
+         Ok(parsed) => {
+             let source_kind = match &parsed {
+                 PluginInstallSource::Remote(
+@@ -229,7 +231,29 @@ fn parse_codewhale_entry(
+             raw: source.to_string(),
+         },
+     };
+-    let normalized = normalize_native_source(source);
++    let mut normalized = normalize_native_source(source);
++    if let Some(pin) = obj.get("sha256").filter(|value| !value.is_null()) {
++        let pinned = pin
++            .as_str()
++            .ok_or_else(|| "sha256 must be a string".to_string())
++            .and_then(|pin| PluginInstallSource::pin_archive_spec(source, pin));
++        match pinned {
++            Ok((pinned_spec, digest)) => {
++                if let MarketplaceInstallPlan::Supported { spec, .. } = &mut install_plan {
++                    *spec = pinned_spec;
++                }
++                if let MarketplaceSourceSpec::ArchiveUrl { sha256, .. } = &mut normalized {
++                    *sha256 = Some(digest);
++                }
++            }
++            Err(reason) => entry_diags.push(MarketplaceDiagnostic::error(
++                "INVALID_SHA256",
++                reason,
++                Some(name.clone()),
++                Some(index),
++            )),
++        }
++    }
+ 
+     let (description, bad_desc) = str_field(obj, "description");
+     if let Some(diag) = bad_desc {
+```
+
+**File**: `crates/plugins/src/marketplace/tests.rs` (modified, +6/-3)
+```diff
+@@ -300,7 +300,7 @@ fn claude_source_object_matrix_matches_documented_forms() {
+           {"name": "u", "source": {"source": "url", "url": "https://git.example.com/x.git"}},
+           {"name": "gs", "source": {"source": "git-subdir", "url": "https://github.com/a/sub", "path": "p"}},
+           {"name": "np", "source": {"source": "npm", "package": "pkg"}},
+-          {"name": "ar", "source": {"source": "archive", "url": "https://x.example.com/p.tgz", "sha256": "abc"}},
++          {"name": "ar", "source": {"source": "archive", "url": "https://x.example.com/p.tgz", "sha256": "ABCDEF0123456789abcdef0123456789abcdef0123456789abcdef0123456789"}},
+           {"name": "cm", "source": {"source": "command", "command": "curl x"}}
+         ]
+       }"#;
+@@ -329,10 +329,13 @@ fn claude_source_object_matrix_matches_documented_forms() {
+ 
+     let ar = catalog.candidate_by_name("ar").unwrap();
+     assert!(ar.install_plan.is_supported());
++    let pin = "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789";
+     assert!(matches!(&ar.source,
+         MarketplaceSourceSpec::ArchiveUrl { url, sha256: Some(s) }
+-            if url == "https://x.example.com/p.tgz" && s == "abc"));
+-    assert!(ar.diagnostics.iter().any(|d| d.code == "UNVERIFIED_PIN"));
++            if url == "https://x.example.com/p.tgz" && s == pin));
++    assert!(matches!(&ar.install_plan,
++        MarketplaceInstallPlan::Supported { spec, .. }
++            if *spec == format!("https://x.example.com/p.tgz#sha256={pin}")));
+ 
+     let cm = catalog.candidate_by_name("cm").unwrap();
+     assert!(!cm.install_plan.is_supported());
+```
+
+**File**: `crates/plugins/src/marketplace/types.rs` (modified, +1/-1)
+```diff
+@@ -205,7 +205,7 @@ pub enum MarketplaceSourceSpec {
+         #[serde(default, skip_serializing_if = "Option::is_none")]
+         sha: Option<String>,
+     },
+-    /// Tarball archive URL with an optional unverified sha256 pin.
++    /// Tarball archive URL with an optional sha256 pin, verified at install.
+     ArchiveUrl {
+         url: String,
+         #[serde(default, skip_serializing_if = "Option::is_none")]
 ```
 
 **File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
@@ -2044,75 +3237,24 @@ Verified with
  
  ## [Unreleased]
  
-+- **Sandboxed commands cannot plant git hooks or edit git config:** in workspace-write mode, `.git/hooks` and `.git/config` (and a linked worktree's shared `hooks` and `config`) are read-only to sandboxed commands, so a command cannot leave a hook or `core.hooksPath` that later runs outside the sandbox. The workspace's `.codewhale/` is protected even before it exists (on Linux it is created first, because bubblewrap can only protect existing paths). `git commit` and ordinary file writes are unaffected; `git config` writes and hook edits need an approved unsandboxed command.
++- **Pinned marketplace archives:** a Codewhale or Claude marketplace entry whose tarball source carries a `sha256` now installs only when the downloaded bytes match it; a mismatch, a malformed pin or a pin on a non-archive source refuses the install with nothing written. The pin also applies to direct installs as `https://…/x.tar.gz#sha256=<hex>`. (E2, CW-6732)
+ - **Sandboxed commands cannot plant git hooks or edit git config:** in workspace-write mode, `.git/hooks` and `.git/config` (and a linked worktree's shared `hooks` and `config`) are read-only to sandboxed commands, so a command cannot leave a hook or `core.hooksPath` that later runs outside the sandbox. The workspace's `.codewhale/` is protected even before it exists (on Linux it is created first, because bubblewrap can only protect existing paths). `git commit` and ordinary file writes are unaffected; `git config` writes and hook edits need an approved unsandboxed command.
  - **Interrupted session hint stays visible (#7095):** when a plain `codewhale` launch finds an in-flight session snapshot, the "Run `codewhale --continue` to resume it" hint now appears in the TUI's status line instead of being printed to the terminal just before the TUI covered it.
- - **Crate split S24a (internal):** the workshop byte-budget slot moves to `codewhale-runtime`, `AutoRouteDecisionEvidence` to `codewhale-models`, and cost-status session persistence to a tui `usage_persistence` module, so billing no longer reaches the session manager or model routing. No behavior change. (CW-6129)
- - **Nested and deletable threads (Runtime API):** a fork (including a backtrack fork) records `parent_thread_id`, `POST /v1/threads` accepts one naming an existing thread, and `GET /v1/threads/summary` returns it so clients can nest child conversations. `DELETE /v1/threads/{id}` removes an idle thread with its turns, items, events and goal, and its saved session unless another thread shares it or a terminal holds it open; a running thread answers 409.
+ - **`codewhale-plugins` crate:** plugin discovery, review, install and marketplace parsing move out of `codewhale-tui` into a new crate; MCP server config types move to `codewhale-mcp`, and the skill parse core and recommendations to `codewhale-skill-install`. Review and trust behavior is unchanged. (S19, CW-6129)
 ```
 
----
-
-### Incident Patch 3: `7bde7462` (2026-10-28)
-**Commit Message**: fix(extension-host): a runtime bwrap cannot execute is a start failure, so auto falls back to Node
-
-On Linux the Native host probe ran `<runtime> --version` inside bwrap and
-treated any failure as "no verified OS sandbox", a hard error raised while
-preparing the launch, before runtime = "auto"'s Bun-to-Node fallback (which
-only covers spawn failures). A runtime that is a script or shim (asdf's bash
-shims; the test's #!/bin/sh fake Bun) cannot execute in the sandbox because
-its interpreter is not among the Native read grants, and bwrap reports
-`bwrap: execvp <runtime>: No such file or directory`. bwrap has already built
-its namespaces at that point, so the sandbox is verified: the probe now
-accepts that line, the real host spawn fails as an ordinary runtime start
-failure, and auto falls back to Node with its existing diagnostic. Explicit
-bun or node still never fall back; genuine bwrap failures (namespaces, uid
-map, missing binary, timeout) remain hard errors.
-
-Paths: crates/tui/src/extension_host/supervisor.rs (bwrap_probe_verdict, its
-doc comment, one assertion added to the existing
-missing_verified_sandbox_refuses_native_but_reports_pinned_builtin_exception body)
-
-Verified by the
-
-**File**: `crates/tui/src/extension_host/supervisor.rs` (modified, +15/-1)
+**File**: `crates/tui/src/runtime_api/plugins.rs` (modified, +3/-0)
 ```diff
-@@ -1174,7 +1174,10 @@ fn probe_bwrap(command: &[String], cwd: &Path, env: &[(String, String)]) -> Resu
- }
- 
- /// What a wrapped `<runtime> --version` run says about bwrap here: `Ok` when
--/// it ran, otherwise the reason `/plugin` and doctor show — bwrap's first
-+/// it ran, or when bwrap built the sandbox and only the runtime failed to
-+/// execute in it (a script shim whose interpreter is not granted): the host
-+/// spawn then reports that as a runtime start failure, which `auto` answers
-+/// by falling back to Node. Otherwise the reason `/plugin` and doctor show — bwrap's first
- /// line of stderr (or the exit status), and a hint when that line is about
- /// the user namespace bwrap could not create. Pure.
- #[cfg(any(test, all(target_os = "linux", not(target_env = "ohos"))))]
-@@ -1183,6 +1186,9 @@ fn bwrap_probe_verdict(succeeded: bool, status: &str, stderr: &str) -> Result<()
-         return Ok(());
-     }
-     let first = stderr.lines().map(str::trim).find(|line| !line.is_empty());
-+    if first.is_some_and(|line| line.starts_with("bwrap: execvp ")) {
-+        return Ok(());
-+    }
-     let mut detail: String = first.map_or_else(
-         || status.to_string(),
-         |line| line.chars().take(240).collect(),
-@@ -2646,6 +2652,14 @@ mod tests {
- 
-         // A probe that ran keeps the wrapper.
-         assert_eq!(bwrap_probe_verdict(true, "exit status: 0", ""), Ok(()));
-+        assert_eq!(
-+            bwrap_probe_verdict(
-+                false,
-+                "exit status: 1",
-+                "bwrap: execvp /tmp/.tmp1/bun: No such file or directory\n",
-+            ),
-+            Ok(())
-+        );
-         let command: Vec<String> = ["/usr/bin/bwrap", "--unshare-all", "--die-with-parent", "--"]
-             .iter()
-             .map(ToString::to_string)
+@@ -422,6 +422,9 @@ async fn run_plugin_mutation(
+                 || error
+                     .downcast_ref::<codewhale_plugins::install::PluginContentMismatch>()
+                     .is_some()
++                || error
++                    .downcast_ref::<codewhale_plugins::install::PluginArchiveMismatch>()
++                    .is_some()
+             {
+                 ApiError::conflict(format!("plugin mutation failed: {error:#}"))
+             } else {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2141,29 +3283,21 @@ Verified by the
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security): bound MCP catalog revalidation and harden hunk patch parsing
+## X. tui): vendored terminal kit on design tokens 2.3.0 (Accent role)
 
 **RULE**:
-When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cf10ca14`: security): bound MCP catalog revalidation and harden hunk patch parsing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b47cf99`: tui): vendored terminal kit on design tokens 2.3.0 (Accent role). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-# Private keys and certificates never belong in the tree.
-*.pem
-*.key
-*.p12
-*.p8
-id_rsa*
-id_ed25519*
-!docs/cloud-facts/fixtures/test-only-signing-key.pem
+- **Terminal kit on design tokens 2.3.0:** the vendored `codewhale-ratatui` now follows design tokens 2.3.0: an `Accent` role carries the one blue for links, focus and selection, and `Primary` is the ink of filled actions (upstream codewhale-hq/codewhale-ratatui 528a9c4). The built-in TUI themes keep their colours; only surfaces drawn in the kit's own roles take the 2.3.0 values.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2173,4 +3307,4 @@ id_ed25519*
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cf10ca14` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b47cf99` are properly handled with clean fallback behavior.

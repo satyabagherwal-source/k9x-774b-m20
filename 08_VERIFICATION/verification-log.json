@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-2H4K",
-    "timestamp": "2026-10-27T20:01:23.252Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "ee3e8e0c350383f2da3b4b9a7f6b863f5b32188503267f0ddac0bf1f3023c7b4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-6S5F",
-    "timestamp": "2026-10-27T20:04:44.163Z",
-    "repository": "internet-development/www-sacred",
-    "learningId": "learn-github-internet-development-www-sacred",
-    "contentHash": "1f65b77c9ca49a96848cababb2cfbb92e71e14868da97198b296b2911e6d58f0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-6TQJ",
-    "timestamp": "2026-10-27T20:04:46.219Z",
-    "repository": "astral-sh/uv",
-    "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "53db82dd5c199b79f25a16445567e0408c309cfc3c00f52fa22b5141b2c0732c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-6WLI",
     "timestamp": "2026-10-27T20:04:49.926Z",
     "repository": "stakater/Reloader",
@@ -7490,6 +7445,51 @@
     "repository": "skyhook-io/radar",
     "learningId": "learn-github-skyhook-io-radar",
     "contentHash": "a01cf617bae4484ec002ec43a764bc702b99270f9d28144d618bb0c9cdba59bd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-YJH7",
+    "timestamp": "2026-10-29T01:49:55.099Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "edee7dd8b0db065770e88498259b996a817a303d13b52440921daed728fb07bc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-YKWG",
+    "timestamp": "2026-10-29T01:49:56.944Z",
+    "repository": "TableProApp/TablePro",
+    "learningId": "learn-github-tableproapp-tablepro",
+    "contentHash": "b6054ad5243cc11d07a0a2ffa3f35d0f36fe7a6b3ee3b218cea0e8e0efc60792",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-YMT6",
+    "timestamp": "2026-10-29T01:49:59.418Z",
+    "repository": "okteto/okteto",
+    "learningId": "learn-github-okteto-okteto",
+    "contentHash": "3978f573b551cad0ed65b6c7c52ade6445f5d61eb3fea30516df386405237fdb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

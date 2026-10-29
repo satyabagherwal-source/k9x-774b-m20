@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T01:43:16.077Z",
+  "last_updated": "2026-10-29T01:49:59.346Z",
   "total_verified_learnings": 1161,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7286,13 +7286,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "687a38c6",
-      "content_hash": "56f8e0f9f7d5f134fd538eb7fc3729eefe3ce401f0014998cf5d1d64e7e70f34",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "a998f06c",
+      "content_hash": "edee7dd8b0db065770e88498259b996a817a303d13b52440921daed728fb07bc",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -7377,7 +7377,7 @@
         {
           "number": 5407,
           "title": "tui): vendored terminal kit on design tokens 2.3.0 (Accent role)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7385,7 +7385,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T21:29:53.421Z",
+      "verified_at": "2026-10-29T01:49:54.988Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41431,8 +41431,8 @@
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "4aef91ec",
-      "content_hash": "2ac18930a7f0de830889fa2dec5075e87713e9bc64f802d9393057ae3bdb0c5b",
+      "source_version": "75f7d7b4",
+      "content_hash": "3978f573b551cad0ed65b6c7c52ade6445f5d61eb3fea30516df386405237fdb",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "promoted_rules": [
@@ -41460,6 +41460,11 @@
           "number": 5263,
           "title": "deps): Update module golang.org/x/sync to v0.24.0 (#5226)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5487,
+          "title": "PROD-552: Stop copying shared namespace endpoints in the gateway-api divert driv",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41467,7 +41472,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T11:32:27.393Z",
+      "verified_at": "2026-10-29T01:49:59.327Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51133,8 +51138,8 @@
       "slug": "tableproapp-tablepro",
       "platform": "github",
       "source_url": "https://github.com/TableProApp/TablePro",
-      "source_version": "94367b10",
-      "content_hash": "2c205e048914e5d7df869a20befef19f87191fcaaa9ae76a1a1a1643285386f8",
+      "source_version": "dcbce8af",
+      "content_hash": "b6054ad5243cc11d07a0a2ffa3f35d0f36fe7a6b3ee3b218cea0e8e0efc60792",
       "dossier_path": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "promoted_rules": [
@@ -51152,6 +51157,11 @@
           "number": 4396,
           "title": "test(linux): retry a fixture's start when its image pull fails (#3828)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5486,
+          "title": "linux-grid): copy rows as a text table, JSON Lines, one row or INSERT without ge",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51159,7 +51169,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T17:42:43.039Z",
+      "verified_at": "2026-10-29T01:49:56.854Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -146732,14 +146742,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5407,
       "title": "tui): vendored terminal kit on design tokens 2.3.0 (Accent role)",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "687a38c6",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "a998f06c",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T21:29:53.421Z"
+      "verified_at": "2026-10-29T01:49:54.988Z"
     },
     "rule-5408": {
       "learning_id": "rule-5408",
@@ -147903,6 +147913,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T01:43:16.058Z"
+    },
+    "rule-5486": {
+      "learning_id": "rule-5486",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5486,
+      "title": "linux-grid): copy rows as a text table, JSON Lines, one row or INSERT without ge",
+      "source_url": "https://github.com/TableProApp/TablePro",
+      "source_version": "dcbce8af",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T01:49:56.854Z"
+    },
+    "rule-5487": {
+      "learning_id": "rule-5487",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5487,
+      "title": "PROD-552: Stop copying shared namespace endpoints in the gateway-api divert driv",
+      "source_url": "https://github.com/okteto/okteto",
+      "source_version": "75f7d7b4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T01:49:59.327Z"
     }
   },
   "aliases": {

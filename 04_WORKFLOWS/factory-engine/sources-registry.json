@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T01:43:19.857Z",
-    "lastVerified": "2026-10-29T01:43:19.857Z",
+    "lastChecked": "2026-10-29T01:50:02.590Z",
+    "lastVerified": "2026-10-29T01:50:02.590Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -323,9 +323,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-29T01:09:04.558Z",
+    "lastChecked": "2026-10-29T01:50:02.581Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-29T01:09:04.558Z"
+    "lastVerified": "2026-10-29T01:50:02.581Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -997,8 +997,8 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T21:37:14.353Z",
-    "lastVerified": "2026-10-28T21:37:14.353Z",
+    "lastChecked": "2026-10-29T01:49:57.648Z",
+    "lastVerified": "2026-10-29T01:49:57.648Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -1186,14 +1186,14 @@
     "officialUrl": "https://github.com/Hmbown/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T04:35:28.148Z",
-    "lastVerified": "2026-10-28T04:35:28.148Z",
+    "lastChecked": "2026-10-29T01:49:53.130Z",
+    "lastVerified": "2026-10-29T01:49:53.130Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "85734e854871c5a85ffc83db5006f35738dbd196621e06cc36432fb923f7f913",
+    "contentHash": "edee7dd8b0db065770e88498259b996a817a303d13b52440921daed728fb07bc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 22,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2652,9 +2652,9 @@
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
-    "lastChecked": "2026-10-28T09:25:20.391Z",
+    "lastChecked": "2026-10-29T01:50:00.085Z",
     "revisionIdentifier": "6d4608c5",
-    "lastVerified": "2026-10-28T09:25:20.391Z"
+    "lastVerified": "2026-10-29T01:50:00.085Z"
   },
   "clementtsang-bottom": {
     "name": "bottom",
@@ -3002,12 +3002,12 @@
     "officialUrl": "https://github.com/okteto/okteto",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T11:32:26.758Z",
-    "lastVerified": "2026-10-28T11:32:26.758Z",
+    "lastChecked": "2026-10-29T01:49:58.788Z",
+    "lastVerified": "2026-10-29T01:49:58.788Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-okteto-okteto",
-    "contentHash": "2ac18930a7f0de830889fa2dec5075e87713e9bc64f802d9393057ae3bdb0c5b",
+    "contentHash": "3978f573b551cad0ed65b6c7c52ade6445f5d61eb3fea30516df386405237fdb",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -7936,5 +7936,29 @@
     "lastChecked": "2026-10-29T01:43:09.822Z",
     "revisionIdentifier": "258d4577",
     "lastVerified": "2026-10-29T01:43:09.822Z"
+  },
+  "istifano-seo-auditor": {
+    "name": "seo-auditor",
+    "officialUrl": "https://github.com/ISTIFANO/seo-auditor",
+    "lastChecked": "2026-10-29T01:49:50.059Z",
+    "revisionIdentifier": "87ba51e6",
+    "lastVerified": "2026-10-29T01:49:50.059Z"
+  },
+  "tableproapp-tablepro": {
+    "name": "TableProApp/TablePro",
+    "officialUrl": "https://github.com/TableProApp/TablePro",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-29T01:49:56.334Z",
+    "lastVerified": "2026-10-29T01:49:56.334Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-tableproapp-tablepro",
+    "contentHash": "b6054ad5243cc11d07a0a2ffa3f35d0f36fe7a6b3ee3b218cea0e8e0efc60792",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 11,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
