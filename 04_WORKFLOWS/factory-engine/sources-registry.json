@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T06:10:26.036Z",
-    "lastVerified": "2026-10-30T06:10:26.036Z",
+    "lastChecked": "2026-10-30T06:16:41.266Z",
+    "lastVerified": "2026-10-30T06:16:41.266Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T05:46:03.218Z",
-    "lastVerified": "2026-10-30T05:46:03.218Z",
+    "lastChecked": "2026-10-30T06:16:40.322Z",
+    "lastVerified": "2026-10-30T06:16:40.322Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1003,12 +1003,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "provablehq-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T23:41:35.944Z",
-    "lastVerified": "2026-10-29T23:41:35.944Z",
+    "lastChecked": "2026-10-30T06:16:35.467Z",
+    "lastVerified": "2026-10-30T06:16:35.467Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -1017,7 +1017,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "22c4a97a"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -3958,14 +3959,14 @@
     "officialUrl": "https://github.com/kucherenko/jscpd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T13:43:34.250Z",
-    "lastVerified": "2026-10-28T13:43:34.250Z",
+    "lastChecked": "2026-10-30T06:16:31.613Z",
+    "lastVerified": "2026-10-30T06:16:31.613Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kucherenko-jscpd",
-    "contentHash": "60269540fd80e2cea64ddbe079ac02a58a46da28f89fddd3890d6a5c16768549",
+    "contentHash": "ee5cbb8f9cf9a2eb3fe93619f3a7dc1e76b76c27fca564d6949cb0170c438c65",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5849,9 +5850,9 @@
   "lindb-lindb": {
     "name": "lindb",
     "officialUrl": "https://github.com/lindb/lindb",
-    "lastChecked": "2026-10-28T17:28:14.329Z",
+    "lastChecked": "2026-10-30T06:16:37.836Z",
     "revisionIdentifier": "612070e1",
-    "lastVerified": "2026-10-28T17:28:14.329Z"
+    "lastVerified": "2026-10-30T06:16:37.836Z"
   },
   "vercel-labs-opensrc": {
     "name": "opensrc",
@@ -6239,14 +6240,14 @@
     "officialUrl": "https://github.com/linkerd/linkerd2",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T18:27:30.343Z",
-    "lastVerified": "2026-10-28T18:27:30.343Z",
+    "lastChecked": "2026-10-30T06:16:38.285Z",
+    "lastVerified": "2026-10-30T06:16:38.285Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "adbb74356b08bc97236b23d418cd0b787e9072a7d60ac35a51a8ced3a332f942",
+    "contentHash": "3a64b4a40e3f0dc1e1b9eb2eb7dfaca4738763f4caf5925a8086adbbe6d9614b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9259,5 +9260,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nometria-sitemap-generator": {
+    "name": "sitemap-generator",
+    "officialUrl": "https://github.com/nometria/sitemap-generator",
+    "lastChecked": "2026-10-30T06:16:27.763Z",
+    "revisionIdentifier": "6d8cae81",
+    "lastVerified": "2026-10-30T06:16:27.763Z"
+  },
+  "touchlab-droidconkotlin": {
+    "name": "DroidconKotlin",
+    "officialUrl": "https://github.com/touchlab/DroidconKotlin",
+    "lastChecked": "2026-10-30T06:16:30.300Z",
+    "revisionIdentifier": "27f3e87c",
+    "lastVerified": "2026-10-30T06:16:30.300Z"
   }
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source**: github ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
-> **Source Version**: `ef979746`  
+> **Source Version**: `5655cdfc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T13:43:34.256Z  
+> **Timestamp**: 2026-10-30T06:16:32.575Z  
 > **Learning ID**: `learn-github-kucherenko-jscpd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kucherenko/jscpd](https://github.com/kucherenko/jscpd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T13:43:34.250Z  
+> **Harvest Timestamp**: 2026-10-30T06:16:31.613Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Copy/paste detector for source code. 220+ languages, Rust engine, SARIF/HTML/badge reporters, GitHub Action, MCP server for AI agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6458 stars
+- **Stars / Engagement**: 6468 stars
 
 ---
 
@@ -1878,1132 +1878,257 @@ impl CpdClone {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d07c67aa` (2026-10-28)
-**Commit Message**: fix(lsp): put JSX ignore markers in {/* */} and outside tags
+### Incident Patch 1: `5655cdfc` (2026-10-30)
+**Commit Message**: Merge pull request #1267 from kucherenko/dependabot/cargo/rust/ruff-939b3aa493
 
-"Ignore this clone" wrote `// jscpd:ignore-start` on a line of its own
-among the children of a JSX element, and `/* jscpd:ignore-start */`
-beside them. JSX reads both as text, so the page showed the marker.
-Since #1258 jscpd reads a marker wherever its text stands, so the clone
-went away while the text stayed on the page.
+chore(deps): bump the ruff group in /rust with 2 updates
 
-A clone in JSX also tends to end inside a tag: after the `</` of a
-closing tag when the copies close different elements, or between the
-`<` and the `/` when one copy closes an element and the other opens one
-more child. TypeScript takes a comment in the first spot, but
-`< /* jscpd:ignore-end *//ul>` does not parse.
-
-cpd-tokenizer gets ignore_marker_spots. It parses the source with oxc
-and tells, for the start and the end of a clone, whether the byte stands
-among the children of an element or fragment. A byte inside a tag moves
-to the start of the tag for the start marker and to its end for the end
-marker, so the region still holds the whole clone, and the place it
-lands in decides: after `<li>` a marker is among the children of that
-`li`. Code in a `{...}`, among children or in an attribute, is code, a
-
-**File**: `docs/editors.md` (modified, +1/-1)
+**File**: `rust/Cargo.lock` (modified, +26/-70)
 ```diff
-@@ -169,7 +169,7 @@ Renamed and near-miss copies need the options that find them on the command line
- Two code actions come with a clone:
+@@ -2162,7 +2162,7 @@ version = "0.155.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e78e5d50ecf9fbf6c00afb29dbd670784b2ac407fd676f625d1f3515a1a2d577"
+ dependencies = [
+- "phf 0.14.0",
++ "phf",
+  "proc-macro2",
+  "quote",
+  "syn 3.0.6",
+@@ -2273,7 +2273,7 @@ dependencies = [
+  "oxc_diagnostics",
+  "oxc_span",
+  "oxc_str",
+- "phf 0.14.0",
++ "phf",
+  "rustc-hash",
+  "unicode-id-start",
+ ]
+@@ -2343,7 +2343,7 @@ dependencies = [
+  "oxc_index",
+  "oxc_span",
+  "oxc_str",
+- "phf 0.14.0",
++ "phf",
+  "unicode-id-start",
+ ]
  
- - "Go to the other copy in src/holds.js:4-13" opens that copy, with one action per copy.
--- "Ignore this clone" puts `jscpd:ignore-start` and `jscpd:ignore-end` comments around the fragment, in the comment syntax of the file's language: on lines of their own where the fragment starts and ends its lines, and as block comments beside it where other code shares a line with it. The first line of a file that starts with `#!` or `<?` stays first.
-+- "Ignore this clone" puts `jscpd:ignore-start` and `jscpd:ignore-end` comments around the fragment, in the comment syntax of the file's language: on lines of their own where the fragment starts and ends its lines, and as block comments beside it where other code shares a line with it. Among the children of a JSX element, where a comment would show on the page, the markers are `{/* jscpd:ignore-start */}` and `{/* jscpd:ignore-end */}`, and no marker goes inside a JSX tag: the start one goes before the tag, the end one after it. The first line of a file that starts with `#!` or `<?` stays first.
+@@ -2375,44 +2375,25 @@ version = "2.3.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
  
- A hover over a clone shows the message and the first lines of the other copy.
+-[[package]]
+-name = "phf"
+-version = "0.11.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1fd6780a80ae0c52cc120a26a1a42c1ae51b247a253e4e06113d23d2c2edd078"
+-dependencies = [
+- "phf_shared 0.11.3",
+-]
+-
+ [[package]]
+ name = "phf"
+ version = "0.14.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "010378780309880b08997fae13be7834dba947d36393bd372f2b1556deb2a2f6"
+ dependencies = [
+  "phf_macros",
+- "phf_shared 0.14.0",
++ "phf_shared",
+  "serde",
+ ]
  
+ [[package]]
+ name = "phf_codegen"
+-version = "0.11.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "aef8048c789fa5e851558d709946d6d79a8ff88c0440c587967f8e94bfb1216a"
+-dependencies = [
+- "phf_generator 0.11.3",
+- "phf_shared 0.11.3",
+-]
+-
+-[[package]]
+-name = "phf_generator"
+-version = "0.11.3"
++version = "0.14.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3c80231409c20246a13fddb31776fb942c38553c51e871f8cbd687a4cfb5843d"
++checksum = "41b585a510fb76fdebead6897982ef2a03a21d8e6cbcca904999742a4afc6ffe"
+ dependencies = [
+- "phf_shared 0.11.3",
+- "rand 0.8.8",
++ "phf_generator",
++ "phf_shared",
+ ]
+ 
+ [[package]]
+@@ -2422,7 +2403,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "aeb62e0959d5a1bebc965f4d15d9e2b7cea002b6b0f5ba8cde6cc26738467100"
+ dependencies = [
+  "fastrand",
+- "phf_shared 0.14.0",
++ "phf_shared",
+ ]
+ 
+ [[package]]
+@@ -2431,22 +2412,13 @@ version = "0.14.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "5fa8d0ca26d424d27630da600c6624696e7dec8bf7b3b492b383c5dc49e5e085"
+ dependencies = [
+- "phf_generator 0.14.0",
+- "phf_shared 0.14.0",
++ "phf_generator",
++ "phf_shared",
+  "proc-macro2",
+  "quote",
+  "syn 2.0.119",
+ ]
+ 
+-[[package]]
+-name = "phf_shared"
+-version = "0.11.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "67eabc2ef2a60eb7faa00097bd1ffdb5bd28e62bf39990626a582201b7a754e5"
+-dependencies = [
+- "siphasher",
+-]
+-
+ [[package]]
+ name = "phf_shared"
+ version = "0.14.0"
+@@ -2615,15 +2587,6 @@ version = "6.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "f8dcc9c7d52a811697d2151c701e0d08956f92b0e24136cf4cf27b57a6a0d9bf"
+ 
+-[[package]]
+-name = "rand"
+-version = "0.8.8"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e058c7de0b26af77780c769414d6257830bb240f3c38477dbc2c16e5f54d6d4c"
+-dependencies = [
+- "rand_core 0.6.4",
+-]
+-
+ [[package]]
+ name = "rand"
+ version = "0.9.5"
+@@ -2654,12 +2617,6 @@ dependencies = [
+  "rand_core 0.9.5",
+ ]
+ 
+-[[package]]
+-name = "rand_core"
+-version = "0.6.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
+-
+ [[package]]
+ name = "rand_core"
+ version = "0.9.5"
+@@ -2776,9 +2733,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "ruff_python_ast"
+-version = "0.0.18"
++version = "0.0.20"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "787e187198eba5c7792f05358d1365ea5c7df8de0e701c7d7d15e07b532092a7"
++checksum = "f5c31f9196e6333f154b92e6f6f9701d23ddfeee0b7fd45476aacbed7b74b440"
+ dependencies = [
+  "aho-corasick",
+  "arrayvec",
+@@ -2798,9 +2755,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "ruff_python_parser"
+-version = "0.0.18"
++version = "0.0.20"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3fc400c5340219261a2b1e0630070fdac30fa99918ee78a2b006391a50c36df9"
++checksum = "2b5b7fd512a12be87d02bbc8d8352f8159a058d1f91e6749f234ca43cb351525"
+ dependencies = [
+  "bitflags 2.13.2",
+  "bstr",
+@@ -2813,7 +2770,6 @@ dependencies = [
+  "ruff_text_size",
+  "ruff_unicode_names2",
+  "rustc-hash",
+- "stacker",
+  "static_assertions",
+  "thin-vec",
+  "unicode-ident",
+@@ -2822,9 +2778,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "ruff_python_trivia"
+-version = "0.0.18"
++version = "0.0.20"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2eaa30e95771578677685be47e20d7a1beaed762225a444d337f54b1d50e9150"
++checksum = "a867e9037e2c616342dcb77ff69344c59cf956bde079392a6da4b23138246a02"
+ dependencies = [
+  "itertools 0.15.0",
+  "memchr",
+@@ -2837,38 +2793,
 ```
 
-**File**: `rust/crates/cpd-tokenizer/src/javascript.rs` (modified, +256/-1)
+**File**: `rust/crates/basta/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -5,8 +5,13 @@ use std::panic::{AssertUnwindSafe, catch_unwind};
- use std::path::Path;
- 
- use oxc_allocator::Allocator;
-+use oxc_ast::ast::{
-+    JSXClosingElement, JSXClosingFragment, JSXElement, JSXExpressionContainer, JSXFragment,
-+    JSXOpeningElement, JSXOpeningFragment, JSXSpreadChild,
-+};
-+use oxc_ast_visit::{Visit, walk};
- use oxc_parser::{Kind, Parser, config::TokensParserConfig};
--use oxc_span::SourceType;
-+use oxc_span::{SourceType, Span};
- 
- use cpd_core::models::{Token, TokenKind};
- 
-@@ -260,6 +265,154 @@ fn parse_with_oxc(source: &str, format: &str, strip_types: bool) -> Option<Vec<T
-     Some(tokens)
- }
- 
-+// ── ignore markers in JSX ─────────────────────────────────────────────────────
-+
-+/// Where a `jscpd:ignore` marker goes in a JavaScript source.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub struct MarkerSpot {
-+    /// The byte the marker goes at.
-+    pub offset: usize,
-+    /// The marker stands among the children of a JSX element or fragment,
-+    /// where `//` and `/* */` are text on the page, so it has to be
-+    /// `{/* … */}`.
-+    pub jsx_child: bool,
-+}
-+
-+/// Where the markers around the code from byte `start` to byte `end` of
-+/// `source` go. A marker stays at its byte unless the byte is inside a JSX
-+/// tag: then the start marker goes before the tag and the end marker after
-+/// it, as TypeScript reads no comment between the `<` and the `/` of
-+/// `</ul>`. `None` when the parser gives up on the source.
-+pub fn ignore_marker_spots(
-+    source: &str,
-+    format: &str,
-+    start: usize,
-+    end: usize,
-+) -> Option<[MarkerSpot; 2]> {
-+    let asked = [u32::try_from(start).ok()?, u32::try_from(end).ok()?];
-+    catch_unwind(AssertUnwindSafe(|| {
-+        let allocator = Allocator::new();
-+        let parsed = Parser::new(&allocator, source, source_type_for_format(format)).parse();
-+        if parsed.fatal_error {
-+            return None;
-+        }
-+        let places_of = |offsets: [u32; 2]| {
-+            let mut places = Places {
-+                offsets,
-+                places: [Place::Code; 2],
-+            };
-+            places.visit_program(&parsed.program);
-+            places.places
-+        };
-+        let [first, last] = places_of(asked);
-+        let offsets = [
-+            match first {
-+                Place::Tag(tag) => tag.start,
-+                _ => asked[0],
-+            },
-+            match last {
-+                Place::Tag(tag) => tag.end,
-+                _ => asked[1],
-+            },
-+        ];
-+        // A marker out of a tag stands where it lands: after `<li>` it is
-+        // among the children of the `li`, before `</ul>` among those of the
-+        // `ul`.
-+        let places = match offsets == asked {
-+            true => [first, last],
-+            false => places_of(offsets),
-+        };
-+        Some([0, 1].map(|n| MarkerSpot {
-+            offset: offsets[n] as usize,
-+            jsx_child: places[n] == Place::Children,
-+        }))
-+    }))
-+    .ok()
-+    .flatten()
-+}
-+
-+/// What a byte of a JSX source stands in.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+enum Place {
-+    Code,
-+    /// Among the children of an element or fragment.
-+    Children,
-+    /// Inside the tag at this span.
-+    Tag(Span),
-+}
-+
-+/// The [`Place`] of two bytes. The visitor meets the nodes that hold a byte
-+/// outermost first, so the last place it marks is the innermost one.
-+struct Places {
-+    offsets: [u32; 2],
-+    places: [Place; 2],
-+}
-+
-+impl Places {
-+    /// The bytes from `from` to `to`, both included, the end of an opening
-+    /// tag and the start of its closing tag, are among children.
-+    fn children(&mut self, from: u32, to: u32) {
-+        for (offset, place) in self.offsets.iter().zip(&mut self.places) {
-+            if from <= *offset && *offset <= to {
-+                *place = Place::Children;
-+            }
-+        }
-+    }
-+
-+    /// The bytes strictly inside `span`, a tag or a `{…}` of code.
-+    fn inside(&mut self, span: Span, tag: bool) {
-+        for (offset, place) in self.offsets.iter().zip(&mut self.places) {
-+            if span.start < *offset && *offset < span.end {
-+                *place = match tag {
-+                    true => Place::Tag(span),
-+                    false => Place::Code,
-+                };
-+            }
-+        }
-+    }
-+}
-+
-+impl<'a> Visit<'a> for Places {
-+    fn visit_jsx_element(&mut self, it: &JSXElement<'a>) {
-+        if let Some(closing) = &it.closing_element {
-+            self.children(it.opening_element.span.end, closing.span.start);
-+        }
-+        walk::walk_jsx_element(self, it);
-+    }
-+
-+    fn visit_jsx_fragment(&mut self, it: &JSXFragment<'a>) {
-+        self.children(it.opening_fragment.span.end, it.closing_fragment.span.start);
-+        walk::walk_jsx_fragment(self, it);
-+    }
-+
-+    fn visit_jsx_opening_element(&mut self, it: &JSXOpeningElement<'a>) {
-+        self.inside(it.span, true);
-+        walk::walk_jsx_opening_element(self, it);
-+    }
-+
-+  
+@@ -34,8 +34,8 @@ oxc_parser = "0.155"
+ oxc_semantic = "0.155"
+ oxc_span = "0.155"
+ oxc_syntax = "0.155"
+-ruff_python_ast = "0.0.18"
+-ruff_python_parser = "0.0.18"
++ruff_python_ast = "0.0.20"
++ruff_python_parser = "0.0.20"
+ rustc-hash = "2"
+ chrono = "0.4"
+ rayon = "1"
 ```
 
-**File**: `rust/crates/cpd/src/lsp/findings.rs` (modified, +6/-2)
+**File**: `rust/crates/cpd-semantic/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -394,8 +394,6 @@ pub fn diagnostic(finding: &Finding, related: bool) -> Diagnostic {
-     }
- }
- 
--/// How a line comment opens and closes in `format`, for the markers of
--/// "Ignore this clone"; `None` for a format without comments we know.
- /// The block comment of a format, for a marker beside code on its line;
- /// `None` for formats without one.
- pub fn block_comment_syntax(format: &str) -> Option<(&'static str, &'static str)> {
-@@ -419,6 +417,8 @@ pub fn block_comment_syntax(format: &str) -> Option<(&'static str, &'static str)
-     })
- }
- 
-+/// How a line comment opens and closes in `format`, for the markers of
-+/// "Ignore this clone"; `None` for a format without comments we know.
- pub fn comment_syntax(format: &str) -> Option<(&'static str, &'static str)> {
-     Some(match format {
-         "actionscript" | "apex" | "aql" | "arduino" | "asciidoc" | "bicep" | "bison" | "c"
-@@ -463,6 +463,10 @@ pub fn comment_syntax(format: &str) -> Option<(&'static str, &'static str)> {
-     })
- }
- 
-+/// The comment of a marker among the children of a JSX element, where `//`
-+/// and `/* */` are text on the page: a `{…}` that holds nothing else.
-+pub const JSX_CHILD_COMMENT: (&str, &str) = ("{/* ", " */}");
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
-```
-
-**File**: `rust/crates/cpd/src/lsp/server.rs` (modified, +69/-15)
-```diff
-@@ -8,14 +8,15 @@
- use super::complexity::{Limits, complexity_findings};
- use super::dead_code::dead_code_findings;
- use super::findings::{
--    Finding, Scope, Snapshot, Target, Text, block_comment_syntax, clone_findings, comment_syntax,
--    diagnostic,
-+    Finding, JSX_CHILD_COMMENT, Scope, Snapshot, Target, Text, block_comment_syntax,
-+    clone_findings, comment_syntax, diagnostic,
- };
- use super::position::{Encoding, path_to_uri, uri_to_path};
- use super::project::{CONFIG_NAME, Project, find_config_dirs, plan};
- use super::settings::{Analysis, LspSection};
- use crate::cli::{Cli, ConfigDiagnostic};
- use crate::index::{ScanIndex, host_file};
-+use cpd_tokenizer::javascript::{MarkerSpot, ignore_marker_spots};
- use crossbeam_channel::{Receiver, Sender};
- use lsp_server::{Connection, ErrorCode, Message, Notification, Request, RequestId, Response};
- use lsp_types::notification::Notification as _;
-@@ -1290,10 +1291,13 @@ impl Server {
-     /// the finding starts and ends its lines, and as block comments beside it
-     /// where other code shares them, so the code around keeps its meaning
-     /// (a comment line inside `<script>export function …` would land in the
--    /// markup). The first line of a file that starts with `#!` or `<?` stays
-+    /// markup). Among the children of a JSX element a comment would be text
-+    /// on the page, so a marker there is `{/* … */}`, set beside code with no
-+    /// space, which the page would show too, and no marker goes inside a JSX
-+    /// tag. The first line of a file that starts with `#!` or `<?` stays
-     /// first.
-     fn ignore_edit(&self, uri: &Uri, finding: &Finding) -> Option<WorkspaceEdit> {
--        let (open, close) = comment_syntax(&finding.format)?;
-+        let comment = comment_syntax(&finding.format)?;
-         let block = block_comment_syntax(&finding.format);
-         let path = document_path(uri)?;
-         let text = self.text_of(&path)?;
-@@ -1303,62 +1307,79 @@ impl Server {
-         };
-         let line = |n: u32| text.index.line(&text.text, n as usize);
-         let lines = text.index.line_count() as u32;
--        let indent: String = line(finding.first_line)
-+        let (mut start, mut end) = (finding.range.start, finding.range.end);
-+        let (mut first_line, mut last_line) = (finding.first_line, finding.last_line);
-+        let mut jsx = [false; 2];
-+        if let Some(spots) = self.jsx_marker_spots(&path, &text, finding) {
-+            let position =
-+                |spot: MarkerSpot| text.index.position(&text.text, spot.offset, self.encoding);
-+            (start, end) = (position(spots[0]), position(spots[1]));
-+            (first_line, last_line) = (start.line, end.line);
-+            jsx = spots.map(|spot| spot.jsx_child);
-+        }
-+        // The comments of a marker on a line of its own and beside code, and
-+        // the space between a marker and the code beside it.
-+        let syntax = |jsx_child: bool| match jsx_child {
-+            true => (JSX_CHILD_COMMENT, Some(JSX_CHILD_COMMENT), ""),
-+            false => (comment, block, " "),
-+        };
-+        let indent: String = line(first_line)
-             .chars()
-             .take_while(|c| c.is_whitespace())
-             .collect();
--        let (start, end) = (finding.range.start, finding.range.end);
-         let before = &line(start.line)[..byte_at(line(start.line), start.character, self.encoding)];
-         let after = &line(end.line)[byte_at(line(end.line), end.character, self.encoding)..];
-         let at =
-             |position: Position, text: String| TextEdit::new(Range::new(position, position), text);
-         let mut edits = Vec::new();
-+        let ((open, close), block, space) = syntax(jsx[0]);
-         match (before.trim().is_empty(), block) {
-             (false, Some((block_open, block_close))) => {
-                 edits.push(at(
-                     start,
--                    format!("{block_open}jscpd:ignore-start{block_close} "),
-+                    format!("{block_open}jscpd:ignore-start{block_close}{space}"),
-                 ));
-             }
-             _ => {
--                let first = line(finding.first_line);
-+                let first = line(first_line);
-                 let keep_first =
--                    finding.first_line == 0 && (first.starts_with("#!") || first.starts_with("<?"));
-+                    first_line == 0 && (first.starts_with("#!") || first.starts_with("<?"));
-                 let (row, indent) = match keep_first {
-                     true if lines > 1 => (
-                         1,
-                         line(1).chars().take_while(|c| c.is_whitespace()).collect(),
-                     ),
-                     true => return None,
--                    false => (finding.first_line, indent.clone()),
-+                    false => (first_line, indent.clone()),
-                 };
-                 edits.push(at(
-                     Position::new(row, 0),
-                     format!("{indent}{open}jscpd:ignore-s
-```
-
-**File**: `rust/crates/cpd/tests/lsp_stdio.rs` (modified, +80/-0)
-```diff
-@@ -770,6 +770,27 @@ fn ignore_action(actions: &[Value]) -> &Value {
-         .unwrap_or_else(|| panic!("an ignore action in {actions:?}"))
- }
- 
-+/// `text` with the inserts of `edits` made; `text` is ASCII, so a column
-+/// is a byte.
-+fn apply(text: &str, edits: &[Value]) -> String {
-+    let mut inserts: Vec<(usize, &str)> = edits
-+        .iter()
-+        .map(|edit| {
-+            let at = &edit["range"]["start"];
-+            let line = at["line"].as_u64().unwrap() as usize;
-+            let column = at["character"].as_u64().unwrap() as usize;
-+            let start: usize = text.split_inclusive('\n').take(line).map(str::len).sum();
-+            (start + column, edit["newText"].as_str().unwrap())
-+        })
-+        .collect();
-+    inserts.sort_by_key(|&(offset, _)| std::cmp::Reverse(offset));
-+    let mut text = text.to_string();
-+    for (offset, insert) in inserts {
-+        text.insert_str(offset, insert);
-+    }
-+    text
-+}
-+
- // ------------------------------------------------------------ initialize
- 
- #[test]
-@@ -966,6 +987,65 @@ fn an_ignore_edit_beside_code_after_the_clone_is_a_block_comment() {
-     remove(&dir);
- }
- 
-+/// The same links among the children of a JSX element in two files, after
-+/// text that differs and before a closing tag that differs.
-+const MENU_JSX: &str = "export function Menu() {\n  return (\n    <nav>Menu<a href=\"/home\">Home</a>\n      <a href=\"/about\">About us</a>\n      <a href=\"/pricing\">Pricing</a>\n      <a href=\"/contact\">Contact</a>\n      <a href=\"/blog\">Blog</a>\n    </nav>\n  );\n}\n";
-+const FOOTER_JSX: &str = "export function Footer() {\n  return (\n    <footer>\n      Links\n      <a href=\"/home\">Home</a>\n      <a href=\"/about\">About us</a>\n      <a href=\"/pricing\">Pricing</a>\n      <a href=\"/contact\">Contact</a>\n      <a href=\"/blog\">Blog</a>\n    </footer>\n  );\n}\n";
-+
-+#[test]
-+fn an_ignore_edit_in_jsx_is_no_text_on_the_page_and_splits_no_tag() {
-+    let dir = workspace(
-+        "jsx",
-+        &[
-+            ("menu.jsx", MENU_JSX),
-+            ("footer.jsx", FOOTER_JSX),
-+            (".jscpd.json", SMALL),
-+        ],
-+    );
-+    let mut lsp = Lsp::start(&dir, &[]);
-+    lsp.initialize(&[&dir], json!({}));
-+    let mut ignored = Vec::new();
-+    for (name, text) in [("menu.jsx", MENU_JSX), ("footer.jsx", FOOTER_JSX)] {
-+        let uri = lsp.open(&dir.join(name));
-+        let diagnostics = lsp.diagnostics(&uri, |d| !d.is_empty());
-+        let actions = lsp.actions(&uri, &diagnostics[0]["range"]);
-+        let edits = edits_of(&ignore_action(&actions)["edit"], &uri);
-+        ignored.push((uri, apply(text, edits), text));
-+    }
-+    // A comment among the children of an element is text on the page: the
-+    // start is an empty expression, beside the text of <nav> with no space
-+    // and on a line of its own among the children of <footer>. The clone
-+    // ends inside the closing tag, `</|nav>`, and no marker goes inside a
-+    // tag: the end goes after it, into the code around it.
-+    assert_eq!(
-+        ignored[0].1,
-+        MENU_JSX
-+            .replace("<nav>Menu<a", "<nav>Menu{/* jscpd:ignore-start */}<a")
-+            .replace("    </nav>\n", "    </nav>\n    // jscpd:ignore-end\n")
-+    );
-+    assert_eq!(
-+        ignored[1].1,
-+        FOOTER_JSX
-+            .replace(
-+                "      Links\n",
-+                "      Links\n      {/* jscpd:ignore-start */}\n"
-+            )
-+            .replace(
-+                "    </footer>\n",
-+                "    </footer>\n      // jscpd:ignore-end\n"
-+            )
-+    );
-+    // Either edit takes the clone away.
-+    for (uri, text, original) in &ignored {
-+        lsp.change(uri, 2, text);
-+        lsp.diagnostics(uri, |d| d.is_empty());
-+        lsp.change(uri, 3, original);
-+        lsp.diagnostics(uri, |d| !d.is_empty());
-+    }
-+    assert_eq!(lsp.shutdown(), 0);
-+    remove(&dir);
-+}
-+
- #[test]
- fn an_ignore_edit_names_the_version_for_a_client_that_takes_document_changes() {
-     let dir = workspace(
+@@ -29,8 +29,8 @@ oxc_span = "0.155"
+ oxc_ast = "0.155"
+ oxc_ast_visit = "0.155"
+ # Python functions
+-ruff_python_ast = "0.0.18"
+-ruff_python_parser = "0.0.18"
++ruff_python_ast = "0.0.20"
++ruff_python_parser = "0.0.20"
+ # A stack for dropping a Python syntax tree nested deeper than the walk goes
+ stacker = "0.1"
+ # Functions of the languages below (one tree-sitter grammar each)
 ```
 
 ---
 
-### Incident Patch 2: `4dcd9277` (2026-10-26)
-**Commit Message**: fix(tokenizer): find JS/TS ignore markers by their text
+### Incident Patch 2: `761feb9a` (2026-10-30)
+**Commit Message**: Merge pull request #1266 from kucherenko/dependabot/github_actions/rust-lang/crates-io-auth-action-1.0.6
 
-Reading the markers from the comments oxc collects fixed #1257 for the
-files oxc parses, but it broke markers that work in 5.4:
+chore(deps): bump rust-lang/crates-io-auth-action from 1.0.5 to 1.0.6
 
-- a marker inside a template literal, such as the CSS of a styled
-  component, is template text to oxc, so that CSS came back as clones
-- the markers jscpd --lsp writes among JSX children are JSX text to
-  oxc as well. When only one marker of a pair was JSX text, the start
-  of one region paired with the end of the next, and the real clone
-  between them dropped out of the report
-- in a file the lexer stops early on, such as one with an unterminated
-  string, the end marker after the stop was never seen
-- files oxc rejects (Flow, TypeScript syntax in a .js file) still went
-  through the old scan, so #1257 stayed there
-
-Now the markers are found by their text, as the generic tokenizer finds
-them: a region runs from the end of jscpd:ignore-start to the next
-jscpd:ignore-end. A /* or // in a string, template or regex can't end
-it, on the oxc path and the fallback alike, ignored_ranges no longer
-parses the file a second time, and the markers that worked in 5.4 still
-work.
-
-Two things change on purpose. 
-
-**File**: `rust/crates/cpd-tokenizer/src/javascript.rs` (modified, +42/-162)
+**File**: `.github/workflows/crates-publish.yml` (modified, +1/-1)
 ```diff
-@@ -5,7 +5,7 @@ use std::panic::{AssertUnwindSafe, catch_unwind};
- use std::path::Path;
+@@ -132,7 +132,7 @@ jobs:
  
- use oxc_allocator::Allocator;
--use oxc_parser::{Kind, Parser, ParserReturn, config::TokensParserConfig};
-+use oxc_parser::{Kind, Parser, config::TokensParserConfig};
- use oxc_span::SourceType;
+       - name: Authenticate to crates.io (Trusted Publishing)
+         id: crates-io-auth
+-        uses: rust-lang/crates-io-auth-action@c6f97d42243bad5fab37ca0427f495c86d5b1a18 # v1.0.5
++        uses: rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9 # v1.0.6
  
- use cpd_core::models::{Token, TokenKind};
-@@ -15,12 +15,12 @@ use crate::line_index::LineIndex;
- // ── fallback tokenizer ────────────────────────────────────────────────────────
- 
- mod fallback {
--    use super::{LineIndex, in_ignore, scan_ignore_ranges};
-+    use super::{LineIndex, find_ignore_ranges, in_ignore};
-     use cpd_core::models::{Token, TokenKind};
- 
-     /// Simple word-split fallback tokenizer. Never panics.
-     pub fn tokenize(source: &str, _format: &str) -> Vec<Token> {
--        let ignore_ranges = scan_ignore_ranges(source);
-+        let ignore_ranges = find_ignore_ranges(source);
-         let bytes = source.as_bytes();
-         let line_index = LineIndex::new(bytes);
-         let mut tokens = Vec::new();
-@@ -77,81 +77,26 @@ mod fallback {
- 
- // ── helpers ──────────────────────────────────────────────────────────────────
- 
--/// The byte ranges between `jscpd:ignore-start` and `jscpd:ignore-end`
--/// comments, whose tokens [`tokenize_js`] marks as ignored. The comments
--/// are the ones oxc lexes, so a `/*` or `//` inside a string, template or
--/// regular expression is not one (issue #1257). A source the parser gives
--/// up on is scanned byte by byte, as the word-split fallback reads it.
--pub(crate) fn find_ignore_ranges(source: &str, format: &str) -> Vec<[usize; 2]> {
--    let lexed = catch_unwind(AssertUnwindSafe(|| {
--        let allocator = Allocator::new();
--        parse(&allocator, source, format).map(|parsed| comment_ignore_ranges(source, &parsed))
--    }));
--    match lexed {
--        Ok(Some(ranges)) => ranges,
--        _ => scan_ignore_ranges(source),
--    }
--}
--
--/// The ignored ranges from the comments oxc collected.
--fn comment_ignore_ranges(source: &str, parsed: &ParserReturn<'_>) -> Vec<[usize; 2]> {
--    let spans = parsed.program.comments.iter().map(|comment| {
--        let span = comment.span;
--        [span.start as usize, span.end as usize]
--    });
--    marker_ranges(source, spans)
--}
--
--/// The ignored ranges with comments found byte by byte: a `/*` or `//`
--/// opens one wherever it stands, inside a string literal too.
--fn scan_ignore_ranges(source: &str) -> Vec<[usize; 2]> {
--    let mut comments = Vec::new();
--    let bytes = source.as_bytes();
--    let mut i = 0;
--    while i < bytes.len() {
--        if i + 1 < bytes.len() && bytes[i] == b'/' {
--            let end = if bytes[i + 1] == b'/' {
--                bytes[i..]
--                    .iter()
--                    .position(|&b| b == b'\n')
--                    .map(|p| i + p)
--                    .unwrap_or(bytes.len())
--            } else if bytes[i + 1] == b'*' {
--                bytes[i..]
--                    .windows(2)
--                    .position(|w| w == b"*/")
--                    .map(|p| i + p + 2)
--                    .unwrap_or(bytes.len())
--            } else {
--                i += 1;
--                continue;
--            };
--            comments.push([i, end]);
--            i = end;
--            continue;
--        }
--        i += 1;
--    }
--    marker_ranges(source, comments)
--}
--
--/// The byte ranges from the end of each comment with `jscpd:ignore-start`
--/// to the start of the next one with `jscpd:ignore-end`, given the spans of
--/// the comments of `source` in order.
--fn marker_ranges(source: &str, comments: impl IntoIterator<Item = [usize; 2]>) -> Vec<[usize; 2]> {
-+/// The byte ranges between `jscpd:ignore-start` and `jscpd:ignore-end`,
-+/// whose tokens [`tokenize_js`] marks as ignored. Each runs from the end of
-+/// a start marker to the next end marker: a second start inside it changes
-+/// nothing, and a start with no end after it marks nothing. The markers are
-+/// found by their text, as the generic tokenizer finds them, so a `/*` or
-+/// `//` in a string, template or regular expression has no say in where a
-+/// range ends (issue #1257), and a marker inside a template literal or JSX
-+/// text still counts.
-+pub(crate) fn find_ignore_ranges(source: &str) -> Vec<[usize; 2]> {
-+    const START: &str = "jscpd:ignore-start";
-+    const END: &str = "jscpd:ignore-end";
-     let mut ranges = Vec::new();
--    let mut start: Option<usize> = None;
--    for [from, to] in comments {
--        let Some(comment_text) = source.get(from..to) else {
--            continue;
-+    let mut from = 0;
-+    while let Some(at) = source[from..].find(START) {
-+        let start = from + at + START.len();
-+        let Some(length) = source[start..].find(END) else {
-+            break;
-         };
--        if comment_text.contains("jscpd:ignore-start") {
--            start = Some(to);
--        } else if comment_text.contains("jscpd:ignore-end")
--            && let Some(s) = start.take()
--        {
--            ranges.push
-```
-
-**File**: `rust/crates/cpd-tokenizer/src/tokenizer.rs` (modified, +3/-14)
-```diff
-@@ -839,16 +839,15 @@ pub fn tokenize_to_detection(
- /// The byte ranges of `source` whose tokens the tokenizer of `format` drops
- /// for `jscpd:ignore-start` and `jscpd:ignore-end` markers, sorted and
- /// disjoint, so the code inside a range is left out of detection. Each
--/// language reads the markers as its tokenizer does: JS and TS take them
--/// from the comments oxc parses, the container formats run their
--/// tokenizer, and the others scan the text. Empty without a marker.
-+/// language reads the markers as its tokenizer does: the container formats
-+/// run their tokenizer, the others scan the text. Empty without a marker.
- pub fn ignored_ranges(format: &str, source: &str) -> Vec<[usize; 2]> {
-     if !source.contains("jscpd:ignore") {
-         return Vec::new();
-     }
-     let ranges = match format {
-         "javascript" | "typescript" | "jsx" | "tsx" => {
--            crate::javascript::find_ignore_ranges(source, format)
-+            crate::javascript::find_ignore_ranges(source)
-         }
-         "markdown" | "md" => crate::markdown::collect_ignore_byte_ranges(source),
-         "vue" | "svelte" | "astro" | "razor" => ignored_tokens(format, source),
-@@ -999,16 +998,6 @@ mod tests {
-                 "typescript",
-                 "const a = 1; /* jscpd:ignore-start */ const b = 2; /* jscpd:ignore-end */ const c = 3;\n",
-             ),
--            (
--                "typescript",
--                "let a = 1;\n/* jscpd:ignore-start */\nlet p: string = 'a /* b';\nlet close = 2;\n/* jscpd:ignore-end */\nlet c = 3;\n",
--            ),
--            // The stray braces make the parser give up: the fallback scans
--            // for comments byte by byte, and the ranges still agree.
--            (
--                "javascript",
--                "let a = 1;\n// jscpd:ignore-start\nlet close = 2;\n// jscpd:ignore-end\nlet c = 3;\n}}}\n",
--            ),
-         ];
-         for (format, source) in sources {
-             let ranges = ignored_ranges(format, source);
-```
-
-**File**: `rust/crates/cpd-tokenizer/tests/behavior.rs` (modified, +72/-25)
-```diff
-@@ -524,10 +524,37 @@ fn ignore_markers_in_razor_markup_cover_the_marked_markup() {
-     assert!(!covered("after"), "{ranges:?}");
- }
- 
--/// Only a comment opens or closes a region. A `/*` or `//` inside a
--/// string, template, regular expression or JSX text is code: it cannot
--/// end a region early, and a marker spelled in a string is no marker
--/// (issue #1257).
-+/// Detection and `ignored_ranges` both leave out every `hidden` in `source`
-+/// and keep every `kept`.
-+fn assert_marked_regions(format: &str, source: &str) {
-+    let t = texts(
-+        source,
-+        &tokenize_to_detection(format, source, &opts(Mode::Mild)),
-+    );
-+    assert!(
-+        !t.iter().any(|text| text.contains("hidden")),
-+        "{format} {source:?}: {t:?}"
-+    );
-+    let kept = t.iter().filter(|text| text.contains("kept")).count();
-+    assert_eq!(
-+        kept,
-+        source.matches("kept").count(),
-+        "{format} {source:?}: {t:?}"
-+    );
-+
-+    let ranges = ignored_ranges(format, source);
-+    let covered = |at: usize| ranges.iter().any(|[s, e]| *s <= at && at < *e);
-+    for (at, _) in source.match_indices("hidden") {
-+        assert!(covered(at), "{format} {source:?}: {ranges:?}");
-+    }
-+    for (at, _) in source.match_indices("kept") {
-+        assert!(!covered(at), "{format} {source:?}: {ranges:?}");
-+    }
-+}
-+
-+/// A `/*` or `//` inside a string, template, regular expression or JSX
-+/// text is no comment, so it cannot end a marked region early (issue
-+/// #1257).
- #[test]
- fn comment_openers_inside_literals_leave_marked_regions_whole() {
-     let sources = [
-@@ -551,32 +578,52 @@ fn comment_openers_inside_literals_leave_marked_regions_whole() {
-             "javascript",
-             "const u = 'https://x'; /* jscpd:ignore-start */ hidden(0);\nhidden(1);\n/* jscpd:ignore-end */\nkept(2);\n",
-         ),
-+    ];
-+    for (format, source) in sources {
-+        assert_marked_regions(format, source);
-+    }
-+}
-+
-+/// The markers count wherever their text stands, as in every other
-+/// language, also where the parser sees no comment.
-+#[test]
-+fn markers_count_wherever_their_text_stands() {
-+    let sources = [
-+        // The CSS of a styled component: the template is one token.
-+        (
-+            "javascript",
-+            "const Button = styled.button`\n  /* jscpd:ignore-start */\n  hidden: 1px;\n  /* jscpd:ignore-end */\n`;\nkept(2);\n",
-+        ),
-+        // `jscpd --lsp` writes the markers on lines of their own, which
-+        // are JSX text among a component's children.
-+        (
-+            "jsx",
-+            "const List = () => (\n  <ul>\n    // jscpd:ignore-start\n    <li>hidden</li>\n    // jscpd:ignore-end\n  </ul>\n);\nkept(2);\n",
-+        ),
-+        // One marker of each pair is JSX text. Read from the comments
-+        // alone, Alpha's start would pair with Beta's end and hide kept().
-+        (
-+            "jsx",
-+            "function Alpha() {\n  // jscpd:ignore-start\n  hidden(1);\n  return (\n    <div>\n      // jscpd:ignore-end\n    </div>\n  );\n}\nkept(2);\nfunction Beta() {\n  return (\n    <div>\n      // jscpd:ignore-start\n      <p>hidden</p>\n    </div>\n  );\n  // jscpd:ignore-end\n}\n",
-+        ),
-+        (
-+            "javascript",
-+            "const s = '/* jscpd:ignore-start */';\nhidden(1);\n/* jscpd:ignore-end */\nkept(2);\n",
-+        ),
-+        // The lexer stops at the unterminated string, the end marker
-+        // after it still closes the region.
-         (
-             "javascript",
--            "const s = '/* jscpd:ignore-start */';\nkept(1);\n/* jscpd:ignore-end */\nkept(2);\n",
-+            "kept(0);\n// jscpd:ignore-start\nhidden(1);\n'unterminated\n// jscpd:ignore-end\n",
-+        ),
-+        // A second start inside a region changes nothing.
-+        (
-+            "javascript",
-+            "// jscpd:ignore-start\nhidden(1);\n// jscpd:ignore-start\nhidden(2);\n// jscpd:ignore-end\nkept(3);\n",
-         ),
-     ];
-     for (format, source) in sources {
--        let t = texts(
--            source,
--            &tokenize_to_detection(format, source, &opts(Mode::Mild)),
--        );
--        assert!(!t.contains(&"hidden"), "{format} {source:?}: {t:?}");
--        let kept = t.iter().filter(|text| **text == "kept").count();
--        assert_eq!(
--            kept,
--            source.matches("kept").count(),
--            "{format} {source:?}: {t:?}"
--        );
--
--        let ranges = ignored_ranges(format, source);
--        let covered = |at: usize| ranges.iter().any(|[s, e]| *s <= at && at < *e);
--        for (at, _) in source.match_indices("hidden") {
--            assert!(covered(at), "{format} {source:?}: {ranges:?}");
--        }
--        for (at, _) in source.match_indices("kept") {
--            assert!(!covered(at), "{format} {source:?}: {ranges:?}");
--        }
-+        assert_marked_regions(format, source);
-     }
- }
- 
-```
-
----
-
-### Incident Patch 3: `ef979746` (2026-10-28)
-**Commit Message**: Merge pull request #1260 from kucherenko/fix/lsp-jsx-ignore-markers
-
-fix(lsp): put JSX ignore markers in {/* */} and outside tags
-
-**File**: `docs/editors.md` (modified, +1/-1)
-```diff
-@@ -169,7 +169,7 @@ Renamed and near-miss copies need the options that find them on the command line
- Two code actions come with a clone:
- 
- - "Go to the other copy in src/holds.js:4-13" opens that copy, with one action per copy.
--- "Ignore this clone" puts `jscpd:ignore-start` and `jscpd:ignore-end` comments around the fragment, in the comment syntax of the file's language: on lines of their own where the fragment starts and ends its lines, and as block comments beside it where other code shares a line with it. The first line of a file that starts with `#!` or `<?` stays first.
-+- "Ignore this clone" puts `jscpd:ignore-start` and `jscpd:ignore-end` comments around the fragment, in the comment syntax of the file's language: on lines of their own where the fragment starts and ends its lines, and as block comments beside it where other code shares a line with it. Among the children of a JSX element, where a comment would show on the page, the markers are `{/* jscpd:ignore-start */}` and `{/* jscpd:ignore-end */}`, and no marker goes inside a JSX tag: the start one goes before the tag, the end one after it. The first line of a file that starts with `#!` or `<?` stays first.
- 
- A hover over a clone shows the message and the first lines of the other copy.
- 
-```
-
-**File**: `rust/crates/cpd-tokenizer/src/javascript.rs` (modified, +256/-1)
-```diff
-@@ -5,8 +5,13 @@ use std::panic::{AssertUnwindSafe, catch_unwind};
- use std::path::Path;
- 
- use oxc_allocator::Allocator;
-+use oxc_ast::ast::{
-+    JSXClosingElement, JSXClosingFragment, JSXElement, JSXExpressionContainer, JSXFragment,
-+    JSXOpeningElement, JSXOpeningFragment, JSXSpreadChild,
-+};
-+use oxc_ast_visit::{Visit, walk};
- use oxc_parser::{Kind, Parser, config::TokensParserConfig};
--use oxc_span::SourceType;
-+use oxc_span::{SourceType, Span};
- 
- use cpd_core::models::{Token, TokenKind};
- 
-@@ -260,6 +265,154 @@ fn parse_with_oxc(source: &str, format: &str, strip_types: bool) -> Option<Vec<T
-     Some(tokens)
- }
- 
-+// ── ignore markers in JSX ─────────────────────────────────────────────────────
-+
-+/// Where a `jscpd:ignore` marker goes in a JavaScript source.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub struct MarkerSpot {
-+    /// The byte the marker goes at.
-+    pub offset: usize,
-+    /// The marker stands among the children of a JSX element or fragment,
-+    /// where `//` and `/* */` are text on the page, so it has to be
-+    /// `{/* … */}`.
-+    pub jsx_child: bool,
-+}
-+
-+/// Where the markers around the code from byte `start` to byte `end` of
-+/// `source` go. A marker stays at its byte unless the byte is inside a JSX
-+/// tag: then the start marker goes before the tag and the end marker after
-+/// it, as TypeScript reads no comment between the `<` and the `/` of
-+/// `</ul>`. `None` when the parser gives up on the source.
-+pub fn ignore_marker_spots(
-+    source: &str,
-+    format: &str,
-+    start: usize,
-+    end: usize,
-+) -> Option<[MarkerSpot; 2]> {
-+    let asked = [u32::try_from(start).ok()?, u32::try_from(end).ok()?];
-+    catch_unwind(AssertUnwindSafe(|| {
-+        let allocator = Allocator::new();
-+        let parsed = Parser::new(&allocator, source, source_type_for_format(format)).parse();
-+        if parsed.fatal_error {
-+            return None;
-+        }
-+        let places_of = |offsets: [u32; 2]| {
-+            let mut places = Places {
-+                offsets,
-+                places: [Place::Code; 2],
-+            };
-+            places.visit_program(&parsed.program);
-+            places.places
-+        };
-+        let [first, last] = places_of(asked);
-+        let offsets = [
-+            match first {
-+                Place::Tag(tag) => tag.start,
-+                _ => asked[0],
-+            },
-+            match last {
-+                Place::Tag(tag) => tag.end,
-+                _ => asked[1],
-+            },
-+        ];
-+        // A marker out of a tag stands where it lands: after `<li>` it is
-+        // among the children of the `li`, before `</ul>` among those of the
-+        // `ul`.
-+        let places = match offsets == asked {
-+            true => [first, last],
-+            false => places_of(offsets),
-+        };
-+        Some([0, 1].map(|n| MarkerSpot {
-+            offset: offsets[n] as usize,
-+            jsx_child: places[n] == Place::Children,
-+        }))
-+    }))
-+    .ok()
-+    .flatten()
-+}
-+
-+/// What a byte of a JSX source stands in.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+enum Place {
-+    Code,
-+    /// Among the children of an element or fragment.
-+    Children,
-+    /// Inside the tag at this span.
-+    Tag(Span),
-+}
-+
-+/// The [`Place`] of two bytes. The visitor meets the nodes that hold a byte
-+/// outermost first, so the last place it marks is the innermost one.
-+struct Places {
-+    offsets: [u32; 2],
-+    places: [Place; 2],
-+}
-+
-+impl Places {
-+    /// The bytes from `from` to `to`, both included, the end of an opening
-+    /// tag and the start of its closing tag, are among children.
-+    fn children(&mut self, from: u32, to: u32) {
-+        for (offset, place) in self.offsets.iter().zip(&mut self.places) {
-+            if from <= *offset && *offset <= to {
-+                *place = Place::Children;
-+            }
-+        }
-+    }
-+
-+    /// The bytes strictly inside `span`, a tag or a `{…}` of code.
-+    fn inside(&mut self, span: Span, tag: bool) {
-+        for (offset, place) in self.offsets.iter().zip(&mut self.places) {
-+            if span.start < *offset && *offset < span.end {
-+                *place = match tag {
-+                    true => Place::Tag(span),
-+                    false => Place::Code,
-+                };
-+            }
-+        }
-+    }
-+}
-+
-+impl<'a> Visit<'a> for Places {
-+    fn visit_jsx_element(&mut self, it: &JSXElement<'a>) {
-+        if let Some(closing) = &it.closing_element {
-+            self.children(it.opening_element.span.end, closing.span.start);
-+        }
-+        walk::walk_jsx_element(self, it);
-+    }
-+
-+    fn visit_jsx_fragment(&mut self, it: &JSXFragment<'a>) {
-+        self.children(it.opening_fragment.span.end, it.closing_fragment.span.start);
-+        walk::walk_jsx_fragment(self, it);
-+    }
-+
-+    fn visit_jsx_opening_element(&mut self, it: &JSXOpeningElement<'a>) {
-+        self.inside(it.span, true);
-+        walk::walk_jsx_opening_element(self, it);
-+    }
-+
-+  
-```
-
-**File**: `rust/crates/cpd/src/lsp/findings.rs` (modified, +6/-2)
-```diff
-@@ -394,8 +394,6 @@ pub fn diagnostic(finding: &Finding, related: bool) -> Diagnostic {
-     }
- }
- 
--/// How a line comment opens and closes in `format`, for the markers of
--/// "Ignore this clone"; `None` for a format without comments we know.
- /// The block comment of a format, for a marker beside code on its line;
- /// `None` for formats without one.
- pub fn block_comment_syntax(format: &str) -> Option<(&'static str, &'static str)> {
-@@ -419,6 +417,8 @@ pub fn block_comment_syntax(format: &str) -> Option<(&'static str, &'static str)
-     })
- }
- 
-+/// How a line comment opens and closes in `format`, for the markers of
-+/// "Ignore this clone"; `None` for a format without comments we know.
- pub fn comment_syntax(format: &str) -> Option<(&'static str, &'static str)> {
-     Some(match format {
-         "actionscript" | "apex" | "aql" | "arduino" | "asciidoc" | "bicep" | "bison" | "c"
-@@ -463,6 +463,10 @@ pub fn comment_syntax(format: &str) -> Option<(&'static str, &'static str)> {
-     })
- }
- 
-+/// The comment of a marker among the children of a JSX element, where `//`
-+/// and `/* */` are text on the page: a `{…}` that holds nothing else.
-+pub const JSX_CHILD_COMMENT: (&str, &str) = ("{/* ", " */}");
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
-```
-
-**File**: `rust/crates/cpd/src/lsp/server.rs` (modified, +69/-15)
-```diff
-@@ -8,14 +8,15 @@
- use super::complexity::{Limits, complexity_findings};
- use super::dead_code::dead_code_findings;
- use super::findings::{
--    Finding, Scope, Snapshot, Target, Text, block_comment_syntax, clone_findings, comment_syntax,
--    diagnostic,
-+    Finding, JSX_CHILD_COMMENT, Scope, Snapshot, Target, Text, block_comment_syntax,
-+    clone_findings, comment_syntax, diagnostic,
- };
- use super::position::{Encoding, path_to_uri, uri_to_path};
- use super::project::{CONFIG_NAME, Project, find_config_dirs, plan};
- use super::settings::{Analysis, LspSection};
- use crate::cli::{Cli, ConfigDiagnostic};
- use crate::index::{ScanIndex, host_file};
-+use cpd_tokenizer::javascript::{MarkerSpot, ignore_marker_spots};
- use crossbeam_channel::{Receiver, Sender};
- use lsp_server::{Connection, ErrorCode, Message, Notification, Request, RequestId, Response};
- use lsp_types::notification::Notification as _;
-@@ -1290,10 +1291,13 @@ impl Server {
-     /// the finding starts and ends its lines, and as block comments beside it
-     /// where other code shares them, so the code around keeps its meaning
-     /// (a comment line inside `<script>export function …` would land in the
--    /// markup). The first line of a file that starts with `#!` or `<?` stays
-+    /// markup). Among the children of a JSX element a comment would be text
-+    /// on the page, so a marker there is `{/* … */}`, set beside code with no
-+    /// space, which the page would show too, and no marker goes inside a JSX
-+    /// tag. The first line of a file that starts with `#!` or `<?` stays
-     /// first.
-     fn ignore_edit(&self, uri: &Uri, finding: &Finding) -> Option<WorkspaceEdit> {
--        let (open, close) = comment_syntax(&finding.format)?;
-+        let comment = comment_syntax(&finding.format)?;
-         let block = block_comment_syntax(&finding.format);
-         let path = document_path(uri)?;
-         let text = self.text_of(&path)?;
-@@ -1303,62 +1307,79 @@ impl Server {
-         };
-         let line = |n: u32| text.index.line(&text.text, n as usize);
-         let lines = text.index.line_count() as u32;
--        let indent: String = line(finding.first_line)
-+        let (mut start, mut end) = (finding.range.start, finding.range.end);
-+        let (mut first_line, mut last_line) = (finding.first_line, finding.last_line);
-+        let mut jsx = [false; 2];
-+        if let Some(spots) = self.jsx_marker_spots(&path, &text, finding) {
-+            let position =
-+                |spot: MarkerSpot| text.index.position(&text.text, spot.offset, self.encoding);
-+            (start, end) = (position(spots[0]), position(spots[1]));
-+            (first_line, last_line) = (start.line, end.line);
-+            jsx = spots.map(|spot| spot.jsx_child);
-+        }
-+        // The comments of a marker on a line of its own and beside code, and
-+        // the space between a marker and the code beside it.
-+        let syntax = |jsx_child: bool| match jsx_child {
-+            true => (JSX_CHILD_COMMENT, Some(JSX_CHILD_COMMENT), ""),
-+            false => (comment, block, " "),
-+        };
-+        let indent: String = line(first_line)
-             .chars()
-             .take_while(|c| c.is_whitespace())
-             .collect();
--        let (start, end) = (finding.range.start, finding.range.end);
-         let before = &line(start.line)[..byte_at(line(start.line), start.character, self.encoding)];
-         let after = &line(end.line)[byte_at(line(end.line), end.character, self.encoding)..];
-         let at =
-             |position: Position, text: String| TextEdit::new(Range::new(position, position), text);
-         let mut edits = Vec::new();
-+        let ((open, close), block, space) = syntax(jsx[0]);
-         match (before.trim().is_empty(), block) {
-             (false, Some((block_open, block_close))) => {
-                 edits.push(at(
-                     start,
--                    format!("{block_open}jscpd:ignore-start{block_close} "),
-+                    format!("{block_open}jscpd:ignore-start{block_close}{space}"),
-                 ));
-             }
-             _ => {
--                let first = line(finding.first_line);
-+                let first = line(first_line);
-                 let keep_first =
--                    finding.first_line == 0 && (first.starts_with("#!") || first.starts_with("<?"));
-+                    first_line == 0 && (first.starts_with("#!") || first.starts_with("<?"));
-                 let (row, indent) = match keep_first {
-                     true if lines > 1 => (
-                         1,
-                         line(1).chars().take_while(|c| c.is_whitespace()).collect(),
-                     ),
-                     true => return None,
--                    false => (finding.first_line, indent.clone()),
-+                    false => (first_line, indent.clone()),
-                 };
-                 edits.push(at(
-                     Position::new(row, 0),
-                     format!("{indent}{open}jscpd:ignore-s
-```
-
-**File**: `rust/crates/cpd/tests/lsp_stdio.rs` (modified, +80/-0)
-```diff
-@@ -770,6 +770,27 @@ fn ignore_action(actions: &[Value]) -> &Value {
-         .unwrap_or_else(|| panic!("an ignore action in {actions:?}"))
- }
- 
-+/// `text` with the inserts of `edits` made; `text` is ASCII, so a column
-+/// is a byte.
-+fn apply(text: &str, edits: &[Value]) -> String {
-+    let mut inserts: Vec<(usize, &str)> = edits
-+        .iter()
-+        .map(|edit| {
-+            let at = &edit["range"]["start"];
-+            let line = at["line"].as_u64().unwrap() as usize;
-+            let column = at["character"].as_u64().unwrap() as usize;
-+            let start: usize = text.split_inclusive('\n').take(line).map(str::len).sum();
-+            (start + column, edit["newText"].as_str().unwrap())
-+        })
-+        .collect();
-+    inserts.sort_by_key(|&(offset, _)| std::cmp::Reverse(offset));
-+    let mut text = text.to_string();
-+    for (offset, insert) in inserts {
-+        text.insert_str(offset, insert);
-+    }
-+    text
-+}
-+
- // ------------------------------------------------------------ initialize
- 
- #[test]
-@@ -966,6 +987,65 @@ fn an_ignore_edit_beside_code_after_the_clone_is_a_block_comment() {
-     remove(&dir);
- }
- 
-+/// The same links among the children of a JSX element in two files, after
-+/// text that differs and before a closing tag that differs.
-+const MENU_JSX: &str = "export function Menu() {\n  return (\n    <nav>Menu<a href=\"/home\">Home</a>\n      <a href=\"/about\">About us</a>\n      <a href=\"/pricing\">Pricing</a>\n      <a href=\"/contact\">Contact</a>\n      <a href=\"/blog\">Blog</a>\n    </nav>\n  );\n}\n";
-+const FOOTER_JSX: &str = "export function Footer() {\n  return (\n    <footer>\n      Links\n      <a href=\"/home\">Home</a>\n      <a href=\"/about\">About us</a>\n      <a href=\"/pricing\">Pricing</a>\n      <a href=\"/contact\">Contact</a>\n      <a href=\"/blog\">Blog</a>\n    </footer>\n  );\n}\n";
-+
-+#[test]
-+fn an_ignore_edit_in_jsx_is_no_text_on_the_page_and_splits_no_tag() {
-+    let dir = workspace(
-+        "jsx",
-+        &[
-+            ("menu.jsx", MENU_JSX),
-+            ("footer.jsx", FOOTER_JSX),
-+            (".jscpd.json", SMALL),
-+        ],
-+    );
-+    let mut lsp = Lsp::start(&dir, &[]);
-+    lsp.initialize(&[&dir], json!({}));
-+    let mut ignored = Vec::new();
-+    for (name, text) in [("menu.jsx", MENU_JSX), ("footer.jsx", FOOTER_JSX)] {
-+        let uri = lsp.open(&dir.join(name));
-+        let diagnostics = lsp.diagnostics(&uri, |d| !d.is_empty());
-+        let actions = lsp.actions(&uri, &diagnostics[0]["range"]);
-+        let edits = edits_of(&ignore_action(&actions)["edit"], &uri);
-+        ignored.push((uri, apply(text, edits), text));
-+    }
-+    // A comment among the children of an element is text on the page: the
-+    // start is an empty expression, beside the text of <nav> with no space
-+    // and on a line of its own among the children of <footer>. The clone
-+    // ends inside the closing tag, `</|nav>`, and no marker goes inside a
-+    // tag: the end goes after it, into the code around it.
-+    assert_eq!(
-+        ignored[0].1,
-+        MENU_JSX
-+            .replace("<nav>Menu<a", "<nav>Menu{/* jscpd:ignore-start */}<a")
-+            .replace("    </nav>\n", "    </nav>\n    // jscpd:ignore-end\n")
-+    );
-+    assert_eq!(
-+        ignored[1].1,
-+        FOOTER_JSX
-+            .replace(
-+                "      Links\n",
-+                "      Links\n      {/* jscpd:ignore-start */}\n"
-+            )
-+            .replace(
-+                "    </footer>\n",
-+                "    </footer>\n      // jscpd:ignore-end\n"
-+            )
-+    );
-+    // Either edit takes the clone away.
-+    for (uri, text, original) in &ignored {
-+        lsp.change(uri, 2, text);
-+        lsp.diagnostics(uri, |d| d.is_empty());
-+        lsp.change(uri, 3, original);
-+        lsp.diagnostics(uri, |d| !d.is_empty());
-+    }
-+    assert_eq!(lsp.shutdown(), 0);
-+    remove(&dir);
-+}
-+
- #[test]
- fn an_ignore_edit_names_the_version_for_a_client_that_takes_document_changes() {
-     let dir = workspace(
+       - name: Publish crates in dependency order
+         working-directory: rust
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1267** (2026-10-30): chore(deps): bump the ruff group in /rust with 2 updates (@dependabot[bot])
+- **PR #1266** (2026-10-30): chore(deps): bump rust-lang/crates-io-auth-action from 1.0.5 to 1.0.6 (@dependabot[bot])
 - **PR #1262** (2026-10-28): ci(release): ask npmmirror to sync the npm packages after a release (@kucherenko)
 - **PR #1260** (2026-10-28): fix(lsp): put JSX ignore markers in {/* */} and outside tags (@kucherenko)
 - **PR #1259** (closed): fix(tokenizer): a /* in a JS string no longer ends a jscpd:ignore region (@kucherenko)
 - **PR #1258** (2026-10-27): fix(tokenizer): a /* or // in a JS/TS string no longer ends a jscpd:ignore region (@sarankumar1325)
-- **PR #1256** (2026-10-25): fix(dead-code): knip.ts and knip.js are knip's config, not unused files (@kucherenko)
-- **PR #1254** (2026-10-25): fix(basta): don't report constructors and dunder methods as unused members (@sarankumar1325)
 
 ---
 
@@ -3023,28 +2148,89 @@ fix(lsp): put JSX ignore markers in {/* */} and outside tags
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. lsp): put JSX ignore markers in {/* */} and outside tags
+## X. Merge pull request #1267 from kucherenko/dependabot/cargo/rust/ruff-939b3aa493
 
 **RULE**:
-When implementing operations in `docs/editors.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kucherenko/jscpd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d07c67aa`: lsp): put JSX ignore markers in {/* */} and outside tags. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5655cdfc`: Merge pull request #1267 from kucherenko/dependabot/cargo/rust/ruff-939b3aa493. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/editors.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- "Ignore this clone" puts `jscpd:ignore-start` and `jscpd:ignore-end` comments around the fragment, in the comment syntax of the file's language: on lines of their own where the fragment starts and ends its lines, and as block comments beside it where other code shares a line with it. Among the children of a JSX element, where a comment would show on the page, the markers are `{/* jscpd:ignore-start */}` and `{/* jscpd:ignore-end */}`, and no marker goes inside a JSX tag: the start one goes before the tag, the end one after it. The first line of a file that starts with `#!` or `<?` stays first.
+ "phf",
+ "phf",
+ "phf",
+ "phf_shared",
+version = "0.14.0"
+checksum = "41b585a510fb76fdebead6897982ef2a03a21d8e6cbcca904999742a4afc6ffe"
+ "phf_generator",
+ "phf_shared",
+ "phf_shared",
+ "phf_generator",
+ "phf_shared",
+version = "0.0.20"
+checksum = "f5c31f9196e6333f154b92e6f6f9701d23ddfeee0b7fd45476aacbed7b74b440"
+version = "0.0.20"
+checksum = "2b5b7fd512a12be87d02bbc8d8352f8159a058d1f91e6749f234ca43cb351525"
+version = "0.0.20"
+checksum = "a867e9037e2c616342dcb77ff69344c59cf956bde079392a6da4b23138246a02"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- "Ignore this clone" puts `jscpd:ignore-start` and `jscpd:ignore-end` comments around the fragment, in the comment syntax of the file's language: on lines of their own where the fragment starts and ends its lines, and as block comments beside it where other code shares a line with it. The first line of a file that starts with `#!` or `<?` stays first.
+ "phf 0.14.0",
+ "phf 0.14.0",
+ "phf 0.14.0",
+[[package]]
+name = "phf"
+version = "0.11.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1fd6780a80ae0c52cc120a26a1a42c1ae51b247a253e4e06113d23d2c2edd078"
+dependencies = [
+ "phf_shared 0.11.3",
+]
+
+ "phf_shared 0.14.0",
+version = "0.11.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aef8048c789fa5e851558d709946d6d79a8ff88c0440c587967f8e94bfb1216a"
+dependencies = [
+ "phf_generator 0.11.3",
+ "phf_shared 0.11.3",
+]
+
+[[package]]
+name = "phf_generator"
+version = "0.11.3"
+checksum = "3c80231409c20246a13fddb31776fb942c38553c51e871f8cbd687a4cfb5843d"
+ "phf_shared 0.11.3",
+ "rand 0.8.8",
+ "phf_shared 0.14.0",
+ "phf_generator 0.14.0",
+ "phf_shared 0.14.0",
+[[package]]
+name = "phf_shared"
+version = "0.11.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "67eabc2ef2a60eb7faa00097bd1ffdb5bd28e62bf39990626a582201b7a754e5"
+dependencies = [
+ "siphasher",
+]
+
+[[package]]
+name = "rand"
+version = "0.8.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e058c7de0b26af77780c769414d6257830bb240f3c38477dbc2c16e5f54d6d4c"
+dependencies = [
+ "ran
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d07c67aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5655cdfc` are properly handled with clean fallback behavior.

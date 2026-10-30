@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-RZ1I",
-    "timestamp": "2026-10-28T01:29:08.646Z",
-    "repository": "linkwarden/linkwarden",
-    "learningId": "learn-github-linkwarden-linkwarden",
-    "contentHash": "25c41a158cd8fec799a7e5a24eec270796aa35280c355ff0aaaf0b00422475e6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-S20C",
-    "timestamp": "2026-10-28T01:29:12.492Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-zai-org-glm-5-3",
-    "contentHash": "915ffb33572768cc1eefdb803ff59a6f76c13b02b08f44eac3c25502bba56bb6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-S6MT",
     "timestamp": "2026-10-28T01:29:18.485Z",
     "repository": "ytsaurus/ytsaurus",
@@ -7490,6 +7460,36 @@
     "repository": "JuulLabs/kable",
     "learningId": "learn-github-juullabs-kable",
     "contentHash": "2bfc7acbc77bf7a1eee8d0b75eef6d3a01b164922e9182bc82b810dac78df42b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-XA8B",
+    "timestamp": "2026-10-30T06:16:33.035Z",
+    "repository": "kucherenko/jscpd",
+    "learningId": "learn-github-kucherenko-jscpd",
+    "contentHash": "ee5cbb8f9cf9a2eb3fe93619f3a7dc1e76b76c27fca564d6949cb0170c438c65",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-XEML",
+    "timestamp": "2026-10-30T06:16:38.733Z",
+    "repository": "linkerd/linkerd2",
+    "learningId": "learn-github-linkerd-linkerd2",
+    "contentHash": "3a64b4a40e3f0dc1e1b9eb2eb7dfaca4738763f4caf5925a8086adbbe6d9614b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

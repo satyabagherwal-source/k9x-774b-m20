@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T06:10:21.191Z",
+  "last_updated": "2026-10-30T06:16:38.689Z",
   "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34350,8 +34350,8 @@
       "slug": "kucherenko-jscpd",
       "platform": "github",
       "source_url": "https://github.com/kucherenko/jscpd",
-      "source_version": "ef979746",
-      "content_hash": "60269540fd80e2cea64ddbe079ac02a58a46da28f89fddd3890d6a5c16768549",
+      "source_version": "5655cdfc",
+      "content_hash": "ee5cbb8f9cf9a2eb3fe93619f3a7dc1e76b76c27fca564d6949cb0170c438c65",
       "dossier_path": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kucherenko-jscpd-learnings.md",
       "promoted_rules": [
@@ -34409,6 +34409,11 @@
           "number": 5295,
           "title": "lsp): put JSX ignore markers in {/* */} and outside tags",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5623,
+          "title": "Merge pull request #1267 from kucherenko/dependabot/cargo/rust/ruff-939b3aa493",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34416,7 +34421,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T13:43:34.580Z",
+      "verified_at": "2026-10-30T06:16:32.972Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35433,8 +35438,8 @@
       "slug": "linkerd-linkerd2",
       "platform": "github",
       "source_url": "https://github.com/linkerd/linkerd2",
-      "source_version": "36f78470",
-      "content_hash": "adbb74356b08bc97236b23d418cd0b787e9072a7d60ac35a51a8ced3a332f942",
+      "source_version": "a4c00ac5",
+      "content_hash": "3a64b4a40e3f0dc1e1b9eb2eb7dfaca4738763f4caf5925a8086adbbe6d9614b",
       "dossier_path": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
       "promoted_rules": [
@@ -35457,6 +35462,11 @@
           "number": 5361,
           "title": "update dependencies. (#15748)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5624,
+          "title": "build(deps): bump postcss-selector-parser in /web/app (#15751)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35464,7 +35474,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:27:30.907Z",
+      "verified_at": "2026-10-30T06:16:38.677Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150829,6 +150839,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T06:10:21.172Z"
+    },
+    "rule-5623": {
+      "learning_id": "rule-5623",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5623,
+      "title": "Merge pull request #1267 from kucherenko/dependabot/cargo/rust/ruff-939b3aa493",
+      "source_url": "https://github.com/kucherenko/jscpd",
+      "source_version": "5655cdfc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:16:32.972Z"
+    },
+    "rule-5624": {
+      "learning_id": "rule-5624",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5624,
+      "title": "build(deps): bump postcss-selector-parser in /web/app (#15751)",
+      "source_url": "https://github.com/linkerd/linkerd2",
+      "source_version": "a4c00ac5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:16:38.677Z"
     }
   },
   "aliases": {

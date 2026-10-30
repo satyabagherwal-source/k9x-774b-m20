@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source**: github ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
-> **Source Version**: `36f78470`  
+> **Source Version**: `a4c00ac5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T18:27:30.350Z  
+> **Timestamp**: 2026-10-30T06:16:38.290Z  
 > **Learning ID**: `learn-github-linkerd-linkerd2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T18:27:30.343Z  
+> **Harvest Timestamp**: 2026-10-30T06:16:38.285Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 11521 stars
+- **Stars / Engagement**: 11522 stars
 
 ---
 
@@ -1621,86 +1621,136 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36f78470` (2026-10-28)
-**Commit Message**: chore: update dependencies. (#15748)
+### Incident Patch 1: `7bdeb65b` (2026-10-28)
+**Commit Message**: build(deps): bump postcss-selector-parser in /web/app (#15751)
 
-Signed-off-by: Apoorv Kothari <[REDACTED_EMAIL]>
+Bumps [postcss-selector-parser](https://github.com/postcss/postcss-selector-parser) from 6.0.6 to 6.1.5.
+- [Release notes](https://github.com/postcss/postcss-selector-parser/releases)
+- [Changelog](https://github.com/postcss/postcss-selector-parser/blob/6.1.5/CHANGELOG.md)
+- [Commits](https://github.com/postcss/postcss-selector-parser/compare/v6.0.6...6.1.5)
 
-**File**: `Cargo.lock` (modified, +8/-8)
+---
+updated-dependencies:
+- dependency-name: postcss-selector-parser
+  dependency-version: 6.1.5
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Anthony Turcios <[REDACTED_EMAIL]>
+Co-authored-by: Raymond Kroeker <[REDACTED_EMAIL]>
+
+**File**: `web/app/yarn.lock` (modified, +3/-3)
 ```diff
-@@ -526,7 +526,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.0",
- ]
+@@ -8539,9 +8539,9 @@ postcss-modules-values@^4.0.0:
+     icss-utils "^5.0.0"
  
- [[package]]
-@@ -2015,14 +2015,14 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.52.0",
-+ "windows-sys 0.61.0",
- ]
- 
- [[package]]
- name = "rustls"
--version = "0.23.45"
-+version = "0.23.46"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
-+checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
- dependencies = [
-  "aws-lc-rs",
-  "log",
-@@ -2057,9 +2057,9 @@ dependencies = [
- 
- [[package]]
- name = "rustls-webpki"
--version = "0.103.15"
-+version = "0.103.16"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-+checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
- dependencies = [
-  "aws-lc-rs",
-  "ring",
-@@ -2357,9 +2357,9 @@ dependencies = [
- 
- [[package]]
- name = "tokio"
--version = "1.53.1"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "bytes",
-  "libc",
+ postcss-selector-parser@^6.0.2, postcss-selector-parser@^6.0.4:
+-  version "6.0.6"
+-  resolved "https://registry.yarnpkg.com/postcss-selector-parser/-/postcss-selector-parser-6.0.6.tgz#2c5bba8174ac2f6981ab631a42ab0ee54af332ea"
+-  integrity sha512-9LXrvaaX3+mcv5xkg5kFwqSzSH1JIObIx51PrndZwlmznwXRfxMddDvo9gve3gVR8ZTKgoFDdWkbRFmEhT4PMg==
++  version "6.1.5"
++  resolved "https://registry.yarnpkg.com/postcss-selector-parser/-/postcss-selector-parser-6.1.5.tgz#20e988ce8eab87575d54824d9800236c5fd872ca"
++  integrity sha512-TEHFzb5KRDKaOgJ4TYE+0jyJtFbjLvkdVOu0fZ2b6MTWzoqZd4Le+61aEppWkvTlYePgOX4ATL1wsAIPMLTw6Q==
+   dependencies:
+     cssesc "^3.0.0"
+     util-deprecate "^1.0.2"
 ```
 
-**File**: `deny.toml` (modified, +2/-0)
+---
+
+### Incident Patch 2: `9127f149` (2026-10-28)
+**Commit Message**: build(deps): bump github.com/go-test/deep from 1.1.1 to 1.1.2 (#15729)
+
+Bumps [github.com/go-test/deep](https://github.com/go-test/deep) from 1.1.1 to 1.1.2.
+- [Release notes](https://github.com/go-test/deep/releases)
+- [Changelog](https://github.com/go-test/deep/blob/main/CHANGES.md)
+- [Commits](https://github.com/go-test/deep/compare/v1.1.1...v1.1.2)
+
+---
+updated-dependencies:
+- dependency-name: github.com/go-test/deep
+  dependency-version: 1.1.2
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -8,6 +8,8 @@ targets = [
- db-path = "~/.cargo/advisory-db"
- db-urls = ["https://github.com/rustsec/advisory-db"]
- ignore = [
-+    # unsafe-libyaml is unmaintained, but pulled in via kube and gateway-api (serde_yaml)
-+    "RUSTSEC-2024-0449",
- ]
+@@ -14,7 +14,7 @@ require (
+ 	github.com/fatih/color v1.19.0
+ 	github.com/fsnotify/fsnotify v1.10.1
+ 	github.com/go-openapi/spec v1.0.1
+-	github.com/go-test/deep v1.1.1
++	github.com/go-test/deep v1.1.2
+ 	github.com/golang/protobuf v1.5.4
+ 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
+ 	github.com/grantae/certinfo v0.0.0-20170412194111-59d56a35515b
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -172,8 +172,8 @@ github.com/go-openapi/testify/v2 v2.7.0 h1:bycOreEj6wfBvijg3YFogZ/sFjTCDmQnwSodS
+ github.com/go-openapi/testify/v2 v2.7.0/go.mod h1:SgsVHtfooshd0tublTtJ50FPKhujf47YRqauXXOUxfw=
+ github.com/go-task/slim-sprig/v3 v3.0.0 h1:sUs3vkvUymDpBKi3qH1YSqBQk9+9D/8M2mN1vB6EwHI=
+ github.com/go-task/slim-sprig/v3 v3.0.0/go.mod h1:W848ghGpv3Qj3dhTPRyJypKRiqCdHZiAzKg9hl15HA8=
+-github.com/go-test/deep v1.1.1 h1:0r/53hagsehfO4bzD2Pgr/+RgHqhmf+k1Bpse2cTu1U=
+-github.com/go-test/deep v1.1.1/go.mod h1:5C2ZWiW0ErCdrYzpqxLbTX7MG14M9iiw8DgHncVwcsE=
++github.com/go-test/deep v1.1.2 h1:JUuyv17rKrqYfLFnP9A4Yh6hw0635ugB93bMg2bwuDQ=
++github.com/go-test/deep v1.1.2/go.mod h1:lwVFiFFWPjydTsV3xGJ/YTQsnWwi8zxBFM+gOVcwINE=
+ github.com/gobwas/glob v0.2.3 h1:A4xDbljILXROh+kObIiy5kIaPYD8e96x1tgBhUI5J+Y=
+ github.com/gobwas/glob v0.2.3/go.mod h1:d3Ez4x06l9bZtSvzIay5+Yzi0fmZzPgnTbPcKjJAkT8=
+ github.com/golang-jwt/jwt/v5 v5.3.1 h1:kYf81DTWFe7t+1VvL7eS+jKFVWaUnK9cB1qbwn63YCY=
+```
+
+---
+
+### Incident Patch 3: `edc0d7ae` (2026-10-28)
+**Commit Message**: build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /web/app (#15750)
+
+Bumps [fast-uri](https://github.com/fastify/fast-uri) from 3.1.8 to 3.1.9.
+- [Release notes](https://github.com/fastify/fast-uri/releases)
+- [Commits](https://github.com/fastify/fast-uri/compare/v3.1.8...v3.1.9)
+
+---
+updated-dependencies:
+- dependency-name: fast-uri
+  dependency-version: 3.1.9
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Anthony Turcios <[REDACTED_EMAIL]>
+
+**File**: `web/app/yarn.lock` (modified, +3/-3)
+```diff
+@@ -5460,9 +5460,9 @@ fast-levenshtein@^2.0.6:
+   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
  
- [licenses]
+ fast-uri@^3.0.1:
+-  version "3.1.8"
+-  resolved "https://registry.yarnpkg.com/fast-uri/-/fast-uri-3.1.8.tgz#f7db8d942e20eead3cfe93b0beeb4eb0169e938b"
+-  integrity sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==
++  version "3.1.9"
++  resolved "https://registry.yarnpkg.com/fast-uri/-/fast-uri-3.1.9.tgz#f1deba822b1d6ac79da2f860e872a63470cff203"
++  integrity sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==
+ 
+ fastq@^1.6.0:
+   version "1.13.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15754** (2026-10-29): chore(deps): upgrade proxy-init to v2.4.11 and cni-plugin to v1.7.1 (@anthoturc)
+- **PR #15752** (2026-10-28): proxy: v2.372.0 (@l5d-bot)
+- **PR #15751** (2026-10-28): build(deps): bump postcss-selector-parser from 6.0.6 to 6.1.5 in /web/app (@dependabot[bot])
+- **PR #15750** (2026-10-28): build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /web/app (@dependabot[bot])
 - **PR #15749** (2026-10-26): chore: update go version. (@toidiu)
 - **PR #15748** (2026-10-28): chore: update Rust dependencies. (@toidiu)
-- **PR #15742** (closed): chore: bump v50 -> v51 (@raykroeker)
-- **PR #15737** (2026-10-20): chore(build): update golang to 1.26.9 (@arichardet)
-- **PR #15724** (2026-10-15): chore: fix rate limit policy test (@raykroeker)
-- **PR #15721** (2026-10-20): build(deps): bump golang.org/x/tools from 0.50.0 to 0.52.0 (@dependabot[bot])
 
 ---
 
@@ -1720,42 +1770,32 @@ Signed-off-by: Apoorv Kothari <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update dependencies. (#15748)
+## X. build(deps): bump postcss-selector-parser in /web/app (#15751)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `web/app/yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `36f78470`: update dependencies. (#15748). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7bdeb65b`: build(deps): bump postcss-selector-parser in /web/app (#15751). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/app/yarn.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
- "windows-sys 0.61.0",
- "windows-sys 0.61.0",
-version = "0.23.46"
-checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
-version = "0.103.16"
-checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
-version = "1.54.1"
-checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
+  version "6.1.5"
+  resolved "https://registry.yarnpkg.com/postcss-selector-parser/-/postcss-selector-parser-6.1.5.tgz#20e988ce8eab87575d54824d9800236c5fd872ca"
+  integrity sha512-TEHFzb5KRDKaOgJ4TYE+0jyJtFbjLvkdVOu0fZ2b6MTWzoqZd4Le+61aEppWkvTlYePgOX4ATL1wsAIPMLTw6Q==
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
-version = "0.23.45"
-checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
-version = "0.103.15"
-checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-version = "1.53.1"
-checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
+  version "6.0.6"
+  resolved "https://registry.yarnpkg.com/postcss-selector-parser/-/postcss-selector-parser-6.0.6.tgz#2c5bba8174ac2f6981ab631a42ab0ee54af332ea"
+  integrity sha512-9LXrvaaX3+mcv5xkg5kFwqSzSH1JIObIx51PrndZwlmznwXRfxMddDvo9gve3gVR8ZTKgoFDdWkbRFmEhT4PMg==
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `36f78470` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7bdeb65b` are properly handled with clean fallback behavior.

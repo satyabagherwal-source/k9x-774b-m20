@@ -4983,10 +4983,10 @@
     "repository": "kucherenko/jscpd",
     "platform": "github",
     "sourceUrl": "https://github.com/kucherenko/jscpd",
-    "sourceVersion": "ef979746",
+    "sourceVersion": "5655cdfc",
     "license": "MIT",
-    "contentHash": "60269540fd80e2cea64ddbe079ac02a58a46da28f89fddd3890d6a5c16768549",
-    "lastHarvestedAt": "2026-10-28T13:43:34.642Z",
+    "contentHash": "ee5cbb8f9cf9a2eb3fe93619f3a7dc1e76b76c27fca564d6949cb0170c438c65",
+    "lastHarvestedAt": "2026-10-30T06:16:33.038Z",
     "learningId": "learn-github-kucherenko-jscpd"
   },
   "akveo-kittentricks": {
@@ -6213,10 +6213,10 @@
     "repository": "linkerd/linkerd2",
     "platform": "github",
     "sourceUrl": "https://github.com/linkerd/linkerd2",
-    "sourceVersion": "36f78470",
+    "sourceVersion": "a4c00ac5",
     "license": "Apache-2.0",
-    "contentHash": "adbb74356b08bc97236b23d418cd0b787e9072a7d60ac35a51a8ced3a332f942",
-    "lastHarvestedAt": "2026-10-28T18:27:31.001Z",
+    "contentHash": "3a64b4a40e3f0dc1e1b9eb2eb7dfaca4738763f4caf5925a8086adbbe6d9614b",
+    "lastHarvestedAt": "2026-10-30T06:16:38.735Z",
     "learningId": "learn-github-linkerd-linkerd2"
   },
   "libsql-libsql": {

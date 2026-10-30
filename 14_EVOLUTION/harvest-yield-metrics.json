@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T06:10:21.275Z",
-  "total_cycles_completed": 6103,
-  "total_learnings_persisted": 6103,
-  "total_rules_promoted": 5592,
+  "last_updated": "2026-10-30T06:16:38.739Z",
+  "total_cycles_completed": 6105,
+  "total_learnings_persisted": 6105,
+  "total_rules_promoted": 5594,
   "history": [
-    {
-      "timestamp": "2026-10-28T20:44:20.577Z",
-      "repository": "Qwen/Qwen3-4B",
-      "learningId": "learn-huggingface-qwen-qwen3-4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T20:44:28.987Z",
-      "repository": "NativeScript/NativeScript",
-      "learningId": "learn-github-nativescript-nativescript",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T20:44:29.297Z",
       "repository": "Kong/kubernetes-ingress-controller",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T06:10:21.275Z",
       "repository": "JuulLabs/kable",
       "learningId": "learn-github-juullabs-kable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:16:33.043Z",
+      "repository": "kucherenko/jscpd",
+      "learningId": "learn-github-kucherenko-jscpd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:16:38.739Z",
+      "repository": "linkerd/linkerd2",
+      "learningId": "learn-github-linkerd-linkerd2",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

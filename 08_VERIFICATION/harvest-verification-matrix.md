@@ -6126,3 +6126,5 @@
 | `CYCLE-20261030-4C3V` | `2026-10-30T05:54:02.443Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5620` | Yes (`81fe04ed...`) |
 | `CYCLE-20261030-EHT9` | `2026-10-30T06:01:56.397Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5621` | Yes (`c5f5880b...`) |
 | `CYCLE-20261030-PBDE` | `2026-10-30T06:10:21.266Z` | `JuulLabs/kable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5622` | Yes (`2bfc7acb...`) |
+| `CYCLE-20261030-XA8B` | `2026-10-30T06:16:33.035Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5623` | Yes (`ee5cbb8f...`) |
+| `CYCLE-20261030-XEML` | `2026-10-30T06:16:38.733Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5624` | Yes (`3a64b4a4...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T06:10:21.279Z",
+  "last_updated": "2026-10-30T06:16:38.742Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7596,14 +7596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kucherenko-jscpd",
-      "content_hash": "60269540fd80e2cea64ddbe079ac02a58a46da28f89fddd3890d6a5c16768549",
-      "verified_at": "2026-10-28T13:43:34.650Z",
+      "content_hash": "ee5cbb8f9cf9a2eb3fe93619f3a7dc1e76b76c27fca564d6949cb0170c438c65",
+      "verified_at": "2026-10-30T06:16:33.047Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T13:43:34.650Z"
+      "last_updated": "2026-10-30T06:16:33.047Z"
     },
     "akveo/kittenTricks": {
       "repository": "akveo/kittenTricks",
@@ -9441,14 +9441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-linkerd-linkerd2",
-      "content_hash": "adbb74356b08bc97236b23d418cd0b787e9072a7d60ac35a51a8ced3a332f942",
-      "verified_at": "2026-10-28T18:27:31.010Z",
+      "content_hash": "3a64b4a40e3f0dc1e1b9eb2eb7dfaca4738763f4caf5925a8086adbbe6d9614b",
+      "verified_at": "2026-10-30T06:16:38.742Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:27:31.010Z"
+      "last_updated": "2026-10-30T06:16:38.742Z"
     },
     "tursodatabase/libsql": {
       "repository": "tursodatabase/libsql",
