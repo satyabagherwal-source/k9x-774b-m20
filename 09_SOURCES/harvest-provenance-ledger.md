@@ -6292,3 +6292,7 @@ Every entry in this ledger must capture:
 | `learn-github-keyboardkit-keyboardkit` | `https://github.com/KeyboardKit/KeyboardKit` | `c799e2cb` | Multi-dimensional audit evidence | 2026-10-30T19:42:44.360Z |
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `9fe15519` | Multi-dimensional audit evidence | 2026-10-30T19:42:46.104Z |
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `b92540d8` | Multi-dimensional audit evidence | 2026-10-30T19:47:42.256Z |
+| `learn-github-qwikdev-qwik` | `https://github.com/QwikDev/qwik` | `d6152907` | Multi-dimensional audit evidence | 2026-10-30T19:54:09.172Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `d91ed8e6` | Multi-dimensional audit evidence | 2026-10-30T19:54:17.049Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `514f09ca` | Multi-dimensional audit evidence | 2026-10-30T19:54:18.234Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `10db33df` | Multi-dimensional audit evidence | 2026-10-30T19:58:26.659Z |

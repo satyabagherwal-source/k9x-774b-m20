@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-8LBF",
-    "timestamp": "2026-10-28T13:49:54.027Z",
-    "repository": "Qwen/Qwen3.8-Flash-Next",
-    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-    "contentHash": "ad34a17d93b274ddf2da439614a6e0d390884e1dd957993af1a86e214784852a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-8NZO",
-    "timestamp": "2026-10-28T13:49:57.492Z",
-    "repository": "actix/actix-web",
-    "learningId": "learn-github-actix-actix-web",
-    "contentHash": "256ef83e54d7b4239ab13149fe174215582f079c396cbede281d85e76142bca9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-HFKU",
-    "timestamp": "2026-10-28T13:56:46.494Z",
-    "repository": "deepseek-ai/DeepSeek-V4-Pro",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-    "contentHash": "dab231a811db22c4c3b462a261e594183091e6e470ebb19b249452f92aeb40b3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-HM13",
-    "timestamp": "2026-10-28T13:56:54.855Z",
-    "repository": "software-mansion/react-native-gesture-handler",
-    "learningId": "learn-github-software-mansion-react-native-gesture-handler",
-    "contentHash": "b2668ffafa06cf6323baf90d7745ec4b4cb3448d6c3492ee1c3565013d207d48",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-HOZL",
     "timestamp": "2026-10-28T13:56:58.689Z",
     "repository": "DefGuard/defguard",
@@ -7492,6 +7432,66 @@
     "contentHash": "cfedc6d9f729ce7a7409caf41731783b593248ed90bc740c73dd5b7d58bc39cb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-4Q6Q",
+    "timestamp": "2026-10-30T19:54:09.170Z",
+    "repository": "QwikDev/qwik",
+    "learningId": "learn-github-qwikdev-qwik",
+    "contentHash": "014d69b0a05d898ddf2ed7b37bfc06a291a21dcd26de8a9a4a0f2b060a9c6ba0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-4W9I",
+    "timestamp": "2026-10-30T19:54:17.046Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "6f3ca87601b4e811a46e3c11182a162638aa547000ec232e8fc6647775b3019b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-4X6F",
+    "timestamp": "2026-10-30T19:54:18.231Z",
+    "repository": "neuron-core/neuron-ai",
+    "learningId": "learn-github-neuron-core-neuron-ai",
+    "contentHash": "0df439740602db0c32babad338abe30bb4cda26d65b4a0a2ab10bebc8ce78f49",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-A8V4",
+    "timestamp": "2026-10-30T19:58:26.656Z",
+    "repository": "biomejs/biome",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "af85799f5df6859f0fe92d37d7a4bb84f2f10d056ffaa153e76868f2150edd5e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

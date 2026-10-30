@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T19:47:42.177Z",
+  "last_updated": "2026-10-30T19:58:26.585Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4689,8 +4689,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "824df15e",
-      "content_hash": "8a8adf314b4fbed9c23151c09da3cd309a35859bfc59a9c218ba30fb7fbaf50c",
+      "source_version": "10db33df",
+      "content_hash": "af85799f5df6859f0fe92d37d7a4bb84f2f10d056ffaa153e76868f2150edd5e",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -4733,6 +4733,21 @@
           "number": 5410,
           "title": "fix advisory (#12730)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5850,
+          "title": "Mandatory Unwind Isolation with Non-Suppressible Diagnostic Escaping",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5851,
+          "title": "Trivia-Preserving CST Separator Synthesis and Transfer",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5852,
+          "title": "Container-Prefix State Invariant in Indented Prose Wrapping",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4740,7 +4755,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T21:37:11.007Z",
+      "verified_at": "2026-10-30T19:58:26.573Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6649,8 +6664,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "662d00cb",
-      "content_hash": "c1cb506289e2ba64f236f88a03a6cb07555b31cfcd3a01e6a2d757f1ec7659e0",
+      "source_version": "d91ed8e6",
+      "content_hash": "6f3ca87601b4e811a46e3c11182a162638aa547000ec232e8fc6647775b3019b",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -6828,6 +6843,11 @@
           "number": 5785,
           "title": "ci: Build the docs-builder image for Renovate branches",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5848,
+          "title": "docs: cni-chaining: document route MTU requirement",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6835,7 +6855,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T15:15:06.596Z",
+      "verified_at": "2026-10-30T19:54:16.988Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40928,8 +40948,8 @@
       "slug": "neuron-core-neuron-ai",
       "platform": "github",
       "source_url": "https://github.com/neuron-core/neuron-ai",
-      "source_version": "5842bc45",
-      "content_hash": "930fc60f231c2be03c614ddda645652076eb30416b415f05af9389231d1bf55c",
+      "source_version": "514f09ca",
+      "content_hash": "0df439740602db0c32babad338abe30bb4cda26d65b4a0a2ab10bebc8ce78f49",
       "dossier_path": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "promoted_rules": [
@@ -40952,6 +40972,11 @@
           "number": 5497,
           "title": "Merge pull request #703 from neuron-core/dependabot/npm_and_yarn/npm-a51ffcc4f6",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5849,
+          "title": "support protocol version in ag-ui adapter",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40959,7 +40984,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T11:47:45.935Z",
+      "verified_at": "2026-10-30T19:54:18.173Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72588,8 +72613,8 @@
       "slug": "qwikdev-qwik",
       "platform": "github",
       "source_url": "https://github.com/QwikDev/qwik",
-      "source_version": "fd3c66a5",
-      "content_hash": "256d71270b16edb7277ac6199dc3517b680550e912d32fd0acfbfd55eb378ae3",
+      "source_version": "d6152907",
+      "content_hash": "014d69b0a05d898ddf2ed7b37bfc06a291a21dcd26de8a9a4a0f2b060a9c6ba0",
       "dossier_path": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/qwikdev-qwik-learnings.md",
       "promoted_rules": [
@@ -72607,6 +72632,11 @@
           "number": 3809,
           "title": "Dev-Server HMR Separation of Pure Stylesheet Assets Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5847,
+          "title": "Rebuild docs deps when serializer.mjs is missing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72614,7 +72644,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T16:45:08.978Z",
+      "verified_at": "2026-10-30T19:54:09.112Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155148,6 +155178,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T19:47:42.158Z"
+    },
+    "rule-5847": {
+      "learning_id": "rule-5847",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5847,
+      "title": "Rebuild docs deps when serializer.mjs is missing",
+      "source_url": "https://github.com/QwikDev/qwik",
+      "source_version": "d6152907",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T19:54:09.112Z"
+    },
+    "rule-5848": {
+      "learning_id": "rule-5848",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5848,
+      "title": "docs: cni-chaining: document route MTU requirement",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "d91ed8e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T19:54:16.988Z"
+    },
+    "rule-5849": {
+      "learning_id": "rule-5849",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5849,
+      "title": "support protocol version in ag-ui adapter",
+      "source_url": "https://github.com/neuron-core/neuron-ai",
+      "source_version": "514f09ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T19:54:18.173Z"
+    },
+    "rule-5850": {
+      "learning_id": "rule-5850",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5850,
+      "title": "Mandatory Unwind Isolation with Non-Suppressible Diagnostic Escaping",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "10db33df",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T19:58:26.573Z"
+    },
+    "rule-5851": {
+      "learning_id": "rule-5851",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5851,
+      "title": "Trivia-Preserving CST Separator Synthesis and Transfer",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "10db33df",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T19:58:26.573Z"
+    },
+    "rule-5852": {
+      "learning_id": "rule-5852",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5852,
+      "title": "Container-Prefix State Invariant in Indented Prose Wrapping",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "10db33df",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T19:58:26.573Z"
     }
   },
   "aliases": {

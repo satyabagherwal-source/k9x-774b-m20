@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `662d00cb`  
+> **Source Version**: `d91ed8e6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T15:15:06.143Z  
+> **Timestamp**: 2026-10-30T19:54:16.641Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T15:15:05.409Z  
+> **Harvest Timestamp**: 2026-10-30T19:54:16.636Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25737 stars
+- **Stars / Engagement**: 25738 stars
 
 ---
 
@@ -1265,10 +1265,8 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
   > /test
   > > I did a small proof-of-concept doing the above that a while ago. Let me try and see whether I can dust it of and bring it into a PR-ready state.  Let me know when/if you manage to open it, I'm curious! I don't know if what you've been working on would tackle only a subset of BPF macros, but yeah, there are a lot of things that would be lovely to have auto-generated/synced so that they won't drift anymore.  Thanks so much for the review btw 🙏🏼  
 
-- **Issue #49707** (2026-10-29): **[v1.19] Backports 2026-10-29**
-  *Symptoms*:  * [x] #49421 (@aanm)  * [x] #49535 (@aanm)  Once this PR is merged, a GitHub action will update the labels of these PRs: ```upstream-prs  49421 49535 ``` 
-  **Post-Mortem & Fix Analysis**:
-  > /test
+- **Issue #49713** (2026-10-30): **cni-chaining: extend Documentation and warn when lacking route MTU**
+  *Symptoms*: Aligned with what has been done previously for WireGuard, here we:  1. Extend documentation specific for egress gateway. 2. Extend general cni-chaining documentation mentioning features (so far explicitly supported) that would require this to be enabled. 3. Add an Agent warning in case the parameter is not provided.  I've considered making it default and not opt-in, but in chaining mode the other plugin creates the pod's netns, veth and routes, and Cilium rewriting routes there can conflict with the plugin's own MTU management. Other minor reasons are that we've limited testing of chaining in CI (only awscni).  Fixes: #34493.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1285,296 +1283,112 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `662d00cb` (2026-10-19)
-**Commit Message**: ci: Build the docs-builder image for Renovate branches
+### Incident Patch 1: `06005d6d` (2026-10-29)
+**Commit Message**: docs: cni-chaining: document route MTU requirement
 
-With the docs-builder check required, every Renovate PR that bumps the
-documentation requirements waits until a docs-structure member approves
-both docs-builder jobs. The base images avoid this with a push workflow
-on renovate/main-** branches that runs in a Renovate-only environment
-without reviewers.
+The cni.enableRouteMTUForCNIChaining option is needed whenever a feature
+adds encapsulation or encryption overhead to Pod traffic, but it was only
+mentioned in the WireGuard and egress gateway guides. Add an MTU section to
+the generic CNI chaining page listing every feature affected (WireGuard,
+egress gateway, tunneling). IPsec is not listed as it is unsupported with
+CNI chaining, and Geneve DSR is not as its overhead is handled in the
+datapath.
 
-This commit does the same for the docs-builder image. A push to
-renovate/main-** that changes images/docs-builder/ calls the
-docs-builder workflow in the docs-builder-renovate environment, and the
-pull_request_target run skips Renovate branches. The PR still needs a
-review from docs-structure before it merges. The copies for the stable
-branches skip Renovate branches as well, and each stable branch gets its
-push workflow with its backport.
+Signed-off-by: Simone Magnani <[REDACTED_EMAIL]>
 
-A Renovate branch can bump the base images and the documentation
-requirements at once, and both workflows then push a commit onto the
-same tip. When GitHub rejects one of the pushes, its push step now
-rebases onto the new tip and retries.
-
-This commit was prepared with AIL:3. I personally checked the diff.
-
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/build-images-base.yaml` (modified, +12/-1)
+**File**: `Documentation/installation/cni-chaining.rst` (modified, +19/-0)
 ```diff
-@@ -398,7 +398,18 @@ jobs:
-             fi
-           fi
-           git diff HEAD^
--          git push https://x-access-token:${{ steps.get_token.outputs.app_token }}@github.com/${{ env.repository }}.git HEAD:$ref
-+          url="https://x-access-token:${{ steps.get_token.outputs.app_token }}@github.com/${{ env.repository }}.git"
-+          for attempt in 1 2 3; do
-+            if git push "${url}" HEAD:"$ref"; then
-+              break
-+            fi
-+            if [ "${attempt}" -eq 3 ]; then
-+              exit 1
-+            fi
-+            # The docs-builder workflow can push to the same Renovate branch.
-+            git fetch "${url}" "$ref"
-+            git rebase FETCH_HEAD
-+          done
+@@ -17,6 +17,25 @@ is managed by the non-Cilium CNI plugin, but Cilium attaches eBPF programs to th
+ network devices created by the non-Cilium plugin to provide L3/L4 network
+ visibility, policy enforcement and other advanced features.
  
-       - name: Prepare for Image Digests
-         shell: bash
-```
-
-**File**: `.github/workflows/build-images-docs-builder-renovate.yaml` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+name: Docs-builder Image Build - Renovate
++.. _cni_chaining_mtu:
 +
-+# Any change in triggers needs to be reflected in the concurrency group.
-+on:
-+  push:
-+    branches:
-+      - "renovate/main-**"
-+    paths:
-+      - images/docs-builder/**
++MTU
++===
 +
-+permissions:
-+  # To be able to access the repository with `actions/checkout`
-+  contents: read
++By default, Cilium does not adjust the MTU of the Pods when chaining, so Pods
++use the MTU configured by the other CNI plugins. Features that add encapsulation
++or encryption overhead on top of Pod traffic are therefore not accounted for,
++and the resulting packets might get fragmented, which can lead to a network
++performance degradation.
 +
-+jobs:
-+  build-docs-builder-from-renovate:
-+    name: "Build Docs-builder Image From Renovate"
-+    permissions:
-+      contents: read
-+      # Required by the Quay OIDC token exchange.
-+      id-token: write
-+    uses: ./.github/workflows/build-images-docs-builder.yaml
-+    secrets:
-+      AUTO_COMMITTER_PEM_202411: ${{ secrets.AUTO_COMMITTER_PEM_202411 }}
-+      AUTO_COMMITTER_APP_ID_202411: ${{ secrets.AUTO_COMMITTER_APP_ID_202411 }}
-+    with:
-+      # Build the docs-builder image from this environment which is set up
-+      # specifically for renovate.
-+      environment: docs-builder-renovate
-```
-
-**File**: `.github/workflows/build-images-docs-builder-v1.18.yaml` (modified, +2/-0)
-```diff
-@@ -23,6 +23,8 @@ concurrency:
- 
- jobs:
-   build-and-push:
-+    # Renovate branches build through build-images-docs-builder-renovate.yaml
-+    if: ${{ ! (github.event_name == 'pull_request_target' && startsWith(github.head_ref, 'renovate/')) }}
-     name: Build and Push Image
-     runs-on: ubuntu-24.04
-     timeout-minutes: 30
-```
-
-**File**: `.github/workflows/build-images-docs-builder-v1.19.yaml` (modified, +2/-0)
-```diff
-@@ -23,6 +23,8 @@ concurrency:
- 
- jobs:
-   build-and-push:
-+    # Renovate branches build through build-images-docs-builder-renovate.yaml
-+    if: ${{ ! (github.event_name == 'pull_request_target' && startsWith(github.head_ref, 'renovate/')) }}
-     name: Build and Push Image
-     runs-on: ubuntu-24.04
-     timeout-minutes: 30
-```
-
-**File**: `.github/workflows/build-images-docs-builder-v1.20.yaml` (modified, +2/-0)
-```diff
-@@ -23,6 +23,8 @@ concurrency:
- 
- jobs:
-   build-and-push:
-+    # Renovate branches build through build-images-docs-builder-renovate.yaml
-+    if: ${{ ! (github.event_name == 'pull_request_target' && startsWith(github.head_ref, 'renovate/')) }}
-     name: Build and Push Image
-     runs-on: ubuntu-26.04
-     timeout-minutes: 30
-```
-
-**File**: `.github/workflows/build-images-docs-builder.yaml` (modified, +36/-11)
-```diff
-@@ -13,17 +13,31 @@ on:
-       - v1.20
-       - v1.19
-       - v1.18
-+  # Renovate branches build from a different environment than 'docs-builder'.
-+  # See build-images-docs-builder-renovate.yaml
-+  workflow_call:
-+    secrets:
-+      AUTO_COMMITTER_PEM_202411:
-+        required: true
-+      AUTO_COMMITTER_APP_ID_202411:
-+        required: true
-+    inputs:
-+      environment:
-+        required: true
-+        type: string
- 
- permissions:
-   # To be able to access the repository with `actions/checkout`
-   contents: read
- 
- concurrency:
--  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-   cancel-in-progress: true
- 
- jobs:
-   build-and-push:
-+    # Renovate branches build through build-images-docs-builder-renovate.yaml
-+    if: ${{ ! (github.event_name == 'pull_request_target' && startsWith(github.head_ref, 'renovate/')) }}
-     name: Build and Push Image
-     runs-on: ubuntu-26.04
-     timeout-minutes: 30
-@@ -32,7 +46,7 @@ jobs:
-       # Required by the Quay OIDC token exchange.
-       id-token: write
-     environment:
--      name: docs-builder
-+      name: ${{ inputs.environment || 'docs-builder' }}
-       deployment: false
-     outputs:
-       tag: ${{ steps.docs-builder-tag.outputs.tag }}
-@@ -41,7 +55,7 @@ jobs:
-       - name: Checkout base branch (trusted)
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
--          ref: ${{ github.base_ref }}
-+          ref: ${{ github.base_ref || github.event.repository.default_branch }}
-           persist-credentials: false
- 
-       - name: Cleanup Disk space in runner
-@@ -59,7 +73,7 @@ jobs:
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           persist-credentials: false
--          ref: ${{ github.event.pull_request.head.sha }}
-+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-           # Required by checkout v7+ to fetch fork PR code; see the NOT TRUSTED warning above.
-           allow-unsafe-pr-checkout: true
- 
-@@ -145,7 +159,7 @@ jobs:
-       - name: Checkout base branch (trusted)
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
--          ref: ${{ github.base_ref }}
-+          ref: ${{ github.base_ref || github.event.repository.default_branch }}
-           persist-credentials: false
- 
-       - name: Set environment variables
-@@ -157,7 +171,7 @@ jobs:
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           persist-credentials: false
--          ref: ${{ github.event.pull_request.head.sha }}
-+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-           # Required by checkout v7+ to fetch fork PR code; see the NOT TRUSTED warning above.
-           allow-unsafe-pr-checkout: true
- 
-@@ -194,14 +208,14 @@ jobs:
-     runs-on: ubuntu-26.04
-     timeout-minutes: 10
-     environment:
--      name: docs-builder
-+      name: ${{ inputs.environment || 'docs-builder' }}
-       deployment: false
-     steps:
-       - name: Checkout pull request branch (NOT TRUSTED)
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           persist-credentials: false
--          ref: ${{ github.event.pull_request.head.sha }}
-+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-           # Required by checkout v7+ to fetch fork PR code; see the NOT TRUSTED warning above.
-           allow-unsafe-pr-checkout: true
- 
-@@ -228,10 +242,21 @@ jobs:
- 
-       - name: Push changes into PR
-         env:
--          REF: ${{ github.event.pull_request.head.ref }}
-+          REF: ${{ github.event.pull_request.head.ref || github.ref_name }}
-         run: |
-           git diff HEAD^
--          git push --no-verify https://x-access-token:${{ steps.get_token.outputs.app_token }}@github.com/${{ github.event.pull_request.head.repo.full_name }}.git HEAD:"$REF"
-+          url="https://x-access-token:${{ steps.get_token.outputs.app_token }}@github.com/${{ github.event.pull_request.head.repo.full_name || github.repository }}.git"
-+          for attempt in 1 2 3; do
-+            if git push --no-verify "${url}" HEAD:"$REF"; then
-+              break
-+            fi
-+            if [ "${attempt}" -eq 3 ]; then
-+              exit 1
-+            fi
-+            # The base images workflow can push to the same Renovate branch.
-+            git fetch "${url}" "$REF"
-+            git rebase FETCH_HEAD
-+          done
- 
-   image-digest:
-     name: Retrieve and display image digest
-@@ -243,7 +268,7 @@ jobs:
-       - name: Checkout base branch (trusted)
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
--          ref: ${{ github.base_ref }}
-+          ref: ${{ github.base_ref || github.event.repository.default_branch }}
-           persist-credentials: false
- 
-       - name:
++Set the Helm option ``cni.enableRouteMTUForCNIChaining`` to ``true`` to make
++Cilium set a route MTU for Pods that accounts for such overhead. This is
++required when using any of the following features:
++
++* :ref:`WireGuard encryption <encryption_wg>`
++* :ref:`Egress Gateway <egress-gateway>`
++* :ref:`Tunneling <encapsulation>` (``routingMode=tunnel``)
++
+ .. toctree::
+    :maxdepth: 1
+    :glob:
 ```
 
 ---
 
-### Incident Patch 2: `9debbc60` (2026-10-29)
-**Commit Message**: bpf: fix CIDR_IDENTITY_RANGE_END out of sync with MaxLocalIdentity
+### Incident Patch 2: `f5f814b9` (2026-10-28)
+**Commit Message**: ci: update docs-builder
 
-CIDR_IDENTITY_RANGE_END evaluated to 0x100FFFF, while the allocator
-can hand out CIDR identities up to identity.MaxLocalIdentity
-(0x1FFFFFF). Identities above the BPF limit would not be recognized
-by identity_is_cidr_range() and, as a consequence, by
-identity_is_world().
+Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
 
-Align the constant with identity.MaxLocalIdentity.
-
-Signed-off-by: Simone Magnani <[REDACTED_EMAIL]>
-
-**File**: `bpf/lib/identity.h` (modified, +1/-1)
+**File**: `.github/workflows/documentation.yaml` (modified, +1/-1)
 ```diff
-@@ -58,7 +58,7 @@ static __always_inline __u32 world_ipv6_id(void)
-  * It must be in sync with the constant identity.MaxLocalIdentity
-  * defined in the numericidentity.go file.
-  */
--#define CIDR_IDENTITY_RANGE_END ((1 << 24) + (1 << 16) - 1)
-+#define CIDR_IDENTITY_RANGE_END ((1 << 24) + (1 << 24) - 1)
+@@ -70,7 +70,7 @@ jobs:
+         uses: ./.github/actions/disk-cleanup
  
- /**
-  * get_identity - returns source identity from the mark field
+       - name: Build HTML
+-        uses: docker://quay.io/cilium/docs-builder:cd9f601a1edba91d911e50c1acce48b6413008d7@sha256:c377837bcb944b4dba60607f839be47d45e49c140f415d5c43cd051c0ee2a875
++        uses: docker://quay.io/cilium/docs-builder:16b20632cc36a85a7fa7bd1c52470a46463281cf@sha256:bfcda38c4fc7831b6cc3483ae6d4c640aa18d55be8ddb0dfa41087c0eaa7c9c7
+         with:
+           entrypoint: ./Documentation/check-build.sh
+           args: html
+```
+
+**File**: `Documentation/Makefile` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@ SPHINX_OPTS := "-j=auto"
+ 
+ .PHONY: default clean help cilium-build cmdref epub latex html
+ 
+-DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:cd9f601a1edba91d911e50c1acce48b6413008d7@sha256:c377837bcb944b4dba60607f839be47d45e49c140f415d5c43cd051c0ee2a875
++DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:16b20632cc36a85a7fa7bd1c52470a46463281cf@sha256:bfcda38c4fc7831b6cc3483ae6d4c640aa18d55be8ddb0dfa41087c0eaa7c9c7
+ 
+ .PHONY: update-docs-builder-image
+ update-docs-builder-image: DOCS_BUILDER_TAG=$(word 3,$(shell git ls-tree --full-tree HEAD -- $(DOCS_BUILDER_DIR)))
+```
+
+---
+
+### Incident Patch 3: `b20ea39d` (2026-10-28)
+**Commit Message**: docs: Fix update-requirements target
+
+The make target here referred to a path that doesn't exist. Fix it.
+
+Fixes: 76cc4f5dec09 ("images: Move docs-builder into images/ directory")
+Signed-off-by: Joe Stringer <[REDACTED_EMAIL]>
+
+**File**: `Documentation/Makefile` (modified, +1/-1)
+```diff
+@@ -157,7 +157,7 @@ update-redirects: builder-image ## Build and serve the documentation locally.
+ update-requirements: docs-base-image $(DOCS_REQUIREMENTS_NODEP) ## Regenerate the requirements.txt file from requirements-min/requirements.txt.
+ 	@echo '## Auto-generated from Documentation/$(DOCS_REQUIREMENTS_NODEP) with "make update-requirements"' > $(DOCS_BUILDER_DIR)/$(DOCS_REQUIREMENTS)
+ 	$(QUIET)$(DOCKER_CTR_BASE) $(DOCS_BASE_IMG) \
+-		bash -c "export HOME=/tmp && pip install --no-warn-script-location -r ../../Documentation/$(DOCS_REQUIREMENTS_NODEP) && pip freeze -r ../../$(DOCS_REQUIREMENTS_NODEP) >> $(DOCS_REQUIREMENTS)"
++		bash -c "export HOME=/tmp && pip install --no-warn-script-location -r ../../Documentation/$(DOCS_REQUIREMENTS_NODEP) && pip freeze -r ../../Documentation/$(DOCS_REQUIREMENTS_NODEP) >> $(DOCS_REQUIREMENTS)"
+ 
+ clean: ## Clean up all artefacts from documentation.
+ 	-$(QUIET)rm -rf _build _exts/__pycache__ _preview Pipfile Pipfile.lock
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #49715** (2026-10-30): bpf: fix CIDR_IDENTITY_RANGE_END out of sync with MaxLocalIdentity (@smagnani96)
+- **PR #49713** (2026-10-30): cni-chaining: extend Documentation and warn when lacking route MTU (@smagnani96)
 - **PR #49707** (2026-10-29): [v1.19] Backports 2026-10-29 (@aanm)
 - **PR #49706** (2026-10-30): [v1.20] Backports 2026-10-29 (@aanm)
 - **PR #49700** (closed): cilium-cli: Avoid connectivity setup hangs on stalled exec requests (@weizhoublue)
-- **PR #49698** (2026-10-29): chore(deps): update auto-merge-trusted-deps (v1.18) (@cilium-renovate[bot])
-- **PR #49697** (2026-10-29): chore(deps): update auto-merge-trusted-deps (v1.19) (@cilium-renovate[bot])
+- **PR #49699** (2026-10-30): endpoint: refresh DNS redirects after identity changes (@tklauser)
 
 ---
 
@@ -1594,39 +1408,46 @@ Signed-off-by: Simone Magnani <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: Build the docs-builder image for Renovate branches
+## X. docs: cni-chaining: document route MTU requirement
 
 **RULE**:
-When implementing operations in `.github/workflows/build-images-base.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Documentation/installation/cni-chaining.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `662d00cb`: ci: Build the docs-builder image for Renovate branches. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `06005d6d`: docs: cni-chaining: document route MTU requirement. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-images-base.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/installation/cni-chaining.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          url="https://x-access-token:${{ steps.get_token.outputs.app_token }}@github.com/${{ env.repository }}.git"
-          for attempt in 1 2 3; do
-            if git push "${url}" HEAD:"$ref"; then
-              break
-            fi
-            if [ "${attempt}" -eq 3 ]; then
-              exit 1
-            fi
-            # The docs-builder workflow can push to the same Renovate branch.
-            git fetch "${url}" "$ref"
-            git rebase FETCH_HEAD
-          done
+.. _cni_chaining_mtu:
+
+MTU
+===
+
+By default, Cilium does not adjust the MTU of the Pods when chaining, so Pods
+use the MTU configured by the other CNI plugins. Features that add encapsulation
+or encryption overhead on top of Pod traffic are therefore not accounted for,
+and the resulting packets might get fragmented, which can lead to a network
+performance degradation.
+
+Set the Helm option ``cni.enableRouteMTUForCNIChaining`` to ``true`` to make
+Cilium set a route MTU for Pods that accounts for such overhead. This is
+required when using any of the following features:
+
+* :ref:`WireGuard encryption <encryption_wg>`
+* :ref:`Egress Gateway <egress-gateway>`
+* :ref:`Tunneling <encapsulation>` (``routingMode=tunnel``)
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-          git push https://x-access-token:${{ steps.get_token.outputs.app_token }}@github.com/${{ env.repository }}.git HEAD:$ref
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `662d00cb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `06005d6d` are properly handled with clean fallback behavior.

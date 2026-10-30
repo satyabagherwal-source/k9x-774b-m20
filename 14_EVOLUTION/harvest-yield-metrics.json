@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T19:47:42.261Z",
-  "total_cycles_completed": 6260,
-  "total_learnings_persisted": 6260,
-  "total_rules_promoted": 5817,
+  "last_updated": "2026-10-30T19:58:26.663Z",
+  "total_cycles_completed": 6264,
+  "total_learnings_persisted": 6264,
+  "total_rules_promoted": 5823,
   "history": [
-    {
-      "timestamp": "2026-10-30T00:19:01.096Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T00:25:48.199Z",
-      "repository": "bridgecrewio/checkov",
-      "learningId": "learn-github-bridgecrewio-checkov",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T00:25:52.976Z",
-      "repository": "slatedb/slatedb",
-      "learningId": "learn-github-slatedb-slatedb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T00:27:04.706Z",
-      "repository": "o2sh/onefetch",
-      "learningId": "learn-github-o2sh-onefetch",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T00:33:13.970Z",
       "repository": "GitoxideLabs/gitoxide",
@@ -1403,6 +1375,34 @@
       "repository": "codewhale-hq/Codewhale",
       "learningId": "learn-github-codewhale-hq-codewhale",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T19:54:09.176Z",
+      "repository": "QwikDev/qwik",
+      "learningId": "learn-github-qwikdev-qwik",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T19:54:17.053Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T19:54:18.238Z",
+      "repository": "neuron-core/neuron-ai",
+      "learningId": "learn-github-neuron-core-neuron-ai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T19:58:26.663Z",
+      "repository": "biomejs/biome",
+      "learningId": "learn-github-biomejs-biome",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
