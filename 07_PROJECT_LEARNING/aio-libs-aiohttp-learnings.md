@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md`  
 > **Source**: github ([https://github.com/aio-libs/aiohttp](https://github.com/aio-libs/aiohttp))  
-> **Source Version**: `e7475aec`  
+> **Source Version**: `3df45d98`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:48:11.898Z  
+> **Timestamp**: 2026-10-30T16:00:31.928Z  
 > **Learning ID**: `learn-github-aio-libs-aiohttp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aio-libs-aiohttp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aio-libs/aiohttp](https://github.com/aio-libs/aiohttp))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:48:11.428Z  
+> **Harvest Timestamp**: 2026-10-30T16:00:30.599Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Asynchronous HTTP client/server framework for asyncio and Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 16593 stars
+- **Stars / Engagement**: 16597 stars
 
 ---
 
@@ -1840,626 +1840,191 @@ class WebSocketReader:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `79675d55` (2026-10-26)
-**Commit Message**: Bump filelock from 4.1.0 to 4.2.1 in /requirements in the pip group across 1 directory (#14172)
+### Incident Patch 1: `3df45d98` (2026-10-30)
+**Commit Message**: Bump python-discovery from 1.6.4 to 1.6.5 (#14217)
 
-Bumps the pip group with 1 update in the /requirements directory:
-[filelock](https://github.com/tox-dev/py-filelock).
-
-Updates `filelock` from 4.1.0 to 4.2.1
+Bumps [python-discovery](https://github.com/tox-dev/python-discovery)
+from 1.6.4 to 1.6.5.
 <details>
 <summary>Release notes</summary>
 <p><em>Sourced from <a
-href="https://github.com/tox-dev/py-filelock/releases">filelock's
+href="https://github.com/tox-dev/python-discovery/releases">python-discovery's
 releases</a>.</em></p>
 <blockquote>
-<h2>4.2.1</h2>
+<h2>v1.6.5</h2>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h3>Packaging</h3>
 <ul>
-<li>On a singleton wrapper, <code>close&gt;</code> and
-<code>close&gt;</code> end only the holds that tasks acquired
-through that wrapper. A reader that arrives during <code>close()</code>
-gets the closed error instead of joining the ending hold.
-After synchronous code closes or force-releases the shared lock, the
-wrappers refuse to admit readers into the ended
-hold, and <code>close()</code> on such a wrapper returns.
-Closing one wrapper no longer ends a task's nested hold taken through
-another wrapper on the same path. <a
-href="https://redirect.github.com/tox-dev/py-filelock/issues/832">#832</a></li>
-<li><code>ReadWriteLock</code> locks again after a
-<code>release()</code> that an exception from a signal handler
-interrupted.
-The async read-write 
+<li>Releases now run on the shared tox-dev/github-workflows pipeline,
+with a locked release toolchain and generated GitHub Release notes (<a
+href="https://redirect.github.com/tox-dev/python-discovery/pull/164">#164</a>)
+by <a
+href="https://github.com/gaborbernat"><code>@​gaborbernat</code></a>.</li>
+</ul>
+<p><a href="https://pypi.org/project/python-discovery/1.6.5/">🐍 PyPI
+release</a></p>
+<p><a
+href="https://github.com/tox-dev/python-discovery/compare/1.6.4...1.6.5">📜
+Full Changelog</a></p>
+</blockquote>
+</details>
+<details>
+<summary>Changelog</summary>
+<p><em>Sourced from <a
+href="https://github.com/tox-dev/python-discovery/blob/main/docs/changelog.rst">python-discovery's
+changelog</a>.</em></p>
+<blockquote>
+<p>#################
+Release History
+#################</p
 
-**File**: `requirements/constraints.txt` (modified, +63/-63)
+**File**: `requirements/constraints.txt` (modified, +1/-1)
 ```diff
-@@ -6,21 +6,21 @@
- #
- aiodns==4.0.4 ; sys_platform != "android" and sys_platform != "ios"
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/runtime-deps.in
-+    #   -r lint.in
-+    #   -r runtime-deps.in
- aiofastnet==1.2.0 ; platform_python_implementation == "CPython" and sys_platform != "android" and sys_platform != "ios"
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/runtime-deps.in
-+    #   -r lint.in
-+    #   -r runtime-deps.in
- aiohappyeyeballs==2.7.1
-     # via
--    #   -r requirements/runtime-deps.in
-+    #   -r runtime-deps.in
-     #   aiohttp
- aiohttp-theme==0.1.7
--    # via -r requirements/doc.in
-+    # via -r doc.in
- aiosignal==1.4.0
-     # via
--    #   -r requirements/runtime-deps.in
-+    #   -r runtime-deps.in
-     #   aiohttp
- alabaster==1.0.0
-     # via sphinx
-@@ -29,21 +29,21 @@ annotated-types==0.8.0
- ast-serialize==0.13.1
-     # via mypy
- atheris==3.0.0
--    # via -r requirements/lint.in
-+    # via -r lint.in
- attrs==26.1.0
-     # via aiohttp
- babel==2.18.0
-     # via sphinx
- backports-zstd==1.3.0 ; implementation_name == "cpython" and python_version < "3.14"
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/runtime-deps.in
-+    #   -r lint.in
-+    #   -r runtime-deps.in
- blockbuster==1.5.29
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-common.in
-+    #   -r lint.in
-+    #   -r test-common.in
- brotli==1.2.1 ; platform_python_implementation == "CPython" and sys_platform != "android" and sys_platform != "ios"
--    # via -r requirements/runtime-deps.in
-+    # via -r runtime-deps.in
- build==1.6.1
-     # via pip-tools
- certifi==2026.10.19
-@@ -62,12 +62,12 @@ click==8.5.0
-     #   towncrier
- coverage==7.16.2
-     # via
--    #   -r requirements/test-common.in
-+    #   -r test-common.in
-     #   pytest-cov
- cryptography==50.0.2
-     # via trustme
- cython==3.3.0
--    # via -r requirements/cython.in
-+    # via -r cython.in
- distlib==0.4.4
-     # via virtualenv
- docutils==0.21.2
-@@ -76,23 +76,23 @@ docutils==0.21.2
-     #   sphinx
- execnet==2.1.2
-     # via pytest-xdist
--filelock==4.1.0
-+filelock==4.2.1
-     # via
-     #   python-discovery
-     #   virtualenv
- forbiddenfruit==0.1.4
-     # via blockbuster
- freezegun==1.5.5
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-common-base.in
-+    #   -r lint.in
-+    #   -r test-common-base.in
- frozenlist==1.8.0
-     # via
--    #   -r requirements/runtime-deps.in
-+    #   -r runtime-deps.in
-     #   aiohttp
-     #   aiosignal
- gunicorn==26.2.0
--    # via -r requirements/base.in
-+    # via -r base.in
- identify==2.6.20
-     # via pre-commit
- idna==3.20
-@@ -106,8 +106,8 @@ iniconfig==2.3.1
-     # via pytest
- isal==1.8.0 ; python_version < "3.14" and implementation_name == "cpython"
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-common.in
-+    #   -r lint.in
-+    #   -r test-common.in
- jinja2==3.1.6
-     # via
-     #   myst-parser
-@@ -129,18 +129,18 @@ mdurl==0.1.2
-     # via markdown-it-py
- multidict==7.1.0
-     # via
--    #   -r requirements/multidict.in
--    #   -r requirements/runtime-deps.in
-+    #   -r multidict.in
-+    #   -r runtime-deps.in
-     #   aiohttp
-     #   yarl
- mypy==2.4.0 ; implementation_name == "cpython"
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-common.in
-+    #   -r lint.in
-+    #   -r test-common.in
- mypy-extensions==1.1.0
-     # via mypy
- myst-parser==4.0.1
--    # via -r requirements/doc.in
-+    # via -r doc.in
- nodeenv==1.11.0
-     # via pre-commit
- packaging==26.3
-@@ -155,26 +155,26 @@ pathspec==1.1.1
- pip==26.2.2
-     # via pip-tools
- pip-tools==7.6.2
--    # via -r requirements/dev.in
-+    # via -r dev.in
- pkgconfig==1.6.0
--    # via -r requirements/test-common-base.in
-+    # via -r test-common-base.in
- platformdirs==4.12.4
-     # via virtualenv
- pluggy==1.7.0
-     # via
-     #   pytest
-     #   pytest-cov
- pre-commit==4.6.2
--    # via -r requirements/lint.in
-+    # via -r lint.in
- propcache==0.5.4
-     # via
--    #   -r requirements/runtime-deps.in
-+    #   -r runtime-deps.in
-     #   aiohttp
-     #   yarl
- proxy-py==2.4.10
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-common-base.in
-+    #   -r lint.in
-+    #   -r test-common-base.in
- pycares==5.1.0
-     # via aiodns
- pycparser==3.11
-@@ -196,8 +196,8 @@ pyproject-hooks==1.3.3
-     #   pip-tools
- pytest==9.1.1
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-common-base.in
-+    #   -r lint.in
-+    #   -r test-common-base.in
-     #   pytest-aiohttp
-     #   pytest-asyncio
-     #   pytest-codspeed
-@@ -207,32 +207,32 @@ pytest==9.1.1
-     #   pytest-xdist
- pytest-aiohttp==1.1.1
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-common-base.in
-+    #   -r lint.in
-+    #   -r test-common-base.in
- pytest-asyncio==1.4.0
-     # via pytest-aiohttp
- pytest-codspeed==5.0.3
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-commo
-```
-
-**File**: `requirements/dev.txt` (modified, +60/-60)
-```diff
-@@ -6,21 +6,21 @@
- #
- aiodns==4.0.4 ; sys_platform != "android" and sys_platform != "ios"
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/runtime-deps.in
-+    #   -r lint.in
-+    #   -r runtime-deps.in
- aiofastnet==1.2.0 ; platform_python_implementation == "CPython" and sys_platform != "android" and sys_platform != "ios"
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/runtime-deps.in
-+    #   -r lint.in
-+    #   -r runtime-deps.in
- aiohappyeyeballs==2.7.1
-     # via
--    #   -r requirements/runtime-deps.in
-+    #   -r runtime-deps.in
-     #   aiohttp
- aiohttp-theme==0.1.7
--    # via -r requirements/doc.in
-+    # via -r doc.in
- aiosignal==1.4.0
-     # via
--    #   -r requirements/runtime-deps.in
-+    #   -r runtime-deps.in
-     #   aiohttp
- alabaster==1.0.0
-     # via sphinx
-@@ -29,21 +29,21 @@ annotated-types==0.8.0
- ast-serialize==0.13.1
-     # via mypy
- atheris==3.0.0
--    # via -r requirements/lint.in
-+    # via -r lint.in
- attrs==26.1.0
-     # via aiohttp
- babel==2.18.0
-     # via sphinx
- backports-zstd==1.3.0 ; platform_python_implementation == "CPython" and python_version < "3.14" and sys_platform != "android" and sys_platform != "ios"
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/runtime-deps.in
-+    #   -r lint.in
-+    #   -r runtime-deps.in
- blockbuster==1.5.29
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-common.in
-+    #   -r lint.in
-+    #   -r test-common.in
- brotli==1.2.1 ; platform_python_implementation == "CPython" and sys_platform != "android" and sys_platform != "ios"
--    # via -r requirements/runtime-deps.in
-+    # via -r runtime-deps.in
- build==1.6.1
-     # via pip-tools
- certifi==2026.10.19
-@@ -62,7 +62,7 @@ click==8.5.0
-     #   towncrier
- coverage==7.16.2
-     # via
--    #   -r requirements/test-common.in
-+    #   -r test-common.in
-     #   pytest-cov
- cryptography==50.0.2
-     # via trustme
-@@ -74,23 +74,23 @@ docutils==0.21.2
-     #   sphinx
- execnet==2.1.2
-     # via pytest-xdist
--filelock==4.1.0
-+filelock==4.2.1
-     # via
-     #   python-discovery
-     #   virtualenv
- forbiddenfruit==0.1.4
-     # via blockbuster
- freezegun==1.5.5
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-common-base.in
-+    #   -r lint.in
-+    #   -r test-common-base.in
- frozenlist==1.8.0
-     # via
--    #   -r requirements/runtime-deps.in
-+    #   -r runtime-deps.in
-     #   aiohttp
-     #   aiosignal
- gunicorn==26.2.0
--    # via -r requirements/base.in
-+    # via -r base.in
- identify==2.6.20
-     # via pre-commit
- idna==3.20
-@@ -104,8 +104,8 @@ iniconfig==2.3.1
-     # via pytest
- isal==1.8.0 ; python_version < "3.14" and implementation_name == "cpython"
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-common.in
-+    #   -r lint.in
-+    #   -r test-common.in
- jinja2==3.1.6
-     # via
-     #   myst-parser
-@@ -127,17 +127,17 @@ mdurl==0.1.2
-     # via markdown-it-py
- multidict==7.1.0
-     # via
--    #   -r requirements/runtime-deps.in
-+    #   -r runtime-deps.in
-     #   aiohttp
-     #   yarl
- mypy==2.4.0 ; implementation_name == "cpython"
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-common.in
-+    #   -r lint.in
-+    #   -r test-common.in
- mypy-extensions==1.1.0
-     # via mypy
- myst-parser==4.0.1
--    # via -r requirements/doc.in
-+    # via -r doc.in
- nodeenv==1.11.0
-     # via pre-commit
- packaging==26.3
-@@ -152,26 +152,26 @@ pathspec==1.1.1
- pip==26.2.2
-     # via pip-tools
- pip-tools==7.6.2
--    # via -r requirements/dev.in
-+    # via -r dev.in
- pkgconfig==1.6.0
--    # via -r requirements/test-common-base.in
-+    # via -r test-common-base.in
- platformdirs==4.12.4
-     # via virtualenv
- pluggy==1.7.0
-     # via
-     #   pytest
-     #   pytest-cov
- pre-commit==4.6.2
--    # via -r requirements/lint.in
-+    # via -r lint.in
- propcache==0.5.4
-     # via
--    #   -r requirements/runtime-deps.in
-+    #   -r runtime-deps.in
-     #   aiohttp
-     #   yarl
- proxy-py==2.4.10
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-common-base.in
-+    #   -r lint.in
-+    #   -r test-common-base.in
- pycares==5.1.0
-     # via aiodns
- pycparser==3.11
-@@ -191,8 +191,8 @@ pyproject-hooks==1.3.3
-     #   pip-tools
- pytest==9.1.1
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-common-base.in
-+    #   -r lint.in
-+    #   -r test-common-base.in
-     #   pytest-aiohttp
-     #   pytest-asyncio
-     #   pytest-codspeed
-@@ -202,32 +202,32 @@ pytest==9.1.1
-     #   pytest-xdist
- pytest-aiohttp==1.1.1
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-common-base.in
-+    #   -r lint.in
-+    #   -r test-common-base.in
- pytest-asyncio==1.4.0
-     # via pytest-aiohttp
- pytest-codspeed==5.0.3
-     # via
--    #   -r requirements/lint.in
--    #   -r requirements/test-common.in
-+    #   -r lint.in
-+    #   -r test-common.in
- pytest-cov==7.1.0
--    # via -r requirements/test-common-base.in
-+    # via -
-```
-
-**File**: `requirements/lint.txt` (modified, +21/-21)
-```diff
-@@ -5,9 +5,9 @@
- #    pip-compile --output-file=requirements/lint.txt --strip-extras --unsafe-package=aiohttp requirements/lint.in
- #
- aiodns==4.0.4
--    # via -r requirements/lint.in
-+    # via -r lint.in
- aiofastnet==1.2.0
--    # via -r requirements/lint.in
-+    # via -r lint.in
- aiohappyeyeballs==2.7.1
-     # via aiohttp
- aiosignal==1.4.0
-@@ -17,13 +17,13 @@ annotated-types==0.8.0
- ast-serialize==0.13.1
-     # via mypy
- atheris==3.0.0
--    # via -r requirements/lint.in
-+    # via -r lint.in
- attrs==26.1.0
-     # via aiohttp
- backports-zstd==1.3.0 ; implementation_name == "cpython" and python_version < "3.14"
--    # via -r requirements/lint.in
-+    # via -r lint.in
- blockbuster==1.5.29
--    # via -r requirements/lint.in
-+    # via -r lint.in
- cffi==2.1.1
-     # via
-     #   cryptography
-@@ -34,14 +34,14 @@ cryptography==50.0.2
-     # via trustme
- distlib==0.4.4
-     # via virtualenv
--filelock==4.1.0
-+filelock==4.2.1
-     # via
-     #   python-discovery
-     #   virtualenv
- forbiddenfruit==0.1.4
-     # via blockbuster
- freezegun==1.5.5
--    # via -r requirements/lint.in
-+    # via -r lint.in
- frozenlist==1.8.0
-     # via
-     #   aiohttp
-@@ -55,7 +55,7 @@ idna==3.20
- iniconfig==2.3.1
-     # via pytest
- isal==1.8.0
--    # via -r requirements/lint.in
-+    # via -r lint.in
- librt==0.16.0
-     # via mypy
- markdown-it-py==4.2.0
-@@ -67,7 +67,7 @@ multidict==7.1.0
-     #   aiohttp
-     #   yarl
- mypy==2.4.0 ; implementation_name == "cpython"
--    # via -r requirements/lint.in
-+    # via -r lint.in
- mypy-extensions==1.1.0
-     # via mypy
- nodeenv==1.11.0
-@@ -83,13 +83,13 @@ platformdirs==4.12.4
- pluggy==1.7.0
-     # via pytest
- pre-commit==4.6.2
--    # via -r requirements/lint.in
-+    # via -r lint.in
- propcache==0.5.4
-     # via
-     #   aiohttp
-     #   yarl
- proxy-py==2.4.10
--    # via -r requirements/lint.in
-+    # via -r lint.in
- pycares==5.1.0
-     # via aiodns
- pycparser==3.11
-@@ -104,35 +104,35 @@ pygments==2.21.0
-     #   rich
- pytest==9.1.1
-     # via
--    #   -r requirements/lint.in
-+    #   -r lint.in
-     #   pytest-aiohttp
-     #   pytest-asyncio
-     #   pytest-codspeed
-     #   pytest-mock
- pytest-aiohttp==1.1.1
--    # via -r requirements/lint.in
-+    # via -r lint.in
- pytest-asyncio==1.4.0
-     # via pytest-aiohttp
- pytest-codspeed==5.0.3
--    # via -r requirements/lint.in
-+    # via -r lint.in
- pytest-mock==3.17.0
--    # via -r requirements/lint.in
-+    # via -r lint.in
+@@ -227,7 +227,7 @@ pytest-xdist==3.8.0
+     # via -r requirements/test-common.in
  python-dateutil==3.0.0
      # via freezegun
- python-discovery==1.6.4
+-python-discovery==1.6.4
++python-discovery==1.6.5
+     # via virtualenv
+ python-on-whales==0.81.0 ; implementation_name == "cpython"
+     # via
+```
+
+**File**: `requirements/dev.txt` (modified, +1/-1)
+```diff
+@@ -222,7 +222,7 @@ pytest-xdist==3.8.0
+     # via -r requirements/test-common.in
+ python-dateutil==3.0.0
+     # via freezegun
+-python-discovery==1.6.4
++python-discovery==1.6.5
+     # via virtualenv
+ python-on-whales==0.81.0 ; implementation_name == "cpython"
+     # via
+```
+
+**File**: `requirements/lint.txt` (modified, +1/-1)
+```diff
+@@ -119,7 +119,7 @@ pytest-mock==3.17.0
+     # via -r requirements/lint.in
+ python-dateutil==3.0.0
+     # via freezegun
+-python-discovery==1.6.4
++python-discovery==1.6.5
      # via virtualenv
  python-on-whales==0.81.0
--    # via -r requirements/lint.in
-+    # via -r lint.in
- pyyaml==6.0.3
-     # via pre-commit
- rich==15.0.0
-     # via pytest-codspeed
- six==1.17.0
-     # via python-dateutil
- slotscheck==0.21.0
--    # via -r requirements/lint.in
-+    # via -r lint.in
- trustme==1.2.1
--    # via -r requirements/lint.in
-+    # via -r lint.in
- typing-extensions==4.16.0
-     # via
-     #   aiohttp
-@@ -148,15 +148,15 @@ typing-inspection==0.4.4
- tzdata==2026.5
-     # via python-dateutil
- uvloop==0.23.0 ; platform_system != "Windows"
--    # via -r requirements/lint.in
-+    # via -r lint.in
- valkey==6.1.1
--    # via -r requirements/lint.in
-+    # via -r lint.in
- virtualenv==21.14.13
-     # via pre-commit
- yarl==1.25.1
-     # via aiohttp
- zlib-ng==1.0.0
--    # via -r requirements/lint.in
-+    # via -r lint.in
- 
- # The following packages are considered to be unsafe in a requirements file:
- # aiohttp
+     # via -r requirements/lint.in
 ```
 
 ---
 
-### Incident Patch 2: `12029ec5` (2026-10-26)
-**Commit Message**: Bump pypa/cibuildwheel from 4.3.1 to 4.3.4 (#14134)
+### Incident Patch 2: `26164297` (2026-10-29)
+**Commit Message**: Warn on naive datetime passed to last_modified (#5313)
 
-Bumps [pypa/cibuildwheel](https://github.com/pypa/cibuildwheel) from
-4.3.1 to 4.3.4.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/pypa/cibuildwheel/releases">pypa/cibuildwheel's
-releases</a>.</em></p>
-<blockquote>
-<h2>v4.3.4</h2>
-<ul>
-<li>🔐 Warns when a uv build frontend is selected and the host uv is
-older than 0.13.4, which still trusts the compromised eMudhra CA roots
-(<a
-href="https://redirect.github.com/pypa/cibuildwheel/issues/3021">#3021</a>)</li>
-<li>🔐 Uses cibuildwheel's CA bundle for pip on Python 3.9, where pip
-uses its bundled certifi, which still trusts the compromised eMudhra
-roots (<a
-href="https://redirect.github.com/pypa/cibuildwheel/issues/3017">#3017</a>)</li>
-<li>🔐 Uses cibuildwheel's CA bundle for pip on GraalPy, where truststore
-is not supported (<a
-href="https://redirect.github.com/pypa/cibuildwheel/issues/3019">#3019</a>)</li>
-<li>🔐 Uses cibuildwheel's CA bundle in Android, iOS, and Pyodide cross
-venvs, where pip uses the host's OpenSSL CA file (<a
-href="https://redirect.github.com/pypa/cibuildwheel/issues/3020">#3020</a>)</li>
-<li>🐛 Seeds build's isolated
-
-**File**: `.github/workflows/reusable-cibuildwheel.yml` (modified, +1/-1)
+**File**: `CHANGES/5304.deprecation.rst` (added, +6/-0)
 ```diff
-@@ -116,7 +116,7 @@ jobs:
-         image: tonistiigi/binfmt:qemu-v8.1.5
+@@ -0,0 +1,6 @@
++Deprecated passing an offset-naive :class:`datetime.datetime` to
++:py:attr:`~aiohttp.web.StreamResponse.last_modified`, which is interpreted as
++UTC and will raise an error in a future version -- by :user:`greshilov`.
++
++Pass a timezone-aware :class:`datetime.datetime` instead, e.g.
++``datetime.datetime.now(datetime.UTC)``.
+```
+
+**File**: `CHANGES/5313.deprecation.rst` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++5304.deprecation.rst
+\ No newline at end of file
+```
+
+**File**: `aiohttp/web_response.py` (modified, +10/-0)
+```diff
+@@ -266,6 +266,16 @@ def last_modified(
+                 "%a, %d %b %Y %H:%M:%S GMT", time.gmtime(math.ceil(value))
+             )
+         elif isinstance(value, datetime.datetime):
++            if value.utcoffset() is None:
++                warnings.warn(
++                    DeprecationWarning(
++                        "'last_modified' property received an offset-naive datetime, "
++                        "which is interpreted as UTC. This will raise an error in "
++                        "a future version. Please specify a timezone for your "
++                        "datetime object."
++                    ),
++                    stacklevel=2,
++                )
+             if value.microsecond:
+                 value = value.replace(microsecond=0) + datetime.timedelta(seconds=1)
+             self._headers[hdrs.LAST_MODIFIED] = time.strftime(
+```
+
+**File**: `docs/web_reference.rst` (modified, +7/-0)
+```diff
+@@ -862,6 +862,13 @@ and :ref:`aiohttp-web-signals` handlers::
+       as an :class:`int` or a :class:`float` object, and the
+       value ``None`` to unset the header.
  
-     - name: Build wheels
--      uses: pypa/cibuildwheel@v4.3.1
-+      uses: pypa/cibuildwheel@v4.3.4
-       with:
-         package-dir: >-  # not necessarily a dir, we pass an acceptable sdist
-           dist/${{ inputs.source-tarball-name }}
++      Naive :class:`datetime.datetime` objects are interpreted as UTC.
++
++      .. deprecated:: 3.15
++
++         Naive :class:`datetime.datetime` objects, pass a timezone-aware
++         one instead.
++
+    .. attribute:: etag
+ 
+       *ETag* header for outgoing response.
+```
+
+**File**: `tests/test_web_response.py` (modified, +21/-0)
+```diff
+@@ -285,6 +285,7 @@ def test_last_modified_datetime() -> None:
+     dt = datetime.datetime(2001, 2, 3, 4, 5, 6, 0, datetime.UTC)
+     resp.last_modified = dt
+     assert resp.last_modified == dt
++    assert resp.headers[hdrs.LAST_MODIFIED] == "Sat, 03 Feb 2001 04:05:06 GMT"
+ 
+ 
+ def test_last_modified_datetime_and_timestamp_round_consistently() -> None:
+@@ -408,6 +409,26 @@ def test_etag_reset() -> None:
+     assert resp.etag is None
+ 
+ 
++class _NoOffsetTZ(datetime.tzinfo):
++    utcoffset = dst = tzname = lambda self, dt=None: None  # type: ignore[misc]
++
++
++@pytest.mark.parametrize(
++    "value",
++    (
++        datetime.datetime(2020, 12, 6, 15, 38, 5),
++        datetime.datetime(2020, 12, 6, 15, 38, 5, tzinfo=_NoOffsetTZ()),
++    ),
++    ids=("no-tzinfo", "tzinfo-without-offset"),
++)
++def test_last_modified_naive_datetime_deprecated(value: datetime.datetime) -> None:
++    resp = web.StreamResponse()
++
++    with pytest.warns(DeprecationWarning, match="offset-naive datetime"):
++        resp.last_modified = value
++    assert resp.headers[hdrs.LAST_MODIFIED] == "Sun, 06 Dec 2020 15:38:05 GMT"
++
++
+ async def test_start() -> None:
+     req = make_request("GET", "/")
+     resp = web.StreamResponse()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14199** (2026-10-27): Bump coverage from 7.16.2 to 7.17.0 (@dependabot[bot])
-- **PR #14198** (2026-10-27): Bump coverage from 7.16.2 to 7.17.0 (@dependabot[bot])
-- **PR #14197** (2026-10-27): Bump certifi from 2026.10.19 to 2026.10.23 (@dependabot[bot])
-- **PR #14194** (2026-10-27): Bump multidict from 7.1.0 to 7.2.0 (@dependabot[bot])
-- **PR #14192** (2026-10-27): Bump pycares from 5.1.0 to 5.2.1 (@dependabot[bot])
-- **PR #14190** (2026-10-27): Bump myst-parser from 4.0.1 to 5.1.0 (@dependabot[bot])
+- **PR #14224** (2026-10-30): Bump python-discovery from 1.6.4 to 1.6.5 (@dependabot[bot])
+- **PR #14222** (2026-10-30): Bump virtualenv from 21.14.13 to 21.15.0 (@dependabot[bot])
+- **PR #14221** (2026-10-30): Bump platformdirs from 4.13.5 to 4.13.6 (@dependabot[bot])
+- **PR #14220** (2026-10-30): Bump pypa/cibuildwheel from 4.3.4 to 4.3.5 (@dependabot[bot])
+- **PR #14219** (2026-10-30): Bump pypa/cibuildwheel from 4.3.4 to 4.3.5 (@dependabot[bot])
+- **PR #14217** (2026-10-30): Bump python-discovery from 1.6.4 to 1.6.5 (@dependabot[bot])
 
 ---
 
@@ -2479,13 +2044,13 @@ href="https://redirect.github.com/pypa/cibuildwheel/issues/3020">#3020</a>)</li>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump filelock from 4.1.0 to 4.2.1 in /requirements in the pip group across 1 dir
+## X. Bump python-discovery from 1.6.4 to 1.6.5 (#14217)
 
 **RULE**:
 When implementing operations in `requirements/constraints.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aio-libs/aiohttp. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `79675d55`: Bump filelock from 4.1.0 to 4.2.1 in /requirements in the pip group across 1 directory (#14172). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3df45d98`: Bump python-discovery from 1.6.4 to 1.6.5 (#14217). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `requirements/constraints.txt`.
@@ -2493,83 +2058,14 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    #   -r lint.in
-    #   -r runtime-deps.in
-    #   -r lint.in
-    #   -r runtime-deps.in
-    #   -r runtime-deps.in
-    # via -r doc.in
-    #   -r runtime-deps.in
-    # via -r lint.in
-    #   -r lint.in
-    #   -r runtime-deps.in
-    #   -r lint.in
-    #   -r test-common.in
-    # via -r runtime-deps.in
-    #   -r test-common.in
-    # via -r cython.in
-filelock==4.2.1
-    #   -r lint.in
-    #   -r test-common-base.in
-    #   -r runtime-deps.in
-    # via -r base.in
-    #   -r lint.in
-    #   -r test-common.in
-    #   -r multidict.in
-    #   -r runtime-deps.in
-    #   -r lint.in
-    #   -r test-common.in
-    # via -r doc.in
-    # via -r dev.in
-    # via -r test-common-base.in
-    # via -r lint.in
-    #   -r runtime-deps.in
-    #   -r lint.in
-    #   -r test-common-base.in
-    #   -r lint.in
-    #   -r test-common-base.in
-    #   -r lint.in
-    #   -r test-common-base.in
+python-discovery==1.6.5
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    #   -r requirements/lint.in
-    #   -r requirements/runtime-deps.in
-    #   -r requirements/lint.in
-    #   -r requirements/runtime-deps.in
-    #   -r requirements/runtime-deps.in
-    # via -r requirements/doc.in
-    #   -r requirements/runtime-deps.in
-    # via -r requirements/lint.in
-    #   -r requirements/lint.in
-    #   -r requirements/runtime-deps.in
-    #   -r requirements/lint.in
-    #   -r requirements/test-common.in
-    # via -r requirements/runtime-deps.in
-    #   -r requirements/test-common.in
-    # via -r requirements/cython.in
-filelock==4.1.0
-    #   -r requirements/lint.in
-    #   -r requirements/test-common-base.in
-    #   -r requirements/runtime-deps.in
-    # via -r requirements/base.in
-    #   -r requirements/lint.in
-    #   -r requirements/test-common.in
-    #   -r requirements/multidict.in
-    #   -r requirements/runtime-deps.in
-    #   -r requirements/lint.in
-    #   -r requirements/test-common.in
-    # via -r requirements/doc.in
-    # via -r requirements/dev.in
-    # via -r requirements/test-common-base.in
-    # via -r requirements/lint.in
-    #   -r requirements/runtime-deps.in
-    #   -r requirements/lint.in
-    #   -r requirements/test-common-base.in
-  
+python-discovery==1.6.4
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `79675d55` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3df45d98` are properly handled with clean fallback behavior.

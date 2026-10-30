@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T15:54:16.303Z",
-    "lastVerified": "2026-10-30T15:54:16.303Z",
+    "lastChecked": "2026-10-30T16:00:48.020Z",
+    "lastVerified": "2026-10-30T16:00:48.020Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -140,22 +140,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T15:15:03.468Z",
-    "lastVerified": "2026-10-30T15:15:03.468Z",
+    "lastChecked": "2026-10-30T16:00:43.617Z",
+    "lastVerified": "2026-10-30T16:00:43.617Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "95173f3ede33a2d7f7d7d7117242f7e6ee98ec17c75a033533ea7e205bdcb3cb",
+    "contentHash": "8ac80a4af2b961470583e44373726e9e68ea56aade508670245aaba1e3386bdd",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "15bc0611"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -1797,12 +1796,12 @@
     "officialUrl": "https://github.com/langchain4j/langchain4j",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-28T22:59:10.759Z",
-    "lastVerified": "2026-10-28T22:59:10.759Z",
+    "lastChecked": "2026-10-30T16:00:42.150Z",
+    "lastVerified": "2026-10-30T16:00:42.150Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-langchain4j-langchain4j",
-    "contentHash": "24db3cda644cef48be90c37bda4832d6fd6f0133f782776dc5a37588644c2b37",
+    "contentHash": "35c53f8e8272a237feea7c271e6cbe2e253f181bb6771ca6412a8c5b78e8d7f2",
     "promotedRulesCount": 1,
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
@@ -2109,14 +2108,14 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-30T08:36:32.044Z",
-    "lastVerified": "2026-10-30T08:36:32.044Z",
+    "lastChecked": "2026-10-30T16:00:38.265Z",
+    "lastVerified": "2026-10-30T16:00:38.265Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
-    "contentHash": "50a515b1b890604af918a5e0e37cba3315ecb35e94371af20fdb74098135dd7c",
-    "promotedRulesCount": 2,
-    "recentFixesCount": 1,
+    "contentHash": "22096d72a577075b97fbad4879618a22896927f02a07712dd9a931d13ece0883",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2776,9 +2775,9 @@
   "litmuschaos-litmus": {
     "name": "litmus",
     "officialUrl": "https://github.com/litmuschaos/litmus",
-    "lastChecked": "2026-10-29T00:09:12.422Z",
+    "lastChecked": "2026-10-30T16:00:31.955Z",
     "revisionIdentifier": "97a397fb",
-    "lastVerified": "2026-10-29T00:09:12.422Z"
+    "lastVerified": "2026-10-30T16:00:31.955Z"
   },
   "pinecone-io-examples": {
     "name": "examples",
@@ -6468,12 +6467,12 @@
     "lastVerified": "2026-10-30T07:03:33.332Z"
   },
   "topgrade-rs-topgrade": {
-    "name": "topgrade-rs/topgrade",
+    "name": "topgrade",
     "officialUrl": "https://github.com/topgrade-rs/topgrade",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T18:34:32.443Z",
-    "lastVerified": "2026-10-28T18:34:32.443Z",
+    "lastChecked": "2026-10-30T16:00:23.422Z",
+    "lastVerified": "2026-10-30T16:00:23.422Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-topgrade-rs-topgrade",
@@ -6482,7 +6481,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c58ad18d"
   },
   "hf-baai-bge-large-en-v1.5": {
     "name": "BAAI/bge-large-en-v1.5",
@@ -10312,5 +10312,29 @@
     "lastChecked": "2026-10-30T15:49:10.923Z",
     "revisionIdentifier": "d1f7b2b4",
     "lastVerified": "2026-10-30T15:49:10.923Z"
+  },
+  "aio-libs-aiohttp": {
+    "name": "aio-libs/aiohttp",
+    "officialUrl": "https://github.com/aio-libs/aiohttp",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-30T16:00:30.599Z",
+    "lastVerified": "2026-10-30T16:00:30.599Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-aio-libs-aiohttp",
+    "contentHash": "e1a1f6f241c08f0cc4ecfeda58cc0df65503f0ee873c3261e561554c9ee83b82",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jordansinger-swiftui-kit": {
+    "name": "SwiftUI-Kit",
+    "officialUrl": "https://github.com/jordansinger/SwiftUI-Kit",
+    "lastChecked": "2026-10-30T16:00:28.404Z",
+    "revisionIdentifier": "1211aa6b",
+    "lastVerified": "2026-10-30T16:00:28.404Z"
   }
 }

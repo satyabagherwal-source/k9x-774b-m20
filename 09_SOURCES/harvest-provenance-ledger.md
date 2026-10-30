@@ -6240,3 +6240,7 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `2c7aeadb` | Multi-dimensional audit evidence | 2026-10-30T15:49:21.069Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `4c5be75d` | Multi-dimensional audit evidence | 2026-10-30T15:49:23.795Z |
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `3105c762` | Multi-dimensional audit evidence | 2026-10-30T15:54:13.752Z |
+| `learn-github-aio-libs-aiohttp` | `https://github.com/aio-libs/aiohttp` | `3df45d98` | Multi-dimensional audit evidence | 2026-10-30T16:00:32.372Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `b08148b3` | Multi-dimensional audit evidence | 2026-10-30T16:00:39.425Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `0be3cd1c` | Multi-dimensional audit evidence | 2026-10-30T16:00:43.854Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `e29d9471` | Multi-dimensional audit evidence | 2026-10-30T16:00:45.482Z |

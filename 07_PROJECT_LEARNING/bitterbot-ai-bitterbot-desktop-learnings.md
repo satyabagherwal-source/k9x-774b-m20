@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `15bc0611`  
+> **Source Version**: `e29d9471`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T13:37:43.297Z  
+> **Timestamp**: 2026-10-30T16:00:45.054Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T13:37:43.012Z  
+> **Harvest Timestamp**: 2026-10-30T16:00:43.617Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,294 +1799,95 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `15bc0611` (2026-10-30)
-**Commit Message**: feat(gateway): WSL2 autostart and crash supervision without systemd (#333)
+### Incident Patch 1: `442271d8` (2026-10-30)
+**Commit Message**: docs: reboot recovery fix, WSL2 autostart note, LongMemEval in benchmarks index (#334)
 
-The live node runs in WSL2 with init as PID 1: no systemd user bus, so
-`bitterbot gateway install` failed with "systemctl --user unavailable"
-and nothing relaunched the gateway after a Windows reboot or a crash
-(down unnoticed twice in three days: 2026-10-27 lock handoff, 2026-10-29
-Windows Update reboot).
+README Common fixes gains a 'gateway gone after a reboot' entry pointing at
+bitterbot gateway install and the background-process guide. The Windows
+platform page no longer says a scheduled task is unavailable; it describes
+the WSL2 logon task and supervisor from #333. The Benchmarks index, linked
+from the README, now carries the 2026-10-28 LongMemEval-S official-protocol
+result with its caveats and a Reports entry.
 
-A fourth GatewayService backend, `wsl-supervisor`, is selected on Linux
-when the process runs in WSL and a one-shot `systemctl --user status`
-probe fails; systemd is kept whenever the bus works, and non-WSL Linux
-without systemd keeps the systemd backend and its hints.
+Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
-- `bitterbot gateway supervise` (what the autostart runs): spawns the
-  recorded launcher with the recorded arguments, cwd and environment;
-  child stdout/stderr to ~/.bitterbot/logs/gateway-<YYYYMMDD>.log (new
-  file per day, newest 14 kept); one line per exit to gateway-exits.log
-  (ISO time, pid, exit code or signal, uptime, decision); single-instance
-  lock with stale detection; stale orchestrator socket removed only when
-  nothing holds it; SIGTERM/SIGINT forward a graceful stop and never
-  relaunch.
-- Relaunch policy as pure functio
-
-**File**: `docs/cli/gateway.md` (modified, +11/-1)
+**File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -159,8 +159,18 @@ bitterbot gateway uninstall
- 
- Notes:
- 
--- `gateway install` supports `--port`, `--runtime`, `--token`, `--force`, `--json`.
-+- `gateway install` supports `--port`, `--runtime`, `--token`, `--force`, `--dry-run`, `--json`.
-+- `--dry-run` prints what would be installed without writing, registering or starting anything. It is supported by the `wsl-supervisor` backend (task XML plus the `schtasks.exe` and supervisor commands); other backends refuse it.
- - Lifecycle commands accept `--json` for scripting.
-+- Backends: launchd (macOS), systemd user service (Linux), Scheduled Task (Windows), and `wsl-supervisor` on WSL2 when `systemctl --user` has no bus. See [/gateway/background-process#wsl2-without-systemd](/gateway/background-process#wsl2-without-systemd).
-+
-+### `gateway supervise`
-+
-+```bash
-+bitterbot gateway supervise
-+```
-+
-+The WSL crash supervisor: what the Windows logon task registered by `gateway install` runs on a WSL2 host without systemd. It spawns the recorded gateway command, relaunches it after crashes with a backoff (5 s doubling to 60 s), adopts a gateway that is already running, logs to `~/.bitterbot/logs/gateway-<YYYYMMDD>.log` and `gateway-exits.log`, and stops the gateway on SIGTERM. Not for interactive use: install with `bitterbot gateway install`, stop with `bitterbot gateway stop`.
- 
- ### `gateway switch`
+@@ -296,6 +296,7 @@ In a source checkout use `pnpm bitterbot doctor`; in Docker, `docker compose exe
+ - **Control UI shows "Disconnected" or the first-run screen.** Open the UI at `http://127.0.0.1:19001` on the gateway machine, or through an SSH tunnel to it: the token handoff only works over loopback.
+ - **Port 19001 already in use.** Another gateway is running. Find it with `ss -tlnp | grep 19001` (Linux) or `lsof -i :19001` (macOS), or start on another port with `BITTERBOT_GATEWAY_PORT=19002`.
+ - **`npm install -g bitterbot` fails with `EACCES`.** Your npm cannot write to its global folder (normal with Node from nodejs.org or `apt`). Do not use `sudo`. Run the one command from Quick Start instead; it needs no npm. If you must stay on npm: [give npm a folder you own](docs/start/npm.md#eacces-permission-denied).
++- **Gateway gone after a reboot.** Run `bitterbot gateway install` once and the gateway comes back on its own: a systemd user service on Linux, a launchd agent on macOS, and on WSL2 without systemd a Windows logon task with a crash supervisor that relaunches the gateway and keeps daily logs. Details: [running in the background](docs/gateway/background-process.md).
+ - **"Orchestrator binary NOT FOUND".** No prebuilt P2P orchestrator was available for your platform. Build it with `cargo build --release --manifest-path orchestrator/Cargo.toml` from a checkout.
+ - **P2P peers not connecting.** The P2P Network section of `bitterbot doctor` shows whether bootstrap DNS resolves and the fallback peer is reachable; firewall problems show up there.
  
 ```
 
-**File**: `docs/gateway/background-process.md` (modified, +47/-0)
+**File**: `docs/benchmarks/index.md` (modified, +26/-0)
 ```diff
-@@ -3,6 +3,7 @@ summary: "Background exec execution and process management"
- read_when:
-   - Adding or modifying background exec behavior
-   - Debugging long-running exec tasks
-+  - Running the gateway on WSL2 without systemd (autostart, crash supervision)
- title: "Background Exec and Process Tool"
- ---
+@@ -42,9 +42,35 @@ so an older report is flagged rather than compared. The
+ `skills-ablation` workflow runs the harness self-test weekly with a
+ deterministic executor and can produce a live report on demand.
  
-@@ -94,3 +95,49 @@ Send stdin:
- ```json
- { "tool": "process", "action": "write", "sessionId": "<id>", "data": "y\n" }
- ```
++## Long-term memory recall (LongMemEval-S)
 +
-+## WSL2 without systemd
++A full 500-question run of [LongMemEval-S](https://github.com/xiaowu0162/LongMemEval)
++under the reference protocol (the benchmark's own GPT-4o judge and
++per-question-type prompts), 2026-10-28, with Bitterbot's production retrieval
++(hybrid search, session-level recall, k = 10) feeding a Claude Haiku 4.5
++reader. The unmodified reference scorer returned the same overall figure.
 +
-+A WSL2 distro whose PID 1 is `init` (not systemd) has no user bus: `systemctl --user` fails with `Failed to connect to bus`, and the systemd backend cannot install anything. On such a host `bitterbot gateway install` selects the `wsl-supervisor` backend instead (Linux keeps systemd whenever the user bus works; non-WSL Linux without systemd keeps the systemd backend and its hints). Nothing it installs is root-owned, so it needs no sudo and no `/etc/wsl.conf` change.
++| metric                                    | value |
++| ----------------------------------------- | ----- |
++| overall (question-weighted)               | 0.858 |
++| task-averaged (mean of 6 type means)      | 0.883 |
++| abstention accuracy (30 `_abs` questions) | 0.933 |
++| session recall_all@10 (470 non-abs)       | 0.964 |
++| multi-session (133), the weakest type     | 0.744 |
 +
-+```bash
-+bitterbot gateway install            # record, logon task, supervisor started now
-+bitterbot gateway install --dry-run  # print the task XML and the commands only
-+bitterbot gateway status             # supervisor pid, gateway pid, port, task, last exits
-+bitterbot gateway stop               # stops the supervisor, which stops the gateway
-+bitterbot gateway restart            # stop + start the supervisor
-+bitterbot gateway uninstall          # removes the task, the lock and the record
-+```
++Caveats. The score is reader and judge dependent: the same retrieval with an
++oracle context (gold sessions only) scores 0.920 with the Haiku reader, so the
++remaining gap is mostly context noise and reading, not retrieval misses (58 of
++the 71 misses had every gold session in context). A Claude Sonnet 4.5 reader
++scored 0.868, one point higher at about three times the cost. Published
++numbers from other systems mostly use a different judge or reader and are not
++directly comparable. Setup, per-type table, miss analysis and raw outputs:
++[benchmarks/longmemeval](https://github.com/Bitterbot-AI/bitterbot-desktop/blob/main/benchmarks/longmemeval/README.md).
 +
-+### What gets installed
-+
-+- `~/.bitterbot/run/gateway-supervisor.json`: the recorded command (program arguments, working directory, environment), what `bitterbot gateway status` shows as the service command.
-+- A Windows scheduled task named `Bitterbot Gateway (WSL <distro>)` for the current Windows user (logon trigger). Its action is `C:\Windows\System32\wsl.exe -d <distro> -u <linux user> -- <launcher> gateway supervise`, where the launcher is `~/.bitterbot/app/current/bin/bitterbot` on a release install. It is registered through `schtasks.exe /Create /XML` from a UTF-16 file written to the Windows temp dir and deleted afterwards, because only the XML form can set `ExecutionTimeLimit` to `PT0S` (the `/SC ONLOGON` flags leave the default 72 hour limit, which would kill the supervisor after three days). The task also sets `MultipleInstancesPolicy` IgnoreNew, `StartWhenAvailable` true and `DisallowStartIfOnBatteries` false.
-+- The supervisor process, started detached right away. It adopts a gateway that is already running (see below), so the install does not restart the gateway.
-+
-+If Windows interop (`schtasks.exe`, `wsl.exe` under `/mnt/c/Windows/System32`) is not reachable, the install still writes the record and starts the supervisor, and says plainly that no boot trigger was registered and how to enable interop. The supervisor then runs until the next Windows reboot; `bitterbot gateway start` brings it back.
-+
-+The task runs `wsl.exe` in the interactive session, so a console window belongs to the supervisor after logon. Closing that window kills the supervisor and the gateway; use `bitterbot gateway stop` instead.
-+
-+### `bitterbot gateway supervise`
-+
-+This is what the task runs; you do not type it. The supervisor:
-+
-+- Spawns the recorded command (the launcher is re-resolved from `BITTERBOT_INSTALL_ROOT` when the recorded path is gone, falling back to this Node and the CLI entry), with the recorded working directory and environment.
-+- Writes the gateway's stdout and stderr to `~/.bitterbot/logs/gateway-<YYYYMMDD>.log` (a new file per calendar day, the newest 14 kept) and one line per gateway exit to `~/.bitterbot/logs/gateway-exits.log`: ISO time, pid, exit code or signal, uptime in seconds, and the relaunch decision.
-+- Holds a single-instance lock at `~/.bitterbot/run/gateway-supervisor.lock` (pid inside; a lock whose owner is dead is taken over) and writes `gateway-supervisor.pid` next to it.
-+- Removes a leftover `/tmp/bitterbot-orchestrator.sock` before each spawn, only when no process answers on it.
-+
-+### Relaunch policy
-+
-+- Any non-zero exit or signal: relaunch after a backoff of 5 s that doubles per consecutive failure and caps at 60 s. Ten minutes of healthy uptime reset the backoff.
-+- Exit code 0 is an intentional stop or a SIGUSR1 full-process restart (the old gateway spawns the new one detached, hands it the lock and exits 0 while the child keeps running). The supervisor does not relaunch on exit 0. It waits 20 s, then checks the gateway lock and the port: a gateway holding the lock or answering on the port is the restart child, and the supervisor adopts it. Nothing running after the grace means a stop nobody asked the supervisor for, so it relaunches once and logs why. A second exit 0 that again leaves nothing running (before the ten-minute reset) means the gateway is being stopped on purpose; the supervisor logs that and exits.
-+- SIGTERM or SIGINT to the supervisor (what `bitterbot gateway stop` sends) forwards a graceful stop to the gateway, waits for it (SIGKILL afte
+ ## Reports
+ 
+ Newest first.
+ 
++- [2026-10-28 LongMemEval-S official protocol](https://github.com/Bitterbot-AI/bitterbot-desktop/blob/main/benchmarks/longmemeval/README.md#results): 500 questions, Haiku 4.5 reader, GPT-4o judge, 0.858 overall; oracle-context and Sonnet 4.5 reader baselines.
+ - [2026-09-06 external](skills-2026-09-06-external.md): ContinualSkillBench math, deterministic subset, baseline and harvested arms, primary model, six tasks, two trials.
+ - [2026-09-06](skills-2026-09-06.md): first run on the reference node; baseline and harvested arms only (no evolved skill live yet), primary model, frozen corpus, six tasks per suite, two trials.
 ```
 
-**File**: `docs/gateway/doctor.md` (modified, +2/-1)
+**File**: `docs/platforms/windows.md` (modified, +5/-2)
 ```diff
-@@ -88,7 +88,8 @@ cat ~/.bitterbot/bitterbot.json
- - Gateway port collision diagnostics (default `19001`).
- - Security warnings for open DM policies.
- - Gateway auth warnings when no `gateway.auth.token` is set (local mode; offers token generation).
--- systemd linger check on Linux.
-+- systemd linger check on Linux (systemd backend only).
-+- WSL2 without systemd: reports an unsupervised gateway (no `wsl-supervisor` installed) as a finding, fix `bitterbot gateway install`.
- - Source install checks (pnpm workspace mismatch, missing UI assets, missing tsx binary).
- - Writes updated config + wizard metadata.
+@@ -14,8 +14,11 @@ compatible (Node, Linux binaries, skills). WSL2 itself is one command:
+ `wsl --install`. Without WSL2, use the [Docker](/platforms/docker) image with
+ Docker Desktop.
  
-```
-
-**File**: `docs/gateway/index.md` (modified, +12/-0)
-```diff
-@@ -149,6 +149,18 @@ sudo loginctl enable-linger <user>
+-A native Windows install (and a Scheduled Task to run the gateway without
+-WSL) is not available yet; native companion apps are planned.
++A native Windows install is not available yet; native companion apps are
++planned. The gateway does survive reboots: `bitterbot gateway install` inside
++WSL2 registers a Windows logon task that starts a crash supervisor in the
++distro, with `bitterbot gateway status` and `bitterbot doctor` reporting on it.
++See [running in the background](/gateway/background-process#wsl2-without-systemd).
  
-   </Tab>
+ ## Install with install.ps1 (WSL2)
  
-+  <Tab title="WSL2 without systemd">
-+
-+When `systemctl --user` reports `Failed to connect to bus`, `bitterbot gateway install` selects the `wsl-supervisor` backend: a Windows logon task (`Bitterbot Gateway (WSL <distro>)`) starts `bitterbot gateway supervise`, which relaunches the gateway after crashes and adopts one that is already running. No root, no `/etc/wsl.conf` change. See [/gateway/background-process#wsl2-without-systemd](/gateway/background-process#wsl2-without-systemd).
-+
-+```bash
-+bitterbot gateway install --dry-run
-+bitterbot gateway install
-+bitterbot gateway status
-+```
-+
-+  </Tab>
-+
-   <Tab title="Linux (system service)">
- 
- Use a system unit for multi-user/always-on hosts.
-```
-
-**File**: `docs/gateway/troubleshooting.md` (modified, +20/-0)
-```diff
-@@ -201,6 +201,26 @@ Related:
- - [/gateway/configuration](/gateway/configuration)
- - [/gateway/doctor](/gateway/doctor)
- 
-+## Gateway did not come back after a Windows reboot (WSL2)
-+
-+Use this when the gateway runs inside WSL2 and was down after Windows restarted or after a crash.
-+
-+```bash
-+bitterbot gateway status
-+bitterbot doctor
-+systemctl --user status
-+```
-+
-+Look for:
-+
-+- `Failed to connect to bus` from `systemctl --user`: the distro has no systemd user bus, so a systemd unit cannot restart the gateway. `bitterbot gateway status` then shows the `wsl-supervisor` backend.
-+- `Service: wsl-supervisor (not installed)`: nothing restarts the gateway. Fix: `bitterbot gateway install` (registers a Windows logon task and starts the supervisor; it adopts a gateway that is already running). `bitterbot gateway install --dry-run` prints the task XML and the commands first.
-+- `Logon task: not registered` with the supervisor installed: Windows interop was not reachable at install time. Enable interop in `/etc/wsl.conf` and rerun `bitterbot gateway install --force`, or start the supervisor by hand after a reboot with `bitterbot gateway start`.
-+- `Supervisor: not running` with the task registered: the task starts at the Windows user's logon, not at boot; log on, or run the task from Task Scheduler. Closing the task's console window kills the supervisor; use `bitterbot gateway stop`.
-+- Repeated lines in `~/.bitterbot/logs/gateway-exits.log` with the same exit code: the gateway crashes at start. Read `~/.bitterbot/logs/gateway-<YYYYMMDD>.log` for the cause; the supervisor backs off up to 60 s between attempts.
-+
-+See [/gateway/background-process#wsl2-without-systemd](/gateway/background-process#wsl2-without-systemd) for what the supervisor installs and its relaunch policy.
-+
- ## Channel connected messages not flowing
- 
- If channel state is connected but message flow is dead, focus on policy, permissions, and channel specific delivery rules.
-```
-
-**File**: `src/cli/daemon-cli/install.ts` (modified, +38/-2)
-```diff
-@@ -50,14 +50,19 @@ export async function runDaemonInstall(opts: DaemonInstallOptions) {
-   }
- 
-   const service = resolveGatewayService();
-+  const dryRun = Boolean(opts.dryRun);
-+  if (dryRun && !service.supportsDryRun) {
-+    fail(`--dry-run is not supported by the ${service.label} backend.`);
-+    return;
-+  }
-   let loaded = false;
-   try {
-     loaded = await service.isLoaded({ env: process.env });
-   } catch (err) {
-     fail(`Gateway service check failed: ${String(err)}`);
-     return;
-   }
--  if (loaded) {
-+  if (loaded && !dryRun) {
-     if (!opts.force) {
-       emit({
-         ok: true,
-@@ -87,7 +92,15 @@ export async function runDaemonInstall(opts: DaemonInstallOptions) {
-   let token: string | undefined =
-     opts.token || cfg.gateway?.auth?.token || process.env.BITTERBOT_GATEWAY_TOKEN;
- 
--  if (!token && needsToken) {
-+  if (!token && needsToken && dryRun) {
-+    const msg = "Dry run: a gateway token would be generated and saved to config.";
-+    if (json) {
-+      warnings.push(msg);
-+    } else {
-+      defaultRuntime.log(msg);
-+    }
-+    token = "<generated-at-install>";
-+  } else if (!token && needsToken) {
-     token = randomToken();
-     const warnMsg = "No gateway token found. Auto-generated one and saving to config.";
-     if (json) {
-@@ -155,6 +168,29 @@ export async function runDaemonInstall(opts: DaemonInstallOptions) {
-     config: cfg,
-   });
- 
-+  if (dryRun) {
-+    try {
-+      await service.install({
-+        env: process.env,
-+        stdout,
-+        programArguments,
-+        workingDirectory,
-+        environment,
-+        dryRun: true,
-+      });
-+    } catch (err) {
-+      fail(`Gateway install dry run failed: ${String(err)}`);
-+      return;
-+    }
-+    emit({
-+      ok: true,
-+      result: "dry-run",
-+      message: "Nothing was installed.",
-+      service: buildDaemonServiceSnapshot(service, loaded),
-+    });
-+    return;
-+  }
-+
-   await installDaemonServiceAndEmit({
-     serviceNoun: "Gateway",
-     service,
-```
-
-**File**: `src/cli/daemon-cli/register-service-commands.ts` (modified, +5/-0)
-```diff
-@@ -37,6 +37,11 @@ export function addGatewayServiceCommands(parent: Command, opts?: { statusDescri
-     .option("--runtime <runtime>", "Daemon runtime (node|bun). Default: node")
-     .option("--token <token>", "Gateway token (token auth)")
-     .option("--force", "Reinstall/overwrite if already installed", false)
-+    .option(
-+      "--dry-run",
-+      "Print what would be installed (WSL supervisor: task XML + commands) without changing anything",
-+      false,
-+    )
-     .option("--json", "Output JSON", false)
-     .action(async (cmdOpts) => {
-       await runDaemonInstall(cmdOpts);
-```
-
-**File**: `src/cli/daemon-cli/shared.ts` (modified, +5/-0)
-```diff
-@@ -5,6 +5,8 @@ import {
- } from "../../daemon/constants.js";
- import { resolveGatewayLogPaths } from "../../daemon/launchd.js";
- import { formatRuntimeStatus } from "../../daemon/runtime-format.js";
-+import { resolveGatewayService } from "../../daemon/service.js";
-+import { WSL_SUPERVISOR_LABEL } from "../../daemon/wsl-supervisor.js";
- import { pickPrimaryLanIPv4 } from "../../gateway/net.js";
- import { getResolvedLoggerSettings } from "../../logging.js";
- import { colorize, isRich, theme } from "../../terminal/theme.js";
-@@ -158,6 +160,9 @@ export function renderGatewayServiceStartHints(env: NodeJS.ProcessEnv = process.
-       return [...base, `launchctl bootstrap gui/$UID ~/Library/LaunchAgents/${label}.plist`];
-     }
-     case "linux": {
-+      if (resolveGatewayService().label === WSL_SUPERVISOR_LABEL) {
-+        return base;
-+      }
-       const unit = resolveGatewaySystemdServiceName(profile);
-       return [...base, `systemctl --user start ${unit}.service`];
-     }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #334** (2026-10-30): docs: reboot recovery fix, WSL2 autostart note, LongMemEval in benchmarks index (@VGIL77)
 - **PR #333** (2026-10-30): feat(gateway): WSL2 autostart and crash supervision without systemd (@VGIL77)
 - **PR #332** (2026-10-30): feat(memory): weighted RRF channel fusion with sweep and real-query validation (@VGIL77)
 - **PR #331** (2026-10-30): feat(memory): shadow surfacing trial eligibility and assignment (PLAN-59 Phase 2) (@VGIL77)
 - **PR #329** (2026-10-29): feat(memory): PLAN-59 Phase 1 pilot harness (forked consolidation arms) (@VGIL77)
 - **PR #328** (2026-10-29): feat(memory): default evidence telemetry to shadow mode (@VGIL77)
-- **PR #322** (2026-10-29): feat(memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (@VGIL77)
 
 ---
 
@@ -2106,38 +1907,28 @@ without systemd keeps the systemd backend and its hints.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gateway): WSL2 autostart and crash supervision without systemd (#333)
+## X. docs: reboot recovery fix, WSL2 autostart note, LongMemEval in benchmarks index 
 
 **RULE**:
-When implementing operations in `docs/cli/gateway.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `15bc0611`: gateway): WSL2 autostart and crash supervision without systemd (#333). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `442271d8`: docs: reboot recovery fix, WSL2 autostart note, LongMemEval in benchmarks index (#334). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/cli/gateway.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- `gateway install` supports `--port`, `--runtime`, `--token`, `--force`, `--dry-run`, `--json`.
-- `--dry-run` prints what would be installed without writing, registering or starting anything. It is supported by the `wsl-supervisor` backend (task XML plus the `schtasks.exe` and supervisor commands); other backends refuse it.
-- Backends: launchd (macOS), systemd user service (Linux), Scheduled Task (Windows), and `wsl-supervisor` on WSL2 when `systemctl --user` has no bus. See [/gateway/background-process#wsl2-without-systemd](/gateway/background-process#wsl2-without-systemd).
-
-### `gateway supervise`
-
-```bash
-bitterbot gateway supervise
-```
-
-The WSL crash supervisor: what the Windows logon task registered by `gateway install` runs on a WSL2 host without systemd. It spawns the recorded gateway command, relaunches it after crashes with a backoff (5 s doubling to 60 s), adopts a gateway that is already running, logs to `~/.bitterbot/logs/gateway-<YYYYMMDD>.log` and `gateway-exits.log`, and stops the gateway on SIGTERM. Not for interactive use: install with `bitterbot gateway install`, stop with `bitterbot gateway stop`.
+- **Gateway gone after a reboot.** Run `bitterbot gateway install` once and the gateway comes back on its own: a systemd user service on Linux, a launchd agent on macOS, and on WSL2 without systemd a Windows logon task with a crash supervisor that relaunches the gateway and keeps daily logs. Details: [running in the background](docs/gateway/background-process.md).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-- `gateway install` supports `--port`, `--runtime`, `--token`, `--force`, `--json`.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `15bc0611` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `442271d8` are properly handled with clean fallback behavior.

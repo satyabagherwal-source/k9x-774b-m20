@@ -6231,3 +6231,7 @@
 | `CYCLE-20261030-DWRT` | `2026-10-30T15:49:21.065Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5791` | Yes (`2b9ce47a...`) |
 | `CYCLE-20261030-DYVJ` | `2026-10-30T15:49:23.791Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5792` | Yes (`87cec5dd...`) |
 | `CYCLE-20261030-K6LW` | `2026-10-30T15:54:13.748Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5793` | Yes (`028dbe4e...`) |
+| `CYCLE-20261030-SAR5` | `2026-10-30T16:00:32.369Z` | `aio-libs/aiohttp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5794` | Yes (`e1a1f6f2...`) |
+| `CYCLE-20261030-SG72` | `2026-10-30T16:00:39.422Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5795` | Yes (`22096d72...`) |
+| `CYCLE-20261030-SJM3` | `2026-10-30T16:00:43.851Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5796` | Yes (`35c53f8e...`) |
+| `CYCLE-20261030-SKVB` | `2026-10-30T16:00:45.479Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5797` | Yes (`8ac80a4a...`) |

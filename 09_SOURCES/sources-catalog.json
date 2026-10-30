@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "15bc0611",
+    "sourceVersion": "e29d9471",
     "license": "MIT",
-    "contentHash": "95173f3ede33a2d7f7d7d7117242f7e6ee98ec17c75a033533ea7e205bdcb3cb",
-    "lastHarvestedAt": "2026-10-30T13:37:43.962Z",
+    "contentHash": "8ac80a4af2b961470583e44373726e9e68ea56aade508670245aaba1e3386bdd",
+    "lastHarvestedAt": "2026-10-30T16:00:45.482Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "71740ecb",
+    "sourceVersion": "b08148b3",
     "license": "MIT",
-    "contentHash": "50a515b1b890604af918a5e0e37cba3315ecb35e94371af20fdb74098135dd7c",
-    "lastHarvestedAt": "2026-10-30T08:41:45.926Z",
+    "contentHash": "22096d72a577075b97fbad4879618a22896927f02a07712dd9a931d13ece0883",
+    "lastHarvestedAt": "2026-10-30T16:00:39.425Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "3eabc2b8",
+    "sourceVersion": "0be3cd1c",
     "license": "Apache-2.0",
-    "contentHash": "24db3cda644cef48be90c37bda4832d6fd6f0133f782776dc5a37588644c2b37",
-    "lastHarvestedAt": "2026-10-28T22:59:11.456Z",
+    "contentHash": "35c53f8e8272a237feea7c271e6cbe2e253f181bb6771ca6412a8c5b78e8d7f2",
+    "lastHarvestedAt": "2026-10-30T16:00:43.854Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {
@@ -9673,10 +9673,10 @@
     "repository": "aio-libs/aiohttp",
     "platform": "github",
     "sourceUrl": "https://github.com/aio-libs/aiohttp",
-    "sourceVersion": "e7475aec",
+    "sourceVersion": "3df45d98",
     "license": "Apache-2.0",
-    "contentHash": "88ae448a08ad2731e232fcffe2a333640088bb3913bf2d954989a99ccc62bb27",
-    "lastHarvestedAt": "2026-10-27T13:48:12.304Z",
+    "contentHash": "e1a1f6f241c08f0cc4ecfeda58cc0df65503f0ee873c3261e561554c9ee83b82",
+    "lastHarvestedAt": "2026-10-30T16:00:32.372Z",
     "learningId": "learn-github-aio-libs-aiohttp"
   },
   "iplug2-iplug2": {

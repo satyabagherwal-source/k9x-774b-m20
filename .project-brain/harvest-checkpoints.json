@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T15:54:13.761Z",
+  "last_updated": "2026-10-30T16:00:45.488Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "95173f3ede33a2d7f7d7d7117242f7e6ee98ec17c75a033533ea7e205bdcb3cb",
-      "verified_at": "2026-10-30T13:37:43.972Z",
+      "content_hash": "8ac80a4af2b961470583e44373726e9e68ea56aade508670245aaba1e3386bdd",
+      "verified_at": "2026-10-30T16:00:45.488Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T13:37:43.972Z"
+      "last_updated": "2026-10-30T16:00:45.488Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "50a515b1b890604af918a5e0e37cba3315ecb35e94371af20fdb74098135dd7c",
-      "verified_at": "2026-10-30T08:41:45.932Z",
+      "content_hash": "22096d72a577075b97fbad4879618a22896927f02a07712dd9a931d13ece0883",
+      "verified_at": "2026-10-30T16:00:39.431Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T08:41:45.932Z"
+      "last_updated": "2026-10-30T16:00:39.431Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "24db3cda644cef48be90c37bda4832d6fd6f0133f782776dc5a37588644c2b37",
-      "verified_at": "2026-10-28T22:59:11.465Z",
+      "content_hash": "35c53f8e8272a237feea7c271e6cbe2e253f181bb6771ca6412a8c5b78e8d7f2",
+      "verified_at": "2026-10-30T16:00:43.860Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:59:11.465Z"
+      "last_updated": "2026-10-30T16:00:43.860Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",
@@ -14556,14 +14556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aio-libs-aiohttp",
-      "content_hash": "88ae448a08ad2731e232fcffe2a333640088bb3913bf2d954989a99ccc62bb27",
-      "verified_at": "2026-10-27T13:48:12.312Z",
+      "content_hash": "e1a1f6f241c08f0cc4ecfeda58cc0df65503f0ee873c3261e561554c9ee83b82",
+      "verified_at": "2026-10-30T16:00:32.378Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:48:12.312Z"
+      "last_updated": "2026-10-30T16:00:32.378Z"
     },
     "iPlug2/iPlug2": {
       "repository": "iPlug2/iPlug2",
