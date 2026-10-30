@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T11:28:20.239Z",
+  "last_updated": "2026-10-30T13:01:54.415Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -70462,8 +70462,8 @@
       "slug": "fb55-htmlparser2",
       "platform": "github",
       "source_url": "https://github.com/fb55/htmlparser2",
-      "source_version": "8eff7d8b",
-      "content_hash": "1baec62a8e75c320a5b9966aabf72936e2d0e9e44ec997542f9a769f968767f3",
+      "source_version": "29d243b5",
+      "content_hash": "8d9465bf2c2d7f7c28701a4034c5f5641428df5078623e0ff03703c7adfdeb2f",
       "dossier_path": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fb55-htmlparser2-learnings.md",
       "promoted_rules": [
@@ -70486,6 +70486,21 @@
           "number": 4736,
           "title": "build(deps): Bump github/codeql-action from 4.39.0 to 4.39.1 (#2555)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5747,
+          "title": "Zero-Allocation Index-Windowing Invariant for Streaming Tokenizers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5748,
+          "title": "Multi-Byte Streaming Decoder Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5749,
+          "title": "Dual-Branch Lookahead Disambiguation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -70493,7 +70508,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:14:34.867Z",
+      "verified_at": "2026-10-30T13:01:54.396Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153184,6 +153199,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T11:28:20.224Z"
+    },
+    "rule-5747": {
+      "learning_id": "rule-5747",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5747,
+      "title": "Zero-Allocation Index-Windowing Invariant for Streaming Tokenizers",
+      "source_url": "https://github.com/fb55/htmlparser2",
+      "source_version": "29d243b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:01:54.396Z"
+    },
+    "rule-5748": {
+      "learning_id": "rule-5748",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5748,
+      "title": "Multi-Byte Streaming Decoder Invariant",
+      "source_url": "https://github.com/fb55/htmlparser2",
+      "source_version": "29d243b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:01:54.396Z"
+    },
+    "rule-5749": {
+      "learning_id": "rule-5749",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5749,
+      "title": "Dual-Branch Lookahead Disambiguation Invariant",
+      "source_url": "https://github.com/fb55/htmlparser2",
+      "source_version": "29d243b5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:01:54.396Z"
     }
   },
   "aliases": {

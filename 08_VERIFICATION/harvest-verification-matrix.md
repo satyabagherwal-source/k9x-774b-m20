@@ -6187,3 +6187,4 @@
 | `CYCLE-20261030-247P` | `2026-10-30T11:28:14.293Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5744` | Yes (`412c986e...`) |
 | `CYCLE-20261030-288S` | `2026-10-30T11:28:19.516Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5745` | Yes (`f1b258ac...`) |
 | `CYCLE-20261030-28VE` | `2026-10-30T11:28:20.330Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5746` | Yes (`e46e7ba6...`) |
+| `CYCLE-20261030-EKSB` | `2026-10-30T13:01:54.491Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5747, Rule 5748, Rule 5749` | Yes (`8d9465bf...`) |

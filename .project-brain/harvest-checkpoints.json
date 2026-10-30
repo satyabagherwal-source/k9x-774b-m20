@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T11:28:20.341Z",
+  "last_updated": "2026-10-30T13:01:54.505Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -14091,14 +14091,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fb55-htmlparser2",
-      "content_hash": "1baec62a8e75c320a5b9966aabf72936e2d0e9e44ec997542f9a769f968767f3",
-      "verified_at": "2026-10-27T12:14:34.985Z",
+      "content_hash": "8d9465bf2c2d7f7c28701a4034c5f5641428df5078623e0ff03703c7adfdeb2f",
+      "verified_at": "2026-10-30T13:01:54.504Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:14:34.985Z"
+      "last_updated": "2026-10-30T13:01:54.504Z"
     },
     "inikulin/parse5": {
       "repository": "inikulin/parse5",

@@ -9363,10 +9363,10 @@
     "repository": "fb55/htmlparser2",
     "platform": "github",
     "sourceUrl": "https://github.com/fb55/htmlparser2",
-    "sourceVersion": "8eff7d8b",
+    "sourceVersion": "29d243b5",
     "license": "MIT",
-    "contentHash": "1baec62a8e75c320a5b9966aabf72936e2d0e9e44ec997542f9a769f968767f3",
-    "lastHarvestedAt": "2026-10-27T12:14:34.974Z",
+    "contentHash": "8d9465bf2c2d7f7c28701a4034c5f5641428df5078623e0ff03703c7adfdeb2f",
+    "lastHarvestedAt": "2026-10-30T13:01:54.495Z",
     "learningId": "learn-github-fb55-htmlparser2"
   },
   "inikulin-parse5": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T11:28:20.337Z",
-  "total_cycles_completed": 6164,
-  "total_learnings_persisted": 6164,
-  "total_rules_promoted": 5716,
+  "last_updated": "2026-10-30T13:01:54.500Z",
+  "total_cycles_completed": 6165,
+  "total_learnings_persisted": 6165,
+  "total_rules_promoted": 5719,
   "history": [
-    {
-      "timestamp": "2026-10-28T23:30:41.643Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T23:31:36.016Z",
       "repository": "black-forest-labs/flux-3-image-klein",
@@ -1403,6 +1396,13 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T13:01:54.500Z",
+      "repository": "fb55/htmlparser2",
+      "learningId": "learn-github-fb55-htmlparser2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

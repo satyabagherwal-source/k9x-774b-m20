@@ -6196,3 +6196,4 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `4e28758e` | Multi-dimensional audit evidence | 2026-10-30T11:28:14.296Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `eb9f5b29` | Multi-dimensional audit evidence | 2026-10-30T11:28:19.519Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `43480947` | Multi-dimensional audit evidence | 2026-10-30T11:28:20.333Z |
+| `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `29d243b5` | Multi-dimensional audit evidence | 2026-10-30T13:01:54.495Z |
