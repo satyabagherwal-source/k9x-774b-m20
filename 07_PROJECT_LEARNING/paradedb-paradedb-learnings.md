@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `2dbf3197`  
+> **Source Version**: `ae198feb`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T00:02:39.544Z  
+> **Timestamp**: 2026-10-30T17:14:40.765Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T00:02:39.361Z  
+> **Harvest Timestamp**: 2026-10-30T17:14:38.925Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9455 stars
+- **Stars / Engagement**: 9460 stars
 
 ---
 
@@ -2301,11 +2301,11 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6885** (2026-10-21): **Regex search on one large segment ignores cancel until the segment is done**
-  *Symptoms*: # What happens?  When a serial Top-K scan runs a `pdb.regex` query on one large segment, `pg_cancel_backend` waits until that segment is searched. The search phase checks for interrupts once per segment (`segments_to_query` in `top_k.rs`). Tantivy walks the term dictionary and opens the matching postings with no check in between. One segment means one check.  On a 20M row table with one segment, the query below runs 18 s. A cancel sent at 1 s landed after 13.8 s. With the same table split into 10 segments, the query runs 8.3 s and the cancel landed in 0.18 s.  Found on 0.26.2 while we looked for paths that hold interrupts (see #6881). Big single segments are what the merger produces on large tables, so this isn't an artificial shape.  ## To Reproduce  1. Start `paradedb/paradedb:0.26.2-pg18` and connect. 2. In session 1, build the table and run the query.  ```sql SET maintenance_work_mem = '2GB'; CREATE TABLE docs AS SELECT i AS id, md5(i::text) || ' ' || md5((i * 7)::text) || ' common words here' AS body FROM generate_series(1, 20000000) AS i; CREATE INDEX docs_idx ON docs USING bm25 (id, body) WITH (target_segment_count = 1); VACUUM ANALYZE docs;  SET max_parallel_workers_per_gather = 0; SELECT id FROM docs WHERE body @@@ pdb.regex('.*abc.*') ORDER BY id DESC LIMIT 10; ```  3. In session 2, right after the `SELECT` starts, run `SELECT pg_cancel_backend(<session 1 pid>);`. 4. Session 1 reports the cancel about 14 s later. Rebuild the index with `target_segment_count = 10` an
+- **Issue #7091** (2026-10-30): **Hash-join InList pushdown disabled when build-side join key contains NULL**
+  *Symptoms*: ### What happens?  If the build side of a hash join has a NULL key, the `InList` dynamic filter is never pushed down as a `TermSetQuery`. The probe side falls back to a full scan + `PreFilter`.  Cause: `try_convert_in_list_to_query` (`scan/pre_filter.rs`) collects terms into `Option<Vec<Term>>`, and `from_scalar` returns `None` for a NULL, so one NULL rejects the whole list. NULLs can just be skipped, since they never match in a non-negated `IN` / inner join.  ### To Reproduce  Stackoverflow benchmark, 100k posts:  ```sql SELECT b.name, COUNT(*) FROM stackoverflow_posts p JOIN badges b ON b.user_id = p.owner_user_id WHERE p.body ||| 'postgres' GROUP BY b.name ORDER BY COUNT(*) DESC LIMIT 10; ```  118 matching posts, 1 with `owner_user_id IS NULL`. No pushdown, and the `badges` scan reads all ~5.95M docs.  With NULLs skipped:  | term | before | after | |---|---|---| | postgres | 115 ms | 43 ms | | regex | 133 ms | 54 ms |  ### Environment  - OS: Linux x86_64 - Version: pg_search 0.26.0 (`main` @ 1a4c5ecd9) - pg_search extension, PG18 
 
-- **Issue #6884** (2026-10-19): **IVF training ignores cancel and terminate during CREATE INDEX and merges**
-  *Symptoms*: # What happens?  When a vector index trains its IVF centroids, the backend ignores `pg_cancel_backend` and `pg_terminate_backend` until training ends. `SuperKMeansIvfClusterer::train` calls `superkmeans::train_owned`, which has no interrupt hook. The assign step after it polls `wants_cancel` in `mvcc.rs`. That reads `QueryCancelPending` but not `ProcDiePending`, so a cancel lands there and a terminate doesn't.  Background merges attach the same clusterer (`SearchIndexMerger::open`). A merger that is training ignores `SIGTERM` the same way, and a fast shutdown waits for it.  Measured on 0.26.2 with `CREATE INDEX` on 1M rows of `vector(512)` and `target_segment_count = 1`. The build reports `train=29264 assign=22265 encode=21265` ms.  | Phase | `pg_cancel_backend` | `pg_terminate_backend` | |---|---|---| | train (29 s) | waits for train to end | waits for train and assign to end | | assign (22 s) | lands in 0.6 s | waits for assign to end | | encode (21 s) | lands in 0.1 s | lands in 0.1 s |  A terminate sent during training landed after 41.7 s. A cancel sent during training landed after 14.4 s, when the phase ended. Training time grows with rows times dims, so I'd expect a few million 1536-dim rows to train for minutes.  Found while we looked for paths that hold interrupts (see #6881). A fix needs two parts, I think. `wants_cancel` should also test `ProcDiePending`, and the clusterer needs a check between splits, which `superkmeans` doesn't expose today.  ## To Reproduce  1. S
+- **Issue #7079** (2026-10-29): **qgen aggregate join test silently falls back because rating is not indexed**
+  *Symptoms*: ## Problem  `generated_aggregate_join` is intended to exercise ParadeDB aggregate pushdown, but its shared qgen fixture deliberately leaves `rating` unindexed for heap-filter coverage. The test nevertheless generates `MIN(users.rating)` and `MAX(users.rating)`. ParadeDB correctly warns that the aggregate argument is not columnar indexed and falls back to PostgreSQL execution.  The test checks result equivalence without checking that the intended DataFusion aggregate path was selected. This lets fallback silently satisfy the test until it becomes slow enough to time out.  ## Evidence  The October 28 Enterprise Antithesis run reported a 60-second statement timeout for `generated_aggregate_join::case_2_churn`, while the harness reported a declared fault pause. This was an execution timeout, not an observed result mismatch.  Run: `7ca15ed5f6be3f861d09eecbb6d51d93-64-10`   Session: `f2b3d1701ab837ac4536d5d15a64a47c-64-10`   Qgen setup seed: `8222010017877383816`  Replayed the full SQL below on pg_search 0.26.3:  - Original fixture: valid warning that `users.rating` is not columnar indexed; PostgreSQL hash FULL JOINs and a sequential search filter. Results matched the baseline locally. - Adding only `rating` to the generated indexes: **ParadeDB Aggregate Scan, Backend: DataFusion**, with both FULL JOINs in the DataFusion physical plan. Results still matched.  This confirms a fixture/coverage problem in qgen. It does not establish a ParadeDB planner bug: the warning correctly descri
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2322,165 +2322,569 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e5995dd2` (2026-10-28)
-**Commit Message**: fix: debug-build panics in filtered Top K queries (#6793)
+### Incident Patch 1: `6610b066` (2026-10-30)
+**Commit Message**: fix: enforce permissions on standalone index reads (#7023)
 
 ## What
 
-Pins Tantivy to the commit that fixes two panics in debug builds for Top
-K queries with a filter.
+Require backing-table permission checks for SQL functions that read
+ParadeDB indexes directly, including `paradedb.aggregate()`,
+diagnostics, and index inventory statistics.
 
 ## Why
 
-In a Top K query such as:
+These functions read index storage outside PostgreSQL's normal scan
+permission and row-policy checks. MVCC visibility alone does not
+authorize access. This originated from an emailed report that a role
+without table SELECT could read indexed data through standalone
+functions.
 
-```sql
-SELECT id FROM t WHERE body === 'alpha' AND n >= 100 AND m >= 150
-ORDER BY pdb.score(id) DESC LIMIT 10;
-```
-
-Block-WAND asked the filter about the first row containing `alpha`, even
-when the filter's first match was a later row. Two filters fail on that
-in debug builds:
-
-- two range conditions: `ERROR:  attempt to subtract with overflow`
-- a constant-score phrase, such as `tag ### 'red apple'::pdb.const(1)`:
-`ERROR: target (0) should be greater than or equal to doc (150)`
-
-Release builds return correct results. See paradedb/tantivy#316 for the
-cause.
+Monitoring needs a separate, explicit policy: the Cloud exporter uses a
+role inheriting `pg_monitor` without table SELECT or BYPASSRLS.
 
 ## How
 
-The pin moves from `ff6099c7`, Tantivy `main` on Oct 27, to `7abd03c1`,
-the squash merge of paradedb/tantivy#316 and the current head of Tantivy
-`main`. Between the two it also carries paradedb/tantivy#341 (faster
-TermSet filter lookups) and paradedb/tantivy#349, which turned
-`TopDocsByVectorSimilarity` into a builder. The five vector collector
-call sites in `pg_search/src/index/reader/index.rs` now finish with
-`build()`.
+A shared guard resolves the backing table, locks it before the requested
+index, rechecks their association, and retains both relation handles
+while producing the result. Rust arguments use `IndexOid` to avoid pgrx
+locking the index during argument decoding; SQL signatures remain
+`regclass`.
 
-**File**: `Cargo.lock` (modified, +10/-10)
+- Content reads and strict diagnostics require schema USAGE, table-level
+SELECT, and no effective RLS. Column grants do not authorize a
+whole-index read. Effective RLS produces an error naming the table.
+- The metadata APIs listed i
+
+**File**: `docs/project/changelog/unreleased/7023.breaking.mdx` (added, +28/-0)
 ```diff
-@@ -4948,7 +4948,7 @@ dependencies = [
- [[package]]
- name = "ownedbytes"
- version = "0.9.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
- dependencies = [
-  "stable_deref_trait",
- ]
-@@ -7128,7 +7128,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
- [[package]]
- name = "tantivy"
- version = "0.27.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
- dependencies = [
-  "aho-corasick",
-  "arc-swap",
-@@ -7187,15 +7187,15 @@ dependencies = [
- [[package]]
- name = "tantivy-bitpacker"
- version = "0.10.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
- dependencies = [
-  "bitpacking",
- ]
- 
- [[package]]
- name = "tantivy-columnar"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
- dependencies = [
-  "downcast-rs",
-  "fastdivide",
-@@ -7210,7 +7210,7 @@ dependencies = [
- [[package]]
- name = "tantivy-common"
- version = "0.11.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
- dependencies = [
-  "async-trait",
-  "byteorder",
-@@ -7243,7 +7243,7 @@ dependencies = [
- [[package]]
- name = "tantivy-quant"
- version = "0.1.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
- dependencies = [
-  "rand_chacha 0.3.1",
-  "rand_core 0.6.4",
-@@ -7252,7 +7252,7 @@ dependencies = [
- [[package]]
- name = "tantivy-query-grammar"
- version = "0.26.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
- dependencies = [
-  "fnv",
-  "nom 7.1.3",
-@@ -7264,7 +7264,7 @@ dependencies = [
- [[package]]
- name = "tantivy-sstable"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
- dependencies = [
-  "futures-util",
-  "itertools 0.14.0",
-@@ -7277,7 +7277,7 @@ dependencies = [
- [[package]]
- name = "tantivy-stacker"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
- dependencies = [
-  "fixedbitset",
-  "murmurhash32",
-@@ -7314,7 +7314,7 @@ dependencies = [
- [[package]]
- name = "tantivy-tokenizer-api"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
- dependencies = [
-  "serde",
- ]
+@@ -0,0 +1,28 @@
++---
++header: breaking
++title: Standalone index access permissions
++---
++
++Standalone index reads now check permissions on the backing table. Content-reading APIs,
++including `paradedb.aggregate()`, require table-level `SELECT` and reject calls when row-level
++security applies to the effective caller.
++Callers who need a filtered result under RLS can be given a `SECURITY DEFINER` function,
++owned by the table owner, that applies the policy's filter in an ordinary `@@@` query.
++Wrapping `paradedb.aggregate()` itself does not filter rows.
++
++Metadata APIs, including `paradedb.schema()`, `index_fields()`, the layer-size
++functions, `index_created_at()`, `index_created_by()`, `merge_info()` (and its
++`is_merging()` alias), `vacuum_info()`, `fsm_info()`, `fsm_size()`,
++`paradedb.index_info()`, `pdb.index_segments()`, and the statistics returned by
++`pdb.indexes()`
++also accept callers with the privileges of `pg_stat_scan_tables`, inherited by `pg_monitor`.
++These trusted monitoring roles can inspect whole-index metadata and document counts without
++table `SELECT`, including counts across rows hidden by RLS. Other callers still need schema
++`USAGE`, table-level `SELECT`, and no active RLS; inventory omits indexes they cannot inspect.
++The monitoring privilege does not authorize document reads, verification, or maintenance.
++
++Only the metadata APIs listed above accept monitoring privileges. Other diagnostics,
++including `vector_config()`, and content reads and verification retain the stricter read policy.
++`merge_lock_garbage_collect()` requires `MAINTAIN` on the backing table on PostgreSQL 17
++and later, including privileges inherited from `pg_maintain`. Table owners qualify
++implicitly. PostgreSQL 15 and 16 require ownership of the backing table.
 ```
 
-**File**: `Cargo.toml` (modified, +4/-4)
+**File**: `docs/reference/sql-functions.mdx` (modified, +9/-0)
 ```diff
-@@ -70,7 +70,7 @@ pgrx-tests = "=0.19.3"
+@@ -87,6 +87,15 @@ These functions are placeholders that ParadeDB's custom scan resolves during que
+ | `pdb.combine_agg`    | `pdb.combine_agg(agg jsonb) -> jsonb`                                                                                                                                                                                | Combine grouped facets using `pdb.combine_agg(pdb.agg(...)) OVER ()`.                             | [Facets with GROUP BY](/reference/aggregates/facets#facets-with-group-by) |
+ | `paradedb.aggregate` | `paradedb.aggregate(index regclass, query searchqueryinput, agg json, solve_mvcc bool default null, memory_limit bigint default 500000000, bucket_limit bigint default null, visibility text default null) -> jsonb` | Execute an aggregate directly against an index. Prefer `visibility` over deprecated `solve_mvcc`. | [Aggregate Syntax](/reference/aggregates/overview)                        |
  
- # Keep the Git revisions for `tantivy`, `tantivy-common`, and the crates.io
- # patches in sync.
--tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "3d304727a314e654c7c28402965fae90d330bdc2", features = [
-+tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "7abd03c193fd06b488f13e8781a2daa77a5941be", features = [
-   "columnar-zstd-compression",
-   "lz4-compression",
-   "paradedb",
-@@ -79,12 +79,12 @@ tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy"
-   "stemmer",
-   "stopwords",
- ], default-features = false }
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "3d304727a314e654c7c28402965fae90d330bdc2" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "7abd03c193fd06b488f13e8781a2daa77a5941be" }
- tantivy-jieba = "0.20.0"
++`paradedb.aggregate()` requires schema `USAGE`, table-level `SELECT`, and no active
++row-level security for the effective caller. Metadata APIs (schema and field
++configuration, layer sizes, creation details, merge/vacuum/FSM status, segment
++counts, and `pdb.indexes()`) also allow callers with `pg_stat_scan_tables`
++privileges, inherited by `pg_monitor`; those roles can see whole-index metadata
++and counts under RLS, but this exception does not authorize document reads or
++verification. `merge_lock_garbage_collect()` instead requires table `MAINTAIN`
++on PostgreSQL 17+, including `pg_maintain`, or table ownership on older versions.
++
+ Supported aggregate JSON shapes are documented under [Aggregates](/reference/aggregates/overview), including [terms](/reference/aggregates/bucket/terms), [range](/reference/aggregates/bucket/range), [histogram](/reference/aggregates/bucket/histogram), [date histogram](/reference/aggregates/bucket/datehistogram), [filters](/reference/aggregates/bucket/filters), [sum](/reference/aggregates/metrics/sum), [average](/reference/aggregates/metrics/average), [min/max](/reference/aggregates/metrics/minmax), [count](/reference/aggregates/metrics/count), [stats](/reference/aggregates/metrics/stats), [percentiles](/reference/aggregates/metrics/percentiles), [cardinality](/reference/aggregates/metrics/cardinality), and [top hits](/reference/aggregates/metrics/tophits).
  
- [patch.crates-io]
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "3d304727a314e654c7c28402965fae90d330bdc2" }
--tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "3d304727a314e654c7c28402965fae90d330bdc2" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "7abd03c193fd06b488f13e8781a2daa77a5941be" }
-+tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "7abd03c193fd06b488f13e8781a2daa77a5941be" }
+ ## Index Configuration and Tokenizers
+```
+
+**File**: `pg_search/src/api/admin.rs` (modified, +55/-93)
+```diff
+@@ -21,6 +21,7 @@ use crate::index::fast_fields_helper::FFType;
+ use crate::index::mvcc::MvccSatisfies;
+ use crate::index::reader::index::SearchIndexReader;
+ use crate::index::reader::open_vector_field;
++use crate::postgres::access::IndexOid;
+ use crate::postgres::index::IndexKind;
+ use crate::postgres::rel::PgSearchRelation;
+ use crate::postgres::storage::block::{
+@@ -33,7 +34,6 @@ use crate::query::pdb_query::pdb as pdb_query;
+ use crate::schema::{IndexRecordOption, SearchFieldType};
+ use anyhow::{Context, Result};
+ use pgrx::JsonB;
+-use pgrx::PgRelation;
+ use pgrx::datum::DatumWithOid;
+ use pgrx::prelude::*;
+ use serde_json::Value;
+@@ -43,7 +43,7 @@ use tantivy::vector::diagnostics::VectorStorageFormat;
+ #[allow(clippy::type_complexity)]
+ #[pg_extern]
+ pub fn schema(
+-    index: PgRelation,
++    index: IndexOid,
+ ) -> TableIterator<
+     'static,
+     (
+@@ -59,18 +59,10 @@ pub fn schema(
+         name!(normalizer, Option<String>),
+     ),
+ > {
+-    // # Safety
+-    //
+-    // Lock the index relation until the end of this function so it is not dropped or
+-    // altered while we are reading it.
+-    //
+-    // Because we accept a PgRelation above, we have confidence that Postgres has already
+-    // validated the existence of the relation. We are safe calling the function below as
+-    // long we do not pass pg_sys::NoLock without any other locking mechanism of our own.
+-    let index = PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as _);
++    let index = index.read_metadata();
  
- [workspace.lints.clippy]
- large_futures = "warn"
+     // We only consider the first partition for the purposes of computing a schema.
+-    let index = IndexKind::for_index(index)
++    let index = IndexKind::for_index(index.clone())
+         .unwrap()
+         .partitions()
+         .next()
+@@ -141,8 +133,8 @@ pub fn schema(
+ }
+ 
+ #[pg_extern]
+-pub unsafe fn index_fields(index: PgRelation) -> anyhow::Result<JsonB> {
+-    let index = PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as _);
++pub unsafe fn index_fields(index: IndexOid) -> anyhow::Result<JsonB> {
++    let index = index.read_metadata();
+     let schema = index.schema()?;
+ 
+     let mut name_and_config = HashMap::default();
+@@ -158,8 +150,8 @@ pub unsafe fn index_fields(index: PgRelation) -> anyhow::Result<JsonB> {
+ }
+ 
+ #[pg_extern]
+-pub unsafe fn layer_sizes(index: PgRelation) -> Vec<AnyNumeric> {
+-    let index = PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as _);
++pub unsafe fn layer_sizes(index: IndexOid) -> Vec<AnyNumeric> {
++    let index = index.read_metadata();
+     index
+         .options()
+         .foreground_layer_sizes()
+@@ -169,8 +161,8 @@ pub unsafe fn layer_sizes(index: PgRelation) -> Vec<AnyNumeric> {
+ }
+ 
+ #[pg_extern]
+-pub unsafe fn background_layer_sizes(index: PgRelation) -> Vec<AnyNumeric> {
+-    let index = PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as _);
++pub unsafe fn background_layer_sizes(index: IndexOid) -> Vec<AnyNumeric> {
++    let index = index.read_metadata();
+     index
+         .options()
+         .background_layer_sizes()
+@@ -180,8 +172,8 @@ pub unsafe fn background_layer_sizes(index: PgRelation) -> Vec<AnyNumeric> {
+ }
+ 
+ #[pg_extern]
+-pub unsafe fn combined_layer_sizes(index: PgRelation) -> Vec<AnyNumeric> {
+-    let index = PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as _);
++pub unsafe fn combined_layer_sizes(index: IndexOid) -> Vec<AnyNumeric> {
++    let index = index.read_metadata();
+     let mut sizes: Vec<_> = index
+         .options()
+         .foreground_layer_sizes()
+@@ -198,8 +190,8 @@ pub unsafe fn combined_layer_sizes(index: PgRelation) -> Vec<AnyNumeric> {
+ /// Returns the wall-clock time the given ParadeDB index was built, or NULL for indices created
+ /// before build-time stamping was added.
+ #[pg_extern]
+-pub fn index_created_at(index: PgRelation) -> Option<pgrx::datum::TimestampWithTimeZone> {
+-    let index = PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as _);
++pub fn index_created_at(index: IndexOid) -> Option<pgrx::datum::TimestampWithTimeZone> {
++    let index = index.read_metadata();
+     MetaPage::open(&index)
+         .created_at()
+         .and_then(|ts| pgrx::datum::TimestampWithTimeZone::try_from(ts).ok())
+@@ -208,16 +200,16 @@ pub fn index_created_at(index: PgRelation) -> Option<pgrx::datum::TimestampWithT
+ /// Returns the pg_search version that created the given ParadeDB index, or NULL for indices
+ /// created before version stamping was added.
+ #[pg_extern]
+-pub fn index_created_by(index: PgRelation) -> Option<String> {
+-    let index = PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as _);
++pub fn index_created_by(index: IndexOid) -> Option<String> {
++    let index = index.read_metadata();
+     MetaPage::open(&index)
+         .created_by_version()
+         .map(|version| version.to_string())
+ }
+ 
+ #[pg_extern]
+ unsafe fn merge_info(
+-    index: PgRelation,
++    index: IndexOid,
+ ) -> TableIterator<
+     'static,
+     (
+```
+
+**File**: `pg_search/src/api/aggregate.rs` (modified, +5/-4)
+```diff
+@@ -58,7 +58,7 @@
+ 
+ use std::error::Error;
+ 
+-use pgrx::{FromDatum, Json, JsonB, PgRelation, default, pg_extern};
++use pgrx::{FromDatum, Json, JsonB, default, pg_extern};
+ use serde::{Deserialize, Serialize};
+ 
+ use crate::aggregate::{AggregateRequest, execute_aggregate};
+@@ -67,6 +67,7 @@ use crate::api::version::VersionInfo;
+ use crate::gucs;
+ use crate::index::reader::index::SearchIndexReader;
+ use crate::nodecast;
++use crate::postgres::access::IndexOid;
+ use crate::postgres::customscan::aggregatescan::aggregate_type::validate_agg_json_fields;
+ use crate::postgres::customscan::aggregatescan::json_rewrite::rewrite_aggregate_result_json_timestamps;
+ use crate::postgres::rel::PgSearchRelation;
+@@ -75,7 +76,7 @@ use crate::query::SearchQueryInput;
+ use crate::schema::SearchIndexSchema;
+ 
+ fn aggregate_impl(
+-    index: PgRelation,
++    index: IndexOid,
+     query: SearchQueryInput,
+     agg: Json,
+     visibility: MvccVisibility,
+@@ -92,7 +93,7 @@ fn aggregate_impl(
+         .try_into()
+         .unwrap_or_else(|_| pgrx::error!("bucket_limit must be <= {}", u32::MAX));
+ 
+-    let relation = unsafe { PgSearchRelation::from_pg(index.as_ptr()) };
++    let relation = index.read();
+ 
+     // Validate aggregation fields exist and are supported before executing.
+     // This path bypasses the planner, so we validate here directly.
+@@ -182,7 +183,7 @@ fn resolve_udf_visibility(solve_mvcc: Option<bool>, visibility: Option<String>)
+ /// in place so that positional calls written against the old signature still resolve.
+ #[pg_extern]
+ pub fn aggregate(
+-    index: PgRelation,
++    index: IndexOid,
+     query: SearchQueryInput,
+     agg: Json,
+     solve_mvcc: default!(Option<bool>, "NULL"),
+```
+
+**File**: `pg_search/src/api/vector.rs` (modified, +11/-12)
+```diff
+@@ -19,14 +19,20 @@
+ 
+ use crate::index::reader::index::SearchIndexReader;
+ use crate::index::reader::open_vector_field;
+-use crate::postgres::catalog::{OidExt, is_pgvector_oid};
++use crate::postgres::access::IndexOid;
++#[cfg(feature = "pg_test")]
++use crate::postgres::catalog::OidExt;
++use crate::postgres::catalog::is_pgvector_oid;
++#[cfg(any(test, feature = "pg_test"))]
+ use crate::postgres::rel::PgSearchRelation;
+ use crate::vector::PgVector;
+ use anyhow::{Context, Result, ensure};
+ #[cfg(feature = "pg_test")]
+ use pgrx::JsonB;
++#[cfg(feature = "pg_test")]
++use pgrx::PgRelation;
+ use pgrx::prelude::*;
+-use pgrx::{AnyArray, PgRelation, Spi, pg_sys};
++use pgrx::{AnyArray, Spi, pg_sys};
+ #[cfg(feature = "pg_test")]
+ use tantivy::vector::diagnostics::{
+     VectorAuditMoments, VectorErrorAuditMeasurements, VectorErrorConeAuditMeasurements,
+@@ -131,7 +137,7 @@ AS 'MODULE_PATHNAME', 'vector_estimator_info_internal_wrapper';
+ "#
+ )]
+ fn vector_estimator_info_internal(
+-    index: Option<PgRelation>,
++    index: Option<IndexOid>,
+     field: Option<String>,
+     queries: Option<AnyArray>,
+ ) -> Result<
+@@ -149,16 +155,9 @@ fn vector_estimator_info_internal(
+ > {
+     let index = index.context("index must not be NULL")?;
+     let field = field.context("field must not be NULL")?;
+-    let index_oid = index.oid();
+-    drop(index);
+-
+-    let index = PgSearchRelation::with_lock(index_oid, pg_sys::AccessShareLock as _);
++    // Preserve the catalog-only parent diagnostic before opening index data.
+     reject_partitioned_index(index.oid(), PartitionedIndexOperation::EstimatorInfo)?;
+-    ensure!(
+-        unsafe { pg_sys::get_rel_relkind(index.oid()) as u8 } == pg_sys::RELKIND_INDEX
+-            && unsafe { (*index.rd_rel).relam.is_paradedb_am() },
+-        "vector_estimator_info requires a ParadeDB index"
+-    );
++    let index = index.read();
+     ensure!(index.is_usable(), "index is not valid, ready, and live");
+ 
+     let (search_reader, vector_field, vector_options) = open_vector_field(&index, &field)?;
+```
+
+**File**: `pg_search/src/postgres/access.rs` (added, +315/-0)
+```diff
+@@ -0,0 +1,315 @@
++// Copyright (c) 2023-2026 ParadeDB, Inc.
++//
++// This file is part of ParadeDB - Postgres for Search and Analytics
++//
++// This program is free software: you can redistribute it and/or modify
++// it under the terms of the GNU Affero General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++// GNU Affero General Public License for more details.
++//
++// You should have received a copy of the GNU Affero General Public License
++// along with this program. If not, see <http://www.gnu.org/licenses/>.
++
++//! Authorization for SQL APIs that access an index outside a policy-aware scan.
++//!
++//! Do not use these guards for normal SQL scans: PostgreSQL owns their RTE
++//! permission identity and row-policy evaluation. Low-level readers also serve
++//! build, vacuum and recovery, so authorization belongs at the public boundary.
++
++use crate::postgres::catalog::OidExt;
++use crate::postgres::rel::PgSearchRelation;
++use pgrx::callconv::{Arg, ArgAbi};
++use pgrx::pgrx_sql_entity_graph::metadata::{
++    ArgumentError, ReturnsError, ReturnsRef, SqlMappingRef, SqlTranslatable, TypeOrigin,
++};
++use pgrx::{PgSqlErrorCode, pg_sys};
++use std::ffi::CStr;
++
++/// A `regclass` argument without pgrx's implicit index lock.
++///
++/// `PgRelation::from_datum` locks the index before the function starts. Keeping
++/// only the OID lets acquisition follow PostgreSQL's table-before-index order.
++pub struct IndexOid(pg_sys::Oid);
++
++impl From<pg_sys::Oid> for IndexOid {
++    fn from(oid: pg_sys::Oid) -> Self {
++        Self(oid)
++    }
++}
++
++unsafe impl<'fcx> ArgAbi<'fcx> for IndexOid {
++    unsafe fn unbox_arg_unchecked(arg: Arg<'_, 'fcx>) -> Self {
++        Self(unsafe { pg_sys::Oid::unbox_arg_unchecked(arg) })
++    }
++}
++
++unsafe impl SqlTranslatable for IndexOid {
++    const TYPE_IDENT: &'static str = pgrx::pgrx_resolved_type!(IndexOid);
++    const TYPE_ORIGIN: TypeOrigin = TypeOrigin::External;
++    const ARGUMENT_SQL: Result<SqlMappingRef, ArgumentError> =
++        Ok(SqlMappingRef::literal("regclass"));
++    const RETURN_SQL: Result<ReturnsRef, ReturnsError> = Err(ReturnsError::Datum);
++}
++
++impl IndexOid {
++    pub(crate) fn oid(&self) -> pg_sys::Oid {
++        self.0
++    }
++
++    pub(crate) fn read(self) -> IndexAccess {
++        self.authorize(pg_sys::AccessShareLock as _, check_read)
++    }
++
++    /// Inventory APIs omit entries whose direct-read policy denies access.
++    /// Missing relations, wrong kinds and operational failures still raise errors.
++    pub(crate) fn is_readable(&self) -> bool {
++        let access = IndexAccess::open(self.0, pg_sys::AccessShareLock as _);
++        check_read(access.heap()).is_ok()
++    }
++
++    /// Trusted diagnostics may inspect metadata without table SELECT or RLS.
++    pub(crate) fn read_metadata(self) -> IndexAccess {
++        self.authorize(pg_sys::AccessShareLock as _, check_metadata)
++    }
++
++    /// Like metadata reads, but inventory omits entries denied to this caller.
++    pub(crate) fn read_metadata_if_permitted(self) -> Option<IndexAccess> {
++        let access = IndexAccess::open(self.0, pg_sys::AccessShareLock as _);
++        check_metadata(access.heap()).ok()?;
++        Some(access)
++    }
++
++    /// Maintenance follows REINDEX: `MAINTAIN` on the backing table from
++    /// PostgreSQL 17, ownership before that.
++    pub(crate) fn maintain(self) -> IndexAccess {
++        self.authorize(pg_sys::RowExclusiveLock as _, check_maintain)
++    }
++
++    fn authorize(
++        self,
++        index_lock: pg_sys::LOCKMODE,
++        check: fn(&PgSearchRelation) -> Result<(), AccessDenied>,
++    ) -> IndexAccess {
++        let access = IndexAccess::open(self.0, index_lock);
++        if let Err(denied) = check(access.heap()) {
++            denied.report();
++        }
++        access
++    }
++}
++
++/// An index opened after its backing table, with both locks held until drop.
++/// Derefs to the index; the entry method on `IndexOid` determines the policy.
++/// `open` only locks relations and does not authorize reads.
++// Fields drop in declaration order: the index closes before the heap.
++pub(crate) struct IndexAccess {
++    index: PgSearchRelation,
++    heap: PgSearchRelation,
++}
++
++impl std::ops::Deref for IndexAccess {
++    type Target = PgSearchRelation;
++
++    fn deref(&self) -> &PgSearchRelation {
++        &self.index
++    }
++}
++
++impl IndexAccess {
++    pub(crate) fn open(index_oid: pg_sys::Oid, index_lock: pg_sys::LOCKMODE) -> Self {
++        // Like amcheck_lock_relation_and_check: resolve without an index
++        // lock, lock the table first, then recheck the association.
++        let heap_oid = unsafe { pg_sys::IndexGetRelation(index_oid, true) };
++        if heap_oid == pg_sy
+```
+
+**File**: `pg_search/src/postgres/mod.rs` (modified, +1/-0)
+```diff
+@@ -34,6 +34,7 @@ use pgrx::*;
+ use tantivy::aggregation::intermediate_agg_result::IntermediateAggregationResults;
+ use tantivy::index::SegmentId;
+ 
++pub mod access;
+ mod build;
+ pub mod build_logging;
+ mod cost;
+```
+
+**File**: `pg_search/src/postgres/storage/fsm.rs` (modified, +6/-7)
+```diff
+@@ -15,13 +15,14 @@
+ // You should have received a copy of the GNU Affero General Public License
+ // along with this program. If not, see <http://www.gnu.org/licenses/>.
+ 
++use crate::postgres::access::IndexOid;
+ use crate::postgres::rel::PgSearchRelation;
+ use crate::postgres::storage::buffer::BufferManager;
+ use crate::postgres::storage::fsm::v1::V1FSM;
+ use crate::postgres::storage::fsm::v2::V2FSM;
+ use crate::postgres::storage::metadata::MetaPage;
+ use pgrx::iter::TableIterator;
+-use pgrx::{PgRelation, name, pg_extern, pg_sys};
++use pgrx::{name, pg_extern, pg_sys};
+ 
+ /// Denotes what the data on an FSM block looks like
+ #[allow(non_camel_case_types)]
+@@ -1860,7 +1861,7 @@ pub fn convert_v1_to_v2(bman1: &mut BufferManager, mut v1: V1FSM, mut v2: V2FSM)
+ 
+ #[pg_extern]
+ unsafe fn fsm_info(
+-    index: PgRelation,
++    index: IndexOid,
+ ) -> TableIterator<
+     'static,
+     (
+@@ -1873,8 +1874,7 @@ unsafe fn fsm_info(
+     use crate::postgres::storage::fsm::v2::AvlLeaf;
+     use crate::postgres::storage::fsm::v2::V2FSM;
+ 
+-    let index =
+-        PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as pg_sys::LOCKMODE);
++    let index = index.read_metadata();
+ 
+     let meta = MetaPage::open(&index);
+     let bman = BufferManager::new(&index);
+@@ -1920,10 +1920,9 @@ unsafe fn fsm_info(
+ }
+ 
+ #[pg_extern]
+-unsafe fn fsm_size(index: PgRelation) -> i64 {
++unsafe fn fsm_size(index: IndexOid) -> i64 {
+     use crate::postgres::storage::fsm::v2::V2FSM;
+-    let index =
+-        PgSearchRelation::with_lock(index.oid(), pg_sys::AccessShareLock as pg_sys::LOCKMODE);
++    let index = index.read_metadata();
+ 
+     let meta = MetaPage::open(&index);
+     let bman = BufferManager::new(&index);
+```
+
+---
+
+### Incident Patch 2: `1248c3ed` (2026-10-29)
+**Commit Message**: fix: upgrade zip to resolve archive parsing advisory (#7094)
+
+## What
+
+Update the locked `zip` dependency from 9.0.4 to 9.0.5, the first
+patched release for
+[GHSA-m665-v7pm-7grj](https://github.com/advisories/GHSA-m665-v7pm-7grj).
+Addresses [Dependabot alert
+#8](https://github.com/paradedb/paradedb/security/dependabot/8).
+
+## Why
+
+The affected package enters through `benchmarks → duckdb → libduckdb-sys
+→ zip` (build dependency). Like pdbench#42, this uses the patched zip
+release. ParadeDB already requires DuckDB 1.10506.1, so no DuckDB
+upgrade is needed.
+
+I also checked Walter’s dependency cleanup in pdbench#43. DuckDB is
+already scoped to the benchmark crate here and excluded from the default
+extension build. Its zip build dependency is unconditional, so disabling
+default features would not remove it.
+
+## Tests
+
+- Cargo update changed only the zip version and checksum.
+- Locked workspace dependency tree confirms zip 9.0.5 and the
+benchmark-only path above.
+- Locked Cargo metadata passes for aarch64-apple-darwin using Rust
+1.99.1.
+- Downloaded crate SHA-256 matches the lockfile; `git diff --check`
+passes.
+- Compilation and benchmark tests were not run locally.
+
+Dependabot closure r
+
+**File**: `Cargo.lock` (modified, +2/-2)
+```diff
+@@ -8570,9 +8570,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "zip"
+-version = "9.0.4"
++version = "9.0.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a954114b47a54df49f83d2722814e86b23d4bb1b54a1b90fb7d92b41619ddc22"
++checksum = "6e04976da629d3b04204ba8105b396a193af8ad2583b2c79bfb3ab8af580a11e"
+ dependencies = [
+  "crc32fast",
+  "flate2",
 ```
 
 **File**: `nix/pg_search.nix` (modified, +1/-1)
@@ -2489,387 +2893,189 @@ call sites in `pg_search/src/index/reader/index.rs` now finish with
    # If maintainers forget to do so, Nix will throw an error message that begins
    # like this and then provides the correct new hash:
    # error: hash mismatch in fixed-output derivation '...'
--  cargoHash = "sha256-wWfEnPN5l/ncNUgWBwMkcHPooKiyyWi44gZXQAgXTNM=";
-+  cargoHash = "sha256-gfoo7ED9iDaAZ1YBzS4U4m6l5d4rwaigo926dCrUDdU=";
+-  cargoHash = "sha256-fNtmEhJGQBZdWf0x3gAnmx0Ize5SHSUu5L50uUAdPwM=";
++  cargoHash = "sha256-AVcHOw7envbETWm0yz0bGTWUbjHMMSK/UuH0zHLIjTA=";
  
    inherit cargo-pgrx postgresql;
  
 ```
 
-**File**: `pg_search/src/index/reader/index.rs` (modified, +7/-5)
-```diff
-@@ -2353,31 +2353,33 @@ impl SearchIndexReader {
-                     0 => self.collect_maybe_auxiliary(
-                         readers,
-                         partition_bounds,
--                        collector,
-+                        collector.build(),
-                         aux_collector,
-                     ),
-                     1 => self.collect_maybe_auxiliary(
-                         readers,
-                         partition_bounds,
--                        collector.with_tie_break(next()),
-+                        collector.with_tie_break(next()).build(),
-                         aux_collector,
-                     ),
-                     2 => self.collect_maybe_auxiliary(
-                         readers,
-                         partition_bounds,
--                        collector.with_tie_break((next(), next())),
-+                        collector.with_tie_break((next(), next())).build(),
-                         aux_collector,
-                     ),
-                     3 => self.collect_maybe_auxiliary(
-                         readers,
-                         partition_bounds,
--                        collector.with_tie_break((next(), next(), next())),
-+                        collector.with_tie_break((next(), next(), next())).build(),
-                         aux_collector,
-                     ),
-                     4 => self.collect_maybe_auxiliary(
-                         readers,
-                         partition_bounds,
--                        collector.with_tie_break((next(), next(), next(), next())),
-+                        collector
-+                            .with_tie_break((next(), next(), next(), next()))
-+                            .build(),
-                         aux_collector,
-                     ),
-                     x => panic!(
-```
-
-**File**: `pg_search/tests/pg_regress/expected/filtered_topk_late_filter.out` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+-- Top K with a filter whose first match is after the first row of the text clause.
-+-- Debug builds panicked: two range filters overflowed in RangeDocSet, and a
-+-- constant-score phrase failed an assert in PhraseScorer (paradedb/tantivy#316).
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+SET max_parallel_maintenance_workers TO 0;
-+SET paradedb.planner_warnings = 'off';
-+CREATE TABLE filtered_topk_late_filter (id INT PRIMARY KEY, body TEXT, tag TEXT, n INT, m INT);
-+INSERT INTO filtered_topk_late_filter
-+SELECT i, 'alpha', CASE WHEN i >= 150 AND i % 10 = 0 THEN 'red apple' ELSE 'apple red' END, i, i
-+FROM generate_series(0, 299) i;
-+CREATE INDEX filtered_topk_late_filter_idx ON filtered_topk_late_filter
-+USING paradedb (id, body, tag, n, m)
-+WITH (target_segment_count = 1);
-+-- Two range filters: the first row in both ranges is 150.
-+SELECT count(*) AS row_count, min(id) AS min_id
-+FROM (
-+    SELECT id FROM filtered_topk_late_filter
-+    WHERE body === 'alpha' AND n >= 100 AND m >= 150
-+    ORDER BY pdb.score(id) DESC
-+    LIMIT 10
-+) top;
-+ row_count | min_id 
-+-----------+--------
-+        10 |    150
-+(1 row)
-+
-+-- A constant-score phrase: its first match is row 150.
-+SELECT count(*) AS row_count, min(id) AS min_id
-+FROM (
-+    SELECT id FROM filtered_topk_late_filter
-+    WHERE body === 'alpha' AND tag ### 'red apple'::pdb.const(1)
-+    ORDER BY pdb.score(id) DESC
-+    LIMIT 10
-+) top;
-+ row_count | min_id 
-+-----------+--------
-+        10 |    150
-+(1 row)
-+
-+RESET paradedb.planner_warnings;
-+RESET max_parallel_maintenance_workers;
-+DROP TABLE filtered_topk_late_filter;
-```
-
-**File**: `pg_search/tests/pg_regress/sql/filtered_topk_late_filter.sql` (added, +37/-0)
-```diff
-@@ -0,0 +1,37 @@
-+-- Top K with a filter whose first match is after the first row of the text clause.
-+-- Debug builds panicked: two range filters overflowed in RangeDocSet, and a
-+-- constant-score phrase failed an assert in PhraseScorer (paradedb/tantivy#316).
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+SET max_parallel_maintenance_workers TO 0;
-+SET paradedb.planner_warnings = 'off';
-+
-+CREATE TABLE filtered_topk_late_filter (id INT PRIMARY KEY, body TEXT, tag TEXT, n INT, m INT);
-+INSERT INTO filtered_topk_late_filter
-+SELECT i, 'alpha', CASE WHEN i >= 150 AND i % 10 = 0 THEN 'red apple' ELSE 'apple red' END, i, i
-+FROM generate_series(0, 299) i;
-+
-+CREATE INDEX filtered_topk_late_filter_idx ON filtered_topk_late_filter
-+USING paradedb (id, body, tag, n, m)
-+WITH (target_segment_count = 1);
-+
-+-- Two range filters: the first row in both ranges is 150.
-+SELECT count(*) AS row_count, min(id) AS min_id
-+FROM (
-+    SELECT id FROM filtered_topk_late_filter
-+    WHERE body === 'alpha' AND n >= 100 AND m >= 150
-+    ORDER BY pdb.score(id) DESC
-+    LIMIT 10
-+) top;
-+
-+-- A constant-score phrase: its first match is row 150.
-+SELECT count(*) AS row_count, min(id) AS min_id
-+FROM (
-+    SELECT id FROM filtered_topk_late_filter
-+    WHERE body === 'alpha' AND tag ### 'red apple'::pdb.const(1)
-+    ORDER BY pdb.score(id) DESC
-+    LIMIT 10
-+) top;
-+
-+RESET paradedb.planner_warnings;
-+RESET max_parallel_maintenance_workers;
-+DROP TABLE filtered_topk_late_filter;
-```
-
 ---
 
-### Incident Patch 2: `29e8638d` (2026-10-28)
-**Commit Message**: fix(tokenizers): avoid quadratic Lindera token consumption (#7066)
+### Incident Patch 3: `e40d419a` (2026-10-29)
+**Commit Message**: fix: detach worker queues before destroying parallel context (#7106)
 
-# Ticket(s) Closed
+When a parallel aggregate cannot launch workers inside a parallel
+InitPlan with leader participation disabled, the fallback destroys the
+parallel context before dropping its message-queue handles. Their
+cleanup can then access unmapped shared memory and crash the backend.
 
-- Closes #7065
+Drop the launcher and its queue handles before destroying the context,
+matching the successful completion path. Add a SQL regression that
+asserts a parallel InitPlan/aggregate plan and checks five correct query
+results under a one-worker limit.
 
-## What
+Validation: on an isolated Linux PostgreSQL 18.6 runner, the identical
+SQL regression crashes unpatched main `d3d439e68` on its first count
+query (backend terminated by signal 11 / segmentation fault). With only
+the cleanup-order fix applied, all three repetitions pass, each checking
+five count results. [Control run and
+evidence](https://github.com/paradedb/paradedb/actions/runs/40962987145).
 
-Consume Lindera tokens in linear time for the Chinese, Japanese, and
-Korean tokenizers.
+Strict workspace/all-target Clippy, workspace check, docs with warnings
+denied, formatting, and applicable commit hooks also passed. No
+worker-limit or sweep changes are included.
 
-## Why
-
-`LinderaTokenStream::advance()` removes element zero from a `Vec` for
-every token, shifting the remaining elements each time. Large text
-fields therefore incur quadratic token-movement overhead after
-segmentation.
-
-On the synthetic release-mode benchmark in #7065, consuming 40,000
-tokens took 1,440.572 ms before this change and 0.557 ms after it. These
-are representative single-run measurements of token consumption, with
-dictionary loading excluded and segmentation timed separately; they do
-not represent end-to-end SQL latency.
-
-## How
-
-- Store the token vector as `std::vec::IntoIter` and advance it with
-`next()`.
-- Preserve token order, text, byte offsets, positions, and position
-lengths.
-- Add CJK metadata and partial-stream reuse regression tests, a manually
-invoked scaling benchmark, and a performance changelog fragment.
-
-The change is limited to the Lindera adapter and its tests; it adds no
-dependencies, SQL migrations, or index-format changes.
-
-## Tests
-
-- `cargo test -
-
-**File**: `docs/project/changelog/unreleased/7066.performance.mdx` (added, +5/-0)
+**File**: `pg_search/src/parallel_worker/builder.rs` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+header: performance
-+---
-+
-+- Avoid quadratic token consumption for Chinese, Japanese, and Korean Lindera tokenizers on large text fields.
+@@ -207,7 +207,8 @@ impl ParallelProcessLauncher {
+                 return Some(ParallelProcessAttach { launcher: self });
+             }
+ 
+-            // no workers launched
++            // Detach queues while their shared memory is still mapped.
++            drop(self);
+             pg_sys::DestroyParallelContext(pcxt);
+             pg_sys::ExitParallelMode();
+             None
 ```
 
-**File**: `tokenizers/src/lindera.rs` (modified, +98/-7)
+**File**: `pg_search/tests/pg_regress/expected/aggregate_worker_shortage.out` (added, +72/-0)
 ```diff
-@@ -37,6 +37,7 @@ use lindera_analysis::token_filter::korean_reading_form::KoreanReadingFormTokenF
- use lindera_analysis::tokenizer::Tokenizer as LinderaTokenizer;
- use once_cell::sync::{Lazy, OnceCell};
- use std::sync::Arc;
-+use std::vec::IntoIter;
- use tantivy::tokenizer::{Token, TokenStream, Tokenizer};
- 
- /// The set of configurable options that distinguish one cached Lindera
-@@ -226,7 +227,8 @@ impl Tokenizer for LinderaChineseTokenizer {
-         let lindera_token_stream = LinderaTokenStream {
-             tokens: tokenizer
-                 .tokenize(text)
--                .expect("Lindera Chinese tokenizer failed"),
-+                .expect("Lindera Chinese tokenizer failed")
-+                .into_iter(),
-             token: &mut self.token,
-         };
- 
-@@ -247,7 +249,8 @@ impl Tokenizer for LinderaJapaneseTokenizer {
-         let lindera_token_stream = LinderaTokenStream {
-             tokens: tokenizer
-                 .tokenize(text)
--                .expect("Lindera Japanese tokenizer failed"),
-+                .expect("Lindera Japanese tokenizer failed")
-+                .into_iter(),
-             token: &mut self.token,
-         };
- 
-@@ -268,7 +271,8 @@ impl Tokenizer for LinderaKoreanTokenizer {
-         let lindera_token_stream = LinderaTokenStream {
-             tokens: tokenizer
-                 .tokenize(text)
--                .expect("Lindera Korean tokenizer failed"),
-+                .expect("Lindera Korean tokenizer failed")
-+                .into_iter(),
-             token: &mut self.token,
-         };
- 
-@@ -282,7 +286,7 @@ pub enum MultiLanguageTokenStream<'a> {
- }
- 
- pub struct LinderaTokenStream<'a> {
--    pub tokens: Vec<LinderaToken<'a>>,
-+    pub tokens: IntoIter<LinderaToken<'a>>,
-     pub token: &'a mut Token,
- }
- 
-@@ -315,10 +319,9 @@ impl TokenStream for MultiLanguageTokenStream<'_> {
- 
- impl TokenStream for LinderaTokenStream<'_> {
-     fn advance(&mut self) -> bool {
--        if self.tokens.is_empty() {
-+        let Some(token) = self.tokens.next() else {
-             return false;
--        }
--        let token = self.tokens.remove(0);
-+        };
-         self.token.text = token.surface.to_string();
-         self.token.offset_from = token.byte_start;
-         self.token.offset_to = token.byte_end;
-@@ -352,6 +355,94 @@ mod tests {
-         tokens
-     }
- 
-+    #[rstest]
-+    #[case::chinese(
-+        LinderaChineseTokenizer::new,
-+        chinese_tokenizer,
-+        "北京 上海，搜索引擎。"
-+    )]
-+    #[case::japanese(
-+        LinderaJapaneseTokenizer::new,
-+        japanese_tokenizer,
-+        "東京 大阪、検索エンジン。"
-+    )]
-+    #[case::korean(LinderaKoreanTokenizer::new, korean_tokenizer, "서울 부산, 검색 엔진.")]
-+    fn test_lindera_token_stream_preserves_metadata<T: Tokenizer>(
-+        #[case] make_tokenizer: fn(bool) -> T,
-+        #[case] source: fn(LinderaOptions) -> &'static Arc<LinderaTokenizer>,
-+        #[case] text: &str,
-+        #[values(false, true)] keep_whitespace: bool,
-+    ) {
-+        let expected = source(LinderaOptions::new(keep_whitespace, false, false))
-+            .tokenize(text)
-+            .unwrap();
-+        let mut tokenizer = make_tokenizer(keep_whitespace);
-+        let mut stream = tokenizer.token_stream(text);
+@@ -0,0 +1,72 @@
++-- An InitPlan can consume the only worker before the aggregate launches.
++CREATE TABLE aggregate_worker_shortage (id int, body text, hash text);
++INSERT INTO aggregate_worker_shortage
++SELECT i, 'test content ' || i, md5(i::text) FROM generate_series(1, 1000) i;
++CREATE INDEX aggregate_worker_shortage_idx
++ON aggregate_worker_shortage USING paradedb (id, body, hash);
++SET max_parallel_workers = 1;
++SET max_parallel_workers_per_gather = 2;
++SET parallel_setup_cost = 0;
++SET parallel_tuple_cost = 0;
++SET min_parallel_table_scan_size = 0;
++SET parallel_leader_participation = off;
++DO $$
++DECLARE
++    plan jsonb;
++BEGIN
++    EXECUTE 'EXPLAIN (FORMAT JSON) SELECT count(*) FROM aggregate_worker_shortage
++             WHERE body @@@ paradedb.all()
++               AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5))'
++    INTO plan;
++    ASSERT jsonb_path_exists(plan, '$.**."Workers Planned" ? (@ > 0)');
++    ASSERT plan::text LIKE '%ParadeDB Aggregate Scan%';
++    ASSERT plan::text LIKE '%InitPlan%';
++END
++$$;
++SELECT count(*) FROM aggregate_worker_shortage
++WHERE body @@@ paradedb.all()
++  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
++ count 
++-------
++     5
++(1 row)
 +
-+        for expected_token in &expected {
-+            assert!(stream.advance());
-+            let actual = stream.token();
-+            assert_eq!(actual.text, expected_token.surface.as_ref());
-+            assert_eq!(actual.offset_from, expected_token.byte_start);
-+            assert_eq!(actual.offset_to, expected_token.byte_end);
-+            assert_eq!(actual.position, expected_token.position);
-+            assert_eq!(actual.position_length, expected_token.position_length);
-+        }
-+        assert!(!stream.advance());
-+        assert!(!stream.advance());
-+    }
++SELECT count(*) FROM aggregate_worker_shortage
++WHERE body @@@ paradedb.all()
++  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
++ count 
++-------
++     5
++(1 row)
 +
-+    #[rstest]
-+    #[case::chinese(LinderaChineseTokenizer::default(), "北京 上海。")]
-+    #[case::japanese(LinderaJapaneseTokenizer::default(), "東京 大阪。")]
-+    #[case::korean(LinderaKoreanTokenizer::default(), "서울 부산.")]
-+    fn test_lindera_tokenizer_reuse_after_partial_stream<T: Tokenizer + Clone>(
-+        #[case] mut tokenizer: T,
-+        #[case] text: &str,
-+    ) {
-+        let expected = test_helper(&mut tokenizer.clone(), text);
-+        let partial_text = text.repeat(2);
-+        assert!(test_helper(&mut tokenizer.clone(), &partial_text).len() > 5);
-+        {
-+            let mut stream = tokenizer.token_stream(&partial_text);
-+            for _ in 0..5 {
-+                assert!(stream.advance());
-+            }
-+        }
-+        assert!(test_helper(&mut tokenizer, " \t\n").is_empty());
-+        assert_eq!(test_helper(&mut tokenizer, text), expected);
-+    }
++SELECT count(*) FROM aggregate_worker_shortage
++WHERE body @@@ paradedb.all()
++  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
++ count 
++-------
++     5
++(1 row)
 +
-+    // Run explicitly to compare token-stream consumption independently of
-+    // dictionary loading and segmentation. Avoid a wall-clock assertion in CI.
-+    #[test]
-+    #[ignore = "manual token-stream scaling benchmark; run with --release --ignored --nocapture"]
-+    fn benchmark_lindera_token_stream_scalin
++SELECT count(*) FROM aggregate_worker_shortage
++WHERE body @@@ paradedb.all()
++  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
++ count 
++-------
++     5
++(1 row)
++
++SELECT count(*) FROM aggregate_worker_shortage
++WHERE body @@@ paradedb.all()
++  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
++ count 
++-------
++     5
++(1 row)
++
++DROP TABLE aggregate_worker_shortage;
++RESET max_parallel_workers;
++RESET max_parallel_workers_per_gather;
++RESET parallel_setup_cost;
++RESET parallel_tuple_cost;
++RESET min_parallel_table_scan_size;
++RESET parallel_leader_participation;
 ```
 
----
-
-### Incident Patch 3: `416da5d0` (2026-10-28)
-**Commit Message**: fix: allow vacuum delete assertion to remain unreachable (#7078)
-
-## What
-
-Use `assert_always_or_unreachable!` for the immutable VACUUM
-delete-count invariant.
-
-## Why
-
-Antithesis reported this property as failed with no examples in the
-October 28 Enterprise run. Reaching this assertion requires partially
-deleting an immutable segment. A run may validly delete nothing, remove
-whole segments, or only flush mutable segments.
-
-## How
-
-Allow the assertion site to remain unvisited while preserving every
-existing invariant check whenever it executes. Document why reachability
-is optional. Existing Stressgres workloads are unchanged.
-
-## Tests
-
-`git diff --check` passed. No runtime tests added or run for this
-assertion classification change. Antithesis validation remains pending a
-subsequent run.
-
-**File**: `pg_search/src/postgres/delete.rs` (modified, +3/-1)
+**File**: `pg_search/tests/pg_regress/sql/aggregate_worker_shortage.sql` (added, +47/-0)
 ```diff
-@@ -341,6 +341,8 @@ impl SegmentDeleter {
-         // file), and (b) never resurrect a deleted doc -- num_deleted only grows and live docs
-         // only shrink. A violation means the atomic swap would pair mismatched segments or
-         // un-delete already-dead rows (wrong results / resurrected tuples).
-+        // Partial immutable-segment deletes need not occur in every run: VACUUM may
-+        // delete nothing, remove whole segments, or only flush mutable segments.
-         dst::observe!(|| {
-             let old_segment_id = old_meta.id();
-             let new_segment_id = new_meta.id();
-@@ -350,7 +352,7 @@ impl SegmentDeleter {
-             let new_num_deleted_docs = new_meta.num_deleted_docs();
-             let old_num_docs = old_meta.num_docs();
-             let new_num_docs = new_meta.num_docs();
--            dst::assert_always!(
-+            dst::assert_always_or_unreachable!(
-                 new_segment_id == old_segment_id
-                     && new_max_doc == old_max_doc
-                     && new_num_deleted_docs >= old_num_deleted_docs
+@@ -0,0 +1,47 @@
++-- An InitPlan can consume the only worker before the aggregate launches.
++CREATE TABLE aggregate_worker_shortage (id int, body text, hash text);
++INSERT INTO aggregate_worker_shortage
++SELECT i, 'test content ' || i, md5(i::text) FROM generate_series(1, 1000) i;
++CREATE INDEX aggregate_worker_shortage_idx
++ON aggregate_worker_shortage USING paradedb (id, body, hash);
++SET max_parallel_workers = 1;
++SET max_parallel_workers_per_gather = 2;
++SET parallel_setup_cost = 0;
++SET parallel_tuple_cost = 0;
++SET min_parallel_table_scan_size = 0;
++SET parallel_leader_participation = off;
++DO $$
++DECLARE
++    plan jsonb;
++BEGIN
++    EXECUTE 'EXPLAIN (FORMAT JSON) SELECT count(*) FROM aggregate_worker_shortage
++             WHERE body @@@ paradedb.all()
++               AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5))'
++    INTO plan;
++    ASSERT jsonb_path_exists(plan, '$.**."Workers Planned" ? (@ > 0)');
++    ASSERT plan::text LIKE '%ParadeDB Aggregate Scan%';
++    ASSERT plan::text LIKE '%InitPlan%';
++END
++$$;
++SELECT count(*) FROM aggregate_worker_shortage
++WHERE body @@@ paradedb.all()
++  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
++SELECT count(*) FROM aggregate_worker_shortage
++WHERE body @@@ paradedb.all()
++  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
++SELECT count(*) FROM aggregate_worker_shortage
++WHERE body @@@ paradedb.all()
++  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
++SELECT count(*) FROM aggregate_worker_shortage
++WHERE body @@@ paradedb.all()
++  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
++SELECT count(*) FROM aggregate_worker_shortage
++WHERE body @@@ paradedb.all()
++  AND hash = ANY(ARRAY(SELECT hash FROM aggregate_worker_shortage LIMIT 5));
++DROP TABLE aggregate_worker_shortage;
++RESET max_parallel_workers;
++RESET max_parallel_workers_per_gather;
++RESET parallel_setup_cost;
++RESET parallel_tuple_cost;
++RESET min_parallel_table_scan_size;
++RESET parallel_leader_participation;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7086** (2026-10-28): test: reduce Stressgres bootstrap data for Antithesis (@philippemnoel)
-- **PR #7078** (2026-10-28): fix: allow vacuum delete assertion to remain unreachable (@philippemnoel)
-- **PR #7077** (2026-10-28): perf: pin Tantivy main tip and share vector bounds (@walter-woodall)
-- **PR #7076** (closed): perf: pin Tantivy main with member patience (@walter-woodall)
-- **PR #7074** (2026-10-28): chore: Break out a lazy sorted scan. (@paradedb-github-bot[bot])
-- **PR #7073** (2026-10-28): fix(tokenizers): avoid quadratic Lindera token consumption (@paradedb-github-bot[bot])
+- **PR #7122** (2026-10-30): fix: reclaim merge entry segment ID pages (@rebasedming)
+- **PR #7121** (2026-10-30): ci: baseline Cohere shared buffer hits per query (@rebasedming)
+- **PR #7117** (2026-10-30): fix: leave NULL comparison values to PostgreSQL in pushdown (@paradedb-github-bot[bot])
+- **PR #7115** (2026-10-30): fix: match every row for an empty `<> ALL` array in pushdown (@paradedb-github-bot[bot])
+- **PR #7114** (2026-10-30): fix: enforce permissions on standalone index reads (@paradedb-github-bot[bot])
+- **PR #7113** (2026-10-29): fix: authenticate benchmark metric staging (@philippemnoel)
 
 ---
 
@@ -2889,44 +3095,48 @@ subsequent run.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. debug-build panics in filtered Top K queries (#6793)
+## X. enforce permissions on standalone index reads (#7023)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/project/changelog/unreleased/7023.breaking.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e5995dd2`: debug-build panics in filtered Top K queries (#6793). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6610b066`: enforce permissions on standalone index reads (#7023). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/7023.breaking.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
-source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
-source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
-source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
-source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
-source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
-source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
-source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06b488f13e8781a2daa77a5941be#7abd03c193fd06b488f13e8781a2daa77a5941be"
-source = "git+https://github.com/paradedb/tantivy.git?rev=7abd03c193fd06
+---
+header: breaking
+title: Standalone index access permissions
+---
+
+Standalone index reads now check permissions on the backing table. Content-reading APIs,
+including `paradedb.aggregate()`, require table-level `SELECT` and reject calls when row-level
+security applies to the effective caller.
+Callers who need a filtered result under RLS can be given a `SECURITY DEFINER` function,
+owned by the table owner, that applies the policy's filter in an ordinary `@@@` query.
+Wrapping `paradedb.aggregate()` itself does not filter rows.
+
+Metadata APIs, including `paradedb.schema()`, `index_fields()`, the layer-size
+functions, `index_created_at()`, `index_created_by()`, `merge_info()` (and its
+`is_merging()` alias), `vacuum_info()`, `fsm_info()`, `fsm_size()`,
+`paradedb.index_info()`, `pdb.index_segments()`, and the statistics returned by
+`pdb.indexes()`
+also accept callers with the privileges of `pg_stat_scan_tables`, inherited by `pg_monitor`.
+These trusted monitoring roles can inspect whole-index metadata and document counts without
+table `SELECT`, including counts across rows hidden by RLS. Other callers still need schema
+`USAGE`, table-level `SELECT`, and no active RLS; inventory omits in
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e654c7c28402965fae90d330bdc2#3d304727a314e654c7c28402965fae90d330bdc2"
-source = "git+https://github.com/paradedb/tantivy.git?rev=3d304727a314e6
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e5995dd2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6610b066` are properly handled with clean fallback behavior.

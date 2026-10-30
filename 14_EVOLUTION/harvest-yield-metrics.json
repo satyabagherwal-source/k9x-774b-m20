@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T17:06:08.872Z",
-  "total_cycles_completed": 6222,
-  "total_learnings_persisted": 6222,
-  "total_rules_promoted": 5776,
+  "last_updated": "2026-10-30T17:14:41.344Z",
+  "total_cycles_completed": 6223,
+  "total_learnings_persisted": 6223,
+  "total_rules_promoted": 5777,
   "history": [
-    {
-      "timestamp": "2026-10-29T16:36:47.144Z",
-      "repository": "mistralai/Mistral-Large-4-1T-A52B",
-      "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T16:48:26.044Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-30T17:06:08.872Z",
       "repository": "databendlabs/databend",
       "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T17:14:41.344Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

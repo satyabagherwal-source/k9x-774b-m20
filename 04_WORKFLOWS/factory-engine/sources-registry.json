@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T17:06:11.416Z",
-    "lastVerified": "2026-10-30T17:06:11.416Z",
+    "lastChecked": "2026-10-30T17:14:43.874Z",
+    "lastVerified": "2026-10-30T17:14:43.874Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -341,9 +341,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T16:29:58.121Z",
+    "lastChecked": "2026-10-30T17:14:37.242Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T16:29:58.121Z"
+    "lastVerified": "2026-10-30T17:14:37.242Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -396,9 +396,9 @@
   "openziti-zrok": {
     "name": "zrok",
     "officialUrl": "https://github.com/openziti/zrok",
-    "lastChecked": "2026-10-30T10:23:52.007Z",
+    "lastChecked": "2026-10-30T17:14:32.206Z",
     "revisionIdentifier": "09ed814e",
-    "lastVerified": "2026-10-30T10:23:52.007Z"
+    "lastVerified": "2026-10-30T17:14:32.206Z"
   },
   "run-llama-llama_index": {
     "name": "llama_index",
@@ -2272,14 +2272,14 @@
     "officialUrl": "https://github.com/paradedb/paradedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T00:02:39.361Z",
-    "lastVerified": "2026-10-29T00:02:39.361Z",
+    "lastChecked": "2026-10-30T17:14:38.925Z",
+    "lastVerified": "2026-10-30T17:14:38.925Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "ed801206cb804f7affad6744c14ddef452555d225adb73f47b2f4d4384e013b4",
+    "contentHash": "1e3f88d81a80f8e3777011f1e462521cfb45faec2ec5d34860684944477e1e7e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3114,9 +3114,9 @@
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
     "officialUrl": "https://github.com/AliyunContainerService/pouch",
-    "lastChecked": "2026-10-29T01:17:51.187Z",
+    "lastChecked": "2026-10-30T17:14:29.738Z",
     "revisionIdentifier": "ba854f2d",
-    "lastVerified": "2026-10-29T01:17:51.187Z"
+    "lastVerified": "2026-10-30T17:14:29.738Z"
   },
   "vearch-vearch": {
     "name": "vearch",
@@ -6834,9 +6834,9 @@
   "arxanas-git-branchless": {
     "name": "git-branchless",
     "officialUrl": "https://github.com/arxanas/git-branchless",
-    "lastChecked": "2026-10-28T19:24:21.825Z",
+    "lastChecked": "2026-10-30T17:14:22.234Z",
     "revisionIdentifier": "f37244cb",
-    "lastVerified": "2026-10-28T19:24:21.825Z"
+    "lastVerified": "2026-10-30T17:14:22.234Z"
   },
   "hf-autotrust-gev-26b-decide": {
     "name": "autotrust/GEV-26B-Decide",
@@ -10442,5 +10442,19 @@
     "lastChecked": "2026-10-30T17:05:53.441Z",
     "revisionIdentifier": "d82b2e99",
     "lastVerified": "2026-10-30T17:05:53.441Z"
+  },
+  "digitalbazaar-pyld": {
+    "name": "pyld",
+    "officialUrl": "https://github.com/digitalbazaar/pyld",
+    "lastChecked": "2026-10-30T17:14:24.761Z",
+    "revisionIdentifier": "470edbc3",
+    "lastVerified": "2026-10-30T17:14:24.761Z"
+  },
+  "jtrivedi-wave": {
+    "name": "Wave",
+    "officialUrl": "https://github.com/jtrivedi/Wave",
+    "lastChecked": "2026-10-30T17:14:27.202Z",
+    "revisionIdentifier": "27b7e1d2",
+    "lastVerified": "2026-10-30T17:14:27.202Z"
   }
 }

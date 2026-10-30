@@ -6245,3 +6245,4 @@
 | `CYCLE-20261030-LQBF` | `2026-10-30T16:51:25.179Z` | `RDFLib/pySHACL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5804` | Yes (`7cc0215c...`) |
 | `CYCLE-20261030-4O5O` | `2026-10-30T17:06:08.844Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5805` | Yes (`34b31a2a...`) |
 | `CYCLE-20261030-4O68` | `2026-10-30T17:06:08.864Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5806` | Yes (`7f5bcbcc...`) |
+| `CYCLE-20261030-FNLK` | `2026-10-30T17:14:41.336Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5807` | Yes (`1e3f88d8...`) |

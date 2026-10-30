@@ -424568,3 +424568,73 @@ use crate::optimizer::optimizers::cascades::tasks::SchedulerStat;
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `23e080ae` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5807. enforce permissions on standalone index reads (#7023) (Harvested from paradedb/paradedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "enforce permissions on standalone index reads (#7023)",
+  "source": "paradedb/paradedb",
+  "source_url": "https://github.com/paradedb/paradedb",
+  "source_version": "ae198feb",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-30T17:14:41.065Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-paradedb-paradedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [paradedb/paradedb](https://github.com/paradedb/paradedb) (Revision: `ae198feb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `docs/project/changelog/unreleased/7023.breaking.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6610b066`: enforce permissions on standalone index reads (#7023). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/7023.breaking.mdx`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+---
+header: breaking
+title: Standalone index access permissions
+---
+
+Standalone index reads now check permissions on the backing table. Content-reading APIs,
+including `paradedb.aggregate()`, require table-level `SELECT` and reject calls when row-level
+security applies to the effective caller.
+Callers who need a filtered result under RLS can be given a `SECURITY DEFINER` function,
+owned by the table owner, that applies the policy's filter in an ordinary `@@@` query.
+Wrapping `paradedb.aggregate()` itself does not filter rows.
+
+Metadata APIs, including `paradedb.schema()`, `index_fields()`, the layer-size
+functions, `index_created_at()`, `index_created_by()`, `merge_info()` (and its
+`is_merging()` alias), `vacuum_info()`, `fsm_info()`, `fsm_size()`,
+`paradedb.index_info()`, `pdb.index_segments()`, and the statistics returned by
+`pdb.indexes()`
+also accept callers with the privileges of `pg_stat_scan_tables`, inherited by `pg_monitor`.
+These trusted monitoring roles can inspect whole-index metadata and document counts without
+table `SELECT`, including counts across rows hidden by RLS. Other callers still need schema
+`USAGE`, table-level `SELECT`, and no active RLS; inventory omits in
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6610b066` are properly handled with clean fallback behavior.

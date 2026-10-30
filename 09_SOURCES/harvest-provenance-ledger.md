@@ -6254,3 +6254,4 @@ Every entry in this ledger must capture:
 | `learn-github-rdflib-pyshacl` | `https://github.com/RDFLib/pySHACL` | `df57bd43` | Multi-dimensional audit evidence | 2026-10-30T16:51:25.182Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `95cd5f20` | Multi-dimensional audit evidence | 2026-10-30T17:06:08.847Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `1bb45751` | Multi-dimensional audit evidence | 2026-10-30T17:06:08.867Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `ae198feb` | Multi-dimensional audit evidence | 2026-10-30T17:14:41.340Z |

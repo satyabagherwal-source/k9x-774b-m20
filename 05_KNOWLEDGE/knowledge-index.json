@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T17:06:08.790Z",
+  "last_updated": "2026-10-30T17:14:41.251Z",
   "total_verified_learnings": 1175,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -44052,8 +44052,8 @@
       "slug": "paradedb-paradedb",
       "platform": "github",
       "source_url": "https://github.com/paradedb/paradedb",
-      "source_version": "2dbf3197",
-      "content_hash": "ed801206cb804f7affad6744c14ddef452555d225adb73f47b2f4d4384e013b4",
+      "source_version": "ae198feb",
+      "content_hash": "1e3f88d81a80f8e3777011f1e462521cfb45faec2ec5d34860684944477e1e7e",
       "dossier_path": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
       "promoted_rules": [
@@ -44101,6 +44101,11 @@
           "number": 5469,
           "title": "debug-build panics in filtered Top K queries (#6793)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5807,
+          "title": "enforce permissions on standalone index reads (#7023)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44108,7 +44113,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T00:02:39.920Z",
+      "verified_at": "2026-10-30T17:14:41.235Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154333,6 +154338,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T17:06:08.772Z"
+    },
+    "rule-5807": {
+      "learning_id": "rule-5807",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5807,
+      "title": "enforce permissions on standalone index reads (#7023)",
+      "source_url": "https://github.com/paradedb/paradedb",
+      "source_version": "ae198feb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T17:14:41.235Z"
     }
   },
   "aliases": {

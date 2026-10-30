@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "2dbf3197",
+    "sourceVersion": "ae198feb",
     "license": "AGPL-3.0",
-    "contentHash": "ed801206cb804f7affad6744c14ddef452555d225adb73f47b2f4d4384e013b4",
-    "lastHarvestedAt": "2026-10-29T00:02:39.978Z",
+    "contentHash": "1e3f88d81a80f8e3777011f1e462521cfb45faec2ec5d34860684944477e1e7e",
+    "lastHarvestedAt": "2026-10-30T17:14:41.340Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {
