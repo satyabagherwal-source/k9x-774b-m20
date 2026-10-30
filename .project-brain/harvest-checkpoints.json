@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T07:18:41.342Z",
+  "last_updated": "2026-10-30T07:33:29.306Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9156,14 +9156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-redisearch-redisearch",
-      "content_hash": "ae7f3750f7fa2f8c4d22ac38d74417d8732f15d71bdfe208330cb4f108c36ff6",
-      "verified_at": "2026-10-28T18:42:00.538Z",
+      "content_hash": "5dab5eed9d11b400335d88d00ad3462d55aee19246e61ed8e89bedc142a253cf",
+      "verified_at": "2026-10-30T07:33:29.305Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:42:00.538Z"
+      "last_updated": "2026-10-30T07:33:29.305Z"
     },
     "taiga-family/taiga-ui": {
       "repository": "taiga-family/taiga-ui",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "721b879436de950bdb68731b2a989017ca53d97b73f2e22dd6540491af5e2ecb",
-      "verified_at": "2026-10-28T19:46:50.460Z",
+      "content_hash": "e81b614efcef0171bc32a8b93820a50691f67f5888256f552de16cf9b92eaa16",
+      "verified_at": "2026-10-30T07:32:41.559Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T19:46:50.460Z"
+      "last_updated": "2026-10-30T07:32:41.559Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",

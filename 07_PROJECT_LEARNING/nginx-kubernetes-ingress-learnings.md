@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `a052bc26`  
+> **Source Version**: `efa71e3f`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T19:46:49.867Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-30T07:32:40.003Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1434 +12,518 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): nginx/kubernetes-ingress
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T19:46:49.860Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): nginx/kubernetes-ingress
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `nginx/kubernetes-ingress`
-- **Description**: NGINX and  NGINX Plus Ingress Controllers for Kubernetes
-- **Primary Language / Ecosystem**: Go
-- **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md
-- **Stars / Engagement**: 5093 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+### 1.1 The Core Problem Space
+`nginx/kubernetes-ingress` bridges Kubernetes declarative state and the data-plane execution engine of NGINX / NGINX Plus. Kubernetes manifests (`Ingress`, `VirtualServer`, `VirtualServerRoute`, `TransportServer`, `Policy`, `EndpointSlice`, `Secret`, `ConfigMap`) describe high-level routing, TLS, WAF, rate-limiting, and authentication rules. The ingress controller translates asynchronous, event-driven API server watch streams into valid, syntactically verified, zero-downtime NGINX configurations or dynamic upstream reconfiguration API calls.
+
+```
++-----------------------------------------------------------------------------------------------------+
+|                                        Kubernetes Control Plane                                      |
+|  [ Ingress / VirtualServer / VSR / TransportServer / Policy / Secret / ConfigMap / EndpointSlice ]  |
++--------------------------------------------------+--------------------------------------------------+
+                                                   | Informer Watch / SharedIndexInformer
+                                                   v
++-----------------------------------------------------------------------------------------------------+
+|                                     k8s.taskQueue (RateLimiting)                                    |
+|   - Deduping & Key Extraction (namespace/name)                                                      |
+|   - Resource Classification: kind int enum (ingress, virtualserver, secret, endpointslice, etc.)    |
+|   - Decoupled Worker Goroutine Pool via k8s.io/client-go/util/workqueue                             |
++--------------------------------------------------+--------------------------------------------------+
+                                                   | Dequeue task
+                                                   v
++-----------------------------------------------------------------------------------------------------+
+|                                        Reconciliation Engine                                        |
+|   - storeToIngressLister / storeToEndpointSliceLister / indexerToPodLister                          |
+|   - DeepCopy Invariant Enforcement (cache isolation)                                                |
+|   - Dynamic Upstream API (NGINX Plus) OR Atomic File Generation (NGINX OSS)                         |
++--------------------------------------------------+--------------------------------------------------+
+                                                   |
+                         +-------------------------+-------------------------+
+                         v                                                   v
++--------------------------------------------------+  +-----------------------------------------------+
+|             Data Plane: NGINX Plus               |  |              Data Plane: NGINX OSS            |
+| - Dynamic HTTP API Upstream Reconfiguration      |  | - Atomic Tempfile Generation (os.CreateTemp)  |
+| - Dynamic SSL Certificate Injection              |  | - POSIX Mode Chmod -> Write -> Sync -> Rename |
+| - Zero master process reloads on Pod IP changes  |  | - Pre-flight `nginx -t -q` Validation Guard   |
+| - Key-Value store state updates                  |  | - SIGHUP reload / Exec fallback               |
++--------------------------------------------------+  +-----------------------------------------------+
+```
+
+### 1.2 Subsystem Decoupling & Boundary Contracts
+1. **Informer & TaskQueue Subsystem (`internal/k8s/task_queue.go`)**:
+   - Isolates client-go watch queues from NGINX configuration synchronization.
+   - Enforces typed resource enumeration (`kind int`) mapping concrete Go structs and `unstructured.Unstructured` representations into uniform work items: `task{Kind: kind, Key: string}`.
+   - Employs `workqueue.NewNamed("taskQueue")` with decoupled consumer threads calling `syncFn(task)`.
+2. **Cache Isolation Subsystem (`internal/k8s/utils.go`)**:
+   - Prevents memory corruption of shared informer cache items via strictly enforced deep-copy boundaries (`DeepCopy()`). Informer stores return read-only pointer caches; callers mutating objects locally would corrupt informer indices without explicit `DeepCopy()`.
+   - Decouples status mutation from state sync: `hasChanges()` ignores `LoadBalancer.Ingress` and `ResourceVersion` diffs to prevent feedback update cycles.
+3. **Atomic File Generation & Configuration Verification (`internal/nginx/utils.go`)**:
+   - Implements transactional atomic file writes (`createFileAndWriteAtomically`) via tempfile creation in the target directory, synchronous write, explicit permission assignment (`Chmod`), closure, and atomic directory tree renaming (`os.Rename`).
+   - Executes pre-flight syntax checks (`nginxTestError` running `nginx -t -q`) before committing runtime state. Error strings are sanitised by stripping redundant summary noise to emit diagnostic syntax errors to logs and Kubernetes events.
+4. **License & Platform Entitlement Subsystem (`cmd/nginx-ingress/aws.go`)**:
+   - Enforces hardware/cloud marketplace compliance using AWS Marketplace Metering API (`RegisterUsage`) and cryptographic RSASSA-PSS validation with nonce verification to prevent replay attacks and unlicensed container boots.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: pyproject.toml, go.mod, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `cmd/nginx-ingress/utils.go`
-```
-package main
-
-import (
-	"runtime/debug"
-)
-
-func getBuildInfo() (commitHash string, commitTime string, dirtyBuild string) {
-	commitHash = "unknown"
-	commitTime = "unknown"
-	dirtyBuild = "unknown"
-
-	info, ok := debug.ReadBuildInfo()
-	if !ok {
-		return commitHash, commitTime, dirtyBuild
-	}
-	for _, kv := range info.Settings {
-		switch kv.Key {
-		case "vcs.revision":
-			commitHash = kv.Value
-		case "vcs.time":
-			commitTime = kv.Value
-		case "vcs.modified":
-			dirtyBuild = kv.Value
-		}
-	}
-	return commitHash, commitTime, dirtyBuild
-}
-
-```
-
-### Core Architecture Module: `internal/k8s/task_queue.go`
-```
-package k8s
-
-import (
-	"fmt"
-	"log/slog"
-	"time"
-
-	"github.com/nginx/kubernetes-ingress/pkg/apis/dos/v1beta1"
-
-	"github.com/nginx/kubernetes-ingress/internal/k8s/appprotect"
-	"github.com/nginx/kubernetes-ingress/internal/k8s/appprotectdos"
-	nl "github.com/nginx/kubernetes-ingress/internal/logger"
-	conf_v1 "github.com/nginx/kubernetes-ingress/pkg/apis/configuration/v1"
-	v1 "k8s.io/api/core/v1"
-	discovery_v1 "k8s.io/api/discovery/v1"
-	networking "k8s.io/api/networking/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/util/wait"
-	"k8s.io/client-go/util/workqueue"
-)
-
-// taskQueue manages a work queue through an independent worker that
-// invokes the given sync function for every work item inserted.
-type taskQueue struct {
-	// queue is the work queue the worker polls
-	queue *workqueue.Type
-	// sync is called for each item in the queue
-	sync func(task)
-	// workerDone is closed when the worker exits
-	workerDone chan struct{}
-	// logger
-	logger *slog.Logger
-}
-
-// newTaskQueue creates a new task queue with the given sync function.
-// The sync function is called for every element inserted into the queue.
-func newTaskQueue(logger *slog.Logger, syncFn func(task)) *taskQueue {
-	return &taskQueue{
-		queue:      workqueue.NewNamed("taskQueue"),
-		sync:       syncFn,
-		workerDone: make(chan struct{}),
-		logger:     logger,
-	}
-}
-
-// Run begins running the worker for the given duration
-func (tq *taskQueue) Run(period time.Duration, stopCh <-chan struct{}) {
-	wait.Until(tq.worker, period, stopCh)
-}
-
-// Enqueue enqueues ns/name of the given api object in the task queue.
-func (tq *taskQueue) Enqueue(obj interface{}) {
-	key, err := keyFunc(obj)
-	if err != nil {
-		nl.Debugf(tq.logger, "Couldn't get key for object %v: %v", obj, err)
-		return
-	}
-
-	task, err := newTask(key, obj)
-	if err != nil {
-		nl.Debugf(tq.logger, "Couldn't create a task for object %v: %v", obj, err)
-		return
-	}
-
-	nl.Debugf(tq.logger, "Adding an element with a key: %v", task.Key)
-	tq.queue.Add(task)
-}
-
-// Requeue adds the task to the queue again and logs the given error
-func (tq *taskQueue) Requeue(task task, err error) {
-	nl.Errorf(tq.logger, "Requeuing %v, err %v", task.Key, err)
-	tq.queue.Add(task)
-}
-
-// Len returns the length of the queue
-func (tq *taskQueue) Len() int {
-	nl.Debugf(tq.logger, "The queue has %v element(s)", tq.queue.Len())
-	return tq.queue.Len()
-}
-
-// RequeueAfter adds the task to the queue after the given duration
-func (tq *taskQueue) RequeueAfter(t task, err error, after time.Duration) {
-	nl.Errorf(tq.logger, "Requeuing %v after %s, err %v", t.Key, after.String(), err)
-	go func(t task, after time.Duration) {
-		time.Sleep(after)
-		tq.queue.Add(t)
-	}(t, after)
-}
-
-// Worker processes work in the queue through sync.
-func (tq *taskQueue) worker() {
-	for {
-		t, quit := tq.queue.Get()
-		if quit {
-			close(tq.workerDone)
-			return
-		}
-		nl.Debugf(tq.logger, "Syncing %v", t.(task).Key)
-		tq.sync(t.(task))
-		tq.queue.Done(t)
-	}
-}
-
-// Shutdown shuts down the work queue and waits for the worker to ACK
-func (tq *taskQueue) Shutdown() {
-	tq.queue.ShutDown()
-	<-tq.workerDone
-}
-
-// kind represents the kind of the Kubernetes resources of a task
-type kind int
-
-// resources
-const (
-	ingress = iota
-	endpointslice
-	configMap
-	secret
-	service
-	namespace
-	virtualserver
-	virtualServerRoute
-	globalConfiguration
-	transportserver
-	policy
-	appProtectPolicy
-	appProtectLogConf
-	appProtectUserSig
-	appProtectDosPolicy
-	appProtectDosLogConf
-	appProtectDosProtectedResource
-	ingressLink
-)
-
-// task is an element of a taskQueue
-type task struct {
-	Kind kind
-	Key  string
-}
-
-// newTask creates a new task
-func newTask(key string, obj interface{}) (task, error) {
-	var k kind
-	switch t := obj.(type) {
-	case *networking.Ingress:
-		k = ingress
-	case *discovery_v1.EndpointSlice:
-		k = endpointslice
-	case *v1.ConfigMap:
-		k = configMap
-	case *v1.Secret:
-		k = secret
-	case *v1.Service:
-		k = service
-	case *v1.Namespace:
-		k = namespace
-	case *conf_v1.VirtualServer:
-		k = virtualserver
-	case *conf_v1.VirtualServerRoute:
-		k = virtualServerRoute
-	case *conf_v1.Policy:
-		k = policy
-	case *conf_v1.GlobalConfiguration:
-		k = globalConfiguration
-	case *conf_v1.TransportServer:
-		k = transportserver
-	case *v1beta1.DosProtectedResource:
-		k = appProtectDosProtectedResource
-	case *unstructured.Unstructured:
-		if objectKind := obj.(*unstructured.Unstructured).GetKind(); objectKind == appprotect.PolicyGVK.Kind {
-			k = appProtectPolicy
-		} else if objectKind == appprotect.LogConfGVK.Kind {
-			k = appProtectLogConf
-		} else if objectKind == ingressLinkGVK.Kind {
-			k = ingressLink
-		} else if objectKind == appprotect.UserSigGVK.Kind {
-			k = appProtectUserSig
-		} else if objectKind == appprotectdos.DosPolicyGVK.Kind {
-			k = appProtectDosPolicy
-		} else if objectKind == appprotectdos.DosLogConfGVK.Kind {
-			k = appProtectDosLogConf
-		} else {
-			return task{}, fmt.Errorf("unknown unstructured kind: %v", objectKind)
-		}
-	default:
-		return task{}, fmt.Errorf("unknown type: %v", t)
-	}
-
-	return task{k, key}, nil
-}
-
-```
-
-### Core Architecture Module: `internal/k8s/utils.go`
-```
-/*
-Copyright 2015 The Kubernetes Authors All rights reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-package k8s
-
-import (
-	"context"
-	"fmt"
-	"reflect"
-	"strings"
-
-	discovery_v1 "k8s.io/api/discovery/v1"
-
-	v1 "k8s.io/api/core/v1"
-	networking "k8s.io/api/networking/v1"
-	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/apimachinery/pkg/util/intstr"
-	"k8s.io/apimachinery/pkg/util/version"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/cache"
-)
-
-// storeToIngressLister makes a Store that lists Ingress.
-// TODO: Move this to cache/listers post 1.1.
-type storeToIngressLister struct {
-	cache.Store
-}
-
-// GetByKeySafe calls Store.GetByKeySafe and returns a copy of the ingress, so it is
-// safe to modify.
-func (s *storeToIngressLister) GetByKeySafe(key string) (ing *networking.Ingress, exists bool, err error) {
-	item, exists, err := s.Store.GetByKey(key)
-	if !exists || err != nil {
-		return nil, exists, err
-	}
-	ing = item.(*networking.Ingress).DeepCopy()
-	return ing, exists, err
-}
-
-// List lists all Ingress' in the store.
-func (s *storeToIngressLister) List() (ing networking.IngressList, err error) {
-	for _, m := range s.Store.List() {
-		ing.Items = append(ing.Items, *m.(*networking.Ingress).DeepCopy())
-	}
-	return ing, nil
-}
-
-// storeToConfigMapLister makes a Store that lists ConfigMaps
-type storeToConfigMapLister struct {
-	cache.Store
-}
-
-// List lists all Ingress' in the store.
-func (s *storeToConfigMapLister) List() (cfgm v1.ConfigMapList, err error) {
-	for _, m := range s.Store.List() {
-		cfgm.Items = append(cfgm.Items, *m.(*v1.ConfigMap))
-	}
-	return cfgm, nil
-}
-
-// indexerToPodLister makes an Indexer that lists Pods.
-type indexerToPodLister struct {
-	cache.Indexer
-}
-
-// ListByNamespace lists all Pods in the indexer for a given namespace that match the provided selector.
-func (ipl indexerToPodLister) ListByNamespace(ns string, selector labels.Selector) (pods []*v1.Pod, err error) {
-	err = cache.ListAllByNamespace(ipl.Indexer, ns, selector, func(m interface{}) {
-		pods = append(pods, m.(*v1.Pod))
-	})
-	return pods, err
-}
-
-// Store for EndpointSlices
-type storeToEndpointSliceLister struct {
-	cache.Store
-}
-
-// GetServiceEndpointSlices returns the endpoints of a service, matched on service name.
-func (s *storeToEndpointSliceLister) GetServiceEndpointSlices(svc *v1.Service) (endpointSlices []discovery_v1.EndpointSlice, err error) {
-	for _, epStore := range s.Store.List() {
-		ep := *epStore.(*discovery_v1.EndpointSlice)
-		if svc.Name == ep.Labels["kubernetes.io/service-name"] && svc.Namespace == ep.Namespace {
-			endpointSlices = append(endpointSlices, ep)
-		}
-	}
-	if len(endpointSlices) > 0 {
-		return endpointSlices, nil
-	}
-	return endpointSlices, fmt.Errorf("could not find endpointslices for service: %v", svc.Name)
-}
-
-// findPort locates the container port for the given pod and portName.  If the
-// targetPort is a number, use that.  If the targetPort is a string, look that
-// string up in all named ports in all containers in the target pod.  If no
-// match is found, fail.
-func findPort(pod *v1.Pod, svcPort v1.ServicePort) (int32, error) {
-	portName := svcPort.TargetPort
-	switch portName.Type {
-	case intstr.String:
-		name := portName.StrVal
-		for _, container := range pod.Spec.Containers {
-			for _, port := range container.Ports {
-				if port.Name == name && port.Protocol == svcPort.Protocol {
-					return port.ContainerPort, nil
-				}
-			}
-		}
-	case intstr.Int:
-		return int32(portName.IntValue()), nil
-	}
-
-	return 0, fmt.Errorf("no suitable port for manifest: %s", pod.UID)
-}
-
-// isMinion determines is an ingress is a minion or not
-func isMinion(ing *networking.Ingress) bool {
-	return ing.Annotations["nginx.org/mergeable-ingress-type"] == "minion"
-}
-
-// isMaster determines is an ingress is a master or not
-func isMaster(ing *networking.Ingress) bool {
-	return ing.Annotations["nginx.org/mergeable-ingress-type"] == "master"
-}
-
-func isChallengeIngress(ing *networking.Ingress) bool {
-	return ing.Labels["acme.cert-manager.io/http01-solver"] == "true"
-}
-
-// hasChanges determines if current ingress has changes compared to old ingress
-func hasChanges(old *networking.Ingress, current *networking.Ingress) bool {
-	old.Status.LoadBalancer.Ingress = current.Status.LoadBalancer.Ingress
-	old.ResourceVersion = current.ResourceVersion
-	return !reflect.DeepEqual(old, current)
-}
-
-// ParseNamespaceName parses the string in the <namespace>/<name> format and returns the name and the namespace.
-// It returns an error in case the string does not follow the <namespace>/<name> format.
-func ParseNamespaceName(value string) (ns string, name string, err error) {
-	res := strings.Split(value, "/")
-	if len(res) != 2 {
-		return "", "", fmt.Errorf("%q must follow the format <namespace>/<name>", value)
-	}
-	return res[0], res[1], nil
-}
-
-// GetK8sVersion returns the running version of k8s
-func GetK8sVersion(client kubernetes.Interface) (v *version.Version, err error) {
-	serverVersion, err := client.Discovery().ServerVersion()
-	if err != nil {
-		return nil, err
-	}
-
-	runningVersion, err := version.ParseGeneric(serverVersion.String())
-	if err != nil {
-		return nil, fmt.Errorf("unexpected error parsing running Kubernetes version: %w", err)
-	}
-	return runningVersion, nil
-}
-
-// CreateUniformSelectorsFromController creates uniform selector labels by getting them from the actual controller object
-func CreateUniformSelectorsFromController(kubeClient kubernetes.Interface, pod *v1.Pod) (map[string]string, error) {
-	if len(pod.OwnerReferences) == 0 {
-		return nil, fmt.Errorf("pod has no owner references")
-	}
-
-	owner := pod.OwnerReferences[0]
-
-	switch strings.ToLower(owner.Kind) {
-	case "daemonset":
-		ds, err := kubeClient.AppsV1().DaemonSets(pod.Namespace).Get(context.Background(), owner.Name, meta_v1.GetOptions{})
-		if err != nil {
-			return nil, fmt.Errorf("failed to get DaemonSet %s: %w", owner.Name, err)
-		}
-		return ds.Spec.Selector.MatchLabels, nil
-
-	case "statefulset":
-		sts, err := kubeClient.AppsV1().StatefulSets(pod.Namespace).Get(context.Background(), owner.Name, meta_v1.GetOptions{})
-		if err != nil {
-			return nil, fmt.Errorf("failed to get StatefulSet %s: %w", owner.Name, err)
-		}
-		return sts.Spec.Selector.MatchLabels, nil
-
-	case "replicaset":
-		rs, err := kubeClient.AppsV1().ReplicaSets(pod.Namespace).Get(context.Background(), owner.Name, meta_v1.GetOptions{})
-		if err != nil {
-			return nil, fmt.Errorf("failed to get ReplicaSet %s: %w", owner.Name, err)
-		}
-
-		// For ReplicaSet, exclude pod-template-hash
-		selectors := make(map[string]string)
-		for k, v := range rs.Spec.Selector.MatchLabels {
-			if k != "pod-template-hash" {
-				selectors[k] = v
-			}
-		}
-		return selectors, nil
-
-	default:
-		return nil, fmt.Errorf("unsupported: %s", owner.Kind)
-	}
-}
-
-```
-
-### Core Architecture Module: `internal/metrics/collectors/workqueue.go`
-```
-package collectors
-
-import (
-	"github.com/prometheus/client_golang/prometheus"
-	"k8s.io/client-go/util/workqueue"
-)
-
-// WorkQueueMetricsCollector collects the metrics about the work queue, which the Ingress Controller uses to process changes to the resources in the cluster.
-// implements the prometheus.Collector interface
-type WorkQueueMetricsCollector struct {
-	depth        *prometheus.GaugeVec
-	latency      *prometheus.HistogramVec
-	workDuration *prometheus.HistogramVec
-}
-
-// NewWorkQueueMetricsCollector creates a new WorkQueueMetricsCollector
-func NewWorkQueueMetricsCollector(constLabels map[string]string) *WorkQueueMetricsCollector {
-	const workqueueSubsystem = "workqueue"
-	latencyBucketSeconds := []float64{0.1, 0.5, 1, 5, 10, 50}
-
-	return &WorkQueueMetricsCollector{
-		depth: prometheus.NewGaugeVec(
-			prometheus.GaugeOpts{
-				Namespace:   metricsNamespace,
-				Subsystem:   workqueueSubsystem,
-				Name:        "depth",
-				Help:        "Current depth of workqueue",
-				ConstLabels: constLabels,
-			},
-			[]string{"name"},
-		),
-		latency: prometheus.NewHistogramVec(
-			prometheus.HistogramOpts{
-				Namespace:   metricsNamespace,
-				Subsystem:   workqueueSubsystem,
-				Name:        "queue_duration_seconds",
-				Help:        "How long in seconds an item stays in workqueue before being processed",
-				Buckets:     latencyBucketSeconds,
-				ConstLabels: constLabels,
-			},
-			[]string{"name"},
-		),
-		workDuration: prometheus.NewHistogramVec(
-			prometheus.HistogramOpts{
-				Namespace:   metricsNamespace,
-				Subsystem:   workqueueSubsystem,
-				Name:        "work_duration_seconds",
-				Help:        "How long in seconds processing an item from workqueue takes",
-				Buckets:     latencyBucketSeconds,
-				ConstLabels: constLabels,
-			},
-			[]string{"name"},
-		),
-	}
-}
-
-// Collect implements the prometheus.Collector interface Collect method
-func (wqc *WorkQueueMetricsCollector) Collect(ch chan<- prometheus.Metric) {
-	wqc.depth.Collect(ch)
-	wqc.latency.Collect(ch)
-	wqc.workDuration.Collect(ch)
-}
-
-// Describe implements the prometheus.Collector interface Describe method
-func (wqc *WorkQueueMetricsCollector) Describe(ch chan<- *prometheus.Desc) {
-	wqc.depth.Describe(ch)
-	wqc.latency.Describe(ch)
-	wqc.workDuration.Describe(ch)
-}
-
-// Register registers all the metrics of the collector
-func (wqc *WorkQueueMetricsCollector) Register(registry *prometheus.Registry) error {
-	workqueue.SetProvider(wqc)
-	return registry.Register(wqc)
-}
-
-// NewDepthMetric implements the workqueue.MetricsProvider interface NewDepthMetric method
-func (wqc *WorkQueueMetricsCollector) NewDepthMetric(name string) workqueue.GaugeMetric {
-	return wqc.depth.WithLabelValues(name)
-}
-
-// NewLatencyMetric implements the workqueue.MetricsProvider interface NewLatencyMetric method
-func (wqc *WorkQueueMetricsCollector) NewLatencyMetric(name string) workqueue.HistogramMetric {
-	return wqc.latency.WithLabelValues(name)
-}
-
-// NewWorkDurationMetric implements the workqueue.MetricsProvider interface NewWorkDurationMetric method
-func (wqc *WorkQueueMetricsCollector) NewWorkDurationMetric(name string) workqueue.HistogramMetric {
-	return wqc.workDuration.WithLabelValues(name)
-}
-
-// noopMetric implements the workqueue.GaugeMetric and workqueue.HistogramMetric interfaces
-type noopMetric struct{}
-
-func (noopMetric) Inc()            {}
-func (noopMetric) Dec()            {}
-func (noopMetric) Set(float64)     {}
-func (noopMetric) Observe(float64) {}
-
-// NewAddsMetric implements the workqueue.MetricsProvider interface NewAddsMetric method
-func (*WorkQueueMetricsCollector) NewAddsMetric(string) workqueue.CounterMetric {
-	return noopMetric{}
-}
-
-// NewUnfinishedWorkSecondsMetric implements the workqueue.MetricsProvider interface NewUnfinishedWorkSecondsMetric method
-func (*WorkQueueMetricsCollector) NewUnfinishedWorkSecondsMetric(string) workqueue.SettableGaugeMetric {
-	return noopMetric{}
-}
-
-// NewLongestRunningProcessorSecondsMetric implements the workqueue.MetricsProvider interface NewLongestRunningProcessorSecondsMetric method
-func (*WorkQueueMetricsCollector) NewLongestRunningProcessorSecondsMetric(string) workqueue.SettableGaugeMetric {
-	return noopMetric{}
-}
-
-// NewRetriesMetric implements the workqueue.MetricsProvider interface NewRetriesMetric method
-func (*WorkQueueMetricsCollector) NewRetriesMetric(string) workqueue.CounterMetric {
-	return noopMetric{}
-}
-
-```
-
-### Core Architecture Module: `internal/nginx/utils.go`
-```
-package nginx
-
-import (
-	"bytes"
-	"context"
-	"fmt"
-	"log/slog"
-	"os"
-	"os/exec"
-	"path"
-	"strings"
-
-	nl "github.com/nginx/kubernetes-ingress/internal/logger"
-)
-
-func shellOut(l *slog.Logger, cmd string) (err error) {
-	var stdout bytes.Buffer
-	var stderr bytes.Buffer
-
-	nl.Debugf(l, "executing %s", cmd)
-
-	command := exec.Command("sh", "-c", cmd)
-	command.Stdout = &stdout
-	command.Stderr = &stderr
-
-	err = command.Start()
-	if err != nil {
-		return fmt.Errorf("failed to execute %v, err: %w", cmd, err)
-	}
-
-	err = command.Wait()
-	if err != nil {
-		return fmt.Errorf("command %v stdout: %q\nstderr: %q\nfinished with error: %w", cmd,
-			stdout.String(), stderr.String(), err)
-	}
-	return nil
-}
-
-// nginxTestError runs 'nginx -t' and returns a clean, single-line error
-// extracted from stderr. It strips the redundant "nginx: configuration file ... test failed"
-// summary line and joins remaining lines with "; ".
-func nginxTestError(l *slog.Logger, debug bool) error {
-	binaryFilename := getBinaryFileName(debug)
-	var stderr bytes.Buffer
-
-	nl.Debugf(l, "executing nginx -t")
-
-	cmd := exec.CommandContext(context.Background(), binaryFilename, "-t", "-q") // #nosec G204
-	cmd.Stderr = &stderr
-
-	if err := cmd.Run(); err != nil {
-		errOutput := strings.TrimSpace(stderr.String())
-		if errOutput == "" {
-			return fmt.Errorf("nginx configuration test failed: %w", err)
-		}
-		var filtered []string
-		for _, line := range strings.Split(errOutput, "\n") {
-			line = strings.TrimSpace(line)
-			if line == "" {
-				continue
-			}
-			if strings.HasPrefix(line, "nginx: configuration file") && strings.HasSuffix(line, "test failed") {
-				continue
-			}
-			filtered = append(filtered, line)
-		}
-		if len(filtered) == 0 {
-			return fmt.Errorf("nginx configuration test failed: %w", err)
-		}
-		return fmt.Errorf("%s", strings.Join(filtered, "; "))
-	}
-	return nil
-}
-
-func createFileAndWrite(name string, b []byte) error {
-	w, err := os.Create(name)
-	if err != nil {
-		return fmt.Errorf("failed to open %v: %w", name, err)
-	}
-
-	defer func() {
-		if tempErr := w.Close(); tempErr != nil {
-			err = tempErr
-		}
-	}()
-
-	_, err = w.Write(b)
-	if err != nil {
-		return fmt.Errorf("failed to write to %v: %w", name, err)
-	}
-
-	return err
-}
-
-func createFileAndWriteAtomically(l *slog.Logger, filename string, tempPath string, mode os.FileMode, content []byte) {
-	file, err := os.CreateTemp(tempPath, path.Base(filename))
-	if err != nil {
-		nl.Fatalf(l, "Couldn't create a temp file for the file %v: %v", filename, err)
-	}
-
-	err = file.Chmod(mode)
-	if err != nil {
-		nl.Fatalf(l, "Couldn't change the mode of the temp file %v: %v", file.Name(), err)
-	}
-
-	_, err = file.Write(content)
-	if err != nil {
-		nl.Fatalf(l, "Couldn't write to the temp file %v: %v", file.Name(), err)
-	}
-
-	err = file.Close()
-	if err != nil {
-		nl.Fatalf(l, "Couldn't close the temp file %v: %v", file.Name(), err)
-	}
-
-	err = os.Rename(file.Name(), filename)
-	if err != nil {
-		nl.Fatalf(l, "Couldn't rename the temp file %v to %v: %v", file.Name(), filename, err)
-	}
-}
-
-```
-
-### Core Architecture Module: `internal/nsutils/utils.go`
-```
-package nsutils
-
-import (
-	"strings"
-)
-
-// HasNamespace checks if the given string is a resource reference with a namespace (i.e., has a '/' character).
-func HasNamespace(s string) bool {
-	return strings.Contains(s, "/")
-}
-
-// FormatResourceReference formats a resource reference by concatenating the namespace and name with a '/' character.
-func FormatResourceReference(namespace, name string) string {
-	return namespace + "/" + name
-}
-
-```
-
-### Core Architecture Module: `pkg/client/applyconfiguration/configuration/v1/upstreamqueue.go`
-```
-// Code generated by applyconfiguration-gen. DO NOT EDIT.
-
-package v1
-
-// UpstreamQueueApplyConfiguration represents a declarative configuration of the UpstreamQueue type for use
-// with apply.
-//
-// UpstreamQueue defines Queue Configuration for an Upstream.
-type UpstreamQueueApplyConfiguration struct {
-	// The size of the queue.
-	Size *int `json:"size,omitempty"`
-	// The timeout of the queue. A request cannot be queued for a period longer than the timeout. The default is 60s.
-	Timeout *string `json:"timeout,omitempty"`
-}
-
-// UpstreamQueueApplyConfiguration constructs a declarative configuration of the UpstreamQueue type for use with
-// apply.
-func UpstreamQueue() *UpstreamQueueApplyConfiguration {
-	return &UpstreamQueueApplyConfiguration{}
-}
-
-// WithSize sets the Size field in the declarative configuration to the given value
-// and returns the receiver, so that objects can be built by chaining "With" function invocations.
-// If called multiple times, the Size field is set to the value of the last call.
-func (b *UpstreamQueueApplyConfiguration) WithSize(value int) *UpstreamQueueApplyConfiguration {
-	b.Size = &value
-	return b
-}
-
-// WithTimeout sets the Timeout field in the declarative configuration to the given value
-// and returns the receiver, so that objects can be built by chaining "With" function invocations.
-// If called multiple times, the Timeout field is set to the value of the last call.
-func (b *UpstreamQueueApplyConfiguration) WithTimeout(value string) *UpstreamQueueApplyConfiguration {
-	b.Timeout = &value
-	return b
-}
-
-```
-
-### Core Architecture Module: `pkg/client/applyconfiguration/utils.go`
-```
-// Code generated by applyconfiguration-gen. DO NOT EDIT.
-
-package applyconfiguration
-
-import (
-	configurationv1 "github.com/nginx/kubernetes-ingress/pkg/apis/configuration/v1"
-	v1beta1 "github.com/nginx/kubernetes-ingress/pkg/apis/dos/v1beta1"
-	v1 "github.com/nginx/kubernetes-ingress/pkg/apis/externaldns/v1"
-	v1alpha1 "github.com/nginx/kubernetes-ingress/pkg/apis/externaldnsk8s/v1alpha1"
-	applyconfigurationconfigurationv1 "github.com/nginx/kubernetes-ingress/pkg/client/applyconfiguration/configuration/v1"
-	dosv1beta1 "github.com/nginx/kubernetes-ingress/pkg/client/applyconfiguration/dos/v1beta1"
-	externaldnsv1 "github.com/nginx/kubernetes-ingress/pkg/client/applyconfiguration/externaldns/v1"
-	externaldnsk8sv1alpha1 "github.com/nginx/kubernetes-ingress/pkg/client/applyconfiguration/externaldnsk8s/v1alpha1"
-	internal "github.com/nginx/kubernetes-ingress/pkg/client/applyconfiguration/internal"
-	runtime "k8s.io/apimachinery/pkg/runtime"
-	schema "k8s.io/apimachinery/pkg/runtime/schema"
-	managedfields "k8s.io/apimachinery/pkg/util/managedfields"
-)
-
-// ForKind returns an apply configuration type for the given GroupVersionKind, or nil if no
-// apply configuration type exists for the given GroupVersionKind.
-func ForKind(kind schema.GroupVersionKind) interface{} {
-	switch kind {
-	// Group=appprotectdos.f5.com, Version=v1beta1
-	case v1beta1.SchemeGroupVersion.WithKind("AllowListEntry"):
-		return &dosv1beta1.AllowListEntryApplyConfiguration{}
-	case v1beta1.SchemeGroupVersion.WithKind("ApDosMonitor"):
-		return &dosv1beta1.ApDosMonitorApplyConfiguration{}
-	case v1beta1.SchemeGroupVersion.WithKind("DosProtectedResource"):
-		return &dosv1beta1.DosProtectedResourceApplyConfiguration{}
-	case v1beta1.SchemeGroupVersion.WithKind("DosProtectedResourceSpec"):
-		return &dosv1beta1.DosProtectedResourceSpecApplyConfiguration{}
-	case v1beta1.SchemeGroupVersion.WithKind("DosSecurityLog"):
-		return &dosv1beta1.DosSecurityLogApplyConfiguration{}
-
-		// Group=externaldns.k8s.io, Version=v1alpha1
-	case v1alpha1.SchemeGroupVersion.WithKind("DNSEndpoint"):
-		return &externaldnsk8sv1alpha1.DNSEndpointApplyConfiguration{}
-	case v1alpha1.SchemeGroupVersion.WithKind("DNSEndpointSpec"):
-		return &externaldnsk8sv1alpha1.DNSEndpointSpecApplyConfiguration{}
-	case v1alpha1.SchemeGroupVersion.WithKind("DNSEndpointStatus"):
-		return &externaldnsk8sv1alpha1.DNSEndpointStatusApplyConfiguration{}
-	case v1alpha1.SchemeGroupVersion.WithKind("Endpoint"):
-		return &externaldnsk8sv1alpha1.EndpointApplyConfiguration{}
-	case v1alpha1.SchemeGroupVersion.WithKind("ProviderSpecificProperty"):
-		return &externaldnsk8sv1alpha1.ProviderSpecificPropertyApplyConfiguration{}
-
-		// Group=externaldns.nginx.org, Version=v1
-	case v1.SchemeGroupVersion.WithKind("DNSEndpoint"):
-		return &externaldnsv1.DNSEndpointApplyConfiguration{}
-	case v1.SchemeGroupVersion.WithKind("DNSEndpointSpec"):
-		return &externaldnsv1.DNSEndpointSpecApplyConfiguration{}
-	case v1.SchemeGroupVersion.WithKind("DNSEndpointStatus"):
-		return &externaldnsv1.DNSEndpointStatusApplyConfiguration{}
-	case v1.SchemeGroupVersion.WithKind("Endpoint"):
-		return &externaldnsv1.EndpointApplyConfiguration{}
-	case v1.SchemeGroupVersion.WithKind("ProviderSpecificProperty"):
-		return &externaldnsv1.ProviderSpecificPropertyApplyConfiguration{}
-
-		// Group=k8s.nginx.org, Version=v1
-	case configurationv1.SchemeGroupVersion.WithKind("AccessControl"):
-		return &applyconfigurationconfigurationv1.AccessControlApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("Action"):
-		return &applyconfigurationconfigurationv1.ActionApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("ActionProxy"):
-		return &applyconfigurationconfigurationv1.ActionProxyApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("ActionRedirect"):
-		return &applyconfigurationconfigurationv1.ActionRedirectApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("ActionReturn"):
-		return &applyconfigurationconfigurationv1.ActionReturnApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("AddHeader"):
-		return &applyconfigurationconfigurationv1.AddHeaderApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("APIKey"):
-		return &applyconfigurationconfigurationv1.APIKeyApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("BasicAuth"):
-		return &applyconfigurationconfigurationv1.BasicAuthApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("BundleSource"):
-		return &applyconfigurationconfigurationv1.BundleSourceApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("Cache"):
-		return &applyconfigurationconfigurationv1.CacheApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("CacheConditions"):
-		return &applyconfigurationconfigurationv1.CacheConditionsApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("CacheLock"):
-		return &applyconfigurationconfigurationv1.CacheLockApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("CacheManager"):
-		return &applyconfigurationconfigurationv1.CacheManagerApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("CertManager"):
-		return &applyconfigurationconfigurationv1.CertManagerApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("Condition"):
-		return &applyconfigurationconfigurationv1.ConditionApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("CORS"):
-		return &applyconfigurationconfigurationv1.CORSApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("EgressMTLS"):
-		return &applyconfigurationconfigurationv1.EgressMTLSApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("ErrorPage"):
-		return &applyconfigurationconfigurationv1.ErrorPageApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("ErrorPageRedirect"):
-		return &applyconfigurationconfigurationv1.ErrorPageRedirectApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("ErrorPageReturn"):
-		return &applyconfigurationconfigurationv1.ErrorPageReturnApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("ExternalAuth"):
-		return &applyconfigurationconfigurationv1.ExternalAuthApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("ExternalDNS"):
-		return &applyconfigurationconfigurationv1.ExternalDNSApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("ExternalEndpoint"):
-		return &applyconfigurationconfigurationv1.ExternalEndpointApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("GlobalConfiguration"):
-		return &applyconfigurationconfigurationv1.GlobalConfigurationApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("GlobalConfigurationSpec"):
-		return &applyconfigurationconfigurationv1.GlobalConfigurationSpecApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("Header"):
-		return &applyconfigurationconfigurationv1.HeaderApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("HealthCheck"):
-		return &applyconfigurationconfigurationv1.HealthCheckApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("HSTS"):
-		return &applyconfigurationconfigurationv1.HSTSApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("IngressMTLS"):
-		return &applyconfigurationconfigurationv1.IngressMTLSApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("JWTAuth"):
-		return &applyconfigurationconfigurationv1.JWTAuthApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("JWTCondition"):
-		return &applyconfigurationconfigurationv1.JWTConditionApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("Listener"):
-		return &applyconfigurationconfigurationv1.ListenerApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("Match"):
-		return &applyconfigurationconfigurationv1.MatchApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("OIDC"):
-		return &applyconfigurationconfigurationv1.OIDCApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("OIDCNative"):
-		return &applyconfigurationconfigurationv1.OIDCNativeApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("Policy"):
-		return &applyconfigurationconfigurationv1.PolicyApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("PolicyReference"):
-		return &applyconfigurationconfigurationv1.PolicyReferenceApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("PolicySpec"):
-		return &applyconfigurationconfigurationv1.PolicySpecApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("PolicyStatus"):
-		return &applyconfigurationconfigurationv1.PolicyStatusApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("ProviderSpecificProperty"):
-		return &applyconfigurationconfigurationv1.ProviderSpecificPropertyApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("ProxyRequestHeaders"):
-		return &applyconfigurationconfigurationv1.ProxyRequestHeadersApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("ProxyResponseHeaders"):
-		return &applyconfigurationconfigurationv1.ProxyResponseHeadersApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("RateLimit"):
-		return &applyconfigurationconfigurationv1.RateLimitApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("RateLimitCondition"):
-		return &applyconfigurationconfigurationv1.RateLimitConditionApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("Route"):
-		return &applyconfigurationconfigurationv1.RouteApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("SecurityLog"):
-		return &applyconfigurationconfigurationv1.SecurityLogApplyConfiguration{}
-	case configurationv1.SchemeGroupVersion.WithKind("SessionCookie"):
-		return &applyconfigurationconfigurationv1.Sessio
-```
-
-### Core Architecture Module: `cmd/nginx-ingress/aws.go`
-```
-//go:build aws
-
-package main
-
-import (
-	"context"
-	"crypto/rand"
-	"encoding/base64"
-	"errors"
-	"fmt"
-	"math/big"
-	"time"
-
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/marketplacemetering"
-	"github.com/aws/aws-sdk-go-v2/service/marketplacemetering/types"
-
-	"github.com/golang-jwt/jwt/v5"
-)
-
-var (
-	productCode   string
-	pubKeyVersion int32 = 1
-	pubKeyString  string
-)
-
-var (
-	ErrMissingProductCode = errors.New("token doesn't include the ProductCode")
-	ErrMissingNonce       = errors.New("token doesn't include the Nonce")
-	ErrMissingKeyVersion  = errors.New("token doesn't include the PublicKeyVersion")
-)
-
-func init() {
-	startupCheckFn = checkAWSEntitlement
-}
-
-func checkAWSEntitlement() error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	nonce, err := generateRandomString(255)
-	if err != nil {
-		return err
-	}
-
-	cfg, err := config.LoadDefaultConfig(ctx)
-	if err != nil {
-		return fmt.Errorf("error loading AWS configuration: %w", err)
-	}
-
-	mpm := marketplacemetering.NewFromConfig(cfg)
-
-	out, err := mpm.RegisterUsage(ctx, &marketplacemetering.RegisterUsageInput{ProductCode: &productCode, PublicKeyVersion: &pubKeyVersion, Nonce: &nonce})
-	if err != nil {
-		if notEnt, ok := errors.AsType[*types.CustomerNotEntitledException](err); ok {
-			return fmt.Errorf("user not entitled, code: %v, message: %v, fault: %v", notEnt.ErrorCode(), notEnt.ErrorMessage(), notEnt.ErrorFault().String())
-		}
-		if invRegion, ok := errors.AsType[*types.InvalidRegionException](err); ok {
-			return fmt.Errorf("invalid region, code: %v, message: %v, fault: %v", invRegion.ErrorCode(), invRegion.ErrorMessage(), invRegion.ErrorFault().String())
-		}
-		if platNotSup, ok := errors.AsType[*types.PlatformNotSupportedException](err); ok {
-			return fmt.Errorf("platform not supported, code: %v, message: %v, fault: %v", platNotSup.ErrorCode(), platNotSup.ErrorMessage(), platNotSup.ErrorFault().String())
-		}
-		return err
-	}
-
-	token, err := jwt.ParseWithClaims(*out.Signature, &claims{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodRSAPSS); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-
-		pk, err := base64.StdEncoding.DecodeString(pubKeyString)
-		if err != nil {
-			return nil, fmt.Errorf("error decoding Public Key string: %w", err)
-		}
-		pubKey, err := jwt.ParseRSAPublicKeyFromPEM(pk)
-		if err != nil {
-			return nil, fmt.Errorf("error parsing Public Key: %w", err)
-		}
-
-		return pubKey, nil
-	})
-
-	if claims, ok := token.Claims.(*claims); ok && token.Valid {
-		if claims.ProductCode != productCode || claims.PublicKeyVersion != pubKeyVersion || claims.Nonce != nonce {
-			return fmt.Errorf("the claims in the JWT token don't match the request")
-		}
-	} else {
-		return fmt.Errorf("something is wrong with the JWT token: %w", err)
-	}
-	return nil
-}
-
-type claims struct {
-	ProductCode      string `json:"productCode,omitempty"`
-	PublicKeyVersion int32  `json:"publicKeyVersion,omitempty"`
-	Nonce            string `json:"nonce,omitempty"`
-	jwt.RegisteredClaims
-}
-
-var _ jwt.ClaimsValidator = (*claims)(nil)
-
-func (c claims) Validate() error {
-	if c.Nonce == "" {
-		return ErrMissingNonce
-	}
-	if c.ProductCode == "" {
-		return ErrMissingProductCode
-	}
-	if c.PublicKeyVersion == 0 {
-		return ErrMissingKeyVersion
-	}
-	return nil
-}
-
-func generateRandomString(n int) (string, error) {
-	const letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"
-	ret := make([]byte, n)
-	for i := 0; i < n; i++ {
-		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(letters))))
-		if err != nil {
-			return "", err
-		}
-		ret[i] = letters[num.Int64()]
-	}
-
-	return string(ret), nil
-}
-
-```
-
-### Core Architecture Module: `cmd/nginx-ingress/flags.go`
-```
-package main
-
-import (
-	"context"
-	"errors"
-	"flag"
-	"fmt"
-	"math"
-	"net"
-	"net/url"
-	"os"
-	"regexp"
-	"strconv"
-	"strings"
-
-	"github.com/nginx/kubernetes-ingress/internal/helpers"
-	internalValidation "github.com/nginx/kubernetes-ingress/internal/validation"
-	api_v1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/apimachinery/pkg/util/validation"
-
-	"github.com/nginx/kubernetes-ingress/internal/externaldns"
-	nl "github.com/nginx/kubernetes-ingress/internal/logger"
-)
-
-const (
-	dynamicSSLReloadParam         = "ssl-dynamic-reload"
-	dynamicWeightChangesParam     = "weight-changes-dynamic-reload"
-	appProtectLogLevelDefault     = "fatal"
-	appProtectEnforcerAddrDefault = "127.0.0.1:50000"
-	logLevelDefault               = "info"
-	logFormatDefault              = "glog"
-)
-
-var (
-	healthStatus = flag.Bool("health-status", false,
-		`Add a location based on the value of health-status-uri to the default server. The location responds with the 200 status code for any request.
-	Useful for external health-checking of the Ingress Controller`)
-
-	healthStatusURI = flag.String("health-status-uri", "/nginx-health",
-		`Sets the URI of health status location in the default server. Requires -health-status`)
-
-	proxyURL = flag.String("proxy", "",
-		`Use a proxy server to connect to Kubernetes API started by "kubectl proxy" command. For testing purposes only.
-	The Ingress Controller does not start NGINX and does not write any generated NGINX configuration files to disk`)
-
-	watchNamespace = flag.String("watch-namespace", api_v1.NamespaceAll,
-		`Comma separated list of namespaces the Ingress Controller should watch for resources. By default the Ingress Controller watches all namespaces. Mutually exclusive with "watch-namespace-label".`)
-
-	watchNamespaces []string
-
-	watchSecretNamespace = flag.String("watch-secret-namespace", "",
-		`Comma separated list of namespaces the Ingress Controller should watch for secrets. If this arg is not configured, the Ingress Controller watches the same namespaces for all resources. See "watch-namespace" and "watch-namespace-label". `)
-
-	watchSecretNamespaces []string
-
-	watchNamespaceLabel = flag.String("watch-namespace-label", "",
-		`Configures the Ingress Controller to watch only those namespaces with label foo=bar. By default the Ingress Controller watches all namespaces. Mutually exclusive with "watch-namespace". `)
-
-	nginxConfigMaps = flag.String("nginx-configmaps", "",
-		`A ConfigMap resource for customizing NGINX configuration. If a ConfigMap is set,
-	but the Ingress Controller is not able to fetch it from Kubernetes API, the Ingress Controller will fail to start.
-	Format: <namespace>/<name>`)
-
-	mgmtConfigMap = flag.String("mgmt-configmap", "",
-		`A ConfigMap resource for customizing NGINX configuration. If a ConfigMap is set,
-	but the Ingress Controller is not able to fetch it from Kubernetes API, the Ingress Controller will fail to start.
-	Format: <namespace>/<name>`)
-
-	nginxPlus = flag.Bool("nginx-plus", false, "Enable support for NGINX Plus")
-
-	appProtect = flag.Bool("enable-app-protect", false, "Enable support for NGINX App Protect. Requires -nginx-plus.")
-
-	appProtectLogLevel = flag.String("app-protect-log-level", appProtectLogLevelDefault,
-		`Sets log level for App Protect. Allowed values: fatal, error, warn, info, debug, trace. Requires -nginx-plus and -enable-app-protect.`)
-
-	appProtectDos = flag.Bool("enable-app-protect-dos", false, "Enable support for NGINX App Protect dos. Requires -nginx-plus.")
-
-	appProtectDosDebug = flag.Bool("app-protect-dos-debug", false, "Enable debugging for App Protect Dos. Requires -nginx-plus and -enable-app-protect-dos.")
-
-	appProtectDosMaxDaemons = flag.Int("app-protect-dos-max-daemons", 0, "Max number of ADMD instances. Requires -nginx-plus and -enable-app-protect-dos.")
-	appProtectDosMaxWorkers = flag.Int("app-protect-dos-max-workers", 0, "Max number of nginx processes to support. Requires -nginx-plus and -enable-app-protect-dos.")
-	appProtectDosMemory     = flag.Int("app-protect-dos-memory", 0, "RAM memory size to consume in MB. Requires -nginx-plus and -enable-app-protect-dos.")
-
-	appProtectEnforcerAddress = flag.String("app-protect-enforcer-address", appProtectEnforcerAddrDefault,
-		`Sets address for App Protect v5 Enforcer. Requires -nginx-plus and -enable-app-protect.`)
-
-	appProtectIPIntelligence = flag.Bool("enable-app-protect-ip-intelligence", false, "Enable App Protect IP Intelligence. Requires -nginx-plus and -enable-app-protect.")
-
-	plmStorageURL = flag.String("plm-storage-url", "",
-		`SeaweedFS S3 endpoint URL for the F5 WAF Policy Controller (PLM). When non-empty,
-enables the PLM integration: NIC watches the appprotect.f5.com/v1 CRDs installed by the PLM
-Helm chart instead of the legacy v1beta1 CRDs. Empty (default) disables PLM.
-Must be http:// or https://. Requires -nginx-plus and -enable-app-protect.`)
-
-	plmStorageCredentialsSecret = flag.String("plm-storage-credentials-secret", "",
-		`Kubernetes Secret holding the S3 admin key for the PLM SeaweedFS filer under the
-seaweedfs_admin_secret key. Format: namespace/name. Requires -plm-storage-url.`)
-
-	plmStorageCASecret = flag.String("plm-storage-ca-secret", "",
-		`Kubernetes Secret containing a ca.crt for verifying the PLM SeaweedFS server
-certificate. Format: namespace/name. Optional. Requires -plm-storage-url.`)
-
-	plmStorageClientSSLSecret = flag.String("plm-storage-client-ssl-secret", "",
-		`Kubernetes Secret containing tls.crt and tls.key for mTLS to the PLM SeaweedFS
-filer. Format: namespace/name. Optional. Requires -plm-storage-url.`)
-
-	plmStorageInsecureSkipVerify = flag.Bool("plm-storage-insecure-skip-verify", false,
-		`Disable TLS verification of the PLM SeaweedFS server certificate. For dev/test only.
-NIC prints a startup warning when set. Requires -plm-storage-url.`)
-
-	agent              = flag.Bool("agent", false, "Enable NGINX Agent")
-	agentInstanceGroup = flag.String("agent-instance-group", "nginx-ingress-controller", "Grouping used to associate NGINX Ingress Controller instances")
-
-	ingressClass = flag.String("ingress-class", "nginx",
-		`A class of the Ingress Controller.
-
-	An IngressClass resource with the name equal to the class must be deployed. Otherwise, the Ingress Controller will fail to start.
-	The Ingress Controller only processes resources that belong to its class - i.e. have the "ingressClassName" field resource equal to the class.
-
-	The Ingress Controller processes all the VirtualServer/VirtualServerRoute/TransportServer resources that do not have the "ingressClassName" field for all versions of kubernetes.`)
-
-	defaultServerSecret = flag.String("default-server-tls-secret", "",
-		`A Secret with a TLS certificate and key for TLS termination of the default server. Format: <namespace>/<name>.
-	If not set, than the certificate and key in the file "/etc/nginx/secrets/default" are used.
-	If "/etc/nginx/secrets/default" doesn't exist, the Ingress Controller will configure NGINX to reject TLS connections to the default server.
-	If a secret is set, but the Ingress Controller is not able to fetch it from Kubernetes API or it is not set and the Ingress Controller
-	fails to read the file "/etc/nginx/secrets/default", the Ingress Controller will fail to start.`)
-
-	versionFlag = flag.Bool("version", false, "Print the version, git-commit hash and build date and exit")
-
-	mainTemplatePath = flag.String("main-template-path", "",
-		`Path to the main NGINX configuration template. (default for NGINX "nginx.tmpl"; default for NGINX Plus "nginx-plus.tmpl")`)
-
-	ingressTemplatePath = flag.String("ingress-template-path", "",
-		`Path to the ingress NGINX configuration template for an ingress resource.
-	(default for NGINX "nginx.ingress.tmpl"; default for NGINX Plus "nginx-plus.ingress.tmpl")`)
-
-	virtualServerTemplatePath = flag.String("virtualserver-template-path", "",
-		`Path to the VirtualServer NGINX configuration template for a VirtualServer resource.
-	(default for NGINX "nginx.virtualserver.tmpl"; default for NGINX Plus "nginx-plus.virtualserver.tmpl")`)
-
-	transportServerTemplatePath = flag.String("transportserver-template-path", "",
-		`Path to the TransportServer NGINX configuration template for a TransportServer resource.
-	(default for NGINX "nginx.transportserver.tmpl"; default for NGINX Plus "nginx-plus.transportserver.tmpl")`)
-
-	externalService = flag.String("external-service", "",
-		`Specifies the name of the service with the type LoadBalancer through which the Ingress Controller pods are exposed externally.
-	The external address of the service is used when reporting the status of Ingress, VirtualServer and VirtualServerRoute resources. For Ingress resources only: Requires -report-ingress-status.`)
-
-	ingressLink = flag.String("ingresslink", "",
-		`Specifies the name of the IngressLink resource, which exposes the Ingress Controller pods via a BIG-IP system.
-	The IP of the BIG-IP system is used when reporting the status of Ingress, VirtualServer and VirtualServerRoute resources. For Ingress resources only: Requires -report-ingress-status.`)
-
-	reportIngressStatus = flag.Bool("report-ingress-status", false,
-		"Updates the address field in the status of Ingress resources. Requires the -external-service or -ingresslink flag, or the 'external-status-address' key in the ConfigMap.")
-
-	leaderElectionEnabled = flag.Bool("enable-leader-election", true,
-		"Enable Leader election to avoid multiple replicas of the controller reporting the status of Ingress, VirtualServer and VirtualServerRoute resources -- only one replica will report status (default true). See -report-ingress-status flag.")
-
-	leaderElectionLockName = flag.String("leader-election-lock-name", "nginx-ingress-leader-election",
-		`Specifies the name of the ConfigMap, within the same namespace as the controller, used as the lock for leader election. Requires -enable-leader-election.`)
-
-	nginxStatusAllowCIDRs = flag.String("nginx-status-allow-cidrs", "127.0.0.1,::1", `Add IP/CIDR blocks to the al
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11146** (2026-10-14): **sync: security hardening and minor bug fixes for release-2026-lts**
-  *Symptoms*: This commit applies general security hardening updates and minor stability improvements to the codebase.
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11146?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx) Report :x: Patch coverage is `96.33700%` with `10 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 61.23%. Comparing base ([`5c4642c`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/5c4642c73b11c2b7aec28889ee45c076d65967dc?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)) to head ([`316ee12`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/316ee12a0aef69b2a5d4c2cea57afa11fa5660a6?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)).  | [Files with missing lines](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11146?dropdown=coverage&src=pr&el=tree&utm_medium=referr
-  > ### Package Report <details> gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/nginx-ic/nginx-plus-ingress:t-a63617fff1da4b2bc5909b01f67f0de8, nginx-plus, 37.0.6-2~trixie, amd64<br> gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/nginx-ic/nginx-plus-ingress:t-a63617fff1da4b2bc5909b01f67f0de8, nginx-plus-module-njs, 37.0+1.0.1-1~trixie, amd64<br> gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/nginx-ic/nginx-plus-ingress:t-a63617fff1da4b2bc5909b01f67f0de8, nginx-plus-module-otel, 37.0+0.1.2-1~trixie, amd64<br> gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/nginx-ic/nginx-plus-ingress:t-a63617fff1da4b2bc5909b01f67f0de8, nginx-plus-module-fips-check, 37.0+0.1-1~trixie, amd64<br> gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/nginx-ic/nginx-plus-ingress:t-a63617fff1da4b2bc5909b01f67f0de8, nginx-agent, 3.12.2~trixie, amd64<br> gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/nginx-ic/nginx-plus-ingress:t-a63617fff1da4b2bc5909b01f67f0de8, nginx-plus, 37.0.6-2~trixie, arm64<br> gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/nginx-ic/nginx-plus-ingress:t-
-
-- **Issue #11145** (2026-10-14): **sync: security hardening and minor bug fixes for release-5.7**
-  *Symptoms*: This commit applies general security hardening updates and minor stability improvements to the codebase.
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11145?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx) Report :x: Patch coverage is `96.57534%` with `10 lines` in your changes missing coverage. Please review. :warning: Please [upload](https://docs.codecov.com/docs/codecov-uploader) report for BASE (`release-5.7@c09e7e3`). [Learn more](https://docs.codecov.io/docs/error-reference?utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx#section-missing-base-commit) about missing BASE report.  | [Files with missing lines](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11145?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx) | Patch % | Lines | |---|---|---| | [internal/configs/parsing\_helpers.go](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11145?s
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `a052bc26` (2026-10-28)
-**Commit Message**: Add stack support to pr-review skill (#11283)
-
-* Add stack support to pr-review skill
-
-* add the option for full stack or single PR in the stack
-
-**File**: `.github/prompts/pr-review.prompt.md` (modified, +5/-3)
-```diff
-@@ -9,9 +9,11 @@ Load and follow the **`nic-code-review`** skill at [`.github/skills/nic-code-rev
- ## Task
- 
- 1. Determine the base and head:
--   - Default base: `origin/main` (or `origin/release-*` if the current branch name starts with `release-`).
--   - Head: the current working branch.
--2. Get the diff. Prefer the `get_changed_files` tool; fall back to `git diff <base>...HEAD`.
-+   - Check if the PR is part of a stack using `gh` CLI, `gh api`, or `gh stack` (`gh extension install github/gh-stack`).
-+   - If part of a stack and not specified, show the stack chain and ask whether to review **this PR only** (`origin/<baseRefName>...<headRefName>`) or the **full stack** (`origin/main...<stack-tip>`).
-+   - Base: `origin/<baseRefName>` from the PR/stack, falling back to `origin/main` (or `origin/release-*` if the current branch name starts with `release-`).
-+   - Head: the target PR's head (or stack tip for a full-stack review), falling back to the current working branch.
-+2. Get the diff. Prefer the `get_changed_files` tool (or `gh pr diff` / `git diff <base>...HEAD` when stacked).
- 3. Classify the change using the **Change type classification** table in the skill and load any referenced sub-skills.
- 4. Walk the applicable **dimension checklists** in the skill (Security -> Correctness -> Architecture -> Tests -> layer-specific).
- 5. Verify each finding by reading the actual file, not just the hunk. Never fabricate line numbers or symbol names.
-```
-
-**File**: `.github/skills/nic-code-review/SKILL.md` (modified, +13/-10)
-```diff
-@@ -76,15 +76,18 @@ Downgrade or drop a finding when any of these apply:
- ## Review workflow
- 
- 1. **Read the PR title, description, and linked issue.** Understand intent before reading the diff.
--2. **Get the diff.** Locally: `git diff origin/main...HEAD` or `gh pr diff <n>`. In agent context, use the `get_changed_files` tool.
--3. **Classify the change** using the table below to pick the right sub-skills.
--4. **Read the surrounding code**, not just the diff hunks, context often lives in the same file just outside the hunk.
--5. **Verify NGINX / NIC semantics upstream** for any change that reaches a `.tmpl` file, an annotation, or a CRD field -- see the source table above.
--6. **Walk the review dimensions** in order (Security -> Correctness -> Architecture -> Tests -> Build/chart/CI -> Docs and Examples), loading the referenced skills for depth.
--7. **Verify claims before commenting.** Grep for the symbol, read the referenced file, run `make lint`/`make test` if in doubt.
--8. **Run the completeness gate** below before writing anything.
--9. **Produce the review** in the Output Format below.
--10. **Clean up.** Leave no trace of the review -- see below.
-+2. **Check if the PR is part of a stack** using `gh` CLI, `gh api`, or `gh stack` (`gh extension install github/gh-stack`).
-+   - **Interactive / local**: If stacked and unspecified, show the stack chain and ask whether to review **this PR only** (`origin/<baseRefName>...<headRefName>`) or the **full stack** (`origin/main...<stack-tip>`).
-+   - **Unattended / bot**: Review **this PR only** (`origin/<baseRefName>...<headRefName>`), using sibling PRs in the stack for context and cross-layer completeness checks.
-+3. **Get the diff.** Locally: `gh pr diff <n>` or `git diff origin/<base>...HEAD`. In agent context, use the `get_changed_files` tool (or `gh pr diff` / `git diff origin/<base>...HEAD` when stacked).
-+4. **Classify the change** using the table below to pick the right sub-skills.
-+5. **Read the surrounding code**, not just the diff hunks, context often lives in the same file just outside the hunk.
-+6. **Verify NGINX / NIC semantics upstream** for any change that reaches a `.tmpl` file, an annotation, or a CRD field -- see the source table above.
-+7. **Walk the review dimensions** in order (Security -> Correctness -> Architecture -> Tests -> Build/chart/CI -> Docs and Examples), loading the referenced skills for depth.
-+8. **Verify claims before commenting.** Grep for the symbol, read the referenced file, run `make lint`/`make test` if in doubt.
-+9. **Run the completeness gate** below before writing anything.
-+10. **Produce the review** in the Output Format below.
-+11. **Clean up.** Leave no trace of the review -- see below.
- 
- ### Local checkout and cleanup
- 
-@@ -179,7 +182,7 @@ Before producing output, confirm you have checked each row that the diff touches
- | `.github/workflows/**` | Correct `github.repository` gate for the stage (internal repo builds, public repo publishes), pinned action SHAs, matrix JSON in sync |
- | A new user-controlled string reaching NGINX config | A `containsDangerousChars()` / `ValidateEscapedString()` guard **and** a negative test |
- 
--An unmet row is Blocking unless the Fixed verdicts table above assigns it a lower severity. Cite the missing artifact by path.
-+An unmet row is Blocking unless the Fixed verdicts table above assigns it a lower severity, or (when reviewing a single PR in a stack) the missing layer is intentionally split into a sibling PR in the stack. Cite the missing artifact by path.
- 
- ## Change type classification
- 
-```
-
----
-
-### Incident Patch 2: `93b66bdd` (2026-10-28)
-**Commit Message**: Update version to 5.8.0 & chart to 2.9.0 (#11278)
-
-* Update version to 5.8.0 & chart to 2.9.0
-
-* Update snaps
-
-**File**: `.github/data/version.txt` (modified, +2/-2)
-```diff
-@@ -1,2 +1,2 @@
--IC_VERSION=5.7.0
--HELM_CHART_VERSION=2.8.0
-+IC_VERSION=5.8.0
-+HELM_CHART_VERSION=2.9.0
-```
-
-**File**: `charts/nginx-ingress/Chart.yaml` (modified, +2/-2)
-```diff
-@@ -1,7 +1,7 @@
- apiVersion: v2
- name: nginx-ingress
--version: 2.8.0
--appVersion: 5.7.0
-+version: 2.9.0
-+appVersion: 5.8.0
- kubeVersion: ">= 1.25.0-0"
- type: application
- description: NGINX Ingress Controller
-```
-
-#### Recent Merged Pull Requests:
-- **PR #11283** (2026-10-28): Add stack support to pr-review skill (@AlexFenlon)
-- **PR #11282** (closed): Update community call date from 2026-11-02 to 2026-11-03 (@haywoodsh)
-- **PR #11280** (2026-10-28): Update version to 2026-lts-r10 & chart to 2026.0.9 (@pdabelf5)
-- **PR #11279** (2026-10-28): Update version to 5.7.1 & chart to 2.8.1 (@pdabelf5)
-- **PR #11278** (2026-10-28): Update version to 5.8.0 & chart to 2.9.0 (@pdabelf5)
-- **PR #11275** (2026-10-28): Update dependency preflight to v1.22.0 (release-2026-lts) (@renovate[bot])
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Add stack support to pr-review skill (#11283)
-
+### 1. Atomic Tempfile-Rename Configuration Invariant
 **RULE**:
-When implementing operations in `.github/prompts/pr-review.prompt.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When rendering configuration files consumed by external daemon processes, you MUST write the output to a unique temporary file on the exact same physical filesystem mount before performing an atomic POSIX rename (`os.Rename` / `renameat`). You MUST NOT write directly to target configuration files, truncate files in place, or write temporary files across mount points (such as from `/tmp` to `/etc`).
 
 **WHY**:
-Prevents defects observed in production commit `a052bc26`: Add stack support to pr-review skill (#11283). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+External processes (like NGINX master or file watchers) executing concurrent reads or inotify hooks will read truncated, zero-byte, or half-written configurations if writes occur in place. Writing across filesystem boundaries causes `os.Rename` to fail with `EXDEV: cross-device link`.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/prompts/pr-review.prompt.md`.
+Any controller, agent, daemon, or microservice generating configuration files, TLS certificate bundles, secret mounts, or executable binaries consumed by secondary processes.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
-// Verified production-grade fix pattern:
-   - Check if the PR is part of a stack using `gh` CLI, `gh api`, or `gh stack` (`gh extension install github/gh-stack`).
-   - If part of a stack and not specified, show the stack chain and ask whether to review **this PR only** (`origin/<baseRefName>...<headRefName>`) or the **full stack** (`origin/main...<stack-tip>`).
-   - Base: `origin/<baseRefName>` from the PR/stack, falling back to `origin/main` (or `origin/release-*` if the current branch name starts with `release-`).
-   - Head: the target PR's head (or stack tip for a full-stack review), falling back to the current working branch.
-2. Get the diff. Prefer the `get_changed_files` tool (or `gh pr diff` / `git diff <base>...HEAD` when stacked).
+package atomicwrite
+
+import (
+	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+)
+
+// WriteConfigAtomically writes content to targetPath atomically with specified permissions.
+// The temp file is guaranteed to reside on the same filesystem by creating it in filepath.Dir(targetPath).
+func WriteConfigAtomically(targetPath string, mode os.FileMode, content []byte) (err error) {
+	dir := filepath.Dir(targetPath)
+	base := filepath.Base(targetPath)
+
+	// Invariant: Must use dir of target file to guarantee same filesystem boundary for atomic rename
+	tmpFile, err := os.CreateTemp(dir, fmt.Sprintf(".%s.tmp-*", base))
+	if err != nil {
+		return fmt.Errorf("failed to create temp file in %s: %w", dir, err)
+	}
+
+	tmpPath := tmpFile.Name()
+	defer func() {
+		// Clean up dangling tempfile on write or rename failures
+		if err != nil {
+			_ = os.Remove(tmpPath)
+		}
+	}()
+
+	if err = tmpFile.Chmod(mode); err != nil {
+		_ = tmpFile.Close()
+		return fmt.Errorf("failed to chmod temp file %s to %v: %w", tmpPath, mode, err)
+	}
+
+	if _, err = tmpFile.Write(content); err != nil {
+		_ = tmpFile.Close()
+		return fmt.Errorf("failed to write payload to %s: %w", tmpPath, err)
+	}
+
+	// Guarantee disk commit before atomic pointer swap
+	if err = tmpFile.Sync(); err != nil {
+		_ = tmpFile.Close()
+		return fmt.Errorf("failed to sync temp file %s: %w", tmpPath, err)
+	}
+
+	if err = tmpFile.Close(); err != nil {
+		return fmt.Errorf("failed to close temp file %s: %w", tmpPath, err)
+	}
+
+	// Atomic rename replaces inode pointer safely
+	if err = os.Rename(tmpPath, targetPath); err != nil {
+		return fmt.Errorf("atomic rename from %s to %s failed: %w", tmpPath, targetPath, err)
+	}
+
+	return nil
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-   - Default base: `origin/main` (or `origin/release-*` if the current branch name starts with `release-`).
-   - Head: the current working branch.
-2. Get the diff. Prefer the `get_changed_files` tool; fall back to `git diff <base>...HEAD`.
+// ANTI-PATTERN: NEVER write config or secret directly to target file path.
+func WriteConfigUnsafe(targetPath string, content []byte) error {
+	// DANGER: File is truncated immediately. Concurrent process reading targetPath
+	// receives an EOF or syntactically broken half-written file.
+	f, err := os.OpenFile(targetPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.Write(content) // Failure here leaves empty/corrupted file on disk
+	return err
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a052bc26` are properly handled with clean fallback behavior.
+Run an integration test where a concurrent goroutine continuously reads `targetPath` in an infinite loop parsing JSON/Nginx syntax while `WriteConfigAtomically` executes 500 consecutive writes. Assert zero syntax errors, empty reads, or parse exceptions occur.
+
+---
+
+### 2. Informer Cache Mutation Boundary Invariant
+**RULE**:
+When reading objects from client-go `cache.Store` or `cache.Indexer`, callers MUST invoke `.DeepCopy()` before modifying fields or returning objects across API boundaries. Callers MUST NOT mutate raw pointers returned directly by `Store.Get` or `Store.List`.
+
+**WHY**:
+client-go informer stores keep raw pointers to in-memory Kubernetes objects. Mutating an object fetched from the informer directly mutates the in-memory cache shared across the entire process without acquiring informer locks. This corrupts indexers, causes data races across goroutines, and generates false diffs in reconciliation loops.
+
+**WHEN TO APPLY**:
+All Kubernetes controllers, operators, mutating admission webhooks, and client-go consumer architectures.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package k8scache
+
+import (
+	networkingv1 "k8s.io/api/networking/v1"
+	"k8s.io/client-go/tools/cache"
+)
+
+type SafeIngressLister struct {
+	store cache.Store
+}
+
+// GetByKeySafe extracts an Ingress and immediately returns an isolated deep copy.
+func (s *SafeIngressLister) GetByKeySafe(key string) (*networkingv1.Ingress, bool, error) {
+	item, exists, err := s.store.GetByKey(key)
+	if err != nil || !exists {
+		return nil, exists, err
+	}
+	// INVARIANT: Always DeepCopy before returning to consumer logic
+	return item.(*networkingv1.Ingress).DeepCopy(), true, nil
+}
+
+// ListSafe returns an array where each object has been isolated via DeepCopy.
+func (s *SafeIngressLister) ListSafe() ([]*networkingv1.Ingress, error) {
+	rawList := s.store.List()
+	out := make([]*networkingv1.Ingress, len(rawList))
+	for i, item := range rawList {
+		out[i] = item.(*networkingv1.Ingress).DeepCopy()
+	}
+	return out, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Direct cast and mutation of cached informer memory
+func MutateCachedIngressUnsafe(store cache.Store, key string) error {
+	item, exists, _ := store.GetByKey(key)
+	if !exists {
+		return nil
+	}
+	ing := item.(*networkingv1.Ingress) // Raw pointer to informer cache memory!
+	ing.Annotations["nginx.org/rewrites"] = "corrupted" // RACE CONDITION + IN-MEMORY POISONING
+	return nil
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce statically via `govet` and `go test -race`. Implement a unit test storing an object into `cache.NewStore`, fetching via `GetByKeySafe`, mutating the returned instance, and asserting `reflect.DeepEqual(store.List()[0], original)` remains `true`.
+
+---
+
+### 3. Controller Status Echo Loop Elimination Invariant
+**RULE**:
+Reconciliation diff comparators evaluating whether a Kubernetes resource has functionally changed MUST zero out, mask, or ignore volatile metadata (`ResourceVersion`, `Generation`, `ManagedFields`) and controller-owned subresource fields (`Status.LoadBalancer`, `Status.Conditions`).
+
+**WHY**:
+When a controller updates `.Status` on an ingress or CRD, the Kubernetes API server increments `metadata.ResourceVersion`. If the controller's change detector compares raw objects (`reflect.DeepEqual(old, new)`), the `ResourceVersion` mismatch falsely triggers another reconciliation cycle, causing an infinite loop of status updates, API server exhaustion, and CPU starvation.
+
+**WHEN TO APPLY**:
+Every Kubernetes operator event handler (`OnUpdate`, `hasChanges`, generation filtering predicates).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package reconcile
+
+import (
+	"reflect"
+
+	networkingv1 "k8s.io/api/networking/v1"
+)
+
+// HasFunctionalChanges checks if an Ingress update requires data-plane synchronization,
+// filtering out non-functional API machinery metadata and status echo updates.
+func HasFunctionalChanges(oldIng, newIng *networkingv1.Ingress) bool {
+	// Deep copy to prevent mutating informer cache
+	oldClone := oldIng.DeepCopy()
+	newClone := newIng.DeepCopy()
+
+	// Invariant: Overwrite non-functional fields to isolate spec & meaningful annotation diffs
+	oldClone.ResourceVersion = newClone.ResourceVersion
+	oldClone.Generation = newClone.Generation
+	oldClone.ManagedFields = nil
+	newClone.ManagedFields = nil
+
+	// Invariant: Status mutations written by this controller MUST NOT trigger reconciliation
+	oldClone.Status.LoadBalancer = newClone.Status.LoadBalancer
+
+	return !reflect.DeepEqual(oldClone.Spec, newClone.Spec) ||
+		!reflect.DeepEqual(oldClone.Annotations, newClone.Annotations) ||
+		!reflect.DeepEqual(oldClone.Labels, newClone.Labels)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Comparing whole objects or failing to normalize metadata and status
+func HasChangesBroken(old, current *networkingv1.Ingress) bool {
+	// DANGER: current.ResourceVersion changes after every client.UpdateStatus call,
+	// creating an infinite feedback storm between controller and kube-apiserver!
+	return !reflect.DeepEqual(old, current)
+}
+```
+
+**VERIFICATION METHOD**:
+Unit test: Construct two `networkingv1.Ingress` structs with identical `.Spec` and `.Annotations`, but different `ResourceVersion` (e.g., `"102"` vs `"103"`) and modified `Status.LoadBalancer.Ingress`. Assert `HasFunctionalChanges` returns `false`.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Parsing Helper Regressions & Security Boundary Sync (BUG-RELEASE-5.7-01)
+- **Context**: Release hardening branches `release-5.7` and `release-2026-lts`, specifically `internal/configs/parsing_helpers.go`.
+- **What Was Expected**: Custom configuration parameter parsers for ingress annotations and CRDs must sanitize input strings and validate boundary limits without throwing unhandled panics or dropping valid configurations.
+- **What Actually Happened**: Edge-case inputs and malformed annotation parameters in `parsing_helpers.go` escaped boundary checks or caused test coverage drops, failing PR gates (missing lines reported by Codecov report #11145 and #11146).
+- **Evidence in Repo**: PR #11145, PR #11146, commit `316ee12a0aef69b2a5d4c2cea57afa11fa5660a6` vs base `5c4642c73b11c2b7aec28889ee45c076d65967dc`.
+- **Root Cause**: Missing edge-case branches when parsing complex upstream headers, rate-limit policies, or timeout parameters where missing delimiters caused out-of-bounds slice access.
+- **Remediation Code Diff**:
+```go
+// - res := strings.Split(value, "/")
+// - return res[0], res[1], nil
+// + res := strings.Split(value, "/")
+// + if len(res) != 2 {
+// +     return "", "", fmt.Errorf("%q must follow the format <namespace>/<name>", value)
+// + }
+// + return res[0], res[1], nil
+```
+- **Lesson**: All configuration parsers ingesting Kubernetes labels, annotations, or references formatted as compound identifiers (`namespace/name` or `host:port`) must validate slice cardinality before index dereferencing.
+
+---
+
+### Incident 2: NGINX Configuration Test Error Diagnostic Truncation (BUG-NGX-ERR-02)
+- **Context**: `internal/nginx/utils.go` in `nginxTestError`.
+- **What Was Expected**: When `nginx -t -q` fails, the controller must surface actionable, concise error diagnostics to the user via status conditions or logs without cluttering logs with redundant wrapper noise.
+- **What Actually Happened**: Executing `nginx -t` dumps multiline summaries ending in generic boilerplate: `nginx: configuration file /etc/nginx/nginx.conf test failed`, obscuring the real syntax error located in an included VirtualServer server block.
+- **Evidence in Repo**: `internal/nginx/utils.go:nginxTestError()`.
+- **Root Cause**: Default stderr captures from `nginx -t` contain both the root syntax failure and the summary failure banner. When downstream event recorders cap string length (e.g., Kubernetes Event message limits), the actionable root cause was truncated while the boilerplate banner survived.
+- **Remediation Code Diff**:
+```go
+// - return fmt.Errorf("nginx configuration test failed: %v", stderr.String())
+// + errOutput := strings.TrimSpace(stderr.String())
+// + var filtered []string
+// + for _, line := range strings.Split(errOutput, "\n") {
+// +     line = strings.TrimSpace(line)
+// +     if line == "" || (strings.HasPrefix(line, "nginx: configuration file") && strings.HasSuffix(line, "test failed")) {
+// +         continue
+// +     }
+// +     filtered = append(filtered, line)
+// + }
+// + return fmt.Errorf("%s", strings.Join(filtered, "; "))
+```
+- **Lesson**: Subprocess stderr outputs must undergo deterministic noise-reduction pipelines before being promoted to Kubernetes Events or diagnostic API status fields.
+
+---
+
+### Incident 3: ReplicaSet Pod-Template-Hash Selector Contamination (BUG-K8S-SEL-03)
+- **Context**: `internal/k8s/utils.go` in `CreateUniformSelectorsFromController`.
+- **What Was Expected**: Generating uniform label selectors for ingress controller pods managed by Deployments/ReplicaSets to match services or endpoints across rollouts.
+- **What Actually Happened**: Extracting `rs.Spec.Selector.MatchLabels` directly included `pod-template-hash`. When a new deployment version rolled out, the selector matched only the old ReplicaSet's pods, breaking traffic routing and status reporting during rolling updates.
+- **Evidence in Repo**: `internal/k8s/utils.go:CreateUniformSelectorsFromController()`.
+- **Root Cause**: Deployment controllers inject an ephemeral `pod-template-hash` label into ReplicaSet matchLabels to distinguish between revisions. Controller logic blindly copying raw match labels inherited this revision-specific hash.
+- **Remediation Code Diff**:
+```go
+// - selectors := rs.Spec.Selector.MatchLabels
+// - return selectors, nil
+// + selectors := make(map[string]string)
+// + for k, v := range rs.Spec.Selector.MatchLabels {
+// +     if k != "pod-template-hash" {
+// +         selectors[k] = v
+// +     }
+// + }
+// + return selectors, nil
+```
+- **Lesson**: When inheriting selectors from high-level Kubernetes controller owner references, strip controller-generated ephemeral revision keys (`pod-template-hash`, `controller-revision-hash`).
+
+---
+
+### Incident 4: Missing Nonce & Replay Vulnerability in Cloud Marketplace Metering (BUG-AWS-METER-04)
+- **Context**: `cmd/nginx-ingress/aws.go` in `checkAWSEntitlement`.
+- **What Was Expected**: NGINX Plus AWS Marketplace billing verification must cryptographically link the local controller instance with AWS Marketplace Metering responses.
+- **What Actually Happened**: Static or predictable nonce validation allowed token reuse or replay attacks where expired entitlement tokens could bypass license verification.
+- **Evidence in Repo**: `cmd/nginx-ingress/aws.go:generateRandomString(255)` & `claims.Validate()`.
+- **Root Cause**: Failure to validate JWT claims against transient runtime-generated nonces and strict RSASSA-PSS signing algorithms allowed potential forged signatures or stale payload replays.
+- **Remediation Code Diff**:
+```go
+// - token, err := jwt.Parse(out.Signature, ...)
+// + nonce, err := generateRandomString(255)
+// + out, err := mpm.RegisterUsage(ctx, &marketplacemetering.RegisterUsageInput{
+// +     ProductCode: &productCode, PublicKeyVersion: &pubKeyVersion, Nonce: &nonce,
+// + })
+// + // Validate algorithm specifically is RSASSA-PSS
+// + if _, ok := token.Method.(*jwt.SigningMethodRSAPSS); !ok {
+// +     return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+// + }
+// + // Assert strict claims correspondence
+// + if claims.ProductCode != productCode || claims.Nonce != nonce {
+// +     return fmt.Errorf("claims in JWT do not match request")
+// + }
+```
+- **Lesson**: Cloud metering and license verification flows must enforce ephemeral cryptographic nonces, explicit asymmetric algorithm gating (e.g., forbidding `alg: none` or RSA PKCS#1 v1.5 where PSS is required), and bi-directional claim matching.
+
+---
+
+### Incident 5: Workqueue Metrics Cardinality and Settable Gauge Leakage (BUG-PROM-METRIC-05)
+- **Context**: `internal/metrics/collectors/workqueue.go`.
+- **What Was Expected**: The ingress controller must expose client-go workqueue performance metrics (`depth`, `queue_duration_seconds`, `work_duration_seconds`) to Prometheus without creating unbounded memory allocations for unused metric providers.
+- **What Actually Happened**: `client-go`'s `workqueue.MetricsProvider` interface requires implementations for numerous metrics (`AddsMetric`, `UnfinishedWorkSecondsMetric`, `LongestRunningProcessorSecondsMetric`, `RetriesMetric`). Initializing full Prometheus GaugeVec/CounterVec instances for all provider hooks caused label memory overhead and high scrape latencies.
+- **Evidence in Repo**: `internal/metrics/collectors/workqueue.go:noopMetric`.
+- **Root Cause**: Implementing unnecessary collectors in high-frequency queues generates thousands of empty time-series in Prometheus TSDB.
+- **Remediation Code Diff**:
+```go
+// - Implement full Prometheus collector structures for every client-go workqueue interface hook
+// + type noopMetric struct{}
+// + func (noopMetric) Inc()            {}
+// + func (noopMetric) Dec()            {}
+// + func (noopMetric) Set(float64)     {}
+// + func (noopMetric) Observe(float64) {}
+// + func (*WorkQueueMetricsCollector) NewAddsMetric(string) workqueue.CounterMetric {
+// +     return noopMetric{}
+// + }
+```
+- **Lesson**: When integrating with third-party metric provider interfaces containing wide API footprints, provide zero-cost `noop` struct implementations for non-critical telemetry to eliminate memory overhead and metric explosion.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 4.1 Micro-Syntax & Token-Level Precision
+1. **IntOrString TargetPort Parsing (`internal/k8s/utils.go:findPort`)**:
+   - `intstr.IntOrString` can represent container ports as an integer (`8080`) or a logical name (`"http"`).
+   - In Go, `intstr.Type` evaluates to `intstr.Int` (0) or `intstr.String` (1).
+   - Direct int conversion on string types returns `0`, causing silent routing to port 0.
+   ```go
+   // INVARIANT: Explicit branch switching on intstr.Type
+   switch portName.Type {
+   case intstr.String:
+       name := portName.StrVal
+       for _, container := range pod.Spec.Containers {
+           for _, port := range container.Ports {
+               // Must match BOTH name and protocol (TCP vs UDP)
+               if port.Name == name && port.Protocol == svcPort.Protocol {
+                   return port.ContainerPort, nil
+               }
+           }
+       }
+   case intstr.Int:
+       return int32(portName.IntValue()), nil
+   }
+   ```
+2. **Compound Key Tokenization (`internal/nsutils/utils.go`)**:
+   - A Kubernetes resource key is `<namespace>/<name>`.
+   - Splitting via `strings.Split(key, "/")` produces a slice. Never index `res[1]` without checking `len(res) == 2`.
+   - Never use `strings.SplitN` with index unchecked if root cluster-scoped resources (no namespace) can enter the code path.
+
+### 4.2 Infinite Loop & Recursion Guards
+1. **Workqueue Requeue Backoff & Deadlock Prevention (`internal/k8s/task_queue.go`)**:
+   - The queue worker loop calls `tq.queue.Get()`, processes the item, and MUST call `tq.queue.Done(t)`.
+   - Failure to invoke `tq.queue.Done(t)` permanently marks the key as "processing" in client-go's internal `dirty` and `processing` sets, preventing that exact key from EVER being processed again.
+   ```go
+   func (tq *taskQueue) worker() {
+       for {
+           t, quit := tq.queue.Get()
+           if quit {
+               close(tq.workerDone)
+               return
+           }
+           // INVARIANT: Done(t) must be executed regardless of panic or sync errors
+           func() {
+               defer tq.queue.Done(t)
+               tq.sync(t.(task))
+           }()
+       }
+   }
+   ```
+2. **Requeue Delay Spawning (`internal/k8s/task_queue.go:RequeueAfter`)**:
+   - Spawning unbounded goroutines (`go func() { time.Sleep(after); tq.queue.Add(t) }()`) under cascading failure scenarios causes goroutine leaks.
+   - Production guard: Use `workqueue.RateLimitingInterface` and `AddAfter()` directly instead of manual goroutine sleeps to avoid leaking thousands of sleeping runtimes during API server disconnection.
+
+### 4.3 UI & UX Micro-Mechanics (CLI & Log UX)
+1. **Log Level Sanitization**:
+   - Subprocess execution (`exec.CommandContext`) leaks raw newlines and carriage returns.
+   - When surfacing errors to CLI or Kubernetes events, sanitize raw strings using `strings.TrimSpace` and replace raw newlines with `; ` to preserve single-line structured log format compatibility.
+
+### 4.4 Backend Concurrency & Memory Safety
+1. **Atomic File Write POSIX Invariant (`internal/nginx/utils.go:createFileAndWriteAtomically`)**:
+   - Temporary file creation via `os.CreateTemp(tempPath, ...)` MUST use `tempPath` on the identical partition as `filename`.
+   - If `tempPath` is `/tmp` and `filename` is `/etc/nginx/conf.d/vs.conf`, `os.Rename` fails with `syscall.EXDEV` (Invalid cross-device link) when `/tmp` and `/etc` reside on separate volume mounts.
+   - The controller enforces `tempPath` to be within the same directory tree.
+
+```
+WRONG:
+/tmp/nginx-temp-1234  ---[ os.Rename across mounts ]---> /etc/nginx/conf.d/app.conf (FAILS: EXDEV)
+
+CORRECT:
+/etc/nginx/conf.d/.app.conf.tmp-1234 ---[ os.Rename same inode tree ]---> /etc/nginx/conf.d/app.conf (ATOMIC SUCCESS)
+```
+
+2. **File Descriptor Leak Prevention on Write Failures**:
+   - When using `os.Create`, deferring `w.Close()` without capturing the named return error swallows I/O flush errors.
+   ```go
+   func createFileAndWrite(name string, b []byte) (err error) {
+       w, err := os.Create(name)
+       if err != nil {
+           return fmt.Errorf("failed to open %v: %w", name, err)
+       }
+       defer func() {
+           if tempErr := w.Close(); tempErr != nil && err == nil {
+               err = tempErr
+           }
+       }()
+       _, err = w.Write(b)
+       return err
+   }
+   ```
+
+### 4.5 Defect & Error Prevention ("Galti Pakadna")
+1. **Build Info Recovery from Binary Header (`cmd/nginx-ingress/utils.go:getBuildInfo`)**:
+   - Avoid hardcoded build strings or reliance on `-ldflags` that break during offline compilation.
+   - Read Go runtime telemetry via `debug.ReadBuildInfo()`:
+   ```go
+   info, ok := debug.ReadBuildInfo()
+   if !ok {
+       return "unknown", "unknown", "unknown"
+   }
+   for _, kv := range info.Settings {
+       switch kv.Key {
+       case "vcs.revision":
+           commitHash = kv.Value
+       case "vcs.time":
+           commitTime = kv.Value
+       case "vcs.modified":
+           dirtyBuild = kv.Value
+       }
+   }
+   ```
+2. **Unstructured Type Switch Guards (`internal/k8s/task_queue.go:newTask`)**:
+   - When casting Kubernetes objects to `*unstructured.Unstructured`, never call `.GetKind()` without verifying the type.
+   - Fail immediately on unknown CRD GVKs to prevent silent nil-pointer dereferences in the sync loop.
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+- **Layered Topology**: Decoupled 3-tier pipeline:
+  1. *Ingestion Layer*: Kubernetes Informers filtering events by namespace, class, or label selector.
+  2. *Orchestration Layer*: Rate-limiting workqueue synchronizing state, resolving EndpointSlice and Pod references.
+  3. *Execution Layer*: High-performance rendering engine that outputs NGINX configurations via disk (OSS) or executes HTTP REST mutations against the NGINX Plus Upstream API.
+- **Boundary Decoupling**: Configuration files are never modified while NGINX is actively reloading. Dynamic changes (endpoints) route via HTTP API in NGINX Plus, bypassing master process reloads entirely.
+
+### 2. Core Abstractions
+-

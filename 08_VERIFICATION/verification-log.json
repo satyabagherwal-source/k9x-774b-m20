@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-M8HM",
-    "timestamp": "2026-10-28T02:20:40.186Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-    "contentHash": "3ff07436711e26497f34fe7e46c906392fd3a226a3735f5b5442c50ed0e1938c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-URAP",
-    "timestamp": "2026-10-28T02:27:17.809Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-    "contentHash": "1fee073545039027bf3cc84763c23f454bf8539c9ca7b5904e276019787907c6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-USNG",
     "timestamp": "2026-10-28T02:27:19.564Z",
     "repository": "koderover/zadig",
@@ -7490,6 +7460,36 @@
     "repository": "lucky-media/astro-seo",
     "learningId": "learn-github-lucky-media-astro-seo",
     "contentHash": "fc5e2ee3797d194ec0b16c8a644333b1ddc2611ffbce2412eaa3d1b44c2d9fb7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-N7BE",
+    "timestamp": "2026-10-30T07:32:41.546Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "e81b614efcef0171bc32a8b93820a50691f67f5888256f552de16cf9b92eaa16",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-O85N",
+    "timestamp": "2026-10-30T07:33:29.291Z",
+    "repository": "RediSearch/RediSearch",
+    "learningId": "learn-github-redisearch-redisearch",
+    "contentHash": "5dab5eed9d11b400335d88d00ad3462d55aee19246e61ed8e89bedc142a253cf",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

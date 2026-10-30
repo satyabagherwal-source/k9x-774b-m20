@@ -410433,3 +410433,589 @@ test('serializeConfig correctly preserves URL instances as hrefs', () => {
 ```
 
 ---
+
+
+---
+
+## 5653. Atomic Tempfile-Rename Configuration Invariant (Harvested from nginx/kubernetes-ingress)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Atomic Tempfile-Rename Configuration Invariant",
+  "source": "nginx/kubernetes-ingress",
+  "source_url": "https://github.com/nginx/kubernetes-ingress",
+  "source_version": "efa71e3f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T07:32:40.396Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nginx-kubernetes-ingress",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `efa71e3f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When rendering configuration files consumed by external daemon processes, you MUST write the output to a unique temporary file on the exact same physical filesystem mount before performing an atomic POSIX rename (`os.Rename` / `renameat`). You MUST NOT write directly to target configuration files, truncate files in place, or write temporary files across mount points (such as from `/tmp` to `/etc`).
+
+**WHY**:
+External processes (like NGINX master or file watchers) executing concurrent reads or inotify hooks will read truncated, zero-byte, or half-written configurations if writes occur in place. Writing across filesystem boundaries causes `os.Rename` to fail with `EXDEV: cross-device link`.
+
+**WHEN TO APPLY**:
+Any controller, agent, daemon, or microservice generating configuration files, TLS certificate bundles, secret mounts, or executable binaries consumed by secondary processes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package atomicwrite
+
+import (
+	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+)
+
+// WriteConfigAtomically writes content to targetPath atomically with specified permissions.
+// The temp file is guaranteed to reside on the same filesystem by creating it in filepath.Dir(targetPath).
+func WriteConfigAtomically(targetPath string, mode os.FileMode, content []byte) (err error) {
+	dir := filepath.Dir(targetPath)
+	base := filepath.Base(targetPath)
+
+	// Invariant: Must use dir of target file to guarantee same filesystem boundary for atomic rename
+	tmpFile, err := os.CreateTemp(dir, fmt.Sprintf(".%s.tmp-*", base))
+	if err != nil {
+		return fmt.Errorf("failed to create temp file in %s: %w", dir, err)
+	}
+
+	tmpPath := tmpFile.Name()
+	defer func() {
+		// Clean up dangling tempfile on write or rename failures
+		if err != nil {
+			_ = os.Remove(tmpPath)
+		}
+	}()
+
+	if err = tmpFile.Chmod(mode); err != nil {
+		_ = tmpFile.Close()
+		return fmt.Errorf("failed to chmod temp file %s to %v: %w", tmpPath, mode, err)
+	}
+
+	if _, err = tmpFile.Write(content); err != nil {
+		_ = tmpFile.Close()
+		return fmt.Errorf("failed to write payload to %s: %w", tmpPath, err)
+	}
+
+	// Guarantee disk commit before atomic pointer swap
+	if err = tmpFile.Sync(); err != nil {
+		_ = tmpFile.Close()
+		return fmt.Errorf("failed to sync temp file %s: %w", tmpPath, err)
+	}
+
+	if err = tmpFile.Close(); err != nil {
+		return fmt.Errorf("failed to close temp file %s: %w", tmpPath, err)
+	}
+
+	// Atomic rename replaces inode pointer safely
+	if err = os.Rename(tmpPath, targetPath); err != nil {
+		return fmt.Errorf("atomic rename from %s to %s failed: %w", tmpPath, targetPath, err)
+	}
+
+	return nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: NEVER write config or secret directly to target file path.
+func WriteConfigUnsafe(targetPath string, content []byte) error {
+	// DANGER: File is truncated immediately. Concurrent process reading targetPath
+	// receives an EOF or syntactically broken half-written file.
+	f, err := os.OpenFile(targetPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.Write(content) // Failure here leaves empty/corrupted file on disk
+	return err
+}
+```
+
+**VERIFICATION METHOD**:
+Run an integration test where a concurrent goroutine continuously reads `targetPath` in an infinite loop parsing JSON/Nginx syntax while `WriteConfigAtomically` executes 500 consecutive writes. Assert zero syntax errors, empty reads, or parse exceptions occur.
+
+---
+
+
+---
+
+## 5654. Informer Cache Mutation Boundary Invariant (Harvested from nginx/kubernetes-ingress)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Informer Cache Mutation Boundary Invariant",
+  "source": "nginx/kubernetes-ingress",
+  "source_url": "https://github.com/nginx/kubernetes-ingress",
+  "source_version": "efa71e3f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T07:32:40.798Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nginx-kubernetes-ingress",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `efa71e3f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When reading objects from client-go `cache.Store` or `cache.Indexer`, callers MUST invoke `.DeepCopy()` before modifying fields or returning objects across API boundaries. Callers MUST NOT mutate raw pointers returned directly by `Store.Get` or `Store.List`.
+
+**WHY**:
+client-go informer stores keep raw pointers to in-memory Kubernetes objects. Mutating an object fetched from the informer directly mutates the in-memory cache shared across the entire process without acquiring informer locks. This corrupts indexers, causes data races across goroutines, and generates false diffs in reconciliation loops.
+
+**WHEN TO APPLY**:
+All Kubernetes controllers, operators, mutating admission webhooks, and client-go consumer architectures.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package k8scache
+
+import (
+	networkingv1 "k8s.io/api/networking/v1"
+	"k8s.io/client-go/tools/cache"
+)
+
+type SafeIngressLister struct {
+	store cache.Store
+}
+
+// GetByKeySafe extracts an Ingress and immediately returns an isolated deep copy.
+func (s *SafeIngressLister) GetByKeySafe(key string) (*networkingv1.Ingress, bool, error) {
+	item, exists, err := s.store.GetByKey(key)
+	if err != nil || !exists {
+		return nil, exists, err
+	}
+	// INVARIANT: Always DeepCopy before returning to consumer logic
+	return item.(*networkingv1.Ingress).DeepCopy(), true, nil
+}
+
+// ListSafe returns an array where each object has been isolated via DeepCopy.
+func (s *SafeIngressLister) ListSafe() ([]*networkingv1.Ingress, error) {
+	rawList := s.store.List()
+	out := make([]*networkingv1.Ingress, len(rawList))
+	for i, item := range rawList {
+		out[i] = item.(*networkingv1.Ingress).DeepCopy()
+	}
+	return out, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Direct cast and mutation of cached informer memory
+func MutateCachedIngressUnsafe(store cache.Store, key string) error {
+	item, exists, _ := store.GetByKey(key)
+	if !exists {
+		return nil
+	}
+	ing := item.(*networkingv1.Ingress) // Raw pointer to informer cache memory!
+	ing.Annotations["nginx.org/rewrites"] = "corrupted" // RACE CONDITION + IN-MEMORY POISONING
+	return nil
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce statically via `govet` and `go test -race`. Implement a unit test storing an object into `cache.NewStore`, fetching via `GetByKeySafe`, mutating the returned instance, and asserting `reflect.DeepEqual(store.List()[0], original)` remains `true`.
+
+---
+
+
+---
+
+## 5655. Controller Status Echo Loop Elimination Invariant (Harvested from nginx/kubernetes-ingress)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Controller Status Echo Loop Elimination Invariant",
+  "source": "nginx/kubernetes-ingress",
+  "source_url": "https://github.com/nginx/kubernetes-ingress",
+  "source_version": "efa71e3f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T07:32:41.235Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nginx-kubernetes-ingress",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress) (Revision: `efa71e3f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Reconciliation diff comparators evaluating whether a Kubernetes resource has functionally changed MUST zero out, mask, or ignore volatile metadata (`ResourceVersion`, `Generation`, `ManagedFields`) and controller-owned subresource fields (`Status.LoadBalancer`, `Status.Conditions`).
+
+**WHY**:
+When a controller updates `.Status` on an ingress or CRD, the Kubernetes API server increments `metadata.ResourceVersion`. If the controller's change detector compares raw objects (`reflect.DeepEqual(old, new)`), the `ResourceVersion` mismatch falsely triggers another reconciliation cycle, causing an infinite loop of status updates, API server exhaustion, and CPU starvation.
+
+**WHEN TO APPLY**:
+Every Kubernetes operator event handler (`OnUpdate`, `hasChanges`, generation filtering predicates).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package reconcile
+
+import (
+	"reflect"
+
+	networkingv1 "k8s.io/api/networking/v1"
+)
+
+// HasFunctionalChanges checks if an Ingress update requires data-plane synchronization,
+// filtering out non-functional API machinery metadata and status echo updates.
+func HasFunctionalChanges(oldIng, newIng *networkingv1.Ingress) bool {
+	// Deep copy to prevent mutating informer cache
+	oldClone := oldIng.DeepCopy()
+	newClone := newIng.DeepCopy()
+
+	// Invariant: Overwrite non-functional fields to isolate spec & meaningful annotation diffs
+	oldClone.ResourceVersion = newClone.ResourceVersion
+	oldClone.Generation = newClone.Generation
+	oldClone.ManagedFields = nil
+	newClone.ManagedFields = nil
+
+	// Invariant: Status mutations written by this controller MUST NOT trigger reconciliation
+	oldClone.Status.LoadBalancer = newClone.Status.LoadBalancer
+
+	return !reflect.DeepEqual(oldClone.Spec, newClone.Spec) ||
+		!reflect.DeepEqual(oldClone.Annotations, newClone.Annotations) ||
+		!reflect.DeepEqual(oldClone.Labels, newClone.Labels)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Comparing whole objects or failing to normalize metadata and status
+func HasChangesBroken(old, current *networkingv1.Ingress) bool {
+	// DANGER: current.ResourceVersion changes after every client.UpdateStatus call,
+	// creating an infinite feedback storm between controller and kube-apiserver!
+	return !reflect.DeepEqual(old, current)
+}
+```
+
+**VERIFICATION METHOD**:
+Unit test: Construct two `networkingv1.Ingress` structs with identical `.Spec` and `.Annotations`, but different `ResourceVersion` (e.g., `"102"` vs `"103"`) and modified `Status.LoadBalancer.Ingress`. Assert `HasFunctionalChanges` returns `false`.
+
+---
+
+
+---
+
+## 5656. The Strict Lock-Hierarchy GIL Release-Reacquire Pattern (Harvested from RediSearch/RediSearch)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The Strict Lock-Hierarchy GIL Release-Reacquire Pattern",
+  "source": "RediSearch/RediSearch",
+  "source_url": "https://github.com/RediSearch/RediSearch",
+  "source_version": "0bf17e14",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-30T07:33:28.146Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-redisearch-redisearch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [RediSearch/RediSearch](https://github.com/RediSearch/RediSearch) (Revision: `0bf17e14`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an asynchronous worker thread holding an inner domain lock (e.g., `IndexSpec`) requires access to an outer engine orchestrator lock (e.g., Redis GIL), the worker **MUST NOT** perform a blocking acquisition of the outer lock while holding the inner lock. The worker **MUST** completely release the inner lock, acquire the outer lock, and re-acquire the inner lock in strict global order. Furthermore, all state invariants validated prior to releasing the inner lock **MUST** be re-verified after re-acquisition.
+
+**WHY**:
+Failing to release the inner lock violates strict lock ordering. Main-thread operations acquire the GIL *first* upon handling socket events, and subsequently request the inner `IndexSpec` write lock to execute updates or deletes. If a background query worker holds the `IndexSpec` read lock and blocks awaiting the GIL, an unrecoverable AB-BA deadlock freezes the entire Redis engine.
+
+**WHEN TO APPLY**:
+Apply to any multi-threaded architecture extending a single-threaded runtime through modules, plugins, or extensions (e.g., Redis Modules, Python C extensions, Node.js N-API addons, database storage engine worker pools).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+// Verified production pattern from src/aggregate/aggregate_exec.c
+static int prepareExecutionPlanWithKeyMapFallback(AREQ *req, QueryError *status) {
+  RedisSearchCtx *sctx = AREQ_SearchCtx(req);
+  RedisModuleCtx *outctx = sctx->redisCtx;
+  bool keyMapFallback = req->searchopts.inkeys && !sctx->spec->diskSpec &&
+                        sctx->spec->docs.keyMapState != DocKeyMap_Ready;
+  rs_wall_clock fallbackGILStart;
+
+  if (keyMapFallback) {
+    // ENFORCE ORDER: Release inner lock before obtaining outer GIL.
+    IndexSpec_Unlock(sctx->spec);
+    RedisModule_ThreadSafeContextLock(outctx);
+
+    if (IsProfile(req)) {
+      rs_wall_clock_init(&fallbackGILStart);
+    }
+
+#ifdef ENABLE_ASSERT
+    SyncPoint_Wait("KeyMapFallbackGIL");
+#endif
+
+    // Re-acquire inner lock under safe hierarchy: GIL -> Spec Read Lock
+    IndexSpec_LockRead(sctx->spec);
+  }
+
+  // Execute plan preparation under the protected state
+  int planStatus = prepareExecutionPlan(req, status);
+
+  if (keyMapFallback) {
+    if (IsProfile(req)) {
+      AREQ_QueryProcessingCtx(req)->queryGILTime += rs_wall_clock_elapsed_ns(&fallbackGILStart) + 1;
+    }
+    // Release outer GIL; inner spec lock remains held by caller contract
+    RedisModule_ThreadSafeContextUnlock(outctx);
+  }
+
+  return planStatus;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// FORBIDDEN: Acquiring GIL while holding the inner IndexSpec lock creates an AB-BA deadlock.
+static int prepareExecutionPlanDeadlock(AREQ *req, QueryError *status) {
+  RedisSearchCtx *sctx = AREQ_SearchCtx(req);
+  RedisModuleCtx *outctx = sctx->redisCtx;
+
+  // Caller already holds IndexSpec_LockRead(sctx->spec)!
+  // Acquiring GIL here causes instant deadlock if main thread calls
+  // IndexSpec_LockWrite() while holding GIL.
+  RedisModule_ThreadSafeContextLock(outctx); 
+  int planStatus = prepareExecutionPlan(req, status);
+  RedisModule_ThreadSafeContextUnlock(outctx);
+  return planStatus;
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce verification using ThreadSanitizer (TSan) combined with deterministic synchronization test points (`SyncPoint_Wait` / `SyncPoint_Signal`). Write an automated integration test where a query thread activates fallback resolution simultaneously with a high-throughput main-thread write loop:
+```bash
+make SAN=thread
+pytest tests/pytests/test_inkeys.py -k "test_inkeys_concurrent_mutation"
+```
+
+---
+
+
+---
+
+## 5657. Time-Sliced Background Backfill via Weak Reference Promotion (Harvested from RediSearch/RediSearch)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Time-Sliced Background Backfill via Weak Reference Promotion",
+  "source": "RediSearch/RediSearch",
+  "source_url": "https://github.com/RediSearch/RediSearch",
+  "source_version": "0bf17e14",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-30T07:33:28.546Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-redisearch-redisearch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [RediSearch/RediSearch](https://github.com/RediSearch/RediSearch) (Revision: `0bf17e14`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Background maintenance tasks that iterate over core data structures in chunks **MUST NOT** retain strong pointers to their parent container across scheduling yield points. The task **MUST** demote its handle to a weak reference (`WeakRef`), yield control back to the scheduler, and attempt to promote the weak reference to a strong reference (`StrongRef`) only upon waking. If promotion fails, the task **MUST** immediately abort, release all parked iterator resources, and deallocate itself.
+
+**WHY**:
+Retaining strong references or raw pointers across asynchronous yield points prevents parent container cleanup (such as when a user drops an index via `FT.DROPINDEX`). If a raw pointer is kept across yields without strong ownership, the task accesses freed memory (use-after-free). If a strong reference is permanently retained across long backfills, memory leaks occur or teardown deadlocks when the engine shutdown routine waits for the thread pool to drain.
+
+**WHEN TO APPLY**:
+Any asynchronous batch processing, lazy reindexing, or incremental migration task that yields between time slices or element quotas.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+// Verified production pattern from src/indexes_scan.c & src/doc_table.c
+#define KEY_MAP_BUILD_BATCH_SIZE 1024
+
+typedef struct {
+  WeakRef spec;
+  DocTableKeyMapIterator iterator;
+} KeyMapBuild;
+
+static void KeyMapBuild_Run(void *arg) {
+  KeyMapBuild *build = (KeyMapBuild *)arg;
+
+  // Attempt to upgrade weak handle to strong handle
+  StrongRef ref = IndexSpecRef_Promote(build->spec);
+  IndexSpec *spec = StrongRef_Get(ref);
+  bool done = true;
+
+  if (spec) {
+    IndexSpec_LockWrite(spec);
+    // Execute bounded traversal limited strictly by budget
+    done = DocTable_BuildKeyMapBatch(&spec->docs, &build->iterator, KEY_MAP_BUILD_BATCH_SIZE);
+    IndexSpec_Unlock(spec);
+
+    // Release strong reference immediately after completing the batch
+    IndexSpecRef_Release(ref);
+  }
+
+  if (!done) {
+    // Requeue continuation at LOW priority to prevent starvations
+    int rc = redisearch_thpool_add_work(reindexPool, KeyMapBuild_Run, build, THPOOL_PRIORITY_LOW);
+    RS_ASSERT_ALWAYS(rc == 0);
+  } else {
+    // Cleanup iterator cursor state and deallocate build task
+    DocTable_KeyMapIteratorReleaseNext(&build->iterator);
+    WeakRef_Release(build->spec);
+    rm_free(build);
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// FORBIDDEN: Holding raw pointers or retaining strong refs indefinitely
+static void KeyMapBuild_Unsafe(void *arg) {
+  IndexSpec *spec = (IndexSpec *)arg; // Dangling pointer hazard if index dropped!
+  while (!DocTable_BuildKeyMapBatch(&spec->docs, &iter, 1024)) {
+    // Yielding with raw pointer across scheduling leads to SIGSEGV
+    thpool_yield(); 
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using automated regression testing where an index creation and immediate deletion occurs concurrently with lazy backfill activation. Confirm absence of memory leaks and invalid reads using Valgrind/ASan:
+```bash
+valgrind --leak-check=full redis-server --loadmodule ./redisearch.so
+pytest tests/pytests/test_inkeys.py -k "test_drop_index_during_lazy_activation"
+```
+
+---
+
+
+---
+
+## 5658. Safe IEEE-754 Floating-Point to 64-Bit Integer Coercion Invariant (Harvested from RediSearch/RediSearch)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Safe IEEE-754 Floating-Point to 64-Bit Integer Coercion Invariant",
+  "source": "RediSearch/RediSearch",
+  "source_url": "https://github.com/RediSearch/RediSearch",
+  "source_version": "0bf17e14",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-30T07:33:28.980Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-redisearch-redisearch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [RediSearch/RediSearch](https://github.com/RediSearch/RediSearch) (Revision: `0bf17e14`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When parsing numeric values from client text tokens into signed 64-bit integers (`long long`), the implementation **MUST** reject `NaN` inputs explicitly, verify that the floating-point value is strictly within the half-open interval `[LLONG_MIN, (double)LLONG_MAX)`, and verify identity round-trip equality `(double)(long long)dVal == dVal` before casting. When saturation/coalescing is explicitly requested, values outside the range **MUST** saturate to `LLONG_MIN` or `LLONG_MAX` without invoking an unchecked C-level cast.
+
+**WHY**:
+In C99, C11, C++17, and C++20 standard semantics (ISO/IEC 9899:2011 §6.3.1.4), converting a float or double to an integer type where the value cannot be represented produces **Undefined Behavior (UB)**. Furthermore, in IEEE 754 64-bit binary floating point, `LLONG_MAX` ($2^{63}-1 = 9223372036854775807$) cannot be represented exactly and rounds up to exactly $2^{63}$ ($9223372036854775808.0$). Direct cast `(long long)d` when `d == 9223372036854775808.0` invokes UB, which compiles down to `0x8000000000000000` (wrap-around to negative minimum) on x86-64 or triggers processor trap exceptions.
+
+**WHEN TO APPLY**:
+All command-line argument parsers, JSON/query engine lexers, and serialization/deserialization boundaries converting string/float representations to integer storage.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+// Verified production pattern from deps/rmutil/args.c
+static int tryReadAsDouble(ArgsCursor *ac, long long *ll, int flags) {
+  double dTmp = 0.0;
+  if (AC_GetDouble(ac, &dTmp, flags | AC_F_NOADVANCE) != AC_OK) {
+    return AC_ERR_PARSE;
+  }
+
+  // Casting a double outside [LLONG_MIN, 2^63) to long long is UB.
+  // The RString conversion accepts literal "inf" - reject NaN first.
+  if (isnan(dTmp)) {
+    return AC_ERR_PARSE;
+  }
+
+  if (flags & AC_F_COALESCE) {
+    // Coalescing coerces: saturate out-of-range values (including +/- inf)
+    // (double)LLONG_MAX rounds up to exactly 2^63, providing the exclusive bound.
+    if (dTmp >= (double)LLONG_MAX) {
+      *ll = LLONG_MAX;
+    } else if (dTmp < (double)LLONG_MIN) {
+      *ll = LLONG_MIN;
+    } else {
+      *ll = (long long)dTmp;
+    }
+    return AC_OK;
+  }
+
+  // Non-coalescing: strict boundary check avoiding undefined casting behavior
+  if (!(dTmp >= (double)LLONG_MIN && dTmp < (double)LLONG_MAX)) {
+    return AC_ERR_PARSE;
+  }
+
+  // Verify exact integral representation without truncation
+  if ((double)(long long)dTmp != dTmp) {
+    return AC_ERR_PARSE;
+  } else {
+    *ll = (long long)dTmp;
+    return AC_OK;
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// FORBIDDEN: Direct cast of parsed double without IEEE-754 range verification
+int UnsafeParseLongLong(const char *str, long long *out) {
+  double d = atof(str);
+  // If str == "9223372036854775808.0", "inf", or "nan", this cast is UNDEFINED BEHAVIOR!
+  *out = (long long)d; 
+  return 0;
+}
+```
+
+**VERIFICATION METHOD**:
+Run unit tests under Clang UndefinedBehaviorSanitizer (UBSan):
+```bash
+CFLAGS="-fsanitize=undefined" make test
+# Execute argument boundary test suite
+./build/tests/args_test --run-coercion-limits
+```
+
+---

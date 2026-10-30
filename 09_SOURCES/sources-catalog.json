@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "58fba8cb",
+    "sourceVersion": "0bf17e14",
     "license": "NOASSERTION",
-    "contentHash": "ae7f3750f7fa2f8c4d22ac38d74417d8732f15d71bdfe208330cb4f108c36ff6",
-    "lastHarvestedAt": "2026-10-28T18:42:00.529Z",
+    "contentHash": "5dab5eed9d11b400335d88d00ad3462d55aee19246e61ed8e89bedc142a253cf",
+    "lastHarvestedAt": "2026-10-30T07:33:29.295Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "a052bc26",
+    "sourceVersion": "efa71e3f",
     "license": "Apache-2.0",
-    "contentHash": "721b879436de950bdb68731b2a989017ca53d97b73f2e22dd6540491af5e2ecb",
-    "lastHarvestedAt": "2026-10-28T19:46:50.452Z",
+    "contentHash": "e81b614efcef0171bc32a8b93820a50691f67f5888256f552de16cf9b92eaa16",
+    "lastHarvestedAt": "2026-10-30T07:32:41.549Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {

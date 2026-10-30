@@ -6157,3 +6157,5 @@ Every entry in this ledger must capture:
 | `learn-github-bitnami-sealed-secrets` | `https://github.com/bitnami/sealed-secrets` | `c22f5839` | Multi-dimensional audit evidence | 2026-10-30T07:05:28.792Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `ed850f42` | Multi-dimensional audit evidence | 2026-10-30T07:18:07.932Z |
 | `learn-github-lucky-media-astro-seo` | `https://github.com/lucky-media/astro-seo` | `3d6ff7b4` | Multi-dimensional audit evidence | 2026-10-30T07:18:41.334Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `efa71e3f` | Multi-dimensional audit evidence | 2026-10-30T07:32:41.549Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `0bf17e14` | Multi-dimensional audit evidence | 2026-10-30T07:33:29.295Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T07:18:41.247Z",
+  "last_updated": "2026-10-30T07:33:29.212Z",
   "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -40725,8 +40725,8 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "a052bc26",
-      "content_hash": "721b879436de950bdb68731b2a989017ca53d97b73f2e22dd6540491af5e2ecb",
+      "source_version": "efa71e3f",
+      "content_hash": "e81b614efcef0171bc32a8b93820a50691f67f5888256f552de16cf9b92eaa16",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
@@ -40769,6 +40769,21 @@
           "number": 5384,
           "title": "Add stack support to pr-review skill (#11283)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5653,
+          "title": "Atomic Tempfile-Rename Configuration Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5654,
+          "title": "Informer Cache Mutation Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5655,
+          "title": "Controller Status Echo Loop Elimination Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40776,7 +40791,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T19:46:50.363Z",
+      "verified_at": "2026-10-30T07:32:41.447Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46466,8 +46481,8 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "58fba8cb",
-      "content_hash": "ae7f3750f7fa2f8c4d22ac38d74417d8732f15d71bdfe208330cb4f108c36ff6",
+      "source_version": "0bf17e14",
+      "content_hash": "5dab5eed9d11b400335d88d00ad3462d55aee19246e61ed8e89bedc142a253cf",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
@@ -46510,6 +46525,21 @@
           "number": 5367,
           "title": "[MOD-19190] ci: run the Rust tests under valgrind on pull requests (#11695)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5656,
+          "title": "The Strict Lock-Hierarchy GIL Release-Reacquire Pattern",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5657,
+          "title": "Time-Sliced Background Backfill via Weak Reference Promotion",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5658,
+          "title": "Safe IEEE-754 Floating-Point to 64-Bit Integer Coercion Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46517,7 +46547,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:42:00.434Z",
+      "verified_at": "2026-10-30T07:33:29.192Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -151399,6 +151429,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T07:18:41.231Z"
+    },
+    "rule-5653": {
+      "learning_id": "rule-5653",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5653,
+      "title": "Atomic Tempfile-Rename Configuration Invariant",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "efa71e3f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:32:41.447Z"
+    },
+    "rule-5654": {
+      "learning_id": "rule-5654",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5654,
+      "title": "Informer Cache Mutation Boundary Invariant",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "efa71e3f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:32:41.447Z"
+    },
+    "rule-5655": {
+      "learning_id": "rule-5655",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5655,
+      "title": "Controller Status Echo Loop Elimination Invariant",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "efa71e3f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:32:41.447Z"
+    },
+    "rule-5656": {
+      "learning_id": "rule-5656",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5656,
+      "title": "The Strict Lock-Hierarchy GIL Release-Reacquire Pattern",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "0bf17e14",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:33:29.192Z"
+    },
+    "rule-5657": {
+      "learning_id": "rule-5657",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5657,
+      "title": "Time-Sliced Background Backfill via Weak Reference Promotion",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "0bf17e14",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:33:29.192Z"
+    },
+    "rule-5658": {
+      "learning_id": "rule-5658",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5658,
+      "title": "Safe IEEE-754 Floating-Point to 64-Bit Integer Coercion Invariant",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "0bf17e14",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:33:29.192Z"
     }
   },
   "aliases": {

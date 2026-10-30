@@ -6148,3 +6148,5 @@
 | `CYCLE-20261030-O7H1` | `2026-10-30T07:05:28.789Z` | `bitnami/sealed-secrets` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5644, Rule 5645, Rule 5646` | Yes (`41e6c1e6...`) |
 | `CYCLE-20261030-4H7G` | `2026-10-30T07:18:07.900Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5647, Rule 5648, Rule 5649` | Yes (`e9d0e0a7...`) |
 | `CYCLE-20261030-5702` | `2026-10-30T07:18:41.330Z` | `lucky-media/astro-seo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5650, Rule 5651, Rule 5652` | Yes (`fc5e2ee3...`) |
+| `CYCLE-20261030-N7BE` | `2026-10-30T07:32:41.546Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5653, Rule 5654, Rule 5655` | Yes (`e81b614e...`) |
+| `CYCLE-20261030-O85N` | `2026-10-30T07:33:29.291Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5656, Rule 5657, Rule 5658` | Yes (`5dab5eed...`) |
