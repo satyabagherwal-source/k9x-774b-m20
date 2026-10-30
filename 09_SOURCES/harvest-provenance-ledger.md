@@ -6176,3 +6176,7 @@ Every entry in this ledger must capture:
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `76ac1021` | Multi-dimensional audit evidence | 2026-10-30T09:15:15.899Z |
 | `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `0d964894` | Multi-dimensional audit evidence | 2026-10-30T09:30:00.627Z |
 | `learn-github-cloudwego-volo` | `https://github.com/cloudwego/volo` | `0bc881c4` | Multi-dimensional audit evidence | 2026-10-30T09:53:21.475Z |
+| `learn-github-webrecorder-pywb` | `https://github.com/webrecorder/pywb` | `65db40a0` | Multi-dimensional audit evidence | 2026-10-30T10:09:25.883Z |
+| `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `a5ba070c` | Multi-dimensional audit evidence | 2026-10-30T10:09:26.013Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `5546f767` | Multi-dimensional audit evidence | 2026-10-30T10:10:00.284Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `fd1cf5fc` | Multi-dimensional audit evidence | 2026-10-30T10:11:43.140Z |

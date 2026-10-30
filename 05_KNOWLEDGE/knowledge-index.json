@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T09:53:21.410Z",
+  "last_updated": "2026-10-30T10:11:43.062Z",
   "total_verified_learnings": 1173,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11081,8 +11081,8 @@
       "slug": "emberstack-kubernetes-reflector",
       "platform": "github",
       "source_url": "https://github.com/emberstack/kubernetes-reflector",
-      "source_version": "9a470efc",
-      "content_hash": "072be09e4557a1b56c956e0040be2f28caafb43d267dd2d520a2487f78884afa",
+      "source_version": "a5ba070c",
+      "content_hash": "3338c1ce7663dc40fd830f72873c0ae667d9a9655146defc52b986ce1e947806",
       "dossier_path": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "promoted_rules": [
@@ -11120,6 +11120,16 @@
           "number": 4682,
           "title": "Strict Least-Privilege Helm RBAC Pruning on Subsystem Deprecation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5708,
+          "title": "In-Memory Hash Divergence Verification for Operator Loops",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5710,
+          "title": "Resilient Kubernetes Watch Stream Auto-Reconstruction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11127,7 +11137,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T10:37:45.006Z",
+      "verified_at": "2026-10-30T10:09:25.917Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41338,8 +41348,8 @@
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "feb17a0d",
-      "content_hash": "021d85b8deb9795c788f9abdcfbe41efe7011e78ce405aa8463f6d11795ad1e0",
+      "source_version": "fd1cf5fc",
+      "content_hash": "3feab823677c17633a86b6af22a6f66baf7cd0fc497996c8848c583418e7bf11",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "promoted_rules": [
@@ -41382,6 +41392,21 @@
           "number": 5331,
           "title": "Various spawn related improvements",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5714,
+          "title": "Invalidation-Aware Multi-Future Readiness Generation Gating",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5715,
+          "title": "Cache-Line Isolated Dual-Sided Atomic Run-Queue Ingress",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5716,
+          "title": "Reentrancy-Safe Ephemeral Allocation Borrow Pattern",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41389,7 +41414,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T15:50:33.788Z",
+      "verified_at": "2026-10-30T10:11:43.044Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66942,8 +66967,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "6afd9ba3",
-      "content_hash": "275c1a5dffb01c1032cbdf8806751e93bc81b8427908e37402e9b93b1076169d",
+      "source_version": "5546f767",
+      "content_hash": "680dc689f89a437efade3f95239d225feb76efcf64a548b97fd5764e2cd52a40",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -67001,6 +67026,21 @@
           "number": 5386,
           "title": "plugins): read profile and memory listings from peer scope (#5246)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5711,
+          "title": "Atomic Async Mutex Serialization for stdio Transports",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5712,
+          "title": "Multi-Stage Build-Artifact Provenance & Stable ABI Fingerprint Validation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5713,
+          "title": "Asynchronous Operation Separation from Polling Boundaries",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -67008,7 +67048,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T20:01:42.085Z",
+      "verified_at": "2026-10-30T10:10:00.188Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -152434,6 +152474,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T09:53:21.398Z"
+    },
+    "rule-5708": {
+      "learning_id": "rule-5708",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5708,
+      "title": "In-Memory Hash Divergence Verification for Operator Loops",
+      "source_url": "https://github.com/emberstack/kubernetes-reflector",
+      "source_version": "a5ba070c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:09:25.917Z"
+    },
+    "rule-5710": {
+      "learning_id": "rule-5710",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5710,
+      "title": "Resilient Kubernetes Watch Stream Auto-Reconstruction Invariant",
+      "source_url": "https://github.com/emberstack/kubernetes-reflector",
+      "source_version": "a5ba070c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:09:25.917Z"
+    },
+    "rule-5711": {
+      "learning_id": "rule-5711",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5711,
+      "title": "Atomic Async Mutex Serialization for stdio Transports",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "5546f767",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:10:00.188Z"
+    },
+    "rule-5712": {
+      "learning_id": "rule-5712",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5712,
+      "title": "Multi-Stage Build-Artifact Provenance & Stable ABI Fingerprint Validation",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "5546f767",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:10:00.188Z"
+    },
+    "rule-5713": {
+      "learning_id": "rule-5713",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5713,
+      "title": "Asynchronous Operation Separation from Polling Boundaries",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "5546f767",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:10:00.188Z"
+    },
+    "rule-5714": {
+      "learning_id": "rule-5714",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5714,
+      "title": "Invalidation-Aware Multi-Future Readiness Generation Gating",
+      "source_url": "https://github.com/ntex-rs/ntex",
+      "source_version": "fd1cf5fc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:11:43.044Z"
+    },
+    "rule-5715": {
+      "learning_id": "rule-5715",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5715,
+      "title": "Cache-Line Isolated Dual-Sided Atomic Run-Queue Ingress",
+      "source_url": "https://github.com/ntex-rs/ntex",
+      "source_version": "fd1cf5fc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:11:43.044Z"
+    },
+    "rule-5716": {
+      "learning_id": "rule-5716",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5716,
+      "title": "Reentrancy-Safe Ephemeral Allocation Borrow Pattern",
+      "source_url": "https://github.com/ntex-rs/ntex",
+      "source_version": "fd1cf5fc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:11:43.044Z"
     }
   },
   "aliases": {

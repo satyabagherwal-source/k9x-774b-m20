@@ -6167,3 +6167,7 @@
 | `CYCLE-20261030-B41K` | `2026-10-30T09:15:15.896Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5697, Rule 5698, Rule 5699` | Yes (`7aa2cd9b...`) |
 | `CYCLE-20261030-U2PC` | `2026-10-30T09:30:00.624Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5700, Rule 5701, Rule 5702` | Yes (`69e58d9b...`) |
 | `CYCLE-20261030-O3LS` | `2026-10-30T09:53:21.472Z` | `cloudwego/volo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5703, Rule 5704, Rule 5705` | Yes (`8686b99a...`) |
+| `CYCLE-20261030-8RQV` | `2026-10-30T10:09:25.879Z` | `webrecorder/pywb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5706, Rule 5707, Rule 5709` | Yes (`a5aca1f8...`) |
+| `CYCLE-20261030-8RUH` | `2026-10-30T10:09:26.009Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5708, Rule 5710` | Yes (`3338c1ce...`) |
+| `CYCLE-20261030-9IAH` | `2026-10-30T10:10:00.281Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5711, Rule 5712, Rule 5713` | Yes (`680dc689...`) |
+| `CYCLE-20261030-BPNK` | `2026-10-30T10:11:43.136Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5714, Rule 5715, Rule 5716` | Yes (`3feab823...`) |

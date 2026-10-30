@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T09:53:21.482Z",
+  "last_updated": "2026-10-30T10:11:43.150Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "275c1a5dffb01c1032cbdf8806751e93bc81b8427908e37402e9b93b1076169d",
-      "verified_at": "2026-10-28T20:01:42.193Z",
+      "content_hash": "680dc689f89a437efade3f95239d225feb76efcf64a548b97fd5764e2cd52a40",
+      "verified_at": "2026-10-30T10:10:00.293Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T20:01:42.193Z"
+      "last_updated": "2026-10-30T10:10:00.293Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "021d85b8deb9795c788f9abdcfbe41efe7011e78ce405aa8463f6d11795ad1e0",
-      "verified_at": "2026-10-28T15:50:33.901Z",
+      "content_hash": "3feab823677c17633a86b6af22a6f66baf7cd0fc497996c8848c583418e7bf11",
+      "verified_at": "2026-10-30T10:11:43.149Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T15:50:33.901Z"
+      "last_updated": "2026-10-30T10:11:43.149Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",
@@ -10671,14 +10671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-emberstack-kubernetes-reflector",
-      "content_hash": "072be09e4557a1b56c956e0040be2f28caafb43d267dd2d520a2487f78884afa",
-      "verified_at": "2026-10-27T10:37:45.063Z",
+      "content_hash": "3338c1ce7663dc40fd830f72873c0ae667d9a9655146defc52b986ce1e947806",
+      "verified_at": "2026-10-30T10:09:26.021Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T10:37:45.063Z"
+      "last_updated": "2026-10-30T10:09:26.021Z"
     },
     "arxanas/git-branchless": {
       "repository": "arxanas/git-branchless",
@@ -13896,14 +13896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webrecorder-pywb",
-      "content_hash": "ed341d24b0403e83ecec7af2565ed9d4ba99f859c56195ab12937cc3a909c304",
-      "verified_at": "2026-10-27T11:39:02.227Z",
+      "content_hash": "a5aca1f8beb80d2c1d6836104abf507b4cfbd9dba1173546ff3cf2cef1366182",
+      "verified_at": "2026-10-30T10:09:25.893Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:39:02.227Z"
+      "last_updated": "2026-10-30T10:09:25.893Z"
     },
     "Kruszoneq/macUSB": {
       "repository": "Kruszoneq/macUSB",

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T09:53:24.019Z",
-    "lastVerified": "2026-10-30T09:53:24.019Z",
+    "lastChecked": "2026-10-30T10:11:45.695Z",
+    "lastVerified": "2026-10-30T10:11:45.695Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -317,12 +317,12 @@
     "lastVerified": "2026-10-30T07:15:36.562Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "microsoft/agent-governance-toolkit",
+    "name": "agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-30T05:01:21.967Z",
-    "lastVerified": "2026-10-30T05:01:21.967Z",
+    "lastChecked": "2026-10-30T10:07:44.096Z",
+    "lastVerified": "2026-10-30T10:07:44.096Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -331,7 +331,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6d2a138b"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -343,9 +344,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T08:53:37.000Z",
+    "lastChecked": "2026-10-30T10:07:49.067Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T08:53:37.000Z"
+    "lastVerified": "2026-10-30T10:07:49.067Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1101,11 +1102,21 @@
     "lastVerified": "2026-10-28T04:21:41.166Z"
   },
   "emberstack-kubernetes-reflector": {
-    "name": "kubernetes-reflector",
+    "name": "emberstack/kubernetes-reflector",
     "officialUrl": "https://github.com/emberstack/kubernetes-reflector",
-    "lastChecked": "2026-10-28T20:57:39.373Z",
-    "revisionIdentifier": "9a470efc",
-    "lastVerified": "2026-10-28T20:57:39.373Z"
+    "sourceType": "github",
+    "technology": "C#",
+    "lastChecked": "2026-10-30T10:07:44.444Z",
+    "lastVerified": "2026-10-30T10:07:44.444Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-emberstack-kubernetes-reflector",
+    "contentHash": "3338c1ce7663dc40fd830f72873c0ae667d9a9655146defc52b986ce1e947806",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "freenet-freenet-core": {
     "name": "freenet/freenet-core",
@@ -5118,13 +5129,13 @@
     "officialUrl": "https://github.com/ntex-rs/ntex",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T15:50:33.023Z",
-    "lastVerified": "2026-10-28T15:50:33.023Z",
+    "lastChecked": "2026-10-30T10:07:38.067Z",
+    "lastVerified": "2026-10-30T10:07:38.067Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "021d85b8deb9795c788f9abdcfbe41efe7011e78ce405aa8463f6d11795ad1e0",
-    "promotedRulesCount": 1,
+    "contentHash": "3feab823677c17633a86b6af22a6f66baf7cd0fc497996c8848c583418e7bf11",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
@@ -6979,14 +6990,14 @@
     "officialUrl": "https://github.com/volcengine/OpenViking",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-28T20:01:41.523Z",
-    "lastVerified": "2026-10-28T20:01:41.523Z",
+    "lastChecked": "2026-10-30T10:07:50.875Z",
+    "lastVerified": "2026-10-30T10:07:50.875Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "275c1a5dffb01c1032cbdf8806751e93bc81b8427908e37402e9b93b1076169d",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 20,
+    "contentHash": "680dc689f89a437efade3f95239d225feb76efcf64a548b97fd5764e2cd52a40",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9678,5 +9689,29 @@
     "lastChecked": "2026-10-30T09:44:25.626Z",
     "revisionIdentifier": "dfb23ea5",
     "lastVerified": "2026-10-30T09:44:25.626Z"
+  },
+  "webrecorder-pywb": {
+    "name": "webrecorder/pywb",
+    "officialUrl": "https://github.com/webrecorder/pywb",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-30T10:07:40.497Z",
+    "lastVerified": "2026-10-30T10:07:40.497Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-webrecorder-pywb",
+    "contentHash": "a5aca1f8beb80d2c1d6836104abf507b4cfbd9dba1173546ff3cf2cef1366182",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "johnbean393-sidekick": {
+    "name": "Sidekick",
+    "officialUrl": "https://github.com/johnbean393/Sidekick",
+    "lastChecked": "2026-10-30T10:07:39.082Z",
+    "revisionIdentifier": "83b3e6e0",
+    "lastVerified": "2026-10-30T10:07:39.082Z"
   }
 }

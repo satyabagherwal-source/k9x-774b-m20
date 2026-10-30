@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-WNFP",
-    "timestamp": "2026-10-28T03:24:45.349Z",
-    "repository": "BAAI/bge-small-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-    "contentHash": "8dafd97d4261e051a77f90e0b98dadfedd08b2cea9bff1ff2c36fcd8b4caa308",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-5BHX",
-    "timestamp": "2026-10-28T03:31:29.781Z",
-    "repository": "expo/expo",
-    "learningId": "learn-github-expo-expo",
-    "contentHash": "3f2da62970527b8f2278cdb801cdb9541fe95df1b6e690d83b92e7eb96623077",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-5CRP",
-    "timestamp": "2026-10-28T03:31:31.429Z",
-    "repository": "projectcontour/contour",
-    "learningId": "learn-github-projectcontour-contour",
-    "contentHash": "20ca2582db3703601a738708a6f85b068a6623fe32a804e1a8cfcf5dbb076f50",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-5DD4",
-    "timestamp": "2026-10-28T03:31:32.200Z",
-    "repository": "Qwen/Qwen3.8-27B",
-    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
-    "contentHash": "aab339483193ee7783bcbffb9f0038d89fa2793cdbb04d2d56ba0969bab538d6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-DTCP",
     "timestamp": "2026-10-28T03:38:06.169Z",
     "repository": "black-forest-labs/FLUX.1-dev",
@@ -7490,6 +7430,66 @@
     "repository": "cloudwego/volo",
     "learningId": "learn-github-cloudwego-volo",
     "contentHash": "8686b99aae482629749feb30f1f766c4caa239ab533ae0fca76d1afe201c548c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-8RQV",
+    "timestamp": "2026-10-30T10:09:25.879Z",
+    "repository": "webrecorder/pywb",
+    "learningId": "learn-github-webrecorder-pywb",
+    "contentHash": "a5aca1f8beb80d2c1d6836104abf507b4cfbd9dba1173546ff3cf2cef1366182",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-8RUH",
+    "timestamp": "2026-10-30T10:09:26.009Z",
+    "repository": "emberstack/kubernetes-reflector",
+    "learningId": "learn-github-emberstack-kubernetes-reflector",
+    "contentHash": "3338c1ce7663dc40fd830f72873c0ae667d9a9655146defc52b986ce1e947806",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-9IAH",
+    "timestamp": "2026-10-30T10:10:00.281Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "680dc689f89a437efade3f95239d225feb76efcf64a548b97fd5764e2cd52a40",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-BPNK",
+    "timestamp": "2026-10-30T10:11:43.136Z",
+    "repository": "ntex-rs/ntex",
+    "learningId": "learn-github-ntex-rs-ntex",
+    "contentHash": "3feab823677c17633a86b6af22a6f66baf7cd0fc497996c8848c583418e7bf11",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

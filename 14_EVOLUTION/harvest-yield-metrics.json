@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T09:53:21.478Z",
-  "total_cycles_completed": 6144,
-  "total_learnings_persisted": 6144,
-  "total_rules_promoted": 5675,
+  "last_updated": "2026-10-30T10:11:43.145Z",
+  "total_cycles_completed": 6148,
+  "total_learnings_persisted": 6148,
+  "total_rules_promoted": 5686,
   "history": [
-    {
-      "timestamp": "2026-10-28T22:33:00.212Z",
-      "repository": "SimonSchubert/LinuxCommandLibrary",
-      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T22:39:29.002Z",
-      "repository": "autotrust/JEV-35B-NVFP4",
-      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T22:39:30.674Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T22:39:38.929Z",
-      "repository": "chaos-mesh/chaos-mesh",
-      "learningId": "learn-github-chaos-mesh-chaos-mesh",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T22:45:43.272Z",
       "repository": "meta/folly",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-30T09:53:21.478Z",
       "repository": "cloudwego/volo",
       "learningId": "learn-github-cloudwego-volo",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T10:09:25.888Z",
+      "repository": "webrecorder/pywb",
+      "learningId": "learn-github-webrecorder-pywb",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T10:09:26.018Z",
+      "repository": "emberstack/kubernetes-reflector",
+      "learningId": "learn-github-emberstack-kubernetes-reflector",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T10:10:00.290Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T10:11:43.145Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

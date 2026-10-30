@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "6afd9ba3",
+    "sourceVersion": "5546f767",
     "license": "AGPL-3.0",
-    "contentHash": "275c1a5dffb01c1032cbdf8806751e93bc81b8427908e37402e9b93b1076169d",
-    "lastHarvestedAt": "2026-10-28T20:01:42.183Z",
+    "contentHash": "680dc689f89a437efade3f95239d225feb76efcf64a548b97fd5764e2cd52a40",
+    "lastHarvestedAt": "2026-10-30T10:10:00.284Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "feb17a0d",
+    "sourceVersion": "fd1cf5fc",
     "license": "Apache-2.0",
-    "contentHash": "021d85b8deb9795c788f9abdcfbe41efe7011e78ce405aa8463f6d11795ad1e0",
-    "lastHarvestedAt": "2026-10-28T15:50:33.892Z",
+    "contentHash": "3feab823677c17633a86b6af22a6f66baf7cd0fc497996c8848c583418e7bf11",
+    "lastHarvestedAt": "2026-10-30T10:11:43.140Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {
@@ -7083,10 +7083,10 @@
     "repository": "emberstack/kubernetes-reflector",
     "platform": "github",
     "sourceUrl": "https://github.com/emberstack/kubernetes-reflector",
-    "sourceVersion": "9a470efc",
+    "sourceVersion": "a5ba070c",
     "license": "MIT",
-    "contentHash": "072be09e4557a1b56c956e0040be2f28caafb43d267dd2d520a2487f78884afa",
-    "lastHarvestedAt": "2026-10-27T10:37:45.058Z",
+    "contentHash": "3338c1ce7663dc40fd830f72873c0ae667d9a9655146defc52b986ce1e947806",
+    "lastHarvestedAt": "2026-10-30T10:09:26.013Z",
     "learningId": "learn-github-emberstack-kubernetes-reflector"
   },
   "arxanas-git-branchless": {
@@ -9233,10 +9233,10 @@
     "repository": "webrecorder/pywb",
     "platform": "github",
     "sourceUrl": "https://github.com/webrecorder/pywb",
-    "sourceVersion": "20bf53e0",
+    "sourceVersion": "65db40a0",
     "license": "GPL-3.0",
-    "contentHash": "ed341d24b0403e83ecec7af2565ed9d4ba99f859c56195ab12937cc3a909c304",
-    "lastHarvestedAt": "2026-10-27T11:39:02.219Z",
+    "contentHash": "a5aca1f8beb80d2c1d6836104abf507b4cfbd9dba1173546ff3cf2cef1366182",
+    "lastHarvestedAt": "2026-10-30T10:09:25.883Z",
     "learningId": "learn-github-webrecorder-pywb"
   },
   "kruszoneq-macusb": {

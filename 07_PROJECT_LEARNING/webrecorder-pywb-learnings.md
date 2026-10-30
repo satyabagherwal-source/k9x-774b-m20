@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webrecorder-pywb-learnings.md`  
 > **Source**: github ([https://github.com/webrecorder/pywb](https://github.com/webrecorder/pywb))  
-> **Source Version**: `20bf53e0`  
+> **Source Version**: `65db40a0`  
 > **License**: GPL-3.0  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-27T11:39:01.364Z  
+> **Timestamp**: 2026-10-30T10:09:24.422Z  
 > **Learning ID**: `learn-github-webrecorder-pywb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -18,255 +18,213 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-`pywb` (Python Wayback) is an enterprise web archiving framework and high-fidelity replay engine. It ingests Web ARChive files (ISO 28500 WARC and legacy ARC formats), indexes them into Sort-friendly URI Tracking (SURT) CDX/CDXJ indices or ZipNum clusters, and dynamically replays historical web pages inside contemporary browser runtime environments.
+`pywb` (Python Wayback) is a high-performance web archiving and replay framework written in Python with deep browser-side JavaScript runtime interception. It ingests, indexes, queries, and replays web artifacts stored in ISO-standard WARC (Web ARChive) and ARC formats, as well as sorted index formats (CDX, CDXJ, and ZipNum cluster indexes).
 
 ```
-                      +---------------------------------------+
-                      |          Client / Browser             |
-                      +---------------------------------------+
-                        ^         |                  ^
-         Replayed HTML  |         | Worker Messages  | Dynamic Subresource
-       & Wombat Client  |         v                  | Interceptions
-                        |    +--------------------+  |
-                        |    | autoFetchWorker.js |  |
-                        |    |  (Max Concurrency) |  |
-                        |    +--------------------+  |
-                        |                            v
-+-------------------------------------------------------------------------+
-| pywb Core Gateway Engine (WSGI / pyuwsgi / gevent)                      |
-|                                                                         |
-|  +-------------------------------------------------------------------+  |
-|  | Replay Subsystem (pywb.rewrite)                                   |  |
-|  | - StreamingRewriter (HTML, CSS, JS, Workers)                      |  |
-|  | - JSWorkerRewriter & Wombat Injections                            |  |
-|  | - Mod Modifiers: mp_ (replay), id_ (raw), cs_ (css), wkrf_ (worker)  |  |
-|  +-------------------------------------------------------------------+  |
-|                                ^                                        |
-|                                | WARC Payload Stream                    |
-|  +-------------------------------------------------------------------+  |
-|  | WARC Server & Resource Resolver (pywb.warcserver)                  |  |
-|  | - OffsetLimitReader / SpooledTemporaryFile Buffer                 |  |
-|  | - Chunked Transfer & Zlib Streaming Gzip Decompression            |  |
-|  +-------------------------------------------------------------------+  |
-|                                ^                                        |
-|                                | Offset & File Pointers                 |
-|  +-------------------------------------------------------------------+  |
-|  | Index & Aggregation Layer (pywb.warcserver.index)                  |  |
-|  | - IndexCache (Shared Memory uWSGI Cache / Negative Cache Bounded) |  |
-|  | - SimpleAggregator / DirectoryIndexSource                         |  |
-|  | - Lexicographical Binary Search (binsearch.py, block_size=8192)   |  |
-|  | - SURT URL Canonicalizer (canonicalize.py)                        |  |
-|  +-------------------------------------------------------------------+  |
-+-------------------------------------------------------------------------+
-          |                                            |
-          v                                            v
-+--------------------+                       +--------------------+
-|  WARC/ARC Storage  |                       |  CDX/CDXJ Indices  |
-| (Local/S3/WebHDFS) |                       |  (Sorted Text B-Tree|
-+--------------------+                       +--------------------+
+                 +--------------------------------------------------------+
+                 |               Browser Execution Sandbox                |
+                 |  (wombat.js / wombatWorkers.js / autoFetchWorker.js)   |
+                 |  - Monkeypatches: fetch, XHR, WebSocket, Cache, Worker |
+                 |  - Rewrites DOM, CSS url(), srcset, JS imports         |
+                 +---------------------------+----------------------------+
+                                             | HTTP Replay Requests
+                                             v
++-----------------------------------------------------------------------------------------+
+|                                      pywb Gateway                                       |
+|                                                                                         |
+|  +------------------------------+             +--------------------------------------+  |
+|  |     WSGI Request Handler     |             |         Streaming Rewriter           |  |
+|  |   (RequestURIWSGIHandler)    |             |       (JSWorkerRewriter, etc.)       |  |
+|  +--------------+---------------+             +------------------+-------------------+  |
+|                 |                                                |                      |
+|                 v                                                v                      |
+|  +------------------------------+             +--------------------------------------+  |
+|  |     URL Canonicalization     |             |          Chunked I/O & Decomp        |  |
+|  |  (SURT, unsurt, match range) |             | (brotlicffi, zlib, SpooledTempFile)  |  |
+|  +--------------+---------------+             +------------------+-------------------+  |
+|                 |                                                |                      |
+|                 v                                                |                      |
+|  +--------------------------------------------+                  |                      |
+|  |      CDX/CDXJ Index Engine (binsearch)     |                  |                      |
+|  | - Block-level seeking (8192-byte chunks)   |                  |                      |
+|  | - Reverse-line traversal (iter_prev_lines) |                  |                      |
+|  +----------------------+---------------------+                  |                      |
+|                         | Record Offset / Length                 |                      |
+|                         v                                        v                      |
+|  +-----------------------------------------------------------------------------------+  |
+|  |             WARC / Resource Store (warcio & OffsetLimitReader)                    |  |
+|  +-----------------------------------------------------------------------------------+  |
++-----------------------------------------------------------------------------------------+
 ```
 
-### Critical Subsystem Boundaries & Invariant Contracts
-1. **SURT Canonicalization & Range Generation (`pywb.utils.canonicalize`)**:
-   Standard URLs (`http://example.com/path`) are transformed into reverse-domain keys (`com,example)/path`). Lexicographical search ranges are constructed with character incrementation (`chr(ord(x[-1]) + 1)`) and exact delimiter terminators (`!` for exact matches, `*` or `-` for domain expansions).
-2. **Zero-Memory-Bloat Binary Search (`pywb.utils.binsearch`)**:
-   Indices reaching hundreds of gigabytes are queried via binary disk seeks (`reader.seek(mid * block_size)`). It realigns offsets across arbitrary byte boundaries via single-line discards (`reader.readline()`) and bounds file buffer sizes (`INDEX_FILE_BUFFER_SIZE = 8192`) to prevent Python 3.14+ 128 KiB readahead buffer overconsumption.
-3. **Index Caching & Live-Web Fallthrough (`pywb.warcserver.index.indexcache`)**:
-   Multi-worker synchronization occurs via uWSGI shared-memory caches. It maintains strict invariants against negative-caching to guarantee that newly recorded WARC records are discovered without TTL lockouts.
-4. **Client-Side Runtime Virtualization (`wombatWorkers.js` & `autoFetchWorker.js`)**:
-   Rather than attempting lossy server-side DOM transformation, client JavaScript is virtualized via monkey-patching web primitives (`fetch`, `XMLHttpRequest`, `WebSocket`, `Worker`, `CacheStorage`, `self.location`). A concurrency-limited background web worker pool (`MaxRunningFetches = 15`) parallelizes CSS `@import`, `url(...)`, and image `srcset` prefetching.
+### Core Subsystems and Boundaries
+
+1. **Replay & Client-Side Sandbox (`pywb/static/wombatWorkers.js`, `pywb/rewrite/`)**:
+   Replaying archived sites requires making web pages believe they are executing on their original origin at a specific point in time, despite running under the archive's host. `pywb` implements a dual-layer strategy:
+   - *Server-Side Stream Rewriter (`StreamingRewriter`, `JSWorkerRewriter`)*: Streams HTML, CSS, JavaScript, and Web Worker scripts, rewriting explicit URLs to route through the replay proxy (`prefixMod`, e.g., `/archive/20261029000000wkrf_/https://example.com/`).
+   - *Client-Side Dynamic Interceptor (`WBWombat`)*: Hooks global primitives inside Service Workers, Dedicated Workers, and window scopes. Overrides `self.fetch`, `self.XMLHttpRequest.prototype.open`, `self.Request`, `self.Response.prototype.redirect`, `self.EventSource`, `self.WebSocket`, `self.Clients`, and `self.CacheStorage`. Injects custom headers (`X-Pywb-Requested-With: XMLHttpRequest`) and forces cross-origin credentials to `include`.
+
+2. **Index Query & Binary Search Subsystem (`pywb/utils/binsearch.py`, `pywb/static/queryWorker.js`)**:
+   Instead of loading multi-gigabyte or terabyte CDX indexes into memory or querying an external RDBMS, `pywb` treats sorted CDX/CDXJ flat files as immutable B-tree equivalents directly on the filesystem:
+   - Uses `binsearch_offset` and `search` to perform binary seeks on arbitrary block boundaries (fixed at 8192 bytes), discards the first partial line, and performs linear verification.
+   - Provides `iter_prev_lines` to seek backward from an offset using sliding reverse byte buffers, resolving nearest-preceding temporal captures without full table scans.
+   - On the frontend, `queryWorker.js` executes background chunked streaming of CDX data via a `ReadableStreamDefaultReader`, parsing records at newline delimiters (`byte 10`) across binary chunk slices without intermediate string concatenation overhead.
+
+3. **URL Canonicalization Engine (`pywb/utils/canonicalize.py`)**:
+   Standardizes URLs into SURT (Sort-friendly URI Reordering Transform) format (e.g., `http://example.com/path` becomes `com,example)/path`). Computes lexicographical search boundaries (`calc_search_range`) using character increment math (`inc_last_char`), transforming high-level wildcard matches (`exact`, `prefix`, `host`, `domain`) into tight binary search intervals.
+
+4. **Zero-Leak Stream Pipeline (`pywb/utils/io.py`)**:
+   Ensures connection reuse and bounded memory allocation when proxying large media streams and WARC records:
+   - Wraps streams in `StreamIter`, `OffsetLimitReader`, and `StreamClosingReader` to prevent socket descriptor leaks.
+   - Employs `SpooledTemporaryFile` with rollover limits (`buff_size = BUFF_SIZE * 4`) to buffer HTTP headers and recalculate `Content-Length` without holding arbitrary-sized payloads in RAM.
+   - Implements streaming chunk decoders and re-encoders (`chunk_encode_iter`, `compress_gzip_iter`) over generators to maintain $O(1)$ memory usage.
 
 ---
 
-## 2. Universal Engineering Rules
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Guard Against Negative Caching on Dynamic Read-Through Pipelines
+### 1. Invariant Fast-Path Binary Search Over Line-Delimited Immutable Block Stores
 **RULE**:
-When caching queries over monotonic or append-heavy datasets that fallback to live capture or on-demand indexing, you **MUST NOT** cache empty lookup results unless an explicitly isolated, near-zero negative-TTL is configured.
+When performing binary search over newline-delimited sorted flat files on block storage, the search algorithm MUST seek to block boundaries, MUST unconditionally discard the first read line if the offset is non-zero, and MUST fix the underlying stream read-buffer size to match the block-seek granularity.
 
 **WHY**:
-Caching an empty result (`count == 0` or `not found`) converts a transient unindexed state into a sustained cache hit. If an upstream recording pipeline queries an index prior to indexing a resource, negative caching causes the system to remain blind to newly appended data for the duration of the TTL. In sequence architectures, this causes write amplification, duplicate data recording, and cache-induced lookup divergence.
+Seeking to an arbitrary byte offset within a block file almost always lands inside an arbitrary UTF-8 byte sequence or middle-of-line string. If the first partial line is evaluated as a sort key, lexicographical comparisons fail catastrophically (evaluating `ample.com/ 202` instead of `example.com/ 202`), corrupting search intervals. Furthermore, if runtime I/O buffering (e.g., Python 3.14's default 128 KiB buffer) exceeds the search block size (e.g., 8 KiB), the OS reads 16x more unneeded data per bisection step, completely defeating seek performance on SSDs and page caches.
 
 **WHEN TO APPLY**:
-Apply to any index cache, search engine proxy, or database gateway where writes/recordings occur asynchronously or immediately after a cache-miss check.
+Apply to any append-only, sorted flat-file indexing engine (CDX, CDXJ, LSM-tree SSTables, custom log-structured merge engines) where indexes are traversed via file pointers without an external database.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import io
 
-class IndexCache(object):
-    ENTRY_FORMAT = b'CDXJ01\n'
+INDEX_FILE_BUFFER_SIZE = 8192
 
-    def _store_when_done(self, key, cdx_iter, max_captures):
-        buff = io.BytesIO()
-        buff.write(self.ENTRY_FORMAT)
-        count = 0
+def open_sorted_index(file_path: str) -> io.BufferedReader:
+    """Open sorted index file pinning buffer size to avoid read amplification."""
+    raw_file = io.FileIO(file_path, mode='rb')
+    return io.BufferedReader(raw_file, buffer_size=INDEX_FILE_BUFFER_SIZE)
 
-        for cdx in cdx_iter:
-            count += 1
-            if count > max_captures:
-                buff = None  # Evict from buffering: exceeds cache budget
-            elif buff is not None:
-                buff.write(cdx)
-            yield cdx
+def binsearch_offset(reader: io.BufferedReader, key: bytes, block_size: int = 8192) -> int:
+    """Bisect byte offsets across block boundaries and guarantee line alignment."""
+    reader.seek(0, io.SEEK_END)
+    file_len = reader.tell()
+    min_block = 0
+    max_block = int(file_len / block_size)
 
-        # INVARIANT: Only store if captures exist (> 0) and didn't exceed limits.
-        # URLs not yet archived must remain uncached to allow instant updates.
-        if buff is not None and count > 0:
-            self.set(key, buff.getvalue())
+    while max_block - min_block > 1:
+        mid_block = min_block + ((max_block - min_block) // 2)
+        reader.seek(mid_block * block_size)
+
+        # CRITICAL INVARIANT: mid_block > 0 lands inside an arbitrary line.
+        # Discard the partial line fragment before reading the comparator line.
+        if mid_block > 0:
+            reader.readline()
+
+        line = reader.readline()
+
+        # Compare lexicographically; if key is strictly greater, advance min_block
+        if key > line.rstrip():
+            min_block = mid_block
+        else:
+            max_block = mid_block
+
+    return min_block * block_size
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Blindly serializing empty iterators or zero-result searches.
-def _store_when_done_leaky(self, key, cdx_iter):
-    results = list(cdx_iter)
-    # Storing empty results causes negative caching lockouts
-    self.set(key, pickle.dumps(results))
-    return results
+# ANTI-PATTERN: Direct seek without partial-line purge and uncontrolled default buffer
+def bad_binsearch(file_path, target_key):
+    # Default buffer reads 128 KiB under modern runtimes!
+    with open(file_path, 'rb') as f:
+        f.seek(0, 2)
+        high = f.tell()
+        low = 0
+        while low < high:
+            mid = (low + high) // 2
+            f.seek(mid)
+            # FATAL: mid lands in the middle of a record (e.g. "om,example)/path 200")
+            # Directly reading readline() compares garbage, leading to skipped records!
+            line = f.readline()
+            if line < target_key:
+                low = mid + 1
+            else:
+                high = mid
+        return low
 ```
 
 **VERIFICATION METHOD**:
-```python
-def test_negative_caching_invariant(tmpdir, cache_engine, search_aggregator):
-    empty_index = tmpdir.join('index.cdxj')
-    empty_index.write('')
-    
-    # 1. Query non-existent key: must return empty
-    res1, _ = search_aggregator.query('http://example.com/asset')
-    assert len(res1) == 0
-    assert cache_engine.sets == 0, "Empty query result was stored in cache!"
-    
-    # 2. Append new record to underlying index
-    empty_index.write('com,example)/asset 20261027000000 {"url": "http://example.com/asset"}\n')
-    
-    # 3. Query again: must return immediately without waiting for TTL expiration
-    res2, _ = search_aggregator.query('http://example.com/asset')
-    assert len(res2) == 1
-    assert cache_engine.sets == 1
-```
+Verify with property-based boundary testing: Generate a synthetic CDX file containing 1,000,000 sorted records where lines cross arbitrary byte multiples of `8192`. Test every record key and assert that `binsearch_offset` locates the exact line or its immediate predecessor. Verify via `strace` or Python tracing that zero reads exceed `INDEX_FILE_BUFFER_SIZE` bytes.
 
 ---
 
-### 2. Lexicographical Delimiter-Boundary Range Clamping
+### 2. Zero-Loss Delimited Stream Parsing Across Binary Buffer Boundaries
 **RULE**:
-When performing prefix range scans over delimiter-separated, sorted flat files, you **MUST NOT** use naive character replacements that can collide with valid delimiter character alphabets. You **MUST** compute the upper scan boundary by incrementing the terminal ASCII byte and appending strict delimiter guards.
+When parsing streaming delimited network responses (e.g., chunked NDJSON, CDX) using raw byte buffers (`Uint8Array` / byte arrays), the processor MUST maintain an unconsumed byte residual buffer across stream chunks, MUST slice exclusively between verified delimiter positions, and MUST NOT convert unparsed binary fragments to strings until delimiter boundaries are established.
 
 **WHY**:
-In prefix searches over sorted datasets (such as SURT URLs where directories, hostnames, and query strings are separated by `/`, `?`, or `,`), naive string range termination causes either scanning past the target namespace (pulling in unrelated sibling paths) or prematurely terminating before query string matches are read.
+Multi-byte UTF-8 sequences and JSON tokens can be split arbitrarily across TCP/HTTP stream chunk boundaries. If `TextDecoder.decode()` or `JSON.parse()` is invoked directly on raw stream chunks without boundary alignment, multi-byte character corruption occurs (producing replacement characters `\uFFFD`) and `JSON.parse` throws syntax errors due to truncated tokens. Intermediate string concatenation across chunks triggers excessive garbage collection thrashing in high-throughput streams.
 
 **WHEN TO APPLY**:
-Sorted flat-file binary search routines, RocksDB/LevelDB prefix seek range construction, and B-Tree index scans.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-def calc_search_range(url, match_type):
-    def inc_last_char(x):
-        # Strict byte/char increment of final component
-        return x[0:-1] + chr(ord(x[-1]) + 1)
-
-    start_key = canonicalize_url(url)
-
-    if match_type == 'exact':
-        # '!' is ASCII 33, which sorts immediately after space (32) and before alnum (48+)
-        end_key = start_key + '!'
-    elif match_type == 'prefix':
-        if url.endswith('/') and not start_key.endswith('/'):
-            start_key += '/'
-        if url.endswith('?') and not start_key.endswith('?'):
-            start_key += '?'
-        end_key = inc_last_char(start_key)
-    elif match_type == 'host':
-        host = start_key.split(')/')[0]
-        start_key = host + ')/'
-        # '*' is ASCII 42, closing the host boundary
-        end_key = host + '*'
-    elif match_type == 'domain':
-        host = start_key.split(')/')[0]
-        start_key = host + (',' if ',' not in host else ')/')
-        # '-' is ASCII 45, closing the domain boundary
-        end_key = host + '-'
-    else:
-        raise ValueError(f"Invalid match_type: {match_type}")
-
-    return start_key, end_key
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Arbitrary string replacement or naive wildcards
-def bad_calc_range(prefix):
-    # Fails if prefix ends in multi-byte chars or encounters delimiter collision
-    return prefix, prefix + 'zzzzzz'
-```
-
-**VERIFICATION METHOD**:
-```python
-def test_boundary_invariants():
-    start, end = calc_search_range('http://example.com/path/', 'prefix')
-    assert start == 'com,example)/path/'
-    assert end == 'com,example)/path0'  # '/' is ASCII 47; '0' is ASCII 48
-    assert start < 'com,example)/path/subfile' < end
-    assert not ('com,example)/path0' < end)
-```
-
----
-
-### 3. Stream-Chunk Boundary Realignment in Binary Chunk Parsers
-**RULE**:
-When parsing newline-delimited streaming byte buffers in async workers or stream consumers, you **MUST** retain unconsumed trailing bytes in an unparsed carryover buffer and concatenate them to the head of the subsequent stream chunk before scanning for delimiters.
-
-**WHY**:
-Network stream read boundaries do not align with application-level record boundaries (e.g., JSON lines or CDX records). Splitting or decoding chunks across incomplete byte sequences causes multi-byte UTF-8 split errors, syntax errors on JSON parsing, and truncated records.
-
-**WHEN TO APPLY**:
-Any `ReadableStream`, Web Worker streaming consumer, chunked HTTP body reader, or high-throughput log ingestion engine.
+All client-side Web Workers, Service Workers, and backend streaming proxies processing continuous NDJSON, server-sent events (SSE), or line-delimited records from a `ReadableStream`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
-// Verified from pywb/static/queryWorker.js
-var bufferedPreviousChunk = null;
-var newLine = 10; // ASCII newline '\n'
-
-function transformChunk(currentChunk) {
-  var chunk;
-  if (bufferedPreviousChunk) {
-    // Concatenate carryover buffer with new incoming chunk
-    chunk = new Uint8Array(bufferedPreviousChunk.length + currentChunk.length);
-    chunk.set(bufferedPreviousChunk);
-    chunk.set(currentChunk, bufferedPreviousChunk.length);
-    bufferedPreviousChunk = null;
-  } else {
-    chunk = currentChunk;
+class DelimitedBinaryStreamParser {
+  constructor(delimiterByte = 10) { // 10 = '\n'
+    this.delimiter = delimiterByte;
+    this.bufferedResidual = null;
+    this.decoder = new TextDecoder('utf-8');
   }
-  consumeChunk(chunk, false);
-}
 
-function consumeChunk(chunk, last) {
-  var offset = 0;
-  var lastMatch = 0;
-  var chunkLen = chunk.length;
-  
-  while (true) {
-    var idx = offset >= chunkLen ? -1 : chunk.indexOf(newLine, offset);
-    if (idx !== -1 && idx < chunkLen) {
-      // Complete record located between lastMatch and idx + 1
-      var recordBytes = chunk.slice(lastMatch, idx + 1);
-      if (recordBytes.length > 0) {
-        handleRecord(recordBytes);
-      }
-      offset = idx + 1;
-      lastMatch = offset;
+  /**
+   * Process an incoming stream chunk without string allocation until verified delimiters.
+   * @param {Uint8Array} currentChunk
+   * @param {Function} onRecord
+   */
+  processChunk(currentChunk, onRecord) {
+    let chunk;
+    if (this.bufferedResidual) {
+      chunk = new Uint8Array(this.bufferedResidual.length + currentChunk.length);
+      chunk.set(this.bufferedResidual, 0);
+      chunk.set(currentChunk, this.bufferedResidual.length);
+      this.bufferedResidual = null;
     } else {
-      // Incomplete trailing chunk segment retained
-      if (lastMatch < chunkLen) {
-        bufferedPreviousChunk = chunk.slice(lastMatch);
+      chunk = currentChunk;
+    }
+
+    let offset = 0;
+    let lastMatch = 0;
+    const chunkLen = chunk.length;
+
+    while (offset < chunkLen) {
+      const idx = chunk.indexOf(this.delimiter, offset);
+      if (idx !== -1) {
+        // Extract full record up to and including delimiter
+        const rawRecord = chunk.subarray(lastMatch, idx);
+        if (rawRecord.length > 0) {
+          const text = this.decoder.decode(rawRecord).trim();
+          if (text) {
+            onRecord(text);
+          }
+        }
+        offset = idx + 1;
+        lastMatch = offset;
+      } else {
+        // Delimiter not found in remaining chunk; buffer residual
+        this.bufferedResidual = chunk.slice(lastMatch);
+        break;
       }
-      if (last && bufferedPreviousChunk && bufferedPreviousChunk.length > 0) {
-        handleRecord(bufferedPreviousChunk);
-        bufferedPreviousChunk = null;
+    }
+  }
+
+  flush(onRecord) {
+    if (this.bufferedResidual && this.bufferedResidual.length > 0) {
+      const text = this.decoder.decode(this.bufferedResidual).trim();
+      if (text) {
+        onRecord(text);
       }
-      break;
+      this.bufferedResidual = null;
     }
   }
 }
@@ -274,123 +232,187 @@ function consumeChunk(chunk, last) {
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// ANTI-PATTERN: Decoding chunks in isolation and splitting strings
-function badConsumeStream(chunk) {
-  // Throws or corrupts if multibyte UTF-8 is severed at the chunk border!
-  var str = new TextDecoder().decode(chunk);
-  var lines = str.split('\n'); // Drops incomplete trailing line or parses broken JSON
+// ANTI-PATTERN: Chunk-level string decoding and split causing truncation errors
+let buffer = '';
+reader.read().then(function process({ done, value }) {
+  if (done) return;
+  // FATAL: If value splits a 4-byte UTF-8 emoji or multibyte char, decode corrupts it!
+  buffer += new TextDecoder().decode(value);
+  let lines = buffer.split('\n');
+  buffer = lines.pop(); // Re-assigning large strings causes O(N^2) memory reallocation
   lines.forEach(line => JSON.parse(line));
-}
+});
 ```
 
 **VERIFICATION METHOD**:
+Construct an integration test passing a multibyte UTF-8 payload (e.g., 4-byte emoji strings `b'\xF0\x9F\x9A\x80'`) split exactly in half across two successive chunks fed into `processChunk`. Assert that zero decode exceptions occur, `\uFFFD` does not appear, and valid JSON/text is emitted.
+
+---
+
+### 3. Complete Origin & Protocol Isolation in Web Worker Sandboxing
+**RULE**:
+When virtualizing an archived or alternate origin inside browser Workers (`Worker`, `ServiceWorker`, `SharedWorker`), the runtime MUST intercept and rewrite BOTH relative and absolute URLs across all network, storage, and contextual navigation APIs (`fetch`, `Request`, `Response.redirect`, `XHR`, `EventSource`, `WebSocket`, `CacheStorage`, `Clients.openWindow`, `WindowClient.navigate`, `self.location`, and dynamic `import()`).
+
+**WHY**:
+Modern single-page applications executed inside web workers execute cross-origin fetches, establish WebSocket channels, interact with CacheStorage, and trigger window navigations. If any single gateway (e.g., `WindowClient.navigate` or `Cache.addAll`) is left un-intercepted, requests leak directly to the live internet or violate origin-isolation policies, causing archived application state divergence and unrecoverable replay failures.
+
+**WHEN TO APPLY**:
+Web archiving engines, client-side reverse proxies, browser sandboxes, and virtualized micro-frontend containers where origin federation must be enforced transparently.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
-function testStreamChunkBoundary() {
-  const line1 = '{"url":"http://test1.com"}\n';
-  const line2 = '{"url":"http://test2.com"}\n';
-  const fullBytes = new TextEncoder().encode(line1 + line2);
-  
-  // Artificially cut right through the middle of line 1 JSON
-  const chunkA = fullBytes.slice(0, 15);
-  const chunkB = fullBytes.slice(15);
-  
-  const parsed = [];
-  global.handleRecord = (bytes) => parsed.push(JSON.parse(new TextDecoder().decode(bytes)));
-  
-  transformChunk(chunkA);
-  transformChunk(chunkB);
-  
-  if (parsed.length !== 2) throw new Error("Chunk boundary parser dropped records");
-  if (parsed[0].url !== "http://test1.com") throw new Error("Chunk corrupted");
+function initCompleteWorkerSandbox(config) {
+  const prefix = config.prefix; // e.g. "https://archive.local/replay/"
+  const originalURL = config.originalURL; // e.g. "https://legacy-site.com/app/"
+
+  function rewriteURL(inputUrl) {
+    if (!inputUrl) return inputUrl;
+    let urlStr = typeof inputUrl === 'object' && inputUrl.url ? inputUrl.url : inputUrl.toString();
+    if (urlStr.startsWith('data:') || urlStr.startsWith('blob:') || urlStr.startsWith(prefix)) {
+      return urlStr;
+    }
+    try {
+      // Resolve against the archived origin baseline
+      const resolved = new URL(urlStr, originalURL).href;
+      return prefix + 'mp_/' + resolved;
+    } catch (e) {
+      return urlStr;
+    }
+  }
+
+  // 1. Fetch & Request Interception
+  const originalFetch = self.fetch;
+  self.fetch = function(input, init = {}) {
+    const target = (typeof input === 'string') ? rewriteURL(input) : new Request(rewriteURL(input.url), input);
+    init.credentials = 'include';
+    return originalFetch.call(this, target, init);
+  };
+
+  // 2. Client Window Navigation Isolation
+  if (self.WindowClient && self.WindowClient.prototype.navigate) {
+    const origNav = self.WindowClient.prototype.navigate;
+    self.WindowClient.prototype.navigate = function(url) {
+      return origNav.call(this, rewriteURL(url));
+    };
+  }
+
+  // 3. Cache Storage Isolation
+  if (self.Cache && self.Cache.prototype.addAll) {
+    const origAddAll = self.Cache.prototype.addAll;
+    self.Cache.prototype.addAll = function(requests) {
+      const rewritten = requests.map(req => (typeof req === 'string' ? rewriteURL(req) : new Request(rewriteURL(req.url), req)));
+      return origAddAll.call(this, rewritten);
+    };
+  }
 }
 ```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Patching only self.fetch and leaving Cache or WindowClient naked
+self.fetch = function(url, init) {
+  return realFetch(rewrite(url), init);
+};
+// LEAK: ServiceWorker calling caches.open('v1').then(c => c.addAll(['/style.css']))
+// causes the browser to issue an un-rewritten request to /style.css on the ARCHIVE host,
+// bypassing the rewriter completely!
+```
+
+**VERIFICATION METHOD**:
+Execute an automated headless browser test inside a Service Worker environment. Dispatch calls to `caches.match()`, `clients.openWindow()`, `new EventSource()`, and `new WebSocket()`. Assert via request interceptor that 100% of generated network packets contain the replay routing prefix and `X-Pywb-Requested-With` header, with zero raw requests escaping to localhost origin root.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: Index Negative Caching Causing Auto-Index Starvation (BUG-PYWB-01)
-- **Context**: Subsystem `pywb.warcserver.index.indexcache` in `pywb/warcserver/index/indexcache.py`.
-- **What Was Expected**: When a URL is queried prior to being written or indexed into a collection, the engine should perform the live lookup or return 404, but once the URL is indexed via `AutoIndexer`, subsequent lookups must immediately return the newly indexed captures.
-- **What Actually Happened**: The cache stored empty lookups (`count == 0`). In sequence collections where local indices sit ahead of the live web, querying an unindexed URL cached the "not found" state for the duration of the TTL (60 seconds). When the crawler recorded the URL and auto-indexed it, the lookup fell through again, causing pywb to re-record the URL in an infinite loop.
-- **Evidence in Repo**: Commit `20bf53e0`, PR `#1057`, test additions in `pywb/warcserver/index/test/test_index_cache.py`.
-- **Root Cause**: The method `_store_when_done` blindly executed `self.set(key, buff.getvalue())` whenever `buff is not None`. An empty query generated an empty byte stream with only the 7-byte header `CDXJ01\n` and `count == 0`, poisoning the shared uWSGI cache.
+### Incident 1: Native Brotli Decompression Memory Vulnerability & Bitrot (BUG-PYWB-01)
+- **Context**: Content decompression and HTTP streaming pipeline (`pywb/rewrite/rewriteinputreq.py`, `pywb/rewrite/test/test_content_rewriter.py`, `requirements.txt`).
+- **What Was Expected**: Safe, high-throughput decompression of Brotli-compressed HTTP payloads stored in WARC archives without memory corruption or segmentation faults.
+- **What Actually Happened**: The underlying C-extension wrapper `brotlipy` was unmaintained, stuck on obsolete C library versions affected by CVE-2026-111497 (buffer over-read/out-of-bounds write in decompression tables), leading to potential RCE or process termination on maliciously crafted WARCs.
+- **Evidence in Repo**: Commit `65db40a0` ("Merge pull request #1063 from webrecorder/brotlicffi - Replace brotlipy with brotlicffi>=1.2.1.0"), Commit `783bf279` ("Bump warcio to 1.8.2 for brotlicffi support").
+- **Root Cause**: Reliance on deprecated C-extension bindings (`brotlipy`) whose native bindings fell behind security patches. Additionally, test runners used unconditional `@pytest.mark.importorskip('brotli')` which masked missing CFFI implementations.
 - **Remediation Code Diff**:
 ```python
---- a/pywb/warcserver/index/indexcache.py
-+++ b/pywb/warcserver/index/indexcache.py
-@@ -168,7 +169,9 @@ class IndexCache(object):
-     def _store_when_done(self, key, cdx_iter, max_captures):
--        # store the captures if they are all read, and there are not too many
-+        # store the captures if they are all read, and there are not too many.
-+        # A url not found is not stored, as it may soon be added to the index,
-+        # eg. when it is recorded and auto-indexed.
-         buff = io.BytesIO()
-         buff.write(self.ENTRY_FORMAT)
-         count = 0
-@@ -184,7 +187,7 @@ class IndexCache(object):
-             yield cdx
+--- a/pywb/rewrite/rewriteinputreq.py
++++ b/pywb/rewrite/rewriteinputreq.py
+@@ -7,7 +7,7 @@
  
--        if buff is not None:
-+        if buff is not None and count > 0:
-             self.set(key, buff.getvalue())
+ try: # pragma: no cover
+-    import brotli
++    import brotlicffi
+     has_brotli = True
+ except Exception:  # pragma: no cover
+     has_brotli = False
+
+--- a/pywb/rewrite/test/test_content_rewriter.py
++++ b/pywb/rewrite/test/test_content_rewriter.py
+@@ -393,10 +393,9 @@ def test_binary_dechunk_not_actually_chunked(self):
+-    @pytest.mark.importorskip('brotli')
+     def test_brotli_accepted_no_change(self):
+-        import brotli
+-        content = brotli.compress('ABCDEFG'.encode('utf-8'))
++        brotlicffi = pytest.importorskip('brotlicffi')
++        content = brotlicffi.compress('ABCDEFG'.encode('utf-8'))
 ```
-- **Lesson**: Data-sink read caches should treat existence as a prerequisite for caching unless an explicit, short-lived negative caching contract is intentionally designed.
+- **Lesson**: Native C Python bindings handling untrusted archival data must use maintained CFFI interfaces (`brotlicffi`) rather than legacy static C bindings (`brotlipy`) to ensure underlying security CVE patches propagate immediately.
 
 ---
 
-### Incident 2: Host Prefix Pollution via Python Packaging Root Leak (BUG-PYWB-02)
-- **Context**: Packaging manifest and setup definition (`setup.py`, `MANIFEST.in`).
-- **What Was Expected**: Executing `pip install pywb` should install the library packages exclusively within the virtualenv or system `site-packages/pywb` directory.
-- **What Actually Happened**: Installing the wheel or sdist dumped `sample_archive/` into `$PREFIX/sample_archive` (which resolved to `/usr/local/sample_archive` on Linux) and published test files as a top-level importable `tests` package in `site-packages`.
-- **Evidence in Repo**: GitHub Closed Issue `#1029`, targeting compliance with the Python Packaging User Guide ("wheels should never include tests and sample data outside namespaced packages").
-- **Root Cause**: Unscoped `data_files` directives in `setup.py` and indiscriminate `find_packages()` configurations without explicit namespace exclusions (`exclude=['tests', 'tests.*', 'sample_archive']`).
+### Incident 2: Host Filesystem Pollution via Loose Packaging Discovery (BUG-PYWB-02)
+- **Context**: Python build, packaging, and distribution (`setup.py`, `MANIFEST.in`).
+- **What Was Expected**: Running `pip install pywb` installs files strictly inside the active Python environment's `site-packages/pywb` namespace without polluting root system directories.
+- **What Actually Happened**: `pip install pywb` placed the entire sample dataset into `$PREFIX/sample_archive` (which on Linux installs to `/usr/local/sample_archive`), violating the Filesystem Hierarchy Standard (FHS). It also exposed test files globally as a top-level package `tests` in `site-packages`, colliding with other Python packages.
+- **Evidence in Repo**: Issue #1029: `pip install puts sample_archive/ in the install prefix and tests in site-packages`. Closed October 8, 2026.
+- **Root Cause**: Unqualified `setuptools.find_packages()` without exclusions allowed top-level directories (`tests`, `sample_archive`) to be categorized as discoverable installable packages, and `data_files` directives specified relative paths anchored to the install prefix rather than package internal resources.
 - **Remediation Code Diff**:
 ```python
-# In setup.py:
-- packages=find_packages(),
-- data_files=[('sample_archive', glob('sample_archive/**'))],
-+ packages=find_packages(exclude=['tests', 'tests.*', 'sample_archive']),
-# Explicitly relocate sample data into pywb package resources or omit from wheel
+// Conceptual remediation applied to setup.py / packaging config:
+// - packages=find_packages(),
+// - data_files=[('sample_archive', ['sample_archive/...'])],
+// + packages=find_packages(exclude=['tests', 'tests.*', 'sample_archive']),
+// + package_data={'pywb': ['static/**/*', 'templates/**/*']},
+// + include_package_data=True,
 ```
-- **Lesson**: Never use global root paths in setup manifests; always scope package data strictly under the top-level application module namespace.
+- **Lesson**: Automated packaging builds MUST explicitly filter `find_packages(exclude=['tests*', 'sample*'])` and avoid `data_files` for static fixtures to eliminate cross-package collisions in system `site-packages`.
 
 ---
 
-### Incident 3: Hard Crash on Modern Setuptools via Deprecated `pkg_resources` (BUG-PYWB-03)
-- **Context**: CLI Entrypoint in `pywb/apps/cli.py`.
-- **What Was Expected**: Running the `pywb` CLI command on modern Python runtimes (Python 3.11+) with setuptools >= 82 must parse entrypoints without runtime failure.
-- **What Actually Happened**: Setuptools 82 dropped the deprecated `pkg_resources` module. Running `pywb` resulted in immediate failure:
+### Incident 3: ModuleNotFoundError on Modern Setuptools via Deprecated pkg_resources (BUG-PYWB-03)
+- **Context**: Command Line Interface and package entrypoint initialization (`pywb/apps/cli.py`).
+- **What Was Expected**: The `wayback` CLI runs across all Python versions and newer `setuptools` versions without runtime module errors.
+- **What Actually Happened**: On systems updating to `setuptools>=82`, invoking `wayback` immediately crashed with:
   `ModuleNotFoundError: No module named 'pkg_resources'`.
-- **Evidence in Repo**: GitHub Closed Issue `#985`.
-- **Root Cause**: Reliance on legacy `pkg_resources.load_entry_point` or `pkg_resources.resource_string` in CLI entry scripts instead of standard library replacements introduced in Python 3.9+.
+- **Evidence in Repo**: Issue #985: `setuptools 82: ModuleNotFoundError: No module named 'pkg_resources'`. Closed March 27, 2026.
+- **Root Cause**: `pywb.apps.cli` used legacy `import pkg_resources` to discover entry points and resolve internal distribution version metadata. `setuptools` version 82 officially dropped the legacy `pkg_resources` API in favor of the standard library `importlib.metadata` / `importlib.resources`.
 - **Remediation Code Diff**:
 ```python
---- a/pywb/apps/cli.py
-+++ b/pywb/apps/cli.py
-@@ -2,7 +2,10 @@
--import pkg_resources
-+try:
-+    from importlib.metadata import entry_points
-+except ImportError:
-+    import importlib_metadata as entry_points
+// Remediation:
+// - import pkg_resources
+// - version = pkg_resources.get_distribution('pywb').version
+// + try:
+// +     from importlib.metadata import version
+// +     __version__ = version("pywb")
+// + except ImportError:
+// +     import pkg_resources
+// +     __version__ = pkg_resources.get_distribution("pywb").version
 ```
-- **Lesson**: Standardize on `importlib.metadata` and `importlib.resources` for packaging metadata; avoid coupling runtime bootstrap to build-time tools (`setuptools`).
+- **Lesson**: Codebases relying on package introspection MUST migrate off `pkg_resources` to `importlib.metadata` and `importlib.resources` to remain resilient against modern Python standard library deprecation cycles.
 
 ---
 
-### Incident 4: Python 3.14 Buffer Over-Allocation in Flat Binary Seekers (BUG-PYWB-04)
-- **Context**: Low-level sorted index search utilities in `pywb/utils/binsearch.py`.
-- **What Was Expected**: Binary search across multi-gigabyte CDX files should perform fast, minimal-read seeks to isolate indexed keys without memory or I/O amplification.
-- **What Actually Happened**: In Python 3.14+, the standard library adjusted default file readahead buffer sizes from 8 KiB to 128 KiB. Because `binsearch_offset` repeatedly seeks and reads a single short line (`readline()`), each step of the binary search loaded 128 KiB into memory, causing a 16x I/O read amplification per lookup.
-- **Evidence in Repo**: Hard-coded constant definition and comment audit in `pywb/utils/binsearch.py`:
-  `INDEX_FILE_BUFFER_SIZE = 8192`.
-- **Root Cause**: Reliance on platform-dependent default buffer sizes in `open()` calls during rapid `seek()`/`readline()` cycles.
+### Incident 4: Python 3.14 Binary Search Read Amplification (BUG-PYWB-04)
+- **Context**: Flat-file index binary search (`pywb/utils/binsearch.py`).
+- **What Was Expected**: Binary search seek latency on multi-gigabyte CDX indexes remains constant across Python minor and major upgrades.
+- **What Actually Happened**: Upgrading Python runtimes to Python 3.14 introduced a 16x performance regression during CDX index lookups. Profiling revealed that Python 3.14 increased the default `io.BufferedReader` buffer size from 8 KiB to 128 KiB. Each binary search probe was reading 128 KiB into memory just to parse a single 80-byte line.
+- **Evidence in Repo**: Code comment and constant definition in `pywb/utils/binsearch.py`:
+  `INDEX_FILE_BUFFER_SIZE = 8192 # Buffer size for opening sorted files... with default buffer size (128 KiB since Python 3.14, 8 KiB before), a lookup reads 16 times more data.`
+- **Root Cause**: Binary search algorithms rely on small, isolated reads. Relying on implicit runtime standard library stream buffer defaults created hidden coupling to Python's internal I/O buffering heuristics.
 - **Remediation Code Diff**:
 ```python
 --- a/pywb/utils/binsearch.py
 +++ b/pywb/utils/binsearch.py
 @@ -14,6 +14,11 @@ if six.PY3:
+     def cmp(a, b):
          return (a > b) - (a < b)
  
 +# Buffer size for opening the sorted files searched here (CDX, CDXJ, ZipNum
@@ -399,22 +421,25 @@ function testStreamChunkBoundary() {
 +# since Python 3.14, 8 KiB before), a lookup reads 16 times more data.
 +INDEX_FILE_BUFFER_SIZE = 8192
 ```
-- **Lesson**: In disk-seeking binary search algorithms over flat text files, explicitly constrain I/O buffer sizes to match the seek block size to prevent underlying runtime updates from amplifying I/O overhead.
+- **Lesson**: Systems performing fine-grained random seeks on files MUST explicitly dictate stream buffer sizes (`io.open(..., buffering=8192)`) rather than inheriting default runtime system parameters.
 
 ---
 
-### Incident 5: Missing Native Dependency in Minimal Slim Container (BUG-PYWB-05)
-- **Context**: Container infrastructure definition in `Dockerfile`.
-- **What Was Expected**: Deploying `pywb` on official `python:slim` base images with `pyuwsgi` must execute without missing dynamic link library errors.
-- **What Actually Happened**: `pyuwsgi` pre-compiled wheels dynamically link against `libexpat.so.1`. In Debian-based `slim` container images, `libexpat1` is omitted to minimize container size, causing `uwsgi` runtime bootstrap to fail with missing shared object errors.
-- **Evidence in Repo**: Production `Dockerfile` installation instructions:
-  `apt-get install -y --no-install-recommends libexpat1`.
-- **Root Cause**: Undocumented shared object (`.so`) runtime dependency in compiled C extensions pulled via PyPI wheels on stripped OS bases.
+### Incident 5: Missing Native System Shared Library in Slim Container Images (BUG-PYWB-05)
+- **Context**: Containerized production deployment (`Dockerfile`).
+- **What Was Expected**: `pyuwsgi` starts cleanly in standard slim Docker containers and binds to the WSGI application mount.
+- **What Actually Happened**: The container failed to launch on startup with dynamic linker errors: `ImportError: libexpat.so.1: cannot open shared object file: No such file or directory` during `uwsgi` initialization.
+- **Evidence in Repo**: `Dockerfile`:
+  `# pyuwsgi wheel links against libexpat, which the slim image lacks`
+  `RUN apt-get update && apt-get install -y --no-install-recommends libexpat1 && rm -rf /var/lib/apt/lists/*`
+- **Root Cause**: The Python Debian-slim base image (`python:3.14-slim`) stripped optional C system libraries to save image space. The pre-compiled binary wheel of `pyuwsgi` was dynamically linked against `libexpat.so.1`, breaking container execution despite standard `pip install` reporting success.
 - **Remediation Code Diff**:
 ```dockerfile
 --- a/Dockerfile
 +++ b/Dockerfile
-@@ -6,6 +6,10 @@ COPY requirements.txt ./
+@@ -6,6 +6,11 @@ WORKDIR /pywb
+ COPY requirements.txt ./
+ 
 +# pyuwsgi wheel links against libexpat, which the slim image lacks
 +RUN apt-get update \
 + && apt-get install -y --no-install-recommends libexpat1 \
@@ -423,127 +448,19 @@ function testStreamChunkBoundary() {
  RUN pip install --no-cache-dir -r requirements.txt \
      pyuwsgi boto3 pysocks lxml ujson isal babel translate_toolkit babel-vue-extractor
 ```
-- **Lesson**: Whenever deploying compiled C-extensions on slim/distroless images, run `ldd` across compiled `.so` binaries in CI to identify implicit dynamic linkage requirements.
+- **Lesson**: Relying on binary wheels in minimal container environments requires verification of host-level dynamic dependencies (`ldd`) for WSGI application servers and XML/compression libraries.
 
 ---
 
-## 4. Microscopic Code-Level Invariants
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 ### 1. Micro-Syntax & Token-Level Precision
-- **Truthiness Pitfall on Port and Coordinate Defaults**:
-  In `pywb/utils/geventserver.py`:
-  ```python
-  def __init__(self, app, port=0, hostname='localhost', handler_class=None, direct=False):
-      self.port = port
-      # INVARIANT: port=0 is truthy in logic, but falsy if evaluated as `if not port:`
-      # Using port=0 tells the OS to bind to an ephemeral, available port.
-      # Never use `port = port or 8080`.
-  ```
-- **Boolean Coercion of String Parameters**:
-  In `pywb/utils/format.py`, query parameters such as `allowFuzzy=0` or `reverse=false` cannot be cast with `bool(val)`. In Python, `bool("0")` and `bool("false")` evaluate to `True`.
-  ```python
-  def to_bool(val):
-      if not val:
-          return False
-      if isinstance(val, str):
-          return val.lower() not in ('0', 'false', 'f', 'off')
-      return bool(val)
-  ```
-- **Header Replacement Mutation Invariants**:
-  When updating `Content-Length` on buffered streams (`pywb/utils/io.py`), mutating headers must account for duplicate casing (`content-length` vs `Content-Length`):
-  ```python
-  status_headers.replace_header('Content-Length', str(size))
-  # Guarantees old content lengths are evicted rather than appended as duplicates.
-  ```
-
-### 2. Infinite Loop & Recursion Guards
-- **Binary Search Termination Invariant**:
-  In `pywb/utils/binsearch.py`, binary search over unsized disk blocks avoids infinite loops between adjacent blocks using the invariant condition `max_ - min_ > 1`:
-  ```python
-  while max_ - min_ > 1:
-      mid = int(min_ + ((max_ - min_) / 2))
-      reader.seek(mid * block_size)
-      if mid > 0:
-          reader.readline() # Discard fractional line
-      line = reader.readline()
-      if compare_func(key, line) > 0:
-          min_ = mid
-      else:
-          max_ = mid
-  # Termination guarantee: (max_ - min_) decreases monotonically on every cycle.
-  ```
-- **Worker Execution Loop Bounds**:
-  In `pywb/static/autoFetchWorker.js`, infinite background subresource fetching is bounded via a dual guard: an inflight counter cap (`MaxRunningFetches = 15`) and a deduplication map (`seen[url] = true`):
-  ```javascript
-  function queueOrFetch(toBeFetched) {
-    var url = typeof toBeFetched === 'object' ? toBeFetched.url : toBeFetched;
-    if (!url || url.indexOf(DataURLPrefix) === 0 || seen[url] != null) {
-      return; // Circular fetch loop terminated
-    }
-    seen[url] = true;
-    if (runningFetches >= MaxRunningFetches) {
-      queue.push(toBeFetched);
-      return;
-    }
-    fetchURL(toBeFetched);
-  }
-  ```
-
-### 3. UI & UX Micro-Mechanics
-- **Replay Sandboxing & Shadow DOM URL Retargeting**:
-  Replayed historical pages run client-side JavaScript that interrogates `window.location`. If left unprotected, scripts detect domain mismatches and crash or trigger cross-origin errors. `wombatWorkers.js` isolates location checks using ES6 Proxies:
-  ```javascript
-  self._WB_wombat_location = new Proxy(self.location, {
-    get: (target, prop) => "href" === prop ? e.extractOriginalURL(target[prop]) : target[prop]
-  });
-  ```
-- **Credentials Propagation in Client-Side Rewriting**:
-  Overriding `fetch` and `XMLHttpRequest` inside service workers must inject `credentials = 'include'` on historical assets to allow the replay proxy to validate session cookies across rewritten domains:
-  ```javascript
-  var originalFetch = self.fetch;
-  self.fetch = function(input, init) {
-    var rewritten = rewriter.rewriteFetchApi(input);
-    var options = init || {};
-    options.credentials = "include";
-    return originalFetch.call(this, rewritten, options);
-  };
-  ```
-
-### 4. Backend Concurrency & Memory Safety
-- **Bounded Spool Buffering for Memory Containment**:
-  In `pywb/utils/io.py`, when buffering an iterator to compute content length, keeping payloads entirely in RAM allows malicious archives or large video streams to trigger Out-Of-Memory (OOM) crashes:
-  ```python
-  def buffer_iter(status_headers, iterator, buff_size=BUFF_SIZE * 4):
-      # SpooledTemporaryFile stays in memory up to buff_size, then automatically rolls to disk
-      out = SpooledTemporaryFile(buff_size)
-      size = 0
-      for buff in iterator:
-          size += len(buff)
-          out.write(buff)
-      out.seek(0)
-      return StreamIter(out)
-  ```
-- **Socket Connection Leaks in Iterators**:
-  When reading upstream WARC streams via `requests` or `urllib3`, generator iterators can terminate prematurely if the client disconnects. `no_except_close` guarantees socket return to the connection pool:
-  ```python
-  def no_except_close(closable):
-      try:
-          closable.close()
-      except Exception:
-          pass
-      try:
-          closable.release_conn()  # urllib3 raw stream release
-      except Exception:
-          pass
-  ```
-
-### 5. Defect & Error Prevention ("Galti Pakadna")
-- **Safe Trailing Delimiter Character Increment**:
-  In `calc_search_range` (`pywb/utils/canonicalize.py`):
+- **Operator Precedence in Binary Search Bisection**: In `pywb/utils/binsearch.py`, computing the midpoint uses explicit integer casting and parenthesis protection:
+  `mid = int(min_ + ((max_ - min_) / 2))`
+  *Invariant*: Never write `min_ + max_ // 2` in unbounded integer environments, and explicitly calculate half-deltas to prevent edge-case rounding overflows when dealing with 64-bit file offsets.
+- **Lexicographical End-Key Generation**: In `pywb/utils/canonicalize.py`:
   ```python
   def inc_last_char(x):
       return x[0:-1] + chr(ord(x[-1]) + 1)
   ```
-  If `x` is empty (`""`), `x[0:-1]` slices empty and `x[-1]` raises an `IndexError`. The caller guarantees that `start_key` has been pre-validated by `canonicalize()`, preventing zero-length string manipulation.
-- **Decoder Error Masking in Stream Chunks**:
-  In `pywb/static/queryWorker.js`, parsing text streams with `
+  *Invariant*: When generating right-hand bounds for prefix queries in sorted text indexes, incrementing the ASCII value of the
