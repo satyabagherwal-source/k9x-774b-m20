@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T04:48:18.129Z",
-    "lastVerified": "2026-10-30T04:48:18.129Z",
+    "lastChecked": "2026-10-30T04:54:40.723Z",
+    "lastVerified": "2026-10-30T04:54:40.723Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -209,9 +209,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-10-29T17:16:40.833Z",
+    "lastChecked": "2026-10-30T04:54:29.235Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-10-29T17:16:40.833Z"
+    "lastVerified": "2026-10-30T04:54:29.235Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -333,9 +333,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T04:25:21.212Z",
+    "lastChecked": "2026-10-30T04:54:34.293Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T04:25:21.212Z"
+    "lastVerified": "2026-10-30T04:54:34.293Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -3470,9 +3470,9 @@
   "svenstaro-miniserve": {
     "name": "miniserve",
     "officialUrl": "https://github.com/svenstaro/miniserve",
-    "lastChecked": "2026-10-28T12:36:44.315Z",
+    "lastChecked": "2026-10-30T04:54:19.285Z",
     "revisionIdentifier": "e698dbd0",
-    "lastVerified": "2026-10-28T12:36:44.315Z"
+    "lastVerified": "2026-10-30T04:54:19.285Z"
   },
   "hf-google-t5-t5-small": {
     "name": "google-t5/t5-small",
@@ -5270,14 +5270,14 @@
     "officialUrl": "https://github.com/trinodb/trino",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-28T16:12:34.360Z",
-    "lastVerified": "2026-10-28T16:12:34.360Z",
+    "lastChecked": "2026-10-30T04:54:37.296Z",
+    "lastVerified": "2026-10-30T04:54:37.296Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trinodb-trino",
-    "contentHash": "315f257de9758ddee97063aa7f1f8658976f2ffe076962336a493b86519dbb8c",
+    "contentHash": "333a0dbb335eedc7b759ea3831bc964c8008d258ef268fa2d3601036680a8fd7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5678,12 +5678,12 @@
     "officialUrl": "https://github.com/kcl-lang/kcl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T17:05:52.074Z",
-    "lastVerified": "2026-10-28T17:05:52.074Z",
+    "lastChecked": "2026-10-30T04:54:31.223Z",
+    "lastVerified": "2026-10-30T04:54:31.223Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kcl-lang-kcl",
-    "contentHash": "138f18555d52529de696fffdaed0783e19a09dc0f01623ce787fec0ac6874b31",
+    "contentHash": "d7fe7a18bd73f366966dc376ebfc1e03c62564636052180f9ac9707ddd53aaed",
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
@@ -9051,5 +9051,19 @@
     "lastChecked": "2026-10-30T04:48:00.284Z",
     "revisionIdentifier": "54a45fbb",
     "lastVerified": "2026-10-30T04:48:00.284Z"
+  },
+  "aliarifsoydas-sitemap-checker": {
+    "name": "sitemap-checker",
+    "officialUrl": "https://github.com/aliarifsoydas/sitemap-checker",
+    "lastChecked": "2026-10-30T04:54:21.758Z",
+    "revisionIdentifier": "8eef8767",
+    "lastVerified": "2026-10-30T04:54:21.758Z"
+  },
+  "android-kotlin-multiplatform-samples": {
+    "name": "kotlin-multiplatform-samples",
+    "officialUrl": "https://github.com/android/kotlin-multiplatform-samples",
+    "lastChecked": "2026-10-30T04:54:24.255Z",
+    "revisionIdentifier": "7844c733",
+    "lastVerified": "2026-10-30T04:54:24.256Z"
   }
 }

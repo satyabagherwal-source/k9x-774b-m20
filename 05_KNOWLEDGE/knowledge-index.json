@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T04:48:15.527Z",
+  "last_updated": "2026-10-30T04:54:38.110Z",
   "total_verified_learnings": 1171,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32981,8 +32981,8 @@
       "slug": "kcl-lang-kcl",
       "platform": "github",
       "source_url": "https://github.com/kcl-lang/kcl",
-      "source_version": "fcdc928b",
-      "content_hash": "138f18555d52529de696fffdaed0783e19a09dc0f01623ce787fec0ac6874b31",
+      "source_version": "971eca90",
+      "content_hash": "d7fe7a18bd73f366966dc376ebfc1e03c62564636052180f9ac9707ddd53aaed",
       "dossier_path": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "promoted_rules": [
@@ -33015,6 +33015,11 @@
           "number": 5350,
           "title": "runtime): round half to even in round() and keep int results for ints (#2238)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5603,
+          "title": "runtime): parse base 10 int() strings exactly and report invalid input (#2247)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33022,7 +33027,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T17:05:52.647Z",
+      "verified_at": "2026-10-30T04:54:32.553Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53713,8 +53718,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "49829ccd",
-      "content_hash": "315f257de9758ddee97063aa7f1f8658976f2ffe076962336a493b86519dbb8c",
+      "source_version": "eb21c0d1",
+      "content_hash": "333a0dbb335eedc7b759ea3831bc964c8008d258ef268fa2d3601036680a8fd7",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -53762,6 +53767,11 @@
           "number": 5338,
           "title": "Accept lock timeout in SQL Server concurrent add column",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5604,
+          "title": "Avoid oversized null row builders",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53769,7 +53779,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T16:12:34.977Z",
+      "verified_at": "2026-10-30T04:54:38.098Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150421,6 +150431,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T04:48:15.516Z"
+    },
+    "rule-5603": {
+      "learning_id": "rule-5603",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5603,
+      "title": "runtime): parse base 10 int() strings exactly and report invalid input (#2247)",
+      "source_url": "https://github.com/kcl-lang/kcl",
+      "source_version": "971eca90",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T04:54:32.553Z"
+    },
+    "rule-5604": {
+      "learning_id": "rule-5604",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5604,
+      "title": "Avoid oversized null row builders",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "eb21c0d1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T04:54:38.098Z"
     }
   },
   "aliases": {

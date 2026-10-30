@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "49829ccd",
+    "sourceVersion": "eb21c0d1",
     "license": "Apache-2.0",
-    "contentHash": "315f257de9758ddee97063aa7f1f8658976f2ffe076962336a493b86519dbb8c",
-    "lastHarvestedAt": "2026-10-28T16:12:35.086Z",
+    "contentHash": "333a0dbb335eedc7b759ea3831bc964c8008d258ef268fa2d3601036680a8fd7",
+    "lastHarvestedAt": "2026-10-30T04:54:38.184Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -5713,10 +5713,10 @@
     "repository": "kcl-lang/kcl",
     "platform": "github",
     "sourceUrl": "https://github.com/kcl-lang/kcl",
-    "sourceVersion": "fcdc928b",
+    "sourceVersion": "971eca90",
     "license": "Apache-2.0",
-    "contentHash": "138f18555d52529de696fffdaed0783e19a09dc0f01623ce787fec0ac6874b31",
-    "lastHarvestedAt": "2026-10-28T17:05:52.742Z",
+    "contentHash": "d7fe7a18bd73f366966dc376ebfc1e03c62564636052180f9ac9707ddd53aaed",
+    "lastHarvestedAt": "2026-10-30T04:54:32.615Z",
     "learningId": "learn-github-kcl-lang-kcl"
   },
   "apache-incubator-pegasus": {

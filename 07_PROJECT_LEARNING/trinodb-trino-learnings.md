@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `49829ccd`  
+> **Source Version**: `eb21c0d1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T16:12:34.369Z  
+> **Timestamp**: 2026-10-30T04:54:37.742Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T16:12:34.360Z  
+> **Harvest Timestamp**: 2026-10-30T04:54:37.296Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13381 stars
+- **Stars / Engagement**: 13385 stars
 
 ---
 
@@ -1862,178 +1862,327 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `91d50fd1` (2026-10-27)
-**Commit Message**: Accept lock timeout in SQL Server concurrent add column
+### Incident Patch 1: `eb21c0d1` (2026-10-29)
+**Commit Message**: Avoid oversized null row builders
 
-Concurrent ALTER TABLE ADD COLUMN may fail with "Lock request time out
-period exceeded" instead of a deadlock, since the test server sets
-lockTimeout.
+Null-row temporary builders inherited page-sized capacities.
 
-**File**: `plugin/trino-sqlserver/src/test/java/io/trino/plugin/sqlserver/BaseSqlServerConnectorTest.java` (modified, +1/-1)
+**File**: `core/trino-spi/src/main/java/io/trino/spi/block/RowBlockBuilder.java` (modified, +2/-2)
 ```diff
-@@ -241,7 +241,7 @@ protected void verifyAddNotNullColumnToNonEmptyTableFailurePermissible(Throwable
-     @Override
-     protected void verifyConcurrentAddColumnFailurePermissible(Exception e)
+@@ -488,7 +488,7 @@ public BlockBuilder newBlockBuilderLike(int expectedEntries, BlockBuilderStatus
      {
--        assertThat(e).hasMessageContaining("was deadlocked on lock resources");
-+        assertThat(e).hasMessageMatching("(?s).*(was deadlocked on lock resources|Lock request time out period exceeded).*");
+         BlockBuilder[] newBlockBuilders = new BlockBuilder[fieldBlockBuilders.length];
+         for (int i = 0; i < fieldBlockBuilders.length; i++) {
+-            newBlockBuilders[i] = fieldBlockBuilders[i].newBlockBuilderLike(blockBuilderStatus);
++            newBlockBuilders[i] = fieldBlockBuilders[i].newBlockBuilderLike(expectedEntries, blockBuilderStatus);
+         }
+         return new RowBlockBuilder(blockBuilderStatus, newBlockBuilders, expectedEntries, null);
+     }
+@@ -497,7 +497,7 @@ private Block nullRle(int length)
+     {
+         Block[] fieldBlocks = new Block[fieldBlockBuilders.length];
+         for (int i = 0; i < fieldBlockBuilders.length; i++) {
+-            fieldBlocks[i] = fieldBlockBuilders[i].newBlockBuilderLike(null).appendNull().build();
++            fieldBlocks[i] = fieldBlockBuilders[i].newBlockBuilderLike(1, null).appendNull().build();
+         }
+ 
+         RowBlock nullRowBlock = createRowBlockInternal(0, 1, new long[] {0}, fieldBlocks);
+```
+
+**File**: `core/trino-spi/src/main/java/io/trino/spi/block/VariantBlockBuilder.java` (modified, +2/-2)
+```diff
+@@ -414,8 +414,8 @@ public BlockBuilder newBlockBuilderLike(int expectedEntries, BlockBuilderStatus
+     {
+         return new VariantBlockBuilder(
+                 blockBuilderStatus,
+-                (VariableWidthBlockBuilder) metadataBlockBuilder.newBlockBuilderLike(blockBuilderStatus),
+-                (VariableWidthBlockBuilder) valuesBlockBuilder.newBlockBuilderLike(blockBuilderStatus),
++                (VariableWidthBlockBuilder) metadataBlockBuilder.newBlockBuilderLike(expectedEntries, blockBuilderStatus),
++                (VariableWidthBlockBuilder) valuesBlockBuilder.newBlockBuilderLike(expectedEntries, blockBuilderStatus),
+                 expectedEntries,
+                 null);
+     }
+```
+
+**File**: `core/trino-spi/src/test/java/io/trino/spi/block/TestRowBlockBuilder.java` (modified, +20/-0)
+```diff
+@@ -14,6 +14,7 @@
+ package io.trino.spi.block;
+ 
+ import com.google.common.collect.ImmutableList;
++import io.trino.spi.type.Type;
+ import org.junit.jupiter.api.Test;
+ 
+ import java.util.ArrayList;
+@@ -22,7 +23,9 @@
+ import static io.trino.spi.type.BigintType.BIGINT;
+ import static io.trino.spi.type.BooleanType.BOOLEAN;
+ import static io.trino.spi.type.IntegerType.INTEGER;
++import static io.trino.spi.type.RowType.anonymous;
+ import static io.trino.spi.type.VarcharType.VARCHAR;
++import static io.trino.spi.type.VariantType.VARIANT;
+ import static org.assertj.core.api.Assertions.assertThat;
+ import static org.assertj.core.api.Assertions.assertThatThrownBy;
+ 
+@@ -42,6 +45,23 @@ public void testBuilderProducesNullRleForNullRows()
+         assertIsAllNulls(blockBuilder().appendNull().appendNull().build(), 2);
      }
  
++    @Test
++    void testNewBlockBuilderLikeExpectedEntries()
++    {
++        List<Type> fieldTypes = List.of(VARCHAR, VARIANT, anonymous(List.of(VARCHAR, BIGINT)));
++        RowBlockBuilder blockBuilder = new RowBlockBuilder(fieldTypes, null, 1024);
++        for (int position = 0; position < 1024; position++) {
++            blockBuilder.appendNull();
++        }
++
++        BlockBuilder singleRowBuilder = blockBuilder.newBlockBuilderLike(1, null).appendNull();
++        RowBlockBuilder expected = new RowBlockBuilder(fieldTypes, null, 1);
++        expected.appendNull();
++        assertThat(singleRowBuilder.getRetainedSizeInBytes()).isEqualTo(expected.getRetainedSizeInBytes());
++        assertIsAllNulls(singleRowBuilder.build(), 1);
++        assertIsAllNulls(blockBuilder.build(), 1024);
++    }
++
      @Test
-```
-
----
-
-### Incident Patch 2: `42e8994f` (2026-10-27)
-**Commit Message**: Widen client timeout margin in abandoned query test
-
-The test set query.client.timeout to 1s. The server holds a results
-request for up to 1s (MAX_WAIT_TIME) before recording a heartbeat, and
-CI shows major GC pauses of 0.6-0.8s, so a client actively reading rows
-could go more than 1s without a recorded heartbeat and be failed with
-ABANDONED_QUERY.
-
-Raise the client timeout to 3s and the per-row delay to 200ms, so
-reading the 25 rows still takes longer than the timeout and the test
-keeps verifying that row heartbeats keep the query alive.
-
-**File**: `testing/trino-tests/src/test/java/io/trino/tests/TestServerAbandonedQueries.java` (modified, +2/-2)
-```diff
-@@ -50,7 +50,7 @@ public class TestServerAbandonedQueries
-     public void setup()
+     void buildEntry()
      {
-         server = TestingTrinoServer.builder()
--                .setProperties(ImmutableMap.of("query.client.timeout", "1s"))
-+                .setProperties(ImmutableMap.of("query.client.timeout", "3s"))
-                 .build();
- 
-         server.installPlugin(new TpchPlugin());
-@@ -89,7 +89,7 @@ public void testAbandonedQueries()
-             while (client.advance()) {
-                 client.currentRows().forEach(_ -> {
-                     try {
--                        Thread.sleep(100); // 25 rows * 100 ms = 2500 ms > client timeout
-+                        Thread.sleep(200); // 25 rows * 200 ms = 5000 ms > client timeout
-                     }
-                     catch (InterruptedException e) {
-                         throw new RuntimeException(e);
 ```
 
 ---
 
-### Incident Patch 3: `3a8e6eef` (2026-10-28)
-**Commit Message**: Bump the web-ui-dependencies group
+### Incident Patch 2: `4be27d19` (2026-10-26)
+**Commit Message**: Use MemoryContext in AvroPageSource
 
-Bumps the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 8 updates:
+AvroPageSourceFactory implemented the deprecated createPageSource
+overload, so the guessed reader memory of AvroPageSource was accounted
+only by polling getMemoryUsage. Report it to the MemoryContext instead
+and release it when the page source is closed.
 
-| Package | From | To |
-| --- | --- | --- |
-| [react](https://github.com/react/react/tree/HEAD/packages/react) | `19.3.0` | `19.3.1` |
-| [react-dom](https://github.com/react/react/tree/HEAD/packages/react-dom) | `19.3.0` | `19.3.1` |
-| [sass](https://github.com/sass/dart-sass) | `1.105.1` | `1.105.2` |
-| [baseline-browser-mapping](https://github.com/web-platform-dx/baseline-browser-mapping) | `2.11.29` | `2.11.34` |
-| [browserslist](https://github.com/browserslist/browserslist) | `4.29.3` | `4.29.5` |
-| [caniuse-lite](https://github.com/browserslist/caniuse-lite) | `1.0.30001816` | `1.0.30001819` |
-| [electron-to-chromium](https://github.com/Kilian/electron-to-chromium) | `1.5.456` | `1.5.467` |
-| [node-releases](https://github.com/chicoxyzzy/node-releases) | `2.0.59` | `2.0.60` |
-
-
-Updates `react` from 19.3.0 to 19.3.1
-- [Release notes](https://github.com/react/react/releases)
-- [Changelog](https://github.com/react/react/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/react/react/commits/v19.3.1/packages/react)
-
-Updates `react-dom` from 19
-
-**File**: `core/trino-web-ui/src/main/resources/webapp/bun.lock` (modified, +11/-11)
+**File**: `plugin/trino-hive/src/main/java/io/trino/plugin/hive/avro/AvroPageSource.java` (modified, +8/-7)
 ```diff
-@@ -17,11 +17,11 @@
-         "axios": "^1.20.0",
-         "lodash": "^4.18.1",
-         "monaco-editor": "^0.57.0",
--        "react": "^19.3.0",
-+        "react": "^19.3.1",
-         "react-calendar-timeline": "^0.30.0-beta.4",
--        "react-dom": "^19.3.0",
-+        "react-dom": "^19.3.1",
-         "react-router-dom": "^7.18.4",
--        "sass": "^1.105.1",
-+        "sass": "^1.105.2",
-         "zustand": "^5.0.15",
-       },
-       "devDependencies": {
-@@ -387,15 +387,15 @@
+@@ -20,6 +20,7 @@
+ import io.trino.hive.formats.avro.AvroTypeException;
+ import io.trino.spi.TrinoException;
+ import io.trino.spi.connector.ConnectorPageSource;
++import io.trino.spi.connector.MemoryContext;
+ import io.trino.spi.connector.SourcePage;
+ import org.apache.avro.Schema;
  
-     "balanced-match": ["balanced-match@1.0.2", "", {}, "sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw=="],
+@@ -36,17 +37,22 @@ public class AvroPageSource
+     private static final long GUESSED_MEMORY_USAGE = DataSize.of(16, DataSize.Unit.MEGABYTE).toBytes();
  
--    "baseline-browser-mapping": ["baseline-browser-mapping@2.11.29", "", { "bin": { "baseline-browser-mapping": "dist/cli.cjs" } }, "sha512-YeesxhUmR4h5y5V8KF8iBCqJb8YFrBJ++XBTeGcWIaQOYXGN19JM0FoiOjAhwuDoln8owMgXcWBmgHtYSkky2w=="],
-+    "baseline-browser-mapping": ["baseline-browser-mapping@2.11.34", "", { "bin": { "baseline-browser-mapping": "dist/cli.cjs" } }, "sha512-Aqr8mA1kIvyJ3UY5YAY7ib8LSo1DmDMbMnVqGPtsKW1LxaFQFwn9Eb3yvq2fUKJsRvaXjnAV7R5osqETapzNiA=="],
+     private final String fileName;
++    private final MemoryContext memoryContext;
+     private final AvroFileReader avroFileReader;
  
-     "batch-processor": ["batch-processor@1.0.0", "", {}, "sha512-xoLQD8gmmR32MeuBHgH0Tzd5PuSZx71ZsbhVxOCRbgktZEPe4SQy7s9Z50uPp0F/f7iw2XmkHN2xkgbMfckMDA=="],
+     public AvroPageSource(
+             TrinoInputFile inputFile,
+             Schema schema,
+             AvroTypeBlockHandler avroTypeManager,
+             long offset,
+-            long length)
++            long length,
++            MemoryContext memoryContext)
+             throws IOException, AvroTypeException
+     {
+         fileName = requireNonNull(inputFile, "inputFile is null").location().fileName();
++        this.memoryContext = requireNonNull(memoryContext, "memoryContext is null");
++        // Report before the reader is opened, so that exceeding the memory limit leaks no resources
++        memoryContext.setBytes(GUESSED_MEMORY_USAGE);
+         avroFileReader = new AvroFileReader(inputFile, schema, avroTypeManager, offset, OptionalLong.of(length));
+     }
  
-     "bezier-easing": ["bezier-easing@3.2.0", "", {}, "sha512-QOKIYCgHd06gsQg0G9k1/JnzzZ+PT99qqUmgRHQ+r5PI/gsjCn0l7LXW6gtXoPhVJviIjP01xg9E7eNime9fVw=="],
+@@ -91,16 +97,11 @@ public SourcePage getNextSourcePage()
+         }
+     }
  
-     "brace-expansion": ["brace-expansion@1.1.21", "", { "dependencies": { "balanced-match": "^1.0.0", "concat-map": "0.0.1" } }, "sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw=="],
- 
--    "browserslist": ["browserslist@4.29.3", "", { "dependencies": { "baseline-browser-mapping": "^2.11.26", "caniuse-lite": "^1.0.30001813", "electron-to-chromium": "^1.5.439", "node-releases": "^2.0.57", "update-browserslist-db": "^1.3.3" }, "bin": { "browserslist": "cli.js" } }, "sha512-1R4kiYKXGViqEN0CnoDrXc1StD9niAwu+j2dukWzrD4bJgsD4lDmEp0CRbc6E/vYJIfTHwPmwyaKtVSudICdPA=="],
-+    "browserslist": ["browserslist@4.29.5", "", { "dependencies": { "baseline-browser-mapping": "^2.11.33", "caniuse-lite": "^1.0.30001819", "electron-to-chromium": "^1.5.464", "node-releases": "^2.0.60", "update-browserslist-db": "^1.3.4" }, "bin": { "browserslist": "cli.js" } }, "sha512-khTmKu5NGYTotqcYo8Bew2k4RAE9PuXRSFRXG2lQBrCEQHyeQ/vX6gKMxfokwywBsLiXZMnHsmWMG1pnO8J7uQ=="],
- 
-     "call-bind": ["call-bind@1.0.9", "", { "dependencies": { "call-bind-apply-helpers": "^1.0.2", "es-define-property": "^1.0.1", "get-intrinsic": "^1.3.0", "set-function-length": "^1.2.2" } }, "sha512-a/hy+pNsFUTR+Iz8TCJvXudKVLAnz/DyeSUo10I5yvFDQJBFU2s9uqQpoSrJlroHUKoKqzg+epxyP9lqFdzfBQ=="],
- 
-@@ -405,7 +405,7 @@
- 
-     "callsites": ["callsites@3.1.0", "", {}, "sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ=="],
- 
--    "caniuse-lite": ["caniuse-lite@1.0.30001816", "", {}, "sha512-+8Yx7BXCoqk6IF8yTicjfUR6D/ldJzdlsodlEOiOSPmhK844WIgk67/zIQaGAOxNkZyyvBlrRFnLvqKIoqbAFw=="],
-+    "caniuse-lite": ["caniuse-lite@1.0.30001819", "", {}, "sha512-LFUqIIAwpzsIuevnKnsR9qnStBcgzPShTX61lBwN9uFkkf8o8zLiebEjbW8AYtZiF+1YKDWfdt/pWDtMuG8Xwg=="],
- 
-     "chalk": ["chalk@4.1.2", "", { "dependencies": { "ansi-styles": "^4.1.0", "supports-color": "^7.1.0" } }, "sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA=="],
- 
-@@ -497,7 +497,7 @@
- 
-     "dunder-proto": ["dunder-proto@1.0.1", "", { "dependencies": { "call-bind-apply-helpers": "^1.0.1", "es-errors": "^1.3.0", "gopd": "^1.2.0" } }, "sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A=="],
- 
--    "electron-to-chromium": ["electron-to-chromium@1.5.456", "", {}, "sha512-8hboqI6xesozteFb8aa7OGknvxUtTeRJLz0FoePysUEh/oWbddykIGdgpEJRbPRg/nIMfBf2DFos+H2MtvJl2A=="],
-+    "electron-to-chromium": ["electron-to-chromium@1.5.467", "", {}, "sha512-Nw9X371rtZmYcBSnEijnCDONILjs93biCZO34juC7MBOmK8E+GFnyD4T/WvyrlJkppul7oxg6TwvtKst9SODTw=="],
- 
-     "element-resize-detector": ["element-resize-detector@1.2.4", "", { "dependencies": { "batch-processor": "1.0.0" } }, "sha512-Fl5Ftk6WwXE0wqCgNoseKWndjzZlDCwuPTcoVZfCP9R3EHQF8qUtr3YUPNETegRBOKqQKPW3n4kiIWngGi8tKg=="],
- 
-@@ -771,7 +771,7 @@
- 
-     "node-exports-info": ["node-exports-info@1.6.2", "", { "dependencies": { "array.prototype.flatmap": "^1.3.3", "es-errors": "^1.3.0", "object.entries": "^1.1.9", "semver": "^6.3.1" } }, "sha512-kXs9Go0cah0qHVV2v389IXQLdLCeE1xfFtjOAF+iobu0OIoG1pje8At2vMHyaPMiPMnG/LWP50twML21eMcAag=="],
- 
--    "node-releases": ["node-releases@2.0.59", "", {}, "sha512-5qr2okC4ItAI0hG5SaV0HoYMpnM/Y6+Oqr7AmPYy/2uEoGvS+GbSKLeRxSS1uAdu59yz0ouzcuXievSgg///WA=="],
-+    "node-releases": ["node-releases@2.0.60", "", {}, "sha512-OmO8+GM1JUZqXET720VrJCwkjUCXmCMQm0Z3UDDRbfNLHS4NEAvY60j5jiFv0tkKw2PNNlqOLhahVmwJIOLDIQ=="],
- 
-     "object-assign": ["object-assign@4.1.1", "", {}, "sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3
+-    @Override
+-    public long getMemoryUsage()
+-    {
+-        return GUESSED_MEMORY_USAGE;
+-    }
+-
+     @Override
+     public void close()
+             throws IOException
+     {
+         avroFileReader.close();
++        memoryContext.setBytes(0);
+     }
+ }
 ```
 
-**File**: `core/trino-web-ui/src/main/resources/webapp/package.json` (modified, +3/-3)
+**File**: `plugin/trino-hive/src/main/java/io/trino/plugin/hive/avro/AvroPageSourceFactory.java` (modified, +7/-4)
 ```diff
-@@ -29,11 +29,11 @@
-     "axios": "^1.20.0",
-     "lodash": "^4.18.1",
-     "monaco-editor": "^0.57.0",
--    "react": "^19.3.0",
-+    "react": "^19.3.1",
-     "react-calendar-timeline": "^0.30.0-beta.4",
--    "react-dom": "^19.3.0",
-+    "react-dom": "^19.3.1",
-     "react-router-dom": "^7.18.4",
--    "sass": "^1.105.1",
-+    "sass": "^1.105.2",
-     "zustand": "^5.0.15"
-   },
-   "devDependencies": {
+@@ -32,6 +32,7 @@
+ import io.trino.spi.connector.ConnectorPageSource;
+ import io.trino.spi.connector.ConnectorSession;
+ import io.trino.spi.connector.EmptyPageSource;
++import io.trino.spi.connector.MemoryContext;
+ import io.trino.spi.predicate.TupleDomain;
+ import org.apache.avro.Schema;
+ import org.apache.avro.SchemaBuilder;
+@@ -88,7 +89,8 @@ public Optional<ConnectorPageSource> createPageSource(
+             Optional<AcidInfo> acidInfo,
+             OptionalInt bucketNumber,
+             boolean originalFile,
+-            AcidTransaction transaction)
++            AcidTransaction transaction,
++            MemoryContext memoryContext)
+     {
+         if (!AVRO_SERDE_CLASS.equals(schema.serializationLibraryName())) {
+             return Optional.empty();
+@@ -111,7 +113,7 @@ public Optional<ConnectorPageSource> createPageSource(
+             return Optional.of(new EmptyPageSource());
+         }
+ 
+-        return Optional.of(projectColumnDereferences(columns, baseColumns -> createPageSource(session, trinoFileSystem, inputFile, start, actualSplitSize, schema, baseColumns)));
++        return Optional.of(projectColumnDereferences(columns, baseColumns -> createPageSource(session, trinoFileSystem, inputFile, start, actualSplitSize, schema, baseColumns, memoryContext)));
+     }
+ 
+     private static AvroPageSource createPageSource(
+@@ -121,7 +123,8 @@ private static AvroPageSource createPageSource(
+             long start,
+             long length,
+             io.trino.plugin.hive.Schema schema,
+-            List<HiveColumnHandle> columns)
++            List<HiveColumnHandle> columns,
++            MemoryContext memoryContext)
+     {
+         verify(columns.stream().allMatch(HiveColumnHandle::isBaseColumn), "All columns must be base columns");
+         Schema tableSchema;
+@@ -143,7 +146,7 @@ private static AvroPageSource createPageSource(
+         int hiveTimestampPrecision = getTimestampPrecision(session).getPrecision();
+ 
+         try {
+-            return new AvroPageSource(inputFile, maskedSchema, new HiveAvroTypeBlockHandler(createTimestampType(hiveTimestampPrecision)), start, length);
++            return new AvroPageSource(inputFile, maskedSchema, new HiveAvroTypeBlockHandler(createTimestampType(hiveTimestampPrecision)), start, length, memoryContext);
+         }
+         catch (IOException e) {
+             throw new TrinoException(HIVE_CANNOT_OPEN_SPLIT, e);
+```
+
+**File**: `plugin/trino-hive/src/test/java/io/trino/plugin/hive/avro/TestAvroPageSource.java` (added, +147/-0)
+```diff
+@@ -0,0 +1,147 @@
++/*
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package io.trino.plugin.hive.avro;
++
++import com.google.common.collect.ImmutableList;
++import com.google.common.collect.ImmutableMap;
++import io.airlift.units.DataSize;
++import io.trino.filesystem.Location;
++import io.trino.filesystem.TrinoFileSystemFactory;
++import io.trino.filesystem.TrinoInputFile;
++import io.trino.filesystem.TrinoInputStream;
++import io.trino.filesystem.memory.MemoryFileSystemFactory;
++import io.trino.filesystem.memory.MemoryInputFile;
++import io.trino.hive.formats.avro.HiveAvroTypeBlockHandler;
++import io.trino.spi.TrinoException;
++import io.trino.spi.connector.ConnectorPageSource;
++import io.trino.spi.connector.SourcePage;
++import io.trino.spi.predicate.TupleDomain;
++import org.apache.avro.Schema;
++import org.apache.avro.SchemaBuilder;
++import org.apache.avro.file.DataFileWriter;
++import org.apache.avro.generic.GenericDatumWriter;
++import org.apache.avro.generic.GenericRecord;
++import org.apache.avro.generic.GenericRecordBuilder;
++import org.junit.jupiter.api.Test;
++
++import java.io.ByteArrayOutputStream;
++import java.io.IOException;
++import java.util.Optional;
++import java.util.OptionalInt;
++import java.util.concurrent.atomic.AtomicInteger;
++import java.util.concurrent.atomic.AtomicLong;
++
++import static io.airlift.slice.Slices.wrappedBuffer;
++import static io.airlift.units.DataSize.Unit.MEGABYTE;
++import static io.trino.hive.formats.HiveClassNames.AVRO_SERDE_CLASS;
++import static io.trino.hive.formats.avro.AvroHiveConstants.SCHEMA_LITERAL;
++import static io.trino.metastore.HiveType.HIVE_LONG;
++import static io.trino.plugin.hive.HiveColumnHandle.ColumnType.REGULAR;
++import static io.trino.plugin.hive.HiveColumnHandle.createBaseColumn;
++import static io.trino.plugin.hive.HiveTestUtils.SESSION;
++import static io.trino.plugin.hive.acid.AcidTransaction.NO_ACID_TRANSACTION;
++import static io.trino.spi.StandardErrorCode.EXCEEDED_LOCAL_MEMORY_LIMIT;
++import static io.trino.spi.type.BigintType.BIGINT;
++import static io.trino.spi.type.TimestampType.TIMESTAMP_MILLIS;
++import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.Assertions.assertThatThrownBy;
++
++final class TestAvroPageSource
++{
++    private static final Schema AVRO_SCHEMA = SchemaBuilder.record("test").fields().requiredLong("value").endRecord();
++    private static final int ROW_COUNT = 1000;
++    private static final long GUESSED_MEMORY_USAGE = DataSize.of(16, MEGABYTE).toBytes();
++
++    @Test
++    void testReportsMemoryUsageToMemoryContext()
++            throws IOException
++    {
++        TrinoFileSystemFactory fileSystemFactory = new MemoryFileSystemFactory();
++        Location location = Location.of("memory:///test.avro");
++        byte[] data = createAvroFile();
++        fileSystemFactory.create(SESSION).newOutputFile(location).createOrOverwrite(data);
++
++        AtomicLong reportedBytes = new AtomicLong(-1);
++        ConnectorPageSource pageSource = new AvroPageSourceFactory(fileSystemFactory).createPageSource(
++                        SESSION,
++                        location,
++                        0,
++                        data.length,
++                        data.length,
++                        0,
++                        new io.trino.plugin.hive.Schema(AVRO_SERDE_CLASS, false, ImmutableMap.of(SCHEMA_LITERAL, AVRO_SCHEMA.toString())),
++                        ImmutableList.of(createBaseColumn("value", 0, HIVE_LONG, BIGINT, REGULAR, Optional.empty())),
++                        TupleDomain.all(),
++                        Optional.empty(),
++                        OptionalInt.empty(),
++                        false,
++                        NO_ACID_TRANSACTION,
++                        reportedBytes::set)
++                .orElseThrow();
++        try (pageSource) {
++            assertThat(reportedBytes).hasValue(GUESSED_MEMORY_USAGE);
++            // the memory must not be accounted for again when getMemoryUsage is polled
++            assertThat(pageSource.getMemoryUsage()).isZero();
++
++            int positions = 0;
++            while (!pageSource.isFinished()) {
++                SourcePage page = pageSource.getNextSourcePage();
++                if (page != null) {
++                    positions += page.getPositionCount();
++                }
++            }
++            assertThat(positions).isEqualTo(ROW_COUNT);
++            assertThat(reportedBytes).hasValue(GUESSED_MEMORY_USAGE);
++        }
++   
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31863** (2026-10-28): Assert initial roles in JDBC set role test (@ksobolew)
-- **PR #31853** (2026-10-28): Fix CLI JSON output for arrays (@chenjian2664)
-- **PR #31851** (2026-10-28): Check Hive writer task limits directly (@bvolpato)
-- **PR #31850** (2026-10-28): Share Druid ingestion for nonfinite value tests (@bvolpato)
-- **PR #31848** (2026-10-28): Bump the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 8 updates (@dependabot[bot])
-- **PR #31847** (2026-10-28): Bump io.airlift:aircompressor-v3 from 3.13 to 3.14 (@dependabot[bot])
+- **PR #31890** (2026-10-29): Avoid oversized null row builders (@wendigo)
+- **PR #31878** (2026-10-29): Bump org.mariadb.jdbc:mariadb-java-client from 3.5.10 to 3.5.11 (@dependabot[bot])
+- **PR #31877** (2026-10-29): Bump dep.okhttp.version from 5.5.0 to 5.5.1 (@dependabot[bot])
+- **PR #31874** (closed): Fix row predicate domain extraction (@akasakariko)
+- **PR #31873** (closed): Use DeltaLengthByteArrayEncoding in CheckpointWriter (@ebyhr)
+- **PR #31872** (2026-10-29): Speed up translation of large discrete domains (@raunaqmorarka)
 
 ---
 
@@ -2053,28 +2202,30 @@ Updates `react-dom` from 19
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Accept lock timeout in SQL Server concurrent add column
+## X. Avoid oversized null row builders
 
 **RULE**:
-When implementing operations in `plugin/trino-sqlserver/src/test/java/io/trino/plugin/sqlserver/BaseSqlServerConnectorTest.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-spi/src/main/java/io/trino/spi/block/RowBlockBuilder.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `91d50fd1`: Accept lock timeout in SQL Server concurrent add column. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eb21c0d1`: Avoid oversized null row builders. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugin/trino-sqlserver/src/test/java/io/trino/plugin/sqlserver/BaseSqlServerConnectorTest.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-spi/src/main/java/io/trino/spi/block/RowBlockBuilder.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        assertThat(e).hasMessageMatching("(?s).*(was deadlocked on lock resources|Lock request time out period exceeded).*");
+            newBlockBuilders[i] = fieldBlockBuilders[i].newBlockBuilderLike(expectedEntries, blockBuilderStatus);
+            fieldBlocks[i] = fieldBlockBuilders[i].newBlockBuilderLike(1, null).appendNull().build();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-        assertThat(e).hasMessageContaining("was deadlocked on lock resources");
+            newBlockBuilders[i] = fieldBlockBuilders[i].newBlockBuilderLike(blockBuilderStatus);
+            fieldBlocks[i] = fieldBlockBuilders[i].newBlockBuilderLike(null).appendNull().build();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `91d50fd1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eb21c0d1` are properly handled with clean fallback behavior.

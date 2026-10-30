@@ -6108,3 +6108,5 @@
 | `CYCLE-20261030-APOZ` | `2026-10-30T04:35:01.139Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5558` | Yes (`2231007c...`) |
 | `CYCLE-20261030-JJC0` | `2026-10-30T04:41:52.800Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5601` | Yes (`4bcb0faf...`) |
 | `CYCLE-20261030-RQOP` | `2026-10-30T04:48:15.577Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5602` | Yes (`ce12403b...`) |
+| `CYCLE-20261030-ZTLW` | `2026-10-30T04:54:32.612Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5603` | Yes (`d7fe7a18...`) |
+| `CYCLE-20261030-ZXWL` | `2026-10-30T04:54:38.181Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5604` | Yes (`333a0dbb...`) |
