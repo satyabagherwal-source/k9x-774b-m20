@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T16:44:33.518Z",
-  "total_cycles_completed": 6218,
-  "total_learnings_persisted": 6218,
-  "total_rules_promoted": 5773,
+  "last_updated": "2026-10-30T16:51:25.188Z",
+  "total_cycles_completed": 6220,
+  "total_learnings_persisted": 6220,
+  "total_rules_promoted": 5774,
   "history": [
-    {
-      "timestamp": "2026-10-29T12:26:02.781Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T16:23:51.095Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T16:36:36.738Z",
       "repository": "liketrek/TREK",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T16:44:33.518Z",
       "repository": "restatedev/restate",
       "learningId": "learn-github-restatedev-restate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T16:51:23.177Z",
+      "repository": "jhspetersson/fselect",
+      "learningId": "learn-github-jhspetersson-fselect",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T16:51:25.188Z",
+      "repository": "RDFLib/pySHACL",
+      "learningId": "learn-github-rdflib-pyshacl",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

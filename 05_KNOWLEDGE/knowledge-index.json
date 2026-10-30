@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T16:44:33.430Z",
+  "last_updated": "2026-10-30T16:51:25.101Z",
   "total_verified_learnings": 1175,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32438,8 +32438,8 @@
       "slug": "jhspetersson-fselect",
       "platform": "github",
       "source_url": "https://github.com/jhspetersson/fselect",
-      "source_version": "277c4890",
-      "content_hash": "3323057916f8a0254a69f213aaf5dcefefb562d4dce7c793383f015070ad16c0",
+      "source_version": "2b101ea5",
+      "content_hash": "164a2436bc2b64ddcfbc247bf0769850c4daf3d529772aed83a3d88838034092",
       "dossier_path": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md",
       "promoted_rules": [
@@ -32479,7 +32479,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:57:37.899Z",
+      "verified_at": "2026-10-30T16:51:23.036Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71548,8 +71548,8 @@
       "slug": "rdflib-pyshacl",
       "platform": "github",
       "source_url": "https://github.com/RDFLib/pySHACL",
-      "source_version": "a8ed01e8",
-      "content_hash": "a3d57cb6f1f986b281eefc5a16a6031fa8530e2753a103fa84951bbd6254d5ae",
+      "source_version": "df57bd43",
+      "content_hash": "7cc0215c5f75dc667c930681b9eab246c946b37ce0350200b5c292755d9db75d",
       "dossier_path": "07_PROJECT_LEARNING/rdflib-pyshacl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rdflib-pyshacl-learnings.md",
       "promoted_rules": [
@@ -71563,6 +71563,11 @@
           "number": 3753,
           "title": "Merge pull request #335 from lepy/fix/oxigraph-len-and-xsd-string",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5804,
+          "title": "Merge pull request #338 from mhatipog/fix-shared-shapes-concurrency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -71570,7 +71575,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T21:35:16.046Z",
+      "verified_at": "2026-10-30T16:51:25.082Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154295,6 +154300,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T16:44:33.410Z"
+    },
+    "rule-5804": {
+      "learning_id": "rule-5804",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5804,
+      "title": "Merge pull request #338 from mhatipog/fix-shared-shapes-concurrency",
+      "source_url": "https://github.com/RDFLib/pySHACL",
+      "source_version": "df57bd43",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T16:51:25.082Z"
     }
   },
   "aliases": {

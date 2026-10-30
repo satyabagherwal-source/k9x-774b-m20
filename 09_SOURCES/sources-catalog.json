@@ -7013,10 +7013,10 @@
     "repository": "jhspetersson/fselect",
     "platform": "github",
     "sourceUrl": "https://github.com/jhspetersson/fselect",
-    "sourceVersion": "277c4890",
+    "sourceVersion": "2b101ea5",
     "license": "Apache-2.0",
-    "contentHash": "3323057916f8a0254a69f213aaf5dcefefb562d4dce7c793383f015070ad16c0",
-    "lastHarvestedAt": "2026-10-28T18:57:38.003Z",
+    "contentHash": "164a2436bc2b64ddcfbc247bf0769850c4daf3d529772aed83a3d88838034092",
+    "lastHarvestedAt": "2026-10-30T16:51:23.164Z",
     "learningId": "learn-github-jhspetersson-fselect"
   },
   "mikepenz-aboutlibraries": {
@@ -9753,10 +9753,10 @@
     "repository": "RDFLib/pySHACL",
     "platform": "github",
     "sourceUrl": "https://github.com/RDFLib/pySHACL",
-    "sourceVersion": "a8ed01e8",
+    "sourceVersion": "df57bd43",
     "license": "Apache-2.0",
-    "contentHash": "a3d57cb6f1f986b281eefc5a16a6031fa8530e2753a103fa84951bbd6254d5ae",
-    "lastHarvestedAt": "2026-10-22T21:35:16.109Z",
+    "contentHash": "7cc0215c5f75dc667c930681b9eab246c946b37ce0350200b5c292755d9db75d",
+    "lastHarvestedAt": "2026-10-30T16:51:25.182Z",
     "learningId": "learn-github-rdflib-pyshacl"
   },
   "mikelikesdesign-swiftui-experiments": {

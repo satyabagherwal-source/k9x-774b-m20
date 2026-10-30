@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rdflib-pyshacl-learnings.md`  
 > **Source**: github ([https://github.com/RDFLib/pySHACL](https://github.com/RDFLib/pySHACL))  
-> **Source Version**: `a8ed01e8`  
+> **Source Version**: `df57bd43`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:35:15.778Z  
+> **Timestamp**: 2026-10-30T16:51:24.518Z  
 > **Learning ID**: `learn-github-rdflib-pyshacl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rdflib-pyshacl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RDFLib/pySHACL](https://github.com/RDFLib/pySHACL))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:35:15.259Z  
+> **Harvest Timestamp**: 2026-10-30T16:51:24.129Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Python validator for SHACL
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 365 stars
+- **Stars / Engagement**: 364 stars
 
 ---
 
@@ -1968,454 +1968,333 @@ from .stringify import stringify_blank_node, stringify_graph, stringify_literal,
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a8ed01e8` (2026-10-20)
-**Commit Message**: Merge pull request #335 from lepy/fix/oxigraph-len-and-xsd-string
+### Incident Patch 1: `c8a3c9bc` (2026-10-28)
+**Commit Message**: Merge pull request #338 from mhatipog/fix-shared-shapes-concurrency
 
-Fix slow and incorrect validation on Oxigraph-backed data graphs
+Avoid concurrent writes to shared shapes graphs
 
-**File**: `CHANGELOG.md` (modified, +7/-0)
+**File**: `pyshacl/shapes_graph.py` (modified, +12/-2)
 ```diff
-@@ -6,6 +6,13 @@ and this project adheres to [Python PEP 440 Versioning](https://www.python.org/d
+@@ -1,6 +1,7 @@
+ # -*- coding: utf-8 -*-
+ import logging
+ import warnings
++from threading import Lock
+ from typing import TYPE_CHECKING, Dict, List, Optional, Sequence, Union
  
- ## [Unreleased]
+ import rdflib
+@@ -34,6 +35,11 @@
+     from .pytypes import RDFNode
  
-+### Fixed
+ 
++# A preloaded shapes graph may be shared by concurrent validation calls. RDFLib's
++# Memory store is not safe for simultaneous writes, even of the same triple.
++_system_triples_lock = Lock()
 +
-+- Oxigraph-backed validation no longer computes `len()` of the whole data graph for every validation result.
-+  - `datagraph or sg` evaluated the truthiness of the DataGraph, which on Oxigraph runs a `COUNT` query over the entire store.
-+- Plain string literals read from an Oxigraph store now compare equal to plain literals in the shapes graph.
-+  - Oxigraph reports them as `xsd:string`; they are now mapped back to plain RDFLib literals, which fixes false violations of `sh:in`, `sh:hasValue` and similar constraints.
 +
- ## [0.40.1] - 2026-07-28
+ class ShapesGraph(object):
+     system_triples = [(OWL_Class, RDFS_subClassOf, RDFS_Class), (OWL_DatatypeProperty, RDFS_subClassOf, RDF_Property)]
  
- ### Fixed
+@@ -76,8 +82,12 @@ def _add_system_triples(self):
+             g = self.graph.default_graph
+         else:
+             g = self.graph
+-        for t in self.system_triples:
+-            g.add(t)
++        # Keep initialization idempotent and protect the (usually first) writes
++        # when several validators share the same rdflib graph.
++        with _system_triples_lock:
++            for t in self.system_triples:
++                if t not in g:
++                    g.add(t)
+ 
+     def subjects(self, p, o):
+         return self.graph.subjects(p, o)
 ```
 
-**File**: `pyshacl/constraints/constraint_component.py` (modified, +3/-3)
+**File**: `test/issues/test_314.py` (added, +104/-0)
 ```diff
-@@ -168,7 +168,7 @@ def make_v_result_description(
-         source_shape_text = stringify_node(sg, self.shape.node)
-         severity_node_text = stringify_node(sg, severity)
-         try:
--            focus_node_text = stringify_node(datagraph or sg, focus_node)
-+            focus_node_text = stringify_node(sg if datagraph is None else datagraph, focus_node)
-         except (LookupError, ValueError):
-             # focus node doesn't exist in the datagraph. We can deal.
-             focus_node_text = str(focus_node)
-@@ -182,7 +182,7 @@ def make_v_result_description(
-         )
-         if value_node is not None:
-             try:
--                val_node_string = stringify_node(datagraph or sg, value_node)
-+                val_node_string = stringify_node(sg if datagraph is None else datagraph, value_node)
-             except (LookupError, ValueError):
-                 # value node doesn't exist in the datagraph.
-                 val_node_string = str(value_node)
-@@ -254,7 +254,7 @@ def make_v_result(
-         r_triples.append((r_node, SH_sourceConstraintComponent, (sg, constraint_component)))
-         r_triples.append((r_node, SH_sourceShape, (sg, self.shape.node)))
-         r_triples.append((r_node, SH_resultSeverity, severity))
--        r_triples.append((r_node, SH_focusNode, (datagraph or sg, focus_node)))
-+        r_triples.append((r_node, SH_focusNode, (sg if datagraph is None else datagraph, focus_node)))
-         if value_node is not None:
-             r_triples.append((r_node, SH_value, (datagraph, value_node)))
-         if result_path is None and self.shape.is_property_shape:
-```
-
-**File**: `pyshacl/graph_abstraction.py` (modified, +18/-20)
-```diff
-@@ -1297,16 +1297,26 @@ def to_rdf(
-     elif isinstance(term, ox_BlankNode):
-         return rdf_BNode(term.value)
-     elif isinstance(term, ox_Literal):
--        if term.language is not None:
--            return rdf_Literal(term.value, lang=term.language)
--        data_type = term.datatype
--        if data_type is not None:
--            data_type = rdf_URIRef(data_type.value)
--        return rdf_Literal(term.value, datatype=data_type)
-+        return _ox_literal_to_rdf(term)
-     else:
-         return rdf_URIRef(term.value)
- 
- 
-+XSD_STRING_IRI = "http://www.w3.org/2001/XMLSchema#string"
-+
-+
-+def _ox_literal_to_rdf(term: ox_Literal) -> rdf_Literal:
-+    if term.language is not None:
-+        return rdf_Literal(term.value, lang=term.language)
-+    data_type = term.datatype
-+    # Oxigraph reports simple literals with their RDF 1.1 datatype xsd:string, but RDFLib
-+    # treats Literal("x") and Literal("x", datatype=XSD.string) as unequal. Map them back to
-+    # plain literals so they compare equal to the literals in the shapes graph.
-+    if data_type is None or data_type.value == XSD_STRING_IRI:
-+        return rdf_Literal(term.value)
-+    return rdf_Literal(term.value, datatype=rdf_URIRef(data_type.value))
-+
-+
- def convert_quad_to_rdflib(quad: ox_Quad):
-     s, p, o, g = quad
-     if s is None:
-@@ -1316,13 +1326,7 @@ def convert_quad_to_rdflib(quad: ox_Quad):
-     elif isinstance(s, ox_Literal):
-         # Technically a subject can never be a Literal
-         # in Oxigraph, but this is here for completeness
--        if s.language is not None:
--            out_s = rdf_Literal(s.value, lang=s.language)
--        else:
--            data_type = s.datatype
--            if data_type is not None:
--                data_type = rdf_URIRef(data_type.value)
--            out_s = rdf_Literal(s.value, datatype=data_type)
-+        out_s = _ox_literal_to_rdf(s)
-     else:
-         out_s = rdf_URIRef(s.value)
-     if p is None:
-@@ -1334,13 +1338,7 @@ def convert_quad_to_rdflib(quad: ox_Quad):
-     if o is None:
-         out_o = None
-     elif isinstance(o, ox_Literal):
--        if o.language is not None:
--            out_o = rdf_Literal(o.value, lang=o.language)
--        else:
--            data_type = o.datatype
--            if data_type is not None:
--                data_type = rdf_URIRef(data_type.value)
--            out_o = rdf_Literal(o.value, datatype=data_type)
-+        out_o = _ox_literal_to_rdf(o)
-     elif isinstance(o, ox_BlankNode):
-         out_o = rdf_BNode(o.value)
-     else:
-```
-
-**File**: `test/test_oxigraph_parity.py` (added, +91/-0)
-```diff
-@@ -0,0 +1,91 @@
+@@ -0,0 +1,104 @@
 +# -*- coding: utf-8 -*-
-+"""\
-+Parity and performance regressions for validation against an Oxigraph-backed DataGraph.
++"""Regression tests for concurrent reuse of a preloaded shapes graph (#314)."""
 +
-+1. Plain string literals coming back from Oxigraph carry an explicit xsd:string datatype
-+   (RDF 1.1). They must compare equal to the plain literals in the shapes graph, otherwise
-+   constraints such as sh:in and sh:hasValue report false violations.
-+2. Building a validation result must not compute len() of the whole data graph. The
-+   expressions `datagraph or sg` triggered DataGraph.__len__, which on Oxigraph is a
-+   COUNT query over the entire store, once per validation result.
-+"""
++import threading
++from concurrent.futures import ThreadPoolExecutor
++from time import sleep
 +
-+import pytest
-+from rdflib import XSD, Graph, Literal
++from rdflib import Dataset, Graph, Literal, Namespace
++from rdflib.namespace import RDF
 +
-+import pyshacl
-+from pyshacl.graph_abstraction import has_oxigraph
++from pyshacl import validate
++from pyshacl.shapes_graph import ShapesGraph
 +
-+pytestmark = pytest.mark.skipif(not has_oxigraph, reason="pyoxigraph is not installed")
++EX = Namespace('http://example.org/')
 +
 +SHAPES = """\
++@prefix ex: <http://example.org/> .
 +@prefix sh: <http://www.w3.org/ns/shacl#> .
-+@prefix ex: <http://example.org/> .
 +
-+ex:OpShape a sh:NodeShape ;
-+    sh:targetClass ex:Comparison ;
-+    sh:property [
-+        sh:path ex:operator ;
-+        sh:in ( "=" "<" ">" ) ;
-+    ] ;
-+    sh:property [
-+        sh:path ex:kind ;
-+        sh:hasValue "atomic" ;
-+    ] .
-+"""
-+
-+DATA = """\
-+@prefix ex: <http://example.org/> .
-+
-+ex:c1 a ex:Comparison ; ex:operator "=" ; ex:kind "atomic" .
-+ex:c2 a ex:Comparison ; ex:operator "<" ; ex:kind "atomic" .
++ex:PersonShape a sh:NodeShape ;
++    sh:targetClass ex:Person ;
++    sh:property [ sh:path ex:name ; sh:minCount 1 ] .
 +"""
 +
 +
-+def _ox_store(ttl: str):
-+    from pyoxigraph import RdfFormat, Store
++class WatchedGraph(Graph):
++    """Expose overlapping writes to pySHACL's helper triples deterministically."""
 +
-+    store = Store()
-+    store.bulk_load(ttl.encode("utf-8"), format=RdfFormat.TURTLE)
-+    return store
++    def __init__(self):
++        super().__init__()
++        self._monitor = False
++        self._active = 0
++        self._guard = threading.Lock()
++        self.system_writes = 0
 +
-+
-+def test_plain_string_literals_match_shapes_on_oxigraph():
-+    shapes = Graph().parse(data=SHAPES, format="turtle")
-+    conforms_rdflib, _, _ = pyshacl.validate(
-+        Graph().parse(data=DATA, format="turtle"), shacl_graph=shapes
-+    )
-+    conforms_ox, _, text = pyshacl.validate(_ox_store(DATA), shacl_graph=shapes)
-+    assert conforms_rdflib
-+    assert conforms_ox, text
-+
-+
-+def test_to_rdf_maps_xsd_string_to_plain_literal():
-+    from pyoxigraph import Literal as OxLiteral
-+    from pyoxigraph import NamedNode as OxNamedNode
-+
-+    from pyshacl.graph_abstraction import to_rdf
-+
-+    converted = to_rdf(OxLiteral("="))
-+    assert converted == Literal("=")
-+    assert converted.datatype is None
-+    typed = to_rdf(OxLiteral("1", datatype=OxNamedNode(str(XSD.integer))))
-+    assert typed.datatype == XSD.integer
++    def add(self, triple):
++        if not self._monitor or triple not in ShapesGraph.system_triples:
++            return super().add(triple)
++        with self._guard:
++            self._active += 1
++            self.system_writes += 1
++            overlapping = self._active > 1
++        try:
++            # Deliberately enlarge the race window so a missing synchronization
++            # fails reliably instead of depending on the timing of rdflib internals.
++            sleep(0.005)
++            assert not overlapping, 'concurrent writes to a shared shapes graph'
++            return super().add(triple)
++        finally:
++            with self._guard:
++                self._active -= 1
 +
 +
-+def test_validation_results_do_not_compute_data_graph_length(monkeypatch):
-+    from pyshacl import graph_abstraction
++def test_concurrent_validations_share_shapes_without_writing_concurrently():
++    shapes = WatchedGraph().parse(data=SHAPES, format='turtle')
++    shapes._monitor = True
++    start = threading.Barrier(8)
 +
-+    calls = []
-+    original_len = graph_abstraction.OxigraphDataGraph.__len__
++    def check(_index):
++        data = Graph()
++        data.add((EX.person, EX.name, Literal('Alice')))
++        # Every request has its own data graph; only shapes are shared.
++        data.add((EX.person, RDF.type, EX.Person))
++        start.wait()
++        conforms, _, _ = validate(data, shacl_graph=shapes)
++        return conforms
 +
-+    def counting_len(self, *args, **kwargs):
-+        calls.append(1)
-+        return original_len(self, *args, **kwargs)
++    with ThreadPoolExecutor(max_workers=8) as pool:
++        assert all(pool.map(check, range(8)))
 +
-+    monkeypatch.setattr(graph_abstraction.OxigraphDataGraph, "__len__", counting_len)
-+    shapes = Graph().parse(data=SHAPES, format="turtle")
-+    bad = DATA.replace('ex:operator "<"', 'ex:operator "!="')
-+    conforms, results, _ = pyshacl.validate(_ox_store(bad), shacl_graph=shapes)
-+    assert not conforms
-+    assert calls == []
++    # Each system triple is only written once despite eight constructors.
++    assert shapes.system_writes == len(ShapesGraph.system_triples)
++    assert all(triple in shapes for triple in ShapesGraph.system_triples)
++
++    # Subsequent calls must not write the same triples again.
++    data = Graph()
++    data.add((EX.person, RDF.type, EX.Person))
++    data.add((EX.person, EX.name, Literal('Alice')))
++    assert validate(data, shacl_graph=shapes)[0]
++    assert shapes.system_writes == len(ShapesGraph.system_triples)
++
++
++def test_preloaded_helper_triples_are_not_reinserted():
++    shapes = WatchedGraph().parse(data=SHAPES, format='turtle')
++    for triple in ShapesGraph.system_triples:
++        shapes.add(triple)
++    shapes._monitor = True
++
++    for _ in range(10):
++        ShapesGraph(shapes)
++
++    assert shapes.system_writes == 0
++
++
++def test_dataset_uses_default_graph_without_modifying_named_graphs():
++    shapes = Dataset()
++    named = shapes.graph(EX.shapes)
++    named.parse(data=SHAPES, format='turtle')
++    before = set(named)
++
++    ShapesGraph(shapes)
++
++    assert all(triple in shapes.default_graph for triple in ShapesGraph.system_triples)
++    assert set(named) == before
 ```
 
 ---
 
-### Incident Patch 2: `718cfb65` (2026-10-20)
-**Commit Message**: Fix slow and incorrect validation on Oxigraph-backed data graphs
+### Incident Patch 2: `0f259486` (2026-10-28)
+**Commit Message**: Quick workaround for PYSHACL_USE_FULL_MIXIN=1 returns non-wrapped Dataset or Graph
 
-- Replace `datagraph or sg` with an explicit None check. The truthiness
-  test called DataGraph.__len__, which on Oxigraph runs a COUNT query over
-  the whole store, once per validation result.
-- Map Oxigraph literals with datatype xsd:string back to plain RDFLib
-  literals so they compare equal to plain literals in the shapes graph.
-  This removes false violations of sh:in, sh:hasValue and similar.
-
-**File**: `CHANGELOG.md` (modified, +7/-0)
+**File**: `pyshacl/extras/js/function.py` (modified, +1/-1)
 ```diff
-@@ -6,6 +6,13 @@ and this project adheres to [Python PEP 440 Versioning](https://www.python.org/d
- 
- ## [Unreleased]
- 
-+### Fixed
-+
-+- Oxigraph-backed validation no longer computes `len()` of the whole data graph for every validation result.
-+  - `datagraph or sg` evaluated the truthiness of the DataGraph, which on Oxigraph runs a `COUNT` query over the entire store.
-+- Plain string literals read from an Oxigraph store now compare equal to plain literals in the shapes graph.
-+  - Oxigraph reports them as `xsd:string`; they are now mapped back to plain RDFLib literals, which fixes false violations of `sh:in`, `sh:hasValue` and similar constraints.
-+
- ## [0.40.1] - 2026-07-28
- 
- ### Fixed
+@@ -87,7 +87,7 @@ def execute_from_sparql_oxigraph(
+         *args: Union[ox_NamedNode, ox_BlankNode, ox_Triple],
+     ):
+         """Oxigraph custom-function callback: evaluated argument terms in, one RDF term out."""
+-        if not g.is_oxigraph:
++        if not getattr(g, 'is_oxigraph', False):
+             raise ReportableRuntimeError("execute_from_sparql_oxigraph requires an Oxigraph-backed DataGraph.")
+         params = self.get_params_in_order()
+         num_params = len(params)
 ```
 
-**File**: `pyshacl/constraints/constraint_component.py` (modified, +3/-3)
+**File**: `pyshacl/functions/shacl_function.py` (modified, +1/-1)
 ```diff
-@@ -168,7 +168,7 @@ def make_v_result_description(
-         source_shape_text = stringify_node(sg, self.shape.node)
-         severity_node_text = stringify_node(sg, severity)
+@@ -386,7 +386,7 @@ def execute_from_sparql_oxigraph(
+         (pyoxigraph NamedNode, BlankNode, Literal, or Triple). The DataGraph is not provided
+         by Oxigraph; apply() binds it with functools.partial().
+         """
+-        if not g.is_oxigraph:
++        if not getattr(g, 'is_oxigraph', False):
+             raise ReportableRuntimeError("execute_from_sparql_oxigraph requires an Oxigraph-backed DataGraph.")
+         params = self.get_params_in_order()
+         num_params = len(params)
+```
+
+**File**: `pyshacl/rule_expand_runner.py` (modified, +8/-1)
+```diff
+@@ -6,6 +6,7 @@
+ 
+ import rdflib
+ from rdflib import URIRef
++from rdflib.graph import Dataset as rdf_Dataset
+ 
+ from .consts import (
+     env_truths,
+@@ -57,7 +58,13 @@ def __init__(
+         self.data_graph: DataGraph = data_graph
+         self._target_graph: Union[GraphLike, None] = None
+         self.ont_graph = ont_graph
+-        self.data_graph_is_multigraph = self.data_graph.is_multigraph()
++        if not hasattr(self.data_graph, 'is_multigraph'):
++            if isinstance(self.data_graph.impl, rdf_Dataset):
++                self.data_graph_is_multigraph = True
++            else:
++                self.data_graph_is_multigraph = False
++        else:
++            self.data_graph_is_multigraph = self.data_graph.is_multigraph()
+         if self.ont_graph is not None and isinstance(self.ont_graph, rdflib.Dataset):
+             self.ont_graph.default_union = True
+         if shacl_graph is None:
+```
+
+**File**: `pyshacl/rules/sparql/__init__.py` (modified, +9/-1)
+```diff
+@@ -3,6 +3,7 @@
+ 
+ import rdflib
+ from rdflib import Literal
++from rdflib.graph import Dataset as rdf_Dataset
+ from rdflib.namespace import XSD
+ 
+ from pyshacl.consts import SH_construct
+@@ -109,7 +110,14 @@ def apply(
+                         added += 1
+                         construct_graphs.add(result_graph)
+             if added > 0:
+-                if data_graph.is_multigraph():
++                if not hasattr(data_graph, 'is_multigraph'):
++                    if isinstance(data_graph.impl, rdf_Dataset):
++                        multi_graph = True
++                    else:
++                        multi_graph = False
++                else:
++                    multi_graph = data_graph.is_multigraph()
++                if multi_graph:
+                     if target_graph_identifier is not None:
+                         target_graph = data_graph.get_context(target_graph_identifier)
+                     else:
+```
+
+**File**: `pyshacl/run_type.py` (modified, +18/-6)
+```diff
+@@ -2,6 +2,8 @@
+ from abc import ABCMeta, abstractmethod
+ from typing import TYPE_CHECKING, Optional
+ 
++from rdflib.graph import Dataset as rdf_Dataset
++
+ from .errors import ReportableRuntimeError
+ 
+ if TYPE_CHECKING:
+@@ -59,17 +61,28 @@ def _run_pre_inference(
+             raise ReportableRuntimeError(
+                 "Error during creation of OWL-RL Deductive Closure\n{}".format(str(e.args[0]))
+             )
+-        if target_graph.is_oxigraph:
++        if not hasattr(target_graph, 'is_oxigraph'):
++            owl_target = target_graph
++        elif target_graph.is_oxigraph:
+             ox_store = target_graph.impl
+             owl_target = OWLDataGraph(ox_store)
+         else:
+             owl_target = target_graph.impl
+-        if target_graph.is_multigraph():
++        if not hasattr(target_graph, 'is_multigraph'):
++            if isinstance(target_graph.impl, rdf_Dataset):
++                is_multigraph = True
++            else:
++                is_multigraph = False
++        else:
++            is_multigraph = target_graph.is_multigraph()
++        if is_multigraph:
+             target_graph.default_union = True
+             if destination_graph_identifier is not None:
+-                if target_graph.is_oxigraph:
+-                    ox_store = target_graph.impl
+-                    owl_dest = OWLDataGraph(ox_store, locked_context=destination_graph_identifier)
++                if not hasattr(target_graph, 'is_oxigraph'):
++                    owl_dest = target_graph.get_context(destination_graph_identifier)
++                elif target_graph.is_oxigraph:
++                    ox_store2 = target_graph.impl
++                    owl_dest = OWLDataGraph(ox_store2, locked_context=destination_graph_identifier)
+                 else:
+                     rdf_graph = target_graph.impl.get_context(destination_graph_identifier)
+                     owl_dest = rdf_graph
+@@ -80,6 +93,5 @@ def _run_pre_inference(
          try:
--            focus_node_text = stringify_node(datagraph or sg, focus_node)
-+            focus_node_text = stringify_node(sg if datagraph is None else datagraph, focus_node)
-         except (LookupError, ValueError):
-             # focus node doesn't exist in the datagraph. We can deal.
-             focus_node_text = str(focus_node)
-@@ -182,7 +182,7 @@ def make_v_result_description(
-         )
-         if value_node is not None:
-             try:
--                val_node_string = stringify_node(datagraph or sg, value_node)
-+                val_node_string = stringify_node(sg if datagraph is None else datagraph, value_node)
-             except (LookupError, ValueError):
-                 # value node doesn't exist in the datagraph.
-                 val_node_string = str(value_node)
-@@ -254,7 +254,7 @@ def make_v_result(
-         r_triples.append((r_node, SH_sourceConstraintComponent, (sg, constraint_component)))
-         r_triples.append((r_node, SH_sourceShape, (sg, self.shape.node)))
-         r_triples.append((r_node, SH_resultSeverity, severity))
--        r_triples.append((r_node, SH_focusNode, (datagraph or sg, focus_node)))
-+        r_triples.append((r_node, SH_focusNode, (sg if datagraph is None else datagraph, focus_node)))
-         if value_node is not None:
-             r_triples.append((r_node, SH_value, (datagraph, value_node)))
-         if result_path is None and self.shape.is_property_shape:
+             inferencer.expand(owl_target, destination=owl_dest)
+         except Exception as e:  # pragma: no cover
+-            raise
+             logger.error("Error while running OWL-RL Deductive Closure")
+             raise ReportableRuntimeError("Error while running OWL-RL Deductive Closure\n{}".format(str(e.args[0])))
 ```
 
-**File**: `pyshacl/graph_abstraction.py` (modified, +18/-20)
+**File**: `pyshacl/validator.py` (modified, +8/-1)
 ```diff
-@@ -1297,16 +1297,26 @@ def to_rdf(
-     elif isinstance(term, ox_BlankNode):
-         return rdf_BNode(term.value)
-     elif isinstance(term, ox_Literal):
--        if term.language is not None:
--            return rdf_Literal(term.value, lang=term.language)
--        data_type = term.datatype
--        if data_type is not None:
--            data_type = rdf_URIRef(data_type.value)
--        return rdf_Literal(term.value, datatype=data_type)
-+        return _ox_literal_to_rdf(term)
-     else:
-         return rdf_URIRef(term.value)
+@@ -7,6 +7,7 @@
  
+ import rdflib
+ from rdflib import BNode, Literal, URIRef
++from rdflib.graph import Dataset as rdf_Dataset
  
-+XSD_STRING_IRI = "http://www.w3.org/2001/XMLSchema#string"
-+
-+
-+def _ox_literal_to_rdf(term: ox_Literal) -> rdf_Literal:
-+    if term.language is not None:
-+        return rdf_Literal(term.value, lang=term.language)
-+    data_type = term.datatype
-+    # Oxigraph reports simple literals with their RDF 1.1 datatype xsd:string, but RDFLib
-+    # treats Literal("x") and Literal("x", datatype=XSD.string) as unequal. Map them back to
-+    # plain literals so they compare equal to the literals in the shapes graph.
-+    if data_type is None or data_type.value == XSD_STRING_IRI:
-+        return rdf_Literal(term.value)
-+    return rdf_Literal(term.value, datatype=rdf_URIRef(data_type.value))
-+
-+
- def convert_quad_to_rdflib(quad: ox_Quad):
-     s, p, o, g = quad
-     if s is None:
-@@ -1316,13 +1326,7 @@ def convert_quad_to_rdflib(quad: ox_Quad):
-     elif isinstance(s, ox_Literal):
-         # Technically a subject can never be a Literal
-         # in Oxigraph, but this is here for completeness
--        if s.language is not None:
--            out_s = rdf_Literal(s.value, lang=s.language)
--        else:
--            data_type = s.datatype
--            if data_type is not None:
--                data_type = rdf_URIRef(data_type.value)
--            out_s = rdf_Literal(s.value, datatype=data_type)
-+        out_s = _ox_literal_to_rdf(s)
-     else:
-         out_s = rdf_URIRef(s.value)
-     if p is None:
-@@ -1334,13 +1338,7 @@ def convert_quad_to_rdflib(quad: ox_Quad):
-     if o is None:
-         out_o = None
-     elif isinstance(o, ox_Literal):
--        if o.language is not None:
--            out_o = rdf_Literal(o.value, lang=o.language)
--        else:
--            data_type = o.datatype
--            if data_type is not None:
--                data_type = rdf_URIRef(data_type.value)
--            out_o = rdf_Literal(o.value, datatype=data_type)
-+        out_o = _ox_literal_to_rdf(o)
-     elif isinstance(o, ox_BlankNode):
-         out_o = rdf_BNode(o.value)
-     else:
-```
-
-**File**: `test/test_oxigraph_parity.py` (added, +91/-0)
-```diff
-@@ -0,0 +1,91 @@
-+# -*- coding: utf-8 -*-
-+"""\
-+Parity and performance regressions for validation against an Oxigraph-backed DataGraph.
-+
-+1. Plain string literals coming back from Oxigraph carry an explicit xsd:string datatype
-+   (RDF 1.1). They must compare equal to the plain literals in the shapes graph, otherwise
-+   constraints such as sh:in and sh:hasValue report false violations.
-+2. Building a validation result must not compute len() of the whole data graph. The
-+   expressions `datagraph or sg` triggered DataGraph.__len__, which on Oxigraph is a
-+   COUNT query over the entire store, once per validation result.
-+"""
-+
-+import pytest
-+from rdflib import XSD, Graph, Literal
-+
-+import pyshacl
-+from pyshacl.graph_abstraction import has_oxigraph
-+
-+pytestmark = pytest.mark.skipif(not has_oxigraph, reason="pyoxigraph is not installed")
-+
-+SHAPES = """\
-+@prefix sh: <http://www.w3.org/ns/shacl#> .
-+@prefix ex: <http://example.org/> .
-+
-+ex:OpShape a sh:NodeShape ;
-+    sh:targetClass ex:Comparison ;
-+    sh:property [
-+        sh:path ex:operator ;
-+        sh:in ( "=" "<" ">" ) ;
-+    ] ;
-+    sh:property [
-+        sh:path ex:kind ;
-+        sh:hasValue "atomic" ;
-+    ] .
-+"""
-+
-+DATA = """\
-+@prefix ex: <http://example.org/> .
-+
-+ex:c1 a ex:Comparison ; ex:operator "=" ; ex:kind "atomic" .
-+ex:c2 a ex:Comparison ; ex:operator "<" ; ex:kind "atomic" .
-+"""
-+
-+
-+def _ox_store(ttl: str):
-+    from pyoxigraph import RdfFormat, Store
-+
-+    store = Store()
-+    store.bulk_load(ttl.encode("utf-8"), format=RdfFormat.TURTLE)
-+    return store
-+
-+
-+def test_plain_string_literals_match_shapes_on_oxigraph():
-+    shapes = Graph().parse(data=SHAPES, format="turtle")
-+    conforms_rdflib, _, _ = pyshacl.validate(
-+        Graph().parse(data=DATA, format="turtle"), shacl_graph=shapes
-+    )
-+    conforms_ox, _, text = pyshacl.validate(_ox_store(DATA), shacl_graph=shapes)
-+    assert conforms_rdflib
-+    assert conforms_ox, text
-+
-+
-+def test_to_rdf_maps_xsd_string_to_plain_literal():
-+    from pyoxigraph import Literal as OxLiteral
-+    from pyoxigraph import NamedNode as OxNamedNode
-+
-+    from pyshacl.graph_abstraction import to_rdf
-+
-+    converted = to_rdf(OxLiteral("="))
-+    assert converted == Literal("=")
-+    assert converted.datatype is None
-+    typed = to_rdf(OxLiteral("1", datatype=OxNamedNode(str(XSD.integer))))
-+    assert typed.datatype == XSD.integer
-+
-+
-+def test_validation_results_do_not_compute_data_graph_length(monkeypatch):
-+    from pyshacl import graph_abstraction
-+
-+    calls = []
-+    original_len = graph_abstraction.OxigraphDataGraph.__len__
-+
-+    def counting_len(self, *args, **kwargs):
-+        calls.append(1)
-+        return original_len(self, *args, **kwargs)
-+
-+    monkeypatch.setattr(graph_abstraction.OxigraphDataGraph, "__len__", counting_len)
-+    shapes = Graph().parse(data=SHAPES, format="turtle")
-+    bad = DATA.replace('ex:operator "<"', 'ex:operator "!="')
-+    conforms, results, _ = pyshacl.validate(_ox_store(bad), shacl_graph=shapes)
-+    assert not conforms
-+    assert calls == []
+ from .consts import (
+     RDF_type,
+@@ -65,7 +66,13 @@ def __init__(
+         self.data_graph = data_graph
+         self._target_graph: Union[DataGraph, None] = None
+         self.ont_graph = ont_graph
+-        self.data_graph_is_multigraph = self.data_graph.is_multigraph()
++        if not hasattr(self.data_graph, 'is_multigraph'):
++            if isinstance(self.data_graph.impl, rdf_Dataset):
++                self.data_graph_is_multigraph = True
++            else:
++                self.data_graph_is_multigraph = False
++        else:
++            self.data_graph_is_multigraph = self.data_graph.is_multigraph()
+         if self.ont_graph is not None and isinstance(self.ont_graph, rdflib.Dataset):
+             self.ont_graph.default_union = True
+         if self.ont_graph is not None and options['sparql_mode']:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #338** (2026-10-28): Avoid concurrent writes to shared shapes graphs (@mhatipog)
 - **PR #335** (2026-10-20): Fix slow and incorrect validation on Oxigraph-backed data graphs (@lepy)
 - **PR #328** (2026-07-28): Fixes rollup for v0.40.1 release (@ashleysommer)
 - **PR #325** (2026-07-28): Add future annotations to keep Python 3.9 support (@bact)
 - **PR #324** (2026-07-08): Big updates (@ashleysommer)
 - **PR #322** (2026-07-08): Fix HTTPResponse cleanup for owl imports (@binggao1230)
-- **PR #317** (closed): fix(rdflib): adapt pySHACL to Dataset API deprecations in RDFLib 7.3+ (@torsknod2)
 
 ---
 
@@ -2435,34 +2314,40 @@ Fix slow and incorrect validation on Oxigraph-backed data graphs
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #335 from lepy/fix/oxigraph-len-and-xsd-string
+## X. Merge pull request #338 from mhatipog/fix-shared-shapes-concurrency
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RDFLib/pySHACL. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pyshacl/shapes_graph.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RDFLib/pySHACL. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a8ed01e8`: Merge pull request #335 from lepy/fix/oxigraph-len-and-xsd-string. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8a3c9bc`: Merge pull request #338 from mhatipog/fix-shared-shapes-concurrency. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyshacl/shapes_graph.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-### Fixed
+from threading import Lock
+# A preloaded shapes graph may be shared by concurrent validation calls. RDFLib's
+# Memory store is not safe for simultaneous writes, even of the same triple.
+_system_triples_lock = Lock()
 
-- Oxigraph-backed validation no longer computes `len()` of the whole data graph for every validation result.
-  - `datagraph or sg` evaluated the truthiness of the DataGraph, which on Oxigraph runs a `COUNT` query over the entire store.
-- Plain string literals read from an Oxigraph store now compare equal to plain literals in the shapes graph.
-  - Oxigraph reports them as `xsd:string`; they are now mapped back to plain RDFLib literals, which fixes false violations of `sh:in`, `sh:hasValue` and similar constraints.
 
+        # Keep initialization idempotent and protect the (usually first) writes
+        # when several validators share the same rdflib graph.
+        with _system_triples_lock:
+            for t in self.system_triples:
+                if t not in g:
+                    g.add(t)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        for t in self.system_triples:
+            g.add(t)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a8ed01e8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8a3c9bc` are properly handled with clean fallback behavior.

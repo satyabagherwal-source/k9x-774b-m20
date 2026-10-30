@@ -6241,3 +6241,5 @@
 | `CYCLE-20261030-6J21` | `2026-10-30T16:39:35.929Z` | `RDFLib/rdflib` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5801` | Yes (`0fba0aed...`) |
 | `CYCLE-20261030-6NZA` | `2026-10-30T16:39:42.310Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5802` | Yes (`2b2f39c3...`) |
 | `CYCLE-20261030-CWO5` | `2026-10-30T16:44:33.509Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5803` | Yes (`de785172...`) |
+| `CYCLE-20261030-LORD` | `2026-10-30T16:51:23.161Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md` | Yes (`164a2436...`) |
+| `CYCLE-20261030-LQBF` | `2026-10-30T16:51:25.179Z` | `RDFLib/pySHACL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5804` | Yes (`7cc0215c...`) |

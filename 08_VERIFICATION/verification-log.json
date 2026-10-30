@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-CKXS",
-    "timestamp": "2026-10-28T11:05:02.464Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "cec87647009b8ac7142e5dda180121c98ed6949a79337d37bfd735a3a171b4cb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-LLBX",
-    "timestamp": "2026-10-28T11:12:02.877Z",
-    "repository": "kumahq/kuma",
-    "learningId": "learn-github-kumahq-kuma",
-    "contentHash": "22dfc13595c22eb1b08cb5013d965f8212d539948ecdf6604b76e47ca854cfeb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-LP1R",
     "timestamp": "2026-10-28T11:12:07.695Z",
     "repository": "dathere/qsv",
@@ -7490,6 +7460,36 @@
     "repository": "restatedev/restate",
     "learningId": "learn-github-restatedev-restate",
     "contentHash": "de785172c1c2311c7afb7e94c6d6d72cfb811600b0ad9f3c8f0334ec0af2b683",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-LORD",
+    "timestamp": "2026-10-30T16:51:23.161Z",
+    "repository": "jhspetersson/fselect",
+    "learningId": "learn-github-jhspetersson-fselect",
+    "contentHash": "164a2436bc2b64ddcfbc247bf0769850c4daf3d529772aed83a3d88838034092",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-LQBF",
+    "timestamp": "2026-10-30T16:51:25.179Z",
+    "repository": "RDFLib/pySHACL",
+    "learningId": "learn-github-rdflib-pyshacl",
+    "contentHash": "7cc0215c5f75dc667c930681b9eab246c946b37ce0350200b5c292755d9db75d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T14:40:23.814Z",
+  "last_updated": "2026-10-30T16:51:23.175Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3346,6 +3346,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-sindresorhus-got"
+    },
+    {
+      "id": "CD-LORR",
+      "directive_title": "Empirical Invariant Guard in searcher.rs",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "jhspetersson/fselect",
+      "source_commit": "2b101ea5",
+      "date_staged": "2026-10-30",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-jhspetersson-fselect"
     }
   ]
 }

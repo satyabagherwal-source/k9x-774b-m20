@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T16:44:36.068Z",
-    "lastVerified": "2026-10-30T16:44:36.068Z",
+    "lastChecked": "2026-10-30T16:51:31.508Z",
+    "lastVerified": "2026-10-30T16:51:31.508Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -139,12 +139,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T16:00:43.617Z",
-    "lastVerified": "2026-10-30T16:00:43.617Z",
+    "lastChecked": "2026-10-30T16:51:31.497Z",
+    "lastVerified": "2026-10-30T16:51:31.497Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -153,7 +153,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e29d9471"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -216,9 +217,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-10-30T09:44:30.568Z",
+    "lastChecked": "2026-10-30T16:51:26.493Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-10-30T09:44:30.568Z"
+    "lastVerified": "2026-10-30T16:51:26.493Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -2122,9 +2123,9 @@
   "oceanbase-oceanbase": {
     "name": "oceanbase",
     "officialUrl": "https://github.com/oceanbase/oceanbase",
-    "lastChecked": "2026-10-28T23:43:06.747Z",
+    "lastChecked": "2026-10-30T16:51:28.990Z",
     "revisionIdentifier": "5e8a63d2",
-    "lastVerified": "2026-10-28T23:43:06.747Z"
+    "lastVerified": "2026-10-30T16:51:28.990Z"
   },
   "flox-flox": {
     "name": "flox/flox",
@@ -2994,9 +2995,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-10-29T00:41:26.760Z",
+    "lastChecked": "2026-10-30T16:51:24.071Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-10-29T00:41:26.760Z"
+    "lastVerified": "2026-10-30T16:51:24.071Z"
   },
   "milvus-io-bootcamp": {
     "name": "bootcamp",
@@ -6696,14 +6697,14 @@
     "officialUrl": "https://github.com/jhspetersson/fselect",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T18:57:37.727Z",
-    "lastVerified": "2026-10-28T18:57:37.727Z",
+    "lastChecked": "2026-10-30T16:51:21.620Z",
+    "lastVerified": "2026-10-30T16:51:21.620Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-jhspetersson-fselect",
-    "contentHash": "3323057916f8a0254a69f213aaf5dcefefb562d4dce7c793383f015070ad16c0",
+    "contentHash": "164a2436bc2b64ddcfbc247bf0769850c4daf3d529772aed83a3d88838034092",
     "promotedRulesCount": 0,
-    "recentFixesCount": 7,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10404,5 +10405,29 @@
     "lastChecked": "2026-10-30T16:39:32.311Z",
     "revisionIdentifier": "0ced68b2",
     "lastVerified": "2026-10-30T16:39:32.311Z"
+  },
+  "rdflib-pyshacl": {
+    "name": "RDFLib/pySHACL",
+    "officialUrl": "https://github.com/RDFLib/pySHACL",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-30T16:51:24.129Z",
+    "lastVerified": "2026-10-30T16:51:24.129Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-rdflib-pyshacl",
+    "contentHash": "7cc0215c5f75dc667c930681b9eab246c946b37ce0350200b5c292755d9db75d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "elai950-alerttoast": {
+    "name": "AlertToast",
+    "officialUrl": "https://github.com/elai950/AlertToast",
+    "lastChecked": "2026-10-30T16:51:21.525Z",
+    "revisionIdentifier": "76a1c179",
+    "lastVerified": "2026-10-30T16:51:21.525Z"
   }
 }

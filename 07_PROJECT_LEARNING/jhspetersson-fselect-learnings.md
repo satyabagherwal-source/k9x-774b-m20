@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
 > **Source**: github ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
-> **Source Version**: `277c4890`  
+> **Source Version**: `2b101ea5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T18:57:37.735Z  
+> **Timestamp**: 2026-10-30T16:51:22.895Z  
 > **Learning ID**: `learn-github-jhspetersson-fselect`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jhspetersson/fselect](https://github.com/jhspetersson/fselect))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T18:57:37.727Z  
+> **Harvest Timestamp**: 2026-10-30T16:51:21.620Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find files with SQL-like queries
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 4474 stars
+- **Stars / Engagement**: 4475 stars
 
 ---
 
@@ -1460,315 +1460,147 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `277c4890` (2026-10-27)
+### Incident Patch 1: `2b101ea5` (2026-10-28)
 **Commit Message**: fix RANDOM
 
-**File**: `src/searcher.rs` (modified, +115/-21)
+**File**: `src/searcher.rs` (modified, +25/-8)
 ```diff
-@@ -116,6 +116,7 @@ pub struct Searcher<'a> {
-     accumulators: HashMap<Vec<String>, function::GroupAccumulator>,
-     output_buffer: TopN<Criteria<String>, BufferedRow>,
-     deferred_columns: Vec<usize>,
-+    deferred_keys: HashSet<String>,
-     aggregate_plan: Option<Rc<AggregatePlan>>,
-     ordering_fields_rc: Rc<Vec<Expr>>,
-     ordering_asc_rc: Rc<Vec<bool>>,
-@@ -335,7 +336,7 @@ impl<'r> Row<'r> {
- 
- enum BufferedRow {
-     Rendered(String, Option<Variant>),
--    Pending(PendingRow),
-+    Pending(Box<PendingRow>),
- }
- 
- impl BufferedRow {
-@@ -353,6 +354,7 @@ struct PendingRow {
-     file_info: Option<FileInfo>,
-     follow_symlinks: bool,
-     items: Vec<(String, String)>,
-+    values: HashMap<String, Variant>,
-     deferred: Vec<usize>,
-     first_value: Option<Variant>,
- }
-@@ -446,6 +448,7 @@ impl<'a> Searcher<'a> {
-             found: 0,
-             accumulators: HashMap::new(),
-             deferred_columns: Self::deferred_columns(query),
-+            deferred_keys: Self::deferred_keys(query),
-             aggregate_plan: AggregatePlan::new(query),
-             output_buffer: if limit == 0 {
-                 TopN::limitless()
-@@ -1936,6 +1939,20 @@ impl<'a> Searcher<'a> {
-             .collect()
+@@ -2618,32 +2618,33 @@ impl<'a> Searcher<'a> {
+             .iter()
+             .map(|(_, column)| column.get_alias_references_in_subqueries(current_alias, true).is_empty())
+             .collect();
++        let mut alias_dependent_keys = HashSet::new();
++        for (_, column) in required_columns {
++            Self::collect_alias_dependent_keys(column, current_alias, &mut alias_dependent_keys);
++        }
+         let mut bound: Vec<Option<Variant>> = vec![None; required_columns.len()];
+         let mut scratches: Vec<HashMap<String, Variant>> = vec![HashMap::new(); required_columns.len()];
+         let mut failed: Vec<(usize, SearchError)> = Vec::new();
+         for round in 0..rounds {
+             let mut changed = false;
+             failed.clear();
+             if round > 0 {
+-                for (index, scratch) in scratches.iter_mut().enumerate() {
+-                    if !self_contained[index] {
+-                        scratch.clear();
+-                    }
++                for scratch in scratches.iter_mut() {
++                    scratch.retain(|key, _| !alias_dependent_keys.contains(key));
+                 }
+             }
+             for (index, (name, column)) in required_columns.iter().enumerate() {
+                 if round > 0 && self_contained[index] && bound[index].is_some() {
+                     continue;
+                 }
+-                let mut seed = row.values.clone();
++                let mut scratch = row.values.clone();
+                 for (other, settled) in scratches.iter().enumerate() {
+                     if other != index && bound[other].is_some() {
+                         for (key, value) in settled {
+-                            seed.entry(key.clone()).or_insert_with(|| value.clone());
++                            scratch.entry(key.clone()).or_insert_with(|| value.clone());
+                         }
+                     }
+                 }
+-                let mut scratch = seed.clone();
+                 let shared = required_columns[..index]
+                     .iter()
+                     .position(|(_, earlier)| earlier.cache_key() == column.cache_key())
+@@ -2652,7 +2653,6 @@ impl<'a> Searcher<'a> {
+                     Some(value) => Ok(value),
+                     None => self.get_column_expr_value(&mut row.scratch(&mut scratch), column),
+                 };
+-                scratch.retain(|key, _| !seed.contains_key(key));
+                 scratches[index] = scratch;
+                 let value = match evaluated {
+                     Ok(value) => {
+@@ -2711,6 +2711,21 @@ impl<'a> Searcher<'a> {
+         Ok(())
      }
  
-+    fn deferred_keys(query: &Query) -> HashSet<String> {
-+        fn collect(expr: &Expr, keys: &mut HashSet<String>) {
-+            keys.insert(expr.cache_key());
-+            for child in expr.children() {
-+                collect(child, keys);
-+            }
++    fn collect_alias_dependent_keys(expr: &Expr, alias: &str, keys: &mut HashSet<String>) {
++        if expr.get_alias_references_in_subqueries(alias, true).is_empty() {
++            return;
 +        }
-+        let mut keys = HashSet::new();
-+        for index in Self::deferred_columns(query) {
-+            collect(&query.fields[index], &mut keys);
++        keys.insert(expr.cache_key());
++        if expr.minus {
++            let mut bare = expr.clone();
++            bare.minus = false;
++            keys.insert(bare.cache_key());
 +        }
-+        keys
++        for child in expr.children() {
++            Self::collect_alias_dependent_keys(child, alias, keys);
++        }
 +    }
 +
-     fn condition_state(
+     fn seed_bound_aliases(
          &mut self,
-         row: &mut Row,
-@@ -2219,7 +2236,7 @@ impl<'a> Searcher<'a> {
-                 let rendered = match row {
-                     BufferedRow::Rendered(text, first_value) => Some((text, first_value)),
-                     BufferedRow::Pending(pending) if position < offset => Some((String::new(), pending.first_value)),
--                    BufferedRow::Pending(pending) => self.render_pending(pending, &mut lookup)?,
-+                    BufferedRow::Pending(pending) => self.render_pending(*pending, &mut lookup)?,
-                 };
-                 position += 1;
-                 if let Some((text, first_value)) = rendered {
-@@ -2232,7 +2249,7 @@ impl<'a> Searcher<'a> {
+         current_alias: &str,
+@@ -9140,10 +9155,12 @@ f
+         let run = |query: &str| run_query_against_dir(query, &tmp);
+         let cells = |row: &String| row.split('\t').map(str::to_string).collect::<Vec<_>>();
+         let mismatched = run("select name, random(0, 1) as r, random(0, 1) + 1 as s from __DIR__ as t where t.s <> t.r + 1");
++        let dependent = run("select name, t.z + random(0, 1) as a, random(0, 1) + 1 as b, 1 as z from __DIR__ as t where t.a <> t.b");
+         let shown = run("select name, random(0, 1) as r, random(0, 1) + 1 as s, random(0, 1) from __DIR__ as t where t.s = t.r + 1");
+         let _ = fs::remove_dir_all(&tmp);
  
-     fn render_pending(
-         &mut self,
--        row: PendingRow,
-+        mut row: PendingRow,
-         lookup: &mut DirEntryLookup,
-     ) -> Result<Option<(String, Option<Variant>)>, SearchError> {
-         let (Some(directory), Some(file_name)) = (row.path.parent(), row.path.file_name()) else {
-@@ -2242,11 +2259,12 @@ impl<'a> Searcher<'a> {
-         };
-         let mut items = row.items.clone();
-         let mut first_value = row.first_value.clone();
-+        let mut values = std::mem::take(&mut row.values);
-         match lookup.entry(directory, file_name) {
-             Ok(Some(entry)) => {
-                 self.fms.clear();
-                 let follow_symlinks = std::mem::replace(&mut self.current_follow_symlinks, row.follow_symlinks);
--                let evaluated = self.evaluate_deferred(entry, &row, &mut items);
-+                let evaluated = self.evaluate_deferred(entry, &row, &mut values, &mut items);
-                 self.current_follow_symlinks = follow_symlinks;
-                 first_value = first_value.or(evaluated?);
-             }
-@@ -2268,12 +2286,12 @@ impl<'a> Searcher<'a> {
-         &mut self,
-         entry: &DirEntry,
-         pending: &PendingRow,
-+        values: &mut HashMap<String, Variant>,
-         items: &mut [(String, String)],
-     ) -> Result<Option<Variant>, SearchError> {
-         let mut first_value = None;
-         let query = self.query;
--        let mut values = HashMap::new();
--        let mut row = Row::entry(entry, &pending.file_info, &pending.root_path, &mut values);
-+        let mut row = Row::entry(entry, &pending.file_info, &pending.root_path, values);
-         if self.use_colors && pending.deferred.iter().any(|index| query.fields[*index].contains_colorized()) {
-             self.fms.update_file_metadata(entry, self.current_follow_symlinks);
-         }
-@@ -2372,10 +2390,12 @@ impl<'a> Searcher<'a> {
-                 subquery.limit = 1;
-             }
-             let list = self.get_list_from_subquery(*subquery)?;
--            return Ok(match list.into_iter().next() {
-+            let result = match list.into_iter().next() {
-                 Some(value) => apply_minus(column_expr, value),
-                 None => Variant::null(),
--            });
-+            };
-+            row.values.insert(cache_key, result.clone());
-+            return Ok(result);
-         }
- 
-         if let Some(ref _function) = column_expr.function {
-@@ -2885,15 +2905,21 @@ impl<'a> Searcher<'a> {
-         self.alias_read_failure()?;
-         if self.is_buffered() {
-             let buffered = if defer 
+         assert_eq!(mismatched, Vec::<String>::new());
++        assert_eq!(dependent, Vec::<String>::new());
+         assert_eq!(shown.len(), 64);
+         for row in &shown {
+             let row = cells(row);
 ```
 
 ---
 
-### Incident Patch 2: `1ad912a4` (2026-10-27)
-**Commit Message**: fix handling RANDOM
+### Incident Patch 2: `50b4ea9f` (2026-10-28)
+**Commit Message**: fix RANDOM
 
-**File**: `src/expr.rs` (modified, +4/-0)
+**File**: `src/searcher.rs` (modified, +42/-1)
 ```diff
-@@ -827,6 +827,10 @@ impl Expr {
-         self.function.as_ref().is_some_and(Function::reads_entry) || self.children().any(Expr::reads_entry)
-     }
- 
-+    pub fn is_volatile(&self) -> bool {
-+        self.function.as_ref().is_some_and(Function::is_volatile) || self.children().any(Expr::is_volatile)
-+    }
-+
-     pub fn has_correlated_subquery(&self) -> bool {
-         self.subquery.as_ref().is_some_and(|subquery| subquery.is_correlated())
-             || self.children().any(Expr::has_correlated_subquery)
-```
-
-**File**: `src/function.rs` (modified, +4/-0)
-```diff
-@@ -457,6 +457,10 @@ impl Display for Arity {
- }
- 
- impl Function {
-+    pub fn is_volatile(&self) -> bool {
-+        matches!(self, Function::Random)
-+    }
-+
-     pub fn datetime_argument_positions(&self) -> &'static [usize] {
-         match self {
-             Function::Year
-```
-
-**File**: `src/parser.rs` (modified, +13/-0)
-```diff
-@@ -183,6 +183,7 @@ impl <'a> Parser<'a> {
-             && !fields.iter().any(|expr| expr.has_aggregate_function())
-             && !fields.iter().any(|expr| expr.has_correlated_subquery())
-             && !fields.iter().any(Expr::reads_entry)
-+            && !fields.iter().any(Expr::is_volatile)
-             && fields
-                 .iter()
-                 .all(|expr| expr.get_required_fields().is_empty())
-@@ -3257,6 +3258,18 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn no_implicit_limit_for_random_values() {
-+        for query in [
-+            "select random() from /test",
-+            "select random(1, 10) + 1 from /test",
-+            "select 1, upper(rand()) from /test",
-+        ] {
-+            let parsed = parse_query(query).unwrap();
-+            assert_eq!(parsed.limit, 0, "{}: the value differs per row", query);
-+        }
-+    }
-+
-     #[test]
-     fn no_implicit_limit_for_functions_that_read_the_file() {
-         for query in [
-```
-
-**File**: `src/searcher.rs` (modified, +39/-22)
-```diff
-@@ -151,7 +151,6 @@ pub struct Searcher<'a> {
-     file_map: HashMap<String, Variant>,
-     unknown_conditions: HashSet<String>,
-     null_comparisons: HashSet<String>,
--    conforms_map: HashMap<String, Variant>,
-     subquery_cache: HashMap<String, Vec<Variant>>,
-     membership_cache: HashMap<(String, VariantType), Rc<Membership>>,
-     silent_mode: bool,
-@@ -490,7 +489,6 @@ impl<'a> Searcher<'a> {
-             file_map: HashMap::new(),
-             unknown_conditions: HashSet::new(),
-             null_comparisons: HashSet::new(),
--            conforms_map: HashMap::new(),
-             subquery_cache: HashMap::new(),
-             membership_cache: HashMap::new(),
-             silent_mode: false,
-@@ -1940,7 +1938,7 @@ impl<'a> Searcher<'a> {
- 
-     fn condition_state(
-         &mut self,
--        row: &Row,
-+        row: &mut Row,
-         expr: &Expr,
-     ) -> Result<Option<bool>, SearchError> {
-         if let Some(ref logical_op) = expr.logical_op {
-@@ -2766,7 +2764,7 @@ impl<'a> Searcher<'a> {
-         }
- 
-         if let Some(ref expr) = self.query.expr {
--            let result = self.conforms(&row, expr)?;
-+            let result = self.conforms(&mut row, expr)?;
-             self.alias_read_failure()?;
-             if !result {
-                 return Ok(());
-@@ -2789,7 +2787,7 @@ impl<'a> Searcher<'a> {
+@@ -2624,11 +2624,26 @@ impl<'a> Searcher<'a> {
+         for round in 0..rounds {
+             let mut changed = false;
+             failed.clear();
++            if round > 0 {
++                for (index, scratch) in scratches.iter_mut().enumerate() {
++                    if !self_contained[index] {
++                        scratch.clear();
++                    }
++                }
++            }
+             for (index, (name, column)) in required_columns.iter().enumerate() {
+                 if round > 0 && self_contained[index] && bound[index].is_some() {
                      continue;
                  }
-                 let value = if grouping_condition {
--                    let state = self.condition_state(&row, expr)?;
-+                    let state = self.condition_state(&mut row, expr)?;
-                     if state.is_none() {
-                         unknown_keys.insert(key.clone());
-                     }
-@@ -3100,15 +3098,11 @@ impl<'a> Searcher<'a> {
-         }
-     }
- 
--    fn evaluate_operand(&mut self, row: &Row, operand: &Expr) -> Result<Variant, SearchError> {
--        let mut scratch = std::mem::take(&mut self.conforms_map);
--        let value = self.get_column_expr_value(&mut row.scratch(&mut scratch), operand);
--        scratch.clear();
--        self.conforms_map = scratch;
--        value
-+    fn evaluate_operand(&mut self, row: &mut Row, operand: &Expr) -> Result<Variant, SearchError> {
-+        self.get_column_expr_value(row, operand)
-     }
- 
--    fn conforms(&mut self, row: &Row, expr: &Expr) -> Result<bool, SearchError> {
-+    fn conforms(&mut self, row: &mut Row, expr: &Expr) -> Result<bool, SearchError> {
-         let mut result = false;
- 
-         if let Some(ref logical_op) = expr.logical_op {
-@@ -3117,17 +3111,18 @@ impl<'a> Searcher<'a> {
-                 None => false,
-             };
- 
--            let right_result = |s: &mut Self| -> Result<bool, SearchError> {
-+            let needs_right = match logical_op {
-+                LogicalOp::And => left_result,
-+                LogicalOp::Or => !left_result,
-+            };
-+            result = if !needs_right {
-+                left_result
-+            } else {
-                 match expr.right {
--                    Some(ref right) => s.conforms(row, right),
--                    None => Ok(false),
-+                    Some(ref right) => self.conforms(row, right)?,
-+                    None => false,
-                 }
-             };
--
--            result = match logical_op {
--                LogicalOp::And => if !left_result { false } else { right_result(self)? },
--                LogicalOp::Or => if left_result { true } else { right_result(self)? },
--            };
-         } else if let Some(ref op) = expr.op {
-             match op {
-                 Op::Exists => return self.check_exists(expr),
-@@ -4228,7 +4223,7 @@ mod tests {
-             Expr::value(String::from("not-a-date")),
-         );
- 
--        let result = searcher.conforms(&Row::entry(&entry, &None, &tmp, &mut HashMap::new()), &expr);
-+        let result = searcher.conforms(&mut Row::entry(&entry, &None, &tmp, &mut HashMap::new()), &expr);
- 
-         let _ = fs::remove_dir_all(&tmp);
- 
-@@ -4259,7 +4254,7 @@ mod tests {
-             Expr::value(String::from("not-a-date")),
-         );
- 
--        let result = searcher.conforms(&Row::entry(&entry, &None, &tmp, &mut HashMap::new()), &expr);
-+        let result = searcher.conforms(&mut Row::entry(&entry, &None, &tmp, &mut HashMap::new()), &expr);
- 
-         let _ = fs::remove_dir_all(&tmp);
- 
-@@ -9080,6 +9075,28 @@ f
-         assert_eq!(having, vec!["txt	2"]);
+-                let mut scratch = HashMap::new();
++                let mut seed = row.values.clone();
++                for (other, settled) in scratches.iter().enumerate() {
++                    if other != index && bound[other].is_some() {
++                        for (key, value) in settled {
++                            seed.entry(key.clone()).or_insert_with(|| value.clone());
++                        }
++                    }
++                }
++                let mut scratch = seed.clone();
+                 let shared = required_columns[..index]
+                     .iter()
+                     .position(|(_, earlier)| earlier.cache_key() == column.cache_key())
+@@ -2637,6 +2652,7 @@ impl<'a> Searcher<'a> {
+                     Some(value) => Ok(value),
+                     None => self.get_column_expr_value(&mut row.scratch(&mut scratch), column),
+                 };
++                scratch.retain(|key, _| !seed.contains_key(key));
+                 scratches[index] = scratch;
+                 let value = match evaluated {
+                     Ok(value) => {
+@@ -9112,6 +9128,31 @@ f
+         assert_eq!(shifted, Vec::<String>::new());
      }
  
 +    #[test]
-+    fn random_values_are_stable_within_a_row() {
-+        let tmp = std::env::temp_dir().join("fselect_test_random_per_row");
++    fn aliases_share_the_random_values_of_their_row() {
++        let tmp = std::env::temp_dir().join("fselect_test_random_aliases");
 +        let _ = fs::remove_dir_all(&tmp);
 +        fs::create_dir_all(&tmp).unwrap();
 +        for i in 0..64 {
@@ -1776,78 +1608,69 @@ Observed empirical fixes and code patches:
 +        }
 +
 +        let run = |query: &str| run_query_against_dir(query, &tmp);
-+        let all = run("select random() from __DIR__");
-+        let impossible = run("select name from __DIR__ where random(0, 1) between 1 and 0");
-+        let certain = run("select name fr
++        let cells = |row: &String| row.split('\t').map(str::to_string).collect::<Vec<_>>();
++        let mismatched = run("select name, random(0, 1) as r, random(0, 1) + 1 as s from __DIR__ as t where t.s <> t.r + 1");
++        let shown = run("select name, random(0, 1) as r, random(0, 1) + 1 as s, random(0, 1) from __DIR__ as t where t.s = t.r + 1");
++        let _ = fs::remove_dir_all(&tmp);
++
++        assert_eq!(mismatched, Vec::<String>::new());
++        assert_eq!(shown.len(), 64);
++        for row in &shown {
++            let row = cells(row);
++            let r: i64 = row[1].parse().unwrap();
++            assert_eq!(row[2], (r + 1).to_string(), "alias s drew a different random value in {row:?}");
++            assert_eq!(row[3], row[1], "the projection drew a different random value in {row:?}");
++        }
++    }
++
+     #[test]
+     fn correlated_scalar_subqueries_are_evaluated_once_per_row() {
+         let tmp = std::env::temp_dir().join("fselect_test_random_correlated_once");
 ```
 
 ---
 
-### Incident Patch 3: `9593ecab` (2026-10-27)
-**Commit Message**: fix xattrs on Windows
+### Incident Patch 3: `4510af3c` (2026-10-28)
+**Commit Message**: fix IN clause caching
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `src/expr.rs` (modified, +22/-0)
 ```diff
-@@ -62,7 +62,7 @@ xattr = "1.0"
- libc = "0.2"
- 
- [target.'cfg(windows)'.dependencies]
--windows-sys = { version = "0.61", features = ["Win32_Security_Authorization", "Win32_Security", "Win32_Foundation", "Win32_Storage_FileSystem", "Win32_System_LibraryLoader"] }
-+windows-sys = { version = "0.61", features = ["Win32_Security_Authorization", "Win32_Security", "Win32_Foundation", "Win32_Storage_FileSystem", "Win32_System_LibraryLoader", "Win32_Globalization"] }
- 
- [profile.release]
- lto = true
-```
-
-**File**: `src/util/win_xattr.rs` (modified, +11/-2)
-```diff
-@@ -7,6 +7,7 @@
- use std::path::Path;
- 
- use windows_sys::Win32::Foundation::{HANDLE, INVALID_HANDLE_VALUE};
-+use windows_sys::Win32::Globalization::{CompareStringOrdinal, CSTR_EQUAL};
- use windows_sys::Win32::Storage::FileSystem::{
-     FindClose, FindFirstStreamW, FindNextStreamW, FindStreamInfoStandard, WIN32_FIND_STREAM_DATA,
- };
-@@ -159,7 +160,9 @@ pub fn has_named_ads(path: &Path, name: &str) -> bool {
- }
- 
- fn eq_ignore_case(a: &str, b: &str) -> bool {
--    a.chars().flat_map(char::to_uppercase).eq(b.chars().flat_map(char::to_uppercase))
-+    let a: Vec<u16> = a.encode_utf16().collect();
-+    let b: Vec<u16> = b.encode_utf16().collect();
-+    unsafe { CompareStringOrdinal(a.as_ptr(), a.len() as i32, b.as_ptr(), b.len() as i32, 1) == CSTR_EQUAL }
- }
- 
- /// Reads the content of a named alternate data stream as a UTF-8 string.
-@@ -221,7 +224,7 @@ mod tests {
-         fs::create_dir_all(&tmp).unwrap();
-         let file = tmp.join("tagged.txt");
-         fs::write(&file, "x").unwrap();
--        for stream in ["\u{e9}cole", "\u{444}\u{430}\u{439}\u{43b}"] {
-+        for stream in ["\u{e9}cole", "\u{444}\u{430}\u{439}\u{43b}", "stra\u{df}e", "\u{fb00}", "\u{131}"] {
-             let mut ads = fs::File::create(format!("{}:{}", file.display(), stream)).unwrap();
-             ads.write_all(b"v").unwrap();
+@@ -974,6 +974,15 @@ impl Expr {
+             }
+         } else if let Some(ref left) = self.left {
+             write_operand(out, left, mode)?;
++        } else if let Some(ref args) = self.args {
++            out.write_char('(')?;
++            for (i, arg) in args.iter().enumerate() {
++                if i > 0 {
++                    out.write_str(", ")?;
++                }
++                arg.render(out, mode)?;
++            }
++            out.write_char(')')?;
          }
-@@ -230,12 +233,18 @@ mod tests {
-         let cyrillic = has_named_ads(&file, "\u{424}\u{410}\u{419}\u{41b}");
-         let exact = has_named_ads(&file, "\u{e9}cole");
-         let missing = has_named_ads(&file, "\u{e9}col");
-+        let sharp_s = has_named_ads(&file, "STRASSE");
-+        let ligature = has_named_ads(&file, "FF");
-+        let dotless = has_named_ads(&file, "I");
-         let _ = fs::remove_dir_all(&tmp);
  
-         assert!(exact, "exact");
-         assert!(accented, "accented");
-         assert!(cyrillic, "cyrillic");
-         assert!(!missing, "missing");
-+        assert!(!sharp_s, "full case mapping of sharp s");
-+        assert!(!ligature, "full case mapping of a ligature");
-+        assert!(!dotless, "dotless i is not folded by NTFS");
+         if let Some(ref op) = self.arithmetic_op {
+@@ -1058,6 +1067,19 @@ mod tests {
+         assert_ne!(backslash.cache_key(), plain.cache_key());
      }
  
- }
++    #[test]
++    fn cache_key_includes_in_list_members() {
++        let mut txt_list = Expr::new();
++        txt_list.set_args(vec![Expr::value(String::from("txt"))]);
++        let mut md_list = Expr::new();
++        md_list.set_args(vec![Expr::value(String::from("md"))]);
++        let in_txt = Expr::op(Expr::field(Field::Extension), Op::In, txt_list);
++        let in_md = Expr::op(Expr::field(Field::Extension), Op::In, md_list);
++        assert_ne!(in_txt.cache_key(), in_md.cache_key());
++        assert_eq!(in_txt.cache_key(), "Extension In (\"txt\")");
++        assert_eq!(in_txt.to_string(), "Extension In (txt)");
++    }
++
+     #[test]
+     fn cache_key_separates_literals_fields_and_aliases() {
+         let literal = Expr::value(String::from("Name"));
 ```
 
 #### Recent Merged Pull Requests:
@@ -1882,7 +1705,7 @@ Observed empirical fixes and code patches:
 When implementing operations in `src/searcher.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jhspetersson/fselect. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `277c4890`: RANDOM. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b101ea5`: RANDOM. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/searcher.rs`.
@@ -1890,48 +1713,45 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    deferred_keys: HashSet<String>,
-    Pending(Box<PendingRow>),
-    values: HashMap<String, Variant>,
-            deferred_keys: Self::deferred_keys(query),
-    fn deferred_keys(query: &Query) -> HashSet<String> {
-        fn collect(expr: &Expr, keys: &mut HashSet<String>) {
-            keys.insert(expr.cache_key());
-            for child in expr.children() {
-                collect(child, keys);
-            }
+        let mut alias_dependent_keys = HashSet::new();
+        for (_, column) in required_columns {
+            Self::collect_alias_dependent_keys(column, current_alias, &mut alias_dependent_keys);
         }
-        let mut keys = HashSet::new();
-        for index in Self::deferred_columns(query) {
-            collect(&query.fields[index], &mut keys);
+                for scratch in scratches.iter_mut() {
+                    scratch.retain(|key, _| !alias_dependent_keys.contains(key));
+                let mut scratch = row.values.clone();
+                            scratch.entry(key.clone()).or_insert_with(|| value.clone());
+    fn collect_alias_dependent_keys(expr: &Expr, alias: &str, keys: &mut HashSet<String>) {
+        if expr.get_alias_references_in_subqueries(alias, true).is_empty() {
+            return;
         }
-        keys
+        keys.insert(expr.cache_key());
+        if expr.minus {
+            let mut bare = expr.clone();
+            bare.minus = false;
+            keys.insert(bare.cache_key());
+        }
+        for child in expr.children() {
+            Self::collect_alias_dependent_keys(child, alias, keys);
+        }
     }
 
-                    BufferedRow::Pending(pending) => self.render_pending(*pending, &mut lookup)?,
-        mut row: PendingRow,
-        let mut values = std::mem::take(&mut row.values);
-                let evaluated = self.evaluate_deferred(entry, &row, &mut values, &mut items);
-        values: &mut HashMap<String, Variant>,
-        let mut row = Row::entry(entry, &pending.file_info, &pending.root_path, values);
-            let result = match list.into_iter().next() {
-            };
-            row.values.insert(cache_key, result.clone());
-            return Ok(result);
+        let dependent = run("select name, t.z + random(0, 1) as a, random(0, 1) + 1 as b, 1 as z from __DIR__ as t where t.a <> t.b");
+        assert_eq!(dependent, Vec::<String>::new());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    Pending(PendingRow),
-                    BufferedRow::Pending(pending) => self.render_pending(pending, &mut lookup)?,
-        row: PendingRow,
-                let evaluated = self.evaluate_deferred(entry, &row, &mut items);
-        let mut values = HashMap::new();
-        let mut row = Row::entry(entry, &pending.file_info, &pending.root_path, &mut values);
-            return Ok(match list.into_iter().next() {
-            });
+                for (index, scratch) in scratches.iter_mut().enumerate() {
+                    if !self_contained[index] {
+                        scratch.clear();
+                    }
+                let mut seed = row.values.clone();
+                            seed.entry(key.clone()).or_insert_with(|| value.clone());
+                let mut scratch = seed.clone();
+                scratch.retain(|key, _| !seed.contains_key(key));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `277c4890` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b101ea5` are properly handled with clean fallback behavior.
