@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T08:56:42.699Z",
+  "last_updated": "2026-10-30T09:15:15.810Z",
   "total_verified_learnings": 1173,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -41599,8 +41599,8 @@
       "slug": "nvidia-cuda-rust",
       "platform": "github",
       "source_url": "https://github.com/NVIDIA/cuda-rust",
-      "source_version": "a4a939a9",
-      "content_hash": "6827f340668693dee5bcafa2cf33bde34c166aa1920eab97ac6643fcf5efcbe7",
+      "source_version": "76ac1021",
+      "content_hash": "7aa2cd9b892cdd1b8dccdac2b362172f7a1ae5c1ef698e8f1faf1b3626edac37",
       "dossier_path": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
       "promoted_rules": [
@@ -41648,6 +41648,21 @@
           "number": 4789,
           "title": "cuda-oxide): shared-memory i32/addrspace(3) codegen and CTA-local TMA without Sh",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5697,
+          "title": "Zero-Validity Invariant for Low-Level FFI Transmutations & GPU Allocators",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5698,
+          "title": "Multi-Dialect Pre-Analysis Constant Hoisting & Normalization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5699,
+          "title": "Closed-World Lowering Invariant for Non-Standard Address Spaces",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41655,7 +41670,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T15:22:48.168Z",
+      "verified_at": "2026-10-30T09:15:15.794Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -152263,6 +152278,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T08:56:42.680Z"
+    },
+    "rule-5697": {
+      "learning_id": "rule-5697",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5697,
+      "title": "Zero-Validity Invariant for Low-Level FFI Transmutations & GPU Allocators",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "76ac1021",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T09:15:15.794Z"
+    },
+    "rule-5698": {
+      "learning_id": "rule-5698",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5698,
+      "title": "Multi-Dialect Pre-Analysis Constant Hoisting & Normalization",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "76ac1021",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T09:15:15.794Z"
+    },
+    "rule-5699": {
+      "learning_id": "rule-5699",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5699,
+      "title": "Closed-World Lowering Invariant for Non-Standard Address Spaces",
+      "source_url": "https://github.com/NVIDIA/cuda-rust",
+      "source_version": "76ac1021",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T09:15:15.794Z"
     }
   },
   "aliases": {

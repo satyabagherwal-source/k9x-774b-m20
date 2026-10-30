@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "a4a939a9",
+    "sourceVersion": "76ac1021",
     "license": "Apache-2.0",
-    "contentHash": "6827f340668693dee5bcafa2cf33bde34c166aa1920eab97ac6643fcf5efcbe7",
-    "lastHarvestedAt": "2026-10-28T15:22:48.226Z",
+    "contentHash": "7aa2cd9b892cdd1b8dccdac2b362172f7a1ae5c1ef698e8f1faf1b3626edac37",
+    "lastHarvestedAt": "2026-10-30T09:15:15.899Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {

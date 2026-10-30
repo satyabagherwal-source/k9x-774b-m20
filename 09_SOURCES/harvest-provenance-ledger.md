@@ -6173,3 +6173,4 @@ Every entry in this ledger must capture:
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `71740ecb` | Multi-dimensional audit evidence | 2026-10-30T08:41:45.926Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `9072454f` | Multi-dimensional audit evidence | 2026-10-30T08:55:22.763Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `e70cdbcd` | Multi-dimensional audit evidence | 2026-10-30T08:56:42.779Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `76ac1021` | Multi-dimensional audit evidence | 2026-10-30T09:15:15.899Z |

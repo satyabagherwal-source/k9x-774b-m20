@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T08:56:42.789Z",
+  "last_updated": "2026-10-30T09:15:15.907Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "6827f340668693dee5bcafa2cf33bde34c166aa1920eab97ac6643fcf5efcbe7",
-      "verified_at": "2026-10-28T15:22:48.235Z",
+      "content_hash": "7aa2cd9b892cdd1b8dccdac2b362172f7a1ae5c1ef698e8f1faf1b3626edac37",
+      "verified_at": "2026-10-30T09:15:15.906Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T15:22:48.235Z"
+      "last_updated": "2026-10-30T09:15:15.906Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",

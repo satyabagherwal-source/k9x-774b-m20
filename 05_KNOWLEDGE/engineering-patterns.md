@@ -414889,3 +414889,301 @@ Simulate network fault injection where page faults return synthetic pending I/O 
 2. Inject an unresolved `TursoStatus.IO` generator and assert that execution terminates after exactly 1,000,000 cycles with the error `'getAllRows: exceeded 1000000 IO retries'`.
 
 ---
+
+
+---
+
+## 5697. Zero-Validity Invariant for Low-Level FFI Transmutations & GPU Allocators (Harvested from NVIDIA/cuda-rust)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Zero-Validity Invariant for Low-Level FFI Transmutations & GPU Allocators",
+  "source": "NVIDIA/cuda-rust",
+  "source_url": "https://github.com/NVIDIA/cuda-rust",
+  "source_version": "76ac1021",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T09:15:14.959Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nvidia-cuda-rust",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust) (Revision: `76ac1021`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Types exposed to raw device-to-host memory blits, zeroed GPU allocations (`cuMemAlloc` + `cuMemset`), or kernel scalar argument decoding MUST uphold the **All-Zero Bit Pattern Validity Invariant** (`0x00...00` represents an inhabited, valid bit pattern in Rust). Types with restricted discriminant ranges (e.g., standard Rust `enum`, `bool`, `char`, `NonZeroU*`) MUST NOT implement raw memory copy traits without custom validation guards, and procedural derive macros MUST fail compilation if applied to non-product types.
+
+**WHY**:
+Kernel launch pipelines use `DeviceBuffer::zeroed` to reserve and clear GPU memory via synchronous or asynchronous driver `memset` operations. If a type containing an invalid null discriminant (such as `enum Foo { A = 1, B = 2 }` or `bool` whose valid bit range is strictly `0x00` and `0x01`) is read back across the FFI boundary via `to_host_vec` or direct pointer dereference, LLVM immediately assumes unreachable paths, generating instantaneous Undefined Behavior (UB), branch elisions, and memory corruption without emitting panics.
+
+**WHEN TO APPLY**:
+Any cross-boundary FFI, CUDA/Vulkan/Metal driver abstraction, shared-memory buffer manager, IPC ring buffer, or hardware register serialization layer.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// In cuda-core-derive / src/device_copy.rs:
+// Reject sum types (enums) at compile-time within the proc-macro derive.
+pub fn impl_device_copy(input: &syn::DeriveInput, trait_path: proc_macro2::TokenStream) -> proc_macro2::TokenStream {
+    let type_ident = &input.ident;
+    match input.data {
+        syn::Data::Struct(ref data_struct) => generate_field_assertions(data_struct, trait_path, type_ident),
+        syn::Data::Union(ref data_union) => generate_union_assertions(data_union, trait_path, type_ident),
+        syn::Data::Enum(_) => {
+            syn::Error::new_spanned(
+                type_ident,
+                "DeviceCopy cannot be derived for enums: every bit pattern (including all-zero) \
+                 must be valid to prevent undefined behavior when materializing device memory."
+            ).to_compile_error()
+        }
+    }
+}
+
+// Generate zero-cost static trait boundary verification helpers:
+fn generate_field_assertions(
+    s: &syn::DataStruct, 
+    trait_path: proc_macro2::TokenStream, 
+    type_ident: &syn::Ident
+) -> proc_macro2::TokenStream {
+    let field_checks = s.fields.iter().map(|f| {
+        let ty = &f.ty;
+        quote::quote! { assert_device_copy::<#ty>(); }
+    });
+    
+    quote::quote! {
+        unsafe impl #trait_path for #type_ident {}
+        
+        #[doc(hidden)]
+        #[allow(non_snake_case, dead_code)]
+        fn __verify_device_copy_safety() {
+            fn assert_device_copy<T: #trait_path>() {}
+            #(#field_checks)*
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER DO THIS: Blindly implementing POD/Copy traits on Enums or NonZero primitives
+pub enum BadGpuStatus {
+    Success = 1,
+    Failure = 2,
+}
+
+// Catastrophic: DeviceBuffer::<BadGpuStatus>::zeroed() writes 0x00.
+// Reading this into host memory materializes an invalid discriminant, triggering LLVM branch miscompilation!
+unsafe impl DeviceCopy for BadGpuStatus {} 
+```
+
+**VERIFICATION METHOD**:
+Enforce compile-fail integration suites using `trybuild`:
+```rust
+#[test]
+fn compile_fail_enum_device_copy() {
+    let t = trybuild::TestCases::new();
+    t.compile_fail("tests/compile_fail/derive_enum_device_copy.rs");
+}
+```
+
+---
+
+
+---
+
+## 5698. Multi-Dialect Pre-Analysis Constant Hoisting & Normalization (Harvested from NVIDIA/cuda-rust)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Dialect Pre-Analysis Constant Hoisting & Normalization",
+  "source": "NVIDIA/cuda-rust",
+  "source_url": "https://github.com/NVIDIA/cuda-rust",
+  "source_version": "76ac1021",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T09:15:15.280Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nvidia-cuda-rust",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust) (Revision: `76ac1021`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Before invoking loop induction variable analysis or unroll engines in an optimizing compiler pipeline, the transformation driver MUST execute Sparse Conditional Constant Propagation (`SCCP`) and MUST hoist compile-time constants out of loop headers into preheaders. Analyses MUST NOT assume constant operands originate solely from native dialect constant ops; they MUST query both core language constants and synthetic constants materialized by downstream folding engines.
+
+**WHY**:
+Global Value Numbering (GVN) and common subexpression elimination deduplicate loop bounds (such as `N / 8` where `N` is a const generic parameter). When a nested loop reads the bound, GVN places the computation in the *outermost dominating loop header*. If constant folding runs after unrolling or induction analysis, the outer loop is rejected because "the loop header defines a value consumed by the body." Furthermore, if induction analysis only recognizes dialect-specific constants (`mir.constant`) and ignores generic builder constants (`builtin.constant`), the loop bound is marked "runtime only," preventing full unroll and forcing register arrays into GPU local memory (`.local`).
+
+**WHEN TO APPLY**:
+Compiler backends, JIT pipelines, MLIR transformation engines, and AST loop unrollers targeting strict register architectures (GPUs, DSPs).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// In mir-transforms/src/canonicalize.rs & unroll.rs
+pub(crate) fn hoist_header_constants(
+    ctx: &mut Context,
+    info: &LoopInfo,
+    id: LoopId,
+    preheader: Ptr<BasicBlock>,
+) -> bool {
+    let header = info.loops()[id].header;
+    let Some(anchor) = preheader.deref(ctx).get_terminator(ctx) else {
+        return false;
+    };
+
+    // Filter operations that represent pure constants from any dialect
+    let constants: Vec<Ptr<Operation>> = header
+        .deref(ctx)
+        .iter(ctx)
+        .filter(|&op| {
+            Operation::get_op::<MirConstantOp>(op, ctx).is_some()
+                || Operation::get_op::<ConstantOp>(op, ctx).is_some()
+        })
+        .collect();
+
+    // Relocate them to the preheader anchor to prevent invalid loop-carried dependencies
+    for &op in &constants {
+        op.unlink(ctx);
+        op.insert_before(ctx, anchor);
+    }
+    !constants.is_empty()
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER DO THIS: Querying only importer-specific constant ops without prior SCCP folding
+pub(crate) fn bad_induction_trip_count(ctx: &Context, v: Value) -> Option<i128> {
+    let def = v.defining_op()?;
+    // BUGS: Misses builtin.constant created by SCCP!
+    // Fails on folded const generic division (N / 8)!
+    let c = Operation::get_op::<MirConstantOp>(def, ctx)?; 
+    Some(c.get_attr_value(ctx)?.value().to_i128())
+}
+```
+
+**VERIFICATION METHOD**:
+Verify that intermediate IR generated for const-generic nested loops emits zero `.local` memory operations:
+```bash
+# Automated PTX shape assertion:
+cargo oxide build --example unroll_smoke
+python3 -c '
+import re, sys
+ptx = open("target/ptx/unroll_smoke.ptx").read()
+assert not re.search(r"(\.local\b|ld\.local|st\.local)", ptx), "Local memory leak detected!"
+'
+```
+
+---
+
+
+---
+
+## 5699. Closed-World Lowering Invariant for Non-Standard Address Spaces (Harvested from NVIDIA/cuda-rust)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Closed-World Lowering Invariant for Non-Standard Address Spaces",
+  "source": "NVIDIA/cuda-rust",
+  "source_url": "https://github.com/NVIDIA/cuda-rust",
+  "source_version": "76ac1021",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T09:15:15.626Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nvidia-cuda-rust",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust) (Revision: `76ac1021`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When lowering complex aggregate types across hardware-specific address spaces (e.g., CUDA `AS3` shared memory), compilers MUST NOT rely on local type conversion or deduce carrier storage types ad-hoc from converted operands. Lowering MUST execute a global, pre-pass reachability analysis over the entire function graph, verifying every consumer. If and only if the full address-use graph is valid, physical lowering attributes MUST be committed transactionally. Any untracked operation (indirect branch, unmodeled cast, raw pointer arithmetic) MUST fail closed before generating backend IR.
+
+**WHY**:
+GPU architectures impose distinct physical bitwidths and ABI constraints on pointers depending on their address space (e.g., 32-bit offset inside `.shared` space vs 64-bit generic pointer). Allowing an `AS3` pointer to pass through a local struct projection without verified, synchronized layout transforms leads to LLVM type-mismatch assertion crashes or, worse, miscalculated `GetElementPtr` byte offsets that silently overwrite adjacent shared memory partitions.
+
+**WHEN TO APPLY**:
+Hardware compilers, embedded systems targeting banked SRAM/TCM, graphics shaders, and heterogeneous accelerators.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// In mir-lower/src/packed_shared_local_storage.rs
+#[derive(Default)]
+pub struct CarrierFactPlan {
+    storage_types: Vec<(Ptr<Operation>, TypeHandle)>,
+    gep_source_types: Vec<(Ptr<Operation>, TypeHandle)>,
+    projection_alignments: Vec<(Ptr<Operation>, u32)>,
+}
+
+impl CarrierFactPlan {
+    pub fn commit(self, ctx: &mut Context) {
+        for (op, ty) in self.storage_types {
+            op.deref_mut(ctx).set_attr(CARRIER_STORAGE_TYPE_KEY, TypeAttr::new(ty));
+        }
+        for (op, ty) in self.gep_source_types {
+            op.deref_mut(ctx).set_attr(CARRIER_GEP_SOURCE_TYPE_KEY, TypeAttr::new(ty));
+        }
+        for (op, align) in self.projection_alignments {
+            llvm_export::ops::set_address_alignment(ctx, op, align);
+        }
+    }
+}
+
+// Closed-world validation pass:
+pub fn validate_and_plan_carrier_storage(ctx: &Context, func: Ptr<Operation>) -> Result<CarrierFactPlan, CompileError> {
+    let mut plan = CarrierFactPlan::default();
+    for op in func.deref(ctx).iter_all_ops() {
+        if is_carrier_address_use(op, ctx) {
+            if !is_provably_safe_projection(op, ctx) {
+                // FAIL CLOSED: Never attempt partial fallback lowering!
+                return Err(CompileError::UnsafeCarrierEscape(op));
+            }
+            plan.record_safe_fact(op, ctx);
+        }
+    }
+    Ok(plan)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER DO THIS: Speculatively recovering carrier properties during lowering
+pub fn convert_gep(ctx: &mut Context, op: Ptr<Operation>) -> Result<()> {
+    // ANTI-PATTERN: Inferring parent physical carrier layout from an incoming LLVM operand!
+    let incoming_ptr = op.deref(ctx).get_operand(0);
+    let inferred_type = incoming_ptr.get_type(ctx); 
+    // If incoming_ptr was converted from another dialect pass, this pointer 
+    // now lacks AS3 provenance, leading to incorrect stride and memory corruption.
+}
+```
+
+**VERIFICATION METHOD**:
+Automated IR verifier that asserts carrier-annotated ops contain verified physical attributes:
+```rust
+#[test]
+fn test_carrier_lowering_fails_closed_on_unmodeled_use() {
+    let mut ctx = Context::default();
+    let module = build_invalid_carrier_escape_module(&mut ctx);
+    let result = validate_and_plan_carrier_storage(&ctx, module);
+    assert!(result.is_err(), "Must reject unmodeled carrier escape");
+}
+```
+
+---
