@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `d9409618`  
+> **Source Version**: `22cd0239`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T02:00:19.328Z  
+> **Timestamp**: 2026-10-30T19:05:44.140Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T02:00:18.207Z  
+> **Harvest Timestamp**: 2026-10-30T19:05:43.796Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17340 stars
+- **Stars / Engagement**: 17685 stars
 
 ---
 
@@ -1885,11 +1885,13 @@ pub use xerj_common::Result;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2578** (2026-10-29): **security: CLI/MCP silently auto-discovers an admin key from an unrelated project's data dir and never says where the key came from (rc.99)**
-  *Symptoms*: **Problem (rc.99, Linux x86_64):** the CLI/MCP admin-key auto-discovery silently picked up the admin key from **another project's data directory** (`~/Projects/<other-project>/data/admin.key`). The repo the agent was working in had its own unused `.xerj-data/`. Nothing in the output said where the key came from.  **What happened** - The MCP server was configured with only `XERJ_URL` (no `XERJ_API_KEY`) against an auth-on node on 127.0.0.1:9200. - Every tool call succeeded because the CLI found and used the other project's `admin.key`. - The agent reasonably assumed the node belonged to the repo it was in. That is wrong, and it means writes (autoindex) can land in a node owned by another project with full admin credentials.  **Why it matters (security/safety):** an admin credential is chosen implicitly from a directory unrelated to the current working tree, and the choice is invisible. A user or agent can't tell which node or credential they are acting with, and a stray `admin.key` anywhere in the search path grants admin to whatever process runs `xerj`.  **Expected** - Print where the key came from (for example `auth: admin key from <path>`) on stderr and in MCP diagnostics whenever the key is auto-discovered. - Restrict discovery to the node's own data dir (as reported by the node, or set by `--data-dir`/config), or require explicit opt-in beyond the current project. Warn when the discovered key's data dir isn't the one the node at `XERJ_URL` is running from. - Document the 
+- **Issue #2654** (2026-10-29): **[bug]: constant_score inside a bool should loses its score after a flush**
+  *Symptoms*: Written by an AI coding agent (Claude Code), run by @jelbirt, who has reviewed this change.  ### XERJ version  xerj v1.0.0-rc.100 (code unchanged on `main` 2c1609d18)  ### How did you install / run XERJ?  Prebuilt release binary  ### Operating system & architecture  Ubuntu 24.04.3 x86_64 (WSL2)  ### Steps to reproduce  ```shell xerj --insecure --port 9390 -d ./data & U=http://localhost:9390; J='content-type: application/json' curl -s -XPUT "$U/cs" -H "$J" -d '{"mappings":{"properties":{"t":{"type":"text"}}}}' curl -s -XPUT "$U/cs/_doc/1?refresh=true" -H "$J" -d '{"t":"alpha beta"}' curl -s -XPUT "$U/cs/_doc/2?refresh=true" -H "$J" -d '{"t":"alpha"}' Q='{"query":{"bool":{"must":[{"match":{"t":"alpha"}}],"should":[{"constant_score":{"filter":{"match":{"t":"beta"}},"boost":1000}}]}}}' curl -s "$U/cs/_search?filter_path=hits.hits._id,hits.hits._score" -H "$J" -d "$Q" curl -s -XPOST "$U/cs/_flush" curl -s "$U/cs/_search?filter_path=hits.hits._id,hits.hits._score" -H "$J" -d "$Q" ```  ### Expected behavior  Before and after the flush, doc 1 scores its `must` score plus 1000 and doc 2 its `must` score (the bare `must` gives 0.16044301 and 0.2111092). A `constant_score` scores every match exactly `boost`, and `bool` adds matching `should` scores.  ### Actual behavior  ``` before flush: {"hits":{"hits":[{"_id":"1","_score":1001.6932},{"_id":"2","_score":1.6931472}]}} after flush:  {"hits":{"hits":[{"_id":"1","_score":0.7704125},{"_id":"2","_score":0.2111092}]}} ```  After the flush th
 
-- **Issue #2491** (2026-10-29): **mcp: search response exceeds agent tool-output limits (no default size cap), result spilled to temp file (rc.99)**
-  *Symptoms*: An agent using xerj through MCP reported that a single search response was too large for its host's tool-output limit, so the host spilled the result to a temp file and the agent had to dig the target passage back out of it.  **Report (rc.99, linux x86_64, Copilot SDK in VS Code)** - Task: local code search for `calcular_derivada` and `Vz` in a project (ARCTURUS) via the xerj MCP server. - Verdict: "XERJ search ran successfully, but its response exceeded the tool output limit and was saved to a temporary file; exact target passage is being extracted from that result."  **Problem** The MCP search tool's default response isn't bounded to fit typical agent tool-output limits. Agents then lose the inline result and burn extra steps/tokens re-reading it.  **Possible fix directions (to verify)** - Cap MCP search output by default (total bytes/tokens), trimming passages to a window around the match and dropping lower-ranked hits first. - Report truncation in the response (e.g. "N more hits, re-run with `k`/offset or a narrower query") instead of overflowing. - Expose a size/budget parameter on the MCP search tool.  The report didn't include the query options, hit count or response size, so the exact overflow size is unknown.  <sub>Mirrored by Xerj Merger. R2 key: `reports/2026-10-27/1793065899831-c6b44866.json` · user agent: `xerj-feedback`</sub> 
+- **Issue #2579** (2026-10-29): **def: TS/JS const bound to a factory call (zustand `const useX = create(...)`) is not extracted, so xerj_def returns 0 hits (rc.100)**
+  *Symptoms*: **Problem (rc.100, macOS aarch64):** in a TS/React monorepo, `xerj_def` returns **0 hits** for a zustand store declared as a const assignment from a factory call, e.g.  ```ts export const useUserStore = create<UserState>()((set) => ({ ... })); ```  The agent had to fall back to grep. Other definitions in the same repo (components and hooks such as `UserInfoCapsule`, `useUserInfoSync`) were found correctly with definition-first ranking.  **Expected:** a top-level `const`/`export const` bound to a call expression (`create(...)`, `createSlice(...)`, `defineStore(...)`, `styled.x\`\``, etc.) is extracted as a definition (kind `const`/`variable`), so `xerj_def useUserStore` finds it. These factory-built stores and hooks are how many TS/JS codebases define their main state objects.  Related: closed #293 (exported module const captured in TS but not JS).  <sub>From an agent field report (claude-opus-5-5, xerj rc.100). R2 key: `reports/2026-10-27/1793114455560-0d27ef3c.json`.</sub> 
+  **Post-Mortem & Fix Analysis**:
+  > Checked this against current `main` (2c1609d18), Linux x86_64, with a small TS/JS repo indexed by `xerj autoindex`.  `xerj def` now finds every one of these as a `[const]` definition:  | Declaration | rc.100 | main | |---|---|---| | `export const useUserStore = create<UserState>()((set) => ({...}))` (the form in this report) | found | found | | `const useCartStore = create(...); export { useCartStore }` (exported in a separate statement) | **not found** | found | | same, in `.tsx` and `.js` files | **not found** | found | | `export const counterSlice = createSlice({...})` | – | found | | `export const useAuthStore = defineStore('auth', {...})` | – | found | | ``export const FancyButton = styled.button`...` `` | – | found | | `export const useBigStore = create<S>()(devtools(persist(...)))` (nested wrappers over several lines) | – | found |  The inline `export const` form was already found on rc.100 in my test, so the 0 hits in this report most likely came from the separate-export form (
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1906,467 +1908,1120 @@ pub use xerj_common::Result;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8ab6ae27` (2026-10-29)
-**Commit Message**: fix(mcp): split xerj_search's union-typed `query` into `query` and `query_dsl`
+### Incident Patch 1: `12d2d3b1` (2026-10-30)
+**Commit Message**: fix(engine): a lone background merge waits until its reservation fits (#2709)
 
-`xerj_search` typed `query` as `["object", "string"]`: plain words, or a
-whole ES query-DSL clause. It is the only tool in the set with a union-typed
-primary argument, and it is the only one GLM-5.3 failed on — the model wrote
-the string value unquoted inside the union field, so one transport rejected
-the turn as invalid JSON and the OpenAI-compatible path recorded `{}` and got
-a 0-hit success. Every scalar-schema sibling tool round-tripped (#2549).
+Refs #2427
 
-So `query` is now a plain string and the DSL moved to `query_dsl` (an
-object). Neither field is union-typed, so there is nothing for a model to
-serialize wrongly, and the two are mutually exclusive. `query_dsl` keeps the
-structured path that `query: {…}` used to carry — `filter`, `bool`, `knn`,
-`match_all` — so nothing is lost.
+Motivation: in the 1 GB release gate (3,072 MB cap) the ingest node
+peaked at 3.5-3.8 GB with 38-47 breaker trips, and the restarted
+search node at 5.7-6.0 GB. #2492's notes show one merge reserving
+3,985 MB on that 3,072 MB cap.
 
-One of the two is now required, which also fixes the second signature in the
-report: an empty-argument call used to fall through to `match_all` and return
-0 hits with no error. It now fails naming both fields.
+Root cause: `merge_budget::decide_merge_admission` admitted any batch
+when no other merge was in flight (`in_flight == 0`), whatever its
+reservation, so long as the breaker was not engaged. The #2485 lone
+wait only compared RSS to the merge-pool ceiling, not RSS plus the
+batch's own reservation. A batch bigger than the headroom therefore
+started as soon as RSS dipped under the ceiling and carried the node
+past it. The wait clock was also reset whenever RSS was under the
+ceiling, so a batch that never fit could restart its wait forever.
 
-A caller that still sends an object as `query` gets an error that names
-`query_dsl` rather than a silent behaviour change.
+Fix:
+- `decide_merge_admission` takes `headroom_wait_expired`. A lone
+  background batch is admitted only when `rss + reservation` is under
+  the ceiling, or after the bounded wait (MERGE_HEADROOM_MAX_WAIT,
+  30 s) ran out, so merging still always makes progress.
+- `lone_merge_waits_for_headroom` takes the reservation into account.
+-
 
-
-**File**: `README.md` (modified, +8/-1)
+**File**: `CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -495,7 +495,7 @@ Twenty-one tools are exposed. Eleven are thin proxies over an endpoint XERJ alre
+@@ -47,6 +47,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- | Tool | What it does |
- |---|---|
--| `xerj_search` | ES query-DSL search over an index |
-+| `xerj_search` | keyword search over an index, from plain words (`query`) or an ES query-DSL clause (`query_dsl`) |
- | `xerj_semantic_search` | recall by meaning over a `semantic_text` field, the query embedded server-side (default embedder is lexical feature-hashing, not neural, unless the node runs `--embed-mode neural`) |
- | `xerj_vector_search` | kNN over a `dense_vector` field |
- | `xerj_hybrid_search` | RRF or linear fusion of sub-queries |
-@@ -511,6 +511,13 @@ pattern instead; non-empty `index` and `prefix` cannot be combined. An empty
- prefix, a prefix with no `[a-z0-9]` character, or a prefix that cannot name an
- index is an error. With neither argument, the tool searches `ax-*`.
+ ### Fixed
  
-+`query` is a plain string, and a structured ES query-DSL clause goes in
-+`query_dsl` instead — `{"index":"docs","query_dsl":{"match_all":{}}}`. One of
-+the two is required and they cannot be combined, so a call with neither is an
-+error naming both rather than a silent `match_all` that returns nothing. The
-+fields are separate because a union-typed `query` (`["object","string"]`) is
-+what made some models emit invalid arguments for this tool alone (#2549).
-+
- `xerj_def` finds local definitions with the same query, ranking and location deduplication
- as `xerj def --json`. For example, `{"symbol":"Cache","prefix":"project","kind":"struct","lang":"rust","k":5}`
- searches `project-*`; `index` can replace `prefix`, with the same scope rules as `xerj_search`.
++- A background merge no longer starts alone when its own memory reservation
++  would carry the node past the merge-pool ceiling. It waits (at most 30 s)
++  while the next batches are planned small enough to fit, so merging still
++  makes progress without the overshoot behind the 1 GB gate's 3.5 GB ingest
++  peak on a 3,072 MB cap (Refs #2427).
+ - Search under a memory cap: when the segment hydration cache is full, a query that has to build a segment's stored slices or FTS reader outside the cache now reserves that memory from a separate read budget (`XERJ_READ_TRANSIENT_MB`, default a tenth of `XERJ_MAX_PROCESS_MEMORY_MB`). It waits up to `XERJ_READ_TRANSIENT_WAIT_MS` (default 5 s) for room instead of stacking whole decompressed sections on top of each other. Background cache warms that the full cache would refuse are skipped. While the memory breaker is engaged, its drain still flushes and purges on every tick but releases the read caches at most once per `XERJ_BREAKER_CACHE_RELEASE_SECS` (default 30 s), so queries no longer re-hydrate cold every two seconds. `GET /_nodes/stats` reports the budget under `indices.read_transient_budget`. (Refs #2427, #1122)
+ - Opt-in lexical `judge` now matches CJK characters and adjacent pairs inside
+   uninterrupted Chinese/Japanese/Korean text instead of treating the whole
 ```
 
-**File**: `engine/crates/xerj-mcp/src/lib.rs` (modified, +157/-48)
+**File**: `engine/crates/xerj-engine/src/governor.rs` (modified, +81/-7)
 ```diff
-@@ -962,8 +962,16 @@ pub fn tool_specs_with(include_hub: bool) -> Value {
-                          is omitted)."
-                     },
-                     "query": {
--                        "type": ["object", "string"],
--                        "description": "Plain string (definition-first code search) or ES query-DSL clause. Omit for match_all.",
-+                        "type": "string",
-+                        "description": "What to search for, in plain words — the definition-first code search \
-+                         `xerj search` runs. REQUIRED unless you pass `query_dsl` instead."
-+                    },
-+                    "query_dsl": {
-+                        "type": "object",
-+                        "description": "An Elasticsearch query-DSL clause, used INSTEAD of `query` when the \
-+                         search needs structure plain words cannot express — a `filter`, a `bool`, a `knn`, \
-+                         a field-scoped `match`, an explicit `match_all`. Cannot be combined with `query`. \
-+                         The engine's own order is kept."
-                     },
-                     "size": { "type": "integer", "description": "Max hits to return (default engine value)." },
-                     "from": { "type": "integer", "description": "Offset for pagination." },
-@@ -2517,30 +2525,64 @@ fn build_search_with_mapping(
-     let index = search_index(args)?;
-     let mut body = serde_json::Map::new();
-     let mut plain_string = false;
--    match args.get("query") {
--        // A plain string gets the definition-first shape `xerj search` uses
--        // (measured 38%→94% correct-file-at-rank-1 on cross-file lookups vs a
--        // bare body match). Agents should never have to hand-write ES DSL for
--        // the common "find me this code" case; the DSL object path stays
--        // untouched for structured queries.
--        Some(Value::String(q)) if !q.trim().is_empty() => {
--            plain_string = true;
--            // #1961: the mapping-aware body the CLI builds (#1601/#1602),
--            // including the #1759 exact-phrase leg. A prose corpus drops the
--            // `defs`/`name` clauses instead of 400ing on them; a code corpus
--            // (or an unreadable mapping) keeps the historical shape. `10`
--            // only fills the discarded `size` member.
--            let mapped = mapping.and_then(mapped_property_names);
--            let numeric = mapping.map(numeric_property_names);
--            let built = search_query_body_for_mapping(q, 10, mapped.as_ref(), numeric.as_ref());
--            body.insert("query".into(), built["query"].clone());
-+    // #2549: `query` is a plain string and `query_dsl` is the structured
-+    // variant, so neither is union-typed. A model whose function-calling
-+    // serialized a string into the old `["object", "string"]` field unquoted
-+    // produced invalid JSON on one transport and `{}` on another, while every
-+    // scalar-schema sibling tool round-tripped. The two fields are also
-+    // mutually exclusive and one of them is required, so an empty-argument
-+    // call fails loudly instead of searching for nothing and returning 0 hits.
-+    let dsl = match args.get("query_dsl") {
-+        None | Some(Value::Null) => None,
-+        Some(v @ Value::Object(_)) => Some(v),
-+        Some(_) => {
-+            return Err("`query_dsl` must be a JSON object, for example \
-+                        {\"query_dsl\": {\"match_all\": {}}}"
-+                .into())
+@@ -737,24 +737,44 @@ impl ResourceGovernor {
+         let engaged = self.memory_breaker_engaged();
+         let mut ledger = self.merge_ledger.lock().unwrap_or_else(|e| e.into_inner());
+         // #2427 ingest overshoot: a lone background batch does not start
+-        // inside the read reserve; it waits (bounded) for the drain. See
+-        // `merge_budget::lone_merge_waits_for_headroom`.
+-        if !forced && ledger.in_flight == 0 && watermark > 0 && observed >= watermark {
++        // inside the read reserve, and does not start when its own
++        // reservation would carry RSS into it (the 1 GB gate's ingest node
++        // peaked at 3.5 GB against a 3,072 MB cap this way). It waits,
++        // bounded, for the drain; meanwhile the next batches are planned
++        // to fit the headroom. See `merge_budget::lone_merge_waits_for_headroom`
++        // and `merge_budget::pressure_cap_for_headroom`.
++        let lone_background = !forced && ledger.in_flight == 0 && watermark > 0 && observed > 0;
++        let mut headroom_wait_expired = false;
++        if lone_background && observed.saturating_add(bytes) >= watermark {
+             let since = *ledger
+                 .headroom_wait_since
+                 .get_or_insert_with(std::time::Instant::now);
+             if crate::merge_budget::lone_merge_waits_for_headroom(
+                 observed,
+                 watermark,
++                bytes,
+                 ledger.in_flight,
+                 forced,
+                 since.elapsed(),
+                 self.merge_headroom_max_wait,
+             ) {
++                if observed < watermark {
++                    ledger.pressure_cap = crate::merge_budget::pressure_cap_for_headroom(
++                        ledger.pressure_cap,
++                        input_bytes,
++                        bytes,
++                        watermark - observed,
++                    );
++                }
+                 return None;
+             }
++            // Waited the full bound: start it anyway so merging progresses.
++            headroom_wait_expired = true;
+         } else if observed < watermark {
+-            // Headroom came back: the next wait starts its own clock.
++            // Headroom came back: the next wait starts its own clock. Only
++            // when the batch fits, not merely when RSS is under the
++            // ceiling; otherwise a batch that never fits restarts the clock
++            // on every pass and never runs.
+             ledger.headroom_wait_since = None;
          }
--        Some(q) if !q.is_null() => {
--            body.insert("query".into(), q.clone());
-+    };
-+    let plain = match args.get("query") {
-+        None | Some(Value::Null) => None,
-+        Some(Value::String(q)) if q.trim().is_empty() => None,
-+        Some(Value::String(q)) => Some(q.clone()),
-+        Some(_) => {
-+            return Err(
-+                "`query` must be plain search text; pass a structured ES query-DSL \
-+                        clause as `query_dsl`, for example {\"query_dsl\": {\"match_all\": {}}}"
-+                    .into(),
-+            )
+         if !crate::merge_budget::decide_merge_admission(
+@@ -765,6 +785,7 @@ impl ResourceGovernor {
+             engaged,
+             bytes,
+             forced,
++            headroom_wait_expired,
+         ) {
+             return None;
          }
--        _ => {
--            body.insert("query".into(), json!({ "match_all": {} }));
-+    };
-+    if let Some(dsl) = dsl {
-+        if plain.is_some() {
-+            return Err(
-+                "pass either `query` (plain words) or `query_dsl` (an ES query-DSL \
-+                        clause), not both"
-+                    .into(),
-+            );
-         }
-+        body.insert("query".into(), dsl.clone());
-+    } else if let Some(q) = plain {
-+        // A plain string gets the definition-first shape `xerj search` uses
-+        // (measured 38%→94% correct-file-at-rank-1 on cross-file lookups vs a
-+        // bare body match). Agents should never have to hand-write ES DSL for
-+        // the common "find me this code" case; `query_dsl` stays available for
-+        // structured queries.
-+        plain_string = true;
-+        // #1961: the mapping-aware body the CLI builds (
-```
-
-**File**: `landing/docs/agents/schemas/mcp-tools.json` (modified, +6/-5)
-```diff
-@@ -152,11 +152,12 @@
-             "description": "Autoindex prefix, resolved by the same function as `xerj search --prefix` and `xerj autoindex --prefix`: lower-case [a-z0-9] runs joined by '-', so `project` searches `project-*` and `My_Proj` searches `my-proj-*`. A trailing `-*` is dropped. Whitespace is trimmed. An empty prefix, a prefix with no [a-z0-9] character, or a prefix that cannot name an index is an error before any request. Cannot be combined with a non-empty `index`. With neither argument, searches `ax-*` (the CLI default when `--prefix` is omitted)."
-           },
-           "query": {
--            "type": [
--              "object",
--              "string"
--            ],
--            "description": "Plain string (definition-first code search) or ES query-DSL clause. Omit for match_all."
-+            "type": "string",
-+            "description": "What to search for, in plain words — the definition-first code search `xerj search` runs. REQUIRED unless you pass `query_dsl` instead."
-+          },
-+          "query_dsl": {
-+            "type": "object",
-+            "description": "An Elasticsearch query-DSL clause, used INSTEAD of `query` when the search needs structure plain words cannot express — a `filter`, a `bool`, a `knn`, a field-scoped `match`, an explicit `match_all`. Cannot be combined with `query`. The engine's own order is kept."
-           },
-           "size": {
-             "type": "integer",
-```
-
----
-
-### Incident Patch 2: `9edb4f59` (2026-10-29)
-**Commit Message**: Integrate the feedback fork fix and its real rollback control
-
-Preserve the original #2598 change and the strengthened failure-path test. The mock accepts the supported GitHub CLI fork arguments, leaves remote creation to the implementation and sends pushes to a nonexistent local path. Full composed validation follows before merge.
-
-**File**: `engine/crates/xerj-autoindex/src/feedback.rs` (modified, +64/-28)
-```diff
-@@ -439,7 +439,8 @@ pub fn pr_commands(d: &Draft) -> String {
-          # Run these in a clone of xerj-org/xerj, not in the project you are working in.\n\
-          git clone https://github.com/xerj-org/xerj.git\n\
-          cd xerj\n\
--         gh repo fork xerj-org/xerj --remote --remote-name xerj-fork\n\
-+         gh repo fork xerj-org/xerj --clone=false\n\
-+         git remote add xerj-fork https://github.com/YOUR_LOGIN/xerj.git\n\
-          xerj feedback{agent_line} \\\n\
-          \x20 --used-for {used_for:?} --pointed-at {pointed_at:?} \\\n\
-          \x20 --verdict {verdict:?} --numbers {numbers:?} \\\n\
-@@ -912,43 +913,55 @@ fn has_push_rights() -> Result<bool, String> {
+@@ -4046,8 +4067,10 @@ mod tests {
+         );
+ 
+         // A big merge starts on a quiet node and reserves about half the
+-        // limit: the merge budget is held.
+-        let base = limit / 2;
++        // limit: the merge budget is held. The node is quiet enough that
++        // the reservation fits under the merge pool, which a lone merge
++        // now needs (or a full bounded wait).
++        let base = limit / 4;
+         g.refresh(0, base, 0);
+         let input = (limit / 2) / crate::merge_budget::MERGE_WORKING_SET_NUMERATOR;
+         let merge = g
+@@ -4062,7 +4085,7 @@ mod tests {
+         // The merge allocates its working set: RSS goes past the hard limit.
+         // Its working set plus a little other growth takes RSS past the hard
+         // limit, while the non-merge part stays well under it.
+-        let other = limit / 16;
++        let other = limit / 4 + limit / 16;
+         g.refresh(0, base + held + other, 0);
+         assert!(base + held + other >= limit);
+         assert!(g.memory_breaker_engaged());
+@@ -4558,6 +4581,57 @@ mod tests {
+         drop(late);
      }
- }
  
--/// `gh repo fork` adds the `xerj-fork` remote. A remote that is already there
--/// is enough — forking twice would fail on the second run.
-+/// Make sure the `xerj-fork` remote points at the caller's fork. A remote that
-+/// is already there is enough. Recent `gh` releases reject `--remote` when a
-+/// repository argument is given (#2596), so fork without it (a no-op when the
-+/// fork exists) and add the remote ourselves.
- fn ensure_fork(dir: Option<&Path>) -> Result<(), String> {
-     if git_config_remote_exists(dir) {
-         return Ok(());
++    /// #2427 1 GB gate on `0eaa8af9`, ingest node (3.5 GB peak, 47 breaker
++    /// trips against a 3,072 MB cap): with nothing else merging, a batch
++    /// started whenever RSS was under the merge-pool ceiling, even when its
++    /// own reservation was larger than the room left. Now it waits while
++    /// it does not fit, the next batches are planned to the headroom, and
++    /// the wait clock is not restarted by RSS merely being under the
++    /// ceiling, so the bounded wait still guarantees it runs.
++    #[test]
++    fn a_lone_merge_whose_reservation_exceeds_the_headroom_waits_and_shrinks() {
++        let mut cfg = Config::default();
++        cfg.limits.max_total_memtable_mb = 0;
++        cfg.limits.memory_watermark_percent = 95;
++        let mut g = build(&cfg);
++        let ceiling = g.merge_pool_ceiling_bytes();
++        assert!(ceiling > 0, "this test needs a live RSS watermark");
++        let headroom = 64 * 1024 * 1024;
++        let rss = ceiling - headroom;
++        g.refresh(0, rss, 0);
++        assert!(!g.memory_breaker_engaged());
++
++        // Its reservation alone is 
+```
+
+**File**: `engine/crates/xerj-engine/src/merge_budget.rs` (modified, +192/-16)
+```diff
+@@ -167,15 +167,26 @@ pub fn merge_reservation_bytes(planned_input_bytes: u64, on_disk_bytes: u64) ->
+ ///
+ /// * `watermark == 0` (breaker off) or `observed_rss == 0` (no probe):
+ ///   start.
+-/// * No merge in flight anywhere in the process: start one, so merging can
+-///   always make progress, unless the breaker is engaged and the merge is a
+-///   background one. A `forced` merge (`_forcemerge`) is still allowed as
+-///   the single in-flight merge while engaged; it is a deliberate operator
+-///   request and it waits on its own.
++/// * No merge in flight anywhere in the process:
++///   * a `forced` merge (`_forcemerge`) starts, engaged or not; it is a
++///     deliberate operator request and it waits on its own;
++///   * a background merge does not start while the breaker is engaged;
++///   * otherwise a background merge starts only if its reservation fits:
++///     `observed_rss + request` stays under the watermark. This is the
++///     headroom check the lone merge used to skip (#2427, 1 GB gate on
++///     `0eaa8af9`: the ingest node launched lone batches whose reservation
++///     was larger than the room left and peaked at 3.5 GB against a
++///     3,072 MB cap). Progress is still guaranteed:
++///     `headroom_wait_expired` admits the batch once the governor has held
++///     lone merges back for [`MERGE_HEADROOM_MAX_WAIT`], and in the
++///     meantime the governor shrinks the next batches to the headroom
++///     ([`pressure_cap_for_headroom`]) so a smaller batch usually fits
++///     long before that.
+ /// * Breaker engaged: defer. Background merges are the one memory consumer
+ ///   the node can postpone, so they wait for the drain.
+ /// * Otherwise start only if `observed_rss + reserved + request` stays under
+ ///   the watermark.
++#[allow(clippy::too_many_arguments)]
+ pub fn decide_merge_admission(
+     watermark: u64,
+     observed_rss: u64,
+@@ -184,12 +195,19 @@ pub fn decide_merge_admission(
+     breaker_engaged: bool,
+     request: u64,
+     forced: bool,
++    headroom_wait_expired: bool,
+ ) -> bool {
+     if watermark == 0 || observed_rss == 0 {
+         return true;
      }
--    if run_cmd(
-+    if !run_cmd(
-         dir,
-         "gh",
-         &[
-             "repo".into(),
-             "fork".into(),
-             "xerj-org/xerj".into(),
--            "--remote".into(),
--            "--remote-name".into(),
-+            "--clone=false".into(),
-+        ],
-+    ) {
-+        return Err("`gh repo fork xerj-org/xerj --clone=false` failed".into());
-+    }
-+    let login = gh_login()?;
-+    if !run_cmd(
-+        dir,
-+        "git",
-+        &[
-+            "remote".into(),
-+            "add".into(),
-             "xerj-fork".into(),
-+            format!("https://github.com/{login}/xerj.git"),
-         ],
-     ) {
--        // A fork that lags main would refuse a push from a shallow clone.
--        // Best effort: a failure here shows up as a failed push.
--        if let Ok(login) = gh_login() {
--            let _ = run_cmd(
--                dir,
--                "gh",
--                &[
--                    "repo".into(),
--                    "sync".into(),
--                    format!("{login}/xerj"),
--                    "--branch".into(),
--                    "main".into(),
--                ],
--            );
--        }
--        Ok(())
--    } else {
--        Err("`gh repo fork xerj-org/xerj --remote --remote-name xerj-fork` failed".into())
-+        return Err(format!(
-+            "`git remote add xerj-fork https://github.com/{login}/xerj.git` failed"
-+        ));
-     }
-+    // A fork that lags main would refuse a push from a shallow clone.
-+    // Best effort: a failure here shows up as a failed push.
-+    let _ = run_cmd(
-+        dir,
-+        "gh",
-+        &[
-+            "repo".into(),
-+            "sync".into(),
-+            format!("{login}/xerj"),
-+            "--branch".into(),
-+            "main".into(),
-+        ],
-+    );
-+    Ok(())
- }
- 
- fn git_config_remote_exists(dir: Option<&Path>) -> bool {
-@@ -1980,7 +1993,8 @@ mod tests {
-         let commands = pr_commands(&filled);
-         for needle in [
-             "git clone https://github.com/xerj-org/xerj.git",
--            "gh repo fork xerj-org/xerj --remote --remote-name xerj-fork",
-+            "gh repo fork xerj-org/xerj --clone=false",
-+            "git remote add xerj-fork https://github.com/YOUR_LOGIN/xerj.git",
-             "--agent \"Claude Code\"",
-             "git push -u xerj-fork field-report/",
-             "--head YOUR_LOGIN:field-report/",
-@@ -2036,6 +2050,14 @@ mod tests {
-         xerj_origin(root);
-         let stub_dir = tempfile::tempdir().unwrap();
-         let log = stub_dir.path().join("gh.log");
-+        let committed = stub_dir.path().join("report-committed");
-+        write_executable(
-+            &root.join(".git/hooks/post-commit"),
-+            &format!(
-+                "#!/bin/sh\ntouch {}\n",
-+                shell_single(&committed.display().to_string())
-+            ),
-+        );
-         write_executable(
-             &stub_dir.path().join("gh"),
-             &format!(
-@@ -2044,7 +2066,12 @@ mod tests {
-                  \"auth status\") exit 0 ;;\n\
-                  \"api user\") echo testlogin; exit 0 ;;\n\
-                  \"api repos/xerj-org/xerj\") echo false; exit 0 ;;\n\
--                 \"repo fork\") git remote add xerj-fork /nonexistent/fork-target; exit 0 ;;\n\
-+                 \"repo fork\")\n\
-+                   test \"$*\" = \"repo fork xerj-org/xerj --clone=false\" || exit 2\n\
-+                   exit 0 ;;\n\
-+                 \"repo sync\")\n\
-+                   git remote set-url --push xerj-fork /nonexistent/fork-target\n\
-+                   exit $? ;;\n\
-                  *) exit 1 ;;\n\
-                  esac\n",
-                 shell_single(&log.display().to_string())
-@@ -2058,8 +2085,17 @@ mod tests {
-       
-```
-
----
-
-### Incident Patch 3: `30071c2b` (2026-10-29)
-**Commit Message**: Integrate the hybrid search page-size fix with current main
-
-Preserve the contributor’s original commit and its root-cause analysis: the
-engine pins the kNN leg independently at size k, so the outer hybrid query
-must retain the requested page size. Add size-zero, complete-union, final-page
-and refresh-success assertions to the existing transport regression.
-
-Reverting the API size selection reproduces the failure; the restored
-implementation passes the scoped API crate suite: 1009 passed, 0 failed,
-2 existing ignored. Main’s current tests and all prior changelog entries
-are retained. Final release and conformance checks follow on the composed tree.
-
-**File**: `CHANGELOG.md` (modified, +4/-0)
-```diff
-@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Empty files keep separate inventory identities instead of being reported
-   as content duplicates of unrelated paths (#2449). Non-empty byte-identical
-   files still deduplicate.
-+- A search with both `query` and a top-level `knn` returns `size` hits, not
-+  `k` (#2561). The page was widened to `k`, so `size: 5, k: 20` returned
-+  20 hits. `k` still sets how many nearest neighbours join the candidate
-+  set, and `from`/`size` page through the union, as in Elasticsearch.
- - Index deletion no longer waits for unrelated index statistics while
-   resolving its selectors. Index listings and health checks also release
-   their index-map locks before awaiting statistics, so a stalled schema
-```
-
-**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +11/-1)
-```diff
-@@ -14251,9 +14251,19 @@ async fn search_impl(
-         } else {
-             knn_query_json
-         };
-+        // A pure knn search is raised to `k` here and trimmed back by
-+        // `knn_total_cap`. A hybrid search keeps the request's `size`
-+        // (#2561): the engine pins the full top-k into the union itself
-+        // (`pin_knn_clause`), so `k` widens the candidate set, and `size`
-+        // is how many hits come back, as in ES.
-+        let size = if body.query.is_some() {
-+            body.size
-+        } else {
-+            body.size.max(k_total)
-+        };
-         EsSearchBody {
-             query: Some(merged_query),
--            size: body.size.max(k_total),
-+            size,
-             knn: None,
-             ..body.clone()
-         }
-```
-
-**File**: `engine/crates/xerj-api/tests/knn_beside_query_with_aggs_stays_200.rs` (modified, +84/-0)
-```diff
-@@ -429,3 +429,87 @@ async fn knn_beside_bool_query_keeps_the_vector_contribution() {
-         "#825: the better vector match must lead the page: hits={hits:?} {body}"
-     );
- }
-+
-+/// #2561: in the hybrid shape `size` is how many hits come back and `k` is
-+/// how many nearest neighbours join the candidate set. The page used to be
-+/// widened to `k`, so `size: 5, k: 20` returned 20 hits. The page must be
-+/// the first `size` hits of the union (paged with `from`), and the vector
-+/// side must still contribute: `vec` matches no term, and its vector is the
-+/// query vector, so it leads the union.
-+#[tokio::test]
-+async fn knn_beside_query_returns_size_hits_not_k() {
-+    let (app, _dir) = app().await;
-+
-+    let (st, b) = json_req(
-+        &app,
-+        "PUT",
-+        "/sz",
-+        json!({ "mappings": { "properties": {
-+            "text": { "type": "text" },
-+            "v": { "type": "dense_vector", "dims": 3, "similarity": "cosine" }
-+        } } }),
-+    )
-+    .await;
-+    assert!(st.is_success(), "create index: {st} {b}");
-+    let mut docs: Vec<(String, Value)> = (1..=30)
-+        .map(|i| {
-+            (
-+                i.to_string(),
-+                json!({ "text": format!("apple doc {i}"), "v": [1.0, i as f32, 0.5] }),
-+            )
-+        })
-+        .collect();
-+    docs.push(("vec".into(), json!({ "text": "zzz", "v": [0.0, 0.0, 1.0] })));
-+    for (id, doc) in docs {
-+        let (st, b) = json_req(&app, "POST", &format!("/sz/_doc/{id}"), doc).await;
-+        assert!(st.is_success(), "index {id}: {st} {b}");
-+    }
-+    let (status, body) = json_req(&app, "POST", "/sz/_refresh", json!({})).await;
-+    assert!(status.is_success(), "refresh: {status} {body}");
-+
-+    let search = |from: usize, size: usize| {
-+        let app = app.clone();
-+        async move {
-+            let (status, body) = json_req(
-+                &app,
-+                "POST",
-+                "/sz/_search",
-+                json!({
-+                    "from": from,
-+                    "size": size,
-+                    "_source": false,
-+                    "query": { "match": { "text": "apple" } },
-+                    "knn": { "field": "v", "query_vector": [0.0, 0.0, 1.0], "k": 20, "num_candidates": 31 }
-+                }),
-+            )
-+            .await;
-+            assert_eq!(status, StatusCode::OK, "_search status: {status} {body}");
-+            body.pointer("/hits/hits")
-+                .and_then(Value::as_array)
-+                .map(|hits| {
-+                    hits.iter()
-+                        .filter_map(|h| h.get("_id").and_then(Value::as_str).map(String::from))
-+                        .collect::<Vec<_>>()
-+                })
-+                .unwrap_or_default()
+     if in_flight == 0 {
+-        return !breaker_engaged || forced;
++        if forced {
++            return true;
 +        }
-+    };
++        if breaker_engaged {
++            return false;
++        }
++        return headroom_wait_expired || observed_rss.saturating_add(request) < watermark;
+     }
+     if breaker_engaged {
+         return false;
+@@ -200,6 +218,35 @@ pub fn decide_merge_admission(
+         < watermark
+ }
+ 
++/// The adaptive batch input cap after a lone background batch was held
++/// back because its reservation did not fit the headroom (#2427).
++///
++/// `input_bytes` is the batch's planned input and `request` the bytes it
++/// asked to reserve ([`merge_reservation_bytes`]); `headroom` is what is
++/// left under the merge-pool ceiling. The next batches are planned at the
++/// same input-to-reservation ratio scaled down to the headroom, so the
++/// planner splits the work into batches that fit instead of retrying the
++/// one that did not. `current == 0` means no adaptive cap yet. Never below
++/// 1; the planner still builds a minimum-count batch under any cap, and
++/// [`decide_merge_admission`]'s bounded wait lets that one through.
++pub fn pressure_cap_for_headroom(
++    current: u64,
++    input_bytes: u64,
++    request: u64,
++    headroom: u64,
++) -> u64 {
++    let scaled = (u128::from(input_bytes) * u128::from(headroom) / u128::from(request.max(1)))
++        .min(u128::from(u64::MAX)) as u64;
++    // Leave a little room: a batch planned exactly at the headroom would
++    // still be refused by the strict `<` check.
++    let target = (scaled - scaled / 8).max(1);
++    if current == 0 {
++        target
++    } else {
++        current.min(target)
++    }
++}
 +
-+    let all = search(0, 31).await;
-+    assert_eq!(all.len(), 31, "both legs contribute to the complete union");
-+    assert!(search(0, 0).await.is_empty(), "size zero returns no hits");
-+    let page = search(0, 5).await;
-+    assert_eq!(
-+        page.len(),
-+        5,
-+        "#2561: size 5 beside knn k 20 must return 5 hits, not k: {page:?}"
-+    );
-+    assert_eq!(page, all[..5], "the page is the head of the union: {all:?}");
+ /// Whether an in-flight background merge batch must stop (#2427).
+ ///
+ /// Admission checks a batch against `input * MERGE_WORKING_SET_NUMERATOR`
+@@ -243,16 +290,20 @@ pub const MERGE_HEADROOM_MAX_WAIT: std::time::Duration = std::time::Duration::fr
+ /// grew RSS by 400-900 MB, and every one of the run's over-cap samples
+ /// (3,100-3,502 MB against 3,072 MB) is one of those batches.
+ ///
+-/// A lone background batch now waits while `observed_rss` is at or above
+-/// `ceiling` (the merge-pool ceiling), so it starts after the drain, with
+-/// the batch's growth room under the cap. The wait is bounded by `max_wait`
++/// A lone background batch now waits while `observed_rss + request` is at
++/// or above `ceiling` (the merge-pool ceiling), so it starts after the
++/// drain, with the batch's growth room under the cap. `request` is the
++/// batch's reservation; `0` checks RSS alone. Including it closes the gap
++/// where RSS sat just under the ceiling and a batch whose reservation was
++/// larger than the room left still started alone. The wait is bounded by `max_wait`
+ /// (`waited` is how long lone merges have been held back), so a node whose
+ /// live
+```
+
+---
+
+### Incident Patch 2: `314d8be9` (2026-10-30)
+**Commit Message**: fix(engine): bound transient read builds and stop the breaker cache thrash (#2712)
+
+Refs #2427
+Refs #1122
+
+Motivation: on the 1 GB autoindex gate (cap 3072 MB) the search-only node
+peaks at 5.4-5.7 GB with no merges running (#2710 removed them), so the read
+path's own working set is the dominant term.
+
+Root cause, from /_nodes/stats polled every second during the gate's query
+phase:
+- The segment hydration cache is pinned at its 614 MiB limit (stored slices
+  ~589 MB) and admission_refusals climb to 2,721. Every cold segment a query
+  touches is decompressed outside the cache, with no bound: 64 concurrent
+  queries x 49 indices can stack whole stored sections and FTS postings.
+- schedule_cold_stored_warm decompresses each cold segment in the
+  background even when the full cache will refuse the result, so the work
+  is pure transient memory.
+- The breaker sampler asks for a drain on every tick while engaged, and every
+  drain released every rebuildable cache. The next query re-hydrated cold,
+  RSS climbed back and the breaker engaged again: a ~2 s thrash loop
+  (84-93 drains per search phase).
+
+Fix:
+- read_budget.rs: ReadTransientBudget, a process-wide byte budget for
+  transient r
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ### Fixed
+ 
++- Search under a memory cap: when the segment hydration cache is full, a query that has to build a segment's stored slices or FTS reader outside the cache now reserves that memory from a separate read budget (`XERJ_READ_TRANSIENT_MB`, default a tenth of `XERJ_MAX_PROCESS_MEMORY_MB`). It waits up to `XERJ_READ_TRANSIENT_WAIT_MS` (default 5 s) for room instead of stacking whole decompressed sections on top of each other. Background cache warms that the full cache would refuse are skipped. While the memory breaker is engaged, its drain still flushes and purges on every tick but releases the read caches at most once per `XERJ_BREAKER_CACHE_RELEASE_SECS` (default 30 s), so queries no longer re-hydrate cold every two seconds. `GET /_nodes/stats` reports the budget under `indices.read_transient_budget`. (Refs #2427, #1122)
+ - Opt-in lexical `judge` now matches CJK characters and adjacent pairs inside
+   uninterrupted Chinese/Japanese/Korean text instead of treating the whole
+   run as one word (refs #2580). Single-character evidence is retained, pairs
+```
+
+**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +14/-0)
+```diff
+@@ -31677,6 +31677,17 @@ pub async fn nodes_stats(State(state): State<AppState>) -> impl IntoResponse {
+         .unwrap_or_default()
+         .as_millis() as u64;
+ 
++    let read_transient_budget = {
++        let b = xerj_engine::read_budget::global().snapshot();
++        json!({
++            "limit_in_bytes": b.limit,
++            "current_in_bytes": b.current,
++            "peak_in_bytes": b.peak,
++            "admitted": b.admitted,
++            "waited": b.waited,
++            "overruns": b.overruns,
++        })
++    };
+     Json(json!({
+         "_nodes": { "total": 1, "successful": 1, "failed": 0 },
+         "cluster_name": "xerj",
+@@ -31741,6 +31752,9 @@ pub async fn nodes_stats(State(state): State<AppState>) -> impl IntoResponse {
+                     // bbq_hnsw/flat).
+                     "dense_vector": dense_vector_off_heap_stats(&state),
+                     "segment_hydration_cache": segment_hydration,
++                    // #2427/#1122: transient read-path builds the hydration
++                    // cache refused, bounded by their own budget.
++                    "read_transient_budget": read_transient_budget,
+                 },
+                 "transport": {
+                     "server_open": 1,
+```
+
+**File**: `engine/crates/xerj-engine/src/engine.rs` (modified, +112/-2)
+```diff
+@@ -222,6 +222,83 @@ pub fn set_allocator_purge_hook(hook: AllocatorPurgeHook) {
+     *slot = Some(hook);
+ }
+ 
++/// Spaces breaker-driven cache releases (#2427/#1122). The first engaged
++/// tick releases; later ticks within `interval` only flush and purge.
++/// `XERJ_BREAKER_CACHE_RELEASE_SECS` sets the interval (default 30 s; `0`
++/// releases on every tick, the pre-fix behaviour).
++#[derive(Debug, Clone)]
++pub struct PressureCacheReleaseGate {
++    interval: std::time::Duration,
++    last: Option<std::time::Instant>,
++}
++
++impl PressureCacheReleaseGate {
++    pub const DEFAULT_INTERVAL: std::time::Duration = std::time::Duration::from_secs(30);
++
++    pub fn new(interval: std::time::Duration) -> Self {
++        Self {
++            interval,
++            last: None,
++        }
++    }
++
++    pub fn from_env() -> Self {
++        let interval = std::env::var("XERJ_BREAKER_CACHE_RELEASE_SECS")
++            .ok()
++            .and_then(|v| v.trim().parse::<u64>().ok())
++            .map(std::time::Duration::from_secs)
++            .unwrap_or(Self::DEFAULT_INTERVAL);
++        Self::new(interval)
++    }
++
++    pub fn interval(&self) -> std::time::Duration {
++        self.interval
++    }
++
++    /// Whether a drain at `now` should release caches; records it if so.
++    pub fn should_release(&mut self, now: std::time::Instant) -> bool {
++        let due = self
++            .last
++            .is_none_or(|last| now.saturating_duration_since(last) >= self.interval);
++        if due {
++            self.last = Some(now);
++        }
++        due
++    }
++}
++
++#[cfg(test)]
++mod pressure_cache_release_gate_tests {
++    use super::PressureCacheReleaseGate;
++    use std::time::{Duration, Instant};
++
++    /// #2427/#1122: the breaker requests a drain every sampler tick while
++    /// engaged. Only the first tick in each interval may release caches.
++    #[test]
++    fn engaged_ticks_release_caches_at_most_once_per_interval() {
++        let mut gate = PressureCacheReleaseGate::new(Duration::from_secs(30));
++        let t0 = Instant::now();
++        assert!(gate.should_release(t0), "the first engaged tick releases");
++        for tick in 1..15u64 {
++            assert!(
++                !gate.should_release(t0 + Duration::from_secs(2 * tick)),
++                "tick at {}s must only flush and purge",
++                2 * tick
++            );
++        }
++        assert!(gate.should_release(t0 + Duration::from_secs(30)));
++        assert!(!gate.should_release(t0 + Duration::from_secs(31)));
++    }
++
++    #[test]
++    fn a_zero_interval_releases_on_every_tick() {
++        let mut gate = PressureCacheReleaseGate::new(Duration::ZERO);
++        let t0 = Instant::now();
++        assert!(gate.should_release(t0));
++        assert!(gate.should_release(t0));
++    }
++}
++
+ /// Run the installed allocator purge, if any. Never panics: a broken hook
+ /// must not take the drain (or the process) down — purging is an
+ /// optimisation for RSS return, not a correctness step.
+@@ -4457,6 +4534,29 @@ impl Engine {
+         self.release_rebuildable_memory(&loaded).await
+     }
+ 
++    /// The breaker-driven drain (#2427/#1122): always flush memtables and
++    /// purge the allocator, but release the rebuildable caches only when
++    /// `release_caches` is set. The sampler requests a drain on every tick
++    /// while the breaker is engaged; releasing every cache each time made a
++    /// read-heavy node re-hydrate cold on every query, which refilled RSS and
++    /// re-engaged the breaker — a ~2 s thrash loop that drained nothing
++    /// durable. The worker spaces cache releases with
++    /// [`PressureCacheReleaseGate`]; `_cache/clear` and the direct
++    /// [`Self::drain_rebuildable_memory`] still release every time.
++    pub async fn pressure_drain(&self, release_caches: bool) -> usize {
++        let loaded = self.open_indices_largest_memtable_first();
++        if release_caches {
++            return self.release_rebuildable_memory(&loaded).await;
++        }
++        for idx in &loaded {
++            if idx.memtable_bytes() > 0 && idx.flush().await.is_err() {
++                tracing::warn!("memory pressure drain: flush failed");
++            }
++        }
++        purge_allocator_pages();
++        loaded.len()
++    }
++
+     /// Open indices, largest live memtable first (#2321).
+     ///
+     /// The summed budget stays engaged until enough bytes are retired. DashMap
+@@ -4575,15 +4675,25 @@ impl Engine {
+                 // automatic wiring is inert.
+                 return;
+             };
++            let mut release_gate = PressureCacheReleaseGate::from_env();
+             while let Ok(()) = drain_rx.recv() {
+                 let Some(engine) = weak_c.upgrade() else {
+                     return; // engine dropped
+                 };
+-                let drained = handle.block_on(engine.drain_rebuildable_memory());
+-                tracing::info!(
++                let release_caches = release_gate.should_release(std::time::Instant::now());
++   
+```
+
+**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +201/-8)
+```diff
+@@ -37,6 +37,7 @@ use xerj_vector::hnsw::{HnswIndex, HnswParams};
+ use xerj_vector::{Sq8CodeStore, Sq8Params};
+ 
+ use crate::aggs::run_aggs_with_schema;
++use crate::read_budget::{ReadPermit, ReadTransientBudget};
+ use crate::segment_cache_budget::{
+     CacheResident, SegmentCacheCategory, SegmentHydrationBudget, CATEGORY_COUNT,
+ };
+@@ -62,6 +63,34 @@ fn index_segment_hydration_budget(_config: &Config) -> Arc<SegmentHydrationBudge
+     panic!("Index construction requires the process ResourceGovernor to be initialised");
+ }
+ 
++/// Reserve `bytes` of transient read memory unless the hydration cache has
++/// room to keep the value (#2427/#1122). A value the cache admits is
++/// accounted there; only one it will refuse is a per-query allocation.
++fn transient_read_permit(
++    hydration: &SegmentHydrationBudget,
++    read_budget: &Arc<ReadTransientBudget>,
++    bytes: u64,
++) -> Option<ReadPermit> {
++    if hydration.has_headroom(bytes) {
++        None
++    } else {
++        Some(read_budget.acquire(bytes))
++    }
++}
++
++/// Retained-size bound of a `StoredSlices` built from `raw` (the framing-only
++/// estimator; a zstd frame without a content size falls back to 8x raw).
++fn stored_slices_bound(raw: &[u8], expect_docs: u64) -> u64 {
++    xerj_storage::stored_codec::stored_slices_retained_upper_bound(raw, expect_docs)
++        .ok()
++        .flatten()
++        .unwrap_or_else(|| {
++            (raw.len() as u64)
++                .saturating_mul(8)
++                .saturating_add(expect_docs.saturating_mul(8))
++        })
++}
++
+ /// Wait for a publication test barrier, on the runtime and bounded.
+ ///
+ /// A test must never park a tokio BLOCKING-pool thread to wait for a signal
+@@ -2015,6 +2044,74 @@ mod flush_publication_recovery_tests {
+         assert_eq!(idx.search(&request).await.unwrap().hits[0].id, "survivor");
+     }
+ 
++    /// #2427/#1122: a stored-slices build the hydration cache cannot hold is
++    /// transient, and it must hold a read-budget reservation for as long as a
++    /// query holds the value — so concurrent cold queries are bounded by the
++    /// read budget instead of stacking whole stored sections. A build the
++    /// cache can hold reserves nothing (the cache accounts it).
++    ///
++    /// Fails before the fix (with `transient_read_permit` returning `None`):
++    /// the read budget never sees the transient bytes.
++    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++    async fn transient_stored_slices_hold_a_read_reservation_until_dropped() {
++        let dir = tempfile::tempdir().unwrap();
++        let engine = crate::Engine::new(topk_projection_config(dir.path())).unwrap();
++        engine
++            .create_index("read-budget", topk_projection_schema())
++            .unwrap();
++        let idx = engine.get_index("read-budget").unwrap();
++        idx.abort_background_tasks();
++        for i in 0..512u64 {
++            idx.index_document(
++                Some(format!("doc-{i}")),
++                json!({"title": format!("title {i}"), "body": format!("body text {i}"), "blob": "x".repeat(64)}),
++            )
++            .await
++            .unwrap();
++        }
++        idx.flush().await.unwrap();
++        let seg = idx.store.snapshot().segments[0].clone();
++        let read = ReadTransientBudget::new(1 << 30, std::time::Duration::from_secs(5));
++        idx.release_memory();
++        assert!(
++            !idx.stored_slices_cache.contains_key(&seg.id),
++            "precondition: cold"
++        );
++
++        // No room in the cache: transient, reserved until the value drops.
++        let full = SegmentHydrationBudget::new(0);
++        let slices = idx
++            .stored_slices_for_with(&seg.id, seg.doc_count, &full, &read)
++            .expect("slices build");
++        assert!(!idx.stored_slices_cache.contains_key(&seg.id));
++        let held = read.snapshot().current;
++        assert!(
++            held >= slices.bytes.len() as u64,
++            "the transient build must reserve at least its decoded bytes ({} held, {} decoded)",
++            held,
++            slices.bytes.len()
++        );
++        let second = Arc::clone(&slices);
++        drop(slices);
++        assert_eq!(read.snapshot().current, held, "a live reader keeps it");
++        drop(second);
++        assert_eq!(read.snapshot().current, 0, "released with the last reader");
++
++        // Room in the cache: admitted, nothing reserved.
++        let roomy = SegmentHydrationBudget::new(u64::MAX);
++        let cached = idx
++            .stored_slices_for_with(&seg.id, seg.doc_count, &roomy, &read)
++            .expect("slices build");
++        assert!(idx.stored_slices_cache.contains_key(&seg.id));
++        assert_eq!(read.snapshot().current, 0);
++        assert_eq!(
++            read.snapshot().admitted,
++            1,
++            "only the transient build reserved"
++        );
++        drop(cached);
++    }
++
+     fn topk_projection_config(dir: &std::path::Path) -> Config {
+         let mut config = Conf
+```
+
+**File**: `engine/crates/xerj-engine/src/lib.rs` (modified, +1/-0)
+```diff
+@@ -36,6 +36,7 @@ mod node_lock;
+ pub mod painless;
+ pub mod pools;
+ pub mod rbac;
++pub mod read_budget;
+ pub mod secret_hash;
+ pub mod segment_cache_budget;
+ pub mod segment_cache_estimates;
+```
+
+**File**: `engine/crates/xerj-engine/src/read_budget.rs` (added, +323/-0)
+```diff
+@@ -0,0 +1,323 @@
++//! Process-wide budget for query-time *transient* hydration (#2427, #1122).
++//!
++//! A query that misses the segment hydration cache still builds the whole
++//! value — a segment's decompressed stored section, or every requested
++//! field's decompressed postings and norms — and, when the cache budget
++//! refuses it, uses that value once and throws it away. Nothing bounded
++//! those transient builds: a `{prefix}-*` `multi_match` fanned out over 49
++//! indexes and every cold segment in them, the RSS sampler saw the spike,
++//! the shared memory breaker engaged, and the write path answered 429 for
++//! memory the *read* path had allocated.
++//!
++//! Every such build now reserves its estimated size here first. A
++//! reservation that does not fit waits (back-pressure) until earlier
++//! transient values are dropped. Two rules keep that wait safe:
++//!
++//! * **Progress.** A request is always admitted when nothing is held, so a
++//!   value larger than the whole budget is still served — alone.
++//! * **No hold-and-wait.** A thread that already holds a reservation is
++//!   admitted without waiting. A query that holds a postings reader while it
++//!   asks for the same segment's stored bytes can therefore never deadlock
++//!   against another query doing the same.
++//!
++//! The wait is capped (`XERJ_READ_TRANSIENT_WAIT_MS`, default 5 s). A
++//! reservation that times out is still admitted and counted in `overruns`,
++//! so a slow holder delays a query rather than failing it, and the counter
++//! shows an operator that the budget is too small for the workload.
++//!
++//! This is retained-payload accounting, like the hydration budget: decode
++//! scratch and allocator slack are outside it.
++
++use std::cell::Cell;
++use std::sync::atomic::{AtomicU64, Ordering};
++use std::sync::{Arc, Condvar, Mutex, OnceLock};
++use std::time::{Duration, Instant};
++
++const MIB: u64 = 1024 * 1024;
++/// Fallback when no governor is installed (an `Index` built directly).
++const DEFAULT_LIMIT_BYTES: u64 = 256 * MIB;
++/// Share of the process memory limit given to transient read hydration.
++const LIMIT_DIVISOR: u64 = 10;
++const DEFAULT_MAX_WAIT: Duration = Duration::from_secs(5);
++
++thread_local! {
++    /// Reservations currently held by this thread (see "No hold-and-wait").
++    static HELD_ON_THREAD: Cell<u32> = const { Cell::new(0) };
++}
++
++#[derive(Debug, Clone, Copy, Eq, PartialEq, serde::Serialize)]
++pub struct ReadTransientBudgetSnapshot {
++    pub limit: u64,
++    pub current: u64,
++    pub peak: u64,
++    pub admitted: u64,
++    pub waited: u64,
++    pub overruns: u64,
++}
++
++pub struct ReadTransientBudget {
++    limit: u64,
++    max_wait: Duration,
++    used: Mutex<u64>,
++    released: Condvar,
++    peak: AtomicU64,
++    admitted: AtomicU64,
++    waited: AtomicU64,
++    overruns: AtomicU64,
++}
++
++impl ReadTransientBudget {
++    pub fn new(limit: u64, max_wait: Duration) -> Arc<Self> {
++        Arc::new(Self {
++            limit,
++            max_wait,
++            used: Mutex::new(0),
++            released: Condvar::new(),
++            peak: AtomicU64::new(0),
++            admitted: AtomicU64::new(0),
++            waited: AtomicU64::new(0),
++            overruns: AtomicU64::new(0),
++        })
++    }
++
++    pub fn limit(&self) -> u64 {
++        self.limit
++    }
++
++    /// Reserve `bytes` for one transient value, waiting for room if needed.
++    /// The reservation is returned when the permit is dropped.
++    pub fn acquire(self: &Arc<Self>, bytes: u64) -> ReadPermit {
++        let reentrant = HELD_ON_THREAD.with(|held| held.get() > 0);
++        let mut used = self.used.lock().unwrap_or_else(|p| p.into_inner());
++        let fits = |used: u64| used == 0 || used.saturating_add(bytes) <= self.limit;
++        if !reentrant && !fits(*used) {
++            self.waited.fetch_add(1, Ordering::Relaxed);
++            let deadline = Instant::now() + self.max_wait;
++            while !fits(*used) {
++                let now = Instant::now();
++                if now >= deadline {
++                    self.overruns.fetch_add(1, Ordering::Relaxed);
++                    tracing::warn!(
++                        requested_bytes = bytes,
++                        in_use_bytes = *used,
++                        limit_bytes = self.limit,
++                        "read transient budget: waited {:?} for room; admitting over budget \
++                         (raise XERJ_READ_TRANSIENT_MB if this repeats)",
++                        self.max_wait
++                    );
++                    break;
++                }
++                used = self
++                    .released
++                    .wait_timeout(used, deadline - now)
++                    .unwrap_or_else(|p| p.into_inner())
++                    .0;
++            }
++        }
++        *used = used.saturating_add(bytes);
++        self.peak.fetch_max(*used, Ordering::Relaxed);
++        self.admitted.fetch_add(1, Ordering::Relaxed);
++        drop(used);
++        HELD_ON_THREAD.
+```
+
+**File**: `engine/crates/xerj-engine/src/segment_cache_budget.rs` (modified, +22/-0)
+```diff
+@@ -9,6 +9,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
+ use std::sync::Arc;
+ 
+ use crate::ingest_memory::{Category, Retained};
++use crate::read_budget::ReadPermit;
+ 
+ pub const CATEGORY_COUNT: usize = 9;
+ 
+@@ -95,6 +96,16 @@ impl SegmentHydrationBudget {
+         self.limit
+     }
+ 
++    /// Whether a `bytes` charge would fit right now. Advisory (another thread
++    /// may charge first): used to skip building a value the cache would only
++    /// refuse, and to decide whether a build is transient.
++    pub fn has_headroom(&self, bytes: u64) -> bool {
++        self.used
++            .load(Ordering::Acquire)
++            .checked_add(bytes)
++            .is_some_and(|next| next <= self.limit)
++    }
++
+     pub fn try_charge(
+         self: &Arc<Self>,
+         category: SegmentCacheCategory,
+@@ -188,6 +199,9 @@ impl Drop for BudgetCharge {
+ pub struct CacheResident<T> {
+     value: T,
+     _charge: Option<BudgetCharge>,
++    /// A value the cache refused carries its transient read reservation
++    /// (#2427/#1122), returned when the last reader drops it.
++    _read_permit: Option<ReadPermit>,
+     _trace_retained: Retained<'static>,
+ }
+ 
+@@ -201,6 +215,7 @@ impl<T> CacheResident<T> {
+         Arc::new(Self {
+             value,
+             _charge: Some(charge),
++            _read_permit: None,
+             _trace_retained: Retained::new(
+                 category.trace_category(),
+                 usize::try_from(bytes).unwrap_or(usize::MAX),
+@@ -209,9 +224,16 @@ impl<T> CacheResident<T> {
+     }
+ 
+     pub fn uncached(value: T) -> Arc<Self> {
++        Self::uncached_with_permit(value, None)
++    }
++
++    /// An uncached value that keeps `permit` (its transient read reservation)
++    /// until the last reference is dropped.
++    pub fn uncached_with_permit(value: T, permit: Option<ReadPermit>) -> Arc<Self> {
+         Arc::new(Self {
+             value,
+             _charge: None,
++            _read_permit: permit,
+             _trace_retained: Retained::disabled(),
+         })
+     }
+```
+
+**File**: `engine/crates/xerj-engine/tests/drain_releases_memory.rs` (modified, +40/-0)
+```diff
+@@ -184,3 +184,43 @@ async fn flush_prunes_published_storage_memtable_entries() {
+     // readable, all durable.
+     assert_eq!(count_all(&engine, "docs").await, 40);
+ }
++
++/// #2427/#1122: the breaker drain between cache releases flushes the
++/// memtable (data safety, memory relief) but keeps the warm caches, so a
++/// read-heavy node is not forced to re-hydrate cold on every query while the
++/// breaker stays engaged — the thrash loop the gate showed.
++#[tokio::test]
++async fn pressure_drain_without_release_flushes_but_keeps_caches() {
++    let dir = TempDir::new().unwrap();
++    let engine = make_engine(&dir);
++    seed(&engine, "docs", 50).await;
++    engine.get_index("docs").unwrap().refresh().await.unwrap();
++    hydrate(&engine, "docs").await;
++    let cached_before = engine.get_index("docs").unwrap().total_cache_entries();
++    assert!(cached_before > 0, "precondition: hydrated caches");
++
++    // Unflushed docs must still be flushed by the keep-caches drain.
++    let idx = engine.get_index("docs").unwrap();
++    for i in 50..60 {
++        idx.index_document(
++            Some(format!("d{i}")),
++            json!({ "body": format!("document number {i}") }),
++        )
++        .await
++        .unwrap();
++    }
++    assert!(idx.memtable_bytes() > 0, "precondition: live memtable");
++
++    let drained = engine.pressure_drain(false).await;
++    assert_eq!(drained, 1);
++    assert_eq!(idx.memtable_bytes(), 0, "the drain still flushes");
 +    assert!(
-+        page.iter().any(|id| id == "vec"),
-+        "the vector-only document must still reach the page: {page:?}"
++        idx.total_cache_entries() >= cached_before,
++        "caches must survive a drain between releases (was {cached_before}, now {})",
++        idx.total_cache_entries()
 +    );
-+    let next = search(5, 5).await;
-+    assert_eq!(next, all[5..10], "from pages through the union: {all:?}");
-+    assert_eq!(search(30, 5).await, all[30..], "last page is bounded");
++
++    engine.pressure_drain(true).await;
++    assert_eq!(idx.total_cache_entries(), 0, "a due release still releases");
++    assert_eq!(count_all(&engine, "docs").await, 60, "lossless");
 +}
 ```
 
+---
+
+### Incident Patch 3: `b1678d1f` (2026-10-30)
+**Commit Message**: fix(governor): let a small merge write run after a yield streak below the watermark (#2722)
+
+Refs #2427.
+
+Motivation: in the #2427 1 GB gate (gate f, cap 3072 MiB, watermark
+2918 MiB) the search-only node logged 70 "merge batch yielded before its
+output write" events. Batches of 1-10 MB input were retried every 5 s
+and none completed, while segments piled up and each retry decoded its
+inputs again.
+
+Root cause: admit_merge_write checks the write step against the
+merge-pool ceiling (process limit less the 20% search-read reserve,
+2458 MiB on the gate). The search node rests at 2.3-2.5 GB, so a write
+estimate of 94-455 MB was refused every time (for example rss 2517 MB
+plus write 408 MB). The #2468 streak rule that lets a small batch
+finish after repeated yields only applies when merge_must_yield() is
+true, which needs the breaker engaged or RSS at the watermark. Between
+the ceiling and the watermark neither held, so the exemption never
+applied and the batch livelocked.
+
+Fix: merge_budget::merge_write_limit_after() picks the line the write
+is checked against. After MERGE_YIELD_STREAK_LIMIT (3) yields in a row
+with nothing merged, a non-forced batch of at most
+MERGE_YIELD_STREAK_MAX_I
+
+**File**: `CHANGELOG.md` (modified, +7/-0)
+```diff
+@@ -47,6 +47,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ### Fixed
+ 
++- A node whose resting memory sits between the merge-pool ceiling and the
++  memory watermark merges again. Every background merge's output write was
++  refused there, so small batches were retried every 5 s without ever
++  completing, and each retry decoded its inputs again. After three yields in
++  a row with nothing merged, a batch of at most 64 MB now checks its write
++  against the process memory limit instead of the merge-pool ceiling.
++  (Refs #2427)
+ - `_bulk` throughput with explicit `_id`s: `index` actions that carry an `_id`
+   (and prepared `semantic_text` documents) are now published as one batch per
+   index instead of one `index_document` call each, which took the WAL lock,
+```
+
+**File**: `engine/crates/xerj-engine/src/governor.rs` (modified, +79/-5)
+```diff
+@@ -904,15 +904,38 @@ impl ResourceGovernor {
+         extra: u64,
+         forced: bool,
+         exempt: bool,
++    ) -> bool {
++        self.admit_merge_write_for(reservation, held, extra, forced, exempt, 0)
++    }
++
++    /// [`Self::admit_merge_write`] for a batch of `input_bytes`: after a
++    /// streak of yields with nothing merged, a small background batch's
++    /// write is checked against the hard process limit instead of the
++    /// merge-pool ceiling, so a node resting between the two still merges
++    /// (#2427). See `merge_budget::merge_write_limit_after`.
++    pub fn admit_merge_write_for(
++        &self,
++        reservation: Option<&mut MergeReservation>,
++        held: u64,
++        extra: u64,
++        forced: bool,
++        exempt: bool,
++        input_bytes: u64,
+     ) -> bool {
+         let observed = self.observed_process_memory();
+-        if !crate::merge_budget::decide_merge_write(
+-            observed,
++        let streak = self
++            .merge_ledger
++            .lock()
++            .unwrap_or_else(|e| e.into_inner())
++            .yield_streak;
++        let line = crate::merge_budget::merge_write_limit_after(
+             self.merge_pool_ceiling_bytes(),
+-            extra,
++            self.memory_limit_bytes,
+             forced,
+-            exempt,
+-        ) {
++            input_bytes,
++            streak,
++        );
++        if !crate::merge_budget::decide_merge_write(observed, line, extra, forced, exempt) {
+             return false;
+         }
+         if let Some(reservation) = reservation {
+@@ -4694,6 +4717,57 @@ mod tests {
+         assert_eq!(g.merges_in_flight(), 0);
+     }
+ 
++    /// #2427: in the 1 GB gate the search node rested between the merge-pool
++    /// ceiling and the watermark, so the breaker never engaged, the #2468
++    /// exemption never applied, and every write step was refused: 70 yields
++    /// of 1-10 MB batches and nothing merged. After the streak, a small
++    /// batch's write is checked against the hard limit and runs.
++    #[test]
++    fn a_small_batch_write_runs_after_a_streak_below_the_watermark() {
++        const MIB: u64 = 1024 * 1024;
++        let mut cfg = Config::default();
++        cfg.limits.max_total_memtable_mb = 0;
++        cfg.limits.memory_watermark_percent = 95;
++        let g = build(&cfg);
++        let wm = g.memory_watermark_bytes.load(Ordering::Relaxed);
++        let limit = g.process_memory_limit_bytes();
++        let ceiling = g.merge_pool_ceiling_bytes();
++        assert!(
++            ceiling < wm && wm < limit,
++            "this test needs ceiling < watermark < limit"
++        );
++        // Resting above the ceiling, below the watermark: not engaged.
++        let rss = ceiling + (wm - ceiling) / 2;
++        g.refresh(0, rss, 0);
++        assert!(!g.memory_breaker_engaged());
++        let small = 6 * MIB;
++        let large = crate::merge_budget::MERGE_YIELD_STREAK_MAX_INPUT_BYTES + 1;
++        // Fits under the hard limit, not under the ceiling.
++        let write = (limit - rss) / 2;
++        assert!(!g.merge_write_exempt(false, small));
++
++        // Before the streak: refused, as before.
++        assert!(!g.admit_merge_write_for(None, small, write, false, false, small));
++        for _ in 0..crate::merge_budget::MERGE_YIELD_STREAK_LIMIT {
++            g.note_merge_yield(small);
++        }
++        // The old exemption still does not apply below the watermark ...
++        assert!(!g.merge_write_exempt(false, small));
++        // ... but the small batch's write now runs, charged to the ledger.
++        let mut reservation = g.try_reserve_merge(small, true).expect("forced admission");
++        let held = reservation.bytes();
++        assert!(g.admit_merge_write_for(Some(&mut reservation), held, write, false, false, small));
++        assert_eq!(reservation.bytes(), held + write);
++        drop(reservation);
++        // A large batch, or a write that would reach the hard limit, is
++        // still refused.
++        assert!(!g.admit_merge_write_for(None, large, write, false, false, large));
++        assert!(!g.admit_merge_write_for(None, small, limit - rss, false, false, small));
++        // A completed batch ends the streak.
++        g.note_merge_completed(small);
++        assert!(!g.admit_merge_write_for(None, small, write, false, false, small));
++    }
++
+     /// #2427 x #2468: a small background batch that the yield-streak rule
+     /// lets run to completion is not refused at its output write, even with
+     /// RSS at the hard limit. A large batch, a batch before the streak, and
+```
+
+**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +8/-1)
+```diff
+@@ -14618,7 +14618,14 @@ impl Index {
+                 // rule is what waived this batch's yield, the write runs
+                 // too, or refusing it would bring the stall back.
+                 let exempt = governor.merge_write_exempt(forced_for_task, input_bytes_for_task);
+-                if governor.admit_merge_write(reservation, held, extra, forced_for_task, exempt) {
++                if governor.admit_merge_write_for(
++                    reservation,
++                    held,
++                    extra,
++                    forced_for_task,
++                    exempt,
++                    input_bytes_for_task,
++                ) {
+                     return true;
+                 }
+                 let cap = governor.note_merge_yield(input_bytes_for_task);
+```
+
+**File**: `engine/crates/xerj-engine/src/merge_budget.rs` (modified, +82/-0)
+```diff
+@@ -400,6 +400,43 @@ pub fn effective_batch_cap_bytes(static_cap: u64, pressure_cap: u64) -> u64 {
+     }
+ }
+ 
++/// The memory line a background merge's output-write step is checked
++/// against (#2427, #2468).
++///
++/// Normally that is the merge-pool `ceiling` (the process limit less the
++/// search-read reserve). After [`MERGE_YIELD_STREAK_LIMIT`] yields in a row
++/// with nothing merged, a batch of at most
++/// [`MERGE_YIELD_STREAK_MAX_INPUT_BYTES`] is checked against the hard
++/// process `limit` instead.
++///
++/// Without this a search node whose resting RSS sits between the ceiling
++/// and the watermark never merges. In the #2427 1 GB gate the search
++/// node's floor was 2.3-2.5 GB against a 2,458 MB ceiling, so every write
++/// step was refused (70 yields of 1-10 MB batches, retried every 5 s, none
++/// completed). The #2468 streak exemption did not apply, because it only
++/// covers batches the in-flight yield rule stops, and that rule needs RSS
++/// at the watermark. Each retry decoded its inputs again, which kept RSS
++/// near the watermark. The hard limit still bounds the write, and searches
++/// are refused only at that limit.
++pub fn merge_write_limit_after(
++    ceiling: u64,
++    limit: u64,
++    forced: bool,
++    input_bytes: u64,
++    yield_streak: u64,
++) -> u64 {
++    if !forced
++        && limit > ceiling
++        && yield_streak >= MERGE_YIELD_STREAK_LIMIT
++        && input_bytes > 0
++        && input_bytes <= MERGE_YIELD_STREAK_MAX_INPUT_BYTES
++    {
++        limit
++    } else {
++        ceiling
++    }
++}
++
+ /// Multiplier on the merged stored JSON for the merge output-write step
+ /// (#2427).
+ ///
+@@ -471,6 +508,51 @@ pub fn decide_merge_write(
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    fn a_small_batch_write_uses_the_hard_limit_after_a_yield_streak() {
++        const MIB: u64 = 1024 * 1024;
++        let ceiling = 2458 * MIB;
++        let limit = 3072 * MIB;
++        let small = 6 * MIB;
++        // Before the streak: the merge-pool ceiling.
++        for streak in 0..MERGE_YIELD_STREAK_LIMIT {
++            assert_eq!(
++                merge_write_limit_after(ceiling, limit, false, small, streak),
++                ceiling
++            );
++        }
++        // At the streak: the hard limit, for a small background batch only.
++        let at = MERGE_YIELD_STREAK_LIMIT;
++        assert_eq!(
++            merge_write_limit_after(ceiling, limit, false, small, at),
++            limit
++        );
++        let large = MERGE_YIELD_STREAK_MAX_INPUT_BYTES + 1;
++        assert_eq!(
++            merge_write_limit_after(ceiling, limit, false, large, at),
++            ceiling
++        );
++        assert_eq!(
++            merge_write_limit_after(ceiling, limit, false, 0, at),
++            ceiling
++        );
++        assert_eq!(
++            merge_write_limit_after(ceiling, limit, true, small, at),
++            ceiling
++        );
++        // Never below the ceiling.
++        assert_eq!(
++            merge_write_limit_after(ceiling, 0, false, small, at),
++            ceiling
++        );
++        // The gate-f case: rss 2,517 MB plus a 408 MB write fits under the
++        // hard limit but not under the ceiling.
++        let (rss, extra) = (2517 * MIB, 408 * MIB);
++        assert!(!decide_merge_write(rss, ceiling, extra, false, false));
++        let line = merge_write_limit_after(ceiling, limit, false, small, at);
++        assert!(decide_merge_write(rss, line, extra, false, false));
++    }
++
+     #[test]
+     fn a_background_merge_yields_only_when_engaged_at_the_limit() {
+         const MIB: u64 = 1024 * 1024;
+```
+
 #### Recent Merged Pull Requests:
-- **PR #2613** (2026-10-29): Preserve MCP search compatibility, default budgets and honest node status (@xerj-org)
-- **PR #2612** (2026-10-29): hub: re-pin the ai_agent_chat corpus to the scrubbed commit (@DuNorth595)
-- **PR #2611** (2026-10-29): hub: author-approved contribution candidates (7689 repos) (@xerj-org)
-- **PR #2608** (2026-10-29): Fix feedback forking and local-key diagnostics; update both zip lockfiles (@xerj-org)
-- **PR #2603** (2026-10-29): fix(mcp): split xerj_search's union-typed `query` into `query` and `query_dsl` (@snmsoodan)
-- **PR #2602** (2026-10-29): Fix hybrid search pagination and clarify empty catalog namespaces (@xerj-org)
+- **PR #2736** (2026-10-30): hub: author-approved contribution candidates (8700 repos) (@xerj-org)
+- **PR #2729** (2026-10-30): hub: author-approved contribution candidates (8682 repos) (@xerj-org)
+- **PR #2725** (2026-10-30): hub: author-approved contribution candidates (8657 repos) (@xerj-org)
+- **PR #2723** (2026-10-30): fix(autoindex): read a headerless number sheet as a table, not a capped document (#2720) (@jelbirt)
+- **PR #2722** (2026-10-30): fix(governor): let a small merge write run after a yield streak below the watermark (refs #2427) (@xerj-org)
+- **PR #2721** (2026-10-30): hub: author-approved contribution candidates (8632 repos) (@xerj-org)
 
 ---
 
@@ -2386,35 +3041,32 @@ are retained. Final release and conformance checks follow on the composed tree.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp): split xerj_search's union-typed `query` into `query` and `query_dsl`
+## X. engine): a lone background merge waits until its reservation fits (#2709)
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8ab6ae27`: mcp): split xerj_search's union-typed `query` into `query` and `query_dsl`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `12d2d3b1`: engine): a lone background merge waits until its reservation fits (#2709). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| `xerj_search` | keyword search over an index, from plain words (`query`) or an ES query-DSL clause (`query_dsl`) |
-`query` is a plain string, and a structured ES query-DSL clause goes in
-`query_dsl` instead — `{"index":"docs","query_dsl":{"match_all":{}}}`. One of
-the two is required and they cannot be combined, so a call with neither is an
-error naming both rather than a silent `match_all` that returns nothing. The
-fields are separate because a union-typed `query` (`["object","string"]`) is
-what made some models emit invalid arguments for this tool alone (#2549).
-
+- A background merge no longer starts alone when its own memory reservation
+  would carry the node past the merge-pool ceiling. It waits (at most 30 s)
+  while the next batches are planned small enough to fit, so merging still
+  makes progress without the overshoot behind the 1 GB gate's 3.5 GB ingest
+  peak on a 3,072 MB cap (Refs #2427).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-| `xerj_search` | ES query-DSL search over an index |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8ab6ae27` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `12d2d3b1` are properly handled with clean fallback behavior.

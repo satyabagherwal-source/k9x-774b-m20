@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-1RHJ",
-    "timestamp": "2026-10-28T13:16:35.815Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "13fd4b2049b0c75108f530ae06f10f5b6d92fd4b3e28f4cdf20885e2f98dad22",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-1ST0",
-    "timestamp": "2026-10-28T13:16:37.524Z",
-    "repository": "wasm-bindgen/wasm-pack",
-    "learningId": "learn-github-wasm-bindgen-wasm-pack",
-    "contentHash": "8c27ec97b197ec69941ddcd623cf6687bad620eaa39002020ecaa1c244afe69b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-2573",
     "timestamp": "2026-10-28T13:16:53.583Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7460,36 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "1e96a4449e82f092dfd760b4b0fe66ed52f61bc5409b8ffbad61ed99726978c5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-EGPC",
+    "timestamp": "2026-10-30T19:05:44.208Z",
+    "repository": "webpack/webpack",
+    "learningId": "learn-github-webpack-webpack",
+    "contentHash": "9938785c7214e8eca3473d650a55bb3d65173175e96a8b11355cd1847ba404a8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-EH68",
+    "timestamp": "2026-10-30T19:05:44.816Z",
+    "repository": "xerj-org/xerj",
+    "learningId": "learn-github-xerj-org-xerj",
+    "contentHash": "f102e3635f2a432643b30ca3db5879689c409bc6ef9a6c32e83ad67e7692a0a6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

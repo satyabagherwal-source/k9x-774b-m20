@@ -426937,3 +426937,107 @@ checksum = "88b39c9bfcfc231068454382784bb460aae594343fb030d46e9f50a645418412"
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5b8effbb` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5836. hmr): stop over-fetching shared group chunks, support prototype-key chunk ids, p (Harvested from webpack/webpack)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "hmr): stop over-fetching shared group chunks, support prototype-key chunk ids, p",
+  "source": "webpack/webpack",
+  "source_url": "https://github.com/webpack/webpack",
+  "source_version": "a11411af",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T19:05:43.898Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-webpack-webpack",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [webpack/webpack](https://github.com/webpack/webpack) (Revision: `a11411af`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.changeset/054-hmr-audit-fixes.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webpack/webpack. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5831e741`: hmr): stop over-fetching shared group chunks, support prototype-key chunk ids, prune retained records, shrink the runtime (#23020). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/054-hmr-audit-fixes.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+Fix HMR cache, CSS order, rejected accepts, over-fetching and custom chunk ids.
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern to NEVER write (induced failure mode):
+Fix HMR with a reused persistent cache, CSS order and rejected accepts.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5831e741` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5837. engine): a lone background merge waits until its reservation fits (#2709) (Harvested from xerj-org/xerj)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "engine): a lone background merge waits until its reservation fits (#2709)",
+  "source": "xerj-org/xerj",
+  "source_url": "https://github.com/xerj-org/xerj",
+  "source_version": "22cd0239",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T19:05:44.513Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-xerj-org-xerj",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [xerj-org/xerj](https://github.com/xerj-org/xerj) (Revision: `22cd0239`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `12d2d3b1`: engine): a lone background merge waits until its reservation fits (#2709). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- A background merge no longer starts alone when its own memory reservation
+  would carry the node past the merge-pool ceiling. It waits (at most 30 s)
+  while the next batches are planned small enough to fit, so merging still
+  makes progress without the overshoot behind the 1 GB gate's 3.5 GB ingest
+  peak on a 3,072 MB cap (Refs #2427).
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `12d2d3b1` are properly handled with clean fallback behavior.

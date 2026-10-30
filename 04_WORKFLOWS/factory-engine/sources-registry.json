@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T18:58:44.560Z",
-    "lastVerified": "2026-10-30T18:58:44.560Z",
+    "lastChecked": "2026-10-30T19:05:47.376Z",
+    "lastVerified": "2026-10-30T19:05:47.376Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -238,12 +238,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T18:25:41.012Z",
-    "lastVerified": "2026-10-30T18:25:41.012Z",
+    "lastChecked": "2026-10-30T19:05:41.200Z",
+    "lastVerified": "2026-10-30T19:05:41.200Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -252,7 +252,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8e1490fa"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1330,9 +1331,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-10-30T13:53:20.117Z",
+    "lastChecked": "2026-10-30T19:05:36.093Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-10-30T13:53:20.117Z"
+    "lastVerified": "2026-10-30T19:05:36.093Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2945,14 +2946,14 @@
     "officialUrl": "https://github.com/xerj-org/xerj",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T02:00:18.207Z",
-    "lastVerified": "2026-10-29T02:00:18.207Z",
+    "lastChecked": "2026-10-30T19:05:43.796Z",
+    "lastVerified": "2026-10-30T19:05:43.796Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "a94372a32ade6d89ee52f6f28fde64068370606bc907046330b3bce93f80a823",
+    "contentHash": "f102e3635f2a432643b30ca3db5879689c409bc6ef9a6c32e83ad67e7692a0a6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 19,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3662,9 +3663,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-10-29T11:47:34.131Z",
+    "lastChecked": "2026-10-30T19:05:33.638Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-10-29T11:47:34.131Z"
+    "lastVerified": "2026-10-30T19:05:33.638Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -7293,9 +7294,9 @@
   "pamburus-hl": {
     "name": "hl",
     "officialUrl": "https://github.com/pamburus/hl",
-    "lastChecked": "2026-10-28T20:44:16.472Z",
+    "lastChecked": "2026-10-30T19:05:26.090Z",
     "revisionIdentifier": "3aae7bc7",
-    "lastVerified": "2026-10-28T20:44:16.472Z"
+    "lastVerified": "2026-10-30T19:05:26.090Z"
   },
   "hf-qwen-qwen3-4b": {
     "name": "Qwen/Qwen3-4B",
@@ -10701,5 +10702,29 @@
     "lastChecked": "2026-10-30T18:58:26.637Z",
     "revisionIdentifier": "e7884cce",
     "lastVerified": "2026-10-30T18:58:26.637Z"
+  },
+  "webpack-webpack": {
+    "name": "webpack/webpack",
+    "officialUrl": "https://github.com/webpack/webpack",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-30T19:05:34.006Z",
+    "lastVerified": "2026-10-30T19:05:34.006Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-webpack-webpack",
+    "contentHash": "9938785c7214e8eca3473d650a55bb3d65173175e96a8b11355cd1847ba404a8",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 17,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pointfreeco-sqlite-data": {
+    "name": "sqlite-data",
+    "officialUrl": "https://github.com/pointfreeco/sqlite-data",
+    "lastChecked": "2026-10-30T19:05:31.173Z",
+    "revisionIdentifier": "37c461a8",
+    "lastVerified": "2026-10-30T19:05:31.173Z"
   }
 }

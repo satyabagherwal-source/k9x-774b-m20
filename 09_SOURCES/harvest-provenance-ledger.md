@@ -6280,3 +6280,5 @@ Every entry in this ledger must capture:
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `996a3a71` | Multi-dimensional audit evidence | 2026-10-30T18:58:28.572Z |
 | `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `90bc034a` | Multi-dimensional audit evidence | 2026-10-30T18:58:30.350Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `5b8effbb` | Multi-dimensional audit evidence | 2026-10-30T18:58:42.016Z |
+| `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `a11411af` | Multi-dimensional audit evidence | 2026-10-30T19:05:44.212Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `22cd0239` | Multi-dimensional audit evidence | 2026-10-30T19:05:44.820Z |

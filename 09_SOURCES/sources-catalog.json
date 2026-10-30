@@ -1893,10 +1893,10 @@
     "repository": "webpack/webpack",
     "platform": "github",
     "sourceUrl": "https://github.com/webpack/webpack",
-    "sourceVersion": "c93aa8f9",
+    "sourceVersion": "a11411af",
     "license": "MIT",
-    "contentHash": "ec0105c6bef820c86b88b2dfdad3845bdfbe63edd469f511611a02202af8ccb2",
-    "lastHarvestedAt": "2026-10-27T18:36:18.942Z",
+    "contentHash": "9938785c7214e8eca3473d650a55bb3d65173175e96a8b11355cd1847ba404a8",
+    "lastHarvestedAt": "2026-10-30T19:05:44.212Z",
     "learningId": "learn-github-webpack-webpack"
   },
   "rollup-rollup": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "d9409618",
+    "sourceVersion": "22cd0239",
     "license": "Apache-2.0",
-    "contentHash": "a94372a32ade6d89ee52f6f28fde64068370606bc907046330b3bce93f80a823",
-    "lastHarvestedAt": "2026-10-29T02:00:19.845Z",
+    "contentHash": "f102e3635f2a432643b30ca3db5879689c409bc6ef9a6c32e83ad67e7692a0a6",
+    "lastHarvestedAt": "2026-10-30T19:05:44.820Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
