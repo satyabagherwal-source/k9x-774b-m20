@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T06:36:34.377Z",
+  "last_updated": "2026-10-30T06:43:22.644Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8211,14 +8211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-grpc-grpc-rust",
-      "content_hash": "d2f0ec21df5afb32ea25e5f3829860ac676e12fcb8bd42db6bf79775832ce8ef",
-      "verified_at": "2026-10-28T14:15:20.954Z",
+      "content_hash": "87fa322a40d3cec3864a6a5df5b46d58429c4e5da0be79ec49296473652b736c",
+      "verified_at": "2026-10-30T06:43:14.173Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T14:15:20.954Z"
+      "last_updated": "2026-10-30T06:43:14.173Z"
     },
     "crazycodeboy/react-native-splash-screen": {
       "repository": "crazycodeboy/react-native-splash-screen",
@@ -9591,14 +9591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-k3s-io-k3s",
-      "content_hash": "aa7ec9501d00598efda5dfed3fba8c784d33e7b69dce9dbc5ced367ed67cb5f8",
-      "verified_at": "2026-10-28T18:57:47.169Z",
+      "content_hash": "f7d1afd7108b254bdcab209352c5db4d516e05d2085492b7872dbfde568d3f28",
+      "verified_at": "2026-10-30T06:43:22.643Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:57:47.169Z"
+      "last_updated": "2026-10-30T06:43:22.643Z"
     },
     "Ataraxy-Labs/sem": {
       "repository": "Ataraxy-Labs/sem",
@@ -13356,14 +13356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chrisbanes-skills",
-      "content_hash": "3fb1912dadf6a24bb42d159c91dcf757bf2201f55e3b26d3ae751846c259e438",
-      "verified_at": "2026-10-26T01:22:55.899Z",
+      "content_hash": "a3db5c8fa7ad3a09694f1f95dfbc85c4d6fece4a0f472851ccd13a1841303f87",
+      "verified_at": "2026-10-30T06:43:18.368Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T01:22:55.899Z"
+      "last_updated": "2026-10-30T06:43:18.368Z"
     },
     "joreilly/Confetti": {
       "repository": "joreilly/Confetti",

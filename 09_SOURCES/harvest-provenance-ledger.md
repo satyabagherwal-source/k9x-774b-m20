@@ -6146,3 +6146,6 @@ Every entry in this ledger must capture:
 | `learn-github-cryfs-cryfs` | `https://github.com/cryfs/cryfs` | `e2da97b1` | Multi-dimensional audit evidence | 2026-10-30T06:29:51.660Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `da3239c5` | Multi-dimensional audit evidence | 2026-10-30T06:36:32.238Z |
 | `learn-github-startrail-org-leann` | `https://github.com/StarTrail-org/LEANN` | `11ca8a53` | Multi-dimensional audit evidence | 2026-10-30T06:36:34.369Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `c49f0d09` | Multi-dimensional audit evidence | 2026-10-30T06:43:14.164Z |
+| `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `8fc8836c` | Multi-dimensional audit evidence | 2026-10-30T06:43:18.359Z |
+| `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `f2aea320` | Multi-dimensional audit evidence | 2026-10-30T06:43:22.635Z |

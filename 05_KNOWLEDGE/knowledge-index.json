@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T06:36:34.306Z",
+  "last_updated": "2026-10-30T06:43:22.560Z",
   "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6380,8 +6380,8 @@
       "slug": "chrisbanes-skills",
       "platform": "github",
       "source_url": "https://github.com/chrisbanes/skills",
-      "source_version": "6c30c500",
-      "content_hash": "3fb1912dadf6a24bb42d159c91dcf757bf2201f55e3b26d3ae751846c259e438",
+      "source_version": "8fc8836c",
+      "content_hash": "a3db5c8fa7ad3a09694f1f95dfbc85c4d6fece4a0f472851ccd13a1841303f87",
       "dossier_path": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
       "promoted_rules": [
@@ -6399,6 +6399,11 @@
           "number": 4521,
           "title": "Keep serial implementation solo and PR polling in the controller (#135)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5635,
+          "title": "Reject impossible CalVer dates (#120)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6406,7 +6411,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T01:22:55.822Z",
+      "verified_at": "2026-10-30T06:43:18.264Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15193,8 +15198,8 @@
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "54137995",
-      "content_hash": "d2f0ec21df5afb32ea25e5f3829860ac676e12fcb8bd42db6bf79775832ce8ef",
+      "source_version": "c49f0d09",
+      "content_hash": "87fa322a40d3cec3864a6a5df5b46d58429c4e5da0be79ec49296473652b736c",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "promoted_rules": [
@@ -15262,6 +15267,11 @@
           "number": 5302,
           "title": "tonic-web): fix dropped trailers in combined streaming call. (#2474)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5634,
+          "title": "server): set a timer on HTTP/1 connections so hyper's header read timeout applie",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15269,7 +15279,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T14:15:20.851Z",
+      "verified_at": "2026-10-30T06:43:14.069Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -32771,8 +32781,8 @@
       "slug": "k3s-io-k3s",
       "platform": "github",
       "source_url": "https://github.com/k3s-io/k3s",
-      "source_version": "0cc587fa",
-      "content_hash": "aa7ec9501d00598efda5dfed3fba8c784d33e7b69dce9dbc5ced367ed67cb5f8",
+      "source_version": "f2aea320",
+      "content_hash": "f7d1afd7108b254bdcab209352c5db4d516e05d2085492b7872dbfde568d3f28",
       "dossier_path": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/k3s-io-k3s-learnings.md",
       "promoted_rules": [
@@ -32810,6 +32820,11 @@
           "number": 5374,
           "title": "Set IdleTimeout on the supervisor http server (#14904)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5636,
+          "title": "Update AI guidance",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32817,7 +32832,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:57:47.063Z",
+      "verified_at": "2026-10-30T06:43:22.541Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -151038,6 +151053,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T06:36:34.290Z"
+    },
+    "rule-5634": {
+      "learning_id": "rule-5634",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5634,
+      "title": "server): set a timer on HTTP/1 connections so hyper's header read timeout applie",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "c49f0d09",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:43:14.069Z"
+    },
+    "rule-5635": {
+      "learning_id": "rule-5635",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5635,
+      "title": "Reject impossible CalVer dates (#120)",
+      "source_url": "https://github.com/chrisbanes/skills",
+      "source_version": "8fc8836c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:43:18.264Z"
+    },
+    "rule-5636": {
+      "learning_id": "rule-5636",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5636,
+      "title": "Update AI guidance",
+      "source_url": "https://github.com/k3s-io/k3s",
+      "source_version": "f2aea320",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:43:22.541Z"
     }
   },
   "aliases": {

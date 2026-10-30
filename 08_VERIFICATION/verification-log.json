@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-I6IE",
-    "timestamp": "2026-10-28T01:49:31.382Z",
-    "repository": "kumahq/kuma",
-    "learningId": "learn-github-kumahq-kuma",
-    "contentHash": "df5b800e35267a4fd330c8a1d3a3723e3e05486d2a15d77e62a8d4ca655df614",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-I823",
-    "timestamp": "2026-10-28T01:49:33.387Z",
-    "repository": "jialinyyzz/humanizer",
-    "learningId": "learn-huggingface-jialinyyzz-humanizer",
-    "contentHash": "e0de5996f7a94e1a3399fed9f5ae96ec2df93e3b32360ab4b4afdfe87be4c1c8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-TTTO",
-    "timestamp": "2026-10-28T01:58:34.812Z",
-    "repository": "autotrust/JEV-27B-VL",
-    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-    "contentHash": "d7c2ba43d51602823f52a2238142c53e5839d2c6b495d9416a1c94cad7e0e0c0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-TV5C",
     "timestamp": "2026-10-28T01:58:36.528Z",
     "repository": "CrossPaste/crosspaste-desktop",
@@ -7490,6 +7445,51 @@
     "repository": "StarTrail-org/LEANN",
     "learningId": "learn-github-startrail-org-leann",
     "contentHash": "51221a6a7eaaeb776534b0ae2060a5f8ab604039714a838a9ed1f6b20418a3a9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-VLO1",
+    "timestamp": "2026-10-30T06:43:14.161Z",
+    "repository": "grpc/grpc-rust",
+    "learningId": "learn-github-grpc-grpc-rust",
+    "contentHash": "87fa322a40d3cec3864a6a5df5b46d58429c4e5da0be79ec49296473652b736c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-VOWK",
+    "timestamp": "2026-10-30T06:43:18.356Z",
+    "repository": "chrisbanes/skills",
+    "learningId": "learn-github-chrisbanes-skills",
+    "contentHash": "a3db5c8fa7ad3a09694f1f95dfbc85c4d6fece4a0f472851ccd13a1841303f87",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-VS7B",
+    "timestamp": "2026-10-30T06:43:22.631Z",
+    "repository": "k3s-io/k3s",
+    "learningId": "learn-github-k3s-io-k3s",
+    "contentHash": "f7d1afd7108b254bdcab209352c5db4d516e05d2085492b7872dbfde568d3f28",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

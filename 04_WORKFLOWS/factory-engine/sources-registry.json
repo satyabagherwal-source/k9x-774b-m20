@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T06:36:36.901Z",
-    "lastVerified": "2026-10-30T06:36:36.901Z",
+    "lastChecked": "2026-10-30T06:43:25.176Z",
+    "lastVerified": "2026-10-30T06:43:25.176Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T06:16:40.322Z",
-    "lastVerified": "2026-10-30T06:16:40.322Z",
+    "lastChecked": "2026-10-30T06:43:23.360Z",
+    "lastVerified": "2026-10-30T06:43:23.360Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1314,9 +1314,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-10-30T00:25:44.614Z",
+    "lastChecked": "2026-10-30T06:43:18.496Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-10-30T00:25:44.614Z"
+    "lastVerified": "2026-10-30T06:43:18.496Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -4220,12 +4220,12 @@
     "officialUrl": "https://github.com/grpc/grpc-rust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T14:15:20.189Z",
-    "lastVerified": "2026-10-28T14:15:20.189Z",
+    "lastChecked": "2026-10-30T06:43:12.599Z",
+    "lastVerified": "2026-10-30T06:43:12.599Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "d2f0ec21df5afb32ea25e5f3829860ac676e12fcb8bd42db6bf79775832ce8ef",
+    "contentHash": "87fa322a40d3cec3864a6a5df5b46d58429c4e5da0be79ec49296473652b736c",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -6091,9 +6091,9 @@
   "activeloopai-deeplake": {
     "name": "deeplake",
     "officialUrl": "https://github.com/activeloopai/deeplake",
-    "lastChecked": "2026-10-28T17:56:42.462Z",
+    "lastChecked": "2026-10-30T06:43:20.995Z",
     "revisionIdentifier": "f432041f",
-    "lastVerified": "2026-10-28T17:56:42.462Z"
+    "lastVerified": "2026-10-30T06:43:20.995Z"
   },
   "pauljuliusmartinez-jless": {
     "name": "jless",
@@ -6551,14 +6551,14 @@
     "officialUrl": "https://github.com/k3s-io/k3s",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T18:57:46.492Z",
-    "lastVerified": "2026-10-28T18:57:46.492Z",
+    "lastChecked": "2026-10-30T06:43:21.561Z",
+    "lastVerified": "2026-10-30T06:43:21.561Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "aa7ec9501d00598efda5dfed3fba8c784d33e7b69dce9dbc5ced367ed67cb5f8",
+    "contentHash": "f7d1afd7108b254bdcab209352c5db4d516e05d2085492b7872dbfde568d3f28",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9347,5 +9347,29 @@
     "lastChecked": "2026-10-30T06:36:21.722Z",
     "revisionIdentifier": "ad0f844e",
     "lastVerified": "2026-10-30T06:36:21.722Z"
+  },
+  "jafforgehq-site-analytics-tool": {
+    "name": "site-analytics-tool",
+    "officialUrl": "https://github.com/jafforgehq/site-analytics-tool",
+    "lastChecked": "2026-10-30T06:43:10.859Z",
+    "revisionIdentifier": "1788648c",
+    "lastVerified": "2026-10-30T06:43:10.859Z"
+  },
+  "chrisbanes-skills": {
+    "name": "chrisbanes/skills",
+    "officialUrl": "https://github.com/chrisbanes/skills",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-30T06:43:17.457Z",
+    "lastVerified": "2026-10-30T06:43:17.457Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-chrisbanes-skills",
+    "contentHash": "a3db5c8fa7ad3a09694f1f95dfbc85c4d6fece4a0f472851ccd13a1841303f87",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "54137995",
+    "sourceVersion": "c49f0d09",
     "license": "MIT",
-    "contentHash": "d2f0ec21df5afb32ea25e5f3829860ac676e12fcb8bd42db6bf79775832ce8ef",
-    "lastHarvestedAt": "2026-10-28T14:15:20.945Z",
+    "contentHash": "87fa322a40d3cec3864a6a5df5b46d58429c4e5da0be79ec49296473652b736c",
+    "lastHarvestedAt": "2026-10-30T06:43:14.164Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {
@@ -6313,10 +6313,10 @@
     "repository": "k3s-io/k3s",
     "platform": "github",
     "sourceUrl": "https://github.com/k3s-io/k3s",
-    "sourceVersion": "0cc587fa",
+    "sourceVersion": "f2aea320",
     "license": "Apache-2.0",
-    "contentHash": "aa7ec9501d00598efda5dfed3fba8c784d33e7b69dce9dbc5ced367ed67cb5f8",
-    "lastHarvestedAt": "2026-10-28T18:57:47.160Z",
+    "contentHash": "f7d1afd7108b254bdcab209352c5db4d516e05d2085492b7872dbfde568d3f28",
+    "lastHarvestedAt": "2026-10-30T06:43:22.635Z",
     "learningId": "learn-github-k3s-io-k3s"
   },
   "open-source-legal-opencontracts": {
@@ -8873,10 +8873,10 @@
     "repository": "chrisbanes/skills",
     "platform": "github",
     "sourceUrl": "https://github.com/chrisbanes/skills",
-    "sourceVersion": "6c30c500",
+    "sourceVersion": "8fc8836c",
     "license": "Apache-2.0",
-    "contentHash": "3fb1912dadf6a24bb42d159c91dcf757bf2201f55e3b26d3ae751846c259e438",
-    "lastHarvestedAt": "2026-10-26T01:22:55.891Z",
+    "contentHash": "a3db5c8fa7ad3a09694f1f95dfbc85c4d6fece4a0f472851ccd13a1841303f87",
+    "lastHarvestedAt": "2026-10-30T06:43:18.359Z",
     "learningId": "learn-github-chrisbanes-skills"
   },
   "joreilly-confetti": {

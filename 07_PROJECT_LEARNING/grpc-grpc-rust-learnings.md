@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source**: github ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
-> **Source Version**: `54137995`  
+> **Source Version**: `c49f0d09`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T14:15:20.329Z  
+> **Timestamp**: 2026-10-30T06:43:13.514Z  
 > **Learning ID**: `learn-github-grpc-grpc-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T14:15:20.189Z  
+> **Harvest Timestamp**: 2026-10-30T06:43:12.599Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -230,6 +230,134 @@ impl WorkerService for WorkerServer {
     async fn quit_worker(&self, _request: Request<Void>) -> Result<Response<Void>, Status> {
         self.quit_notify.notify_one();
         Ok(Response::new(Void {}))
+    }
+}
+
+```
+
+### Core Architecture Module: `grpc-xds/src/dependency_manager/state.rs`
+```
+/*
+ *
+ * Copyright 2026 gRPC authors.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ */
+
+//! The cached state of each watched xDS resource or DNS target.
+
+use std::sync::Arc;
+
+/// The latest known state of one watched resource or DNS target.
+///
+/// Follows gRFC A88: a *resource error* (the resource itself is bad) drops
+/// the cached value, while an *ambient error* (such as a broken stream) keeps
+/// it and only adds a note.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(super) enum WatchState<T> {
+    /// The watch has started but nothing has been received yet.
+    Pending,
+    /// A usable value. `note` holds the latest ambient error, if any; the next
+    /// valid update clears it.
+    Ready { value: T, note: Option<Arc<str>> },
+    /// Nothing usable: the resource does not exist, is invalid, or an error
+    /// arrived before the first valid value.
+    Failed(Arc<str>),
+}
+
+impl<T> WatchState<T> {
+    /// Applies a `ResourceChanged` event. An `Err` discards any cached value.
+    fn on_changed(&mut self, result: Result<T, Arc<str>>) {
+        *self = match result {
+            Ok(value) => Self::Ready { value, note: None },
+            Err(reason) => Self::Failed(reason),
+        };
+    }
+
+    /// Applies an `AmbientError` event: attaches `reason` to the cached value
+    /// as a note.
+    ///
+    /// The XdsClient sends ambient errors only once a value is cached, and
+    /// otherwise sends a `ResourceChanged` error (gRFC A88). Any other ambient
+    /// error is ignored, so that it can't hide the reason a watch failed.
+    fn on_ambient_error(&mut self, reason: Arc<str>) {
+        if let Self::Ready { note, .. } = self {
+            *note = Some(reason);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[derive(Debug)]
+    enum Event {
+        Changed(Result<u32, &'static str>),
+        Ambient(&'static str),
+    }
+
+    fn ready(value: u32, note: Option<&str>) -> WatchState<u32> {
+        WatchState::Ready {
+            value,
+            note: note.map(Arc::from),
+        }
+    }
+
+    fn failed(reason: &str) -> WatchState<u32> {
+        WatchState::Failed(reason.into())
+    }
+
+    #[test]
+    fn events_follow_a88_transitions() {
+        use Event::Ambient;
+        use Event::Changed;
+        use WatchState::Pending;
+
+        for (start, event, expected) in [
+            // A valid resource always replaces the state and clears the note.
+            (Pending, Changed(Ok(2)), ready(2, None)),
+            (ready(1, Some("old")), Changed(Ok(2)), ready(2, None)),
+            (failed("old"), Changed(Ok(2)), ready(2, None)),
+            // A resource error always discards the cached value.
+            (Pending, Changed(Err("gone")), failed("gone")),
+            (ready(1, None), Changed(Err("gone")), failed("gone")),
+            (failed("old"), Changed(Err("gone")), failed("gone")),
+            // An ambient error keeps a cached value and only replaces its note.
+            (ready(1, None), Ambient("down"), ready(1, Some("down"))),
+            (
+                ready(1, Some("old")),
+                Ambient("down"),
+                ready(1, Some("down")),
+            ),
+            // Without a cached value, it's ignored, keeping the failure reason.
+            (Pending, Ambient("down"), Pending),
+            (failed("gone"), Ambient("down"), failed("gone")),
+        ] {
+            let mut state = start.clone();
+            match &event {
+                Changed(result) => state.on_changed(result.map_err(Arc::from)),
+                Ambient(reason) => state.on_ambient_error(Arc::from(*reason)),
+            }
+            assert_eq!(state, expected, "{start:?} after {event:?}");
+        }
     }
 }
 
@@ -1765,231 +1893,17 @@ impl SubscriptionMode {
     fn resource_names_for_request(&se
 ```
 
-### Core Architecture Module: `codegen/src/main.rs`
-```
-/*
- *
- * Copyright 2025 gRPC authors.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- */
-
-use std::{
-    fs::File,
-    io::{BufWriter, Write as _},
-    path::{Path, PathBuf},
-    time::Instant,
-};
-
-use protox::prost::Message as _;
-use quote::quote;
-use tonic_prost_build::FileDescriptorSet;
-
-fn main() {
-    println!("Running codegen...");
-
-    let start = Instant::now();
-
-    // tonic-health
-    codegen(
-        &PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .unwrap()
-            .join("tonic-health"),
-        &["proto/health.proto"],
-        &["proto"],
-        &PathBuf::from("src/generated"),
-        &PathBuf::from("src/generated/grpc_health_v1_fds.rs"),
-        true,
-        true,
-    );
-
-    // tonic-reflection
-    codegen(
-        &PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .unwrap()
-            .join("tonic-reflection"),
-        &["proto/reflection_v1.proto"],
-        &["proto"],
-        &PathBuf::from("src/generated"),
-        &PathBuf::from("src/generated/reflection_v1_fds.rs"),
-        true,
-        true,
-    );
-    codegen(
-        &PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .unwrap()
-            .join("tonic-reflection"),
-        &["proto/reflection_v1alpha.proto"],
-        &["proto"],
-        &PathBuf::from("src/generated"),
-        &PathBuf::from("src/generated/reflection_v1alpha1_fds.rs"),
-        true,
-        true,
-    );
-
-    // tonic-types
-    codegen(
-        &PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .unwrap()
-            .join("tonic-types"),
-        &["proto/status.proto", "proto/error_details.proto"],
-        &["proto"],
-        &PathBuf::from("src/generated"),
-        &PathBuf::from("src/generated/types_fds.rs"),
-        false,
-        false,
-    );
-
-    // grpc
-    codegen(
-        &PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .unwrap()
-            .join("grpc"),
-        &["proto/echo/echo.proto"],
-        &["proto"],
-        &PathBuf::from("src/generated"),
-        &PathBuf::from("src/generated/echo_fds.rs"),
-        true,
-        true,
-    );
-
-    println!("Codgen completed: {}ms", start.elapsed().as_millis());
-}
-
-fn codegen(
-    root_dir: &Path,
-    iface_files: &[&str],
-    include_dirs: &[&str],
-    out_dir: &Path,
-    file_descriptor_set_path: &Path,
-    build_client: bool,
-    build_server: bool,
-) {
-    let tempdir = tempfile::Builder::new()
-        .prefix("tonic-codegen-")
-        .tempdir()
-        .unwrap();
-
-    let iface_files = iface_files.iter().map(|&path| root_dir.join(path));
-    let include_dirs = include_dirs.iter().map(|&path| root_dir.join(path));
-    let out_dir = root_dir.join(out_dir);
-    let file_descriptor_set_path = root_dir.join(file_descriptor_set_path);
-
-    let fds = protox::compile(iface_files, include_dirs).unwrap();
-
-    write_fds(&fds, &file_descriptor_set_path);
-
-    tonic_prost_build::configure()
-        .build_client(build_client)
-        .build_server(build_server)
-        .build_transport(false)
-        .out_dir(&tempdir)
-        .compile_fds(fds)
-        .unwrap();
-
-    for path in std::fs::read_dir(tempdir.path()).unwrap() {
-        let path = path.unwrap().path();
-        let to = out_dir.join(
-            path.file_name()
-                .unwrap()
-                .to_str()
-                .unwrap()
-                .strip_suffix(".rs")
-                .unwrap()
-                .replace('.', "_")
-                + ".rs",
-        );
-        std::fs::copy(&path, &to).unwrap();
-    }
-}
-
-fn write_fds(fds: &FileDescriptorSet, path: &Path) {
-    const GENERATED_COMMENT: &str = "// This file is @generated by codegen.";
-
-    let mut file_header = String::new();
-
-    let mut fds = fds.clone();
-
-    for fd in fds.file.iter() {
-        let Some(source_code_info) = &fd.source_code_info else {
-            continue;
-        };
-
-        for location in &source_code_info.location {
-            for comment in &location.leading_detached_comments {
-                file_header += comment;
-            }
-        }
-    }
-
-    for fd in fds.file.iter_mut() {
-        fd.source_code_info = None;
-    }
-
-    let fds_raw = fds.encode_to_vec();
-    let tokens = quote! {
-        /// Byte encoded FILE_DESCRIPTOR_SET.
-        pub const FILE_DESCRIPTOR_SET: &[u8] = &[#(#fds_raw),*];
-    };
-    let ast = syn::parse2(tokens).unwrap();
-    let formatted = prettyplease::unparse(&ast);
-
-    let mut writer = BufWriter::new(File::create(path).unwrap());
-
-    writer.write_all(GENERATED_COMMENT.as_bytes()).unwrap();
-    writer.write_all(b"\n").unwrap();
-
-    if !file_header.is_empty() {
-        let file_header = comment_out(&file_header);
-        writer.write_all(file_header.as_bytes()).unwrap();
-        writer.write_all(b"\n").unwrap();
-    }
-
-    writer.write_all(formatted.as_bytes()).unwrap()
-}
-
-fn comment_out(s: &str) -> String {
-    s.split('\n')
-        .map(|line| format!("// {line}"))
-        .collect::<Vec<String>>()
-        .join("\n")
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2966** (2026-10-27): **chore: release v0.14.8**
-  *Symptoms*:    ## 🤖 New release  * `tonic`: 0.14.7 -> 0.14.8 * `tonic-build`: 0.14.7 -> 0.14.8 * `tonic-prost`: 0.14.7 -> 0.14.8 * `tonic-health`: 0.14.7 -> 0.14.8 * `tonic-types`: 0.14.7 -> 0.14.8 * `tonic-reflection`: 0.14.7 -> 0.14.8 * `tonic-prost-build`: 0.14.7 -> 0.14.8 * `tonic-web`: 0.14.7 -> 0.14.8 (✓ API compatible changes)  <details><summary><i><b>Changelog</b></i></summary><p>  ## `tonic`  <blockquote>  ## [0.14.7](https://github.com/grpc/grpc-rust/compare/tonic-v0.14.6...tonic-v0.14.7) - 2026-10-26  ### Fixed  - *(codec)* eliminate uninitialized memory in encode_item on unwind ([#2847](https://github.com/grpc/grpc-rust/pull/2847)) - *(transport)* drop listener before draining connections ([#2824](https://github.com/grpc/grpc-rust/pull/2824)) - fix/silence all clippy warnings ([#2807](https://github.com/grpc/grpc-rust/pull/2807)) - *(status)* map h2 FRAME_SIZE_ERROR to Code::Internal ([#2641](https://github.com/grpc/grpc-rust/pull/2641)) - *(codec)* respect server's enabled encodings when selecting response compression ([#2655](https://github.com/grpc/grpc-rust/pull/2655))  ### Other  - *(deps)* require patched zstd ([#2962](https://github.com/grpc/grpc-rust/pull/2962)) - fix changelog duplicate and update repository URLs ([#2943](https://github.com/grpc/grpc-rust/pull/2943)) - *(deps)* require patched rustls-webpki and webpki-roots ([#2940](https://github.com/grpc/grpc-rust/pull/2940)) - handle ipv6 endpoints when tls is enabled ([#2423](https://github.com/grpc/grpc-rust/pu
+- **Issue #2982** (2026-10-29): **protoc-gen-grpc-rust: downgrade abseil**
+  *Symptoms*: The current version of abseil has a bug that includes bmi2intrin.h directly, which is not allowed and errors on the newest version of our runners (ubuntu 26):  https://github.com/grpc/grpc-rust/actions/runs/40946149760/job/123701909400?pr=2981#step:6:508 >     25 | # error "Never use <bmi2intrin.h> directly; include <x86gprintrin.h> instead."  ~This updates us to the current latest abseil release.~  \*ahem\*  Apparently the newest version also has a bug with windows builds.  It is fixed on master, but no release contains it.  So we need to downgrade instead. This makes us match protobuf's version from 2025-05-12. 
 
-- **Issue #2964** (2026-10-27): **tonic-web client drops trailers when the trailer frame arrives in the same chunk as the last message**
-  *Symptoms*: ## Version  tonic-web 0.14.7, and every 0.14.x release I've checked (0.14.3 onward).  ## Description  A tonic client using `GrpcWebClientLayer` fails a successful call with:      protocol error: missing grpc-status trailer, stream was terminated without a final status (possible truncation by a proxy or load balancer)  This happens whenever the response body delivers the last message frame and the trailer frame in the same chunk. That is a valid gRPC-web body, since frame boundaries do not have to line up with body chunks, and it is the usual shape of a unary response from anything that buffers the response. We hit it with an AWS Lambda behind Envoy's `aws_lambda` filter, where every response arrives as one chunk.  ## Reproduction  A response body that yields this as a single data frame:      \0\0\0\0\x03abc\x80\0\0\0\x0fgrpc-status:0\r\n  decodes as the message and then end of stream, with no trailers. Split into two data frames at the trailer frame, it decodes correctly.  ## Cause  In `GrpcWebCall::poll_frame` (client decode path, `tonic-web/src/call.rs`):  1. `find_trailers` returns `Trailer(len)`. The trailers are decoded and stored in `self.trailers`, and the message is returned. 2. On the next poll the buffer is empty, so `find_trailers` returns `Done(0)`, which maps to `Poll::Ready(None)`. The stored trailers are never emitted.  The same chunking assumptions cause related failures:  - A trailer frame whose payload is split across chunks is decoded from the partial bytes
+- **Issue #2980** (2026-10-29): **fix(server): set a timer on HTTP/1 connections so hyper's header read timeout applies**
+  *Symptoms*: ## Motivation  Since the hyper 1.0 upgrade, the server's connection builder only gets a timer on its HTTP/2 side (added in #1726 for keepalive). hyper's HTTP/1 `header_read_timeout` defaults to 30s, but hyper silently disables it when no timer is set.  As a result, a server built with `accept_http1(true)`, which `tonic-web` requires, never times out a client that doesn't finish sending its request headers. A slowloris client can hold connections open indefinitely and exhaust the server's file descriptors. Users can't fix this from outside, since the connection builder is internal and `Server` exposes no HTTP/1 options.  ## Solution  Set `TokioTimer` on the HTTP/1 builder too. This only turns on hyper's existing 30s default header read timeout. It adds no new API and changes nothing for HTTP/2-only servers.  Adds `http1_header_read_timeout_is_enforced`, which sends a partial HTTP/1 request head, advances the clock past 30s, and checks that the server closed the connection. It fails without the fix and passes with it. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2006,136 +1920,94 @@ fn comment_out(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b8282b95` (2026-10-27)
-**Commit Message**: fix(tonic-web): fix dropped trailers in combined streaming call. (#2474)
+### Incident Patch 1: `4ee04836` (2026-10-29)
+**Commit Message**: fix(server): set a timer on HTTP/1 connections so hyper's header read timeout applies (#2980)
 
 ## Motivation
 
-In testing grpc-web streaming from AWS lambda I discovered a bug in the
-trailer frame parsing where if the upstream service combined data frames
-together (message + trailers in the same frame), the trailers would be
-dropped.
+Since the hyper 1.0 upgrade, the server's connection builder only gets a
+timer on its HTTP/2 side (added in #1726 for keepalive). hyper's HTTP/1
+`header_read_timeout` defaults to 30s, but hyper silently disables it
+when no timer is set.
+
+As a result, a server built with `accept_http1(true)`, which `tonic-web`
+requires, never times out a client that doesn't finish sending its
+request headers. A slowloris client can hold connections open
+indefinitely and exhaust the server's file descriptors. Users can't fix
+this from outside, since the connection builder is internal and `Server`
+exposes no HTTP/1 options.
 
 ## Solution
 
-In tonic web frame decoding logic, ensure trailers are emitted on poll
-even when the data frame has been emitted.
+Set `TokioTimer` on the HTTP/1 builder too. This only turns on hyper's
+existing 30s default header read timeout. It adds no new API and changes
+nothing for HTTP/2-only servers.
 
-**File**: `tonic-web/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -30,6 +30,7 @@ tracing = "0.1"
- tokio = { version = "1", features = ["macros", "rt"] }
- tower-http = { version = "0.6", features = ["cors"] }
- axum = { version = "0.8", default-features = false }
-+http-body-util = "0.1"
- 
- [lints]
- workspace = true
-```
+Adds `http1_header_read_timeout_is_enforced`, which sends a partial
+HTTP/1 request head, advances the clock past 30s, and checks that the
+server closed the connection. It fails without the fix and passes with
+it.
 
-**File**: `tonic-web/src/call.rs` (modified, +279/-11)
+**File**: `tonic/src/transport/server/mod.rs` (modified, +37/-0)
 ```diff
-@@ -286,13 +286,27 @@ where
-         if self.client && self.direction == Direction::Decode {
-             let mut me = self.as_mut();
+@@ -849,6 +849,9 @@ impl<L> Server<L> {
+                 builder.http2().max_header_list_size(max_header_list_size);
+             }
  
-+            // If we previously decoded trailers (which can arrive in the same HTTP
-+            // data frame as the final message), ensure we yield them on a subsequent
-+            // poll once all message bytes have been emitted.
-+            let this = me.as_mut().project();
-+            if this.decoded.is_empty()
-+                && let Some(trailers) = this.trailers.take()
-+            {
-+                return Poll::Ready(Some(Ok(Frame::trailers(trailers))));
-+            }
++            // hyper only enforces its default HTTP/1 header read timeout (30s) when a timer is set.
++            builder.http1().timer(TokioTimer::new());
 +
-             loop {
--                match ready!(me.as_mut().poll_decode(cx)) {
-+                // Track whether the underlying HTTP body is complete for this poll.
-+                // This is used to avoid busy loops when we have an incomplete gRPC
-+                // frame buffered but can no longer read more bytes.
-+                let eof = match ready!(me.as_mut().poll_decode(cx)) {
-                     Some(Ok(incoming_buf)) if incoming_buf.is_data() => {
-                         me.as_mut()
-                             .project()
-                             .decoded
-                             .put(incoming_buf.into_data().unwrap());
-+                        false
-                     }
-                     Some(Ok(incoming_buf)) if incoming_buf.is_trailers() => {
-                         let trailers = incoming_buf.into_trailers().unwrap();
-@@ -307,7 +321,8 @@ where
-                         continue;
-                     }
-                     Some(Ok(_)) => unreachable!("unexpected frame type"),
--                    None => {} // No more data to decode, time to look for trailers
-+                    // No more data to decode, time to look for trailers / remaining messages
-+                    None => true,
-                     Some(Err(e)) => return Poll::Ready(Some(Err(e))),
-                 };
+             builder
+         };
  
-@@ -319,11 +334,27 @@ where
-                     FindTrailers::Trailer(len) => {
-                         // Extract up to len of where the trailers are at
-                         let msg_buf = buf.copy_to_bytes(len);
--                        match decode_trailers_frame(buf.split().freeze()) {
--                            Ok(Some(trailers)) => {
--                                me.as_mut().project().trailers.replace(trailers);
+@@ -1436,4 +1439,38 @@ mod tests {
+             Some(EXAMPLE_TCP_KEEPALIVE_RETRIES)
+         );
+     }
 +
-+                        // Only attempt to decode the trailers once the full trailers frame
-+                        // is buffered. Otherwise, keep the bytes in `decoded` for the next poll.
-+                        match grpc_web_frame_total_len(&buf[..]) {
-+                            Some(total_len) if buf.len() >= total_len => {
-+                                let trailers_bytes = buf.split_to(total_len).freeze();
-+                                match decode_trailers_frame(trailers_bytes) {
-+                                    Ok(Some(trailers)) => {
-+                                        me.as_mut().project().trailers.replace(trailers);
-+                                    }
-+                                    Err(e) => return Poll::Ready(Some(Err(e))),
-+                                    Ok(None) => {}
-+                                }
-+                            }
-+                            // We cannot make forward progress: the trailers frame is only
-+                            // partially buffered, and the underlying HTTP body has ended.
-+                            _ if eof && !msg_buf.has_remaining() => {
-+                                return Poll::Ready(Some(Err(data_loss(
-+                                    "incomplete grpc-web trailers frame",
-+                                ))));
-                             }
--                            Err(e) => return Poll::Ready(Some(Err(e))),
-                             _ => {}
-                         }
- 
-@@ -332,14 +363,42 @@ where
-                         } else if let Some(trailers) = me.as_mut().project().trailers.take() {
-                             Poll::Ready(Some(Ok(Frame::trailers(trailers))))
-                         } else {
-+                            // If we haven't yet buffered the full trailers frame, request more
-+                            // bytes from the underlying body.
-+                            if !eof {
-+                                continue;
-+                            }
-                             Poll::Ready(None)
-                         }
-                     }
--                    FindTrailers::IncompleteBuf => continue,
--                    FindTrailers::Done(len) => Poll::Ready(match len {
--                        0 => None,
--                        _ => Some(Ok(Frame::data(buf.split_to(len).freeze()))),
--                    }),
-+                    FindTrailers::IncompleteBuf => {
-+                        if eof {
-+                            Poll::Ready(Some(Err(data_loss("incomplete grpc-web message frame"))))
-+                        } else {
++    #[tokio::test]
++    async fn http1_header_read_timeout_is_enforced() {
++        use tokio::io::{AsyncReadExt, AsyncWriteExt};
++
++        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
++        let addr = listener.local_addr().unwrap();
++        tokio::spawn(
++            Server::builder()
++                .accept_http1(true)
++                .add_routes(Routes::default())
++                .serve_with_incoming(TcpIncoming::from(listener)),
++        );
++
++        let mut client = tokio::net::TcpStream::connect(addr).await.unwrap();
++        client
++            .write_all(b"POST / HTTP/1.1\r\nHost: x\r\n")
++            .await
++            .unwrap();
++
++        // Let the server start reading the request head, then jump past hyper's default 30s
++        // header read timeout. Auto-advance is avoided on purpose: it races with socket I/O.
++        tokio::time::sleep(Duration::from_millis(200)).await;
++        tokio::time::pause();
++        tokio::time::advance(Duration::from_secs(31)).await;
++        tokio::time::resume();
++
++        let mut buf = [0u8; 64];
++        let read = tokio::time::timeout(Duration::from_secs(5), client.read(&mut buf)).await;
++        assert!(
++            read.is_ok(),
++            "connection with unfinished HTTP/1 headers was not closed"
++        );
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2966** (2026-10-27): chore: release v0.14.8 (@github-actions[bot])
-- **PR #2963** (2026-10-26): chore(ci): set publish = false for unpublished grpc crates in release-plz (@LucioFranco)
-- **PR #2962** (2026-10-26): chore(deps): require patched zstd (@LucioFranco)
-- **PR #2961** (closed): chore(deps): update zstd to 0.14.3 (@alamb)
-- **PR #2957** (2026-10-26): grpc: ChannelBuilder should be exported (@ejona86)
-- **PR #2956** (2026-10-23): Upgrade to Protobuf 36.2 (@ejona86)
+- **PR #2982** (2026-10-29): protoc-gen-grpc-rust: downgrade abseil (@dfawley)
+- **PR #2980** (2026-10-29): fix(server): set a timer on HTTP/1 connections so hyper's header read timeout applies (@LucioFranco)
+- **PR #2979** (2026-10-29): chore: release v0.14.9 (@github-actions[bot])
+- **PR #2975** (2026-10-30): grpc/load_balancing: add send_resolver_update_with_config to TestEnv (@nathanielford)
+- **PR #2973** (2026-10-28): feat(tonic-xds): expose ADS keepalive knob in config (@YutaoMa)
+- **PR #2972** (2026-10-29): feat(transport): expose h2 reset stream settings on Endpoint (@adriangb)
 
 ---
 
@@ -2155,21 +2027,50 @@ even when the data frame has been emitted.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tonic-web): fix dropped trailers in combined streaming call. (#2474)
+## X. server): set a timer on HTTP/1 connections so hyper's header read timeout applie
 
 **RULE**:
-When implementing operations in `tonic-web/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tonic/src/transport/server/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b8282b95`: tonic-web): fix dropped trailers in combined streaming call. (#2474). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4ee04836`: server): set a timer on HTTP/1 connections so hyper's header read timeout applies (#2980). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tonic-web/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tonic/src/transport/server/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-http-body-util = "0.1"
+            // hyper only enforces its default HTTP/1 header read timeout (30s) when a timer is set.
+            builder.http1().timer(TokioTimer::new());
+
+
+    #[tokio::test]
+    async fn http1_header_read_timeout_is_enforced() {
+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
+
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let addr = listener.local_addr().unwrap();
+        tokio::spawn(
+            Server::builder()
+                .accept_http1(true)
+                .add_routes(Routes::default())
+                .serve_with_incoming(TcpIncoming::from(listener)),
+        );
+
+        let mut client = tokio::net::TcpStream::connect(addr).await.unwrap();
+        client
+            .write_all(b"POST / HTTP/1.1\r\nHost: x\r\n")
+            .await
+            .unwrap();
+
+        // Let the server start reading the request head, then jump past hyper's default 30s
+        // header read timeout. Auto-advance is avoided on purpose: it races with socket I/O.
+        tokio::time::sleep(Duration::from_millis(200)).await;
+        tokio::time::pause();
+        tokio::time::advance(Duration::from_secs(31)).await;
+        tokio::time::resume();
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2179,4 +2080,4 @@ http-body-util = "0.1"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b8282b95` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4ee04836` are properly handled with clean fallback behavior.

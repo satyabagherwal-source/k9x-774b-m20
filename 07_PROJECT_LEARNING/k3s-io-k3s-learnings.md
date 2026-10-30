@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source**: github ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
-> **Source Version**: `0cc587fa`  
+> **Source Version**: `f2aea320`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T18:57:46.500Z  
+> **Timestamp**: 2026-10-30T06:43:21.963Z  
 > **Learning ID**: `learn-github-k3s-io-k3s`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/k3s-io-k3s-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/k3s-io/k3s](https://github.com/k3s-io/k3s))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T18:57:46.492Z  
+> **Harvest Timestamp**: 2026-10-30T06:43:21.561Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Lightweight Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 34272 stars
+- **Stars / Engagement**: 34281 stars
 
 ---
 
@@ -884,14 +884,15 @@ func AddFeatureGate(current, toAdd string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14913** (2026-10-28): **Decompress openvex json**
-  *Symptoms*: #### Proposed Changes ####  CI fix  #### Types of Changes ####  CI  #### Verification ####  check scan output  #### Testing ####  #### Linked Issues ####  * https://github.com/rancher/rke2/pull/11334  #### User-Facing Change #### ```release-note ```  #### Further Comments #### 
+- **Issue #14938** (2026-10-29): **[release-1.34] Bump x/net and pass `golang.org/x/` replacements through when building bundled binaries**
+  *Symptoms*:  #### Proposed Changes ####  * Bump x/net and pass `golang.org/x/` replacements through when building bundled binaries * Also backports https://github.com/k3s-io/k3s/pull/14922  #### Types of Changes ####  version bump for cves  #### Verification ####  Check scan: ``` Vulnerabilities - Critical: 0, High: 0 ```  #### Testing ####  #### Linked Issues ####   #### User-Facing Change #### ```release-note  ```  #### Further Comments #### 
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/14913?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 49.28%. Comparing base ([`a443fd3`](https://app.codecov.io/gh/k3s-io/k3s/commit/a443fd39077abee5f053ed1310e6af2a2e6f8d30?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`f872e22`](https://app.codecov.io/gh/k3s-io/k3s/commit/f872e2206a67b40493a5e9f6fc01949126c69d67?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             main   #14913      +/-   ## ==========================================
-  > Closing in favor of https://github.com/k3s-io/k3s/pull/14916 which also corrects the on-demand scan workflow
+  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/14938?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 52.03%. Comparing base ([`a88c1e1`](https://app.codecov.io/gh/k3s-io/k3s/commit/a88c1e1d65c0e76fdf78680949d6c36559cd781d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`de64b56`](https://app.codecov.io/gh/k3s-io/k3s/commit/de64b5605257d5331bd503e04d166d9a2970049e?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  <details><summary>Additional details and impacted files</summary>    ```diff @@               Coverage Diff                @@ ##           release-1.34   #14938      +/-   ## ==============================
 
-- **Issue #14910** (2026-10-27): **Expose kine connection pool settings (max open/idle connections) for external SQL datastores**
-  *Symptoms*: **Is your feature request related to a problem? Please describe.**  With an external SQL datastore (`--datastore-endpoint=postgres://...`), the embedded kine connection pool cannot be configured. K3s never sets `endpoint.Config.ConnectionPoolConfig`, so kine falls back to its defaults (`pkg/drivers/generic/generic.go`): `MaxIdle` 20 and `MaxOpen` unlimited.  On a shared PostgreSQL server this lets one K3s server use a large share of `max_connections`. We run several K3s servers against one PostgreSQL instance (`max_connections` 181). Each time a new server starts, its kine opens 100-135 connections within about 10 seconds, then releases most of them. We measured this on 15 server joins in 26 hours, from the PostgreSQL `connection authorized` log. Once, this burst overlapped other load, and PostgreSQL refused connections from the new server and other clients (`FATAL: sorry, too many clients already`).  The standalone kine binary already has `--datastore-max-open-connections`, `--datastore-max-idle-connections`, `--datastore-connection-max-lifetime` and `--datastore-connection-max-idle-time` (`pkg/app/app.go`). K3s exposes only `--datastore-endpoint`, `--datastore-cafile`, `--datastore-certfile`, `--datastore-keyfile` and `--kine-tls`. We checked v1.36.5+k3s1 (kine v0.16.5), v1.37.1+k3s1 and master (kine v0.17.1). Query parameters in the DSN do not help: kine `pgsql.go` passes them to pgx as startup parameters, not to `database/sql`.  **Describe the solution you'd like**  Add s
+- **Issue #14937** (2026-10-29): **[release-1.35] Bump x/net and pass `golang.org/x/` replacements through when building bundled binaries**
+  *Symptoms*:  #### Proposed Changes ####  * Bump x/net and pass `golang.org/x/` replacements through when building bundled binaries * Also backports https://github.com/k3s-io/k3s/pull/14922  #### Types of Changes ####  version bump for cves  #### Verification ####  Check scan: ``` Vulnerabilities - Critical: 0, High: 0 ```  #### Testing ####  #### Linked Issues ####   #### User-Facing Change #### ```release-note  ```  #### Further Comments #### 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/k3s-io/k3s/pull/14937?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 52.00%. Comparing base ([`82657bc`](https://app.codecov.io/gh/k3s-io/k3s/commit/82657bc374ed28b7394b3f23166d8f9173dd5e4d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)) to head ([`6fd5de1`](https://app.codecov.io/gh/k3s-io/k3s/commit/6fd5de13d1e0833d4cf5533fa86f3f792c28bb74?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=k3s-io)).  <details><summary>Additional details and impacted files</summary>    ```diff @@               Coverage Diff                @@ ##           release-1.35   #14937      +/-   ## ==============================
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -908,39 +909,309 @@ func AddFeatureGate(current, toAdd string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1bebce8e` (2026-10-28)
-**Commit Message**: Set IdleTimeout on the supervisor http server (#14904)
+### Incident Patch 1: `f2aea320` (2026-10-29)
+**Commit Message**: Update AI guidance
 
-**File**: `pkg/cluster/https.go` (modified, +5/-0)
+Signed-off-by: Brad Davidson <[REDACTED_EMAIL]>
+
+**File**: `CONTRIBUTING.md` (modified, +9/-2)
 ```diff
-@@ -11,6 +11,7 @@ import (
- 	"os"
- 	"path/filepath"
- 	"strconv"
-+	"time"
+@@ -24,8 +24,15 @@ understanding every change. If you used AI tools in preparing your PR, you must
+ description of your PR. Listing AI tooling as a co-author, co-signing commits using an AI tool, or using
+ the `assisted-by`, `co-developed` or similar commit trailer is not allowed.
  
- 	"github.com/k3s-io/k3s/pkg/daemons/config"
- 	"github.com/k3s-io/k3s/pkg/util"
-@@ -121,6 +122,10 @@ func (c *Cluster) initClusterAndHTTPS(ctx context.Context) error {
- 			certHandler.ServeHTTP(rw, req)
- 			handler.ServeHTTP(rw, req)
- 		}),
-+		// Same values as kubernetes apiserver
-+		MaxHeaderBytes:    1 << 20,
-+		IdleTimeout:       90 * time.Second,
-+		ReadHeaderTimeout: 32 * time.Second,
+-Large AI generated PRs and AI generated commit messages are not allowed. PRs with excessively large or
+-unnecessarily scaffolded unit tests that could be replaced with a succinct E2E test will be closed.
++Be considerate of maintainer resources. Large AI generated PRs, commit messages, and issue
++reports are not allowed. Issues with excessive AI prose ("Why it matters" sections and lengthy
++contrived steps to reproduce) may be ignored or rejected.
++
++PRs may be rejected solely due to inapproriate addition of tests. Test should not be:
++* Excessively trivial (ie, validates that input=output, or covers only 3rd party code)
++* Replacable by a succinct E2E test
++* Unnecessarily scaffolded
++* Excessively large
+ 
+ Do not leave the first review of AI generated changes to the reviewers. Verify the changes (code review,
+ testing, etc.) before submitting your PR. Reviewers may ask questions about your AI-assisted code, and if
+```
+
+---
+
+### Incident Patch 2: `21ccab9b` (2026-10-29)
+**Commit Message**: Bump x/net and pass replacements through when building runc and runc-shim
+
+Signed-off-by: Brad Davidson <[REDACTED_EMAIL]>
+
+**File**: `go.mod` (modified, +6/-6)
+```diff
+@@ -31,7 +31,7 @@ replace (
+ 	go.etcd.io/etcd/server/v3 => github.com/k3s-io/etcd/server/v3 v3.7.1-k3s3
+ 	go.opentelemetry.io/contrib/instrumentation/github.com/emicklei/go-restful/otelrestful => go.opentelemetry.io/contrib/instrumentation/github.com/emicklei/go-restful/otelrestful v0.69.0
+ 	golang.org/x/crypto => golang.org/x/crypto v0.54.0
+-	golang.org/x/net => golang.org/x/net v0.57.0
++	golang.org/x/net => golang.org/x/net v0.60.0
+ 	golang.org/x/sys => golang.org/x/sys v0.47.0
+ 	google.golang.org/genproto => google.golang.org/genproto v0.0.0-20230525234035-dd9d682886f9
+ 	google.golang.org/grpc => google.golang.org/grpc v1.83.2
+@@ -147,7 +147,7 @@ require (
+ 	go.uber.org/mock v0.6.0
+ 	go.uber.org/zap v1.28.0
+ 	golang.org/x/crypto v0.57.0
+-	golang.org/x/mod v0.38.0
++	golang.org/x/mod v0.41.0
+ 	golang.org/x/net v0.58.0
+ 	golang.org/x/sync v0.23.0
+ 	golang.org/x/sys v0.48.0
+@@ -500,11 +500,11 @@ require (
+ 	go.yaml.in/yaml/v4 v4.0.0-rc.2 // indirect
+ 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/telemetry v0.0.0-20260708182218-49f421fb7959 // indirect
+-	golang.org/x/term v0.45.0 // indirect
+-	golang.org/x/text v0.41.0 // indirect
++	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
++	golang.org/x/term v0.46.0 // indirect
++	golang.org/x/text v0.42.0 // indirect
+ 	golang.org/x/time v0.15.0 // indirect
+-	golang.org/x/tools v0.48.0 // indirect
++	golang.org/x/tools v0.49.0 // indirect
+ 	golang.zx2c4.com/wireguard v0.0.0-20231211153847-12269c276173 // indirect
+ 	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20241231184526-a9ab2273dd10 // indirect
+ 	gonum.org/v1/gonum v0.17.0 // indirect
+```
+
+**File**: `go.sum` (modified, +13/-7)
+```diff
+@@ -2093,10 +2093,12 @@ golang.org/x/mod v0.34.0/go.mod h1:ykgH52iCZe79kzLLMhyCUzhMci+nQj+0XkbXpNYtVjY=
+ golang.org/x/mod v0.35.0/go.mod h1:+GwiRhIInF8wPm+4AoT6L0FA1QWAad3OMdTRx4tFYlU=
+ golang.org/x/mod v0.36.0/go.mod h1:moc6ELqsWcOw5Ef3xVprK5ul/MvtVvkIXLziUOICjUQ=
+ golang.org/x/mod v0.37.0/go.mod h1:m8S8VeM9r4dzDwjrKO0a1sZP3YjeMamRRlD+fmR2Q/0=
+-golang.org/x/mod v0.38.0 h1:MECBjubtXD7yj4HrhIUcywNaGeNVUdfVnxmPajOk4yk=
+ golang.org/x/mod v0.38.0/go.mod h1:V6Xz0pq8TQ3dGqVQ1FVHuelZpAL0uNhSkk9ogYP3c40=
+-golang.org/x/net v0.57.0 h1:K5+3DljvIuDG9/Jv9rvyMywYNFCQ9RSUY6OOTTkT+tE=
+-golang.org/x/net v0.57.0/go.mod h1:KpXc8iv+r3XplLAG/f7Jsf9RPszJzdR0f58q9vGOuEU=
++golang.org/x/mod v0.39.0/go.mod h1:bvIbwjQ0HUFFf5AKukeeYQG4ZBUG9yxQbR9aEweIwYY=
++golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
++golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
++golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
++golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
+ golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+ golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+ golang.org/x/oauth2 v0.0.0-20191202225959-858c2ad4c8b6/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
+@@ -2201,11 +2203,13 @@ golang.org/x/telemetry v0.0.0-20260311193753-579e4da9a98c/go.mod h1:TpUTTEp9frx7
+ golang.org/x/telemetry v0.0.0-20260409153401-be6f6cb8b1fa/go.mod h1:kHjTxDEnAu6/Nl9lDkzjWpR+bmKfxeiRuSDlsMb70gE=
+ golang.org/x/telemetry v0.0.0-20260508192327-42602be52be6/go.mod h1:Eqhaxk/wZsWEH8CRxLwj6xzEJbz7k1EFGqx7nyCoabE=
+ golang.org/x/telemetry v0.0.0-20260625142307-59b4966ccb57/go.mod h1:3AWMyWHS+caVoiEXpiq6+tzKA40J4vQT3MYr80ZtQpc=
+-golang.org/x/telemetry v0.0.0-20260708182218-49f421fb7959 h1:RJhm5l6Fo4rmEIcndxDllNhhf/fAx8qIm4t6A7vpm2A=
+ golang.org/x/telemetry v0.0.0-20260708182218-49f421fb7959/go.mod h1:LV7u5Oco+Z/g6XI7PqN+EUUUGGkEcmB1uj2ceI0fOVg=
++golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 h1:ZUSxONxc981v7AW7QUg+I9WwZzSTTJ019ENBYr5pV/Q=
++golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5/go.mod h1:LVehoXe41cL5SCVQilsV7Gg6BNG+Js6P9PhSbYTIUkQ=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+-golang.org/x/term v0.45.0 h1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=
+ golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
++golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
++golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
+ golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+@@ -2244,8 +2248,9 @@ golang.org/x/text v0.32.0/go.mod h1:o/rUWzghvpD5TXrTIBuJU77MTaN0ljMWE47kxGJQ7jY=
+ golang.org/x/text v0.33.0/go.mod h1:LuMebE6+rBincTi9+xWTY8TztLzKHc/9C1uBCG27+q8=
+ golang.org/x/text v0.38.0/go.mod h1:YXZt3QhHUKYT53r2lLKFIVi6Ao1jdzrTR/KQ09qyxF4=
+ golang.org/x/text v0.40.0/go.mod h1:hpnzDAfGV753zIKo+wk3u1bVKCGPbrnF7+7LBF/UHVY=
+-golang.org/x/text v0.41.0 h1:vz/seA0lnX87Othu2f/0L24RcgrXD9/YFTSuGjj3rH8=
+ golang.org/x/text v0.41.0/go.mod h1:jvf1O8ajNzZqhSrQBPbutR/EB83Cc0CFrezNQIwbb5M=
++golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
++golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
+ golang.org/x/time v0.0.0-20180412165947-fbb02b2291d2/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
+ golang.org/x/time v0.0.0-20181108054448-85acf8d2951c/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
+ golang.org/x/time v0.0.0-20190308202827-9d24e82272b4/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
+@@ -2356,8 +2361,9 @@ golang.org/x/tools v0.43.0/go.mod h1:uHkMso649BX2cZK6+RpuIPXS3ho2hZo4FVwfoy1vIk0
+ golang.org/x/tools v0.44.0/go.mod h1:KA0AfVErSdxRZIsOVipbv3rQhVXTnlU6UhKxHd1seDI=
+ golang.org/x/tools v0.45.0/go.mod h1:LuUGqqaXcXMEFEruIVJVm5mgDD8vww/z/SR1gQ4uE/0=
+ golang.org/x/tools v0.47.0/go.mod h1:dFHnyTvFWY212G+h7ZY4Vsp/K3U4/7W9TyVaAul8uCA=
+-golang.org/x/tools v0.48.0 h1:3+hClM1aLL5mjMKm5ovokw9epgRXPuu2tILgismM6RE=
+ golang.org/x/tools v0.48.0/go.mod h1:08xX0orndb/F7jJxGDicx061tyd5pcMto75YMAXr6lk=
++golang.org/x/tools v0.49.0 h1:3NI7VXzL9+1WZD52Dx2ttoPwD5DWrFGpl9mFZDlmisI=
++golang.org/x/tools v0.49.0/go.mod h1:SJNXV9DBKT0UbdttsQjbfJlAE/q+y36++zo3uL3N0Oo=
+ golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+ golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+ golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+```
+
+**File**: `scripts/build` (modified, +21/-23)
+```diff
+@@ -154,22 +154,6 @@ cleanup() {
+     exit ${exit_status}
+ }
+ 
+-INSTALLBIN=$(pwd)/bin
+-if [ ! -x ${INSTALLBIN}/cni${BINARY_POSTFIX} ]; then
+-(
+-    echo Building cni
+-    TMPDIR=$(mktemp -d)
+-    trap cleanup EXIT
+-    WORKDIR=$TMPDIR/src/github.com/containernetworking/plugins
+-    git clone --single-branch --depth=1 --branch=$VERSION_CNIPLUGINS https://github.com/rancher/plugins.git $WORKDIR
+-    cd $WORKDIR
+-    rm -rf plugins/meta/flannel
+-    git clone --single-branch --depth=1 --branch=$VERSION_FLANNEL_PLUGIN https://github.com/flannel-io/cni-plugin.git plugins/meta/flannel
+-    sed -i 's/package main/package flannel/; s/func main/func Main/' plugins/meta/flannel/*.go
+-    GO111MODULE=off GOPATH=$TMPDIR CGO_ENABLED=0 "${GO}" build -tags "$TAGS" -gcflags="all=${GCFLAGS}" -ldflags "$VERSIONFLAGS $LDFLAGS $STATIC" -o $INSTALLBIN/cni${BINARY_POSTFIX}
+-)
+-fi
+-
+ echo Building k3s
+ cp -av manifests/* pkg/deploy/embed/
+ cp -av build/static/* pkg/static/embed/
+@@ -181,22 +165,34 @@ for i in "${k3s_binaries[@]}"; do
+ done
+ 
+ export GOPATH=$(pwd)/build
++REPLACEMENTS=$(go list -m --mod=readonly -f '{{ if .Replace }}-replace={{.Path}}={{.Replace.Path}}@{{.Replace.Version}}{{end}}' all | grep '=golang.org/x/')
++
++echo Building cni
++pushd ${PLUGINS_DIR}
++go mod edit ${REPLACEMENTS}; go mod tidy; [ -d vendor ] && go mod vendor
++CGO_ENABLED=0 "${GO}" build -tags "$TAGS" -gcflags="all=${GCFLAGS}" -ldflags "$VERSIONFLAGS $LDFLAGS $STATIC" -o bin/cni${BINARY_POSTFIX}
++popd
++cp -vf ${PLUGINS_DIR}/bin/cni${BINARY_POSTFIX} ./bin/
+ 
+ case ${OS} in
+   linux)
+     echo Building containerd-shim
+-    pushd ./build/src/github.com/containerd/containerd
++    pushd ${CONTAINERD_DIR}
++    rm -rf bin
++    go mod edit ${REPLACEMENTS}; go mod tidy; [ -d vendor ] && go mod vendor
+     TAGS="${TAGS/netcgo/netgo}"
+     CGO_ENABLED=1 "${GO}" build -tags "$TAGS" -gcflags="all=${GCFLAGS}" -ldflags "$VERSIONFLAGS $LDFLAGS $STATIC" -o bin/containerd-shim-runc-v2 ./cmd/containerd-shim-runc-v2
+     popd
+-    cp -vf ./build/src/github.com/containerd/containerd/bin/* ./bin/
++    cp -vf ${CONTAINERD_DIR}/bin/* ./bin/
+ 
+     echo Building runc
+-    pushd ./build/src/github.com/opencontainers/runc
++    pushd ${RUNC_DIR}
+     rm -f runc
+-    make GO="${GO}" EXTRA_FLAGS="-gcflags=\"all=${GCFLAGS}\"" EXTRA_LDFLAGS="$LDFLAGS" BUILDTAGS="$RUNC_TAGS" $RUNC_STATIC
++    COMMIT=$(git describe --dirty --long --always)
++    go mod edit ${REPLACEMENTS}; go mod tidy; [ -d vendor ] && go mod vendor
++    make COMMIT="${COMMIT}" GO="${GO}" EXTRA_FLAGS="-gcflags=\"all=${GCFLAGS}\"" EXTRA_LDFLAGS="$LDFLAGS" BUILDTAGS="$RUNC_TAGS" $RUNC_STATIC
+     popd
+-    cp -vf ./build/src/github.com/opencontainers/runc/runc ./bin/
++    cp -vf ${RUNC_DIR}/runc ./bin/
+     ;;
+   windows)
+     if [ "${ARCH}" != "amd64" ]; then
+@@ -205,12 +201,14 @@ case ${OS} in
+     fi
+ 
+     echo Building containerd-shim-runhcs-v1
+-    pushd ./build/src/github.com/microsoft/hcsshim
++    pushd ${HCSSHIM_DIR}
++    rm -rf bin
++    go mod edit ${REPLACEMENTS}; go mod tidy; [ -d vendor ] && go mod vendor
+     TAGS="${TAGS/netcgo/netgo}"
+     CGO_ENABLED=0 "${GO}" build -tags "$TAGS" -ldflags "$VERSIONFLAGS $LDFLAGS $STATIC" -o bin/containerd-shim-runhcs-v1${BINARY_POSTFIX} ./cmd/containerd-shim-runhcs-v1
+     CGO_ENABLED=0 "${GO}" build -tags "$TAGS" -ldflags "$VERSIONFLAGS $LDFLAGS $STATIC" -o bin/runhcs${BINARY_POSTFIX} ./cmd/runhcs
+     popd
+-    cp -vf ./build/src/github.com/microsoft/hcsshim/bin/*${BINARY_POSTFIX} ./bin/
++    cp -vf ${HCSSHIM_DIR}/bin/*${BINARY_POSTFIX} ./bin/
+     ;;
+   *)
+     echo "[ERROR] unrecognized opertaing system: ${OS}"
+```
+
+**File**: `scripts/download` (modified, +7/-3)
+```diff
+@@ -8,9 +8,6 @@ cd $(dirname $0)/..
+ 
+ CHARTS_URL=https://k3s.io/k3s-charts/assets
+ CHARTS_DIR=build/static/charts
+-RUNC_DIR=build/src/github.com/opencontainers/runc
+-CONTAINERD_DIR=build/src/github.com/containerd/containerd
+-HCSSHIM_DIR=build/src/github.com/microsoft/hcsshim
+ DATA_DIR=build/data
+ export TZ=UTC
+ 
+@@ -19,6 +16,7 @@ rm -rf ${CHARTS_DIR}
+ rm -rf ${RUNC_DIR}
+ rm -rf ${CONTAINERD_DIR}
+ rm -rf ${HCSSHIM_DIR}
++rm -rf ${PLUGINS_DIR}
+ mkdir -p ${CHARTS_DIR}
+ mkdir -p ${DATA_DIR}
+ 
+@@ -40,6 +38,12 @@ case ${OS} in
+     ;;
+ esac
+ 
++git clone --single-branch --depth=1 --branch=${VERSION_CNIPLUGINS} https://github.com/rancher/plugins.git ${PLUGINS_DIR}
++rm -rf ${PLUGINS_DIR}/plugins/meta/flannel
++git clone --single-branch --depth=1 --branch=${VERSION_FLANNEL_PLUGIN} https://github.com/flannel-io/cni-plugin.git ${PLUGINS_DIR}/plugins/meta/flannel
++rm -rf ${PLUGINS_DIR}/plugins/meta/flannel/go.*
++sed -i 's/package main/package flannel/; s/func main/func Main/' ${PLUGINS_DIR}/plugins/meta/flannel/*.go
++
+ git clone --single-branch --branch=${VERSION_CONTAINERD} --depth=1 https://${PKG_CONTAINERD_K3S%/v[0-9]*} ${CONTAINERD_DIR}
+ 
+ for CHART_FILE in $(grep -rlF HelmChart manifests/ | xargs yq eval --no-doc .spec.chart | xargs -n1 basename); do
+```
+
+**File**: `scripts/version.sh` (modified, +5/-0)
+```diff
+@@ -13,6 +13,11 @@ get-module-path(){
+   go list -mod=readonly -m -f '{{if .Replace}}{{.Replace.Path}}{{else}}{{.Path}}{{end}}' $1
+ }
+ 
++RUNC_DIR=build/src/github.com/opencontainers/runc
++CONTAINERD_DIR=build/src/github.com/containerd/containerd
++HCSSHIM_DIR=build/src/github.com/microsoft/hcsshim
++PLUGINS_DIR=build/src/github.com/containernetworking/plugins
++
+ PKG_CONTAINERD_K3S=$(get-module-path github.com/containerd/containerd/v2)
+ VERSION_CONTAINERD=$(get-module-version github.com/containerd/containerd/v2)
+ if [ -z "$VERSION_CONTAINERD" ]; then
+```
+
+---
+
+### Incident Patch 3: `36f32b2e` (2026-10-27)
+**Commit Message**: Fix airgap tarballs re-imported on every start with .cache.json
+
+The image import cache stores each file's mtime as a metav1.Time, which
+is serialized with second precision. Since #14288 the cached mtime is
+compared with the file's full-precision mtime on its own, so any file
+with a sub-second mtime looks newer than its cache entry and is
+re-imported on every start. Truncate the file's mtime to seconds before
+comparing.
+
+Fixes #14911
+
+Signed-off-by: Adam Gelwarg <[REDACTED_EMAIL]>
+
+**File**: `pkg/agent/containerd/watcher.go` (modified, +3/-1)
+```diff
+@@ -162,7 +162,9 @@ func (w *watchqueue) processImageEvent(ctx context.Context, key string, client *
+ 		return nil
  	}
  
- 	if logrus.IsLevelEnabled(logrus.DebugLevel) {
+-	if lastFileState := w.filesCache[key]; lastFileState == nil || lastFileState.Images == nil || file.Size() != lastFileState.Size || file.ModTime().After(lastFileState.ModTime.Time) {
++	// metav1.Time is serialized with second precision, so truncate the file's actual mtime before
++	// comparing, otherwise files with a sub-second mtime are re-imported on every start
++	if lastFileState := w.filesCache[key]; lastFileState == nil || lastFileState.Images == nil || file.Size() != lastFileState.Size || file.ModTime().Truncate(time.Second).After(lastFileState.ModTime.Time) {
+ 		start := time.Now()
+ 		images, err := preloadFile(ctx, w.cfg, client, imageClient, key)
+ 		if err != nil {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14913** (closed): Decompress openvex json (@brandond)
-- **PR #14909** (closed): Add contextual logging for event-broadcaster's startup (@ChuDucAnh242002)
-- **PR #14907** (closed): Sa v1.36.4+k3s1 (@sajuptpm)
-- **PR #14906** (closed): Document the --flannel-conf override solution for Windows (@ChuDucAnh242002)
-- **PR #14904** (2026-10-28): Set IdleTimeout on the supervisor http server (@somaz94)
-- **PR #14903** (2026-10-26): Add containerd server/metrics plugin (@haavard)
+- **PR #14938** (2026-10-29): [release-1.34] Bump x/net and pass `golang.org/x/` replacements through when building bundled binaries (@brandond)
+- **PR #14937** (2026-10-29): [release-1.35] Bump x/net and pass `golang.org/x/` replacements through when building bundled binaries (@brandond)
+- **PR #14936** (2026-10-29): [release-1.36] Bump x/net and pass `golang.org/x/` replacements through when building bundled binaries (@brandond)
+- **PR #14935** (2026-10-29): [release-1.37] Bump x/net and pass `golang.org/x/` replacements through when building bundled binaries (@brandond)
+- **PR #14934** (2026-10-29): Update AI guidance (@brandond)
+- **PR #14933** (2026-10-29): Bump x/net and pass `golang.org/x/` replacements through when building bundled binaries (@brandond)
 
 ---
 
@@ -960,32 +1231,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Set IdleTimeout on the supervisor http server (#14904)
+## X. Update AI guidance
 
 **RULE**:
-When implementing operations in `pkg/cluster/https.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in k3s-io/k3s. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1bebce8e`: Set IdleTimeout on the supervisor http server (#14904). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f2aea320`: Update AI guidance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/cluster/https.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"time"
-		// Same values as kubernetes apiserver
-		MaxHeaderBytes:    1 << 20,
-		IdleTimeout:       90 * time.Second,
-		ReadHeaderTimeout: 32 * time.Second,
+Be considerate of maintainer resources. Large AI generated PRs, commit messages, and issue
+reports are not allowed. Issues with excessive AI prose ("Why it matters" sections and lengthy
+contrived steps to reproduce) may be ignored or rejected.
+
+PRs may be rejected solely due to inapproriate addition of tests. Test should not be:
+* Excessively trivial (ie, validates that input=output, or covers only 3rd party code)
+* Replacable by a succinct E2E test
+* Unnecessarily scaffolded
+* Excessively large
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Large AI generated PRs and AI generated commit messages are not allowed. PRs with excessively large or
+unnecessarily scaffolded unit tests that could be replaced with a succinct E2E test will be closed.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1bebce8e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f2aea320` are properly handled with clean fallback behavior.

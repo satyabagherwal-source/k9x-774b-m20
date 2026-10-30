@@ -6137,3 +6137,6 @@
 | `CYCLE-20261030-EEGA` | `2026-10-30T06:29:51.658Z` | `cryfs/cryfs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5631` | Yes (`bb118e0d...`) |
 | `CYCLE-20261030-MZJE` | `2026-10-30T06:36:32.235Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5632` | Yes (`173f90f7...`) |
 | `CYCLE-20261030-N16L` | `2026-10-30T06:36:34.365Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5633` | Yes (`51221a6a...`) |
+| `CYCLE-20261030-VLO1` | `2026-10-30T06:43:14.161Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5634` | Yes (`87fa322a...`) |
+| `CYCLE-20261030-VOWK` | `2026-10-30T06:43:18.356Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5635` | Yes (`a3db5c8f...`) |
+| `CYCLE-20261030-VS7B` | `2026-10-30T06:43:22.631Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5636` | Yes (`f7d1afd7...`) |

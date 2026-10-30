@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T06:36:34.373Z",
-  "total_cycles_completed": 6114,
-  "total_learnings_persisted": 6114,
-  "total_rules_promoted": 5603,
+  "last_updated": "2026-10-30T06:43:22.640Z",
+  "total_cycles_completed": 6117,
+  "total_learnings_persisted": 6117,
+  "total_rules_promoted": 5606,
   "history": [
-    {
-      "timestamp": "2026-10-28T21:11:14.836Z",
-      "repository": "microsoft/FrogNano-4B-2609",
-      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T21:11:22.661Z",
-      "repository": "CrossPaste/crosspaste-desktop",
-      "learningId": "learn-github-crosspaste-crosspaste-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T21:29:53.524Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T21:30:04.952Z",
       "repository": "FrancisRing/Prism",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-30T06:36:34.373Z",
       "repository": "StarTrail-org/LEANN",
       "learningId": "learn-github-startrail-org-leann",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:43:14.170Z",
+      "repository": "grpc/grpc-rust",
+      "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:43:18.364Z",
+      "repository": "chrisbanes/skills",
+      "learningId": "learn-github-chrisbanes-skills",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:43:22.640Z",
+      "repository": "k3s-io/k3s",
+      "learningId": "learn-github-k3s-io-k3s",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

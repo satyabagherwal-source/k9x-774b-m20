@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chrisbanes-skills-learnings.md`  
 > **Source**: github ([https://github.com/chrisbanes/skills](https://github.com/chrisbanes/skills))  
-> **Source Version**: `6c30c500`  
+> **Source Version**: `8fc8836c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T01:22:55.507Z  
+> **Timestamp**: 2026-10-30T06:43:17.714Z  
 > **Learning ID**: `learn-github-chrisbanes-skills`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chrisbanes-skills-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chrisbanes/skills](https://github.com/chrisbanes/skills))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T01:22:55.499Z  
+> **Harvest Timestamp**: 2026-10-30T06:43:17.457Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Skills for Kotlin, Jetpack Compose, and Android development
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1121 stars
+- **Stars / Engagement**: 1131 stars
 
 ---
 
@@ -245,193 +245,149 @@ class ProfileModel {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6c30c500` (2026-10-25)
-**Commit Message**: Keep serial implementation solo and PR polling in the controller (#135)
+### Incident Patch 1: `8fc8836c` (2026-10-27)
+**Commit Message**: Reject impossible CalVer dates (#120)
 
-**File**: `README.md` (modified, +4/-3)
+The release helper accepted impossible dates like `2026.2.31`.
+
+I added calendar validation and regression coverage. Invalid dates now
+fail clearly, including dates from existing release inventory. Valid
+CalVer formatting and daily numbering stay unchanged.
+
+**File**: `scripts/release.py` (modified, +5/-0)
 ```diff
-@@ -129,17 +129,18 @@ for its lane-specific fallback and blocking behavior.
- - [`deliver-spec`](skills/deliver-spec/SKILL.md) — coordinate one approved spec or verified Project-controller handoff through solo or justified delegated implementation, a planning-free fast path for small well-understood tickets, CI-supplied full-suite evidence, concurrent external review with verified draft support or earlier PR readiness, reusable scope approval and evidence, independent integrated-candidate review and focused repair review, and PR shepherding; validate applicable live-qualification harness paths offline (isolated production stores for persistent paths, fake runtimes for asynchronous paths), then reconcile failures under bounded approved allowances.
- - [`release-kotlin-library`](skills/release-kotlin-library/SKILL.md) — assess readiness, prepare, and verify Kotlin library releases; check the `gradle-maven-publish-plugin` prerequisite, reconcile changelogs and Metalava API snapshots, and follow repository checks and publication gates.
- - [`gradle-run`](skills/gradle-run/SKILL.md) — run every agent-initiated Gradle command through a compact-output wrapper; recover run identity and bounded results by workflow ID with read-only status, and diagnose failures with optional investigation helpers.
--- [`implement-with-subagents`](skills/implement-with-subagents/SKILL.md) — coordinate one or more worker-owned implementation tasks through dependency-aware dispatch, task acceptance, integration, and same-owner repair; dispatch independent ready work concurrently within actual capacity, reuse sequential worker slots, and support read-only orchestration review.
-+- [`implement-with-subagents`](skills/implement-with-subagents/SKILL.md) — choose solo implementation for a single item or serial graph and worker ownership for every item in a graph with parallel work; preserve dependency-aware integration, independent final review, same-owner repair, bounded checkout reuse, and read-only orchestration review.
- - [`to-plan`](skills/to-plan/SKILL.md) — create risk-scaled implementation plans that prove baselines from green CI, with observable slices and consequential boundary validation before dependent work, plus authenticated integration amendments and explicit consumer handoffs; decide separate PRs by coherent deliverable boundaries.
- - [`run-github-project`](skills/run-github-project/SKILL.md) — set up, review, or operate a repository's GitHub Project workflow with current-column authorization, human-only Backlog promotion, and deterministic configured agent selection; deliver ordinary implementation tickets through `deliver-spec`, resolve run-level merging once at startup with a 60-second default-no question unless already specified, preflight offline live-qualification harness evidence, preserve asynchronous or persistent failures in durable checkpoints, prioritize active delivery through safe planner checkpoints, fast-path small Todo tickets straight into implementation, start external review while CI runs after local qualification, free slots while reviewed PRs wait on CI, record ticket-local pauses while independent work continues, and keep `drain` alive under a read-only Project Watcher instead of returning at the first human wait.
--- [`shepherd`](skills/shepherd/SKILL.md) — autonomously poll open PRs and MRs, or follow a host PR monitor's wake events (such as Claude desktop's Auto-fix) instead of polling, triage review comments, and repair CI failures with affected checks and required integrated-candidate validation; start external review during CI while retaining final-head merge gates.
-+- [`shepherd`](skills/shepherd/SKILL.md) — poll open PRs and MRs directly in the controller, using a read-only helper only for a bounded large failed-log question, or follow a host PR monitor's wake events (such as Claude desktop's Auto-fix) instead of polling, triage review comments, and repair CI failures with affected checks and required integrated-candidate validation; start external review during CI while retaining final-head merge gates.
+@@ -37,6 +37,11 @@ def validate_version(version):
+             f"zero-padded month/day: {version}"
+         )
+     parts = version.split(".")
++    year, month, day = map(int, parts[:3])
++    try:
++        dt.date(year, month, day)
++    except ValueError as error:
++        raise ValueError(f"Version must use a valid Gregorian calendar date: {version}") from error
+     if len(parts) == 4 and len(parts[3]) == 1:
+         return ".".join((*parts[:3], f"0{parts[3]}"))
+     return version
+```
+
+**File**: `scripts/test_release.py` (modified, +164/-0)
+```diff
+@@ -39,6 +39,170 @@ def test_validate_version_accepts_daily_release_number(self):
+             with self.subTest(version=version):
+                 self.assertEqual(self.release.validate_version(version), expected)
  
- Workflows that delegate agents share the [subagent selection and handoff
- reference](references/subagent-selection.md). Each workflow retains its own
- delegation trigger, authority, and acceptance rules. Each consuming skill also
- contains a copy of the reference for standalone installation.
- `deliver-spec` bundles its own solo-or-delegated implementation procedure;
--`implement-with-subagents` retains its explicitly delegated workflow.
-+`implement-with-subagents` chooses solo or delegated ownership once from the
-+whole task graph.
- 
- Planning and drain admission distinguish behavioral prerequisites, shared-file
- mutation conflicts and final integration requirements. Plan-proven independent
-```
-
-**File**: `evals/README.md` (modified, +10/-6)
-```diff
-@@ -344,7 +344,7 @@ forbidden-action grading; they do not contact a provider. The
- dependency. Its missing-provider challenge supplies a behavior ticket without
- `tdd` and checks that implementation does not start.
- 
--The workflows/writing corpus contains 114 calibration-only cases, including
-+The workflows/writing corpus contains 119 calibration-only cases, including
- the two missing-provider challenges. Select them
- explicitly with `--case`; they do not change the published benchmark or its
- default call count. They cover authorized local planning, prior confirmation,
-@@ -359,7 +359,7 @@ evidence reuse versus missing, stale, failed, or explicitly required fresh
- evidence. Six additional cases cover accessible context-pointer handoffs and
- optional shared discovery, including bounded evidence reuse, capacity and
- restraint. The local-planning cases check the generated plan artifact. The scored orchestration
--triad exercises a ready fork/join, a serial dependency chain, and restraint for
-+triad exercises a ready fork/join, a solo serial dependency chain, and restraint for
- a cyclic or incomplete graph, unsafe shared-file overlap, and validation
- invalidated at an integrated head. Additional orchestration calibrations cover
- direct TDD at an approved behavior seam, documentation without TDD, completed
-@@ -370,9 +370,13 @@ different slot, preservation of checkouts and artifacts that are unsafe to
- retire, and cleanup failure that blocks workflow completion despite successful
- code verification. These cases assess supplied state read-only and do not prove
- live subagent execution.
-+Five ownership calibrations cover a solo chain with integrated-head checks,
-+missing final-review capability before solo implementation, worker ownership of
-+an entire late-fanout graph, direct controller polling, and one bounded large-log
-+question with capability and model selection. Decisive supplied facts have
-+mutation-sensitive deterministic fixture checks; model behavior is rubric-graded.
- Three shared-handoff calibrations check bounded implementation ownership,
--capability-based PR evidence helper selection, and restraint for one-off PR
--inspection. They also assess supplied state read-only.
-+rejection of routine PR evidence helpers, and restraint for one-off PR inspection. They also assess supplied state read-only.
- Two host-monitor calibrations check that `shepherd` handles a Claude desktop
- CI-monitor wake with one read and no self-scheduled polling, and sets up the
- monitor from deferred tools with Auto-fix and authorized auto-merge, using
-@@ -383,8 +387,8 @@ capability, and the trivial-edit exception versus useful overlap and retained
- repair ownership and the clean-checkout preflight. They assess immutable state
- without live execution.
- Deterministic coverage stages `deliver-spec` alone, follows its local procedure
--and handoff links, and checks that its bundled procedure matches the orchestration
--skill's copy.
-+and handoff links, and checks its bundled procedure independently of the
-+orchestration skill's mode-specific procedure.
- Three Project-delivery calibrations cover automatic `deliver-spec` handoff,
- one startup merge question with a 60-second default-no deadline, explicit
- instructions, nonblocking fallback, late replies and invocation expiry,
-```
-
-**File**: `evals/cases/implement-with-subagents-explicit-rerun-novel/prompt.md` (modified, +2/-0)
-```diff
-@@ -1,3 +1,5 @@
-+The run selected delegated mode at preflight because its validated full graph has a parallel point; that choice and existing ownership remain in force.
++    def test_validate_version_rejects_impossible_calendar_dates(self):
++        versions = (
++            "2026.2.31", "2026.2.29", "2026.4.31", "0000.1.1", "1900.2.29",
++            "2026.2.31.1", "2026.2.31.01", "2026.2.31.99",
++            "2026.2.29.1", "2026.2.29.01", "2026.2.29.99",
++            "2026.4.31.1", "2026.4.31.01", "2026.4.31.99",
++            "0000.1.1.1", "0000.1.1.01", "0000.1.1.99",
++            "1900.2.29.1", "1900.2.29.01", "1900.2.29.99",
++        )
++        for version in versions:
++            with self.subTest(version=version):
++                with self.assertRaises(ValueError) as error:
++                    self.release.validate_version(version)
++                self.assertEqual(
++                    str(error.exception),
++                    f"Version must use a valid Gregorian calendar date: {version}",
++                )
 +
- Review acceptance for one implementation item. The task-scoped commit, independent
- diff inspection, command, complete passing output, tested revision, relevant
- inputs, and environment all match current state. The user nevertheless requires
-```
-
-**File**: `evals/cases/implement-with-subagents-failed-verification-negative/prompt.md` (modified, +2/-0)
-```diff
-@@ -1,3 +1,5 @@
-+The run selected delegated mode at preflight because its validated full graph has a parallel point; that choice and existing ownership remain in force.
++    def test_validate_version_accepts_calendar_boundaries(self):
++        expected_versions = {
++            "2000.2.29": "2000.2.29",
++            "2028.2.29": "2028.2.29",
++            "1900.2.28": "1900.2.28",
++            "2026.2.28": "2026.2.28",
++            "2026.4.30": "2026.4.30",
++            "2026.1.31": "2026.1.31",
++            "2028.2.29.1": "2028.2.29.01",
++            "2028.2.29.01": "2028.2.29.01",
++            "2028.2.29.99": "2028.2.29.99",
++        }
++        for version, expected in expected_versions.items():
++            with self.subTest(version=version):
++                self.assertEqual(self.release.validate_version(version), expected)
 +
- Review acceptance for one implementation item at its current task-scoped commit.
- The owner returned the exact requested command, complete output, tested revision,
- and environment, but the command exited 1 with a failing parser test. Describe
-```
-
-**File**: `evals/cases/implement-with-subagents-final-review-stale-negative/prompt.md` (modified, +2/-0)
-```diff
-@@ -1,3 +1,5 @@
-+The run selected delegated mode at preflight because its validated full graph has a parallel point; that choice and existing ownership remain in force.
++    def test_validate_version_preserves_format_diagnostic(self):
++        versions = (
++            "2026-2-28", "2026/2/28", "026.2.28", "02026.2.28",
++            "2026.0.1", "2026.13.1", "2026.1.0", "2026.1.32",
++            "2026.02.28", "2026.2.08", "2026.02.08",
++            "2028.2.29.0", "2028.2.29.00", "2028.2.29.001", "2028.2.29.100",
++            "2026.02.31", "2026.2.28.1.1", "v2026.2.28", "2026.2.28\n",
++        )
++        for version in versions:
++            with self.subTest(version=version):
++                with self.assertRaises(ValueError) as error:
++                    self.release.validate_version(version)
++                self.assertEqual(
++                    str(error.exception),
++                    "Version must use CalVer YYYY.M.D, YYYY.M.D.N, or YYYY.M.D.NN without "
++                    f"zero-padded month/day: {version}",
++                )
 +
- All tickets were integrated at aaaaaaa, where the full required suite passed
- and the joined diff was independently reviewed. The original task owner then
- repaired a shared interface; its accepted repair is integrated at bbbbbbb.
-```
-
-**File**: `evals/cases/implement-with-subagents-fix-forward-novel/prompt.md` (modified, +2/-0)
-```diff
-@@ -1,3 +1,5 @@
-+The run selected delegated mode at preflight because its validated full graph has a parallel point; that choice and existing ownership remain in force.
++    def test_automatic_version_rejects_invalid_historical_calendar_dates(self):
++        cases = (
++            ("2026.2.31", "2026.2.31"),
++            ("2026.02.31", "2026.2.31"),
++            ("2026.2.29", "2026.2.29"),
++            ("2026.02.29.1", "2026.2.29.1"),
++            ("2026.4.31", "2026.4.31"),
++            ("2026.04.31.99", "2026.4.31.99"),
++            ("0000.1.1", "0000.1.1"),
++            ("0000.01.01.01", "0000.1.1.01"),
++            ("1900.2.29", "1900.2.29"),
++            ("1900.02.29", "1900.2.29"),
++        )
++        with patch.object(self.release, "default_version", return_value="2026.10.14"):
++            for version, normalized in cases:
++                with self.subTest(version=version):
++                    with self.assertRaises(ValueError) as error:
++                        self.release.resolve_version("", ["2026.10.14", version])
++                    self.assertEqual(
++                        str(error.exception),
++                        f"Version must use a valid Gregorian calendar date: {normalized}",
++                    )
 +
- Task `ENCODE` has an accepted commit integrated at `1111111`. The lead then
- cherry-picked the accepted `WIRE` task, producing integrated head `2222222`.
- That Git operation completed, but an endpoint check affected by `WIRE` fails at
-```
-
-**File**: `evals/cases/implement-with-subagents-late-fanout-novel/case.json` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+{
-+  "id": "implement-with-subagents-late-fanout-novel",
-+  "title": "Choose delegated ownership before a late fanout",
-+  "family": "workflow",
-+  "target_skills": [
-+    "implement-with-subagents"
-+  ],
-+  "expected_skills": [
-+    "implement-with-subagents"
-+  ],
-+  "task_mode": "review",
-+  "kind": "novel",
-+  "fixture": "workflow-subagents",
-+  "forbid_all_commands": true,
-+  "allow_skill_reference_reads": true,
-+  "allowed_write_paths": [],
-+  "validators": [
-+    {
-+      "argv": [
-+        "python3",
-+        "@validators/text_case.py",
-+        "implement-with-subagents-late-fanout-novel"
-+      ],
-+      "timeout_seconds": 30
-+    }
-+  ],
-+  "rubric": [
-+    {
-+      "id": "whole-graph",
-+      "text": "Chooses delegated mode once at preflight because B and C form a later parallel point; assigns A as well as B and C to workers, rejecting per-frontier mode switching."
-+    },
-+    {
-+      "id": "dependency",
-+      "text": "Accepts and integrates the worker-owned A commit and passes affected checks at that integrated head before releasing B and C."
-+    },
-+    {
-+      "id": "fanout",
-+      "text": "Dispatches B and C concurrently within actual capacity in separate checkouts, preserving same-owner repair and mandatory independent final review."
-+    }
-+  ],
-+  "provenance": {
-+    "kind": "synthetic"
-+  },
-+  "calibration": true
-+}
-```
-
-**File**: `evals/cases/implement-with-subagents-late-fanout-novel/expectations.json` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+{
-+  "files": [
-+    "state.md"
-+  ],
-+  "must_contain": [
-+    "The validated graph is A followed by B and C: A has no dependencies; B and C both depend on A and are independent with disjoint write sets.",
-+    "The runtime has capable resumable workers, independent final review, sufficient capacity, isolated checkouts and approved test seams.",
-+    "Only A is ready now. The draft has the lead implement A and proposes deciding again whether to use workers when B and C become ready."
-+  ]
-+}
++    def test_automatic_version_accepts_historical_leap_dates(self):
++        with patch.object(self.release, "default_version", return_value="2026.10.14"):
++            self.assertEqual(
++                self.release.resolve_version(
++                    "", ["2000.02.29", "2028.02.29.9", "2026.06.07.9"],
++                ),
++                "2026.10.14",
++            )
++
++    def test_explicit_version_overrides_invalid_calendar_inventory(self):
++        self.assertEqual(
++            self.release.resolve_version(
++                "2028.2.29.1",
++                ["2026.02.31", "0000.01.01", "1900.02.29", "2026.10.14.99"],
++            ),
++            "2028.2.29.01",
++        )
++
++    def test_cli_calendar_error_is_exact(self):
++        output = io.StringIO()
++        errors = io.StringIO()
++        with contextlib.redirect_stdout(output), contextlib.redirect_stderr(errors):
++            result = self.release.main(["resolve-version", "2026.2.31.1"])
++        self.assertEqual(result, 1)
++        self.assertEqual(output.getvalue(), "")
++        self.assertEqual(
++            errors.getvalue(),
++            "Version must use a valid Gregorian calendar date: 2026.2.31.1\n",
++        )
++
++    def test_manifest_helpers_reject_invalid_calendar_before_filesystem_ac
 ```
 
 ---
 
-### Incident Patch 2: `e8e32270` (2026-10-22)
-**Commit Message**: Bump version to 2026.10.22
+### Incident Patch 2: `183cfc9b` (2026-10-26)
+**Commit Message**: Bump version to 2026.10.26
 
 **File**: `.claude-plugin/plugin.json` (modified, +1/-1)
 ```diff
@@ -439,8 +395,8 @@ Observed empirical fixes and code patches:
  {
    "name": "chrisbanes-skills",
    "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
--  "version": "2026.10.21",
-+  "version": "2026.10.22",
+-  "version": "2026.10.22",
++  "version": "2026.10.26",
    "author": {
      "name": "Chris Banes",
      "url": "https://github.com/chrisbanes"
@@ -451,8 +407,8 @@ Observed empirical fixes and code patches:
 @@ -1,6 +1,6 @@
  {
    "name": "chrisbanes-skills",
--  "version": "2026.10.21",
-+  "version": "2026.10.22",
+-  "version": "2026.10.22",
++  "version": "2026.10.26",
    "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
    "author": {
      "name": "Chris Banes",
@@ -463,8 +419,8 @@ Observed empirical fixes and code patches:
 @@ -1,6 +1,6 @@
  {
    "name": "chrisbanes-skills",
--  "version": "2026.10.21",
-+  "version": "2026.10.22",
+-  "version": "2026.10.22",
++  "version": "2026.10.26",
    "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
    "type": "module",
    "main": ".opencode/plugins/chrisbanes-skills.js",
@@ -476,8 +432,8 @@ Observed empirical fixes and code patches:
  {
    "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
    "name": "chrisbanes-skills",
--  "version": "2026.10.21",
-+  "version": "2026.10.22",
+-  "version": "2026.10.22",
++  "version": "2026.10.26",
    "description": "Skills for Kotlin, Android, JVM, and Jetpack Compose development by Chris Banes.",
    "author": {
      "name": "Chris Banes",
@@ -509,33 +465,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Keep serial implementation solo and PR polling in the controller (#135)
+## X. Reject impossible CalVer dates (#120)
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/release.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chrisbanes/skills. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6c30c500`: Keep serial implementation solo and PR polling in the controller (#135). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8fc8836c`: Reject impossible CalVer dates (#120). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/release.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- [`implement-with-subagents`](skills/implement-with-subagents/SKILL.md) — choose solo implementation for a single item or serial graph and worker ownership for every item in a graph with parallel work; preserve dependency-aware integration, independent final review, same-owner repair, bounded checkout reuse, and read-only orchestration review.
-- [`shepherd`](skills/shepherd/SKILL.md) — poll open PRs and MRs directly in the controller, using a read-only helper only for a bounded large failed-log question, or follow a host PR monitor's wake events (such as Claude desktop's Auto-fix) instead of polling, triage review comments, and repair CI failures with affected checks and required integrated-candidate validation; start external review during CI while retaining final-head merge gates.
-`implement-with-subagents` chooses solo or delegated ownership once from the
-whole task graph.
+    year, month, day = map(int, parts[:3])
+    try:
+        dt.date(year, month, day)
+    except ValueError as error:
+        raise ValueError(f"Version must use a valid Gregorian calendar date: {version}") from error
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-- [`implement-with-subagents`](skills/implement-with-subagents/SKILL.md) — coordinate one or more worker-owned implementation tasks through dependency-aware dispatch, task acceptance, integration, and same-owner repair; dispatch independent ready work concurrently within actual capacity, reuse sequential worker slots, and support read-only orchestration review.
-- [`shepherd`](skills/shepherd/SKILL.md) — autonomously poll open PRs and MRs, or follow a host PR monitor's wake events (such as Claude desktop's Auto-fix) instead of polling, triage review comments, and repair CI failures with affected checks and required integrated-candidate validation; start external review during CI while retaining final-head merge gates.
-`implement-with-subagents` retains its explicitly delegated workflow.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6c30c500` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8fc8836c` are properly handled with clean fallback behavior.
