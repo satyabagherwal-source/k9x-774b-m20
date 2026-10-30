@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T07:05:28.798Z",
+  "last_updated": "2026-10-30T07:18:41.342Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "8648a3463996ea5a635734fcccc5fd5597270cdcada31f54fd25ff13663842e5",
-      "verified_at": "2026-10-28T18:34:46.043Z",
+      "content_hash": "e9d0e0a7e741ec159d5ab232279023cb3e5f56aaf1676a626d52f96db2f3602e",
+      "verified_at": "2026-10-30T07:18:07.940Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:34:46.043Z"
+      "last_updated": "2026-10-30T07:18:07.940Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",
@@ -13581,14 +13581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lucky-media-astro-seo",
-      "content_hash": "753e5a1f3b4a10c80a03ad33a7c753e782696a86cd7bb367b5bc0b126f1f516b",
-      "verified_at": "2026-10-19T20:53:16.574Z",
+      "content_hash": "fc5e2ee3797d194ec0b16c8a644333b1ddc2611ffbce2412eaa3d1b44c2d9fb7",
+      "verified_at": "2026-10-30T07:18:41.342Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T20:53:16.574Z"
+      "last_updated": "2026-10-30T07:18:41.342Z"
     },
     "yattee/yattee": {
       "repository": "yattee/yattee",

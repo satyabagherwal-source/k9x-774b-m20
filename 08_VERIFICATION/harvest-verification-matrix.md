@@ -6146,3 +6146,5 @@
 | `CYCLE-20261030-DB38` | `2026-10-30T06:57:00.260Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5640` | Yes (`81b3aa55...`) |
 | `CYCLE-20261030-DRYP` | `2026-10-30T06:57:22.129Z` | `joreilly/Confetti` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5641, Rule 5642, Rule 5643` | Yes (`0b0ba83c...`) |
 | `CYCLE-20261030-O7H1` | `2026-10-30T07:05:28.789Z` | `bitnami/sealed-secrets` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5644, Rule 5645, Rule 5646` | Yes (`41e6c1e6...`) |
+| `CYCLE-20261030-4H7G` | `2026-10-30T07:18:07.900Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5647, Rule 5648, Rule 5649` | Yes (`e9d0e0a7...`) |
+| `CYCLE-20261030-5702` | `2026-10-30T07:18:41.330Z` | `lucky-media/astro-seo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5650, Rule 5651, Rule 5652` | Yes (`fc5e2ee3...`) |

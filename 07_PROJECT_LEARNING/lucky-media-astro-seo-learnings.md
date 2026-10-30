@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lucky-media-astro-seo-learnings.md`  
 > **Source**: github ([https://github.com/lucky-media/astro-seo](https://github.com/lucky-media/astro-seo))  
-> **Source Version**: `379fde02`  
+> **Source Version**: `3d6ff7b4`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T20:53:16.317Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-30T07:18:40.076Z  
 > **Learning ID**: `learn-github-lucky-media-astro-seo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,716 +12,549 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): lucky-media/astro-seo
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/lucky-media-astro-seo-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/lucky-media/astro-seo](https://github.com/lucky-media/astro-seo))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T20:53:14.924Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): lucky-media/astro-seo
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `lucky-media/astro-seo`
-- **Description**: Ported generateMetadata from Next.js to Astro
-- **Primary Language / Ecosystem**: TypeScript
-- **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 2 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+### 1.1 Core Problem Statement & Domain Boundary
+In standard Astro applications, managing HTML `<head>` metadata lacks a unified architectural contract. Developers routinely encounter:
+- Prop-drilling cascades across nested layouts (`Layout.astro` $\to$ `BaseLayout.astro` $\to$ `Header.astro`).
+- Inconsistent canonical URL resolution across multi-stage environments (preview vs. production).
+- Divergence between OpenGraph (`og:image`, `og:title`) and Twitter card specifications (`twitter:image`, `twitter:card`).
+- Inability to dynamically hydrate server-side metadata from headless CMS instances without re-implementing metadata resolution logic across both SSG and SSR entry points.
+
+`@lucky-media/astro-seo` ports the Next.js App Router metadata model (`Metadata`, `generateMetadata`, `resolveMetadata`) into Astro's static site generation (SSG) and server-side rendering (SSR) lifecycle.
+
+```
++-------------------------------------------------------------------------------+
+| ASTRO BUILD / DEV PIPELINE                                                    |
+|                                                                               |
+|  astro.config.mjs                                                             |
+|  +-----------------------------------+                                        |
+|  | defaultSeo(siteConfig)            |                                        |
+|  +-----------------+-----------------+                                        |
+|                    | (hook: astro:config:setup)                               |
+|                    v                                                          |
+|       +-------------------------+                                             |
+|       | serializeConfig()       | -> Handles URL/string replacer             |
+|       +------------+------------+                                             |
+|                    |                                                          |
+|                    v                                                          |
+|       +------------------------------------+                                  |
+|       | Vite Plugin Virtual Module Engine   |                                 |
+|       | ID: virtual:@lucky-media/astro-seo  |                                 |
+|       | Resolved ID: \0virtual:...         |                                 |
+|       +------------------+-----------------+                                  |
++--------------------------|----------------------------------------------------+
+                           | (import at compile time or runtime)
+                           v
++-------------------------------------------------------------------------------+
+| RUNTIME / SSR RESOLUTION PIPELINE                                             |
+|                                                                               |
+|  BaseLayout.astro / Page.astro                                                |
+|  +-------------------------------------------------------------------------+  |
+|  | resolveMetadata(pageMetadata, runtimeDefaults)                          |  |
+|  +------------------------------------+------------------------------------+  |
+|                                       |                                       |
+|                                       v                                       |
+|  +-------------------------------------------------------------------------+  |
+|  | Layer 1: createDefaultMetadata()                                        |  |
+|  |   (Initializes all 32 top-level SEO keys to null or empty sets)         |  |
+|  +------------------------------------+------------------------------------+  |
+|                                       v                                       |
+|  +-------------------------------------------------------------------------+  |
+|  | Layer 2: mergeMetadata(defaults, siteConfig)                            |  |
+|  |   (Bakes build-time config & sets base title template)                  |  |
+|  +------------------------------------+------------------------------------+  |
+|                                       v                                       |
+|  +-------------------------------------------------------------------------+  |
+|  | Layer 3: mergeMetadata(withSite, runtimeDefaults) [Conditional SSR]     |  |
+|  |   (Applies per-request CMS settings)                                    |  |
+|  +------------------------------------+------------------------------------+  |
+|                                       v                                       |
+|  +-------------------------------------------------------------------------+  |
+|  | Layer 4: mergeMetadata(withRuntime, pageMetadata)                       |  |
+|  |   (Applies route-specific overrides & executes title interpolation)     |  |
+|  +------------------------------------+------------------------------------+  |
+|                                       v                                       |
+|  +-------------------------------------------------------------------------+  |
+|  | Layer 5: postProcessMetadata(resolved)                                  |  |
+|  |   - Invariant Fallback: Twitter <- OpenGraph <- Document Root           |  |
+|  |   - Dynamic Inference: Infer twitter:card from og:images array length   |  |
+|  +------------------------------------+------------------------------------+  |
+|                                       v                                       |
+|  +-------------------------------------------------------------------------+  |
+|  | <SEO /> Astro Component Tag Generation Engine                           |  |
+|  |   (Outputs RFC-compliant <meta>, <link>, and <title> tags)              |  |
+|  +-------------------------------------------------------------------------+  |
++-------------------------------------------------------------------------------+
+```
+
+### 1.2 Virtual Module Interception Subsystem
+The engine avoids runtime file generation by intercepting imports via a synthetic virtual module:
+1. **Module Specifier Invariant**: Consumers import from `virtual:@lucky-media/astro-seo`.
+2. **Vite Internal Resolution**: Vite prefixes the resolved ID with `\0` (`\0virtual:@lucky-media/astro-seo`) to mark it as private and prevent downstream filesystem plugins from executing resolution algorithms against it.
+3. **Rolldown/Vite 8 Filter Alignment**: Modern bundling engines implement fast-path regex hooks (`resolveId.filter` and `load.filter`). Hook filters instruct the bundler's native Rust/C++ worker threads to execute JavaScript hooks *only* when the module specifier satisfies `new RegExp(^${virtualModuleId}$)`.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: package.json, README.md.
-- Evaluated system abstractions and modular contracts.
+### 1. Vite Virtual Module ID Parameterization Invariant
+**RULE**:
+When implementing Vite/Rollup plugins utilizing virtual module resolution with hook filters (`resolveId.filter` and `load.filter`), developers **MUST NOT** hardcode string literals inside regular expressions without dynamic string interpolation and proper boundary anchors. Virtual module specifiers containing scoped package characters (`@`, `/`, `:`, `-`) **MUST** be explicitly constructed via parameterized `new RegExp('^' + escapeRegex(id) + '$')` or direct variable template interpolation matching the exact identifier constant.
 
-### Core Architecture Module: `examples/with-lucky-astro-seo-ssr/astro.config.mjs`
-```
-import { defineConfig } from 'astro/config'
-import node from '@astrojs/node'
-import { defaultSeo } from '@lucky-media/astro-seo'
+**WHY**:
+Hardcoded regexes in hook filters (such as `/^virtual:@lucky-media\/astro-seo$/`) create brittle coupling between plugin definitions and execution filters. If the virtual module ID changes or uses special regex metacharacters (`@`, `/`, `-`, `\0`), unparameterized regexes cause hook bypasses in bundlers like Vite 8 and Rolldown. When the hook filter fails, the resolver is skipped, yielding catastrophic unhandled build exceptions: `[vite] Failed to resolve module import "virtual:..."`.
 
-export default defineConfig({
-  output: 'server',
-  adapter: node({ mode: 'standalone' }),
-  integrations: [
-    // Minimal build-time fallbacks — real site-wide defaults are fetched from
-    // the CMS on every request inside BaseLayout.astro via the runtimeDefaults
-    // argument of resolveMetadata(). Swap this for an async function if you
-    // want CMS defaults baked in at build time instead (SSG style):
-    //
-    //   defaultSeo(async () => {
-    //     const res = await fetch('https://cms.example.com/api/seo')
-    //     return res.json()
-    //   })
-    defaultSeo({
-      metadataBase: new URL('https://example.com'),
-    }),
-  ],
-})
+**WHEN TO APPLY**:
+Apply in all Vite, Rollup, Astro, and WMR plugins where synthetic modules are injected into the dependency graph via the `\0` private resolution prefix.
 
-```
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import type { Plugin } from 'vite'
 
-### Core Architecture Module: `examples/with-lucky-astro-seo-ssr/src/lib/cms.ts`
-```
-// Mock CMS — replace with real API calls (fetch, SDK, etc.)
-// getSeoDefaults() simulates a request to a headless CMS for site-wide SEO settings.
-// In a real app this would be a fetch() call, a GraphQL query, or an SDK call.
+export function virtualModulePlugin(): Plugin {
+  const virtualModuleId = 'virtual:@my-scope/engine'
+  const resolvedId = '\0' + virtualModuleId
 
-export type SeoDefaults = {
-  siteName: string
-  title: string
-  description: string
-  ogImage: string
-  twitterHandle: string
-}
+  // Escape special regex characters if ID contains arbitrary user inputs
+  const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
-export type Post = {
-  slug: string
-  title: string
-  excerpt: string
-  content: string
-}
-
-export type Product = {
-  id: string
-  name: string
-  description: string
-  image: string
-}
-
-// In production this data comes from your CMS API.
-const mockSeoDefaults: SeoDefaults = {
-  siteName: 'Acme Corp',
-  title: 'Acme Corp',
-  description: 'We make things that make things.',
-  ogImage: '/og-default.png',
-  twitterHandle: '@acmecorp',
-}
-
-const mockPosts: Post[] = [
-  {
-    slug: 'hello-world',
-    title: 'Hello World',
-    excerpt: 'Our very first blog post.',
-    content: 'Welcome to the Acme blog. We are just getting started.',
-  },
-  {
-    slug: 'new-product-launch',
-    title: 'New Product Launch',
-    excerpt: 'Introducing Widget Pro 2.',
-    content: 'We are thrilled to announce Widget Pro 2, the best widget yet.',
-  },
-]
-
-const mockProducts: Product[] = [
-  {
-    id: '1',
-    name: 'Widget Pro',
-    description: 'The original, the best. Used by thousands of teams.',
-    image: '/products/widget-pro.png',
-  },
-  {
-    id: '2',
-    name: 'Super Gadget',
-    description: 'A gadget unlike any other. Solves problems you did not know you had.',
-    image: '/products/gadget.png',
-  },
-]
-
-export async function getSeoDefaults(): Promise<SeoDefaults> {
-  // Replace with: const res = await fetch('https://cms.example.com/api/seo-defaults')
-  //               return res.json()
-  return mockSeoDefaults
-}
-
-export async function getPost(slug: string): Promise<Post | null> {
-  return mockPosts.find((p) => p.slug === slug) ?? null
-}
-
-export async function getProduct(id: string): Promise<Product | null> {
-  return mockProducts.find((p) => p.id === id) ?? null
-}
-
-```
-
-### Core Architecture Module: `examples/with-lucky-astro-seo/astro.config.mjs`
-```
-import { defineConfig } from 'astro/config'
-import { defaultSeo } from '@lucky-media/astro-seo'
-
-export default defineConfig({
-  site: 'https://example.com',
-  integrations: [
-    defaultSeo({
-      metadataBase: new URL('https://example.com'),
-      title: { default: 'Lucky Media', template: '%s | Lucky Media' },
-      description: 'We build great digital products.',
-      icons: { icon: '/favicon.ico', apple: '/apple-touch-icon.png' },
-      openGraph: {
-        siteName: 'Lucky Media',
-        images: [{ url: '/og-default.png', alt: 'Lucky Media' }],
-      },
-      twitter: { site: '@luckymedia' },
-    }),
-  ],
-})
-
-```
-
-### Core Architecture Module: `src/defaults.ts`
-```
-// src/defaults.ts
-import type { ResolvedMetadata } from './types.ts'
-
-export function createDefaultMetadata(): ResolvedMetadata {
   return {
-    metadataBase: null,
-    title: null,
-    titleTemplate: null,
-    description: null,
-    applicationName: null,
-    authors: null,
-    generator: null,
-    keywords: null,
-    referrer: null,
-    creator: null,
-    publisher: null,
-    robots: null,
-    alternates: null,
-    icons: null,
-    manifest: null,
-    openGraph: null,
-    twitter: null,
-    verification: {},
-    category: null,
-    classification: null,
-    other: {},
-  }
-}
-
-```
-
-### Core Architecture Module: `src/index.ts`
-```
-export { defaultSeo } from './integration.ts'
-export type {
-  Metadata,
-  ResolvedMetadata,
-  OpenGraph,
-  OpenGraphImage,
-  Twitter,
-  TwitterImage,
-  Icons,
-  Icon,
-  Alternates,
-  Robots,
-  Verification,
-  Author,
-  TemplateString,
-} from './types.ts'
-
-```
-
-### Core Architecture Module: `src/integration.ts`
-```
-import type { AstroIntegration, HookParameters } from 'astro'
-import type { Metadata } from './types.ts'
-
-const VIRTUAL_MODULE_TYPES = `declare module 'virtual:@lucky-media/astro-seo' {
-  import type { Metadata, ResolvedMetadata } from '@lucky-media/astro-seo'
-  export function generateMetadata(overrides: Metadata): Metadata
-  export function resolveMetadata(pageMetadata?: Metadata, runtimeDefaults?: Metadata): ResolvedMetadata
-  export type { Metadata, ResolvedMetadata }
-}`
-
-type SiteConfig = Metadata | (() => Metadata | Promise<Metadata>)
-
-function serializeConfig(config: Metadata): string {
-  return JSON.stringify(config, (_, value) => {
-    if (value instanceof URL) return value.href
-    return value
-  })
-}
-
-export function defaultSeo(siteConfig: SiteConfig): AstroIntegration {
-  return {
-    name: '@lucky-media/astro-seo',
-    hooks: {
-      'astro:config:done': ({ injectTypes }: HookParameters<'astro:config:done'>) => {
-        injectTypes({ filename: 'types.d.ts', content: VIRTUAL_MODULE_TYPES })
+    name: 'my-scope-virtual-plugin',
+    resolveId: {
+      filter: { id: new RegExp(`^${escapeRegex(virtualModuleId)}$`) },
+      handler(id: string) {
+        if (id === virtualModuleId) {
+          return resolvedId
+        }
       },
-      'astro:config:setup': ({ updateConfig }: HookParameters<'astro:config:setup'>) => {
-        const virtualModuleId = 'virtual:@lucky-media/astro-seo'
-        const resolvedId = '\0' + virtualModuleId
-
-        // Cache the resolved module code so the loader function is called only once.
-        let cachedModuleCode: string | null = null
-
-        updateConfig({
-          vite: {
-            plugins: [
-              {
-                name: '@lucky-media/astro-seo-virtual',
-                resolveId(id: string) {
-                  if (id === virtualModuleId) return resolvedId
-                },
-                async load(id: string) {
-                  if (id !== resolvedId) return
-
-                  if (!cachedModuleCode) {
-                    const config =
-                      typeof siteConfig === 'function' ? await siteConfig() : siteConfig
-                    const serialized = serializeConfig(config)
-
-                    cachedModuleCode = `
-import { createDefaultMetadata } from '@lucky-media/astro-seo/internal/defaults'
-import { mergeMetadata, applyTwitterOgFallback } from '@lucky-media/astro-seo/internal/merge'
-
-const siteConfig = ${serialized}
-
-export function generateMetadata(overrides) {
-  return overrides
-}
-
-export function resolveMetadata(pageMetadata, runtimeDefaults) {
-  const base = mergeMetadata(createDefaultMetadata(), siteConfig)
-  const withRuntime = runtimeDefaults ? mergeMetadata(base, runtimeDefaults) : base
-  const resolved = pageMetadata ? mergeMetadata(withRuntime, pageMetadata) : withRuntime
-  return applyTwitterOgFallback(resolved)
-}
-`
-                  }
-
-                  return cachedModuleCode
-                },
-              },
-            ],
-          },
-        })
+    },
+    load: {
+      filter: { id: new RegExp(`^${escapeRegex(resolvedId)}$`) },
+      async handler(id: string) {
+        if (id !== resolvedId) return
+        return `export const timestamp = ${Date.now()};`
       },
     },
   }
 }
-
-```
-
-### Core Architecture Module: `src/merge.ts`
-```
-import type { Metadata, ResolvedMetadata, OpenGraph, Twitter } from './types.ts'
-import { resolveTitle, extractTitleTemplate } from './resolve-title.ts'
-import { resolveOpenGraph } from './resolve-opengraph.ts'
-import { resolveTwitter } from './resolve-twitter.ts'
-import { resolveRobots } from './resolve-robots.ts'
-import { resolveAlternates } from './resolve-alternates.ts'
-import { resolveIcons } from './resolve-icons.ts'
-import { resolveUrl } from './resolve-url.ts'
-
-function mergeOpenGraph(
-  parent: ResolvedMetadata['openGraph'],
-  child: OpenGraph | null | undefined
-): OpenGraph | null | undefined {
-  if (child === null) return null
-  if (child === undefined) return undefined
-  if (parent == null) return child
-
-  return {
-    type: child.type ?? parent.type,
-    title: child.title ?? parent.title,
-    description: child.description ?? parent.description,
-    url: child.url ?? parent.url,
-    siteName: child.siteName ?? parent.siteName,
-    locale: child.locale ?? parent.locale,
-    alternateLocale: child.alternateLocale ?? parent.alternateLocale,
-    images: child.images !== undefined ? child.images : parent.images,
-  }
-}
-
-function mergeTwitter(
-  parent: ResolvedMetadata['twitter'],
-  child: Twitter | null | undefined
-): Twitter | null | undefined {
-  if (child === null) return null
-  if (child === undefined) return undefined
-  if (parent == null) return child
-
-  return {
-    card: child.card ?? parent.card,
-    site: child.site ?? parent.site,
-    siteId: child.siteId ?? parent.siteId,
-    creator: child.creator ?? parent.creator,
-    creatorId: child.creatorId ?? parent.creatorId,
-    description: child.description ?? parent.description,
-    title: child.title ?? parent.title,
-    images: child.images !== undefined ? child.images : parent.images,
-  }
-}
-
-export function applyTwitterOgFallback(resolved: ResolvedMetadata): ResolvedMetadata {
-  if (resolved.twitter && !resolved.twitter.images && resolved.openGraph?.images?.length) {
-    return {
-      ...resolved,
-      twitter: {
-        ...resolved.twitter,
-        card: 'summary_large_image',
-        images: resolved.openGraph.images.map((img) => ({ url: img.url, alt: img.alt })),
-      },
-    }
-  }
-  return resolved
-}
-
-export function mergeMetadata(parent: ResolvedMetadata, child: Metadata): ResolvedMetadata {
-  const base = child.metadataBase ?? parent.metadataBase ?? null
-
-  const openGraph =
-    child.openGraph !== undefined
-      ? resolveOpenGraph(mergeOpenGraph(parent.openGraph, child.openGraph), base)
-      : parent.openGraph
-
-  let twitter =
-    child.twitter !== undefined
-      ? resolveTwitter(mergeTwitter(parent.twitter, child.twitter), base)
-      : parent.twitter
-
-  return {
-    metadataBase: base,
-    title: child.title != null ? resolveTitle(child.title, parent.titleTemplate) : parent.title,
-    titleTemplate:
-      child.title != null
-        ? (extractTitleTemplate(child.title) ?? parent.titleTemplate)
-        : parent.titleTemplate,
-    description: child.description !== undefined ? child.description : parent.description,
-    applicationName:
-      child.applicationName !== undefined ? child.applicationName : parent.applicationName,
-    authors: child.authors !== undefined ? child.authors : parent.authors,
-    generator: child.generator !== undefined ? child.generator : parent.generator,
-    keywords: child.keywords !== undefined ? child.keywords : parent.keywords,
-    referrer: child.referrer !== undefined ? child.referrer : parent.referrer,
-    creator: child.creator !== undefined ? child.creator : parent.creator,
-    publisher: child.publisher !== undefined ? child.publisher : parent.publisher,
-    robots: child.robots !== undefined ? resolveRobots(child.robots) : parent.robots,
-    alternates:
-      child.alternates !== undefined
-        ? resolveAlternates(child.alternates, base)
-        : parent.alternates,
-    icons: child.icons !== undefined ? resolveIcons(child.icons, base) : parent.icons,
-    manifest:
-      child.manifest !== undefined ? resolveUrl(child.manifest ?? null, base) : parent.manifest,
-    openGraph,
-    twitter,
-    verification:
-      child.verification !== undefined
-        ? { ...parent.verification, ...child.verification }
-        : parent.verification,
-    category: child.category !== undefined ? child.category : parent.category,
-    classification:
-      child.classification !== undefined ? child.classification : parent.classification,
-    other: child.other !== undefined ? { ...parent.other, ...child.other } : parent.other,
-  }
-}
-
-```
-
-### Core Architecture Module: `src/resolve-alternates.ts`
-```
-import type { Alternates } from './types.ts'
-import { resolveUrl } from './resolve-url.ts'
-
-export function resolveAlternates(
-  alternates: Alternates | null | undefined,
-  metadataBase: URL | null
-): Alternates | null {
-  if (alternates == null) return null
-  return {
-    canonical: alternates.canonical != null ? resolveUrl(alternates.canonical, metadataBase) : null,
-    languages: alternates.languages
-      ? Object.fromEntries(
-          Object.entries(alternates.languages).map(([lang, url]) => [
-            lang,
-            resolveUrl(url, metadataBase) ?? url,
-          ])
-        )
-      : undefined,
-  }
-}
-
-```
-
-### Core Architecture Module: `src/resolve-icons.ts`
-```
-import type { Icons, Icon } from './types.ts'
-import { resolveUrl } from './resolve-url.ts'
-
-function normalizeIcons(
-  icon: string | URL | Icon | (string | URL | Icon)[],
-  base: URL | null
-): Icon[] {
-  return (Array.isArray(icon) ? icon : [icon]).map((i) => {
-    if (typeof i === 'string' || i instanceof URL) return { url: resolveUrl(i, base) ?? String(i) }
-    return { ...i, url: resolveUrl(i.url, base) ?? String(i.url) }
-  })
-}
-
-export function resolveIcons(
-  icons: Icons | null | undefined,
-  metadataBase: URL | null
-): Icons | null {
-  if (icons == null) return null
-  return {
-    icon: icons.icon != null ? normalizeIcons(icons.icon, metadataBase) : undefined,
-    apple: icons.apple != null ? normalizeIcons(icons.apple, metadataBase) : undefined,
-    shortcut: icons.shortcut != null ? normalizeIcons(icons.shortcut, metadataBase) : undefined,
-    other: icons.other != null ? normalizeIcons(icons.other, metadataBase) : undefined,
-  }
-}
-
-```
-
-### Core Architecture Module: `src/resolve-opengraph.ts`
-```
-import type { OpenGraph, ResolvedMetadata } from './types.ts'
-import { resolveUrl } from './resolve-url.ts'
-
-type ResolvedOG = NonNullable<ResolvedMetadata['openGraph']>
-
-export function resolveOpenGraph(
-  og: OpenGraph | null | undefined,
-  metadataBase: URL | null
-): ResolvedOG | null {
-  if (og == null) return null
-
-  const images = og.images
-    ? (Array.isArray(og.images) ? og.images : [og.images]).map((img) => ({
-        ...img,
-        url: resolveUrl(img.url, metadataBase) ?? '',
-        secureUrl: img.secureUrl
-          ? (resolveUrl(img.secureUrl, metadataBase) ?? undefined)
-          : undefined,
-      }))
-    : []
-
-  return {
-    type: og.type ?? 'website',
-    title: og.title,
-    description: og.description,
-    url: og.url != null ? (resolveUrl(og.url, metadataBase) ?? undefined) : undefined,
-    siteName: og.siteName,
-    locale: og.locale,
-    alternateLocale: og.alternateLocale,
-    images,
-  }
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2** (2026-06-17): **Smarter defaults for OG, Twitter, and canonical URLs**
-  *Symptoms*: Release notes for more info
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `379fde02` (2026-06-17)
-**Commit Message**: small fix for fallback images
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@lucky-media/astro-seo",
--  "version": "0.2.0",
-+  "version": "0.2.1",
-   "description": "Next.js-style generateMetadata for Astro",
-   "license": "MIT",
-   "author": "Lucky Media",
-```
-
-**File**: `src/integration.ts` (modified, +3/-2)
-```diff
-@@ -49,7 +49,7 @@ export function defaultSeo(siteConfig: SiteConfig): AstroIntegration {
- 
-                     cachedModuleCode = `
- import { createDefaultMetadata } from '@lucky-media/astro-seo/internal/defaults'
--import { mergeMetadata } from '@lucky-media/astro-seo/internal/merge'
-+import { mergeMetadata, applyTwitterOgFallback } from '@lucky-media/astro-seo/internal/merge'
- 
- const siteConfig = ${serialized}
- 
-@@ -60,7 +60,8 @@ export function generateMetadata(overrides) {
- export function resolveMetadata(pageMetadata, runtimeDefaults) {
-   const base = mergeMetadata(createDefaultMetadata(), siteConfig)
-   const withRuntime = runtimeDefaults ? mergeMetadata(base, runtimeDefaults) : base
--  return pageMetadata ? mergeMetadata(withRuntime, pageMetadata) : withRuntime
-+  const resolved = pageMetadata ? mergeMetadata(withRuntime, pageMetadata) : withRuntime
-+  return applyTwitterOgFallback(resolved)
- }
- `
-                   }
-```
-
-**File**: `src/merge.ts` (modified, +14/-8)
-```diff
-@@ -47,6 +47,20 @@ function mergeTwitter(
-   }
- }
- 
-+export function applyTwitterOgFallback(resolved: ResolvedMetadata): ResolvedMetadata {
-+  if (resolved.twitter && !resolved.twitter.images && resolved.openGraph?.images?.length) {
-+    return {
-+      ...resolved,
-+      twitter: {
-+        ...resolved.twitter,
-+        card: 'summary_large_image',
-+        images: resolved.openGraph.images.map((img) => ({ url: img.url, alt: img.alt })),
-+      },
-+    }
-+  }
-+  return resolved
-+}
-+
- export function mergeMetadata(parent: ResolvedMetadata, child: Metadata): ResolvedMetadata {
-   const base = child.metadataBase ?? parent.metadataBase ?? null
- 
-@@ -60,14 +74,6 @@ export function mergeMetadata(parent: ResolvedMetadata, child: Metadata): Resolv
-       ? resolveTwitter(mergeTwitter(parent.twitter, child.twitter), base)
-       : parent.twitter
- 
--  if (twitter && !twitter.images && openGraph?.images?.length) {
--    twitter = {
--      ...twitter,
--      card: 'summary_large_image',
--      images: openGraph.images.map((img) => ({ url: img.url, alt: img.alt })),
--    }
--  }
--
-   return {
-     metadataBase: base,
-     title: child.title != null ? resolveTitle(child.title, parent.titleTemplate) : parent.title,
-```
-
-**File**: `test/merge.test.ts` (modified, +21/-4)
-```diff
-@@ -1,5 +1,5 @@
- import { describe, it, expect } from 'vitest'
--import { mergeMetadata } from '../src/merge.ts'
-+import { mergeMetadata, applyTwitterOgFallback } from '../src/merge.ts'
- import { createDefaultMetadata } from '../src/defaults.ts'
- import type { Metadata, ResolvedMetadata } from '../src/types.ts'
- 
-@@ -200,7 +200,7 @@ describe('mergeMetadata', () => {
-       openGraph: { images: [{ url: '/og.png', alt: 'Page OG' }] },
-       twitter: { site: '@lucky' },
-     }
--    const result = mergeMetadata(createDefaultMetadata(), child)
-+    const result = applyTwitterOgFallback(mergeMetadata(createDefaultMetadata(), child))
-     expect(result.twitter?.images?.[0]?.url).toBe('https://example.com/og.png')
-     expect(result.twitter?.images?.[0]?.alt).toBe('Page OG')
-   })
-@@ -211,7 +211,7 @@ describe('mergeMetadata', () => {
-       openGraph: { images: [{ url: '/og.png' }] },
-       twitter: { site: '@lucky' },
-     }
--    const result = mergeMetadata(createDefaultMetadata(), child)
-+    const result = applyTwitterOgFallback(mergeMetadata(createDefaultMetadata(), child))
-     expect(result.twitter?.card).toBe('summary_large_image')
-   })
- 
-@@ -221,7 +221,7 @@ describe('mergeMetadata', () => {
-       openGraph: { images: [{ url: '/og.png' }] },
-       twitter: { images: [{ url: '/tw.png' }] },
-     }
--    const result = mergeMetadata(createDefaultMetadata(), child)
-+    const result = applyTwitterOgFallback(mergeMetadata(createDefaultMetadata(), child))
-     expect(result.twitter?.images?.[0]?.url).toBe('https://example.com/tw.png')
-   })
- 
-@@ -233,4 +233,21 @@ describe('mergeMetadata', () => {
-     const result = mergeMetadata(createDefaultMetadata(), child)
-     expect(result.twitter).toBeNull()
-   })
-+
-+  it('twitter images match page OG image when siteConfig has global OG and twitter handle but page has its own OG', () => {
-+    // Bug: fallback fires during siteConfig merge and locks in the global OG image as
-+    // twitter.images, so a later page-level OG image never replaces it.
-+    const siteConfig: Metadata = {
-+      openGraph: { images: [{ url: 'https://example.com/global.png' }] },
-+      twitter: { site: '@lucky' },
-+    }
-+    const pageMetadata: Metadata = {
-+      openGraph: { images: [{ url: 'https://example.com/page.png' }] },
-+    }
-+
-+    const base = mergeMetadata(createDefaultMetadata(), siteConfig)
-+    const resolved = applyTwitterOgFallback(mergeMetadata(base, pageMetadata))
-+
-+    expect(resolved.twitter?.images?.[0]?.url).toBe('https://example.com/page.png')
-+  })
- })
-```
-
-#### Recent Merged Pull Requests:
-- **PR #2** (2026-06-17): Smarter defaults for OG, Twitter, and canonical URLs (@lokmanm)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. small fix for fallback images
-
-**RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lucky-media/astro-seo. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `379fde02`: small fix for fallback images. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-  "version": "0.2.1",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-  "version": "0.2.0",
+// ANTI-PATTERN: Hardcoded, fragile regex literals vulnerable to refactor drift and escaping errors
+export function brokenVirtualModulePlugin(): Plugin {
+  const virtualModuleId = 'virtual:@my-scope/engine'
+  const resolvedId = '\0' + virtualModuleId
+
+  return {
+    name: 'broken-plugin',
+    resolveId: {
+      // DANGER: If virtualModuleId is updated above, this static filter silently desynchronizes
+      filter: { id: /^virtual:@my-scope\/engine$/ },
+      handler(id: string) {
+        if (id === virtualModuleId) return resolvedId
+      },
+    },
+    load: {
+      // DANGER: \0 in raw regex literal can fail depending on bundler parsing of null bytes
+      filter: { id: /^\0virtual:@my-scope\/engine$/ },
+      handler(id: string) {
+        if (id !== resolvedId) return
+        return `export const ok = true;`
+      },
+    },
+  }
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `379fde02` are properly handled with clean fallback behavior.
+Execute an automated integration test compiling an entry point importing the virtual module across both Vite 5/6 and Vite 8/Rolldown runtimes:
+```typescript
+import { test, expect } from 'vitest'
+import { build } from 'vite'
+import { virtualModulePlugin } from './plugin'
+
+test('virtual module resolves cleanly without Rolldown filter rejection', async () => {
+  const result = await build({
+    plugins: [virtualModulePlugin()],
+    build: {
+      write: false,
+      rollupOptions: {
+        input: 'entry.js',
+      },
+    },
+  })
+  expect(result).toBeDefined()
+})
+```
+
+---
+
+### 2. Tri-State Configuration Cascade Semantics
+**RULE**:
+In hierarchical configuration merge engines, every field transition **MUST** strictly adhere to tri-state semantics:
+1. `undefined` $\implies$ Inherit parent value.
+2. `null` $\implies$ Explicitly wipe/clear the field (do not inherit parent value).
+3. `Primitive | Object` $\implies$ Apply override or transform child value.
+
+Engine code **MUST NOT** use truthiness/falsiness checks (`!value`) or nullish-coalescing defaults (`child.prop ?? parent.prop`) when `null` represents intentional resource suppression.
+
+**WHY**:
+Using `??` or falsy checks collapses the distinction between `null` and `undefined`. If a root config defines a default robots tag (`{ robots: 'index, follow' }`), and an internal/secure route specifies `{ robots: null }` or `{ description: null }` intending to strip SEO exposure entirely, standard `child ?? parent` logic revives the parent configuration, exposing private metadata or indexing hidden pages.
+
+**WHEN TO APPLY**:
+Any layered configuration system (SEO metadata, theme merging, hierarchical permissions, inherited network timeouts).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+/**
+ * Resolves child configuration against parent with strict tri-state inheritance.
+ * undefined = inherit
+ * null = clear/strip
+ * T = transform / set
+ */
+export function pickTriState<K extends string, P extends Record<K, any>, C extends Record<K, any>, R>(
+  child: C,
+  parent: P,
+  key: K,
+  transform: (val: NonNullable<C[K]>) => R
+): R | P[K] | null {
+  const value = child[key]
+  // 1. Undefined means consumer did not specify -> Inherit parent
+  if (value === undefined) {
+    return parent[key]
+  }
+  // 2. Explicit null means consumer intentionally commanded absolute removal
+  if (value === null) {
+    return null
+  }
+  // 3. Concrete value present -> execute schema transformation
+  return transform(value as NonNullable<C[K]>)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Falsy or naive nullish coalescing destroying explicit clearing semantics
+export function naiveMerge(parent: Config, child: Config): Config {
+  return {
+    // BUG: If child.title is "", it falls back to parent.title
+    title: child.title || parent.title,
+    // BUG: If child.robots is null (wipe), it revives parent.robots
+    robots: child.robots ?? parent.robots,
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a matrix test verifying that passing `undefined` preserves parent, while `null` purges:
+```typescript
+import { test, expect } from 'vitest'
+import { pickTriState } from './merge-engine'
+
+test('tri-state inheritance preserves null deletion while falling back on undefined', () => {
+  const parent = { robots: 'all', title: 'Default' }
+
+  const inherited = {
+    robots: pickTriState({ robots: undefined }, parent, 'robots', (v) => v),
+  }
+  expect(inherited.robots).toBe('all')
+
+  const cleared = {
+    robots: pickTriState({ robots: null }, parent, 'robots', (v) => v),
+  }
+  expect(cleared.robots).toBeNull()
+})
+```
+
+---
+
+### 3. Non-JSON Domain Object Virtualization Invariant
+**RULE**:
+When serializing runtime state or user configuration into virtual module source strings during a build hook, the serializer **MUST** provide an explicit Replacer function to convert non-JSON serializable primitives (specifically `URL`, `RegExp`, `BigInt`, and `Date`) into serializable, cross-boundary reconstructible expressions or strings.
+
+**WHY**:
+Standard `JSON.stringify(config)` turns `URL` objects into `{}` (an empty object) or calls default `toJSON` without preserving type prototype contracts. When the serialized code is injected into a virtual module (`const siteConfig = ${serialized}`), the deserialized runtime structure receives broken plain objects or loses instance methods, causing subsequent calls like `url.pathname` or `url instanceof URL` to fail silently or crash SSR runs.
+
+**WHEN TO APPLY**:
+Static site generation plugins, Astro/Next.js/Nuxt integrations, and Vite plugins that serialize build-time JS objects into generated virtual code.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export function serializeConfig(config: Record<string, unknown>): string {
+  return JSON.stringify(config, (_key: string, value: unknown) => {
+    // Preserve URL semantics by standardizing to absolute href strings
+    if (value instanceof URL) {
+      return value.href
+    }
+    // Handle BigInt serialization failure
+    if (typeof value === 'bigint') {
+      return value.toString()
+    }
+    return value
+  })
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Direct template interpolation without type sanitization
+export function injectBrokenVirtualModule(config: any): string {
+  // CRASH: If config contains new URL('https://example.com'),
+  // stringify outputs {} in node/bundler environments where URL serialization is not custom mapped,
+  // or leaves consumers with broken prototype chains.
+  return `export const siteConfig = ${JSON.stringify(config)};`
+}
+```
+
+**VERIFICATION METHOD**:
+Validate via runtime assertion that a serialized configuration containing a native `URL` produces a valid stringifiable schema that does not deserialize as an empty object:
+```typescript
+import { test, expect } from 'vitest'
+import { serializeConfig } from './serialize'
+
+test('serializeConfig correctly preserves URL instances as hrefs', () => {
+  const payload = { base: new URL('https://domain.test/api') }
+  const output = serializeConfig(payload)
+  expect(output).toBe('{"base":"https://domain.test/api"}')
+})
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Rolldown / Vite 8 Hook Filter Desynchronization (BUG-VITE8-01)
+- **Context**: Subsystem: `src/integration.ts` (Vite Virtual Module Hook Filter Setup).
+- **What Was Expected**: The integration was intended to declare fast-path filtering in Vite 8 (and Rolldown) so the compiler skips executing JS plugins for unrelated module IDs, while resolving and loading `virtual:@lucky-media/astro-seo`.
+- **What Actually Happened**: The plugin defined a local identifier `const virtualModuleId = 'virtual:@lucky-media/astro-seo'` and `const resolvedId = '\0' + virtualModuleId`, but hardcoded static regular expression literals in the hook filters (`filter: { id: /^virtual:@lucky-media\/astro-seo$/ }` and `filter: { id: /^\0virtual:@lucky-media\/astro-seo$/ }`). These hardcoded regexes bypassed dynamic identifiers and caused potential mismatch during AST passes or escaped byte boundary checks.
+- **Evidence in Repo**: Commit SHA `14c0b0bc`, files modified: `src/integration.ts`.
+- **Root Cause**: Desynchronization between identifier variables (`virtualModuleId`, `resolvedId`) and the static filter parameters. In addition, regex literal parsing of the null byte `\0` in bundlers can vary across execution environments, whereas using `new RegExp(`^${resolvedId}$`)` guarantees exact character identity matching.
+- **Remediation Code Diff**:
+```diff
+--- a/src/integration.ts
++++ b/src/integration.ts
+@@ -39,13 +39,13 @@ export function defaultSeo(siteConfig: SiteConfig): AstroIntegration {
+                 // Hook filters let Vite 8 (Rolldown) skip these hooks for other ids.
+                 // The checks inside each handler keep older Vite versions working.
+                 resolveId: {
+-                  filter: { id: /^virtual:@lucky-media\/astro-seo$/ },
++                  filter: { id: new RegExp(`^${virtualModuleId}$`) },
+                   handler(id: string) {
+                     if (id === virtualModuleId) return resolvedId
+                   },
+                 },
+                 load: {
+-                  filter: { id: /^\0virtual:@lucky-media\/astro-seo$/ },
++                  filter: { id: new RegExp(`^${resolvedId}$`) },
+                   async handler(id: string) {
+                     if (id !== resolvedId) return
+```
+- **Lesson**: Never hardcode string literals inside plugin lifecycle hook filters if the identifier is already abstracted into a reference variable. Always construct regex boundaries dynamically from the reference variable to prevent desynchronization bugs.
+
+---
+
+### Incident 2: Twitter Card Inferred Desynchronization with OpenGraph Images (BUG-OGTW-02)
+- **Context**: Subsystem: `src/merge.ts` (`postProcessMetadata`). Issue reference #2: *"Smarter defaults for OG, Twitter, and canonical URLs"*.
+- **What Was Expected**: If a developer configures an OpenGraph image (`openGraph.images`) but omits Twitter cards or Twitter images, the system should automatically infer Twitter metadata (`summary_large_image`) and clone the OG image payload to prevent social card display failures on platforms like X/Twitter.
+- **What Actually Happened**: Twitter tags rendered empty unless explicitly configured by the developer, producing unstyled raw text links when shared on platforms expecting Twitter meta tags.
+- **Evidence in Repo**: Closed Issue #2 (`Smarter defaults for OG, Twitter, and canonical URLs`) and `src/merge.ts` lines 18-36.
+- **Root Cause**: Merge stages were operating independently without a post-processing synthesis step. When merging occurred sequentially (`siteConfig` $\to$ `runtimeDefaults` $\to$ `pageMetadata`), no reconciliation pass existed to propagate OpenGraph values horizontally into Twitter schemas.
+- **Remediation Code Diff**:
+```typescript
+// Forensic architecture of postProcessMetadata in src/merge.ts:
+export function postProcessMetadata(resolved: ResolvedMetadata): ResolvedMetadata {
+  const { openGraph } = resolved
+  let twitter = resolved.twitter
+
+  if (openGraph) {
+    const fill: Partial<ResolvedTwitter> = {}
+    if (!twitter?.title) fill.title = openGraph.title || resolved.title || undefined
+    if (!twitter?.description) {
+      fill.description = openGraph.description || resolved.description || undefined
+    }
+    // Clone OpenGraph images into Twitter images if none exist
+    if (!twitter?.images?.length && openGraph.images.length) {
+      fill.images = openGraph.images.map((image) => ({ ...image }))
+    }
+
+    const merged = { ...twitter, ...stripUndefined(fill) }
+    twitter = {
+      ...merged,
+      // Automatically infer card type based on image existence
+      card: twitter && !twitter.cardInferred ? twitter.card : inferCard(merged.images),
+    }
+  }
+
+  return {
+    ...resolved,
+    openGraph: openGraph && inheritTitleAndDescription(openGraph, resolved),
+    twitter: twitter && inheritTitleAndDescription(twitter, resolved),
+  }
+}
+```
+- **Lesson**: Decoupled domain models that serve similar functional targets (OpenGraph and Twitter Card specs) require a terminal convergence phase (`postProcessMetadata`) where shared invariant fallbacks are populated after all hierarchy levels have settled.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 4.1 Micro-Syntax & Token-Level Precision
+1. **Implicit Nullish vs. Boolean Trap in Metadata Pick Functions**:
+   In `src/merge.ts`, observe the `pick` function signature:
+   ```typescript
+   function pick<K extends keyof Metadata, R>(
+     child: Metadata,
+     parent: ResolvedMetadata,
+     key: K & keyof ResolvedMetadata,
+     resolve: (value: NonNullable<Metadata[K]>) => R
+   ): R | ResolvedMetadata[K & keyof ResolvedMetadata] | null {
+     const value = child[key]
+     if (value === undefined) return parent[key]
+     if (value === null) return null
+     return resolve(value as NonNullable<Metadata[K]>)
+   }
+   ```
+   *Forensic Precision*: `if (value === undefined)` cannot be replaced with `if (!value)`. If a child passes `category: ""` or `colorScheme: 'light'`, a falsy check would incorrectly fall back to the parent. Comparing strictly to `undefined` preserves empty strings and zero values.
+
+2. **Array Normalization Null-Check Boundary**:
+   In `src/utils.ts`:
+   ```typescript
+   export function toArray<T>(value: T | T[] | null | undefined): T[] {
+     if (value == null) return []
+     return Array.isArray(value) ? value : [value]
+   }
+   ```
+   *Forensic Precision*: The loose equality check `value == null` is intentional and strictly bounded to catch *both* `null` and `undefined` in a single opcode, while allowing empty strings `""` or numbers `0` to wrap into `[0]` rather than discarding them.
+
+3. **Shallow Copy Object Mutation Leaks**:
+   In `src/merge.ts`, line 28:
+   ```typescript
+   fill.images = openGraph.images.map((image) => ({ ...image }))
+   ```
+   *Forensic Precision*: A simple array slice `openGraph.images.slice()` would leave references to the underlying image objects intact. If a downstream consumer modifies `twitter.images[0].alt`, mutating the object in place would corrupt `openGraph.images[0].alt`. Shallow-cloning each element during the mapping boundary creates isolated object identities.
+
+### 4.2 Infinite Loop & Recursion Guards
+1. **Title Template Recursion Termination Invariant**:
+   In `src/resolve-title.ts`:
+   ```typescript
+   export function resolveTitle(
+     title: Metadata['title'],
+     template: string | null
+   ): string | null {
+     if (title == null) return null
+     if (typeof title === 'string') {
+       return template && template.includes('%s') ? template.replace('%s', title) : title
+     }
+     if ('default' in title) {
+       return template && template.includes('%s')
+         ? template.replace('%s', title.default)
+         : title.default
+     }
+     return null
+   }
+   ```
+   *Termination Invariant*: `template.replace('%s', title)` is called *once* without recursive looping. Even if `title` itself contains the literal string `"%s"`, no nested resolution is performed, eliminating `%s%s` re-entrant replacement loops.
+
+2. **Virtual Module Compilation Cache Guard**:
+   In `src/integration.ts`:
+   ```typescript
+   let cachedModuleCode: string | null = null
+   // ...
+   async handler(id: string) {
+     if (id !== resolvedId) return
+     if (!cachedModuleCode) {
+       const config = typeof siteConfig === 'function' ? await siteConfig() : siteConfig
+       const serialized = serializeConfig(config)
+       cachedModuleCode = `...`
+     }
+     return cachedModuleCode
+   }
+   ```
+   *Resource Starvation Guard*: The Astro build pipeline can invoke the `load` hook repeatedly across multi-page generation workers. Caching `cachedModuleCode` guarantees that if `siteConfig` is an asynchronous database or CMS fetch call (`() => Promise<Metadata>`), the external API is queried *exactly once* at build time, preventing socket exhaustion or HTTP 429 rate-limiting failures.
+
+### 4.3 UI & UX Micro-Mechanics
+1. **Canonical URL Normalization & Redundant Trailing Slash Hazards**:
+   In `src/resolve-url.ts` and `src/resolve-alternates.ts`:
+   When metadata outputs `<link rel="canonical" href="..." />`, resolving relative path strings against `metadataBase` (`new URL('/blog', 'https://example.com/subpath/')`) can produce unintended root relocations if leading slashes are mishandled:
+   - `new URL('/about', 'https://example.com/sub/').href` $\to$ `https://example.com/about` (discards `/sub/`).
+   - `new URL('about', 'https://example.com/sub/').href` $\to$ `https://example.com/sub/about` (retains `/sub/`).
+   The integration mandates standardizing `metadataBase` as a verified `URL` object instance in `defaultSeo` to force absolute resolution paths.
+
+2. **Head Tag Rendering Stacking & SSR DOM Order**:
+   In `src/components/SEO.astro`, tags are grouped and emitted in a defined order:
+   - Document title (`<title>`)
+   - Charset & base directives
+   - Primary meta tags (`description`, `keywords`, `robots`)
+   - Canonical & alternates (`<link rel="canonical">`, `<link rel="alternate">`)
+   - OpenGraph protocol tags (`<meta property="og:...">`)
+   - Twitter protocol tags (`<meta name="twitter:...">`)
+   This structure avoids head-reordering layout thrashing in browsers during initial streaming render passes.
+
+### 4.4 Backend Concurrency & Memory Safety
+1. **Object.fromEntries Filter Compaction**:
+   In `src/utils.ts`:
+   ```typescript
+   export function stripUndefined<T extends object>(value: T): Partial<T> {
+     return Object.fromEntries(
+       Object.entries(value).filter(([, v]) => v !== undefined)
+     ) as Partial<T>
+   }
+   ```
+   *Memory Safety*: Removing `undefined` keys shrinks the heap allocation footprint of the serialized metadata object. In server-side rendering (SSR), thousands of incoming requests create metadata instances; eliminating sparse keys reduces V8 hidden class bloat and lowers garbage collector cycle frequencies.
+
+### 4.5 Defect & Error Prevention ("Galti Pakadna")
+1. **URL Serialization Instance Loss**:
+   If an application defines:
+   ```javascript
+   defaultSeo({
+     metadataBase: new URL('https://example.com')
+   })
+   ```
+   Running naive `JSON.stringify` converts the `URL` object to `{}` in various environments. The custom replacer in `src/integration.ts`:
+   ```typescript
+   function serializeConfig(config: Metadata): string {
+     return JSON.stringify(config, (_, value) => {
+       if (value instanceof URL) return value.href
+       return value
+     })
+   }
+   ```
+   captures the `URL` instance and maps it directly to its primitive string `href` *before* the virtual module code string is constructed.
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+- **Boundary**: Strict separation between Build Time (Astro config phase, Vite plugin synthesis, virtual type injection) and Runtime/SSR (dynamic metadata fetching, hierarchy merging, post-processing).
+- **Decoupling**: The runtime merging engine (`src/merge.ts`) is completely isolated from Astro's runtime APIs, allowing pure unit testing in Vitest without mocking the Astro container.
+
+### 2. Core Abstractions
+- `Metadata`: The declarative configuration schema exposed to consumers (allowing partial structures, promises, and functions).
+- `ResolvedMetadata`: The complete, strongly typed contract where defaults are populated, titles resolved, and relative URLs converted to absolute strings.
+- `AstroIntegration`: Hook adapter implementing `astro:config:setup` and `astro:config:done`.
+
+### 3. Error Handling
+- **Degradation**: If `resolveUrl` fails due to an invalid base URL, the engine catches resolution failures and safely falls back to returning the unparsed string, preventing server crashes during invalid URL input scenarios.
+- **Null Safety**: Absence of configuration values falls back to `null` or `{}` rather than throwing runtime reference errors.
+
+### 4. Testing
+- **Suite Structure**: Comprehensive Vitest coverage across discrete merge dimensions (`test/merge.test.ts`, `test/resolve-twitter.test.ts`, `test/resolve-opengraph.test.ts`, `test/resolve-url.test.ts`).
+- **Invariant Testing**: Validates that child values override parent values, while omitted child values (`undefined`) preserve parent configurations.
+
+### 5. Security
+- **Meta Tag Injection Protection**: Property values are serialized and passed into Astro component attributes, where Astro's template engine applies automatic HTML attribute entity escaping, eliminating XSS vectors through CMS metadata inputs.
+- **Null-Byte Virtual Module Masking**: Using `\0` prevents external web requests from importing internal virtual modules over the wire.
+
+### 6. Performance
+- **Zero Runtime Overhead for SSG**: When using static configuration, serialization occurs during build; runtime resolution executes pure in-memory object merges without dynamic filesystem I/O.
+- **Module Code Caching**: Virtual module code generation executes once and caches the result (`cachedModuleCode`), preventing redundant work across parallel bundle chunks.
+
+### 7. Deployment
+- **Dual Mode (

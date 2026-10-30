@@ -6155,3 +6155,5 @@ Every entry in this ledger must capture:
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `b60d74c5` | Multi-dimensional audit evidence | 2026-10-30T06:57:00.263Z |
 | `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `3ca053db` | Multi-dimensional audit evidence | 2026-10-30T06:57:22.133Z |
 | `learn-github-bitnami-sealed-secrets` | `https://github.com/bitnami/sealed-secrets` | `c22f5839` | Multi-dimensional audit evidence | 2026-10-30T07:05:28.792Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `ed850f42` | Multi-dimensional audit evidence | 2026-10-30T07:18:07.932Z |
+| `learn-github-lucky-media-astro-seo` | `https://github.com/lucky-media/astro-seo` | `3d6ff7b4` | Multi-dimensional audit evidence | 2026-10-30T07:18:41.334Z |

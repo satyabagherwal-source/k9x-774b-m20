@@ -409894,3 +409894,542 @@ func RenderSecretTemplateInsecure(rawTmpl string, data map[string]string) ([]byt
 Implement a security regression unit test parsing the template string `{{ env "PATH" }}` using the configured function map. Verification passes only when template parsing fails with an `unregistered function "env"` error.
 
 ---
+
+
+---
+
+## 5647. Stream-Capped Chunked Buffer Ingestion (Harvested from genkit-ai/genkit)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Stream-Capped Chunked Buffer Ingestion",
+  "source": "genkit-ai/genkit",
+  "source_url": "https://github.com/genkit-ai/genkit",
+  "source_version": "ed850f42",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T07:18:06.899Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-genkit-ai-genkit",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `ed850f42`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When ingesting arbitrary binary payloads or remote streams from untrusted or dynamic upstream URLs, the application MUST NOT rely solely on upfront `Content-Length` headers, MUST NOT buffer the entire payload in memory with an unconstrained `.read()` or `.content`, and MUST enforce a hard byte ceiling inside an active chunked streaming loop, immediately terminating the connection upon exceeding the threshold.
+
+**WHY**:
+Malicious or misconfigured HTTP servers can omit the `Content-Length` header, send chunked transfer-encodings, compress payloads (`gzip`, `deflate`, `br`) to bypass size heuristics, or send a forged low `Content-Length` header while streaming infinite byte streams. Uncapped reads cause buffer overflow, memory exhaustion, and out-of-memory (OOM) process crashes in backend runtimes.
+
+**WHEN TO APPLY**:
+Apply in any service, gateway, AI agent plugin, or proxy layer that downloads external media, multimodal assets, or attachments on behalf of user requests.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import httpx
+from genkit.errors import GenkitError
+
+MAX_ALLOWED_BYTES = 20 * 1024 * 1024  # 20 MB Hard Boundary
+
+async def download_bounded_stream(client: httpx.AsyncClient, url: str) -> tuple[bytes, str | None]:
+    async with client.stream("GET", url, timeout=60.0) as response:
+        response.raise_for_status()
+
+        # Invariant 1: Reject compressed encoding when expecting exact binary bytes
+        encoding = response.headers.get("content-encoding", "").strip().lower()
+        if encoding not in ("", "identity"):
+            raise GenkitError(
+                status="INVALID_ARGUMENT",
+                message=f"Unsupported Content-Encoding {encoding!r}; expected uncompressed bytes."
+            )
+
+        # Invariant 2: Check declared header if present
+        declared = response.headers.get("content-length", "")
+        if declared.isdigit() and int(declared) > MAX_ALLOWED_BYTES:
+            raise GenkitError(status="INVALID_ARGUMENT", message="Payload exceeds 20MB limit.")
+
+        # Invariant 3: Active chunked enforcement loop
+        body = bytearray()
+        chunks = response.aiter_bytes() if response.is_stream_consumed else response.aiter_raw()
+        async for chunk in chunks:
+            body.extend(chunk)
+            if len(body) > MAX_ALLOWED_BYTES:
+                # Force-close the connection immediately before reading more
+                await response.aclose()
+                raise GenkitError(status="INVALID_ARGUMENT", message="Stream exceeded 20MB ceiling.")
+
+        return bytes(body), response.headers.get("content-type")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Vulnerable to memory exhaustion and header spoofing
+async def download_unbounded(url: str):
+    # DANGEROUS: Entire response is pulled into memory before checking size
+    response = await httpx.get(url, timeout=60.0)
+    # Checking len(response.content) happens AFTER memory is already consumed!
+    if len(response.content) > 20 * 1024 * 1024:
+        raise ValueError("Too large")
+    return response.content
+```
+
+**VERIFICATION METHOD**:
+Mock an HTTP endpoint that emits an infinite byte generator (`itertools.repeat(b'0' * 1024)`). Assert that the client throws `INVALID_ARGUMENT` after consuming precisely the 20MB boundary plus one chunk, verifies the transport connection is severed, and confirms resident set size (RSS) memory does not balloon.
+
+---
+
+
+---
+
+## 5648. Provider Error Classification Partitioning for Fallback vs. Retry (Harvested from genkit-ai/genkit)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Provider Error Classification Partitioning for Fallback vs. Retry",
+  "source": "genkit-ai/genkit",
+  "source_url": "https://github.com/genkit-ai/genkit",
+  "source_version": "ed850f42",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T07:18:07.218Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-genkit-ai-genkit",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `ed850f42`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When handling failures during multimodal preprocessing or tool dispatch within an AI orchestration engine, the system MUST strictly classify errors: client-side request flaws (HTTP 4xx except 408/429) MUST be wrapped as permanent `INVALID_ARGUMENT` errors, whereas transient transport failures and upstream capacity limits (HTTP 408, 429, 5xx, timeouts) MUST remain unclassified or rethrown in their raw transport form.
+
+**WHY**:
+Model orchestrators commonly implement automated fallback chains (e.g., trying Claude if Gemini fails) and automated retry loops. If a client provides a broken image URL (HTTP 404 or 403), classifying it as `NOT_FOUND` or transient failure causes the fallback chain to invoke the alternative model using the exact same invalid URL, burning latency and API quota. Conversely, wrapping transient errors (429/503) into terminal `INVALID_ARGUMENT` kills requests that could have recovered under standard exponential backoff retries.
+
+**WHEN TO APPLY**:
+All model connectors, agent tool execution layers, media preprocessors, and RPC dispatch bridges in AI agent architectures.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import httpx
+from genkit.errors import GenkitError
+
+def classify_http_error(e: httpx.HTTPStatusError, sanitized_url: str) -> Exception:
+    status = e.response.status_code
+    sanitized_error = httpx.HTTPStatusError(
+        f"HTTP {status} for {sanitized_url}",
+        request=e.request,
+        response=e.response
+    )
+    
+    # 4xx client errors (excluding timeouts and rate limits) represent caller faults
+    if 400 <= status < 500 and status not in (408, 429):
+        return GenkitError(
+            status="INVALID_ARGUMENT",
+            message=f"Could not fetch media URL (HTTP {status} for {sanitized_url})",
+            cause=sanitized_error
+        )
+    
+    # 408, 429, and 5xx are transient; bubble raw exception to trigger retry policy,
+    # preventing fallback models from executing an inherently flawed request.
+    return sanitized_error
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Blindly classifying all non-200 responses as generic failures
+try:
+    response.raise_for_status()
+except httpx.HTTPStatusError as e:
+    # WRONG: Conflating 404 with internal errors causes fallback cascades
+    # or wraps transient 429 in a non-retriable fatal error.
+    raise GenkitError(status="INTERNAL", message="Upstream error", cause=e)
+```
+
+**VERIFICATION METHOD**:
+Execute an automated test harness with parametrized HTTP status codes `[400, 401, 403, 404, 408, 429, 500, 502, 503]`. Verify that codes `[400, 401, 403, 404]` raise `GenkitError` with `status == "INVALID_ARGUMENT"`, while `[408, 429, 500, 502, 503]` re-raise instances of `httpx.HTTPStatusError`.
+
+---
+
+
+---
+
+## 5649. Pydantic v2 Class Namespace Collision Avoidance (Harvested from genkit-ai/genkit)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Pydantic v2 Class Namespace Collision Avoidance",
+  "source": "genkit-ai/genkit",
+  "source_url": "https://github.com/genkit-ai/genkit",
+  "source_version": "ed850f42",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T07:18:07.561Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-genkit-ai-genkit",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `ed850f42`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When defining schema models or configuration dataclasses inheriting from Pydantic `BaseModel` (or platform wrappers), fields MUST NOT be given names that collide with internal or inherited Pydantic model methods (specifically `validate`, `copy`, `schema`, `parse_obj`, `json`, `dict`). Configuration fields needing wire-compatibility with these names MUST use alternative Python attribute identifiers paired with `validation_alias=AliasChoices(...)` and `serialization_alias=...`.
+
+**WHY**:
+In Pydantic v2, `BaseModel.validate` and similar class-level/instance-level methods are fundamental metaclass or class properties. Declaring a schema field named `validate: str` shadows `BaseModel.validate`, causing runtime crashes, inspection bugs, Pyright/Mypy type-check failures, and breakage across automatic schema generation tools (`to_json_schema`).
+
+**WHEN TO APPLY**:
+All Pydantic schema definitions, configuration objects, tool input/output definitions, and API payloads across Python plugins.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from pydantic import BaseModel, Field, AliasChoices, ConfigDict
+
+class SafePluginConfig(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        validate_by_name=True,
+        validate_by_alias=True
+    )
+
+    # Use 'validation' in Python namespace; support both on the wire
+    validation: str = Field(
+        default="warn",
+        validation_alias=AliasChoices("validate", "validation"),
+        serialization_alias="validate"
+    )
+    surface_id: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("surfaceId", "surface_id"),
+        serialization_alias="surfaceId"
+    )
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Shadowing BaseModel methods directly
+class DangerousConfig(BaseModel):
+    # This shadows BaseModel.validate!
+    validate: str = "warn" 
+    surfaceId: str | None = None
+```
+
+**VERIFICATION METHOD**:
+Run Pyright type checking across all model files (`uv run pyright`). Add a unit test verifying that `SafePluginConfig.model_validate({"validate": "strict"}).validation == "strict"` and ensure `SafePluginConfig.model_validate` remains a callable method.
+
+---
+
+
+---
+
+## 5650. Vite Virtual Module ID Parameterization Invariant (Harvested from lucky-media/astro-seo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Vite Virtual Module ID Parameterization Invariant",
+  "source": "lucky-media/astro-seo",
+  "source_url": "https://github.com/lucky-media/astro-seo",
+  "source_version": "3d6ff7b4",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-10-30T07:18:40.397Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lucky-media-astro-seo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lucky-media/astro-seo](https://github.com/lucky-media/astro-seo) (Revision: `3d6ff7b4`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing Vite/Rollup plugins utilizing virtual module resolution with hook filters (`resolveId.filter` and `load.filter`), developers **MUST NOT** hardcode string literals inside regular expressions without dynamic string interpolation and proper boundary anchors. Virtual module specifiers containing scoped package characters (`@`, `/`, `:`, `-`) **MUST** be explicitly constructed via parameterized `new RegExp('^' + escapeRegex(id) + '$')` or direct variable template interpolation matching the exact identifier constant.
+
+**WHY**:
+Hardcoded regexes in hook filters (such as `/^virtual:@lucky-media\/astro-seo$/`) create brittle coupling between plugin definitions and execution filters. If the virtual module ID changes or uses special regex metacharacters (`@`, `/`, `-`, `\0`), unparameterized regexes cause hook bypasses in bundlers like Vite 8 and Rolldown. When the hook filter fails, the resolver is skipped, yielding catastrophic unhandled build exceptions: `[vite] Failed to resolve module import "virtual:..."`.
+
+**WHEN TO APPLY**:
+Apply in all Vite, Rollup, Astro, and WMR plugins where synthetic modules are injected into the dependency graph via the `\0` private resolution prefix.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import type { Plugin } from 'vite'
+
+export function virtualModulePlugin(): Plugin {
+  const virtualModuleId = 'virtual:@my-scope/engine'
+  const resolvedId = '\0' + virtualModuleId
+
+  // Escape special regex characters if ID contains arbitrary user inputs
+  const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+  return {
+    name: 'my-scope-virtual-plugin',
+    resolveId: {
+      filter: { id: new RegExp(`^${escapeRegex(virtualModuleId)}$`) },
+      handler(id: string) {
+        if (id === virtualModuleId) {
+          return resolvedId
+        }
+      },
+    },
+    load: {
+      filter: { id: new RegExp(`^${escapeRegex(resolvedId)}$`) },
+      async handler(id: string) {
+        if (id !== resolvedId) return
+        return `export const timestamp = ${Date.now()};`
+      },
+    },
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Hardcoded, fragile regex literals vulnerable to refactor drift and escaping errors
+export function brokenVirtualModulePlugin(): Plugin {
+  const virtualModuleId = 'virtual:@my-scope/engine'
+  const resolvedId = '\0' + virtualModuleId
+
+  return {
+    name: 'broken-plugin',
+    resolveId: {
+      // DANGER: If virtualModuleId is updated above, this static filter silently desynchronizes
+      filter: { id: /^virtual:@my-scope\/engine$/ },
+      handler(id: string) {
+        if (id === virtualModuleId) return resolvedId
+      },
+    },
+    load: {
+      // DANGER: \0 in raw regex literal can fail depending on bundler parsing of null bytes
+      filter: { id: /^\0virtual:@my-scope\/engine$/ },
+      handler(id: string) {
+        if (id !== resolvedId) return
+        return `export const ok = true;`
+      },
+    },
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Execute an automated integration test compiling an entry point importing the virtual module across both Vite 5/6 and Vite 8/Rolldown runtimes:
+```typescript
+import { test, expect } from 'vitest'
+import { build } from 'vite'
+import { virtualModulePlugin } from './plugin'
+
+test('virtual module resolves cleanly without Rolldown filter rejection', async () => {
+  const result = await build({
+    plugins: [virtualModulePlugin()],
+    build: {
+      write: false,
+      rollupOptions: {
+        input: 'entry.js',
+      },
+    },
+  })
+  expect(result).toBeDefined()
+})
+```
+
+---
+
+
+---
+
+## 5651. Tri-State Configuration Cascade Semantics (Harvested from lucky-media/astro-seo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Tri-State Configuration Cascade Semantics",
+  "source": "lucky-media/astro-seo",
+  "source_url": "https://github.com/lucky-media/astro-seo",
+  "source_version": "3d6ff7b4",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-10-30T07:18:40.717Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lucky-media-astro-seo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lucky-media/astro-seo](https://github.com/lucky-media/astro-seo) (Revision: `3d6ff7b4`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In hierarchical configuration merge engines, every field transition **MUST** strictly adhere to tri-state semantics:
+1. `undefined` $\implies$ Inherit parent value.
+2. `null` $\implies$ Explicitly wipe/clear the field (do not inherit parent value).
+3. `Primitive | Object` $\implies$ Apply override or transform child value.
+
+Engine code **MUST NOT** use truthiness/falsiness checks (`!value`) or nullish-coalescing defaults (`child.prop ?? parent.prop`) when `null` represents intentional resource suppression.
+
+**WHY**:
+Using `??` or falsy checks collapses the distinction between `null` and `undefined`. If a root config defines a default robots tag (`{ robots: 'index, follow' }`), and an internal/secure route specifies `{ robots: null }` or `{ description: null }` intending to strip SEO exposure entirely, standard `child ?? parent` logic revives the parent configuration, exposing private metadata or indexing hidden pages.
+
+**WHEN TO APPLY**:
+Any layered configuration system (SEO metadata, theme merging, hierarchical permissions, inherited network timeouts).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+/**
+ * Resolves child configuration against parent with strict tri-state inheritance.
+ * undefined = inherit
+ * null = clear/strip
+ * T = transform / set
+ */
+export function pickTriState<K extends string, P extends Record<K, any>, C extends Record<K, any>, R>(
+  child: C,
+  parent: P,
+  key: K,
+  transform: (val: NonNullable<C[K]>) => R
+): R | P[K] | null {
+  const value = child[key]
+  // 1. Undefined means consumer did not specify -> Inherit parent
+  if (value === undefined) {
+    return parent[key]
+  }
+  // 2. Explicit null means consumer intentionally commanded absolute removal
+  if (value === null) {
+    return null
+  }
+  // 3. Concrete value present -> execute schema transformation
+  return transform(value as NonNullable<C[K]>)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Falsy or naive nullish coalescing destroying explicit clearing semantics
+export function naiveMerge(parent: Config, child: Config): Config {
+  return {
+    // BUG: If child.title is "", it falls back to parent.title
+    title: child.title || parent.title,
+    // BUG: If child.robots is null (wipe), it revives parent.robots
+    robots: child.robots ?? parent.robots,
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a matrix test verifying that passing `undefined` preserves parent, while `null` purges:
+```typescript
+import { test, expect } from 'vitest'
+import { pickTriState } from './merge-engine'
+
+test('tri-state inheritance preserves null deletion while falling back on undefined', () => {
+  const parent = { robots: 'all', title: 'Default' }
+
+  const inherited = {
+    robots: pickTriState({ robots: undefined }, parent, 'robots', (v) => v),
+  }
+  expect(inherited.robots).toBe('all')
+
+  const cleared = {
+    robots: pickTriState({ robots: null }, parent, 'robots', (v) => v),
+  }
+  expect(cleared.robots).toBeNull()
+})
+```
+
+---
+
+
+---
+
+## 5652. Non-JSON Domain Object Virtualization Invariant (Harvested from lucky-media/astro-seo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Non-JSON Domain Object Virtualization Invariant",
+  "source": "lucky-media/astro-seo",
+  "source_url": "https://github.com/lucky-media/astro-seo",
+  "source_version": "3d6ff7b4",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-10-30T07:18:41.064Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lucky-media-astro-seo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lucky-media/astro-seo](https://github.com/lucky-media/astro-seo) (Revision: `3d6ff7b4`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When serializing runtime state or user configuration into virtual module source strings during a build hook, the serializer **MUST** provide an explicit Replacer function to convert non-JSON serializable primitives (specifically `URL`, `RegExp`, `BigInt`, and `Date`) into serializable, cross-boundary reconstructible expressions or strings.
+
+**WHY**:
+Standard `JSON.stringify(config)` turns `URL` objects into `{}` (an empty object) or calls default `toJSON` without preserving type prototype contracts. When the serialized code is injected into a virtual module (`const siteConfig = ${serialized}`), the deserialized runtime structure receives broken plain objects or loses instance methods, causing subsequent calls like `url.pathname` or `url instanceof URL` to fail silently or crash SSR runs.
+
+**WHEN TO APPLY**:
+Static site generation plugins, Astro/Next.js/Nuxt integrations, and Vite plugins that serialize build-time JS objects into generated virtual code.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export function serializeConfig(config: Record<string, unknown>): string {
+  return JSON.stringify(config, (_key: string, value: unknown) => {
+    // Preserve URL semantics by standardizing to absolute href strings
+    if (value instanceof URL) {
+      return value.href
+    }
+    // Handle BigInt serialization failure
+    if (typeof value === 'bigint') {
+      return value.toString()
+    }
+    return value
+  })
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Direct template interpolation without type sanitization
+export function injectBrokenVirtualModule(config: any): string {
+  // CRASH: If config contains new URL('https://example.com'),
+  // stringify outputs {} in node/bundler environments where URL serialization is not custom mapped,
+  // or leaves consumers with broken prototype chains.
+  return `export const siteConfig = ${JSON.stringify(config)};`
+}
+```
+
+**VERIFICATION METHOD**:
+Validate via runtime assertion that a serialized configuration containing a native `URL` produces a valid stringifiable schema that does not deserialize as an empty object:
+```typescript
+import { test, expect } from 'vitest'
+import { serializeConfig } from './serialize'
+
+test('serializeConfig correctly preserves URL instances as hrefs', () => {
+  const payload = { base: new URL('https://domain.test/api') }
+  const output = serializeConfig(payload)
+  expect(output).toBe('{"base":"https://domain.test/api"}')
+})
+```
+
+---

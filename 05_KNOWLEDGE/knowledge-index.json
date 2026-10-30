@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T07:05:28.719Z",
+  "last_updated": "2026-10-30T07:18:41.247Z",
   "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13675,8 +13675,8 @@
       "slug": "genkit-ai-genkit",
       "platform": "github",
       "source_url": "https://github.com/genkit-ai/genkit",
-      "source_version": "dffd52bc",
-      "content_hash": "8648a3463996ea5a635734fcccc5fd5597270cdcada31f54fd25ff13663842e5",
+      "source_version": "ed850f42",
+      "content_hash": "e9d0e0a7e741ec159d5ab232279023cb3e5f56aaf1676a626d52f96db2f3602e",
       "dossier_path": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md",
       "promoted_rules": [
@@ -13719,6 +13719,21 @@
           "number": 5365,
           "title": "genkit-tools/cli): restore .js extension on @modelcontextprotocol/sdk subpath im",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5647,
+          "title": "Stream-Capped Chunked Buffer Ingestion",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5648,
+          "title": "Provider Error Classification Partitioning for Fallback vs. Retry",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5649,
+          "title": "Pydantic v2 Class Namespace Collision Avoidance",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13726,7 +13741,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:34:45.957Z",
+      "verified_at": "2026-10-30T07:18:07.728Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69272,8 +69287,8 @@
       "slug": "lucky-media-astro-seo",
       "platform": "github",
       "source_url": "https://github.com/lucky-media/astro-seo",
-      "source_version": "379fde02",
-      "content_hash": "753e5a1f3b4a10c80a03ad33a7c753e782696a86cd7bb367b5bc0b126f1f516b",
+      "source_version": "3d6ff7b4",
+      "content_hash": "fc5e2ee3797d194ec0b16c8a644333b1ddc2611ffbce2412eaa3d1b44c2d9fb7",
       "dossier_path": "07_PROJECT_LEARNING/lucky-media-astro-seo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lucky-media-astro-seo-learnings.md",
       "promoted_rules": [
@@ -69282,6 +69297,21 @@
           "number": 2805,
           "title": "small fix for fallback images",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5650,
+          "title": "Vite Virtual Module ID Parameterization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5651,
+          "title": "Tri-State Configuration Cascade Semantics",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5652,
+          "title": "Non-JSON Domain Object Virtualization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -69289,7 +69319,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T20:53:16.518Z",
+      "verified_at": "2026-10-30T07:18:41.231Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -151285,6 +151315,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T07:05:28.707Z"
+    },
+    "rule-5647": {
+      "learning_id": "rule-5647",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5647,
+      "title": "Stream-Capped Chunked Buffer Ingestion",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "ed850f42",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:18:07.728Z"
+    },
+    "rule-5648": {
+      "learning_id": "rule-5648",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5648,
+      "title": "Provider Error Classification Partitioning for Fallback vs. Retry",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "ed850f42",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:18:07.729Z"
+    },
+    "rule-5649": {
+      "learning_id": "rule-5649",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5649,
+      "title": "Pydantic v2 Class Namespace Collision Avoidance",
+      "source_url": "https://github.com/genkit-ai/genkit",
+      "source_version": "ed850f42",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:18:07.729Z"
+    },
+    "rule-5650": {
+      "learning_id": "rule-5650",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5650,
+      "title": "Vite Virtual Module ID Parameterization Invariant",
+      "source_url": "https://github.com/lucky-media/astro-seo",
+      "source_version": "3d6ff7b4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:18:41.231Z"
+    },
+    "rule-5651": {
+      "learning_id": "rule-5651",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5651,
+      "title": "Tri-State Configuration Cascade Semantics",
+      "source_url": "https://github.com/lucky-media/astro-seo",
+      "source_version": "3d6ff7b4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:18:41.231Z"
+    },
+    "rule-5652": {
+      "learning_id": "rule-5652",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5652,
+      "title": "Non-JSON Domain Object Virtualization Invariant",
+      "source_url": "https://github.com/lucky-media/astro-seo",
+      "source_version": "3d6ff7b4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:18:41.231Z"
     }
   },
   "aliases": {

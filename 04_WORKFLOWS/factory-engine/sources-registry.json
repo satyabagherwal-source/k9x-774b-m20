@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T07:05:31.339Z",
-    "lastVerified": "2026-10-30T07:05:31.339Z",
+    "lastChecked": "2026-10-30T07:18:43.884Z",
+    "lastVerified": "2026-10-30T07:18:43.884Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T06:43:23.360Z",
-    "lastVerified": "2026-10-30T06:43:23.360Z",
+    "lastChecked": "2026-10-30T07:15:43.988Z",
+    "lastVerified": "2026-10-30T07:15:43.988Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -312,9 +312,9 @@
   "actions-actions-runner-controller": {
     "name": "actions-runner-controller",
     "officialUrl": "https://github.com/actions/actions-runner-controller",
-    "lastChecked": "2026-10-28T19:38:58.886Z",
+    "lastChecked": "2026-10-30T07:15:36.562Z",
     "revisionIdentifier": "89f34c4f",
-    "lastVerified": "2026-10-28T19:38:58.886Z"
+    "lastVerified": "2026-10-30T07:15:36.562Z"
   },
   "microsoft-agent-governance-toolkit": {
     "name": "microsoft/agent-governance-toolkit",
@@ -1603,9 +1603,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-10-30T03:18:50.724Z",
+    "lastChecked": "2026-10-30T07:15:39.125Z",
     "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-10-30T03:18:50.724Z"
+    "lastVerified": "2026-10-30T07:15:39.125Z"
   },
   "alibaba-zvec": {
     "name": "zvec",
@@ -4459,9 +4459,9 @@
   "smol-rs-smol": {
     "name": "smol",
     "officialUrl": "https://github.com/smol-rs/smol",
-    "lastChecked": "2026-10-28T14:42:35.233Z",
+    "lastChecked": "2026-10-30T07:15:28.974Z",
     "revisionIdentifier": "41579301",
-    "lastVerified": "2026-10-28T14:42:35.233Z"
+    "lastVerified": "2026-10-30T07:15:28.974Z"
   },
   "hf-bigscience-bloom": {
     "name": "bigscience/bloom",
@@ -6364,14 +6364,14 @@
     "officialUrl": "https://github.com/genkit-ai/genkit",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T18:34:45.504Z",
-    "lastVerified": "2026-10-28T18:34:45.504Z",
+    "lastChecked": "2026-10-30T07:15:47.552Z",
+    "lastVerified": "2026-10-30T07:15:47.552Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "8648a3463996ea5a635734fcccc5fd5597270cdcada31f54fd25ff13663842e5",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "contentHash": "e9d0e0a7e741ec159d5ab232279023cb3e5f56aaf1676a626d52f96db2f3602e",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9434,5 +9434,29 @@
     "lastChecked": "2026-10-30T07:03:25.809Z",
     "revisionIdentifier": "3a4042f3",
     "lastVerified": "2026-10-30T07:03:25.809Z"
+  },
+  "lucky-media-astro-seo": {
+    "name": "lucky-media/astro-seo",
+    "officialUrl": "https://github.com/lucky-media/astro-seo",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T07:15:36.757Z",
+    "lastVerified": "2026-10-30T07:15:36.757Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-lucky-media-astro-seo",
+    "contentHash": "fc5e2ee3797d194ec0b16c8a644333b1ddc2611ffbce2412eaa3d1b44c2d9fb7",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kevinnzou-compose-webview-multiplatform": {
+    "name": "compose-webview-multiplatform",
+    "officialUrl": "https://github.com/KevinnZou/compose-webview-multiplatform",
+    "lastChecked": "2026-10-30T07:15:33.974Z",
+    "revisionIdentifier": "68e76907",
+    "lastVerified": "2026-10-30T07:15:33.974Z"
   }
 }
