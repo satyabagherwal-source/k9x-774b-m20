@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `3f0e3b9a`  
+> **Source Version**: `eb9f5b29`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T20:44:34.465Z  
+> **Timestamp**: 2026-10-30T11:28:18.955Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T20:44:34.458Z  
+> **Harvest Timestamp**: 2026-10-30T11:28:17.822Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46513 stars
+- **Stars / Engagement**: 46537 stars
 
 ---
 
@@ -1412,11 +1412,11 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #54770** (2026-10-28): **fix: [cp3.0] support contextual keywords as field names**
-  *Symptoms*: issue: #53925 pr: #53968  Cherry-pick of #53968 onto 3.0.  ## What  Fields named after contextual keywords (`iso`, `interval`, ...) can be created but could not be used in filters, because the lexer emits a keyword token where the parser expects an identifier. A shared `fieldName` rule now accepts 20 contextual keyword families in expression field positions while keeping their function, option and timestamp syntax. `LIKE`, `AND`, `OR`, `NOT` and `IN` are rejected as field names in every casing on Create and Add.  Compatibility (same as master): mixed-case names such as `And`, `In` and `Like` could be created before; new Create/Add requests now reject them. Existing collections are not revalidated.  ## 3.0 adaptations  - The master change to `internal/proxy/task.go` / `internal/proxy/util.go` maps to `internal/proxy/ddl/task.go` / `internal/proxy/ddl/util_ddl.go` on 3.0. - 3.0 already validates the struct-array parent name before the remaining struct checks and already classifies `ErrFieldInvalidName` (1701) as `InputError`, so those parts of #53968 are kept as they are on 3.0 (`pkg/util/merr/errors.go` is unchanged). - `ARRAY_LENGTH` keeps 3.0's operand list (no struct sub-field operand); that operand comes from a different master change, not from #53968. - The parser under `internal/parser/planparserv2/generated` was regenerated from the 3.0 grammar with ANTLR 4.13.2 (`generate.sh`), not copied from master. - `internal/proxy/contextual_keywords_test.go` already existed on 3.
+- **Issue #54881** (2026-10-30): **fix: [3.0] retry worker cleanup during import task GC**
+  *Symptoms*: Backport of #54867.  pr: #54867 issue: #52332  ## Changes  Cherry-picks source commit `67b23600ed9b2efc474118020ae23473fb5730b8` onto branch `3.0`.  - Let GC retry worker cleanup for expired V2 import/pre-import tasks whose scheduler owner is already gone, retaining metadata on RPC or catalog failures. - Preserve failed-output segment and CDC rollback gates before deleting task/job metadata. - Keep the reviewed per-task synchronization across worker callbacks, slot calculation, no-slot requeue and delayed requeue, preventing finalized tasks from re-entering the scheduler or accessing deleted jobs. - Retain all seven Finalize concurrency regression groups and the GC/persistence/missing-job coverage.  Only a test import-context conflict needed adaptation: retain the 3.0 fixture without introducing master's metacache dependency. All added/deleted lines across the ten files match the source fix.  ## Validation  - On the 3.0 checkout, the full scheduler/task package passes with `dynamic,test` build tags. - All seven Finalize concurrency groups pass with `-race -tags dynamic,test -count=20`. - Scheduler/task golangci-lint reports zero issues; changed-file gofumpt/gci and `git diff --check` pass. - On an isolated development host using Go 1.26.9 and 3.0 native libraries, the original 3.0 GC baseline passes all nine cases. The patched target `TestCalculateTaskSlot|TestImportChecker|TestImportInspector` passes 19 top-level tests / 98 cases including subtests, with all 50 ImportChecker
 
-- **Issue #54764** (2026-10-28): **fix: return WALNameMismatch synchronously during remote consumer creation**
-  *Symptoms*: Fixes #54762  When a remote consumer reconnects with a position from the previous WAL backend, the VChannel handshake reports `WALNameMismatch` after the constructor has already returned. The handler client's existing `DeliverPolicyAll` fallback therefore cannot catch the error.  Complete the VChannel handshake before returning the consumer and starting its receive loop. Each creation attempt owns a child context, so failures release its stream while preserving the parent context and upper message handler for retry. Validate both successful and embedded-error handshake responses.  Add gRPC regressions using the production server/client error interceptors, with fault-injection coverage for handshake failures and cancellation. Historical WAL catch-up and handler-level catch-up/All-handoff coverage are in #54778 (issue #54763), which must merge after this PR. The two PRs have no overlapping changed files.  ### Validation  - Confirmed the gRPC mismatch regression fails on unmodified master and passes with this change. - Passed consumer, streaming status and streaming service interceptor tests with `-tags dynamic,test -gcflags="all=-N -l" -count=1`; reran the full consumer package after moving handler handoff coverage to #54778. - Passed scoped consumer lint. - Audited the mismatch source through server construction, gRPC error conversion and the existing handler fallback. - Full online concurrent read/write + MQ switch e2e has not been run. 
+- **Issue #54875** (2026-10-30): **fix: make REST v1 test log directory creation race-safe**
+  *Symptoms*: ## What does this PR do?  Fix REST v1 test collection failing with `FileExistsError` when parallel pytest workers initialize the same client log directory. Use `os.makedirs(..., exist_ok=True)` so a directory created between the existing check and creation is accepted, matching REST v2.  This is a one-line change to the existing test helper; no new test files are added.  ## Verification  - Local validation confirmed concurrent directory creation is accepted and an existing ordinary file still raises an error. - `git diff --check`: passed. - Separate 10-process reproduction: original REST v1 initialization failed 23/100 times; the candidate fix passed 100/100. Forced interleaving failed 27/30 original initializations and passed 30/30 with the fix. - Full Milvus E2E was not run locally.  Observed in TCUS E2E build #442 during REST v1 collection, before test execution. No server behavior changes. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1433,1203 +1433,888 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `029df857` (2026-10-28)
-**Commit Message**: fix: Recover from all transient etcd errors, not only leader changes (#54733)
+### Incident Patch 1: `31c941f0` (2026-10-29)
+**Commit Message**: fix: Bound Python E2E collection cleanup and report failures (#54349)
 
-issue: #54706
-Related: #54707
+Python E2E collection drops can wait without an RPC deadline, both
+during automatic teardown and when a test calls the MilvusClient drop
+helper directly. In CI #65505,
+`test_milvus_client_list_collections_multi_collections` blocked in its
+test-body drop loop until pytest-timeout killed the worker; the
+crash-rerun path then raised an unrelated `NotImplementedError`.
 
-### What
+This change:
 
-#54707 made `etcdserver: leader changed` recoverable for the proxy and
-session watchers. That error is only one member of a family. With etcd
-auth enabled, clientv3 authenticates before opening every watch stream.
-`Authenticate` is a raft request that clientv3 does not retry, and its
-failure is converted to an `rpctypes.EtcdError`, which
-`openWatchClient`'s `isHaltErr` treats as fatal. The watch is then
-canceled with whatever transient error the member returned. During an
-etcd rolling restart that is just as likely to be `server stopped`, `no
-leader` or `request timed out`.
+- gives `TestMilvusClientV2Base.drop_collection()` a 120-second default
+RPC timeout when the caller omits it or supplies `None`, preserving
+explicit timeouts and the existing positional check arguments;
+- initializes collection tracking alongside each test's wrappers,
+retaining the legacy class-scoped lifecycle;
+- passes finite RPC timeouts from a shared 120-second budget checked
+between collection-cleanup operations, and gives the utility drop
+wrapper its usual 20-second default;
+- reports unsuccessful cleanup results and exceptions after attempting
+remaining collection cleanup and resetting connections; removes aliases
+in the owning connection, skips missing collections, and avoids
+duplicate drops.
 
-The new `TestIsRetriableWatchErr_WatchCanceledByAuthFailure` injects
-each error into `Authenticate` through a bufconn server and uses the
-real clientv3. Every case cancels the watch. On master after #54707,
-every error except leader changed is classified as non-retriable, so the
-watcher panics:
+issue: #54348
+Fixes #54348
 
-| injected | watch canceled | `IsRetriableWatchErr` on master |
-|---|---|---|
-| leader changed | yes | true |
-| no leader | yes | **false** |
-| server stopped | yes | **false** |
-| request timed out | 
+Validat
 
-**File**: `internal/cdc/controller/controller.go` (modified, +37/-4)
+**File**: `tests/python_client/base/client_base.py` (modified, +89/-18)
 ```diff
-@@ -18,9 +18,11 @@ package controller
+@@ -1,4 +1,5 @@
+ import sys
++import time
  
- import (
- 	"context"
-+	"fmt"
- 	"path"
- 	"strings"
- 	"sync"
-+	"time"
+ from base.database_wrapper import ApiDatabaseWrapper
+ from pymilvus import DefaultConfig
+@@ -18,6 +19,8 @@
+ from pymilvus import DataType, MilvusClient, ResourceGroupInfo, utility
+ from utils.util_log import test_log as log
  
- 	"go.etcd.io/etcd/api/v3/mvccpb"
- 	clientv3 "go.etcd.io/etcd/client/v3"
-@@ -29,9 +31,14 @@ import (
- 	"github.com/milvus-io/milvus/internal/cdc/resource"
- 	"github.com/milvus-io/milvus/internal/metastore/kv/streamingcoord"
- 	"github.com/milvus-io/milvus/pkg/v3/mlog"
-+	"github.com/milvus-io/milvus/pkg/v3/util/etcd"
- 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
- )
- 
-+// listRetryInterval is how long the controller waits before listing the
-+// replicate pchannels again after a transient etcd error.
-+const listRetryInterval = time.Second
++COLLECTION_CLEANUP_TIMEOUT = 120
 +
- // Controller controls and schedules the CDC process.
- // It will periodically update the replications by the replicate configuration.
- type Controller interface {
-@@ -103,10 +110,12 @@ func (c *controller) startWatchLoop() {
- 	go func() {
- 		defer c.wg.Done()
- 		for {
--			m, err := meta.ListReplicatePChannels(c.ctx, resource.Resource().ETCD(), c.prefix)
--			if err != nil && c.ctx.Err() == nil {
--				mlog.Warn(c.ctx, "failed to list replicate pchannels", mlog.Err(err))
+ 
+ class Base:
+     """Initialize class object"""
+@@ -30,7 +33,7 @@ class Base:
+     collection_schema_wrap = None
+     field_schema_wrap = None
+     database_wrap = None
+-    tear_down_collection_names = []
++    tear_down_collection_names = ()
+     tear_down_role_names = []
+     tear_down_user_names = []
+     resource_group_list = []
+@@ -51,6 +54,9 @@ def setup_method(self, method):
+         self._setup_objects()
+ 
+     def _setup_objects(self):
++        # TestCaseClassBase calls this once per class; ordinary cases call it
++        # once per method. Keep the registry in the same scope as the wrappers.
++        self.tear_down_collection_names = []
+         self.connection_wrap = ApiConnectionsWrapper()
+         self.utility_wrap = ApiUtilityWrapper()
+         self.collection_wrap = ApiCollectionWrapper()
+@@ -66,6 +72,67 @@ def teardown_method(self, method):
+         log.info(f"[teardown_method] Start teardown test case {method.__name__}...")
+         self._teardown_objects()
+ 
++    def _cleanup_collections(self):
++        deadline = time.monotonic() + COLLECTION_CLEANUP_TIMEOUT
++        errors = []
++
++        def cleanup_call(action, operation, *args, **kwargs):
++            try:
++                timeout = deadline - time.monotonic()
++                if timeout <= 0:
++                    raise TimeoutError("collection cleanup deadline exceeded")
++                result, success = operation(*args, timeout=timeout, check_task=ct.CheckTasks.check_nothing, **kwargs)
++                if not success:
++                    raise AssertionError(str(result))
++                if time.monotonic() >= deadline:
++                    raise TimeoutError("collection cleanup deadline exceeded")
++                return result
++            except Exception as error:
++                errors.append((action, error))
++                log.exception(f"Collection cleanup failed: {action}")
++                return None
++
++        def drop_aliases(collection_name, using):
++            aliases = cleanup_call(
++                f"list aliases for {collection_name}", self.utility_wrap.list_aliases, collection_name, using=using
++            )
++            for alias in aliases or []:
++                cleanup_call(f"drop alias {alias}", self.utility_wrap.drop_alias, alias, using=using)
++
++        # A collection may be registered more than once, or also be owned by
++        # collection_wrap. Attempt each drop only once during this teardown.
++        collection_names = dict.fromkeys(name for name in self.tear_down_collection_names if name is not None)
++        collection = self.collection_wrap.collection
++        collection_list = None
++        if collection is not None:
++            if collection.name.startswith("alias"):
++                log.info(f"collection {collection.name} is alias, skip drop operation")
++            else:
++                using = collection._using
++                wrapped_collection_list = cleanup_call(
++                    f"list collections using {using}", self.utility_wrap.list_collections, using=using
++                )
++                if wrapped_collection_list is not None and collection.name in wrapped_collection_list:
++                    drop_aliases(collection.name, using)
++                    cleanup_call(f"drop collection {collection.name}", self.collection_wrap.drop)
++                if using == DefaultConfig.DEFAULT_USING:
++                    collection_list = wrapped_collection_list
++                    collection_names.pop(collection.name, None)
++
++        if collection_names:
++            if collection_list is None:
++                collection_list = cleanup_call("list collections", self.utility_wrap.list_collections)
++            if collection_list is not None:
++                for collection_name in collection_names:
++                    if collection_name not in collection_list:
++                        continue
++                    drop_aliases(collection_name, DefaultConfig.DEFAULT_USING)
++                    cleanup_call(
++                        f"drop collection {collection_name}", self.utility_wrap.drop_collection, collection_name
++                    )
++
++        return errors
++
+     def _teardown_objects(self):
+         # Prioritize uri and token for connection
+         if cf.param_info.param_uri:
+@@ -82,29 +149,29 @@ def _teardown_objects(self):
+                 else None
+             )
+ 
++        cleanup_errors = []
+         try:
+             """ Drop collection before disconnect """
+             if not self.connection_wrap.has_connection(alias=DefaultConfig.DEFAULT_USING)[0]:
+                 if token:
+-                    self.connection_wrap.connect(alias=DefaultConfig.DEFAULT_USING, ur
+```
+
+**File**: `tests/python_client/base/client_v2_base.py` (modified, +4/-0)
+```diff
+@@ -489,6 +489,10 @@ def list_collections(self, client, timeout=None, check_task=None, check_items=No
+ 
+     @trace()
+     def drop_collection(self, client, collection_name, check_task=None, check_items=None, **kwargs):
++        # Drops in test bodies do not use Base's collection-cleanup budget.
++        timeout = kwargs.get("timeout")
++        kwargs["timeout"] = TIMEOUT if timeout is None else timeout
++
+         func_name = sys._getframe().f_code.co_name
+         res, check = api_request([client.drop_collection, collection_name], **kwargs)
+         check_result = ResponseChecker(
+```
+
+**File**: `tests/python_client/base/utility_wrapper.py` (modified, +1/-0)
+```diff
+@@ -375,6 +375,7 @@ def has_partition(self, collection_name, partition_name, using="default", check_
+         return res, check_result
+ 
+     def drop_collection(self, collection_name, timeout=None, using="default", check_task=None, check_items=None):
++        timeout = TIMEOUT if timeout is None else timeout
+         func_name = sys._getframe().f_code.co_name
+         res, is_succ = api_request([self.ut.drop_collection, collection_name, timeout, using])
+         check_result = ResponseChecker(
+```
+
+**File**: `tests/scripts/test_python_client_cleanup.py` (added, +468/-0)
+```diff
+@@ -0,0 +1,468 @@
++"""Server-independent regressions for Python E2E collection cleanup.
++
++Run explicitly with: python3 -m pytest tests/scripts/test_python_client_cleanup.py
++The tests use the E2E Python dependencies and a local gRPC fault injector.
++"""
++
++import importlib
++import threading
++import time
++import xml.etree.ElementTree as ET
++from concurrent.futures import ThreadPoolExecutor
++from pathlib import Path
++from types import SimpleNamespace
++from unittest.mock import Mock, call
++
++import grpc
++import numpy as np
++import pytest
++from pymilvus import MilvusClient
++from pymilvus.client.grpc_handler import GrpcHandler
++from pymilvus.grpc_gen import common_pb2, milvus_pb2_grpc
++
++pytest_plugins = ["pytester"]
++
++
++@pytest.fixture
++def client_base(monkeypatch):
++    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1] / "python_client"))
++    # Standalone runs and pytester workers do not load python_client/conftest.py.
++    # Match its NumPy 2 compatibility bootstrap before importing legacy wrappers.
++    if not hasattr(np, "NaN"):
++        monkeypatch.setattr(np, "NaN", np.nan, raising=False)
++    # Match conftest's import order: common_func and the wrappers depend on
++    # each other during import.
++    common = importlib.import_module("common.common_func")
++    module = importlib.import_module("base.client_base")
++    for name, value in {
++        "param_uri": "http://localhost:19530",
++        "param_token": "",
++        "param_user": "",
++        "param_password": "",
++    }.items():
++        monkeypatch.setattr(common.param_info, name, value)
++    return module
++
++
++@pytest.fixture
++def case(client_base):
++    case = client_base.Base()
++    case._setup_objects()
++    case.skip_global_role_cleanup = True
++    case.connection_wrap = Mock(spec=client_base.ApiConnectionsWrapper)
++    case.connection_wrap.has_connection.return_value = (True, True)
++    case.connection_wrap.list_connections.return_value = ([("default", None), ("extra", None)], True)
++    case.collection_wrap = Mock(spec=client_base.ApiCollectionWrapper)
++    case.collection_wrap.collection = None
++    case.utility_wrap = Mock(spec=client_base.ApiUtilityWrapper)
++    case.utility_wrap.list_collections.return_value = (["one", "two", "unowned"], True)
++    case.utility_wrap.list_aliases.return_value = ([], True)
++    case.utility_wrap.drop_alias.return_value = (None, True)
++    case.utility_wrap.drop_collection.return_value = (None, True)
++    case.utility_wrap.list_resource_groups.return_value = ([], True)
++    return case
++
++
++@pytest.fixture
++def client_v2_base(client_base):
++    return importlib.import_module("base.client_v2_base")
++
++
++@pytest.fixture
++def client_v2_case(client_v2_base):
++    case = client_v2_base.TestMilvusClientV2Base()
++    case._setup_objects()
++    return case
++
++
++@pytest.fixture
++def stalled_drop():
++    canceled = threading.Event()
++    observed_deadlines = []
++
++    class StalledDrop(milvus_pb2_grpc.MilvusServiceServicer):
++        def DropCollection(self, request, context):
++            observed_deadlines.append(context.time_remaining())
++            context.add_callback(canceled.set)
++            canceled.wait(20)
++            return common_pb2.Status()
++
++    with ThreadPoolExecutor(max_workers=1) as executor:
++        server = grpc.server(executor)
++        milvus_pb2_grpc.add_MilvusServiceServicer_to_server(StalledDrop(), server)
++        port = server.add_insecure_port("127.0.0.1:0")
++        server.start()
++        channel = grpc.insecure_channel(f"127.0.0.1:{port}")
++        try:
++            grpc.channel_ready_future(channel).result(timeout=5)
++            handler = GrpcHandler(channel=channel)
++            client = object.__new__(MilvusClient)
++            client._get_connection = lambda: handler
++            client._generate_call_context = lambda **kwargs: None
++            yield SimpleNamespace(
++                handler=handler, client=client, canceled=canceled, observed_deadlines=observed_deadlines
++            )
++        finally:
++            canceled.set()
++            channel.close()
++            server.stop(0).wait(timeout=5)
++
++
++def test_registries_are_isolated_and_reset_with_wrappers(client_base):
++    first, second = client_base.Base(), client_base.Base()
++    first._setup_objects()
++    second._setup_objects()
++    first.tear_down_collection_names.append("first")
++    assert second.tear_down_collection_names == []
++    assert client_base.Base.tear_down_collection_names == ()
++    first._setup_objects()
++    assert first.tear_down_collection_names == []
++
++
++def test_success_drops_only_owned_collections_and_aliases_once(case):
++    case.tear_down_collection_names.extend(["one", None, "one", "missing", "two"])
++    case.utility_wrap.list_aliases.side_effect = [(["one_alias"], True), ([], True)]
++    case._teardown_objects()
++    assert [c.args for c in case.utility_wrap.drop_collection.call_args_list] == [("one",), ("two",)]
++    assert case.utility_wrap.drop_alias.call_args
+```
+
+---
+
+### Incident Patch 2: `00dac515` (2026-10-30)
+**Commit Message**: fix: retry worker cleanup during import task GC (#54867)
+
+issue: #52332
+
+## Problem
+
+A terminal V2 import task can lose its scheduler owner after worker
+cleanup fails while retaining its persisted NodeID. GC only checks that
+NodeID and skips the task forever, including after coordinator restart.
+
+## Changes
+
+- Retry worker cleanup from import GC and remove task/job metadata only
+after cleanup succeeds. Keep metadata for a later GC tick on RPC or
+catalog errors, preserving the existing failed-output segment and CDC
+rollback gates.
+- Add a narrow scheduler Finalize callback to drain in-flight work
+before cleanup. Mark failed-job tasks terminal under that lock, re-read
+the latest worker assignment, and reject queued Query callbacks that no
+longer own the task.
+- Hold the task lock across slot calculation and no-slot/backoff
+requeues, checking terminal state again after Pop and before delayed
+requeue. Finalized tasks cannot re-enter the queue or read job metadata
+after GC removes it.
+- Make import slot calculation tolerate a missing job as a secondary
+safeguard, and stop admitting Pending tasks from terminal import jobs.
+
+This extracts the failed-import GC fix from #52277 without its
+r
+
+**File**: `internal/datacoord/import_checker.go` (modified, +60/-15)
+```diff
+@@ -28,6 +28,8 @@ import (
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
+ 	"github.com/milvus-io/milvus/internal/datacoord/allocator"
+ 	"github.com/milvus-io/milvus/internal/datacoord/broker"
++	"github.com/milvus-io/milvus/internal/datacoord/session"
++	"github.com/milvus-io/milvus/internal/datacoord/task"
+ 	"github.com/milvus-io/milvus/internal/streamingcoord/server/broadcaster"
+ 	"github.com/milvus-io/milvus/internal/util/importutilv2"
+ 	"github.com/milvus-io/milvus/internal/util/importutilv2/importid"
+@@ -77,6 +79,8 @@ type importChecker struct {
+ 	importMeta ImportMeta
+ 	ci         CompactionInspector
+ 	handler    Handler
++	cluster    session.Cluster
++	scheduler  task.GlobalScheduler
+ 
+ 	hooks importCheckerHooks
+ 
+@@ -99,6 +103,8 @@ func NewImportChecker(ctx context.Context,
+ 	importMeta ImportMeta,
+ 	ci CompactionInspector,
+ 	handler Handler,
++	cluster session.Cluster,
++	scheduler task.GlobalScheduler,
+ 	hooks importCheckerHooks,
+ ) ImportChecker {
+ 	return &importChecker{
+@@ -109,6 +115,8 @@ func NewImportChecker(ctx context.Context,
+ 		importMeta: importMeta,
+ 		ci:         ci,
+ 		handler:    handler,
++		cluster:    cluster,
++		scheduler:  scheduler,
+ 		hooks:      hooks,
+ 		closeChan:  make(chan struct{}),
+ 	}
+@@ -930,23 +938,9 @@ func (c *importChecker) checkGC(job ImportJob) {
+ 		tasks := c.importMeta.GetTaskByJob(c.ctx, job.GetJobID())
+ 		shouldRemoveJob := true
+ 		for _, task := range tasks {
+-			if job.GetState() == internalpb.ImportJobState_Failed && task.GetType() == ImportTaskType {
+-				if len(task.(*importTask).GetSegmentIDs()) != 0 || len(task.(*importTask).GetSortedSegmentIDs()) != 0 {
+-					shouldRemoveJob = false
+-					continue
+-				}
+-			}
+-			if task.GetNodeID() != NullNodeID {
+-				shouldRemoveJob = false
 -				continue
-+			m, err := c.listReplicatePChannels()
-+			if err != nil {
-+				if c.ctx.Err() != nil {
+-			}
+-			err := c.importMeta.RemoveTask(c.ctx, task.GetTaskID())
+-			if err != nil {
+-				log.Warn(c.ctx, "remove task failed during GC", WrapTaskLog(task, mlog.Err(err))...)
++			if !c.cleanupTaskForGC(job, task.GetTaskID()) {
+ 				shouldRemoveJob = false
+-				continue
+ 			}
+-			log.Info(c.ctx, "reached GC retention, task removed", WrapTaskLog(task)...)
+ 		}
+ 		if !shouldRemoveJob {
+ 			return
+@@ -1011,6 +1005,57 @@ func (c *importChecker) checkGC(job ImportJob) {
+ 	}
+ }
+ 
++func (c *importChecker) cleanupTaskForGC(job ImportJob, taskID int64) bool {
++	cleaned := false
++	cleanup := func() {
++		// An in-flight Create may have persisted its assignment while Finalize
++		// waited for it. Read the task only after scheduler callbacks drain.
++		latest := c.importMeta.GetTask(c.ctx, taskID)
++		if latest == nil {
++			cleaned = true
++			return
++		}
++		if job.GetState() == internalpb.ImportJobState_Failed {
++			// A queued Create must see a terminal state after Finalize releases
++			// the task lock, even if the failed-job checker has not run yet.
++			if latest.GetState() != datapb.ImportTaskStateV2_Failed {
++				if err := c.importMeta.UpdateTask(c.ctx, taskID,
++					UpdateState(datapb.ImportTaskStateV2_Failed), UpdateReason(job.GetReason())); err != nil {
++					mlog.Warn(c.ctx, "mark import task failed during GC", WrapTaskLog(latest, mlog.Err(err))...)
 +					return
 +				}
-+				panic(fmt.Sprintf("failed to list replicate pchannels: %v", err))
- 			}
- 			c.recoverReplicatePChannelMeta(m.Channels)
- 			eventCh := c.watchEvents(m.Revision + 1)
-@@ -118,13 +127,37 @@ func (c *controller) startWatchLoop() {
- 	}()
- }
- 
-+// listReplicatePChannels lists the replicate pchannels, retrying transient etcd
-+// errors (e.g. leader changed while etcd restarts). Any other error, including
-+// a request timeout, is returned.
-+func (c *controller) listReplicatePChannels() (*meta.ReplicateChannels, error) {
-+	for {
-+		m, err := meta.ListReplicatePChannels(c.ctx, resource.Resource().ETCD(), c.prefix)
-+		if err == nil {
-+			return m, nil
++			}
++			if latest.GetType() == ImportTaskType {
++				importTask := latest.(*importTask)
++				if len(importTask.GetSegmentIDs()) != 0 || len(importTask.GetSortedSegmentIDs()) != 0 {
++					return
++				}
++			}
 +		}
-+		if c.ctx.Err() != nil || !etcd.IsRetriableEtcdErr(err) {
-+			return nil, err
++		if latest.GetNodeID() != NullNodeID {
++			if c.cluster == nil {
++				return
++			}
++			if err := DropImportTask(latest, c.cluster, c.importMeta); err != nil {
++				mlog.Warn(c.ctx, "drop import task during GC failed, will retry", WrapTaskLog(latest, mlog.Err(err))...)
++				return
++			}
 +		}
-+		mlog.Warn(c.ctx, "failed to list replicate pchannels, retry", mlog.Err(err))
-+		select {
-+		case <-time.After(listRetryInterval):
-+		case <-c.ctx.Done():
-+			return nil, c.ctx.Err()
++		if err := c.importMeta.RemoveTask(c.ctx, taskID); err != nil {
++			mlog.Warn(c.ctx, "remove task failed during GC", WrapTaskLog(latest, mlog.Err(err))...)
++			return
 +		}
++		mlog.Info(c.ctx, "reached GC retention, task removed", WrapTaskLog(latest)...)
++		cleaned = true
 +	}
++	if c.scheduler != nil {
++		c.scheduler.Finalize(taskID, cleanup)
++	} else {
++		cleanup()
++	}
++	return cleaned
 +}
 +
- func (c *controller) watchLoop(eventCh clientv3.WatchChan) error {
- 	for {
- 		select {
- 		case <-c.ctx.Done():
- 			return nil
- 		case event, ok := <-eventCh:
- 			if !ok {
-+				if c.ctx.Err() != nil {
-+					return nil
-+				}
- 				panic("etcd event channel closed")
- 			}
- 			if err := event.Err(); err != nil {
+ // isPermanentRollbackErr reports whether a RollbackImport broadcast error is permanent,
+ // i.e. retrying it can never succeed, so the failed job should still be GC'd rather than
+ // retried forever (which would leak its metadata). Everything else is treated as transient
 ```
 
-**File**: `internal/cdc/controller/controller_test.go` (modified, +109/-0)
+**File**: `internal/datacoord/import_checker_test.go` (modified, +135/-2)
 ```diff
-@@ -17,12 +17,20 @@
- package controller
+@@ -33,6 +33,8 @@ import (
+ 	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
+ 	"github.com/milvus-io/milvus/internal/datacoord/allocator"
+ 	broker2 "github.com/milvus-io/milvus/internal/datacoord/broker"
++	"github.com/milvus-io/milvus/internal/datacoord/session"
++	"github.com/milvus-io/milvus/internal/datacoord/task"
+ 	"github.com/milvus-io/milvus/internal/metacache"
+ 	"github.com/milvus-io/milvus/internal/metastore/mocks"
+ 	"github.com/milvus-io/milvus/internal/metastore/model"
+@@ -100,7 +102,7 @@ func (s *ImportCheckerSuite) SetupTest() {
+ 		}, nil
+ 	}).Maybe()
  
- import (
-+	"context"
-+	"net"
-+	"sync/atomic"
- 	"testing"
- 	"time"
+-	checker := NewImportChecker(context.TODO(), meta, broker, s.alloc, importMeta, ci, handler, importCheckerHooks{}).(*importChecker)
++	checker := NewImportChecker(context.TODO(), meta, broker, s.alloc, importMeta, ci, handler, nil, nil, importCheckerHooks{}).(*importChecker)
+ 	s.checker = checker
  
- 	"github.com/stretchr/testify/mock"
-+	"github.com/stretchr/testify/require"
-+	"go.etcd.io/etcd/api/v3/etcdserverpb"
- 	"go.etcd.io/etcd/api/v3/mvccpb"
-+	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
- 	clientv3 "go.etcd.io/etcd/client/v3"
-+	"google.golang.org/grpc"
-+	"google.golang.org/grpc/test/bufconn"
- 	"google.golang.org/protobuf/proto"
- 
- 	"github.com/milvus-io/milvus/internal/cdc/meta"
-@@ -102,3 +110,104 @@ func TestController_StartAndStop_WithEvents(t *testing.T) {
- 	}
- 	ctrl.Stop()
+ 	job := &importJob{
+@@ -594,6 +596,137 @@ func (s *ImportCheckerSuite) TestCheckGC() {
+ 	s.Equal(0, len(s.importMeta.GetJobBy(context.TODO())))
  }
-+
-+// failingRangeServer fails the first failures Range calls with err.
-+type failingRangeServer struct {
-+	etcdserverpb.UnimplementedKVServer
-+	failures int32
-+	err      error
-+	calls    atomic.Int32
+ 
++func (s *ImportCheckerSuite) TestCheckGCPreImportWorkerCleanup() {
++	s.checkGCWorkerCleanup(PreImportTaskType)
 +}
 +
-+func (s *failingRangeServer) Range(context.Context, *etcdserverpb.RangeRequest) (*etcdserverpb.RangeResponse, error) {
-+	if s.calls.Add(1) <= s.failures {
-+		return nil, s.err
++func (s *ImportCheckerSuite) TestCheckGCImportWorkerCleanup() {
++	s.checkGCWorkerCleanup(ImportTaskType)
++}
++
++func (s *ImportCheckerSuite) checkGCWorkerCleanup(taskType TaskType) {
++	catalog := s.importMeta.(*importMeta).catalog.(*mocks.DataCoordCatalog)
++	catalog.EXPECT().SaveImportJob(mock.Anything, mock.Anything).Return(nil)
++	s.NoError(s.importMeta.UpdateJob(context.TODO(), s.jobID, UpdateJobState(internalpb.ImportJobState_Failed)))
++	s.manuallyUpdateJob(s.jobID, func(job ImportJob) { job.(*importJob).CleanupTs = 1 })
++
++	const taskID, nodeID = int64(1), int64(17)
++	var gcTask ImportTask
++	if taskType == PreImportTaskType {
++		catalog.EXPECT().SavePreImportTask(mock.Anything, mock.Anything).Return(nil)
++		catalog.EXPECT().DropPreImportTask(mock.Anything, taskID).Return(nil).Once()
++		preImport := &preImportTask{importMeta: s.importMeta}
++		preImport.task.Store(&datapb.PreImportTask{
++			JobID: s.jobID, TaskID: taskID, NodeID: nodeID, State: datapb.ImportTaskStateV2_Failed,
++		})
++		gcTask = preImport
++	} else {
++		catalog.EXPECT().SaveImportTask(mock.Anything, mock.Anything).Return(nil)
++		catalog.EXPECT().DropImportTask(mock.Anything, taskID).Return(nil).Once()
++		importing := &importTask{importMeta: s.importMeta}
++		importing.task.Store(&datapb.ImportTaskV2{
++			JobID: s.jobID, TaskID: taskID, NodeID: nodeID, State: datapb.ImportTaskStateV2_Failed,
++		})
++		gcTask = importing
 +	}
-+	return &etcdserverpb.RangeResponse{Header: &etcdserverpb.ResponseHeader{Revision: 10}}, nil
++	s.NoError(s.importMeta.AddTask(context.TODO(), gcTask))
++	cluster := session.NewMockCluster(s.T())
++	s.checker.cluster = cluster
++	s.checker.scheduler = task.NewGlobalTaskScheduler(context.TODO(), cluster)
++
++	// Simulate a failed task restored from metadata: the scheduler no longer
++	// owns it, but its previous worker assignment still needs cleanup.
++	cluster.EXPECT().DropImport(nodeID, taskID).Return(errors.New("worker unavailable")).Once()
++	s.checker.checkGC(s.importMeta.GetJob(context.TODO(), s.jobID))
++	s.NotNil(s.importMeta.GetJob(context.TODO(), s.jobID))
++	s.Equal(nodeID, s.importMeta.GetTask(context.TODO(), taskID).GetNodeID())
++
++	cluster.EXPECT().DropImport(nodeID, taskID).Return(nil).Once()
++	catalog.EXPECT().DropImportJob(mock.Anything, s.jobID).Return(nil).Once()
++	s.checker.checkGC(s.importMeta.GetJob(context.TODO(), s.jobID))
++	s.Nil(s.importMeta.GetTask(context.TODO(), taskID))
++	s.Nil(s.importMeta.GetJob(context.TODO(), s.jobID))
 +}
 +
-+func newBufconnEtcdClient(t *testing.T, kv etcdserverpb.KVServer) *clientv3.Client {
-+	listener := bufconn.Listen(1024 * 1024)
-+	server := grpc.NewServer()
-+	etcdserverpb.RegisterKVServer(server, kv)
-+	go server.Serve(listener)
-+	t.Cleanup(server.Stop)
-+
-+	cli, err := clientv3.New(clientv3.Config{
-+		Endpoints:   []string{"http://etcd-controller"},
-+		DialTimeout: time.Second,
-+		// Surface server errors to the controller instead of retrying them
-+		// inside clientv3.
-+		MaxUnaryRetries: 1,
-+		DialOptions: []grpc.DialOption{grpc.WithContextDialer(func(ctx context.Context, _ string) (net.Conn, error) {
-+			return listener.DialContext(ctx)
-+		})},
-+	})
-+	require.NoError(t, err)
-+	t.Cleanup(func() { cli.Close() })
-+	return cli
++func (s *ImportCheckerSuite) TestCheckGCWorkerNotFound() {
++	s.setupGCReadyFailedJob()
++	s.NoError(s.importMeta.UpdateTask(context.TODO(), 1, UpdateNodeID(17)))
++	catalog := s.importMeta.(*importMeta).catalog.(*mocks.DataCoordCatalog)
++	cluster := session.NewMockCluster(s.T())
++	s.checker.cluster = cluster
++	s.checker.scheduler = task.NewGlobalTaskScheduler(context.TODO(), cluster)
++	cluster.EXPECT().DropImport(int64(17), int64(1)).Return(merr.ErrNodeNotFound).Once()
++	catalog.EXPECT().DropImportTask(mock.Anything, int64(1)).Return(nil).Once()
++	catalog.EXPECT().DropImportJob(mock.Anything, s.jobID).Return(nil).Once()
++	s.checker.checkGC(s.importMeta.GetJob(context.TODO(), s.jobID))
++	s.Nil(s.importMeta.GetTask(context.TODO(), 1))
++	s.Nil(s.importMeta.GetJob(context.TODO(), s.jobID))
 +}
 +
-+func TestController_ListRetriesTransientEtcdError(t *testing.T) {
-+	// The leader change outlasts clientv3's own retry and reaches the controller.
-+	kv := &failingRangeServer{failures: 3, err: rpctypes.ErrGRPCLeaderChanged}
-+	resource.InitForTest(t, resource.OptETCD(newBufconnEtcdClient(t, kv)))
-+
-+	ctrl := NewController()
-+	defer ctrl.cancel()
-+	m, err := ctrl.listReplicatePChannels()
-+	require.NoError(t, err)
-+	require.EqualValues(t, 10, m.Revision)
-+	require.EqualValues(t, 4, kv.calls.Load())
-+}
-+
-+func TestController_ListAbortsOnNonTransientError(t *testing.T) {
-+	kv := &failingRangeServer{failures: 1, err: rpctypes.ErrGRPCPermissionDenied}
-+	resource.InitForTest(t, resource.OptETCD(newBufconnEtcdClient(t, kv)))
-+
-+	ctrl := NewController()
-+	defer ctrl.cancel()
-+	_, err := ctrl.listReplicatePChannels()
-+	require.ErrorIs(t, err, rpctypes.ErrPermissionDenied)
-+	require.EqualValues(t, 1, kv.calls.Load())
-+}
-+
-+func TestController_ListWithCanceledContext(t *testing.T) {
-+	kv := &failingRangeServer{}
-+	manager := replication.NewMockReplicateManagerClient(t)
-+	manager.EXPECT().Close().Return().Once()
-+	resource.InitForTest(t,
-+		resource.OptETCD(newBufconnEtcdClient(t, kv)),
-+		resource.OptReplicateManagerClient(manager),
-+	)
-+
-+	ctrl := NewController()
-+	ctrl.cancel()
-+	require.NoError(t, ctrl.Start())
-+	ctrl.Stop()
-+	require.Zero(t, kv.calls.Load())
-+}
-+
-+func TestController_WatchLoopCanceled(t *testing.T) {
-+	ctx, cancel := context.WithCancel(context.Background())
-+	events := make(chan clientv3.WatchResponse)
-+	ctrl := &controller{ctx: ctx}
-+	// clientv3 closes the watch channel after cancellation. Both select cases
-+	// can be ready before the controller resumes.
-+	cancel()
-+	close(events)
-+	for range 128 {
-+		require.NotPanics(t, func() {
-+			require.NoError(t, ctrl.watchLoop(events))
++func (s *ImportCheckerSuite) TestCheckGCWorkerCleanupPersistenceFailure() {
++	s.setupGCReadyFailedJob()
++	s.NoError(s.importMeta.UpdateTask(context.TODO(), 1, UpdateNodeID(17)))
++	catalog := s.importMeta.(*importMeta).catalog.(*mocks.DataCoordCatalog)
++	catalog.ExpectedCalls = nil
++	cluster := session.NewMockCluster(s.T())
++	s.checker.cluster = cluster
++	s.checker.scheduler = task.NewGlobalTaskScheduler(context.TODO(), cluster)
++	cluster.EXPECT().DropImport(int64(17), int64(1)).Return(nil).Twice()
++	catalog.EXPECT().SaveImportTask(mock.Anything, mock.Anything).Return(errors.New("catalog unavailable")).Once()
++	s.checker.checkGC(s.importMeta.GetJob(context.TODO()
+```
+
+**File**: `internal/datacoord/import_inspector.go` (modified, +4/-0)
+```diff
+@@ -27,6 +27,7 @@ import (
+ 	"github.com/milvus-io/milvus/internal/datacoord/task"
+ 	"github.com/milvus-io/milvus/pkg/v3/mlog"
+ 	"github.com/milvus-io/milvus/pkg/v3/proto/datapb"
++	"github.com/milvus-io/milvus/pkg/v3/proto/internalpb"
+ )
+ 
+ const (
+@@ -187,6 +188,9 @@ func (s *importInspector) inspect() {
+ 		for _, task := range tasks {
+ 			switch task.GetState() {
+ 			case datapb.ImportTaskStateV2_Pending:
++				if job.GetState() == internalpb.ImportJobState_Failed || job.GetState() == internalpb.ImportJobState_Completed {
++					continue
++				}
+ 				switch task.GetType() {
+ 				case ReshardTaskType:
+ 					// A ReshardTask is persisted just before the job advances to
+```
+
+**File**: `internal/datacoord/import_inspector_test.go` (modified, +20/-0)
+```diff
+@@ -421,6 +421,26 @@ func TestImportInspector(t *testing.T) {
+ 	suite.Run(t, new(ImportInspectorSuite))
+ }
+ 
++func TestImportInspectorSkipsPendingTasksOfTerminalJobs(t *testing.T) {
++	for _, state := range []internalpb.ImportJobState{
++		internalpb.ImportJobState_Failed, internalpb.ImportJobState_Completed,
++	} {
++		t.Run(state.String(), func(t *testing.T) {
++			importMeta := NewMockImportMeta(t)
++			scheduler := task2.NewMockGlobalScheduler(t)
++			inspector := NewImportInspector(context.Background(), nil, importMeta, scheduler, nil).(*importInspector)
++			job := &importJob{ImportJob: &datapb.ImportJob{JobID: 1, State: state}}
++			preImport := &preImportTask{}
++			preImport.task.Store(&datapb.PreImportTask{JobID: 1, TaskID: 10, State: datapb.ImportTaskStateV2_Pending})
++			importing := &importTask{}
++			importing.task.Store(&datapb.ImportTaskV2{JobID: 1, TaskID: 20, State: datapb.ImportTaskStateV2_Pending})
++			importMeta.EXPECT().GetJobBy(mock.Anything).Return([]ImportJob{job}).Once()
++			importMeta.EXPECT().GetTaskByJob(mock.Anything, int64(1)).Return([]ImportTask{preImport, importing}).Once()
++			inspector.inspect()
 +		})
 +	}
 +}
 +
-+func TestController_WatchLoopUnexpectedClose(t *testing.T) {
-+	ctrl := &controller{ctx: context.Background()}
-+	events := make(chan clientv3.WatchResponse)
-+	close(events)
-+	require.PanicsWithValue(t, "etcd event channel closed", func() {
-+		ctrl.watchLoop(events)
-+	})
-+}
+ func TestImportInspectorSchedulesV3PendingTasksWithoutJobGate(t *testing.T) {
+ 	ctx := context.Background()
+ 	importMeta := NewMockImportMeta(t)
 ```
 
-**File**: `internal/cdc/replication/replicatestream/replicate_stream_client_impl.go` (modified, +13/-2)
+**File**: `internal/datacoord/import_util.go` (modified, +6/-0)
 ```diff
-@@ -36,7 +36,9 @@ import (
- 	"github.com/milvus-io/milvus/internal/util/streamingutil/service/contextutil"
- 	"github.com/milvus-io/milvus/pkg/v3/mlog"
- 	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message"
-+	"github.com/milvus-io/milvus/pkg/v3/util/etcd"
- 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
-+	"github.com/milvus-io/milvus/pkg/v3/util/retry"
+@@ -1428,6 +1428,12 @@ func ValidateMaxImportJobExceed(ctx context.Context, importMeta ImportMeta) erro
+ // Returns the maximum of the two constraints to ensure sufficient resources
+ func CalculateTaskSlot(task ImportTask, importMeta ImportMeta) int {
+ 	job := importMeta.GetJob(context.TODO(), task.GetJobID())
++	if job == nil {
++		// The scheduler skips finalized tasks before calculating their slots.
++		// Keep this accessor safe for other callers holding an older snapshot,
++		// matching the V3 task accessors' minimum-slot fallback.
++		return 1
++	}
+ 
+ 	// Calculate CPU-based slots
+ 	fileNumPerSlot := paramtable.Get().DataCoordCfg.ImportFileNumPerSlot.GetAsInt()
+```
+
+**File**: `internal/datacoord/import_util_test.go` (modified, +10/-0)
+```diff
+@@ -56,6 +56,16 @@ import (
+ 	"github.com/milvus-io/milvus/pkg/v3/util/timerecord"
  )
  
- var ErrReplicationRemoved = errors.New("replication removed")
-@@ -359,15 +361,24 @@ func (r *replicateStreamClient) handleAlterReplicateConfigMessage(msg message.Im
- 		// Cannot find the target channel, it means that the `current->target` topology edge is removed,
- 		// so we need to remove the replicate pchannel and stop replicate.
- 		etcdCli := resource.Resource().ETCD()
--		ok, err := meta.RemoveReplicatePChannelWithRevision(r.ctx, etcdCli, r.channel.Key, r.channel.ModRevision)
-+		// Retry transient etcd errors (e.g. leader changed during an etcd restart).
-+		// The delete is guarded by the channel's revision, so retrying after an
-+		// attempt that was applied despite the error just finds the revision
-+		// changed; the replication is removed either way.
-+		var ok bool
-+		err := retry.Do(r.ctx, func() error {
-+			var err error
-+			ok, err = meta.RemoveReplicatePChannelWithRevision(r.ctx, etcdCli, r.channel.Key, r.channel.ModRevision)
-+			return err
-+		}, retry.Attempts(0), retry.RetryErr(etcd.IsRetriableEtcdErr))
++func TestCalculateTaskSlotMissingJob(t *testing.T) {
++	meta := &importMeta{jobs: map[int64]ImportJob{}}
++	pre := &preImportTask{importMeta: meta}
++	pre.task.Store(&datapb.PreImportTask{JobID: 1})
++	imp := &importTask{importMeta: meta}
++	imp.task.Store(&datapb.ImportTaskV2{JobID: 1})
++	require.EqualValues(t, 1, pre.GetTaskSlot())
++	require.EqualValues(t, 1, imp.GetTaskSlot())
++}
++
+ func TestCalculateTaskSlotSnapshotBudgets(t *testing.T) {
+ 	paramtable.Init()
+ 	params := paramtable.Get()
+```
+
+**File**: `internal/datacoord/server.go` (modified, +1/-1)
+```diff
+@@ -377,7 +377,7 @@ func (s *Server) initDataCoord() (initErr error) {
+ 
+ 	s.initGarbageCollection(storageCli)
+ 
+-	s.importChecker = NewImportChecker(s.ctx, s.meta, s.broker, s.allocator, s.importMeta, s.compactionInspector, s.handler, importCheckerHooks{
++	s.importChecker = NewImportChecker(s.ctx, s.meta, s.broker, s.allocator, s.importMeta, s.compactionInspector, s.handler, s.cluster2, s.globalScheduler, importCheckerHooks{
+ 		commitImport:        s.broadcastCommitImportMessage,
+ 		rollbackImport:      s.broadcastRollbackImportMessage,
+ 		assignImportIDRange: s.broadcastUpdateImportMessage,
+```
+
+**File**: `internal/datacoord/task/global_scheduler.go` (modified, +48/-1)
+```diff
+@@ -36,6 +36,10 @@ const NullNodeID = -1
+ type GlobalScheduler interface {
+ 	Enqueue(task Task)
+ 	AbortAndRemoveTask(taskID int64)
++	// Finalize releases scheduler ownership and runs cleanup after in-flight
++	// callbacks finish. Cleanup must leave the task terminal before removing its
++	// metadata, so a previously submitted Create callback cannot dispatch it.
++	Finalize(taskID int64, cleanup func())
+ 	// GetPendingTaskCount returns the number of queued tasks of the given type.
+ 	// The queue is shared by every task type, so callers that gate admission for
+ 	// one kind of work must scope the count to that kind, otherwise an unrelated
+@@ -113,6 +117,9 @@ func (s *globalTaskScheduler) taskInBackoff(task Task) bool {
+ }
+ 
+ func (s *globalTaskScheduler) Enqueue(task Task) {
++	s.mu.RLock(task.GetTaskID())
++	defer s.mu.RUnlock(task.GetTaskID())
++
+ 	if s.pendingTasks.Get(task.GetTaskID()) != nil {
+ 		return
+ 	}
+@@ -149,6 +156,16 @@ func (s *globalTaskScheduler) AbortAndRemoveTask(taskID int64) {
+ 	s.backoffs.Remove(taskID)
+ }
+ 
++func (s *globalTaskScheduler) Finalize(taskID int64, cleanup func()) {
++	s.mu.Lock(taskID)
++	defer s.mu.Unlock(taskID)
++
++	s.pendingTasks.Remove(taskID)
++	s.runningTasks.Remove(taskID)
++	s.backoffs.Remove(taskID)
++	cleanup()
++}
++
+ func (s *globalTaskScheduler) Start() {
+ 	dur := paramtable.Get().DataCoordCfg.TaskScheduleInterval.GetAsDuration(time.Millisecond)
+ 	s.wg.Add(3)
+@@ -278,19 +295,33 @@ func (s *globalTaskScheduler) schedule() {
+ 		if task == nil {
+ 			break
+ 		}
++		// Pop removes the task from the queue before it acquires this lock.
++		// Finalize may have completed in that window, so check the state before
++		// GetTaskSlot reads metadata that cleanup may already have removed.
++		taskID := task.GetTaskID()
++		s.mu.RLock(taskID)
++		switch task.GetTaskState() {
++		case taskcommon.None, taskcommon.Finished, taskcommon.Failed:
++			s.backoffs.Remove(taskID)
++			s.mu.RUnlock(taskID)
++			continue
++		}
+ 		// A task in failure backoff gives way: it re-enters the queue after
+ 		// this round and is dispatched once its delay elapses, so one
+ 		// persistently failing task cannot occupy the scheduler.
+ 		if s.taskInBackoff(task) {
+ 			delayed = append(delayed, task)
++			s.mu.RUnlock(taskID)
+ 			continue
+ 		}
+ 		taskSlot := task.GetTaskSlot()
+ 		nodeID := s.pickNode(slotHeap, taskSlot)
+ 		if nodeID == NullNodeID {
+ 			s.pendingTasks.Push(task)
++			s.mu.RUnlock(taskID)
+ 			break
+ 		}
++		s.mu.RUnlock(taskID)
+ 		future := s.execPool.Submit(func() (struct{}, error) {
+ 			s.mu.RLock(task.GetTaskID())
+ 			defer s.mu.RUnlock(task.GetTaskID())
+@@ -327,7 +358,17 @@ func (s *globalTaskScheduler) schedule() {
+ 		futures = append(futures, future)
+ 	}
+ 	for _, task := range delayed {
+-		s.pendingTasks.Push(task)
++		// Finalize can run while this task waits in delayed. Re-check under
++		// the same lock before putting it back, just like the no-slot path.
++		taskID := task.GetTaskID()
++		s.mu.RLock(taskID)
++		switch task.GetTaskState() {
++		case taskcommon.None, taskcommon.Finished, taskcommon.Failed:
++			s.backoffs.Remove(taskID)
++		default:
++			s.pendingTasks.Push(task)
++		}
++		s.mu.RUnlock(taskID)
+ 	}
+ 	_ = conc.AwaitAll(futures...)
+ }
+@@ -344,6 +385,12 @@ func (s *globalTaskScheduler) check() {
+ 		future := s.checkPool.Submit(func() (struct{}, error) {
+ 			s.mu.RLock(task.GetTaskID())
+ 			defer s.mu.RUnlock(task.GetTaskID())
++			// A captured task may have been finalized while this callback was
++			// waiting for a worker or the task lock. Its late query must not
++			// overwrite terminal metadata or put it back in the pending queue.
++			if current, ok := s.runningTasks.Get(task.GetTaskID()); !ok || current != task {
++				return struct{}{}, nil
++			}
+ 			task.QueryTaskOnWorker(s.cluster)
+ 			switch task.GetTaskState() {
+ 			case taskcommon.None:
+```
+
+---
+
+### Incident Patch 3: `71b8073b` (2026-10-29)
+**Commit Message**: fix: Keep unassignNode's etcd retry from being cut short by the caller (#54801)
+
+issue: #54706
+Related: #54733
+
+Follow-up to #54733.
+
+`ResourceManager.unassignNode` retries a transient etcd save error and
+calls `mlog.Fatal` if the save still fails, while holding `rm.rwmutex`.
+The retry ran on the caller's `ctx`. On the SuspendNode path
+(`ops_services.go` → `HandleNodeDown`), that is the RPC request context.
+If the client went away during the retry, `retry.Do` returned the last
+etcd error and the process exited. mixcoord then lost its in-memory node
+suspension, which is the outcome #54733 set out to remove, on the drain
+operation of the original incident.
+
+The retry and the save now run on `context.WithoutCancel(ctx)`, so the
+caller can no longer decide whether the process dies. Each save keeps
+the metastore's own request timeout (`etcdKV` and `txnTiKV` both wrap
+every call in `WithTimeout`), so a request timeout still aborts, and the
+retry is still bounded by `retry.Do`'s default attempts. Paths that
+already passed `context.Background()` (the node watcher) are unchanged.
+
+### Test
+
+`TestResourceManager/TestUnassignSurvivesCallerCancel`: the caller
+cancels while the first save fails
+
+**File**: `internal/querycoordv2/meta/resource_manager.go` (modified, +7/-2)
+```diff
+@@ -1102,8 +1102,13 @@ func (rm *ResourceManager) unassignNode(ctx context.Context, node int64) (string
+ 		// restart) even if the failed attempt was applied. The retry is bounded
+ 		// because rm.rwmutex is held; a persistent failure still exits to reload
+ 		// a consistent state.
+-		err := retry.Do(ctx, func() error {
+-			return rm.catalog.SaveResourceGroup(ctx, rg.GetMeta())
++		//
++		// A failed save exits the process, so the caller (e.g. a SuspendNode RPC
++		// whose client went away) must not decide it by canceling ctx. Each save
++		// keeps the metastore's own request timeout, which still aborts.
++		saveCtx := context.WithoutCancel(ctx)
++		err := retry.Do(saveCtx, func() error {
++			return rm.catalog.SaveResourceGroup(saveCtx, rg.GetMeta())
+ 		}, retry.RetryErr(etcd.IsRetriableEtcdErr))
  		if err != nil {
- 			logger.Warn(r.ctx, "failed to remove replicate pchannel", mlog.Err(err))
- 			// When performing delete operation on etcd, the context may be canceled by the delete event
- 			// in cdc controller and then return `context.Canceled` error.
- 			// Since the delete event is generated after the delete operation is committed in etcd,
- 			// the delete is guaranteed to have succeeded on the server side.
- 			// So we can ignore the context canceled error here.
--			if !errors.Is(err, context.Canceled) {
-+			if !errors.Is(err, context.Canceled) && r.ctx.Err() == nil {
- 				panic(fmt.Sprintf("failed to remove replicate pchannel: %v", err))
- 			}
- 		}
-```
-
-**File**: `internal/kv/etcd/embed_etcd_error_test.go` (added, +75/-0)
-```diff
-@@ -0,0 +1,75 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package etcdkv
-+
-+import (
-+	"context"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
-+	clientv3 "go.etcd.io/etcd/client/v3"
-+
-+	"github.com/milvus-io/milvus/pkg/v3/util/etcd"
-+	"github.com/milvus-io/milvus/pkg/v3/util/merr"
-+)
-+
-+type failedEmbeddedTxnKV struct {
-+	clientv3.KV
-+	err error
-+}
-+
-+func (kv failedEmbeddedTxnKV) Txn(context.Context) clientv3.Txn {
-+	return failedEmbeddedTxn{err: kv.err}
-+}
-+
-+type failedEmbeddedTxn struct {
-+	err error
-+}
-+
-+func (t failedEmbeddedTxn) If(...clientv3.Cmp) clientv3.Txn  { return t }
-+func (t failedEmbeddedTxn) Then(...clientv3.Op) clientv3.Txn { return t }
-+func (t failedEmbeddedTxn) Else(...clientv3.Op) clientv3.Txn { return t }
-+func (t failedEmbeddedTxn) Commit() (*clientv3.TxnResponse, error) {
-+	return nil, t.err
-+}
-+
-+func TestEmbedEtcdKVMultiSavePreservesEtcdCause(t *testing.T) {
-+	for _, tc := range []struct {
-+		cause     error
-+		retriable bool
-+	}{
-+		{rpctypes.ErrLeaderChanged, true},
-+		{rpctypes.ErrPermissionDenied, false},
-+		{context.Canceled, false},
-+		{context.DeadlineExceeded, false},
-+	} {
-+		t.Run(tc.cause.Error(), func(t *testing.T) {
-+			kv := &EmbedEtcdKV{
-+				client:         &clientv3.Client{KV: failedEmbeddedTxnKV{err: tc.cause}},
-+				rootPath:       "test",
-+				requestTimeout: time.Second,
-+			}
-+			err := kv.MultiSave(context.Background(), map[string]string{"rg": "value"})
-+			require.ErrorIs(t, err, tc.cause)
-+			require.ErrorIs(t, err, merr.ErrIoFailed)
-+			require.EqualValues(t, 1001, merr.Code(err))
-+			require.Equal(t, tc.retriable, etcd.IsRetriableEtcdErr(err))
-+		})
-+	}
-+}
-```
-
-**File**: `internal/kv/etcd/embed_etcd_kv.go` (modified, +2/-1)
-```diff
-@@ -415,7 +415,8 @@ func (kv *EmbedEtcdKV) MultiSave(ctx context.Context, kvs map[string]string) err
- 
- 	_, err := kv.client.Txn(ctx1).If().Then(ops...).Commit()
- 	if err != nil {
--		return merr.WrapErrIoFailedReason("failed to execute transaction", err.Error())
-+		// Preserve the same IO contract and driver cause as external etcd.
-+		return merr.WrapErrIoFailedErr(err, "failed to execute transaction")
- 	}
- 	return nil
- }
-```
-
-**File**: `internal/kv/etcd/etcd_kv.go` (modified, +3/-1)
-```diff
-@@ -810,7 +810,9 @@ func (kv *etcdKV) executeTxn(txn clientv3.Txn, ops ...clientv3.Op) (*clientv3.Tx
- 	}
- 
- 	if err != nil {
--		err = merr.WrapErrIoFailedReason("execute etcd txn failed", err.Error())
-+		// Keep the existing IO classification at this boundary, but retain the
-+		// driver cause so callers can distinguish transient etcd errors.
-+		err = merr.WrapErrIoFailedErr(err, "execute etcd txn failed")
- 	}
- 	return resp, err
- }
-```
-
-**File**: `internal/metastore/kv/querycoord/etcd_retry_test.go` (added, +148/-0)
-```diff
-@@ -0,0 +1,148 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package querycoord
-+
-+import (
-+	"context"
-+	"net"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	"go.etcd.io/etcd/api/v3/etcdserverpb"
-+	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
-+	clientv3 "go.etcd.io/etcd/client/v3"
-+	"google.golang.org/grpc"
-+	"google.golang.org/grpc/test/bufconn"
-+
-+	etcdkv "github.com/milvus-io/milvus/internal/kv/etcd"
-+	"github.com/milvus-io/milvus/pkg/v3/proto/querypb"
-+	"github.com/milvus-io/milvus/pkg/v3/util/etcd"
-+	"github.com/milvus-io/milvus/pkg/v3/util/merr"
-+	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
-+	"github.com/milvus-io/milvus/pkg/v3/util/retry"
-+)
-+
-+type resourceGroupTxnServer struct {
-+	etcdserverpb.UnimplementedKVServer
-+	txn func(context.Context, *etcdserverpb.TxnRequest) (*etcdserverpb.TxnResponse, error)
-+}
-+
-+func (s *resourceGroupTxnServer) Txn(ctx context.Context, req *etcdserverpb.TxnRequest) (*etcdserverpb.TxnResponse, error) {
-+	return s.txn(ctx, req)
-+}
-+
-+func newResourceGroupTxnClient(t *testing.T, service *resourceGroupTxnServer) *clientv3.Client {
-+	t.Helper()
-+	listener := bufconn.Listen(1024 * 1024)
-+	t.Cleanup(func() { listener.Close() })
-+	server := grpc.NewServer()
-+	etcdserverpb.RegisterKVServer(server, service)
-+	go server.Serve(listener)
-+	t.Cleanup(server.Stop)
-+	cli, err := clientv3.New(clientv3.Config{
-+		Endpoints:   []string{"http://resource-group-etcd"},
-+		DialTimeout: time.Second,
-+		DialOptions: []grpc.DialOption{grpc.WithContextDialer(func(ctx context.Context, _ string) (net.Conn, error) {
-+			return listener.DialContext(ctx)
-+		})},
-+	})
-+	require.NoError(t, err)
-+	t.Cleanup(func() { cli.Close() })
-+	return cli
-+}
-+
-+// Exercise the actual catalog and etcdKV layers: mocking SaveResourceGroup to
-+// return an etcd sentinel misses errors that get stringified below the catalog.
-+func TestCatalogSaveResourceGroupRetriesEtcdErrors(t *testing.T) {
-+	paramtable.Init()
-+	for _, tc := range []struct {
-+		name      string
-+		rpcErr    error
-+		cause     error
-+		retriable bool
-+	}{
-+		{"leader changed", rpctypes.ErrGRPCLeaderChanged, rpctypes.ErrLeaderChanged, true},
-+		{"server stopped", rpctypes.ErrGRPCStopped, rpctypes.ErrStopped, true},
-+		{"permission denied", rpctypes.ErrGRPCPermissionDenied, rpctypes.ErrPermissionDenied, false},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-+			defer cancel()
-+			var rpcCalls atomic.Int32
-+			requests := make(chan *etcdserverpb.TxnRequest, 3)
-+			cli := newResourceGroupTxnClient(t, &resourceGroupTxnServer{
-+				txn: func(_ context.Context, req *etcdserverpb.TxnRequest) (*etcdserverpb.TxnResponse, error) {
-+					requests <- req
-+					if rpcCalls.Add(1) == 1 {
-+						return nil, tc.rpcErr
-+					}
-+					return &etcdserverpb.TxnResponse{
-+						Header: &etcdserverpb.ResponseHeader{Revision: 2}, Succeeded: true,
-+					}, nil
-+				},
-+			})
-+			catalog := NewCatalog(etcdkv.NewEtcdKV(cli, "test"))
-+			rg := &querypb.ResourceGroup{Name: "rg", Nodes: []int64{101}}
-+			var firstErr error
-+			var attempts int
-+			err := retry.Do(ctx, func() error {
-+				attempts++
-+				err := catalog.SaveResourceGroup(ctx, rg)
-+				if attempts == 1 {
-+					firstErr = err
-+				}
-+				return err
-+			}, retry.Attempts(3), retry.Sleep(time.Millisecond), retry.RetryErr(etcd.IsRetriableEtcdErr))
-+			require.ErrorIs(t, firstErr, tc.cause)
-+			var etcdErr rpctypes.EtcdError
-+			require.ErrorAs(t, firstErr, &etcdErr)
-+			require.Equal(t, merr.Code(merr.ErrIoFailed), merr.Code(firstErr))
-+			require.Equal(t, tc.retriable, etcd.IsRetriableEtcdErr(firstErr))
-+			if tc.retriable {
-+				require.NoError(t, err)
-+				require.Equal(t, 2, attempts)
-+				require.EqualValues(t, 2, rpcCalls.Load())
-+				first, second := <-requests, <-requests
-+				require.Equal(t, first, second, "retry must persist the same resource group")
-+			} else {
-+				require.ErrorIs(t, err, tc.cause)
-+				require.Equal(t, 1, attempts)
-+				require.EqualValues(t, 1, rpcCalls.Load())
-+			}
-+		})
-+	}
-+}
-+
-+func TestCatalogSaveResourceGroupPreservesRequestDeadline(t *testing.T) {
-+	paramtable.Init()
-+	ctx, cancel := context.WithTimeout(context.Background(), 5
-```
-
-**File**: `internal/querycoordv2/meta/resource_manager.go` (modified, +11/-1)
-```diff
-@@ -35,9 +35,11 @@ import (
- 	"github.com/milvus-io/milvus/pkg/v3/metrics"
- 	"github.com/milvus-io/milvus/pkg/v3/mlog"
- 	"github.com/milvus-io/milvus/pkg/v3/proto/querypb"
-+	"github.com/milvus-io/milvus/pkg/v3/util/etcd"
- 	"github.com/milvus-io/milvus/pkg/v3/util/merr"
- 	"github.com/milvus-io/milvus/pkg/v3/util/metricsinfo"
- 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
-+	"github.com/milvus-io/milvus/pkg/v3/util/retry"
- 	"github.com/milvus-io/milvus/pkg/v3/util/syncutil"
- 	"github.com/milvus-io/milvus/pkg/v3/util/typeutil"
- )
-@@ -1095,7 +1097,15 @@ func (rm *ResourceManager) unassignNode(ctx context.Context, node int64) (string
- 		mrg.UnassignNode(node)
- 		rg := mrg.ToResourceGroup()
- 
--		if err := rm.catalog.SaveResourceGroup(ctx, rg.GetMeta()); err != nil {
-+		// Saving the whole resource group is an unconditional overwrite, so it is
-+		// safe to retry a transient etcd error (e.g. leader changed during an etcd
-+		// restart) even if the failed attempt was applied. The retry is bounded
-+		// because rm.rwmutex is held; a persistent failure still exits to reload
-+		// a consistent state.
-+		err := retry.Do(ctx, func() error {
-+			return rm.catalog.SaveResourceGroup(ctx, rg.GetMeta())
-+		}, retry.RetryErr(etcd.IsRetriableEtcdErr))
-+		if err != nil {
  			mlog.Fatal(context.TODO(), "unassign node from resource group",
- 				mlog.String("rgName", rg.GetName()),
- 				mlog.Int64("node", node),
 ```
 
----
-
-### Incident Patch 2: `3f4f04d3` (2026-10-28)
-**Commit Message**: fix: authenticate GCS requests with the registered GCP credential provider (#54760)
-
-issue: #54759
-
-### What
-
-With `minio.useIAM=true` on GCP, Milvus installs
-`GoogleHttpClientFactory` as the process-wide AWS SDK HTTP factory (only
-the first `Aws::InitAPI` in a process takes effect), so it also serves
-milvus-storage (StorageV2 / StorageV3). It fetched a token from its own
-`ComputeEngineCredentials` for every request and threw when the fetch
-failed. Since the google-cloud-cpp 2.28 upgrade
-`ComputeEngineCredentials` no longer caches tokens, so every S3 request
-became a GKE metadata server request. Under load the metadata server
-throttles, and the exception — raised inside the AWS SDK, which is built
-with `-fno-exceptions` — ended the process in `std::terminate`.
-
-### Changes
-(`internal/core/src/storage/minio/MinioChunkManager.{h,cpp}`)
-
-1. **Authenticate with milvus-storage's GCP credential providers**,
-which cache the token (google-cloud-cpp `CachedCredentials`, the same
-stack milvus-storage uses). Milvus no longer builds its own
-`ComputeEngineCredentials`.
-- Milvus' own bucket uses the IAM provider built in
-`BuildGoogleCloudClient`, kept per (endpoint, bucket) and reused by
-later c
-
-**File**: `internal/core/src/storage/minio/MinioChunkManager.cpp` (modified, +190/-26)
+**File**: `internal/querycoordv2/meta/resource_manager_test.go` (modified, +36/-0)
 ```diff
-@@ -18,6 +18,7 @@
- #include "storage/minio/GuardedS3EndpointProvider.h"
- 
- #include <aws/core/auth/AWSCredentials.h>
-+#include <aws/core/auth/AWSCredentialsProvider.h>
- #include <aws/s3/model/CreateBucketRequest.h>
- #include <aws/s3/model/DeleteBucketRequest.h>
- #include <aws/s3/model/DeleteObjectRequest.h>
-@@ -29,10 +30,16 @@
- #include <string.h>
- #include <unistd.h>
- #include <algorithm>
-+#include <cctype>
- #include <chrono>
- #include <exception>
- #include <functional>
-+#include <mutex>
-+#include <optional>
-+#include <set>
- #include <sstream>
-+#include <unordered_map>
-+#include <utility>
- 
- #include "aws/core/Aws.h"
- #include "aws/core/auth/signer/AWSAuthV4Signer.h"
-@@ -49,9 +56,6 @@
- #include "common/Consts.h"
- #include "common/EasyAssert.h"
- #include "fmt/core.h"
--#include "google/cloud/internal/rest_client.h"
--#include "google/cloud/storage/oauth2/compute_engine_credentials.h"
--#include "google/cloud/version.h"
- #include "log/Log.h"
- #include "milvus-storage/common/extend_status.h"
- #include "milvus-storage/filesystem/gcp/gcp_credential_registry.h"
-@@ -69,22 +73,156 @@ namespace milvus::storage {
- std::atomic<size_t> MinioChunkManager::init_count_(0);
- std::mutex MinioChunkManager::client_mutex_;
- 
-+namespace {
-+
-+std::mutex&
-+GcsEndpointsMutex() {
-+    static std::mutex mutex;
-+    return mutex;
-+}
-+
-+std::set<std::string>&
-+GcsEndpointHosts() {
-+    static std::set<std::string> hosts;
-+    return hosts;
-+}
-+
-+// The IAM providers of the GCS buckets Milvus itself is configured with,
-+// guarded by GcsEndpointsMutex(). milvus-storage replaces its registry entry
-+// for a bucket whenever it opens a filesystem there, possibly with another
-+// identity (an external table on the same bucket), so Milvus' own requests do
-+// not use the registry entry. Reusing the provider also keeps its cached token.
-+using GcpProviderMap =
-+    std::unordered_map<milvus_storage::GcpBucketKey,
-+                       std::shared_ptr<milvus_storage::GcpCredentialProvider>,
-+                       milvus_storage::GcpBucketKeyHash>;
-+
-+GcpProviderMap&
-+MilvusGcpProviders() {
-+    static GcpProviderMap providers;
-+    return providers;
-+}
-+
-+std::string
-+ToLower(std::string s) {
-+    std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) {
-+        return std::tolower(c);
-+    });
-+    return s;
-+}
-+
-+// Matches a request like GcpCredentialRegistry::Lookup: path-style
-+// (<endpoint>/<bucket>/<key>), then virtual-host style (<bucket>.<endpoint>).
-+std::shared_ptr<milvus_storage::GcpCredentialProvider>
-+LookupMilvusGcpProvider(const Aws::Http::URI& uri) {
-+    milvus_storage::GcpEndpointKey endpoint{
-+        uri.GetScheme(), uri.GetPort(), ToLower(uri.GetAuthority().c_str())};
-+    std::string path = uri.GetPath().c_str();
-+    size_t start = (!path.empty() && path.front() == '/') ? 1 : 0;
-+    std::string bucket = path.substr(start, path.find('/', start) - start);
-+
-+    std::lock_guard<std::mutex> lock(GcsEndpointsMutex());
-+    const auto& providers = MilvusGcpProviders();
-+    if (!bucket.empty()) {
-+        auto it = providers.find({endpoint, bucket});
-+        if (it != providers.end()) {
-+            return it->second;
-+        }
-+    }
-+    auto dot = endpoint.host.find('.');
-+    if (dot != std::string::npos && dot > 0) {
-+        bucket = endpoint.host.substr(0, dot);
-+        endpoint.host.erase(0, dot + 1);
-+        auto it = providers.find({endpoint, bucket});
-+        if (it != providers.end()) {
-+            return it->second;
-+        }
-+    }
-+    return nullptr;
-+}
-+
-+// Whether a request to `host` may carry GCP credentials: Google's own
-+// endpoints, and the GCS endpoints Milvus is configured with, also in
-+// virtual-host form (<bucket>.<endpoint>).
-+bool
-+IsGcsHostForCredentials(std::string host) {
-+    host = ToLower(std::move(host));
-+    const std::string google_suffix = ".googleapis.com";
-+    if (host.size() > google_suffix.size() &&
-+        host.compare(host.size() - google_suffix.size(),
-+                     google_suffix.size(),
-+                     google_suffix) == 0) {
-+        return true;
-+    }
-+    std::lock_guard<std::mutex> lock(GcsEndpointsMutex());
-+    const auto& hosts = GcsEndpointHosts();
-+    if (hosts.count(host) > 0) {
-+        return true;
-+    }
-+    auto dot = host.find('.');
-+    return dot != std::string::npos && hosts.count(host.substr(dot + 1)) > 0;
-+}
-+
-+}  // namespace
-+
-+void
-+AddGcsEndpointForCredentials(const std::string& address, bool use_ssl) {
-+    auto endpoint = milvus_storage::NormalizeGcpEndpoint(address, use_ssl);
-+    std::lock_guard<std::mutex> lock(GcsEndpointsMutex());
-+    GcsEndpointHosts().insert(endpoint.host);
-+}
-+
- void
- ConfigureGoogleCloudIAMHttpClientFactory(Aws::SDKOptions& sdk_options) {
-     sdk_options.httpOptions.httpClientFactory_create_fn = []() {
--        auto credentials =
--            std::make_shared<google::cloud::oauth2_internal::
--                                 GOOGLE_CLOUD_CPP_NS::ComputeEngineCredentials>(
--         
-```
-
-**File**: `internal/core/src/storage/minio/MinioChunkManager.h` (modified, +16/-35)
-```diff
-@@ -455,20 +455,22 @@ class TlsHttpClientFactory : public Aws::Http::HttpClientFactory {
- static const char* GOOGLE_CLIENT_FACTORY_ALLOCATION_TAG =
-     "GoogleHttpClientFactory";
- 
-+// Records a GCS endpoint that Milvus itself is configured to use.
-+// GoogleHttpClientFactory sends GCP credentials only to these endpoints and to
-+// Google's *.googleapis.com.
-+void
-+AddGcsEndpointForCredentials(const std::string& address, bool use_ssl);
-+
-+// Process-wide AWS SDK HTTP factory for GCP IAM. Only the first Aws::InitAPI
-+// in a process takes effect, so it also serves milvus-storage. It
-+// authenticates a request for Milvus' own GCS bucket with Milvus' IAM
-+// provider, and any other GCS request with the provider milvus-storage's
-+// GcpCredentialRegistry holds for its endpoint and bucket, as milvus-storage's
-+// own GCP factory does. Every other request is left alone.
- class GoogleHttpClientFactory : public Aws::Http::HttpClientFactory {
-  public:
--    explicit GoogleHttpClientFactory(
--        std::shared_ptr<google::cloud::oauth2_internal::Credentials>
--            credentials,
--        const std::string& tls_min_version = "")
-+    explicit GoogleHttpClientFactory(const std::string& tls_min_version = "")
-         : tls_min_version_(tls_min_version) {
--        credentials_ = credentials;
--    }
--
--    void
--    SetCredentials(std::shared_ptr<google::cloud::oauth2_internal::Credentials>
--                       credentials) {
--        credentials_ = credentials;
-     }
- 
-     std::shared_ptr<Aws::Http::HttpClient>
-@@ -493,32 +495,11 @@ class GoogleHttpClientFactory : public Aws::Http::HttpClientFactory {
-     }
- 
-     std::shared_ptr<Aws::Http::HttpRequest>
--    CreateHttpRequest(
--        const Aws::Http::URI& uri,
--        Aws::Http::HttpMethod method,
--        const Aws::IOStreamFactory& streamFactory) const override {
--        auto request =
--            Aws::MakeShared<Aws::Http::Standard::StandardHttpRequest>(
--                GOOGLE_CLIENT_FACTORY_ALLOCATION_TAG, uri, method);
--        request->SetResponseStreamFactory(streamFactory);
--        auto auth_header =
--            google::cloud::oauth2_internal::AuthorizationHeader(*credentials_);
--        if (!auth_header.ok()) {
--            ThrowInfo(IsRetryableGcpStatus(auth_header.status().code())
--                          ? ErrorCode::S3Error
--                          : ErrorCode::UnexpectedError,
--                      fmt::format("get authorization failed, errcode: {}",
--                                  google::cloud::StatusCodeToString(
--                                      auth_header.status().code())));
--        }
--        request->SetHeaderValue(auth_header->first.c_str(),
--                                auth_header->second.c_str());
--
--        return request;
--    }
-+    CreateHttpRequest(const Aws::Http::URI& uri,
-+                      Aws::Http::HttpMethod method,
-+                      const Aws::IOStreamFactory& streamFactory) const override;
- 
-  private:
--    std::shared_ptr<google::cloud::oauth2_internal::Credentials> credentials_;
-     std::string tls_min_version_;
- };
- 
-```
-
-**File**: `internal/core/unittest/test_gcp_chunk_manager.cpp` (modified, +259/-0)
-```diff
-@@ -20,7 +20,14 @@
- #include <aws/core/http/standard/StandardHttpRequest.h>
- #include <cstdio>
- #include <cstdlib>
-+#include <memory>
-+#include <optional>
- #include <sstream>
-+#include <stdexcept>
-+#include <string>
-+#include <utility>
-+
-+#include <arrow/status.h>
- 
- #include "milvus-storage/filesystem/gcp/gcp_credential_registry.h"
- #include "milvus-storage/filesystem/gcp/gcp_filesystem_producer.h"
-@@ -150,8 +157,249 @@ CheckGcpRegistration(const bool legacy_first, const bool use_iam) {
-     }
+@@ -722,6 +722,42 @@ func (suite *ResourceManagerSuite) TestUnassignRetriesTransientEtcdError() {
+ 	suite.Empty(suite.manager.GetResourceGroupByNodeID(1))
  }
  
-+class FakeGcpCredentialProvider : public milvus_storage::GcpCredentialProvider {
-+ public:
-+    enum class Mode { kToken, kNoToken, kEmptyHeader, kThrow };
++func (suite *ResourceManagerSuite) TestUnassignSurvivesCallerCancel() {
++	mockKV := mocks.NewMetaKv(suite.T())
++	mockKV.EXPECT().MultiSave(mock.Anything, mock.Anything).Return(nil)
 +
-+    explicit FakeGcpCredentialProvider(Mode mode) : mode_(mode) {
-+    }
++	store := querycoord.NewCatalog(mockKV)
++	suite.manager = NewResourceManager(store, session.NewNodeManager())
 +
-+    std::optional<std::pair<std::string, std::string>>
-+    AuthorizationHeader() override {
-+        ++calls_;
-+        switch (mode_) {
-+            case Mode::kToken:
-+                return std::make_pair(std::string("Authorization"),
-+                                      std::string("Bearer fake-token"));
-+            case Mode::kNoToken:
-+                return std::nullopt;
-+            case Mode::kEmptyHeader:
-+                return std::make_pair(std::string(), std::string());
-+            case Mode::kThrow:
-+                throw std::runtime_error("malformed token response");
-+        }
-+        return std::nullopt;
-+    }
++	suite.manager.AlterResourceGroups(suite.ctx, map[string]*rgpb.ResourceGroupConfig{
++		"rg1": newResourceGroupConfig(20, 30),
++	})
 +
-+    arrow::Status
-+    MaybeSignConditionalWrite(
-+        const std::shared_ptr<Aws::Http::HttpRequest>&) override {
-+        return arrow::Status::OK();
-+    }
++	suite.manager.nodeMgr.Add(session.NewNodeInfo(session.ImmutableNodeInfo{
++		NodeID:   1,
++		Address:  "localhost",
++		Hostname: "localhost",
++	}))
++	suite.manager.HandleNodeUp(suite.ctx, 1)
++	suite.Equal("rg1", suite.manager.GetResourceGroupByNodeID(1))
 +
-+    int
-+    calls() const {
-+        return calls_;
-+    }
-+
-+ private:
-+    Mode mode_;
-+    int calls_ = 0;
-+};
-+
-+// Registers a provider for a bucket on `endpoint`, as milvus-storage does for
-+// every filesystem it opens.
-+static std::shared_ptr<FakeGcpCredentialProvider>
-+RegisterFakeProvider(const std::string& endpoint,
-+                     const std::string& bucket,
-+                     FakeGcpCredentialProvider::Mode mode) {
-+    auto provider = std::make_shared<FakeGcpCredentialProvider>(mode);
-+    milvus_storage::GcpCredentialRegistry::Instance().Register(
-+        {milvus_storage::NormalizeGcpEndpoint(endpoint, true), bucket},
-+        provider);
-+    return provider;
-+}
-+
-+// Registers a provider the way MinioChunkManager::BuildGoogleCloudClient does
-+// for the GCS endpoint Milvus is configured with.
-+static std::shared_ptr<FakeGcpCredentialProvider>
-+RegisterMilvusProvider(const std::string& bucket,
-+                       FakeGcpCredentialProvider::Mode mode) {
-+    AddGcsEndpointForCredentials("gcs-factory-test.invalid", true);
-+    return RegisterFakeProvider("gcs-factory-test.invalid", bucket, mode);
-+}
-+
-+static std::shared_ptr<Aws::Http::HttpRequest>
-+CreateGoogleRequest(const std::string& uri) {
-+    GoogleHttpClientFactory factory;
-+    return factory.CreateHttpRequest(
-+        Aws::Http::URI(uri.c_str()),
-+        Aws::Http::HttpMethod::HTTP_GET,
-+        Aws::Utils::Stream::DefaultResponseStreamFactoryMethod);
-+}
-+
-+static void
-+CheckMilvusBucketKeepsItsProvider() {
-+    setenv("AWS_EC2_METADATA_DISABLED", "true", 1);
-+    setenv("AWS_CONFIG_FILE", "/dev/null", 1);
-+    setenv("AWS_SHARED_CREDENTIALS_FILE", "/dev/null", 1);
-+    // Milvus' own IAM provider asks the metadata server for a token; point it
-+    // at a closed port so the fetch fails at once instead of reaching GCP.
-+    setenv("GCE_METADATA_ROOT", "127.0.0.1:1", 1);
-+    unsetenv("GOOGLE_APPLICATION_CREDENTIALS");
-+    setenv("GOOGLE_GCLOUD_ADC_PATH_OVERRIDE", "/nonexistent/adc.json", 1);
-+
-+    MinioChunkManager manager;
-+    manager.InitSDKAPI(RemoteStorageType::GOOGLE_CLOUD, true, "off");
-+
-+    StorageConfig storage_config;
-+    storage_config.address = "storage.googleapis.com:443";
-+    storage_config.bucket_name = "milvus-own-bucket";
-+    storage_config.cloud_provider = "gcp";
-+    storage_config.useSSL = true;
-+    storage_config.useIAM = true;
-+    Aws::Client::ClientConfiguration client_config;
-+    client_config.region = "europe-west3";
-+    client_config.endpointOverride = "storage.googleapis.com:443";
-+    manager.BuildGoogleCloudClient(storage_config, client_config);
-+
-+    auto& registry = milvus_storage::GcpCredentialRegistry::Instance();
-+    const Aws::Http::URI own_uri(
-+        "https://storage.googleapis.com/milvus-own-bucket/key");
-+    const auto milvus_provider = registry.Lookup(own_uri);
-+    ASSERT_NE(milvus_provider, nullptr);
-+
-+    // milvus-storage registers another identity for the same bucket, as for
-+    // an external table on it. Milvus' own requests keep Milvus' provider.
-+    const milvus_storage::GcpBucketKey own_key{
-+        milvus_storage::NormalizeGcpEndpoint(storage_config.address, true),
-+        storage_config.bucket_name};
-+    auto replacement = std::make_shared<FakeGcpCredentialProvider>(
-+        FakeGcpCredentialProvider::Mode::kToken);
-+    registry.Register(own_key, replacement);
-+    for (const auto* uri :
-+         {"https://storage.google
-```
-
----
-
-### Incident Patch 3: `6a779486` (2026-10-28)
-**Commit Message**: fix: return WALNameMismatch synchronously during remote consumer creation (#54764)
-
-Fixes #54762
-
-When a remote consumer reconnects with a position from the previous WAL
-backend, the VChannel handshake reports `WALNameMismatch` after the
-constructor has already returned. The handler client's existing
-`DeliverPolicyAll` fallback therefore cannot catch the error.
-
-Complete the VChannel handshake before returning the consumer and
-starting its receive loop. Each creation attempt owns a child context,
-so failures release its stream while preserving the parent context and
-upper message handler for retry. Validate both successful and
-embedded-error handshake responses.
-
-Add gRPC regressions using the production server/client error
-interceptors, with fault-injection coverage for handshake failures and
-cancellation. Historical WAL catch-up and handler-level
-catch-up/All-handoff coverage are in #54778 (issue #54763), which must
-merge after this PR. The two PRs have no overlapping changed files.
-
-### Validation
-
-- Confirmed the gRPC mismatch regression fails on unmodified master and
-passes with this change.
-- Passed consumer, streaming status and streaming service interceptor
-tests with `-tag
-
-**File**: `internal/streamingnode/client/handler/consumer/consumer_impl.go` (modified, +30/-6)
-```diff
-@@ -45,6 +45,13 @@ func CreateConsumer(
- 	opts *ConsumerOptions,
- 	handlerClient streamingpb.StreamingNodeHandlerServiceClient,
- ) (Consumer, error) {
-+	ctx, cancel := context.WithCancel(ctx)
-+	created := false
-+	defer func() {
-+		if !created {
-+			cancel()
-+		}
-+	}()
- 	ctx = contextutil.WithCreateConsumer(ctx, &streamingpb.CreateConsumerRequest{
- 		Pchannel: types.NewProtoFromPChannelInfo(opts.Assignment.Channel),
- 	})
-@@ -69,6 +76,7 @@ func CreateConsumer(
- 	}
- 	cli := &consumerImpl{
- 		ctx:              ctx,
-+		cancel:           cancel,
- 		walName:          createResp.GetWalName(),
- 		opts:             opts,
- 		grpcStreamClient: streamClient,
-@@ -77,16 +85,26 @@ func CreateConsumer(
- 			mlog.String("walName", createResp.GetWalName()),
- 			mlog.String("pchannel", opts.Assignment.Channel.Name),
- 			mlog.Int64("term", opts.Assignment.Channel.Term),
--			mlog.Int64("streamingNodeID", opts.Assignment.Node.ServerID)),
-+			mlog.Int64("streamingNodeID", opts.Assignment.Node.ServerID),
-+		),
- 		msgHandler: opts.MessageHandler,
- 		finishErr:  syncutil.NewFuture[error](),
- 	}
-+	if err := cli.createVChannelConsumer(); err != nil {
-+		// No receiver owns finishErr yet. Cancel only this attempt and leave
-+		// the upper message handler available for a retry.
++	// A SuspendNode client goes away while the save hits a transient etcd
++	// error, wrapped the way etcdKV returns it.
++	ctx, cancel := context.WithCancel(suite.ctx)
++	defer cancel()
++	mockKV.EXPECT().MultiSave(mock.Anything, mock.Anything).Unset()
++	mockKV.EXPECT().MultiSave(mock.Anything, mock.Anything).RunAndReturn(func(context.Context, map[string]string) error {
 +		cancel()
-+		_ = streamClient.CloseSend()
-+		return nil, err
-+	}
-+	created = true
- 	go cli.execute()
- 	return cli, nil
- }
- 
- type consumerImpl struct {
--	ctx              context.Context // TODO: the cancel method of consumer should be managed by consumerImpl, fix it in future.
-+	ctx              context.Context
-+	cancel           context.CancelFunc
- 	walName          string
- 	opts             *ConsumerOptions
- 	grpcStreamClient streamingpb.StreamingNodeHandlerService_ConsumeClient
-@@ -147,12 +165,10 @@ func (c *consumerImpl) recvLoop() (err error) {
- 		} else {
- 			c.logger.Info(c.ctx, "recv arm of stream closed")
- 		}
-+		c.cancel()
- 		c.finishErr.Set(err)
- 		c.msgHandler.Close()
- 	}()
--	if err := c.createVChannelConsumer(); err != nil {
--		return err
--	}
- 	for {
- 		resp, err := c.grpcStreamClient.Recv()
- 		if errors.Is(err, io.EOF) {
-@@ -221,7 +237,15 @@ func (c *consumerImpl) createVChannelConsumer() error {
- 	if createVChannelResp == nil {
- 		return status.NewInvalidRequestSeq("expect create vchannel response")
- 	}
--	return nil
-+	switch response := createVChannelResp.GetResponse().(type) {
-+	case *streamingpb.CreateVChannelConsumerResponse_ConsumerId:
-+		return nil
-+	case *streamingpb.CreateVChannelConsumerResponse_Error:
-+		if response.Error != nil {
-+			return (*status.StreamingError)(response.Error)
-+		}
-+	}
-+	return status.NewInvalidRequestSeq("expect successful create vchannel response")
- }
- 
- func (c *consumerImpl) handleTxnMessage(ctx context.Context, msg message.ImmutableMessage) error {
-```
-
-**File**: `internal/streamingnode/client/handler/consumer/handshake_test.go` (added, +211/-0)
-```diff
-@@ -0,0 +1,211 @@
-+package consumer
++		return merr.WrapErrIoFailedErr(rpctypes.ErrLeaderChanged, "execute etcd txn failed")
++	}).Once()
++	mockKV.EXPECT().MultiSave(mock.Anything, mock.Anything).Return(nil).Once()
 +
-+import (
-+	"context"
-+	"io"
-+	"net"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+
-+	"github.com/cockroachdb/errors"
-+	"github.com/stretchr/testify/mock"
-+	"github.com/stretchr/testify/require"
-+	"google.golang.org/grpc"
-+	"google.golang.org/grpc/credentials/insecure"
-+	"google.golang.org/grpc/test/bufconn"
-+
-+	serviceinterceptor "github.com/milvus-io/milvus/internal/util/streamingutil/service/interceptor"
-+	"github.com/milvus-io/milvus/internal/util/streamingutil/status"
-+	"github.com/milvus-io/milvus/pkg/v3/mocks/proto/mock_streamingpb"
-+	"github.com/milvus-io/milvus/pkg/v3/proto/streamingpb"
-+	"github.com/milvus-io/milvus/pkg/v3/streaming/util/message"
-+	"github.com/milvus-io/milvus/pkg/v3/streaming/util/options"
-+	"github.com/milvus-io/milvus/pkg/v3/streaming/util/types"
-+	"github.com/milvus-io/milvus/pkg/v3/streaming/walimpls/impls/walimplstest"
-+)
-+
-+type handshakeHandler struct{ closed atomic.Int32 }
-+
-+func (h *handshakeHandler) Handle(message.HandleParam) message.HandleResult {
-+	return message.HandleResult{MessageHandled: true}
-+}
-+func (h *handshakeHandler) Close() { h.closed.Add(1) }
-+func handshakeOptions(h message.Handler) *ConsumerOptions {
-+	return &ConsumerOptions{
-+		Assignment: &types.PChannelInfoAssigned{Channel: types.PChannelInfo{Name: "p", Term: 1}},
-+		VChannel:   "v1", DeliverPolicy: options.DeliverPolicyStartFrom(walimplstest.NewTestMessageID(1)), MessageHandler: h,
-+	}
++	suite.NotPanics(func() {
++		suite.manager.HandleNodeDown(ctx, 1)
++	})
++	suite.Empty(suite.manager.GetResourceGroupByNodeID(1))
 +}
 +
-+func firstHandshakeResponse() *streamingpb.ConsumeResponse {
-+	return &streamingpb.ConsumeResponse{Response: &streamingpb.ConsumeResponse_Create{Create: &streamingpb.CreateConsumerResponse{WalName: "woodpecker"}}}
-+}
-+
-+func successfulHandshakeResponse() *streamingpb.ConsumeResponse {
-+	return &streamingpb.ConsumeResponse{Response: &streamingpb.ConsumeResponse_CreateVchannel{CreateVchannel: &streamingpb.CreateVChannelConsumerResponse{Response: &streamingpb.CreateVChannelConsumerResponse_ConsumerId{ConsumerId: 1}}}}
-+}
-+
-+func TestConsumerFailedHandshakeCancelsOnlyItsStream(t *testing.T) {
-+	expected := status.NewWALNameMismatchError("woodpecker", "test")
-+	for _, stage := range []string{"open", "first-recv", "first-response", "second-send", "second-recv", "embedded-error", "second-response", "empty-second-response", "nil-embedded-error"} {
-+		t.Run(stage, func(t *testing.T) {
-+			parent, cancel := context.WithCancel(t.Context())
-+			defer cancel()
-+			h := &handshakeHandler{}
-+			client := mock_streamingpb.NewMockStreamingNodeHandlerServiceClient(t)
-+			stream := mock_streamingpb.NewMockStreamingNodeHandlerService_ConsumeClient(t)
-+			var attempt context.Context
-+			client.EXPECT().Consume(mock.Anything, mock.Anything).RunAndReturn(func(ctx context.Context, _ ...grpc.CallOption) (streamingpb.StreamingNodeHandlerService_ConsumeClient, error) {
-+				attempt = ctx
-+				if stage == "open" {
-+					return nil, expected
-+				}
-+				return stream, nil
-+			}).Once()
-+			if stage != "open" {
-+				calls := 0
-+				stream.EXPECT().Recv().RunAndReturn(func() (*streamingpb.ConsumeResponse, error) {
-+					calls++
-+					if calls == 1 {
-+						if stage == "first-recv" {
-+							return nil, expected
-+						}
-+						if stage == "first-response" {
-+							return &streamingpb.ConsumeResponse{}, nil
-+						}
-+						return firstHandshakeResponse(), nil
-+					}
-+					if stage == "second-recv" {
-+						return nil, expected
-+					}
-+					if stage == "embedded-error" {
-+						return &streamingpb.ConsumeResponse{Response: &streamingpb.ConsumeResponse_CreateVchannel{CreateVchannel: &streamingpb.CreateVChannelConsumerResponse{Response: &streamingpb.CreateVChannelConsumerResponse_Error{Error: expected.AsPBError()}}}}, nil
-+					}
-+					if stage == "empty-second-response" {
-+						return &streamingpb.ConsumeResponse{Response: &streamingpb.ConsumeResponse_CreateVchannel{CreateVchannel: &streamingpb.CreateVChannelConsumerResponse{}}}, nil
-+					}
-+					if stage == "nil-embedded-error" {
-+						return &streamingpb.ConsumeResponse{Response: &streamingpb.ConsumeResponse_CreateVchannel{CreateVchannel: &streamingpb.CreateVChannelConsumerResponse{Response: &streamingpb.CreateVChannelConsumerResponse_Error{}}}}, nil
-+					}
-+					return &streamingpb.ConsumeResponse{}, nil
-+				}).Maybe()
-+				stream.EXPECT().Send(mock.Anything).RunAndReturn(func(*streamingpb.ConsumeRequest) error {
-+					if stage == "second-send" {
-+						return expected
-+					}
-+					return nil
-+				}).Maybe()
-+				stream.EXPECT().CloseSend().Return(nil).Maybe()
-+			}
-+			c, err := CreateConsumer(parent, handshakeOptions(h), client)
-+			require.Error(t, err)
-+			require.Nil(t, c)
-+			if stage == "embedded-error" || stage == "open" || stage == "first-recv" || stage == "second-send" || stage == "second-recv" {
-+				require.True(t, status.AsStreamingError(err).IsWALNameMismatch())
-+			} else {
-+				require.Equal(t, streamingpb.StreamingCode_STREAMING_CODE_INVALID_REQUEST_SEQ, status.AsStreamingError(err).Code)
-+			}
-+			require.NoError(t, parent.Err())
-+		
+ func TestGetResourceGroupsJSON(t *testing.T) {
+ 	ctx := context.Background()
+ 	nodeManager := session.NewNodeManager()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #54770** (2026-10-28): fix: [cp3.0] support contextual keywords as field names (@zhengbuqian)
-- **PR #54764** (2026-10-28): fix: return WALNameMismatch synchronously during remote consumer creation (@tinswzy)
-- **PR #54761** (2026-10-28): fix: [cp3.0] authenticate GCS requests with the registered GCP credential provider (@xiaofan-luan)
-- **PR #54760** (2026-10-28): fix: authenticate GCS requests with the registered GCP credential provider (@xiaofan-luan)
-- **PR #54758** (2026-10-28): test: [3.0] expand CDC API contract and boundary coverage (@zhuwenxing)
-- **PR #54754** (2026-10-28): fix: [3.0] Recover from transient etcd errors instead of crashing (@xiaofan-luan)
+- **PR #54881** (2026-10-30): fix: [3.0] retry worker cleanup during import task GC (@xiaofan-luan)
+- **PR #54875** (2026-10-30): fix: make REST v1 test log directory creation race-safe (@zhikunyao)
+- **PR #54867** (2026-10-30): fix: retry worker cleanup during import task GC (@xiaofan-luan)
+- **PR #54856** (2026-10-30): fix: [3.0] Keep SegcoreError codes at the segcore C API boundary (@xiaofan-luan)
+- **PR #54854** (2026-10-29): fix: Correct embedded UniDic loader name (@xiaofan-luan)
+- **PR #54851** (2026-10-30): [automated] Bump milvus version to v3.0.5 (@sre-ci-robot)
 
 ---
 
@@ -2649,67 +2334,56 @@ tests with `-tag
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Recover from all transient etcd errors, not only leader changes (#54733)
+## X. Bound Python E2E collection cleanup and report failures (#54349)
 
 **RULE**:
-When implementing operations in `internal/cdc/controller/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/python_client/base/client_base.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `029df857`: Recover from all transient etcd errors, not only leader changes (#54733). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `31c941f0`: Bound Python E2E collection cleanup and report failures (#54349). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/cdc/controller/controller.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/python_client/base/client_base.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"fmt"
-	"time"
-	"github.com/milvus-io/milvus/pkg/v3/util/etcd"
-// listRetryInterval is how long the controller waits before listing the
-// replicate pchannels again after a transient etcd error.
-const listRetryInterval = time.Second
+import time
+COLLECTION_CLEANUP_TIMEOUT = 120
 
-			m, err := c.listReplicatePChannels()
-			if err != nil {
-				if c.ctx.Err() != nil {
-					return
-				}
-				panic(fmt.Sprintf("failed to list replicate pchannels: %v", err))
-// listReplicatePChannels lists the replicate pchannels, retrying transient etcd
-// errors (e.g. leader changed while etcd restarts). Any other error, including
-// a request timeout, is returned.
-func (c *controller) listReplicatePChannels() (*meta.ReplicateChannels, error) {
-	for {
-		m, err := meta.ListReplicatePChannels(c.ctx, resource.Resource().ETCD(), c.prefix)
-		if err == nil {
-			return m, nil
-		}
-		if c.ctx.Err() != nil || !etcd.IsRetriableEtcdErr(err) {
-			return nil, err
-		}
-		mlog.Warn(c.ctx, "failed to list replicate pchannels, retry", mlog.Err(err))
-		select {
-		case <-time.After(listRetryInterval):
-		case <-c.ctx.Done():
-			return nil, c.ctx.Err()
-		}
-	}
-}
+    tear_down_collection_names = ()
+        # TestCaseClassBase calls this once per class; ordinary cases call it
+        # once per method. Keep the registry in the same scope as the wrappers.
+        self.tear_down_collection_names = []
+    def _cleanup_collections(self):
+        deadline = time.monotonic() + COLLECTION_CLEANUP_TIMEOUT
+        errors = []
 
-				if c.ctx.Err() != nil {
-					return nil
-				}
+        def cleanup_call(action, operation, *args, **kwargs):
+            try:
+                timeout = deadline - time.monotonic()
+                if timeout <= 0:
+                    raise TimeoutError("collection cleanup deadline exceeded")
+                result, success = operation(*args, timeout=timeout, check_task=ct.CheckTasks.check_nothing, **kwargs)
+                if not success:
+                    raise AssertionError(str(result))
+                if time.monotonic() >= deadline:
+                    raise TimeoutError("collection cleanup deadline exceeded")
+                return result
+            except Exception as error:
+                errors.append((action, error))
+                log.exception(f"Collection cleanup failed: {action}")
+                return None
+
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-			m, err := meta.ListReplicatePChannels(c.ctx, resource.Resource().ETCD(), c.prefix)
-			if err != nil && c.ctx.Err() == nil {
-				mlog.Warn(c.ctx, "failed to list replicate pchannels", mlog.Err(err))
-				continue
+    tear_down_collection_names = []
+                    self.connection_wrap.connect(alias=DefaultConfig.DEFAULT_USING, ur
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `029df857` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `31c941f0` are properly handled with clean fallback behavior.

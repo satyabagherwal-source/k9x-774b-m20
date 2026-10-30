@@ -6184,3 +6184,6 @@
 | `CYCLE-20261030-XECF` | `2026-10-30T10:56:34.527Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5739, Rule 5740, Rule 5741` | Yes (`033ab191...`) |
 | `CYCLE-20261030-HSJF` | `2026-10-30T11:12:26.043Z` | `RevenueCat/purchases-ios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5742` | Yes (`4b4cf40c...`) |
 | `CYCLE-20261030-O53I` | `2026-10-30T11:17:22.254Z` | `nezhahq/nezha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5743` | Yes (`2e773a06...`) |
+| `CYCLE-20261030-247P` | `2026-10-30T11:28:14.293Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5744` | Yes (`412c986e...`) |
+| `CYCLE-20261030-288S` | `2026-10-30T11:28:19.516Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5745` | Yes (`f1b258ac...`) |
+| `CYCLE-20261030-28VE` | `2026-10-30T11:28:20.330Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5746` | Yes (`e46e7ba6...`) |

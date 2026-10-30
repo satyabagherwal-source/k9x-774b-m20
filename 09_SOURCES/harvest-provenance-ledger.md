@@ -6193,3 +6193,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `d2240721` | Multi-dimensional audit evidence | 2026-10-30T10:56:34.531Z |
 | `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `373c6305` | Multi-dimensional audit evidence | 2026-10-30T11:12:26.046Z |
 | `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `3e7d9ba6` | Multi-dimensional audit evidence | 2026-10-30T11:17:22.257Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `4e28758e` | Multi-dimensional audit evidence | 2026-10-30T11:28:14.296Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `eb9f5b29` | Multi-dimensional audit evidence | 2026-10-30T11:28:19.519Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `43480947` | Multi-dimensional audit evidence | 2026-10-30T11:28:20.333Z |

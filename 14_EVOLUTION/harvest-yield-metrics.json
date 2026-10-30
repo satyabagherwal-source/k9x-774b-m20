@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T11:17:22.262Z",
-  "total_cycles_completed": 6161,
-  "total_learnings_persisted": 6161,
-  "total_rules_promoted": 5713,
+  "last_updated": "2026-10-30T11:28:20.337Z",
+  "total_cycles_completed": 6164,
+  "total_learnings_persisted": 6164,
+  "total_rules_promoted": 5716,
   "history": [
-    {
-      "timestamp": "2026-10-28T23:05:28.802Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T23:18:53.942Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T23:18:58.444Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T23:30:41.643Z",
       "repository": "rtk-ai/rtk",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-30T11:17:22.262Z",
       "repository": "nezhahq/nezha",
       "learningId": "learn-github-nezhahq-nezha",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T11:28:14.300Z",
+      "repository": "nats-io/nats-server",
+      "learningId": "learn-github-nats-io-nats-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T11:28:19.524Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T11:28:20.337Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

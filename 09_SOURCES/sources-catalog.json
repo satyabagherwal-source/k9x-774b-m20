@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "fb8018f7",
+    "sourceVersion": "43480947",
     "license": "Apache-2.0",
-    "contentHash": "de6b4cff5e725735b111df4f99f06f969c5239d6bb43fb56818f1c0abb98d42e",
-    "lastHarvestedAt": "2026-10-30T10:26:21.627Z",
+    "contentHash": "e46e7ba6eff98acd1d401d4c7c736ab942375b848a209ce0df0a116db8863f3c",
+    "lastHarvestedAt": "2026-10-30T11:28:20.333Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "3f0e3b9a",
+    "sourceVersion": "eb9f5b29",
     "license": "Apache-2.0",
-    "contentHash": "25cc4e816a9e8b488a1faf383f536695ff00f52713b2960546aef2e3635a5e8b",
-    "lastHarvestedAt": "2026-10-28T20:44:35.011Z",
+    "contentHash": "f1b258acd6df8d5c1b6a3a1987a66c5c938ce7e046829f14f04f77a374d77305",
+    "lastHarvestedAt": "2026-10-30T11:28:19.519Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "60ce2463",
+    "sourceVersion": "4e28758e",
     "license": "Apache-2.0",
-    "contentHash": "d0292b2a781409438d3aa22bdc4334d76c25b9575918d684ee8c3529b4dc88a1",
-    "lastHarvestedAt": "2026-10-28T21:43:37.948Z",
+    "contentHash": "412c986e3d02f5bb66a5d043b8b48615a74c0e8553d659c1dc32b271b9c8fc17",
+    "lastHarvestedAt": "2026-10-30T11:28:14.296Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {

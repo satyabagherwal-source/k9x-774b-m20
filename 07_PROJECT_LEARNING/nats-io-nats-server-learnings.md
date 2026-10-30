@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `60ce2463`  
+> **Source Version**: `4e28758e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T21:43:37.482Z  
+> **Timestamp**: 2026-10-30T11:28:13.723Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T21:43:37.477Z  
+> **Harvest Timestamp**: 2026-10-30T11:28:11.989Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 20954 stars
+- **Stars / Engagement**: 20969 stars
 
 ---
 
@@ -2726,1222 +2726,136 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6e102223` (2026-10-28)
-**Commit Message**: [FIXED] Durable mirror/source skipping messages after a consumer reset (#8802)
+### Incident Patch 1: `f797bbdf` (2026-10-29)
+**Commit Message**: [FIXED] Stale leafnode connection when hub sends many subs on connect (#8811)
 
-Flow-controlled push consumers deliver messages before replicating their
-delivered state, so after a consumer leader change stale deliveries can
-still arrive. After a reset the consumer's delivery sequence restarts at
-1, so stale deliveries from before the reset could take the place of new
-deliveries with the same numbers. A source would then drop those new
-messages as duplicates, and a mirror would mark them as deleted if they
-got lost.
+The hub queued an `INFO` block to the leaf, but didn't flush it, so if
+the interest it needs to send takes longer than 2s the leaf connection
+would be marked stale. This PR fixes that by flushing the `INFO`
+immediately, before snapshotting the subs.
 
-Resolves https://github.com/nats-io/nats-server/issues/8796
-
-**File**: `server/consumer.go` (modified, +22/-4)
+**File**: `server/leafnode.go` (modified, +2/-1)
 ```diff
-@@ -3557,6 +3557,18 @@ func (o *consumer) info() *ConsumerInfo {
- 	return o.infoWithSnap(false)
+@@ -2585,7 +2585,8 @@ func (s *Server) sendPermsAndAccountInfo(c *client) {
+ 	// s.SystemAccount() uses an atomic operation and does not get the server lock, so this is safe.
+ 	info.IsSystemAccount = c.acc == s.SystemAccount()
+ 	info.ConnectInfo = true
+-	c.enqueueProto(generateInfoJSON(info))
++	// Flush now, so it isn't delayed by sending all subs.
++	c.enqueueProtoAndFlush(generateInfoJSON(info), true)
+ 	c.mu.Unlock()
  }
  
-+// resetInfo returns the consumer info for a reset to the given starting sequence.
-+// Delivery resumes before the info is gathered, so report the reset point itself.
-+func (o *consumer) resetInfo(seq uint64) *ConsumerInfo {
-+	info := o.info()
-+	if info == nil {
-+		return nil
-+	}
-+	info.Delivered.Consumer, info.Delivered.Stream = 0, seq-1
-+	info.AckFloor.Consumer, info.AckFloor.Stream = 0, seq-1
-+	return info
-+}
-+
- func (o *consumer) infoWithSnap(snap bool) *ConsumerInfo {
- 	return o.infoWithSnapAndReply(snap, _EMPTY_)
- }
-@@ -4690,7 +4702,7 @@ func (o *consumer) processResetReq(_ *subscription, c *client, a *Account, _, re
- 		resp.Error = NewJSConsumerInvalidResetError(err)
- 		s.sendInternalAccountMsg(a, reply, s.jsonResponse(&resp))
- 	} else if canRespond {
--		if resp.ConsumerInfo = setDynamicConsumerInfoMetadata(o.info()); resp.ConsumerInfo == nil {
-+		if resp.ConsumerInfo = setDynamicConsumerInfoMetadata(o.resetInfo(resetSeq)); resp.ConsumerInfo == nil {
- 			// The consumer was closed before we could respond.
- 			resp.Error = NewJSConsumerInvalidResetError(errConsumerClosed)
- 			s.sendInternalAccountMsg(a, reply, s.jsonResponse(&resp))
-@@ -5025,6 +5037,7 @@ func (o *consumer) isFilterSubsetOf(subj string) bool {
- 
- var (
- 	errMaxAckPending = errors.New("max ack pending reached")
-+	errResetPending  = errors.New("reset pending")
- 	errBadConsumer   = errors.New("consumer not valid")
- 	errNoInterest    = errors.New("consumer requires interest for delivery subject when ephemeral")
- )
-@@ -5036,6 +5049,11 @@ func (o *consumer) getNextMsg() (*jsPubMsg, uint64, error) {
- 	if o.mset == nil || o.mset.store == nil {
- 		return nil, 0, errBadConsumer
- 	}
-+	// Deliveries proposed before a reset applies would mix into the delivered state after it.
-+	// Only our own resets are tracked, these always have a reply when replicated.
-+	if len(o.rsm) > 0 {
-+		return nil, 0, errResetPending
-+	}
- 	// Process redelivered messages before looking at possibly "skip list" (deliver last per subject)
- 	if o.hasRedeliveries() {
- 		var seq, dc uint64
-@@ -5549,7 +5567,7 @@ func (o *consumer) loopAndGatherMsgs(qch chan struct{}) {
- 			if err == ErrStoreEOF {
- 				o.checkNumPendingOnEOF()
- 			}
--			if err == ErrStoreMsgNotFound || err == errDeletedMsg || err == ErrStoreEOF || err == errMaxAckPending {
-+			if err == ErrStoreMsgNotFound || err == errDeletedMsg || err == ErrStoreEOF || err == errMaxAckPending || err == errResetPending {
- 				goto waitForMsgs
- 			} else {
- 				if pmsg != nil {
-@@ -5682,8 +5700,8 @@ func (o *consumer) loopAndGatherMsgs(qch chan struct{}) {
- 		// Make sure to process any expired requests that are pending.
- 		var wrExp <-chan time.Time
- 		if o.isPullMode() {
--			// Dont expire oneshots if we are here because of max ack pending limit.
--			_, _, _, fexp := o.processWaiting(err != errMaxAckPending)
-+			// Dont expire oneshots if we are here because of max ack pending limit or a pending reset.
-+			_, _, _, fexp := o.processWaiting(err != errMaxAckPending && err != errResetPending)
- 			if !fexp.IsZero() {
- 				expires := time.Until(fexp)
- 				if expires <= 0 {
 ```
 
-**File**: `server/jetstream_cluster.go` (modified, +3/-3)
+**File**: `server/leafnode_test.go` (modified, +32/-0)
 ```diff
-@@ -7918,7 +7918,7 @@ func (js *jetStream) processClusterCreateConsumer(oca, ca *consumerAssignment, s
- 								resp.Error = NewJSConsumerInvalidResetError(err)
- 								s.sendAPIErrResponse(client, acc, subject, reply, _EMPTY_, s.jsonResponse(&resp))
- 							} else if canRespond {
--								if resp.ConsumerInfo = setDynamicConsumerInfoMetadata(o.info()); resp.ConsumerInfo == nil {
-+								if resp.ConsumerInfo = setDynamicConsumerInfoMetadata(o.resetInfo(resetSeq)); resp.ConsumerInfo == nil {
- 									// The consumer was closed before we could respond.
- 									resp.Error = NewJSConsumerInvalidResetError(errConsumerClosed)
- 									s.sendAPIErrResponse(client, acc, subject, reply, _EMPTY_, s.jsonResponse(&resp))
-@@ -8915,7 +8915,7 @@ func (js *jetStream) applyConsumerMsgOp(o *consumer, buf []byte) error {
- 					a = nil
- 				}
- 				var resp = JSApiConsumerResetResponse{ApiResponse: ApiResponse{Type: JSApiConsumerResetResponseType}}
--				if resp.ConsumerInfo = setDynamicConsumerInfoMetadata(o.info()); resp.ConsumerInfo == nil {
-+				if resp.ConsumerInfo = setDynamicConsumerInfoMetadata(o.resetInfo(sseq)); resp.ConsumerInfo == nil {
- 					// The consumer was closed before we could respond.
- 					resp.Error = NewJSConsumerInvalidResetError(errConsumerClosed)
- 					s.sendInternalAccountMsg(a, reply, s.jsonResponse(&resp))
-@@ -9148,7 +9148,7 @@ func (js *jetStream) processConsumerLeaderChangeWithAssignment(o *consumer, ca *
- 				rresp.Error = NewJSConsumerInvalidResetError(err)
- 				s.sendAPIErrResponse(client, acc, subject, reply, _EMPTY_, s.jsonResponse(&rresp))
- 			} else if canRespond {
--				if rresp.ConsumerInfo = setDynamicConsumerInfoMetadata(o.info()); rresp.ConsumerInfo == nil {
-+				if rresp.ConsumerInfo = setDynamicConsumerInfoMetadata(o.resetInfo(resetSeq)); rresp.ConsumerInfo == nil {
- 					// The consumer was closed before we could respond.
- 					rresp.Error = NewJSConsumerInvalidResetError(errConsumerClosed)
- 					s.sendAPIErrResponse(client, acc, subject, reply, _EMPTY_, s.jsonResponse(&rresp))
-```
-
-**File**: `server/jetstream_consumer_test.go` (modified, +177/-0)
-```diff
-@@ -14029,3 +14029,180 @@ func TestJetStreamConsumerEphemeralPullDefaultInactiveThresholdAfterRestart(t *t
- 		return nil
- 	})
+@@ -15025,3 +15025,35 @@ func TestLeafNodeJetStreamPullForgedRequestInfo(t *testing.T) {
+ 	require_Equal(t, acc, "JS")
+ 	require_Equal(t, interest, "_R_.forged")
  }
 +
-+func TestJetStreamConsumerResetResponseReportsResetSeq(t *testing.T) {
-+	test := func(t *testing.T, replicas int) {
-+		c := createJetStreamClusterExplicit(t, "R3S", 3)
-+		defer c.shutdown()
-+
-+		nc := clientConnectToServer(t, c.randomServer())
-+		defer nc.Close()
-+
-+		_, err := jsStreamCreate(t, nc, &StreamConfig{
-+			Name:     "TEST",
-+			Subjects: []string{"foo"},
-+			Replicas: replicas,
-+			Storage:  FileStorage,
-+		})
-+		require_NoError(t, err)
-+		for range 200 {
-+			_, err = nc.Request("foo", nil, time.Second)
-+			require_NoError(t, err)
-+		}
-+
-+		// Answer flow control so the consumer keeps delivering.
-+		sub, err := nc.Subscribe("deliver", func(m *nats.Msg) {
-+			if m.Reply != _EMPTY_ {
-+				m.Respond(nil)
-+			}
-+		})
-+		require_NoError(t, err)
-+		defer sub.Unsubscribe()
-+
-+		_, err = jsConsumerCreate(t, nc, "TEST", ConsumerConfig{
-+			Durable:        "CONSUMER",
-+			DeliverSubject: "deliver",
-+			AckPolicy:      AckFlowControl,
-+			Replicas:       replicas,
-+		}, false)
-+		require_NoError(t, err)
-+		c.waitOnConsumerLeader(globalAccountName, "TEST", "CONSUMER")
-+
-+		// Delivery resumes right after the reset, the response must still report the reset point.
-+		for range 500 {
-+			msg, err := nc.Request(fmt.Sprintf(JSApiConsumerResetT, "TEST", "CONSUMER"), nil, 2*time.Second)
-+			require_NoError(t, err)
-+			var resp JSApiConsumerResetResponse
-+			require_NoError(t, json.Unmarshal(msg.Data, &resp))
-+			require_True(t, resp.Error == nil)
-+			require_Equal(t, resp.Delivered.Stream, resp.ResetSeq-1)
-+			require_Equal(t, resp.AckFloor.Stream, resp.ResetSeq-1)
-+		}
-+	}
-+
-+	for _, replicas := range []int{1, 3} {
-+		t.Run(fmt.Sprintf("R%d", replicas), func(t *testing.T) { test(t, replicas) })
-+	}
-+}
-+
-+func TestJetStreamConsumerResetPendingHoldsDeliveries(t *testing.T) {
-+	c := createJetStreamClusterExplicit(t, "R3S", 3)
-+	defer c.shutdown()
-+
-+	nc := clientConnectToServer(t, c.randomServer())
-+	defer nc.Close()
-+
-+	_, err := jsStreamCreate(t, nc, &StreamConfig{
-+		Name:     "TEST",
-+		Subjects: []string{"foo"},
-+		Replicas: 3,
-+		Storage:  FileStorage,
-+	})
-+	require_NoError(t, err)
-+	for range 30 {
-+		_, err = nc.Request("foo", nil, time.Second)
-+		require_NoError(t, err)
-+	}
-+
-+	// No interest on the deliver subject, so we drive deliveries ourselves.
-+	_, err = jsConsumerCreate(t, nc, "TEST", ConsumerConfig{
-+		Durable:        "CONSUMER",
-+		DeliverSubject: "deliver",
-+		AckPolicy:      AckFlowControl,
-+		Replicas:       3,
-+	}, false)
-+	require_NoError(t, err)
-+	c.waitOnConsumerLeader(globalAccountName, "TEST", "CONSUMER")
-+
-+	lookupConsumer := func() *consumer {
-+		t.Helper()
-+		cl := c.consumerLeader(globalAccountName, "TEST", "CONSUMER")
-+		require_NotNil(t, cl)
-+		mset, err := cl.globalAccount().lookupStream("TEST")
-+		require_NoError(t, err)
-+		o := mset.lookupConsumer("CONSUMER")
-+		require_NotNil(t, o)
-+		return o
-+	}
-+	o := lookupConsumer()
-+
-+	// Same as loopAndGatherMsgs, lock should be held.
-+	deliverNext := func() error {
-+		pmsg, dc, err := o.getNextMsg()
-+		if err != nil {
-+			return err
-+		}
-+		o.deliverMsg(o.cfg.DeliverSubject, o.ackReply(pmsg.seq, o.dseq, dc, pmsg.ts, o.numPending()), pmsg, dc, LimitsPolicy)
-+		return nil
-+	}
-+	reset := func(seq uint64) {
-+		t.Helper()
-+		o.mu.Lock()
-+		_, _, err := o.resetStartingSeqLocked(seq, _EMPTY_, false, false)
-+		o.mu.Unlock()
-+		require_NoError(t, err)
-+		checkFor(t, 2*time.Second, 50*time.Millisecond, func() error {
-+			o.mu.RLock()
-+			defer o.mu.RUnlock()
-+			if o.dseq != 1 || o.sseq != seq {
-+				return fmt.Errorf("reset not applied yet: dseq=%d sseq=%d", o.dseq, o.sseq)
-+			}
-+			return nil
-+		})
-+	}
-+	deliver := func(n int) {
-+		t.Helper()
-+		o.mu.Lock()
-+		defer o.mu.Unlock()
-+		for range n {
-+			require_NoError(t, deliverNext())
-+		}
-+	}
-+
-+	// Deliver d1..d5 = s15..s19.
-+	reset(15)
-+	deliver(5)
-+
-+	// Reset back to s11, nothing must be delivered until it's applied.
-+	// Otherwise d6 = s20 is applied after the reset and mixes into the delivered state.
-+	o.mu.Lock()
-+	_, _, err = o.resetStartingSeqLocked(11, "reply", false, false)
-+	if err == nil {
-+		err = deliverNext()
-+	}
-+	o.mu.Unlock()
-+	require_Error(t, err, errResetPending)
-+
-+	// Deliver d1..d8 = s11..s18.
-+	reset(11)
-+	deliver(8)
-+	checkFor(t, 2*time.Second, 50*time.Millisecond, func() error {
-+		for _, s := range c.servers {
-+			mset, err := s.globalAccount().lookupStream("TEST")
-+			if err != nil {
-+				return err
-+			}
-+			state, err := mset.lookupConsumer("CONSUMER").store.State()
-+			if err != nil {
-+				return err
-+			}
-+			if state.Delivered.Consumer != 8 || state.Delivered.Stream != 18 {
-+				return fmt.Errorf("%s: unexpected delivered state %+v", s, state.Delivered)
-+			}
-+		}
-+		return nil
-+	})
-+
-+	// A new leader must continue at d9 = s19.
-+	o.mu.RLock()
-+	node := o.node
-+	o.mu.RUnlock()
-+	require_NoError(t, node.StepDown())
-+	c.waitOnConsume
-```
-
-**File**: `server/jetstream_test.go` (modified, +77/-0)
-```diff
-@@ -25608,6 +25608,83 @@ func TestJetStreamDurableStreamMirrorAndSourceIncorrectConsumerConfig(t *testing
- 	require_Error(t, err, NewJSSourceDurableConsumerCfgInvalidError())
- }
- 
-+// https://github.com/nats-io/nats-server/issues/8796
-+func TestJetStreamDurableStreamSourcingStaleDeliveryAfterReset(t *testing.T) {
-+	test := func(t *testing.T, source bool) {
-+		s := RunBasicJetStreamServer(t)
-+		defer s.Shutdown()
-+
-+		nc, _ := jsClientConnect(t, s)
-+		defer nc.Close()
-+
-+		_, err := jsStreamCreate(t, nc, &StreamConfig{Name: "O", Subjects: []string{"foo"}, Storage: FileStorage})
-+		require_NoError(t, err)
-+		// Starts at s2, so the reset when setting up goes back to the ack floor at s1.
-+		// Deliveries go elsewhere, we hand them to the mirror or source ourselves.
-+		_, err = jsConsumerCreate(t, nc, "O", ConsumerConfig{
-+			Durable:        "C",
-+			DeliverSubject: "orig",
-+			AckPolicy:      AckFlowControl,
-+			DeliverPolicy:  DeliverByStartSequence,
-+			OptStartSeq:    2,
-+		}, false)
-+		require_NoError(t, err)
-+
-+		ssi := &StreamSource{Name: "O", Consumer: &StreamConsumerSource{Name: "C", DeliverSubject: "dlv"}}
-+		cfg := &StreamConfig{Name: "M", Storage: FileStorage}
-+		if source {
-+			cfg.Sources = []*StreamSource{ssi}
-+		} else {
-+			cfg.Mirror = ssi
-+		}
-+		_, err = jsStreamCreate(t, nc, cfg)
-+		require_NoError(t, err)
-+		mset, err := s.globalAccount().lookupStream("M")
-+		require_NoError(t, err)
-+
-+		var si *sourceInfo
-+		checkFor(t, 2*time.Second, 50*time.Millisecond, func() error {
-+			mset.mu.RLock()
-+			defer mset.mu.RUnlock()
-+			if si = mset.mirror; source {
-+				for _, si = range mset.sources {
-+				}
-+			}
-+			if si == nil || si.sub == nil {
-+				return errors.New("consumer not set up yet")
-+			}
-+			return nil
-+		})
-+		deliver := func(dseq, sseq uint64) {
-+			m := &inMsg{subj: "foo", rply: fmt.Sprintf("$JS.ACK.O.C.1.%d.%d.0.0", sseq, dseq), msg: []byte("x")}
-+			if source {
-+				mset.processInboundSourceMsg(si, m)
-+			} else {
-+				mset.processInboundMirrorMsg(m)
-+			}
-+		}
-+
-+		// A stale d1 = s1 from before the reset arrives first.
-+		deliver(1, 1)
-+		// A source would drop d1 = s2 by itself, a mirror only skips s2 if it's lost.
-+		if source {
-+			deliver(1, 2)
-+		}
-+		deliver(2, 3)
-+
-+		// The origin never deleted s2, so s3 must not be stored without it.
-+		state := mset.state()
-+		if source {
-+			require_Equal(t, state.Msgs, 2)
-+		} else {
-+			require_Equal(t, state.LastSeq, 1)
-+		}
-+	}
-+
-+	t.Run("Mirror", func(t *testing.T) { test(t, false) })
-+	t.Run("Source", func(t *testing.T) { test(t, true) })
-+}
-+
- func TestJetStreamDurableStreamSourcesWithUniqueConsumerNames(t *testing.T) {
- 	s := RunBasicJetStreamServer(t)
- 	defer s.Shutdown()
-```
-
-**File**: `server/stream.go` (modified, +23/-17)
-```diff
-@@ -712,6 +712,7 @@ type sourceInfo struct {
- 	msgs  *ipQueue[*inMsg]    // Intra-process queue for incoming messages.
- 	sseq  uint64              // Last stream message sequence number seen from the source.
- 	dseq  uint64              // Last delivery (i.e. consumer's) sequence number.
-+	cseq  uint64              // Stream message sequence number of the last delivery counted towards dseq.
- 	lag   uint64              // 0 or number of messages pending (as last reported by the consumer) - 1.
- 	err   *ApiError           // The API error that caused the last consumer setup to fail.
- 	fails int                 // The number of times trying to setup the consumer failed.
-@@ -3546,33 +3547,38 @@ func (mset *stream) processInboundMirrorMsg(m *inMsg) bool {
- 	}
- 
- 	// Mirror info tracking.
--	olag, osseq, odseq := mset.mirror.lag, mset.mirror.sseq, mset.mirror.dseq
-+	olag, osseq, odseq, ocseq := mset.mirror.lag, mset.mirror.sseq, mset.mirror.dseq, mset.mirror.cseq
- 	if sseq <= mset.mirror.sseq {
- 		// Ignore older messages.
- 		// If the deliver sequence matches, we only update delivered accounting.
--		if dseq == mset.mirror.dseq+1 {
-+		// A stale delivery from before a consumer reset could match too, but it won't be above the last counted.
-+		if dseq == mset.mirror.dseq+1 && sseq > mset.mirror.cseq {
- 			mset.mirror.dseq++
-+			mset.mirror.cseq = sseq
- 		}
- 		mset.mu.Unlock()
- 		return true
- 	} else if sseq == mset.mirror.sseq+1 {
- 		mset.mirror.dseq = dseq
- 		mset.mirror.sseq++
-+		mset.mirror.cseq = sseq
- 	} else if mset.mirror.cname == _EMPTY_ {
- 		mset.mirror.cname = cname
--		mset.mirror.dseq, mset.mirror.sseq = dseq, sseq
-+		mset.mirror.dseq, mset.mirror.sseq, mset.mirror.cseq = dseq, sseq, sseq
- 	} else {
- 		// If the deliver sequence matches then the upstream stream has expired or deleted messages.
- 		if dseq == mset.mirror.dseq+1 {
- 			if err := mset.skipMsgs(mset.mirror.sseq+1, sseq-1); err != nil {
- 				mset.mirror.sseq = osseq
- 				mset.mirror.dseq = odseq
-+				mset.mirror.cseq = ocseq
- 				mset.mu.Unlock()
- 				mset.retryMirrorConsumer()
- 				return false
- 			}
- 			mset.mirror.dseq++
- 			mset.mirror.sseq = sseq
-+			mset.mirror.cseq = sseq
- 		} else {
- 			mset.mu.Unlock()
- 			mset.retryMirrorConsumer()
-@@ -3651,6 +3657,7 @@ func (mset *stream) processInboundMirrorMsg(m *inMsg) bool {
- 				mset.mirror.lag = olag
- 				mset.mirror.dseq = odseq
- 				mset.mirror.sseq = osseq
-+				mset.mirror.cseq = ocseq
- 				if sseq <= lseq {
- 					mset.mirror.sseq = lseq
- 				}
-@@ -4132,7 +4139,7 @@ func (mset *stream) setupMirrorConsumer() error {
- 
- 			// Capture consumer name.
- 			mirror.cname = ccr.ConsumerInfo.Name
--			mirror.dseq = 0
-+			mirror.dseq, mirror.cseq = 0, ccr.ConsumerInfo.Delivered.Stream
- 			mirror.fcid, mirror.fcsc = _EMPTY_, 0
- 			mirror.sseq = max(ccr.ConsumerInfo.Delivered.Stream, state.LastSeq)
- 			mirror.qch = make(chan struct{})
-@@ -4644,7 +4651,7 @@ func (mset *stream) trySetupSourceConsumer(iname string, seq uint64, startTime t
- 				si.cname = ccr.ConsumerInfo.Name
- 
- 				// Do not set si.sseq to seq here. si.sseq will be set in processInboundSourceMsg
--				si.dseq = 0
-+				si.dseq, si.cseq = 0, ccr.ConsumerInfo.Delivered.Stream
- 				si.fcid, si.fcsc = _EMPTY_, 0
- 				si.qch = make(chan struct{})
- 				// Set the last seen as now so that we don't fail at the first check.
-@@ -4894,28 +4901,26 @@ func (mset *stream) processInboundSourceMsg(si *sourceInfo, m *inMsg) bool {
- 	}
- 
- 	// Tracking is done here.
--	osseq, odseq := si.sseq, si.dseq
-+	osseq, odseq, ocseq := si.sseq, si.dseq, si.cseq
- 	if sseq <= si.sseq {
- 		// Ignore older messages.
- 		// If the deliver sequence matches, we only update delivered accounting.
--		if dseq == si.dseq+1 {
-+		// A stale delivery from before a consumer reset could match too, but it won't be above the last counted.
-+		if dseq == si.dseq+1 && sseq > si.cseq {
- 			si.dseq++
-+			si.cseq = sseq
- 		}
- 		mset.mu.Unlock()
- 		return true
- 	} else if dseq == si.dseq+1 {
- 		si.dseq++
--		si.sseq = sseq
--	} else if dseq > si.dseq {
--		if si.cname == _EMPTY_ {
--			si.cname = cname
--			si.dseq, si.sseq = dseq, sseq
--		} else {
--			mset.retrySourceConsumerAtSeq(si.iname, si.sseq+1)
--			mset.mu.Unlock()
--			return false
--		}
-+		si.sseq, si.cseq = sseq, sseq
-+	} else if dseq > si.dseq && si.cname == _EMPTY_ {
-+		si.cname = cname
-+		si.dseq, si.sseq, si.cseq = dseq, sseq, sseq
- 	} else {
-+		// Either we missed messages, or this newer message was delivered before one we already counted.
-+		mset.retrySourceConsumerAtSeq(si.iname, si.sseq+1)
- 		mset.mu.Unlock()
- 		return false
- 	}
-@@ -4996,6 +5001,7 @@ func (mset *stream) processInboundSourceMsg(si *sourceInfo, m *inMsg) bool {
- 			mset.mu.Lock()
- 			si.dseq = odseq
- 			si.sseq = osseq
-+			si.cseq = ocseq
- 			mset.retrySourceConsumerAtSeq(iName, sseq)
- 			mset.mu.Unlock()
- 		}
-```
-
----
-
-### Incident Patch 2: `011cda33` (2026-10-28)
-**Commit Message**: [FIXED] Leafnode deny_imports reply drops & perms on account updates (#8800)
-
-This PR fixes three leafnode permission issues:
-- `deny_imports` now properly only limits what the leaf receives, and
-`deny_exports` limits what the leaf sends.
-- Updating an account JWT would drop leafnode interest.
-- Leafs now keep their permissions set at connect when updating default
-permissions, consistent with config reloads.
-
-**File**: `server/client.go` (modified, +27/-13)
-```diff
-@@ -1083,6 +1083,10 @@ func (c *client) updateDefaultPermissions(perms *Permissions) bool {
- 	if c.user == nil || !c.user.defaultPerms {
- 		return false
- 	}
-+	// A leafnode's perms are set up at connect, like on config reload.
-+	if c.kind == LEAF {
-+		return false
-+	}
- 	if perms == nil {
- 		c.user.Permissions = nil
- 		c.perms = nil
-@@ -3484,6 +3488,11 @@ func (c *client) canSubscribe(subject string, optQueue ...string) bool {
- // an exact queue subscription, can overlap a deny entry. Assumes caller is
- // holding the write lock.
- func (c *client) loadMsgDenyFilterIfNeeded(subject string, hasQueue bool) {
-+	// A solicited leafnode's subscribe denies only limit what we receive.
-+	// Deliveries to it are checked against its publish perms in deliverMsg().
-+	if c.isSolicitedLeafNode() {
-+		return
-+	}
- 	// We use the actual subscription to signal us to spin up the deny mperms
- 	// and cache. We check if the subject is a wildcard that intersects any of
- 	// the deny clauses.
-@@ -6264,10 +6273,17 @@ func (c *client) swapAccountAfterReload() {
- func (c *client) processSubsOnConfigReload(awcsti map[string]struct{}) {
- 	c.mu.Lock()
- 	var (
--		checkPerms = c.perms != nil
-+		// A leafnode's subscribe perms only limit what we receive, not the remote's interest.
-+		checkPerms = c.perms != nil && c.kind != LEAF
- 		checkAcc   = c.acc != nil
- 		acc        = c.acc
- 	)
-+	if checkAcc {
-+		// We actually only want to check if stream imports have changed.
-+		if _, ok := awcsti[acc.Name]; !ok {
-+			checkAcc = false
-+		}
-+	}
- 	if !checkPerms && !checkAcc {
- 		c.mu.Unlock()
- 		return
-@@ -6279,24 +6295,22 @@ func (c *client) processSubsOnConfigReload(awcsti map[string]struct{}) {
- 		removed  = _removed[:0]
- 		srv      = c.srv
- 	)
--	if checkAcc {
--		// We actually only want to check if stream imports have changed.
--		if _, ok := awcsti[acc.Name]; !ok {
--			checkAcc = false
--		}
--	}
- 	// We will clear any mperms we have here. It will rebuild on the fly with canSubscribe,
- 	// so we do that here as we collect them. We will check result down below.
--	c.mperms = nil
-+	if checkPerms {
-+		c.mperms = nil
-+	}
- 	// Collect client's subs under the lock
- 	for _, sub := range c.subs {
- 		// Just checking to rebuild mperms under the lock, will collect removed though here.
- 		// Only collect under subs array of canSubscribe and checkAcc true.
--		var allowed bool
--		if len(sub.queue) > 0 {
--			allowed = c.canSubscribe(string(sub.subject), string(sub.queue))
--		} else {
--			allowed = c.canSubscribe(string(sub.subject))
-+		allowed := true
-+		if checkPerms {
-+			if len(sub.queue) > 0 {
-+				allowed = c.canSubscribe(string(sub.subject), string(sub.queue))
-+			} else {
-+				allowed = c.canSubscribe(string(sub.subject))
-+			}
- 		}
- 		if !allowed {
- 			removed = append(removed, sub)
-```
-
-**File**: `server/leafnode_test.go` (modified, +289/-0)
-```diff
-@@ -10619,6 +10619,295 @@ func TestLeafNodeQueueScopedImportDenyFiltersBroadQueueInterest(t *testing.T) {
- 	require_Equal(t, "exact blocked", string(msg.Data))
- }
- 
-+// A remote's deny_imports only limits what the leaf receives from the hub, and
-+// deny_exports only what it sends. Replies to a hub requester must not be dropped
-+// when interest on either side overlaps an import deny.
-+func TestLeafNodeDenyImportsDoesNotDropRepliesToHub(t *testing.T) {
-+	// In each case a single kind of interest overlaps the deny. All but the first use the
-+	// old request style, so the hub's reply inbox is literal and doesn't overlap it.
-+	for _, test := range []struct {
-+		name            string
-+		oldRequestStyle bool
-+		hubQueue        bool
-+		leafWildcard    bool
-+	}{
-+		// The hub requester's response inbox (_INBOX.<id>.*) overlaps the deny.
-+		{"hub wildcard inbox", false, false, false},
-+		// A hub queue sub on a literal subject overlaps the deny.
-+		{"hub queue sub", true, true, false},
-+		// A leaf wildcard sub overlaps the deny.
-+		{"leaf wildcard sub", true, false, true},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			hconf := createConfFile(t, []byte(`
-+				server_name: "HUB"
-+				listen: "127.0.0.1:-1"
-+				leafnodes {
-+					listen: "127.0.0.1:-1"
-+				}
-+			`))
-+			hub, ohub := RunServerWithConfig(hconf)
-+			defer hub.Shutdown()
-+
-+			lconf := createConfFile(t, []byte(fmt.Sprintf(`
-+				server_name: "LEAF"
-+				listen: "127.0.0.1:-1"
-+				leafnodes {
-+					remotes: [
-+						{ url: "nats://127.0.0.1:%d", deny_imports: ["_INBOX.>"], deny_exports: ["out.secret"] }
-+					]
-+				}
-+			`, ohub.LeafNode.Port)))
-+			leaf, _ := RunServerWithConfig(lconf)
-+			defer leaf.Shutdown()
-+
-+			checkLeafNodeConnected(t, hub)
-+			checkLeafNodeConnected(t, leaf)
-+
-+			var opts []nats.Option
-+			if test.oldRequestStyle {
-+				opts = append(opts, nats.UseOldRequestStyle())
-+			}
-+			ncHub := natsConnect(t, hub.ClientURL(), opts...)
-+			defer ncHub.Close()
-+			out := natsSubSync(t, ncHub, "out.*")
-+			if test.hubQueue {
-+				natsQueueSubSync(t, ncHub, "_INBOX.queue", "q")
-+			}
-+			natsFlush(t, ncHub)
-+			checkSubInterest(t, leaf, globalAccountName, "out.public", time.Second)
-+			if test.hubQueue {
-+				checkSubInterest(t, leaf, globalAccountName, "_INBOX.queue", time.Second)
-+			}
-+
-+			ncLeaf := natsConnect(t, leaf.ClientURL())
-+			defer ncLeaf.Close()
-+			natsSub(t, ncLeaf, "svc", func(m *nats.Msg) {
-+				m.Respond([]byte("OK"))
-+			})
-+			var wildcard *nats.Subscription
-+			if test.leafWildcard {
-+				wildcard = natsSubSync(t, ncLeaf, ">")
-+			}
-+			denied := natsSubSync(t, ncLeaf, "_INBOX.leaf")
-+			natsFlush(t, ncLeaf)
-+			checkSubInterest(t, hub, globalAccountName, "svc", time.Second)
-+
-+			resp, err := ncHub.Request("svc", []byte("hello"), 2*time.Second)
-+			require_NoError(t, err)
-+			require_Equal(t, "OK", string(resp.Data))
-+
-+			// The export deny still applies to what the leaf sends.
-+			natsPub(t, ncLeaf, "out.secret", nil)
-+			natsPub(t, ncLeaf, "out.public", nil)
-+			natsFlush(t, ncLeaf)
-+			require_Equal(t, "out.public", natsNexMsg(t, out, time.Second).Subject)
-+
-+			// The import deny still keeps _INBOX traffic from the hub off the leaf.
-+			natsPub(t, ncHub, "_INBOX.leaf", nil)
-+			natsFlush(t, ncHub)
-+			if _, err := denied.NextMsg(100 * time.Millisecond); err != nats.ErrTimeout {
-+				t.Fatalf("Expected _INBOX.leaf to be denied by deny_imports, got %v", err)
-+			}
-+			// The wildcard sub also gets the leaf's own traffic, but not _INBOX.leaf.
-+			for wildcard != nil {
-+				msg, err := wildcard.NextMsg(100 * time.Millisecond)
-+				if err == nats.ErrTimeout {
-+					break
-+				}
-+				require_NoError(t, err)
-+				if msg.Subject == "_INBOX.leaf" {
-+					t.Fatalf("Expected _INBOX.leaf to be denied by deny_imports for the wildcard sub")
-+				}
-+			}
-+		})
-+	}
-+}
-+
-+// A leafnode's subs hold the remote's interest. An account update on either side must
-+// not remove it based on the leafnode's subscribe perms.
-+func TestLeafNodeAccountUpdateKeepsRemoteInterest(t *testing.T) {
-+	sysKp, sysPub := createKey(t)
-+	sysJwt := encodeClaim(t, jwt.NewAccountClaims(sysPub), sysPub)
-+	sysCreds := newUser(t, sysKp)
-+
-+	_, expPub := createKey(t)
-+	expClaim := jwt.NewAccountClaims(expPub)
-+	expClaim.Exports.Add(&jwt.Export{Subject: "feed", Type: jwt.Stream})
-+	expJwt := encodeClaim(t, expClaim, expPub)
-+
-+	aKp, aPub := createKey(t)
-+	aClaim := jwt.NewAccountClaims(aPub)
-+	aJwt := encodeClaim(t, aClaim, aPub)
-+	aCreds := newUser(t, aKp)
-+
-+	// The leaf user may receive anything, but may not publish "events".
-+	ukp, _ := nkeys.CreateUser()
-+	seed, _ := ukp.Seed()
-+	upub, _ := ukp.PublicKey()
-+	uclaim := newJWTTestUserClaims()
-+	uclaim.Subject = upub
-+	uclaim.Pub.Deny.Add("events")
-+	ujwt, err := uclaim.Encode(aKp)
-+	require_NoError(t, err)
-+	leafCreds := genCredsFile(t, ujwt, seed)
-+
-+	tmpl := `
-+		server_name: %s
-+		listen: "127.0.0.1:-1"
-+		operator: %s
-+		system_account: %s
-+		resolver: MEMORY
-+		resolver_preload: {
-+			%s: %s
-+		
-```
-
----
-
-### Incident Patch 3: `9068db70` (2026-10-28)
-**Commit Message**: [FIXED] Imported pull request kept alive by response wildcard interest (#8797)
-
-A pull request that came in through a service import would not track
-interest for the original reply subject since it was mapped as part of
-the import. Only the server handling the import can map the `_R_` reply
-back, so with the consumer leader on another server the request was kept
-alive by the import's `_R_.>` response interest until the pull request
-expired.
-
-This PR fixes that by recording the original reply subject as part of
-`Nats-Request-Info` (similar to how fast batching uses it) and checking
-interest against that reply instead.
-
-**File**: `server/client.go` (modified, +29/-0)
-```diff
-@@ -4362,6 +4362,12 @@ func isJSAckSubject(subject []byte) bool {
- 	return len(subject) > jsAckPreLen && bytesToString(subject[:jsAckPreLen]) == jsAckPre
- }
- 
-+// Test whether a message is a JetStream pull request, either directly or with an ack.
-+func isJSPullRequest(subject string, payload []byte) bool {
-+	return strings.HasPrefix(subject, jsRequestNextPre) ||
-+		(isJSAckSubject(stringToBytes(subject)) && bytes.HasPrefix(payload, AckNext))
-+}
-+
- // jsAckDeliverIdx returns the byte offset of the `@` separator in an encoded
- // `$JS.ACK....@<deliver>` reply, or -1 if reply is not in that form. Stream,
- // consumer, and subject tokens may legally contain `@`, so we accept only the
-@@ -5089,6 +5095,9 @@ func (c *client) processServiceImport(si *serviceImport, acc *Account, msg []byt
- 			// Fast batch requires knowledge of the original reply subject.
- 			if bytes.HasSuffix(c.pa.reply, []byte(FastBatchSuffix)) {
- 				ci.Reply = bytesToString(c.pa.reply)
-+			} else if ci != nil && len(c.pa.reply) > 0 && isJSPullRequest(to, msg[max(c.pa.hdr, 0):]) {
-+				// So do pull requests, for a consumer leader on another server to track the requester's interest.
-+				ci.Reply = bytesToString(c.pa.reply)
- 			}
- 			// If we did not share but the imports destination is the system account add in the server and cluster info.
- 			if !share && isSysImport {
-@@ -5923,6 +5932,26 @@ func (c *client) checkLeafClientInfoHeader(msg []byte) (dmsg []byte, setHdr bool
- 	return dmsg, setHdr
- }
- 
-+// Bind a client info header received from a leafnode to the account of the leafnode connection.
-+func (c *client) bindLeafClientInfoHeader(acc *Account, msg []byte) []byte {
-+	if c.pa.hdr < 0 || len(msg) < c.pa.hdr {
-+		return msg
-+	}
-+	cir := sliceHeader(ClientInfoHdr, msg[:c.pa.hdr])
-+	if len(cir) == 0 {
-+		return msg
-+	}
-+	var ci ClientInfo
-+	if err := json.Unmarshal(cir, &ci); err != nil || ci.Account == acc.Name {
-+		return msg
-+	}
-+	ci.Account = acc.Name
-+	if b, _ := json.Marshal(ci); b != nil {
-+		msg = c.setHeader(ClientInfoHdr, bytesToString(b), msg)
-+	}
-+	return msg
-+}
-+
- func (c *client) pubPermissionViolation(subject []byte) {
- 	errTxt := fmt.Sprintf("Permissions Violation for Publish to %q", subject)
- 	if mt, _ := c.isMsgTraceEnabled(); mt != nil {
-```
-
-**File**: `server/consumer.go` (modified, +56/-7)
-```diff
-@@ -2874,7 +2874,12 @@ func (o *consumer) processAck(subject, reply string, hdr int, rmsg []byte) {
- 		}
- 	case bytes.HasPrefix(msg, AckNext):
- 		o.processAckMsg(sseq, dseq, dc, _EMPTY_, true)
--		o.processNextMsgRequest(reply, msg[len(AckNext):])
-+		// An _R_ reply's Nats-Request-Info holds the requester's account and reply, parsed only if needed.
-+		var rci []byte
-+		if strings.HasPrefix(reply, replyPrefix) && hdr > 0 {
-+			rci = sliceHeader(ClientInfoHdr, rmsg[:hdr])
-+		}
-+		o.processNextMsgRequest(reply, msg[len(AckNext):], rci)
- 		skipAckReply = true
- 	case bytes.HasPrefix(msg, AckNak):
- 		o.processNak(sseq, dseq, dc, msg)
-@@ -4080,6 +4085,8 @@ type waitingRequest struct {
- 	next          *waitingRequest
- 	acc           *Account
- 	interest      string
-+	racc          *Account // Requester's account from Nats-Request-Info, until its interest is tracked.
-+	rreply        string   // Requester's reply from Nats-Request-Info, until its interest is tracked.
- 	reply         string
- 	n             int // For batching
- 	d             int // num delivered
-@@ -4112,6 +4119,7 @@ func (wr *waitingRequest) recycleIfDone() bool {
- func (wr *waitingRequest) recycle() {
- 	if wr != nil {
- 		wr.next, wr.acc, wr.interest, wr.reply = nil, nil, _EMPTY_, _EMPTY_
-+		wr.racc, wr.rreply = nil, _EMPTY_
- 		wrPool.Put(wr)
- 	}
- }
-@@ -4533,6 +4541,7 @@ func (o *consumer) nextWaiting(sz int) *waitingRequest {
- 				}
- 			}
- 
-+			wr.trackRequesterInterest(o.srv)
- 			if wr.acc.sl.HasInterest(wr.interest) {
- 				return o.waiting.popOrPopAndRequeue(o.cfg.PriorityPolicy)
- 			} else if time.Since(wr.received) < defaultGatewayRecentSubExpiration && (o.srv.leafNodeEnabled || o.srv.gateway.enabled) {
-@@ -4587,11 +4596,12 @@ func (o *consumer) nextWaiting(sz int) *waitingRequest {
- type nextMsgReq struct {
- 	reply string
- 	msg   []byte
-+	rci   []byte // Nats-Request-Info, for an _R_ reply of a service import
- }
- 
- var nextMsgReqPool sync.Pool
- 
--func newNextMsgReq(reply string, msg []byte) *nextMsgReq {
-+func newNextMsgReq(reply string, msg, rci []byte) *nextMsgReq {
- 	var nmr *nextMsgReq
- 	m := nextMsgReqPool.Get()
- 	if m != nil {
-@@ -4602,15 +4612,15 @@ func newNextMsgReq(reply string, msg []byte) *nextMsgReq {
- 	// When getting something from a pool it is critical that all fields are
- 	// initialized. Doing this way guarantees that if someone adds a field to
- 	// the structure, the compiler will fail the build if this line is not updated.
--	(*nmr) = nextMsgReq{reply, msg}
-+	(*nmr) = nextMsgReq{reply, msg, rci}
- 	return nmr
- }
- 
- func (nmr *nextMsgReq) returnToPool() {
- 	if nmr == nil {
- 		return
- 	}
--	nmr.reply, nmr.msg = _EMPTY_, nil
-+	nmr.reply, nmr.msg, nmr.rci = _EMPTY_, nil, nil
- 	nextMsgReqPool.Put(nmr)
- }
- 
-@@ -4635,7 +4645,12 @@ func (o *consumer) processNextMsgReq(_ *subscription, c *client, _ *Account, _,
- 		o.outq.send(newJSPubMsg(reply, _EMPTY_, _EMPTY_, hdr, nil, nil, 0))
- 		return
- 	}
--	o.nextMsgReqs.push(newNextMsgReq(reply, copyBytes(msg)))
-+	// An _R_ reply's Nats-Request-Info holds the requester's account and reply, parsed only if needed.
-+	var rci []byte
-+	if strings.HasPrefix(reply, replyPrefix) && len(hdr) > 0 {
-+		rci = copyBytes(sliceHeader(ClientInfoHdr, hdr))
-+	}
-+	o.nextMsgReqs.push(newNextMsgReq(reply, copyBytes(msg), rci))
- }
- 
- // processResetReq will reset a consumer to a new starting sequence.
-@@ -4691,7 +4706,7 @@ func (o *consumer) processResetReq(_ *subscription, c *client, a *Account, _, re
- 	}
- }
- 
--func (o *consumer) processNextMsgRequest(reply string, msg []byte) {
-+func (o *consumer) processNextMsgRequest(reply string, msg, rci []byte) {
- 	o.mu.Lock()
- 	defer o.mu.Unlock()
- 
-@@ -4801,12 +4816,21 @@ func (o *consumer) processNextMsgRequest(reply string, msg []byte) {
- 
- 	// If we receive this request though an account export, we need to track that interest subject and account.
- 	acc, interest := trackDownAccountAndInterest(o.acc, reply)
-+	// An _R_ reply of an import on another server can't be tracked down here, and always has interest.
-+	// Get the requester's account and reply from Nats-Request-Info instead.
-+	var racc *Account
-+	var rreply string
-+	if len(rci) > 0 && strings.HasPrefix(interest, replyPrefix) {
-+		racc, rreply = o.srv.requesterFromRequestInfo(rci)
-+	}
- 
- 	// Create a waiting request.
- 	wr := wrPool.Get().(*waitingRequest)
- 	wr.acc, wr.interest, wr.reply, wr.n, wr.d, wr.noWait, wr.expires, wr.hb, wr.hbt, wr.priorityGroup = acc, interest, reply, batchSize, 0, noWait, expires, hb, hbt, priorityGroup
-+	wr.racc, wr.rreply = racc, rreply
- 	wr.b = maxBytes
- 	wr.received = time.Now()
-+	wr.trackRequesterInterest(o.srv)
- 
- 	if o.cfg.PriorityPolicy == PriorityPrioritized {
- 		if err := o.waiting.addPrioritized(wr); err != nil {
-@@ -4854,6 +4878,30 @@ func trackDownAccountAndInterest(acc *Account, interest string) (*Account, strin
- 	return acc, interest
- }
- 
-+// Returns the requester's account and reply from Nats-Request-Info, if known here.
-+func (s *Server) requesterFromRequestInfo(rci []byte) (*A
-```
-
-**File**: `server/jetstream_consumer_test.go` (modified, +2/-2)
-```diff
-@@ -11333,7 +11333,7 @@ func TestJetStreamConsumerNoWaitNoMessagesOnEos(t *testing.T) {
- 	req := &JSApiConsumerGetNextRequest{NoWait: true}
- 	jreq, err := json.Marshal(req)
- 	require_NoError(t, err)
--	o.processNextMsgRequest("reply", jreq)
-+	o.processNextMsgRequest("reply", jreq, nil)
- 
- 	msg, err := sub.NextMsg(time.Second)
- 	require_NoError(t, err)
-@@ -11370,7 +11370,7 @@ func TestJetStreamConsumerNoWaitNoMessagesOnEosWithDeliveredMsgs(t *testing.T) {
- 	req := &JSApiConsumerGetNextRequest{NoWait: true, Batch: 2}
- 	jreq, err := json.Marshal(req)
- 	require_NoError(t, err)
--	o.processNextMsgRequest("reply", jreq)
-+	o.processNextMsgRequest("reply", jreq, nil)
- 
- 	msg, err := sub.NextMsg(time.Second)
- 	require_NoError(t, err)
-```
-
-**File**: `server/jetstream_super_cluster_test.go` (modified, +213/-0)
-```diff
-@@ -6777,3 +6777,216 @@ func TestJetStreamSuperClusterMoveCompletesWithoutUnvouchedPeer(t *testing.T) {
- 		require_NoError(t, sub.Unsubscribe())
- 	}
- }
-+
-+// A pull request through a service import must be dropped once the requester goes away,
-+// also with the consumer leader on another server. Its reply is the import's _R_ subject,
-+// which only the import's server can map back to the requester.
-+func TestJetStreamSuperClusterConsumerPullCrossAccountLostInterest(t *testing.T) {
-+	tmpl := `
-+		listen: 127.0.0.1:-1
-+		server_name: %s
-+		jetstream: {max_mem_store: 256MB, max_file_store: 2GB, store_dir: '%s', domain: HUB}
-+		cluster {
-+			name: %s
-+			listen: 127.0.0.1:%d
-+			routes = [%s]
-+		}
-+		accounts {
-+			JS {
-+				jetstream: enabled
-+				users = [ { user: "js", pass: "p" } ]
-+				exports [
-+					{ service: "$JS.API.CONSUMER.MSG.NEXT.>", response: stream }
-+					{ service: "$JS.ACK.>", response: stream }
-+				]
-+			}
-+			IU {
-+				users = [ { user: "iu", pass: "p" } ]
-+				imports [
-+					{ service: { subject: "$JS.API.CONSUMER.MSG.NEXT.*.*", account: JS } }
-+					{ service: { subject: "$JS.ACK.>", account: JS } }
-+				]
-+			}
-+			$SYS { users = [ { user: "admin", pass: "s3cr3t!" } ] }
-+		}
-+		leafnodes { listen: 127.0.0.1:-1 }`
-+	sc := createJetStreamSuperClusterWithTemplate(t, tmpl, 3, 2)
-+	defer sc.shutdown()
-+
-+	c1, c2 := sc.clusterForName("C1"), sc.clusterForName("C2")
-+	nc, js := jsClientConnect(t, c1.randomServer(), nats.UserInfo("js", "p"))
-+	defer nc.Close()
-+	_, err := js.AddStream(&nats.StreamConfig{
-+		Name: "TEST", Subjects: []string{"foo"}, Replicas: 3, Placement: &nats.Placement{Cluster: "C1"},
-+	})
-+	require_NoError(t, err)
-+
-+	const (
-+		KindRoute = iota
-+		KindGateway
-+		KindLateInterest
-+		KindAckNext
-+	)
-+	for _, test := range []struct {
-+		name string
-+		kind int
-+		leaf bool
-+	}{
-+		{"route", KindRoute, false},
-+		{"gateway", KindGateway, false},
-+		{"late-interest", KindLateInterest, false},
-+		{"ack-next", KindAckNext, false},
-+		{"leafnode", KindRoute, true},
-+		{"leafnode-ack-next", KindAckNext, true},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			_, err := js.AddConsumer("TEST", &nats.ConsumerConfig{
-+				Durable: test.name, AckPolicy: nats.AckExplicitPolicy, DeliverPolicy: nats.DeliverNewPolicy,
-+			})
-+			require_NoError(t, err)
-+			leader := c1.consumerLeader("JS", "TEST", test.name)
-+			s := c1.randomNonConsumerLeader("JS", "TEST", test.name)
-+			if test.kind == KindGateway {
-+				s = c2.randomServer()
-+			}
-+			pullSubj := fmt.Sprintf(JSApiRequestNextT, "TEST", test.name)
-+			if test.leaf {
-+				// The requester is behind a leafnode bound to the importing account.
-+				// It pulls through the hub's domain, which maps to the import.
-+				pullSubj = strings.Replace(pullSubj, "$JS.API.", "$JS.HUB.API.", 1)
-+				lconf := createConfFile(t, fmt.Appendf(nil, `
-+					listen: 127.0.0.1:-1
-+					server_name: LEAF-%s
-+					accounts { IU { users = [ { user: "iu", pass: "p" } ] } }
-+					leafnodes { remotes [ { url: "nats-leaf://iu:p@127.0.0.1:%d", account: IU } ] }
-+				`, test.name, s.getOpts().LeafNode.Port))
-+				ln, _ := RunServerWithConfig(lconf)
-+				defer ln.Shutdown()
-+				checkLeafNodeConnected(t, ln)
-+				checkSubInterest(t, ln, "IU", pullSubj, 2*time.Second)
-+				s = ln
-+			}
-+			nc2, _ := jsClientConnect(t, s, nats.UserInfo("iu", "p"))
-+			defer nc2.Close()
-+			if !test.leaf {
-+				checkSubInterest(t, s, "JS", pullSubj, 2*time.Second)
-+			}
-+
-+			// The leader sees the requester's interest through a route or a gateway.
-+			iu, err := leader.LookupAccount("IU")
-+			require_NoError(t, err)
-+			checkInterest := func(subj string, expected bool) {
-+				t.Helper()
-+				checkFor(t, 2*time.Second, 50*time.Millisecond, func() error {
-+					if (iu.sl.HasInterest(subj) || leader.hasGatewayInterest("IU", subj)) != expected {
-+						return fmt.Errorf("expected interest %v for %q on %s", expected, subj, leader.Name())
-+					}
-+					return nil
-+				})
-+			}
-+			checkWaiting := func(expected int, wait time.Duration) {
-+				t.Helper()
-+				checkFor(t, wait, 50*time.Millisecond, func() error {
-+					ci, err := js.ConsumerInfo("TEST", test.name)
-+					if err != nil {
-+						return err
-+					}
-+					if ci.NumWaiting != expected {
-+						return fmt.Errorf("expected %d waiting pull requests, got %d", expected, ci.NumWaiting)
-+					}
-+					return nil
-+				})
-+			}
-+			pull := func(inbox string, batch int) {
-+				t.Helper()
-+				req, err := json.Marshal(&JSApiConsumerGetNextRequest{Batch: batch, Expires: 30 * time.Second})
-+				require_NoError(t, err)
-+				require_NoError(t, nc2.PublishRequest(pullSubj, inbox, req))
-+				require_NoError(t, nc2.Flush())
-+			}
-+			receive := func(sub *nats.Subscription) {
-+				t.Helper()
-+				_, err := js.Publish("foo", []byte("ok"))
-+				require_NoError(t, err)
-+				m, err := sub.NextMsg(2 * time.Second)
-+				require_NoError(t, err)
-+				require_Equal(t, string(m.Data), "ok")
-+				require_NoError(t, m.AckSync())
-+			}
-+
-+			jsAcc, err := leader.LookupAccou
-```
-
-**File**: `server/leafnode.go` (modified, +6/-0)
-```diff
-@@ -3420,6 +3420,12 @@ func (c *client) processInboundLeafMsg(msg []byte) {
- 		return
- 	}
- 
-+	// A leafnode only speaks for the account it's bound to.
-+	// The system account is trusted to speak for others, like for JetStream API requests.
-+	if len(c.pa.reply) > 0 && c.pa.hdr > 0 && acc != srv.SystemAccount() {
-+		msg = c.bindLeafClientInfoHeader(acc, msg)
-+	}
-+
- 	// Match the subscriptions. We will use our own L1 map if
- 	// it's still valid, avoiding contention on the shared sublist.
- 	var r *SublistResult
-```
-
-**File**: `server/leafnode_test.go` (modified, +68/-0)
-```diff
-@@ -14448,3 +14448,71 @@ func TestLeafNodeLogsRemoteURL(t *testing.T) {
- 	s2.Shutdown()
- 	checkNoticeNotContains(t, l, remoteURLLogUser, remoteURLLogPassword)
- }
-+
-+// A leafnode can send a pull request with an _R_ reply and its own Nats-Request-Info.
-+// It may only speak for its own account, so the consumer must not track interest of another account.
-+func TestLeafNodeJetStreamPullForgedRequestInfo(t *testing.T) {
-+	conf := createConfFile(t, fmt.Appendf(nil, `
-+		listen: 127.0.0.1:-1
-+		jetstream: {max_mem_store: 64MB, max_file_store: 64MB, store_dir: %q}
-+		accounts {
-+			JS {
-+				jetstream: enabled
-+				users = [ { user: js, password: js }, { user: leaf, password: leaf } ]
-+			}
-+			V { users = [ { user: v, password: v } ] }
-+		}
-+		leafnodes { listen: 127.0.0.1:-1 }
-+	`, t.TempDir()))
-+	s, o := RunServerWithConfig(conf)
++func TestLeafNodeConnectInfoNotDelayedBySendingSubs(t *testing.T) {
++	o := DefaultOptions()
++	o.LeafNode.Port = -1
++	s := RunServer(o)
 +	defer s.Shutdown()
 +
-+	nc, js := jsClientConnect(t, s, nats.UserInfo("js", "js"))
-+	defer nc.Close()
-+	_, err := js.AddStream(&nats.StreamConfig{Name: "TEST", Subjects: []string{"foo"}})
++	// Block sending subs, like an account with many subs would.
++	sl := s.globalAccount().sl
++	sl.Lock()
++	defer sl.Unlock()
++
++	addr := fmt.Sprintf("127.0.0.1:%d", o.LeafNode.Port)
++	c, err := net.Dial("tcp", addr)
 +	require_NoError(t, err)
-+	_, err = js.AddConsumer("TEST", &nats.ConsumerConfig{Durable: "C", AckPolicy: nats.AckExplicitPolicy})
++	defer c.Close()
++
++	br := bufio.NewReader(c)
++	require_NoError(t, c.SetReadDeadline(time.Now().Add(2*time.Second)))
++	l, _, err := br.ReadLine()
++	require_NoError(t, err)
++	require_True(t, strings.HasPrefix(string(l), "INFO"))
++
++	_, err = c.Write([]byte("CONNECT {}\r\n"))
 +	require_NoError(t, err)
 +
-+	// Another account has interest in a subject.
-+	ncV := natsConnect(t, s.ClientURL(), nats.UserInfo("v", "v"))
-+	defer ncV.Close()
-+	natsSubSync(t, ncV, "victim.inbox")
-+	natsFlush(t, ncV)
++	// The soliciting side times out if the INFO response to CONNECT is delayed.
++	require_NoError(t, c.SetReadDeadline(time.Now().Add(2*time.Second)))
++	l, _, err = br.ReadLine()
++	require_NoError(t, err)
++	require_True(t, strings.Contains(string(l), `"connect_info":true`))
++}
+```
+
+---
+
+### Incident Patch 2: `9b7c6849` (2026-10-29)
+**Commit Message**: [FIXED] Stale leafnode connection when hub sends many subs on connect
+
+Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
+
+**File**: `server/leafnode.go` (modified, +2/-1)
+```diff
+@@ -2585,7 +2585,8 @@ func (s *Server) sendPermsAndAccountInfo(c *client) {
+ 	// s.SystemAccount() uses an atomic operation and does not get the server lock, so this is safe.
+ 	info.IsSystemAccount = c.acc == s.SystemAccount()
+ 	info.ConnectInfo = true
+-	c.enqueueProto(generateInfoJSON(info))
++	// Flush now, so it isn't delayed by sending all subs.
++	c.enqueueProtoAndFlush(generateInfoJSON(info), true)
+ 	c.mu.Unlock()
+ }
+ 
+```
+
+**File**: `server/leafnode_test.go` (modified, +32/-0)
+```diff
+@@ -15025,3 +15025,35 @@ func TestLeafNodeJetStreamPullForgedRequestInfo(t *testing.T) {
+ 	require_Equal(t, acc, "JS")
+ 	require_Equal(t, interest, "_R_.forged")
+ }
 +
-+	leafConn, err := net.DialTimeout("tcp", net.JoinHostPort(o.LeafNode.Host, fmt.Sprintf("%d", o.LeafNode.Port)), 2*time.Second)
-+	require_NoError(t, err)
-+	defer leafConn.Close()
-+	_, err = bufio.NewReader(leafConn).ReadString('\n')
-+	require_NoError(t, err)
-+	_, err = leafConn.Write([]byte("CONNECT {\"name\":\"leaf\",\"user\":\"leaf\",\"pass\":\"leaf\",\"headers\":true}\r\nPING\r\n"))
-+	require_NoError(t, err)
-+	checkLeafNodeConnected(t, s)
++func TestLeafNodeConnectInfoNotDelayedBySendingSubs(t *testing.T) {
++	o := DefaultOptions()
++	o.LeafNode.Port = -1
++	s := RunServer(o)
++	defer s.Shutdown()
 +
-+	// The leafnode claims the request came from that account.
-+	hdr := "NATS/1.0\r\n" + ClientInfoHdr + ": {\"acc\":\"V\",\"reply\":\"victim.inbox\"}\r\n\r\n"
-+	req := `{"batch":1,"expires":30000000000}`
-+	subj := fmt.Sprintf(JSApiRequestNextT, "TEST", "C")
-+	_, err = fmt.Fprintf(leafConn, "HMSG %s _R_.forged %d %d\r\n%s%s\r\n", subj, len(hdr), len(hdr)+len(req), hdr, req)
++	// Block sending subs, like an account with many subs would.
++	sl := s.globalAccount().sl
++	sl.Lock()
++	defer sl.Unlock()
++
++	addr := fmt.Sprintf("127.0.0.1:%d", o.LeafNode.Port)
++	c, err := net.Dial("tcp", addr)
++	require_NoError(t, err)
++	defer c.Close()
++
++	br := bufio.NewReader(c)
++	require_NoError(t, c.SetReadDeadline(time.Now().Add(2*time.Second)))
++	l, _, err := br.ReadLine()
++	require_NoError(t, err)
++	require_True(t, strings.HasPrefix(string(l), "INFO"))
++
++	_, err = c.Write([]byte("CONNECT {}\r\n"))
 +	require_NoError(t, err)
 +
-+	jsAcc, err := s.LookupAccount("JS")
++	// The soliciting side times out if the INFO response to CONNECT is delayed.
++	require_NoError(t, c.SetReadDeadline(time.Now().Add(2*time.Second)))
++	l, _, err = br.ReadLine()
 +	require_NoError(t, err)
-+	mset, err := jsAcc.lookupStream("TEST")
-+	require_NoError(t, err)
-+	oc := mset.lookupConsumer("C")
-+	require_NotNil(t, oc)
-+	checkFor(t, 2*time.Second, 50*time.Millisecond, func() error {
-+		oc.mu.RLock()
-+		defer oc.mu.RUnlock()
-+		if oc.waiting.len() != 1 {
-+			return fmt.Errorf("expected 1 waiting pull request, got %d", oc.waiting.len())
-+		}
-+		return nil
-+	})
-+	oc.mu.RLock()
-+	acc, interest := oc.waiting.head.acc.Name, oc.waiting.head.interest
-+	oc.mu.RUnlock()
-+	require_Equal(t, acc, "JS")
-+	require_Equal(t, interest, "_R_.forged")
++	require_True(t, strings.Contains(string(l), `"connect_info":true`))
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8813** (2026-10-29): Replace Match with MatchUntil  (@sciascid)
+- **PR #8812** (2026-10-29): Add `verify: optional` to TLS config (@neilalexander)
+- **PR #8811** (2026-10-29): [FIXED] Stale leafnode connection when hub sends many subs on connect (@MauriceVanVeen)
 - **PR #8808** (2026-10-28): [IMPROVED] Use MatchUntil in firstMatching to return early (@sciascid)
 - **PR #8807** (2026-10-28): [IMPROVED] Add LoadLastSeq to skip message loads for last subject sequence (@MauriceVanVeen)
 - **PR #8806** (2026-10-28): [IMPROVED] Skip psim walk on a miss in the second-to-last block (@MauriceVanVeen)
-- **PR #8804** (2026-10-28): Refuse auth callout when eventing is shut down (@davidfarah2003)
-- **PR #8803** (2026-10-28): [IMPROVED] Optimize `mb.prevMatchingMulti` (@sciascid)
-- **PR #8802** (2026-10-28): [FIXED] Durable mirror/source skipping messages after a consumer reset (@MauriceVanVeen)
 
 ---
 
@@ -3961,52 +2875,29 @@ interest against that reply instead.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Durable mirror/source skipping messages after a consumer reset (#8802)
+## X. [FIXED] Stale leafnode connection when hub sends many subs on connect (#8811)
 
 **RULE**:
-When implementing operations in `server/consumer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/leafnode.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6e102223`: [FIXED] Durable mirror/source skipping messages after a consumer reset (#8802). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f797bbdf`: [FIXED] Stale leafnode connection when hub sends many subs on connect (#8811). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/consumer.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/leafnode.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// resetInfo returns the consumer info for a reset to the given starting sequence.
-// Delivery resumes before the info is gathered, so report the reset point itself.
-func (o *consumer) resetInfo(seq uint64) *ConsumerInfo {
-	info := o.info()
-	if info == nil {
-		return nil
-	}
-	info.Delivered.Consumer, info.Delivered.Stream = 0, seq-1
-	info.AckFloor.Consumer, info.AckFloor.Stream = 0, seq-1
-	return info
-}
-
-		if resp.ConsumerInfo = setDynamicConsumerInfoMetadata(o.resetInfo(resetSeq)); resp.ConsumerInfo == nil {
-	errResetPending  = errors.New("reset pending")
-	// Deliveries proposed before a reset applies would mix into the delivered state after it.
-	// Only our own resets are tracked, these always have a reply when replicated.
-	if len(o.rsm) > 0 {
-		return nil, 0, errResetPending
-	}
-			if err == ErrStoreMsgNotFound || err == errDeletedMsg || err == ErrStoreEOF || err == errMaxAckPending || err == errResetPending {
-			// Dont expire oneshots if we are here because of max ack pending limit or a pending reset.
-			_, _, _, fexp := o.processWaiting(err != errMaxAckPending && err != errResetPending)
+	// Flush now, so it isn't delayed by sending all subs.
+	c.enqueueProtoAndFlush(generateInfoJSON(info), true)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		if resp.ConsumerInfo = setDynamicConsumerInfoMetadata(o.info()); resp.ConsumerInfo == nil {
-			if err == ErrStoreMsgNotFound || err == errDeletedMsg || err == ErrStoreEOF || err == errMaxAckPending {
-			// Dont expire oneshots if we are here because of max ack pending limit.
-			_, _, _, fexp := o.processWaiting(err != errMaxAckPending)
+	c.enqueueProto(generateInfoJSON(info))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6e102223` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f797bbdf` are properly handled with clean fallback behavior.
