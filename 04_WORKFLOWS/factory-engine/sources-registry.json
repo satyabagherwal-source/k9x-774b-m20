@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T08:41:48.460Z",
-    "lastVerified": "2026-10-30T08:41:48.460Z",
+    "lastChecked": "2026-10-30T08:56:45.337Z",
+    "lastVerified": "2026-10-30T08:56:45.337Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -343,9 +343,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T07:46:07.405Z",
+    "lastChecked": "2026-10-30T08:53:37.000Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T07:46:07.405Z"
+    "lastVerified": "2026-10-30T08:53:37.000Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -802,14 +802,14 @@
     "officialUrl": "https://github.com/gardener/gardener",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T20:22:19.774Z",
-    "lastVerified": "2026-10-28T20:22:19.774Z",
+    "lastChecked": "2026-10-30T08:53:33.509Z",
+    "lastVerified": "2026-10-30T08:53:33.509Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gardener-gardener",
-    "contentHash": "1d05f95a0ada2fc4690673b25f8dda9cf82bd4787c56881c626d66c46e6cf8cd",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "contentHash": "e04cb5e95ea97271e3ab4da9c13b1e20990220c5d4587643804522f443915ca9",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2107,12 +2107,12 @@
     "lastVerified": "2026-10-28T22:45:43.332Z"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T04:34:52.759Z",
-    "lastVerified": "2026-10-30T04:34:52.759Z",
+    "lastChecked": "2026-10-30T08:53:32.028Z",
+    "lastVerified": "2026-10-30T08:53:32.028Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -2121,7 +2121,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "22c4a97a"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -4787,9 +4788,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-10-28T15:16:23.530Z",
+    "lastChecked": "2026-10-30T08:53:21.955Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-10-28T15:16:23.530Z"
+    "lastVerified": "2026-10-30T08:53:21.955Z"
   },
   "hf-deepseek-ai-deepseek-v3": {
     "name": "deepseek-ai/DeepSeek-V3",
@@ -6783,14 +6784,14 @@
     "officialUrl": "https://github.com/tursodatabase/limbo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T19:32:00.549Z",
-    "lastVerified": "2026-10-28T19:32:00.549Z",
+    "lastChecked": "2026-10-30T08:53:39.193Z",
+    "lastVerified": "2026-10-30T08:53:39.193Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "dc280eae6f46aac6750cab824fe4bdbb0b878794e02ab80d73eb1bcaa8c74a36",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "contentHash": "203c7d657158b7d9444b35c1e2e03e4d896fedc776c25eb3cb1cdef7dab74967",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9598,5 +9599,19 @@
     "lastChecked": "2026-10-30T08:36:21.917Z",
     "revisionIdentifier": "2e96f4f7",
     "lastVerified": "2026-10-30T08:36:21.917Z"
+  },
+  "scrapy-plugins-scrapy-selenium": {
+    "name": "scrapy-selenium",
+    "officialUrl": "https://github.com/scrapy-plugins/scrapy-selenium",
+    "lastChecked": "2026-10-30T08:53:24.504Z",
+    "revisionIdentifier": "0eef52b5",
+    "lastVerified": "2026-10-30T08:53:24.504Z"
+  },
+  "lessica-trollfools": {
+    "name": "TrollFools",
+    "officialUrl": "https://github.com/Lessica/TrollFools",
+    "lastChecked": "2026-10-30T08:53:26.964Z",
+    "revisionIdentifier": "c5c87b85",
+    "lastVerified": "2026-10-30T08:53:26.964Z"
   }
 }

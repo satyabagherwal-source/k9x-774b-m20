@@ -6162,3 +6162,5 @@
 | `CYCLE-20261030-C8E4` | `2026-10-30T08:20:08.957Z` | `yattee/yattee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5683, Rule 5684, Rule 5685` | Yes (`46ed292c...`) |
 | `CYCLE-20261030-316A` | `2026-10-30T08:40:59.314Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5686, Rule 5687, Rule 5688` | Yes (`94cb7405...`) |
 | `CYCLE-20261030-414Z` | `2026-10-30T08:41:45.923Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5689, Rule 5690` | Yes (`50a515b1...`) |
+| `CYCLE-20261030-LJEW` | `2026-10-30T08:55:22.760Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5691, Rule 5692, Rule 5693` | Yes (`e04cb5e9...`) |
+| `CYCLE-20261030-N95J` | `2026-10-30T08:56:42.775Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5694, Rule 5695, Rule 5696` | Yes (`203c7d65...`) |

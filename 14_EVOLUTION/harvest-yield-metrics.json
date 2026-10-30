@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T08:41:45.929Z",
-  "total_cycles_completed": 6139,
-  "total_learnings_persisted": 6139,
-  "total_rules_promoted": 5660,
+  "last_updated": "2026-10-30T08:56:42.784Z",
+  "total_cycles_completed": 6141,
+  "total_learnings_persisted": 6141,
+  "total_rules_promoted": 5666,
   "history": [
-    {
-      "timestamp": "2026-10-28T22:26:37.031Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T22:26:41.375Z",
-      "repository": "higress-group/higress",
-      "learningId": "learn-github-higress-group-higress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T22:26:48.378Z",
       "repository": "t8y2/dbx",
@@ -1403,6 +1389,20 @@
       "repository": "mitmproxy/mitmproxy",
       "learningId": "learn-github-mitmproxy-mitmproxy",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T08:55:22.769Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T08:56:42.784Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

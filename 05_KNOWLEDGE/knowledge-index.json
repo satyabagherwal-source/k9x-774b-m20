@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T08:41:45.863Z",
+  "last_updated": "2026-10-30T08:56:42.699Z",
   "total_verified_learnings": 1173,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13514,8 +13514,8 @@
       "slug": "gardener-gardener",
       "platform": "github",
       "source_url": "https://github.com/gardener/gardener",
-      "source_version": "753bf1fd",
-      "content_hash": "1d05f95a0ada2fc4690673b25f8dda9cf82bd4787c56881c626d66c46e6cf8cd",
+      "source_version": "9072454f",
+      "content_hash": "e04cb5e95ea97271e3ab4da9c13b1e20990220c5d4587643804522f443915ca9",
       "dossier_path": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gardener-gardener-learnings.md",
       "promoted_rules": [
@@ -13583,6 +13583,21 @@
           "number": 5396,
           "title": "kyverno:allow-secrets ClusterRole missing patch verb for Secrets (#16113)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5691,
+          "title": "Decoupled Bootstrap vs. Runtime Endpoint Routing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5692,
+          "title": "Client-Go Log Deduplication & Warning Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5693,
+          "title": "Machine-Controller Health Check State Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13590,7 +13605,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T20:22:20.104Z",
+      "verified_at": "2026-10-30T08:55:22.666Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54306,13 +54321,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "b0563444",
-      "content_hash": "d1ffe8b80c033e36d3a38be54e6d2774fef6d2ddf318c89cf154128281c4e7a5",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "e70cdbcd",
+      "content_hash": "203c7d657158b7d9444b35c1e2e03e4d896fedc776c25eb3cb1cdef7dab74967",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -54383,6 +54398,21 @@
           "number": 5382,
           "title": "Merge 'build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript' f",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5694,
+          "title": "Invariant Defense for Synthetically Injected AST Projections",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5695,
+          "title": "Schema-Level Determinism Enforcement for Persistent Expressions",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5696,
+          "title": "Cooperative Microtask Polling in Async I/O Storage Drivers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54390,7 +54420,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:07:53.834Z",
+      "verified_at": "2026-10-30T08:56:42.680Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -152149,6 +152179,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T08:41:45.851Z"
+    },
+    "rule-5691": {
+      "learning_id": "rule-5691",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5691,
+      "title": "Decoupled Bootstrap vs. Runtime Endpoint Routing",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "9072454f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:55:22.666Z"
+    },
+    "rule-5692": {
+      "learning_id": "rule-5692",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5692,
+      "title": "Client-Go Log Deduplication & Warning Isolation",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "9072454f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:55:22.666Z"
+    },
+    "rule-5693": {
+      "learning_id": "rule-5693",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5693,
+      "title": "Machine-Controller Health Check State Invariant",
+      "source_url": "https://github.com/gardener/gardener",
+      "source_version": "9072454f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:55:22.666Z"
+    },
+    "rule-5694": {
+      "learning_id": "rule-5694",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5694,
+      "title": "Invariant Defense for Synthetically Injected AST Projections",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "e70cdbcd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:56:42.680Z"
+    },
+    "rule-5695": {
+      "learning_id": "rule-5695",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5695,
+      "title": "Schema-Level Determinism Enforcement for Persistent Expressions",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "e70cdbcd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:56:42.680Z"
+    },
+    "rule-5696": {
+      "learning_id": "rule-5696",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5696,
+      "title": "Cooperative Microtask Polling in Async I/O Storage Drivers",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "e70cdbcd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:56:42.680Z"
     }
   },
   "aliases": {

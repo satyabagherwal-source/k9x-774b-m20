@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-6ORN",
-    "timestamp": "2026-10-28T03:04:34.019Z",
-    "repository": "storybookjs/storybook",
-    "learningId": "learn-github-storybookjs-storybook",
-    "contentHash": "48b2cd700e9b8b66dff819288edb86355433788f0423e6a2f29bfe93be6e9df7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-FJ8X",
-    "timestamp": "2026-10-28T03:11:26.769Z",
-    "repository": "sentence-transformers/all-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-    "contentHash": "14ba29c79d03a04b711d69f5ab35dd18015998e50b831966483427c7a068e6d3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-NYQV",
     "timestamp": "2026-10-28T03:18:00.104Z",
     "repository": "appwrite/appwrite",
@@ -7492,6 +7462,36 @@
     "contentHash": "50a515b1b890604af918a5e0e37cba3315ecb35e94371af20fdb74098135dd7c",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-LJEW",
+    "timestamp": "2026-10-30T08:55:22.760Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "e04cb5e95ea97271e3ab4da9c13b1e20990220c5d4587643804522f443915ca9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-N95J",
+    "timestamp": "2026-10-30T08:56:42.775Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "203c7d657158b7d9444b35c1e2e03e4d896fedc776c25eb3cb1cdef7dab74967",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
