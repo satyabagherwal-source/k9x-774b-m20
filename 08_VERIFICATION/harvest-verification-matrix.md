@@ -6081,3 +6081,5 @@
 | `CYCLE-20261029-FTQZ` | `2026-10-29T23:59:03.515Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5559, Rule 5560, Rule 5561` | Yes (`469f8025...`) |
 | `CYCLE-20261030-IM66` | `2026-10-30T00:01:13.662Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5562, Rule 5563` | Yes (`66237bc5...`) |
 | `CYCLE-20261030-IMHL` | `2026-10-30T00:01:14.073Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5562, Rule 5563, Rule 5564` | Yes (`5590c56e...`) |
+| `CYCLE-20261030-R7OR` | `2026-10-30T00:07:54.795Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5565` | Yes (`5722a712...`) |
+| `CYCLE-20261030-RD87` | `2026-10-30T00:08:01.975Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2030` | Yes (`f74a8958...`) |

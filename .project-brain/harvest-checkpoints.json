@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T00:01:14.087Z",
+  "last_updated": "2026-10-30T00:08:01.988Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5961,14 +5961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clementtsang-bottom",
-      "content_hash": "5324261db0b71c9c81430e940f1c1198d90e473ed72df47c79ab1ec2039d27e3",
-      "verified_at": "2026-10-28T01:22:15.173Z",
+      "content_hash": "5722a71203ad8a2b5565ca72232fb21bbd77a7ad36bf23ee01931ea5df3abc3a",
+      "verified_at": "2026-10-30T00:07:54.809Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:22:15.173Z"
+      "last_updated": "2026-10-30T00:07:54.809Z"
     },
     "jhen0409/react-native-debugger": {
       "repository": "jhen0409/react-native-debugger",
@@ -7566,14 +7566,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crossplane-crossplane",
-      "content_hash": "a92fe8c30a85aebf31c9bc37120963e80ec6ad882635f9be3bb1e8878c67b394",
-      "verified_at": "2026-10-28T15:16:36.637Z",
+      "content_hash": "f74a89586f2f682040831fd22a069dcccdd2d985f508ca27e3588ce02b0d86ee",
+      "verified_at": "2026-10-30T00:08:01.987Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T15:16:36.637Z"
+      "last_updated": "2026-10-30T00:08:01.987Z"
     },
     "apple/foundationdb": {
       "repository": "apple/foundationdb",

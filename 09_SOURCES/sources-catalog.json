@@ -3893,10 +3893,10 @@
     "repository": "ClementTsang/bottom",
     "platform": "github",
     "sourceUrl": "https://github.com/ClementTsang/bottom",
-    "sourceVersion": "fdc61caf",
+    "sourceVersion": "dbf91d4b",
     "license": "MIT",
-    "contentHash": "5324261db0b71c9c81430e940f1c1198d90e473ed72df47c79ab1ec2039d27e3",
-    "lastHarvestedAt": "2026-10-28T01:22:15.164Z",
+    "contentHash": "5722a71203ad8a2b5565ca72232fb21bbd77a7ad36bf23ee01931ea5df3abc3a",
+    "lastHarvestedAt": "2026-10-30T00:07:54.800Z",
     "learningId": "learn-github-clementtsang-bottom"
   },
   "jhen0409-react-native-debugger": {
@@ -4963,10 +4963,10 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "21e97313",
+    "sourceVersion": "76a72bee",
     "license": "Apache-2.0",
-    "contentHash": "a92fe8c30a85aebf31c9bc37120963e80ec6ad882635f9be3bb1e8878c67b394",
-    "lastHarvestedAt": "2026-10-28T15:16:36.628Z",
+    "contentHash": "f74a89586f2f682040831fd22a069dcccdd2d985f508ca27e3588ce02b0d86ee",
+    "lastHarvestedAt": "2026-10-30T00:08:01.978Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {

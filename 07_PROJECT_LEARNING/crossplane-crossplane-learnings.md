@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source**: github ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
-> **Source Version**: `21e97313`  
+> **Source Version**: `76a72bee`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T15:16:36.320Z  
+> **Timestamp**: 2026-10-30T00:08:01.561Z  
 > **Learning ID**: `learn-github-crossplane-crossplane`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T15:16:36.201Z  
+> **Harvest Timestamp**: 2026-10-30T00:08:01.274Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud Native Control Plane
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12201 stars
+- **Stars / Engagement**: 12204 stars
 
 ---
 
@@ -1525,85 +1525,370 @@ type startCommand struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a9ed0775` (2026-10-27)
+### Incident Patch 1: `e6b8e86a` (2026-10-28)
 **Commit Message**: chore(deps): update vulnerable dependencies [security]
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `apis/go.mod` (modified, +4/-4)
 ```diff
-@@ -65,7 +65,7 @@ require (
- 	github.com/dustin/go-humanize v1.0.1 // indirect
- 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
- 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
--	github.com/go-chi/chi/v5 v5.3.0 // indirect
-+	github.com/go-chi/chi/v5 v5.4.0 // indirect
- 	github.com/go-errors/errors v1.4.2 // indirect
- 	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
- 	github.com/go-openapi/analysis v0.25.2 // indirect
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -188,8 +188,8 @@ github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S
- github.com/fsnotify/fsnotify v1.9.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
- github.com/fxamacker/cbor/v2 v2.9.0 h1:NpKPmjDBgUfBms6tr6JZkTHtfFGcMKsw3eGcmD/sapM=
- github.com/fxamacker/cbor/v2 v2.9.0/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
--github.com/go-chi/chi/v5 v5.3.0 h1:halUjDxhshgXHMrao5bB8eNBXo/rnzwr8m5m36glehM=
--github.com/go-chi/chi/v5 v5.3.0/go.mod h1:R+tYY2hNuVUUjxoPtqUdgBqevM9s9njzkTLutVsOCto=
-+github.com/go-chi/chi/v5 v5.4.0 h1:+ufzvFTGKyin26Or5DLrlIDq4ygIDBVcj7oVNeeaYFE=
-+github.com/go-chi/chi/v5 v5.4.0/go.mod h1:d1IG7GtKPSjPyBP365PH8sAGVHk3qfB/IhjFNRH1wWM=
- github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxIA=
- github.com/go-errors/errors v1.4.2/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
- github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
-```
-
-**File**: `nix/vendor-hashes.nix` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
- # by hand.)
- {
-   # Root module: github.com/crossplane/crossplane/v2
--  root = "sha256-TgXWrBa2HNrnfvr5LFQyHiHEBjuE55l2wVQoam70Ca4=";
-+  root = "sha256-YA6ZZHJvpOKVZKmBP/7oDfSzASPVgtz7rbI3khPv0yY=";
- 
-   # apis module: github.com/crossplane/crossplane/apis/v2
-   apis = "sha256-jqLo8KpfkMdu2wl1MWkhLJ5dCXgnXyXv7xk9nZfIoWI=";
-```
-
-**File**: `test/e2e/functions/revision-id/go.mod` (modified, +1/-1)
-```diff
-@@ -64,7 +64,7 @@ require (
- 	golang.org/x/tools v0.49.0 // indirect
- 	golang.org/x/tools/go/packages/packagestest v0.1.1-deprecated // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
--	google.golang.org/grpc v1.83.1 // indirect
-+	google.golang.org/grpc v1.83.2 // indirect
+@@ -47,11 +47,11 @@ require (
+ 	go.uber.org/zap v1.27.1 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.3 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.4 // indirect
+-	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.34.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/term v0.46.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/term v0.47.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.14.0 // indirect
  	google.golang.org/protobuf v1.36.11 // indirect
  	gopkg.in/inf.v0 v0.9.1 // indirect
- 	gopkg.in/yaml.v2 v2.4.0 // indirect
 ```
 
-**File**: `test/e2e/functions/revision-id/go.sum` (modified, +2/-2)
+**File**: `apis/go.sum` (modified, +12/-12)
 ```diff
-@@ -220,8 +220,8 @@ gonum.org/v1/gonum v0.17.0 h1:VbpOemQlsSMrYmn7T2OUvQ4dqxQXU+ouZFQsZOx50z4=
- gonum.org/v1/gonum v0.17.0/go.mod h1:El3tOrEuMpv2UdMrbNlKEh9vd86bmQ6vqIcDwxEOc1E=
- google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa h1:mZHHdPZl0dbGHCflZgAq/Q468DWVFcU2whhB2KAo8fk=
- google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa/go.mod h1:4Hqkh8ycfw05ld/3BWL7rJOSfebL2Q+DVDeRgYgxUU8=
--google.golang.org/grpc v1.83.1 h1:HIO0+BEtBP6soyqvqC8sNUjZ7bTs+0hFQuFF+RAy++Y=
--google.golang.org/grpc v1.83.1/go.mod h1:kDyl6SKsiHKt0uylY5gtn5cEjkrIOhQOGDgIc4JGwzQ=
-+google.golang.org/grpc v1.83.2 h1:EManeRomTObA0BU7I8vXgg/78uE5MJ9M8B39EX2WscU=
-+google.golang.org/grpc v1.83.2/go.mod h1:YPI1hK3kDked6iHvgX3tR0y+nX/qpMFKhPgFsokw1S8=
+@@ -114,22 +114,22 @@ go.yaml.in/yaml/v3 v3.0.4 h1:tfq32ie2Jv2UxXFdLJdh3jXuOzWiL1fo0bu/FbuKpbc=
+ go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
+ golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
+ golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.34.0 h1:hqK/t4AKgbqWkdkcAeI8XLmbK+4m4G5YeQRrmiotGlw=
+ golang.org/x/oauth2 v0.34.0/go.mod h1:lzm5WQJQwKZ3nwavOZ3IS5Aulzxi68dUSgRHujetwEA=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+-golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
+-golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
+-golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
+-golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
++golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
++golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
++golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
+ golang.org/x/time v0.14.0 h1:MRx4UaLrDotUKUdCIqzPC48t1Y9hANFKIRpNx+Te8PI=
+ golang.org/x/time v0.14.0/go.mod h1:eL/Oa2bBBK0TkX57Fyni+NgnyQQN4LitPmob2Hjnqw4=
+-golang.org/x/tools v0.49.0 h1:3NI7VXzL9+1WZD52Dx2ttoPwD5DWrFGpl9mFZDlmisI=
+-golang.org/x/tools v0.49.0/go.mod h1:SJNXV9DBKT0UbdttsQjbfJlAE/q+y36++zo3uL3N0Oo=
++golang.org/x/tools v0.51.0 h1:k4Xc/1Om9jwkBJBo4NVLMSARBoWtK10mx+W5BnXCeAI=
++golang.org/x/tools v0.51.0/go.mod h1:9eEncMayCV6zRMGhR5eZEC2iBx98qWcF1HZ9Z7wJOoA=
  google.golang.org/protobuf v1.36.11 h1:fV6ZwhNocDyBLK0dj+fg8ektcVegBBuEolpbTQyBNVE=
  google.golang.org/protobuf v1.36.11/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
  gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 ```
 
+**File**: `go.mod` (modified, +8/-8)
+```diff
+@@ -15,7 +15,7 @@ require (
+ 	github.com/google/go-containerregistry v0.22.1
+ 	github.com/robfig/cron/v3 v3.0.1
+ 	github.com/spf13/afero v1.15.0
+-	golang.org/x/sync v0.23.0
++	golang.org/x/sync v0.24.0
+ 	google.golang.org/grpc v1.84.0
+ 	google.golang.org/protobuf v1.36.12
+ 	k8s.io/api v0.35.3
+@@ -67,7 +67,7 @@ require (
+ 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
+ 	github.com/go-chi/chi/v5 v5.4.0 // indirect
+ 	github.com/go-errors/errors v1.4.2 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-openapi/analysis v0.25.2 // indirect
+ 	github.com/go-openapi/errors v0.22.7 // indirect
+ 	github.com/go-openapi/loads v0.23.3 // indirect
+@@ -212,15 +212,15 @@ require (
+ 	go.opentelemetry.io/otel/trace v1.45.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.uber.org/zap v1.28.0 // indirect
+-	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/term v0.46.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/term v0.47.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.15.0 // indirect
+-	golang.org/x/tools v0.49.0 // indirect
++	golang.org/x/tools v0.51.0 // indirect
+ 	gomodules.xyz/jsonpatch/v2 v2.5.0 // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260720211330-0afa2a65878a // indirect
+ 	gopkg.in/inf.v0 v0.9.1 // indirect
+```
+
+**File**: `go.sum` (modified, +16/-16)
+```diff
+@@ -192,8 +192,8 @@ github.com/go-chi/chi/v5 v5.4.0 h1:+ufzvFTGKyin26Or5DLrlIDq4ygIDBVcj7oVNeeaYFE=
+ github.com/go-chi/chi/v5 v5.4.0/go.mod h1:d1IG7GtKPSjPyBP365PH8sAGVHk3qfB/IhjFNRH1wWM=
+ github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxIA=
+ github.com/go-errors/errors v1.4.2/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
+ github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
+ github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
+@@ -600,8 +600,8 @@ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPh
+ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
+ golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+ golang.org/x/crypto v0.17.0/go.mod h1:gCAAfMLgwOJRpTjQ2zCCt2OcSfYMTeZVSRtQlPC7Nq4=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa h1:Zt3DZoOFFYkKhDT3v7Lm9FDMEV06GpzjG2jrqW+QTE0=
+ golang.org/x/exp v0.0.0-20260218203240-3dfff04db8fa/go.mod h1:K79w1Vqn7PoiZn+TkNpx3BUWUQksGO3JcVX6qIjytmA=
+ golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+@@ -622,17 +622,17 @@ golang.org/x/net v0.0.0-20220607020251-c690dde0001d/go.mod h1:XRhObCWvk6IyKnWLug
+ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
+ golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
+ golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+ golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+@@ -656,33 +656,33 @@ golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.15.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+ golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
+ golang.org/x/term v0.8.0/go.mod h1:xPskH00ivmX89bAKVGSKKt
+```
+
+**File**: `nix/vendor-hashes.nix` (modified, +2/-2)
+```diff
+@@ -12,8 +12,8 @@
+ # by hand.)
+ {
+   # Root module: github.com/crossplane/crossplane/v2
+-  root = "sha256-YA6ZZHJvpOKVZKmBP/7oDfSzASPVgtz7rbI3khPv0yY=";
++  root = "sha256-GvTrfk/0dX3keeOYkCmaUkoddW7u0mMP5+ncW9jS7NA=";
+ 
+   # apis module: github.com/crossplane/crossplane/apis/v2
+-  apis = "sha256-jqLo8KpfkMdu2wl1MWkhLJ5dCXgnXyXv7xk9nZfIoWI=";
++  apis = "sha256-dGfchRqTv/XPEuaZ9MnpoOJ+oGNEjhNNL5JUUy/nd8s=";
+ }
+```
+
+**File**: `test/e2e/functions/revision-id/go.mod` (modified, +6/-6)
+```diff
+@@ -54,14 +54,14 @@ require (
+ 	go.yaml.in/yaml/v2 v2.4.2 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.4 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/sync v0.23.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/term v0.46.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
++	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/term v0.47.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.11.0 // indirect
+-	golang.org/x/tools v0.49.0 // indirect
++	golang.org/x/tools v0.51.0 // indirect
+ 	golang.org/x/tools/go/packages/packagestest v0.1.1-deprecated // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+ 	google.golang.org/grpc v1.83.2 // indirect
+```
+
+**File**: `test/e2e/functions/revision-id/go.sum` (modified, +12/-12)
+```diff
+@@ -177,35 +177,35 @@ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn
+ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+-golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
+-golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
++golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+-golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
+-golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
++golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
++golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
+ golang.org/x/time v0.11.0 h1:/bpjEDfN9tkoN/ryeYHnv5hcMlc8ncjMcM4XBk5NWV0=
+ golang.org/x/time v0.11.0/go.mod h1:CDIdPxbZBQxdj6cxyCIdrNogrJKMJ7pr37NYpMcMDSg=
+ golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+ golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
+ golang.org/x/tools v0.0.0-20200619180055-7c47624df98f/go.mod h1:EkVYQZoAsY45+roYkvgYkIh4xh/qjgUK9TdY2XT94GE=
+ golang.org/x/tools v0.0.0-20210106214847-113979e3529a/go.mod h1:emZCQorbCU4vsT4fOWvOPXz4eW1wZW4PmDk9uLelYpA=
+-golang.org/x/tools v0.49.0 h1:3NI7VXzL9+1WZD52Dx2ttoPwD5DWrFGpl9mFZDlmisI=
+-golang.org/x/tools v0.49.0/go.mod h1:SJNXV9DBKT0UbdttsQjbfJlAE/q+y36++zo3uL3N0Oo=
++golang.org/x/tools v0.51.0 h1:k4Xc/1Om9jwkBJBo4NVLMSARBoWtK10mx+W5BnXCeAI=
++golang.org/x/tools v0.51.0/go.mod h1:9eEncMayCV6zRMGhR5eZEC2iBx98qWcF1HZ9Z7wJOoA=
+ golang.org/x/tools/go/expect v0.1.0-deprecated h1:jY2C5HGYR5lqex3gEniOQL0r7Dq5+VGVgY1nudX5lXY=
+ golang.org/x/tools/go/expect v0.1.0-deprecated/go.mod h1:eihoPOH+FgIqa3FpoTwguz/bVUSGBlGQU67vpBeOrBY=
+ golang.org/x/tools/go/packages/packagestest v0.1.1-deprecated h1:1h2MnaIAIXISqTFKdENegdpAgUXz6NrPEsbIeWaBRvM=
+```
+
+---
+
+### Incident Patch 2: `e96ea0b3` (2026-10-29)
+**Commit Message**: Merge pull request #7970 from aniketatgithub/fix-7965-imageconfig-runtime
+
+Enqueue package revisions for runtime-only ImageConfigs
+
+**File**: `internal/controller/pkg/revision/watch.go` (modified, +14/-2)
+```diff
+@@ -48,6 +48,17 @@ func hasRewriteRules(ic *v1beta1.ImageConfig) bool {
+ 	return ic.Spec.RewriteImage != nil
+ }
+ 
++// hasRuntimeConfig returns true if the ImageConfig references a runtime config.
++func hasRuntimeConfig(ic *v1beta1.ImageConfig) bool {
++	if ic.Spec.Runtime == nil {
++		return false
++	}
++	if ic.Spec.Runtime.ConfigReference == nil {
++		return false
++	}
++	return ic.Spec.Runtime.ConfigReference.Name != ""
++}
++
+ // EnqueuePackageRevisionsForImageConfig enqueues a reconcile for all package
+ // revisions an ImageConfig applies to.
+ func EnqueuePackageRevisionsForImageConfig(kube client.Client, l v1.PackageRevisionList, log logging.Logger) handler.EventHandler {
+@@ -56,8 +67,9 @@ func EnqueuePackageRevisionsForImageConfig(kube client.Client, l v1.PackageRevis
+ 		if !ok {
+ 			return nil
+ 		}
+-		// We only care about ImageConfigs that have a pull secret or rewrite rules.
+-		if !hasPullSecret(ic) && !hasRewriteRules(ic) {
++		// We only care about ImageConfigs that have a pull secret, rewrite
++		// rules, or a runtime config.
++		if !hasPullSecret(ic) && !hasRewriteRules(ic) && !hasRuntimeConfig(ic) {
+ 			return nil
+ 		}
+ 		// Enqueue all package revisions matching the prefixes in the ImageConfig.
+```
+
+**File**: `internal/controller/pkg/revision/watch_test.go` (modified, +47/-0)
+```diff
+@@ -287,6 +287,53 @@ func TestEnqueuePackageRevisionsForImageConfig(t *testing.T) {
+ 				},
+ 			},
+ 		},
++		"SuccessfulWithRuntimeConfig": {
++			reason: "Should enqueue matching package revisions when ImageConfig only references a runtime config",
++			params: params{
++				kube: &test.MockClient{
++					MockList: test.NewMockListFn(nil, func(obj client.ObjectList) error {
++						list := obj.(*v1.ProviderRevisionList)
++						list.Items = []v1.ProviderRevision{
++							{
++								ObjectMeta: metav1.ObjectMeta{Name: "provider-aws-abc123"},
++								Spec: v1.ProviderRevisionSpec{
++									PackageRevisionSpec: v1.PackageRevisionSpec{
++										Package: "xpkg.upbound.io/upbound/provider-aws:v1.0.0",
++									},
++								},
++							},
++							{
++								ObjectMeta: metav1.ObjectMeta{Name: "provider-gcp-def456"},
++								Spec: v1.ProviderRevisionSpec{
++									PackageRevisionSpec: v1.PackageRevisionSpec{
++										Package: "xpkg.crossplane.io/crossplane-contrib/provider-gcp:v1.0.0",
++									},
++								},
++							},
++						}
++						return nil
++					}),
++				},
++				l:   &v1.ProviderRevisionList{},
++				log: logging.NewNopLogger(),
++				obj: &v1beta1.ImageConfig{
++					ObjectMeta: metav1.ObjectMeta{Name: "test-config"},
++					Spec: v1beta1.ImageConfigSpec{
++						MatchImages: []v1beta1.ImageMatch{
++							{Prefix: "xpkg.upbound.io/upbound/"},
++						},
++						Runtime: &v1beta1.ImageRuntime{
++							ConfigReference: &v1beta1.RuntimeConfigReference{Name: "my-runtime-config"},
++						},
++					},
++				},
++			},
++			want: want{
++				reqs: []reconcile.Request{
++					{NamespacedName: types.NamespacedName{Name: "provider-aws-abc123"}},
++				},
++			},
++		},
+ 		"NoMatchingPackageRevisions": {
+ 			reason: "Should not enqueue when no package revisions match the prefix",
+ 			params: params{
+```
+
 #### Recent Merged Pull Requests:
-- **PR #7976** (2026-10-28): chore(deps): lock file maintenance (release-2.4) (@crossplane-renovate[bot])
-- **PR #7975** (2026-10-28): chore(deps): lock file maintenance (release-2.3) (@crossplane-renovate[bot])
-- **PR #7974** (2026-10-28): chore(deps): lock file maintenance (release-2.2) (@crossplane-renovate[bot])
-- **PR #7971** (2026-10-28): docs: add Wordfully to adopters (@vlbaluk)
-- **PR #7969** (2026-10-28): chore(deps): update module github.com/go-chi/chi/v5 to v5.4.0 [security] (release-2.4) (@crossplane-renovate[bot])
-- **PR #7968** (2026-10-28): chore(deps): update module github.com/go-chi/chi/v5 to v5.4.0 [security] (release-2.3) (@crossplane-renovate[bot])
+- **PR #7992** (2026-10-29): feat(apis): add a deletion policy to Compositions (@lsviben)
+- **PR #7988** (2026-10-28): chore(deps): lock file maintenance (release-2.4) (@crossplane-renovate[bot])
+- **PR #7987** (2026-10-28): chore(deps): lock file maintenance (release-2.3) (@crossplane-renovate[bot])
+- **PR #7986** (2026-10-28): chore(deps): lock file maintenance (release-2.2) (@crossplane-renovate[bot])
+- **PR #7983** (2026-10-28): chore(deps): update vulnerable dependencies [security] (release-2.4) (@crossplane-renovate[bot])
+- **PR #7982** (2026-10-28): chore(deps): update vulnerable dependencies [security] (release-2.3) (@crossplane-renovate[bot])
 
 ---
 
@@ -1626,25 +1911,31 @@ Observed empirical fixes and code patches:
 ## X. deps): update vulnerable dependencies [security]
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apis/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a9ed0775`: deps): update vulnerable dependencies [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e6b8e86a`: deps): update vulnerable dependencies [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `apis/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/go-chi/chi/v5 v5.4.0 // indirect
+	golang.org/x/net v0.62.0 // indirect
+	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/term v0.47.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/go-chi/chi/v5 v5.3.0 // indirect
+	golang.org/x/net v0.60.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/term v0.46.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a9ed0775` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e6b8e86a` are properly handled with clean fallback behavior.

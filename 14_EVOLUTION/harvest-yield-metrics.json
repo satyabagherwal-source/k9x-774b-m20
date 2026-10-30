@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T00:01:14.083Z",
-  "total_cycles_completed": 6058,
-  "total_learnings_persisted": 6058,
-  "total_rules_promoted": 5531,
+  "last_updated": "2026-10-30T00:08:01.984Z",
+  "total_cycles_completed": 6060,
+  "total_learnings_persisted": 6060,
+  "total_rules_promoted": 5533,
   "history": [
-    {
-      "timestamp": "2026-10-28T18:34:46.040Z",
-      "repository": "genkit-ai/genkit",
-      "learningId": "learn-github-genkit-ai-genkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T18:41:56.886Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T18:42:00.535Z",
       "repository": "RediSearch/RediSearch",
@@ -1403,6 +1389,20 @@
       "repository": "encoredev/encore",
       "learningId": "learn-github-encoredev-encore",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T00:07:54.805Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T00:08:01.984Z",
+      "repository": "crossplane/crossplane",
+      "learningId": "learn-github-crossplane-crossplane",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

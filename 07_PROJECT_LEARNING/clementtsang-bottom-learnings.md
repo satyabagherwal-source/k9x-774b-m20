@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source**: github ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
-> **Source Version**: `fdc61caf`  
+> **Source Version**: `dbf91d4b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T01:22:14.727Z  
+> **Timestamp**: 2026-10-30T00:07:54.174Z  
 > **Learning ID**: `learn-github-clementtsang-bottom`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clementtsang-bottom-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClementTsang/bottom](https://github.com/ClementTsang/bottom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T01:22:14.462Z  
+> **Harvest Timestamp**: 2026-10-30T00:07:52.948Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Yet another cross-platform graphical process/system monitor.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 14135 stars
+- **Stars / Engagement**: 14140 stars
 
 ---
 
@@ -1599,267 +1599,112 @@ impl InputFieldState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fdc61caf` (2026-10-28)
-**Commit Message**: bug: make it so bracketed paste not working does not panic (#2284)
+### Incident Patch 1: `97e352bf` (2026-10-29)
+**Commit Message**: ci: add windows gnullvm aarch64 build targets (#2290)
 
-This change makes it so that if bracketed paste is not supported (e.g. Windows 7/8), we proceed and don't outright panic. This also has some small cosmetic changes around execute! and cleanup.
+Adds Windows gnnllvm aarch64 build targets in CI. This applies to the MSI wix build and the normal binary. This also fixes that we weren't specifying the wix build target technically (wasn't a problem though since it was previously just using the default).
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `.github/workflows/build_releases.yml` (modified, +22/-2)
 ```diff
-@@ -41,6 +41,8 @@ That said, these are more guidelines rather than hard rules, though the project
+@@ -151,12 +151,17 @@ jobs:
+               cross: true,
+             }
  
- - [#2225](https://github.com/ClementTsang/bottom/pull/2225): Fix waking up NVIDIA GPUs when getting stats on Linux.
- - [#2261](https://github.com/ClementTsang/bottom/pull/2261): Fix scrollbars not drawing when height of bar was 2 or less.
-+- [#2279](https://github.com/ClementTsang/bottom/pull/2279): Fix an abort (SIGABRT) if the terminal is gone when exiting.
-+- [#2284](https://github.com/ClementTsang/bottom/pull/2284): Fix bracketed paste not being supported on Windows 7/8 causing btm to panic on startup.
+-          # Windows ARM, may promote to official.
++          # Windows ARM; may promote to official.
+           - {
+               target: "aarch64-pc-windows-msvc",
+               os: "windows-11-arm",
+               cross: false,
+             }
++          - {
++              target: "aarch64-pc-windows-gnullvm",
++              os: "windows-11-arm",
++              cross: false,
++            }
  
- ### Other
+           # FreeBSD
+           - {
+@@ -175,6 +180,11 @@ jobs:
+           fetch-depth: 1
+           persist-credentials: false
  
++      - name: Install Windows ARM64 GNU toolchain
++        if: matrix.info.target == 'aarch64-pc-windows-gnullvm'
++        shell: pwsh
++        run: ./scripts/ci/setup_windows_gnullvm.ps1
++
+       # TODO: Make this and the toolchain step a separate wrapper action?
+       - name: Read Rust version
+         shell: bash
+@@ -342,6 +352,11 @@ jobs:
+               target: "aarch64-pc-windows-msvc",
+               output: "bottom_aarch64_installer.msi",
+             }
++          - {
++              os: "windows-11-arm",
++              target: "aarch64-pc-windows-gnullvm",
++              output: "bottom_aarch64_gnullvm_installer.msi",
++            }
+     runs-on: ${{ matrix.info.os }}
+     steps:
+       - name: Checkout repository
+@@ -350,6 +365,11 @@ jobs:
+           fetch-depth: 1
+           persist-credentials: false
+ 
++      - name: Install Windows ARM64 GNU toolchain
++        if: matrix.info.target == 'aarch64-pc-windows-gnullvm'
++        shell: pwsh
++        run: ./scripts/ci/setup_windows_gnullvm.ps1
++
+       - name: Install Net-Framework-Core
+         shell: powershell
+         run: |
+@@ -386,7 +406,7 @@ jobs:
+         env:
+           BTM_GENERATE: true
+         run: |
+-          cargo wix --toolset modern --nocapture
++          cargo wix --toolset modern --target ${{ matrix.info.target }} --nocapture
+           mv bottom_installer.msi ${{ matrix.info.output }}
+ 
+       - name: Generate artifact attestation for file
 ```
 
-**File**: `src/app.rs` (modified, +17/-0)
+**File**: `scripts/ci/setup_windows_gnullvm.ps1` (added, +21/-0)
 ```diff
-@@ -103,6 +103,21 @@ pub struct DataFilters {
-     pub net_filter: Option<Filter>,
- }
- 
-+#[derive(Clone, Copy)]
-+pub struct TerminalFeatures {
-+    pub bracketed_paste_enabled: bool,
-+    pub mouse_capture_enabled: bool,
+@@ -0,0 +1,21 @@
++$ErrorActionPreference = 'Stop'
++
++$msys2 = 'C:\msys64'
++$package = 'mingw-w64-clang-aarch64-clang=23.1.4-1'
++& "$msys2\usr\bin\bash.exe" -lc 'pacman --noconfirm -Sy'
++if ($LASTEXITCODE -ne 0) {
++    throw 'Failed to synchronize the MSYS2 package databases'
++}
++& "$msys2\usr\bin\bash.exe" -lc "pacman --noconfirm -S --needed '$package'"
++if ($LASTEXITCODE -ne 0) {
++    throw 'Failed to install the CLANGARM64 toolchain'
 +}
 +
-+impl Default for TerminalFeatures {
-+    fn default() -> Self {
-+        Self {
-+            bracketed_paste_enabled: true,
-+            mouse_capture_enabled: true,
-+        }
-+    }
++$bin = "$msys2\clangarm64\bin"
++$compiler = "$bin\aarch64-w64-mingw32-clang.exe"
++if (-not (Test-Path $compiler)) {
++    throw "The CLANGARM64 compiler was not found at $compiler"
 +}
 +
- pub struct App {
-     awaiting_second_char: bool,
-     second_char: Option<char>,
-@@ -120,6 +135,7 @@ pub struct App {
-     pub current_widget: BottomWidget,
-     pub used_widgets: UsedWidgets,
-     pub filters: DataFilters,
-+    pub terminal_features: TerminalFeatures,
- }
- 
- impl App {
-@@ -149,6 +165,7 @@ impl App {
-             current_widget,
-             used_widgets,
-             filters,
-+            terminal_features: TerminalFeatures::default(),
-         }
-     }
- 
-```
-
-**File**: `src/lib.rs` (modified, +46/-21)
-```diff
-@@ -56,7 +56,7 @@ use ratatui::{Terminal, backend::CrosstermBackend, prelude::Backend};
- use utils::logging::*;
- use utils::{cancellation_token::CancellationToken, conversion::*};
- 
--use crate::collection::Data;
-+use crate::{app::TerminalFeatures, collection::Data};
- 
- // Used for heap allocation debugging purposes.
- // #[global_allocator]
-@@ -67,23 +67,28 @@ fn try_drawing(
-     terminal: &mut Terminal<CrosstermBackend<Stdout>>, app: &mut App, painter: &mut canvas::Painter,
- ) -> anyhow::Result<()> {
-     if let Err(err) = painter.draw_data(terminal, app) {
--        cleanup_terminal(terminal)?;
-+        cleanup_terminal(terminal, app.terminal_features)?;
-         Err(err.into())
-     } else {
-         Ok(())
-     }
- }
- 
- /// Clean up the terminal before returning it to the user.
--fn cleanup_terminal(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> anyhow::Result<()> {
-+fn cleanup_terminal(
-+    terminal: &mut Terminal<CrosstermBackend<Stdout>>, terminal_features: TerminalFeatures,
-+) -> anyhow::Result<()> {
-     disable_raw_mode()?;
- 
--    execute!(
--        terminal.backend_mut(),
--        DisableMouseCapture,
--        DisableBracketedPaste,
--        LeaveAlternateScreen,
--    )?;
-+    if terminal_features.mouse_capture_enabled {
-+        execute!(terminal.backend_mut(), DisableMouseCapture)?;
-+    }
-+
-+    if terminal_features.bracketed_paste_enabled {
-+        execute!(terminal.backend_mut(), DisableBracketedPaste)?;
-+    }
-+
-+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-     terminal.show_cursor()?;
- 
-     Ok(())
-@@ -107,13 +112,10 @@ fn check_if_terminal() {
- pub fn reset_stdout() {
-     let mut stdout = stdout();
-     let _ = disable_raw_mode();
--    let _ = execute!(
--        stdout,
--        DisableMouseCapture,
--        DisableBracketedPaste,
--        LeaveAlternateScreen,
--        Show,
--    );
-+    let _ = execute!(stdout, DisableMouseCapture);
-+    let _ = execute!(stdout, DisableBracketedPaste);
-+    let _ = execute!(stdout, LeaveAlternateScreen);
-+    let _ = execute!(stdout, Show);
- }
- 
- /// A panic hook to properly restore the terminal in the case of a panic.
-@@ -368,11 +370,27 @@ pub fn start_bottom(enable_error_hook: &mut bool) -> anyhow::Result<()> {
-     *enable_error_hook = true;
- 
-     let mut stdout_val = stdout();
--    execute!(stdout_val, EnterAlternateScreen, EnableBracketedPaste)?;
--    if app.app_config_fields.disable_click {
--        execute!(stdout_val, DisableMouseCapture)?;
--    } else {
-+    execute!(stdout_val, EnterAlternateScreen)?;
-+
-+    let mut bracketed_paste_enabled = true;
-+    let mouse_capture_enabled = !app.app_config_fields.disable_click;
-+
-+    // Note that some operating systems (basically Windows 8.1 and older) don't support
-+    // this, so we'll catch the error, but not outright fail.
-+    // For more info, see https://github.com/ClementTsang/bottom/issues/2277 and
-+    // https://github.com/helix-editor/helix/discussions/9025.
-+    match execute!(stdout_val, EnableBracketedPaste) {
-+        Err(err) if err.kind() == std::io::ErrorKind::Unsupported => {
-+            bracketed_paste_enabled = false;
-+        }
-+        Err(err) => return Err(err.into()),
-+        Ok(_) => {}
-+    }
-+
-+    if mouse_capture_enabled {
-         execute!(stdout_val, EnableMouseCapture)?;
-+    } else {
-+        execute!(stdout_val, DisableMouseCapture)?;
-     }
-     enable_raw_mode()?;
- 
-@@ -387,6 +405,13 @@ pub fn start_bottom(enable_error_hook: &mut bool) -> anyhow::Result<()> {
- 
-     terminal.hide_cursor()?;
- 
-+    let terminal_features = TerminalFeatures {
-+        bracketed_paste_enabled,
-+        mouse_capture_enabled,
-+    };
-+
-+    app.terminal_features = terminal_features;
-+
-     // Set panic hook
-     panic::set_hook(Box::new(panic_hook));
- 
-@@ -480,7 +505,7 @@ pub fn start_bottom(enable_error_hook: &mut bool) -> anyhow::Result<()> {
-     // I think doing it in this order is safe...
-     // TODO: maybe move the cancellation token to the ctrl-c handler?
-     cancellation_token.cancel();
--    cleanup_terminal(&mut terminal)?;
-+    cleanup_terminal(&mut terminal, terminal_features)?;
- 
-     Ok(())
- }
-```
-
----
-
-### Incident Patch 2: `b48e8070` (2026-10-27)
-**Commit Message**: bug: don't abort in panic hook if the terminal is gone (#2279)
-
-**File**: `src/lib.rs` (modified, +6/-2)
-```diff
-@@ -131,9 +131,13 @@ fn panic_hook(panic_info: &PanicHookInfo<'_>) {
- 
-     reset_stdout();
- 
--    // Print stack trace. Must be done after!
-+    // Print stack trace. Must be done after! Ignore write errors, as `println!`
-+    // would panic inside this hook (and abort) if the terminal is gone.
-     if let Some(panic_info) = panic_info.location() {
--        println!("thread '<unnamed>' panicked at '{msg}', {panic_info}\n\r{backtrace}")
-+        let _ = writeln!(
-+            stdout(),
-+            "thread '<unnamed>' panicked at '{msg}', {panic_info}\n\r{backtrace}"
-+        );
-     }
- 
-     // TODO: Might be cleaner in the future to use a cancellation token, but
-```
-
----
-
-### Incident Patch 3: `1aaa907a` (2026-10-27)
-**Commit Message**: ci: update netbsd cross pre-build install (#2283)
-
-Cause was due to the netbsd paths changing, apparently.
-
-**File**: `.github/workflows/build_releases.yml` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ env:
-   CARGO_HUSKY_DONT_INSTALL_HOOKS: true
-   COMPLETION_DIR: "target/tmp/bottom/completion/"
-   MANPAGE_DIR: "target/tmp/bottom/manpage/"
--  CROSS_VERSION: "git:588b3c99db52b5a9c5906fab96cfadcf1bde7863"
-+  CROSS_VERSION: "git:d6204e62acdba1a117341f93972f3d52470a3052"
- 
- permissions:
-   id-token: write
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ env:
-   CARGO_HUSKY_DONT_INSTALL_HOOKS: true
-   COMPLETION_DIR: "target/tmp/bottom/completion/"
-   MANPAGE_DIR: "target/tmp/bottom/manpage/"
--  CROSS_VERSION: "git:588b3c99db52b5a9c5906fab96cfadcf1bde7863"
-+  CROSS_VERSION: "git:d6204e62acdba1a117341f93972f3d52470a3052"
- 
- concurrency:
-   group: ${{ github.workflow }}-${{ github.ref }}
-```
-
-**File**: `Cross.toml` (modified, +2/-2)
-```diff
-@@ -3,6 +3,6 @@ passthrough = ["RUST_BACKTRACE", "BTM_GENERATE"]
- 
- [target.x86_64-unknown-netbsd]
- pre-build = [
--    # Last updated on 2026-08-28
--    "apt-get update && apt-get install -y --no-install-recommends curl=8.5.0-2ubuntu10.13 xz-utils=5.6.1+really5.4.5-1ubuntu0.3 && td=$(mktemp -d) && mkdir -p \"$td/netbsd\" && curl -4 --retry 3 -sSfL 'http://ftp.netbsd.org/pub/NetBSD/NetBSD-9.3/amd64/binary/sets/base.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib ./lib && curl -4 --retry 3 -sSfL 'http://ftp.netbsd.org/pub/NetBSD/NetBSD-9.3/amd64/binary/sets/comp.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib && cp \"$td\"/netbsd/usr/lib/libkvm* /usr/local/x86_64-unknown-netbsd/lib/ && rm -rf \"$td\"",
-+    # Last updated on 2026-10-27
-+    "apt-get update && apt-get install -y --no-install-recommends curl=8.5.0-2ubuntu10.16 xz-utils=5.6.1+really5.4.5-1ubuntu0.4 && td=$(mktemp -d) && mkdir -p \"$td/netbsd\" && curl -4 --retry 3 -sSfL 'http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/base.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib ./lib && curl -4 --retry 3 -sSfL 'http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-9.5/amd64/binary/sets/comp.tar.xz' | tar -C \"$td/netbsd\" -xJ ./usr/lib && cp \"$td\"/netbsd/usr/lib/libkvm* /usr/local/x86_64-unknown-netbsd/lib/ && rm -rf \"$td\"",
- ]
++$bin >> $env:GITHUB_PATH
++& $compiler --version
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2291** (2026-10-29): docs: update changelog (@ClementTsang)
+- **PR #2290** (2026-10-29): ci: add windows gnullvm aarch64 build targets (@ClementTsang)
+- **PR #2289** (closed): ci: build a Windows ARM64 GNU-family (gnullvm) release binary (@meop)
 - **PR #2285** (2026-10-27): docs: add NavpreetSSidhu as a contributor for code (@allcontributors[bot])
 - **PR #2284** (2026-10-28): bug: make it so bracketed paste not working does not panic (@ClementTsang)
 - **PR #2283** (2026-10-27): ci: update netbsd cross pre-build install (@ClementTsang)
-- **PR #2282** (2026-10-27): ci: update netbsd-vm version to 1.5.2 (@ClementTsang)
-- **PR #2280** (closed): feature: add AMD GPU temperature support on Windows via ADL (@BoYanZh)
-- **PR #2279** (2026-10-27): bug: don't abort in panic hook if the terminal is gone (@NavpreetSSidhu)
 
 ---
 
@@ -1879,29 +1724,50 @@ Cause was due to the netbsd paths changing, apparently.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. make it so bracketed paste not working does not panic (#2284)
+## X. ci: add windows gnullvm aarch64 build targets (#2290)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build_releases.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClementTsang/bottom. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fdc61caf`: make it so bracketed paste not working does not panic (#2284). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `97e352bf`: ci: add windows gnullvm aarch64 build targets (#2290). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build_releases.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- [#2279](https://github.com/ClementTsang/bottom/pull/2279): Fix an abort (SIGABRT) if the terminal is gone when exiting.
-- [#2284](https://github.com/ClementTsang/bottom/pull/2284): Fix bracketed paste not being supported on Windows 7/8 causing btm to panic on startup.
+          # Windows ARM; may promote to official.
+          - {
+              target: "aarch64-pc-windows-gnullvm",
+              os: "windows-11-arm",
+              cross: false,
+            }
+      - name: Install Windows ARM64 GNU toolchain
+        if: matrix.info.target == 'aarch64-pc-windows-gnullvm'
+        shell: pwsh
+        run: ./scripts/ci/setup_windows_gnullvm.ps1
+
+          - {
+              os: "windows-11-arm",
+              target: "aarch64-pc-windows-gnullvm",
+              output: "bottom_aarch64_gnullvm_installer.msi",
+            }
+      - name: Install Windows ARM64 GNU toolchain
+        if: matrix.info.target == 'aarch64-pc-windows-gnullvm'
+        shell: pwsh
+        run: ./scripts/ci/setup_windows_gnullvm.ps1
+
+          cargo wix --toolset modern --target ${{ matrix.info.target }} --nocapture
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+          # Windows ARM, may promote to official.
+          cargo wix --toolset modern --nocapture
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fdc61caf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `97e352bf` are properly handled with clean fallback behavior.

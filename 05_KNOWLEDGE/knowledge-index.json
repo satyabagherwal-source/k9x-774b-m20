@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T00:01:13.996Z",
+  "last_updated": "2026-10-30T00:08:01.895Z",
   "total_verified_learnings": 1169,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6828,8 +6828,8 @@
       "slug": "clementtsang-bottom",
       "platform": "github",
       "source_url": "https://github.com/ClementTsang/bottom",
-      "source_version": "fdc61caf",
-      "content_hash": "5324261db0b71c9c81430e940f1c1198d90e473ed72df47c79ab1ec2039d27e3",
+      "source_version": "dbf91d4b",
+      "content_hash": "5722a71203ad8a2b5565ca72232fb21bbd77a7ad36bf23ee01931ea5df3abc3a",
       "dossier_path": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "promoted_rules": [
@@ -6842,6 +6842,11 @@
           "number": 5093,
           "title": "make it so bracketed paste not working does not panic (#2284)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5565,
+          "title": "ci: add windows gnullvm aarch64 build targets (#2290)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6849,7 +6854,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:22:15.091Z",
+      "verified_at": "2026-10-30T00:07:54.702Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7922,8 +7927,8 @@
       "slug": "crossplane-crossplane",
       "platform": "github",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "21e97313",
-      "content_hash": "a92fe8c30a85aebf31c9bc37120963e80ec6ad882635f9be3bb1e8878c67b394",
+      "source_version": "76a72bee",
+      "content_hash": "f74a89586f2f682040831fd22a069dcccdd2d985f508ca27e3588ce02b0d86ee",
       "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "promoted_rules": [
@@ -7943,7 +7948,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T15:16:36.549Z",
+      "verified_at": "2026-10-30T00:08:01.876Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -95369,13 +95374,13 @@
       "rule_number": 2030,
       "title": "deps): update vulnerable dependencies [security]",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "21e97313",
+      "source_version": "76a72bee",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-28T15:16:36.549Z"
+      "verified_at": "2026-10-30T00:08:01.876Z"
     },
     "rule-2031": {
       "learning_id": "rule-2031",
@@ -149638,6 +149643,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T00:01:13.972Z"
+    },
+    "rule-5565": {
+      "learning_id": "rule-5565",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5565,
+      "title": "ci: add windows gnullvm aarch64 build targets (#2290)",
+      "source_url": "https://github.com/ClementTsang/bottom",
+      "source_version": "dbf91d4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T00:07:54.703Z"
     }
   },
   "aliases": {

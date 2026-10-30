@@ -6090,3 +6090,5 @@ Every entry in this ledger must capture:
 | `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `10629aba` | Multi-dimensional audit evidence | 2026-10-29T23:59:03.519Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `5d288a99` | Multi-dimensional audit evidence | 2026-10-30T00:01:13.666Z |
 | `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `7f38d5dd` | Multi-dimensional audit evidence | 2026-10-30T00:01:14.077Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `dbf91d4b` | Multi-dimensional audit evidence | 2026-10-30T00:07:54.800Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `76a72bee` | Multi-dimensional audit evidence | 2026-10-30T00:08:01.978Z |

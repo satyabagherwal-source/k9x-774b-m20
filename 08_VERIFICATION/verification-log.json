@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-0YCG",
-    "timestamp": "2026-10-27T23:44:09.184Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "f9461b7faf8ad6a5b394060d7d8a7e0db2aa8cd9da7ccf703ed0ed856fa126d2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-10LW",
-    "timestamp": "2026-10-27T23:44:12.116Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "a70dcad6e8b6add44c2ca3f80d202b0ad25143e7abe53825bcb95c3c8aaf2e77",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-3AR7",
     "timestamp": "2026-10-27T23:45:58.579Z",
     "repository": "LiquidAI/LFM3-1.7B",
@@ -7492,6 +7462,36 @@
     "contentHash": "5590c56e2859508c564a1a0a7e6106c54ff1cd739db8d45db728afa0175b9144",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-R7OR",
+    "timestamp": "2026-10-30T00:07:54.795Z",
+    "repository": "ClementTsang/bottom",
+    "learningId": "learn-github-clementtsang-bottom",
+    "contentHash": "5722a71203ad8a2b5565ca72232fb21bbd77a7ad36bf23ee01931ea5df3abc3a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-RD87",
+    "timestamp": "2026-10-30T00:08:01.975Z",
+    "repository": "crossplane/crossplane",
+    "learningId": "learn-github-crossplane-crossplane",
+    "contentHash": "f74a89586f2f682040831fd22a069dcccdd2d985f508ca27e3588ce02b0d86ee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

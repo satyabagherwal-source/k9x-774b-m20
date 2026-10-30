@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T00:01:16.616Z",
-    "lastVerified": "2026-10-30T00:01:16.616Z",
+    "lastChecked": "2026-10-30T00:08:04.522Z",
+    "lastVerified": "2026-10-30T00:08:04.522Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -401,8 +401,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T23:28:38.967Z",
-    "lastVerified": "2026-10-29T23:28:38.967Z",
+    "lastChecked": "2026-10-30T00:08:03.762Z",
+    "lastVerified": "2026-10-30T00:08:03.762Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1165,9 +1165,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-10-29T02:03:29.002Z",
+    "lastChecked": "2026-10-30T00:07:58.796Z",
     "revisionIdentifier": "ad1f72d5",
-    "lastVerified": "2026-10-29T02:03:29.002Z"
+    "lastVerified": "2026-10-30T00:07:58.796Z"
   },
   "tursodatabase-turso": {
     "name": "tursodatabase/turso",
@@ -2741,11 +2741,21 @@
     "lastVerified": "2026-10-29T01:50:00.085Z"
   },
   "clementtsang-bottom": {
-    "name": "bottom",
+    "name": "ClementTsang/bottom",
     "officialUrl": "https://github.com/ClementTsang/bottom",
-    "lastChecked": "2026-10-28T09:57:53.852Z",
-    "revisionIdentifier": "fdc61caf",
-    "lastVerified": "2026-10-28T09:57:53.852Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-30T00:07:52.948Z",
+    "lastVerified": "2026-10-30T00:07:52.948Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-clementtsang-bottom",
+    "contentHash": "5722a71203ad8a2b5565ca72232fb21bbd77a7ad36bf23ee01931ea5df3abc3a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -4342,9 +4352,9 @@
   "vlcn-io-cr-sqlite": {
     "name": "cr-sqlite",
     "officialUrl": "https://github.com/vlcn-io/cr-sqlite",
-    "lastChecked": "2026-10-28T14:29:14.580Z",
+    "lastChecked": "2026-10-30T00:08:01.223Z",
     "revisionIdentifier": "43ab94ca",
-    "lastVerified": "2026-10-28T14:29:14.580Z"
+    "lastVerified": "2026-10-30T00:08:01.223Z"
   },
   "webrtc-rs-webrtc": {
     "name": "webrtc",
@@ -4722,14 +4732,14 @@
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T15:16:36.201Z",
-    "lastVerified": "2026-10-28T15:16:36.201Z",
+    "lastChecked": "2026-10-30T00:08:01.274Z",
+    "lastVerified": "2026-10-30T00:08:01.274Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
-    "contentHash": "a92fe8c30a85aebf31c9bc37120963e80ec6ad882635f9be3bb1e8878c67b394",
+    "contentHash": "f74a89586f2f682040831fd22a069dcccdd2d985f508ca27e3588ce02b0d86ee",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8696,5 +8706,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "stangirard-seo-audits-toolkit": {
+    "name": "seo-audits-toolkit",
+    "officialUrl": "https://github.com/StanGirard/seo-audits-toolkit",
+    "lastChecked": "2026-10-30T00:07:51.214Z",
+    "revisionIdentifier": "c3e95fc4bf",
+    "lastVerified": "2026-10-30T00:07:51.214Z"
+  },
+  "sergdort-moderncleanarchitectureswiftui": {
+    "name": "ModernCleanArchitectureSwiftUI",
+    "officialUrl": "https://github.com/sergdort/ModernCleanArchitectureSwiftUI",
+    "lastChecked": "2026-10-30T00:07:53.688Z",
+    "revisionIdentifier": "4fd07daa",
+    "lastVerified": "2026-10-30T00:07:53.688Z"
   }
 }
