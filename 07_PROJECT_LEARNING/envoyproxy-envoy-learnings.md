@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `38be8ce3`  
+> **Source Version**: `da3239c5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T18:48:36.732Z  
+> **Timestamp**: 2026-10-30T06:36:31.707Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T18:48:36.727Z  
+> **Harvest Timestamp**: 2026-10-30T06:36:30.610Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29151 stars
+- **Stars / Engagement**: 29157 stars
 
 ---
 
@@ -1044,8 +1044,8 @@ public:
 - **Issue #48627** (2026-10-28): **Compression being applied to bodyless responses**
   *Symptoms*: Making an issue because explaining all this in the PR (#48604) would be a bit much, and for discoverability if someone else runs into "Safari is aborting connections" with a similar cause.  On upgrading from envoy 1.36 to envoy 1.38 we found (eventually) that 204 responses started acquiring a 20 byte `sent_bytes`, despite 0 bytes from upstream.  The reason is that the upgrade changed the default from oghttp2 back to nghttp2 (again), and nghttp2 strips the content-length header from 204 responses.  Envoy, on receiving http2 with no content-length header, apparently does decodeHeaders(..., end_stream=false) then decodeData(empty_buffer, end_stream=true).  The compression filter starts compression on headers end_stream=false, so in these conditions results in gzipping zero bytes, creating a 20-byte body.  This becomes a much more severe problem than wasting 20 bytes when these responses go to a Safari browser, which, as far as we can tell, goes "a body on a 204 response? Outrageous! I'm aborting the entire connection!"  Which meant that a telemetry 204 would cause much more important POST requests to suddenly abort mid-stream, just for Safari browsers.  This took a week to notice, by which point non-edge instances had also deployed, which led to an extremely confusing situation where we could see that the upgrade on edge had clearly caused the increase in aborted POSTs, but when we flipped flags and reverted things it wasn't fixed - because the further-in proxies were, by now, *
 
-- **Issue #48362** (2026-10-16): **geoip: client-supplied geolocation headers are forwarded upstream whenever the lookup has no value for them**
-  *Symptoms*: *Title*: geoip: client-supplied geolocation headers are forwarded upstream whenever the lookup has no value for them  *Description*:  The HTTP geoip filter documents that a configured geolocation header present in the incoming request "will be overridden by the filter" (`docs/root/configuration/http/http_filters/geoip_filter.rst`, and the `geo_headers_to_add` comment in `api/envoy/extensions/geoip_providers/common/v3/common.proto`).  The filter only writes a header when the provider returned a non-empty value for it (`source/extensions/filters/http/geoip/geoip_filter.cc`, `onLookupComplete`: `if (!lookup_value.empty()) { request_headers_->setCopy(...) }`) and never removes one. The maxmind provider only inserts a key when `found_entry` is true and the field exists. So a client-supplied `x-geo-country`, `x-geo-asn`, `x-geo-anon-vpn`, etc. reaches the upstream unchanged whenever the lookup produces nothing for that header:  - the address is not in the database (unresolved ranges, private ranges, new allocations), - the lookup returns an error, - the database has no such field for that address (city/region are often absent), - the lookup is skipped because the downstream address is not an IP address (internal listener, Unix socket; the skip path added in #47481 lets the request through "untouched").  The upstream, or an RBAC, ext_authz or Lua step later in the filter chain, cannot tell such a header from one the filter set. The anon headers are documented as "set to either true 
+- **Issue #48410** (2026-10-29): **dynamic_modules: HTTP `send_response` reports `grpc-status: 0` (OK) to gRPC clients**
+  *Symptoms*: ## Description  `envoy_dynamic_module_callback_http_send_response` passes a literal `0` as the `grpc_status` argument of `sendLocalReply`:  ```cpp // source/extensions/filters/http/dynamic_modules/abi_impl.cc (main; same on release/v1.36, v1.37, v1.38) filter->sendLocalReply(static_cast<Http::Code>(status_code), body_view, modify_headers, 0,                        details_view); ```  The parameter is `absl::optional<Grpc::Status::GrpcStatus>`, so `0` is an *engaged* value of `Ok`. For a gRPC request, `Http::Utility::sendLocalReply` maps the HTTP code only when no status is given:  ```cpp local_reply_data.grpc_status_ ? local_reply_data.grpc_status_.value()                               : Grpc::Utility::httpToGrpcStatus(enumToInt(response_code)) ```  So every local reply a dynamic module sends to a gRPC client goes out as a trailers-only `:status 200` with `grpc-status: 0` and no message, whatever status code the module asked for. A module that denies a request with 403 tells the client the call succeeded.  **Expected:** the same mapping every other local reply gets (403 → `PERMISSION_DENIED` (7), 429 → `UNAVAILABLE` (14), and so on). That needs `absl::nullopt` here instead of `0`, or a module-supplied gRPC status if the ABI should expose one.  **Impact:** the request is still blocked, because the module returns `StopIteration` and the upstream is never called. But the client gets the wrong outcome:  - Unary clients typically surface "OK with no response message" as an `INTERN
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1062,271 +1062,290 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `38be8ce3` (2026-10-28)
-**Commit Message**: deps: Update QUICHE to f53fd81 (#48778)
+### Incident Patch 1: `7b15e26a` (2026-10-29)
+**Commit Message**: api: Add `mode` field to TraceContextPropagationConfig in mcp.proto (#48249)
 
-Update QUICHE from 67bce2e to f53fd81
-https://github.com/google/quiche/compare/67bce2e..f53fd81
+<!--
+!!!ATTENTION!!!
 
-Registry:
-https://github.com/envoyproxy/bazel-registry/commit/1c874f7787383338455c4cf4a03f0d6d547fbd88
+If you are fixing **any** crash or **any** potential security issue,
+**do not
+open a pull request**.
 
-```
-$ git log 67bce2e..f53fd81 --date=short --no-merges --format="%ad %an %s"
+Instead, please
+[open a GitHub Security
+Advisory](https://github.com/envoyproxy/envoy/security/advisories/new)
+(preferred). Alternatively, you may email
+[REDACTED_EMAIL].
 
-2026-10-21 apaseltiner Update Structured Headers generated specification tests.
-2026-10-21 QUICHE team QBONE Bonnet: pull netlink usage out of packet exchanger
-2026-10-24 ianswett Consolidate OnStreamHeadersPriority and OnPriorityFrame into OnStreamPriority.
-2026-10-24 ianswett Use min(1ms, SmoothedRTT) as the QUIC delayed ACK floor with AKDF copt.
-2026-10-26 ianswett Update the Connection ID code to only give out more than 2 CIDs if the client is not using a CID and the server is a Blue L1.
-2026-10-27 ricea Add missing QUICHE_EXPORT annotations to moq_varint.h
-2026-10-27 apaseltiner Update Structured Headers generated specification tests.
-```
+Thank you in advance for helping to keep Envoy secure.
 
-Signed-off-by: Ricardo Perez Perez <[REDACTED_EMAIL]>
+!!!ATTENTION!!!
 
-**File**: `.bazelrc` (modified, +1/-1)
+For an explanation of how to fill out the fields, please see the
+relevant section
+in
+[PULL_REQUESTS.md](https://github.com/envoyproxy/envoy/blob/main/PULL_REQUESTS.md)
+
+!!!ATTENTION!!!
+
+Please check the [use of generative AI
+policy](https://github.com/envoyproxy/envoy/blob/main/CONTRIBUTING.md?plain=1#L41).
+
+You may use generative AI only if you fully understand the code. You
+need to disclose
+this usage in the PR description to ensure transparency.
+-->
+
+Commit Message:
+Additional Description:
+
+This is the first PR in a chain, with the high-level goal of getting
+McpFilter to reparent the active span based on the request body's trace
+context.
+
+For reference, here is the full PR chain:
+
+1. #48249
+1. #48250
+1. #48449
+1. #48448
+1. #48516
+1. #48038
+
+
+**File**: `api/envoy/extensions/filters/http/mcp/v3/mcp.proto` (modified, +21/-0)
 ```diff
-@@ -26,7 +26,7 @@ common --noincompatible_disallow_ctx_resolve_tools
- common --legacy_external_runfiles
+@@ -74,6 +74,27 @@ message Mcp {
  
- common --registry=https://bcr.bazel.build/
--common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055
-+common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735
- # common --registry=file:///bazel-registry
- # this can be useful for dev
- # common --lockfile_mode=off
-```
-
-**File**: `MODULE.bazel` (modified, +1/-1)
-```diff
-@@ -79,7 +79,7 @@ bazel_dep(name = "proxy-wasm-rust-sdk", version = "0.2.5")
- bazel_dep(name = "qat-zstd", version = "1.0.0.envoy")
- bazel_dep(name = "qatlib", version = "26.02.0.envoy")
- bazel_dep(name = "qatzip", version = "2.0.0.envoy")
--bazel_dep(name = "quiche", version = "0.0.0-261019-67bce2e.envoy")
-+bazel_dep(name = "quiche", version = "0.0.0-261027-f53fd81.envoy")
- bazel_dep(name = "ragel", version = "7.0.4-211228-d4577c9.envoy")
- bazel_dep(name = "re2", version = "2025-11-05.bcr.1")
- bazel_dep(name = "rules_apple", version = "5.3.1")
-```
-
-**File**: `MODULE.bazel.lock` (modified, +137/-137)
-```diff
-@@ -459,7 +459,7 @@
-     "https://bcr.bazel.build/modules/qat-zstd/1.0.0.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/qatlib/26.02.0.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/qatzip/2.0.0.envoy/MODULE.bazel": "not found",
--    "https://bcr.bazel.build/modules/quiche/0.0.0-261019-67bce2e.envoy/MODULE.bazel": "not found",
-+    "https://bcr.bazel.build/modules/quiche/0.0.0-261027-f53fd81.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/MODULE.bazel": "82fbcb2e42f9e0040e76ccc74c06c3e46dfd33c64ca359293f8b84df0e6dff4c",
-     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/source.json": "5c42389ad0e21fc06b95ad7c0b730008271624a2fa3292e0eab5f30e15adeee3",
-@@ -770,142 +770,142 @@
-     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/MODULE.bazel": "031c2f61e3f30853704948e722b6c3c7f7989780ee37bc431747cf3dc6cbe0b3",
-     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/source.json": "92e3cd6613957216e9954b59e7c944766cdd7e55e5684862a1434bd5132663de",
-     "https://bcr.bazel.build/modules/zstd/1.5.7/MODULE.bazel": "f5780cdbd6f4c5bb985a20f839844316fe48fb5e463056f372dbc37cfabdf450",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/aws-c-auth-testdata/0.10.4.envoy/MODULE.bazel": "ed40f4181373fb0e277d5511db521f5a77f5558141b5697499a9b22fa1dc96c4",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/aws-c-auth-testdata/0.10.4.envoy/source.json": "20b0d19dc5c1e83f57c1cbc7e54ab0131291cc2220b374b0d222e44a6a0d914e",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/bazel-compdb/0.0.0-20220906-4086479.envoy/MODULE.bazel": "8ea7d294e0ea35bdcfddb8c3597eaa2967a4fa18b0e975ddef9374cd0e926d92",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/bazel-compdb/0.0.0-20220906-4086479.envoy/source.json": "586e9896baf303341171326f8721091d0b9748386e2383c9b60b351d30b60550",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boost.headers/1.89.0.envoy.1/MODULE.bazel": "c05fcf60ad2a00dbf39055698d0ea1becf4ceb8fff7d9e248f3f6dece982d856",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boost.headers/1.89.0.envoy.1/source.json": "31a56cde871ef03d5ae0e22d9959f9a049336474fae2ad0fb5998964d40cd1d4",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boost.headers/1.89.0.envoy/MODULE.bazel": "c7205963786fdbe14f5a384ff5a3a04da66ed0cecfee3d3cedecf5be173dcb66",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-fips/0.20260929.0.envoy.1/MODULE.bazel": "5e634802b6ae4b25fb21ee82636c288b4ac5973fb5c981456751ec72a40ac463",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-fips/0.20260929.0.envoy.1/source.json": "054bd9dff1076a6caf66c47a44aeafad70ffa0e0f9e701daa43f157da6a8f3e3",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-source/0.20260929.0.envoy/MODULE.bazel": "d80ba9dddc69a8d1900428c2f0b128cd1a41f63f058b4b0bce668357f7ec66a0",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-source/0.20260929.0.envoy/source.json": "9c57158c4b3a2b2ac0188c472249d1faacbfcf3fd3fa822a4785836b391fe8b4",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/brotli/1.2.0-260930-42a2ed4.envoy/MODULE.bazel": "dce5f9c0643e0551aaeb0341ed90b994337ae3fbf232b584f2aaeae79ae47800",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/brotli/1.2.0-260930-42a2ed4.envoy/source.json": "c699301760293b6ffa07f1117aa1c1763683aeef33f1e10a061e1db342873860",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/cel-cpp/0.16.1.envoy/MODULE.bazel": "f835ee95427829db17d60fe1349839a759478fe89bb03c3869f39b5d6e56491d",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/cel-cpp/0.16.1.envoy/source.json": "decb295094395a4ef83e0562a82c58487d580e1a89e86cfa575c5705471dbac7",
--    "https://raw.githubusercontent.com/env
-```
-
-**File**: `api/.bazelrc` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
+   message TraceContextPropagationConfig {
+     option (xds.annotations.v3.message_status).work_in_progress = true;
++
++    enum TraceContextPropagationMode {
++      // Copy the request body's trace context to headers without modification.
++      COPY = 0;
++
++      // Copy the request body's trace context to headers without modification.
++      // Also reparents the active span based on the body's traceparent. In this
++      // mode, upstream spans will not descend from the active span; the subtree
++      // of spans will be a sibling of the active span.
++      COPY_AND_REPARENT_SPAN = 1;
++
++      // Rewrite the request body's trace context after reparenting the active
++      // span based on the body's trace context. In this mode, upstream spans will
++      // be descend from the active span.
++      REWRITE_AND_REPARENT_SPAN = 2;
++    }
++
++    // Controls how the request body's trace context is propagated.
++    //
++    // [#not-implemented-hide:]
++    TraceContextPropagationMode mode = 1;
+   }
  
- common --registry=https://bcr.bazel.build/
--common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055
-+common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735
- 
- # Build settings
- build --incompatible_strict_action_env
+   message BaggagePropagationConfig {
 ```
 
-**File**: `api/MODULE.bazel.lock` (modified, +15/-15)
+**File**: `tools/spelling/spelling_dictionary.txt` (modified, +3/-0)
 ```diff
-@@ -521,21 +521,21 @@
-     "https://bcr.bazel.build/modules/zlib/1.3/MODULE.bazel": "6a9c02f19a24dcedb05572b2381446e27c272cd383aed11d41d99da9e3167a72",
-     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/MODULE.bazel": "031c2f61e3f30853704948e722b6c3c7f7989780ee37bc431747cf3dc6cbe0b3",
-     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/source.json": "92e3cd6613957216e9954b59e7c944766cdd7e55e5684862a1434bd5132663de",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/envoy_toolshed/0.5.9.envoy/MODULE.bazel": "13b3b2534ebc162c99021fb0502b797a1bf6dc4242da9966c590330548ebf39c",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/envoy_toolshed/0.5.9.envoy/source.json": "b0b86356a107b49d273d5a16df8e3245a373878eb2d85d8c24acbd5730324791",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/envoy_toolshed_jq/0.5.9.envoy/MODULE.bazel": "3d7505a7421eedf8aef4722ba5dfe62a2bdc0245c8cfee0bfc78dbd65b3d263d",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/envoy_toolshed_jq/0.5.9.envoy/source.json": "420f1a3474253833d851bed39cbc6c9abf1e4a24fcee289f9aba647600230004",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/grpc/1.83.0.envoy/MODULE.bazel": "71ff92df79911a0975a09c1482791fd3983696383d4652277684e67884ac9d40",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/grpc/1.83.0.envoy/source.json": "39d70fd55602db781fc793f0417b7ecce8f2427e9fdaf6c18938e33acdc4d549",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/prometheus-metrics-model/0.6.2.envoy/MODULE.bazel": "40e1b9b9db52c3238fcc3e85c08ef35eb9157783e620009ed01eeed7631a9f67",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/prometheus-metrics-model/0.6.2.envoy/source.json": "0943a090f19491879321638e307bf6bea1459659fb8de4d85ff7e1eb153f12c9",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/protobuf/35.1.bcr.envoy/MODULE.bazel": "97206075bc75d7aa4c3d580f488ad19de0f374f192c9e93da9e071b4780d1f23",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/protobuf/35.1.bcr.envoy/source.json": "1e41359b39620019d80e22316fb8762780330dfbae99ea32e0dd98f3db233e56",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/protoc-gen-jsonschema/0.0.0-20230530-7680e49.envoy/MODULE.bazel": "bfa220406788d867e7358476be714494f0e7a9a2389fd67e826a04eff6dba4e5",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/protoc-gen-jsonschema/0.0.0-20230530-7680e49.envoy/source.json": "45bf54e4859f6031318404956ac2933654cc8494899fc84f1d4f5414c0e977ca",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/protoc-gen-validate/1.3.3.envoy/MODULE.bazel": "48db25694ec054d0bf9039ce2d51d292daf67b8ff8fc3c4071b43a807f313b41",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/protoc-gen-validate/1.3.3.envoy/source.json": "1c2acb99b8b3e7c57b5d43d06a71e65be1ba5f62ff327e126699ebad6defc018"
-+    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
-+    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735/modules/envoy_toolshed/0.5.9.envoy/MODULE.bazel": "13b3b2534ebc162c99021fb0502b797a1bf6dc4242da9966c590330548ebf39c",
-+    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735/modules/envoy_toolshed/0.5.9.envoy/source.json": "b0b86356a107b49d273d5a16df8e3245a373878eb2d85d8c24acbd5730324791",
-+    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735/modules/envoy_toolshed_jq/0.5.9.envoy/MODULE.bazel": "3d7505a7421eedf8aef4722ba5dfe62a2bdc0245c8cfee0bfc78dbd65b3d263d",
-+    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735/modules/envoy_toolshed_jq/0.5.9.envoy/source.json": "420f1a3474253833d851bed39cbc6c9abf1e4a24fcee289f9aba647600230004",
-+    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/1637118
-```
-
-**File**: `bazel/deps.yaml` (modified, +1/-1)
-```diff
-@@ -1437,7 +1437,7 @@ zstd:
-   project_name: "zstd"
-   project_desc: "zstd compression library"
-   project_url: "https://facebook.github.io/zstd"
--  release_date: "2026-10-19"
-+  release_date: "2026-10-27"
-   use_category:
-   - dataplane_ext
-   extensions:
-```
-
-**File**: `bazel/tests/codeql/.bazelrc` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- common --registry=https://bcr.bazel.build/
--common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055
-+common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735
- 
- common --noincompatible_disallow_empty_glob
- common --noincompatible_disallow_ctx_resolve_tools
-```
-
-**File**: `bazel/tests/codeql/MODULE.bazel.lock` (modified, +138/-138)
-```diff
-@@ -475,7 +475,7 @@
-     "https://bcr.bazel.build/modules/qat-zstd/1.0.0.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/qatlib/26.02.0.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/qatzip/2.0.0.envoy/MODULE.bazel": "not found",
--    "https://bcr.bazel.build/modules/quiche/0.0.0-261019-67bce2e.envoy/MODULE.bazel": "not found",
-+    "https://bcr.bazel.build/modules/quiche/0.0.0-261027-f53fd81.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/ragel/7.0.4-211228-d4577c9.envoy/MODULE.bazel": "not found",
-     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/MODULE.bazel": "82fbcb2e42f9e0040e76ccc74c06c3e46dfd33c64ca359293f8b84df0e6dff4c",
-     "https://bcr.bazel.build/modules/rapidjson/1.1.0.bcr.20241007/source.json": "5c42389ad0e21fc06b95ad7c0b730008271624a2fa3292e0eab5f30e15adeee3",
-@@ -785,143 +785,143 @@
-     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/MODULE.bazel": "031c2f61e3f30853704948e722b6c3c7f7989780ee37bc431747cf3dc6cbe0b3",
-     "https://bcr.bazel.build/modules/zstd/1.5.7.bcr.3/source.json": "92e3cd6613957216e9954b59e7c944766cdd7e55e5684862a1434bd5132663de",
-     "https://bcr.bazel.build/modules/zstd/1.5.7/MODULE.bazel": "f5780cdbd6f4c5bb985a20f839844316fe48fb5e463056f372dbc37cfabdf450",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/bazel_registry.json": "51bd3a0b193753e419c5d3db38e92fbcb9f7f97fd992ef2e24a0addd7274b37a",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/aws-c-auth-testdata/0.10.4.envoy/MODULE.bazel": "ed40f4181373fb0e277d5511db521f5a77f5558141b5697499a9b22fa1dc96c4",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/aws-c-auth-testdata/0.10.4.envoy/source.json": "20b0d19dc5c1e83f57c1cbc7e54ab0131291cc2220b374b0d222e44a6a0d914e",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/bazel-compdb/0.0.0-20220906-4086479.envoy/MODULE.bazel": "8ea7d294e0ea35bdcfddb8c3597eaa2967a4fa18b0e975ddef9374cd0e926d92",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/bazel-compdb/0.0.0-20220906-4086479.envoy/source.json": "586e9896baf303341171326f8721091d0b9748386e2383c9b60b351d30b60550",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boost.headers/1.89.0.envoy.1/MODULE.bazel": "c05fcf60ad2a00dbf39055698d0ea1becf4ceb8fff7d9e248f3f6dece982d856",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boost.headers/1.89.0.envoy.1/source.json": "31a56cde871ef03d5ae0e22d9959f9a049336474fae2ad0fb5998964d40cd1d4",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boost.headers/1.89.0.envoy/MODULE.bazel": "c7205963786fdbe14f5a384ff5a3a04da66ed0cecfee3d3cedecf5be173dcb66",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-fips/0.20260929.0.envoy.1/MODULE.bazel": "5e634802b6ae4b25fb21ee82636c288b4ac5973fb5c981456751ec72a40ac463",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-fips/0.20260929.0.envoy.1/source.json": "054bd9dff1076a6caf66c47a44aeafad70ffa0e0f9e701daa43f157da6a8f3e3",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-source/0.20260929.0.envoy/MODULE.bazel": "d80ba9dddc69a8d1900428c2f0b128cd1a41f63f058b4b0bce668357f7ec66a0",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/boringssl-source/0.20260929.0.envoy/source.json": "9c57158c4b3a2b2ac0188c472249d1faacbfcf3fd3fa822a4785836b391fe8b4",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/brotli/1.2.0-260930-42a2ed4.envoy/MODULE.bazel": "dce5f9c0643e0551aaeb0341ed90b994337ae3fbf232b584f2aaeae79ae47800",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/brotli/1.2.0-260930-42a2ed4.envoy/source.json": "c699301760293b6ffa07f1117aa1c1763683aeef33f1e10a061e1db342873860",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/cel-cpp/0.16.1.envoy/MODULE.bazel": "f835ee95427829db17d60fe1349839a759478fe89bb03c3869f39b5d6e56491d",
--    "https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055/modules/cel-cpp/0.16.1.envoy/source.json": "decb295094395a4ef83e0562a82c58487d580e1a89e86cfa575c5705471dbac7",
--    "https://raw.githubusercontent.com/env
+@@ -1848,3 +1848,6 @@ cpaths
+ SynchronousFeedbackResourceMonitor
+ bernoulli
+ vendored
++reparent
++reparents
++reparenting
 ```
 
 ---
 
-### Incident Patch 2: `072c869a` (2026-10-28)
-**Commit Message**: bazel: add `use_prebuilt_libs` flag to build prebuilt deps from source (#48772)
+### Incident Patch 2: `751fb919` (2026-10-29)
+**Commit Message**: Fix dynamic module tests on Windows (#48850)
 
-Add a `--@envoy//bazel:use_prebuilt_libs` bool flag (default `True`,
-preserving current behavior). Setting it to `False` builds dependencies
-that otherwise use prebuilt artifacts (currently `wee8`) from source,
-for environments that disallow prebuilt artifacts.
+Resolve dynamic module tests failures on Windows. The problem with these
+tests is that on Windows dynamic module file can not be overwritten or
+deleted while it is loaded in the process. These test changes modify
+tests to address this specific behavior.
 
-Signed-off-by: Jonh Wendell <[REDACTED_EMAIL]>
+Risk Level: low
+Testing: unit tests
+Docs Changes: no
+Release Notes: no
+Platform Specific Features: windows only
 
-**File**: `bazel/BUILD` (modified, +28/-5)
+Signed-off-by: Yan Avlasov <[REDACTED_EMAIL]>
+
+**File**: `test/extensions/dynamic_modules/dynamic_modules_test.cc` (modified, +16/-2)
 ```diff
-@@ -684,14 +684,37 @@ label_flag(
-     visibility = ["//visibility:public"],
- )
+@@ -477,16 +477,24 @@ TEST(NewDynamicModuleFromBytes, RepeatedLoadReusesDlopenHandle) {
+       std::filesystem::temp_directory_path() / fmt::format("envoy_dynamic_module_{}.so", sha256);
+   std::filesystem::remove(temp_path);
  
--# wee8 engine: envoy_toolshed prebuilt by default, source for configs the
--# prebuilt is incompatible with (gcc libstdc++ ABI; sanitizers need instrumented deps).
-+# Use prebuilt artifacts for dependencies that offer them (currently wee8). Set to False to
-+# build every such dependency from source, e.g. in environments that disallow prebuilt
-+# artifacts: --//bazel:use_prebuilt_libs=False
-+# Toolchain components (compiler, sysroot, libc++/libunwind runtimes) are not covered.
-+bool_flag(
-+    name = "use_prebuilt_libs",
-+    build_setting_default = True,
-+)
++#ifdef WIN32
++  // Windows cannot delete a loaded DLL, so let the module unload once both handles are released
++  // instead of pinning it for the rest of the process.
++  constexpr bool do_not_close = false;
++#else
++  constexpr bool do_not_close = true;
++#endif
 +
-+config_setting(
-+    name = "prebuilt_libs_disabled",
-+    flag_values = {":use_prebuilt_libs": "False"},
-+)
-+
-+selects.config_setting_group(
-+    name = "wee8_source_build",
-+    match_any = [
-+        ":prebuilt_libs_disabled",
-+        ":asan_build",
-+        ":msan_build",
-+        ":tsan_build",
-+    ],
-+)
-+
-+# wee8 engine: envoy_toolshed prebuilt by default, source when :use_prebuilt_libs is False
-+# or for configs the prebuilt is incompatible with (sanitizers need instrumented deps).
-+# envoy_toolshed itself falls back to source on unsupported platforms.
- alias(
-     name = "wee8_engine",
-     actual = select({
--        ":asan_build": "@proxy-wasm-cpp-host//bazel:wee8_no_pointer_compression",
--        ":msan_build": "@proxy-wasm-cpp-host//bazel:wee8_no_pointer_compression",
--        ":tsan_build": "@proxy-wasm-cpp-host//bazel:wee8_no_pointer_compression",
-+        ":wee8_source_build": "@proxy-wasm-cpp-host//bazel:wee8_no_pointer_compression",
-         "//conditions:default": "@envoy_toolshed//v8:wee8",
-     }),
-     visibility = ["//visibility:public"],
+   // First load writes and loads the module.
+   absl::StatusOr<DynamicModulePtr> module1 =
+-      newDynamicModuleFromBytes(module_bytes, sha256, true, false);
++      newDynamicModuleFromBytes(module_bytes, sha256, do_not_close, false);
+   ASSERT_OK(module1);
+   ASSERT_TRUE(std::filesystem::exists(temp_path));
+ 
+   // Second load with the same sha256 — writes again but the RTLD_NOLOAD check in
+   // newDynamicModule returns the existing handle, so the init function is not called twice.
+   absl::StatusOr<DynamicModulePtr> module2 =
+-      newDynamicModuleFromBytes(module_bytes, sha256, true, false);
++      newDynamicModuleFromBytes(module_bytes, sha256, do_not_close, false);
+   ASSERT_OK(module2);
+ 
+   // Cleanup.
+@@ -611,12 +619,18 @@ TEST_F(NewDynamicModuleByConfigTest, RemoteCacheHitLoads) {
+   std::filesystem::create_directories(cached.parent_path());
+   std::filesystem::copy_file(module_path, cached,
+                              std::filesystem::copy_options::overwrite_existing);
++  // The copy keeps the read-only attribute of the Bazel output on Windows, which would prevent
++  // removing or overwriting the cached file later.
++  std::filesystem::permissions(cached, std::filesystem::perms::owner_write,
++                               std::filesystem::perm_options::add);
+ 
+   auto result = newDynamicModuleByConfig(makeRemoteConfig(sha), "test_module", context_);
+   ASSERT_OK(result);
+   EXPECT_NE(result->loaded, nullptr);
+   EXPECT_EQ(result->async, nullptr);
+ 
++  // Unload the module first, since Windows cannot delete a loaded DLL.
++  result->loaded.reset();
+   std::filesystem::remove(cached);
+ }
+ 
 ```
 
-**File**: `bazel/README.md` (modified, +6/-0)
+---
+
+### Incident Patch 3: `4b0e4ac6` (2026-10-29)
+**Commit Message**: quic: fix goaway_sent stat and shouldShedLoad evaluation order in  CreateIncomingStream (#48485)
+
+Commit Message: quic: fix goaway_sent stat and shouldShedLoad evaluation
+order in CreateIncomingStream
+Additional Description: When
+`envoy.load_shed_points.http3_server_go_away_on_dispatch` triggers in
+`EnvoyQuicServerSession::CreateIncomingStream`:
+1. `SendHttp3GoAway()` is called directly on the QUIC session without
+incrementing `codec_stats_->goaway_sent_`, causing `http3.goaway_sent`
+to
+   remain 0 during overload GOAWAY shedding.
+2. `should_send_go_away_on_dispatch_->shouldShedLoad()` is evaluated
+before
+`!h3_go_away_sent_`. Because `LoadShedPointImpl::shouldShedLoad()`
+increments
+`shed_load_counter_` on every true evaluation, subsequent streams on a
+session that already sent `GOAWAY` repeatedly increment
+`shed_load_count`
+   even though no additional `GOAWAY` is sent.
+Risk Level: low
+Testing: updated unit and integration test
+Docs Changes:
+Release Notes:
+Platform Specific Features:
+[Optional Runtime guard:]
+[Optional Fixes #Issue]
+[Optional Fixes commit #PR or SHA]
+[Optional Deprecated:]
+[Optional [API
+Considerations](https://github.com/envoyproxy/envoy/blob/main/api/review_check
+
+**File**: `source/common/quic/envoy_quic_server_session.cc` (modified, +10/-9)
 ```diff
-@@ -643,6 +643,12 @@ Invalid values are rejected at parse time. Note: the former `--define wasm=<engi
- `--define engine=<engine>` mechanisms are no longer supported; passing them is now a **build
- error**. Use `--@proxy-wasm-cpp-host//bazel:engine=<engine>` instead.
+@@ -117,25 +117,26 @@ quic::QuicSpdyStream* EnvoyQuicServerSession::CreateIncomingStream(quic::QuicStr
+   if (!ShouldCreateIncomingStream(id)) {
+     return nullptr;
+   }
++  if (!codec_stats_.has_value() || !http3_options_.has_value()) {
++    ENVOY_BUG(false,
++              fmt::format(
++                  "Quic session {} attempts to create stream {} before HCM filter is initialized.",
++                  this->id(), id));
++    return nullptr;
++  }
+   if (Runtime::runtimeFeatureEnabled("envoy.reloadable_features.http3_fix_goaway_loadshed_point")) {
+     if (should_send_go_away_and_close_on_dispatch_ != nullptr &&
+         should_send_go_away_and_close_on_dispatch_->shouldShedLoad()) {
+       connection()->CloseConnection(quic::QUIC_PEER_GOING_AWAY, "Server overloaded",
+                                     quic::ConnectionCloseBehavior::SEND_CONNECTION_CLOSE_PACKET);
+       return nullptr;
+-    } else if (should_send_go_away_on_dispatch_ != nullptr &&
+-               should_send_go_away_on_dispatch_->shouldShedLoad() && !h3_go_away_sent_) {
++    } else if (should_send_go_away_on_dispatch_ != nullptr && !h3_go_away_sent_ &&
++               should_send_go_away_on_dispatch_->shouldShedLoad()) {
+       SendHttp3GoAway(quic::QUIC_PEER_GOING_AWAY, "Server overloaded");
+       h3_go_away_sent_ = true;
++      codec_stats_->goaway_sent_.inc();
+     }
+   }
+-  if (!codec_stats_.has_value() || !http3_options_.has_value()) {
+-    ENVOY_BUG(false,
+-              fmt::format(
+-                  "Quic session {} attempts to create stream {} before HCM filter is initialized.",
+-                  this->id(), id));
+-    return nullptr;
+-  }
+   auto stream = new EnvoyQuicServerStream(id, this, quic::BIDIRECTIONAL, codec_stats_.value(),
+                                           http3_options_.value(), headers_with_underscores_action_);
+   ActivateStream(absl::WrapUnique(stream));
+```
+
+**File**: `test/common/quic/envoy_quic_server_session_test.cc` (modified, +4/-1)
+```diff
+@@ -1001,17 +1001,20 @@ TEST_F(EnvoyQuicServerSessionTest, CreateIncomingStreamGoAwayOnDispatch) {
+   setupRequestDecoderMock(request_decoder);
+   EXPECT_CALL(request_decoder, accessLogHandlers()).Times(2);
  
-+By default the `v8` engine links a prebuilt wee8 (V8) static library from `envoy_toolshed` on
-+supported platforms. To build all dependencies that have prebuilt alternatives (currently only
-+wee8) from source instead, e.g. in environments that disallow prebuilt artifacts, pass
-+`--@envoy//bazel:use_prebuilt_libs=False`. This does not affect toolchain components such as the
-+compiler, sysroot or C++ runtime libraries.
-+
- You may persist those options in `user.bazelrc` in Envoy repo or your `.bazelrc`.
+-  EXPECT_CALL(go_away_lsp, shouldShedLoad()).WillRepeatedly(Return(true));
++  EXPECT_CALL(go_away_lsp, shouldShedLoad()).WillOnce(Return(true));
+   EXPECT_CALL(debug_visitor, OnGoAwayFrameSent(_));
++  EXPECT_EQ(0U, stats_.goaway_sent_.value());
  
- Contrib extensions can be enabled and disabled similarly to above when building the contrib
+   auto* stream1 = dynamic_cast<EnvoyQuicServerStream*>(
+       createNewStreamWithId(4u, request_decoder, stream_callbacks1));
+   ASSERT_NE(nullptr, stream1);
++  EXPECT_EQ(1U, stats_.goaway_sent_.value());
+ 
+   // Subsequent stream creation should not send a duplicate GOAWAY frame.
+   auto* stream2 = dynamic_cast<EnvoyQuicServerStream*>(
+       createNewStreamWithId(8u, request_decoder, stream_callbacks2));
+   ASSERT_NE(nullptr, stream2);
++  EXPECT_EQ(1U, stats_.goaway_sent_.value());
+ 
+   EXPECT_CALL(stream_callbacks1, onResetStream(Http::StreamResetReason::LocalReset, _));
+   stream1->resetStream(Http::StreamResetReason::LocalReset);
+```
+
+**File**: `test/integration/overload_integration_test.cc` (modified, +3/-0)
+```diff
+@@ -1850,6 +1850,9 @@ TEST_P(LoadShedPointIntegrationTest, Http3ServerDispatchSendsGoAwayCompletingPen
+   // so the second request should also complete.
+   EXPECT_TRUE(second_request_decoder->waitForEndStream());
+   EXPECT_TRUE(second_request_decoder->complete());
++  test_server_->waitForCounter("http3.goaway_sent", Eq(1));
++  test_server_->waitForCounter(
++      "overload.envoy.load_shed_points.http3_server_go_away_on_dispatch.shed_load_count", Eq(1));
+ 
+   codec_client_->close();
+   ASSERT_TRUE(codec_client_->waitForDisconnect());
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #48805** (2026-10-28): deps/cve: Update c-ares cpe to newer (@phlax)
-- **PR #48804** (2026-10-28): Remove deprecated testing::Invoke (@michalkielan)
-- **PR #48803** (2026-10-28): deps: Bump `envoy_toolshed` -> 0.5.9.envoy (@dependency-envoy[bot])
-- **PR #48802** (2026-10-28): deps: Bump `bazel-registry` -> 34d8081 (@dependency-envoy[bot])
-- **PR #48800** (2026-10-28): deps: Bump `c-ares` -> 1.34.6.bcr.3 (@dependency-envoy[bot])
-- **PR #48787** (2026-10-28): rbac: update docs to match implementation (@ggreenway)
+- **PR #48853** (2026-10-29): dynamic_modules: add Deref to EnvoyBuffer for ergonomic byte access (@codefromthecrypt)
+- **PR #48850** (2026-10-29): Fix dynamic module tests on Windows (@yanavlasov)
+- **PR #48847** (2026-10-29): deps: Bump `envoy_toolshed` -> 0.5.11.envoy (@dependency-envoy[bot])
+- **PR #48846** (2026-10-29): repo: Sync version histories (@publish-envoy[bot])
+- **PR #48845** (closed): [v1.38] repo: Sync version histories (@publish-envoy[bot])
+- **PR #48844** (2026-10-29): deps: Regenerate bazel lockfiles (@dependency-envoy[bot])
 
 ---
 
@@ -1346,28 +1365,48 @@ Signed-off-by: Jonh Wendell <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: Update QUICHE to f53fd81 (#48778)
+## X. api: Add `mode` field to TraceContextPropagationConfig in mcp.proto (#48249)
 
 **RULE**:
-When implementing operations in `.bazelrc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/envoy/extensions/filters/http/mcp/v3/mcp.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `38be8ce3`: deps: Update QUICHE to f53fd81 (#48778). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b15e26a`: api: Add `mode` field to TraceContextPropagationConfig in mcp.proto (#48249). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.bazelrc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/envoy/extensions/filters/http/mcp/v3/mcp.proto`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/16371188feba0bcc93ef353abfd5017a6480e735
+
+    enum TraceContextPropagationMode {
+      // Copy the request body's trace context to headers without modification.
+      COPY = 0;
+
+      // Copy the request body's trace context to headers without modification.
+      // Also reparents the active span based on the body's traceparent. In this
+      // mode, upstream spans will not descend from the active span; the subtree
+      // of spans will be a sibling of the active span.
+      COPY_AND_REPARENT_SPAN = 1;
+
+      // Rewrite the request body's trace context after reparenting the active
+      // span based on the body's trace context. In this mode, upstream spans will
+      // be descend from the active span.
+      REWRITE_AND_REPARENT_SPAN = 2;
+    }
+
+    // Controls how the request body's trace context is propagated.
+    //
+    // [#not-implemented-hide:]
+    TraceContextPropagationMode mode = 1;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-common --registry=https://raw.githubusercontent.com/envoyproxy/bazel-registry/34d80819e910a93e0383f3bad7b769d6d8c79055
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `38be8ce3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b15e26a` are properly handled with clean fallback behavior.

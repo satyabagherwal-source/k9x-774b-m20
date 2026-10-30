@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T06:29:51.666Z",
+  "last_updated": "2026-10-30T06:36:34.377Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8631,14 +8631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-startrail-org-leann",
-      "content_hash": "7cf2e5452f54e8f930dc0827b88420c5b16584863a43cf95c2fed28f94b2a064",
-      "verified_at": "2026-10-28T01:36:08.327Z",
+      "content_hash": "51221a6a7eaaeb776534b0ae2060a5f8ab604039714a838a9ed1f6b20418a3a9",
+      "verified_at": "2026-10-30T06:36:34.376Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T01:36:08.327Z"
+      "last_updated": "2026-10-30T06:36:34.376Z"
     },
     "adonisjs/core": {
       "repository": "adonisjs/core",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "7ac9efae53ec38af2a3ccb59520b6b463b1d067cfa7edbb69eda8f9c484d4b2a",
-      "verified_at": "2026-10-28T18:48:37.243Z",
+      "content_hash": "173f90f732d266dd50b088ac79e84454a5e7fdc946229a26edc007927251cb2f",
+      "verified_at": "2026-10-30T06:36:32.245Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:48:37.243Z"
+      "last_updated": "2026-10-30T06:36:32.245Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",

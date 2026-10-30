@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T06:29:51.664Z",
-  "total_cycles_completed": 6112,
-  "total_learnings_persisted": 6112,
-  "total_rules_promoted": 5601,
+  "last_updated": "2026-10-30T06:36:34.373Z",
+  "total_cycles_completed": 6114,
+  "total_learnings_persisted": 6114,
+  "total_rules_promoted": 5603,
   "history": [
-    {
-      "timestamp": "2026-10-28T21:04:27.670Z",
-      "repository": "microsoft/react-native-windows",
-      "learningId": "learn-github-microsoft-react-native-windows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T21:04:30.588Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T21:11:14.836Z",
       "repository": "microsoft/FrogNano-4B-2609",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T06:29:51.664Z",
       "repository": "cryfs/cryfs",
       "learningId": "learn-github-cryfs-cryfs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:36:32.242Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:36:34.373Z",
+      "repository": "StarTrail-org/LEANN",
+      "learningId": "learn-github-startrail-org-leann",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

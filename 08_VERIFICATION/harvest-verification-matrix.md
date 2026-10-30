@@ -6135,3 +6135,5 @@
 | `CYCLE-20261030-E9FO` | `2026-10-30T06:29:45.156Z` | `mikepenz/multiplatform-markdown-renderer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5629` | Yes (`0c85086e...`) |
 | `CYCLE-20261030-EBD1` | `2026-10-30T06:29:47.653Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5630` | Yes (`324c9ccf...`) |
 | `CYCLE-20261030-EEGA` | `2026-10-30T06:29:51.658Z` | `cryfs/cryfs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5631` | Yes (`bb118e0d...`) |
+| `CYCLE-20261030-MZJE` | `2026-10-30T06:36:32.235Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5632` | Yes (`173f90f7...`) |
+| `CYCLE-20261030-N16L` | `2026-10-30T06:36:34.365Z` | `StarTrail-org/LEANN` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5633` | Yes (`51221a6a...`) |

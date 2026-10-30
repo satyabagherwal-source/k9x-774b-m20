@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T06:29:51.615Z",
+  "last_updated": "2026-10-30T06:36:34.306Z",
   "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11271,8 +11271,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "38be8ce3",
-      "content_hash": "7ac9efae53ec38af2a3ccb59520b6b463b1d067cfa7edbb69eda8f9c484d4b2a",
+      "source_version": "da3239c5",
+      "content_hash": "173f90f732d266dd50b088ac79e84454a5e7fdc946229a26edc007927251cb2f",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -11315,6 +11315,11 @@
           "number": 5370,
           "title": "deps: Update QUICHE to f53fd81 (#48778)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5632,
+          "title": "api: Add `mode` field to TraceContextPropagationConfig in mcp.proto (#48249)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11322,7 +11327,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:48:37.159Z",
+      "verified_at": "2026-10-30T06:36:32.157Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50589,8 +50594,8 @@
       "slug": "startrail-org-leann",
       "platform": "github",
       "source_url": "https://github.com/StarTrail-org/LEANN",
-      "source_version": "c443fc41",
-      "content_hash": "7cf2e5452f54e8f930dc0827b88420c5b16584863a43cf95c2fed28f94b2a064",
+      "source_version": "11ca8a53",
+      "content_hash": "51221a6a7eaaeb776534b0ae2060a5f8ab604039714a838a9ed1f6b20418a3a9",
       "dossier_path": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/startrail-org-leann-learnings.md",
       "promoted_rules": [
@@ -50623,6 +50628,11 @@
           "number": 5105,
           "title": "release): install uv before lockfile update",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5633,
+          "title": "release): align version tests and retry MKL setup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50630,7 +50640,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:36:08.239Z",
+      "verified_at": "2026-10-30T06:36:34.290Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -151000,6 +151010,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T06:29:51.604Z"
+    },
+    "rule-5632": {
+      "learning_id": "rule-5632",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5632,
+      "title": "api: Add `mode` field to TraceContextPropagationConfig in mcp.proto (#48249)",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "da3239c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:36:32.157Z"
+    },
+    "rule-5633": {
+      "learning_id": "rule-5633",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5633,
+      "title": "release): align version tests and retry MKL setup",
+      "source_url": "https://github.com/StarTrail-org/LEANN",
+      "source_version": "11ca8a53",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:36:34.290Z"
     }
   },
   "aliases": {

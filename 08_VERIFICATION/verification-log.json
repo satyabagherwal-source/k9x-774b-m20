@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-9FMJ",
-    "timestamp": "2026-10-28T01:42:43.291Z",
-    "repository": "microsoft/react-native-windows",
-    "learningId": "learn-github-microsoft-react-native-windows",
-    "contentHash": "b1c46c9ac3ac2f2fcf3c1b99aa9b8ae8b6023512620d30e9a2eb68d930a51fc3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-HZN5",
-    "timestamp": "2026-10-28T01:49:22.481Z",
-    "repository": "franken-ui/ui",
-    "learningId": "learn-github-franken-ui-ui",
-    "contentHash": "94ae90200af435f8e0d4e4e97920980cbb4e6c18c05b2b36cec95908f0c36150",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-I6IE",
     "timestamp": "2026-10-28T01:49:31.382Z",
     "repository": "kumahq/kuma",
@@ -7490,6 +7460,36 @@
     "repository": "cryfs/cryfs",
     "learningId": "learn-github-cryfs-cryfs",
     "contentHash": "bb118e0dbd3a12acb855f4510478124d7cf61470566b95b84b960a4f8979d471",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-MZJE",
+    "timestamp": "2026-10-30T06:36:32.235Z",
+    "repository": "envoyproxy/envoy",
+    "learningId": "learn-github-envoyproxy-envoy",
+    "contentHash": "173f90f732d266dd50b088ac79e84454a5e7fdc946229a26edc007927251cb2f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-N16L",
+    "timestamp": "2026-10-30T06:36:34.365Z",
+    "repository": "StarTrail-org/LEANN",
+    "learningId": "learn-github-startrail-org-leann",
+    "contentHash": "51221a6a7eaaeb776534b0ae2060a5f8ab604039714a838a9ed1f6b20418a3a9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
