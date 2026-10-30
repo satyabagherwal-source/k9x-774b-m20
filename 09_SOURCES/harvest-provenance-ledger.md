@@ -6093,3 +6093,6 @@ Every entry in this ledger must capture:
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `dbf91d4b` | Multi-dimensional audit evidence | 2026-10-30T00:07:54.800Z |
 | `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `76a72bee` | Multi-dimensional audit evidence | 2026-10-30T00:08:01.978Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `125ba14d` | Multi-dimensional audit evidence | 2026-10-30T00:19:01.090Z |
+| `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `3bdc054c` | Multi-dimensional audit evidence | 2026-10-30T00:25:48.188Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `57677801` | Multi-dimensional audit evidence | 2026-10-30T00:25:52.967Z |
+| `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `b5f80988` | Multi-dimensional audit evidence | 2026-10-30T00:27:04.701Z |

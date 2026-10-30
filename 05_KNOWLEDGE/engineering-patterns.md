@@ -403510,3 +403510,208 @@ import { render, screen } from '@testing-library/react';
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `1ac48c18` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5567. Disjoint Range Commit-Counting Over Strict Fast-Forward Invariants (Harvested from o2sh/onefetch)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Disjoint Range Commit-Counting Over Strict Fast-Forward Invariants",
+  "source": "o2sh/onefetch",
+  "source_url": "https://github.com/o2sh/onefetch",
+  "source_version": "b5f80988",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T00:27:03.977Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-o2sh-onefetch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [o2sh/onefetch](https://github.com/o2sh/onefetch) (Revision: `b5f80988`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When computing metrics between revisions across branches (such as unreleased commits between a release tag and `HEAD`), implementations **MUST NOT** reject the calculation simply because `HEAD` is not a strict descendant of the target tag (i.e., `merge_base(HEAD, tag) != tag`). Instead, implementations **MUST** compute the metric using topological symmetric difference or disjoint revision walk (`tag..HEAD`), which remains algebraically valid on divergent branch topologies and cherry-picked histories.
+
+**WHY**:
+In trunk-based development, hotfix branches, and release maintenance branches, `HEAD` frequently diverges from the latest global tag. Asserting that `merge_base == tag` produces false negatives: the system reports zero unreleased changes or omits the status metric completely whenever a fast-forward line is broken by a rebase, merge commit, or out-of-order patch release.
+
+**WHEN TO APPLY**:
+Git metrics collectors, CI/CD changelog generators, release automation engines, and developer dashboard CLIs querying commit intervals between tags/references and current working states.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use gix::Repository;
+use gix::ObjectId;
+use anyhow::Result;
+
+pub struct UnreleasedDiff {
+    pub tag_name: String,
+    pub commits_since_tag: usize,
+}
+
+impl UnreleasedDiff {
+    /// Computes commits reachable from HEAD but not reachable from latest_tag (tag..HEAD)
+    /// without requiring latest_tag to be an ancestor of HEAD.
+    pub fn calculate(
+        repo: &Repository,
+        latest_tag_name: String,
+        latest_tag_commit: ObjectId,
+    ) -> Result<Self> {
+        let head_id = repo.head_id()?.detach();
+
+        // Safe topological count: tag..HEAD
+        // repo.rev_walk([head_id]) with excluded commit latest_tag_commit
+        let commits_since_tag = repo
+            .rev_walk([head_id])
+            .with_boundary([latest_tag_commit])
+            .all()?
+            .try_fold(0usize, |count, info| -> Result<usize> {
+                let _commit_info = info?;
+                Ok(count.saturating_add(1))
+            })?;
+
+        Ok(Self {
+            tag_name: latest_tag_name,
+            commits_since_tag,
+        })
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Demanding strict lineage causes false negatives on non-fast-forward branches
+pub fn calculate_bad(repo: &Repository, tag_id: ObjectId) -> Result<Option<usize>> {
+    let head_id = repo.head_id()?.detach();
+    let merge_base = repo.merge_base(head_id, tag_id)?;
+    
+    // BREAKS: If HEAD is on a maintenance branch or rebased past the tag,
+    // merge_base is an ancestor of the tag, NOT the tag itself.
+    if merge_base.map(|id| id.detach()) != Some(tag_id) {
+        return Ok(None); // Silently swallows metric!
+    }
+
+    // rev-list tag..HEAD
+    Ok(Some(count_commits(repo, tag_id, head_id)?))
+}
+```
+
+**VERIFICATION METHOD**:
+Set up an integration test with two divergent Git branches:
+1. Commit `C1` -> Tag `v1.0.0`.
+2. Commit `C2` on `branch-A`.
+3. Branch from `C1` to `branch-B`, commit `C3`.
+4. Run the calculation on `branch-B` with `tag = v1.0.0`.
+Assert that `commits_since_tag == 1` and does not return `None` or an ancestral verification error.
+
+---
+
+
+---
+
+## 5568. Zero-Width Control Sequence Decoupling in Layout Calculators (Harvested from o2sh/onefetch)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Zero-Width Control Sequence Decoupling in Layout Calculators",
+  "source": "o2sh/onefetch",
+  "source_url": "https://github.com/o2sh/onefetch",
+  "source_version": "b5f80988",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T00:27:04.365Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-o2sh-onefetch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [o2sh/onefetch](https://github.com/o2sh/onefetch) (Revision: `b5f80988`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When parsing, measuring, or slicing formatted text containing terminal color tokens or escape sequences (e.g., `{0}`, ANSI CSI codes `\x1b[...m`), the visual layout engine **MUST** decouple raw byte length and character count from printable terminal cell width. Slicing operations and bounding box calculations **MUST** decrement cursor widths strictly on visual/printable tokens, while permitting non-printable/style tokens to bypass bounding bounds without advancing character coordinates.
+
+**WHY**:
+Treating color/style tags as printable characters causes column misalignment, jagged ASCII rendering, and broken formatting strings. Conversely, stripping tags prior to truncation destroys color boundaries, leading to ANSI color bleed across terminal rows.
+
+**WHEN TO APPLY**:
+Any terminal renderer, CLI syntax highlighter, text-wrapping algorithm, or column-based layout formatter handling ANSI escapes or custom templating markup.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum LayoutToken {
+    StyleDirective(u32),
+    PrintableChar(char),
+    Whitespace,
+}
+
+impl LayoutToken {
+    #[inline]
+    pub fn visual_width(&self) -> usize {
+        match self {
+            LayoutToken::PrintableChar(_) | LayoutToken::Whitespace => 1,
+            LayoutToken::StyleDirective(_) => 0,
+        }
+    }
+}
+
+pub struct TokenStream<'a>(&'a str);
+
+impl<'a> TokenStream<'a> {
+    pub fn truncate_visible(
+        tokens: impl Iterator<Item = LayoutToken>,
+        mut start_col: usize,
+        end_col: usize,
+    ) -> impl Iterator<Item = LayoutToken> {
+        let mut visual_width = end_col.saturating_sub(start_col);
+
+        tokens
+            // Phase 1: Skip leading visible characters up to start_col without skipping styling
+            .filter(move |tok| {
+                let w = tok.visual_width();
+                if start_col > 0 && w > 0 {
+                    start_col = start_col.saturating_sub(w);
+                    return false;
+                }
+                true
+            })
+            // Phase 2: Take tokens until printable width is exhausted, keeping inline trailing styles safe
+            .take_while(move |tok| {
+                let w = tok.visual_width();
+                if visual_width == 0 && w > 0 {
+                    return false;
+                }
+                visual_width = visual_width.saturating_sub(w);
+                true
+            })
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Operating directly on raw strings or characters without width differentiation
+pub fn bad_truncate(input: &str, start: usize, len: usize) -> String {
+    // Slicing on char indices cuts across {n} tokens mid-sequence,
+    // corrupts terminal escape codes, and miscalculates visual columns.
+    input.chars().skip(start).take(len).collect()
+}
+```
+
+**VERIFICATION METHOD**:
+Property test with arbitrary ASCII strings interspersed with `{0}`..`{9}` and `\x1b[38;5;Xm` tags. Assert that the visual width of the emitted line (`stripped of styling`) exactly equals `min(end_col - start_col, original_visual_width)`.
+
+---

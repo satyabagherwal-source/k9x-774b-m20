@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source**: github ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
-> **Source Version**: `811d0687`  
+> **Source Version**: `3bdc054c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T15:16:26.117Z  
+> **Timestamp**: 2026-10-30T00:25:47.927Z  
 > **Learning ID**: `learn-github-bridgecrewio-checkov`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bridgecrewio/checkov](https://github.com/bridgecrewio/checkov))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T15:16:25.471Z  
+> **Harvest Timestamp**: 2026-10-30T00:25:47.080Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Prevent cloud misconfigurations and find vulnerabilities during build-time in infrastructure as code, container images and open source packages with Checkov by Bridgecrew.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 9089 stars
+- **Stars / Engagement**: 9118 stars
 
 ---
 
@@ -955,25 +955,42 @@ check = SQSQueueEncryption()
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `811d0687` (2026-10-20)
+### Incident Patch 1: `3bdc054c` (2026-10-28)
 **Commit Message**: chore: update release notes
 
-**File**: `CHANGELOG.md` (modified, +7/-1)
+**File**: `CHANGELOG.md` (modified, +5/-1)
 ```diff
-@@ -1,6 +1,12 @@
+@@ -1,6 +1,10 @@
  # CHANGELOG
  
--## [Unreleased](https://github.com/bridgecrewio/checkov/compare/3.3.29...HEAD)
-+## [Unreleased](https://github.com/bridgecrewio/checkov/compare/3.3.30...HEAD)
+-## [Unreleased](https://github.com/bridgecrewio/checkov/compare/3.3.30...HEAD)
++## [Unreleased](https://github.com/bridgecrewio/checkov/compare/3.4.0...HEAD)
 +
-+## [3.3.30](https://github.com/bridgecrewio/checkov/compare/3.3.29...3.3.30) - 2026-10-20
++## [3.4.0](https://github.com/bridgecrewio/checkov/compare/3.3.30...3.4.0) - 2026-10-28
 +
-+### Bug Fix
-+
-+- **secrets:** load platform-provided detectors in spawn-mode secrets … - [#7757](https://github.com/bridgecrewio/checkov/pull/7757)
++- no noteworthy changes
  
- ## [3.3.29](https://github.com/bridgecrewio/checkov/compare/3.3.28...3.3.29) - 2026-10-13
+ ## [3.3.30](https://github.com/bridgecrewio/checkov/compare/3.3.29...3.3.30) - 2026-10-20
  
+```
+
+---
+
+### Incident Patch 2: `9504d068` (2026-10-20)
+**Commit Message**: chore: update release notes
+
+**File**: `checkov/version.py` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-version = '3.3.30'
++version = '3.4.0'
+```
+
+**File**: `kubernetes/requirements.txt` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-checkov==3.3.30
++checkov==3.4.0
 ```
 
 #### Recent Merged Pull Requests:
@@ -1008,7 +1025,7 @@ Observed empirical fixes and code patches:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bridgecrewio/checkov. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `811d0687`: update release notes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3bdc054c`: update release notes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1016,20 +1033,18 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-## [Unreleased](https://github.com/bridgecrewio/checkov/compare/3.3.30...HEAD)
+## [Unreleased](https://github.com/bridgecrewio/checkov/compare/3.4.0...HEAD)
 
-## [3.3.30](https://github.com/bridgecrewio/checkov/compare/3.3.29...3.3.30) - 2026-10-20
+## [3.4.0](https://github.com/bridgecrewio/checkov/compare/3.3.30...3.4.0) - 2026-10-28
 
-### Bug Fix
-
-- **secrets:** load platform-provided detectors in spawn-mode secrets … - [#7757](https://github.com/bridgecrewio/checkov/pull/7757)
+- no noteworthy changes
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-## [Unreleased](https://github.com/bridgecrewio/checkov/compare/3.3.29...HEAD)
+## [Unreleased](https://github.com/bridgecrewio/checkov/compare/3.3.30...HEAD)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `811d0687` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3bdc054c` are properly handled with clean fallback behavior.

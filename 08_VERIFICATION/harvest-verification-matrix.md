@@ -6084,3 +6084,6 @@
 | `CYCLE-20261030-R7OR` | `2026-10-30T00:07:54.795Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5565` | Yes (`5722a712...`) |
 | `CYCLE-20261030-RD87` | `2026-10-30T00:08:01.975Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2030` | Yes (`f74a8958...`) |
 | `CYCLE-20261030-5HSU` | `2026-10-30T00:19:01.086Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5566` | Yes (`48ec877e...`) |
+| `CYCLE-20261030-E7X5` | `2026-10-30T00:25:48.185Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md` | Yes (`5b8f6dac...`) |
+| `CYCLE-20261030-EBLV` | `2026-10-30T00:25:52.963Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md` | Yes (`bc0d324c...`) |
+| `CYCLE-20261030-FUYI` | `2026-10-30T00:27:04.698Z` | `o2sh/onefetch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5567, Rule 5568` | Yes (`f088eb01...`) |

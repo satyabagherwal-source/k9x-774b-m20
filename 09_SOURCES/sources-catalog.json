@@ -3993,10 +3993,10 @@
     "repository": "o2sh/onefetch",
     "platform": "github",
     "sourceUrl": "https://github.com/o2sh/onefetch",
-    "sourceVersion": "892934ca",
+    "sourceVersion": "b5f80988",
     "license": "MIT",
-    "contentHash": "aabba09dc0425037d2ae0a9db76aac80f8fc8badfdf1cc378b7756684552ce42",
-    "lastHarvestedAt": "2026-10-28T01:35:55.819Z",
+    "contentHash": "f088eb011c97f5e93b2fb05d7b4c54bbedd4a28af5ac183a3417b4358f0faf92",
+    "lastHarvestedAt": "2026-10-30T00:27:04.701Z",
     "learningId": "learn-github-o2sh-onefetch"
   },
   "runanywhereai-runanywhere-sdks": {
@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "d1dc56f1",
+    "sourceVersion": "57677801",
     "license": "Apache-2.0",
-    "contentHash": "2915d00f220b37724de1a9943ac21faf64e1abe939b060a708fda6298b670c30",
-    "lastHarvestedAt": "2026-10-27T22:42:44.477Z",
+    "contentHash": "bc0d324cf66cfaed05c7c7ea2361896e7e69497ab23d9e83cb1b4658211c8a74",
+    "lastHarvestedAt": "2026-10-30T00:25:52.967Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -5113,10 +5113,10 @@
     "repository": "bridgecrewio/checkov",
     "platform": "github",
     "sourceUrl": "https://github.com/bridgecrewio/checkov",
-    "sourceVersion": "811d0687",
+    "sourceVersion": "3bdc054c",
     "license": "Apache-2.0",
-    "contentHash": "f9891b1e0fb42495000068eee60df9f0ea07524aa853616d93c16a8e68363124",
-    "lastHarvestedAt": "2026-10-21T15:16:26.310Z",
+    "contentHash": "5b8f6dac4410cf4243469129f8cfdd48716f702cab1870c7b06b629aa3f90c2b",
+    "lastHarvestedAt": "2026-10-30T00:25:48.188Z",
     "learningId": "learn-github-bridgecrewio-checkov"
   },
   "apache-zookeeper": {

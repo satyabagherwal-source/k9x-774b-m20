@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T00:19:01.013Z",
+  "last_updated": "2026-10-30T00:27:04.608Z",
   "total_verified_learnings": 1169,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5027,8 +5027,8 @@
       "slug": "bridgecrewio-checkov",
       "platform": "github",
       "source_url": "https://github.com/bridgecrewio/checkov",
-      "source_version": "811d0687",
-      "content_hash": "f9891b1e0fb42495000068eee60df9f0ea07524aa853616d93c16a8e68363124",
+      "source_version": "3bdc054c",
+      "content_hash": "5b8f6dac4410cf4243469129f8cfdd48716f702cab1870c7b06b629aa3f90c2b",
       "dossier_path": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "promoted_rules": [
@@ -5048,7 +5048,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-21T15:16:26.222Z",
+      "verified_at": "2026-10-30T00:25:48.073Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41382,8 +41382,8 @@
       "slug": "o2sh-onefetch",
       "platform": "github",
       "source_url": "https://github.com/o2sh/onefetch",
-      "source_version": "892934ca",
-      "content_hash": "aabba09dc0425037d2ae0a9db76aac80f8fc8badfdf1cc378b7756684552ce42",
+      "source_version": "b5f80988",
+      "content_hash": "f088eb011c97f5e93b2fb05d7b4c54bbedd4a28af5ac183a3417b4358f0faf92",
       "dossier_path": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "promoted_rules": [
@@ -41401,6 +41401,16 @@
           "number": 5102,
           "title": "deps): upgrade site to SvelteKit 3 (#1912)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5567,
+          "title": "Disjoint Range Commit-Counting Over Strict Fast-Forward Invariants",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5568,
+          "title": "Zero-Width Control Sequence Decoupling in Layout Calculators",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41408,7 +41418,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:35:55.742Z",
+      "verified_at": "2026-10-30T00:27:04.587Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49447,8 +49457,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "d1dc56f1",
-      "content_hash": "2915d00f220b37724de1a9943ac21faf64e1abe939b060a708fda6298b670c30",
+      "source_version": "57677801",
+      "content_hash": "bc0d324cf66cfaed05c7c7ea2361896e7e69497ab23d9e83cb1b4658211c8a74",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -49478,7 +49488,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T22:42:44.432Z",
+      "verified_at": "2026-10-30T00:25:52.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149676,6 +149686,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T00:19:00.994Z"
+    },
+    "rule-5567": {
+      "learning_id": "rule-5567",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5567,
+      "title": "Disjoint Range Commit-Counting Over Strict Fast-Forward Invariants",
+      "source_url": "https://github.com/o2sh/onefetch",
+      "source_version": "b5f80988",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T00:27:04.587Z"
+    },
+    "rule-5568": {
+      "learning_id": "rule-5568",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5568,
+      "title": "Zero-Width Control Sequence Decoupling in Layout Calculators",
+      "source_url": "https://github.com/o2sh/onefetch",
+      "source_version": "b5f80988",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T00:27:04.587Z"
     }
   },
   "aliases": {

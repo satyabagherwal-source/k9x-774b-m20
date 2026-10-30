@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T00:19:03.646Z",
-    "lastVerified": "2026-10-30T00:19:03.646Z",
+    "lastChecked": "2026-10-30T00:27:07.237Z",
+    "lastVerified": "2026-10-30T00:27:07.237Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -233,8 +233,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T23:41:36.433Z",
-    "lastVerified": "2026-10-29T23:41:36.433Z",
+    "lastChecked": "2026-10-30T00:25:49.621Z",
+    "lastVerified": "2026-10-30T00:25:49.621Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1300,9 +1300,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-10-29T10:59:03.227Z",
+    "lastChecked": "2026-10-30T00:25:44.614Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-10-29T10:59:03.227Z"
+    "lastVerified": "2026-10-30T00:25:44.614Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -2852,11 +2852,21 @@
     "lastVerified": "2026-10-29T02:03:31.604Z"
   },
   "o2sh-onefetch": {
-    "name": "onefetch",
+    "name": "o2sh/onefetch",
     "officialUrl": "https://github.com/o2sh/onefetch",
-    "lastChecked": "2026-10-28T10:43:28.840Z",
-    "revisionIdentifier": "892934ca",
-    "lastVerified": "2026-10-28T10:43:28.840Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-30T00:25:38.482Z",
+    "lastVerified": "2026-10-30T00:25:38.482Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-o2sh-onefetch",
+    "contentHash": "f088eb011c97f5e93b2fb05d7b4c54bbedd4a28af5ac183a3417b4358f0faf92",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -4461,11 +4471,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "slatedb-slatedb": {
-    "name": "slatedb",
+    "name": "slatedb/slatedb",
     "officialUrl": "https://github.com/slatedb/slatedb",
-    "lastChecked": "2026-10-28T14:42:47.511Z",
-    "revisionIdentifier": "d1dc56f1",
-    "lastVerified": "2026-10-28T14:42:47.511Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-30T00:25:51.843Z",
+    "lastVerified": "2026-10-30T00:25:51.843Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-slatedb-slatedb",
+    "contentHash": "bc0d324cf66cfaed05c7c7ea2361896e7e69497ab23d9e83cb1b4658211c8a74",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tokio-rs-console": {
     "name": "console",
@@ -4849,11 +4869,21 @@
     "lastVerified": "2026-10-28T15:29:38.669Z"
   },
   "bridgecrewio-checkov": {
-    "name": "checkov",
+    "name": "bridgecrewio/checkov",
     "officialUrl": "https://github.com/bridgecrewio/checkov",
-    "lastChecked": "2026-10-28T15:29:41.151Z",
-    "revisionIdentifier": "811d0687",
-    "lastVerified": "2026-10-28T15:29:41.151Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-30T00:25:47.080Z",
+    "lastVerified": "2026-10-30T00:25:47.080Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-bridgecrewio-checkov",
+    "contentHash": "5b8f6dac4410cf4243469129f8cfdd48716f702cab1870c7b06b629aa3f90c2b",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "etcd-io-etcd": {
     "name": "etcd-io/etcd",
@@ -8735,5 +8765,19 @@
     "lastChecked": "2026-10-30T00:18:52.086Z",
     "revisionIdentifier": "99695337",
     "lastVerified": "2026-10-30T00:18:52.086Z"
+  },
+  "indexcraft-ai-seo-audit-agent": {
+    "name": "ai-seo-audit-agent",
+    "officialUrl": "https://github.com/indexcraft/ai-seo-audit-agent",
+    "lastChecked": "2026-10-30T00:25:36.946Z",
+    "revisionIdentifier": "20d2e73081",
+    "lastVerified": "2026-10-30T00:25:36.946Z"
+  },
+  "sayaka-sh-spmp": {
+    "name": "spmp",
+    "officialUrl": "https://github.com/sayaka-sh/spmp",
+    "lastChecked": "2026-10-30T00:25:39.477Z",
+    "revisionIdentifier": "2fb03e84",
+    "lastVerified": "2026-10-30T00:25:39.477Z"
   }
 }

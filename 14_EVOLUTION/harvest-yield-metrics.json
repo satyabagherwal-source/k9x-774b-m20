@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T00:19:01.096Z",
-  "total_cycles_completed": 6061,
-  "total_learnings_persisted": 6061,
-  "total_rules_promoted": 5534,
+  "last_updated": "2026-10-30T00:27:04.706Z",
+  "total_cycles_completed": 6064,
+  "total_learnings_persisted": 6064,
+  "total_rules_promoted": 5536,
   "history": [
-    {
-      "timestamp": "2026-10-28T18:42:00.741Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T18:42:07.097Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-zai-org-glm-5-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T18:48:30.376Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T18:48:37.240Z",
       "repository": "envoyproxy/envoy",
@@ -1403,6 +1382,27 @@
       "repository": "meshery/meshery",
       "learningId": "learn-github-meshery-meshery",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T00:25:48.199Z",
+      "repository": "bridgecrewio/checkov",
+      "learningId": "learn-github-bridgecrewio-checkov",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T00:25:52.976Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T00:27:04.706Z",
+      "repository": "o2sh/onefetch",
+      "learningId": "learn-github-o2sh-onefetch",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
