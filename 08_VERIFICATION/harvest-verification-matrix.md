@@ -6150,3 +6150,6 @@
 | `CYCLE-20261030-5702` | `2026-10-30T07:18:41.330Z` | `lucky-media/astro-seo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5650, Rule 5651, Rule 5652` | Yes (`fc5e2ee3...`) |
 | `CYCLE-20261030-N7BE` | `2026-10-30T07:32:41.546Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5653, Rule 5654, Rule 5655` | Yes (`e81b614e...`) |
 | `CYCLE-20261030-O85N` | `2026-10-30T07:33:29.291Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5656, Rule 5657, Rule 5658` | Yes (`5dab5eed...`) |
+| `CYCLE-20261030-60TP` | `2026-10-30T07:47:19.597Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5659, Rule 5660, Rule 5661` | Yes (`d31516c4...`) |
+| `CYCLE-20261030-6QP2` | `2026-10-30T07:47:53.126Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5662, Rule 5663, Rule 5664` | Yes (`8077e078...`) |
+| `CYCLE-20261030-71SO` | `2026-10-30T07:48:07.512Z` | `salvo-rs/salvo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5665, Rule 5666` | Yes (`171f3d54...`) |

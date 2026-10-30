@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T07:33:29.212Z",
+  "last_updated": "2026-10-30T07:48:07.440Z",
   "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10144,8 +10144,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "2391d544",
-      "content_hash": "8c57b26be7817067a104045418b1cdfa049d7a717659b9132a30488ea83472d9",
+      "source_version": "583b1a67",
+      "content_hash": "d31516c4477f8ab9f46fdf82f15d0eb3ce5928943995fc32ffe35ae5a6b995f4",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -10203,6 +10203,21 @@
           "number": 5373,
           "title": "server): make XINFO and JSON.DEBUG keyed so scripts read them through the transa",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5659,
+          "title": "Atomic File Replacement Invariant with Directory Durability",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5660,
+          "title": "Dual-Form Serialization Invariant for Control-Byte and Length-Constrained Protocols",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5661,
+          "title": "Cooperative Fiber Dispatcher Non-Preemption Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10210,7 +10225,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:48:42.441Z",
+      "verified_at": "2026-10-30T07:47:19.504Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34225,8 +34240,8 @@
       "slug": "kubernetes-sigs-aws-load-balancer-controller",
       "platform": "github",
       "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-      "source_version": "d19307cc",
-      "content_hash": "e71325c1c96c6f72301bac6cfda1238136b4b210694ea27d8822b6d321049d52",
+      "source_version": "745586f6",
+      "content_hash": "8077e0781e5628abbaff3a02d2b562285b9ba870bb815e125800cd7b65595ad6",
       "dossier_path": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "promoted_rules": [
@@ -34264,6 +34279,21 @@
           "number": 4005,
           "title": "cut v3.6.2 release (#4937)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5662,
+          "title": "Zero-Signal Cascade Eviction Guard for Dependent Controller Informers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5663,
+          "title": "Multi-Resource Loop Aggregation Error Context Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5664,
+          "title": "Reconcile Phase Decoupling of Requeue Signals from Clean Success Status",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34271,7 +34301,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T03:06:14.098Z",
+      "verified_at": "2026-10-30T07:47:53.032Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47819,8 +47849,8 @@
       "slug": "salvo-rs-salvo",
       "platform": "github",
       "source_url": "https://github.com/salvo-rs/salvo",
-      "source_version": "2908d718",
-      "content_hash": "6c3c733e127c8b20f4a85ce8d2ad793caf3a931fc3cac3761c0539dfece77e15",
+      "source_version": "1620e723",
+      "content_hash": "171f3d5494bb1f9cad4b62b98d3ca2808b5047df856dcd1b183b6fc454332102",
       "dossier_path": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/salvo-rs-salvo-learnings.md",
       "promoted_rules": [
@@ -47843,6 +47873,16 @@
           "number": 5318,
           "title": "Expose client certificates and TLS metadata on requests (#1759)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5665,
+          "title": "Tri-State Optionality Invariant for Configuration Overrides",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5666,
+          "title": "State-Check Race Elimination via Pre-Registration on Async Notifiers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47850,7 +47890,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T14:56:30.100Z",
+      "verified_at": "2026-10-30T07:48:07.421Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -151513,6 +151553,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T07:33:29.192Z"
+    },
+    "rule-5659": {
+      "learning_id": "rule-5659",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5659,
+      "title": "Atomic File Replacement Invariant with Directory Durability",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "583b1a67",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:47:19.504Z"
+    },
+    "rule-5660": {
+      "learning_id": "rule-5660",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5660,
+      "title": "Dual-Form Serialization Invariant for Control-Byte and Length-Constrained Protocols",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "583b1a67",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:47:19.504Z"
+    },
+    "rule-5661": {
+      "learning_id": "rule-5661",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5661,
+      "title": "Cooperative Fiber Dispatcher Non-Preemption Invariant",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "583b1a67",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:47:19.504Z"
+    },
+    "rule-5662": {
+      "learning_id": "rule-5662",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5662,
+      "title": "Zero-Signal Cascade Eviction Guard for Dependent Controller Informers",
+      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "745586f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:47:53.032Z"
+    },
+    "rule-5663": {
+      "learning_id": "rule-5663",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5663,
+      "title": "Multi-Resource Loop Aggregation Error Context Isolation",
+      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "745586f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:47:53.032Z"
+    },
+    "rule-5664": {
+      "learning_id": "rule-5664",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5664,
+      "title": "Reconcile Phase Decoupling of Requeue Signals from Clean Success Status",
+      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "745586f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:47:53.032Z"
+    },
+    "rule-5665": {
+      "learning_id": "rule-5665",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5665,
+      "title": "Tri-State Optionality Invariant for Configuration Overrides",
+      "source_url": "https://github.com/salvo-rs/salvo",
+      "source_version": "1620e723",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:48:07.421Z"
+    },
+    "rule-5666": {
+      "learning_id": "rule-5666",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5666,
+      "title": "State-Check Race Elimination via Pre-Registration on Async Notifiers",
+      "source_url": "https://github.com/salvo-rs/salvo",
+      "source_version": "1620e723",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:48:07.421Z"
     }
   },
   "aliases": {

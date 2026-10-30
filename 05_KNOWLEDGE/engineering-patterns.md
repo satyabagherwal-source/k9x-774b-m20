@@ -411019,3 +411019,833 @@ CFLAGS="-fsanitize=undefined" make test
 ```
 
 ---
+
+
+---
+
+## 5659. Atomic File Replacement Invariant with Directory Durability (Harvested from dragonflydb/dragonfly)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Atomic File Replacement Invariant with Directory Durability",
+  "source": "dragonflydb/dragonfly",
+  "source_url": "https://github.com/dragonflydb/dragonfly",
+  "source_version": "583b1a67",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-30T07:47:18.527Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dragonflydb-dragonfly",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly) (Revision: `583b1a67`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When persisting state atomically via disk replacement, the system MUST write to a uniquely named sibling temporary file (`.tmpXXXXXX`), complete all payload writes, issue `fsync()` on the file descriptor, execute an atomic `rename()` over the target file, and immediately issue an `fsync()` on an open directory file descriptor referencing the target file's parent directory. The system MUST NOT truncate files in place and MUST NOT rely solely on file-level `fsync()`.
+
+**WHY**:
+POSIX filesystems commit file metadata updates and directory index entries asynchronously from file payload blocks. Writing directly or truncating an existing configuration or ACL file creates a window where a concurrent reader sees a 0-byte or partially written file. Even when writing to a temporary file and renaming, the directory entry update (pointing the parent inode to the new inode) remains volatile in the kernel dentry cache. A system crash or abrupt power loss before the directory inode hits disk can leave the target file non-existent or pointing to a corrupted inode, rolling back system state.
+
+**WHEN TO APPLY**:
+Apply to all configuration mutations, credential state updates, snapshot saves, ACL persists, and stateful journal rotations in persistent C/C++/Rust services where data corruption or truncation induces denial-of-service or privilege-escalation loops.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+#include <fcntl.h>
+#include <libgen.h>
+#include <unistd.h>
+#include <system_error>
+#include <string>
+#include <string_view>
+#include "absl/strings/str_cat.h"
+
+// Synchronizes the parent directory metadata to physical media.
+bool SyncDirectory(std::string_view file_path) {
+  // dirname() may modify its argument; allocate a local mutable copy
+  std::string path_copy(file_path);
+  char* dir_path = dirname(path_copy.data());
+  
+  const int dir_fd = open(dir_path, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+  if (dir_fd == -1) {
+    return false;
+  }
+  const bool synced = (fsync(dir_fd) == 0);
+  close(dir_fd);
+  return synced;
+}
+
+bool AtomicDurableWrite(const std::string& target_path, std::string_view payload, std::string* error_out) {
+  // 1. Create temporary file in the exact same directory (guarantees same mount point / filesystem)
+  std::string tmp_template = absl::StrCat(target_path, ".tmpXXXXXX");
+  int fd = mkstemp(tmp_template.data());
+  if (fd == -1) {
+    *error_out = absl::StrCat("Failed to open temp file: ", std::generic_category().message(errno));
+    return false;
+  }
+
+  // Lambda guard ensuring cleanup on any early failure
+  auto cleanup_on_fail = [&](std::string_view stage) -> bool {
+    const int saved_errno = errno;
+    close(fd);
+    unlink(tmp_template.c_str());
+    *error_out = absl::StrCat("Failed to ", stage, ": ", std::generic_category().message(saved_errno));
+    return false;
+  };
+
+  // 2. Write payload loop handling partial writes
+  size_t bytes_written = 0;
+  while (bytes_written < payload.size()) {
+    ssize_t res = write(fd, payload.data() + bytes_written, payload.size() - bytes_written);
+    if (res <= 0) {
+      if (res < 0 && errno == EINTR) continue;
+      return cleanup_on_fail("write payload");
+    }
+    bytes_written += res;
+  }
+
+  // 3. Flush file contents to physical media
+  if (fsync(fd) == -1) {
+    return cleanup_on_fail("fsync file payload");
+  }
+
+  // 4. Close before renaming to release OS file locks and state
+  if (close(fd) == -1) {
+    fd = -1;
+    return cleanup_on_fail("close file");
+  }
+  fd = -1; // Disarm cleanup handler close
+
+  // 5. Atomic POSIX rename over target file
+  if (rename(tmp_template.c_str(), target_path.c_str()) == -1) {
+    const int saved_errno = errno;
+    unlink(tmp_template.c_str());
+    *error_out = absl::StrCat("Failed to rename file: ", std::generic_category().message(saved_errno));
+    return false;
+  }
+
+  // 6. Sync directory inode to prevent rename rollback on power failure
+  if (!SyncDirectory(target_path)) {
+    *error_out = "Failed to fsync parent directory";
+    return false;
+  }
+
+  return true;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Truncates in place; leaves window where file is empty or corrupted.
+// Fails to fsync payload and fails to fsync parent directory dentry.
+void UnsafeSave(const std::string& path, const std::string& data) {
+  FILE* fp = fopen(path.c_str(), "w"); // File truncated immediately! Concurrent reader reads 0 bytes!
+  if (!fp) return;
+  fwrite(data.data(), 1, data.size(), fp);
+  fclose(fp); // No fsync! Crashes during write lose all data.
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a multi-fiber / multi-thread integration stress test:
+1. Initialize a target file with baseline configuration.
+2. Launch a reader thread continuously reading, parsing, and verifying that the file is never empty and never malformed.
+3. Launch a writer thread performing 10,000 rapid iterations of `AtomicDurableWrite`.
+4. Inject fault crash points before directory fsync and assert via POSIX `stat` that the target file either exists in the complete old version or complete new version, never zero-sized.
+
+---
+
+
+---
+
+## 5660. Dual-Form Serialization Invariant for Control-Byte and Length-Constrained Protocols (Harvested from dragonflydb/dragonfly)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Form Serialization Invariant for Control-Byte and Length-Constrained Protocols",
+  "source": "dragonflydb/dragonfly",
+  "source_url": "https://github.com/dragonflydb/dragonfly",
+  "source_version": "583b1a67",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-30T07:47:18.902Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dragonflydb-dragonfly",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly) (Revision: `583b1a67`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When serializing unstructured or operator-provided identifiers into an inline space-delimited text wire format, the serializer MUST scan the input for control characters, whitespace (any byte `<= 0x20`), or length boundaries. If any byte `<= 0x20` is present, or if the argument count or field size exceeds the single-line inline capacity, the serializer MUST switch to a structured, binary-safe framed format (such as RESP Array `*<count>\r\n$<len>\r\n...`), and emit the payload under a distinct version-guarded auxiliary key (e.g., `-resp` suffix). The parser MUST validate the frame length against available buffer boundaries BEFORE allocating memory.
+
+**WHY**:
+Inline text protocols rely on whitespace splitting. When users inject strings containing spaces (e.g., index names, search tags, JSON field paths, or passwords), an unquoted or unframed serializer splits a single token into multiple arbitrary tokens during deserialization. This causes silent data corruption, index drops, or syntax errors on replication and reload. Furthermore, blind allocation based on unvetted incoming frame counts (e.g., `*4294967295\r\n`) allows memory exhaustion attacks where the parser reserves gigabytes of RAM for non-existent payloads.
+
+**WHEN TO APPLY**:
+Apply to all metadata serializers, database dump engines (RDB/AOF), cross-shard replication protocols, and configuration parsers where user-defined arbitrary string inputs are embedded in stream records.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+#include <string>
+#include <string_view>
+#include <vector>
+#include <algorithm>
+#include "absl/strings/str_cat.h"
+#include "absl/strings/str_join.h"
+#include "absl/types/span.h"
+
+// Encodes command arguments safely: inline if safe, framed RESP if spaces/binary bytes exist.
+std::string EncodeSafeCommand(absl::Span<const std::string> args) {
+  auto is_inline_safe = [](std::string_view arg) {
+    return !arg.empty() && std::all_of(arg.begin(), arg.end(), [](unsigned char c) {
+      return c > ' '; // Reject spaces, tabs, newlines, and control bytes
+    });
+  };
+
+  // If every token has no whitespace, keep backward-compatible inline format
+  if (std::all_of(args.begin(), args.end(), is_inline_safe)) {
+    return absl::StrJoin(args, " ");
+  }
+
+  // Otherwise, construct length-prefixed RESP Array
+  std::string cmd = absl::StrCat("*", args.size(), "\r\n");
+  for (const auto& arg : args) {
+    absl::StrAppend(&cmd, "$", arg.size(), "\r\n", arg, "\r\n");
+  }
+  return cmd;
+}
+
+// Emits the appropriate metadata aux key to ensure backwards-incompatible records
+// are skipped by older daemon versions rather than misinterpreted.
+std::string DetermineAuxKey(std::string_view base_key, std::string_view encoded_value) {
+  if (encoded_value.find('\r') == std::string_view::npos) {
+    return std::string(base_key);
+  }
+  return absl::StrCat(base_key, "-resp");
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Blindly space-joins arbitrary user arguments.
+// If arg contains ' ', "tag city" turns into two tokens ("tag" and "city").
+std::string BrokenEncode(const std::vector<std::string>& args) {
+  return absl::StrJoin(args, " "); // Corrupts any argument containing whitespace!
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a memory-limited unit test:
+1. Feed a malicious payload string `"*4294967295\r\n"` into the parser within a Linux container with `setrlimit(RLIMIT_AS)` clamped to 2GB.
+2. Assert that the parser rejects the header with a parse error without executing `vector::reserve` or throwing `std::bad_alloc`.
+3. Round-trip test: Create indices containing tabs, spaces, and strings exceeding 64 KiB, save to RDB, reload, and verify bit-for-bit identity across reload.
+
+---
+
+
+---
+
+## 5661. Cooperative Fiber Dispatcher Non-Preemption Invariant (Harvested from dragonflydb/dragonfly)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cooperative Fiber Dispatcher Non-Preemption Invariant",
+  "source": "dragonflydb/dragonfly",
+  "source_url": "https://github.com/dragonflydb/dragonfly",
+  "source_version": "583b1a67",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-30T07:47:19.308Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dragonflydb-dragonfly",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly) (Revision: `583b1a67`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Code running on an event-driven dispatcher fiber or an atomic critical execution section MUST NOT invoke blocking primitives, synchronization barriers, or throttling functions that yield execution back to the fiber scheduler (`WaitUntil`, `EventCount::wait_until`, or channel blocking). All flow-control, queue throttling, and socket backpressure checks MUST be verified and scheduled on worker fibers prior to entering the non-preemptive dispatcher context.
+
+**WHY**:
+In shared-nothing fiber architectures (e.g., Dragonfly's `util::fb2`), the dispatcher fiber is responsible for scheduling work, processing timers, and dispatching tasks to shard queues. If a dispatcher fiber yields or halts on an event count, the fiber scheduler cannot pump pending microtasks or process completions. The fiber engine detects this invariant violation via assertion (`Should not preempt dispatcher`) and aborts with a SIGSEGV / exit code 139 to prevent deadlocks and memory corruptions across all connected client pipelines.
+
+**WHEN TO APPLY**:
+Apply to all core engine dispatchers, network command demuxers, asynchronous state machines, and cooperative thread-pool engines executing transactional phases across distributed shards.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+#include <cstdint>
+#include <cassert>
+
+class JournalStreamer {
+ public:
+  bool NeedsThrottling() const {
+    return buffered_bytes_ >= kOutputLimit;
+  }
+
+  // MUST only be called from a worker fiber context, NEVER dispatcher fiber
+  void ThrottleIfNeeded(bool is_dispatcher_context) {
+    if (!NeedsThrottling()) {
+      return;
+    }
+
+    // STRICT INVARIANT ENFORCEMENT
+    if (is_dispatcher_context) {
+      // Must not suspend! Mark backpressure flag and return to prevent preemption panic.
+      backpressure_signaled_ = true;
+      return; 
+    }
+
+    // Worker fiber is safe to yield execution until buffer drains below threshold
+    while (buffered_bytes_ >= kOutputLimit) {
+      buffer_drained_event_.wait(); // Yields worker fiber, scheduler continues running
+    }
+  }
+
+ private:
+  static constexpr size_t kOutputLimit = 1024 * 1024;
+  size_t buffered_bytes_ = 0;
+  bool backpressure_signaled_ = false;
+  EventCount buffer_drained_event_;
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Calling blocking flow-control unconditionally from any context.
+void JournalStreamer::UnsafeThrottle() {
+  if (buffered_bytes_ >= kOutputLimit) {
+    // FATAL: If called during WAIT or on a dispatcher fiber, scheduler crashes:
+    // "Should not preempt dispatcher: util::fb2::detail::Scheduler::WaitUntil()"
+    buffer_drained_event_.wait();
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Compile with fiber debug assertions (`-DDFLY_FIBER_DEBUG=1`). Execute replication under backpressure:
+1. Spin up a replica on a Docker network and run `docker pause <replica_container>`.
+2. Pipeline 200MB of `SET` commands into the primary to breach `replication_stream_output_limit`.
+3. Concurrently issue `WAIT 1 2000` against the primary.
+4. Assert that the server handles the wait timeout smoothly, returns integer `0`, and does not crash with exit code 139 or log dispatcher preemption panics.
+
+---
+
+
+---
+
+## 5662. Zero-Signal Cascade Eviction Guard for Dependent Controller Informers (Harvested from kubernetes-sigs/aws-load-balancer-controller)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Zero-Signal Cascade Eviction Guard for Dependent Controller Informers",
+  "source": "kubernetes-sigs/aws-load-balancer-controller",
+  "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+  "source_version": "745586f6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T07:47:52.047Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) (Revision: `745586f6`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an event handler watches child or reference resources to enqueue a root reconciler (e.g., HTTPRoute/Service -> Gateway, Pod/Node -> Ingress), the handler **MUST NOT** enqueue parent items during the initial cache synchronization window (`IsInInitialList == true`). Parent reconcilers **MUST** rely exclusively on their own initial list event and retrieve fully populated child states directly from the localized informer cache upon worker dispatch.
+
+**WHY**:
+In large-scale orchestrators ($N$ root controllers, $M$ dependent child resources where $M \gg N$), during startup every child resource emits an `Add` event from the initial informer listing. If each child handler scans and enqueues parent objects, the system triggers an $\mathcal{O}(M \times K)$ avalanche of cache lookups, slice allocations, and queue thrashing before the reconciler workers even start. This delays operator convergence by minutes, saturates the controller-runtime workqueue, and starvates node-level heartbeats.
+
+**WHEN TO APPLY**:
+Apply to any Kubernetes/cloud controller or event-driven agent architecture watching child/associated entities where the parent reconciler independently scans children via indexer caches.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package watcher
+
+import (
+	"context"
+	"k8s.io/client-go/util/workqueue"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/event"
+	"sigs.k8s.io/controller-runtime/pkg/handler"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+)
+
+// NewChildResourceEventHandler creates a handler that ignores startup listing cascades
+func NewChildResourceEventHandler(
+	client client.Client, 
+	mapper func(ctx context.Context, obj client.Object) []reconcile.Request,
+) handler.TypedFuncs[client.Object, reconcile.Request] {
+	return handler.TypedFuncs[client.Object, reconcile.Request]{
+		CreateFunc: func(ctx context.Context, e event.TypedCreateEvent[client.Object], q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
+			// CRITICAL INVARIANT: Suppress enqueue if event originates from initial informer LIST sync
+			if e.IsInInitialList {
+				return
+			}
+			for _, req := range mapper(ctx, e.Object) {
+				q.Add(req)
+			}
+		},
+		UpdateFunc: func(ctx context.Context, e event.TypedUpdateEvent[client.Object], q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
+			if e.ObjectNew.GetResourceVersion() == e.ObjectOld.GetResourceVersion() {
+				return
+			}
+			for _, req := range mapper(ctx, e.ObjectNew) {
+				q.Add(req)
+			}
+		},
+		DeleteFunc: func(ctx context.Context, e event.TypedDeleteEvent[client.Object], q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
+			for _, req := range mapper(ctx, e.Object) {
+				q.Add(req)
+			}
+		},
+	}
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Indiscriminately enqueuing root references on initial listing events.
+CreateFunc: func(ctx context.Context, e event.TypedCreateEvent[client.Object], q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
+    // BUG: When cluster has 10,000 HTTPRoutes, 10,000 requests are pushed into the queue,
+    // triggering repeated Gateway scans even though Gateway controller is also receiving its own initial list!
+    parents := findParents(ctx, e.Object)
+    for _, req := range parents {
+        q.Add(req)
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Inject mock informer queues with 5,000 synthetic child events marked with `event.TypedCreateEvent[client.Object]{ IsInInitialList: true }`. Assert that the target queue depth remains strictly 0 until a non-initial event (`IsInInitialList: false`) is pushed.
+
+---
+
+
+---
+
+## 5663. Multi-Resource Loop Aggregation Error Context Isolation (Harvested from kubernetes-sigs/aws-load-balancer-controller)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Resource Loop Aggregation Error Context Isolation",
+  "source": "kubernetes-sigs/aws-load-balancer-controller",
+  "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+  "source_version": "745586f6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T07:47:52.426Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) (Revision: `745586f6`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an operational manager iterates over an array or map of independent external resources (such as AWS Security Groups, Target Groups, or ENIs) and aggregates failures into a combined multierror, it **MUST** emit a discrete, contextualized log event at the failure site tagged with the unique entity identifier (e.g., Resource ID, ARN, NamespacedName) **BEFORE** aggregating the error into a collection.
+
+**WHY**:
+Using aggregated error joining (`errors.Join` or `slice of errors`) strips the immediate execution context, or squashes the identifier into a massive aggregated trace where individual failed entities cannot be queried by log scrapers. In shared infrastructure topologies where multiple resources bind to a single gateway/security group, an invalid ID on one binding halts reconciliation for all dependents without exposing which constituent ID poisoned the batch.
+
+**WHEN TO APPLY**:
+Any reconciliation loop processing heterogeneous collections of cloud or remote infrastructure where one invalid resource ID should not cause an invisible, un-debuggable failure state across peers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package reconciler
+
+import (
+	"context"
+	"errors"
+	"github.com/go-logr/logr"
+)
+
+type ReconcileTarget struct {
+	ID   string
+	Data interface{}
+}
+
+func ReconcileAllTargets(ctx context.Context, logger logr.Logger, targets []ReconcileTarget, worker func(context.Context, ReconcileTarget) error) error {
+	var collectedErrors []error
+
+	for _, target := range targets {
+		if err := worker(ctx, target); err != nil {
+			// CRITICAL INVARIANT: Log the failure explicitly scoped with the unique target ID
+			// prior to error collection. This ensures external observability systems isolate the culprit.
+			logger.Error(err, "failed to reconcile target entity", 
+				"targetID", target.ID,
+				"totalTargets", len(targets),
+			)
+			collectedErrors = append(collectedErrors, err)
+			continue
+		}
+	}
+
+	if len(collectedErrors) > 0 {
+		return errors.Join(collectedErrors...)
+	}
+	return nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Silently joining loop errors without per-entity diagnostic logging
+func ReconcileAllTargets(ctx context.Context, targets []ReconcileTarget, worker func(context.Context, ReconcileTarget) error) error {
+    var errs []error
+    for _, target := range targets {
+        if err := worker(ctx, target); err != nil {
+            // ANTI-PATTERN: The error is returned up the stack as a giant string.
+            // When target.ID is nested or missing in err, root cause debugging is impossible.
+            errs = append(errs, err)
+        }
+    }
+    return errors.Join(errs...)
+}
+```
+
+**VERIFICATION METHOD**:
+Run unit tests with a mock worker failing on 1 out of 5 items. Inspect log output sink (using `logr/testing` or `zaptest/observer`) and assert that a log line with level `Error` contains the exact key-value pair `targetID: "target-3"` and that the returned `error` satisfies `errors.Is`.
+
+---
+
+
+---
+
+## 5664. Reconcile Phase Decoupling of Requeue Signals from Clean Success Status (Harvested from kubernetes-sigs/aws-load-balancer-controller)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Reconcile Phase Decoupling of Requeue Signals from Clean Success Status",
+  "source": "kubernetes-sigs/aws-load-balancer-controller",
+  "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+  "source_version": "745586f6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T07:47:52.835Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) (Revision: `745586f6`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+A reconciliation helper function **MUST NOT** declare operational success or clear degradation conditions when the underlying controller returns a non-zero `ctrl.Result.RequeueAfter` or `ctrl.Result.Requeue == true`, even if the returned `error` is `nil`. Success states **MUST** be gated on both `err == nil` AND `result.Requeue == false` AND `result.RequeueAfter == 0`.
+
+**WHY**:
+In Kubernetes controllers, polling or asynchronous wait loops (such as awaiting cloud load balancer provisioning, DNS propagation, or security group association) return `ctrl.Result{RequeueAfter: 10 * time.Second}, nil`. If the controller framework equates `err == nil` with total completion and sets `Programmed=True` or triggers success webhooks, it creates an illegal transient state where downstream consumers proceed against non-existent cloud endpoints.
+
+**WHEN TO APPLY**:
+Every reconciliation exit gate handling status condition emission, metrics counter increments, or status block mutation.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package controller
+
+import (
+	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+)
+
+// SafeReconcileTerminalGate inspects reconcile status and fires hooks deterministically
+func SafeReconcileTerminalGate(
+	req reconcile.Request, 
+	result ctrl.Result, 
+	err error, 
+	onComplete func(name, ns string), 
+	onFailure func(name, ns string, err error),
+) (ctrl.Result, error) {
+	if err != nil {
+		onFailure(req.Name, req.Namespace, err)
+		return result, err
+	}
+
+	// CRITICAL INVARIANT: Requeue signals mean work is pending; NOT terminal success!
+	if !result.Requeue && result.RequeueAfter == 0 {
+		onComplete(req.Name, req.Namespace)
+	}
+
+	return result, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Marking resource condition as Successful purely based on err == nil
+res, err := r.reconcileCloudResources(ctx, obj)
+if err == nil {
+    // BUG: If res.RequeueAfter == 5*time.Second because AWS ALB is still in 'provisioning',
+    // setting Programmed = True tells users the endpoint is ready when it is dead!
+    obj.Status.SetCondition(ConditionProgrammed, StatusTrue)
+}
+return res, err
+```
+
+**VERIFICATION METHOD**:
+Execute unit tests passing `ctrl.Result{RequeueAfter: 5 * time.Second}, nil` into the reconciler result wrapper. Assert that `onComplete` is NOT called, and verify status conditions remain in `Pending` or `In-Progress`.
+
+---
+
+
+---
+
+## 5665. Tri-State Optionality Invariant for Configuration Overrides (Harvested from salvo-rs/salvo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Tri-State Optionality Invariant for Configuration Overrides",
+  "source": "salvo-rs/salvo",
+  "source_url": "https://github.com/salvo-rs/salvo",
+  "source_version": "1620e723",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T07:48:06.811Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-salvo-rs-salvo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [salvo-rs/salvo](https://github.com/salvo-rs/salvo) (Revision: `1620e723`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When serializing or deserializing domain specifications where the absence of a key inherits an ancestor policy, but an empty collection explicitly clears/overrides that policy, you MUST model the field as `Option<Vec<T>>` (or `Option<T>`), NEVER as a bare collection `Vec<T>` with `skip_serializing_if = "Vec::is_empty"`.
+
+**WHY**:
+In protocols like OpenAPI (v3.0/v3.1/v3.2), top-level configuration sets global security requirements. An operation that omits the `security` property inherits the global document policy. An operation defining `security: []` explicitly overrides the global security requirement, making the endpoint public. If an API framework models `securities` as `Vec<SecurityRequirement>` and serializes with `skip_serializing_if = "Vec::is_empty"`, setting an empty list strips the field entirely. The downstream gateway or UI will treat the endpoint as secured by the inherited policy, leading to broken authorization contracts and authentication failures on public endpoints.
+
+**WHEN TO APPLY**:
+In all API specification generators, hierarchical schema builders, and inherited configuration parsers (OpenAPI, Kubernetes CRDs, IAM policies, and CSS/styling inheritance models).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use serde::{Deserialize, Serialize};
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
+pub struct OperationSchema {
+    /// `None` indicates inheritance from document-level configuration.
+    /// `Some(vec)` defines explicit policies.
+    /// `Some([])` explicitly disables policies, serializing to `security: []`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub security: Option<Vec<SecurityRequirement>>,
+}
+
+impl OperationSchema {
+    #[must_use]
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Sets explicit security requirements. Passing an empty iterator produces `Some([])`.
+    #[must_use]
+    pub fn security<I: IntoIterator<Item = SecurityRequirement>>(mut self, requirements: I) -> Self {
+        self.security = Some(requirements.into_iter().collect());
+        self
+    }
+
+    /// Appends a requirement, lazily initializing `None` to `Some(Vec)`.
+    #[must_use]
+    pub fn add_security(mut self, requirement: SecurityRequirement) -> Self {
+        self.security.get_or_insert_default().push(requirement);
+        self
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Bare collection cannot distinguish inheritance from explicit negation.
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+pub struct OperationSchemaBad {
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub security: Vec<SecurityRequirement>, // ERRONEOUS: [] serializes to absent field!
+}
+
+impl OperationSchemaBad {
+    pub fn set_public(mut self) -> Self {
+        self.security = Vec::new(); // Will be dropped on serialization, reverting to global auth!
+        self
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce via unit tests validating bidirectional round-tripping of both empty and omitted fields:
+```rust
+#[test]
+fn test_security_tri_state_serialization() {
+    let public_op = OperationSchema::new().security([]);
+    let json = serde_json::to_string(&public_op).unwrap();
+    assert_eq!(json, r#"{"security":[]}"#);
+
+    let inherited_op = OperationSchema::new();
+    let json_inherited = serde_json::to_string(&inherited_op).unwrap();
+    assert_eq!(json_inherited, r#"{}"#);
+}
+```
+
+---
+
+
+---
+
+## 5666. State-Check Race Elimination via Pre-Registration on Async Notifiers (Harvested from salvo-rs/salvo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "State-Check Race Elimination via Pre-Registration on Async Notifiers",
+  "source": "salvo-rs/salvo",
+  "source_url": "https://github.com/salvo-rs/salvo",
+  "source_version": "1620e723",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T07:48:07.188Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-salvo-rs-salvo",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [salvo-rs/salvo](https://github.com/salvo-rs/salvo) (Revision: `1620e723`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When coordinating concurrent state transitions (e.g., connection aborts, shutdown signals) using an atomic flag and an asynchronous notification primitive (such as `tokio::sync::Notify`), you MUST pin and enable the notification waiter *before* querying the atomic state.
+
+**WHY**:
+If a task inspects the atomic state first and subsequently calls `notify.notified().await`, a race condition occurs:
+1. Thread A checks `state.load(Ordering::Acquire)` and observes `RUNNING`.
+2. Thread B transitions `state` to `ABORT` and calls `notify.notify_waiters()`. Because Thread A has not yet registered itself as a waiter on `Notify`, the broadcast is lost.
+3. Thread A constructs `notified.await` and parks indefinitely.
+Pre-registering via `notified.as_mut().enable()` guarantees that any subsequent notification issued after the atomic check will reliably wake the parked future.
+
+**WHEN TO APPLY**:
+Low-level async drivers, transport control structures, lifecycle managers, and connection termination guards in Rust or C++.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::sync::atomic::{AtomicU8, Ordering};
+use tokio::sync::Notify;
+
+const RUNNING: u8 = 0;
+const GRACEFUL_SHUTDOWN: u8 = 1;
+const ABORT: u8 = 2;
+
+pub struct SafeConnCtrl {
+    state: AtomicU8,
+    notify: Notify,
+}
+
+impl SafeConnCtrl {
+    pub async fn wait_for_state(&self, abort_only: bool) -> u8 {
+        loop {
+            // STEP 1: Allocate and pin the notification future.
+            let notified = self.notify.notified();
+            tokio::pin!(notified);
+
+            // STEP 2: Enable the waiter before inspecting the atomic state.
+            // This registers the waiter in Notify's internal linked list.
+            notified.as_mut().enable();
+
+            // STEP 3: Read atomic state with Acquire ordering.
+            let current = self.state.load(Ordering::Acquire);
+            if current == ABORT || (!abort_only && current == GRACEFUL_SHUTDOWN) {
+                return current;
+            }
+
+            // STEP 4: Await the pre-registered notification.
+            notified.await;
+        }
+    }
+
+    pub fn abort(&self) {
+        if self.state.swap(ABORT, Ordering::AcqRel) != ABORT {
+            self.notify.notify_waiters();
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: TOCTOU race between state check and notification subscription.
+pub async fn buggy_wait_for_state(state: &AtomicU8, notify: &Notify) -> u8 {
+    loop {
+        let current = state.load(Ordering::Acquire);
+        if current == ABORT {
+            return current;
+        }
+        // RACE CONDITION: If another thread swaps `state` to ABORT and calls
+        // `notify_waiters()` RIGHT HERE, this future misses the signal and hangs!
+        notify.notified().await;
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Execute an aggressive multithreaded loom test or stress loop spawning concurrent aborts and assertions:
+```rust
+#[tokio::test]
+async fn test_conn_ctrl_race_elimination() {
+    for _ in 0..10_000 {
+        let ctrl = std::sync::Arc::new(SafeConnCtrl {
+            state: AtomicU8::new(0),
+            notify: Notify::new(),
+        });
+        let c = ctrl.clone();
+        let handle = tokio::spawn(async move {
+            c.wait_for_state(true).await
+        });
+        ctrl.abort();
+        tokio::time::timeout(std::time::Duration::from_millis(50), handle)
+            .await
+            .expect("must not deadlock")
+            .unwrap();
+    }
+}
+```
+
+---

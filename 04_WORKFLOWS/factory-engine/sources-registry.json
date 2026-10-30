@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T07:33:31.854Z",
-    "lastVerified": "2026-10-30T07:33:31.854Z",
+    "lastChecked": "2026-10-30T07:48:10.058Z",
+    "lastVerified": "2026-10-30T07:48:10.058Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -343,9 +343,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T06:56:58.165Z",
+    "lastChecked": "2026-10-30T07:46:07.405Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T06:56:58.165Z"
+    "lastVerified": "2026-10-30T07:46:07.405Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -469,11 +469,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubernetes-sigs-aws-load-balancer-controller": {
-    "name": "aws-load-balancer-controller",
+    "name": "kubernetes-sigs/aws-load-balancer-controller",
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-    "lastChecked": "2026-10-28T19:54:33.800Z",
-    "revisionIdentifier": "d19307cc",
-    "lastVerified": "2026-10-28T19:54:33.800Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-30T07:46:04.563Z",
+    "lastVerified": "2026-10-30T07:46:04.563Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+    "contentHash": "8077e0781e5628abbaff3a02d2b562285b9ba870bb815e125800cd7b65595ad6",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "smallstep-cli": {
     "name": "cli",
@@ -1777,12 +1787,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "projectdiscovery/nuclei",
+    "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T03:46:54.973Z",
-    "lastVerified": "2026-10-30T03:46:54.973Z",
+    "lastChecked": "2026-10-30T07:46:02.506Z",
+    "lastVerified": "2026-10-30T07:46:02.506Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -1791,7 +1801,8 @@
     "recentFixesCount": 9,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2e258fc3"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -4582,14 +4593,14 @@
     "officialUrl": "https://github.com/salvo-rs/salvo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T14:56:29.654Z",
-    "lastVerified": "2026-10-28T14:56:29.654Z",
+    "lastChecked": "2026-10-30T07:45:57.424Z",
+    "lastVerified": "2026-10-30T07:45:57.424Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-salvo-rs-salvo",
-    "contentHash": "6c3c733e127c8b20f4a85ce8d2ad793caf3a931fc3cac3761c0539dfece77e15",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "171f3d5494bb1f9cad4b62b98d3ca2808b5047df856dcd1b183b6fc454332102",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 4,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6505,14 +6516,14 @@
     "officialUrl": "https://github.com/dragonflydb/dragonfly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-28T18:48:41.807Z",
-    "lastVerified": "2026-10-28T18:48:41.807Z",
+    "lastChecked": "2026-10-30T07:46:09.674Z",
+    "lastVerified": "2026-10-30T07:46:09.674Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "8c57b26be7817067a104045418b1cdfa049d7a717659b9132a30488ea83472d9",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "contentHash": "d31516c4477f8ab9f46fdf82f15d0eb3ce5928943995fc32ffe35ae5a6b995f4",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9473,5 +9484,19 @@
     "lastChecked": "2026-10-30T07:29:52.481Z",
     "revisionIdentifier": "50835e2e",
     "lastVerified": "2026-10-30T07:29:52.481Z"
+  },
+  "santifer-santifer-irepair": {
+    "name": "santifer-irepair",
+    "officialUrl": "https://github.com/santifer/santifer-irepair",
+    "lastChecked": "2026-10-30T07:45:54.889Z",
+    "revisionIdentifier": "5c1ce0b2",
+    "lastVerified": "2026-10-30T07:45:54.889Z"
+  },
+  "damascenorafael-reminders-menubar": {
+    "name": "reminders-menubar",
+    "officialUrl": "https://github.com/DamascenoRafael/reminders-menubar",
+    "lastChecked": "2026-10-30T07:45:57.370Z",
+    "revisionIdentifier": "3ee6f0ac",
+    "lastVerified": "2026-10-30T07:45:57.370Z"
   }
 }

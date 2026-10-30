@@ -5483,10 +5483,10 @@
     "repository": "salvo-rs/salvo",
     "platform": "github",
     "sourceUrl": "https://github.com/salvo-rs/salvo",
-    "sourceVersion": "2908d718",
+    "sourceVersion": "1620e723",
     "license": "Apache-2.0",
-    "contentHash": "6c3c733e127c8b20f4a85ce8d2ad793caf3a931fc3cac3761c0539dfece77e15",
-    "lastHarvestedAt": "2026-10-28T14:56:30.185Z",
+    "contentHash": "171f3d5494bb1f9cad4b62b98d3ca2808b5047df856dcd1b183b6fc454332102",
+    "lastHarvestedAt": "2026-10-30T07:48:07.515Z",
     "learningId": "learn-github-salvo-rs-salvo"
   },
   "react-metro": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "2391d544",
+    "sourceVersion": "583b1a67",
     "license": "NOASSERTION",
-    "contentHash": "8c57b26be7817067a104045418b1cdfa049d7a717659b9132a30488ea83472d9",
-    "lastHarvestedAt": "2026-10-28T18:48:42.519Z",
+    "contentHash": "d31516c4477f8ab9f46fdf82f15d0eb3ce5928943995fc32ffe35ae5a6b995f4",
+    "lastHarvestedAt": "2026-10-30T07:47:19.600Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -6703,10 +6703,10 @@
     "repository": "kubernetes-sigs/aws-load-balancer-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-    "sourceVersion": "d19307cc",
+    "sourceVersion": "745586f6",
     "license": "Apache-2.0",
-    "contentHash": "e71325c1c96c6f72301bac6cfda1238136b4b210694ea27d8822b6d321049d52",
-    "lastHarvestedAt": "2026-10-25T03:06:14.153Z",
+    "contentHash": "8077e0781e5628abbaff3a02d2b562285b9ba870bb815e125800cd7b65595ad6",
+    "lastHarvestedAt": "2026-10-30T07:47:53.130Z",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller"
   },
   "qdrant-qdrant": {
