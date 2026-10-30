@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T09:15:18.447Z",
-    "lastVerified": "2026-10-30T09:15:18.447Z",
+    "lastChecked": "2026-10-30T09:30:03.174Z",
+    "lastVerified": "2026-10-30T09:30:03.174Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -109,8 +109,8 @@
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T04:48:05.298Z",
-    "lastVerified": "2026-10-30T04:48:05.298Z",
+    "lastChecked": "2026-10-30T09:27:12.759Z",
+    "lastVerified": "2026-10-30T09:27:12.759Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T08:16:52.528Z",
-    "lastVerified": "2026-10-30T08:16:52.528Z",
+    "lastChecked": "2026-10-30T09:27:17.596Z",
+    "lastVerified": "2026-10-30T09:27:17.596Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -954,12 +954,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kong-kubernetes-ingress-controller": {
-    "name": "Kong/kubernetes-ingress-controller",
+    "name": "kubernetes-ingress-controller",
     "officialUrl": "https://github.com/Kong/kubernetes-ingress-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T20:44:29.013Z",
-    "lastVerified": "2026-10-28T20:44:29.013Z",
+    "lastChecked": "2026-10-30T09:27:10.252Z",
+    "lastVerified": "2026-10-30T09:27:10.252Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kong-kubernetes-ingress-controller",
@@ -968,7 +968,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5fa96bf0"
   },
   "mimblewimble-grin": {
     "name": "grin",
@@ -4919,9 +4920,9 @@
   "mlua-rs-mlua": {
     "name": "mlua",
     "officialUrl": "https://github.com/mlua-rs/mlua",
-    "lastChecked": "2026-10-28T15:29:33.584Z",
+    "lastChecked": "2026-10-30T09:27:02.585Z",
     "revisionIdentifier": "ff96ed78",
-    "lastVerified": "2026-10-28T15:29:33.584Z"
+    "lastVerified": "2026-10-30T09:27:02.585Z"
   },
   "hf-aleph-alpha-kolibri-1": {
     "name": "Aleph-Alpha/Kolibri-1",
@@ -6877,11 +6878,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "tickernelz-opencode-mem": {
-    "name": "opencode-mem",
+    "name": "tickernelz/opencode-mem",
     "officialUrl": "https://github.com/tickernelz/opencode-mem",
-    "lastChecked": "2026-10-28T19:46:49.756Z",
-    "revisionIdentifier": "83c386bc",
-    "lastVerified": "2026-10-28T19:46:49.756Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T09:27:20.498Z",
+    "lastVerified": "2026-10-30T09:27:20.498Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-tickernelz-opencode-mem",
+    "contentHash": "69e58d9bf5e4c6d9f15d8e897fb6ed65b5e23018dac0f62f4e06b1d2874aa9df",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "str4d-rage": {
     "name": "rage",
@@ -9628,5 +9639,19 @@
     "lastChecked": "2026-10-30T09:12:31.449Z",
     "revisionIdentifier": "494a3635",
     "lastVerified": "2026-10-30T09:12:31.449Z"
+  },
+  "scrapy-plugins-scrapy-zyte-api": {
+    "name": "scrapy-zyte-api",
+    "officialUrl": "https://github.com/scrapy-plugins/scrapy-zyte-api",
+    "lastChecked": "2026-10-30T09:27:05.134Z",
+    "revisionIdentifier": "9b63ad94",
+    "lastVerified": "2026-10-30T09:27:05.134Z"
+  },
+  "krzysztofzablocki-inject": {
+    "name": "Inject",
+    "officialUrl": "https://github.com/krzysztofzablocki/Inject",
+    "lastChecked": "2026-10-30T09:27:07.530Z",
+    "revisionIdentifier": "67e3ee9a",
+    "lastVerified": "2026-10-30T09:27:07.530Z"
   }
 }

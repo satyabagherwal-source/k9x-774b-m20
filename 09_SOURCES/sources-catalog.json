@@ -1413,10 +1413,10 @@
     "repository": "tickernelz/opencode-mem",
     "platform": "github",
     "sourceUrl": "https://github.com/tickernelz/opencode-mem",
-    "sourceVersion": "83c386bc",
+    "sourceVersion": "0d964894",
     "license": "MIT",
-    "contentHash": "86a4a89e24999dba3e70342f64b6cbd4f18283be76bc387578d9655e671abbe0",
-    "lastHarvestedAt": "2026-10-27T17:05:13.801Z",
+    "contentHash": "69e58d9bf5e4c6d9f15d8e897fb6ed65b5e23018dac0f62f4e06b1d2874aa9df",
+    "lastHarvestedAt": "2026-10-30T09:30:00.627Z",
     "learningId": "learn-github-tickernelz-opencode-mem"
   },
   "hf-autotrust-jev-35b-nvfp4": {

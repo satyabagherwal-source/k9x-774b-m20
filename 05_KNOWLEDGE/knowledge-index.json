@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T09:15:15.810Z",
+  "last_updated": "2026-10-30T09:30:00.561Z",
   "total_verified_learnings": 1173,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -64978,8 +64978,8 @@
       "slug": "tickernelz-opencode-mem",
       "platform": "github",
       "source_url": "https://github.com/tickernelz/opencode-mem",
-      "source_version": "83c386bc",
-      "content_hash": "86a4a89e24999dba3e70342f64b6cbd4f18283be76bc387578d9655e671abbe0",
+      "source_version": "0d964894",
+      "content_hash": "69e58d9bf5e4c6d9f15d8e897fb6ed65b5e23018dac0f62f4e06b1d2874aa9df",
       "dossier_path": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
       "promoted_rules": [
@@ -65012,6 +65012,21 @@
           "number": 4915,
           "title": "turso): checkpoint the WAL before closing a database (#440)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5700,
+          "title": "In-Database Pre-Filtering Before Limit Application In Distributed Sharded Queries",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5701,
+          "title": "Multi-Byte UTF-8 Strict Boundary Truncation For Context Injection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5702,
+          "title": "Separation Of In-Flight Embedding Vectors From Serialized Model Context",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65019,7 +65034,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:05:13.756Z",
+      "verified_at": "2026-10-30T09:30:00.546Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -152320,6 +152335,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T09:15:15.794Z"
+    },
+    "rule-5700": {
+      "learning_id": "rule-5700",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5700,
+      "title": "In-Database Pre-Filtering Before Limit Application In Distributed Sharded Queries",
+      "source_url": "https://github.com/tickernelz/opencode-mem",
+      "source_version": "0d964894",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T09:30:00.546Z"
+    },
+    "rule-5701": {
+      "learning_id": "rule-5701",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5701,
+      "title": "Multi-Byte UTF-8 Strict Boundary Truncation For Context Injection",
+      "source_url": "https://github.com/tickernelz/opencode-mem",
+      "source_version": "0d964894",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T09:30:00.546Z"
+    },
+    "rule-5702": {
+      "learning_id": "rule-5702",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5702,
+      "title": "Separation Of In-Flight Embedding Vectors From Serialized Model Context",
+      "source_url": "https://github.com/tickernelz/opencode-mem",
+      "source_version": "0d964894",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T09:30:00.546Z"
     }
   },
   "aliases": {

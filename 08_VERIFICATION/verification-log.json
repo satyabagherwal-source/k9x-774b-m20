@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-O1YQ",
-    "timestamp": "2026-10-28T03:18:04.274Z",
-    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-    "contentHash": "2057185c2b7c52a5f3ca0df96ed92d6c564558fd5d917ec6a5033714acf885e7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-O3LM",
     "timestamp": "2026-10-28T03:18:06.394Z",
     "repository": "milvus-io/milvus",
@@ -7490,6 +7475,21 @@
     "repository": "NVIDIA/cuda-rust",
     "learningId": "learn-github-nvidia-cuda-rust",
     "contentHash": "7aa2cd9b892cdd1b8dccdac2b362172f7a1ae5c1ef698e8f1faf1b3626edac37",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-U2PC",
+    "timestamp": "2026-10-30T09:30:00.624Z",
+    "repository": "tickernelz/opencode-mem",
+    "learningId": "learn-github-tickernelz-opencode-mem",
+    "contentHash": "69e58d9bf5e4c6d9f15d8e897fb6ed65b5e23018dac0f62f4e06b1d2874aa9df",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

@@ -415187,3 +415187,349 @@ fn test_carrier_lowering_fails_closed_on_unmodeled_use() {
 ```
 
 ---
+
+
+---
+
+## 5700. In-Database Pre-Filtering Before Limit Application In Distributed Sharded Queries (Harvested from tickernelz/opencode-mem)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "In-Database Pre-Filtering Before Limit Application In Distributed Sharded Queries",
+  "source": "tickernelz/opencode-mem",
+  "source_url": "https://github.com/tickernelz/opencode-mem",
+  "source_version": "0d964894",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T09:29:59.711Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tickernelz-opencode-mem",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem) (Revision: `0d964894`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When querying partitioned, sharded, or multi-collection databases with pagination or cardinality limits (`LIMIT N`), query filters (such as session exclusions, temporal cutoffs, soft-deletions, and tenant barriers) MUST be evaluated at the database query level prior to limit truncation. Application code MUST NOT pull top-N rows from the datastore and then filter out unneeded rows in memory.
+
+**WHY**:
+Applying filters in memory *after* pulling a fixed limit (`LIMIT N`) causes severe result starvation and non-deterministic cache degradation. For example, if an agent retrieves `LIMIT 20` memories and the current session generated the 20 most recent records, applying `memories.filter(m => m.sessionId !== currentSessionId)` in memory yields 0 records, starving the LLM prompt of valid historical memories despite thousands of valid older records existing in the database. Furthermore, sorting across shards without matching primary keys and pinned flags leads to inconsistent prompt hydration.
+
+**WHEN TO APPLY**:
+Apply in any multi-tenant, sharded, or partitioned retrieval system where query constraints (age boundaries, tenant/session isolation) coexist with fixed top-K or pagination limits.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified pattern from opencode-mem src/services/client.ts & turso/vector-search.ts
+export interface MemoryListFilters {
+  excludeSessionId?: string;
+  createdAfter?: number;
+}
+
+export async function listMemories(
+  db: TursoDb,
+  containerTag: string,
+  limit: number,
+  filters: MemoryListFilters = {}
+): Promise<MemoryRecord[]> {
+  const whereClauses: string[] = [];
+  const args: Array<string | number> = [];
+
+  if (containerTag) {
+    whereClauses.push("container_tag = ?");
+    args.push(containerTag);
+  }
+
+  // Mandatory: Filter excluded session inside the SQL engine
+  if (filters.excludeSessionId) {
+    whereClauses.push("(session_id != ? OR session_id IS NULL)");
+    args.push(filters.excludeSessionId);
+  }
+
+  // Mandatory: Filter age cutoffs inside the SQL engine
+  if (filters.createdAfter !== undefined) {
+    whereClauses.push("created_at > ?");
+    args.push(filters.createdAfter);
+  }
+
+  const whereSql = whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : "";
+
+  // The database filters out disqualified rows BEFORE slicing top N.
+  const query = `
+    SELECT id, content, created_at, is_pinned, session_id, metadata
+    FROM memories
+    ${whereSql}
+    ORDER BY is_pinned DESC, created_at DESC
+    LIMIT ?
+  `;
+  args.push(limit);
+
+  return await db.all<MemoryRecord>(query, args);
+}
+
+// Cross-shard aggregator matching identical selection ordering
+export function mergeShardedMemories(
+  shardResults: MemoryRecord[][],
+  limit: number
+): MemoryRecord[] {
+  const allMemories = shardResults.flat();
+
+  // Primary rank: is_pinned DESC, Secondary rank: created_at DESC
+  allMemories.sort((a, b) => {
+    const pinDiff = Number(b.is_pinned ?? 0) - Number(a.is_pinned ?? 0);
+    if (pinDiff !== 0) return pinDiff;
+    return Number(b.created_at) - Number(a.created_at);
+  });
+
+  const selected = allMemories.slice(0, limit);
+  // Final presentation order: recency for conversational context injection
+  selected.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+  return selected;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Pulling limit N and post-filtering in memory
+async function buggyListMemories(containerTag: string, limit: number, sessionId: string) {
+  // Query executes "SELECT * FROM memories LIMIT 20"
+  const rows = await db.all("SELECT * FROM memories WHERE tag = ? LIMIT ?", [containerTag, limit]);
+  
+  // DEFECT: If all 20 rows are from current session, LLM context is starved with []
+  const filtered = rows.filter(r => r.sessionId !== sessionId);
+  return filtered;
+}
+```
+
+**VERIFICATION METHOD**:
+Automated integration test asserting zero slot leakage:
+```typescript
+test("listMemories does not starve eligible rows when latest entries are excluded", async () => {
+  const currentSession = "sess_active_123";
+  // Seed 25 items for current session
+  for (let i = 0; i < 25; i++) {
+    await insertMemory({ content: `Current ${i}`, session_id: currentSession, created_at: 2000 + i });
+  }
+  // Seed 10 older eligible items
+  for (let i = 0; i < 10; i++) {
+    await insertMemory({ content: `Older ${i}`, session_id: "sess_prior_999", created_at: 1000 + i });
+  }
+
+  const results = await client.listMemories("tag", 10, "project", { excludeSessionId: currentSession });
+  expect(results.length).toBe(10);
+  expect(results.every(m => m.metadata?.sessionID !== currentSession)).toBe(true);
+});
+```
+
+---
+
+
+---
+
+## 5701. Multi-Byte UTF-8 Strict Boundary Truncation For Context Injection (Harvested from tickernelz/opencode-mem)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Byte UTF-8 Strict Boundary Truncation For Context Injection",
+  "source": "tickernelz/opencode-mem",
+  "source_url": "https://github.com/tickernelz/opencode-mem",
+  "source_version": "0d964894",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T09:30:00.030Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tickernelz-opencode-mem",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem) (Revision: `0d964894`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When truncating natural language strings to fit byte-bounded model input contexts, code MUST NOT perform raw byte-level slicing without accounting for UTF-8 multibyte character boundaries. Byte truncations MUST advance the starting pointer past UTF-8 continuation bytes (`(byte & 0xc0) === 0x80`) and decrement the ending pointer prior to decoding.
+
+**WHY**:
+Arbitrary byte slicing can bisect 2-byte, 3-byte, or 4-byte UTF-8 sequences (common in non-ASCII text, emojis, and code with non-English comments). Decoding bisected UTF-8 byte sequences emits replacement characters (`\uFFFD`), corrupts semantic tokens for ONNX vector embeddings, or triggers fatal parser errors in strict JSON/tool schema parsers.
+
+**WHEN TO APPLY**:
+Any context pruning, prompt injection windowing, or token/byte budgeting logic operating on string buffers in Node.js, Bun, or browser runtimes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified pattern from opencode-mem src/utils/context-limit.ts
+const encoder = new TextEncoder();
+const decoder = new TextDecoder("utf-8", { fatal: false });
+
+export function sliceUtf8Bytes(text: string, start: number, end?: number): string {
+  const bytes = encoder.encode(text);
+  let from = Math.max(0, Math.min(start, bytes.length));
+  let to = Math.min(bytes.length, end ?? bytes.length);
+
+  if (to <= from) return "";
+
+  // UTF-8 continuation byte check: (byte & 0b11000000) === 0b10000000 (0x80)
+  // If `from` lands inside a multi-byte sequence, advance to the next leading byte.
+  while (from < to && (bytes[from]! & 0xc0) === 0x80) {
+    from++;
+  }
+
+  // If `to` lands inside a multi-byte sequence, decrement to that character's start byte.
+  while (to > from && (bytes[to]! & 0xc0) === 0x80) {
+    to--;
+  }
+
+  return decoder.decode(bytes.subarray(from, to));
+}
+
+export function truncateToMaxBytes(
+  text: string,
+  maxBytes: number,
+  marker = "\n[... truncated ...]\n"
+): string {
+  if (maxBytes <= 0) return "";
+  const initialBytes = encoder.encode(text).byteLength;
+  if (initialBytes <= maxBytes) return text;
+
+  const markerBytes = encoder.encode(marker).byteLength;
+  if (maxBytes <= markerBytes) {
+    return sliceUtf8Bytes(text, 0, maxBytes);
+  }
+
+  const available = maxBytes - markerBytes;
+  const headBytes = Math.floor(available / 2);
+  const tailBytes = available - headBytes;
+
+  return (
+    sliceUtf8Bytes(text, 0, headBytes) +
+    marker +
+    sliceUtf8Bytes(text, initialBytes - tailBytes)
+  );
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Naive string slicing or raw buffer decoding
+function naiveTruncate(text: string, maxBytes: number): string {
+  // Bug 1: text.slice slices UTF-16 code units, not UTF-8 bytes
+  // Bug 2: Buffer.from(text).subarray(0, maxBytes).toString('utf-8') produces \uFFFD replacement bytes
+  const buf = Buffer.from(text, 'utf-8');
+  return buf.subarray(0, maxBytes).toString('utf-8'); 
+}
+```
+
+**VERIFICATION METHOD**:
+Fuzz test slicing multi-byte unicode code points (Arabic, Chinese, German umlauts, 4-byte emojis):
+```typescript
+test("sliceUtf8Bytes never emits unicode replacement characters", () => {
+  const complexStr = "مرحبا بالعالم 🚀 Test äöü 𠮷野家";
+  const bytesLength = new TextEncoder().encode(complexStr).byteLength;
+
+  for (let i = 0; i <= bytesLength + 2; i++) {
+    const sliced = sliceUtf8Bytes(complexStr, 0, i);
+    expect(sliced.includes("\uFFFD")).toBe(false);
+    expect(new TextEncoder().encode(sliced).byteLength).toBeLessThanOrEqual(i);
+  }
+});
+```
+
+---
+
+
+---
+
+## 5702. Separation Of In-Flight Embedding Vectors From Serialized Model Context (Harvested from tickernelz/opencode-mem)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Separation Of In-Flight Embedding Vectors From Serialized Model Context",
+  "source": "tickernelz/opencode-mem",
+  "source_url": "https://github.com/tickernelz/opencode-mem",
+  "source_version": "0d964894",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T09:30:00.378Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tickernelz-opencode-mem",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem) (Revision: `0d964894`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Internal multi-dimensional dense embedding vectors (e.g., 768-dim `Float32Array` or `number[]` centroids, anchors, and keys) used for in-process semantic comparison MUST be explicitly stripped from entity graphs before passing those graphs into LLM generation prompts, HTTP payloads, or public UI serializers.
+
+**WHY**:
+Serializing dense float vectors into chat prompts or REST responses injects hundreds of kilobytes of unstructured floating-point tokens into the LLM context window. This exhausts token limits, increases inference latency by multiples, inflates compute costs, and degrades agent reasoning capabilities due to token noise.
+
+**WHEN TO APPLY**:
+Every agent memory system or vector-augmented pipeline that enriches in-memory profile graphs, episodic nodes, or knowledge graphs with vector embeddings.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified pattern from opencode-mem src/services/user-profile/profile-utils.ts
+export const stripProfileEmbeddings = <T>(data: T): T => {
+  if (!data || typeof data !== "object") return data;
+  const container = data as Record<string, unknown>;
+
+  for (const key of ["preferences", "patterns", "workflows"]) {
+    const items = container[key];
+    if (!Array.isArray(items)) continue;
+    for (const item of items) {
+      if (item && typeof item === "object") {
+        delete (item as Record<string, unknown>).centroid;
+        delete (item as Record<string, unknown>).anchor;
+      }
+    }
+  }
+  return data;
+};
+
+export const toPublicProfileData = <T>(data: T): T => {
+  // Use structuredClone to guarantee no mutation leak to internal mathematical state
+  return stripProfileEmbeddings(structuredClone(data));
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Leaking internal vector arrays into public or prompt JSON
+export function serializeUserProfileForPrompt(userProfile: UserProfile): string {
+  // Emits: {"preferences": [{"description": "Tabs", "centroid": [0.0123, -0.942, ... 768 floats]}]}
+  // Consumes 3,000+ unnecessary tokens per profile item!
+  return JSON.stringify(userProfile);
+}
+```
+
+**VERIFICATION METHOD**:
+Static payload assertion:
+```typescript
+test("toPublicProfileData strips vector arrays entirely", () => {
+  const internalData = {
+    preferences: [
+      { description: "Use Bun", centroid: [0.1, 0.2, 0.3], anchor: [0.4, 0.5, 0.6] }
+    ]
+  };
+  const sanitized = toPublicProfileData(internalData);
+  expect(sanitized.preferences[0].centroid).toBeUndefined();
+  expect(sanitized.preferences[0].anchor).toBeUndefined();
+  // Ensure original internal data is preserved for drift calculations
+  expect(internalData.preferences[0].centroid).toBeDefined();
+});
+```
+
+---

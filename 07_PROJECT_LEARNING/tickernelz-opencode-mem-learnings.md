@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source**: github ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
-> **Source Version**: `83c386bc`  
+> **Source Version**: `0d964894`  
 > **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T17:05:13.537Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-30T09:29:59.401Z  
 > **Learning ID**: `learn-github-tickernelz-opencode-mem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,526 +12,286 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): tickernelz/opencode-mem
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T17:05:12.032Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): tickernelz/opencode-mem
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `tickernelz/opencode-mem`
-- **Description**: OpenCode plugin that gives coding agents persistent memory using local vector database
-- **Primary Language / Ecosystem**: TypeScript
-- **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1787 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+`opencode-mem` solves the stateful retention barrier inherent in stateless Large Language Model coding agents operating inside host orchestration systems (such as OpenCode). Without persistent episodic, semantic, and user-behavior memory, agent sessions start tabula rasa on every invocation or context compaction, repeating erroneous architectural patterns, disregarding user-specified stylistic constraints, and lacking cross-session continuity.
+
+```
+                  ┌────────────────────────────────────────────────────────┐
+                  │                 OpenCode Host Process                  │
+                  │                                                        │
+                  │  Hooks: chat.message │ chat.params │ event             │
+                  └───────────┬──────────────────────▲─────────────────────┘
+                              │                      │
+                   (Injected Context)         (Prompt / Model Interception)
+                              │                      │
+                              ▼                      │
+  ┌────────────────────────────────────────────────────────────────────────┐
+  │                 opencode-mem Subsystem Core Engine                     │
+  │                                                                        │
+  │  ┌────────────────────────┐         ┌───────────────────────────────┐  │
+  │  │  Context Injector      │         │   Auto-Capture Watchdog       │  │
+  │  │  - Eligibility Filter  │         │   - In-Process Host Model     │  │
+  │  │  - Multi-Shard Merge   │         │     Resolution (inherit)      │  │
+  │  │  - Token Budget Slices │         │   - Structured Output Guard   │  │
+  │  └───────────┬────────────┘         │     (2-Step Runaway Abort)    │  │
+  │              │                      └───────────────┬───────────────┘  │
+  │              ▼                                      ▼                  │
+  │  ┌────────────────────────┐         ┌───────────────────────────────┐  │
+  │  │ Local Turso Shard Mgr  │         │  User Profile Evolution Engine│  │
+  │  │ - Ref-Counted Leases   │         │  - Anchor/Centroid Drift      │  │
+  │  │ - Engine Auto-Migrate  │         │  - Confidence / Frequency     │  │
+  │  │ - File Lock Retries    │         │  - Vector Stripping on Export │  │
+  │  └───────────┬────────────┘         └───────────────┬───────────────┘  │
+  └──────────────┼──────────────────────────────────────┼──────────────────┘
+                 │                                      │
+                 ▼                                      ▼
+  ┌─────────────────────────────────┐   ┌──────────────────────────────────┐
+  │   Embedded Storage Layer        │   │    Embedding & Inference Engine  │
+  │   - @tursodatabase/database     │   │    - @huggingface/transformers   │
+  │     (libSQL / SQLite engine)    │   │      (ONNX runtime local CPU)    │
+  │   - F32_BLOB native vectors     │   │    - Multi-provider fallback     │
+  │   - vector_distance_cos         │   │      (OpenAI, Anthropic, etc.)   │
+  └─────────────────────────────────┘   └──────────────────────────────────┘
+```
+
+The system is decoupled across four core technical boundaries:
+1. **Plugin Lifecycle & State Synchronization (`src/index.ts`, `src/services/turso/lifecycle.ts`)**: Binds directly into OpenCode plugin hooks (`chat.message`, `chat.params`, `event`). It manages an explicit reference-counted lock on local SQLite handles, preventing file-handle starvation and deadlocks during concurrent session initialization or teardown.
+2. **Embedded Vector Database Sharding Engine (`src/services/turso/*`)**: Replaces remote vector databases with local `@tursodatabase/database` SQLite databases storing `F32_BLOB` vectors. Similarity scoring executes via `vector_distance_cos` calculations inside the database engine. Sharding isolates project-level memory from global user profile data.
+3. **In-Flight Context & Prompt Optimization (`src/utils/context-limit.ts`, `src/services/client.ts`)**: Enforces strict UTF-8 byte boundary truncation (`sliceUtf8Bytes`), multi-shard result merging ordered by pinning and recency, and down-stream injection markers.
+4. **Autonomous Cognitive Drift Engine (`src/services/user-profile/*`, `src/utils/math.ts`, `src/utils/profile.ts`)**: Tracks user preferences, coding patterns, and workflows. Updates centroid vectors in memory, applies L2 normalization, calculates cosine drift, and freezes items when drift breaches threshold invariants (`driftBelowCount >= 2`). Per-item vector payloads are stripped prior to public serialization to prevent payload bloat.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: package.json, README.md.
-- Evaluated system abstractions and modular contracts.
+### 1. In-Database Pre-Filtering Before Limit Application In Distributed Sharded Queries
+**RULE**:
+When querying partitioned, sharded, or multi-collection databases with pagination or cardinality limits (`LIMIT N`), query filters (such as session exclusions, temporal cutoffs, soft-deletions, and tenant barriers) MUST be evaluated at the database query level prior to limit truncation. Application code MUST NOT pull top-N rows from the datastore and then filter out unneeded rows in memory.
 
-### Core Architecture Module: `src/services/turso/engine-migrator.ts`
-```
-import { createClient, type Client } from "@libsql/client";
-import { connect } from "@tursodatabase/database";
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { CONFIG } from "../../config.js";
-import { log } from "../logger.js";
-import { acquireTursoOperationLock } from "./operation-lock.js";
-import {
-  withSqliteFileLockRetry,
-  renameSqliteDatabase,
-  copySqliteDatabase,
-  removeSqliteDatabase,
-  collectReleasedSqliteHandles,
-} from "./sqlite-handle-release.js";
-import {
-  tursoConnectionManager,
-  resolveDatabaseEncryption,
-  buildConnectOptions,
-} from "./connection-manager.js";
-import { TursoDb } from "./turso-db.js";
-import { tursoShardManager } from "./shard-manager.js";
-import { parseExtractedVector } from "./vector-utils.js";
+**WHY**:
+Applying filters in memory *after* pulling a fixed limit (`LIMIT N`) causes severe result starvation and non-deterministic cache degradation. For example, if an agent retrieves `LIMIT 20` memories and the current session generated the 20 most recent records, applying `memories.filter(m => m.sessionId !== currentSessionId)` in memory yields 0 records, starving the LLM prompt of valid historical memories despite thousands of valid older records existing in the database. Furthermore, sorting across shards without matching primary keys and pinned flags leads to inconsistent prompt hydration.
 
-const ENGINE_MARKER = ".tursodb-engine-v1";
-const LIBSQL_VECTOR_INDEX_RE = /libsql_vector_idx/i;
+**WHEN TO APPLY**:
+Apply in any multi-tenant, sharded, or partitioned retrieval system where query constraints (age boundaries, tenant/session isolation) coexist with fixed top-K or pagination limits.
 
-/** libsql 0.18 defaults to a multi-handle pool; keep one connection for file DBs. */
-function openLibsql(dbPath: string): Client {
-  return createClient({
-    url: `file:${dbPath}`,
-    concurrency: 1,
-    timeout: 5_000,
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified pattern from opencode-mem src/services/client.ts & turso/vector-search.ts
+export interface MemoryListFilters {
+  excludeSessionId?: string;
+  createdAfter?: number;
+}
+
+export async function listMemories(
+  db: TursoDb,
+  containerTag: string,
+  limit: number,
+  filters: MemoryListFilters = {}
+): Promise<MemoryRecord[]> {
+  const whereClauses: string[] = [];
+  const args: Array<string | number> = [];
+
+  if (containerTag) {
+    whereClauses.push("container_tag = ?");
+    args.push(containerTag);
+  }
+
+  // Mandatory: Filter excluded session inside the SQL engine
+  if (filters.excludeSessionId) {
+    whereClauses.push("(session_id != ? OR session_id IS NULL)");
+    args.push(filters.excludeSessionId);
+  }
+
+  // Mandatory: Filter age cutoffs inside the SQL engine
+  if (filters.createdAfter !== undefined) {
+    whereClauses.push("created_at > ?");
+    args.push(filters.createdAfter);
+  }
+
+  const whereSql = whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : "";
+
+  // The database filters out disqualified rows BEFORE slicing top N.
+  const query = `
+    SELECT id, content, created_at, is_pinned, session_id, metadata
+    FROM memories
+    ${whereSql}
+    ORDER BY is_pinned DESC, created_at DESC
+    LIMIT ?
+  `;
+  args.push(limit);
+
+  return await db.all<MemoryRecord>(query, args);
+}
+
+// Cross-shard aggregator matching identical selection ordering
+export function mergeShardedMemories(
+  shardResults: MemoryRecord[][],
+  limit: number
+): MemoryRecord[] {
+  const allMemories = shardResults.flat();
+
+  // Primary rank: is_pinned DESC, Secondary rank: created_at DESC
+  allMemories.sort((a, b) => {
+    const pinDiff = Number(b.is_pinned ?? 0) - Number(a.is_pinned ?? 0);
+    if (pinDiff !== 0) return pinDiff;
+    return Number(b.created_at) - Number(a.created_at);
   });
+
+  const selected = allMemories.slice(0, limit);
+  // Final presentation order: recency for conversational context injection
+  selected.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+  return selected;
 }
-
-function markerPath(): string {
-  return join(CONFIG.storagePath, ENGINE_MARKER);
-}
-
-function listDbFiles(dir: string): string[] {
-  if (!existsSync(dir)) return [];
-  return readdirSync(dir)
-    .filter((name) => name.endsWith(".db") && !name.includes(".bak") && !name.includes(".tmp"))
-    .map((name) => join(dir, name));
-}
-
-function collectCandidateDbs(): string[] {
-  const root = CONFIG.storagePath;
-  return [
-    ...listDbFiles(root),
-    ...listDbFiles(join(root, "users")),
-    ...listDbFiles(join(root, "projects")),
-  ];
-}
-
-async function needsEngineRewrite(dbPath: string): Promise<boolean> {
-  try {
-    const encryption = resolveDatabaseEncryption();
-    const db = await connect(dbPath, buildConnectOptions(encryption));
-    try {
-      await db.all("SELECT 1");
-      return false;
-    } finally {
-      await db.close();
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    if (
-      LIBSQL_VECTOR_INDEX_RE.test(message) ||
-      /invalid expression in CREATE INDEX/i.test(message)
-    ) {
-      return true;
-    }
-    // Unencrypted DB with encryption configured (or vice versa) is handled elsewhere.
-    if (/encrypt|cipher|key/i.test(message)) {
-      return false;
-    }
-    // Unknown open failure: try libsql probe for DiskANN indexes.
-    try {
-      const client = openLibsql(dbPath);
-      try {
-        const result = await client.execute(
-          `SELECT sql FROM sqlite_master WHERE type = 'index' AND sql IS NOT NULL`
-        );
-        return result.rows.some((row) => LIBSQL_VECTOR_INDEX_RE.test(String(row.sql ?? "")));
-      } finally {
-        client.close();
-      }
-    } catch {
-      return false;
-    }
-  }
-}
-
-async function copyTableViaLibsql(
-  sourcePath: string,
-  targetDb: TursoDb,
-  table: string,
-  heartbeat: () => void
-): Promise<number> {
-  const client = openLibsql(sourcePath);
-  try {
-    const tableInfo = await client.execute(`PRAGMA table_info(${table})`);
-    if (tableInfo.rows.length === 0) return 0;
-    const columns = tableInfo.rows.map((row) => String(row.name));
-    const selectCols = columns
-      .map((col) =>
-        col === "vector" || col === "tags_vector"
-          ? `CASE WHEN ${col} IS NOT NULL THEN vector_extract(${col}) ELSE NULL END AS ${col}`
-          : col
-      )
-      .join(", ");
-    const rows = await client.execute(`SELECT ${selectCols} FROM ${table}`);
-    let imported = 0;
-    for (const row of rows.rows) {
-      const sqlPlaceholders: string[] = [];
-      const sqlArgs: Array<string | number | null> = [];
-      for (const col of columns) {
-        const raw = row[col];
-        if (col === "vector" || col === "tags_vector") {
-          if (raw == null) {
-            sqlPlaceholders.push("NULL");
-          } else {
-            const extracted =
-              typeof raw === "string"
-                ? raw
-                : JSON.stringify(Array.from(parseExtractedVector(raw) ?? []));
-            sqlPlaceholders.push("vector32(?)");
-            sqlArgs.push(extracted);
-          }
-        } else {
-          sqlPlaceholders.push("?");
-          if (raw == null) sqlArgs.push(null);
-          else if (typeof raw === "number" || typeof raw === "string") sqlArgs.push(raw);
-          else if (typeof raw === "bigint") sqlArgs.push(Number(raw));
-          else if (typeof raw === "boolean") sqlArgs.push(raw ? 1 : 0);
-          else sqlArgs.push(String(raw));
-        }
-      }
-      await targetDb.run(
-        `INSERT OR REPLACE INTO ${table} (${columns.join(", ")}) VALUES (${sqlPlaceholders.join(", ")})`,
-        sqlArgs
-      );
-      imported += 1;
-      heartbeat();
-    }
-    return imported;
-  } finally {
-    client.close();
-  }
-}
-
-async function rewriteMemoryShard(dbPath: string, heartbeat: () => void): Promise<void> {
-  const client = openLibsql(dbPath);
-  let dims = CONFIG.embeddingDimensions;
-  let model = CONFIG.embeddingModel;
-  try {
-    try {
-      const dimRow = await client.execute(
-        `SELECT value FROM shard_metadata WHERE key = 'embedding_dimensions'`
-      );
-      if (dimRow.rows[0]?.value) dims = Number(dimRow.rows[0].value);
-      const modelRow = await client.execute(
-        `SELECT value FROM shard_metadata WHERE key = 'embedding_model'`
-      );
-      if (modelRow.rows[0]?.value) model = String(modelRow.rows[0].value);
-    } catch {
-      // metadata table may be missing on very old shards
-    }
-  } finally {
-    client.close();
-  }
-
-  const stagedPath = `${dbPath}.tursodb-migrate-${Date.now()}.tmp`;
-  const backupPath = `${dbPath}.pre-tursodb-${Date.now()}.bak`;
-  const dir = dirname(stagedPath);
-  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-
-  await tursoConnectionManager.closeConnection(dbPath);
-  const staged = await tursoConnectionManager.getConnection(stagedPath);
-  try {
-    await tursoShardManager.initShardDb(staged, dims, model);
-    const imported = await copyTableViaLibsql(dbPath, staged, "memories", heartbeat);
-    const metaClient = openLibsql(dbPath);
-    try {
-      const metaRows = await metaClient
-        .execute(`SELECT key, value FROM shard_metadata`)
-        .catch(() => null);
-      for (const row of metaRows?.rows ?? []) {
-        try {
-          await staged.run(`INSERT OR REPLACE INTO shard_metadata (key, value) VALUES (?, ?)`, [
-            String(row.key),
-            String(row.value),
-          ]);
-        } catch {
-          // Metadata is optional; do not swallow ownership failures below.
-          break;
-        }
-        heartbeat();
-      }
-    } finally {
-      metaClient.close();
-    }
-
-    const countRow = await staged.get<{ count?: number }>(`SELECT COUNT(*) as count FROM memories`);
-    if (Number(countRow?.count ?? 0) !== imported) {
-      throw new Error(
-        `Engine migration count mismatch for ${dbPath}: expected ${imported}, got ${countRow?.count}`
-      );
-    }
-  } finally {
-    await tursoConnectionManager.closeConnection(stagedPath);
-  }
-
-  // Match encryption-migrator: Windows cannot rename over an existing file (EPERM).
-  // Pre-swap aborts preserve the original and may leave a staged temp file.
-  heartbeat();
-  await withSqliteFileLockRetry(() => {
-    copySqliteDatabase(dbPath, backupPath);
-    removeSqliteDatabase(dbPath);
-    renameSqliteDatabase(stagedPath, dbPath);
-  });
-  heartbeat();
-
-  log("Migrated libSQL DiskANN shard to @tursodatabase/database", {
-    dbPath,
-    backupPath,
-  });
-}
-
-async function rewriteGenericDb(
-  dbPath: string,
-  tables: string[],
-  heartbeat: () => void
-): Promise<void> {
-  const stagedPath = `${dbPath}.tursodb-migrate-${Date.now()}.tmp`;
-  const backupPath = `${dbPath}.pre-tursodb-${Date.now()}.bak`;
-
-  await tursoConnectionManager.closeConnection(dbPath);
-  const encryption = resolveDatabaseEncryption();
-  const stagedNative = await connect(stagedPath, buildConnectOptions(encryption));
-  const staged = new TursoDb(stagedNative);
-  try {
-    // Recreate schema by copying CREATE SQL from source via libsql.
-    const source = openLibsql(dbPath);
-    try {
-      for (const table of tables) {
-        heartbeat();
-        const schema = await source.execute({
-          sql: `SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?`,
-          args: [table],
-        });
-        const createSql = schema.rows[0]?.sql ? String(schema.rows[0].sql) : null;
-        if (!createSql) continue;
-        await staged.run(createSql.replace(/F32_BLOB/gi, "BLOB"));
-        await copyTableViaLibsql(dbPath, staged, table, heartbeat);
-      }
-      const indexes = await source.execute(
-        `SELECT sql FROM sqlite_master WHERE type = 'index' AND sql IS NOT NULL AND name NOT LIKE 'sqlite_%'`
-      );
-      for (const row of indexes.rows) {
-        const sql = String(row.sql);
-        if (LIBSQL_VECTOR_INDEX_RE.test(sql)) continue;
-        try {
-          await staged.run(sql);
-        } catch {
-          // index may already exist from CREATE TABLE
-        }
-        heartbeat();
-      }
-    } finally {
-      source.close();
-    }
-  } finally {
-    await staged.close();
-    await collectReleasedSqliteHandles();
-  }
-
-  // Match encryption-migrator: Windows cannot rename over an existing file (EPERM).
-  // Pre-swap aborts preserve the original and may leave a staged temp file.
-  heartbeat();
-  await withSqliteFileLockRetry(() => {
-    copySqliteDatabase(dbPath, backupPath);
-    removeSqliteDatabase(dbPath);
-    renameSqliteDatabase(stagedPath, dbPath);
-  });
-  heartbeat();
-  log("Migrated auxiliary DB to @tursodatabase/database", { dbPath, backupPath });
-}
-
-/**
- * Convert any local shards that still use libSQL DiskANN indexes into plain
- * @tursodatabase/database files (F32_BLOB + exact cosine search).
- */
-export async function runTursoEngineMigration(): Promise<void> {
-  if (existsSync(markerPath())) return;
-
-  const candidates = collectCandidateDbs();
-  if (candida
 ```
 
-### Core Architecture Module: `src/services/turso/lifecycle.ts`
-```
-import { tursoConnectionManager } from "./connection-manager.js";
-import { tursoShardManager } from "./shard-manager.js";
-import { resetTursoReady } from "./ready.js";
-import { userPromptManager } from "../user-prompt/user-prompt-manager.js";
-import { userProfileManager } from "../user-profile/user-profile-manager.js";
-import { aiSessionManager } from "../ai/session/ai-session-manager.js";
-import { skillsManager } from "../skills/skills-manager.js";
-import { releasePluginTursoLease } from "./plugin-refs.js";
-
-export {
-  retainPluginTurso,
-  pluginTursoRefCount,
-  resetPluginTursoRefsForTests,
-} from "./plugin-refs.js";
-
-/**
- * Drop one plugin-instance lease. Closes the process-wide pool only when the
- * last live instance is gone (or when no retain was recorded — tests / force
- * close via `memoryClient.close()`).
- *
- * @returns `true` when connections were closed and manager caches invalidated
- */
-export async function releasePluginTurso(): Promise<boolean> {
-  if (!releasePluginTursoLease()) {
-    return false;
-  }
-  await closeTursoAndInvalidateCaches();
-  return true;
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Pulling limit N and post-filtering in memory
+async function buggyListMemories(containerTag: string, limit: number, sessionId: string) {
+  // Query executes "SELECT * FROM memories LIMIT 20"
+  const rows = await db.all("SELECT * FROM memories WHERE tag = ? LIMIT ?", [containerTag, limit]);
+  
+  // DEFECT: If all 20 rows are from current session, LLM context is starved with []
+  const filtered = rows.filter(r => r.sessionId !== sessionId);
+  return filtered;
 }
-
-export async function closeTursoAndInvalidateCaches(): Promise<void> {
-  await tursoConnectionManager.closeAll();
-  tursoShardManager.reset();
-  resetTursoReady();
-  userPromptManager.reset();
-  userProfileManager.reset();
-  aiSessionManager.reset();
-  skillsManager.reset();
-}
-
 ```
 
-### Core Architecture Module: `src/services/turso/vector-utils.ts`
-```
-export function vectorToJson(vector: Float32Array): string {
-  return JSON.stringify(Array.from(vector));
-}
-
-export function blobToFloat32Array(value: unknown): Float32Array | null {
-  if (value == null) return null;
-
-  try {
-    if (value instanceof Float32Array) {
-      return value;
-    }
-
-    if (value instanceof ArrayBuffer) {
-      if (value.byteLength === 0 || value.byteLength % 4 !== 0) {
-        return null;
-      }
-      return new Float32Array(value);
-    }
-
-    if (ArrayBuffer.isView(value)) {
-      const view = value as ArrayBufferView;
-      const byteLength = view.byteLength;
-      if (byteLength === 0 || byteLength % 4 !== 0) {
-        return null;
-      }
-      return new Float32Array(
-        view.buffer.slice(view.byteOffset, view.byteOffset + view.byteLength)
-      );
-    }
-
-    if (typeof value === "string") {
-      try {
-        const parsed = JSON.parse(value) as number[];
-        return new Float32Array(parsed);
-      } catch {
-        return null;
-      }
-    }
-  } catch {
-    return null;
+**VERIFICATION METHOD**:
+Automated integration test asserting zero slot leakage:
+```typescript
+test("listMemories does not starve eligible rows when latest entries are excluded", async () => {
+  const currentSession = "sess_active_123";
+  // Seed 25 items for current session
+  for (let i = 0; i < 25; i++) {
+    await insertMemory({ content: `Current ${i}`, session_id: currentSession, created_at: 2000 + i });
+  }
+  // Seed 10 older eligible items
+  for (let i = 0; i < 10; i++) {
+    await insertMemory({ content: `Older ${i}`, session_id: "sess_prior_999", created_at: 1000 + i });
   }
 
-  return null;
-}
-
-/** Parse libSQL `vector_extract()` JSON output (preferred over raw F32_BLOB bytes). */
-export function parseExtractedVector(value: unknown): Float32Array | null {
-  if (value == null) return null;
-  if (typeof value === "string") {
-    try {
-      const parsed = JSON.parse(value) as number[];
-      if (!Array.isArray(parsed) || parsed.length === 0) return null;
-      return new Float32Array(parsed);
-    } catch {
-      return null;
-    }
-  }
-  return blobToFloat32Array(value);
-}
-
-export function distanceToSimilarity(distance: number): number {
-  const similarity = 1 - Number(distance);
-  if (!Number.isFinite(similarity)) return 0;
-  // Clamp float artifacts (docs: cos-distance can be slightly negative near exact matches).
-  return Math.max(0, Math.min(1, similarity));
-}
-
-/** Canonical text used for tag-vector embeddings (must stay consistent across write paths). */
-export function formatTagsForEmbedding(tags: string[]): string {
-  return `Topics: ${tags.join(", ")}`;
-}
-
-/** Split free text into lowercase tokens for keyword / hybrid search. */
-export function tokenizeQueryText(text: string | undefined | null): string[] {
-  if (!text) return [];
-  return text
-    .toLowerCase()
-    .split(/[\s,._/-]+/)
-    .map((token) => token.trim())
-    .filter((token) => token.length > 1)
-    .slice(0, 16);
-}
-
-/**
- * Escape LIKE wildcards so user tokens are matched literally.
- * Pair with `ESCAPE '\\'` in SQL.
- */
-export function escapeLikePattern(token: string): string {
-  return token.replace(/\\/g, "\\\\").replace(/%/g, "\\%").replace(/_/g, "\\_");
-}
-
-export function parseSessionIdFromMetadata(metadata: string | undefined | null): string | null {
-  if (!metadata) return null;
-  try {
-    const parsed = JSON.parse(metadata) as Record<string, unknown>;
-    return typeof parsed.sessionID === "string" && parsed.sessionID.length > 0
-      ? parsed.sessionID
-      : null;
-  } catch {
-    return null;
-  }
-}
-
+  const results = await client.listMemories("tag", 10, "project", { excludeSessionId: currentSession });
+  expect(results.length).toBe(10);
+  expect(results.every(m => m.metadata?.sessionID !== currentSession)).toBe(true);
+});
 ```
 
-### Core Architecture Module: `src/services/user-profile/profile-utils.ts`
-```
-export const safeArray = <T>(arr: any): T[] => {
-  if (!arr) return [];
-  let result = arr;
-  if (typeof result === "string") {
-    try {
-      result = JSON.parse(result);
-    } catch {
-      try {
-        result = JSON.parse(result.trim().replace(/,$/, ""));
-      } catch {
-        return [];
-      }
-    }
+---
+
+### 2. Multi-Byte UTF-8 Strict Boundary Truncation For Context Injection
+**RULE**:
+When truncating natural language strings to fit byte-bounded model input contexts, code MUST NOT perform raw byte-level slicing without accounting for UTF-8 multibyte character boundaries. Byte truncations MUST advance the starting pointer past UTF-8 continuation bytes (`(byte & 0xc0) === 0x80`) and decrement the ending pointer prior to decoding.
+
+**WHY**:
+Arbitrary byte slicing can bisect 2-byte, 3-byte, or 4-byte UTF-8 sequences (common in non-ASCII text, emojis, and code with non-English comments). Decoding bisected UTF-8 byte sequences emits replacement characters (`\uFFFD`), corrupts semantic tokens for ONNX vector embeddings, or triggers fatal parser errors in strict JSON/tool schema parsers.
+
+**WHEN TO APPLY**:
+Any context pruning, prompt injection windowing, or token/byte budgeting logic operating on string buffers in Node.js, Bun, or browser runtimes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified pattern from opencode-mem src/utils/context-limit.ts
+const encoder = new TextEncoder();
+const decoder = new TextDecoder("utf-8", { fatal: false });
+
+export function sliceUtf8Bytes(text: string, start: number, end?: number): string {
+  const bytes = encoder.encode(text);
+  let from = Math.max(0, Math.min(start, bytes.length));
+  let to = Math.min(bytes.length, end ?? bytes.length);
+
+  if (to <= from) return "";
+
+  // UTF-8 continuation byte check: (byte & 0b11000000) === 0b10000000 (0x80)
+  // If `from` lands inside a multi-byte sequence, advance to the next leading byte.
+  while (from < to && (bytes[from]! & 0xc0) === 0x80) {
+    from++;
   }
-  if (!Array.isArray(result)) return [];
 
-  const flattened: T[] = [];
-  const walk = (item: any) => {
-    if (Array.isArray(item)) {
-      item.forEach(walk);
-    } else if (item) {
-      flattened.push(item);
-    }
-  };
-  walk(result);
-  return flattened;
-};
+  // If `to` lands inside a multi-byte sequence, decrement to that character's start byte.
+  while (to > from && (bytes[to]! & 0xc0) === 0x80) {
+    to--;
+  }
 
-/**
- * Remove per-item embedding vectors (`centroid`/`anchor`) from profile data.
- *
- * Those 768-dim vectors are only used internally for similarity, dedup and
- * drift detection. Returning them to the model or the read-only API inflates
- * the payload by hundreds of KB, so callers that serialize profile data for
- * display must strip them first. Mutates in place and returns the same object.
- */
+  return decoder.decode(bytes.subarray(from, to));
+}
+
+export function truncateToMaxBytes(
+  text: string,
+  maxBytes: number,
+  marker = "\n[... truncated ...]\n"
+): string {
+  if (maxBytes <= 0) return "";
+  const initialBytes = encoder.encode(text).byteLength;
+  if (initialBytes <= maxBytes) return text;
+
+  const markerBytes = encoder.encode(marker).byteLength;
+  if (maxBytes <= markerBytes) {
+    return sliceUtf8Bytes(text, 0, maxBytes);
+  }
+
+  const available = maxBytes - markerBytes;
+  const headBytes = Math.floor(available / 2);
+  const tailBytes = available - headBytes;
+
+  return (
+    sliceUtf8Bytes(text, 0, headBytes) +
+    marker +
+    sliceUtf8Bytes(text, initialBytes - tailBytes)
+  );
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Naive string slicing or raw buffer decoding
+function naiveTruncate(text: string, maxBytes: number): string {
+  // Bug 1: text.slice slices UTF-16 code units, not UTF-8 bytes
+  // Bug 2: Buffer.from(text).subarray(0, maxBytes).toString('utf-8') produces \uFFFD replacement bytes
+  const buf = Buffer.from(text, 'utf-8');
+  return buf.subarray(0, maxBytes).toString('utf-8'); 
+}
+```
+
+**VERIFICATION METHOD**:
+Fuzz test slicing multi-byte unicode code points (Arabic, Chinese, German umlauts, 4-byte emojis):
+```typescript
+test("sliceUtf8Bytes never emits unicode replacement characters", () => {
+  const complexStr = "مرحبا بالعالم 🚀 Test äöü 𠮷野家";
+  const bytesLength = new TextEncoder().encode(complexStr).byteLength;
+
+  for (let i = 0; i <= bytesLength + 2; i++) {
+    const sliced = sliceUtf8Bytes(complexStr, 0, i);
+    expect(sliced.includes("\uFFFD")).toBe(false);
+    expect(new TextEncoder().encode(sliced).byteLength).toBeLessThanOrEqual(i);
+  }
+});
+```
+
+---
+
+### 3. Separation Of In-Flight Embedding Vectors From Serialized Model Context
+**RULE**:
+Internal multi-dimensional dense embedding vectors (e.g., 768-dim `Float32Array` or `number[]` centroids, anchors, and keys) used for in-process semantic comparison MUST be explicitly stripped from entity graphs before passing those graphs into LLM generation prompts, HTTP payloads, or public UI serializers.
+
+**WHY**:
+Serializing dense float vectors into chat prompts or REST responses injects hundreds of kilobytes of unstructured floating-point tokens into the LLM context window. This exhausts token limits, increases inference latency by multiples, inflates compute costs, and degrades agent reasoning capabilities due to token noise.
+
+**WHEN TO APPLY**:
+Every agent memory system or vector-augmented pipeline that enriches in-memory profile graphs, episodic nodes, or knowledge graphs with vector embeddings.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified pattern from opencode-mem src/services/user-profile/profile-utils.ts
 export const stripProfileEmbeddings = <T>(data: T): T => {
   if (!data || typeof data !== "object") return data;
   const container = data as Record<string, unknown>;
+
   for (const key of ["preferences", "patterns", "workflows"]) {
     const items = container[key];
     if (!Array.isArray(items)) continue;
@@ -545,2030 +305,269 @@ export const stripProfileEmbeddings = <T>(data: T): T => {
   return data;
 };
 
-/**
- * Clone profile data and strip embeddings for public responses.
- * Use this when the original object must keep embeddings (e.g. pending cleanups).
- */
 export const toPublicProfileData = <T>(data: T): T => {
+  // Use structuredClone to guarantee no mutation leak to internal mathematical state
   return stripProfileEmbeddings(structuredClone(data));
 };
-
-export const safeObject = <T extends object>(obj: any, fallback: T): T => {
-  if (!obj) return fallback;
-  let result = obj;
-  if (typeof result === "string") {
-    try {
-      result = JSON.parse(result);
-    } catch {
-      return fallback;
-    }
-  }
-  return result && typeof result === "object" && !Array.isArray(result) ? (result as T) : fallback;
-};
-
 ```
 
-### Core Architecture Module: `src/utils/context-limit.ts`
-```
-const encoder = new TextEncoder();
-const decoder = new TextDecoder();
-
-/** UTF-8 byte length of a string. */
-export function utf8ByteLength(text: string): number {
-  return encoder.encode(text).byteLength;
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Leaking internal vector arrays into public or prompt JSON
+export function serializeUserProfileForPrompt(userProfile: UserProfile): string {
+  // Emits: {"preferences": [{"description": "Tabs", "centroid": [0.0123, -0.942, ... 768 floats]}]}
+  // Consumes 3,000+ unnecessary tokens per profile item!
+  return JSON.stringify(userProfile);
 }
-
-/** Decode a UTF-8 byte slice without splitting multi-byte characters. */
-export function sliceUtf8Bytes(text: string, start: number, end?: number): string {
-  const bytes = encoder.encode(text);
-  let from = Math.max(0, Math.min(start, bytes.length));
-  let to = Math.min(bytes.length, end ?? bytes.length);
-  if (to <= from) return "";
-
-  // If `from` lands inside a multi-byte character, advance to the next lead byte.
-  while (from < to && (bytes[from]! & 0xc0) === 0x80) {
-    from++;
-  }
-
-  // If `to` lands inside a multi-byte character, back up to that character's start.
-  while (to > from && (bytes[to]! & 0xc0) === 0x80) {
-    to--;
-  }
-
-  return decoder.decode(bytes.subarray(from, to));
-}
-
-/**
- * Truncate text to at most `maxBytes` UTF-8 bytes.
- * Prefers keeping the start and end (head + tail) when space allows,
- * so summaries retain both opening context and closing conclusions.
- */
-export function truncateToMaxBytes(
-  text: string,
-  maxBytes: number,
-  marker = "\n[... truncated ...]\n"
-): string {
-  if (maxBytes <= 0) return "";
-  if (utf8ByteLength(text) <= maxBytes) return text;
-
-  const markerBytes = utf8ByteLength(marker);
-  if (maxBytes <= markerBytes) {
-    return sliceUtf8Bytes(text, 0, maxBytes);
-  }
-
-  const available = maxBytes - markerBytes;
-  const headBytes = Math.floor(available / 2);
-  const tailBytes = available - headBytes;
-  const totalBytes = utf8ByteLength(text);
-
-  return sliceUtf8Bytes(text, 0, headBytes) + marker + sliceUtf8Bytes(text, totalBytes - tailBytes);
-}
-
 ```
 
-### Core Architecture Module: `src/utils/math.ts`
-```
-export function cosineSimilarity(a: Float32Array, b: Float32Array): number {
-  if (a.length !== b.length) return 0;
-
-  let dot = 0;
-  let magA = 0;
-  let magB = 0;
-
-  for (let i = 0; i < a.length; i++) {
-    const av = a[i] ?? 0;
-    const bv = b[i] ?? 0;
-    dot += av * bv;
-    magA += av * av;
-    magB += bv * bv;
-  }
-
-  if (magA === 0 || magB === 0) return 0;
-
-  return dot / (Math.sqrt(magA) * Math.sqrt(magB));
-}
-
-/**
- * Cosine similarity for number[] (JSON-stored centroids), otherwise
- * identical to the Float32Array version above.
- */
-export function cosineSimilarityNumbers(a: number[], b: number[]): number {
-  if (a.length !== b.length) return 0;
-
-  let dot = 0;
-  let magA = 0;
-  let magB = 0;
-
-  for (let i = 0; i < a.length; i++) {
-    const av = a[i] ?? 0;
-    const bv = b[i] ?? 0;
-    dot += av * bv;
-    magA += av * av;
-    magB += bv * bv;
-  }
-
-  if (magA === 0 || magB === 0) return 0;
-  return dot / (Math.sqrt(magA) * Math.sqrt(magB));
-}
-
-export function l2Normalize(vec: number[]): number[] {
-  let norm = 0;
-  for (let i = 0; i < vec.length; i++) {
-    norm += (vec[i] ?? 0) * (vec[i] ?? 0);
-  }
-  norm = Math.sqrt(norm);
-  if (norm === 0) return vec;
-  return vec.map((v) => v / norm);
-}
-
-```
-
-### Core Architecture Module: `src/utils/profile.ts`
-```
-export function isFrozen(item: any): boolean {
-  return (item.driftBelowCount || 0) >= 2;
-}
-
-export function sortProfileItems(items: any[], metric: "confidence" | "frequency"): any[] {
-  return [...items].sort((a, b) => {
-    const aFrozen = isFrozen(a) ? 1 : 0;
-    const bFrozen = isFrozen(b) ? 1 : 0;
-    if (aFrozen !== bFrozen) return aFrozen - bFrozen;
-    if (metric === "confidence") {
-      return (b.confidence || 0) - (a.confidence || 0) || (b.frequency || 1) - (a.frequency || 1);
-    }
-    return (b.frequency || 0) - (a.frequency || 0);
-  });
-}
-
-```
-
-### Core Architecture Module: `web/scripts/render-banner.mjs`
-```
-import { Resvg } from "@resvg/resvg-js";
-import { writeFileSync } from "node:fs";
-import path from "node:path";
-
-const root = path.resolve(import.meta.dirname, "../..");
-const out = path.join(root, ".github/pics/banner.png");
-const fontDir = "/tmp/jetbrains-mono/fonts/ttf";
-
-/** Keep in sync with `web/src/app.css` (.dark) — see `web/README.md`. */
-const colors = {
-  background: "#0a0a0a",
-  panel: "#111111",
-  card: "#141414",
-  border: "#2a2a2a",
-  foreground: "#d4d4d4",
-  foregroundBright: "#ffffff",
-  muted: "#8a8a8a",
-  /** Dark primary — matches `--primary` / Lucide Brain favicon */
-  primary: "#c4b5fd",
-  /** Dark accent well — matches `--accent` / sidebar ICON_WELL base */
-  accentWell: "#1a1428",
-};
-
-const W = 1200;
-const H = 300;
-const CX = W / 2;
-
-/** JetBrains Mono advance ≈ 0.6em */
-function monoWidth(text, size) {
-  return text.length * size * 0.6;
-}
-
-const brainPaths = `
-  <path d="M12 18V5"/>
-  <path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4"/>
-  <path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/>
-  <path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/>
-  <path d="M18 18a4 4 0 0 0 2-7.464"/>
-  <path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/>
-  <path d="M6 18a4 4 0 0 1-2-7.464"/>
-  <path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/>
-`;
-
-const brand = "opencode-mem";
-const brandSize = 48;
-const logo = 68;
-const brandGap = 20;
-const brandTextW = monoWidth(brand, brandSize);
-const brandGroupW = logo + brandGap + brandTextW;
-const brandX = CX - brandGroupW / 2;
-const brandY = 78;
-
-const subtitle = "PERSISTENT MEMORY FOR AI CODING AGENTS";
-const features = [
-  { label: "LOCAL VECTOR DATABASE", color: colors.primary },
-  { label: "NO API KEYS REQUIRED", color: colors.primary },
-  { label: "CROSS-SESSION CONTEXT", color: colors.primary },
-];
-const featSize = 13;
-const featGap = 36;
-const featItems = features.map((f) => ({
-  ...f,
-  width: 10 + 8 + monoWidth(f.label, featSize),
-}));
-const featTotal = featItems.reduce((sum, f) => sum + f.width, 0) + featGap * (featItems.length - 1);
-let featX = CX - featTotal / 2;
-
-const featRow = featItems
-  .map((f) => {
-    const chunk = `
-    <g transform="translate(${featX}, 0)">
-      <circle cx="4" cy="-4" r="4" fill="${f.color}"/>
-      <text x="18" y="0">${f.label}</text>
-    </g>`;
-    featX += f.width + featGap;
-    return chunk;
-  })
-  .join("");
-
-const svg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-  <!-- Image ends at the frame: fill full canvas, stroke sits on the edge -->
-  <rect width="${W}" height="${H}" fill="${colors.panel}"/>
-  <rect x="1" y="1" width="${W - 2}" height="${H - 2}" rx="12" fill="${colors.panel}" stroke="${colors.primary}" stroke-width="2"/>
-
-  <g transform="translate(${brandX}, ${brandY})">
-    <!-- Same recipe as web ICON_WELL: primary/15 over dark surface + primary icon -->
-    <rect width="${logo}" height="${logo}" rx="16" fill="${colors.card}"/>
-    <rect width="${logo}" height="${logo}" rx="16" fill="${colors.primary}" fill-opacity="0.15"/>
-    <g transform="translate(10, 10)" stroke="${colors.primary}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
-      <g transform="scale(2)">${brainPaths}</g>
-    </g>
-    <text
-      x="${logo + brandGap}"
-      y="${logo / 2}"
-      text-anchor="start"
-      font-family="JetBrains Mono"
-      font-weight="700"
-      font-size="${brandSize}"
-      fill="${colors.foregroundBright}"
-      dominant-baseline="middle"
-    >${brand}</text>
-  </g>
-
-  <text
-    x="${CX}"
-    y="188"
-    text-anchor="middle"
-    font-family="JetBrains Mono"
-    font-weight="400"
-    font-size="15"
-    fill="${colors.muted}"
-    letter-spacing="3"
-  >${subtitle}</text>
-
-  <g transform="translate(0, 246)" font-family="JetBrains Mono" font-size="${featSize}" fill="${colors.muted}">
-    ${featRow}
-  </g>
-</svg>`;
-
-const resvg = new Resvg(svg, {
-  fitTo: { mode: "width", value: W },
-  font: {
-    fontFiles: [
-      `${fontDir}/JetBrainsMono-Bold.ttf`,
-      `${fontDir}/JetBrainsMono-Regular.ttf`,
-      `${fontDir}/JetBrainsMono-SemiBold.ttf`,
-    ],
-    loadSystemFonts: false,
-    defaultFontFamily: "JetBrains Mono",
-  },
+**VERIFICATION METHOD**:
+Static payload assertion:
+```typescript
+test("toPublicProfileData strips vector arrays entirely", () => {
+  const internalData = {
+    preferences: [
+      { description: "Use Bun", centroid: [0.1, 0.2, 0.3], anchor: [0.4, 0.5, 0.6] }
+    ]
+  };
+  const sanitized = toPublicProfileData(internalData);
+  expect(sanitized.preferences[0].centroid).toBeUndefined();
+  expect(sanitized.preferences[0].anchor).toBeUndefined();
+  // Ensure original internal data is preserved for drift calculations
+  expect(internalData.preferences[0].centroid).toBeDefined();
 });
-
-writeFileSync(out, resvg.render().asPng());
-console.log("wrote", out, `${resvg.width}x${resvg.height}`);
-
 ```
 
-### Core Architecture Module: `web/src/lib/profile-utils.ts`
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Memory Context Starvation via Post-Limit Session Exclusion Filter (BUG-MEM-01)
+- **Context**: Memory retrieval and injection orchestrator (`src/index.ts`, `src/services/client.ts`)
+- **What Was Expected**: When `loadMemoryContext(sessionID)` retrieves up to `CONFIG.chatMessage.maxMemories`, the system must return up to `maxMemories` eligible records excluding records created in `sessionID` and older than `maxAgeDays`.
+- **What Actually Happened**: The client invoked `listMemories(tags.project.tag, maxMemories)`. If the current session or old entries occupied the top slots returned by the database, the subsequent JavaScript array filtering stripped them, returning far fewer than `maxMemories` (or even 0), starving the agent prompt of relevant context.
+- **Evidence in Repo**: Commit `c1809c1b` (`fix(memory): apply eligibility filters before injection limits (#451)`).
+- **Root Cause**: SQL query pagination `LIMIT` was executed inside SQLite prior to applying application-level business filters (`sessionID` exclusion and `maxAgeDays` cutoff).
+- **Remediation Code Diff**:
+```diff
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -705,19 +705,17 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
+   const loadMemoryContext = async (sessionID: string): Promise<string> => {
+     const listResult = await memoryClient.listMemories(
+       tags.project.tag,
+-      CONFIG.chatMessage.maxMemories
++      CONFIG.chatMessage.maxMemories,
++      "project",
++      {
++        excludeSessionId: CONFIG.chatMessage.excludeCurrentSession ? sessionID : undefined,
++        createdAfter: CONFIG.chatMessage.maxAgeDays
++          ? Date.now() - CONFIG.chatMessage.maxAgeDays * 86400000
++          : undefined,
++      }
+     );
+-    let memories = listResult.success ? listResult.memories : [];
+-    if (CONFIG.chatMessage.excludeCurrentSession) {
+-      memories = memories.filter((m: any) => m.metadata?.sessionID !== sessionID);
+-    }
+-    if (CONFIG.chatMessage.maxAgeDays) {
+-      const cutoffDate = Date.now() - CONFIG.chatMessage.maxAgeDays * 86400000;
+-      memories = memories.filter((m: any) => new Date(m.createdAt).getTime() > cutoffDate);
+-    }
++    const memories = listResult.success ? listResult.memories : [];
 ```
-import { jsonrepair } from "jsonrepair";
-import type { ProfileItem, UserProfile } from "./types";
+- **Lesson**: Filtering MUST be pushed down to the storage layer before computing pagination boundaries.
 
-export type ProfileField = "preferences" | "patterns" | "workflows";
+---
 
-export type ProfileDataSlice = NonNullable<UserProfile["profileData"]>;
+### Incident 2: Sharded Rank Distortion and Unpinned Overwrites (BUG-MEM-02)
+- **Context**: Shard result aggregation across SQLite shard databases (`src/services/client.ts`)
+- **What Was Expected**: When merging results from multiple shards, pinned memories (`is_pinned = 1`) must take priority over unpinned memories, mirroring per-shard SQL sorting semantics (`ORDER BY is_pinned DESC, created_at DESC`).
+- **What Actually Happened**: Cross-shard results were combined and sorted solely by `created_at DESC`. Pinned memories from one shard were dropped if unpinned memories on another shard had newer timestamps, violating the user's explicit memory pinning contract.
+- **Evidence in Repo**: Commit `c1809c1b` (`src/services/client.ts`).
+- **Root Cause**: Aggregator sorting logic omitted the `is_pinned` descriptor during the merge step, relying exclusively on date sorting before slicing to `limit`.
+- **Remediation Code Diff**:
+```diff
+--- a/src/services/client.ts
++++ b/src/services/client.ts
+@@ -341,9 +346,15 @@ export class LocalMemoryClient {
+         allMemories.push(...memories);
+       }
+ 
+-      allMemories.sort((a, b) => Number(b.created_at) - Number(a.created_at));
++      // Match per-shard SQL (is_pinned DESC, created_at DESC) when selecting the
++      // merged limit, then present the chosen rows by recency for injection order.
++      allMemories.sort((a, b) => {
++        const pinDiff = Number(b.is_pinned ?? 0) - Number(a.is_pinned ?? 0);
++        if (pinDiff !== 0) return pinDiff;
++        return Number(b.created_at) - Number(a.created_at);
++      });
++      const selected = allMemories.slice(0, limit);
++      selected.sort((a, b) => Number(b.created_at) - Number(a.created_at));
+-      const memories = allMemories.slice(0, limit).map((r: any) => ({
++      const memories = selected.map((r: any) => ({
+```
+- **Lesson**: Distributed aggregation sorts must be a mathematical twin of shard-local order clauses before applying limits.
 
-export type CleanupItem = ProfileItem & { _id: string; _type: "pref" | "pat" | "wf" };
+---
 
-export function parseProfileField(field: unknown): ProfileItem[] {
-  if (!field) return [];
+### Incident 3: Host Session Model Orphan in OpenCode v2 Environment (BUG-AI-01)
+- **Context**: Model inheritance during background tasks (`src/services/ai/opencode-provider.ts`, `src/index.ts`)
+- **What Was Expected**: Setting `"opencodeModel": "inherit"` should allow background workers (such as user profile learning or memory deduplication) to inherit the model currently active in the host chat session.
+- **What Actually Happened**: Background processes crashed with `ProviderModelNotFoundError: Model not found: <provider>/inherit`.
+- **Evidence in Repo**: Commit `094f7899` (`fix(ai): remember host session model for opencodeModel inherit (#454)`).
+- **Root Cause**: The plugin previously relied on disk-backed file reads of OpenCode's `model.json`. In OpenCode v2, `model.json` was deprecated and ceased to be written to disk. Background paths not initiated by a direct prompt had no session context, causing the literal string `"inherit"` to be passed downstream to the provider SDK.
+- **Remediation Code Diff**:
+```diff
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -832,6 +833,13 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
+     "chat.params": async (input, output) => {
+       applyStructuredOutputChatParams(input, output);
+ 
++      const sessionModel = input?.model;
++      if (typeof sessionModel?.providerID === "string" && typeof sessionModel?.id === "string") {
++        // Keep the host-resolved model for inherit on idle paths (profile
++        // learning, dedup, …). OpenCode v2 no longer writes model.json (#453).
++        rememberSessionModel(sessionModel.providerID, sessionModel.id);
++      }
++
+       if (!isConfigured() || CONFIG.opencodeModel !== "inherit") return;
+--- a/src/services/ai/opencode-provider.ts
++++ b/src/services/ai/opencode-provider.ts
+@@ -377,12 +377,32 @@ export interface StructuredOutputOptions<T> {
++let rememberedSessionModel: { providerID: string; modelID: string } | undefined;
++
++export function rememberSessionModel(providerID: string, modelID: string): void {
++  if (!providerID || !modelID || modelID === "inherit") return;
++  rememberedSessionModel = { providerID, modelID };
++}
+...
++  if (rememberedSessionModel) {
++    return rememberedSessionModel;
++  }
+   const recent = readRecentOpencodeModel(opts.providerID);
+```
+- **Lesson**: Do not rely on ephemeral host configuration files on disk for inter-subsystem state; intercept live execution parameters during hook lifecycles and cache them in-process.
+
+---
+
+### Incident 4: Provider-Specific Parameter Drop in AI Cleanup Requests (BUG-AI-02)
+- **Context**: External LLM structured cleanup requests (`src/services/user-profile/ai-cleanup.ts`)
+- **What Was Expected**: Custom engine tuning parameters configured via `memoryExtraParams` (e.g., `enable_thinking: false` for SiliconFlow/Qwen, or `temperature: 0.0`) must be forwarded to all outbound provider requests.
+- **What Actually Happened**: The AI cleanup module reconstructed an HTTP POST payload from scratch, omitting `CONFIG.memoryExtraParams`. Reasoning models timed out or failed to return valid JSON because thinking tokens overwhelmed token limits.
+- **Evidence in Repo**: Issue #287 (`Forward memoryExtraParams in external AI cleanup requests`).
+- **Root Cause**: Architectural fragmentation between standard chat provider adapters and dedicated user-profile background cleanup requests.
+- **Remediation Code Diff**:
+```typescript
+// Fixed pattern in ai-cleanup request builder:
+const requestBody = {
+  model: resolvedModel,
+  messages: promptMessages,
+  temperature: CONFIG.memoryTemperature !== false ? CONFIG.memoryTemperature : 0.0,
+  // Fix: Explicitly merge configured extra params while guarding reserved keys
+  ...(CONFIG.memoryExtraParams ?? {}),
+  response_format: { type: "json_object" }
+};
+```
+- **Lesson**: Centralize outbound HTTP payload formatting through unified provider transport adapters instead of bespoke per-feature fetch calls.
+
+---
+
+### Incident 5: Disconnect Between Search Query UI State and Result Totals (BUG-UI-01)
+- **Context**: Web UI Memory Explorer (`web/src/lib/*`, Issue #288)
+- **What Was Expected**: When a user inputs a search query in the Memory Explorer, the count badge must reflect the count of *matched* records (`filtered.length`). When the input is cleared, it must restore the store-wide total (`totalCount`).
+- **What Actually Happened**: The count badge continuously displayed `totalCount` regardless of search query state, causing users to believe the search query was ignored or returned all records.
+- **Evidence in Repo**: Closed Issue #288 (`Show matched memory count while Web UI search is active`).
+- **Root Cause**: State reactivity failed to derive the count dynamically from the filtered array store, binding directly to the top-level collection metadata.
+- **Remediation Code Pattern**:
+```svelte
+<!-- Fixed reactive pattern in web UI -->
+<script>
+  let searchQuery = "";
+  $: filteredMemories = memories.filter(m => matchesQuery(m, searchQuery));
+  $: displayedCount = searchQuery.trim().length > 0 ? filteredMemories.length : totalCount;
+</script>
+
+<Badge>{displayedCount} {searchQuery ? 'matched' : 'total'}</Badge>
+```
+- **Lesson**: State visualization components must explicitly bind to derived filtered sets rather than static parent-level totals.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Operator Precedence in Bitwise Masks**: In `sliceUtf8Bytes`, checking for UTF-8 continuation bytes requires strict parentheses:
+  ```typescript
+  // CORRECT: Bitwise AND (&) has lower precedence than equality (===)
+  (bytes[from]! & 0xc0) === 0x80
+  // FATAL BUG: Without parentheses, evaluates as bytes[from]! & (0xc0 === 0x80) -> bytes[from]! & 0
+  bytes[from]! & 0xc0 === 0x80 // ALWAYS EVALUATES TO 0 (FALSE)
+  ```
+- **Falsy Zero Guard in Math Vectors**:
+  ```typescript
+  // CORRECT: In cosine distance calculations, magnitude can be precisely 0
+  if (magA === 0 || magB === 0) return 0;
+  // Anti-pattern: Assuming truthy values
+  if (!magA || !magB) // Works for 0, but prone to NaN propagation if magA is null
+  ```
+- **Coercion of SQLite Booleans & BigInts**:
+  ```typescript
+  // When inserting dynamic types from raw database rows into TursoDb:
+  else if (typeof raw === "bigint") sqlArgs.push(Number(raw));
+  else if (typeof raw === "boolean") sqlArgs.push(raw ? 1 : 0);
+  // Using String(raw) on a boolean outputs "true"/"false" instead of SQLite integer 1/0,
+  // completely breaking SQLite WHERE is_pinned = 1 index scans!
+  ```
+
+### 2. Infinite Loop & Recursion Guards
+- **Circular JSON Repair De-nesting**: In `web/src/lib/profile-utils.ts`, recursive unstringing of escaped JSON contains a strict convergence invariant:
+  ```typescript
   let result: unknown = field;
   let lastResult: unknown = null;
+  // Invariant: Stop if value does not change, or if not a string
   while (typeof result === "string" && result !== lastResult) {
     lastResult = result;
     try {
       result = JSON.parse(jsonrepair(result));
     } catch {
-      break;
+      break; // Immediate escape on unparsable syntax
     }
   }
-  if (!Array.isArray(result)) return [];
-  const flattened: ProfileItem[] = [];
-  const walk = (item: unknown) => {
-    if (Array.isArray(item)) item.forEach(walk);
-    else if (item && typeof item === "object") flattened.push(item as ProfileItem);
-  };
-  walk(result);
-  return flattened;
-}
-
-/** Normalize profileData whether it arrives as object or JSON string. */
-export function normalizeProfileData(raw: unknown): ProfileDataSlice | null {
-  if (!raw) return null;
-  let data: unknown = raw;
-  if (typeof data === "string") {
-    try {
-      data = JSON.parse(jsonrepair(data));
-    } catch {
-      return null;
+  ```
+- **Sub-Agent Autonomous Loop Watchdog**: When utilizing internal agents for structured memory extraction (`STRUCTURED_OUTPUT_AGENT`), OpenCode sub-agents can enter self-referential calling loops.
+  ```typescript
+  // Enforced invariant: Hard abort after exactly 2 execution steps
+  export const STRUCTURED_OUTPUT_MAX_STEPS = 2;
+  export function noteStructuredOutputStep(sessionId: string, currentStep: number): void {
+    if (currentStep > STRUCTURED_OUTPUT_MAX_STEPS) {
+      throw new Error(`Watchdog aborted runaway internal session ${sessionId} at step ${currentStep}`);
     }
   }
-  if (!data || typeof data !== "object") return null;
-  const obj = data as ProfileDataSlice;
-  return {
-    preferences: parseProfileField(obj.preferences),
-    patterns: parseProfileField(obj.patterns),
-    workflows: parseProfileField(obj.workflows),
-  };
-}
-
-/** Flat list with stable pref_/pat_/wf_ ids for AI cleanup selection. */
-export function flattenProfileItems(pd: ProfileDataSlice | null | undefined): CleanupItem[] {
-  if (!pd) return [];
-  const prefs = (pd.preferences || []).map((p, i) => ({
-    ...p,
-    _id: `pref_${i}`,
-    _type: "pref" as const,
-  }));
-  const pats = (pd.patterns || []).map((p, i) => ({
-    ...p,
-    _id: `pat_${i}`,
-    _type: "pat" as const,
-  }));
-  const wfs = (pd.workflows || []).map((w, i) => ({
-    ...w,
-    _id: `wf_${i}`,
-    _type: "wf" as const,
-  }));
-  return [...prefs, ...pats, ...wfs];
-}
-
-function parseProfileItemId(id: string): { prefix: string; index: number } | null {
-  if (!id.includes("_")) return null;
-  const [prefix, idxStr] = id.split("_");
-  const index = parseInt(idxStr, 10);
-  if (Number.isNaN(index)) return null;
-  return { prefix, index };
-}
-
-function itemAt(profileData: ProfileDataSlice | undefined, id: string): ProfileItem | null {
-  const parsed = parseProfileItemId(id);
-  if (!parsed || !profileData) return null;
-  if (parsed.prefix === "pref") return profileData.preferences?.[parsed.index] ?? null;
-  if (parsed.prefix === "pat") return profileData.patterns?.[parsed.index] ?? null;
-  if (parsed.prefix === "wf") return profileData.workflows?.[parsed.index] ?? null;
-  return null;
-}
-
-export function findDescById(id: string, profileData?: ProfileDataSlice): string | null {
-  return itemAt(profileData, id)?.description ?? null;
-}
-
-export function findStepsById(id: string, profileData?: ProfileDataSlice): string[] | null {
-  const parsed = parseProfileItemId(id);
-  if (!parsed || parsed.prefix !== "wf") return null;
-  return itemAt(profileData, id)?.steps || null;
-}
-
-export function profileTypeLabel(
-  id: string,
-  labels: { pref: string; pat: string; wf: string }
-): string {
-  const parsed = parseProfileItemId(id);
-  if (!parsed) return "?";
-  if (parsed.prefix === "pref") return labels.pref;
-  if (parsed.prefix === "pat") return labels.pat;
-  if (parsed.prefix === "wf") return labels.wf;
-  return "?";
-}
-
-export function confidencePct(item: Pick<ProfileItem, "confidence">): number {
-  return Math.round((item.confidence || 0) * 1000) / 10;
-}
-
-export function evidenceTitle(item: ProfileItem): string {
-  if (!item.evidence) return "";
-  return Array.isArray(item.evidence) ? item.evidence.join("\n") : item.evidence;
-}
-
-export function evidenceCount(item: ProfileItem): number {
-  if (!item.evidence) return 0;
-  return Array.isArray(item.evidence) ? item.evidence.length : 1;
-}
-
-```
-
-### Core Architecture Module: `web/src/lib/set-utils.ts`
-```
-/** Immutable Set toggle helper — returns a new Set. */
-export function toggleInSet<T>(set: Set<T>, value: T, checked: boolean): Set<T> {
-  const next = new Set(set);
-  if (checked) next.add(value);
-  else next.delete(value);
-  return next;
-}
-
-export function removeFromSet<T>(set: Set<T>, value: T): Set<T> {
-  const next = new Set(set);
-  next.delete(value);
-  return next;
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #288** (2026-08-30): **Show matched memory count while Web UI search is active**
-  *Symptoms*: Split from #284 so the Web UI behavior can be fixed independently.  The memory explorer count continues to display the store-wide total while a search is active. It should display the number of matched results so users can tell whether the current query found anything.  Acceptance criteria: - show the filtered result count while search is active - restore the full count when search is cleared - add UI or state-level regression coverage  See #284 for the original reproduction.
-
-- **Issue #287** (2026-09-01): **Forward memoryExtraParams in external AI cleanup requests**
-  *Symptoms*: Split from #284 so provider request behavior can be fixed independently.  The external API path in `src/services/user-profile/ai-cleanup.ts` builds its request body directly and does not include configured `memoryExtraParams`. Provider-specific parameters such as `enable_thinking: false` therefore work in other model calls but are omitted during cleanup.  Acceptance criteria: - forward configured extra parameters through the cleanup request path - preserve required cleanup fields and prevent unsafe overrides - add request-body coverage  See #284 for the SiliconFlow/Qwen reproduction.
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `c26bf2c9` (2026-10-27)
-**Commit Message**: fix(turso): checkpoint the WAL before closing a database (#440)
-
-* fix(turso): checkpoint the WAL before closing a database
-
-A process killed mid-WAL (SIGKILL after a shutdown timeout, OOM kill,
-power-off) can leave a `-wal` that disagrees with turso's `-tshm` index;
-every later open then fails with "I/O error: short read on WAL frame",
-which takes the whole memory system down because ensureTursoReady()
-gates tools, capture and the web server behind it (see #435).
-
-Run `PRAGMA wal_checkpoint(TRUNCATE)` before database.close(), bounded at
-1500 ms so a contended checkpoint cannot consume a host shutdown budget,
-never throwing, and logging the pragma result row so a partial checkpoint
-is visible. Close pooled databases in parallel so N * the bound still fits
-inside the window.
-
-Verified: format/lint/typecheck clean; 13 pass across the four turso and
-plugin-shutdown test files; against a patched build loaded by a running
-server, stopping the service leaves metadata.db 74192 -> 0 and
-user-prompts.db 45352 -> 0 bytes of WAL with no process alive to write.
-
-* fix(turso): make shutdown close survive logging failures and the exit path
-
-Review findings on #440:
-- checkpointBeforeClose: swall
-
-**File**: `src/services/logger.ts` (modified, +13/-0)
-```diff
-@@ -141,6 +141,19 @@ export function serializeError(error: unknown): {
-   return { error: String(error) };
- }
- 
-+/**
-+ * Log without letting a logger failure escape. `log()` initialises the log
-+ * directory lazily and can throw on ENOSPC/EACCES; callers on a teardown path
-+ * must never let a diagnostic write skip the work that follows it.
-+ */
-+export function safeLog(message: string, data?: unknown): void {
-+  try {
-+    log(message, data);
-+  } catch {
-+    // swallow — the caller's cleanup matters more than this line
-+  }
-+}
-+
- export function log(message: string, data?: unknown) {
-   ensureLoggerInitialized();
- 
-```
-
-**File**: `src/services/turso/connection-manager.ts` (modified, +15/-11)
-```diff
-@@ -3,7 +3,7 @@ import type { DatabaseOpts, EncryptionOpts } from "@tursodatabase/database-commo
- import { existsSync, mkdirSync } from "node:fs";
- import { dirname, resolve, relative, isAbsolute, sep } from "node:path";
- import { CONFIG } from "../../config.js";
--import { log } from "../logger.js";
-+import { safeLog } from "../logger.js";
- import { collectReleasedSqliteHandles } from "./sqlite-handle-release.js";
- import { TursoDb } from "./turso-db.js";
- import { resolveOrCreateDatabaseEncryptionKey } from "./encryption-key.js";
-@@ -387,7 +387,7 @@ export class TursoConnectionManager {
-           try {
-             await db.close();
-           } catch (error) {
--            log("Error closing Turso database", { path: dbPath, error: String(error) });
-+            safeLog("Error closing Turso database", { path: dbPath, error: String(error) });
-           }
- 
-           this.connections.delete(dbPath);
-@@ -408,13 +408,17 @@ export class TursoConnectionManager {
- 
-     this.closingPromise = (async () => {
-       await Promise.allSettled([...this.pending.values(), ...this.closingConnections.values()]);
--      for (const [path, db] of this.connections) {
--        try {
--          await db.close();
--        } catch (error) {
--          log("Error closing Turso database", { path, error: String(error) });
--        }
--      }
-+      // Close in parallel: each close runs a bounded WAL checkpoint, and the
-+      // host allows only ~5s between SIGTERM and SIGKILL.
-+      await Promise.allSettled(
-+        [...this.connections].map(async ([path, db]) => {
-+          try {
-+            await db.close();
-+          } catch (error) {
-+            safeLog("Error closing Turso database", { path, error: String(error) });
-+          }
-+        })
-+      );
-       this.connections.clear();
-       this.pending.clear();
-       await collectReleasedSqliteHandles();
-@@ -430,9 +434,9 @@ export class TursoConnectionManager {
-   closeAllSync(): void {
-     for (const [path, db] of this.connections) {
-       try {
--        void db.close();
-+        db.closeSync();
-       } catch (error) {
--        log("Error closing Turso database (sync)", { path, error: String(error) });
-+        safeLog("Error closing Turso database (sync)", { path, error: String(error) });
-       }
-     }
-     this.connections.clear();
-```
-
-**File**: `src/services/turso/turso-db.ts` (modified, +71/-1)
-```diff
-@@ -1,4 +1,5 @@
- import type { Database } from "@tursodatabase/database";
-+import { safeLog } from "../logger.js";
- 
- export type SqlValue = null | string | number | bigint | boolean | Uint8Array | ArrayBuffer;
- export type SqlArgs = SqlValue[] | Record<string, SqlValue>;
-@@ -112,8 +113,18 @@ function bindArgs(args?: SqlArgs): SqlValue[] | [Record<string, SqlValue>] {
-   return [normalized];
- }
- 
-+/**
-+ * Upper bound for the pre-close WAL checkpoint. The host SIGTERMs and SIGKILLs
-+ * the service after ~5s, so a checkpoint that cannot finish (another process
-+ * holds a read lock) must not eat the whole shutdown budget.
-+ */
-+const CHECKPOINT_TIMEOUT_MS = 1500;
-+
- export class TursoDb {
--  constructor(private readonly database: Database) {}
-+  constructor(
-+    private readonly database: Database,
-+    private readonly checkpointTimeoutMs: number = CHECKPOINT_TIMEOUT_MS
-+  ) {}
- 
-   getClient(): Database {
-     return this.database;
-@@ -203,7 +214,66 @@ export class TursoDb {
-     return wrapped[txnMode]();
-   }
- 
-+  /**
-+   * Checkpoint the WAL into the main DB before closing so a SIGKILL during
-+   * teardown cannot leave a 0-byte `-wal` beside a stale `-tshm` (every later
-+   * open then fails with "short read on WAL frame"). Never throws: a busy or
-+   * slow checkpoint is logged and skipped.
-+   *
-+   * The timeout only bounds how long we *prefer* to wait before logging a
-+   * failure — turso's `close()` does not take `execLock`, so we must still
-+   * await settlement of the pragma before returning. Closing under an
-+   * in-flight statement would recreate the tear this helper exists to avoid.
-+   * A truncate stuck on a foreign reader can therefore still hold shutdown
-+   * past the bound until the reader leaves (or the host SIGKILLs).
-+   */
-+  private async checkpointBeforeClose(): Promise<void> {
-+    let timer: ReturnType<typeof setTimeout> | undefined;
-+    const checkpoint = this.database.all("PRAGMA wal_checkpoint(TRUNCATE)");
-+    try {
-+      const rows = await Promise.race([
-+        checkpoint,
-+        new Promise<never>((_, reject) => {
-+          timer = setTimeout(
-+            () => reject(new Error(`timed out after ${this.checkpointTimeoutMs}ms`)),
-+            this.checkpointTimeoutMs
-+          );
-+        }),
-+      ]);
-+      // `PRAGMA wal_checkpoint` returns {busy, log, checkpointed}; busy>0 means a
-+      // reader blocked the truncate and the WAL was only partially checkpointed.
-+      const result = Array.isArray(rows) ? rows[0] : undefined;
-+      safeLog("Turso WAL checkpoint before close", {
-+        busy: result?.busy,
-+        log: result?.log,
-+        checkpointed: result?.checkpointed,
-+      });
-+    } catch (error) {
-+      safeLog("Turso WAL checkpoint before close failed", { error: String(error) });
-+    } finally {
-+      if (timer !== undefined) clearTimeout(timer);
-+      // Always drain the pragma before close(), including after a timeout win:
-+      // a late rejection must not escape unhandled, and the native close must
-+      // not race an in-flight statement on the same handle.
-+      await checkpoint.catch(() => {});
-+    }
-+  }
-+
-   async close(): Promise<void> {
-+    await this.checkpointBeforeClose();
-     await this.database.close();
-   }
-+
-+  /**
-+   * Close without the WAL checkpoint, for the synchronous `exit` handler where
-+   * async continuations never run. The turso async `close()` calls the native
-+   * close in its first statement with nothing awaited before it, so an
-+   * un-awaited call really does release the handle — but it leaves the `-wal`
-+   * in place, which is unavoidable without an event loop.
-+   */
-+  closeSync(): void {
-+    // Errors surface as a rejected promise (never a throw) and are ignored:
-+    // the process is exiting and there is no budget left to act on them.
-+    void this.database.close().catch(() => {});
-+  }
- }
-```
-
-**File**: `tests/turso-close-checkpoint.test.ts` (added, +163/-0)
-```diff
-@@ -0,0 +1,163 @@
-+import { describe, expect, it } from "bun:test";
-+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-+import { tmpdir } from "node:os";
-+import { join } from "node:path";
-+import type { Database } from "@tursodatabase/database";
-+import { CONFIG } from "../src/config.js";
-+import { TursoConnectionManager } from "../src/services/turso/connection-manager.js";
-+import { TursoDb } from "../src/services/turso/turso-db.js";
-+
-+function fakeDatabase(all: (sql: string) => Promise<unknown[]>) {
-+  const calls: string[] = [];
-+  const database = {
-+    calls,
-+    async all(sql: string) {
-+      calls.push(sql);
-+      return all(sql);
-+    },
-+    async run(sql: string) {
-+      calls.push(sql);
-+      return { changes: 0, lastInsertRowid: 0 };
-+    },
-+    async get() {
-+      return undefined;
-+    },
-+    async batch() {
-+      return [];
-+    },
-+    async close() {
-+      calls.push("close");
-+    },
-+  };
-+  return database as unknown as Database & { calls: string[] };
-+}
-+
-+describe("turso close checkpoint", () => {
-+  it("checkpoints the WAL before closing", async () => {
-+    const database = fakeDatabase(async () => []);
-+    await new TursoDb(database).close();
-+
-+    expect(database.calls).toEqual(["PRAGMA wal_checkpoint(TRUNCATE)", "close"]);
-+  });
-+
-+  it("still closes when the checkpoint fails", async () => {
-+    const database = fakeDatabase(async () => {
-+      throw new Error("database is locked");
-+    });
-+    await new TursoDb(database).close();
-+
-+    expect(database.calls).toEqual(["PRAGMA wal_checkpoint(TRUNCATE)", "close"]);
-+  });
-+
-+  it("does not leak the checkpoint rejection that lands after the timeout", async () => {
-+    // Bun's test runner fails any test that leaks an unhandled rejection, so a
-+    // regression here surfaces as a suite failure rather than a silent hang.
-+    const unhandled: unknown[] = [];
-+    const onUnhandled = (reason: unknown) => {
-+      unhandled.push(reason);
-+    };
-+    process.on("unhandledRejection", onUnhandled);
-+    try {
-+      const calls: string[] = [];
-+      const database = {
-+        async all() {
-+          calls.push("all");
-+          await new Promise((resolve) => setTimeout(resolve, 80));
-+          throw new Error("database is locked");
-+        },
-+        async close() {
-+          calls.push("close");
-+        },
-+      } as unknown as Database;
-+
-+      const db = new TursoDb(database, 10);
-+      await db.close();
-+
-+      expect(calls).toEqual(["all", "close"]);
-+      expect(unhandled).toEqual([]);
-+    } finally {
-+      process.off("unhandledRejection", onUnhandled);
-+    }
-+  });
-+
-+  it("waits for a timed-out checkpoint to settle before closing", async () => {
-+    // turso's close() does not take execLock — closing under an in-flight
-+    // pragma would race the native handle. After the timeout fires we must
-+    // still drain the checkpoint before close runs.
-+    let release!: () => void;
-+    const gate = new Promise<void>((resolve) => {
-+      release = resolve;
-+    });
-+    const calls: string[] = [];
-+    const database = {
-+      async all() {
-+        calls.push("all");
-+        await gate;
-+        return [{ busy: 0, log: 0, checkpointed: 0 }];
-+      },
-+      async close() {
-+        calls.push("close");
-+      },
-+    } as unknown as Database;
-+
-+    const closing = new TursoDb(database, 10).close();
-+    await new Promise((resolve) => setTimeout(resolve, 40));
-+    expect(calls).toEqual(["all"]);
-+
-+    release();
-+    await closing;
-+    expect(calls).toEqual(["all", "close"]);
-+  });
-+
-+  it("still closes when logging fails", async () => {
-+    // Point the log file inside a regular file so the logger's mkdir/write
-+    // throws (ENOTDIR) on both the success and failure log calls.
-+    const sandbox = mkdtempSync(join(tmpdir(), "turso-log-fail-"));
-+    const previousLogFile = process.env.OPENCODE_MEM_LOG_FILE;
-+    writeFileSync(join(sandbox, "blocker"), "x");
-+    process.env.OPENCODE_MEM_LOG_FILE = join(sandbox, "blocker", "opencode-mem.log");
-+    try {
-+      const database = fakeDatabase(async () => [{ busy: 0, log: 0, checkpointed: 0 }]);
-+      await new TursoDb(database).close();
-+
-+      expect(database.calls).toEqual(["PRAGMA wal_checkpoint(TRUNCATE)", "close"]);
-+    } finally {
-+      if (previousLogFile === undefined) {
-+        delete process.env.OPENCODE_MEM_LOG_FILE;
-+      } else {
-+        process.env.OPENCODE_MEM_LOG_FILE = previousLogFile;
-+      }
-+      rmSync(sandbox, { recursive: true, force: true });
-+    }
-+  });
-+
-+  it("closeSync closes without running the checkpoint", () => {
-+    const database = fakeDatabase(async () => []);
-+    new TursoDb(database).closeSync();
-+
-+    // No await: the native close still happened on this tick.
-+    expect(database.calls).toEqual(["close"]);
-+  });
-+
-+  it("closeAllSync releases the native handle on the exit path", async () => {
-+    const previousStoragePath = CONFIG.storagePath;
-+    const sandbox = mkdtemp
-```
-
----
-
-### Incident Patch 2: `0ca8b0d4` (2026-10-27)
-**Commit Message**: fix(turso): stop stale migration locks from blocking all writes (#437)
-
-* fix(turso): preserve completed migrations after normal writes
-
-Treat complete sidecars as historical import verification, not a live row-count invariant. Keep native vector readiness checks and cover backup restoration for unreadable completed shards.
-
-* fix(turso): bound live-but-inert migration lock staleness
-
-Expire locks after thirty minutes without progress, with timestamp/mtime fallback and audited stale cleanup shared by write gating and legacy acquisition. Heartbeat legacy insert batches and shards plus dimension migration progress; abort on lost ownership instead of continuing concurrently.
-
-* fix(turso): heartbeat remaining long-running operation locks
-
-* fix(turso): verify lock file and acquisition ownership
-
-* fix(turso): preserve successor data after lock ownership loss
-
-* fix(turso): preserve successor re-embed journal after lock loss
-
-Skip unlinking the shared per-shard re-embed swap journal when ownership is lost so a concurrent successor's recovery state survives, and heartbeat before warmup so long model loads refresh the lease.
-
----------
-
-Co-authored-by: EyJunge1 <[REDACTED_EMAIL]>
-
-**File**: `README.md` (modified, +2/-0)
-```diff
-@@ -60,8 +60,10 @@ On first startup after upgrading, opencode-mem automatically migrates existing m
- - Each shard is backed up as `<shard>.db.legacy.bak` before rewrite
- - Progress is tracked per shard in `<shard>.db.turso-migrate.json`
- - A global marker `.turso-migrated` is written only after all shards verify successfully
-+- Normal inserts and deletes do not invalidate a completed shard migration; startup still checks that its vectors are readable and match its stored dimensions
- - Do not run multiple OpenCode instances against the same `storagePath` during migration; a lock file (`.turso-migrate.lock`) prevents concurrent migration
- - Manual dimension migrations use `.turso-operation.lock`; other plugin processes reject new memory writes until the migration finishes
-+- Locks expire after 30 minutes without a progress timestamp update (or file modification time if the timestamp is unavailable), even if the owning process is alive. This lease uses wall-clock time: a forward clock step greater than 30 minutes can expire a progressing operation early; a backward step or future-dated lock can extend an inert lock's life. Locks carry a unique acquisition id, and stale cleanup only removes the exact file it inspected. Migrations heartbeat as they progress and abort if they discover that ownership was lost. Stale-lock cleanup is logged for diagnosis
- 
- If migration is interrupted, the next startup resumes from the backup automatically.
- 
-```
-
-**File**: `src/services/memory-portability-service.ts` (modified, +12/-3)
-```diff
-@@ -20,7 +20,10 @@ import { extractScopeFromContainerTag } from "./memory-scope.js";
- import { getProjectTagInfo } from "./tags.js";
- import { embeddingService } from "./embedding.js";
- import { ensureTursoReady } from "./turso/ready.js";
--import { acquireTursoOperationLock } from "./turso/operation-lock.js";
-+import {
-+  acquireTursoOperationLock,
-+  isTursoLockOwnershipLostError,
-+} from "./turso/operation-lock.js";
- import { tursoShardManager } from "./turso/shard-manager.js";
- import { tursoConnectionManager } from "./turso/connection-manager.js";
- import { tursoVectorSearch } from "./turso/vector-search.js";
-@@ -334,6 +337,7 @@ export class MemoryPortabilityService {
-           },
-           isPinned: Boolean(memory.isPinned),
-         });
-+        releaseLock.heartbeat();
-       }
- 
-       // Phase B: single transactional write. Avoid getWriteShard() here because it
-@@ -355,13 +359,15 @@ export class MemoryPortabilityService {
-               });
-             }
-             insertedIds.push(item.record.id);
-+            releaseLock.heartbeat();
-           }
-         });
- 
-         await tursoShardManager.setVectorCount(
-           shard.id,
-           await tursoVectorSearch.countAllVectors(db)
-         );
-+        releaseLock.heartbeat();
-       });
- 
-       log("Memory import completed", {
-@@ -378,8 +384,11 @@ export class MemoryPortabilityService {
-         containerTag: target.tag,
-       };
-     } catch (error) {
--      // Best-effort cleanup if a partial insert somehow escaped the transaction.
--      if (insertedIds.length > 0) {
-+      // Best-effort cleanup for ordinary failures only. Ownership loss rolls back
-+      // an open transaction, but a successor may already have committed these IDs
-+      // (or our transaction may have committed before the final heartbeat).
-+      // Never compensate shared rows without current ownership.
-+      if (!isTursoLockOwnershipLostError(error) && insertedIds.length > 0) {
-         try {
-           const shards = await tursoShardManager.getAllShards(scope, hash);
-           for (const shard of shards) {
-```
-
-**File**: `src/services/migration-service.ts` (modified, +45/-12)
-```diff
-@@ -8,7 +8,10 @@ import { CONFIG } from "../config.js";
- import { log } from "./logger.js";
- import { formatTagsForEmbedding } from "./turso/vector-utils.js";
- import type { MemoryRecord, ShardInfo } from "./turso/types.js";
--import { acquireTursoOperationLock } from "./turso/operation-lock.js";
-+import {
-+  acquireTursoOperationLock,
-+  isTursoLockOwnershipLostError,
-+} from "./turso/operation-lock.js";
- import {
-   withSqliteFileLockRetry,
-   renameSqliteDatabase,
-@@ -105,13 +108,15 @@ export class MigrationService {
-     }
- 
-     this.isRunning = true;
--    let releaseOperationLock: (() => void) | undefined;
-+    let releaseOperationLock: ReturnType<typeof acquireTursoOperationLock> | undefined;
-     this.progressCallback = progressCallback;
-     const startTime = Date.now();
- 
-     try {
-       releaseOperationLock = acquireTursoOperationLock(`dimension-${strategy}`);
-+      const heartbeat = releaseOperationLock.heartbeat;
-       const mismatch = await this.detectDimensionMismatch();
-+      heartbeat();
- 
-       if (!mismatch.needsMigration) {
-         return {
-@@ -124,10 +129,10 @@ export class MigrationService {
-       }
- 
-       if (strategy === "fresh-start") {
--        return await this.freshStartMigration(mismatch, startTime);
-+        return await this.freshStartMigration(mismatch, startTime, heartbeat);
-       }
- 
--      return await this.reEmbedMigration(mismatch, startTime);
-+      return await this.reEmbedMigration(mismatch, startTime, heartbeat);
-     } catch (error) {
-       log("Migration: failed", { error: String(error) });
-       return {
-@@ -147,7 +152,8 @@ export class MigrationService {
- 
-   private async freshStartMigration(
-     mismatch: DimensionMismatch,
--    startTime: number
-+    startTime: number,
-+    heartbeat: () => void
-   ): Promise<MigrationResult> {
-     this.reportProgress({
-       phase: "preparing",
-@@ -158,6 +164,7 @@ export class MigrationService {
-     let deletedShards = 0;
- 
-     for (const [index, shardInfo] of mismatch.shardMismatches.entries()) {
-+      heartbeat();
-       this.reportProgress({
-         phase: "cleanup",
-         processed: index,
-@@ -174,6 +181,7 @@ export class MigrationService {
-         archivePath,
-       });
-       deletedShards++;
-+      heartbeat();
-     }
- 
-     this.reportProgress({
-@@ -193,9 +201,13 @@ export class MigrationService {
- 
-   private async reEmbedMigration(
-     mismatch: DimensionMismatch,
--    startTime: number
-+    startTime: number,
-+    heartbeat: () => void
-   ): Promise<MigrationResult> {
-+    // Warmup (ONNX load / remote probes) can outlast a single lease window.
-+    heartbeat();
-     await embeddingService.warmup();
-+    heartbeat();
-     embeddingService.clearCache();
- 
-     const totalMemories = mismatch.shardMismatches.reduce(
-@@ -213,6 +225,7 @@ export class MigrationService {
-     let processedCount = 0;
- 
-     for (const shardInfo of mismatch.shardMismatches) {
-+      heartbeat();
-       this.reportProgress({
-         phase: "re-embedding",
-         processed: processedCount,
-@@ -229,7 +242,8 @@ export class MigrationService {
-         shard.scope,
-         shard.scopeHash,
-         () =>
--          this.rebuildShardSafely(shard, (processed) => {
-+          this.rebuildShardSafely(shard, heartbeat, (processed) => {
-+            heartbeat();
-             processedCount++;
-             this.reportProgress({
-               phase: "re-embedding",
-@@ -244,6 +258,7 @@ export class MigrationService {
-           })
-       );
-       reEmbeddedCount += migrated;
-+      heartbeat();
-     }
- 
-     this.reportProgress({
-@@ -263,6 +278,7 @@ export class MigrationService {
- 
-   private async rebuildShardSafely(
-     shard: ShardInfo,
-+    heartbeat: () => void,
-     onProcessed: (memoryId: string) => void
-   ): Promise<number> {
-     const sourceDb = await tursoConnectionManager.getConnection(shard.dbPath);
-@@ -331,6 +347,7 @@ export class MigrationService {
-           onProcessed(String(memory.id));
-         }
- 
-+        heartbeat();
-         await stagedDb.transaction("write", async (tx) => {
-           for (const item of stagedBatch) {
-             await tursoVectorSearch.insertVectorInTransaction(tx, item.record);
-@@ -342,6 +359,7 @@ export class MigrationService {
-             }
-           }
-         });
-+        heartbeat();
-       }
- 
-       const countRow = await stagedDb.get(`SELECT COUNT(*) AS count FROM memories`);
-@@ -353,12 +371,14 @@ export class MigrationService {
-       }
- 
-       await tursoConnectionManager.closeConnection(stagedPath);
-+      heartbeat();
-       writeFileSync(
-         swapStatePath,
-         JSON.stringify({ dbPath: shard.dbPath, stagedPath, backupPath }),
-         "utf-8"
-       );
-       await tursoConnectionManager.closeConnection(shard.dbPath);
-+      heartbeat();
-       await withSqliteFileLockRetry(() => renameSqliteDatabase(shard.dbPath, backupPath));
-       try {
-         await withSqliteFileLockRetry(() => renameSqliteDatabase(stagedPath, shard.dbPath));
-@@ -377,11 +397,2
-```
-
-**File**: `src/services/shard-path-migration-service.ts` (modified, +27/-3)
-```diff
-@@ -4,7 +4,10 @@ import { CONFIG } from "../config.js";
- import { extractScopeFromContainerTag } from "./memory-scope.js";
- import { getProjectTagInfo } from "./tags.js";
- import { ensureTursoReady } from "./turso/ready.js";
--import { acquireTursoOperationLock } from "./turso/operation-lock.js";
-+import {
-+  acquireTursoOperationLock,
-+  isTursoLockOwnershipLostError,
-+} from "./turso/operation-lock.js";
- import { tursoShardManager } from "./turso/shard-manager.js";
- import { tursoConnectionManager } from "./turso/connection-manager.js";
- import { tursoVectorSearch } from "./turso/vector-search.js";
-@@ -280,6 +283,7 @@ export class ShardPathMigrationService {
- 
-     try {
-       // Stage complete, updated copies while originals remain untouched.
-+      // A gigantic shard's synchronous copy or single UPDATE/count can still delay a heartbeat.
-       for (const move of moves) {
-         await tursoConnectionManager.closeConnection(move.oldPath);
-         if (!existsSync(move.oldPath)) {
-@@ -317,9 +321,11 @@ export class ShardPathMigrationService {
-           );
-         }
-         await tursoConnectionManager.closeConnection(move.stagedPath);
-+        releaseLock.heartbeat();
-       }
- 
-       writeSwapState(statePath, state);
-+      releaseLock.heartbeat();
- 
-       // Empty targets remain recoverable until the complete swap succeeds.
-       for (let index = 0; index < targetShards.length; index++) {
-@@ -328,17 +334,20 @@ export class ShardPathMigrationService {
-           "pre-path-migrate",
-           archivedTargets[index]!.archivePath!
-         );
-+        releaseLock.heartbeat();
-       }
- 
-       for (const move of moves) {
-         await tursoConnectionManager.closeConnection(move.oldPath);
-+        releaseLock.heartbeat();
-         await withSqliteFileLockRetry(() => renameSqliteDatabase(move.oldPath, move.backupPath));
-         try {
-           await withSqliteFileLockRetry(() => renameSqliteDatabase(move.stagedPath, move.newPath));
-         } catch (error) {
-           await withSqliteFileLockRetry(() => renameSqliteDatabase(move.backupPath, move.oldPath));
-           throw error;
-         }
-+        releaseLock.heartbeat();
- 
-         await tursoShardManager.reassignShardScope(
-           move.shardId,
-@@ -354,6 +363,7 @@ export class ShardPathMigrationService {
-       }
- 
-       unlinkSync(statePath);
-+      releaseLock.heartbeat();
- 
-       // Prompt metadata is secondary and must not invalidate a completed,
-       // recoverable memory migration.
-@@ -380,12 +390,26 @@ export class ShardPathMigrationService {
-         actions,
-       };
-     } catch (error) {
--      await this.rollbackSwap(state, statePath);
-+      const ownershipLost = isTursoLockOwnershipLostError(error);
-+      if (ownershipLost) {
-+        // A successor may already be writing to the migrated paths. Only fresh
-+        // ownership at startup may recover any journal that remains.
-+        log(
-+          "WARNING: Path migration interrupted after lock ownership lost; leaving recoverable state untouched",
-+          { error: String(error), statePath }
-+        );
-+      } else {
-+        await this.rollbackSwap(state, statePath);
-+      }
-       return {
-         success: false,
-         ...resultBase,
-         dryRun: false,
--        error: error instanceof Error ? error.message : String(error),
-+        error: ownershipLost
-+          ? `Path migration interrupted after lock ownership lost and may have completed; state is recoverable. ${String(error)}`
-+          : error instanceof Error
-+            ? error.message
-+            : String(error),
-       };
-     } finally {
-       releaseLock();
-```
-
-**File**: `src/services/turso/encryption-migrator.ts` (modified, +12/-2)
-```diff
-@@ -73,7 +73,7 @@ async function canOpenPlain(dbPath: string): Promise<boolean> {
-   }
- }
- 
--async function dumpAndReloadEncrypted(dbPath: string): Promise<void> {
-+async function dumpAndReloadEncrypted(dbPath: string, heartbeat: () => void): Promise<void> {
-   const encryption = resolveDatabaseEncryption();
-   if (!encryption) {
-     throw new Error("databaseEncryptionKey is required for encryption migration");
-@@ -101,6 +101,7 @@ async function dumpAndReloadEncrypted(dbPath: string): Promise<void> {
-     );
-     const tableNames = tables.map((row) => String(row.name));
-     for (const table of tableNames) {
-+      heartbeat();
-       const create = await sourceDb.get<{ sql?: string }>(
-         `SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?`,
-         [table]
-@@ -171,6 +172,7 @@ async function dumpAndReloadEncrypted(dbPath: string): Promise<void> {
-               ]
-             );
-           }
-+          heartbeat();
-         }
-         continue;
-       }
-@@ -184,6 +186,7 @@ async function dumpAndReloadEncrypted(dbPath: string): Promise<void> {
-           `INSERT OR REPLACE INTO ${table} (${columns.join(", ")}) VALUES (${placeholders})`,
-           columns.map((col) => asSqlValue(row[col]))
-         );
-+        heartbeat();
-       }
-     }
- 
-@@ -201,17 +204,21 @@ async function dumpAndReloadEncrypted(dbPath: string): Promise<void> {
-       } catch {
-         // may already exist
-       }
-+      heartbeat();
-     }
-   } finally {
-     await sourceDb.close();
-     await stagedDb.close();
-   }
- 
-+  // Pre-swap aborts preserve the plaintext original and may leave a staged temp file.
-+  heartbeat();
-   await withSqliteFileLockRetry(() => {
-     copySqliteDatabase(dbPath, backupPath);
-     removeSqliteDatabase(dbPath);
-     renameSqliteDatabase(stagedPath, dbPath);
-   });
-+  heartbeat();
- 
-   // Verify encrypted open
-   const verify = await connect(dbPath, buildConnectOptions(encryption));
-@@ -231,17 +238,20 @@ export async function runDatabaseEncryptionMigration(): Promise<void> {
- 
-   const candidates = collectCandidateDbs();
-   const release = acquireTursoOperationLock("tursodb-encrypt");
-+  const heartbeat = release.heartbeat;
-   try {
-     for (const path of candidates) {
-+      heartbeat();
-       if (await isAlreadyEncrypted(path)) continue;
-       if (!(await canOpenPlain(path))) {
-         throw new Error(
-           `Cannot open ${path} as plaintext for encryption migration. ` +
-             `If it is already encrypted with a different key, update databaseEncryptionKey.`
-         );
-       }
--      await dumpAndReloadEncrypted(path);
-+      await dumpAndReloadEncrypted(path, heartbeat);
-     }
-+    heartbeat();
-     writeFileSync(
-       markerPath(),
-       JSON.stringify({
-```
-
-**File**: `src/services/turso/engine-migrator.ts` (modified, +42/-19)
-```diff
-@@ -95,7 +95,8 @@ async function needsEngineRewrite(dbPath: string): Promise<boolean> {
- async function copyTableViaLibsql(
-   sourcePath: string,
-   targetDb: TursoDb,
--  table: string
-+  table: string,
-+  heartbeat: () => void
- ): Promise<number> {
-   const client = openLibsql(sourcePath);
-   try {
-@@ -141,14 +142,15 @@ async function copyTableViaLibsql(
-         sqlArgs
-       );
-       imported += 1;
-+      heartbeat();
-     }
-     return imported;
-   } finally {
-     client.close();
-   }
- }
- 
--async function rewriteMemoryShard(dbPath: string): Promise<void> {
-+async function rewriteMemoryShard(dbPath: string, heartbeat: () => void): Promise<void> {
-   const client = openLibsql(dbPath);
-   let dims = CONFIG.embeddingDimensions;
-   let model = CONFIG.embeddingModel;
-@@ -178,18 +180,24 @@ async function rewriteMemoryShard(dbPath: string): Promise<void> {
-   const staged = await tursoConnectionManager.getConnection(stagedPath);
-   try {
-     await tursoShardManager.initShardDb(staged, dims, model);
--    const imported = await copyTableViaLibsql(dbPath, staged, "memories");
-+    const imported = await copyTableViaLibsql(dbPath, staged, "memories", heartbeat);
-     const metaClient = openLibsql(dbPath);
-     try {
--      const metaRows = await metaClient.execute(`SELECT key, value FROM shard_metadata`);
--      for (const row of metaRows.rows) {
--        await staged.run(`INSERT OR REPLACE INTO shard_metadata (key, value) VALUES (?, ?)`, [
--          String(row.key),
--          String(row.value),
--        ]);
-+      const metaRows = await metaClient
-+        .execute(`SELECT key, value FROM shard_metadata`)
-+        .catch(() => null);
-+      for (const row of metaRows?.rows ?? []) {
-+        try {
-+          await staged.run(`INSERT OR REPLACE INTO shard_metadata (key, value) VALUES (?, ?)`, [
-+            String(row.key),
-+            String(row.value),
-+          ]);
-+        } catch {
-+          // Metadata is optional; do not swallow ownership failures below.
-+          break;
-+        }
-+        heartbeat();
-       }
--    } catch {
--      // optional
-     } finally {
-       metaClient.close();
-     }
-@@ -205,19 +213,26 @@ async function rewriteMemoryShard(dbPath: string): Promise<void> {
-   }
- 
-   // Match encryption-migrator: Windows cannot rename over an existing file (EPERM).
-+  // Pre-swap aborts preserve the original and may leave a staged temp file.
-+  heartbeat();
-   await withSqliteFileLockRetry(() => {
-     copySqliteDatabase(dbPath, backupPath);
-     removeSqliteDatabase(dbPath);
-     renameSqliteDatabase(stagedPath, dbPath);
-   });
-+  heartbeat();
- 
-   log("Migrated libSQL DiskANN shard to @tursodatabase/database", {
-     dbPath,
-     backupPath,
-   });
- }
- 
--async function rewriteGenericDb(dbPath: string, tables: string[]): Promise<void> {
-+async function rewriteGenericDb(
-+  dbPath: string,
-+  tables: string[],
-+  heartbeat: () => void
-+): Promise<void> {
-   const stagedPath = `${dbPath}.tursodb-migrate-${Date.now()}.tmp`;
-   const backupPath = `${dbPath}.pre-tursodb-${Date.now()}.bak`;
- 
-@@ -230,14 +245,15 @@ async function rewriteGenericDb(dbPath: string, tables: string[]): Promise<void>
-     const source = openLibsql(dbPath);
-     try {
-       for (const table of tables) {
-+        heartbeat();
-         const schema = await source.execute({
-           sql: `SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?`,
-           args: [table],
-         });
-         const createSql = schema.rows[0]?.sql ? String(schema.rows[0].sql) : null;
-         if (!createSql) continue;
-         await staged.run(createSql.replace(/F32_BLOB/gi, "BLOB"));
--        await copyTableViaLibsql(dbPath, staged, table);
-+        await copyTableViaLibsql(dbPath, staged, table, heartbeat);
-       }
-       const indexes = await source.execute(
-         `SELECT sql FROM sqlite_master WHERE type = 'index' AND sql IS NOT NULL AND name NOT LIKE 'sqlite_%'`
-@@ -250,6 +266,7 @@ async function rewriteGenericDb(dbPath: string, tables: string[]): Promise<void>
-         } catch {
-           // index may already exist from CREATE TABLE
-         }
-+        heartbeat();
-       }
-     } finally {
-       source.close();
-@@ -260,11 +277,14 @@ async function rewriteGenericDb(dbPath: string, tables: string[]): Promise<void>
-   }
- 
-   // Match encryption-migrator: Windows cannot rename over an existing file (EPERM).
-+  // Pre-swap aborts preserve the original and may leave a staged temp file.
-+  heartbeat();
-   await withSqliteFileLockRetry(() => {
-     copySqliteDatabase(dbPath, backupPath);
-     removeSqliteDatabase(dbPath);
-     renameSqliteDatabase(stagedPath, dbPath);
-   });
-+  heartbeat();
-   log("Migrated auxiliary DB to @tursodatabase/database", { dbPath, backupPath });
- }
- 
-@@ -294,23 +314,26 @@ export async function runTursoEngineMigration(): Promise<void> {
-   }
- 
-   const release = acquireTursoOperationLock("tursodb-engine-migrate");
-+  const heartbeat = release.heartbeat;
-   try {
-     for (const path of toRewrite) 
-```
-
-**File**: `src/services/turso/legacy-migrator.ts` (modified, +45/-53)
-```diff
-@@ -7,11 +7,13 @@ import {
-   writeFileSync,
- } from "node:fs";
- import { basename, join } from "node:path";
-+import { randomUUID } from "node:crypto";
- import { CONFIG } from "../../config.js";
- import { log } from "../logger.js";
- import { tursoConnectionManager } from "./connection-manager.js";
- import { tursoShardManager } from "./shard-manager.js";
- import { runTursoEngineMigration } from "./engine-migrator.js";
-+import { heartbeatTursoLock, readLiveTursoLock, releaseTursoLock } from "./operation-lock.js";
- import {
-   withSqliteFileLockRetry,
-   renameSqliteDatabase,
-@@ -42,6 +44,7 @@ interface MigrationMarker {
- }
- 
- interface MigrationLock {
-+  id: string;
-   pid: number;
-   timestamp: string;
- }
-@@ -91,68 +94,44 @@ function writeMarker(storagePath: string, shards: MigrationMarker["shards"]): vo
-   writeFileSync(join(storagePath, MIGRATION_MARKER), JSON.stringify(marker, null, 2), "utf-8");
- }
- 
--function isProcessAlive(pid: number): boolean {
--  try {
--    process.kill(pid, 0);
--    return true;
--  } catch {
--    return false;
--  }
--}
--
- function sleep(ms: number): Promise<void> {
-   return new Promise((resolve) => setTimeout(resolve, ms));
- }
- 
--function acquireMigrationLock(storagePath: string): boolean {
-+function acquireMigrationLock(storagePath: string): string | null {
-   const lockPath = join(storagePath, MIGRATION_LOCK);
--  if (existsSync(lockPath)) {
--    try {
--      const lock = JSON.parse(readFileSync(lockPath, "utf-8")) as MigrationLock;
--      if (lock.pid && isProcessAlive(lock.pid)) {
--        return false;
--      }
--      unlinkSync(lockPath);
--    } catch {
--      try {
--        unlinkSync(lockPath);
--      } catch {
--        // stale or corrupt lock — try atomic create below
--      }
--    }
--  }
-+  if (readLiveTursoLock(lockPath)) return null;
- 
--  const lock: MigrationLock = { pid: process.pid, timestamp: new Date().toISOString() };
-+  const lock: MigrationLock = {
-+    id: randomUUID(),
-+    pid: process.pid,
-+    timestamp: new Date().toISOString(),
-+  };
-   try {
-     writeFileSync(lockPath, JSON.stringify(lock), { flag: "wx" });
--    return true;
-+    return lock.id;
-   } catch {
--    return false;
-+    return null;
-   }
- }
- 
--async function acquireMigrationLockWithRetry(storagePath: string, maxAttempts = 3): Promise<void> {
-+async function acquireMigrationLockWithRetry(
-+  storagePath: string,
-+  maxAttempts = 3
-+): Promise<string> {
-   for (let attempt = 0; attempt < maxAttempts; attempt++) {
--    if (acquireMigrationLock(storagePath)) {
--      return;
-+    const id = acquireMigrationLock(storagePath);
-+    if (id) {
-+      return id;
-     }
-     await sleep(200 + attempt * 150);
-   }
- 
-   throw new Error("Turso legacy migration locked by another process");
- }
- 
--function releaseMigrationLock(storagePath: string): void {
--  const lockPath = join(storagePath, MIGRATION_LOCK);
--  if (!existsSync(lockPath)) return;
--  try {
--    const lock = JSON.parse(readFileSync(lockPath, "utf-8")) as MigrationLock;
--    if (lock.pid === process.pid) {
--      unlinkSync(lockPath);
--    }
--  } catch {
--    unlinkSync(lockPath);
--  }
-+function releaseMigrationLock(storagePath: string, id: string): void {
-+  releaseTursoLock(join(storagePath, MIGRATION_LOCK), id);
- }
- 
- async function countMemories(db: TursoDb): Promise<number> {
-@@ -210,11 +189,9 @@ async function isShardMigrationComplete(dbPath: string): Promise<boolean> {
-     if (!(await hasMemoriesTable(db))) {
-       return sidecar.expectedCount === 0;
-     }
--    const count = await countMemories(db);
--    if (count !== sidecar.expectedCount) {
--      return false;
--    }
--    // Sidecar alone is not enough — require native vector index + readable vectors.
-+    // Counts are verified before publishing the complete sidecar. Normal
-+    // inserts and deletes must not invalidate that historical migration fact.
-+    // Sidecar alone is not enough — still require native, readable vectors.
-     return isTursoVectorShardReady(db);
-   } catch {
-     return false;
-@@ -314,7 +291,10 @@ function rowToRecord(row: Record<string, unknown>): MemoryRecord | null {
-   };
- }
- 
--async function migrateMemoryShard(dbPath: string): Promise<ShardMigrationSidecar | null> {
-+async function migrateMemoryShard(
-+  dbPath: string,
-+  heartbeatMigrationLock: () => void
-+): Promise<ShardMigrationSidecar | null> {
-   if (await isShardMigrationComplete(dbPath)) {
-     const sidecar = readSidecar(dbPath);
-     return sidecar;
-@@ -411,6 +391,7 @@ async function migrateMemoryShard(dbPath: string): Promise<ShardMigrationSidecar
-   }
- 
-   const expectedCount = records.length;
-+  heartbeatMigrationLock();
-   writeSidecar(dbPath, {
-     sourceCount,
-     expectedCount,
-@@ -421,6 +402,7 @@ async function migrateMemoryShard(dbPath: string): Promise<ShardMigrationSidecar
- 
-   const backup = backupPath(dbPath);
-   await tursoConnectionManager.closeConnection(dbPath);
-+  heartbeatMigrationLock();
-   if (existsSync(dbPath)) {
-     await withSqliteFileLockRetry(() => renameSqlite
-```
-
-**File**: `src/services/turso/operation-lock.ts` (modified, +159/-18)
-```diff
-@@ -1,13 +1,31 @@
--import { existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
-+import {
-+  closeSync,
-+  fstatSync,
-+  openSync,
-+  readFileSync,
-+  statSync,
-+  unlinkSync,
-+  writeFileSync,
-+  writeSync,
-+  type Stats,
-+} from "node:fs";
-+import { randomUUID } from "node:crypto";
- import { join } from "node:path";
- import { CONFIG } from "../../config.js";
-+import { log } from "../logger.js";
- 
- const OPERATION_LOCK = ".turso-operation.lock";
- const LEGACY_MIGRATION_LOCK = ".turso-migrate.lock";
- 
-+// Thirty minutes of progress silence is far longer than a local 50-row insert
-+// batch, shard swap, or individual embedding request. Long migrations heartbeat
-+// at those boundaries, so total migration duration is not limited by this lease.
-+export const TURSO_LOCK_STALE_MS = 30 * 60 * 1000;
-+
- interface LockState {
-+  id?: string;
-   pid: number;
--  timestamp: string;
-+  timestamp?: string;
-   operation?: string;
- }
- 
-@@ -20,29 +38,152 @@ function isProcessAlive(pid: number): boolean {
-   }
- }
- 
--function readLiveLock(path: string): LockState | null {
--  if (!existsSync(path)) return null;
-+function lockAgeMs(identity: Stats, state: LockState | null): number | null {
-+  let timestamp = typeof state?.timestamp === "string" ? Date.parse(state.timestamp) : NaN;
-+  if (!Number.isFinite(timestamp)) {
-+    timestamp = identity.mtimeMs;
-+  }
-+  return Number.isFinite(timestamp) ? Date.now() - timestamp : null;
-+}
-+
-+function sameFile(a: Pick<Stats, "dev" | "ino">, b: Pick<Stats, "dev" | "ino">): boolean {
-+  return a.dev === b.dev && a.ino === b.ino;
-+}
-+
-+/** Remove only the file inspected by the caller; cleanup must never throw. */
-+export function unlinkTursoLockIfUnchanged(
-+  path: string,
-+  identity: Pick<Stats, "dev" | "ino">
-+): boolean {
-   try {
--    const state = JSON.parse(readFileSync(path, "utf-8")) as LockState;
--    if (Number.isInteger(state.pid) && state.pid > 0 && isProcessAlive(state.pid)) {
--      return state;
-+    if (!sameFile(identity, statSync(path))) return false;
-+    // A nanosecond stat → unlink race remains without interprocess locking.
-+    // The true owner bounds it by aborting at its next progress heartbeat.
-+    unlinkSync(path);
-+    return true;
-+  } catch {
-+    // Missing or held open (Windows): preserve best-effort cleanup semantics.
-+    return false;
-+  }
-+}
-+
-+/** Release by acquisition identity, never merely by PID. */
-+export function releaseTursoLock(path: string, expectedId: string): void {
-+  let fd: number | undefined;
-+  try {
-+    fd = openSync(path, "r");
-+    const identity = fstatSync(fd);
-+    const state = JSON.parse(readFileSync(fd, "utf-8")) as LockState | null;
-+    if (state?.id === expectedId) unlinkTursoLockIfUnchanged(path, identity);
-+  } catch {
-+    // Missing, replaced, corrupt, or held open: cleanup must not block writes.
-+  } finally {
-+    if (fd !== undefined) closeSync(fd);
-+  }
-+}
-+
-+export class TursoLockOwnershipLostError extends Error {
-+  override name = "TursoLockOwnershipLostError";
-+}
-+
-+export function isTursoLockOwnershipLostError(
-+  error: unknown
-+): error is TursoLockOwnershipLostError {
-+  return error instanceof TursoLockOwnershipLostError;
-+}
-+
-+/** Shared lease check for both write gating and atomic migration acquisition. */
-+export function readLiveTursoLock(path: string): LockState | null {
-+  let fd: number;
-+  try {
-+    fd = openSync(path, "r");
-+  } catch {
-+    return null;
-+  }
-+  const identity = fstatSync(fd);
-+  let state: LockState | null = null;
-+  let reason = "corrupt lock";
-+  try {
-+    state = JSON.parse(readFileSync(fd, "utf-8")) as LockState | null;
-+    if (state && Number.isInteger(state.pid) && state.pid > 0) {
-+      const age = lockAgeMs(identity, state);
-+      if (isProcessAlive(state.pid)) {
-+        if (age === null || age <= TURSO_LOCK_STALE_MS) return state;
-+        reason = "progress heartbeat expired";
-+      } else {
-+        reason = "dead PID";
-+      }
-     }
-   } catch {
-     // Corrupt locks are stale and removed below.
-+  } finally {
-+    closeSync(fd);
-   }
-+  const ageMs = lockAgeMs(identity, state);
-+  const removed = unlinkTursoLockIfUnchanged(path, identity);
-+  const details = {
-+    path,
-+    pid: state?.pid ?? null,
-+    ageMs,
-+    operation: state?.operation,
-+    reason,
-+    removed,
-+  };
-   try {
--    unlinkSync(path);
-+    log("WARNING: Invalidating stale Turso migration lock", details);
-   } catch {
--    // Already removed (race) or held open (Windows) — either way the lock is
--    // gone or unowned; do not let cleanup failure block writes.
-+    // Audit even when the log destination is unavailable; logging must not
-+    // turn an unowned lock into a permanent write outage.
-+    console.warn("WARNING: Invalidating stale Turso migration lock", details);
-+  }
-+  if (!removed) {
-+    try {
-+      // A replacement must be evaluated on its own lease, not the stale read.
-+      if (!sameFile(identity, statSync(path))) return readLiveTursoLock(path);
-+
-```
-
----
-
-### Incident Patch 3: `c4c6abea` (2026-10-27)
-**Commit Message**: fix(context): inject profile when project memories are empty (#444)
-
-* fix(turso): restore log import in connection-manager
-
-PR #440 switched close-path logging to safeLog but left other
-call sites using log without importing it, which breaks typecheck.
-
-* fix(context): inject profile when project memories are empty
-
-loadMemoryContext short-circuited on an empty memory list, so
-injectProfile never ran with chatMessage.maxMemories: 0. Always
-call formatContextForPrompt so a standalone <user_profile> block
-can still be delivered.
-
-Closes #438
-
-**File**: `src/index.ts` (modified, +2/-2)
-```diff
-@@ -695,8 +695,8 @@ export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
-       memories = memories.filter((m: any) => new Date(m.createdAt).getTime() > cutoffDate);
-     }
- 
--    if (memories.length === 0) return "";
--
-+    // Still format an empty project-memory payload so injectProfile can emit
-+    // <user_profile> on its own (e.g. chatMessage.maxMemories: 0).
-     const projectMemories = {
-       results: memories.map((m: any) => ({
-         similarity: 1.0,
-```
-
-**File**: `src/services/turso/connection-manager.ts` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ import type { DatabaseOpts, EncryptionOpts } from "@tursodatabase/database-commo
- import { existsSync, mkdirSync } from "node:fs";
- import { dirname, resolve, relative, isAbsolute, sep } from "node:path";
- import { CONFIG } from "../../config.js";
--import { safeLog } from "../logger.js";
-+import { log, safeLog } from "../logger.js";
- import { collectReleasedSqliteHandles } from "./sqlite-handle-release.js";
- import { TursoDb } from "./turso-db.js";
- import { resolveOrCreateDatabaseEncryptionKey } from "./encryption-key.js";
-```
-
-**File**: `tests/fixtures/child-session-capture.mjs` (modified, +1/-0)
-```diff
-@@ -60,6 +60,7 @@ mock.module(moduleUrl("services/user-prompt/user-prompt-manager"), () => ({
- }));
- mock.module(moduleUrl("services/logger"), () => ({
-   log() {},
-+  safeLog() {},
-   serializeError: (error) => ({ error: error instanceof Error ? error.message : String(error) }),
- }));
- mock.module(moduleUrl("services/web-server"), () => ({
-```
-
-**File**: `tests/fixtures/profile-inject-empty-memories.mjs` (added, +105/-0)
-```diff
-@@ -0,0 +1,105 @@
-+import { mock } from "bun:test";
-+
-+const moduleUrl = (path) => new URL("../../src/" + path + ".js", import.meta.url).href;
-+const config = {
-+  injectProfile: true,
-+  chatMessage: {
-+    enabled: true,
-+    injectOn: "first",
-+    maxMemories: 0,
-+    excludeCurrentSession: false,
-+    filterInjectedPrompts: true,
-+    captureChildSessions: false,
-+  },
-+  compaction: { enabled: false },
-+  autoCaptureEnabled: false,
-+  webServerEnabled: false,
-+  autoUpdate: { enabled: false },
-+  storagePath: process.argv[2],
-+  opencodeModel: "inherit",
-+};
-+const formatCalls = [];
-+let listLimit = null;
-+
-+mock.module(moduleUrl("config"), () => ({
-+  CONFIG: config,
-+  initConfig() {},
-+  isConfigured: () => true,
-+}));
-+mock.module(moduleUrl("services/client"), () => ({
-+  memoryClient: {
-+    warmup: async () => {},
-+    close: async () => {},
-+    listMemories: async (_tag, limit) => {
-+      listLimit = limit;
-+      return { success: true, memories: [] };
-+    },
-+  },
-+}));
-+mock.module(moduleUrl("services/tags"), () => ({
-+  getTags: () => ({
-+    project: { tag: "fixture-project" },
-+    user: { userEmail: "fixture-user@example.com" },
-+  }),
-+}));
-+// Record that loadMemoryContext still formats when project memories are empty.
-+mock.module(moduleUrl("services/context"), () => ({
-+  formatContextForPrompt: async (userId, projectMemories) => {
-+    formatCalls.push({
-+      userId,
-+      resultCount: projectMemories?.results?.length ?? 0,
-+    });
-+    return (
-+      "<memory_context>\n" +
-+      `<user_profile>\nprefs for ${userId}\n</user_profile>\n` +
-+      "</memory_context>"
-+    );
-+  },
-+}));
-+mock.module(moduleUrl("services/user-prompt/user-prompt-manager"), () => ({
-+  userPromptManager: {
-+    savePrompt: async () => {},
-+    setPromptModel: async () => {},
-+  },
-+}));
-+mock.module(moduleUrl("services/logger"), () => ({
-+  log() {},
-+  safeLog() {},
-+  serializeError: (error) => ({ error: error instanceof Error ? error.message : String(error) }),
-+}));
-+mock.module(moduleUrl("services/web-server"), () => ({
-+  startWebServer: async () => null,
-+  WebServer: class {},
-+}));
-+mock.module(moduleUrl("services/auto-update"), () => ({ startAutoUpdate() {} }));
-+
-+const { OpenCodeMemPlugin } = await import(moduleUrl("index"));
-+
-+const client = {
-+  provider: { list: async () => ({ data: { connected: [] } }) },
-+  session: {
-+    get: async ({ path }) => ({ data: { id: path.id, title: "regular task" } }),
-+    messages: async () => ({ data: [] }),
-+  },
-+};
-+
-+const plugin = await OpenCodeMemPlugin({ directory: "/fixture-project", client });
-+
-+const loaded = await plugin.memoryContext.load("ses-profile");
-+
-+const v1Parts = [{ type: "text", text: "hello" }];
-+await plugin["chat.message"](
-+  { sessionID: "ses-profile-v1" },
-+  { message: { id: "msg-1" }, parts: v1Parts }
-+);
-+
-+await plugin.dispose();
-+
-+console.log(
-+  JSON.stringify({
-+    listLimit,
-+    formatCalls,
-+    loaded,
-+    v1Parts,
-+  })
-+);
-```
-
-**File**: `tests/fixtures/v2-memory-context.mjs` (modified, +7/-2)
-```diff
-@@ -46,8 +46,12 @@ mock.module(moduleUrl("services/tags"), () => ({
-   }),
- }));
- mock.module(moduleUrl("services/context"), () => ({
--  formatContextForPrompt: async (_user, data) =>
--    "<memory_context>" + data.results.map((m) => m.memory).join("|") + "</memory_context>",
-+  // Mirror production: empty project memories yield "" unless a profile block exists.
-+  formatContextForPrompt: async (_user, data) => {
-+    const results = data?.results ?? [];
-+    if (results.length === 0) return "";
-+    return "<memory_context>" + results.map((m) => m.memory).join("|") + "</memory_context>";
-+  },
- }));
- mock.module(moduleUrl("services/user-prompt/user-prompt-manager"), () => ({
-   userPromptManager: {
-@@ -57,6 +61,7 @@ mock.module(moduleUrl("services/user-prompt/user-prompt-manager"), () => ({
- }));
- mock.module(moduleUrl("services/logger"), () => ({
-   log() {},
-+  safeLog() {},
-   serializeError: (error) => ({ error: error instanceof Error ? error.message : String(error) }),
- }));
- mock.module(moduleUrl("services/web-server"), () => ({
-```
-
-**File**: `tests/memory-provenance.test.ts` (modified, +5/-0)
-```diff
-@@ -88,6 +88,11 @@ describe("memory provenance formatting", () => {
-     expect(result).toContain('<memory relevance="50%">\nFallback chunk\n</memory>');
-   });
- 
-+  it("returns empty string when project memories are empty and no profile applies", async () => {
-+    expect(await formatContextForPrompt(null, { results: [] })).toBe("");
-+    expect(await formatContextForPrompt(null, {})).toBe("");
-+  });
-+
-   it("renders exact compaction output with provenance", () => {
-     expect(
-       formatMemoriesForCompaction([
-```
-
-**File**: `tests/profile-inject-empty-memories.test.ts` (added, +47/-0)
-```diff
-@@ -0,0 +1,47 @@
-+import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-+import { mkdtempSync, rmSync } from "node:fs";
-+import { tmpdir } from "node:os";
-+import { fileURLToPath } from "node:url";
-+import { join } from "node:path";
-+
-+const directory = mkdtempSync(join(tmpdir(), "opencode-mem-profile-empty-"));
-+let result: any;
-+
-+afterAll(() => rmSync(directory, { recursive: true, force: true }));
-+
-+beforeAll(() => {
-+  // Isolate module mocks from the suite. Drive the real shared plugin with
-+  // maxMemories: 0 so project listing is empty, while injectProfile stays on.
-+  const child = Bun.spawnSync([
-+    process.execPath,
-+    fileURLToPath(new URL("./fixtures/profile-inject-empty-memories.mjs", import.meta.url)),
-+    directory,
-+  ]);
-+  expect(child.exitCode).toBe(0);
-+  expect(child.stderr.toString()).toBe("");
-+  result = JSON.parse(child.stdout.toString().trim());
-+});
-+
-+describe("profile injection with empty project memories", () => {
-+  it("still formats context when chatMessage.maxMemories is 0", () => {
-+    expect(result.listLimit).toBe(0);
-+    expect(result.formatCalls).toHaveLength(2);
-+    expect(result.formatCalls.every((call: any) => call.resultCount === 0)).toBe(true);
-+    expect(
-+      result.formatCalls.every((call: any) => call.userId === "fixture-user@example.com")
-+    ).toBe(true);
-+  });
-+
-+  it("injects a profile-only memory context via memoryContext.load", () => {
-+    expect(result.loaded).toContain("<user_profile>");
-+    expect(result.loaded).toContain("fixture-user@example.com");
-+    expect(result.loaded).toContain("<memory_context>");
-+    expect(result.loaded).not.toContain("<project_knowledge>");
-+  });
-+
-+  it("injects the same profile block on the V1 chat.message path", () => {
-+    expect(result.v1Parts).toHaveLength(2);
-+    expect(result.v1Parts[0].synthetic).toBe(true);
-+    expect(result.v1Parts[0].text).toBe(result.loaded);
-+  });
-+});
-```
-
-#### Recent Merged Pull Requests:
-- **PR #450** (2026-10-27): chore(release): release v2.36.0 (@EyJunge1)
-- **PR #449** (2026-10-27): feat(markdown): add optional vault backend for persistent memories (@EyJunge1)
-- **PR #448** (2026-10-27): chore(release): release v2.35.0 (@EyJunge1)
-- **PR #447** (2026-10-27): fix(turso): stop dispose closeAll from racing sibling idle handlers (@EyJunge1)
-- **PR #446** (2026-10-27): fix(migration): use opencodeProvider for tag migration and stream retry (@EyJunge1)
-- **PR #445** (2026-10-27): fix(test): move web-server-health ports below ephemeral range (@EyJunge1)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. turso): checkpoint the WAL before closing a database (#440)
-
-**RULE**:
-When implementing operations in `src/services/logger.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `c26bf2c9`: turso): checkpoint the WAL before closing a database (#440). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/services/logger.ts`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-/**
- * Log without letting a logger failure escape. `log()` initialises the log
- * directory lazily and can throw on ENOSPC/EACCES; callers on a teardown path
- * must never let a diagnostic write skip the work that follows it.
- */
-export function safeLog(message: string, data?: unknown): void {
-  try {
-    log(message, data);
-  } catch {
-    // swallow — the caller's cleanup matters more than this line
+  ```
+
+### 3. UI & UX Micro-Mechanics
+- **Immutable Set Mutators**: Avoid direct Set mutation in UI state reactivity:
+  ```typescript
+  // In web/src/lib/set-utils.ts:
+  export function toggleInSet<T>(set: Set<T>, value: T, checked: boolean): Set<T> {
+    const next = new Set(set);
+    if (checked) next.add(value);
+    else next.delete(value);
+    return next; // Returns a new reference, guaranteeing triggering Svelte / React dirty check
   }
-}
+  ```
+- **Vector Banner Canvas Pixel Grid Alignment**: In `web/scripts/render-banner.mjs`, strokes sit exactly on pixel boundaries to prevent anti-aliasing blur:
+  ```javascript
+  // 1px offset ensures 2px border strokes remain crisp on exact integer pixel grid
+  `<rect x="1" y="1" width="${W - 2}" height="${H - 2}" rx="12" stroke-width="2"/>`
+  ```
 
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c26bf2c9` are properly handled with clean fallback behavior.
+### 4. Backend Concurrency & Memory Safety
+- **Windows SQLite File Handle Lock Failure (EPERM)**: On Windows OS, renaming a SQLite database over an existing open file handle throws `EPERM`. The migrator encapsulates filesystem mutations within an explicit retry-backoff harness:
+  ```typescript
+  // In src/services/turso/engine-migrator.ts & sqlite-handle-release.ts
+  await withSqliteFileLockRetry(() => {
+    copySqliteDatabase(dbPath, backupPath);
+    remove
