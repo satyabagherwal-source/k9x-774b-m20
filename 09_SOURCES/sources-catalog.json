@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "d2240721",
+    "sourceVersion": "aa56dfcb",
     "license": "NOASSERTION",
-    "contentHash": "033ab191b0d22d1adc8e8c48f1f90dbbd45510cbc42aa4dd68b63dd40f3a5ad6",
-    "lastHarvestedAt": "2026-10-30T10:56:34.531Z",
+    "contentHash": "6c4790eb39e05e75ee926022019ae2fc1450715a5f87a4f66b07fcb6c94d77cf",
+    "lastHarvestedAt": "2026-10-30T13:09:10.864Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -6143,10 +6143,10 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "platform": "github",
     "sourceUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
-    "sourceVersion": "c4d3ad3d",
+    "sourceVersion": "07c53c96",
     "license": "NOASSERTION",
-    "contentHash": "f8c017933134131e5e763b336daa4d28011b9e35dec0a00a3d34ee5a82b5d0e4",
-    "lastHarvestedAt": "2026-10-28T16:33:38.303Z",
+    "contentHash": "89a78d214307951cc52455d6fbaa99ab8b03a498f0b8dce45c2c5dbd0d697ec2",
+    "lastHarvestedAt": "2026-10-30T13:14:05.387Z",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard"
   },
   "xinthink-react-native-material-kit": {
@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "b81465d9",
+    "sourceVersion": "2e0f4dd3",
     "license": "MIT",
-    "contentHash": "db27976a2ab3cafaca897e43cdc4fe005f27caf83ae81c4de0d4853ccb5689b1",
-    "lastHarvestedAt": "2026-10-27T14:07:29.544Z",
+    "contentHash": "b77dfea2792e90885dd5f39e020c770afa0a3267ebec4ff9859812e1ccaa12ab",
+    "lastHarvestedAt": "2026-10-30T13:10:12.146Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {
@@ -9273,10 +9273,10 @@
     "repository": "0xCUB3/wBlock",
     "platform": "github",
     "sourceUrl": "https://github.com/0xCUB3/wBlock",
-    "sourceVersion": "8f305ae3",
+    "sourceVersion": "04c047f8",
     "license": "GPL-3.0",
-    "contentHash": "9486cfb7f155cbc005a81646a3ab03f8ee7cbdeba5f8ada56a697e3c1055ee4c",
-    "lastHarvestedAt": "2026-10-26T10:21:37.728Z",
+    "contentHash": "bf99e82356b9032a1f99d26e7850209f53c78b29267ac5cb4e318c277f588684",
+    "lastHarvestedAt": "2026-10-30T13:13:34.903Z",
     "learningId": "learn-github-0xcub3-wblock"
   },
   "archivebox-archivebox": {
@@ -9373,10 +9373,10 @@
     "repository": "inikulin/parse5",
     "platform": "github",
     "sourceUrl": "https://github.com/inikulin/parse5",
-    "sourceVersion": "e32b1b0e",
+    "sourceVersion": "8402e101",
     "license": "MIT",
-    "contentHash": "b3d242fd5e354d7f9bbdd140efe07bbe164099cf44c4446bb7203ba79047e466",
-    "lastHarvestedAt": "2026-10-27T12:21:46.976Z",
+    "contentHash": "ae3dec40d001d28e8b0fc1635dd704c216334deb3670f192c06d4848714c622d",
+    "lastHarvestedAt": "2026-10-30T13:11:07.848Z",
     "learningId": "learn-github-inikulin-parse5"
   },
   "kitlangton-hex": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T13:01:54.505Z",
+  "last_updated": "2026-10-30T13:14:05.397Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "033ab191b0d22d1adc8e8c48f1f90dbbd45510cbc42aa4dd68b63dd40f3a5ad6",
-      "verified_at": "2026-10-30T10:56:34.542Z",
+      "content_hash": "6c4790eb39e05e75ee926022019ae2fc1450715a5f87a4f66b07fcb6c94d77cf",
+      "verified_at": "2026-10-30T13:09:10.874Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T10:56:34.542Z"
+      "last_updated": "2026-10-30T13:09:10.874Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -9336,14 +9336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
-      "content_hash": "f8c017933134131e5e763b336daa4d28011b9e35dec0a00a3d34ee5a82b5d0e4",
-      "verified_at": "2026-10-28T16:33:38.309Z",
+      "content_hash": "89a78d214307951cc52455d6fbaa99ab8b03a498f0b8dce45c2c5dbd0d697ec2",
+      "verified_at": "2026-10-30T13:14:05.396Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T16:33:38.309Z"
+      "last_updated": "2026-10-30T13:14:05.396Z"
     },
     "xinthink/react-native-material-kit": {
       "repository": "xinthink/react-native-material-kit",
@@ -9996,14 +9996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vectifyai-pageindex",
-      "content_hash": "db27976a2ab3cafaca897e43cdc4fe005f27caf83ae81c4de0d4853ccb5689b1",
-      "verified_at": "2026-10-27T14:07:29.552Z",
+      "content_hash": "b77dfea2792e90885dd5f39e020c770afa0a3267ebec4ff9859812e1ccaa12ab",
+      "verified_at": "2026-10-30T13:10:12.155Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:07:29.552Z"
+      "last_updated": "2026-10-30T13:10:12.155Z"
     },
     "dalance/procs": {
       "repository": "dalance/procs",
@@ -13956,14 +13956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-0xcub3-wblock",
-      "content_hash": "9486cfb7f155cbc005a81646a3ab03f8ee7cbdeba5f8ada56a697e3c1055ee4c",
-      "verified_at": "2026-10-26T10:21:37.734Z",
+      "content_hash": "bf99e82356b9032a1f99d26e7850209f53c78b29267ac5cb4e318c277f588684",
+      "verified_at": "2026-10-30T13:13:34.912Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T10:21:37.734Z"
+      "last_updated": "2026-10-30T13:13:34.912Z"
     },
     "ArchiveBox/ArchiveBox": {
       "repository": "ArchiveBox/ArchiveBox",
@@ -14106,14 +14106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-inikulin-parse5",
-      "content_hash": "b3d242fd5e354d7f9bbdd140efe07bbe164099cf44c4446bb7203ba79047e466",
-      "verified_at": "2026-10-27T12:21:46.984Z",
+      "content_hash": "ae3dec40d001d28e8b0fc1635dd704c216334deb3670f192c06d4848714c622d",
+      "verified_at": "2026-10-30T13:11:07.856Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:21:46.984Z"
+      "last_updated": "2026-10-30T13:11:07.856Z"
     },
     "kitlangton/Hex": {
       "repository": "kitlangton/Hex",

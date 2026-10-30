@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source**: github ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
-> **Source Version**: `c4d3ad3d`  
+> **Source Version**: `07c53c96`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T16:33:37.889Z  
+> **Timestamp**: 2026-10-30T13:14:04.711Z  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T16:33:37.882Z  
+> **Harvest Timestamp**: 2026-10-30T13:08:54.536Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fast Rust safety hook that blocks destructive shell, git, and filesystem commands before AI coding agents run them. 50+ security packs (databases, Kubernetes, Docker, cloud, Terraform), heredoc/inline-script scanning, CI scan mode, and explain mode; works with Claude Code, Codex, Gemini, Copilot, Cursor, and more.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6219 stars
+- **Stars / Engagement**: 6229 stars
 
 ---
 
@@ -2476,1343 +2476,973 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c4d3ad3d` (2026-10-27)
-**Commit Message**: fix(security): keep grants bound to original requests and preserve DCG argv ownership
+### Incident Patch 1: `07c53c96` (2026-10-29)
+**Commit Message**: fix(allow-once): preserve policy precedence for exact outer grants (#599)
 
-Match whole-command allowlists, allow overrides, and temporary allow-once
-grants against the original request. Preserve that identity through child
-extraction, detection rewrites, case folding, and confidence-policy replays.
-Keep rule grants scoped to findings and retain destructive normalization.
+Quoted interpreter requests inside alias and trap envelopes can return from
+nested inspection before the deferred exact-command grant lookup. Recover a
+grant after an actual outer-request denial without authorizing a derived
+command or adding store I/O to unrelated quick rejections.
 
-Recognize DCG control actions across native global-option and argument
-boundaries. Preserve opaque agent values, quoted PowerShell expressions,
-and the distinction between invocation and background operators. Add
-decision-only unit, CLI, hook, custom-pack, and wrapper regressions.
+The direct quoted-launcher case already works on main after deff5c07. The
+decision-only reproduction still leaves four quoted alias/trap cases denied
+with unconsumed grants on pristine 025d06a0. The expanded 16-case matrix passes
+6 cases on official v0.15.3 x86_64, 12 on that main revision, and all 16 with
+this correction.
 
-Document command-grant matching and record the separate executable-variable
-binding gap as bd-executable-assignment-scope.
+Inspect explicit configuration blocks before consuming ordinary grants,
+including later nested commands hidden by an earlier finding. Keep that
+inspection bounded and non-consuming; retain the original denial when source
+ownership or completeness cannot be proved. Preserve original command bytes,
+authoritative request cwd, expiry checks, and atomic single-use consumption.
+Select explicitly forced configuration grants independently of earlier
+ordinary entries.
 
-Validation:
-- All-target cargo check, strict all-target Clippy, and formatting passed.
-- Library run before the last quoted-data correction: 5072 passed; three
-  filesystem-attribute tests passed unchanged on their required filesystem.
-  The remaining normalization assertion exposed the quoted-data bug fixed
-  here. The final full-library rebuild was killed by the memory limit;
-  the production rebuild 
+Align quoted-interpreter triggers with extraction
 
-**File**: `.beads/issues.jsonl` (modified, +1/-0)
+**File**: `src/evaluator.rs` (modified, +1213/-63)
 ```diff
-@@ -74,6 +74,7 @@
- {"id":"bd-f16f","title":"Segment-scope overrides.allow matching: naive substring patterns allow chained unrelated destruction (#327 sharp edge)","status":"closed","priority":2,"issue_type":"task","created_at":"2026-08-20T18:11:54.866705Z","created_by":"jemanuel","updated_at":"2026-09-22T18:21:24.894261767Z","closed_at":"2026-09-22T18:21:24.878665477Z","close_reason":"Already implemented under #340: CompiledOverrides::check_allow is segment-scoped, so an allow entry must cover every segment. Pinned by src/config.rs tests unanchored_allow_override_does_not_launder_later_segments (&&, ;, ||, |), allow_override_does_not_launder_command_substitution, allow_override_permits_fully_covered_compound.","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0}
- {"id":"bd-fg8f","title":"P4.7: Update scan command progress and results display","status":"closed","priority":2,"issue_type":"task","created_at":"2026-01-19T21:12:05.227501776Z","created_by":"ubuntu","updated_at":"2026-01-21T21:53:05.030745430Z","closed_at":"2026-01-21T21:53:05.030657314Z","source_repo":".","compaction_level":0,"original_size":0,"dependencies":[{"issue_id":"bd-fg8f","depends_on_id":"bd-2cvj","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""},{"issue_id":"bd-fg8f","depends_on_id":"bd-2e8p","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""},{"issue_id":"bd-fg8f","depends_on_id":"bd-2jp9","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""},{"issue_id":"bd-fg8f","depends_on_id":"bd-2loz","type":"blocks","created_at":"2026-02-16T07:00:29Z","created_by":"import","metadata":"{}","thread_id":""}]}
- {"id":"bd-git-backslash-attribution-ptpo","title":"Windows-separator .git paths deny under the escaped-path rule, not git-internals","status":"closed","priority":2,"issue_type":"bug","created_at":"2026-09-24T16:23:11.237677557Z","created_by":"ubuntu","updated_at":"2026-09-24T17:50:29.885365887Z","closed_at":"2026-09-24T17:50:29.884650196Z","close_reason":"Measured; converted to GitHub #492. The attribution is POSIX-correct (> .git\\config opens .gitconfig there), so the live defect is grantability, not naming: allowlisting the High redirect-truncate-dynamic-path also grants the Windows-separator spellings of two Critical rules. Repair changes existing allowlist meaning, so it is a maintainer decision, filed with options and a recommendation.","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0}
-+{"id":"bd-executable-assignment-scope","title":"Preserve destructive detection across multiple executable-variable assignments and neutral commands","description":"Decision-only evaluations against the retained e0554cd0abcb8b447aaf9089042e9ab535a8ad36 baseline, with no command grants, deny `d=git; $d reset --hard` but allow `UNREVIEWED=1 d=git; $d reset --hard`, `d=git x=1; $d reset --hard`, `true; d=git; $d reset --hard`, and `d=git; true; $d reset --hard`. The wrapped control `env UNREVIEWED=1 bash -c 'd=git; $d reset --hard'` denies. No candidate command was executed. The retained baseline binary SHA-256 is 4af034a233e77a3b2ba97180ab120ab03fc1eb6890ffe47cfc312da812f546d8.\n\nIn src/evaluator.rs, posix_executable_assignment_parts accepts one assignment word and model_literal_posix_executable_assignments models a bounded straight-line prefix. Rejected cases can reach ordinary detection with the executable still spelled `$d`, missing the known destructive action. This is separate from original-request grant ownership and requires a bounded executable-resolution correction.","acceptance_criteria":"Extend literal binding analysis to supported multiple-assignment statements and proven neutral-command boundaries. Preserve invalidation for ambiguous mutations, environment-only assignments, and shell scopes. Add the listed denial controls plus benign command and quoted-data controls through decision-only evaluations; keep existing rule identities and destructive detection.","status":"open","priority":1,"issue_type":"bug","created_at":"2026-10-27T19:25:00Z","created_by":"ChatGPT","updated_at":"2026-10-27T19:25:00Z","source_repo":"destructive_command_guard","compaction_level":0,"original_size":0,"labels":["normalization","bypass"]}
- {"id":"bd-guardrails-global-options","title":"Enabled guardrails pack misses dcg self-weakening commands with global options","description":"## Confirmed defect\n\nA fresh isolated probe against executable source content corresponding to published commit 10bc819cc0906019037024d4ab6d769bb3d9b6db confirms that the explicitly enabled careful_company_running_windows.guardrails pack denies direct dcg self-weakening subcommands but permits the same commands when the valid global --robot option precedes the subcommand.\n\nPaired fixture results:\n- dcg allow-once abc123 --yes -> deny; dcg --robot allow-once abc123 --yes -
-```
-
-**File**: `README.md` (modified, +17/-0)
-```diff
-@@ -3196,6 +3196,23 @@ risk_acknowledged = true  # Required for pattern-based entries
- added_at = "2026-01-08T12:00:00Z"
- ```
- 
-+**Command grants bind to the original request.** `exact_command` compares the
-+complete command text, including environment assignments, executable paths,
-+quoting, wrappers, and redirections. `command_prefix` and risk-acknowledged
-+`pattern` entries also match that original text. For example, an exact grant
-+for `git reset --hard` does not authorize `PATH=/other/bin git reset --hard`
-+or `sh -c 'git reset --hard'`. An explicit grant for either complete form can
-+authorize that form; extracting its child command during analysis never
-+creates a new grant. `[overrides] allow` follows the same original-request
-+boundary, and an applicable explicit block override still takes precedence.
-+Confidence and policy re-evaluation keep that same boundary, including for
-+temporary allow-once grants.
-+
-+Rule entries remain scoped to the named rule. An intentionally unanchored
-+allowlist regex retains the scope its author wrote, so use anchors when the
-+approval is for one complete command. Destructive detection continues to use
-+normalization to recognize dangerous commands behind assignments and wrappers.
-+
- ### Per-Rule Target-Path Exemptions
- 
- Agent runtimes hand each job a scratch directory under `$HOME` — Claude Code
-```
-
-**File**: `src/evaluator.rs` (modified, +582/-102)
-```diff
-@@ -347,9 +347,17 @@ fn byte_span_to_char_span(command: &str, span: &MatchSpan) -> Option<WindowedSpa
- thread_local! {
-     /// Recursive evaluation is synchronous. Keep authorization source separate
-     /// from detection views, including case-folded and redirection-free replays.
-+    /// Whole-command allowlists and overrides share this provenance with safe
-+    /// patterns: extracting a child cannot create a new authorization scope.
-     static SAFE_PATTERN_SOURCE: std::cell::RefCell<Option<Rc<SafePatternSource>>> = const {
-         std::cell::RefCell::new(None)
+@@ -364,6 +364,18 @@ thread_local! {
+     static ALLOW_ONCE_REQUEST_CWD: std::cell::RefCell<AllowOnceRequestCwd> = const {
+         std::cell::RefCell::new(AllowOnceRequestCwd::Unspecified)
      };
-+    /// Adapter policy replays enter through the public depth-zero API. Keep
-+    /// their initial request authoritative when confidence analysis blanks a
-+    /// finding before asking the evaluator to inspect the remaining text.
-+    static AUTHORIZATION_REPLAY_SOURCE: std::cell::RefCell<Option<Rc<str>>> = const {
-+        std::cell::RefCell::new(None)
++    /// An ordinary exact grant cannot hide an explicit block on a later
++    /// nested command. Policy inspection must read past whole-command grants,
++    /// including the grant whose eligibility it is checking, without spending
++    /// any of them. Recursive evaluation stays on this thread.
++    static ALLOW_ONCE_POLICY_REPLAY: std::cell::Cell<bool> = const {
++        std::cell::Cell::new(false)
++    };
++    /// A finding-only rescan can discard its verdict, so it must never spend
++    /// a stateful grant. Permanent exemptions still govern its findings.
++    static ALLOW_ONCE_SUPPRESSED: std::cell::Cell<bool> = const {
++        std::cell::Cell::new(false)
 +    };
  }
  
- struct SafePatternSource {
-@@ -400,10 +408,13 @@ struct SafePatternScope {
- 
- impl SafePatternScope {
-     fn enter(command: &str, dialect: ShellDialect, depth: usize) -> Self {
-+        let replay_source = (depth == 0)
-+            .then(|| AUTHORIZATION_REPLAY_SOURCE.with(|slot| slot.borrow().clone()))
-+            .flatten();
-         let previous = SAFE_PATTERN_SOURCE.with(|slot| {
-             let previous = slot.borrow_mut().take();
-             *slot.borrow_mut() = Some(Rc::new(SafePatternSource {
--                command: command.to_string(),
-+                command: replay_source.as_deref().unwrap_or(command).to_string(),
-                 dialect,
-                 parent: (depth > 0).then(|| previous.clone()).flatten(),
-             }));
-@@ -413,12 +424,63 @@ impl SafePatternScope {
+ #[derive(Clone, Default)]
+@@ -497,11 +509,51 @@ impl Drop for SafePatternScope {
      }
  }
  
-+/// Preserve one authorization request across policy replays, including nested
-+/// confidence rounds. Only the detection view changes; every new depth-zero
-+/// evaluation still establishes its source using the first request's bytes.
-+struct CommandReplayScope {
-+    previous: Option<Rc<str>>,
++struct AllowOncePolicyScope {
++    previous: bool,
 +}
 +
-+impl CommandReplayScope {
-+    fn enter(command: &str) -> Self {
-+        let previous = AUTHORIZATION_REPLAY_SOURCE.with(|slot| {
-+            let previous = slot.borrow_mut().take();
-+            *slot.borrow_mut() = Some(previous.clone().unwrap_or_else(|| Rc::from(command)));
-+            previous
-+        });
-+        Self { previous }
++impl AllowOncePolicyScope {
++    fn enter() -> Self {
++        Self {
++            previous: ALLOW_ONCE_POLICY_REPLAY.with(|slot| slot.replace(true)),
++        }
 +    }
 +}
 +
-+impl Drop for CommandReplayScope {
++impl Drop for AllowOncePolicyScope {
 +    fn drop(&mut self) {
-+        AUTHORIZATION_REPLAY_SOURCE.with(|slot| *slot.borrow_mut() = self.previous.take());
++        ALLOW_ONCE_POLICY_REPLAY.with(|slot| slot.set(self.previous));
 +    }
 +}
 +
- impl Drop for SafePatternScope {
-     fn drop(&mut self) {
-         SAFE_PATTERN_SOURCE.with(|slot| *slot.borrow_mut() = self.previous.take());
-     }
- }
- 
-+/// A whole-command grant authorizes the original outer request. Detection
-+/// replays may change case, remove syntax, or extract executable children;
-+/// none of those derived strings is a new request the operator authorized.
-+/// An explicitly approved outer envelope is checked before its children run.
-+fn original_command_grant<T>(command: &str, grant: impl FnOnce(&str) -> Option<T>) -> Option<T> {
-+    let source = SAFE_PATTERN_SOURCE.with(|slot| slot.borrow().clone());
-+    match source {
-+        Some(source) if source.parent.is_none() => grant(&source.command),
-+        Some(_) => None,
-+        None => grant(command),
++struct AllowOnceSuppressionScope {
++    previous: bool,
++}
++
++impl AllowOnceSuppressionScope {
++    fn enter() -> Self {
++        Self {
++            previous: ALLOW_ONCE_SUPPRESSED.with(|slot| slot.replace(true)),
++        }
 +    }
 +}
 +
-+fn original_command_matches_grant(command: &str, matches: impl FnOnce(&str) -> bool) -> bool {
-+    original_command_grant(command, |original| matches(original).then_some(())).is_some()
-+}
-+
-+fn command_allowed_by_override_as_written(
-+    command: &str,
-+    compiled_overrides: &crate::config::CompiledOverrides,
-+) -> bool {
-+    !compiled_overrides.allow.is_empty()
-+        && original_command_matches_grant(command, |original| {
-+            compiled_overrides.check_allow(original)
-+        })
-+}
-+
- /// Regex exemptions read the original segment, including assignments,
- /// executable paths, wrappers, and redirects. Normalized/sanitized strings are
- /// detection inputs only. Segment correspondence is positional, never a search
-@@ -13923,25 +13985,32 @@ fn allow_once_match(
-     command: &str,
-     allow_once_audit: Option<&crate::pending_exceptions::AllowOnceAuditConfig<'_>>,
- ) -> Option<crate::pending_exceptions::AllowOnceEntry> {
--    let cwd = std::env::current_dir().ok()?;
--    let store = AllowOnceStore::new(AllowOnceStore::default_path(Some(&cwd)));
--    match store.match_command(command, &cwd, Utc::now(), allow_once_audit) {
--        Ok(Some(entry)) => Some(entry),
--        _ => None,
--    }
-+    // A policy replay is a different detection view of the same request.
-+    // Resolve its identity before consulting the store: matching the derived
-+    // text would both authorize another command and consume its one-use grant.
-+    original_command_grant(command, |original| {
-+        let cwd = std::env::current_dir().ok()?;
-+        let store = AllowOnceStore::new(
-```
-
-**File**: `src/normalize.rs` (modified, +519/-59)
-```diff
-@@ -2656,19 +2656,34 @@ fn decode_powershell_pattern_view(command: &str) -> Cow<'_, str> {
- 
-     let mut replacements: Vec<(Range<usize>, String)> = Vec::new();
-     let mut segment_has_command = false;
-+    let mut quoted_invocation_target = false;
-     for token in &tokens {
-+        let Some(raw) = token.text(command) else {
-+            return Cow::Borrowed(command);
-+        };
-         if token.kind == NormalizeTokenKind::Separator {
--            segment_has_command = false;
-+            // A leading call operator invokes its next word. An ampersand
-+            // after an existing command is the background operator instead;
-+            // it does not turn the following string expression into a call.
-+            quoted_invocation_target = !segment_has_command && raw == "&";
-+            // A closing parenthesis completes an expression; a following
-+            // ampersand is still backgrounding that completed command.
-+            segment_has_command = raw == ")";
-             continue;
-         }
-         if segment_has_command {
-             continue;
-         }
--        let Some(raw) = token.text(command) else {
--            return Cow::Borrowed(command);
--        };
-+        if raw == "." {
-+            // Dot sourcing, like the call operator, owns an executable
-+            // operand rather than evaluating a standalone string expression.
-+            quoted_invocation_target = true;
-+            continue;
-+        }
-         segment_has_command = true;
--        if !raw.contains('`') {
-+        let string_expression =
-+            raw.starts_with(['\'', '"']) || raw.starts_with("@'") || raw.starts_with("@\"");
-+        if (!quoted_invocation_target && string_expression) || !raw.contains('`') {
-             continue;
-         }
-         let decoded = decode_powershell_executable_backticks(raw);
-@@ -3878,6 +3893,282 @@ fn normalize_subcommand_token(token: &str, posix_quoting: bool) -> Option<String
-     if changed { Some(out) } else { None }
- }
- 
-+/// Quote state at a source boundary in a literal dcg syntax token.
-+///
-+/// PowerShell control/Unicode escapes are not ordinary escaped letters. The
-+/// shared syntax decoder intentionally retains its established matching view;
-+/// this narrower CLI proof must not turn `--ro`bot` into `--robot`, for example.
-+/// Returning `None` leaves those bytes opaque instead of inventing an option.
-+fn dcg_syntax_quote_state(token: &str, dialect: ShellDialect) -> Option<(PosixQuote, bool)> {
-+    let mut quote = PosixQuote::Unquoted;
-+    let mut ansi_c_quote = false;
-+    let mut chars = token.chars().peekable();
-+    while let Some(ch) = chars.next() {
-+        if quote == PosixQuote::Single && !ansi_c_quote {
-+            if ch == '\'' {
-+                if dialect == ShellDialect::PowerShell && chars.peek() == Some(&'\'') {
-+                    chars.next();
-+                } else {
-+                    quote = PosixQuote::Unquoted;
-+                }
-+            }
-+            continue;
-+        }
-+        if dialect == ShellDialect::PowerShell && ch == '`' {
-+            let escaped = chars.next()?;
-+            if matches!(
-+                escaped,
-+                '0' | 'a' | 'b' | 'e' | 'f' | 'n' | 'r' | 't' | 'u' | 'v'
-+            ) {
-+                return None;
-+            }
-+            continue;
-+        }
-+        if dialect == ShellDialect::Posix && ch == '\\' {
-+            chars.next()?;
-+            continue;
-+        }
-+        match (quote, ch) {
-+            (PosixQuote::Unquoted, '$')
-+                if dialect == ShellDialect::Posix && chars.peek() == Some(&'\'') =>
-+            {
-+                chars.next();
-+                quote = PosixQuote::Single;
-+                ansi_c_quote = true;
-+            }
-+            (PosixQuote::Unquoted, '\'') => quote = PosixQuote::Single,
-+            (PosixQuote::Unquoted, '"') => quote = PosixQuote::Double,
-+            (PosixQuote::Double, '"') => quote = PosixQuote::Unquoted,
-+            (PosixQuote::Single, '\'') => {
-+                quote = PosixQuote::Unquoted;
-+                ansi_c_quote = false;
-+            }
-+            _ => {}
-+        }
++impl Drop for AllowOnceSuppressionScope {
++    fn drop(&mut self) {
++        ALLOW_ONCE_SUPPRESSED.with(|slot| slot.set(self.previous));
 +    }
-+    Some((quote, ansi_c_quote))
 +}
 +
-+/// Canonicalize an inline --agent option without rewriting its opaque value.
-+fn normalize_dcg_agent_assignment(raw: &str, dialect: ShellDialect) -> Option<String> {
-+    let value_start = raw.find('=')? + 1;
-+    let prefix = &raw[..value_start];
-+    let (quote, ansi_c_quote) = dcg_syntax_quote_state(prefix, dialect)?;
-+    let (closing_quote, value_quote) = match quote {
-+        PosixQuote::Unquoted => ("", ""),
-+        PosixQuote::Single if ansi_c_quote => ("'", "$'"),
-+        PosixQuote::Single => ("'", "'"),
-+        PosixQuote::Double => ("\"", "\""),
-+    };
-+    // A quote spanning the option/value boundary can be closed just for the
-+    // syntax proof, then reopened in front of the unchanged value. Thus
-+    // "--a`gent=two words" becomes --agent="two words", not two argv wor
-```
-
-**File**: `src/packs/careful_company_running_windows/guardrails.rs` (modified, +394/-2)
-```diff
-@@ -46,6 +46,11 @@
- //! persistent `Set-ExecutionPolicy` is.
- 
- use crate::destructive_pattern;
-+use crate::normalize::{
-+    NormalizeToken, NormalizeTokenKind, ShellDialect, dcg_global_option_has_no_value,
-+    dcg_literal_word_is_static, decode_dcg_literal_word, is_dcg_literal_agent_assignment,
-+    tokenize_for_shell_dialect,
-+};
- use crate::packs::careful_company_running_windows::shared_safe_patterns;
- use crate::packs::regex_engine::LazyCompiledRegex;
- use crate::packs::{DestructivePattern, Pack, PatternSuggestion, SafePattern};
-@@ -54,17 +59,239 @@ use crate::packs::{DestructivePattern, Pack, PatternSuggestion, SafePattern};
- // `allowlist` command and its subcommand. Only --agent consumes a value: a
- // subcommand-looking agent name is data, while --robot never consumes the
- // following word. Help/version and arbitrary positional words are not skipped.
-+// One argv value may concatenate quoted and unquoted fragments. The unquoted
-+// alternative consumes one character so the outer repetition has no ambiguous
-+// nested quantifier; whitespace or a shell boundary still ends the whole word.
- // This grammar adds destructive evidence; it grants no exemption.
- macro_rules! dcg_global_options {
-     () => {
-         concat!(
-             r"(?:(?:--(?:verbose|quiet|legacy-output|no-color|no-suggestions|robot)|-v+|-q)[ \t]+",
--            r#"|--agent=(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s"'|&;<>]*)[ \t]+"#,
--            r#"|--agent[ \t]+(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s"'|&;<>]+)[ \t]+)*"#
-+            r#"|--agent=(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s"'|&;<>])*[ \t]+"#,
-+            r#"|--agent[ \t]+(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s"'|&;<>])+[ \t]+)*"#
-         )
-     };
- }
- 
-+/// Prove a dcg control action from native argv boundaries without rewriting
-+/// opaque agent values. This supplements the regex view, whose whitespace
-+/// boundaries cannot represent unquoted escaped spaces in one argv word.
-+///
-+/// Only top-level commands in a proven dialect participate. Nested execution
-+/// is evaluated separately by the evaluator; expression/scriptblock ownership
-+/// and unknown shells are not guessed here. Returned spans refer to `command`.
-+pub(crate) fn dcg_control_action_span(
-+    command: &str,
-+    dialect: ShellDialect,
-+    expected_rule: &str,
-+) -> Option<std::ops::Range<usize>> {
-+    if !matches!(
-+        expected_rule,
-+        "dcg-bypass-or-uninstall" | "dcg-policy-self-weakening"
-+    ) {
+ /// A whole-command grant authorizes the original outer request. Detection
+ /// replays may change case, remove syntax, or extract executable children;
+ /// none of those derived strings is a new request the operator authorized.
+-/// An explicitly approved outer envelope is checked before its children run.
++/// Policy inspection deliberately acquires none: an ordinary grant must not
++/// bypass an explicit block merely because another finding appears first.
+ fn original_command_grant<T>(command: &str, grant: impl FnOnce(&str) -> Option<T>) -> Option<T> {
++    if ALLOW_ONCE_POLICY_REPLAY.with(std::cell::Cell::get) {
 +        return None;
 +    }
-+    let dialect = if dialect == ShellDialect::Unknown {
-+        ShellDialect::Posix
-+    } else {
-+        dialect
-+    };
-+    let tokens = tokenize_for_shell_dialect(command, dialect);
-+    let mut start = 0;
-+    let mut depth = 0usize;
-+    let mut grouped = false;
-+    let mut comment = false;
-+    for (index, token) in tokens.iter().enumerate() {
-+        let raw = token.text(command)?;
-+        let newline = matches!(raw, "\n" | "\r" | "\r\n");
-+        if comment {
-+            if newline {
-+                comment = false;
-+                start = index + 1;
-+                grouped = depth != 0;
-+            }
-+            continue;
+     let source = SAFE_PATTERN_SOURCE.with(|slot| slot.borrow().clone());
+     match source {
+         Some(source) if source.parent.is_none() => grant(&source.command),
+@@ -5975,7 +6027,8 @@ fn windows_launcher_envelopes(
+ /// allowlist grant for that rule first (mirrors the
+ /// `ExecutableTextSink::Unverified` handling). Returns `None` when the rule
+ /// is allowlisted — the caller falls back to ordinary evaluation — recording
+-/// the hit for audit output.
++/// the hit for audit output. Policy inspection cannot treat a waived refusal
++/// as proof that the unread source contains no explicit block.
+ fn launcher_unverified_denial(
+     rule: &str,
+     reason: &str,
+@@ -5985,6 +6038,12 @@ fn launcher_unverified_denial(
+ ) -> Option<EvaluationResult> {
+     let (pack_id, pattern_name) = split_ast_rule_id(rule);
+     if let Some(hit) = allowlists.match_rule_at_path(&pack_id, &pattern_name, project_path) {
++        if ALLOW_ONCE_POLICY_REPLAY.with(std::cell::Cell::get) {
++            return Some(EvaluationResult {
++                decision: EvaluationDecision::Indeterminate,
++                ..EvaluationResult::allowed()
++            });
 +        }
-+        if token.kind == NormalizeTokenKind::Word {
-+            if dialect != ShellDialect::Cmd && raw.starts_with('#') {
-+                if depth == 0
-+                    && !grouped
-+                    && let Some(span) = dcg_segment_action_span(
-+                        command,
-+                        &tokens[start..index],
-+                        dialect,
-+                        expected_rule,
-+                    )
-+                {
-+                    return Some(span);
-+                }
-+                comment = true;
-+            } else if dcg_word_updates_group_depth(raw, dialect, &mut depth) {
-+                grouped = true;
-+            }
-+            continue;
-+        }
-+        match raw {
-+            "(" => {
-+                depth = depth.saturating_add(1);
-+                grouped = true;
-+            }
-+            ")" => depth = depth.saturating_sub(1),
-+            _ if depth > 0 => {}
-+            "&" if dialect == ShellDialect::PowerShell && index == start => {}
-+            _ => {
-+                if !grouped
-+                    && let Some(span) = dcg_segment_action_span(
-+                        command,
-+                        &tokens[start..index],
-+                        dialect,
-+                        expected_rule,
-+                    )
-+                {
-+                    return Some(span);
-+                }
-+                // A leading PowerShell & invokes the next command. Retain
-+                // it so a quoted executable is distinguished from a string
-+                // expression; POSIX & is only a sequence boundary here.
-+                start = if raw == "&" && dialect == ShellDialect::PowerShell {
-+                    index
-+                } else {
-+                    index + 1
-+                };
-+                grouped = false;
-+            }
-+        }
-+    }
-+    if co
-```
-
-**File**: `tests/cli_e2e.rs` (modified, +236/-1)
-```diff
-@@ -10073,6 +10073,7 @@ safe_patterns:
-     struct SafePatternFixture {
-         root: tempfile::TempDir,
-         config: std::path::PathBuf,
-+        allowlist: Option<std::path::PathBuf>,
-     }
- 
-     impl SafePatternFixture {
-@@ -10120,7 +10121,40 @@ safe_patterns:
-                 ),
-             )
-             .expect("write config");
--            Self { root, config }
-+            Self {
-+                root,
-+                config,
-+                allowlist: None,
-+            }
-+        }
-+
-+        fn with_allowlist(mut self, selector: &str, value: &str) -> Self {
-+            let path = self.root.path().join("allowlist.toml");
-+            std::fs::write(
-+                &path,
-+                format!(
-+                    "[[allow]]\n{selector} = {}\nreason = \"Reviewed command form\"\n\
-+                     risk_acknowledged = true\n",
-+                    serde_json::to_string(value).expect("serialize allowlist selector")
-+                ),
-+            )
-+            .expect("write isolated allowlist");
-+            self.allowlist = Some(path);
-+            self
-+        }
-+
-+        fn with_allow_override(self, pattern: &str) -> Self {
-+            let mut config = std::fs::OpenOptions::new()
-+                .append(true)
-+                .open(&self.config)
-+                .expect("open isolated config");
-+            writeln!(
-+                config,
-+                "\n[overrides]\nallow = [{}]",
-+                serde_json::to_string(pattern).expect("serialize allow override")
-+            )
-+            .expect("append allow override");
-+            self
-         }
- 
-         fn command(&self) -> Command {
-@@ -10145,6 +10179,9 @@ safe_patterns:
-             if let Some(path) = std::env::var_os("PATH") {
-                 command.env("PATH", path);
-             }
-+            if let Some(path) = &self.allowlist {
-+                command.env("DCG_ALLOWLIST_SYSTEM_PATH", path);
-+            }
-             command
-         }
- 
-@@ -10245,6 +10282,204 @@ safe_patterns:
-         }
-     }
- 
-+    #[test]
-+    fn command_allowlist_selectors_preserve_original_execution_context() {
-+        let exact_pattern = format!("^{}$", regex::escape(REVIEWED_COMMAND));
-+        let control = SafePatternFixture::new(&[], REVIEWED_DESTRUCTIVE_PATTERN);
-+        control.assert_explain(REVIEWED_COMMAND, "deny", Some(REVIEW_RULE));
-+
-+        for (selector, grant) in [
-+            ("exact_command", REVIEWED_COMMAND),
-+            ("command_prefix", REVIEWED_COMMAND),
-+            ("pattern", exact_pattern.as_str()),
-+        ] {
-+            let fixture = SafePatternFixture::new(&[], REVIEWED_DESTRUCTIVE_PATTERN)
-+                .with_allowlist(selector, grant);
-+            fixture.assert_explain(REVIEWED_COMMAND, "allow", None);
-+            fixture.assert_hooks(REVIEWED_COMMAND, true);
-+            for variable in [
-+                "PATH",
-+                "PYTHONPATH",
-+                "NODE_OPTIONS",
-+                "BASH_ENV",
-+                "LD_PRELOAD",
-+                "DYLD_INSERT_LIBRARIES",
-+                "GIT_CONFIG_COUNT",
-+                "APPLICATION_SPECIFIC_SETTING",
-+            ] {
-+                fixture.assert_explain(
-+                    &format!("{variable}=/unreviewed {REVIEWED_COMMAND}"),
-+                    "deny",
-+                    Some(REVIEW_RULE),
-+                );
-+            }
-+            for candidate in [
-+                format!("env PATH=/unreviewed {REVIEWED_COMMAND}"),
-+                format!("env -i {REVIEWED_COMMAND}"),
-+                format!("command {REVIEWED_COMMAND}"),
-+                format!("exec {REVIEWED_COMMAND}"),
-+                format!("sudo {REVIEWED_COMMAND}"),
-+                format!("timeout 5s {REVIEWED_COMMAND}"),
-+                format!("sh -c '{REVIEWED_COMMAND}'"),
-+                format!("env PATH=/unreviewed sh -c '{REVIEWED_COMMAND}'"),
-+                format!("bash -c \"sh -c '{REVIEWED_COMMAND}'\""),
-+                format!("true; {REVIEWED_COMMAND}"),
-+                format!("{REVIEWED_COMMAND}; {REVIEWED_COMMAND}"),
-+                REVIEWED_COMMAND.replace("/usr/bin/python3", "/unreviewed/python3"),
-+                REVIEWED_COMMAND.replace("/usr/bin/python3", "python3"),
-+            ] {
-+                fixture.assert_explain(&candidate, "deny", Some(REVIEW_RULE));
-+            }
-+            fixture.assert_hooks(&format!("PATH=/unreviewed {REVIEWED_COMMAND}"), false);
-+            fixture.assert_hooks(
-+                &format!("env PATH=/unreviewed sh -c '{REVIEWED_COMMAND}'"),
-+                false,
-+            );
-+        }
-+    }
-+
-+    #[test]
-+    fn exact_command_grants_keep_explicit_environment_and_complete_wrapper_scope() {
-+        for grant in [
-+            format!("PATH=/reviewed {REVIEWED_COMMAND}"),
-+            format!("env -i PATH=/reviewed {REVIEWED_COMMAND}"),
-+            format!("env PATH=/reviewed sh -c '{REVIEWED_COMMAND}'"),
-+            format!("bash -c '{REVIEWED_COMMAND}'")
-```
-
-**File**: `tests/repro_313_powershell_read_only_false_positives.rs` (modified, +208/-2)
-```diff
-@@ -23,11 +23,15 @@ const PACKS: &str =
- /// `dcg test <command>` under a hermetic config; returns the `Result:` line
- /// plus the full output for diagnostics.
- fn dcg_test(command: &str) -> (String, String) {
-+    dcg_test_in_dialect(command, "unknown")
-+}
-+
-+fn dcg_test_in_dialect(command: &str, dialect: &str) -> (String, String) {
-     let temp = tempfile::tempdir().expect("tempdir");
-     std::fs::create_dir_all(temp.path().join("home")).unwrap();
-     std::fs::create_dir_all(temp.path().join("xdg")).unwrap();
-     let output = Command::new(dcg_binary())
--        .args(["test", "--with-packs", PACKS, command])
-+        .args(["test", "--with-packs", PACKS, "--dialect", dialect, command])
-         .env_clear()
-         .env("HOME", temp.path().join("home"))
-         .env("USERPROFILE", temp.path().join("home"))
-@@ -243,6 +247,159 @@ fn global_options_preserve_inspection_and_argument_data() {
+         if first_allowlist_hit.is_none() {
+             *first_allowlist_hit = Some((
+                 PatternMatch {
+@@ -6689,6 +6748,149 @@ fn parse_obfuscated_posix_inline_launcher_segment(
      }
  }
  
-+#[test]
-+fn escaped_dcg_syntax_cannot_hide_guardrail_changes() {
-+    // Ordinary PowerShell backtick escapes are syntax; these strings are
-+    // passed to dcg test as data and never execute exception grants/uninstall.
-+    for dialect in ["powershell", "unknown"] {
-+        for (command, rule) in [
-+            (
-+                "dcg --a`gent=codex --robot uninstall",
-+                "dcg-bypass-or-uninstall",
-+            ),
-+            (
-+                "dcg --a`gent codex --r`obot un`install",
-+                "dcg-bypass-or-uninstall",
-+            ),
-+            (
-+                "dcg --a`gent='two words' --robot un`install",
-+                "dcg-bypass-or-uninstall",
-+            ),
-+            (
-+                "dcg --a`gent='two 'words --robot un`install",
-+                "dcg-bypass-or-uninstall",
-+            ),
-+            (
-+                "dcg --a`gent 'two 'words --robot un`install",
-+                "dcg-bypass-or-uninstall",
-+            ),
-+            (
-+                "dcg --a`gent=codex doctor; dcg un`install",
-+                "dcg-bypass-or-uninstall",
-+            ),
-+            (
-+                "dcg --a`gent=codex doctor\ndcg un`install",
-+                "dcg-bypass-or-uninstall",
-+            ),
-+            (
-+                "dcg --a`gent=codex doctor && dcg un`install",
-+                "dcg-bypass-or-uninstall",
-+            ),
-+            (
-+                "dcg --a'gent'='dcg --robot uninstall' --robot un'install'",
-+                "dcg-bypass-or-uninstall",
-+            ),
-+            (
-+                "dcg --r`obot al`low-once abc123 --yes",
-+                "dcg-policy-self-weakening",
-+            ),
-+            (
-+                "dcg --a`gent=codex al`low core.git:reset-hard --reason reviewed",
-+                "dcg-policy-self-weakening",
-+            ),
-+            (
-+                "dcg allowl`ist --a`gent='dcg uninstall' a`dd core.git:reset-hard --reason reviewed",
-+                "dcg-policy-self-weakening",
-+            ),
-+            (
-+                "dcg allowl`ist add-c`ommand 'git reset --hard' --reason reviewed",
-+                "dcg-policy-self-weakening",
-+            ),
-+            (
-+                "dcg allowl`ist imp`ort /tmp/reviewed-allowlist.toml",
-+                "dcg-policy-self-weakening",
-+            ),
-+        ] {
-+            let (result, full) = dcg_test_in_dialect(command, dialect);
-+            assert!(
-+                result.starts_with("Result: BLOCKED"),
-+                "[{dialect}] {command:?}: {full}"
-+            );
-+            assert!(
-+                full.contains(&format!("Pattern: {rule}")),
-+                "[{dialect}] expected {rule} for {command:?}: {full}"
-+            );
-+        }
++/// Locate only a source operand whose option grammar is modeled here. Python
++/// stops option parsing at its source; other interpreters can replace or add
++/// programs through later flags, so their proof requires the minimal argv.
++fn non_shell_inline_source_word<'a>(
++    words: &[&'a str],
++    language: crate::heredoc::ScriptLanguage,
++) -> Option<&'a str> {
++    use crate::heredoc::ScriptLanguage;
++
++    if language == ScriptLanguage::Python {
++        return python_inline_source_word(words);
 +    }
++    let [_, raw_flag, source] = words else {
++        return None;
++    };
++    let flag = crate::normalize::decode_posix_literal_word(raw_flag)?;
++    matches!(
++        (language, flag.as_ref()),
++        (ScriptLanguage::Ruby, "-e")
++            | (ScriptLanguage::Perl, "-e" | "-E")
++            | (
++                ScriptLanguage::JavaScript,
++                "-e" | "--eval" | "-p" | "--print"
++            )
++            | (ScriptLanguage::Php, "-r")
++    )
++    .then_some(*source)
 +}
 +
-+#[test]
-+fn escaped_dcg_options_keep_agent_values_and_inspection_arguments_as_data() {
-+    for dialect in ["powershell", "unknown"] {
-+        for command in [
-+            "dcg --a`gent=uninstall do`ctor",
-+            "dcg --a`gent='allowlist add' allowlist list",
-+            "dcg --a`gent='dcg --robot uninstall' doctor",
-+            "dcg --a'gent'='dcg --robot uninstall' doctor",
-+            "dcg --a`gent='two words' doctor",
-+            "dcg --a`gent='two 'words doctor",
-+            "dcg --a`gent 'two 'words doctor",
-+            "dcg --a`gent='co`dex; dcg uninstall' doctor",
-+            "dcg --r`obot al`lowlist li`st",
-+            "dcg al`lowlist --a`gent=add li`st",
-+            "dcg --r`obot test 'dcg --robot uninstall'",
-+            "dcg --agent='--robot uninstall' explain 'dcg allow-once abc123 --yes'",
-+        ] {
-+            let (result, full) = dcg_test_in_dialect(command, dialect);
-+            assert_eq!(result, "Result: ALLOWED", "[{dialect}] {command:?}: {full}");
-+        }
++/// Prove that Tier 2 extracted this launcher's actual, fully literal source.
++/// A successful extraction elsewhere in the command (including a decoy in
++/// script argv or inside its source) does not prove ownership 
+```
+
+**File**: `src/heredoc.rs` (modified, +302/-9)
+```diff
+@@ -83,6 +83,9 @@ const HEREDOC_TRIGGER_PATTERNS: [&str; 31] = [
+     // - combined short-flag clusters (bash -lc, node -pe, perl -pi -e)
+     // - Windows .exe extensions (python.exe, python3.11.exe, etc.)
+     // - Attached quotes (python -c"...", bash -c'...')
++    // - A closing quote on the executable path ('/usr/bin/python3' -c ...).
++    //   Tier 2 already accepts it; without this, an argv-form Python sink
++    //   with no incidental trigger can skip language-aware inspection (#599).
+     //
+     // Tier 1 MUST have zero false negatives for Tier 2 extraction.
+     //
+@@ -92,18 +95,18 @@ const HEREDOC_TRIGGER_PATTERNS: [&str; 31] = [
+     // superset invariant.  False positives are acceptable for Tier 1.
+     r"<<<",
+     // Python inline execution (matches python, python3, python3.11, python.exe, python3.11.exe, etc.)
+-    r#"\bpython[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[ce][A-Za-z]*(?:\s|['"]|$)"#,
++    r#"\bpython[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[ce][A-Za-z]*(?:\s|['"]|$)"#,
+     // Ruby inline execution (matches ruby, ruby3, ruby3.0, ruby.exe, etc.)
+-    r#"\bruby[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*e[A-Za-z]*(?:\s|['"]|$)"#,
+-    r#"\birb[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*e[A-Za-z]*(?:\s|['"]|$)"#,
++    r#"\bruby[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*e[A-Za-z]*(?:\s|['"]|$)"#,
++    r#"\birb[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*e[A-Za-z]*(?:\s|['"]|$)"#,
+     // Perl inline execution (matches perl, perl5, perl5.36, perl.exe, etc.)
+-    r#"\bperl[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[eE][A-Za-z]*(?:\s|['"]|$)"#,
++    r#"\bperl[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[eE][A-Za-z]*(?:\s|['"]|$)"#,
+     // Node.js inline execution (matches node, node18, nodejs, node.exe, etc.)
+-    r#"\bnode(?:js)?[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[ep][A-Za-z]*(?:\s|['"]|$)"#,
++    r#"\bnode(?:js)?[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[ep][A-Za-z]*(?:\s|['"]|$)"#,
+     // Bun and Deno inline execution (issue #397). Bun runs `-e`/`-p` exactly as
+     // Node does, so the identical payload must reach the identical rules; before
+     // this, swapping `node` for `bun` was a one-word bypass of a live deny.
+-    r#"\b(?:bun|deno)[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[ep][A-Za-z]*(?:\s|['"]|$)"#,
++    r#"\b(?:bun|deno)[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*[ep][A-Za-z]*(?:\s|['"]|$)"#,
+     // Bun's `exec` subcommand hands its argument to a shell, so it is an inline
+     // shell payload under a subcommand rather than a flag (issue #397).
+     // The optional quote matches `subcommand_inline_payload`, which dequotes the
+@@ -134,15 +137,15 @@ const HEREDOC_TRIGGER_PATTERNS: [&str; 31] = [
+     r"\$\.system\s*\(",
+     r"\.doShellScript\s*\(",
+     // PHP inline execution
+-    r#"\bphp[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*r[A-Za-z]*(?:\s|['"]|$)"#,
++    r#"\bphp[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*r[A-Za-z]*(?:\s|['"]|$)"#,
+     // Lua inline execution
+-    r#"\blua[0-9.]*(?:\.exe)?\b(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*e[A-Za-z]*(?:\s|['"]|$)"#,
++    r#"\blua[0-9.]*(?:\.exe)?\b["']?(?:\s+(?:--\S+|-[A-Za-z]+(?:[:.=]\S*)?)(?:\s+(?:[0-9]\S*|\S*[:/\\]\S*|[A-Za-z][A-Za-z0-9_]*))?)*\s+['\x22]?-[A-Za-z]*e[A-Za-z]*(?:\s|['"]|$)"#,
+     // Shell inline execution (sh -c, bash -c, zsh -c, fish -c, bash -lc, etc.).
+     // dash/ksh/mksh are ordinary POSIX shells: without them `dash -c "git
+     // reset --hard"` was never unwrapped, and command-position rules such as
+     // core.git never saw the payload. An option or its value may be quoted
+     // (`bash -o 'errex
+```
+
+**File**: `src/packs/careful_company_running_windows/guardrails.rs` (modified, +285/-5)
+```diff
+@@ -347,9 +347,45 @@ fn authorization_store_write_span_with_paths_in_source(
+     command: &str,
+     stores: &AuthorizationStorePaths,
+     source_context: Option<(&str, usize)>,
++) -> Option<Range<usize>> {
++    if let Some(span) =
++        authorization_store_write_span_in_range(command, stores, source_context, None)
++    {
++        return Some(span);
 +    }
++
++    // Masking a harmless sed script erases an argv position, not the write
++    // performed by -i. Recover roles only when the original interval has the
++    // same visible bytes. Parse its full owner so quoted examples and stored
++    // source never become standalone commands merely because of a slice.
++    let (source, start) = source_context?;
++    let end = start.checked_add(command.len())?;
++    let original = source.get(start..end)?;
++    if original == command
++        || !original
++            .bytes()
++            .zip(command.bytes())
++            .all(|(raw, masked)| raw == masked || masked.is_ascii_whitespace())
++    {
++        return None;
++    }
++    authorization_store_write_span_in_range(source, stores, None, Some(start..end))
++        .map(|span| span.start - start..span.end - start)
 +}
 +
-+#[test]
-+fn native_agent_argument_boundaries_are_dialect_specific() {
-+    for (dialect, escaped_space) in [("powershell", "two` words"), ("posix", r"two\ words")] {
-+        for separator in ["=", " "] {
-+            let dangerous = format!("dcg --agent{separator}{escaped_space} uni
++fn authorization_store_write_span_in_range(
++    command: &str,
++    stores: &AuthorizationStorePaths,
++    source_context: Option<(&str, usize)>,
++    visible_range: Option<Range<usize>>,
+ ) -> Option<Range<usize>> {
+     let ast = crate::heredoc::try_parse_shell_ast(command).ok()?;
+     let (source, source_base) = source_context.unwrap_or((command, 0));
++    let visible = |span: &Range<usize>| {
++        visible_range
++            .as_ref()
++            .is_none_or(|range| range.start <= span.start && span.end <= range.end)
++    };
+     let mut pending = vec![ast.root()];
+     while let Some(node) = pending.pop() {
+         match node.kind().as_ref() {
+@@ -363,13 +399,34 @@ fn authorization_store_write_span_with_paths_in_source(
+                     .filter(|owner| {
+                         matches!(owner.kind().as_ref(), "command" | "redirected_statement")
+                     })
+-                    .map_or(node.range().start, |owner| owner.range().start);
++                    .map_or_else(
++                        || node.range().start,
++                        |owner| {
++                            // Bash can attach the redirect to the whole `a && b`
++                            // list, although only its final statement opens it.
++                            // Keep preceding directory changes, but do not enter
++                            // a compound/subshell body: its redirect opens first.
++                            let mut statement = owner.field("body").unwrap_or(owner);
++                            while statement.kind() == "list" {
++                                let Some(last) = statement
++                                    .children()
++                                    .filter(|part| part.is_named() && part.kind() != "comment")
++                                    .last()
++                                else {
++                                    break;
++                                };
++                                statement = last;
++                            }
++                            statement.range().start
++                        },
++                    );
+                 if node.children().any(|part| {
+                     matches!(
+                         part.kind().as_ref(),
+                         ">" | ">>" | ">|" | "&>" | "&>>" | ">&" | "<>"
+                     )
+                 }) && let Some(target) = node.field("destination")
++                    && visible(&(node.range().start..target.range().end))
+                     && stores
+                         .at_source_prefix(source.get(..source_base.checked_add(statement_start)?)?)
+                         .matches_word(target.text().as_ref())
+@@ -381,7 +438,7 @@ fn authorization_store_write_span_with_paths_in_source(
+                 let statement_start = node
+                     .parent()
+                     .filter(|owner| owner.kind() == "redirected_statement")
+-                    .map_or(node.range().start, |owner| owner.range().start);
++                    .map_or_else(|| node.range().start, |owner| owner.range().start);
+                 let mut words = Vec::new();
+                 for child in node.children().filter(ast_grep_core::Node::is_named) {
+                     if !matches!(
+@@ -415,7 +472,23 @@ fn authorization_store_write_span_with_paths_in_source(
+                 }
+                 let scoped_stores = stores
+                     .at_source_prefix(source.get(..source_base.checked_add(statement_start)?)?);
+-                if let Some(span) = authorization_writer_span(&words, &scoped_stores) {
++                if let Some(span) = authorization_writer_span(&words, &scoped_stores)
++                    && visible(&span)
++                {
++                    return Some(span);
++                }
++                // A map
+```
+
+**File**: `src/pending_exceptions.rs` (modified, +82/-8)
+```diff
+@@ -836,7 +836,7 @@ impl AllowOnceStore {
+         Ok(Some(selected))
+     }
+ 
+-    /// Match a command against allow-once entries, but only grant if `force_allow_config` is set.
++    /// Match a command against the first scoped allow-once entry with `force_allow_config` set.
+     ///
+     /// This prevents single-use entries from being consumed when a config blocklist would still
+     /// deny the command (unless explicitly forced).
+@@ -864,18 +864,14 @@ impl AllowOnceStore {
+             rewrite_allow_once_records(&mut file, &active)?;
+         }
+ 
+-        let idx = active
+-            .iter()
+-            .position(|entry| entry.command_raw == command && entry.matches_scope(cwd));
++        let idx = active.iter().position(|entry| {
++            entry.command_raw == command && entry.matches_scope(cwd) && entry.force_allow_config
++        });
+ 
+         let Some(idx) = idx else {
+             return Ok(None);
+         };
+ 
+-        if !active[idx].force_allow_config {
+-            return Ok(None);
+-        }
+-
+         let mut selected = active[idx].clone();
+         if active[idx].single_use {
+             selected.consumed_at = Some(format_timestamp(now));
+@@ -1971,6 +1967,84 @@ mod tests {
+         assert!(second.is_none());
+     }
+ 
++    #[test]
++    fn test_forced_allow_once_skips_ordinary_and_mismatched_entries_issue_599() {
++        let dir = TempDir::new().expect("tempdir");
++        let cwd_dir = TempDir::new().expect("cwd tempdir");
++        let other_dir = TempDir::new().expect("other cwd tempdir");
++        let cwd = cwd_dir.path();
++        let scope = cwd.to_str().unwrap();
++        let store = AllowOnceStore::new(dir.path().join("allow_once.jsonl"));
++        let now = DateTime::parse_from_rfc3339("2026-01-10T06:30:00Z")
++            .unwrap()
++            .with_timezone(&Utc);
++        let command = "'/usr/bin/python3' -c 'print(1)'";
++        let redaction = redaction_config();
++        let pending =
++            PendingExceptionRecord::new(now, scope, command, "blocked", &redaction, true, None);
++        let ordinary = AllowOnceEntry::from_pending(
++            &pending,
++            now,
++            AllowOnceScopeKind::Cwd,
++            scope,
++            true,
++            false,
++            &redaction,
++        );
++        let mut forced = ordinary.clone();
++        forced.force_allow_config = true;
++        let mut wrong_command = forced.clone();
++        wrong_command.command_raw.push(' ');
++        let mut wrong_cwd = forced.clone();
++        wrong_cwd.scope_path = other_dir.path().to_str().unwrap().to_string();
++        let preserved = [ordinary.clone(), wrong_command, wrong_cwd];
++        for entry in &preserved {
++            store.add_entry(entry, now).unwrap();
++        }
++
++        assert!(
++            store
++                .match_command_force_config(command, cwd, now, None)
++                .unwrap()
++                .is_none(),
++            "ordinary, altered-command, and other-cwd entries cannot override policy"
++        );
++        assert_eq!(store.load_active(now).unwrap().0, preserved);
++
++        // A later explicit forced authorization must not be hidden by the
++        // retained ordinary entry for the same command and cwd.
++        store.add_entry(&forced, now).unwrap();
++        let selected = store
++            .match_command_force_config(command, cwd, now, None)
++            .unwrap()
++            .expect("later matching forced entry");
++        forced.consumed_at = Some(format_timestamp(now));
++        assert_eq!(selected, forced);
++        assert_eq!(store.load_active(now).unwrap().0, preserved);
++        assert!(
++            store
++                .match_command_force_config(command, cwd, now, None)
++                .unwrap()
++                .is_none(),
++            "a forced single-use entry cannot be reused"
++        );
++        assert_eq!(store.load_active(now).unwrap().0, preserved);
++
++        // Removing the policy later still leaves the ordinary authorization
++        // usable once; the failed policy attempts never consumed it.
++        let selected = store.match_command(command, cwd, now, None).unwrap();
++        let mut consumed_ordinary = ordinary;
++        consumed_ordinary.consumed_at = Some(format_timestamp(now));
++        assert_eq!(selected, Some(consumed_ordinary));
++        assert_eq!(store.load_active(now).unwrap().0, preserved[1..]);
++        assert!(
++            store
++                .match_command(command, cwd, now, None)
++                .unwrap()
++                .is_none()
++        );
++    }
++
+     #[test]
+     fn test_allow_once_project_scope_matches_subdir() {
+         let dir = TempDir::new().expect("tempdir");
+```
+
+**File**: `tests/cli_e2e.rs` (modified, +771/-2)
+```diff
+@@ -1460,6 +1460,17 @@ mod allow_once_management_tests {
+ 
+ mod allow_once_flow_tests {
+     use super::*;
++    use destructive_command_guard::pending_exceptions::{
++        AllowOnceEntry, AllowOnceScopeKind, PendingExceptionRecord,
++    };
++
++    const INLINE_POLICY_REASON: &str = "issue 599 explicit policy";
++    const INLINE_SENTINEL: &str = "decision-only sentinel\n";
++    const QUOTED_PRINT: &str = "'/usr/bin/python3' -c 'print(1)'";
++    const QUOTED_UNLINK: &str =
++        "'/usr/bin/python3' -c 'import pathlib; pathlib.Path(\"important.txt\").unlink()'";
++    const UNQUOTED_UNLINK: &str =
++        "python3 -c 'import pathlib; pathlib.Path(\"important.txt\").unlink()'";
+ 
+     /// Dedicated test environment with control over all file paths.
+     struct FlowTestEnv {
+@@ -1468,17 +1479,25 @@ mod allow_once_flow_tests {
+         xdg_config_dir: std::path::PathBuf,
+         pending_path: std::path::PathBuf,
+         allow_once_path: std::path::PathBuf,
++        config_path: Option<std::path::PathBuf>,
+     }
+ 
+     impl FlowTestEnv {
+         fn new() -> Self {
++            Self::with_repository(true)
++        }
++
++        fn with_repository(repository: bool) -> Self {
+             let temp = tempfile::tempdir().expect("tempdir");
+             let home_dir = temp.path().join("home");
+             let xdg_config_dir = temp.path().join("xdg_config");
+             std::fs::create_dir_all(&home_dir).expect("HOME dir");
+             std::fs::create_dir_all(&xdg_config_dir).expect("XDG_CONFIG_HOME dir");
+-            // Create a .git directory so it's recognized as a repo
+-            std::fs::create_dir_all(temp.path().join(".git")).expect(".git dir");
++            // Preserve the existing tests' project scope. The inline tests
++            // deliberately use a plain directory to exercise exact cwd scope.
++            if repository {
++                std::fs::create_dir_all(temp.path().join(".git")).expect(".git dir");
++            }
+ 
+             let pending_path = temp.path().join("pending_exceptions.jsonl");
+             let allow_once_path = temp.path().join("allow_once.jsonl");
+@@ -1489,7 +1508,219 @@ mod allow_once_flow_tests {
+                 xdg_config_dir,
+                 pending_path,
+                 allow_once_path,
++                config_path: None,
++            }
++        }
++
++        fn with_inline_policy() -> Self {
++            let mut env = Self::with_repository(false);
++            for directory in ["tmp", "xdg_cache", "xdg_state", "xdg_data", "other_cwd"] {
++                std::fs::create_dir_all(env.temp.path().join(directory))
++                    .expect("isolated inline test directory");
+             }
++            for filename in ["important.txt", "other.txt"] {
++                std::fs::write(env.temp.path().join(filename), INLINE_SENTINEL)
++                    .expect("decision-only payload sentinel");
++            }
++            env.config_path = Some(env.temp.path().join("inline-policy.toml"));
++            env.write_inline_policy(None);
++            env
++        }
++
++        fn write_inline_policy(&self, blocked_command: Option<&str>) {
++            let block = blocked_command.map_or_else(String::new, |command| {
++                format!(
++                    "[overrides]\nblock = [{{ pattern = {:?}, reason = {:?} }}]\n",
++                    format!("^{}$", regex::escape(command)),
++                    INLINE_POLICY_REASON,
++                )
++            });
++            std::fs::write(
++                self.config_path.as_ref().expect("inline policy path"),
++                format!(
++                    "[general]\ncheck_updates = false\nself_heal_hook = false\n\
++                     [packs]\nenabled = [\"core.git\", \"core.filesystem\"]\n\
++                     [history]\nenabled = false\n\
++                     [heredoc]\nenabled = true\ntimeout_ms = 5000\n\
++                     fallback_on_parse_error = false\n{block}"
++                ),
++            )
++            .expect("write isolated inline policy");
++        }
++
++        fn inline_command(&self, cwd: &std::path::Path) -> Command {
++            let scratch = self.temp.path().join("tmp");
++            let mut command = Command::new(dcg_binary());
++            command
++                .env_clear()
++                .env("HOME", &self.home_dir)
++                .env("USERPROFILE", &self.home_dir)
++                .env("XDG_CONFIG_HOME", &self.xdg_config_dir)
++                .env("XDG_CACHE_HOME", self.temp.path().join("xdg_cache"))
++                .env("XDG_STATE_HOME", self.temp.path().join("xdg_state"))
++                .env("XDG_DATA_HOME", self.temp.path().join("xdg_data"))
++                .env("TMPDIR", &scratch)
++                .env("TEMP", &scratch)
++                .env("TMP", &scratch)
++                .env(
++                    "DCG_CONFIG",
++                    self.config_path.as_ref().expect("inline policy path"),
++                )
++                .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
++        
 ```
 
 ---
 
-### Incident Patch 2: `e0554cd0` (2026-10-27)
-**Commit Message**: fix: bind safe-pattern exemptions to original command context (#598)
+### Incident Patch 2: `efbd488c` (2026-10-29)
+**Commit Message**: fix(python): judge a sink argv passed by a name bound to a literal (#602)
 
-Keep original command segments and recursive execution context separate
-from normalized destructive-detection views. Require explicit custom
-carrier grants, retain assignment, wrapper and executable identity, and
-prevent safe text in child commands or argument data from exempting its
-parent.
+`args = ['rm', '-rf', '/home/user']` and then `subprocess.run(args)` runs
+the argv that is denied when written inline, but it was allowed. The
+backstops read operands only from the call text, a bare name became the
+run-time placeholder, and an argv whose program is unknown keeps the
+warn-only posture. No other layer saw the list either, since it is not
+contiguous command text.
 
-Preserve existing argv-based safety proofs and verified literal-shell
-previews. Apply custom destructive policies to the original sanitized
-view as well as the normalized view. Document the authorization boundary
-and add decision-only CLI, hook, legacy and built-in regressions.
+When a Python sink call's whole argv is a bare name (its first positional
+argument, or `args=NAME`), python_bound_argv_calls finds each statement
+that assigns a list or tuple literal to that name, annotated or not, at a
+line start or after `;`, and not inside a string literal. It writes each
+literal in the name's place. The backstop judges every such call with
+detect_destructive_in_args and keeps the most severe hit. The
+reconstruction loop reads each one too, so pack rules see the command
+(`cmd = ['dd', 'if=/dev/zero', 'of=/dev/sda']`).
 
-Make the existing temporary-directory fallback lazy for the pinned
-Clippy qualification without changing its assertions.
+Every literal binding counts, in any scope and whatever comes between, so
+a later rebinding or another function's variable of the same name can
+only add a reading. That over-approximates toward a den
 
-Validation:
-- cargo check --all-targets --locked
-- cargo clippy --all-targets --locked -- -D warnings
-- cargo fmt --check and git diff --check
-- 377 integration tests across 10 binaries passed
-- 5064 library tests passed; 10 skipped
-- All 19 new issue-598 tests and 42 focused AWS decision checks passed
-
-Known baseline qualification failures:
-- The unchanged normalize::tests::dcg_global_option_syntax_is_decoded_without_promoting_ag
-
-**File**: `README.md` (modified, +22/-14)
+**File**: `src/ast_pattern_engine.rs` (modified, +232/-69)
 ```diff
-@@ -2197,9 +2197,9 @@ This is logged and visible in git history. For permanent exceptions, use allowli
- Your AI agent invokes dcg as a PreToolUse hook before executing each shell command. The hook receives the command as JSON on stdin and runs through a four-stage pipeline:
- 
- 1. **JSON Parsing** -- Validates the hook payload (Claude/Gemini/Copilot variants), extracts the command string. Non-shell tools are immediately allowed.
--2. **Normalization** -- Strips absolute paths (`/usr/bin/git` becomes `git`) while preserving arguments.
--3. **Quick Reject** -- O(n) substring search for keywords like "git" or "rm". Commands without these substrings skip regex matching entirely (handles 99%+ of non-destructive commands).
--4. **Pattern Matching** -- Safe patterns checked first (match = allow). Destructive patterns checked second (match = deny with explanation). No match on either = allow.
-+2. **Normalization** -- Builds a detection view by stripping recognized wrappers, environment assignments, and executable paths (`/usr/bin/git` becomes `git`), while retaining the original command and execution context for safe exemptions.
-+3. **Quick Reject** -- Searches command text and resolved executable names for pack keywords such as "git" or "rm". Original text remains available to custom policies, including keywords in environment assignments removed from the detection view.
-+4. **Pattern Matching** -- Checks safe exemptions in their original execution context before the relevant pack's destructive rules. Destructive matching retains the normalized view so wrappers cannot hide dangerous commands. An exemption is scoped to its pack and command segment; other packs and segments still undergo evaluation. Commands without a destructive match are allowed.
- 
- If blocked under a Claude-compatible JSON hook protocol, dcg outputs a JSON
- denial on stdout and a colorful human-readable warning on stderr. If blocked
-@@ -2806,17 +2806,25 @@ fn quick_reject(cmd: &str) -> bool {
- 
- For commands like `ls -la`, `cargo build`, or `npm install`, this check short-circuits the entire matching pipeline. The `memmem::Finder` is pre-compiled once and reused, avoiding repeated setup costs.
- 
--### 3. Early Exit on Safe Match
--
--Safe patterns are checked first. On match, the function returns immediately without checking destructive patterns:
--
--```rust
--for pattern in SAFE_PATTERNS.iter() {
--    if pattern.regex.is_match(&normalized).unwrap_or(false) {
--        return;  // Allow immediately
--    }
--}
--```
-+### 3. Early Exit Within a Pack
-+
-+A safe exemption skips the corresponding pack's destructive rules for the
-+authorized command segment. Evaluation continues for other packs and shell
-+segments, so one safe command cannot exempt a dangerous sibling.
-+
-+Regex exemptions retain the original command's environment assignments,
-+wrappers, executable paths, and redirections. For example, an exact custom
-+safe pattern for `/usr/bin/python3 -I /opt/tools/run_check.py --check` does not
-+also authorize that invocation with `PATH=/somewhere` prepended. Destructive
-+patterns still inspect normalized commands, and custom destructive patterns
-+also inspect the original command after data sanitization.
-+
-+Nested commands retain their carrier's context. A custom safe grant can
-+transfer to a nested command only when a safe pattern explicitly covers the
-+complete original carrier as one shell segment. Earlier shell statements
-+also prevent a later custom exemption unless they are provably neutral.
-+See [command text and safe exemptions](docs/custom-packs.md#command-text-and-safe-exemptions)
-+for exact matching, unanchored patterns, and compound-command behavior.
- 
- ### 4. Compile-Time Pattern Validation
- 
-```
-
-**File**: `docs/custom-packs.md` (modified, +62/-0)
-```diff
-@@ -200,6 +200,68 @@ silently become broader or turn into a dead rule.
- | `pattern` | string | yes | fancy-regex pattern to match |
- | `description` | string | no | Why this command is allowed |
- 
-+### Command text and safe exemptions
-+
-+Safe patterns match the **original command segment**, including leading
-+environment assignments, execution wrappers, executable paths, and
-+redirections. Detection still uses normalized command text so a wrapper such
-+as `env NAME=value` cannot hide a destructive operation. Custom destructive
-+patterns also see the original, data-sanitized command, allowing a policy to
-+require an assignment or wrapper in its match.
-+
-+For an exemption that authorizes one reviewed invocation, anchor both ends:
-+
-+```yaml
-+safe_patterns:
-+  - name: reviewed-check
-+    pattern: '^/usr/bin/python3 -I /opt/tools/run_check\.py --check$'
-+```
-+
-+This exemption does not cover `PATH=/somewhere` before the command, an `env`
-+or `sudo` wrapper, or another executable with the same basename. An absolute
-+interpreter path and Python's `-I` option do not pin the environment used by
-+child processes. Any variable can matter to an application; dcg does not
-+maintain a list of supposedly harmless variable names for exemptions.
-+
-+When a particular environment is intentional, include its exact spelling in
-+the safe pattern:
-+
-+```yaml
-+safe_patterns:
-+  - name: reviewed-check-with-path
-+    pattern: '^env PATH=/usr/bin:/bin /usr/bin/python3 -I /opt/tools/run_check\.py --check$'
-+```
-+
-+Nested shell evaluation retains the enclosing execution context. Extracting
-+the command from an environment-changing wrapper or shell does not give it a
-+new bare-command exemption. A custom safe regex that matches the **complete
-+original carrier as one shell segment** can authorize that carrier's nested
-+commands for its own pack; it cannot exempt another pack or a sibling shell
-+segment. Even a plain `bash -c 'reviewed-command'` needs an exemption for the
-+complete carrier to transfer a custom safe grant to its extracted command.
-+
-+Earlier shell segments can change the context of a later command. dcg
-+conservatively withholds a later segment's custom exemption unless every
-+preceding top-level segment is provably neutral with respect to the parent
-+shell's state. Examples include no-argument `true` and `false`, bare `:`,
-+and literal executable paths with literal arguments when the shell dialect
-+is known to be POSIX. The path proof does not apply to unknown dialects,
-+PowerShell, or Cmd, where a script can change the current process's
-+environment. For example, `FOO=1 true; reviewed-command` can retain the
-+later command's exemption; `export PATH=/somewhere; reviewed-command` and
-+`PATH=/somewhere :; reviewed-command` cannot. Standalone assignments,
-+`unset`, unknown command names, and expansions do not establish a neutral
-+context. Exempting an earlier command does not by itself prove that later
-+commands retain their reviewed shell state.
-+
-+Unanchored patterns can intentionally permit additional prefixes or
-+suffixes when the safe match also holds in the detection view. When a safe
-+match exists only in the original text, it must cover the complete original
-+segment; a substring in quoted data or removed wrapper text cannot supply a
-+new exemption. Use anchors to constrain the command forms you authorize.
-+Losing a safe match means destructive evaluation continues; it does not by
-+itself deny a command that no destructive rule covers.
-+
- ## Severity Levels
- 
- Severity determines the default decision mode when a command matches, and how
-```
-
-**File**: `src/evaluator.rs` (modified, +665/-23)
-```diff
-@@ -69,6 +69,7 @@ use std::fs::{self, OpenOptions};
- use std::io::Read;
- use std::ops::Range;
- use std::path::{Path, PathBuf};
-+use std::rc::Rc;
- use std::sync::LazyLock;
- 
- /// Convert `ast_matcher::Severity` to `packs::Severity`.
-@@ -343,6 +344,272 @@ fn byte_span_to_char_span(command: &str, span: &MatchSpan) -> Option<WindowedSpa
-     })
- }
- 
-+thread_local! {
-+    /// Recursive evaluation is synchronous. Keep authorization source separate
-+    /// from detection views, including case-folded and redirection-free replays.
-+    static SAFE_PATTERN_SOURCE: std::cell::RefCell<Option<Rc<SafePatternSource>>> = const {
-+        std::cell::RefCell::new(None)
-+    };
-+}
-+
-+struct SafePatternSource {
-+    command: String,
-+    dialect: ShellDialect,
-+    parent: Option<Rc<Self>>,
-+}
-+
-+impl SafePatternSource {
-+    /// An outer full-command grant covers only its own pack. Otherwise a
-+    /// custom exemption cannot be acquired by extracting an apparently bare
-+    /// child command from a different invocation (#598). This is a provenance
-+    /// rule, independent of variable names or the set of recognized wrappers.
-+    fn inherited_grant(
-+        &self,
-+        pack: &crate::packs::Pack,
-+        deadline: Option<&Deadline>,
-+    ) -> Option<bool> {
-+        let parent = self.parent.as_ref()?;
-+        if let Some(grant) = parent.inherited_grant(pack, deadline) {
-+            return Some(grant);
-+        }
-+        if REGISTRY.get_entry(&pack.id).is_some() {
-+            // A built-in operation-level exception must still recognize the
-+            // original carrier. It never grants safety to a child on its own:
-+            // the child also needs its own existing safe proof below.
-+            return (!pack.matches_safe_with_deadline(&parent.command, deadline)).then_some(false);
-+        }
-+        let segments =
-+            crate::packs::split_command_segments_in_dialect(&parent.command, parent.dialect);
-+        // Built-in safe regexes describe operation-level exceptions (such as
-+        // Redis INFO), not reviewed envelopes. Propagating those would let an
-+        // outer read-only word hide a destructive command substitution.
-+        Some(
-+            segments.len() == 1
-+                && pack.matches_safe_with_deadline(&parent.command, deadline)
-+                && pack.safe_patterns.iter().any(|pattern| {
-+                    !deadline_exceeded(deadline)
-+                        && pattern.regex.find(&parent.command) == Some((0, parent.command.len()))
-+                }),
-+        )
-+    }
-+}
-+
-+struct SafePatternScope {
-+    previous: Option<Rc<SafePatternSource>>,
-+}
-+
-+impl SafePatternScope {
-+    fn enter(command: &str, dialect: ShellDialect, depth: usize) -> Self {
-+        let previous = SAFE_PATTERN_SOURCE.with(|slot| {
-+            let previous = slot.borrow_mut().take();
-+            *slot.borrow_mut() = Some(Rc::new(SafePatternSource {
-+                command: command.to_string(),
-+                dialect,
-+                parent: (depth > 0).then(|| previous.clone()).flatten(),
-+            }));
-+            previous
-+        });
-+        Self { previous }
-+    }
-+}
-+
-+impl Drop for SafePatternScope {
-+    fn drop(&mut self) {
-+        SAFE_PATTERN_SOURCE.with(|slot| *slot.borrow_mut() = self.previous.take());
-+    }
-+}
-+
-+/// Regex exemptions read the original segment, including assignments,
-+/// executable paths, wrappers, and redirects. Normalized/sanitized strings are
-+/// detection inputs only. Segment correspondence is positional, never a search
-+/// for equal normalized text: two siblings may normalize to the same command.
-+struct SafePatternInputs<'a> {
-+    source: Rc<SafePatternSource>,
-+    view: &'a str,
-+    dialect: ShellDialect,
-+    ranges: std::cell::OnceCell<Vec<(usize, usize)>>,
-+    source_ranges: std::cell::OnceCell<Vec<(usize, usize)>>,
-+}
-+
-+impl<'a> SafePatternInputs<'a> {
-+    fn new(view: &'a str, original: &str, dialect: ShellDialect) -> Self {
-+        let source = SAFE_PATTERN_SOURCE
-+            .with(|slot| slot.borrow().clone())
-+            .unwrap_or_else(|| {
-+                Rc::new(SafePatternSource {
-+                    command: original.to_string(),
-+                    dialect,
-+                    parent: None,
-+                })
-+            });
-+        Self {
-+            source,
-+            view,
-+            dialect,
-+            ranges: std::cell::OnceCell::new(),
-+            source_ranges: std::cell::OnceCell::new(),
-+        }
-+    }
-+
-+    fn segment(&self, range: Option<(usize, usize)>) -> Option<&str> {
-+        let Some(range) = range else {
-+            return Some(&self.source.command);
-+        };
-+        if self.view == self.source.command {
-+            return self.source.command.get(range.0..range.1);
-+        }
-+        let ranges = self
-+            .ranges
-+            .get_or_init(|| command_segment_ranges_in_dialect(self.view, self.dialect));
-+        let source_ranges = self
-+            .source_ranges
-+        
-```
-
-**File**: `src/packs/cloud/aws.rs` (modified, +118/-0)
-```diff
-@@ -51,6 +51,124 @@ pub fn create_pack() -> Pack {
-     }
- }
- 
-+/// Prove EC2's existing preview exemption from literal argv, including when
-+/// the invocation was extracted from a shell carrier. A dry-run-looking word
-+/// in an option value or command substitution is not an execution flag.
-+/// `Some(false)` owns a recognized EC2 deletion so a read-only phrase in its
-+/// arguments cannot override a failed preview proof.
-+pub(crate) fn ec2_dry_run_decision(command: &str) -> Option<bool> {
-+    let stripped = crate::normalize::strip_wrapper_prefixes(command);
-+    if stripped.wrapper_limit_reached {
-+        return None;
-+    }
-+    let source = stripped.normalized.as_ref();
-+    let words = shell_words::split(source).ok()?;
-+    let executable = words.first()?.rsplit(['/', '\\']).next()?;
-+    if !matches!(executable, "aws" | "aws.exe") {
-+        return None;
-+    }
-+    let mut index = 1;
-+    while let Some(option) = words.get(index).filter(|word| word.starts_with('-')) {
-+        let name = option
-+            .split_once('=')
-+            .map_or(option.as_str(), |(name, _)| name);
-+        if aws_global_value_option(name) {
-+            index += if option.contains('=') { 1 } else { 2 };
-+        } else if aws_global_flag(name) && !option.contains('=') {
-+            index += 1;
-+        } else {
-+            return None;
-+        }
-+    }
-+    if words.get(index).map(String::as_str) != Some("ec2")
-+        || !words.get(index + 1).is_some_and(|operation| {
-+            operation == "terminate-instances" || operation.starts_with("delete-")
-+        })
-+    {
-+        return None;
-+    }
-+    let terminate = words[index + 1] == "terminate-instances";
-+    let operation_end = index + 2;
-+    let tokens = crate::normalize::tokenize_for_normalization(source);
-+    let literal_words: Option<Vec<_>> = tokens
-+        .iter()
-+        .map(|token| {
-+            (token.kind == crate::normalize::NormalizeTokenKind::Word)
-+                .then(|| token.text(source))
-+                .flatten()
-+                .and_then(crate::normalize::decode_posix_literal_word)
-+        })
-+        .collect();
-+    let Some(words) = literal_words else {
-+        return Some(false);
-+    };
-+    // These are expansion/escape syntax in the other supported shells. The
-+    // pack-level helper has no caller-proven dialect, so it cannot grant a
-+    // preview from their POSIX-looking literal spelling.
-+    if source.contains(['%', '!', '^']) {
-+        return Some(false);
-+    }
-+    let mut preview = false;
-+    index = operation_end;
-+    while let Some(argument) = words.get(index) {
-+        match argument.as_ref() {
-+            "--dry-run" => preview = true,
-+            "--" | "--no-dry-run" => return Some(false),
-+            word if word.starts_with("--dry-run=") || word.starts_with("--no-dry-run=") => {
-+                return Some(false);
-+            }
-+            "--force" | "--no-force" | "--skip-os-shutdown" | "--no-skip-os-shutdown"
-+                if terminate => {}
-+            word if word.starts_with('-') && !word.contains('=') && !aws_global_flag(word) => {
-+                // This narrow proof does not guess an unknown boolean
-+                // option's arity. Consume only a literal value, and never
-+                // let that value provide the preview flag itself.
-+                let Some(value) = words.get(index + 1) else {
-+                    return Some(false);
-+                };
-+                if value.starts_with('-') {
-+                    return Some(false);
-+                }
-+                index += 1;
-+            }
-+            _ => {}
-+        }
-+        index += 1;
-+    }
-+    Some(preview)
-+}
-+
-+fn aws_global_value_option(option: &str) -> bool {
-+    matches!(
-+        option,
-+        "--profile"
-+            | "--region"
-+            | "--endpoint-url"
-+            | "--output"
-+            | "--query"
-+            | "--color"
-+            | "--ca-bundle"
-+            | "--cli-read-timeout"
-+            | "--cli-connect-timeout"
-+            | "--cli-binary-format"
-+            | "--cli-error-format"
-+    )
-+}
-+
-+fn aws_global_flag(option: &str) -> bool {
-+    matches!(
-+        option,
-+        "--debug"
-+            | "--no-verify-ssl"
-+            | "--no-paginate"
-+            | "--no-sign-request"
-+            | "--no-cli-pager"
-+            | "--cli-auto-prompt"
-+            | "--no-cli-auto-prompt"
-+            | "--version"
-+    )
-+}
-+
- fn create_safe_patterns() -> Vec<SafePattern> {
-     vec![
-         // describe/list/get operations are safe (read-only).
-```
-
-**File**: `src/packs/mod.rs` (modified, +34/-48)
-```diff
-@@ -697,6 +697,38 @@ impl Pack {
-         false
-     }
- 
-+    /// Apply operation-specific safety proofs independently of regex grants.
-+    ///
-+    /// `Some(false)` is an authoritative refusal: a permissive safe regex must
-+    /// not override it. `None` leaves the command to ordinary pattern matching.
-+    /// These proofs inspect command semantics, so the evaluator can preserve
-+    /// them while binding regex exemptions to their original source spelling.
-+    #[must_use]
-+    pub(crate) fn semantic_safe_decision(&self, cmd: &str) -> Option<bool> {
-+        match self.id.as_str() {
-+            "core.filesystem" => {
-+                // This proof owns unlink's exemptions, including rejected
-+                // literal-path boundaries that a legacy temp regex may match.
-+                crate::packs::core::filesystem::unlink_command_for_pattern_matching(
-+                    cmd,
-+                    crate::normalize::ShellDialect::Unknown,
+@@ -597,7 +597,14 @@ pub fn scan_executing_sink_matches(code: &str, language: ScriptLanguage) -> Vec<
+         let hit = if inert_string_end.is_some() {
+             detect_destructive_in_literal_args(arg_region, language)
+         } else {
+-            detect_destructive_in_args(arg_region, language)
++            // A name bound to a literal list or tuple is judged as that literal
++            // written in its place (#602).
++            python_bound_argv_calls(language, haystack, arg_region, python_text.as_ref())
++                .iter()
++                .fold(
++                    detect_destructive_in_args(arg_region, language),
++                    |found, call| more_severe(found, detect_destructive_in_args(call, language)),
 +                )
-+                .map(|command| command.safe)
-+            }
-+            "system.permissions" => {
-+                crate::packs::system::permissions::posix_chmod_is_safe(cmd).then_some(true)
-+            }
-+            "kubernetes.kubectl" => {
-+                crate::packs::kubernetes::kubectl::dry_run_is_effectively_safe(cmd).then_some(true)
-+            }
-+            "cloud.aws" => crate::packs::cloud::aws::ec2_dry_run_decision(cmd),
-+            "careful_company_running_windows.transfer" => {
-+                crate::packs::careful_company_running_windows::transfer::direct_safe_decision(cmd)
-+            }
-+            _ => None,
-+        }
-+    }
-+
-     /// Check if a command matches any safe pattern.
-     ///
-     /// Uses `RegexSet` for O(n) matching when available (fast path).
-@@ -706,31 +738,7 @@ impl Pack {
-         if self.destructive_match_vetoes_safe(cmd) {
-             return false;
-         }
--        if self.id == "core.filesystem"
--            && let Some(command) =
--                crate::packs::core::filesystem::unlink_command_for_pattern_matching(
--                    cmd,
--                    crate::normalize::ShellDialect::Unknown,
--                )
--        {
--            // This proof owns unlink's exemptions. A permissive legacy temp
--            // regex must not override a rejected literal-path boundary.
--            return command.safe;
--        }
--        if self.id == "system.permissions"
--            && crate::packs::system::permissions::posix_chmod_is_safe(cmd)
--        {
--            return true;
--        }
--        if self.id == "kubernetes.kubectl"
--            && crate::packs::kubernetes::kubectl::dry_run_is_effectively_safe(cmd)
--        {
--            return true;
--        }
--        if self.id == "careful_company_running_windows.transfer"
--            && let Some(decision) =
--                crate::packs::careful_company_running_windows::transfer::direct_safe_decision(cmd)
--        {
-+        if let Some(decision) = self.semantic_safe_decision(cmd) {
-             return decision;
-         }
-         // Fast path: use RegexSet if available
-@@ -779,29 +787,7 @@ impl Pack {
-         if self.destructive_match_vetoes_safe_with_deadline(cmd, deadline) {
-             return false;
-         }
--        if self.id == "core.filesystem"
--            && let Some(command) =
--                crate::packs::core::filesystem::unlink_command_for_pattern_matching(
--                    cmd,
--                    crate::normalize::ShellDialect::Unknown,
--                )
--        {
--            return command.safe;
--        }
--        if self.id == "system.permissions"
--            && crate::packs::system::permissions::posix_chmod_is_safe(cmd)
--        {
--            return true;
--        }
--        if self.id == "kubernetes.kubectl"
--            && crate::packs::kubernetes::kubectl::dry_run_is_effectively_safe(cmd)
--        {
--            return true;
--        }
--        if self.id == "careful_company_running_windows.transfer"
--            && let Some(decision) =
--                crate::packs::careful_company_running_windows::transfer::direct_safe_decision(cmd)
--        {
-+        if let Some(decision) = self.semantic_safe_decision(cmd) {
-             return decision;
-         }
-         let linear_set_missed = if let Some(ref set) = self.safe_regex_set {
-```
-
-**File**: `tests/cli_e2e.rs` (modified, +548/-0)
-```diff
-@@ -9798,6 +9798,7 @@ destructive_patterns:
- 
- mod custom_pack_loading_tests {
-     use super::*;
-+    use std::fmt::Write as _;
-     use std::io::Write;
- 
-     /// Create a temp directory with a custom pack and config
-@@ -10059,6 +10060,553 @@ safe_patterns:
-             "the pack's destructive pattern must still block prod\nstdout:\n{stdout}"
+         };
+         let Some(hit) = hit else {
+             continue;
+@@ -802,83 +809,94 @@ pub fn exec_sink_reconstructed_commands(
+         let inert_string_end = python_text
+             .as_ref()
+             .and_then(|text| text.inert_string_end(call_start));
+-        let region = exec_sink_arg_region(
++        let call_region = exec_sink_arg_region(
+             inert_string_end.map_or(haystack, |end| &haystack[..end]),
+             call_start,
          );
-     }
-+
-+    // Issue #598: these strings are inputs to dcg's decision APIs only. The
-+    // reviewed script, replacement executables, and injected libraries need
-+    // not exist and are never run by this fixture.
-+    const REVIEWED_COMMAND: &str = "/usr/bin/python3 -I /opt/tools/run_check.py --check";
-+    const REVIEWED_SAFE_PATTERN: &str =
-+        r"^\s*/usr/bin/python3[ \t]+-I[ \t]+/opt/tools/run_check\.py[ \t]+--check[ \t]*$";
-+    const REVIEWED_DESTRUCTIVE_PATTERN: &str = r"(?:^|\s)(?:[^\s]*/)?python3[ \t]+-I[ \t]+/opt/tools/run_check\.py[ \t]+--check(?:[ \t]|$)";
-+    const REVIEW_RULE: &str = "synthetic.environment:requires-review";
-+
-+    struct SafePatternFixture {
-+        root: tempfile::TempDir,
-+        config: std::path::PathBuf,
-+    }
-+
-+    impl SafePatternFixture {
-+        fn new(safe_patterns: &[&str], destructive_pattern: &str) -> Self {
-+            Self::new_with_keywords(safe_patterns, destructive_pattern, &["python3", "git"])
-+        }
-+
-+        fn new_with_keywords(
-+            safe_patterns: &[&str],
-+            destructive_pattern: &str,
-+            keywords: &[&str],
-+        ) -> Self {
-+            let root = tempfile::tempdir().expect("isolated safe-pattern fixture");
-+            for directory in ["home", "tmp", "cwd", "xdg"] {
-+                std::fs::create_dir_all(root.path().join(directory)).expect("fixture directory");
+-        // A call the rm/git backstop owns (any `detect_destructive_in_args`
+-        // hit) is left to it, so an allowlisted `rm`/`git` is not re-denied
+-        // here under a pack rule id.
+-        if detect_destructive_in_args(region, language).is_some() {
+-            continue;
+-        }
+-        // Operands, for the same reason `detect_destructive_in_args` uses them:
+-        // reconstructing `dd` from `"d"+"d"` as two argv words would not be the
+-        // command the call actually runs (#474).
+-        //
+-        // #562 resolution is enabled only once this call's program word
+-        // (read with resolution off) is an archive tool, never a launcher.
+-        let argv = if const_env.is_some() {
+-            RESOLVE_ENABLED.with(|cell| cell.set(false));
+-            let unresolved = exec_argv_operands(region, language);
+-            let archive = unresolved
+-                .values
+-                .first()
+-                .is_some_and(|program| is_archive_program(program));
+-            if archive {
+-                RESOLVE_ENABLED.with(|cell| cell.set(true));
+-                let resolved = exec_argv_operands(region, language);
+-                RESOLVE_ENABLED.with(|cell| cell.set(false));
+-                resolved
+-            } else {
+-                unresolved
+-            }
++        // A name bound to a literal list or tuple is reconstructed as that
++        // literal written in its place (#602); in a string nothing runs, the
++        // name stays text.
++        let bound = if inert_string_end.is_none() {
++            python_bound_argv_calls(language, haystack, call_region, python_text.as_ref())
+         } else {
+-            exec_argv_operands(region, language)
++            Vec::new()
+         };
+-        if argv.unverified {
+-            continue;
+-        }
+-        // In a string nothing runs, a name is text, not a value decided at run
+-        // time, so it raises no dynamic-path or alias question (#601). A fully
+-        // literal command is still judged, as any destructive literal is.
+-        if inert_string_end.is_some()
+-            && argv
+-                .values
+-                .iter()
+-                .any(|value| value.contains(RUNTIME_VALUE))
+-        {
+-            continue;
+-        }
+-        let operands = argv.values;
+-        let command = match operands.as_slice() {
+-            [] => continue,
+-            // One string handed to a shell (#512): see below.
+-            [script] => {
+-                if !single_string_sink_runs_shell(language, sink, haystack, call_start, region) {
+-                    continue;
++        for region in std::iter::once(call_region).chain(bound.iter().map(String::as_str)) {
++            // A call the rm/git backstop owns (any `detect_destructive_in_args`
++            // hit) is left to it, so an allowlisted `rm`/`git` is not re-denied
++            // here under a pack rule id.
++            if detect_destructive_in_args(region, language).is_some() {
++                continue;
 +            }
-+            let pack_path = root.path().join("pack.yaml");
-+            let mut pack = format!(
-+                "schema_version: 1\nid: synthetic.environment\nname: Environment exemption regression\n\
-+                 version: 1.0.0\nkeywords: {}\ndestructive_patterns:\n  - name: requires-review\n    pattern: {}\n    severity: critical\n    description: This command requires explicit review\nsafe_patterns:\n",
-+                serde_json::to_string(keywords).expect("serialize pack keywords"),
-+                serde_json::to_string(destructive_pattern).expect("serialize destructive pattern")
-+            );
-+            if safe_patterns.is_empty() {
-+                pack.push_str("  []\n");
-+            } else {
-+                for (index, pattern) in safe_patterns.iter().enumerate() {
-+                    writeln!(
-+                        pack,
-+                        "  - name: reviewed-{index}\n    pattern: {}",
-+                        serde_json::to_string(pattern).expect("serialize safe pattern")
-+                    )
-+                    .expect("append safe pattern");
-+                }
-+            }
-+            std::fs::write(&pack_path, pack).expect("write custom pack");
-+            let config = root.path().join("config.toml");
-+            std::fs::write(
-+                &config,
-+                format!(
-+                    "[general]\nself_heal_hook = false\n[packs]\n\
-+                     enabled = [\"core.git\", \"core.filesystem\", \"containers.docker\"]\n\
-+                     custom_paths = [{}]\n",
-+                    serde_json::to_string(&pack_path).expect("serialize pack path")
-+                ),
-+            )
-+            .expect("write config");
-+            Self { root, config }
-+        }
-+
-+        fn command(&self) -> Command {
-+            let mut command = Command::new(dcg_binary());
-+            command
-+                .env_clear()
-+                .env("HOME", self.root.path().join("home"))
-+                .env("USERPROFILE", self.root.path().join("home"))
-+                .env("XDG_CONFIG_HOME", self.root.path().join("xdg"))
-+                .env("TMPDIR", self.root.path().join("tmp"))
-+                .env("TEMP", self.root.path().join("tmp"))
-+                .env("TMP", self.root.path().join("tmp"))
-+                .env("DCG_CONFIG", &self.config)
-+                .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
-+                .env("DCG_HISTORY_DISABLED", "1")
-+                .env("DCG_SELF_HEAL_HOOK", "0")
-+                .env("NO_COLOR", "1")
-+                .current_dir(self.root.path().join("cwd"))
-+                .stdin(Stdio::piped())
-+                .stdout(Stdio::piped())
-+                .stderr(Stdio::piped());
-+            if let Some(path) = std::env::var_os("PATH") {
-+                command.env("PATH", path);
-+            }
-+            command
-+        }
-+
-+        fn assert_explain(&self, candidate: &str, expected: &str, rule: Option<&str>) {
-+            self.assert_explain_in_dialects(candidate, expected, rule, &["posix", "unknown"]);
-+        }
-+
-+        fn assert_explain_in_dialects(
-+            &self,
-+            candidate: &str,
-+            expected: &str,
-+            rule: Option<&str>,
-+         
++            // Operands, for the same reason `detect_destructive_in_args` uses them:
++            // reconstructing `dd` from `"d"+"d"` as two argv words would not be the
++            // command the call actually runs (#474).
++            //
++            // #562 resolution is enabled only once this call's program word
++            // (read with resolution off) is an archive tool, never a launcher.
++            let argv = if const_env.is_some() {
++                RESOLVE_ENABLED.with(|cell| cell.set(false));
++                let unresolved = exec_argv_operands(region, language);
++                let archive = unresolved
++                    .values
++                    .first()
++                    .is_some_and(|program| is_archive_progr
 ```
 
-**File**: `tests/repro_536_tmp_redirect_resolution.rs` (modified, +1/-1)
+**File**: `src/evaluator.rs` (modified, +58/-0)
 ```diff
-@@ -41,7 +41,7 @@ fn hook_with_environment(
-         .env("LOCALAPPDATA", home.join("localappdata"))
-         .env("TEMP", temp.path())
-         .env("TMP", temp.path())
--        .env("TMPDIR", tmpdir.unwrap_or(temp.path()))
-+        .env("TMPDIR", tmpdir.unwrap_or_else(|| temp.path()))
-         .env("DCG_CONFIG", &config)
-         .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
-         .env(
+@@ -42374,6 +42374,64 @@ mod tests {
+         }
+     }
+ 
++    /// #602 end to end: a Python sink argv passed by a name bound to a literal
++    /// list or tuple is judged as that literal written inline. A name bound to
++    /// anything else, or only in a string or comment, keeps its old posture.
++    #[test]
++    fn python_argv_bound_to_a_name_is_judged_602() {
++        let body = |code: &str| format!("python3 - <<'PY'\n{code}\nPY");
++        let packs = ["core.git", "core.filesystem", "system.disk"];
++        for command in [
++            body("import subprocess\nargs = ['rm','-rf','/home/user']\nsubprocess.run(args)"),
++            body("import subprocess\nargs = ('git','reset','--hard')\nsubprocess.run(args)"),
++            body("import subprocess\nx = ['a']\nargs = ['git','add',*x]\nsubprocess.run(args)"),
++            body("import subprocess\nargs = ['rm','-rf','/home/user']\nsubprocess.run(args=args)"),
++            body(
++                "import subprocess\nargs = ['rm','-rf','/home/user']\n\
++                 subprocess.check_call(args)\nsubprocess.Popen(args)",
++            ),
++            "python3 -c 'import subprocess; a = [\"git\",\"reset\",\"--hard\"]; subprocess.run(a)'"
++                .to_string(),
++            body(
++                "import subprocess\ncmd: list[str] = [\n    'git',\n    'reset',\n    \
++                 '--hard',  # discard\n]\nsubprocess.run(cmd, check=True)",
++            ),
++            body(
++                "import subprocess\ncmd = ['dd', 'if=/dev/zero', 'of=/dev/sda']\nsubprocess.run(cmd)",
++            ),
++            body(
++                "import subprocess\ncmd = ['git', 'status']\nif x:\n    \
++                 cmd = ['git', 'clean', '-fdx']\nsubprocess.run(cmd)",
++            ),
++        ] {
++            let result = evaluate_with_pack_ids_in_dialect(&command, &packs, ShellDialect::Posix);
++            assert!(
++                result.is_denied(),
++                "{command:?} must be denied: {:?}",
++                result.pattern_info
++            );
++        }
++        for command in [
++            body("import subprocess\ncmd = ['git', 'status']\nsubprocess.run(cmd)"),
++            body("import subprocess, sys\nargs = sys.argv[1:]\nsubprocess.run(args)"),
++            body(
++                "import subprocess\ns = \"args = ['rm','-rf','/home/user']\"\n\
++                 args = ['git','status']\nsubprocess.run(args)",
++            ),
++            body(
++                "import subprocess\n# args = ['rm','-rf','/home/user']\n\
++                 args = ['git','status']\nsubprocess.run(args)",
++            ),
++        ] {
++            let result = evaluate_with_pack_ids_in_dialect(&command, &packs, ShellDialect::Posix);
++            assert!(
++                result.is_allowed(),
++                "{command:?} must be allowed: {:?}",
++                result.pattern_info
++            );
++        }
++    }
++
+     #[test]
+     fn here_string_receiver_analysis_preserves_bash_rule_allowlists_issue_555() {
+         let enabled_packs = ["core.git".to_string(), "core.filesystem".to_string()]
+```
+
+---
+
+### Incident Patch 3: `66e108c9` (2026-10-29)
+**Commit Message**: fix(python): read sink call text in strings and comments as text (#601)
+
+The Python exec-sink backstops (scan_executing_sink_matches and
+exec_sink_reconstructed_commands) found `run(`, `Popen(` and
+`check_output(` with a regex over the whole body, comments and string
+literals included. An edit script that quotes another script's
+`subprocess.run([…` line in a search or replacement string, or a comment
+that mentions one, was refused as exec_sink.argv_unverified or as a
+reconstruction holding a run-time value.
+
+PythonSinkText now reads the body's comments and the contents of its
+plain string literals with a small lexer: prefixes, escapes, triple
+quotes, and f- and t-string replacement fields (PEP 701), whose code is
+not a string. Comments are blanked before the sink regex runs, as Perl's
+are. Call text inside a string literal is still a call when the body can
+run a string: when, outside every string and comment, it has a sink call
+or names something that executes, imports or looks up code at run time
+(exec, eval, compile, __import__, importlib, getattr, runpy, pickle,
+ctypes, subprocess, popen/system/spawn, code.interact, ...). Otherwise the
+call's region ends where the string does, a
+
+**File**: `src/ast_pattern_engine.rs` (modified, +399/-7)
+```diff
+@@ -565,20 +565,41 @@ pub fn scan_executing_sink_matches(code: &str, language: ScriptLanguage) -> Vec<
+         _ => return out,
+     };
+ 
+-    for caps in sink_regex.captures_iter(code) {
++    // A Python comment never runs, and call text in a string literal is not a
++    // call unless something can run the string (#601): see `PythonSinkText`.
++    let python_text = (language == ScriptLanguage::Python)
++        .then(|| PythonSinkText::read(code))
++        .flatten();
++    let haystack = python_text
++        .as_ref()
++        .map_or(code, |text| text.comments_masked.as_str());
++
++    for caps in sink_regex.captures_iter(haystack) {
+         let Some(m) = caps.get(0) else { continue };
+         let Some((call_start, sink)) = exec_sink_call(&caps) else {
+             continue;
+         };
++        let inert_string_end = python_text
++            .as_ref()
++            .and_then(|text| text.inert_string_end(call_start));
+ 
+         // Scan the sink call's full argument region — not just its first string
+         // literal — so a destructive payload nested inside a list/tuple literal
+         // (`subprocess.run(["sh", "-c", "rm -rf /etc"])`) is caught even when the
+         // first literal (`"sh"`) is inert (#136). The region spans from the
+         // opening paren of this match to the balanced close paren (bounded to the
+         // remainder of the source), descending into bracketed list elements.
+-        let arg_region = exec_sink_arg_region(code, call_start);
+-        let Some(hit) = detect_destructive_in_args(arg_region, language) else {
++        // Call text inside an inert string ends where the string does.
++        let arg_region = exec_sink_arg_region(
++            inert_string_end.map_or(haystack, |end| &haystack[..end]),
++            call_start,
++        );
++        let hit = if inert_string_end.is_some() {
++            detect_destructive_in_literal_args(arg_region, language)
++        } else {
++            detect_destructive_in_args(arg_region, language)
++        };
++        let Some(hit) = hit else {
+             continue;
+         };
+ 
+@@ -747,8 +768,15 @@ pub fn exec_sink_reconstructed_commands(
+     // Perl comments can hold a `system(...)` that never runs; mask them so a
+     // commented call is not reconstructed and over-blocked. Masking preserves
+     // length, so the sink spans still line up with `code`.
++    // Python's are masked the same way, and call text in a string nothing can
++    // run is not a call (#601).
++    let python_text = (language == ScriptLanguage::Python)
++        .then(|| PythonSinkText::read(code))
++        .flatten();
+     let masked = if language == ScriptLanguage::Perl {
+         mask_perl_comments(code)
++    } else if let Some(text) = python_text.as_ref() {
++        std::borrow::Cow::Borrowed(text.comments_masked.as_str())
+     } else {
+         std::borrow::Cow::Borrowed(code)
+     };
+@@ -771,7 +799,13 @@ pub fn exec_sink_reconstructed_commands(
+         let Some((call_start, sink)) = exec_sink_call(&caps) else {
+             continue;
+         };
+-        let region = exec_sink_arg_region(haystack, call_start);
++        let inert_string_end = python_text
++            .as_ref()
++            .and_then(|text| text.inert_string_end(call_start));
++        let region = exec_sink_arg_region(
++            inert_string_end.map_or(haystack, |end| &haystack[..end]),
++            call_start,
++        );
+         // A call the rm/git backstop owns (any `detect_destructive_in_args`
+         // hit) is left to it, so an allowlisted `rm`/`git` is not re-denied
+         // here under a pack rule id.
+@@ -805,6 +839,17 @@ pub fn exec_sink_reconstructed_commands(
+         if argv.unverified {
+             continue;
+         }
++        // In a string nothing runs, a name is text, not a value decided at run
++        // time, so it raises no dynamic-path or alias question (#601). A fully
++        // literal command is still judged, as any destructive literal is.
++        if inert_string_end.is_some()
++            && argv
++                .values
++                .iter()
++                .any(|value| value.contains(RUNTIME_VALUE))
++        {
++            continue;
++        }
+         let operands = argv.values;
+         let command = match operands.as_slice() {
+             [] => continue,
+@@ -3979,6 +4024,212 @@ fn mask_perl_comments(code: &str) -> std::borrow::Cow<'_, str> {
+     String::from_utf8(out).map_or(std::borrow::Cow::Borrowed(code), std::borrow::Cow::Owned)
+ }
+ 
++/// A Python body as the exec-sink scans read it (#601).
++///
++/// A sink name inside a comment is never a call, so comments are blanked, as
++/// Perl's are. A sink name inside a string literal becomes a call only when
++/// something runs the string, and `strings_may_run` says whether the body
++/// could: outside every string and comment it has a sink call, or a name that
++/// executes, imports or looks up code at run time. When it cannot, call text
++/// in a string is judged by its literal content alone. De
+```
+
+**File**: `src/evaluator.rs` (modified, +72/-0)
+```diff
+@@ -42302,6 +42302,78 @@ mod tests {
+         }
+     }
+ 
++    /// #601 end to end: Python call text in a comment, or in a string the body
++    /// cannot run, is not a call. Strings handed to dynamic execution, real
++    /// calls, and destructive literals are judged as before.
++    #[test]
++    fn python_call_text_in_strings_and_comments_is_not_a_call_601() {
++        let body = |code: &str| format!("python3 - <<'PY'\n{code}\nPY");
++        for command in [
++            body("s = \"subprocess.run(['git','status'\""),
++            body("# subprocess.run(['git','x'\nprint(1)"),
++            body("s = 'subprocess.run([\"git\",\"add\",*x])'"),
++            body("s = \"subprocess.Popen(['git','status'\""),
++            body("s = \"subprocess.check_output(['git','status'\""),
++            body("s = \"run(['git','status'\""),
++            body(
++                "import sys\nt = open(sys.argv[1]).read()\n\
++                 t = t.replace(\"subprocess.run(['git', 'status'\", \"run_git('status'\")",
++            ),
++            "python3 -c 'print(1)  # subprocess.run([\"git\",\"x\"'".to_string(),
++            body("s = '''subprocess.run(['git','mv',f'{old}','b'])'''"),
++            body("s = '''subprocess.Popen(['git','mv',old,'b'])'''"),
++            body(
++                "s = '''subprocess.run(\n    [\n        \"git\",\n        \"mv\",\n        \
++                 f\"{old}{suffix}\",\n    ],\n)'''",
++            ),
++            body("# subprocess.run(['git','mv',old,'b'])"),
++            body("s = '''subprocess.check_output(['git',args])'''"),
++            body("# subprocess.run(['git',args])"),
++            body("print(1)  # subprocess.run(['rm','-rf','/home/user'])"),
++            body("import subprocess\ncmd = ['git', 'status']\nsubprocess.run(cmd)"),
++        ] {
++            let result = evaluate_with_pack_ids_in_dialect(
++                &command,
++                &["core.git", "core.filesystem"],
++                ShellDialect::Posix,
++            );
++            assert!(
++                result.is_allowed(),
++                "{command:?} must be allowed: {:?}",
++                result.pattern_info
++            );
++        }
++        let rm = "import subprocess; subprocess.run(['rm','-rf','/home/user'])";
++        for command in [
++            body("import subprocess\nx = ['a']\nsubprocess.run(['git', 'add', *x])"),
++            body(&format!("exec(\"{rm}\")")),
++            body(&format!("s = \"{rm}\"\nexec(s)")),
++            body(&format!(
++                "code = compile(\"{rm}\", 'x', 'exec')\nexec(code)"
++            )),
++            body(&format!(
++                "import subprocess, sys\nsubprocess.run([sys.executable, '-c', \"{rm}\"])"
++            )),
++            body(&format!(
++                "import subprocess, sys\ns = \"{rm}\"\nsubprocess.run([sys.executable, '-c', s])"
++            )),
++            body("s = \"subprocess.run(['rm','-rf','/home/user'])\"\nprint(s)"),
++            body("import subprocess\nold = 'a'\nsubprocess.run(['git','mv',old,'b'])"),
++            body("import subprocess\nargs = 'status'\nsubprocess.check_output(['git',args])"),
++        ] {
++            let result = evaluate_with_pack_ids_in_dialect(
++                &command,
++                &["core.git", "core.filesystem"],
++                ShellDialect::Posix,
++            );
++            assert!(
++                result.is_denied(),
++                "{command:?} must stay denied: {:?}",
++                result.pattern_info
++            );
++        }
++    }
++
+     #[test]
+     fn here_string_receiver_analysis_preserves_bash_rule_allowlists_issue_555() {
+         let enabled_packs = ["core.git".to_string(), "core.filesystem".to_string()]
 ```
 
 #### Recent Merged Pull Requests:
@@ -3841,28 +3471,66 @@ Known baseline qualification failures:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security): keep grants bound to original requests and preserve DCG argv ownershi
+## X. allow-once): preserve policy precedence for exact outer grants (#599)
 
 **RULE**:
-When implementing operations in `.beads/issues.jsonl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/evaluator.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c4d3ad3d`: security): keep grants bound to original requests and preserve DCG argv ownership. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `07c53c96`: allow-once): preserve policy precedence for exact outer grants (#599). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.beads/issues.jsonl`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/evaluator.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-{"id":"bd-executable-assignment-scope","title":"Preserve destructive detection across multiple executable-variable assignments and neutral commands","description":"Decision-only evaluations against the retained e0554cd0abcb8b447aaf9089042e9ab535a8ad36 baseline, with no command grants, deny `d=git; $d reset --hard` but allow `UNREVIEWED=1 d=git; $d reset --hard`, `d=git x=1; $d reset --hard`, `true; d=git; $d reset --hard`, and `d=git; true; $d reset --hard`. The wrapped control `env UNREVIEWED=1 bash -c 'd=git; $d reset --hard'` denies. No candidate command was executed. The retained baseline binary SHA-256 is 4af034a233e77a3b2ba97180ab120ab03fc1eb6890ffe47cfc312da812f546d8.\n\nIn src/evaluator.rs, posix_executable_assignment_parts accepts one assignment word and model_literal_posix_executable_assignments models a bounded straight-line prefix. Rejected cases can reach ordinary detection with the executable still spelled `$d`, missing the known destructive action. This is separate from original-request grant ownership and requires a bounded executable-resolution correction.","acceptance_criteria":"Extend literal binding analysis to supported multiple-assignment statements and proven
+    /// An ordinary exact grant cannot hide an explicit block on a later
+    /// nested command. Policy inspection must read past whole-command grants,
+    /// including the grant whose eligibility it is checking, without spending
+    /// any of them. Recursive evaluation stays on this thread.
+    static ALLOW_ONCE_POLICY_REPLAY: std::cell::Cell<bool> = const {
+        std::cell::Cell::new(false)
+    };
+    /// A finding-only rescan can discard its verdict, so it must never spend
+    /// a stateful grant. Permanent exemptions still govern its findings.
+    static ALLOW_ONCE_SUPPRESSED: std::cell::Cell<bool> = const {
+        std::cell::Cell::new(false)
+    };
+struct AllowOncePolicyScope {
+    previous: bool,
+}
+
+impl AllowOncePolicyScope {
+    fn enter() -> Self {
+        Self {
+            previous: ALLOW_ONCE_POLICY_REPLAY.with(|slot| slot.replace(true)),
+        }
+    }
+}
+
+impl Drop for AllowOncePolicyScope {
+    fn drop(&mut self) {
+        ALLOW_ONCE_POLICY_REPLAY.with(|slot| slot.set(self.previous));
+    }
+}
+
+struct AllowOnceSuppressionScope {
+    previous: bool,
+}
+
+impl AllowOnceSuppressionScope {
+    fn enter() -> Self {
+        Self {
+            previous: ALLOW_ONCE_SUPPRE
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+/// An explicitly approved outer envelope is checked before its children run.
+/// the hit for audit output.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c4d3ad3d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `07c53c96` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T13:01:54.415Z",
+  "last_updated": "2026-10-30T13:14:05.309Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34,8 +34,8 @@
       "slug": "0xcub3-wblock",
       "platform": "github",
       "source_url": "https://github.com/0xCUB3/wBlock",
-      "source_version": "8f305ae3",
-      "content_hash": "9486cfb7f155cbc005a81646a3ab03f8ee7cbdeba5f8ada56a697e3c1055ee4c",
+      "source_version": "04c047f8",
+      "content_hash": "bf99e82356b9032a1f99d26e7850209f53c78b29267ac5cb4e318c277f588684",
       "dossier_path": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/0xcub3-wblock-learnings.md",
       "promoted_rules": [
@@ -48,6 +48,21 @@
           "number": 4581,
           "title": "filters): restore Fanboy's Social Blocking List",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5756,
+          "title": "Multi-Target Sharding of Exception-Isolated Rule Engines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5757,
+          "title": "Multi-Process Darwin IPC State-Coalescing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5758,
+          "title": "Progressive Pipeline Lifecycle Preservation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55,7 +70,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T10:21:37.669Z",
+      "verified_at": "2026-10-30T13:13:34.804Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -8687,8 +8702,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "d2240721",
-      "content_hash": "033ab191b0d22d1adc8e8c48f1f90dbbd45510cbc42aa4dd68b63dd40f3a5ad6",
+      "source_version": "aa56dfcb",
+      "content_hash": "6c4790eb39e05e75ee926022019ae2fc1450715a5f87a4f66b07fcb6c94d77cf",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8986,6 +9001,11 @@
           "number": 5741,
           "title": "Absolute Target Derivation for Decompressed Ephemeral Inputs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5750,
+          "title": "build(deps): bump Swatinem/rust-cache from 2.9.1 to 2.9.3 (#4961)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8993,7 +9013,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T10:56:34.430Z",
+      "verified_at": "2026-10-30T13:09:10.768Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9400,8 +9420,8 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "c4d3ad3d",
-      "content_hash": "f8c017933134131e5e763b336daa4d28011b9e35dec0a00a3d34ee5a82b5d0e4",
+      "source_version": "07c53c96",
+      "content_hash": "89a78d214307951cc52455d6fbaa99ab8b03a498f0b8dce45c2c5dbd0d697ec2",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
@@ -9444,6 +9464,11 @@
           "number": 5342,
           "title": "security): keep grants bound to original requests and preserve DCG argv ownershi",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5759,
+          "title": "allow-once): preserve policy precedence for exact outer grants (#599)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9451,7 +9476,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T16:33:38.240Z",
+      "verified_at": "2026-10-30T13:14:05.290Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55361,8 +55386,8 @@
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "b81465d9",
-      "content_hash": "db27976a2ab3cafaca897e43cdc4fe005f27caf83ae81c4de0d4853ccb5689b1",
+      "source_version": "2e0f4dd3",
+      "content_hash": "b77dfea2792e90885dd5f39e020c770afa0a3267ebec4ff9859812e1ccaa12ab",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "promoted_rules": [
@@ -55405,6 +55430,16 @@
           "number": 4830,
           "title": "Merge pull request #641 from VectifyAI/docs/page-search-update",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5751,
+          "title": "Cross-Process Socket and Thread Boundary Isolation on Fork",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5752,
+          "title": "Upstream Parameter Sanitization for Layered Subprocess Runtimes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55412,7 +55447,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:07:29.484Z",
+      "verified_at": "2026-10-30T13:10:12.052Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70525,8 +70560,8 @@
       "slug": "inikulin-parse5",
       "platform": "github",
       "source_url": "https://github.com/inikulin/parse5",
-      "source_version": "e32b1b0e",
-      "content_hash": "b3d242fd5e354d7f9bbdd140efe07bbe164099cf44c4446bb7203ba79047e466",
+      "source_version": "8402e101",
+      "content_hash": "ae3dec40d001d28e8b0fc1635dd704c216334deb3670f192c06d4848714c622d",
       "dossier_path": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/inikulin-parse5-learnings.md",
       "promoted_rules": [
@@ -70544,6 +70579,21 @@
           "number": 4743,
           "title": "tokenizer): append attribute values and character runs as slices of the input (#",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5753,
+          "title": "Sliding Window Stream Decoupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5754,
+          "title": "Stream Transform Backpressure DevNull Drain Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5755,
+          "title": "WHATWG Attribute Escaping Minimality Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -70551,7 +70601,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:21:46.902Z",
+      "verified_at": "2026-10-30T13:11:07.750Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153241,6 +153291,146 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T13:01:54.396Z"
+    },
+    "rule-5750": {
+      "learning_id": "rule-5750",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5750,
+      "title": "build(deps): bump Swatinem/rust-cache from 2.9.1 to 2.9.3 (#4961)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "aa56dfcb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:09:10.768Z"
+    },
+    "rule-5751": {
+      "learning_id": "rule-5751",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5751,
+      "title": "Cross-Process Socket and Thread Boundary Isolation on Fork",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "2e0f4dd3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:10:12.052Z"
+    },
+    "rule-5752": {
+      "learning_id": "rule-5752",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5752,
+      "title": "Upstream Parameter Sanitization for Layered Subprocess Runtimes",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "2e0f4dd3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:10:12.052Z"
+    },
+    "rule-5753": {
+      "learning_id": "rule-5753",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5753,
+      "title": "Sliding Window Stream Decoupling Invariant",
+      "source_url": "https://github.com/inikulin/parse5",
+      "source_version": "8402e101",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:11:07.750Z"
+    },
+    "rule-5754": {
+      "learning_id": "rule-5754",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5754,
+      "title": "Stream Transform Backpressure DevNull Drain Invariant",
+      "source_url": "https://github.com/inikulin/parse5",
+      "source_version": "8402e101",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:11:07.750Z"
+    },
+    "rule-5755": {
+      "learning_id": "rule-5755",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5755,
+      "title": "WHATWG Attribute Escaping Minimality Invariant",
+      "source_url": "https://github.com/inikulin/parse5",
+      "source_version": "8402e101",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:11:07.750Z"
+    },
+    "rule-5756": {
+      "learning_id": "rule-5756",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5756,
+      "title": "Multi-Target Sharding of Exception-Isolated Rule Engines",
+      "source_url": "https://github.com/0xCUB3/wBlock",
+      "source_version": "04c047f8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:13:34.804Z"
+    },
+    "rule-5757": {
+      "learning_id": "rule-5757",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5757,
+      "title": "Multi-Process Darwin IPC State-Coalescing Invariant",
+      "source_url": "https://github.com/0xCUB3/wBlock",
+      "source_version": "04c047f8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:13:34.804Z"
+    },
+    "rule-5758": {
+      "learning_id": "rule-5758",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5758,
+      "title": "Progressive Pipeline Lifecycle Preservation Invariant",
+      "source_url": "https://github.com/0xCUB3/wBlock",
+      "source_version": "04c047f8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:13:34.804Z"
+    },
+    "rule-5759": {
+      "learning_id": "rule-5759",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5759,
+      "title": "allow-once): preserve policy precedence for exact outer grants (#599)",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "07c53c96",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:14:05.290Z"
     }
   },
   "aliases": {

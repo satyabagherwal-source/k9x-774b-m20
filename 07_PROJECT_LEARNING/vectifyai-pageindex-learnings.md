@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source**: github ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
-> **Source Version**: `b81465d9`  
+> **Source Version**: `2e0f4dd3`  
 > **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:07:29.185Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-30T13:10:11.074Z  
 > **Learning ID**: `learn-github-vectifyai-pageindex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1486 +12,534 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): VectifyAI/PageIndex
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:07:28.660Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): VectifyAI/PageIndex
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `VectifyAI/PageIndex`
-- **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
-- **Primary Language / Ecosystem**: Python
-- **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 39842 stars
+## 1. Executive Forensic Architecture & System Mechanics
 
----
+### Exact Technical Problem Solved
+Traditional Retrieval-Augmented Generation (RAG) relies on chunking documents into arbitrary character/token segments and embedding them into high-dimensional vector spaces. This creates three critical failures on structured and dense documents (financial 10-Ks, legal filings, technical whitepapers):
+1. **Semantic Drift & Context Fragmentation**: Arbitrary chunks split tables, sentences, and hierarchical proofs across vector boundaries, discarding structural context.
+2. **Similarity $\neq$ Relevance Inversion**: Vector cosine similarity retrieves text that sounds topically similar rather than text that answers the specific logical query (e.g., retrieving definition paragraphs rather than accounting footnote tables).
+3. **Black-Box Traceability**: Dense embeddings cannot explain why a chunk was selected, preventing verifiable citation validation.
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+`VectifyAI/PageIndex` solves this by introducing **hierarchical, reasoning-driven, vectorless retrieval**. Instead of embeddings, it parses PDFs via pure layout geometry and statistical font distribution (Flash parser via `pypdfium2` and `PyPDF2`), constructs a deterministic hierarchical Table of Contents (TOC) tree, enriches nodes with LLM-generated semantic summaries, and lets reasoning LLM agents navigate the tree hierarchically via tool execution (reading summaries $\to$ choosing subtrees $\to$ requesting specific page/bounding-box text).
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: pyproject.toml, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `pageindex/utils.py`
 ```
-import contextvars
-import logging
+               [ Input Document: PDF / Raw Stream ]
+                                |
+             +------------------+------------------+
+             |                                     |
+   [ Cloud Processing API ]             [ Local Flash Parser Engine ]
+   (CloudAPI via HTTP Session)          (PDFium Font/Char Geometry)
+             |                                     |
+             |                          [ Structural Tree Synthesis ]
+             |                          - Layout Statistics / Font Adv
+             |                          - Embedded Bookmark Reconciliation
+             |                          - Deterministic Node Collapse/Merge
+             |                                     |
+             |                          [ Parallel Enrichment Lanes ]
+             |                          - Summary Lane (cap=128, prio)
+             |                          - Tree Expand Lane (cap=32)
+             |                                     |
+             +------------------+------------------+
+                                |
+                     [ Hierarchical TOC Tree ]
+                                |
+             +------------------+------------------+
+             |                                     |
+   [ Agent Navigation Engine ]          [ Local Protocol Bridges ]
+   - MCP Bridge Tool Contract           - LiteLLM Multi-Route Adapter
+   - State-Preserving Chat Stream       - Anthropic Messages API Native
+   - Citation Extract (<doc;page;block>) - OpenAI Responses Bridge
+```
+
+### Architectural Subsystem Boundaries
+1. **Flash Ingestion Engine (`pageindex/flash/`)**: Zero-LLM document geometry extraction. Analyzes char-level bounding boxes, font heights, baseline deltas, and Type-3 font matrices to discover hierarchical sections, heading tiers, and table structures directly from the layout stream.
+2. **Tree Optimization & Summarization (`pageindex/tree_optimize.py`, `flash/api.py`)**: Two-stage parallel enrichment pipeline executing over dual concurrency lanes (default 128 workers for summaries, 32 for structural expansion) with priority queuing (`contextvars.ContextVar("pageindex_llm_priority")`).
+3. **Execution Transport & Unified Client (`pageindex/client.py`, `pageindex/cloud_api.py`)**: Hybrid façade offering identical programmatic interfaces across Cloud API, Local LiteLLM proxies, Anthropic Messages native API, OpenAI Responses API, and local Claude Code subprocess execution (`claude-code/*`).
+4. **Agent Tool Contract & Protocol Bridges (`pageindex/agent_tools.py`, `pageindex/mcp_bridge.py`)**: Full implementation of the Model Context Protocol (MCP) server contract over local memory, wrapping tree traversal (`browse_documents`, `get_document_structure`, `get_page_content`) with deterministic error suppression, pagination offsets, and char budget limits.
+5. **Stream Synthesis & Citation Parsing (`pageindex/chat_stream.py`)**: Unified streaming abstraction (`ChatStream`, `MessagesStream`, `ChatObject`) with strict single-view consumption claims, zero-overhead attribute routing, and dual regex citation extraction (`<doc=...;page=...>` and `<cite doc=... page=.../>`).
+
+---
+
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+### 1. Cross-Process Socket and Thread Boundary Isolation on Fork
+**RULE**:
+Any runtime managing long-lived I/O connection pools (e.g., `requests.Session`, `urllib3.PoolManager`, `httpx.Client`) or asynchronous background daemon threads MUST invalidate all socket handles and join/cancel pending futures immediately upon a process `fork()`. Systems MUST register hooks via `os.register_at_fork(before=..., after_in_child=...)` on POSIX runtimes to enforce this invariant.
+
+**WHY**:
+When a process forks mid-execution, child processes inherit the parent's file descriptors, including open TCP sockets and SSL session states, without inheriting the parent's background threads. If the parent or another child writes to or reads from that pooled socket, the child process will read interleaved TLS frames or cross-talk HTTP responses intended for another worker, leading to cryptographic protocol deadlocks, response hijacking, or infinite hangs. Similarly, if a thread was holding the Python GIL or an internal import lock during fork, the child process will deadlock permanently when calling `import`.
+
+**WHEN TO APPLY**:
+Applies to all multi-processing architectures, background LLM batch processing pipelines, Gunicorn/Uvicorn worker models, and CLI tools spawning `multiprocessing.Pool` or `ProcessPoolExecutor` in Python, C++, or Go.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
 import os
 import sys
-import textwrap
-from datetime import datetime
-import time
-import json
-import PyPDF2
-import copy
-import asyncio
-import heapq
-from contextlib import asynccontextmanager
-from io import BytesIO
-from dotenv import find_dotenv, load_dotenv
-load_dotenv(find_dotenv(usecwd=True))
-# litellm's import fetches its model map over the network unless told not to.
-os.environ.setdefault("LITELLM_LOCAL_MODEL_COST_MAP", "True")
-import logging
-import yaml
-from pathlib import Path
-from types import SimpleNamespace as config
-import re
+import threading
+from typing import Optional
+import requests
 
-# litellm is imported inside the functions that use it; eager import is slow
-# and fetches a remote model-cost map.
+class ProcessIsolatedSession:
+    """Guarantees connection pool invalidation across fork boundaries."""
+    def __init__(self):
+        self._session: Optional[requests.Session] = requests.Session()
+        self._pid: int = os.getpid()
+        self._lock = threading.Lock()
 
+    @property
+    def http(self) -> requests.Session:
+        current_pid = os.getpid()
+        if self._pid != current_pid:
+            with self._lock:
+                if self._pid != current_pid:
+                    # Invalidate inherited parent socket pool in child
+                    if self._session:
+                        try:
+                            self._session.close()
+                        except Exception:
+                            pass
+                    self._session = requests.Session()
+                    self._pid = current_pid
+        return self._session
 
-# The indexing lane's connection overrides, scoped by LocalAPI around each
-# indexing operation — a contextvar, so the value reaches this module's
-# helpers and their asyncio tasks without threading it through every call.
-_llm_backend: contextvars.ContextVar = contextvars.ContextVar(
-    "pageindex_llm_backend", default=None)
+# Global registration for libraries with module-level internal client caches
+def _purge_inherited_runtime_state():
+    # 1. Flush LiteLLM / external HTTP connection caches
+    litellm = sys.modules.get("litellm")
+    cache = litellm and vars(litellm).get("in_memory_llm_clients_cache")
+    if cache is not None:
+        cache.flush_cache()
 
-# Same scope: the dict the token usage of every indexing model call is
-# summed into, which LocalAPI returns from submit_document.
-_llm_usage: contextvars.ContextVar = contextvars.ContextVar(
-    "pageindex_llm_usage", default=None)
+if hasattr(os, "register_at_fork"):
+    os.register_at_fork(after_in_child=_purge_inherited_runtime_state)
+```
 
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Reusing singleton session across forked multiprocessing pool
+GLOBAL_SESSION = requests.Session()
 
-def _add_usage(response) -> None:
-    usage, counted = _llm_usage.get(), getattr(response, "usage", None)
-    if usage is None or counted is None:
-        return
-    prompt = getattr(counted, "prompt_tokens", 0) or 0
-    completion = getattr(counted, "completion_tokens", 0) or 0
-    details = getattr(counted, "prompt_tokens_details", None)
-    cached = getattr(details, "cached_tokens", 0)
-    cache_write = getattr(details, "cache_write_tokens", 0)
-    reasoning = getattr(getattr(counted, "completion_tokens_details", None),
-                        "reasoning_tokens", 0)
-    usage["prompt_tokens"] += prompt
-    usage["completion_tokens"] += completion
-    usage["total_tokens"] += prompt + completion
-    usage["prompt_tokens_details"]["cached_tokens"] += cached or 0
-    usage["prompt_tokens_details"]["cache_write_tokens"] += cache_write or 0
-    usage["completion_tokens_details"]["reasoning_tokens"] += reasoning or 0
+def worker_task(url: str):
+    # DANGEROUS: Multiple children execute requests concurrently over the
+    # EXACT same inherited file descriptor / socket pool!
+    return GLOBAL_SESSION.get(url).json()
+```
 
+**VERIFICATION METHOD**:
+Run an integration harness spawning 8 worker processes via `multiprocessing.Pool(8)` that execute 200 concurrent HTTP queries using an inherited client instance. Verify with an assertion that zero socket read collisions occur (`assert response.json()["call_id"] == expected_call_id`) and that no process hangs waiting for orphaned parent threads.
 
-def _add_usage_counts(counts, usage=None) -> None:
-    """Add a chat-shape usage dict (a claude-code/ run's) to the tally."""
-    usage = _llm_usage.get() if usage is None else usage
-    if usage is None:
-        return
-    for key, value in counts.items():
-        if isinstance(value, dict):
-            _add_usage_counts(value, usage.setdefault(key, {}))
-        else:
-            usage[key] = usage.get(key, 0) + (value or 0)
+---
 
+### 2. Upstream Parameter Sanitization for Layered Subprocess Runtimes
+**RULE**:
+When an application invokes an external CLI tool or agent runtime (such as Claude Code, GitHub Copilot CLI, or OpenAI Operator) via subprocess or bridge, any explicit programmatic option passed by the user MUST forcibly override and scrub conflicting environmental configuration variables (e.g., setting the conflicting environment variable to empty string `""` or unsetting it) before launching the subprocess.
 
-def _repair_litellm_types() -> None:
-    """litellm 1.97.0's Message/Delta annotations carry nested forward refs
-    Python 3.10 cannot resolve (BerriAI/litellm#36384), so every completion
-    dies constructing its response. Rebuild them once with the defining
-    modules' names; no-op on 3.11+ and on fixed litellm releases."""
-    if sys.version_info >= (3, 11):
-        return
-    try:
-        import litellm.types.llms.openai as openai_types
-        import litellm.types.utils as litellm_types
-        namespace = {**vars(openai_types), **vars(litellm_types)}
-        litellm_types.Message.model_rebuild(_types_namespace=namespace)
-        litellm_types.Delta.model_rebuild(_types_namespace=namespace)
-    except Exception:
-        pass  # best-effort: a failed repair leaves litellm's own error
+**WHY**:
+Modern CLI agents prioritize persistent system-level environment variables (e.g., `CLAUDE_CODE_EFFORT_LEVEL` in `.bashrc` or terminal profile) over transient command-line arguments (e.g., `--effort`). When an automated SDK orchestrates this CLI underneath, caller-specified execution parameters are silently swallowed and overridden by the host's background environment, corrupting reasoning limits, billing tiers, and execution behavior without throwing errors.
 
+**WHEN TO APPLY**:
+Subprocess agent runners, CLI wrappers, containerized tool bridges, and LLM orchestration layers interacting with third-party local agent CLIs.
 
-def _mute_litellm_bridge_usage_warning() -> None:
-    """litellm's chat→Responses bridge (e.g. OpenAI gpt-5.4+ with function
-    tools) logs a chat-shaped usage dict inside a ResponseAPIUsage field
-    (litellm_logging._get_assembled_streaming_response, 1.97 through at
-    least 1.105), and pydantic reports it on every streamed turn. Hide
-    exactly that message; every other warning still surfaces."""
-    import warnings
-    warnings.filterwarnings(
-        "ignore",
-        message=r"Pydantic serializer warnings:\s+"
-                r"(PydanticSerializationUnexpectedValue\()?Expected `ResponseAPIUsage`")
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import os
+import subprocess
+from typing import Mapping, Optional
 
+def build_sanitized_subprocess_env(
+    explicit_effort: Optional[str],
+    base_env: Optional[Mapping[str, str]] = None
+) -> dict[str, str]:
+    """
+    Prevents host shell profile variables from overriding explicit programmatic settings.
+    """
+    env = dict(base_env if base_env is not None else os.environ)
+    if explicit_effort is not None:
+        # Claude Code ranks CLAUDE_CODE_EFFORT_LEVEL above CLI flag --effort.
+        # Passing empty string blanks it out, forcing CLI parameter adherence.
+        env["CLAUDE_CODE_EFFORT_LEVEL"] = ""
+    return env
 
-def _quiet_litellm() -> None:
-    """Mute litellm's stdout "Provider List:" banner and default its loggers
-    to LITELLM_LOG (ERROR unset); a level set elsewhere stays."""
-    import litellm
-    litellm.suppress_debug_info = True
-    level = getattr(logging, os.environ.get("LITELLM_LOG", "ERROR").upper(),
-                    logging.ERROR)
-    for name in ("LiteLLM", "LiteLLM Router", "LiteLLM Proxy", "litellm"):
-        logger = logging.getLogger(name)
-        if logger.level == logging.NOTSET:
-            logger.setLevel(level)
+def execute_agent_step(cmd: list[str], reasoning_effort: Optional[str]) -> str:
+    env = build_sanitized_subprocess_env(reasoning_effort)
+    proc = subprocess.run(
+        cmd,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    return proc.stdout
+```
 
-# Backward compatibility: support CHATGPT_API_KEY as alias for OPENAI_API_KEY
-if not os.getenv("OPENAI_API_KEY") and os.getenv("CHATGPT_API_KEY"):
-    import warnings
-    warnings.warn("CHATGPT_API_KEY is deprecated — set OPENAI_API_KEY "
-                  "instead.", FutureWarning)
-    os.environ["OPENAI_API_KEY"] = os.getenv("CHATGPT_API_KEY")
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Assuming subprocess arguments always override environment variables
+def execute_agent_step(cmd: list[str], reasoning_effort: str):
+    # If caller environment contains CLAUDE_CODE_EFFORT_LEVEL="max",
+    # the CLI ignores '--effort low' completely!
+    cmd.extend(["--effort", reasoning_effort])
+    subprocess.run(cmd, env=os.environ)
+```
 
-def count_tokens(text, model=None):
-    if not text:
-        return 0
-    import litellm
-    try:
-        return litellm.token_counter(model=model, text=text)
-    except Exception:
-        return litellm.token_counter(model=None, text=text)
+**VERIFICATION METHOD**:
+Construct an automated test that sets `os.environ["CLAUDE_CODE_EFFORT_LEVEL"] = "high"`, executes a mock agent run requesting `reasoning_effort="low"`, and intercepts the final payload dispatched to the model server. The test MUST fail if the outbound payload contains `high` reasoning parameters instead of `low`.
 
+---
 
-def _strip_prefix(s, prefix):
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Cross-Process TCP Socket Race Condition on Fork Pool (BUG-PAGEINDEX-01)
+- **Context**: `pageindex/cloud_api.py` and `pageindex/utils.py` handling parallel indexing pipelines.
+- **What Was Expected**: Multi-process worker pools (`multiprocessing.Pool(8)`) executing 240 document indexing requests against the cloud backend or LiteLLM endpoints should complete without socket corruption or deadlocks.
+- **What Actually Happened**: In a pool of 8 processes running 240 index calls, child processes inherited open socket handles from the parent's `requests.Session`. Worker processes received responses belonging to other worker processes, and 2 out of 3 batch runs hung indefinitely.
+- **Evidence in Repo**: PR #644 ("forked processes drop LiteLLM's connections"); Commit `2e0f4dd3`; Files `pageindex/cloud_api.py`, `pageindex/utils.py`.
+- **Root Cause**: Python's `requests.Session` caches connection adapters containing active TCP sockets. When `os.fork()` is called, these file descriptors are duplicated into child address spaces. Multiple child processes executed simultaneous `read()` and `write()` operations on the identical socket file descriptor, causing TCP stream interleaving and SSL session errors.
+- **Remediation Code Diff**:
+```python
+--- a/pageindex/cloud_api.py
++++ b/pageindex/cloud_api.py
+@@ -1,4 +1,5 @@
++import os
+ import requests
++from .retry import cloud_session
+
+ class CloudAPI:
+     def __init__(self, client):
+         self._client = client
++        self._session, self._pid = cloud_session(), os.getpid()
+
++    @property
++    def _http(self):
++        # a forked process would read replies off the sockets its parent pooled
++        if self._pid != os.getpid():
++            self._session, self._pid = cloud_session(), os.getpid()
++        return self._session
+```
+```python
+--- a/pageindex/utils.py
++++ b/pageindex/utils.py
+@@ -120,6 +120,13 @@
++def _drop_litellm_clients():
++    litellm = sys.modules.get("litellm")
++    cache = litellm and vars(litellm).get("in_memory_llm_clients_cache")
++    if cache is not None:
++        cache.flush_cache()
++
++if hasattr(os, "register_at_fork"):
++    os.register_at_fork(after_in_child=_drop_litellm_clients)
+```
+- **Lesson**: Never store raw HTTP session singletons across fork points. Bind sessions to PID state or hook `os.register_at_fork` to purge all pooled connection caches immediately upon process fork.
+
+---
+
+### Incident 2: Subprocess Environment Variable Shadowing CLI Flags (BUG-PAGEINDEX-02)
+- **Context**: `pageindex/client.py` and local Claude Code agent orchestration.
+- **What Was Expected**: Passing explicit `reasoning_effort="none"` or `"low"` to `PageIndexClient` should force Claude Code to disable or throttle thinking steps during tree summarization.
+- **What Actually Happened**: The caller's shell environment or `.bashrc` had `CLAUDE_CODE_EFFORT_LEVEL` set. Claude Code version 2.1.301 silently gave precedence to `CLAUDE_CODE_EFFORT_LEVEL` over the command-line flag `--effort`, ignoring SDK options and depleting user token quotas.
+- **Evidence in Repo**: Issue #643, PR #640, Commit `9846a9c`.
+- **Root Cause**: Inversion of configuration precedence in third-party CLI tooling. The SDK assumed standard POSIX behavior where explicit CLI arguments override inherited environment variables.
+- **Remediation Code Diff**:
+```python
+--- a/pageindex/client.py
++++ b/pageindex/client.py
+@@ -387,9 +392,14 @@
++def claude_code_options(reasoning_effort: Optional[str], **kwargs) -> dict:
++    env = dict(os.environ)
++    if reasoning_effort is not None:
++        # Blank CLAUDE_CODE_EFFORT_LEVEL in the CLI's environment when given
++        # an explicit reasoning_effort ("" reads as unset in the tool runner).
++        env["CLAUDE_CODE_EFFORT_LEVEL"] = ""
++    return {"env": env, **kwargs}
+```
+- **Lesson**: Do not trust third-party binaries to honor flag precedence over ambient environment variables. Actively neutralize the corresponding environment variable when providing programmatic arguments.
+
+---
+
+### Incident 3: Shared In-Memory Stream Buffer Race in Parallel PDF Parsing (BUG-PAGEINDEX-03)
+- **Context**: `pageindex/flash/parser_pdfium_charlevel/pipeline.py` and `parser_pdfium_parallel.py`.
+- **What Was Expected**: Extracting metadata and character geometry from an in-memory `io.BytesIO` PDF handle must operate without corrupting buffer seek pointers across concurrent parser libraries (`pypdfium2` and `PyPDF2`).
+- **What Actually Happened**: When parsing character-level metadata, `pypdfium2` and `PyPDF2` concurrently consumed the exact same `io.BytesIO` object. `PyPDF2` seek operations altered the read offset while `pypdfium2` was reading raw bytes, causing truncated byte streams and crashes with `PdfReadError`.
+- **Evidence in Repo**: Commit `2e0f4dd3`; Files `pipeline.py` and `parser_pdfium_parallel.py`.
+- **Root Cause**: Object aliasing of mutable I/O handles across decoupled parsing engines. `BytesIO` holds internal stateful offset pointers (`tell()` / `seek()`), making it thread-unsafe and concurrent-read unsafe.
+- **Remediation Code Diff**:
+```python
+--- a/pageindex/flash/parser_pdfium_charlevel/pipeline.py
++++ b/pageindex/flash/parser_pdfium_charlevel/pipeline.py
+@@ -222,15 +222,14 @@
+     try:
+         if isinstance(doc_handle, (str, Path)):
+             pdf_doc = _PdfDoc(_pypdf2.PdfReader(str(doc_handle)))
+         elif isinstance(doc_handle, BytesIO):
+-            pdf_doc = _PdfDoc(_pypdf2.PdfReader(doc_handle))
++            # Read a copy so we never race pdfium's read of the same buffer.
++            pdf_doc = _PdfDoc(_pypdf2.PdfReader(BytesIO(doc_handle.getvalue())))
+     except Exception:
+         pdf_doc = None
+```
+- **Lesson**: Never pass the same in-memory stream buffer instance to two different parsing subsystems. Provide an isolated copy (`BytesIO(handle.getvalue())`) to preserve independent stream seek pointers.
+
+---
+
+### Incident 4: Premature Termination of Background Import Threads at Fork (BUG-PAGEINDEX-04)
+- **Context**: `pageindex/client.py` background initialization of heavy dependencies (`litellm`).
+- **What Was Expected**: `_preload_litellm()` spawns a daemon thread to load `litellm` lazily in the background. If the user forks the main process, child workers should safely import dependencies without hanging.
+- **What Actually Happened**: If a child process was forked while the background thread held Python's internal import lock, the child process deadlocked permanently upon any subsequent import statement because the thread holding the lock did not exist in the child.
+- **Evidence in Repo**: Commit `2e0f4dd3`, `pageindex/client.py`.
+- **Root Cause**: Forking a multi-threaded Python process duplicates only the calling thread into the child. Any locks held by other threads (including Python's internal module import locks) remain permanently acquired in the child address space.
+- **Remediation Code Diff**:
+```python
+--- a/pageindex/client.py
++++ b/pageindex/client.py
+@@ -30,7 +30,12 @@
+     def _import() -> None:
+         try:
+             import litellm  # noqa: F401
+         except Exception:
+             pass
+
+-    threading.Thread(target=_import, daemon=True).start()
++    thread = threading.Thread(target=_import, daemon=True)
++    thread.start()
++    if hasattr(os, "register_at_fork"):
++        # a child forked mid-import would wait forever on the import lock of
++        # a thread it lacks, so a fork waits for the import to finish
++        os.register_at_fork(before=thread.join)
+```
+- **Lesson**: When utilizing background daemon threads to warm up imports or caches, register a `before` fork handler to block and `join()` the thread, ensuring all system locks are released before process duplication.
+
+---
+
+### Incident 5: Silent Drop of Model Context Window Stop Reason (BUG-PAGEINDEX-05)
+- **Context**: `pageindex/utils.py` and LiteLLM streaming response handler.
+- **What Was Expected**: When Claude or another LLM exceeds its maximum context window during tree indexing or chat, the SDK should raise a clear error and expose the partial answer.
+- **What Actually Happened**: LiteLLM encountered Anthropic's `model_context_window_exceeded` finish reason. Because this token was missing from LiteLLM's internal `_FINISH_REASON_MAP`, LiteLLM fell back to mapping it to a normal `"stop"` finish reason, allowing incomplete, truncated text to be treated as a successful completion.
+- **Evidence in Repo**: PR #644; Commit `2e0f4dd3`; File `pageindex/utils.py`.
+- **Root Cause**: Permissive fallback logic in translation layer. The bridge mapped unrecognized stop reasons to normal completion instead of failure.
+- **Remediation Code Diff**:
+```python
+--- a/pageindex/utils.py
++++ b/pageindex/utils.py
+@@ -85,6 +85,14 @@
+ def _quiet_litellm() -> None:
+     import litellm
++    try:
++        from litellm.litellm_core_utils.core_helpers import _FINISH_REASON_MAP
++    except ImportError:
++        pass
++    else:
++        # Map Claude's stop at context window to "length" instead of default "stop"
++        _FINISH_REASON_MAP.setdefault("model_context_window_exceeded", "length")
+```
+- **Lesson**: Do not allow third-party protocol mappers to normalize catastrophic failure tokens into successful completions. Explicitly inject expected termination invariants into the translation lookup table.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Implicit Falsy vs. Explicit None Checking**: When accumulating token metrics, `0` is a valid token count. Using `or` expressions without explicit `None` guards causes subtle zero-drop bugs:
+```python
+# CORRECT INVARIANT in pageindex/utils.py:
+prompt = getattr(counted, "prompt_tokens", 0) or 0
+completion = getattr(counted, "completion_tokens", 0) or 0
+# Notice getattr default prevents AttributeError, and 'or 0' converts None to 0.
+
+# WRONG:
+prompt = getattr(counted, "prompt_tokens")
+usage["prompt_tokens"] += prompt # TypeError if prompt is None
+```
+- **Strict Prefix Stripping without String Mutation**: `str.lstrip()` strips sets of characters, not literal words. `pageindex/utils.py` enforces exact prefix slice boundaries:
+```python
+def _strip_prefix(s: str, prefix: str) -> str:
     if s.startswith(prefix):
         return s[len(prefix):]
     return s
-
-
-def run_off_loop(func, *args):
-    """Run func now, or on a worker thread when this thread already runs an
-    asyncio loop (func may itself call asyncio.run)."""
-    try:
-        asyncio.get_running_loop()
-    except RuntimeError:
-        pass  # called below, so its errors don't chain onto this one
-    else:
-        from concurrent.futures import ThreadPoolExecutor
-        with ThreadPoolExecutor(max_workers=1) as pool:
-            return pool.submit(func, *args).result()
-    return func(*args)
-
-
-def _litellm_model(model):
-    """Normalize to LiteLLM's grammar (``litellm/`` strips, bare names get
-    the ``openai/`` wire form — same as the chat lane) and refuse an
-    unknown provider with the 404 the retry loop treats as unrecoverable.
-    Credentials are LiteLLM's own call, made at the first completion."""
-    if not model:
-        return model
-    model = _strip_prefix(model, "litellm/")
-    if "/" not in model:
-        model = f"openai/{model}"
-    import litellm
-    provider = model.split("/", 1)[0]
-    providers = getattr(litellm, "provider_list", None)
-    # custom_provider_map providers join provider_list only at call time.
-    custom = {entry.get("provider") for entry
-              in getattr(litellm, "custom_provider_map", None) or []}
-    if providers and provider not in providers and provider not in custom:
-        raise litellm.NotFoundError(
-            f"'{model}' routes through LiteLLM, but '{provider}' is not a "
-            f"LiteLLM provider. For an OpenAI-compatible server serving "
-            f"this model id, use 'openai/{model}' and point "
-            f"OPENAI_BASE_URL at the server.",
-            llm_provider=None, model=model)
-    return model
-
-
-# Misconfiguration: no retry can fix a rejected key or a model that does not
-# exist, and every later call fails the same way. An unknown status is a
-# transport failure and stays retryable.
-_UNRECOVERABLE_STATUS = frozenset({401, 403, 404})
-
-# A 400 (context_length_exceeded) is equally unfixable by retry — the prompt
-# will not shrink — but it is per-prompt: the ladder raises it immediately
-# and consumers absorb it instead of failing the run.
-_NO_RETRY_STATUS = _UNRECOVERABLE_STATUS | frozenset({400})
-
-
-class LLMRetriesExhausted(RuntimeError):
-    """The retry ladder gave up; carries the last error's status_code."""
-
-    def __init__(self, message, status_code=None):
-        super().__init__(message)
-        self.status_code = status_code
-
-
-def _is_unrecoverable(exc: Exception) -> bool:
-    if isinstance(exc, LLMRetriesExhausted):
-        # 400 carries context_length_exceeded, the per-prompt failure the
-        # caller absorbs (see above); any other exhausted ladder is fatal.
-        return exc.status_code != 400
-    return getattr(exc, "status_code", None) in _UNRECOVERABLE_STATUS
-
-
-def llm_completion(model, prompt, chat_history=None, return_finish_reason=False):
-    from .integrations.claude_agent_sdk import claude_code_complete, is_claude_code
-    if is_claude_code(model):
-        if chat_history or return_finish_reason:
-            raise ValueError("claude-code/ models index in flash mode only; "
-                             "standard mode needs an API model.")
-        return run_off_loop(asyncio.run, claude_code_complete(model, prompt))
-    import litellm
-    max_retries = 10
-    messages = list(chat_history) + [{"role": "user", "content": prompt}] if chat_history else [{"role": "user", "content": prompt}]
-    backend = _llm_backend.get()
-    model = _litellm_model(model)
-    _repair_litellm_types()
-    _quiet_litellm()
-    for i in range(max_retries):
-        try:
-            response = litellm.completion(**{
-                "model": model,
-                "messages": messages,
-                "drop_params": True,
-                # the loop is the retry policy; the merge lets a backend override win
-                "max_retries": 0,
-                **(backend or {}),
-            })
-            _add_usage(response)
-            content = response.choices[0].message.content
-            if return_finish_reason:
-                finish_reason = "max_output_reached" if response.choices[0].finish_reason == "length" else "finished"
-                return content, finish_reason
-            return content
-        except Exception as e:
-            if getattr(e, "status_code", None) in _NO_RETRY_STATUS:
-                raise
-            logging.error(f"Error: {e}")
-            if i < max_retries - 1:
-                logging.warning("Retrying LLM completion")
-                time.sleep(1)
-            else:
-                raise LLMRetriesExhausted(
-                    f"LLM completion failed after {max_retries} retries: {e}",
-                    status_code=getattr(e, "status_
+# Prevents bug: "litellm/model".lstrip("litellm/") -> "model", but "llll/test".lstrip("l/") -> "test"
+```
+- **Attribute Access Routing via Read-Only Facades**: In `pageindex/chat_stream.py`, `ChatObject` inherits from `dict`, but intercepts `__setattr__` to preserve data integrity:
+```python
+def __setattr__(self, name: str, value: Any) -> None:
+    if not name.startswith("_"):
+        raise AttributeError(f"attributes are a read-only view; set [{name!r}] instead")
+    super().__setattr__(name, value)
 ```
 
-### Core Architecture Module: `cookbook/pageindex-claude-subscription.py`
+---
+
+### 2. Infinite Loop & Recursion Guards
+- **Stream View Monopolization Guard**: A streaming response cannot be consumed as both raw text pieces and structured event dictionaries without generating infinite loops or buffer race conditions. `ChatStream` enforces mutual exclusion:
+```python
+def _claim(self, view: str) -> None:
+    if self._view is not None and self._view != view:
+        raise PageIndexAPIError(
+            f"This chat stream is being consumed as {self._view}; one "
+            "run serves one view — call chat() again for the other."
+        )
+    self._view = view
 ```
-"""PageIndex can use your Claude subscription to call Claude models through
-Claude Code: usage is covered by your plan, and no API key is needed.
-
-    pip install -U "pageindex[claude]"
-
-Log in with your Claude subscription: run `claude`, then /login (install
-Claude Code first if needed). Then:
-
-    python pageindex-claude-subscription.py
-"""
-from pathlib import Path
-
-import requests
-from pageindex import PageIndexClient
-
-url = "https://arxiv.org/pdf/2610.14224v1"  # the Harness² paper
-Path("harness2.pdf").write_bytes(requests.get(url).content)
-
-client = PageIndexClient(
-    index="claude-code/haiku",          # model to build the tree index
-    chat="claude-code/opus",            # model to retrieve from the tree and answer
-)
-print("Indexing harness2.pdf...")
-doc_id = client.submit_document("harness2.pdf")["doc_id"]
-print(f"Indexed, doc_id: {doc_id}\n")
-
-question = "How does Harness² guide harness edits without a ground-truth verifier?"
-for chunk in client.chat(question, doc_id=doc_id, stream=True):
-    print(chunk, end="", flush=True)
-print()
-
-```
-
-### Core Architecture Module: `pageindex/__init__.py`
-```
-"""PageIndex SDK."""
-from typing import TYPE_CHECKING as _TYPE_CHECKING
-
-from .chat_stream import ChatStream, MessagesStream, ChatObject
-from .client import PageIndexClient, PageIndexCloudClient, PageIndexLocalClient
-from .errors import PageIndexAPIError
-from .types import (ChatConfig, ChatProcessOptions, CloudIndexConfig,
-                    IndexConfig, LocalIndexConfig)
-
-if _TYPE_CHECKING:
-    from .flash import page_index_flash
-    from .imaging import highlight_region
-    from .page_index_classic import page_index, page_index_main
-    from .page_index_md import md_to_tree
-    from .tree_optimize import optimize_tree
-
-__all__ = [
-    "PageIndexClient", "PageIndexCloudClient", "PageIndexLocalClient",
-    "PageIndexAPIError",
-    "IndexConfig", "CloudIndexConfig", "LocalIndexConfig", "ChatConfig",
-    "ChatProcessOptions", "ChatStream", "MessagesStream", "ChatObject",
-    "page_index", "page_index_main", "page_index_flash",
-    "optimize_tree", "md_to_tree", "highlight_region",
-]
-
-_LAZY = {
-    "highlight_region": ".imaging",
-    "page_index_flash": ".flash",
-    "optimize_tree": ".tree_optimize",
-    "md_to_tree": ".page_index_md",
+- **Pagination Offset Upper Bounds**: In `pageindex/agent_tools.py`, pagination offsets are bounded by JavaScript's `Number.MAX_SAFE_INTEGER` ($2^{53} - 1 = 9007199254740991$) to prevent numerical overflow in JSON-RPC bridges:
+```python
+"offset": {
+    "type": "integer",
+    "minimum": 0,
+    "maximum": 9007199254740991,
+    "default": 0
 }
-_SUBMODULES = {"agent_tools", "chat_stream", "client", "cloud_api", "errors",
-               "flash", "imaging", "integrations", "local_api", "local_chat",
-               "local_store", "mcp_bridge", "page_index_classic",
-               "page_index_md", "tree_optimize", "types", "utils"}
-
-
-def __getattr__(name):
-    if name.startswith("_"):
-        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-    import importlib
-    if name in _SUBMODULES:
-        return importlib.import_module(f".{name}", __name__)
-    module = importlib.import_module(_LAZY.get(name, ".page_index_classic"), __name__)
-    try:
-        value = getattr(module, name)
-    except AttributeError:
-        raise AttributeError(f"module {__name__!r} has no attribute {name!r}") from None
-    globals()[name] = value
-    return value
-
-
-def __dir__():
-    return sorted(set(globals()) | set(__all__) | _SUBMODULES)
-
 ```
-
-### Core Architecture Module: `pageindex/_version.py`
-```
-"""Installed-package version, shared by every surface that reports it upstream."""
-from __future__ import annotations
-
-
-def sdk_version() -> str:
-    try:
-        from importlib.metadata import version
-        return version("pageindex")
-    except Exception:
-        return "0.0.0"
-
-```
-
-### Core Architecture Module: `pageindex/agent_tools.py`
-```
-"""Agent tools: the cloud MCP tool contract, executed against a PageIndexClient.
-
-Tool names and the surviving input-schema structure match the PageIndex
-cloud MCP server — the local surface hides the documented cloud-only
-parameters — so agent prompts port across the cloud MCP connection and
-this in-process layer. Only the tools that exist in every mode are
-registered (no folders, search_documents, or get_document_image), and the
-guidance strings (tool descriptions) adapt to the local surface the same
-way the agent instructions do — they never teach capabilities that only
-exist on the cloud.
-
-Tools never raise: every outcome, including errors, is returned as the
-same JSON envelope the cloud emits ({"success": true, ...} /
-{"error": ...}) — arguments outside a pruned local signature come back as
-that envelope too, on the direct and the call_tool path alike, except
-browse_documents' ``recursive``: call_tool honors it, because the flat
-no-folders shape it asks for is trivially true here. The exceptions to
-never-raise, all cloud: a 401/403, a 429/5xx that outlived the bridge's
-retries, an unreachable server and a RATE_LIMITED / USAGE_LIMIT_REACHED
-tool error re-raise PageIndexAPIError.
-"""
-from __future__ import annotations
-
-import copy
-import difflib
-import inspect
-import json
-import re
-import threading
-import time
-import weakref
-from typing import Any, Callable, Optional
-
-import requests
-
-from .errors import PageIndexAPIError
-from .mcp_bridge import render_prompt_text, render_text
-
-TOOL_RESPONSE_CHAR_LIMIT = 100_000
-STRUCTURE_FIRST_PAGE_THRESHOLD = 20
-
-_CHAR_BUDGET = int(TOOL_RESPONSE_CHAR_LIMIT * 0.95)
-_MAX_REQUESTED_PAGES = 10_000
-_SIMILAR_NAMES_LIMIT = 3
-_TOOL_WAIT_TIMEOUT = 180.0  # "up to 3 minutes", per the wait_for_completion schema
+- **Bounded Polling Intervals with Hard Timeouts**: In `agent_tools.py`, document completion polling uses deterministic step ceilings:
+```python
+_TOOL_WAIT_TIMEOUT = 180.0
 _TOOL_WAIT_INTERVAL = 5.0
 
-_DOC_NAME_DESCRIPTION = (
-    'Copy the `name` field verbatim from a browse_documents() or '
-    'search_documents() response (case-sensitive, include extension). '
-    'Example: "Q3 Report.pdf". If the response shows two documents with the '
-    'same name, pass `folder_id` alongside to disambiguate.'
-)
-_FOLDER_ID_DISAMBIGUATOR_DESCRIPTION = (
-    'Disambiguator for same-name documents. Copy the `folder_id` from the '
-    'intended browse/search result; use "root" for root-level documents, or '
-    '"shared-with-me"/"following" for the read-only folders at the library '
-    'root; omit if `doc_name` is unique. Copy any folder_id verbatim from a '
-    'browse_documents()/get_folder_structure() response, never construct one.'
-)
-_WAIT_FOR_COMPLETION_DESCRIPTION = (
-    "If true and document is processing, automatically wait up to 3 minutes "
-    "until completed. Reduces repeated tool calls."
-)
-
-#: Tool names, descriptions, and parameter schemas, identical to the cloud
-#: MCP server's tools/list.
-TOOL_CONTRACT: dict[str, dict[str, Any]] = {
-    "browse_documents": {
-        "annotations": {"readOnlyHint": True, "openWorldHint": False},
-        "description": (
-            "Primary document retrieval tool. After orienting with "
-            "`get_folder_structure()` (when available) — and, for queries "
-            "that may involve typed attributes, pairing it with "
-            "`get_metadata_schema()` so you know which fields metadata mode "
-            "could filter on — use this for all document-related questions. "
-            "The bare call returns root-level sub-folders and documents; pass "
-            "`folder_id` to drill into a sub-folder level by level. Use "
-            '`sort="relevance"` + `query` for semantic ranking. Do NOT jump '
-            "to `search_documents()` first — keyword search and metadata mode "
-            "are escalation paths, only after "
-            '`browse_documents(sort="relevance")` + the persistence retries '
-            "have failed. `browse_documents` does not filter by attribute — "
-            "for typed-attribute queries, escalate to "
-            '`search_documents(mode="metadata")`.'
-        ),
-        "schema": {
-            "type": "object",
-            "properties": {
-                "folder_id": {
-                    "type": "string",
-                    "default": "root",
-                    "description": (
-                        'Folder scope (default "root"). Pass a specific folder '
-                        'ID to scope into that folder, or "root" to reference '
-                        "the library root. The read-only \"shared-with-me\" and "
-                        '"following" folders live at the library root — pass '
-                        "one of those ids to browse them. Copy any folder_id "
-                        "verbatim from a browse/tree response, never construct "
-                        "one. Combine with `recursive` to control breadth."
-                    ),
-                },
-                "recursive": {
-                    "type": "boolean",
-                    "default": False,
-                    "description": (
-                        "Whether to include documents from descendant folders. "
-                        "When false (default), returns the direct contents of "
-                        "folder_id along with its sub-folders — prefer this for "
-                        "level-by-level exploration so you retain folder "
-                        "hierarchy context. When true, flattens all descendant "
-                        "documents into one list and omits sub-folders — use "
-                        "only when a non-recursive browse of the target folder "
-                        "returned no relevant results and you need to widen the "
-                        "scope, or the user explicitly requests a flat listing."
-                    ),
-                },
-                "sort": {
-                    "type": "string",
-                    "enum": ["time", "relevance"],
-                    "default": "time",
-                    "description": (
-                        'Sort order. "time" (default) sorts by upload date '
-                        '(newest first); "relevance" orders documents by '
-                        "semantic relevance to `query`. Relevance also works "
-                        "inside the read-only shared folders — pass their "
-                        "folder_id — but at the library root it ranks only "
-                        "your own documents."
-                    ),
-                },
-                "query": {
-                    "type": "string",
-                    "description": (
-                        "Search query for relevance ranking. "
-                        'Required when sort="relevance".'
-                    ),
-                },
-                "offset": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991,
-                    "default": 0,
-                    "description": (
-                        "Zero-based pagination offset. Pass the value of "
-                        "`next_offset` from the previous response to fetch the "
-                        "next page."
-                    ),
-                },
-                "limit": {
-                    "type": "number",
-                    "minimum": 1,
-                    "maximum": 50,
-                    "default": 10,
-                    "description": (
-                        "Number of documents to return per page (1-50, "
-                        "default 10)"
-                    ),
-                },
-            },
-            "required": [],
-        },
-    },
-    "get_document": {
-        "annotations": {"readOnlyHint": True, "openWorldHint": False},
-        "description": (
-            "Check a document's processing status and metadata. Call this "
-            "before `get_document_structure()` or `get_page_content()` to "
-            'confirm the document is ready (`status === "completed"`).'
-        ),
-        "schema": {
-            "type": "object",
-            "properties": {
-                "doc_name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": _DOC_NAME_DESCRIPTION,
-                },
-                "folder_id": {
-                    "anyOf": [{"type": "string"}, {"type": "null"}],
-                    "description": _FOLDER_ID_DISAMBIGUATOR_DESCRIPTION,
-                },
-                "wait_for_completion": {
-                    "type": "boolean",
-                    "default": False,
-                    "description": _WAIT_FOR_COMPLETION_DESCRIPTION,
-                },
-            },
-            "required": ["doc_name"],
-        },
-    },
-    "get_document_structure": {
-        "annotations": {"readOnlyHint": True, "openWorldHint": False},
-        "description": (
-            "Extract a document's hierarchical outline (headers, sections, "
-            f"page references). REQUIRED for documents over "
-            f"{STRUCTURE_FIRST_PAGE_THRESHOLD} pages — call this first to "
-            "locate relevant sections, then pass their page numbers to "
-            "`get_page_content()`. Use the `part` parameter to iterate large "
-            "outlines until `pagination.has_more` is false."
-        ),
-        "schema": {
-            "type": "object",
-            "properties": {
-                "doc_name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": _DOC_NAME_DESCRIPTION,
-                },
-                "folder_id": {
-                    "anyOf": [{"type": "string"}, {"type": "null"}],
-                    "description": _FOLDER_ID_DISAMBIGUATOR_DESCRIPTION,
-                },
-                "part": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 9007199254740991,
-                    "default": 1,
-                    "description": (
-                        "Part number for pagination (1-based, default 1). For "
-                        "large outlines, increment until the response's "
-                  
+deadline = time.time() + _TOOL_WAIT_TIMEOUT
+while time.time() < deadline:
+    res = check_status()
+    if res["status"] in ("completed", "failed"):
+        break
+    time.sleep(_TOOL_WAIT_INTERVAL)
+else:
+    raise PageIndexAPIError("Document processing timed out after 180 seconds.")
 ```
 
-### Core Architecture Module: `pageindex/chat_stream.py`
-```
-"""chat()'s return types: the answer lane's ChatStream, the Messages
-protocol's MessagesStream, and the protocol lanes' ChatObject."""
-from __future__ import annotations
+---
 
-from typing import Any, Iterator, Optional
-
-from .errors import PageIndexAPIError
-
-
-class ChatObject(dict[str, Any]):
-    """What chat()'s protocol lanes return, envelopes, chunks and events
-    alike: the protocol's JSON as a dict, which also reads by attribute as
-    the official SDK reads that JSON (its lenient construct_type):
-    ``r.choices[0].message.content`` beside
-    ``r["choices"][0]["message"]["content"]``. A value or event type the
-    installed SDK doesn't know reads as sent, a field the type has and the
-    dict lacks reads None, and a name the official object lacks raises.
-    The attribute view is read-only: write through the keys. chat() returns
-    it; callers don't construct one."""
-
-    @staticmethod
-    def _parse(data: dict) -> Any:
-        # a bare ChatObject names no official type to read through
-        raise AttributeError("ChatObject reads attributes only as a lane's "
-                             "envelope, chunk or event")
-
-    def __getattr__(self, name: str) -> Any:
-        if name.startswith("_"):
-            raise AttributeError(name)
-        return getattr(self._parse(dict(self)), name)
-
-    def __setattr__(self, name: str, value: Any) -> None:
-        if not name.startswith("_"):
-            raise AttributeError(
-                f"attributes are a read-only view; set [{name!r}] instead")
-        super().__setattr__(name, value)
-
-
-def _as_plain_dict(dumper: Any, data: ChatObject) -> Any:
-    rule = dumper.yaml_representers.get(dict)
-    return rule(dumper, data) if rule else dumper.represent_data(dict(data))
-
-
-def _yaml_as_dict() -> None:
-    """yaml writes a ChatObject exactly as the plain dict it is, through
-    the dumper's own dict rule (safe_dump refuses a dict subclass, and dump
-    would tag it as a Python object). The rule goes on every representer
-    class that already holds its own table, BaseRepresenter, Representer
-    or a caller's dumper that registered something; the rest inherit it
-    and keep inheriting what others register later."""
-    from yaml.representer import BaseRepresenter
-    pending: list = [BaseRepresenter]
-    while pending:
-        representer = pending.pop()
-        if "yaml_multi_representers" in vars(representer):
-            representer.add_multi_representer(ChatObject, _as_plain_dict)
-        pending.extend(representer.__subclasses__())
-
-
-class ChatStream:
-    """chat(stream=True)'s stream: iterate it for the answer text pieces
-    (with show_process, the woven display); read ``.events`` instead for
-    the typed process event dicts. One underlying run — consume exactly
-    one view; call chat() again for the other."""
-
-    def __init__(self, text, events):
-        self._text = text      # () -> Iterator[str]
-        self._events = events  # () -> Iterator[dict], or the refusal text
-        self._view: Optional[str] = None
-        self._it: Any = None
-        self._closed = False
-
-    def _claim(self, view: str) -> None:
-        if self._view is not None and self._view != view:
-            raise PageIndexAPIError(
-                f"This chat stream is being consumed as {self._view}; one "
-                "run serves one view — call chat() again for the other.")
-        self._view = view
-
-    def __iter__(self) -> "ChatStream":
-        return self
-
-    def __next__(self) -> str:
-        self._claim("text")
-        if self._it is None:
-            if self._closed:
-                raise StopIteration
-            self._it = self._text()
-        return next(self._it)
-
-    @property
-    def events(self) -> Iterator[dict]:
-        """The run as typed event dicts: {"type": "thinking"|"answer",
-        "delta": ...}, {"type": "tool_call", "call_id", "name",
-        "arguments"}, {"type": "tool_result", "call_id", "name",
-        "output"} — the result as the framework recorded it (a string,
-        or its structured text/image items), never clipped. Consuming —
-        not merely reading the attribute — claims the view, so debugger
-        panes and getattr probing stay side-effect free."""
-        def consume():
-            if isinstance(self._events, str):
-                raise PageIndexAPIError(self._events)
-            self._claim("events")
-            if self._it is None:
-                if self._closed:
-                    return
-                self._it = self._events()
-            # no `yield from`: a dropped handle must not close the run
-            for ev in self._it:
-                yield ev
-        return consume()
-
-    def close(self) -> None:
-        """Stop the run: closes the open view, and the stream is dead
-        afterwards, like a closed generator (own-model chat: a run never
-        consumed never starts)."""
-        self._closed = True
-        close = getattr(self._it, "close", None)
-        if close is not None:
-            close()
-
-
-class MessagesStream:
-    """chat(protocol="messages", stream=True)'s stream: iterate it for the
-    Anthropic SDK's events, one message sequence per turn; then
-    ``get_final_message()`` returns what the non-stream call returns."""
-
-    def __init__(self, events):
-        self._events = events  # a generator that returns the run's envelope
-        self._result: Any = None
-
-    def __iter__(self) -> "MessagesStream":
-        return self
-
-    def __next__(self) -> ChatObject:
-        try:
-            return next(self._events)
-        except StopIteration as stop:
-            if stop.value is not None:
-                self._result = stop.value
-            raise
-
-    def close(self) -> None:
-        """Stop the run, like closing a generator."""
-        self._events.close()
-
-    def get_final_message(self) -> ChatObject:
-        """Read the stream to its end (raising what iterating it would),
-        then return the run's envelope as the non-stream call returns it:
-        the final message, with ``usage`` aggregated across turns and the
-        ``messages`` turn sequence."""
-        for _ in self:
-            pass
-        if self._result is None:
-            raise PageIndexAPIError(
-                "This stream has no final message: the run failed, or the "
-                "stream was closed before the run finished.")
-        return self._result
-
-    def get_final_text(self) -> str:
-        """The final message's text blocks, joined. A bare string has
-        nowhere to mark an answer cut short, so unless the message finished
-        (stop_reason ``end_turn`` or ``stop_sequence``) this raises, the cut
-        text in ``partial_answer``; it raises too when there is no text."""
-        message = self.get_final_message()
-        texts = [block["text"] for block in message["content"]
-                 if block.get("type") == "text"]
-        stop = message.get("stop_reason")
-        if stop not in ("end_turn", "stop_sequence"):
-            error = PageIndexAPIError(
-                f"The final message is unfinished (stop_reason {stop!r}); "
-                "get_final_message() returns it as it is.")
-            error.partial_answer = "".join(texts)
-            error.usage = message.get("usage")
-            raise error
-        if not texts:
-            raise PageIndexAPIError(
-                "The final message has no text block; its content is in "
-                "get_final_message().content.")
-        return "".join(texts)
-
-```
-
-### Core Architecture Module: `pageindex/client.py`
-```
-"""PageIndex SDK client: the 0.2.x cloud surface, now with a local mode."""
-from __future__ import annotations
-
-import os
-import re
-import threading
-import time
-import warnings
-from typing import (TYPE_CHECKING, Any, Callable, Iterator, Literal, Mapping,
-                    Optional, Union, cast, overload)
-
-from .chat_stream import ChatStream, MessagesStream, ChatObject
-from .errors import PageIndexAPIError
-
-
-_litellm_preload_started = False
-
-
-def _preload_litellm() -> None:
-    """Start litellm's multi-second import in the background, once per
-    process — a per-client thread would churn under per-request clients."""
-    global _litellm_preload_started
-    if _litellm_preload_started:
-        return
-    _litellm_preload_started = True
-
-    def _import() -> None:
-        try:
-            import litellm  # noqa: F401
-        except Exception:
-            pass
-
-    threading.Thread(target=_import, daemon=True).start()
-
-
-def _parse_pages(pages: str) -> list[int]:
-    from .agent_tools import _PageSpecError, _expand_pages
-    if isinstance(pages, str):
-        # 0.2.10 tolerated whitespace on this surface; the tool layer stays
-        # on the strict contract pattern.
-        pages = re.sub(r"\s*([,-])\s*", r"\1", pages.strip())
-    try:
-        return _expand_pages(pages)
-    except _PageSpecError as exc:
-        raise PageIndexAPIError(str(exc)) from exc
-
-
-# The two citation tag formats PageIndex chat writes and renders.
-_OLD_CITATION_RE = re.compile(
-    r"<doc=([^;<>]+);page=(\d+)(?:;block(?:_id)?=([^;<>]+))?>")
+### 3. UI & UX Micro-Mechanics
+- **Citation Parsing & Rendering Dual Format Normalization**: LLM agent outputs frequently oscillate between custom XML-like tags and legacy bracket delimiters. `client.py` uses two strict regular expressions to normalize document citations:
+```python
+_OLD_CITATION_RE = re.compile(r"<doc=([^;<>]+);page=(\d+)(?:;block(?:_id)?=([^;<>]+))?>")
 _CITE_TAG_RE = re.compile(r"<cite\s([^<>]*)>(?:(?P<inner>[^<>]*)</cite>)?")
 _CITE_ATTR_RE = re.compile(r"""\b(\w+)=(["'])(.*?)\2""", re.S)
+```
+- **Terminal Display Unwinding without Flickering**: When streaming thinking deltas vs. answer deltas in terminal interfaces, ANSI carriage returns must only flush on real chunk emissions, avoiding console redraw thrashing:
+```python
+for chunk in client.chat(question, doc_id=doc_id, stream=True):
+    sys.stdout.write(chunk)
+    sys.stdout.flush()
+```
 
+---
 
-def _citation_key(m: re.Match) -> Optional[tuple[str, int, Optional[str]]]:
-    """(document, page, block_id) of one matched tag, or None when it names
-    no document or no positive page."""
-    if m.re is _OLD_CITATION_RE:
-        doc, page_str, block_id = m.group(1), m.group(2), m.group(3)
-    else:
-        attrs = {name: value for name, _, value in
-                 _CITE_ATTR_RE.findall(m.group(1))}
-        doc, page_str, block_id = (attrs.get("doc", ""), attrs.get("page", ""),
-                                   attrs.get("block"))
-    doc = doc.strip()
-    block_id = (block_id or "").strip() or None
+### 4. Backend Concurrency & Memory Safety
+- **Context-Scoped Thread-Safe LLM Priority Queuing**: `pageindex/utils.py` uses Python's `contextvars` to manage LLM backend configurations and priority queues across overlapping coroutines without passing state through call signatures:
+```python
+_llm_priority: contextvars.ContextVar = contextvars.ContextVar("pageindex_llm_priority", default=0)
+
+@contextmanager
+def llm_priority(prio: int):
+    token = _llm_priority.set(prio)
     try:
-        page = int(page_str.split("-")[0])
-    except ValueError:
-        return None
-    return (doc, page, block_id) if doc and page > 0 else None
-
-
-def _parse_citations(text: str) -> list[dict[str, Any]]:
-    """``<doc=…;page=…;block=…>`` tags (the managed chat's format), then
-    ``<cite doc= page= block=/>`` tags; deduplicated, ``block_id`` only
-    when the tag carries one."""
-    found: list[dict[str, Any]] = []
-    seen: set[tuple[str, int, Optional[str]]] = set()
-    for m in [*_OLD_CITATION_RE.finditer(text), *_CITE_TAG_RE.finditer(text)]:
-        key = _citation_key(m)
-        if key and key not in seen:
-            seen.add(key)
-            entry: dict[str, Any] = {"document": key[0], "page": key[1]}
-            if key[2]:
-                entry["block_id"] = key[2]
-            found.append(entry)
-    return found
-
-
-def _agents_sdk_model_name(model: str) -> str:
-    """Preserve supported Agents SDK prefixes and route other provider paths via LiteLLM."""
-    passthrough_prefixes = ("litellm/", "openai/")
-    if not model or "/" not in model:
-        return model
-    if model.startswith(passthrough_prefixes):
-        return model
-    return f"litellm/{model}"
-
-
-# The Anthropic-stack routes this SDK wires a transport for, each with
-# its Claude Code env switch; a row is an inventory fact, not a model
-# judgment. Growth rule: a row per route LiteLLM names and the anthropic
-# SDK ships a client for (Mantle clears both bars, no one has asked;
-# Claude-on-AWS/GoogleCloud wait on LiteLLM prefix names).
-_ROUTE_ENV = {"bedrock": "CLAUDE_CODE_USE_BEDROCK",
-              "vertex_ai": "CLAUDE_CODE_USE_VERTEX",
-              "azure_ai": "CLAUDE_CODE_USE_FOUNDRY"}
-_CLAUDE_ROUTES = tuple(_ROUTE_ENV)
-
-
-def _claude_wire(model, surface: str) -> "tuple[str, str]":
-    """(wire id, route) for an Anthropic-native surface. The name is sent
-    as written — the destination judges the id; only the routing prefix
-    is read: ``litellm/`` drops, ``bedrock/`` / ``vertex_ai/`` /
-    ``azure_ai/`` select that transport, and ``anthropic/`` is the
-    direct route's own prefix.
-    Anything else — bare ids, aliases, gateway names — ships verbatim on
-    the direct route. A prefix with nothing after it names a route and
-    no model: refused, so no surface ships model='' or switches a
-    transport with no model chosen."""
-    if not isinstance(model, str):
-        raise PageIndexAPIError(
-            f"{surface} model must be a str, got {type(model).__name__}.")
-    wire = model.removeprefix("litellm/")
-    for route in _CLAUDE_ROUTES:
-        if wire.startswith(route + "/"):
-            wire = wire[len(route) + 1:]
-            break
-    else:
-        wire, route = wire.removeprefix("anthropic/"), "anthropic"
-    if not wire:
-        raise PageIndexAPIError(
-            f"{surface} model {model!r} names a route but no model id.")
-    return wire, route
-
-
-def _yaml_names_chat(loader) -> bool:
-    # config.yaml is a third way to name a chat model. Blank values mean
-    # "absent", exactly like the flat arguments (_resolve_models agrees).
-    return any(loader._default_dict.get(key)
-               for key in ("chat_model", "retrieve_model", "model"))
-
-
-def _needs_model(surface: str) -> PageIndexAPIError:
-    # The stock chat_model default is not the user's choice: never send
-    # it on an Anthropic-native surface as if it were one.
-    return PageIndexAPIError(
-        f"{surface} needs a model — pass a Claude model=..., or "
-        "configure chat_model on the client.")
-
-
-_LOCAL_INDEX_KEYS = ("model", "summary_model", "backend", "storage_path",
-                     "summary_max_words", "summary_concurrency",
-                     "summary_reasoning_effort", "use_embedded_toc", "optimize")
-
-# Near-synonyms of "cloud" that would otherwise parse as model names —
-# a silent wrong mode. They error, pointing at the real word.
-_RESERVED_MODE_WORDS = {"hosted", "managed"}
-
-
-def _env_cloud_key(spelling: str, inline: str = "api_key=...") -> str:
-    # .env support lives in utils' import-time load_dotenv(): load it
-    # before the read, or a key in .env is visible only by import order.
-    from . import utils  # noqa: F401
-    key = os.environ.get("PAGEINDEX_API_KEY")
-    if not key:
-        raise PageIndexAPIError(
-            f"{spelling} reads the PageIndex API key from the "
-            "PAGEINDEX_API_KEY environment variable, which is not set — "
-            f"export it, or pass the key inline ({inline}).")
-    return key
-
-
-# One argument vocabulary regardless of spelling: these values are shape-
-# checked in the constructor, so a wrong type or an empty value refuses
-# there as a PageIndexAPIError — never later, never silently.
-_ARG_TYPES: "dict[str, tuple[type, ...]]" = {
-    "model": (str,), "index_model": (str,), "summary_model": (str,),
-    "chat_model": (str,), "retrieve_model": (str,), "summary_max_words": (int,),
-    "summary_concurrency": (int,), "summary_reasoning_effort": (str,),
-    "use_embedded_toc": (bool,), "optimize": (str,),
-    "storage_path": (str, os.PathLike), "index_backend": (dict,),
-    "chat_backend": (dict,)}
-
-
-def _declared_mode(value, side: str):
-    if isinstance(value, str):
-        value = value.strip().lower()
-    if value not in (None, "cloud", "local"):
-        raise PageIndexAPIError(
-            f'{side} "mode" must be "cloud" or "local", not {value!r}.')
-    return value
-
-
-_CloudKey = Union[str, Callable[[], str], None]
-
-
-def _resolve_index_slot(index) -> "tuple[_CloudKey, dict[str, Any]]":
-    """The ``index=`` slot as (cloud api_key, local overrides). A dict
-    declares its side by its keys; an optional "mode" states it and must
-    agree. Keyless cloud spellings ("cloud" / "pageindex-cloud",
-    {"mode": "cloud"}) return the environment read as a thunk, so the
-    caller's mode cross-check runs before the environment is touched."""
-    from .types import PAGEINDEX_CLOUD
-    if isinstance(index, str):
-        # Normalized compare: a case/whitespace variant of a mode word
-        # must never fall through and silently become a model name.
-        word = index.strip().lower()
-        if word in (PAGEINDEX_CLOUD, "cloud"):
-            return lambda: _env_cloud_key(f'index="{index.strip()}"',
-                                          'index={"api_key": ...}'), {}
-        if word == "local":
-            return None, {}
-        if word in _RESERVED_MODE_WORDS:
-            raise PageIndexAPIError(
-                f'index="{index}" is not a mode word — the cloud spelling '
-                'is index="cloud" (key from PAGEINDEX_API_KEY) or '
-                'index={"api_key": ...}.')
-        if index.strip():
-            return None, {"index_model": index}
-        raise PageIndexAPIError(
-            "index is an empty string — pass a local index model name, "
-            'or "cloud".')
-    if isinstance(index, Mapping):
-        # None-valued keys mean "absent", exactly like the flat arguments.
-        conf: dict[str, Any] = {name: value for name, value in index.items()
-                                if value is not None}
-        declared = _declared_mode(conf.pop("mode", None), "index")
-        if not conf:
-            if declared == "cloud":
-                return lambda: _env_cloud_key('index={"mode": "cloud"}',
-                                              'index={"api_key": ...}'), {}
-            if declared == "local":
-                return None, {}
-            raise PageIndexAPIError(
-                "index is an empty dict — its keys pick the side: "
-                '{"api_key": ...} for cloud documents, or '
-                f"{', '.join(_LOCAL_INDEX_KEYS)} for the local store.")
-        unknown = set(conf) - {"api_key"} - set(_LOCAL_INDEX
+        yield
+    finally:
+        _llm_priority.reset(token)
+```
+- **Thread-Safe Deduplicated Async Futures for Expensive Downloads**: In `_published_map()`, downloading external model cost definitions uses a singleton `Future` protected by a `threading.Lock()` to avoid duplicate network calls:
+```python
+with _published_lock:
+    if _published is not None:
+        return _published
+    future = _published = Future()
+    future.set_running_or_notify_cancel()
 ```
 
-### Core Architecture Module: `pageindex/cloud_api.py`
-```
-"""Cloud mode of the PageIndex SDK, based on the 0.2.8 client."""
-import requests
-from pathlib import Path
-from typing import Optional, Dict, Any, List, Union, Iterator
-import json
-import urllib.parse
+---
 
-from .chat_stream import ChatObject
-from .errors import PageIndexAPIError
-from .naming import sanitize_filename, validate_folder_name
-
-
-def _enc(value: str) -> str:
-    """URL-encode a path segment (ids may contain / ? # or spaces)."""
-    return urllib.parse.quote(str(value), safe="")
-
-
-class CloudAPI:
-    """
-    Python SDK client for the PageIndex API.
-    """
-
-    def __init__(self, client):
-        self._client = client
-
-    @property
-    def BASE_URL(self) -> str:
-        return self._client.BASE_URL
-
-    @property
-    def api_key(self) -> str:
-        return self._client.api_key
-
-    def _headers(self) -> Dict[str, str]:
-        return {"api_key": self.api_key}
-
-    # ---------- DOCUMENT SUBMISSION ----------
-
-    def submit_document(
-        self,
-        file_path: str,
-        mode: Optional[str] = None,
-        beta_headers: Optional[List[str]] = None,
-        folder_id: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
-        """
-        Upload a PDF document for processing. The system will automatically process both tree generation and OCR.
-        Immediately returns a document identifier (`doc_id`) for subsequent operations.
-
-        Args:
-            file_path (str): Path to the PDF file.
-            mode (str, optional): Processing mode (e.g., "mcp"). Defaults to None.
-            beta_headers (List[str], optional): Beta feature headers (e.g., ["block_reference"]
-                to enable block-level content with bounding boxes). Defaults to None.
-            folder_id (str, optional): Folder (workspace) ID to assign the document to. Defaults to None.
-            metadata (dict, optional): Your own JSON-serializable tags for the document;
-                returned in get_tree/get_ocr responses and list_documents entries. Defaults to None.
-
-        Returns:
-            dict: {'doc_id': ...} — plus 'name', the stored document name
-                (a taken name gains a numeric suffix), when the server
-                returns it.
-        """
-        data: Dict[str, Any] = {'if_retrieval': True}
-        if mode is not None:
-            data['mode'] = mode
-        if beta_headers is not None:
-            data['beta_headers'] = json.dumps(beta_headers)
-        if folder_id is not None:
-            data['folder_id'] = folder_id
-        if metadata is not None:
-            data['metadata'] = json.dumps(metadata)
-
-        with open(file_path, "rb") as f:
-            response = requests.post(
-                f"{self.BASE_URL}/doc/",
-                headers=self._headers(),
-                files={'file': (sanitize_filename(Path(file_path).name), f)},
-                data=data
-            )
-
-        if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to submit document: {response.text}",
-                status_code=response.status_code)
-        return response.json()
-
-    # ---------- OCR FUNCTIONALITY ----------
-
-    def get_ocr(self, doc_id: str, format: str = "page") -> Dict[str, Any]:
-        """
-        Get OCR processing status and results.
-
-        Args:
-            doc_id (str): Document ID.
-            format (str): Result format. Use 'page' for page-based results, 'node' for node-based results, or 'raw' for concatenated markdown. Defaults to 'page'.
-
-        Returns:
-            dict: API response with status and, if ready, OCR results.
-        """
-        if format not in ["page", "node", "raw"]:
-            raise ValueError("Format parameter must be 'page', 'node', or 'raw'")
-
-        response = requests.get(
-            f"{self.BASE_URL}/doc/{_enc(doc_id)}/?type=ocr&format={format}",
-            headers=self._headers(),
-            timeout=30
-        )
-        if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to get OCR result: {response.text}",
-                status_code=response.status_code)
-        return response.json()
-
-    def get_block(self, doc_id: str, block_id: str) -> Dict[str, Any]:
-        """
-        Get one layout block of a document by the block_id its page content
-        and block-level citations carry.
-
-        Args:
-            doc_id (str): Document ID.
-            block_id (str): Block ID, e.g. "p3_text_5".
-
-        Returns:
-            dict: The block as the API returns it: {'doc_id', 'page',
-                'block_id', 'bbox', 'block_type', ...}. bbox is
-                [x0, y0, x1, y1] in thousandths of the page's width and
-                height (0-1000), origin top-left. A 404 means the
-                document has no such block.
-        """
-        response = requests.get(
-            f"{self.BASE_URL}/doc/{_enc(doc_id)}/block/{_enc(block_id)}/",
-            headers=self._headers(),
-            timeout=30
-        )
-        if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to get block: {response.text}",
-                status_code=response.status_code)
-        return response.json()
-
-    def get_page_image(self, doc_id: str, page: int) -> str:
-        """Presigned URL for a rendered page image.
-
-        Args:
-            doc_id (str): Document ID.
-            page (int): 1-based page number.
-
-        Returns:
-            str: A presigned URL to the page image (JPEG).
-        """
-        response = requests.get(
-            f"{self.BASE_URL}/doc/s3/{_enc(doc_id)}/images",
-            headers=self._headers(),
-            params={"start": page, "end": page},
-            timeout=30
-        )
-        if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to get page image: {response.text}",
-                status_code=response.status_code)
-        for img in response.json().get("images") or []:
-            if img.get("page") == page and img.get("url"):
-                return img["url"]
-        raise PageIndexAPIError(f"No image URL returned for page {page}.")
-
-    def get_document_image(self, doc_id: str, img_id: str) -> str:
-        """Presigned URL for an embedded image extracted during OCR.
-
-        Args:
-            doc_id (str): Document ID.
-            img_id (str): Image ID as page content carries it,
-                e.g. ``"img-7.jpeg"``.
-
-        Returns:
-            str: A presigned URL to the image.
-        """
-        response = requests.get(
-            f"{self.BASE_URL}/doc/{_enc(doc_id)}/image/{_enc(img_id)}/",
-            headers=self._headers(),
-            timeout=30
-        )
-        if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to get document image: {response.text}",
-                status_code=response.status_code)
-        url = response.json().get("url")
-        if not url:
-            raise PageIndexAPIError(f"No image URL returned for {img_id!r}.")
-        return url
-
-    # ---------- TREE GENERATION ----------
-
-    def get_tree(self, doc_id: str, node_summary: bool = False,
-                 include_text: bool = True) -> Dict[str, Any]:
-        """
-        Get tree generation status and results.
-
-        Args:
-            doc_id (str): Document ID.
-            node_summary (bool): Include node summaries (default False).
-
-        Returns:
-            dict: API response with status and, if ready, tree structure.
-        """
-        response = requests.get(
-            f"{self.BASE_URL}/doc/{_enc(doc_id)}/?type=tree&summary={node_summary}"
-            f"&include_text={str(include_text).lower()}",
-            headers=self._headers(),
-            timeout=30
-        )
-        if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to get tree result: {response.text}",
-                status_code=response.status_code)
-        return response.json()
-
-    # ---------- RETRIEVAL ----------
-
-    def submit_query(self, doc_id: str, query: str, thinking: bool = False) -> Dict[str, Any]:
-        """
-        Submit a retrieval query for a specific PageIndex document.
-
-        Args:
-            doc_id (str): Document ID.
-            query (str): User question or information need.
-            thinking (bool, optional): If true, enables deeper retrieval. Default is False.
-
-        Returns:
-            dict: {'retrieval_id': ...}
-        """
-        payload = {
-            "doc_id": doc_id,
-            "query": query,
-            "thinking": thinking
-        }
-        response = requests.post(
-            f"{self.BASE_URL}/retrieval/",
-            headers=self._headers(),
-            json=payload,
-            timeout=30
-        )
-        if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to submit retrieval: {response.text}",
-                status_code=response.status_code)
-        return response.json()
-
-    def get_retrieval(self, retrieval_id: str) -> Dict[str, Any]:
-        """
-        Get retrieval status and results.
-
-        Args:
-            retrieval_id (str): Retrieval ID.
-
-        Returns:
-            dict: Retrieval status and results.
-        """
-        response = requests.get(
-            f"{self.BASE_URL}/retrieval/{_enc(retrieval_id)}/",
-            headers=self._headers(),
-            timeout=30
-        )
-        if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to get retrieval result: {response.text}",
-                status_code=response.status_code)
-        return response.json()
-
-    # ---------- CHAT COMPLETIONS ----------
-
-    def chat_completions(
-        self,
-        messages: List[Dict[str, str]],
-        stream: bool = False,
-        doc_id: Optional[Union[str, List[str]]] = None,
-        temperature: Optional[float] = None,
-        stream_metadata: bool = False,
-        enable_citations: bool = False,
-        extra_body: Optional[Dict[str, Any]] = Non
-```
-
-### Core Architecture Module: `pageindex/errors.py`
-```
-class PageIndexAPIError(Exception):
-    """status_code carries the HTTP status when the raising site passes it;
-    None does not imply local/client-side. rpc_error carries an MCP
-    server's JSON-RPC error object as it was sent. usage is set when an
-    own-model chat run fails: what its finished model calls had spent, in
-    the protocol's usage shape with each call listed (claude-code/: the
-    run's total only, None on a tool failure or if the run ends before
-    Claude Code reports it); None on any other error. partial_answer is
-    the text a non-streamed chat() answer, or a Messages stream's
-    get_final_text(), reached before it was cut short (a stream has already
-    delivered its text); None otherwise."""
-
-    def __init__(self, *args: object, status_code: int | None = None,
-                 rpc_error: dict | None = None) -> None:
-        super().__init__(*args)
-        self.status_code = status_code
-        self.rpc_error = rpc_error
-        self.usage: dict | None = None
-        self.partial_answer: str | None = None
-
-
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Cause Unwrapping across Framework Exception Chains**: Agent frameworks wrap user exceptions inside arbitrary internal error types. `pageindex/errors.py` unwinds `__cause__` to extract the true underlying error:
+```python
 def _pageindex_cause(exc: BaseException | None) -> PageIndexAPIError | None:
-    """The PageIndexAPIError behind a framework's wrapper exception, if any."""
     while exc is not None:
         if isinstance(exc, PageIndexAPIError):
             return exc
         exc = exc.__cause__
     return None
-
 ```
-
-### Core Architecture Module: `pageindex/flash/__init__.py`
-```
-"""PageIndex Flash: LLM-free tree structure extraction from PDF layout statistics."""
-
-from .api import page_index_flash
-
-__all__ = ["page_index_flash"]
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #636** (2026-10-26): **docs(cookbook): the metadata notebook says metadata, as the SDK docs do, instead of tags**
-  *Symptoms*: `cookbook/pageindex-metadata.ipynb` called document metadata "tags" in 16 places. The SDK docs ([Metadata](https://docs.pageindex.ai/sdk/documents#metadata)) only say metadata, metadata schema and fields, so the notebook now does too.  - Part headings: **Part 1 · Add metadata on upload** and **Part 2 · Search a large library by metadata**. - Section headings: **03 · Add metadata on upload** and **05 · Ask by metadata**. - The tagline, intro, section text and usage note say metadata wherever they said tags.  Text only: no code or outputs change.  ## Test plan  - [x] No markdown cell in the notebook says tag. - [x] The notebook validates as nbformat 4. - [x] The two PDFs added in #635 download from their raw GitHub URLs on `main` (HTTP 200; 2,360,672 and 2,376,880 bytes, matching the files).
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"cd36d96cd6f8a9662b621ccda9ff318fdfb7d277","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"cd36d96cd6f8a9662b621ccda9ff318fdfb7d277","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"cd36d96cd6f8a9662b621ccda9ff318fdfb7d277","mergeGateEnabled":false,"pullRequestNumber":636,"repository":"VectifyAI/PageIndex","status":"completed"} --> ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-26T09:55:03.656905Z">2026-10-26T09:55:03.656905Z</relative-time> | `cd36d96` | PR opened | | 🔒 **Security Review** | ✅ **Completed** <relative-time 
-
-- **Issue #635** (2026-10-26): **docs(cookbook): one metadata notebook: tag two filings with your key, then ask a 120-filing library by tag**
-  *Symptoms*: Merges the two metadata cookbooks into `cookbook/pageindex-metadata.ipynb` and removes `cookbook/pageindex-metadata-search.ipynb`. The notebook keeps its old file name, so the Colab link already shared still opens it.  Each part starts with a top-level heading that names the key it uses, so the switch from the reader's key to the demo key is visible:  **Part 1 · Tag documents on upload** uses the reader's own PageIndex key. - Declares `company`, `form_type`, `fiscal_year` and `fiscal_quarter` on a new folder, `Metadata Demo Filings`. These are the same fields the Part 2 library uses. A reader who ran the earlier version has a `Metadata Demo` folder with `type`/`team`/`year` fields, so the new folder name avoids it. - Uploads two 10-Qs with their tags and reads the tags back. Both are fiscal 2025 Q2: NVIDIA's (quarter ended July 28, 2024) and AMD's (June 28, 2025). - Both PDFs are added to `examples/documents/` as `nvda-20240728.pdf` and `amd-20250628.pdf` (65 and 83 pages, about 2.4 MB each). These are EDGAR's own names for the filings: the ticker and the date the period ended. The names are almost a year apart, yet both filings are fiscal 2025 Q2, and the intro uses this to show what the tags add.  **Part 2 · Ask a large library by tag** uses the read-only `pageindex_demo_readonly_key`. - The `demo` client is created here, under the Part 2 heading, together with the reader's OpenAI key and `MODEL`. - It asks `semiconductor-sec-filings`: 120 10-K and 10-Q filings from six chi
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `b81465d9` (2026-10-27)
-**Commit Message**: Merge pull request #641 from VectifyAI/docs/page-search-update
-
-README: Page Search API at the top of the updates
-
-**File**: `README.md` (modified, +2/-1)
-```diff
-@@ -30,7 +30,8 @@
- <details open>
- <summary><h2>Updates</h2></summary>
- 
--- [Aug '26] 🔥 [**PageIndex SDK**](#quickstart): **local** and **cloud** modes — one client to index, retrieve, and chat on your machine (with your own LLM API key) or on [PageIndex Cloud](https://developer.pageindex.ai/).
-+- [Oct '26] 🔥 [**Page Search API**](https://search.pageindex.ai): find the pages that answer each question in about a second, and send your LLM only those. *Cut 97% token cost on document question answering*; more accurate and faster than vector search ([benchmark](https://github.com/VectifyAI/page-search-benchmark)).
-+- [Aug '26] [**PageIndex SDK**](#quickstart): **local** and **cloud** modes — one client to index, retrieve, and chat on your machine (with your own LLM API key) or on [PageIndex Cloud](https://developer.pageindex.ai/).
- - [Aug '26] ⚡ [**PageIndex Flash**](https://pageindex.ai/blog/pageindex-flash): fast tree index generation for text-based PDFs, now the default indexing method in PageIndex SDK local mode.
- - [Scale PageIndex to Millions of Documents](https://pageindex.ai/blog/pageindex-filesystem): *PageIndex File System* is a file-level tree indexing layer that lets PageIndex reason over an entire corpus, not just a single document.
- - [PageIndex App](https://app.pageindex.ai): a human-like document analysis agent for long professional documents.<!-- Also available via [MCP](https://pageindex.ai/developer) or [API](https://pageindex.ai/developer). -->
-```
-
----
-
-### Incident Patch 2: `f9518927` (2026-10-27)
-**Commit Message**: README: Page Search API at the top of the updates
-
-**File**: `README.md` (modified, +2/-1)
-```diff
-@@ -30,7 +30,8 @@
- <details open>
- <summary><h2>Updates</h2></summary>
- 
--- [Aug '26] 🔥 [**PageIndex SDK**](#quickstart): **local** and **cloud** modes — one client to index, retrieve, and chat on your machine (with your own LLM API key) or on [PageIndex Cloud](https://developer.pageindex.ai/).
-+- [Oct '26] 🔥 [**Page Search API**](https://search.pageindex.ai): find the pages that answer each question in about a second, and send your LLM only those. *Cut 97% token cost on document question answering*; more accurate and faster than vector search ([benchmark](https://github.com/VectifyAI/page-search-benchmark)).
-+- [Aug '26] [**PageIndex SDK**](#quickstart): **local** and **cloud** modes — one client to index, retrieve, and chat on your machine (with your own LLM API key) or on [PageIndex Cloud](https://developer.pageindex.ai/).
- - [Aug '26] ⚡ [**PageIndex Flash**](https://pageindex.ai/blog/pageindex-flash): fast tree index generation for text-based PDFs, now the default indexing method in PageIndex SDK local mode.
- - [Scale PageIndex to Millions of Documents](https://pageindex.ai/blog/pageindex-filesystem): *PageIndex File System* is a file-level tree indexing layer that lets PageIndex reason over an entire corpus, not just a single document.
- - [PageIndex App](https://app.pageindex.ai): a human-like document analysis agent for long professional documents.<!-- Also available via [MCP](https://pageindex.ai/developer) or [API](https://pageindex.ai/developer). -->
-```
-
-#### Recent Merged Pull Requests:
-- **PR #641** (2026-10-27): README: Page Search API at the top of the updates (@zmtomorrow)
-- **PR #636** (2026-10-26): docs(cookbook): the metadata notebook says metadata, as the SDK docs do, instead of tags (@BukeLy)
-- **PR #635** (2026-10-26): docs(cookbook): one metadata notebook: tag two filings with your key, then ask a 120-filing library by tag (@BukeLy)
-- **PR #634** (closed): feat: the agent tools address documents by path, as the cloud MCP server now does (@BukeLy)
-- **PR #633** (2026-10-26): docs(cookbook): the metadata notebook shows the folder's declared fields after declaring them (@BukeLy)
-- **PR #631** (2026-10-26): docs(cookbook): tag on upload in one notebook, search a 120-filing library by tag in another (@BukeLy)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Merge pull request #641 from VectifyAI/docs/page-search-update
-
-**RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `b81465d9`: Merge pull request #641 from VectifyAI/docs/page-search-update. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
+- **Safe URI Encoding of Path Parameters**: File and document IDs may contain slashes, hashes, or query parameters. Direct interpolation in URLs produces injection flaws or 404s. `cloud_api.py` enforces strict encoding:
 ```python
-// Verified production-grade fix pattern:
-- [Oct '26] 🔥 [**Page Search API**](https://search.pageindex.ai): find the pages that answer each question in about a second, and send your LLM only those. *Cut 97% token cost on document question answering*; more accurate and faster than vector search ([benchmark](https://github.com/VectifyAI/page-search-benchmark)).
-- [Aug '26] [**PageIndex SDK**](#quickstart): **local** and **cloud** modes — one client to index, retrieve, and chat on your machine (with your own LLM API key) or on [PageIndex Cloud](https://developer.pageindex.ai/).
+def _enc(value: str) -> str:
+    """URL-encode a path segment (ids may contain / ? # or spaces)."""
+    return urllib.parse.quote(str(value), safe="")
 ```
 
-**NEGATIVE CONSTRAINT**:
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+- **Layering**: The architecture separates document representation from retrieval. Documents become immutable, hierarchical JSON structures. Retrieval becomes an interactive traversal process over that structure.
+- **State Ownership**: The client holds zero conversational state; it passes conversation history (`history += r["messages"]`) immutably between caller and provider.
+- **Decoupling**: Cloud API (`CloudAPI`), local extraction (`flash`), and agent tools (`agent_tools`) are completely independent modules orchestrated through the unified `PageIndexClient`.
+
+### 2. Core Abstractions
+- `ChatObject`: A subclass of `dict` that provides an official-SDK-compatible dot-notation attribute view over protocol payloads while maintaining pure JSON serializability.
+- `ChatStream` / `MessagesStream`: Single-consumption generator abstractions that decouple real-time token rendering from background event tracking.
+- `PageIndexAPIError`: Specialized exception preserving HTTP `status_code`, MCP `rpc_error` payloads, token `usage` tallies, and partial response buffers (`partial_answer`).
+
+### 3. Error Handling
+- **Non-Throwing Tool Contracts**: Agent tools in `agent_tools.py` never raise exceptions to the agent loop. Exceptions are caught and converted into JSON error objects (`{"success": False, "error": str(e)}`) to allow the model to self-correct.
+- **Unrecoverable Error Escalation**: Authentication failures (401/403) and persistent rate limits (429) break the non-throwing rule and immediately raise `PageIndexAPIError`.
+
+### 4. Testing
+- **Matrix Permutations**: Matrix testing in `.github/workflows/publish.yml` tests two axes:
+  - Framework availability: `with` (`claude-agent-sdk`, `anthropic`) vs `without` (clean standard library).
+  - PDF parser compatibility: `pdfium==4` vs `pdfium>=5`.
+- **Pre-fork Isolation Tests**: Automated verification of socket state after process fork across 240 concurrent jobs.
+
+### 5. Security
+- **Path Sanitization**: Document uploads use `sanitize_filename(Path(file_path).name)` to prevent directory traversal attacks.
+- **Credential Scoping**: Environment variable loading uses `dotenv.load_dotenv(find_dotenv(usecwd=True))` but enforces precedence checks so user-injected credentials override system variables.
+
+### 6. Performance
+- **Zero-LLM Flash Parsing**: PDF hierarchy extraction uses layout statistics and font advance geometry via `pypdfium2`, running up to 100x faster than vision-based or LLM-based parsers.
+- **Dual-Lane Concurrency**: Indexing splits work into two lanes: summary generation (capped at 128 workers) and structural expansion (capped at 32 workers).
+- **Lazy Module Imports**: Heavy libraries (`litellm`, `PyPDF2`, `PIL`) are imported inside functions or on background threads to minimize startup latency.
+
+### 7. Deployment
+- **Poetry Build Invariants**: Package definitions in `pyproject.toml` isolate optional dependencies via extras (`pageindex[claude]`, `pageindex[anthropic]`).
+- **Data File Packaging**: Layout statistical priors (`pageindex/flash/data/*.json`) are explicitly included in wheels and source distributions.
+
+### 8. Agent Patterns
+- **Prompt Budget Guards**: Agent tool output is capped at `TOOL_RESPONSE_CHAR_LIMIT = 100_000`, with internal truncation thresholds at 95% budget (`_CHAR_BUDGET = 95_000`) to prevent context window exhaustion.
+- **Adaptive Descriptions**: Tool documentation injected into agent prompts dynamically adapts based on whether the backend is configured for local mode or cloud mode.
+
+### 9. Data Flow
+```
+[PDF Stream] -> [pypdfium2 Glyph BBox] -> [Baseline & Font Analysis]
+    -> [Section Tree] -> [Dual-Lane Parallel Summaries] -> [Optimized TOC Tree]
+        -> [Agent browse_documents/get_page_content] -> [Citation Extraction]
+```
+
+---
+
+## 6. The 8 Learning Extraction Artifacts
+
+### 1. Pattern: Dynamic Model Map Hot-Reloading
 ```python
-// Anti-pattern to NEVER write (induced failure mode):
-- [Aug '26] 🔥 [**PageIndex SDK**](#quickstart): **local** and **cloud** modes — one client to index, retrieve, and chat on your machine (with your own LLM API key) or on [PageIndex Cloud](https://developer.pageindex.ai/).
+async def learn_published_models() -> bool:
+    """Dynamically register newly published models from upstream map without SDK upgrade."""
+    global _filled
+    if _MAP_SET_BY_USER:
+        return False
+    import litellm
+    try:
+        published = json.loads(await asyncio.wrap_future(_published_map()))
+        new = {key: entry for key, entry in published.items()
+               if key not in litellm.model_cost and isinstance(entry, dict)}
+    except Exception:
+        return False
+    if new:
+        litellm.register_model(new)
+        _filled = True
+    return _filled
 ```
 
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b81465d9` are properly handled with clean fallback behavior.
+### 2. Rule
+*When serializing custom dictionary wrappers through YAML or JSON dumpers, you MUST register multi-representers on the base representer class to avoid Python object memory address tagging.*
+
+### 3. Architecture Principle
+*Decouple retrieval reasoning from document storage: An agent should navigate an explicit structural hierarchy using tool calls rather than relying on

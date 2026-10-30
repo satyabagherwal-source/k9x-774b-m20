@@ -6188,3 +6188,8 @@
 | `CYCLE-20261030-288S` | `2026-10-30T11:28:19.516Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5745` | Yes (`f1b258ac...`) |
 | `CYCLE-20261030-28VE` | `2026-10-30T11:28:20.330Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5746` | Yes (`e46e7ba6...`) |
 | `CYCLE-20261030-EKSB` | `2026-10-30T13:01:54.491Z` | `fb55/htmlparser2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5747, Rule 5748, Rule 5749` | Yes (`8d9465bf...`) |
+| `CYCLE-20261030-NXHP` | `2026-10-30T13:09:10.861Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5750` | Yes (`6c4790eb...`) |
+| `CYCLE-20261030-P8RZ` | `2026-10-30T13:10:12.143Z` | `VectifyAI/PageIndex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5751, Rule 5752` | Yes (`b77dfea2...`) |
+| `CYCLE-20261030-QFR8` | `2026-10-30T13:11:07.844Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5753, Rule 5754, Rule 5755` | Yes (`ae3dec40...`) |
+| `CYCLE-20261030-TL84` | `2026-10-30T13:13:34.900Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5756, Rule 5757, Rule 5758` | Yes (`bf99e823...`) |
+| `CYCLE-20261030-U8QW` | `2026-10-30T13:14:05.384Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5759` | Yes (`89a78d21...`) |

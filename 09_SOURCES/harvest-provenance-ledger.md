@@ -6197,3 +6197,8 @@ Every entry in this ledger must capture:
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `eb9f5b29` | Multi-dimensional audit evidence | 2026-10-30T11:28:19.519Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `43480947` | Multi-dimensional audit evidence | 2026-10-30T11:28:20.333Z |
 | `learn-github-fb55-htmlparser2` | `https://github.com/fb55/htmlparser2` | `29d243b5` | Multi-dimensional audit evidence | 2026-10-30T13:01:54.495Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `aa56dfcb` | Multi-dimensional audit evidence | 2026-10-30T13:09:10.864Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `2e0f4dd3` | Multi-dimensional audit evidence | 2026-10-30T13:10:12.146Z |
+| `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `8402e101` | Multi-dimensional audit evidence | 2026-10-30T13:11:07.848Z |
+| `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `04c047f8` | Multi-dimensional audit evidence | 2026-10-30T13:13:34.903Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `07c53c96` | Multi-dimensional audit evidence | 2026-10-30T13:14:05.387Z |
