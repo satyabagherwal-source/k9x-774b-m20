@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T15:37:11.637Z",
+  "last_updated": "2026-10-30T15:54:13.761Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "c5a25da1dd15f9f42e0ebb8dd994894a60a4dcdc11b8fc47c896fc502938994e",
-      "verified_at": "2026-10-29T00:02:34.496Z",
+      "content_hash": "264987c58eee43256ef8bb7d5442978b8afd2f04a61f612adb4343bc42877606",
+      "verified_at": "2026-10-30T15:49:19.739Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T00:02:34.496Z"
+      "last_updated": "2026-10-30T15:49:19.739Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "36e4a6f3e657758c7be7ac583d346a09207e36ef911b5412f05314ca5967cf67",
-      "verified_at": "2026-10-30T04:17:54.636Z",
+      "content_hash": "2b9ce47ab388f3056907fddfbd7f9e1c50afb58c5a990d625b075cbacea9a9e1",
+      "verified_at": "2026-10-30T15:49:21.078Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T04:17:54.636Z"
+      "last_updated": "2026-10-30T15:49:21.078Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -10296,14 +10296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-domcyrus-rustnet",
-      "content_hash": "f096caddbfc7477e2d9aa897f0513ee73332afd256ad63c1fc1e0501e39d0b88",
-      "verified_at": "2026-10-28T18:27:21.119Z",
+      "content_hash": "028dbe4e9f118db11aac6dabe624a961b140fe412aa6a869c4b00293806e18ba",
+      "verified_at": "2026-10-30T15:54:13.760Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:27:21.119Z"
+      "last_updated": "2026-10-30T15:54:13.761Z"
     },
     "futurice/pepperoni-app-kit": {
       "repository": "futurice/pepperoni-app-kit",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "e3486c62caaf9f3a9bedefd0947a5c2dac8a25c7cf2c344cec70f0b0022dfeba",
-      "verified_at": "2026-10-28T05:17:55.152Z",
+      "content_hash": "87cec5ddd178e06e0fad9cda585e73ea20d1fc4e1970d1e7eb976765e316cbef",
+      "verified_at": "2026-10-30T15:49:23.804Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T05:17:55.152Z"
+      "last_updated": "2026-10-30T15:49:23.804Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",

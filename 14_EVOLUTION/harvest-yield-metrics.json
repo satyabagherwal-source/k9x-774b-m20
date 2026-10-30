@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T15:37:11.633Z",
-  "total_cycles_completed": 6204,
-  "total_learnings_persisted": 6204,
-  "total_rules_promoted": 5759,
+  "last_updated": "2026-10-30T15:54:13.757Z",
+  "total_cycles_completed": 6208,
+  "total_learnings_persisted": 6208,
+  "total_rules_promoted": 5763,
   "history": [
-    {
-      "timestamp": "2026-10-29T11:47:46.045Z",
-      "repository": "neuron-core/neuron-ai",
-      "learningId": "learn-github-neuron-core-neuron-ai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T11:47:48.377Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T11:52:34.700Z",
-      "repository": "FalkorDB/FalkorDB",
-      "learningId": "learn-github-falkordb-falkordb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T11:52:50.686Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T12:01:49.117Z",
       "repository": "matrixorigin/matrixone",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-30T15:37:11.633Z",
       "repository": "trufflesecurity/trufflehog",
       "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T15:49:19.735Z",
+      "repository": "kgateway-dev/kgateway",
+      "learningId": "learn-github-kgateway-dev-kgateway",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T15:49:21.074Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T15:49:23.800Z",
+      "repository": "alibaba/zvec",
+      "learningId": "learn-github-alibaba-zvec",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T15:54:13.757Z",
+      "repository": "domcyrus/rustnet",
+      "learningId": "learn-github-domcyrus-rustnet",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

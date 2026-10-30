@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-U4W0",
-    "timestamp": "2026-10-28T07:34:44.544Z",
-    "repository": "karmada-io/karmada",
-    "learningId": "learn-github-karmada-io-karmada",
-    "contentHash": "bff9588a8752a3b75d39f61476809d52d141d2920e809e941dbd0d289084ac1d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-WCL2",
-    "timestamp": "2026-10-28T07:36:27.830Z",
-    "repository": "wix/Detox",
-    "learningId": "learn-github-wix-detox",
-    "contentHash": "1e5daa8daa0b1005e625b5f6acfcc7971dfd358a53f3317c256929888a14d2a8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-72G3",
-    "timestamp": "2026-10-28T07:44:47.907Z",
-    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-    "contentHash": "a9b43c557df740d48677326e3cae3c8c1a6e265e6d33949ed3fd755e43b4c89f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-0IMW",
-    "timestamp": "2026-10-28T08:07:41.912Z",
-    "repository": "unsloth/Qwen-Image-2.1-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "7f45ec5af53056af7f54db6a0950bcc696f1be6d486abc8af1799bac27eed4ab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-P187",
     "timestamp": "2026-10-28T08:26:45.751Z",
     "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -7490,6 +7430,66 @@
     "repository": "trufflesecurity/trufflehog",
     "learningId": "learn-github-trufflesecurity-trufflehog",
     "contentHash": "438de66fab45cf0209a697502c4e92cab88f128d143c84640e866e67db809dfa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-DVQN",
+    "timestamp": "2026-10-30T15:49:19.727Z",
+    "repository": "kgateway-dev/kgateway",
+    "learningId": "learn-github-kgateway-dev-kgateway",
+    "contentHash": "264987c58eee43256ef8bb7d5442978b8afd2f04a61f612adb4343bc42877606",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-DWRT",
+    "timestamp": "2026-10-30T15:49:21.065Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "2b9ce47ab388f3056907fddfbd7f9e1c50afb58c5a990d625b075cbacea9a9e1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-DYVJ",
+    "timestamp": "2026-10-30T15:49:23.791Z",
+    "repository": "alibaba/zvec",
+    "learningId": "learn-github-alibaba-zvec",
+    "contentHash": "87cec5ddd178e06e0fad9cda585e73ea20d1fc4e1970d1e7eb976765e316cbef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-K6LW",
+    "timestamp": "2026-10-30T15:54:13.748Z",
+    "repository": "domcyrus/rustnet",
+    "learningId": "learn-github-domcyrus-rustnet",
+    "contentHash": "028dbe4e9f118db11aac6dabe624a961b140fe412aa6a869c4b00293806e18ba",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

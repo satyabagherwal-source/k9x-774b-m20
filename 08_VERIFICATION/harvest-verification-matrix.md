@@ -6227,3 +6227,7 @@
 | `CYCLE-20261030-Y4UC` | `2026-10-30T15:37:05.028Z` | `urllib3/urllib3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5788` | Yes (`77f7c673...`) |
 | `CYCLE-20261030-Y8RQ` | `2026-10-30T15:37:10.118Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md` | Yes (`b91fade3...`) |
 | `CYCLE-20261030-Y9XJ` | `2026-10-30T15:37:11.623Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5789` | Yes (`438de66f...`) |
+| `CYCLE-20261030-DVQN` | `2026-10-30T15:49:19.727Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5790` | Yes (`264987c5...`) |
+| `CYCLE-20261030-DWRT` | `2026-10-30T15:49:21.065Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5791` | Yes (`2b9ce47a...`) |
+| `CYCLE-20261030-DYVJ` | `2026-10-30T15:49:23.791Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5792` | Yes (`87cec5dd...`) |
+| `CYCLE-20261030-K6LW` | `2026-10-30T15:54:13.748Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5793` | Yes (`028dbe4e...`) |

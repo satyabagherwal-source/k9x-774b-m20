@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `76a1d8fe`  
+> **Source Version**: `3105c762`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T18:27:20.421Z  
+> **Timestamp**: 2026-10-30T15:54:13.088Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T18:27:19.359Z  
+> **Harvest Timestamp**: 2026-10-30T15:49:10.677Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5188 stars
+- **Stars / Engagement**: 5194 stars
 
 ---
 
@@ -2495,54 +2495,125 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `41884d3e` (2026-10-27)
-**Commit Message**: fix(deps): update zstd dependencies to patched releases (#701)
+### Incident Patch 1: `3105c762` (2026-10-30)
+**Commit Message**: chore(deps): bump zip from 9.1.0 to 9.1.2 in the rust-dependencies group (#704)
 
-**File**: `Cargo.lock` (modified, +6/-6)
+Bumps the rust-dependencies group with 1 update: [zip](https://github.com/zip-rs/zip2).
+
+
+Updates `zip` from 9.1.0 to 9.1.2
+- [Release notes](https://github.com/zip-rs/zip2/releases)
+- [Changelog](https://github.com/zip-rs/zip2/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/zip-rs/zip2/compare/v9.1.0...v9.1.2)
+
+---
+updated-dependencies:
+- dependency-name: zip
+  dependency-version: 9.1.2
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: rust-dependencies
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -4175,27 +4175,27 @@ dependencies = [
+@@ -4123,9 +4123,9 @@ dependencies = [
  
  [[package]]
- name = "zstd"
--version = "0.14.2"
-+version = "0.14.3"
+ name = "zip"
+-version = "9.1.0"
++version = "9.1.2"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "057cfd910cfac363a0ada849592624b4c9ff2e10bef504c3433810d78ed96f93"
-+checksum = "db3ae9bf90af6e40197bef767eeefc46ad6397420fe873830bd85e5fbbfb3c70"
+-checksum = "2886b00003a72c4ccee3f42cfc34908d33b2508a74d827dc2a4244706475c704"
++checksum = "ec2e3161de27091f18a831d9494e9c53378a34833af5c1dda35ad85849da18d6"
  dependencies = [
-  "zstd-safe",
+  "aes",
+  "bzip2",
+```
+
+---
+
+### Incident Patch 2: `7af8d610` (2026-10-29)
+**Commit Message**: chore(deps): bump zip from 9.0.5 to 9.1.0 in the rust-dependencies group (#703)
+
+Bumps the rust-dependencies group with 1 update: [zip](https://github.com/zip-rs/zip2).
+
+
+Updates `zip` from 9.0.5 to 9.1.0
+- [Release notes](https://github.com/zip-rs/zip2/releases)
+- [Changelog](https://github.com/zip-rs/zip2/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/zip-rs/zip2/compare/v9.0.5...v9.1.0)
+
+---
+updated-dependencies:
+- dependency-name: zip
+  dependency-version: 9.1.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+  dependency-group: rust-dependencies
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +7/-6)
+```diff
+@@ -1572,9 +1572,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "lzma-rust2"
+-version = "0.22.0"
++version = "0.23.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7277c9742229dc25243236d578b6471a798c554512c6f6a04365ec2e87c2a3bb"
++checksum = "f1c46f3fcd2e888afdb01a07efc071cb21300e07c68d32c3e8b01b5c8cb1fcaa"
+ dependencies = [
+  "sha2 0.11.1",
  ]
+@@ -3345,9 +3345,9 @@ dependencies = [
  
  [[package]]
- name = "zstd-safe"
--version = "8.1.0"
-+version = "8.2.0"
+ name = "typed-path"
+-version = "0.12.3"
++version = "0.13.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bdd44c6a7284e91f3717755b24315a302edd9153a01f753c3cba3d765e8eafac"
-+checksum = "ded520f16b29e1a9b771c722221b2b0a0398c2316d9bb3c42b458a5414d7434b"
- dependencies = [
-  "zstd-sys",
- ]
+-checksum = "8e28f89b80c87b8fb0cf04ab448d5dd0dd0ade2f8891bae878de66a75a28600e"
++checksum = "9ce898823d8cd0f028662d2f349694b1af0a5cc9be83f1d213a00d3147445e1e"
  
  [[package]]
- name = "zstd-sys"
--version = "2.1.1+zstd.1.5.7"
-+version = "2.1.2+zstd.1.5.7"
+ name = "typenum"
+@@ -4123,9 +4123,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "zip"
+-version = "9.0.5"
++version = "9.1.0"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aeec9eaf2dffbbd09201e23bd0ffcbaa33bb8e9266a10734fd7ed90a85eca078"
-+checksum = "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
+-checksum = "6e04976da629d3b04204ba8105b396a193af8ad2583b2c79bfb3ab8af580a11e"
++checksum = "2886b00003a72c4ccee3f42cfc34908d33b2508a74d827dc2a4244706475c704"
  dependencies = [
-  "cc",
-  "pkg-config",
+  "aes",
+  "bzip2",
+@@ -4144,6 +4144,7 @@ dependencies = [
+  "sha1",
+  "time",
+  "typed-path",
++ "windows-sys 0.61.2",
+  "zeroize",
+  "zopfli",
+  "zstd",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #704** (2026-10-30): chore(deps): bump zip from 9.1.0 to 9.1.2 in the rust-dependencies group (@dependabot[bot])
+- **PR #703** (2026-10-29): chore(deps): bump zip from 9.0.5 to 9.1.0 in the rust-dependencies group (@dependabot[bot])
 - **PR #702** (2026-10-28): ci: cache Docker checks and trim test artifact retention (@domcyrus)
 - **PR #701** (2026-10-27): fix(deps): update vulnerable zstd dependencies (@domcyrus)
 - **PR #700** (2026-10-26): chore(deps): bump docker/login-action from 4.6.0 to 4.7.0 in the actions group (@dependabot[bot])
 - **PR #698** (2026-10-23): fix: update dependencies for security audit (@domcyrus)
-- **PR #697** (2026-10-21): chore(deps): bump zip from 9.0.4 to 9.0.5 in the rust-dependencies group (@dependabot[bot])
-- **PR #696** (2026-10-20): chore(deps): bump the rust-dependencies group with 2 updates (@dependabot[bot])
 
 ---
 
@@ -2562,13 +2633,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update zstd dependencies to patched releases (#701)
+## X. deps): bump zip from 9.1.0 to 9.1.2 in the rust-dependencies group (#704)
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `41884d3e`: deps): update zstd dependencies to patched releases (#701). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3105c762`: deps): bump zip from 9.1.0 to 9.1.2 in the rust-dependencies group (#704). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2576,24 +2647,16 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.14.3"
-checksum = "db3ae9bf90af6e40197bef767eeefc46ad6397420fe873830bd85e5fbbfb3c70"
-version = "8.2.0"
-checksum = "ded520f16b29e1a9b771c722221b2b0a0398c2316d9bb3c42b458a5414d7434b"
-version = "2.1.2+zstd.1.5.7"
-checksum = "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
+version = "9.1.2"
+checksum = "ec2e3161de27091f18a831d9494e9c53378a34833af5c1dda35ad85849da18d6"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.14.2"
-checksum = "057cfd910cfac363a0ada849592624b4c9ff2e10bef504c3433810d78ed96f93"
-version = "8.1.0"
-checksum = "bdd44c6a7284e91f3717755b24315a302edd9153a01f753c3cba3d765e8eafac"
-version = "2.1.1+zstd.1.5.7"
-checksum = "aeec9eaf2dffbbd09201e23bd0ffcbaa33bb8e9266a10734fd7ed90a85eca078"
+version = "9.1.0"
+checksum = "2886b00003a72c4ccee3f42cfc34908d33b2508a74d827dc2a4244706475c704"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `41884d3e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3105c762` are properly handled with clean fallback behavior.

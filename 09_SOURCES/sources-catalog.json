@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "643f50b3",
+    "sourceVersion": "753b3276",
     "license": "Apache-2.0",
-    "contentHash": "c5a25da1dd15f9f42e0ebb8dd994894a60a4dcdc11b8fc47c896fc502938994e",
-    "lastHarvestedAt": "2026-10-29T00:02:34.489Z",
+    "contentHash": "264987c58eee43256ef8bb7d5442978b8afd2f04a61f612adb4343bc42877606",
+    "lastHarvestedAt": "2026-10-30T15:49:19.730Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "5a05ac11",
+    "sourceVersion": "2c7aeadb",
     "license": "BSD-3-Clause",
-    "contentHash": "36e4a6f3e657758c7be7ac583d346a09207e36ef911b5412f05314ca5967cf67",
-    "lastHarvestedAt": "2026-10-30T04:17:54.626Z",
+    "contentHash": "2b9ce47ab388f3056907fddfbd7f9e1c50afb58c5a990d625b075cbacea9a9e1",
+    "lastHarvestedAt": "2026-10-30T15:49:21.069Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "76a1d8fe",
+    "sourceVersion": "3105c762",
     "license": "Apache-2.0",
-    "contentHash": "f096caddbfc7477e2d9aa897f0513ee73332afd256ad63c1fc1e0501e39d0b88",
-    "lastHarvestedAt": "2026-10-28T18:27:21.110Z",
+    "contentHash": "028dbe4e9f118db11aac6dabe624a961b140fe412aa6a869c4b00293806e18ba",
+    "lastHarvestedAt": "2026-10-30T15:54:13.752Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {
@@ -7293,10 +7293,10 @@
     "repository": "alibaba/zvec",
     "platform": "github",
     "sourceUrl": "https://github.com/alibaba/zvec",
-    "sourceVersion": "4c2d07de",
+    "sourceVersion": "4c5be75d",
     "license": "Apache-2.0",
-    "contentHash": "e3486c62caaf9f3a9bedefd0947a5c2dac8a25c7cf2c344cec70f0b0022dfeba",
-    "lastHarvestedAt": "2026-10-28T05:17:55.146Z",
+    "contentHash": "87cec5ddd178e06e0fad9cda585e73ea20d1fc4e1970d1e7eb976765e316cbef",
+    "lastHarvestedAt": "2026-10-30T15:49:23.795Z",
     "learningId": "learn-github-alibaba-zvec"
   },
   "zenbu-labs-terminal-browser": {

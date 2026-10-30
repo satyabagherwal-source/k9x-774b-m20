@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T15:37:11.547Z",
+  "last_updated": "2026-10-30T15:54:13.674Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1576,8 +1576,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "4c2d07de",
-      "content_hash": "e3486c62caaf9f3a9bedefd0947a5c2dac8a25c7cf2c344cec70f0b0022dfeba",
+      "source_version": "4c5be75d",
+      "content_hash": "87cec5ddd178e06e0fad9cda585e73ea20d1fc4e1970d1e7eb976765e316cbef",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -1620,6 +1620,11 @@
           "number": 5184,
           "title": "hnsw_rabitq): refine entry scores before level-0 search (#851)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5792,
+          "title": "io): prevent file descriptor inheritance across exec (#859)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -1627,7 +1632,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T05:17:55.089Z",
+      "verified_at": "2026-10-30T15:49:23.696Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10017,8 +10022,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "76a1d8fe",
-      "content_hash": "f096caddbfc7477e2d9aa897f0513ee73332afd256ad63c1fc1e0501e39d0b88",
+      "source_version": "3105c762",
+      "content_hash": "028dbe4e9f118db11aac6dabe624a961b140fe412aa6a869c4b00293806e18ba",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -10056,6 +10061,11 @@
           "number": 5360,
           "title": "deps): update zstd dependencies to patched releases (#701)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5793,
+          "title": "deps): bump zip from 9.1.0 to 9.1.2 in the rust-dependencies group (#704)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10063,7 +10073,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:27:21.014Z",
+      "verified_at": "2026-10-30T15:54:13.655Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33569,8 +33579,8 @@
       "slug": "kgateway-dev-kgateway",
       "platform": "github",
       "source_url": "https://github.com/kgateway-dev/kgateway",
-      "source_version": "643f50b3",
-      "content_hash": "c5a25da1dd15f9f42e0ebb8dd994894a60a4dcdc11b8fc47c896fc502938994e",
+      "source_version": "753b3276",
+      "content_hash": "264987c58eee43256ef8bb7d5442978b8afd2f04a61f612adb4343bc42877606",
       "dossier_path": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md",
       "promoted_rules": [
@@ -33618,6 +33628,11 @@
           "number": 5465,
           "title": "e2e: share one Gateway per TCPRoute/TLSRoute suite (#14890)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5790,
+          "title": "CVE fixes (#14929)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33625,7 +33640,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T00:02:34.425Z",
+      "verified_at": "2026-10-30T15:49:19.635Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52383,8 +52398,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "5a05ac11",
-      "content_hash": "36e4a6f3e657758c7be7ac583d346a09207e36ef911b5412f05314ca5967cf67",
+      "source_version": "2c7aeadb",
+      "content_hash": "2b9ce47ab388f3056907fddfbd7f9e1c50afb58c5a990d625b075cbacea9a9e1",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -52502,6 +52517,11 @@
           "number": 5598,
           "title": "Chunked UTF-8 Multi-Byte Buffer Splitting Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5791,
+          "title": "ipn/ipnlocal,wgengine{,/magicsock}: cleanup TSMP disco logs (#22088)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52509,7 +52529,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T04:17:54.524Z",
+      "verified_at": "2026-10-30T15:49:20.972Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154001,6 +154021,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T15:37:11.524Z"
+    },
+    "rule-5790": {
+      "learning_id": "rule-5790",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5790,
+      "title": "CVE fixes (#14929)",
+      "source_url": "https://github.com/kgateway-dev/kgateway",
+      "source_version": "753b3276",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T15:49:19.635Z"
+    },
+    "rule-5791": {
+      "learning_id": "rule-5791",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5791,
+      "title": "ipn/ipnlocal,wgengine{,/magicsock}: cleanup TSMP disco logs (#22088)",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "2c7aeadb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T15:49:20.972Z"
+    },
+    "rule-5792": {
+      "learning_id": "rule-5792",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5792,
+      "title": "io): prevent file descriptor inheritance across exec (#859)",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "4c5be75d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T15:49:23.696Z"
+    },
+    "rule-5793": {
+      "learning_id": "rule-5793",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5793,
+      "title": "deps): bump zip from 9.1.0 to 9.1.2 in the rust-dependencies group (#704)",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "3105c762",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T15:54:13.655Z"
     }
   },
   "aliases": {

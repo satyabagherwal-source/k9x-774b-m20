@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source**: github ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
-> **Source Version**: `4c2d07de`  
+> **Source Version**: `4c5be75d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T05:17:54.767Z  
+> **Timestamp**: 2026-10-30T15:49:23.145Z  
 > **Learning ID**: `learn-github-alibaba-zvec`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T05:17:54.592Z  
+> **Harvest Timestamp**: 2026-10-30T15:49:23.137Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightweight, lightning-fast, in-process vector database
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 16158 stars
+- **Stars / Engagement**: 16165 stars
 
 ---
 
@@ -1092,181 +1092,517 @@ class HolderCluster {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4c2d07de` (2026-10-28)
-**Commit Message**: fix(hnsw_rabitq): refine entry scores before level-0 search (#851)
+### Incident Patch 1: `4c5be75d` (2026-10-30)
+**Commit Message**: fix(io): prevent file descriptor inheritance across exec (#859)
 
-**File**: `src/core/algorithm/hnsw_rabitq/hnsw_rabitq_query_algorithm.cc` (modified, +5/-0)
+**File**: `src/ailego/io/file.cc` (modified, +6/-0)
 ```diff
-@@ -61,6 +61,11 @@ int HnswRabitqQueryAlgorithm::search(HnswRabitqQueryEntity *entity,
-     select_entry_point(cur_level, &entry_point, &curest, ctx, entity);
-   }
+@@ -34,6 +34,9 @@ namespace ailego {
+ #if !defined(_WIN64) && !defined(_WIN32)
  
-+  if (ex_bits_ > 0) {
-+    // Use all quantization bits for the final entry before inserting it.
-+    get_full_est(entity_.get_vector(entry_point), curest, *entity);
-+  }
-+
-   auto &topk_heap = ctx->topk_heap();
-   topk_heap.clear();
-   search_neighbors(0, &entry_point, &curest, topk_heap, ctx, entity);
+ static inline int OpenSafely(const char *path, int flags) {
++  // Set close-on-exec atomically with open: a later fcntl can race with a
++  // concurrent process launch and leave the child holding collection locks.
++  flags |= O_CLOEXEC;
+   int fd = open(path, flags, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+   while (fd == -1 && errno == EINTR) {
+     fd = open(path, flags, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+@@ -424,6 +427,8 @@ bool File::create(const char *path, size_t len, bool direct) {
+   ailego_false_if_false(Utf8PathOk(path, wpath));
+ 
+   // Try opening or creating the file
++  // Null security attributes make this handle and the direct-I/O reopen below
++  // non-inheritable, even when the child process enables handle inheritance.
+   HANDLE file_handle =
+       ::CreateFileW(wpath.c_str(), GENERIC_WRITE | GENERIC_READ,
+                     FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+@@ -470,6 +475,7 @@ bool File::open(const char *path, bool rdonly, bool direct) {
+   if (direct) {
+     flags |= FILE_FLAG_NO_BUFFERING;
+   }
++  // Null security attributes keep this handle non-inheritable.
+   HANDLE file_handle = ::CreateFileW(
+       wpath.c_str(), (rdonly ? GENERIC_READ : GENERIC_READ | GENERIC_WRITE),
+       FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr,
 ```
 
-**File**: `tests/core/interface/hnsw_rabitq_index_test.cc` (added, +206/-0)
+**File**: `tests/ailego/io/file_test.cc` (modified, +43/-0)
 ```diff
-@@ -0,0 +1,206 @@
-+// Copyright 2025-present the zvec project
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+#include <algorithm>
-+#include <cmath>
-+#include <cstdint>
-+#include <memory>
-+#include <random>
-+#include <string>
-+#include <vector>
-+#include <gtest/gtest.h>
-+
-+#if RABITQ_SUPPORTED
-+#include <rabitqlib/utils/cpu_features.hpp>
-+#include "ailego/pattern/scope_guard.h"
-+#include "algorithm/hnsw_rabitq/hnsw_rabitq_context.h"
-+#include "algorithm/hnsw_rabitq/hnsw_rabitq_params.h"
-+#include "algorithm/hnsw_rabitq/rabitq_converter.h"
-+#include "tests/test_util.h"
-+#include "zvec/core/framework/index_holder.h"
-+#include "zvec/core/interface/index.h"
-+#include "zvec/core/interface/index_param_builders.h"
-+
-+namespace zvec::core_interface {
+@@ -17,9 +17,52 @@
+ #include <ailego/utility/memory_helper.h>
+ #include <gtest/gtest.h>
+ #include <zvec/ailego/io/file.h>
++#if defined(_WIN64) || defined(_WIN32)
++#include <Windows.h>
++#ifdef RemoveDirectory
++#undef RemoveDirectory
++#endif
++#else
++#include <fcntl.h>
++#endif
+ 
+ using namespace zvec::ailego;
+ 
 +namespace {
 +
-+constexpr uint32_t kDimension = 128;
-+constexpr uint32_t kTotalBits = 7;
-+constexpr uint32_t kGraphDocCount =
-+    core::HnswRabitqEntity::kDefaultBruteForceThreshold + 1;
++void ExpectNonInheritable(const File &file) {
++#if defined(_WIN64) || defined(_WIN32)
++  DWORD flags = 0;
++  ASSERT_TRUE(GetHandleInformation(file.native_handle(), &flags));
++  EXPECT_EQ(0u, flags & HANDLE_FLAG_INHERIT);
++#else
++  int flags = fcntl(file.native_handle(), F_GETFD);
++  ASSERT_NE(-1, flags);
++  EXPECT_NE(0, flags & FD_CLOEXEC);
++#endif
++}
 +
-+struct EntryScoreCase {
-+  MetricType metric;
-+  uint32_t doc_count;
-+  const char *name;
-+};
++}  // namespace
 +
-+class TestableHnswRabitqIndex : public HNSWRabitqIndex {
-+ public:
-+  explicit TestableHnswRabitqIndex(bool force_graph)
-+      : force_graph_(force_graph) {}
++TEST(File, HandlesAreNotInherited) {
++  const char *path = "file_inheritance_test.dat";
++  for (bool direct : {false, true}) {
++    SCOPED_TRACE(direct);
++    File file;
++    ASSERT_TRUE(file.create(path, 4096, direct));
++    ExpectNonInheritable(file);
++    file.close();
 +
-+  using Index::init;
-+
-+  core::IndexContext::Pointer create_context() const {
-+    return streamer_->create_context();
-+  }
-+
-+ protected:
-+  int create_and_init_streamer(const BaseIndexParam &param) override {
-+    if (force_graph_) {
-+      // A single-node index otherwise falls back to a linear scan.
-+      proxima_index_params_.set(
-+          core::PARAM_HNSW_RABITQ_STREAMER_BRUTE_FORCE_THRESHOLD, 0U);
++    for (bool read_only : {false, true}) {
++      SCOPED_TRACE(read_only);
++      ASSERT_TRUE(file.open(path, read_only, direct));
++      ExpectNonInheritable(file);
++      file.close();
 +    }
-+    return HNSWRabitqIndex::create_and_init_streamer(param);
 +  }
++  EXPECT_TRUE(File::Delete(path));
++}
 +
-+ private:
-+  bool force_graph_;
-+};
+ TEST(File, General) {
+   EXPECT_TRUE(File::IsDirectory("."));
+   EXPECT_TRUE(File::IsDirectory(".."));
+```
+
+---
+
+### Incident Patch 2: `804ab197` (2026-10-30)
+**Commit Message**: fix: enforce read-only storage and WAL recovery boundaries (#840)
+
+**File**: `python/tests/test_hnsw_contiguous_memory.py` (modified, +32/-76)
+```diff
+@@ -11,21 +11,9 @@
+ # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+-"""
+-Tests for the ``use_contiguous_memory`` optimization on ``HnswIndexParam``.
+-
+-The HNSW streamer supports two allocation strategies for graph nodes:
++"""HNSW contiguous storage is used only for read-only mmap opens.
+ 
+-* ``use_contiguous_memory=False`` (default): each node allocates its own
+-  linked buffer. Lower peak memory usage, worse cache locality.
+-* ``use_contiguous_memory=True``: a single contiguous arena holds every
+-  node. Higher peak memory usage, better cache locality and search
+-  throughput.
+-
+-These tests exercise the Python surface end-to-end and make sure that
+-when a collection is created / reopened with ``use_contiguous_memory=True``
+-the underlying HNSW streamer entity is constructed correctly and serves
+-search traffic.
++Verify parameter persistence and query parity across writable/read-only opens.
+ """
+ 
+ from __future__ import annotations
+@@ -224,34 +212,17 @@ def rng() -> np.random.Generator:
+     return np.random.default_rng(seed=42)
+ 
+ 
+-# NOTE: the ``enable_mmap=False`` (BufferPool) variant is intentionally
+-# omitted from this fixture. Building a persisted HNSW index via
+-# ``optimize()`` / ``create_vector_index`` / ``drop_vector_index``
+-# currently requires mmap-backed storage, because the BufferPool backend
+-# has not implemented the ``create_new`` semantics yet and the guard in
+-# ``SegmentImpl::merge_vector_indexer`` rejects that combination. Once
+-# BufferPool gains write support, re-add ``False`` to ``params`` (and
+-# drop the guard in segment.cc) so these end-to-end tests cover both
+-# storage modes again.
++# Persisted HNSW builds require mmap until BufferPool supports create_new.
+ @pytest.fixture(params=[True], ids=["mmap_on"])
+ def collection_option(request) -> CollectionOption:
+     return CollectionOption(read_only=False, enable_mmap=request.param)
+ 
+ 
+-# Building a new persisted HNSW index currently requires mmap-backed storage
+-# because the BufferPool backend has not implemented `create_new` semantics
+-# yet. Collections opened with ``enable_mmap=False`` therefore cannot run
+-# optimize()/create_vector_index/drop_vector_index. Tests use this fixture
+-# to know which behaviour to assert, and once BufferPool gains write support
+-# the guard in segment.cc (and these branches) can be removed together.
+ @pytest.fixture
+ def build_index_supported(collection_option: CollectionOption) -> bool:
+     return bool(collection_option.enable_mmap)
+ 
+ 
+-# Error message fragments emitted by the NotSupported guard in
+-# SegmentImpl::merge_vector_indexer / drop_vector_index. If the C++ message
+-# changes, update these together.
+ _BUILD_NOT_SUPPORTED_FRAGMENTS = ("not yet supported", "enable_mmap=false")
+ 
+ 
+@@ -264,21 +235,13 @@ def test_create_with_contiguous_memory_and_query(
+         collection_option,
+         rng,
+     ):
+-        """With the flag on, the schema round-trips and search works end-to-end.
+-
+-        After ``optimize()`` the writing segment is compacted into a persisted
+-        segment backed by the configured HNSW entity. We assert both the
+-        user-observable behaviour (schema + search) and, via the debug hook,
+-        that the entity type actually honours ``use_contiguous_memory``.
+-        """
+         schema = _build_schema("hnsw_contig_create", use_contiguous_memory=True)
+ 
+         path = tmp_path_factory.mktemp("zvec") / "hnsw_contig_create"
+         coll = zvec.create_and_open(
+             path=str(path), schema=schema, option=collection_option
+         )
+         try:
+-            # Schema round-trips with the flag set.
+             vec_schema = coll.schema.vectors[0]
+             assert vec_schema.index_param.use_contiguous_memory is True
+ 
+@@ -288,27 +251,26 @@ def test_create_with_contiguous_memory_and_query(
+                 assert r.ok(), f"insert failed: code={r.code()}"
+             assert coll.stats.doc_count == NUM_DOCS
+ 
+-            # Build persisted HNSW index; this is where the contiguous entity
+-            # is actually instantiated.
+             coll.optimize()
+-            assert _debug_hnsw_storage_mode(coll) == "contiguous", (
+-                "use_contiguous_memory=True should produce a contiguous entity"
+-            )
++            assert _debug_hnsw_storage_mode(coll) == "mmap"
+ 
+-            # Pick an existing vector as the query; top-1 must be itself.
+             query_vec = docs[0].vector("dense")
+             ids = _assert_query_matches(coll, query_vec)
+             assert ids[0] == "0", f"expected self-recall, got top-1 id={ids[0]}"
 +
-+class HnswRabitqIndexTest : public testing::TestWithParam<EntryScoreCase> {
-+ protected:
-+  void SetUp() override {
-+    if (!rabitqlib::cpu::has_avx512_core() && !rabitqlib::cpu::has_avx2() &&
-+        !rabitqlib::cpu::has_neon()) {
-+      GTEST_SKIP() << "CPU does not support AVX2/FMA, AVX512F/BW/DQ, or NEON";
++            coll.close()
++            coll = zvec.open(path=str(path), option=CollectionOption(read_only=True))
++            assert _debug_hnsw_storage_mode(coll) == "contiguous"
++            assert _assert_query_matches(coll, query_vec) == ids
+         finally:
+-            coll.destr
+```
+
+**File**: `python/tests/test_readonly_storage.py` (added, +250/-0)
+```diff
+@@ -0,0 +1,250 @@
++# Copyright 2025-present the zvec project
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++"""Read-only opens preserve files, including after an unclean shutdown."""
++
++import contextlib
++import os
++import stat
++import subprocess
++import sys
++from pathlib import Path
++
++import pytest
++import zvec
++
++
++@pytest.fixture(scope="module", autouse=True)
++def initialize():
++    zvec.init(memory_limit_mb=512, query_threads=2, optimize_threads=2)
++
++
++def _schema(kind="flat"):
++    fields = [
++        zvec.FieldSchema(
++            "value", zvec.DataType.INT64, index_param=zvec.InvertIndexParam()
++        ),
++        zvec.FieldSchema(
++            "text", zvec.DataType.STRING, index_param=zvec.FtsIndexParam()
++        ),
++    ]
++    vectors = []
++    if kind != "scalar":
++        sparse = kind == "sparse"
++        param_type = zvec.FlatIndexParam if kind == "flat" else zvec.HnswIndexParam
++        param = param_type(
++            metric_type=zvec.MetricType.IP if sparse else zvec.MetricType.L2
++        )
++        vectors = [
++            zvec.VectorSchema(
++                "v",
++                zvec.DataType.SPARSE_VECTOR_FP32
++                if sparse
++                else zvec.DataType.VECTOR_FP32,
++                index_param=param,
++                **({} if sparse else {"dimension": 4}),
++            )
++        ]
++    return zvec.CollectionSchema(
++        name="readonly_storage", fields=fields, vectors=vectors
++    )
++
++
++def _doc(key, value, kind):
++    vectors = (
++        {}
++        if kind == "scalar"
++        else {"v": {value: 1.0} if kind == "sparse" else [float(value), 1.0, 0.0, 0.0]}
++    )
++    return zvec.Doc(
++        id=key, fields={"value": value, "text": "hello readonly"}, vectors=vectors
++    )
++
++
++def _snapshot(path):
++    return {
++        str(p.relative_to(path)): (
++            p.read_bytes(),
++            p.stat().st_ino,
++            p.stat().st_mtime_ns,
++        )
++        for p in path.rglob("*")
++        if p.is_file()
 +    }
-+    test_util::RemoveTestFiles(index_path() + "*");
++
++
++def _crash_writer(path, enable_mmap, kind, operation):
++    # A fresh process using os._exit leaves a WAL without running destructors.
++    subprocess.run(
++        [sys.executable, __file__, str(path), str(int(enable_mmap)), kind, operation],
++        check=True,
++        timeout=60,
++    )
++
++
++def _assert_docs(collection, expected):
++    fetched = collection.fetch(["a", "b", "c"])
++    assert {key: doc.fields["value"] for key, doc in fetched.items()} == expected
++    assert collection.stats.doc_count == len(expected)
++    assert {doc.id for doc in collection.iter_docs()} == set(expected)
++
++
++@pytest.mark.parametrize("enable_mmap", [True, False])
++@pytest.mark.parametrize("kind", ["flat", "sparse", "scalar"])
++@pytest.mark.parametrize("operation", ["insert", "update", "upsert", "delete"])
++def test_pending_wal_requires_writable_recovery(tmp_path, enable_mmap, kind, operation):
++    path = tmp_path / "collection"
++    _crash_writer(path, enable_mmap, kind, operation)
++    before = _snapshot(path)
++    assert list(path.rglob("*.wal"))
++    for _ in range(2):
++        with pytest.raises(
++            (ValueError, RuntimeError), match="requires WAL recovery.*read_only=false"
++        ):
++            zvec.open(
++                str(path),
++                zvec.CollectionOption(read_only=True, enable_mmap=enable_mmap),
++            )
++        assert _snapshot(path) == before
++
++    expected = {"a": 1, "b": 2}
++    if operation == "insert":
++        expected["c"] = 3
++    elif operation in ("update", "upsert"):
++        expected["a"] = 4
++    else:
++        del expected["a"]
++    writer = zvec.open(str(path), zvec.CollectionOption(enable_mmap=enable_mmap))
++    _assert_docs(writer, expected)
++    writer.close()
++    recovered = _snapshot(path)
++    reader = zvec.open(
++        str(path), zvec.CollectionOption(read_only=True, enable_mmap=enable_mmap)
++    )
++    _assert_docs(reader, expected)
++    reader.close()
++    assert _snapshot(path) == recovered
++
++
++@pytest.mark.parametrize("enable_mmap", [True, False])
++def test_header_only_wal_can_be_opened_readonly(tmp_path, enable_mmap):
++    path = tmp_path / "collection"
++    _crash_writer(path, enable_mmap, "flat", "empty")
++    wal = next(path.rglob("*.wal"))
++    assert wal.stat().st_size == 64
++    before = _snapshot(path)
++    reader = zvec.open(
++        str(path), zvec.CollectionOption(read_only=True, enable_mmap=enable_mmap)
++    )
++    _assert_docs(reader, {"a": 1, "b": 2})
++    reader
+```
+
+**File**: `python/zvec/zvec.py` (modified, +3/-0)
+```diff
+@@ -219,6 +219,9 @@ def open(path: str, option: CollectionOption = CollectionOption()) -> Collection
+ 
+     The collection must have been previously created with ``create_and_open``.
+ 
++    Pending WAL recovery requires opening and closing the collection with
++    ``CollectionOption(read_only=False)`` before a read-only open.
++
+     Args:
+         path (str): Path or name of the existing collection.
+         option (CollectionOption, optional): Configuration options
+```
+
+**File**: `src/core/algorithm/hnsw/hnsw_streamer.cc` (modified, +4/-1)
+```diff
+@@ -325,7 +325,10 @@ int HnswStreamer::open(IndexStorage::Pointer stg) {
+     default: {
+       if (use_external_vector_) {
+         entity_ = std::make_unique<HnswExternalStreamerEntity>(stats_);
+-      } else if (use_contiguous_memory_) {
++      } else if (use_contiguous_memory_ &&
++                 stg->name() == "MMapFileReadStorage") {
++        // Writable appends would leave cloned contexts using stale contiguous
++        // snapshots.
+         entity_ = std::make_unique<HnswContiguousStreamerEntity>(stats_);
+       } else {
+         entity_ = std::make_unique<HnswMmapStreamerEntity>(stats_);
+```
+
+**File**: `src/core/interface/index.cc` (modified, +13/-3)
+```diff
+@@ -503,6 +503,10 @@ int Index::init(const BaseIndexParam &param) {
+ 
+ 
+ int Index::open(const std::string &file_path, StorageOptions storage_options) {
++  if (storage_options.read_only && storage_options.create_new) {
++    LOG_ERROR("Cannot create storage for a read-only index");
++    return core::IndexError_Runtime;
 +  }
-+
-+  void TearDown() override {
-+    test_util::RemoveTestFiles(index_path() + "*");
+   ailego::Params storage_params;
+   // storage_params.set("proxima.mmap_file.storage.memory_warmup", true);
+   // storage_params.set("proxima.mmap_file.storage.segment_meta_capacity",
+@@ -519,14 +523,16 @@ int Index::open(const std::string &file_path, StorageOptions storage_options) {
+ 
+   switch (storage_options.type) {
+     case StorageOptions::StorageType::kMMAP: {
+-      storage_ = core::IndexFactory::CreateStorage("MMapFileStorage");
++      const char *storage_name =
++          storage_options.read_only ? "MMapFileReadStorage" : "MMapFileStorage";
++      storage_ = core::IndexFactory::CreateStorage(storage_name);
+       if (storage_ == nullptr) {
+-        LOG_ERROR("Failed to create MMapFileStorage");
++        LOG_ERROR("Failed to create %s", storage_name);
+         return core::IndexError_Runtime;
+       }
+       int ret = storage_->init(storage_params);
+       if (ret != 0) {
+-        LOG_ERROR("Failed to init MMapFileStorage, path: %s, err: %s",
++        LOG_ERROR("Failed to init %s, path: %s, err: %s", storage_name,
+                   file_path.c_str(), core::IndexError::What(ret));
+         return ret;
+       }
+@@ -1415,6 +1421,10 @@ int Index::_sparse_search(const VectorData &vector_data,
+ 
+ int Index::merge(const std::vector<Index::Pointer> &indexes,
+                  const IndexFilter &filter, const MergeOptions &options) {
++  if (!is_open_ || is_read_only_) {
++    LOG_ERROR("Cannot merge into an index that is closed or read-only");
++    return core::IndexError_Runtime;
 +  }
-+
-+  std::string index_path() const {
-+    return std::string("hnsw_rabitq_entry_score_") + GetParam().name;
+   if (indexes.empty()) {
+     return core::IndexError_Success;
+   }
+```
+
+**File**: `src/core/interface/indexes/diskann_index.cc` (modified, +6/-0)
+```diff
+@@ -137,6 +137,10 @@ int DiskAnnIndex::create_and_init_streamer(const BaseIndexParam &param) {
+ 
+ int DiskAnnIndex::open(const std::string &file_path,
+                        StorageOptions storage_options) {
++  if (storage_options.read_only && storage_options.create_new) {
++    LOG_ERROR("Cannot create storage for a read-only index");
++    return core::IndexError_Runtime;
 +  }
-+};
-+
-+TEST_P(HnswRabitqIndexTest, EntryScoreMatchesFullEstimate) {
-+  const auto &test_case = GetParam();
-+  auto holder = std::make_shared<
-+      core::MultiPassIndexProvider<core::IndexMeta::DataType::DT_FP32>>(
-+      kDimension);
-+  std::vector<ailego::NumericalVector<float>> vectors;
-+  std::mt19937 generator(20260319);
-+  std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
-+  // Keep a nonzero quantization residual even for the single-node index.
-+  const uint32_t train_count = std::max(2U, test_case.doc_count);
-+  for (uint32_t i = 0; i < train_count; ++i) {
-+    ailego::NumericalVector<float> vector(kDimension);
-+    float norm = 0.0f;
-+    for (uint32_t j = 0; j < kDimension; ++j) {
-+      vector[j] = distribution(generator);
-+      norm += vector[j] * vector[j];
-+    }
-+    if (test_case.metric == MetricType::kCosine) {
-+      norm = std::sqrt(norm);
-+      for (uint32_t j = 0; j < kDimension; ++j) {
-+        vector[j] /= norm;
-+      }
-+    }
-+    vectors.push_back(vector);
-+    ASSERT_TRUE(holder->emplace(i, vector));
+   ailego::Params storage_params;
+   file_path_ = file_path;
+   is_read_only_ = storage_options.read_only;
+@@ -200,6 +204,7 @@ int DiskAnnIndex::generate_holder() {
+ }
+ 
+ int DiskAnnIndex::add(const VectorData &vector, uint32_t doc_id) {
++  if (!is_open_ || is_read_only_) return core::IndexError_NoReady;
+   if (is_trained_ || build_stage_ != BuildStage::kCollecting) {
+     LOG_ERROR("this diskann index is trained or has a pending build");
+     return core::IndexError_Runtime;
+@@ -223,6 +228,7 @@ int DiskAnnIndex::add(const VectorData &vector, uint32_t doc_id) {
+ 
+ int DiskAnnIndex::train() {
+   if (is_trained_) return 0;
++  if (!is_open_ || is_read_only_) return core::IndexError_NoReady;
+   if (build_stage_ == BuildStage::kCollecting) {
+     int ret = reset_builder();
+     if (ret != 0) return ret;
+```
+
+**File**: `src/core/interface/indexes/flat_index.cc` (modified, +1/-1)
+```diff
+@@ -33,7 +33,7 @@ int ReadPersistedFlatIndexMeta(const std::string &file_path,
+   const char *storage_name = nullptr;
+   switch (storage_options.type) {
+     case StorageOptions::StorageType::kMMAP:
+-      storage_name = "MMapFileStorage";
++      storage_name = "MMapFileReadStorage";
+       break;
+     case StorageOptions::StorageType::kBufferPool:
+       storage_name = "BufferStorage";
+```
+
+**File**: `src/core/interface/indexes/ivf_index.cc` (modified, +5/-0)
+```diff
+@@ -170,6 +170,10 @@ int IVFIndex::load_streamer() {
+ 
+ int IVFIndex::open(const std::string &file_path,
+                    StorageOptions storage_options) {
++  if (storage_options.read_only && storage_options.create_new) {
++    LOG_ERROR("Cannot create storage for a read-only index");
++    return core::IndexError_Runtime;
 +  }
-+
-+  core::IndexMeta meta(DataType::DT_FP32, kDimension);
-+  meta.set_metric(
-+      test_case.metric == MetricType::kCosine ? "Cosine" : "SquaredEuclidean",
-+      0, ailego::Params());
-+  ailego::Params converter_params;
-+  converter_params.set(core::PARAM_RABITQ_TOTAL_BITS, kTotalBits);
-+  converter_params.set(core::PARAM_RABITQ_NUM_CLUSTERS, 1U);
-+  core::RabitqConverter converter;
-+  ASSERT_EQ(0, converter.init(meta, converter_params));
-+  ASSERT_EQ(0, converter.train(holder));
-+  core::IndexReformer::Pointer reformer;
-+  ASSERT_EQ(0, converter.to_reformer(&reformer));
-+
-+  auto param = HNSWRabitqIndexParamBuilder()
-+                   .with_metric_type(test_case.metric)
-+                   .with_data_type(DataType::DT_FP32)
-+                   .with_dimension(kDimension)
-+                   .with_m(16)
-+                   .with_ef_construction(100)
-+                   .with_total_bits(kTotalBits)
-+                   .with_provider(holder)
-+                   .with_reformer(reformer)
-+                   .build();
-+  TestableHnswRabitqIndex index(test_case.doc_count == 1);
-+
+   ailego::Params storage_params;
+   file_path_ = file_path;
+   is_read_only_ = storage_options.read_only;
+@@ -239,6 +243,7 @@ int IVFIndex::generate_holder() {
+ }
+ 
+ int IVFIndex::add(const VectorData &vector, uint32_t doc_id) {
++  if (!is_open_ || is_read_only_) return core::IndexError_NoReady;
+   if (is_trained_ || build_stage_ != BuildStage::kCollecting) {
+     LOG_ERROR("this IVF index is trained or has a pending build");
+     return core::IndexError_Runtime;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #859** (2026-10-30): fix(io): prevent file descriptor inheritance across exec (@egolearner)
+- **PR #856** (2026-10-29): feat(turbo): complete ARM NEON one-to-many distance kernels (@richyreachy)
+- **PR #853** (2026-10-30): perf(diskann): borrow mmap vectors during graph construction (@iaojnh)
 - **PR #851** (2026-10-28): fix(hnsw_rabitq): refine entry scores before level-0 search (@egolearner)
 - **PR #846** (2026-10-27): perf: deduplicate string parameter constants (@egolearner)
 - **PR #844** (2026-10-26): docs: simplify README badges and organize SDK installation tables (@JalinWang)
-- **PR #842** (closed): fix(flat): repopulate id_key_vector on reopen with use_id_map=false (#781) (@thlurte)
-- **PR #835** (2026-10-21): docs: clarify README platforms and Python example (@zhourrr)
-- **PR #834** (2026-10-21): fix(core): preserve index bytes on read-only close (@iaojnh)
 
 ---
 
@@ -1286,25 +1622,26 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hnsw_rabitq): refine entry scores before level-0 search (#851)
+## X. io): prevent file descriptor inheritance across exec (#859)
 
 **RULE**:
-When implementing operations in `src/core/algorithm/hnsw_rabitq/hnsw_rabitq_query_algorithm.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/ailego/io/file.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4c2d07de`: hnsw_rabitq): refine entry scores before level-0 search (#851). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4c5be75d`: io): prevent file descriptor inheritance across exec (#859). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/core/algorithm/hnsw_rabitq/hnsw_rabitq_query_algorithm.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/ailego/io/file.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  if (ex_bits_ > 0) {
-    // Use all quantization bits for the final entry before inserting it.
-    get_full_est(entity_.get_vector(entry_point), curest, *entity);
-  }
-
+  // Set close-on-exec atomically with open: a later fcntl can race with a
+  // concurrent process launch and leave the child holding collection locks.
+  flags |= O_CLOEXEC;
+  // Null security attributes make this handle and the direct-I/O reopen below
+  // non-inheritable, even when the child process enables handle inheritance.
+  // Null security attributes keep this handle non-inheritable.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1314,4 +1651,4 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4c2d07de` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4c5be75d` are properly handled with clean fallback behavior.

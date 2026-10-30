@@ -6236,3 +6236,7 @@ Every entry in this ledger must capture:
 | `learn-github-urllib3-urllib3` | `https://github.com/urllib3/urllib3` | `2aa7e9c3` | Multi-dimensional audit evidence | 2026-10-30T15:37:05.032Z |
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `d72e8d00` | Multi-dimensional audit evidence | 2026-10-30T15:37:10.122Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `421026a6` | Multi-dimensional audit evidence | 2026-10-30T15:37:11.627Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `753b3276` | Multi-dimensional audit evidence | 2026-10-30T15:49:19.730Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `2c7aeadb` | Multi-dimensional audit evidence | 2026-10-30T15:49:21.069Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `4c5be75d` | Multi-dimensional audit evidence | 2026-10-30T15:49:23.795Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `3105c762` | Multi-dimensional audit evidence | 2026-10-30T15:54:13.752Z |
