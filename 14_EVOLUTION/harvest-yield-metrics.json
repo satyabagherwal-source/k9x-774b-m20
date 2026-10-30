@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T10:32:10.265Z",
-  "total_cycles_completed": 6153,
-  "total_learnings_persisted": 6153,
-  "total_rules_promoted": 5699,
+  "last_updated": "2026-10-30T10:42:07.295Z",
+  "total_cycles_completed": 6157,
+  "total_learnings_persisted": 6157,
+  "total_rules_promoted": 5705,
   "history": [
-    {
-      "timestamp": "2026-10-28T22:52:12.921Z",
-      "repository": "google/tcmalloc",
-      "learningId": "learn-github-google-tcmalloc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T22:52:18.407Z",
-      "repository": "thaw-app/Thaw",
-      "learningId": "learn-github-thaw-app-thaw",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T22:58:57.153Z",
-      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T22:58:58.480Z",
-      "repository": "nguyenphutrong/quotio",
-      "learningId": "learn-github-nguyenphutrong-quotio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T22:59:06.588Z",
       "repository": "authzed/spicedb",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-30T10:32:10.265Z",
       "repository": "webrecorder/browsertrix-crawler",
       "learningId": "learn-github-webrecorder-browsertrix-crawler",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T10:40:53.292Z",
+      "repository": "ArchiveBox/ArchiveBox",
+      "learningId": "learn-github-archivebox-archivebox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T10:40:58.785Z",
+      "repository": "smallstep/cli",
+      "learningId": "learn-github-smallstep-cli",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T10:41:00.873Z",
+      "repository": "meilisearch/meilisearch",
+      "learningId": "learn-github-meilisearch-meilisearch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T10:42:07.295Z",
+      "repository": "LiquidAI/LFM3-Audio-2B",
+      "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

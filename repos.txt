@@ -4714,3 +4714,7 @@ https://github.com/reason-machines/reason-network
 # --- Automatically Discovered by AI Scout Engine [2026-10-30T08:01:41.559Z] ---
 # [HUGGINGFACE-AI-MODELS] Pika-Labs/Pika-H3-Flex (1420 score) - Verified Hugging Face Model: Pika-Labs/Pika-H3-Flex (142 likes, 0 downloads)
 https://huggingface.co/Pika-Labs/Pika-H3-Flex
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-30T10:40:37.357Z] ---
+# [HUGGINGFACE-AI-MODELS] LiquidAI/LFM3-Audio-2B (3400 score) - Verified Hugging Face Model: LiquidAI/LFM3-Audio-2B (140 likes, 3550 downloads)
+https://huggingface.co/LiquidAI/LFM3-Audio-2B

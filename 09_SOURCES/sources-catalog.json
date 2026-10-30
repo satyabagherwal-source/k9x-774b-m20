@@ -2283,10 +2283,10 @@
     "repository": "smallstep/cli",
     "platform": "github",
     "sourceUrl": "https://github.com/smallstep/cli",
-    "sourceVersion": "824bfd6b",
+    "sourceVersion": "1f40f8ba",
     "license": "Apache-2.0",
-    "contentHash": "348993ae2d587e4449326201814dd95e30e7a9b0a97c8c13f0ac24f087eb10a4",
-    "lastHarvestedAt": "2026-10-27T09:46:50.504Z",
+    "contentHash": "0fc1be6f4728287b7a8556b46b634f3a00030e49b09a86b8d56b92408f244ece",
+    "lastHarvestedAt": "2026-10-30T10:40:58.780Z",
     "learningId": "learn-github-smallstep-cli"
   },
   "ontos-ai-knowhere": {
@@ -6423,10 +6423,10 @@
     "repository": "meilisearch/meilisearch",
     "platform": "github",
     "sourceUrl": "https://github.com/meilisearch/meilisearch",
-    "sourceVersion": "ef98c47f",
+    "sourceVersion": "3a8f3f35",
     "license": "NOASSERTION",
-    "contentHash": "bd96eac799af92e489fe49b6a105655763d74bd17c21e5986bf108baa52718d2",
-    "lastHarvestedAt": "2026-10-28T20:15:54.186Z",
+    "contentHash": "52fc2ef9768e3a31713dc4592e6fa8e3fe2667f1b13af709edf861495ecb2a88",
+    "lastHarvestedAt": "2026-10-30T10:41:00.866Z",
     "learningId": "learn-github-meilisearch-meilisearch"
   },
   "pacocoursey-cmdk": {
@@ -9283,10 +9283,10 @@
     "repository": "ArchiveBox/ArchiveBox",
     "platform": "github",
     "sourceUrl": "https://github.com/ArchiveBox/ArchiveBox",
-    "sourceVersion": "4ab614bc",
+    "sourceVersion": "d46ed799",
     "license": "MIT",
-    "contentHash": "192b8e55c828a258cf185160ff8a35d7855a187c74feb2c8ed68a4c5be5d4ab8",
-    "lastHarvestedAt": "2026-10-27T11:56:08.102Z",
+    "contentHash": "c27aa8f899cc075ae416d36f4195930d5bc9b66f98897a3ab00541d65e784873",
+    "lastHarvestedAt": "2026-10-30T10:40:53.284Z",
     "learningId": "learn-github-archivebox-archivebox"
   },
   "buriy-python-readability": {
@@ -11558,5 +11558,15 @@
     "contentHash": "4d9ea41aa092bc1f8161977b78e31c2339dc2baaeb620b20356b506cec8cc4b5",
     "lastHarvestedAt": "2026-10-30T08:04:02.164Z",
     "learningId": "learn-huggingface-pika-labs-pika-h3-flex"
+  },
+  "hf-liquidai-lfm3-audio-2b": {
+    "repository": "LiquidAI/LFM3-Audio-2B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
+    "sourceVersion": "hf-liquidai-lfm3-audio-2b",
+    "license": "Open-Source",
+    "contentHash": "9c92f6081c12c259d0e873d358be1ea55eb19b2fca7df7f3690f21c8cd7f3b4c",
+    "lastHarvestedAt": "2026-10-30T10:42:07.290Z",
+    "learningId": "learn-huggingface-liquidai-lfm3-audio-2b"
   }
 }

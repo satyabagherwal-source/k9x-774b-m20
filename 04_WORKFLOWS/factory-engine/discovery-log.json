@@ -19849,5 +19849,17 @@
     "downloads": 0,
     "qualityScore": 1420,
     "discoveredAt": "2026-10-30T07:59:33.389Z"
+  },
+  {
+    "name": "LiquidAI/LFM3-Audio-2B",
+    "fullName": "LiquidAI/LFM3-Audio-2B",
+    "url": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: LiquidAI/LFM3-Audio-2B (140 likes, 3550 downloads)",
+    "likes": 140,
+    "downloads": 3550,
+    "qualityScore": 3400,
+    "discoveredAt": "2026-10-30T10:38:28.818Z"
   }
 ]

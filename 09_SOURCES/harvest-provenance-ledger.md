@@ -6185,3 +6185,7 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `fb8018f7` | Multi-dimensional audit evidence | 2026-10-30T10:26:21.627Z |
 | `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `77d3d3fe` | Multi-dimensional audit evidence | 2026-10-30T10:30:47.825Z |
 | `learn-github-webrecorder-browsertrix-crawler` | `https://github.com/webrecorder/browsertrix-crawler` | `3aff4355` | Multi-dimensional audit evidence | 2026-10-30T10:32:10.261Z |
+| `learn-github-archivebox-archivebox` | `https://github.com/ArchiveBox/ArchiveBox` | `d46ed799` | Multi-dimensional audit evidence | 2026-10-30T10:40:53.284Z |
+| `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `1f40f8ba` | Multi-dimensional audit evidence | 2026-10-30T10:40:58.780Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `3a8f3f35` | Multi-dimensional audit evidence | 2026-10-30T10:41:00.866Z |
+| `learn-huggingface-liquidai-lfm3-audio-2b` | `https://huggingface.co/LiquidAI/LFM3-Audio-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-30T10:42:07.290Z |

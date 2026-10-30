@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-SP2W",
-    "timestamp": "2026-10-28T03:49:40.472Z",
-    "repository": "react-hook-form/react-hook-form",
-    "learningId": "learn-github-react-hook-form-react-hook-form",
-    "contentHash": "3199236986162bead61c38e2eb1f6f53770228fe084e3b74b41ad860e8ee5d51",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-SRND",
-    "timestamp": "2026-10-28T03:49:43.801Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "da61f0054e8eaacf968cef60ecc343486191964b58f88c501edb9f959fcc1234",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-16DW",
-    "timestamp": "2026-10-28T03:56:16.148Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-moonshotai-kimi-k3",
-    "contentHash": "aa11c3f204342bdfac6b19d2ceff984af961f4088f58bfd99a2bfc4bbcb34045",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-AN95",
-    "timestamp": "2026-10-28T04:03:37.913Z",
-    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-    "contentHash": "3b03c8864e4f11c295ad225ef0168479ba0062dbc7cb6bf36f86d9eaecd90fbc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-AU11",
     "timestamp": "2026-10-28T04:03:46.693Z",
     "repository": "mattermost/mattermost",
@@ -7490,6 +7430,66 @@
     "repository": "webrecorder/browsertrix-crawler",
     "learningId": "learn-github-webrecorder-browsertrix-crawler",
     "contentHash": "a30173ada98e7f0171ab926f79d1175914431a45b57eac1ab0304203431ee2e8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-D82M",
+    "timestamp": "2026-10-30T10:40:53.278Z",
+    "repository": "ArchiveBox/ArchiveBox",
+    "learningId": "learn-github-archivebox-archivebox",
+    "contentHash": "c27aa8f899cc075ae416d36f4195930d5bc9b66f98897a3ab00541d65e784873",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-DCBC",
+    "timestamp": "2026-10-30T10:40:58.776Z",
+    "repository": "smallstep/cli",
+    "learningId": "learn-github-smallstep-cli",
+    "contentHash": "0fc1be6f4728287b7a8556b46b634f3a00030e49b09a86b8d56b92408f244ece",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-DDXA",
+    "timestamp": "2026-10-30T10:41:00.862Z",
+    "repository": "meilisearch/meilisearch",
+    "learningId": "learn-github-meilisearch-meilisearch",
+    "contentHash": "52fc2ef9768e3a31713dc4592e6fa8e3fe2667f1b13af709edf861495ecb2a88",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-ET6E",
+    "timestamp": "2026-10-30T10:42:07.286Z",
+    "repository": "LiquidAI/LFM3-Audio-2B",
+    "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
+    "contentHash": "9c92f6081c12c259d0e873d358be1ea55eb19b2fca7df7f3690f21c8cd7f3b4c",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

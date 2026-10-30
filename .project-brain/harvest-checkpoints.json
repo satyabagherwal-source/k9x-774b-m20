@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T10:32:10.267Z",
+  "last_updated": "2026-10-30T10:42:07.300Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3561,14 +3561,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-smallstep-cli",
-      "content_hash": "348993ae2d587e4449326201814dd95e30e7a9b0a97c8c13f0ac24f087eb10a4",
-      "verified_at": "2026-10-27T09:46:50.512Z",
+      "content_hash": "0fc1be6f4728287b7a8556b46b634f3a00030e49b09a86b8d56b92408f244ece",
+      "verified_at": "2026-10-30T10:40:58.789Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T09:46:50.512Z"
+      "last_updated": "2026-10-30T10:40:58.789Z"
     },
     "Ontos-AI/knowhere": {
       "repository": "Ontos-AI/knowhere",
@@ -9726,14 +9726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meilisearch-meilisearch",
-      "content_hash": "bd96eac799af92e489fe49b6a105655763d74bd17c21e5986bf108baa52718d2",
-      "verified_at": "2026-10-28T20:15:54.195Z",
+      "content_hash": "52fc2ef9768e3a31713dc4592e6fa8e3fe2667f1b13af709edf861495ecb2a88",
+      "verified_at": "2026-10-30T10:41:00.876Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T20:15:54.195Z"
+      "last_updated": "2026-10-30T10:41:00.876Z"
     },
     "dip/cmdk": {
       "repository": "dip/cmdk",
@@ -13971,14 +13971,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-archivebox-archivebox",
-      "content_hash": "192b8e55c828a258cf185160ff8a35d7855a187c74feb2c8ed68a4c5be5d4ab8",
-      "verified_at": "2026-10-27T11:56:08.110Z",
+      "content_hash": "c27aa8f899cc075ae416d36f4195930d5bc9b66f98897a3ab00541d65e784873",
+      "verified_at": "2026-10-30T10:40:53.298Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:56:08.110Z"
+      "last_updated": "2026-10-30T10:40:53.298Z"
     },
     "buriy/python-readability": {
       "repository": "buriy/python-readability",
@@ -17384,6 +17384,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-30T08:04:02.173Z"
+    },
+    "LiquidAI/LFM3-Audio-2B": {
+      "repository": "LiquidAI/LFM3-Audio-2B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-liquidai-lfm3-audio-2b",
+      "content_hash": "9c92f6081c12c259d0e873d358be1ea55eb19b2fca7df7f3690f21c8cd7f3b4c",
+      "verified_at": "2026-10-30T10:42:07.299Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-30T10:42:07.299Z"
     }
   },
   "repos": {

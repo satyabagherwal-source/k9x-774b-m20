@@ -6176,3 +6176,7 @@
 | `CYCLE-20261030-UJI0` | `2026-10-30T10:26:21.624Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5722, Rule 5723, Rule 5724` | Yes (`de6b4cff...`) |
 | `CYCLE-20261030-08WE` | `2026-10-30T10:30:47.822Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5725, Rule 5726` | Yes (`13854db7...`) |
 | `CYCLE-20261030-20IA` | `2026-10-30T10:32:10.258Z` | `webrecorder/browsertrix-crawler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5727, Rule 5728, Rule 5729` | Yes (`a30173ad...`) |
+| `CYCLE-20261030-D82M` | `2026-10-30T10:40:53.278Z` | `ArchiveBox/ArchiveBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5730` | Yes (`c27aa8f8...`) |
+| `CYCLE-20261030-DCBC` | `2026-10-30T10:40:58.776Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5731` | Yes (`0fc1be6f...`) |
+| `CYCLE-20261030-DDXA` | `2026-10-30T10:41:00.862Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5732` | Yes (`52fc2ef9...`) |
+| `CYCLE-20261030-ET6E` | `2026-10-30T10:42:07.286Z` | `LiquidAI/LFM3-Audio-2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5733, Rule 5734, Rule 5735` | Yes (`9c92f608...`) |
