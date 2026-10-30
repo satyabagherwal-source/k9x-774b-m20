@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T03:49:00.709Z",
+  "last_updated": "2026-10-30T04:00:39.303Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "ef0ec7224579129c5b110deaa9fa3ec80dfb5710286c641d3075ad23ac3cde2f",
-      "verified_at": "2026-10-29T23:35:04.695Z",
+      "content_hash": "0743f4e6d3665750acd7398eee962491d3899857b6213a86ef0d2fa1ed661593",
+      "verified_at": "2026-10-30T03:59:44.949Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T23:35:04.695Z"
+      "last_updated": "2026-10-30T03:59:44.949Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "4fbdccf50b57f74b03b2f267bb4491d815349462d5aef27481a24bf70afab409",
-      "verified_at": "2026-10-29T12:19:47.468Z",
+      "content_hash": "661d987d5eaa656d566787286ef160bf4fbc854cbfb86818925dc41fe552c9cd",
+      "verified_at": "2026-10-30T03:59:40.133Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T12:19:47.468Z"
+      "last_updated": "2026-10-30T03:59:40.133Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -7281,14 +7281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-etcd-io-etcd",
-      "content_hash": "94c541cf0f326ca0c7eddd731c3705bc7e42aa2858144af562ad060ade713532",
-      "verified_at": "2026-10-28T15:29:51.453Z",
+      "content_hash": "d6bb3446d45e6da8233bf5266d5f3df50a1b3544ee579ca6d5c3640c70ecfb95",
+      "verified_at": "2026-10-30T03:59:42.202Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T15:29:51.453Z"
+      "last_updated": "2026-10-30T03:59:42.202Z"
     },
     "wasm-bindgen/wasm-pack": {
       "repository": "wasm-bindgen/wasm-pack",
@@ -8241,14 +8241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dnscontrol-dnscontrol",
-      "content_hash": "f4c07c7835a349f42442338ddfbac6a3625e4f0ee1f58e62532be6f44e8497a9",
-      "verified_at": "2026-10-27T17:05:09.989Z",
+      "content_hash": "48c1e4a4633c303daafdf0b4926d37239ad92314ac26f88acdc142fa8219cded",
+      "verified_at": "2026-10-30T03:59:37.849Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T17:05:09.989Z"
+      "last_updated": "2026-10-30T03:59:37.849Z"
     },
     "ydb-platform/ydb": {
       "repository": "ydb-platform/ydb",
@@ -12801,14 +12801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rainbow-me-rainbow",
-      "content_hash": "3d48bea64ca8e5a5a13545c0d3ab1a5be9ec5a0e5e27a7491235c2c39baf9d4e",
-      "verified_at": "2026-10-25T22:31:50.701Z",
+      "content_hash": "13b88e1a75b7042d385f6300e10828d9d5fbb2a4dc701df37672339c3f0e8733",
+      "verified_at": "2026-10-30T04:00:39.302Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T22:31:50.701Z"
+      "last_updated": "2026-10-30T04:00:39.302Z"
     },
     "zoontek/react-native-permissions": {
       "repository": "zoontek/react-native-permissions",

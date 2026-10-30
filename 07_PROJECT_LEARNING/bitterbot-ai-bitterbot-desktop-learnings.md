@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `f9ac780a`  
+> **Source Version**: `fe517486`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T23:35:04.254Z  
+> **Timestamp**: 2026-10-30T03:59:44.277Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T23:35:04.249Z  
+> **Harvest Timestamp**: 2026-10-30T03:59:43.678Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,944 +1799,1394 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f9ac780a` (2026-10-29)
-**Commit Message**: feat(memory): PLAN-59 Phase 1 pilot harness (forked consolidation arms) (#329)
+### Incident Patch 1: `fe517486` (2026-10-30)
+**Commit Message**: feat(memory): weighted RRF channel fusion with sweep and real-query validation (#332)
 
-Build the first PLAN-59 mechanism pilot: gain x need selection of bounded,
-reversible memory operations compared against recency and random selection,
-every arm on its own VACUUM INTO fork of a sealed snapshot, scored on a
-family-partitioned question set with the live-recall method.
+Hybrid memory search fused its vector, keyword and graph channels with
+unweighted reciprocal rank fusion (1 / (60 + rank) per channel). On one
+node's real memory the fused list lost to its own keyword channel. This
+adds per-channel RRF weights and a configurable RRF constant, measures
+them, and sets the default from that measurement.
 
-benchmarks/plan59-phase1/
-- snapshot.mts seals a read-only VACUUM INTO copy with a hashed manifest and
-  refuses any output under ~/.bitterbot
-- partition.ts/.mts cut questions 50/25/25 by family (chunk path) under a
-  seed; the final split is refused unless --final --freeze names a protocol
-  file marked status: frozen (implemented, unused)
-- operations.ts: consolidate_cluster (connected components over
-  near_merge_hints >= 0.85, co-surfacing qualification, one joined parent
-  chunk, members demoted with parent_id, lifecycle consolidated,
-  hygiene_done and index rows removed, never deleted) and bound_validity
-  (valid_time_end from superseded canonical facts); re-embed reported as
-  inapplicable from the data; quoted and realised costs
-- estimate.ts: need per family (decayed access prior, development top-5
-  demand, unsu
+Weighted RRF:
+- rrfFuse accepts a weight per list (contribution weight / (k + rank));
+  weight 0 removes a channel's contribution without changing candidate
+  retrieval, and an id found only by silenced channels is dropped.
+- mergeHybridResultsRRF takes weights and k; the manager reads them from
+  agents.defaults.memorySearch.query.hybrid.rrfWeights {vector, keyword,
+  graph} and hybrid.rrfK (types, zod, labels, help, defaults registry).
+  Negative or non-finite values fall back to the default with a warning.
+- 1/1/1 at k 60 reproduces the previous ordering exactly (tested).
 
-**File**: `.gitignore` (modified, +2/-0)
+Measurement (docs/research/fusion-weights-2026-10-29.md):
+- benchmarks/live-recall/fusion-sweep.mts: capture once, re-fuse offline
+  through the production rrfFuse over 72 settings, select on t
+
+**File**: `benchmarks/live-recall/README.md` (modified, +70/-6)
 ```diff
-@@ -216,6 +216,8 @@ keys/
+@@ -83,12 +83,26 @@ code paths can be judged on what the agent actually asks:
+    `~/.bitterbot/event-journal.sqlite` (stream `tool`, phase `start`). Private
+    output under `~/.bitterbot`, never committed; a manifest with counts and the
+    file hash is.
+-2. `replay-judge.mts` searches a copy of the snapshot once per setting
+-   (here `postFusionBoostScale` 1, 0.1, 0), pools the top-k passages across
+-   settings, and asks a small model ONCE per (query, passage) pair whether the
+-   passage answers the query. The same verdicts score every setting, so the
+-   comparison is fair even where the judge is not. Output: hit@k (any relevant
+-   passage in the top k), precision@k, relevant@1, MRR; hashes and ranks only.
++2. `replay-judge.mts` searches a copy of the snapshot once per setting,
++   pools the top-k passages across settings, and asks a small model ONCE per
++   (query, passage) pair whether the passage answers the query. The same
++   verdicts score every setting, so the comparison is fair even where the
++   judge is not. Output: hit@k (any relevant passage in the top k),
++   precision@k, relevant@1, MRR; hashes and ranks only.
++
++   A setting is `boost=<postFusionBoostScale>;rrf=<vector>,<keyword>,<graph>[;k=<rrfK>]`,
++   passed as `--settings "boost=0.1;rrf=1,1,1" "boost=0.1;rrf=0.25,1,1" ...`
++   (`--scales 1,0.1,0` is the older spelling for boost scales alone). The first
++   setting is the baseline. Every search runs with the wall clock frozen at
++   `--now` and hormonal modulation off, so a setting's list depends on the
++   code and the snapshot only; the recency boost keeps its production default.
++   `--rejudge N` asks the judge again about N random pooled pairs to estimate
++   its flip rate; the output then carries, per setting against the baseline,
++   the paired delta in hit@k and MRR, a paired bootstrap over queries
++   (sampling noise), the sd of the delta when every pooled verdict flips at
++   that rate (judge noise), and a `nonInferior` flag (both deltas at least
++   minus twice the judge-noise sd). `--verdict-cache` checkpoints verdicts
++   (hashes and booleans) so a run that loses the network resumes for free.
  
- # Research / planning playground (internal only)
- research/
-+# PLAN-59 phase reports are published documentation, not the playground.
-+!docs/research/
+ Results, 2026-10-27: 68 distinct real queries (May to October 2026, median 36
+ characters), k = 5, judge `claude-haiku-4-5`, 398 pairs judged. Only 33 of the
+@@ -109,6 +123,56 @@ queries, which are short and keyword-shaped and sit closer to the keyword
+ channel's strengths, and 0 is not distinguishable from 0.1 on this sample. The
+ default stays at 0.1.
  
- # Wallet seed data (should never be in repo)
- wallet-data.json
++Results, 2026-10-29 (`results/replay-journal-fusion-weights-2026-10-29.json`):
++the same 68 queries against a fresh snapshot (3,952 chunks), k = 5, clock
++frozen, hormonal modulation off, `postFusionBoostScale` 0.1 throughout, RRF
++channel weights varied (vector, keyword, graph). 329 pairs judged by
++`claude-haiku-4-5` ($0.06); 36 of 68 queries had any relevant passage under
++any setting. Re-judging 80 random pairs flipped 3 (3.75 percent).
++
++| RRF weights (vector, keyword, graph) | hit@5 | precision@5 | relevant@1 | MRR   | delta hit@5 vs 1,1,1 | delta MRR vs 1,1,1 | judge-noise margin (hit@5 / MRR) |
++| ------------------------------------ | ----- | ----------- | ---------- | ----- | -------------------- | ------------------ | -------------------------------- |
++| 1, 1, 1 (unweighted, default)        | 47.1% | 33.5%       | 36.8%      | 0.400 |                      |                    |                                  |
++| 0.5, 1, 1                            | 45.6% | 33.5%       | 36.8%      | 0.398 | -1.5 pt              | -0.003             | 3.5 pt / 0.017                   |
++| 0.25, 1, 1                           | 47.1% | 32.6%       | 36.8%      | 0.402 | 0.0 pt               | +0.002             | 4.7 pt / 0.026                   |
++| 0.1, 1, 1                            | 48.5% | 32.6%       | 35.3%      | 0.394 | +1.5 pt              | -0.006             | 5.1 pt / 0.030                   |
++
++The margin is twice the sd of the paired delta when every pooled verdict flips
++independently at the observed 3.75 percent rate; all three keyword-heavier
++settings are non-inferior to 1/1/1 under it, and none is better (paired
++bootstrap over queries spans zero for every contrast). The large gain the
++generated questions showed does not appear on real queries, which are short
++and keyword-shaped and already sit where both channels agree. The default
++stays 1/1/1: with no measured real-query benefit there is nothing to pay the
++comparability cost for. 0.25 and 0.1 are available as configuration. Full
++tables and the decision: `docs/research/fusion-weights-2026-10-29.md`.
++
++## Fusion-weight sweep (generated questions, partitioned)
++
++`fusion-sweep.mts` asks how the fused list should combine its channels. It
++runs one deep search per question (fused top 200 with every channel's own rank
++on each result) from a frozen fork of the snapshot, then re-fuses offline
++through the production `rrfFuse` over a grid of RRF channel we
 ```
 
-**File**: `benchmarks/plan59-phase1/README.md` (added, +176/-0)
+**File**: `benchmarks/live-recall/fusion-sweep.mts` (added, +489/-0)
 ```diff
-@@ -0,0 +1,176 @@
-+# PLAN-59 Phase 1 pilot: gain x need consolidation on forked stores
-+
-+A development and qualification pilot for the first PLAN-59 mechanism:
-+selecting bounded, reversible memory operations by estimated future benefit
-+and comparing that selection against the same operations chosen by recency or
-+at random, every arm on its own fork of one sealed snapshot of a node's real
-+memory store. The live store is never written. The pilot fixes the sample
-+size for a later, separately frozen collection; it is not that collection and
-+was not externally preregistered.
-+
-+The result of the run on 2026-10-29 is in `docs/research/plan59-phase1-pilot.md`
-+and in `results/`: a negative pilot. One of 130 candidate clusters co-surfaced
-+for the development questions at the lowered bar, below the floor of five, so
-+the arm run stopped by rule and no contrast was computed.
-+
-+## What the harness does
-+
-+1. **Snapshot** (`snapshot.mts`). `--copy-from` opens the live store READ-ONLY
-+   and takes a `VACUUM INTO` copy into scratch; `--db` copies an existing copy.
-+   The manifest beside it records SHA-256, chunk count, lifecycle counts,
-+   created time and commit. Output anywhere under `~/.bitterbot` is refused.
-+2. **Questions**. `benchmarks/live-recall/make-questions.mts` writes one
-+   question per sampled chunk (the chunk id is the gold label) under a fixed
-+   seed. The file paraphrases private memory: it lives under
-+   `~/.bitterbot/benchmarks/live-recall/` with mode 0600, is never committed,
-+   and only its hash and counts appear here.
-+3. **Partition** (`partition.mts`, `partition.ts`). A family is the gold
-+   chunk's `path` (one session transcript or memory file). Families are ordered
-+   by `sha256(seed:path)` and cut 50 / 25 / 25 into development,
-+   qualification and final; every question of a family lands in one split.
-+   `<questions>.partition.json` holds chunk ids, family hashes, seed and counts
-+   only. The final split is never read by estimation or selection; the runner
-+   refuses to score it unless `--final --freeze <sha256>` names a protocol file
-+   that contains `status: frozen` and hashes to that value. The path is
-+   implemented and tested and the pilot does not use it.
-+4. **Operations** (`operations.ts`), applied on forks only:
-+   - `consolidate_cluster`: connected components over `near_merge_hints`
-+     pairs at `base_similarity >= 0.85` among live chunks (lifecycle
-+     `generated` or `activated`, `parent_id` null), capped at six members by
-+     weighted degree. A cluster qualifies when at least two members sit in
-+     the fused top 5 of at least three development queries (two when fewer
-+     than eight clusters qualify; the runner records which bar it used).
-+     Applying it inserts one new chunk whose text is the members' texts joined
-+     by a separator (no LLM rewriting), embedded with the normal provider,
-+     `parent_id` null, importance = max over members, access_count = sum,
-+     lifecycle `generated`. Members get `parent_id` = the new id, lifecycle
-+     `consolidated`, `hygiene_done` = 1, importance halved, and their rows are
-+     removed from `chunks_vec` and `chunks_fts`. Members are never deleted;
-+     their text and embedding stay in `chunks`, so the operation is reversible.
-+   - `bound_validity`: for each canonical fact with `superseded_by` and
-+     `valid_until` set, set `valid_time_end = valid_until` on the chunks in
-+     its `evidence_chunk_ids` where it is null. No text changes; reversible.
-+   - Re-embedding does not apply on this store: every indexed chunk carries
-+     `text-embedding-3-small` and the live provider is that model, so there is
-+     no model or index change to re-embed after. `describeReembed` reports this
-+     from the data and the result file records it.
-+   - Every operation returns a quoted cost (chunks touched, embedding calls,
-+     estimated ms) and the apply step records the realised one. Dollars,
-+     seconds and calls are reported separately in the result file.
-+5. **Estimation** (`estimate.ts`), development partition only:
-+   - need(k) per family = sum over chunks of `access_count` decayed from
-+     `last_accessed_at` with a 30-day half-life, plus the number of development
-+     queries with a chunk of k in the fused top 5, plus 1 per development query
-+     whose gold is in k and whose fused rank is above 10 or missing. Phase 0
-+     `retrieval_hits` are added, decayed the same way, when the table exists
-+     and has rows; on this snapshot it is empty, so the access prior carries.
-+     The plan's first-order session-transition term is deferred: it needs
-+     stable topic ids and real session boundaries from the Phase 0 telemetry,
-+     which has not yet run in a deployed build.
-+   - gain(op | k) = mean change in parent-mapped reciprocal rank over the
-+     development queries affected by the operation (gold in a touched family,
-+     or a touched chunk in the baseline top 10) whose gold is in k, measured
-```
-
-**File**: `benchmarks/plan59-phase1/arms.test.ts` (added, +111/-0)
-```diff
-@@ -0,0 +1,111 @@
-+import { describe, expect, it } from "vitest";
+@@ -0,0 +1,489 @@
++/**
++ * Fusion-weight sweep on the PLAN-59 Phase 1 partition.
++ *
++ * Captures one deep fused search per question from a frozen fork of a store
++ * snapshot (the fused top N with every channel's own rank on each result),
++ * then re-fuses offline with weighted RRF over a grid of channel weights and
++ * RRF constants, through the production `rrfFuse`. Selection happens on the
++ * development split only, confirmation on qualification (family-paired
++ * bootstrap), and the final split stays sealed behind the Phase 1 partition
++ * gate (`--final --freeze <sha256>` of a protocol file marked frozen).
++ *
++ * The capture holds chunk ids and file paths of private memory, so it is
++ * written only under `~/.bitterbot/benchmarks/live-recall/` with mode 0600
++ * and is never committed. The result file holds weights, hashes and numbers.
++ *
++ *   node --import tsx benchmarks/live-recall/fusion-sweep.mts \
++ *     --snapshot <copy.sqlite> --questions ~/.bitterbot/benchmarks/live-recall/plan59-questions-<date>.jsonl \
++ *     --capture ~/.bitterbot/benchmarks/live-recall/plan59-fusion-capture-<date>.json \
++ *     --out benchmarks/live-recall/results/fusion-sweep-<date>.json [--max 200] [--now <epoch ms>]
++ *
++ * The capture is reused when it exists, so the grid can be changed and the
++ * sweep re-run without another round of searches. Captures take about ten
++ * seconds per question at 1,000 candidates per channel on a small box; a
++ * partial capture is checkpointed every ten questions and resumed.
++ */
 +import {
-+  buildArms,
-+  chooseK,
-+  selectPrioritised,
-+  selectRandom,
-+  selectRecency,
-+  shuffledBatch,
-+  ZERO_SELECTION_COST,
-+} from "./arms.js";
-+import type { PriorityRow } from "./estimate.js";
-+import type { Operation } from "./operations.js";
-+
-+const op = (id: string, lastAccessedAt: number | null): Operation => ({
-+  kind: "bound_validity",
-+  id,
-+  factId: id,
-+  validUntil: 1,
-+  chunkIds: [`${id}-c`],
-+  families: [`fam-${id}`],
-+  lastAccessedAt,
-+});
-+const pool = [op("a", 5), op("b", null), op("c", 9), op("d", 9), op("e", 1), op("f", 3)];
-+const row = (opId: string, priority: number, need = 1): PriorityRow => ({
-+  opId,
-+  need,
-+  benefit: priority,
-+  cost: 1,
-+  priority,
-+  affectedQueries: 1,
-+  gain: {},
-+});
-+
-+describe("arm selection", () => {
-+  it("picks K as 20 or the candidate count when fewer", () => {
-+    expect(chooseK(82)).toBe(20);
-+    expect(chooseK(7)).toBe(7);
-+    expect(chooseK(0)).toBe(0);
-+    expect(chooseK(50, 5)).toBe(5);
-+  });
-+
-+  it("recency takes the most recently accessed first, ties by id, never-accessed last", () => {
-+    expect(selectRecency(pool, 4).map((o) => o.id)).toEqual(["c", "d", "a", "f"]);
-+    expect(selectRecency(pool, 6).map((o) => o.id)).toEqual(["c", "d", "a", "f", "e", "b"]);
-+  });
-+
-+  it("random is uniform without replacement and reproducible under the seed", () => {
-+    const r1 = selectRandom(pool, 3, "59");
-+    const r2 = selectRandom(pool, 3, "59");
-+    expect(r1.map((o) => o.id)).toEqual(r2.map((o) => o.id));
-+    expect(new Set(r1.map((o) => o.id)).size).toBe(3);
-+    const r3 = selectRandom(pool, 6, "other");
-+    expect(r3.map((o) => o.id).toSorted()).toEqual(["a", "b", "c", "d", "e", "f"]);
-+    expect(r3.map((o) => o.id)).not.toEqual(selectRandom(pool, 6, "59").map((o) => o.id));
-+  });
-+
-+  it("prioritised orders by priority, then need, then id, with unestimated candidates last", () => {
-+    const rows = new Map([
-+      ["a", row("a", 0.5)],
-+      ["b", row("b", 0.9)],
-+      ["c", row("c", 0.5, 7)],
-+      ["d", row("d", 0)],
-+    ]);
-+    const needOf = (o: Operation) => (o.id === "e" ? 10 : 2);
-+    expect(selectPrioritised(pool, 6, rows, needOf).map((o) => o.id)).toEqual([
-+      "b",
-+      "c",
-+      "a",
-+      "d",
-+      "e",
-+      "f",
-+    ]);
-+    expect(selectPrioritised(pool, 2, rows, needOf).map((o) => o.id)).toEqual(["b", "c"]);
-+  });
-+
-+  it("shuffled batch is the same set in a seeded order", () => {
-+    const selected = selectRecency(pool, 6);
-+    const s1 = shuffledBatch(selected, "59");
-+    expect(s1.map((o) => o.id).toSorted()).toEqual(selected.map((o) => o.id).toSorted());
-+    expect(s1).toEqual(shuffledBatch(selected, "59"));
-+    expect(s1.map((o) => o.id)).not.toEqual(selected.map((o) => o.id));
-+  });
-+
-+  it("buildArms gives every arm K operations, charges estimation only to prioritised arms", () => {
-+    const rows = new Map([
-+      ["a", row("a", 0.5)],
-+      ["b", row("b", 0.9)],
-+    ]);
-+    const cost = { forks: 2, searches: 30, embeddingCalls: 2, seconds: 12 };
-+    const arms = buildArms({
-+      candidates: pool,
-+      k: 4,
-+      seed: "59",
-+      priorities: rows,
-+      needOf: () => 0,
-+      estimationCost: cost,
-+    });
-+    expect(arms.unchanged.operations).toEqual([]);
-+    for (const name of ["recency", "random", "prioritised", "shuffled_batch"] as const) {
-+      expect(arms[name].operations).toHaveLength(4);
-+    }
-+    expect(arms.prioritised.operations.slice(0, 2).map((o) => o.id)).toEqual(["b", "a"]);
-+    expect(arms.shuffled_batch.operations.map((o) => o.id).toSorted()).toEqual(
-+      arms.prioritised.operations.map((o) => o.id).toSorted(),
-+    );
-+    expect(arms.prioritised.selectionCost).toEqual(cost);
-+    expect(arms.shuffled_batch.selectionCost).toEqual(cost);
-+    expect(arms.recency.selectionCost).toEqual(ZERO_SELECTION_COST);
-+    expect(arms.random.selectionCost).toEqual(ZERO_SELECTION_COST);
-+  });
-+});
-```
-
-**File**: `benchmarks/plan59-phase1/arms.ts` (added, +137/-0)
-```diff
-@@ -0,0 +1,137 @@
-+/**
-+ * PLAN-59 Phase 1: arm construction.
-+ *
-+ * Every arm is a list of operations applied, in order, to its own fork of the
-+ * sealed snapshot. K is 20 or the number of qualifying candidates when fewer,
-+ * the same K for every arm.
-+ *
-+ *   unchanged       no operations
-+ *   recency         the K candidates whose chunks were most recently accessed
-+ *   random          K drawn uniformly without replacement under a recorded seed
-+ *   prioritised     top K by priority (estimate.ts)
-+ *   shuffled_batch  the prioritised arm's exact set in a seeded random order,
-+ *                   charged the prioritised arm's selection cost
-+ */
-+import { seededShuffle } from "./common.js";
-+import type { PriorityRow } from "./estimate.js";
-+import type { Operation } from "./operations.js";
-+
-+export type ArmName = "unchanged" | "recency" | "random" | "prioritised" | "shuffled_batch";
-+export const ARMS: readonly ArmName[] = [
-+  "unchanged",
-+  "recency",
-+  "random",
-+  "prioritised",
-+  "shuffled_batch",
-+];
-+
-+export const DEFAULT_K = 20;
-+
-+export function chooseK(candidateCount: number, kMax = DEFAULT_K): number {
-+  return Math.max(0, Math.min(kMax, candidateCount));
-+}
-+
-+const byId = (a: Operation, b: Operation) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
-+
-+export function selectRecency(candidates: readonly Operation[], k: number): Operation[] {
-+  return [...candidates]
-+    .toSorted((a, b) => {
-+      const ta = a.lastAccessedAt ?? Number.NEGATIVE_INFINITY;
-+      const tb = b.lastAccessedAt ?? Number.NEGATIVE_INFINITY;
-+      return tb - ta || byId(a, b);
-+    })
-+    .slice(0, k);
-+}
-+
-+export function selectRandom(
-+  candidates: readonly Operation[],
-+  k: number,
-+  seed: string,
-+): Operation[] {
-+  return seededShuffle([...candidates].toSorted(byId), `${seed}:random`).slice(0, k);
-+}
-+
-+/**
-+ * Top K by priority. Candidates without a priority row (outside the gain
-+ * estimation cap) rank below every estimated one, by need then id, so the arm
-+ * is still filled when fewer than K candidates were estimated.
-+ */
-+export function selectPrioritised(
-+  candidates: readonly Operation[],
-+  k: number,
-+  rows: ReadonlyMap<string, PriorityRow>,
-+  needOf: (op: Operation) => number,
-+): Operation[] {
-+  return [...candidates]
-+    .toSorted((a, b) => {
-+      const ra = rows.get(a.id);
-+      const rb = rows.get(b.id);
-+      if (ra && rb) {
-+        return rb.priority - ra.priority || rb.need - ra.need || byId(a, b);
-+      }
-+      if (ra) return -1;
-+      if (rb) return 1;
-+      return needOf(b) - needOf(a) || byId(a, b);
-+    })
-+    .slice(0, k);
-+}
-+
-+export function shuffledBatch(selected: readonly Operation[], seed: string): Operation[] {
-+  return seededShuffle(selected, `${seed}:shuffled_batch`);
-+}
-+
-+export type SelectionCost = {
-+  forks: number;
-+  searches: number;
-+  embeddingCalls: number;
-+  seconds: number;
-+};
-+
-+export const ZERO_SELECTION_COST: SelectionCost = {
-+  forks: 0,
-+  searches: 0,
-+  embeddingCalls: 0,
-+  seconds: 0,
-+};
-+
-+export type ArmPlan = { arm: ArmName; operations: Operation[]; selectionCost: SelectionCost };
-+
-+export function buildArms(params: {
-+  candidates: readonly Operation[];
-+  k: number;
-+  seed: string;
-+  priorities: ReadonlyMap<string, PriorityRow>;
-+  needOf: (op: Operation) => number;
-+  /** what estimating priorities cost: forks, searches, embedding calls, seconds */
-+  estimationCost: SelectionCost;
-+}): Record<ArmName, ArmPlan> {
-+  const prioritised = selectPrioritised(
-+    params.candidates,
-+    params.k,
-+    params.priorities,
-+    params.needOf,
-+  );
-+  return {
-+    unchanged: { arm: "unchanged", operations: [], selectionCost: ZERO_SELECTION_COST },
-+    recency: {
-+      arm: "recency",
-+      operations: selectRecency(params.candidates, params.k),
-+      selectionCost: ZERO_SELECTION_COST,
-+    },
-+    random: {
-+      arm: "random",
-+      operations: selectRandom(params.candidates, params.k, params.seed),
-+      selectionCost: ZERO_SELECTION_COST,
-+    },
-+    prioritised: {
-+      arm: "prioritised",
-+      operations: prioritised,
-+      selectionCost: params.estimationCost,
-+    },
-+    shuffled_batch: {
-+      arm: "shuffled_batch",
-+      operations: shuffledBatch(prioritised, params.seed),
-+      selectionCost: params.estimationCost,
-+    },
-+  };
-+}
-```
-
-**File**: `benchmarks/plan59-phase1/common.ts` (added, +176/-0)
-```diff
-@@ -0,0 +1,176 @@
-+/**
-+ * PLAN-59 Phase 1 pilot: shared helpers.
-+ *
-+ * Everything here is pure or touches only the paths it is handed. The one
-+ * safety rule every entry point shares lives here: nothing under ~/.bitterbot
-+ * is ever written except the private question/partition files that the
-+ * live-recall tooling already keeps there with mode 0600.
-+ */
-+import { execSync } from "node:child_process";
-+import { createHash } from "node:crypto";
-+import { existsSync, readFileSync, rmSync, statSync } from "node:fs";
-+import { homedir } from "node:os";
-+import { join, resolve } from "node:path";
++  chmodSync,
++  existsSync,
++  mkdirSync,
++  mkdtempSync,
++  readFileSync,
++  writeFileSync,
++} from "node:fs";
++import { tmpdir } from "node:os";
++import { dirname, join } from "node:path";
 +import { DatabaseSync } from "node:sqlite";
++import { parseArgs } from "node:util";
++import { resolveApiKeyForProvider } from "../../src/agents/model-auth.js";
++import { loadConfig } from "../../src/config/io.js";
++import { rrfFuse } from "../../src/memory/rrf.js";
++import type { MemorySearchResult } from "../../src/memory/types.js";
++import {
++  gitCommit,
++  isPrivateBenchmarkPath,
++  loadQuestions,
++  type Question,
++  refuseUnderBitterbotHome,
++  sha256,
++  sha256File,
++} from "../plan59-phase1/common.js";
++import {
++  EmbeddingMemo,
++  makeIdResolver,
++  openFrozenStore,
++  parentMap,
++} from "../plan59-phase1/harness.js";
++import {
++  assertFinalAllowed,
++  type FinalGate,
++  type Partition,
++  questionsIn,
++  type Split,
++} from "../plan59-phase1/partition.js";
++import { type Channel, CHANNELS, type RankedResult, rankOf } from "../plan59-phase1/scoring.js";
 +
-+export const sha256 = (s: string | Buffer | Uint8Array): string =>
-+  createHash("sha256").update(s).digest("hex");
++const { values: args } = parseArgs({
++  options: {
++    snapshot: { type: "string" },
++    questions: { type: "string" },
++    capture: { type: "string" },
++    out: { type: "string" },
++    max: { type: "string", default: "200" },
++    now: { type: "string" },
++    work: { type: "string" },
++    final: { type: "boolean", default: false },
++    freeze: { type: "string" },
++    protocol: { type: "string" },
++  },
++  strict: true,
++});
++if (!args.snapshot || !args.questions || !args.capture || !args.out) {
++  throw new Error(
++    "usage: --snapshot <sqlite> --questions <jsonl> --capture <private json> --out <result json> [--max 200] [--now ms]",
++  );
++}
++if (!isPrivateBenchmarkPath(args.capture)) {
++  throw new Error(
++    `the capture holds private paths; --capture must be under ~/.bitterbot/benchmarks/live-recall/ (got ${args.capture})`,
++  );
++}
++refuseUnderBitterbotHome(args.out, "a sweep result");
++const MAX = Math.max(1, Math.floor(Number(args.max)));
 +
-+export const sha256File = (path: string): string => sha256(readFileSync(path));
++// ---- questions and partition ----------------------------------------------
 +
-+/** One generated question, exactly as benchmarks/live-recall/make-questions.mts writes it. */
-+export type Question = {
-+  chunkId: string;
++type CapturedResult = {
++  id: string | null;
 +  path: string;
-+  source: string;
 +  startLine: number;
 +  endLine: number;
-+  textSha256?: string;
-+  question: string;
++  fusedRank: number;
++  ch: Partial<Record<Channel, number>>;
 +};
-+
-+/** The family a question belongs to: the gold chunk's file path. */
-+export const familyOf = (q: Pick<Question, "path">): string => q.path;
-+
-+export function loadQuestions(path: string): { questions: Question[]; raw: string } {
-+  const raw = readFileSync(path, "utf-8");
-+  const questions = raw
-+    .split("\n")
-+    .filter((l) => l.trim())
-+    .map((l) => JSON.parse(l) as Question);
-+  return { questions, raw };
-+}
-+
-+// ── ~/.bitterbot guard ───────────────────────────────────────────────────────
-+
-+export function bitterbotHome(): string {
-+  return resolve(join(homedir(), ".bitterbot"));
-+}
-+
-+export function isUnderBitterbotHome(p: string, home = bitterbotHome()): boolean {
-+  const r = resolve(p);
-+  return r === home || r.startsWith(`${home}/`);
-+}
-+
-+/** The one directory under ~/.bitterbot a private question or partition file may land in. */
-+export function isPrivateBenchmarkPath(p: string, home = bitterbotHome()): boolean {
-+  const allowed = join(home, "benchmarks", "live-recall");
-+  const r = resolve(p);
-+  return r.startsWith(`${allowed}/`);
-+}
-+
-+export function refuseUnderBitterbotHome(p: string, what: string): void {
-+  if (isUnderBitterbotHome(p)) {
-+    throw new Error(`refusing to write ${what} under ~/.bitterbot: ${p}`);
-+  }
-+}
-+
-+// ── snapshots and forks ──────────────────────────────────────────────────────
-+
-+/**
-+ * Copy a SQLite file with `VACUUM INTO` through a READ-ONLY connection. The
-+ * source is never modified (no WAL is created on a read-only open); the
-+ * destination must not exist and must not be under ~/.bitterbot.
-+ */
-+export function vacuumInto(src: string, dest: string): { ms: number; bytes: number } {
-+  refuseUnderBitterbotHome(dest, "a database copy");
-+  if (existsSync(dest)) {
-+    throw new Error(`destination exists: ${dest}`);
-+  }
-+  const t0 = performance.now();
-+  const ro = new DatabaseSync(resolve(src), { readOnly: true });
-+  try {
-+    // The copy is a scratch fork; syncing every page to disk made a 370 MB
-+    // VACUUM INTO take 40 s on the pilot box against 7 s without.
-+    ro.exec("PRAGMA synchronous = OFF");
-+    ro.exec(`VACUUM INTO '${resolve(dest).replace(/'/g, "''")}'`);
-+  } finally {
-+    ro.close();
-+  }
-+  return { ms: performance.now() - t0, bytes: statSync(dest).size };
-+}
-+
-+/** Remove a database copy and its WAL/SHM side files. */
-+export function removeDbFiles(path: string): void {
-+  refuseUnderBitterbotHome(path, "a delete");
-+  for (const suffix of ["", "-wal", "-shm", "-journal"]) {
-+    rmSync(`${path}${suffix}`, { force: true });
-+  }
-+}
-+
-+/** Size of a database including any WAL that has not been checkpointed. */
-+export function dbBytes(path: string): number {
-+  let total = 0;
-+  for (const suffix of ["", "-wal"]) {
-+    try {
-+      total += statSync(`${path}${suffix}`).size;
-+    } catch {
-+      // absent side file
-+    }
-+  }
-+  return total;
-+}
-+
-+export function gitCommit(cwd?: string): string | null {
-+  try {
-+    const head = execSync("git rev-parse --short HEAD", { encoding: "utf-8", cwd }).trim();
-+    const dirty = execSync("git status --porcelain --untracked-files=no", {
-+      encoding: "utf-8",
-+      cwd,
-+    }).trim();
-+    return dirty ? `${head}+dirty` : head;
-+  } catch {
-+    return null;
-+  }
-+}
-+
-+// ── seeded randomness ────────────────────────────────────────────────────────
-+
-+/**
-+ * Deterministic PRNG (sfc32) seeded from a string through SHA-256. Every
-+ * random choice in the pilot (random arm, shuffled batch, bootstrap resamples)
-+ * goes through one of these so a run is reproducible from its recorded seed.
-+ */
-+export function seededRandom(seed: string): () => number {
-+  const h = createHash("sha256").update(seed).digest();
-+  let a = h.readUInt32LE(0);
-+  let b = h.readUInt32LE(4);
-+  let c = h.readUInt32LE(8);
-+  let d = h.readUInt32LE(12);
-+  const next = () => {
-+    a >>>= 
-```
-
-**File**: `benchmarks/plan59-phase1/estimate.test.ts` (added, +148/-0)
-```diff
-@@ -0,0 +1,148 @@
-+import { describe, expect, it } from "vitest";
-+import { DAY_MS } from "./common.js";
-+import {
-+  affectedQueries,
-+  costScalar,
-+  decayFactor,
-+  type DevBaseline,
-+  estimatedBenefit,
-+  gainByFamily,
-+  needByFamily,
-+  operationNeed,
-+  priority,
-+  priorityRow,
-+} from "./estimate.js";
-+import type { ClusterCandidate } from "./operations.js";
-+
-+const NOW = 1_800_000_000_000;
-+
-+describe("need", () => {
-+  it("decays access counts with a 30-day half-life", () => {
-+    expect(decayFactor(NOW, NOW)).toBe(1);
-+    expect(decayFactor(NOW - 30 * DAY_MS, NOW)).toBeCloseTo(0.5, 10);
-+    expect(decayFactor(NOW - 60 * DAY_MS, NOW)).toBeCloseTo(0.25, 10);
-+    expect(decayFactor(NOW - 15 * DAY_MS, NOW, 15)).toBeCloseTo(0.5, 10);
-+    expect(decayFactor(null, NOW)).toBe(0);
-+    // a timestamp in the future counts as fresh, never above 1
-+    expect(decayFactor(NOW + DAY_MS, NOW)).toBe(1);
-+  });
-+
-+  it("sums the access prior, top-5 demand and unsuccessful retrievals per family", () => {
-+    const chunks = [
-+      { id: "a1", path: "A", accessCount: 4, lastAccessedAt: NOW - 30 * DAY_MS, createdAt: 0 },
-+      { id: "a2", path: "A", accessCount: 2, lastAccessedAt: null, createdAt: NOW },
-+      { id: "b1", path: "B", accessCount: 0, lastAccessedAt: null, createdAt: null },
-+      { id: "c1", path: "C", accessCount: 10, lastAccessedAt: NOW, createdAt: 0 },
-+    ];
-+    const dev: DevBaseline[] = [
-+      { chunkId: "a1", family: "A", fusedRank: 1, topTenIds: ["a1", "c1", "x", "y", "z", "b1"] },
-+      { chunkId: "b1", family: "B", fusedRank: null, topTenIds: ["c1", "a2"] },
-+      { chunkId: "c1", family: "C", fusedRank: 12, topTenIds: ["c1"] },
-+    ];
-+    const chunkFamily = new Map(chunks.map((c) => [c.id, c.path]));
-+    const need = needByFamily({ chunks, devBaseline: dev, chunkFamily, now: NOW });
-+    // A: 4 * 0.5 (30 days) + 2 * 1 (no timestamp, decays from created_at = now) = 4;
-+    //    top-5 demand: a1 (q1) + a2 (q2) = 2; no unsuccessful
-+    expect(need.get("A")!.accessPrior).toBeCloseTo(4, 10);
-+    expect(need.get("A")!.topFiveDemand).toBe(2);
-+    expect(need.get("A")!.unsuccessful).toBe(0);
-+    expect(need.get("A")!.total).toBeCloseTo(6, 10);
-+    // B: no accesses, b1 sits at position 6 (outside top 5), gold missing -> 1
-+    expect(need.get("B")!.total).toBe(1);
-+    // C: 10 fresh accesses, in top 5 of q1, q2, q3 = 3, rank 12 -> unsuccessful 1
-+    expect(need.get("C")!.total).toBeCloseTo(14, 10);
-+  });
-+
-+  it("uses retrieval_hits when present and leaves them at zero otherwise", () => {
-+    const chunks = [{ id: "a1", path: "A", accessCount: 0, lastAccessedAt: null, createdAt: 0 }];
-+    const chunkFamily = new Map([["a1", "A"]]);
-+    const without = needByFamily({ chunks, devBaseline: [], chunkFamily, now: NOW });
-+    expect(without.get("A")).toBeUndefined();
-+    const withHits = needByFamily({
-+      chunks,
-+      devBaseline: [],
-+      chunkFamily,
-+      now: NOW,
-+      retrievalHits: [
-+        { chunkId: "a1", createdAt: NOW },
-+        { chunkId: "a1", createdAt: NOW - 30 * DAY_MS },
-+      ],
-+    });
-+    expect(withHits.get("A")!.retrievalHits).toBeCloseTo(1.5, 10);
-+    expect(withHits.get("A")!.total).toBeCloseTo(1.5, 10);
-+  });
-+});
-+
-+const cluster: ClusterCandidate = {
-+  kind: "consolidate_cluster",
-+  id: "cc_1",
-+  families: ["A"],
-+  memberIds: ["a1", "a2"],
-+  pairCount: 1,
-+  minSimilarity: 0.9,
-+  lastAccessedAt: null,
-+};
-+
-+describe("priority", () => {
-+  it("prices cost as 1 + chunks + 2 * embedding calls", () => {
-+    expect(costScalar({ chunksTouched: 3, embeddingCalls: 1 })).toBe(6);
-+    expect(costScalar({ chunksTouched: 0, embeddingCalls: 0 })).toBe(1);
-+  });
-+
-+  it("guards a zero or invalid cost instead of dividing by it", () => {
-+    expect(priority(2, 4)).toBe(0.5);
-+    expect(priority(2, 0)).toBe(2);
-+    expect(priority(2, -3)).toBe(2);
-+    expect(priority(2, Number.NaN)).toBe(2);
-+    expect(Number.isFinite(priority(2, 0))).toBe(true);
-+  });
-+
-+  it("weights gain by need and divides by cost", () => {
-+    const need = new Map([
-+      ["A", { total: 6, accessPrior: 6, topFiveDemand: 0, unsuccessful: 0, retrievalHits: 0 }],
-+      ["B", { total: 2, accessPrior: 2, topFiveDemand: 0, unsuccessful: 0, retrievalHits: 0 }],
-+    ]);
-+    const gain = new Map([
-+      ["A", 0.5],
-+      ["B", -0.25],
-+    ]);
-+    expect(estimatedBenefit(gain, need)).toBeCloseTo(2.5, 10);
-+    expect(operationNeed(cluster, need)).toBe(6);
-+    const row = priorityRow({
-+      op: cluster,
-+      need,
-+      gain,
-+      cost: { chunksTouched: 3, embeddingCalls: 1, estimatedMs: 0 },
-+      affectedQueries: 4,
-+    });
-+    expect(row.cost).toBe(6);
-+    expect(row.priority).toBeCloseTo(2.5 / 6, 10);
-+  });
-+});
-+
-+describe("gain", () => {
-+  const dev: DevBaseline[] = [
-+    { chunkId: "q1", family: "A", fusedRank: 2, topTenIds: ["x"] },
-+    { chunkId: "q2", family: "B", fusedRank: 4, topTenIds: ["a1", "y"] },
-+    { chunkId: "q3", fa
-```
-
-**File**: `benchmarks/plan59-phase1/estimate.ts` (added, +205/-0)
-```diff
-@@ -0,0 +1,205 @@
-+/**
-+ * PLAN-59 Phase 1: need, gain and priority. Development partition only.
-+ *
-+ * need(k) for a family k (a chunk path) is the sum of
-+ *   1. the access prior: each chunk's access_count decayed from its
-+ *      last_accessed_at with a 30-day half-life (a chunk with accesses but no
-+ *      timestamp decays from created_at);
-+ *   2. development demand: the number of development queries whose fused top 5
-+ *      contains a chunk of k;
-+ *   3. unsuccessful retrievals: 1 per development query whose gold is in k and
-+ *      whose fused rank is above 10 or missing;
-+ *   4. `retrieval_hits` (PLAN-59 Phase 0) decayed the same way, when the table
-+ *      exists and has rows. It is empty on the pilot snapshot, so the access
-+ *      prior carries.
-+ * The plan's first-order session-transition term is deferred (see README).
-+ *
-+ * gain(op | k) is the mean change in parent-mapped reciprocal rank over the
-+ * development queries affected by the operation whose gold is in k, measured
-+ * by applying only that operation on a fork. Queries are affected when their
-+ * gold is in a family the operation touches or when their baseline top 10
-+ * contains a chunk the operation touches.
-+ *
-+ * priority(op) = sum_k need(k) * gain(op | k) / cost(op),
-+ * cost(op) = 1 + chunksTouched + 2 * embeddingCalls (weights fixed here).
-+ */
-+import { DAY_MS } from "./common.js";
-+import { type Operation, type OperationCost, affectedChunkIds } from "./operations.js";
-+
-+export const COST_WEIGHTS = { base: 1, perChunk: 1, perEmbeddingCall: 2 } as const;
-+export const NEED_HALF_LIFE_DAYS = 30;
-+
-+export function costScalar(cost: Pick<OperationCost, "chunksTouched" | "embeddingCalls">): number {
-+  return (
-+    COST_WEIGHTS.base +
-+    COST_WEIGHTS.perChunk * Math.max(0, cost.chunksTouched) +
-+    COST_WEIGHTS.perEmbeddingCall * Math.max(0, cost.embeddingCalls)
-+  );
-+}
-+
-+/**
-+ * benefit / cost with a zero-cost guard: a non-positive or non-finite cost is
-+ * treated as the base cost (1) rather than producing Infinity or NaN.
-+ */
-+export function priority(benefit: number, cost: number): number {
-+  const c = Number.isFinite(cost) && cost > 0 ? cost : COST_WEIGHTS.base;
-+  return benefit / c;
-+}
-+
-+export function decayFactor(
-+  lastAt: number | null,
-+  now: number,
-+  halfLifeDays = NEED_HALF_LIFE_DAYS,
-+): number {
-+  if (lastAt === null || !Number.isFinite(lastAt)) {
-+    return 0;
-+  }
-+  const ageDays = Math.max(0, (now - lastAt) / DAY_MS);
-+  return Math.pow(0.5, ageDays / halfLifeDays);
-+}
-+
-+export type ChunkNeedRow = {
-+  id: string;
-+  path: string;
-+  accessCount: number;
-+  lastAccessedAt: number | null;
-+  createdAt: number | null;
-+};
-+
-+/** What the estimator needs from one development query's baseline run. */
-+export type DevBaseline = {
-+  chunkId: string;
-+  family: string;
-+  /** parent-mapped fused rank on the unchanged fork, null when missing */
-+  fusedRank: number | null;
-+  /** chunk ids of the fused top 10, in order */
-+  topTenIds: string[];
-+};
-+
-+export type NeedBreakdown = {
-+  total: number;
-+  accessPrior: number;
-+  topFiveDemand: number;
-+  unsuccessful: number;
-+  retrievalHits: number;
-+};
-+
-+export function needByFamily(params: {
-+  chunks: readonly ChunkNeedRow[];
-+  devBaseline: readonly DevBaseline[];
-+  chunkFamily: ReadonlyMap<string, string>;
-+  now: number;
-+  halfLifeDays?: number;
-+  retrievalHits?: ReadonlyArray<{ chunkId: string; createdAt: number }>;
-+}): Map<string, NeedBreakdown> {
-+  const half = params.halfLifeDays ?? NEED_HALF_LIFE_DAYS;
-+  const out = new Map<string, NeedBreakdown>();
-+  const get = (fam: string) => {
-+    let b = out.get(fam);
-+    if (!b) {
-+      b = { total: 0, accessPrior: 0, topFiveDemand: 0, unsuccessful: 0, retrievalHits: 0 };
-+      out.set(fam, b);
-+    }
-+    return b;
-+  };
-+  for (const c of params.chunks) {
-+    if (c.accessCount <= 0) continue;
-+    const at = c.lastAccessedAt ?? c.createdAt;
-+    get(c.path).accessPrior += c.accessCount * decayFactor(at, params.now, half);
-+  }
-+  for (const q of params.devBaseline) {
-+    for (const id of q.topTenIds.slice(0, 5)) {
-+      const fam = params.chunkFamily.get(id);
-+      if (fam !== undefined) get(fam).topFiveDemand += 1;
-+    }
-+    if (q.fusedRank === null || q.fusedRank > 10) {
-+      get(q.family).unsuccessful += 1;
-+    }
-+  }
-+  for (const h of params.retrievalHits ?? []) {
-+    const fam = params.chunkFamily.get(h.chunkId);
-+    if (fam !== undefined) get(fam).retrievalHits += decayFactor(h.createdAt, params.now, half);
-+  }
-+  for (const b of out.values()) {
-+    b.total = b.accessPrior + b.topFiveDemand + b.unsuccessful + b.retrievalHits;
-+  }
-+  return out;
-+}
-+
-+/** Sum of need over the families an operation touches (its own ranking key for the gain cap). */
-+export function operationNeed(op: Operation, need: ReadonlyMap<string, NeedBreakdown>): number {
-+  return op.families.reduce((s, f) => s + (need.get(f)?.total ?? 0), 0);
-+}
-+
-+/** Development queries whose out
-```
-
-**File**: `benchmarks/plan59-phase1/harness.ts` (added, +237/-0)
-```diff
-@@ -0,0 +1,237 @@
-+/**
-+ * PLAN-59 Phase 1: the manager-side harness.
-+ *
-+ * Opens a fork through the normal MemoryIndexManager under the frozen scoring
-+ * settings benchmarks/live-recall/evidence-gate.mts established (every
-+ * background engine off, recency boost off, hormonal state off, evidence
-+ * telemetry off, wall clock frozen for the duration of a query batch) and
-+ * turns each search into a QueryOutcome. Query embeddings are memoised
-+ * in-process by text, so every arm scores the same question with the same
-+ * vector and the embedding bill is one call per distinct question.
-+ */
-+import { mkdirSync, writeFileSync } from "node:fs";
-+import { join } from "node:path";
-+import { DatabaseSync } from "node:sqlite";
-+import type { BitterbotConfig } from "../../src/config/config.js";
-+import { createEmbeddingProvider, type EmbeddingProvider } from "../../src/memory/embeddings.js";
-+import { MemoryIndexManager } from "../../src/memory/manager.js";
-+import type { MemorySearchResult } from "../../src/memory/types.js";
-+import { type Question, sha256 } from "./common.js";
-+import type { EmbedFn } from "./operations.js";
-+import { channelRanks, type QueryOutcome, type RankedResult, rankOf } from "./scoring.js";
-+
-+export const EMBEDDING_MODEL = "text-embedding-3-small";
-+
-+/** In-process memo shared by every manager and by the operation embedder. */
-+export class EmbeddingMemo {
-+  private readonly cache = new Map<string, Promise<number[]>>();
-+  calls = 0;
-+  /** characters sent to the provider (cache misses only), for the token estimate */
-+  chars = 0;
-+  wrap(embed: (text: string) => Promise<number[]>): (text: string) => Promise<number[]> {
-+    return (text: string) => {
-+      const hit = this.cache.get(text);
-+      if (hit) return hit;
-+      this.calls += 1;
-+      this.chars += text.length;
-+      const p = embed(text).catch((err: unknown) => {
-+        this.cache.delete(text);
-+        throw err;
-+      });
-+      this.cache.set(text, p);
-+      return p;
-+    };
-+  }
-+  get size(): number {
-+    return this.cache.size;
-+  }
-+}
-+
-+export async function makeEmbedder(params: {
-+  liveConfig: BitterbotConfig;
-+  apiKey: string;
-+  memo: EmbeddingMemo;
-+}): Promise<EmbedFn> {
-+  const result = await createEmbeddingProvider({
-+    config: params.liveConfig,
-+    provider: "openai",
-+    remote: { apiKey: params.apiKey },
-+    model: EMBEDDING_MODEL,
-+    fallback: "none",
-+  });
-+  const provider = result.provider;
-+  return params.memo.wrap((text) => provider.embedQuery(text, { feature: "plan59-phase1" }));
-+}
-+
-+export function frozenConfig(params: {
-+  storePath: string;
-+  workspaceDir: string;
-+  agentId: string;
-+  apiKey: string;
++type Capture = { chunkId: string; path: string; split: Split; results: CapturedResult[] };
++type CaptureFile = {
++  snapshotSha256?: string;
++  questionsSha256: string;
++  frozenNow: number;
 +  maxResults: number;
-+}): BitterbotConfig {
-+  return {
-+    agents: {
-+      defaults: {
-+        workspace: params.workspaceDir,
-+        memorySearch: {
-+          enabled: true,
-+          provider: "openai",
-+          model: EMBEDDING_MODEL,
-+          remote: { apiKey: params.apiKey },
-+          sources: ["memory", "sessions"],
-+          store: { path: params.storePath, vector: { enabled: true } },
-+          sync: {
-+            intervalMinutes: 0,
-+            onSearch: false,
-+            onStartup: false,
-+            watch: false,
-+            onSessionStart: false,
-+          },
-+          query: {
-+            maxResults: params.maxResults,
-+            minScore: 0,
-+            hybrid: { enabled: true, mergeStrategy: "rrf", candidateMultiplier: 5 },
-+            recency: { enabled: false },
++  gitCommit: string | null;
++  captures: Capture[];
++};
++
++const { questions, raw } = loadQuestions(args.questions);
++const qSha = sha256(raw);
++const partition = JSON.parse(readFileSync(`${args.questions}.partition.json`, "utf8")) as Partition;
++let finalGate: FinalGate | undefined;
++if (args.final) {
++  finalGate = assertFinalAllowed({
++    final: true,
++    freeze: args.freeze,
++    protocolPath: args.protocol ?? join(dirname(args.out), "fusion-sweep.protocol.md"),
++  });
++}
++const splits: Split[] = finalGate
++  ? ["development", "qualification", "final"]
++  : ["development", "qualification"];
++const bySplit = new Map<Split, Question[]>(
++  splits.map((s) => [
++    s,
++    questionsIn(s, questions, partition, { questionsSha256: qSha, finalGate }),
++  ]),
++);
++const splitOf = new Map<string, Split>();
++for (const [s, qs] of bySplit) {
++  for (const q of qs) {
++    splitOf.set(q.chunkId, s);
++  }
++}
++const all = splits.fl
+```
+
+**File**: `benchmarks/live-recall/replay-judge.mts` (modified, +478/-66)
+```diff
+@@ -1,50 +1,138 @@
+ /**
+- * Replay real agent queries against a store snapshot under several
+- * post-fusion boost scales and judge relevance with a small model.
++ * Replay real agent queries against a store snapshot under several search
++ * settings and judge relevance with a small model.
+  *
+  * The held-out set (run.mts) has exact ground truth but synthetic questions.
+  * Real queries from the journal (extract-journal-queries.mts) have no ground
+  * truth, so a judge model marks each (query, passage) pair relevant or not,
+  * ONCE, and the same verdicts score every setting. Settings differ only in the
+  * code path under test, so the comparison is fair even if the judge is not
+- * perfect. Output holds metrics and ids only.
++ * perfect. Output holds metrics, hashes and ranks only.
++ *
++ * A setting is a post-fusion boost scale, an RRF weight triple
++ * (vector,keyword,graph) and optionally an RRF constant:
+  *
+  *   node --import tsx benchmarks/live-recall/replay-judge.mts \
+  *     --snapshot ~/snap.sqlite --queries ~/.bitterbot/benchmarks/live-recall/journal-queries.jsonl \
+- *     --scales 1,0.1,0 --out benchmarks/live-recall/results/replay-<date>.json [--k 5] [--judge claude-haiku-4-5]
++ *     --settings "boost=0.1;rrf=1,1,1" "boost=0.1;rrf=0.25,1,1" "boost=0.1;rrf=0.1,1,1" \
++ *     --out benchmarks/live-recall/results/replay-<date>.json [--k 5] [--judge claude-haiku-4-5] \
++ *     [--now <epoch ms>] [--rejudge 60] [--verdict-cache <json>]
++ *
++ * `--scales 1,0.1,0` is the older spelling of `--settings "boost=1;rrf=1,1,1" ...`.
++ * The first setting is the baseline the others are compared with. The wall
++ * clock is frozen at `--now` for every search (default: the start of the run)
++ * and hormonal modulation is off, so a setting's result list is a function of
++ * the code and the snapshot alone; the recency boost keeps its production
++ * default. `--rejudge N` asks the judge a second time about N randomly chosen
++ * pooled pairs to estimate its flip rate, which sets the non-inferiority
++ * margin (see `judgeNoise` and `contrasts` in the output).
+  */
+ import { execSync } from "node:child_process";
+ import { createHash } from "node:crypto";
+-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
++import {
++  chmodSync,
++  copyFileSync,
++  existsSync,
++  mkdirSync,
++  mkdtempSync,
++  readFileSync,
++  rmSync,
++  writeFileSync,
++} from "node:fs";
+ import { tmpdir } from "node:os";
+ import { dirname, join } from "node:path";
+ import { parseArgs } from "node:util";
+ import { resolveApiKeyForProvider } from "../../src/agents/model-auth.js";
+ import type { BitterbotConfig } from "../../src/config/config.js";
+ import { loadConfig } from "../../src/config/io.js";
++import type { EmbeddingProvider } from "../../src/memory/embeddings.js";
++import type { HybridRrfWeights } from "../../src/memory/hybrid.js";
+ import { MemoryIndexManager } from "../../src/memory/manager.js";
+ import type { MemorySearchResult } from "../../src/memory/types.js";
++import { seededRandom } from "../plan59-phase1/common.js";
+ 
+-const { values: args } = parseArgs({
++const { values: args, positionals } = parseArgs({
++  allowPositionals: true,
+   options: {
+     snapshot: { type: "string" },
+     queries: { type: "string" },
+     out: { type: "string" },
+-    scales: { type: "string", default: "1,0.1,0" },
++    scales: { type: "string" },
++    settings: { type: "string", multiple: true },
+     k: { type: "string", default: "5" },
+     judge: { type: "string", default: "claude-haiku-4-5" },
++    now: { type: "string" },
++    rejudge: { type: "string", default: "0" },
++    "verdict-cache": { type: "string" },
+   },
+   strict: true,
+ });
+ if (!args.snapshot || !args.queries || !args.out) {
+   throw new Error(
+-    "usage: --snapshot <sqlite> --queries <jsonl> --out <json> [--scales 1,0.1,0] [--k 5]",
++    'usage: --snapshot <sqlite> --queries <jsonl> --out <json> [--settings "boost=0.1;rrf=1,1,1" ...] [--scales 1,0.1,0] [--k 5]',
+   );
+ }
+ const K = Number(args.k);
+-const scales = args.scales.split(",").map((s) => Number(s.trim()));
+ const sha = (s: string | Buffer) => createHash("sha256").update(s).digest("hex");
+ 
++// ---- settings ---------------------------------------------------------------
++
++type Setting = {
++  label: string;
++  boost: number;
++  rrf: HybridRrfWeights;
++  rrfK: number;
++};
++
++/** Parse `boost=0.1;rrf=0.25,1,1;k=60` (every part optional; defaults 0.1 / 1,1,1 / 60). */
++function parseSetting(spec: string): Setting {
++  const setting: Setting = {
++    label: spec.trim(),
++    boost: 0.1,
++    rrf: { vector: 1, keyword: 1, graph: 1 },
++    rrfK: 60,
++  };
++  for (const part of spec.split(";")) {
++    const [key, value] = part.split("=").map((s) => s.trim());
++    if (!key) {
++      continue;
++    }
++    if (key === "boost") {
++      setting.boost = Number(value);
++    } else if (key === "rrf") {
++      const [v, k, g] = (value ?? "").split(",").map((s) => Number(s.trim()));
++ 
+```
+
+**File**: `benchmarks/live-recall/results/fusion-sweep-2026-10-29.json` (added, +445/-0)
+```diff
+@@ -0,0 +1,445 @@
++{
++  "ranAt": "2026-10-30T00:57:21.498Z",
++  "gitCommit": "f9ac780a+dirty",
++  "snapshotSha256": "03be448df9d4e5570d47d36d68b8bd433a9cfb4e59fc464ed67d861cd0828990",
++  "questionsSha256": "bc36b6b0bc60999aa060a5d1b92e4f66669c8bd63564b65feab563857c308d32",
++  "frozenNow": 1793317267487,
++  "maxResults": 200,
++  "fusion": "src/memory/rrf.ts rrfFuse, weight / (k + rank), ties by live fused rank",
++  "caveat": "channel lists are the per-channel ranks of the chunks inside the live fused top-200; gold chunks outside that list are unrecoverable here",
++  "goldAbsentFromCapture": {
++    "development": 40,
++    "qualification": 18
++  },
++  "development": {
++    "n": 212,
++    "liveFused": {
++      "n": 212,
++      "mrr": 0.2547,
++      "r1": 0.1604,
++      "r5": 0.3491,
++      "cov10": 0.467
++    },
++    "currentUnweightedRrf60": {
++      "n": 212,
++      "mrr": 0.2689,
++      "r1": 0.1745,
++      "r5": 0.3726,
++      "cov10": 0.4811
++    },
++    "keywordOnly": {
++      "n": 212,
++      "mrr": 0.4174,
++      "r1": 0.316,
++      "r5": 0.5519,
++      "cov10": 0.6509
++    },
++    "best": {
++      "w": {
++        "v": 0.1,
++        "k": 1,
++        "g": 0,
++        "rrfK": 60
++      },
++      "n": 212,
++      "mrr": 0.4227,
++      "r1": 0.3208,
++      "r5": 0.5613,
++      "cov10": 0.6509
++    },
++    "top10": [
++      {
++        "w": {
++          "v": 0.1,
++          "k": 1,
++          "g": 0,
++          "rrfK": 60
++        },
++        "n": 212,
++        "mrr": 0.4227,
++        "r1": 0.3208,
++        "r5": 0.5613,
++        "cov10": 0.6509
++      },
++      {
++        "w": {
++          "v": 0.1,
++          "k": 1,
++          "g": 0.5,
++          "rrfK": 60
++        },
++        "n": 212,
++        "mrr": 0.4227,
++        "r1": 0.3208,
++        "r5": 0.5613,
++        "cov10": 0.6509
++      },
++      {
++        "w": {
++          "v": 0.1,
++          "k": 1,
++          "g": 1,
++          "rrfK": 60
++        },
++        "n": 212,
++        "mrr": 0.4227,
++        "r1": 0.3208,
++        "r5": 0.5613,
++        "cov10": 0.6509
++      },
++      {
++        "w": {
++          "v": 0.25,
++          "k": 1,
++          "g": 0,
++          "rrfK": 15
++        },
++        "n": 212,
++        "mrr": 0.4188,
++        "r1": 0.316,
++        "r5": 0.5377,
++        "cov10": 0.6415
++      },
++      {
++        "w": {
++          "v": 0.25,
++          "k": 1,
++          "g": 0.5,
++          "rrfK": 15
++        },
++        "n": 212,
++        "mrr": 0.4188,
++        "r1": 0.316,
++        "r5": 0.5377,
++        "cov10": 0.6415
++      },
++      {
++        "w": {
++          "v": 0.25,
++          "k": 1,
++          "g": 1,
++          "rrfK": 15
++        },
++        "n": 212,
++        "mrr": 0.4188,
++        "r1": 0.316,
++        "r5": 0.5377,
++        "cov10": 0.6415
++      },
++      {
++        "w": {
++          "v": 0.1,
++          "k": 1,
++          "g": 0,
++          "rrfK": 5
++        },
++        "n": 212,
++        "mrr": 0.4179,
++        "r1": 0.316,
++        "r5": 0.5519,
++        "cov10": 0.6509
++      },
++      {
++        "w": {
++          "v": 0.1,
++          "k": 1,
++          "g": 0.5,
++          "rrfK": 5
++        },
++        "n": 212,
++        "mrr": 0.4179,
++        "r1": 0.316,
++        "r5": 0.5519,
++        "cov10": 0.6509
++      },
++      {
++        "w": {
++          "v": 0.1,
++          "k": 1,
++          "g": 1,
++          "rrfK": 5
++        },
++        "n": 212,
++        "mrr": 0.4179,
++        "r1": 0.316,
++        "r5": 0.5519,
++        "cov10": 0.6509
++      },
++      {
++        "w": {
++          "v": 0,
++          "k": 1,
++          "g": 0,
++          "rrfK": 5
++        },
++        "n": 212,
++        "mrr": 0.4174,
++        "r1": 0.316,
++        "r5": 0.5519,
++        "cov10": 0.6509
++      }
++    ],
++    "worst3": [
++      {
++        "w": {
++          "v": 1,
++          "k": 1,
++          "g": 0,
++          "rrfK": 60
++        },
++        "n": 212,
++        "mrr": 0.2689,
++        "r1": 0.1745,
++        "r5": 0.3726,
++        "cov10": 0.4811
++      },
++      {
++        "w": {
++          "v": 1,
++          "k": 1,
++          "g": 0.5,
++          "rrfK": 60
++        },
++        "n": 212,
++        "mrr": 0.2689,
++        "r1": 0.1745,
++        "r5": 0.3726,
++        "cov10": 0.4811
++      },
++      {
++        "w": {
++          "v": 1,
++          "k": 1,
++          "g": 1,
++          "rrfK": 60
++        },
++        "n": 212,
++        "mrr": 0.2689,
++        "r1": 0.1745,
++        "r5": 0.3726,
++        "cov10": 0.4811
++      }
++    ]
++  },
++  "qualification": {
++    "n": 106,
++    "liveFused": {
++      "n": 106,
++      "mrr": 0.2379,
++      "r1": 0.1415,
++      "r5": 0.3302,
++      "cov10": 0.4434
++    },
++    "currentUnweightedRrf60": {
++      "n": 106,
++      "mrr": 0.246,
++      "r1": 0.1415,
++      "r5": 0.3491,
++      "cov10": 0.4434
++    },
++    "keywordOnly": {
++      "n": 106,
++      "mrr": 0.4052,
++      "r1": 0.2642,
++      "r5": 0.5943,
++      "cov10": 0.6887
++    },
++    "best": {
++      "w": {
++        "v"
+```
+
+**File**: `benchmarks/live-recall/results/replay-journal-fusion-weights-2026-10-29.json` (added, +1578/-0)
+```diff
+@@ -0,0 +1,1578 @@
++{
++  "git_commit": "f9ac780a+dirty",
++  "snapshotSha256": "03be448df9d4e5570d47d36d68b8bd433a9cfb4e59fc464ed67d861cd0828990",
++  "queriesSha256": "f3075b7c9129fe562d04d79893176583d4256dc70acbd65f65eddc60fa0406a2",
++  "judge": "claude-haiku-4-5",
++  "judgePromptSha256": "56d6dc5281a15b16bb9790e296c942a2e9c2629ea264bbf939a8b9956f726f79",
++  "k": 5,
++  "n": 68,
++  "frozenNow": 1793317267487,
++  "determinism": "clock frozen at frozenNow, hormonal modulation off, recency boost at its default",
++  "embeddingCalls": 68,
++  "pairsJudged": 329,
++  "pairsFromCache": 92,
++  "judgeUsage": {
++    "calls": 317,
++    "inputTokens": 50343,
++    "outputTokens": 1508,
++    "costUsd": 0.0579
++  },
++  "judgeNoise": {
++    "rejudged": 80,
++    "flips": 3,
++    "flipRate": 0.0375,
++    "flipRateUsed": 0.0375,
++    "rule": "margin = 2 x sd of the paired delta when every pooled verdict flips independently with flipRateUsed (the larger of the observed rate and 3/n)"
++  },
++  "anyRelevantQueries": 36,
++  "elapsed_seconds": 349.1,
++  "summary": {
++    "boost=0.1;rrf=1,1,1": {
++      "n": 68,
++      "hitAtK": 0.471,
++      "precisionAtK": 0.335,
++      "mrr": 0.4,
++      "relevantAt1": 0.368,
++      "setting": {
++        "boost": 0.1,
++        "rrf": {
++          "vector": 1,
++          "keyword": 1,
++          "graph": 1
++        },
++        "rrfK": 60
++      }
++    },
++    "boost=0.1;rrf=0.5,1,1": {
++      "n": 68,
++      "hitAtK": 0.456,
++      "precisionAtK": 0.335,
++      "mrr": 0.398,
++      "relevantAt1": 0.368,
++      "setting": {
++        "boost": 0.1,
++        "rrf": {
++          "vector": 0.5,
++          "keyword": 1,
++          "graph": 1
++        },
++        "rrfK": 60
++      }
++    },
++    "boost=0.1;rrf=0.25,1,1": {
++      "n": 68,
++      "hitAtK": 0.471,
++      "precisionAtK": 0.326,
++      "mrr": 0.402,
++      "relevantAt1": 0.368,
++      "setting": {
++        "boost": 0.1,
++        "rrf": {
++          "vector": 0.25,
++          "keyword": 1,
++          "graph": 1
++        },
++        "rrfK": 60
++      }
++    },
++    "boost=0.1;rrf=0.1,1,1": {
++      "n": 68,
++      "hitAtK": 0.485,
++      "precisionAtK": 0.326,
++      "mrr": 0.394,
++      "relevantAt1": 0.353,
++      "setting": {
++        "boost": 0.1,
++        "rrf": {
++          "vector": 0.1,
++          "keyword": 1,
++          "graph": 1
++        },
++        "rrfK": 60
++      }
++    }
++  },
++  "contrasts": [
++    {
++      "setting": "boost=0.1;rrf=0.5,1,1",
++      "baseline": "boost=0.1;rrf=1,1,1",
++      "deltaHitAtK": -0.0147,
++      "deltaMrr": -0.0029,
++      "queriesUp": 2,
++      "queriesDown": 4,
++      "queryBootstrap": {
++        "deltaHitAtK": [-0.0588, 0.0294],
++        "deltaMrr": [-0.0304, 0.0245]
++      },
++      "judgeNoiseSd": {
++        "deltaHitAtK": 0.0174,
++        "deltaMrr": 0.0083
++      },
++      "nonInferior": true
++    },
++    {
++      "setting": "boost=0.1;rrf=0.25,1,1",
++      "baseline": "boost=0.1;rrf=1,1,1",
++      "deltaHitAtK": 0,
++      "deltaMrr": 0.0017,
++      "queriesUp": 5,
++      "queriesDown": 4,
++      "queryBootstrap": {
++        "deltaHitAtK": [-0.0735, 0.0735],
++        "deltaMrr": [-0.0311, 0.0319]
++      },
++      "judgeNoiseSd": {
++        "deltaHitAtK": 0.0234,
++        "deltaMrr": 0.0132
++      },
++      "nonInferior": true
++    },
++    {
++      "setting": "boost=0.1;rrf=0.1,1,1",
++      "baseline": "boost=0.1;rrf=1,1,1",
++      "deltaHitAtK": 0.0147,
++      "deltaMrr": -0.0061,
++      "queriesUp": 6,
++      "queriesDown": 5,
++      "queryBootstrap": {
++        "deltaHitAtK": [-0.0588, 0.0882],
++        "deltaMrr": [-0.0475, 0.0326]
++      },
++      "judgeNoiseSd": {
++        "deltaHitAtK": 0.0257,
++        "deltaMrr": 0.0151
++      },
++      "nonInferior": true
++    }
++  ],
++  "per_query": [
++    {
++      "q": "c4b4aafcd5d3",
++      "results": {
++        "boost=0.1;rrf=1,1,1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "boost=0.1;rrf=0.5,1,1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "boost=0.1;rrf=0.25,1,1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "boost=0.1;rrf=0.1,1,1": {
++          "ranks": [],
++          "relevant": 0
++        }
++      }
++    },
++    {
++      "q": "c3e3a474a0e8",
++      "results": {
++        "boost=0.1;rrf=1,1,1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "boost=0.1;rrf=0.5,1,1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "boost=0.1;rrf=0.25,1,1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "boost=0.1;rrf=0.1,1,1": {
++          "ranks": [],
++          "relevant": 0
++        }
++      }
++    },
++    {
++      "q": "ec7da990967b",
++      "results": {
++        "boost=0.1;rrf=1,1,1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "boost=0.1;rrf=0.5,1,1": {
++          "ranks": [],
++          "relevant": 0
++        },
++        "boost=0.1;rrf=0.25,1,1": {
++          "ranks": [],
++
+```
+
+**File**: `docs/docs.json` (modified, +1/-1)
+```diff
+@@ -739,7 +739,7 @@
+               },
+               {
+                 "group": "Research",
+-                "pages": ["research/plan59-phase1-pilot"]
++                "pages": ["research/plan59-phase1-pilot", "research/fusion-weights-2026-10-29"]
+               }
+             ]
+           },
+```
+
+**File**: `docs/memory/curiosity-and-search.md` (modified, +3/-1)
+```diff
+@@ -232,7 +232,9 @@ flowchart TB
+     H --> K[Return results]
+ ```
+ 
+-**Hybrid merging** uses reciprocal rank fusion by default (`mergeStrategy: "rrf"`); the configurable weights (0.7 vector + 0.3 text) apply only with `mergeStrategy: "weighted"`. BM25 ranks are converted to [0,1] scores via `bm25RankToScore()`. A PLAN-18 graph-reader channel joins the fusion as a third ranked list when the knowledge graph is populated.
++**Hybrid merging** uses reciprocal rank fusion by default (`mergeStrategy: "rrf"`); the legacy `vectorWeight` / `textWeight` pair (0.7 + 0.3) applies only with `mergeStrategy: "weighted"`. BM25 ranks are converted to [0,1] scores via `bm25RankToScore()`. A PLAN-18 graph-reader channel joins the fusion as a third ranked list when the knowledge graph is populated.
++
++**RRF channel weights.** Under RRF each channel contributes `weight / (k + rank)` for every result it ranked, with `query.hybrid.rrfWeights: { vector, keyword, graph }` and `query.hybrid.rrfK` (default 60). The default is 1/1/1, plain unweighted RRF; a weight of 0 silences a channel without changing what it retrieves (a result found only by a silenced channel is dropped). Negative or non-finite values fall back to the default with a warning. On one node's real memory the keyword channel carries the fused list (names, paths and identifiers): a 2026-10-29 sweep on 318 generated questions found vector 0.1 / keyword 1 best by a wide margin, but on the agent's 68 real, shorter queries no keyword-heavier setting was better than 1/1/1 (vector 0.25: MRR 0.402 against 0.400, hit@5 identical), so the generated-question gain did not transfer and the default was kept. Vector 0.25 and 0.1 are non-inferior on real queries and available as configuration; a LongMemEval-S retrieval check at 0.25 is the precondition for any future default change. Measurement and decision rule: [the fusion-weights research page](../research/fusion-weights-2026-10-29.md).
+ 
+ **Keyword query shape.** `buildFtsQuery()` OR-joins the query's terms for the FTS5 `MATCH`, dropping a short shared stopword list when the query has three or more tokens (a one- or two-word lookup keeps every word) and capping at 16 distinct terms. bm25 then ranks chunks by how many of the terms they contain and how rare those terms are, so a chunk holding every term still sorts first. Until 2026-10-27 the terms were AND-joined: a chunk had to contain every token, which held for terse lookups and for no conversational question, and the per-channel diagnostics showed the keyword channel contributing nothing to natural-language queries on the live store or the LongMemEval baseline. The `fusion` field still reports `rrf` in that case, so look at `channels.keyword` presence, not `fusion`, to tell whether the keyword channel took part.
+ 
+```
+
+**File**: `docs/research/fusion-weights-2026-10-29.md` (added, +231/-0)
+```diff
+@@ -0,0 +1,231 @@
++---
++title: "Weighted RRF channel fusion: sweep and real-query validation"
++description: "Hybrid memory search fused its vector, keyword and graph channels with unweighted RRF. A partitioned sweep on generated questions and a judge-scored replay of the agent's real queries measured whether down-weighting the vector channel helps, and set the default."
++---
++
++This is a retrieval diagnostic and a default decision, not a curiosity
++component and not externally preregistered. It ran on 2026-10-29 against a
++sealed `VACUUM INTO` copy of one node's memory store; the live store was never
++written. Selection used the development split of the PLAN-59 Phase 1 partition
++only, confirmation the qualification split, and the final split was never read.
++
++Tools: `benchmarks/live-recall/fusion-sweep.mts` (capture once, re-fuse
++offline through the production `rrfFuse`, select on development, confirm on
++qualification) and `benchmarks/live-recall/replay-judge.mts` (real queries,
++judge-scored, every setting scored on the same verdicts). Result files:
++`benchmarks/live-recall/results/fusion-sweep-2026-10-29.json` and
++`benchmarks/live-recall/results/replay-journal-fusion-weights-2026-10-29.json`
++(weights, hashes, ranks and numbers only). Method notes:
++`benchmarks/live-recall/README.md`.
++
++## What was found on main
++
++`src/memory/rrf.ts` fused the channels with plain reciprocal rank fusion,
++`1 / (60 + rank)` per channel, unweighted. The `vectorWeight` and `textWeight`
++keys under `query.hybrid` apply only to the legacy `mergeStrategy: "weighted"`
++path. The PLAN-59 Phase 1 pilot's development baseline had already shown the
++fused list losing to its own keyword channel on this store (fused MRR 0.254
++against keyword-alone 0.421); this work asks whether channel weights recover
++the gap and whether the agent's real queries agree.
++
++## Provenance
++
++| item                | value                                                                                                                                                            |
++| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
++| commit under test   | `f9ac780a` (main, PLAN-59 Phase 1 harness merged) plus this change                                                                                               |
++| snapshot            | `VACUUM INTO` copy of the live store, read-only source, 3,952 chunks, 368 MB                                                                                     |
++| snapshot SHA-256    | `03be448df9d4e5570d47d36d68b8bd433a9cfb4e59fc464ed67d861cd0828990`                                                                                               |
++| frozen clock        | 2026-10-29T23:41:07Z (capture time) for both the sweep and the replay                                                                                            |
++| generated questions | 449, `claude-haiku-4-5`, seed 59; file SHA-256 `bc36b6b0bc60999aa060a5d1b92e4f66669c8bd63564b65feab563857c308d32`                                                |
++| partition           | seed 59, by family (chunk path): 212 development / 106 qualification / 131 final (never read)                                                                    |
++| capture             | one search per development and qualification question, fused top 200 with per-channel ranks, `maxResults` 200, recency off, hormonal off                         |
++| real queries        | 68 distinct `memory_search` queries from the event journal, May to October 2026; file SHA-256 `f3075b7c9129fe562d04d79893176583d4256dc70acbd65f65eddc60fa0406a2` |
++| judge               | `claude-haiku-4-5`, one YES/NO verdict per (query, passage) pair, shared across settings                                                                         |
++| embedding model     | `text-embedding-3-small`                                                                                                                                         |
++
++The question, partition and capture files paraphrase or name private memory
++and live under `~/.bitterbot/benchmarks/live-recall/` with mode 0600; they are
++not in the repository.
++
++## Sweep on generated questions
++
++Weighted RRF scores a result as the sum over channels of
++`weight / (k + rank)`. The grid was vector weight 0, 0.1, 0.25, 0.5, 0.75, 1
++against keyword weight 1, graph weight 0, 0.5, 1, and k 5, 15, 30, 60: 72
++settings, re-fused offline from one capture per question. "Live fused" is the
++list the search actually returned (unweighted RRF followed by the bounded
++post-fusion boosts); "unweighted RRF" is the same ranks re-fused at 1/1/1
++without the boosts, so the gap between those two rows is what the boosts cost.
++
++### Development split (212 questions, 158 families): selection
++
++| setting                                   | MRR  
+```
+
+---
+
+### Incident Patch 2: `b6c09df1` (2026-10-30)
+**Commit Message**: feat(memory): shadow surfacing trial eligibility and assignment (PLAN-59 Phase 2) (#331)
+
+Phase 2 measures whether proactively surfacing autonomously learned
+information is useful to the owner. Before any live trial can withhold
+anything, eligibility and assignment run in shadow: every eligible
+surfacing opportunity is logged, assigned to an arm by a randomised
+block design, and delivered exactly as today. Nothing the owner sees
+changes in this PR; the live withhold condition is a separate exposure
+decision and PR, so the mode enum is `off | shadow` only.
+
+- Config `memory.curiosity.evidence.surfacingTrial` (mode default
+  `shadow`, blockMinutes 240, carryOverDays 7, optional seed), Zod entry
+  next to CuriosityEvidenceSchema, resolver with the evidence-config
+  fallback style. `evidence.mode: off` wins: the trial then writes nothing.
+- `src/memory/surfacing-trial.ts`: block id = floor(now / blockMinutes);
+  arm per (kind, block) from HMAC-SHA256(seed, kind, blockId), balanced
+  and independent across blocks; seed derived from the node's evidence
+  digest key when none is configured. Carry-over reuses the arm of an
+  assignment of the same (kind, ref_id) inside the window. Every
+  
+
+**File**: `docs/gateway/configuration-reference.md` (modified, +7/-0)
+```diff
+@@ -1957,6 +1957,12 @@ The memory subsystems (`memory.dream`, `memory.consolidation`, `memory.curiosity
+         mode: "shadow", // "off" | "observe" | "shadow" (default "shadow")
+         retentionDays: 90, // prune rows older than this on the consolidation tick
+         topK: 10, // retrieval rows kept per search
++        surfacingTrial: {
++          mode: "shadow", // "off" | "shadow" (default "shadow")
++          blockMinutes: 240, // length of one randomisation block
++          carryOverDays: 7, // an item assigned within this window keeps its arm
++          seed: "optional", // absent: derived from this node's evidence digest key
++        },
+       },
+     },
+   },
+@@ -1965,6 +1971,7 @@ The memory subsystems (`memory.dream`, `memory.consolidation`, `memory.curiosity
+ 
+ - `off`: nothing is written. `observe`: retrieval hits and surfacing events. `shadow`: also dream-engine decision traces.
+ - Observation changes no behaviour in any mode. Query text is never stored; queries and session keys appear only as node-keyed digests. See [Evidence telemetry](/memory/evidence-telemetry).
++- `surfacingTrial` (PLAN-59 Phase 2, shadow stage): logs every proactive surfacing opportunity as `eligible` and assigns it `surface` or `withhold` by a randomised block design, then delivers exactly as before. `shadow` changes nothing the owner sees; `off` restores the Phase 0 rows. A `live` mode does not exist yet; the withhold condition is a separate decision and PR. Writes nothing when `evidence.mode` is `off`. See [Surfacing trial](/memory/evidence-telemetry#surfacing-trial-shadow-stage).
+ 
+ ## Browser
+ 
+```
+
+**File**: `docs/memory/curiosity-and-search.md` (modified, +1/-1)
+```diff
+@@ -112,7 +112,7 @@ Maximum active targets: 10 (configurable). Expired targets are cleaned up during
+ 
+ Budget: `maxPerDay` (10) questions per UTC day, +2 when dopamine > 0.65, −2 when cortisol > 0.65 (cortisol also raises the confidence floor by 0.1). Pause state lives in `memory_meta`.
+ 
+-Use ledger (`src/memory/curiosity-use.ts`): memory search and proactive recall call `recordCuriosityUse` for any self-learned chunk they return; `curiosityRoiByRegion` feeds step 1. Evidence layer (`memory.curiosity.evidence`, default `shadow`): every owner search writes its top-K chunk ids under a keyed query digest, every voiced finding, proactive-recall fact and dream brief writes a `delivered` row, and a dismiss labels it `explicit`; see [Evidence telemetry](/memory/evidence-telemetry). RPCs: `curiosity.status`, `curiosity.list`, `curiosity.pause`, `curiosity.resume`, `curiosity.dismiss`, `curiosity.ask`, `curiosity.runNow`; the same from the terminal as [`bitterbot curiosity`](/cli/curiosity).
++Use ledger (`src/memory/curiosity-use.ts`): memory search and proactive recall call `recordCuriosityUse` for any self-learned chunk they return; `curiosityRoiByRegion` feeds step 1. Evidence layer (`memory.curiosity.evidence`, default `shadow`): every owner search writes its top-K chunk ids under a keyed query digest, every voiced finding, proactive-recall fact and dream brief writes a `delivered` row, and a dismiss labels it `explicit`; since PLAN-59 Phase 2 the shadow surfacing trial (`evidence.surfacingTrial`, default `shadow`) logs each of those as `eligible` and `assigned` to a randomised-block arm first, without changing what is delivered; see [Evidence telemetry](/memory/evidence-telemetry). RPCs: `curiosity.status`, `curiosity.list`, `curiosity.pause`, `curiosity.resume`, `curiosity.dismiss`, `curiosity.ask`, `curiosity.runNow`; the same from the terminal as [`bitterbot curiosity`](/cli/curiosity).
+ 
+ Private names come from the knowledge graph's `person`, `organization` and `project` entities. A "person" that is not a name ("here", "commands", a peer id) is filed as a `concept` at write time (`looksLikePersonName`) and migration v75 reclassified existing rows, so the filter blocks people, not ordinary words.
+ 
+```
+
+**File**: `docs/memory/evidence-telemetry.md` (modified, +90/-25)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ An observational layer under the curiosity and dream system. It records what retrieval surfaced, what the agent proactively surfaced to the owner and what came of it, and (in shadow mode) what a "GCCRF as diagnostic only" routing would have decided in the dream engine next to what the legacy routing actually decided. It changes no behaviour in any mode: retrieval order, dream seeds, dream mode choice, hormone events and target closure are exactly what they were before it existed. Later phases read these tables; this phase only writes them.
+ 
+-Code: `src/memory/evidence-telemetry.ts` (writer), migration v79 in `src/memory/migrations.ts`, call sites in `src/memory/manager.ts` and `src/memory/dream-engine.ts`.
++Code: `src/memory/evidence-telemetry.ts` (writer), `src/memory/surfacing-trial.ts` (PLAN-59 Phase 2 shadow assignment), migrations v79 and v80 in `src/memory/migrations.ts`, call sites in `src/memory/manager.ts` and `src/memory/dream-engine.ts`.
+ 
+ ## Modes and defaults
+ 
+@@ -55,20 +55,21 @@ Indexes: `created_at`; `(chunk_id, created_at)`; `query_id`.
+ 
+ What the agent put in front of the owner, and separately what the owner did about it.
+ 
+-| column             | meaning                                                                                                   |
+-| ------------------ | --------------------------------------------------------------------------------------------------------- |
+-| `event_id`         | idempotency key (`INSERT OR IGNORE`), for example `cf:<finding id>:<hour bucket>`                         |
+-| `kind`             | `curiosity_finding`, `proactive_recall`, `dream_brief`, `dream_digest`, `curiosity_target`                |
+-| `ref_id`           | the surfaced item (finding id, chunk id, brief id, notification key)                                      |
+-| `arm`              | `legacy` in Phase 0; later phases add arms                                                                |
+-| `opportunity_id`   | the curiosity target a finding answered, so a dismiss by target id finds the delivery                     |
+-| `session_digest`   | digest of the conversation the item was surfaced in, when known                                           |
+-| `stage`            | `eligible`, `assigned`, `delivered`, `visible`, `responded`                                               |
+-| `outcome`          | `useful`, `corrected`, `dismissed`, `answered`, `engaged_weak`, `unknown`; NULL until something labels it |
+-| `label_provenance` | `explicit` (the owner acted), `inferred`, `unknown`                                                       |
+-| `cost_usd`         | cost attributed to producing the item, when known                                                         |
+-| `created_at`       | when the stage was reached                                                                                |
+-| `outcome_at`       | when the outcome was labelled                                                                             |
++| column             | meaning                                                                                                                                                                                             |
++| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
++| `event_id`         | idempotency key (`INSERT OR IGNORE`), for example `cf:<finding id>:<hour bucket>`                                                                                                                   |
++| `kind`             | `curiosity_finding`, `proactive_recall`, `dream_brief`, `dream_digest`, `curiosity_target`                                                                                                          |
++| `ref_id`           | the surfaced item (finding id, chunk id, brief id, notification key)                                                                                                                                |
++| `arm`              | `legacy` (Phase 0 rows, or the trial off), `unassigned` (an `eligible` row, before the draw), `surface` or `withhold` (assigned by the surfacing trial)                                             |
++| `opportunity_id`   | shared id of one opportunity across its `eligible`, `assigned` and `delivered` rows: the curiosity target a finding answered (so a dismiss by target id finds the delivery), the event id otherwise |
++| `session_digest`   | digest of the conversation the item was surfaced in, when known                                                                                                                                     |
++| `stage`            | `eligible`, `assigned`, `delivered`, `visible`, `responded`                                                                                                               
+```
+
+**File**: `src/config/config.curiosity-evidence.test.ts` (modified, +48/-3)
+```diff
+@@ -1,15 +1,15 @@
+ /**
+  * PLAN-59 Phase 0: `memory.curiosity.evidence` in the config schema.
+  *
+- * The typed branch accepts the three keys and rejects a bad mode or an unknown
+- * key. Inside the full config the curiosity block sits in a union with
++ * The typed branch accepts the three keys (and, since PLAN-59 Phase 2, the
++ * `surfacingTrial` block) and rejects a bad mode or an unknown key. Inside the full config the curiosity block sits in a union with
+  * `z.unknown()` (acceptance of `memory` was never narrowed), so a bad mode there
+  * still validates and is handled by `resolveEvidenceConfig` at the read site.
+  */
+ 
+ import { describe, expect, it } from "vitest";
+ import { validateConfigObject } from "./validation.js";
+-import { CuriosityEvidenceSchema } from "./zod-schema.js";
++import { CuriosityEvidenceSchema, CuriositySurfacingTrialSchema } from "./zod-schema.js";
+ 
+ describe("memory.curiosity.evidence (PLAN-59 Phase 0)", () => {
+   it("accepts the three keys in a full config", () => {
+@@ -42,6 +42,51 @@ describe("memory.curiosity.evidence (PLAN-59 Phase 0)", () => {
+     expect(CuriosityEvidenceSchema.safeParse({ modes: "off" }).success).toBe(false);
+   });
+ 
++  it("accepts the Phase 2 surfacingTrial block and rejects a live mode or an unknown key", () => {
++    const res = validateConfigObject({
++      memory: {
++        curiosity: {
++          evidence: {
++            mode: "shadow",
++            surfacingTrial: { mode: "shadow", blockMinutes: 240, carryOverDays: 7, seed: "node-a" },
 +          },
 +        },
 +      },
-+      list: [{ id: params.agentId, default: false, workspace: params.workspaceDir }],
-+    },
-+    memory: {
-+      dream: { enabled: false },
-+      consolidation: { enabled: false },
-+      curiosity: { enabled: false, evidence: { mode: "off" } },
-+      emotional: { enabled: false, hormonal: { enabled: false } },
-+      healthSweep: { enabled: false },
-+      coverageDiagnostics: { enabled: false },
-+    },
-+  } as unknown as BitterbotConfig;
-+}
++    });
++    expect(res.ok).toBe(true);
++    if (res.ok) {
++      const curiosity = (res.config.memory as { curiosity?: { evidence?: unknown } }).curiosity;
++      expect(curiosity?.evidence).toEqual({
++        mode: "shadow",
++        surfacingTrial: { mode: "shadow", blockMinutes: 240, carryOverDays: 7, seed: "node-a" },
++      });
++    }
++    for (const mode of ["off", "shadow"]) {
++      expect(CuriositySurfacingTrialSchema.safeParse({ mode }).success).toBe(true);
++    }
++    expect(CuriositySurfacingTrialSchema.safeParse({}).success).toBe(true);
++    // the withhold condition is a separate exposure decision and PR
++    expect(CuriositySurfacingTrialSchema.safeParse({ mode: "live" }).success).toBe(false);
++    expect(CuriositySurfacingTrialSchema.safeParse({ blockMinutes: 0 }).success).toBe(false);
++    expect(CuriositySurfacingTrialSchema.safeParse({ carryOverDays: -1 }).success).toBe(false);
++    expect(CuriositySurfacingTrialSchema.safeParse({ seed: "" }).success).toBe(false);
++    expect(CuriositySurfacingTrialSchema.safeParse({ blocks: 3 }).success).toBe(false);
++    expect(CuriosityEvidenceSchema.safeParse({ surfacingTrial: { mode: "shadow" } }).success).toBe(
++      true,
++    );
++    expect(CuriosityEvidenceSchema.safeParse({ surfacingTrial: { mode: "live" } }).success).toBe(
++      false,
++    );
++  });
 +
-+export type OpenStore = {
-+  manager: MemoryIndexManager;
-+  close: () => Promise<void>;
++  it("a bad surfacingTrial mode in the full config falls to the unknown branch like the evidence mode", () => {
++    expect(
++      validateConfigObject({
++        memory: { curiosity: { evidence: { surfacingTrial: { mode: "live" } } } },
++      }).ok,
++    ).toBe(true);
++  });
++
+   it("a bad mode in the full config falls to the unknown branch and is left to the read site", () => {
+     // Documented behaviour of MemorySchema: the curiosity union's fallback is z.unknown().
+     const res = validateConfigObject({ memory: { curiosity: { evidence: { mode: "shadwo" } } } });
+```
+
+**File**: `src/config/zod-schema.ts` (modified, +15/-0)
+```diff
+@@ -34,11 +34,26 @@ const NodeHostSchema = z
+  * is `z.unknown()`, so a bad mode there degrades to the unknown branch and the
+  * code-read site (`resolveEvidenceConfig`) falls back to the default.
+  */
++/**
++ * PLAN-59 Phase 2: `memory.curiosity.evidence.surfacingTrial`. Same arrangement
++ * as the evidence block: the typed branch feeds the form; the read site
++ * (`resolveSurfacingTrialConfig`) does its own coercion.
++ */
++export const CuriositySurfacingTrialSchema = z
++  .object({
++    mode: z.enum(["off", "shadow"]).optional(),
++    blockMinutes: z.number().positive().optional(),
++    carryOverDays: z.number().positive().optional(),
++    seed: z.string().min(1).optional(),
++  })
++  .strict();
++
+ export const CuriosityEvidenceSchema = z
+   .object({
+     mode: z.enum(["off", "observe", "shadow"]).optional(),
+     retentionDays: z.number().positive().optional(),
+     topK: z.number().int().positive().optional(),
++    surfacingTrial: CuriositySurfacingTrialSchema.optional(),
+   })
+   .strict();
+ 
+```
+
+**File**: `src/memory/curiosity-types.ts` (modified, +31/-0)
+```diff
+@@ -106,6 +106,32 @@ export type CuriosityWeights = {
+  */
+ export type CuriosityEvidenceMode = "off" | "observe" | "shadow";
+ 
++/**
++ * PLAN-59 Phase 2 surfacing trial modes. `off` writes delivered rows with the
++ * `legacy` arm as Phase 0 did; `shadow` logs eligibility and a randomised-block
++ * arm for every proactive surfacing opportunity and delivers exactly as before.
++ * A `live` mode (withholding) is a separate exposure decision and PR.
++ */
++export type CuriositySurfacingTrialMode = "off" | "shadow";
++
++export type CuriositySurfacingTrialConfig = {
++  /** Default: "shadow" (observation only; nothing the owner sees changes). */
++  mode?: CuriositySurfacingTrialMode;
++  /** Length of one randomisation block in minutes. Default: 240. */
++  blockMinutes?: number;
++  /**
++   * An item (same kind and ref id) assigned within this many days keeps its
++   * arm instead of drawing again. Default: 7.
++   */
++  carryOverDays?: number;
++  /**
++   * Trial seed for the arm draw. Absent, it is derived from the node's own
++   * evidence digest key, so assignment is deterministic per node and cannot
++   * be reconstructed from the logged rows.
++   */
++  seed?: string;
 +};
 +
-+export async function openFrozenStore(params: {
-+  storePath: string;
-+  workDir: string;
-+  agentId: string;
-+  apiKey: string;
-+  maxResults: number;
-+  memo: EmbeddingMemo;
-+}): Promise<OpenStore> {
-+  const workspaceDir = join(params.workDir, "workspace", params.agentId);
-+  mkdirSync(join(workspaceDir, "memory"), { recursive: true });
-+  writeFileSync(join(workspaceDir, "memory", "MEMORY.md"), "# plan59 phase 1\n");
-+  const manager = await MemoryIndexManager.get({
-+    cfg: frozenConfig({ ...params, workspaceDir }),
-+    agentId: params.agentId,
+ export type CuriosityEvidenceConfig = {
+   /**
+    * Default: "shadow" (every tier of evidence, so the GCCRF retirement decision
+@@ -116,6 +142,11 @@ export type CuriosityEvidenceConfig = {
+   retentionDays?: number;
+   /** At most this many retrieval rows per search. Default: 10. */
+   topK?: number;
++  /**
++   * PLAN-59 Phase 2: shadow eligibility and assignment for proactive surfacing.
++   * Writes nothing when `mode` (the evidence layer) is `off`.
++   */
++  surfacingTrial?: CuriositySurfacingTrialConfig;
+ };
+ 
+ export type CuriosityConfig = {
+```
+
+**File**: `src/memory/evidence-telemetry.test.ts` (modified, +75/-0)
+```diff
+@@ -285,6 +285,81 @@ describe("EvidenceTelemetry", () => {
+     ).toBeNull();
+   });
+ 
++  it("stores stage details as canonical JSON and a guarded label never overwrites or creates a row", () => {
++    const db = openDb();
++    const t = new EvidenceTelemetry(db, { mode: "observe" }, quiet);
++    t.recordSurfacing({
++      eventId: "assigned:pr:c1:1",
++      kind: "proactive_recall",
++      refId: "c1",
++      arm: "withhold",
++      stage: "assigned",
++      details: { carryOver: false, blockId: 7 },
++      now: 1000,
++    });
++    t.recordSurfacing({
++      eventId: "pr:c1:1",
++      kind: "proactive_recall",
++      refId: "c1",
++      arm: "withhold",
++      stage: "delivered",
++      now: 1000,
++    });
++    expect(
++      (
++        db
++          .prepare(`SELECT details_json FROM surfacing_events WHERE event_id = 'assigned:pr:c1:1'`)
++          .get() as { details_json: string }
++      ).details_json,
++    ).toBe('{"blockId":7,"carryOver":false}');
++    expect(
++      (
++        db
++          .prepare(`SELECT details_json FROM surfacing_events WHERE event_id = 'pr:c1:1'`)
++          .get() as {
++          details_json: string | null;
++        }
++      ).details_json,
++    ).toBeNull();
++    // guarded label on an unlabelled row: applied
++    expect(
++      t.recordSurfacingOutcome({
++        eventId: "pr:c1:1",
++        outcome: "explicit_retrieval",
++        provenance: "shadow_crossover",
++        onlyIfUnlabelled: true,
++        now: 2000,
++      }),
++    ).toBe(true);
++    // the owner's explicit label replaces it (ungarded), and the guarded marker then leaves it alone
++    t.recordSurfacingOutcome({ eventId: "pr:c1:1", outcome: "dismissed", provenance: "explicit" });
++    expect(
++      t.recordSurfacingOutcome({
++        eventId: "pr:c1:1",
++        outcome: "explicit_retrieval",
++        provenance: "shadow_crossover",
++        onlyIfUnlabelled: true,
++      }),
++    ).toBe(false);
++    expect(
++      db
++        .prepare(
++          `SELECT outcome, label_provenance FROM surfacing_events WHERE event_id = 'pr:c1:1'`,
++        )
++        .get(),
++    ).toEqual({ outcome: "dismissed", label_provenance: "explicit" });
++    // guarded with no matching row: no responded row is created
++    expect(
++      t.recordSurfacingOutcome({
++        refId: "nothing-here",
++        outcome: "explicit_retrieval",
++        provenance: "shadow_crossover",
++        onlyIfUnlabelled: true,
++      }),
++    ).toBe(false);
++    expect(count(db, "surfacing_events")).toBe(2);
 +  });
-+  if (!manager) {
-+    throw new Error("MemoryIndexManager.get returned null");
++
+   it("decision traces are shadow-only and diverged compares canonical forms (or the decision key)", () => {
+     const db = openDb();
+     const observe = new EvidenceTelemetry(db, { mode: "observe" }, quiet);
+```
+
+**File**: `src/memory/evidence-telemetry.ts` (modified, +48/-7)
+```diff
+@@ -115,8 +115,19 @@ export type SurfacingOutcome =
+   | "dismissed"
+   | "answered"
+   | "engaged_weak"
++  /**
++   * PLAN-59 Phase 2: the owner retrieved the item through an explicit memory
++   * search. In the shadow stage this is a baseline rate, not a crossover from
++   * a withheld condition (nothing is withheld in shadow).
++   */
++  | "explicit_retrieval"
++  | "unknown";
++export type LabelProvenance =
++  | "explicit"
++  | "inferred"
++  /** PLAN-59 Phase 2: set by the shadow crossover marker, never by the owner. */
++  | "shadow_crossover"
+   | "unknown";
+-export type LabelProvenance = "explicit" | "inferred" | "unknown";
+ 
+ export type RecordSurfacingInput = {
+   /** Idempotency key: the same event id is written once (INSERT OR IGNORE). */
+@@ -128,6 +139,12 @@ export type RecordSurfacingInput = {
+   sessionKey?: string;
+   stage: SurfacingStage;
+   costUsd?: number;
++  /**
++   * PLAN-59 Phase 2: small JSON payload for the stage (the surfacing trial
++   * stores the randomisation block id and the carry-over flag on `assigned`
++   * rows). Never content, never a query.
++   */
++  details?: Record<string, unknown>;
+   now?: number;
+ };
+ 
+@@ -138,6 +155,12 @@ export type RecordSurfacingOutcomeInput = {
+   provenance: LabelProvenance;
+   /** Kind for the `responded` row created when no delivered row matches. */
+   kind?: string;
++  /**
++   * PLAN-59 Phase 2: leave a row alone when it already carries an outcome, so
++   * an inferred marker never overwrites what the owner said. Also skips the
++   * `responded` fallback row.
++   */
++  onlyIfUnlabelled?: boolean;
+   now?: number;
+ };
+ 
+@@ -234,6 +257,16 @@ export class EvidenceTelemetry {
+     return { ...this.cfg };
+   }
+ 
++  /**
++   * The live connection, or null when the tables are missing. For the
++   * surfacing trial's own lookups (carry-over, crossover, counts): it reads
++   * through this accessor on every call, so a rebind after a database swap is
++   * picked up without the trial holding a handle of its own.
++   */
++  connection(): DatabaseSync | null {
++    return this.available ? this.db : null;
 +  }
-+  // Route this manager's query embeddings through the shared memo.
-+  const inner = manager as unknown as { provider: EmbeddingProvider };
-+  const original = inner.provider.embedQuery.bind(inner.provider);
-+  inner.provider.embedQuery = params
++
+   /** True when rows can be written at all (mode not off, tables present). */
+   isEnabled(): boolean {
+     return this.available && this.cfg.mode !== "off";
+@@ -318,8 +351,9 @@ export class EvidenceTelemetry {
+     try {
+       const stmt = this.db.prepare(
+         `INSERT OR IGNORE INTO surfacing_events
+-           (event_id, kind, ref_id, arm, opportunity_id, session_digest, stage, cost_usd, created_at)
+-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
++           (event_id, kind, ref_id, arm, opportunity_id, session_digest, stage, cost_usd,
++            details_json, created_at)
++         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       );
+       let inserted = 0;
+       this.inTransaction(() => {
+@@ -333,6 +367,7 @@ export class EvidenceTelemetry {
+             this.sessionDigest(e.sessionKey),
+             e.stage,
+             typeof e.costUsd === "number" && Number.isFinite(e.costUsd) ? e.costUsd : null,
++            e.details ? canonicalJson(e.details) : null,
+             e.now ?? Date.now(),
+           );
+           inserted += Number(res.changes);
+@@ -361,24 +396,30 @@ export class EvidenceTelemetry {
+       const now = input.now ?? Date.now();
+       const target = input.eventId
+         ? (this.db
+-            .prepare(`SELECT id FROM surfacing_events WHERE event_id = ? LIMIT 1`)
+-            .get(input.eventId) as { id: number } | undefined)
++            .prepare(`SELECT id, outcome FROM surfacing_events WHERE event_id = ? LIMIT 1`)
++            .get(input.eventId) as { id: number; outcome: string | null } | undefined)
+         : (this.db
+             .prepare(
+-              `SELECT id FROM surfacing_events
++              `SELECT id, outcome FROM surfacing_events
+                 WHERE (ref_id = ? OR opportunity_id = ?)
+                 ORDER BY CASE WHEN stage = 'delivered' THEN 0 ELSE 1 END, created_at DESC, id DESC
+                 LIMIT 1`,
+             )
+-            .get(input.refId!, input.refId!) as { id: number } | undefined);
++            .get(input.refId!, input.refId!) as { id: number; outcome: string | null } | undefined);
+       if (target) {
++        if (input.onlyIfUnlabelled && target.outcome !== null) {
++          return false;
++        }
+         this.db
+           .prepare(
+             `UPDATE surfacing_events SET outcome = ?, label_provenance = ?, outcome_at = ? WHERE id = ?`,
+           )
+           .run(input.outcome, input.provenance, now, target.id);
+         return true;
+       }
++      if (input.onlyIfUnlabelled) {
++        return false;
++      }
+       const ref = input.refId ?? input.eventId!;
+       this.db
+         .prepare(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #332** (2026-10-30): feat(memory): weighted RRF channel fusion with sweep and real-query validation (@VGIL77)
+- **PR #331** (2026-10-30): feat(memory): shadow surfacing trial eligibility and assignment (PLAN-59 Phase 2) (@VGIL77)
 - **PR #329** (2026-10-29): feat(memory): PLAN-59 Phase 1 pilot harness (forked consolidation arms) (@VGIL77)
 - **PR #328** (2026-10-29): feat(memory): default evidence telemetry to shadow mode (@VGIL77)
 - **PR #322** (2026-10-29): feat(memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (@VGIL77)
 - **PR #321** (2026-10-28): fix(memory): GCCRF and curiosity-target defects (@VGIL77)
-- **PR #320** (2026-10-28): fix(p2p): fail-closed skill ingest and publish gates (@VGIL77)
-- **PR #318** (2026-10-28): feat(benchmarks): LongMemEval runner on the official protocol (@VGIL77)
 
 ---
 
@@ -2756,29 +3206,50 @@ benchmarks/plan59-phase1/
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory): PLAN-59 Phase 1 pilot harness (forked consolidation arms) (#329)
+## X. memory): weighted RRF channel fusion with sweep and real-query validation (#332)
 
 **RULE**:
-When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `benchmarks/live-recall/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f9ac780a`: memory): PLAN-59 Phase 1 pilot harness (forked consolidation arms) (#329). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fe517486`: memory): weighted RRF channel fusion with sweep and real-query validation (#332). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/live-recall/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-# PLAN-59 phase reports are published documentation, not the playground.
-!docs/research/
+2. `replay-judge.mts` searches a copy of the snapshot once per setting,
+   pools the top-k passages across settings, and asks a small model ONCE per
+   (query, passage) pair whether the passage answers the query. The same
+   verdicts score every setting, so the comparison is fair even where the
+   judge is not. Output: hit@k (any relevant passage in the top k),
+   precision@k, relevant@1, MRR; hashes and ranks only.
+
+   A setting is `boost=<postFusionBoostScale>;rrf=<vector>,<keyword>,<graph>[;k=<rrfK>]`,
+   passed as `--settings "boost=0.1;rrf=1,1,1" "boost=0.1;rrf=0.25,1,1" ...`
+   (`--scales 1,0.1,0` is the older spelling for boost scales alone). The first
+   setting is the baseline. Every search runs with the wall clock frozen at
+   `--now` and hormonal modulation off, so a setting's list depends on the
+   code and the snapshot only; the recency boost keeps its production default.
+   `--rejudge N` asks the judge again about N random pooled pairs to estimate
+   its flip rate; the output then carries, per setting against the baseline,
+   the paired delta in hit@k and MRR, a paired bootstrap over queries
+   (sampling noise), the sd of the delta when every pooled verdict flips at
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+2. `replay-judge.mts` searches a copy of the snapshot once per setting
+   (here `postFusionBoostScale` 1, 0.1, 0), pools the top-k passages across
+   settings, and asks a small model ONCE per (query, passage) pair whether the
+   passage answers the query. The same verdicts score every setting, so the
+   comparison is fair even where the judge is not. Output: hit@k (any relevant
+   passage in the top k), precision@k, relevant@1, MRR; hashes and ranks only.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f9ac780a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fe517486` are properly handled with clean fallback behavior.

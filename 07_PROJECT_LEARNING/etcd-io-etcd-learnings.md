@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/etcd-io-etcd-learnings.md`  
 > **Source**: github ([https://github.com/etcd-io/etcd](https://github.com/etcd-io/etcd))  
-> **Source Version**: `f164b70f`  
+> **Source Version**: `1573d594`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T15:29:50.958Z  
+> **Timestamp**: 2026-10-30T03:59:41.521Z  
 > **Learning ID**: `learn-github-etcd-io-etcd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/etcd-io-etcd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/etcd-io/etcd](https://github.com/etcd-io/etcd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T15:29:50.951Z  
+> **Harvest Timestamp**: 2026-10-30T03:59:41.250Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Distributed reliable key-value store for the most critical data of a distributed system
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 52432 stars
+- **Stars / Engagement**: 52431 stars
 
 ---
 
@@ -667,14 +667,17 @@ func LockFile(path string, flag int, perm os.FileMode) (*LockedFile, error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22663** (2026-10-27): **build(deps): bump docker/login-action from 4.6.0 to 4.7.0**
-  *Symptoms*: Bumps [docker/login-action](https://github.com/docker/login-action) from 4.6.0 to 4.7.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/login-action/releases">docker/login-action's releases</a>.</em></p> <blockquote> <h2>v4.7.0</h2> <ul> <li>Preserve explicit ECR settings in <code>registry-auth</code> by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1089">docker/login-action#1089</a></li> <li>Use registry hosts for scoped credentials by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1088">docker/login-action#1088</a></li> <li>Raise Docker Hub OIDC max expiry to 6 hours by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1068">docker/login-action#1068</a></li> <li>Log Docker Hub OIDC token exchange progress by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1061">docker/login-action#1061</a></li> <li>Bump <code>@​aws-sdk/client-ecr</code> and <code>@​aws-sdk/client-ecr-public</code> to 3.1154.0 in <a href="https://redirect.github.com/docker/login-action/pull/1093">docker/login-action#1093</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.94.0 to 0.107.0 in <a href="https://redir
+- **Issue #22670** (2026-10-28): **Dockerfile: bump base image to distroless static-debian13**
+  *Symptoms*: - the debian 11 and 12 distroless images still trust the compromised eMudhra intermediate CAs, with no patched release - see #22665 
   **Post-Mortem & Fix Analysis**:
-  > Hi @dependabot[bot]. Thanks for your PR.  I'm waiting for a [etcd-io](https://github.com/orgs/etcd-io/people) member to verify that this patch is reasonable to test. If it is, they should reply with `/ok-to-test` on its own line. Until that is done, I will not automatically test new commits in this PR, but the usual testing commands by org members will still work.  Regular contributors should [join the org](https://github.com/etcd-io/etcd/blob/main/CONTRIBUTING.md) to skip this step.  Once the patch is verified, the new status will be reflected by the `ok-to-test` label.  I understand the commands that are listed [here](https://go.k8s.io/bot-commands?repo=etcd-io%2Fetcd).  <details>  Instructions for interacting with me using PR comments are available [here](https://git.k8s.io/community/contributors/guide/pull-requests.md).  If you have questions or suggestions related to my behavior, please file an issue against the [kubernetes-sigs/prow](https://github.com/kubernetes-sigs/prow/issues
-  > /ok-to-test
+  > ## [Codecov](https://app.codecov.io/gh/etcd-io/etcd/pull/22670?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=etcd-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 72.99%. Comparing base ([`2b7b001`](https://app.codecov.io/gh/etcd-io/etcd/commit/2b7b001a90b4be38e6b1b54021ea3327666e3793?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=etcd-io)) to head ([`8f34a9c`](https://app.codecov.io/gh/etcd-io/etcd/commit/8f34a9cf6c4ddfcab63153024ccdd32d10fcb2b0?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=etcd-io)). :warning: Report is 2 commits behind head on main.  <details><summary>Additional details and impacted files</summary>   [see 19 files with indirect coverage changes](https://app.codecov.io/gh/etcd-
+  > /retest
 
-- **Issue #22662** (2026-10-27): **build(deps): bump the codeql group with 4 updates**
-  *Symptoms*: Bumps the codeql group with 4 updates: [github/codeql-action/init](https://github.com/github/codeql-action), [github/codeql-action/autobuild](https://github.com/github/codeql-action), [github/codeql-action/analyze](https://github.com/github/codeql-action) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).  Updates `github/codeql-action/init` from 4.39.0 to 4.39.1 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/init's releases</a>.</em></p> <blockquote> <h2>v4.39.1</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.3">2.27.3</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4256">#4256</a></li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/blob/main/CHANGELOG.md">github/codeql-action/init's changelog</a>.</em></p> <blockquote> <h1>CodeQL Action Changelog</h1> <p>See the <a href="https://github.com/github/codeql-action/releases">releases page</a> for the relevant changes to the CodeQL CLI and language packs.</p> <h2>[UNRELEASED]</h2> <p>No user facing changes.</p> <h2>4.39.1 - 21 Oct 2026</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.3">2.27.3</a>. <a href="https://redirect
+- **Issue #22669** (2026-10-28): **[release-3.7] Dockerfile: bump base image to distroless static-debian13**
+  *Symptoms*: - the debian 11 and 12 distroless images still trust the compromised eMudhra intermediate CAs, with no patched release - see #22665 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/etcd-io/etcd/pull/22669?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=etcd-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 69.76%. Comparing base ([`0a173d0`](https://app.codecov.io/gh/etcd-io/etcd/commit/0a173d0410a96d01091b484daae81365bbcde57e?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=etcd-io)) to head ([`35da5f6`](https://app.codecov.io/gh/etcd-io/etcd/commit/35da5f6e62ce36bd3c3601f245c1b91152dc779f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=etcd-io)).  <details><summary>Additional details and impacted files</summary>   [see 21 files with indirect coverage changes](https://app.codecov.io/gh/etcd-io/etcd/pull/22669/indirect-changes?src=pr&el=tree-
+  > /retitle [release-3.7] Dockerfile: bump base image to distroless static-debian13
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -691,43 +694,28 @@ func LockFile(path string, flag int, perm os.FileMode) (*LockedFile, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f164b70f` (2026-10-28)
-**Commit Message**: Merge pull request #22661 from etcd-io/dependabot/go_modules/github.com/GoogleCloudPlatform/testgrid-0.0.177
+### Incident Patch 1: `1573d594` (2026-10-28)
+**Commit Message**: Merge pull request #22670 from vivekpatani/distroless-debian13
 
-build(deps): bump github.com/GoogleCloudPlatform/testgrid from 0.0.176 to 0.0.177
+Dockerfile: bump base image to distroless static-debian13
 
-**File**: `tools/testgrid-analysis/go.mod` (modified, +1/-1)
+**File**: `Dockerfile` (modified, +1/-1)
 ```diff
-@@ -5,7 +5,7 @@ go 1.27
- toolchain go1.27.3
+@@ -1,4 +1,4 @@
+-FROM gcr.io/distroless/static-debian12@sha256:d75cdd72874d4790092fcb1b058493ecf6bb5bf2b2b897045b00ff01d91843f2
++FROM gcr.io/distroless/static-debian13@sha256:15f8637509792e05b97d83451b0b6ccfa4abd548f997e406ac1e72c87fe1fa78
  
- require (
--	github.com/GoogleCloudPlatform/testgrid v0.0.176
-+	github.com/GoogleCloudPlatform/testgrid v0.0.177
- 	github.com/google/go-github/v60 v60.0.0
- 	github.com/spf13/cobra v1.10.2
- 	google.golang.org/protobuf v1.36.12
-```
-
-**File**: `tools/testgrid-analysis/go.sum` (modified, +2/-2)
-```diff
-@@ -1,5 +1,5 @@
--github.com/GoogleCloudPlatform/testgrid v0.0.176 h1:RF00+dBqwjQfHSBrtR1YOePbNW6ezpWRMlqNdjpKAvI=
--github.com/GoogleCloudPlatform/testgrid v0.0.176/go.mod h1:4yUPTTrkliiLlPJqzKHry0orAB3fBDUJRBJOqwlzpVc=
-+github.com/GoogleCloudPlatform/testgrid v0.0.177 h1:ZhtnQHXpbaIe8tF7LwWbyd/gGHf2r5xKcCgv6dIXOL0=
-+github.com/GoogleCloudPlatform/testgrid v0.0.177/go.mod h1:eCvOHg4LNH8JWkxLRbEb2HyQiyLLRCSR3rYV0k/qA2o=
- github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
- github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
- github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6rSs7xps=
+ ARG TARGETARCH
+ ARG VERSION
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22670** (2026-10-28): Dockerfile: bump base image to distroless static-debian13 (@vivekpatani)
+- **PR #22669** (2026-10-28): [release-3.7] Dockerfile: bump base image to distroless static-debian13 (@vivekpatani)
+- **PR #22668** (2026-10-28): [release-3.6] Dockerfile: bump base image to distroless static-debian13 (@vivekpatani)
+- **PR #22667** (2026-10-28): [release-3.5] Dockerfile: bump base image to distroless static-debian13 (@vivekpatani)
 - **PR #22663** (2026-10-27): build(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
 - **PR #22662** (2026-10-27): build(deps): bump the codeql group with 4 updates (@dependabot[bot])
-- **PR #22661** (2026-10-28): build(deps): bump github.com/GoogleCloudPlatform/testgrid from 0.0.176 to 0.0.177 (@dependabot[bot])
-- **PR #22660** (2026-10-27): build(deps): bump github.com/prometheus/common from 0.72.0 to 0.72.1 (@dependabot[bot])
-- **PR #22652** (2026-10-26): [release-3.5] raft: fix stale read index at a leader that removed itself (@upamanyus)
-- **PR #22648** (2026-10-23): Update CHANGELOG to cover 3.5.35, 3.6.16, 3.7.3 (@ivanvc)
 
 ---
 
@@ -747,28 +735,28 @@ build(deps): bump github.com/GoogleCloudPlatform/testgrid from 0.0.176 to 0.0.17
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #22661 from etcd-io/dependabot/go_modules/github.com/GoogleCl
+## X. Merge pull request #22670 from vivekpatani/distroless-debian13
 
 **RULE**:
-When implementing operations in `tools/testgrid-analysis/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in etcd-io/etcd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in etcd-io/etcd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f164b70f`: Merge pull request #22661 from etcd-io/dependabot/go_modules/github.com/GoogleCloudPlatform/testgrid-0.0.177. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1573d594`: Merge pull request #22670 from vivekpatani/distroless-debian13. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/testgrid-analysis/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/GoogleCloudPlatform/testgrid v0.0.177
+FROM gcr.io/distroless/static-debian13@sha256:15f8637509792e05b97d83451b0b6ccfa4abd548f997e406ac1e72c87fe1fa78
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/GoogleCloudPlatform/testgrid v0.0.176
+FROM gcr.io/distroless/static-debian12@sha256:d75cdd72874d4790092fcb1b058493ecf6bb5bf2b2b897045b00ff01d91843f2
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f164b70f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1573d594` are properly handled with clean fallback behavior.

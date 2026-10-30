@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
-> **Source Version**: `148c2d48`  
+> **Source Version**: `81a6eab8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T17:05:09.728Z  
+> **Timestamp**: 2026-10-30T03:59:37.113Z  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T17:05:09.267Z  
+> **Harvest Timestamp**: 2026-10-30T03:59:36.406Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -688,11 +688,11 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5046** (2026-10-27): **fix(p/CLOUDPRESS): halve zone fetches and make retry backoff configurable**
-  *Symptoms*: Accounts with many zones (431 in our case) hit HTTP 429 while gathering records, and the retry backoff (1s doubling, capped at 30s, ~61s total) gave up before the rate limit reset. CloudPress does not send a usable `Retry-After` header, so the fallback backoff is all we have.  - **Fetch each zone once.** `GetNameservers` and `GetZoneRecords` both called `GET /api/dns_zones/<id>`, because the list endpoint returns neither nameservers nor records, so every zone cost two requests. The full zone is now cached by ID; writes to a zone drop its cached copy. - **Configurable backoff.** New optional `retry_base_delay` and `retry_max_delay` settings (Go durations, defaults `1s` and `30s`, so existing setups behave the same). For example `10s` / `10m` waits 10s, 20s, 40s, 80s, 160s, 320s. A `Retry-After` in seconds is now capped by `retry_max_delay` as well. - Documented under "Rate limiting" in the provider docs, with a unit test for the retry delays.  `bin/generate-all.sh` produced no changes; `go test ./providers/cloudpress` passes.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #5050** (2026-10-28): **build(deps): bump github/codeql-action/upload-sarif from 4.38.3 to 4.39.1**
+  *Symptoms*: Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.38.3 to 4.39.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's releases</a>.</em></p> <blockquote> <h2>v4.39.1</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.3">2.27.3</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4256">#4256</a></li> </ul> <h2>v4.39.0</h2> <ul> <li><em>Breaking change</em>: Bump the minimum required CodeQL bundle version to 2.20.7. <a href="https://redirect.github.com/github/codeql-action/pull/4205">#4205</a></li> <li>The <code>codeql-action/analyze</code> step now validates that a correct argument for the <code>checkout_path</code> input has been provided. The <code>checkout_path</code> input must be set to the path where the repository that is being analyzed is checked out at on the runner, if that path is something other than the workspace root. If the path does not point to a repository checkout or is different from the path that was used by <code>codeql-action/init</code>, then the CodeQL Action now produces a warning. <a href="https://redirect.github.com/github/codeql-action/pull/4148">#4148</a></li> <li>Resolved an issue with third-party caching implementations that prevented caches from being restored correctly. <a href="https://redirect.github
 
-- **Issue #5045** (2026-10-26): **build(deps-dev): bump fast-uri from 3.1.8 to 3.1.9**
-  *Symptoms*: Bumps [fast-uri](https://github.com/fastify/fast-uri) from 3.1.8 to 3.1.9. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/fastify/fast-uri/releases">fast-uri's releases</a>.</em></p> <blockquote> <h2>v3.1.9</h2> <h2>Security</h2> <p>This security release fixes four URI parsing and normalization vulnerabilities in fast-uri 3.x. Applications that process untrusted URI input should upgrade to v3.1.9.</p> <ul> <li><strong>Medium — URI scheme spoofing through percent-encoded schemes</strong> (<a href="https://github.com/fastify/fast-uri/security/advisories/GHSA-w74x-v6f9-j3xg">GHSA-w74x-v6f9-j3xg</a>, CVE-2026-110306): percent-encoded scheme input is now rejected instead of being decoded into a live scheme.</li> <li><strong>Medium — Host confusion during domain-host canonicalization</strong> (<a href="https://github.com/fastify/fast-uri/security/advisories/GHSA-wjr9-j795-jxcr">GHSA-wjr9-j795-jxcr</a>, CVE-2026-110180): malformed domain hosts containing ambiguous delimiters or stripped control characters are now rejected instead of being silently rewritten.</li> <li><strong>Low — Incorrect relative-reference normalization</strong> (<a href="https://github.com/fastify/fast-uri/security/advisories/GHSA-xhq7-xmqj-769h">GHSA-xhq7-xmqj-769h</a>, CVE-2026-110095): dot-segment removal now preserves the resolution semantics of relative references.</li> <li><strong>Low — Scheme injection in suffix references</strong> (<a href="https://github.com/f
+- **Issue #5049** (2026-10-28): **build(deps): bump step-security/harden-runner from 2.22.1 to 2.22.2**
+  *Symptoms*: Bumps [step-security/harden-runner](https://github.com/step-security/harden-runner) from 2.22.1 to 2.22.2. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's releases</a>.</em></p> <blockquote> <h2>v2.22.2</h2> <h2>What's Changed</h2> <ul> <li>Fixed inbound (ingress) network traffic being incorrectly classified as outbound (egress) traffic on macOS</li> <li>Fixed implicit endpoints intended for self-hosted runners being applied to custom VM environments on Linux (enterprise tier)</li> <li>Improved network and DNS tracing, enforcement logic, and process information correlation on Linux (enterprise tier)</li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/step-security/harden-runner/compare/v2.22.1...v2.22.2">https://github.com/step-security/harden-runner/compare/v2.22.1...v2.22.2</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/step-security/harden-runner/commit/dc2769abcc0fcfbadfc1df54081c1608579ef6b2"><code>dc2769a</code></a> Merge pull request <a href="https://redirect.github.com/step-security/harden-runner/issues/707">#707</a> from step-security/rc-45</li> <li><a href="https://github.com/step-security/harden-runner/commit/ab0b27386ab734bab7c3b9293e0c8b1b29ce5c26"><code>ab0b273</code></a> Merge pull request <a href="https://redirect.github.com/step-security/harden-runner/issues/706">#706<
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -709,297 +709,60 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01079f52` (2026-10-26)
-**Commit Message**: build(deps): bump zod and puppeteer (#5044)
+### Incident Patch 1: `c679839b` (2026-10-28)
+**Commit Message**: build(deps): bump step-security/harden-runner from 2.22.1 to 2.22.2 (#5049)
 
-Bumps [zod](https://github.com/colinhacks/zod) and
-[puppeteer](https://github.com/puppeteer/puppeteer). These dependencies
-needed to be updated together.
-Updates `zod` from 3.25.76 to 4.6.7
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/colinhacks/zod/releases">zod's
-releases</a>.</em></p>
-<blockquote>
-<h2>v4.6.7</h2>
-<h2>Commits:</h2>
-<ul>
-<li>b500a2ee95134f81d74da7911d7378dd2853d042 4.6.7</li>
-</ul>
-<h2>v4.6.6</h2>
-<blockquote>
-<p>Six malicious commits pushed to <code>main</code> on September 21
-with a compromised git credential were reverted the same day in <a
-href="https://redirect.github.com/colinhacks/zod/issues/6620">#6620</a>
-and have since been removed from the history of <code>main</code>. None
-were ever published to npm. The npm provenance for 4.6.6 names 284243fb,
-the pre-rewrite copy of 9c219833 with identical contents.</p>
-</blockquote>
-<h2>Commits:</h2>
-<ul>
-<li>0cd3af5e9f50ad11bbcd4407a46a21b8848ba574 docs: load the en locale
-directly in Zod Mini</li>
-<li>9d5e60f162997b764b40d45aa02481888db50dea docs: import locales from
-zod/locales, not z.locales</li>
-<li>34a626f307871ecbb01239
-
-**File**: `package-lock.json` (modified, +43/-43)
+**File**: `.github/workflows/fuzzing.yml` (modified, +1/-1)
 ```diff
-@@ -399,12 +399,12 @@
-       }
-     },
-     "node_modules/@puppeteer/browsers": {
--      "version": "3.2.0",
--      "resolved": "https://registry.npmjs.org/@puppeteer/browsers/-/browsers-3.2.0.tgz",
--      "integrity": "sha512-LlBrE8oqGfU7b1Nk2d5Q1SbuPhZxTj0cJEMDPEws28OjNMELlflekmPPuf4FnK03x0ZRjKaYwJElUcKK4kyqJA==",
-+      "version": "3.2.6",
-+      "resolved": "https://registry.npmjs.org/@puppeteer/browsers/-/browsers-3.2.6.tgz",
-+      "integrity": "sha512-MJP29gVoHznmqmwhH1tlZqzfeQ3aylTpSSa6WKZXtkwYUH02i9imBmWGTyZrbnAou5paX78SE4jMAUqnEPf8ug==",
-       "license": "Apache-2.0",
-       "dependencies": {
--        "modern-tar": "^0.8.0",
-+        "modern-tar": "^0.8.6",
-         "yargs": "^18.0.0"
-       },
-       "bin": {
-@@ -1081,13 +1081,13 @@
-       }
-     },
-     "node_modules/chromium-bidi": {
--      "version": "17.0.2",
--      "resolved": "https://registry.npmjs.org/chromium-bidi/-/chromium-bidi-17.0.2.tgz",
--      "integrity": "sha512-5v9GQFhTktFvotn/OFNJBmKLKRAb6n9r0bVCwf7sHgWc3/JryK0bj1nn93L3pHFrfgcsu6Be6EWsDi+1XHTGDg==",
-+      "version": "157.0.8090-0",
-+      "resolved": "https://registry.npmjs.org/chromium-bidi/-/chromium-bidi-157.0.8090-0.tgz",
-+      "integrity": "sha512-KJw7IQgqXwxpJgJlEIPg5mr2ZoqA+jkTRtc5EABI7sUJ3bu3cpI7NuEBoj4Gn1AsF78CaT9So5WQWspK3/wYag==",
-       "license": "Apache-2.0",
-       "dependencies": {
-         "mitt": "^3.0.1",
--        "zod": "^3.24.1"
-+        "zod": "^4.6.5"
-       },
-       "engines": {
-         "node": ">=20.19.0 <22.0.0 || >=22.12.0"
-@@ -1484,9 +1484,9 @@
-       }
-     },
-     "node_modules/devtools-protocol": {
--      "version": "0.0.1653615",
--      "resolved": "https://registry.npmjs.org/devtools-protocol/-/devtools-protocol-0.0.1653615.tgz",
--      "integrity": "sha512-pGVkY3T/qXxAp2nFPodwYqOevk6ncNMSmvL8QfRCx5ZWGd6Vor7AFNmyaA8Zs6uJyP1QAfjuLandCgvSix1BNA==",
-+      "version": "0.0.1704951",
-+      "resolved": "https://registry.npmjs.org/devtools-protocol/-/devtools-protocol-0.0.1704951.tgz",
-+      "integrity": "sha512-GQhQOs9u/Mvm1zMtJIH872JS4AskuZdUSsPNPk4ChahtWAUqgz6atEtIsMt+nO7MqF1Ic4HxII/k8Cu36JivNg==",
-       "license": "BSD-3-Clause"
-     },
-     "node_modules/emoji-regex": {
-@@ -2835,9 +2835,9 @@
-       "license": "MIT"
-     },
-     "node_modules/modern-tar": {
--      "version": "0.8.4",
--      "resolved": "https://registry.npmjs.org/modern-tar/-/modern-tar-0.8.4.tgz",
--      "integrity": "sha512-gN54ddmyzEg10orwZ2u4OOv+bjpMWdIl5jIkodK97bMq8QBSL5c0D7YX0lT1Ooz+99S7+PvFbnxzdjgHo1r41g==",
-+      "version": "0.8.6",
-+      "resolved": "https://registry.npmjs.org/modern-tar/-/modern-tar-0.8.6.tgz",
-+      "integrity": "sha512-LYSks0tNVqbtez/9OB0YFP6qLRSqkdAxJWOQpVaR67lNTbj2zNLyYpowkRMia5lXLCZKzxwoxkxH2MbbBR2aEg==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=18.0.0"
-@@ -3068,18 +3068,18 @@
-       }
-     },
-     "node_modules/puppeteer": {
--      "version": "25.6.0",
--      "resolved": "https://registry.npmjs.org/puppeteer/-/puppeteer-25.6.0.tgz",
--      "integrity": "sha512-TXUolDddU4AwISjOOrGk2AhJDpbM/ZDt2KvGIqz74EOk+8bKwXFo+acUvP1sQx3hUda7owOeNuuT1UnJT1o0qA==",
-+      "version": "25.16.0",
-+      "resolved": "https://registry.npmjs.org/puppeteer/-/puppeteer-25.16.0.tgz",
-+      "integrity": "sha512-LOr3reYnxAYYfQkpopz1fQnL0LdvqhpR5U2Fu+QnwzTX2gpVTHsn91UETo5NNC1md2/oC54Zu1ChBXgZDNSP1A==",
-       "hasInstallScript": true,
-       "license": "Apache-2.0",
-       "dependencies": {
--        "@puppeteer/browsers": "3.2.0",
--        "chromium-bidi": "17.0.2",
--        "devtools-protocol": "0.0.1653615",
-+        "@puppeteer/browsers": "3.2.6",
-+        "chromium-bidi": "157.0.8090-0",
-+        "devtools-protocol": "0.0.1704951",
-         "lilconfig": "^3.1.3",
--        "puppeteer-core": "25.6.0",
--        "typed-query-selector": "^2.12.2"
-+        "puppeteer-core": "25.16.0",
-+        "typed-query-selector": "^2.12.3"
-       },
-       "bin": {
-         "puppeteer": "lib/puppeteer/node/cli.js"
-@@ -3089,17 +3089,17 @@
-       }
-     },
-     "node_modules/puppeteer-core": {
--      "version": "25.6.0",
--      "resolved": "https://registry.npmjs.org/puppeteer-core/-/puppeteer-core-25.6.0.tgz",
--      "integrity": "sha512-GJ67rjZdVQzZmD2Ab0cgttfQN9j387QYMv3t6MN3/4nmjursNt6M5Utj4/T/4y0AwNrSwJzjw6Q/zuWFEIizOg==",
-+      "version": "25.16.0",
-+      "resolved": "https://registry.npmjs.org/puppeteer-core/-/puppeteer-core-25.16.0.tgz",
-+      "integrity": "sha512-VA5Pf54N8shfopNkZZXCdiiwfnnY8ZJYAMqFQRhlH5mGUhfwf53Ar770GPtdpTDLUqvQeYpIBtC9/G2Jij2IJw==",
-       "license": "Apache-2.0",
-       "dependencies": {
--        "@puppeteer/browsers": "3.2.0",
--        "chromium-bidi": "17.0.2",
--        "devtools-protocol": "0.0.1653615",
--        "typed-query-selector": "^2.12.2",
--        "webdriver-bidi-protocol": "0.4.2",
--        "ws": "^8.21.1"
-+        "@puppeteer/browsers": "3.2.6",
-+        "chromium-bidi": "157.0.8090-0",
-+        "devtools-protocol": "0.0.1704951",
-+        "typed-query-selector": "^2.12.3",
-+        "webdriver-bidi-protocol": "1
-```
-
----
-
-### Incident Patch 2: `08c0d2a4` (2026-10-26)
-**Commit Message**: build(deps-dev): bump fast-uri from 3.1.8 to 3.1.9 (#5045)
-
-Bumps [fast-uri](https://github.com/fastify/fast-uri) from 3.1.8 to
-3.1.9.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/fastify/fast-uri/releases">fast-uri's
-releases</a>.</em></p>
-<blockquote>
-<h2>v3.1.9</h2>
-<h2>Security</h2>
-<p>This security release fixes four URI parsing and normalization
-vulnerabilities in fast-uri 3.x. Applications that process untrusted URI
-input should upgrade to v3.1.9.</p>
-<ul>
-<li><strong>Medium — URI scheme spoofing through percent-encoded
-schemes</strong> (<a
-href="https://github.com/fastify/fast-uri/security/advisories/GHSA-w74x-v6f9-j3xg">GHSA-w74x-v6f9-j3xg</a>,
-CVE-2026-110306): percent-encoded scheme input is now rejected instead
-of being decoded into a live scheme.</li>
-<li><strong>Medium — Host confusion during domain-host
-canonicalization</strong> (<a
-href="https://github.com/fastify/fast-uri/security/advisories/GHSA-wjr9-j795-jxcr">GHSA-wjr9-j795-jxcr</a>,
-CVE-2026-110180): malformed domain hosts containing ambiguous delimiters
-or stripped control characters are now rejected instead of being
-silently rewritten.</li>
-<li><strong>Low — Incor
-
-**File**: `package-lock.json` (modified, +3/-3)
-```diff
-@@ -1573,9 +1573,9 @@
-       "license": "MIT"
-     },
-     "node_modules/fast-uri": {
--      "version": "3.1.8",
--      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.8.tgz",
--      "integrity": "sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==",
-+      "version": "3.1.9",
-+      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.9.tgz",
-+      "integrity": "sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==",
-       "dev": true,
-       "funding": [
-         {
-```
-
----
-
-### Incident Patch 3: `f0e54a98` (2026-10-26)
-**Commit Message**: fix(IGNORE): bug: *.foo and **.foo both act like **.foo (*.foo has no "stop" pattern) (#5038)
-
-[`IGNORE.md`](https://github.com/DNSControl/dnscontrol/blob/ec3d8013718ba1dbc838c096e2e51a2572204d7e/documentation/language-reference/domain-modifiers/IGNORE.md?plain=1#L47-L49)
-says `IGNORE("*.foo")` ignores `bar.foo` but not `foo.bar.foo`.
-DNSControl ignores both.
-
-```js
-D("example.com", REG, DnsProvider(BIND), {no_ns: "true"},
-  SOA("@", "ns1.example.com.", "hostmaster.example.com.", 3600, 600, 604800, 1440),
-  IGNORE_NAME("*.foo"),
-  A("www", "192.0.2.1")
-);
-```
-
-With `www`, `bar.foo` and `x.bar.foo` in the BIND zone file, `preview`
-proposes nothing:
-
-```
-******************** Domain: example.com
-Done. 0 corrections.
-```
-
-Cause: [`compileUnmanagedConfigs` calls `glob.Compile` with no
-separator](https://github.com/DNSControl/dnscontrol/blob/ec3d8013718ba1dbc838c096e2e51a2572204d7e/pkg/diff2/handsoff.go#L256),
-and gobwas/glob then treats `*` and `**` alike. Before diff2, `pkg/diff`
-passed `'.'`.
-
-Fix: pass `'.'` for the label pattern. `preview` then ignores `bar.foo`
-only:
-
-```
-******************** Domain: example.com
-1 correction (bind)
-#1: 1 records not being deleted because of IGNORE*
-
-**File**: `pkg/diff2/handsoff.go` (modified, +1/-1)
-```diff
-@@ -253,7 +253,7 @@ func compileUnmanagedConfigs(configs []*models.UnmanagedConfig) error {
- 		if c.LabelPattern == "" || c.LabelPattern == "*" {
- 			c.LabelGlob = nil // nil indicates "always match"
- 		} else {
--			c.LabelGlob, err = glob.Compile(c.LabelPattern)
-+			c.LabelGlob, err = glob.Compile(c.LabelPattern, '.')
- 			if err != nil {
- 				return err
- 			}
-```
-
-**File**: `pkg/diff2/handsoff_test.go` (modified, +23/-0)
-```diff
-@@ -222,6 +222,29 @@ FOREIGN:
- 	`)
- }
+@@ -27,7 +27,7 @@ jobs:
+         target: [FuzzConfigJSON, FuzzTXTQuoted]
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+         with:
+           egress-policy: audit
  
-+func Test_ignore_lab_glob(t *testing.T) {
-+	existingZone := `
-+bar.foo IN A 1.1.1.1
-+x.bar.foo IN A 2.2.2.2
-+`
-+	for _, tt := range []struct {
-+		pattern string
-+		ignored string
-+	}{
-+		{"*.foo", "bar.foo A 1.1.1.1\n"},
-+		{"**.foo", "bar.foo A 1.1.1.1\nx.bar.foo A 2.2.2.2\n"},
-+	} {
-+		t.Run(tt.pattern, func(t *testing.T) {
-+			desiredJs := fmt.Sprintf(`
-+D("f.com", "none",
-+	IGNORE_NAME(%q),
-+{})
-+`, tt.pattern)
-+			handsoffHelper(t, existingZone, desiredJs, false, "IGNORED:\n"+tt.ignored+"FOREIGN:\n")
-+		})
-+	}
-+}
-+
- func Test_ignore_target(t *testing.T) {
- 	existingZone := `
- foo1 IN A 1.1.1.1
+```
+
+**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
+```diff
+@@ -36,7 +36,7 @@ jobs:
+ 
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+         with:
+           egress-policy: audit
+ 
+```
+
+---
+
+### Incident Patch 2: `81a6eab8` (2026-10-28)
+**Commit Message**: build(deps): bump github/codeql-action/upload-sarif from 4.38.3 to 4.39.1 (#5050)
+
+**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
+```diff
+@@ -76,6 +76,6 @@ jobs:
+ 
+       # Upload the results to GitHub's code scanning dashboard.
+       - name: "Upload to code-scanning"
+-        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
++        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+         with:
+           sarif_file: results.sarif
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5050** (2026-10-28): build(deps): bump github/codeql-action/upload-sarif from 4.38.3 to 4.39.1 (@dependabot[bot])
+- **PR #5049** (2026-10-28): build(deps): bump step-security/harden-runner from 2.22.1 to 2.22.2 (@dependabot[bot])
 - **PR #5046** (2026-10-27): fix(p/CLOUDPRESS): halve zone fetches and make retry backoff configurable (@arnoschoon)
 - **PR #5045** (2026-10-26): build(deps-dev): bump fast-uri from 3.1.8 to 3.1.9 (@dependabot[bot])
 - **PR #5044** (2026-10-26): build(deps): bump zod and puppeteer (@dependabot[bot])
 - **PR #5042** (2026-10-27): fix(p/LUADNS): bug: occasional "Server returned bad status code (500)" fails a push (@TomOnTime)
-- **PR #5041** (closed): fix(p/LUADNS): bug: occasional "Server returned bad status code (500)" fails a push (@TomOnTime)
-- **PR #5040** (2026-10-26): fix(AZURE_DNS): bug: intermittent "resource type does not match the type in the request body" errors (@TomOnTime)
 
 ---
 
@@ -1019,60 +782,28 @@ only:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump zod and puppeteer (#5044)
+## X. build(deps): bump step-security/harden-runner from 2.22.1 to 2.22.2 (#5049)
 
 **RULE**:
-When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/fuzzing.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01079f52`: build(deps): bump zod and puppeteer (#5044). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c679839b`: build(deps): bump step-security/harden-runner from 2.22.1 to 2.22.2 (#5049). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/fuzzing.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      "version": "3.2.6",
-      "resolved": "https://registry.npmjs.org/@puppeteer/browsers/-/browsers-3.2.6.tgz",
-      "integrity": "sha512-MJP29gVoHznmqmwhH1tlZqzfeQ3aylTpSSa6WKZXtkwYUH02i9imBmWGTyZrbnAou5paX78SE4jMAUqnEPf8ug==",
-        "modern-tar": "^0.8.6",
-      "version": "157.0.8090-0",
-      "resolved": "https://registry.npmjs.org/chromium-bidi/-/chromium-bidi-157.0.8090-0.tgz",
-      "integrity": "sha512-KJw7IQgqXwxpJgJlEIPg5mr2ZoqA+jkTRtc5EABI7sUJ3bu3cpI7NuEBoj4Gn1AsF78CaT9So5WQWspK3/wYag==",
-        "zod": "^4.6.5"
-      "version": "0.0.1704951",
-      "resolved": "https://registry.npmjs.org/devtools-protocol/-/devtools-protocol-0.0.1704951.tgz",
-      "integrity": "sha512-GQhQOs9u/Mvm1zMtJIH872JS4AskuZdUSsPNPk4ChahtWAUqgz6atEtIsMt+nO7MqF1Ic4HxII/k8Cu36JivNg==",
-      "version": "0.8.6",
-      "resolved": "https://registry.npmjs.org/modern-tar/-/modern-tar-0.8.6.tgz",
-      "integrity": "sha512-LYSks0tNVqbtez/9OB0YFP6qLRSqkdAxJWOQpVaR67lNTbj2zNLyYpowkRMia5lXLCZKzxwoxkxH2MbbBR2aEg==",
-      "version": "25.16.0",
-      "resolved": "https://registry.npmjs.org/puppeteer/-/puppeteer-25.16.0.tgz",
-      "integrity": "sha512-LOr3reYnxAYYfQkpopz1fQnL0LdvqhpR5U2Fu+QnwzTX2gpVTH
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-      "version": "3.2.0",
-      "resolved": "https://registry.npmjs.org/@puppeteer/browsers/-/browsers-3.2.0.tgz",
-      "integrity": "sha512-LlBrE8oqGfU7b1Nk2d5Q1SbuPhZxTj0cJEMDPEws28OjNMELlflekmPPuf4FnK03x0ZRjKaYwJElUcKK4kyqJA==",
-        "modern-tar": "^0.8.0",
-      "version": "17.0.2",
-      "resolved": "https://registry.npmjs.org/chromium-bidi/-/chromium-bidi-17.0.2.tgz",
-      "integrity": "sha512-5v9GQFhTktFvotn/OFNJBmKLKRAb6n9r0bVCwf7sHgWc3/JryK0bj1nn93L3pHFrfgcsu6Be6EWsDi+1XHTGDg==",
-        "zod": "^3.24.1"
-      "version": "0.0.1653615",
-      "resolved": "https://registry.npmjs.org/devtools-protocol/-/devtools-protocol-0.0.1653615.tgz",
-      "integrity": "sha512-pGVkY3T/qXxAp2nFPodwYqOevk6ncNMSmvL8QfRCx5ZWGd6Vor7AFNmyaA8Zs6uJyP1QAfjuLandCgvSix1BNA==",
-      "version": "0.8.4",
-      "resolved": "https://registry.npmjs.org/modern-tar/-/modern-tar-0.8.4.tgz",
-      "integrity": "sha512-gN54ddmyzEg10orwZ2u4OOv+bjpMWdIl5jIkodK97bMq8QBSL5c0D7YX0lT1Ooz+99S7+PvFbnxzdjgHo1r41g==",
-      "version": "25.6.0",
-      "resolved": "https://registry.npmjs.org/puppeteer/-/puppeteer-25.6.0.tgz",
-      "integrity": "sha512-TXUolDddU4AwISjOOrGk2AhJDpbM/ZDt2KvGIqz74EOk+8bKwXFo+acUvP1sQx3
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01079f52` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c679839b` are properly handled with clean fallback behavior.

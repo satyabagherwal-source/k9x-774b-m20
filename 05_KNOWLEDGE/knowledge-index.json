@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T03:49:00.620Z",
+  "last_updated": "2026-10-30T04:00:39.212Z",
   "total_verified_learnings": 1171,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4705,8 +4705,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "f9ac780a",
-      "content_hash": "ef0ec7224579129c5b110deaa9fa3ec80dfb5710286c641d3075ad23ac3cde2f",
+      "source_version": "fe517486",
+      "content_hash": "0743f4e6d3665750acd7398eee962491d3899857b6213a86ef0d2fa1ed661593",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4809,6 +4809,11 @@
           "number": 5557,
           "title": "memory): PLAN-59 Phase 1 pilot harness (forked consolidation arms) (#329)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5592,
+          "title": "memory): weighted RRF channel fusion with sweep and real-query validation (#332)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4816,7 +4821,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T23:35:04.618Z",
+      "verified_at": "2026-10-30T03:59:44.841Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9633,8 +9638,8 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "148c2d48",
-      "content_hash": "f4c07c7835a349f42442338ddfbac6a3625e4f0ee1f58e62532be6f44e8497a9",
+      "source_version": "81a6eab8",
+      "content_hash": "48c1e4a4633c303daafdf0b4926d37239ad92314ac26f88acdc142fa8219cded",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
@@ -9662,6 +9667,11 @@
           "number": 4913,
           "title": "build(deps): bump zod and puppeteer (#5044)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5589,
+          "title": "build(deps): bump step-security/harden-runner from 2.22.1 to 2.22.2 (#5049)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9669,7 +9679,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:05:09.939Z",
+      "verified_at": "2026-10-30T03:59:37.711Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -11703,8 +11713,8 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "f164b70f",
-      "content_hash": "94c541cf0f326ca0c7eddd731c3705bc7e42aa2858144af562ad060ade713532",
+      "source_version": "1573d594",
+      "content_hash": "d6bb3446d45e6da8233bf5266d5f3df50a1b3544ee579ca6d5c3640c70ecfb95",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
@@ -11752,6 +11762,11 @@
           "number": 5327,
           "title": "Merge pull request #22661 from etcd-io/dependabot/go_modules/github.com/GoogleCl",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5591,
+          "title": "Merge pull request #22670 from vivekpatani/distroless-debian13",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11759,7 +11774,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T15:29:51.359Z",
+      "verified_at": "2026-10-30T03:59:42.089Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45430,14 +45445,29 @@
       "slug": "rainbow-me-rainbow",
       "platform": "github",
       "source_url": "https://github.com/rainbow-me/rainbow",
-      "source_version": "9997c6ed",
-      "content_hash": "3d48bea64ca8e5a5a13545c0d3ab1a5be9ec5a0e5e27a7491235c2c39baf9d4e",
+      "source_version": "11a07420",
+      "content_hash": "13b88e1a75b7042d385f6300e10828d9d5fbb2a4dc701df37672339c3f0e8733",
       "dossier_path": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "promoted_rules": [
         {
           "number": 2716,
           "title": "android): support nested button presses (#7848)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5593,
+          "title": "Unified Currency Tiering and Anti-Double-Rounding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5594,
+          "title": "Multi-Store Reactive Derivation Synchronization & Cache Piggybacking",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5595,
+          "title": "Font Metrics-Compensated Spacing Invariant for Native Typography",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -45446,7 +45476,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T22:31:50.603Z",
+      "verified_at": "2026-10-30T04:00:39.193Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53736,8 +53766,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "87adc84b",
-      "content_hash": "4fbdccf50b57f74b03b2f267bb4491d815349462d5aef27481a24bf70afab409",
+      "source_version": "69734591",
+      "content_hash": "661d987d5eaa656d566787286ef160bf4fbc854cbfb86818925dc41fe552c9cd",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -53805,6 +53835,11 @@
           "number": 5190,
           "title": "Clean up GitHub source logging for per-source debug (#5457)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5590,
+          "title": "Close Couchbase clusters after verification and honor the context (#5489)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53812,7 +53847,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T12:19:47.365Z",
+      "verified_at": "2026-10-30T03:59:40.023Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150150,6 +150185,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T03:49:00.601Z"
+    },
+    "rule-5589": {
+      "learning_id": "rule-5589",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5589,
+      "title": "build(deps): bump step-security/harden-runner from 2.22.1 to 2.22.2 (#5049)",
+      "source_url": "https://github.com/DNSControl/dnscontrol",
+      "source_version": "81a6eab8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:59:37.711Z"
+    },
+    "rule-5590": {
+      "learning_id": "rule-5590",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5590,
+      "title": "Close Couchbase clusters after verification and honor the context (#5489)",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "69734591",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:59:40.023Z"
+    },
+    "rule-5591": {
+      "learning_id": "rule-5591",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5591,
+      "title": "Merge pull request #22670 from vivekpatani/distroless-debian13",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "1573d594",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:59:42.089Z"
+    },
+    "rule-5592": {
+      "learning_id": "rule-5592",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5592,
+      "title": "memory): weighted RRF channel fusion with sweep and real-query validation (#332)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "fe517486",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:59:44.841Z"
+    },
+    "rule-5593": {
+      "learning_id": "rule-5593",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5593,
+      "title": "Unified Currency Tiering and Anti-Double-Rounding Invariant",
+      "source_url": "https://github.com/rainbow-me/rainbow",
+      "source_version": "11a07420",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T04:00:39.193Z"
+    },
+    "rule-5594": {
+      "learning_id": "rule-5594",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5594,
+      "title": "Multi-Store Reactive Derivation Synchronization & Cache Piggybacking",
+      "source_url": "https://github.com/rainbow-me/rainbow",
+      "source_version": "11a07420",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T04:00:39.193Z"
+    },
+    "rule-5595": {
+      "learning_id": "rule-5595",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5595,
+      "title": "Font Metrics-Compensated Spacing Invariant for Native Typography",
+      "source_url": "https://github.com/rainbow-me/rainbow",
+      "source_version": "11a07420",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T04:00:39.193Z"
     }
   },
   "aliases": {

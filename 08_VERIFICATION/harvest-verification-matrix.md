@@ -6096,3 +6096,8 @@
 | `CYCLE-20261030-8AZM` | `2026-10-30T03:37:09.538Z` | `thebaselab/codeapp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5580, Rule 5581, Rule 5582` | Yes (`95726c63...`) |
 | `CYCLE-20261030-N17N` | `2026-10-30T03:48:36.707Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5583, Rule 5584, Rule 5585` | Yes (`f38ecb13...`) |
 | `CYCLE-20261030-NJPZ` | `2026-10-30T03:49:00.695Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5586, Rule 5587, Rule 5588` | Yes (`b5fe8e24...`) |
+| `CYCLE-20261030-17CB` | `2026-10-30T03:59:37.835Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5589` | Yes (`48c1e4a4...`) |
+| `CYCLE-20261030-193T` | `2026-10-30T03:59:40.121Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5590` | Yes (`661d987d...`) |
+| `CYCLE-20261030-1AP9` | `2026-10-30T03:59:42.189Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5591` | Yes (`d6bb3446...`) |
+| `CYCLE-20261030-1CTL` | `2026-10-30T03:59:44.937Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5592` | Yes (`0743f4e6...`) |
+| `CYCLE-20261030-2IRD` | `2026-10-30T04:00:39.289Z` | `rainbow-me/rainbow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5593, Rule 5594, Rule 5595` | Yes (`13b88e1a...`) |

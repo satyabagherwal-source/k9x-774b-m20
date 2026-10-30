@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "f9ac780a",
+    "sourceVersion": "fe517486",
     "license": "MIT",
-    "contentHash": "ef0ec7224579129c5b110deaa9fa3ec80dfb5710286c641d3075ad23ac3cde2f",
-    "lastHarvestedAt": "2026-10-29T23:35:04.688Z",
+    "contentHash": "0743f4e6d3665750acd7398eee962491d3899857b6213a86ef0d2fa1ed661593",
+    "lastHarvestedAt": "2026-10-30T03:59:44.940Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "87adc84b",
+    "sourceVersion": "69734591",
     "license": "AGPL-3.0",
-    "contentHash": "4fbdccf50b57f74b03b2f267bb4491d815349462d5aef27481a24bf70afab409",
-    "lastHarvestedAt": "2026-10-29T12:19:47.454Z",
+    "contentHash": "661d987d5eaa656d566787286ef160bf4fbc854cbfb86818925dc41fe552c9cd",
+    "lastHarvestedAt": "2026-10-30T03:59:40.125Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "f164b70f",
+    "sourceVersion": "1573d594",
     "license": "Apache-2.0",
-    "contentHash": "94c541cf0f326ca0c7eddd731c3705bc7e42aa2858144af562ad060ade713532",
-    "lastHarvestedAt": "2026-10-28T15:29:51.444Z",
+    "contentHash": "d6bb3446d45e6da8233bf5266d5f3df50a1b3544ee579ca6d5c3640c70ecfb95",
+    "lastHarvestedAt": "2026-10-30T03:59:42.192Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -5413,10 +5413,10 @@
     "repository": "DNSControl/dnscontrol",
     "platform": "github",
     "sourceUrl": "https://github.com/DNSControl/dnscontrol",
-    "sourceVersion": "148c2d48",
+    "sourceVersion": "81a6eab8",
     "license": "MIT",
-    "contentHash": "f4c07c7835a349f42442338ddfbac6a3625e4f0ee1f58e62532be6f44e8497a9",
-    "lastHarvestedAt": "2026-10-27T17:05:09.983Z",
+    "contentHash": "48c1e4a4633c303daafdf0b4926d37239ad92314ac26f88acdc142fa8219cded",
+    "lastHarvestedAt": "2026-10-30T03:59:37.839Z",
     "learningId": "learn-github-dnscontrol-dnscontrol"
   },
   "ydb-platform-ydb": {
@@ -8503,10 +8503,10 @@
     "repository": "rainbow-me/rainbow",
     "platform": "github",
     "sourceUrl": "https://github.com/rainbow-me/rainbow",
-    "sourceVersion": "9997c6ed",
+    "sourceVersion": "11a07420",
     "license": "GPL-3.0",
-    "contentHash": "3d48bea64ca8e5a5a13545c0d3ab1a5be9ec5a0e5e27a7491235c2c39baf9d4e",
-    "lastHarvestedAt": "2026-10-25T22:31:50.693Z",
+    "contentHash": "13b88e1a75b7042d385f6300e10828d9d5fbb2a4dc701df37672339c3f0e8733",
+    "lastHarvestedAt": "2026-10-30T04:00:39.293Z",
     "learningId": "learn-github-rainbow-me-rainbow"
   },
   "zoontek-react-native-permissions": {

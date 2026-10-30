@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T03:49:03.257Z",
-    "lastVerified": "2026-10-30T03:49:03.257Z",
+    "lastChecked": "2026-10-30T04:00:41.850Z",
+    "lastVerified": "2026-10-30T04:00:41.850Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -139,22 +139,21 @@
     "revisionIdentifier": "0941fb03"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T00:46:50.776Z",
-    "lastVerified": "2026-10-30T00:46:50.776Z",
+    "lastChecked": "2026-10-30T03:59:43.678Z",
+    "lastVerified": "2026-10-30T03:59:43.678Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "ef0ec7224579129c5b110deaa9fa3ec80dfb5710286c641d3075ad23ac3cde2f",
+    "contentHash": "0743f4e6d3665750acd7398eee962491d3899857b6213a86ef0d2fa1ed661593",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f9ac780a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -1837,14 +1836,14 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-29T12:19:46.955Z",
-    "lastVerified": "2026-10-29T12:19:46.955Z",
+    "lastChecked": "2026-10-30T03:59:38.404Z",
+    "lastVerified": "2026-10-30T03:59:38.404Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "4fbdccf50b57f74b03b2f267bb4491d815349462d5aef27481a24bf70afab409",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "contentHash": "661d987d5eaa656d566787286ef160bf4fbc854cbfb86818925dc41fe552c9cd",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3149,9 +3148,9 @@
   "kuberwastaken-claurst": {
     "name": "claurst",
     "officialUrl": "https://github.com/Kuberwastaken/claurst",
-    "lastChecked": "2026-10-28T11:46:13.548Z",
+    "lastChecked": "2026-10-30T03:59:25.135Z",
     "revisionIdentifier": "e4228cc6",
-    "lastVerified": "2026-10-28T11:46:13.548Z"
+    "lastVerified": "2026-10-30T03:59:25.135Z"
   },
   "hf-cloudflare-clef-flash": {
     "name": "Cloudflare/clef-flash",
@@ -4910,12 +4909,12 @@
     "officialUrl": "https://github.com/etcd-io/etcd",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T15:29:50.951Z",
-    "lastVerified": "2026-10-28T15:29:50.951Z",
+    "lastChecked": "2026-10-30T03:59:41.250Z",
+    "lastVerified": "2026-10-30T03:59:41.250Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "94c541cf0f326ca0c7eddd731c3705bc7e42aa2858144af562ad060ade713532",
+    "contentHash": "d6bb3446d45e6da8233bf5266d5f3df50a1b3544ee579ca6d5c3640c70ecfb95",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -5324,11 +5323,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dnscontrol-dnscontrol": {
-    "name": "dnscontrol",
+    "name": "DNSControl/dnscontrol",
     "officialUrl": "https://github.com/DNSControl/dnscontrol",
-    "lastChecked": "2026-10-28T16:19:22.687Z",
-    "revisionIdentifier": "148c2d48",
-    "lastVerified": "2026-10-28T16:19:22.687Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-30T03:59:36.406Z",
+    "lastVerified": "2026-10-30T03:59:36.406Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-dnscontrol-dnscontrol",
+    "contentHash": "48c1e4a4633c303daafdf0b4926d37239ad92314ac26f88acdc142fa8219cded",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "apache-zookeeper": {
     "name": "zookeeper",
@@ -8937,5 +8946,29 @@
     "lastChecked": "2026-10-30T03:46:46.739Z",
     "revisionIdentifier": "c637ad7d",
     "lastVerified": "2026-10-30T03:46:46.739Z"
+  },
+  "adobe-structured-data-validator": {
+    "name": "structured-data-validator",
+    "officialUrl": "https://github.com/adobe/structured-data-validator",
+    "lastChecked": "2026-10-30T03:59:27.695Z",
+    "revisionIdentifier": "66e7610a",
+    "lastVerified": "2026-10-30T03:59:27.695Z"
+  },
+  "rainbow-me-rainbow": {
+    "name": "rainbow-me/rainbow",
+    "officialUrl": "https://github.com/rainbow-me/rainbow",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T03:59:34.448Z",
+    "lastVerified": "2026-10-30T03:59:34.448Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-rainbow-me-rainbow",
+    "contentHash": "13b88e1a75b7042d385f6300e10828d9d5fbb2a4dc701df37672339c3f0e8733",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
