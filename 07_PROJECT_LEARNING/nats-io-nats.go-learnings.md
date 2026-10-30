@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
-> **Source Version**: `9868714c`  
+> **Source Version**: `36314d40`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T00:12:44.711Z  
+> **Timestamp**: 2026-10-30T14:40:27.107Z  
 > **Learning ID**: `learn-github-nats-io-nats-go`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T00:12:43.541Z  
+> **Harvest Timestamp**: 2026-10-30T14:40:26.811Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Golang client for NATS, the cloud native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 6793 stars
+- **Stars / Engagement**: 6796 stars
 
 ---
 
@@ -1561,94 +1561,569 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9868714c` (2026-10-27)
-**Commit Message**: [FIXED] Legacy JetStream reconnect watcher cleanup (#2218)
+### Incident Patch 1: `36314d40` (2026-10-30)
+**Commit Message**: [IMPROVED] Reuse header encoding buffers in PublishMsg (#2219)
 
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
+Signed-off-by: Guangren Wang <[REDACTED_EMAIL]>
 
-**File**: `js.go` (modified, +2/-5)
+**File**: `headers_test.go` (added, +311/-0)
 ```diff
-@@ -727,7 +727,7 @@ func (js *js) newAsyncReply() string {
- 	}
- 	if js.connStatusCh == nil {
- 		js.connStatusCh = js.nc.StatusChanged(RECONNECTING, CLOSED)
--		go js.resetPendingAcksOnReconnect()
-+		go js.resetPendingAcksOnReconnect(js.connStatusCh)
- 	}
- 	var sb strings.Builder
- 	sb.Grow(len(js.rpre) + aReplyTokensize)
-@@ -749,10 +749,7 @@ func (js *js) newAsyncReply() string {
- 	return sb.String()
- }
- 
--func (js *js) resetPendingAcksOnReconnect() {
--	js.mu.Lock()
--	connStatusCh := js.connStatusCh
--	js.mu.Unlock()
-+func (js *js) resetPendingAcksOnReconnect(connStatusCh <-chan Status) {
- 	for {
- 		newStatus, ok := <-connStatusCh
- 		if !ok || newStatus == CLOSED {
-```
-
-**File**: `js_test.go` (modified, +32/-1)
-```diff
-@@ -49,7 +49,7 @@ func TestJetStreamReconnectErrorCallback(t *testing.T) {
- 			}
- 			called <- struct{}{}
- 		}
--		go js.resetPendingAcksOnReconnect()
-+		go js.resetPendingAcksOnReconnect(js.connStatusCh)
- 		defer func() {
- 			close(js.connStatusCh)
- 			synctest.Wait()
-@@ -69,6 +69,37 @@ func TestJetStreamReconnectErrorCallback(t *testing.T) {
- 	})
- }
- 
-+func TestJetStreamReconnectWatcherCleanup(t *testing.T) {
-+	for _, reuse := range []bool{false, true} {
-+		t.Run(fmt.Sprintf("reuse=%v", reuse), func(t *testing.T) {
-+			synctest.Test(t, func(t *testing.T) {
-+				nc := &Conn{}
-+				js := &js{nc: nc, opts: &jsOpts{}}
-+				js.connStatusCh = nc.StatusChanged(RECONNECTING, CLOSED)
-+				connStatusCh := js.connStatusCh
+@@ -0,0 +1,311 @@
++// Copyright 2012-2026 The NATS Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
 +
-+				// Cleanup can finish before the reconnect watcher starts running.
-+				js.CleanupPublisher()
-+				if reuse {
-+					js.connStatusCh = nc.StatusChanged(RECONNECTING, CLOSED)
-+					defer js.CleanupPublisher()
-+				}
-+				stopped := make(chan struct{})
-+				go func() {
-+					js.resetPendingAcksOnReconnect(connStatusCh)
-+					close(stopped)
-+				}()
-+				synctest.Wait()
-+				select {
-+				case <-stopped:
-+				default:
-+					t.Error("Reconnect watcher did not exit after publisher cleanup")
-+				}
-+			})
-+		})
++package nats
++
++import (
++	"bytes"
++	"fmt"
++	"io"
++	"net/http"
++	"strconv"
++	"strings"
++	"testing"
++)
++
++func TestHeaderParser(t *testing.T) {
++	shouldErr := func(hdr string) {
++		t.Helper()
++		if _, err := DecodeHeadersMsg([]byte(hdr)); err == nil {
++			t.Fatalf("Expected an error")
++		}
++	}
++	shouldErr("NATS/1.0")
++	shouldErr("NATS/1.0\r\n")
++	shouldErr("NATS/1.0\r\nk1:v1")
++	shouldErr("NATS/1.0\r\nk1:v1\r\n")
++	shouldErr("NATS/1.0 5\r\n\r\n")
++	shouldErr("NATS/1.0 41\r\n\r\n")
++	shouldErr("NATS/1.0 \r\n\r\n")
++
++	// Check that we can do inline status and descriptions
++	checkStatus := func(hdr string, status int, description string) {
++		t.Helper()
++		hdrs, err := DecodeHeadersMsg([]byte(hdr + "\r\n\r\n"))
++		if err != nil {
++			t.Fatalf("Unexpected error: %v", err)
++		}
++		if code, err := strconv.Atoi(hdrs.Get(statusHdr)); err != nil || code != status {
++			t.Fatalf("Expected status of %d, got %s", status, hdrs.Get(statusHdr))
++		}
++		if len(description) > 0 {
++			if descr := hdrs.Get(descrHdr); err != nil || descr != description {
++				t.Fatalf("Expected description of %q, got %q", description, descr)
++			}
++		}
++	}
++
++	checkStatus("NATS/1.0 503", 503, "")
++	checkStatus("NATS/1.0 503 No Responders", 503, "No Responders")
++	checkStatus("NATS/1.0  404   No Messages", 404, "No Messages")
++}
++
++func TestHeaderMultiLine(t *testing.T) {
++	m := NewMsg("foo")
++	m.Header = Header{
++		"CorrelationID": []string{"123"},
++		"Msg-ID":        []string{"456"},
++		"X-NATS-Keys":   []string{"A", "B", "C"},
++		"X-Test-Keys":   []string{"D", "E", "F"},
++	}
++	// Users can opt-in to canonicalize like http.Header does
++	// by using http.Header#Set or http.Header#Add.
++	http.Header(m.Header).Set("accept-encoding", "json")
++	http.Header(m.Header).Add("AUTHORIZATION", "s3cr3t")
++
++	// Multi Value Header becomes represented as multi-lines in the wire
++	m.Header.Set("X-Test", "First")
++	m.Header.Add("X-Test", "Second")
++	m.Header.Add("X-Test", "Third")
++
++	b, err := m.headerBytes()
++	if err != nil {
++		t.Fatal(err)
++	}
++	result := string(b)
++
++	// Require the header string to have a known prefix and suffix
++	if !strings.HasPrefix(result, "NATS/1.0\r\n") {
++		t.Fatalf("header prefix not present")
++	}
++	if !strings.HasSuffix(result, "\r\n\r\n") {
++		t.Fatalf("header suffix not present")
++	}
++
++	// Require the header string to contain each of the following rows. Note
++	// that headers can be written in any order.
++	expectedHeaderLines := []string{
++		"Accept-Encoding: json\r\n",
++		"Authorization: s3cr3t\r\n",
++		"CorrelationID: 123\r\n",
++		"Msg-ID: 456\r\n",
++		"X-NATS-Keys: A\r\n",
++		"X-NATS-Keys: B\r\n",
++		"X-NATS-Keys: C\r\n",
++		"X-Test: First\r\n",
++		"X-Test: Second\r\n",
++		"X-Test: Third\r\n",
++		"X-Test-Keys: D\r\n",
++		"X-Test-Keys: E\r\n",
++		"X-Test-Keys: F\r\n",
++	}
++	for _, h := range expectedHeaderLines {
++		if !strings.Contains(result, h) {
++			t.Fatalf("expected header line '%s' to be present", h)
++		}
 +	}
 +}
 +
- func TestIsWrongLastSeqErr(t *testing.T) {
- 	// 10164 is the replicated-stream variant of the 10071 "wrong last
- 	// sequence" CAS conflict; both must be recognized (issue #2097).
++func TestHeaderValidKeys(t *testing.T) {
++	const validChars = "!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz|~"
++
++	m := NewMsg("foo")
++	m.Header = Header{
++		validChars: []string{"value"},
++	}
++	if _, err := m.headerBytes(); err != nil {
++		t.Fatal(err.Error())
++	}
++}
++
++func TestHeaderInvalidKeys(t *testing.T) {
++	testKeys := []string{
++		"",       // Empty string
++		":",      // Illegal printable ASCII character
++		"\r",     // Non-printable ASCII character
++		"\n",     // Non-printable ASCII character
++		"\t",     // Non-printable ASCII character
++		"\x00",   // Non-printable ASCII character
++		"→",      // Standard Unicode character
++		"\u200b", // Non-printable Unicode character
++	}
++	for _, key := range testKeys {
++		m := NewMsg("foo")
++		m.Header = Header{
++			key: []string{"value"},
++		}
++		if _, err := m.headerBytes(); err == nil {
++			t.Fatalf("expected error for key '%s'", key)
++		}
++	}
++}
++
++func TestHeaderValidValues(t *testing.T) {
++	testValues := []string{
++		"!\"#$%&'()*+,-./0123456789;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",                              // Printable ASCII characters
++		"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0b\x0c\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1c\x1d\x1e\x1f", // Invisible ASCII characters (except CR/LF)
++		"→",      // Standard Unicode characters
++		"\u200b", // No
+```
+
+**File**: `nats.go` (modified, +29/-5)
+```diff
+@@ -911,6 +911,12 @@ func (m *Msg) headerSize() (int, error) {
+ }
+ 
+ func (m *Msg) headerBytes() ([]byte, error) {
++	var b bytes.Buffer
++	return m.encodeHeaders(&b)
++}
++
++// encodeHeaders writes the headers into an empty buffer.
++func (m *Msg) encodeHeaders(b *bytes.Buffer) ([]byte, error) {
+ 	var hdr []byte
+ 	hdrSize, err := m.headerSize()
+ 	if hdrSize == 0 || err != nil {
+@@ -921,14 +927,13 @@ func (m *Msg) headerBytes() ([]byte, error) {
+ 	// is intended to be a valid implementation of the io.StringWriter interface.
+ 	// This implementation cannot actually fail in practice, so it is safe to
+ 	// ignore write errors here.
+-	var b bytes.Buffer
+ 	b.Grow(hdrSize)
+ 	_, _ = b.WriteString(hdrLine)
+ 	for k, vs := range m.Header {
+ 		for _, v := range vs {
+ 			_, _ = b.WriteString(k)
+ 			_, _ = b.WriteString(": ")
+-			writeHeaderValue(&b, v)
++			writeHeaderValue(b, v)
+ 			_, _ = b.WriteString(crlf)
+ 		}
+ 	}
+@@ -4656,15 +4661,34 @@ func readMIMEHeader(s string) (Header, error) {
+ 	}
+ }
+ 
++const maxPooledHeaderSize = 64 * 1024
++
++var publishHeaderPool = sync.Pool{
++	New: func() any { return new(bytes.Buffer) },
++}
++
+ // PublishMsg publishes the Msg structure, which includes the
+ // Subject, an optional Reply and an optional Data field.
+ func (nc *Conn) PublishMsg(m *Msg) error {
+ 	if m == nil {
+ 		return ErrInvalidMsg
+ 	}
+-	hdr, err := m.headerBytes()
+-	if err != nil {
+-		return err
++	var hdr []byte
++	if len(m.Header) > 0 {
++		b := publishHeaderPool.Get().(*bytes.Buffer)
++		defer func() {
++			// publish copies the headers into the writer's buffer before returning.
++			// Do not retain unusually large headers in the pool.
++			if b.Cap() <= maxPooledHeaderSize {
++				b.Reset()
++				publishHeaderPool.Put(b)
++			}
++		}()
++		var err error
++		hdr, err = m.encodeHeaders(b)
++		if err != nil {
++			return err
++		}
+ 	}
+ 	validateReply := m.Reply != _EMPTY_
+ 	return nc.publish(m.Subject, m.Reply, validateReply, hdr, m.Data)
+```
+
+**File**: `nats_test.go` (modified, +0/-204)
+```diff
+@@ -31,13 +31,11 @@ import (
+ 	"fmt"
+ 	"math/big"
+ 	"net"
+-	"net/http"
+ 	"net/url"
+ 	"os"
+ 	"reflect"
+ 	"regexp"
+ 	"runtime"
+-	"strconv"
+ 	"strings"
+ 	"sync"
+ 	"sync/atomic"
+@@ -1606,165 +1604,6 @@ func TestNoPanicOnSrvPoolSizeChanging(t *testing.T) {
+ 	wg.Wait()
+ }
+ 
+-func TestHeaderParser(t *testing.T) {
+-	shouldErr := func(hdr string) {
+-		t.Helper()
+-		if _, err := DecodeHeadersMsg([]byte(hdr)); err == nil {
+-			t.Fatalf("Expected an error")
+-		}
+-	}
+-	shouldErr("NATS/1.0")
+-	shouldErr("NATS/1.0\r\n")
+-	shouldErr("NATS/1.0\r\nk1:v1")
+-	shouldErr("NATS/1.0\r\nk1:v1\r\n")
+-	shouldErr("NATS/1.0 5\r\n\r\n")
+-	shouldErr("NATS/1.0 41\r\n\r\n")
+-	shouldErr("NATS/1.0 \r\n\r\n")
+-
+-	// Check that we can do inline status and descriptions
+-	checkStatus := func(hdr string, status int, description string) {
+-		t.Helper()
+-		hdrs, err := DecodeHeadersMsg([]byte(hdr + "\r\n\r\n"))
+-		if err != nil {
+-			t.Fatalf("Unexpected error: %v", err)
+-		}
+-		if code, err := strconv.Atoi(hdrs.Get(statusHdr)); err != nil || code != status {
+-			t.Fatalf("Expected status of %d, got %s", status, hdrs.Get(statusHdr))
+-		}
+-		if len(description) > 0 {
+-			if descr := hdrs.Get(descrHdr); err != nil || descr != description {
+-				t.Fatalf("Expected description of %q, got %q", description, descr)
+-			}
+-		}
+-	}
+-
+-	checkStatus("NATS/1.0 503", 503, "")
+-	checkStatus("NATS/1.0 503 No Responders", 503, "No Responders")
+-	checkStatus("NATS/1.0  404   No Messages", 404, "No Messages")
+-}
+-
+-func TestHeaderMultiLine(t *testing.T) {
+-	m := NewMsg("foo")
+-	m.Header = Header{
+-		"CorrelationID": []string{"123"},
+-		"Msg-ID":        []string{"456"},
+-		"X-NATS-Keys":   []string{"A", "B", "C"},
+-		"X-Test-Keys":   []string{"D", "E", "F"},
+-	}
+-	// Users can opt-in to canonicalize like http.Header does
+-	// by using http.Header#Set or http.Header#Add.
+-	http.Header(m.Header).Set("accept-encoding", "json")
+-	http.Header(m.Header).Add("AUTHORIZATION", "s3cr3t")
+-
+-	// Multi Value Header becomes represented as multi-lines in the wire
+-	m.Header.Set("X-Test", "First")
+-	m.Header.Add("X-Test", "Second")
+-	m.Header.Add("X-Test", "Third")
+-
+-	b, err := m.headerBytes()
+-	if err != nil {
+-		t.Fatal(err)
+-	}
+-	result := string(b)
+-
+-	// Require the header string to have a known prefix and suffix
+-	if !strings.HasPrefix(result, "NATS/1.0\r\n") {
+-		t.Fatalf("header prefix not present")
+-	}
+-	if !strings.HasSuffix(result, "\r\n\r\n") {
+-		t.Fatalf("header suffix not present")
+-	}
+-
+-	// Require the header string to contain each of the following rows. Note
+-	// that headers can be written in any order.
+-	expectedHeaderLines := []string{
+-		"Accept-Encoding: json\r\n",
+-		"Authorization: s3cr3t\r\n",
+-		"CorrelationID: 123\r\n",
+-		"Msg-ID: 456\r\n",
+-		"X-NATS-Keys: A\r\n",
+-		"X-NATS-Keys: B\r\n",
+-		"X-NATS-Keys: C\r\n",
+-		"X-Test: First\r\n",
+-		"X-Test: Second\r\n",
+-		"X-Test: Third\r\n",
+-		"X-Test-Keys: D\r\n",
+-		"X-Test-Keys: E\r\n",
+-		"X-Test-Keys: F\r\n",
+-	}
+-	for _, h := range expectedHeaderLines {
+-		if !strings.Contains(result, h) {
+-			t.Fatalf("expected header line '%s' to be present", h)
+-		}
+-	}
+-}
+-
+-func TestHeaderValidKeys(t *testing.T) {
+-	const validChars = "!#$%&'*+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ^_`abcdefghijklmnopqrstuvwxyz|~"
+-
+-	m := NewMsg("foo")
+-	m.Header = Header{
+-		validChars: []string{"value"},
+-	}
+-	if _, err := m.headerBytes(); err != nil {
+-		t.Fatal(err.Error())
+-	}
+-}
+-
+-func TestHeaderInvalidKeys(t *testing.T) {
+-	testKeys := []string{
+-		"",       // Empty string
+-		":",      // Illegal printable ASCII character
+-		"\r",     // Non-printable ASCII character
+-		"\n",     // Non-printable ASCII character
+-		"\t",     // Non-printable ASCII character
+-		"\x00",   // Non-printable ASCII character
+-		"→",      // Standard Unicode character
+-		"\u200b", // Non-printable Unicode character
+-	}
+-	for _, key := range testKeys {
+-		m := NewMsg("foo")
+-		m.Header = Header{
+-			key: []string{"value"},
+-		}
+-		if _, err := m.headerBytes(); err == nil {
+-			t.Fatalf("expected error for key '%s'", key)
+-		}
+-	}
+-}
+-
+-func TestHeaderValidValues(t *testing.T) {
+-	testValues := []string{
+-		"!\"#$%&'()*+,-./0123456789;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",                              // Printable ASCII characters
+-		"\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0b\x0c\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1c\x1d\x1e\x1f", // Invisible ASCII characters (except CR/LF)
+-		"→",      // Standard Unicode characters
+-		"\u200b", // Non-printable Unicode characters
+-	}
+-	for _, v := range testValues {
+-		m := NewMsg(v)
+-		m.Header = Header{
+-			"key": []string{v},
+-		}
+-		if _, err := m.headerBytes(); err != nil {
+-			t.Fatal(err.Error())
+-		}
+-	}
+-}
+-
+-func TestHeaderNewlineValue(t *testing.T) {
+-	m := NewMsg("foo")
+-	m.Header.Set("X-Test", "line1\nline2\rline3")
+-
+-	b, err := m.headerBytes()
+-	if err != nil {
+-		t.Fatal(err.Error())
+-	}
+-	out := string(b)
+-	if !strings.Contains(out, 
+```
+
+**File**: `test/bench_test.go` (modified, +29/-22)
+```diff
+@@ -38,29 +38,36 @@ func BenchmarkPublishSpeed(b *testing.B) {
+ }
+ 
+ func BenchmarkPublishSpeedHeaders(b *testing.B) {
+-	withServerB(b, func(b *testing.B, nc *nats.Conn) {
+-		headers := make(nats.Header, 10)
+-		for i := range 10 {
+-			headers.Add(
+-				fmt.Sprintf("header_%d", i),
+-				generateRandomString(32),
+-			)
+-		}
+-		msg := &nats.Msg{
+-			Subject: "foo",
+-			Header:  headers,
+-			Data:    []byte("Hello World"),
+-		}
++	for _, n := range []int{0, 1, 10, 100} {
++		b.Run(fmt.Sprintf("headers=%d", n), func(b *testing.B) {
++			withServerB(b, func(b *testing.B, nc *nats.Conn) {
++				headers := make(nats.Header, n)
++				for i := range n {
++					headers.Add(
++						fmt.Sprintf("header_%d", i),
++						generateRandomString(32),
++					)
++				}
++				msg := &nats.Msg{
++					Subject: "foo",
++					Header:  headers,
++					Data:    []byte("Hello World"),
++				}
+ 
+-		b.ResetTimer()
+-		for range b.N {
+-			if err := nc.PublishMsg(msg); err != nil {
+-				b.Fatalf("Error in benchmark during PublishMsg: %v\n", err)
+-			}
+-		}
+-		nc.Flush()
+-		b.StopTimer()
+-	})
++				b.ReportAllocs()
++				b.ResetTimer()
++				for range b.N {
++					if err := nc.PublishMsg(msg); err != nil {
++						b.Fatalf("Error in benchmark during PublishMsg: %v\n", err)
++					}
++				}
++				if err := nc.Flush(); err != nil {
++					b.Fatal(err)
++				}
++				b.StopTimer()
++			})
++		})
++	}
+ }
+ 
+ func generateRandomString(length int) string {
+```
+
+**File**: `test/headers_test.go` (modified, +59/-0)
+```diff
+@@ -21,6 +21,7 @@ import (
+ 	"net/http/httptest"
+ 	"reflect"
+ 	"sort"
++	"strings"
+ 	"sync"
+ 	"testing"
+ 	"time"
+@@ -55,6 +56,64 @@ func TestBasicHeaders(t *testing.T) {
+ 	})
+ }
+ 
++func TestPublishMsgConcurrentHeaders(t *testing.T) {
++	withServer(t, func(t *testing.T, nc *nats.Conn) {
++		const publishers, messages = 4, 100
++		sub, err := nc.SubscribeSync("headers.concurrent")
++		if err != nil {
++			t.Fatal(err)
++		}
++		defer sub.Unsubscribe()
++
++		var wg sync.WaitGroup
++		errs := make(chan error, publishers)
++		for p := range publishers {
++			wg.Add(1)
++			go func() {
++				defer wg.Done()
++				for i := range messages {
++					id := fmt.Sprintf("%d/%d", p, i)
++					m := &nats.Msg{
++						Subject: "headers.concurrent",
++						Data:    []byte(id),
++						Header:  nats.Header{"X-Value": {id, strings.Repeat(id, i+1)}},
++					}
++					if err := nc.PublishMsg(m); err != nil {
++						errs <- err
++						return
++					}
++				}
++			}()
++		}
++		wg.Wait()
++		close(errs)
++		for err := range errs {
++			t.Fatal(err)
++		}
++
++		seen := make(map[string]bool, publishers*messages)
++		for range publishers * messages {
++			m, err := sub.NextMsg(time.Second)
++			if err != nil {
++				t.Fatal(err)
++			}
++			id := string(m.Data)
++			var p, i int
++			if _, err := fmt.Sscanf(id, "%d/%d", &p, &i); err != nil || p < 0 || p >= publishers || i < 0 || i >= messages {
++				t.Fatalf("Invalid message ID %q", id)
++			}
++			if seen[id] {
++				t.Fatalf("Duplicate message %q", id)
++			}
++			seen[id] = true
++			expected := nats.Header{"X-Value": {id, strings.Repeat(id, i+1)}}
++			if !reflect.DeepEqual(m.Header, expected) {
++				t.Fatalf("Headers for %q: expected %v, got %v", id, expected, m.Header)
++			}
++		}
++	})
++}
++
+ func TestRequestMsg(t *testing.T) {
+ 	withServer(t, func(t *testing.T, nc *nats.Conn) {
+ 		subject := "headers.test"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2219** (2026-10-30): [IMPROVED] Reuse header encoding buffers in PublishMsg (@Grivn)
 - **PR #2218** (2026-10-27): [FIXED] Legacy JetStream reconnect watcher cleanup (@piotrpio)
 - **PR #2217** (2026-10-26): [FIXED] Keep TLS server name for IPs discovered via an IP entry (@igor-kupczynski)
 - **PR #2216** (2026-10-26): [FIXED] Release the JetStream reconnect watcher after publisher cleanup (@Grivn)
 - **PR #2214** (2026-10-23): Release v1.55.0 (@piotrpio)
 - **PR #2213** (2026-10-23): [IMPROVED] Document default MaxAckPending for legacy JetStream subscriptions (@piotrpio)
-- **PR #2212** (2026-10-23): [IMPROVED] Avoid per-message metadata allocations in JetStream consumers (@piotrpio)
 
 ---
 
@@ -1668,33 +2143,69 @@ Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Legacy JetStream reconnect watcher cleanup (#2218)
+## X. [IMPROVED] Reuse header encoding buffers in PublishMsg (#2219)
 
 **RULE**:
-When implementing operations in `js.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `headers_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9868714c`: [FIXED] Legacy JetStream reconnect watcher cleanup (#2218). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `36314d40`: [IMPROVED] Reuse header encoding buffers in PublishMsg (#2219). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `js.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `headers_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		go js.resetPendingAcksOnReconnect(js.connStatusCh)
-func (js *js) resetPendingAcksOnReconnect(connStatusCh <-chan Status) {
+// Copyright 2012-2026 The NATS Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package nats
+
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"net/http"
+	"strconv"
+	"strings"
+	"testing"
+)
+
+func TestHeaderParser(t *testing.T) {
+	shouldErr := func(hdr string) {
+		t.Helper()
+		if _, err := DecodeHeadersMsg([]byte(hdr)); err == nil {
+			t.Fatalf("Expected an error")
+		}
+	}
+	shouldErr("NATS/1.0")
+	shouldErr("NATS/1.0\r\n")
+	shouldErr("NATS/1.0\r\nk1:v1")
+	shouldErr("NATS/1.0\r\nk1:v1\r\n")
+	shouldErr("NATS/1.0 5\r\n\r\n")
+	shouldErr("NATS/1.0 41\r\n\r\n")
+	shouldErr("NATS/1.0 \r\n\r\n")
+
+	// Check that we can do inline status and descriptions
+	checkStatus := func(hdr string, status int, description s
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		go js.resetPendingAcksOnReconnect()
-func (js *js) resetPendingAcksOnReconnect() {
-	js.mu.Lock()
-	connStatusCh := js.connStatusCh
-	js.mu.Unlock()
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9868714c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `36314d40` are properly handled with clean fallback behavior.

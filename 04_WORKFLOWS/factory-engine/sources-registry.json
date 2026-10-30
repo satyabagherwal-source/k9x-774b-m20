@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T14:33:40.541Z",
-    "lastVerified": "2026-10-30T14:33:40.541Z",
+    "lastChecked": "2026-10-30T14:45:13.885Z",
+    "lastVerified": "2026-10-30T14:45:13.885Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -343,9 +343,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T13:53:25.133Z",
+    "lastChecked": "2026-10-30T14:40:29.883Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T13:53:25.133Z"
+    "lastVerified": "2026-10-30T14:40:29.883Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1342,9 +1342,9 @@
   "neondatabase-neon": {
     "name": "neon",
     "officialUrl": "https://github.com/neondatabase/neon",
-    "lastChecked": "2026-10-28T22:14:07.578Z",
+    "lastChecked": "2026-10-30T14:40:27.366Z",
     "revisionIdentifier": "fa504217",
-    "lastVerified": "2026-10-28T22:14:07.578Z"
+    "lastVerified": "2026-10-30T14:40:27.366Z"
   },
   "ajeetdsouza-zoxide": {
     "name": "zoxide",
@@ -1601,22 +1601,21 @@
     "lastVerified": "2026-10-30T12:58:27.641Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "tfhe-rs",
+    "name": "zama-ai/tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T07:03:30.890Z",
-    "lastVerified": "2026-10-30T07:03:30.890Z",
+    "lastChecked": "2026-10-30T14:40:29.832Z",
+    "lastVerified": "2026-10-30T14:40:29.832Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "2d547157429a25812a13a88fa2d0641dba4b69f58bc01836e267a54d0c178031",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "60255047acfbdc57b76daa53ac29d3665ae9ebd7a943678af96407b064f039d0",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6753c2a7"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -2398,11 +2397,21 @@
     "lastVerified": "2026-10-28T06:31:07.365Z"
   },
   "nats-io-nats.go": {
-    "name": "nats.go",
+    "name": "nats-io/nats.go",
     "officialUrl": "https://github.com/nats-io/nats.go",
-    "lastChecked": "2026-10-28T23:05:21.910Z",
-    "revisionIdentifier": "9868714c",
-    "lastVerified": "2026-10-28T23:05:21.910Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-30T14:40:26.811Z",
+    "lastVerified": "2026-10-30T14:40:26.811Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nats-io-nats-go",
+    "contentHash": "b52db522f916953d9f707d51f2022d72eae99ade5049e692bc6ad4a755871d5a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "infiniflow-infinity": {
     "name": "infinity",
@@ -6084,11 +6093,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "alexpasmantier-television": {
-    "name": "television",
+    "name": "alexpasmantier/television",
     "officialUrl": "https://github.com/alexpasmantier/television",
-    "lastChecked": "2026-10-28T17:42:39.629Z",
-    "revisionIdentifier": "67ddd304",
-    "lastVerified": "2026-10-28T17:42:39.629Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-30T14:40:19.166Z",
+    "lastVerified": "2026-10-30T14:40:19.166Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-alexpasmantier-television",
+    "contentHash": "937851a68c2ce2193b2d71794b8582b24b2e52fc8ac50da83b216fd3b145321e",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-google-vit-base-patch16-224": {
     "name": "google/vit-base-patch16-224",
@@ -10134,5 +10153,29 @@
     "lastChecked": "2026-10-30T14:33:23.647Z",
     "revisionIdentifier": "e8a0208c",
     "lastVerified": "2026-10-30T14:33:23.647Z"
+  },
+  "sindresorhus-got": {
+    "name": "sindresorhus/got",
+    "officialUrl": "https://github.com/sindresorhus/got",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T14:40:22.023Z",
+    "lastVerified": "2026-10-30T14:40:22.023Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-sindresorhus-got",
+    "contentHash": "39526ced461bba660f920c5bc9670d41064f61b752b0c6db8eb65a5615952204",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nalexn-viewinspector": {
+    "name": "ViewInspector",
+    "officialUrl": "https://github.com/nalexn/ViewInspector",
+    "lastChecked": "2026-10-30T14:40:19.782Z",
+    "revisionIdentifier": "4d5e732c",
+    "lastVerified": "2026-10-30T14:40:19.782Z"
   }
 }

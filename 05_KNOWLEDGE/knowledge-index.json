@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T14:33:37.956Z",
+  "last_updated": "2026-10-30T14:45:11.250Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -1389,14 +1389,29 @@
       "slug": "alexpasmantier-television",
       "platform": "github",
       "source_url": "https://github.com/alexpasmantier/television",
-      "source_version": "67ddd304",
-      "content_hash": "4cd2d575a02cdd83a5d86194c8ef81895aeeaca7381bedc468bedca8a016f7a7",
+      "source_version": "48eeeef3",
+      "content_hash": "937851a68c2ce2193b2d71794b8582b24b2e52fc8ac50da83b216fd3b145321e",
       "dossier_path": "07_PROJECT_LEARNING/alexpasmantier-television-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alexpasmantier-television-learnings.md",
       "promoted_rules": [
         {
           "number": 2231,
           "title": "website): better code block copy icon alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5777,
+          "title": "Pipelined Task Ingestion Order Preservation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5778,
+          "title": "Double-Checked String Interning Invariant for Concurrently Ingested Enums/Styles",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5779,
+          "title": "Coalesced Terminal Event Render-Drain Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -1405,7 +1420,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:18:57.394Z",
+      "verified_at": "2026-10-30T14:45:11.231Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40440,8 +40455,8 @@
       "slug": "nats-io-nats.go",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats.go",
-      "source_version": "9868714c",
-      "content_hash": "c19357b819f711a04f562b44d720865949a27b06dea375f5a82046760d9e980a",
+      "source_version": "36314d40",
+      "content_hash": "b52db522f916953d9f707d51f2022d72eae99ade5049e692bc6ad4a755871d5a",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "promoted_rules": [
@@ -40479,6 +40494,11 @@
           "number": 5069,
           "title": "[FIXED] Legacy JetStream reconnect watcher cleanup (#2218)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5776,
+          "title": "[IMPROVED] Reuse header encoding buffers in PublishMsg (#2219)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40486,7 +40506,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:12:45.078Z",
+      "verified_at": "2026-10-30T14:40:27.682Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57949,8 +57969,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "6753c2a7",
-      "content_hash": "2d547157429a25812a13a88fa2d0641dba4b69f58bc01836e267a54d0c178031",
+      "source_version": "bc50afb4",
+      "content_hash": "60255047acfbdc57b76daa53ac29d3665ae9ebd7a943678af96407b064f039d0",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -58035,7 +58055,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T00:46:52.029Z",
+      "verified_at": "2026-10-30T14:40:30.321Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71038,8 +71058,8 @@
       "slug": "sindresorhus-got",
       "platform": "github",
       "source_url": "https://github.com/sindresorhus/got",
-      "source_version": "05b44769",
-      "content_hash": "dc6f3885d4605b0651f7d32a6089e378d2c371aed182444cd6d4d9ddb919f766",
+      "source_version": "6b5aafc1",
+      "content_hash": "39526ced461bba660f920c5bc9670d41064f61b752b0c6db8eb65a5615952204",
       "dossier_path": "07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sindresorhus-got-learnings.md",
       "promoted_rules": [
@@ -71054,7 +71074,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T23:53:46.312Z",
+      "verified_at": "2026-10-30T14:40:23.680Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153735,6 +153755,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T14:33:37.944Z"
+    },
+    "rule-5776": {
+      "learning_id": "rule-5776",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5776,
+      "title": "[IMPROVED] Reuse header encoding buffers in PublishMsg (#2219)",
+      "source_url": "https://github.com/nats-io/nats.go",
+      "source_version": "36314d40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T14:40:27.682Z"
+    },
+    "rule-5777": {
+      "learning_id": "rule-5777",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5777,
+      "title": "Pipelined Task Ingestion Order Preservation Invariant",
+      "source_url": "https://github.com/alexpasmantier/television",
+      "source_version": "48eeeef3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T14:45:11.231Z"
+    },
+    "rule-5778": {
+      "learning_id": "rule-5778",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5778,
+      "title": "Double-Checked String Interning Invariant for Concurrently Ingested Enums/Styles",
+      "source_url": "https://github.com/alexpasmantier/television",
+      "source_version": "48eeeef3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T14:45:11.231Z"
+    },
+    "rule-5779": {
+      "learning_id": "rule-5779",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5779,
+      "title": "Coalesced Terminal Event Render-Drain Invariant",
+      "source_url": "https://github.com/alexpasmantier/television",
+      "source_version": "48eeeef3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T14:45:11.231Z"
     }
   },
   "aliases": {

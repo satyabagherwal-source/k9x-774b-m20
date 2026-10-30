@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T13:46:24.336Z",
+  "last_updated": "2026-10-30T14:40:23.814Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3335,6 +3335,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-hmlongco-factory"
+    },
+    {
+      "id": "CD-X8G6",
+      "directive_title": "Empirical Invariant Guard in package.json",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "sindresorhus/got",
+      "source_commit": "6b5aafc1",
+      "date_staged": "2026-10-30",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-sindresorhus-got"
     }
   ]
 }

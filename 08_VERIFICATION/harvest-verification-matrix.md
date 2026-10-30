@@ -6212,3 +6212,7 @@
 | `CYCLE-20261030-5CBT` | `2026-10-30T14:18:42.473Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5773` | Yes (`cb949fe2...`) |
 | `CYCLE-20261030-OG9Y` | `2026-10-30T14:33:34.054Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5774` | Yes (`d99339b2...`) |
 | `CYCLE-20261030-OJBM` | `2026-10-30T14:33:38.002Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5775` | Yes (`d503df5d...`) |
+| `CYCLE-20261030-X8FS` | `2026-10-30T14:40:23.800Z` | `sindresorhus/got` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sindresorhus-got-learnings.md` | Yes (`39526ced...`) |
+| `CYCLE-20261030-XBJ1` | `2026-10-30T14:40:27.805Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5776` | Yes (`b52db522...`) |
+| `CYCLE-20261030-XDK1` | `2026-10-30T14:40:30.433Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md` | Yes (`60255047...`) |
+| `CYCLE-20261030-3EAL` | `2026-10-30T14:45:11.325Z` | `alexpasmantier/television` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5777, Rule 5778, Rule 5779` | Yes (`937851a6...`) |

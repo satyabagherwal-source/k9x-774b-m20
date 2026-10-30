@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "9868714c",
+    "sourceVersion": "36314d40",
     "license": "Apache-2.0",
-    "contentHash": "c19357b819f711a04f562b44d720865949a27b06dea375f5a82046760d9e980a",
-    "lastHarvestedAt": "2026-10-28T00:12:45.168Z",
+    "contentHash": "b52db522f916953d9f707d51f2022d72eae99ade5049e692bc6ad4a755871d5a",
+    "lastHarvestedAt": "2026-10-30T14:40:27.808Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "6753c2a7",
+    "sourceVersion": "bc50afb4",
     "license": "NOASSERTION",
-    "contentHash": "2d547157429a25812a13a88fa2d0641dba4b69f58bc01836e267a54d0c178031",
-    "lastHarvestedAt": "2026-10-30T00:46:52.125Z",
+    "contentHash": "60255047acfbdc57b76daa53ac29d3665ae9ebd7a943678af96407b064f039d0",
+    "lastHarvestedAt": "2026-10-30T14:40:30.437Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -6583,10 +6583,10 @@
     "repository": "alexpasmantier/television",
     "platform": "github",
     "sourceUrl": "https://github.com/alexpasmantier/television",
-    "sourceVersion": "67ddd304",
+    "sourceVersion": "48eeeef3",
     "license": "MIT",
-    "contentHash": "4cd2d575a02cdd83a5d86194c8ef81895aeeaca7381bedc468bedca8a016f7a7",
-    "lastHarvestedAt": "2026-10-19T06:18:57.447Z",
+    "contentHash": "937851a68c2ce2193b2d71794b8582b24b2e52fc8ac50da83b216fd3b145321e",
+    "lastHarvestedAt": "2026-10-30T14:45:11.328Z",
     "learningId": "learn-github-alexpasmantier-television"
   },
   "insertkoinio-koin": {
@@ -9553,10 +9553,10 @@
     "repository": "sindresorhus/got",
     "platform": "github",
     "sourceUrl": "https://github.com/sindresorhus/got",
-    "sourceVersion": "05b44769",
+    "sourceVersion": "6b5aafc1",
     "license": "MIT",
-    "contentHash": "dc6f3885d4605b0651f7d32a6089e378d2c371aed182444cd6d4d9ddb919f766",
-    "lastHarvestedAt": "2026-10-19T23:53:46.387Z",
+    "contentHash": "39526ced461bba660f920c5bc9670d41064f61b752b0c6db8eb65a5615952204",
+    "lastHarvestedAt": "2026-10-30T14:40:23.804Z",
     "learningId": "learn-github-sindresorhus-got"
   },
   "sdwebimage-sdwebimageswiftui": {

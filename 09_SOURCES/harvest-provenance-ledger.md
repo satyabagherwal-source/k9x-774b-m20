@@ -6221,3 +6221,7 @@ Every entry in this ledger must capture:
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `7eadd80c` | Multi-dimensional audit evidence | 2026-10-30T14:18:42.477Z |
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `aa5046f0` | Multi-dimensional audit evidence | 2026-10-30T14:33:34.057Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `f301e7f4` | Multi-dimensional audit evidence | 2026-10-30T14:33:38.005Z |
+| `learn-github-sindresorhus-got` | `https://github.com/sindresorhus/got` | `6b5aafc1` | Multi-dimensional audit evidence | 2026-10-30T14:40:23.804Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `36314d40` | Multi-dimensional audit evidence | 2026-10-30T14:40:27.808Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `bc50afb4` | Multi-dimensional audit evidence | 2026-10-30T14:40:30.437Z |
+| `learn-github-alexpasmantier-television` | `https://github.com/alexpasmantier/television` | `48eeeef3` | Multi-dimensional audit evidence | 2026-10-30T14:45:11.328Z |

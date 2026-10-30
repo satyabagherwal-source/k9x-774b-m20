@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T14:33:38.011Z",
+  "last_updated": "2026-10-30T14:45:11.337Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3981,14 +3981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-go",
-      "content_hash": "c19357b819f711a04f562b44d720865949a27b06dea375f5a82046760d9e980a",
-      "verified_at": "2026-10-28T00:12:45.176Z",
+      "content_hash": "b52db522f916953d9f707d51f2022d72eae99ade5049e692bc6ad4a755871d5a",
+      "verified_at": "2026-10-30T14:40:27.816Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T00:12:45.176Z"
+      "last_updated": "2026-10-30T14:40:27.816Z"
     },
     "ChrispyBacon-dev/DockFlare": {
       "repository": "ChrispyBacon-dev/DockFlare",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "2d547157429a25812a13a88fa2d0641dba4b69f58bc01836e267a54d0c178031",
-      "verified_at": "2026-10-30T00:46:52.134Z",
+      "content_hash": "60255047acfbdc57b76daa53ac29d3665ae9ebd7a943678af96407b064f039d0",
+      "verified_at": "2026-10-30T14:40:30.450Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T00:46:52.134Z"
+      "last_updated": "2026-10-30T14:40:30.450Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -9951,14 +9951,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alexpasmantier-television",
-      "content_hash": "4cd2d575a02cdd83a5d86194c8ef81895aeeaca7381bedc468bedca8a016f7a7",
-      "verified_at": "2026-10-19T06:18:57.453Z",
+      "content_hash": "937851a68c2ce2193b2d71794b8582b24b2e52fc8ac50da83b216fd3b145321e",
+      "verified_at": "2026-10-30T14:45:11.337Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:18:57.453Z"
+      "last_updated": "2026-10-30T14:45:11.337Z"
     },
     "InsertKoinIO/koin": {
       "repository": "InsertKoinIO/koin",
@@ -14376,14 +14376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sindresorhus-got",
-      "content_hash": "dc6f3885d4605b0651f7d32a6089e378d2c371aed182444cd6d4d9ddb919f766",
-      "verified_at": "2026-10-19T23:53:46.394Z",
+      "content_hash": "39526ced461bba660f920c5bc9670d41064f61b752b0c6db8eb65a5615952204",
+      "verified_at": "2026-10-30T14:40:23.819Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T23:53:46.394Z"
+      "last_updated": "2026-10-30T14:40:23.819Z"
     },
     "SDWebImage/SDWebImageSwiftUI": {
       "repository": "SDWebImage/SDWebImageSwiftUI",

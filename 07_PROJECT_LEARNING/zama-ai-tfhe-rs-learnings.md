@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `6753c2a7`  
+> **Source Version**: `bc50afb4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T00:46:51.491Z  
+> **Timestamp**: 2026-10-30T14:40:30.180Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T00:46:50.235Z  
+> **Harvest Timestamp**: 2026-10-30T14:40:29.832Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1927,137 +1927,682 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c8cf7821` (2026-10-29)
-**Commit Message**: fix(gpu): fix cmux metadata (#4116)
+### Incident Patch 1: `bc50afb4` (2026-10-30)
+**Commit Message**: chore(zk): remove unused itertools dep (#4122)
 
-**File**: `tfhe/src/high_level_api/booleans/base.rs` (modified, +40/-4)
+**File**: `tfhe-zk-pok/Cargo.toml` (modified, +0/-1)
 ```diff
-@@ -23,6 +23,8 @@ use crate::integer::prelude::*;
- use crate::integer::BooleanBlock;
- use crate::named::Named;
- use crate::prelude::FheWait;
-+#[cfg(feature = "gpu")]
-+use crate::shortint::ciphertext::Degree;
- use crate::shortint::ciphertext::NotTrivialCiphertextError;
- use crate::shortint::parameters::CiphertextConformanceParams;
- use crate::shortint::AtomicPatternParameters;
-@@ -478,13 +480,30 @@ impl ScalarIfThenElse<&Self, &Self> for FheBool {
-             #[cfg(feature = "gpu")]
-             InternalServerKey::Cuda(cuda_key) => {
-                 let streams = &cuda_key.streams;
--                let inner = cuda_key.key.key.if_then_else(
-+                let mut inner = cuda_key.key.key.if_then_else(
-                     &CudaBooleanBlock(self.ciphertext.on_gpu(streams).duplicate(streams)),
-                     &*ct_then.ciphertext.on_gpu(streams),
-                     &*ct_else.ciphertext.on_gpu(streams),
-                     streams,
-                 );
--                let boolean_inner = CudaBooleanBlock(inner);
-+                // The result encrypts one of the two boolean branches, so its degree
-+                // is bounded by the max of the branch degrees. The generic radix
-+                // cmux instead sets the worst case of its final message-extraction
-+                // LUT (message_modulus - 1), which the boolean wrapper rejects.
-+                let branches_max_degree = ct_then.ciphertext.on_gpu(streams).ciphertext.info.blocks
-+                    [0]
-+                .degree
-+                .get()
-+                .max(
-+                    ct_else.ciphertext.on_gpu(streams).ciphertext.info.blocks[0]
-+                        .degree
-+                        .get(),
-+                );
-+                inner.ciphertext.info.blocks[0].degree = Degree::new(branches_max_degree);
-+                // Use the checked constructor so an invalid degree on a value
-+                // meant to be boolean fails here rather than at a later use.
-+                let boolean_inner =
-+                    CudaBooleanBlock::from_cuda_radix_ciphertext(inner.into_inner());
-                 (InnerBoolean::Cuda(boolean_inner), cuda_key.tag.clone())
-             }
-             #[cfg(feature = "hpu")]
-@@ -676,13 +695,30 @@ impl IfThenElse<Self> for FheBool {
-             #[cfg(feature = "gpu")]
-             InternalServerKey::Cuda(cuda_key) => {
-                 let streams = &cuda_key.streams;
--                let inner = cuda_key.key.key.if_then_else(
-+                let mut inner = cuda_key.key.key.if_then_else(
-                     &CudaBooleanBlock(self.ciphertext.on_gpu(streams).duplicate(streams)),
-                     &*ct_then.ciphertext.on_gpu(streams),
-                     &*ct_else.ciphertext.on_gpu(streams),
-                     streams,
-                 );
--                let boolean_inner = CudaBooleanBlock(inner);
-+                // The result encrypts one of the two boolean branches, so its degree
-+                // is bounded by the max of the branch degrees. The generic radix
-+                // cmux instead sets the worst case of its final message-extraction
-+                // LUT (message_modulus - 1), which the boolean wrapper rejects.
-+                let branches_max_degree = ct_then.ciphertext.on_gpu(streams).ciphertext.info.blocks
-+                    [0]
-+                .degree
-+                .get()
-+                .max(
-+                    ct_else.ciphertext.on_gpu(streams).ciphertext.info.blocks[0]
-+                        .degree
-+                        .get(),
-+                );
-+                inner.ciphertext.info.blocks[0].degree = Degree::new(branches_max_degree);
-+                // Use the checked constructor so an invalid degree on a value
-+                // meant to be boolean fails here rather than at a later use.
-+                let boolean_inner =
-+                    CudaBooleanBlock::from_cuda_radix_ciphertext(inner.into_inner());
-                 (InnerBoolean::Cuda(boolean_inner), cuda_key.tag.clone())
-             }
-             #[cfg(feature = "hpu")]
+@@ -27,7 +27,6 @@ tfhe-versionable = { version = "0.8.1", path = "../utils/tfhe-versionable" }
+ tfhe-safe-serialize = { version = "0.1.1", path = "../utils/tfhe-safe-serialize" }
+ zk-cuda-backend = { version = "0.3.0", path = "../backends/zk-cuda-backend", optional = true }
+ tfhe-cuda-common = { version = "0.2.0", path = "../backends/tfhe-cuda-common", optional = true }
+-itertools.workspace = true
+ [target.'cfg(target_family = "wasm")'.dependencies]
+ getrandom = { workspace = true, features = ["js"] }
+ wasm-par-mq = { version = "0.1.1", path = "../utils/wasm-par-mq", features = [
 ```
 
-**File**: `tfhe/src/high_level_api/tests/gpu.rs` (modified, +31/-0)
+**File**: `utils/tfhe-forward-compat-matrices/compat_nightly/Cargo.lock` (modified, +0/-1)
 ```diff
-@@ -79,6 +79,37 @@ fn test_drop_rayon_pool_with_gpu_server_key_thread_locals() {
-     drop(pool);
+@@ -1187,7 +1187,6 @@ dependencies = [
+  "ark-ff",
+  "ark-poly",
+  "getrandom",
+- "itertools 0.15.0",
+  "num-bigint 0.5.1",
+  "rand",
+  "rayon",
+```
+
+---
+
+### Incident Patch 2: `a3c9dea1` (2026-10-30)
+**Commit Message**: refactor(shortint)!: remove wopbs from the shortint and integer layers (#4112)
+
+**File**: `scripts/test_filtering.py` (modified, +0/-2)
+```diff
+@@ -83,15 +83,13 @@
+ 
+ # block PBS are too slow for high params
+ # mul_crt_4_4 is extremely flaky (~80% failure)
+-# test_wopbs_bivariate_crt_wopbs_param_message generate tables that are too big at the moment
+ # test_integer_default_add_sequence_multi_thread_param_message_4_carry_4_ks_pbs_gaussian_2m64 is too slow
+ # skip default_div, default_rem which are covered by default_div_rem
+ EXCLUDED_INTEGER_TESTS = [
+     "/.*integer_default_div_param/",
+     "/.*integer_default_rem_param/",
+     "/.*_block_pbs(_base)?_param_message_[34]_carry_[34]_ks_pbs_gaussian_2m64$/",
+     "~mul_crt_param_message_4_carry_4_ks_pbs_gaussian_2m64",
+-    "/.*test_wopbs_bivariate_crt_wopbs_param_message_[34]_carry_[34]_ks_pbs_gaussian_2m64$/",
+     "/.*test_integer_default_add_sequence_multi_thread_param_message_4_carry_4_ks_pbs_gaussian_2m64$/",
+     "/.*::tests_long_run::.*/",
+ ]
+```
+
+**File**: `tfhe/examples/utilities/generates_test_keys.rs` (modified, +1/-62)
+```diff
+@@ -1,8 +1,6 @@
+ use clap::{Arg, ArgAction, Command};
+ use tfhe::boolean;
+ use tfhe::boolean::parameters::{BooleanParameters, DEFAULT_PARAMETERS, DEFAULT_PARAMETERS_KS_PBS};
+-#[cfg(feature = "experimental")]
+-use tfhe::shortint::keycache::KEY_CACHE_WOPBS;
+ use tfhe::shortint::keycache::{KEY_CACHE, KEY_CACHE_KSK};
+ #[cfg(tarpaulin)]
+ use tfhe::shortint::parameters::coverage_parameters::{
+@@ -18,12 +16,6 @@ use tfhe::shortint::parameters::current_params::*;
+ use tfhe::shortint::parameters::{
+     v1_6, ClassicPBSParameters, PARAM_MESSAGE_2_CARRY_2_KS_PBS_TUNIFORM_2M128,
+ };
+-#[cfg(feature = "experimental")]
+-use tfhe::shortint::parameters::{
+-    WopbsParameters, LEGACY_WOPBS_PARAM_MESSAGE_1_CARRY_1_KS_PBS,
+-    LEGACY_WOPBS_PARAM_MESSAGE_2_CARRY_2_KS_PBS, LEGACY_WOPBS_PARAM_MESSAGE_3_CARRY_3_KS_PBS,
+-    LEGACY_WOPBS_PARAM_MESSAGE_4_CARRY_4_KS_PBS,
+-};
+ use tfhe::shortint::MultiBitPBSParameters;
+ 
+ const KSK_PARAMS: [(
+@@ -41,7 +33,7 @@ fn client_server_keys() {
+         .arg(
+             Arg::new("multi_bit_only")
+                 .long("multi-bit-only")
+-                .help("Set to generate only multi bit keys, otherwise only PBS and WoPBS keys are generated")
++                .help("Set to generate only multi bit keys, otherwise only PBS keys are generated")
+                 .action(ArgAction::SetTrue)
+                 .exclusive(true),
+         )
+@@ -93,15 +85,6 @@ fn client_server_keys() {
+             generate_pbs_multi_bit_keys(&MULTI_BIT_PARAMS);
+         }
+ 
+-        #[cfg(feature = "experimental")]
+-        {
+-            const WOPBS_PARAMS: [(ClassicPBSParameters, WopbsParameters); 1] = [(
+-                V1_9_PARAM_MESSAGE_2_CARRY_2_KS_PBS_GAUSSIAN_2M128,
+-                LEGACY_WOPBS_PARAM_MESSAGE_2_CARRY_2_KS_PBS,
+-            )];
+-            generate_wopbs_keys(&WOPBS_PARAMS);
+-        }
+-
+         const BOOLEAN_PARAMS: [BooleanParameters; 2] =
+             [DEFAULT_PARAMETERS, DEFAULT_PARAMETERS_KS_PBS];
+         generate_boolean_keys(&BOOLEAN_PARAMS);
+@@ -129,30 +112,6 @@ fn client_server_keys() {
+             v1_6::V1_6_PARAM_MESSAGE_4_CARRY_4_KS_PBS_GAUSSIAN_2M64,
+         ];
+         generate_pbs_keys(&PBS_KEYS);
+-
+-        #[cfg(feature = "experimental")]
+-        {
+-            const WOPBS_PARAMS: [(ClassicPBSParameters, WopbsParameters); 4] = [
+-                (
+-                    v1_6::V1_6_PARAM_MESSAGE_1_CARRY_1_KS_PBS_GAUSSIAN_2M64,
+-                    LEGACY_WOPBS_PARAM_MESSAGE_1_CARRY_1_KS_PBS,
+-                ),
+-                (
+-                    v1_6::V1_6_PARAM_MESSAGE_2_CARRY_2_KS_PBS_GAUSSIAN_2M64,
+-                    LEGACY_WOPBS_PARAM_MESSAGE_2_CARRY_2_KS_PBS,
+-                ),
+-                (
+-                    v1_6::V1_6_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M64,
+-                    LEGACY_WOPBS_PARAM_MESSAGE_3_CARRY_3_KS_PBS,
+-                ),
+-                (
+-                    v1_6::V1_6_PARAM_MESSAGE_4_CARRY_4_KS_PBS_GAUSSIAN_2M64,
+-                    LEGACY_WOPBS_PARAM_MESSAGE_4_CARRY_4_KS_PBS,
+-                ),
+-            ];
+-
+-            generate_wopbs_keys(&WOPBS_PARAMS);
+-        }
+     }
  }
  
-+/// Regression test: on GPU, a select with boolean branches used to return a
-+/// CudaBooleanBlock whose degree metadata was the message-extraction LUT's
-+/// worst case (message_modulus - 1) instead of <= 1. The value was correct,
-+/// but the first boolean op consuming the result panicked on the
-+/// CudaBooleanBlock degree assert.
-+#[test]
-+fn test_gpu_bool_if_then_else_result_is_usable() {
-+    let config = ConfigBuilder::default().build();
-+    let cks = ClientKey::generate(config);
-+    let compressed_sks = CompressedServerKey::new(&cks);
-+    set_server_key(compressed_sks.decompress_to_gpu());
-+
-+    for cond in [false, true] {
-+        for a in [false, true] {
-+            for b in [false, true] {
-+                let ct_cond = FheBool::encrypt(cond, &cks);
-+                let ct_a = FheBool::encrypt(a, &cks);
-+                let ct_b = FheBool::encrypt(b, &cks);
-+
-+                let selected = ct_cond.if_then_else(&ct_a, &ct_b);
-+                // Consuming the result is what used to panic
-+                let consumed = &selected | &ct_a;
-+
-+                let expected = if cond { a } else { b };
-+                assert_eq!(selected.decrypt(&cks), expected);
-+                assert_eq!(consumed.decrypt(&cks), expected | a);
-+            }
-+        }
-+    }
-+}
-+
- #[test]
- fn test_gpu_selection() {
-     let config = ConfigBuilder::default().build();
+@@ -219,26 +178,6 @@ fn generate_ksk_keys(
+     }
+ }
+ 
+-#[cfg(feature = "experimental")]
+-fn generate_wopbs_keys(params: &[(ClassicPBSParameters, WopbsParameters)]) {
+-    println!("Generating woPBS keys");
+-
+-    for (i, (params_shortint, params_wopbs)) in params.iter().copied().enumerate() {
+-        println!("Generating [{} / {}]", i + 1, params.len());
+-
+-        let start = std::time::Instant::now();
+-
+-        let _ = KEY_CACHE_WOPBS.get_from_param((params_shortint, params_wopbs));
+-
+-        let stop = start.elapsed().as_secs();
+-
+-        println!("Generation took {stop} seconds");
+-
+-        // Clear keys as we go to avoid filling the RAM
+-        KEY_CACHE_WOPBS.clear_in_memory_cache()
+-    }
+-}
+-
+ fn generate_boolean_keys(params: &[BooleanParameters]) {
+     println!("Generating boolean (ClientKey, ServerKey)");
+ 
+```
+
+**File**: `tfhe/src/integer/keycache.rs` (modified, +0/-33)
+```diff
+@@ -1,9 +1,5 @@
+-#[cfg(feature = "experimental")]
+-use crate::integer::wopbs::WopbsKey;
+ use crate::integer::{ClientKey, IntegerKeyKind, ServerKey};
+ use crate::shortint::atomic_pattern::AtomicPatternParameters;
+-#[cfg(feature = "experimental")]
+-use crate::shortint::{PBSParameters, WopbsParameters};
+ 
+ #[cfg(feature = "hpu")]
+ use std::sync::{Mutex, OnceLock};
+@@ -99,33 +95,4 @@ impl IntegerKeyCache {
+     }
+ }
+ 
+-#[derive(Default)]
+-#[cfg(feature = "experimental")]
+-pub struct WopbsKeyCache;
+-
+-#[cfg(feature = "experimental")]
+-impl WopbsKeyCache {
+-    pub fn get_from_params<P>(&self, (pbs_params, wopbs_params): (P, WopbsParameters)) -> WopbsKey
+-    where
+-        P: Into<PBSParameters>,
+-    {
+-        let cache = &crate::shortint::keycache::KEY_CACHE_WOPBS;
+-        let shortint_wops_key = cache.get_from_param((pbs_params, wopbs_params));
+-
+-        // For cargo nextest which runs in separate processes we load keys once per process, this
+-        // allows to remove the copy loaded in the keycache to avoid OOM errors, the nice effect of
+-        // linux file caching is that the keys will still be in RAM most likely, not requiring re
+-        // re-reading from file for all processes.
+-        if let Ok(val) = std::env::var("TFHE_RS_CLEAR_IN_MEMORY_KEY_CACHE") {
+-            if val == "1" {
+-                cache.clear_in_memory_cache()
+-            }
+-        }
+-
+-        WopbsKey::from(shortint_wops_key.wopbs_key().clone())
+-    }
+-}
+-
+ pub static KEY_CACHE: IntegerKeyCache = IntegerKeyCache::new();
+-#[cfg(feature = "experimental")]
+-pub static KEY_CACHE_WOPBS: WopbsKeyCache = WopbsKeyCache;
+```
+
+**File**: `tfhe/src/integer/mod.rs` (modified, +0/-2)
+```diff
+@@ -67,8 +67,6 @@ pub mod parameters;
+ pub mod prelude;
+ pub mod public_key;
+ pub mod server_key;
+-#[cfg(feature = "experimental")]
+-pub mod wopbs;
+ 
+ #[cfg(feature = "gpu")]
+ pub mod gpu;
+```
+
+**File**: `tfhe/src/integer/parameters/mod.rs` (modified, +2/-142)
+```diff
+@@ -4,14 +4,14 @@ use crate::integer::key_switching_key::KeySwitchingKeyView;
+ use crate::integer::server_key::ServerKey;
+ use crate::shortint::parameters::{
+     CarryModulus, CiphertextConformanceParams, CompactCiphertextListExpansionKind,
+-    CompactPublicKeyEncryptionParameters, EncryptionKeyChoice, MessageModulus,
++    CompactPublicKeyEncryptionParameters, MessageModulus,
+ };
+ pub use crate::shortint::parameters::{
+     DecompositionBaseLog, DecompositionLevelCount, DynamicDistribution, GlweDimension,
+     LweDimension, PolynomialSize, StandardDev,
+ };
+ use crate::shortint::PBSParameters;
+-pub use crate::shortint::{CiphertextModulus, ClassicPBSParameters, WopbsParameters};
++pub use crate::shortint::{CiphertextModulus, ClassicPBSParameters};
+ 
+ #[derive(Clone, Copy)]
+ pub enum IntegerCompactCiphertextListExpansionMode<'key> {
+@@ -21,146 +21,6 @@ pub enum IntegerCompactCiphertextListExpansionMode<'key> {
+     UnpackAndSanitizeIfNecessary(&'key ServerKey),
+ }
+ 
+-pub const ALL_PARAMETER_VEC_INTEGER_16_BITS: [WopbsParameters; 2] = [
+-    PARAM_MESSAGE_4_CARRY_4_KS_PBS_16_BITS,
+-    PARAM_MESSAGE_2_CARRY_2_KS_PBS_16_BITS,
+-];
+-
+-pub const PARAM_MESSAGE_4_CARRY_4_KS_PBS_16_BITS: WopbsParameters = WopbsParameters {
+-    lwe_dimension: LweDimension(481),
+-    glwe_dimension: GlweDimension(1),
+-    polynomial_size: PolynomialSize(2048),
+-    lwe_noise_distribution: DynamicDistribution::new_gaussian_from_std_dev(StandardDev(
+-        0.00061200133780220371345,
+-    )),
+-    glwe_noise_distribution: DynamicDistribution::new_gaussian_from_std_dev(StandardDev(
+-        0.00000000000000022148688116005568513645324585951,
+-    )),
+-    pbs_base_log: DecompositionBaseLog(9),
+-    pbs_level: DecompositionLevelCount(4),
+-    ks_level: DecompositionLevelCount(9),
+-    ks_base_log: DecompositionBaseLog(1),
+-    pfks_level: DecompositionLevelCount(4),
+-    pfks_base_log: DecompositionBaseLog(9),
+-    pfks_noise_distribution: DynamicDistribution::new_gaussian_from_std_dev(StandardDev(
+-        0.00000000000000022148688116005568513645324585951,
+-    )),
+-    cbs_level: DecompositionLevelCount(4),
+-    cbs_base_log: DecompositionBaseLog(6),
+-    message_modulus: MessageModulus(16),
+-    carry_modulus: CarryModulus(16),
+-    ciphertext_modulus: CiphertextModulus::new_native(),
+-    encryption_key_choice: EncryptionKeyChoice::Big,
+-};
+-
+-pub const PARAM_MESSAGE_2_CARRY_2_KS_PBS_16_BITS: WopbsParameters = WopbsParameters {
+-    lwe_dimension: LweDimension(493),
+-    glwe_dimension: GlweDimension(1),
+-    polynomial_size: PolynomialSize(2048),
+-    lwe_noise_distribution: DynamicDistribution::new_gaussian_from_std_dev(StandardDev(
+-        0.00049144710341316649172,
+-    )),
+-    glwe_noise_distribution: DynamicDistribution::new_gaussian_from_std_dev(StandardDev(
+-        0.00000000000000022148688116005568513645324585951,
+-    )),
+-    pbs_base_log: DecompositionBaseLog(16),
+-    pbs_level: DecompositionLevelCount(2),
+-    ks_level: DecompositionLevelCount(5),
+-    ks_base_log: DecompositionBaseLog(2),
+-    pfks_level: DecompositionLevelCount(2),
+-    pfks_base_log: DecompositionBaseLog(16),
+-    pfks_noise_distribution: DynamicDistribution::new_gaussian_from_std_dev(StandardDev(
+-        0.00000000000000022148688116005568513645324585951,
+-    )),
+-    cbs_level: DecompositionLevelCount(6),
+-    cbs_base_log: DecompositionBaseLog(3),
+-    message_modulus: MessageModulus(4),
+-    carry_modulus: CarryModulus(4),
+-    ciphertext_modulus: CiphertextModulus::new_native(),
+-    encryption_key_choice: EncryptionKeyChoice::Big,
+-};
+-
+-pub const PARAM_MESSAGE_4_CARRY_4_KS_PBS_32_BITS: WopbsParameters = WopbsParameters {
+-    lwe_dimension: LweDimension(481),
+-    glwe_dimension: GlweDimension(1),
+-    polynomial_size: PolynomialSize(2048),
+-    lwe_noise_distribution: DynamicDistribution::new_gaussian_from_std_dev(StandardDev(
+-        0.00061200133780220371345,
+-    )),
+-    glwe_noise_distribution: DynamicDistribution::new_gaussian_from_std_dev(StandardDev(
+-        0.00000000000000022148688116005568513645324585951,
+-    )),
+-    pbs_base_log: DecompositionBaseLog(9),
+-    pbs_level: DecompositionLevelCount(4),
+-    ks_level: DecompositionLevelCount(9),
+-    ks_base_log: DecompositionBaseLog(1),
+-    pfks_level: DecompositionLevelCount(4),
+-    pfks_base_log: DecompositionBaseLog(9),
+-    pfks_noise_distribution: DynamicDistribution::new_gaussian_from_std_dev(StandardDev(
+-        0.00000000000000022148688116005568513645324585951,
+-    )),
+-    cbs_level: DecompositionLevelCount(4),
+-    cbs_base_log: DecompositionBaseLog(6),
+-    message_modulus: MessageModulus(16),
+-    carry_modulus: CarryModulus(16),
+-    ciphertext_modulus: CiphertextModulus::new_native(),
+-    encryption_key_choice: EncryptionKeyChoice::Big,
+-};
+-
+-pub const PARAM_MESSAGE_2_CARRY_2_KS_PBS_32_BITS: WopbsParameters = WopbsParameters {
+-    lwe_dimension: LweDimension(481),
+-    glwe_dimension: GlweDimension(1),
+-    polynomial_size: PolynomialSize(2048),
+-    lwe_noi
+```
+
+**File**: `tfhe/src/integer/wopbs/mod.rs` (removed, +0/-1222)
+```diff
+@@ -1,1222 +0,0 @@
+-//! Module with the definition of the WopbsKey (WithOut padding PBS Key).
+-//!
+-//! This module implements the generation of another server public key, which allows to compute
+-//! an alternative version of the programmable bootstrapping. This does not require the use of a
+-//! bit of padding.
+-#[cfg(all(test, feature = "experimental"))]
+-mod test;
+-
+-use serde::{Deserialize, Serialize};
+-
+-#[derive(Clone, Serialize, Deserialize)]
+-pub struct WopbsKey {
+-    wopbs_key: crate::shortint::wopbs::WopbsKey,
+-}
+-
+-#[cfg(feature = "experimental")]
+-pub use experimental::*;
+-
+-#[cfg(feature = "experimental")]
+-mod experimental {
+-    use core::slice;
+-
+-    pub use crate::core_crypto::commons::parameters::{CiphertextCount, PlaintextCount};
+-    use crate::core_crypto::prelude::*;
+-    use crate::integer::client_key::utils::i_crt;
+-    use crate::integer::{ClientKey, CrtCiphertext, IntegerCiphertext, RadixCiphertext, ServerKey};
+-    use crate::shortint::atomic_pattern::AtomicPattern;
+-    use crate::shortint::ciphertext::{Degree, NoiseLevel};
+-    use crate::shortint::client_key::atomic_pattern::EncryptionAtomicPattern;
+-    use crate::shortint::client_key::StandardClientKeyView;
+-    use crate::shortint::server_key::StandardServerKeyView;
+-    use crate::shortint::WopbsParameters;
+-
+-    use crate::shortint::wopbs::WopbsLUTBase;
+-
+-    use super::WopbsKey;
+-
+-    use rayon::prelude::*;
+-
+-    #[must_use]
+-    pub struct IntegerWopbsLUT {
+-        inner: WopbsLUTBase,
+-    }
+-
+-    impl IntegerWopbsLUT {
+-        pub fn new(
+-            small_lut_size: PlaintextCount,
+-            output_ciphertext_count: CiphertextCount,
+-        ) -> Self {
+-            Self {
+-                inner: WopbsLUTBase::new(small_lut_size, output_ciphertext_count),
+-            }
+-        }
+-    }
+-
+-    impl TryFrom<Vec<Vec<u64>>> for IntegerWopbsLUT {
+-        type Error = &'static str;
+-
+-        fn try_from(value: Vec<Vec<u64>>) -> Result<Self, Self::Error> {
+-            let small_lut_size = value[0].len();
+-            if !value.iter().all(|x| x.len() == small_lut_size) {
+-                return Err("All small luts must have the same size");
+-            }
+-
+-            let small_lut_count = value.len();
+-
+-            Ok(Self {
+-                inner: WopbsLUTBase::from_vec(
+-                    value.into_iter().flatten().collect(),
+-                    CiphertextCount(small_lut_count),
+-                ),
+-            })
+-        }
+-    }
+-
+-    impl AsRef<WopbsLUTBase> for IntegerWopbsLUT {
+-        fn as_ref(&self) -> &WopbsLUTBase {
+-            &self.inner
+-        }
+-    }
+-
+-    impl AsMut<WopbsLUTBase> for IntegerWopbsLUT {
+-        fn as_mut(&mut self) -> &mut WopbsLUTBase {
+-            &mut self.inner
+-        }
+-    }
+-
+-    impl std::ops::Index<usize> for IntegerWopbsLUT {
+-        type Output = [u64];
+-
+-        fn index(&self, index: usize) -> &Self::Output {
+-            self.as_ref().get_small_lut(index)
+-        }
+-    }
+-
+-    impl std::ops::IndexMut<usize> for IntegerWopbsLUT {
+-        fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+-            self.as_mut().get_small_lut_mut(index)
+-        }
+-    }
+-
+-    /// ```rust
+-    /// use tfhe::integer::wopbs::{decode_radix, encode_radix};
+-    ///
+-    /// let val = 11;
+-    /// let basis = 2;
+-    /// let nb_block = 5;
+-    /// let radix = encode_radix(val, basis, nb_block);
+-    ///
+-    /// assert_eq!(val, decode_radix(&radix, basis));
+-    /// ```
+-    pub fn encode_radix(val: u64, basis: u64, nb_block: u64) -> Vec<u64> {
+-        let mut output = vec![];
+-        //Bits of message put to 1éfé
+-        let mask = basis - 1;
+-
+-        let mut power = 1_u64;
+-        //Put each decomposition into a new ciphertext
+-        for _ in 0..nb_block {
+-            let mut decomp = val & (mask * power);
+-            decomp /= power;
+-
+-            // fill the vector with the message moduli
+-            output.push(decomp);
+-
+-            //modulus to the power i
+-            power *= basis;
+-        }
+-        output
+-    }
+-
+-    pub fn encode_crt(val: u64, basis: &[u64]) -> Vec<u64> {
+-        let mut output = vec![];
+-        //Put each decomposition into a new ciphertext
+-        for i in basis {
+-            output.push(val % i);
+-        }
+-        output
+-    }
+-
+-    //Concatenate two ciphertexts in one
+-    //Used to compute bivariate wopbs
+-    fn ciphertext_concatenation<T>(ct1: &T, ct2: &T) -> T
+-    where
+-        T: IntegerCiphertext,
+-    {
+-        let mut new_blocks = ct1.blocks().to_vec();
+-        new_blocks.extend_from_slice(ct2.blocks());
+-        T::from_blocks(new_blocks)
+-    }
+-
+-    pub fn encode_mix_radix(mut val: u64, basis: &[u64], modulus: u64) -> Vec<u64> {
+-        let mut output = vec![];
+-        for basis in basis.iter() {
+-            output.push(val % modulus);
+-            val -= val % modulus;
+-            let tmp = (val % (1 << basis)) >> (f64::log2(modulus as f64) as u64);
+-            val >>
+```
+
+**File**: `tfhe/src/integer/wopbs/test.rs` (removed, +0/-302)
+```diff
+@@ -1,302 +0,0 @@
+-#![allow(unused)]
+-
+-use crate::integer::keycache::{KEY_CACHE, KEY_CACHE_WOPBS};
+-use crate::integer::parameters::*;
+-use crate::integer::wopbs::{encode_radix, WopbsKey};
+-use crate::integer::{gen_keys, IntegerKeyKind};
+-use crate::shortint::ciphertext::Degree;
+-use crate::shortint::parameters::parameters_wopbs::*;
+-use crate::shortint::parameters::test_params::*;
+-use crate::shortint::parameters::*;
+-use paste::paste;
+-use rand::Rng;
+-use std::cmp::max;
+-
+-#[cfg(not(tarpaulin))]
+-const NB_TESTS: usize = 10;
+-// Use lower numbers for coverage to ensure fast tests to counter balance slowdown due to code
+-// instrumentation
+-#[cfg(tarpaulin)]
+-const NB_TESTS: usize = 1;
+-
+-fn make_basis(message_modulus: u64) -> Vec<u64> {
+-    match message_modulus {
+-        2 => vec![2],
+-        3 => vec![2],
+-        n if n < 8 => vec![2, 3],
+-        n if n < 16 => vec![2, 5, 7],
+-        _ => vec![3, 7, 13],
+-    }
+-}
+-
+-macro_rules! create_parameterized_test{    (
+-        $name:ident {
+-            $($(#[$cfg:meta])* ($sks_param:ident, $wopbs_param:ident)),*
+-            $(,)?
+-        }
+-    ) => {
+-        ::paste::paste! {
+-            $(
+-                #[test]
+-                $(#[$cfg])*
+-                fn [<test_ $name _ $wopbs_param:lower>]() {
+-                    $name(($sks_param, $wopbs_param))
+-                }
+-            )*
+-        }
+-    };
+-    ($name:ident)=> {
+-        create_parameterized_test!($name
+-        {
+-            (TEST_PARAM_MESSAGE_2_CARRY_2_KS_PBS_GAUSSIAN_2M64, LEGACY_WOPBS_PARAM_MESSAGE_2_CARRY_2_KS_PBS),
+-            #[cfg(not(tarpaulin))]
+-            (TEST_PARAM_MESSAGE_3_CARRY_3_KS_PBS_GAUSSIAN_2M64, LEGACY_WOPBS_PARAM_MESSAGE_3_CARRY_3_KS_PBS),
+-            #[cfg(not(tarpaulin))]
+-            (TEST_PARAM_MESSAGE_4_CARRY_4_KS_PBS_GAUSSIAN_2M64, LEGACY_WOPBS_PARAM_MESSAGE_4_CARRY_4_KS_PBS)
+-        });
+-    };
+-}
+-
+-create_parameterized_test!(wopbs_crt);
+-create_parameterized_test!(wopbs_crt_non_reg);
+-create_parameterized_test!(wopbs_bivariate_radix);
+-create_parameterized_test!(wopbs_bivariate_crt);
+-create_parameterized_test!(wopbs_radix);
+-
+-// test wopbs fake crt with different degree for each Ct
+-pub fn wopbs_crt(params: (ClassicPBSParameters, WopbsParameters)) {
+-    let mut rng = rand::thread_rng();
+-
+-    let basis = make_basis(params.1.message_modulus.0);
+-
+-    let nb_block = basis.len();
+-
+-    let (cks, sks) = KEY_CACHE.get_from_params(params.0, IntegerKeyKind::Radix);
+-    let wopbs_key = KEY_CACHE_WOPBS.get_from_params(params);
+-
+-    let mut msg_space = 1;
+-    for modulus in basis.iter() {
+-        msg_space *= modulus;
+-    }
+-
+-    let mut tmp = 0;
+-    for _ in 0..NB_TESTS {
+-        let clear1 = rng.gen::<u64>() % msg_space;
+-        let mut ct1 = cks.encrypt_crt(clear1, basis.clone());
+-        //artificially modify the degree
+-        for ct in ct1.blocks.iter_mut() {
+-            let degree = params.0.message_modulus.0
+-                * ((rng.gen::<u64>() % (params.0.carry_modulus.0 - 1)) + 1);
+-            ct.degree = Degree::new(degree);
+-        }
+-        let res = cks.decrypt_crt(&ct1);
+-
+-        let ct1 = wopbs_key.keyswitch_to_wopbs_params(&sks, &ct1);
+-        let lut = wopbs_key.generate_lut_crt(&ct1, |x| (x * x) + x);
+-        let ct_res = wopbs_key.wopbs(&ct1, &lut);
+-        let ct_res = wopbs_key.keyswitch_to_pbs_params(&ct_res);
+-
+-        let res_wop = cks.decrypt_crt(&ct_res);
+-        if ((res * res) + res) % msg_space != res_wop {
+-            tmp += 1;
+-        }
+-    }
+-    if tmp != 0 {
+-        println!("failure rate {tmp:?}/{NB_TESTS:?}");
+-        panic!()
+-    }
+-}
+-
+-// From https://github.com/zama-ai/tfhe-rs/issues/849
+-// This checks we do not generate a LUT constant equal to 0, as used to be the case with this
+-// threshold-like LUT
+-pub fn wopbs_crt_non_reg(params: (ClassicPBSParameters, WopbsParameters)) {
+-    let mut rng = rand::thread_rng();
+-
+-    let basis = make_basis(params.1.message_modulus.0);
+-
+-    let nb_block = basis.len();
+-
+-    let (cks, sks) = KEY_CACHE.get_from_params(params.0, IntegerKeyKind::Radix);
+-    let wopbs_key = KEY_CACHE_WOPBS.get_from_params(params);
+-
+-    let mut msg_space = 1;
+-    for modulus in basis.iter() {
+-        msg_space *= modulus;
+-    }
+-
+-    let threshold = msg_space / 2;
+-
+-    let f = |x| (x > threshold) as u64;
+-
+-    let mut tmp = 0;
+-    for _ in 0..NB_TESTS {
+-        let clear1 = rng.gen::<u64>() % msg_space;
+-        let mut ct1 = cks.encrypt_crt(clear1, basis.clone());
+-        //artificially modify the degree
+-        for ct in ct1.blocks.iter_mut() {
+-            let degree = params.0.message_modulus.0
+-                * ((rng.gen::<u64>() % (params.0.carry_modulus.0 - 1)) + 1);
+-            ct.degree = Degree::new(degree);
+-        }
+-        let sanity_dec = cks.decrypt_crt(&ct1);
+-        assert_eq!(clear1, sanity_dec);
+-
+-        let ct1 = wopbs_key.keyswitch_to_wopbs_params(&sks, &ct1);
+-        let lut = wopbs_key.generate_lut_crt(&ct1, f
+```
+
+**File**: `tfhe/src/shortint/backward_compatibility/client_key/atomic_pattern.rs` (modified, +2/-1)
+```diff
+@@ -1,10 +1,11 @@
+ use tfhe_versionable::{Upgrade, Version, VersionsDispatch};
+ 
+ use crate::core_crypto::prelude::{GlweSecretKeyOwned, LweSecretKeyOwned};
++use crate::shortint::backward_compatibility::parameters::WopbsParameters;
+ use crate::shortint::client_key::atomic_pattern::{
+     AtomicPatternClientKey, KS32AtomicPatternClientKey, StandardAtomicPatternClientKey,
+ };
+-use crate::shortint::{PBSParameters, WopbsParameters};
++use crate::shortint::PBSParameters;
+ use crate::Error;
+ 
+ #[derive(VersionsDispatch)]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4122** (2026-10-30): chore(zk): remove unused itertools dep (@nsarlin-zama)
 - **PR #4121** (2026-10-28): chore(tfhe-lints): bump dylint 6.3.0 (@nsarlin-zama)
 - **PR #4116** (2026-10-29): fix(gpu): fix cmux metadata (@guillermo-oyarzun)
 - **PR #4115** (2026-10-28): chore(deps-dev): bump fast-uri from 3.1.7 to 3.1.9 in /tfhe/web_wasm_parallel_tests (@dependabot[bot])
 - **PR #4114** (2026-10-29): chore(gpu)!: make all unchecked gpu entry points pub(crate) (@agnesLeroy)
 - **PR #4113** (2026-10-29): chore(gpu): run initcheck and synccheck besides racecheck in ci (@agnesLeroy)
-- **PR #4111** (2026-10-27): chore(deps-dev): bump fast-uri from 3.1.8 to 3.1.9 in /utils/wasm-par-mq/web_tests (@dependabot[bot])
 
 ---
 
@@ -2071,58 +2616,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. gpu): fix cmux metadata (#4116)
-
-**RULE**:
-When implementing operations in `tfhe/src/high_level_api/booleans/base.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `c8cf7821`: gpu): fix cmux metadata (#4116). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/booleans/base.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-#[cfg(feature = "gpu")]
-use crate::shortint::ciphertext::Degree;
-                let mut inner = cuda_key.key.key.if_then_else(
-                // The result encrypts one of the two boolean branches, so its degree
-                // is bounded by the max of the branch degrees. The generic radix
-                // cmux instead sets the worst case of its final message-extraction
-                // LUT (message_modulus - 1), which the boolean wrapper rejects.
-                let branches_max_degree = ct_then.ciphertext.on_gpu(streams).ciphertext.info.blocks
-                    [0]
-                .degree
-                .get()
-                .max(
-                    ct_else.ciphertext.on_gpu(streams).ciphertext.info.blocks[0]
-                        .degree
-                        .get(),
-                );
-                inner.ciphertext.info.blocks[0].degree = Degree::new(branches_max_degree);
-                // Use the checked constructor so an invalid degree on a value
-                // meant to be boolean fails here rather than at a later use.
-                let boolean_inner =
-                    CudaBooleanBlock::from_cuda_radix_ciphertext(inner.into_inner());
-            
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-                let inner = cuda_key.key.key.if_then_else(
-                let boolean_inner = CudaBooleanBlock(inner);
-                let inner = cuda_key.key.key.if_then_else(
-                let boolean_inner = CudaBooleanBlock(inner);
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c8cf7821` are properly handled with clean fallback behavior.
