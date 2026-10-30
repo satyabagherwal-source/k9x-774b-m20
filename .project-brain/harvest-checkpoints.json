@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T22:56:32.632Z",
+  "last_updated": "2026-10-30T23:05:21.312Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "f193789674e7813406a29d133f5f834849339b82c23d4a5af0706c9c5c6ac724",
-      "verified_at": "2026-10-29T00:22:52.082Z",
+      "content_hash": "08a13f0043a308364fac1e6d46132ed9ed28a35bfbfdde6831c9dc5466868060",
+      "verified_at": "2026-10-30T23:05:17.193Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T00:22:52.082Z"
+      "last_updated": "2026-10-30T23:05:17.193Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -17046,14 +17046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kirillzyusko-react-native-keyboard-controller",
-      "content_hash": "ed0f89b375ed7814ee805ec043984d174d45af697fd5dae4cbee84664aeefa2d",
-      "verified_at": "2026-10-27T21:28:59.289Z",
+      "content_hash": "afb1520f0148a66eb124dd0c31edbe1a06649049da9157b0cab46b566b90bf77",
+      "verified_at": "2026-10-30T23:05:21.312Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T21:28:59.289Z"
+      "last_updated": "2026-10-30T23:05:21.312Z"
     },
     "margelo/react-native-blur": {
       "repository": "margelo/react-native-blur",

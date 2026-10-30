@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-ZFMN",
-    "timestamp": "2026-10-28T16:58:44.063Z",
-    "repository": "Qwen/Qwen3-VL-8B-Instruct",
-    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-    "contentHash": "4cfb0c09d6f932745bd1215a18cc0022042f4b7a2e8df2c77aaf50b4c8912236",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-ZREJ",
-    "timestamp": "2026-10-28T16:58:59.323Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "6817ae15182494880c02477f005f68b790175619547c3381202536afc6fb7396",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-8EXL",
     "timestamp": "2026-10-28T17:05:43.065Z",
     "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -7490,6 +7460,36 @@
     "repository": "pallets/flask",
     "learningId": "learn-github-pallets-flask",
     "contentHash": "1339d2f0b236d4e6ce883839260787420ea0ca89478c4d1b422fc21dec36d69c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-YIYK",
+    "timestamp": "2026-10-30T23:05:17.180Z",
+    "repository": "Automattic/harper",
+    "learningId": "learn-github-automattic-harper",
+    "contentHash": "08a13f0043a308364fac1e6d46132ed9ed28a35bfbfdde6831c9dc5466868060",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-YM4Z",
+    "timestamp": "2026-10-30T23:05:21.299Z",
+    "repository": "kirillzyusko/react-native-keyboard-controller",
+    "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
+    "contentHash": "afb1520f0148a66eb124dd0c31edbe1a06649049da9157b0cab46b566b90bf77",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

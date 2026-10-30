@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md`  
 > **Source**: github ([https://github.com/kirillzyusko/react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller))  
-> **Source Version**: `505d7132`  
+> **Source Version**: `43032b5a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T21:28:58.701Z  
+> **Timestamp**: 2026-10-30T23:05:20.605Z  
 > **Learning ID**: `learn-github-kirillzyusko-react-native-keyboard-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kirillzyusko/react-native-keyboard-controller](https://github.com/kirillzyusko/react-native-keyboard-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T21:28:58.281Z  
+> **Harvest Timestamp**: 2026-10-30T23:05:19.854Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⌨️ Keyboard manager which works in identical way on both iOS and Android
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3752 stars
+- **Stars / Engagement**: 3754 stars
 
 ---
 
@@ -348,11 +348,11 @@ using KeyboardBackgroundViewShadowNode = ConcreteViewShadowNode<
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1722** (2026-10-27): **fix: make prepare portable across platforms**
-  *Symptoms*: ## 📜 Description  Remove the Unix-only redirect from `prepare` and keep lifecycle output out of the JSON parsed by the package size script.  ## 💡 Motivation and Context  Fixes #1721. Running `yarn` at the repository root on Windows executes `bob build > /dev/null 2>&1` through `cmd.exe`, which cannot open `/dev/null` and fails before Bob starts.  Removing the redirect alone breaks size calculation: `npm pack --json` runs `prepare` in the foreground, so Bob logs appear before the JSON. The size script then fails with `SyntaxError: Unexpected token 'ℹ'`.  To reproduce the size regression on base commit `0a85aa5d8e`, set `scripts.prepare` in `package.json` to `bob build` and run `node scripts/size.js`. Adding `--foreground-scripts=false` to its `npm pack` command keeps the build enabled and returns only the numeric package size. This passed with Node 20.13.0/npm 10.5.2, Node 22.22.1/npm 10.9.4, and Node 24.15.0/npm 11.12.1 on macOS.  The CI size detector and its automatic PR comment both report a smaller package:  ```text Target:     353214 bytes Current:    353201 bytes Difference:    -13 bytes 📉 ```  ## 📢 Changelog  ### JS  - `package.json`: remove the `/dev/null` redirect from `prepare`. - `scripts/size.js`: pass `--foreground-scripts=false` to `npm pack`.  ## 🤔 How Has This Been Tested?  Verified via this PR.  ## 📸 Screenshots (if appropriate):  <img width="908" height="274" alt="image" src="https://github.com/user-attachments/assets/32
+- **Issue #1729** (2026-10-29): **docs: fix broken trusted by icons**
+  *Symptoms*: ## 📜 Description  Fix broken icons in the homepage's Trusted by section while keeping the images remotely hosted.  ## 💡 Motivation and Context  On the [unfixed homepage](https://github.com/kirillzyusko/react-native-keyboard-controller/blob/505d7132310cf8ddb98b415fba934408f3d26512/docs/src/pages/index.tsx#L31-L193), scroll to **Trusted by** on an affected connection. The six `play-lh.googleusercontent.com` requests fail with `net::ERR_CERT_COMMON_NAME_INVALID`, so the browser shows broken-image placeholders instead of the app icons.  Minimal browser reproduction: save this snippet as an HTML file and open it on the affected connection:  ```html <img   src="https://play-lh.googleusercontent.com/VsgCCgW-ct98JhgVoQzndWCAaXxlP6uMwcjzINYPmeja8cCNISsJDqDFNQrF2IRq9xM=w200-h480-rw"   alt="Bluesky mobile app"   width="100"   height="100" /> ```  The same image paths work on `lh3.googleusercontent.com`. Changing only the hostname restores Bluesky, Pixelfed, Trezor Suite, PocketPal AI, Drakula, and Kwibo. All six requests returned HTTP 200 and decoded successfully after the change; the existing GitHub-hosted icons also loaded. Local copies were considered, but the alternate host keeps the requested remote hosting without adding image assets.  The local docs type-check is blocked by the existing missing `@tsconfig/docusaurus/tsconfig.json`.  ## 📢 Changelog  ### Docs  - `docs/src/pages/index.tsx`: change the six Google-hosted icon URLs from `play-lh.googleusercontent.com` to `lh3.google
 
-- **Issue #1721** (2026-10-27): **Repository setup fails on Windows: `prepare` redirects to `/dev/null`, which cmd cannot open**
-  *Symptoms*: **Describe the bug**  When I set up the repository on Windows with `yarn`, as CONTRIBUTING.md describes, the root package's `prepare` script fails: `bob build > /dev/null 2>&1`. yarn 1 runs lifecycle scripts through cmd.exe on Windows, and cmd has no `/dev/null`. It reads the target as the path `\dev\null`, prints `The system cannot find the path specified.`, and the script exits 1. So the install fails and `lib/` is never built.  In the same checkout, `yarn bob build` without the redirection succeeds and writes `lib/commonjs`, `lib/module` and `lib/typescript`.  **Code snippet**  `package.json`:  ```json "prepare": "bob build > /dev/null 2>&1", ```  **Repo for reproducing**  This repository at the `1.22.9` tag (e3fae4f6a).  **To Reproduce**  1. On Windows, check out `1.22.9` in a clean clone. 2. Run `yarn` at the repository root. 3. The example's install succeeds, then the root install fails:  ``` [4/4] Building fresh packages... $ bob build > /dev/null 2>&1 The system cannot find the path specified. error Command failed with exit code 1. ```  **Expected behavior**  `yarn` completes on Windows, and `prepare` builds `lib/` as `yarn bob build` does there:  ``` ✔ Wrote definition files to lib\typescript Done in 21.72s. ```  **Screenshots**  N/A  **Smartphone (please complete the following information):**  - Desktop OS: Windows 11 (10.0.26300), Node 26.12.1, yarn 1.22.22 - Device: N/A (repository setup) - OS: N/A - RN version: N/A (the failure is before any app runs; the example
+- **Issue #1728** (2026-10-29): **fix: prevent first-drag overscroll with Android keyboard insets**
+  *Symptoms*: ## 📜 Description  Limit Android's temporary padding-scroll workaround to drag initiation so short content stops at its real end on the first gesture. Preserve scrolling from the content area when keyboard insets or `blankSpace` make otherwise short content scrollable.  ## 💡 Motivation and Context  Closes #1727.  ### First drag scrolls beyond the real range  In the [reported reproduction at 4030e68](https://github.com/itsramiel/KeyboardControllerOverscroll/tree/4030e68):  1. Select **insets / short** and tap **Field 1**. 2. After the keyboard opens, drag slowly upward and keep the finger down after reaching the end. 3. Release, then repeat the drag.  The first drag keeps moving the form past the NEXT button and leaves empty space below it. Releasing snaps the form back; the second drag stops correctly. Both gestures should stop with NEXT above the keyboard.  Captured on Android 16 / API 36 with FabricExample, RN 0.87.1 / Fabric / Hermes, using the reproduction's form geometry. The reporter's Expo SDK 58 / RN 0.88 environment was not run.  Native measurements explain the visible difference:  ```text content height: 1662px viewport height: 1986px bottom padding: 883px real maximum: 1662 + 883 - 1986 = 559px  before: first drag reaches 861px, then returns to 559px on release after:  first and second drags stop at 559px ```  The included [ClippingScrollViewDecoratorViewTest.kt](https://github.com/kirillzyusko/react-native-keyboard-controller/blob/e6fbc39eb041814846b403d009b217a5
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -369,303 +369,468 @@ using KeyboardBackgroundViewShadowNode = ConcreteViewShadowNode<
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `182029e7` (2026-10-13)
-**Commit Message**: fix: race condition between recycling and resigning first responder (#1678)
+### Incident Patch 1: `f8023c5e` (2026-10-29)
+**Commit Message**: fix: prevent first-drag overscroll with Android `contentInsets` (#1728)
 
 ## 📜 Description
 
-Make sure a focused `KeyboardGestureArea` input is actually unfocused
-when its screen is closed.
+Limit Android's temporary padding-scroll workaround to drag initiation
+so short content stops at its real end on the first gesture. Preserve
+scrolling from the content area when keyboard insets or `blankSpace`
+make otherwise short content scrollable.
 
 ## 💡 Motivation and Context
 
-<!-- Why is this change required? What problem does it solve? -->
-<!-- If it fixes an open issue, please link to the issue here. -->
+Closes #1727.
 
-For `KeyboardGestureArea` inputs we delay `resignFirstResponder` by one
-frame (#727). When we use native-stack and dismiss screen via swipe we
-have two cases:
+### First drag scrolls beyond the real range
 
-- on iOS 26+, UIKit hides the keyboard when the swipe starts but keeps
-the focus. It calls `resignFirstResponder` only when it removes the
-screen. Our swizzle delays that call, and a frame later the input is
-already detached from the window. The resign fails, and the input keeps
-the focus (it then gets recycled and is reused, still focused, on the
-next push).
-- on iOS 18, UIKit calls `resignFirstResponder` at the start of the
-transition, while the input is still in the window, so the delayed
-resign succeeds and the swipe works fine.
+In the [reported reproduction at
+4030e68](https://github.com/itsramiel/KeyboardControllerOverscroll/tree/4030e68):
 
-It causes two bugs:
+1. Select **insets / short** and tap **Field 1**.
+2. After the keyboard opens, drag slowly upward and keep the finger down
+after reaching the end.
+3. Release, then repeat the drag.
 
-- after a swipe-back, the next time you open the screen and tap the
-input, only the Paste/AutoFill menu appears and the k
+The first drag keeps moving the form past the NEXT button and leaves
+empty space below it. Releasing snaps the form back; the second drag
+stops correctly. Both gestures should stop with NEXT above the keyboard.
 
-**File**: `ios/swizzling/UIResponderSwizzle.swift` (modified, +44/-0)
-```diff
-@@ -9,6 +9,7 @@ import Foundation
- import UIKit
- 
- private var pendingBecomeResponder: TextInput?
-+private weak var pendingResignResponder: UIResponder?
- private var originalResignFirstResponder: IMP?
- private var originalBecomeFirstResponder: IMP?
- 
-@@ -69,9 +70,13 @@ extension UIResponder {
-       }
- 
-       KeyboardAreaExtender.shared.hide()
-+      pendingResignResponder = self
- 
-       // Postpone execution of the original resignFirstResponder
-       DispatchQueue.main.asyncAfter(deadline: .now() + UIUtils.nextFrame) {
-+        if pendingResignResponder === self {
-+          pendingResignResponder = nil
-+        }
-         NotificationCenter.default.post(
-           name: .shouldIgnoreKeyboardEvents, object: nil, userInfo: ["ignore": false]
-         )
-@@ -86,6 +91,45 @@ extension UIResponder {
- 
-     let implementation = imp_implementationWithBlock(swizzledResignImplementation)
-     method_setImplementation(originalResignMethod, implementation)
-+
-+    swizzleWillMoveToWindow(originalResignSelector)
-+  }
-+
-+  /// If an input with a postponed resign is about to leave its window (native-stack pop on iOS 26+,
-+  /// unmount, etc.), then the postponed resign will fail, because input will not be attached to the
-+  /// window anymore, and window will keep a stale first responder. So we resign it immediately while
-+  /// input is still attached.
-+  private static func swizzleWillMoveToWindow(_ resignSelector: Selector) {
-+    let selector = #selector(UIView.willMove(toWindow:))
-+
-+    for cls in [UITextView.self, UITextField.self] as [AnyClass] {
-+      guard let method = class_getInstanceMethod(cls, selector) else { continue }
-+
-+      // may be inherited from `UIView` - we add own method to the class in this case,
-+      // so the change doesn't affect all views
-+      let originalImplementation = method_getImplementation(method)
-+      typealias Function = @convention(c) (AnyObject, Selector, UIWindow?) -> Void
-+      let castOriginalImplementation = unsafeBitCast(originalImplementation, to: Function.self)
-+
-+      let swizzledImplementation: @convention(block) (UIView, UIWindow?) -> Void = { view, newWindow in
-+        if newWindow !== view.window, pendingResignResponder === view {
-+          pendingResignResponder = nil
-+          NotificationCenter.default.post(
-+            name: .shouldIgnoreKeyboardEvents, object: nil, userInfo: ["ignore": false]
-+          )
-+          (view as? TextInput)?.inputAccessoryView = nil
-+          KeyboardAreaExtender.shared.remove()
-+          _ = view.callOriginalResignFirstResponder(resignSelector)
-+        }
-+
-+        castOriginalImplementation(view, selector, newWindow)
-+      }
-+
-+      let implementation = imp_implementationWithBlock(swizzledImplementation)
-+      if !class_addMethod(cls, selector, implementation, method_getTypeEncoding(method)) {
-+        method_setImplementation(method, implementation)
-+      }
-+    }
-   }
- 
-   private func callOriginalResignFirstResponder(_ selector: Selector) -> Bool {
-```
+Captured on Android 16 / API 36 with FabricExample, RN 0.87.1 / Fabric /
+Hermes, using the reproduction's form geometry. The reporter's Expo SDK
+58 / RN 0.88 environment was not run.
 
----
-
-### Incident Patch 2: `e4d63d0a` (2026-10-16)
-**Commit Message**: fix: restore original delegate only for inputs with substituted delegate (#1684)
-
-## 📜 Description
-
-Restore original delegate only for inputs with substituted delegate.
-
-## 💡 Motivation and Context
-
-When an input gets focused, we replace its UIKit delegate with our
-`KCTextInputCompositeDelegate`. It intercepts selection/text changes and
-forwards everything else to the original delegate. When the focus moves
-away, we put the original delegate back. There is only one composite
-delegate per `KeyboardProvider`, and it stores the original delegate of
-only one input at a time.
-
-Since #1027 we install the composite delegate one frame after the focus,
-so that other libraries that set their own delegate later (e.g. via
-decorator views) aren't overwritten. But we restore the original
-delegate **synchronously**. If the focus changes again before that
-deferred frame, we "restore" an input that never received the composite
-delegate. And because the composite still stores the delegate of the
-*previous* input, we assign another input's delegate to it.
-
-For example, input `A` (with `maxLength={3}`, already full) is focused
-and we call `B.focus(); A.focus(); B.focus()` in one handler:
-
-1. `B.focu
-
-**File**: `ios/observers/FocusedInputObserver.swift` (modified, +8/-2)
-```diff
-@@ -264,9 +264,15 @@ public class FocusedInputObserver: NSObject {
-   }
- 
-   private func substituteDelegateBack(_ input: UIResponder?) {
--    if let textField = input as? UITextField, let oldDelegate = delegate.activeDelegate as? UITextFieldDelegate {
-+    // substitution is deferred, so the input may lose focus before it gets our delegate;
-+    // in this case `activeDelegate` belongs to another input and must not be assigned
-+    if let textField = input as? UITextField, textField.delegate === delegate,
-+       let oldDelegate = delegate.activeDelegate as? UITextFieldDelegate
-+    {
-       textField.setForceDelegate(oldDelegate)
--    } else if let textView = input as? UITextView, let oldDelegate = delegate.activeDelegate as? UITextViewDelegate {
-+    } else if let textView = input as? UITextView, textView.delegate === delegate,
-+              let oldDelegate = delegate.activeDelegate as? UITextViewDelegate
-+    {
-       textView.setForceDelegate(oldDelegate)
-     }
-   }
-```
-
----
-
-### Incident Patch 3: `5d3751a3` (2026-10-26)
-**Commit Message**: fix: restore iOS build caches before codegen (#1719)
-
-## 📜 Description
-
-Restore iOS build caches before `pod install`, so codegen regenerates
-current headers instead of having them overwritten by cached files.
-Apply the same ordering to the Fabric, legacy example, and iOS E2E build
-workflows.
-
-## 💡 Motivation and Context
-
-After #1714 added `KeyboardExtender.transparent`, the Fabric build
-failed with:
+Native measurements explain the visible difference:
 
 ```text
-KeyboardExtenderManager.mm:265:20: no member named 'transparent' in 'facebook::react::KeyboardExtenderProps'
+content he
+
+**File**: `android/src/main/java/com/reactnativekeyboardcontroller/views/ClippingScrollViewDecoratorView.kt` (modified, +23/-0)
+```diff
+@@ -19,6 +19,9 @@ class ClippingScrollViewDecoratorView(
+   private var insetTop = 0.0
+   private var appliedTopInsetPx = 0
+   private var paddingScrollWorkaroundActive = false
++  private var expandedContentView: View? = null
++  private var contentBottomBeforeExpansion = 0
++  private var expansionTouchAction = MotionEvent.ACTION_CANCEL
+ 
+   override fun onAttachedToWindow() {
+     super.onAttachedToWindow()
+@@ -35,6 +38,10 @@ class ClippingScrollViewDecoratorView(
+ 
+     if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+       paddingScrollWorkaroundActive = shouldUsePaddingScrollWorkaround(scrollView, event)
++    } else if (scrollView.scrollY != 0) {
++      // Only expand the range to start the drag. Once scrolling begins, use the
++      // real content bounds so padding does not keep extending the drag range.
++      paddingScrollWorkaroundActive = false
+     }
+ 
+     val handled =
+@@ -54,6 +61,17 @@ class ClippingScrollViewDecoratorView(
+     return handled
+   }
+ 
++  override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
++    if (disallowIntercept && expansionTouchAction == MotionEvent.ACTION_MOVE) {
++      // ScrollView has taken the drag. Restore the bounds before onTouchEvent
++      // calculates its range, including on the first movement of a tiny range.
++      paddingScrollWorkaroundActive = false
++      expandedContentView?.bottom = contentBottomBeforeExpansion
++    }
++
++    super.requestDisallowInterceptTouchEvent(disallowIntercept)
++  }
++
+   fun setContentInsetBottom(value: Double) {
+     insetBottom = value
+     decorateScrollView()
+@@ -129,10 +147,15 @@ class ClippingScrollViewDecoratorView(
+     }
+ 
+     return try {
++      expandedContentView = contentView
++      contentBottomBeforeExpansion = originalBottom
++      expansionTouchAction = event.actionMasked
+       contentView.bottom = expandedBottom
+       super.dispatchTouchEvent(event)
+     } finally {
+       contentView.bottom = originalBottom
++      expandedContentView = null
++      expansionTouchAction = MotionEvent.ACTION_CANCEL
+     }
+   }
+ 
 ```
 
-The cache includes the whole `FabricExample/ios/build` directory,
-including codegen output. The logs show `pod install` generating RNKC
-sources, followed by cache restoration replacing them with files from
-before the prop existed.
-
-The existing FabricExample and [workflow at
-`57f6c923a4`](https://github.com/kirillzyusko/react-native-keyboard-controller/blob/57f6c923a462bba422f381a097d7de55df16c5b5/.github/workflows/build-ios-fabric.yml)
-provide the runnable reproduction. On the GitHub-hosted macOS 15.7.9
-runner with Xcode 16.4:
-
-1. Run that workflow at the cache-producing commit, `e3fae4f6ab`, to
-populate the build cache with generated headers that lack `transpar
-
-**File**: `.github/workflows/build-ios-fabric.yml` (modified, +8/-7)
+**File**: `android/src/test/java/com/reactnativekeyboardcontroller/views/ClippingScrollViewDecoratorViewTest.kt` (added, +193/-0)
 ```diff
-@@ -95,20 +95,21 @@ jobs:
-           key: ${{ runner.os }}-fabric-pods-${{ hashFiles('**/Podfile.lock') }}
-           restore-keys: |
-             ${{ runner.os }}-fabric-pods-
--      - name: Install Pods
--        run: |
--          if ! bundle exec pod install; then
--            bundle exec pod update --repo-update
--          fi
--        env:
--          USE_CCACHE: "1"
-       - name: Restore DerivedData cache
-+        # Restore before pod install so cached codegen files are regenerated.
-         uses: actions/cache@v5
-         with:
-           path: FabricExample/ios/build
-           key: ${{ runner.os }}-fabric-derived-data-xcode-${{ env.XCODE_VERSION }}-${{ hashFiles('**/Podfile.lock', '**/Gemfile.lock', '**/package.json', '**/yarn.lock') }}
-           restore-keys: |
-             ${{ runner.os }}-fabric-derived-data-xcode-${{ env.XCODE_VERSION }}-
-+      - name: Install Pods
-+        run: |
-+          if ! bundle exec pod install; then
-+            bundle exec pod update --repo-update
-+          fi
-+        env:
-+          USE_CCACHE: "1"
-       - name: Install xcpretty
-         run: gem install xcpretty
-       - name: Build App
+@@ -0,0 +1,193 @@
++package com.reactnativekeyboardcontroller.views
++
++import android.content.Context
++import android.os.SystemClock
++import android.view.MotionEvent
++import android.view.View
++import android.view.ViewConfiguration
++import android.widget.FrameLayout
++import android.widget.ScrollView
++import androidx.core.widget.NestedScrollView
++import androidx.test.core.app.ApplicationProvider
++import com.facebook.react.bridge.BridgeReactContext
++import com.facebook.react.uimanager.ThemedReactContext
++import org.junit.Assert.assertEquals
++import org.junit.Assert.assertFalse
++import org.junit.Assert.assertTrue
++import org.junit.Test
++import org.junit.runner.RunWith
++import org.robolectric.RobolectricTestRunner
++import org.robolectric.annotation.Config
++
++@RunWith(RobolectricTestRunner::class)
++@Config(sdk = [33], manifest = Config.NONE)
++class ClippingScrollViewDecoratorViewTest {
++  @Test
++  fun `first drag on short clickable content scrolls without exceeding the padded range`() {
++    val (decorator, scrollView) = createScrollView(contentHeight = 600, paddingBottom = 400)
++
++    // This is why the interception workaround is needed in the first place.
++    assertFalse(scrollView.canScrollVertically(1))
++
++    val offsets = dragUp(decorator, scrollView)
++
++    assertTrue("A drag starting on the child must scroll", offsets.max() > 0)
++    assertTrue("The first drag must respect the real range", offsets.all { it in 0..200 })
++    assertEquals(200, scrollView.scrollY)
++    assertEquals(600, scrollView.getChildAt(0).height)
++  }
++
++  @Test
++  fun `short content without a padding-created range stays still`() {
++    val (decorator, scrollView) = createScrollView(contentHeight = 600, paddingBottom = 0)
++
++    assertTrue(dragUp(decorator, scrollView).all { it == 0 })
++    assertEquals(600, scrollView.getChildAt(0).height)
++  }
++
++  @Test
++  fun `nested scroll view also starts a padding-only drag and respects its real range`() {
++    val (decorator, scrollView) = createScrollView(contentHeight = 600, paddingBottom = 400, nested = true)
++
++    val offsets = dragUp(decorator, scrollView)
++
++    assertTrue("A nested drag starting on the child must scroll", offsets.max() > 0)
++    assertTrue("The nested drag must respect the real range", offsets.all { it in 0..200 })
++    assertEquals(200, scrollView.scrollY)
++    assertEquals(600, scrollView.getChildAt(0).height)
++  }
++
++  @Test
++  fun `content that already overflows keeps its normal scroll range`() {
++    val (decorator, scrollView) = createScrollView(contentHeight = 1200, paddingBottom = 400)
++
++    assertTrue(scrollView.canScrollVertically(1))
++    assertTrue(dragUp(decorator, scrollView).all { it in 0..800 })
++    assertTrue(scrollView.scrollY > 0)
++    assertEquals(1200, scrollView.getChildAt(0).height)
++  }
++
++  @Test
++  fun `a second drag from offset 10 consumes only the remaining 90 pixels`() {
++    assertInterruptedDrag(nested = false)
++  }
++
++  @Test
++  fun `a nested second drag from offset 10 consumes only the remaining 90 pixels`() {
++    assertInterruptedDrag(nested = true)
++  }
++
++  @Test
++  fun `a new drag after returning to zero can bootstrap again`() {
++    val (decorator, scrollView) = createScrollView(contentHeight = 200, paddingBottom = 700)
++    dragTenPixels(decorator, scrollView)
++    assertEquals(10, scrollView.scrollY)
++    dragUp(decorator, scrollView, listOf(100, 110, 120, 130, 130))
++    assertEquals(0, scrollView.scrollY)
++
++    val offsets = dragUp(decorator, scrollView, listOf(180) + (170 downTo -30 step 10) + -30)
++
++    assertTrue(offsets.all { it in 0..100 })
++    assertEquals(100, scrollView.scrollY)
++  }
++
++  @Test
++  fun `a one pixel padding-created range cannot be exceeded on the first move`() {
++    val (decorator, scrollView) = createScrollView(contentHeight = 200, paddingBottom = 601)
++
++    val offsets = dragUp(decorator, scrollView, listOf(180) + (170 downTo -30 step 10) + -30)
++
++    assertTrue("The real scroll range is only one pixel", offsets.all { it in 0..1 })
++    assertEquals(1, scrollView.scrollY)
++  }
++
++  @Test
++  fun `a drag without a clickable child also respects a one pixel range`() {
++    val (decorator, scrollView) = createScrollView(contentHeight = 200, paddingBottom = 601, clickable = false)
++
++    val offsets = dragUp(decorator, scrollView, listOf(180, 100, 0, 0))
++
++    assertTrue("Even a large first movement must use the real range", offsets.all { it in 0..1 })
++    assertEquals(1, scrollView.scrollY)
++  }
++
++  private fun assertInterruptedDrag(nested: Boolean) {
++    val (decorator, scrollView) = createScrollView(contentHeight = 200, paddingBottom = 700, nested = nested)
++
++    dragTenPixels(decorator, scrollView)
++    assertEquals("The first gesture stops at exactly 10 pixels", 10, scrollView.scrollY)
++
++    val offsets = dragUp(decorator, scrollView, listOf(180) + (170 downTo -30 step 10) + -30)
++
++    assertTrue("The second gesture stays within the original 100-pixel range", offsets.all { it in 10..100 })
 ```
 
-**File**: `.github/workflows/build-ios.yml` (modified, +8/-7)
-```diff
-@@ -91,6 +91,14 @@ jobs:
-           key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
-           restore-keys: |
-             ${{ runner.os }}-pods-
-+      - name: Restore DerivedData cache
-+        # Restore before pod install so cached codegen files are regenerated.
-+        uses: actions/cache@v5
-+        with:
-+          path: example/ios/build
-+          key: ${{ runner.os }}-derived-data-xcode-${{ env.XCODE_VERSION }}-${{ hashFiles('**/Podfile.lock', '**/Gemfile.lock', '**/package.json', '**/yarn.lock') }}
-+          restore-keys: |
-+            ${{ runner.os }}-derived-data-xcode-${{ env.XCODE_VERSION }}-
-       - name: Install Pods
-         run: |
-           if ! bundle exec pod install; then
-@@ -100,13 +108,6 @@ jobs:
-           USE_CCACHE: "1"
-       - name: Install xcpretty
-         run: gem install xcpretty
--      - name: Restore DerivedData cache
--        uses: actions/cache@v5
--        with:
--          path: example/ios/build
--          key: ${{ runner.os }}-derived-data-xcode-${{ env.XCODE_VERSION }}-${{ hashFiles('**/Podfile.lock', '**/Gemfile.lock', '**/package.json', '**/yarn.lock') }}
--          restore-keys: |
--            ${{ runner.os }}-derived-data-xcode-${{ env.XCODE_VERSION }}-
-       - name: Build App
-         run: "set -o pipefail && xcodebuild \
-           CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ \
+---
+
+### Incident Patch 2: `00b09bcf` (2026-10-29)
+**Commit Message**: docs: fix broken trusted by icons (#1729)
+
+## 📜 Description
+
+Fix broken icons in the homepage's Trusted by section while keeping the
+images remotely hosted.
+
+## 💡 Motivation and Context
+
+On the [unfixed
+homepage](https://github.com/kirillzyusko/react-native-keyboard-controller/blob/505d7132310cf8ddb98b415fba934408f3d26512/docs/src/pages/index.tsx#L31-L193),
+scroll to **Trusted by** on an affected connection. The six
+`play-lh.googleusercontent.com` requests fail with
+`net::ERR_CERT_COMMON_NAME_INVALID`, so the browser shows broken-image
+placeholders instead of the app icons.
+
+Minimal browser reproduction: save this snippet as an HTML file and open
+it on the affected connection:
+
+```html
+<img
+  src="https://play-lh.googleusercontent.com/VsgCCgW-ct98JhgVoQzndWCAaXxlP6uMwcjzINYPmeja8cCNISsJDqDFNQrF2IRq9xM=w200-h480-rw"
+  alt="Bluesky mobile app"
+  width="100"
+  height="100"
+/>
 ```
 
-**File**: `.github/workflows/ios-e2e-test.yml` (modified, +8/-7)
+The same image paths work on `lh3.googleusercontent.com`. Changing only
+the hostname restores Bluesky, Pixelfed, Trezor Suite, PocketPal AI,
+Drakula, and Kwibo. All six requests returned HTTP 200 and decoded
+successfully after the change; the existing GitHub-hosted icons also
+loaded. Local copies were cons
+
+**File**: `docs/src/pages/index.tsx` (modified, +6/-6)
 ```diff
-@@ -91,6 +91,14 @@ jobs:
-           key: ${{ runner.os }}-xcode-${{ matrix.config.xcode }}-pods-${{ hashFiles('**/Podfile.lock') }}
-           restore-keys: |
-             ${{ runner.os }}-xcode-${{ matrix.config.xcode }}-pods-
-+      - name: Restore DerivedData cache
-+        # Restore before pod install so cached codegen files are regenerated.
-+        uses: actions/cache@v5
-+        with:
-+          path: example/ios/build
-+          key: ${{ runner.os }}-e2e-derived-data-xcode-${{ matrix.config.xcode }}-${{ hashFiles('**/Podfile.lock', '**/Gemfile.lock', '**/package.json', '**/yarn.lock') }}
-+          restore-keys: |
-+            ${{ runner.os }}-e2e-derived-data-xcode-${{ matrix.config.xcode }}-
-       - name: Install pods
-         working-directory: ${{ env.WORKING_DIRECTORY }}/ios
-         run: |
-@@ -99,13 +107,6 @@ jobs:
-           fi
-         env:
-           USE_CCACHE: "1"
--      - name: Restore DerivedData cache
--        uses: actions/cache@v5
--        with:
--          path: example/ios/build
--          key: ${{ runner.os }}-e2e-derived-data-xcode-${{ matrix.config.xcode }}-${{ hashFiles('**/Podfile.lock', '**/Gemfile.lock', '**/package.json', '**/yarn.lock') }}
--          restore-keys: |
--            ${{ runner.os }}-e2e-derived-data-xcode-${{ matrix.config.xcode }}-
-       - name: Build app
-         working-directory: e2e
-         run: yarn build-example:ios
+@@ -42,7 +42,7 @@ const trustedBy = [
+     name: "Expensify",
+   },
+   {
+-    img: "https://play-lh.googleusercontent.com/VsgCCgW-ct98JhgVoQzndWCAaXxlP6uMwcjzINYPmeja8cCNISsJDqDFNQrF2IRq9xM=w200-h480-rw",
++    img: "https://lh3.googleusercontent.com/VsgCCgW-ct98JhgVoQzndWCAaXxlP6uMwcjzINYPmeja8cCNISsJDqDFNQrF2IRq9xM=w200-h480-rw",
+     alt: "Bluesky mobile app",
+     link: "https://github.com/bluesky-social/social-app",
+     name: "Bluesky",
+@@ -150,19 +150,19 @@ const trustedBy = [
+     name: "Edge",
+   },
+   {
+-    img: "https://play-lh.googleusercontent.com/4G1ZS2y5ekD1eRgpOahOj6v_vq1UlN0VVNcmHFFIS2SFGotr3vbZStS_6RZU8l4G7Ryy=w200-h480-rw",
++    img: "https://lh3.googleusercontent.com/4G1ZS2y5ekD1eRgpOahOj6v_vq1UlN0VVNcmHFFIS2SFGotr3vbZStS_6RZU8l4G7Ryy=w200-h480-rw",
+     alt: "Pixelfed App",
+     link: "https://github.com/pixelfed/pixelfed-rn",
+     name: "Pixelfed",
+   },
+   {
+-    img: "https://play-lh.googleusercontent.com/xs4ZUIOATV_bGfdl2yd0mWev9bcK2_a4ofnUEIIQe2_BecUqOVQ7YmtXu41Ereg0Kg=w200-h480-rw",
++    img: "https://lh3.googleusercontent.com/xs4ZUIOATV_bGfdl2yd0mWev9bcK2_a4ofnUEIIQe2_BecUqOVQ7YmtXu41Ereg0Kg=w200-h480-rw",
+     alt: "Trezor Suite App",
+     link: "https://github.com/trezor/trezor-suite",
+     name: "Trezor Suite",
+   },
+   {
+-    img: "https://play-lh.googleusercontent.com/BFYQT9Pugt8shdo75MjFZh5F_IMn7btSj8mXknbvSfmVV6JASCKQqcLcERvGdD0iN8A=w200-h480-rw",
++    img: "https://lh3.googleusercontent.com/BFYQT9Pugt8shdo75MjFZh5F_IMn7btSj8mXknbvSfmVV6JASCKQqcLcERvGdD0iN8A=w200-h480-rw",
+     alt: "PocketPal AI App",
+     link: "https://github.com/a-ghorbani/pocketpal-ai",
+     name: "PocketPal AI",
+@@ -174,7 +174,7 @@ const trustedBy = [
+     name: "Juno",
+   },
+   {
+-    img: "https://play-lh.googleusercontent.com/KsXljWMtBXw131OcLT44ByxwznfdgM1a-2gZVYNBzPBKz9gqOCxEIhC83IpS35OIZQc=w200-h480-rw",
++    img: "https://lh3.googleusercontent.com/KsXljWMtBXw131OcLT44ByxwznfdgM1a-2gZVYNBzPBKz9gqOCxEIhC83IpS35OIZQc=w200-h480-rw",
+     alt: "Drakula: Watch Videos App",
+     link: "https://play.google.com/store/apps/details?id=app.drakula",
+     name: "Drakula",
+@@ -186,7 +186,7 @@ const trustedBy = [
+     name: "Swan",
+   },
+   {
+-    img: "https://play-lh.googleusercontent.com/N2Rh_iRbYkX4a5l4u3kMqFu6n5Wk7KkVQnWwXh0MmSGdAfau4IiGFlLmzVU_oeoV9Lo=w240-h480-rw",
++    img: "https://lh3.googleusercontent.com/N2Rh_iRbYkX4a5l4u3kMqFu6n5Wk7KkVQnWwXh0MmSGdAfau4IiGFlLmzVU_oeoV9Lo=w240-h480-rw",
+     alt: "Kwibo: Fast Kwai HD Videos Downloader",
+     link: "https://play.google.com/store/apps/details?id=com.kwai.video.downloader.nowatermark",
+     name: "Kwibo",
+```
+
+---
+
+### Incident Patch 3: `43032b5a` (2026-10-29)
+**Commit Message**: fix: inverted `KeyboardChatScrollView` can not be scrolled at the beginning (#1637)
+
+## 📜 Description
+
+Allow an inverted `KeyboardChatScrollView` to start scrolling from
+translated content while the keyboard is open on Android.
+
+## 💡 Motivation and Context
+
+Closes
+https://github.com/kirillzyusko/react-native-keyboard-controller/issues/1553.
+
+In the existing [Chat Kit
+example](https://github.com/kirillzyusko/react-native-keyboard-controller/blob/505d7132310cf8ddb98b415fba934408f3d26512/FabricExample/src/screens/Examples/KeyboardChatScrollView/index.tsx),
+select **FlashList**, enable **inverted**, and set lifting mode to
+**whenAtEnd**. Open the keyboard, scroll to the beginning of the
+conversation, then swipe up from the top of the visible messages. Before
+this change, the gesture dismisses the keyboard instead of scrolling the
+conversation. After this change, the same gesture scrolls the messages
+with the keyboard open.
+
+Android's `ScrollView.inChild()` checks the direct child's layout bounds
+without its `translationY`. The top inset translates that child, leaving
+visible content outside the initial hit area. Temporarily extend the
+child's bottom during `ACTION_DOWN`, then restore
+
+**File**: `android/src/main/java/com/reactnativekeyboardcontroller/views/ClippingScrollViewDecoratorView.kt` (modified, +36/-4)
+```diff
+@@ -44,11 +44,22 @@ class ClippingScrollViewDecoratorView(
+       paddingScrollWorkaroundActive = false
+     }
+ 
++    // ScrollView.inChild() ignores its direct child's translationY when it
++    // initializes a gesture. contentInsetTop is represented by translating
++    // that child, so the translated portion is visible but cannot start a
++    // scroll (the gap appears at the top once the ScrollView is inverted).
++    // Include the translated visual range only while dispatching ACTION_DOWN;
++    // subsequent events use the real bounds after ScrollView has initialized
++    // the gesture.
++    val translatedContentNeedsExpandedHitRange =
++      event.actionMasked == MotionEvent.ACTION_DOWN && appliedTopInsetPx > 0
++
+     val handled =
+-      if (paddingScrollWorkaroundActive) {
+-        dispatchWithExpandedContentRange(scrollView, event)
+-      } else {
+-        super.dispatchTouchEvent(event)
++      when {
++        paddingScrollWorkaroundActive -> dispatchWithExpandedContentRange(scrollView, event)
++        translatedContentNeedsExpandedHitRange ->
++          dispatchWithTranslatedContentRange(scrollView, event)
++        else -> super.dispatchTouchEvent(event)
+       }
+ 
+     if (
+@@ -142,6 +153,27 @@ class ClippingScrollViewDecoratorView(
+     val expandedBottom =
+       max(originalBottom, scrollView.height + scrollView.scrollY + MIN_SCROLL_RANGE_PX)
+ 
++    return dispatchWithTemporaryContentBottom(contentView, event, expandedBottom)
++  }
++
++  private fun dispatchWithTranslatedContentRange(
++    scrollView: ViewGroup,
++    event: MotionEvent,
++  ): Boolean {
++    val contentView = scrollView.getChildAt(0)
++    val originalBottom = contentView?.bottom ?: 0
++    val translatedBottom = originalBottom + appliedTopInsetPx + MIN_SCROLL_RANGE_PX
++
++    return dispatchWithTemporaryContentBottom(contentView, event, translatedBottom)
++  }
++
++  private fun dispatchWithTemporaryContentBottom(
++    contentView: View?,
++    event: MotionEvent,
++    expandedBottom: Int,
++  ): Boolean {
++    val originalBottom = contentView?.bottom ?: 0
++
+     if (contentView == null || expandedBottom == originalBottom) {
+       return super.dispatchTouchEvent(event)
+     }
+```
+
+**File**: `android/src/test/java/com/reactnativekeyboardcontroller/views/ClippingScrollViewDecoratorViewTest.kt` (modified, +27/-1)
+```diff
+@@ -1,6 +1,7 @@
+ package com.reactnativekeyboardcontroller.views
+ 
+ import android.content.Context
++import android.content.res.Resources
+ import android.os.SystemClock
+ import android.view.MotionEvent
+ import android.view.View
+@@ -111,6 +112,31 @@ class ClippingScrollViewDecoratorViewTest {
+     assertEquals(1, scrollView.scrollY)
+   }
+ 
++  @Test
++  fun `visible translated content in an inverted scroll view can start a drag`() {
++    assertTranslatedContentCanScroll(nested = false)
++  }
++
++  @Test
++  fun `visible translated content in an inverted nested scroll view can start a drag`() {
++    assertTranslatedContentCanScroll(nested = true)
++  }
++
++  private fun assertTranslatedContentCanScroll(nested: Boolean) {
++    val (decorator, scrollView) = createScrollView(contentHeight = 200, paddingBottom = 0, nested = nested)
++
++    // Inversion maps the translated content onto the top 200 pixels of the screen.
++    scrollView.scaleY = -1f
++    decorator.setContentInsetTop(700.0 / Resources.getSystem().displayMetrics.density)
++    scrollView.scrollTo(0, 100)
++    val offsetBeforeDrag = scrollView.scrollY
++
++    val offsets = dragUp(decorator, scrollView, listOf(100, 90, 80, 70, 60, 50, 50))
++
++    assertTrue("The message must move from $offsetBeforeDrag; observed $offsets", scrollView.scrollY < offsetBeforeDrag)
++    assertTrue("The drag must stay inside the real scroll range", offsets.all { it in 0..100 })
++  }
++
+   private fun assertInterruptedDrag(nested: Boolean) {
+     val (decorator, scrollView) = createScrollView(contentHeight = 200, paddingBottom = 700, nested = nested)
+ 
+@@ -142,7 +168,7 @@ class ClippingScrollViewDecoratorViewTest {
+     val themedContext = ThemedReactContext(BridgeReactContext(context), context)
+     val decorator = ClippingScrollViewDecoratorView(themedContext)
+     val scrollView = if (nested) NestedScrollView(context) else ScrollView(context)
+-    val content = View(context).apply { isClickable = clickable }
++    val content = FrameLayout(context).apply { isClickable = clickable }
+ 
+     scrollView.overScrollMode = View.OVER_SCROLL_NEVER
+     scrollView.clipToPadding = false
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1729** (2026-10-29): docs: fix broken trusted by icons (@kirillzyusko)
+- **PR #1728** (2026-10-29): fix: prevent first-drag overscroll with Android keyboard insets (@kirillzyusko)
 - **PR #1722** (2026-10-27): fix: make prepare portable across platforms (@kirillzyusko)
 - **PR #1719** (2026-10-26): fix: restore iOS build caches before codegen (@kirillzyusko)
 - **PR #1718** (2026-10-26): chore: release 1.22.9 (@kirillzyusko)
 - **PR #1717** (2026-10-26): fix: support `View` style props on `KeyboardToolbar.Group` on Android with fabric (@RodSarhan)
-- **PR #1714** (2026-10-26): feat: `transparent` prop for `KeyboardExtender` (@kylesuss)
-- **PR #1713** (2026-10-23): docs: keep PR verification concise and preserve CI evidence (@kirillzyusko)
 
 ---
 
@@ -685,44 +850,43 @@ populate the build cache with generated headers that lack `transpar
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. race condition between recycling and resigning first responder (#1678)
+## X. prevent first-drag overscroll with Android `contentInsets` (#1728)
 
 **RULE**:
-When implementing operations in `ios/swizzling/UIResponderSwizzle.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kirillzyusko/react-native-keyboard-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `android/src/main/java/com/reactnativekeyboardcontroller/views/ClippingScrollViewDecoratorView.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kirillzyusko/react-native-keyboard-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `182029e7`: race condition between recycling and resigning first responder (#1678). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f8023c5e`: prevent first-drag overscroll with Android `contentInsets` (#1728). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `ios/swizzling/UIResponderSwizzle.swift`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/reactnativekeyboardcontroller/views/ClippingScrollViewDecoratorView.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-private weak var pendingResignResponder: UIResponder?
-      pendingResignResponder = self
-        if pendingResignResponder === self {
-          pendingResignResponder = nil
-        }
+  private var expandedContentView: View? = null
+  private var contentBottomBeforeExpansion = 0
+  private var expansionTouchAction = MotionEvent.ACTION_CANCEL
+    } else if (scrollView.scrollY != 0) {
+      // Only expand the range to start the drag. Once scrolling begins, use the
+      // real content bounds so padding does not keep extending the drag range.
+      paddingScrollWorkaroundActive = false
+  override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+    if (disallowIntercept && expansionTouchAction == MotionEvent.ACTION_MOVE) {
+      // ScrollView has taken the drag. Restore the bounds before onTouchEvent
+      // calculates its range, including on the first movement of a tiny range.
+      paddingScrollWorkaroundActive = false
+      expandedContentView?.bottom = contentBottomBeforeExpansion
+    }
 
-    swizzleWillMoveToWindow(originalResignSelector)
+    super.requestDisallowInterceptTouchEvent(disallowIntercept)
   }
 
-  /// If an input with a postponed resign is about to leave its window (native-stack pop on iOS 26+,
-  /// unmount, etc.), then the postponed resign will fail, because input will not be attached to the
-  /// window anymore, and window will keep a stale first responder. So we resign it immediately while
-  /// input is still attached.
-  private static func swizzleWillMoveToWindow(_ resignSelector: Selector) {
-    let selector = #selector(UIView.willMove(toWindow:))
-
-    for cls in [UITextView.self, UITextField.self] as [AnyClass] {
-      guard let method = class_getInstanceMethod(cls, selector) else { continue }
-
-      // may be inherited from `UIView` - we add own method to the class in this case,
-      // so the change doesn't affect all views
-      let originalImplementation = method_getImplementation(method)
-      typealias Function = @convention(c) (AnyObject, Selector, UIWindow?) -> Void
-      let castOriginalImplementation = unsafeBitCast(
+      expandedContentView = contentView
+      contentBottomBeforeExpansion = originalBottom
+      expansionTouchAction = event.actionMasked
+      expandedContentView = null
+      expansionTouchAction = MotionEvent.ACTION_CANCEL
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -732,4 +896,4 @@ private weak var pendingResignResponder: UIResponder?
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `182029e7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f8023c5e` are properly handled with clean fallback behavior.

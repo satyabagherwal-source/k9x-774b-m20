@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T22:56:39.783Z",
-    "lastVerified": "2026-10-30T22:56:39.783Z",
+    "lastChecked": "2026-10-30T23:05:26.252Z",
+    "lastVerified": "2026-10-30T23:05:26.252Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -139,12 +139,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T22:34:40.202Z",
-    "lastVerified": "2026-10-30T22:34:40.202Z",
+    "lastChecked": "2026-10-30T23:05:26.239Z",
+    "lastVerified": "2026-10-30T23:05:26.239Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -153,7 +153,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "66a52434"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -791,14 +792,14 @@
     "officialUrl": "https://github.com/Automattic/harper",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T00:22:51.444Z",
-    "lastVerified": "2026-10-29T00:22:51.444Z",
+    "lastChecked": "2026-10-30T23:05:14.809Z",
+    "lastVerified": "2026-10-30T23:05:14.809Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-automattic-harper",
-    "contentHash": "f193789674e7813406a29d133f5f834849339b82c23d4a5af0706c9c5c6ac724",
+    "contentHash": "08a13f0043a308364fac1e6d46132ed9ed28a35bfbfdde6831c9dc5466868060",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1344,9 +1345,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-10-30T19:05:36.093Z",
+    "lastChecked": "2026-10-30T23:05:21.223Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-10-30T19:05:36.093Z"
+    "lastVerified": "2026-10-30T23:05:21.223Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -4525,9 +4526,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-10-29T23:57:07.573Z",
+    "lastChecked": "2026-10-30T23:05:23.787Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-10-29T23:57:07.573Z"
+    "lastVerified": "2026-10-30T23:05:23.787Z"
   },
   "telemt-telemt": {
     "name": "telemt",
@@ -5306,9 +5307,9 @@
   "aquasecurity-tfsec": {
     "name": "tfsec",
     "officialUrl": "https://github.com/aquasecurity/tfsec",
-    "lastChecked": "2026-10-30T00:46:43.310Z",
+    "lastChecked": "2026-10-30T23:05:18.820Z",
     "revisionIdentifier": "b692c20b",
-    "lastVerified": "2026-10-30T00:46:43.310Z"
+    "lastVerified": "2026-10-30T23:05:18.820Z"
   },
   "rqlite-rqlite": {
     "name": "rqlite/rqlite",
@@ -11432,5 +11433,29 @@
     "lastChecked": "2026-10-30T22:56:29.760Z",
     "revisionIdentifier": "254006ae",
     "lastVerified": "2026-10-30T22:56:29.760Z"
+  },
+  "fastify-fastify": {
+    "name": "fastify",
+    "officialUrl": "https://github.com/fastify/fastify",
+    "lastChecked": "2026-10-30T23:05:13.726Z",
+    "revisionIdentifier": "5df959f3",
+    "lastVerified": "2026-10-30T23:05:13.726Z"
+  },
+  "kirillzyusko-react-native-keyboard-controller": {
+    "name": "kirillzyusko/react-native-keyboard-controller",
+    "officialUrl": "https://github.com/kirillzyusko/react-native-keyboard-controller",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T23:05:19.854Z",
+    "lastVerified": "2026-10-30T23:05:19.854Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
+    "contentHash": "afb1520f0148a66eb124dd0c31edbe1a06649049da9157b0cab46b566b90bf77",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

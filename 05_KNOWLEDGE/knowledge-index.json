@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T22:56:32.558Z",
+  "last_updated": "2026-10-30T23:05:21.219Z",
   "total_verified_learnings": 1178,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3972,8 +3972,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "2d7635f7",
-      "content_hash": "f193789674e7813406a29d133f5f834849339b82c23d4a5af0706c9c5c6ac724",
+      "source_version": "26d3b3dd",
+      "content_hash": "08a13f0043a308364fac1e6d46132ed9ed28a35bfbfdde6831c9dc5466868060",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -4026,6 +4026,11 @@
           "number": 5471,
           "title": "build(deps): bump rustls in /harper-desktop/src-tauri (#4724)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5931,
+          "title": "web): enable platform checkbox by default",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4033,7 +4038,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T00:22:51.978Z",
+      "verified_at": "2026-10-30T23:05:17.084Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -143082,14 +143087,19 @@
       "slug": "kirillzyusko-react-native-keyboard-controller",
       "platform": "github",
       "source_url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
-      "source_version": "505d7132",
-      "content_hash": "ed0f89b375ed7814ee805ec043984d174d45af697fd5dae4cbee84664aeefa2d",
+      "source_version": "43032b5a",
+      "content_hash": "afb1520f0148a66eb124dd0c31edbe1a06649049da9157b0cab46b566b90bf77",
       "dossier_path": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
       "promoted_rules": [
         {
           "number": 5020,
           "title": "race condition between recycling and resigning first responder (#1678)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5932,
+          "title": "prevent first-drag overscroll with Android `contentInsets` (#1728)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -143098,7 +143108,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T21:28:59.190Z",
+      "verified_at": "2026-10-30T23:05:21.198Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156774,6 +156784,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T22:56:32.542Z"
+    },
+    "rule-5931": {
+      "learning_id": "rule-5931",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5931,
+      "title": "web): enable platform checkbox by default",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "26d3b3dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:05:17.084Z"
+    },
+    "rule-5932": {
+      "learning_id": "rule-5932",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5932,
+      "title": "prevent first-drag overscroll with Android `contentInsets` (#1728)",
+      "source_url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
+      "source_version": "43032b5a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:05:21.198Z"
     }
   },
   "aliases": {

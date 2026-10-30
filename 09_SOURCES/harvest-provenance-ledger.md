@@ -6359,3 +6359,5 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `50ae5918` | Multi-dimensional audit evidence | 2026-10-30T22:50:03.547Z |
 | `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `c7d88ddc` | Multi-dimensional audit evidence | 2026-10-30T22:56:32.277Z |
 | `learn-github-pallets-flask` | `https://github.com/pallets/flask` | `49943b5a` | Multi-dimensional audit evidence | 2026-10-30T22:56:32.623Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `26d3b3dd` | Multi-dimensional audit evidence | 2026-10-30T23:05:17.184Z |
+| `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `43032b5a` | Multi-dimensional audit evidence | 2026-10-30T23:05:21.302Z |

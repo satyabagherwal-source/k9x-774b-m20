@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "2d7635f7",
+    "sourceVersion": "26d3b3dd",
     "license": "Apache-2.0",
-    "contentHash": "f193789674e7813406a29d133f5f834849339b82c23d4a5af0706c9c5c6ac724",
-    "lastHarvestedAt": "2026-10-29T00:22:52.073Z",
+    "contentHash": "08a13f0043a308364fac1e6d46132ed9ed28a35bfbfdde6831c9dc5466868060",
+    "lastHarvestedAt": "2026-10-30T23:05:17.184Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -11343,10 +11343,10 @@
     "repository": "kirillzyusko/react-native-keyboard-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kirillzyusko/react-native-keyboard-controller",
-    "sourceVersion": "505d7132",
+    "sourceVersion": "43032b5a",
     "license": "MIT",
-    "contentHash": "ed0f89b375ed7814ee805ec043984d174d45af697fd5dae4cbee84664aeefa2d",
-    "lastHarvestedAt": "2026-10-27T21:28:59.280Z",
+    "contentHash": "afb1520f0148a66eb124dd0c31edbe1a06649049da9157b0cab46b566b90bf77",
+    "lastHarvestedAt": "2026-10-30T23:05:21.302Z",
     "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller"
   },
   "margelo-react-native-blur": {
