@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T13:37:46.518Z",
-    "lastVerified": "2026-10-30T13:37:46.518Z",
+    "lastChecked": "2026-10-30T13:46:34.616Z",
+    "lastVerified": "2026-10-30T13:46:34.616Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -239,12 +239,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T13:09:09.665Z",
-    "lastVerified": "2026-10-30T13:09:09.665Z",
+    "lastChecked": "2026-10-30T13:46:29.228Z",
+    "lastVerified": "2026-10-30T13:46:29.228Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -253,7 +253,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "aa56dfcb"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -938,14 +939,14 @@
     "officialUrl": "https://github.com/weaviate/weaviate",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T21:37:22.181Z",
-    "lastVerified": "2026-10-28T21:37:22.181Z",
+    "lastChecked": "2026-10-30T13:46:30.631Z",
+    "lastVerified": "2026-10-30T13:46:30.631Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "72f00540277944fc4190da5608cd61e3808330fc8a4d5710f75b51f670b86cc3",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "contentHash": "711603553ed7804b58a1608cb150e0c54f47efc85727e22b8c6fbe1d3e32249c",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1248,12 +1249,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cryfs-cryfs": {
-    "name": "cryfs/cryfs",
+    "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T06:29:51.074Z",
-    "lastVerified": "2026-10-30T06:29:51.074Z",
+    "lastChecked": "2026-10-30T13:46:24.224Z",
+    "lastVerified": "2026-10-30T13:46:24.224Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -1262,7 +1263,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e2da97b1"
   },
   "tursodatabase-turso": {
     "name": "tursodatabase/turso",
@@ -2019,9 +2021,9 @@
   "fission-fission": {
     "name": "fission",
     "officialUrl": "https://github.com/fission/fission",
-    "lastChecked": "2026-10-28T22:32:57.781Z",
+    "lastChecked": "2026-10-30T13:46:21.811Z",
     "revisionIdentifier": "ae2aabf5",
-    "lastVerified": "2026-10-28T22:32:57.781Z"
+    "lastVerified": "2026-10-30T13:46:21.811Z"
   },
   "tailscale-tailscale": {
     "name": "tailscale",
@@ -5800,14 +5802,14 @@
     "officialUrl": "https://github.com/Ataraxy-Labs/sem",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T17:05:44.717Z",
-    "lastVerified": "2026-10-28T17:05:44.717Z",
+    "lastChecked": "2026-10-30T13:46:18.989Z",
+    "lastVerified": "2026-10-30T13:46:18.989Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ataraxy-labs-sem",
-    "contentHash": "9ea765aba68ac92abed64f1a6c26fff6288cb5e1d1d241634e2ae70522f375ec",
+    "contentHash": "2b6717636ecc4dd311ee40205208a4084cdbaabf4bbc9637ae6979915b1a969b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10031,5 +10033,29 @@
     "lastChecked": "2026-10-30T13:37:26.834Z",
     "revisionIdentifier": "25471d6e",
     "lastVerified": "2026-10-30T13:37:26.834Z"
+  },
+  "rehypejs-rehype": {
+    "name": "rehype",
+    "officialUrl": "https://github.com/rehypejs/rehype",
+    "lastChecked": "2026-10-30T13:46:16.736Z",
+    "revisionIdentifier": "cae74c7f",
+    "lastVerified": "2026-10-30T13:46:16.736Z"
+  },
+  "hmlongco-factory": {
+    "name": "hmlongco/Factory",
+    "officialUrl": "https://github.com/hmlongco/Factory",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-30T13:46:23.595Z",
+    "lastVerified": "2026-10-30T13:46:23.595Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-hmlongco-factory",
+    "contentHash": "810f1508ba42e91ff47b5cfee59eacf39c8dd287abfc59635fb3e7261e0a7d7a",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -6212,3 +6212,6 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `76d7ef16` | Multi-dimensional audit evidence | 2026-10-30T13:37:39.835Z |
 | `learn-github-nirdiamant-rag_techniques` | `https://github.com/NirDiamant/RAG_Techniques` | `4eacd2fa` | Multi-dimensional audit evidence | 2026-10-30T13:37:42.500Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `15bc0611` | Multi-dimensional audit evidence | 2026-10-30T13:37:43.962Z |
+| `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `fee69d96` | Multi-dimensional audit evidence | 2026-10-30T13:46:21.473Z |
+| `learn-github-hmlongco-factory` | `https://github.com/hmlongco/Factory` | `3799543a` | Multi-dimensional audit evidence | 2026-10-30T13:46:24.325Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `0a6bfa1a` | Multi-dimensional audit evidence | 2026-10-30T13:46:32.072Z |

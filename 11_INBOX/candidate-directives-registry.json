@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T13:22:19.378Z",
+  "last_updated": "2026-10-30T13:46:24.336Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3324,6 +3324,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-louis-cfm-coucou"
+    },
+    {
+      "id": "CD-ZSUO",
+      "directive_title": "Empirical Invariant Guard in CHANGELOG",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "hmlongco/Factory",
+      "source_commit": "3799543a",
+      "date_staged": "2026-10-30",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-github-hmlongco-factory"
     }
   ]
 }

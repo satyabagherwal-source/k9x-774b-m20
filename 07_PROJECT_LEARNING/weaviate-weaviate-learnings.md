@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source**: github ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
-> **Source Version**: `d923b9b0`  
+> **Source Version**: `0a6bfa1a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T21:37:22.188Z  
+> **Timestamp**: 2026-10-30T13:46:31.802Z  
 > **Learning ID**: `learn-github-weaviate-weaviate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T21:37:22.181Z  
+> **Harvest Timestamp**: 2026-10-30T13:46:30.631Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16925 stars
+- **Stars / Engagement**: 16930 stars
 
 ---
 
@@ -1732,727 +1732,548 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9e34d6d0` (2026-10-28)
-**Commit Message**: security: bump github.com/go-jose/go-jose/v4 to v4.1.6
+### Incident Patch 1: `97571b7e` (2026-10-28)
+**Commit Message**: fix(add-class): read the collection cap's fail-fast count from the local schema (#13592)
 
-**File**: `go.mod` (modified, +1/-1)
+* Enforce the per-namespace collection cap at the RAFT apply path
+
+- The cap was checked only in the schema handler: a leader count query followed later by the apply, so concurrent creates in one namespace could all pass the check and overshoot the cap.
+- Enforce it in PreApplyFilter on the leader, with Store.Execute serializing AddClass per namespace across the apply, mirroring the tenant-cap mechanism.
+- Unqualified classes count against the global total; uncapped clusters take no lock and read no count.
+- The handler check stays as the fail-fast path.
+
+* Read the collection cap's fail-fast count from the local schema
+
+The handler's cap check queried the leader for a count whose answer is advisory: the authoritative check runs in the FSM's PreApplyFilter since the apply-layer enforcement landed.
+- Read the node-local count instead, dropping a gRPC round trip from every capped create.
+- The fail-open path dies with the query (a local read cannot fail)
+- The leader-side GET_COLLECTIONS_COUNT handling stays so old nodes can still query a new leader during rolling upgrades; the now-dead in-repo 
+
+**File**: `cluster/raft_query_endpoints.go` (modified, +0/-36)
 ```diff
-@@ -35,7 +35,7 @@ require (
- 	github.com/fortytw2/leaktest v1.3.0
- 	github.com/getsentry/sentry-go v0.30.0
- 	github.com/go-ego/gse v0.80.3
--	github.com/go-jose/go-jose/v4 v4.1.4
-+	github.com/go-jose/go-jose/v4 v4.1.6
- 	github.com/go-openapi/errors v0.22.4
- 	github.com/go-openapi/loads v0.23.2
- 	github.com/go-openapi/runtime v0.29.2
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -244,8 +244,8 @@ github.com/go-ini/ini v1.67.0 h1:z6ZrTEZqSWOTyH2FlglNbNgARyHG8oLW9gMELqKr06A=
- github.com/go-ini/ini v1.67.0/go.mod h1:ByCAeIL28uOIIG0E3PJtZPDL8WnHpFKFOtgjp+3Ies8=
- github.com/go-jose/go-jose/v3 v3.0.5 h1:BLLJWbC4nMZOfuPVxoZIxeYsn6Nl2r1fITaJ78UQlVQ=
- github.com/go-jose/go-jose/v3 v3.0.5/go.mod h1:5b+7YgP7ZICgJDBdfjZaIt+H/9L9T/YQrVfLAMboGkQ=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
-```
-
-**File**: `test/acceptance_with_go_client/go.mod` (modified, +1/-1)
-```diff
-@@ -88,7 +88,7 @@ require (
- 	github.com/felixge/httpsnoop v1.0.4 // indirect
- 	github.com/getsentry/sentry-go v0.30.0 // indirect
- 	github.com/go-ini/ini v1.67.0 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-logr/logr v1.4.3 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-ole/go-ole v1.3.0 // indirect
-```
-
-**File**: `test/acceptance_with_go_client/go.sum` (modified, +2/-2)
-```diff
-@@ -183,8 +183,8 @@ github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxI
- github.com/go-errors/errors v1.4.2/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
- github.com/go-ini/ini v1.67.0 h1:z6ZrTEZqSWOTyH2FlglNbNgARyHG8oLW9gMELqKr06A=
- github.com/go-ini/ini v1.67.0/go.mod h1:ByCAeIL28uOIIG0E3PJtZPDL8WnHpFKFOtgjp+3Ies8=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
-```
-
-**File**: `test/benchmark_bm25/go.sum` (modified, +2/-2)
-```diff
-@@ -44,8 +44,8 @@ github.com/getsentry/sentry-go v0.30.0 h1:lWUwDnY7sKHaVIoZ9wYqRHJ5iEmoc0pqcRqFko
- github.com/getsentry/sentry-go v0.30.0/go.mod h1:WU9B9/1/sHDqeV8T+3VwwbjeR5MSXs/6aqG3mqZrezA=
- github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxIA=
- github.com/go-errors/errors v1.4.2/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
-```
-
----
-
-### Incident Patch 2: `687a2113` (2026-10-28)
-**Commit Message**: Merge pull request #13629 from weaviate/fix-authz-batch-refs-log-flake
-
-test(authz): wait for pending authz logs before measuring batch refs
-
-**File**: `test/acceptance/authz/batch_refs_test.go` (modified, +1/-1)
-```diff
-@@ -69,7 +69,7 @@ func TestAuthZBatchRefAuthZCalls(t *testing.T) {
- 	helper.CreateObjectAuth(t, &models.Object{ID: UUID1, Class: className2}, adminKey)
- 
- 	ls := newLogScanner(containers[0].Container())
--	ls.GetAuthzLogs(t) // startup and object class creation logs that are irrelevant
-+	ls.SkipAuthzLogs(t) // startup and object class creation logs that are irrelevant
- 
- 	from := beaconStart + className1 + "/" + UUID1.String() + "/ref"
- 	to := beaconStart + UUID1
-```
-
-**File**: `test/acceptance/authz/helper.go` (modified, +17/-0)
-```diff
-@@ -17,6 +17,7 @@ import (
- 	"fmt"
- 	"strings"
- 	"testing"
-+	"time"
- 
- 	"github.com/testcontainers/testcontainers-go"
- 	"google.golang.org/grpc/metadata"
-@@ -256,3 +257,19 @@ func (s *logScanner) GetAuthzLogs(t *testing.T) []string {
- 
- 	return newLines
+@@ -123,42 +123,6 @@ func (s *Raft) QuerySchema() (models.Schema, error) {
+ 	return resp.Schema, nil
  }
-+
-+// SkipAuthzLogs consumes authz lines until a read finds none. Docker delivers
-+// container logs asynchronously, so a single read can miss lines of requests
-+// that already returned, and the next read would count them for the wrong
-+// request.
-+func (s *logScanner) SkipAuthzLogs(t *testing.T) {
-+	t.Helper()
-+
-+	for deadline := time.Now().Add(10 * time.Second); time.Now().Before(deadline); {
-+		time.Sleep(200 * time.Millisecond)
-+		if len(s.GetAuthzLogs(t)) == 0 {
-+			return
-+		}
-+	}
-+	t.Fatal("authz logs still arriving after 10s")
-+}
+ 
+-// QueryCollectionsCount issues a leader-directed count query. An empty
+-// namespace returns the cluster-global total; a non-empty namespace returns
+-// the count restricted to classes in that namespace.
+-func (s *Raft) QueryCollectionsCount(namespace string) (int, error) {
+-	ctx := context.Background()
+-	if entSentry.Enabled() {
+-		transaction := sentry.StartSpan(ctx, "grpc.client",
+-			sentry.WithTransactionName("raft.query.collections.count"),
+-			sentry.WithDescription("Query the collections count"),
+-		)
+-		transaction.SetData("namespace", namespace)
+-		ctx = transaction.Context()
+-		defer transaction.Finish()
+-	}
+-
+-	req := cmd.QueryCollectionsCountRequest{Namespace: namespace}
+-	subCommand, err := json.Marshal(&req)
+-	if err != nil {
+-		return 0, fmt.Errorf("marshal collections count request (namespace=%q): %w", namespace, err)
+-	}
+-	command := &cmd.QueryRequest{
+-		Type:       cmd.QueryRequest_TYPE_GET_COLLECTIONS_COUNT,
+-		SubCommand: subCommand,
+-	}
+-	queryResp, err := s.Query(ctx, command)
+-	if err != nil {
+-		return 0, fmt.Errorf("execute collections count query (namespace=%q): %w", namespace, err)
+-	}
+-
+-	resp := cmd.QueryCollectionsCountResponse{}
+-	if err := json.Unmarshal(queryResp.Payload, &resp); err != nil {
+-		return 0, fmt.Errorf("unmarshal collections count response (namespace=%q): %w", namespace, err)
+-	}
+-	return resp.Count, nil
+-}
+-
+ // QueryTenants build a Query to read the tenants of a given class that will be directed to the leader to ensure we
+ // will read the class with strong consistency
+ func (s *Raft) QueryTenants(class string, tenants []string) ([]*models.Tenant, uint64, error) {
 ```
 
----
-
-### Incident Patch 3: `ba635e72` (2026-10-27)
-**Commit Message**: Merge pull request #13612 from weaviate/fix-recount-properties-single-store-open
-
-perf(db): open and walk each shard once for all startup rebuilds before load
-
-**File**: `adapters/repos/db/index.go` (modified, +1/-2)
+**File**: `cluster/schema/reader.go` (modified, +9/-0)
 ```diff
-@@ -605,8 +605,7 @@ func (i *Index) initAndStoreShards(ctx context.Context, class *models.Class,
- 			withDirs = append(withDirs, shard.name)
+@@ -272,6 +272,15 @@ func (rs SchemaReader) GetShardsStatus(class, tenant string) (models.ShardStatus
+ 
+ func (rs SchemaReader) Len() int { return rs.schema.len() }
+ 
++// CollectionsCount returns the local count of stored classes: the global total
++// for an empty namespace, otherwise only classes in that namespace.
++func (rs SchemaReader) CollectionsCount(namespace string) int {
++	t := prometheus.NewTimer(monitoring.GetMetrics().SchemaReadsLocal.WithLabelValues("CollectionsCount"))
++	defer t.ObserveDuration()
++
++	return rs.schema.CollectionsCount(namespace)
++}
++
+ func (rs SchemaReader) retry(f func(*schema) error) error {
+ 	return backoff.Retry(func() error {
+ 		return f(rs.schema)
+```
+
+**File**: `docs/usage_limits.md` (modified, +1/-1)
+```diff
+@@ -46,7 +46,7 @@ On namespace-enabled clusters the chokepoint passes the (namespace-qualified) cl
+ 
+ We deliberately don't route through `UsageForIndex` — that path triggers other usage-module computations beyond a count.
+ 
+-The collection count is **schema/RAFT-backed**: the limit check in `AddClass()` calls `schemaManager.QueryCollectionsCount(namespace)`, which goes through RAFT to the leader. When `NAMESPACES_ENABLED=false` the namespace selector is empty and the response is the cluster-global `len(s.classes)`. When `NAMESPACES_ENABLED=true` the selector is the caller's `principal.Namespace` (namespaced creates already require a namespaced principal) and the count is restricted to stored class names whose `<namespace>:` prefix matches. Aliases live outside this map and do not consume the cap.
++The collection count is **schema/RAFT-backed** and checked twice. `AddClass()` fails fast on the node-local schema via `schemaReader.CollectionsCount(namespace)`, which can lag the leader. The authoritative check runs in the schema FSM's `PreApplyFilter` before the `AddClass` commits. When `NAMESPACES_ENABLED=false` the namespace selector is empty and the response is the cluster-global `len(s.classes)`. When `NAMESPACES_ENABLED=true` the selector is the caller's `principal.Namespace` (namespaced creates already require a namespaced principal) and the count is restricted to stored class names whose `<namespace>:` prefix matches. Aliases live outside this map and do not consume the cap.
+ 
+ ## Error response
+ 
+```
+
+**File**: `usecases/schema/class.go` (modified, +4/-9)
+```diff
+@@ -185,9 +185,9 @@ func (h *Handler) AddClass(ctx context.Context, principal *models.Principal,
+ 		return nil, 0, err
+ 	}
+ 
+-	// Read the limit before the count: no cap is the default, and the count
+-	// costs a round trip to the leader whose answer an uncapped cluster
+-	// discards.
++	// This check fails fast on the local schema, which can lag the leader.
++	// The authoritative cap check runs in the schema FSM's PreApplyFilter
++	// before the AddClass commits.
+ 	limit := h.schemaConfig.MaximumAllowedCollectionsCount.Get()
+ 	if limit != config.DefaultMaximumAllowedCollectionsCount {
+ 		// On namespace-enabled clusters the cap is enforced per namespace.
+@@ -198,12 +198,7 @@ func (h *Handler) AddClass(ctx context.Context, principal *models.Principal,
+ 			countNamespace = principal.Namespace
  		}
- 	}
--	i.prepareDimensionsOfShards(ctx, class, withDirs)
--	i.recountPropertyLengthsOfShards(ctx, class, withDirs)
-+	i.rebuildShardsBeforeLoad(ctx, class, withDirs)
  
- 	hotShardNames := make([]string, 0, len(localShards))
- 
-```
-
-**File**: `adapters/repos/db/shard_dimension_recalculation.go` (modified, +111/-105)
-```diff
-@@ -35,45 +35,21 @@ import (
- 	"github.com/weaviate/weaviate/entities/storobj"
- )
- 
--// prepareDimensionsOfShards migrates or rebuilds the dimensions buckets of active and
--// cold shards before they load, without loading them. A failed shard is retried at load.
--func (i *Index) prepareDimensionsOfShards(ctx context.Context, class *models.Class, shardNames []string) {
--	reindex := i.Config.DimensionsReindex
--	if !i.Config.TrackVectorDimensions || len(shardNames) == 0 ||
--		(!i.Config.MigrateDimensionsToRoaringSet && (reindex == nil || !reindex.enabled)) {
--		return
--	}
--
--	i.rebuildShardsBeforeLoad(ctx, "prepare_dimensions", "dimensions buckets prepared", shardNames,
--		func(logger logrus.FieldLogger, name string) { i.prepareShardDimensions(ctx, logger, class, name) })
--}
--
--func (i *Index) prepareShardDimensions(ctx context.Context, logger logrus.FieldLogger, class *models.Class, name string) {
--	reindex := i.Config.DimensionsReindex
--	rebuild := reindex.pending(i.ID(), name)
-+// prepareShardDimensions migrates the dimensions bucket of a shard that is not loaded,
-+// if asked to. It reports whether the dimensions of the shard are to be reindexed.
-+func (i *Index) prepareShardDimensions(ctx context.Context, logger logrus.FieldLogger, name string) bool {
-+	reindex := i.Config.DimensionsReindex.pending(i.ID(), name)
- 
--	// a rebuild writes a RoaringSet bucket anyway
--	migrated, err := i.prepareUnloadedDimensionsBucket(ctx, name, i.Config.MigrateDimensionsToRoaringSet && !rebuild)
-+	// a reindex writes a RoaringSet bucket anyway
-+	migrated, err := i.prepareUnloadedDimensionsBucket(ctx, name, i.Config.MigrateDimensionsToRoaringSet && !reindex)
- 	if err != nil {
- 		logger.Errorf("could not prepare dimensions: %v", err)
--		return
-+		return false
- 	}
- 	if migrated {
- 		i.removeComputedUsage(logger, name)
- 	}
--	if !rebuild {
--		return
--	}
--
--	start := time.Now()
--	objects, err := i.rebuildUnloadedShardDimensions(ctx, class, name)
--	reindex.record(i.ID(), name, objects, err == nil)
--	if err != nil {
--		logger.Errorf("could not reindex dimensions: %v", err)
--		return
--	}
--	i.removeComputedUsage(logger, name)
--	logger.WithField("objects", objects).WithField("took", time.Since(start)).Info("dimensions reindexed")
-+	return reindex
- }
- 
- func (i *Index) prepareUnloadedDimensionsBucket(ctx context.Context, name string, migrate bool) (bool, error) {
-@@ -92,18 +68,42 @@ func (i *Index) removeComputedUsage(logger logrus.FieldLogger, name string) {
- 	}
- }
- 
--// rebuildUnloadedShardDimensions rebuilds on a shard with only the objects and
--// dimensions buckets open.
--func (i *Index) rebuildUnloadedShardDimensions(ctx context.Context, class *models.Class, name string) (int, error) {
--	if i.unloadedShardIsEmpty(name) {
--		return 0, nil
-+// unloadedDimensionsReindex reindexes the dimensions of a shard before it loads.
-+type unloadedDimensionsReindex struct {
-+	index   *Index
-+	name    string
-+	logger  logrus.FieldLogger
-+	rebuild *dimensionsRebuild
-+}
-+
-+func (r *unloadedDimensionsReindex) empty() error {
-+	return nil
-+}
-+
-+func (r *unloadedDimensionsReindex) begin(ctx context.Context, s *Shard) (objectsVisitor, error) {
-+	if err := s.loadDimensionsBucket(ctx, helpers.DimensionsBucketLSM); err != nil {
-+		return nil, err
- 	}
--	return i.rebuildUnloadedShard(ctx, class, name, func(s *Shard) (int, error) {
--		if err := s.loadDimensionsBucket(ctx, helpers.DimensionsBucketLSM); err != nil {
--			return 0, err
--		}
--		return s.recalculateDimensions(ctx)
--	})
-+	rebuild, err := s.beginDimensionsRebuild(ctx)
-+	if err != nil {
-+		return nil, err
-+	}
-+	r.rebuild = rebuild
-+	return rebuild, nil
-+}
-+
-+func (r *unloadedDimensionsReindex) end(ctx context.Context, walkErr error) error {
-+	return r.rebuild.end(ctx, walkErr)
-+}
-+
-+func (r *unloadedDimensionsReindex) conclude(objects int, took time.Duration, err error) {
-+	r.index.Config.DimensionsReindex.record(r.index.ID(), r.name, objects, err == nil)
-+	if err != nil {
-+		r.logger.Errorf("could not reindex dimensions: %v", err)
-+		return
-+	}
-+	r.index.removeComputedUsage(r.logger, r.name)
-+	r.logger.WithField("objects", objects).WithField("took", took).Info("dimensions reindexed")
- }
- 
- // openUnloadedShard opens only the objects bucket of a shard that is not loaded,
-@@ -187,41 +187,35 @@ func (s *Shard) reindexDimensionsOnLoad(ctx context.Context) error {
- }
- 
- // recalculateDimensions must not run while the shard serves.
--func (s *Shard) recalculateDimensions(ctx context.Context) (objects int, err error) {
--	// a usage scan of the unloaded shard runs migration recovery, which removes a
--	// replacement bucket that has no bucket moved aside next to it
--	unlock, err := shardusage.LockUnloadedDimensionsBucket(ctx, s.index.path(), s.name)
--	if err != nil {
--		return 0, err
--	}
--	defer unlock()
--
--	rows, objects, err := s.scanObjectDimensions(ctx)
-+func (s *Shard) recalculateDimensions(ctx context.Context) (int, error) {
-+	rebuild, err := s.beginDimensionsRebuild(ctx)
- 	if err != nil {
- 		return 0, 
-```
-
-**File**: `adapters/repos/db/shard_recount_property_lengths.go` (modified, +68/-86)
-```diff
-@@ -22,11 +22,8 @@ import (
- 
- 	"github.com/sirupsen/logrus"
- 
--	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
- 	"github.com/weaviate/weaviate/adapters/repos/db/inverted"
--	"github.com/weaviate/weaviate/adapters/repos/db/lsmkv"
- 	"github.com/weaviate/weaviate/entities/additional"
--	"github.com/weaviate/weaviate/entities/models"
- 	"github.com/weaviate/weaviate/entities/storobj"
- )
- 
-@@ -35,56 +32,39 @@ const (
- 	propLengthsRecountFile = propLengthsFile + ".recount"
- )
- 
--// recountPropertyLengthsOfShards recounts the property lengths of active and cold
--// shards before they load, without loading them. A failed shard is retried at load.
--func (i *Index) recountPropertyLengthsOfShards(ctx context.Context, class *models.Class, shardNames []string) {
--	recount := i.Config.PropertyLengthsRecount
--	if recount == nil || !recount.enabled || len(shardNames) == 0 {
--		return
-+// unloadedPropertyLengthsRecount recounts the property lengths of a shard before it loads.
-+type unloadedPropertyLengthsRecount struct {
-+	index     *Index
-+	name      string
-+	logger    logrus.FieldLogger
-+	recounter *propertyLengthsRecounter
-+}
-+
-+func (r *unloadedPropertyLengthsRecount) empty() error {
-+	if r.recounter.trackerReadable() {
-+		return nil
- 	}
-+	return r.recounter.writeEmpty()
-+}
- 
--	i.logger.WithField("action", "recount_property_lengths").WithField("shards", len(shardNames)).
--		Warn("Recounting property lengths before the shards load. It cannot be cancelled, and " +
--			"runs on every startup while environment variable RECOUNT_PROPERTIES_AT_STARTUP is set")
--	i.rebuildShardsBeforeLoad(ctx, "recount_property_lengths", "property lengths recount before load finished",
--		shardNames, func(logger logrus.FieldLogger, name string) {
--			i.recountUnloadedShardPropertyLengths(ctx, logger, class, name)
--		})
-+func (r *unloadedPropertyLengthsRecount) begin(_ context.Context, s *Shard) (objectsVisitor, error) {
-+	return r.recounter, r.recounter.begin(s)
- }
- 
--func (i *Index) recountUnloadedShardPropertyLengths(ctx context.Context, logger logrus.FieldLogger,
--	class *models.Class, name string,
--) {
--	recount := i.Config.PropertyLengthsRecount
--	if !recount.pending(i.ID(), name) {
--		return
-+func (r *unloadedPropertyLengthsRecount) end(_ context.Context, walkErr error) error {
-+	if err := r.recounter.end(walkErr); err != nil {
-+		return err
- 	}
-+	return r.recounter.replaceTrackerFile()
-+}
- 
--	start := time.Now()
--	objects, err := i.recountUnloadedShard(ctx, class, name)
--	recount.record(i.ID(), name, objects, err == nil)
-+func (r *unloadedPropertyLengthsRecount) conclude(objects int, took time.Duration, err error) {
-+	r.index.Config.PropertyLengthsRecount.record(r.index.ID(), r.name, objects, err == nil)
- 	if err != nil {
--		logger.Errorf("could not recount property lengths, retrying when the shard loads: %v", err)
-+		r.logger.Errorf("could not recount property lengths, retrying when the shard loads: %v", err)
- 		return
- 	}
--	logger.WithField("objects", objects).WithField("took", time.Since(start)).Info("property lengths recounted")
--}
--
--func (i *Index) recountUnloadedShard(ctx context.Context, class *models.Class, name string) (int, error) {
--	r := newPropertyLengthsRecounter(shardPath(i.path(), name), i.logger)
--	if i.unloadedShardIsEmpty(name) {
--		if r.trackerReadable() {
--			return 0, nil
--		}
--		return 0, r.writeEmpty()
--	}
--	return i.rebuildUnloadedShard(ctx, class, name, func(s *Shard) (int, error) {
--		objects, err := r.count(ctx, s)
+-		existingCollectionsCount, err := h.schemaManager.QueryCollectionsCount(countNamespace)
 -		if err != nil {
--			return 0, err
+-			h.logger.WithField("namespace", countNamespace).Errorf("could not query the collections count: %v", err)
 -		}
--		return objects, r.replaceTrackerFile()
--	})
-+	r.logger.WithField("objects", objects).WithField("took", took).Info("property lengths recounted")
- }
- 
- // recountPropertyLengthsOnLoad recounts a shard the recount before load missed. It
-@@ -129,6 +109,11 @@ type propertyLengthsRecounter struct {
- 	logger      logrus.FieldLogger
- 	trackerPath string
- 	recountPath string
-+
-+	// set from begin to end
-+	shard    *Shard
-+	previous *inverted.JsonShardMetaData
-+	tracker  *inverted.JsonShardMetaData
- }
- 
- func newPropertyLengthsRecounter(shardPath string, logger logrus.FieldLogger) *propertyLengthsRecounter {
-@@ -143,24 +128,41 @@ func newPropertyLengthsRecounter(shardPath string, logger logrus.FieldLogger) *p
- // file, so a failure or a crash halfway leaves the previous ones in place. It
- // returns the number of objects counted.
- func (r *propertyLengthsRecounter) count(ctx context.Context, s *Shard) (int, error) {
--	tracker, err := r.createRecountTracker()
--	if err != nil {
-+	if err := r.begin(s); err != nil {
- 		return 0, err
- 	}
-+	objects, errs := s.walkObjects(ctx, r)
-+	if err := r.end(errs[0]); err != nil {
-+		return 0, err
-+	}
-+	return objects, nil
-+}
- 
--	// the shard does not serve yet, so nothing else uses its tracker meanwhile
--	previous := s.propLenTracker
-+// begin points the tracker of s at a new recount file, for visit to fill. The shard
-+// does not serve yet, so nothing else uses its tracker meanwhile.
-+func (r *propertyLengthsRecounter) be
-```
-
-**File**: `adapters/repos/db/shard_recount_property_lengths_test.go` (modified, +2/-2)
-```diff
-@@ -266,7 +266,7 @@ func TestRecountPropertyLengthsBeforeLoad_FailureRetriedOnLoad(t *testing.T) {
- 	idx.Config.PropertyLengthsRecount = recount
- 	// a non-empty directory cannot be removed as a leftover recount file
- 	require.NoError(t, os.MkdirAll(filepath.Join(recountFileOf(trackerPath), "blocker"), 0o755))
--	idx.recountPropertyLengthsOfShards(testCtx(), class, []string{name})
-+	idx.rebuildShardsBeforeLoad(testCtx(), class, []string{name})
- 	_, failed, _ := recount.summary()
- 	require.Equal(t, 1, failed)
- 	sum, count := diskTally(t, trackerPath)
-@@ -294,7 +294,7 @@ func TestRecountPropertyLengthsBeforeLoad_UnreadableTrackerOfEmptyShard(t *testi
- 	require.NoError(t, os.WriteFile(trackerPath, nil, 0o644))
- 
- 	idx.Config.PropertyLengthsRecount = &startupRebuild{enabled: true}
--	idx.recountPropertyLengthsOfShards(testCtx(), class, []string{name})
-+	idx.rebuildShardsBeforeLoad(testCtx(), class, []string{name})
- 	sum, count := diskTally(t, trackerPath)
- 	require.Equal(t, []int{0, 0}, []int{sum, count})
- 
-```
-
-**File**: `adapters/repos/db/startup_rebuild.go` (modified, +222/-20)
-```diff
-@@ -13,15 +13,19 @@ package db
- 
- import (
- 	"context"
-+	"errors"
-+	"fmt"
- 	"os"
- 	"slices"
- 	"sync"
- 	"time"
- 
--	"github.com/sirupsen/logrus"
 -
-+	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
-+	"github.com/weaviate/weaviate/adapters/repos/db/lsmkv"
-+	"github.com/weaviate/weaviate/entities/additional"
- 	enterrors "github.com/weaviate/weaviate/entities/errors"
- 	"github.com/weaviate/weaviate/entities/models"
-+	"github.com/weaviate/weaviate/entities/storobj"
- )
- 
- // startupRebuild makes REINDEX_VECTOR_DIMENSIONS_AT_STARTUP or
-@@ -41,8 +45,12 @@ type rebuiltShard struct {
- 	index, shard string
- }
- 
-+func (r *startupRebuild) isEnabled() bool {
-+	return r != nil && r.enabled
-+}
-+
- func (r *startupRebuild) pending(index, shard string) bool {
--	if r == nil || !r.enabled {
-+	if !r.isEnabled() {
- 		return false
- 	}
- 	r.mu.Lock()
-@@ -104,44 +112,238 @@ func (r *startupRebuild) summary() (rebuilt, failed int, objects int64) {
- 	return rebuilt, failed, r.objects
- }
- 
--// rebuildShardsBeforeLoad runs rebuild on each of the shards that has a dir,
--// _NUMCPU at a time.
--func (i *Index) rebuildShardsBeforeLoad(ctx context.Context, action, finished string, shardNames []string,
--	rebuild func(logger logrus.FieldLogger, name string),
--) {
-+// rebuildShardsBeforeLoad prepares the dimensions and recounts the property lengths of
-+// active and cold shards before they load, without loading them, _NUMCPU shards at a
-+// time. A failed shard is retried at load.
-+func (i *Index) rebuildShardsBeforeLoad(ctx context.Context, class *models.Class, shardNames []string) {
-+	dimensions := i.Config.TrackVectorDimensions &&
-+		(i.Config.MigrateDimensionsToRoaringSet || i.Config.DimensionsReindex.isEnabled())
-+	recount := i.Config.PropertyLengthsRecount.isEnabled()
-+	if len(shardNames) == 0 || (!dimensions && !recount) {
-+		return
-+	}
-+
-+	if recount {
-+		i.logger.WithField("action", "recount_property_lengths").WithField("shards", len(shardNames)).
-+			Warn("Recounting property lengths before the shards load. It cannot be cancelled, and " +
-+				"runs on every startup while environment variable RECOUNT_PROPERTIES_AT_STARTUP is set")
-+	}
- 	start := time.Now()
- 	eg := enterrors.NewErrorGroupWrapper(i.logger)
- 	eg.SetLimit(_NUMCPU)
- 	for _, name := range shardNames {
- 		eg.Go(func() error {
--			logger := i.logger.WithField("action", action).WithField("shard", name)
- 			if _, err := os.Stat(shardPath(i.path(), name)); err != nil {
- 				if !os.IsNotExist(err) {
--					logger.Errorf("could not stat shard dir: %v", err)
-+					i.logger.WithField("action", "rebuild_shard_before_load").WithField("shard", name).
-+						Errorf("could not stat shard dir: %v", err)
- 				}
- 				return nil
- 			}
--			rebuild(logger, name)
-+			i.rebuildShardBeforeLoad(ctx, class, name, dimensions, recount)
- 			return nil
- 		}, name)
- 	}
- 	_ = eg.Wait()
--	i.logger.WithField("action", action).WithField("shards", len(shardNames)).
--		WithField("took", time.Since(start)).Info(finished)
-+
-+	took := time.Since(start)
-+	if dimensions {
-+		i.logger.WithField("action", "prepare_dimensions").WithField("shards", len(shardNames)).
-+			WithField("took", took).Info("dimensions buckets prepared")
-+	}
-+	if recount {
-+		i.logger.WithField("action", "recount_property_lengths").WithField("shards", len(shardNames)).
-+			WithField("took", took).Info("property lengths recount before load finished")
-+	}
-+}
-+
-+// rebuildShardBeforeLoad runs the pending rebuilds of a shard on one walk over its
-+// objects. Each records and logs its own outcome.
-+func (i *Index) rebuildShardBeforeLoad(ctx context.Context, class *models.Class, name string, dimensions, recount bool) {
-+	var rebuilds []unloadedShardRebuild
-+	if dimensions {
-+		logger := i.logger.WithField("action", "prepare_dimensions").WithField("shard", name)
-+		if i.prepareShardDimensions(ctx, logger, name) {
-+			rebuilds = append(rebuilds, &unloadedDimensionsReindex{index: i, name: name, logger: logger})
-+		}
-+	}
-+	if recount && i.Config.PropertyLengthsRecount.pending(i.ID(), name) {
-+		rebuilds = append(rebuilds, &unloadedPropertyLengthsRecount{
-+			index:     i,
-+			name:      name,
-+			logger:    i.logger.WithField("action", "recount_property_lengths").WithField("shard", name),
-+			recounter: newPropertyLengthsRecounter(shardPath(i.path(), name), i.logger),
-+		})
-+	}
-+	if len(rebuilds) == 0 {
-+		return
-+	}
-+
-+	start := time.Now()
-+	objects, errs := i.rebuildUnloadedShard(ctx, class, name, rebuilds)
-+	for j, rebuild := range rebuilds {
-+		rebuild.conclude(objects, time.Since(start), errs[j])
-+	}
-+}
-+
-+// unloadedShardRebuild is a rebuild of a shard before it loads.
-+type unloadedShardRebuild interface {
-+	// empty takes the place of the rebuild on a shard that never held objects.
-+	empty() error
-+	// begin readies the rebuild on the shard opened by openUnloadedShard, and returns
-+	// what the walk over its objects feeds.
-+	begin(ctx context.Context, s *Shard) (objectsVisitor, error)
-+	// end writes out the rebuild, unless walkErr is set.
-
+-		if existingCollectionsCount >= limit {
++		if h.schemaReader.CollectionsCount(countNamespace) >= limit {
+ 			// Migrated from a free-text 422 to a typed 429 / RESOURCE_EXHAUSTED
+ 			// in the usage-limits work; see docs/usage_limits.md for the wire
+ 			// contract.
 ```
 
-**File**: `adapters/repos/db/startup_rebuild_test.go` (added, +345/-0)
+**File**: `usecases/schema/class_test.go` (modified, +4/-4)
 ```diff
-@@ -0,0 +1,345 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
+@@ -540,10 +540,10 @@ func Test_AddClassWithLimits(t *testing.T) {
+ 			t.Run(tt.name, func(t *testing.T) {
+ 				handler, fakeSchemaManager := newTestHandler(t, &fakeDB{})
+ 
+-				// An unlimited cap must not ask the leader for a count it would
+-				// discard, so the expectation is only set where the cap is on.
++				// An unlimited cap skips the count, so the expectation is only
++				// set where the cap is on.
+ 				if tt.maxAllowed != config.DefaultMaximumAllowedCollectionsCount {
+-					fakeSchemaManager.On("QueryCollectionsCount", "").Return(tt.existingCount, nil)
++					fakeSchemaManager.On("CollectionsCount", "").Return(tt.existingCount)
+ 				}
+ 
+ 				// Set the max collections limit in config
+@@ -571,7 +571,7 @@ func Test_AddClassWithLimits(t *testing.T) {
+ 					require.Nil(t, err)
+ 				}
+ 				if tt.maxAllowed == config.DefaultMaximumAllowedCollectionsCount {
+-					fakeSchemaManager.AssertNotCalled(t, "QueryCollectionsCount", "")
++					fakeSchemaManager.AssertNotCalled(t, "CollectionsCount", "")
+ 				}
+ 				fakeSchemaManager.AssertExpectations(t)
+ 			})
+```
+
+**File**: `usecases/schema/fakes_test.go` (modified, +2/-2)
+```diff
+@@ -152,9 +152,9 @@ func (f *fakeSchemaManager) QuerySchema() (models.Schema, error) {
+ 	return args.Get(0).(models.Schema), args.Error(1)
+ }
+ 
+-func (f *fakeSchemaManager) QueryCollectionsCount(namespace string) (int, error) {
++func (f *fakeSchemaManager) CollectionsCount(namespace string) int {
+ 	args := f.Called(namespace)
+-	return args.Get(0).(int), args.Error(1)
++	return args.Int(0)
+ }
+ 
+ func (f *fakeSchemaManager) QueryReadOnlyClasses(classes ...string) (map[string]versioned.Class, error) {
+```
+
+**File**: `usecases/schema/handler.go` (modified, +4/-4)
+```diff
+@@ -91,10 +91,6 @@ type SchemaManager interface {
+ 	QueryReadOnlyClasses(names ...string) (map[string]versioned.Class, error)
+ 	QuerySchema() (models.Schema, error)
+ 	QueryTenants(class string, tenants []string) ([]*models.Tenant, uint64, error)
+-	// QueryCollectionsCount returns a leader-consistent count. Empty
+-	// namespace returns the cluster-global total; a non-empty namespace
+-	// restricts the count to classes in that namespace.
+-	QueryCollectionsCount(namespace string) (int, error)
+ 	QueryShardOwner(class, shard string) (string, uint64, error)
+ 	QueryTenantsShards(class string, tenants ...string) (map[string]string, uint64, error)
+ 	QueryShardingState(class string) (*sharding.State, uint64, error)
+@@ -134,6 +130,10 @@ type SchemaReader interface {
+ 	GetShardsStatus(class, tenant string) (models.ShardStatusList, error)
+ 	ResolveAlias(alias string) string
+ 	GetAliasesForClass(class string) []*models.Alias
++	// CollectionsCount returns the local count of stored classes. Empty
++	// namespace returns the cluster-global total; a non-empty namespace
++	// restricts the count to classes in that namespace.
++	CollectionsCount(namespace string) int
+ 
+ 	// These schema reads function (...WithVersion) return the metadata once the local schema has caught up to the
+ 	// version parameter. If version is 0 is behaves exactly the same as eventual consistent reads.
+```
+
+**File**: `usecases/schema/mock_schema_reader.go` (modified, +46/-0)
+```diff
+@@ -237,6 +237,52 @@ func (_c *MockSchemaReader_ClassInfoWithVersion_Call) RunAndReturn(run func(cont
+ 	return _c
+ }
+ 
++// CollectionsCount provides a mock function with given fields: namespace
++func (_m *MockSchemaReader) CollectionsCount(namespace string) int {
++	ret := _m.Called(namespace)
 +
-+//go:build integrationTest
-+
-+package db
-+
-+import (
-+	"bytes"
-+	"context"
-+	"errors"
-+	"os"
-+	"path/filepath"
-+	"testing"
-+	"time"
-+
-+	"github.com/go-openapi/strfmt"
-+	"github.com/google/uuid"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/weaviate/weaviate/adapters/repos/db/helpers"
-+	"github.com/weaviate/weaviate/adapters/repos/db/lsmkv"
-+	shardusage "github.com/weaviate/weaviate/adapters/repos/db/shard_usage"
-+	"github.com/weaviate/weaviate/entities/additional"
-+	"github.com/weaviate/weaviate/entities/models"
-+	"github.com/weaviate/weaviate/entities/schema"
-+	"github.com/weaviate/weaviate/entities/storobj"
-+)
-+
-+func TestRebuildShardsBeforeLoad(t *testing.T) {
-+	// the objects of the recount tests, each with a vector of 3 dimensions
-+	const wantDims = 2 * 3
-+
-+	type outcomes struct{ rebuilt, failed int }
-+	tests := []struct {
-+		name             string
-+		reindex, recount bool
-+		// breakRebuild makes a rebuild fail, and restores what the others need.
-+		breakRebuild func(t *testing.T, shard *Shard, schemaGetter *fakeSchemaGetter) (restore func())
-+		// keepDimensions keeps the dimensions bucket, which is otherwise lost before the restart.
-+		keepDimensions bool
-+		// wantAnalyzed is the number of objects the recount analyzes with both enabled.
-+		wantAnalyzed int
-+		wantDims     int
-+		wantTally    []int
-+		wantReindex  outcomes
-+		wantRecount  outcomes
-+	}{
-+		{
-+			name:        "dimensions reindex only",
-+			reindex:     true,
-+			wantDims:    wantDims,
-+			wantTally:   []int{5 + 100, 2 + 1},
-+			wantReindex: outcomes{rebuilt: 1},
-+		},
-+		{
-+			name:        "property lengths recount only",
-+			recount:     true,
-+			wantTally:   []int{5, 2},
-+			wantRecount: outcomes{rebuilt: 1},
-+		},
-+		{
-+			name:    "both",
-+			reindex: true, recount: true,
-+			wantAnalyzed: 2,
-+			wantDims:     wantDims,
-+			wantTally:    []int{5, 2},
-+			wantReindex:  outcomes{rebuilt: 1},
-+			wantRecount:  outcomes{rebuilt: 1},
-+		},
-+		{
-+			name:    "both, recount cannot start",
-+			reindex: true, recount: true,
-+			breakRebuild: func(t *testing.T, shard *Shard, _ *fakeSchemaGetter) func() {
-+				// a non-empty directory cannot be removed as a leftover recount file
-+				blocker := filepath.Join(shard.path(), propLengthsRecountFile, "blocker")
-+				require.NoError(t, os.MkdirAll(blocker, 0o755))
-+				return func() {}
-+			},
-+			wantDims:    wantDims,
-+			wantTally:   []int{5 + 100, 2 + 1},
-+			wantReindex: outcomes{rebuilt: 1},
-+			wantRecount: outcomes{failed: 1},
-+		},
-+		{
-+			name:    "both, recount fails during the walk",
-+			reindex: true, recount: true,
-+			wantAnalyzed: 1,
-+			breakRebuild: func(_ *testing.T, _ *Shard, schemaGetter *fakeSchemaGetter) func() {
-+				previous := schemaGetter.schema
-+				schemaGetter.schema = schema.Schema{Objects: &models.Schema{}}
-+				return func() { schemaGetter.schema = previous }
-+			},
-+			wantDims:    wantDims,
-+			wantTally:   []int{5 + 100, 2 + 1},
-+			wantReindex: outcomes{rebuilt: 1},
-+			wantRecount: outcomes{failed: 1},
-+		},
-+		{
-+			name:    "both, dimensions reindex fails",
-+			reindex: true, recount: true,
-+			breakRebuild: func(t *testing.T, shard *Shard, _ *fakeSchemaGetter) func() {
-+				// a leftover replacement bucket that cannot be removed fails the switch
-+				stuck := filepath.Join(shard.pathLSM(), helpers.DimensionsBucketLSM+"__to_roaringset_ready", "stuck")
-+				require.NoError(t, os.MkdirAll(stuck, 0o700))
-+				require.NoError(t, os.WriteFile(filepath.Join(stuck, "file"), []byte("x"), 0o600))
-+				require.NoError(t, os.Chmod(stuck, 0o500))
-+				return func() { _ = os.Chmod(stuck, 0o700) }
-+			},
-+			keepDimensions: true,
-+			wantAnalyzed:   2,
-+			wantDims:       wantDims,
-+			wantTally:      []int{5, 2},
-+			wantReindex:    outcomes{failed: 1},
-+			wantRecount:    outcomes{rebuilt: 1},
-+		},
++	if len(ret) == 0 {
++		panic("no return value specified for CollectionsCount")
 +	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			repo, schemaGetter := openRecountTestDB(t, t.TempDir(), singleShardState(), false, false)
-+			defer repo.Shutdown(context.Background())
-+			for _, name := range recountTestNames {
-+				require.NoError(t, repo.PutObject(testCtx(), &models.Object{
-+					Class:      recountTestClass,
-+					ID:         strfmt.UUID(uuid.NewString()),
-+					Properties: map[string]any{"name": name},
-+				}, []float32{1, 2, 3}, nil, nil, nil, 0))
-+			}
-+			shard := recountTestShard(t, repo)
-+			idx, name, class := shard.index, shard.name, shard.class
-+			trackerPath := shard.GetPropertyLengthTracker().FileName()
-+			require.NoError(t, shard.Shutdown(testCtx()))
-+			idx.shards.LoadAndDelete(name)
-+			inflateTracker(t, tracker
++
++	var r0 int
++	if rf, ok := ret.Get(0).(func(string) int); ok {
++		r0 = rf(namespace)
++	} else {
++		r0 = ret.Get(0).(int)
++	}
++
++	return r0
++}
++
++// MockSchemaReader_CollectionsCount_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CollectionsCount'
++type MockSchemaReader_CollectionsCount_Call struct {
++	*mock.Call
++}
++
++// CollectionsCount is a helper method to define mock.On call
++//   - namespace string
++func (_e *MockSchemaReader_Expecter) CollectionsCount(namespace interface{}) *MockSchemaReader_CollectionsCount_Call {
++	return &MockSchemaReader_CollectionsCount_Call{Call: _e.mock.On("CollectionsCount", namespace)}
++}
++
++func (_c *MockSchemaReader_CollectionsCount_Call) Run(run func(namespace string)) *MockSchemaReader_CollectionsCount_Call {
++	_c.Call.Run(func(args mock.Arguments) {
++		run(args[0].(string))
++	})
++	return _c
++}
++
++func (_c *MockSchemaReader_CollectionsCount_Call) Return(_a0 int) *MockSchemaReader_CollectionsCount_Call {
++	_c.Call.Return(_a0)
++	return _c
++}
++
++func (_c *MockSchemaReader_CollectionsCount_Call) RunAndReturn(run func(string) int) *MockSchemaReader_CollectionsCount_Call {
++	_c.Call.Return(run)
++	return _c
++}
++
+ // GetAliasesForClass provides a mock function with given fields: class
+ func (_m *MockSchemaReader) GetAliasesForClass(class string) []*models.Alias {
+ 	ret := _m.Called(class)
+```
+
+---
+
+### Incident Patch 2: `4f432b07` (2026-10-30)
+**Commit Message**: feat: make builds reproducible (#13633)
+
+* Make builds reproducible
+
+* fix: gse tokenizers
+
+* fix: revert gse changes as will target stable/v1.38
+
+**File**: `.github/workflows/pull_requests.yaml` (modified, +1/-1)
+```diff
+@@ -1033,7 +1033,7 @@ jobs:
+           install-only: true
+       - name: goreleaser
+         run: |
+-          GIT_REVISION=$(git rev-parse --short HEAD) GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) BUILD_USER=ci BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") goreleaser build  --clean --snapshot
++          GIT_REVISION=$(git rev-parse --short HEAD) GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) BUILD_USER=ci goreleaser build --clean --snapshot
+       - name: Upload macos
+         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+         with:
+```
+
+**File**: `.github/workflows/release.yaml` (modified, +10/-1)
+```diff
+@@ -20,6 +20,12 @@ jobs:
+         goarch: [amd64, arm64]
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++      - name: Build stamps
++        id: stamps
++        # Commit timestamp, not wall clock, so the binary is reproducible (docs/reproducible-builds.md).
++        run: |
++          echo "revision=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
++          echo "date=$(TZ=UTC git log -1 --date=format-local:%Y-%m-%dT%H:%M:%SZ --format=%cd)" >> "$GITHUB_OUTPUT"
+       - uses: wangyoucao577/go-release-action@279495102627de7960cbc33434ab01a12bae144b # v1.55
+         with:
+           github_token: ${{ secrets.GITHUB_TOKEN }}
+@@ -28,5 +34,8 @@ jobs:
+           goversion: "1.27"
+           project_path: "./cmd/weaviate-server"
+           extra_files: LICENSE README.md
+-          ldflags: -w -extldflags "-static" -X github.com/weaviate/weaviate/usecases/config.GitHash='"$GITHASH"'
++          # -buildvcs=false: the checkout is shallow and tagless, so VCS stamping would embed a
++          # v0.0.0 pseudo-version that no full clone reproduces. Same flags as the Dockerfile.
++          build_flags: -trimpath -buildvcs=false
++          ldflags: -s -w -extldflags "-static" -X github.com/weaviate/weaviate/usecases/build.Branch=${{ github.ref_name }} -X github.com/weaviate/weaviate/usecases/build.Revision=${{ steps.stamps.outputs.revision }} -X github.com/weaviate/weaviate/usecases/build.BuildUser=ci -X github.com/weaviate/weaviate/usecases/build.BuildDate=${{ steps.stamps.outputs.date }}
+           sha256sum: true
+```
+
+**File**: `.goreleaser.yaml` (modified, +7/-5)
+```diff
+@@ -1,7 +1,6 @@
+-before:
+-  hooks:
+-    # You may remove this if you don't use go modules.
+-    - go mod tidy
++# Reproducible builds (docs/reproducible-builds.md): no `go mod tidy` hook, because a
++# hook that touches go.mod/go.sum flips vcs.modified in the embedded build info; no
++# wall-clock date anywhere; -trimpath so the checkout path is not embedded.
+ builds:
+   - env:
+       - CGO_ENABLED=0
+@@ -12,13 +11,16 @@ builds:
+     goarch:
+       - amd64
+       - arm64
++    flags:
++      - -trimpath
++    mod_timestamp: "{{ .CommitTimestamp }}"
+     ldflags:
+       - -w
+       - -extldflags "-static"
+       - -X github.com/weaviate/weaviate/usecases/build.Branch={{ .Env.GIT_BRANCH }}
+       - -X github.com/weaviate/weaviate/usecases/build.Revision={{ .Env.GIT_REVISION }}
+       - -X github.com/weaviate/weaviate/usecases/build.BuildUser={{ .Env.BUILD_USER }}
+-      - -X github.com/weaviate/weaviate/usecases/build.BuildDate={{ .Env.BUILD_DATE }}
++      - -X github.com/weaviate/weaviate/usecases/build.BuildDate={{ .CommitDate }}
+ 
+ # create a "fat" binary for MacOS
+ universal_binaries:
+```
+
+**File**: `Makefile` (modified, +16/-9)
+```diff
+@@ -9,9 +9,14 @@ help:
+ 
+ GO_VERSION         := $(shell go version | cut -d' ' -f3 | sed 's/^go//')
+ 
+-# Git tags
+-GIT_REVISION       := $(shell git rev-parse --short HEAD)
+-GIT_BRANCH         := $(shell git rev-parse --abbrev-ref HEAD)
++# Git tags. Overridable so a verifier can rebuild a binary with the exact values
++# recorded in it (`go version -m weaviate` shows the -ldflags that were used).
++GIT_REVISION       ?= $(shell git rev-parse --short HEAD)
++GIT_BRANCH         ?= $(shell git rev-parse --abbrev-ref HEAD)
++# Build stamps. BUILD_DATE defaults to the commit's timestamp, not the wall clock, so
++# two builds of the same commit are byte-identical (see docs/reproducible-builds.md).
++BUILD_USER         ?= $(shell whoami)@$(shell hostname)
++BUILD_DATE         ?= $(shell TZ=UTC git log -1 --date=format-local:%Y-%m-%dT%H:%M:%SZ --format=%cd)
+ 
+ # Golang environment
+ GOOS               ?= $(shell go env GOOS)
+@@ -27,12 +32,14 @@ GOTEST             ?= go test
+ VPREFIX            := github.com/weaviate/weaviate/usecases/build
+ GO_LDFLAGS         := -X $(VPREFIX).Branch=$(GIT_BRANCH) \
+                       -X $(VPREFIX).Revision=$(GIT_REVISION) \
+-                      -X $(VPREFIX).BuildUser=$(shell whoami)@$(shell hostname) \
+-                      -X $(VPREFIX).BuildDate=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+-GO_FLAGS           := -ldflags "-extldflags \"-static\" -s -w $(GO_LDFLAGS)" -tags netgo
+-DYN_GO_FLAGS       := -ldflags "-s -w $(GO_LDFLAGS)" -tags netgo
+-
+-# Debug build flags
++                      -X $(VPREFIX).BuildUser=$(BUILD_USER) \
++                      -X $(VPREFIX).BuildDate=$(BUILD_DATE)
++# -trimpath keeps the checkout's absolute path out of the binary (file names in
++# pclntab and panic traces), so builds from different directories match.
++GO_FLAGS           := -trimpath -ldflags "-extldflags \"-static\" -s -w $(GO_LDFLAGS)" -tags netgo
++DYN_GO_FLAGS       := -trimpath -ldflags "-s -w $(GO_LDFLAGS)" -tags netgo
++
++# Debug build flags. No -trimpath: delve needs the real source paths.
+ DEBUG_GO_FLAGS     := -gcflags "all=-N -l" -ldflags "-extldflags \"-static\" $(GO_LDFLAGS)" -tags netgo
+ DEBUG_DYN_GO_FLAGS := -gcflags "all=-N -l" -ldflags "$(GO_LDFLAGS)" -tags netgo
+ 
+```
+
+**File**: `ci/push_docker.sh` (modified, +2/-1)
+```diff
+@@ -43,7 +43,8 @@ function release() {
+   git_revision=$(echo "$GITHUB_SHA" | cut -c1-7)
+   git_branch="$GITHUB_HEAD_REF"
+   build_user="ci"
+-  build_date=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
++  # Commit timestamp, not wall clock, so the binary is reproducible (docs/reproducible-builds.md).
++  build_date=$(TZ=UTC git log -1 --date=format-local:%Y-%m-%dT%H:%M:%SZ --format=%cd "$GITHUB_SHA")
+ 
+   # Determine architecture and platform
+   arch=""
+```
+
+**File**: `docs/reproducible-builds.md` (added, +80/-0)
+```diff
+@@ -0,0 +1,80 @@
++# Reproducible builds
++
++Building the same commit twice must produce a byte-identical `weaviate` binary, from
++any checkout directory, on any machine with the same Go toolchain. This lets anyone
++verify that a shipped binary (GitHub release asset or the `/bin/weaviate` inside the
++Docker image) really was built from the commit it claims.
++
++`tools/dev/check_reproducible_build.sh` builds twice and compares hashes.
++
++## What goes into the binary
++
++Everything below is a build input. Change any of it and the hash changes.
++
++| Input | Where it comes from | Why it is deterministic |
++|---|---|---|
++| Source tree | the commit | must be clean (see `vcs.modified`) |
++| Go toolchain | `golang:1.27-alpine` (Docker), `goversion: 1.27` (release action), local `go` (Makefile) | deliberately **not** pinned to a patch version, so Go security fixes keep rolling in. The exact version is recorded in the binary (first line of `go version -m`), and a verifier rebuilds with that version. See below |
++| `-trimpath` | Makefile, Dockerfile, `.goreleaser.yaml`, `release.yaml` | without it ~2300 absolute source paths of the checkout are embedded in pclntab |
++| `-X build.Revision` | `git rev-parse --short HEAD` | derived from the commit |
++| `-X build.Branch` | branch or tag name | a declared input; CI passes the tag name for releases, so re-derivable. Nothing else reads it: Docker tags are computed in `ci/push_docker.sh` from the GitHub ref, not from the binary |
++| `-X build.BuildUser` | `ci` in CI, `user@host` locally | override with `make BUILD_USER=ci` to match a CI binary |
++| `-X build.BuildDate` | **the commit timestamp**, never the wall clock | `TZ=UTC git log -1 --date=format-local:%Y-%m-%dT%H:%M:%SZ --format=%cd`; goreleaser uses `{{ .CommitDate }}` |
++| ldflags string | all of the above, verbatim | `go build` embeds the exact `-ldflags` text in the build info, so flag order and spacing matter too |
++| VCS stamp (`vcs.revision`, `vcs.time`, `vcs.modified`, main-module version) | `-buildvcs` (default `auto`) | see below |
++
++`go version -m weaviate` prints every one of these, so a verifier can read the inputs
++straight out of the binary they want to check.
++
++## Code must not find files through runtime.Caller
++
++`-trimpath` rewrites the file names that `runtime.Caller` reports from absolute paths to
++module-relative ones, so any code that builds a path from them breaks in a release binary.
++The gse tokenizer did exactly this to locate its dictionaries and was silently unavailable
++in every Docker image from v1.34.0 until it was switched to the dictionaries gse embeds.
++Ship data as `//go:embed` files, never as paths derived from the source tree, and run the
++tests of any code that loads data with `go test -trimpath`.
++
++## The VCS stamp
++
++With `-buildvcs=auto` (the default) `go build` records the commit, its time, whether the
++tree was dirty, and a main-module version derived from the nearest reachable tag.
++
++- **Dirty tree.** Any modified *or untracked* file flips `vcs.modified=true` and changes
++  the binary. Build from a clean checkout. This is why `.goreleaser.yaml` has no
++  `go mod tidy` hook: a hook that rewrites `go.mod` dirties the tree mid-build.
++- **Shallow or tagless clone.** `actions/checkout` fetches depth 1 with no tags. The main
++  module version then becomes `v0.0.0-<time>-<sha>` instead of `v1.40.2-0.<time>-<sha>`,
++  which a full clone can never reproduce. The GitHub release job therefore builds with
++  `-buildvcs=false`.
++- **Docker.** `.dockerignore` excludes `.git`, so the Docker binary has no VCS stamp and
++  reports its module version as `(devel)`.
++
++To reproduce a CI binary locally, pass `-buildvcs=false` as well.
++
++## Reproducing the Docker image's binary locally
++
++```sh
++CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -buildvcs=false \
++  -ldflags="<the -ldflags line printed by: go version -m /bin/weaviate>" \
++  -o weaviate ./cmd/weaviate-server
++sha256sum weaviate
++```
++
++Use the Go version printed on the first line of `go version -m /bin/weaviate`, for example
++by running the build inside `golang:<that version>-alpine`.
++
++## Reproducing a Makefile build
++
++```sh
++make weaviate BUILD_USER=<user@host from go version -m> GIT_BRANCH=<branch>
++```
++
++`GIT_REVISION` and `BUILD_DATE` default to values derived from the commit and only need
++overriding when they were overridden for the original build.
++
++## What is not reproducible by design
++
++- `make weaviate-debug` keeps absolute paths (no `-trimpath`) because delve needs them.
++- The signed and notarized macOS zip produced by `tools/dev/goreleaser_and_sign.sh`:
++  code signatures carry a signing timestamp. The binary *before* signing is reproducible.
+```
+
+**File**: `tools/dev/check_reproducible_build.sh` (added, +28/-0)
+```diff
+@@ -0,0 +1,28 @@
++#!/usr/bin/env bash
++# Builds the weaviate binary twice with the Makefile and fails if the two builds differ.
++# Run from the repository root on a clean checkout. See docs/reproducible-builds.md.
++set -euo pipefail
++
++if [[ -n "$(git status --porcelain)" ]]; then
++  echo "working tree is dirty; vcs.modified would be stamped into the binary" >&2
++  git status --short >&2
++  exit 1
++fi
++
++out=$(mktemp -d)
++trap 'rm -rf "$out"' EXIT
++
++for i in 1 2; do
++  make weaviate BUILD_USER=ci >/dev/null
++  cp cmd/weaviate-server/weaviate "$out/weaviate.$i"
++done
++
++a=$(sha256sum "$out/weaviate.1" | cut -d' ' -f1)
++b=$(sha256sum "$out/weaviate.2" | cut -d' ' -f1)
++if [[ "$a" != "$b" ]]; then
++  echo "builds differ: $a != $b" >&2
++  echo "build info of the first binary:" >&2
++  go version -m "$out/weaviate.1" >&2
++  exit 1
++fi
++echo "reproducible: $a"
+```
+
+**File**: `tools/dev/goreleaser_and_sign.sh` (modified, +2/-2)
+```diff
+@@ -9,7 +9,7 @@ set -eou pipefail
+ GIT_REVISION=$(git rev-parse --short HEAD)
+ GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+ BUILD_USER="ci"
+-BUILD_DATE="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
++# BuildDate comes from .goreleaser.yaml ({{ .CommitDate }}) so the binary is reproducible.
+ 
+ extra_args=""
+ 
+@@ -19,7 +19,7 @@ if [[ "$VERSION" == *"-"* ]]; then
+     extra_args="--snapshot"
+ fi
+ 
+-GIT_REVISION="$GIT_REVISION" GIT_BRANCH="$GIT_BRANCH" BUILD_USER="$BUILD_USER" BUILD_DATE="$BUILD_DATE" goreleaser build --clean $extra_args
++GIT_REVISION="$GIT_REVISION" GIT_BRANCH="$GIT_BRANCH" BUILD_USER="$BUILD_USER" goreleaser build --clean $extra_args
+ 
+ codesign -f -o runtime --timestamp -s "Developer ID Application: Weaviate B.V. (QUZ8SKLS6R)" dist/weaviate_darwin_all/weaviate
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13636** (2026-10-28): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
-- **PR #13635** (2026-10-28): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
-- **PR #13634** (2026-10-28): Fixes missing propery length for empty arrays (@dirkkul)
-- **PR #13632** (2026-10-28): security: bump github.com/go-jose/go-jose/v4 to v4.1.6 (@antas-marcin)
-- **PR #13630** (2026-10-28): Merge stable/v1.40 into main (@antas-marcin)
-- **PR #13629** (2026-10-28): test(authz): wait for pending authz logs before measuring batch refs (@antas-marcin)
+- **PR #13672** (2026-10-30): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
+- **PR #13671** (2026-10-30): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
+- **PR #13670** (2026-10-30): Merge stable/v1.37 into stable/v1.38 (@antas-marcin)
+- **PR #13664** (2026-10-30): Deny namespaced callers on RBAC paths with an unrecognized shape (@dirkkul)
+- **PR #13663** (2026-10-30): Merge stable/v1.40 into main (@antas-marcin)
+- **PR #13662** (2026-10-29): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
 
 ---
 
@@ -2466,34 +2287,3 @@ perf(db): open and walk each shard once for all startup rebuilds before load
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. security: bump github.com/go-jose/go-jose/v4 to v4.1.6
-
-**RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `9e34d6d0`: security: bump github.com/go-jose/go-jose/v4 to v4.1.6. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// Verified production-grade fix pattern:
-	github.com/go-jose/go-jose/v4 v4.1.6
-```
-
-**NEGATIVE CONSTRAINT**:
-```go
-// Anti-pattern to NEVER write (induced failure mode):
-	github.com/go-jose/go-jose/v4 v4.1.4
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9e34d6d0` are properly handled with clean fallback behavior.

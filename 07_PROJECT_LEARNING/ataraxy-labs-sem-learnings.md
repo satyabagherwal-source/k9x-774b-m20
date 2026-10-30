@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source**: github ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
-> **Source Version**: `f28b2311`  
+> **Source Version**: `fee69d96`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T17:05:44.724Z  
+> **Timestamp**: 2026-10-30T13:46:20.798Z  
 > **Learning ID**: `learn-github-ataraxy-labs-sem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T17:05:44.717Z  
+> **Harvest Timestamp**: 2026-10-30T13:46:18.989Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Semantic version control => entity-level diffs, blame, and impact analysis on top of git. 28 languages via tree-sitter. Built for coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 3429 stars
+- **Stars / Engagement**: 3431 stars
 
 ---
 
@@ -1820,15 +1820,15 @@ fn main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #534** (2026-10-28): **perf(mcp): reuse repeated caller lookups within a batch**
-  *Symptoms*: Repeated names in a caller batch currently repeat the same lookup. Reuse results within that request while preserving original query labels, order, and individual error results; nothing is cached across requests. Extends the caller-batch regression test with a whitespace-equivalent duplicate. Ported onto current main while retaining the explicit repository-path fix. Rust compilation and MCP lifecycle validation run in CI.
+- **Issue #539** (2026-10-30): **release: Sem 0.29.0**
+  *Symptoms*: Bumps every crate, the npm package and the MCP registry entry to 0.29.0.  Minor bump because what sem extracts changed (#538): new entity kinds in C, C++, C#, Rust, Java, Kotlin and Elixir, C++ headers in `.h` files read as C++, and recovered definitions in regions tree-sitter cannot parse.
   **Post-Mortem & Fix Analysis**:
-  > [vc]: #kAbAQM7aexyGsDBUrCh49unULfL4ABXp91IzmotOcQg=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy9DUXhVODdialI3VzJoQnJDcFBxTHliMmNVS2JBIiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1wZXJmLXJldXNlLWNhbGxlci1iYXRjaC1yZXN1bHRzLXJzNTQ1ODM3cy1wcm9qZWN0cy52ZXJjZWwuYXBwIiwibmV4dENvbW1pdFN0YXR1cyI6IkRFUExPWUVEIiwibGl2ZUZlZWRiYWNrIjp7InJlc29sdmVkIjowLCJ1bnJlc29sdmVkIjowLCJ0b3RhbCI6MCwibGluayI6InNlbS1kb2NzLWdpdC1wZXJmLXJldXNlLWNhbGxlci1iYXRjaC1yZXN1bHRzLXJzNTQ1ODM3cy1wcm9qZWN0cy52ZXJjZWwuYXBwIn0sInJvb3REaXJlY3RvcnkiOiJkb2NzIn1dLCJyZXF1ZXN0UmV2aWV3VXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3ZlcmNlbC1hZ2VudC9yZXF1ZXN0LXJldmlldz9vd25lcj1BdGFyYXh5LUxhYnMmcmVwbz1zZW0mcHI9NTM0In0= The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updat
+  > [vc]: #YoFltfDbDPLuou47DvAQVyQORfVl+RstseHSqw9G9CQ=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy83Y0pXZ0hMMmZRY2pYQmJSSkV1R0FUYlVzQmMxIiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1yZWxlYXNlLTAyOTAtcnM1NDU4MzdzLXByb2plY3RzLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoic2VtLWRvY3MtZ2l0LXJlbGVhc2UtMDI5MC1yczU0NTgzN3MtcHJvamVjdHMudmVyY2VsLmFwcCJ9fV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPUF0YXJheHktTGFicyZyZXBvPXNlbSZwcj01MzkifQ== The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/rs54583
 
-- **Issue #533** (2026-10-26): **fix(release): resume accepted uploads after registry indexing stalls**
-  *Symptoms*: Crates.io accepted the new versions and serves their archives, but Cargo cannot resolve them until its sparse index updates. Query upload acceptance separately, avoid re-uploading accepted versions, wait directly on the sparse index before publishing dependents, preserve upload errors, and pin retries to the release tag. Six publisher regression tests cover delayed indexing, authentication failure, response-loss recovery, timeout, API failure, and exact unyanked versions. Workflow YAML and tests pass locally; no Rust product code changed.
+- **Issue #538** (2026-10-30): **fix(core): extract definitions sem used to miss across 7 languages**
+  *Symptoms*: Entity extraction now finds definitions it used to miss, measured head to head against Entire's graph (entire-graph v0.6.0) on 14 real repositories.  ## Changes - `.h` headers written in C++ (templates, namespaces, access sections, `std::`) are parsed as C++ - Members of C++ template classes; C++ `using` aliases - C function-pointer typedefs get their name (parenthesized declarators) - Rust trait method signatures; Java annotation members - C# operators, conversion operators, delegates, events, indexers - Kotlin companion objects (named `Companion`) and members of `object :` expressions in function bodies (locals stay suppressed) - Elixir `@type`/`@typep`/`@opaque` specs - For C, C++ and Kotlin files tree-sitter cannot fully parse (macros, Kotlin Multiplatform `internal actual constructor(`), unambiguous definition headers in the unparsed regions are recovered and marked `recovered = parse_error`. Files that parse cleanly are untouched.  ## Recall (share of real definitions found) Ground truth is each language's own parser for Python, Go, TypeScript, JavaScript and Rust, and Universal Ctags elsewhere. Every tool is scored on the same files with the same exclusions (lambdas, anonymous types, macro calls, import aliases, doc-string examples).  | Language | Repo | sem before | **sem now** | Entire | |---|---|---|---|---| | Python | flask / requests | 100% | **100%** | 98.2% / 98.3% | | Go | gin | 100% | **100%** | 98.2% | | TypeScript | zod | 98.2% | **100%** | 100% | | JavaScri
   **Post-Mortem & Fix Analysis**:
-  > [vc]: #+jA9Wvqzz+yYsv0QNMpPN8rK0H/2dS4Gtwma9yZAVfs=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy8yS3FZRUY5S2FyckRRcWhEcEJ0NVdGNDFZaG80IiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1maXgtcmVnaXN0cnktcHVibGljYXRpb24tcnM1NDU4MzdzLXByb2plY3RzLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoic2VtLWRvY3MtZ2l0LWZpeC1yZWdpc3RyeS1wdWJsaWNhdGlvbi1yczU0NTgzN3MtcHJvamVjdHMudmVyY2VsLmFwcCJ9fV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPUF0YXJheHktTGFicyZyZXBvPXNlbSZwcj01MzMifQ== The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a 
+  > [vc]: #SrAyiDBubbpdvaHPfHJ2YvsX2l9XI+IBpHx4kz6JYsw=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwibGl2ZUZlZWRiYWNrIjp7InJlc29sdmVkIjowLCJ1bnJlc29sdmVkIjowLCJ0b3RhbCI6MCwibGluayI6InNlbS1kb2NzLWdpdC1maXgtZXh0cmFjdGlvbi1yZWNhbGwtcnM1NDU4MzdzLXByb2plY3RzLnZlcmNlbC5hcHAifSwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy9Ec0JMRjRMM1g2dml2YktDNGVZd3E0dWJER2k2IiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1maXgtZXh0cmFjdGlvbi1yZWNhbGwtcnM1NDU4MzdzLXByb2plY3RzLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQifV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPUF0YXJheHktTGFicyZyZXBvPXNlbSZwcj01MzgifQ== The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="ht
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1845,16 +1845,31 @@ fn main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f28b2311` (2026-10-28)
-**Commit Message**: perf(mcp): reuse repeated caller lookups within a batch (#534)
+### Incident Patch 1: `3e2e7851` (2026-10-30)
+**Commit Message**: fix(core): extract definitions sem used to miss across 7 languages (#538)
 
-Repeated names in a caller batch currently repeat the same lookup. Reuse
-results within that request while preserving original query labels,
-order, and individual error results; nothing is cached across requests.
-Extends the caller-batch regression test with a whitespace-equivalent
-duplicate. Ported onto current main while retaining the explicit
-repository-path fix. Rust compilation and MCP lifecycle validation run
-in CI.
+Entity extraction now finds definitions it used to miss, measured head
+to head against Entire's graph (entire-graph v0.6.0) on 14 real
+repositories.
+
+## Changes
+- `.h` headers written in C++ (templates, namespaces, access sections,
+`std::`) are parsed as C++
+- Members of C++ template classes; C++ `using` aliases
+- C function-pointer typedefs get their name (parenthesized declarators)
+- Rust trait method signatures; Java annotation members
+- C# operators, conversion operators, delegates, events, indexers
+- Kotlin companion objects (named `Companion`) and members of `object :`
+expressions in function bodies (locals stay suppressed)
+- Elixir `@type`/`@typep`/`@opaque` specs
+- For C, C++ and Kotlin files tree-sitter cannot fully parse (macros,
+Kotlin Multiplatform `internal actual constructor(`), unambiguous
+definition headers in the unparsed regions are recovered and marked
+`recovered = parse_error`. Files that parse cleanly are untouched.
+
+## Recall (share of real definitions found)
+Ground truth is each language's own parser for Python, Go, TypeScript,
+JavaScript and Rust, and Universal Ctags elsewhere. Every 
 
 **File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
@@ -1862,72 +1877,643 @@ in CI.
  
  ## [Unreleased]
  
-+### Performance
++### Fixed
 +
-+- Repeated caller queries within one MCP batch reuse the first lookup while preserving input order and per-query responses. Results are not reused across requests.
++- **Entity extraction finds definitions it used to miss.** C++ headers saved as `.h` are read as C++; members of C++ template classes, `using` aliases, C function-pointer typedefs, Rust trait method signatures, Java annotation members, C# operators, delegates, events and indexers, Kotlin companion objects and members of `object :` expressions, and Elixir `@type` specs are now entities. When C, C++ or Kotlin code cannot be parsed (macros the grammar cannot expand, Kotlin Multiplatform constructors), clear definition headers in the unparsed region are recovered and marked `recovered = parse_error`. Measured against each language's own parser or Universal Ctags on 14 real repositories, recall is now 99–100% in every language except C++ (92%), up from 56% for C++, 71% for Kotlin and 92% for C#.
 +
- ### Fixed
+ ## [0.28.3] - 2026-10-29
  
- - Crate publishing checks accepted uploads separately from sparse-index availability, waits before publishing dependents, and resumes from the immutable release tag without re-uploading accepted versions.
+ ### Performance
 ```
 
-**File**: `crates/sem-mcp/src/server.rs` (modified, +18/-7)
+**File**: `crates/sem-core/src/parser/plugins/code/entity_extractor.rs` (modified, +374/-2)
 ```diff
-@@ -2716,11 +2716,21 @@ impl SemServer {
-                     let mut blocks = Vec::new();
-                     let mut json_results = Vec::new();
-                     let mut any_ok = false;
-+                    // Batch-local only: never reuse a caller result across edits
-+                    // or requests. Keep one output slot for every input query.
-+                    let mut results_by_query: HashMap<String, CallToolResult> = HashMap::new();
-                     for name in names {
--                        let result = self.sem_callers(Parameters(CallersParams {
--                            query: name.clone(), file: params.file().map(str::to_string),
--                            limit: params.limit, format: params.format.clone(),
--                        })).await?;
-+                        let key = name.trim().to_string();
-+                        let result = if let Some(result) = results_by_query.get(&key) {
-+                            result.clone()
-+                        } else {
-+                            let result = self.sem_callers(Parameters(CallersParams {
-+                                query: name.clone(), file: params.file().map(str::to_string),
-+                                limit: params.limit, format: params.format.clone(),
-+                            })).await?;
-+                            results_by_query.insert(key, result.clone());
-+                            result
-+                        };
-                         let is_error = result.is_error.unwrap_or(false);
-                         any_ok |= !is_error;
-                         let mut query_results = Vec::new();
-@@ -3746,15 +3756,16 @@ mod tests {
-         let outside_repo = TempDir::new().unwrap();
-         let missing_file = outside_repo.path().join("missing/a.py");
-         let params: FindParams = serde_json::from_value(serde_json::json!({
--            "mode": "callers", "queries": ["first", "second"],
-+            "mode": "callers", "queries": ["first", "second", " first "],
-             "file": missing_file, "format": "json"
-         })).unwrap();
-         let result = SemServer::new().sem_find(Parameters(params)).await.unwrap();
-         assert!(result.is_error.unwrap_or(false));
-         let value: serde_json::Value = serde_json::from_str(&text_of(result)).unwrap();
-         let rows = value.as_array().unwrap();
--        assert_eq!(rows.len(), 2);
--        for (row, name) in rows.iter().zip(["first", "second"]) {
-+        assert_eq!(rows.len(), 3);
-+        assert_eq!(rows[0]["results"], rows[2]["results"]);
-+        for (row, name) in rows.iter().zip(["first", "second", " first "]) {
-             assert_eq!(row["query"], name);
-             assert_eq!(row["is_error"], true);
-             assert!(!row["results"].as_array().unwrap().is_empty());
+@@ -34,11 +34,260 @@ pub fn extract_entities(
+         attach_go_package_metadata(tree.root_node(), source_code.as_bytes(), &mut entities);
+     }
+ 
++    recover_definitions_in_parse_errors(tree.root_node(), file_path, config, &mut entities, source_code);
++
+     disambiguate_colliding_entity_ids(&mut entities);
+ 
+     entities
+ }
+ 
++/// When tree-sitter cannot parse part of a C, C++ or Kotlin file, the
++/// definitions in that part come back inside ERROR nodes and are never seen:
++/// C/C++ macros the grammar cannot expand (`XXH_RESTRICT`, `FMT_API`) and
++/// Kotlin Multiplatform's `internal actual constructor(` on its own line are
++/// the usual causes. This pass reads the lines of each ERROR region and
++/// recovers the definition headers that are unambiguous on their own, so that
++/// code is not invisible to the graph. Files that parse cleanly are untouched,
++/// a definition already extracted is never added twice, and every recovered
++/// entity is marked `recovered = parse_error` in its metadata.
++fn recover_definitions_in_parse_errors(
++    root: Node,
++    file_path: &str,
++    config: &LanguageConfig,
++    entities: &mut Vec<SemanticEntity>,
++    source: &str,
++) {
++    if !matches!(config.id, "c" | "cpp" | "kotlin") || !root.has_error() {
++        return;
++    }
++    let mut error_rows: Vec<(usize, usize)> = Vec::new();
++    let mut stack = vec![root];
++    while let Some(node) = stack.pop() {
++        if node.is_error() {
++            error_rows.push((node.start_position().row, node.end_position().row));
++            continue;
++        }
++        if node.has_error() {
++            let mut cursor = node.walk();
++            stack.extend(node.children(&mut cursor));
++        }
++    }
++    if error_rows.is_empty() {
++        return;
++    }
++    let lines: Vec<&str> = source.lines().collect();
++    let mut rows: Vec<usize> = error_rows
++        .iter()
++        .flat_map(|&(a, b)| a..=b.min(lines.len().saturating_sub(1)))
++        .collect();
++    rows.sort_unstable();
++    rows.dedup();
++
++    let line_starts: Vec<usize> = std::iter::once(0)
++        .chain(source.match_indices('\n').map(|(i, _)| i + 1))
++        .collect();
++    let mut recovered: Vec<SemanticEntity> = Vec::new();
++    for row in rows {
++        let line = lines[row];
++        let header = if config.id == "kotlin" {
++            kotlin_definition_header(line)
++        } else {
++            c_family_definition_header(&lines, row)
++        };
++        let Some((entity_type, name, opens_body)) = header else {
++            continue;
++        };
++        let start_line = row + 1;
++        let already = entities.iter().chain(recovered.iter()).any(|e| {
++            e.name.rsplit("::").next() == Some(name.as_str())
++                && e.start_line + 3 >= start_line
++                && e.start_line <= start_line + 1
++        });
++        if already {
++            continue;
++        }
++        let end_row = if opens_body {
++            matching_brace_row(&lines, row).unwrap_or(row)
++        } else {
++            row
++        };
++        let start_byte = line_starts[row];
++        let end_byte = line_starts
++            .get(end_row + 1)
++            .copied()
++            .unwrap_or(source.len());
++        let content = source[start_byte..end_byte].to_string();
++        let parent = entities
++            .iter()
++            .filter(|e| {
++                e.start_line < start_line
++                    && e.end_line >= end_row + 1
++                    && matches!(
++                        e.entity_type.as_str(),
++                        "class" | "struct" | "namespace" | "object" | "interface"
++                            | "companion_object" | "union" | "template" | "module"
++                    )
++            })
++            .min_by_key(|e| e.end_line - e.start_line)
++            .map(|e| e.id.clone());
++        let mut metadata = BTreeMap::new();
++        metadata.insert("recovered".to_string(), "parse_error".to_string());
++        recovered.push(SemanticEntity {
++            id: build_entity_id(file_path, entity_type, &name, parent.as_deref()),
++            file_path: file_path.to_string(),
++            entity_type: entity_type.to_string(),
++            name,
++            parent_id: parent,
++            content_hash: content_hash(&content),
++            structural_hash: None,
++            kappa: None,
++            content,
++            start_line,
++            end_line: end_row + 1,
++            start_byte: Some(start_byte),
++            end_byte: Some(end_byte),
++            metadata: Some(metadata),
++        });
++    }
++    entities.extend(recovered);
++}
++
++/// `fun name(`, `class Name`, `interface Name`, `object Name` or
++/// `companion object` on one Kotlin line, after any modifiers.
++fn kotlin_definition_header(line: &str) -> Option<(&'static str, String, bool)> {
++    use std::sync::LazyLock;
++    static RE: LazyLock<regex::Regex> = LazyLock::new(|| {
++        regex::Regex::new(
++            r"^\s*(?:@\w+(?:\([^)]*\))?\s+)*(?:(?:pu
+```
+
+**File**: `crates/sem-core/src/parser/plugins/code/languages.rs` (modified, +36/-3)
+```diff
+@@ -447,6 +447,20 @@ const JS_TS_SCOPE_BOUNDARIES: &[&str] = &[
+ /// Inside C function bodies, suppress `declaration` nodes so that block-local
+ /// variables are not extracted as nested entities. Inner type declarations are
+ /// still reached by traversal after the wrapper is skipped.
++/// Kotlin function bodies are walked so members of `object : Base { ... }`
++/// expressions are found, but the function's own local `val`/`var`
++/// declarations are locals, not entities.
++const KOTLIN_SUPPRESSED_NESTED: &[SuppressedNestedEntity] = &[
++    SuppressedNestedEntity {
++        parent_entity_node_type: "function_declaration",
++        child_entity_node_type: "property_declaration",
++    },
++    SuppressedNestedEntity {
++        parent_entity_node_type: "secondary_constructor",
++        child_entity_node_type: "property_declaration",
++    },
++];
++
+ const C_SUPPRESSED_NESTED: &[SuppressedNestedEntity] = &[SuppressedNestedEntity {
+     parent_entity_node_type: "function_definition",
+     child_entity_node_type: "declaration",
+@@ -659,6 +673,7 @@ static RUST_CONFIG: LanguageConfig = LanguageConfig {
+     extensions: &[".rs"],
+     entity_node_types: &[
+         "function_item",
++        "function_signature_item",
+         "struct_item",
+         "enum_item",
+         "impl_item",
+@@ -690,12 +705,14 @@ static JAVA_CONFIG: LanguageConfig = LanguageConfig {
+         "field_declaration",
+         "constructor_declaration",
+         "annotation_type_declaration",
++        "annotation_type_element_declaration",
+     ],
+     container_node_types: &[
+         "class_body",
+         "interface_body",
+         "enum_body",
+         "record_body",
++        "annotation_type_body",
+         "block",
+     ],
+     call_entity_identifiers: &[],
+@@ -738,6 +755,7 @@ static CPP_CONFIG: LanguageConfig = LanguageConfig {
+         "template_declaration",
+         "declaration",
+         "type_definition",
++        "alias_declaration",
+     ],
+     container_node_types: &[
+         "field_declaration_list",
+@@ -780,8 +798,23 @@ static CSHARP_CONFIG: LanguageConfig = LanguageConfig {
+         "property_declaration",
+         "constructor_declaration",
+         "field_declaration",
++        "operator_declaration",
++        "conversion_operator_declaration",
++        "delegate_declaration",
++        "destructor_declaration",
++        "indexer_declaration",
++        "event_declaration",
++        "event_field_declaration",
++    ],
++    container_node_types: &[
++        "declaration_list",
++        "record_body",
++        "block",
++        "preproc_if",
++        "preproc_elif",
++        "preproc_else",
++        "preproc_region",
+     ],
+-    container_node_types: &["declaration_list", "record_body", "block"],
+     call_entity_identifiers: &[],
+     suppressed_nested_entities: &[],
+     scope_boundary_types: &[],
+@@ -935,9 +968,9 @@ static KOTLIN_CONFIG: LanguageConfig = LanguageConfig {
+         "secondary_constructor",
+         "type_alias",
+     ],
+-    container_node_types: &["class_body", "enum_class_body"],
++    container_node_types: &["class_body", "enum_class_body", "function_body"],
+     call_entity_identifiers: &[],
+-    suppressed_nested_entities: &[],
++    suppressed_nested_entities: KOTLIN_SUPPRESSED_NESTED,
+     scope_boundary_types: &[],
+     get_language: get_kotlin,
+     scope_resolve: Some(&KOTLIN_SCOPE_CONFIG),
+```
+
+**File**: `crates/sem-core/src/parser/plugins/code/mod.rs` (modified, +31/-0)
+```diff
+@@ -49,11 +49,42 @@ pub fn language_config_for_content(
+         })
+         .unwrap_or_default();
+ 
++    // `.h` is shared by C and C++. A header written in C++ (templates,
++    // namespaces, access sections) parsed with the C grammar loses most of
++    // its classes and functions, so it is read as C++ instead.
++    if ext == ".h" && looks_like_cpp_header(content) {
++        if let Some(cpp) = get_language_config(".hpp") {
++            return Some(cpp);
++        }
++    }
++
+     get_language_config(&ext).or_else(|| {
+         detect_ext_from_content(content).and_then(|shebang_ext| get_language_config(&shebang_ext))
+     })
+ }
+ 
++/// True when a `.h` file uses constructs only C++ has. Each check is a
++/// line-start keyword or `std::`, none of which is valid C, so a plain C
++/// header (including one with an `extern "C"` guard) stays C.
++pub(crate) fn looks_like_cpp_header(content: &str) -> bool {
++    let mut end = content.len().min(256 * 1024);
++    while !content.is_char_boundary(end) {
++        end -= 1;
++    }
++    let head = &content[..end];
++    head.lines().any(|line| {
++        let t = line.trim_start();
++        t.starts_with("template<")
++            || t.starts_with("template <")
++            || (t.starts_with("namespace ") && !t.ends_with(';'))
++            || t.starts_with("public:")
++            || t.starts_with("private:")
++            || t.starts_with("protected:")
++            || t.starts_with("using namespace ")
++            || t.contains("std::")
++    })
++}
++
+ /// Parse `content` with the thread-local parser for `config`, from scratch.
+ pub fn parse_tree(
+     config: &'static languages::LanguageConfig,
+```
+
+**File**: `crates/sem-core/tests/extraction_recall.rs` (added, +87/-0)
+```diff
+@@ -0,0 +1,87 @@
++//! Definitions that used to be missed, checked against each language's own
++//! parser or Universal Ctags on real repositories.
++
++use sem_core::parser::plugins::create_default_registry;
++
++fn names(path: &str, src: &str) -> Vec<String> {
++    create_default_registry()
++        .extract_entities(path, src)
++        .into_iter()
++        .map(|e| e.name)
++        .collect()
++}
++
++fn has(path: &str, src: &str, want: &[&str]) {
++    let got = names(path, src);
++    for w in want {
++        assert!(got.iter().any(|n| n == w), "{path}: missing {w}, got {got:?}");
++    }
++}
++
++#[test]
++fn cpp_headers_and_template_members() {
++    // A `.h` header written in C++ is read as C++; members of a template
++    // class are found.
++    has(
++        "fmt.h",
++        "namespace fmt {\ntemplate <typename T> class buffer {\n public:\n  void flush() {}\n};\nusing bigit = unsigned;\n}\n",
++        &["buffer", "flush", "bigit"],
++    );
++}
++
++#[test]
++fn c_function_pointer_typedef() {
++    has("m.h", "typedef int (*Handler)(void *ctx);\n", &["Handler"]);
++}
++
++#[test]
++fn rust_trait_method_signatures() {
++    has("lib.rs", "trait Flag {\n    fn name(&self) -> &str;\n}\n", &["Flag", "name"]);
++}
++
++#[test]
++fn java_annotation_members() {
++    has(
++        "Intercept.java",
++        "public @interface Intercept {\n  Class<?> postDeserialize();\n}\n",
++        &["postDeserialize"],
++    );
++}
++
++#[test]
++fn csharp_operators() {
++    has(
++        "JToken.cs",
++        "class JToken {\n  public static explicit operator decimal(JToken v) { return 0; }\n  public static JToken operator +(JToken a, JToken b) { return a; }\n}\n",
++        &["operator decimal", "operator +"],
++    );
++}
++
++#[test]
++fn kotlin_companions_and_object_expressions() {
++    has(
++        "Buf.kt",
++        "class Buf {\n  companion object {\n    fun of(): Buf = Buf()\n  }\n  fun source() {\n    val s = object : Source {\n      override fun close() {}\n    }\n  }\n}\n",
++        &["Companion", "of", "close"],
++    );
++}
++
++#[test]
++fn kotlin_multiplatform_constructor_is_recovered() {
++    // `internal actual constructor(` on its own line is not parsed by the
++    // grammar; the definitions in the class are recovered.
++    has(
++        "ByteString.kt",
++        "actual open class ByteString\ninternal actual constructor(\n  internal actual val data: ByteArray,\n) : Comparable<ByteString> {\n  actual open fun hex(): String = commonHex()\n  actual companion object {\n    actual fun of(vararg data: Byte): ByteString = TODO()\n  }\n}\n",
++        &["ByteString", "hex"],
++    );
++}
++
++#[test]
++fn elixir_typespecs() {
++    has(
++        "endpoint.ex",
++        "defmodule Phoenix.Endpoint do\n  @type topic :: String.t()\n  @typep event(a) :: a\nend\n",
++        &["topic", "event"],
++    );
++}
+```
+
+---
+
+### Incident Patch 2: `bd244542` (2026-10-29)
+**Commit Message**: fix: honor gitignore in source snapshots without Git metadata (#536)
+
+Source snapshots and container mounts without `.git` currently ignore
+`.gitignore` during code discovery. An ignored, unreadable database
+directory can consequently abort `graph`, `find`, or `impact`. Enable
+ignore rules without requiring Git metadata in CLI and MCP walkers,
+preserving nested rules and negations.
+
+Permission errors now explain that `postgres/` excludes the directory
+itself, whereas `postgres/**` requires entering it, and point to
+`.semignore` as an existing exclusion mechanism. Unignored traversal
+errors remain fatal to avoid silently returning incomplete results.
+
+Addresses #535. The exact reporter configuration is not yet confirmed: a
+`postgres/` rule already works inside a Git checkout. This PR does not
+claim that a child-only ignore pattern excludes its parent directory.
+
+Validation:
+- Reproduced the snapshot failure with an unreadable directory using the
+installed Sem binary.
+- Added CLI/MCP discovery tests for snapshots, nested rules, negations,
+and scoped reads.
+- Added CLI regressions for graph/find/impact and permission-error
+remediation.
+- `git diff --check` passed.
+- Modal: CLI discove
+
+**File**: `CHANGELOG.md` (modified, +2/-0)
+```diff
+@@ -10,6 +10,8 @@ All notable changes to sem are documented in this file.
+ 
+ ### Fixed
+ 
++- Code discovery honors .gitignore in source snapshots without Git metadata; permission errors explain how to exclude an unreadable directory without returning an incomplete graph (#535).
++
+ - Crate publishing checks accepted uploads separately from sparse-index availability, waits before publishing dependents, and resumes from the immutable release tag without re-uploading accepted versions.
+ 
+ 
+```
+
+**File**: `crates/sem-cli/src/commands/files.rs` (modified, +36/-0)
+```diff
+@@ -39,6 +39,8 @@ fn find_files_in_path(
+     builder
+         .hidden(true)
+         .git_ignore(true)
++        // Source snapshots and container mounts may not include .git.
++        .require_git(false)
+         .git_global(true)
+         .git_exclude(true);
+ 
+@@ -74,6 +76,15 @@ fn find_files_in_path(
+                     scan_path.display(),
+                     e
+                 );
++                if e.io_error()
++                    .is_some_and(|err| err.kind() == std::io::ErrorKind::PermissionDenied)
++                {
++                    eprintln!(
++                        "hint: exclude the unreadable directory itself in .gitignore or .semignore \
++                         (for example, postgres/ rather than postgres/**). \
++                         sem stops instead of returning an incomplete graph."
++                    );
++                }
+                 std::process::exit(1);
+             }
+         };
+@@ -171,6 +182,31 @@ mod tests {
+         path
+     }
+ 
++    #[test]
++    fn scan_honors_nested_gitignore_without_git_metadata() {
++        let root = temp_dir();
++        fs::create_dir_all(root.join("postgres")).unwrap();
++        fs::create_dir_all(root.join("src")).unwrap();
++        fs::write(root.join(".gitignore"), "postgres/\n").unwrap();
++        fs::write(root.join("postgres/hidden.py"), "def hidden(): pass\n").unwrap();
++        fs::write(root.join("src/.gitignore"), "*.py\n!keep.py\n").unwrap();
++        fs::write(root.join("src/hidden.py"), "def hidden(): pass\n").unwrap();
++        fs::write(root.join("src/keep.py"), "def keep(): pass\n").unwrap();
++        let registry = create_default_registry();
++        for no_default_excludes in [false, true] {
++            assert_eq!(
++                find_supported_files_in_path(&root, &root, &registry, &[], no_default_excludes),
++                vec!["src/keep.py"]
++            );
++        }
++        assert_eq!(find_search_files(&root), vec!["src/keep.py"]);
++        assert_eq!(
++            find_supported_files_in_path(&root, &root.join("src"), &registry, &[], false),
++            vec!["src/keep.py"]
++        );
++        fs::remove_dir_all(root).unwrap();
++    }
++
+     #[test]
+     fn scan_skips_binary_files_and_default_excludes() {
+         let root = temp_dir();
+```
+
+**File**: `crates/sem-cli/tests/ignored_permissions.rs` (added, +86/-0)
+```diff
+@@ -0,0 +1,86 @@
++//! Ignored container data must not stop source discovery (#535).
++#![cfg(unix)]
++
++use std::{fs, os::unix::fs::PermissionsExt, path::Path, process::Command};
++
++struct LockedDir(std::path::PathBuf);
++impl Drop for LockedDir {
++    fn drop(&mut self) {
++        let _ = fs::set_permissions(&self.0, fs::Permissions::from_mode(0o700));
++    }
++}
++
++fn run(root: &Path, args: &[&str]) -> std::process::Output {
++    Command::new(env!("CARGO_BIN_EXE_sem"))
++        .current_dir(root)
++        .env("DO_NOT_TRACK", "1")
++        .env("SEM_LOCAL", "1")
++        .env("XDG_CACHE_HOME", root.join("cache"))
++        .args(args)
++        .output()
++        .unwrap()
++}
++
++#[test]
++fn ignored_unreadable_directory_does_not_break_discovery() {
++    for with_git in [false, true] {
++        let tmp = tempfile::tempdir().unwrap();
++        let root = tmp.path();
++        if with_git {
++            assert!(Command::new("git")
++                .args(["init", "-q"])
++                .current_dir(root)
++                .status()
++                .unwrap()
++                .success());
++        }
++        fs::write(root.join(".gitignore"), "postgres/\ncache/\n").unwrap();
++        fs::write(
++            root.join("app.py"),
++            "def target_fn():\n    return 1\n\ndef caller():\n    return target_fn()\n",
++        )
++        .unwrap();
++        let locked = LockedDir(root.join("postgres"));
++        fs::create_dir(&locked.0).unwrap();
++        fs::write(locked.0.join("ignored.py"), "def ignored(): pass\n").unwrap();
++        fs::set_permissions(&locked.0, fs::Permissions::from_mode(0)).unwrap();
++        for args in [
++            vec!["graph", "--no-cache", "--json"],
++            vec!["find", "target_fn", "--json"],
++            vec!["impact", "target_fn", "--no-cache", "--json"],
++        ] {
++            let out = run(root, &args);
++            assert!(
++                out.status.success(),
++                "{args:?}: {}",
++                String::from_utf8_lossy(&out.stderr)
++            );
++            let body = String::from_utf8_lossy(&out.stdout);
++            assert!(body.contains("target_fn"), "{args:?}: {body}");
++            assert!(!body.contains("ignored.py"), "{args:?}: {body}");
++        }
++    }
++}
++
++#[test]
++fn unignored_permission_error_explains_directory_exclusion() {
++    let tmp = tempfile::tempdir().unwrap();
++    let root = tmp.path();
++    fs::write(root.join(".gitignore"), "postgres/**\n").unwrap();
++    let locked = LockedDir(root.join("postgres"));
++    fs::create_dir(&locked.0).unwrap();
++    fs::set_permissions(&locked.0, fs::Permissions::from_mode(0)).unwrap();
++    if fs::read_dir(&locked.0).is_ok() {
++        // Root can bypass mode bits; run this test as an unprivileged user.
++        return;
++    }
++    let out = run(root, &["graph", "--no-cache"]);
++    assert!(!out.status.success());
++    let err = String::from_utf8_lossy(&out.stderr);
++    assert!(
++        err.contains(".semignore") && err.contains("postgres/ rather than postgres/**"),
++        "{err}"
++    );
++    fs::write(root.join(".semignore"), "postgres/\n").unwrap();
++    assert!(run(root, &["graph", "--no-cache"]).status.success());
++}
+```
+
+**File**: `crates/sem-mcp/src/server.rs` (modified, +36/-0)
+```diff
+@@ -468,6 +468,8 @@ impl SemServer {
+         builder
+             .hidden(true)
+             .git_ignore(true)
++            // Source snapshots and container mounts may not include .git.
++            .require_git(false)
+             .git_global(true)
+             .git_exclude(true);
+         let semignore = root.join(".semignore");
+@@ -515,6 +517,8 @@ impl SemServer {
+         builder
+             .hidden(!include_hidden)
+             .git_ignore(true)
++            // Source snapshots and container mounts may not include .git.
++            .require_git(false)
+             .git_global(true)
+             .git_exclude(true);
+         let semignore = prefix_root.join(".semignore");
+@@ -4139,6 +4143,38 @@ mod tests {
+         assert_eq!(mcp_log_labels(&repo, "original", "a.py"), expected);
+     }
+ 
++    #[test]
++    fn discovery_honors_gitignore_without_git_metadata() {
++        let temp = tempfile::tempdir().unwrap();
++        let root = temp.path();
++        fs::create_dir_all(root.join("postgres")).unwrap();
++        fs::create_dir_all(root.join("src")).unwrap();
++        fs::write(root.join(".gitignore"), "postgres/\n").unwrap();
++        fs::write(root.join("postgres/hidden.py"), "def hidden(): pass\n").unwrap();
++        fs::write(root.join("src/.gitignore"), "*.py\n!keep.py\n").unwrap();
++        fs::write(root.join("src/hidden.py"), "def hidden(): pass\n").unwrap();
++        fs::write(root.join("src/keep.py"), "def keep(): pass\n").unwrap();
++        let registry = sem_core::parser::plugins::create_default_registry();
++        for no_default_excludes in [false, true] {
++            assert_eq!(
++                SemServer::find_supported_files_with_options(root, &registry, no_default_excludes)
++                    .unwrap(),
++                vec!["src/keep.py"]
++            );
++            assert_eq!(
++                SemServer::walk_dir_files_with_options(
++                    &root.join("src"),
++                    root,
++                    &registry,
++                    no_default_excludes,
++                    false
++                )
++                .unwrap(),
++                vec!["src/keep.py"]
++            );
++        }
++    }
++
+     #[test]
+     fn find_supported_files_skips_binary_and_default_excludes() {
+         let root = temp_dir();
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #539** (2026-10-30): release: Sem 0.29.0 (@rs545837)
+- **PR #538** (2026-10-30): fix(core): extract definitions sem used to miss across 7 languages (@rs545837)
+- **PR #537** (2026-10-29): release: Sem 0.28.3 (@rs545837)
+- **PR #536** (2026-10-29): fix: honor gitignore in source snapshots without Git metadata (@rs545837)
 - **PR #534** (2026-10-28): perf(mcp): reuse repeated caller lookups within a batch (@rs545837)
 - **PR #533** (2026-10-26): fix(release): resume accepted uploads after registry indexing stalls (@rs545837)
-- **PR #532** (2026-10-26): release: Sem 0.28.2 (@rs545837)
-- **PR #531** (2026-10-26): bench: preserve experimental validation runtime and parity checks (@rs545837)
-- **PR #530** (2026-10-24): docs: record MCP query contract fixes (@rs545837)
-- **PR #529** (2026-10-24): fix(mcp): support scoped context and structured caller batches (@rs545837)
 
 ---
 
@@ -1947,13 +2533,13 @@ in CI.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp): reuse repeated caller lookups within a batch (#534)
+## X. core): extract definitions sem used to miss across 7 languages (#538)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f28b2311`: mcp): reuse repeated caller lookups within a batch (#534). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3e2e7851`: core): extract definitions sem used to miss across 7 languages (#538). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1961,9 +2547,9 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Performance
+### Fixed
 
-- Repeated caller queries within one MCP batch reuse the first lookup while preserving input order and per-query responses. Results are not reused across requests.
+- **Entity extraction finds definitions it used to miss.** C++ headers saved as `.h` are read as C++; members of C++ template classes, `using` aliases, C function-pointer typedefs, Rust trait method signatures, Java annotation members, C# operators, delegates, events and indexers, Kotlin companion objects and members of `object :` expressions, and Elixir `@type` specs are now entities. When C, C++ or Kotlin code cannot be parsed (macros the grammar cannot expand, Kotlin Multiplatform constructors), clear definition headers in the unparsed region are recovered and marked `recovered = parse_error`. Measured against each language's own parser or Universal Ctags on 14 real repositories, recall is now 99–100% in every language except C++ (92%), up from 56% for C++, 71% for Kotlin and 92% for C#.
 
 ```
 
@@ -1974,4 +2560,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f28b2311` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3e2e7851` are properly handled with clean fallback behavior.

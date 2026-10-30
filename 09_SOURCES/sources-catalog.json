@@ -6343,10 +6343,10 @@
     "repository": "Ataraxy-Labs/sem",
     "platform": "github",
     "sourceUrl": "https://github.com/Ataraxy-Labs/sem",
-    "sourceVersion": "f28b2311",
+    "sourceVersion": "fee69d96",
     "license": "Apache-2.0",
-    "contentHash": "9ea765aba68ac92abed64f1a6c26fff6288cb5e1d1d241634e2ae70522f375ec",
-    "lastHarvestedAt": "2026-10-28T17:05:45.384Z",
+    "contentHash": "2b6717636ecc4dd311ee40205208a4084cdbaabf4bbc9637ae6979915b1a969b",
+    "lastHarvestedAt": "2026-10-30T13:46:21.473Z",
     "learningId": "learn-github-ataraxy-labs-sem"
   },
   "komi-store-komi-store": {
@@ -6853,10 +6853,10 @@
     "repository": "weaviate/weaviate",
     "platform": "github",
     "sourceUrl": "https://github.com/weaviate/weaviate",
-    "sourceVersion": "d923b9b0",
+    "sourceVersion": "0a6bfa1a",
     "license": "NOASSERTION",
-    "contentHash": "72f00540277944fc4190da5608cd61e3808330fc8a4d5710f75b51f670b86cc3",
-    "lastHarvestedAt": "2026-10-28T21:37:22.836Z",
+    "contentHash": "711603553ed7804b58a1608cb150e0c54f47efc85727e22b8c6fbe1d3e32249c",
+    "lastHarvestedAt": "2026-10-30T13:46:32.072Z",
     "learningId": "learn-github-weaviate-weaviate"
   },
   "topgrade-rs-topgrade": {
@@ -9353,10 +9353,10 @@
     "repository": "hmlongco/Factory",
     "platform": "github",
     "sourceUrl": "https://github.com/hmlongco/Factory",
-    "sourceVersion": "aa8596de",
+    "sourceVersion": "3799543a",
     "license": "MIT",
-    "contentHash": "347cc5fc71aa1c8fe0db97b6e69536e06132bd56f2c75aa6bd189dcb23ef1bc8",
-    "lastHarvestedAt": "2026-10-22T16:51:46.911Z",
+    "contentHash": "810f1508ba42e91ff47b5cfee59eacf39c8dd287abfc59635fb3e7261e0a7d7a",
+    "lastHarvestedAt": "2026-10-30T13:46:24.325Z",
     "learningId": "learn-github-hmlongco-factory"
   },
   "fb55-htmlparser2": {

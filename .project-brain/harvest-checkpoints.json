@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T13:37:43.973Z",
+  "last_updated": "2026-10-30T13:46:32.087Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9606,14 +9606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ataraxy-labs-sem",
-      "content_hash": "9ea765aba68ac92abed64f1a6c26fff6288cb5e1d1d241634e2ae70522f375ec",
-      "verified_at": "2026-10-28T17:05:45.393Z",
+      "content_hash": "2b6717636ecc4dd311ee40205208a4084cdbaabf4bbc9637ae6979915b1a969b",
+      "verified_at": "2026-10-30T13:46:21.483Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T17:05:45.393Z"
+      "last_updated": "2026-10-30T13:46:21.483Z"
     },
     "komi-store/komi-store": {
       "repository": "komi-store/komi-store",
@@ -10341,14 +10341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-weaviate-weaviate",
-      "content_hash": "72f00540277944fc4190da5608cd61e3808330fc8a4d5710f75b51f670b86cc3",
-      "verified_at": "2026-10-28T21:37:22.845Z",
+      "content_hash": "711603553ed7804b58a1608cb150e0c54f47efc85727e22b8c6fbe1d3e32249c",
+      "verified_at": "2026-10-30T13:46:32.087Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T21:37:22.845Z"
+      "last_updated": "2026-10-30T13:46:32.087Z"
     },
     "topgrade-rs/topgrade": {
       "repository": "topgrade-rs/topgrade",
@@ -14076,14 +14076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hmlongco-factory",
-      "content_hash": "347cc5fc71aa1c8fe0db97b6e69536e06132bd56f2c75aa6bd189dcb23ef1bc8",
-      "verified_at": "2026-10-22T16:51:46.919Z",
+      "content_hash": "810f1508ba42e91ff47b5cfee59eacf39c8dd287abfc59635fb3e7261e0a7d7a",
+      "verified_at": "2026-10-30T13:46:24.341Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-22T16:51:46.919Z"
+      "last_updated": "2026-10-30T13:46:24.341Z"
     },
     "fb55/htmlparser2": {
       "repository": "fb55/htmlparser2",

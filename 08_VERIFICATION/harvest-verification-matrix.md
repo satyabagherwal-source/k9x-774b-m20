@@ -6203,3 +6203,6 @@
 | `CYCLE-20261030-OK53` | `2026-10-30T13:37:39.831Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5766` | Yes (`a375a812...`) |
 | `CYCLE-20261030-OM74` | `2026-10-30T13:37:42.496Z` | `NirDiamant/RAG_Techniques` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5767` | Yes (`3896a9b4...`) |
 | `CYCLE-20261030-ONBR` | `2026-10-30T13:37:43.959Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5768` | Yes (`95173f3e...`) |
+| `CYCLE-20261030-ZQN1` | `2026-10-30T13:46:21.469Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5769` | Yes (`2b671763...`) |
+| `CYCLE-20261030-ZSU9` | `2026-10-30T13:46:24.321Z` | `hmlongco/Factory` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hmlongco-factory-learnings.md` | Yes (`810f1508...`) |
+| `CYCLE-20261030-ZYTG` | `2026-10-30T13:46:32.068Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md` | Yes (`71160355...`) |

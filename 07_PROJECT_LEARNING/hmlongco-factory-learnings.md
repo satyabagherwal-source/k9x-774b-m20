@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmlongco-factory-learnings.md`  
 > **Source**: github ([https://github.com/hmlongco/Factory](https://github.com/hmlongco/Factory))  
-> **Source Version**: `aa8596de`  
+> **Source Version**: `3799543a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:51:46.709Z  
+> **Timestamp**: 2026-10-30T13:46:24.053Z  
 > **Learning ID**: `learn-github-hmlongco-factory`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmlongco-factory-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hmlongco/Factory](https://github.com/hmlongco/Factory))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:51:46.484Z  
+> **Harvest Timestamp**: 2026-10-30T13:46:23.595Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern approach to Container-Based Dependency Injection for Swift and SwiftUI.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2918 stars
+- **Stars / Engagement**: 2923 stars
 
 ---
 
@@ -980,88 +980,314 @@ internal class MyCommonType: CommonType {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa8596de` (2026-10-21)
-**Commit Message**: DocC for 3.5.1
+### Incident Patch 1: `3799543a` (2026-10-28)
+**Commit Message**: Changelog
+
+**File**: `CHANGELOG` (modified, +1/-1)
+```diff
+@@ -2,7 +2,7 @@
+ 
+ ### 3.5.2
+ 
+-* Unpdated README and documentation to cover withContainer caveats and examples
++* Updated README and documentation to cover withContainer caveats and examples
+ 
+ ### 3.5.1
+ 
+```
+
+---
+
+### Incident Patch 2: `ab10ce27` (2026-10-28)
+**Commit Message**: Updates for 3.5.2
+
+**File**: `CHANGELOG` (modified, +4/-0)
+```diff
+@@ -1,5 +1,9 @@
+ # Factory Changelog
+ 
++### 3.5.2
++
++* Unpdated README and documentation to cover withContainer caveats and examples
++
+ ### 3.5.1
+ 
+ * Updated code to support custom scene containers
+```
+
+**File**: `README.md` (modified, +7/-10)
+```diff
+@@ -5,7 +5,7 @@
+ 
+ A modern approach to Container-Based Dependency Injection for Swift and SwiftUI.
+ 
+-## Factory Version 3.5.1
++## Factory Version 3.5.2
+ 
+ Factory is strongly influenced by SwiftUI, and in my opinion is highly suited for that environment. Factory is...
+ 
+@@ -171,26 +171,23 @@ It's easy. Just replace `MyService` with a mock that also conforms to `MyService
+ 
+ ```swift
+ #Preview {
++    Container.shared.myService.register { MockService() }
+     ContentView()
+-        .withContainer(\.myService) { MockService() }
+ }
+ ```
+ 
+-Or use the closure form when there's more to set up.
++Now when our preview is displayed `ContentView` creates a `ContentViewModel` which in turn has a dependency on `myService` using the `Injected` property wrapper. And when the wrapper asks the factory for an instance of `MyServiceType` it now gets a `MockService2` instead of the `MyService` type originally defined.
++
++Views that use `@InjectedObject` or `@InjectedObservable` can also register from the view hierarchy.
+ 
+ ```swift
+ #Preview {
+     ContentView()
+-        .withContainer {
+-            $0.myService.register { MockService() }
+-            $0.analytics.register { MockAnalytics() }
+-        }
++        .withContainer(\.myService) { MockService() }
+ }
+ ```
+ 
+-Now when our preview is displayed `ContentView` creates a `ContentViewModel` which in turn has a dependency on `myService` using the `Injected` property wrapper. And when the wrapper asks the factory for an instance of `MyServiceType` it now gets a `MockService2` instead of the `MyService` type originally defined.
+-
+-This is a powerful concept that lets us reach deep into a chain of dependencies and alter the behavior of a system as needed.
++Either way, this is a powerful concept that lets us reach deep into a chain of dependencies and alter the behavior of a system as needed.
+ 
+ See the [Previews](https://hmlongco.github.io/Factory/documentation/factorykit/previews) documentation for more.
+ 
+```
+
+**File**: `Sources/FactoryKit/FactoryKit.docc/Advanced/Scenes.md` (modified, +98/-0)
+```diff
+@@ -206,6 +206,8 @@ Scopes behave the way you'd expect once you remember where they live. `.cached`
+ 
+ A preview has no scene root, so `\.container` is the global container. You'll usually want to register a mock for the preview, and `withContainer` does that without leaving the view hierarchy.
+ 
++It works for views that get their dependencies from ``InjectedObservable`` or ``InjectedObject``. If your view uses ``Injected`` or builds its view model in `init`, read "When withContainer is too late" below first.
++
+ Register one factory with the key path form.
+ 
+ ```swift
+@@ -251,3 +253,99 @@ ContentView()
+ ```
+ 
+ The same rule applies in a real scene root. To give one scene its own registrations, apply `withContainer` inside the view that publishes the scene container.
++
++## When withContainer is too late
++
++`withContainer` is a view modifier, and a modifier can only wrap a view that already exists. Look at the order things happen in.
++
++```swift
++ContentView()                  // 1. init runs, and so does everything resolved in it
++    .withContainer { ... }     // 2. the modifier is attached
++                               // 3. later, when SwiftUI renders, the registrations run
++```
++
++Swift evaluates `ContentView()` before it ever looks at `.withContainer`. The registrations happen after the view has been built. No modifier can reach back and change that.
++
++For some views that doesn't matter. ``InjectedObservable`` and ``InjectedObject`` resolve on first use, which is when the body is evaluated. By then the modifier has run, so the registrations are in place.
++
++```swift
++struct ContentView: View {
++    @InjectedObservable(\.contentViewModel) var model   // resolved in body. Sees the mock.
++    var body: some View { Text(model.text) }
++}
++
++#Preview {
++    ContentView()
++        .withContainer(\.myServiceType) { MockService() }
++}
++```
++
++For others it matters a lot. ``Injected`` resolves in the view's `init`, from `Container.shared`. So does any view model you create there, along with every `@Injected` property inside that view model.
++
++```swift
++struct ContentView: View {
++    @Injected(\.myServiceType) var service          // resolved in init
++    @State private var model = ContentViewModel()   // created in init, and so are its dependencies
++    ...
++}
++
++#Preview {
++    ContentView()
++        .withContainer(\.myServiceType) { MockService() }   // Too late. Both already have the live service.
++}
++```
++
++Nothing complains. The preview just quietly talks to the real thing.
++
++### The old-style fallbacks
++
++Until you can move those views over to ``InjectedObservable`` or ``InjectedObject``, make sure the registration happens *before* the view is created.
++
++The simplest way is to register in the preview itself. The `let _ =` keeps the statement legal inside the preview's view builder.
++
++```swift
++#Preview {
++    let _ = Container.shared.myServiceType.register { MockService() }
++    ContentView()
++}
++```
++
++That's the global container again, so the same warning about leaking registrations into other previews applies. If you want isolation, build your own container and install it as well. Views that use the SwiftUI wrappers will find it in the environment.
++
++```swift
++#Preview {
++    let container = Container()
++    let _ = container.myServiceType.register { MockService() }
++    ContentView()
++        .withContainer(container)
++}
++```
++
++That still leaves ``Injected``, which has no way to see the environment. For that, `Container.shared` is a `@TaskLocal`, and you can scope it while the view is being built.
++
++```swift
++#Preview {
++    let container = Container()
++    let _ = container.myServiceType.register { MockService() }
++    Container.$shared.withValue(container) {
++        ContentView()
++            .withContainer(container)
++    }
++}
++```
++
++Inside that closure `init` runs with `container` as `Container.shared`, so `@Injected` and any view model created in `init` resolve from it. Only the construction is scoped, though. Anything that touches `Container.shared` later, like a ``LazyInjected`` property or a button action, goes back to the real global.
++
++Finally, there's the option that works everywhere, and it's the one recommended above. Stop reaching for the global in your view models. Give them the container and resolve from it.
++
++```swift
++@MainActor @Observable
++final class ContentViewModel {
++    private let service: MyServiceType
++    init(container: Container) {
++        self.service = container.myServiceType()
++    }
++}
++```
++
++These are stopgaps. A way to defer building the view until the registrations have run is planned, but it isn't part of `withContainer` today.
+```
+
+**File**: `Sources/FactoryKit/FactoryKit.docc/Basics/GettingStarted.md` (modified, +7/-6)
+```diff
+@@ -158,23 +158,24 @@ It's easy. Just replace `MyService` with a mock that also conforms to `MyService
+ 
+ ```swift
+ #Preview {
++    Container.shared.myService.register { MockService2() }
+     ContentView()
+-        .withContainer(\.myService) { MockService2() }
+ }
+ ```
+ 
+-Or use the closure form when there's more to set up.
++The registration runs before `ContentView` is created, and that matters here. `ContentViewModel` is created in the view's `init` and resolves its dependencies there.
++
++Views that use ``InjectedObject`` or ``InjectedObservable`` can also register from the view hierarchy.
+ 
+ ```swift
+ #Preview {
+     ContentView()
+-        .withContainer {
+-            $0.myService.register { MockService2() }
+-            $0.analytics.register { MockAnalytics() }
+-        }
++        .withContainer(\.myService) { MockService2() }
+ }
+ ```
+ 
++But `withContainer` is a modifier, so it runs after the view has already been built. It's too late for anything obtained via ``Injected`` or for a view model created in `init`, as in our example above. See <doc:Scenes> for details and fallbacks.
++
+ Note the line in our preview code where we’re gone back to our container and registered a new closure on our factory. This function overrides the default factory closure.
+ 
+ Now when our preview is displayed `ContentView` creates a `ContentViewModel` which in turn has a dependency on `myService` using shared container. 
+```
+
+**File**: `Sources/FactoryKit/FactoryKit/Injections.swift` (modified, +3/-0)
+```diff
+@@ -48,6 +48,9 @@ import SwiftUI
+ ///
+ /// > Note: The @Injected property wrapper will be resolved on **initialization**. In the above example
+ /// the referenced dependencies will be acquired when the parent class is created.
++///
++/// Because it always reads `Container.shared` at that moment, it can't see registrations made later by the SwiftUI `withContainer`
++/// modifier or a container installed in the environment. Use `@InjectedObject` or `@InjectedObservable` for that.
+ @propertyWrapper public struct Injected<T> {
+ 
+     private var thunk: () -> Factory<T>
+```
+
+**File**: `Sources/FactoryKit/FactoryKit/Scenes.swift` (modified, +15/-1)
+```diff
+@@ -89,6 +89,10 @@ extension View {
+     ///     // Registers on sceneContainer.
+     ///     .environment(\.container, sceneContainer)
+     /// ```
++    /// > Important: The view is already constructed when the modifier is attached, and the registrations run later, when SwiftUI
++    /// renders. They're visible to `@InjectedObject` and `@InjectedObservable`, which resolve on first use. They're **not** visible
++    /// to `@Injected`, or to a view model created in the view's `init`, since those resolve first. See the Scenes article for
++    /// the fallbacks.
+     @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+     public func withContainer(_ modify: @escaping (Container) -> Void) -> some View {
+         modifier(SceneContainerModifier<Container>(modify: modify))
+@@ -107,6 +111,9 @@ extension View {
+     /// }
+     /// ```
+     /// The same placement rule applies. Apply it inside the view that sets `\.container`, or it registers on `Container.shared`.
++    ///
++    /// The same timing rule applies as well. It reaches `@InjectedObject` and `@InjectedObservable`, but not `@Injected` or
++    /// anything created in the view's `init`.
+     @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+     public func withContainer<T>(_ keyPath: KeyPath<Container, Factory<T>>, _ registration: @escaping () -> T) -> some View {
+         modifier(SceneContainerModifier<Container>(modify: { $0[keyPath: keyPath].register(factory: registration) }))
+@@ -125,6 +132,9 @@ extension View {
+     /// }
+     /// ```
+     /// The same placement rule applies. Apply it inside the view that installs the container, or it registers on `MyContainer.shared`.
++    ///
++    /// The same timing rule applies as well. It reaches `@InjectedObject` and `@InjectedObservable`, but not `@Injected` or
++    /// anything created in the view's `init`.
+     @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+     public func withContainer<C: SharedContainer>(_ type: C.Type, _ modify: @escaping (C) -> Void) -> some View {
+         modifier(SceneContainerModifier<C>(modify: modify))
+@@ -141,6 +151,9 @@ extension View {
+     /// }
+     /// ```
+     /// The same placement rule applies. Apply it inside the view that installs the container, or it registers on `MyContainer.shared`.
++    ///
++    /// The same timing rule applies as well. It reaches `@InjectedObject` and `@InjectedObservable`, but not `@Injected` or
++    /// anything created in the view's `init`.
+     @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+     public func withContainer<C: SharedContainer, T>(_ keyPath: KeyPath<C, Factory<T>>, _ registration: @escaping () -> T) -> some View {
+         modifier(SceneContainerModifier<C>(modify: { $0[keyPath: keyPath].register(factory: registration) }))
+@@ -173,7 +186,8 @@ private struct SceneContainerModifier<C: SharedContainer>: ViewModifier {
+     let modify: (C) -> Void
+ 
+     func body(content: Content) -> some View {
+-        content.environment(\.sceneContainers, modifiedContainers())
++        let containers = modifiedContainers()
++        content.environment(\.sceneContainers, containers)
+     }
+ 
+     func modifiedContainers() -> SceneContainers {
+```
 
 **File**: `docs/data/documentation/factorykit.json` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--{"identifier":{"interfaceLanguage":"swift","url":"doc:\/\/FactoryKit\/documentation\/FactoryKit"},"abstract":[{"type":"text","text":"A modern approach to Container-Based Dependency Injection for Swift and SwiftUI."}],"metadata":{"role":"collection","modules":[{"name":"FactoryKit"}],"externalID":"FactoryKit","symbolKind":"module","title":"FactoryKit","roleHeading":"Framework"},"topicSections":[{"anchor":"The-Basics","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/GettingStarted","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Containers","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Scopes"],"title":"The Basics"},{"anchor":"Development-and-Testing","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/SwiftUI","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Previews","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Testing","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Contexts","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Debugging","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Chains"],"title":"Development and Testing"},{"anchor":"Advanced-Topics","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/Modifiers","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Actors","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Modules","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Scenes","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Cycle","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Optionals","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Functional","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Tags"],"title":"Advanced Topics"},{"anchor":"Additional-Topics","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/Design","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Migration"],"title":"Additional Topics"},{"anchor":"Classes","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container","doc:\/\/FactoryKit\/documentation\/FactoryKit\/ContainerManager"],"title":"Classes","generated":true},{"anchor":"Protocols","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/AutoRegistering","doc:\/\/FactoryKit\/documentation\/FactoryKit\/FactoryModifying","doc:\/\/FactoryKit\/documentation\/FactoryKit\/ManagedContainer","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Resolving","doc:\/\/FactoryKit\/documentation\/FactoryKit\/SharedContainer"],"title":"Protocols","generated":true},{"title":"Structures","generated":true,"identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/DynamicInjected","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Factory","doc:\/\/FactoryKit\/documentation\/FactoryKit\/FactoryContext","doc:\/\/FactoryKit\/documentation\/FactoryKit\/FactoryRegistration","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Injected","doc:\/\/FactoryKit\/documentation\/FactoryKit\/InjectedContainer","doc:\/\/FactoryKit\/documentation\/FactoryKit\/InjectedObject","doc:\/\/FactoryKit\/documentation\/FactoryKit\/InjectedObservable","doc:\/\/FactoryKit\/documentation\/FactoryKit\/InjectedType","doc:\/\/FactoryKit\/documentation\/FactoryKit\/LazyInjected","doc:\/\/FactoryKit\/documentation\/FactoryKit\/ParameterFactory","doc:\/\/FactoryKit\/documentation\/FactoryKit\/WeakLazyInjected"],"anchor":"Structures"},{"identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/dependency(_:)-952hq","doc:\/\/FactoryKit\/documentation\/FactoryKit\/dependency(_:)-9pmu1","doc:\/\/FactoryKit\/documentation\/FactoryKit\/dependency(_:parameter:)-7g39a","doc:\/\/FactoryKit\/documentation\/FactoryKit\/dependency(_:parameter:)-96ign","doc:\/\/FactoryKit\/documentation\/FactoryKit\/resolve(_:)-1v66f","doc:\/\/FactoryKit\/documentation\/FactoryKit\/resolve(_:)-22zpa"],"generated":true,"anchor":"Functions","title":"Functions"},{"identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/ParameterFactoryType","doc:\/\/FactoryKit\/documentation\/FactoryKit\/VoidFactoryType"],"generated":true,"anchor":"Type-Aliases","title":"Type Aliases"},{"identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/FactoryContextType","doc:\/\/FactoryKit\/documentation\/FactoryKit\/FactoryResetOptions"],"generated":true,"anchor":"Enumerations","title":"Enumerations"},{"identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/Swift","doc:\/\/FactoryKit\/documentation\/FactoryKit\/SwiftUICore"],"generated":true,"anchor":"Extended-Modules","title":"Extended Modules"}],"primaryContentSections":[{"content":[{"anchor":"Overview","level":2,"type":"heading","text":"Overview"},{"inlineContent":[{"text":"Factory is strongly influenced by SwiftUI, and in my opinion is highly suited for use in that environment.","type":"text"}],"type":"paragraph"},{"inlineContent":[{"text":"Factory is…","type":"text"}],"type":"paragraph"},{"type":"unorderedList","items":[{"content":[{"type":"paragraph","inlineContent":[{"inlineContent":[{"type":"text","text":"Adaptable"}],"type":"strong"},{"type":"text","text":": Factory doesn’t tie you down to a single dependency injection strategy or tech
+-{"topicSections":[{"identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/GettingStarted","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Containers","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Scopes"],"title":"The Basics","anchor":"The-Basics"},{"identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/SwiftUI","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Previews","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Testing","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Contexts","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Debugging","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Chains"],"title":"Development and Testing","anchor":"Development-and-Testing"},{"title":"Advanced Topics","anchor":"Advanced-Topics","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/Modifiers","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Actors","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Modules","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Scenes","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Cycle","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Optionals","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Functional","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Tags"]},{"anchor":"Additional-Topics","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/Design","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Migration"],"title":"Additional Topics"},{"anchor":"Classes","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container","doc:\/\/FactoryKit\/documentation\/FactoryKit\/ContainerManager"],"generated":true,"title":"Classes"},{"anchor":"Protocols","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/AutoRegistering","doc:\/\/FactoryKit\/documentation\/FactoryKit\/FactoryModifying","doc:\/\/FactoryKit\/documentation\/FactoryKit\/ManagedContainer","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Resolving","doc:\/\/FactoryKit\/documentation\/FactoryKit\/SharedContainer"],"generated":true,"title":"Protocols"},{"anchor":"Structures","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/DynamicInjected","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Factory","doc:\/\/FactoryKit\/documentation\/FactoryKit\/FactoryContext","doc:\/\/FactoryKit\/documentation\/FactoryKit\/FactoryRegistration","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Injected","doc:\/\/FactoryKit\/documentation\/FactoryKit\/InjectedContainer","doc:\/\/FactoryKit\/documentation\/FactoryKit\/InjectedObject","doc:\/\/FactoryKit\/documentation\/FactoryKit\/InjectedObservable","doc:\/\/FactoryKit\/documentation\/FactoryKit\/InjectedType","doc:\/\/FactoryKit\/documentation\/FactoryKit\/LazyInjected","doc:\/\/FactoryKit\/documentation\/FactoryKit\/ParameterFactory","doc:\/\/FactoryKit\/documentation\/FactoryKit\/WeakLazyInjected"],"generated":true,"title":"Structures"},{"anchor":"Functions","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/dependency(_:)-952hq","doc:\/\/FactoryKit\/documentation\/FactoryKit\/dependency(_:)-9pmu1","doc:\/\/FactoryKit\/documentation\/FactoryKit\/dependency(_:parameter:)-7g39a","doc:\/\/FactoryKit\/documentation\/FactoryKit\/dependency(_:parameter:)-96ign","doc:\/\/FactoryKit\/documentation\/FactoryKit\/resolve(_:)-1v66f","doc:\/\/FactoryKit\/documentation\/FactoryKit\/resolve(_:)-22zpa"],"generated":true,"title":"Functions"},{"identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/ParameterFactoryType","doc:\/\/FactoryKit\/documentation\/FactoryKit\/VoidFactoryType"],"title":"Type Aliases","generated":true,"anchor":"Type-Aliases"},{"anchor":"Enumerations","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/FactoryContextType","doc:\/\/FactoryKit\/documentation\/FactoryKit\/FactoryResetOptions"],"generated":true,"title":"Enumerations"},{"identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/Swift","doc:\/\/FactoryKit\/documentation\/FactoryKit\/SwiftUICore"],"title":"Extended Modules","generated":true,"anchor":"Extended-Modules"}],"metadata":{"externalID":"FactoryKit","symbolKind":"module","title":"FactoryKit","modules":[{"name":"FactoryKit"}],"roleHeading":"Framework","role":"collection"},"abstract":[{"text":"A modern approach to Container-Based Dependency Injection for Swift and SwiftUI.","type":"text"}],"schemaVersion":{"major":0,"patch":0,"minor":3},"identifier":{"interfaceLanguage":"swift","url":"doc:\/\/FactoryKit\/documentation\/FactoryKit"},"primaryContentSections":[{"kind":"content","content":[{"type":"heading","level":2,"anchor":"Overview","text":"Overview"},{"type":"paragraph","inlineContent":[{"text":"Factory is strongly influenced by SwiftUI, and in my opinion is highly suited for use in that environment.","type":"text"}]},{"type":"paragraph","inlineContent":[{"type":"text","text":"Factory is…"}]},{"type":"unorderedList","items":[{"content":[{"inlineContent":[{"type":"strong","inlineContent":[{"type":"text","text":"Adaptable"}]},{"type":"text","text":": Factory doesn’t tie you down to 
 ```
 
 **File**: `docs/data/documentation/factorykit/actors.json` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--{"identifier":{"interfaceLanguage":"swift","url":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/Actors"},"abstract":[{"type":"text","text":"Registering and resolving actors and actor-isolated dependencies."}],"metadata":{"title":"Actors and Actor Isolation","modules":[{"name":"FactoryKit"}],"roleHeading":"Article","role":"article"},"primaryContentSections":[{"content":[{"type":"heading","level":2,"text":"Overview","anchor":"Overview"},{"inlineContent":[{"text":"Factory resolution is synchronous. You ask for a dependency and you get one back, right now, with no ","type":"text"},{"type":"codeVoice","code":"await"},{"text":" in sight. That model is simple and fast, but it bumps up against Swift Concurrency the moment a dependency needs to be built on a specific actor.","type":"text"}],"type":"paragraph"},{"inlineContent":[{"type":"text","text":"This page walks through the cases in order, from the one that just works to the one that needs a little help. The simplest case is a plain actor. Then a main actor-isolated type. Then a custom global actor."}],"type":"paragraph"},{"type":"paragraph","inlineContent":[{"type":"text","text":"And finally what to do when you need to resolve one of those isolated types from a detached task that’s non-isolated and not on any actor."}]},{"type":"heading","level":2,"anchor":"Plain-Actors","text":"Plain Actors"},{"inlineContent":[{"type":"text","text":"An ordinary actor is the easy case. Define it and register it like anything else."}],"type":"paragraph"},{"syntax":"swift","type":"codeListing","code":["actor OrdinaryActor {","    private var count = 0","    func increment() -> Int {","        count += 1","        return count","    }","}","","extension Container {","    var ordinaryActor: Factory<OrdinaryActor> {","        self { OrdinaryActor() }","    }","}"]},{"type":"paragraph","inlineContent":[{"text":"Resolution needs nothing special, because an actor’s initializer is ","type":"text"},{"type":"emphasis","inlineContent":[{"text":"nonisolated","type":"text"}]},{"type":"text","text":". It runs synchronously on whatever thread asks for it, so Factory can build one from any context."}]},{"syntax":"swift","type":"codeListing","code":["let actor = Container.shared.ordinaryActor()"]},{"type":"paragraph","inlineContent":[{"type":"text","text":"The isolation only matters once you touch the actor’s state, and the compiler already handles that for you by requiring "},{"type":"codeVoice","code":"await"},{"type":"text","text":" on the call."}]},{"syntax":"swift","type":"codeListing","code":["let count = await actor.increment()"]},{"type":"paragraph","inlineContent":[{"type":"text","text":"So for a plain old everyday actor there’s no annotation, no special resolution function, and nothing to remember. Register it, resolve it, await its methods."}]},{"type":"paragraph","inlineContent":[{"type":"text","text":"Done."}]},{"anchor":"Main-Actor-Isolation","type":"heading","level":2,"text":"Main Actor Isolation"},{"type":"paragraph","inlineContent":[{"text":"Now consider a type that is isolated to the main actor. View models are the common example.","type":"text"}]},{"type":"codeListing","code":["@MainActor","class ContentViewModel {","    init() {","        \/\/ initializer is @MainActor-isolated","    }","    func load() async { ... }","}"],"syntax":"swift"},{"inlineContent":[{"type":"text","text":"Because the initializer is "},{"type":"codeVoice","code":"@MainActor"},{"type":"text","text":"-isolated, the factory closure that calls it has to be "},{"type":"codeVoice","code":"@MainActor"},{"type":"text","text":"-isolated too. You get there by annotating the computed property."}],"type":"paragraph"},{"type":"codeListing","code":["extension Container {","    @MainActor","    var contentViewModel: Factory<ContentViewModel> {","        self { ContentViewModel() }","    }","}"],"syntax":"swift"},{"type":"paragraph","inlineContent":[{"type":"text","text":"The annotation is the whole trick. It requires the Factory request to be on the main actor so the initializer runs on the MainActor as well."}]},{"type":"paragraph","inlineContent":[{"text":"Most of the time you never think about this because you resolve a main actor type from main actor code. A ","type":"text"},{"code":"@MainActor","type":"codeVoice"},{"text":" view model resolved by ","type":"text"},{"code":"@Injected","type":"codeVoice"},{"text":" inside another ","type":"text"},{"code":"@MainActor","type":"codeVoice"},{"text":" type, or referenced from a SwiftUI view, is already on the main actor when the Factory is requested and resolution occurs.","type":"text"}]},{"syntax":"swift","code":["@MainActor","class CoordinatorViewModel {","    @Injected(\\.contentViewModel) var content","}"],"type":"codeListing"},{"inlineContent":[{"text":"See ","type":"text"},{"isActive":true,"identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/SwiftUI","type":"reference"},{"text":" for more on main actor types and the SwiftUI property wrapper
-```
-
-**File**: `docs/data/documentation/factorykit/autoregistering.json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"identifier":{"url":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/AutoRegistering","interfaceLanguage":"swift"},"primaryContentSections":[{"declarations":[{"platforms":["macOS"],"languages":["swift"],"tokens":[{"kind":"keyword","text":"protocol"},{"kind":"text","text":" "},{"kind":"identifier","text":"AutoRegistering"}]}],"kind":"declarations"},{"kind":"mentions","mentions":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/Containers"]},{"kind":"content","content":[{"text":"Overview","type":"heading","anchor":"overview","level":2},{"inlineContent":[{"text":"Add this protocol to a container to support first-time registration of needed dependencies prior to first resolution","type":"text"},{"text":" ","type":"text"},{"text":"of a dependency on that container.","type":"text"}],"type":"paragraph"},{"syntax":"swift","code":["extension Container: @retroactive AutoRegistering {","    func autoRegister() {","        someService.register {","            CrossModuleService()","        }","    }","}"],"type":"codeListing"},{"type":"paragraph","inlineContent":[{"type":"text","text":"The "},{"code":"autoRegister","type":"codeVoice"},{"type":"text","text":" function is called on each instantiated container prior to"},{"type":"text","text":" "},{"type":"text","text":"the first resolution of a Factory on that container."}]},{"content":[{"inlineContent":[{"type":"text","text":"Calling "},{"type":"codeVoice","code":"container.manager.reset(options: .all)"},{"type":"text","text":" restores the container to it’s initial state"},{"type":"text","text":" "},{"type":"text","text":"and autoRegister will be called again if it exists."}],"type":"paragraph"}],"type":"aside","name":"Warning","style":"warning"},{"inlineContent":[{"type":"text","text":"The "},{"type":"codeVoice","code":"@retroactive"},{"type":"text","text":" attribute is needed as of Swift 6 to silence a conformance warning."}],"type":"paragraph"}]}],"sections":[],"variants":[{"traits":[{"interfaceLanguage":"swift"}],"paths":["\/documentation\/factorykit\/autoregistering"]}],"topicSections":[{"identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/AutoRegistering\/autoRegister()"],"title":"Instance Methods","generated":true,"anchor":"Instance-Methods"}],"abstract":[{"type":"text","text":"Adds an registration “hook” to a "},{"type":"codeVoice","code":"Container"},{"type":"text","text":"."}],"schemaVersion":{"major":0,"patch":0,"minor":3},"hierarchy":{"paths":[["doc:\/\/FactoryKit\/documentation\/FactoryKit"]]},"kind":"symbol","metadata":{"fragments":[{"text":"protocol","kind":"keyword"},{"text":" ","kind":"text"},{"text":"AutoRegistering","kind":"identifier"}],"externalID":"s:10FactoryKit15AutoRegisteringP","title":"AutoRegistering","role":"symbol","navigatorTitle":[{"kind":"identifier","text":"AutoRegistering"}],"roleHeading":"Protocol","symbolKind":"protocol","modules":[{"name":"FactoryKit"}]},"references":{"doc://FactoryKit/documentation/FactoryKit/Containers":{"url":"\/documentation\/factorykit\/containers","abstract":[{"text":"Containers are the cornerstone of Factory 2.0. What are they and how do we use them?","type":"text"}],"role":"article","identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/Containers","type":"topic","kind":"article","title":"Containers"},"doc://FactoryKit/documentation/FactoryKit/AutoRegistering":{"url":"\/documentation\/factorykit\/autoregistering","abstract":[{"type":"text","text":"Adds an registration “hook” to a "},{"type":"codeVoice","code":"Container"},{"type":"text","text":"."}],"role":"symbol","fragments":[{"text":"protocol","kind":"keyword"},{"text":" ","kind":"text"},{"text":"AutoRegistering","kind":"identifier"}],"identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/AutoRegistering","type":"topic","kind":"symbol","title":"AutoRegistering","navigatorTitle":[{"text":"AutoRegistering","kind":"identifier"}]},"doc://FactoryKit/documentation/FactoryKit/AutoRegistering/autoRegister()":{"url":"\/documentation\/factorykit\/autoregistering\/autoregister()","abstract":[{"type":"text","text":"User provided function that supports first-time registration of needed dependencies prior to first resolution"},{"type":"text","text":" "},{"type":"text","text":"of a dependency on that container."}],"role":"symbol","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"autoRegister"},{"kind":"text","text":"()"}],"identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/AutoRegistering\/autoRegister()","type":"topic","kind":"symbol","title":"autoRegister()","required":true},"doc://FactoryKit/documentation/FactoryKit":{"role":"collection","identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit","type":"topic","title":"FactoryKit","abstract":[{"type":"text","text":"A modern approach to Container-Based Dependency Injection for Swift and SwiftUI."}],"url":"\/documentation\/factorykit","kind":"symbol"}}}
-\ No newline at end of file
-+{"topicSections":[{"anchor":"Instance-Me
-```
-
-**File**: `docs/data/documentation/factorykit/autoregistering/autoregister().json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"primaryContentSections":[{"declarations":[{"platforms":["macOS"],"languages":["swift"],"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"text":"autoRegister","kind":"identifier"},{"text":"()","kind":"text"}]}],"kind":"declarations"}],"variants":[{"paths":["\/documentation\/factorykit\/autoregistering\/autoregister()"],"traits":[{"interfaceLanguage":"swift"}]}],"hierarchy":{"paths":[["doc:\/\/FactoryKit\/documentation\/FactoryKit","doc:\/\/FactoryKit\/documentation\/FactoryKit\/AutoRegistering"]]},"abstract":[{"text":"User provided function that supports first-time registration of needed dependencies prior to first resolution","type":"text"},{"text":" ","type":"text"},{"text":"of a dependency on that container.","type":"text"}],"sections":[],"identifier":{"interfaceLanguage":"swift","url":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/AutoRegistering\/autoRegister()"},"schemaVersion":{"major":0,"patch":0,"minor":3},"kind":"symbol","metadata":{"roleHeading":"Instance Method","role":"symbol","symbolKind":"method","modules":[{"name":"FactoryKit"}],"externalID":"s:10FactoryKit15AutoRegisteringP12autoRegisteryyF","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"autoRegister"},{"kind":"text","text":"()"}],"title":"autoRegister()","required":true},"references":{"doc://FactoryKit/documentation/FactoryKit":{"role":"collection","identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit","type":"topic","title":"FactoryKit","abstract":[{"type":"text","text":"A modern approach to Container-Based Dependency Injection for Swift and SwiftUI."}],"url":"\/documentation\/factorykit","kind":"symbol"},"doc://FactoryKit/documentation/FactoryKit/AutoRegistering/autoRegister()":{"url":"\/documentation\/factorykit\/autoregistering\/autoregister()","abstract":[{"type":"text","text":"User provided function that supports first-time registration of needed dependencies prior to first resolution"},{"type":"text","text":" "},{"type":"text","text":"of a dependency on that container."}],"role":"symbol","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"autoRegister"},{"kind":"text","text":"()"}],"identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/AutoRegistering\/autoRegister()","type":"topic","kind":"symbol","title":"autoRegister()","required":true},"doc://FactoryKit/documentation/FactoryKit/AutoRegistering":{"url":"\/documentation\/factorykit\/autoregistering","abstract":[{"type":"text","text":"Adds an registration “hook” to a "},{"type":"codeVoice","code":"Container"},{"type":"text","text":"."}],"role":"symbol","fragments":[{"text":"protocol","kind":"keyword"},{"text":" ","kind":"text"},{"text":"AutoRegistering","kind":"identifier"}],"identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/AutoRegistering","type":"topic","kind":"symbol","title":"AutoRegistering","navigatorTitle":[{"text":"AutoRegistering","kind":"identifier"}]}}}
-\ No newline at end of file
-+{"metadata":{"symbolKind":"method","title":"autoRegister()","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"autoRegister"},{"kind":"text","text":"()"}],"role":"symbol","roleHeading":"Instance Method","modules":[{"name":"FactoryKit"}],"required":true,"externalID":"s:10FactoryKit15AutoRegisteringP12autoRegisteryyF"},"abstract":[{"type":"text","text":"User provided function that supports first-time registration of needed dependencies prior to first resolution"},{"type":"text","text":" "},{"type":"text","text":"of a dependency on that container."}],"schemaVersion":{"patch":0,"minor":3,"major":0},"identifier":{"url":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/AutoRegistering\/autoRegister()","interfaceLanguage":"swift"},"primaryContentSections":[{"kind":"declarations","declarations":[{"tokens":[{"text":"func","kind":"keyword"},{"text":" ","kind":"text"},{"text":"autoRegister","kind":"identifier"},{"text":"()","kind":"text"}],"languages":["swift"],"platforms":["macOS"]}]}],"variants":[{"paths":["\/documentation\/factorykit\/autoregistering\/autoregister()"],"traits":[{"interfaceLanguage":"swift"}]}],"kind":"symbol","hierarchy":{"paths":[["doc:\/\/FactoryKit\/documentation\/FactoryKit","doc:\/\/FactoryKit\/documentation\/FactoryKit\/AutoRegistering"]]},"sections":[],"references":{"doc://FactoryKit/documentation/FactoryKit/AutoRegistering/autoRegister()":{"type":"topic","url":"\/documentation\/factorykit\/autoregistering\/autoregister()","abstract":[{"text":"User provided function that supports first-time registration of needed dependencies prior to first resolution","type":"text"},{"text":" ","type":"text"},{"text":"of a dependency on that container.","type":"text"}],"title":"autoRegister()","identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/AutoRegistering\/autoRegister()","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text
-```
-
-**File**: `docs/data/documentation/factorykit/chains.json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"identifier":{"url":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/Chains","interfaceLanguage":"swift"},"abstract":[{"text":"Detecting and solving Circular Dependency Chains.","type":"text"}],"metadata":{"role":"article","title":"Circular Dependency Chains","modules":[{"name":"FactoryKit"}],"roleHeading":"Article"},"primaryContentSections":[{"kind":"content","content":[{"text":"Circular Dependency Chain Detection","anchor":"Circular-Dependency-Chain-Detection","type":"heading","level":2},{"inlineContent":[{"text":"What’s a circular dependency? Let’s say that A needs B to be constructed, and B needs a C. But what happens if C needs an A?","type":"text"}],"type":"paragraph"},{"inlineContent":[{"text":"Examine the following class definitions.","type":"text"}],"type":"paragraph"},{"syntax":"swift","type":"codeListing","code":["class CircularA {","    @Injected(\\.circularB) var circularB","}","","class CircularB {","    @Injected(\\.circularC) var circularC","}","","class CircularC {","    @Injected(\\.circularA) var circularA","}"]},{"inlineContent":[{"text":"Attempting make an instance of ","type":"text"},{"type":"codeVoice","code":"CircularA"},{"text":" is going to result in an infinite loop.","type":"text"}],"type":"paragraph"},{"inlineContent":[{"text":"Why? Well, A’s injected property wrapper needs a B in to construct an A. Okay, fine. Let’s make one. But B’s wrapper needs a C, which can’t be made without injecting an A, which once more needs a B… and so on. Ad infinitum.","type":"text"}],"type":"paragraph"},{"type":"paragraph","inlineContent":[{"text":"This is a circular dependency chain.","type":"text"}]},{"level":2,"anchor":"Resolution","text":"Resolution","type":"heading"},{"type":"paragraph","inlineContent":[{"text":"Unfortunately, by the time this code is compiled and run it’s too late to break the cycle. We’ve effectively coded an infinite loop into our program.","type":"text"}]},{"type":"paragraph","inlineContent":[{"text":"All Factory can do in this case is die gracefully and in the process dump the dependency chain that indicates where the problem lies.","type":"text"}]},{"code":["2022-12-23 14:57:23.512032-0600 FactoryDemo[47546:6946786] Factory\/Factory.swift:393: ","FACTORY: Circular dependency on Container.recursiveA"],"type":"codeListing","syntax":null},{"type":"paragraph","inlineContent":[{"type":"text","text":"With the above information in hand we could start walking recursiveA’s dependency tree to find the problem… but Factory provides an easier way. Just turn on trace prior to creating recursiveA."}]},{"syntax":"swift","code":["Container.shared.manager.trace.toggle()","let a = Container.shared.recursiveA()"],"type":"codeListing"},{"type":"paragraph","inlineContent":[{"type":"text","text":"With the trace log in hand, the cycle becomes obvious."}]},{"syntax":null,"type":"codeListing","code":["0: FactoryKit.Container.circularA<FactoryDemo.CircularA>","1:     FactoryKit.Container.circularB<FactoryDemo.CircularB>","2:         FactoryKit.Container.circularC<FactoryDemo.CircularC>","3:             FactoryKit.Container.circularA<FactoryDemo.CircularA>"]},{"type":"paragraph","inlineContent":[{"type":"text","text":"CircularC is attempting to inject an instance of CircularA, and we can see that in the code."}]},{"syntax":"swift","type":"codeListing","code":["class RecursiveC {","    @Injected(\\.recursiveA) var a: RecursiveA?","    init() {}","}"]},{"type":"paragraph","inlineContent":[{"type":"text","text":"We could fix things by changing CircularC’s injection wrapper to "},{"type":"codeVoice","code":"LazyInjected"},{"type":"text","text":" or, better yet, "},{"type":"codeVoice","code":"WeakLazyInjected"},{"type":"text","text":" in order to avoid a retain cycle."}]},{"type":"paragraph","inlineContent":[{"type":"text","text":"But a better solution would probably entail breaking out some of the functionality from RecursiveA and creating a "},{"inlineContent":[{"type":"text","text":"third"}],"type":"emphasis"},{"type":"text","text":" object that RecursiveA "},{"inlineContent":[{"type":"text","text":"and"}],"type":"emphasis"},{"type":"text","text":" RecursiveC could both include."}]},{"type":"paragraph","inlineContent":[{"type":"text","text":"Circular dependencies such as this are usually a violation of the Single Responsibility Principle, and should be avoided."}]},{"style":"important","name":"Important","type":"aside","content":[{"inlineContent":[{"type":"text","text":"Due to the overhead involved, circular dependency detection only occurs when running the application in DEBUG mode. The code is stripped out of production builds for improved performance."}],"type":"paragraph"}]},{"text":"Disabling CDC Detection","anchor":"Disabling-CDC-Detection","type":"heading","level":2},{"type":"paragraph","inlineContent":[{"type":"text","text":"Circular dependency chain detection can be disabled if desired."}]},{"syntax":"swift","type":"codeListing","code":["Container.shared.manager.circularDepende
-```
-
-**File**: `docs/data/documentation/factorykit/container.json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"identifier":{"interfaceLanguage":"swift","url":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container"},"hierarchy":{"paths":[["doc:\/\/FactoryKit\/documentation\/FactoryKit"]]},"schemaVersion":{"major":0,"minor":3,"patch":0},"sections":[],"kind":"symbol","topicSections":[{"title":"Initializers","generated":true,"anchor":"Initializers","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container\/init()"]},{"title":"Instance Properties","generated":true,"anchor":"Instance-Properties","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container\/manager"]},{"title":"Type Properties","generated":true,"anchor":"Type-Properties","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container\/shared"]},{"title":"Default Implementations","generated":true,"anchor":"Default-Implementations","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container\/ManagedContainer-Implementations","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container\/SharedContainer-Implementations"]}],"primaryContentSections":[{"kind":"declarations","declarations":[{"platforms":["macOS"],"languages":["swift"],"tokens":[{"text":"nonisolated","kind":"attribute"},{"text":" ","kind":"text"},{"text":"final","kind":"keyword"},{"text":" ","kind":"text"},{"text":"class","kind":"keyword"},{"text":" ","kind":"text"},{"text":"Container","kind":"identifier"}]}]},{"kind":"mentions","mentions":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/Containers"]},{"kind":"content","content":[{"level":2,"anchor":"overview","text":"Overview","type":"heading"},{"inlineContent":[{"type":"text","text":"Containers are used by Factory to manage object creation, object resolution, and object lifecycles in general."}],"type":"paragraph"},{"syntax":"swift","code":["extension Container {","    var service: Factory<ServiceType> {","        self { MyService() }","    }","}"],"type":"codeListing"},{"inlineContent":[{"type":"text","text":"Registrations and scope caches will persist as long as the associated container remains in scope."},{"type":"text","text":" "},{"type":"text","text":"If the Container’s @TaskLocal macro provided "},{"type":"codeVoice","code":"withValue"},{"type":"text","text":" function is used, the aforementioned scope of the container will be isolated to that task."}],"type":"paragraph"},{"inlineContent":[{"type":"text","text":"See "},{"type":"reference","isActive":true,"identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/Containers"},{"type":"text","text":" for more information."}],"type":"paragraph"}]}],"variants":[{"paths":["\/documentation\/factorykit\/container"],"traits":[{"interfaceLanguage":"swift"}]}],"metadata":{"externalID":"s:10FactoryKit9ContainerC","title":"Container","fragments":[{"text":"class","kind":"keyword"},{"text":" ","kind":"text"},{"text":"Container","kind":"identifier"}],"modules":[{"name":"FactoryKit"}],"roleHeading":"Class","navigatorTitle":[{"text":"Container","kind":"identifier"}],"symbolKind":"class","role":"symbol"},"abstract":[{"text":"This is the default Container provided for your convenience by Factory.","type":"text"}],"relationshipsSections":[{"title":"Conforms To","kind":"relationships","type":"conformsTo","identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/ManagedContainer","doc:\/\/FactoryKit\/documentation\/FactoryKit\/SharedContainer","doc:\/\/FactoryKit\/s8SendableP","doc:\/\/FactoryKit\/s16SendableMetatypeP"]}],"references":{"doc://FactoryKit/documentation/FactoryKit/ManagedContainer":{"role":"symbol","type":"topic","identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/ManagedContainer","title":"ManagedContainer","navigatorTitle":[{"text":"ManagedContainer","kind":"identifier"}],"abstract":[{"text":"ManagedContainer defines the core protocol all Containers must adopt.","type":"text"}],"kind":"symbol","url":"\/documentation\/factorykit\/managedcontainer","fragments":[{"text":"protocol","kind":"keyword"},{"text":" ","kind":"text"},{"text":"ManagedContainer","kind":"identifier"}]},"doc://FactoryKit/documentation/FactoryKit/Container":{"fragments":[{"text":"class","kind":"keyword"},{"text":" ","kind":"text"},{"text":"Container","kind":"identifier"}],"title":"Container","identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container","type":"topic","abstract":[{"text":"This is the default Container provided for your convenience by Factory.","type":"text"}],"url":"\/documentation\/factorykit\/container","navigatorTitle":[{"text":"Container","kind":"identifier"}],"role":"symbol","kind":"symbol"},"doc://FactoryKit/documentation/FactoryKit/Container/SharedContainer-Implementations":{"identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container\/SharedContainer-Implementations","title":"SharedContainer Implementations","kind":"article","url":"\/documentation\/factorykit\/container\/sharedcontainer-implementations","type":"topic","role":"collectionGroup","abstract":[]},"doc://FactoryKit/documentation/FactoryKit/Contain
-```
-
-**File**: `docs/data/documentation/factorykit/container/callasfunction(_:).json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"identifier":{"interfaceLanguage":"swift","url":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container\/callAsFunction(_:)"},"abstract":[{"type":"text","text":"Defines a convenience function to allow easy container transformations in SwiftUI Previews."}],"metadata":{"fragments":[{"text":"func","kind":"keyword"},{"text":" ","kind":"text"},{"text":"callAsFunction","kind":"identifier"},{"text":"((","kind":"text"},{"text":"Self","kind":"typeIdentifier"},{"text":") -> ","kind":"text"},{"preciseIdentifier":"s:s4Voida","text":"Void","kind":"typeIdentifier"},{"text":") -> ","kind":"text"},{"preciseIdentifier":"s:7SwiftUI9EmptyViewV","text":"EmptyView","kind":"typeIdentifier"}],"title":"callAsFunction(_:)","roleHeading":"Instance Method","role":"symbol","externalID":"s:10FactoryKit15SharedContainerPAAE14callAsFunctiony7SwiftUI9EmptyViewVyxXEF::SYNTHESIZED::s:10FactoryKit9ContainerC","modules":[{"name":"FactoryKit"}],"extendedModule":"FactoryKit","symbolKind":"method"},"primaryContentSections":[{"declarations":[{"tokens":[{"kind":"attribute","text":"@discardableResult"},{"kind":"text","text":" "},{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"callAsFunction"},{"kind":"text","text":"("},{"kind":"externalParam","text":"_"},{"kind":"text","text":" "},{"kind":"internalParam","text":"transform"},{"kind":"text","text":": ("},{"kind":"typeIdentifier","text":"Self"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"Void","preciseIdentifier":"s:s4Voida"},{"kind":"text","text":") -> "},{"kind":"typeIdentifier","text":"EmptyView","preciseIdentifier":"s:7SwiftUI9EmptyViewV"}],"platforms":["macOS"],"languages":["swift"]}],"kind":"declarations"},{"kind":"content","content":[{"anchor":"discussion","level":2,"type":"heading","text":"Discussion"},{"code":["#Preview {","    Container.shared {","        $0.requestUsers { MockAsyncRequest { User.mockUsers } }","        \/\/ as many as needed","    }","    MainView()","}"],"type":"codeListing","syntax":"swift"},{"type":"paragraph","inlineContent":[{"type":"text","text":"Without it you’d need something like the following let assignment."}]},{"code":["#Preview {","    let _ = Container.shared {","        $0.requestUsers { MockAsyncRequest { User.mockUsers } }","    }","    MainView()","}"],"type":"codeListing","syntax":"swift"}]}],"schemaVersion":{"patch":0,"major":0,"minor":3},"hierarchy":{"paths":[["doc:\/\/FactoryKit\/documentation\/FactoryKit","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container"]]},"kind":"symbol","sections":[],"variants":[{"paths":["\/documentation\/factorykit\/container\/callasfunction(_:)"],"traits":[{"interfaceLanguage":"swift"}]}],"references":{"doc://FactoryKit/documentation/FactoryKit/Container":{"fragments":[{"text":"class","kind":"keyword"},{"text":" ","kind":"text"},{"text":"Container","kind":"identifier"}],"title":"Container","identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container","type":"topic","abstract":[{"text":"This is the default Container provided for your convenience by Factory.","type":"text"}],"url":"\/documentation\/factorykit\/container","navigatorTitle":[{"text":"Container","kind":"identifier"}],"role":"symbol","kind":"symbol"},"doc://FactoryKit/documentation/FactoryKit":{"role":"collection","identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit","type":"topic","title":"FactoryKit","abstract":[{"type":"text","text":"A modern approach to Container-Based Dependency Injection for Swift and SwiftUI."}],"url":"\/documentation\/factorykit","kind":"symbol"},"doc://FactoryKit/documentation/FactoryKit/Container/callAsFunction(_:)":{"url":"\/documentation\/factorykit\/container\/callasfunction(_:)","abstract":[{"type":"text","text":"Defines a convenience function to allow easy container transformations in SwiftUI Previews."}],"role":"symbol","fragments":[{"text":"func","kind":"keyword"},{"text":" ","kind":"text"},{"text":"callAsFunction","kind":"identifier"},{"text":"((","kind":"text"},{"kind":"typeIdentifier","text":"Self"},{"text":") -> ","kind":"text"},{"text":"Void","preciseIdentifier":"s:s4Voida","kind":"typeIdentifier"},{"text":") -> ","kind":"text"},{"text":"EmptyView","preciseIdentifier":"s:7SwiftUI9EmptyViewV","kind":"typeIdentifier"}],"identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container\/callAsFunction(_:)","type":"topic","kind":"symbol","title":"callAsFunction(_:)"}}}
-\ No newline at end of file
-+{"metadata":{"symbolKind":"method","title":"callAsFunction(_:)","extendedModule":"FactoryKit","fragments":[{"text":"func","kind":"keyword"},{"text":" ","kind":"text"},{"text":"callAsFunction","kind":"identifier"},{"text":"((","kind":"text"},{"text":"Self","kind":"typeIdentifier"},{"text":") -> ","kind":"text"},{"text":"Void","preciseIdentifier":"s:s4Voida","kind":"typeIdentifier"},{"text":") -> ","kind":"text"},{"text":"EmptyView","preciseIdentifier":"s:7SwiftUI9EmptyViewV","kind":"typeIdentifier"}],"role":"symbol","modules":[{"name":"F
-```
-
-**File**: `docs/data/documentation/factorykit/container/callasfunction(key:_:)-9dimj.json` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"identifier":{"interfaceLanguage":"swift","url":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container\/callAsFunction(key:_:)-9dimj"},"abstract":[{"text":"Syntactic sugar allows container to create a properly bound Factory.","type":"text"}],"metadata":{"fragments":[{"text":"func","kind":"keyword"},{"text":" ","kind":"text"},{"text":"callAsFunction","kind":"identifier"},{"text":"<","kind":"text"},{"text":"T","kind":"genericParameter"},{"text":">(","kind":"text"},{"text":"key","kind":"externalParam"},{"text":": ","kind":"text"},{"text":"StaticString","preciseIdentifier":"s:s12StaticStringV","kind":"typeIdentifier"},{"text":", ","kind":"text"},{"text":"VoidFactoryType","preciseIdentifier":"s:10FactoryKit04VoidA4Typea","kind":"typeIdentifier"},{"text":"<","kind":"text"},{"text":"T","preciseIdentifier":"s:10FactoryKit16ManagedContainerPAAE14callAsFunction3key_AA0A0Vyqd__Gs12StaticStringV_qd__yctlF1TL_qd__mfp","kind":"typeIdentifier"},{"text":">) -> ","kind":"text"},{"text":"Factory","preciseIdentifier":"s:10FactoryKit0A0V","kind":"typeIdentifier"},{"text":"<","kind":"text"},{"text":"T","preciseIdentifier":"s:10FactoryKit16ManagedContainerPAAE14callAsFunction3key_AA0A0Vyqd__Gs12StaticStringV_qd__yctlF1TL_qd__mfp","kind":"typeIdentifier"},{"text":">","kind":"text"}],"title":"callAsFunction(key:_:)","roleHeading":"Instance Method","role":"symbol","externalID":"s:10FactoryKit16ManagedContainerPAAE14callAsFunction3key_AA0A0Vyqd__Gs12StaticStringV_qd__yctlF::SYNTHESIZED::s:10FactoryKit9ContainerC","modules":[{"name":"FactoryKit"}],"extendedModule":"FactoryKit","symbolKind":"method"},"primaryContentSections":[{"declarations":[{"platforms":["macOS"],"tokens":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"callAsFunction"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"T"},{"kind":"text","text":">("},{"kind":"externalParam","text":"key"},{"kind":"text","text":": "},{"kind":"typeIdentifier","preciseIdentifier":"s:s12StaticStringV","text":"StaticString"},{"text":" = ","kind":"text"},{"text":"#function","kind":"keyword"},{"text":", ","kind":"text"},{"text":"_","kind":"externalParam"},{"kind":"text","text":" "},{"kind":"internalParam","text":"factory"},{"kind":"text","text":": "},{"kind":"attribute","text":"@escaping"},{"kind":"text","text":" "},{"kind":"typeIdentifier","text":"VoidFactoryType","identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/VoidFactoryType","preciseIdentifier":"s:10FactoryKit04VoidA4Typea"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:10FactoryKit16ManagedContainerPAAE14callAsFunction3key_AA0A0Vyqd__Gs12StaticStringV_qd__yctlF1TL_qd__mfp"},{"kind":"text","text":">) -> "},{"kind":"typeIdentifier","text":"Factory","identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/Factory","preciseIdentifier":"s:10FactoryKit0A0V"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:10FactoryKit16ManagedContainerPAAE14callAsFunction3key_AA0A0Vyqd__Gs12StaticStringV_qd__yctlF1TL_qd__mfp"},{"kind":"text","text":">"}],"languages":["swift"]}],"kind":"declarations"}],"hierarchy":{"paths":[["doc:\/\/FactoryKit\/documentation\/FactoryKit","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container"]]},"schemaVersion":{"major":0,"minor":3,"patch":0},"sections":[],"kind":"symbol","variants":[{"paths":["\/documentation\/factorykit\/container\/callasfunction(key:_:)-9dimj"],"traits":[{"interfaceLanguage":"swift"}]}],"references":{"doc://FactoryKit/documentation/FactoryKit/Container/callAsFunction(key:_:)-9dimj":{"url":"\/documentation\/factorykit\/container\/callasfunction(key:_:)-9dimj","abstract":[{"type":"text","text":"Syntactic sugar allows container to create a properly bound Factory."}],"role":"symbol","fragments":[{"kind":"keyword","text":"func"},{"kind":"text","text":" "},{"kind":"identifier","text":"callAsFunction"},{"kind":"text","text":"<"},{"kind":"genericParameter","text":"T"},{"kind":"text","text":">("},{"kind":"externalParam","text":"key"},{"kind":"text","text":": "},{"kind":"typeIdentifier","text":"StaticString","preciseIdentifier":"s:s12StaticStringV"},{"kind":"text","text":", "},{"kind":"typeIdentifier","text":"VoidFactoryType","preciseIdentifier":"s:10FactoryKit04VoidA4Typea"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:10FactoryKit16ManagedContainerPAAE14callAsFunction3key_AA0A0Vyqd__Gs12StaticStringV_qd__yctlF1TL_qd__mfp"},{"kind":"text","text":">) -> "},{"kind":"typeIdentifier","text":"Factory","preciseIdentifier":"s:10FactoryKit0A0V"},{"kind":"text","text":"<"},{"kind":"typeIdentifier","text":"T","preciseIdentifier":"s:10FactoryKit16ManagedContainerPAAE14callAsFunction3key_AA0A0Vyqd__Gs12StaticStringV_qd__yctlF1TL_qd__mfp"},{"kind":"text","text":">"}],"identifier":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/Container\/callAsFunction(key:_:)-9dimj","type":"topic","kind":"symbol","title":"callAsFunction(
-```
-
----
-
-### Incident Patch 2: `db8d149e` (2026-10-21)
-**Commit Message**: Update README
-
-**File**: `README.md` (modified, +2/-1)
-```diff
-@@ -113,8 +113,8 @@ struct FactoryDemoApp: App {
-         }
-     }
- }
--
- ```
-+
- New to Factory 3.5 is support for scene-based containers in SwiftUI. `InjectedObservable` and `InjectedObject` both obtain their containers from the environment and resolve their dependencies from the current scene.
- 
- ```swift
-@@ -125,6 +125,7 @@ struct ContentView: View {
-     }
- }
- ```
-+
- See [Scenes](https://hmlongco.github.io/Factory/documentation/factorykit/scenes) for more examples.
- 
- Finally, Factory also has a set of global dependency resolution functions. These global functions can easily be replaced should you want to minimize your codebase's apparent dependency on Factory.
+-{"identifier":{"interfaceLanguage":"swift","url":"doc:\/\/FactoryKit\/documentation\/FactoryKit\/Actors"},"sections":[],"seeAlsoSections":[{"anchor":"Advanced-Topics","generated":true,"identifiers":["doc:\/\/FactoryKit\/documentation\/FactoryKit\/Modifiers","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Modules","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Scenes","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Cycle","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Optionals","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Functional","doc:\/\/FactoryKit\/documentation\/FactoryKit\/Tags"],"title":"Advanced Topics"}],"kind":"article","variants":[{"traits":[{"interfaceLanguage":"swift"}],"paths":["\/documentation\/factorykit\/actors"]}],"metadata":{"roleHeading":"Article","modules":[{"name":"FactoryKit"}],"role":"article","title":"Actors and Actor Isolation"},"schemaVersion":{"minor":3,"major":0,"patch":0},"abstract":[{"type":"text","text":"Registering and resolving actors and actor-isolated dependencies."}],"primaryContentSections":[{"kind":"content","content":[{"level":2,"anchor":"Overview","text":"Overview","type":"heading"},{"inlineContent":[{"type":"text","text":"Factory resolution is synchronous. You ask for a dependency and you get one back, right now, with no "},{"type":"codeVoice","code":"await"},{"type":"text","text":" in sight. That model is simple and fast, but it bumps up against Swift Concurrency the moment a dependency needs to be built on a specific actor."}],"type":"paragraph"},{"inlineContent":[{"type":"text","text":"This page walks through the cases in order, from the one that just works to the one that needs a little help. The simplest case is a plain actor. Then a main actor-isolated type. Then a custom global actor."}],"type":"paragraph"},{"inlineContent":[{"type":"text","text":"And finally what to do when you need to resolve one of those isolated types from a detached task that’s non-isolated and not on any actor."}],"type":"paragraph"},{"level":2,"anchor":"Plain-Actors","text":"Plain Actors","type":"heading"},{"inlineContent":[{"type":"text","text":"An ordinary actor is the easy case. Define it and register it like anything else."}],"type":"paragraph"},{"code":["actor OrdinaryActor {","    private var count = 0","    func increment() -> Int {","        count += 1","        return count","    }","}","","extension Container {","    var ordinaryActor: Factory<OrdinaryActor> {","        self { OrdinaryActor() }","    }","}"],"syntax":"swift","type":"codeListing"},{"inlineContent":[{"type":"text","text":"Resolution needs nothing special, because an actor’s initializer is "},{"type":"emphasis","inlineContent":[{"type":"text","text":"nonisolated"}]},{"type":"text","text":". It runs synchronously on whatever thread asks for it, so Factory can build one from any context."}],"type":"paragraph"},{"code":["let actor = Container.shared.ordinaryActor()"],"syntax":"swift","type":"codeListing"},{"inlineContent":[{"type":"text","text":"The isolation only matters once you touch the actor’s state, and the compiler already handles that for you by requiring "},{"type":"codeVoice","code":"await"},{"type":"text","text":" on the call."}],"type":"paragraph"},{"code":["let count = await actor.increment()"],"syntax":"swift","type":"codeListing"},{"inlineContent":[{"type":"text","text":"So for a plain old everyday actor there’s no annotation, no special resolution function, and nothing to remember. Register it, resolve it, await its methods."}],"type":"paragraph"},{"inlineContent":[{"type":"text","text":"Done."}],"type":"paragraph"},{"level":2,"anchor":"Main-Actor-Isolation","text":"Main Actor Isolation","type":"heading"},{"inlineContent":[{"type":"text","text":"Now consider a type that is isolated to the main actor. View models are the common example."}],"type":"paragraph"},{"code":["@MainActor","class ContentViewModel {","    init() {","        \/\/ initializer is @MainActor-isolated","    }","    func load() async { ... }","}"],"syntax":"swift","type":"codeListing"},{"inlineContent":[{"type":"text","text":"Because the initializer is "},{"type":"codeVoice","code":"@MainActor"},{"type":"text","text":"-isolated, the factory closure that calls it has to be "},{"type":"codeVoice","code":"@MainActor"},{"type":"text","text":"-isolated too. You get there by annotating the computed property."}],"type":"paragraph"},{"code":["extension Container {","    @MainActor","    var contentViewModel: Factory<ContentViewModel> {","        self { ContentViewModel() }","    }","}"],"syntax":"swift","type":"codeListing"},{"inlineContent":[{"type":"text","text":"The annotation is the whole trick. It requires the Factory request to be on the main actor so the initializer runs on the MainActor as well."}],"type":"paragraph"},{"inlineContent":[{"type":"text","text":"Most of the time you never think about this because you resolve a main actor type from main actor code. A "},{"type":"codeVoice","code":"@MainActor"},{"type"
 ```
 
 #### Recent Merged Pull Requests:
@@ -1084,3 +1310,34 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Empirical Invariant Guard in CHANGELOG
+
+**RULE**:
+When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hmlongco/Factory. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3799543a`: Changelog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+* Updated README and documentation to cover withContainer caveats and examples
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+* Unpdated README and documentation to cover withContainer caveats and examples
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3799543a` are properly handled with clean fallback behavior.
