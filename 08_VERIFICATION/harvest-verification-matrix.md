@@ -6273,3 +6273,4 @@
 | `CYCLE-20261030-5EXP` | `2026-10-30T18:58:42.013Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5835` | Yes (`1e96a444...`) |
 | `CYCLE-20261030-EGPC` | `2026-10-30T19:05:44.208Z` | `webpack/webpack` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5836` | Yes (`9938785c...`) |
 | `CYCLE-20261030-EH68` | `2026-10-30T19:05:44.816Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5837` | Yes (`f102e363...`) |
+| `CYCLE-20261030-N2OL` | `2026-10-30T19:12:25.941Z` | `rollup/rollup` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5838` | Yes (`9908bc51...`) |

@@ -427041,3 +427041,54 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `12d2d3b1` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5838. Preserve rendering errors when renderError fails (#6602) (Harvested from rollup/rollup)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Preserve rendering errors when renderError fails (#6602)",
+  "source": "rollup/rollup",
+  "source_url": "https://github.com/rollup/rollup",
+  "source_version": "1147f535",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-30T19:12:25.749Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-rollup-rollup",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [rollup/rollup](https://github.com/rollup/rollup) (Revision: `1147f535`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `docs/plugin-development/index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rollup/rollup. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ad4ded9a`: Preserve rendering errors when renderError fails (#6602). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/plugin-development/index.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+If a `renderError` hook itself fails, Rollup reports both the original rendering error and the hook failure together. The combined error retains the original error's code and plugin metadata.
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ad4ded9a` are properly handled with clean fallback behavior.

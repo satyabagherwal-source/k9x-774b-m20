@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T19:05:47.376Z",
-    "lastVerified": "2026-10-30T19:05:47.376Z",
+    "lastChecked": "2026-10-30T19:12:31.112Z",
+    "lastVerified": "2026-10-30T19:12:31.112Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -340,9 +340,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T18:32:35.866Z",
+    "lastChecked": "2026-10-30T19:12:31.104Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T18:32:35.866Z"
+    "lastVerified": "2026-10-30T19:12:31.104Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1403,9 +1403,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-10-30T14:11:47.628Z",
+    "lastChecked": "2026-10-30T19:12:26.258Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-10-30T14:11:47.628Z"
+    "lastVerified": "2026-10-30T19:12:26.258Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -2999,9 +2999,9 @@
   "milvus-io-bootcamp": {
     "name": "bootcamp",
     "officialUrl": "https://github.com/milvus-io/bootcamp",
-    "lastChecked": "2026-10-29T02:03:31.604Z",
+    "lastChecked": "2026-10-30T19:12:28.666Z",
     "revisionIdentifier": "b2be8cc8",
-    "lastVerified": "2026-10-29T02:03:31.604Z"
+    "lastVerified": "2026-10-30T19:12:28.666Z"
   },
   "o2sh-onefetch": {
     "name": "o2sh/onefetch",
@@ -3708,9 +3708,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-10-29T11:56:21.878Z",
+    "lastChecked": "2026-10-30T19:12:23.625Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-10-29T11:56:21.878Z"
+    "lastVerified": "2026-10-30T19:12:23.625Z"
   },
   "dingodb-dingo": {
     "name": "dingo",
@@ -7335,9 +7335,9 @@
   "atanunq-viu": {
     "name": "viu",
     "officialUrl": "https://github.com/atanunq/viu",
-    "lastChecked": "2026-10-28T20:50:41.285Z",
+    "lastChecked": "2026-10-30T19:12:16.095Z",
     "revisionIdentifier": "5733be5f",
-    "lastVerified": "2026-10-28T20:50:41.285Z"
+    "lastVerified": "2026-10-30T19:12:16.095Z"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "name": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -10726,5 +10726,29 @@
     "lastChecked": "2026-10-30T19:05:31.173Z",
     "revisionIdentifier": "37c461a8",
     "lastVerified": "2026-10-30T19:05:31.173Z"
+  },
+  "rollup-rollup": {
+    "name": "rollup/rollup",
+    "officialUrl": "https://github.com/rollup/rollup",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-30T19:12:24.520Z",
+    "lastVerified": "2026-10-30T19:12:24.520Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-rollup-rollup",
+    "contentHash": "9908bc5177d3fc4b0c15771d2da70063e3999653b2bfa3ae9e0703196d12d9c1",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "shpigford-chops": {
+    "name": "chops",
+    "officialUrl": "https://github.com/Shpigford/chops",
+    "lastChecked": "2026-10-30T19:12:21.078Z",
+    "revisionIdentifier": "9d379d58",
+    "lastVerified": "2026-10-30T19:12:21.078Z"
   }
 }

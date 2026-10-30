@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T19:05:44.826Z",
-  "total_cycles_completed": 6250,
-  "total_learnings_persisted": 6250,
-  "total_rules_promoted": 5808,
+  "last_updated": "2026-10-30T19:12:25.947Z",
+  "total_cycles_completed": 6251,
+  "total_learnings_persisted": 6251,
+  "total_rules_promoted": 5809,
   "history": [
-    {
-      "timestamp": "2026-10-29T23:28:42.476Z",
-      "repository": "typedb/typedb",
-      "learningId": "learn-github-typedb-typedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T23:34:50.513Z",
       "repository": "Orange-OpenSource/hurl",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-30T19:05:44.826Z",
       "repository": "xerj-org/xerj",
       "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T19:12:25.947Z",
+      "repository": "rollup/rollup",
+      "learningId": "learn-github-rollup-rollup",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

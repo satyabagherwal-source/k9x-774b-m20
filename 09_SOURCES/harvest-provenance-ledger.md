@@ -6282,3 +6282,4 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `5b8effbb` | Multi-dimensional audit evidence | 2026-10-30T18:58:42.016Z |
 | `learn-github-webpack-webpack` | `https://github.com/webpack/webpack` | `a11411af` | Multi-dimensional audit evidence | 2026-10-30T19:05:44.212Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `22cd0239` | Multi-dimensional audit evidence | 2026-10-30T19:05:44.820Z |
+| `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `1147f535` | Multi-dimensional audit evidence | 2026-10-30T19:12:25.944Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T19:05:44.736Z",
+  "last_updated": "2026-10-30T19:12:25.893Z",
   "total_verified_learnings": 1176,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -72280,8 +72280,8 @@
       "slug": "rollup-rollup",
       "platform": "github",
       "source_url": "https://github.com/rollup/rollup",
-      "source_version": "7879c659",
-      "content_hash": "bb0522585e01b1b167aeb92354f783bdf7f815ef9acebc53bd81330caa74509b",
+      "source_version": "1147f535",
+      "content_hash": "9908bc5177d3fc4b0c15771d2da70063e3999653b2bfa3ae9e0703196d12d9c1",
       "dossier_path": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rollup-rollup-learnings.md",
       "promoted_rules": [
@@ -72314,6 +72314,11 @@
           "number": 4948,
           "title": "tree-shaking of disposable resources (#6556)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5838,
+          "title": "Preserve rendering errors when renderError fails (#6602)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72321,7 +72326,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:43:42.455Z",
+      "verified_at": "2026-10-30T19:12:25.883Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154950,6 +154955,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T19:05:44.716Z"
+    },
+    "rule-5838": {
+      "learning_id": "rule-5838",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5838,
+      "title": "Preserve rendering errors when renderError fails (#6602)",
+      "source_url": "https://github.com/rollup/rollup",
+      "source_version": "1147f535",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T19:12:25.883Z"
     }
   },
   "aliases": {

@@ -1903,10 +1903,10 @@
     "repository": "rollup/rollup",
     "platform": "github",
     "sourceUrl": "https://github.com/rollup/rollup",
-    "sourceVersion": "7879c659",
+    "sourceVersion": "1147f535",
     "license": "NOASSERTION",
-    "contentHash": "bb0522585e01b1b167aeb92354f783bdf7f815ef9acebc53bd81330caa74509b",
-    "lastHarvestedAt": "2026-10-27T18:43:42.571Z",
+    "contentHash": "9908bc5177d3fc4b0c15771d2da70063e3999653b2bfa3ae9e0703196d12d9c1",
+    "lastHarvestedAt": "2026-10-30T19:12:25.944Z",
     "learningId": "learn-github-rollup-rollup"
   },
   "rmax-scrapy-redis": {
