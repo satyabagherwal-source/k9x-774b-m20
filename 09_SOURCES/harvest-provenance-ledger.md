@@ -6315,3 +6315,5 @@ Every entry in this ledger must capture:
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `f7607a3d` | Multi-dimensional audit evidence | 2026-10-30T20:49:21.092Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `e8618dbc` | Multi-dimensional audit evidence | 2026-10-30T20:52:08.927Z |
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `c14e4456` | Multi-dimensional audit evidence | 2026-10-30T20:52:38.701Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `6d74dc11` | Multi-dimensional audit evidence | 2026-10-30T20:59:20.209Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `e9bb7b3d` | Multi-dimensional audit evidence | 2026-10-30T20:59:29.192Z |

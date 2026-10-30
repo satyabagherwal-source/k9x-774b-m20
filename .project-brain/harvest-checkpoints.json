@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T20:52:38.711Z",
+  "last_updated": "2026-10-30T20:59:29.202Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "c93536ae72a820ecaa4be7cc730ab7414d909f08746ff72ba52ee2b9d637317a",
-      "verified_at": "2026-10-29T16:51:23.870Z",
+      "content_hash": "f9b56a9b6bd5094f606e8687fd216fa392f1b4d94b9101f999a19981544126cd",
+      "verified_at": "2026-10-30T20:59:29.201Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T16:51:23.870Z"
+      "last_updated": "2026-10-30T20:59:29.201Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "80b06260d9d135515622e50fe11ebc45219928653dbbda433ca0931c507ee31f",
-      "verified_at": "2026-10-28T22:26:32.110Z",
+      "content_hash": "63f4f402e5ab4430e3b3cb415c385e660983dcce86a004fff05926d2d13e3ddd",
+      "verified_at": "2026-10-30T20:59:20.219Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:26:32.110Z"
+      "last_updated": "2026-10-30T20:59:20.219Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",

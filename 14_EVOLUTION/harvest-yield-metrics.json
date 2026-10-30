@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T20:52:38.707Z",
-  "total_cycles_completed": 6283,
-  "total_learnings_persisted": 6283,
-  "total_rules_promoted": 5844,
+  "last_updated": "2026-10-30T20:59:29.198Z",
+  "total_cycles_completed": 6285,
+  "total_learnings_persisted": 6285,
+  "total_rules_promoted": 5846,
   "history": [
-    {
-      "timestamp": "2026-10-30T04:41:52.809Z",
-      "repository": "apple/foundationdb",
-      "learningId": "learn-github-apple-foundationdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T04:48:15.584Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T04:54:32.620Z",
       "repository": "kcl-lang/kcl",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T20:52:38.707Z",
       "repository": "clastix/kamaji",
       "learningId": "learn-github-clastix-kamaji",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T20:59:20.215Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T20:59:29.198Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

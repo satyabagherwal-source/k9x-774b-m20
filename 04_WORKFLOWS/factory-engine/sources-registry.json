@@ -1,21 +1,20 @@
 {
   "rustls-rustls": {
-    "name": "rustls",
+    "name": "rustls/rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T16:29:53.123Z",
-    "lastVerified": "2026-10-30T16:29:53.123Z",
+    "lastChecked": "2026-10-30T20:59:28.510Z",
+    "lastVerified": "2026-10-30T20:59:28.510Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
-    "contentHash": "c93536ae72a820ecaa4be7cc730ab7414d909f08746ff72ba52ee2b9d637317a",
-    "promotedRulesCount": 3,
+    "contentHash": "f9b56a9b6bd5094f606e8687fd216fa392f1b4d94b9101f999a19981544126cd",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "44323f51"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tanstack-router": {
     "name": "TanStack/router",
@@ -39,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T20:52:41.258Z",
-    "lastVerified": "2026-10-30T20:52:41.258Z",
+    "lastChecked": "2026-10-30T20:59:31.747Z",
+    "lastVerified": "2026-10-30T20:59:31.747Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -242,8 +241,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T20:15:18.985Z",
-    "lastVerified": "2026-10-30T20:15:18.985Z",
+    "lastChecked": "2026-10-30T20:59:28.903Z",
+    "lastVerified": "2026-10-30T20:59:28.903Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -3625,9 +3624,9 @@
   "parthsarthi03-raptor": {
     "name": "raptor",
     "officialUrl": "https://github.com/parthsarthi03/raptor",
-    "lastChecked": "2026-10-29T16:13:38.860Z",
+    "lastChecked": "2026-10-30T20:59:26.373Z",
     "revisionIdentifier": "7da1d48a",
-    "lastVerified": "2026-10-29T16:13:38.860Z"
+    "lastVerified": "2026-10-30T20:59:26.373Z"
   },
   "svenstaro-miniserve": {
     "name": "miniserve",
@@ -4384,9 +4383,9 @@
   "nitrictech-nitric": {
     "name": "nitric",
     "officialUrl": "https://github.com/nitrictech/nitric",
-    "lastChecked": "2026-10-29T17:35:33.108Z",
+    "lastChecked": "2026-10-30T20:59:21.407Z",
     "revisionIdentifier": "8b1be250",
-    "lastVerified": "2026-10-29T17:35:33.108Z"
+    "lastVerified": "2026-10-30T20:59:21.407Z"
   },
   "qovery-replibyte": {
     "name": "Replibyte",
@@ -7808,14 +7807,14 @@
     "officialUrl": "https://github.com/astral-sh/uv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T22:26:31.504Z",
-    "lastVerified": "2026-10-28T22:26:31.504Z",
+    "lastChecked": "2026-10-30T20:59:18.408Z",
+    "lastVerified": "2026-10-30T20:59:18.408Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "80b06260d9d135515622e50fe11ebc45219928653dbbda433ca0931c507ee31f",
+    "contentHash": "63f4f402e5ab4430e3b3cb415c385e660983dcce86a004fff05926d2d13e3ddd",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11027,5 +11026,19 @@
     "lastChecked": "2026-10-30T20:47:30.111Z",
     "revisionIdentifier": "26e79369",
     "lastVerified": "2026-10-30T20:47:30.111Z"
+  },
+  "testing-library-react-testing-library": {
+    "name": "react-testing-library",
+    "officialUrl": "https://github.com/testing-library/react-testing-library",
+    "lastChecked": "2026-10-30T20:59:16.405Z",
+    "revisionIdentifier": "20ce75f2",
+    "lastVerified": "2026-10-30T20:59:16.405Z"
+  },
+  "signerlabs-klee": {
+    "name": "Klee",
+    "officialUrl": "https://github.com/signerlabs/Klee",
+    "lastChecked": "2026-10-30T20:59:18.899Z",
+    "revisionIdentifier": "64bce8db",
+    "lastVerified": "2026-10-30T20:59:18.899Z"
   }
 }

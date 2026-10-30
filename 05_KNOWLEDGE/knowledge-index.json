@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T20:52:38.618Z",
+  "last_updated": "2026-10-30T20:59:29.113Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3642,8 +3642,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "1330634e",
-      "content_hash": "80b06260d9d135515622e50fe11ebc45219928653dbbda433ca0931c507ee31f",
+      "source_version": "6d74dc11",
+      "content_hash": "63f4f402e5ab4430e3b3cb415c385e660983dcce86a004fff05926d2d13e3ddd",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -3706,6 +3706,11 @@
           "number": 5426,
           "title": "Distinguish pre-existing issues in code quality reviews (#22973)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5874,
+          "title": "Skip retry backoff in the HTTP read timeout tests (#23002)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3713,7 +3718,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:26:32.046Z",
+      "verified_at": "2026-10-30T20:59:20.110Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48192,8 +48197,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "44323f51",
-      "content_hash": "c93536ae72a820ecaa4be7cc730ab7414d909f08746ff72ba52ee2b9d637317a",
+      "source_version": "e9bb7b3d",
+      "content_hash": "f9b56a9b6bd5094f606e8687fd216fa392f1b4d94b9101f999a19981544126cd",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -48246,6 +48251,11 @@
           "number": 5525,
           "title": "Cooperative Deterministic Fuel Guards in Async Schedulers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5875,
+          "title": "Ensure rustls-ring crate is used by rustls-test",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48253,7 +48263,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T16:51:23.781Z",
+      "verified_at": "2026-10-30T20:59:29.094Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155661,6 +155671,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T20:52:38.598Z"
+    },
+    "rule-5874": {
+      "learning_id": "rule-5874",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5874,
+      "title": "Skip retry backoff in the HTTP read timeout tests (#23002)",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "6d74dc11",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:59:20.111Z"
+    },
+    "rule-5875": {
+      "learning_id": "rule-5875",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5875,
+      "title": "Ensure rustls-ring crate is used by rustls-test",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "e9bb7b3d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:59:29.094Z"
     }
   },
   "aliases": {

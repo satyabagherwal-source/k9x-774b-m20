@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "44323f51",
+    "sourceVersion": "e9bb7b3d",
     "license": "NOASSERTION",
-    "contentHash": "c93536ae72a820ecaa4be7cc730ab7414d909f08746ff72ba52ee2b9d637317a",
-    "lastHarvestedAt": "2026-10-29T16:51:23.864Z",
+    "contentHash": "f9b56a9b6bd5094f606e8687fd216fa392f1b4d94b9101f999a19981544126cd",
+    "lastHarvestedAt": "2026-10-30T20:59:29.192Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "1330634e",
+    "sourceVersion": "6d74dc11",
     "license": "Apache-2.0",
-    "contentHash": "80b06260d9d135515622e50fe11ebc45219928653dbbda433ca0931c507ee31f",
-    "lastHarvestedAt": "2026-10-28T22:26:32.104Z",
+    "contentHash": "63f4f402e5ab4430e3b3cb415c385e660983dcce86a004fff05926d2d13e3ddd",
+    "lastHarvestedAt": "2026-10-30T20:59:20.209Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {

@@ -6306,3 +6306,5 @@
 | `CYCLE-20261030-3POH` | `2026-10-30T20:49:21.089Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5867, Rule 5868, Rule 5869` | Yes (`a9c1b0fb...`) |
 | `CYCLE-20261030-7B6J` | `2026-10-30T20:52:08.923Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5870, Rule 5871, Rule 5872` | Yes (`324ee7b1...`) |
 | `CYCLE-20261030-7Y5L` | `2026-10-30T20:52:38.697Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5873` | Yes (`f96d68a8...`) |
+| `CYCLE-20261030-GJYM` | `2026-10-30T20:59:20.206Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5874` | Yes (`63f4f402...`) |
+| `CYCLE-20261030-GQW4` | `2026-10-30T20:59:29.188Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5875` | Yes (`f9b56a9b...`) |

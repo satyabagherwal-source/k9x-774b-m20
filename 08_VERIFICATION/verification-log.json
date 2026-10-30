@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-DNEQ",
-    "timestamp": "2026-10-28T14:49:49.250Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "1c3219cdd5916fa38603ba520464c5ad55c4fdc4d5e3ab261395289f0db88118",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-M7L0",
-    "timestamp": "2026-10-28T14:56:28.644Z",
-    "repository": "meta-llama/Llama-2-7b-chat-hf",
-    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-    "contentHash": "8b0c11704806dc4bbf8015994cdfacd9199bec278139e93cdb7b6814b8cc4160",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-M8RQ",
     "timestamp": "2026-10-28T14:56:30.182Z",
     "repository": "salvo-rs/salvo",
@@ -7490,6 +7460,36 @@
     "repository": "clastix/kamaji",
     "learningId": "learn-github-clastix-kamaji",
     "contentHash": "f96d68a8b5990cce6dace8fa31bda3221bd1a6c276148578ac72b3047b524d23",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-GJYM",
+    "timestamp": "2026-10-30T20:59:20.206Z",
+    "repository": "astral-sh/uv",
+    "learningId": "learn-github-astral-sh-uv",
+    "contentHash": "63f4f402e5ab4430e3b3cb415c385e660983dcce86a004fff05926d2d13e3ddd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-GQW4",
+    "timestamp": "2026-10-30T20:59:29.188Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "f9b56a9b6bd5094f606e8687fd216fa392f1b4d94b9101f999a19981544126cd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
