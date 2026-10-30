@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "d1b31339",
+    "sourceVersion": "f876742c",
     "license": "Apache-2.0",
-    "contentHash": "37d18e9c08967cd76e0fb7720e42fdccb5e9b8199773661989964ca46ce70090",
-    "lastHarvestedAt": "2026-10-29T00:41:38.056Z",
+    "contentHash": "6fce9fd0daaecd03b6fd5480451c97eb6545a6f1e4d87d55228d711304f421b0",
+    "lastHarvestedAt": "2026-10-30T18:07:13.345Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "efa5b45f",
+    "sourceVersion": "c78633d8",
     "license": "AGPL-3.0",
-    "contentHash": "7a2487ab51b47afdbf8487362a7eb54cb1cd775f8e8c229475abe32847760f02",
-    "lastHarvestedAt": "2026-10-29T02:03:31.525Z",
+    "contentHash": "ac76ae613700dd74e0307b282d8c570aa02ede374e2772c7c5bf66cdb6378f4c",
+    "lastHarvestedAt": "2026-10-30T18:07:08.488Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {

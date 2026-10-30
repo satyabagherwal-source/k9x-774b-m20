@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T18:00:12.840Z",
-  "total_cycles_completed": 6232,
-  "total_learnings_persisted": 6232,
-  "total_rules_promoted": 5790,
+  "last_updated": "2026-10-30T18:07:13.351Z",
+  "total_cycles_completed": 6234,
+  "total_learnings_persisted": 6234,
+  "total_rules_promoted": 5792,
   "history": [
-    {
-      "timestamp": "2026-10-29T17:23:31.867Z",
-      "repository": "Kuddev/pebrel",
-      "learningId": "learn-github-kuddev-pebrel",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T17:23:41.704Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T17:23:45.555Z",
       "repository": "risingwavelabs/risingwave",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T18:00:12.840Z",
       "repository": "crate/crate",
       "learningId": "learn-github-crate-crate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T18:07:08.494Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T18:07:13.351Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

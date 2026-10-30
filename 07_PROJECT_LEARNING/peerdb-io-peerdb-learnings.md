@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `efa5b45f`  
+> **Source Version**: `c78633d8`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T02:03:31.061Z  
+> **Timestamp**: 2026-10-30T18:07:07.838Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T02:03:31.056Z  
+> **Harvest Timestamp**: 2026-10-30T18:07:06.831Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3310 stars
+- **Stars / Engagement**: 3312 stars
 
 ---
 
@@ -190,6 +190,7 @@ func pullAndSyncCore[TPull connectors.CDCPullConnectorCore, TSync connectors.CDC
 			v.DestinationTableIdentifier, v.Exclude, v.StructuredIngestionConfig,
 		)
 		mapping.MongoConfiguration = v.MongoConfig
+		mapping.Columns = v.Columns
 		tblNameMapping[v.SourceTableIdentifier] = mapping
 	}
 
@@ -292,6 +293,7 @@ func pullAndSyncCore[TPull connectors.CDCPullConnectorCore, TSync connectors.CDC
 			RecordStream:                recordBatchPull,
 			Env:                         config.Env,
 			InternalVersion:             config.Version,
+			Flags:                       config.Flags,
 		})
 		if err != nil {
 			pullSpan.RecordError(err)
@@ -307,8 +309,7 @@ func pullAndSyncCore[TPull connectors.CDCPullConnectorCore, TSync connectors.CDC
 		// wait for the pull goroutine to finish
 		if err := errGroup.Wait(); err != nil {
 			// don't log flow error for "replState changed" and "slot is already active"
-			_, isDesync := errors.AsType[*exceptions.ReplStateDesyncError](err)
-			if !(isDesync || shared.IsSQLStateError(err, pgerrcode.
+			_, isDesync := errors.AsType[*exceptions.ReplState
 ```
 
 ### Core Architecture Module: `flow/cmd/snapshot_worker.go`
@@ -1860,548 +1861,221 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab1ba0c5` (2026-10-28)
-**Commit Message**: fix(deps): update gomod dependencies (#4984)
+### Incident Patch 1: `dc196b24` (2026-10-29)
+**Commit Message**: fix(mysql): drop NO_BACKSLASH_ESCAPES from session sql_mode (#4985)
 
-This PR contains the following updates:
+This PR removes `NO_BACKSLASH_ESCAPES` from the MySQL connector's
+session sql_mode.
 
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-|
-[github.com/ClickHouse/ch-go](https://redirect.github.com/ClickHouse/ch-go)
-| `v0.74.0` → `v0.75.0` |
-![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fClickHouse%2fch-go/v0.75.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fClickHouse%2fch-go/v0.74.0/v0.75.0?slim=true)
-|
-|
-[github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager](https://redirect.github.com/aws/aws-sdk-go-v2)
-| `v0.4.16` → `v0.4.18` |
-![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2faws%2faws-sdk-go-v2%2ffeature%2fs3%2ftransfermanager/v0.4.18?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2faws%2faws-sdk-go-v2%2ffeature%2fs3%2ftransfermanager/v0.4.16/v0.4.18?slim=true)
-|
-|
-[github.com/aws/aws-sdk-go-v2/service/kms](https://redirect.github.com/aws/aws-sdk-go-v2)
-| `v1.61.4` → `v1.61.5` |
-![age](https://developer.mend.io/api/mc/badges/age/go/github
+MySQL parses stored expressions again with the session's mode, and their
+canonical form escapes quotes as `\'`. In our session, a generated
+column with a quote therefore failed every query on its table with
+`ERROR 1064 (42000)`.
 
-**File**: `flow/go.mod` (modified, +8/-8)
+With this PR, backslash is is an escape character again and generated
+column with escape syntax is now supported. And it's safe to uses
+`mysql.Escape`.
+
+Testing: add e2e test and repro-ed failure. 
+
+Fixes:  DBI-1282
+
+**File**: `flow/connectors/mysql/mysql.go` (modified, +1/-7)
 ```diff
-@@ -14,7 +14,7 @@ require (
- 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.15.0
- 	github.com/Azure/azure-sdk-for-go/sdk/messaging/azeventhubs/v2 v2.0.2
- 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/eventhub/armeventhub v1.3.0
--	github.com/ClickHouse/ch-go v0.74.0
-+	github.com/ClickHouse/ch-go v0.75.0
- 	github.com/ClickHouse/clickhouse-go/v2 v2.49.0
- 	github.com/PeerDB-io/glua64 v1.0.1
- 	github.com/PeerDB-io/gluabit32 v1.0.2
-@@ -28,12 +28,12 @@ require (
- 	github.com/aws/aws-sdk-go-v2/config v1.33.9
- 	github.com/aws/aws-sdk-go-v2/credentials v1.20.9
- 	github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.7.6
--	github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.16
--	github.com/aws/aws-sdk-go-v2/service/kms v1.61.4
--	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
-+	github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.18
-+	github.com/aws/aws-sdk-go-v2/service/kms v1.61.5
-+	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.4
- 	github.com/aws/aws-sdk-go-v2/service/ses v1.42.4
- 	github.com/aws/aws-sdk-go-v2/service/sts v1.51.4
--	github.com/aws/smithy-go v1.28.5
-+	github.com/aws/smithy-go v1.28.6
- 	github.com/cockroachdb/pebble/v2 v2.1.7
- 	github.com/elastic/go-elasticsearch/v8 v8.19.7
- 	github.com/go-logr/logr v1.4.4
-@@ -61,7 +61,7 @@ require (
- 	github.com/pressly/goose/v3 v3.29.0
- 	github.com/quasilyte/go-ruleguard/dsl v0.3.23
- 	github.com/robfig/cron/v3 v3.0.1
--	github.com/shopspring/decimal v1.5.0
-+	github.com/shopspring/decimal v1.6.0
- 	github.com/slack-go/slack v0.30.1
- 	github.com/snowflakedb/gosnowflake/v2 v2.3.0
- 	github.com/stretchr/testify v1.12.1
-@@ -84,7 +84,7 @@ require (
- 	go.opentelemetry.io/otel/sdk v1.47.0
- 	go.opentelemetry.io/otel/sdk/metric v1.47.0
- 	go.opentelemetry.io/otel/trace v1.47.0
--	go.temporal.io/api v1.63.7
-+	go.temporal.io/api v1.64.0
- 	go.temporal.io/sdk v1.50.0
- 	go.temporal.io/sdk/contrib/opentelemetry v0.8.1
- 	go.uber.org/automaxprocs v1.6.0
-@@ -132,7 +132,7 @@ require (
- 	github.com/andybalholm/brotli v1.2.6 // indirect
- 	github.com/apache/arrow/go/v15 v15.0.2 // indirect
- 	github.com/apache/thrift v0.24.0 // indirect
--	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22 // indirect
-+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.23 // indirect
- 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 // indirect
- 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 // indirect
- 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 // indirect
-```
-
-**File**: `flow/go.sum` (modified, +16/-16)
-```diff
-@@ -76,8 +76,8 @@ github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1/go.mod h1:xdY
- github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
- github.com/BurntSushi/toml v1.6.0 h1:dRaEfpa2VI55EwlIW72hMRHdWouJeRF7TPYhI+AUQjk=
- github.com/BurntSushi/toml v1.6.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
--github.com/ClickHouse/ch-go v0.74.0 h1:uYs2m4wIt0ZHSM1E72rg0maCfzhR2V3xWb/vZEgpeWE=
--github.com/ClickHouse/ch-go v0.74.0/go.mod h1:sZ/r+8ttZMjyrP9PuFbgoVbth1ywIu2LIQNA2vgko6M=
-+github.com/ClickHouse/ch-go v0.75.0 h1:GZ3gyLVK8VsgU5M3tjXthUqefgNf9dPAfosx1k+EJ0g=
-+github.com/ClickHouse/ch-go v0.75.0/go.mod h1:ON7yTiWA2F/xQ5cxb7h9ef/nv8ziLNLKTs0B9CDuZsc=
- github.com/ClickHouse/clickhouse-go/v2 v2.49.0 h1:HgiLTraLGgMe8kYivQ6RzMHDUkU/uFUpsWEAuhVk34Q=
- github.com/ClickHouse/clickhouse-go/v2 v2.49.0/go.mod h1:o8dSgGJGxY7CeWFNiKusF9a5RnLpgzuo7OaNyH0NQPE=
- github.com/DataDog/zstd v1.5.7 h1:ybO8RBeh29qrxIhCA9E8gKY6xfONU9T6G6aP9DTKfLE=
-@@ -135,8 +135,8 @@ github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3d
- github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
- github.com/aws/aws-sdk-go-v2 v1.47.3 h1:HRoT/MkNi3bjO5xF4dCzLzvVmkvRGHj3/cLINDnJejk=
- github.com/aws/aws-sdk-go-v2 v1.47.3/go.mod h1:xSl+OSI5ZUw6bSMupWc218zE5Pl+65MCCu3ySWFY99A=
--github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22 h1:oiEmPz/YMMeh/JvAE8xSxNCIsvWE6lpFe4ZPlyFykQI=
--github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22/go.mod h1:QWUDuRi9PFjBHIU2iH1Pkldbe7zqLfXJC4wWLbF8nuQ=
-+github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.23 h1:/fGPpKrXTjzkhsDXExBgNT2cGwxiF9rLrQXh8RlXMhI=
-+github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.23/go.mod h1:QWUDuRi9PFjBHIU2iH1Pkldbe7zqLfXJC4wWLbF8nuQ=
- github.com/aws/aws-sdk-go-v2/config v1.33.9 h1:Hv6bcQUJVnmuWaKjqD6Ot8sE75NrWsWV20oGT5aWle0=
- github.com/aws/aws-sdk-go-v2/config v1.33.9/go.mod h1:ivowmrZNfBQLcg4QkaItgi5wae4Bzot9RzIdbY1hfTg=
- github.com/aws/aws-sdk-go-v2/credentials v1.20.9 h1:SNO55PnWhaDafsOcv16lCA0kdoFMl/YlegWoVsU02s0=
-@@ -145,8 +145,8 @@ github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 h1:gr3b87OLB29jymWPzp/CAyX
- github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3/go.mod h1:BRjf4L/Yx2hY54o+ZibPbLJyMMeSwqYQXwcJfqW66a8=
- github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.7.6 h1:oc0NI/Uegp+9UeEEkQrfHhBpLeFKVjB+4CkA5KTFAOY=
- github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.7.6/go.mod h1:X/KPhoB0miTAnZFuC0p6M7++TZExuZwiCmDXGlv6dLQ=
--github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.16 h1:q9YuNkYR/7lxflWCcEv3C0cecUt3Zvrh2hn9ZNxieNA=
--github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.16/go.mod h1:3BSeJQF55QQI+dDFHx4WTIjTvX/Lvtk8Jaaf/SGAnBM=
-+github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.18 h1:Ejz+9J40AOXRev/3FD19AStv4nJbBIbCb8vwz/DXhKg=
-+github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.18/go.mod h1:TX4kyX8cShpnWdM5QUYL+nyL3ujOcF1HMekEVLGms8U=
- github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 h1:CqL8NN3p4I0JTwwV5MEoatIl4Y2amZ2X9dRD+0hbRL0=
- github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6/go.mod h1:exdJ32hMqXl0Wyo6NwqEC5yIhtua3+PDaKE8P29m4qE=
- github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 h1:FpBq24TG6WVSObTNhQOv7Q0088rounUUlwn3zlNItkM=
-@@ -161,10 +161,10 @@ github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 h1:LHHdobjo5
- github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6/go.mod h1:CBGB0evAiaMD3Lk4wPO7LQCcCZLuhzL5Qf/wfEUHQ5w=
- github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6 h1:mYViDr2azcgxOpRrObZOl631bvavqILoE/L+Kxgbwys=
- github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6/go.mod h1:OXVdAo9jNhggB+hJRGOyy7WolGTKB6Rg7IIulDeSzPM=
--github.com/aws/aws-sdk-go-v2/service/kms v1.61.4 h1:vW7497x7W6ucLJAqDt96jIdO4+IWLMB3p98UubwjdqM=
--github.com/aws/aws-sdk-go-v2/service/kms v1.61.4/go.mod h1:Vz59N7x42VGLXZ5dGL9b10QhrU4GQv7MqnO7wc8bl9U=
--github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3 h1:NyeuyXkZL476uoAowNActm4XJO1QPKf7aassgXHpiqA=
--github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3/go.mod h1:GfoBeKMDJecgRUsGf/0RGdx0NJAh81ObTd922h8pQys=
-+github.com/aws/aws-sdk-go-v2/service/kms v1.61.5 h1:c5rky/FkXXEiY4OhecCH4Q6MeYgSpAVFlrZrsrlSkUE=
-+github.com/aws/aws-sdk-go-v2/service/kms v1.61.5/go.mod h1:Vz59N7x42VGLXZ5dGL9b10QhrU4GQv7MqnO7wc8bl9U=
-+github.com/aws/aws-sdk-go-v2/service/s3 v1.114.4 h1:MrkWRB58Qw5TEkb51QVooVLjlM3IevO2iVXEz74B8pg=
-+github.com/aws/aws-sdk-go-v2/service/s3 v1.114.4/go.mod h1:yfIxaKRHasvfy6tNEm3/LpqKsupMzQjMaWj9Y0jMVbo=
- github.com/aws/aws-sdk-go-v2/service/ses v1.42.4 h1:7opEzfGDeDZ1PUL8oOi7nHo8xqwxFkBSW256tI0zZOA=
- github.com/aws/aws-sdk-go-v2/service/ses v1.42.4/go.mod h1:qdmebzqxnVatb4c8zI7rNfDcopz9wxreNiGUo0YuXV8=
- github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 h1:tvpDjuUvgKURf3Yk4hOaGbZ4QdY+070OWcA5d6LUv2A=
-@@ -175,8 +175,8 @@ github.com/aws/aws-sdk-go-v2/service/ss
-```
-
-**File**: `flow/pkg/go.mod` (modified, +17/-16)
-```diff
-@@ -5,7 +5,7 @@ go 1.26.0
- require (
- 	cloud.google.com/go/bigquery v1.74.0
- 	cloud.google.com/go/storage v1.62.1
--	github.com/ClickHouse/ch-go v0.74.0
-+	github.com/ClickHouse/ch-go v0.75.0
- 	github.com/ClickHouse/clickhouse-go/v2 v2.49.0
- 	github.com/go-mysql-org/go-mysql v1.15.0
- 	github.com/jackc/pgx/v5 v5.11.0
-@@ -40,7 +40,7 @@ require (
- 	github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a // indirect
- 	github.com/felixge/httpsnoop v1.1.0 // indirect
- 	github.com/go-faster/city v1.0.1 // indirect
--	github.com/go-faster/errors v0.7.1 // indirect
-+	github.com/go-faster/errors v0.8.0 // indirect
- 	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
-@@ -56,14 +56,14 @@ require (
- 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.22.0 // indirect
- 	github.com/jackc/pgpassfile v1.0.0 // indirect
- 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
--	github.com/klauspost/compress v1.19.2 // indirect
-+	github.com/klauspost/compress v1.20.3 // indirect
- 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
- 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
- 	github.com/modern-go/reflect2 v1.0.2 // indirect
- 	github.com/nexus-rpc/nexus-proto-annotations v0.1.0 // indirect
- 	github.com/nexus-rpc/sdk-go v0.7.0 // indirect
- 	github.com/paulmach/orb v0.13.0 // indirect
--	github.com/pierrec/lz4/v4 v4.1.27 // indirect
-+	github.com/pierrec/lz4/v4 v4.1.33 // indirect
- 	github.com/pingcap/errors v0.11.5-0.20260310054046-9c8b3586e4b2 // indirect
- 	github.com/pingcap/log v1.1.1-0.20260227082333-572e590d08f1 // indirect
- 	github.com/pingcap/tidb/pkg/parser v0.0.0-20260504140133-511dba1dbe17 // indirect
-@@ -82,27 +82,28 @@ require (
- 	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.67.0 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
--	go.opentelemetry.io/otel v1.46.0 // indirect
--	go.opentelemetry.io/otel/metric v1.46.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.44.0 // indirect
--	go.opentelemetry.io/otel/sdk/metric v1.44.0 // indirect
--	go.opentelemetry.io/otel/trace v1.46.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.temporal.io/api v1.63.5 // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.uber.org/zap v1.28.0 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
--	golang.org/x/crypto v0.55.0 // indirect
-+	golang.org/x/crypto v0.57.0 // indirect
- 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
--	golang.org/x/mod v0.38.0 // indirect
-+	golang.org/x/mod v0.41.0 // indirect
- 	golang.org/x/net v0.58.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sync v0.22.0 // indirect
--	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/telemetry v0.0.0-20260708182218-49f421fb7959 // indirect
--	golang.org/x/text v0.41.0 // indirect
-+	golang.org/x/sync v0.23.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
-+	golang.org/x/text v0.42.0 // indirect
- 	golang.org/x/time v0.15.0 // indirect
--	golang.org/x/tools v0.48.0 // indirect
-+	golang.org/x/tools v0.49.0 // indirect
- 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
- 	google.golang.org/genproto v0.0.0-20260319201613-d00831a3d3e7 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
-```
-
-**File**: `flow/pkg/go.sum` (modified, +36/-34)
-```diff
-@@ -26,8 +26,8 @@ cloud.google.com/go/trace v1.11.7 h1:kDNDX8JkaAG3R2nq1lIdkb7FCSi1rCmsEtKVsty7p+U
- cloud.google.com/go/trace v1.11.7/go.mod h1:TNn9d5V3fQVf6s4SCveVMIBS2LJUqo73GACmq/Tky0s=
- filippo.io/edwards25519 v1.2.0 h1:crnVqOiS4jqYleHd9vaKZ+HKtHfllngJIiOpNpoJsjo=
- filippo.io/edwards25519 v1.2.0/go.mod h1:xzAOLCNug/yB62zG1bQ8uziwrIqIuxhctzJT18Q77mc=
--github.com/ClickHouse/ch-go v0.74.0 h1:uYs2m4wIt0ZHSM1E72rg0maCfzhR2V3xWb/vZEgpeWE=
--github.com/ClickHouse/ch-go v0.74.0/go.mod h1:sZ/r+8ttZMjyrP9PuFbgoVbth1ywIu2LIQNA2vgko6M=
-+github.com/ClickHouse/ch-go v0.75.0 h1:GZ3gyLVK8VsgU5M3tjXthUqefgNf9dPAfosx1k+EJ0g=
-+github.com/ClickHouse/ch-go v0.75.0/go.mod h1:ON7yTiWA2F/xQ5cxb7h9ef/nv8ziLNLKTs0B9CDuZsc=
- github.com/ClickHouse/clickhouse-go/v2 v2.49.0 h1:HgiLTraLGgMe8kYivQ6RzMHDUkU/uFUpsWEAuhVk34Q=
- github.com/ClickHouse/clickhouse-go/v2 v2.49.0/go.mod h1:o8dSgGJGxY7CeWFNiKusF9a5RnLpgzuo7OaNyH0NQPE=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.33.0 h1:l7+6kwRMJNwdCvYdDl7Eax+wzEYHSnNY7zrrfbhDdTA=
-@@ -66,8 +66,8 @@ github.com/felixge/httpsnoop v1.1.0 h1:3YtUj32ZZkqZtt3sZZsClsymw/QDuVfpNhoA31zeO
- github.com/felixge/httpsnoop v1.1.0/go.mod h1:Zqxgdd+1Rkcz8euOqdr7lqgCRJztwr5hp9vDSi5UZCE=
- github.com/go-faster/city v1.0.1 h1:4WAxSZ3V2Ws4QRDrscLEDcibJY8uf41H6AhXDrNDcGw=
- github.com/go-faster/city v1.0.1/go.mod h1:jKcUJId49qdW3L1qKHH/3wPeUstCVpVSXTM6vO3VcTw=
--github.com/go-faster/errors v0.7.1 h1:MkJTnDoEdi9pDabt1dpWf7AA8/BaSYZqibYyhZ20AYg=
--github.com/go-faster/errors v0.7.1/go.mod h1:5ySTjWFiphBs07IKuiL69nxdfd5+fzh1u7FPGZP2quo=
-+github.com/go-faster/errors v0.8.0 h1:9T9eJrM+72dFk7n4DfhuaDDe6cyuFCSW2oNUkN77Yqc=
-+github.com/go-faster/errors v0.8.0/go.mod h1:5ySTjWFiphBs07IKuiL69nxdfd5+fzh1u7FPGZP2quo=
- github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
- github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
-@@ -118,8 +118,8 @@ github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnr
- github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
- github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
- github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
--github.com/klauspost/compress v1.19.2 h1:hMRETovs/pu/dVWN7zIT1PGG8t509MwT6bO7XSi26R8=
--github.com/klauspost/compress v1.19.2/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
-+github.com/klauspost/compress v1.20.3 h1:zWNoFqq/lSuYQRim3dUXlXeA0IqwuZGicdG5ZTfY5j4=
-+github.com/klauspost/compress v1.20.3/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/klauspost/cpuid/v2 v2.2.5 h1:0E5MSMDEoAulmXNFquVs//DdoomxaoTY1kUhbc/qbZg=
- github.com/klauspost/cpuid/v2 v2.2.5/go.mod h1:Lcz8mBdAVJIBVzewtcLocK12l3Y+JytZYpaMropDUws=
- github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
-@@ -133,8 +133,8 @@ github.com/nexus-rpc/sdk-go v0.7.0 h1:38NrfY5rLnZAiMMs2ZfCKI/CSDzdfJG+27iAgfA8bU
- github.com/nexus-rpc/sdk-go v0.7.0/go.mod h1:FHdPfVQwRuJFZFTF0Y2GOAxCrbIBNrcPna9slkGKPYk=
- github.com/paulmach/orb v0.13.0 h1:r7n7mQGGF+cj/CbcivEj9J3HGK+XR+yXnvzRdq9saIw=
- github.com/paulmach/orb v0.13.0/go.mod h1:6scRWINywA2Jf05dcjOfLfxrUIMECvTSG2MVbRLxu/k=
--github.com/pierrec/lz4/v4 v4.1.27 h1:+PhzhWDrjRj89TH2sw43nE3+4+W8lSxIuQadEHZyjUk=
--github.com/pierrec/lz4/v4 v4.1.27/go.mod h1:EoQMVJgeeEOMsCqCzqFm2O0cJvljX2nGZjcRIPL34O4=
-+github.com/pierrec/lz4/v4 v4.1.33 h1:GjG1TJ1V4IzKP8L96muuuDNpTwd7D+l2ccXrjAbe014=
-+github.com/pierrec/lz4/v4 v4.1.33/go.mod h1:7SE9MC2STkNtL4PIwGhjmyVwvILaGI9/COYQNBhKM/c=
- github.com/pingcap/errors v0.11.5-0.20260310054046-9c8b3586e4b2 h1:cLgCk5mwDG9lDH+dPK8TmEliTjyGJwwKN0qevWAl8IY=
- github.com/pingcap/errors v0.11.5-0.20260310054046-9c8b3586e4b2/go.mod h1:ktAJCA9lxrHHjVyVl2pKJFvzBnq2eZbb+CUOjBRPlXo=
- github.com/pingcap/log v1.1.1-0.20260227082333-572e590d08f1 h1:A2bEfgSb7hLwR9mxDszgGKweF+xY9YoTDG+8RjdFjDE=
-@@ -196,20 +196,22 @@ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.6
- go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.67.0/go.mod h1:NoUCKYWK+3ecatC4HjkRktREheMeEtrXoQxrqYFeHSc=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 h1:8tvICD4vSTOOsNrsI4Ljf6C+6UKvpTEH5XY3JMoyPoo=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0/go.mod h1:z9+yiacE0IHRqM4qFfkbt/JYlmYXgss8GY/jXoNuPJI=
--go.opentelemetry.io/otel v1.46.0 h1:FHt5/CDyVxi/8IM1CH7VE/rRgq3kLHa2mSTVMO8AWyc=
--go.opentelemetry.io/otel v1.46.0/go.mod h1:Gj3SEScelsNC45tp4nSxRYlS+f5iez7W8XPMCt905kE=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.43.0 h1:
-```
-
----
-
-### Incident Patch 2: `efa5b45f` (2026-10-28)
-**Commit Message**: fix(deps): update npm dependencies (#4982)
-
-This PR contains the following updates:
-
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-| [@radix-ui/react-form](https://radix-ui.com/primitives)
-([source](https://redirect.github.com/radix-ui/primitives/tree/HEAD/packages/react/form))
-| [`^0.1.4` →
-`^0.3.0`](https://renovatebot.com/diffs/npm/@radix-ui%2freact-form/0.1.16/0.3.0)
-|
-![age](https://developer.mend.io/api/mc/badges/age/npm/@radix-ui%2freact-form/0.3.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@radix-ui%2freact-form/0.1.16/0.3.0?slim=true)
-|
-| [material-symbols](https://marella.github.io/material-symbols/demo/)
-([source](https://redirect.github.com/marella/material-symbols/tree/HEAD/material-symbols))
-| [`^0.47.0` →
-`^0.48.0`](https://renovatebot.com/diffs/npm/material-symbols/0.47.6/0.48.1)
-|
-![age](https://developer.mend.io/api/mc/badges/age/npm/material-symbols/0.48.1?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/material-symbols/0.47.6/0.48.1?slim=true)
-|
-
----
-
-### Release Notes
-
-<details>
-
-
-**File**: `ui/package-lock.json` (modified, +16/-119)
-```diff
-@@ -14,7 +14,7 @@
-         "@radix-ui/react-collapsible": "^1.1.8",
-         "@radix-ui/react-dialog": "^1.1.11",
-         "@radix-ui/react-dropdown-menu": "^2.1.12",
--        "@radix-ui/react-form": "^0.1.4",
-+        "@radix-ui/react-form": "^0.3.0",
-         "@radix-ui/react-icons": "^1.3.2",
-         "@radix-ui/react-popover": "^1.1.11",
-         "@radix-ui/react-progress": "^1.1.4",
-@@ -31,7 +31,7 @@
-         "chart.js": "^4.5.1",
-         "classnames": "^2.5.1",
-         "date-fns": "^4.1.0",
--        "material-symbols": "^0.47.0",
-+        "material-symbols": "^0.48.0",
-         "moment": "^2.30.1",
-         "moment-timezone": "^0.6.0",
-         "next": "^16.0.7",
-@@ -1921,61 +1921,17 @@
-       }
-     },
-     "node_modules/@radix-ui/react-form": {
--      "version": "0.1.16",
--      "resolved": "https://registry.npmjs.org/@radix-ui/react-form/-/react-form-0.1.16.tgz",
--      "integrity": "sha512-Q4TLEn2A7TAypxwmd6R9EwrlXDvkfYSDMrq9/887AXAGh+G1rH+kYJKSTv+Si9Y0JPKTwKYv6PviAJosysNimA==",
-+      "version": "0.3.0",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-form/-/react-form-0.3.0.tgz",
-+      "integrity": "sha512-KnmrCM27m7Jo1R8S6cFDPrEeq20Jfn5dqde0SZrJr2lVXlj6/QZSUCyFoYh1d8ti0uUrMNK5Lx6dUDuINT+f4Q==",
-       "license": "MIT",
-       "dependencies": {
--        "@radix-ui/primitive": "1.1.7",
-+        "@radix-ui/primitive": "1.2.0",
-         "@radix-ui/react-compose-refs": "1.1.5",
--        "@radix-ui/react-context": "1.2.2",
-+        "@radix-ui/react-context": "1.3.0",
-         "@radix-ui/react-id": "1.1.4",
--        "@radix-ui/react-label": "2.1.15",
--        "@radix-ui/react-primitive": "2.1.10"
--      },
--      "peerDependencies": {
--        "@types/react": "*",
--        "@types/react-dom": "*",
--        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
--        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
--      },
--      "peerDependenciesMeta": {
--        "@types/react": {
--          "optional": true
--        },
--        "@types/react-dom": {
--          "optional": true
--        }
--      }
--    },
--    "node_modules/@radix-ui/react-form/node_modules/@radix-ui/primitive": {
--      "version": "1.1.7",
--      "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.1.7.tgz",
--      "integrity": "sha512-rqWnm76nYT8HoNNqEjpgJ7Pw/DrBj5iBTrmEPo6HTX5+VJyBNOqTdv4g89G63HuR5g0AaENoAcH7Is5fF2kZ8Q==",
--      "license": "MIT"
--    },
--    "node_modules/@radix-ui/react-form/node_modules/@radix-ui/react-context": {
--      "version": "1.2.2",
--      "resolved": "https://registry.npmjs.org/@radix-ui/react-context/-/react-context-1.2.2.tgz",
--      "integrity": "sha512-RHCUGwKHDr0hDGg4X7ma4JG4/+12qxw8rkh5QKdDldlCvtja6nUx1Ef/8HVrJze81lEsgLQlqjzjGNHantgnQA==",
--      "license": "MIT",
--      "peerDependencies": {
--        "@types/react": "*",
--        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
--      },
--      "peerDependenciesMeta": {
--        "@types/react": {
--          "optional": true
--        }
--      }
--    },
--    "node_modules/@radix-ui/react-form/node_modules/@radix-ui/react-primitive": {
--      "version": "2.1.10",
--      "resolved": "https://registry.npmjs.org/@radix-ui/react-primitive/-/react-primitive-2.1.10.tgz",
--      "integrity": "sha512-MucOnzh6hR5mid6VpkbglRAMYMjKLqRnGBbjXkzjK52fuQDd1qbkx78a5P40mkcnVXJdEVxm26E9OPAiUq7nBg==",
--      "license": "MIT",
--      "dependencies": {
--        "@radix-ui/react-slot": "1.3.3"
-+        "@radix-ui/react-label": "2.1.17",
-+        "@radix-ui/react-primitive": "2.2.0"
-       },
-       "peerDependencies": {
-         "@types/react": "*",
-@@ -1992,24 +1948,6 @@
-         }
-       }
-     },
--    "node_modules/@radix-ui/react-form/node_modules/@radix-ui/react-slot": {
--      "version": "1.3.3",
--      "resolved": "https://registry.npmjs.org/@radix-ui/react-slot/-/react-slot-1.3.3.tgz",
--      "integrity": "sha512-qx7oqnYbxnK9kYI9m317qmFmEgo6ywqWvbTogdj7cL9p3/yx4M48p7Rnw5z3H890cL/ow/EeWJsuTykeZVXP5Q==",
--      "license": "MIT",
--      "dependencies": {
--        "@radix-ui/react-compose-refs": "1.1.5"
--      },
--      "peerDependencies": {
--        "@types/react": "*",
--        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
--      },
--      "peerDependenciesMeta": {
--        "@types/react": {
--          "optional": true
--        }
--      }
--    },
-     "node_modules/@radix-ui/react-icons": {
-       "version": "1.3.2",
-       "resolved": "https://registry.npmjs.org/@radix-ui/react-icons/-/react-icons-1.3.2.tgz",
-@@ -2038,35 +1976,12 @@
-       }
-     },
-     "node_modules/@radix-ui/react-label": {
--      "version": "2.1.15",
--      "resolved": "https://registry.npmjs.org/@radix-ui/react-label/-/react-label-2.1.15.tgz",
--      "integrity": "sha512-o/rdYEwZTTo5tjknnPeyQFU45kUC4i/XyeDPP+HGyi6XqpOP6Zf5Ya5vh/Yfe9Id5JiuWnnAx2XqIeD3UYZt0g==",
--      "license": "MIT",
--      "dependencies": {
--        "@radix-ui/react-primitive": "2.1.10"
--      },
--      "peerDependencies": {
--        "@types/re
-```
-
-**File**: `ui/package.json` (modified, +2/-2)
-```diff
-@@ -17,7 +17,7 @@
-     "@radix-ui/react-collapsible": "^1.1.8",
-     "@radix-ui/react-dialog": "^1.1.11",
-     "@radix-ui/react-dropdown-menu": "^2.1.12",
--    "@radix-ui/react-form": "^0.1.4",
-+    "@radix-ui/react-form": "^0.3.0",
-     "@radix-ui/react-icons": "^1.3.2",
-     "@radix-ui/react-popover": "^1.1.11",
-     "@radix-ui/react-progress": "^1.1.4",
-@@ -34,7 +34,7 @@
-     "chart.js": "^4.5.1",
-     "classnames": "^2.5.1",
-     "date-fns": "^4.1.0",
--    "material-symbols": "^0.47.0",
-+    "material-symbols": "^0.48.0",
-     "moment": "^2.30.1",
-     "moment-timezone": "^0.6.0",
-     "next": "^16.0.7",
-```
-
----
-
-### Incident Patch 3: `3d9a5ca4` (2026-10-28)
-**Commit Message**: chore(deps): update temporalio/ui docker tag to v2.56.0 (#4981)
-
-This PR contains the following updates:
-
-| Package | Update | Change |
-|---|---|---|
-| [temporalio/ui](https://redirect.github.com/temporalio/ui-server) |
-minor | `2.54.1` → `2.57.0` |
-
----
-
-### Release Notes
-
-<details>
-<summary>temporalio/ui-server (temporalio/ui)</summary>
-
-###
-[`v2.57.0`](https://redirect.github.com/temporalio/ui-server/releases/tag/v2.57.0)
-
-[Compare
-Source](https://redirect.github.com/temporalio/ui-server/compare/v2.56.0...v2.57.0)
-
-Release synced from
-[ui@v2.57.0](https://redirect.github.com/temporalio/ui/releases/tag/v2.57.0)
-
-#### What's Changed
-
-- Read Node, pnpm, and Go versions from the synced UI by
-[@&#8203;rossnelson](https://redirect.github.com/rossnelson) in
-[#&#8203;343](https://redirect.github.com/temporalio/ui-server/pull/343)
-
-**Full Changelog**:
-<https://github.com/temporalio/ui-server/compare/v2.56.0...v2.57.0>
-
-###
-[`v2.56.0`](https://redirect.github.com/temporalio/ui-server/releases/tag/v2.56.0)
-
-[Compare
-Source](https://redirect.github.com/temporalio/ui-server/compare/v2.55.0...v2.56.0)
-
-Release synced from
-[ui@v2.56.0](https://redirect.github.com/temporalio/ui/releases/tag/v2.
-
-**File**: `docker-compose-dev.yml` (modified, +1/-1)
-```diff
-@@ -144,7 +144,7 @@ services:
-       - TEMPORAL_ADDRESS=temporal:7233
-       - TEMPORAL_CORS_ORIGINS=http://localhost:3030
-       - TEMPORAL_CSRF_COOKIE_INSECURE=true
--    image: temporalio/ui:2.54.1@sha256:ff0943fe532b8e33c46cd28b29e81e0ce0b6f55b9ee50a38ef1b437cc4de3fa5
-+    image: temporalio/ui:2.57.0@sha256:d944f959d0923c35cd991a17a0edbe087770eff843724b181933e0cfdd563ab2
-     ports:
-       - *temporal-ui-port
+@@ -275,7 +275,7 @@ func (c *MySqlConnector) connect(ctx context.Context) (*client.Conn, error) {
  
+ func (c *MySqlConnector) setSessionSettings() error {
+ 	conn := c.conn.Load()
+-	if _, err := conn.Execute("SET sql_mode = 'ANSI,NO_BACKSLASH_ESCAPES'"); err != nil {
++	if _, err := conn.Execute("SET sql_mode = 'ANSI'"); err != nil {
+ 		return fmt.Errorf("failed to set sql_mode to ANSI: %w", err)
+ 	}
+ 
+@@ -318,12 +318,6 @@ func (c *MySqlConnector) setSessionSettings() error {
+ 	return nil
+ }
+ 
+-func escapeWithNoBackslashEscapes(s string) string {
+-	// mysql.Escape must NOT be used because MySQL connector session has sql_mode set
+-	// to NO_BACKSLASH_ESCAPES (see setSessionSettings). Only quotes needs to be escaped.
+-	return strings.ReplaceAll(s, "'", "''")
+-}
+-
+ // withRetries return an iterable over connections,
+ // consumer should break out of loop on success or error,
+ // to retry for mysql.ErrBadConn
 ```
 
-**File**: `docker-compose.yml` (modified, +1/-1)
+**File**: `flow/connectors/mysql/qrep.go` (modified, +2/-2)
 ```diff
-@@ -108,7 +108,7 @@ services:
-       - TEMPORAL_ADDRESS=temporal:7233
-       - TEMPORAL_CORS_ORIGINS=http://localhost:3000
-       - TEMPORAL_CSRF_COOKIE_INSECURE=true
--    image: temporalio/ui:2.54.1@sha256:ff0943fe532b8e33c46cd28b29e81e0ce0b6f55b9ee50a38ef1b437cc4de3fa5
-+    image: temporalio/ui:2.57.0@sha256:d944f959d0923c35cd991a17a0edbe087770eff843724b181933e0cfdd563ab2
-     ports:
-       - 8085:8080
+@@ -370,8 +370,8 @@ func (c *MySqlConnector) PullQRepRecords(
+ 			rangeStart = "'" + x.TimestampRange.Start.AsTime().Format("2006-01-02 15:04:05.999999") + "'"
+ 			rangeEnd = "'" + x.TimestampRange.End.AsTime().Format("2006-01-02 15:04:05.999999") + "'"
+ 		case *protos.PartitionRange_StringRange:
+-			rangeStart = "'" + escapeWithNoBackslashEscapes(x.StringRange.Start) + "'"
+-			rangeEnd = "'" + escapeWithNoBackslashEscapes(x.StringRange.End) + "'"
++			rangeStart = "'" + mysql.Escape(x.StringRange.Start) + "'"
++			rangeEnd = "'" + mysql.Escape(x.StringRange.End) + "'"
+ 			if config.Query != "" {
+ 				// custom query is only possible for standalone QRepFlowWorkflow;
+ 				// this is a legacy feature and string partitioning is not supported
+```
+
+**File**: `flow/connectors/mysql/qrep_partition.go` (modified, +3/-3)
+```diff
+@@ -306,7 +306,7 @@ func (c *MySqlConnector) fetchNextRealKey(
+ ) (string, bool, error) {
+ 	query := fmt.Sprintf(
+ 		"SELECT %[1]s FROM %[2]s WHERE %[1]s >= '%[3]s' AND %[1]s > '%[4]s' AND %[1]s < '%[5]s' ORDER BY %[1]s LIMIT 1",
+-		quotedCol, tableName, escapeWithNoBackslashEscapes(midpoint), escapeWithNoBackslashEscapes(start), escapeWithNoBackslashEscapes(end))
++		quotedCol, tableName, mysql.Escape(midpoint), mysql.Escape(start), mysql.Escape(end))
+ 	return c.fetchRealKey(ctx, query)
+ }
  
+@@ -319,7 +319,7 @@ func (c *MySqlConnector) fetchPrevRealKey(
+ ) (string, bool, error) {
+ 	query := fmt.Sprintf(
+ 		"SELECT %[1]s FROM %[2]s WHERE %[1]s < '%[3]s' AND %[1]s > '%[4]s' AND %[1]s < '%[5]s' ORDER BY %[1]s DESC LIMIT 1",
+-		quotedCol, tableName, escapeWithNoBackslashEscapes(midpoint), escapeWithNoBackslashEscapes(start), escapeWithNoBackslashEscapes(end))
++		quotedCol, tableName, mysql.Escape(midpoint), mysql.Escape(start), mysql.Escape(end))
+ 	return c.fetchRealKey(ctx, query)
+ }
+ 
+@@ -356,7 +356,7 @@ func (c *MySqlConnector) estimateRowsInRange(
+ ) (uint64, error) {
+ 	query := fmt.Sprintf(
+ 		"EXPLAIN FORMAT=TRADITIONAL SELECT 1 FROM %[1]s WHERE %[2]s >= '%[3]s' AND %[2]s < '%[4]s'",
+-		tableName, quotedCol, escapeWithNoBackslashEscapes(start), escapeWithNoBackslashEscapes(end))
++		tableName, quotedCol, mysql.Escape(start), mysql.Escape(end))
+ 	rs, err := c.Execute(ctx, query)
+ 	if err != nil {
+ 		return 0, err
+```
+
+**File**: `flow/connectors/mysql/qrep_partition_test.go` (modified, +0/-19)
+```diff
+@@ -238,25 +238,6 @@ func TestBase95RoundTrip(t *testing.T) {
+ 	}
+ }
+ 
+-func TestEscapeStringValue(t *testing.T) {
+-	cases := []struct {
+-		name     string
+-		in       string
+-		expected string
+-	}{
+-		{"plain", "key_0042", "key_0042"},
+-		{"backslash untouched", `Z:\tmp`, `Z:\tmp`},
+-		{"quotes doubled", `x' OR '1'='1`, `x'' OR ''1''=''1`},
+-		{"midpoint-synthesized quotes", "'''", "''''''"},
+-		{"control bytes raw", "a\x00b\nc\td", "a\x00b\nc\td"},
+-	}
+-	for _, tc := range cases {
+-		t.Run(tc.name, func(t *testing.T) {
+-			assert.Equal(t, tc.expected, escapeWithNoBackslashEscapes(tc.in))
+-		})
+-	}
+-}
+-
+ func TestStringPartitionHeapPopsLargest(t *testing.T) {
+ 	h := &stringPartitionHeap{}
+ 	heap.Init(h)
+```
+
+**File**: `flow/e2e/clickhouse_json_suite.go` (modified, +6/-0)
+```diff
+@@ -221,6 +221,12 @@ func (s ClickHouseSuite) testJSONColumns(cfg jsonColumnMirrorConfig) {
+ 	jsonColumns := []string{"json"}
+ 	createStmt := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (id SERIAL PRIMARY KEY, json JSON);`, srcFullName)
+ 	insertStmt := func(v string) string { return fmt.Sprintf(`INSERT INTO %s (json) VALUES (%s)`, srcFullName, v) }
++	if _, isMySQL := s.source.(*MySqlSource); isMySQL {
++		// test values are standard SQL literals, but MySQL reads backslash as an escape character
++		insertStmt = func(v string) string {
++			return fmt.Sprintf(`INSERT INTO %s (json) VALUES (%s)`, srcFullName, strings.ReplaceAll(v, `\`, `\\`))
++		}
++	}
+ 	if _, isPostgres := s.source.(*PostgresSource); isPostgres {
+ 		jsonColumns = []string{"json", "jsonb"}
+ 		createStmt = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (id SERIAL PRIMARY KEY, json JSON, jsonb JSONB);`, srcFullName)
+```
+
+**File**: `flow/e2e/mysql_clickhouse/mysql_test.go` (modified, +47/-5)
+```diff
+@@ -3082,10 +3082,52 @@ func (s MySQLClickHouseSuite) Test_MySQL_String_Partition_Key_Arbitrary_Parallel
+ 	e2e.RequireEnvCanceled(s.T(), env)
+ }
+ 
+-// Test_MySQL_String_Partition_Key_Special_Chars_Parallel_Snapshot guards against
+-// silent endpoint data loss when a watermark value contains a backslash, which
+-// the session sql_mode (NO_BACKSLASH_ESCAPES) treats as literal but mysql.Escape
+-// would wrongly escape it (\ -> \\), potentially sorting below the real max value
++// Test_MySQL_Generated_Column_Escapes_Parallel_Snapshot snapshots a generated column containing a quote.
++func (s MySQLClickHouseSuite) Test_MySQL_Generated_Column_Escapes_Parallel_Snapshot() {
++	if _, ok := s.Source().(*e2e.MySqlSource); !ok {
++		s.T().Skip("only applies to mysql")
++	}
++
++	srcTable := "test_gcol_escapes"
++	srcFullName := e2e.AttachSchema(s, srcTable)
++	dstTable := "test_gcol_escapes_dst"
++
++	require.NoError(s.T(), s.Source().Exec(s.T().Context(), fmt.Sprintf(
++		`CREATE TABLE %s (id INT PRIMARY KEY, name VARCHAR(100) NOT NULL,
++			name_quote VARCHAR(200) AS (concat(lower(name), '\'s')))`,
++		srcFullName)))
++	// hex literals keep the inserted values independent of escaping
++	names := []string{`O'Brien`, `C:\tmp\x`, `plain`, `a\'b`}
++	values := make([]string, len(names))
++	for i, name := range names {
++		values[i] = fmt.Sprintf("(%d, X'%s')", i+1, hex.EncodeToString([]byte(name)))
++	}
++	require.NoError(s.T(), s.Source().Exec(s.T().Context(),
++		fmt.Sprintf("INSERT INTO %s (id, name) VALUES %s", srcFullName, strings.Join(values, ","))))
++
++	connectionGen := e2e.FlowConnectionGenerationConfig{
++		FlowJobName:   e2e.AddSuffix(s, "gcol_escapes"),
++		TableMappings: e2e.TableMappings(s, srcTable, dstTable),
++		Destination:   s.Peer().Name,
++	}
++	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
++	flowConnConfig.DoInitialSnapshot = true
++	// more than one partition so the min/max partitioning query runs against the table
++	flowConnConfig.SnapshotNumPartitionsOverride = 2
++
++	tc := e2e.NewTemporalClient(s.T())
++	env := e2e.ExecutePeerflow(s.T(), tc, flowConnConfig)
++	e2e.SetupCDCFlowStatusQuery(s.T(), env, flowConnConfig)
++
++	e2e.EnvWaitForEqualTablesWithNames(env, s, "waiting on initial", srcTable, dstTable, "id,name,name_quote")
++
++	env.Cancel(s.T().Context())
++	e2e.RequireEnvCanceled(s.T(), env)
++}
++
++// Test_MySQL_String_Partition_Key_Special_Chars_Parallel_Snapshot checks that a max key containing a backslash
++// is not dropped. If the boundary literal is escaped for the wrong sql_mode, `key_99\max` is read back as
++// `key_99\\max`, which sorts below the real max, so the last partition silently misses that row.
+ func (s MySQLClickHouseSuite) Test_MySQL_String_Partition_Key_Special_Chars_Parallel_Snapshot() {
+ 	if _, ok := s.Source().(*e2e.MySqlSource); !ok {
+ 		s.T().Skip("only applies to mysql")
+@@ -3105,7 +3147,7 @@ func (s MySQLClickHouseSuite) Test_MySQL_String_Partition_Key_Special_Chars_Para
+ 	for i := range numRows - 1 {
+ 		keys[i] = fmt.Sprintf("key_%02d", i)
+ 	}
+-	// wrongly escaped, `key_99\\max` sorts before `key_99\max` under binary collation:
++	// a raw string, so this is one literal backslash (0x5C); under binary collation the wrongly escaped form sorts first:
+ 	// key_99\max bytes:  6B 65 79 5F 39 39 5C 6D 61 78
+ 	// key_99\\max bytes: 6B 65 79 5F 39 39 5C 5C 6D 61 78
+ 	keys[numRows-1] = `key_99\max`
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4995** (closed): perf(clickhouse): load multiple staged batches per raw table insert (@dtunikov)
+- **PR #4994** (2026-10-30): log topology attribute to differentiate replica set vs. sharded cluster (@jgao54)
+- **PR #4993** (2026-10-30): remove mongodb server-side commit lag metrics (@jgao54)
 - **PR #4988** (closed): perf(avro): replace hamba/avro with twmb/avro (@pfcoperez)
+- **PR #4985** (2026-10-29): fix(mysql): drop NO_BACKSLASH_ESCAPES from session sql_mode (@jgao54)
 - **PR #4984** (2026-10-28): fix(deps): update gomod dependencies (@renovate[bot])
-- **PR #4982** (2026-10-28): fix(deps): update npm dependencies (@renovate[bot])
-- **PR #4981** (2026-10-28): chore(deps): update temporalio/ui docker tag to v2.57.0 (@renovate[bot])
-- **PR #4978** (2026-10-26): Fix ClickHouse JSON test readback with flattened serialization (@ilidemi)
-- **PR #4976** (2026-10-27): Update decimal to v1.5.0 and preserve large numeric values (@ilidemi)
 
 ---
 
@@ -2421,42 +2095,34 @@ Release synced from
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update gomod dependencies (#4984)
+## X. mysql): drop NO_BACKSLASH_ESCAPES from session sql_mode (#4985)
 
 **RULE**:
-When implementing operations in `flow/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/connectors/mysql/mysql.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab1ba0c5`: deps): update gomod dependencies (#4984). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dc196b24`: mysql): drop NO_BACKSLASH_ESCAPES from session sql_mode (#4985). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/mysql/mysql.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/ClickHouse/ch-go v0.75.0
-	github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.18
-	github.com/aws/aws-sdk-go-v2/service/kms v1.61.5
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.4
-	github.com/aws/smithy-go v1.28.6
-	github.com/shopspring/decimal v1.6.0
-	go.temporal.io/api v1.64.0
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.23 // indirect
+	if _, err := conn.Execute("SET sql_mode = 'ANSI'"); err != nil {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/ClickHouse/ch-go v0.74.0
-	github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.4.16
-	github.com/aws/aws-sdk-go-v2/service/kms v1.61.4
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
-	github.com/aws/smithy-go v1.28.5
-	github.com/shopspring/decimal v1.5.0
-	go.temporal.io/api v1.63.7
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22 // indirect
+	if _, err := conn.Execute("SET sql_mode = 'ANSI,NO_BACKSLASH_ESCAPES'"); err != nil {
+func escapeWithNoBackslashEscapes(s string) string {
+	// mysql.Escape must NOT be used because MySQL connector session has sql_mode set
+	// to NO_BACKSLASH_ESCAPES (see setSessionSettings). Only quotes needs to be escaped.
+	return strings.ReplaceAll(s, "'", "''")
+}
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab1ba0c5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dc196b24` are properly handled with clean fallback behavior.

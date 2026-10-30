@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `d1b31339`  
+> **Source Version**: `f876742c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T00:41:37.413Z  
+> **Timestamp**: 2026-10-30T18:07:12.689Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T00:41:37.406Z  
+> **Harvest Timestamp**: 2026-10-30T18:07:12.681Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 3823 stars
+- **Stars / Engagement**: 3845 stars
 
 ---
 
@@ -1009,67 +1009,49 @@ class ResponseCode(Enum):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a9348f4d` (2026-10-28)
-**Commit Message**: Upload coarse artifacts from the document workspace, not a random sibling render dir.
+### Incident Patch 1: `d748ed7e` (2026-10-29)
+**Commit Message**: Fix local CI after progressive and visual page-num changes.
+
+Remove an unused test import and type the vector_repair stage update so lint and typecheck stay green.
 
 Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
-**File**: `apps/worker/app/services/page_memory/scope_enrichment_service.py` (modified, +20/-7)
+**File**: `apps/worker/app/services/page_memory/scope_enrichment_service.py` (modified, +3/-3)
 ```diff
-@@ -210,6 +210,7 @@ def execute_structure_enrichment(
-             job_id=target.job_id,
-             raw_prefix=target.raw_prefix,
-             workspace_dir=workspace_dir,
-+            add_dir=add_dir,
-             artifact_refs=set(phase_b_artifacts),
-             artifact_mapping=phase_b_artifacts,
-         )
-@@ -1166,17 +1167,29 @@ def _upload_scope_artifacts(
-     workspace_dir: str,
-     artifact_refs: set[str],
-     artifact_mapping: dict[str, str] | None = None,
-+    add_dir: str | None = None,
- ) -> None:
-     if not artifact_refs:
-         return
--    add_dirs = [
--        os.path.join(workspace_dir, entry)
--        for entry in os.listdir(workspace_dir)
--        if os.path.isdir(os.path.join(workspace_dir, entry))
--    ]
--    if not add_dirs:
-+    if add_dir is None:
-+        add_dirs = [
-+            os.path.join(workspace_dir, entry)
-+            for entry in os.listdir(workspace_dir)
-+            if os.path.isdir(os.path.join(workspace_dir, entry))
-+        ]
-+        add_dir = next(
-+            (
-+                child
-+                for child in add_dirs
-+                if any(
-+                    os.path.isfile(os.path.join(child, relative_path))
-+                    for relative_path in artifact_refs
-+                )
-+            ),
-+            add_dirs[0] if add_dirs else None,
-+        )
-+    if not add_dir:
-         return
--    add_dir = add_dirs[0]
-     for relative_path in sorted(artifact_refs):
-         local_path = os.path.join(add_dir, relative_path)
-         if not os.path.isfile(local_path):
+@@ -861,9 +861,9 @@ def _publish_coarse_structure_and_write_scopes(
+         if state is not None:
+             stages: dict[str, EnhancementStage] = dict(state.stages)
+             stages["structure"] = {**stages.get("structure", {}), "status": "complete"}
+-            vector_repair_stage: EnhancementStage = dict(
+-                stages.get("vector_repair") or {}
+-            )
++            vector_repair_stage: EnhancementStage = {
++                **(stages.get("vector_repair") or {}),
++            }
+             pending_pages = list(vector_repair_stage.get("pending_pages") or [])
+             if pending_pages:
+                 corpus_storage: CorpusStorage = CorpusStorage.resolve_namespace(
+```
+
+**File**: `packages/shared-python/shared/tests/test_progressive_completion.py` (modified, +0/-1)
+```diff
+@@ -1,7 +1,6 @@
+ """Final artifact publication and its outbox event form one logical commit."""
+ 
+ from unittest.mock import Mock
+-import pytest
+ 
+ from shared.models.database.job_result import JobResult
+ from shared.models.schemas.progressive_ingestion import StoredSnapshot
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #486** (2026-10-30): perf: shorten progressive first-ready work and deliver coarse directories (@suguanYang)
+- **PR #485** (2026-10-29): chore: promote main to staging (visual page-num match) (@EricNGOntos)
+- **PR #484** (2026-10-29): Match visual page discovery by page_nums across shared boundaries (@EricNGOntos)
 - **PR #483** (2026-10-28): chore: promote main to staging (Fine boundary titles) (@EricNGOntos)
 - **PR #482** (2026-10-28): Keep Fine boundary titles across same-page parent headings (@EricNGOntos)
 - **PR #481** (2026-10-28): chore: promote main to staging (on-demand Fine) (@EricNGOntos)
-- **PR #480** (2026-10-28): feat: on-demand Fine, token ledger, and calibration phase 1 (@EricNGOntos)
-- **PR #479** (2026-10-28): fix: preserve whitespace in TXT parsing (@suguanYang)
-- **PR #478** (2026-10-27): feat: publish progressive ingestion snapshots atomically (@suguanYang)
 
 ---
 
@@ -1089,13 +1071,13 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Upload coarse artifacts from the document workspace, not a random sibling render
+## X. local CI after progressive and visual page-num changes.
 
 **RULE**:
 When implementing operations in `apps/worker/app/services/page_memory/scope_enrichment_service.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a9348f4d`: Upload coarse artifacts from the document workspace, not a random sibling render dir.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d748ed7e`: local CI after progressive and visual page-num changes.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/worker/app/services/page_memory/scope_enrichment_service.py`.
@@ -1103,39 +1085,18 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-            add_dir=add_dir,
-    add_dir: str | None = None,
-    if add_dir is None:
-        add_dirs = [
-            os.path.join(workspace_dir, entry)
-            for entry in os.listdir(workspace_dir)
-            if os.path.isdir(os.path.join(workspace_dir, entry))
-        ]
-        add_dir = next(
-            (
-                child
-                for child in add_dirs
-                if any(
-                    os.path.isfile(os.path.join(child, relative_path))
-                    for relative_path in artifact_refs
-                )
-            ),
-            add_dirs[0] if add_dirs else None,
-        )
-    if not add_dir:
+            vector_repair_stage: EnhancementStage = {
+                **(stages.get("vector_repair") or {}),
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    add_dirs = [
-        os.path.join(workspace_dir, entry)
-        for entry in os.listdir(workspace_dir)
-        if os.path.isdir(os.path.join(workspace_dir, entry))
-    ]
-    if not add_dirs:
-    add_dir = add_dirs[0]
+            vector_repair_stage: EnhancementStage = dict(
+                stages.get("vector_repair") or {}
+            )
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a9348f4d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d748ed7e` are properly handled with clean fallback behavior.

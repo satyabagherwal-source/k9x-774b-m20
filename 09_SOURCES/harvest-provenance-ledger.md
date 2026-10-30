@@ -6264,3 +6264,5 @@ Every entry in this ledger must capture:
 | `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `e1f93d25` | Multi-dimensional audit evidence | 2026-10-30T17:45:17.575Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `bb9214a9` | Multi-dimensional audit evidence | 2026-10-30T17:51:40.042Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `fa1943a8` | Multi-dimensional audit evidence | 2026-10-30T18:00:12.835Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `c78633d8` | Multi-dimensional audit evidence | 2026-10-30T18:07:08.488Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `f876742c` | Multi-dimensional audit evidence | 2026-10-30T18:07:13.345Z |
