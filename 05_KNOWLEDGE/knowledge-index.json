@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T07:48:07.440Z",
-  "total_verified_learnings": 1172,
+  "last_updated": "2026-10-30T08:04:56.375Z",
+  "total_verified_learnings": 1173,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -10348,8 +10348,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "6287a4e5",
-      "content_hash": "1cbdaa46855fdf478c318b7f41b5798d4ce8b141b1118068c17c49858ecdc719",
+      "source_version": "ed0443f1",
+      "content_hash": "f400ec526dadff2abdbf6aa355c276ca9fd26068c2d58253edf5e283ec2e5eb1",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -10397,6 +10397,21 @@
           "number": 5376,
           "title": "Keep bulk insert rows invisible until commit and revert failed appends during co",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5674,
+          "title": "Cross-Arena Memory Affinity in Parallel Reduction Trees",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5675,
+          "title": "Multi-File Schema Detection Buffer De-registration Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5676,
+          "title": "Non-Recursive Bottom-Up Path Reclamation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10404,7 +10419,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:57:51.993Z",
+      "verified_at": "2026-10-30T08:04:56.356Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41321,8 +41336,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "0550f8b3",
-      "content_hash": "747b8c632f9f7512dd302258e6a96d78b8f9a68147061f53381ee5ccb22e6717",
+      "source_version": "bd27ee11",
+      "content_hash": "d7b26f07ed8057ce50db4b0cff46af06dd8ca2dff1b492edf290c761e2fbdfb5",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -41455,6 +41470,16 @@
           "number": 5513,
           "title": "Generalize ARC world-model guidance",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5672,
+          "title": "Transactional Write-Log Inversion Isolation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5673,
+          "title": "Multi-Entity Declarative Graph Isolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41462,7 +41487,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T16:23:50.994Z",
+      "verified_at": "2026-10-30T08:04:38.622Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69483,8 +69508,8 @@
       "slug": "scrapy-scrapy",
       "platform": "github",
       "source_url": "https://github.com/scrapy/scrapy",
-      "source_version": "3e4d0faf",
-      "content_hash": "3854b119172d7cfc2f7a100f51bcf971e28d74719833fa52d9061441d1967341",
+      "source_version": "71e4b2b0",
+      "content_hash": "a776ddb6d26b4ac788e9c283e181b9413dafee0b310a26810004fd6727b6253a",
       "dossier_path": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapy-scrapy-learnings.md",
       "promoted_rules": [
@@ -69503,6 +69528,21 @@
           "number": 4683,
           "title": "Upgrade docs requirements (#8411)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5669,
+          "title": "Connection-Pool Multiplexing with Deferred-Chained Pending Queues & LRU Eviction Under Active Stream Constraints",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5670,
+          "title": "HTTP/2 Pseudo-Header Construction Sequence and RFC 7540 Authority Precedence Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5671,
+          "title": "Ephemeral File-Backed Streaming with Exception-Safe Cleanup and Quota Guards",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -69510,7 +69550,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T10:39:32.152Z",
+      "verified_at": "2026-10-30T08:04:03.830Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -151665,6 +151705,184 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T07:48:07.421Z"
+    },
+    "learn-huggingface-pika-labs-pika-h3-flex": {
+      "learning_id": "learn-huggingface-pika-labs-pika-h3-flex",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Pika-Labs/Pika-H3-Flex",
+      "repository": "Pika-Labs/Pika-H3-Flex",
+      "slug": "hf-pika-labs-pika-h3-flex",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
+      "source_version": "hf-pika-labs-pika-h3-flex",
+      "content_hash": "4d9ea41aa092bc1f8161977b78e31c2339dc2baaeb620b20356b506cec8cc4b5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-pika-labs-pika-h3-flex-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5667,
+          "title": "Temporal Video Pipeline LoRA State Mutation Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5668,
+          "title": "Temporal Segment Timestamp Monotonicity and Continuity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-30T08:04:02.069Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5667": {
+      "learning_id": "rule-5667",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5667,
+      "title": "Temporal Video Pipeline LoRA State Mutation Contract",
+      "source_url": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
+      "source_version": "hf-pika-labs-pika-h3-flex",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:04:02.069Z"
+    },
+    "rule-5668": {
+      "learning_id": "rule-5668",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5668,
+      "title": "Temporal Segment Timestamp Monotonicity and Continuity Invariant",
+      "source_url": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
+      "source_version": "hf-pika-labs-pika-h3-flex",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:04:02.069Z"
+    },
+    "rule-5669": {
+      "learning_id": "rule-5669",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5669,
+      "title": "Connection-Pool Multiplexing with Deferred-Chained Pending Queues & LRU Eviction Under Active Stream Constraints",
+      "source_url": "https://github.com/scrapy/scrapy",
+      "source_version": "71e4b2b0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:04:03.830Z"
+    },
+    "rule-5670": {
+      "learning_id": "rule-5670",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5670,
+      "title": "HTTP/2 Pseudo-Header Construction Sequence and RFC 7540 Authority Precedence Guard",
+      "source_url": "https://github.com/scrapy/scrapy",
+      "source_version": "71e4b2b0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:04:03.830Z"
+    },
+    "rule-5671": {
+      "learning_id": "rule-5671",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5671,
+      "title": "Ephemeral File-Backed Streaming with Exception-Safe Cleanup and Quota Guards",
+      "source_url": "https://github.com/scrapy/scrapy",
+      "source_version": "71e4b2b0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:04:03.830Z"
+    },
+    "rule-5672": {
+      "learning_id": "rule-5672",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5672,
+      "title": "Transactional Write-Log Inversion Isolation Rule",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "bd27ee11",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:04:38.622Z"
+    },
+    "rule-5673": {
+      "learning_id": "rule-5673",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5673,
+      "title": "Multi-Entity Declarative Graph Isolation Invariant",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "bd27ee11",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:04:38.622Z"
+    },
+    "rule-5674": {
+      "learning_id": "rule-5674",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5674,
+      "title": "Cross-Arena Memory Affinity in Parallel Reduction Trees",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "ed0443f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:04:56.356Z"
+    },
+    "rule-5675": {
+      "learning_id": "rule-5675",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5675,
+      "title": "Multi-File Schema Detection Buffer De-registration Invariant",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "ed0443f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:04:56.356Z"
+    },
+    "rule-5676": {
+      "learning_id": "rule-5676",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5676,
+      "title": "Non-Recursive Bottom-Up Path Reclamation Invariant",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "ed0443f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:04:56.356Z"
     }
   },
   "aliases": {

@@ -4710,3 +4710,7 @@ https://github.com/yuezhiai/jonex
 # --- Automatically Discovered by AI Scout Engine [2026-10-30T05:39:05.670Z] ---
 # [AI-AGENTS] reason-machines/reason-network (1001 score) - Reason Network: your team's coding agents, talking to each other. The engine beh
 https://github.com/reason-machines/reason-network
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-30T08:01:41.559Z] ---
+# [HUGGINGFACE-AI-MODELS] Pika-Labs/Pika-H3-Flex (1420 score) - Verified Hugging Face Model: Pika-Labs/Pika-H3-Flex (142 likes, 0 downloads)
+https://huggingface.co/Pika-Labs/Pika-H3-Flex

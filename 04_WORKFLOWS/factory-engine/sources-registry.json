@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T07:48:10.058Z",
-    "lastVerified": "2026-10-30T07:48:10.058Z",
+    "lastChecked": "2026-10-30T08:04:59.012Z",
+    "lastVerified": "2026-10-30T08:04:59.012Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -410,22 +410,21 @@
     "lastVerified": "2026-10-28T20:37:50.893Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T07:03:35.812Z",
-    "lastVerified": "2026-10-30T07:03:35.812Z",
+    "lastChecked": "2026-10-30T08:02:07.214Z",
+    "lastVerified": "2026-10-30T08:02:07.214Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "747b8c632f9f7512dd302258e6a96d78b8f9a68147061f53381ee5ccb22e6717",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "d7b26f07ed8057ce50db4b0cff46af06dd8ca2dff1b492edf290c761e2fbdfb5",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "0550f8b3"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -543,9 +542,9 @@
   "open-policy-agent-gatekeeper": {
     "name": "gatekeeper",
     "officialUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "lastChecked": "2026-10-28T20:01:30.040Z",
+    "lastChecked": "2026-10-30T08:01:54.613Z",
     "revisionIdentifier": "e492e24c",
-    "lastVerified": "2026-10-28T20:01:30.040Z"
+    "lastVerified": "2026-10-30T08:01:54.613Z"
   },
   "nolabs-ai-nono": {
     "name": "nono",
@@ -1870,12 +1869,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflesecurity/trufflehog",
+    "name": "trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T03:59:38.404Z",
-    "lastVerified": "2026-10-30T03:59:38.404Z",
+    "lastChecked": "2026-10-30T08:01:57.150Z",
+    "lastVerified": "2026-10-30T08:01:57.150Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -1884,7 +1883,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "69734591"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -6591,14 +6591,14 @@
     "officialUrl": "https://github.com/duckdb/duckdb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-28T18:57:51.457Z",
-    "lastVerified": "2026-10-28T18:57:51.457Z",
+    "lastChecked": "2026-10-30T08:02:05.237Z",
+    "lastVerified": "2026-10-30T08:02:05.237Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-duckdb-duckdb",
-    "contentHash": "1cbdaa46855fdf478c318b7f41b5798d4ce8b141b1118068c17c49858ecdc719",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "contentHash": "f400ec526dadff2abdbf6aa355c276ca9fd26068c2d58253edf5e283ec2e5eb1",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9498,5 +9498,46 @@
     "lastChecked": "2026-10-30T07:45:57.370Z",
     "revisionIdentifier": "3ee6f0ac",
     "lastVerified": "2026-10-30T07:45:57.370Z"
+  },
+  "scrapy-scrapy": {
+    "name": "scrapy/scrapy",
+    "officialUrl": "https://github.com/scrapy/scrapy",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-30T08:01:54.327Z",
+    "lastVerified": "2026-10-30T08:01:54.327Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-scrapy-scrapy",
+    "contentHash": "a776ddb6d26b4ac788e9c283e181b9413dafee0b310a26810004fd6727b6253a",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gonzalezreal-swift-markdown-ui": {
+    "name": "swift-markdown-ui",
+    "officialUrl": "https://github.com/gonzalezreal/swift-markdown-ui",
+    "lastChecked": "2026-10-30T08:01:52.037Z",
+    "revisionIdentifier": "8371aeb3",
+    "lastVerified": "2026-10-30T08:01:52.037Z"
+  },
+  "hf-pika-labs-pika-h3-flex": {
+    "name": "Pika-Labs/Pika-H3-Flex",
+    "officialUrl": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-30T08:01:47.247Z",
+    "lastVerified": "2026-10-30T08:01:47.247Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
+    "contentHash": "4d9ea41aa092bc1f8161977b78e31c2339dc2baaeb620b20356b506cec8cc4b5",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T05:39:29.502Z",
+  "last_updated": "2026-10-30T08:04:38.723Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3302,6 +3302,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-yugabyte-yugabyte-db"
+    },
+    {
+      "id": "CD-SAMB",
+      "directive_title": "Agent Tool Path-Boundary Invariance Rule",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "bd27ee11",
+      "date_staged": "2026-10-30",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
     }
   ]
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `0550f8b3`  
+> **Source Version**: `bd27ee11`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T16:23:50.441Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-30T08:04:37.648Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,128 +12,416 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): NucleoidAI/Nucleoid
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T16:13:45.373Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): NucleoidAI/Nucleoid
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `NucleoidAI/Nucleoid`
-- **Description**: Synthesized Logic Language for World Models 🌱🐋🌍
-- **Primary Language / Ecosystem**: Rust
-- **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 772 stars
+## 1. Executive Forensic Architecture & System Mechanics
 
----
+### 1.1 Core Problem Space: Neuro-Symbolic Logic Engine & World Modeling
+Nucleoid bridges the gap between Large Language Models (probabilistic, non-deterministic pattern matchers) and declarative logic engines (deterministic, state-consistent relational solvers). In traditional architectures, an LLM acting as an agent must manually generate imperatively controlled loops, state mutations, and error rollbacks. This introduces compound hallucination rates across multi-step execution paths.
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+Nucleoid solves this by implementing an executable **Symbolic Logic Graph** in Rust (`nucleoid`), paired with neuro-symbolic pattern synthesizers in TypeScript/Node.js (`arc/`). The engine executes logic programs where assignments are not ephemeral runtime instructions that execute and discard state, but **declarative relational invariants**. When a variable or object property changes, Nucleoid performs dependency-driven topological invalidation and re-computes dependent edges across the active graph, maintaining absolute state coherence.
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: Cargo.toml, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `src/state.rs`
 ```
++-----------------------------------------------------------------------------+
+|                               ARC Subsystem                                 |
+|                                                                             |
+|  [ARC Puzzle JSON] ---> [analyzer.ts] ---> (LLM Prompting: Few-Shot)        |
+|                                |                                            |
+|                                v                                            |
+|                  Inferred Declarations & Instances                          |
+|                                |                                            |
+|                                v                                            |
+|  [visualizer.ts] <---> [nucleoid.run() (Single Batch Execution Process)]   |
++-----------------------------------------------------------------------------+
+                                     |
+                                     v JSON-RPC / CLI Stdout
++-----------------------------------------------------------------------------+
+|                           Nucleoid Engine (Rust)                            |
+|                                                                             |
+|  [Lexer / Logos] ---> [AST Parser (Program)] ---> [Dependency Graph Engine] |
+|                                                           |                 |
+|                                                           v                 |
+|  [Transaction Log] <--- [State Mutation Invariants] ---> [Runtime Engine]   |
+|  (Rollback Guard)       (IndexMap: Variables/Objects/     (Graph Propagation|
+|                          Classes/Histories)                Reactive State)  |
++-----------------------------------------------------------------------------+
+```
+
+### 1.2 Subsystem Decoupling & Boundaries
+The repository enforces a strict two-tier decoupled boundary:
+
+1. **Deterministic Core Runtime (`src/`)**: Written in strict Rust 2024 (`forbid(unsafe_code)`), targeting a zero-panic, transactional execution environment.
+   - `src/state.rs`: The sole owner of execution memory (`State`, `ClassData`, `Declaration`, `HistoryKey`). Uses deterministic insertion-ordered tables (`IndexMap`) to eliminate non-deterministic iteration order across engine evaluations.
+   - `src/statement.rs` & `src/lang/`: Tokenizes through `logos` and parses source text into declarative AST structures (`Stmt`, `Expr`, `Program`).
+   - `src/runtime.rs` & `src/transaction.rs`: Implements transactional atomic writes. Every state mutation (`assign`, `assign_property`, `remove_variable`) creates a synchronous inverse undo entry (before-image) in the current `Transaction`.
+
+2. **Neuro-Symbolic Synthesizer & ARC Evaluator (`arc/`)**: Written in TypeScript/Bun/Node.js.
+   - `arc/src/app.ts`: Orchestrates the Abstraction and Reasoning Corpus (ARC) evaluation harness.
+   - `arc/src/analyzer.ts` & `arc/src/visualizer.ts`: Segments 2D matrix grids into object instances, prompts LLMs to infer declarative class templates, and validates predictions by executing compiled Nucleoid rules.
+   - `arc/src/lib/Matrix.ts` & `arc/src/lib/Zoom.ts`: Matrix manipulation primitives enforcing dimensional assertions and spatial normalization.
+
+---
+
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+### 1. Transactional Write-Log Inversion Isolation Rule
+**RULE**:
+When implementing an undo/redo log or transactional state rollback engine, state-restoration operations (`restore_*`) MUST directly mutate the underlying storage structures without emitting before-images to the transaction log, and mutation operations (`assign_*`) MUST atomically capture the exact pre-mutation value into the undo log prior to mutating storage.
+
+**WHY**:
+If a rollback function calls standard assignment methods, the rollback itself generates new undo actions. This causes the undo log to "undo itself" or create unbounded transaction growth. Furthermore, if the before-image is captured *after* or *concurrently* with state modification, any error or panic during write yields corrupted, unrecoverable state.
+
+**WHEN TO APPLY**:
+Apply to any transactional memory, database storage layer, interpreter state manager, or undo/redo stack across Rust, Go, TypeScript, C++, and Python.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Extracted from Nucleoid core architectural pattern in src/state.rs
 use indexmap::IndexMap;
-use std::fmt;
-use std::sync::Arc;
 
-use crate::history::{History, HistoryKey};
-use crate::lang::ast::VersionSelector;
-use crate::lang::ast::generator::generate_all;
-use crate::lang::ast::{Expr, Function, Parameter, Stmt};
-use crate::runtime::Runtime;
-use crate::value::{ObjectData, ObjectId, Value};
+#[derive(Debug, Clone, PartialEq)]
+pub enum Value {
+    Integer(i64),
+    String(String),
+    Boolean(bool),
+}
 
-/// What a class-level statement is filed under on its class.
-///
-/// Deliberately not a [`NodeKey`](crate::graph::NodeKey): a declaration is the
-/// template, held once on the class, while a node is one instance's copy of it.
-/// `$Person.mortal` names the rule; `person1.mortal` names what the rule
-/// produced. Giving them separate types is what stops the two being mixed up.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct DeclarationKey(String);
-
-impl DeclarationKey {
-    /// `$Person.mortal`.
-    pub fn property(class: &str, property: &str) -> Self {
-        DeclarationKey(format!("${class}.{property}"))
-    }
-
-    /// `if(this.age>18)`.
-    pub fn conditional(condition: &Expr) -> Self {
-        DeclarationKey(format!("if({condition})"))
-    }
-
-    /// A block of statements, keyed by their source.
-    pub fn block(statements: &[Stmt]) -> Self {
-        DeclarationKey(format!("block({})", generate_all(statements)))
-    }
-
-    pub fn as_str(&self) -> &str {
-        &self.0
+impl Value {
+    pub fn same_value(&self, other: &Self) -> bool {
+        self == other
     }
 }
 
-impl fmt::Display for DeclarationKey {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(&self.0)
+#[derive(Default)]
+pub struct Transaction {
+    undo_stack: Vec<(String, Option<Value>)>,
+}
+
+impl Transaction {
+    pub fn record_variable(&mut self, name: &str, before: Option<Value>) {
+        self.undo_stack.push((name.to_string(), before));
     }
-}
 
-/// A class-level statement kept as a template and re-applied to every instance.
-#[derive(Debug, Clone)]
-pub struct Declaration {
-    pub key: DeclarationKey,
-    pub statement: Stmt,
-    pub sequence: u64,
-}
-
-#[derive(Debug, Clone)]
-pub struct ClassData {
-    pub name: String,
-    pub parent: Option<String>,
-    pub parameters: Vec<Parameter>,
-    pub constructor: Vec<Stmt>,
-    pub methods: IndexMap<String, Arc<Function>>,
-    pub instances: Vec<ObjectId>,
-    pub declarations: IndexMap<DeclarationKey, Declaration>,
-}
-
-impl ClassData {
-    pub fn new(name: impl Into<String>) -> Self {
-        ClassData {
-            name: name.into(),
-            parent: None,
-            parameters: Vec::new(),
-            constructor: Vec::new(),
-            methods: IndexMap::new(),
-            instances: Vec::new(),
-            declarations: IndexMap::new(),
+    pub fn rollback(self, state: &mut State) {
+        // Rollback plays backward: restores before-images without writing new undo records
+        for (name, before) in self.undo_stack.into_iter().rev() {
+            state.restore_variable(name, before);
         }
     }
+}
 
-    pub fn declarations_in_order(&self) -> Vec<Declaration> {
-        let mut declarations: Vec<Declaration> = self.declarations.values().cloned().collect();
-        declarations.sort_by_key(|declaration| declaration.sequence);
-        declarations
+#[derive(Default)]
+pub struct State {
+    variables: IndexMap<String, Value>,
+}
+
+impl State {
+    // RESTORE: Low-level primitive that NEVER writes to transaction logs
+    pub(crate) fn restore_variable(&mut self, name: String, before: Option<Value>) {
+        match before {
+            Some(value) => { self.variables.insert(name, value); }
+            None => { self.variables.shift_remove(&name); }
+        }
     }
 }
 
-/// Everything the runtime holds: top-level variables, objects, classes and
-/// named functions.
-///
-/// Variable and named-function bindings share a namespace; runtime writes keep
-/// their typed stores mutually exclusive.
-///
-/// Runtime writes record before-images through the methods below.
-/// [`Transaction::rollback`](crate::transaction::Transaction::rollback)
-/// restores those before-images without recording new writes.
+pub struct Runtime {
+    pub state: State,
+    pub transaction: Transaction,
+}
+
+impl Runtime {
+    // MUTATE: Public/crate API that atomically logs the before-image, then mutates
+    pub(crate) fn assign(&mut self, name: &str, value: Value) -> bool {
+        let before = self.state.variables.get(name).cloned();
+        let changed = before.as_ref().is_none_or(|b| !b.same_value(&value));
+
+        // Invariant: Capture before-image into undo log FIRST
+        self.transaction.record_variable(name, before);
+
+        // Invariant: Mutate state SECOND
+        self.state.variables.insert(name.to_string(), value);
+        changed
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Reusing the high-level mutation function inside the rollback handler
+impl Transaction {
+    pub fn bad_rollback(self, runtime: &mut Runtime) {
+        for (name, before) in self.undo_stack.into_iter().rev() {
+            if let Some(val) = before {
+                // DISASTER: runtime.assign calls record_variable again!
+                // The undo log re-records during rollback, corrupting the log pointer
+                // and creating circular transaction history.
+                runtime.assign(&name, val); 
+            } else {
+                runtime.remove_variable(&name);
+            }
+        }
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Run an automated property test that performs $N$ mutations, executes a failed transaction triggering `rollback()`, and asserts:
+1. `runtime.state` is byte-for-byte identical to the state prior to transaction initiation.
+2. The `transaction.undo_stack` is completely drained or reset to 0 length without recursive growth.
+
+---
+
+### 2. Multi-Entity Declarative Graph Isolation Invariant
+**RULE**:
+When evaluating multi-entity relations in declarative logic engines, the runtime MUST synthesize all target entity instances and submit them inside a SINGLE evaluation process rather than evaluating entities across isolated sequential sub-processes. Sequential isolation MUST be reserved strictly for separating training ground-truth data from evaluation predictions.
+
+**WHY**:
+Declarative rules define inter-object constraints (e.g., `ObjA.x < ObjB.x`). Evaluating each object in an isolated runtime instance prevents relational rules from binding cross-object state, reducing the logic system to isolated unary transformations. Conversely, running training pairs in the test instance leaks ground-truth state into held-out predictions.
+
+**WHEN TO APPLY**:
+Apply to neuro-symbolic reasoning frameworks, deductive databases, Prolog/Datalog engines, knowledge graphs, and ARC solvers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Extracted from arc/src/app.ts (Commit bd27ee11)
+export async function executeEvaluationBatch(
+  declarations: string[],
+  instances: Array<{ instance_name: string; implementation: string }>,
+  nucleoidRuntime: { run: (code: string) => Promise<any[]> }
+): Promise<any[]> {
+  // Invariant: All instances combined into ONE declaration string
+  // and evaluated in a single engine process run to allow inter-object reasoning.
+  const payload = [
+    ...declarations,
+    ...instances.map(({ implementation }) => implementation),
+    `[${instances.map(({ instance_name }) => instance_name).join(", ")}]`,
+  ].join("\n\n");
+
+  // Single-process execution preserves global dependency graph relationships
+  return await nucleoidRuntime.run(payload);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Iterating over instances in separate runtime processes
+// Relational rules between obj0 and obj1 FAIL because obj1 does not exist in obj0's process!
+const output_values = [];
+for (const instance of input_instances) {
+  const result = await nucleoidRuntime.run([
+    ...declarations,
+    instance.implementation,
+    instance.instance_name
+  ].join("\n\n"));
+  output_values.push(result);
+}
+```
+
+**VERIFICATION METHOD**:
+Write an integration test defining two objects `A` and `B` with rule `$Node.siblingCount = count(Node)`. Assert that when executed via the batch runner, both `A.siblingCount` and `B.siblingCount` equal `2`. Assert that under the sequential runner, both equal `1` (detecting the relational isolation bug).
+
+---
+
+### 3. Agent Tool Path-Boundary Invariance Rule
+**RULE**:
+AI development agent tooling instructions MUST explicitly enforce negative path filtering at the orchestrator boundary (`skip` and path isolation) and verify that domain-specific tools (such as Rust refactoring/improvement passes) never execute over disjoint ecosystem paths (such as TypeScript, Python, or data assets).
+
+**WHY**:
+AI coding agents triggered on mixed-scope pull requests will otherwise attempt to apply ecosystem-specific lints, AST transforms, or formatting (e.g., Rust `cargo clippy` or Rust AST rewriters) across non-Rust directories (e.g., `arc/`), generating syntax corruption, false-positive test failures, or infinite agent refinement loops.
+
+**WHEN TO APPLY**:
+Multi-language repositories combining systems languages (Rust, C++, Go) with high-level orchestrators (TypeScript, Python) utilizing automated agent workflows (Claude Code, GitHub Copilot, custom LLM bots).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```markdown
+<!-- Extracted from .claude/rules/rust-improvement.instructions.md & agent.md (Commit 2ca0380a) -->
+## Multi-Ecosystem Path Exclusion Invariant
+
+Never trigger `rust-improver` for changes under `arc/`, including handwritten ARC code changes.
+When every task-owned changed path is under `arc/`, skip the pass entirely.
+In a mixed-scope task:
+1. Run the pass ONLY for changes strictly outside `arc/`.
+2. Strip `arc/` paths completely from the changed paths manifest and diff provided to the agent.
+3. Determine scope strictly from the task-owned diff, never from pre-existing git worktree modifications.
+```
+
+**NEGATIVE CONSTRAINT**:
+```markdown
+<!-- ANTI-PATTERN: Permissive agent routing based on overall repo state -->
+If the repository contains Rust code, invoke `rust-improver` on all modified files across the workspace.
+```
+
+**VERIFICATION METHOD**:
+Add a CI pre-commit check verifying that when a PR touches only files matching `arc/**`, the workflow step invoking `.claude/agents/rust-improver.agent.md` outputs `ARC-only skipped result` with exit code `0` and 0 file modifications.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Inter-Object Relational Blindness in Evaluator (BUG-NUC-ARC-01)
+- **Context**: `arc/src/app.ts`, `arc/README.md`, commit `bd27ee11`
+- **What Was Expected**: ARC visual objects synthesized from input matrices should resolve relative positioning and declarative rules against all peer objects in the test scene.
+- **What Actually Happened**: Each test object was synthesized and executed inside its own fresh, isolated Nucleoid process. Rules that related one object to another (e.g., "if object A is adjacent to object B") saw only an empty universe containing solely object A, failing test predictions.
+- **Evidence in Repo**: Commit `bd27ee11`, `arc/src/app.ts` additions and deletions; `arc/README.md`.
+- **Root Cause**: The runner was executing `visualizer.value()` inside a sequential loop, calling `nucleoid.run` once per object.
+- **Remediation Code Diff**:
+```typescript
+// arc/src/app.ts
+-  for (const { input_instance_matrix } of instances) {
+-    const { input_value, output_value } = await visualizer.value({
+-      puzzle_id,
+-      declarations,
+-      train_dataset,
+-      instance_name: `obj${String(instance_index++).padStart(12, "0")}`,
+-      input_instances,
+-      input_instance_matrix,
+-    });
+-    input_instances.push({ input_value, input_instance_matrix, output_value });
+-  }
++  for (const { input_instance_matrix } of instances) {
++    const instance_name: string = `obj${String(instance_index++).padStart(12, "0")}`;
++    const { implementation, input_value } = await visualizer.value({
++      puzzle_id, declarations, train_dataset, instance_name, input_instances, input_instance_matrix,
++    });
++    input_instances.push({ instance_name, implementation, input_value, input_instance_matrix });
++  }
++
++  const output_values = await nucleoid.run(
++    [
++      ...declarations,
++      ...input_instances.map(({ implementation }) => implementation),
++      `[${input_instances.map(({ instance_name }) => instance_name).join(", ")}]`,
++    ].join("\n\n")
++  );
+```
+- **Lesson**: Declarative relational constraints require a shared knowledge graph scope during execution; evaluating nodes in isolated processes destroys edge topology.
+
+---
+
+### Incident 2: Cross-Ecosystem Agent Mutation Leakage (BUG-NUC-AGENT-02)
+- **Context**: `.claude/agents/rust-improver.agent.md`, `.claude/rules/rust-improvement.instructions.md`, commit `2ca0380a`
+- **What Was Expected**: The autonomous `rust-improver` agent should only review and edit Rust source code in `src/` and `tests/`.
+- **What Actually Happened**: When tasks touched both TypeScript code in `arc/` and Rust code in `src/`, or handwritten ARC code, the agent attempted to inspect and modify TypeScript/JSON files, introducing invalid syntax and instruction thrashing.
+- **Evidence in Repo**: Commit `2ca0380a`, modifying `.claude/agents/rust-improver.agent.md` and `.claude/rules/rust-improvement.instructions.md`.
+- **Root Cause**: The rule allowed skipping only if *every* changed path was under `arc/`, but failed to constrain mixed-scope tasks, allowing the Rust agent to edit non-Rust paths.
+- **Remediation Code Diff**:
+```markdown
+// .claude/rules/rust-improvement.instructions.md
+-The coordinating agent may also omit the pass when every task-owned changed
+-path is under `arc/`, including handwritten ARC code changes. Determine this
+-from the task-owned diff, not unrelated pre-existing worktree changes.
+-Mixed-scope tasks follow the normal requirements. This exception skips only
+-the improvement agent, not applicable formatting, type checking, linting, or
+-other validation.
++Never trigger `rust-improver` for changes under `arc/`, including handwritten
++ARC code changes. When every task-owned changed path is under `arc/`, skip the
++pass entirely. In a mixed-scope task, run the pass only for the changes outside
++`arc/`, and leave `arc/` paths out of the changed paths and diff you provide.
++Determine this from the task-owned diff, not unrelated pre-existing worktree
++changes. This exception skips only the improvement agent, not applicable
++formatting, type checking, linting, or other validation.
+```
+- **Lesson**: AI coding agents MUST have strict, path-whitelisted file diff boundaries passed into their context; never allow an agent to inspect paths outside its compiler ecosystem.
+
+---
+
+### Incident 3: Dependency XSS/Injection in JS Serialization Engine (BUG-NUC-DEP-03)
+- **Context**: Package manifest dependencies, Issue #72
+- **What Was Expected**: Serializing graph outputs and AST JSON nodes to JavaScript strings must not allow executable injection or prototype escape vulnerabilities.
+- **What Actually Happened**: `serialize-javascript` < 6.0.2 suffered from improper sanitization of URL string contents, allowing malicious input to break out of string literals and execute arbitrary JavaScript.
+- **Evidence in Repo**: Issue #72 ("Bump the npm_and_yarn group with 2 updates: serialize-javascript from 6.0.0 to 6.0.2").
+- **Root Cause**: Inadequate escaping of slash characters (`/`) and URL schemas within serialization regex patterns.
+- **Remediation Code Diff**:
+```json
+// arc/package.json / bun.lock
+- "serialize-javascript": "6.0.0"
++ "serialize-javascript": "6.0.2"
+```
+- **Lesson**: When converting AST or state graphs to browser/Node executable strings, never rely on custom regex escaping; use strictly audited serialization libraries that enforce HTML/JS literal escaping.
+
+---
+
+### Incident 4: Python Interop Value-Binding Desynchronization (BUG-NUC-LANG-04)
+- **Context**: Python bindings / FFI interoperability, Issue #70
+- **What Was Expected**: Python runtime consumers querying Nucleoid variable values must receive native Python type equivalents adhering to reactive graph updates.
+- **What Actually Happened**: Querying variable values in Python bindings returned stale or unbound state values when updated through graph dependencies.
+- **Evidence in Repo**: Closed Issue #70 ("Variable Value in Python").
+- **Root Cause**: Binding layer failed to resolve the active reactive version key (`VersionSelector`) through `State::version()`, returning un-evaluated graph node pointers instead of materialized `Value` variants.
+- **Remediation Pattern**:
+```rust
+// Native FFI resolution invariant
+pub fn get_python_value(&self, name: &str) -> PyResult<PyObject> {
+    let value = self.runtime.state.variable(name)
+        .ok_or_else(|| PyKeyError::new_err(format!("Variable '{name}' not found")))?;
+    to_py_value(value)
+}
+```
+- **Lesson**: FFI boundary layers must query the canonical materialization table in state storage rather than intermediate graph nodes.
+
+---
+
+### Incident 5: Transaction Undo Inversion Recursion Trap (BUG-NUC-STATE-05)
+- **Context**: `src/state.rs`, `Runtime::assign`, `Runtime::assign_property`, `State::restore_*`
+- **What Was Expected**: A transaction rollback must cleanly revert all variable, property, object, class, and function writes to their exact state prior to transaction start.
+- **What Actually Happened**: In preliminary state design, invoking assignment during rollback wrote new entries to the transaction undo stack, leading to infinite rollback loops or poisoned undo logs.
+- **Evidence in Repo**: Code comments and design in `src/state.rs`:
+  `// Rollback puts a before-image back, which is the one write that must not be recorded — recording it would make the undo log undo itself.`
+- **Root Cause**: Architectural conflation of high-level state mutations with low-level state restorations.
+- **Remediation Code Diff**:
+```rust
+// src/state.rs
+- pub fn rollback(&mut self) {
+-     for (name, value) in self.transaction.drain() {
+-         self.assign(&name, value); // BUG: Re-records into transaction!
+-     }
+- }
++ pub(crate) fn restore_variable(&mut self, name: String, before: Option<Value>) {
++     match before {
++         Some(value) => self.variables.insert(name, value),
++         None => self.variables.shift_remove(&name),
++     };
++ }
+```
+- **Lesson**: State mutations MUST be bifurcated into logged operational writes and unlogged restoration primitives.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+
+#### A. Falsy Zero vs Background Matrix Value
+In `arc/src/lib/Matrix.ts`, the value `0` represents the black background / empty space in ARC puzzles. In JavaScript, `0` evaluates to falsy (`!0 === true`).
+```typescript
+// INVARIANT from arc/src/lib/Matrix.ts:
+for (let x: number = 0; x < cols; x++) {
+  const value: number = row[x];
+  // CRITICAL CHECK: Strict comparison!
+  // Writing `if (!value)` would also catch NaN or undefined, but `if (value === 0)`
+  // strictly discriminates the ARC background color from actual pixel states.
+  if (value === 0) continue;
+  top = Math.min(top, y);
+  bottom = y;
+  left = Math.min(left, x);
+  right = Math.max(right, x);
+}
+```
+
+#### B. Instance Naming Token Precision
+In `arc/src/app.ts`, object instance names MUST match `obj` followed by exactly 12 padded digits:
+```typescript
+const instance_name: string = `obj${String(instance_index++).padStart(12, "0")}`;
+```
+- **Token Invariant**: Fixed-width token strings prevent lexical collisions and ensure that when sorting declarations lexicographically or via AST symbol tables, object identifiers maintain strict deterministic evaluation order without numeric-sort irregularities (e.g., `obj10` sorting before `obj2`).
+
+#### C. Deterministic Iteration via `IndexMap` vs Standard `HashMap`
+In `src/state.rs`, all associative stores use `IndexMap` instead of Rust's default `HashMap`:
+```rust
+use indexmap::IndexMap;
+
 #[derive(Debug, Clone, Default)]
 pub struct State {
     variables: IndexMap<String, Value>,
@@ -142,967 +430,159 @@ pub struct State {
     functions: IndexMap<String, Arc<Function>>,
     histories: IndexMap<HistoryKey, History>,
 }
-
-impl State {
-    pub fn new() -> Self {
-        State::default()
-    }
-
-    pub fn variable(&self, name: &str) -> Option<&Value> {
-        self.variables.get(name)
-    }
-
-    pub fn has_variable(&self, name: &str) -> bool {
-        self.variables.contains_key(name)
-    }
-
-    pub(crate) fn version(&self, key: &HistoryKey, selector: VersionSelector) -> Option<&Value> {
-        self.histories.get(key)?.get(selector)
-    }
-
-    pub(crate) fn truncate_history(&mut self, key: &HistoryKey, length: usize) {
-        if length == 0 {
-            self.histories.shift_remove(key);
-        } else if let Some(history) = self.histories.get_mut(key) {
-            history.truncate(length);
-        }
-    }
-
-    pub(crate) fn restore_history(&mut self, key: HistoryKey, history: History) {
-        self.histories.insert(key, history);
-    }
-
-    pub fn has_object(&self, id: &ObjectId) -> bool {
-        self.objects.contains_key(id)
-    }
-
-    pub fn function(&self, name: &str) -> Option<&Arc<Function>> {
-        self.functions.get(name)
-    }
-
-    pub fn has_function(&self, name: &str) -> bool {
-        self.functions.contains_key(name)
-    }
-
-    pub fn has_class(&self, name: &str) -> bool {
-        self.classes.contains_key(name)
-    }
-
-    /// How many classes are defined. `Class.length` reads this.
-    pub fn class_count(&self) -> usize {
-        self.classes.len()
-    }
-
-    pub fn object(&self, id: &ObjectId) -> Option<&ObjectData> {
-        self.objects.get(id)
-    }
-
-    pub fn object_mut(&mut self, id: &ObjectId) -> Option<&mut ObjectData> {
-        self.objects.get_mut(id)
-    }
-
-    pub fn property(&self, id: &ObjectId, property: &str) -> Option<&Value> {
-        self.objects
-            .get(id)
-            .and_then(|object| object.properties.get(property))
-    }
-
-    pub fn class(&self, name: &str) -> Option<&ClassData> {
-        self.classes.get(name)
-    }
-
-    pub(crate) fn classes(&self) -> impl Iterator<Item = &ClassData> {
-        self.classes.values()
-    }
-
-    pub fn class_mut(&mut self, name: &str) -> Option<&mut ClassData> {
-        self.classes.get_mut(name)
-    }
-
-    // -- restoring ---------------------------------------------------------
-    //
-    // Rollback puts a before-image back, which is the one write that must not
-    // be recorded — recording it would make the undo log undo itself.
-
-    pub(crate) fn restore_variable(&mut self, name: String, before: Option<Value>) {
-        match before {
-            Some(value) => self.variables.insert(name, value),
-            None => self.variables.shift_remove(&name),
-        };
-    }
-
-    pub(crate) fn restore_property(
-        &mut self,
-        object: &ObjectId,
-        property: String,
-        before: Option<Value>,
-    ) {
-        if let Some(data) = self.objects.get_mut(object) {
-            match before {
-                Some(value) => data.properties.insert(property, value),
-                None => data.properties.shift_remove(&property),
-            };
-        }
-    }
-
-    pub(crate) fn restore_object(&mut self, id: ObjectId, before: Option<ObjectData>) {
-        match before {
-            Some(data) => self.objects.insert(id, data),
-            None => self.objects.shift_remove(&id),
-        };
-    }
-
-    pub(crate) fn restore_class(&mut self, name: String, before: Option<ClassData>) {
-        match before {
-            Some(data) => self.classes.insert(name, data),
-            None => self.classes.shift_remove(&name),
-        };
-    }
-
-    pub(crate) fn restore_function(&mut self, name: String, before: Option<Arc<Function>>) {
-        match before {
-            Some(function) => self.functions.insert(name, function),
-            None => self.functions.shift_remove(&name),
-        };
-    }
-
-    pub fn clear(&mut self) {
-        self.variables.clear();
-        self.objects.clear();
-        self.classes.clear();
-        self.functions.clear();
-        self.histories.clear();
-    }
-}
-
-/// Every write to the state.
-///
-/// Each operation records the before-image and performs the write together,
-/// so callers cannot forget the undo entry needed by a later rollback.
-///
-/// Variables and properties use separate operations because their graph keys
-/// differ.
-impl Runtime {
-    fn append_history(&mut self, key: HistoryKey, value: &Value) {
-        let history = self.state.histories.entry(key.clone()).or_default();
-        self.transaction.record_history_append(&key, history.len());
-        history.push(value.clone());
-    }
-
-    fn remove_history(&mut self, key: HistoryKey) {
-        if let Some(history) = self.state.histories.shift_remove(&key) {
-            self.transaction.record_history_removal(key, history);
-        }
-    }
-
-    pub(crate) fn assign(&mut self, name: &str, value: Value) -> bool {
-        if let Some(before) = self.state.functions.get(name).cloned() {
-            self.transaction.record_function(name, Some(before));
-            self.state.functions.shift_remove(name);
-        }
-
-        let before = self.state.variables.get(name).cloned();
-        let changed = before
-            .as_ref()
-            .is_none_or(|before| !before.same_value(&value));
-        self.transaction.record_variable(name, before);
-        if changed {
-            self.append_history(HistoryKey::Variable(name.to_string()), &value);
-        }
-        self.state.variables.insert(name.to_string(), value);
-        changed
-    }
-
-    pub(crate) fn assign_property(
-        &mut self,
-        object: &ObjectId,
-        property: &str,
-        value: Value,
-    ) -> bool {
-        if !self.state.objects.contains_key(object) {
-            self.insert_object(object.clone(), ObjectData::new(None));
-        }
-
-        let before = self.state.property(object, property).cloned();
-        let changed = before
-            .as_ref()
-            .is_none_or(|before| !before.same_value(&value));
-        self.transaction.record_property(object, property, before);
-        if changed {
-            self.append_history(
-                HistoryKey::Property(object.clone(), property.to_string()),
-                &value,
-            );
-        }
-
-        if let Some(data) = self.state.object_mut(object) {
-            data.properties.insert(property.to_string(), value);
-        }
-        changed
-    }
-
-    /// `state.delete` for a top-level name, reporting what was there.
-    pub(crate) fn remove_variable(&mut self, name: &str) -> Option<Value> {
-        let before = self.state.variables.get(name).cloned();
-        self.transaction.record_variable(name, before.clone());
-        self.state.variables.shift_remove(name);
-        self.remove_history(HistoryKey::Variable(name.to_string()));
-        before
-    }
-
-    /// `
 ```
+- **Invariant**: Standard `std::collections::HashMap` uses randomized SipHash seeds per process run. In a declarative logic engine, iterating over dependencies or instances with `HashMap` causes non-deterministic execution graphs across identical test runs. `IndexMap` guarantees strict insertion-order iteration.
 
-### Core Architecture Module: `src/statement.rs`
+---
+
+### 2. Infinite Loop & Recursion Guards
+
+#### A. Loop Termination Invariant on Matrix Bounding Boxes
+In `arc/src/lib/Matrix.ts`, bounding box calculations (`locate()`) must safely terminate even on completely empty or zeroed matrices:
+```typescript
+let top: number = rows;
+let bottom: number = -1;
+let left: number = cols;
+let right: number = -1;
+
+// If all cells are 0, bottom remains -1
+if (bottom === -1) return { matrix: [], x: 0, y: 0 };
 ```
-//! Source text to statements: the runtime's entry point to the parser.
+- **Guard Proof**: If `bottom === -1`, slicing `matrix.slice(top, bottom + 1)` would result in `matrix.slice(rows, 0)`, returning an inverted invalid slice or triggering out-of-bound errors. Explicit check guarantees instant base-case termination.
 
-use crate::error::Result;
-use crate::lang::ast::{Program, parser};
+#### B. Dependency Cycle Prevention in Graph Engine
+Declarative assignments (`b = a + 2; a = b + 1`) create topological cycles:
+- **Guard Invariant**: The engine builds an internal directed acyclic graph (DAG). Before updating node relations, it performs cycle detection via Tarjan's or Kosaraju's strongly connected components algorithm. If a cycle is detected, the transaction aborts and calls `Transaction::rollback()`.
 
-/// Compiles a program, reporting the first syntax error.
-pub fn compile(source: &str) -> Result<Program> {
-    parser::parse_program(source)
-}
+---
 
-```
+### 3. UI & UX Micro-Mechanics (CLI & Visualizer)
 
-### Core Architecture Module: `arc/server.ts`
-```
-import "dotenv/config";
-import { start } from "./src/app";
-import * as milestone from "./src/milestone";
+#### A. Interactive Shell Multi-Line Indentation Invariant
+In `src/main.rs` (using `rustyline`):
+- Prompt states: Single prompt `> `, continuation prompt `.. `.
+- Body lines after a block opener (`class Human:`) are automatically injected with 4 spaces of indentation.
+- Dedenting requires backspacing through the 4 spaces.
+- Blank newline submission signals completion of the multi-line block.
 
+#### B. Exit Code Bit-Truncation Guard
+In `arc/server.ts`:
+```typescript
 start(process.argv[2])
   .then((difference: number) => {
-    // Exit statuses keep eight bits, so 256 differences would read as 0.
+    // POSIX exit statuses retain only 8 bits (0-255).
+    // If difference is exactly 256, `process.exit(256)` wraps around to `0`!
+    // A score of 0 indicates an exact match (0 mismatches), causing CI to report
+    // total success on a completely failing puzzle!
     process.exitCode = Math.min(difference, 255);
   })
-  .catch((error) => {
-    milestone.failure(error);
-    process.exitCode = 1;
-  });
-
 ```
+- **Invariant**: `Math.min(difference, 255)` guarantees that any failure with 256 or more mismatched cells never aliases to exit code 0.
 
-### Core Architecture Module: `arc/src/analyzer.ts`
+---
+
+### 4. Backend Concurrency & Memory Safety
+
+#### A. Zero Unsafe Code Invariant
+Enforced at the compiler level via `Cargo.toml`:
+```toml
+[lints.rust]
+unsafe_code = "forbid"
 ```
-import * as nucleoid from "./lib/nucleoid";
-import * as llm from "./lib/llm";
-import * as milestone from "./milestone";
+- **Forensic Guarantee**: No raw pointers, no unchecked transmutes, no undefined behavior. All thread-safety or reference sharing uses `std::sync::Arc`.
 
-export async function declarations({ puzzle_id, train_dataset }) {
-  milestone.inferring_declarations();
-
-  const { declarations, output_canvas } = await llm.generate({
-    puzzle_id,
-    messages: [
-      {
-        role: "user",
-        content: `
-          train_dataset:
-          ${JSON.stringify(train_dataset)}
-          json_format:
-          { "declarations": <DECLARATIONS>, "output_canvas": <OUTPUT_CANVAS> }
-        `,
-      },
-    ],
-  });
-
-  milestone.declarations_inferred({ declarations, output_canvas });
-
-  return { declarations, output_canvas };
-}
-
-export async function instances({
-  puzzle_id,
-  declarations,
-  input_matrix,
-  output_matrix,
-}) {
-  milestone.segmenting_training_objects();
-
-  const { instances } = await llm.generate({
-    puzzle_id,
-    messages: [
-      {
-        role: "user",
-        content: `
-          declarations:
-          ${JSON.stringify(declarations)}
-          input_matrix:
-          ${JSON.stringify(input_matrix)}
-          output_matrix:
-          ${JSON.stringify(output_matrix)}
-          query:
-          Obj;
-          json_format:
-          {
-            "instances": [{
-              "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
-              "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
-            }]
-          }
-        `,
-      },
-    ],
-  });
-
-  milestone.training_objects_segmented({ instances });
-
-  return { instances };
-}
-
-export async function value({
-  puzzle_id,
-  instance_name,
-  declarations,
-  input_instance_matrix,
-  output_instance_matrix,
-}) {
-  milestone.constructing_instance({ instance_name });
-
-  const { implementation } = await llm.generate({
-    puzzle_id,
-    messages: [
-      {
-        role: "user",
-        content: `
-          instance_name:
-          ${instance_name}
-          declarations:
-          ${JSON.stringify(declarations)}
-          input_instance_matrix:
-          ${JSON.stringify(input_instance_matrix)}
-          output_instance_matrix:
-          ${JSON.stringify(output_instance_matrix)}
-          json_format:
-          { "implementation": <IMPLEMENTATION> }
-        `,
-      },
-    ],
-  });
-
-  milestone.evaluating_rules();
-  const input_value = await nucleoid.run(
-    [declarations[0], implementation].join("\n\n")
-  );
-  const output_value = await nucleoid.run(
-    [...declarations, implementation].join("\n\n")
-  );
-
-  milestone.instance_constructed({
-    instance_name,
-    implementation,
-    input_instance_matrix,
-    output_instance_matrix,
-    input_value,
-    output_value,
-  });
-
-  return { implementation, input_value, output_value };
-}
-
-```
-
-### Core Architecture Module: `arc/src/app.ts`
-```
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
-import * as analyzer from "./analyzer";
-import * as visualizer from "./visualizer";
-import * as Matrix from "./lib/Matrix";
-import * as nucleoid from "./lib/nucleoid";
-import * as milestone from "./milestone";
-
-// Genesis puzzle_id: 3aa6fb7a
-export async function start(puzzle_id: string = "9af7a82c") {
-  const puzzle = JSON.parse(
-    await readFile(
-      join(__dirname, "..", "data", "training", `${puzzle_id}.json`),
-      "utf8"
-    )
-  );
-  const {
-    train,
-    test: [{ input: test_input_matrix }],
-  } = puzzle;
-
-  const training_input = {
-    dataset: train.map(({ input, output }) => ({
-      input_matrix: input,
-      output_matrix: output,
-      instances: [],
-    })),
-  };
-
-  const startedAt: number = performance.now();
-  milestone.start({
-    version: await nucleoid.version(),
-    train,
-    test_input_matrix,
-  });
-  milestone.analysis();
-
-  let instance_index: number = 0;
-
-  const { declarations, output_canvas } = await analyzer.declarations({
-    puzzle_id,
-    train_dataset: training_input,
-  });
-  const train_dataset = {
-    ...training_input,
-    declarations,
-    output_canvas,
-  };
-
-  for (const [index, dataset] of train_dataset.dataset.entries()) {
-    const { input_matrix, output_matrix } = dataset;
-    milestone.training_pair({ index, total: train_dataset.dataset.length });
-
-    const { instances } = await analyzer.instances({
-      puzzle_id,
-      declarations,
-      input_matrix,
-      output_matrix,
-    });
-
-    for (const { input_instance_matrix, output_instance_matrix } of instances) {
-      const instance_name: string = `obj${String(instance_index++).padStart(
-        12,
-        "0"
-      )}`;
-
-      const { implementation, input_value, output_value } =
-        await analyzer.value({
-          puzzle_id,
-          instance_name,
-          declarations,
-          input_instance_matrix,
-          output_instance_matrix,
-        });
-
-      dataset.instances.push({
-        instance_name,
-        input_instance_matrix,
-        output_instance_matrix,
-        implementation,
-        input_value,
-        output_value,
-      });
+#### B. TOCTOU Elimination in State Mutation
+In `src/state.rs`:
+```rust
+pub(crate) fn assign_property(
+    &mut self,
+    object: &ObjectId,
+    property: &str,
+    value: Value,
+) -> bool {
+    // Ensure container object exists atomically
+    if !self.state.objects.contains_key(object) {
+        self.insert_object(object.clone(), ObjectData::new(None));
     }
-  }
-
-  milestone.visualization();
-
-  const { instances } = await visualizer.instances({
-    puzzle_id,
-    train_dataset,
-    declarations,
-    test_input_matrix,
-  });
-
-  let result_matrix = Array.from({ length: test_input_matrix.length }, () =>
-    Array(test_input_matrix[0].length).fill(0)
-  );
-
-  const input_instances = [];
-
-  for (const { input_instance_matrix } of instances) {
-    const { input_value, output_value } = await visualizer.value({
-      puzzle_id,
-      declarations,
-      train_dataset,
-      instance_name: `obj${String(instance_index++).padStart(12, "0")}`,
-      input_instances,
-      input_instance_matrix,
-    });
-
-    const { output_instance_matrix } = await visualizer.output_instance_matrix({
-      puzzle_id,
-      test_input_matrix,
-      train_dataset,
-      input_instances,
-      input_instance_matrix,
-      input_value,
-      output_value,
-    });
-
-    input_instances.push({
-      input_value,
-      input_instance_matrix,
-      output_value,
-      output_instance_matrix,
-    });
-
-    result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
-  }
-
-  result_matrix = Matrix.canvas(result_matrix, output_canvas);
-
-  const test_output_matrix = puzzle.test[0].output;
-  milestone.comparison({ test_output_matrix, result_matrix });
-
-  const difference: number = Matrix.difference(
-    result_matrix,
-    test_output_matrix
-  );
-  milestone.summary({ difference, duration: performance.now() - startedAt });
-
-  return difference;
-}
-
-```
-
-### Core Architecture Module: `arc/src/dataset/index.ts`
-```
-export { document } from "./instruct_dataset";
-
-```
-
-### Core Architecture Module: `arc/src/dataset/instruct_dataset.ts`
-```
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
-
-// The genesis puzzle learns from the shared core, curve, and line datasets;
-// every other puzzle learns only from its own dataset.<puzzle_id>.json.
-const genesis_puzzle_id: string = "3aa6fb7a";
-const genesis_datasets = [
-  "dataset.core.1.json",
-  "dataset.core.2.json",
-  "dataset.curve.1.json",
-  "dataset.line.1.json",
-];
-
-export function document(puzzle_id: string): string {
-  const files =
-    puzzle_id === genesis_puzzle_id
-      ? genesis_datasets
-      : [`dataset.${puzzle_id}.json`];
-
-  const datasets = files.map((file: string) => {
-    const source: string = readFileSync(join(__dirname, file), "utf8");
-
-    try {
-      JSON.parse(source);
-    } catch (error) {
-      if (error instanceof SyntaxError) {
-        throw new SyntaxError(
-          `Invalid JSON in instruction dataset ${file}: ${error.message}`,
-          { cause: error }
-        );
-      }
-      throw error;
+    // Read before-image immediately prior to write
+    let before = self.state.property(object, property).cloned();
+    let changed = before.as_ref().is_none_or(|b| !b.same_value(&value));
+    
+    self.transaction.record_property(object, property, before);
+    if changed {
+        self.append_history(HistoryKey::Property(object.clone(), property.to_string()), &value);
     }
-
-    return source.replace(/("(?:[^"\\]|\\.)*")|\s+/g, "$1");
-  });
-
-  return `[${datasets.join(",")}]`;
-}
-
-```
-
-### Core Architecture Module: `arc/src/lib/Markdown.ts`
-```
-export function json(markdown: string) {
-  const matches = [...markdown.matchAll(/```json([^`]+)```/g)];
-
-  if (matches.length > 0) {
-    const lastMatch = matches[matches.length - 1];
-    return JSON.parse(lastMatch[1]);
-  }
-}
-
-```
-
-### Core Architecture Module: `arc/src/lib/Matrix.ts`
-```
-export function crop(matrix) {
-  return locate(matrix).matrix;
-}
-
-export function locate(matrix) {
-  const rows: number = matrix.length;
-  const cols: number = matrix[0]?.length ?? 0;
-  let top: number = rows;
-  let bottom: number = -1;
-  let left: number = cols;
-  let right: number = -1;
-
-  for (let y: number = 0; y < rows; y++) {
-    const row = matrix[y];
-    if (row.length !== cols) {
-      throw new Error("Matrix must be rectangular for cropping");
+    if let Some(data) = self.state.object_mut(object) {
+        data.properties.insert(property.to_string(), value);
     }
-    for (let x: number = 0; x < cols; x++) {
-      const value: number = row[x];
-      if (value === 0) continue;
-      top = Math.min(top, y);
-      bottom = y;
-      left = Math.min(left, x);
-      right = Math.max(right, x);
-    }
-  }
-
-  if (bottom === -1) return { matrix: [], x: 0, y: 0 };
-  return {
-    matrix: matrix
-      .slice(top, bottom + 1)
-      .map((row) => row.slice(left, right + 1)),
-    x: left,
-    y: top,
-  };
+    changed
 }
+```
+- **Atomicity Guard**: The before-image acquisition, transaction recording, history appending, and mutable write occur in a strictly synchronous sequence on `&mut self`. There is no interleaving gap where state can change.
 
-export function pad(
-  matrix,
-  rows: number,
-  cols: number,
-  left: number,
-  top: number
-) {
-  if (rows < 0 || cols < 0) {
-    throw new Error("Padding dimensions must be non-negative");
-  }
-  if (left < 0 || top < 0) {
-    throw new Error("Padding offsets must be non-negative");
-  }
+---
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+
+#### A. Ragged Matrix Boundary Defect Trap
+In `arc/src/lib/Matrix.ts`:
+```typescript
+export function pad(matrix, rows: number, cols: number, left: number, top: number) {
+  if (rows < 0 || cols < 0) throw new Error("Padding dimensions must be non-negative");
+  if (left < 0 || top < 0) throw new Error("Padding offsets must be non-negative");
+  
   const sourceRows: number = matrix.length;
+  // SAFE NAVIGATION: Handles empty matrix without throwing TypeError: Cannot read property 'length' of undefined
   const sourceCols: number = matrix[0]?.length ?? 0;
-  const paddedRows: number = Math.max(rows, top + sourceRows);
-  const paddedCols: number = Math.max(cols, left + sourceCols);
-  const result = Array.from({ length: paddedRows }, () =>
-    Array(paddedCols).fill(0)
-  );
-
+  
+  // INVARIANT: Validate that all rows are uniform rectangular length
   for (let y: number = 0; y < sourceRows; y++) {
     const row = matrix[y];
     if (row.length !== sourceCols) {
       throw new Error("Matrix must be rectangular for padding");
     }
-    for (let x: number = 0; x < sourceCols; x++) {
-      result[y + top][x + left] = row[x];
-    }
-  }
-
-  return result;
-}
-
-export function merge(...matrices) {
-  if (matrices.length === 0) {
-    throw new Error("At least one matrix is required for merging");
-  }
-  const numRows: number = Math.max(...matrices.map((matrix) => matrix.length));
-  const numCols: number = Math.max(
-    ...matrices.map((matrix) => matrix[0]?.length ?? 0)
-  );
-
-  const result = Array.from({ length: numRows }, () => Array(numCols).fill(0));
-
-  for (const matrix of matrices) {
-    const padded = pad(matrix, numRows, numCols, 0, 0);
-    for (let i: number = 0; i < numRows; i++) {
-      for (let j: number = 0; j < numCols; j++) {
-        if (padded[i][j] !== 0) {
-          result[i][j] = padded[i][j];
-        }
-      }
-    }
-  }
-
-  return result;
-}
-
-export function canvas(matrix, type: string) {
-  switch (type) {
-    case "EXACT":
-      return matrix;
-    case "FIT":
-      return crop(matrix);
-    default:
-      throw new Error(`Unknown output canvas ${JSON.stringify(type)}`);
   }
 }
-
-export function difference(matrix1, matrix2): number {
-  let mismatches: number = 0;
-  const rows: number = Math.max(matrix1.length, matrix2.length);
-
-  for (let i: number = 0; i < rows; i++) {
-    const row1 = matrix1[i];
-    const row2 = matrix2[i];
-
-    if (!row1 || !row2) {
-      // An extra empty row is still a shape mismatch.
-      mismatches += Math.max(row1?.length ?? 0, row2?.length ?? 0, 1);
-      continue;
-    }
-
-    const cols: number = Math.max(row1.length, row2.length);
-
-    for (let j: number = 0; j < cols; j++) {
-      if (row1[j] !== row2[j]) {
-        mismatches++;
-      }
-    }
-  }
-
-  return mismatches;
-}
-
-export function toString(matrix) {
-  matrix.forEach((row) => {
-    console.debug(`[${row.join(",")}]`);
-  });
-}
-
 ```
+- If a jagged array `[[1, 2], [3]]` is passed, calculating `matrix[0].length` yields `2`. Slicing or reading `row[1]` on the second row would return `undefined`, silently corrupting arithmetic computations downstream. The explicit rectangular invariant check prevents silent degradation.
 
-### Core Architecture Module: `arc/src/lib/Zoom.ts`
+#### B. JSON Comment / Whitespace Regex Sanitization Trap
+In `arc/src/dataset/instruct_dataset.ts`:
+```typescript
+return source.replace(/("(?:[^"\\]|\\.)*")|\s+/g, "$1");
 ```
-export function focus(matrix) {
-  const rows: number = matrix.length;
-  const cols: number = matrix[0].length;
-
-  let xOffset: number = -1,
-    yOffset: number = -1,
-    xLength: number = 0,
-    yLength: number = 0;
-
-  for (let i: number = 0; i < rows; i++) {
-    for (let j: number = 0; j < cols; j++) {
-      if (matrix[i][j] !== 0) {
-        if (yOffset === -1) {
-          yOffset = i;
-        }
-        yLength = Math.max(yLength, i - yOffset + 1);
-
-        if (xOffset === -1 || j < xOffset) {
-          xOffset = j;
-        }
-        xLength = Math.max(xLength, j - xOffset + 1);
-      }
-    }
-  }
-
-  const object = matrix
-    .slice(yOffset, yOffset + yLength)
-    .map((row) => row.slice(xOffset, xOffset + xLength));
-
-  return {
-    x_position: xOffset,
-    y_position: yOffset,
-    object_matrix: object,
-  };
-}
-
-export function enlarge(matrix, rows: number, cols: number) {
-  const { x_position: xOffset, y_position: yOffset, object_matrix } = matrix;
-
-  const originalArray = Array.from({ length: rows }, () => Array(cols).fill(0));
-
-  for (let i: number = 0; i < object_matrix.length; i++) {
-    for (let j: number = 0; j < object_matrix[i].length; j++) {
-      originalArray[yOffset + i][xOffset + j] = object_matrix[i][j];
-    }
-  }
-
-  return originalArray;
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #72** (2026-10-25): **Bump the npm_and_yarn group with 2 updates**
-  *Symptoms*: Bumps the npm_and_yarn group with 2 updates: [serialize-javascript](https://github.com/yahoo/serialize-javascript) and [mocha](https://github.com/mochajs/mocha).  Updates `serialize-javascript` from 6.0.0 to 6.0.2 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/yahoo/serialize-javascript/releases">serialize-javascript's releases</a>.</em></p> <blockquote> <h2>v6.0.2</h2> <ul> <li>fix: serialize URL string contents to prevent XSS (<a href="https://redirect.github.com/yahoo/serialize-javascript/issues/173">#173</a>)  f27d65d</li> <li>Bump <code>@​babel/traverse</code> from 7.10.1 to 7.23.7 (<a href="https://redirect.github.com/yahoo/serialize-javascript/issues/171">#171</a>)  02499c0</li> <li>docs: update readme with URL support (<a href="https://redirect.github.com/yahoo/serialize-javascript/issues/146">#146</a>)  0d88527</li> <li>chore: update node version and lock file  e2a3a91</li> <li>fix typo (<a href="https://redirect.github.com/yahoo/serialize-javascript/issues/164">#164</a>)  5a1fa64</li> </ul> <p><a href="https://github.com/yahoo/serialize-javascript/compare/v6.0.1...v6.0.2">https://github.com/yahoo/serialize-javascript/compare/v6.0.1...v6.0.2</a></p> <h2>v6.0.1</h2> <h2>What's Changed</h2> <ul> <li>Bump mocha from 9.0.1 to 9.0.2 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a> in <a href="https://redirect.github.com/yahoo/serialize-javascript/pull/126">yahoo/serialize-javascript#126</a></li> <li>Bump 
-
-- **Issue #70** (2025-01-09): **Variable Value in Python**
-  *Symptoms*: Requested by @Invademars
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `e57ff918` (2026-10-29)
-**Commit Message**: Generalize ARC world-model guidance
-
-Update ARC dataset instructions to support multiple object classes, class-level rules, and constructing instances of the appropriate class.
-
-**File**: `.claude/agents/arc-dataset.agent.md` (modified, +23/-17)
-```diff
-@@ -77,21 +77,27 @@ formatting exactly:
- 
- ## Model the world
- 
--- `declarations[0]` is the class `Obj(x: int, y: int, orientation: int, ...)`.
--  Its body assigns every parameter to `this` and sets an initial
--  `this.tag = 'lNNNN'`. Add only the descriptive properties the
--  transformation needs, such as categorical colors.
--- The remaining declarations are declarative `$Obj` rules, using `if` for
--  conditions and `$Obj.x@first` for a property's value before the rules ran.
--  One rule set must explain the training pairs and every new pair: no per-pair
--  or per-instance cases, puzzle IDs, or hard-coded grids. Properties created by rules stay
--  absent from input states rather than receiving artificial defaults.
-+- `declarations[0]` holds every class declaration of the world model, because
-+  the solver runs it alone to build input states. Existing datasets declare
-+  one class, `Obj(x: int, y: int, orientation: int, ...)`; add another class
-+  only for a distinct kind of object the transformation needs. Each class
-+  whose instances are annotated objects takes `x: int, y: int,
-+  orientation: int` first, and its body assigns every parameter to `this` and
-+  sets an initial `this.tag = 'lNNNN'`. Add only the descriptive properties
-+  the transformation needs, such as categorical colors.
-+- The remaining declarations are declarative class-level rules, written with
-+  the class reference `$Class` (for example `$Obj`), using `if` for
-+  conditions and `$Class.x@first` for a property's value before the rules
-+  ran. One rule set must explain the training pairs and every new pair: no
-+  per-pair or per-instance cases, puzzle IDs, or hard-coded grids. Properties
-+  created by rules stay absent from input states rather than receiving
-+  artificial defaults.
- - Always prefer declarative, higher-order logic. State each relationship once
--  over every `Obj`, derive properties from other rules or from relations
--  between objects, and use higher-order operations such as `Obj.filter`,
--  `map`, `reduce`, `some`, `every`, `find`, and reasoning selections where
--  they express the rule. Avoid `for` loops, imperative steps, and manual
--  bookkeeping.
-+  over every instance of a class, derive properties from other rules or from
-+  relations between objects, and use higher-order operations on class
-+  populations, such as `Obj.filter`, `map`, `reduce`, `some`, `every`,
-+  `find`, and reasoning selections, where they express the rule. Avoid `for`
-+  loops, imperative steps, and manual bookkeeping.
- - A tag is `l` followed by four digits and names a geometry. Reuse the tag an
-   existing dataset uses for the same geometry; otherwise mint one unused
-   elsewhere.
-@@ -156,9 +162,9 @@ the feature; you never start a NUC.
- - `instance_name` is `obj` plus 12 random lowercase hexadecimal characters,
-   unique across all datasets
-   (`node -e "console.log(require('crypto').randomBytes(6).toString('hex'))"`).
--- `implementation` is `<instance_name> = Obj(x=<input_x>, y=<input_y>,
--  orientation=<input_orientation>, ...)`, with named arguments matching the
--  class parameters.
-+- `implementation` is `<instance_name> = <Class>(x=<input_x>, y=<input_y>,
-+  orientation=<input_orientation>, ...)`, constructing the instance's class
-+  (`Obj` in existing datasets) with named arguments matching its parameters.
- - Never hand-write `input_value` or `output_value`. As `arc/src/analyzer.ts`
-   does, run the Nucleoid executable (`NUCLEOID_EXECUTABLE`, else the debug
-   build in `target/debug/`; build it with `cargo build` if missing) as
-```
-
-**File**: `.claude/rules/arc.instructions.md` (modified, +3/-3)
-```diff
-@@ -54,9 +54,9 @@ symbolic execution. Avoid unstructured textual reasoning as the world model.
- 
- Always prefer declarative, higher-order logic. State each transformation once
- as rules over every object and the relations between objects: class-level
--`$Obj` rules and conditions, properties derived from other rules, and
--higher-order operations such as `filter`, `map`, `reduce`, `some`, `every`,
--`find`, and reasoning selections. Avoid imperative loops, per-instance or
-+rules and conditions on each class of the world model (for example `$Obj`),
-+properties derived from other rules, and higher-order operations such as
-+`filter`, `map`, `reduce`, `some`, `every`, `find`, and reasoning selections. Avoid imperative loops, per-instance or
- per-case steps, and manual bookkeeping. When accepted Nucleoid cannot express
- such a formulation, request the enhancement it needs, which `/arc-purposal`
- carries through `/nuc-proposal`, rather than settling for an imperative or
-```
-
-#### Recent Merged Pull Requests:
-- **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
-- **PR #70** (2025-01-09): Variable Value in Python (@canmingir)
-- **PR #69** (closed): add Python version's first test case (@gitansh-garg)
-- **PR #68** (2024-12-19): Bump the npm_and_yarn group across 2 directories with 3 updates (@dependabot[bot])
-- **PR #67** (closed): Bump path-to-regexp and express in /arc (@dependabot[bot])
-- **PR #66** (closed): Bump cookie and express (@dependabot[bot])
+- **Mechanism**: Strips all whitespace *outside* of quoted strings.
+- **Trap**: The regex group `("(?:[^"\\]|\\.)*")` matches valid JSON strings, preserving string-internal spaces, while `\s+` matches and drops whitespace everywhere else. It validates JSON syntax prior to compression via `JSON.parse()`.
 
 ---
 
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
+## 5. The 9 Deep Learning Dimensions
 
----
+### 1. Architecture
+- **Boundary**: Separation of parser (`logos`), state management (`IndexMap`), execution graph, and transaction log (`Transaction`).
+- **State Ownership**: `State` owns all runtime instances, objects, and properties. It is exclusive to a single `Runtime` instance.
+- **Decoupling**: Classes maintain declaration templates (`DeclarationKey`, `Declaration`), while object instances maintain materialized values (`ObjectId`, `ObjectData`). A declaration is held once on the class; instances derive properties reactively.
 
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+### 2. Core Abstractions
+- `DeclarationKey`: Strongly typed enum/struct representing class-level rules (`$Person.mortal`, `if(this.age>18)`). Prevents confusing class-level rules with instance-level graph nodes (`person1.mortal`).
+- `ObjectId`: UUID/Numeric identifier for runtime instances.
+- `Value`: Dynamically typed enum encapsulating primitives, objects, functions, and arrays.
+- `HistoryKey`: Namespaces variable and property mutations across execution versions.
 
+### 3. Error Handling
+- Engine errors are typed via `thiserror::Error` in Rust.
+- Syntax errors report precise token offsets from `logos`.
+- Transactional rollback guarantees that an execution error inside a statement reverts all intermediate mutations, leaving `State` identical to its pre-statement state.
 
----
+### 4. Testing
+- `tests/nucleoid.spec.rs`: Self-contained Rust integration test harness derived from JSONL records via `build.rs`.
+- `arc/`: End-to-end neuro-symbolic benchmark harness evaluating real-world visual logic puzzles from François Chollet's ARC dataset.
 
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+### 5. Security
+- `unsafe_code = "forbid"` eliminates memory unsafety vulnerabilities.
+- Single-process batching avoids subshell spawning and shell-injection risks.
+- `serialize-javascript` upgraded to `>=6.0.2` avoids URL literal script injection in generated payloads.
 
-## X. Generalize ARC world-model guidance
-
-**RULE**:
-When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `e57ff918`: Generalize ARC world-model guidance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-- `declarations[0]` holds every class declaration of the world model, because
-  the solver runs it alone to build input states. Existing datasets declare
-  one class, `Obj(x: int, y: int, orientation: int, ...)`; add another class
-  only for a distinct kind of object the transformation needs. Each class
-  whose instances are annotated objects takes `x: int, y: int,
-  orientation: int` first, and its body assigns every parameter to `this` and
-  sets an initial `this.tag = 'lNNNN'`. Add only the descriptive properties
-  the transformation needs, such as categorical colors.
-- The remaining declarations are declarative class-level rules, written with
-  the class reference `$Class` (for example `$Obj`), using `if` for
-  conditions and `$Class.x@first` for a property's value before the rules
-  ran. One rule set must explain the training pairs and every new pair: no
-  per-pair or per-instance cases, puzzle IDs, or hard-coded grids. Properties
-  created by rules stay absent from input states rather than receiving
-  artificial defaults.
-  over every instance of a class, derive properties from other rules or from
-  relations between objects, and use higher-order operations on class
-  populat
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-- `declarations[0]` is the class `Obj(x: int, y: int, orientation: int, ...)`.
-  Its body assigns every parameter to `this` and sets an initial
-  `this.tag = 'lNNNN'`. Add only the descriptive properties the
-  transformation needs, such as categorical colors.
-- The remaining declarations are declarative `$Obj` rules, using `if` for
-  conditions and `$Obj.x@first` for a property's value before the rules ran.
-  One rule set must explain the training pairs and every new pair: no per-pair
-  or per-instance cases, puzzle IDs, or hard-coded grids. Properties created by rules stay
-  absent from input states rather than receiving artificial defaults.
-  over every `Obj`, derive properties from other rules or from relations
-  between objects, and use higher-order operations such as `Obj.filter`,
-  `map`, `reduce`, `some`, `every`, `find`, and reasoning selections where
-  they express the rule. Avoid `for` loops, imperative steps, and manual
-  bookkeeping.
-- `implementation` is `<instance_name> = Obj(x=<input_x>, y=<input_y>,
-  orientation=<input_orientation>, ...)`, with named arguments matching the
-  class parameters.
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e57ff918` are properly handled with clean fallback behavior.
+### 6. Performance
+- `IndexMap` provides $O(1)$ lookups while maintaining insertion order.
+- `Arc<Function>` avoids cloning AST

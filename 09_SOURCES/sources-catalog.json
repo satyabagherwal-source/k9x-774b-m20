@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "0550f8b3",
+    "sourceVersion": "bd27ee11",
     "license": "Apache-2.0",
-    "contentHash": "747b8c632f9f7512dd302258e6a96d78b8f9a68147061f53381ee5ccb22e6717",
-    "lastHarvestedAt": "2026-10-29T16:23:51.090Z",
+    "contentHash": "d7b26f07ed8057ce50db4b0cff46af06dd8ca2dff1b492edf290c761e2fbdfb5",
+    "lastHarvestedAt": "2026-10-30T08:04:38.717Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "6287a4e5",
+    "sourceVersion": "ed0443f1",
     "license": "MIT",
-    "contentHash": "1cbdaa46855fdf478c318b7f41b5798d4ce8b141b1118068c17c49858ecdc719",
-    "lastHarvestedAt": "2026-10-28T18:57:52.087Z",
+    "contentHash": "f400ec526dadff2abdbf6aa355c276ca9fd26068c2d58253edf5e283ec2e5eb1",
+    "lastHarvestedAt": "2026-10-30T08:04:56.454Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -9083,10 +9083,10 @@
     "repository": "scrapy/scrapy",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapy/scrapy",
-    "sourceVersion": "3e4d0faf",
+    "sourceVersion": "71e4b2b0",
     "license": "BSD-3-Clause",
-    "contentHash": "3854b119172d7cfc2f7a100f51bcf971e28d74719833fa52d9061441d1967341",
-    "lastHarvestedAt": "2026-10-27T10:39:32.195Z",
+    "contentHash": "a776ddb6d26b4ac788e9c283e181b9413dafee0b310a26810004fd6727b6253a",
+    "lastHarvestedAt": "2026-10-30T08:04:03.927Z",
     "learningId": "learn-github-scrapy-scrapy"
   },
   "krzysztofzablocki-inject": {
@@ -11548,5 +11548,15 @@
     "contentHash": "0f2c7e21f3f8728dd00bf9b17ca7d00f5b253155df2a06dec81c5f894f13021d",
     "lastHarvestedAt": "2026-10-30T05:39:12.310Z",
     "learningId": "learn-github-reason-machines-reason-network"
+  },
+  "hf-pika-labs-pika-h3-flex": {
+    "repository": "Pika-Labs/Pika-H3-Flex",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
+    "sourceVersion": "hf-pika-labs-pika-h3-flex",
+    "license": "Open-Source",
+    "contentHash": "4d9ea41aa092bc1f8161977b78e31c2339dc2baaeb620b20356b506cec8cc4b5",
+    "lastHarvestedAt": "2026-10-30T08:04:02.164Z",
+    "learningId": "learn-huggingface-pika-labs-pika-h3-flex"
   }
 }

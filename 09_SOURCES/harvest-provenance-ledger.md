@@ -6162,3 +6162,7 @@ Every entry in this ledger must capture:
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `583b1a67` | Multi-dimensional audit evidence | 2026-10-30T07:47:19.600Z |
 | `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `745586f6` | Multi-dimensional audit evidence | 2026-10-30T07:47:53.130Z |
 | `learn-github-salvo-rs-salvo` | `https://github.com/salvo-rs/salvo` | `1620e723` | Multi-dimensional audit evidence | 2026-10-30T07:48:07.515Z |
+| `learn-huggingface-pika-labs-pika-h3-flex` | `https://huggingface.co/Pika-Labs/Pika-H3-Flex` | `hf-pika-la` | Multi-dimensional audit evidence | 2026-10-30T08:04:02.164Z |
+| `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `71e4b2b0` | Multi-dimensional audit evidence | 2026-10-30T08:04:03.927Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bd27ee11` | Multi-dimensional audit evidence | 2026-10-30T08:04:38.717Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `ed0443f1` | Multi-dimensional audit evidence | 2026-10-30T08:04:56.454Z |

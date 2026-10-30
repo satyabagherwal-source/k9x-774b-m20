@@ -19837,5 +19837,17 @@
     "qualityScore": 1001,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-30T05:35:49.834Z"
+  },
+  {
+    "name": "Pika-Labs/Pika-H3-Flex",
+    "fullName": "Pika-Labs/Pika-H3-Flex",
+    "url": "https://huggingface.co/Pika-Labs/Pika-H3-Flex",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Pika-Labs/Pika-H3-Flex (142 likes, 0 downloads)",
+    "likes": 142,
+    "downloads": 0,
+    "qualityScore": 1420,
+    "discoveredAt": "2026-10-30T07:59:33.389Z"
   }
 ]
