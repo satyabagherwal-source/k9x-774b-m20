@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T23:44:49.270Z",
-  "total_verified_learnings": 1178,
+  "last_updated": "2026-10-30T23:51:45.501Z",
+  "total_verified_learnings": 1179,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6714,8 +6714,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "d91ed8e6",
-      "content_hash": "6f3ca87601b4e811a46e3c11182a162638aa547000ec232e8fc6647775b3019b",
+      "source_version": "ef31e883",
+      "content_hash": "4a39912ee49d8786b39759b9d4b68c9eb3eb09aadb5dfc52e13e8dd532cea64d",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -6898,6 +6898,11 @@
           "number": 5848,
           "title": "docs: cni-chaining: document route MTU requirement",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5944,
+          "title": "hubble: fix deleted-pod metrics cleanup with dynamic configuration",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6905,7 +6910,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T19:54:16.988Z",
+      "verified_at": "2026-10-30T23:51:45.482Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7621,13 +7626,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_url": "https://github.com/Hmbown/Codewhale",
       "source_version": "b92540d8",
-      "content_hash": "cfedc6d9f729ce7a7409caf41731783b593248ed90bc740c73dd5b7d58bc39cb",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "content_hash": "21fb542fb4687a240a2cf048ff7dce2c1fd67bd96557287ca7a112686112d243",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -7717,7 +7722,7 @@
         {
           "number": 5846,
           "title": "runtime): compare a prompt with its metadata envelope stripped from either end",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7725,7 +7730,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T19:47:42.158Z",
+      "verified_at": "2026-10-30T23:51:38.328Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -35491,8 +35496,8 @@
       "slug": "laurent22-joplin",
       "platform": "github",
       "source_url": "https://github.com/laurent22/joplin",
-      "source_version": "b613d006",
-      "content_hash": "d039810c5a5ae12d4b6acf651ce00ea0592bd94a7f1c36b8508aa4f558cc17c4",
+      "source_version": "2e131019",
+      "content_hash": "c5989e2e012ae28423aef3a03fdf2b9db14a95e16dfcad96fb2e1ba6498a414f",
       "dossier_path": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
       "promoted_rules": [
@@ -35510,6 +35515,11 @@
           "number": 4755,
           "title": "deps): update dependency @react-native-documents/picker to v12.0.2 (#16951)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5943,
+          "title": "Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (#16964)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35517,7 +35527,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:38:30.735Z",
+      "verified_at": "2026-10-30T23:51:40.203Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155607,14 +155617,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5846,
       "title": "runtime): compare a prompt with its metadata envelope stripped from either end",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_url": "https://github.com/Hmbown/Codewhale",
       "source_version": "b92540d8",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-30T19:47:42.158Z"
+      "verified_at": "2026-10-30T23:51:38.328Z"
     },
     "rule-5847": {
       "learning_id": "rule-5847",
@@ -156983,6 +156993,81 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T23:44:49.247Z"
+    },
+    "learn-github-meta-docusaurus": {
+      "learning_id": "learn-github-meta-docusaurus",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "meta/docusaurus",
+      "repository": "meta/docusaurus",
+      "slug": "facebook-docusaurus",
+      "platform": "github",
+      "source_url": "https://github.com/facebook/docusaurus",
+      "source_version": "65316774",
+      "content_hash": "1055de047ba991c63641a8fab88d658c4ab10d565be7dda27ef3688a522d11d7",
+      "dossier_path": "07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5942,
+          "title": "ci): don't proxy our unscoped packages in the E2E Verdaccio registry (AI-assiste",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-30T23:51:40.062Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5942": {
+      "learning_id": "rule-5942",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5942,
+      "title": "ci): don't proxy our unscoped packages in the E2E Verdaccio registry (AI-assiste",
+      "source_url": "https://github.com/facebook/docusaurus",
+      "source_version": "65316774",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:51:40.062Z"
+    },
+    "rule-5943": {
+      "learning_id": "rule-5943",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5943,
+      "title": "Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (#16964)",
+      "source_url": "https://github.com/laurent22/joplin",
+      "source_version": "2e131019",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:51:40.203Z"
+    },
+    "rule-5944": {
+      "learning_id": "rule-5944",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5944,
+      "title": "hubble: fix deleted-pod metrics cleanup with dynamic configuration",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "ef31e883",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:51:45.482Z"
     }
   },
   "aliases": {

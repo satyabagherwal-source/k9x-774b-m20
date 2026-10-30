@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T23:44:49.379Z",
+  "last_updated": "2026-10-30T23:51:45.586Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "cfedc6d9f729ce7a7409caf41731783b593248ed90bc740c73dd5b7d58bc39cb",
-      "verified_at": "2026-10-30T19:47:42.264Z",
+      "content_hash": "21fb542fb4687a240a2cf048ff7dce2c1fd67bd96557287ca7a112686112d243",
+      "verified_at": "2026-10-30T23:51:38.445Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T19:47:42.264Z"
+      "last_updated": "2026-10-30T23:51:38.445Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "6f3ca87601b4e811a46e3c11182a162638aa547000ec232e8fc6647775b3019b",
-      "verified_at": "2026-10-30T19:54:17.064Z",
+      "content_hash": "4a39912ee49d8786b39759b9d4b68c9eb3eb09aadb5dfc52e13e8dd532cea64d",
+      "verified_at": "2026-10-30T23:51:45.585Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T19:54:17.064Z"
+      "last_updated": "2026-10-30T23:51:45.585Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -15486,14 +15486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-laurent22-joplin",
-      "content_hash": "d039810c5a5ae12d4b6acf651ce00ea0592bd94a7f1c36b8508aa4f558cc17c4",
-      "verified_at": "2026-10-27T12:38:30.819Z",
+      "content_hash": "c5989e2e012ae28423aef3a03fdf2b9db14a95e16dfcad96fb2e1ba6498a414f",
+      "verified_at": "2026-10-30T23:51:40.312Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:38:30.819Z"
+      "last_updated": "2026-10-30T23:51:40.312Z"
     },
     "appwrite/appwrite": {
       "repository": "appwrite/appwrite",
@@ -17459,6 +17459,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-30T22:34:31.585Z"
+    },
+    "meta/docusaurus": {
+      "repository": "meta/docusaurus",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-meta-docusaurus",
+      "content_hash": "1055de047ba991c63641a8fab88d658c4ab10d565be7dda27ef3688a522d11d7",
+      "verified_at": "2026-10-30T23:51:40.172Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-30T23:51:40.172Z"
     }
   },
   "repos": {

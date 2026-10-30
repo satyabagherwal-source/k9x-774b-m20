@@ -6370,3 +6370,7 @@ Every entry in this ledger must capture:
 | `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `8f5727ea` | Multi-dimensional audit evidence | 2026-10-30T23:35:08.488Z |
 | `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `8b14e8dc` | Multi-dimensional audit evidence | 2026-10-30T23:44:47.307Z |
 | `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `b805c0a5` | Multi-dimensional audit evidence | 2026-10-30T23:44:49.370Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `b92540d8` | Multi-dimensional audit evidence | 2026-10-30T23:51:38.436Z |
+| `learn-github-meta-docusaurus` | `https://github.com/facebook/docusaurus` | `65316774` | Multi-dimensional audit evidence | 2026-10-30T23:51:40.163Z |
+| `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `2e131019` | Multi-dimensional audit evidence | 2026-10-30T23:51:40.303Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `ef31e883` | Multi-dimensional audit evidence | 2026-10-30T23:51:45.576Z |

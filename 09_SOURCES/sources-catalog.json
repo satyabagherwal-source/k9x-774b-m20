@@ -2140,14 +2140,14 @@
     "learningId": "learn-github-synalinks-synalinks-skills"
   },
   "facebook-docusaurus": {
-    "repository": "facebook/docusaurus",
+    "repository": "meta/docusaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/docusaurus",
-    "sourceVersion": "4e6fe616",
+    "sourceVersion": "65316774",
     "license": "MIT",
-    "contentHash": "5ee7dca0478958971f93923ec0079abe28bda71bf2059097f6e42d3d879eeb37",
-    "lastHarvestedAt": "2026-10-24T20:31:18.104Z",
-    "learningId": "learn-github-facebook-docusaurus"
+    "contentHash": "1055de047ba991c63641a8fab88d658c4ab10d565be7dda27ef3688a522d11d7",
+    "lastHarvestedAt": "2026-10-30T23:51:40.163Z",
+    "learningId": "learn-github-meta-docusaurus"
   },
   "tabbyml-tabby": {
     "repository": "TabbyML/tabby",
@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "a998f06c",
+    "sourceVersion": "b92540d8",
     "license": "MIT",
-    "contentHash": "edee7dd8b0db065770e88498259b996a817a303d13b52440921daed728fb07bc",
-    "lastHarvestedAt": "2026-10-29T01:49:55.104Z",
+    "contentHash": "21fb542fb4687a240a2cf048ff7dce2c1fd67bd96557287ca7a112686112d243",
+    "lastHarvestedAt": "2026-10-30T23:51:38.436Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "d91ed8e6",
+    "sourceVersion": "ef31e883",
     "license": "Apache-2.0",
-    "contentHash": "6f3ca87601b4e811a46e3c11182a162638aa547000ec232e8fc6647775b3019b",
-    "lastHarvestedAt": "2026-10-30T19:54:17.049Z",
+    "contentHash": "4a39912ee49d8786b39759b9d4b68c9eb3eb09aadb5dfc52e13e8dd532cea64d",
+    "lastHarvestedAt": "2026-10-30T23:51:45.576Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -10313,10 +10313,10 @@
     "repository": "laurent22/joplin",
     "platform": "github",
     "sourceUrl": "https://github.com/laurent22/joplin",
-    "sourceVersion": "b613d006",
+    "sourceVersion": "2e131019",
     "license": "NOASSERTION",
-    "contentHash": "d039810c5a5ae12d4b6acf651ce00ea0592bd94a7f1c36b8508aa4f558cc17c4",
-    "lastHarvestedAt": "2026-10-27T12:38:30.810Z",
+    "contentHash": "c5989e2e012ae28423aef3a03fdf2b9db14a95e16dfcad96fb2e1ba6498a414f",
+    "lastHarvestedAt": "2026-10-30T23:51:40.303Z",
     "learningId": "learn-github-laurent22-joplin"
   },
   "appwrite-appwrite": {

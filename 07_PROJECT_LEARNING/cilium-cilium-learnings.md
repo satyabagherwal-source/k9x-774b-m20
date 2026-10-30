@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `d91ed8e6`  
+> **Source Version**: `ef31e883`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T19:54:16.641Z  
+> **Timestamp**: 2026-10-30T23:51:44.943Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T19:54:16.636Z  
+> **Harvest Timestamp**: 2026-10-30T23:51:44.936Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25738 stars
+- **Stars / Engagement**: 25740 stars
 
 ---
 
@@ -1283,112 +1283,267 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `06005d6d` (2026-10-29)
-**Commit Message**: docs: cni-chaining: document route MTU requirement
+### Incident Patch 1: `ef31e883` (2026-10-29)
+**Commit Message**: hubble: fix deleted-pod metrics cleanup with dynamic configuration
 
-The cni.enableRouteMTUForCNIChaining option is needed whenever a feature
-adds encapsulation or encryption overhead to Pod traffic, but it was only
-mentioned in the WireGuard and egress gateway guides. Add an MTU section to
-the generic CNI chaining page listing every feature affected (WireGuard,
-egress gateway, tunneling). IPsec is not listed as it is unsupported with
-CNI chaining, and Geneve DSR is not as its overhead is handled in the
-datapath.
+Signed-off-by: Alex Castilio dos Santos <[REDACTED_EMAIL]>
 
-Signed-off-by: Simone Magnani <[REDACTED_EMAIL]>
-
-**File**: `Documentation/installation/cni-chaining.rst` (modified, +19/-0)
+**File**: `pkg/hubble/metrics/dynamic_flow_processor.go` (modified, +9/-0)
 ```diff
-@@ -17,6 +17,25 @@ is managed by the non-Cilium CNI plugin, but Cilium attaches eBPF programs to th
- network devices created by the non-Cilium plugin to provide L3/L4 network
- visibility, policy enforcement and other advanced features.
+@@ -13,6 +13,7 @@ import (
  
-+.. _cni_chaining_mtu:
+ 	flowpb "github.com/cilium/cilium/api/v1/flow"
+ 	"github.com/cilium/cilium/pkg/hubble/metrics/api"
++	"github.com/cilium/cilium/pkg/k8s/types"
+ 	"github.com/cilium/cilium/pkg/lock"
+ 	"github.com/cilium/cilium/pkg/logging/logfields"
+ )
+@@ -88,9 +89,17 @@ func NewDynamicFlowProcessor(reg *prometheus.Registry, logger *slog.Logger, conf
+ 	}
+ 	watcher := NewMetricConfigWatcher(logger, configFilePath, dynamicFlowProcessor.onConfigReload)
+ 	dynamicFlowProcessor.watcher = watcher
++	initEndpointDeletionHandler(dynamicFlowProcessor.processCiliumEndpointDeletion)
+ 	return dynamicFlowProcessor
+ }
+ 
++func (d *DynamicFlowProcessor) processCiliumEndpointDeletion(endpoint *types.CiliumEndpoint) {
++	d.mutex.RLock()
++	defer d.mutex.RUnlock()
 +
-+MTU
-+===
++	api.ProcessCiliumEndpointDeletion(endpoint, d.Metrics)
++}
 +
-+By default, Cilium does not adjust the MTU of the Pods when chaining, so Pods
-+use the MTU configured by the other CNI plugins. Features that add encapsulation
-+or encryption overhead on top of Pod traffic are therefore not accounted for,
-+and the resulting packets might get fragmented, which can lead to a network
-+performance degradation.
-+
-+Set the Helm option ``cni.enableRouteMTUForCNIChaining`` to ``true`` to make
-+Cilium set a route MTU for Pods that accounts for such overhead. This is
-+required when using any of the following features:
-+
-+* :ref:`WireGuard encryption <encryption_wg>`
-+* :ref:`Egress Gateway <egress-gateway>`
-+* :ref:`Tunneling <encapsulation>` (``routingMode=tunnel``)
-+
- .. toctree::
-    :maxdepth: 1
-    :glob:
+ func (d *DynamicFlowProcessor) onConfigReload(ctx context.Context, hash uint64, config api.Config) {
+ 	d.mutex.Lock()
+ 	defer d.mutex.Unlock()
 ```
 
----
-
-### Incident Patch 2: `f5f814b9` (2026-10-28)
-**Commit Message**: ci: update docs-builder
-
-Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/documentation.yaml` (modified, +1/-1)
+**File**: `pkg/hubble/metrics/metrics.go` (modified, +11/-9)
 ```diff
-@@ -70,7 +70,7 @@ jobs:
-         uses: ./.github/actions/disk-cleanup
+@@ -32,6 +32,7 @@ import (
+ type CiliumEndpointDeletionHandler struct {
+ 	gracefulPeriod time.Duration
+ 	queue          workqueue.TypedDelayingInterface[*types.CiliumEndpoint]
++	cleanup        func(*types.CiliumEndpoint)
+ }
  
-       - name: Build HTML
--        uses: docker://quay.io/cilium/docs-builder:cd9f601a1edba91d911e50c1acce48b6413008d7@sha256:c377837bcb944b4dba60607f839be47d45e49c140f415d5c43cd051c0ee2a875
-+        uses: docker://quay.io/cilium/docs-builder:16b20632cc36a85a7fa7bd1c52470a46463281cf@sha256:bfcda38c4fc7831b6cc3483ae6d4c640aa18d55be8ddb0dfa41087c0eaa7c9c7
-         with:
-           entrypoint: ./Documentation/check-build.sh
-           args: html
+ var (
+@@ -66,26 +67,27 @@ var (
+ )
+ 
+ func ProcessCiliumEndpointDeletion(pod *types.CiliumEndpoint) error {
+-	if endpointDeletionHandler != nil && EnabledMetrics != nil {
++	if endpointDeletionHandler != nil {
+ 		endpointDeletionHandler.queue.AddAfter(pod, endpointDeletionHandler.gracefulPeriod)
+ 	}
+ 	return nil
+ }
+ 
+-func initEndpointDeletionHandler() {
++func initEndpointDeletionHandler(cleanup func(*types.CiliumEndpoint)) {
+ 	endpointDeletionHandler = &CiliumEndpointDeletionHandler{
+ 		gracefulPeriod: time.Minute,
+ 		queue:          workqueue.NewTypedDelayingQueue[*types.CiliumEndpoint](),
++		cleanup:        cleanup,
+ 	}
+-
++	handler := endpointDeletionHandler
+ 	go func() {
+ 		for {
+-			endpoint, quit := endpointDeletionHandler.queue.Get()
++			endpoint, quit := handler.queue.Get()
+ 			if quit {
+ 				return
+ 			}
+-			api.ProcessCiliumEndpointDeletion(endpoint, EnabledMetrics)
+-			endpointDeletionHandler.queue.Done(endpoint)
++			handler.cleanup(endpoint)
++			handler.queue.Done(endpoint)
+ 		}
+ 	}()
+ }
+@@ -103,7 +105,9 @@ func InitMetrics(logger *slog.Logger, reg *prometheus.Registry, enabled *api.Con
+ 	reg.MustRegister(RequestsTotal)
+ 	reg.MustRegister(RequestDuration)
+ 
+-	initEndpointDeletionHandler()
++	initEndpointDeletionHandler(func(endpoint *types.CiliumEndpoint) {
++		api.ProcessCiliumEndpointDeletion(endpoint, EnabledMetrics)
++	})
+ 
+ 	return nil
+ }
+@@ -114,8 +118,6 @@ func InitHubbleInternalMetrics(reg *prometheus.Registry, grpcMetrics *grpc_prome
+ 	reg.MustRegister(RequestsTotal)
+ 	reg.MustRegister(RequestDuration)
+ 
+-	initEndpointDeletionHandler()
+-
+ 	return nil
+ }
+ 
 ```
 
-**File**: `Documentation/Makefile` (modified, +1/-1)
+**File**: `pkg/hubble/metrics/metrics_test.go` (modified, +202/-1)
 ```diff
-@@ -14,7 +14,7 @@ SPHINX_OPTS := "-j=auto"
+@@ -10,6 +10,8 @@ import (
+ 	"log/slog"
+ 	"net/http"
+ 	"net/http/httptest"
++	"os"
++	"path/filepath"
+ 	"sort"
+ 	"testing"
+ 	"time"
+@@ -34,25 +36,223 @@ import (
  
- .PHONY: default clean help cilium-build cmdref epub latex html
+ func TestInitializedMetrics(t *testing.T) {
+ 	t.Run("Should send pod removal to delayed delivery queue", func(t *testing.T) {
++		previousEnabledMetrics := EnabledMetrics
++		previousEndpointDeletionHandler := endpointDeletionHandler
++		t.Cleanup(func() {
++			endpointDeletionHandler.queue.ShutDown()
++			EnabledMetrics = previousEnabledMetrics
++			endpointDeletionHandler = previousEndpointDeletionHandler
++		})
++
+ 		deletedEndpoint := &types.CiliumEndpoint{
+ 			ObjectMeta: slim_metav1.ObjectMeta{
+ 				Name: "name",
+ 			},
+ 		}
+-		EnabledMetrics = []api.NamedHandler{}
++		EnabledMetrics = nil
+ 		endpointDeletionHandler = &CiliumEndpointDeletionHandler{
+ 			gracefulPeriod: 10 * time.Millisecond,
+ 			queue:          workqueue.NewTypedDelayingQueue[*types.CiliumEndpoint](),
+ 		}
  
--DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:cd9f601a1edba91d911e50c1acce48b6413008d7@sha256:c377837bcb944b4dba60607f839be47d45e49c140f415d5c43cd051c0ee2a875
-+DOCS_BUILDER_IMG ?= quay.io/cilium/docs-builder:16b20632cc36a85a7fa7bd1c52470a46463281cf@sha256:bfcda38c4fc7831b6cc3483ae6d4c640aa18d55be8ddb0dfa41087c0eaa7c9c7
+ 		ProcessCiliumEndpointDeletion(deletedEndpoint)
  
- .PHONY: update-docs-builder-image
- update-docs-builder-image: DOCS_BUILDER_TAG=$(word 3,$(shell git ls-tree --full-tree HEAD -- $(DOCS_BUILDER_DIR)))
-```
-
----
-
-### Incident Patch 3: `b20ea39d` (2026-10-28)
-**Commit Message**: docs: Fix update-requirements target
-
-The make target here referred to a path that doesn't exist. Fix it.
-
-Fixes: 76cc4f5dec09 ("images: Move docs-builder into images/ directory")
-Signed-off-by: Joe Stringer <[REDACTED_EMAIL]>
-
-**File**: `Documentation/Makefile` (modified, +1/-1)
-```diff
-@@ -157,7 +157,7 @@ update-redirects: builder-image ## Build and serve the documentation locally.
- update-requirements: docs-base-image $(DOCS_REQUIREMENTS_NODEP) ## Regenerate the requirements.txt file from requirements-min/requirements.txt.
- 	@echo '## Auto-generated from Documentation/$(DOCS_REQUIREMENTS_NODEP) with "make update-requirements"' > $(DOCS_BUILDER_DIR)/$(DOCS_REQUIREMENTS)
- 	$(QUIET)$(DOCKER_CTR_BASE) $(DOCS_BASE_IMG) \
--		bash -c "export HOME=/tmp && pip install --no-warn-script-location -r ../../Documentation/$(DOCS_REQUIREMENTS_NODEP) && pip freeze -r ../../$(DOCS_REQUIREMENTS_NODEP) >> $(DOCS_REQUIREMENTS)"
-+		bash -c "export HOME=/tmp && pip install --no-warn-script-location -r ../../Documentation/$(DOCS_REQUIREMENTS_NODEP) && pip freeze -r ../../Documentation/$(DOCS_REQUIREMENTS_NODEP) >> $(DOCS_REQUIREMENTS)"
++		require.Eventually(t, func() bool {
++			return endpointDeletionHandler.queue.Len() == 1
++		}, time.Second, 10*time.Millisecond)
+ 		received, _ := endpointDeletionHandler.queue.Get()
+ 		assert.Equal(t, deletedEndpoint, received)
++	})
++
++}
++
++func TestDynamicMetricsCleanupOnEndpointDeletion(t *testing.T) {
++	dfp, reg := newTestDynamicFlowProcessor(t)
++
++	processDropFlow(t, dfp, "deleted-source", "live-destination")
++	processDropFlow(t, dfp, "live-source", "deleted-destination")
++	processDropFlow(t, dfp, "live-source", "live-destination")
++	processDropFlow(t, dfp, "live-source", "live-destination")
++
++	require.Equal(t, map[string]float64{
++		"test/deleted-source->test/live-destination": 1,
++		"test/live-source->test/deleted-destination": 1,
++		"test/live-source->test/live-destination":    2,
++	}, gatheredDropMetrics(t, reg))
++
++	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
++		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-source", Namespace: "test"},
++	}))
++	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
++		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-destination", Namespace: "test"},
++	}))
++
++	require.EventuallyWithT(t, func(c *assert.CollectT) {
++		assert.Equal(c, map[string]float64{
++			"test/live-source->test/live-destination": 2,
++		}, gatheredDropMetrics(c, reg))
++	}, time.Second, 10*time.Millisecond)
++}
  
- clean: ## Clean up all artefacts from documentation.
- 	-$(QUIET)rm -rf _build _exts/__pycache__ _preview Pipfile Pipfile.lock
++func TestStaticMetricsCleanupOnEndpointDeletion(t *testing.T) {
++	previousEnabledMetrics := EnabledMetrics
++	previousEndpointDeletionHandler := endpointDeletionHandler
++	t.Cleanup(func() {
+ 		endpointDeletionHandler.queue.ShutDown()
++		EnabledMetrics = previousEnabledMetrics
++		endpointDeletionHandler = previousEndpointDeletionHandler
+ 	})
+ 
++	reg := prometheus.NewPedanticRegistry()
++	require.NoError(t, InitMetrics(
++		hivetest.Logger(t),
++		reg,
++		api.ParseStaticMetricsConfig([]string{"drop:sourceContext=pod;destinationContext=pod"}),
++		grpc_prometheus.NewServerMetrics(),
++	))
++	endpointDeletionHandler.gracefulPeriod = 0
++
++	processor := NewStaticFlowProcessor(hivetest.Logger(t), EnabledMetrics)
++	processDropFlow(t, processor, "deleted-source", "live-destination")
++	processDropFlow(t, processor, "live-source", "live-destination")
++	require.Equal(t, map[string]float64{
++		"test/deleted-source->test/live-destination": 1,
++		"test/live-source->test/live-destination":    1,
++	}, gatheredDropMetrics(t, reg))
++
++	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
++		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-source", Namespace: "test"},
++	}))
++	require.EventuallyWithT(t, func(c *assert.CollectT) {
++		assert.Equal(c, map[string]float64{
++			"test/live-source->test/live-destination": 1,
++		}, gatheredDropMetrics(c, reg))
++	}, time.Second, 10*time.Millisecond)
++}
++
++func TestDynamicMetricsCleanupUsesReplacementHandlers(t *testing.T) {
++	dfp, reg := newTestDynamicFlowProcessor(t)
++
++	cleanup := endpointDeletionHandler.cleanup
++	dequeued := make(chan struct{})
++	release := make(chan struct{})
++	released := false
++	releaseCleanup := func() {
++		if !released {
++			close(release)
++			released = true
++		}
++	}
++	t.Cleanup(releaseCleanup)
++	endpointDeletionHandler.cleanup = func(endpoint *types.CiliumEndpoint) {
++		close(dequeued)
++		<-release
++		cleanup(endpoint)
++	}
++
++	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
++		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-source", Namespace: "test"},
++	}))
++	select {
++	case <-dequeued:
++	case <-time.After(time.Second):
++		releaseCleanup()
++		t.Fatal("endpoint deletion was not dequeued")
++	}
++
++	config := api.Config{Metrics: []*api.MetricConfig{{
++		Name: "drop",
++		ContextOptionConfigs: []*api.ContextOptionConfig{
++			{Name: "sourceContext", Values: []string{"pod"}},
++			{Name: "destinationContext", Values: []string{"pod"}},
++		},
++	}}}
++	dfp.onConfigReload(t.Context(), 0, api.Config{})
++	dfp.onConfigReload(t.Context(), 0, config)
++
++	processDropFlow(t, dfp, "deleted-source"
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #49715** (2026-10-30): bpf: fix CIDR_IDENTITY_RANGE_END out of sync with MaxLocalIdentity (@smagnani96)
 - **PR #49713** (2026-10-30): cni-chaining: extend Documentation and warn when lacking route MTU (@smagnani96)
+- **PR #49712** (2026-10-30): hubble: fix deleted-pod metrics cleanup with dynamic configuration (@alexcastilio)
+- **PR #49709** (2026-10-30): ipsec: improve invalid key format error in loadIPSecKeys (@smagnani96)
 - **PR #49707** (2026-10-29): [v1.19] Backports 2026-10-29 (@aanm)
 - **PR #49706** (2026-10-30): [v1.20] Backports 2026-10-29 (@aanm)
-- **PR #49700** (closed): cilium-cli: Avoid connectivity setup hangs on stalled exec requests (@weizhoublue)
-- **PR #49699** (2026-10-30): endpoint: refresh DNS redirects after identity changes (@tklauser)
 
 ---
 
@@ -1408,38 +1563,28 @@ Signed-off-by: Joe Stringer <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: cni-chaining: document route MTU requirement
+## X. hubble: fix deleted-pod metrics cleanup with dynamic configuration
 
 **RULE**:
-When implementing operations in `Documentation/installation/cni-chaining.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/hubble/metrics/dynamic_flow_processor.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `06005d6d`: docs: cni-chaining: document route MTU requirement. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ef31e883`: hubble: fix deleted-pod metrics cleanup with dynamic configuration. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/installation/cni-chaining.rst`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/hubble/metrics/dynamic_flow_processor.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-.. _cni_chaining_mtu:
+	"github.com/cilium/cilium/pkg/k8s/types"
+	initEndpointDeletionHandler(dynamicFlowProcessor.processCiliumEndpointDeletion)
+func (d *DynamicFlowProcessor) processCiliumEndpointDeletion(endpoint *types.CiliumEndpoint) {
+	d.mutex.RLock()
+	defer d.mutex.RUnlock()
 
-MTU
-===
-
-By default, Cilium does not adjust the MTU of the Pods when chaining, so Pods
-use the MTU configured by the other CNI plugins. Features that add encapsulation
-or encryption overhead on top of Pod traffic are therefore not accounted for,
-and the resulting packets might get fragmented, which can lead to a network
-performance degradation.
-
-Set the Helm option ``cni.enableRouteMTUForCNIChaining`` to ``true`` to make
-Cilium set a route MTU for Pods that accounts for such overhead. This is
-required when using any of the following features:
-
-* :ref:`WireGuard encryption <encryption_wg>`
-* :ref:`Egress Gateway <egress-gateway>`
-* :ref:`Tunneling <encapsulation>` (``routingMode=tunnel``)
+	api.ProcessCiliumEndpointDeletion(endpoint, d.Metrics)
+}
 
 ```
 
@@ -1450,4 +1595,4 @@ required when using any of the following features:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `06005d6d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ef31e883` are properly handled with clean fallback behavior.

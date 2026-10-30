@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source**: github ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
-> **Source Version**: `b613d006`  
+> **Source Version**: `2e131019`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:38:30.409Z  
+> **Timestamp**: 2026-10-30T23:51:39.622Z  
 > **Learning ID**: `learn-github-laurent22-joplin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:38:30.115Z  
+> **Harvest Timestamp**: 2026-10-30T23:51:39.613Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Joplin - the privacy-focused note taking app with sync capabilities for Windows, macOS, Linux, Android and iOS.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 56903 stars
+- **Stars / Engagement**: 56950 stars
 
 ---
 
@@ -930,14 +930,11 @@ export {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16953** (2026-10-26): **Mobile: Fixes #16908: Replace oversized dropdown arrow glyph with a vector chevron**
-  *Symptoms*: On the note screen, the notebook dropdown arrow looks oversized on some Android devices (reported on a Galaxy S9+, less so on a Galaxy S23 Ultra). The arrow is not an icon at all: it is the text glyph U+25BC, rendered in the device's own system font, and it inherits the label's full header style (18pt bold) with no gap from the label. So its visual weight varies by device font instead of being controlled by the app.  Replace the glyph with the existing Icon component (ionicon chevron-down, the same chevron the sidebar already uses), with its own style: the label's color, a 16pt size, and a small start margin. It stays hidden from screen readers, as before. The existing Dropdown tests contain no assertions about the arrow.  Note that Dropdown is a shared component, so this changes the arrow everywhere it is used (notes-list picker, folder screen, and others), which keeps its appearance consistent, as the issue asks.  Manual testing plan: run the app, open a note, and compare the notebook dropdown arrow before and after this change. Fixes #16908.
+- **Issue #16977** (2026-10-30): **Desktop: Fixes #16976: Refresh spellcheck underlines on note load and document edit in Markdown editor**
+  *Symptoms*: # Summary Fixes #16976: In the Markdown editor (CodeMirror 6), spellcheck underlines for misspelled words did not appear upon opening or switching to a note until a space character was typed. While editing, actions such as backspacing or modifying words destroyed existing spelling markers and caused all squiggly underlines to disappear without re-appearing until a space was typed.  ### Root Cause Chromium/Electron's Blink layout engine only schedules spellcheck passes when native keyboard input events contain word delimiters (e.g. spaces, punctuation, enter). In CodeMirror 6, document text is injected programmatically upon note switching, and editing actions like backspacing are intercepted by CodeMirror (`preventDefault()`) which mutates and replaces DOM text nodes. When text nodes are replaced without a native word-boundary input event, Chromium destroys previous spelling markers and skips running its spellcheck pipeline. Consequently, red squiggly underlines never appear on note switch or disappear entirely on backspace until a space character is typed.  ### Solution 1. **`spellCheckRefreshExtension`**:    - Implemented a lightweight `ViewPlugin` registered in the CodeMirror 6 extensions pipeline.    - Schedules a 100ms quick refresh on initial editor creation, note switch (`setNoteIdEffect`), or editor focus gain (`focusChanged && hasFocus`).    - Schedules a 500ms debounced refresh on document edits (`docChanged`). If the user continues typing, the timer resets, ensuring
 
-- **Issue #16952** (2026-10-26): **Clipper: Fixes #16887: Fix Confirm button hidden when Firefox default font size is increased**
-  *Symptoms*: When Firefox's default font size is raised, the popup rows grow taller because body's line-height: 2em computes to an absolute value that gets inherited unchanged, and .App's overflow-y: hidden then clips the Confirm button off the bottom with no way to scroll to it. Use a unitless line-height so it scales with each element's own font-size, and let the popup scroll instead of clipping controls. Fixes #16887.
-  **Post-Mortem & Fix Analysis**:
-  > I have read the CLA Document and I hereby sign the CLA
-  > All contributors have signed the CLA  ✍️ ✅<br/><sub>Posted by the ****CLA Assistant Lite bot****.</sub>
+- **Issue #16958** (2026-10-30): **flatpak configuration forces creation of a backup directory separate from the user-configured directory**
+  *Symptoms*: ### Operating system  Linux  ### Joplin version  3.7.21  ### Desktop version info  3.7.21, Linux Fedora 44, flatpak version.  ### Current behaviour  The flatpak configuration forces creation of a backup directory separate from the user-configured directory.  ``` [Context] shared=ipc;network; sockets=cups;fallback-x11;pulseaudio;wayland; devices=dri; filesystems=~/.config/joplin-desktop:create;~/JoplinBackup:create;  [Session Bus Policy] org.kde.StatusNotifierWatcher=talk org.freedesktop.Notifications=talk com.canonical.AppMenu.Registrar=talk org.a11y.Bus=talk  [System Bus Policy] org.freedesktop.Avahi=talk ``` Because the flatpak configuration is creating this, there is no configuration toggle or setting within Joplin that prevents it. Disabling the backup plugin entirely does not work.  `flatpak override --user --nofilesystem=~/JoplinBackup net.cozic.joplin_desktop` is the workaround for this, but it would be better if the flatpak did not force a directory at all.  ### Expected behaviour  The application respects the user-configured backup folder and does not create an arbitrary directory.  ### Logs  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -954,202 +951,213 @@ export {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2c09ccab` (2026-10-26)
-**Commit Message**: fix(deps): update dependency @react-native-documents/picker to v12.0.2 (#16951)
+### Incident Patch 1: `f5823d1b` (2026-10-28)
+**Commit Message**: Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (#16964)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `packages/app-mobile/package.json` (modified, +1/-1)
+**File**: `packages/app-desktop/package.json` (modified, +1/-1)
 ```diff
-@@ -37,7 +37,7 @@
-     "@react-native-community/geolocation": "3.4.0",
-     "@react-native-community/netinfo": "12.0.1",
-     "@react-native-community/push-notification-ios": "1.12.0",
--    "@react-native-documents/picker": "12.0.1",
-+    "@react-native-documents/picker": "12.0.2",
-     "@react-native-vector-icons/fontawesome5": "13.1.2",
-     "@react-native-vector-icons/get-image": "13.0.0",
-     "@react-native-vector-icons/ionicons": "13.1.2",
+@@ -185,7 +185,7 @@
+     "color": "3.2.1",
+     "compare-versions": "6.1.1",
+     "debounce": "1.2.1",
+-    "electron": "42.3.0",
++    "electron": "42.11.18",
+     "electron-builder": "26.15.6",
+     "electron-updater": "6.6.8",
+     "electron-window-state": "5.0.3",
 ```
 
-**File**: `yarn.lock` (modified, +5/-5)
+**File**: `yarn.lock` (modified, +13/-32)
 ```diff
-@@ -12651,7 +12651,7 @@ __metadata:
-     "@react-native-community/geolocation": "npm:3.4.0"
-     "@react-native-community/netinfo": "npm:12.0.1"
-     "@react-native-community/push-notification-ios": "npm:1.12.0"
--    "@react-native-documents/picker": "npm:12.0.1"
-+    "@react-native-documents/picker": "npm:12.0.2"
-     "@react-native-vector-icons/fontawesome5": "npm:13.1.2"
-     "@react-native-vector-icons/get-image": "npm:13.0.0"
-     "@react-native-vector-icons/ionicons": "npm:13.1.2"
-@@ -16089,13 +16089,13 @@ __metadata:
+@@ -9934,6 +9934,13 @@ __metadata:
    languageName: node
    linkType: hard
  
--"@react-native-documents/picker@npm:12.0.1":
--  version: 12.0.1
--  resolution: "@react-native-documents/picker@npm:12.0.1"
-+"@react-native-documents/picker@npm:12.0.2":
-+  version: 12.0.2
-+  resolution: "@react-native-documents/picker@npm:12.0.2"
-   peerDependencies:
-     react: "*"
-     react-native: ">=0.79.0"
--  checksum: 10/5d915828a2baade9b476589738c2dc4ac192b4444006e198e15676e952991bdbf472163bb739592abf581fb7402a193c9cc49319fa986fb7fd6434aaae3a3a68
-+  checksum: 10/b525403dc90465fbf4c879f30fdde6e9f5208a4d075a4c7af2ab1f0724f1ad314faf4795fc1f89bb171978695f66ac00eeda3f562bc89320ecc189a5e84f0832
-   languageName: node
-   linkType: hard
- 
-```
-
----
-
-### Incident Patch 2: `ee7f9f4b` (2026-10-26)
-**Commit Message**: Doc: Resolves #16891: Add positive boolean naming guidance to coding_style.md (#16949)
-
-**File**: `readme/dev/coding_style.md` (modified, +16/-0)
-```diff
-@@ -149,6 +149,22 @@ const GRAVITY_ACCEL = 9.8;
- const gravityAccel = 9.8;
- ```
- 
-+### Prefer positive names for booleans
-+
-+When possible, use positive names for booleans to avoid double negatives.
-+
-+**BAD:**
-+```ts
-+const isHidden = true;
-+const isDisabled = true;
-+```
-+
-+**Good:**
-+```ts
-+const isShown = true;
-+const isEnabled = true;
-+```
-+
- ### Declare variables just before their usage
- 
- **BAD:**
-```
-
----
-
-### Incident Patch 3: `4fc42750` (2026-10-25)
-**Commit Message**: fix(deps): update dependency knex to v3.3.0 (#16937)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `packages/server/package.json` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@
-     "fs-extra": "11.3.6",
-     "html-entities": "1.4.0",
-     "jquery": "3.7.1",
--    "knex": "3.2.10",
-+    "knex": "3.3.0",
-     "koa": "2.16.4",
-     "ldapts": "8.1.8",
-     "markdown-it": "13.0.2",
-```
-
-**File**: `packages/transcribe/package.json` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@
-     "dotenv": "17.4.2",
-     "file-type": "16.5.4",
-     "fs-extra": "11.3.6",
--    "knex": "3.2.10",
-+    "knex": "3.3.0",
-     "koa": "2.16.4",
-     "koa-body": "6.0.1",
-     "pg-boss": "10.4.2",
-```
-
-**File**: `yarn.lock` (modified, +16/-7)
-```diff
-@@ -13170,7 +13170,7 @@ __metadata:
-     jest-expect-message: "npm:1.1.3"
-     jquery: "npm:3.7.1"
-     jsdom: "npm:26.1.0"
--    knex: "npm:3.2.10"
-+    knex: "npm:3.3.0"
-     koa: "npm:2.16.4"
-     ldapts: "npm:8.1.8"
-     markdown-it: "npm:13.0.2"
-@@ -13267,7 +13267,7 @@ __metadata:
-     gulp: "npm:4.0.2"
-     jest: "npm:29.7.0"
-     jest-expect-message: "npm:1.1.3"
--    knex: "npm:3.2.10"
-+    knex: "npm:3.3.0"
-     koa: "npm:2.16.4"
-     koa-body: "npm:6.0.1"
-     pg-boss: "npm:10.4.2"
-@@ -39906,9 +39906,9 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"knex@npm:3.2.10":
--  version: 3.2.10
--  resolution: "knex@npm:3.2.10"
-+"knex@npm:3.3.0":
-+  version: 3.3.0
-+  resolution: "knex@npm:3.3.0"
-   dependencies:
-     colorette: "npm:2.0.19"
-     commander: "npm:^10.0.0"
-@@ -39922,13 +39922,15 @@ __metadata:
-     pg-connection-string: "npm:2.6.2"
-     rechoir: "npm:^0.8.0"
-     resolve-from: "npm:^5.0.0"
--    tarn: "npm:^3.0.2"
-+    tarn: "npm:^3.1.0"
-     tildify: "npm:2.0.0"
-   peerDependencies:
-     pg-query-stream: ^4.14.0
-   peerDependenciesMeta:
-     better-sqlite3:
-       optional: true
-+    mariadb:
-+      optional: true
-     mysql:
-       optional: true
-     mysql2:
-@@ -39945,7 +39947,7 @@ __metadata:
-       optional: true
-   bin:
-     knex: bin/cli.js
--  checksum: 10/6d043d0d55bee2d6ecc977dd67fbff61121f8832d70a635f490a3979bf82cae001ee0b53a1d1222ef46c3f1bf5afac39b1fb918aaefabcc7a7a57d7c97e3cf7f
-+  checksum: 10/40924546fb223d186dd76b5eea415b5eaee517b9ba1d8ddad689e5c68a0e4e08fffe8e69f9e9d31ca533c8b8c0244f7bb47bc75b308efb58bceccc16322ec11d
-   languageName: node
-   linkType: hard
- 
-@@ -56594,6 +56596,13 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
-+"tarn@npm:^3.1.0":
-+  version: 3.1.2
-+  resolution: "tarn@npm:3.1.2"
-+  checksum: 10/7b8bb2f439abd867ac40ab72c2a1d8f6bf7825523c15189b71bcc2fe38b38a404319f0358cf32fa0d3c3b731eeff5429dfadae69eeb14eaf2903a4f04c0d7a18
++"@electron-internal/extract-zip@npm:^1.0.1":
++  version: 1.0.5
++  resolution: "@electron-internal/extract-zip@npm:1.0.5"
++  checksum: 10/f67a2ae62ab78df306e5ec38e917fed8faf87053cf13aa5d29784ed7da6d7b96b358b3559be1b6fa98d75636593dfed23ad89a8aafff5ffac01c3c88abdd0291
 +  languageName: node
 +  linkType: hard
 +
- "tcompare@npm:^5.0.6, tcompare@npm:^5.0.7":
-   version: 5.0.7
-   resolution: "tcompare@npm:5.0.7"
+ "@electron/asar@npm:3.4.1, @electron/asar@npm:^3.3.1":
+   version: 3.4.1
+   resolution: "@electron/asar@npm:3.4.1"
+@@ -12523,7 +12530,7 @@ __metadata:
+     color: "npm:3.2.1"
+     compare-versions: "npm:6.1.1"
+     debounce: "npm:1.2.1"
+-    electron: "npm:42.3.0"
++    electron: "npm:42.11.18"
+     electron-builder: "npm:26.15.6"
+     electron-updater: "npm:6.6.8"
+     electron-window-state: "npm:5.0.3"
+@@ -19708,15 +19715,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@types/yauzl@npm:^2.9.1":
+-  version: 2.10.0
+-  resolution: "@types/yauzl@npm:2.10.0"
+-  dependencies:
+-    "@types/node": "npm:*"
+-  checksum: 10/55d27ae5d346ea260e40121675c24e112ef0247649073848e5d4e03182713ae4ec8142b98f61a1c6cbe7d3b72fa99bbadb65d8b01873e5e605cdc30f1ff70ef2
+-  languageName: node
+-  linkType: hard
+-
+ "@types/yoga-layout@npm:1.9.2":
+   version: 1.9.2
+   resolution: "@types/yoga-layout@npm:1.9.2"
+@@ -29592,17 +29590,17 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"electron@npm:42.3.0":
+-  version: 42.3.0
+-  resolution: "electron@npm:42.3.0"
++"electron@npm:42.11.18":
++  version: 42.11.18
++  resolution: "electron@npm:42.11.18"
+   dependencies:
++    "@electron-internal/extract-zip": "npm:^1.0.1"
+     "@electron/get": "npm:^5.0.0"
+     "@types/node": "npm:^24.9.0"
+-    extract-zip: "npm:^2.0.1"
+   bin:
+     electron: cli.js
+     install-electron: install.js
+-  checksum: 10/969c82badc2cb9e573f82a7e87ca208f15bcee862b77a3d45d19e2f239ca8dcc6130442e20608daa54529847adbf06c0cb628f57c4e0cff3abd6b867b7f1e42a
++  checksum: 10/2cda7a3eff1f9fc91c7d6c332eb9a675624a3b152cbbb999d952dbaf1834dabe74d2765ea9785e510044c33aa45dfe25ad84694a1054b8020af87ab440d509ef
+   languageName: node
+   linkType: hard
+ 
+@@ -32036,23 +32034,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"extract-zip@npm:^2.0.1":
+-  version: 2.0.1
+-  resolution: "extract-zip@npm:2.0.1"
+-  dependencies:
+-    "@types/yauzl": "npm:^2.9.1"
+-    debug: "npm:^4.1.1"
+-    get-stream: "npm:^5.1.0"
+-    yauzl: "npm:^2.10.0"
+-  dependenciesMeta:
+-    "@types/yauzl":
+-      optional: true
+-  bin:
+-    extract-zip: cli.js
+-  checksum: 10/8cbda9debdd6d6980819cc69734d874ddd71051c9fe5bde1ef307ebcedfe949ba57b004894b585f758b7c9eeeea0e3d87f2dda89b7d25320459c2c9643ebb635
+-  languageName: node
+-  linkType: hard
+-
+ "extsprintf@npm:1.3.0":
+   version: 1.3.0
+   resolution: "extsprintf@npm:1.3.0"
+```
+
+---
+
+### Incident Patch 2: `2e131019` (2026-10-30)
+**Commit Message**: fix(deps): update dependency js-yaml to v4.3.1 (#16973)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `packages/lib/package.json` (modified, +1/-1)
+```diff
+@@ -78,7 +78,7 @@
+     "html-minifier": "4.0.0",
+     "image-data-uri": "2.0.1",
+     "immer": "9.0.21",
+-    "js-yaml": "4.3.0",
++    "js-yaml": "4.3.1",
+     "markdown-it": "13.0.2",
+     "md5": "2.3.0",
+     "md5-file": "5.0.0",
+```
+
+**File**: `packages/tools/package.json` (modified, +1/-1)
+```diff
+@@ -59,7 +59,7 @@
+     "gulp": "4.0.2",
+     "html-entities": "1.4.0",
+     "jest": "29.7.0",
+-    "js-yaml": "4.3.0",
++    "js-yaml": "4.3.1",
+     "rss": "1.2.2",
+     "sass": "1.101.7",
+     "sqlite3": "5.1.6",
+```
+
+**File**: `yarn.lock` (modified, +6/-6)
+```diff
+@@ -12958,7 +12958,7 @@ __metadata:
+     immer: "npm:9.0.21"
+     jest: "npm:29.7.0"
+     jest-expect-message: "npm:1.1.3"
+-    js-yaml: "npm:4.3.0"
++    js-yaml: "npm:4.3.1"
+     jsdom: "npm:26.1.0"
+     markdown-it: "npm:13.0.2"
+     md5: "npm:2.3.0"
+@@ -13234,7 +13234,7 @@ __metadata:
+     gulp: "npm:4.0.2"
+     html-entities: "npm:1.4.0"
+     jest: "npm:29.7.0"
+-    js-yaml: "npm:4.3.0"
++    js-yaml: "npm:4.3.1"
+     license-checker-rseidelsohn: "npm:4.4.2"
+     markdown-it: "npm:13.0.2"
+     md5-file: "npm:5.0.0"
+@@ -39266,14 +39266,14 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"js-yaml@npm:4.3.0":
+-  version: 4.3.0
+-  resolution: "js-yaml@npm:4.3.0"
++"js-yaml@npm:4.3.1":
++  version: 4.3.1
++  resolution: "js-yaml@npm:4.3.1"
+   dependencies:
+     argparse: "npm:^2.0.1"
+   bin:
+     js-yaml: bin/js-yaml.js
+-  checksum: 10/2bcec3a8118d7f744badeb04e14366578d234a736f353d41fe35d2305e4ce2409a8e041d277f07cd6bbc8aaa12128d650a68ce43247072519bede20962d2126f
++  checksum: 10/2ce71b5d632abbd77da80447bf860e8a0264e54bffe94840984887d58b023761495b523727547904517a6107a1ef189854b361e0fc44995ee13a84f222d7bd42
+   languageName: node
+   linkType: hard
+ 
+```
+
+---
+
+### Incident Patch 3: `85cdb8ad` (2026-10-28)
+**Commit Message**: Clipper: Fixes #16887: Keep the Confirm button reachable with a larger browser font size (#16929)
+
+**File**: `packages/app-clipper/popup/src/App.css` (modified, +3/-1)
+```diff
+@@ -2,7 +2,9 @@ body {
+ 	margin: 0;
+ 	padding: 0;
+ 	font-family: sans-serif;
+-	line-height: 2em;
++	/* What 2em gave at the default 16px. A fixed value, so a larger browser font size doesn't
++	   make every row taller and push the Confirm button out of the popup (#16887) */
++	line-height: 32px;
+ }
+ 
+ .App {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16977** (closed): Desktop: Fixes #16976: Refresh spellcheck underlines on note load and document edit in Markdown editor (@Ayush-AM)
+- **PR #16974** (closed): Server: Resolves #16975: Listen on a Unix socket when APP_SOCKET is set (@cyberb)
+- **PR #16973** (2026-10-30): fix(deps): update dependency js-yaml to v4.3.1 (@renovate[bot])
+- **PR #16964** (2026-10-28): Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (@personalizedrefrigerator)
+- **PR #16963** (closed): Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (@personalizedrefrigerator)
 - **PR #16955** (2026-10-27): chore(deps): update actions/github-script action to v9 (@renovate[bot])
-- **PR #16954** (2026-10-27): chore(deps): update nvidia/cuda docker tag to v13.3.1 (@renovate[bot])
-- **PR #16953** (closed): Mobile: Fixes #16908: Replace oversized dropdown arrow glyph with a vector chevron (@Shivain-codes)
-- **PR #16952** (closed): Clipper: Fixes #16887: Fix Confirm button hidden when Firefox default font size is increased (@Shivain-codes)
-- **PR #16951** (2026-10-26): fix(deps): update dependency @react-native-documents/picker to v12.0.2 (@renovate[bot])
-- **PR #16950** (closed): Clipper: Fixes #16887: Fix Confirm button hidden when Firefox default font size is increased (@Shivain-codes)
 
 ---
 
@@ -1169,28 +1177,28 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency @react-native-documents/picker to v12.0.2 (#16951)
+## X. Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (#16964)
 
 **RULE**:
-When implementing operations in `packages/app-mobile/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/app-desktop/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2c09ccab`: deps): update dependency @react-native-documents/picker to v12.0.2 (#16951). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f5823d1b`: Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (#16964). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-mobile/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-desktop/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@react-native-documents/picker": "12.0.2",
+    "electron": "42.11.18",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "@react-native-documents/picker": "12.0.1",
+    "electron": "42.3.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2c09ccab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f5823d1b` are properly handled with clean fallback behavior.

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T23:44:53.292Z",
-    "lastVerified": "2026-10-30T23:44:53.292Z",
+    "lastChecked": "2026-10-30T23:51:48.128Z",
+    "lastVerified": "2026-10-30T23:51:48.128Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -342,9 +342,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T23:22:01.515Z",
+    "lastChecked": "2026-10-30T23:51:43.888Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T23:22:01.515Z"
+    "lastVerified": "2026-10-30T23:51:43.888Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -554,11 +554,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "laurent22-joplin": {
-    "name": "joplin",
+    "name": "laurent22/joplin",
     "officialUrl": "https://github.com/laurent22/joplin",
-    "lastChecked": "2026-10-28T03:24:37.914Z",
-    "revisionIdentifier": "b613d006",
-    "lastVerified": "2026-10-28T03:24:37.914Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T23:51:39.613Z",
+    "lastVerified": "2026-10-30T23:51:39.613Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-laurent22-joplin",
+    "contentHash": "c5989e2e012ae28423aef3a03fdf2b9db14a95e16dfcad96fb2e1ba6498a414f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "open-policy-agent-gatekeeper": {
     "name": "gatekeeper",
@@ -1309,14 +1319,14 @@
     "officialUrl": "https://github.com/Hmbown/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T01:49:53.130Z",
-    "lastVerified": "2026-10-29T01:49:53.130Z",
+    "lastChecked": "2026-10-30T23:51:36.478Z",
+    "lastVerified": "2026-10-30T23:51:36.478Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "edee7dd8b0db065770e88498259b996a817a303d13b52440921daed728fb07bc",
+    "contentHash": "21fb542fb4687a240a2cf048ff7dce2c1fd67bd96557287ca7a112686112d243",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1801,14 +1811,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T19:54:16.636Z",
-    "lastVerified": "2026-10-30T19:54:16.636Z",
+    "lastChecked": "2026-10-30T23:51:44.936Z",
+    "lastVerified": "2026-10-30T23:51:44.936Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "6f3ca87601b4e811a46e3c11182a162638aa547000ec232e8fc6647775b3019b",
+    "contentHash": "4a39912ee49d8786b39759b9d4b68c9eb3eb09aadb5dfc52e13e8dd532cea64d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4887,9 +4897,9 @@
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
     "officialUrl": "https://github.com/orbitinghail/sqlsync",
-    "lastChecked": "2026-10-30T00:46:48.234Z",
+    "lastChecked": "2026-10-30T23:51:41.446Z",
     "revisionIdentifier": "7dc1af6b",
-    "lastVerified": "2026-10-30T00:46:48.234Z"
+    "lastVerified": "2026-10-30T23:51:41.446Z"
   },
   "async-rs-async-std": {
     "name": "async-std",
@@ -5712,9 +5722,9 @@
   "checkmarx-kics": {
     "name": "kics",
     "officialUrl": "https://github.com/Checkmarx/kics",
-    "lastChecked": "2026-10-30T04:25:13.771Z",
+    "lastChecked": "2026-10-30T23:51:36.464Z",
     "revisionIdentifier": "0f99087a",
-    "lastVerified": "2026-10-30T04:25:13.771Z"
+    "lastVerified": "2026-10-30T23:51:36.464Z"
   },
   "starrocks-starrocks": {
     "name": "StarRocks/starrocks",
@@ -11514,5 +11524,22 @@
     "lastChecked": "2026-10-30T23:44:40.640Z",
     "revisionIdentifier": "f06c800d",
     "lastVerified": "2026-10-30T23:44:40.640Z"
+  },
+  "facebook-docusaurus": {
+    "name": "meta/docusaurus",
+    "officialUrl": "https://github.com/facebook/docusaurus",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T23:51:39.374Z",
+    "lastVerified": "2026-10-30T23:51:39.374Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-meta-docusaurus",
+    "contentHash": "1055de047ba991c63641a8fab88d658c4ab10d565be7dda27ef3688a522d11d7",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
