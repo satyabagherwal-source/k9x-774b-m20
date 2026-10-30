@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md`  
 > **Source**: github ([https://github.com/webdriverio/webdriverio](https://github.com/webdriverio/webdriverio))  
-> **Source Version**: `ba88f76d`  
+> **Source Version**: `dc7be72b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T19:13:39.314Z  
+> **Timestamp**: 2026-10-30T20:22:00.538Z  
 > **Learning ID**: `learn-github-webdriverio-webdriverio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webdriverio/webdriverio](https://github.com/webdriverio/webdriverio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T19:13:38.879Z  
+> **Harvest Timestamp**: 2026-10-30T20:22:00.339Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Next-gen browser and mobile automation test framework for Node.js
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9861 stars
+- **Stars / Engagement**: 9866 stars
 
 ---
 
@@ -46,7 +46,8 @@ import {
     isFunctionAsync as isFnAsync,
     getArgumentType as getArgumentTypeOrig,
     isValidParameter as isValidParameterOrig,
-    commandCallStructure as commandCallStructureOrig
+    commandCallStructure as commandCallStructureOrig,
+    specFilePath as specFilePathOrig
 } from '../../packages/wdio-utils/src/utils.js'
 import webdriverMonadOrig from '../../packages/wdio-utils/src/monad.js'
 import {
@@ -131,6 +132,7 @@ export const isFunctionAsync = isFnAsync
 export const safeRequire = vi.fn().mockReturnValue(() => {})
 export const webdriverMonad = webdriverMonadOrig
 export const getArgumentType = getArgumentTypeOrig
+export const specFilePath = specFilePathOrig
 
 /**
  * shim
@@ -353,11 +355,11 @@ export default {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16279** (2026-10-27): **fix(@wdio/mocha-framework): give the root hooks of beforeSuite and afterSuite their own title**
-  *Symptoms*: ## Proposed changes  The Mocha adapter adds a root `before all` and `after all` hook to every run: they run the `beforeSuite` and `afterSuite` hooks of the config and the services. The hooks had no name, so Mocha gave them the title of an anonymous user root hook (`"before all" hook in "{root}"`). A reporter that lists root hooks showed each user root hook 2 times, the second one empty. Now they have their own title, in sequential and parallel mode:  - `"before all" hook: beforeSuite in "{root}"` (or `for "<first test>"`) - `"after all" hook: afterSuite in "{root}"` (or `for "<last test>"`)  **Named change:** the title of these 2 hooks in the reporter events. The title still starts with `"before all" hook` / `"after all" hook` and ends with `"{root}"` (or the test), which `@wdio/runner` and `@wdio/spec-reporter` check.  Real run (Mocha, root `before` + `after` with one command each, `describe('A')`), tracking: #16168:  | Report | `main` | This PR | |---|---|---| | Allure fixtures of test A1 | `"before all" hook in "{root}"` (1 step), `"before all" hook in "{root}"` (0 steps), `"after all" hook in "{root}"` (1 step), `"after all" hook in "{root}"` (0 steps) | `"before all" hook in "{root}"` (1 step), `"before all" hook: beforeSuite in "{root}"` (0 steps), `"after all" hook in "{root}"` (1 step), `"after all" hook: afterSuite in "{root}"` (0 steps) | | html `(root)` hooks (`removeOutput: false`) | `"before all" hook in "{root}"` 2 times, `"after all" hook in "{root}"` 2 times |
+- **Issue #16308** (2026-10-30): **fix(webdriverio, @wdio/session): report a value the browser rejected or reformatted in fill, and reject an empty range value**
+  *Symptoms*: ## Proposed changes  Since #16230, `setValue` throws `The browser rejected the value …` when an input it sets directly (date, time, range, color …) keeps its previous value. `wdio session fill` let that error through, so `e2e/session/inputs.test.ts` fails on `main` ([run 41008605345](https://github.com/webdriverio/webdriverio/actions/runs/41008605345/job/123909885702)). The PR did not run Session E2E, because the `session` path filter does not include `packages/webdriverio`.  | `wdio session fill …` | main | this PR | |---|---|---| | `#start 10/04/2026` (date) | `✖ The browser rejected the value "10/04/2026" for this input, …` | `✖ "#start" did not take "10/04/2026"; it has "".` + `A date input takes values like 2026-10-04.` | | `'label:has(#start)' 10/04/2026` (label around the date input) | same raw message, exit 1 | same as above, exit 2 | | `#volume loud` (range) | raw message | `did not take "loud"; it has "50".` + `A range input takes values like 50.` | | `#volume ''` (range at 70) | `Set "#volume" to 50 (it took 50: the nearest allowed value)` | `did not take ""; it has "70".` | | `#paint '#FF8800'` (color) | `✖ "#paint" did not take "#FF8800"; it has "#ff8800".` (the page has the color) | `Set "#paint" to #ff8800 (it took #ff8800: the format of the input)` | | `#start 2026-10-04` (the page puts back `2026-01-01`) | `did not take "2026-10-04"; it has "2026-01-01".` | same |  - `@wdio/session`: one helper turns the rejection into the usage error on the direct path and o
 
-- **Issue #16274** (2026-10-27): **fix(@wdio/cli, webdriver): load tsx on Node.js 18 and add the bidiConnectTimeout option (v9)**
-  *Symptoms*: ## Proposed changes  Two v9 fixes in one PR, to save CI time.  ### 1. `@wdio/cli`: tsx on Node.js 18  tsx 4.21.1 and later call `Array.prototype.toReversed` (Node.js 20+) when a tsconfig `extends` another one. `@wdio/cli` 9 depends on `tsx ^4.7.2`, so a fresh install on Node.js 18 gets tsx 4.23.15. The worker then stops at start:  ``` TypeError: E.toReversed is not a function or its return value is not iterable     at resolveEntry (.../tsx@4.23.15/node_modules/tsx/dist/register-B1c7OH6V.cjs:7:12650)     at resolveExtendsChain (...) ```  Seen on Dependabot #16263 (tsx 4.21.0 → 4.23.15): Component Test on Node 18.20.8 fails, Node 20 to 26 pass. The wdio CLI sets `TSX_TSCONFIG_PATH` to `e2e/browser-runner/tsconfig.json`, which has `extends`.  | Node.js | Change | |---|---| | 18 | Import a polyfill before tsx: in the launcher process (`importTsx()`) and in the worker `NODE_OPTIONS` (`--import <polyfill> --import tsx`). The polyfill also registers itself as a loader module, because Node.js 18 runs the tsx ESM hooks in a separate thread. | | 20+ | No change. |  The polyfill adds a non-enumerable `toReversed` only when it is missing. `toReversed` is the only Node.js 20+ API in tsx 4.23.15.  ### 2. `webdriver`: `bidiConnectTimeout` option (backport of #15987, with #15996)  On v9 the BiDi connection has a fixed 10 s limit. A busy Windows Firefox can accept it later, then the session continues as Classic and a BiDi-only call fails. Seen on Dependabot #16267, Multi-remote windows-latest
+- **Issue #16303** (2026-10-29): **fix(@wdio/utils): don't pass spawnOpts to Chromedriver as a --spawn-ppts flag**
+  *Symptoms*: ## Proposed changes  [//]: # (Describe the big picture of your changes here to communicate to the maintainers why we should accept this pull request. If it fixes a bug or resolves a feature request, be sure to link to that issue.)  ## How you tested  [//]: # (Name the smallest commands you ran, e.g. `pnpm run test:package webdriverio` or `pnpm run test:smoke mochaTestrunner`. Agents: see AGENTS.md.)  - [ ] Unit tests for the touched package(s) - [ ] Type definition tests (if the public API / command types changed) - [ ] Smoke or e2e (only if the testrunner, launcher, or a real browser path changed)  ## Types of changes  [//]: # (What types of changes does your code introduce to WebdriverIO?) [//]: # (_Put an `x` in the boxes that apply_)  - [ ] Polish (an improvement for an existing feature) - [ ] Bugfix (non-breaking change which fixes an issue) - [ ] New feature (non-breaking change which adds functionality) - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected) - [ ] Documentation update (improvements to the project's docs) - [ ] Specification changes (updates to WebDriver command specifications) - [ ] Internal updates (everything related to internal scripts, governance documentation and CI files)  ## Checklist  [//]: # (_Put an `x` in the boxes that apply. You can also fill these out after creating the PR. If you're unsure about any of them, don't hesitate to ask. We're here to help! This is simply a reminder of what we are 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -374,1242 +376,1178 @@ export default {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4257f55e` (2026-10-25)
-**Commit Message**: feat(@wdio/vitest-framework): Introducing Vitest with parallel run and fixtures (#16154)
+### Incident Patch 1: `cfe0e018` (2026-10-28)
+**Commit Message**: fix(@wdio/html-reporter, @wdio/reporter, @wdio/video-reporter, @wdio/mocha-framework): label each failed attempt of a retried test, copy the styles safely on Windows, give the Mocha config root hooks their own title, and use the base reporter's hook owner and spec file attempt (#16277)
 
-* refactor(@wdio/utils): share parallel context allocation between frameworks
+* refactor(@wdio/html-reporter): find the suite of an event with no test context from the hook owner of the base reporter
 
-Mocha and Cucumber each carried their own copy of the BiDi window and
-user-context allocation and cleanup. Move them to @wdio/utils so the
-upcoming Vitest framework can use the same code.
+The base reporter gives the owner of the open hook: the suite of a before
+all hook (hookSuiteUid) or the scenario of a Cucumber Before hook. The
+html reporter keeps the waiting events of each suite and the suites in
+which a test started, in place of its own stack of open suites; with no
+hook kind (another framework) it takes the innermost open suite of the
+base. No output change.
 
-* feat(@wdio/vitest-framework): run Vitest specs from the wdio testrunner
+* test(@wdio/reporter): the attempt of a spec file with specFileRetries
 
-framework: 'vitest' hands the run to Vitest: wdio.conf specs, maxInstances and
-capabilities become the Vitest include, maxWorkers and one project per
-capability. Each spec file gets its own session with the WDIO globals and
-expect-webdriverio as the default expect. test.concurrent tests run in their
-own browsing context (or user context) through the parallel context store,
-and throw without vitestOpts.parallelMode instead of sharing one window.
+This test fails: RunnerStats has only the runner value, which is
+specFileRetries + 1 for the first attempt and 1 with no retries.
 
-The launcher delegates to any framework that exports launch(), so other
-frameworks keep the worker path.
+* refactor(@wdio/reporter, @wdio/html-reporter, @wdio/video-reporter): decode the spec file attempt one time in RunnerStats
 
-* fix(@wdio/vitest-framework): give session start a hook timeout
+* fix(@wdio/html-reporter): list each root hook one time, and label the fail
 
-beforeAll starts the browser session, and Vitest's 10s hook default cut it
-off on a loaded machine, leaving the fork to hang until the pool kille
-
-**File**: `packages/wdio-cli/src/launcher.ts` (modified, +94/-3)
+**File**: `packages/wdio-html-reporter/README.md` (modified, +2/-0)
 ```diff
-@@ -1,19 +1,22 @@
- import fs from 'node:fs/promises'
-+import { fileURLToPath } from 'node:url'
- import exitHook from 'async-exit-hook'
+@@ -66,6 +66,8 @@ When a worker stops before it writes its results (for example it is killed), or
  
- import logger from '@wdio/logger'
- import { validateConfig, DEFAULT_MAX_INSTANCES_PER_CAPABILITY_VALUE } from '@wdio/config'
- import { ConfigParser } from '@wdio/config/node'
- import { initializePlugin, initializeLauncherService, sleep, enableFileLogging } from '@wdio/utils'
- import { setupDriver, setupBrowser } from '@wdio/utils/node'
--import type { Capabilities, Services } from '@wdio/types'
-+import type { Capabilities, Frameworks, Services } from '@wdio/types'
+ With [`specFileRetries`](https://webdriver.io/docs/retry#add-retries-on-a-per-specfile-basis), each attempt of a spec file writes its own file (`report-0-0.json`, `report-0-0-retry1.json`). The master report shows every attempt that wrote its results, with `(spec file attempt 1, retried)` after the suite titles of an earlier attempt, and counts only the last attempt. Only files with the same name except `-retry<n>` are attempts of one spec file (2 configurations with another `filename` stay separate); an old file of another spec file is left out, and a stopped attempt that a later attempt replaced does not make the report incomplete.
  
- import CLInterface from './interface.js'
- import { runLauncherHook, runOnCompleteHook, runServiceHook, type HookError, shouldEnableTsx, enableTsx } from './utils.js'
- import { TESTRUNNER_DEFAULTS, TS_FILE_EXTENSIONS, WORKER_GROUPLOGS_MESSAGES } from './constants.js'
- import type { RunCommandArguments } from './types.js'
- const log = logger('@wdio/cli:launcher')
- 
-+const LAUNCHER_FRAMEWORKS = new Set(['vitest', '@wdio/vitest-framework'])
++When a test or a Cucumber scenario runs again (Mocha [`retries`](https://webdriver.io/docs/retry#rerun-suites-in-mocha), the Cucumber [`retry`](https://webdriver.io/docs/retry#rerunning-in-cucumber) option, Vitest `retry`), each failed attempt stays in the report as its own entry, with `(attempt 1, retried)` after its title; only the last attempt counts.
 +
- interface Schedule {
-     cid: number
-     caps: WebdriverIO.Capabilities
-@@ -28,6 +31,18 @@ interface WorkerSpecs {
-     rid?: string
- }
+ The master report uses the options of the `ReportAggregator`: set `linkScreenshots`, `linkUrls`, `collapseTests`, `collapseSuites` and `showInBrowser` there. The options of the reporter are for the JSON files and the report of each worker (`produceHtml`).
  
-+/** Vitest `provide` structured-clones the args into forked workers, and programmatic callers may pass functions or classes */
-+function cloneableEntries<T extends object>(args: T): Partial<T> {
-+    return Object.fromEntries(Object.entries(args).filter(([, value]) => {
+ ## Options
+```
+
+**File**: `packages/wdio-html-reporter/src/htmlGenerator.ts` (modified, +33/-2)
+```diff
+@@ -13,6 +13,37 @@ import url from 'node:url'
+ 
+ dayjs.extend(duration)
+ 
++/** Windows: a file that another worker copies, or that an antivirus scans, is locked for a short time */
++const BUSY_RETRIES = 20
++const BUSY_RETRY_WAIT = 50
++const BUSY_CODES = new Set(['EPERM', 'EBUSY', 'EACCES'])
++
++/**
++ * The workers of a run copy the same styles and font next to their reports, at the same time on parallel
++ * workers: wait for a locked copy, then check the file
++ */
++async function copyAsset (from: string, to: string) {
++    const content = await fsp.readFile(from)
++    const copied = () => fsp.readFile(to).then((existing) => existing.equals(content), () => false)
++    for (let tries = 0; ; tries++) {
++        if (await copied()) {
++            return
++        }
 +        try {
-+            structuredClone(value)
-+            return true
-+        } catch {
-+            return false
-+        }
-+    })) as Partial<T>
-+}
-+
- export interface EndMessage {
-     cid: string, // is actually rid
-     exitCode: number,
-@@ -59,6 +74,8 @@ class Launcher {
- 
-     private _launcher?: Services.ServiceInstance[]
-     private _resolve?: Function
-+    #frameworkAbort = new AbortController()
-+    #frameworkLaunch?: Promise<number>
- 
-     constructor(
-         private _configFilePath: string,
-@@ -98,6 +115,12 @@ class Launcher {
-         let error: HookError | undefined = undefined
-         const caps = this.configParser.getCapabilities() as Capabilities.TestrunnerCapabilities
- 
-+        // Rejecting here keeps every hook, service and runner shutdown from running for a run that never starts
-+        const framework = await this.#loadFrameworkLauncher(config)
-+        if (framework) {
-+            this.#assertFrameworkSupportsRun(config.framework, caps)
-+        }
-+
-         try {
-             const { ignoredWorkerServices, launcherServices } = await initializeLauncherService(config, caps)
-             this._launcher = launcherServices
-@@ -134,7 +157,11 @@ class Launcher {
-                     .reduce((a, b) => a + b, 0)
-                 : 1
- 
--            this.interface = new CLInterface(config, totalWorkerCnt, this._isWatchMode)
-+            if (framework && config.specFileRetries > 0) {
-+                log.warn('specFileRetries is not supported with this framework and is ignored')
++            return await fsp.copyFile(from, to)
++        } catch (err) {
++            if (!BUSY_CODES.has((err as NodeJS.ErrnoException).code ?? '') || tries === BUSY_RETRIES) {
++                // another worker can end its copy during the last try
++                if (await copied()) {
++                    return
++                }
++                throw err
 +            }
-+            // The framework schedules specs itself, so no spec file is ever retried
-+            this.interface = new CLInterface(framework ? { ...config, specFileRetries: 0 } : config, totalWorkerCnt, this._isWatchMode)
-             config.runnerEnv!.FORCE_COLOR = Number(this.interface.hasAnsiSupport).toString()
- 
-             /**
-@@ -145,7 +172,34 @@ class Launcher {
-                 setupBrowser(config, caps)
-             ])
- 
--            exitCode = await this._runMode(config, caps)
-+            const cliInterface = this.interface
-+            if (framework) {
-+                this.#frameworkLaunch = framework.launch({
-+                    // ConfigParser keeps capabilities outside of getConfig()
-+                    config: { ...config, capabilities: caps } as WebdriverIO.Config,
-+                    specs: this.configParser.getSpecs().flat().map((spec) => spec.startsWith('file://') ? fileURLToPath(spec) : spec),
-+                    configFile: this._configFilePath,
-+                    args: cloneableEntries(this._args),
-+                    signal: this.#frameworkAbort.signal,
-+                    onEvent: (event) => {
-+                        if (event.type === 'job:start') {
-+                            const { cid, caps, specs } = event
-+                            cliInterface.emit('job:start', { cid, caps, specs, hasTests: true })
-+                        } else if (event.type === 'job:end') {
-+                            cliInterface.emit('job:end', { cid: event.cid, passed: event.passed, retries: 0 })
-+                        } else {
-+                            cliInterface.onMessage(event.message as Parameters<CLInterface['onMessage']>[0])
-+                        }
-+                    }
-+                })
-+            }
-+            exitCode = this.#frameworkLaunch
-+                ? Number(await this.#frameworkLaunch.catch((err) => {
-+                    // onComplete hooks must not see a green exit code for a crashed run
-+        
-```
-
-**File**: `packages/wdio-cli/tests/launcher.test.ts` (modified, +213/-1)
-```diff
-@@ -1,7 +1,9 @@
- import path from 'node:path'
-+import { pathToFileURL } from 'node:url'
- import { vi, describe, it, expect, afterEach, beforeEach } from 'vitest'
- import logger from '@wdio/logger'
- import { sleep, enableFileLogging, initializePlugin, initializeLauncherService } from '@wdio/utils'
-+import type { Frameworks } from '@wdio/types'
- import Launcher from '../src/launcher.js'
- 
- const caps: WebdriverIO.Capabilities = {
-@@ -34,7 +36,7 @@ vi.mock('../src/interface', () => ({
-         logHookError = vi.fn()
-         finalise = vi.fn()
- 
--        constructor (_config: WebdriverIO.Config, totalWorkerCnt: number) {
-+        constructor (public _config: WebdriverIO.Config, totalWorkerCnt: number) {
-             this.totalWorkerCnt = totalWorkerCnt
-         }
-     }
-@@ -981,6 +983,216 @@ describe('launcher', () => {
-             expect(dispose.mock.invocationCallOrder[0]).toBeGreaterThan(serviceOnComplete.mock.invocationCallOrder[0])
-         })
- 
-+        describe('framework with launch export', () => {
-+            const launch = vi.fn()
-+            const defaultPlugin = vi.mocked(initializePlugin).getMockImplementation()!
-+            const [specA, specB, specC] = ['/repo/a.ts', '/repo/b.ts', '/repo/c.ts'].map((spec) => path.resolve(spec))
-+
-+            const mockFramework = (framework: () => Promise<unknown>) => vi.mocked(initializePlugin).mockImplementation(
-+                (name, type) => type === 'framework' ? framework() as never : defaultPlugin(name, type)
-+            )
-+
-+            beforeEach(() => {
-+                launch.mockReset()
-+                launcher.interface!.logHookError = vi.fn()
-+                config.framework = 'vitest'
-+                launcher['_configFilePath'] = '/repo/wdio.conf.ts'
-+                launcher.configParser.getSpecs = vi.fn().mockReturnValue([pathToFileURL(specA).href, [specB, pathToFileURL(specC).href]])
-+            })
-+
-+            afterEach(() => {
-+                vi.mocked(initializePlugin).mockImplementation(defaultPlugin)
-+            })
-+
-+            it('delegates to launch instead of scheduling workers', async () => {
-+                mockFramework(async () => ({ launch }))
-+                launch.mockResolvedValue(0)
-+
-+                expect(await launcher.run()).toEqual(0)
-+                expect(launch).toHaveBeenCalledWith({
-+                    config: { ...config, capabilities: {} },
-+                    specs: [specA, specB, specC],
-+                    configFile: '/repo/wdio.conf.ts',
-+                    args: launcher['_args'],
-+                    signal: expect.any(AbortSignal),
-+                    onEvent: expect.any(Function)
-+                })
-+                expect(launcher['_runMode']).not.toBeCalled()
-+                expect(config.onComplete![0]).toBeCalledTimes(1)
-+            })
-+
-+            it('maps framework events onto the CLI interface', async () => {
-+                mockFramework(async () => ({ launch }))
-+                launch.mockImplementation(async ({ onEvent }: Frameworks.FrameworkLaunchParams) => {
-+                    onEvent!({ type: 'job:start', cid: '0-0', caps: { browserName: 'chrome' }, specs: ['/repo/a.ts'] })
-+                    onEvent!({ type: 'message', message: { origin: 'reporter', name: 'x', cid: '0-0' } })
-+                    onEvent!({ type: 'job:end', cid: '0-0', passed: false })
-+                    return 1
-+                })
-+
-+                await launcher.run()
-+
-+                expect(launcher.interface!.emit).toHaveBeenCalledWith('job:start', { cid: '0-0', caps: { browserName: 'chrome' }, specs: ['/repo/a.ts'], hasTests: true })
-+                expect(launcher.interface!.onMessage).toHaveBeenCalledWith({ origin: 'reporter', name: 'x', cid: '0-0' })
-+                expect(launcher.interface!.emit).toHaveBeenCalledWith('job:end', { cid: '0-0', passed: false, retries: 0 })
-+            })
-+
-+            it('creates the CLI interface without spec file retries and warns once', async () => {
-+                mockFramework(async () => ({ launch }))
-+                launch.mockResolvedValue(0)
-+                config.specFileRetries = 2
-+                const warn = vi.mocked(logger('@wdio/cli:launcher').warn)
-+                warn.mockClear()
-+
-+                await launcher.run()
-+
-+                expect((launcher.interface as any)._config.specFileRetries).toBe(0)
-+                expect(config.specFileRetries).toBe(2)
-+                expect(warn.mock.calls.filter(([message]) => String(message).includes('specFileRetries'))).toHaveLength(1)
-+            })
-+
-+            it('keeps spec file retries for frameworks without launch', async () => {
-+                mockFramework(async () => ({}))
-+                config.specFileRetries = 2
-+
-+                await launcher.run()
-+
-+                expect((launcher.interface as any)._config.specFileRetries).toBe(2)
-+            })
-+
-+            it('turns a failure count into exit code 1', async () => {
-+                mockFramewo
-```
-
-**File**: `packages/wdio-config/src/index.ts` (modified, +3/-2)
-```diff
-@@ -1,6 +1,6 @@
- /* istanbul ignore file */
- 
--import { DEFAULT_CONFIGS, DEFAULT_MAX_INSTANCES_PER_CAPABILITY_VALUE } from './constants.js'
-+import { DEFAULT_CONFIGS, DEFAULT_MAX_INSTANCES_PER_CAPABILITY_VALUE, SUPPORTED_HOOKS } from './constants.js'
- import { defineConfig, validateConfig, isCloudCapability } from './utils.js'
- 
- export {
-@@ -15,7 +15,8 @@ export {
-      * constants
-      */
-     DEFAULT_CONFIGS,
--    DEFAULT_MAX_INSTANCES_PER_CAPABILITY_VALUE
-+    DEFAULT_MAX_INSTANCES_PER_CAPABILITY_VALUE,
-+    SUPPORTED_HOOKS
- }
- 
- export * from './types.js'
-```
-
-**File**: `packages/wdio-cucumber-framework/src/parallel.ts` (modified, +1/-60)
-```diff
-@@ -37,6 +37,7 @@ import { EventEmitter } from 'node:events'
- import type { AsyncLocalStorage } from 'node:async_hooks'
- 
- import logger from '@wdio/logger'
-+import { allocateContext, cleanupAllocation, resolveMaxContexts, type ParallelContextAllocation } from '@wdio/utils'
- import * as Gherkin from '@cucumber/gherkin'
- import { IdGenerator } from '@cucumber/messages'
- import type * as messages from '@cucumber/messages'
-@@ -263,66 +264,6 @@ export function isParallelAvailable(): boolean {
-     return parallelModulesAvailable
- }
- 
--// ============================================================
--// Context allocation
--// ============================================================
--
--interface ParallelContextAllocation {
--    context: string
--    userContext?: string
--}
--
--function resolveMaxContexts(value: unknown, fallback: number): number {
--    return typeof value === 'number' && Number.isFinite(value) && value > 0
--        ? Math.max(1, Math.floor(value))
--        : Math.max(1, fallback)
--}
--
--async function removeUserContext(bidi: ParallelBrowser, userContext: string): Promise<void> {
--    try {
--        await bidi.browserRemoveUserContext?.({ userContext })
--    } catch (err) {
--        log.debug(`Cleanup error removing user context ${userContext}: ${(err as Error).message}`)
--    }
--}
--
--async function closeContext(bidi: ParallelBrowser, context: string, level: 'debug' | 'warn', label: string): Promise<void> {
--    try {
--        await bidi.browsingContextClose({ context })
--    } catch (err) {
--        log[level](`${label} ${context}: ${(err as Error).message}`)
--    }
--}
--
--async function cleanupAllocation(bidi: ParallelBrowser, { context, userContext }: ParallelContextAllocation): Promise<void> {
--    await closeContext(bidi, context, 'debug', 'Cleanup error closing context')
--    if (userContext) {
--        await removeUserContext(bidi, userContext)
--    }
--    bidi.__parallelContexts?.delete(context)
--}
--
--async function allocateContext(bidi: ParallelBrowser, mode: ParallelMode): Promise<ParallelContextAllocation> {
--    let allocation: ParallelContextAllocation
--    if (mode !== 'userContexts') {
--        const { context } = await bidi.browsingContextCreate({ type: 'window' })
--        allocation = { context }
--    } else {
--        const { userContext } = await bidi.browserCreateUserContext!({})
--        try {
--            const { context } = await bidi.browsingContextCreate({ type: 'window', userContext })
--            allocation = { context, userContext }
--        } catch (err) {
--            await removeUserContext(bidi, userContext)
--            throw err
--        }
--    }
--    // Register with the session ContextManager so navigations inside these
--    // windows don't trigger session-global re-anchoring (tree fetch + switchToWindow).
--    bidi.__parallelContexts?.add(allocation.context)
--    return allocation
--}
--
- // ============================================================
- // Feature-grouped pickle collection
- // ============================================================
-```
-
-**File**: `packages/wdio-mocha-framework/src/index.ts` (modified, +1/-2)
-```diff
-@@ -8,13 +8,12 @@ import Mocha from 'mocha'
- import { handleRequires } from 'mocha/lib/cli/run-helpers.cjs'
- 
- import logger from '@wdio/logger'
--import { executeHooksWithArgs } from '@wdio/utils'
-+import { executeHooksWithArgs, type ParallelMode } from '@wdio/utils'
- import type { Services } from '@wdio/types'
- 
- import { applyMochaDefaults, formatMessage, setupEnv } from './common.js'
- import { EVENTS, NOOP } from './constants.js'
- import type { MochaOpts as MochaOptsImport, FrameworkMessage, MochaError } from './types.js'
--import type { ParallelMode } from './parallel.js'
- import { runParallelTests } from './parallel.js'
- import type { EventEmitter } from 'node:events'
- 
-```
-
-**File**: `packages/wdio-mocha-framework/src/parallel.ts` (modified, +2/-62)
-```diff
-@@ -20,6 +20,7 @@ import Mocha from 'mocha'
- import type { Suite } from 'mocha'
- import logger from '@wdio/logger'
- import { dottedFullTitle, formatError, type TitledNode } from './common.js'
-+import { allocateContext, cleanupAllocation, resolveMaxContexts, type ParallelContextAllocation, type ParallelContextBrowser, type ParallelMode } from '@wdio/utils'
- import { MOCHA_TIMEOUT_MESSAGE } from './constants.js'
- import type { MochaError } from './types.js'
- import type { EventEmitter } from 'node:events'
-@@ -77,28 +78,9 @@ function resolveTimeoutMs(timeout?: number | string): number {
-  * webdriverio (to avoid a circular dependency), so we declare the shape
-  * we need here.
-  */
--interface ParallelBrowser extends WebdriverIO.Browser {
-+interface ParallelBrowser extends WebdriverIO.Browser, ParallelContextBrowser {
-     isBidi: boolean
-     __parallelContextStore?: AsyncLocalStorage<string>
--    /** Set of framework-managed parallel contexts (see session/context.ts). */
--    __parallelContexts?: Set<string>
--    browsingContextCreate?(params: { type: string; userContext?: string }): Promise<{ context: string }>
--    browsingContextClose?(params: { context: string }): Promise<void>
--    browserCreateUserContext?(params: Record<string, never>): Promise<{ userContext: string }>
--    browserRemoveUserContext?(params: { userContext: string }): Promise<void>
--}
--
--export type ParallelMode = 'contexts' | 'userContexts'
--
--export interface ParallelContextAllocation {
--    context: string
--    userContext?: string
--}
--
--export function resolveMaxContexts(value: number | undefined, fallback: number): number {
--    return typeof value === 'number' && Number.isFinite(value) && value > 0
--        ? Math.max(1, Math.floor(value))
--        : Math.max(1, fallback)
- }
- 
- interface CollectedTest {
-@@ -550,48 +532,6 @@ function callHook(hook: any, ctx: object, timeoutMs?: number, uncaught?: Uncaugh
-     })
- }
- 
--// ============================================================
--// Context pre-allocation
--// ============================================================
--
--async function removeUserContext(bidi: ParallelBrowser, userContext: string, level: 'warn' | 'debug' = 'warn') {
--    await bidi.browserRemoveUserContext!({ userContext }).catch(
--        (err) => { log[level](`[Parallel] failed to remove user context ${userContext}: ${(err as Error).message}`) }
--    )
--}
--
--async function allocateContext(bidi: ParallelBrowser, mode: ParallelMode): Promise<ParallelContextAllocation> {
--    let allocation: ParallelContextAllocation
--    if (mode !== 'userContexts') {
--        const { context } = await bidi.browsingContextCreate!({ type: 'window' })
--        allocation = { context }
--    } else {
--        const { userContext } = await bidi.browserCreateUserContext!({})
--        try {
--            const { context } = await bidi.browsingContextCreate!({ type: 'window', userContext })
--            allocation = { context, userContext }
--        } catch (err) {
--            await removeUserContext(bidi, userContext)
--            throw err
--        }
--    }
--    // Register with the session ContextManager so navigations inside these
--    // windows don't trigger session-global re-anchoring (tree fetch + switchToWindow).
--    bidi.__parallelContexts?.add(allocation.context)
--    return allocation
--}
--
--/** Never rejects: close window, then remove its user context, then unregister. */
--async function cleanupAllocation(bidi: ParallelBrowser, { context, userContext }: ParallelContextAllocation) {
--    await bidi.browsingContextClose!({ context }).catch(
--        (err) => { log.debug(`[Parallel] cleanup: failed to close context ${context}: ${(err as Error).message}`) }
--    )
--    if (userContext) {
--        await removeUserContext(bidi, userContext, 'debug')
--    }
--    bidi.__parallelContexts?.delete(context)
--}
--
- interface TestRunResult {
-     status: 'passed' | 'failed' | 'pending'
-     name: string
-```
-
-**File**: `packages/wdio-types/src/Frameworks.ts` (modified, +30/-0)
-```diff
-@@ -152,3 +152,33 @@ export interface Scenario {
-      */
-     tags: Tag[]
- }
-+
-+export interface FrameworkLaunchParams {
-+    config: WebdriverIO.Config
-+    /** Resolved absolute spec file paths, after `--spec` and `exclude` filtering. */
-+    specs: string[]
-+    configFile: string
-+    /** CLI arguments the launcher was started with, so framework workers can rebuild the same config. */
-+    args?: Record<string, unknown>
-+    /** Aborted when the launcher receives SIGINT/SIGTERM. The framework must cancel its run and resolve. */
-+    signal?: AbortSignal
-+    /** Receives the job and reporter events the CLI needs to render the run. */
-+    onEvent?: (event: FrameworkLaunchEvent) => void
-+}
-+
-+export type FrameworkLaunchEvent =
-+    | { type: 'job:start', cid: string, caps: WebdriverIO.Capabilities, specs: string[] }
-+    | { type: 'job:end', cid: string, passed: boolean }
-+    | { type: 'message', message: unknown }
-+
-+/**
-+ * Frameworks that schedule specs themselves export `launch`. The CLI then
-+ * calls it in the launcher process instead of starting WDIO workers.
-+ *
-+ * @experimental Internal to first-party frameworks (the CLI only honors an
-+ * allowlist). The contract may change in any release, without a major version.
-+ */
-+export interface FrameworkLauncher {
-+    /** @returns number of failures, `0` when the run passed */
-+    launch(params: FrameworkLaunchParams): Promise<number>
-+}
-```
-
-**File**: `packages/wdio-utils/src/index.ts` (modified, +12/-1)
-```diff
-@@ -20,6 +20,7 @@ import { TimingTracker, type TimingMetrics, type TimingPhase } from './profiler.
- import {
-     WDIO_KIND, WDIO_CHAINABLE, WDIO_KINDS, setWdioKind, getWdioKind, getLoadedWdioKind, isLoadedElement, isArrayOfElements, type WdioKind
- } from './kind.js'
-+import { allocateContext, cleanupAllocation, resolveMaxContexts, type ParallelMode, type ParallelContextAllocation, type ParallelContextBrowser } from './parallel/contexts.js'
- import { knownRoles, roleTable, ROLE_SYNONYMS, type AttributeTest, type RoleRule } from './roles.js'
- 
- export {
-@@ -100,5 +101,15 @@ export {
-     knownRoles,
-     ROLE_SYNONYMS,
-     type AttributeTest,
--    type RoleRule
-+    type RoleRule,
-+
-+    /**
-+     * BiDi context allocation for parallel test execution
-+     */
-+    allocateContext,
-+    cleanupAllocation,
-+    resolveMaxContexts,
-+    type ParallelMode,
-+    type ParallelContextAllocation,
-+    type ParallelContextBrowser
- }
-```
-
----
-
-### Incident Patch 2: `f5499765` (2026-10-25)
-**Commit Message**: fix(webdriverio): remove the log of the ChromeDriver BiDi Mapper so that BiDi commands do not get slower (#16225)
-
-* fix(webdriverio): remove the log of the ChromeDriver BiDi Mapper so that BiDi commands do not get slower
-
-ChromeDriver runs the BiDi Mapper in a hidden target with a 0x0 viewport, and
-the Mapper writes each BiDi message into its page. The layout of that log made
-each large message (for example a screenshot) slower than the one before.
-WebdriverIO now removes the #logs element of the Mapper page once for each
-Chrome BiDi session. https://issues.chromium.org/issues/577213792
-
-* fix(webdriverio): find the BiDi Mapper by its title and stop after a blocked CDP endpoint
-
-- find the Mapper target by its title (chrome-headless-shell gives it the type page)
-- detach from the Mapper target also when the script cannot be sent
-- after a failed CDP request, do not use the endpoint again in this process
-  (a grid can block it, and each failed request is retried)
-- an e2e test checks that the Mapper page has no log
-
-Code review 1 of #16225.
-
-* fix(webdriverio): remove the BiDi Mapper log only with a local driver and an "other" target
-
-- attach only to a Mapper target of type other:
-
-**File**: `e2e/wdio/headless/bidiMapperLog.e2e.ts` (added, +59/-0)
-```diff
-@@ -0,0 +1,59 @@
-+import { browser, expect } from '@wdio/globals'
-+
-+interface TargetInfo {
-+    targetId: string
-+    type: string
-+    title: string
-+}
-+
-+const MAPPER_TITLE = 'BiDi-CDP Mapper'
-+
-+// random pixels: the PNG does not compress, so its BiDi message is large
-+const NOISE_PAGE = 'data:text/html,<body style="margin:0"><canvas id=c width=455 height=455></canvas><script>' +
-+    'const c=document.getElementById("c").getContext("2d");const d=c.createImageData(455,455);' +
-+    'for(let i=0;i<d.data.length;i++)d.data[i]=i%4===3?255:Math.random()*256|0;c.putImageData(d,0,0)</script>'
-+
-+/**
-+ * The page of the ChromeDriver BiDi Mapper is a hidden target. A script there
-+ * cannot return a value through the ChromeDriver CDP endpoint, so it writes the
-+ * result into the page title, and `Target.getTargets` reads it. This uses
-+ * another channel than `session/bidiMapperLog.ts` on purpose: a bug there must
-+ * not hide here.
-+ */
-+async function getMapperPage () {
-+    const targets = async () => (await browser.sendCommandAndGetResult('Target.getTargets', { filter: [{}] }) as { targetInfos: TargetInfo[] }).targetInfos
-+    const mapper = (await targets()).find(({ title, type }) => title === MAPPER_TITLE && type === 'other')
-+    expect(mapper).toBeDefined()
-+    const { sessionId } = await browser.sendCommandAndGetResult('Target.attachToTarget', { targetId: mapper!.targetId, flatten: false }) as { sessionId: string }
-+    const send = (id: number, expression: string) => browser.sendCommandAndGetResult('Target.sendMessageToTarget', {
-+        sessionId,
-+        message: JSON.stringify({ id, method: 'Runtime.evaluate', params: { expression } })
-+    })
-+    try {
-+        await send(1, `document.title = '${MAPPER_TITLE} ' + JSON.stringify({ logs: Boolean(document.getElementById('logs')), size: document.documentElement.outerHTML.length })`)
-+        let title = ''
-+        await browser.waitUntil(async () => {
-+            title = (await targets()).find(({ targetId }) => targetId === mapper!.targetId)?.title ?? ''
-+            return title.startsWith(`${MAPPER_TITLE} {`)
-+        })
-+        return JSON.parse(title.slice(MAPPER_TITLE.length + 1)) as { logs: boolean, size: number }
-+    } finally {
-+        await send(2, `document.title = '${MAPPER_TITLE}'`)
-+        await browser.sendCommandAndGetResult('Target.detachFromTarget', { sessionId })
++            await new Promise((resolve) => setTimeout(resolve, BUSY_RETRY_WAIT))
++        }
 +    }
 +}
 +
-+// https://issues.chromium.org/issues/577213792
-+describe('ChromeDriver BiDi Mapper', () => {
-+    it('has no log in its page, so large BiDi messages do not slow down later commands', async () => {
-+        expect(browser.isBidi).toBe(true)
-+        await browser.url(NOISE_PAGE)
-+        const { data } = await browser.browsingContextCaptureScreenshot({ context: await browser.getWindowHandle() })
-+        expect(data.length).toBeGreaterThan(500_000)
+ /**
+  * The path of a file relative to the report, as a link: the browser reads `#`, `?`
+  * and `%` in a file name as URL characters
+@@ -277,11 +308,11 @@ class HtmlGenerator {
+ 
+                         const reportCss = rootdirname + '/css/report-styles.css'
+                         const destCss = reportOptions.outputDir + '/report-styles.css'
+-                        await fsp.copyFile(reportCss, destCss)
++                        await copyAsset(reportCss, destCss)
+ 
+                         const cssFont = rootdirname + '/css/glyphicons-halflings-regular.woff'
+                         const fontDest = reportOptions.outputDir + '/glyphicons-halflings-regular.woff'
+-                        await fsp.copyFile(cssFont, fontDest)
++                        await copyAsset(cssFont, fontDest)
+                     }
+                 } catch (error) {
+                     failed = true
+```
+
+**File**: `packages/wdio-html-reporter/src/htmlReporter.ts` (modified, +60/-38)
+```diff
+@@ -3,10 +3,9 @@ import type {
+     CommandArgs,
+     HookStats,
+     RunnerStats,
+-    SuiteStats,
+     TestStats
+ } from '@wdio/reporter'
+-import WDIOReporter, { getSessionNames, hookCountsAsFailure, knownFramework } from '@wdio/reporter'
++import WDIOReporter, { getSessionNames, hookCountsAsFailure, knownFramework, SuiteStats } from '@wdio/reporter'
+ 
+ import  { HtmlReporterOptions, InternalReportEvent, Metrics, ReportData } from './types.js'
+ import dayjs from 'dayjs'
+@@ -21,8 +20,6 @@ import util from 'node:util'
+ import logger from '@wdio/logger'
+ 
+ type ReportEvent = InternalReportEvent | { type: string, value: unknown }
+-/** sequential mode: a suite whose first test did not start yet, and the events of its before hooks */
+-type WaitingSuite = { uid?: string, events: ReportEvent[] }
+ 
+ const reportProxy = new ReportEvents()
+ const TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
+@@ -43,17 +40,6 @@ function reportCapabilities (capabilities: unknown) {
+     return Object.fromEntries(REPORT_CAPABILITIES.filter((name) => caps[name] !== undefined).map((name) => [name, caps[name]]))
+ }
+ 
+-/**
+- * The attempt of a spec file with `specFileRetries`: 0 for the first one. The runner gives
+- * the first attempt `specFileRetries + 1` (the launcher does not know the retries yet),
+- * and 1 when there are no retries
+- */
+-function specFileAttempt (runner: RunnerStats) {
+-    const specFileRetries = (runner.config as { specFileRetries?: number } | undefined)?.specFileRetries ?? 0
+-    const retry = runner.retry ?? 0
+-    return specFileRetries && retry <= specFileRetries ? retry : 0
+-}
+-
+ /**
+  * The runner data for the report files, which are often shared (for example as CI
+  * artifacts): only the fields that the report uses, and no configuration, session
+@@ -75,7 +61,7 @@ function reportInfo (runner: RunnerStats): RunnerStats {
+         end: runner.end,
+         _duration: runner._duration,
+         isMultiRemote: runner.isMultiRemote,
+-        retry: specFileAttempt(runner),
++        retry: runner.specFileAttempt,
+         capabilities,
+         // the names of the full capabilities: the reduced copy above cannot name an app
+         browserNames: getSessionNames(runner.capabilities, runner.isMultiRemote),
+@@ -113,11 +99,12 @@ export default class HtmlReporter extends WDIOReporter {
+     /** parallel mode: the events of a context before its test starts (a before hook) */
+     #earlyEvents = new Map<string, ReportEvent[]>()
+     /**
+-     * sequential mode: the open suites whose first test did not start yet, the outer one first
+-     * (the first one is for the events before any suite). An event with no test context (a
+-     * `before all` or Cucumber `Before` hook) waits in the innermost one for the next test
++     * sequential mode: the events with no test context of each suite in which no test started yet
++     * (a `before all` or Cucumber `Before` hook, or the root suite before any suite), for its next test
+      */
+-    #waitingSuites: WaitingSuite[] = [{ events: [] }]
++    #suiteEvents = new Map<SuiteStats, ReportEvent[]>()
++    /** sequential mode: the suites in which a test started */
++    #startedSuites = new WeakSet<SuiteStats>()
+     /** parallel mode: a test of a context started (a skipped test never starts); until then, events with no context wait */
+     #contextTestStarted = false
+     /** the screenshot files of `useOnAfterCommandForScreenshot` */
+@@ -175,8 +162,8 @@ export default class HtmlReporter extends WDIOReporter {
+         this.on('suite:retry', ({ uid, contextId }: { uid: string, contextId?: string }) => {
+             if (contextId) {
+                 this.#contextTests.delete(contextId)
+-            } else {
+-                this.#waitingSuites = [{ uid, events: [] }]
++            } else if (this.suites[uid]) {
++                this.#startedSuites.delete(this.suites[uid])
+             }
+         })
+     }
+@@ -203,9 +190,6 @@ export default class HtmlReporter extends WDIOReporter {
+ 
+     onSuiteStart(suite: SuiteStats) {
+         this._suiteUids.set(suite.uid, suite)
+-        if (!this.#contextTestStarted) {
+-            this.#waitingSuites.push({ uid: suite.uid, events: [] })
+-        }
+         suite.start = new Date()
+         this.LOG.info(`onSuiteStart: ${suite.cid}:${suite.uid}`)
+     }
+@@ -246,9 +230,33 @@ export default class HtmlReporter extends WDIOReporter {
+         }
+     }
+ 
++    /** the waiting events of the open suites, the outer suite first (the first parallel test also takes those of the other suites) */
+     #takeWaitingEvents(events: ReportEvent[]) {
+-        events.push(...this.#waitingSuites.flatMap((suite) => suite.events))
+-        this.#waitingSuites = []
++        for (const suite of [...this.currentSuites, ...this.#suiteEvents.keys()]) {
++            events.push(...this.#suiteEvents.get(suite) ?? [])
++            this.#suiteEvents.delete(suite)
++            this.#startedSuites.add(suite)
++        }
++    }
 +
-+        const page = await getMapperPage()
-+        expect(page.logs).toBe(false)
-+        // also when a Chrome update writes the log into another element
-+        expect(page.size).toBeLessThan(data.length / 10)
++    /**
++     * sequential mode: the suite whose next test
+```
+
+**File**: `packages/wdio-html-reporter/tests/htmlGenerator.test.ts` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++import fs from 'node:fs'
++import fsp from 'node:fs/promises'
++import os from 'node:os'
++import path from 'node:path'
++import { describe, expect, it, vi } from 'vitest'
++
++import HtmlGenerator from '../src/htmlGenerator.js'
++import { Metrics, ReportData } from '../src/types.js'
++import type { HtmlReporterOptions } from '../src/types.js'
++import { RUNNER } from './testdata.js'
++
++describe('HtmlGenerator.htmlOutput', () => {
++    // the workers of a run write their reports to the same folder, and each copies the styles and the font
++    it('copies the styles and the font when several reports in one folder end at the same time', async () => {
++        const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), 'html-assets-'))
++        const options = { outputDir, filename: 'report.html', reportTitle: 'Assets', produceHtml: true } as HtmlReporterOptions
++        for (let round = 0; round < 5; round++) {
++            const results = await Promise.all(Array.from({ length: 16 }, (_, worker) => HtmlGenerator.htmlOutput(options,
++                new ReportData('Assets', RUNNER, [], new Metrics(), path.join(outputDir, `report-${round}-${worker}.html`), 'chrome'))))
++            expect(results.every(Boolean)).toBe(true)
++        }
++        const css = fs.readFileSync(path.join(__dirname, '..', 'css', 'report-styles.css'))
++        expect(fs.readFileSync(path.join(outputDir, 'report-styles.css')).equals(css)).toBe(true)
++        expect(fs.existsSync(path.join(outputDir, 'glyphicons-halflings-regular.woff'))).toBe(true)
++    })
++
++    // Windows: a copy fails with EBUSY while the file is locked, for example while another worker copies it
++    it.each([
++        ['passes when another worker writes the same file', 'same', 1, true],
++        ['passes when another worker writes the same file after 9 busy copies (an antivirus scan)', 'same', 10, true],
++        ['fails when an old file stays locked', 'old', 1, false],
++        ['fails when the file is not there', 'none', 1, false]
++    ])('a busy copy of the styles %s', async (_name, file, writtenAtCall, expected) => {
++        const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), 'html-busy-'))
++        const options = { outputDir, filename: 'report.html', reportTitle: 'Busy', produceHtml: true } as HtmlReporterOptions
++        let calls = 0
++        const copyFile = vi.spyOn(fsp, 'copyFile').mockImplementation(async (from, to) => {
++            if (file !== 'none' && ++calls >= writtenAtCall) {
++                fs.writeFileSync(to as string, file === 'same' ? fs.readFileSync(from as string) : 'old styles')
++            }
++            throw Object.assign(new Error('EBUSY: resource busy or locked, copyfile'), { code: 'EBUSY' })
++        })
++        try {
++            const result = await HtmlGenerator.htmlOutput(options, new ReportData('Busy', RUNNER, [], new Metrics(), path.join(outputDir, 'report.html'), 'chrome'))
++            expect(result).toBe(expected)
++        } finally {
++            copyFile.mockRestore()
++        }
 +    })
 +})
 ```
 
-**File**: `e2e/wdio/wdio.conf.ts` (modified, +1/-0)
+**File**: `packages/wdio-html-reporter/tests/reporter.test.ts` (modified, +51/-4)
 ```diff
-@@ -23,6 +23,7 @@ export const config: WebdriverIO.Config = {
-         path.join(__dirname, 'headless', 'missingListItemOverwrite.e2e.ts'),
-         path.join(__dirname, 'headless', 'setFiles.e2e.ts'),
-         path.join(__dirname, 'headless', 'browsingContexts.e2e.ts'),
-+        path.join(__dirname, 'headless', 'bidiMapperLog.e2e.ts'),
+@@ -747,6 +747,35 @@ describe('retries and hooks of a feature', () => {
+         expect(classOf('flaky suite')).toBe('suite-pass')
+     })
+ 
++    // Mocha `retries`, Cucumber scenario level and Vitest retry a test: each failed attempt is its own entry
++    it.each([
++        ['a new uid for each attempt (Mocha)', (attempt: number) => attempt ? `t1-retry${attempt}` : 't1'],
++        ['the same uid for each attempt (Cucumber scenario level)', () => 't1']
++    ])('labels the failed attempts of a retried test, %s', async (_name, uid) => {
++        const { json } = await run(`retried-test-${uid(1)}`, (reporter) => {
++            reporter.emit('suite:start', suite('flaky suite'))
++            for (const attempt of [0, 1]) {
++                reporter.emit('test:start', { ...test(uid(attempt), 'flaky', 'flaky suite'), retries: attempt })
++                reporter.emit('test:retry', { ...test(uid(attempt), 'flaky', 'flaky suite'), error: { message: `attempt ${attempt + 1}` } })
++            }
++            reporter.emit('test:start', { ...test(uid(2), 'flaky', 'flaky suite'), retries: 2 })
++            reporter.emit('test:pass', test(uid(2), 'flaky', 'flaky suite'))
++            reporter.emit('test:end', test(uid(2), 'flaky', 'flaky suite'))
++            reporter.emit('suite:end', suite('flaky suite'))
++        })
++        expect(json.suites[0].tests.map((entry: { title: string, state: string }) => [entry.title, entry.state])).toEqual([
++            ['flaky (attempt 1, retried)', 'failed'],
++            ['flaky (attempt 2, retried)', 'failed'],
++            ['flaky', 'passed']
++        ])
++        // the page shows the error of each failed attempt
++        expect(json.suites[0].tests.map((entry: { events: { type: string, value: { message: string } }[] }) => entry.events.filter((event) => event.type === 'Error').map((event) => event.value.message))).toEqual([
++            ['attempt 1'],
++            ['attempt 2'],
++            []
++        ])
++    })
++
+     // @wdio/vitest-framework sends the failed hook of a retried attempt with `retried: true`
+     it('shows a suite with a failed hook of a retried attempt as passed when the test passed on retry', async () => {
+         const { classOf } = await run('k24-hook', (reporter) => {
+@@ -800,8 +829,10 @@ describe('retries and hooks of a feature', () => {
+             const attempts = feature.suites.map((entry: { title: string, start: string, end: string, _duration: number, tests: { state: string }[] }) => ({
+                 title: entry.title, start: entry.start, end: entry.end, duration: entry._duration, states: entry.tests.map((step) => step.state)
+             }))
++            // the scenario has the label, not its failed step
++            expect(feature.suites[0].tests[0].title).toBe('a step')
+             expect(attempts).toEqual([
+-                { title: 'S', start: '2026-10-25T10:00:00.000Z', end: '2026-10-25T10:00:03.000Z', duration: 3000, states: ['failed', ...after] },
++                { title: 'S (attempt 1, retried)', start: '2026-10-25T10:00:00.000Z', end: '2026-10-25T10:00:03.000Z', duration: 3000, states: ['failed', ...after] },
+                 // the scenario keeps the start of its first attempt and the duration of all attempts, as main
+                 { title: 'S', start: '2026-10-25T10:00:00.000Z', end: '2026-10-25T10:00:07.000Z', duration: 7000, states: ['passed', ...after.map(() => 'passed')] }
+             ])
+@@ -814,7 +845,7 @@ describe('retries and hooks of a feature', () => {
+         }
+     })
+ 
+-    it('gives the second failed attempt of a Cucumber scenario its own times', async () => {
++    it('gives the second failed attempt of a Cucumber scenario its own times and attempt label', async () => {
+         vi.useFakeTimers({ toFake: ['Date'] })
+         const at = (time: string) => vi.setSystemTime(new Date(`2026-10-25T10:00:${time}.000Z`))
+         try {
+@@ -837,8 +868,8 @@ describe('retries and hooks of a feature', () => {
+                 reporter.emit('suite:end', suite('S', 'scenario', 'F'))
+                 reporter.emit('suite:end', suite('F', 'feature'))
+             }, cucumber)
+-            const times = json.suites[0].suites.map((entry: { start: string, end: string }) => [entry.start.slice(17, 19), entry.end.slice(17, 19)])
+-            expect(times).toEqual([['00', '03'], ['03', '06'], ['00', '08']])
++            const times = json.suites[0].suites.map((entry: { title: string, start: string, end: string }) => [entry.title, entry.start.slice(17, 19), entry.end.slice(17, 19)])
++            expect(times).toEqual([['S (attempt 1, retried)', '00', '03'], ['S (attempt 2, retried)', '03', '06'], ['S', '00', '08']])
+         } finally {
+             vi.useRealTimers()
+         }
+@@ -1407,6 +1438,22 @@ describe('sequential mode: events of a before hook', () => {
+         expect(logsOf(reporter, 'B1')).toEqual(['before all of A', 'before all of B'])
+     })
+ 
++    it('takes the suite of a before all hook from the hook owner of the base reporte
+```
+
+**File**: `packages/wdio-mocha-framework/src/index.ts` (modified, +41/-28)
+```diff
+@@ -27,10 +27,16 @@ interface ParsedConfiguration extends Required<WebdriverIO.Config> {
+     mochaOpts: MochaOptsImport
+ }
+ 
+-/** The reporter fields of a root-suite hook in a sequential run (Mocha's setHookTitle) */
++/** a hook of the config or of a service to run (the runner adds the service hooks before the framework starts) */
++function hasHooks(hooks: unknown) {
++    return [hooks].flat().some((hook) => typeof hook === 'function')
++}
++
++/** The reporter fields of the root-suite hook of the config hooks in a sequential run (Mocha's setHookTitle) */
+ function rootHookMessage(kind: 'before all' | 'after all', tests: { title: string }[] = []) {
+     const test = kind === 'before all' ? tests[0] : tests[tests.length - 1]
+-    const title = test ? `"${kind}" hook for "${test.title}"` : `"${kind}" hook in "{root}"`
++    const hook = `"${kind}" hook: ${kind === 'before all' ? 'beforeSuite' : 'afterSuite'}`
++    const title = test ? `${hook} for "${test.title}"` : `${hook} in "{root}"`
+     return { title, fullTitle: title, parent: '', hookKind: kind === 'before all' ? 'beforeAll' as const : 'afterAll' as const }
+ }
+ 
+@@ -140,6 +146,8 @@ class MochaAdapter {
+ 
+     async run () {
+         const mocha = this._mocha!
++        // the suite duration of afterSuite, also with no beforeSuite hook (which sets it again)
++        this._suiteStartDate = Date.now()
+ 
+         const parallelMode = this._config.mochaOpts?.parallelMode
+         if (parallelMode === 'contexts' || parallelMode === 'userContexts') {
+@@ -191,21 +199,8 @@ class MochaAdapter {
+             mochaSuite.filterOnly?.()
+         }
+ 
+-        // Config hooks are surfaced as paired hook:start/hook:end events like
+-        // sequential mode's root-suite hooks (wrapHook): prepareMessage payloads
+-        // with Mocha's root hook title. They run against the session-global context (no tab).
+         const rootTests = (mocha.suite as unknown as { tests?: { title: string }[] }).tests
+-        const beforeSuiteMsg = this.prepareMessage('beforeSuite')
+-        const beforeSuiteHook = { ...beforeSuiteMsg, ...rootHookMessage('before all', rootTests) }
+-        const beforeSuiteUid = this.getSyncEventIdStart('hook')
+-        this._reporter.emit('hook:start', { ...beforeSuiteHook, type: 'hook:start', cid: this._cid, specs: this._specs, uid: beforeSuiteUid })
+-        try {
+-            await executeHooksWithArgs('beforeSuite', this._config.beforeSuite as Function, [beforeSuiteMsg])
+-            this._reporter.emit('hook:end', { ...beforeSuiteHook, type: 'hook:end', state: 'pass', duration: Date.now() - this._suiteStartDate, cid: this._cid, specs: this._specs, uid: beforeSuiteUid })
+-        } catch (err) {
+-            log.error(`Error in beforeSuite hook: ${(err as Error).stack?.slice(7) || (err as Error).message}`)
+-            this._reporter.emit('hook:end', { ...beforeSuiteHook, type: 'hook:end', state: 'fail', duration: Date.now() - this._suiteStartDate, error: { name: (err as Error).name || 'Error', message: (err as Error).message, stack: (err as Error).stack }, cid: this._cid, specs: this._specs, uid: beforeSuiteUid })
+-        }
++        await this._runRootHook('beforeSuite', rootTests)
+ 
+         let failures: number
+         let runtimeError: Error | undefined
+@@ -229,19 +224,32 @@ class MochaAdapter {
+             failures = 1
+         }
+ 
+-        const afterSuiteMsg = this.prepareMessage('afterSuite')
+-        const afterSuiteHook = { ...afterSuiteMsg, ...rootHookMessage('after all', rootTests) }
+-        const afterSuiteStartUid = this.getSyncEventIdStart('hook')
+-        this._reporter.emit('hook:start', { ...afterSuiteHook, type: 'hook:start', cid: this._cid, specs: this._specs, uid: afterSuiteStartUid })
++        await this._runRootHook('afterSuite', rootTests)
++
++        return this._finalize(failures, runtimeError)
++    }
++
++    /**
++     * Parallel mode: the config hooks surface as paired hook:start/hook:end events like sequential mode's
++     * root-suite hooks (wrapHook): prepareMessage payloads with Mocha's root hook title. They run against
++     * the session-global context (no tab)
++     */
++    private async _runRootHook(hookName: 'beforeSuite' | 'afterSuite', rootTests?: { title: string }[]) {
++        if (!hasHooks(this._config[hookName])) {
++            return
++        }
++        const message = this.prepareMessage(hookName)
++        const hook = { ...message, ...rootHookMessage(hookName === 'beforeSuite' ? 'before all' : 'after all', rootTests) }
++        const fields = { cid: this._cid, specs: this._specs, uid: this.getSyncEventIdStart('hook') }
++        const start = Date.now()
++        this._reporter.emit('hook:start', { ...hook, type: 'hook:start', ...fields })
+         try {
+-            await executeHooksWithArgs('afterSuite', this._config.afterSuite as Function, [afterSuiteMsg])
+-            this._reporter.emit('hook:end', { ...afterSuiteHook, type: 'hook:end', state: 'pass', duration: Date.now() - this._suiteStartDate, cid: th
+```
+
+**File**: `packages/wdio-mocha-framework/tests/adapter.test.ts` (modified, +74/-11)
+```diff
+@@ -31,6 +31,9 @@ const adapterFactory = (config: any) => new MochaAdapter(
+     wdioReporter as any
+ )
+ 
++/** a config with `beforeSuite` and `afterSuite` hooks (of the config or of a service) */
++const SUITE_HOOKS = { beforeSuite: [() => {}], afterSuite: [() => {}] }
++
+ beforeEach(() => {
+     wdioReporter.write.mockReset()
+     wdioReporter.emit.mockReset()
+@@ -50,6 +53,21 @@ test('comes with a factory', async () => {
+     expect(result).toBe(0)
+ })
+ 
++test.each([
++    ['beforeSuite and afterSuite', SUITE_HOOKS, ['beforeSuite'], ['afterSuite']],
++    ['beforeSuite only', { beforeSuite: [() => {}], afterSuite: [] }, ['beforeSuite'], []],
++    ['afterSuite only', { afterSuite: () => {} }, [], ['afterSuite']]
++])('adds a root hook with its own title for each config hook to run: %s', async (_name, hooks, before, after) => {
++    // @ts-ignore params not needed for test scenario
++    const adapter = adapterFactory(hooks)
++    await adapter.init()
++    await adapter.run()
++    // @ts-ignore outdated types
++    const runner = adapter['_mocha']!['runner']
++    expect(runner.suite.beforeAll.mock.calls.map(([title]: [string]) => title)).toEqual(before)
++    expect(runner.suite.afterAll.mock.calls.map(([title]: [string]) => title)).toEqual(after)
++})
++
+ test('should properly set up mocha', async () => {
+     // @ts-ignore params not needed for test scenario
+     const adapter = adapterFactory()
+@@ -67,10 +85,11 @@ test('should properly set up mocha', async () => {
+     // @ts-ignore outdated types
+     const runner = adapter['_mocha']!['runner']
+     expect(runner.on.mock.calls).toHaveLength(Object.keys(EVENTS).length)
+-    expect(runner.suite.beforeAll).toBeCalled()
++    // no beforeSuite / afterSuite hook to run: no root hook for them
++    expect(runner.suite.beforeAll).not.toBeCalled()
+     expect(runner.suite.beforeEach).not.toBeCalled()
+     expect(runner.suite.afterEach).not.toBeCalled()
+-    expect(runner.suite.afterAll).toBeCalled()
++    expect(runner.suite.afterAll).not.toBeCalled()
+ 
+     expect(adapter['_mocha']!.addFile).toBeCalledWith('/foo/bar.test.js')
+ })
+@@ -202,9 +221,26 @@ describe('prepareMessage', () => {
+ })
+ 
+ describe('parallel mode config hooks', () => {
++    test('emits no hook event with no beforeSuite / afterSuite hook to run', async () => {
++        // @ts-ignore params not needed for test scenario
++        const adapter = adapterFactory({ mochaOpts: { parallelMode: 'contexts' }, beforeSuite: [], afterSuite: [] })
++        await adapter.init()
++        adapter['_mocha']!.suite = { suites: [{ title: 'first suite' }] } as any
++
++        ;(globalThis as any).browser = { isBidi: true, __bidiCommandsEnabled: true }
++        try {
++            expect(await adapter.run()).toBe(0)
++        } finally {
++            delete (globalThis as any).browser
++        }
++
++        expect(wdioReporter.emit.mock.calls.filter((c) => c[0].startsWith('hook:'))).toEqual([])
++        expect(runParallelTests).toBeCalledTimes(1)
++    })
++
+     test('emits paired hook events around beforeSuite/afterSuite', async () => {
+         // @ts-ignore params not needed for test scenario
+-        const adapter = adapterFactory({ mochaOpts: { parallelMode: 'contexts' } })
++        const adapter = adapterFactory({ mochaOpts: { parallelMode: 'contexts' }, ...SUITE_HOOKS })
+         await adapter.init()
+         adapter['_mocha']!.suite = { suites: [{ title: 'first suite' }] } as any
+ 
+@@ -223,9 +259,9 @@ describe('parallel mode config hooks', () => {
+         expect(hookStarts.length).toBe(2)
+         expect(hookEnds.length).toBe(2)
+         // the titles of the root-suite hooks of a sequential run
+-        expect(hookStarts.map((c) => c[1].title)).toEqual(['"before all" hook in "{root}"', '"after all" hook in "{root}"'])
+-        expect(hookEnds.map((c) => c[1].title)).toEqual(['"before all" hook in "{root}"', '"after all" hook in "{root}"'])
+-        expect(hookStarts[0][1].fullTitle).toBe('"before all" hook in "{root}"')
++        expect(hookStarts.map((c) => c[1].title)).toEqual(['"before all" hook: beforeSuite in "{root}"', '"after all" hook: afterSuite in "{root}"'])
++        expect(hookEnds.map((c) => c[1].title)).toEqual(['"before all" hook: beforeSuite in "{root}"', '"after all" hook: afterSuite in "{root}"'])
++        expect(hookStarts[0][1].fullTitle).toBe('"before all" hook: beforeSuite in "{root}"')
+         expect(hookStarts[0][1].parent).toBe('')
+         expect(hookStarts[0][1].type).toBe('hook:start')
+         // start/end share a uid; afterSuite end carries duration + state
+@@ -238,7 +274,7 @@ describe('parallel mode config hooks', () => {
+ 
+     test('sends the kind of the beforeSuite / afterSuite root hooks, and the uid of the hook:start on a failing hook:end', async () => {
+         // @ts-ignore params not needed for test scenario
+-        const adapter = adapterFactory({ mochaOpts: { parallelMode: 'contexts' } })
++        const adapter = adapterFactory({ mochaOpts: { parallelMode: 'contexts' }, ...SUITE_HO
+```
+
+**File**: `packages/wdio-mocha-framework/tests/hookKind.test.ts` (modified, +3/-3)
+```diff
+@@ -22,7 +22,7 @@ async function run(build: (root: Mocha.Suite) => void, mochaOpts: Record<string,
+     }
+     const adapter = new MochaAdapter(
+         '0-0',
+-        { mochaOpts: { failHookAffectedTests: true, ...mochaOpts }, after: [], beforeSuite: [], afterSuite: [] } as never,
++        { mochaOpts: { failHookAffectedTests: true, ...mochaOpts }, after: [], beforeSuite: [() => {}], afterSuite: [() => {}] } as never,
+         ['/spec.js'],
+         {},
+         reporter
+@@ -59,14 +59,14 @@ describe('Mocha sequential hook events: hookKind and hookSuiteUid', () => {
+         expect(starts).toEqual([
+             // the root `before` and WDIO beforeSuite: the root suite has no suite event, so no hookSuiteUid
+             ['"before all" hook: root setup in "{root}"', 'beforeAll', undefined],
+-            ['"before all" hook in "{root}"', 'beforeAll', undefined],
++            ['"before all" hook: beforeSuite in "{root}"', 'beforeAll', undefined],
+             ['"before all" hook for outer', 'beforeAll', suiteUid(events, 'outer')],
+             ['"before all" hook for inner', 'beforeAll', suiteUid(events, 'inner')],
+             ['"before each" hook for outer', 'beforeEach', undefined],
+             ['"after each" hook for outer', 'afterEach', undefined],
+             ['"after all" hook for inner', 'afterAll', suiteUid(events, 'inner')],
+             ['"after all" hook for outer', 'afterAll', suiteUid(events, 'outer')],
+-            ['"after all" hook in "{root}"', 'afterAll', undefined]
++            ['"after all" hook: afterSuite in "{root}"', 'afterAll', undefined]
+         ])
+         expect(logMock.debug).not.toHaveBeenCalled()
+     })
+```
+
+---
+
+### Incident Patch 2: `f621b855` (2026-10-29)
+**Commit Message**: fix(webdriver, @wdio/cli): don't crash on a failed BiDi attach, and reject --shard 0/N (#16265)
+
+* fix(webdriver): don't crash the process when an attached session can't connect to BiDi
+
+`attachToSession` registered its Bidi message listener on `socket.on(...)`
+without checking that `waitForConnected()` resolved `true`. When the
+websocket was unreachable there is no socket, so the callback threw a
+TypeError in a promise nobody handled, and Node terminated the process
+with an unhandledRejection.
+
+A connection that fails before a socket exists (e.g. an invalid
+`webSocketUrl`) also rejected `BidiCore.connect()` unhandled in
+`initiateBidi`, and left `waitForConnected()` pending forever.
+
+Now the attached session listens only once connected, `connect()`
+resolves `waitForConnected()` with `false` when it throws, and
+`initiateBidi` logs the failed connection. The session keeps working
+over classic WebDriver.
+
+Fixes #16240
+
+* fix(@wdio/cli): reject a shard outside of 1..total instead of running no spec
+
+The `shard` validation accepted `current: 0` although shards are
+one-based: `--shard 0/4` ran no spec and exited with 0, while the specs
+of the last shard ran in no job. `shard.current` now
+
+**File**: `packages/wdio-cli/src/constants.ts` (modified, +9/-2)
+```diff
+@@ -302,8 +302,15 @@ export const TESTRUNNER_DEFAULTS: Options.Definition<Options.Testrunner & { capa
+                 throw new Error('the "shard" option needs to have "current" and "total" properties with number values')
+             }
+ 
+-            if (p.current < 0 || p.current > p.total) {
+-                throw new Error('the "shard.current" value has to be between 0 and "shard.total"')
++            if (!Number.isInteger(p.total) || p.total < 1) {
++                throw new Error('the "shard.total" value has to be a positive integer')
++            }
++
++            /**
++             * shards are one-based: a shard 0 would run no spec and pass (#16240)
++             */
++            if (!Number.isInteger(p.current) || p.current < 1 || p.current > p.total) {
++                throw new Error('the "shard.current" value has to be an integer between 1 and "shard.total"')
+             }
+         }
+     },
+```
+
+**File**: `packages/wdio-cli/tests/constants.test.ts` (modified, +13/-0)
+```diff
+@@ -63,6 +63,19 @@ describe('constants', () => {
+             expect(() => TESTRUNNER_DEFAULTS.execArgv!.validate!('foobar')).toThrow()
+         })
+ 
++        it('should expect a one-based shard (#16240)', () => {
++            TESTRUNNER_DEFAULTS.shard!.validate!({ current: 1, total: 4 })
++            TESTRUNNER_DEFAULTS.shard!.validate!({ current: 4, total: 4 })
++
++            expect(() => TESTRUNNER_DEFAULTS.shard!.validate!({ current: 0, total: 4 }))
++                .toThrow('the "shard.current" value has to be an integer between 1 and "shard.total"')
++            expect(() => TESTRUNNER_DEFAULTS.shard!.validate!({ current: 5, total: 4 })).toThrow()
++            expect(() => TESTRUNNER_DEFAULTS.shard!.validate!({ current: 1.5, total: 4 })).toThrow()
++            expect(() => TESTRUNNER_DEFAULTS.shard!.validate!({ current: 0, total: 0 }))
++                .toThrow('the "shard.total" value has to be a positive integer')
++            expect(() => TESTRUNNER_DEFAULTS.shard!.validate!({ current: 1, total: 2.5 })).toThrow()
++        })
++
+         it('should expect filesToWatch to be an array', () => {
+             TESTRUNNER_DEFAULTS.filesToWatch!.validate!([])
+             // @ts-expect-error wrong parameter
+```
+
+**File**: `packages/webdriver/src/bidi/core.ts` (modified, +9/-1)
+```diff
+@@ -126,7 +126,15 @@ export class BidiCore {
+         /**
+          * try to connect to different websocket urls depending on the protocol
+          */
+-        this.#ws = await environment.value.createBidiConnection(this.#webSocketUrl, this.#clientOptions, this.#connectTimeout)
++        try {
++            this.#ws = await environment.value.createBidiConnection(this.#webSocketUrl, this.#clientOptions, this.#connectTimeout)
++        } catch (err) {
++            /**
++             * e.g. an invalid url: `waitForConnected()` must not wait forever
++             */
++            this.#resolveWaitForConnected(false)
++            throw err
++        }
+         this._isConnected = Boolean(this.#ws)
+         this.#resolveWaitForConnected(this._isConnected)
+ 
+```
+
+**File**: `packages/webdriver/src/index.ts` (modified, +8/-2)
+```diff
+@@ -156,8 +156,14 @@ export default class WebDriver {
+          * parse and propagate all Bidi events to the browser instance
+          */
+         if (isBidi(options.capabilities || {})) {
+-            client._bidiHandler?.waitForConnected().then(()=>{
+-                client._bidiHandler?.socket.on('message', parseBidiMessage.bind(client))
++            /**
++             * attaching doesn't wait for the connection: when it fails, there is no socket
++             * to listen on, and an error here would crash the process (#16240)
++             */
++            client._bidiHandler?.waitForConnected().then((isConnected: boolean) => {
++                if (isConnected) {
++                    client._bidiHandler?.socket?.on('message', parseBidiMessage.bind(client))
++                }
+             })
+         }
+         return client
+```
+
+**File**: `packages/webdriver/src/utils.ts` (modified, +4/-1)
+```diff
+@@ -481,7 +481,10 @@ export function initiateBidi (
+     socketUrl = socketUrl.replace('localhost', '127.0.0.1')
+     const bidiReqOpts = getBidiRequestOptions(strictSSL, userHeaders)
+     const handler = new BidiHandler(socketUrl, bidiReqOpts, responseTimeout, connectTimeout)
+-    handler.connect().then((isConnected) => isConnected && log.info(`Connected to WebDriver Bidi interface at ${socketUrl}`))
++    handler.connect().then(
++        (isConnected) => isConnected && log.info(`Connected to WebDriver Bidi interface at ${socketUrl}`),
++        (err: Error) => log.error(`Could not connect to WebDriver Bidi interface at ${socketUrl}: ${err.message}`)
++    )
+ 
+     return {
+         _bidiHandler: { value: handler },
+```
+
+**File**: `packages/webdriver/tests/bidi.test.ts` (modified, +10/-0)
+```diff
+@@ -433,6 +433,16 @@ describe('BidiCore', () => {
+         })
+     })
+ 
++    describe('connect', () => {
++        it('stops waiting for the connection when it can not connect (#16240)', async () => {
++            vi.mocked(environment.value.createBidiConnection).mockRejectedValueOnce(new TypeError('Invalid URL'))
++            const handler = new BidiCore('not a url')
++            await expect(handler.connect()).rejects.toThrow('Invalid URL')
++            await expect(handler.waitForConnected()).resolves.toBe(false)
++            expect(handler.isConnected).toBe(false)
++        })
++    })
++
+     describe('sendAsync', () => {
+         beforeAll(() => {
+             delete process.env.WDIO_UNIT_TESTS
+```
+
+**File**: `packages/webdriver/tests/index.test.ts` (modified, +31/-0)
+```diff
+@@ -381,6 +381,37 @@ describe('WebDriver', () => {
+             expect(utils.initiateBidi).toHaveBeenLastCalledWith('ws://foo/bar', undefined, undefined, undefined, 30000)
+         })
+ 
++        it('listens to the Bidi messages of an attached session once it connects', async () => {
++            const socket = { on: vi.fn() }
++            vi.spyOn(utils, 'initiateBidi').mockReturnValueOnce({
++                _bidiHandler: { value: { waitForConnected: () => Promise.resolve(true), socket } }
++            })
++            const capabilities = { browserName: 'chrome', webSocketUrl: 'ws://foo/bar' } as WebdriverIO.Capabilities
++            WebDriver.attachToSession({ ...sessionOptions, capabilities })
++            await vi.waitFor(() => expect(socket.on).toHaveBeenCalledWith('message', expect.any(Function)))
++        })
++
++        it('does not crash the process when the Bidi connection of an attached session fails (#16240)', async () => {
++            const onUnhandledRejection = vi.fn()
++            process.on('unhandledRejection', onUnhandledRejection)
++            try {
++                /**
++                 * a failed connection has no socket
++                 */
++                vi.spyOn(utils, 'initiateBidi').mockReturnValueOnce({
++                    _bidiHandler: { value: { waitForConnected: () => Promise.resolve(false), socket: undefined } }
++                })
++                const capabilities = { browserName: 'chrome', webSocketUrl: 'ws://foo/bar' } as WebdriverIO.Capabilities
++                const client = WebDriver.attachToSession({ ...sessionOptions, capabilities })
++                await new Promise((resolve) => setTimeout(resolve, 10))
++
++                expect(onUnhandledRejection).not.toHaveBeenCalled()
++                expect(client.sessionId).toBe('foobar')
++            } finally {
++                process.off('unhandledRejection', onUnhandledRejection)
++            }
++        })
++
+         it('should fail attaching to session if sessionId is not given', () => {
+             // @ts-ignore
+             expect(() => WebDriver.attachToSession({}))
+```
+
+**File**: `packages/webdriver/tests/utils.test.ts` (modified, +27/-1)
+```diff
+@@ -4,9 +4,13 @@ import type { Capabilities, Options } from '@wdio/types'
+ 
+ import '../src/browser.js'
+ 
++// @ts-expect-error mock feature
++import { logMock } from '@wdio/logger'
++import { environment } from '../src/environment.js'
+ import {
+     isSuccessfulResponse, getPrototype, getSessionError,
+-    startWebDriverSession, setupDirectConnect, validateCapabilities, getBidiRequestOptions
++    startWebDriverSession, setupDirectConnect, validateCapabilities, getBidiRequestOptions,
++    initiateBidi
+ } from '../src/utils.js'
+ import type { Client, RemoteConfig } from '../src/types.js'
+ 
+@@ -124,6 +128,28 @@ describe('utils', () => {
+         })
+     })
+ 
++    describe('initiateBidi', () => {
++        it('logs a failed connection instead of an unhandled rejection (#16240)', async () => {
++            const { createBidiConnection } = environment.value
++            const onUnhandledRejection = vi.fn()
++            process.on('unhandledRejection', onUnhandledRejection)
++            environment.value.createBidiConnection = vi.fn().mockRejectedValue(new TypeError('Invalid URL'))
++            try {
++                const { _bidiHandler } = initiateBidi('not a url')
++                await expect(_bidiHandler.value.waitForConnected()).resolves.toBe(false)
++                await new Promise((resolve) => setTimeout(resolve, 10))
++
++                expect(onUnhandledRejection).not.toHaveBeenCalled()
++                expect(logMock.error).toHaveBeenCalledWith(
++                    'Could not connect to WebDriver Bidi interface at not a url: Invalid URL'
++                )
++            } finally {
++                environment.value.createBidiConnection = createBidiConnection
++                process.off('unhandledRejection', onUnhandledRejection)
++            }
++        })
++    })
++
+     describe('setupDirectConnect', () => {
+         class TestClient implements Client {
+             // @ts-expect-error
+```
+
+---
+
+### Incident Patch 3: `ac46fc07` (2026-10-29)
+**Commit Message**: fix(webdriverio): scope mockRestoreAll and mockClearAll to the tab or parallel test that calls them (#16273)
+
+* fix(webdriverio): scope mockRestoreAll and mockClearAll to the tab or parallel test that calls them
+
+tab.mockRestoreAll() / tab.mockClearAll() also restored or cleared the
+session-wide mocks and the mocks of the other tabs, although the docs say
+"Mock the requests of this tab or window only". In parallel mode, one
+test's browser.mockRestoreAll() restored the mocks of the tests running
+at the same time and the mocks created in beforeSuite.
+
+A mock already knows its scope: mock() gives a tab mock or a parallel
+test's mock its context, and a session-wide mock none. mocksOf() picks the
+mocks of the caller with the same rule: every mock of the session for
+`browser`, only the mocks made for the context on a tab or in a parallel
+test. isOwnedBy() takes that context, and mock() uses the same
+isContextScoped() rule, so creating and restoring cannot drift apart.
+Outside a tab or a parallel test, nothing changes, so @wdio/session
+`unmock --all` still removes every mock.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(webdriverio): restore the mocks a parallel test made on
+
+**File**: `e2e/wdio/headless/browsingContexts.e2e.ts` (modified, +27/-1)
+```diff
+@@ -95,7 +95,9 @@ describe('browsing contexts', () => {
+         </script>`),
+         '/api/scoped': () => 'real',
+         '/api/restored': () => 'real',
+-        '/api/closed': () => 'real'
++        '/api/closed': () => 'real',
++        '/api/session': () => 'real',
++        '/api/own': () => 'real'
+     }
+ 
+     const server = createServer((request, response) => {
+@@ -435,6 +437,30 @@ describe('browsing contexts', () => {
+             await expect(b.$('#result')).toHaveText('real')
+         })
+ 
++        it('restores only the mocks of the tab it was called on', async () => {
++            const a = await open('/tab-a')
++            const b = await openTab('/tab-a')
++
++            try {
++                const sessionWide = await browser.mock('**/api/session')
++                sessionWide.respond('mocked', { headers: { 'Content-Type': 'text/plain' }, fetchResponse: false })
++                const own = await b.mock('**/api/own')
++                own.respond('mocked', { headers: { 'Content-Type': 'text/plain' }, fetchResponse: false })
++
++                await b.mockRestoreAll()
++                await b.navigate(`${origin}/fetch?endpoint=own`)
++                await expect(b.$('#result')).toHaveText('real')
++                await a.navigate(`${origin}/fetch?endpoint=session`)
++                await expect(a.$('#result')).toHaveText('mocked')
++
++                await browser.mockRestoreAll()
++                await a.navigate(`${origin}/fetch?endpoint=session`)
++                await expect(a.$('#result')).toHaveText('real')
++            } finally {
++                await browser.mockRestoreAll()
++            }
++        })
++
+         it('shares cookies between tabs of the same origin', async () => {
+             const a = await open('/tab-a')
+             const b = await openTab('/tab-b')
+```
+
+**File**: `e2e/wdio/headless/parallel-mocks.e2e.ts` (added, +79/-0)
+```diff
+@@ -0,0 +1,79 @@
++import { browser, expect } from '@wdio/globals'
++import { PARALLEL_FIXTURE_ORIGIN } from '../parallelFixtureServer.js'
++
++/**
++ * The two tests run at the same time (`maxParallelContexts: 2`): the second one
++ * waits for the mocks of the first, and the first checks its mocks after the
++ * second called `mockClearAll()` and `mockRestoreAll()`. `wdio.parallel.conf.ts`
++ * mocks `/api/suite-wide` in `beforeSuite`, outside the test windows.
++ */
++const fetchText = (endpoint: string, scope: WebdriverIO.Browser | WebdriverIO.BrowsingContext = browser) => scope.execute(
++    (url) => fetch(url, { cache: 'no-store' }).then((response) => response.text()),
++    `${PARALLEL_FIXTURE_ORIGIN}/api/${endpoint}`
++)
++
++const signal = (label: string) => {
++    let resolve!: () => void
++    const done = new Promise<void>((r) => { resolve = r })
++    const wait = () => Promise.race([
++        done,
++        new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`timed out waiting for ${label}`)), 30_000))
++    ])
++    return { resolve, wait }
++}
++const mocked = signal('the first test to create its mock')
++const restored = signal('the second test to restore its mocks')
++const respondOptions = { headers: { 'Content-Type': 'text/plain' }, fetchResponse: false }
++
++describe('mocks in parallel mode', () => {
++    before(async () => {
++        // runs once per test, in the test's window
++        const hook = await browser.mock('**/api/hook')
++        hook.respond('mocked', respondOptions)
++    })
++
++    it('keeps its mocks when another test clears and restores all mocks', async () => {
++        const own = await browser.mock('**/api/own')
++        own.respond('mocked', respondOptions)
++        try {
++            await browser.url(`${PARALLEL_FIXTURE_ORIGIN}/checkboxes`)
++            expect(await fetchText('own')).toBe('mocked')
++        } finally {
++            mocked.resolve()
++        }
++
++        await restored.wait()
++        expect(await fetchText('own')).toBe('mocked')
++        expect(await fetchText('hook')).toBe('mocked')
++        expect(await fetchText('suite-wide')).toBe('mocked')
++        expect(own.calls.length).toBe(2)
++    })
++
++    it('clears and restores only its own mocks, also on a tab it opened', async () => {
++        let tab: WebdriverIO.BrowsingContext | undefined
++        try {
++            const own = await browser.mock('**/api/own')
++            own.respond('other', respondOptions)
++            await browser.url(`${PARALLEL_FIXTURE_ORIGIN}/checkboxes`)
++            const opened = await browser.newWindow(`${PARALLEL_FIXTURE_ORIGIN}/checkboxes`)
++            if (!('contextId' in opened)) {
++                throw new Error('expected newWindow() to return a browsing context')
++            }
++            tab = opened
++            const onTab = await tab.mock('**/api/tab')
++            onTab.respond('mocked', respondOptions)
++            expect(await fetchText('tab', tab)).toBe('mocked')
++            await mocked.wait()
++
++            await browser.mockClearAll()
++            await browser.mockRestoreAll()
++            expect(await fetchText('own')).toBe('Not found')
++            expect(await fetchText('hook')).toBe('Not found')
++            expect(await fetchText('tab', tab)).toBe('Not found')
++            expect(await fetchText('suite-wide')).toBe('mocked')
++        } finally {
++            restored.resolve()
++            await tab?.closeWindow().catch(() => {})
++        }
++    })
++})
+```
+
+**File**: `e2e/wdio/wdio.parallel.conf.ts` (modified, +9/-1)
+```diff
+@@ -13,7 +13,8 @@ export const config: WebdriverIO.Config = {
+      */
+     specs: [
+         path.join(__dirname, 'headless', 'parallel.e2e.ts'),
+-        path.join(__dirname, 'headless', 'parallel-storage.e2e.ts')
++        path.join(__dirname, 'headless', 'parallel-storage.e2e.ts'),
++        path.join(__dirname, 'headless', 'parallel-mocks.e2e.ts')
      ],
  
      /**
-```
-
-**File**: `packages/webdriverio/src/environment.ts` (modified, +1/-0)
-```diff
-@@ -15,6 +15,7 @@ export const isNode = !!(typeof process !== 'undefined' && process.version)
- export interface EnvironmentVariables {
-     WDIO_UNIT_TESTS?: string
-     WDIO_WORKER_ID?: string
-+    WDIO_KEEP_BIDI_MAPPER_LOG?: string
- }
+@@ -46,6 +47,13 @@ export const config: WebdriverIO.Config = {
+     onComplete: async () => {
+         await stopParallelFixtureServer(server)
+     },
++    beforeSuite: async (suite) => {
++        // a mock outside the test windows, which mockRestoreAll() in a test keeps
++        if (suite.file.endsWith('parallel-mocks.e2e.ts')) {
++            const suiteWide = await browser.mock('**/api/suite-wide')
++            suiteWide.respond('mocked', { headers: { 'Content-Type': 'text/plain' }, fetchResponse: false })
++        }
++    },
  
- export interface EnvironmentDependencies {
+     mochaOpts: {
+         ui: 'bdd',
 ```
 
-**File**: `packages/webdriverio/src/session/bidiMapperLog.ts` (added, +146/-0)
+**File**: `packages/webdriverio/src/commands/browser/mock.ts` (modified, +4/-2)
 ```diff
-@@ -0,0 +1,146 @@
-+import logger from '@wdio/logger'
-+import { capabilitiesEnvironmentDetector } from '@wdio/utils'
-+
-+import { SessionManager } from './session.js'
-+import { environment } from '../environment.js'
-+
-+const log = logger('webdriverio:BidiMapperLogManager')
-+
-+const MAPPER_TITLE = 'BiDi-CDP Mapper'
-+
-+/**
-+ * Chrome lists the Mapper as `other` (chrome-headless-shell: `page`), and also
-+ * as a `tab` that runs no script
-+ */
-+const MAPPER_TYPES = ['other', 'page']
-+
-+/**
-+ * before, the Mapper is a page with a viewport and its log does not slow down
-+ * the commands (and Chrome 132 has no `goog:cdp`)
-+ */
-+const FIRST_SLOW_VERSION = 137
-+
-+export const MAPPER_LOG_TIMEOUT = 5000
-+
-+/**
-+ * Runs in the page of the BiDi Mapper. Without `#logs`, the Mapper does not
-+ * write the BiDi messages into its page; nothing else reads that element.
-+ */
-+export const REMOVE_MAPPER_LOG = `if (document.title === "${MAPPER_TITLE}") { document.getElementById("logs")?.remove() }`
-+
-+interface TargetInfo {
-+    targetId: string
-+    type: string
-+    title: string
-+}
-+
-+interface CdpBidiHandler {
-+    send (command: { method: 'goog:cdp.sendCommand', params: { method: string, params: object } }): Promise<{ result?: { result?: unknown } }>
-+}
-+
-+export function getBidiMapperLogManager(browser: WebdriverIO.Browser) {
-+    return SessionManager.getSessionManager(browser, BidiMapperLogManager)
-+}
-+
-+/**
-+ * ChromeDriver runs the BiDi Mapper in a hidden target with a 0x0 viewport, and
-+ * the Mapper writes each BiDi message into its page. The layout of that 20px wide
-+ * log makes each large message (e.g. a screenshot) slower than the one before:
-+ * https://issues.chromium.org/issues/577213792
-+ * Remove this manager when Chrome fixes that issue.
-+ */
-+export class BidiMapperLogManager extends SessionManager {
-+    #initialize: Promise<boolean>
-+
-+    constructor(browser: WebdriverIO.Browser) {
-+        super(browser, BidiMapperLogManager.name)
-+
-+        // `browser.isChromium` does not change with `reloadSession()` to another browser
-+        const { isChromium } = capabilitiesEnvironmentDetector(browser.capabilities)
-+        // NaN for an unknown version, which does not skip
-+        const majorVersion = parseInt(browser.capabilities.browserVersion ?? '', 10)
-+        if (!this.isEnabled() || !isChromium || browser.isMobile || majorVersion < FIRST_SLOW_VERSION) {
-+            this.#initialize = Promise.resolve(true)
-+            return
-+        }
-+        // the switch to turn off the fix when it causes a problem
-+        if (['1', 'true'].includes(environment.value.variables.WDIO_KEEP_BIDI_MAPPER_LOG?.toLowerCase() ?? '')) {
-+            log.info('WDIO_KEEP_BIDI_MAPPER_LOG is set: keep the log of the ChromeDriver BiDi Mapper')
-+            this.#initialize = Promise.resolve(true)
-+            return
-+        }
-+
-+        this.#initialize = withTimeout((signal) => removeMapperLog(browser, signal)).then(() => true, (err: Error) => {
-+            log.warn(
-+                `Could not remove the log of the ChromeDriver BiDi Mapper (${err.message}), so large ` +
-+                'WebDriver BiDi messages (e.g. screenshots) can make the next commands slower: ' +
-+                'https://issues.chromium.org/issues/577213792'
-+            )
-+            return false
-+        })
-+    }
-+
-+    async initialize() {
-+        return this.#initialize
-+    }
-+}
-+
-+/**
-+ * after the timeout, `run` sends no new command; the race also handles its late rejection
-+ */
-+function withTimeout(run: (signal: AbortSignal) => Promise<void>) {
-+    const controller = new AbortController()
-+    let timer: ReturnType<typeof setTimeout> | undefined
-+    const timeout = new Promise<never>((_, reject) => {
-+        timer = setTimeout(() => {
-+            controller.abort()
-+            reject(new Error(`no answer after ${MAPPER_LOG_TIMEOUT}ms`))
-+        }, MAPPER_LOG_TIMEOUT)
-+    })
-+    return Promise.race([run(controller.signal), timeout]).finally(() => clearTimeout(timer))
-+}
-+
-+async function removeMapperLog(browser: WebdriverIO.Browser, signal: AbortSignal) {
-+    /**
-+     * CDP through the BiDi connection (chromium-bidi `goog:cdp.sendCommand`)
-+     * also reaches the browser through a grid or a cloud service
-+     */
-+    const handler = (browser as unknown as { _bidiHandler: CdpBidiHandler })._bidiHandler
-+    const cdp = async <T>(method: string, params: object) => (
-+        await handler.send({ method: 'goog:cdp.sendCommand', params: { method, params } })
-+    ).result?.result as T
-+
-+    // hidden targets are listed only with an explicit filter
-+    const { targetInfos } = await cdp<{ targetInfos: TargetInfo[] }>('Target.getTargets', { filter: [{}] })
-+    let error: unknown
-+    for (const { targetId } of targetInfos.filter(({ title, type }) => title === MAPPER_TITLE && MAPPER_TYPES.includes(type))) {
-+        if (signal.aborted) {
-+            return
-+        }
-+        try {
-+            /**
-+             * the Mapper detaches 
+@@ -176,9 +176,11 @@ export async function mock(
+      * `browser.mock()` stays session-wide, except in a parallel test, where a
+      * session-wide intercept would catch other tests' traffic.
+      */
++    const test = getParallelContextStore().getStore()
+     const networkInterception = await WebDriverInterception.initiate(url, normalizedFilterOptions, browser, {
+-        contexts: isBrowsingContext(this) || getParallelContextStore().getStore() ? [context] : undefined,
+-        sessionKey: context
++        contexts: isBrowsingContext(this) || test ? [context] : undefined,
++        sessionKey: context,
++        test
+     })
+     SESSION_MOCKS[context].add(networkInterception)
+ 
 ```
 
-**File**: `packages/webdriverio/src/session/index.ts` (modified, +3/-1)
+**File**: `packages/webdriverio/src/commands/browser/mockClearAll.ts` (modified, +9/-17)
 ```diff
-@@ -3,6 +3,7 @@ import { getShadowRootManager } from './shadowRoot.js'
- import { getNetworkManager } from './networkManager.js'
- import { getDialogManager } from './dialog.js'
- import { getContextManager } from './context.js'
-+import { getBidiMapperLogManager } from './bidiMapperLog.js'
- import { setIOSScriptTimeout, trackScriptTimeout } from '../utils/scriptTimeout.js'
+@@ -1,12 +1,13 @@
+ import logger from '@wdio/logger'
+-import { getBrowserObject } from '@wdio/utils'
+-
+-import { SESSION_MOCKS } from './mock.js'
++import { mocksOf } from '../../utils/interception/scope.js'
+ 
+ const log = logger('webdriverio:mockClearAll')
  
  /**
-@@ -25,7 +26,8 @@ export function registerSessionManager(instance: WebdriverIO.Browser) {
-             getPolyfillManager(instance).initialize(),
-             getShadowRootManager(instance).initialize(),
-             getNetworkManager(instance).initialize(),
--            getDialogManager(instance).initialize()
-+            getDialogManager(instance).initialize(),
-+            getBidiMapperLogManager(instance).initialize()
-         )
+- * Resets all information stored in all registered mocks of the session.
++ * Resets all information stored in all registered mocks of the session. On a
++ * browsing context, it resets only the mocks made for that tab or window.
++ * Inside a parallel test, it resets only the mocks that the test created, also
++ * on tabs it opened.
+  *
+  * <example>
+     :mockClearAll.js
+@@ -32,18 +33,9 @@ const log = logger('webdriverio:mockClearAll')
+  * @alias browser.mockClearAll
+  */
+ export async function mockClearAll (this: WebdriverIO.Browser | WebdriverIO.BrowsingContext): Promise<void> {
+-    /**
+-     * only touch mocks of this browser, on a multiremote browser this command
+-     * runs once per instance and `SESSION_MOCKS` holds the mocks of all of them
+-     */
+-    const browser = getBrowserObject(this)
+-    for (const [handle, mocks] of Object.entries(SESSION_MOCKS)) {
+-        log.trace(`Clearing mocks for ${handle}`)
+-        for (const mock of mocks) {
+-            if (!mock.isOwnedBy(browser)) {
+-                continue
+-            }
+-            mock.clear()
+-        }
++    const mocks = mocksOf(this)
++    log.trace(`Clearing ${mocks.length} mock(s)`)
++    for (const mock of mocks) {
++        mock.clear()
      }
- 
-```
-
-**File**: `packages/webdriverio/tests/session/bidiMapperLog.test.ts` (added, +325/-0)
-```diff
-@@ -0,0 +1,325 @@
-+/// <reference path="../../src/index.ts" />
-+import path from 'node:path'
-+import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from 'vitest'
-+import logger from '@wdio/logger'
-+
-+import { BidiMapperLogManager, REMOVE_MAPPER_LOG } from '../../src/session/bidiMapperLog.js'
-+
-+vi.mock('@wdio/logger', () => import(path.join(process.cwd(), '__mocks__', '@wdio/logger')))
-+
-+vi.mock('../../src/session/session.js', () => ({
-+    SessionManager: class SessionManagerMock {
-+        removeListeners = vi.fn()
-+        isEnabled: () => boolean
-+        constructor(public browser: { isEnabled: () => boolean }) {
-+            this.isEnabled = () => browser.isEnabled()
-+        }
-+    }
-+}))
-+
-+const log = logger('test')
-+
-+const PAGE = { targetId: 'page', type: 'page', url: 'about:blank', title: 'about:blank' }
-+// Chrome lists the hidden Mapper target and a tab entry for it with the same title
-+const MAPPER = { targetId: 'mapper', type: 'other', url: 'about:blank', title: 'BiDi-CDP Mapper' }
-+const MAPPER_TAB = { targetId: 'mapper-tab', type: 'tab', url: 'about:blank', title: 'BiDi-CDP Mapper' }
-+
-+type CdpHandler = (method: string, params: Record<string, unknown>) => unknown
-+
-+let browser: WebdriverIO.Browser & { _bidiHandler: { send: Mock } }
-+
-+/**
-+ * answers `goog:cdp.sendCommand` as chromium-bidi does: the CDP result is in `result.result`
-+ */
-+function answer(handler: CdpHandler) {
-+    browser._bidiHandler.send.mockImplementation(async ({ method, params }: { method: string, params: { method: string, params: Record<string, unknown> } }) => {
-+        if (method !== 'goog:cdp.sendCommand') {
-+            throw new Error(`unexpected BiDi command ${method}`)
-+        }
-+        return { type: 'success', id: 1, result: { result: await handler(params.method, params.params) } }
-+    })
-+}
-+
-+const defaultCdp: CdpHandler = (method) => {
-+    if (method === 'Target.getTargets') {
-+        return { targetInfos: [PAGE, { targetId: 'other', type: 'other', url: 'about:blank', title: 'about:blank' }, MAPPER, MAPPER_TAB] }
-+    }
-+    if (method === 'Target.attachToTarget') {
-+        return { sessionId: 'mapper-session' }
-+    }
-+    return {}
-+}
-+
-+const cdpCalls = () => browser._bidiHandler.send.mock.calls.map(([{ params }]) => params)
-+const cdpMethods = () => cdpCalls().map(({ method }: { method: string }) => method)
-+
-+describe('BidiMapperLogManager', () => {
-+    beforeEach(() => {
-+        vi.mocked(log.warn).mockClear()
-+        vi.mocked(log.debug).mockClear()
-+        vi.mocked(log.info).mockClear()
-+        browser = {
-+            isMobile: false,
-+            capabilities: { browserName: 'chrome', browserVersion: '156.0.8078.47', 'goog:chromeOptions': {} },
-+            options: { hostname: 'localhost', port: 4321 },
-+            isEnabled: vi.fn().mockReturnValue(true),
-+            _bidiHandler: { send: vi.fn() }
-+        } as unknown as WebdriverIO.Browser & { _bidiHandler: { send: Mock } }
-+        answer(defaultCdp)
-+    })
-+
-+    afterEach(() => {
-+        vi.useRealTimers()
-+    })
-+
-+    it('removes the log of the hidden BiDi Mapper target through the WebDriver BiDi connection', async () => {
-+        expect(await new BidiMapperLogManager(browser).initialize()).toBe(true)
-+        expect(browser._bidiHandler.send.mock.calls.map(([command]) => command)).toEqual([
-+            // hidden targets are listed only with an explicit filter
-+            { method: 'goog:cdp.sendCommand', params: { method: 'Target.getTargets', params: { filter: [{}] } } },
-+            { method: 'goog:cdp.sendCommand', params: { method: 'Target.attachToTarget', params: { targetId: 'mapper', flatten: false } } },
-+            { method: 'goog:cdp.sendCommand', params: {
-+                method: 'Target.sendMessageToTarget',
-+                params: {
-+                    sessionId: 'mapper-session',
-+                    message: JSON.stringify({ id: 1, method: 'Runtime.evaluate', params: { expression: REMOVE_MAPPER_LOG } })
-+                }
-+            } },
-+            { method: 'goog:cdp.sendCommand', params: { method: 'Target.detachFromTarget', params: { sessionId: 'mapper-session' } } }
-+        ])
-+        expect(log.warn).not.toBeCalled()
-+    })
-+
-+    // chrome-headless-shell gives the Mapper the type `page`
-+    it('removes the log of a BiDi Mapper of the type page', async () => {
-+        answer((method, params) => method === 'Target.getTargets'
-+            ? { targetInfos: [PAGE, { ...MAPPER, type: 'page' }] }
-+            : defaultCdp(method, params))
-+        expect(await new BidiMapperLogManager(browser).initialize()).toBe(true)
-+        expect(cdpCalls()).toContainEqual({ method: 'Target.attachToTarget', params: { targetId: 'mapper', flatten: false } })
-+    })
-+
-+    it('does not attach to the tab entry of the BiDi Mapper or to another target', async () => {
-+        answer((method, params) => method === 'Target.getTargets'
-+            ? { targetInfos: [PAGE, MAPPER_TAB, { ...M
-```
-
-**File**: `packages/webdriverio/tests/session/index.test.ts` (modified, +6/-0)
-```diff
-@@ -5,6 +5,7 @@ import { getShadowRootManager } from '../../src/session/shadowRoot.js'
- import { getNetworkManager } from '../../src/session/networkManager.js'
- import { getDialogManager } from '../../src/session/dialog.js'
- import { getContextManager } from '../../src/session/context.js'
-+import { getBidiMapperLogManager } from '../../src/session/bidiMapperLog.js'
- import { registerSessionManager } from '../../src/session/index.js'
- import { setIOSScriptTimeout, trackScriptTimeout } from '../../src/utils/scriptTimeout.js'
- 
-@@ -20,6 +21,9 @@ vi.mock('../../src/session/networkManager.js', () => ({
- vi.mock('../../src/session/dialog.js', () => ({
-     getDialogManager: vi.fn(() => ({ initialize: vi.fn() }))
- }))
-+vi.mock('../../src/session/bidiMapperLog.js', () => ({
-+    getBidiMapperLogManager: vi.fn(() => ({ initialize: vi.fn() }))
-+}))
- vi.mock('../../src/session/context.js', () => ({
-     getContextManager: vi.fn(() => ({ initialize: vi.fn() }))
- }))
-@@ -40,6 +44,7 @@ describe('webdriverio session manager', () => {
-         expect(getShadowRootManager).toBeCalledWith(browser)
-         expect(getNetworkManager).toBeCalledWith(browser)
-         expect(getDialogManager).toBeCalledWith(browser)
-+        expect(getBidiMapperLogManager).toBeCalledWith(browser)
-         expect(getContextManager).toBeCalledWith(browser)
-         expect(trackScriptTimeout).toBeCalledWith(browser)
-         expect(setIOSScriptTimeout).toBeCalledWith(browser)
-@@ -54,6 +59,7 @@ describe('webdriverio session manager', () => {
-         expect(getShadowRootManager).not.toBeCalledWith(browser)
-         expect(getNetworkManager).not.toBeCalledWith(browser)
-         expect(getDialogManager).not.toBeCalledWith(browser)
-+        expect(getBidiMapperLogManager).not.toBeCalledWith(browser)
-         expect(trackScriptTimeout).not.toBeCalledWith(browser)
-         // ContextManager is always registered for caching current window handle
-         expect(getContextManager).toBeCalledWith(browser)
-```
-
-**File**: `website/docs/Capabilities.md` (modified, +2/-0)
-```diff
-@@ -101,6 +101,8 @@ In a WebDriver BiDi session, runs element commands and browser commands like `ge
  }
- ```
- 
-+In every WebDriver BiDi session with Chrome or Edge 137 and later (or when the browser version is not known), with or without this capability, WebdriverIO removes the on-page log of the ChromeDriver BiDi Mapper when the session starts: that log makes each command after a large BiDi message (for example a screenshot) slower ([crbug.com/577213792](https://issues.chromium.org/issues/577213792)). To keep the log, set the environment variable `WDIO_KEEP_BIDI_MAPPER_LOG=1`.
-+
- </Option>
- 
- #### `wdio:electronVersion`
 ```
 
----
-
-### Incident Patch 3: `1868575b` (2026-10-25)
-**Commit Message**: fix(@wdio/session): act on a ref that has no selector instead of reporting it as stale (#16244)
-
-* fix(@wdio/session): act on a ref that has no selector instead of reporting it as stale
-
-Since #16131 a ref can have no selector candidates, e.g. a nameless button
-repeated in shadow roots. resolveTarget found the element through the page
-store, then stableSelector threw REF_STALE and asked for a new snapshot,
-which gave the same ref again, so the action could never run.
-
-The action now runs on the resolved element. The recorded code uses
-ref('eN') with a comment that the step only replays in the session. A ref
-whose element is gone still reports REF_STALE.
-
-Claude-Session: https://claude.ai/code/session_018aEoYqM4KhkksR6qCfRhwo
-
-* test(@wdio/session): check that snapshot selectors find their element under BiDi and classic
-
-#16131 changed which selectors a snapshot attaches to a ref, so that every
-attached selector finds its element in a WebDriver BiDi session (#16095).
-Its tests checked the generated strings. This e2e test opens a page with
-the cases of #16095 (leading and trailing icons, a non-breaking space,
-block children, repeated names, nameless buttons in shadow roots) in both
-p
-
-**File**: `e2e/session/__fixtures__/site/names.html` (added, +35/-0)
+**File**: `packages/webdriverio/src/commands/browser/mockRestoreAll.ts` (modified, +8/-17)
 ```diff
-@@ -0,0 +1,35 @@
-+<!doctype html>
-+<html lang="en">
-+<head>
-+  <meta charset="utf-8">
-+  <title>Accessible Names Fixture</title>
-+  <style>.icon::before { content: ""; display: inline-block; width: 8px; height: 8px; background: currentColor }</style>
-+</head>
-+<body>
-+  <!-- the cases of #16095: names whose whitespace differs between the snapshot and WebDriver BiDi -->
-+  <nav>
-+    <a href="#logout"><i class="icon"></i> Logout</a>
-+    <a href="#docs">Docs <i class="icon"></i></a>
-+    <a href="#next"><div>Next</div><div>Protocol Commands</div></a>
-+  </nav>
-+  <main>
-+    <button type="button"><svg width="8" height="8" aria-hidden="true"></svg> Submit</button>
-+    <button type="button">Save&nbsp;draft</button>
-+    <section><div><button type="button">Same</button></div></section>
-+    <section><div><button type="button">Same</button></div></section>
-+    <icon-button></icon-button>
-+    <icon-button></icon-button>
-+    <icon-button></icon-button>
-+  </main>
-+  <script>
-+    // nameless buttons repeated in shadow roots: no selector names one of them alone
-+    customElements.define('icon-button', class extends HTMLElement {
-+      connectedCallback () {
-+        const root = this.attachShadow({ mode: 'open' })
-+        root.innerHTML = '<button type="button"></button>'
-+        root.querySelector('button').addEventListener('click', () => this.setAttribute('data-clicked', ''))
-+      }
-+    })
-+  </script>
-+</body>
-+</html>
+@@ -1,13 +1,13 @@
+ import logger from '@wdio/logger'
+-import { getBrowserObject } from '@wdio/utils'
+-
+-import { SESSION_MOCKS } from './mock.js'
++import { mocksOf } from '../../utils/interception/scope.js'
+ 
+ const log = logger('webdriverio:mockRestoreAll')
+ 
+ /**
+  * Restores all mock information and behavior stored in all registered
+- * mocks of the session.
++ * mocks of the session. On a browsing context, it restores only the mocks made
++ * for that tab or window. Inside a parallel test, it restores only the mocks
++ * that the test created, also on tabs it opened.
+  *
+  * <example>
+     :mockRestoreAll.js
+@@ -30,18 +30,9 @@ const log = logger('webdriverio:mockRestoreAll')
+  * @alias browser.mockRestoreAll
+  */
+ export async function mockRestoreAll (this: WebdriverIO.Browser | WebdriverIO.BrowsingContext): Promise<void> {
+-    /**
+-     * only touch mocks of this browser, on a multiremote browser this command
+-     * runs once per instance and `SESSION_MOCKS` holds the mocks of all of them
+-     */
+-    const browser = getBrowserObject(this)
+-    for (const [handle, mocks] of Object.entries(SESSION_MOCKS)) {
+-        log.trace(`Clearing mocks for ${handle}`)
+-        for (const mock of mocks) {
+-            if (!mock.isOwnedBy(browser)) {
+-                continue
+-            }
+-            await mock.restore()
+-        }
++    const mocks = mocksOf(this)
++    log.trace(`Restoring ${mocks.length} mock(s)`)
++    for (const mock of mocks) {
++        await mock.restore()
+     }
+ }
 ```
 
-**File**: `e2e/session/selectors.test.ts` (added, +62/-0)
+**File**: `packages/webdriverio/src/utils/interception/index.ts` (modified, +18/-9)
 ```diff
-@@ -0,0 +1,62 @@
-+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
+@@ -180,6 +180,10 @@ export default class WebDriverInterception {
+     #filterOptions: MockFilterOptions
+     #browser: WebdriverIO.Browser
+     #contexts?: string[]
++    /**
++     * The window of the parallel test that created this mock
++     */
++    #test?: string
+     /**
+      * Iframes below an owned context. Their non-blocked events carry the iframe's
+      * id, so ownership can't be read off `#contexts` alone.
+@@ -253,7 +257,7 @@ export default class WebDriverInterception {
+         url: string | URLPattern | globalThis.URLPattern,
+         filterOptions: MockFilterOptions,
+         browser: WebdriverIO.Browser,
+-        scope: { contexts?: string[], sessionKey?: string } = {}
++        scope: { contexts?: string[], sessionKey?: string, test?: string } = {}
+     ) {
+         const pattern = parseUrlPattern(url)
+         const isCollectingNetworkData = browser.options.maxSpyCollectedBodySize !== 0
+@@ -301,6 +305,7 @@ export default class WebDriverInterception {
+         })
+ 
+         const mock = new WebDriverInterception(pattern, interception.intercept, filterOptions, browser, isCollectingNetworkData, scope.sessionKey, scope.contexts)
++        mock.#test = scope.test
+         await mock.#seedDescendantContexts()
+         return mock
+     }
+@@ -1248,15 +1253,19 @@ export default class WebDriverInterception {
+     }
+ 
+     /**
+-     * Whether this mock was registered on the given browser session. `SESSION_MOCKS`
+-     * is shared by all instances of a multiremote browser. Compares session ids
+-     * rather than objects so that a client attached to the same session via
+-     * `attach()` still owns mocks created by another client of that session.
+-     * @param browser  browser instance to check
+-     * @returns        `true` if this mock belongs to that browser's session
++     * Whether this mock belongs to the given browser session, and to the given tab or
++     * parallel test if one is passed. `SESSION_MOCKS` is shared by all instances of a
++     * multi-remote browser. Compares session ids rather than objects so that a client attached
++     * to the same session via `attach()` still owns mocks created by another client of that session.
++     * @param browser        browser instance to check
++     * @param scope.context  a tab: only mocks made for that tab match
++     * @param scope.test     the window of a parallel test: only mocks that test created match, also on tabs it opened
++     * @returns              `true` if this mock belongs to that browser's session (and scope)
+      */
+-    isOwnedBy(browser: WebdriverIO.Browser) {
+-        return this.#browser.sessionId === browser.sessionId
++    isOwnedBy(browser: WebdriverIO.Browser, { context, test }: { context?: string, test?: string } = {}) {
++        return this.#browser.sessionId === browser.sessionId &&
++            (context === undefined || Boolean(this.#contexts?.includes(context))) &&
++            (test === undefined || this.#test === test)
+     }
+ 
+     isSameDefinition(url: string | URLPattern | globalThis.URLPattern, filterOptions: MockFilterOptions = {}) {
+```
+
+**File**: `packages/webdriverio/src/utils/interception/scope.ts` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++import { getBrowserObject } from '@wdio/utils'
 +
-+import { createProject, startServer, type FixtureServer, type Project } from './helpers.js'
++import type WebDriverInterception from './index.js'
++import { SESSION_MOCKS } from '../../commands/browser/mock.js'
++import { getParallelContextStore } from '../../session/context.js'
++import { isBrowsingContext } from '../../session/browsingContext.js'
 +
 +/**
-+ * The selector a snapshot attaches to a ref must find exactly that element when a script
-+ * runs it later, in a WebDriver BiDi session and in a classic one (#16095).
++ * The mocks `mockClearAll()` and `mockRestoreAll()` act on: on a tab, the mocks made
++ * for that tab; in a parallel test, the mocks that test created, also on tabs it opened;
++ * otherwise every mock of the session. `SESSION_MOCKS` also holds the mocks of the other
++ * instances of a multi-remote browser.
 + */
-+describe.each([
-+    ['WebDriver BiDi', []],
-+    ['WebDriver classic', ['--no-bidi']]
-+])('wdio session snapshot selectors (%s)', (_protocol, openArgs) => {
-+    let server: FixtureServer
-+    let project: Project
-+
-+    const run = (...args: string[]) => project.run(args)
-+
-+    beforeAll(async () => {
-+        server = await startServer()
-+        project = createProject('selectors')
-+        const open = await project.run(['open', 'chrome', `${server.url}/names.html`, '--no-snapshot', ...openArgs])
-+        expect(open.code, open.stderr).toBe(0)
-+    }, 60_000)
-+
-+    afterAll(async () => {
-+        await project.cleanup()
-+        await server.close()
-+    })
-+
-+    it('attaches only selectors that find exactly the element of their ref', async () => {
-+        const snapshot = await run('snapshot', '-i', '--selectors')
-+        expect(snapshot.code, snapshot.stderr).toBe(0)
-+        const refs = snapshot.stdout.split('\n')
-+            .map((line) => line.match(/\[ref=(e\d+)\].*?(?: {2}→ (.+?)(?: \(positional\))?)?$/))
-+            .filter((match): match is RegExpMatchArray => Boolean(match))
-+            .map(([, id, selector]) => ({ id, selector }))
-+        const withSelector = refs.filter(({ selector }) => selector)
-+        // 3 links, Submit, Save draft and the 2 "Same" buttons
-+        expect(withSelector.length, snapshot.stdout).toBeGreaterThanOrEqual(7)
-+
-+        for (const { id, selector } of withSelector) {
-+            const check = await run('exec', '-e', [
-+                `const found = await $$(${JSON.stringify(selector)}).getElements()`,
-+                `return found.length === 1 && await found[0].isEqual(await ref(${JSON.stringify(id)})) ? 'ok' : 'found ' + found.length`
-+            ].join('; '))
-+            expect(check.code, check.stderr).toBe(0)
-+            expect(`${id} ${selector}: ${check.stdout.trim()}`).toBe(`${id} ${selector}: ok`)
-+        }
-+    })
-+
-+    it('acts on a nameless button repeated in shadow roots, which has no selector of its own', async () => {
-+        const snapshot = await run('snapshot', '-i', '--selectors')
-+        const nameless = snapshot.stdout.split('\n').filter((line) => /- button \[ref=e\d+\]/.test(line))
-+        expect(nameless, snapshot.stdout).toHaveLength(3)
-+        const id = nameless[1].match(/\[ref=(e\d+)\]/)![1]
-+
-+        const clicked = await run('click', id)
-+        expect(clicked.code, clicked.stderr).toBe(0)
-+        const marked = await run('exec', '-e', 'return await browser.execute(() => [...document.querySelectorAll("icon-button")].map((el) => el.hasAttribute("data-clicked")))')
-+        expect(JSON.parse(marked.stdout)).toEqual([false, true, false])
-+    })
-+})
-```
-
-**File**: `packages/wdio-session/src/actions/contexts.ts` (modified, +5/-2)
-```diff
-@@ -182,6 +182,9 @@ const switchCode = async (session: Session, tab: Tab) => session.isBidi
- 
- const joinCode = (...lines: string[]) => lines.filter(Boolean).join('\n')
- 
-+const queryOn = (varName: string, code: string) =>
-+    code.startsWith(`${varName}.`) || code.startsWith('ref(') ? code : `${varName}.${code}`
-+
- function resetFrame (session: Session) {
-     session.set('frame', undefined)
-     session.set('frameStack', [])
-@@ -508,7 +511,7 @@ export async function holdFrame (session: Session, frameRef: string) {
-         }
-     }
-     return {
--        lines: [`const page = ${page}`, `const frame = await page.frame(page.${resolved.code})`],
-+        lines: [`const page = ${page}`, `const frame = await page.frame(${queryOn('page', resolved.code)})`],
-         /**
-          * Back to where the session was, without asking the browser, for an
-          * action that is given up while the page may not answer at all.
-@@ -603,7 +606,7 @@ async function frameBidi (session: Session, target: string): Promise<ActionOutco
-      */
-     const ownerVar = await declareHeld(session, owner)
-     // in a held frame the selector code already queries through its variable
--    const query = ownerVar.name && resolved.code.startsWith(`${ownerVar.name}.`) ? resolved.code : `${ownerVar.name}.${resolved.code}`
-+    const query = ownerVar.name && queryOn(ownerVar.name, resolved.code)
-     const childVar = ownerVar.name
-         ? await declareContext(session, 'frame', child.contextId, () => `await ${ownerVar.name}.frame(${query})`)
-         : { code: '' }
-```
-
-**File**: `packages/wdio-session/src/snapshot/target.ts` (modified, +13/-2)
-```diff
-@@ -63,14 +63,25 @@ export async function resolveTarget (session: Session, target: unknown): Promise
-     const id = refId(target)
-     if (id) {
-         const element = await session.refs.resolve(scopeOf(session), id)
--        const selector = await session.refs.stableSelector(scopeOf(session), id, element)
-         const entry = session.refs.get(id)!
-+        const label = `${id} (${entry.role}${entry.name ? ` ${JSON.stringify(entry.name)}` : ''})`
-+        // a ref can have no selector at all, e.g. a nameless button repeated in shadow roots; the element
-+        // resolved, so act on it: a new snapshot would give the same ref without selectors again
-+        const selector = await session.refs.stableSelector(scopeOf(session), id, element).catch((err: unknown) => {
-+            if (entry.candidates.length > 0) {
-+                throw err
-+            }
-+        })
-+        if (!selector) {
-+            const ref = `ref(${quote(id)})`
-+            return { element, selector: ref, code: `${ref} /* no selector matches this element, this step only replays in this session */`, label }
-+        }
-         return {
-             element,
-             selector,
-             // a replay with a selector that misses the element would fail or act on another one
-             code: inScope(session, `$(${quote(selector)})`) + (entry.unverified ? ' /* no selector matches only this element (closed shadow root?), this step may not replay */' : ''),
--            label: `${id} (${entry.role}${entry.name ? ` ${JSON.stringify(entry.name)}` : ''})`
-+            label
-         }
-     }
-     let element: WebdriverIO.Element
-```
-
-**File**: `packages/wdio-session/tests/actions/contexts.test.ts` (modified, +20/-2)
-```diff
-@@ -10,12 +10,14 @@ vi.mock('webdriverio', () => ({
- vi.mock('../../src/snapshot/target.js', () => ({
-     resolveTarget: async (_session: Session, target: string) => ({
-         element: { getTagName: async () => 'iframe' },
--        code: `$('${target}')`,
-+        code: /^e\d+$/.test(target)
-+            ? `ref('${target}') /* no selector matches this element, this step only replays in this session */`
-+            : `$('${target}')`,
-         label: target
-     })
- }))
- 
--const { frame, tabs } = await import('../../src/actions/contexts.js')
-+const { frame, holdFrame, tabs } = await import('../../src/actions/contexts.js')
- 
- function harness ({ secondUrl = 'https://b.test/', outerSiblings = ['https://a.test/outer.html'] } = {}) {
-     const store = new Map<string, unknown>()
-@@ -109,6 +111,22 @@ describe('frame (BiDi)', () => {
-             "const frame = await page.frame(page.$('iframe#outer'))"
-         )
-     })
-+
-+    it('passes a ref without a selector to frame() as the exec global, not a page method', async () => {
-+        const { session, record } = harness()
-+        expect(await record((await frame(session, { target: 'e5', $cwd: '/' })).history)).toBe(
-+            "const page = (await browser.browsingContexts()).find((context) => context.url === 'https://a.test/')!\n" +
-+            "const frame = await page.frame(ref('e5') /* no selector matches this element, this step only replays in this session */)"
-+        )
-+    })
-+
-+    it('holds a frame given by a ref without a selector through the exec global', async () => {
-+        const { session } = harness()
-+        expect((await holdFrame(session, 'e5')).lines).toEqual([
-+            "const page = (await browser.browsingContexts()).find((context) => context.url === 'https://a.test/')!",
-+            "const frame = await page.frame(ref('e5') /* no selector matches this element, this step only replays in this session */)"
-+        ])
-+    })
- })
- 
- describe('frame (BiDi) after a cleared history', () => {
-```
-
-**File**: `packages/wdio-session/tests/snapshot/target.test.ts` (modified, +19/-0)
-```diff
-@@ -44,4 +44,23 @@ describe('resolveTarget', () => {
-         expect(resolved.selector).toBe('button')
-         expect(resolved.code).toMatch(/^\$\('button'\) \/\* .*may not replay \*\/$/)
-     })
-+
-+    it('acts on a resolved ref that has no selector candidates instead of asking for a new snapshot', async () => {
-+        const refs = new RefRegistry()
-+        refs.set({ id: 'e5', kind: 'web', role: 'button', name: '', candidates: [], generation: 1 })
-+        const element = { elementId: '1' }
-+        const browser = { $: () => ({ getElement: async () => element }), $$: () => ({ getElements: async () => [] }) }
-+        const resolved = await resolveTarget({ browser, refs } as unknown as Session, 'e5')
-+        expect(resolved.element).toBe(element)
-+        expect(resolved.selector).toBe("ref('e5')")
-+        expect(resolved.code).toBe("ref('e5') /* no selector matches this element, this step only replays in this session */")
-+        expect(resolved.label).toBe('e5 (button)')
-+    })
-+
-+    it('still reports a ref without candidates whose element is gone as stale', async () => {
-+        const refs = new RefRegistry()
-+        refs.set({ id: 'e6', kind: 'web', role: 'button', name: '', candidates: [], generation: 1 })
-+        const browser = { $: () => ({ getElement: async () => ({}) }) }
-+        await expect(resolveTarget({ browser, refs } as unknown as Session, 'e6')).rejects.toMatchObject({ code: 'REF_STALE' })
-+    })
- })
-```
-
-**File**: `website/docs/session/export.md` (modified, +2/-0)
-```diff
-@@ -6,6 +6,8 @@ description: Turn the steps you ran in wdio session into a spec, page objects an
- 
- `export` writes a spec from the recorded steps. Refs are replaced with stable selectors. For a web page, the first of these that matches exactly one element is used: a test id (`data-testid`, `data-test`, `data-qa`), a [role selector](/docs/selectors#role-selector) such as `role/button[name="Add to cart"]`, an accessible name (`aria/Add to cart`), an id, the text of a button or link, a form field name, and finally a CSS path.
- 
-+A role selector or accessible name is skipped when the name the snapshot computed may not be the one the driver computes, for example a name next to an icon, with a non-breaking space or spread over block elements. This happens in WebDriver BiDi and in classic sessions, and the text or CSS path is used instead. When the element has no selector at all, such as one of several nameless buttons inside shadow roots, the action still runs on the ref. The step is recorded as `ref('e12')` with a comment: it replays in the session, but `export` stops with `Step N still contains ref()` until the step is removed or rewritten with a selector.
-+
- ```sh
- npx wdio session export --out test/specs/cart.e2e.ts
- npx wdio run wdio.conf.ts --spec test/specs/cart.e2e.ts
++export function mocksOf (scope: WebdriverIO.Browser | WebdriverIO.BrowsingContext): WebDriverInterception[] {
++    const browser = getBrowserObject(scope)
++    const filter = isBrowsingContext(scope)
++        ? { context: scope.contextId }
++        : { test: getParallelContextStore().getStore() }
++    return Object.values(SESSION_MOCKS)
++        .flatMap((mocks) => Array.from(mocks))
++        .filter((mock) => mock.isOwnedBy(browser, filter))
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16279** (closed): fix(@wdio/mocha-framework): give the root hooks of beforeSuite and afterSuite their own title (@plum117)
-- **PR #16274** (2026-10-27): fix(@wdio/cli, webdriver): load tsx on Node.js 18 and add the bidiConnectTimeout option (v9) (@plum117)
-- **PR #16272** (2026-10-27): ci: auto-merge only minor and patch Dependabot updates on v9, and not on cancelled checks (@plum117)
-- **PR #16271** (2026-10-27): ci: auto-merge only minor and patch Dependabot updates (@plum117)
-- **PR #16270** (2026-10-27): docs(devtools): read a heading example.com still serves in the Selenium example (@vishnuv688)
-- **PR #16269** (2026-10-27): chore: keep v9 on TypeScript 5 and make its unit tests pass with Vite 7 and globals 17.13 (@plum117)
+- **PR #16308** (2026-10-30): fix(webdriverio, @wdio/session): report a value the browser rejected or reformatted in fill, and reject an empty range value (@plum117)
+- **PR #16303** (2026-10-29): fix(@wdio/utils): don't pass spawnOpts to Chromedriver as a --spawn-ppts flag (@Winify)
+- **PR #16302** (2026-10-29): docs(mcp): update MCP docs for v4 (@Winify)
+- **PR #16301** (2026-10-30): chore(deps): bump @hono/node-server from 2.1.1 to 2.1.5 (@dependabot[bot])
+- **PR #16300** (2026-10-30): fix(@wdio/reporter, @wdio/html-reporter, @wdio/jasmine-framework): hide an empty (root) box and show the spec files of its tests (@plum117)
+- **PR #16298** (2026-10-29): chore(deps-dev): bump the minor-deps-updates-v9 group with 4 updates (@dependabot[bot])
 
 ---
 
@@ -1629,57 +1567,29 @@ p
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. @wdio/vitest-framework): Introducing Vitest with parallel run and fixtures (#161
+## X. @wdio/html-reporter, @wdio/reporter, @wdio/video-reporter, @wdio/mocha-framework
 
 **RULE**:
-When implementing operations in `packages/wdio-cli/src/launcher.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webdriverio/webdriverio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/wdio-html-reporter/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webdriverio/webdriverio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4257f55e`: @wdio/vitest-framework): Introducing Vitest with parallel run and fixtures (#16154). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cfe0e018`: @wdio/html-reporter, @wdio/reporter, @wdio/video-reporter, @wdio/mocha-framework): label each failed attempt of a retried test, copy the styles safely on Windows, give the Mocha config root hooks their own title, and use the base reporter's hook owner and spec file attempt (#16277). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/wdio-cli/src/launcher.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/wdio-html-reporter/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { fileURLToPath } from 'node:url'
-import type { Capabilities, Frameworks, Services } from '@wdio/types'
-const LAUNCHER_FRAMEWORKS = new Set(['vitest', '@wdio/vitest-framework'])
+When a test or a Cucumber scenario runs again (Mocha [`retries`](https://webdriver.io/docs/retry#rerun-suites-in-mocha), the Cucumber [`retry`](https://webdriver.io/docs/retry#rerunning-in-cucumber) option, Vitest `retry`), each failed attempt stays in the report as its own entry, with `(attempt 1, retried)` after its title; only the last attempt counts.
 
-/** Vitest `provide` structured-clones the args into forked workers, and programmatic callers may pass functions or classes */
-function cloneableEntries<T extends object>(args: T): Partial<T> {
-    return Object.fromEntries(Object.entries(args).filter(([, value]) => {
-        try {
-            structuredClone(value)
-            return true
-        } catch {
-            return false
-        }
-    })) as Partial<T>
-}
-
-    #frameworkAbort = new AbortController()
-    #frameworkLaunch?: Promise<number>
-        // Rejecting here keeps every hook, service and runner shutdown from running for a run that never starts
-        const framework = await this.#loadFrameworkLauncher(config)
-        if (framework) {
-            this.#assertFrameworkSupportsRun(config.framework, caps)
-        }
-
-            if (framework && config.specFileRetries > 0) {
-                log.warn('specFileRetries is not supported with this framework and is ignored')
-            }
-            // The framework schedules specs itself, so 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-import type { Capabilities, Services } from '@wdio/types'
-            this.interface = new CLInterface(config, totalWorkerCnt, this._isWatchMode)
-            exitCode = await this._runMode(config, caps)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4257f55e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cfe0e018` are properly handled with clean fallback behavior.

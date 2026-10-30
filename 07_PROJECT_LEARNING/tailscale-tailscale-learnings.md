@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `2c7aeadb`  
+> **Source Version**: `1a28f170`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T15:49:20.409Z  
+> **Timestamp**: 2026-10-30T20:22:07.694Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T15:49:20.402Z  
+> **Harvest Timestamp**: 2026-10-30T20:22:07.523Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 38348 stars
+- **Stars / Engagement**: 38362 stars
 
 ---
 
@@ -821,87 +821,339 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2c7aeadb` (2026-10-30)
-**Commit Message**: ipn/ipnlocal,wgengine{,/magicsock}: cleanup TSMP disco logs (#22088)
+### Incident Patch 1: `1a28f170` (2026-10-30)
+**Commit Message**: wgengine/netstack: disable RACK again
 
-Logging is quite aggressive and most of the logs can be hidden behind
-component logging. A few logs are instead gated on if they changed or if
-the original state was zero.
+Several reports including a severe internal issue have demonstrated use
+cases where the current RACK implementation still fails too poorly to be
+our enabled default.
 
-Updates #cleanup
+Updates #21946
+Updates #21651
+Updates #18307
 
-Signed-off-by: Claus Lensbøl <[REDACTED_EMAIL]>
+Signed-off-by: James Tucker <[REDACTED_EMAIL]>
 
-**File**: `ipn/ipnlocal/node_backend.go` (modified, +3/-1)
+**File**: `wgengine/netstack/netstack.go` (modified, +11/-9)
 ```diff
-@@ -906,7 +906,9 @@ func (nb *nodeBackend) discoChanged(pub key.NodePublic, prev, cur key.DiscoPubli
- 		return false
+@@ -409,16 +409,18 @@ func Create(logf logger.Logf, tundev *tstun.Wrapper, e wgengine.Engine, mc *magi
+ 	if tcpipErr != nil {
+ 		return nil, fmt.Errorf("could not set cubic congestion control: %v", tcpipErr)
  	}
- 
--	nb.logf("nodeBackend: peer %s disco key changed from %q to %q", pub.ShortString(), prev, cur)
-+	if !prev.IsZero() {
-+		nb.logf("nodeBackend: peer %s disco key changed from %q to %q", pub.ShortString(), prev, cur)
+-	if rack, ok := netstackEnableRACK().Get(); ok {
+-		recovery := tcpip.TCPRecovery(0)
+-		if rack {
+-			recovery = tcpip.TCPRACKLossDetection
+-		}
+-		tcpipErr = ns.ipstack.SetTransportProtocolOption(tcp.ProtocolNumber, &recovery)
+-		if tcpipErr != nil {
+-			return nil, fmt.Errorf("could not set TCP loss recovery: %v", tcpipErr)
+-		}
++
++	// Disable RACK by default (again), the conditions under which it performs
++	// poorly are too common still. See google/gvisor#16670, #21946, #18714.
++	recovery := tcpip.TCPRecovery(0)
++	if rack, ok := netstackEnableRACK().Get(); ok && rack {
++		recovery = tcpip.TCPRACKLossDetection
+ 	}
++	tcpipErr = ns.ipstack.SetTransportProtocolOption(tcp.ProtocolNumber, &recovery)
++	if tcpipErr != nil {
++		return nil, fmt.Errorf("could not set TCP loss recovery: %v", tcpipErr)
 +	}
- 	return true
++
+ 	err := setTCPBufSizes(ns.ipstack)
+ 	if err != nil {
+ 		return nil, err
+```
+
+**File**: `wgengine/netstack/netstack_test.go` (modified, +1/-1)
+```diff
+@@ -973,7 +973,7 @@ func TestEnableRACKKnob(t *testing.T) {
+ 		env  string
+ 		want tcpip.TCPRecovery
+ 	}{
+-		{"", tcpip.TCPRACKLossDetection},
++		{"", 0},
+ 		{"false", 0},
+ 		{"true", tcpip.TCPRACKLossDetection},
+ 	} {
+```
+
+---
+
+### Incident Patch 2: `1b68f62b` (2026-10-30)
+**Commit Message**: tstest/natlab: add a new portmapper VM test (#22071)
+
+This test encodes the current behaviour of the Tailscale client.
+It only covers the creation of new mappings.
+
+Updates #21713
+
+Change-Id: Ia44877036569660f4129484d5059ed22ffbf9cda
+Signed-off-by: Francois Marier <[REDACTED_EMAIL]>
+
+**File**: `tstest/natlab/vmtest/portmapper_test.go` (added, +162/-0)
+```diff
+@@ -0,0 +1,162 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++package vmtest_test
++
++import (
++	"fmt"
++	"testing"
++	"time"
++
++	"tailscale.com/tstest/natlab/vmtest"
++	"tailscale.com/tstest/natlab/vnet"
++)
++
++// TestPortmapCreate checks whether a disco ping reaches a node directly when
++// its router offers the given port mapping services, and which protocol the
++// client uses to create its mapping.
++func TestPortmapCreate(t *testing.T) {
++	tests := []struct {
++		name        string
++		pinger      vmtest.AddNodeFunc
++		targetNAT   vnet.NAT
++		targetSvcs  []vnet.NetworkService
++		wantDirect  bool
++		wantMapping vnet.NetworkService // empty if no mapping is expected
++		altMapping  vnet.NetworkService // also accepted, if not empty
++	}{
++		// No portmapping protocols available
++		{
++			name:       "none",
++			pinger:     hard,
++			targetNAT:  vnet.HardNAT,
++			wantDirect: false,
++		},
++		{
++			name:        "not-needed",
++			pinger:      easyAF, // addr-only filtering => no portmapping needed
++			targetNAT:   vnet.HardNAT,
++			wantDirect:  true,
++			wantMapping: "",
++		},
++		// Normal cases (portmapping required for direct connections)
++		{
++			name:        "pcp-only",
++			pinger:      hard,
++			targetNAT:   vnet.HardNAT,
++			targetSvcs:  []vnet.NetworkService{vnet.PCP},
++			wantDirect:  true,
++			wantMapping: vnet.PCP,
++		},
++		{
++			name:        "pmp-only",
++			pinger:      hard,
++			targetNAT:   vnet.HardNAT,
++			targetSvcs:  []vnet.NetworkService{vnet.NATPMP},
++			wantDirect:  true,
++			wantMapping: vnet.NATPMP,
++		},
++		{
++			name:        "upnp-only",
++			pinger:      hard,
++			targetNAT:   vnet.HardNAT,
++			targetSvcs:  []vnet.NetworkService{vnet.UPnP},
++			wantDirect:  true,
++			wantMapping: vnet.UPnP,
++		},
++		{
++			name:        "pcp-and-pmp",
++			pinger:      hard,
++			targetNAT:   vnet.HardNAT,
++			targetSvcs:  []vnet.NetworkService{vnet.PCP, vnet.NATPMP},
++			wantDirect:  true,
++			wantMapping: vnet.NATPMP,
++		},
++		{
++			name:        "pcp-and-upnp",
++			pinger:      hard,
++			targetNAT:   vnet.HardNAT,
++			targetSvcs:  []vnet.NetworkService{vnet.PCP, vnet.UPnP},
++			wantDirect:  true,
++			wantMapping: vnet.PCP,
++			// TODO(fmarier): the client sometimes uses UPnP here. Before
++			// its first probe, it tries NAT-PMP and ignores the router's
++			// PCP "unsupported version" reply (tailscale#21799). After a
++			// timeout, it falls back to UPnP. If the probe hasn't found the
++			// UPnP server yet, that fails and the next attempt uses PCP.
++			// Remove this field once we have stabilized which protocol we get.
++			altMapping: vnet.UPnP,
++		},
++		{
++			name:        "pmp-and-upnp",
++			pinger:      hard,
++			targetNAT:   vnet.HardNAT,
++			targetSvcs:  []vnet.NetworkService{vnet.NATPMP, vnet.UPnP},
++			wantDirect:  true,
++			wantMapping: vnet.NATPMP,
++		},
++		{
++			name:        "all",
++			pinger:      hard,
++			targetNAT:   vnet.HardNAT,
++			targetSvcs:  []vnet.NetworkService{vnet.PCP, vnet.NATPMP, vnet.UPnP},
++			wantDirect:  true,
++			wantMapping: vnet.NATPMP,
++		},
++		// Portmapping also needed behind EasyNAT (endpoint-independent mapping,
++		// but addr+port filtering)
++		{
++			name:        "easy-all",
++			pinger:      hard,
++			targetNAT:   vnet.EasyNAT,
++			targetSvcs:  []vnet.NetworkService{vnet.PCP, vnet.NATPMP, vnet.UPnP},
++			wantDirect:  true,
++			wantMapping: vnet.NATPMP,
++		},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			env := vmtest.New(t)
++			pinger := tt.pinger(env)
++			n := env.NumNodes()
++			opts := []any{
++				fmt.Sprintf("2.%d.%d.%d", n, n, n), // public IP
++				fmt.Sprintf("10.7.%d.1/24", n),
++				tt.targetNAT,
++			}
++			for _, s := range tt.targetSvcs {
++				opts = append(opts, s)
++			}
++			router := env.AddNetwork(opts...)
++			target := env.AddNode(fmt.Sprintf("node-%d", n), router)
++			env.Start()
++
++			res, err := env.PingSettle(pinger, target, 15*time.Second)
++			if err != nil {
++				t.Fatal(err)
++			}
++			if gotDirect := res.Endpoint != ""; gotDirect != tt.wantDirect {
++				t.Fatalf("ping direct = %v (endpoint %q), want %v", gotDirect, res.Endpoint, tt.wantDirect)
++			}
++
++			mappings := router.PortMappings()
++			if tt.wantMapping == "" {
++				if len(mappings) != 0 {
++					t.Errorf("got port mappings %v, want none", mappings)
++				}
++				return
++			}
++			if len(mappings) != 1 {
++				t.Fatalf("got port mappings %v, want one", mappings)
++			}
++			for wan, pm := range mappings {
++				if got := pm.Service; got != tt.wantMapping && got != tt.altMapping {
++					t.Errorf("port mapping made with %v, want %v", got, tt.wantMapping)
++				}
++				if want := wan.String(); want != res.Endpoint {
++					t.Errorf("ping went to %v, want port mapped endpoint %v", res.Endpoint, want)
++				}
++			}
++		})
++	}
++}
+```
+
+**File**: `tstest/natlab/vnet/conf.go` (modified, +6/-0)
+```diff
+@@ -405,6 +405,12 @@ func (n *Network) BlackholeControlForAddr(addr netip.Addr) {
+ 	n.network.BlackholeControlForAddr(addr)
  }
  
++// PortMappings returns the router's unexpired port mappings, keyed by WAN
++// IP:port.
++func (n *Network) PortMappings() map[netip.AddrPort]PortMapping {
++	return n.network.portMappings()
++}
++
+ // NetworkService is a service that can be added to a network.
+ type NetworkService string
+ 
 ```
 
-**File**: `wgengine/magicsock/magicsock.go` (modified, +4/-4)
+**File**: `tstest/natlab/vnet/vnet.go` (modified, +27/-10)
 ```diff
-@@ -4650,11 +4650,11 @@ func (c *Conn) PeerRelays() set.Set[netip.Addr] {
- func (c *Conn) HandleDiscoKeyAdvertisement(node tailcfg.NodeView, update packet.TSMPDiscoKeyAdvertisement) {
- 	discoKey := update.Key
- 	if discoKey.IsZero() {
--		c.logf("[v1] magicsock: received zero disco key update from %v", node.StableID())
-+		c.dlogf("[v1] magicsock: received zero disco key update from %v", node.StableID())
- 		return
+@@ -674,9 +674,21 @@ func (m MAC) String() string {
+ 	return fmt.Sprintf("%02x:%02x:%02x:%02x:%02x:%02x", m[0], m[1], m[2], m[3], m[4], m[5])
+ }
+ 
+-type portMapping struct {
+-	dst    netip.AddrPort // LAN IP:port
+-	expiry time.Time
++type PortMapping struct {
++	dst     netip.AddrPort // LAN IP:port
++	expiry  time.Time
++	Service NetworkService
++}
++
++func (n *network) portMappings() map[netip.AddrPort]PortMapping {
++	n.natMu.Lock()
++	defer n.natMu.Unlock()
++	now := time.Now()
++	ret := maps.Clone(n.portMap)
++	maps.DeleteFunc(ret, func(_ netip.AddrPort, pm PortMapping) bool {
++		return now.After(pm.expiry)
++	})
++	return ret
+ }
+ 
+ // writerFunc is a function that writes an Ethernet frame to a connected client.
+@@ -723,7 +735,7 @@ type network struct {
+ 	natStyle    syncs.AtomicValue[NAT]
+ 	natMu       sync.Mutex // held while using + changing natTable
+ 	natTable    NATTable
+-	portMap     map[netip.AddrPort]portMapping    // WAN ip:port -> LAN ip:port
++	portMap     map[netip.AddrPort]PortMapping    // WAN ip:port -> LAN ip:port
+ 	portMapFlow map[portmapFlowKey]netip.AddrPort // (lanAP, peerWANAP) -> portmapped wanAP
+ 
+ 	macMu     sync.Mutex
+@@ -2775,11 +2787,15 @@ func (n *network) doPortMap(src netip.Addr, dstLANPort, wantExtPort uint16, sec
  	}
  
--	c.logf("[v1] magicsock: received disco key update %v from %v", discoKey.ShortString(), node.StableID())
-+	c.dlogf("[v1] magicsock: received disco key update %v from %v", discoKey.ShortString(), node.StableID())
- 	metricTSMPDiscoKeyAdvertisementReceived.Add(1)
+ 	// See if they already have a mapping and extend expiry if so.
++	// TODO(fmarier): renewing with a different protocol overwrites the
++	// service that created the mapping, so PortMappings only reports the
++	// most recent one.
+ 	for k, v := range n.portMap {
+ 		if v.dst == dst {
+-			n.portMap[k] = portMapping{
+-				dst:    dst,
+-				expiry: time.Now().Add(time.Duration(sec) * time.Second),
++			n.portMap[k] = PortMapping{
++				dst:     dst,
++				expiry:  time.Now().Add(time.Duration(sec) * time.Second),
++				Service: service,
+ 			}
+ 			n.logf("vnet: renewed %v mapping from %v to %v", service, wanAP, dst)
+ 			return k.Port(), true
+@@ -2788,9 +2804,10 @@ func (n *network) doPortMap(src netip.Addr, dstLANPort, wantExtPort uint16, sec
  
- 	c.mu.Lock()
-@@ -4663,7 +4663,7 @@ func (c *Conn) HandleDiscoKeyAdvertisement(node tailcfg.NodeView, update packet.
- 
- 	ep, ok := c.peerMap.endpointForNodeKey(nodeKey)
- 	if !ok {
--		c.logf("magicsock: endpoint not found for node %v", nodeKey.ShortString())
-+		c.dlogf("[v1] magicsock: endpoint not found for node %v", nodeKey.ShortString())
- 		return
- 	}
- 
-@@ -4675,7 +4675,7 @@ func (c *Conn) HandleDiscoKeyAdvertisement(node tailcfg.NodeView, update packet.
- 	// If the key did not change, count it and return.
- 	if oldDiscoKey.Compare(discoKey) == 0 {
- 		metricTSMPDiscoKeyAdvertisementUnchanged.Add(1)
--		c.logf("[v1] magicsock: disco key did not change for node %v", nodeKey.ShortString())
-+		c.dlogf("[v1] magicsock: disco key did not change for node %v", nodeKey.ShortString())
- 		return
- 	}
- 	c.discoInfoForKnownPeerLocked(discoKey)
-```
-
-**File**: `wgengine/userspace.go` (modified, +0/-1)
-```diff
-@@ -606,7 +606,6 @@ func NewUserspaceEngine(logf logger.Logf, conf Config) (_ Engine, reterr error)
- 	}
- 
- 	eventbus.SubscribeFunc(ec, func(update events.DiscoKeyAdvertisement) {
--		e.logf("[v1] wgengine: got TSMP disco key advertisement from %v via eventbus", update.Src)
- 		if e.magicConn == nil {
- 			e.logf("wgengine: no magicConn")
- 			return
+ 	for range 20_000 {
+ 		if wanAP.Port() > 0 && !n.natTable.IsPublicPortUsed(wanAP) {
+-			mak.Set(&n.portMap, wanAP, portMapping{
+-				dst:    dst,
+-				expiry: time.Now().Add(time.Duration(sec) * time.Second),
++			mak.Set(&n.portMap, wanAP, PortMapping{
++				dst:     dst,
++				expiry:  time.Now().Add(time.Duration(sec) * time.Second),
++				Service: service,
+ 			})
+ 			n.logf("vnet: allocated %v mapping from %v to %v", service, wanAP, dst)
+ 			return wanAP.Port(), true
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22092** (2026-10-30): wgengine/netstack: disable RACK again (@raggi)
 - **PR #22088** (2026-10-30): ipn/ipnlocal,wgengine{,/magicsock}: cleanup TSMP disco logs (@cmol)
+- **PR #22073** (2026-10-30): feature/conn25: block private destinations (@mazdakn)
+- **PR #22071** (2026-10-30): tstest/natlab: add a new portmapper VM test (@fmarier)
 - **PR #22069** (2026-10-29): wgengine/netstack: add TS_NETSTACK_ENABLE_RACK opt-out (@raggi)
 - **PR #22066** (2026-10-29): ssh/tailssh: bound session teardown so shutdown can't wedge on it (@raggi)
-- **PR #22065** (closed): ssh/tailssh: fix exit-status ordering and improve signal/exit code handling (@raggi)
-- **PR #22063** (closed): derp,derp/derphttp: batch mesh ForwardPacket flushes (@mikeodr)
-- **PR #22062** (2026-10-29): wgengine/wgcfg: add wireguard metrics for hybrid handshakes (@jwhited)
 
 ---
 
@@ -921,30 +1173,46 @@ Signed-off-by: Claus Lensbøl <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ipn/ipnlocal,wgengine{,/magicsock}: cleanup TSMP disco logs (#22088)
+## X. wgengine/netstack: disable RACK again
 
 **RULE**:
-When implementing operations in `ipn/ipnlocal/node_backend.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `wgengine/netstack/netstack.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2c7aeadb`: ipn/ipnlocal,wgengine{,/magicsock}: cleanup TSMP disco logs (#22088). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a28f170`: wgengine/netstack: disable RACK again. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ipn/ipnlocal/node_backend.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `wgengine/netstack/netstack.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if !prev.IsZero() {
-		nb.logf("nodeBackend: peer %s disco key changed from %q to %q", pub.ShortString(), prev, cur)
+
+	// Disable RACK by default (again), the conditions under which it performs
+	// poorly are too common still. See google/gvisor#16670, #21946, #18714.
+	recovery := tcpip.TCPRecovery(0)
+	if rack, ok := netstackEnableRACK().Get(); ok && rack {
+		recovery = tcpip.TCPRACKLossDetection
+	tcpipErr = ns.ipstack.SetTransportProtocolOption(tcp.ProtocolNumber, &recovery)
+	if tcpipErr != nil {
+		return nil, fmt.Errorf("could not set TCP loss recovery: %v", tcpipErr)
 	}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	nb.logf("nodeBackend: peer %s disco key changed from %q to %q", pub.ShortString(), prev, cur)
+	if rack, ok := netstackEnableRACK().Get(); ok {
+		recovery := tcpip.TCPRecovery(0)
+		if rack {
+			recovery = tcpip.TCPRACKLossDetection
+		}
+		tcpipErr = ns.ipstack.SetTransportProtocolOption(tcp.ProtocolNumber, &recovery)
+		if tcpipErr != nil {
+			return nil, fmt.Errorf("could not set TCP loss recovery: %v", tcpipErr)
+		}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2c7aeadb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a28f170` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T20:15:14.253Z",
+  "last_updated": "2026-10-30T20:22:10.905Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3066,14 +3066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webdriverio-webdriverio",
-      "content_hash": "60ef70381a2a41fbec4b4ae3eb09efc6d6baddf18fc9d42acc3d0ebfe74cb2c0",
-      "verified_at": "2026-10-27T19:13:39.800Z",
+      "content_hash": "855d7d3b49b9e367fc199b0319ab6f83020e913d616776d56e87809c389c3d95",
+      "verified_at": "2026-10-30T20:22:01.284Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T19:13:39.800Z"
+      "last_updated": "2026-10-30T20:22:01.284Z"
     },
     "RubenVerborgh/SPARQL.js": {
       "repository": "RubenVerborgh/SPARQL.js",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "1658218cd321a5145517937f9d3b78194b7f5d67618d92368e606e94c8fa9658",
-      "verified_at": "2026-10-29T12:13:33.992Z",
+      "content_hash": "91e4b23f7c8972b7a35ccdb0ecb3b272a07b3dd2b21f7a5185a9aac6c39106fa",
+      "verified_at": "2026-10-30T20:22:10.904Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T12:13:33.992Z"
+      "last_updated": "2026-10-30T20:22:10.904Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "2b9ce47ab388f3056907fddfbd7f9e1c50afb58c5a990d625b075cbacea9a9e1",
-      "verified_at": "2026-10-30T15:49:21.078Z",
+      "content_hash": "955f469ab0b2fc08a9903f7c5c0ed527ca8ab5ca7447f72482c8e8f56c72e421",
+      "verified_at": "2026-10-30T20:22:08.437Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T15:49:21.078Z"
+      "last_updated": "2026-10-30T20:22:08.437Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "9f4a7db456feb71de7733276dadb1356488e0858a89b5edb1765fe8c8eabf62e",
-      "verified_at": "2026-10-29T17:03:38.033Z",
+      "content_hash": "57ea9fa07664732b8215581f2b48032afbc5346575d314af52f5483e8c58d051",
+      "verified_at": "2026-10-30T20:22:06.387Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T17:03:38.033Z"
+      "last_updated": "2026-10-30T20:22:06.387Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "3f671b045b69beeb9f9f20f16db955f61a12f9a9f36efd93b0729976a40270c1",
-      "verified_at": "2026-10-28T22:01:34.830Z",
+      "content_hash": "39335972b2b964ed14d21ce3f1fe1b9288fcf13826855fe2a48f701f3f36ebe5",
+      "verified_at": "2026-10-30T20:21:58.460Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:01:34.830Z"
+      "last_updated": "2026-10-30T20:21:58.460Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",

@@ -6304,3 +6304,8 @@ Every entry in this ledger must capture:
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `14b7b0ef` | Multi-dimensional audit evidence | 2026-10-30T20:15:09.796Z |
 | `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `1ecfa9e5` | Multi-dimensional audit evidence | 2026-10-30T20:15:11.651Z |
 | `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `4620bb59` | Multi-dimensional audit evidence | 2026-10-30T20:15:14.244Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `86b7fd1e` | Multi-dimensional audit evidence | 2026-10-30T20:21:58.448Z |
+| `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `dc7be72b` | Multi-dimensional audit evidence | 2026-10-30T20:22:01.274Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `f0861e2a` | Multi-dimensional audit evidence | 2026-10-30T20:22:06.377Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `1a28f170` | Multi-dimensional audit evidence | 2026-10-30T20:22:08.428Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `c187ec5c` | Multi-dimensional audit evidence | 2026-10-30T20:22:10.895Z |

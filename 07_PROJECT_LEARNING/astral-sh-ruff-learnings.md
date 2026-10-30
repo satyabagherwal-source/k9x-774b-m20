@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `c9d4e2e1`  
+> **Source Version**: `86b7fd1e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T22:01:34.627Z  
+> **Timestamp**: 2026-10-30T20:21:58.156Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T21:56:33.093Z  
+> **Harvest Timestamp**: 2026-10-30T20:21:57.180Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 50346 stars
+- **Stars / Engagement**: 50337 stars
 
 ---
 
@@ -2103,14 +2103,11 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29787** (2026-10-28): **[ty] Fix panic on a chained assignment with a missing value**
-  *Symptoms*: ## Summary  Debug builds of ty panic when an annotation refers to a target of an incomplete chained assignment.  ```python X = Y = x: X ```  The parser uses an invalid name for the missing right-hand side. When checking whether `X` was an implicit type alias, we tried to resolve that name as a reference. This triggered a debug assertion because both targets share a standalone expression.  We now rule out an implicit type alias when the right-hand side is an invalid name. ty reports the syntax error, treats the annotation as `Unknown`, and continues checking the file.  Closes https://github.com/astral-sh/ty/issues/4837. 
+- **Issue #29815** (2026-10-29): **[ty] Account for loop and nonlocal writes to captured variables**
+  *Symptoms*: ## Summary  A closure created on the first iteration can run after the loop variable has changed. On main, ty accepts this function. Python raises `TypeError` at the addition when `readers[0]()` runs.  ```python def run():     readers = []     for x in (1, None):         if x is not None:             readers.append(lambda: x + 1)     return readers[0]() ```  We include later iterations' assignments when the path that created the closure can reach another iteration. A path that exits with `break` or `return` keeps its narrowing. Closures that share the same loop binding history also share its inferred type.  A sibling function can change a captured value through `nonlocal`, even when that sibling is defined before the guard. We match writers to the cell they actually assign. A writer that assigns another integer still permits integer arithmetic. A writer that assigns `None` makes the read optional again.  This can add a warning when an API consumes a callback synchronously inside the loop. We also use the type of the assignment in the writer. If the writer takes an `int | None` parameter, a call that passes only `19` can still leave a later read typed as optional.  The comprehension follow-up is [#29813](https://github.com/astral-sh/ruff/pull/29813).  ## Verification  Of 103 reduced programs checked against main and CPython, this change diagnoses nine additional programs that raise `TypeError`. The other 94 produced identical diagnostics.  The [ecosystem run](https://github.co
 
-- **Issue #29786** (2026-10-28): **[ty] Fix a panic when a comprehension filter depends on a later binding**
-  *Symptoms*: ## Summary  Checking this comprehension makes ty panic with `too many cycle iterations` on the base branch. With this change, it passes.  ```python def readers(limits: list[int], enabled: bool):     return [         read         for limit in limits         for read, end in [((lambda: i) if enabled else None, limit)]         if read is not None and 0 < end < 10         for i in range(end)     ] ```  The filter tests `read`, whose lambda closes over `i`. To infer the lambda’s return type, ty needs to know whether the final `for` clause can bind `i`. That depends on the same filter. In the original fuzz case, ty alternated between treating the filter as always false and allowing either outcome.  We now give the predicate a few iterations to refine its initial ambiguous result. After that, we take the union of its previous and current truthiness. If they disagree, the query keeps both possible outcomes and the cycle settles. Recovery combines values the query has already computed, so it can’t introduce a new dependency by looking up `__bool__`.  The full Linux fuzz run checked all 20,001 seeds against the PR’s parent and found no new panics or timeouts. [Fuzz run](https://github.com/astral-sh/ty/actions/runs/40721883643)  Closes https://github.com/astral-sh/ty/issues/4846. 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- generated-comment typing-conformance --> <!-- report-run:40712817449:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.25%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.86%</b>. The number of fully passing files held steady at <b>136/146</b>.  </details>  ---  Results for [9759c4b](https://github.com/astral-sh/ruff/commit/9759c4b0933b02818cd7ff9cb0a9a875ccb05476) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40712817449/attempts/1) 
-  > <!-- generated-comment memory --> <!-- report-run:40712817413:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [9759c4b](https://github.com/astral-sh/ruff/commit/9759c4b0933b02818cd7ff9cb0a9a875ccb05476) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40712817413/attempts/1) 
+- **Issue #29814** (2026-10-29): **[`flake8-simplify`] Report collapsible `elif` clauses after a multi-statement `if` branch (`SIM102`)**
+  *Symptoms*: ## Summary  Part of #29422.  SIM102 missed a nested `if` inside an `elif` whenever the first branch had more than one statement. In `nested_if_body`, when the last branch is an `elif` we pick that clause as the nested `if`, but the "only one statement" check still looked at the outer `if` body. So the length check was done on the wrong body.  The fix checks `nested_if.body().len()` instead, so an `elif` uses its own body. The plain `if` path behaves the same as before.  This only covers the SIM102 item from the issue. I didn't touch the other rules there.  ## Test Plan  I added two cases to `SIM102.py`: an `elif` that only contains a nested `if` after a multi-statement first branch (now flagged), and one where the `elif` has another statement next to the nested `if` (still not flagged). The example from the issue is now reported at 5:5. The snapshot also gets one extra context line on the previous last diagnostic, because the file doesn't end there anymore.  `cargo test -p ruff_linter` and clippy both pass.  I used Claude (via T3 Code) to help with this change, and I reviewed and tested it myself. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2127,274 +2124,196 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3937a41c` (2026-10-28)
-**Commit Message**: [ty] Fix a panic when a comprehension filter depends on a later binding (#29786)
+### Incident Patch 1: `7cb935d9` (2026-10-29)
+**Commit Message**: [ty] Fix recursive protocol materialization self-comparison (#29809)
 
-## Summary
+Fix a stack overflow when return-type inference compares a materialized
+recursive protocol with itself. Recognize identical top and bottom
+materializations as subtypes of themselves without recursively expanding
+their members.
 
-Checking this comprehension makes ty panic with `too many cycle
-iterations` on the base branch. With this change, it passes.
+Fixes https://github.com/astral-sh/ty/issues/4863.
 
-```python
-def readers(limits: list[int], enabled: bool):
-    return [
-        read
-        for limit in limits
-        for read, end in [((lambda: i) if enabled else None, limit)]
-        if read is not None and 0 < end < 10
-        for i in range(end)
-    ]
-```
+## Test plan
 
-The filter tests `read`, whose lambda closes over `i`. To infer the
-lambda’s return type, ty needs to know whether the final `for` clause
-can bind `i`. That depends on the same filter. In the original fuzz
-case, ty alternated between treating the filter as always false and
-allowing either outcome.
+Manually reproduced the stack overflow with the original factory call
+and with direct `Top[P]` and `Bottom[P]` self-comparisons on the
+recursive protocol. With the fix, all complete successfully and the
+original call infers `Hutia[Capybara[int]]`.
 
-We now give the predicate a few iterations to refine its initial
-ambiguous result. After that, we take the union of its previous and
-current truthiness. If they disagree, the query keeps both possible
-outcomes and the cycle settles. Recovery combines values the query has
-already computed, so it can’t introduce a new dependency by looking up
-`__bool__`.
-
-The full Linux fuzz run checked all 20,001 seeds against the
-
-**File**: `crates/ty_python_semantic/resources/mdtest/comprehensions/basic.md` (modified, +18/-0)
+**File**: `crates/ty_python_semantic/resources/mdtest/generics/legacy/functions.md` (modified, +27/-0)
 ```diff
-@@ -320,6 +320,24 @@ class Table:
- [[reveal_type((cell, row)) for cell in row] for row in Table()]
+@@ -4846,6 +4846,33 @@ def optional_callback(value: O) -> Callable[[O | None], O | None]:
+     return reveal_type(identity_callback(value))
  ```
  
-+## Filter that depends on a later loop variable
++## Inferring a recursive protocol from a factory's return context
 +
-+The filter tests a callable that closes over `i`. Inferring its return type requires checking the
-+final `for` clause, which is reachable only when the filter passes.
++The annotated assignment supplies `Stream[int]` as the type argument to `make_result`. Comparing the
++return types of `first_or` reaches `Stream`, whose `window` method adds the layer of nesting that
++`flatten` removes.
 +
 +```py
-+from collections.abc import Callable
++from typing import Protocol, TypeVar
 +
-+def readers(limits: list[int], enabled: bool) -> list[Callable[[], int]]:
-+    return [
-+        read
-+        for limit in limits
-+        for read, end in [((lambda: i) if enabled else None, limit)]
-+        if read is not None and 0 < end < 10
-+        for i in range(end)
-+    ]
++T_co = TypeVar("T_co", covariant=True)
++T = TypeVar("T")
++U = TypeVar("U")
++
++class Result(Protocol[T_co]):
++    def first_or(self, default: U) -> T_co | U: ...
++
++class Stream(Protocol[T_co]):
++    def flatten(self: "Stream[Stream[U]]") -> "Stream[U]": ...
++    def window(self) -> "Stream[Stream[T_co]]": ...
++
++def make_result() -> Result[T]:
++    raise NotImplementedError
++
++result: Result[Stream[int]] = make_result()
++reveal_type(result)  # revealed: Result[Stream[int]]
 +```
 +
- ## Comprehension with unbound iterable
+ ## Generic property setter overrides
  
- Iterating over an unbound iterable yields `Unknown`:
+ A method-scoped type variable is inferred for each write, so an unconstrained setter preserves an
 ```
 
-**File**: `crates/ty_python_semantic/src/types/infer.rs` (modified, +9/-0)
+**File**: `crates/ty_python_semantic/resources/mdtest/generics/pep695/functions.md` (modified, +23/-0)
 ```diff
-@@ -598,6 +598,15 @@ pub(crate) fn infer_predicate_truthiness<'db>(
- #[salsa::tracked(
-     returns(copy),
-     cycle_initial = |_, _, _| Truthiness::Ambiguous,
-+    cycle_fn = |_, cycle: &salsa::Cycle, previous: &Truthiness, current: Truthiness, _| {
-+        // A predicate can guard one of its own inputs. Keep both outcomes when iterations
-+        // disagree, but give the initial ambiguous result a chance to resolve first.
-+        if cycle.iteration() > crate::TAINTED_CYCLES {
-+            previous.union(current)
-+        } else {
-+            current
-+        }
-+    },
-     heap_size = get_size2::GetSize::get_heap_size
- )]
- fn cached_predicate_truthiness<'db>(db: &'db dyn Db, expression: Expression<'db>) -> Truthiness {
+@@ -5290,6 +5290,29 @@ def optional_callback[O](value: O) -> Callable[[O | None], O | None]:
+     return reveal_type(identity_callback(value))
+ ```
+ 
++## Inferring a recursive protocol from a factory's return context
++
++The annotated assignment supplies `Stream[int]` as the type argument to `make_result`. Comparing the
++return types of `first_or` reaches `Stream`, whose `window` method adds the layer of nesting that
++`flatten` removes.
++
++```py
++from typing import Protocol
++
++class Result[T](Protocol):
++    def first_or[U](self, default: U) -> T | U: ...
++
++class Stream[T](Protocol):
++    def flatten[U](self: "Stream[Stream[U]]") -> "Stream[U]": ...
++    def window(self) -> "Stream[Stream[T]]": ...
++
++def make_result[T]() -> Result[T]:
++    raise NotImplementedError
++
++result: Result[Stream[int]] = make_result()
++reveal_type(result)  # revealed: Result[Stream[int]]
++```
++
+ ## Generic property setter overrides
+ 
+ A method-scoped type variable is inferred for each write, so an unconstrained setter preserves an
+```
+
+**File**: `crates/ty_python_semantic/resources/mdtest/type_properties/materialization.md` (modified, +20/-0)
+```diff
+@@ -3522,6 +3522,26 @@ static_assert(is_subtype_of(LegacyWrappedReceiver[str], LegacyWrappedReceiver[in
+ static_assert(is_subtype_of(Top[LegacyWrappedReceiver[int]], LegacyWrappedReceiver[int]))
+ ```
+ 
++### Reflexivity of materialized recursive protocols
++
++Each materialization of `Stream[Any]` is a subtype of itself, even though checking its methods
++structurally can produce an ever more deeply nested receiver type.
++
++```py
++from __future__ import annotations
++
++from typing import Any, Protocol
++from ty_extensions import Bottom, Top, static_assert
++from ty_extensions._internal import is_subtype_of
++
++class Stream[T](Protocol):
++    def flatten[U](self: Stream[Stream[U]]) -> Stream[U]: ...
++    def window(self) -> Stream[Stream[T]]: ...
++
++static_assert(is_subtype_of(Top[Stream[Any]], Top[Stream[Any]]))
++static_assert(is_subtype_of(Bottom[Stream[Any]], Bottom[Stream[Any]]))
++```
++
+ ### Recursive protocol receivers with gradual members
+ 
+ A gradual member changes the materializations even when the receiver is recursively specialized.
+```
+
+**File**: `crates/ty_python_semantic/src/types/instance.rs` (modified, +5/-4)
+```diff
+@@ -834,8 +834,8 @@ impl<'c, 'db> TypeRelationChecker<'_, 'c, 'db> {
+         let source_protocol = ty.as_protocol_instance();
+ 
+         // Every gradual type lies between its bottom and top materializations, and is assignable
+-        // to and from either one. Comparing the exact same class specialization can therefore
+-        // settle these directions without expanding a recursive protocol's members.
++        // to and from either one. Each materialization is a subtype of itself. For the same class
++        // specialization, we can check these relations without expanding recursive members.
+         if let Some(source) = source_protocol
+             && let (Some(source_origin), Some(target_origin)) =
+                 (source.class_origin(db), protocol.class_origin(db))
+@@ -844,8 +844,9 @@ impl<'c, 'db> TypeRelationChecker<'_, 'c, 'db> {
+                 source.materialization_kind(db),
+                 protocol.materialization_kind(db),
+             ) {
+-                (None | Some(MaterializationKind::Bottom), Some(MaterializationKind::Top))
+-                | (Some(MaterializationKind::Bottom), None) => true,
++                (_, Some(MaterializationKind::Top)) | (Some(MaterializationKind::Bottom), _) => {
++                    true
++                }
+                 (Some(MaterializationKind::Top), None)
+                 | (None, Some(MaterializationKind::Bottom))
+                     if self.relation.is_assignability() =>
 ```
 
 ---
 
-### Incident Patch 2: `07bd1f1a` (2026-10-28)
-**Commit Message**: [ty] Fix panic on a chained assignment with a missing value (#29787)
+### Incident Patch 2: `a7902dce` (2026-10-28)
+**Commit Message**: Revise Python comment guidelines in mdtests (#29807)
 
-## Summary
-
-Debug builds of ty panic when an annotation refers to a target of an
-incomplete chained assignment.
-
-```python
-X = Y =
-x: X
-```
-
-The parser uses an invalid name for the missing right-hand side. When
-checking whether `X` was an implicit type alias, we tried to resolve
-that name as a reference. This triggered a debug assertion because both
-targets share a standalone expression.
-
-We now rule out an implicit type alias when the right-hand side is an
-invalid name. ty reports the syntax error, treats the annotation as
-`Unknown`, and continues checking the file.
-
-Closes https://github.com/astral-sh/ty/issues/4837.
-
-**File**: `crates/ty_python_semantic/resources/mdtest/invalid_syntax.md` (modified, +13/-0)
+**File**: `AGENTS.md` (modified, +14/-1)
 ```diff
-@@ -116,6 +116,19 @@ first, *left, *right = [1, 2, 3]  # error: [invalid-syntax] "Two starred express
- first, *left, *right = (1, 2, 3)  # error: [invalid-syntax] "Two starred expressions in assignment"
- ```
+@@ -120,16 +120,29 @@ Never edit snapshot files or inline snapshot bodies manually. Regenerate them by
+ ## Writing mdtests
  
-+## Chained assignment with a missing value
+ - Write mdtests as readable, literate specifications, and minimize the context a reader must hold in mind. Prefer short, focused code blocks, and define types, fixtures, and helpers close to the assertions that use them. Sections and subsections can be long when they develop a coherent topic through many short examples interspersed with prose. Do not split a subsection, or flag it in review, solely because of its length. Give independent scenarios separate sibling Markdown test headings at the same level; only introduce child headings if any existing code beneath their parent is first moved into child sections. When scenarios need shared setup, interleave short prose-and-code blocks under the same heading.
 +
-+When a chained assignment has no right-hand side, an annotation that uses one of its targets
-+resolves to `Unknown`.
+ - Code blocks for the same file within a section are concatenated into one file. For inline snapshots, keep each example's code block close to its `# snapshot` block. Ideally, any given code block only has one snapshot in it, but one codeblock containing several snapshots is also acceptable. Repeating a short, independent function definition, including one with the same name, is fine if it keeps the code triggering a snapshot close to the snapshot demonstrating the expected diagnostic on that code. Reuse shared setup when clearer, and check that repeated names do not affect other examples.
+-- When a Python statement in an mdtest is included only or primarily to check that ty does not emit a diagnostic for it, normally add a `# no diagnostic` comment on or above the statement. Statements used as setup for later assertions do not need such comments.
 +
-+```py
-+# error: [invalid-syntax] "Expected an expression"
-+X = Y =
++- When a Python statement in an mdtest is included only or primarily to check that ty does not emit a diagnostic for it, it is often useful to add a `# no diagnostic` comment on or above the statement to clarify why the statement is there. These can be especially useful if the statement expected to produce 0 diagnostics follows, or is immediately followed by, one or more other statements that are all accompanied by `# error` assertions.
 +
-+def f(x: X):
-+    reveal_type(x)  # revealed: Unknown
-+```
++    Statements used as setup for later assertions do not need `# no diagnostic` comments. It is also not necessary to add such comments in cases where it would anyway be extremely obvious why the statement is included.
 +
- ## Match-pattern alternatives binding different names
- 
- A capture present in only one invalid `or` alternative is possibly undefined.
-```
-
-**File**: `crates/ty_python_semantic/src/types/infer/legacy_type_alias.rs` (modified, +4/-1)
-```diff
-@@ -72,7 +72,10 @@ pub(super) fn legacy_type_alias_definition<'db>(
-         DefinitionKind::Assignment(assignment) if assignment.unpack().is_none() => {
-             module = parsed_module(db, definition.python_file(db)).load(db);
-             let value = assignment.value(&module);
--            if value.is_string_literal_expr() {
-+            // The parser represents a missing right-hand side as an invalid name.
-+            if value.is_string_literal_expr()
-+                || value.as_name_expr().is_some_and(ast::ExprName::is_invalid)
-+            {
-                 return None;
-             }
-             (value, None)
-```
-
----
-
-### Incident Patch 3: `2ffdaee2` (2026-10-28)
-**Commit Message**: [ty] Fix a panic when sorting diagnostics without a source location (#29780)
-
-**File**: `crates/ruff_db/src/diagnostic/mod.rs` (modified, +25/-25)
-```diff
-@@ -573,49 +573,49 @@ struct RenderingSortKey<'a> {
- }
- 
- impl Ord for RenderingSortKey<'_> {
--    // We sort diagnostics in a way that keeps them in source order
--    // and grouped by file. After that, we fall back to severity
-+    // Group diagnostics by file and sort them in source order.
-+    // For diagnostics at the same location, fall back to severity
-     // (with fatal messages sorting before info messages) and then
-     // finally the diagnostic ID and concise message.
-+    // Diagnostics without a file come first. Whole-file diagnostics sort at offset zero.
-     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
--        if let (Some(span1), Some(span2)) = (
--            self.diagnostic.primary_span(),
--            other.diagnostic.primary_span(),
--        ) {
--            let file1 = span1.file();
--            let file2 = span2.file();
--            if file1 != file2 {
--                let order = file1.path(&self.db).cmp(file2.path(&self.db));
-+        let left = self.diagnostic;
-+        let right = other.diagnostic;
-+        let left_span = left.primary_span_ref();
-+        let right_span = right.primary_span_ref();
-+        let location = if let (Some(left_span), Some(right_span)) = (left_span, right_span) {
-+            let left_file = left_span.file();
-+            let right_file = right_span.file();
-+            if left_file != right_file {
-+                let order = left_file.path(&self.db).cmp(right_file.path(&self.db));
-                 if order.is_ne() {
-                     return order;
-                 }
-             }
- 
--            if let (Some(range1), Some(range2)) = (span1.range(), span2.range()) {
--                let order = range1.start().cmp(&range2.start());
--                if order.is_ne() {
--                    return order;
--                }
--            }
-+            let left_start = left_span.range().unwrap_or_default().start();
-+            let right_start = right_span.range().unwrap_or_default().start();
-+            left_start.cmp(&right_start)
-+        } else {
-+            left_span.is_some().cmp(&right_span.is_some())
-+        };
-+        if location.is_ne() {
-+            return location;
-         }
+ - Prioritize document structure and readability over avoiding duplicated setup. Add a test to an existing section when its heading accurately describes the new scenario, adding or improving introductory prose as needed; otherwise, create a separate sibling section, even if that requires repeating a small fixture.
 +
-         // Reverse so that, e.g., Fatal sorts before Info.
--        let order = self
--            .diagnostic
--            .severity()
--            .cmp(&other.diagnostic.severity())
--            .reverse();
-+        let order = left.severity().cmp(&right.severity()).reverse();
-         if order.is_ne() {
-             return order;
-         }
--        let order = self.diagnostic.id().cmp(&other.diagnostic.id());
-+        let order = left.id().cmp(&right.id());
-         if order.is_ne() {
-             return order;
-         }
- 
--        self.diagnostic
--            .concise_message()
-+        left.concise_message()
-             .to_str()
--            .cmp(&other.diagnostic.concise_message().to_str())
-+            .cmp(&right.concise_message().to_str())
-     }
- }
- 
-```
-
-**File**: `crates/ruff_db/src/diagnostic/render.rs` (modified, +17/-0)
-```diff
-@@ -2433,6 +2433,23 @@ watermelon
-         );
-     }
- 
-+    #[test]
-+    fn diagnostic_order_with_missing_locations() {
-+        let mut env = TestEnvironment::new();
-+        env.add("fruits", FRUITS);
+ - Order mdtests from basic, common behavior to more specialized cases. Place narrow regression tests alongside closely related examples when they fit naturally; otherwise, put them near the end of the relevant section or file. Do not put an obscure special case at the beginning simply because it is the newest regression.
 +
-+        let fileless = Diagnostic::new(DiagnosticId::Io, Severity::Hint, "Missing directory");
-+        let mut whole_file =
-+            Diagnostic::new(DiagnosticId::Io, Severity::Warning, "Check this file");
-+        whole_file.annotate(Annotation::primary(env.path("fruits")));
-+        let at_zero = env.err().primary("fruits", "1:0", "1:0", "").build();
-+        let at_one = env.err().primary("fruits", "1:1", "1:1", "").build();
+ - Aim for readable documents that serve as both documentation and tests. Use prose to explain the key type checker behavior and its rationale where helpful. A sentence or fragment may suffice; avoid repeating what the heading, surrounding explanation, or assertions already make clear. Use clear, precise terminology. Avoid using jargon where it's unnecessary, and avoid inventing new jargon if there's an existing term of art used in that file. Avoid long paragraphs covering multiple scenarios followed by a single long code block.
 +
-+        let mut diagnostics = [&at_one, &whole_file, &at_zero, &fileless];
-+        diagnostics.sort_by_key(|diagnostic| diagnostic.rendering_sort_key(&env.db));
-+        assert_eq!(diagnostics, [&fileless, &at_zero, &whole_file, &at_one]);
-+    }
+ - Prefer examples whose purpose is understandable without following issue links. For narrow regressions, a brief issue reference can be enough when additional explanation would merely restate the code or obscure the relevant behavior.
 +
-     #[test]
-     fn diagnostics_with_equal_locations_sort_by_concise_message() {
-         let mut env = TestEnvironment::new();
+ - Prefer direct, present-tense descriptions of behavior over abstract requirements: write "We reject this assignment" rather than "We must reject this assignment."
++
+ - Keep each code example as simple as possible while still demonstrating the key behavior. When adapting real-world code or an issue reproducer, remove incidental types, methods, type parameters, imports, and domain-specific details. Preserve complexity only when necessary to reproduce the regression or distinguish the intended behavior, and reuse nearby fixtures or simple built-in types when doing so keeps the test easy to understand.
++
+ - Prefer a minimal, purpose-built custom type over a standard-library type when a regression depends on particular attributes, methods, bounds, or constraints. Define the relevant behavior in the test so readers do not need to look up the standard-library type to understand the scenario. For commonly used standard-library types, consider adding a separate regression using the real type to protect against changes in typeshed.
++
+ - Place each mdtest in a file for the behavior it actually tests, and assert that behavior directly. Prefer an existing file when one already covers that behavior; c
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29795** (2026-10-28): [ty] Place variable type inlay hints after grouping parentheses (@AlexWaygood)
-- **PR #29794** (2026-10-28): [ty] Place argument name inlay hints before grouping parentheses (@AlexWaygood)
-- **PR #29787** (2026-10-28): [ty] Fix panic on a chained assignment with a missing value (@charliermarsh)
-- **PR #29786** (2026-10-28): [ty] Fix a panic when a comprehension filter depends on a later binding (@charliermarsh)
-- **PR #29783** (closed): [`ruff`] Add `match-capture-shadows-variable` (`RUF078`) (@shan3520)
-- **PR #29781** (2026-10-28): [ty] Correctly handle line continuation when fixing unused ignore comments (@MichaReiser)
+- **PR #29847** (2026-10-30): [ty] Rename specialized definitions method (@lerebear)
+- **PR #29839** (closed): Prune superseded Rust caches and caches from closed PRs (@charliermarsh)
+- **PR #29838** (closed): [ty] Skip class members that cannot participate in lookup (@charliermarsh)
+- **PR #29837** (2026-10-30): Upgrade Hawk to 0.1.17 and cache workspace artifacts (@charliermarsh)
+- **PR #29835** (2026-10-29): [ty] Ignore declared parameter type of `typing.cast` when inferring its argument (@ibraheemdev)
+- **PR #29834** (2026-10-29): Update msgpack to 1.2.3 in the release environment (@AlexWaygood)
 
 ---
 
@@ -2414,36 +2333,45 @@ Closes https://github.com/astral-sh/ty/issues/4837.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ty] Fix a panic when a comprehension filter depends on a later binding (#29786)
+## X. [ty] Fix recursive protocol materialization self-comparison (#29809)
 
 **RULE**:
-When implementing operations in `crates/ty_python_semantic/resources/mdtest/comprehensions/basic.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ty_python_semantic/resources/mdtest/generics/legacy/functions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3937a41c`: [ty] Fix a panic when a comprehension filter depends on a later binding (#29786). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7cb935d9`: [ty] Fix recursive protocol materialization self-comparison (#29809). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/resources/mdtest/comprehensions/basic.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/resources/mdtest/generics/legacy/functions.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Filter that depends on a later loop variable
+## Inferring a recursive protocol from a factory's return context
 
-The filter tests a callable that closes over `i`. Inferring its return type requires checking the
-final `for` clause, which is reachable only when the filter passes.
+The annotated assignment supplies `Stream[int]` as the type argument to `make_result`. Comparing the
+return types of `first_or` reaches `Stream`, whose `window` method adds the layer of nesting that
+`flatten` removes.
 
 ```py
-from collections.abc import Callable
+from typing import Protocol, TypeVar
 
-def readers(limits: list[int], enabled: bool) -> list[Callable[[], int]]:
-    return [
-        read
-        for limit in limits
-        for read, end in [((lambda: i) if enabled else None, limit)]
-        if read is not None and 0 < end < 10
-        for i in range(end)
-    ]
+T_co = TypeVar("T_co", covariant=True)
+T = TypeVar("T")
+U = TypeVar("U")
+
+class Result(Protocol[T_co]):
+    def first_or(self, default: U) -> T_co | U: ...
+
+class Stream(Protocol[T_co]):
+    def flatten(self: "Stream[Stream[U]]") -> "Stream[U]": ...
+    def window(self) -> "Stream[Stream[T_co]]": ...
+
+def make_result() -> Result[T]:
+    raise NotImplementedError
+
+result: Result[Stream[int]] = make_result()
+reveal_type(result)  # revealed: Result[Stream[int]]
 ```
 
 ```
@@ -2455,4 +2383,4 @@ def readers(limits: list[int], enabled: bool) -> list[Callable[[], int]]:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3937a41c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7cb935d9` are properly handled with clean fallback behavior.

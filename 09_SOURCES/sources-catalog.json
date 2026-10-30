@@ -1953,10 +1953,10 @@
     "repository": "webdriverio/webdriverio",
     "platform": "github",
     "sourceUrl": "https://github.com/webdriverio/webdriverio",
-    "sourceVersion": "ba88f76d",
+    "sourceVersion": "dc7be72b",
     "license": "MIT",
-    "contentHash": "60ef70381a2a41fbec4b4ae3eb09efc6d6baddf18fc9d42acc3d0ebfe74cb2c0",
-    "lastHarvestedAt": "2026-10-27T19:13:39.790Z",
+    "contentHash": "855d7d3b49b9e367fc199b0319ab6f83020e913d616776d56e87809c389c3d95",
+    "lastHarvestedAt": "2026-10-30T20:22:01.274Z",
     "learningId": "learn-github-webdriverio-webdriverio"
   },
   "rubenverborgh-sparql.js": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "9d8b9f06",
+    "sourceVersion": "c187ec5c",
     "license": "Apache-2.0",
-    "contentHash": "1658218cd321a5145517937f9d3b78194b7f5d67618d92368e606e94c8fa9658",
-    "lastHarvestedAt": "2026-10-29T12:13:33.983Z",
+    "contentHash": "91e4b23f7c8972b7a35ccdb0ecb3b272a07b3dd2b21f7a5185a9aac6c39106fa",
+    "lastHarvestedAt": "2026-10-30T20:22:10.895Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "2c7aeadb",
+    "sourceVersion": "1a28f170",
     "license": "BSD-3-Clause",
-    "contentHash": "2b9ce47ab388f3056907fddfbd7f9e1c50afb58c5a990d625b075cbacea9a9e1",
-    "lastHarvestedAt": "2026-10-30T15:49:21.069Z",
+    "contentHash": "955f469ab0b2fc08a9903f7c5c0ed527ca8ab5ca7447f72482c8e8f56c72e421",
+    "lastHarvestedAt": "2026-10-30T20:22:08.428Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "1d7a8b20",
+    "sourceVersion": "f0861e2a",
     "license": "Apache-2.0",
-    "contentHash": "9f4a7db456feb71de7733276dadb1356488e0858a89b5edb1765fe8c8eabf62e",
-    "lastHarvestedAt": "2026-10-29T17:03:38.019Z",
+    "contentHash": "57ea9fa07664732b8215581f2b48032afbc5346575d314af52f5483e8c58d051",
+    "lastHarvestedAt": "2026-10-30T20:22:06.377Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "c9d4e2e1",
+    "sourceVersion": "86b7fd1e",
     "license": "MIT",
-    "contentHash": "3f671b045b69beeb9f9f20f16db955f61a12f9a9f36efd93b0729976a40270c1",
-    "lastHarvestedAt": "2026-10-28T22:01:34.815Z",
+    "contentHash": "39335972b2b964ed14d21ce3f1fe1b9288fcf13826855fe2a48f701f3f36ebe5",
+    "lastHarvestedAt": "2026-10-30T20:21:58.448Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {

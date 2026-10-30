@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `9d8b9f06`  
+> **Source Version**: `c187ec5c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T12:13:33.366Z  
+> **Timestamp**: 2026-10-30T20:22:10.164Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T12:13:32.478Z  
+> **Harvest Timestamp**: 2026-10-30T20:22:09.921Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2054 stars
+- **Stars / Engagement**: 2058 stars
 
 ---
 
@@ -2911,11 +2911,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1703** (2026-10-29): **[Bug]: Milvus: delete leaves graph edges, entity linking then links new memories to deleted ones**
-  *Symptoms*: ### Bug Description  Milvus delete paths (`delete()`, `delete_by_tag(s)()`, timeframe deletes, `delete_untagged_memories()`) remove memory rows but not their edges in `<collection>_graph`. SQLite cascades since #633; `_prune_orphaned_graph_edges()` (#632) is SQLite-only.  With `MCP_ENTITY_LINKING_ENABLED=true`, the leftover `has_entity` edge makes `find_memories_by_entity()` return the deleted memory, and `EntityLinker` links new memories to it. Since the lookup is capped at 20 before any liveness check, deleted memories also crowd out live ones (from the code, not reproduced).  ### Steps to Reproduce  Milvus Lite, stubbed embeddings, entity linking on:  1. Store A and B with tag `shared-x` — edge A↔B is created. 2. Delete A. 3. Store C with tag `shared-x`.  ### Expected Behavior  No edges touching A after step 2; C is linked to B only.  ### Actual Behavior  After step 2: 3 edges touching A remain (`has_entity`, `shares_entity`). After step 3: 2 `shares_entity` edges C↔A.  ### Storage Backend  milvus (community-maintained)  ### Operating System  macOS  ### Python Version  3.14.7  ### MCP Memory Service Version  `main` at 52568d90 (12.4.0)  ### Installation Method  Source (git clone)  ### Additional Context  Proposed fix: in the Milvus delete paths, also delete graph rows whose `source_hash` or `target_hash` is a deleted hash (best-effort, like the access-collection cleanup in `delete()`), plus Milvus Lite regression tests. I'd like to implement it once the approach is agreed 
+- **Issue #1708** (2026-10-29): **Milvus: purge_deleted() leaves graph edges of purged memories behind**
+  *Symptoms*: Follow-up to #1703 / #1706.  #1706 made all six Milvus delete paths remove the graph edges of the memories they delete, through `MilvusMemoryStorage._delete_graph_edges()`. `purge_deleted()` was left out on purpose, as noted in the PR: it hard-deletes tombstoned rows by id and leaves their rows in `<collection>_graph` behind, the same leak #1703 fixed for the other paths.  On Milvus this is a narrow case. `delete()` is a hard delete, so a tombstone only exists when something set `metadata.deleted_at` explicitly via `update_memory_metadata()` (see the docstrings of `is_deleted()` and `purge_deleted()` in `storage/milvus.py`). When such a row is purged, its edges survive, including `has_entity`, so `find_memories_by_entity()` can still return the purged hash.  Fix: after the successful `delete` call in `purge_deleted()`, call `await self._delete_graph_edges(to_purge)`. Best-effort, same contract as the other paths.  Test: extend `tests/storage/test_milvus_delete_graph_edges.py`: store a memory with entity linking on, set `deleted_at` in its metadata with a `created_at` older than the threshold, run `purge_deleted()`, and assert no edge touches the hash. 
 
-- **Issue #1628** (2026-10-21): **cli: memory migrate still stops at migration 008 on a pre-v8.7 database**
-  *Symptoms*: ## What happens  #1626 fixed #1622 for the service: `SqliteVecMemoryStorage.initialize()` now creates the `metadata` table before it runs the schema migrations. The `memory migrate` command does not go through `initialize()`, so on a sqlite-vec database from before v8.7.0 it still fails the same way: migration 008 stops with `no such table: metadata`, and nothing after it applies.  ## Why  `memory migrate` (`cli/main.py:411`) opens the file with a plain `sqlite3.connect(db_path)` (`:429`) and calls `MigrationRunner.run_pending(conn)` directly (`:431`). `run_pending()` (`storage/migration_runner.py:211`) creates its own registry table (`_ensure_registry_table`, `:37`) but not `metadata`, where it keeps `schema_version`. Credit to @Clannad47, who pointed this out in the #1626 description.  ## Suggested fix  Create `metadata` inside `MigrationRunner` itself, next to `_ensure_registry_table()` and with the same definition the storage uses (`CREATE TABLE IF NOT EXISTS metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL)`). Then every caller of `run_pending()` is covered, the CLI and `initialize()` alike, and the separate guard from #1626 becomes redundant but harmless. Keep the `--dry-run` path read-only: with `dry_run=True` nothing may be created.  ## For whoever picks this up  - The test goes in `tests/storage/`, next to `test_1622_legacy_metadata_table.py`, whose pre-v8.7 database setup you can reuse. Drive it through the real code path: build that database under `temp_db_path`
+- **Issue #1707** (2026-10-29): **[Bug]: POST /oauth/register returns a null client_secret for public clients, which Claude Code rejects**
+  *Symptoms*: ### Bug Description Since v11.8.2 a public client (token_endpoint_auth_method "none") is no longer issued a secret, which is correct. The comment in registration.py says the member is "omitted entirely for a public client", but the handler passes client_secret=None and FastAPI serializes it as JSON null. Unset client_name and scope come back as null the same way.  RFC 7591 section 3.2.1 treats these members as optional, so a member without a value should be left out. Claude Code validates the registration response and aborts the OAuth flow on the null, so it cannot connect to an OAuth-protected instance over HTTP.  ### Steps to Reproduce 1. Start the HTTP server with OAuth enabled (configuration below). 2. Register a public client.    ```bash    curl -s -X POST https://<host>/oauth/register -H 'Content-Type: application/json' \      -d '{"client_name":"test","redirect_uris":["http://localhost:53123/callback"],"grant_types":["authorization_code","refresh_token"],"response_types":["code"],"token_endpoint_auth_method":"none"}'    ``` 3. Add the server to Claude Code with `claude mcp add --transport http memory https://<host>/mcp` and authenticate from `/mcp`.  ### Expected Behavior The registration response leaves out members that have no value, and Claude Code opens the authorization page.  ### Actual Behavior ```json {"client_id":"mcp_client_...","client_secret":null,"redirect_uris":["http://localhost:53123/callback"],"grant_types":["authorization_code","refresh_token"],"respo
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2932,539 +2932,333 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9d8b9f06` (2026-10-29)
-**Commit Message**: ci(prove-fix): give Milvus tests a real verdict (#1709) (#1710)
+### Incident Patch 1: `c187ec5c` (2026-10-30)
+**Commit Message**: fix(storage): stop loading the Milvus backend on every import (#1718)
 
-* ci(prove-fix): give Milvus tests a real verdict
+* fix(storage): stop loading the Milvus backend on every import
 
-tests-prove-fix installs only the dev and sqlite extras. Milvus test files
-importorskip pymilvus, so on the base side pytest skipped the whole module,
-exited 5, and the check reported "no tests collected" for every Milvus fix,
-#1706 included.
+storage/__init__.py imported storage.milvus eagerly, and every
+deployment imports the storage package (web/dependencies.py does it at
+startup). Without pymilvus installed, milvus.py then logged "pymilvus not
+available" at WARNING on every start, for a backend the deployment never
+selected. The except ImportError in __init__.py never ran either, because
+milvus.py catches the ImportError itself.
 
-The job now installs pymilvus, milvus-lite and setuptools at the uv.lock
-versions when a changed test imports pymilvus. The full milvus extra also
-pulls torch, so it stays out of this job.
+MilvusMemoryStorage is now resolved on first access through a module
+__getattr__. The backend selectors (storage/factory.py, server_impl.py,
+cli/utils.py) already import storage.milvus directly. The import-time
+warning is gone: MilvusMemoryStorage.__init__ already raises with install
+instructions when pymilvus is missing, which is where it matters.
 
-A test module that still skips at collection now fails with the name of the
-missing module instead of "no tests collected", and CONTRIBUTING.md says
-what to do about it.
+* docs(changelog): add fragment for #1718
 
-Fixes #1709
+---------
 
-* ci(prove-fix): pin Milvus deps to the lock, quote custom skip reasons
+Co-authored-by: timkjr <[REDACTED_EMAIL]>
+Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
-The Milvus install now passes the whole locked export as constraints, so
-grpcio, pandas, protobuf and the rest land at the uv.lock versions instead
-of whatever resolves on the day. Still only three packages are requested,
-so torch stays out.
-
-importorskip(..., reason=...) drops the module name from the skip line, and
-those modules fell back to "no tests collected". The check now quotes the
-
-
-**File**: `.github/workflows/ci.yml` (modified, +16/-0)
+**File**: `changelog.d/1718.fixed.md` (added, +5/-0)
 ```diff
-@@ -239,6 +239,8 @@ jobs:
- 
-     # Installs from uv.lock, like `test`: see there.
-     - name: Install dependencies
-+      env:
-+        BASE_REF: ${{ github.base_ref }}
-       run: |
-         sudo apt-get update
-         sudo apt-get install -y --only-upgrade ca-certificates
-@@ -247,6 +249,20 @@ jobs:
-         echo "$HOME/venv/bin" >> "$GITHUB_PATH"
-         export UV_PROJECT_ENVIRONMENT="$HOME/venv"
-         python3 -m uv sync --frozen --python python3 --extra dev --extra sqlite
-+        # Milvus tests importorskip pymilvus, so without it they skip at collection
-+        # and the check cannot give a verdict (#1709). Add the Milvus client only
-+        # when a changed test needs it. The full extra also pulls torch, so only
-+        # three packages are installed, and the whole locked export is passed as
-+        # constraints: their dependencies land at the uv.lock versions too, and
-+        # the cap and setuptools<82 stay defined in pyproject.toml alone. Tests
-+        # that importorskip sentence_transformers still skip here.
-+        mapfile -t changed_tests < <(git diff --name-only --diff-filter=AM "origin/$BASE_REF...HEAD" -- tests/ | grep -E '(^|/)test_[^/]*\.py$' || true)
-+        if [ "${#changed_tests[@]}" -gt 0 ] && grep -lq -e pymilvus -- "${changed_tests[@]}"; then
-+          python3 -m uv export --frozen --extra milvus --no-hashes --no-emit-project > "$RUNNER_TEMP/milvus-lock.txt"
-+          grep -E '^(pymilvus|milvus-lite|setuptools)==' "$RUNNER_TEMP/milvus-lock.txt" > "$RUNNER_TEMP/milvus-reqs.txt"
-+          python3 -m uv pip install --python "$HOME/venv/bin/python" \
-+            -r "$RUNNER_TEMP/milvus-reqs.txt" -c "$RUNNER_TEMP/milvus-lock.txt"
-+        fi
- 
-     - name: Run the changed tests against the base branch
-       env:
+@@ -0,0 +1,5 @@
++- **"pymilvus not available" logged on every start without Milvus (#1718).**
++  `storage/__init__.py` imported the Milvus backend eagerly, so every install
++  without pymilvus logged a WARNING at startup whatever backend it used.
++  `MilvusMemoryStorage` now loads on first access, and the missing-pymilvus
++  error is raised only when a Milvus storage is actually created.
 ```
 
-**File**: `CONTRIBUTING.md` (modified, +5/-0)
+**File**: `src/mcp_memory_service/storage/__init__.py` (modified, +15/-4)
 ```diff
-@@ -313,6 +313,11 @@ except StorageError as e:
-   git stash -- src/ && .venv/bin/pytest tests/<your file> -q; git stash pop   # must fail
-   .venv/bin/pytest tests/<your file> -q                                        # must pass
-   ```
-+  The check installs `pymilvus` and Milvus Lite when a changed test imports
-+  `pymilvus`, but no other optional extra. A test that skips itself without one
-+  (`pytest.importorskip("sentence_transformers")`, for example) gets a failure
-+  naming the missing module; paste your local runs and a maintainer sets
-+  `skip-prove-fix`.
- - Drive the real code path. Use the sqlite-vec storage through the `temp_db_path`
-   fixture, the real tool registry, the real handler. Mock only network and
-   external services (Cloudflare, Groq, Gemini). A mock of the function under test
+@@ -12,6 +12,8 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
++from typing import TYPE_CHECKING
++
+ from .base import MemoryStorage
+ 
+ # Conditional imports based on available dependencies
+@@ -35,8 +37,17 @@
+ except ImportError:
+     HybridMemoryStorage = None
+ 
+-try:
++# Milvus is loaded on first access, not here: every deployment imports this
++# package, and only Milvus users need storage/milvus.py. The backend
++# selectors (factory.py, server_impl.py, cli/utils.py) import it directly.
++__all__.append('MilvusMemoryStorage')
++
++if TYPE_CHECKING:
+     from .milvus import MilvusMemoryStorage
+-    __all__.append('MilvusMemoryStorage')
+-except ImportError:
+-    MilvusMemoryStorage = None
+\ No newline at end of file
++
++
++def __getattr__(name):
++    if name == 'MilvusMemoryStorage':
++        from .milvus import MilvusMemoryStorage
++        return MilvusMemoryStorage
++    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+\ No newline at end of file
 ```
 
-**File**: `scripts/ci/check_tests_prove_fix.sh` (modified, +31/-4)
+**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +2/-3)
 ```diff
-@@ -62,7 +62,7 @@ tests_changed="$(git diff --name-only --diff-filter=AM "$base" HEAD -- 'tests/'
- if [ -z "$tests_changed" ]; then
-     echo "FAIL - src/ changed but no test was added or modified"
-     echo "Changed under src/:"
--    printf '  %s\n' $src_changed
-+    printf '%s\n' "$src_changed" | sed 's/^/  /'
-     echo "A behavior change needs a test that fails without it. See CONTRIBUTING.md,"
-     echo "'Testing Requirements'. Maintainers can exempt a PR with the skip-prove-fix label."
-     exit 1
-@@ -86,10 +86,19 @@ done
- git checkout -q "$base" -- 'src/'
- find src -type d -name __pycache__ -prune -exec rm -rf {} +
+@@ -60,9 +60,8 @@
+     PYMILVUS_AVAILABLE = False
+     MilvusClient = None  # type: ignore
+     DataType = None  # type: ignore
+-    logging.getLogger(__name__).warning(
+-        "pymilvus not available. Install with: pip install pymilvus milvus-lite"
+-    )
++    # No warning here: MilvusMemoryStorage.__init__ raises with install
++    # instructions, which is the only point where a missing pymilvus matters.
  
-+# One array element per path, so a space or a glob character in a file name
-+# stays part of that name (bash 3.2 has no mapfile).
-+test_files=()
-+while IFS= read -r t; do
-+    test_files+=("$t")
-+done <<<"$tests_changed"
-+
- echo "Running the changed tests against src/ at ${base:0:8}:"
--printf '  %s\n' $tests_changed
--"$PYTHON" -m pytest $tests_changed -q -p no:cacheprovider -m "not benchmark" --timeout=120
-+printf '  %s\n' "${test_files[@]}"
-+# -rs lists skip reasons, so a module that skipped itself at collection can be named.
-+out="$("$PYTHON" -m pytest "${test_files[@]}" -q -rs -p no:cacheprovider -m "not benchmark" --timeout=120 2>&1)"
- rc=$?
-+printf '%s\n' "$out"
- 
- case "$rc" in
-     1|2)
-@@ -103,7 +112,25 @@ case "$rc" in
-         exit 1
-         ;;
-     5)
--        echo "FAIL - no tests collected from the changed files"
-+        # An importorskip at module top skips the whole file at collection, which
-+        # pytest reports as nothing collected. Say which module was missing: the
-+        # test is not wrong, this job lacks the optional extra it needs (#1709).
-+        # importorskip(..., reason=...) replaces the module name with the reason,
-+        # so fall back to listing the skip reasons themselves.
-+        skips="$(printf '%s\n' "$out" | grep '^SKIPPED ')"
-+        missing="$(printf '%s\n' "$skips" | sed -n "s/^SKIPPED .*could not import '\([^']*\)'.*/\1/p" | sort -u | paste -sd ' ' -)"
-+        if [ -n "$skips" ]; then
-+            if [ -n "$missing" ]; then
-+                echo "FAIL - the changed tests skipped at collection; not installed in this job: $missing"
-+            else
-+                echo "FAIL - the changed tests skipped at collection:"
-+                printf '%s\n' "$skips" | sed 's/^/  /'
-+            fi
-+            echo "Paste your local red/green runs into the PR. A maintainer can exempt it with"
-+            echo "the skip-prove-fix label (push a commit afterwards; a re-run keeps the old labels)."
-+        else
-+            echo "FAIL - no tests collected from the changed files"
-+        fi
-         exit 1
-         ;;
-     *)
+ # BM25 full-text search support (Milvus 2.5+).
+ # Function / FunctionType were added in pymilvus ≥ 2.5; older versions lack them.
 ```
 
-**File**: `tests/ci/test_check_tests_prove_fix.sh` (modified, +40/-0)
+**File**: `tests/storage/test_storage_package_lazy_milvus.py` (added, +57/-0)
 ```diff
-@@ -110,6 +110,12 @@ printf 'def extra():\n    return 1\n' > "$d/src/mcp_memory_service/extra.py"
- printf 'from mcp_memory_service.extra import extra\n\n\ndef test_extra():\n    assert extra() == 1\n' > "$d/tests/test_extra.py"
- run_case "new module with new test passes via collection error" 0 "$d"
- 
-+# A space in a test path must not split it into two pytest arguments.
-+d="$TMP/spaced"; new_repo "$d"
-+sed -i.bak 's/return 41/return 42/' "$d/src/mcp_memory_service/__init__.py" && rm "$d/src/mcp_memory_service/__init__.py.bak"
-+printf 'from mcp_memory_service import answer\n\n\ndef test_answer():\n    assert answer() == 42\n' > "$d/tests/test_spaced answer.py"
-+run_case "test path with a space is passed whole" 0 "$d"
+@@ -0,0 +1,57 @@
++"""Importing the storage package must not load the Milvus backend.
 +
- # Interpreter that does not import this tree: refuse rather than report a verdict.
- d="$TMP/wrongenv"; new_repo "$d"
- sed -i.bak 's/return 41/return 42/' "$d/src/mcp_memory_service/__init__.py" && rm "$d/src/mcp_memory_service/__init__.py.bak"
-@@ -125,6 +131,40 @@ else
-     failures=$((failures + 1))
- fi
- 
-+# A test module that skips itself at collection (importorskip of an optional extra
-+# the job does not install): still a failure, but the message names the module
-+# instead of claiming nothing was collected. The exit code is 1 either way, so the
-+# case checks the output (#1709).
-+d="$TMP/modskip"; new_repo "$d"
-+sed -i.bak 's/return 41/return 42/' "$d/src/mcp_memory_service/__init__.py" && rm "$d/src/mcp_memory_service/__init__.py.bak"
-+printf 'import pytest\n\npytest.importorskip("no_such_module_1709")\n\n\ndef test_answer():\n    assert True\n' > "$d/tests/test_answer.py"
-+git_c -C "$d" add -A && git_c -C "$d" commit -q -m pr
-+out="$(cd "$d" && env PYTHONPATH="$d/src" PYTHON="$PY" bash "$SCRIPT" main 2>&1)"
-+actual=$?
-+if [ "$actual" -eq 1 ] && grep -q "not installed in this job: no_such_module_1709" <<<"$out"; then
-+    echo "PASS - module skipped at collection fails and names the module"
-+else
-+    echo "FAIL - module skipped at collection fails and names the module (got exit $actual)"
-+    echo "$out" | sed 's/^/    /'
-+    failures=$((failures + 1))
-+fi
++Every deployment imports ``mcp_memory_service.storage`` (the web app does it
++through ``web/dependencies.py``). When that import pulled in ``storage/milvus``
++eagerly, a sqlite_vec or hybrid install without pymilvus logged
++"pymilvus not available" at WARNING on every start, for a backend it never
++selected. Each check runs in a fresh interpreter, because by the time pytest
++gets here other tests have already imported the module.
++"""
 +
-+# Same, with importorskip(reason=...): the module name is gone from the skip line,
-+# so the failure quotes the reason instead of claiming nothing was collected.
-+d="$TMP/modskipreason"; new_repo "$d"
-+sed -i.bak 's/return 41/return 42/' "$d/src/mcp_memory_service/__init__.py" && rm "$d/src/mcp_memory_service/__init__.py.bak"
-+printf 'import pytest\n\npytest.importorskip("no_such_module_1709", reason="needs the 1709 extra")\n\n\ndef test_answer():\n    assert True\n' > "$d/tests/test_answer.py"
-+git_c -C "$d" add -A && git_c -C "$d" commit -q -m pr
-+out="$(cd "$d" && env PYTHONPATH="$d/src" PYTHON="$PY" bash "$SCRIPT" main 2>&1)"
-+actual=$?
-+if [ "$actual" -eq 1 ] && grep -q "needs the 1709 extra" <<<"$out" && ! grep -q "no tests collected" <<<"$out"; then
-+    echo "PASS - module skipped with a custom reason fails and quotes the reason"
-+else
-+    echo "FAIL - module skipped with a custom reason fails and quotes the reason (got exit $actual)"
-+    echo "$out" | sed 's/^/    /'
-+    failures=$((failures + 1))
-+fi
++import subprocess
++import sys
 +
- if [ "$failures" -gt 0 ]; then
-     echo "$failures test(s) failed"
-     exit 1
++
++def _run(*lines: str) -> subprocess.CompletedProcess:
++    return subprocess.run(
++        [sys.executable, "-c", "\n".join(lines)],
++        capture_output=True,
++        text=True,
++        timeout=120,
++    )
++
++
++def test_storage_package_import_does_not_load_milvus():
++    result = _run(
++        "import sys",
++        "import mcp_memory_service.storage",
++        'print("mcp_memory_service.storage.milvus" in sys.modules)',
++    )
++    assert result.returncode == 0, result.stderr
++    assert result.stdout.strip() == "False"
++    assert "pymilvus not available" not in result.stderr
++
++
++def test_milvus_class_still_reachable_from_package():
++    result = _run(
++        "from mcp_memory_service.storage import MilvusMemoryStorage",
++        "from mcp_memory_service.storage.milvus import MilvusMemoryStorage as direct",
++        "print(MilvusMemoryStorage is direct)",
++    )
++    assert result.returncode == 0, result.stderr
++    assert result.stdout.strip() == "True"
++
++
++def test_milvus_module_import_without_pymilvus_is_silent():
++    # Block pymilvus so the check holds whether or not it is installed here.
++    result = _run(
++        "import sys",
++        'sys.modules["pymilvus"] = None',
++        "import logging",
++        "logging.basicConfig(level=logging.WARNING)",
++        "import mcp_memory_service.storage.milvus as m",
++        "print(m.PYMILVUS_AVAILABLE)",
++    )
++    assert result.returncode == 0, result.stderr
++    assert result.stdout.strip() == "False"
++    assert "pymilvus not available" not in result.stderr
 ```
 
 ---
 
-### Incident Patch 2: `7363f466` (2026-10-29)
-**Commit Message**: fix(milvus): delete graph edges together with deleted memories (#1706)
+### Incident Patch 2: `38ce0293` (2026-10-30)
+**Commit Message**: fix(quality): log the async scorer's first-use start at DEBUG, not WARNING (#1719)
 
-* test(milvus): reproduce graph edges surviving delete (#1703)
+* fix(quality): log the async scorer's first-use start at DEBUG, not WARNING
 
-Fails on main: after delete() the memory's has_entity/shares_entity
-edges remain, and a new memory sharing an entity is linked to the
-deleted one. Becomes the regression test for the fix.
+Nothing starts AsyncQualityScorer at boot. score_memory() starts it on
+the first store or retrieve, which is the only start path in the service,
+and logged "Async quality scorer not running, starting now" at WARNING
+before doing so. Every process therefore logged one warning after each
+restart for behaviour that is working as designed (31 times in 30 days
+on a production deployment). start() already logs "Async quality scorer
+started" at INFO, so the first-use line moves to DEBUG.
 
-* test(milvus): cover bulk delete and entity linking after delete (#1703)
+* docs(changelog): add fragment for #1719
 
-Store A and B with a shared tag, delete A, store C: C must link to B only. Add delete_by_tags() as the bulk path, and check that delete() still succeeds when the graph cleanup fails.
+---------
 
-* fix(milvus): delete graph edges together with deleted memories (#1703)
+Co-authored-by: timkjr <[REDACTED_EMAIL]>
 
-Milvus delete paths removed memory rows but left their rows in <collection>_graph, so a deleted memory's has_entity edge kept answering find_memories_by_entity() and EntityLinker linked new memories to it. All six delete paths now call one best-effort helper that removes every edge whose source or target is a deleted hash; a failure is logged and does not fail the delete.
-
-* test(milvus): cover graph cleanup when a bulk delete fails part-way (#1703)
-
-With one hash per chunk and the second memory delete failing, delete_by_tags() and dele
-
-**File**: `changelog.d/1703.fixed.md` (added, +7/-0)
+**File**: `changelog.d/1719.fixed.md` (added, +3/-0)
 ```diff
-@@ -0,0 +1,7 @@
-+- **Milvus: deleting a memory left its graph edges behind, and entity linking kept linking new memories to it (#1703, andrunio).**
-+  Every Milvus delete path removed the memory rows but not their rows in
-+  `<collection>_graph`, so the dead memory's `has_entity` edge still answered
-+  `find_memories_by_entity()` and `EntityLinker` connected new memories to it.
-+  `delete()`, `delete_by_tag()`, `delete_by_tags()`, `delete_by_timeframe()`,
-+  `delete_before_date()` and `delete_untagged_memories()` now remove the edges of
-+  the memories they deleted, best-effort and logged, the way SQLite cascades them.
+@@ -0,0 +1,3 @@
++- **Async quality scorer logged a WARNING on every restart (#1719).**
++  Its first-use start is the only way the scorer starts, so
++  "Async quality scorer not running, starting now" is now logged at DEBUG.
 ```
 
-**File**: `src/mcp_memory_service/storage/milvus.py` (modified, +59/-30)
+**File**: `src/mcp_memory_service/quality/async_scorer.py` (modified, +3/-1)
 ```diff
-@@ -979,6 +979,25 @@ async def _get_graph_storage(self):
-             self._graph_storage = graph
-             return graph
+@@ -110,7 +110,9 @@ async def score_memory(
+             storage: Optional storage instance to persist updated scores
+         """
+         if not self.running:
+-            logger.warning("Async quality scorer not running, starting now")
++            # The first score is the normal start path (nothing starts the
++            # scorer at boot), so this is not a warning; start() logs at INFO.
++            logger.debug("Async quality scorer not running, starting now")
+             await self.start()
  
-+    async def _delete_graph_edges(self, content_hashes: List[str]) -> None:
-+        """Best-effort removal of graph edges touching deleted memories (#1703).
-+
-+        SQLite cascades these on delete; here the edges live in a separate
-+        collection and would otherwise survive, so entity linking kept
-+        linking new memories to deleted ones. A failure is logged and does
-+        not fail the delete, which has already happened.
-+        """
-+        if not content_hashes:
-+            return
-+        try:
-+            graph = await self._get_graph_storage()
-+            await graph.delete_edges_for_memories(content_hashes)
-+        except Exception as exc:  # noqa: BLE001
-+            logger.warning(
-+                "Failed to delete graph edges for %d deleted memories (non-fatal): %s",
-+                len(content_hashes), _sanitize_log_value(exc),
-+            )
-+
-     async def _detect_conflicts(
-         self, new_hash: str, new_content: str, embedding: List[float]
-     ) -> List[Dict[str, Any]]:
-@@ -1832,6 +1851,7 @@ async def delete(self, content_hash: str, store: Optional[str] = None) -> Tuple[
-                 )
-             except Exception:  # noqa: BLE001
-                 pass  # non-fatal
-+        await self._delete_graph_edges([content_hash])
-         return True, f"Successfully deleted memory {content_hash}"
- 
-     async def delete_memory(self, content_hash: str) -> bool:
-@@ -1874,32 +1894,35 @@ async def delete_by_tags(self, tags: List[str], store: Optional[str] = None) ->
-             return 0, f"No memories found matching any of the {len(tags)} tags", []
- 
-         deleted_hashes: List[str] = []
--        for start in range(0, len(hashes), self._GET_BY_ID_CHUNK):
--            chunk = hashes[start:start + self._GET_BY_ID_CHUNK]
--            try:
--                await self._call_client(
--                    "delete",
--                    collection_name=self.collection_name,
--                    ids=chunk,
--                )
--            except Exception as exc:  # noqa: BLE001
--                logger.error(
--                    "delete_by_tags failed after %d/%d memories: %s",
--                    len(deleted_hashes),
--                    len(hashes),
--                    _sanitize_log_value(exc),
--                )
--                if deleted_hashes:
-+        try:
-+            for start in range(0, len(hashes), self._GET_BY_ID_CHUNK):
-+                chunk = hashes[start:start + self._GET_BY_ID_CHUNK]
-+                try:
-+                    await self._call_client(
-+                        "delete",
-+                        collection_name=self.collection_name,
-+                        ids=chunk,
-+                    )
-+                except Exception as exc:  # noqa: BLE001
-+                    logger.error(
-+                        "delete_by_tags failed after %d/%d memories: %s",
-+                        len(deleted_hashes),
-+                        len(hashes),
-+                        _sanitize_log_value(exc),
-+                    )
-+                    if deleted_hashes:
-+                        raise MilvusDeleteError(
-+                            f"Deleted {len(deleted_hashes)} of {len(hashes)} memories "
-+                            f"before deletion failed: {_sanitize_log_value(exc)}",
-+                            deleted_count=len(deleted_hashes),
-+                            deleted_hashes=deleted_hashes,
-+                        ) from exc
-                     raise MilvusDeleteError(
--                        f"Deleted {len(deleted_hashes)} of {len(hashes)} memories "
--                        f"before deletion failed: {_sanitize_log_value(exc)}",
--                        deleted_count=len(deleted_hashes),
--                        deleted_hashes=deleted_hashes,
-+                        f"Deletion failed: {_sanitize_log_value(exc)}",
-                     ) from exc
--                raise MilvusDeleteError(
--                    f"Deletion failed: {_sanitize_log_value(exc)}",
--                ) from exc
--            deleted_hashes.extend(chunk)
-+                deleted_hashes.extend(chunk)
-+        finally:
-+            await self._delete_graph_edges(deleted_hashes)
- 
-         return (
-             len(deleted_hashes),
-@@ -1992,12 +2015,18 @@ async def _delete_matching_parts(
-         )
-         if not hashes:
-             return 0, []
--        for start in range(0, len(hashes), self._GET_BY_ID_CHUNK):
--            await self._call_client(
--                "delete",
--                collection_name=self.collection_name,
--                ids=hashes[start:start + self._GET_BY_ID_CHUNK],
--            )
-+        deleted: List[str] = []
-+        try:
-+            for start in range(0, len(hashes), self._GET_BY_ID_CHUNK):
-+                chunk = hashes[start:start + self._GET_BY_ID_CHUNK]
-+                await self._call_client(
-+               
+         # Add to queue
 ```
 
-**File**: `src/mcp_memory_service/storage/milvus_graph.py` (modified, +20/-0)
+**File**: `tests/quality/test_async_scorer_lazy_start.py` (added, +41/-0)
 ```diff
-@@ -55,6 +55,9 @@
- # Milvus per-call result limit ceiling.
- _MILVUS_MAX_LIMIT = 16384
- 
-+# Hashes per delete_edges_for_memories() filter; each hash appears in it twice.
-+_DELETE_EDGES_CHUNK = 200
+@@ -0,0 +1,41 @@
++"""The scorer's first-use start is its normal start path, not a fault.
 +
- # Dimension for the dummy vector field required by Zilliz Cloud / remote Milvus.
- # Zilliz Cloud rejects collections without at least one vector field.
- _DUMMY_VEC_DIM = 2
-@@ -838,6 +841,23 @@ async def delete_association(
-             logger.error("Failed to delete association: %s", exc)
-             return False
- 
-+    async def delete_edges_for_memories(self, memory_hashes: List[str]) -> None:
-+        """Delete every edge from or to ``memory_hashes``. Errors propagate."""
-+        if not self._ensure_ready():
-+            return
-+
-+        hashes = [h for h in memory_hashes if h]
-+        for start in range(0, len(hashes), _DELETE_EDGES_CHUNK):
-+            quoted = ", ".join(
-+                f'"{escape_expr_value(h)}"'
-+                for h in hashes[start:start + _DELETE_EDGES_CHUNK]
-+            )
-+            await self._call_client(
-+                "delete",
-+                collection_name=self.collection_name,
-+                filter=f"source_hash in [{quoted}] or target_hash in [{quoted}]",
-+            )
-+
-     async def get_association_count(self, memory_hash: str) -> int:
-         """Get count of direct associations for a memory."""
-         if not self._ensure_ready():
-```
-
-**File**: `tests/storage/test_milvus_delete_graph_edges.py` (added, +181/-0)
-```diff
-@@ -0,0 +1,181 @@
-+"""Milvus delete must remove the memory's graph edges (#1703).
-+
-+SQLite cascades graph edges on delete since #633. On Milvus the edges in
-+``<collection>_graph`` survived, so with entity linking enabled a new memory
-+sharing an entity was linked to the deleted one.
-+
-+Runs against a real Milvus Lite file; only the embedding is stubbed.
-+
-+Run: pytest tests/storage/test_milvus_delete_graph_edges.py -v
++Nothing in the service starts AsyncQualityScorer at boot; score_memory()
++starts it on the first store or retrieve. That start used to be logged at
++WARNING ("Async quality scorer not running, starting now"), so every process
++logged one warning after each restart for behaviour that is working as
++designed. start() already logs "Async quality scorer started" at INFO.
 +"""
 +
-+import hashlib
-+import uuid
++import logging
 +
-+import numpy as np
 +import pytest
-+import pytest_asyncio
 +
-+pytest.importorskip("pymilvus")
-+pytest.importorskip("milvus_lite")
-+
-+from mcp_memory_service.services.memory_service import MemoryService  # noqa: E402
-+from mcp_memory_service.storage.milvus import MilvusMemoryStorage  # noqa: E402
-+import mcp_memory_service.server.handlers.graph as graph_handlers  # noqa: E402
-+
-+_DIM = 64
++from mcp_memory_service.models.memory import Memory
++from mcp_memory_service.quality.ai_evaluator import QualityEvaluator
++from mcp_memory_service.quality.async_scorer import AsyncQualityScorer
++from mcp_memory_service.quality.config import QualityConfig
 +
 +
-+class _StubEncoder:
-+    """Deterministic, near-orthogonal vectors, so semantic dedup never merges the test memories."""
++@pytest.mark.asyncio
++async def test_first_score_starts_scorer_without_a_warning(caplog):
++    scorer = AsyncQualityScorer()
++    # A disabled evaluator scores without loading a model (see
++    # test_quality_system.py::test_async_background_scoring).
++    scorer.evaluator = QualityEvaluator(QualityConfig(enabled=False))
++    memory = Memory(content="lazy start", content_hash="hash_lazy", metadata={})
 +
-+    def encode(self, texts, convert_to_numpy=True, **kwargs):
-+        return np.array([
-+            np.random.default_rng(int(hashlib.sha256(t.encode()).hexdigest()[:8], 16))
-+            .standard_normal(_DIM).astype(np.float32)
-+            for t in texts
-+        ])
-+
-+
-+@pytest_asyncio.fixture
-+async def service(tmp_path, monkeypatch):
-+    async def _stub_init_embedding(self):
-+        self.embedding_model = _StubEncoder()
-+        self.embedding_dimension = _DIM
-+
-+    monkeypatch.setattr(MilvusMemoryStorage, "_initialize_embedding_model", _stub_init_embedding)
-+    monkeypatch.setenv("MCP_ENTITY_LINKING_ENABLED", "true")
-+    storage = MilvusMemoryStorage(
-+        uri=str(tmp_path / "milvus.db"),
-+        collection_name=f"mcp_delgraph_{uuid.uuid4().hex[:12]}",
-+        embedding_model="stub",
-+    )
-+    await storage.initialize()
-+
-+    async def _graph():
-+        return await storage._get_graph_storage()
-+
-+    monkeypatch.setattr(graph_handlers, "get_graph_storage", _graph)
++    caplog.set_level(logging.DEBUG, logger="mcp_memory_service.quality.async_scorer")
 +    try:
-+        yield MemoryService(storage), storage
++        await scorer.score_memory(memory, "query")
++
++        assert scorer.running is True
++        assert scorer.get_stats()["total_queued"] == 1
++        warnings = [r for r in caplog.records if r.levelno >= logging.WARNING]
++        assert warnings == [], [r.getMessage() for r in warnings]
++        assert any(
++            r.levelno == logging.INFO and r.getMessage() == "Async quality scorer started"
++            for r in caplog.records
++        )
 +    finally:
-+        await storage.close()
-+
-+
-+async def _edges_touching(graph, content_hash):
-+    return await graph._drain_edges(
-+        f'source_hash == "{content_hash}" or target_hash == "{content_hash}"',
-+        ["source_hash", "target_hash", "relationship_type"],
-+    )
-+
-+
-+async def test_delete_removes_graph_edges(service):
-+    svc, storage = service
-+    graph = await storage._get_graph_storage()
-+
-+    a = await svc.store_memory("alpha note about module-x", tags=["shared-x"])
-+    b = await svc.store_memory("beta note about module-x", tags=["shared-x"])
-+    assert a["success"] and b["success"], (a, b)
-+    hash_a = a["memory"]["content_hash"]
-+    assert any(e["relationship_type"] == "shares_entity" for e in await _edges_touching(graph, hash_a))
-+
-+    result = await svc.delete_memory(hash_a)
-+    assert result["success"], result
-+    assert await storage.get_by_hash(hash_a) is None
-+
-+    assert await _edges_touching(graph, hash_a) == []
-+
-+
-+async def test_new_memory_is_not_linked_to_deleted(service):
-+    svc, storage = service
-+    graph = await storage._get_graph_storage()
-+
-+    a = await svc.store_memory("alpha note about module-y", tags=["shared-y"])
-+    b = await svc.store_memory("beta note about module-y", tags=["shared-y"])
-+    assert a["success"] and b["success"], (a, b)
-+    hash_a = a["memory"]["content_hash"]
-+    hash_b = b["memory"]["content_hash"]
-+    assert (await svc.delete_memory(hash_a))["success"]
-+
-+    c = await svc.store_memory("gamma note about module-y", tags=["shared-y"])
-+    assert c["success"], c
-+    hash_c = c["memory"]["content_hash"]
-+    linked = {
-+        e["target_hash"] if e["source_hash"] == hash_c else e["source_hash"]
-+        for e in await _edges_touching(graph, hash_c)
-+        if e["relationship_type"] == "shares_entity"
-+    }
-+    assert linked == {hash_b}
-+
-+
-+async def test_delete_by_tags_removes_graph_edges(service):
-+    svc, storage = service
-+    graph = await storage._get_graph_storage()
-+
-+    a = await svc.store_memory("alpha note about module-z", tags=["shared-z", "drop-me"])
-+    b = await svc.store_memory("beta note about module-z", tags=["shared-z", "drop-me"])
-+    k = await svc.store_memory("kappa note about module-z", tags=["shared-z"])
-+    assert a["success"] and b["success"] and k["success"], (a, b, k)
-+    hash_a, hash_b, hash_k = (r["memory"]["content_hash"] for r in (a, b, k))
-+    assert await _edges_touching(graph, hash_a)
-+
-+    count, _, deleted = await storage.delete_by_tags(["drop-me"])
-+    assert count == 2 and set(deleted) == {hash_a, hash_b}
-+
-+    assert await _edges_touching(graph, hash_a) == []
-+    assert await _edges_touching(graph, hash_b) == []
-+    assert any(e["relationship_type"] == "has_entity" for e in await _edges_touching(graph, hash_k))
-+
-+
-+@pytest.mark.parametrize(
-+    "bulk_delete",
-+    [lambda s: s.delete_by_tags(["drop-p"]), lambda s: s.delete_by_tag("drop-p")],
-+    ids=["delete_
++        await scorer.stop()
+```
+
+---
+
+### Incident Patch 3: `c14318ac` (2026-10-30)
+**Commit Message**: test(multi-store): assert the isolated memory is absent, not that search is empty (#1720)
+
+* test(multi-store): assert the isolated memory is absent, not that search is empty
+
+test_search_with_store_param stored into the "isolated" store, then
+asserted that a search of the "default" store returned no results. The
+default store is shared with every earlier test in the same process, and
+semantic search returns its nearest matches whatever they are, so the
+test failed whenever an earlier test had left anything there. Running
+tests/test_memory_ops.py before it reproduces this on main; under
+pytest -n auto it depends on which worker the two files land on, which
+is why it surfaced on one PR's CI and not another's.
+
+The test now checks for a unique marker at the start of the stored
+content: absent from the default store's results, present in the
+isolated store's results (so an empty search cannot pass it).
+
+* test(multi-store): require the default-store search to succeed before checking absence
+
+An "Error: ..." reply does not contain the marker either, so the
+absence assertion passed on a failed search. The isolated-store control
+runs a separate search and could not catch a failure limite
+
+**File**: `tests/test_multi_store.py` (modified, +22/-5)
+```diff
+@@ -1,6 +1,7 @@
+ """Tests for multi-store partition key support (Issue #57)."""
+ import pytest
+ import os
++import uuid
+ 
+ os.environ.setdefault('MCP_MEMORY_STORAGE_BACKEND', 'sqlite_vec')
+ 
+@@ -195,20 +196,36 @@ async def test_search_with_store_param(self):
+         """memory_search tool respects store parameter."""
+         from mcp_memory_service.server import MemoryServer
+         server = MemoryServer()
+-        # Store in specific store
++        # The default store is shared with every earlier test in this process
++        # (and semantic search returns its nearest matches whatever they are),
++        # so assert that *this* memory is absent, not that the results are
++        # empty. The marker leads the content because results show only a
++        # short preview of each memory, and stays out of the query because
++        # the response echoes the query.
++        marker = f"msiso-{uuid.uuid4().hex[:12]}"
++        query = "unique multi-store test content alpha"
+         await server.call_tool("memory_store", {
+-            "content": "Unique multi-store test content alpha",
++            "content": f"{marker} {query}",
+             "metadata": {"tags": "test"},
+             "store": "isolated"
+         })
+         # Search in different store should not find it
+         result = await server.call_tool("memory_search", {
+-            "query": "unique multi-store test content alpha",
++            "query": query,
+             "store": "default"
+         })
+         text = result[0].text
+-        # Should either be empty results or not contain our content
+-        assert "no memories found" in text.lower() or "0 memories" in text.lower() or '"memories": []' in text
++        # An "Error: ..." reply would not contain the marker either, so the
++        # search itself has to have succeeded before absence means anything.
++        assert text.startswith(("Found ", "No memories found")), text
++        assert marker not in text
++        # Control: the same search in its own store does find it, so the
++        # absence above is not just a search that matched nothing.
++        result = await server.call_tool("memory_search", {
++            "query": query,
++            "store": "isolated"
++        })
++        assert marker in result[0].text
+ 
+ 
+ async def _build_pre_62_db(db_path):
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1711** (closed): fix(storage): purge graph edges together with purged tombstones (@bfs2021)
-- **PR #1710** (2026-10-29): ci(prove-fix): give Milvus tests a real verdict (#1709) (@doobidoo)
-- **PR #1706** (2026-10-29): fix(milvus): delete graph edges together with deleted memories (@andrunio)
-- **PR #1702** (2026-10-28): chore(deps): bump filelock to 4.2.4 (GHSA-v4x8-3wr5-3wq8) (@doobidoo)
-- **PR #1700** (2026-10-28): chore(deps): bump the uv group with 7 updates (@dependabot[bot])
-- **PR #1699** (2026-10-28): chore(deps): bump the actions group with 3 updates (@dependabot[bot])
+- **PR #1720** (2026-10-30): test(multi-store): assert the isolated memory is absent, not that search is empty (@timkjr)
+- **PR #1719** (2026-10-30): fix(quality): log the async scorer's first-use start at DEBUG, not WARNING (@timkjr)
+- **PR #1718** (2026-10-30): fix(storage): stop loading the Milvus backend on every import (@timkjr)
+- **PR #1717** (2026-10-29): fix(oauth): omit empty members from the client registration response (#1707) (@djimenezm2)
+- **PR #1713** (2026-10-29): feat(entities): choose which tags become entities for entity linking (@andrunio)
+- **PR #1712** (2026-10-29): fix(milvus): delete graph edges of memories purged by purge_deleted() (@andrunio)
 
 ---
 
@@ -3484,35 +3278,25 @@ With one hash per chunk and the second memory delete failing, delete_by_tags() a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(prove-fix): give Milvus tests a real verdict (#1709) (#1710)
+## X. storage): stop loading the Milvus backend on every import (#1718)
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1718.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9d8b9f06`: ci(prove-fix): give Milvus tests a real verdict (#1709) (#1710). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c187ec5c`: storage): stop loading the Milvus backend on every import (#1718). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1718.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-      env:
-        BASE_REF: ${{ github.base_ref }}
-        # Milvus tests importorskip pymilvus, so without it they skip at collection
-        # and the check cannot give a verdict (#1709). Add the Milvus client only
-        # when a changed test needs it. The full extra also pulls torch, so only
-        # three packages are installed, and the whole locked export is passed as
-        # constraints: their dependencies land at the uv.lock versions too, and
-        # the cap and setuptools<82 stay defined in pyproject.toml alone. Tests
-        # that importorskip sentence_transformers still skip here.
-        mapfile -t changed_tests < <(git diff --name-only --diff-filter=AM "origin/$BASE_REF...HEAD" -- tests/ | grep -E '(^|/)test_[^/]*\.py$' || true)
-        if [ "${#changed_tests[@]}" -gt 0 ] && grep -lq -e pymilvus -- "${changed_tests[@]}"; then
-          python3 -m uv export --frozen --extra milvus --no-hashes --no-emit-project > "$RUNNER_TEMP/milvus-lock.txt"
-          grep -E '^(pymilvus|milvus-lite|setuptools)==' "$RUNNER_TEMP/milvus-lock.txt" > "$RUNNER_TEMP/milvus-reqs.txt"
-          python3 -m uv pip install --python "$HOME/venv/bin/python" \
-            -r "$RUNNER_TEMP/mi
+- **"pymilvus not available" logged on every start without Milvus (#1718).**
+  `storage/__init__.py` imported the Milvus backend eagerly, so every install
+  without pymilvus logged a WARNING at startup whatever backend it used.
+  `MilvusMemoryStorage` now loads on first access, and the missing-pymilvus
+  error is raised only when a Milvus storage is actually created.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3522,4 +3306,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9d8b9f06` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c187ec5c` are properly handled with clean fallback behavior.

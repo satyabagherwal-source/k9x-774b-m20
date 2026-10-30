@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T20:15:11.656Z",
+  "last_updated": "2026-10-30T20:21:58.454Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3412,6 +3412,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-cypress-io-cypress"
+    },
+    {
+      "id": "CD-4I7Q",
+      "directive_title": "[ty] Fix recursive protocol materialization self-comparison (#29809)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "astral-sh/ruff",
+      "source_commit": "86b7fd1e",
+      "date_staged": "2026-10-30",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-astral-sh-ruff"
     }
   ]
 }
