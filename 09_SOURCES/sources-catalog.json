@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "c19b15f5",
+    "sourceVersion": "c1cfdbd3",
     "license": "Apache-2.0",
-    "contentHash": "25e5735fa7fb06d89da4631f090956150566484856c7f025799d88bf7703b0c2",
-    "lastHarvestedAt": "2026-10-28T22:14:08.053Z",
+    "contentHash": "5cea9df30d7bc15fa3d055711251a2742b01e680094c2ce3a0a691eb60e15140",
+    "lastHarvestedAt": "2026-10-30T13:28:41.795Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -6233,10 +6233,10 @@
     "repository": "yvgude/lean-ctx",
     "platform": "github",
     "sourceUrl": "https://github.com/yvgude/lean-ctx",
-    "sourceVersion": "10a74ea6",
+    "sourceVersion": "e95146ff",
     "license": "Apache-2.0",
-    "contentHash": "6223032506bfbef71ec0063cb00a8ae6668a4b08fab370fa61f4c66a6ee1dadc",
-    "lastHarvestedAt": "2026-10-27T14:07:18.037Z",
+    "contentHash": "4553b8663ead54737ecff38c4309251932d26657ac9615b8a70747f976ea9638",
+    "lastHarvestedAt": "2026-10-30T13:28:35.613Z",
     "learningId": "learn-github-yvgude-lean-ctx"
   },
   "gkd-kit-gkd": {
@@ -6803,10 +6803,10 @@
     "repository": "topoteretes/cognee",
     "platform": "github",
     "sourceUrl": "https://github.com/topoteretes/cognee",
-    "sourceVersion": "37f788bd",
+    "sourceVersion": "525b1d11",
     "license": "Apache-2.0",
-    "contentHash": "07a5645f8b59618ae92a4d1b5ae3b290ed7442499003c1e212ee127aaf6e7010",
-    "lastHarvestedAt": "2026-10-19T06:45:02.552Z",
+    "contentHash": "a1bac883b2c9de177c0583f2ea8b6860ff9fd3f600aa1eab4c803ea39f9a0ca3",
+    "lastHarvestedAt": "2026-10-30T13:28:46.726Z",
     "learningId": "learn-github-topoteretes-cognee"
   },
   "radix-ui-primitives": {
@@ -9413,10 +9413,10 @@
     "repository": "cheeriojs/dom-serializer",
     "platform": "github",
     "sourceUrl": "https://github.com/cheeriojs/dom-serializer",
-    "sourceVersion": "7f3cd35e",
+    "sourceVersion": "00b81ba4",
     "license": "MIT",
-    "contentHash": "6bfe8bf37d60bc34e8f92aa39c87af9487bd65bab2744342f118d43d948cde34",
-    "lastHarvestedAt": "2026-10-27T12:46:35.571Z",
+    "contentHash": "5c97d29f737b3c72bd7419b9dbf40c0d4323f5d9b6a801295ae360effef3b12d",
+    "lastHarvestedAt": "2026-10-30T13:28:34.963Z",
     "learningId": "learn-github-cheeriojs-dom-serializer"
   },
   "paololeonardi-waterfallgrid": {

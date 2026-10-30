@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T13:22:24.080Z",
-    "lastVerified": "2026-10-30T13:22:24.080Z",
+    "lastChecked": "2026-10-30T13:28:49.271Z",
+    "lastVerified": "2026-10-30T13:28:49.271Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -409,12 +409,12 @@
     "lastVerified": "2026-10-30T11:12:27.488Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T11:28:19.539Z",
-    "lastVerified": "2026-10-30T11:28:19.539Z",
+    "lastChecked": "2026-10-30T13:28:42.671Z",
+    "lastVerified": "2026-10-30T13:28:42.671Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -423,7 +423,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "43480947"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -742,11 +743,21 @@
     "revisionIdentifier": "12508b40"
   },
   "topoteretes-cognee": {
-    "name": "cognee",
+    "name": "topoteretes/cognee",
     "officialUrl": "https://github.com/topoteretes/cognee",
-    "lastChecked": "2026-10-28T21:11:23.669Z",
-    "revisionIdentifier": "37f788bd",
-    "lastVerified": "2026-10-28T21:11:23.669Z"
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-30T13:28:45.196Z",
+    "lastVerified": "2026-10-30T13:28:45.196Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-topoteretes-cognee",
+    "contentHash": "a1bac883b2c9de177c0583f2ea8b6860ff9fd3f600aa1eab4c803ea39f9a0ca3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 15,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-tencent-hy-simulmt-30b-a3b-fp8": {
     "name": "tencent/Hy-SimulMT-30B-A3B-FP8",
@@ -1057,8 +1068,8 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T06:16:35.467Z",
-    "lastVerified": "2026-10-30T06:16:35.467Z",
+    "lastChecked": "2026-10-30T13:28:37.774Z",
+    "lastVerified": "2026-10-30T13:28:37.774Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -1825,14 +1836,14 @@
     "officialUrl": "https://github.com/moby/buildkit",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T22:14:07.656Z",
-    "lastVerified": "2026-10-28T22:14:07.656Z",
+    "lastChecked": "2026-10-30T13:28:40.827Z",
+    "lastVerified": "2026-10-30T13:28:40.827Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-moby-buildkit",
-    "contentHash": "25e5735fa7fb06d89da4631f090956150566484856c7f025799d88bf7703b0c2",
+    "contentHash": "5cea9df30d7bc15fa3d055711251a2742b01e680094c2ce3a0a691eb60e15140",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5656,11 +5667,21 @@
     "lastVerified": "2026-10-30T05:32:00.863Z"
   },
   "yvgude-lean-ctx": {
-    "name": "lean-ctx",
+    "name": "yvgude/lean-ctx",
     "officialUrl": "https://github.com/yvgude/lean-ctx",
-    "lastChecked": "2026-10-28T16:51:45.327Z",
-    "revisionIdentifier": "10a74ea6",
-    "lastVerified": "2026-10-28T16:51:45.327Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-30T13:28:32.645Z",
+    "lastVerified": "2026-10-30T13:28:32.645Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-yvgude-lean-ctx",
+    "contentHash": "4553b8663ead54737ecff38c4309251932d26657ac9615b8a70747f976ea9638",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-openai-community-gpt2": {
     "name": "openai-community/gpt2",
@@ -9963,5 +9984,29 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cheeriojs-dom-serializer": {
+    "name": "cheeriojs/dom-serializer",
+    "officialUrl": "https://github.com/cheeriojs/dom-serializer",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T13:28:34.054Z",
+    "lastVerified": "2026-10-30T13:28:34.054Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-cheeriojs-dom-serializer",
+    "contentHash": "5c97d29f737b3c72bd7419b9dbf40c0d4323f5d9b6a801295ae360effef3b12d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mazzzystar-queryable": {
+    "name": "Queryable",
+    "officialUrl": "https://github.com/mazzzystar/Queryable",
+    "lastChecked": "2026-10-30T13:28:32.636Z",
+    "revisionIdentifier": "b95a05a8",
+    "lastVerified": "2026-10-30T13:28:32.636Z"
   }
 }

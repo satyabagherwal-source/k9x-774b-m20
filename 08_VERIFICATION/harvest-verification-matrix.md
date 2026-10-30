@@ -6195,3 +6195,7 @@
 | `CYCLE-20261030-U8QW` | `2026-10-30T13:14:05.384Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5759` | Yes (`89a78d21...`) |
 | `CYCLE-20261030-4TWG` | `2026-10-30T13:22:19.361Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md` | Yes (`b490d604...`) |
 | `CYCLE-20261030-4VKI` | `2026-10-30T13:22:21.522Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5760` | Yes (`601d5241...`) |
+| `CYCLE-20261030-CVPT` | `2026-10-30T13:28:34.961Z` | `cheeriojs/dom-serializer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5761` | Yes (`5c97d29f...`) |
+| `CYCLE-20261030-CW7U` | `2026-10-30T13:28:35.610Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5762` | Yes (`4553b866...`) |
+| `CYCLE-20261030-D0ZK` | `2026-10-30T13:28:41.792Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5763` | Yes (`5cea9df3...`) |
+| `CYCLE-20261030-D4SJ` | `2026-10-30T13:28:46.723Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5764` | Yes (`a1bac883...`) |

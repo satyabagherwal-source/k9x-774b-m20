@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T13:22:21.536Z",
+  "last_updated": "2026-10-30T13:28:46.733Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3306,14 +3306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-moby-buildkit",
-      "content_hash": "25e5735fa7fb06d89da4631f090956150566484856c7f025799d88bf7703b0c2",
-      "verified_at": "2026-10-28T22:14:08.059Z",
+      "content_hash": "5cea9df30d7bc15fa3d055711251a2742b01e680094c2ce3a0a691eb60e15140",
+      "verified_at": "2026-10-30T13:28:41.801Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:14:08.059Z"
+      "last_updated": "2026-10-30T13:28:41.801Z"
     },
     "microsoft/agent-governance-toolkit": {
       "repository": "microsoft/agent-governance-toolkit",
@@ -9471,14 +9471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yvgude-lean-ctx",
-      "content_hash": "6223032506bfbef71ec0063cb00a8ae6668a4b08fab370fa61f4c66a6ee1dadc",
-      "verified_at": "2026-10-27T14:07:18.046Z",
+      "content_hash": "4553b8663ead54737ecff38c4309251932d26657ac9615b8a70747f976ea9638",
+      "verified_at": "2026-10-30T13:28:35.619Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:07:18.046Z"
+      "last_updated": "2026-10-30T13:28:35.619Z"
     },
     "gkd-kit/gkd": {
       "repository": "gkd-kit/gkd",
@@ -10266,14 +10266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topoteretes-cognee",
-      "content_hash": "07a5645f8b59618ae92a4d1b5ae3b290ed7442499003c1e212ee127aaf6e7010",
-      "verified_at": "2026-10-19T06:45:02.558Z",
+      "content_hash": "a1bac883b2c9de177c0583f2ea8b6860ff9fd3f600aa1eab4c803ea39f9a0ca3",
+      "verified_at": "2026-10-30T13:28:46.733Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T06:45:02.558Z"
+      "last_updated": "2026-10-30T13:28:46.733Z"
     },
     "radix-ui/primitives": {
       "repository": "radix-ui/primitives",
@@ -14166,14 +14166,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cheeriojs-dom-serializer",
-      "content_hash": "6bfe8bf37d60bc34e8f92aa39c87af9487bd65bab2744342f118d43d948cde34",
-      "verified_at": "2026-10-27T12:46:35.579Z",
+      "content_hash": "5c97d29f737b3c72bd7419b9dbf40c0d4323f5d9b6a801295ae360effef3b12d",
+      "verified_at": "2026-10-30T13:28:34.969Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:46:35.579Z"
+      "last_updated": "2026-10-30T13:28:34.969Z"
     },
     "paololeonardi/WaterfallGrid": {
       "repository": "paololeonardi/WaterfallGrid",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source**: github ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
-> **Source Version**: `10a74ea6`  
+> **Source Version**: `e95146ff`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:07:17.664Z  
+> **Timestamp**: 2026-10-30T13:28:35.153Z  
 > **Learning ID**: `learn-github-yvgude-lean-ctx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:07:16.383Z  
+> **Harvest Timestamp**: 2026-10-30T13:28:32.645Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LeanCTX is the Context Gateway for AI Systems. Select task-relevant context, apply supported controls, connect local knowledge and inspect recorded evidence. Open-source Engine: CLI, MCP, hooks and supported proxy paths.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3902 stars
+- **Stars / Engagement**: 3911 stars
 
 ---
 
@@ -1091,11 +1091,18 @@ import type {
 import { registerCockpit } from "./cockpit";
 import { registerResultRendering } from "./render";
 
+// Every tool the injected rules route an intent to must stay in front: a
+// deferred ctx_patch/ctx_glob/ctx_tree sends the model back to native
+// Edit/Glob, which replace mode denies (`alwaysLoad` cannot undo a deferral).
+// `claude_mod.rs` tests this list against the rules and the server's core.
 const DEFAULT_FRONT_LOADED_TOOLS = [
   "ctx_read",
   "ctx_search",
   "ctx_shell",
+  "ctx_glob",
+  "ctx_tree",
   "ctx_compose",
+  "ctx_patch",
   "ctx_callgraph",
   "ctx_session",
 ];
@@ -1329,14 +1336,7 @@ export const register: Register = (on, options) => {
 
   // Live skill (concept K5): the shipped SKILL.md is static; this prefixes it
   // with what is true in *this* session, so the guidance never contradicts the
-  // mod (e.g. "no need to poll") or the configured tool surface. Byte-stable
-  // for a given configuration, so it never churns the prompt cache.
-  on("skill.prompt", { skill: "lean-ctx" }, async ($, event, next) => {
-    const base = await next(event);
-    return { text: `${liveSkillHeader(frontLoaded, shapeNative, wakeOnFinish)}\n\n${base.text}` };
-  });
-
-  // The
+  // mod (e.g. "no need to
 ```
 
 ### Core Architecture Module: `integrations/claude-code-mod/hooks/render.tsx`
@@ -1627,808 +1627,817 @@ function drawingFor(tool: LeanTool, key: string, output: unknown, input: unknown
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b683b84e` (2026-10-27)
-**Commit Message**: Security fixes: SSRF guard, shell gate, index secrets, installer checksums, signed handoffs, egress policy, audit rotation (#2151)
+### Incident Patch 1: `8a99cb20` (2026-10-29)
+**Commit Message**: Release 3.12.0: release pipeline fix and security alerts (#2157)
 
-* fix(security): block IPv6 transition addresses embedding private IPv4 (GHSA-h693-v7jv-vmv9)
+Public export of the private source commit aac6332f0f2f3422f7f11d9dc87e6a696d0eb763.
 
-ip_is_blocked only unwrapped IPv4-mapped (::ffff:a.b.c.d). NAT64
-64:ff9b::/96, 6to4 2002::/16, Teredo 2001::/32 (server and inverted
-client) and IPv4-compatible ::a.b.c.d now have their embedded IPv4
-checked with v4_is_blocked; NAT64 local-use 64:ff9b:1::/48 is blocked
-outright. Covers ensure_resolves_safely and SsrfSafeResolver.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(security): fail closed on missing or mismatched release checksums (GHSA-rxv5-4c3x-g4q6 D)
-
-install.sh --download and the npm lean-ctx-bin postinstall now abort before
-installing when SHA256SUMS cannot be fetched, has no unique exact entry for
-the archive, or does not match; install.sh also aborts when neither
-sha256sum nor shasum exists. The npm checksum fetch reuses the
-PowerShell/curl fallback chain so proxies do not turn into hard failures.
-
-Tests: tests/build/test_install_sh_checksum.py (hermetic PATH, fake curl)
-and packages/lean-ctx-bin/postinstall.checksum.test.cjs (wi
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-0)
+**File**: `.cursor/rules/leanctx-ip-governance.mdc` (added, +6/-0)
 ```diff
-@@ -451,6 +451,8 @@ jobs:
-         run: node packages/lean-ctx-bin/postinstall.test.cjs
-       - name: Test install paths containing `$`
-         run: node packages/lean-ctx-bin/postinstall.dollar.test.cjs
-+      - name: Test fail-closed checksum verification
-+        run: node packages/lean-ctx-bin/postinstall.checksum.test.cjs
- 
-   cookbook:
-     name: Cookbook (Node)
-```
-
-**File**: `.github/workflows/release.yml` (modified, +19/-0)
-```diff
-@@ -535,6 +535,7 @@ jobs:
-     permissions:
-       contents: write
-       id-token: write
-+      attestations: write
-     steps:
-       - uses: actions/checkout@v4 # v4
-         with:
-@@ -623,6 +624,19 @@ jobs:
-             echo "LEANCTX_ASSETS_EOF"
-           } >> "$GITHUB_OUTPUT"
- 
-+      # SLSA build provenance for every published binary archive, wheel and
-+      # metadata file (GHSA-rxv5-4c3x-g4q6 D). Users verify a download with
-+      # `gh attestation verify <file> --repo yvgude/lean-ctx` (SECURITY.md).
-+      - name: Attest build provenance
-+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
-+        with:
-+          subject-path: |
-+            lean-ctx-*.tar.gz
-+            lean-ctx-*.zip
-+            thinkery_leanctx_engine*.whl
-+            SHA256SUMS
-+            release-manifest.json
-+
-       - name: Extract release notes from CHANGELOG
-         id: notes
-         env:
-@@ -899,6 +913,11 @@ jobs:
-           X86_64_DARWIN=$(grep "x86_64-apple-darwin\.tar\.gz" SHA256SUMS | awk '{print $1}')
-           AARCH64_LINUX_GNU=$(grep "aarch64-unknown-linux-gnu\.tar\.gz" SHA256SUMS | awk '{print $1}')
-           X86_64_LINUX_GNU=$(grep "x86_64-unknown-linux-gnu\.tar\.gz" SHA256SUMS | awk '{print $1}')
-+          # Never publish a formula with an empty or ambiguous digest.
-+          for sha in "$AARCH64_DARWIN" "$X86_64_DARWIN" "$AARCH64_LINUX_GNU" "$X86_64_LINUX_GNU"; do
-+            printf '%s\n' "$sha" | grep -Eqx '[0-9a-f]{64}' \
-+              || { echo "::error::SHA256SUMS lacks a unique Homebrew platform digest"; exit 1; }
-+          done
- 
-           echo "aarch64_darwin_sha=${AARCH64_DARWIN}" >> "$GITHUB_OUTPUT"
-           echo "x86_64_darwin_sha=${X86_64_DARWIN}" >> "$GITHUB_OUTPUT"
-```
-
-**File**: `SECURITY.md` (modified, +49/-4)
-```diff
-@@ -110,9 +110,12 @@ In addition, roles can restrict **unsafe I/O**:
- - **Pipeline archive redaction** — shell output archives redacted before storage.
- - **UDS socket permissions** — `0o600` enforced on Unix domain sockets after bind.
- - **Error response sanitization** — internal details logged server-side, generic codes returned to clients.
-+- **MCP gateway output redaction** — downstream `ctx_tools call` output (success and error text) passes secret detection before it reaches the model.
-+- **Signed handoffs and packages** — handoff bundle signatures cover the signer id and key; context packages and addons must be signed unless a local import passes `--allow-unsigned` (`allow_unsigned=true` over MCP); `/v1/a2a/handoff` rejects unsigned bundles and context packages. An embedded key proves integrity only: a signer is reported as trusted only when its key is pinned in `<data_dir>/trusted-signers.toml` (`[[signers]] subject = "<agent id or @namespace>"`, `public_key = "<hex>"`) or held by a local agent identity. Remote `pack install` / `addon add` pin the namespace publisher key on first install and refuse a different key afterwards.
-+- **Bounded audit trail** — `<data_dir>/audit/trail.jsonl` rotates at 32 MiB into `trail.NNNNNN.jsonl`; the hash chain continues across segments and `verify` checks all of them. Archived segments are not deleted automatically, because removing one breaks chain verification.
- 
- **Optional network activity (review effective configuration):**
--- **Update check**: a lightweight daily GET to `leanctx.com/version.txt` to notify you of new versions. Sends only the current version as User-Agent. Disable with `update_check_disabled = true` in `~/.lean-ctx/config.toml` or `LEAN_CTX_NO_UPDATE_CHECK=1`.
-+- **Update check**: a lightweight daily GET to `api.github.com/repos/yvgude/lean-ctx/releases/latest` to notify you of new versions. Sends only the current version as User-Agent. Disable with `update_check_disabled = true` in `~/.lean-ctx/config.toml` or `LEAN_CTX_NO_UPDATE_CHECK=1`.
- - **Telemetry**: product telemetry is on by default since v3.11.0 (v3.10.5 and earlier defaulted it off); an explicit earlier opt-out is kept. Inspect your installed build with `lean-ctx telemetry status` and `lean-ctx telemetry show`. Disable sending with `lean-ctx telemetry off`, `DO_NOT_TRACK=1`, or `LEAN_CTX_TELEMETRY=off`. Enabled telemetry sends installation and aggregate usage metadata. Do not infer zero network activity from telemetry being disabled.
- - **Configured providers and integrations**: source connectors, upstream model requests, submitted feedback, and remote endpoints have their own payloads and credentials. Review each enabled path.
- 
-@@ -203,6 +206,32 @@ Use the checksums attached to the relevant [GitHub Release](https://github.com/y
- 
- ---
- 
-+## Verifying Release Artifacts
-+
-+Every release publishes `SHA256SUMS` and `release-manifest.json`, each signed with keyless Cosign by the release workflow (`.sig` and `.pem` next to the file).
-+
-+- **`lean-ctx update`** verifies both signatures against the pinned release-workflow identity, then the archive digest, and refuses the update on any failure.
-+- **`install.sh` and the npm package** verify the archive against `SHA256SUMS` and abort when the checksum file, its entry for the archive, or a SHA-256 tool is missing, or when the digest does not match. There is no opt-out. They do not check the Cosign signature, so a tampered release whose `SHA256SUMS` was replaced too is only caught by the checks below.
-+
-+To check a manual download yourself (replace `vX.Y.Z` with the release tag):
-+
-+```bash
-+cosign verify-blob SHA256SUMS \
-+  --signature SHA256SUMS.sig --certificate SHA256SUMS.pem \
-+  --certificate-identity "https://github.com/yvgude/lean-ctx/.github/workflows/release.yml@refs/tags/vX.Y.Z" \
-+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
-+sha256sum --ignore-missing -c SHA256SUMS   # macOS: shasum -a 256 --ignore-missing -c SHA256SUMS
-+```
-+
-+Releases built after GHSA-rxv5-4c3x-g4q6 also carry GitHub build-provenance attestations for every archive, wheel, `SHA256SUMS` and `release-manifest.json`:
-+
-+```bash
-+gh attestation verify lean-ctx-aarch64-apple-darwin.tar.gz --repo yvgude/lean-ctx \
-+  --signer-workflow yvgude/lean-ctx/.github/workflows/release.yml
-+```
-+
+@@ -0,0 +1,6 @@
++---
++description: LeanCTX Context Gateway source/decision scope, Apache IP and private EE safety gate for all coding, docs and releases.
++alwaysApply: true
 +---
 +
- ## Disclosure Timeline
++Before editing, read `.agents/skills/leanctx-ip-governance/SKILL.md` and `AGENTS.md`, including `references/PRODUCT_SCOPE.md` and `references/CONNECTOR_AND_DECISION_SECURITY.md`. LeanCTX is Context Gateway (Select → Control → Prove); new work must map authorized source→decision→bundle/receipt. General agent/model orchestration is not product scope; team coordination context (presence, leases, workspace bus, shared work graph) is. Preserve existing Apache rights, do not auto-delete OSS, keep new EE private, no public publish without real founder+independent release approval. State source ACL, integration coverage, affected licence, tests and rollback.
+```
+
+**File**: `.github/workflows/release.yml` (modified, +6/-2)
+```diff
+@@ -611,10 +611,14 @@ jobs:
+       - name: Verify release SBOM artifact
+         run: |
+           test -s SBOM.cdx.json
+-          # Audit the tagged tree, not the worktree: the downloaded release
++          # Audit a clean checkout of the tagged commit: the downloaded release
+           # archives and wheels sit untracked in the root by now, and the
+           # worktree mode rejected every one of them as oversized (3.11.0).
+-          python3 scripts/ip-provenance-audit.py --root . --release-strict --ref HEAD \
++          # Not `--ref`: a ref audit never runs the notices generator, so
++          # `--release-strict` refuses it by design.
++          git worktree add --detach "$RUNNER_TEMP/tagged-tree" HEAD
++          cd "$RUNNER_TEMP/tagged-tree"
++          python3 scripts/ip-provenance-audit.py --root . --release-strict \
+             --output "$RUNNER_TEMP/ip-provenance-release-build-report.json"
  
- When vulnerabilities are reported:
-@@ -252,10 +281,25 @@ proof of OS isolation. Inspect `rust/src/core/sandbox.rs` for the release in use
- - dangerous-flag blocking (`git --upload-pack`, `tar --to-command`, `find -exec`, `awk system()`), inline env hijack blocking (`PATH=`, `LD_PRELOAD=`, `GIT_SSH_COMMAND=`, …), and dangerous env-key filtering on the MCP `env` parameter,
- - **no self-loosening** (allowlist mode, the default): lean-ctx subcommands that widen its own guardrails — `yolo`, `allow <cmd>`, `allow-path <dir>`, `trust`, `security open`, `security secrets off`, `config set` of a security or path/allowlist key — are re
+       - name: Upload post-build provenance report
+```
+
+**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +31/-31)
+```diff
+@@ -247,11 +247,11 @@
+    "size": 3565
+   },
+   {
+-   "blob": "50178a38e4788009d064b05054dc07b5739a74f0",
++   "blob": "b962de77b78546a9d7b5ff1fe0a87230454f78db",
+    "mode": "100644",
+    "path": ".github/workflows/release.yml",
+-   "sha256": "ce3c5aded766f107f402dba944c9a14d473aebf7da4ba9c7ae248f1717d5b77e",
+-   "size": 55588
++   "sha256": "d0690278df389b075e5ed6536a233d53dd23630932c3cfc528499bb0f0405bce",
++   "size": 55816
+   },
+   {
+    "blob": "75a4d6a3ea3e0e6bf69efff80c68bc5cca72e7b4",
+@@ -471,10 +471,10 @@
+    "size": 39281
+   },
+   {
+-   "blob": "f16fc5fc88c9a35e862ec5e2ed7c359475d70dfb",
++   "blob": "c7565f8b7b2ea38c5846c8ce435f97dcfb7d29ff",
+    "mode": "100644",
+    "path": "SBOM.cdx.json",
+-   "sha256": "894304fa553ce89c49ecae98bcc3c958e8fc5b2c54eb32fc5d56bdc825bb9e65",
++   "sha256": "fc4645d8027dd03fe57cb4fa1cc7723af906daaffb2d9144378f8ffa542d2dc8",
+    "size": 684664
+   },
+   {
+@@ -485,10 +485,10 @@
+    "size": 32033
+   },
+   {
+-   "blob": "d7b64b53eefc9544c58cdba2e873cea03d20e8fb",
++   "blob": "5dc4c2f5d1ae1be56f4df2bc4bd9e7c7bdc2e7d7",
+    "mode": "100644",
+    "path": "THIRD_PARTY_NOTICES",
+-   "sha256": "e12d06d59d681e1592a62c8905c7ec805dff74c5b81ba3ea408205fecba1fc65",
++   "sha256": "314f805c4ab3e4a7ce2425b9594ad6dd9ea140199d3fb5090e40378b28c042f3",
+    "size": 331533
+   },
+   {
+@@ -4328,10 +4328,10 @@
+    "size": 757
+   },
+   {
+-   "blob": "7413d30599551222ad40f49f18e57383a603cce1",
++   "blob": "c25de73a82745124aec502fcae8242de5fb8636c",
+    "mode": "100644",
+    "path": "_archive/vscode-extension/package-lock.json",
+-   "sha256": "7cd66404122af639dd5dde96edfd7fd4ae0ec205466978dbdc745b1002bcafe0",
++   "sha256": "5dbdd0dec43f1d5a489e9c45f67f407b18ce75754df185bf63f19035add13a29",
+    "size": 168476
+   },
+   {
+@@ -5686,10 +5686,10 @@
+    "size": 4024
+   },
+   {
+-   "blob": "95eb4d786059eff04b40126d1cf1fc4b28a51d34",
++   "blob": "c79bda431062485e8b3e98c7887f10121ac345e5",
+    "mode": "100644",
+    "path": "docs/contracts/delivery-evidence-v1.json",
+-   "sha256": "8a85a07b618f906934dd271d7eccd1ed7769284b401689a73ce5fb03db9615f3",
++   "sha256": "4b16507368818a088af251e4af5b2481ac32c93d518413f461ea0d31d4a6076a",
+    "size": 6892
+   },
+   {
+@@ -8024,18 +8024,18 @@
+    "size": 193663
+   },
+   {
+-   "blob": "22df90af68d6c8e50c7624f74c847bd7a50e02dc",
++   "blob": "450f157d17bd6574f007940f2ef0ef51b3daf19c",
+    "mode": "100644",
+    "path": "legal/third-party-assets.toml",
+-   "sha256": "d1687b3f8892a1ab8d5a2f35b643d3a79408b1aed4442820b7589b6855564d7c",
++   "sha256": "30f965c12dbec317a375d4a37c8ec011b3c278899c3294990e435cb94652bb9d",
+    "size": 3792
+   },
+   {
+-   "blob": "852fe51f09d9bf372449dd0c3698f3f94f671bdb",
++   "blob": "7c30e8899d558cc2fb80f83f63217b7d4aa43210",
+    "mode": "100644",
+    "path": "legal/third-party-notices-approval.toml",
+-   "sha256": "7d2abc2ff0073a3a759febd59a9b64a6890a7662015cd3873935f27f2ee0ddbb",
+-   "size": 590
++   "sha256": "8fc22ce19776b7a5f7dca383e71eeca6107db8002c8828bfb3ae2e8548daa460",
++   "size": 670
+   },
+   {
+    "blob": "69c2d986d2ebf64b9151a844298227e6ccf2258b",
+@@ -8087,11 +8087,11 @@
+    "size": 1603
+   },
+   {
+-   "blob": "3132746d61f5dbf376250cfbfe2dcd79495a2a3c",
++   "blob": "c824ff16201ba847a2ef3c9261a9572118fa0054",
+    "mode": "100644",
+    "path": "packages/lean-ctx-bin/postinstall.js",
+-   "sha256": "72033fa468fafb05de0ca58ebba3f5134e317fe76e4cdbce129ed2341fc0648f",
+-   "size": 23924
++   "sha256": "2d41d43c001752bf8bf0a58ece63dbbb3217b1661a98db5615c7b615d1540c75",
++   "size": 24114
+   },
+   {
+    "blob": "0a85eb889ebb3a1923e7d7b322b24c9c236e8707",
+@@ -8423,11 +8423,11 @@
+    "size": 443
+   },
+   {
+-   "blob": "9c84a53e31b59a6f96508681678a7c13f932cf53",
++   "blob": "7efd7e3db2363d02d12227cf9ff9485346146c9a",
+    "mode": "100644",
+    "path": "packages/pi-lean-ctx/package-lock.json",
+-   "sha256": "35e87ec565ae4e71802703536ea2ea2bd6309fdf9d50e41203876084ab46306c",
+-   "size": 145319
++   "sha256": "2698eb8bcaf09c3ff275826b3be2e28e5fb6044b3245cd6ec23475e06d1744a1",
++   "size": 145355
+   },
+   {
+    "blob": "2fb04622cc3f0f408787f09bcddd58247e983f1d",
+@@ -8738,10 +8738,10 @@
+    "size": 94
+   },
+   {
+-   "blob": "0f18ae32a9707bc63eef08fd0da82ce28d633b4a",
++   "blob": "ad7ee40ffb844385d8eccf0461ad102a4cf00445",
+    "mode": "100644",
+    "path": "rust/Cargo.lock",
+-   "sha256": "c11dfc5b8166dc8eed9d1e678c95e6f59c0701a64f56c34355e3840ecf683231",
++   "sha256": "ab95a1ce51461a272918914edecb4838f362c03b5dd469480667c668dbc8e36a",
+    "size": 151490
+   },
+   {
+@@ -17040,10 +17040,10 @@
+    "size": 557
+   },
+   {
+-   "blob": "baac5a10a6610970f74ddbfe999c13591e080399",
++   "blob": "67ba1d1abe8af6573b7e5dc7ca877804d13e7694",
+    "mode": "100644",
+    "path": "rust/eval/quality/dependency_tracing/Cargo.lock",
+-   "sha256": "3a68988d62f0a65fba6d9ef8a80a5fc922e2e2c3a459ab537824554771f19356",
++   "sha256": "c379598be840e1b2fe60e6fdb1fd8d7a3141e24fe7fe1146cf3881be0fc6c3ac",
+    "size": 1447
+   },
+   {
+@@ -37970,11 +37970,11 @@
+    "size": 6494
+   },
+   {
+-   "blob": "f6
+```
+
+**File**: `SBOM.cdx.json` (modified, +7/-7)
+```diff
+@@ -16634,7 +16634,7 @@
+     },
+     {
+       "author": "Mathijs van de Nes <git@mathijs.vd-nes.nl>, Marli Frost <marli@frost.red>, Ryan Levick <ryan.levick@gmail.com>, Chris Hennick <hennickc@amazon.com>",
+-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.4",
++      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.5",
+       "description": "Library to support the reading and writing of zip files.",
+       "externalReferences": [
+         {
+@@ -16645,7 +16645,7 @@
+       "hashes": [
+         {
+           "alg": "SHA-256",
+-          "content": "a954114b47a54df49f83d2722814e86b23d4bb1b54a1b90fb7d92b41619ddc22"
++          "content": "6e04976da629d3b04204ba8105b396a193af8ad2583b2c79bfb3ab8af580a11e"
+         }
+       ],
+       "licenses": [
+@@ -16654,10 +16654,10 @@
+         }
+       ],
+       "name": "zip",
+-      "purl": "pkg:cargo/zip@9.0.4",
++      "purl": "pkg:cargo/zip@9.0.5",
+       "scope": "required",
+       "type": "library",
+-      "version": "9.0.4"
++      "version": "9.0.5"
+     },
+     {
+       "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#zlib-rs@0.6.7",
+@@ -16948,7 +16948,7 @@
+         "registry+https://github.com/rust-lang/crates.io-index#windows-sys@0.61.2",
+         "registry+https://github.com/rust-lang/crates.io-index#yaml_serde@0.10.4",
+         "registry+https://github.com/rust-lang/crates.io-index#zeroize@1.9.0",
+-        "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.4",
++        "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.5",
+         "registry+https://github.com/rust-lang/crates.io-index#zstd@0.14.3"
+       ],
+       "ref": "path+file://./rust#lean-ctx@3.12.0"
+@@ -20728,7 +20728,7 @@
+         "registry+https://github.com/rust-lang/crates.io-index#zopfli@0.8.3",
+         "registry+https://github.com/rust-lang/crates.io-index#zstd@0.14.3"
+       ],
+-      "ref": "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.4"
++      "ref": "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.5"
+     },
+     {
+       "ref": "registry+https://github.com/rust-lang/crates.io-index#zlib-rs@0.6.7"
+@@ -20813,7 +20813,7 @@
+       },
+       {
+         "name": "leanctx:cargo-lock-sha256",
+-        "value": "c11dfc5b8166dc8eed9d1e678c95e6f59c0701a64f56c34355e3840ecf683231"
++        "value": "ab95a1ce51461a272918914edecb4838f362c03b5dd469480667c668dbc8e36a"
+       }
+     ],
+     "tools": [
+```
+
+**File**: `THIRD_PARTY_NOTICES` (modified, +7/-7)
+```diff
+@@ -2,16 +2,16 @@
+ Schema: leanctx.third-party-notices/v1
+ Status: GENERATED AND APPROVED
+ Content-Digest-Scope: SHA-256 of this file with the Content-Digest value zeroed
+-Content-Digest: sha256:f76d44aea9141a66c36fa602403c5280e9365082c3c6015fe5b5636b890c033e
++Content-Digest: sha256:e9c5859787a9f0920a2156a01115ae74191fb1307754431f25ff783ba9062a92
+ Source inventory: rust/Cargo.lock + cargo metadata --locked --offline --all-features + SBOM.cdx.json + legal/third-party-assets.toml + packages/pi-lean-ctx/package-lock.json
+ Generation command: cargo metadata --locked --offline --all-features --manifest-path rust/Cargo.toml --format-version 1
+ Approval contract: legal/third-party-notices-approval.toml binds approved_content_sha256 to this file's exact SHA-256
+-Cargo.lock SHA-256: c11dfc5b8166dc8eed9d1e678c95e6f59c0701a64f56c34355e3840ecf683231
+-Cargo metadata inventory SHA-256: 2d8bd2c895ecc07dd98a4af25a32a1d1bdd72fc9d3dc7689005dc6e63d196345
+-SBOM.cdx.json SHA-256: 894304fa553ce89c49ecae98bcc3c958e8fc5b2c54eb32fc5d56bdc825bb9e65
++Cargo.lock SHA-256: ab95a1ce51461a272918914edecb4838f362c03b5dd469480667c668dbc8e36a
++Cargo metadata inventory SHA-256: b0504af9ad059d6f4dfba87105dad910660ee265eee16bea5ad9db478802113f
++SBOM.cdx.json SHA-256: fc4645d8027dd03fe57cb4fa1cc7723af906daaffb2d9144378f8ffa542d2dc8
+ SBOM components: 556
+-Asset manifest SHA-256: d1687b3f8892a1ab8d5a2f35b643d3a79408b1aed4442820b7589b6855564d7c
+-npm package-lock.json SHA-256: 35e87ec565ae4e71802703536ea2ea2bd6309fdf9d50e41203876084ab46306c
++Asset manifest SHA-256: 30f965c12dbec317a375d4a37c8ec011b3c278899c3294990e435cb94652bb9d
++npm package-lock.json SHA-256: 2698eb8bcaf09c3ff275826b3be2e28e5fb6044b3245cd6ec23475e06d1744a1
+ Bundled MCP SDK: @modelcontextprotocol/sdk 1.32.1 (sha512-2DdE+SJDtzLEEWzY1ZjY7Q+VcPhcV1KisD3zI4u0XZyktsjHum1mwbMI+JaulUBi2OZk+KJAi2uPXzxichPkdw==)
+ Cargo graph packages: 611
+ Third-party Cargo packages: 603
+@@ -4785,7 +4785,7 @@ Targets: derives[example], make[example], make_var[example], zerovec_derive[proc
+ Features: (none)
+ Dependencies: proc-macro2, quote, syn
+ 
+-### zip 9.0.4
++### zip 9.0.5
+ Source: registry+https://github.com/rust-lang/crates.io-index
+ Package source: https://github.com/zip-rs/zip2
+ SPDX-License-Identifier: MIT
+```
+
+**File**: `_archive/vscode-extension/package-lock.json` (modified, +3/-3)
+```diff
+@@ -4544,9 +4544,9 @@
+       }
+     },
+     "node_modules/qs": {
+-      "version": "6.16.0",
+-      "resolved": "https://registry.npmjs.org/qs/-/qs-6.16.0.tgz",
+-      "integrity": "sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA==",
++      "version": "6.17.1",
++      "resolved": "https://registry.npmjs.org/qs/-/qs-6.17.1.tgz",
++      "integrity": "sha512-jd3COkaKVgGUW+ZHyEHCG9bH7RoaaiWuMgzsIBjUMVjLAaWGWpoUAVwljVvBHxRu/2qEHnadLGZrkutYUBPQJA==",
+       "dev": true,
+       "license": "BSD-3-Clause",
+       "dependencies": {
 ```
 
 **File**: `docs/contracts/delivery-evidence-v1.json` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--{"checklist":[{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::setup_ci_smoke::setup_bootstrap_doctor_status_json_smoke -- --exact --test-threads=1","path":"rust/tests/suite/setup_ci_smoke.rs","selector":"fn setup_bootstrap_doctor_status_json_smoke()","sha256":"632fa142f66dd3c55e010d9115e873413a30f6ace225e9ab9b38be77a7346bae"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"setup"},{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::onboard_doctor_clean::onboard_yes_leaves_doctor_fully_green -- --exact","path":"rust/tests/suite/onboard_doctor_clean.rs","selector":"fn onboard_yes_leaves_doctor_fully_green()","sha256":"e40df3c330bc0e5e82dd34be4b682668f8c5aa3d77320430a0526956f5e1bf98"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"doctor"},{"evidence":{"evidence_class":"rust-unit-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --lib doctor::migrate::tests::contract_outcome_reports_frozen_set -- --exact","path":"rust/src/doctor/migrate.rs","selector":"fn contract_outcome_reports_frozen_set()","sha256":"c2f56222cf27de769376fad739506f6e13e86162002c76b5e82073503718e3b1"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"upgrade"},{"evidence":{"evidence_class":"python-unittest","harness_command":"python3 tests/delivery/test_rehearse_delivery.py DeliveryRehearsalTests.test_rehearses_verified_candidate_and_rollback_without_deployment","path":"tests/delivery/test_rehearse_delivery.py","selector":"def test_rehearses_verified_candidate_and_rollback_without_deployment(self):","sha256":"9c8841eea94ae560ca549e5d514c003eb4e1349c748e6b85dc0725e6bee9363a"},"external_acceptance_required":true,"local_status":"offline-rehearsal","stage":"rollback"},{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::cli_characterization::uninstall_dry_run_exits_zero -- --exact","path":"rust/tests/suite/cli_characterization.rs","selector":"fn uninstall_dry_run_exits_zero()","sha256":"87c819119b3d77e344f36ca64019b7f45cad8c18bbcc40bc5ae5e97f47e4e340"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"uninstall"}],"delivery_manifest":{"fixture":{"path":"tests/delivery/valid/delivery-manifest.json","selector":"\"schema_version\":\"leanctx.delivery/v1\"","sha256":"d8f7336980f57a3e67f3f4d66fc6dc3fef6c38d9eede406ed616bf2c5268a9ff"},"schema":{"path":"docs/contracts/delivery-manifest-v1.schema.json","selector":"https://leanctx.dev/contracts/delivery-manifest-v1.schema.json","sha256":"80ac91c631969a9ce305d8701d3eb0ca92b69b6defcd3a2ef6f9b4a80c7ae291"},"trust_root":{"path":"tests/delivery/valid/release-trust-root.json","selector":"\"algorithm\":\"Ed25519\"","sha256":"660fbf46674b8a16166026551e50b032a1ccf58a4d260c4bb4e4218235066083"},"verifier":{"path":"scripts/verify-delivery-manifest.py","selector":"def verify(manifest_path, root, trust_root=None, rotation_plan=None):","sha256":"636e85f32ce7cd7bfb7a6257b6abf78e4a5d3719c063537ccaa04be9163f21cc"}},"owner":{"handle":"@yvgude","source":{"path":".github/CODEOWNERS","selector":"* @yvgude","sha256":"9c52bffaef2f21976aac61d2ce42311a0ae6e393a95006a36f54e1d1edc72656"}},"release":{"publish_channels":[{"id":"engine-release","source_path":".github/workflows/release.yml","source_sha256":"9c90daafc23126c1db6913ba0e14e76aa6e49ed5d89d9e5868c297ae44179758","trigger_pattern":"v[0-9]*"},{"id":"sdk-release","source_path":".github/workflows/publish-sdk.yml","source_sha256":"29409a5020179f6711acc7bcd22e83dd7123d28b5e2b9beba9df8225b35f2a1b","trigger_pattern":"sdk-v[0-9]*"},{"id":"client-release","source_path":".github/workflows/publish-clients.yml","source_sha256":"dabe867e3aee5660a9e01b54b4876298b2faf0740c3a73af4ee4236cdc6a0cf3","trigger_pattern":"client-v[0-9]*"}],"targets":[{"artifact":"x86_64-unknown-linux-gnu","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-gnu"},{"artifact":"x86_64-unknown-linux-gnu-cuda","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-gnu"},{"artifact":"aarch64-unknown-linux-gnu","certification":"not-asserted","runner":"ubuntu-22.04-arm","target":"aarch64-unknown-linux-gnu"},{"artifact":"x86_64-unknown-linux-musl","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-musl"},{"artifact":"aarch64-unknown-linux-musl","certification":"not-asserted","runner":"ubuntu-22.04-arm","target":"aarch64-unknown-linux-musl"},{"artifact":"x86_64-apple-darwin","certification":"not-asserted","runner":"macos-15-intel","target":"x86_64-apple-darwin"},{"artifact":"aarch64-apple-darwin","certification":"not-asserted","runner":"macos-15","target":"aarch64-apple-darwin"},{"artifact":"x86_64-pc-windows-msvc","certifica
+-{"checklist":[{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::setup_ci_smoke::setup_bootstrap_doctor_status_json_smoke -- --exact --test-threads=1","path":"rust/tests/suite/setup_ci_smoke.rs","selector":"fn setup_bootstrap_doctor_status_json_smoke()","sha256":"632fa142f66dd3c55e010d9115e873413a30f6ace225e9ab9b38be77a7346bae"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"setup"},{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::onboard_doctor_clean::onboard_yes_leaves_doctor_fully_green -- --exact","path":"rust/tests/suite/onboard_doctor_clean.rs","selector":"fn onboard_yes_leaves_doctor_fully_green()","sha256":"f37cf05df9a0f2da013103ac58e661d28989f6b661035c788cbf05c3c3a5d7f9"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"doctor"},{"evidence":{"evidence_class":"rust-unit-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --lib doctor::migrate::tests::contract_outcome_reports_frozen_set -- --exact","path":"rust/src/doctor/migrate.rs","selector":"fn contract_outcome_reports_frozen_set()","sha256":"fec6db3d541f427738f1f53bbe113883da9c72cf46f3cc1dcbecca75efaded65"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"upgrade"},{"evidence":{"evidence_class":"python-unittest","harness_command":"python3 tests/delivery/test_rehearse_delivery.py DeliveryRehearsalTests.test_rehearses_verified_candidate_and_rollback_without_deployment","path":"tests/delivery/test_rehearse_delivery.py","selector":"def test_rehearses_verified_candidate_and_rollback_without_deployment(self):","sha256":"9c8841eea94ae560ca549e5d514c003eb4e1349c748e6b85dc0725e6bee9363a"},"external_acceptance_required":true,"local_status":"offline-rehearsal","stage":"rollback"},{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::cli_characterization::uninstall_dry_run_exits_zero -- --exact","path":"rust/tests/suite/cli_characterization.rs","selector":"fn uninstall_dry_run_exits_zero()","sha256":"87c819119b3d77e344f36ca64019b7f45cad8c18bbcc40bc5ae5e97f47e4e340"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"uninstall"}],"delivery_manifest":{"fixture":{"path":"tests/delivery/valid/delivery-manifest.json","selector":"\"schema_version\":\"leanctx.delivery/v1\"","sha256":"4fcdc5018f96bbb7ce4aa96549befbf2ea7416a80cd45c72bdbcd68413d3b42e"},"schema":{"path":"docs/contracts/delivery-manifest-v1.schema.json","selector":"https://leanctx.dev/contracts/delivery-manifest-v1.schema.json","sha256":"80ac91c631969a9ce305d8701d3eb0ca92b69b6defcd3a2ef6f9b4a80c7ae291"},"trust_root":{"path":"tests/delivery/valid/release-trust-root.json","selector":"\"algorithm\":\"Ed25519\"","sha256":"660fbf46674b8a16166026551e50b032a1ccf58a4d260c4bb4e4218235066083"},"verifier":{"path":"scripts/verify-delivery-manifest.py","selector":"def verify(manifest_path, root, trust_root=None, rotation_plan=None):","sha256":"636e85f32ce7cd7bfb7a6257b6abf78e4a5d3719c063537ccaa04be9163f21cc"}},"owner":{"handle":"@yvgude","source":{"path":".github/CODEOWNERS","selector":"* @yvgude","sha256":"9c52bffaef2f21976aac61d2ce42311a0ae6e393a95006a36f54e1d1edc72656"}},"release":{"publish_channels":[{"id":"engine-release","source_path":".github/workflows/release.yml","source_sha256":"ce3c5aded766f107f402dba944c9a14d473aebf7da4ba9c7ae248f1717d5b77e","trigger_pattern":"v[0-9]*"},{"id":"sdk-release","source_path":".github/workflows/publish-sdk.yml","source_sha256":"29409a5020179f6711acc7bcd22e83dd7123d28b5e2b9beba9df8225b35f2a1b","trigger_pattern":"sdk-v[0-9]*"},{"id":"client-release","source_path":".github/workflows/publish-clients.yml","source_sha256":"dabe867e3aee5660a9e01b54b4876298b2faf0740c3a73af4ee4236cdc6a0cf3","trigger_pattern":"client-v[0-9]*"}],"targets":[{"artifact":"x86_64-unknown-linux-gnu","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-gnu"},{"artifact":"x86_64-unknown-linux-gnu-cuda","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-gnu"},{"artifact":"aarch64-unknown-linux-gnu","certification":"not-asserted","runner":"ubuntu-22.04-arm","target":"aarch64-unknown-linux-gnu"},{"artifact":"x86_64-unknown-linux-musl","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-musl"},{"artifact":"aarch64-unknown-linux-musl","certification":"not-asserted","runner":"ubuntu-22.04-arm","target":"aarch64-unknown-linux-musl"},{"artifact":"x86_64-apple-darwin","certification":"not-asserted","runner":"macos-15-intel","target":"x86_64-apple-darwin"},{"artifact":"aarch64-apple-darwin","certification":"not-asserted","runner":"macos-15","target":"aarch64-apple-darwin"},{"artifact":"x86_64-pc-windows-msvc","certifica
 ```
 
-**File**: `docs/contracts/team-seat-value-v1/frozen-hashes.json` (modified, +1/-1)
+**File**: `legal/third-party-assets.toml` (modified, +3/-3)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "contract": "team-seat-value-v1",
-   "sha256": {
--    ".github/workflows/ci.yml": "34a5c317d5dbb47943ac9b3b0ef801c2621901c5dd870da3815f446670b9274f",
-+    ".github/workflows/ci.yml": "b37e5df6615a1435e38df222cd12fb1eb7bb3023f3274c46f153164925344f13",
-     "ci/gitlab-ci.yml": "fcc3c6b675b988e4f9452ace54f012e3e094eba1a5089c467a3192dc8a7b1cf6",
-     "docs/contracts/README.md": "f61fed796ff70a0d1989c10e0482086a85807bdb43d773b2542abbe9fdde8162",
-     "docs/contracts/team-seat-value-v1/README.md": "caecd3e67f1e9c0adacc272a9dae892ac0cddef42c5e17066c069d17a83505d6",
-```
-
-**File**: `docs/reference/generated/config-keys.md` (modified, +2/-0)
-```diff
-@@ -10,6 +10,7 @@ lean-ctx reads `~/.lean-ctx/config.toml` (and a project `.lean-ctx.toml` overlay
- 
- Top-level configuration keys
- 
-+- `a2a_accept_untrusted_signers` (bool, default `false`) — Accept A2A handoff bundles and context packages (/v1/a2a/handoff, /a2a/deliver) signed by a key that is not pinned in trusted-signers.toml. Off by default: such signatures prove integrity, not who sent them, so they are rejected with 403 untrusted_signer. Global-only
- - `agent_token_budget` (usize, default `0`) — Default per-agent token budget. 0 = unlimited
- - `allow_auto_reroot` (bool, default `false` — env `LEAN_CTX_ALLOW_REROOT`) — Allow automatic project-root re-rooting when absolute paths outside the jail are seen
- - `allow_ide_config_dirs` (bool, default `null` — env `LEAN_CTX_ALLOW_IDE_DIRS`) — Allow jailed ctx_* tools to read home-level IDE config dirs (registry-derived; covers all editors). Off by default — exposes other agents' sessions/credentials
-@@ -50,6 +51,7 @@ Top-level configuration keys
- - `max_ram_percent` (u8, default `5` — env `LEAN_CTX_MAX_RAM_PERCENT`) — Soft process-RSS target as % of system RAM (1-50, default 5); eviction/throttling policy, not an OS hard cap
- - `max_staleness_days` (u32, default `0` — env `LEAN_CTX_MAX_STALENESS_DAYS`) — Auto-purge data older than N days (0 = disabled). Flows into archive.max_age_hours
- - `mcp_idle_exit_minutes` (u64, default `0` — env `LEAN_CTX_MCP_IDLE_EXIT_MINUTES`) — Exit a stdio MCP server after this many minutes without a tool call (0 = never, default). Hosts that do not restart servers (Codex) lose lean-ctx in a resumed thread
-+- `mcp_import_allow_unverified` (bool, default `false`) — Let MCP tools (ctx_handoff import, ctx_pack import) import bundles and packages that are unsigned or signed by a key not pinned in trusted-signers.toml. A tool argument cannot grant this (prompt injection); CLI imports keep --allow-unsigned. Global-only
- - `mcp_max_rss_mb` (u64, default `512` — env `LEAN_CTX_MCP_MAX_RSS_MB`) — Per-process RSS target (MB) of each stdio MCP server; the guardian evicts above the lower of this and max_ram_percent (default 512, 0 = percent only)
- - `memory_cleanup` (enum: aggressive | shared, default `aggressive` — env `LEAN_CTX_MEMORY_CLEANUP`) — Controls how aggressively memory is freed when idle
- - `memory_profile` (enum: low | balanced | performance, default `performance` — env `LEAN_CTX_MEMORY_PROFILE`) — Controls RAM vs feature trade-off (performance = max quality)
-```
-
-**File**: `install.sh` (modified, +30/-10)
-```diff
-@@ -148,6 +148,19 @@ detect_target() {
-   esac
- }
- 
-+# Checksum verification fails closed (GHSA-rxv5-4c3x-g4q6 D): a missing
-+# SHA256SUMS, a missing entry or a missing hash tool aborts before anything
-+# is installed, so a blocked or stripped checksum fetch cannot downgrade the
-+# install to an unverified binary.
-+require_sha256_tool() {
-+  if command -v sha256sum >/dev/null 2>&1 || command -v shasum >/dev/null 2>&1; then
-+    return 0
-+  fi
-+  echo "Error: neither sha256sum nor shasum is available; refusing to install an unverified binary." >&2
-+  echo "  Install coreutils (sha256sum) or perl (shasum) and re-run the installer." >&2
-+  exit 1
-+}
-+
- verify_checksum() {
-   file="$1"
-   expected="$2"
-@@ -156,11 +169,10 @@ verify_checksum() {
-   elif command -v shasum >/dev/null 2>&1; then
-     actual="$(shasum -a 256 "$file" | cut -d' ' -f1)"
-   else
--    echo "Warning: no sha256sum/shasum found, skipping checksum verification"
--    return 0
-+    require_sha256_tool
-   fi
- 
--  if [ "$actual" != "$expected" ]; then
-+  if [ -z "$expected" ] || [ "$actual" != "$expected" ]; then
-     echo "Error: checksum mismatch!"
-     echo "  Expected: $expected"
-     echo "  Got:      $actual"
-@@ -201,6 +213,7 @@ install_download() {
-   echo "Mode: download pre-built binary"
-   echo "Platform: $target"
-   echo ""
-+  require_sha256_tool
- 
-   echo "Fetching latest release..."
-   latest="$(curl -fsSL "https://api.github.com/repos/${REPO}/releases/latest" \
-@@ -226,14 +239,21 @@ install_download() {
-   fi
- 
-   echo "Downloading checksums..."
--  if curl -fsSL "$sums_url" -o "$tmpdir/SHA256SUMS" 2>/dev/null; then
--    expected="$(grep "lean-ctx-${target}.tar.gz" "$tmpdir/SHA256SUMS" | cut -d' ' -f1)"
--    if [ -n "$expected" ]; then
--      verify_checksum "$tmpdir/lean-ctx.tar.gz" "$expected"
--    fi
--  else
--    echo "  Warning: checksums not available, skipping verification"
-+  if ! curl -fsSL "$sums_url" -o "$tmpdir/SHA256SUMS"; then
-+    echo "Error: could not download SHA256SUMS for ${latest}; refusing to install an unverified binary." >&2
-+    echo "  Check your network/proxy and retry, or verify manually: https://github.com/${REPO}/releases/tag/${latest}" >&2
-+    exit 1
-+  fi
-+  # Exact file-name match (sha256sum text or binary mode); exactly one entry.
-+  expected="$(awk -v name="lean-ctx-${target}.tar.gz" \
-+    '{ f = $2; sub(/^\*/, "", f) } f == name { print $1; n++ } END { if (n != 1) exit 1 }' \
-+    "$tmpdir/SHA256SUMS")" || expected=""
-+  if [ -z "$expected" ]; then
-+    echo "Error: SHA256SUMS for ${latest} has no unique entry for lean-ctx-${target}.tar.gz; refusing to install." >&2
-+    exit 1
-   fi
-+  verify_checksum "$tmpdir/lean-ctx.tar.gz" "$expected"
-+  echo "  Signed checksums: verify SHA256SUMS with cosign, see https://github.com/${REPO}/blob/main/SECURITY.md#verifying-release-artifacts"
- 
-   tar -xzf "$tmpdir/lean-ctx.tar.gz" -C "$tmpdir"
- 
-```
-
-**File**: `packages/lean-ctx-bin/postinstall.checksum.test.cjs` (added, +62/-0)
-```diff
-@@ -0,0 +1,62 @@
-+#!/usr/bin/env node
-+"use strict";
-+
-+// GHSA-rxv5-4c3x-g4q6 D: the npm postinstall must refuse to install a binary
-+// whose SHA-256 it cannot verify against the release's SHA256SUMS.
-+
-+const fs = require("node:fs");
-+const os = require("node:os");
-+const path = require("node:path");
-+const vm = require("node:vm");
-+const crypto = require("node:crypto");
-+const assert = require("node:assert/strict");
-+
-+// A Windows checkout may carry CRLF line endings.
-+const source = fs
-+  .readFileSync(path.join(__dirname, "postinstall.js"), "utf8")
-+  .replace(/\r\n/g, "\n");
-+const start = source.indexOf("function expectedSha256");
-+const end = source.indexOf("\n// ---------------------------------------------------------------------------\n// Main", start);
-+assert(start >= 0 && end > start, "checksum helpers were not found");
-+const logs = [];
-+const { verifyArchiveChecksum, expectedSha256 } = vm.runInNewContext(
-+  `${source.slice(start, end)}\n({ verifyArchiveChecksum, expectedSha256 })`,
-+  { console: { log: (m) => logs.push(m) }, crypto, fs, path, require, IS_WIN: false },
-+);
-+
-+const asset = "lean-ctx-x86_64-unknown-linux-musl.tar.gz";
-+const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lean-ctx-sums-test-"));
-+const archive = path.join(dir, asset);
-+fs.writeFileSync(archive, "archive bytes");
-+const digest = crypto.createHash("sha256").update("archive bytes").digest("hex");
-+const other = "0".repeat(64);
-+const release = (assets) => ({ tag_name: "v9.9.9", assets });
-+const withSums = release([{ name: "SHA256SUMS", browser_download_url: "https://example.invalid/SHA256SUMS" }]);
-+const serve = (text) => async () => text;
-+
-+(async () => {
-+  try {
-+    // Exact name match only; `*` binary-mode prefix accepted; CRLF tolerated.
-+    assert.equal(expectedSha256(`${digest}  ${asset}\r\n`, asset), digest);
-+    assert.equal(expectedSha256(`${digest} *${asset}\n`, asset), digest);
-+    assert.equal(expectedSha256(`${digest}  ${asset}.sig\n`, asset), null);
-+    assert.equal(expectedSha256(`${digest}  ${asset}\n${other}  ${asset}\n`, asset), null);
-+    assert.equal(expectedSha256(`nothex  ${asset}\n`, asset), null);
-+
-+    await verifyArchiveChecksum(withSums, asset, archive, serve(`${other}  LICENSE.md\n${digest}  ${asset}\n`));
-+    assert(logs.some((l) => l.includes("SHA256 verified")));
-+
-+    const rejects = async (rel, fetch, pattern) =>
-+      assert.rejects(verifyArchiveChecksum(rel, asset, archive, fetch), pattern);
-+    await rejects(release([]), serve(""), /no SHA256SUMS asset/);
-+    await rejects(withSums, async () => { throw new Error("HTTP 403"); }, /could not download SHA256SUMS \(HTTP 403\)/);
-+    await rejects(withSums, serve(`${digest}  other.tar.gz\n`), /no unique entry/);
-+    await rejects(withSums, serve(`${other}  ${asset}\n`), /SHA256 mismatch/);
-+    console.log("postinstall checksum verification fails closed: ok");
-+  } finally {
-+    fs.rmSync(dir, { recursive: true, force: true });
-+  }
-+})().catch((err) => {
-+  console.error(err);
-+  process.exit(1);
-+});
-```
-
----
-
-### Incident Patch 2: `0c9134e8` (2026-10-26)
-**Commit Message**: Security fixes: provider trust, proxy key injection, path confinement, zstd 0.14.3 (#2150)
-
-* Require the lean-ctx token before injecting a gateway-held provider key
-
-On a loopback proxy any non-empty provider header admitted a request on a
-provider route. For a [[proxy.providers]] entry with api_key_env (or Bedrock)
-the proxy then replaced that header with the operator's key, so a local
-caller without the lean-ctx token could spend it.
-
-The auth guard no longer applies the provider-key fallback to /providers/{id}
-routes that inject a gateway credential. A request admitted through the
-fallback is marked, and the forward path refuses to inject a routed alias
-credential for it, since an alias can move a built-in route onto such an
-entry.
-
-Fix contributed by kasparovabi in GHSA-53h5-q4m8-vg3x.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* Load project-local provider configs only for trusted workspaces
-
-<project>/.lean-ctx/providers.toml and .lean-ctx/providers/ were read for
-every workspace. A provider file chooses its base_url and the environment
-variable it sends as a credential, and a project entry replaces a global or
-built-in id such as github. An untrusted clone could m
-
-**File**: `SBOM.cdx.json` (modified, +20/-90)
-```diff
-@@ -16255,7 +16255,7 @@
-     },
-     {
-       "author": "Alexandre Bury <alexandre.bury@gmail.com>",
--      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#zstd-safe@7.2.4",
-+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#zstd-safe@8.2.0",
-       "description": "Safe low-level bindings for the zstd compression library.",
-       "externalReferences": [
-         {
-@@ -16266,34 +16266,7 @@
-       "hashes": [
-         {
-           "alg": "SHA-256",
--          "content": "8f49c4d5f0abb602a93fb8736af2a4f4dd9512e36f7f570d66e65ff867ed3b9d"
--        }
--      ],
--      "licenses": [
--        {
--          "expression": "MIT OR Apache-2.0"
--        }
--      ],
--      "name": "zstd-safe",
--      "purl": "pkg:cargo/zstd-safe@7.2.4",
--      "scope": "required",
--      "type": "library",
--      "version": "7.2.4"
--    },
--    {
--      "author": "Alexandre Bury <alexandre.bury@gmail.com>",
--      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#zstd-safe@8.1.0",
--      "description": "Safe low-level bindings for the zstd compression library.",
--      "externalReferences": [
--        {
--          "type": "vcs",
--          "url": "https://github.com/gyscos/zstd-rs"
--        }
--      ],
--      "hashes": [
--        {
--          "alg": "SHA-256",
--          "content": "bdd44c6a7284e91f3717755b24315a302edd9153a01f753c3cba3d765e8eafac"
-+          "content": "ded520f16b29e1a9b771c722221b2b0a0398c2316d9bb3c42b458a5414d7434b"
-         }
-       ],
-       "licenses": [
-@@ -16302,14 +16275,14 @@
-         }
-       ],
-       "name": "zstd-safe",
--      "purl": "pkg:cargo/zstd-safe@8.1.0",
-+      "purl": "pkg:cargo/zstd-safe@8.2.0",
-       "scope": "required",
-       "type": "library",
--      "version": "8.1.0"
-+      "version": "8.2.0"
-     },
-     {
-       "author": "Alexandre Bury <alexandre.bury@gmail.com>",
--      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#zstd-sys@2.1.1+zstd.1.5.7",
-+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#zstd-sys@2.1.2+zstd.1.5.7",
-       "description": "Low-level bindings for the zstd compression library.",
-       "externalReferences": [
-         {
-@@ -16324,7 +16297,7 @@
-       "hashes": [
-         {
-           "alg": "SHA-256",
--          "content": "aeec9eaf2dffbbd09201e23bd0ffcbaa33bb8e9266a10734fd7ed90a85eca078"
-+          "content": "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
-         }
-       ],
-       "licenses": [
-@@ -16333,45 +16306,14 @@
-         }
-       ],
-       "name": "zstd-sys",
--      "purl": "pkg:cargo/zstd-sys@2.1.1+zstd.1.5.7",
--      "scope": "required",
--      "type": "library",
--      "version": "2.1.1+zstd.1.5.7"
--    },
--    {
--      "author": "Alexandre Bury <alexandre.bury@gmail.com>",
--      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#zstd@0.13.3",
--      "description": "Binding for the zstd compression library.",
--      "externalReferences": [
--        {
--          "type": "documentation",
--          "url": "https://docs.rs/zstd"
--        },
--        {
--          "type": "vcs",
--          "url": "https://github.com/gyscos/zstd-rs"
--        }
--      ],
--      "hashes": [
--        {
--          "alg": "SHA-256",
--          "content": "e91ee311a569c327171651566e07972200e76fcfe2242a4fa446149a3881c08a"
--        }
--      ],
--      "licenses": [
--        {
--          "expression": "MIT"
--        }
--      ],
--      "name": "zstd",
--      "purl": "pkg:cargo/zstd@0.13.3",
-+      "purl": "pkg:cargo/zstd-sys@2.1.2+zstd.1.5.7",
-       "scope": "required",
-       "type": "library",
--      "version": "0.13.3"
-+      "version": "2.1.2+zstd.1.5.7"
-     },
-     {
-       "author": "Alexandre Bury <alexandre.bury@gmail.com>",
--      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#zstd@0.14.2",
-+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#zstd@0.14.3",
-       "description": "Binding for the zstd compression library.",
-       "externalReferences": [
-         {
-@@ -16386,7 +16328,7 @@
-       "hashes": [
-         {
-           "alg": "SHA-256",
--          "content": "057cfd910cfac363a0ada849592624b4c9ff2e10bef504c3433810d78ed96f93"
-+          "content": "db3ae9bf90af6e40197bef767eeefc46ad6397420fe873830bd85e5fbbfb3c70"
-         }
-       ],
-       "licenses": [
-@@ -16395,10 +16337,10 @@
-         }
-       ],
-       "name": "zstd",
--      "purl": "pkg:cargo/zstd@0.14.2",
-+      "purl": "pkg:cargo/zstd@0.14.3",
-       "scope": "required",
-       "type": "library",
--      "version": "0.14.2"
-+      "version": "0.14.3"
-     }
-   ],
-   "dependencies": [
-@@ -16510,7 +16452,7 @@
-         "registry+https://github.com/rust-lang/crates.io-index#yaml_serde@0.10.4",
-         "registry+https://github.com/rust-lang/crates.io-index#zeroize@1.9.0",
-         "registry+https://github.com/rust-lang/crates.io-index#zip@9.0.4",
--        "registry+https://github.com/rust-lang/crates.io-index#zstd@0.13.3"
-+        "registry+https://
-```
-
-**File**: `THIRD_PARTY_NOTICES` (modified, +11/-27)
-```diff
-@@ -2,19 +2,19 @@
- Schema: leanctx.third-party-notices/v1
- Status: GENERATED AND APPROVED
- Content-Digest-Scope: SHA-256 of this file with the Content-Digest value zeroed
--Content-Digest: sha256:1e735e1fb8a88426b749709908093bc7ed153d76c16a06b10246ced31ce7156c
-+Content-Digest: sha256:d8f42ea922efe53b27e9dff83d841860d4d9fd4a9fba5ccaf89ec18253ef9d7d
- Source inventory: rust/Cargo.lock + cargo metadata --locked --offline --all-features + SBOM.cdx.json + legal/third-party-assets.toml + packages/pi-lean-ctx/package-lock.json
- Generation command: cargo metadata --locked --offline --all-features --manifest-path rust/Cargo.toml --format-version 1
- Approval contract: legal/third-party-notices-approval.toml binds approved_content_sha256 to this file's exact SHA-256
--Cargo.lock SHA-256: 957c7c901d5b4f5c9b706295fb10af475485b213c3087379da5a3be6d4482be0
--Cargo metadata inventory SHA-256: 79b21d172145957df31a412aa20472bdd0b2bf73a8b9aeadfdce2b225765f107
--SBOM.cdx.json SHA-256: fbb3b9e0caa434ec20e4d12fa386a93a62320c2097d3f5ff93c10b2be3ac392c
--SBOM components: 543
--Asset manifest SHA-256: c01fb6825a92b70eb069619f9d315887c8d49bd415239c41e5e2dfe5d87ceb74
-+Cargo.lock SHA-256: 82a6fc6a46a03a37c27c28880d31338f511fddd965bb8eb4133ac5c9e7c1da6e
-+Cargo metadata inventory SHA-256: 49b082bef7074a01e730787c4b3f77386ed8a43ebbf970b1ded34e860064c7e9
-+SBOM.cdx.json SHA-256: 391a1618bcd0b8329fe81daf1d030abea2529abc68ff2570896822da30f97db8
-+SBOM components: 541
-+Asset manifest SHA-256: 6fc0069e6835f4d5793fb63236b9be0f05b95219e262029057786ebf3f6c4ec8
- npm package-lock.json SHA-256: 1f4451809926e44c5edc0651f117aa9aed436ac8efdb927ea5001a9fade4c883
- Bundled MCP SDK: @modelcontextprotocol/sdk 1.32.1 (sha512-2DdE+SJDtzLEEWzY1ZjY7Q+VcPhcV1KisD3zI4u0XZyktsjHum1mwbMI+JaulUBi2OZk+KJAi2uPXzxichPkdw==)
--Cargo graph packages: 597
--Third-party Cargo packages: 587
-+Cargo graph packages: 595
-+Third-party Cargo packages: 585
- 
- ## Cargo dependency graph
- ### adler2 2.0.1
-@@ -4673,39 +4673,23 @@ Targets: zopfli[bin], zopfli[lib]
- Features: default, gzip, nightly, std, zlib
- Dependencies: bumpalo, crc32fast, log, simd-adler32
- 
--### zstd 0.13.3
--Source: registry+https://github.com/rust-lang/crates.io-index
--Package source: https://github.com/gyscos/zstd-rs
--SPDX-License-Identifier: MIT
--Targets: basic[example], benchmark[example], issue_182[test], stream[example], train[example], zstd[example], zstd[lib], zstdcat[example]
--Features: arrays, bindgen, debug, default, doc-cfg, experimental, fat-lto, legacy, no_asm, pkg-config, thin, thin-lto, wasm, zdict_builder, zstdmt
--Dependencies: zstd-safe
--
--### zstd 0.14.2
-+### zstd 0.14.3
- Source: registry+https://github.com/rust-lang/crates.io-index
- Package source: https://github.com/gyscos/zstd-rs
- SPDX-License-Identifier: BSD-3-Clause
- Targets: basic[example], benchmark[example], invalid_dictionary[test], issue_182[test], issue_251[test], issue_381[test], issue_382[test], stream[example], throughput[example], train[example], with_rust_allocator[test], with_rust_allocator_dictionaries[test], with_rust_allocator_stream[test], zstd[example], zstd[lib], zstdcat[example]
- Features: arrays, bindgen, cmake, debug, default, doc-cfg, experimental, fat-lto, legacy, no_asm, pkg-config, thin, thin-lto, vendored, wasm, with-rust-allocator, zdict_builder, zstdmt
- Dependencies: zstd-safe
- 
--### zstd-safe 7.2.4
--Source: registry+https://github.com/rust-lang/crates.io-index
--Package source: https://github.com/gyscos/zstd-rs
--SPDX-License-Identifier: MIT OR Apache-2.0
--Targets: build-script-build[custom-build], zstd_safe[lib]
--Features: arrays, bindgen, debug, default, doc-cfg, experimental, fat-lto, legacy, no_asm, pkg-config, seekable, std, thin, thin-lto, zdict_builder, zstdmt
--Dependencies: zstd-sys
--
--### zstd-safe 8.1.0
-+### zstd-safe 8.2.0
- Source: registry+https://github.com/rust-lang/crates.io-index
- Package source: https://github.com/gyscos/zstd-rs
- SPDX-License-Identifier: BSD-3-Clause
- Targets: build-script-build[custom-build], with_rust_allocator[test], with_rust_allocator_clones[test], with_rust_allocator_dictionaries[test], with_rust_allocator_one_shot[test], zstd_safe[lib]
- Features: arrays, bindgen, cmake, debug, default, doc-cfg, experimental, fat-lto, legacy, no_asm, pkg-config, seekable, std, thin, thin-lto, vendored, with-rust-allocator, zdict_builder, zstdmt
- Dependencies: zstd-sys
- 
--### zstd-sys 2.1.1+zstd.1.5.7
-+### zstd-sys 2.1.2+zstd.1.5.7
- Source: registry+https://github.com/rust-lang/crates.io-index
- Package source: https://github.com/gyscos/zstd-rs
- SPDX-License-Identifier: BSD-3-Clause
-```
-
-**File**: `legal/third-party-assets.toml` (modified, +2/-2)
-```diff
-@@ -4,9 +4,9 @@ authority = "THIRD_PARTY_NOTICES"
+@@ -4,11 +4,11 @@ authority = "THIRD_PARTY_NOTICES"
  
  [inputs]
  cargo_lock = "rust/Cargo.lock"
--cargo_lock_sha256 = "957c7c901d5b4f5c9b706295fb10af475485b213c3087379da5a3be6d4482be0"
-+cargo_lock_sha256 = "82a6fc6a46a03a37c27c28880d31338f511fddd965bb8eb4133ac5c9e7c1da6e"
+-cargo_lock_sha256 = "c11dfc5b8166dc8eed9d1e678c95e6f59c0701a64f56c34355e3840ecf683231"
++cargo_lock_sha256 = "ab95a1ce51461a272918914edecb4838f362c03b5dd469480667c668dbc8e36a"
  sbom = "SBOM.cdx.json"
--sbom_sha256 = "fbb3b9e0caa434ec20e4d12fa386a93a62320c2097d3f5ff93c10b2be3ac392c"
-+sbom_sha256 = "391a1618bcd0b8329fe81daf1d030abea2529abc68ff2570896822da30f97db8"
+-sbom_sha256 = "894304fa553ce89c49ecae98bcc3c958e8fc5b2c54eb32fc5d56bdc825bb9e65"
++sbom_sha256 = "fc4645d8027dd03fe57cb4fa1cc7723af906daaffb2d9144378f8ffa542d2dc8"
  npm_lock = "packages/pi-lean-ctx/package-lock.json"
- npm_lock_sha256 = "1f4451809926e44c5edc0651f117aa9aed436ac8efdb927ea5001a9fade4c883"
+-npm_lock_sha256 = "35e87ec565ae4e71802703536ea2ea2bd6309fdf9d50e41203876084ab46306c"
++npm_lock_sha256 = "2698eb8bcaf09c3ff275826b3be2e28e5fb6044b3245cd6ec23475e06d1744a1"
  
-```
-
-**File**: `legal/third-party-notices-approval.toml` (modified, +3/-3)
-```diff
-@@ -1,5 +1,5 @@
- schema = "leanctx.third-party-notices-approval/v1"
--approved_content_sha256 = "e3bd124434d66a27ac9f2206f37567cf85a2c80a083ca6c8ad0a1f0a470b62a2"
-+approved_content_sha256 = "4477a49e3a367ae7f0c5e2125d5b78e4c52e49ea9ec2a3031844a572d8dda395"
- approving_owner = "Yves Gugger"
--approval_evidence = "Copyright owner approval (explicit \"Ja, freigeben\" for THIRD_PARTY_NOTICES sha256 e3bd1244...0b62a2, 2026-10-24) of the generated THIRD_PARTY_NOTICES (GENERATED AND APPROVED variant of scripts/generate-third-party-notices.py) for the packages/pi-lean-ctx security bumps (vitest 4.1.12, zod 4.6.7, fast-uri 3.1.9, body-parser 2.4.0, ip-address 10.7.4; dev: pi-coding-agent/pi-tui 1.4.0): the npm package-lock, asset-manifest, content and bundled MCP SDK 1.32.1 bundle digests change (the bundle now carries the patched dependencies); no license or notice text changes."
--approved_at = "2026-10-24"
-+approval_evidence = "Copyright owner approval (explicit \"yes mach alles\", 2026-10-26, for the generated content with pending digest 3f96cf8f...e946c7; this file binds its GENERATED AND APPROVED variant 4477a49e...dda395 of scripts/generate-third-party-notices.py) of the THIRD_PARTY_NOTICES for the zstd security bump (RUSTSEC-2026-0391/0398/0403/0410): zstd 0.13.3 and zstd-safe 7.2.4 leave the Cargo graph, zstd 0.14.3, zstd-safe 8.2.0 and zstd-sys 2.1.2 replace 0.14.2/8.1.0/2.1.1; the Cargo.lock, Cargo metadata inventory, SBOM, asset-manifest and content digests change; no new packages, licenses or notice text."
-+approved_at = "2026-10-26"
-```
-
-**File**: `rust/Cargo.lock` (modified, +9/-27)
-```diff
-@@ -2230,7 +2230,7 @@ dependencies = [
-  "yaml_serde",
-  "zeroize",
-  "zip",
-- "zstd 0.13.3",
-+ "zstd",
- ]
- 
- [[package]]
-@@ -5886,7 +5886,7 @@ dependencies = [
-  "typed-path",
-  "zeroize",
-  "zopfli",
-- "zstd 0.14.2",
-+ "zstd",
- ]
- 
- [[package]]
-@@ -5915,45 +5915,27 @@ dependencies = [
- 
- [[package]]
- name = "zstd"
--version = "0.13.3"
-+version = "0.14.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e91ee311a569c327171651566e07972200e76fcfe2242a4fa446149a3881c08a"
-+checksum = "db3ae9bf90af6e40197bef767eeefc46ad6397420fe873830bd85e5fbbfb3c70"
- dependencies = [
-- "zstd-safe 7.2.4",
--]
--
--[[package]]
--name = "zstd"
--version = "0.14.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "057cfd910cfac363a0ada849592624b4c9ff2e10bef504c3433810d78ed96f93"
--dependencies = [
-- "zstd-safe 8.1.0",
--]
--
--[[package]]
--name = "zstd-safe"
--version = "7.2.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8f49c4d5f0abb602a93fb8736af2a4f4dd9512e36f7f570d66e65ff867ed3b9d"
--dependencies = [
-- "zstd-sys",
-+ "zstd-safe",
- ]
- 
- [[package]]
- name = "zstd-safe"
--version = "8.1.0"
-+version = "8.2.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bdd44c6a7284e91f3717755b24315a302edd9153a01f753c3cba3d765e8eafac"
-+checksum = "ded520f16b29e1a9b771c722221b2b0a0398c2316d9bb3c42b458a5414d7434b"
- dependencies = [
-  "zstd-sys",
- ]
- 
- [[package]]
- name = "zstd-sys"
--version = "2.1.1+zstd.1.5.7"
-+version = "2.1.2+zstd.1.5.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aeec9eaf2dffbbd09201e23bd0ffcbaa33bb8e9266a10734fd7ed90a85eca078"
-+checksum = "481ada9c543b2323cbb7bbdbb5249177fbf0188ed959ed2c15e4b22421c84ed3"
- dependencies = [
-  "cc",
-  "pkg-config",
-```
-
-**File**: `rust/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -338,7 +338,7 @@ blake3 = "1.8"
- rayon = "1.12"
- moka = { version = "0.12", features = ["sync"] }
- postcard = { version = "1.1", features = ["use-std"] }
--zstd = "0.13"
-+zstd = "0.14.3"
- lsp-types = "0.97"
- fs2 = "0.4"
- unicode-width = "0.2"
-```
-
-**File**: `rust/src/core/config/loader.rs` (modified, +5/-0)
-```diff
-@@ -125,6 +125,11 @@ pub(crate) fn strip_sensitive_overrides(local: &mut Config) -> Vec<&'static str>
-         local.allow_symlink_roots.clear();
-         withheld.push("allow_symlink_roots");
-     }
-+    // Destinations ctx_shell redirects and downloads may write to.
-+    if !local.write_allow_paths.is_empty() {
-+        local.write_allow_paths.clear();
-+        withheld.push("write_allow_paths");
-+    }
-     if !local.custom_aliases.is_empty() {
-         local.custom_aliases.clear();
-         withheld.push("custom_aliases");
-```
-
-**File**: `rust/src/core/config/tests_extra_roots.rs` (modified, +21/-0)
-```diff
-@@ -319,3 +319,24 @@ fn allow_symlink_roots_follows_extra_roots_trust_semantics() {
-     trusted.merge_local(r#"allow_symlink_roots = ["/opt/dotfiles"]"#, true);
-     assert_eq!(trusted.allow_symlink_roots, vec!["/opt/dotfiles"]);
- }
-+
-+#[test]
-+fn write_allow_paths_follows_workspace_trust() {
-+    // `write_allow_paths` decides where ctx_shell redirects and downloads may
-+    // write, so an untrusted repo must not be able to add `/etc` to it.
-+    let mut untrusted = Config::default();
-+    untrusted.merge_local(r#"write_allow_paths = ["/etc"]"#, false);
-+    assert!(
-+        untrusted.write_allow_paths.is_empty(),
-+        "shell write targets must be withheld for an untrusted workspace"
-+    );
-+    assert_eq!(
-+        local_sensitive_overrides(r#"write_allow_paths = ["/etc"]"#),
-+        vec!["write_allow_paths"],
-+        "`lean-ctx trust` must list the key it is about to enable"
-+    );
-+
-+    let mut trusted = Config::default();
-+    trusted.merge_local(r#"write_allow_paths = ["/var/agent-scratch"]"#, true);
-+    assert_eq!(trusted.write_allow_paths, vec!["/var/agent-scratch"]);
-+}
+ [license_texts]
+ mit = """
 ```
 
 ---
 
-### Incident Patch 3: `ff4a6d72` (2026-10-25)
-**Commit Message**: fix(ci): sync the SDK external-consumer lock fixture with #2141
+### Incident Patch 2: `e95146ff` (2026-10-29)
+**Commit Message**: ci(release): build once on main, reuse the verified build on the tag (#2159)
 
-#2141 moved lean-ctx-client's Cargo.lock to rustls 0.23.46, rustls-webpki
-0.103.16 and webpki-roots 1.0.11 but left the external-consumer fixture
-lock on the old versions. The test resolves it with --offline, so it only
-passed while the CI cargo cache still held the old crates; with a cold
-cache every run (main schedule and PRs) fails with "failed to download
-rustls v0.23.45".
+Public export of the private source commit 8f939247df612fb2e608a23abc48a58ba82d4863.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `clients/rust/lean-ctx-client/tests/external-consumer/Cargo.lock.fixture` (modified, +7/-7)
+**File**: `.github/actions/windows-signing/action.yml` (modified, +4/-1)
 ```diff
-@@ -336,9 +336,9 @@ dependencies = [
+@@ -30,7 +30,10 @@ runs:
+         if ($env:GITHUB_REPOSITORY -ne 'yvgude/lean-ctx') { throw 'Unexpected signing repository' }
+         $release = $env:GITHUB_EVENT_NAME -eq 'push' -and $env:GITHUB_REF -match '^refs/tags/v[0-9]'
+         $smoke = $env:GITHUB_EVENT_NAME -eq 'workflow_dispatch' -and $env:GITHUB_REF -eq 'refs/heads/main'
+-        if (-not ($release -or $smoke)) { throw 'Signing requires a release tag or manual main build' }
++        # The release prebuild of main (release.yml), which its tag reuses.
++        $prebuild = $env:GITHUB_EVENT_NAME -eq 'push' -and $env:GITHUB_REF -eq 'refs/heads/main' -and
++          $env:GITHUB_WORKFLOW_REF -eq 'yvgude/lean-ctx/.github/workflows/release.yml@refs/heads/main'
++        if (-not ($release -or $smoke -or $prebuild)) { throw 'Signing requires a release tag or a main build' }
+         foreach ($value in @($env:SIGNING_CLIENT_ID, $env:SIGNING_TENANT_ID, $env:SIGNING_SUBSCRIPTION_ID)) {
+           if ([string]::IsNullOrWhiteSpace($value)) { throw 'Missing Azure signing configuration' }
+         }
+```
+
+**File**: `.github/workflows/release.yml` (modified, +351/-25)
+```diff
+@@ -7,6 +7,17 @@ on:
+       # excludes the editor-extension tags (`vscode-v*`), which have their own
+       # workflow (publish-vscode.yml) and must NOT trigger a binary release.
+       - 'v[0-9]*'
++    # Build once, reuse on the tag: the push to main that changes the workspace
++    # Cargo version to a new stable, unpublished X.Y.Z (the release merge
++    # commit) builds and seals the full release matrix (`plan` mode
++    # `prebuild`); the tag of that commit then reuses the verified build
++    # instead of compiling again (`resolve-prebuild`). Other main pushes only
++    # run `plan`. Nothing is published from main: every publishing job
++    # requires a tag. Repository variable RELEASE_PREBUILD_REUSE=false turns
++    # reuse off (the tag builds as before).
++    branches: [main]
++  # Manual prebuild of main (e.g. after a failed or expired prebuild).
++  workflow_dispatch:
  
- [[package]]
- name = "rustls"
--version = "0.23.45"
-+version = "0.23.46"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
-+checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
- dependencies = [
-  "log",
-  "once_cell",
-@@ -360,9 +360,9 @@ dependencies = [
+ permissions:
+   contents: read
+@@ -15,6 +26,123 @@ env:
+   CARGO_BUILD_JOBS: "3"
  
- [[package]]
- name = "rustls-webpki"
--version = "0.103.15"
-+version = "0.103.16"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-+checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
- dependencies = [
-  "ring",
-  "rustls-pki-types",
-@@ -560,14 +560,14 @@ version = "0.26.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
- dependencies = [
-- "webpki-roots 1.0.9",
-+ "webpki-roots 1.0.11",
- ]
+ jobs:
++  plan:
++    name: Plan (release, prebuild or skip)
++    runs-on: ubuntu-latest
++    timeout-minutes: 5
++    outputs:
++      mode: ${{ steps.plan.outputs.mode }}
++      version: ${{ steps.plan.outputs.version }}
++      reusable: ${{ steps.plan.outputs.reusable }}
++    steps:
++      - uses: actions/checkout@v4 # v4
++        with:
++          persist-credentials: false
++      - name: Decide the run mode
++        id: plan
++        env:
++          GH_TOKEN: ${{ github.token }}
++          BEFORE: ${{ github.event.before }}
++        run: |
++          python3 scripts/release-prebuild.py plan --event "${GITHUB_EVENT_NAME}" \
++            --ref "${GITHUB_REF}" --repo "${GITHUB_REPOSITORY}" --before "${BEFORE}" --root .
++
++  resolve-prebuild:
++    # The tag reuses the main prebuild of the exact tagged commit when the run
++    # (release.yml, refs/heads/main, push/dispatch, this repository), its
++    # complete artifact set, its manifest's Sigstore attestation, the tree,
++    # version, the build configuration the build jobs compiled in and every
++    # file digest all match. A prebuild still running is awaited; anything
++    # else (or RELEASE_PREBUILD_REUSE=false, or a prerelease tag) falls back
++    # to building in this run.
++    name: Resolve verified prebuild
++    needs: plan
++    if: needs.plan.outputs.mode == 'release'
++    runs-on: ubuntu-latest
++    timeout-minutes: 150
++    permissions:
++      contents: read
++      actions: read
++      attestations: read
++    env:
++      GH_TOKEN: ${{ github.token }}
++      VERSION: ${{ needs.plan.outputs.version }}
++      LEANCTX_PRODUCTION_RUNTIME_CHANNEL_URL: ${{ vars.LEANCTX_PRODUCTION_RUNTIME_CHANNEL_URL }}
++      LEANCTX_PRODUCTION_RUNTIME_CHANNEL_SIGNATURE_URL: ${{ vars.LEANCTX_PRODUCTION_RUNTIME_CHANNEL_SIGNATURE_URL }}
++      LEANCTX_PRODUCTION_RUNTIME_CHANNEL_ROOT_KEY_HEX: ${{ vars.LEANCTX_PRODUCTION_RUNTIME_CHANNEL_ROOT_KEY_HEX }}
++      LEANCTX_PRODUCTION_COCKPIT_CHANNEL_URL: ${{ vars.LEANCTX_PRODUCTION_COCKPIT_CHANNEL_URL }}
++      LEANCTX_PRODUCTION_COCKPIT_CHANNEL_SIGNATURE_URL: ${{ vars.LEANCTX_PRODUCTION_COCKPIT_CHANNEL_SIGNATURE_URL }}
++    outputs:
++      reuse: ${{ steps.resolve.outputs.reuse }}
++      run_id: ${{ steps.resolve.outputs.run_id }}
++    steps:
++      - uses: actions/checkout@v4 # v4
++        with:
++          persist-credentials: false
++      - name: Find and verify the prebuild manifest of this commit
++        id: candidate
++        env:
++          REUSE_SWITCH: ${{ vars.RELEASE_PREBUILD_REUSE }}
++          REUSABLE: ${{ needs.plan.outputs.reusable }}
++        run: |
++          set -euo pipefail
++          run_id=""
++          dir="$RUNNER_TEMP/prebuild-manifest"
++          if [[ "$REUSE_SWITCH" == "false" ]]; then
++            echo "::notice::RELEASE_PREBUILD_REUSE=false: building the release matrix in this run"
++          elif [[ "$REUSABLE" != "true" ]]; then
++            echo "::notice::${VERSION} is not a stable X.Y.Z: building the release matrix in this run"
++          elif run_id="$(python3 scripts/release-prebuild.py find --repo "$GITHUB_REPOSITORY" \
++                --sha "$GITHUB_SHA" --wait-seconds 7200 --poll-seconds 60)" && [[ -n "$run_id" ]] \
++             && gh run download "$run_id" --repo "$GITHUB_REPOSITORY" \
++                --name release-prebuild-manifest --dir "$dir" \
++             && gh attestation verify "$dir/release-prebuild-manifest.json" --repo "$GITHUB_REPOSITORY" \
++                --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release.yml" \
++                --source-ref refs/heads/main --source-digest "$GITHUB_SHA" \
++                --deny-self-hosted-runners --format json > "$dir/attestation.json" \
++             && python3 scripts/release-prebuild.py verify --manifest "$dir/release-prebuild-manifest.json" \
++                --attestation "$dir/attestation.json" --repo "$GITHUB_REPOSITORY" --sha "$GITHUB_SHA" \
++                --tree "$(git rev-parse 'HEAD^{tree}')" --version "$VERSION" --run-id "$run_id"; then
++            echo "Ve
+```
+
+**File**: `PUBLIC-EXPORT-RECEIPT.json` (modified, +34/-20)
+```diff
+@@ -121,11 +121,11 @@
+    "size": 5837
+   },
+   {
+-   "blob": "9daf2afd9fe09598fddef747fa109dc96f494f6e",
++   "blob": "c9b62ceaa4f194ea35825d76f0ccace00997c9a5",
+    "mode": "100644",
+    "path": ".github/actions/windows-signing/action.yml",
+-   "sha256": "b95cd48d0086819e2548ebe824b7a96b4d7f92341abfe3e62fa0623fcfdf86b9",
+-   "size": 2705
++   "sha256": "c62ecdc5d3dafb2bc5f7f410d27b49a520d977c29d1ef0699f228c27b7d7b4ae",
++   "size": 2995
+   },
+   {
+    "blob": "be5be3b15d83dc03857572dff9d0c7482f48b865",
+@@ -247,11 +247,11 @@
+    "size": 3565
+   },
+   {
+-   "blob": "baaad32011a5fa47b828ba7ce3d66bfa67336fb6",
++   "blob": "672c6530206eafd60c790c0ada0467a4710dc416",
+    "mode": "100644",
+    "path": ".github/workflows/release.yml",
+-   "sha256": "afc288cf252f338870d5268f57a6af08eb19bb70200c1aced82bee6f91349e62",
+-   "size": 58410
++   "sha256": "e9d5f5b6183282a39f69ee2b6388f78f27d7aeac108d06029c47d23344fe2a1b",
++   "size": 76157
+   },
+   {
+    "blob": "75a4d6a3ea3e0e6bf69efff80c68bc5cca72e7b4",
+@@ -457,11 +457,11 @@
+    "size": 525
+   },
+   {
+-   "blob": "5387e27f55f84aa12ce91cf27ae9dd80437c2fad",
++   "blob": "3a4e873ce8cb130d2a2324e7d0623fe02dde57b6",
+    "mode": "100644",
+    "path": "PUBLISH_MANIFEST.toml",
+-   "sha256": "d7df663439f72fdd9b269838830cf88f48f7de72b549ab572f7955d84482b58d",
+-   "size": 132651
++   "sha256": "a984764c729a67c955cb25d8e212155ed5d8154481747e6bcaeb6dde75aae4c7",
++   "size": 132804
+   },
+   {
+    "blob": "68b17e5b578ceb2df7dca4efcd0b859428333d54",
+@@ -478,11 +478,11 @@
+    "size": 684664
+   },
+   {
+-   "blob": "3ba16bfeee394fed44d45a9f01068ff49d968d12",
++   "blob": "c014f36ecc399252af9679b99c348abe66ad0fac",
+    "mode": "100644",
+    "path": "SECURITY.md",
+-   "sha256": "f5a05a9bc50d6190dd20c3945c4a85dec90c6f89408e98fac7c2373164a21668",
+-   "size": 32033
++   "sha256": "2d3422ddd0fe229eb979a54d73c837f9fbcac5eb53e0dbb646a8531fafd0c125",
++   "size": 32361
+   },
+   {
+    "blob": "5dc4c2f5d1ae1be56f4df2bc4bd9e7c7bdc2e7d7",
+@@ -5686,10 +5686,10 @@
+    "size": 4024
+   },
+   {
+-   "blob": "17aee035f1915a6167189f1a174719920c839cef",
++   "blob": "39391e736e429ea727a8c3beca6ffdca6f81b694",
+    "mode": "100644",
+    "path": "docs/contracts/delivery-evidence-v1.json",
+-   "sha256": "746b50bf0ef3712f10d499729cd803f53aeaadf2cb036315c4bbc557084d93e1",
++   "sha256": "1e12bf2cc2b26fbeb303c9ef7ffb2d429b2ed04d96242b65070fcf1c591e4ac2",
+    "size": 6892
+   },
+   {
+@@ -28926,11 +28926,11 @@
+    "size": 14289
+   },
+   {
+-   "blob": "8398b1cec01d4f1ec10b30bfabdd26a217a397b7",
++   "blob": "b7bdbf166a879284e6d3943f66dcd5bcfdd5b795",
+    "mode": "100644",
+    "path": "rust/src/core/shell_allowlist/side_door_tests.rs",
+-   "sha256": "c15e0e7a459826359b8aeab896fad9b171c9fcaa117a583f484b35a6b6bdf513",
+-   "size": 13903
++   "sha256": "0abbdacaf59a63b582e412bc0dd4babb5506fdc6f0b3c6121e536a2aa540ae2b",
++   "size": 14353
+   },
+   {
+    "blob": "31af8a934d2d84733e49e19e085a465962f0c018",
+@@ -37724,6 +37724,13 @@
+    "sha256": "19166bf56354d8a1bdc223ba0d76b220fcc2129075d68dd4d592841f483e95ac",
+    "size": 8767
+   },
++  {
++   "blob": "d8431c7faf1008245abf60bc4baad8a670e8b8a1",
++   "mode": "100644",
++   "path": "scripts/release-prebuild.py",
++   "sha256": "9bc16f74415366966a583358a3ee258968ef67933090f58e2208835f211d928a",
++   "size": 23974
++  },
+   {
+    "blob": "afef0f8e0eeff2ad08855261f23b6c12ccb39137",
+    "mode": "100644",
+@@ -38011,6 +38018,13 @@
+    "sha256": "8b60f94da858bcb1fdef8409426931655616fe91289c40acc955c62a76ddc6fe",
+    "size": 11753
+   },
++  {
++   "blob": "fa6fe72aa3a5d6c9bda3bd5ba298cb8dc7782b1d",
++   "mode": "100644",
++   "path": "scripts/tests/test_release_prebuild.py",
++   "sha256": "f1db604d7a2e16b02c9141086c238316561ea90b0278c68ea97c9be02cf0dd37",
++   "size": 23400
++  },
+   {
+    "blob": "65467d1e93b86bc5327211f6c22380cd610da4cb",
+    "mode": "100644",
+@@ -39002,9 +39016,9 @@
+    "sha256": "d8ece87e85f847ba6ef03ac36623f3fa5675f01c3cd01ee22a4c8362eec48dda"
+   }
+  ],
+- "manifest_sha256": "d7df663439f72fdd9b269838830cf88f48f7de72b549ab572f7955d84482b58d",
++ "manifest_sha256": "a984764c729a67c955cb25d8e212155ed5d8154481747e6bcaeb6dde75aae4c7",
+  "schema": 1,
+- "source_commit": "5b798e2d23677e08170b2543758240cad6a4ffda",
++ "source_commit": "8f939247df612fb2e608a23abc48a58ba82d4863",
+  "tool_sha256": "86ea08dc440cce975409b9f805c74bf5beb402284f3200800381def3714c8f3c",
+- "tree_sha256": "749d97bc805341dfd3010bfe87a36184b0d4ff38f2217ba2f79c7f5bdd302046"
++ "tree_sha256": "f50aaea9dd93e6140528907613810b867c68c9bf71b72368df4e44e5d2073ed1"
+ }
+```
+
+**File**: `PUBLISH_MANIFEST.toml` (modified, +3/-0)
+```diff
+@@ -167,12 +167,15 @@ new_paths = [
+   "scripts/public-export.py",
+   "scripts/publish-gate.py",
+   "scripts/publish-pins.py",
++  # Release prebuild reuse (release.yml): own code, Apache-2.0 SPDX-headed.
++  "scripts/release-prebuild.py",
+   "scripts/scan-release-artifacts.py",
+   "scripts/source-export-manifest.py",
+   "scripts/sync-capabilities.py",
+   "scripts/tests/test_export_offline_build.py",
+   "scripts/tests/test_export_secret_gate.py",
+   "scripts/tests/test_public_export.py",
++  "scripts/tests/test_release_prebuild.py",
+   "scripts/tests/test_publish_gate.py",
+   "scripts/tests/test_runtime_install_isolation.py",
+   "scripts/tests/test_scan_release_artifacts.py",
+```
+
+**File**: `SECURITY.md` (modified, +5/-2)
+```diff
+@@ -226,13 +226,16 @@ cosign verify-blob SHA256SUMS \
+ sha256sum --ignore-missing -c SHA256SUMS   # macOS: shasum -a 256 --ignore-missing -c SHA256SUMS
+ ```
  
- [[package]]
- name = "webpki-roots"
--version = "1.0.9"
-+version = "1.0.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
-+checksum = "f5f280bbb2b287bc8e7de7e3852945a0ff50d1bbcb5ed42b6c7a568c546df171"
- dependencies = [
-  "rustls-pki-types",
- ]
+-Releases built after GHSA-rxv5-4c3x-g4q6 also carry GitHub build-provenance attestations for every archive, wheel, `SHA256SUMS` and `release-manifest.json`:
++Releases built after GHSA-rxv5-4c3x-g4q6 also carry GitHub build-provenance attestations for every archive, wheel, `SHA256SUMS` and `release-manifest.json`. Pin the release tag, so only the run of that release is accepted:
+ 
+ ```bash
+ gh attestation verify lean-ctx-aarch64-apple-darwin.tar.gz --repo yvgude/lean-ctx \
+-  --signer-workflow yvgude/lean-ctx/.github/workflows/release.yml
++  --signer-workflow yvgude/lean-ctx/.github/workflows/release.yml \
++  --source-ref refs/tags/vX.Y.Z
+ ```
+ 
++From 3.12.1 the release run may reuse the binaries that `release.yml` built for the same commit on `main`, after verifying them against that build's attested file manifest. Only the release run attests the archives and wheels.
++
+ ---
+ 
+ ## Disclosure Timeline
+```
+
+**File**: `docs/contracts/delivery-evidence-v1.json` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-{"checklist":[{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::setup_ci_smoke::setup_bootstrap_doctor_status_json_smoke -- --exact --test-threads=1","path":"rust/tests/suite/setup_ci_smoke.rs","selector":"fn setup_bootstrap_doctor_status_json_smoke()","sha256":"632fa142f66dd3c55e010d9115e873413a30f6ace225e9ab9b38be77a7346bae"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"setup"},{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::onboard_doctor_clean::onboard_yes_leaves_doctor_fully_green -- --exact","path":"rust/tests/suite/onboard_doctor_clean.rs","selector":"fn onboard_yes_leaves_doctor_fully_green()","sha256":"f37cf05df9a0f2da013103ac58e661d28989f6b661035c788cbf05c3c3a5d7f9"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"doctor"},{"evidence":{"evidence_class":"rust-unit-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --lib doctor::migrate::tests::contract_outcome_reports_frozen_set -- --exact","path":"rust/src/doctor/migrate.rs","selector":"fn contract_outcome_reports_frozen_set()","sha256":"fec6db3d541f427738f1f53bbe113883da9c72cf46f3cc1dcbecca75efaded65"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"upgrade"},{"evidence":{"evidence_class":"python-unittest","harness_command":"python3 tests/delivery/test_rehearse_delivery.py DeliveryRehearsalTests.test_rehearses_verified_candidate_and_rollback_without_deployment","path":"tests/delivery/test_rehearse_delivery.py","selector":"def test_rehearses_verified_candidate_and_rollback_without_deployment(self):","sha256":"9c8841eea94ae560ca549e5d514c003eb4e1349c748e6b85dc0725e6bee9363a"},"external_acceptance_required":true,"local_status":"offline-rehearsal","stage":"rollback"},{"evidence":{"evidence_class":"rust-integration-test","harness_command":"cargo test --manifest-path rust/Cargo.toml --test main suite::cli_characterization::uninstall_dry_run_exits_zero -- --exact","path":"rust/tests/suite/cli_characterization.rs","selector":"fn uninstall_dry_run_exits_zero()","sha256":"87c819119b3d77e344f36ca64019b7f45cad8c18bbcc40bc5ae5e97f47e4e340"},"external_acceptance_required":true,"local_status":"component-evidence","stage":"uninstall"}],"delivery_manifest":{"fixture":{"path":"tests/delivery/valid/delivery-manifest.json","selector":"\"schema_version\":\"leanctx.delivery/v1\"","sha256":"4fcdc5018f96bbb7ce4aa96549befbf2ea7416a80cd45c72bdbcd68413d3b42e"},"schema":{"path":"docs/contracts/delivery-manifest-v1.schema.json","selector":"https://leanctx.dev/contracts/delivery-manifest-v1.schema.json","sha256":"80ac91c631969a9ce305d8701d3eb0ca92b69b6defcd3a2ef6f9b4a80c7ae291"},"trust_root":{"path":"tests/delivery/valid/release-trust-root.json","selector":"\"algorithm\":\"Ed25519\"","sha256":"660fbf46674b8a16166026551e50b032a1ccf58a4d260c4bb4e4218235066083"},"verifier":{"path":"scripts/verify-delivery-manifest.py","selector":"def verify(manifest_path, root, trust_root=None, rotation_plan=None):","sha256":"636e85f32ce7cd7bfb7a6257b6abf78e4a5d3719c063537ccaa04be9163f21cc"}},"owner":{"handle":"@yvgude","source":{"path":".github/CODEOWNERS","selector":"* @yvgude","sha256":"9c52bffaef2f21976aac61d2ce42311a0ae6e393a95006a36f54e1d1edc72656"}},"release":{"publish_channels":[{"id":"engine-release","source_path":".github/workflows/release.yml","source_sha256":"afc288cf252f338870d5268f57a6af08eb19bb70200c1aced82bee6f91349e62","trigger_pattern":"v[0-9]*"},{"id":"sdk-release","source_path":".github/workflows/publish-sdk.yml","source_sha256":"29409a5020179f6711acc7bcd22e83dd7123d28b5e2b9beba9df8225b35f2a1b","trigger_pattern":"sdk-v[0-9]*"},{"id":"client-release","source_path":".github/workflows/publish-clients.yml","source_sha256":"dabe867e3aee5660a9e01b54b4876298b2faf0740c3a73af4ee4236cdc6a0cf3","trigger_pattern":"client-v[0-9]*"}],"targets":[{"artifact":"x86_64-unknown-linux-gnu","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-gnu"},{"artifact":"x86_64-unknown-linux-gnu-cuda","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-gnu"},{"artifact":"aarch64-unknown-linux-gnu","certification":"not-asserted","runner":"ubuntu-22.04-arm","target":"aarch64-unknown-linux-gnu"},{"artifact":"x86_64-unknown-linux-musl","certification":"not-asserted","runner":"ubuntu-22.04","target":"x86_64-unknown-linux-musl"},{"artifact":"aarch64-unknown-linux-musl","certification":"not-asserted","runner":"ubuntu-22.04-arm","target":"aarch64-unknown-linux-musl"},{"artifact":"x86_64-apple-darwin","certification":"not-asserted","runner":"macos-15-intel","target":"x86_64-apple-darwin"},{"artifact":"aarch64-apple-darwin","certification":"not-asserted","runner":"macos-15","target":"aarch64-apple-darwin"},{"artifact":"x86_64-pc-windows-msvc","certifica
+```
+
+**File**: `rust/src/core/shell_allowlist/side_door_tests.rs` (modified, +10/-1)
+```diff
+@@ -318,12 +318,21 @@ fn inputs_that_execute_the_marker_are_blocked() {
+             );
+             continue;
+         }
++        // A coprocess runs asynchronously: `sh -c 'coproc x'` may exit before
++        // x has written the flag, which made the probe flaky under load. The
++        // shell run (not the gated input) waits for it; the gate verdict above
++        // is still taken on the exact probe input.
++        let run_input = if input.starts_with("coproc ") {
++            format!("{input}; wait")
++        } else {
++            (*input).to_string()
++        };
+         let mut ran = false;
+         for shell in &shells {
+             let _ = std::fs::remove_file(&flag);
+             let mut child = Command::new(shell)
+                 .arg("-c")
+-                .arg(input)
++                .arg(&run_input)
+                 .env("PATH", &path)
+                 .env("MARK", &flag)
+                 .current_dir(dir.path())
+```
+
+**File**: `scripts/release-prebuild.py` (added, +493/-0)
+```diff
+@@ -0,0 +1,493 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: Apache-2.0
++"""Build once on main, reuse on the release tag (.github/workflows/release.yml).
++
++    release-prebuild.py plan          --event E --ref R --repo O/N [--before SHA] [--root .]
++    release-prebuild.py find          --repo O/N --sha SHA [--wait-seconds N]
++    release-prebuild.py seal          --artifacts-dir D --config-dir C --repo O/N --sha SHA
++                                      --tree T --version V --run-id ID --run-attempt N --output M
++    release-prebuild.py verify        --manifest M --attestation A --repo O/N --sha SHA
++                                      --tree T --version V --run-id ID [--dir D]
++    release-prebuild.py config-digest
++
++The push to main that changes the workspace Cargo version to a stable,
++unpublished X.Y.Z (the release merge commit), or a manual dispatch on main,
++builds the full release matrix (the jobs a tag runs) and seals it: a manifest
++of every file digest and of the build configuration each build job compiled
++in, attested by release.yml@refs/heads/main. The tag run of the same commit
++reuses that build only when the run, its manifest, the manifest's Sigstore
++attestation and every file digest agree with the tag; otherwise it builds as
++before. Nothing here signs or publishes a release.
++"""
++
++from __future__ import annotations
++
++import argparse
++import base64
++import hashlib
++import json
++import os
++import re
++import sys
++import time
++import tomllib
++import urllib.error
++import urllib.parse
++import urllib.request
++from pathlib import Path
++
++SCHEMA = "leanctx.release-prebuild/v1"
++WORKFLOW_PATH = ".github/workflows/release.yml"
++MAIN_REF = "refs/heads/main"
++MANIFEST_ARTIFACT = "release-prebuild-manifest"
++MANIFEST_NAME = "release-prebuild-manifest.json"
++CONFIG_ARTIFACT_PREFIX = "release-build-config-"
++OIDC_ISSUER = "https://token.actions.githubusercontent.com"
++# The release matrix of release.yml (`build` and `build-windows`), by artifact
++# name. tests/test_release_prebuild.py keeps the two in step.
++ARTIFACTS = (
++    "aarch64-apple-darwin",
++    "x86_64-apple-darwin",
++    "x86_64-unknown-linux-gnu",
++    "x86_64-unknown-linux-gnu-cuda",
++    "aarch64-unknown-linux-gnu",
++    "x86_64-unknown-linux-musl",
++    "aarch64-unknown-linux-musl",
++    "x86_64-pc-windows-msvc",
++    "x86_64-pc-windows-msvc-cuda",
++    "x86_64-pc-windows-gnu",
++)
++# Variables a build compiles in (build.rs, option_env!). A tag run reuses a
++# prebuild only when they are unchanged since it was built.
++BUILD_CONFIG_VARIABLES = (
++    "LEANCTX_PRODUCTION_RUNTIME_CHANNEL_URL",
++    "LEANCTX_PRODUCTION_RUNTIME_CHANNEL_SIGNATURE_URL",
++    "LEANCTX_PRODUCTION_RUNTIME_CHANNEL_ROOT_KEY_HEX",
++    "LEANCTX_PRODUCTION_COCKPIT_CHANNEL_URL",
++    "LEANCTX_PRODUCTION_COCKPIT_CHANNEL_SIGNATURE_URL",
++)
++STABLE = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)")
++# The tag grammar of scripts/check-release-tag.py (stable or prerelease).
++TAG_VERSION = re.compile(
++    r"(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)"
++    r"(?:-(?:0|[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?"
++)
++SHA = re.compile(r"[0-9a-f]{40}")
++DIGEST = re.compile(r"[0-9a-f]{64}")
++REPO = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+")
++WHEEL = re.compile(r"thinkery_leanctx_engine(?:_cuda|_windows_gnu)?-(?P<version>[^-]+)-py3-none-[A-Za-z0-9_.]+\.whl")
++
++
++class PrebuildError(Exception):
++    """A prebuild is unusable; the tag run builds instead."""
++
++
++def archive_name(artifact: str) -> str:
++    return f"lean-ctx-{artifact}.zip" if "-windows-" in artifact else f"lean-ctx-{artifact}.tar.gz"
++
++
++def sha256_bytes(data: bytes) -> str:
++    return hashlib.sha256(data).hexdigest()
++
++
++def sha256_file(path: Path) -> str:
++    digest = hashlib.sha256()
++    with path.open("rb") as handle:
++        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
++            digest.update(chunk)
++    return digest.hexdigest()
++
++
++def _regular(path: Path) -> Path:
++    if path.is_symlink() or not path.is_file():
++        raise PrebuildError(f"{path.name}: not a regular file")
++    return path
++
++
++def _require(condition: bool, message: str) -> None:
++    if not condition:
++        raise PrebuildError(message)
++
++
++def _warn(message: str) -> None:
++    print(f"::warning::{message}", file=sys.stderr)
++
++
++# ---- plan ------------------------------------------------------------------
++
++def _package_version(cargo_toml: str) -> str | None:
++    version = tomllib.loads(cargo_toml).get("package", {}).get("version")
++    return version if isinstance(version, str) else None
++
++
++def cargo_version(root: Path) -> str:
++    version = _package_version((root / "rust/Cargo.toml").read_text(encoding="utf-8"))
++    _require(version is not None and TAG_VERSION.fullmatch(version) is not None, "Cargo version is not a semver")
++    return version
++
++
++def is_stable(version: str | None) -> bool:
++    return isinstance(version, str) and STABLE.fullmatch(version) is
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2152** (2026-10-27): test: make sporadically failing lib tests deterministic under parallel load (@yvgude)
-- **PR #2151** (2026-10-27): Security fixes: SSRF guard, shell gate, index secrets, installer checksums, signed handoffs, egress policy, audit rotation (@yvgude)
-- **PR #2150** (2026-10-26): Security fixes: provider trust, proxy key injection, path confinement (@yvgude)
-- **PR #2146** (2026-10-26): fix: #2142 #2143 #2144 #2147 #2148 + SDK lock fixture (CI) (@yvgude)
-- **PR #2145** (closed): feat(shell): request one-shot MCP approval for allowlist misses (@smollgreymouse)
-- **PR #2141** (2026-10-24): fix(deps): patch every open dependency advisory across the repo (@yvgude)
+- **PR #2159** (2026-10-29): ci(release): build once on main, reuse the verified build on the tag (@yvgude)
+- **PR #2158** (2026-10-29): Release 3.12.0: the Cockpit installs itself, faster release (@yvgude)
+- **PR #2157** (2026-10-29): Release 3.12.0: release pipeline fix and security alerts (@yvgude)
+- **PR #2156** (closed): chore(deps): bump @hono/node-server from 2.1.0 to 2.1.5 in /packages/pi-lean-ctx (@dependabot[bot])
+- **PR #2155** (closed): chore(deps): bump zip from 9.0.4 to 9.0.5 in /rust (@dependabot[bot])
+- **PR #2154** (closed): chore(deps): bump qs from 6.16.0 to 6.17.1 in /_archive/vscode-extension (@dependabot[bot])
 
 ---
 
@@ -2448,22 +2457,26 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Security fixes: SSRF guard, shell gate, index secrets, installer checksums, sign
+## X. Release 3.12.0: release pipeline fix and security alerts (#2157)
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cursor/rules/leanctx-ip-governance.mdc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b683b84e`: Security fixes: SSRF guard, shell gate, index secrets, installer checksums, signed handoffs, egress policy, audit rotation (#2151). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a99cb20`: Release 3.12.0: release pipeline fix and security alerts (#2157). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cursor/rules/leanctx-ip-governance.mdc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - name: Test fail-closed checksum verification
-        run: node packages/lean-ctx-bin/postinstall.checksum.test.cjs
+---
+description: LeanCTX Context Gateway source/decision scope, Apache IP and private EE safety gate for all coding, docs and releases.
+alwaysApply: true
+---
+
+Before editing, read `.agents/skills/leanctx-ip-governance/SKILL.md` and `AGENTS.md`, including `references/PRODUCT_SCOPE.md` and `references/CONNECTOR_AND_DECISION_SECURITY.md`. LeanCTX is Context Gateway (Select → Control → Prove); new work must map authorized source→decision→bundle/receipt. General agent/model orchestration is not product scope; team coordination context (presence, leases, workspace bus, shared work graph) is. Preserve existing Apache rights, do not auto-delete OSS, keep new EE private, no public publish without real founder+independent release approval. State source ACL, integration coverage, affected licence, tests and rollback.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2473,4 +2486,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b683b84e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a99cb20` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T13:22:21.443Z",
+  "last_updated": "2026-10-30T13:28:46.671Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39244,8 +39244,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "c19b15f5",
-      "content_hash": "25e5735fa7fb06d89da4631f090956150566484856c7f025799d88bf7703b0c2",
+      "source_version": "c1cfdbd3",
+      "content_hash": "5cea9df30d7bc15fa3d055711251a2742b01e680094c2ce3a0a691eb60e15140",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -39283,6 +39283,11 @@
           "number": 5425,
           "title": "Merge pull request #7332 from tonistiigi/fix-commit-cancel",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5763,
+          "title": "solver: fix race on merged edge secondary exporters",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39290,7 +39295,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:14:07.995Z",
+      "verified_at": "2026-10-30T13:28:41.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53768,14 +53773,19 @@
       "slug": "topoteretes-cognee",
       "platform": "github",
       "source_url": "https://github.com/topoteretes/cognee",
-      "source_version": "37f788bd",
-      "content_hash": "07a5645f8b59618ae92a4d1b5ae3b290ed7442499003c1e212ee127aaf6e7010",
+      "source_version": "525b1d11",
+      "content_hash": "a1bac883b2c9de177c0583f2ea8b6860ff9fd3f600aa1eab4c803ea39f9a0ca3",
       "dossier_path": "07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/topoteretes-cognee-learnings.md",
       "promoted_rules": [
         {
           "number": 2255,
           "title": "Curate every new entry per distill run by default (SDK-1140) (#5935)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5764,
+          "title": "conflicts): Retire choices a chunk edit loses (SDK-1328) (#6437)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -53784,7 +53794,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T06:45:02.500Z",
+      "verified_at": "2026-10-30T13:28:46.659Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57808,8 +57818,8 @@
       "slug": "yvgude-lean-ctx",
       "platform": "github",
       "source_url": "https://github.com/yvgude/lean-ctx",
-      "source_version": "10a74ea6",
-      "content_hash": "6223032506bfbef71ec0063cb00a8ae6668a4b08fab370fa61f4c66a6ee1dadc",
+      "source_version": "e95146ff",
+      "content_hash": "4553b8663ead54737ecff38c4309251932d26657ac9615b8a70747f976ea9638",
       "dossier_path": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md",
       "promoted_rules": [
@@ -57827,6 +57837,11 @@
           "number": 4828,
           "title": "Security fixes: SSRF guard, shell gate, index secrets, installer checksums, sign",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5762,
+          "title": "Release 3.12.0: release pipeline fix and security alerts (#2157)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57834,7 +57849,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:07:17.952Z",
+      "verified_at": "2026-10-30T13:28:35.552Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70666,8 +70681,8 @@
       "slug": "cheeriojs-dom-serializer",
       "platform": "github",
       "source_url": "https://github.com/cheeriojs/dom-serializer",
-      "source_version": "7f3cd35e",
-      "content_hash": "6bfe8bf37d60bc34e8f92aa39c87af9487bd65bab2744342f118d43d948cde34",
+      "source_version": "00b81ba4",
+      "content_hash": "5c97d29f737b3c72bd7419b9dbf40c0d4323f5d9b6a801295ae360effef3b12d",
       "dossier_path": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cheeriojs-dom-serializer-learnings.md",
       "promoted_rules": [
@@ -70685,6 +70700,11 @@
           "number": 4760,
           "title": "build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (#1754)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5761,
+          "title": "build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (#1757)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -70692,7 +70712,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:46:35.497Z",
+      "verified_at": "2026-10-30T13:28:34.878Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153450,6 +153470,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T13:22:21.423Z"
+    },
+    "rule-5761": {
+      "learning_id": "rule-5761",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5761,
+      "title": "build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (#1757)",
+      "source_url": "https://github.com/cheeriojs/dom-serializer",
+      "source_version": "00b81ba4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:28:34.878Z"
+    },
+    "rule-5762": {
+      "learning_id": "rule-5762",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5762,
+      "title": "Release 3.12.0: release pipeline fix and security alerts (#2157)",
+      "source_url": "https://github.com/yvgude/lean-ctx",
+      "source_version": "e95146ff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:28:35.552Z"
+    },
+    "rule-5763": {
+      "learning_id": "rule-5763",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5763,
+      "title": "solver: fix race on merged edge secondary exporters",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "c1cfdbd3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:28:41.730Z"
+    },
+    "rule-5764": {
+      "learning_id": "rule-5764",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5764,
+      "title": "conflicts): Retire choices a chunk edit loses (SDK-1328) (#6437)",
+      "source_url": "https://github.com/topoteretes/cognee",
+      "source_version": "525b1d11",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:28:46.659Z"
     }
   },
   "aliases": {

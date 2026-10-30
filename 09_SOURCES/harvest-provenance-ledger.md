@@ -6204,3 +6204,7 @@ Every entry in this ledger must capture:
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `07c53c96` | Multi-dimensional audit evidence | 2026-10-30T13:14:05.387Z |
 | `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `37e457dd` | Multi-dimensional audit evidence | 2026-10-30T13:22:19.365Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `cb0936a4` | Multi-dimensional audit evidence | 2026-10-30T13:22:21.526Z |
+| `learn-github-cheeriojs-dom-serializer` | `https://github.com/cheeriojs/dom-serializer` | `00b81ba4` | Multi-dimensional audit evidence | 2026-10-30T13:28:34.963Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `e95146ff` | Multi-dimensional audit evidence | 2026-10-30T13:28:35.613Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `c1cfdbd3` | Multi-dimensional audit evidence | 2026-10-30T13:28:41.795Z |
+| `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `525b1d11` | Multi-dimensional audit evidence | 2026-10-30T13:28:46.726Z |

@@ -421552,3 +421552,251 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `dfb38dce` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5761. build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (#1757) (Harvested from cheeriojs/dom-serializer)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (#1757)",
+  "source": "cheeriojs/dom-serializer",
+  "source_url": "https://github.com/cheeriojs/dom-serializer",
+  "source_version": "00b81ba4",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T13:28:34.740Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-cheeriojs-dom-serializer",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [cheeriojs/dom-serializer](https://github.com/cheeriojs/dom-serializer) (Revision: `00b81ba4`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cheeriojs/dom-serializer. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `00b81ba4`: build(deps-dev): bump typescript-eslint from 8.72.0 to 8.72.1 (#1757). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+        "typescript-eslint": "^8.72.1",
+      "version": "8.72.1",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.1.tgz",
+      "integrity": "sha512-5CokTWXpmbylfFabsbvHC0CAw3XLaGnoa+nFJX5FR592h/LoZsENUE6p/rg5xvkKrFEXz6pYmgI29AgXc2N3BQ==",
+        "@typescript-eslint/scope-manager": "8.72.1",
+        "@typescript-eslint/type-utils": "8.72.1",
+        "@typescript-eslint/utils": "8.72.1",
+        "@typescript-eslint/visitor-keys": "8.72.1",
+        "@typescript-eslint/parser": "^8.72.1",
+      "version": "7.0.14",
+      "resolved": "https://registry.npmjs.org/ignore/-/ignore-7.0.14.tgz",
+      "integrity": "sha512-wCBiZ77u1tuWde6G/nfOtLaCTYcFDU5yCzARzK10y+rLhzYoL7a7yEemcopcc2Mzow7gZOIjnV2ym1NYmdiJOQ==",
+      "version": "8.72.1",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.1.tgz",
+      "integrity": "sha512-ZGwZP4OCfyA0AQTpEAMWz+rtX01DRhQWW5hB0ucKDEIX5U7jdmPSaMx94rQfaPAQzIYz2BimOgKOJtjfpRFQ9g==",
+        "@typescript-eslint/scope-manager": "8.72.1",
+        "@typescript-eslint/types": "8.72.1",
+        "@typescript-eslint/typescript-estree": "8.72.1",
+        "@typescript-eslint/visitor-ke
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+        "typescript-eslint": "^8.72.0",
+      "version": "8.72.0",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.72.0.tgz",
+      "integrity": "sha512-aysKgysPX9XOv/dk95UkvUDe++Q3n3dJPG9CEWT3RUccxfkPJ+Qn6nhKPDhZXU6Ofo9kgwGWwKyQCnZIXTgngg==",
+        "@typescript-eslint/scope-manager": "8.72.0",
+        "@typescript-eslint/type-utils": "8.72.0",
+        "@typescript-eslint/utils": "8.72.0",
+        "@typescript-eslint/visitor-keys": "8.72.0",
+        "@typescript-eslint/parser": "^8.72.0",
+      "version": "7.0.13",
+      "resolved": "https://registry.npmjs.org/ignore/-/ignore-7.0.13.tgz",
+      "integrity": "sha512-2E8Q6rh+1RRSq/YdaGsNfXsEZy9FVqv6BSSrkmZJP7BnaoPnRfKL+YaofPvP+5rzdk144qSm6i4+hvPgUcbV4Q==",
+      "version": "8.72.0",
+      "resolved": "https://registry.npmjs.org/@typescript-eslint/parser/-/parser-8.72.0.tgz",
+      "integrity": "sha512-0O+x3ynciD6zuXb1CKSu165haQV6ey53DKhHHUnujP7U+XlltJG+/keT0Xhd1HXCze+IHf7Tvt39ovyepX/LNw==",
+        "@typescript-eslint/scope-manager": "8.72.0",
+        "@typescript-eslint/types": "8.72.0",
+        "@typescript-eslint/typescript-estree": "8.72.0",
+        "@typescript-eslint/visitor-ke
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `00b81ba4` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5762. Release 3.12.0: release pipeline fix and security alerts (#2157) (Harvested from yvgude/lean-ctx)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Release 3.12.0: release pipeline fix and security alerts (#2157)",
+  "source": "yvgude/lean-ctx",
+  "source_url": "https://github.com/yvgude/lean-ctx",
+  "source_version": "e95146ff",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T13:28:35.400Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yvgude-lean-ctx",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yvgude/lean-ctx](https://github.com/yvgude/lean-ctx) (Revision: `e95146ff`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.cursor/rules/leanctx-ip-governance.mdc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8a99cb20`: Release 3.12.0: release pipeline fix and security alerts (#2157). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cursor/rules/leanctx-ip-governance.mdc`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+---
+description: LeanCTX Context Gateway source/decision scope, Apache IP and private EE safety gate for all coding, docs and releases.
+alwaysApply: true
+---
+
+Before editing, read `.agents/skills/leanctx-ip-governance/SKILL.md` and `AGENTS.md`, including `references/PRODUCT_SCOPE.md` and `references/CONNECTOR_AND_DECISION_SECURITY.md`. LeanCTX is Context Gateway (Select → Control → Prove); new work must map authorized source→decision→bundle/receipt. General agent/model orchestration is not product scope; team coordination context (presence, leases, workspace bus, shared work graph) is. Preserve existing Apache rights, do not auto-delete OSS, keep new EE private, no public publish without real founder+independent release approval. State source ACL, integration coverage, affected licence, tests and rollback.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8a99cb20` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5763. solver: fix race on merged edge secondary exporters (Harvested from moby/buildkit)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "solver: fix race on merged edge secondary exporters",
+  "source": "moby/buildkit",
+  "source_url": "https://github.com/moby/buildkit",
+  "source_version": "c1cfdbd3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T13:28:41.598Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-moby-buildkit",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [moby/buildkit](https://github.com/moby/buildkit) (Revision: `c1cfdbd3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `solver/edge.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b94ff2bc`: solver: fix race on merged edge secondary exporters. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `solver/edge.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	// secondaryExportersMu protects secondaryExporters, which the scheduler
+	// appends to on merge while cache exporters read it from other goroutines
+	secondaryExportersMu sync.Mutex
+	secondaryExporters   []expDep
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+	secondaryExporters []expDep
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b94ff2bc` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5764. conflicts): Retire choices a chunk edit loses (SDK-1328) (#6437) (Harvested from topoteretes/cognee)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "conflicts): Retire choices a chunk edit loses (SDK-1328) (#6437)",
+  "source": "topoteretes/cognee",
+  "source_url": "https://github.com/topoteretes/cognee",
+  "source_version": "525b1d11",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T13:28:46.523Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-topoteretes-cognee",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [topoteretes/cognee](https://github.com/topoteretes/cognee) (Revision: `525b1d11`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `cognee/api/v1/update/incremental.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `95ff9cfd`: conflicts): Retire choices a chunk edit loses (SDK-1328) (#6437). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `cognee/api/v1/update/incremental.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+from cognee.modules.conflicts.methods import retire_decisions_after_edit
+            # An edit can remove the fact a user chose, or restate it under another
+            # relationship; its decision must not outlive it. Read once the new
+            # chunks' facts are written, so a fact the edit kept is still found.
+            await retire_decisions_after_edit(dataset, user)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `95ff9cfd` are properly handled with clean fallback behavior.

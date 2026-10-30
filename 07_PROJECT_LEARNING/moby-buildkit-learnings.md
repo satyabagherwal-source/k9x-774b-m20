@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source**: github ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
-> **Source Version**: `c19b15f5`  
+> **Source Version**: `c1cfdbd3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T22:14:07.661Z  
+> **Timestamp**: 2026-10-30T13:28:41.361Z  
 > **Learning ID**: `learn-github-moby-buildkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T22:14:07.656Z  
+> **Harvest Timestamp**: 2026-10-30T13:28:40.827Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10346 stars
+- **Stars / Engagement**: 10350 stars
 
 ---
 
@@ -2299,11 +2299,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7332** (2026-10-28): **cache: avoid losing finalize commit on cancel**
-  *Symptoms*: On the containerd worker the snapshotter is a gRPC client. If a build is cancelled while finalize is committing a lazy ref, containerd can apply the commit while the client returns Canceled. finalize then deleted the lease protecting the committed snapshot and kept equalMutable, so the record pointed at a mutable snapshot that no longer existed. Every later build using the record failed with "failed to stat active key during commit: snapshot ... does not exist" until the daemon restarted.  Run finalize without cancellation so the commit result is not lost. If Commit still returns an error, check whether the target snapshot was committed and, if so, complete the finalize. Keep the lease when that cannot be determined.
+- **Issue #7338** (2026-10-30): **solver: fix race on merged edge secondary exporters**
+  *Symptoms*: When a job merged an edge into another, mergeTo appended the dependency cache keys to the target edge's secondaryExporters on the scheduler goroutine. Cache export reads the same slice through the exporter of a result loaded from that edge, and runs outside the scheduler, e.g. for build history provenance or cache export while another build is still running and merging into the shared edge.  Guard secondaryExporters with a mutex and let ExportTo iterate over a copy, so nested exports run without holding the lock.
 
-- **Issue #7331** (2026-10-28): **vendor: update fsutil to ca65610c2295**
-  *Symptoms*: https://github.com/tonistiigi/fsutil/compare/83cac42c1c52...ca65610c2295
+- **Issue #7336** (2026-10-30): **gateway: wait for frontend before HTTP/2 handshake**
+  *Symptoms*: If a low-powered machine is running out of resources, it may not be able to start up the frontend in 10 seconds. There is one 10 sec timeout in HTTP/2 stack so wait for container to respond before starting the HTTP/2 stack. Another timeout is in buildkit code that is increased to 15 sec in separate commit.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2320,811 +2320,374 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c19b15f5` (2026-10-28)
-**Commit Message**: Merge pull request #7332 from tonistiigi/fix-commit-cancel
+### Incident Patch 1: `b94ff2bc` (2026-10-28)
+**Commit Message**: solver: fix race on merged edge secondary exporters
 
-cache: avoid losing finalize commit on cancel
+When a job merged an edge into another, mergeTo appended the dependency
+cache keys to the target edge's secondaryExporters on the scheduler
+goroutine. Cache export reads the same slice through the exporter of a
+result loaded from that edge, and runs outside the scheduler, e.g. for
+build history provenance or cache export while another build is still
+running and merging into the shared edge.
 
-**File**: `cache/manager_test.go` (modified, +102/-0)
+Guard secondaryExporters with a mutex and let ExportTo iterate over a
+copy, so nested exports run without holding the lock.
+
+Signed-off-by: Tonis Tiigi <[REDACTED_EMAIL]>
+
+**File**: `solver/edge.go` (modified, +4/-1)
 ```diff
-@@ -3015,6 +3015,108 @@ func TestLoadHalfFinalizedRef(t *testing.T) {
- 	require.NoError(t, err)
- }
+@@ -69,7 +69,10 @@ type edge struct {
+ 	keysDidChange bool
+ 	index         *edgeIndex
  
-+func TestFinalizeAlreadyCommitted(t *testing.T) {
-+	// This test simulates a snapshotter commit that was applied but reported
-+	// as failed (e.g. a canceled containerd RPC). Finalize must notice the
-+	// committed snapshot instead of failing on the missing active snapshot.
-+	t.Parallel()
-+
-+	ctx := namespaces.WithNamespace(t.Context(), "buildkit-test")
-+
-+	tmpdir := t.TempDir()
-+
-+	snapshotter, err := native.NewSnapshotter(filepath.Join(tmpdir, "snapshots"))
-+	require.NoError(t, err)
-+	t.Cleanup(func() {
-+		require.NoError(t, snapshotter.Close())
-+	})
-+
-+	co, cleanup, err := newCacheManager(ctx, t, cmOpt{
-+		tmpdir:          tmpdir,
-+		snapshotter:     snapshotter,
-+		snapshotterName: "native",
-+	})
-+	require.NoError(t, err)
-+	t.Cleanup(cleanup)
-+	cm := co.manager.(*cacheManager)
-+
-+	mref, err := cm.New(ctx, nil, nil, CachePolicyRetain)
-+	require.NoError(t, err)
-+	mutRef := mref.(*mutableRef)
-+
-+	iref, err := mutRef.Commit(ctx)
-+	require.NoError(t, err)
-+	immutRef := iref.(*immutableRef)
-+
-+	err = cm.Snapshotter.Commit(ctx, immutRef.getSnapshotID(), mutRef.getSnapshotID())
-+	require.NoError(t, err)
-+
-+	require.NoError(t, iref.Finalize(ctx))
-+	require.Nil(t, immutRef.equalMutable)
-+
-+	// the committed snapshot must stay protected by the ref's lease
-+	resources, err := co.lm.ListResources(ctx, leases.Lease{ID: immutRef.ID()})
-+	require.NoError(t, err)
-+	require.Contains(t, resources, leases.Resource{
-+		ID:   immutRef.getSnapshotID(),
-+		Type: "snapshots/" + cm.Snapshotter.Name(),
-+	})
-+
-+	m, err := iref.Mount(ctx, true, nil)
-+	require.NoError(t, err)
-+	mnts, release, err := m.Mount()
-+	require.NoError(t, err)
-+	require.NotEmpty(t, mnts)
-+	require.NoError(t, release())
-+
-+	require.NoError(t, mref.Release(ctx))
-+	require.NoError(t, iref.Release(ctx))
-+}
-+
-+func TestFinalizeCanceledContext(t *testing.T) {
-+	// Finalize ignores cancellation, as a remote snapshotter may apply a commit
-+	// that the caller observes as canceled.
-+	t.Parallel()
-+
-+	ctx := namespaces.WithNamespace(t.Context(), "buildkit-test")
-+
-+	tmpdir := t.TempDir()
-+
-+	snapshotter, err := native.NewSnapshotter(filepath.Join(tmpdir, "snapshots"))
-+	require.NoError(t, err)
-+	t.Cleanup(func() {
-+		require.NoError(t, snapshotter.Close())
-+	})
-+
-+	co, cleanup, err := newCacheManager(ctx, t, cmOpt{
-+		tmpdir:          tmpdir,
-+		snapshotter:     snapshotter,
-+		snapshotterName: "native",
-+	})
-+	require.NoError(t, err)
-+	t.Cleanup(cleanup)
-+	cm := co.manager.(*cacheManager)
-+
-+	mref, err := cm.New(ctx, nil, nil, CachePolicyRetain)
-+	require.NoError(t, err)
-+
-+	iref, err := mref.Commit(ctx)
-+	require.NoError(t, err)
-+	immutRef := iref.(*immutableRef)
-+
-+	cctx, cancel := context.WithCancelCause(ctx)
-+	cancel(errors.WithStack(context.Canceled))
-+	require.NoError(t, iref.Finalize(cctx))
-+	require.Nil(t, immutRef.equalMutable)
-+
-+	info, err := cm.Snapshotter.Stat(ctx, immutRef.getSnapshotID())
-+	require.NoError(t, err)
-+	require.Equal(t, snapshots.KindCommitted, info.Kind)
-+
-+	require.NoError(t, mref.Release(ctx))
-+	require.NoError(t, iref.Release(ctx))
-+}
-+
- func TestMountReadOnly(t *testing.T) {
- 	t.Parallel()
- 	if runtime.GOOS != "linux" {
+-	secondaryExporters []expDep
++	// secondaryExportersMu protects secondaryExporters, which the scheduler
++	// appends to on merge while cache exporters read it from other goroutines
++	secondaryExportersMu sync.Mutex
++	secondaryExporters   []expDep
+ 
+ 	failedOnce sync.Once
+ 	debug      bool
 ```
 
-**File**: `cache/refs.go` (modified, +20/-6)
+**File**: `solver/exporter.go` (modified, +4/-1)
 ```diff
-@@ -1538,6 +1538,11 @@ func (cr *cacheRecord) finalize(ctx context.Context) error {
- 		return nil
+@@ -246,7 +246,10 @@ func (e *exporter) ExportTo(ctx context.Context, t CacheExporterTarget, opt Cach
  	}
  
-+	// The snapshotter may apply the commit even when the caller sees a
-+	// cancellation (e.g. a containerd RPC canceled in flight), leaving the
-+	// mutable snapshot gone while the record still points to it.
-+	ctx = context.WithoutCancel(ctx)
-+
- 	_, err := cr.cm.LeaseManager.Create(ctx, func(l *leases.Lease) error {
- 		l.ID = cr.ID()
- 		l.Labels = map[string]string{
-@@ -1555,23 +1560,32 @@ func (cr *cacheRecord) finalize(ctx context.Context) error {
- 		ID:   cr.getSnapshotID(),
- 		Type: "snapshots/" + cr.cm.Snapshotter.Name(),
- 	}); err != nil {
--		_ = cr.cm.LeaseManager.Delete(context.WithoutCancel(ctx), leases.Lease{ID: cr.ID()})
-+		_ = cr.cm.LeaseManager.Delete(ctx, leases.Lease{ID: cr.ID()})
- 		return errors.Wrapf(err, "failed to add snapshot %s to lease", cr.getSnapshotID())
- 	}
+ 	if e.edge != nil {
+-		for _, de := range e.edge.secondaryExporters {
++		e.edge.secondaryExportersMu.Lock()
++		secondaryExporters := slices.Clone(e.edge.secondaryExporters)
++		e.edge.secondaryExportersMu.Unlock()
++		for _, de := range secondaryExporters {
+ 			recs, err := de.cacheKey.CacheKey.Exporter.ExportTo(mainCtx, t, opt)
+ 			if err != nil {
+ 				continue
+```
+
+**File**: `solver/scheduler.go` (modified, +7/-3)
+```diff
+@@ -309,19 +309,23 @@ func (s *scheduler) mergeTo(target, src *edge) bool {
+ 	delete(s.outgoing, src)
+ 	s.signal(target)
  
- 	if err := cr.cm.Snapshotter.Commit(ctx, cr.getSnapshotID(), mutable.getSnapshotID()); err != nil {
--		_ = cr.cm.LeaseManager.Delete(context.WithoutCancel(ctx), leases.Lease{ID: cr.ID()})
--		return errors.Wrapf(err, "failed to commit %s to %s during finalize", mutable.getSnapshotID(), cr.getSnapshotID())
-+		// the commit may still have been applied, e.g. if the response was lost
-+		info, statErr := cr.cm.Snapshotter.Stat(ctx, cr.getSnapshotID())
-+		if statErr != nil || info.Kind != snapshots.KindCommitted {
-+			// keep the lease if it is unknown whether the commit was applied
-+			if statErr == nil || errors.Is(statErr, cerrdefs.ErrNotFound) {
-+				_ = cr.cm.LeaseManager.Delete(ctx, leases.Lease{ID: cr.ID()})
-+			} else {
-+				bklog.G(ctx).WithError(statErr).Warnf("failed to check snapshot %s after commit error, keeping lease", cr.getSnapshotID())
-+			}
-+			return errors.Wrapf(err, "failed to commit %s to %s during finalize", mutable.getSnapshotID(), cr.getSnapshotID())
-+		}
-+		bklog.G(ctx).WithError(err).Warnf("snapshot %s was committed to %s despite commit error", mutable.getSnapshotID(), cr.getSnapshotID())
- 	}
- 	cr.mountCache = nil
- 
- 	mutable.dead = true
- 	go func() {
- 		cr.cm.mu.Lock()
- 		defer cr.cm.mu.Unlock()
--		cleanupCtx := context.WithoutCancel(ctx)
--		if err := mutable.remove(cleanupCtx, true); err != nil {
--			bklog.G(cleanupCtx).Error(err)
-+		if err := mutable.remove(ctx, true); err != nil {
-+			bklog.G(ctx).Error(err)
++	var exps []expDep
+ 	for i, d := range src.deps {
+ 		for _, k := range d.keys {
+-			target.secondaryExporters = append(target.secondaryExporters, expDep{i, CacheKeyWithSelector{CacheKey: k, Selector: src.cacheMap.Deps[i].Selector}})
++			exps = append(exps, expDep{i, CacheKeyWithSelector{CacheKey: k, Selector: src.cacheMap.Deps[i].Selector}})
  		}
- 	}()
+ 		if d.slowCacheKey != nil {
+-			target.secondaryExporters = append(target.secondaryExporters, expDep{i, CacheKeyWithSelector{CacheKey: *d.slowCacheKey}})
++			exps = append(exps, expDep{i, CacheKeyWithSelector{CacheKey: *d.slowCacheKey}})
+ 		}
+ 		if d.result != nil {
+ 			for _, dk := range d.result.CacheKeys() {
+-				target.secondaryExporters = append(target.secondaryExporters, expDep{i, CacheKeyWithSelector{CacheKey: dk, Selector: src.cacheMap.Deps[i].Selector}})
++				exps = append(exps, expDep{i, CacheKeyWithSelector{CacheKey: dk, Selector: src.cacheMap.Deps[i].Selector}})
+ 			}
+ 		}
+ 	}
++	target.secondaryExportersMu.Lock()
++	target.secondaryExporters = append(target.secondaryExporters, exps...)
++	target.secondaryExportersMu.Unlock()
  
+ 	// TODO(tonistiigi): merge cache providers
+ 
+```
+
+**File**: `solver/scheduler_test.go` (modified, +89/-0)
+```diff
+@@ -3226,6 +3226,95 @@ func TestCacheExportingMergedKey(t *testing.T) {
+ 	require.Equal(t, 5, expTarget.numUniqueRecords())
+ }
+ 
++// TestCacheExportDuringEdgeMerge exports a cache-loaded result while another
++// job merges into its edge. Run with -race.
++func TestCacheExportDuringEdgeMerge(t *testing.T) {
++	t.Parallel()
++	ctx := t.Context()
++
++	l := NewSolver(SolverOpt{
++		ResolveOpFunc: testOpResolver,
++		DefaultCache:  NewInMemoryCacheManager(),
++	})
++	defer l.Close()
++
++	// vertexes with the same cache key seed and input results share a slow
++	// cache key, even with different inputs
++	g := func(name, input string) Edge {
++		return Edge{
++			Vertex: vtx(vtxOpt{
++				name:         name,
++				cacheKeySeed: "seed1",
++				value:        "result1",
++				inputs: []Edge{{Vertex: vtx(vtxOpt{
++					name:         input,
++					cacheKeySeed: "seed-" + input,
++					value:        "result2",
++				})}},
++				slowCacheCompute: map[int]ResultBasedCacheFunc{0: digestFromResult},
++			}),
++		}
++	}
++
++	j0, err := l.NewJob("j0")
++	require.NoError(t, err)
++	defer func() {
++		if j0 != nil {
++			j0.Discard()
++		}
++	}()
++	_, err = j0.Build(ctx, g("v1", "v2"))
++	require.NoError(t, err)
++	require.NoError(t, j0.Discard())
++	j0 = nil
++
++	// j1 loads the result through the slow cache key, so its exporter
++	// references the active edge
++	j1, err := l.NewJob("j1")
++	require.NoError(t, err)
++	defer j1.Discard()
++	res, err := j1.Build(ctx, g("v1", "v4"))
++	require.NoError(t, err)
++
++	started := make(chan struct{})
++	done := make(chan struct{})
++	eg, egCtx := errgroup.WithContext(ctx)
++	eg.Go(func() error {
++		for i := 0; ; i++ {
++			if i == 1 {
++				close(started)
++			}
++			select {
++			case <-done:
++				return nil
++			default:
++			}
++			if _, err := res.CacheKeys()[0].Exporter.ExportTo(egCtx, newTestExporterTarget(), testExporterOpts(true)); err != nil {
++				return err
++			}
++		}
++	})
++	// keep exporting while j2 merges into the j1 edge
++	select {
++	case <-started:
++	case <-egCtx.Done():
++	}
++
++	j2, err := l.NewJob("j2")
++	require.NoError(t, err)
++	defer j2.Discard()
++	_, err = j2.Build(ctx, g("v1-diff", "v3"))
++	close(done)
++	require.NoError(t, err)
++	require.NoError(t, eg.Wait())
++
++	// the j2 edge was merged into the j1 edge
++	e := res.CacheKeys()[0].Exporter.(*exporter).edge
++	e.secondaryExportersMu.Lock()
++	defer e.secondaryExportersMu.Unlock()
++	require.NotEmpty(t, e.secondaryExporters)
++}
++
+ // moby/buildkit#434
+ func TestMergedEdgesLookup(t *testing.T) {
+ 	t.Parallel()
 ```
 
 ---
 
-### Incident Patch 2: `55f04a2c` (2026-10-28)
-**Commit Message**: Merge pull request #7325 from tonistiigi/race-fixes
+### Incident Patch 2: `6f8e518a` (2026-10-29)
+**Commit Message**: runcexecutor: increase container start timeout to 15 seconds
 
-data race and correctness fixes
+Signed-off-by: Tonis Tiigi <[REDACTED_EMAIL]>
 
-**File**: `client/client_test.go` (modified, +2/-0)
+**File**: `executor/runcexecutor/executor.go` (modified, +3/-1)
 ```diff
-@@ -274,9 +274,11 @@ func TestClientGatewayIntegration(t *testing.T) {
- 		testClientGatewayContainerPID1Exit,
- 		testClientGatewayContainerPID1Fail,
- 		testClientGatewayContainerPID1Tty,
-+		testClientGatewayContainerResizeSignal,
- 		testClientGatewayContainerSignal,
- 		testClientGatewayExecError,
- 		testClientGatewaySharedExecError,
-+		testClientGatewayExecErrorReleasedDuringLoad,
- 		testClientGatewayExecFileActionError,
- 		testClientGatewaySlowCacheExecError,
+@@ -40,6 +40,8 @@ import (
+ 	"github.com/pkg/errors"
+ )
  
++const runcStartTimeout = 15 * time.Second
++
+ type Opt struct {
+ 	// root directory
+ 	Root              string
+@@ -748,7 +750,7 @@ func (p *procHandle) WaitForReady(ctx context.Context) error {
+ // callback is non-nil it will be called after receiving the pid.
+ func (p *procHandle) WaitForStart(ctx context.Context, startedCh <-chan int, started func()) error {
+ 	ctx, cancel := context.WithCancelCause(ctx)
+-	ctx, _ = context.WithTimeoutCause(ctx, 10*time.Second, errors.WithStack(context.DeadlineExceeded)) //nolint:govet
++	ctx, _ = context.WithTimeoutCause(ctx, runcStartTimeout, errors.WithStack(context.DeadlineExceeded)) //nolint:govet
+ 	defer func() { cancel(errors.WithStack(context.Canceled)) }()
+ 	select {
+ 	case <-ctx.Done():
 ```
 
-**File**: `client/gateway_container_exec_test.go` (modified, +99/-0)
+---
+
+### Incident Patch 3: `248827b6` (2026-10-30)
+**Commit Message**: Merge pull request #7336 from tonistiigi/fix-gateway-wait
+
+gateway: wait for frontend before HTTP/2 handshake
+
+**File**: `executor/runcexecutor/executor.go` (modified, +3/-1)
 ```diff
-@@ -942,6 +942,105 @@ func testClientGatewayContainerSignal(t *testing.T, sb integration.Sandbox) {
- 	checkAllReleasable(t, c, sb, true)
- }
+@@ -40,6 +40,8 @@ import (
+ 	"github.com/pkg/errors"
+ )
  
-+// Linux signal numbers. The container is always Linux, and syscall does not
-+// define these when the test binary is built for other platforms.
-+const (
-+	linuxSIGUSR1  = syscall.Signal(10)
-+	linuxSIGWINCH = syscall.Signal(28)
-+)
++const runcStartTimeout = 15 * time.Second
 +
-+// testClientGatewayContainerResizeSignal resizes and signals a container
-+// process concurrently.
-+func testClientGatewayContainerResizeSignal(t *testing.T, sb integration.Sandbox) {
-+	requiresLinux(t)
-+	ctx := sb.Context()
-+
-+	c, err := New(ctx, sb.Address())
-+	require.NoError(t, err)
-+	defer c.Close()
-+
-+	product := "buildkit_test"
-+
-+	b := func(ctx context.Context, c client.Client) (*client.Result, error) {
-+		ctx, timeout := context.WithTimeoutCause(ctx, 30*time.Second, nil)
-+		defer timeout()
-+
-+		def, err := llb.Image("busybox:latest").Marshal(ctx)
-+		if err != nil {
-+			return nil, errors.Wrap(err, "failed to marshal state")
-+		}
-+
-+		r, err := c.Solve(ctx, client.SolveRequest{
-+			Definition: def.ToPB(),
-+		})
-+		if err != nil {
-+			return nil, errors.Wrap(err, "failed to solve")
-+		}
-+
-+		ctr, err := c.NewContainer(ctx, client.NewContainerRequest{
-+			Mounts: []client.Mount{{
-+				Dest:      "/",
-+				MountType: pb.MountType_BIND,
-+				Ref:       r.Ref,
-+			}},
-+		})
-+		require.NoError(t, err)
-+		defer ctr.Release(ctx)
-+
-+		// outlive the test timeout, killed explicitly below
-+		pid1, err := ctr.Start(ctx, client.StartRequest{
-+			Args: []string{"sleep", "60"},
-+		})
-+		require.NoError(t, err)
-+
-+		// keep running until all events have been sent, stdio is needed as the
-+		// runc executor fails tty processes without it
-+		pid2, err := ctr.Start(ctx, client.StartRequest{
-+			Args:   []string{"sh", "-c", `trap 'exit 0' USR1; while true; do sleep 0.1; done`},
-+			Tty:    true,
-+			Stdout: &iohelper.NopWriteCloser{Writer: io.Discard},
-+			Stderr: &iohelper.NopWriteCloser{Writer: io.Discard},
-+		})
-+		require.NoError(t, err)
-+
-+		// allow for the shell script to setup the trap before we signal it
-+		time.Sleep(time.Second)
-+
-+		var wg sync.WaitGroup
-+		var resizeErr, signalErr error
-+		wg.Go(func() {
-+			for i := range 100 {
-+				if resizeErr = pid2.Resize(ctx, client.WinSize{Rows: uint32(20 + i), Cols: uint32(80 + i)}); resizeErr != nil {
-+					return
-+				}
-+			}
-+		})
-+		wg.Go(func() {
-+			for range 100 {
-+				// ignored by sh
-+				if signalErr = pid2.Signal(ctx, linuxSIGWINCH); signalErr != nil {
-+					return
-+				}
-+			}
-+		})
-+		wg.Wait()
-+		require.NoError(t, resizeErr)
-+		require.NoError(t, signalErr)
-+
-+		require.NoError(t, pid2.Signal(ctx, linuxSIGUSR1))
-+		require.NoError(t, pid2.Wait())
-+
-+		require.NoError(t, pid1.Signal(ctx, syscall.SIGKILL))
-+		pid1.Wait()
-+		return &client.Result{}, nil
-+	}
-+
-+	_, err = c.Build(ctx, SolveOpt{}, product, b, nil)
-+	require.NoError(t, err)
-+
-+	checkAllReleasable(t, c, sb, true)
-+}
-+
- // testClientGatewayExecError is testing gateway exec to recreate the container
- // process for a failed execop.
- func testClientGatewayExecError(t *testing.T, sb integration.Sandbox) {
+ type Opt struct {
+ 	// root directory
+ 	Root              string
+@@ -748,7 +750,7 @@ func (p *procHandle) WaitForReady(ctx context.Context) error {
+ // callback is non-nil it will be called after receiving the pid.
+ func (p *procHandle) WaitForStart(ctx context.Context, startedCh <-chan int, started func()) error {
+ 	ctx, cancel := context.WithCancelCause(ctx)
+-	ctx, _ = context.WithTimeoutCause(ctx, 10*time.Second, errors.WithStack(context.DeadlineExceeded)) //nolint:govet
++	ctx, _ = context.WithTimeoutCause(ctx, runcStartTimeout, errors.WithStack(context.DeadlineExceeded)) //nolint:govet
+ 	defer func() { cancel(errors.WithStack(context.Canceled)) }()
+ 	select {
+ 	case <-ctx.Done():
 ```
 
-**File**: `client/gateway_shared_error_test.go` (modified, +79/-0)
+**File**: `frontend/gateway/gateway.go` (modified, +35/-9)
 ```diff
-@@ -2,6 +2,8 @@ package client
+@@ -1,6 +1,7 @@
+ package gateway
  
  import (
++	"bufio"
  	"context"
-+	"strings"
-+	"sync"
- 	"testing"
- 	"time"
- 
-@@ -104,3 +106,80 @@ func testClientGatewaySharedExecError(t *testing.T, sb integration.Sandbox) {
- 	require.NoError(t, eg.Wait())
- 	checkAllReleasable(t, c, sb, true)
- }
-+
-+// testClientGatewayExecErrorReleasedDuringLoad checks that the refs of a failed
-+// exec are released when the gateway discards a lazy result while the exec is
-+// still running.
-+func testClientGatewayExecErrorReleasedDuringLoad(t *testing.T, sb integration.Sandbox) {
-+	requiresLinux(t)
-+	ctx, cancel := context.WithTimeoutCause(sb.Context(), time.Minute, errors.New("released exec error test timed out"))
-+	defer cancel()
-+
-+	c, err := New(ctx, sb.Address())
-+	require.NoError(t, err)
-+	defer c.Close()
-+
-+	id := identity.NewID()
-+	// The exec fails only after a marker appears in a shared cache mount. The
-+	// marker is written by a second build once the first one has returned, so
-+	// the result is always discarded while the exec is still running.
-+	cache := llb.AsPersistentCacheDir(id, llb.CacheMountShared)
-+	def, err := llb.Image("busybox:latest").Run(
-+		llb.Shlexf("sh -c 'echo %s; i=0; while [ ! -e /cache/go ] && [ $i -lt 300 ]; do sleep 0.1; i=$((i+1)); done; exit 1'", id),
-+		llb.AddMount("/cache", llb.Scratch(), cache),
-+	).Root().Marshal(ctx)
-+	require.NoError(t, err)
-+	markerDef, err := llb.Image("busybox:latest").Run(
-+		llb.Shlexf("sh -c 'echo %s; touch /cache/go'", id),
-+		llb.AddMount("/cache", llb.Scratch(), cache),
-+	).Root().Marshal(ctx)
-+	require.NoError(t, err)
-+
-+	started := make(chan struct{})
-+	statusCh := make(chan *SolveStatus)
-+	statusDone := make(chan struct{})
-+	go func() {
-+		defer close(statusDone)
-+		var once sync.Once
-+		for st := range statusCh {
-+			for _, v := range st.Vertexes {
-+				if v.Started != nil && strings.Contains(v.Name, id) {
-+					once.Do(func() { close(started) })
-+				}
-+			}
-+		}
-+	}()
-+
-+	readErr := make(chan error, 1)
-+	_, err = c.Build(ctx, SolveOpt{}, "buildkit_test", func(ctx context.Context, gc gwclient.Client) (*gwclient.Result, error) {
-+		res, err := gc.Solve(ctx, gwclient.SolveRequest{Definition: def.ToPB()})
-+		if err != nil {
-+			return nil, err
-+		}
-+		ref, err := res.SingleRef()
-+		if err != nil {
-+			return nil, err
-+		}
-+		// reading from the lazy ref runs the exec
-+		go func() {
-+			_, err := ref.ReadFile(ctx, gwclient.ReadRequest{Filename: "/etc/passwd"})
-+			readErr <- err
-+		}()
-+		// return while the exec is running so the gateway discards the ref
-+		select {
-+		case <-started:
-+		case <-ctx.Done():
-+			return nil, errors.WithStack(context.Cause(ctx))
-+		}
-+		return gwclient.NewResult(), nil
-+	}, statusCh)
-+	require.NoError(t, err)
-+	<-statusDone
-+
-+	// the ref has been discarded, let the exec fail
-+	_, err = c.Solve(ctx, markerDef, SolveOpt{}, nil)
-+	require.NoError(t, err)
-+	require.ErrorContains(t, <-readErr, "evaluating released result")
-+
-+	checkAllReleasable(t, c, sb, true)
-+}
-```
-
-**File**: `executor/containerdexecutor/executor.go` (modified, +2/-4)
-```diff
-@@ -426,8 +426,7 @@ func (w *containerdExecutor) runProcess(ctx context.Context, p ctd.Process, resi
- 				if !ok {
- 					return // chan closed
- 				}
--				err = p.Resize(eventCtx, size.Cols, size.Rows)
--				if err != nil {
-+				if err := p.Resize(eventCtx, size.Cols, size.Rows); err != nil {
- 					bklog.G(eventCtx).Warnf("Failed to resize %s: %s", p.ID(), err)
- 				}
- 			}
-@@ -442,8 +441,7 @@ func (w *containerdExecutor) runProcess(ctx context.Context, p ctd.Process, resi
- 				if !ok {
- 					return // chan closed
- 				}
--				err = p.Kill(eventCtx, sig)
--				if err != nil {
-+				if err := p.Kill(eventCtx, sig); err != nil {
- 					bklog.G(eventCtx).Warnf("Failed to signal %s: %s", p.ID(), err)
- 				}
- 			}
-```
-
-**File**: `frontend/dockerfile/dockerfile_provenance_test.go` (modified, +91/-0)
-```diff
-@@ -2722,6 +2722,97 @@ COPY --from=base /out /
- 	require.Equal(t, platforms.FormatAll(platforms.Normalize(platforms.DefaultSpec())), stmt.Predicate.BuildDefinition.InternalParameters.TargetPlatform)
- }
- 
-+// testProvenanceMultipleExporters verifies that every exporter of a build
-+// gets valid provenance when the exporters run in parallel.
-+func testProvenanceMultipleExporters(t *testing.T, sb integration.Sandbox) {
-+	integration.SkipOnPlatform(t, "windows", "local export with provenance is not supported on Windows")
-+	workers.CheckFeatureCompat(t, sb, workers.FeatureProvenance, workers.FeatureOCIExporter)
-+	ctx := sb.Context()
-+
-+	c, err := client.New(ctx, sb.Address())
-+	require.NoError(t, err)
-+	defer c.Close()
-+
-+	f := getFrontend(t, sb)
-+
-+	dockerfile := []byte(`
-+FROM busybox:latest AS base
-+COPY <<EOF /out/foo
-+ok
-+EOF
-+
-+FROM scratch
-+COPY --from=base /out /
-+`)
-+	dir := integration.Tmpdir(
-+		t,
-+		fstest.CreateFile("Dockerfile", dockerfile, 0600),
-+	)
-+
-+	destDir, destDir2, ociDir := t.TempDir(), t.TempDir(), t.TempDir()
-+	_, err = f.Solve(sb.Context(), c, client.SolveOpt{
-+		LocalMounts: map[string]fsutil.FS{
-+			dockerui.DefaultLocalNameDockerfile: dir,
-+			dockerui.DefaultLocalNameContext:    dir,
-+		},
-+		FrontendAttrs: map[string]string{
-+			"attest:provenance": "mode=max,capture-usage=true",
-+		},
-+		Exports: []client.ExportEntry{
-+			{
-+				Type:      client.ExporterLocal,
-+				OutputDir: destDir,
-+			},
-+			{
-+				Type:      client.ExporterLocal,
-+				OutputDir: destDir2,
-+			},
-+			{
-+				Type:      client.ExporterOCI,
-+				OutputDir: ociDir,
-+				Attrs: map[string]string{
-+					"tar": "false",
-+				},
-+			},
-+		},
-+	}, nil)
-+	require.NoError(t, err)
-+
-+	var dts [][]byte
-+	for _, d := range []string{destDir, destDir2} {
-+		dt, err := os.ReadFile(filepath.Join(d, "provenance.json"))
-+		require.NoError(t, err)
-+		dts = append(dts, dt)
-+	}
-+
-+	var index ocispecs.Index
-+	dt, err := os.ReadFile(filepath.Join(ociDir, ocispecs.ImageIndexFile))
-+	require.NoError(t, err)
-+	require.NoError(t, json.Unmarshal(dt, &index))
-+	require.Len(t, index.Manifests, 1)
-+
-+	store, err := local.NewStore(ociDir)
-+	require.NoError(t, err)
-+	imgs, err := testutil.ReadImages(ctx, store, index.Manifests[0])
-+	require.NoError(t, err)
-+	att := imgs.Find("unknown/unknown")
-+	require.NotNil(t, att)
-+	require.Len(t, att.LayersRaw, 1)
-+	dts = append(dts, att.LayersRaw[0])
-+
-+	for _, dt := range dts {
-+		var stmt struct {
-+			Predicate provenancetypes.ProvenancePredicateSLSA1 `json:"predicate"`
-+		}
-+		require.NoError(t, json.Unmarshal(dt, &stmt))
-+		metadata := stmt.Predicate.RunDetails.Metadata
-+		require.NotNil(t, metadata)
-+		require.NotNil(t, metadata.FinishedOn)
-+		require.NotEmpty(t, metadata.BuildKitMetadata.Layers)
-+		require.NotEmpty(t, metadata.BuildKitMetadata.SysUsage)
-+	}
-+}
-+
- /*
- testProvenanceExportLocalForceSplit verifies that the local exporter writes build output and a
- valid provenance.json (SLSA v1) into a platform-specific subdirectory (e.g., linux_amd64/)
-```
-
-**File**: `frontend/dockerfile/dockerfile_test.go` (modified, +1/-0)
-```diff
-@@ -221,6 +221,7 @@ var allTests = integration.TestFuncs(
- 	testFrontendDeduplicateSources,
- 	testDuplicateLayersProvenance,
- 	testProvenanceExportLocal,
-+	testProvenanceMultipleExporters,
- 	testProvenanceExportLocalForceSplit,
- 	testProvenanceExportLocalMultiPlatform,
- 	testProvenanceExportLocalMultiPlatformNoSplit,
-```
-
-**File**: `solver/llbsolver/errdefs/exec.go` (modified, +19/-5)
-```diff
-@@ -3,6 +3,7 @@ package errdefs
- import (
- 	"context"
- 	"runtime"
-+	"sync"
- 
- 	"github.com/moby/buildkit/solver"
- 	"github.com/moby/buildkit/util/bklog"
-@@ -14,6 +15,8 @@ type ExecError struct {
- 	Inputs        []solver.Result
- 	Mounts        []solver.Result
- 	OwnerBorrowed bool
-+
-+	mu sync.Mutex // protects OwnerBorrowed
- }
- 
- func (e *ExecError) Unwrap() error {
-@@ -49,16 +52,27 @@ func (e *ExecError) EachRef(fn func(solver.Result) error) (err error) {
- 	return err
- }
- 
--func (e *ExecError) Release() error {
-+// Borrow marks the error's refs as owned by a caller, so the finalizer and
-+// Release do not release them. The same error can be shared by multiple
-+// callers; Borrow returns false if the refs were already borrowed.
-+func (e *ExecError) Borrow() bool {
-+	e.mu.Lock()
-+	defer e.mu.Unlock()
- 	if e.OwnerBorrowed {
-+		return false
-+	}
-+	e.OwnerBorrowed = true
-+	return true
-+}
-+
-+func (e *ExecError) Release() error {
-+	if !e.Borrow() {
- 		return nil
+ 	"encoding/json"
+ 	"fmt"
+@@ -525,17 +526,27 @@ func newPipe() *pipe {
+ 		Stdin:  pr1,
+ 		Stdout: pw2,
+ 		conn: &conn{
+-			Reader: pr2,
+-			Writer: pw1,
+-			Closer: pw2,
++			Reader:  pr2,
++			Writer:  pw1,
++			closers: []io.Closer{pr2, pw1, pr1, pw2},
+ 		},
  	}
--	err := e.EachRef(func(r solver.Result) error {
-+	return e.EachRef(func(r solver.Result) error {
- 		r.Release(context.TODO())
- 		return nil
- 	})
--	e.OwnerBorrowed = true
--	return err
  }
  
- func WithExecError(err error, inputs, mounts []solver.Result) error {
-@@ -75,7 +89,7 @@ func WithExecErrorWithContext(ctx context.Context, err error, inputs, mounts []s
- 		Mounts: mounts,
- 	}
- 	runtime.SetFinalizer(ee, func(e *ExecError) {
--		if !e.OwnerBorrowed {
-+		if e.Borrow() {
- 			e.EachRef(func(r solver.Result) error {
- 				bklog.G(ctx).Warn("leaked execError detected and released")
- 				r.Release(context.TODO())
+ type conn struct {
+ 	io.Reader
+ 	io.Writer
+-	io.Closer
++	closers []io.Closer
++}
++
++func (s *conn) Close() error {
++	var err error
++	for _, closer := range s.closers {
++		if closeErr := closer.Close(); err == nil {
++			err = closeErr
++		}
++	}
++	return errors.WithStack(err)
+ }
+ 
+ func (s *conn) LocalAddr() net.Addr {
+@@ -1869,13 +1880,28 @@ func (lbf *llbBridgeForwarder) cloneRef(id string) (solver.ResultProxy, error) {
+ 	return s2, nil
+ }
+ 
++type bufferedConn struct {
++	net.Conn
++	reader *bufio.Reader
++}
++
++func (c *bufferedConn) Read(p []byte) (int, error) {
++	return c.reader.Read(p)
++}
++
+ func serve(ctx context.Context, grpcServer *grpc.Server, conn net.Conn) {
+-	go func() {
+-		<-ctx.Done()
+-		conn.Close()
+-	}()
++	stop := context.AfterFunc(ctx, func() { conn.Close() })
++	defer stop()
++	defer conn.Close()
++
++	// The frontend container may take a while to start. Start HTTP/2's
++	// client preface timeout only once the frontend begins communicating.
++	reader := bufio.NewReader(conn)
++	if _, err := reader.Peek(1); err != nil {
++		return
++	}
+ 	bklog.G(ctx).Debugf("serving grpc connection")
+-	(&http2.Server{}).ServeConn(conn, &http2.ServeConnOpts{Handler: grpcServer}) //nolint:staticcheck // This existing HTTP/2 connection is already established.
++	(&http2.Server{}).ServeConn(&bufferedConn{Conn: conn, reader: reader}, &http2.ServeConnOpts{Handler: grpcServer}) //nolint:staticcheck // This existing HTTP/2 connection is already established.
+ }
+ 
+ type markTypeFrontend struct{}
 ```
 
-**File**: `solver/llbsolver/errdefs/exec_test.go` (added, +35/-0)
+**File**: `frontend/gateway/serve_test.go` (added, +42/-0)
 ```diff
-@@ -0,0 +1,35 @@
-+package errdefs
+@@ -0,0 +1,42 @@
++package gateway
 +
 +import (
-+	"sync"
-+	"sync/atomic"
++	"context"
 +	"testing"
 +
 +	"github.com/pkg/errors"
 +	"github.com/stretchr/testify/require"
++	"google.golang.org/grpc"
 +)
 +
-+// TestExecErrorBorrowOnce checks that concurrent callers sharing the same
-+// ExecError can mark it borrowed safely and that only one call reports it.
-+func TestExecErrorBorrowOnce(t *testing.T) {
++func TestServeCancelBeforeFrontendStartup(t *testing.T) {
 +	t.Parallel()
-+
-+	ee := &ExecError{error: errors.New("exec failed")}
-+	var won atomic.Int32
-+	var wg sync.WaitGroup
-+	start := make(chan struct{})
-+	for range 16 {
-+		wg.Go(func() {
-+			<-start
-+			if ee.Borrow() {
-+				won.Add(1)
-+			}
-+		})
-+	}
-+	close(start)
-+	wg.Wait()
-+
-+	require.Equal(t, int32(1), won.Load())
-+	require.False(t, ee.Borrow())
-+	require.NoError(t, ee.Release())
-+}
-```
-
----
-
-### Incident Patch 3: `a868d259` (2026-10-27)
-**Commit Message**: containerdexecutor: fix race on err in event loops
-
-The resize and signal goroutines in runProcess both assigned the err
-variable of the enclosing function, so concurrent Resize and Signal
-calls on a process raced, and either goroutine could log the other's
-error. Use a local error in each goroutine.
-
-Signed-off-by: Tonis Tiigi <[REDACTED_EMAIL]>
-
-**File**: `client/client_test.go` (modified, +1/-0)
-```diff
-@@ -274,6 +274,7 @@ func TestClientGatewayIntegration(t *testing.T) {
- 		testClientGatewayContainerPID1Exit,
- 		testClientGatewayContainerPID1Fail,
- 		testClientGatewayContainerPID1Tty,
-+		testClientGatewayContainerResizeSignal,
- 		testClientGatewayContainerSignal,
- 		testClientGatewayExecError,
- 		testClientGatewaySharedExecError,
-```
-
-**File**: `client/gateway_container_exec_test.go` (modified, +99/-0)
-```diff
-@@ -942,6 +942,105 @@ func testClientGatewayContainerSignal(t *testing.T, sb integration.Sandbox) {
- 	checkAllReleasable(t, c, sb, true)
- }
- 
-+// Linux signal numbers. The container is always Linux, and syscall does not
-+// define these when the test binary is built for other platforms.
-+const (
-+	linuxSIGUSR1  = syscall.Signal(10)
-+	linuxSIGWINCH = syscall.Signal(28)
-+)
-+
-+// testClientGatewayContainerResizeSignal resizes and signals a container
-+// process concurrently.
-+func testClientGatewayContainerResizeSignal(t *testing.T, sb integration.Sandbox) {
-+	requiresLinux(t)
-+	ctx := sb.Context()
-+
-+	c, err := New(ctx, sb.Address())
-+	require.NoError(t, err)
-+	defer c.Close()
-+
-+	product := "buildkit_test"
-+
-+	b := func(ctx context.Context, c client.Client) (*client.Result, error) {
-+		ctx, timeout := context.WithTimeoutCause(ctx, 30*time.Second, nil)
-+		defer timeout()
-+
-+		def, err := llb.Image("busybox:latest").Marshal(ctx)
-+		if err != nil {
-+			return nil, errors.Wrap(err, "failed to marshal state")
-+		}
-+
-+		r, err := c.Solve(ctx, client.SolveRequest{
-+			Definition: def.ToPB(),
-+		})
-+		if err != nil {
-+			return nil, errors.Wrap(err, "failed to solve")
-+		}
-+
-+		ctr, err := c.NewContainer(ctx, client.NewContainerRequest{
-+			Mounts: []client.Mount{{
-+				Dest:      "/",
-+				MountType: pb.MountType_BIND,
-+				Ref:       r.Ref,
-+			}},
-+		})
-+		require.NoError(t, err)
-+		defer ctr.Release(ctx)
-+
-+		// outlive the test timeout, killed explicitly below
-+		pid1, err := ctr.Start(ctx, client.StartRequest{
-+			Args: []string{"sleep", "60"},
-+		})
-+		require.NoError(t, err)
-+
-+		// keep running until all events have been sent, stdio is needed as the
-+		// runc executor fails tty processes without it
-+		pid2, err := ctr.Start(ctx, client.StartRequest{
-+			Args:   []string{"sh", "-c", `trap 'exit 0' USR1; while true; do sleep 0.1; done`},
-+			Tty:    true,
-+			Stdout: &iohelper.NopWriteCloser{Writer: io.Discard},
-+			Stderr: &iohelper.NopWriteCloser{Writer: io.Discard},
-+		})
-+		require.NoError(t, err)
-+
-+		// allow for the shell script to setup the trap before we signal it
-+		time.Sleep(time.Second)
-+
-+		var wg sync.WaitGroup
-+		var resizeErr, signalErr error
-+		wg.Go(func() {
-+			for i := range 100 {
-+				if resizeErr = pid2.Resize(ctx, client.WinSize{Rows: uint32(20 + i), Cols: uint32(80 + i)}); resizeErr != nil {
-+					return
-+				}
-+			}
-+		})
-+		wg.Go(func() {
-+			for range 100 {
-+				// ignored by sh
-+				if signalErr = pid2.Signal(ctx, linuxSIGWINCH); signalErr != nil {
-+					return
-+				}
-+			}
-+		})
-+		wg.Wait()
-+		require.NoError(t, resizeErr)
-+		require.NoError(t, signalErr)
-+
-+		require.NoError(t, pid2.Signal(ctx, linuxSIGUSR1))
-+		require.NoError(t, pid2.Wait())
-+
-+		require.NoError(t, pid1.Signal(ctx, syscall.SIGKILL))
-+		pid1.Wait()
-+		return &client.Result{}, nil
-+	}
-+
-+	_, err = c.Build(ctx, SolveOpt{}, product, b, nil)
-+	require.NoError(t, err)
-+
-+	checkAllReleasable(t, c, sb, true)
++	ctx, cancel := context.WithCancelCause(t.Context())
++	defer cancel(errors.WithStack(context.Canceled))
++	p := newPipe()
++	t.Cleanup(func() { p.conn.Close() })
++	server := grpc.NewServer()
++	t.Cleanup(server.Stop)
++	done := make(chan struct{})
++	go func() {
++		serve(ctx, server, p.conn)
++		close(done)
++	}()
++	cancel(errors.WithStack(context.Canceled))
++	receiveGatewayLifecycleTest(t, done, "server cancellation before frontend startup")
 +}
 +
- // testClientGatewayExecError is testing gateway exec to recreate the container
- // process for a failed execop.
- func testClientGatewayExecError(t *testing.T, sb integration.Sandbox) {
-```
-
-**File**: `executor/containerdexecutor/executor.go` (modified, +2/-4)
-```diff
-@@ -426,8 +426,7 @@ func (w *containerdExecutor) runProcess(ctx context.Context, p ctd.Process, resi
- 				if !ok {
- 					return // chan closed
- 				}
--				err = p.Resize(eventCtx, size.Cols, size.Rows)
--				if err != nil {
-+				if err := p.Resize(eventCtx, size.Cols, size.Rows); err != nil {
- 					bklog.G(eventCtx).Warnf("Failed to resize %s: %s", p.ID(), err)
- 				}
- 			}
-@@ -442,8 +441,7 @@ func (w *containerdExecutor) runProcess(ctx context.Context, p ctd.Process, resi
- 				if !ok {
- 					return // chan closed
- 				}
--				err = p.Kill(eventCtx, sig)
--				if err != nil {
-+				if err := p.Kill(eventCtx, sig); err != nil {
- 					bklog.G(eventCtx).Warnf("Failed to signal %s: %s", p.ID(), err)
- 				}
- 			}
++func TestServeFrontendClosesBeforeStartup(t *testing.T) {
++	t.Parallel()
++	p := newPipe()
++	t.Cleanup(func() { p.conn.Close() })
++	server := grpc.NewServer()
++	t.Cleanup(server.Stop)
++	done := make(chan struct{})
++	go func() {
++		serve(t.Context(), server, p.conn)
++		close(done)
++	}()
++	require.NoError(t, p.Stdout.Close())
++	receiveGatewayLifecycleTest(t, done, "server shutdown on frontend EOF")
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7338** (2026-10-30): solver: fix race on merged edge secondary exporters (@tonistiigi)
+- **PR #7336** (2026-10-30): gateway: wait for frontend before HTTP/2 handshake (@tonistiigi)
 - **PR #7332** (2026-10-28): cache: avoid losing finalize commit on cancel (@tonistiigi)
 - **PR #7331** (2026-10-28): vendor: update fsutil to ca65610c2295 (@tonistiigi)
 - **PR #7330** (2026-10-28): readme: improve the frontend overview (@crazy-max)
-- **PR #7326** (2026-10-28): vendor: golang.org/x/net v0.60.0 (@thaJeztah)
-- **PR #7325** (2026-10-28): data race and correctness fixes (@tonistiigi)
-- **PR #7324** (closed): source: negotiate manifest media types for image blobs (@cdupuis)
+- **PR #7328** (2026-10-30): vendor: github.com/containerd/stargz-snapshotter v0.19.1 (@thaJeztah)
 
 ---
 
@@ -3144,67 +2707,31 @@ Signed-off-by: Tonis Tiigi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7332 from tonistiigi/fix-commit-cancel
+## X. solver: fix race on merged edge secondary exporters
 
 **RULE**:
-When implementing operations in `cache/manager_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `solver/edge.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c19b15f5`: Merge pull request #7332 from tonistiigi/fix-commit-cancel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b94ff2bc`: solver: fix race on merged edge secondary exporters. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cache/manager_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `solver/edge.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func TestFinalizeAlreadyCommitted(t *testing.T) {
-	// This test simulates a snapshotter commit that was applied but reported
-	// as failed (e.g. a canceled containerd RPC). Finalize must notice the
-	// committed snapshot instead of failing on the missing active snapshot.
-	t.Parallel()
-
-	ctx := namespaces.WithNamespace(t.Context(), "buildkit-test")
-
-	tmpdir := t.TempDir()
-
-	snapshotter, err := native.NewSnapshotter(filepath.Join(tmpdir, "snapshots"))
-	require.NoError(t, err)
-	t.Cleanup(func() {
-		require.NoError(t, snapshotter.Close())
-	})
-
-	co, cleanup, err := newCacheManager(ctx, t, cmOpt{
-		tmpdir:          tmpdir,
-		snapshotter:     snapshotter,
-		snapshotterName: "native",
-	})
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
-	cm := co.manager.(*cacheManager)
-
-	mref, err := cm.New(ctx, nil, nil, CachePolicyRetain)
-	require.NoError(t, err)
-	mutRef := mref.(*mutableRef)
-
-	iref, err := mutRef.Commit(ctx)
-	require.NoError(t, err)
-	immutRef := iref.(*immutableRef)
-
-	err = cm.Snapshotter.Commit(ctx, immutRef.getSnapshotID(), mutRef.getSnapshotID())
-	require.NoError(t, err)
-
-	require.NoError(t, iref.Finalize(ctx))
-	require.Nil(t, immutRef.equalMutable)
-
-	// the committed snapshot must stay
+	// secondaryExportersMu protects secondaryExporters, which the scheduler
+	// appends to on merge while cache exporters read it from other goroutines
+	secondaryExportersMu sync.Mutex
+	secondaryExporters   []expDep
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	secondaryExporters []expDep
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c19b15f5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b94ff2bc` are properly handled with clean fallback behavior.

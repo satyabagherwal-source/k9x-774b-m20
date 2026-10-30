@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source**: github ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
-> **Source Version**: `37f788bd`  
+> **Source Version**: `525b1d11`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:45:02.320Z  
+> **Timestamp**: 2026-10-30T13:28:46.255Z  
 > **Learning ID**: `learn-github-topoteretes-cognee`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:45:02.312Z  
+> **Harvest Timestamp**: 2026-10-30T13:28:45.196Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cognee is the open-source AI memory platform for agents. Give your AI agents persistent long-term memory with small models for free
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 32513 stars
+- **Stars / Engagement**: 32919 stars
 
 ---
 
@@ -45,7 +45,11 @@ import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { notifications } from "@mantine/notifications";
 import { useCogniInstance, useTenant } from "@/modules/tenant/TenantProvider";
-import pollDatasetStatus, { DatasetProcessingError } from "@/modules/datasets/pollDatasetStatus";
+import pollDatasetStatus, {
+  DatasetProcessingError,
+  InsufficientCreditsProcessingError,
+} from "@/modules/datasets/pollDatasetStatus";
+import { INSUFFICIENT_CREDITS_PROCESSING_MESSAGE } from "@/app/(app)/datasets/processingErrorMessage";
 import { datasetStatusQueryKey } from "@/modules/datasets/useDatasetStatuses";
 import { getAwaitingDataset, clearAwaitingDataset } from "@/utils/browserStorage";
 
@@ -98,15 +102,17 @@ export function useAwaitingDataset(): boolean {
       .finally(() => queryClient.invalidateQueries({ queryKey: datasetStatusQueryKey(tenant?.tenant_id) }))
       .then(clear, (err: unknown) => {
         // The dashboard must unblock either way, but a failed pipeline is not
-        // a silent event — the user was told their brain is being prepared.
+        // a silent event — the user was told their dataset is being prepared.
         if (!cancelled && !gaveUpEarly) {
           notifications.show({
             color: "red",
-            title: "Brain processing failed",
+            title: err instanceof InsufficientCreditsProcessingError ? "Out of LLM budget" : "Dataset processing failed",
             message:
-              err instanceof DatasetProcessingError
-                ? "Your brain could not be processed. Try uploading it again."
-                : "We could not confirm your brain finished processing. Check the Brain page for its status.",
+              err instanceof InsufficientCreditsProcessingError
+                ? INSUFFICIENT_CREDITS_PROCESSING_MESSAGE
+                : err instanceof DatasetProcessingError
+                ? "Your dataset could not be processed. Try uploading it again."
+                : "We could not confirm your dataset finished processing. Check the Datasets page for its status.",
           });
         }
         clear();
@@ -123,34 +129,144 @@ export function useAwaitingDataset(): boolean {
 
 ```
 
+### Core Architecture Module: `cognee-frontend/src/app/(app)/dashboard/hooks/useChecklistCompletionTracking.ts`
+```
+"use client";
+
+import { useEffect, useMemo, useRef } from "react";
+import { trackEvent } from "@/modules/analytics";
+import type { Agent } from "@/ui/layout/FilterContext";
+import type { PipelineRun, SessionRow } from "@/modules/sessions/getSessions";
+
+export interface ChecklistCompletion {
+  upload_document: boolean;
+  first_query: boolean;
+  connect_agent: boolean;
+}
+
+interface ChecklistCompletionInput {
+  runs: PipelineRun[];
+  sessions: SessionRow[];
+  agents: Agent[];
+  /** True while telemetry (runs/sessions) has not yet produced a trustworthy
+   *  answer — still loading, or errored. Gates `upload_document`/`first_query`
+   *  only: those two never read the agent roster. */
+  telemetryNotReady: boolean;
+  /** Same idea for the agent roster. A pod that has not allowlisted
+   *  `GET /v1/activity/agents` answers 404 forever — no retry, no poll — so
+   *  this can stay true for the life of the page, and it must not also block
+   *  the other two items. */
+  agentsNotReady: boolean;
+}
+
+/**
+ * Fires `checklist_item_completed` once per item, the moment it first
+ * becomes true — never on a render where it is already true, and never for
+ * an item whose own source has not actually answered yet.
+ *
+ * Each item is seeded and tracked independently rather than as one atomic
+ * snapshot: `upload_document`/`first_query` read runs/sessions, `connect_agent`
+ * reads the agent roster, and gating all three on whichever source is slowest
+ * (or permanently erroring) either goes dark for events that had nothing to
+ * do with the failure or seeds the wrong one off an empty array — a workspace
+ * that finished an item long ago then fires a spurious completion on the next
+ * successful poll of the OTHER source. See OverviewPage for the two concrete
+ * failure modes this was written against.
+ */
+export function useChecklistCompletionTracking(input: ChecklistCompletionInput): void {
+  const { runs, sessions, agents, telemetryNotReady, agentsNotReady } = input;
+
+  const checklistDone: ChecklistCompletion = useMemo(() => ({
+    // Only a real pipeline run (upload/cognify) counts here — operation rows
+    // (recall/search/remember/etc., kind: "operation") mean the agent talked
+    // to memory, not that anything was uploaded.
+    upload_document: runs.some((r) => r.kind === "pipeline"),
+    first_query: sessions.length > 0,
+    connect_agent: agents.some((a) => a.is_agent && !a.is_default),
+  }), [runs, sessions, agents]);
+
+  const prev = useRef<Partial<ChecklistCompletion>>({});
+
+  useEffect(() => {
+    if (!telemetryNotReady) {
+      if (prev.current.upload_document === undefined) {
+        prev.current.upload_document = checklistDone.upload_document;
+        prev.current.first_query = checklistDone.first_query;
+      } else {
+        if (checklistDone.upload_document && !prev.current.upload_document) {
+          trackEvent({ pageName: "Dashboard", eventName: "checklist_item_completed", additionalProperties: { item: "upload_document" } });
+        }
+        if (checklistDone.first_query && !prev.current.first_query) {
+          trackEvent({ pageName: "Dashboard", eventName: "checklist_item_completed", additionalProperties: { item: "first_query" } });
+        }
+        prev.current.upload_document = checklistDone.upload_document;
+        prev.current.first_query = checklistDone.first_query;
+      }
+    }
+    if (!agentsNotReady) {
+      if (prev.current.connect_agent === undefined) {
+        prev.current.connect_agent = checklistDone.connect_agent;
+      } else {
+        if (checklistDone.connect_agent && !prev.current.connect_agent) {
+          trackEvent({ pageName: "Dashboard", eventName: "checklist_item_completed", additionalProperties: { item: "connect_agent" } });
+        }
+        prev.current.connect_agent = checklistDone.connect_agent;
+      }
+    }
+  }, [checklistDone, telemetryNotReady, agentsNotReady]);
+}
+
+```
+
 ### Core Architecture Module: `cognee-frontend/src/app/(app)/dashboard/hooks/useConnectedIntegrations.ts`
 ```
 "use client";
 
 import { useState, useEffect } from "react";
+import { AGENT_CHANNEL_NAMES, channelForSessionId } from "@/modules/sessions/getSessions";
 import type { SessionRow } from "@/modules/sessions/getSessions";
+import {
+  AGENT_INTEGRATION_BY_KEY,
+  AGENT_INTEGRATION_DEFS,
+  connectionIntegrationKey,
+} from "@/modules/agents/getAgentConnections";
+import type { AgentConnection } from "@/modules/agents/getAgentConnections";
 import {
   getConnectedIntegrations,
   setConnectedIntegrations as persistConnectedIntegrations,
 } from "@/utils/browserStorage";
 
-// Per-integration session_id prefix. Detection is coarse on purpose — any session
-// whose id starts with the prefix counts as connected. Keep these in sync with
-// the shipped integrations (claude-code → "cc_", codex → "codex_" as emitted by
-// the plugins' _generate_session_id). Openclaw and API/MCP have no fixed prefix.
-export const INTEGRATION_SESSION_PREFIX: Record<string, string> = {
-  "claude-code": "cc_",
-  codex: "codex_",
-};
+/** The integration card keys this hook can report on. Cards keep their own
+ *  slugs — AGENT_INTEGRATION_DEFS.key — because that is what is already
+ *  persisted in users' browsers. */
+export const INTEGRATION_KEYS: readonly string[] = AGENT_INTEGRATION_DEFS.map((def) => def.key);
+
+// Stable reference for callers that don't have a connections list yet — a
+// fresh `[]` on every render would re-run the effect below every render for
+// no reason, since nothing in it depends on the array's identity otherwise.
+const NO_CONNECTIONS: AgentConnection[] = [];
 
 /**
- * Derives and persists per-integration "Connected" state from the session_id
- * prefixes. Sticky per tenant via localStorage so a card stays "Connected" after
- * its session ages out of the polled window.
+ * Derives and persists which agents and integrations have ever reached this
+ * tenant, keyed both by channel name (for the memory graph) and by integration
+ * slug (for the Integrations cards).
+ *
+ * Sticky per tenant via localStorage, and that stickiness is load-bearing
+ * rather than a nicety: the polled session page is scoped to the dashboard's
+ * range toggle and capped at 50 rows, and the deployed pod caps it again on
+ * its own side. A busy workspace pushes an agent's last session off that page
+ * within the hour, and without a persisted answer the graph would then report
+ * an installed agent as never connected.
+ *
+ * `connections` is optional and additive: a plugin registration alone (no
+ * session or memory write yet) is real evidence a card should read
+ * "Connected", ahead of what `sessions` can prove. Passing none keeps this
+ * hook's session-only behavior for callers that haven't wired the endpoint up.
  */
 export function useConnectedIntegrations(
   sessions: SessionRow[],
   tenantId: string | null,
+  connections: AgentConnection[] = NO_CONNECTIONS,
 ): Record<string, boolean> {
   const [connectedIntegrations, setConnectedIntegrations] = useState<Record<string, boolean>>({});
 
@@ -158,8 +274,19 @@ export function useConnectedIntegrations(
     if (!tenantId) return;
     const persisted = getConnectedIntegrations(tenantId);
     const next = { ...persisted };
-    for (const [key, prefix] of Object.entries(INTEGRATION_SESSION_PREFIX)) {
-      if (sessions.some((s) => s.session_id.startsWith(prefix))) next[key] = true;
+    const seen = new Set(sessions.map((s) => channelForSessionId(s.session_id)));
+    for (const name of AGENT_CHANNEL_NAMES) {
+      if (seen.has(name)) next[name] = true;
+    }
+    for (const def of AGENT_INTEGRATION_DEFS) {
+      if (seen.has(def.channel)) next[def.key] = true;
+    }
+    for (const connection of connections) {
+      const key = connectionIntegrationKey(connection);
+      const def = key ? AGENT_INTEGRATION_BY_KEY.get(key) : undefined;
+      if (!def) continue;
+      next[def.key] = true;
+      next[def.channel] = true;
     }
     if (JSON.stringify(next) !== JSON.stringify(persisted)) {
       persistConnectedIntegrations(tenantId, next);
@@ -167,7 +294,7 @@ export function useConnectedIntegrations(
     setConnectedIntegrations((prev) =>
       JSON.stringify(prev) !== JSON.stringify(next) ? next : prev,
     );
-  }, [sessions, tenantId]);
+  }, [sessions, connections, tenantId]);
 
   return connectedIntegrations;
 }
@@ -180,42 +307,37 @@ export function useConnectedIntegrations(
 
 import { useState, useCallback } from "react";
 import { useTenant } from "@/modules/tenant/TenantProvider";
-import { useCreditsBalance, getTenantRow } from "@/modules/billing/useCreditsBalance";
+import { useCreditsBalance, getTenantRemainingUsd } from "@/modules/billing/useCreditsBalance";
 import { isCreditsBannerDismissed, dismissCreditsBanner } from "@/utils/browserStorage";
 
 export interface CreditsBannerState {
-  creditsSpentPct: number | null;
   creditsRemainingUsd: number | null;
-  /** True when ≥ 90 % of credits are spent. Wins over all other banners. */
-  showCreditPctBanner: boolean;
-  /** True when balance < $1 and credit-pct banner is not showing. */
+  /** True when balance < $5. */
   showLowBalanceBanner: boolean;
-  /** True when neither warning banner is active. */
+  /** True when the low-balance banner is not active. */
   showVoucherBanner: boolean;
   dismiss: () => void;
 }
+
+const LOW_BALANCE_THRESHOLD_USD = 5;
 
 /**
  * Fetches credit usage and tracks banner visibility.
  *
  * Only one banner may show at a time — priority:
- *   1. Credit-percentage banner (≥ 90 %)
- *   2. Low-balance banner (< $1)
- *   3. Voucher banner (promotional)
+ *   1. Low-balance banner (< $5)
+ *   2. Voucher banner (promotional)
  */
 export function useCreditsBanner(): CreditsBannerState {
   const { tenant } = useTenant();
   const { data: overview } = useCreditsBalance(true);
   const [dismissed, setDismissed] = useState<boolean>(isCreditsBannerDismissed);
 
-  const row = getTenantRow(overview, tenant?.tenant_id ?? null);
-  const creditsSpentPct =
-    row?.spentUsd != null && row.maxBudgetUsd ? Math.round((row.spentUsd / row.maxBudgetUsd) * 100) : null;
-  const creditsRemainingUsd = row?.remainingUsd ?? null;
+  const creditsRemainingUsd = getTenantRemainingUsd(overview, tenant?.tenant_id ?? null);
 
-  const showCreditPctBanner = !dismissed && creditsSpentPct !== null && creditsSpentPct >= 90;
-  const showLowBalanceBanner = !showCreditPctBanner && creditsRemainingUsd !== null && creditsRemainingUsd < 1;
-  const showVoucherBanner = !showCreditPctBanner && !showLowBalanceBanner;
+  const isLowBalance = creditsRemainingUsd !== null && creditsRemainingUsd < LOW_BALANCE_THRESHOLD_USD;
+  const showLowBalanceBanner = !dismissed && isLowBalance;
+  const showVoucherBanner = !isLowBalance;
 
   const dismiss = useCallback(() => {
     dismissCreditsBanner();
@@ -223,9 +345,7 @@ export function useCreditsBanner(): CreditsBannerState {
   }, []);
 
   return {
-    creditsSpentPct,
     creditsRemainingUsd,
-    showCreditPctBanner,
     showLowBalanceBanner,
     showVoucherBanner,
     dismiss,
@@ -238,111 +358,179 @@ export function useCreditsBanner(): CreditsBannerState {
 ```
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { notifications } from "@mantine/notifications";
 import { useCogniInstance, useTenant } from "@/modules/tenant/TenantProvider";
 import { useFilter } from "@/ui/layout/FilterContext";
-import { listSessions } from "@/modules/sessions/getSessions";
-import type { SessionRow } from "@/modules/sessions/getSessions";
+import { listSessions, normalizeActivityRows } from "@/modules/sessions/getSessions";
+import type { PipelineRun, SessionRow, TimeRange } from "@/modules/sessions/getSessions";
+import getAgentConnections from "@/modules/agents/getAgentConnections";
+import type { AgentConnection } from "@/modules/agents/getAgentConnections";
 import { useCircuitBreaker } from "@/modules/query/useCircuitBreaker";
-import type { PipelineRun, Range } from "@/ui/elements/AgentActivityTerminal";
 
 const TELEMETRY_POLL_INTERVAL_MS = 15_000;
 // Background polls get extra headroom because local/loaded pods can take several
 // seconds per request (COG-5722) — we don't want a slow pod surfacing as a false
 // error while it's still working.
 const BACKGROUND_POLL_TIMEOUT_MS = 25_000;
+// CostPanel and the Analytics breakdown *aggregate* this feed across the whole
+// selected range, so a page-size cap silently truncates their totals rather
+// than just their lists, and operation rows now compete with pipeline runs for
+// the same slots. 500 is the documented maximum.
+//
+// It is inert on every released cognee up to and including v1.5.3, which
+// hardcodes LIMIT 50 with no `limit` parameter — FastAPI ignores an unknown
+// query param, so today all three callers cap at 50. A range busier than 500
+// would still need server-side aggregation, which the endpoint does not offer
+// (it returns a bare array with no total).
+const RUNS_LIMIT = 500;
+const SESSIONS_LIMIT = 50;
+// Same reasoning as RUNS_LIMIT: `connections` answers "has this agent EVER
+// registered" for the sticky registry, and the endpoint's own default (50,
+// `le=500`) silently truncated that to the newest 50 registrations. On a
+// workspace with more churn than that, an agent's one-and-only registration
+// falls off the page and useConnectedIntegrations reads it as never connected
+// — the registry has no other way to find out. This is the endpoint's
+// documented maximum, not a page we then loop past; see connectionsTruncated
+// below for what happens on a tenant busy enough to still overflow it.
+const CONNECTIONS_LIMIT = 500;
+/** The widest window the endpoint understands. The page size is the real bound
+ *  either way, so asking for less only narrows what the local slices can see. */
+const SESSIONS_RANGE: TimeRange = "all";
+/**
+ * Page size every released cognee up to and including 1.5.3 hardcodes, ignoring
+ * the `limit` we send. Verified against the router source: 1.5.3 does
+ * `.limit(50)` with no `limit` parameter, and 1.5.4 is the first build to accept
+ * `limit: int = Query(50, ge=1, le=500)`.
+ *
+ * Both numbers matter, because truncation has to be measured against the page
+ * the pod actually returned rather than against what we asked for. Comparing
+ * `runs.length` to RUNS_LIMIT alone made the flag permanently false on every pod
+ * in production, and with it the Analytics "Partial totals" banner and the Cost
+ * panel's "at least" qualifier — the two disclosures that exist for exactly this
+ * cap. 1.5.4's own docstring states the rule: `len(results) == limit` means
+ * another page may exist.
+ */
+const RUNS_POD_HARDCODED_LIMIT = 50;
 
 export interface DashboardTelemetry {
   runs: PipelineRun[];
   sessions: SessionRow[];
+  /** Plugin registrations, polled on the same cadence as runs/sessions so the
+   *  sticky per-tenant registry (useConnectedIntegrations) never disagrees
+   *  with a tutorial reading the same endpoint about whether an agent has
+   *  ever registered. Registration only, not liveness: the pod's connection
+   *  `status` sticks at "active" after a crash (nothing ever clears it but
+   *  the plugin's own unregister call), so agentStatus's "live" state is
+   *  session-only and does not read this. Empty on a failed fetch; there is
+   *  no separate `connectionsFailed` flag because nothing here downgrades the
+   *  page for it, the registry just falls back to sessions alone. */
+  connections: AgentConnection[];
+  /** The connections endpoint returned a full page (has_more), so a
+   *  registration older than the newest CONNECTIONS_LIMIT may not be in
+   *  `connections`. Absent evidence, not negative evidence: nothing here (or
+   *  in useConnectedIntegrations, whose sticky registry answers the same
+   *  question) infers "never connected" from a row's absence on a truncated
+   *  page. Exposed for a caller that needs to say so rather than invent copy
+   *  no design has asked for yet. */
+  connectionsTruncated: boolean;
   loading: boolean;
+  /** The fetch failed. Exposed because an empty runs/sessions after a failure
+   *  is indistinguishable from an empty workspace, and every panel that reads
+   *  this feed was reporting the second when it meant the first. */
+  error: boolean;
+  /** The sessions half was unreachable while the runs half answered.
+   *
+   *  Separate from `error` because listSessions never rejects — it swallows and
+   *  flags — so `isError` is false on this path and a full /v1/sessions outage
+   *  read as an empty workspace. That is the exact outcome FAILED_PAGE exists
+   *  to prevent, and until now this hook was throwing the flag away. */
+  sessionsFailed: boolean;
+  /** The mirror image: sessions answered but the runs half did not. Both halves
+   *  now degrade the same way — see useActivityFeed, which this now matches. A
+   *  runs failure used to discard a perfectly good sessions half via
+   *  Promise.all and report a total outage: every memory-graph agent read
+   *  "disconnected" though /v1/sessions had just answered. */
+  runsFailed: boolean;
+  /** The runs endpoint returned a full page, so there is very likely more
+   *  activity in this range than these totals account for.
+   *
+   *  Every consumer of this feed AGGREGATES it, so the page-size cap truncates
+   *  their numbers and not just their lists — and until now nothing reported
+   *  that, which made a capped total indistinguishable from a complete one. */
+  runsTruncated: boolean;
+  /** Rows the endpoint actually returned. What the notice should quote: the
+   *  limit we request is ignored by every pod before 1.5.4. */
+  runsReturned: number;
+  /** Same for the sessions half. `sessionsTotal` is null when the pod did not
+   *  say how many it holds — older images return a bare array. */
+  sessionsTruncated: boolean;
+  sessionsShown: number;
+  sessionsTotal: number | null;
+  /** Epoch ms of the last successful fetch, 0 before the first one. What an
+   *  "Updated Xs ago" label reads, so a stale panel can be recognised as one. */
+  updatedAt: number;
+  /** A refetch over data already on screen. `loading` is only the first load,
+   *  so without this a Refresh control can report nothing. */
+  refreshing: boolean;
+  refetch: () => void;
 }
 
-export function useDashboardTelemetry(range: Range): DashboardTelemetry {
+/**
+ * The shared activity feed, always at its widest.
+ *
+ * It took a range, and that parameter was the whole of CLO-722: passing a
+ * panel's toggle into it re-scoped every other consumer of the feed, and the
+ * Analytics page then reintroduced the same mistake in a new shape, blanking
+ * itself to a skeleton on each flip to refetch a payload that cannot differ
+ * (the runs endpoint takes no time filter at all).
+ *
+ * So there is no range to pass. Every consumer slices this locally, one cache
+ * entry per tenant serves the whole app, and a toggle flip costs nothing. That
+ * is a stronger guarantee than any test of the old call sites could give,
+ * because the mistake is no longer expressible.
+ */
+export function useDashboardTelemetry(): DashboardTelemetry {
   const { cogniInstance, isInitializing } = useCogniInstance();
   const { tenant, tenantReady } = useTenant();
   const { loading: filterLoading } = useFilter();
 
-  const [runs, setRuns] = useState<PipelineRun[]>([]);
-  const [sessions, setSessions] = useState<SessionRow[]>([]);
-  const [loading, setLoading] = useState(true);
-
   const telemetryBreaker = useCircuitBreaker(TELEMETRY_POLL_INTERVAL_MS);
 
   const telemetryQuery = useQuery({
-    queryKey: ["dashboard-telemetry", tenant?.tenant_id ?? null, range],
+    queryKey: ["dashboard-telemetry", tenant?.tenant_id ?? null],
     queryFn: async ({ signal }) => {
       if (!cogniInstance) throw new Error("cogniInstance unavailable");
       const init: RequestInit & { timeoutMs?: number } = { signal, timeoutMs: BACKGROUND_POLL_TIMEOUT_MS };
-      // Let genuine failures (timeout/network/5xx) reject the query so the circuit
-      // breaker sees them. listSessions still swallows internally (shared with pages
-      // that want that leniency), but a dead pod fails pipeline-runs first anyway.
-      const [runData, sessionsPage] = await Promise.all([
-        cogniInstance.fetch("/v1/activity/pipeline-runs", init).then((r) => r.json()),
-        listSessions(cogniInstance, { range, limit: 50 }, { signal, timeoutMs: BACKGROUND_POLL_TIMEOUT_MS }),
-      ]);
-      return {
-        // Operation rows (kind: "operation") legitimately carry pipeline_name:
-        // null (recall/search/remember/... aren't named pipelines) — only
-        // reject rows missing the kind discriminator itself, which is the
-        // actual signal of a malformed row (see AgentActivityTerminal.tsx).
-        runs: (Array.isArray(runData) ? runData : []).filter(
-          (r): r is PipelineRun =>
-            (r as { kind?: unknown } | null)?.kind === "pipeline" ||
-            (r as { kind?: unknown } | null)?.kind === "operation",
+      // allSettled, not all — matching useActivityFeed. A rejected runs half
+      // used to take the whole query down via Promise.all and throw away a
+      // sessions half that had already answered.
+      const [runsResult, sessionsResult, connectionsResult] = await Promise.allSettled([
+        // The client rejects on any non-ok status before this resolves; the
+        // failure left to guard is a 200 carrying an error envelope, which
+        // normalizeActivityRows throws on rather than coercing to [].
+        cogniInstance.fetch(`/v1/activity/pipeline-runs?limit=${RUNS_LIMIT}`, init).then((r) => r.json() as Promise<unknown>),
+        listSessions(cogniInstance, { range: SESSIONS_RANGE, limit: SESSIONS_LIMIT }, { signal, timeoutMs: BACKGROUND_POLL_TIMEOUT_MS }),
+        // range "all" and activeOnly false, not a freshness window: this feed
+        // only ever answers "has this agent EVER registered" (for the sticky
+        // registry, see the `connections` field above), so a connection that
+        // is old or already unregistered still has to count. A narrower range
+        // or active-only filter would suit "is it live right now", which is
+        // exactly the question this feed does not answer.
+        getAgentConnections(
+          cogniInstance,
+          { range: "all", activeOnly: false, includeSources: false, limit: CONNECTIONS_LIMIT },
+          { signal, timeoutMs: BACKGROUND_POLL_TIMEOUT_MS },
         ),
-        sessions: sessionsPage?.sessions ?? [],
-      };
-    },
-    // tenantReady, not just cogniInstance: a freshly-created workspace gets a
-    // cogniInstance immediately (optimistic), but the pod itself can take up
-    // to a minute to actually answer — firing this against it early just
-    // produces a burst of failed requests (dashboard now mounts before the
-    // pod is ready, since it's excluded from TenantProvider's isInitializing
-    // wait; see TenantProvider.tsx).
-    enabled: !!cogniInstance && !isInitializing && !filterLoading && tenantReady,
-    refetchInterval: telemetryBreaker.refetchInterval,
-    refetchIntervalInBackground: false,
-    // No per-fetch retry: this is a poll, so the next tick IS the retry, and
-    // the circuit breaker above already tracks consecutive tick failures —
-    // an extra retry here would just delay that signal.
-    retry: false,
-  });
+      ]);
 
-  useEffect(() => {
-    telemetryBreaker.report(telemetryQuery);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [telemetryQuery.isError, telemetryQuery.isSuccess, telemetryQuery.dataUpdatedAt, telemetryQuery.errorUpdatedAt]);
+      signal.throwIfAborted();
 
-  // Surface the breaker opening once per episode — not on every failed tick.
-  useEffect(() => {
-    if (!telemetryBreaker.isOpen) return;
-    notifications.show({
-      title: "Workspace is having trouble responding",
-      message: "We'll keep trying in the background — some data may be out of date.",
-      color: "orange",
-      autoClose: 8000,
-    });
-  }, [telemetryBreaker.isOpen]);
-
-  useEffect(() => {
-    if (!telemetryQuery.data) return;
-    setRuns(telemetryQuery.data.runs);
-    setSessions(telemetryQuery.data.sessions);
-  }, [telemetryQuery.data]);
-
-  // isPending (not isLoading) so `loading` stays true while the query is disabled
-  // (no cogniInstance yet) — matching previous behavior where the fetch effect
-  // simply never ran without an instance.
-  useEffect(() => {
-    if (!telemetryQuery.isPending) setLoading(false);
-  }, [telemetryQuery.isPending]);
-
-  return { runs, sessions, loading };
-}
-
+      // Read rather than discarded. normalizeActivityRows throws a named
+      // diagnostic for a 200 carrying an error envelope, and react-query holds
+      // that rejection in state nothing reads — so the one failure the shared
+      // client logs as a SUCCESS was inv
 ```
 
 ### Core Architecture Module: `cognee-frontend/src/app/(app)/dashboard/hooks/useDataSourceStatuses.ts`
@@ -351,7 +539,27 @@ export function useDashboardTelemetry(range: Range): DashboardTelemetry {
 
 import { useEffect, useState } from "react";
 import getConnectionStatus from "@/modules/integrations/getConnectionStatus";
+import getConnectorCatalog from "@/modules/integrations/getConnectorCatalog";
+import { DATA_SOURCE_CARDS } from "@/modules/integrations/dataSourceCards";
+import { isOffered } from "@/modules/integrations/connectorAvailability";
 import type { NodeStatus } from "@/app/(app)/dashboard/partials/redesign/MemoryFlowDiagram";
+
+/**
+ * The graph's own statuses plus one it never draws: "absent" is a framework
+ * connector this deployment does not ship, which the graph leaves out rather
+ * than showing as disconnected forever.
+ */
+export type DataSourceNodeStatus = NodeStatus | "absent";
+
+async function readNodeStatus(provider: string, tenantId: string): Promise<NodeStatus> {
+  try {
+    const status = await getConnectionStatus(provider, tenantId);
+    return status.connected || status.viaRouting ? "connected" : "disconnected";
+  } catch (e: unknown) {
+    console.warn(`[dashboard] connection status failed for ${provider}:`, e);
+    return "disconnected";
+  }
+}
 
 /**
  * Connection status per data-source provider, from the control-plane's
@@ -363,9 +571,15 @@ import type { NodeStatus } from "@/app/(app)/dashboard/partials/redesign/MemoryF
  * still counts as connected: memory is flowing in either way. A failed read
  * stays "disconnected" — the graph has no third state, and the Integrations
  * page is where a degraded connection gets explained properly.
+ *
+ * The catalog is read first, and a framework provider it does not list is
+ * never asked for: the backend has no routes for it, so the read could only
+ * 404 into a node nobody here can connect (review-reported). A failed
+ * catalog read asks for everything, as before — a failed read must not hide
+ * a live connector.
  */
-export function useDataSourceStatuses(providers: string[], tenantId: string | null): Record<string, NodeStatus> {
-  const [statuses, setStatuses] = useState<Record<string, NodeStatus>>({});
+export function useDataSourceStatuses(providers: string[], tenantId: string | null): Record<string, DataSourceNodeStatus> {
+  const [statuses, setStatuses] = useState<Record<string, DataSourceNodeStatus>>({});
   // Providers is a fresh array each render; the joined key keeps the effect from
   // refiring on identity alone.
   const providerKey = providers.join(",");
@@ -377,19 +591,19 @@ export function useDataSourceStatuses(providers: string[], tenantId: string | nu
       return;
     }
     const list = providerKey === "" ? [] : providerKey.split(",");
-    Promise.all(
-      list.map(async (provider): Promise<[string, NodeStatus]> => {
-        try {
-          const status = await getConnectionStatus(provider, tenantId);
-          return [provider, status.connected || status.viaRouting ? "connected" : "disconnected"];
-        } catch (e: unknown) {
-          console.warn(`[dashboard] connection status failed for ${provider}:`, e);
-          return [provider, "disconnected"];
-        }
-      }),
-    ).then((entries) => {
-      if (!cancelled) setStatuses(Object.fromEntries(entries));
-    });
+    void getConnectorCatalog()
+      .then((catalog) =>
+        Promise.all(
+          list.map(async (provider): Promise<[string, DataSourceNodeStatus]> => {
+            const cfg = DATA_SOURCE_CARDS.find((card) => card.key === provider);
+            if (cfg && isOffered(cfg, catalog) === false) return [provider, "absent"];
+            return [provider, await readNodeStatus(provider, tenantId)];
+          }),
+        ),
+      )
+      .then((entries) => {
+        if (!cancelled) setStatuses(Object.fromEntries(entries));
+      });
     return () => { cancelled = true; };
   }, [providerKey, tenantId]);
 
@@ -411,6 +625,7 @@ import { trackEvent } from "@/modules/analytics";
 import { MAX_FILES_PER_UPLOAD } from "@/modules/ingestion/uploadLimits";
 import { useBrainUpload } from "@/modules/ingestion/useBrainUpload";
 import createDataset from "@/modules/datasets/createDataset";
+import { describeProcessingError } from "@/app/(app)/datasets/processingErrorMessage";
 import { loadGraphModelsConfig } from "@/modules/configuration/userConfiguration";
 import buildCognifyOptions from "@/modules/configuration/buildCognifyOptions";
 
@@ -498,11 +713,8 @@ export function useDatasetUpload(): DatasetUploadState {
       onProcessingError: (error) => {
         console.error("Dataset processing failed:", error);
         refreshDatasets();
-        notifications.show({
-          title: "Knowledge graph build failed",
-          message: `Files were added, but building the knowledge graph failed: ${error instanceof Error ? error.message : String(error)}`,
-          color: "red",
-        });
+        const { title, message, isTimeout } = describeProcessingError(error);
+        notifications.show({ title, message, color: isTimeout ? "yellow" : "red" });
       },
     });
   }
@@ -564,114 +776,339 @@ export function useDatasetUpload(): DatasetUploadState {
 
 ```
 
-### Core Architecture Module: `cognee-frontend/src/app/(app)/dashboard/hooks/useOnboardingRedirect.ts`
+### Core Architecture Module: `cognee-frontend/src/app/(app)/memory-gap-analysis/hooks/useCoverageRuns.ts`
 ```
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useQueries, useQueryClient, type UseQueryResult } from "@tanstack/react-query";
+import { trackEvent } from "@/modules/analytics";
+import { HttpError } from "@/services/http/errors";
 import { useCogniInstance, useTenant } from "@/modules/tenant/TenantProvider";
-import { useUser } from "@/modules/users/UserContext";
+import { useFilter } from "@/ui/layout/FilterContext";
+import isCloudEnvironment from "@/utils/isCloudEnvironment";
+import type { Brain, BrainLoadState, CoverageResult } from "@/app/(app)/memory-gap-analysis/types";
 
-/**
- * Side-effect-only hook. Onboarding is shown exactly once per user, ever —
- * right after welcome, never re-forced based on activity, and never reset
- * by creating or switching workspaces. onboardingCompletedAt (from /me) is
- * the only signal; there is no local fallback, so it survives sign-out and
- * follows the user across devices.
- */
-export function useOnboardingRedirect(): void {
-  const { isInitializing } = useCogniInstance();
-  const { tenant } = useTenant();
-  const { userMe } = useUser();
-  const router = useRouter();
-
-  useEffect(() => {
-    // tenant === null means a new user is in the provisioning flow —
-    // TenantProvider redirects to /welcome; don't race it here.
-    if (isInitializing || !tenant) return;
-    // userMe === null means /me hasn't resolved yet — an unknown, not an
-    // answer; redirecting on it would send an already-onboarded user into
-    // onboarding on every transient fetch delay.
-    if (userMe === null || userMe.onboardingCompletedAt) return;
-    router.replace("/onboarding");
-  }, [isInitializing, tenant, userMe, router]);
+/** Why a "Run analysis" click never became a run, and which brain it was for. */
+export interface RunStartFailure {
+  brainId: string;
+  message: string;
 }
 
+export interface CoverageRunsOptions {
+  /**
+   * Caps the fetch to the first `limit` datasets, in the order `useFilter`
+   * returns them, and confines `brains` to the same set. Omitted, the hook
+   * fetches and tracks every dataset. That is what Memory Gap Analysis needs:
+   * the full fan-out, one query per dataset, and it has to keep getting it.
+   * The dashboard passes this because its coverage panel only ever renders a
+   * handful of rows, so the rest of the workspace's datasets were requests it
+   * paid for and never showed.
+   */
+  limit?: number;
+}
+
+interface CoverageRuns {
+  /** The workspace's brains, each with its latest run and its own fetch state. */
+  brains: Brain[];
+  /** True while the workspace's dataset list itself is still loading. */
+  loading: boolean;
+  /** True when the dataset list could not be fetched at all. */
+  unavailable: boolean;
+  /** Re-fetches the latest run per brain — the retry behind every error state. */
+  refresh: () => void;
+  /** Starts a replay-and-judge run for one brain and begins polling it. */
+  startRun: (brainId: string) => Promise<void>;
+  /** The brain whose POST is in flight right now, if any. */
+  startingBrainId: string | null;
+  /** Set when the last start attempt was rejected; cleared once it is stale. */
+  runError: RunStartFailure | null;
+}
+
+// A run replays every distinct question the brain was ever asked, so it takes
+// minutes. The backend answers the POST immediately with a pending row and
+// does the work in the background; this is how often we ask whether it landed.
+const RUN_POLL_INTERVAL_MS = 4_000;
+// A cold or loaded pod can be slow to answer (see COG-5722); a background poll
+// should not report failure just because the pod took its time.
+const COVERAGE_FETCH_TIMEOUT_MS = 25_000;
+
+/**
+ * What to tell the user per status, instead of the server's own words.
+ *
+ * A 401 is not a failed run, it is a session that ended, and rendering the
+ * pod's "Not authenticated" under "Couldn't start the run" sends the user
+ * looking for a problem with their dataset.
+ */
+const START_FAILURE_MESSAGE: Record<number, string> = {
+  401: "Your session has expired. Reload the page and sign in again.",
+  403: "You do not have permission to run analysis on this dataset.",
+  404: "This dataset no longer exists.",
+  409: "A run is already in progress for this dataset.",
+};
+// A gateway answers with an HTML page, not a sentence; its markup is never the
+// reason we show, and even a plain-text body has to stay one line.
+const MAX_SERVER_MESSAGE_LENGTH = 160;
+
+/** Only this page starts runs, so its name is the one on the events. */
+const RUN_PAGE_NAME = "MemoryGapAnalysis";
+
+type CoverageQuery = UseQueryResult<CoverageResult | null, Error>;
+
+/** One brain's query, reduced to what the page reads off it. */
+interface BrainState {
+  result: CoverageResult | null;
+  state: BrainLoadState;
+  isRunning: boolean;
+}
+
+function isInFlight(result: CoverageResult | null | undefined): boolean {
+  return result?.run.status === "pending" || result?.run.status === "running";
+}
+
+/**
+ * One brain's own fetch state — never the page's. A retry after a failure keeps
+ * react-query's status on "error" for as long as the refetch runs, so a failed
+ * query that is fetching again reads as loading: that is what makes a Retry
+ * click visibly do something.
+ */
+function loadStateFor(query: CoverageQuery | undefined): BrainLoadState {
+  if (query === undefined || query.isPending) return "loading";
+  if (query.isError) return query.isFetching ? "loading" : "error";
+  return "loaded";
+}
+
+function startFailureMessage(error: unknown): string {
+  if (error instanceof HttpError) {
+    const mapped = START_FAILURE_MESSAGE[error.status];
+    if (mapped !== undefined) return mapped;
+    const body = error.message.trim();
+    const usable = body !== "" && !body.startsWith("<") && body.length <= MAX_SERVER_MESSAGE_LENGTH;
+    return usable ? body : `The workspace could not start the run (${error.status}).`;
+  }
+  if (error instanceof Error && error.message.length <= MAX_SERVER_MESSAGE_LENGTH) return error.message;
+  return "The workspace could not start the run.";
+}
+
+/**
+ * Latest coverage run per brain, for the Memory Gap Analysis page and the
+ * dashboard's Memory Coverage panel. The dashboard passes `limit` to bound it
+ * to the rows it actually shows, so opening it does not fetch one query per
+ * dataset in the whole workspace.
+ *
+ * Both halves are real: the brain list is the tenant's datasets, and each
+ * brain's result comes from `GET /v1/datasets/{id}/coverage` on the tenant
+ * pod. A brain that has never been scored returns null rather than an error,
+ * which is what the page's empty state reads.
+ *
+ * While a run is pending or running the query polls, so the page fills in on
+ * its own once the backend finishes — the user does not have to reload.
+ *
+ * Everything per-brain stays per-brain: one dataset's failed fetch or running
+ * run says nothing about the others, and reporting either page-wide is what
+ * let a partial outage read as healthy (CLO-726).
+ */
+export function useCoverageRuns(options: CoverageRunsOptions = {}): CoverageRuns {
+  const { limit } = options;
+  const { datasets, loading, datasetsUnavailable, refreshDatasets } = useFilter();
+  const { cogniInstance, isInitializing } = useCogniInstance();
+  const { tenantReady } = useTenant();
+  const queryClient = useQueryClient();
+  const [runError, setRunError] = useState<RunStartFailure | null>(null);
+  const [startingBrainId, setStartingBrainId] = useState<string | null>(null);
+  // State lands a render late, so a second click inside the same tick would
+  // still see `startingBrainId === null`. The ref is what actually guards the
+  // POST, and a duplicate run is minutes of replay against the LLM.
+  const startingRef = useRef<string | null>(null);
+
+  // The local SDK does not serve the Cloud coverage endpoints.
+  const ready = isCloudEnvironment() && !!cogniInstance && !isInitializing && tenantReady;
+
+  // Sliced once and reused below for both the query list and `brains`, rather
+  // than calling `.slice(0, limit)` again at each site: two calls in the same
+  // render return equal but distinct arrays, which would give `brains`'s own
+  // memo below a new dependency every render for no reason. Equal to
+  // `datasets` itself, not a copy of it, when `limit` is omitted, so the
+  // unbounded call this hook always supported stays on the exact array
+  // identity it always had.
+  const activeDatasets = useMemo(
+    () => (limit === undefined ? datasets : datasets.slice(0, limit)),
+    [datasets, limit],
+  );
+
+  const brainStates = useQueries({
+    queries: activeDatasets.map((dataset) => ({
+      queryKey: ["coverage-run", dataset.id],
+      queryFn: async ({ signal }: { signal: AbortSignal }): Promise<CoverageResult | null> => {
+        if (!cogniInstance) throw new Error("cogniInstance unavailable");
+        const init: RequestInit & { timeoutMs?: number } = { signal, timeoutMs: COVERAGE_FETCH_TIMEOUT_MS };
+        // The pod client rejects on any non-2xx (services/http/client), so a
+        // failed fetch is already this query's error — there is no non-ok
+        // Response to check for here.
+        const response = await cogniInstance.fetch(`/v1/datasets/${dataset.id}/coverage`, init);
+        // The endpoint returns null for a brain that has never been scored,
+        // which is a valid answer rather than a missing one.
+        return (await response.json()) as CoverageResult | null;
+      },
+      enabled: ready,
+      // Poll only while something is actually in flight, so an idle page
+      // costs one request per brain rather than one every few seconds.
+      refetchInterval: (query: { state: { data?: CoverageResult | null } }) =>
+        isInFlight(query.state.data) ? RUN_POLL_INTERVAL_MS : false,
+      staleTime: 15_000,
+      retry: false,
+    })),
+    // `useQueries` hands back a new array on every render, which defeated every
+    // memo downstream. The combined value is structurally shared, so the
+    // derivations below only recompute when a query actually changed.
+    combine: (results): BrainState[] =>
+      results.map((query) => ({
+        result: query.data ?? null,
+        state: loadStateFor(query),
+        isRunning: isInFlight(query.data),
+      })),
+  });
+
+  const brains: Brain[] = useMemo(
+    () =>
+      activeDatasets.map((dataset, index) => ({
+        id: dataset.id,
+        name: dataset.name,
+        result: brainStates[index]?.result ?? null,
+        state: brainStates[index]?.state ?? "loading",
+        isRunning: brainStates[index]?.isRunning ?? false,
+      })),
+    [activeDatasets, brainStates],
+  );
+
+  // A start failure describes one click on one brain. Once that brain reports a
+  // run in flight the POST evidently landed (a slow gateway can reject the
+  // response after the pod queued the work), and once the brain is gone the
+  // message belongs to nothing at all — a workspace switch used to bring a
+  // minutes-old failure back on screen.
+  useEffect(() => {
+    if (runError === null) return;
+    // Existence is asked of the workspace's dataset list, not of `brains`: with
+    // `limit` set, `brains` is only the fetched window, and a failure for a
+    // dataset outside 
 ```
 
 ### Core Architecture Module: `cognee-frontend/src/app/(setup)/onboarding/hooks/useAgentConnectionDetection.ts`
 ```
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { CogneeInstance } from "@/modules/instances/types";
-import getDatasets from "@/modules/datasets/getDatasets";
-import { getDatasetDataCount } from "@/modules/datasets/getDatasetData";
 import { listSessions, SEARCH_SESSION_PREFIX } from "@/modules/sessions/getSessions";
+import type { SessionRow } from "@/modules/sessions/getSessions";
+import { sessionIntegrationKey } from "@/modules/agents/getAgentConnections";
+import type { AgentIntegrationKey } from "@/modules/agents/getAgentConnections";
+import { useBoundedPoll } from "@/utils/useBoundedPoll";
 
-// Detects agent activity while either the Upload or Recall step is active.
-// There is NO generic "did we get an API call" endpoint, so we watch two
-// concrete signals and flip on whichever appears first:
-//   • a NEW session  → recall / session-scoped calls (carry a session_id)
-//   • NEW data docs  → graph-direct uploads (no session_id, so no session)
-// Both are baselined when the step opens so only activity AFTER that counts.
+// Detects agent activity while either the Upload or Recall step is active,
+// by watching for a NEW session (a session_id proves an agent conversation).
+// Baselined when the step opens so only activity AFTER that counts.
+//
+// Used to also watch dataset doc counts, as graph-direct uploads carry no
+// session_id. Dropped (CLO-989): GET /v1/datasets/{id}/data/count 405s on at
+// least one live pod, and the fallback it triggers (getDatasetDataCount's own
+// "list up to 1000 rows and count them" path) ran every poll on top of it,
+// twice the pod load of the sessions check for a signal the plugin's own
+// SessionStart hook makes redundant anyway, it always opens a session, so
+// "first memory saved" never needed the docs path to be reachable.
+const POLL_INTERVAL_MS = 7000;
+const MAX_POLLS = 85; // ~10 min at 7s
+
+function realSessionIds(rows: { session_id: string }[]): string[] {
+  return rows.map((s) => s.session_id).filter((id) => !id.startsWith(SEARCH_SESSION_PREFIX));
+}
+
+/** `realSessionIds`, narrowed to sessions this agent's own plugin opened.
+ *  Without this, a Codex session opened while the Claude Code tutorial step
+ *  is on screen (or a Cursor/Search session with no agent at all) satisfied
+ *  the "a new session appeared" check and confirmed the wrong tutorial. */
+function ownAgentSessionIds(rows: { session_id: string }[], agent: AgentIntegrationKey): string[] {
+  return realSessionIds(rows).filter((id) => sessionIntegrationKey(id) === agent);
+}
+
+/** Which signal proved the agent is talking to Cognee. A plain boolean until
+ *  there is a second signal worth telling apart in analytics again. */
+export type AgentActivitySignal = "session" | null;
+
+export interface AgentActivityState {
+  signal: AgentActivitySignal;
+  /** Sessions from this hook's own poll, exposed so a caller that also wants
+   *  "last seen" or "is it running" (see useAgentConnectionState) doesn't
+   *  have to stand up a second sessions poll next to this one. Empty until
+   *  the first poll resolves. Keeps refreshing after `signal` is set, until
+   *  the poll's bound runs out. */
+  sessions: SessionRow[];
+  /** True once the bounded poll has run out: `sessions` is then the last
+   *  answer, no longer a live one, so nothing should present it as "now". */
+  stale: boolean;
+}
+
 export function useAgentConnectionDetection(
   cogniInstance: CogneeInstance | null,
   active: boolean,
-): boolean {
-  const [connectVerified, setConnectVerified] = useState(false);
+  agent: AgentIntegrationKey,
+  attempt = 0,
+): AgentActivityState {
+  const [signal, setSignal] = useState<AgentActivitySignal>(null);
+  const [sessions, setSessions] = useState<SessionRow[]>([]);
+  const runKey = `${cogniInstance?.instanceId ?? ""}:${agent}:${attempt}`;
 
   useEffect(() => {
-    if (!active || !cogniInstance || connectVerified) return;
-    let cancelled = false;
+    setSignal(null);
+    setSessions([]);
+  }, [active, runKey]);
+
+  // A fresh baseline per run, held in a plain closure the way a hand-written
+  // poll loop would, useBoundedPoll calls this once when a run starts and
+  // reuses the function it returns for every poll in that run.
+  const makeCheck = useCallback(() => {
+    // Baselined off the first (and, thanks to useBoundedPoll never
+    // overlapping checks, only ever one in flight at a time) response for
+    // this run. A session that starts after that request left the pod but
+    // before it answered is not in this baseline, it becomes "new" on the
+    // very next poll instead, which is a bounded, known delay rather than a
+    // coin flip between two concurrent requests answering out of order.
     let primed = false;
-    const baselineSessions = new Set<string>();
-    let baselineDocs = -1;
+    const baselineSessionIds = new Set<string>();
 
-    const realSessionIds = (rows: { session_id: string }[]) =>
-      rows.map((s) => s.session_id).filter((id) => !id.startsWith(SEARCH_SESSION_PREFIX));
+    return async (isStopped: () => boolean) => {
+      if (!cogniInstance) return;
+      const page = await listSessions(cogniInstance, { range: "24h", limit: 50 }).catch((err) => {
+        console.warn("Onboarding progress check: sessions fetch failed", err);
+        return null;
+      });
+      if (isStopped() || !page) return;
+      // A swallowed failure (see FAILED_PAGE) answers with an empty list, not
+      // "there really is nothing here" — priming the baseline off it would
+      // baseline as empty, and the very next successful poll would then read
+      // every pre-existing session as brand new. Nor may it replace the last
+      // good `sessions`, which running/lastSeenAt still read while this poll
+      // keeps trying: swapping them for [] would blank both over one blip.
+      if (page.failed) return;
 
-    // Doc count of the default dataset (the onboarding target). -1 = unknown.
-    async function docCount(): Promise<number> {
-      try {
-        const datasets = await getDatasets(cogniInstance!);
-        if (!Array.isArray(datasets) || datasets.length === 0) return 0;
-        const target = datasets.find((d: { name?: string }) => d.name === "default_dataset") ?? datasets[0];
-        if (!target?.id) return 0;
-        return await getDatasetDataCount(target.id, cogniInstance!);
-      } catch {
-        return -1;
-      }
-    }
-
-    async function check() {
-      const [page, docs] = await Promise.all([
-        listSessions(cogniInstance!, { range: "24h", limit: 50 }).catch((err) => {
-          console.warn("Onboarding progress check: sessions fetch failed", err);
-          return null;
-        }),
-        docCount(),
-      ]);
-      if (cancelled) return;
-      const ids = page ? realSessionIds(page.sessions) : [];
+      setSessions(page.sessions);
+      const ids = ownAgentSessionIds(page.sessions, agent);
       if (!primed) {
-        ids.forEach((id) => baselineSessions.add(id));
-        baselineDocs = docs;
+        ids.forEach((id) => baselineSessionIds.add(id));
         primed = true;
         return;
       }
-      const newSession = ids.some((id) => !baselineSessions.has(id));
-      const newDocs = docs >= 0 && baselineDocs >= 0 && docs > baselineDocs;
-      if (newSession || newDocs) setConnectVerified(true);
-    }
+      if (ids.some((id) => !baselineSessionIds.has(id))) setSignal("session");
+    };
+  }, [cogniInstance, agent]);
 
-    check();
-    const id = setInterval(check, 7000);
-    return () => { cancelled = true; clearInterval(id); };
-  }, [active, cogniInstance, connectVerified]);
+  // Bounded, not gated on `signal`: the sessions it keeps refreshing are what
+  // "running" and "last seen" read while the step stays open, so stopping at
+  // the first session would freeze both at that moment. ~10 minutes at 7s
+  // still caps the load for a tab nobody closes; `stale` says when it ran out.
+  const stale = useBoundedPoll(active && !!cogniInstance, runKey, makeCheck, POLL_INTERVAL_MS, MAX_POLLS);
 
-  return connectVerified;
+  return { signal, sessions, stale };
 }
 
 ```
@@ -680,15 +1117,22 @@ export function useAgentConnectionDetection(
 ```
 import { hsl } from "d3-color";
 import type { BusinessGraphNode, BusinessGraphLink } from "./types";
-import type { BusinessEntity, SemanticLink, TypeNode, TypeLink, Anchor, BrainState } from "./sceneTypes";
+import type { BusinessEntity, SemanticLink, TypeNode, TypeLink, BrainState } from "./sceneTypes";
 import { topImportanceCut } from "./canvas/businessEntityLayer";
 import { computeConnectedIds } from "./canvas/businessGraphFocus";
+import { isCodeNode, normalizeCodeNodes } from "./codeGraph";
+import { endId } from "./linkEndpoint";
+import { normalizeStructuredNodes, structuredTypeName } from "./structuredGraph";
+import { groupStructuredSources } from "./structuredSources";
+import { assignTypeColors, createSourceEncoding, createTypeEncoding } from "./colorEncoding";
+import { resolveLayoutGroups } from "./layoutGroups";
+import { buildLayoutAnchors } from "./layoutAnchors";
 
 // A synthetic source for content ingested with no node_set at all — the
 // product's own manual-upload path (rememberData.ts) never sends node_set,
 // so a directly-uploaded file's entities/documents used to have NO source
 // at all: no Sources tile, no hull, no anchor (they defaulted to world
-// origin, per anchorOf), invisible to a focus lens. Attributing them here
+// origin, per buildLayoutAnchors), invisible to a focus lens. Attributing them here
 // instead of returning [] means every downstream consumer of setsOf —
 // coloring, hulls, filaments, plumbing, the hub metric, the focus lens —
 // picks this up for free, without each needing its own "no source" branch
@@ -753,14 +1197,6 @@ export function sourceTooltipLabel(name: string): string {
   return label === name ? name : `${label} · ${name}`;
 }
 
-// Session-memory sets wear the AGENT color family (amber): this memory
-// exists because agents talked. Shades keep the three layers apart.
-const AGENT_SET_SHADES: Record<string, string> = {
-  session_learnings: "#F5A83C",
-  user_sessions_from_cache: "#E08E1B",
-  agent_trace_feedbacks: "#FFC46B",
-};
-
 function hueDistance(a: number, b: number): number {
   const d = Math.abs(a - b) % 360;
   return d > 180 ? 360 - d : d;
@@ -813,10 +1249,11 @@ function buildSourceColors(
   srcNames.forEach((s, i) => {
     colors[s] = colorForSet(s, i, colorsMap);
   });
-  sessionSetNodes.forEach((n) => {
+  // A session set no entity is tagged with yet still needs a color of its own.
+  // It gets one like any other source: amber is kept for what is live now.
+  sessionSetNodes.forEach((n, i) => {
     const name = n.name as string;
-    const base = Object.keys(AGENT_SET_SHADES).find((k) => name.indexOf(k) === 0);
-    colors[name] = (base && AGENT_SET_SHADES[base]) || "#F5A83C";
+    if (!colors[name]) colors[name] = colorForSet(name, srcNames.length + i, colorsMap);
   });
   return colors;
 }
@@ -827,25 +1264,9 @@ function countBySet(nodes: BusinessGraphNode[]): Record<string, number> {
   return counts;
 }
 
-// Circular layout for sources; session-memory sets get their own arc BELOW
-// the sources — without an anchor those entities all pull to (0,0) and bury
-// the center.
-function buildAnchors(srcNames: string[], sessionNames: string[]): Record<string, Anchor> {
-  const anchors: Record<string, Anchor> = {};
-  srcNames.forEach((s, i) => {
-    const angle = (i / Math.max(srcNames.length, 1)) * Math.PI * 2 - Math.PI / 2;
-    const r = srcNames.length > 1 ? 300 : 0;
-    anchors[s] = { x: Math.cos(angle) * r * 1.25, y: Math.sin(angle) * r * 0.6 };
-  });
-  sessionNames.forEach((name, i) => {
-    const spread = (i - (sessionNames.length - 1) / 2) * 0.55;
-    anchors[name] = { x: Math.sin(spread) * 480, y: 430 + Math.abs(spread) * 60 };
-  });
-  return anchors;
-}
-
-function endId(v: unknown): string {
-  return typeof v === "object" && v !== null ? String((v as { id: string }).id) : String(v);
+// How many of `links` touch the entity, for the panel and tooltip counts.
+export function countLinksTouching(links: SemanticLink[], id: string): number {
+  return links.filter((l) => l._sid === id || l._tid === id).length;
 }
 
 function withEndpointIds<T extends BusinessGraphLink>(links: T[]): (T & { _sid: string; _tid: string })[] {
@@ -855,12 +1276,15 @@ function withEndpointIds<T extends BusinessGraphLink>(links: T[]): (T & { _sid: 
 // The business-model (L0) layer: entity TYPES and how they relate —
 // "campaign generates customer", not individual campaigns. Types float at
 // the centroid of their members, computed each draw frame by the canvas.
+// `typeEdges` is the drawn graph (graphLinks), not insight links: for a
+// structured dataset the schema (rows belong to a table) is the model, so
+// those edges are kept here on purpose even though insights exclude them.
 function buildTypeLayer(
   entities: BusinessEntity[],
   links: (BusinessGraphLink & { _sid: string; _tid: string })[],
   byId: Record<string, BusinessGraphNode>,
-  semanticLinks: SemanticLink[],
-): { typeNodes: TypeNode[]; typeLinks: TypeLink[] } {
+  typeEdges: SemanticLink[],
+): { typeNodes: TypeNode[]; typeLinks: TypeLink[]; entityType: Record<string, string> } {
   const typeName: Record<string, string> = {};
   links.forEach((l) => {
     const s = byId[l._sid], t = byId[l._tid];
@@ -870,17 +1294,34 @@ function buildTypeLayer(
     }
   });
 
+  // entity_type is present on EVERY node since cognee 1.6.1 (falling back to
+  // the node's own class name — "Entity" — when no is_a edge resolved a real
+  // type), not only on code nodes. Trusting it for an ordinary entity would
+  // surface that literal "Entity" as its own Types-rail tile on every graph;
+  // a code node has no such ambiguity, entity_type there always carries its
+  // actual class (CodeSymbol, CodeModule, …), so this only reads it there.
+  function typeOf(id: string): string {
+    if (typeName[id]) return typeName[id];
+    const node = byId[id];
+    const structuredType = node && structuredTypeName(node);
+    if (structuredType) return structuredType;
+    if (node && isCodeNode(node) && node.entity_type) return node.entity_type;
+    return "other";
+  }
+
   const buckets: Record<string, TypeNode> = {};
+  const entityType: Record<string, string> = {};
   entities.forEach((n) => {
-    const tn = typeName[n.id] || "other";
+    const tn = typeOf(n.id);
+    entityType[n.id] = tn;
     const bucket = (buckets[tn] = buckets[tn] || { name: tn, members: [], sets: {} });
     bucket.members.push(n);
     setsOf(n).forEach((s) => { bucket.sets[s] = (bucket.sets[s] || 0) + 1; });
   });
 
   const links2: Record<string, TypeLink> = {};
-  semanticLinks.forEach((l) => {
-    const a = typeName[l._sid] || "other", b = typeName[l._tid] || "other";
+  typeEdges.forEach((l) => {
+    const a = typeOf(l._sid), b = typeOf(l._tid);
     if (a === b) return;
     const relation = l.relation || "related";
     const key = `${a}→${b}|${relation}`;
@@ -888,7 +1329,7 @@ function buildTypeLayer(
     slot.count += 1;
   });
 
-  return { typeNodes: Object.values(buckets), typeLinks: Object.values(links2) };
+  return { typeNodes: Object.values(buckets), typeLinks: Object.values(links2), entityType };
 }
 
 const HUB_MIN_DEGREE = 2;
@@ -900,54 +1341,7 @@ const HUB_MIN_DEGREE = 2;
 // rather than surface a meaningless hub.
 function computeHubInsight(
   semanticLinks: SemanticLink[],
-  byId: Record<string, BusinessGraphNode>,
-): BrainState["hub"] {
-  const degree: Record<string, number> = {};
-  const touchedSets: Record<string, Set<string>> = {};
-  semanticLinks.forEach((l) => {
-    const sSets = setsOf(byId[l._sid] || ({} as BusinessGraphNode));
-    const tSets = setsOf(byId[l._tid] || ({} as BusinessGraphNode));
-    [l._sid, l._tid].forEach((id) => {
-      degree[id] = (degree[id] || 0) + 1;
-      const bucket = (touchedSets[id] = touchedSets[id] || new Set());
-      sSets.forEach((s) => bucket.add(s));
-      tSets.forEach((s) => bucket.add(s));
-    });
-  });
-  let bestId: string | null = null;
-  let bestDegree = 0;
-  Object.entries(degree).forEach(([id, d]) => 
-```
-
-### Core Architecture Module: `cognee-frontend/src/modules/business/panels/BusinessEmptyState.tsx`
-```
-"use client";
-
-import { usePrefersReducedMotion } from "@/modules/business/usePrefersReducedMotion";
-
-// The sad counterpart to BusinessLoading's breathing, converging graph: two
-// nodes reaching for each other over a dashed line that never resolves into
-// a real edge, with a third drooping below as if it gave up. Sits over
-// BusinessCanvas's ambient starfield, which keeps rendering underneath
-// regardless of this state.
-export default function BusinessEmptyState({ label }: { label: string }): React.JSX.Element {
-  const reducedMotion = usePrefersReducedMotion();
-  const driftClass = reducedMotion ? "" : "animate-pulse";
-
-  return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center">
-      <svg width="88" height="88" viewBox="0 0 88 88" fill="none" aria-hidden="true">
-        <line x1="26" y1="28" x2="60" y2="32" stroke="#7E8CA6" strokeOpacity="0.3" strokeWidth="1.5" strokeDasharray="3 5" />
-        <line x1="26" y1="28" x2="34" y2="62" stroke="#7E8CA6" strokeOpacity="0.18" strokeWidth="1.5" strokeDasharray="2 6" />
-        <circle cx="26" cy="28" r="5" fill="#7E8CA6" fillOpacity="0.55" className={driftClass} />
-        <circle cx="60" cy="32" r="4" fill="#7E8CA6" fillOpacity="0.35" className={`${driftClass} delay-300`} />
-        <circle cx="34" cy="62" r="3.5" fill="#7E8CA6" fillOpacity="0.25" className={`${driftClass} delay-150`} />
-      </svg>
-      <span className="max-w-[280px] text-sm text-[#7E8CA6]">{label}</span>
-    </div>
-  );
-}
-
+  byId: Record<string, Busines
 ```
 
 
@@ -956,11 +1350,11 @@ export default function BusinessEmptyState({ label }: { label: string }): React.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5686** (2026-10-13): **[Bug]: remove_disconnected_chunks looks up edges the graph no longer writes, then deletes unrelated nodes**
-  *Symptoms*: ### Bug Description  `remove_disconnected_chunks` (`cognee/tasks/chunks/remove_disconnected_chunks.py`) is a public task, exported from `cognee/tasks/chunks/` and listed in `cognee/tasks/README.md`. It no longer matches the graph the current pipeline writes, and after that miss it deletes every node the adapter reports as having no edges.  The default cognify pipeline does not call this task. A custom pipeline that includes it will mis-clean the graph.  The task queries `has_chunk` and `next_chunk`, then reads `chunk["uuid"]`. After that it calls `get_disconnected_nodes()` and deletes whatever comes back.  Three things are wrong on current `dev`:  1. Chunk membership is an `is_part_of` edge from the chunk to the document. `has_chunk` and `next_chunk` are not written anywhere else in the repository, so the lookup finds nothing on a graph built by the current pipeline. 2. Ladybug `get_successors` returns node dicts keyed by `id`. `DocumentChunk` has no `uuid` field, so a hit raises `KeyError` instead of identifying the chunk. 3. After that miss, the task deletes every node `get_disconnected_nodes()` returns, including nodes that are not chunks of the documents in this batch.  ### Steps to Reproduce  1. Build a graph with the current pipeline (`remember`, or `add` plus `cognify`) so chunks hang off their document by `is_part_of` and node identity is `id`. 2. Run `remove_disconnected_chunks` over those `DocumentChunks`, either from a custom pipeline or a direct call. 3. Inspect w
+- **Issue #6301** (2026-10-29): **[Bug]: S3FileStorage.list_files() hides backend failures as an empty result**
+  *Symptoms*: ### Bug Description  `S3FileStorage.list_files()` catches every exception raised by `s3.glob()` or `s3.isfile()` and returns `[]`. This makes permission errors, transient network failures, and endpoint problems indistinguishable from a genuinely empty directory. Callers that use the listing as a source-of-truth inventory can silently proceed with incomplete or missing data instead of surfacing the storage failure.  ### Steps to Reproduce  1. Configure S3FileStorage with a bucket/prefix. 2. Make the listing call fail (for example, use mocked s3.glob() that raises PermissionError or a connection exception). 3. Call await storage.list_files("some-prefix"). 4. Observe that the call returns [] instead of propagating the backend error.  ### Expected Behavior  Return an empty list only when the requested directory/prefix is confirmed to contain no files. Propagate permission, transport, and other backend errors so callers can fail or retry instead of treating the data source as empty.  ### Actual Behavior  The exception is logged only at debug level and list_files() returns an empty list, hiding the reason the listing failed.  ### Environment  Current main checkout, cognee/infrastructure/files/storage/S3FileStorage.py, S3FileStorage.list_files().  ### Logs/Error Messages  ```shell  ```  ### Additional Context  The blanket except Exception around self.s3.glob() and self.s3.isfile() at the end of list_files_sync() swallows all backend failures. This differs from a confirmed empty pref
 
-- **Issue #5590** (2026-10-13): **[Bug]: Dataset API responses expose internal exception details**
-  *Symptoms*: ### Bug Description  The dataset list and create endpoints include the caught exception text in their HTTP 500 response. This can reveal internal database or configuration details to authenticated API callers. The error details should be logged server-side, while the API response should contain a generic message.  ### Steps to Reproduce  1. Start the Cognee API with authentication enabled. 2. Authenticate as a user. 3. Cause an internal error while retrieving datasets (for example, by making the relational database unavailable),     then request GET /api/v1/datasets. 4. Cause an internal error while creating a dataset, then request POST /api/v1/datasets. 5.Inspect the 500 response bodies.  ### Expected Behavior  Both endpoints return a generic error message. Detailed exception information is available only in server-side logs.  ### Actual Behavior  The response detail interpolates the caught exception text, potentially exposing internal implementation or infrastructure information.  ### Environment  - Repository: Cognee - Affected file: cognee/api/v1/datasets/routers/get_datasets_router.py - Affected handlers: get_datasets and create_new_dataset  ### Logs/Error Messages  ```shell No specific error message required; the issue occurs when either handler catches an exception and returns str(error) in the response detail. ```  ### Additional Context  Keep the existing HTTP 500 status and server-side diagnostics, but return a generic client-facing message.  ### Pre-submission Chec
+- **Issue #6235** (2026-10-29): **[Bug]: Google Drive connector never saves its cursor while one file fails to extract, so every sync re-downloads the whole folder**
+  *Symptoms*: ### Bug Description  In <i>**cognee/tasks/ingestion/connectors/google_drive.py**</i>, **_iter_rows** only saves page_token when the run had no failed file, on lines 296 and 355. That is meant to retry a transient extraction failure, but it cannot tell a transient failure from a permanent one, and some files never extract:  - a password protected PDF: pypdf raises **FileNotDecryptedError** - a Google Doc over Drive's 10 MB export limit: Drive answers 403 exportSizeLimitExceeded every time - a corrupt PDF  One such file in a folder pins the sync forever:  - **First sync never finishes.** page_token stays unset, so every later run is again a full listing that downloads and parses every file in the folder. - **Incremental sync never moves.** Once a changed file fails, page_token stays at the old value, so every run re-reads the change feed since then and downloads every file that changed since then. That backlog only grows.  The only sign is a warning on each run that the file was skipped, which reads as harmless: the sync finishes successfully, and nothing says the cursor was not saved or that the next run starts over. Rows still arrive and content hashes match, so nothing is cognified again. The cost is silent: Drive quota, bandwidth and run time on every sync, growing with folder size, and on a large folder it runs into Drive's rate limits.  ### Steps to Reproduce  1. Install cognee from dev with the google-drive extra. 2. In Google Drive, make a folder with two small text fil
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -977,1392 +1371,516 @@ export default function BusinessEmptyState({ label }: { label: string }): React.
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b063aea8` (2026-10-16)
-**Commit Message**: fix: Curate every new entry per distill run by default (SDK-1140) (#5935)
+### Incident Patch 1: `95ff9cfd` (2026-10-29)
+**Commit Message**: fix(conflicts): Retire choices a chunk edit loses (SDK-1328) (#6437)
 
 ## Description
 
-Follow-up to #5722. That PR capped a distill run at 20 curator batches
-(120 blocks) and sealed every gated entry the run loaded, curated or
-not. A session that gated more entries than the cap lost the rest for
-good: marked as distilled, never curated, with one log line as the only
-trace. With `improve()` on a daily schedule that is daily data loss on
-any active session.
+Stacked on #6401 (`feat/resolve-fact-conflicts`, at `b9e9b7770`, which
+includes #6434).
 
-**Default: no cap.** A run curates every new gated entry. Nothing is
-left pending and nothing is lost; the next run sees only entries created
-since.
+**Problem.** #6434 retires a user decision when `forget(data_id=...)` or
+a connector's orphan cleanup deletes the document behind its chosen
+fact. `update()`'s chunk-level path removes facts without deleting the
+document. An edit that removes the sentence behind the chosen fact
+deletes that fact with the chunk, and the decision stayed. Retrieval
+then kept saying "Accepted by user: X; ignore competing claims" with X
+gone, and the `superseded` marks kept hiding the competing facts that
+remain (review thread r57).
 
-**Cap as an opt-in setting.** `IMPROVE_DISTILL_MAX_BATCHES_PER_RUN` on
-`ImproveConfig`, default `0` meaning off. With a value, the run curates
-the most relevant entries that fit in that many batches (highest
-confidence, then most recent) and seals the rest uncurated, as #5722
-did. Setting it is the explicit choice to trade the overflow for a
-bounded run. The count sealed uncurated is on
-`DistillationResult.uncurated_entries` and on the improve stage result
-as `entries_uncurated`. The stage passes the run's frozen config to
-`distill_session`; SDK callers without the argument read
+**Fix.** `_run_incremental_update` calls the new
+`retire_decisions_after_edit` once `_write_and_publish` has written the
+edit:
+- It runs under the dataset lock and inside the run's error handling, so
+a failure is logged against the update run and raised.
+- It is skipped when the document is unchanged or the write failed.
+- It runs after the new chunks are extracted, so a fact the edit keeps,
+or states again, still exists and its decision stays.
 
-**File**: `cognee/modules/improve/config.py` (modified, +12/-0)
+The function calls #6434's `retire_forgotten_decisions` (
+
+**File**: `cognee/api/v1/update/incremental.py` (modified, +5/-0)
 ```diff
-@@ -17,6 +17,7 @@
-     IMPROVE_EFFECTIVE_DATE_KEY=effective_date  # document metadata source-date key
-     IMPROVE_TRACE_WINDOW_STEPS=30      # max agent trace steps per persisted document
-     IMPROVE_TRACE_WINDOWS_PER_RUN=10   # max agent trace documents per stage pass
-+    IMPROVE_DISTILL_MAX_BATCHES_PER_RUN=0  # curator batches per distill run; 0 = uncapped
- """
- 
- from functools import lru_cache
-@@ -55,6 +56,10 @@ class ImproveConfig(BaseSettings):
-     # Windows one persist_agent_traces pass may cognify; the rest of a backlog
-     # waits for the next improve().
-     trace_windows_per_run: int = 10
-+    # Session distillation curates every new gated entry of a session per run.
-+    # A cap curates only the most relevant entries that fit in this many curator
-+    # batches and seals the rest uncurated; 0 means no cap.
-+    distill_max_batches_per_run: int = 0
- 
-     model_config = SettingsConfigDict(env_prefix="IMPROVE_", extra="ignore")
- 
-@@ -88,6 +93,13 @@ def _entries_non_negative(cls, value: int) -> int:
-             raise ValueError("debounce_entries must be >= 0")
-         return value
- 
-+    @field_validator("distill_max_batches_per_run")
-+    @classmethod
-+    def _cap_non_negative(cls, value: int) -> int:
-+        if value < 0:
-+            raise ValueError("distill_max_batches_per_run must be >= 0 (0 = uncapped)")
-+        return value
-+
-     @field_validator("debounce_seconds")
-     @classmethod
-     def _seconds_non_negative(cls, value: float) -> float:
-```
-
-**File**: `cognee/modules/improve/stages.py` (modified, +7/-1)
-```diff
-@@ -319,13 +319,18 @@ async def run(self, inputs: ImproveRunInputs) -> StageResult:
-         distilled = 0
-         completed = 0
-         failed = 0
-+        uncurated = 0
-         last_error: BaseException | None = None
-         for session_id in inputs.session_ids:
-             try:
-                 result = await distill_session(
--                    session_id, dataset=inputs.dataset_id, user=inputs.user
-+                    session_id,
-+                    dataset=inputs.dataset_id,
-+                    user=inputs.user,
-+                    max_batches=inputs.config.distill_max_batches_per_run,
-                 )
-                 distilled += len(result.documents)
-+                uncurated += result.uncurated_entries
-                 if result.status == "completed":
-                     completed += 1
-                 logger.info(
-@@ -347,6 +352,7 @@ async def run(self, inputs: ImproveRunInputs) -> StageResult:
-             "documents": distilled,
-             "sessions_completed": completed,
-             "sessions_failed": failed,
-+            "entries_uncurated": uncurated,
-         }
-         if failed:
-             return StageResult.errored(self.name, last_error, **counts)
-```
-
-**File**: `cognee/modules/session_distillation/distill.py` (modified, +210/-65)
-```diff
-@@ -2,15 +2,20 @@
- 
- Flow (curator calls parallel by batch; accept/write calls parallel by lesson):
- 
--1. LOAD    distillable session-context entries the watermark does not cover + QA turns.
--2. CURATE  pack a bounded slice of them into batches; one curator LLM call per batch.
-+1. LOAD    distillable session-context entries the watermark does not cover, plus the
-+           QA turns from the turn that produced the earliest such entry onward (older
-+           turns were already curated with the entries they produced).
-+2. CURATE  pack them into batches; one curator LLM call per batch. Every new entry is
-+           curated unless ``IMPROVE_DISTILL_MAX_BATCHES_PER_RUN`` caps the run.
- 3. ACCEPT  per proposed lesson: search prior lessons/entities, then writer/rejecter LLM.
- 4. PERSIST render accepted lessons as documents; add + cognify them in one pass.
- 
--A failed curator batch or writer call drops only its own work mid-run, but the run then
--finishes by RAISING (after publishing what survived) instead of advancing the watermark:
--sealing entries behind calls that never ran would mark them distilled forever — one LLM
--outage on a finished session would silently lose its lessons.
-+An entry is sealed (added to the watermark) once its curator batch completed and the
-+run's surviving lessons are published, whatever the writer did with the lessons:
-+processed once is processed. A batch whose curator call failed seals nothing, so only its
-+entries come back next run; the run still finishes by RAISING after publishing what
-+survived, so the failure is reported. A run cut short by an exhausted LLM budget, in the
-+curator or the writer phase, seals nothing and re-raises, so improve can stop.
- """
- 
- import asyncio
-@@ -20,6 +25,7 @@
- from cognee.context_global_variables import session_user, set_database_global_context_variables
- from cognee.exceptions import CogneeValidationError
- from cognee.infrastructure.databases.vector import get_vector_engine_async
-+from cognee.infrastructure.llm.exceptions import LLMPaymentRequiredError
- from cognee.infrastructure.llm.LLMGateway import LLMGateway
- from cognee.infrastructure.llm.prompts import read_query_prompt
- from cognee.infrastructure.session.get_session_manager import get_session_manager
-@@ -41,6 +47,7 @@
- )
- from cognee.modules.data.methods import get_authorized_existing_datasets
- from cognee.modules.data.models import Dataset
-+from cognee.modules.improve.config import get_improve_config
- from cognee.modules.improve.constants import SESSION_LEARNINGS_NODE_SET
- from cognee.modules.truth_subspace.constants import truth_session_node_set
- from cognee.modules.users.methods import get_default_user
-@@ -53,7 +60,6 @@
-     CURATOR_CONCURRENCY,
-     GLOSSARY_ENTITIES_PER_LESSON,
-     MAX_CANDIDATE_CHARS,
--    MAX_CURATOR_BATCHES_PER_RUN,
-     MAX_QA_ANSWER_CHARS,
-     MAX_QA_FEEDBACK_CHARS,
-     MAX_QA_QUESTION_CHARS,
-@@ -69,7 +75,29 @@
- 
- 
- class DistillationCallsFailedError(RuntimeError):
--    """Some curator/writer LLM calls failed, so the run's watermark was left untouched."""
-+    """Some curator/writer LLM calls failed.
-+
-+    Entries of completed curator batches are sealed; entries of failed batches are
-+    left for the next run. Lessons lost to failed writer calls are not retried.
-+    """
-+
-+
-+@dataclass
-+class CuratorBatch:
-+    """One curator call's input and the gated entries it covers."""
-+
-+    text: str
-+    entry_ids: list[str]
-+
-+
-+@dataclass
-+class CuratorRun:
-+    """What the curator phase produced and which entries it got through."""
-+
-+    proposed: list[ProposedLesson]
-+    failed_batches: int
-+    curated_entry_ids: set[str]
-+    budget_exhausted: bool = False
- 
- 
- CURATOR_PROMPT_FILE = "session_distillation_curator_system.txt"
-@@ -96,12 +124,18 @@ def user_id(self) -> str:
-     def dataset_id(self) -> str:
-         return str(self.dataset.id)
- 
--    def result(self, status: str, documents: list[str] | None = None) -> DistillationResult:
-+    def result(
-+        self,
-+        status: str,
-+        documents: list[str] | None = None,
-+        uncurated_entries: int = 0,
-+    ) -> DistillationResult:
-         return DistillationResult(
-             session_id=self.session_id,
-             dataset_id=self.dataset_id,
-             status=status,
-             documents=documents or [],
-+            uncurated_entries=uncurated_entries,
-         )
- 
- 
-@@ -184,17 +218,43 @@ async def load_session_qa_rows(scope: SessionDistillationScope) -> list[dict]:
-     ]
- 
- 
-+def select_session_turns(
-+    qa_rows: list[dict],
-+    new_entries: list[SessionContextEntry],
-+) -> list[dict]:
-+    """Keep the QA turns from the one that produced the earliest new entry onward.
-+
-+    Turns carry no watermark; the entries do. The analysis that writes an entry runs
-+    while a turn is answered, before that turn's QA row is stored, and it judges the
-+    turn before. So the entry's timestamp falls after the turn it is about: start at
-+    the newest turn at or before the earliest new e
-```
-
-**File**: `cognee/modules/session_distillation/models.py` (modified, +4/-3)
-```diff
-@@ -28,9 +28,8 @@
- # blocks plus separators stays below the budget, so the batching logic can stay simple.
- BATCH_CHAR_BUDGET = 16_000
- CURATOR_BLOCKS_PER_BATCH = 6
--# One run curates at most this many batches, so a session that gates thousands of
--# entries stays bounded; entries past the bound are sealed by the watermark, not carried over.
--MAX_CURATOR_BATCHES_PER_RUN = 20
-+# A run curates every new gated entry unless ``IMPROVE_DISTILL_MAX_BATCHES_PER_RUN``
-+# caps it; entries past a cap are sealed by the watermark, not carried over.
- MAX_QA_QUESTION_CHARS = 1_200
- MAX_QA_ANSWER_CHARS = 1_200
- MAX_CANDIDATE_CHARS = 280
-@@ -107,3 +106,5 @@ class DistillationResult(BaseModel):
-         "no_accepted_lessons",
-     ]
-     documents: list[str] = Field(default_factory=list)
-+    # New gated entries sealed without curation because the run was capped.
-+    uncurated_entries: int = 0
-```
-
-**File**: `cognee/tests/unit/modules/improve/test_improve_config.py` (modified, +12/-0)
-```diff
-@@ -30,6 +30,7 @@ def test_defaults(monkeypatch):
-     assert config.debounce_seconds == 0.0
-     assert config.stages_disabled == []
-     assert config.feedback_alpha == DEFAULT_FEEDBACK_ALPHA == 0.1
-+    assert config.distill_max_batches_per_run == 0
- 
- 
- def test_env_prefix_and_csv_parsing(monkeypatch):
-@@ -72,6 +73,16 @@ def test_negative_debounce_rejected():
-         ImproveConfig(_env_file=None, debounce_seconds=-0.5)
- 
- 
-+def test_negative_distill_cap_rejected():
-+    with pytest.raises(ValueError, match="distill_max_batches_per_run"):
-+        ImproveConfig(_env_file=None, distill_max_batches_per_run=-1)
-+
-+
-+def test_distill_cap_reads_env(monkeypatch):
-+    monkeypatch.setenv("IMPROVE_DISTILL_MAX_BATCHES_PER_RUN", "3")
-+    assert ImproveConfig(_env_file=None).distill_max_batches_per_run == 3
-+
-+
- def test_config_declares_no_shared_knobs():
-     fields = set(ImproveConfig.model_fields)
-     assert fields == {
-@@ -84,6 +95,7 @@ def test_config_declares_no_shared_knobs():
-         "effective_date_key",
-         "trace_window_steps",
-         "trace_windows_per_run",
-+        "distill_max_batches_per_run",
-     }
-     for shared in ("triplet_embedding", "caching", "auto_feedback", "personalization_enabled"):
-         assert shared not in fields
-```
-
-**File**: `cognee/tests/unit/modules/session_distillation/test_distillation_helpers.py` (modified, +78/-11)
-```diff
-@@ -173,6 +173,73 @@ async def test_load_keeps_entry_rated_harmful_once_but_helpful_three_times(self,
-         assert [entry.content for entry in context_entries] == ["Survives."]
- 
- 
-+class TestSelectSessionTurns:
-+    def test_keeps_turns_from_the_one_before_the_earliest_new_entry_onward(self):
-+        # An entry is written after the turn it judges, so the newest turn before
-+        # the earliest new entry is the one that produced it and must be kept.
-+        entries = [
-+            _context_entry(created_at="2026-06-11T12:00:00+00:00"),
-+            _context_entry(created_at="2026-06-11T10:00:00.500000+00:00"),
-+        ]
-+        rows = [
-+            _qa_row("long before", time="2026-06-11T08:00:00+00:00"),
-+            _qa_row("producing", time="2026-06-11T10:00:00+00:00"),
-+            _qa_row("after", time="2026-06-11T15:00:00+00:00"),
-+        ]
-+
-+        kept = distill_module.select_session_turns(rows, entries)
-+
-+        assert [row["question"] for row in kept] == ["producing", "after"]
-+
-+    def test_no_turn_before_the_entry_keeps_the_rest(self):
-+        entries = [_context_entry(created_at="2026-06-11T10:00:00+00:00")]
-+        rows = [_qa_row("after", time="2026-06-11T11:00:00+00:00")]
-+
-+        assert distill_module.select_session_turns(rows, entries) == rows
-+
-+    def test_no_new_entries_keeps_every_turn(self):
-+        rows = [_qa_row("any", time="2026-06-11T09:00:00+00:00")]
-+
-+        assert distill_module.select_session_turns(rows, []) == rows
-+
-+    def test_entry_without_timestamp_keeps_every_turn(self):
-+        entries = [_context_entry(created_at="")]
-+        rows = [_qa_row("any", time="2026-06-11T09:00:00+00:00")]
-+
-+        assert distill_module.select_session_turns(rows, entries) == rows
-+
-+
-+class TestSelectCuratorInputs:
-+    def test_uncapped_returns_everything(self):
-+        entries = [_context_entry(confidence=0.8) for _ in range(50)]
-+        rows = [_qa_row(f"q{i}") for i in range(50)]
-+
-+        kept_rows, kept_entries = distill_module.select_curator_inputs(rows, entries, 0)
-+
-+        assert kept_rows == rows
-+        assert kept_entries == entries
-+
-+    def test_cap_keeps_the_most_confident_entries_then_recent_turns(self):
-+        sure = [_context_entry(confidence=0.99, content="sure")]
-+        bulk = [_context_entry(confidence=0.8, content=f"bulk {i}") for i in range(20)]
-+        rows = [_qa_row(f"q{i}", time=f"2026-06-11T10:{i:02d}:00+00:00") for i in range(10)]
-+
-+        kept_rows, kept_entries = distill_module.select_curator_inputs(rows, bulk + sure, 1)
-+
-+        assert len(kept_entries) == CURATOR_BLOCKS_PER_BATCH
-+        assert kept_entries[0].content == "sure"
-+        assert kept_rows == []
-+
-+    def test_cap_fills_leftover_blocks_with_the_most_recent_turns(self):
-+        entries = [_context_entry(confidence=0.9, content="one")]
-+        rows = [_qa_row(f"q{i}", time=f"2026-06-11T10:{i:02d}:00+00:00") for i in range(10)]
-+
-+        kept_rows, kept_entries = distill_module.select_curator_inputs(rows, entries, 1)
-+
-+        assert kept_entries == entries
-+        assert [row["question"] for row in kept_rows] == ["q5", "q6", "q7", "q8", "q9"]
-+
-+
- class TestBuildCuratorBatches:
-     def test_small_session_is_one_batch_with_turns_and_candidates(self):
-         context_entries = [_context_entry(content="Flashing wipes calibration.")]
-@@ -181,30 +248,30 @@ def test_small_session_is_one_batch_with_turns_and_candidates(self):
-         )
- 
-         assert len(batches) == 1
--        assert "User: How do I update firmware?" in batches[0]
--        assert f"Candidate {context_entries[0].id}" in batches[0]
--        assert "Flashing wipes calibration." in batches[0]
-+        assert "User: How do I update firmware?" in batches[0].text
-+        assert f"Candidate {context_entries[0].id}" in batches[0].text
-+        assert "Flashing wipes calibration." in batches[0].text
- 
-     def test_feedback_text_is_appended_to_the_turn_block(self):
-         batch = distill_module.build_curator_batches(
-             [_qa_row("Which port?", "8080.", feedback_text="Wrong, it is 9000.")], []
--        )[0]
-+        )[0].text
- 
-         assert (
-             batch
-             == "User: Which port?\nAssistant: 8080.\nUser feedback on this answer: Wrong, it is 9000."
-         )
- 
-     def test_turn_without_feedback_has_no_feedback_line(self):
--        batch = distill_module.build_curator_batches([_qa_row("Q?", "A.")], [])[0]
-+        batch = distill_module.build_curator_batches([_qa_row("Q?", "A.")], [])[0].text
- 
-         assert "User feedback on this answer" not in batch
- 
-     def test_feedback_text_is_normalized_and_capped(self):
-         batch = distill_module.build_curator_batches(
-             [_qa_row("Q?", "A.", feedback_text="  too   " + "w" * (MAX_QA_FEEDBACK_CHARS * 2))],
-             [],
--        )[0]
-+        )[0].text
- 
-         feedback_line = batch.split("User feedback on this answer: ", 1)[1]
-         assert feedback_line.startswith("too w")
-@@ -216,7 +283,7 
-```
-
-**File**: `cognee/tests/unit/modules/session_distillation/test_distillation_watermark.py` (modified, +315/-23)
-```diff
-@@ -93,6 +93,16 @@ async def unexpected(*args, **kwargs):
-     monkeypatch.setattr(distill_module, "accept_proposed_lessons", unexpected)
- 
- 
-+def _curator_run(context_entries, proposed=None, failed_batches=0, curated=None):
-+    """Stand-in for propose_lessons: by default every batch completed."""
-+    entries = context_entries if curated is None else curated
-+    return distill_module.CuratorRun(
-+        proposed=list(proposed or []),
-+        failed_batches=failed_batches,
-+        curated_entry_ids={entry.id for entry in entries},
-+    )
-+
-+
- def _install_manager(monkeypatch, manager):
-     monkeypatch.setattr(distill_module, "get_session_manager", lambda: manager)
- 
-@@ -125,7 +135,7 @@ async def test_watermark_is_scoped_to_the_target_dataset(monkeypatch, datasets):
- 
-     async def fake_propose(qa_rows, context_entries):
-         proposed.append([entry.id for entry in context_entries])
--        return [], 0
-+        return _curator_run(context_entries)
- 
-     monkeypatch.setattr(distill_module, "propose_lessons", fake_propose)
- 
-@@ -162,7 +172,7 @@ async def test_new_gated_entry_after_the_watermark_triggers_a_run(monkeypatch, d
- 
-     async def fake_propose(qa_rows, context_entries):
-         seen.append(sorted(entry.id for entry in context_entries))
--        return [], 0
-+        return _curator_run(context_entries)
- 
-     monkeypatch.setattr(distill_module, "propose_lessons", fake_propose)
- 
-@@ -188,7 +198,7 @@ async def test_no_proposed_lessons_advances_watermark_so_next_run_is_free(monkey
-     async def fake_propose(qa_rows, context_entries):
-         nonlocal calls
-         calls += 1
--        return [], 0
-+        return _curator_run(context_entries)
- 
-     monkeypatch.setattr(distill_module, "propose_lessons", fake_propose)
- 
-@@ -207,7 +217,7 @@ async def test_no_accepted_lessons_advances_watermark(monkeypatch, datasets):
-     _install_manager(monkeypatch, manager)
- 
-     async def fake_propose(qa_rows, context_entries):
--        return [ProposedLesson(working_statement="Something.")], 0
-+        return _curator_run(context_entries, [ProposedLesson(working_statement="Something.")])
- 
-     async def fake_accept(scope, proposed, context_entries):
-         return [], 0
-@@ -231,7 +241,7 @@ async def test_completed_run_advances_watermark_after_publish(monkeypatch, datas
-     order = []
- 
-     async def fake_propose(qa_rows, context_entries):
--        return [ProposedLesson(working_statement="Something.")], 0
-+        return _curator_run(context_entries, [ProposedLesson(working_statement="Something.")])
- 
-     async def fake_accept(scope, proposed, context_entries):
-         return [WrittenLesson(accept=True, statement="Keep reports concise.")], 0
-@@ -262,7 +272,7 @@ async def test_failed_publish_leaves_watermark_untouched(monkeypatch, datasets):
-     _install_manager(monkeypatch, manager)
- 
-     async def fake_propose(qa_rows, context_entries):
--        return [ProposedLesson(working_statement="Something.")], 0
-+        return _curator_run(context_entries, [ProposedLesson(working_statement="Something.")])
- 
-     async def fake_accept(scope, proposed, context_entries):
-         return [WrittenLesson(accept=True, statement="Keep reports concise.")], 0
-@@ -315,7 +325,7 @@ async def test_failed_curator_calls_leave_the_watermark_untouched(monkeypatch, d
-     _install_manager(monkeypatch, manager)
- 
-     async def fake_propose(qa_rows, context_entries):
--        return [], 2  # every curator batch failed
-+        return _curator_run(context_entries, failed_batches=2, curated=[])
- 
-     monkeypatch.setattr(distill_module, "propose_lessons", fake_propose)
- 
-@@ -326,14 +336,23 @@ async def fake_propose(qa_rows, context_entries):
- 
- 
- @pytest.mark.asyncio
--async def test_partial_failure_publishes_survivors_but_keeps_the_window(monkeypatch, datasets):
--    rows = [_context_row("Lesson one.")]
--    manager = FakeSessionManager(rows)
-+async def test_partial_failure_publishes_survivors_and_seals_only_completed_batches(
-+    monkeypatch, datasets
-+):
-+    done_row = _context_row("Lesson one.")
-+    lost_row = _context_row("Lesson two.")
-+    manager = FakeSessionManager([done_row, lost_row])
-     _install_manager(monkeypatch, manager)
-     published = []
- 
-     async def fake_propose(qa_rows, context_entries):
--        return [ProposedLesson(working_statement="Something.")], 1  # one batch lost
-+        done = [entry for entry in context_entries if entry.id == done_row["id"]]
-+        return _curator_run(
-+            context_entries,
-+            [ProposedLesson(working_statement="Something.")],
-+            failed_batches=1,
-+            curated=done,
-+        )
- 
-     async def fake_accept(scope, proposed, context_entries):
-         return [WrittenLesson(accept=True, statement="Keep reports concise.")], 0
-@@ -349,30 +368,232 @@ async def fake_publish(scope, accepted):
-     with pytest.raises(distill_module.DistillationCallsFailedError):
-         await distill_module.distill_session("s-1", dataset=DATASET_A.name
-```
-
----
-
-### Incident Patch 2: `32c4f26b` (2026-10-16)
-**Commit Message**: fix: Drain the trace backlog per run (SDK-1139) (#5938)
-
-## Description
-
-Follow-up to #5725. That PR persists a session's pending agent trace
-steps in windows of 30 steps (`IMPROVE_TRACE_WINDOW_STEPS`), at most 10
-windows per `improve()` run (`IMPROVE_TRACE_WINDOWS_PER_RUN`), and stops
-the stage as soon as one window does not advance its watermark. With
-`improve()` running once a day that cap becomes a daily cap: 300 steps a
-day in total, 30 per session once ten sessions are pending, and sessions
-past the tenth never get a turn while busier ones are ahead of them in
-the list. A coding agent produces more than that, so the backlog grows
-and never catches up. One session whose window cannot build also stopped
-the whole stage on every run.
-
-**Default: drain the backlog the run started with.**
-`IMPROVE_TRACE_WINDOWS_PER_RUN` now defaults to `0`, meaning no cap: one
-run persists every window that was pending when it started. The step
-counts are read once at the start and the run drains up to them; steps
-an agent writes while the run goes on wait for the next run, so a live
-session cannot keep the run, and the dataset's improve lock, going. A
-value keeps the old bounded behaviour, for de
-
-**File**: `.env.template` (modified, +6/-0)
-```diff
-@@ -785,6 +785,12 @@ WEB_SCRAPER_MAX_DELAY=10.0
- #IMPROVE_REVIEW_CONFLICTS=false
- # Document external_metadata key holding the source date; never ingestion time.
- #IMPROVE_EFFECTIVE_DATE_KEY=effective_date
-+# persist_agent_traces cognifies a session's pending agent trace steps in
-+# windows of at most WINDOW_STEPS steps, so no single LLM call grows with the
-+# backlog. WINDOWS_PER_RUN=0 (default) drains the backlog a run started with;
-+# a value caps the windows one run persists and leaves the rest for the next.
-+#IMPROVE_TRACE_WINDOW_STEPS=30
-+#IMPROVE_TRACE_WINDOWS_PER_RUN=0
- # Session-search execution mode. concurrent (default) analyzes the turn
- # concurrently with retrieval and answering, so a turn costs one answer call of
- # wall-clock time; sequential analyzes first and lets the analysis rewrite the
-```
-
-**File**: `CLAUDE.md` (modified, +1/-1)
-```diff
-@@ -243,7 +243,7 @@ Each stage is a gate plus a call into existing code plus a result mapping — it
- 
- The run resolves the dataset once and hands every stage a frozen `ImproveRunInputs` (user, resolved dataset id, session ids, `ImproveConfig`, adapter `GraphCapabilities`). It claims one improve lock keyed to the run — every session id given (scoped by user id) plus `dataset:<id>`, so improves for one dataset serialize — and holds it until the last stage finishes, background included; a lost claim returns an `ImproveResult` whose stages are all `skipped: lock_held` (never `{}`). A session-keyed run that loses the claim to a run holding one of its sessions asks that holder for one more pass (`rerun_requested=True` on the loser's result); the holder runs the stages again before releasing — cheap, every stage is watermark-gated — and reports the extra passes in `rerun_passes` (at most 2 extra, 3 passes in total: `IMPROVE_MAX_RERUN_PASSES = 3` in `cognee/api/v1/improve/improve.py` counts the first pass, and is a constant, not an env var). Dataset-only runs do not take part, so a burst of `remember()` calls on one dataset still collapses into one enrichment. `run_in_background=True` runs all stages in one anchored task; await it with `await result.wait()`. `ImproveResult` is what every surface returns: SDK, `POST /api/v1/improve` (`response_model`), the CLI (one line per stage), and `RememberResult.improve` / `.improve_error` (MCP reaches improve only through `remember`'s `self_improvement` — `improve` is deliberately not an advertised MCP tool; the advertised tool set is pinned to remember/recall/forget/code_search, with cognify_status registered but not advertised) (an improve failure after a successful cognify no longer marks the remember as errored). Stages that keep a watermark on the improve operation row (conflict review) stamp it there; the row is written when the run finishes — deferred to the background task in background mode — with a failed outcome when any stage errored (so a retry is never gated off) and a `noop` outcome when nothing ran — a lost lock claim or an all-skipped run — so a no-op call never advances the watermark. Feedback-weight application records applied element ids per QA row so a deleted node no longer causes the same feedback to be re-applied on every run; trace persistence and distillation carry watermarks like Q&A persistence already did.
- 
--Settings the loop owns live in `ImproveConfig` (env prefix `IMPROVE_`): `IMPROVE_AUTO_ENABLED` (default true; false turns off the automatic improve after `remember()`), `IMPROVE_DEBOUNCE_ENTRIES` / `IMPROVE_DEBOUNCE_SECONDS` (session-path auto-improve fires only after that many new entries or that much time; seconds alone is time-only — the entries default of 1 steps aside — and there is no timer, so the check runs on each `remember()`), `IMPROVE_STAGES_DISABLED` (csv of stage names), `IMPROVE_FEEDBACK_ALPHA` (learning rate, default 0.1), `IMPROVE_REVIEW_CONFLICTS` (default false), and `IMPROVE_EFFECTIVE_DATE_KEY` (default `effective_date`, the document metadata source-date key). Shared knobs stay with their owners: `CACHING` / `AUTO_FEEDBACK` (cache layer), `PERSONALIZATION_ENABLED`, `DEFAULT_FEEDBACK_INFLUENCE`. `cognee.wait_for_background_tasks()` drains background improves before a script exits; the API server drains them on shutdown. A host application can also decline a single automatic improve before it starts: `cognee.modules.improve.register_auto_improve_admission(check)` registers one async check per process (a later registration replaces it, `None` / `clear_auto_improve_admission()` removes it) that `remember()` awaits on both paths with `user`, `dataset_id`, `session_id` and `session_ids` — only when an improve would otherwise run, and before the session debounce is consulted, so a skipped bridge never spends the window. A returned reason string (`"insufficient_credits"`) skips the improve and lands on `RememberResult.improve_skipped` (also in `to_dict()`); the data is stored either way. The check is fail-open — one that raises, or answers with anything but `None` or a non-empty string, allows the improve — and explicit `improve()` calls are never gated. Frequency weights were removed (no adapter implemented them and nothing read them).
-+Settings the loop owns live in `ImproveConfig` (env prefix `IMPROVE_`): `IMPROVE_AUTO_ENABLED` (default true; false turns off the automatic improve after `remember()`), `IMPROVE_DEBOUNCE_ENTRIES` / `IMPROVE_DEBOUNCE_SECONDS` (session-path auto-improve fires only after that many new entries or that much time; seconds alone is time-only — the entries default of 1 steps aside — and there is no timer, so the check runs on each `remember()`), `IMPROVE_STAGES_DISABLED` (csv of stage names), `IMPROVE_FEEDBACK_ALPHA` (learning rate, default 0.1), `IMPROVE_REVIEW_CONFLICTS` (default false), `IMPROVE_EFFECTIVE_DATE_KEY` (default `effective_date`, the document metadata source-date key), and the agent-trace w
-```
-
-**File**: `cognee/memify_pipelines/persist_agent_trace_feedbacks_in_knowledge_graph.py` (modified, +4/-0)
-```diff
-@@ -23,6 +23,7 @@ async def persist_agent_trace_feedbacks_in_knowledge_graph_pipeline(
-     raw_trace_content: bool = False,
-     last_n_steps: int | None = None,
-     run_in_background: bool = False,
-+    persist_up_to: dict[str, int] | None = None,
- ):
-     """
-     Persist agent trace content into the knowledge graph via memify pipeline.
-@@ -41,6 +42,8 @@ async def persist_agent_trace_feedbacks_in_knowledge_graph_pipeline(
-             of ``session_feedback`` summaries.
-         last_n_steps: Optional number of most recent trace steps to persist per
-             session. When None, all stored steps are persisted.
-+        persist_up_to: Optional step count per session that no window passes;
-+            later steps wait for a later run.
-         run_in_background: If True, runs memify asynchronously and returns immediately.
-     """
-     await set_session_user_context_variable(user)
-@@ -65,6 +68,7 @@ async def persist_agent_trace_feedbacks_in_knowledge_graph_pipeline(
-             session_ids=session_ids,
-             raw_trace_content=raw_trace_content,
-             last_n_steps=last_n_steps,
-+            persist_up_to=persist_up_to,
-             needs_llm=False,
-         )
-     ]
-```
-
-**File**: `cognee/modules/improve/config.py` (modified, +13/-6)
-```diff
-@@ -16,7 +16,7 @@
-     IMPROVE_REVIEW_CONFLICTS=false     # review source facts and dated conflicts
-     IMPROVE_EFFECTIVE_DATE_KEY=effective_date  # document metadata source-date key
-     IMPROVE_TRACE_WINDOW_STEPS=30      # max agent trace steps per persisted document
--    IMPROVE_TRACE_WINDOWS_PER_RUN=10   # max agent trace documents per stage pass
-+    IMPROVE_TRACE_WINDOWS_PER_RUN=0    # max agent trace documents per run; 0 = drain
-     IMPROVE_DISTILL_MAX_BATCHES_PER_RUN=0  # curator batches per distill run; 0 = uncapped
- """
- 
-@@ -53,9 +53,9 @@ class ImproveConfig(BaseSettings):
-     # Agent trace persistence cognifies a session's pending steps in windows of
-     # at most this many steps, so no single LLM call grows with the backlog.
-     trace_window_steps: int = 30
--    # Windows one persist_agent_traces pass may cognify; the rest of a backlog
--    # waits for the next improve().
--    trace_windows_per_run: int = 10
-+    # Windows one persist_agent_traces run may cognify. 0 (the default) drains
-+    # the backlog in one run; with a cap, the rest waits for the next improve().
-+    trace_windows_per_run: int = 0
-     # Session distillation curates every new gated entry of a session per run.
-     # A cap curates only the most relevant entries that fit in this many curator
-     # batches and seals the rest uncurated; 0 means no cap.
-@@ -79,11 +79,18 @@ def _alpha_in_unit_interval(cls, value: float) -> float:
-             raise ValueError("feedback_alpha must be in range (0, 1]")
-         return value
- 
--    @field_validator("trace_window_steps", "trace_windows_per_run")
-+    @field_validator("trace_window_steps")
-     @classmethod
-     def _positive(cls, value: int) -> int:
-         if value < 1:
--            raise ValueError("trace window settings must be >= 1")
-+            raise ValueError("trace_window_steps must be >= 1")
-+        return value
-+
-+    @field_validator("trace_windows_per_run")
-+    @classmethod
-+    def _windows_non_negative(cls, value: int) -> int:
-+        if value < 0:
-+            raise ValueError("trace_windows_per_run must be >= 0 (0 = drain the backlog)")
-         return value
- 
-     @field_validator("debounce_entries")
-```
-
-**File**: `cognee/modules/improve/stages.py` (modified, +77/-22)
-```diff
-@@ -81,10 +81,17 @@ async def _watermarks_show_nothing_new(inputs: ImproveRunInputs, *, kind: str) -
-         return False
- 
- 
--async def _pending_trace_watermarks(inputs: ImproveRunInputs) -> dict[str, int] | None:
--    """The trace persist watermark of each session with unpersisted steps.
--
--    None when the session store cannot be read.
-+async def _pending_trace_watermarks(
-+    inputs: ImproveRunInputs, backlog: dict[str, int] | None = None
-+) -> dict[str, tuple[int, int]] | None:
-+    """``(persisted, total)`` step counts of each session with unpersisted steps.
-+
-+    ``persisted`` is the effective watermark (a stale one, above the LIVE
-+    count, reads as 0). With ``backlog``, the step counts a run started with,
-+    only sessions still below their starting count are pending: steps written
-+    while the run goes on wait for the next run, and a watermark another
-+    persister moved past the starting count reads as done, not stale. None
-+    when the session store cannot be read.
-     """
-     try:
-         from cognee.infrastructure.session.get_session_manager import get_session_manager
-@@ -105,8 +112,17 @@ async def _pending_trace_watermarks(inputs: ImproveRunInputs) -> dict[str, int]
-             persisted = await TRACE_PERSIST_WATERMARK.read_count(
-                 session_manager, user_id, session_id
+@@ -77,6 +77,7 @@
+ from cognee.modules.chunking.TextChunker import TextChunker
+ from cognee.modules.cognify.config import GLINER_DEMO_EXTRACTOR, LLM_EXTRACTOR, get_cognify_config
+ from cognee.modules.cognify.routing import CognifyRoute, cognify_route_for
++from cognee.modules.conflicts.methods import retire_decisions_after_edit
+ from cognee.modules.data.exceptions.exceptions import UnauthorizedDataAccessError
+ from cognee.modules.data.methods import (
+     StagedContent,
+@@ -767,6 +768,10 @@ async def _run_incremental_update(
+                 chunker=chunker,
+                 extractor=extractor,
              )
--            if total and resolve_trace_window(total, persisted, None, session_id=session_id)[1]:
--                pending[session_id] = persisted
-+            step_limit = None
-+            if backlog is not None:
-+                if session_id not in backlog:
-+                    continue
-+                step_limit = backlog[session_id]
-+            # The live total drives the stale check; the limit only bounds the reach.
-+            effective, pending_steps = resolve_trace_window(
-+                total, persisted, None, session_id=session_id, step_limit=step_limit
-+            )
-+            if total and pending_steps:
-+                pending[session_id] = (effective, total)
-         return pending
++            # An edit can remove the fact a user chose, or restate it under another
++            # relationship; its decision must not outlive it. Read once the new
++            # chunks' facts are written, so a fact the edit kept is still found.
++            await retire_decisions_after_edit(dataset, user)
      except Exception as error:
-         logger.debug("improve: trace watermarks unreadable: %s", error, exc_info=True)
-@@ -172,6 +188,12 @@ async def run(self, inputs: ImproveRunInputs) -> StageResult:
-         return StageResult.from_pipeline_run(self.name, result, sessions=len(inputs.session_ids))
- 
- 
-+# Sessions one persist_agent_traces pass cognifies, one window each. A pass is
-+# one memify run, which holds the dataset lock until it ends, so this bounds how
-+# long a remember() or cognify() on the dataset waits behind a draining run.
-+TRACE_SESSIONS_PER_PASS = 10
-+
-+
- class PersistAgentTracesStage(BaseStage):
-     """Stage 3: cognify per-step agent trace feedback (``agent_trace_feedbacks``)."""
- 
-@@ -183,21 +205,40 @@ async def run(self, inputs: ImproveRunInputs) -> StageResult:
-             persist_agent_trace_feedbacks_in_knowledge_graph_pipeline,
-         )
- 
--        from .config import get_improve_config
--
-         if await _watermarks_show_nothing_new(inputs, kind="traces"):
-             return _already_completed(self.name, REASON_NO_NEW_TRACE_STEPS)
- 
-         # Each pipeline call cognifies the OLDEST trace_window_steps pending steps
-         # of each pending session and advances their watermarks, so a failure
--        # repeats one bounded window, not the whole backlog.
--        config = get_improve_config()
-+        # repeats one bounded window, not the whole backlog. The loop drains the
-+        # backlog the run started with, unless trace_windows_per_run caps the
-+        # run; steps an agent writes meanwhile wait for the next run (the window
-+        # is cut at the starting count, persist_up_to), so a live
-+        # session cannot keep the run (and the dataset's improve lock) going. A
-+        # session whose window did not advance is left out of the later passes
-+        # of this run, so one stuck session never stalls the others. A pass
-+        # takes at most TRACE_SESSIONS_PER_PASS sessions, those with the fewest
-+        # windows so far, so the dataset lock is released between passes and
-+        # sessions late in the list get their turn before earlier ones drain.
-+        config = inputs.config
-+        max_windows = config.trace_windows_per_run
-         sessions = len(inputs.session_ids)
-         windows = 0
-+        stuck: list[str] = []
-+        served: dict[str, int] = {}
-         stage_result = None
-         pending = await _pending_trace_watermarks(inputs)
--        while pending and windows < config.trace_windows_per_run:
--            batch = dict(list(pending.items())[: config.trace_windows_per_run - windows])
-+        backlog = {sid: total for sid, (_mark, total) in (pending or {}).items()}
-+        while pending:
-+            limit = TRACE_SESSIONS_PER_PASS
-+            if max_windows:
-+                limit = min(limit, max_windows - windows)
-+            candidates = sorted(
-+                (sid for sid in pending if sid not in stuck), key=
+         await log_pipeline_run_error(
+             pipeline_run.pipeline_run_id,
 ```
 
-**File**: `cognee/tasks/memify/cognify_agent_trace_feedback.py` (modified, +6/-0)
+**File**: `cognee/modules/conflicts/methods.py` (modified, +22/-4)
 ```diff
-@@ -2,6 +2,7 @@
+@@ -268,10 +268,12 @@ async def resolve_conflict(
+ async def retire_forgotten_decisions(dataset, user: User) -> set[str]:
+     """Delete the user decisions whose chosen fact no longer exists, and return their ids.
  
- import cognee
- from cognee.exceptions import CogneeSystemError, CogneeValidationError
-+from cognee.infrastructure.llm.exceptions import raise_if_budget_exhausted_record
- from cognee.infrastructure.session.get_session_manager import get_session_manager
- from cognee.infrastructure.session.session_node_set import bridge_node_set
- from cognee.infrastructure.session.session_persist_watermark import (
-@@ -90,6 +91,11 @@ async def cognify_agent_trace_feedback(
-             )
-             errored_run = get_errored_run_info(cognify_result)
-             if errored_run is not None:
-+                # A recorded budget rejection is raised as LLMPaymentRequiredError:
-+                # every later window would fail the same way, so improve stops the
-+                # run instead of trying each one. The watermark stays put, so this
-+                # window is retried once there is budget.
-+                raise_if_budget_exhausted_record(errored_run.error_class, errored_run.error_message)
-                 logger.error(
-                     "Cognify failed for agent trace content (%s: %s); watermark not advanced, "
-                     "continuing with the run",
-```
-
-**File**: `cognee/tasks/memify/extract_agent_trace_feedbacks.py` (modified, +18/-1)
-```diff
-@@ -64,6 +64,7 @@ def resolve_trace_window(
-     last_n_steps: int | None,
-     *,
-     session_id: str = "",
-+    step_limit: int | None = None,
- ) -> tuple[int, int]:
-     """The pending trace window as ``(start index, size)``.
- 
-@@ -74,11 +75,17 @@ def resolve_trace_window(
-     so a backlog drains across bounded triggers instead of being sealed —
-     capping at the newest N would leave the older pending steps below an
-     advanced watermark forever, unreachable even for ``improve()``.
-+
-+    ``step_limit`` bounds how far the window may reach (a run draining the
-+    backlog it started with). It never feeds the stale check: that compares
-+    the watermark with the LIVE count, ``total_trace_count``, so a watermark
-+    another persister moved past the limit meanwhile reads as done, not stale.
+-    Run after a document is deleted, inside the dataset's lock and database context.
+-    A fact supported by several documents stays in the graph until the last of them
+-    is deleted, so its decision stays until then too. The check reads what the graph
+-    holds now rather than what one delete removed, so a retried delete still finds it.
++    Run after a document is deleted, inside the dataset's lock and database context;
++    ``update()``'s chunk-level path runs it once the edit is written instead (see
++    ``retire_decisions_after_edit``). A fact supported by several documents stays in
++    the graph until the last of them is deleted, so its decision stays until then too.
++    The check reads what the graph holds now rather than what one delete removed, so a
++    retried delete still finds it.
      """
-     effective = TRACE_PERSIST_WATERMARK.resolve_effective(
-         persisted_trace_count, total_trace_count, session_id=session_id
-     )
--    pending = max(0, total_trace_count - effective)
-+    reach = total_trace_count if step_limit is None else min(total_trace_count, step_limit)
-+    pending = max(0, reach - effective)
-     if last_n_steps is not None:
-         pending = min(pending, max(0, int(last_n_steps)))
-     return effective, pending
-@@ -107,6 +114,7 @@ async def extract_agent_trace_feedbacks(
-     session_ids: list[str] | None = None,
-     raw_trace_content: bool = False,
-     last_n_steps: int | None = None,
-+    persist_up_to: dict[str, int] | None = None,
- ):
-     """
-     Extract not-yet-persisted agent trace steps for the current user.
-@@ -133,6 +141,10 @@ async def extract_agent_trace_feedbacks(
-         last_n_steps: Optional cap on the number of most recent pending trace
-             steps to extract per session. ``None`` means every step above the
-             watermark — never "everything stored".
-+        persist_up_to: Optional step count per session that the window must not
-+            pass. Steps from that index on are left for a later run, so a caller
-+            draining a fixed backlog never takes steps a live agent wrote after
-+            it started. Sessions not in the mapping are unbounded.
- 
-     Yields:
-         TracePersistWindow covering the session's unpersisted steps.
-@@ -185,12 +197,14 @@ async def extract_agent_trace_feedbacks(
-                     )
-                     persisted_count = TRACE_PERSIST_WATERMARK.count_from_rows(context_rows)
-                     counted_trace_count = total_trace_count
-+                    step_limit = (persist_up_to or {}).get(session_id)
-                     if (
-                         resolve_trace_window(
-                             total_trace_count,
-                             persisted_count,
-                             last_n_steps,
-                             session_id=session_id,
-+                            step_limit=step_limit,
-                         )[1]
-                         <= 0
-                     ):
-@@ -226,11 +240,14 @@ async def extract_agent_trace_feedbacks(
-                         context_rows = await read_session_context_strict(
-                             session_manager, user_id, session_id
-                         )
-+                    # The whole fetch stays: the stale check needs the live count.
-+                    # step_limit only bounds how far the window reaches.
-                     window_start, window_size = resolve_trace_window(
-                         total_trace_count,
-                         persisted_count,
-                         last_n_steps,
-                         session_id=session_id,
-+                        step_limit=step_limit,
-                     )
-                     if window_size <= 0:
-                         continue
+     graph = await get_graph_engine()
+     rows, _ = await graph.get_filtered_graph_data([{"type": ["FactConflict"]}], include_edges=False)
+@@ -300,3 +302,19 @@ async def retire_forgotten_decisions(dataset, user: User) -> set[str]:
+         await write_conflicts([ConflictsToWrite(scope, dropped_conflict_ids=list(forgotten))], ctx)
+         await write_conflicts([ConflictsToFinalize(dropped_conflict_ids=list(forgotten))], ctx)
+     return set(forgotten)
++
++
++async def retire_decisions_after_edit(dataset, user: User) -> set[str]:
++    """Retire the decisions an edit left without their chosen fact, and invalidate sessions.
++
++    ``update()``'s chunk-level path drops the facts of the chunks an edit touched and
++    extracts the new chunks. A decision whose fact the new extraction does not restore,
++    because the text changed or the fact came back under another relationship, would go
++    on presenting it as accepted and hiding its competitors. Run inside the dataset's
++    lock and database context, after the edit was written: a failed write may only not
++    have restored the fact yet. A failed session invalidation fails the update.
++    """
++    retired = await retire_forgotten_decisions(dataset, user)
++    if retired:
++        await invalidate_sessions_for_deleted_data(dataset.id, retired, set(), user_id=user.id)
++    return retired
 ```
 
-**File**: `cognee/tests/unit/modules/improve/test_trace_windows.py` (modified, +273/-22)
+**File**: `cognee/tests/unit/api/test_incremental_retires_decisions.py` (added, +64/-0)
 ```diff
-@@ -1,4 +1,9 @@
--"""improve() persists agent traces in bounded windows, never as one unbounded document."""
-+"""improve() persists agent traces in bounded windows, never as one unbounded document.
+@@ -0,0 +1,64 @@
++"""An incremental update retires the conflict decisions an edit took the chosen fact from."""
 +
-+By default one run drains a session's whole backlog, window by window; a stuck
-+session is left out of the run's later passes so the others keep draining; the
-+cap on windows per run is opt-in.
-+"""
- 
- import importlib
- import types
-@@ -10,6 +15,7 @@
- from cognee.infrastructure.databases.cache.models import SessionAgentTraceEntry
- from cognee.infrastructure.session.session_persist_watermark import TRACE_PERSIST_WATERMARK
- from cognee.modules.improve import GraphCapabilities, ImproveConfig, ImproveRunInputs
-+from cognee.modules.improve.result import StageResult
- from cognee.modules.improve.stages import PersistAgentTracesStage
- from cognee.modules.pipelines.models.PipelineRunInfo import PipelineRunErrored
- from cognee.tasks.memify.cognify_agent_trace_feedback import cognify_agent_trace_feedback
-@@ -59,25 +65,35 @@ async def create_session_context_entry(self, *, user_id, entry_dump, session_id=
- 
- 
- class FakeCognee:
--    """Records each document handed to cognify; fails the builds listed in ``fail_builds``."""
-+    """Records each document handed to cognify; fails the builds listed in ``fail_builds``.
++from types import SimpleNamespace
++from unittest.mock import AsyncMock
++from uuid import uuid4
 +
-+    ``on_cognify`` runs on every build, to model an agent still writing steps.
-+    """
- 
--    def __init__(self, fail_builds=()):
-+    def __init__(self, fail_builds=(), on_cognify=None):
-         self.documents: list[str] = []
-         self.fail_builds = set(fail_builds)
-+        self.on_cognify = on_cognify
- 
-     async def add(self, text, **kwargs):
-         self.documents.append(text)
- 
-     async def cognify(self, **kwargs):
-+        if self.on_cognify is not None:
-+            self.on_cognify()
-         if len(self.documents) in self.fail_builds:
-             return PipelineRunErrored(
-                 pipeline_run_id=uuid4(),
-                 dataset_id=uuid4(),
-                 dataset_name="docs",
--                error_message="rate limit exceeded",
-+                error_class=self.error_class,
-+                error_message=self.error_message,
-             )
-         return {}
- 
-+    error_class = "RateLimitError"
-+    error_message = "rate limit exceeded"
++import pytest
 +
-     def steps_per_document(self) -> list[int]:
-         return [len(document.split("\n\n", 1)[1].splitlines()) for document in self.documents]
- 
-@@ -94,19 +110,20 @@ def store(monkeypatch):
-     return manager
- 
- 
--def _use(monkeypatch, cognee_fake, **settings):
-+def _use(monkeypatch, cognee_fake, after_pass=None, **settings) -> ImproveConfig:
-+    """Install the fake cognee and pipeline; returns the config to hand to the run.
++from cognee.api.v1.update import incremental
 +
-+    ``after_pass`` runs after each pipeline call, between the stage's passes.
-+    """
-     config = ImproveConfig(**settings)
--    monkeypatch.setattr(
--        importlib.import_module("cognee.modules.improve.config"),
--        "get_improve_config",
--        lambda: config,
--    )
-     for name in ("add", "cognify"):
-         monkeypatch.setattr(
-             importlib.import_module("cognee"), name, getattr(cognee_fake, name), raising=False
-         )
- 
--    async def pipeline(*, user, session_ids, raw_trace_content, last_n_steps, **kwargs):
-+    async def pipeline(
-+        *, user, session_ids, raw_trace_content, last_n_steps, persist_up_to=None, **kwargs
++
++def _patch_run(monkeypatch, bundle, write):
++    order = []
++
++    async def record_write(*args, **kwargs):
++        order.append("write")
++        return await write(*args, **kwargs)
++
++    async def retire(dataset, user):
++        order.append(("retire", dataset, user))
++        return set()
++
++    monkeypatch.setattr(incremental, "_stage_and_plan", AsyncMock(return_value=bundle))
++    monkeypatch.setattr(incremental, "generate_pipeline_id", lambda *args: uuid4())
++    monkeypatch.setattr(
++        incremental,
++        "log_pipeline_run_start",
++        AsyncMock(return_value=SimpleNamespace(pipeline_run_id=uuid4())),
++    )
++    monkeypatch.setattr(incremental, "log_pipeline_run_complete", AsyncMock())
++    monkeypatch.setattr(incremental, "log_pipeline_run_error", AsyncMock())
++    monkeypatch.setattr(incremental, "send_telemetry", lambda *args, **kwargs: None)
++    monkeypatch.setattr(incremental, "_write_and_publish", record_write)
++    monkeypatch.setattr(incremental, "retire_decisions_after_edit", retire)
++    return order
++
++
++async def _run(dataset, user):
++    return await incremental._run_incremental_update(
++        uuid4(), "new text", dataset, user, None, None, None, None, None, None, None, "llm"
++    )
++
++
++@pytest.mark.asyncio
++async def test_decisions_are_retired_once_the_edit_is_written(monkeypatch):
++    dataset, user = SimpleNamespace(id=uuid4()), SimpleNamespace(id=uuid4())
++    order = _patch_run(monkeypatch, {"status": "changed"}, AsyncMock(return_value={}))
++
++    await _run(dataset, user)
++
++    assert order == ["write", ("retire", dataset, user)]
++
++
++@pytest.mark.asyncio
++async def test_a_failed_write_retires_nothing(monkeypatch):
++    dataset, user = SimpleNamespace(id=uuid4()), SimpleNamespace(id=uuid4())
++    order = _patch_run(
++        monkeypatch, {"status": "changed"}, AsyncMock(side_effect=RuntimeError("write failed"))
++    )
++
++    with pytest.raises(RuntimeError, match="write failed"):
++        await _run(dataset, user)
++
++    assert order == ["write"]
+```
+
+**File**: `cognee/tests/unit/modules/conflicts/test_retire_decisions_after_edit.py` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++"""Sessions that cited a retired decision are invalidated with it (SDK-1328)."""
++
++import importlib
++from types import SimpleNamespace
++from unittest.mock import AsyncMock, patch
++from uuid import uuid4
++
++import pytest
++
++methods = importlib.import_module("cognee.modules.conflicts.methods")
++
++
++@pytest.mark.asyncio
++async def test_retired_decisions_reach_session_invalidation():
++    dataset, user = SimpleNamespace(id=uuid4()), SimpleNamespace(id=uuid4())
++    invalidate = AsyncMock()
++    with (
++        patch.object(methods, "retire_forgotten_decisions", AsyncMock(return_value={"c1"})),
++        patch.object(methods, "invalidate_sessions_for_deleted_data", invalidate),
 +    ):
-         """The memify pipeline's two real tasks, without the dataset and pipeline plumbing."""
-         extract_module = importlib.import_module(
-             "cognee.tasks.memify.extract_agent_trace_feedbacks"
-@@ -117,8 +134,11 @@ async def pipeline(*, user, session_ids, raw_trace_content, last_n_steps, **kwar
-             session_ids=session_ids,
-             raw_trace_content=raw_trace_content,
-             last_n_steps=last_n_steps,
-+            persist_up_to=persist_up_to,
-         ):
-             await cognify_agent_trace_feedback(window, dataset_id=uuid4(), user=user)
-+        if after_pass is not None:
-+            await after_pass()
-         return {}
- 
-     monkeypatch.setattr(
-@@ -128,17 +148,18 @@ async def pipeline(*, user, session_ids, raw_trace_content, last_n_steps, **kwar
-         "persist_agent_trace_feedbacks_in_knowledge_graph_pipeline",
-         AsyncMock(side_effect=pipeline),
-     )
-+    return config
- 
- 
--def _inputs(session_ids=("s1",)):
-+def _inputs(config: ImproveConfig, session_ids=("s1",)):
-     user = types.SimpleNamespace(id=uuid4())
-     dataset = types.SimpleNamespace(id=uuid4(), name="docs", owner_id=user.id)
-     return ImproveRunInputs(
-         user=user,
-         dataset_id=dataset.id,
-         dataset=dataset,
-         session_ids=tuple(session_ids),
--        config=ImproveConfig(),
-+        config=config,
-         capabilities=GraphCapabilities.assume_supported(),
-     )
- 
-@@ -151,8 +172,7 @@ async def _watermark(store, inputs, session_id="s1"):
- async def test_backlog_is_persisted_in_documents_of_at_most_the_window_
++        assert await methods.retire_decisions_after_edit(dataset, user) == {"c1"}
++
++    invalidate.assert_awaited_once_with(dataset.id, {"c1"}, set(), user_id=user.id)
 ```
 
 ---
 
-### Incident Patch 3: `652da18e` (2026-10-16)
-**Commit Message**: perf: Build a trace pass's windows in one cognify run (#5955)
+### Incident Patch 2: `95857f26` (2026-10-29)
+**Commit Message**: fix(conflicts): Retire choices on connector deletes
 
-## Description
+A row removed upstream is deleted by the connector's orphan cleanup, which
+bypassed datasets.delete_data and so kept the user decision whose chosen
+fact went with the row, presenting the deleted fact as accepted. The
+cleanup now retires such decisions before the Data row goes, under the
+dataset lock, and invalidates sessions that cited them.
 
-Stacked on #5938 (now merged to dev). One commit.
+Refs SDK-1328
 
-The trace task added and cognified each window on its own, one after
-another, so a pass of ten sessions cost ten windows of LLM time. On the
-real stack that was 289 seconds for twelve sessions of trivial content,
-and a day's backlog of ten agents at 200 steps each would be about half
-an hour of serial cognify under the improve lock.
-
-**Change.** The task stages every window of the run with `add()`, then
-runs **one** `cognify()` for the dataset. The pipeline builds the staged
-documents concurrently (its item concurrency is 20), so a pass costs
-about one window. Every window's watermark advances only once that run
-completed. The pipeline hands the task every window of the run in one
-call: extraction yields at most one window per session, so the task's
-batch is sized to the number of sessions. One cognify per run, whoever
-calls the pipeline.
-
-**A failed build raises.** `cognify()` is now called with its default,
-so a failed build raises `CognifyFailedError` with the root cause
-instead of being read off the result and logged. The run was rolled back
-as a who
-
-**File**: `cognee/memify_pipelines/persist_agent_trace_feedbacks_in_knowledge_graph.py` (modified, +3/-0)
+**File**: `cognee/tasks/ingestion/resolve_dlt_sources.py` (modified, +14/-3)
 ```diff
-@@ -79,6 +79,9 @@ async def persist_agent_trace_feedbacks_in_knowledge_graph_pipeline(
-             node_set_name=node_set_name,
-             user=user,
-             needs_llm=False,
-+            # Extraction yields at most one window per session, so this hands the
-+            # task every window of the run in one call: one cognify per run.
-+            batch_size=max(1, len(session_ids or [])),
+@@ -976,6 +976,8 @@ async def _delete_dlt_orphans(
+     proved, and deleting another source's data is worse than retaining residue.
+     """
+     from cognee.context_global_variables import set_database_global_context_variables
++    from cognee.infrastructure.locks import dataset_lock
++    from cognee.modules.conflicts.methods import retire_forgotten_decisions
+     from cognee.modules.data.methods import get_authorized_existing_datasets
+     from cognee.modules.data.methods.delete_data import delete_data
+     from cognee.modules.data.methods.get_dataset_data import get_dataset_data
+@@ -1031,15 +1033,24 @@ async def _delete_dlt_orphans(
+     # engines — the background-ingest path invokes orphan_cleanup before any
+     # pipeline establishes the context — so the graph + vector purge silently
+     # targets the wrong DB and leaves the forgotten row's chunks/entities
+-    # searchable under ENABLE_BACKEND_ACCESS_CONTROL.
+-    async with set_database_global_context_variables(dataset.id, dataset.owner_id):
++    # searchable under ENABLE_BACKEND_ACCESS_CONTROL. The dataset lock comes
++    # first, as in datasets.delete_data: retiring conflict decisions rewrites
++    # conflict nodes that a pipeline or a resolve_conflict call may be writing.
++    async with (
++        dataset_lock(dataset.id),
++        set_database_global_context_variables(dataset.id, dataset.owner_id),
++    ):
+         for orphan in orphans:
+             try:
+                 # Called unconditionally: gating on has_data_related_nodes would
+                 # skip graphs whose provenance is stamped in-graph instead of the
+                 # relational ledger (the function handles both paths and no-ops
+                 # when nothing is related).
+                 deleted_elements = await delete_data_nodes_and_edges(dataset.id, orphan.id, user.id)
++                # A row removed upstream is forgotten like forget(data_id=...): a user
++                # decision whose chosen fact went with it is retired before the Data
++                # row goes, so a failure keeps the row for the next ingest's retry.
++                retired = await retire_forgotten_decisions(dataset, user)
+                 await delete_data(orphan, dataset.id)
+                 # Invalidate session answers that used the orphan's graph
+                 # elements (best-effort; must not fail the cleanup).
+@@ -1050,7 +1061,7 @@ async def _delete_dlt_orphans(
+ 
+                     await invalidate_sessions_for_deleted_data(
+                         dataset.id,
+-                        deleted_elements.node_ids,
++                        set(deleted_elements.node_ids) | retired,
+                         deleted_elements.edge_ids,
+                         user_id=user.id,
+                     )
+```
+
+**File**: `cognee/tests/unit/tasks/test_dlt_document_cleanup_scope.py` (modified, +4/-0)
+```diff
+@@ -81,6 +81,10 @@ async def context(*args):
+             "delete_data_nodes_and_edges",
+             new=AsyncMock(return_value=SimpleNamespace(node_ids=[], edge_ids=[])),
          ),
-     ]
- 
++        patch(
++            "cognee.modules.conflicts.methods.retire_forgotten_decisions",
++            new=AsyncMock(return_value=set()),
++        ),
+         patch.object(
+             importlib.import_module("cognee.modules.data.methods.delete_data"),
+             "delete_data",
 ```
 
-**File**: `cognee/modules/improve/stages.py` (modified, +6/-5)
+**File**: `cognee/tests/unit/tasks/test_dlt_orphan_retires_decisions.py` (added, +93/-0)
 ```diff
-@@ -215,8 +215,8 @@ async def run(self, inputs: ImproveRunInputs) -> StageResult:
-         # run; steps an agent writes meanwhile wait for the next run (the window
-         # is cut at the starting count, persist_up_to), so a live
-         # session cannot keep the run (and the dataset's improve lock) going. A
--        # session whose window did not advance is left out of the later passes
--        # of this run, so one stuck session never stalls the others. A pass
-+        # pass's windows build in one cognify run; a failed build raises with its
-+        # cause and ends the run, nothing built, every watermark in place. A pass
-         # takes at most TRACE_SESSIONS_PER_PASS sessions, those with the fewest
-         # windows so far, so the dataset lock is released between passes and
-         # sessions late in the list get their turn before earlier ones drain.
-@@ -232,7 +232,7 @@ async def run(self, inputs: ImproveRunInputs) -> StageResult:
-         while pending:
-             limit = TRACE_SESSIONS_PER_PASS
-             if max_windows:
--                limit = min(limit, max_windows - windows)
-+                limit = max(0, min(limit, max_windows - windows))
-             candidates = sorted(
-                 (sid for sid in pending if sid not in stuck), key=lambda sid: served.get(sid, 0)
-             )
-@@ -257,8 +257,9 @@ async def run(self, inputs: ImproveRunInputs) -> StageResult:
-             )
-             if stage_result.status == "errored":
-                 break
--            # A failed window build is logged, not raised, so the pipeline still
--            # reports completed. Only an unmoved watermark shows the failure.
-+            # A failed build raises and ended the run above. A session can still
-+            # come back unmoved when extraction skipped it (its context could not
-+            # be read): set it aside for the rest of the run and report it.
-             pending = await _pending_trace_watermarks(inputs, backlog)
-             if pending is None:
-                 break
-```
-
-**File**: `cognee/tasks/memify/cognify_agent_trace_feedback.py` (modified, +36/-37)
-```diff
-@@ -2,15 +2,14 @@
- 
- import cognee
- from cognee.exceptions import CogneeSystemError, CogneeValidationError
--from cognee.infrastructure.llm.exceptions import raise_if_budget_exhausted_record
-+from cognee.infrastructure.llm.exceptions import raise_if_budget_exhausted
- from cognee.infrastructure.session.get_session_manager import get_session_manager
- from cognee.infrastructure.session.session_node_set import bridge_node_set
- from cognee.infrastructure.session.session_persist_watermark import (
-     TRACE_PERSIST_WATERMARK,
-     TracePersistWindow,
- )
- from cognee.modules.improve.constants import AGENT_TRACE_FEEDBACKS_NODE_SET
--from cognee.modules.pipelines.models.PipelineRunInfo import get_errored_run_info
- from cognee.modules.users.models import User
- from cognee.shared.logging_utils import get_logger
- 
-@@ -40,13 +39,17 @@ async def cognify_agent_trace_feedback(
-     Cognify agent trace windows into the knowledge graph and advance their watermarks.
- 
-     Receives one ``TracePersistWindow`` (or a batch of them — the pipeline
--    runner delivers generator output in batches) from
--    ``extract_agent_trace_feedbacks``. For each window: adds its text to cognee
--    under ``node_set_name``, triggers cognify, and — only after both succeed —
--    advances that session's trace persist watermark to the step count captured
--    at extraction time. On failure the watermark stays put, so the same window
--    is re-extracted and retried on the next improve() (add-level content-hash
--    dedup makes the retry safe).
-+    runner delivers every window of the run in one call)
-+    from ``extract_agent_trace_feedbacks``. Adds every window's text to cognee
-+    under ``node_set_name``, then runs ONE cognify for the dataset: the run
-+    builds the windows as independent documents, concurrently, so a batch
-+    costs about one window of LLM time instead of one per window. Only after
-+    that run completed does each window's session advance its trace persist
-+    watermark to the step count captured at extraction time. A failed run is
-+    rolled back as a whole and raises ``CognifyFailedError`` with the root
-+    cause, which fails the memify run: no watermark moves, every window is
-+    re-extracted and retried on the next improve() (add-level content-hash
-+    dedup makes the retry safe), and improve reports the cause.
- 
-     Plain strings are still accepted for callers that feed their own trace text
-     through the public ``memify`` task registry; they carry no watermark.
-@@ -60,7 +63,9 @@ async def cognify_agent_trace_feedback(
- 
-     Raises:
-         CogneeValidationError: If no non-empty window or text was provided.
--        CogneeSystemError: If cognee operations fail.
-+        LLMPaymentRequiredError: If the build hit an exhausted LLM budget.
-+        CognifyFailedError: If the build failed, with the root cause.
-+        CogneeSystemError: If another cognee operation fails.
-     """
-     items = _coerce_trace_items(data)
-     if not items:
-@@ -73,40 +78,32 @@ async def cognify_agent_trace_feedback(
-         )
- 
-     try:
-+        windows: list[TracePersistWindow] = []
-         for item in items:
-             window = item if isinstance(item, TracePersistWindow) else None
-             text = window.text if window is not None else item
- 
--            logger.info("Processing agent trace content for cognification")
-+            logger.info("Staging agent trace content for cognification")
-             # Plain-text callers carry no session, so no pinned node set.
-             node_set = bridge_node_set([node_set_name], window.node_set if window else ())
-             await cognee.add(text, dataset_id=dataset_id, node_set=node_set, user=user)
-             logger.debug("Agent trace content added to cognee with node_set: %s", node_set)
--            # raise_on_error=False: one trace session's failed build must not kill
--            # the whole memify run — log the cause, keep this window's watermark
--            # put (so it is re-extracted and retried on the next improve()), and
--            # let the remaining sessions proceed.
--            cognify_result = await cognee.cognify(
--                datasets=[dataset_id], user=user, raise_on_error=False
--            )
--            errored_run = get_errored_run_info(cognify_result)
--            if errored_run is not None:
--                # A recorded budget rejection is raised as LLMPaymentRequiredError:
--                # every later window would fail the same way, so improve stops the
--                # run instead of trying each one. The watermark stays put, so this
--                # window is retried once there is budget.
--                raise_if_budget_exhausted_record(errored_run.error_class, errored_run.error_message)
--                logger.error(
--                    "Cognify failed for agent trace content (%s: %s); watermark not advanced, "
--                    "continuing with the run",
--                    errored_run.error_class,
--                    errored_run.er
-```
-
-**File**: `cognee/tests/unit/modules/improve/test_trace_windows.py` (modified, +77/-33)
-```diff
-@@ -13,10 +13,13 @@
- import pytest
- 
- from cognee.infrastructure.databases.cache.models import SessionAgentTraceEntry
-+from cognee.infrastructure.llm.exceptions import LLMPaymentRequiredError
- from cognee.infrastructure.session.session_persist_watermark import TRACE_PERSIST_WATERMARK
- from cognee.modules.improve import GraphCapabilities, ImproveConfig, ImproveRunInputs
- from cognee.modules.improve.result import StageResult
-+from cognee.modules.improve.stage import execute_stage
- from cognee.modules.improve.stages import PersistAgentTracesStage
-+from cognee.modules.pipelines.exceptions import CognifyFailedError
- from cognee.modules.pipelines.models.PipelineRunInfo import PipelineRunErrored
- from cognee.tasks.memify.cognify_agent_trace_feedback import cognify_agent_trace_feedback
- from cognee.tasks.memify.extract_agent_trace_feedbacks import extract_agent_trace_feedbacks
-@@ -64,31 +67,49 @@ async def create_session_context_entry(self, *, user_id, entry_dump, session_id=
-         return True
- 
- 
--class FakeCognee:
--    """Records each document handed to cognify; fails the builds listed in ``fail_builds``.
-+def _session_of(document: str) -> str:
-+    return document.split("\n", 1)[0].replace("Session ID: ", "")
+@@ -0,0 +1,93 @@
++"""A connector row removed upstream retires the user decisions its facts backed."""
 +
- 
--    ``on_cognify`` runs on every build, to model an agent still writing steps.
-+class FakeCognee:
-+    """Records each document handed to add and each cognify run over them.
-+
-+    A cognify run covers every document added since the previous completed
-+    run, as the real one does: a failed run is rolled back as a whole, its
-+    documents stay pending for the next run, and it raises CognifyFailedError
-+    with the cause (a budget rejection raises LLMPaymentRequiredError). It
-+    fails when its number is in ``fail_calls`` or when one of its documents
-+    belongs to a session in ``fail_sessions``. ``on_cognify`` runs on every
-+    build, to model an agent still writing steps.
-     """
- 
--    def __init__(self, fail_builds=(), on_cognify=None):
-+    def __init__(self, fail_calls=(), fail_sessions=(), on_cognify=None):
-         self.documents: list[str] = []
--        self.fail_builds = set(fail_builds)
-+        self.pending: list[str] = []
-+        self.runs: list[list[str]] = []  # sessions per cognify run
-+        self.fail_calls = set(fail_calls)
-+        self.fail_sessions = set(fail_sessions)
-         self.on_cognify = on_cognify
- 
-     async def add(self, text, **kwargs):
-         self.documents.append(text)
-+        self.pending.append(text)
- 
-     async def cognify(self, **kwargs):
-         if self.on_cognify is not None:
-             self.on_cognify()
--        if len(self.documents) in self.fail_builds:
--            return PipelineRunErrored(
--                pipeline_run_id=uuid4(),
--                dataset_id=uuid4(),
-+        sessions = [_session_of(document) for document in self.pending]
-+        self.runs.append(sessions)
-+        if len(self.runs) in self.fail_calls or self.fail_sessions & set(sessions):
-+            # Rolled back: the documents stay pending, the next run picks them up.
-+            if self.error_class == "LLMPaymentRequiredError":
-+                raise LLMPaymentRequiredError(self.error_message)
-+            raise CognifyFailedError(
-                 dataset_name="docs",
-                 error_class=self.error_class,
-                 error_message=self.error_message,
-             )
-+        self.pending = []
-         return {}
- 
-     error_class = "RateLimitError"
-@@ -129,14 +150,20 @@ async def pipeline(
-             "cognee.tasks.memify.extract_agent_trace_feedbacks"
-         )
-         monkeypatch.setattr(extract_module, "session_user", types.SimpleNamespace(get=lambda: user))
--        async for window in extract_agent_trace_feedbacks(
--            [{}],
--            session_ids=session_ids,
--            raw_trace_content=raw_trace_content,
--            last_n_steps=last_n_steps,
--            persist_up_to=persist_up_to,
--        ):
--            await cognify_agent_trace_feedback(window, dataset_id=uuid4(), user=user)
-+        windows = [
-+            window
-+            async for window in extract_agent_trace_feedbacks(
-+                [{}],
-+                session_ids=session_ids,
-+                raw_trace_content=raw_trace_content,
-+                last_n_steps=last_n_steps,
-+                persist_up_to=persist_up_to,
-+            )
-+        ]
-+        # The runner hands the enrichment task the pass's windows as one batch,
-+        # and re-raises what the task raises after recording the errored run.
-+        if windows:
-+            await cognify_agent_trace_feedback(windows, dataset_id=uuid4(), user=user)
-         if after_pass is not None:
-             await after_pass()
-         return {}
-@@ -275,35 +302,52 @@ async def external_persist():
- @pytest.mark.asyncio
- async def test_failed_window_keeps_earlier_windows_and_stops_the_stage(store, monkeypatch):
-     store.add_steps("s1", 95)
--    cognee_fake = FakeCognee(fail_builds={2})
-+    cognee_fake = Fa
-```
-
-**File**: `cognee/tests/unit/modules/memify_tasks/test_cognify_agent_trace_feedback.py` (modified, +51/-57)
-```diff
-@@ -1,5 +1,6 @@
- import sys
- from unittest.mock import AsyncMock, MagicMock, patch
++import importlib
++from contextlib import asynccontextmanager, contextmanager
++from types import SimpleNamespace
++from unittest.mock import AsyncMock, patch
 +from uuid import uuid4
- 
- import pytest
- 
-@@ -8,6 +9,7 @@
-     TRACE_PERSIST_WATERMARK,
-     TracePersistWindow,
- )
-+from cognee.modules.pipelines.exceptions import CognifyFailedError
- from cognee.tasks.memify.cognify_agent_trace_feedback import cognify_agent_trace_feedback
- 
- # The module object (not the re-exported function), for patching get_session_manager.
-@@ -32,7 +34,7 @@ async def test_cognify_agent_trace_feedback_success():
-         node_set=["agent_trace_feedbacks"],
-         user=None,
-     )
--    mock_cognify.assert_called_once_with(datasets=["123"], user=None, raise_on_error=False)
-+    mock_cognify.assert_called_once_with(datasets=["123"], user=None)
- 
- 
- @pytest.mark.asyncio
-@@ -53,7 +55,7 @@ async def test_cognify_agent_trace_feedback_forwards_user():
-         node_set=["agent_trace_feedbacks"],
-         user=user,
-     )
--    mock_cognify.assert_called_once_with(datasets=["123"], user=user, raise_on_error=False)
-+    mock_cognify.assert_called_once_with(datasets=["123"], user=user)
- 
- 
- @pytest.mark.asyncio
-@@ -113,31 +115,6 @@ async def test_cognify_agent_trace_feedback_cognify_failure():
-             await cognify_agent_trace_feedback(trace_content)
- 
- 
--@pytest.mark.asyncio
--async def test_cognify_agent_trace_feedback_errored_run_info_does_not_raise():
--    """An errored build (raise_on_error=False path) is logged, not raised,
--    so one bad trace session can't kill the whole memify run."""
--    from uuid import uuid4
--
--    from cognee.modules.pipelines.models.PipelineRunInfo import PipelineRunErrored
--
--    errored = PipelineRunErrored(
--        pipeline_run_id=uuid4(),
--        dataset_id=uuid4(),
--        dataset_name="ds",
--        error_class="AuthenticationError",
--        error_message="invalid api key",
--    )
--
--    with (
--        patch("cognee.add", new_callable=AsyncMock),
--        patch("cognee.cognify", new_callable=AsyncMock) as mock_cognify,
--    ):
--        mock_cognify.return_value = {"ds": errored}
--
--        await cognify_agent_trace_feedback("Session ID: trace_session\n\nfeedback")
--
--
- # ----------------------------------------------------------------- watermark windows
- 
- 
-@@ -170,6 +147,52 @@ def _window(text="Session ID: s\n\nstep", persisted_trace_count=3, session_id="s
-     )
- 
- 
-+@pytest.mark.asyncio
-+async def test_a_batch_of_windows_is_one_cognify_run_and_every_watermark_advances():
-+    manager = _FakeSessionManager()
-+    windows = [
-+        _window(text=f"Session ID: {sid}\n\nstep", persisted_trace_count=count, session_id=sid)
-+        for sid, count in (("a", 4), ("b", 7), ("c", 9))
-+    ]
++
++import pytest
++
++from cognee.infrastructure.locks import held_datasets
++
++resolve = importlib.import_module("cognee.tasks.ingestion.resolve_dlt_sources")
++
++
++@contextmanager
++def _patches(dataset, orphan, retire, delete, invalidate):
++    @asynccontextmanager
++    async def context(*args):
++        yield
++
 +    with (
-+        patch("cognee.add", new_callable=AsyncMock) as mock_add,
-+        patch("cognee.cognify", new_callable=AsyncMock, return_value={}) as mock_cognify,
++        patch(
++            "cognee.modules.data.methods.get_authorized_existing_datasets",
++            new=AsyncMock(return_value=[dataset]),
++        ),
 +        patch.object(
-+            cognify_agent_trace_feedback_module, "get_session_manager", return_value=manager
++            importlib.import_module("cognee.modules.data.methods.get_dataset_data"),
++            "get_dataset_data",
++            new=AsyncMock(return_value=[orphan]),
++        ),
++        patch("cognee.context_global_variables.set_database_global_context_variables", context),
++        patch.object(
++            importlib.import_module("cognee.modules.graph.methods.delete_data_nodes_and_edges"),
++            "delete_data_nodes_and_edges",
++            new=AsyncMock(return_value=SimpleNamespace(node_ids={"n1"}, edge_ids={"e1"})),
++        ),
++        patch("cognee.modules.conflicts.methods.retire_forgotten_decisions", new=retire),
++        patch.object(
++            importlib.import_module("cognee.modules.data.methods.delete_data"),
++            "delete_data",
++            new=delete,
++        ),
++        patch.object(
++            importlib.import_module("cognee.modules.session_lifecycle.invalidate_sessions"),
++            "invalidate_sessions_for_deleted_data",
++            new=invalidate,
 +        ),
 +    ):
-+        await cognify_agent_trace_feedback(windows, dataset_id="123")
-+
-+    assert mock_add.await_count == 3
-+    mock_cognify.assert_awaited_once()
-+    for sid, count in (("a", 4), ("b", 7), ("c", 9)):
-+        assert await TRACE_PERSIST_WATERMARK.read_count(manager, "u", sid) == count
++        yield
 +
 +
-+@pytest.mark.asyncio
-+async def test_a_failed_batch_run_advances_no_watermark():
-+    manager = _FakeSessionManager()
-+    windows = [
-+        _window(text=f"Session ID: {sid}\n\nstep", persisted_trace_count=count, session_id=sid)
-+        for sid, count in (("a", 4), ("b", 7))
-+    ]
-+    failed = CognifyFailedError(
-+        dataset_name="docs", error_class="RuntimeError", error_message="one window could not build"
++def _fixture():
++    dataset = SimpleNamespace(id=uuid4(), owner_id=uuid4())
++    user = SimpleNamespace(id=uuid4())
++    orphan = SimpleNamespace(
++        id=uuid4(), system_metadata={"source": "notion", "table_name": "pages"}
 +    )
-+    with (
-+        patch("cognee.add", new_callable=AsyncMock),
-+        patch("cognee.cognify", new_callable=AsyncMock, side_effect=failed),
-+        patch.object(
-+            cognify_agent_trace_feedback_module, "get_session_manager", return_value=manager
-+        ),
-+        pytest.raises(CognifyFailedError, match="one window could not build"),
-+    ):
-+        await cognify_agent_trace_feedback(windows, dataset_id="123")
-+
-+    assert await TRACE_PERSIST_WATERMARK.read_count(manager, "u", "a") == 0
-+    assert await TRACE_PERSIST_WATERMARK.read_count(manager, "u", "b") == 0
++    return dataset, user, orphan
 +
 +
- @pytest.mark.asyncio
- async def test_window_advances_watermark_after_successful_cognify():
-     manager = _FakeSessionManager()
-@@ -208,40 +231,11 @@ async def test_batched_windows_each_advance_their_own_session():
-         await cognify_agent_trace_feedback(windows, dataset_id="123")
++async def _cleanup(user):
++    await resolve._delete_dlt_orphans(
++        "dataset", user, set(), sources=("notion",), document_scopes={("notion", "pages")}
++    )
++
++
++@pytest.mark.asyncio
++async def test_orphan_cleanup_retires_decisions_under_the_dataset_lock():
++    dataset, user, orphan = _fixture()
++
++    async def retire(retire_dataset, retire_user):
++        assert dataset.id in held_datasets.get()
++        assert (retire_dataset, retire_user) == (dataset, user)
++        return {"conflict"}
++
++    delete, invalidate = AsyncMock(), AsyncMock()
++    with _patches(dataset, orphan, AsyncMock(side_effect=retire), delete, invalidate):
++        await _cleanup(user)
++
++    delete.assert_awaited_once_with(orphan, dataset.id)
++    assert invalidate.await_args.args[1:] == ({"n1", "conflict"}, {"e1"})
++
++
++@pytest.mark.asyncio
++async def test_a_failed_retirement_keeps_the_row_for_the_next_ingest():
++    dataset, user, orphan = _fixture()
++    delete = AsyncMock()
++    retire = AsyncMock(side_effect=RuntimeError("graph read failed"))
++    with _patches(dataset, orphan, retire, delete, AsyncMock()):
++        await _cleanup(user)
++
++    delete.assert_not_awaited()
+```
+
+---
+
+### Incident Patch 3: `962e4c13` (2026-10-29)
+**Commit Message**: fix: Fail on malformed DLT key hints instead of skipping them (COG-7007)
+
+Reading a resource's table hints caught every exception at debug level
+and moved on, so a resource that failed for any reason silently lost
+its keys. Only a resource naming its tables per item has no static
+hints; that case is now an explicit check with a warning, and anything
+else raises. A foreign key hint missing its column, table or referenced
+column was skipped or guessed; hints are cognee's own output, so it now
+raises. BROAD reads a table node's name directly instead of defaulting.
+
+**File**: `cognee/modules/retrieval/broad_retriever.py` (modified, +1/-1)
+```diff
+@@ -317,7 +317,7 @@ async def dlt_foreign_keys(self, graph_engine) -> dict[str, list[str]]:
+                 f"{fk['column']} references {fk['ref_table']}.{fk['ref_column']}"
+                 for fk in json.loads(props["foreign_keys"])
+             ]
+-            listed = foreign_keys.setdefault(str(props.get("name")), [])
++            listed = foreign_keys.setdefault(str(props["name"]), [])
+             listed.extend(line for line in lines if line not in listed)
+         return foreign_keys
  
-     assert mock_add.await_count == 2
--    assert mock_cognify.await_count == 2
-+    assert mock_cognify.await_count == 1  # one run for the whole batch
-     assert await TRACE_PERSIST_WATERMARK.read_count(manager, "u", "s1") == 2
-     assert await TRACE_PERSIST_WATERMARK.read_count(manager, "u", "s2") == 7
+```
+
+**File**: `cognee/tasks/ingestion/ingest_dlt_source.py` (modified, +9/-7)
+```diff
+@@ -292,7 +292,8 @@ def _source_tables(pipeline, dlt_source) -> list:
+ 
+     Resource hints carry the source's own spelling; the loaded schema's naming
+     convention gives the names the staging tables and columns were created with.
+-    A resource whose table name depends on its items has no static hints.
++    A resource whose table name depends on its items has no static hints, so its
++    tables get no keys; that is said once per resource.
+     """
+     from dlt.common.schema.utils import normalize_table_identifiers
+     from dlt.extract.source import DltSource
+@@ -305,13 +306,14 @@ def _source_tables(pipeline, dlt_source) -> list:
+ 
+     tables = []
+     for resource in resources:
+-        try:
+-            table = resource.compute_table_schema()
+-        except Exception:
+-            logger.debug("No static table hints for resource %r", resource.name, exc_info=True)
++        if resource.has_dynamic_table_name:
++            logger.warning(
++                "Resource %r names its tables per item, so dlt has no key hints for them: "
++                "its rows get no foreign key edges.",
++                resource.name,
++            )
+             continue
+-        if table.get("name"):
+-            tables.append(normalize_table_identifiers(table, naming))
++        tables.append(normalize_table_identifiers(resource.compute_table_schema(), naming))
+     return tables
  
  
--@pytest.mark.asyncio
--async def test_errored_run_info_keeps_watermark_put():
--    from uuid import
+```
+
+**File**: `cognee/tasks/ingestion/resolve_dlt_sources.py` (modified, +6/-7)
+```diff
+@@ -1040,16 +1040,15 @@ def close(groups, ref_table):
+             yield ref_table, pairs, None
+ 
+     for fk in foreign_keys:
+-        column = fk.get("column", "")
+-        ref_table = fk.get("ref_table", "")
+-        if not column or not ref_table:
+-            continue
++        # Hints are written by _dlt_key_hints with all three fields; one without
++        # them is a bug, not a key to skip.
++        column, ref_table, ref_column = fk["column"], fk["ref_table"], fk["ref_column"]
++        if not column or not ref_table or not ref_column:
++            raise ValueError(f"Foreign key hint {fk!r} does not name its column, table and target")
+         key = key_columns.get(ref_table)
+         if key is None:
+-            yield ref_table, [(column, fk.get("ref_column", ""))], [fk.get("ref_column", "")]
++            yield ref_table, [(column, ref_column)], [ref_column]
+             continue
+-        # A reflected FK without a referenced column names its table's single key.
+-        ref_column = fk.get("ref_column") or (key[0] if len(key) == 1 else "")
+         if ref_column not in key:
+             yield from close(open_keys, ref_table)
+             if any(ref_column == taken for _, taken in open_columns.get(ref_table, [])):
+```
+
+**File**: `cognee/tests/unit/tasks/ingestion/test_dlt_fk_resolution.py` (modified, +13/-0)
+```diff
+@@ -193,3 +193,16 @@ def test_a_key_to_a_table_this_add_did_not_load_gets_its_own_warning(monkeypatch
+     assert "only within one add()" in unloaded.args[0]
+     assert unresolved.args[1:] == (1, "shipments.order_id, line_no -> order_lines:9:1")
+     assert "max_rows_per_table" in unresolved.args[0]
++
++
++def test_a_hint_missing_a_field_raises():
++    """Hints are cognee's own output, so an incomplete one is a bug, not a key to skip."""
++    import pytest
++
++    row = _row("badges", [{"column": "owner_id", "ref_table": "people"}], {"owner_id": 1})
++    with pytest.raises(KeyError):
++        _resolve_fk_references(row, {}, [], {"people": ["id"]})
++
++    row = _row("badges", [_fk("owner_id", "people", "")], {"owner_id": 1})
++    with pytest.raises(ValueError):
++        _resolve_fk_references(row, {}, [], {"people": ["id", "org"]})
+```
+
+**File**: `cognee/tests/unit/tasks/ingestion/test_dlt_key_hints.py` (modified, +22/-0)
+```diff
+@@ -153,3 +153,25 @@ def test_hints_come_from_the_schema_the_source_loaded_into():
+ 
+     assert _loaded_schema(pipeline, sql_source) is sql_schema
+     assert _loaded_schema(pipeline, SimpleNamespace(name="a bare resource")) is csv_schema
++
++
++def test_a_resource_naming_its_tables_per_item_is_skipped_with_a_warning(caplog):
++    """Such a resource has no static hints; any other failure to read hints raises."""
++    import logging
++
++    import dlt
++    from dlt.common.schema import Schema
++
++    @dlt.source(name="sql_database")
++    def shop():
++        yield dlt.resource([{"Id": 1}], name="Users", primary_key="Id")
++        yield dlt.resource([{"kind": "a", "Id": 1}], name="events", table_name=lambda i: i["kind"])
++
++    schema = Schema("sql_database")
++    pipeline = SimpleNamespace(default_schema=schema, schemas={"sql_database": schema})
++
++    with caplog.at_level(logging.WARNING):
++        tables = _source_tables(pipeline, shop())
++
++    assert [table["name"] for table in tables] == ["users"]
++    assert "events" in caplog.text and "no key hints" in caplog.text
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6014** (2026-10-19): fix(deps): Resolve Dependabot alerts in cognee-frontend package-lock (SDK-1155) (@Vasilije1990)
-- **PR #6013** (2026-10-19): test: Poll for ownership release after worker death (SDK-1154) (@Vasilije1990)
-- **PR #6011** (2026-10-18): docs: Link each plugin install block to its own setup guide (COG-7162) (@Vasilije1990)
-- **PR #6010** (closed): docs: point Codex plugin users to the Codex setup guide (@bluetomlee)
-- **PR #5966** (2026-10-16): docs: Move the graph-count cache block to the template's end (@dexters1)
-- **PR #5965** (closed): fix: Raise the typed error when a route refuses base64 (@dexters1)
+- **PR #6456** (closed): docs: Sync router docstrings with handlers (RES-14) (@siillee)
+- **PR #6448** (2026-10-29): chore: Sync cognee-mcp lock to cognee 1.6.6 [release] (@dexters1)
+- **PR #6447** (2026-10-29): chore: Sync cognee-mcp lock to cognee 1.6.6 [release] (@dexters1)
+- **PR #6444** (2026-10-29): chore: Release v1.6.6 (@dexters1)
+- **PR #6443** (2026-10-29): chore: Release v1.6.6 (@dexters1)
+- **PR #6441** (2026-10-29): feat: Make every DLT column a value node by default (SDK-1344) (@dexters1)
 
 ---
 
@@ -2382,32 +1900,25 @@ as a who
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Curate every new entry per distill run by default (SDK-1140) (#5935)
+## X. conflicts): Retire choices a chunk edit loses (SDK-1328) (#6437)
 
 **RULE**:
-When implementing operations in `cognee/modules/improve/config.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cognee/api/v1/update/incremental.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b063aea8`: Curate every new entry per distill run by default (SDK-1140) (#5935). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `95ff9cfd`: conflicts): Retire choices a chunk edit loses (SDK-1328) (#6437). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `cognee/modules/improve/config.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `cognee/api/v1/update/incremental.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    IMPROVE_DISTILL_MAX_BATCHES_PER_RUN=0  # curator batches per distill run; 0 = uncapped
-    # Session distillation curates every new gated entry of a session per run.
-    # A cap curates only the most relevant entries that fit in this many curator
-    # batches and seals the rest uncurated; 0 means no cap.
-    distill_max_batches_per_run: int = 0
-    @field_validator("distill_max_batches_per_run")
-    @classmethod
-    def _cap_non_negative(cls, value: int) -> int:
-        if value < 0:
-            raise ValueError("distill_max_batches_per_run must be >= 0 (0 = uncapped)")
-        return value
-
+from cognee.modules.conflicts.methods import retire_decisions_after_edit
+            # An edit can remove the fact a user chose, or restate it under another
+            # relationship; its decision must not outlive it. Read once the new
+            # chunks' facts are written, so a fact the edit kept is still found.
+            await retire_decisions_after_edit(dataset, user)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2417,4 +1928,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b063aea8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `95ff9cfd` are properly handled with clean fallback behavior.
