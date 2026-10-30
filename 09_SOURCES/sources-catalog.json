@@ -11518,5 +11518,15 @@
     "contentHash": "7dfd98f02d01c2f39f46ec92bc770b04016b8ee7082438a975d64686a3715d17",
     "lastHarvestedAt": "2026-10-29T22:19:06.343Z",
     "learningId": "learn-github-cherryhq-cherry-studio"
+  },
+  "hf-liconstudio-minimax-h3-vbvr": {
+    "repository": "LiconStudio/Minimax-H3-VBVR",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
+    "sourceVersion": "hf-liconstudio-minimax-h3-vbvr",
+    "license": "Open-Source",
+    "contentHash": "4a2f4c0b7787fe31e5162e1f32ff4c77016bb870d5f7f543d54ca85ad725fc4c",
+    "lastHarvestedAt": "2026-10-30T03:18:52.149Z",
+    "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr"
   }
 }

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T00:46:54.678Z",
-    "lastVerified": "2026-10-30T00:46:54.678Z",
+    "lastChecked": "2026-10-30T03:18:55.633Z",
+    "lastVerified": "2026-10-30T03:18:55.633Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -233,8 +233,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T00:25:49.621Z",
-    "lastVerified": "2026-10-30T00:25:49.621Z",
+    "lastChecked": "2026-10-30T03:18:55.622Z",
+    "lastVerified": "2026-10-30T03:18:55.622Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1578,9 +1578,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-10-29T11:56:24.454Z",
+    "lastChecked": "2026-10-30T03:18:50.724Z",
     "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-10-29T11:56:24.454Z"
+    "lastVerified": "2026-10-30T03:18:50.724Z"
   },
   "alibaba-zvec": {
     "name": "zvec",
@@ -4723,9 +4723,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-10-28T15:09:50.339Z",
+    "lastChecked": "2026-10-30T03:18:53.197Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-10-28T15:09:50.339Z"
+    "lastVerified": "2026-10-30T03:18:53.197Z"
   },
   "datadog-glommio": {
     "name": "glommio",
@@ -5141,9 +5141,9 @@
   "goss-org-goss": {
     "name": "goss",
     "officialUrl": "https://github.com/goss-org/goss",
-    "lastChecked": "2026-10-28T15:58:20.027Z",
+    "lastChecked": "2026-10-30T03:18:48.123Z",
     "revisionIdentifier": "e1210076",
-    "lastVerified": "2026-10-28T15:58:20.027Z"
+    "lastVerified": "2026-10-30T03:18:48.123Z"
   },
   "apple-foundationdb": {
     "name": "foundationdb",
@@ -8841,5 +8841,36 @@
     "lastChecked": "2026-10-30T00:46:40.741Z",
     "revisionIdentifier": "525cd241",
     "lastVerified": "2026-10-30T00:46:40.741Z"
+  },
+  "melbahja-seo": {
+    "name": "seo",
+    "officialUrl": "https://github.com/melbahja/seo",
+    "lastChecked": "2026-10-30T03:18:43.112Z",
+    "revisionIdentifier": "cd4e4122",
+    "lastVerified": "2026-10-30T03:18:43.112Z"
+  },
+  "ehpanda-team-ehpanda": {
+    "name": "EhPanda",
+    "officialUrl": "https://github.com/EhPanda-Team/EhPanda",
+    "lastChecked": "2026-10-30T03:18:45.603Z",
+    "revisionIdentifier": "37b97996",
+    "lastVerified": "2026-10-30T03:18:45.603Z"
+  },
+  "hf-liconstudio-minimax-h3-vbvr": {
+    "name": "LiconStudio/Minimax-H3-VBVR",
+    "officialUrl": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-30T03:18:41.011Z",
+    "lastVerified": "2026-10-30T03:18:41.011Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
+    "contentHash": "4a2f4c0b7787fe31e5162e1f32ff4c77016bb870d5f7f543d54ca85ad725fc4c",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

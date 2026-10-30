@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-T0AH",
-    "timestamp": "2026-10-28T00:05:58.073Z",
-    "repository": "authzed/spicedb",
-    "learningId": "learn-github-authzed-spicedb",
-    "contentHash": "9ffc0209b7ae867a50cb47be25812331ba0cbd99130b2feb77ae6e28d8b4a66b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-T255",
     "timestamp": "2026-10-28T00:06:00.473Z",
     "repository": "RustCrypto/hashes",
@@ -7492,6 +7477,21 @@
     "contentHash": "2d547157429a25812a13a88fa2d0641dba4b69f58bc01836e267a54d0c178031",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-KS8J",
+    "timestamp": "2026-10-30T03:18:52.147Z",
+    "repository": "LiconStudio/Minimax-H3-VBVR",
+    "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr",
+    "contentHash": "4a2f4c0b7787fe31e5162e1f32ff4c77016bb870d5f7f543d54ca85ad725fc4c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

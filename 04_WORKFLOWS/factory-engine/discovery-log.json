@@ -19795,5 +19795,17 @@
     "qualityScore": 28436,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-29T22:15:24.349Z"
+  },
+  {
+    "name": "LiconStudio/Minimax-H3-VBVR",
+    "fullName": "LiconStudio/Minimax-H3-VBVR",
+    "url": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: LiconStudio/Minimax-H3-VBVR (140 likes, 6189 downloads)",
+    "likes": 140,
+    "downloads": 6189,
+    "qualityScore": 3400,
+    "discoveredAt": "2026-10-30T03:16:27.223Z"
   }
 ]

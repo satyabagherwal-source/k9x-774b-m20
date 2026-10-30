@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T00:46:52.048Z",
-  "total_verified_learnings": 1169,
+  "last_updated": "2026-10-30T03:18:51.974Z",
+  "total_verified_learnings": 1170,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -149771,6 +149771,72 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T00:46:52.029Z"
+    },
+    "learn-huggingface-liconstudio-minimax-h3-vbvr": {
+      "learning_id": "learn-huggingface-liconstudio-minimax-h3-vbvr",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "LiconStudio/Minimax-H3-VBVR",
+      "repository": "LiconStudio/Minimax-H3-VBVR",
+      "slug": "hf-liconstudio-minimax-h3-vbvr",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
+      "source_version": "hf-liconstudio-minimax-h3-vbvr",
+      "content_hash": "4a2f4c0b7787fe31e5162e1f32ff4c77016bb870d5f7f543d54ca85ad725fc4c",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liconstudio-minimax-h3-vbvr-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5572,
+          "title": "Modular Weight Injection via Low-Rank Adaptation (LoRA)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5573,
+          "title": "Spatial-Temporal Consistency Validation via Comparative Video Diffing",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-30T03:18:51.962Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5572": {
+      "learning_id": "rule-5572",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5572,
+      "title": "Modular Weight Injection via Low-Rank Adaptation (LoRA)",
+      "source_url": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
+      "source_version": "hf-liconstudio-minimax-h3-vbvr",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:18:51.962Z"
+    },
+    "rule-5573": {
+      "learning_id": "rule-5573",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5573,
+      "title": "Spatial-Temporal Consistency Validation via Comparative Video Diffing",
+      "source_url": "https://huggingface.co/LiconStudio/Minimax-H3-VBVR",
+      "source_version": "hf-liconstudio-minimax-h3-vbvr",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:18:51.962Z"
     }
   },
   "aliases": {

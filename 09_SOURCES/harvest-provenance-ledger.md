@@ -6099,3 +6099,4 @@ Every entry in this ledger must capture:
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `4b4d8cd5` | Multi-dimensional audit evidence | 2026-10-30T00:33:13.966Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `3e76856b` | Multi-dimensional audit evidence | 2026-10-30T00:40:04.360Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `6753c2a7` | Multi-dimensional audit evidence | 2026-10-30T00:46:52.125Z |
+| `learn-huggingface-liconstudio-minimax-h3-vbvr` | `https://huggingface.co/LiconStudio/Minimax-H3-VBVR` | `hf-liconst` | Multi-dimensional audit evidence | 2026-10-30T03:18:52.149Z |
