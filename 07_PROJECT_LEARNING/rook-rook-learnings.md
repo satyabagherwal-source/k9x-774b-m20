@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  
-> **Source Version**: `d0d87977`  
+> **Source Version**: `61a8fea1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T18:36:22.654Z  
+> **Timestamp**: 2026-10-30T05:46:01.758Z  
 > **Learning ID**: `learn-github-rook-rook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T18:36:22.646Z  
+> **Harvest Timestamp**: 2026-10-30T05:46:01.222Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Storage Orchestration for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 13694 stars
+- **Stars / Engagement**: 13699 stars
 
 ---
 
@@ -1427,245 +1427,161 @@ func quanityToInt64(qty string) (*int64, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7c82df03` (2026-10-26)
-**Commit Message**: build(deps): bump the github-dependencies group across 1 directory with 10 updates
+### Incident Patch 1: `61a8fea1` (2026-10-28)
+**Commit Message**: Merge pull request #18639 from taraasrita10/cephcluster-status-update
 
-Bumps the github-dependencies group with 10 updates in the / directory:
+operator: retry CephCluster status update on conflict
 
-| Package | From | To |
-| --- | --- | --- |
-| [github.com/IBM/keyprotect-go-client](https://github.com/IBM/keyprotect-go-client) | `0.17.3` | `1.1.0` |
-| [github.com/aws/aws-sdk-go-v2](https://github.com/aws/aws-sdk-go-v2) | `1.47.3` | `1.47.4` |
-| [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) | `1.33.9` | `1.33.10` |
-| [github.com/aws/aws-sdk-go-v2/credentials](https://github.com/aws/aws-sdk-go-v2) | `1.20.9` | `1.20.10` |
-| [github.com/aws/aws-sdk-go-v2/service/s3](https://github.com/aws/aws-sdk-go-v2) | `1.114.3` | `1.114.5` |
-| [github.com/aws/aws-sdk-go-v2/service/sns](https://github.com/aws/aws-sdk-go-v2) | `1.47.5` | `1.47.6` |
-| [github.com/aws/smithy-go](https://github.com/aws/smithy-go) | `1.28.5` | `1.28.6` |
-| [github.com/ceph/go-ceph](https://github.com/ceph/go-ceph) | `0.41.0` | `0.42.1` |
-| [github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring](https://github.com/prometheus-operator/prometheus-operator) | `0.94.1` | `0.94.2` |
-| [github.com/prometheus-operator/prome
-
-**File**: `go.mod` (modified, +22/-22)
+**File**: `pkg/operator/ceph/cluster/controller.go` (modified, +1/-1)
 ```diff
-@@ -11,16 +11,16 @@ replace (
+@@ -408,7 +408,7 @@ func (r *ReconcileCephCluster) reconcileDelete(cephCluster *cephv1.CephCluster)
+ 	var err error
  
- require (
- 	github.com/IBM/keyprotect-go-client v0.17.3
--	github.com/aws/aws-sdk-go-v2 v1.47.3
--	github.com/aws/aws-sdk-go-v2/config v1.33.9
--	github.com/aws/aws-sdk-go-v2/credentials v1.20.9
--	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
--	github.com/aws/aws-sdk-go-v2/service/sns v1.47.5
--	github.com/aws/smithy-go v1.28.5
-+	github.com/aws/aws-sdk-go-v2 v1.47.4
-+	github.com/aws/aws-sdk-go-v2/config v1.33.10
-+	github.com/aws/aws-sdk-go-v2/credentials v1.20.10
-+	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.5
-+	github.com/aws/aws-sdk-go-v2/service/sns v1.47.6
-+	github.com/aws/smithy-go v1.28.6
- 	github.com/banzaicloud/k8s-objectmatcher v1.8.0
- 	github.com/ceph/ceph-csi-operator/api v0.0.0-20261001132947-98eee8980fc6
- 	github.com/ceph/ceph-csi/api v0.0.0-20241216133622-88b7e0d6684f
--	github.com/ceph/go-ceph v0.41.0
-+	github.com/ceph/go-ceph v0.42.1
- 	github.com/coreos/pkg v0.0.0-20240122114842-bbd7aa9bf6fb
- 	github.com/csi-addons/kubernetes-csi-addons v0.15.1
- 	github.com/gemalto/kmip-go v0.1.0
-@@ -33,8 +33,8 @@ require (
- 	github.com/kube-object-storage/lib-bucket-provisioner v0.0.0-20260420161730-5164e3746489
- 	github.com/libopenstorage/secrets v0.0.0-20240416031220-a17cf7f72c6c
- 	github.com/pkg/errors v0.9.1
--	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.94.1
--	github.com/prometheus-operator/prometheus-operator/pkg/client v0.94.1
-+	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.94.2
-+	github.com/prometheus-operator/prometheus-operator/pkg/client v0.94.2
- 	github.com/rook/rook/pkg/apis v0.0.0-20241216163035-3170ac6a0c58
- 	github.com/sethvargo/go-password v0.4.0
- 	github.com/spf13/cobra v1.10.2
-@@ -69,19 +69,19 @@ require (
- 	github.com/AzureAD/microsoft-authentication-library-for-go v1.3.2 // indirect
- 	github.com/ansel1/merry v1.8.1 // indirect
- 	github.com/ansel1/merry/v2 v2.2.2 // indirect
--	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22 // indirect
--	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.7 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6 // indirect
--	github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sso v1.38.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sts v1.51.4 // indirect
-+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.24 // indirect
-+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.4 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.7 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.7 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.7 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.22 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.7 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.7 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/signin v1.10.5 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sso v1.38.5 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.5 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sts v1.51.5 // indirect
- 	github.com/beorn7/perks v1.0.1 // indirect
- 	github.com/blang/semver/v4 v4.0.0 // indirect
- 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
+ 	// Set the deleting status
+-	opcontroller.UpdateClusterCondition(r.context, cephCluster, nsName,
++	_ = opcontroller.UpdateClusterCondition(r.context, cephCluster, nsName,
+ 		k8sutil.ObservedGenerationNotAvailable, cephv1.ConditionDeleting, corev1.ConditionTrue, cephv1.ClusterDeletingReason, "Deleting the CephCluster",
+ 		true /* keep all other conditions to be safe */)
+ 
 ```
 
-**File**: `go.sum` (modified, +44/-44)
+**File**: `pkg/operator/ceph/controller/conditions.go` (modified, +14/-7)
 ```diff
-@@ -488,44 +488,44 @@ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkY
- github.com/asaskevich/govalidator v0.0.0-20180720115003-f9ffefc3facf/go.mod h1:lB+ZfQJz7igIIfQNfa7Ml4HSf2uFQQRzpGGRXenZAgY=
- github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a/go.mod h1:lB+ZfQJz7igIIfQNfa7Ml4HSf2uFQQRzpGGRXenZAgY=
- github.com/aws/aws-sdk-go v1.44.164/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
--github.com/aws/aws-sdk-go-v2 v1.47.3 h1:HRoT/MkNi3bjO5xF4dCzLzvVmkvRGHj3/cLINDnJejk=
--github.com/aws/aws-sdk-go-v2 v1.47.3/go.mod h1:xSl+OSI5ZUw6bSMupWc218zE5Pl+65MCCu3ySWFY99A=
--github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22 h1:oiEmPz/YMMeh/JvAE8xSxNCIsvWE6lpFe4ZPlyFykQI=
--github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22/go.mod h1:QWUDuRi9PFjBHIU2iH1Pkldbe7zqLfXJC4wWLbF8nuQ=
--github.com/aws/aws-sdk-go-v2/config v1.33.9 h1:Hv6bcQUJVnmuWaKjqD6Ot8sE75NrWsWV20oGT5aWle0=
--github.com/aws/aws-sdk-go-v2/config v1.33.9/go.mod h1:ivowmrZNfBQLcg4QkaItgi5wae4Bzot9RzIdbY1hfTg=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.9 h1:SNO55PnWhaDafsOcv16lCA0kdoFMl/YlegWoVsU02s0=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.9/go.mod h1:+2reOTRtdD3VSBqpRDNwrZIYy8yMCYa7oK3WKTJ/I1I=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 h1:gr3b87OLB29jymWPzp/CAyXwQRJVE+sC4Wm0qBIKHsk=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3/go.mod h1:BRjf4L/Yx2hY54o+ZibPbLJyMMeSwqYQXwcJfqW66a8=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 h1:CqL8NN3p4I0JTwwV5MEoatIl4Y2amZ2X9dRD+0hbRL0=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6/go.mod h1:exdJ32hMqXl0Wyo6NwqEC5yIhtua3+PDaKE8P29m4qE=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 h1:FpBq24TG6WVSObTNhQOv7Q0088rounUUlwn3zlNItkM=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6/go.mod h1:ONzdPVYC95oBOu0VWNEsKEntcoemP3xVKjT+qWml1s4=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 h1:Qmn60RWuk9+bd2ddvJJqwf3Cpac3VvGMOdbGemtUhX4=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6/go.mod h1:h/YJhe4AVyQxEUMluph10iqV7mjajH7A9L+BHF5ppis=
--github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 h1:e6YW5uME30TkrElR+4/xcY7NB6CCj2dcv7vtmGXhfhQ=
--github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21/go.mod h1:obpHAMP693+f3/A8PkLhIqfK1C+NWWn8zXzqD3OH520=
--github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.7 h1:CwvFlKw0uUScfgOMflXSRZa+ayXgOf6wk7lhyMemQYU=
--github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.7/go.mod h1:4SbD8BB+p+QEnG0aX6DoWwrtk9SufyYXRsUv0nve8LE=
--github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 h1:LHHdobjo5le1sjJdolitV7uVvYg3wkaeM1Ju2fDgeZQ=
--github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6/go.mod h1:CBGB0evAiaMD3Lk4wPO7LQCcCZLuhzL5Qf/wfEUHQ5w=
--github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6 h1:mYViDr2azcgxOpRrObZOl631bvavqILoE/L+Kxgbwys=
--github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6/go.mod h1:OXVdAo9jNhggB+hJRGOyy7WolGTKB6Rg7IIulDeSzPM=
--github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3 h1:NyeuyXkZL476uoAowNActm4XJO1QPKf7aassgXHpiqA=
--github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3/go.mod h1:GfoBeKMDJecgRUsGf/0RGdx0NJAh81ObTd922h8pQys=
--github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 h1:tvpDjuUvgKURf3Yk4hOaGbZ4QdY+070OWcA5d6LUv2A=
--github.com/aws/aws-sdk-go-v2/service/signin v1.10.4/go.mod h1:3ibVKg5Ng82Zby8++jELTD2nHxiPk2DJRLEeW/LKp8M=
--github.com/aws/aws-sdk-go-v2/service/sns v1.47.5 h1:4EezYQsIY0xPbD6u7TbQLfnpicSMQgA8n9paomVV4Zo=
--github.com/aws/aws-sdk-go-v2/service/sns v1.47.5/go.mod h1:Yr4VqXnyoyjWnOWJck8BOidkJtleQ1c8ypgd2n0epxE=
--github.com/aws/aws-sdk-go-v2/service/sso v1.38.4 h1:ChCtagixSFOxltv0o6E3NT8F7ksvZtZGPwUBynO5Nmk=
--github.com/aws/aws-sdk-go-v2/service/sso v1.38.4/go.mod h1:+FEO9jrVMpc9oN3CdAxJbtlQEu3z8UddDPSedpeM3PY=
--github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.4 h1:j6c+HA4AoS0EBEjArPjavFEBrucJEryfrQU0TffmACk=
--github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.4/go.mod h1:RhghaXUk9q66VtOQUX1FdPddQuHnqQZzbB0fEYXmPRA=
--github.com/aws/aws-sdk-go-v2/service/sts v1.51.4 h1:OKEfbf2tcfsF2pBk/S9QqNpo6alaAtiBs4hysCsBjPw=
--github.com/aws/aws-sdk-go-v2/service/sts v1.51.4/go.mod h1:mCd6qGo9b8hTtfjgsmNkFlzwjyce4owd7HDVFnCLXhM=
--github.com/aws/smithy-go v1.28.5 h1:OqbqKtzY9NUnr2yAe9+hiTdFb20tNaK/lI0PMOGXX9k=
--github.com/aws/smithy-go v1.28.5/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
-+github.com/aws/aws-sdk-go-v2 v1.47.4 h1:bTvk6UdSSSvaQsfLVj1JRDEEqj/PDRwGf1KanaRzau0=
-+github.com/aws/aws-sdk-go-v2 v1.47.4/go.mod h1:XkrjAZvr705Nytv6PkPUhoSB2W9+vVHBp5oAWpkh8Ak=
-+github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.24 h1:t7FxqJ5KHDeKceyD4HtGaG6z7hMSeVGjs5/4c+L5ArM=
-+github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.24/go.mod h1:5XK6NRVlK8s8yj4zKcM43HLluGA/rAz+azLLvWDMRr0=
-+github.com/aws/aws-sdk-go-v2/config v1.33.10 h1:RRb0GghYqq2ikMXzfT4r9NO9lVhOld3FIhJJWDIdk+w=
-+github.com/aws/aws-sdk-go-v2/config
+@@ -29,24 +29,29 @@ import (
+ 	v1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/types"
++	"k8s.io/client-go/util/retry"
+ )
+ 
+ // UpdateCondition function will export each condition into the cluster custom resource
+ func UpdateCondition(ctx context.Context, c *clusterd.Context, namespaceName types.NamespacedName, observedGeneration int64, conditionType cephv1.ConditionType, status v1.ConditionStatus, reason cephv1.ConditionReason, message string) {
+ 	// use client.Client to unit test this more easily with updating statuses which must use the client
+-	cluster := &cephv1.CephCluster{}
+-	if err := c.Client.Get(ctx, namespaceName, cluster); err != nil {
+-		log.NamedError(namespaceName, logger, "failed to get cluster %v to update the conditions. %v", namespaceName, err)
+-		return
++	err := retry.RetryOnConflict(retry.DefaultRetry, func() error {
++		cluster := &cephv1.CephCluster{}
++		if err := c.Client.Get(ctx, namespaceName, cluster); err != nil {
++			log.NamedError(namespaceName, logger, "failed to get cluster %v to update the conditions. %v", namespaceName, err)
++			return err
++		}
++		return UpdateClusterCondition(c, cluster, namespaceName, observedGeneration, conditionType, status, reason, message, false)
++	})
++	if err != nil {
++		log.NamedError(namespaceName, logger, "failed to update cluster condition after retries. %v", err)
+ 	}
+-
+-	UpdateClusterCondition(c, cluster, namespaceName, observedGeneration, conditionType, status, reason, message, false)
+ }
+ 
+ // UpdateClusterCondition function will export each condition into the cluster custom resource
+ func UpdateClusterCondition(c *clusterd.Context, cluster *cephv1.CephCluster, namespaceName types.NamespacedName, observedGeneration int64, conditionType cephv1.ConditionType, status v1.ConditionStatus,
+ 	reason cephv1.ConditionReason, message string, preserveAllConditions bool,
+-) {
++) error {
+ 	// Keep the conditions that already existed if they are in the list of long-term conditions,
+ 	// otherwise discard the temporary conditions
+ 	var currentCondition *cephv1.Condition
+@@ -107,7 +112,9 @@ func UpdateClusterCondition(c *clusterd.Context, cluster *cephv1.CephCluster, na
+ 
+ 	if err := reporting.UpdateStatus(c.Client, cluster); err != nil {
+ 		log.NamedError(namespaceName, logger, "failed to update cluster condition to %+v. %v", *currentCondition, err)
++		return err
+ 	}
++	return nil
+ }
+ 
+ // translatePhasetoState converts the Phase to the corresponding State
 ```
 
 ---
 
-### Incident Patch 2: `bb4c6d7e` (2026-10-26)
-**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
+### Incident Patch 2: `936a5f81` (2026-10-27)
+**Commit Message**: operator: retry CephCluster status update on conflict
 
-Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.0 to 4.39.1.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee...9b3254085494b55a0f7c4c2b3d2d52cc712ce370)
+When the cluster controller finishes reconciling and tries to update the
+CephCluster status to Ready, any concurrently running controller can
+modify the object, leading to a conflict error. Currently, this error is
+only being logged and dropped, leaving the CephCluster in a stale
+Progressing state.
+Adding a retry on conflict, which re-fetches the object and attempts the
+update again.
 
----
-updated-dependencies:
-- dependency-name: github/codeql-action/upload-sarif
-  dependency-version: 4.39.1
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+Signed-off-by: Prabhala Tara Aasrita <[REDACTED_EMAIL]>
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/scorecards.yml` (modified, +1/-1)
+**File**: `pkg/operator/ceph/cluster/controller.go` (modified, +1/-1)
 ```diff
-@@ -65,6 +65,6 @@ jobs:
-       # Upload the results to GitHub's code scanning dashboard (optional).
-       # Commenting out will disable upload of results to your repo's Code Scanning dashboard
-       - name: "Upload to code-scanning"
--        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-         with:
-           sarif_file: results.sarif
-```
-
----
-
-### Incident Patch 3: `98de46c1` (2026-10-26)
-**Commit Message**: build(deps): bump actions/setup-python from 7.0.0 to 7.1.0
-
-Bumps [actions/setup-python](https://github.com/actions/setup-python) from 7.0.0 to 7.1.0.
-- [Release notes](https://github.com/actions/setup-python/releases)
-- [Commits](https://github.com/actions/setup-python/compare/5fda3b95a4ea91299a34e894583c3862153e4b97...6d4fd22b20465ccc0f7354476588e8df7c9ca0e0)
-
----
-updated-dependencies:
-- dependency-name: actions/setup-python
-  dependency-version: 7.1.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/docs-check.yml` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ jobs:
-         with:
-           go-version: "1.26"
+@@ -408,7 +408,7 @@ func (r *ReconcileCephCluster) reconcileDelete(cephCluster *cephv1.CephCluster)
+ 	var err error
  
--      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-         with:
-           python-version: 3.9
+ 	// Set the deleting status
+-	opcontroller.UpdateClusterCondition(r.context, cephCluster, nsName,
++	_ = opcontroller.UpdateClusterCondition(r.context, cephCluster, nsName,
+ 		k8sutil.ObservedGenerationNotAvailable, cephv1.ConditionDeleting, corev1.ConditionTrue, cephv1.ClusterDeletingReason, "Deleting the CephCluster",
+ 		true /* keep all other conditions to be safe */)
  
 ```
 
-**File**: `.github/workflows/linters.yaml` (modified, +1/-1)
+**File**: `pkg/operator/ceph/controller/conditions.go` (modified, +14/-7)
 ```diff
-@@ -38,7 +38,7 @@ jobs:
-           fetch-depth: 0
+@@ -29,24 +29,29 @@ import (
+ 	v1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/types"
++	"k8s.io/client-go/util/retry"
+ )
  
-       - name: Set up Python
--        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-         with:
-           python-version: 3.12
+ // UpdateCondition function will export each condition into the cluster custom resource
+ func UpdateCondition(ctx context.Context, c *clusterd.Context, namespaceName types.NamespacedName, observedGeneration int64, conditionType cephv1.ConditionType, status v1.ConditionStatus, reason cephv1.ConditionReason, message string) {
+ 	// use client.Client to unit test this more easily with updating statuses which must use the client
+-	cluster := &cephv1.CephCluster{}
+-	if err := c.Client.Get(ctx, namespaceName, cluster); err != nil {
+-		log.NamedError(namespaceName, logger, "failed to get cluster %v to update the conditions. %v", namespaceName, err)
+-		return
++	err := retry.RetryOnConflict(retry.DefaultRetry, func() error {
++		cluster := &cephv1.CephCluster{}
++		if err := c.Client.Get(ctx, namespaceName, cluster); err != nil {
++			log.NamedError(namespaceName, logger, "failed to get cluster %v to update the conditions. %v", namespaceName, err)
++			return err
++		}
++		return UpdateClusterCondition(c, cluster, namespaceName, observedGeneration, conditionType, status, reason, message, false)
++	})
++	if err != nil {
++		log.NamedError(namespaceName, logger, "failed to update cluster condition after retries. %v", err)
+ 	}
+-
+-	UpdateClusterCondition(c, cluster, namespaceName, observedGeneration, conditionType, status, reason, message, false)
+ }
  
-```
-
-**File**: `.github/workflows/push-build.yaml` (modified, +1/-1)
-```diff
-@@ -82,7 +82,7 @@ jobs:
-           echo "BRANCH_NAME=${GITHUB_REF##*/}" >> "$GITHUB_ENV"
-           echo "GITHUB_REF=${GITHUB_REF}" >> "$GITHUB_ENV"
+ // UpdateClusterCondition function will export each condition into the cluster custom resource
+ func UpdateClusterCondition(c *clusterd.Context, cluster *cephv1.CephCluster, namespaceName types.NamespacedName, observedGeneration int64, conditionType cephv1.ConditionType, status v1.ConditionStatus,
+ 	reason cephv1.ConditionReason, message string, preserveAllConditions bool,
+-) {
++) error {
+ 	// Keep the conditions that already existed if they are in the list of long-term conditions,
+ 	// otherwise discard the temporary conditions
+ 	var currentCondition *cephv1.Condition
+@@ -107,7 +112,9 @@ func UpdateClusterCondition(c *clusterd.Context, cluster *cephv1.CephCluster, na
  
--      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-         with:
-           python-version: 3.13
+ 	if err := reporting.UpdateStatus(c.Client, cluster); err != nil {
+ 		log.NamedError(namespaceName, logger, "failed to update cluster condition to %+v. %v", *currentCondition, err)
++		return err
+ 	}
++	return nil
+ }
  
+ // translatePhasetoState converts the Phase to the corresponding State
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #18644** (2026-10-29): operator: retry CephCluster status update on conflict (backport #18639) (@mergify[bot])
+- **PR #18643** (closed): operator: retry CephCluster status update on conflict (backport #18639) (@mergify[bot])
+- **PR #18641** (closed): nvmeof: add ROOK_CEPH_NVMEOF_IMAGE env var for image override (@OdedViner)
+- **PR #18639** (2026-10-28): operator: retry CephCluster status update on conflict (@taraasrita10)
 - **PR #18635** (2026-10-26): build: Set release version to v1.21.1 (@travisn)
 - **PR #18633** (2026-10-27): build(deps): bump the github-dependencies group across 1 directory with 10 updates (@dependabot[bot])
-- **PR #18632** (2026-10-27): build(deps): bump actions/setup-python from 7.0.0 to 7.1.0 (@dependabot[bot])
-- **PR #18631** (2026-10-27): build(deps): bump reviewdog/action-misspell from 1.30.2 to 1.30.3 (@dependabot[bot])
-- **PR #18630** (2026-10-27): build(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
-- **PR #18629** (2026-10-27): build(deps): bump github/codeql-action/upload-sarif from 4.39.0 to 4.39.1 (@dependabot[bot])
 
 ---
 
@@ -1685,66 +1601,28 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump the github-dependencies group across 1 directory with 10 updat
+## X. Merge pull request #18639 from taraasrita10/cephcluster-status-update
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/operator/ceph/cluster/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7c82df03`: build(deps): bump the github-dependencies group across 1 directory with 10 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `61a8fea1`: Merge pull request #18639 from taraasrita10/cephcluster-status-update. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/operator/ceph/cluster/controller.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/aws/aws-sdk-go-v2 v1.47.4
-	github.com/aws/aws-sdk-go-v2/config v1.33.10
-	github.com/aws/aws-sdk-go-v2/credentials v1.20.10
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.5
-	github.com/aws/aws-sdk-go-v2/service/sns v1.47.6
-	github.com/aws/smithy-go v1.28.6
-	github.com/ceph/go-ceph v0.42.1
-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.94.2
-	github.com/prometheus-operator/prometheus-operator/pkg/client v0.94.2
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.24 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.4 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.7 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.7 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.7 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.22 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.8 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.7 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.7 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.10.5 // indirect
-	github.com/aws/aw
+	_ = opcontroller.UpdateClusterCondition(r.context, cephCluster, nsName,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/aws/aws-sdk-go-v2 v1.47.3
-	github.com/aws/aws-sdk-go-v2/config v1.33.9
-	github.com/aws/aws-sdk-go-v2/credentials v1.20.9
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
-	github.com/aws/aws-sdk-go-v2/service/sns v1.47.5
-	github.com/aws/smithy-go v1.28.5
-	github.com/ceph/go-ceph v0.41.0
-	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.94.1
-	github.com/prometheus-operator/prometheus-operator/pkg/client v0.94.1
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.7 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 // indirect
-	github.com/aws/aws-
+	opcontroller.UpdateClusterCondition(r.context, cephCluster, nsName,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7c82df03` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `61a8fea1` are properly handled with clean fallback behavior.

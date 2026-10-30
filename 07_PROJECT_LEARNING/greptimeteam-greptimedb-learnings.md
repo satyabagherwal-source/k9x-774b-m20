@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `8e167104`  
+> **Source Version**: `8a38b901`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T16:58:58.864Z  
+> **Timestamp**: 2026-10-30T05:46:10.078Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T16:58:58.859Z  
+> **Harvest Timestamp**: 2026-10-30T05:46:09.452Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6769 stars
+- **Stars / Engagement**: 6771 stars
 
 ---
 
@@ -1651,11 +1651,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10040** (2026-10-28): **ci: enqueue eligible pull requests during the nightly window**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  None.  ## What's changed and what's your intention?  Shift automatic merge-queue admission to the nightly window to reduce competition with daytime PR CI. The PR template defaults to a checked nightly-merge option; creating or editing a PR synchronizes the `merge nightly` label, and unchecking removes it.  Run hourly from 02:10 through 08:10 Beijing time (UTC+8), enqueueing at most five eligible PRs per run, oldest first. Only open, non-draft PRs targeting `main` with approval, a clean merge status, and all review threads resolved are eligible. Recheck the current checkbox and labels and supply the expected head SHA when enqueueing. Leave existing queue entries and manually enabled auto-merge untouched so maintainers can use **Merge when ready** earlier.  Add a manual dry-run option, setup documentation, and mocked workflow-script tests wired into the existing GitHub Script Tests job. Before rollout, create the label and verify the existing automation token can enqueue PRs. Conversation-resolution protection is already enabled according to the maintainer. Actual GitHub permissions and runner savings have not been validated.  Validation passed: actionlint for the changed workflows, the existing and new Node test files, and `git diff --check`. The new tests cover checkbox synchronization, eligibility gates, paginated 
+- **Issue #10056** (2026-10-29): **ci: authenticate ECR Public pulls in benchmark workflows**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  - Failed anonymous pull: https://github.com/GreptimeTeam/greptimedb/actions/runs/40809997410 - Agent benchmark with authenticated pulls: https://github.com/GreptimeTeam/greptimedb/actions/runs/40813622374  ## What's changed and what's your intention?  Agent Observability could not start because anonymous ECR Public runtime pulls repeatedly returned `Data limit exceeded`. Authenticate before the first pull in both validation and benchmark jobs for Agent Observability, Tracesbench, VMBench Long Range, and OS WAL S3 Benchmark.  Reuse the existing `AWS_ECR_ACCESS_KEY_ID` and `AWS_ECR_SECRET_ACCESS_KEY` credentials and `aws-actions/amazon-ecr-login@v2`, with the ECR Public authentication region fixed to `us-east-1`. Both credential setup and login run only when the runtime image starts with `public.ecr.aws/`. EC2 provisioning and benchmark resource settings are unchanged; the existing S3 steps keep their explicit bucket credentials.  Validation:  - `actionlint` passed for all four workflows; `git diff --check` passed. - Existing CI runner tests: 34 passed; version-comparison tests: 6 passed; OS WAL benchmark tests: 62 passed. The OS WAL tests required a rerun outside the socket-restricted sandbox so their local HTTP fixtures could bind. - The Agent benchmark run above passed validation and provisioning and advanced past 
 
-- **Issue #10034** (2026-10-28): **fix(log-store): accept a retried first create of the conditional create probe**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Follow-up to #9909.  ## What's changed and what's your intention?  **Problem.** The conditional create probe that #9909 added to the object store WAL wrote its first create by hand and failed the open on any error. The object store sits behind a retry layer. When that first create is stored but its response is lost, for example to a timeout, the retry layer repeats it and the repeat finds the object, so the probe reports a failed write and the WAL refuses to open. A restart uses a new key and usually passes, but the startup failure is spurious.  **Fix.** `put_if_absent` already handles this case: when a create fails, it reads the object back and accepts identical content. Its body moves unchanged into a private path-based core, `put_path_if_absent`, which both `put_if_absent` and the probe's first create now call. The probe treats `Created` and `AlreadyPresent` alike for the first create. The second create, which the store must refuse, and the delete are unchanged, so a store that ignores the condition is still refused. `put_if_absent` keeps its behaviour and errors.  **Tests.** A new test wraps the store so that the probe's first create is stored and then reported as `ConditionNotMatch`, as its retry would see it, and asserts that the store opens and only the start object remains. It fails without the fix. The exis
+- **Issue #10054** (2026-10-29): **chore(ci): slide the compatibility window to v1.3.0**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Follow-up to the `v1.3.0` release published on 2026-10-28. No issue filed.  ## What's changed and what's your intention?  `tests/compatibility/ci.toml` still names `["v1.1.4", "v1.2.1"]` as the PR compatibility window. With `v1.3.0` now published — and carrying the `greptime-linux-amd64` `tar.gz` and `.sha256sum` assets the window requires — the two newest stable minor lines are `1.3` and `1.2`, so the window must slide to `["v1.2.1", "v1.3.0"]`.  This is the change `Check compat version updater` is asking for. Before the change, the job's command fails on every PR targeting `narthex`:  ``` $ python3 .github/scripts/update-compat-versions.py --check --published-only --check-anchors --- a/tests/compatibility/ci.toml +++ b/tests/compatibility/ci.toml @@ -6,7 +6,7 @@ -from_versions = ["v1.1.4", "v1.2.1"] +from_versions = ["v1.2.1", "v1.3.0"] ```  The file was generated with the documented command rather than edited by hand:  ```bash python3 .github/scripts/update-compat-versions.py --update --published-only ```  `downgrade_to_versions` is deliberately unchanged at `["v1.1.4"]`. The updater only rewrites `from_versions`, and this entry has not moved since it was introduced in #8707 (2026-07-31); neither the automation in #8608 nor the window bump in #9075 touched it. It is worth noting that `v1.1.4` now sits *below* the
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1672,1106 +1672,1461 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `180e2716` (2026-10-28)
-**Commit Message**: fix(log-store): make raft-engine periodic WAL sync actually fsync (#9715)
+### Incident Patch 1: `ec59131d` (2026-10-30)
+**Commit Message**: feat(ci): support optional Docker targets for query regression (#10028)
 
-* fix(log-store): make raft-engine periodic WAL sync actually fsync
+* feat(ci): support optional Docker targets for query regression
 
-On raft-engine 0.4.2, Engine::sync() writes an empty LogBatch and
-write() returns before fsync (tikv/raft-engine#395). The periodic
-sync task therefore never durable-flushed acknowledged WAL data.
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-Work around by writing a minimal non-empty marker with sync=true so
-the fsync path is reached until a crates.io release includes
-tikv/raft-engine#400.
+* fix(ci): enable Docker when provisioning image regression runners
 
-Fixes #9712
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-Signed-off-by: Yvan Wang <[REDACTED_EMAIL]>
+* feat(ci): publish precompiled query regression helpers with pin update PRs
 
-* perf(log-store): reuse LogBatch across periodic WAL syncs
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-Keep the periodic sync task's LogBatch across ticks instead of
-allocating a fresh one (4 KiB encode buffer plus item vec) every
-period. A successful Engine::write drains the batch but retains its
-buffers; after a failed write or a panicked blocking task the batch is
-discarded and recreated on the next tick, since it may be left
-partially encoded.
+* fix(ci): retry helper image publication on registry timeouts
 
-Keep the marker put rather than deleting an empty key: the put
-overwrites a single key, whereas every delete would become a recovery
-tombstone that raft-engine keeps in memory while replaying append
-files.
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
 
-Also document that the marker 
+* fix(ci): publish helper artifacts with hosted Skopeo job
 
-**File**: `src/log-store/src/raft_engine/log_store.rs` (modified, +118/-4)
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+* refactor(ci): update helper image through repository variable
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: WenyXu <[REDACTED_EMAIL]>
+
+**File**: `.github/actions/github-script-tests/action.yml` (modified, +1/-0)
 ```diff
-@@ -82,17 +82,60 @@ impl TaskFunction<Error> for PurgeExpiredFilesFunction {
-     }
- }
- 
-+/// Key used by the periodic WAL sync task. Overwritten each period so the
-+/// write stays non-empty on raft-engine 0.4.2 (see [`durable_sync`]).
-+const PERIODIC_SYNC_MARKER_KEY: &[u8] = b"$wal_periodic_sync";
+@@ -44,6 +44,7 @@ runs:
+         python3 tests/perf/test_query_regression_runner_otlp_trace_load.py
+         python3 tests/perf/test_query_regression_summary_otlp.py
+         python3 tests/perf/test_query_regression_case_selection.py
++        python3 tests/perf/test_query_regression_helpers.py
+         python3 tests/perf/test_query_regression_nightly_refs.py
+         python3 tests/perf/test_query_regression_slash.py
+         python3 tests/perf/test_aliyun_ecs_runner_scripts.py
+```
+
+**File**: `.github/scripts/build-query-regression-helpers.sh` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++#!/usr/bin/env bash
++set -euo pipefail
++: "${CARGO_TARGET_DIR:?CARGO_TARGET_DIR must be configured by the runner}"
++revision="$(git rev-parse HEAD)"
++tag="query-regression-helpers:${revision}"
++staging="$(mktemp -d)"
++trap 'rm -rf -- "$staging"' EXIT
++cargo build --profile nightly -p cmd --features dev-tools \
++  --bin query_perf_fixture --bin query_regression_runner
++for binary in query_perf_fixture query_regression_runner; do
++  "$CARGO_TARGET_DIR/nightly/$binary" --help >/dev/null
++  cp "$CARGO_TARGET_DIR/nightly/$binary" "$staging/$binary"
++done
++mkdir -p helpers-image helpers-validation
++docker build --provenance=false --build-arg "SOURCE_REVISION=$revision" \
++  --file docker/query-regression-helpers/Dockerfile --tag "$tag" "$staging"
++container="$(docker create "$tag" /query_perf_fixture --help)"
++trap 'docker rm --force --volumes "$container"; rm -rf -- "$staging"' EXIT
++mkdir -p "$staging/extracted"
++for binary in query_perf_fixture query_regression_runner; do
++  docker cp "$container:/$binary" "$staging/extracted/$binary"
++  chmod +x "$staging/extracted/$binary"
++  "$staging/extracted/$binary" --help >/dev/null
++  cmp "$staging/$binary" "$staging/extracted/$binary"
++done
++# Hold the revision and cases constant: compare source-built versus extracted
++# fixture normalization twice. Keep the raw outputs as workflow artifacts.
++printf '%s\n' "$revision" > helpers-validation/source-revision.txt
++for iteration in 1 2; do
++  while IFS= read -r case; do
++    name="$(basename "$(dirname "$case")")"
++    for mode in source image; do
++      binary="$staging/query_perf_fixture"
++      [[ "$mode" != image ]] || binary="$staging/extracted/query_perf_fixture"
++      "$binary" plan --case "$case" > "helpers-validation/${name}-${iteration}-${mode}.json"
++    done
++    cmp "helpers-validation/${name}-${iteration}-source.json" \
++        "helpers-validation/${name}-${iteration}-image.json"
++  done < <(find tests/perf/query_cases -name case.toml -type f | sort)
++done
++(cd "$staging" && sha256sum query_perf_fixture query_regression_runner) > helpers-image/SHA256SUMS
++printf '%s\n' "$revision" > helpers-image/source-revision.txt
++docker save "$tag" --output helpers-image/image.tar
+```
+
+**File**: `.github/scripts/publish-query-regression-helpers.sh` (added, +28/-0)
+```diff
+@@ -0,0 +1,28 @@
++#!/usr/bin/env bash
++set -euo pipefail
++repository=greptime-registry.cn-hangzhou.cr.aliyuncs.com/tools/query-regression-helpers
++revision="$(cat helpers-image/source-revision.txt)"
++[[ "$revision" == "$GITHUB_SHA" ]]
++tag="${repository}:${revision}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
++# Match release-dev-builder-images.yaml: publish ACR images with Skopeo from
++# a hosted runner. A failed publish can reuse the completed build artifact.
++mkdir -p helpers-validation
++docker run --rm \
++  -v "${DOCKER_CONFIG:-$HOME/.docker}:/root/.docker:ro" \
++  -v "$PWD/helpers-image:/image:ro" \
++  -v "$PWD/helpers-validation:/result" \
++  -e REGISTRY_AUTH_FILE=/root/.docker/config.json \
++  quay.io/skopeo/stable:latest --command-timeout 20m copy --retry-times 3 \
++  --digestfile /result/digest.txt \
++  docker-archive:/image/image.tar "docker://$tag"
++digest="$(cat helpers-validation/digest.txt)"
++[[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]
++image="$repository@$digest"
++# The ECS build tested these exact bytes. Verify them again from the registry;
++# hosted runners need not share the ECS runtime library versions.
++python3 .github/scripts/query-regression-helpers.py "$image" helpers-validation/extracted \
++  --checksums helpers-image/SHA256SUMS
++jq -e --arg revision "$revision" '.source_revision == $revision' \
++  helpers-validation/extracted/helpers-image.json >/dev/null
++printf 'image=%s\n' "$image" >> "$GITHUB_OUTPUT"
++printf 'Published helpers: `%s` (source `%s`)\n' "$image" "$revision" >> "$GITHUB_STEP_SUMMARY"
+```
+
+**File**: `.github/scripts/query-regression-helpers.py` (added, +82/-0)
+```diff
+@@ -0,0 +1,82 @@
++#!/usr/bin/env python3
++# Copyright 2023 Greptime Team
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
 +
-+/// Force an fsync of previously appended WAL data on raft-engine 0.4.2.
-+///
-+/// `Engine::sync()` writes an empty [`LogBatch`] with `sync = true`, but
-+/// 0.4.2's `Engine::write` returns early for empty batches *before* the
-+/// fsync (tikv/raft-engine#395). Upstream fixed this in tikv/raft-engine#400,
-+/// which is not on crates.io yet. Issuing a minimal non-empty put with
-+/// `sync = true` reaches the fsync path on 0.4.2.
-+///
-+/// `batch` must be empty and can be reused across calls: a successful
-+/// `Engine::write` drains its items but keeps its encoding buffer. On error the
-+/// batch may be left partially encoded, so callers must discard it.
-+fn durable_sync(engine: &Engine, batch: &mut LogBatch) -> raft_engine::Result<usize> {
-+    debug_assert!(batch.is_empty());
-+    // The value is unused, but it must not decode as a `NamespaceImpl`: the
-+    // marker key sorts after `NAMESPACE_PREFIX`, inside the range scanned by
-+    // `list_namespaces`. Overwriting the same key keeps the marker bounded.
-+    batch.put(SYSTEM_NAMESPACE, PERIODIC_SYNC_MARKER_KEY.to_vec(), vec![0])?;
-+    engine.write(batch, true)
-+}
++"""Extract digest-pinned query regression tools from an artifact image."""
 +
- pub struct SyncWalTaskFunction {
-     engine: Arc<Engine>,
-+    /// Batch reused across ticks to avoid allocating a new one each period.
-+    /// `None` after a failed sync; a fresh batch is created on the next tick.
-+    batch: Option<LogBatch>,
- }
- 
- #[async_trait::async_trait]
- impl TaskFunction<Error> for SyncWalTaskFunction {
-     async fn call(&mut self) -> std::result::Result<(), Error> {
-         let engine = self.engine.clone();
--        if let Err(e) = tokio::task::spawn_blocking(move || engine.sync()).await {
--            error!(e; "Failed to sync raft engine log files");
--        };
-+        let mut batch = self
-+            .batch
-+            .take()
-+            .unwrap_or_else(|| LogBatch::with_capacity(1));
-+        match tokio::task::spawn_blocking(move || {
-+            let res = durable_sync(&engine, &mut batch);
-+            (res, batch)
-+        })
-+        .await
-+        {
-+            Ok((Ok(_), batch)) => self.batch = Some(batch),
-+            // The batch may be partially encoded after a failed write; drop it.
-+            Ok((Err(e), _)) => {
-+                error!(e; "Failed to sync raft engine log files");
-+            }
-+            Err(e) => {
-+                error!(e; "Failed to sync raft engine log files");
-+            }
-+        }
-         Ok(())
-     }
- 
-@@ -103,7 +146,10 @@ impl TaskFunction<Error> for SyncWalTaskFunction {
- 
- impl SyncWalTaskFunction {
-     pub fn new(engine: Arc<Engine>) -> Self {
--        Self { engine }
-+        Self {
-+            engine,
-+            batch: None,
-+        }
-     }
- }
- 
-@@ -555,6 +601,74 @@ mod tests {
-         assert_eq!(0, namespaces.len());
-     }
- 
-+    /// Regression for #9712: periodic sync must write a non-empty batch so
-+    /// raft-engine 0.4.2 actually fsyncs (empty `Engine::sync()` is a no-op).
-+    #[tokio::test]
-+    async fn test_durable_sync_writes_non_empty_batch() {
-+        let dir = create_temp_dir("raft-engine-durable-sync-test");
-+        let cfg = Config {
-+            dir: dir.path().to_str().unwrap().to_string(),
-+            recovery_mode: RecoveryMode::TolerateTailCorruption,
-+            ..Default::default()
-+        };
-+        let engine = Engine::open(cfg).unwrap();
++import argparse
++import hashlib
++import json
++import os
++import re
++import subprocess
++from pathlib import Path
 +
-+        // Control: empty sync leaves no marker and returns Ok without fsync
-+        // on 0.4.2 (we cannot count fsyncs here, but we can show the empty
-+        // path writes nothing).
-+        engine.sync().unwrap();
-+        assert!(
-+            engine
-+                .get(SYSTEM_NAMESPACE, PERIODIC_SYNC_MARKER_KEY)
-+                .is_none(),
-+            "Engine::sync must not create the periodic sync marker"
-+        );
++BINARIES = ("query_perf_fixture", "query_regression_runner")
 +
-+        let mut batch = LogBatch::with_capacity(1);
-+        let written = durable_sync(&engine, &mut batch).unwrap();
-+        assert!(written > 0, "durable_sync must write a non-empty batch");
-+        assert!(batch.is_empty(), "a successful write drains the batch");
-+        assert_eq!(
-+            engine
-+                .get(SYSTEM_NAMESPACE, PERIODIC_SYNC_MARKER_KEY)
-+                .as_deref(),
-+            Some(&[0][..]),
-+            "durable_sync must persist the periodic sync marker"
-+        );
 +
-+        // Reusing the drained batch overwrites the same key and still writes.
-+        let written_again = durable_sync(&engine, &mut batch).unwrap();
-+        assert!(written_again > 0);
-+        assert!(batch.is_empty());
-+    }
++def resolve_image(value):
++    if value == "pinned":
++        value = os.environ.get("QUERY_REGRESSION_HELPERS_IMAGE", "")
++    if not re.fullmatch(r"[a-zA-Z0-9][a-zA-Z0-9._/:@-]*@sha256:[0-9a-f]{64}", value):
++        raise ValueError("helpers_image requires an image@sha256 digest; set QUERY_REGRESSION_HELPERS_IMAGE by publishing a verified image before using 'pinned'")
++    return value
 +
-+    #[tokio::test]
-+    async fn test_sync_wal_task_reuses_batch_and_keeps_namespaces() {
-+        let dir = create_temp_dir("raft-engine-sync-wal-task-
++
++def run(*args):
++    return subprocess.check_output(args, text=True).strip()
++
++
++def extract(image, destination, checksums=None):
++    expected = None
++    if checksums is not None:
++        entries = [line.split() for line in checksums.read_text().splitlines()]
++        expected = {name: digest for digest, name in entries}
++        if set(expected) != set(BINARIES) or len(entries) != len(BINARIES):
++            raise ValueError("Checksums must contain exactly the two helper binaries")
++    image = resolve_image(image)
++    destination.mkdir(parents=True, exist_ok=True)
++    run("docker", "pull", image)
++    metadata = json.loads(run("docker", "image", "inspect", image))[0]
++    revision = (metadata.get("Config", {}).get("Labels") or {}).get("org.opencontainers.image.revision", "")
++    if not re.fullmatch(r"[0-9a-f]{40}", revision):
++        raise ValueError("Helper image is missing its source revision label")
++    container = run("docker", "create", image, "/query_perf_fixture", "--help")
++    try:
++        for binary in BINARIES:
++            target = destination / binary
++            run("docker", "cp", f"{container}:/{binary}", str(target))
++            target.chmod(0o755)
++            if expected is None:
++                run(str(target.resolve()), "--help")
++            else:
++                with target.open("rb") as file:
++                    actual = hashlib.file_digest(file, "sha256").hexdigest()
++                if actual != expected[binary]:
++                    raise ValueError(f"Published helper checksum mismatch: {binary}")
++    finally:
++        run("docker", "rm", "--force", "--volumes", container)
++    provenance = {"image": image, "image_id": metadata["Id"], "source_revision": revision}
++    (destination / "helpers-image.json").write_text(json.dumps(provenance, indent=2) + "\n")
++    print(json.dumps(provenance))
++    return provenance
++
++
++if __name__ == "__main__":
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("image")
++    parser.add_argument("destination", type=Path)
++    parser.add_argument("--checksums", type=Path, help="Verify build checksums instead of executing on this host")
++    args = parser.parse_args()
++    extract(args.image, args.destination, args.checksums)
+```
+
+**File**: `.github/scripts/query-regression-run.py` (modified, +143/-6)
+```diff
+@@ -21,10 +21,13 @@
+ import json
+ import os
+ import re
++import shlex
+ import signal
+ import socket
+ import subprocess
++import sys
+ import time
++import uuid
+ import urllib.request
+ from dataclasses import dataclass
+ from pathlib import Path
+@@ -130,6 +133,7 @@ class RunTarget:
+     datanode_http_port: int
+     datanode_data_dir: Path
+     frontend_config: Path | None = None
++    containerized: bool = False
+ 
+ 
+ def allocate_ports(n: int) -> list[int]:
+@@ -151,6 +155,7 @@ def make_target(
+     root: Path,
+     ports: list[int],
+     frontend_config: Path | None = None,
++    containerized: bool = False,
+ ) -> RunTarget:
+     work_dir = root / name
+     return RunTarget(
+@@ -167,6 +172,7 @@ def make_target(
+         datanode_http_port=ports[3],
+         datanode_data_dir=work_dir / "datanode-0" / "data",
+         frontend_config=frontend_config,
++        containerized=containerized,
+     )
+ 
+ 
+@@ -258,7 +264,11 @@ def stop_component(
+     procs: dict[tuple[str, str], subprocess.Popen[bytes]],
+ ) -> None:
+     proc = procs.pop((target.name, name), None)
+-    if proc is None or proc.poll() is not None:
++    if proc is None:
++        return
++    if proc.poll() is not None:
++        if target.containerized and proc.returncode != 0:
++            raise RuntimeError(f"Docker target {target.name}/{name} exited with {proc.returncode}")
+         return
+     try:
+         os.killpg(proc.pid, signal.SIGTERM)
+@@ -272,6 +282,8 @@ def stop_component(
+         except ProcessLookupError:
+             return
+         proc.wait(timeout=20)
++    if target.containerized and proc.returncode not in (0, 128 + signal.SIGTERM):
++        raise RuntimeError(f"Docker target {target.name}/{name} cleanup failed: {proc.returncode}")
+ 
+ 
+ def restart_component(
+@@ -284,9 +296,15 @@ def restart_component(
+ 
+ 
+ def stop_all(targets: list[RunTarget], procs: dict[tuple[str, str], subprocess.Popen[bytes]]) -> None:
++    errors = []
+     for target in reversed(targets):
+         for name in ("frontend", "datanode", "metasrv"):
+-            stop_component(target, name, procs)
++            try:
++                stop_component(target, name, procs)
++            except Exception as err:
++                errors.append(err)
++    if errors:
++        raise RuntimeError(f"component cleanup failed: {errors}") from errors[0]
+ 
+ 
+ def load_plan(fixture_generator: Path, case_path: Path) -> dict[str, Any]:
+@@ -313,8 +331,8 @@ def run_direct_case(
+ ) -> int:
+     ports = allocate_ports(16)
+     targets = [
+-        make_target("base", base_bin, work_dir, ports[:8]),
+-        make_target("candidate", candidate_bin, work_dir, ports[8:]),
++        make_target("base", base_bin, work_dir, ports[:8], containerized=bool(getattr(args, "base_image", ""))),
++        make_target("candidate", candidate_bin, work_dir, ports[8:], containerized=bool(getattr(args, "candidate_image", ""))),
+     ]
+     for target in targets:
+         if target.work_dir.exists() and any(target.work_dir.iterdir()):
+@@ -407,13 +425,15 @@ def run_remote_case(
+             work_dir,
+             ports[:8],
+             work_dir / "base" / "frontend-prom-store.toml",
++            containerized=bool(getattr(args, "base_image", "")),
+         ),
+         make_target(
+             "candidate",
+             candidate_bin,
+             work_dir,
+             ports[8:],
+             work_dir / "candidate" / "frontend-prom-store.toml",
++            containerized=bool(getattr(args, "candidate_image", "")),
+         ),
+     ]
+     for target in targets:
+@@ -495,8 +515,8 @@ def run_otlp_case(
+         raise ValueError("--otelgen-bin is required for otlp_trace_load")
+     ports = allocate_ports(16)
+     targets = [
+-        make_target("base", base_bin, work_dir, ports[:8]),
+-        make_target("candidate", candidate_bin, work_dir, ports[8:]),
++        make_target("base", base_bin, work_dir, ports[:8], containerized=bool(getattr(args, "base_image", ""))),
++        make_target("candidate", candidate_bin, work_dir, ports[8:], containerized=bool(getattr(args, "candidate_image", ""))),
+     ]
+     for target in targets:
+         if target.work_dir.exists() and any(target.work_dir.iterdir()):
+@@ -634,6 +654,106 @@ def write_failed_report(work_dir: Path, case_path: Path, error: Exception) -> No
+     )
+ 
+ 
++def docker_target(image: str, root: Path, command: list[str]) -> int:
++    """Expose an image as a binary, including read-bench subcommands.
++
++    The caller terminates a process group. Keep Docker clients in separate
++    sessions so cleanup can stop the container before SST inspection starts.
++    """
++    name = f"query-regression-{uuid.uuid4().hex}"
++
++    def interrupted(signum, _frame):
++        raise SystemExit(128 + signum)
++
++    previous = {sig: signal.signal(sig, interrupted) for sig in (signal.SIGTERM, signal.SIGINT)}
++    try:
++        subprocess.run([
++            "docker", "create", "--name", name, "--network", "host",
++            "--user", f"{os.getuid()}:{os.getgid()}",
++            "--volume", f"{r
+```
+
+**File**: `.github/scripts/update-query-regression-helpers-image.sh` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++#!/usr/bin/env bash
++set -euo pipefail
++: "${HELPERS_IMAGE:?Verified image digest is required}"
++: "${GITHUB_REPOSITORY:?Repository is required}"
++repository=greptime-registry.cn-hangzhou.cr.aliyuncs.com/tools/query-regression-helpers
++[[ "$HELPERS_IMAGE" == "$repository@sha256:"* ]]
++[[ "${HELPERS_IMAGE#"$repository@"}" =~ ^sha256:[0-9a-f]{64}$ ]]
++# Like QUERY_REGRESSION_ECS_IMAGE_ID, this is CI configuration, not a source
++# change. Create on first publication, then update only after image verification.
++gh variable set QUERY_REGRESSION_HELPERS_IMAGE \
++  --repo "$GITHUB_REPOSITORY" --body "$HELPERS_IMAGE"
++gh api "repos/$GITHUB_REPOSITORY/actions/variables/QUERY_REGRESSION_HELPERS_IMAGE" \
++  | jq -e --arg expected "$HELPERS_IMAGE" '.value == $expected' >/dev/null
++printf 'QUERY_REGRESSION_HELPERS_IMAGE updated to `%s`\n' "$HELPERS_IMAGE"
+```
+
+**File**: `.github/workflows/publish-query-regression-helpers.yml` (added, +166/-0)
+```diff
+@@ -0,0 +1,166 @@
++name: Publish query regression helpers
++
++on:
++  workflow_dispatch:
++  workflow_call:
++  push:
++    branches: [main]
++    paths:
++      - src/cmd/src/bin/query_perf_fixture.rs
++      - src/cmd/src/bin/query_perf_fixture/**
++      - src/cmd/src/bin/query_regression_runner.rs
++      - src/cmd/src/bin/query_regression_runner/**
++      - docker/query-regression-helpers/**
++      - .github/workflows/publish-query-regression-helpers.yml
++      - .github/scripts/publish-query-regression-helpers.sh
++      - .github/scripts/build-query-regression-helpers.sh
++      - .github/scripts/update-query-regression-helpers-image.sh
++      - Cargo.lock
++
++permissions:
++  contents: read
++
++# Serialize publication and updates of the repository image variable.
++concurrency:
++  group: publish-query-regression-helpers
++  cancel-in-progress: false
++
++jobs:
++  provision:
++    if: ${{ github.repository == 'GreptimeTeam/greptimedb' }}
++    runs-on: ubuntu-latest
++    timeout-minutes: 45
++    outputs:
++      label: ${{ steps.provision.outputs.label }}
++      instance_id: ${{ steps.provision.outputs.instance_id }}
++      runner_name: ${{ steps.provision.outputs.runner_name }}
++    steps:
++      - name: Checkout trusted provisioning scripts
++        uses: actions/checkout@v4
++        with:
++          repository: ${{ github.repository }}
++          ref: ${{ github.sha }}
++          persist-credentials: false
++
++      - name: Provision ECS runner
++        id: provision
++        uses: ./.github/actions/aliyun-ecs-create
++        with:
++          access-key-id: ${{ secrets.ALICLOUD_ECS_ACCESS_KEY_ID }}
++          access-key-secret: ${{ secrets.ALICLOUD_ECS_ACCESS_KEY_SECRET }}
++          github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
++          region-id: ${{ vars.ALIYUN_ECS_REGION_ID }}
++          vswitch-id: ${{ vars.ALIYUN_ECS_VSWITCH_ID }}
++          security-group-id: ${{ vars.ALIYUN_ECS_SECURITY_GROUP_ID }}
++          instance-type: ${{ vars.ALIYUN_ECS_INSTANCE_TYPE }}
++          # Preserve query regression's original resource and janitor budgets.
++          system-disk-gib: '80'
++          ttl-hours: '4'
++          enable-docker: 'true'
++          resource-group-id: ${{ vars.ALIYUN_ECS_RESOURCE_GROUP_ID }}
++          image-id: ${{ vars.QUERY_REGRESSION_ECS_IMAGE_ID }}
++          runner-uid: ${{ vars.QUERY_REGRESSION_RUNNER_UID || '1001' }}
++          runner-gid: ${{ vars.QUERY_REGRESSION_RUNNER_GID || '1001' }}
++
++  build:
++    needs: provision
++    runs-on: ${{ needs.provision.outputs.label }}
++    timeout-minutes: 150
++    env:
++      CARGO_HOME: /home/runner/.cargo
++      CARGO_TARGET_DIR: /home/runner/query-regression-target
++      RUSTUP_HOME: /opt/rustup
++      RUSTUP_TOOLCHAIN: nightly-2026-03-21
++      RUSTUP_AUTO_INSTALL: "0"
++      CARGO_INCREMENTAL: "0"
++      RUSTFLAGS: -D warnings -C link-arg=-fuse-ld=mold
++    steps:
++      - uses: actions/checkout@v4
++        with:
++          persist-credentials: false
++      - name: Build and validate helpers
++        run: bash .github/scripts/build-query-regression-helpers.sh
++      - name: Upload reusable helper image
++        uses: actions/upload-artifact@v4
++        with:
++          name: helpers-image
++          path: helpers-image/
++          compression-level: 1
++          retention-days: 7
++          if-no-files-found: error
++      - name: Upload build validation evidence
++        if: always()
++        uses: actions/upload-artifact@v4
++        with:
++          name: helpers-build-validation
++          path: helpers-validation/
++          if-no-files-found: warn
++
++  publish:
++    needs: build
++    runs-on: ubuntu-latest
++    timeout-minutes: 45
++    outputs:
++      image: ${{ steps.publish.outputs.image }}
++    steps:
++      - uses: actions/checkout@v4
++        with:
++          persist-credentials: false
++      - uses: actions/download-artifact@v4
++        with:
++          name: helpers-image
++          path: helpers-image/
++      - name: Login to registry
++        uses: docker/login-action@v3
++        with:
++          registry: greptime-registry.cn-hangzhou.cr.aliyuncs.com
++          username: ${{ secrets.ALICLOUD_USERNAME }}
++          password: ${{ secrets.ALICLOUD_PASSWORD }}
++      - name: Publish and verify helpers
++        id: publish
++        run: bash .github/scripts/publish-query-regression-helpers.sh
++      - name: Upload publication validation evidence
++        if: always()
++        uses: actions/upload-artifact@v4
++        with:
++          name: helpers-publish-validation
++          path: |
++            helpers-validation/digest.txt
++            helpers-validation/extracted/helpers-image.json
++          if-no-files-found: warn
++
++  update-variable:
++    needs: publish
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v4
++        with:
++          persist-credentials: false
++      - name: Update helpers image repository variable
++        env:
++          GH_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
++          HELPERS
+```
+
+**File**: `.github/workflows/query-regression.yml` (modified, +76/-9)
+```diff
+@@ -26,6 +26,21 @@ on:
+         description: Candidate ref/sha to build; reusable release calls must provide an immutable full SHA
+         required: true
+         type: string
++      base_image:
++        description: Base Docker image tag/digest (empty builds base_ref from source)
++        required: false
++        type: string
++        default: ""
++      candidate_image:
++        description: Candidate Docker image tag/digest (empty builds candidate_ref from source)
++        required: false
++        type: string
++        default: ""
++      helpers_image:
++        description: Helpers image@sha256 or pinned from repository variable (empty builds from source)
++        required: false
++        type: string
++        default: ""
+       cargo_profile:
+         description: Cargo profile to build base and candidate binaries with
+         required: false
+@@ -80,6 +95,21 @@ on:
+         description: Runner HTTP timeout seconds
+         required: true
+         default: "300"
++      base_image:
++        description: Base Docker image tag/digest (empty builds base_ref from source)
++        required: false
++        type: string
++        default: ""
++      candidate_image:
++        description: Candidate Docker image tag/digest (empty builds candidate_ref from source)
++        required: false
++        type: string
++        default: ""
++      helpers_image:
++        description: Helpers image@sha256 or pinned from repository variable (empty builds from source)
++        required: false
++        type: string
++        default: ""
+       cargo_profile:
+         description: Cargo profile to build base and candidate binaries with
+         required: true
+@@ -132,6 +162,7 @@ jobs:
+           python3 tests/perf/test_query_regression_runner_otlp_trace_load.py
+           python3 tests/perf/test_query_regression_summary_otlp.py
+           python3 tests/perf/test_query_regression_case_selection.py
++          python3 tests/perf/test_query_regression_helpers.py
+           python3 tests/perf/test_query_regression_nightly_refs.py
+           python3 tests/perf/test_query_regression_slash.py
+           python3 tests/perf/test_aliyun_ecs_runner_scripts.py
+@@ -171,6 +202,7 @@ jobs:
+           # Preserve query regression's original resource and janitor budgets.
+           system-disk-gib: '80'
+           ttl-hours: '4'
++          enable-docker: ${{ inputs.base_image != '' || inputs.candidate_image != '' || inputs.helpers_image != '' }}
+           resource-group-id: ${{ vars.ALIYUN_ECS_RESOURCE_GROUP_ID }}
+           image-id: ${{ vars.QUERY_REGRESSION_ECS_IMAGE_ID }}
+           runner-uid: ${{ vars.QUERY_REGRESSION_RUNNER_UID || '1001' }}
+@@ -214,6 +246,10 @@ jobs:
+       PR_NUMBER: ${{ inputs.pr_number }}
+       HEAD_REPO: ${{ inputs.head_repo }}
+       BASE_REPO: ${{ inputs.base_repo }}
++      HELPERS_IMAGE: ${{ inputs.helpers_image }}
++      QUERY_REGRESSION_HELPERS_IMAGE: ${{ vars.QUERY_REGRESSION_HELPERS_IMAGE }}
++      BASE_IMAGE: ${{ inputs.base_image }}
++      CANDIDATE_IMAGE: ${{ inputs.candidate_image }}
+       BASE_REF: ${{ inputs.base_ref }}
+       CANDIDATE_REF: ${{ inputs.candidate_ref || github.ref }}
+       EVENT_MERGE_SHA: ${{ inputs.pr_number != '' && inputs.candidate_ref || '' }}
+@@ -224,6 +260,16 @@ jobs:
+       EXPECTED_RUNNER_UID: ${{ vars.QUERY_REGRESSION_RUNNER_UID || '1001' }}
+       EXPECTED_RUNNER_GID: ${{ vars.QUERY_REGRESSION_RUNNER_GID || '1001' }}
+     steps:
++      - name: Validate image target admission
++        run: |
++          if [[ "${PR_ADMISSION}" == "true" && ( -n "${BASE_IMAGE}" || -n "${CANDIDATE_IMAGE}" || -n "${HELPERS_IMAGE}" ) ]]; then
++            echo "PR admission requires source targets for verified commit attribution." >&2
++            exit 1
++          fi
++          if [[ -n "${BASE_IMAGE}" || -n "${CANDIDATE_IMAGE}" || -n "${HELPERS_IMAGE}" ]]; then
++            docker info >/dev/null
++          fi
++
+       - name: Report provisioned ECS runner
+         if: ${{ needs.provision.outputs.instance_id != '' }}
+         shell: bash
+@@ -418,6 +464,7 @@ jobs:
+             > "${GITHUB_WORKSPACE}/query-regression-trusted-scripts/query-regression-summary.py"
+ 
+       - name: Verify runner image tools
++        if: ${{ inputs.base_image == '' || inputs.candidate_image == '' || inputs.helpers_image == '' }}
+         shell: bash
+         run: |
+           set -euo pipefail
+@@ -534,6 +581,7 @@ jobs:
+           fi
+ 
+       - name: Prepare query regression cache
++        if: ${{ inputs.base_image == '' || inputs.candidate_image == '' || inputs.helpers_image == '' }}
+         shell: bash
+         working-directory: src
+         run: |
+@@ -694,6 +742,7 @@ jobs:
+           sccache --show-stats
+ 
+       - name: Build base greptime
++        if: ${{ inputs.base_image == '' }}
+         working-directory: src
+         run: |
+           set -euo pipefail
+@@ -728,14 +777,27 @@ jobs:
+           git reset --hard "${VERIFIED_CANDIDATE_SHA}"
+           git clean -ffdx
+ 
++      - name: Extract precompiled query regression
 ```
 
 ---
 
-### Incident Patch 2: `4135e65a` (2026-10-28)
-**Commit Message**: fix(query): keep requested sort when filtering on a lossy cast (#10026)
+### Incident Patch 2: `c7ea8055` (2026-10-29)
+**Commit Message**: fix(mito2): preserve live index files across remote compactions (#10046)
 
-fix(query): pin DataFusion cast constraint propagation fix
+fix(mito2): reuse executor-owned compaction index resources
 
-Update the pinned GreptimeTeam/datafusion revision from e3221b8 to
-cc55344 (the 55.1 fork carrying apache/datafusion#25531 plus a stronger
-regression test).
+Signed-off-by: Lei, HUANG <[REDACTED_EMAIL]>
 
-CastExpr::propagate_constraints used to cast a filter's output interval
-straight back to the input type. For CAST(k AS BIGINT) = 1 the singleton
-output [1, 1] was inverted to [1.0, 1.0] although k = 1.5 matches too, so
-FilterExec advertised k as constant, the equivalence classes dropped the
-ordering required by ORDER BY k, and rows returned in scan order.
-
-The sqlness case keeps every #9600 assertion and the explicit ORDER BY,
-and adds ascending and descending checks for the partitioned table, the
-control table and a table whose matching rows are stored in neither
-ascending nor descending k order.
-
-Cargo.lock only rewrites the 35 datafusion source lines.
-
-Signed-off-by: discord9 <[REDACTED_EMAIL]>
-
-**File**: `Cargo.lock` (modified, +35/-35)
+**File**: `src/mito2/src/compaction/compactor.rs` (modified, +138/-104)
 ```diff
-@@ -3756,7 +3756,7 @@ checksum = "a4ae5f15dda3c708c0ade84bfee31ccab44a3da4f88015ed22f63732abe300c8"
- [[package]]
- name = "datafusion"
- version = "55.1.0"
--source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
-+source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
- dependencies = [
-  "arrow 59.2.0",
-  "arrow-schema 59.2.0",
-@@ -3808,7 +3808,7 @@ dependencies = [
- [[package]]
- name = "datafusion-catalog"
- version = "55.1.0"
--source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
-+source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
- dependencies = [
-  "arrow 59.2.0",
-  "async-trait",
-@@ -3832,7 +3832,7 @@ dependencies = [
- [[package]]
- name = "datafusion-catalog-listing"
- version = "55.1.0"
--source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
-+source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
- dependencies = [
-  "arrow 59.2.0",
-  "async-trait",
-@@ -3855,7 +3855,7 @@ dependencies = [
- [[package]]
- name = "datafusion-common"
- version = "55.1.0"
--source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
-+source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
- dependencies = [
-  "arrow 59.2.0",
-  "arrow-ipc 59.2.0",
-@@ -3881,7 +3881,7 @@ dependencies = [
- [[package]]
- name = "datafusion-common-runtime"
- version = "55.1.0"
--source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
-+source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
- dependencies = [
-  "futures",
-  "log",
-@@ -3891,7 +3891,7 @@ dependencies = [
- [[package]]
- name = "datafusion-datasource"
- version = "55.1.0"
--source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
-+source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
- dependencies = [
-  "arrow 59.2.0",
-  "async-compression",
-@@ -3927,7 +3927,7 @@ dependencies = [
- [[package]]
- name = "datafusion-datasource-arrow"
- version = "55.1.0"
--source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
-+source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
- dependencies = [
-  "arrow 59.2.0",
-  "arrow-ipc 59.2.0",
-@@ -3951,7 +3951,7 @@ dependencies = [
- [[package]]
- name = "datafusion-datasource-csv"
- version = "55.1.0"
--source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
-+source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
- dependencies = [
-  "arrow 59.2.0",
-  "async-trait",
-@@ -3974,7 +3974,7 @@ dependencies = [
- [[package]]
- name = "datafusion-datasource-json"
- version = "55.1.0"
--source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
-+source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
- dependencies = [
-  "arrow 59.2.0",
-  "async-trait",
-@@ -3997,7 +3997,7 @@ dependencies = [
- [[package]]
- name = "datafusion-datasource-parquet"
- version = "55.1.0"
--source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
-+source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#cc5534492d5408831395609cdafb6520c7d514b7"
- dependencies = [
-  "arrow 59.2.0",
-  "arrow-schema 59.2.0",
-@@ -4029,12 +4029,12 @@ dependencies = [
- [[package]]
- name = "datafusion-doc"
- version = "55.1.0"
--source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=e3221b8f74b15c7192621576e5d1e354a6cf097a#e3221b8f74b15c7192621576e5d1e354a6cf097a"
-+source = "git+https://github.com/GreptimeTeam/datafusion.git?rev=cc5534492d5408831395609cdafb6520c7d514b7#c
-```
-
-**File**: `Cargo.toml` (modified, +16/-16)
-```diff
-@@ -367,22 +367,22 @@ rev = "f743c3a5fe8c1f57363eac5866c356b7d91f9b39"
- 
- [patch.crates-io]
- substrait = { git = "https://github.com/GreptimeTeam/substrait-rs.git", rev = "91ec978b0649417ad3da8390e7a515baec723b1b" }
--datafusion = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
--datafusion-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
--datafusion-datasource = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
--datafusion-execution = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
--datafusion-expr = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
--datafusion-expr-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
--datafusion-functions = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
--datafusion-functions-aggregate-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
--datafusion-functions-window-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
--datafusion-optimizer = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
--datafusion-physical-expr = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
--datafusion-physical-expr-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
--datafusion-physical-plan = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
--datafusion-proto = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
--datafusion-sql = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
--datafusion-substrait = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "e3221b8f74b15c7192621576e5d1e354a6cf097a" }
-+datafusion = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
-+datafusion-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
-+datafusion-datasource = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
-+datafusion-execution = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
-+datafusion-expr = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
-+datafusion-expr-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
-+datafusion-functions = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
-+datafusion-functions-aggregate-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
-+datafusion-functions-window-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
-+datafusion-optimizer = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
-+datafusion-physical-expr = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
-+datafusion-physical-expr-common = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
-+datafusion-physical-plan = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
-+datafusion-proto = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
-+datafusion-sql = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
-+datafusion-substrait = { git = "https://github.com/GreptimeTeam/datafusion.git", rev = "cc5534492d5408831395609cdafb6520c7d514b7" }
- datafusion-pg-catalog = { git = "https://github.com/datafusion-contrib/datafusion-postgres.git", rev = "3ae0a6cb30b1c5131687f4637247ff4f84ac11e4" }
- arrow-pg = { git = "https://github.com/datafusion-contrib/datafusion-postgres.git", rev = "3ae0a6cb30b1c5131687f4637247ff4f84ac11e4" }
- sqlparser = { git = "https://github.com/GreptimeTeam/sqlparser-rs.git", rev = "9e9019bb1c7040ed956f654e39378dd42ab17884" }
-```
-
-**File**: `tests/cases/distributed/optimizer/partition_pruning_cast.result` (modified, +74/-0)
-```diff
-@@ -97,6 +97,80 @@ ORDER BY k;
- | 1970-01-01T00:00:01 | 1.5 | 15 | 1      |
- +---------------------+-----+----+--------+
- 
-+-- The same rows must also come back in descending order: a filter on a lossy
-+-- cast must not turn `k` into a constant and drop the requested sort.
-+SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
-+FROM partition_pruning_cast_partitioned
-+WHERE CAST(k AS BIGINT) = 1
-+ORDER BY k DESC;
-+
-++---------------------+-----+----+--------+
-+| ts                  | k   | v  | cast_k |
-++---------------------+-----+----+--------+
-+| 1970-01-01T00:00:01 | 1.5 | 15 | 1      |
-+| 1970-01-01T00:00:01 | 1.0 | 10 | 1      |
-++---------------------+-----+----+--------+
-+
-+SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
-+FROM partition_pruning_cast_control
-+WHERE CAST(k AS BIGINT) = 1
-+ORDER BY k DESC;
-+
-++---------------------+-----+----+--------+
-+| ts                  | k   | v  | cast_k |
-++---------------------+-----+----+--------+
-+| 1970-01-01T00:00:01 | 1.5 | 15 | 1      |
-+| 1970-01-01T00:00:01 | 1.0 | 10 | 1      |
-++---------------------+-----+----+--------+
-+
-+-- A table whose matching rows are stored in neither ascending nor descending
-+-- order, so a dropped sort cannot accidentally satisfy the ASC assertion.
-+CREATE TABLE partition_pruning_cast_unsorted (
-+    ts TIMESTAMP TIME INDEX,
-+    k FLOAT PRIMARY KEY,
-+    v BIGINT,
-+);
-+
-+Affected Rows: 0
-+
-+INSERT INTO partition_pruning_cast_unsorted VALUES
-+    (1000, 1.5, 15),
-+    (1000, 2.5, 25),
-+    (1000, 1.0, 10),
-+    (1000, 1.25, 12);
-+
-+Affected Rows: 4
-+
-+SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
-+FROM partition_pruning_cast_unsorted
-+WHERE CAST(k AS BIGINT) = 1
-+ORDER BY k;
-+
-++---------------------+------+----+--------+
-+| ts                  | k    | v  | cast_k |
-++---------------------+------+----+--------+
-+| 1970-01-01T00:00:01 | 1.0  | 10 | 1      |
-+| 1970-01-01T00:00:01 | 1.25 | 12 | 1      |
-+| 1970-01-01T00:00:01 | 1.5  | 15 | 1      |
-++---------------------+------+----+--------+
-+
-+SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
-+FROM partition_pruning_cast_unsorted
-+WHERE CAST(k AS BIGINT) = 1
-+ORDER BY k DESC;
-+
-++---------------------+------+----+--------+
-+| ts                  | k    | v  | cast_k |
-++---------------------+------+----+--------+
-+| 1970-01-01T00:00:01 | 1.5  | 15 | 1      |
-+| 1970-01-01T00:00:01 | 1.25 | 12 | 1      |
-+| 1970-01-01T00:00:01 | 1.0  | 10 | 1      |
-++---------------------+------+----+--------+
-+
-+DROP TABLE partition_pruning_cast_unsorted;
-+
-+Affected Rows: 0
-+
- -- SQLNESS REPLACE (-+) -
- -- SQLNESS REPLACE (\s\s+) _
- -- SQLNESS REPLACE (elapsed_compute.*) REDACTED
-```
-
-**File**: `tests/cases/distributed/optimizer/partition_pruning_cast.sql` (modified, +36/-0)
-```diff
-@@ -43,6 +43,42 @@ FROM partition_pruning_cast_control
- WHERE CAST(k AS BIGINT) = 1
- ORDER BY k;
- 
-+-- The same rows must also come back in descending order: a filter on a lossy
-+-- cast must not turn `k` into a constant and drop the requested sort.
-+SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
-+FROM partition_pruning_cast_partitioned
-+WHERE CAST(k AS BIGINT) = 1
-+ORDER BY k DESC;
-+SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
-+FROM partition_pruning_cast_control
-+WHERE CAST(k AS BIGINT) = 1
-+ORDER BY k DESC;
-+
-+-- A table whose matching rows are stored in neither ascending nor descending
-+-- order, so a dropped sort cannot accidentally satisfy the ASC assertion.
-+CREATE TABLE partition_pruning_cast_unsorted (
-+    ts TIMESTAMP TIME INDEX,
-+    k FLOAT PRIMARY KEY,
-+    v BIGINT,
-+);
-+
-+INSERT INTO partition_pruning_cast_unsorted VALUES
-+    (1000, 1.5, 15),
-+    (1000, 2.5, 25),
-+    (1000, 1.0, 10),
-+    (1000, 1.25, 12);
-+
-+SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
-+FROM partition_pruning_cast_unsorted
-+WHERE CAST(k AS BIGINT) = 1
-+ORDER BY k;
-+SELECT ts, k, v, CAST(k AS BIGINT) AS cast_k
-+FROM partition_pruning_cast_unsorted
-+WHERE CAST(k AS BIGINT) = 1
-+ORDER BY k DESC;
-+
-+DROP TABLE partition_pruning_cast_unsorted;
-+
- -- SQLNESS REPLACE (-+) -
- -- SQLNESS REPLACE (\s\s+) _
- -- SQLNESS REPLACE (elapsed_compute.*) REDACTED
-```
-
----
-
-### Incident Patch 3: `c818b6ac` (2026-10-28)
-**Commit Message**: feat(postgres): influxdb line protocol ingest via COPY FROM STDIN (#9982)
-
-* feat(postgres): influxdb line protocol ingest via COPY FROM STDIN
-
-COPY FROM STDIN WITH (FORMAT influxdb [, precision 'ns']) ingests
-InfluxDB line protocol over the postgres wire protocol, reusing the
-HTTP ingestion pipeline wholesale for correctness and performance
-parity: the whole payload is buffered and completed once at CopyDone
-through the frontend's InfluxdbLineProtocolHandler::exec — conversion,
-permissions, line-protocol interceptors, timestamp alignment to table
-time-index units, merge mode and inserts are the same path an HTTP
-write of the same bytes takes, under the connection's regular postgres
-query context.
-
-Formats are an explicit, closed enum (CopyFormat::Csv |
-CopyFormat::Influxdb(options)); each variant states its own rules in
-the copy lifecycle's match arms — csv requires a target table and
-parses incrementally, influxdb forbids one (each line names its own
-measurement) and buffers one bounded request body. The COPY layer owns
-only the buffering: record boundaries, including newlines inside quoted
-field values and after escapes, belong to the line-protocol parser
-alone — one COPY statem
-
-**File**: `src/frontend/src/server.rs` (modified, +1/-0)
-```diff
-@@ -429,6 +429,7 @@ where
-                     user_provider.clone(),
-                     Some(self.instance.process_manager().clone()),
-                 )
-+                .with_influxdb_handler(instance.clone())
-                 .with_batching_enabled(postgres_batching),
-             ) as Box<dyn Server>;
- 
-```
-
-**File**: `src/servers/src/http/influxdb.rs` (modified, +3/-20)
-```diff
-@@ -24,7 +24,7 @@ use common_grpc::precision::Precision;
- use common_telemetry::tracing;
- use session::context::{Channel, QueryContext, QueryContextRef};
- 
--use crate::error::{Result, TimePrecisionSnafu};
-+use crate::error::Result;
- use crate::http::header::write_cost_header_map;
- use crate::influxdb::InfluxdbRequest;
- use crate::query_handler::InfluxdbLineProtocolHandlerRef;
-@@ -107,30 +107,13 @@ pub async fn influxdb_write(
-     ))
+@@ -201,28 +201,26 @@ pub struct OpenCompactionRegionRequest {
+     pub plugins: Plugins,
  }
  
--fn parse_time_precision(value: &str) -> Result<Precision> {
--    // Precision conversion needs to be compatible with influxdb v1 v2 api.
--    // For details, see the Influxdb documents.
--    // https://docs.influxdata.com/influxdb/v1.8/tools/api/#apiv2write-http-endpoint
--    // https://docs.influxdata.com/influxdb/v1.8/tools/api/#write-http-endpoint
--    match value {
--        "n" | "ns" => Ok(Precision::Nanosecond),
--        "u" | "us" => Ok(Precision::Microsecond),
--        "ms" => Ok(Precision::Millisecond),
--        "s" => Ok(Precision::Second),
--        "m" => Ok(Precision::Minute),
--        "h" => Ok(Precision::Hour),
--        unknown => TimePrecisionSnafu {
--            name: unknown.to_string(),
+-/// Open a compaction region from a compaction request.
+-/// It's simple version of RegionOpener::open().
+-pub async fn open_compaction_region(
+-    req: &OpenCompactionRegionRequest,
+-    mito_config: &MitoConfig,
++/// Opens manifest-backed compaction regions using executor-owned index resources.
++///
++/// Create one opener per auxiliary directory before accepting jobs and reuse it
++/// for the executor's lifetime. Initialization recovers staging files and removes
++/// stale intermediate files, so repeating it can delete another job's live files.
++#[derive(Clone)]
++pub struct CompactionRegionOpener {
++    mito_config: Arc<MitoConfig>,
+     object_store_manager: ObjectStoreManagerRef,
+-    ttl_provider: Either<TimeToLive, SchemaMetadataManagerRef>,
+-) -> Result<CompactionRegion> {
+-    let object_store = {
+-        let name = &req.region_options.storage;
+-        if let Some(name) = name {
+-            object_store_manager
+-                .find(name)
+-                .with_context(|| ObjectStoreNotFoundSnafu {
+-                    object_store: name.clone(),
+-                })?
+-        } else {
+-            object_store_manager.default_object_store()
 -        }
--        .fail(),
--    }
--}
-+pub(crate) use crate::influxdb::parse_time_precision;
- 
- #[cfg(test)]
- mod tests {
-     use common_grpc::precision::Precision;
- 
--    use crate::http::influxdb::parse_time_precision;
-+    use super::parse_time_precision;
- 
-     #[test]
-     fn test_parse_time_precision() {
-```
-
-**File**: `src/servers/src/influxdb.rs` (modified, +22/-1)
-```diff
-@@ -20,7 +20,7 @@ use hyper::Request;
- use influxdb_line_protocol::{FieldValue, parse_lines};
- use snafu::ResultExt;
- 
--use crate::error::{Error, InfluxdbLineProtocolSnafu};
-+use crate::error::{Error, InfluxdbLineProtocolSnafu, TimePrecisionSnafu};
- use crate::row_writer::{self, MultiTableData};
- 
- const INFLUXDB_API_PATH_NAME: &str = "influxdb";
-@@ -113,6 +113,27 @@ fn unwrap_or_default_precision(precision: Option<Precision>) -> Precision {
-     }
- }
- 
-+/// Parses an InfluxDB time-precision name shared by the HTTP write
-+/// endpoints (v1/v2) and the `precision` option of COPY FROM STDIN.
-+pub(crate) fn parse_time_precision(value: &str) -> crate::error::Result<Precision> {
-+    // Precision conversion needs to be compatible with influxdb v1 v2 api.
-+    // For details, see the Influxdb documents.
-+    // https://docs.influxdata.com/influxdb/v1.8/tools/api/#apiv2write-http-endpoint
-+    // https://docs.influxdata.com/influxdb/v1.8/tools/api/#write-http-endpoint
-+    match value {
-+        "n" | "ns" => Ok(Precision::Nanosecond),
-+        "u" | "us" => Ok(Precision::Microsecond),
-+        "ms" => Ok(Precision::Millisecond),
-+        "s" => Ok(Precision::Second),
-+        "m" => Ok(Precision::Minute),
-+        "h" => Ok(Precision::Hour),
-+        unknown => TimePrecisionSnafu {
-+            name: unknown.to_string(),
-+        }
-+        .fail(),
-+    }
+-    };
++    puffin_manager_factory: PuffinManagerFactory,
++    intermediate_manager: IntermediateManager,
 +}
+ 
+-    let access_layer = {
++impl CompactionRegionOpener {
++    /// Initializes the executor's index resources. The config must be sanitized
++    /// and its auxiliary directory must not be owned by another engine or opener.
++    pub async fn new(
++        mito_config: MitoConfig,
++        object_store_manager: ObjectStoreManagerRef,
++    ) -> Result<Self> {
+         let puffin_manager_factory = PuffinManagerFactory::new(
+             &mito_config.index.aux_path,
+             mito_config.index.staging_size.as_bytes(),
+@@ -231,95 +229,131 @@ pub async fn open_compaction_region(
+         )
+         .await?;
+         let intermediate_manager =
+-            IntermediateManager::init_fs(mito_config.index.aux_path.clone()).await?;
++            IntermediateManager::init_fs(&mito_config.index.aux_path).await?;
 +
- #[cfg(test)]
- mod tests {
-     use api::v1::value::ValueData;
-```
-
-**File**: `src/servers/src/postgres.rs` (modified, +9/-1)
-```diff
-@@ -43,8 +43,8 @@ use session::context::Channel;
- 
- use self::auth_handler::{PgUserProviderSource, ZeroPidSecretKeyGenerator};
- use self::handler::DefaultQueryParser;
--use crate::query_handler::CopyInHandlerRef;
- use crate::query_handler::sql::ServerSqlQueryHandlerRef;
-+use crate::query_handler::{CopyInHandlerRef, InfluxdbLineProtocolHandlerRef};
- 
- pub(crate) struct GreptimeDBStartupParameters {
-     version: String,
-@@ -81,6 +81,11 @@ pub struct PostgresServerHandlerInner {
-     query_handler: ServerSqlQueryHandlerRef,
-     auth_source: Option<Arc<PgUserProviderSource>>,
-     copy_in_handler: CopyInHandlerRef,
-+    /// Executes influxdb line-protocol batches flushed by a table-less
-+    /// COPY FROM STDIN — the same handler the HTTP write endpoints use.
-+    /// Absent on servers not wired for it; such connections reject the
-+    /// influxdb format when a copy starts.
-+    influxdb_handler: Option<InfluxdbLineProtocolHandlerRef>,
-     force_tls: bool,
-     auth_driver: AuthDriver<Arc<GreptimeDBStartupParameters>, UserInfoRef>,
-     /// SCRAM selected; failures get the uniform metric label.
-@@ -99,6 +104,8 @@ pub struct PostgresServerHandlerInner {
- pub(crate) struct MakePostgresServerHandler {
-     query_handler: ServerSqlQueryHandlerRef,
-     copy_in_handler: CopyInHandlerRef,
-+    #[builder(default)]
-+    influxdb_handler: Option<InfluxdbLineProtocolHandlerRef>,
-     user_provider: Option<UserProviderRef>,
-     #[builder(default = "Arc::new(GreptimeDBStartupParameters::new())")]
-     param_provider: Arc<GreptimeDBStartupParameters>,
-@@ -149,6 +156,7 @@ impl MakePostgresServerHandler {
-                 .clone()
-                 .map(|p| Arc::new(PgUserProviderSource::new(p))),
-             copy_in_handler: self.copy_in_handler.clone(),
-+            influxdb_handler: self.influxdb_handler.clone(),
-             force_tls: self.force_tls,
-             auth_driver: AuthDriver::new(self.param_provider.clone())
-                 .with_pid_secret_key_generator(Arc::new(ZeroPidSecretKeyGenerator)),
-```
-
-**File**: `src/servers/src/postgres/copy_in/codec.rs` (modified, +46/-72)
-```diff
-@@ -12,58 +12,63 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
--//! The COPY FROM STDIN codec framework.
-+//! The COPY FROM STDIN formats.
- //!
--//! A *codec* binds one COPY data format to its implementation. Codecs are
--//! stateless strategies: they validate the options they accept at
--//! statement-parse time, describe which column types they can ingest, and
--//! create the stateful [`RecordParser`] per stream.
--//!
--//! Formats are not limited to PostgreSQL's own — GreptimeDB-specific
--//! formats (a line protocol, a JSON-lines dialect, ...) register exactly
--//! like `csv` does, and may define their own options through the open
--//! `WITH (...)` clause.
-+//! [`CopyFormat`] is the closed, explicit set of supported formats — a
-+//! small enum over the real implementations rather than a generic
-+//! format framework. Each variant carries its validated options and
-+//! its rules are stated where they apply: a variant's match arms in
-+//! the copy lifecycle (see the parent module) decide whether a target
-+//! table is required, how the `CopyData` bytes are consumed, and which
-+//! existing ingestion pipeline completes the copy. Adding a format is
-+//! a normal extension: a new variant plus its arms.
- //!
- //! # Parsing and conversion
- //!
--//! A [`RecordParser`] consumes raw `CopyData` bytes and emits complete,
--//! insertable rows: one [`ParsedRow`] per record, in the order of the
--//! targeted columns. Parsers validate record shape (field counts) and
--//! convert field values themselves — `csv` delegates both splitting and
--//! typed conversion to arrow-csv's incremental decoder (the engine
--//! behind `COPY ... FROM 'file.csv'`) and turns decoded batches into
--//! rows with the shared `api::helper::vectors_to_rows`. A future format
--//! that carries values as text (e.g. a line protocol) would reintroduce
--//! shared field-conversion helpers here; see the removed `text` codec in
--//! git history for the shape they had.
-+//! Table-bound formats parse incrementally through a [`RecordParser`]:
-+//! it consumes raw `CopyData` bytes and emits complete, insertable
-+//! rows — one [`ParsedRow`] per record, in the order of the targeted
-+//! columns. `csv` delegates splitting and typed conversion to
-+//! arrow-csv's incremental decoder (the engine behind
-+//! `COPY ... FROM 'file.csv'`) and turns decoded batches into rows
-+//! with the shared `api::helper::vectors_to_rows`.
-+//!
-+//! Formats that delegate to an existing ingestion pipeline (the
-+//! influxdb line protocol) do not parse here at all: the whole payload
-+//! is buffered as one bounded request body and completed through that
-+//! pipeline, so record boundaries and values stay with the pipeline's
-+//! own parser.
- //!
- //! # Options
- //!
- //! The `WITH (...)` clause is open: every `KEY value` entry the client
--//! writes is collected into a [`CopyOptionSet`] (see `options`) regardless
--//! of whether any format understands it — the statement is parsed
--//! textually (see `parse`) precisely so options beyond sqlparser's COPY
--//! grammar can reach the codecs. A codec builder takes the options it
--//! understands (`take_string`, `take_single_byte`, `take_flag`, or raw
--//! `take_value` for codec-specific shapes) and rejects the rest with
--//! `reject_leftovers`, so a future format like
--//! `COPY t FROM STDIN WITH (FORMAT influxdb_line, precision 'ns')` only
--//! needs its own codec and registry entry.
--//!
--//! To add a format:
--//!
--//! 1. implement [`CopyInCodec`] for a config struct holding the format's
--//!    validated options (see `csv::CsvCodec` for the example),
--//! 2. write a builder `fn(CopyOptionSet) -> PgWireResult<Arc<dyn
--//!    CopyInCodec>>` that applies defaults and rejects options the format
--//!    does not accept,
--//! 3. register the builder under every accepted `FORMAT` name (including
--//!    aliases) in `REGISTERED_FORMATS` in the parent module.
-+//! writes is collected into a [`CopyOptionSet`] (see `options`)
-+//! regardless of whether any format understands it — the statement is
-+//! parsed textually (see `parse`) precisely so options beyond
-+//! sqlparser's COPY grammar can reach the formats. A format builder
-+//! takes the options it understands (`take_string`,
-+//! `take_single_byte`, `take_flag`, or raw `take_value` for
-+//! format-specific shapes) and rejects the rest with
-+//! `reject_leftovers`.
- 
--use datatypes::prelude::ConcreteDataType;
--use datatypes::schema::ColumnSchema;
- use pgwire::error::PgWireResult;
- 
-+use crate::postgres::copy_in::csv::CsvCodec;
-+use crate::postgres::copy_in::influxdb::InfluxdbOptions;
++        Ok(Self {
++            mito_config: Arc::new(mito_config),
++            object_store_manager,
++            puffin_manager_factory,
++            intermediate_manager,
++        })
++    }
 +
-+/// A resolved COPY FROM STDIN format with its validated options.
-+#[derive(Debug, Clone)]
-+pub(super) enum CopyFormat {
-+    /// Table-bound CSV: records are parsed incrementally against the
-+    /// targeted table's columns and inserted in batches.
-+    Csv(CsvCodec),
-+    /// Table-less influxdb line protocol: the whole payload is one
-+    /
-```
-
-**File**: `src/servers/src/postgres/copy_in/csv.rs` (modified, +24/-28)
-```diff
-@@ -40,12 +40,12 @@ use datatypes::schema::{ColumnSchema, Schema as GreptimeSchema};
- use datatypes::vectors::{BooleanVector, Helper, StringVector, Vector};
- use pgwire::error::{PgWireError, PgWireResult};
++    /// Opens a region without reinitializing or cleaning shared index resources.
++    pub async fn open(
++        &self,
++        req: &OpenCompactionRegionRequest,
++        ttl_provider: Either<TimeToLive, SchemaMetadataManagerRef>,
++    ) -> Result<CompactionRegion> {
++        let mito_config = &self.mito_config;
++        let object_store = {
++            let name = &req.region_options.storage;
++            if let Some(name) = name {
++                self.object_store_manager
++                    .find(name)
++                    .with_context(|| ObjectStoreNotFoundSnafu {
++                        object_store: name.clone(),
++                    })?
++            } else {
++                self.object_store_manager.default_object_store()
++            }
++        };
  
--use crate::postgres::copy_in::codec::{CopyInCodec, ParsedRow, RecordParser};
-+use crate::postgres::copy_in::codec::{CopyFormat, ParsedRow, RecordParser};
- use crate::postgres::copy_in::options::CopyOptionSet;
- use crate::postgres::copy_in::{COPY_IN_FLUSH_ROWS, bad_copy_data, invalid_text_repr, unsupported};
- 
- /// The validated `csv` format configuration.
--#[derive(Debug)]
-+#[derive(Debug, Clone)]
- pub(super) struct CsvCodec {
-     delimiter: u8,
-     quote: u8,
-@@ -54,7 +54,7 @@ pub(super) struct CsvCodec {
- }
- 
- /// Builds the CSV codec from the parsed options.
--pub(super) fn build_csv_codec(mut options: CopyOptionSet) -> PgWireResult<Arc<dyn CopyInCodec>> {
-+pub(super) fn build_csv_codec(mut options: CopyOptionSet) -> PgWireResult<CopyFormat> {
-     let delimiter = options.take_single_byte("DELIMITER")?.unwrap_or(b',');
-     let quote = options.take_single_byte("QUOTE")?.unwrap_or(b'"');
-     // In PostgreSQL the default escape character for CSV is the quote
-@@ -75,21 +75,17 @@ pub(super) fn build_csv_codec(mut options: CopyOptionSet) -> PgWireResult<Arc<dy
-     if delimiter == quote {
-         return Err(bad_copy_data("DELIMITER must not be equal to QUOTE"));
-     }
--    Ok(Arc::new(CsvCodec {
-+    Ok(CopyFormat::Csv(CsvCodec {
-         delimiter,
-         quote,
-         escape,
-         header,
-     }))
- }
- 
--impl CopyInCodec for CsvCodec {
--    fn name(&self) -> &'static str {
--        "csv"
--    }
+-        Arc::new(AccessLayer::new(
++        let access_layer = Arc::new(AccessLayer::new(
+             &req.table_dir,
+             req.path_type,
+             object_store.clone(),
+-            puffin_manager_factory,
+-            intermediate_manager,
+-        ))
+-    };
 -
-+impl CsvCodec {
-     /// The column types arrow-csv can decode against.
--    fn check_column_type(&self, data_type: &ConcreteDataType) -> PgWireResult<()> {
-+    pub(super) fn check_column_type(&self, data_type: &ConcreteDataType) -> PgWireResult<()> {
-         let supported = matches!(
-             data_type,
-             ConcreteDataType::Boolean(_)
-@@ -117,7 +113,7 @@ impl CopyInCodec for CsvCodec {
-         Ok(())
-     }
- 
--    fn create_parser(
-+    pub(super) fn create_parser(
-         &self,
-         columns: &[ColumnSchema],
-         timezone: &str,
-@@ -292,9 +288,15 @@ mod tests {
-         ]
-     }
- 
-+    fn build_codec(set: CopyOptionSet) -> CsvCodec {
-+        match build_csv_codec(set).unwrap() {
-+            CopyFormat::Csv(codec) => codec,
-+            other => panic!("expected csv format, got {other:?}"),
-+        }
-+    }
-+
-     fn parser() -> Box<dyn RecordParser + Send> {
--        build_csv_codec(CopyOptionSet::default())
--            .unwrap()
-+        build_codec(CopyOptionSet::default())
-             .create_parser(&test_columns(), "UTC")
-             .unwrap()
-     }
-@@ -308,8 +310,7 @@ mod tests {
- 
-     fn rows_with(mut set: CopyOptionSet) -> Box<dyn RecordParser + Send> {
-         set.take_format().unwrap();
--        build_csv_codec(set)
--            .unwrap()
-+        build_codec(set)
-             .create_parser(&test_columns(), "UTC")
-             .unwrap()
-     }
-@@ -329,8 +330,8 @@ mod tests {
- 
-     #[test]
-     fn test_build_defaults() {
--        let codec = build_csv_codec(CopyOptionSet::default()).unwrap();
--        assert_eq!(codec.name(), "csv");
-+        let codec = build_codec(CopyOptionSet::default());
-+        assert!(matches!(codec, CsvCodec { .. }));
-     }
- 
-     #[test]
-@@ -368,7 +369,7 @@ mod tests {
- 
-     #[test]
-     fn test_check_column_type() {
--        let codec = build_csv_codec(CopyOptionSet::default()).unwrap();
-+        let codec = build_codec(CopyOptionSet::default());
-         assert!(
-             codec
-                 .check_column_type(&ConcreteDataType::json_datatype())
-@@ -524,8 +525,7 @@ mod tests {
-             .into_bytes();
- 
-         let check = |chunk: usize| {
--            let mut parser = build_csv_codec(CopyOptionSet::default())
--                .unwrap()
-+            let mut parser = build_codec(CopyOptionSet::default())
-                 .create_parser(&sweep_columns, "UTC")
-                 .unwrap();
-             let mut ids: Vec<i32> = Vec::new();
-@@ -560,8 +560,7 @@ mod tests {
-             check(chunk);
-             let mut shifted = payload.clone();
-             shifted.drain(..37);
--            let mut parser = build_csv_codec(CopyOptionSet::default())
--                .unwrap()
-+            let mut parser = build_codec(CopyOptionSet::default())
-                 .create_parser(&sweep_columns, "UTC")
-                 .unwrap();
-             let mut count = 0usize;
-@@ -585,8 +584,7 @@ mod tests {
-                 false,
-             ),
-         ];
--        let mut parser = build_csv_codec(CopyOptionSet::default())
--            .unwrap()
-+        let mut parser = build_codec(CopyOptionSet::default())
-             .create_parser(&columns, "UTC")
-             .unwrap();
-         let rows = feed_all(
-@@ -628,8 +626,7 @@ mod tests {
-                 false,
-             ),
-         ];
--        let mut parser = build_csv_codec(Co
+-    let manifest_manager = {
+-        let region_dir = region_dir_from_table_dir(&req.table_dir, req.region_id, req.path_type);
+-        let region_manifest_options =
+-            RegionManifestOptions::new(mito_config, &region_dir, object_store);
+-
+-        RegionManifestManager::open(region_manifest_options, &Default::default())
+-            .await?
+-            .with_context(|| EmptyRegionDirSnafu {
+-                region_id: req.region_id,
+-                region_dir: region_dir_from_table_dir(&req.table_dir, req.region_id, req.path_type),
+-            })?
+-    };
+-
+-    let manifest = manifest_manager.manifest();
+-    let region_metadata = manifest.metadata.clone();
+-    let hook: Option<RegionHookRef> = req.plugins.get();
+-    let manifest_ctx = Arc::new(ManifestContext::new(
+-        manifest_manager,
+-        RegionRoleState::Leader(RegionLeaderState::Writable),
+-        hook,
+-    ));
+-
+-    let file_purger = {
+-        let purge_scheduler = Arc::new(LocalScheduler::new(mito_config.max_background_purges));
+-        Arc::new(LocalFilePurger::new(
+-            purge_scheduler.clone(),
+-            access_layer.clone(),
+-            None,
+-        ))
+-    };
+-
+-    let current_version = {
+-        let mut ssts = SstVersion::new(region_metadata.clone());
+-        ssts.add_files(file_purger.clone(), manifest.files.values().cloned());
+-        CompactionVersion {
+-            metadata: region_metadata.clone(),
+-            options: req.region_options.clone(),
+-            ssts: Arc::new(ssts),
+-            // Remo
 ```
 
-**File**: `src/servers/src/postgres/copy_in/influxdb.rs` (added, +95/-0)
+**File**: `src/mito2/src/engine/open_test.rs` (modified, +132/-9)
 ```diff
-@@ -0,0 +1,95 @@
-+// Copyright 2023 Greptime Team
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+//! The `influxdb` line protocol format for COPY FROM STDIN.
-+//!
-+//! `COPY FROM STDIN WITH (FORMAT influxdb, precision 'ns')` ingests
-+//! [InfluxDB line protocol](https://docs.influxdata.com/influxdb/v1.8/write_protocols/line_protocol_reference/)
-+//! text. The format is table-less — each line names its own measurement
-+//! — and does not parse here at all: the COPY layer buffers the whole
-+//! payload (bounded by [`crate::postgres::copy_in::COPY_IN_MAX_PAYLOAD_BYTES`])
-+//! and completes the copy by handing it to the frontend's line-protocol
-+//! write pipeline as one body, exactly like the HTTP
-+//! `/v1/influxdb/v1/write` endpoint receives one request body:
-+//! conversion, permissions, interceptors, timestamp alignment, merge
-+//! mode and inserts are the same path, and record boundaries (including
-+//! newlines inside quoted field values and after escapes) are decided
-+//! by the line-protocol parser alone — the COPY layer never splits
-+//! records.
-+//!
-+//! One COPY statement is therefore one bounded ingestion request; a
-+//! larger import is multiple COPY statements.
-+//!
-+//! The `precision` option carries the same values as the HTTP
-+//! `precision` query parameter (`ns`, `us`, `ms`, `s`, ...), defaults to
-+//! nanoseconds, and is resolved by the shared `parse_time_precision`.
-+
-+use common_grpc::precision::Precision;
-+use pgwire::error::PgWireResult;
-+
-+use crate::postgres::copy_in::bad_copy_data;
-+use crate::postgres::copy_in::codec::CopyFormat;
-+use crate::postgres::copy_in::options::CopyOptionSet;
-+
-+/// The format's validated options. A `None` precision carries the
-+/// pipeline's default (nanoseconds), exactly like an HTTP write without
-+/// a `precision` parameter.
-+#[derive(Debug, Clone)]
-+pub(super) struct InfluxdbOptions {
-+    pub(super) precision: Option<Precision>,
+@@ -33,7 +33,7 @@ use store_api::region_request::{
+ use store_api::storage::{RegionId, ScanRequest};
+ use tokio::sync::{Notify, oneshot};
+ 
+-use crate::compaction::compactor::{OpenCompactionRegionRequest, open_compaction_region};
++use crate::compaction::compactor::{CompactionRegionOpener, OpenCompactionRegionRequest};
+ use crate::config::MitoConfig;
+ use crate::engine::flush_test::MockRegionHook;
+ use crate::engine::listener::EventListener;
+@@ -1037,16 +1037,139 @@ async fn test_open_compaction_region_with_format(flat_format: bool) {
+         plugins: Plugins::new(),
+     };
+ 
+-    let compaction_region = open_compaction_region(
+-        &req,
+-        &mito_config,
+-        object_store_manager.clone(),
+-        Either::Right(schema_metadata_manager),
+-    )
+-    .await
+-    .unwrap();
++    mito_config.index.aux_path = env
++        .data_home()
++        .join("compactor-index")
++        .display()
++        .to_string();
++    let opener = CompactionRegionOpener::new(mito_config, object_store_manager)
++        .await
++        .unwrap();
++    let compaction_region = opener
++        .open(&req, Either::Right(schema_metadata_manager))
++        .await
++        .unwrap();
+ 
+     assert_eq!(region_id, compaction_region.region_id);
++    compaction_region.stop_purger_scheduler().await.unwrap();
 +}
 +
-+pub(super) fn build_influxdb_codec(mut options: CopyOptionSet) -> PgWireResult<CopyFormat> {
-+    let precision = match options.take_string("precision")? {
-+        Some(value) => Some(
-+            crate::influxdb::parse_time_precision(&value)
-+                .map_err(|e| bad_copy_data(format!("invalid precision option: {e}")))?,
-+        ),
-+        None => None,
++// Regression: per-job initialization used to delete another compaction's live
++// atomic-write, external-sort, and staging files under the shared aux_path.
++#[tokio::test]
++async fn test_compaction_region_opens_preserve_live_index_files() {
++    use common_time::TimeToLive;
++    use futures::{AsyncReadExt, AsyncWriteExt};
++    use index::external_provider::ExternalTempFileProvider;
++    use store_api::storage::FileId;
++
++    use crate::sst::index::intermediate::{IntermediateLocation, TempFileProvider};
++
++    let mut env = TestEnv::new().await;
++    let engine = env.create_engine(MitoConfig::default()).await;
++    let mut requests = Vec::new();
++    for (index, path_type) in [PathType::Bare, PathType::Data].into_iter().enumerate() {
++        let region_id = RegionId::new(100 + index as u32, 0);
++        let mut create = CreateRequestBuilder::new()
++            .table_dir(&format!("data/{}/", region_id.table_id()))
++            .build();
++        create.path_type = path_type;
++        engine
++            .handle_request(region_id, RegionRequest::Create(create.clone()))
++            .await
++            .unwrap();
++        put_rows(
++            &engine,
++            region_id,
++            Rows {
++                schema: rows_schema(&create),
++                rows: build_rows(0, 3),
++            },
++        )
++        .await;
++        flush_region(&engine, region_id, None).await;
++        requests.push(OpenCompactionRegionRequest {
++            region_id,
++            table_dir: create.table_dir,
++            path_type,
++            region_options: RegionOptions::default(),
++            max_parallelism: 1,
++            plugins: Plugins::new(),
++        });
++    }
++
++    let mut config = MitoConfig::default();
++    config.sanitize(env.data_home().to_str().unwrap()).unwrap();
++    let aux_path = env.data_home().join("compactor-index");
++    config.index.aux_path = aux_path.display().to_string();
++    let opener = CompactionRegionOpener::new(config, env.get_object_store_manager().unwrap())
++        .await
++        .unwrap();
++    let first = opener
++        .open(&requests[0], Either::Left(TimeToLive::default()))
++        .await
++        .unwrap();
++    let provider = TempFileProvider::new(
++        IntermediateLocation::new(&first.region_id, &FileId::random()),
++        first.access_layer.intermediate_manager().clone(),
++    );
++    let mut committed = provider.create("sort", "committed").await.unwrap();
++    committed.write_all(b"committed sort input").await.unwrap();
++    committed.close().await.unwrap();
++    let mut pending = provider.create("sort", "pending").await.unwrap();
++    pending.write_all(b"pending sort input").await.unwrap();
++    pending.flush().await.unwrap();
++    let staging_file = aux_path.join("staging/inflight.tmp");
++    tokio::fs::write(&staging_file, b"staging input")
++        .await
++        .unwrap();
++
++    let cloned_opener = opener.clone();
++    let (second, reopened) = tokio::try_join!(
++        opener.open(&requests[1], Either::Left(TimeToLive::default())),
++        cloned_opener.open(&requests[0], Either::Left(TimeToLive::default())),
++    )
++    .unwrap();
++    assert_eq!(second.access_layer.path_type(), PathType::Data);
++    assert_eq!(reopened.access_layer.path_type(), PathType::Bare);
++    let missing = OpenCompactionRegionRequest {
++        region_id: RegionId::new(999, 0),
++        table_dir: "missing/".into(),
++        ..requests[0].clone()
 +    };
-+    options.reject_leftovers("influxdb")?;
-+    Ok(CopyFormat::Influxdb(InfluxdbOptions { precision }))
++    assert!(matches!(
++        opener
++            .open(&missing, Either::Left(TimeToLive::default()))
++            .await,
++        Err(error::Error::EmptyRegionDir { .. })
++    ));
++    drop(cloned_opener);
++    drop(opener);
++
++    //
+```
+
+**File**: `src/mito2/src/engine/region_hook.rs` (modified, +2/-2)
+```diff
+@@ -62,7 +62,7 @@
+ //! | Operations during staging    | N/A                    | ❌ (staging dir)      |
+ //! | Async index build            | ❌ (index files only)   | ✅ Yes                |
+ //!
+-//! ¹ Remote compaction runs on a dedicated compactor node via `open_compaction_region()`;
++//! ¹ Remote compaction runs on a dedicated compactor node via `CompactionRegionOpener::open()`;
+ //!   pass plugins via `OpenCompactionRegionRequest` to enable hooks there. `sst_infos` is
+ //!   `#[serde(skip)]` over the wire, so each [`SstInfo`] is rebuilt from [`FileMeta`] with
+ //!   empty footer/index — see [`SstFileInfo`] for field-level detail.
+@@ -328,7 +328,7 @@ pub trait RegionHook: Send + Sync + Debug {
+     /// Fires once when a region becomes active via a create or open request —
+     /// the natural counterpart to [`on_region_closed`] / [`on_region_dropped`].
+     /// It does **not** fire for the compactor's transient compaction regions
+-    /// (`open_compaction_region`), nor for the internal reopen performed during
++    /// (`CompactionRegionOpener::open`), nor for the internal reopen performed during
+     /// follower catch-up / leadership promotion.
+     ///
+     /// On the **create** path it runs inline in the region worker loop; on the
+```
+
+---
+
+### Incident Patch 3: `efed847c` (2026-10-28)
+**Commit Message**: fix!: enforce sparse primary key schema (#10020)
+
+* fix: preserve required sorting for ordinary sparse scans
+
+Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+
+* fix: enforce sparse primary key schema
+
+Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+
+* test: fix
+
+Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: shuiyisong <[REDACTED_EMAIL]>
+
+**File**: `src/common/function/src/scalars/primary_key.rs` (modified, +15/-1)
+```diff
+@@ -354,7 +354,11 @@ mod tests {
+         builder.primary_key_encoding(encoding);
+         for (id, name, ty) in columns {
+             builder.push_column_metadata(ColumnMetadata {
+-                column_schema: ColumnSchema::new((*name).to_string(), ty.clone(), true),
++                column_schema: ColumnSchema::new(
++                    (*name).to_string(),
++                    ty.clone(),
++                    !ReservedColumnId::is_reserved(*id),
++                ),
+                 semantic_type: SemanticType::Tag,
+                 column_id: *id,
+             });
+@@ -440,6 +444,16 @@ mod tests {
+     #[test]
+     fn test_decode_sparse_primary_key() {
+         let columns = vec![
++            (
++                ReservedColumnId::table_id(),
++                "__table_id",
++                ConcreteDataType::uint32_datatype(),
++            ),
++            (
++                ReservedColumnId::tsid(),
++                "__tsid",
++                ConcreteDataType::uint64_datatype(),
++            ),
+             (10, "k0", ConcreteDataType::string_datatype()),
+             (11, "k1", ConcreteDataType::string_datatype()),
+         ];
+```
+
+**File**: `src/mito2/benches/bench_index_update.rs` (modified, +2/-1)
+```diff
+@@ -60,7 +60,8 @@ fn input(shape: &Shape) -> (RegionMetadataRef, HashSet<ColumnId>, RecordBatch) {
+     let mut pk = vec![ReservedColumnId::table_id(), ReservedColumnId::tsid()];
+     let mut inverted_columns = HashSet::new();
+     let mut add_tag = |id, name: String, data_type, indexed| {
+-        let mut schema = ColumnSchema::new(name, data_type, true).with_inverted_index(false);
++        let mut schema = ColumnSchema::new(name, data_type, !ReservedColumnId::is_reserved(id))
++            .with_inverted_index(false);
+         if indexed && shape.inverted {
+             inverted_columns.insert(id);
+         }
+```
+
+**File**: `src/mito2/benches/bench_pk_tag_column.rs` (modified, +5/-1)
+```diff
+@@ -77,7 +77,11 @@ fn metadata(tags: u32) -> RegionMetadataRef {
+         primary_key.push(column_id);
+         builder.push_column_metadata(ColumnMetadata {
+             column_id,
+-            column_schema: ColumnSchema::new(name, data_type, true),
++            column_schema: ColumnSchema::new(
++                name,
++                data_type,
++                !ReservedColumnId::is_reserved(column_id),
++            ),
+             semantic_type: SemanticType::Tag,
+         });
+     }
+```
+
+**File**: `src/mito2/src/engine/create_test.rs` (modified, +40/-0)
+```diff
+@@ -117,6 +117,46 @@ async fn test_engine_column_compression_validation() {
+     assert_eq!(StatusCode::InvalidArguments, err.status_code());
+ }
+ 
++#[tokio::test]
++async fn test_engine_create_sparse_requires_reserved_columns() {
++    let mut env = TestEnv::new().await;
++    let engine = env.create_engine(MitoConfig::default()).await;
++    let region_id = RegionId::new(1, 1);
++    let mut request = CreateRequestBuilder::new()
++        .insert_option("primary_key_encoding", "sparse")
++        .insert_option("sst_format", "flat")
++        .build();
++    let error = engine
++        .handle_request(region_id, RegionRequest::Create(request.clone()))
++        .await
++        .unwrap_err();
++    assert_eq!(StatusCode::InvalidArguments, error.status_code());
++    assert!(
++        error
++            .output_msg()
++            .contains("sparse primary keys must start with (__table_id, __tsid)")
++    );
++    assert!(!engine.is_region_exists(region_id));
++
++    let metadata = sst_region_metadata_with_encoding(PrimaryKeyEncoding::Sparse);
++    request.column_metadatas = metadata.column_metadatas;
++    request.primary_key = metadata.primary_key;
++    engine
++        .handle_request(region_id, RegionRequest::Create(request.clone()))
++        .await
++        .unwrap();
++    let expected = engine.get_region(region_id).unwrap().metadata();
++    reopen_region(
++        &engine,
++        region_id,
++        request.table_dir,
++        false,
++        request.options,
++    )
++    .await;
++    assert_eq!(expected, engine.get_region(region_id).unwrap().metadata());
 +}
 +
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use crate::postgres::copy_in::options::CopyOptionValue;
+ #[tokio::test]
+ async fn test_engine_create_new_region() {
+     test_engine_create_new_region_with_format(false).await;
+```
+
+**File**: `src/mito2/src/memtable/bulk/part.rs` (modified, +25/-77)
+```diff
+@@ -1858,19 +1858,17 @@ impl MultiBulkPart {
+ 
+ #[cfg(test)]
+ mod tests {
+-    use api::v1::{Row, SemanticType, WriteHint};
++    use api::v1::{Row, WriteHint};
+     use datafusion_common::ScalarValue;
+     use datatypes::arrow::array::{
+         BinaryArray, DictionaryArray, Float64Array, TimestampMillisecondArray,
+     };
+     use datatypes::arrow::datatypes::UInt32Type;
+     use datatypes::prelude::{ConcreteDataType, Value};
+-    use datatypes::schema::ColumnSchema;
+     use mito_codec::row_converter::build_primary_key_codec;
+     use rand::rngs::StdRng;
+     use rand::{Rng, SeedableRng};
+-    use store_api::metadata::{ColumnMetadata, RegionMetadataBuilder};
+-    use store_api::storage::RegionId;
++    use store_api::metadata::RegionMetadataBuilder;
+     use store_api::storage::consts::ReservedColumnId;
+     use table::predicate::Predicate;
+ 
+@@ -2594,47 +2592,30 @@ mod tests {
+         KeyValues::new(metadata.as_ref(), mutation).unwrap()
+     }
+ 
+-    #[test]
+-    fn test_bulk_part_converter_sparse_primary_key_encoding() {
+-        use api::v1::SemanticType;
+-        use datatypes::schema::ColumnSchema;
+-        use store_api::metadata::{ColumnMetadata, RegionMetadataBuilder};
+-        use store_api::storage::RegionId;
+-
+-        let mut builder = RegionMetadataBuilder::new(RegionId::new(123, 456));
++    fn sparse_metadata_for_test() -> RegionMetadataRef {
++        let mut metadata = metadata_for_test().as_ref().clone();
++        metadata.column_metadatas[1].column_schema.data_type = ConcreteDataType::string_datatype();
++        let mut builder = RegionMetadataBuilder::from_existing(metadata);
++        let reserved = crate::test_util::sst_util::sst_region_metadata_with_encoding(
++            PrimaryKeyEncoding::Sparse,
++        );
++        for column in reserved.column_metadatas.into_iter().take(2) {
++            builder.push_column_metadata(column);
++        }
+         builder
+-            .push_column_metadata(ColumnMetadata {
+-                column_schema: ColumnSchema::new("k0", ConcreteDataType::string_datatype(), false),
+-                semantic_type: SemanticType::Tag,
+-                column_id: 0,
+-            })
+-            .push_column_metadata(ColumnMetadata {
+-                column_schema: ColumnSchema::new("k1", ConcreteDataType::string_datatype(), false),
+-                semantic_type: SemanticType::Tag,
+-                column_id: 1,
+-            })
+-            .push_column_metadata(ColumnMetadata {
+-                column_schema: ColumnSchema::new(
+-                    "ts",
+-                    ConcreteDataType::timestamp_millisecond_datatype(),
+-                    false,
+-                ),
+-                semantic_type: SemanticType::Timestamp,
+-                column_id: 2,
+-            })
+-            .push_column_metadata(ColumnMetadata {
+-                column_schema: ColumnSchema::new("v0", ConcreteDataType::int64_datatype(), true),
+-                semantic_type: SemanticType::Field,
+-                column_id: 3,
+-            })
+-            .push_column_metadata(ColumnMetadata {
+-                column_schema: ColumnSchema::new("v1", ConcreteDataType::float64_datatype(), true),
+-                semantic_type: SemanticType::Field,
+-                column_id: 4,
+-            })
+-            .primary_key(vec![0, 1])
++            .primary_key(vec![
++                ReservedColumnId::table_id(),
++                ReservedColumnId::tsid(),
++                0,
++                1,
++            ])
+             .primary_key_encoding(PrimaryKeyEncoding::Sparse);
+-        let metadata = Arc::new(builder.build().unwrap());
++        Arc::new(builder.build().unwrap())
++    }
 +
 +    #[test]
-+    fn test_builder_options() {
-+        let format = build_influxdb_codec(CopyOptionSet::default()).unwrap();
-+        assert!(matches!(format, CopyFormat::Influxdb(_)));
-+        assert!(matches!(format, CopyFormat::Influxdb(_)));
-+
-+        let mut set = CopyOptionSet::default();
-+        set.insert("precision".into(), CopyOptionValue::String("ms".into()))
-+            .unwrap();
-+        assert!(matches!(
-+            build_influxdb_codec(set).unwrap(),
-+            CopyFormat::Influxdb(InfluxdbOptions {
-+                precision: Some(Precision::Millisecond)
-+            })
-+        ));
-+
-+        let mut set = CopyOptionSet::default();
-+        set.insert("precision".into(), CopyOptionValue::String("bogus".into()))
-+            .unwrap();
-+        assert!(build_influxdb_codec(set).is_err());
-+
-+        let mut set = CopyOptionSet::default();
-+        set.insert("unknown".into(), CopyOptionValue::Flag).unwrap();
-+        assert!(build_influxdb_codec(set).is_err());
-+    }
-+}
++    fn test_bulk_part_converter_sparse_primary_key_encoding() {
++        let metadata = sparse_metadata_for_test();
+ 
+         let primary_key_codec = build_primary_key_codec(&metadata);
+         let schema = to_flat_sst_arrow_schema(
+@@ -2923,40 +2904,7 @@ mod tests {
+ 
+     #[test]
+     fn test_convert_bulk_part_sparse_encoding() {
+-        let mut builder = RegionMetadataBuilder::new(RegionId::new(123, 456));
+-        builder
+-            .push_column_metadata(ColumnMetadata {
+-                column_schema: ColumnSchema::new("k0", ConcreteDataType::string_datatype(), false),
+-                semantic_type: SemanticType::Tag,
+-                column_id: 0,
+-            })
+-            .push_column_metadata(ColumnMetadata {
+-                column_schema: ColumnSchema::new("k1", ConcreteDataType::string_datatype(), false),
+-                semantic_type: SemanticType::Tag,
+-                column_id: 1,
+-            })
+-            .push_column_metadata(ColumnMetadata {
+-                column_schema: ColumnSchema::new(
+-                    "ts",
+-                    ConcreteDataType::timestamp_millisecond_datatype(),
+-                    false,
+-                ),
+-                semantic_type: SemanticType::Timestamp,
+-                column_id: 2,
+-            })
+-            .push_column_met
 ```
 
-**File**: `src/servers/src/postgres/copy_in/mod.rs` (modified, +229/-76)
+**File**: `src/mito2/src/read/compat.rs` (modified, +51/-13)
 ```diff
-@@ -21,38 +21,42 @@
- //! the data stream incrementally and flushes it into the query handler as
- //! [`RowInsertRequests`] batches.
- //!
--//! # Format framework
-+//! # Formats
- //!
--//! Each COPY data format is implemented as a [`codec::CopyInCodec`]: a
--//! stateless strategy that validates its options at statement-parse time,
--//! describes the column types it can ingest, and creates the stateful
--//! record parser for one stream. Formats register a builder under every
--//! accepted `FORMAT` name in [`REGISTERED_FORMATS`] — `csv` is the only
--//! implemented format today; PostgreSQL's `text`/`binary` and
--//! GreptimeDB-specific formats alike can be added the same way. See the
--//! `codec` module docs.
-+//! The supported formats are the explicit [`codec::CopyFormat`] enum —
-+//! `csv` (table-bound, incremental row parsing) and `influxdb`
-+//! (table-less, one bounded whole-payload request). Each format states
-+//! its own target rule and ingestion shape in the match arms of the
-+//! copy lifecycle below; adding a format is a new variant plus its
-+//! arms. Builders resolve a `FORMAT` name (and its aliases) through
-+//! [`REGISTERED_FORMATS`]. See the `codec` module docs.
+@@ -1344,8 +1344,19 @@ mod tests {
+             ],
+             &[],
+         );
++        let reserved = crate::test_util::sst_util::sst_region_metadata_with_encoding(
++            PrimaryKeyEncoding::Sparse,
++        );
++        actual_metadata.primary_key = reserved.primary_key.into_iter().take(2).collect();
++        actual_metadata
++            .column_metadatas
++            .extend(reserved.column_metadatas.into_iter().take(2));
+         actual_metadata.primary_key_encoding = PrimaryKeyEncoding::Sparse;
+-        let actual_metadata = Arc::new(actual_metadata);
++        let actual_metadata = Arc::new(
++            RegionMetadataBuilder::from_existing(actual_metadata)
++                .build()
++                .unwrap(),
++        );
  
- mod codec;
- mod csv;
-+mod influxdb;
- mod options;
- mod parse;
+         let mut expected_metadata = (*actual_metadata).clone();
+         for column in expected_metadata.column_metadatas.iter_mut() {
+@@ -1373,7 +1384,10 @@ mod tests {
+             .unwrap()
+             .unwrap();
  
- use std::fmt::Debug;
- use std::sync::Arc;
+-        let sparse_k1 = encode_sparse_key(&[]);
++        let mut sparse_k1 = Vec::new();
++        SparsePrimaryKeyCodec::schemaless()
++            .encode_internal(42, 7, &mut sparse_k1)
++            .unwrap();
+         let input_columns: Vec<ArrayRef> = vec![
+             Arc::new(Int64Array::from(vec![100, 200])),
+             Arc::new(TimestampMillisecondArray::from_iter_values([1000, 2000])),
+@@ -1384,8 +1398,10 @@ mod tests {
+                 OpType::Put as u8,
+             ])),
+         ];
+-        let input_schema =
+-            to_flat_sst_arrow_schema(&actual_metadata, &FlatSchemaOptions::default());
++        let input_schema = to_flat_sst_arrow_schema(
++            &actual_metadata,
++            &FlatSchemaOptions::from_encoding(PrimaryKeyEncoding::Sparse),
++        );
+         let input_batch = RecordBatch::try_new(input_schema, input_columns).unwrap();
  
-+use crate::influxdb::InfluxdbRequest;
- use api::helper::ColumnDataTypeWrapper;
- use api::v1::column_def::options_from_column_schema;
- use api::v1::{
-     Row as GrpcRow, RowInsertRequest, RowInsertRequests, Rows as GrpcRows, SemanticType,
+         let result = compat_batch.compat(input_batch).unwrap();
+@@ -1402,8 +1418,10 @@ mod tests {
+                 OpType::Put as u8,
+             ])),
+         ];
+-        let output_schema =
+-            to_flat_sst_arrow_schema(&expected_metadata, &FlatSchemaOptions::default());
++        let output_schema = to_flat_sst_arrow_schema(
++            &expected_metadata,
++            &FlatSchemaOptions::from_encoding(PrimaryKeyEncoding::Sparse),
++        );
+         let expected_batch = RecordBatch::try_new(output_schema, expected_columns).unwrap();
+ 
+         assert_eq!(expected_batch, result);
+@@ -1520,6 +1538,16 @@ mod tests {
+         columns[0] = json;
+         let batch = RecordBatch::try_new(Arc::new(Schema::new(fields)), columns)?;
+         for encoding in [PrimaryKeyEncoding::Dense, PrimaryKeyEncoding::Sparse] {
++            let batch = if encoding == PrimaryKeyEncoding::Sparse {
++                let mut key = Vec::new();
++                SparsePrimaryKeyCodec::schemaless().encode_internal(42, 7, &mut key)?;
++                let mut columns = batch.columns().to_vec();
++                columns[primary_key_column_index(batch.num_columns())] =
++                    build_flat_test_pk_array(&[&key, &key]);
++                RecordBatch::try_new(batch.schema(), columns)?
++            } else {
++                batch.clone()
++            };
+             for missing_json in [false, true] {
+                 let source = if missing_json {
+                     new_metadata(
+@@ -1533,12 +1561,12 @@ mod tests {
+                 } else {
+                     metadata.as_ref().clone()
+                 };
+-                let mut builder = RegionMetadataBuilder::from_existing(source);
+-                builder.primary_key_encoding(encoding);
+-                let actual = Arc::new(builder.build()?);
+-                let mut builder = RegionMetadataBuilder::from_existing(metadata.as_ref().clone());
+-                builder.primary_key_encoding(encoding);
+-                builder.push_column_metadata(ColumnMetadata {
++                let mut actual_builder = RegionMetadataBuilder::from_existing(source);
++                actual_builder.primary_key_encoding(encoding);
++                let mut expected_builder =
++                    RegionMetadataBuilder::from_existing(metadata.as_ref().clone());
++                expected_builder.primary_key_encoding(encoding);
++                expected_builder.push_column_metadata(ColumnMetadata {
+                     column_schema: ColumnSchema::new(
+                         "added",
+                         ConcreteDataType::int64_datatype(),
+@@ -1550,7 +1578,17 @@ mod tests {
+                     semantic_type: SemanticType::Field,
+                     column_id: 2,
+                 });
+-                let expected = Arc::new(builder.build()?);
++                if encoding == PrimaryKeyEncoding::Sparse {
++                    let reserved = test_util::sst_util::sst_region_metadata_with_encoding(encoding);
++                    for builder in [&mut actual_builder, &mut expected_builder] {
++                        builder.primary_key(reserved.primary_key[..2].to_vec());
++       
+```
+
+**File**: `src/mito2/src/sst/parquet/flat_format.rs` (modified, +8/-1)
+```diff
+@@ -1355,7 +1355,14 @@ mod tests {
+             column_id: col_id,
+         });
+ 
+-        let primary_key: Vec<u32> = (0..num_tags as u32).collect();
++        let mut primary_key: Vec<u32> = (0..num_tags as u32).collect();
++        if encoding == PrimaryKeyEncoding::Sparse {
++            let reserved = crate::test_util::sst_util::sst_region_metadata_with_encoding(encoding);
++            primary_key.splice(0..0, reserved.primary_key.into_iter().take(2));
++            for column in reserved.column_metadatas.into_iter().take(2) {
++                builder.push_column_metadata(column);
++            }
++        }
+         builder.primary_key(primary_key);
+         builder.primary_key_encoding(encoding);
+         builder.build().unwrap()
+```
+
+**File**: `src/store-api/src/metadata.rs` (modified, +133/-1)
+```diff
+@@ -31,6 +31,7 @@ use common_macro::stack_trace_debug;
+ use datatypes::arrow;
+ use datatypes::arrow::datatypes::FieldRef;
+ use datatypes::extension::json::json2_metadata_with_updated_settings;
++use datatypes::prelude::ConcreteDataType;
+ use datatypes::schema::{ColumnSchema, FulltextOptions, Schema, SchemaRef};
+ use datatypes::types::TimestampType;
+ use itertools::Itertools;
+@@ -39,10 +40,11 @@ use serde::{Deserialize, Deserializer, Serialize};
+ use snafu::{Location, OptionExt, ResultExt, Snafu, ensure};
+ 
+ use crate::codec::PrimaryKeyEncoding;
++use crate::metric_engine_consts::{DATA_SCHEMA_TABLE_ID_COLUMN_NAME, DATA_SCHEMA_TSID_COLUMN_NAME};
+ use crate::region_request::{
+     AddColumn, AddColumnLocation, AlterKind, ModifyColumnType, SetIndexOption, UnsetIndexOption,
  };
- use async_trait::async_trait;
--use codec::{CopyInCodec, RecordParser};
-+use codec::{CopyFormat, RecordParser};
-+use common_grpc::precision::Precision;
- use common_query::OutputData;
- use common_telemetry::{info, warn};
-+use csv::CsvCodec;
- use datafusion::sql::sqlparser::ast::{CopyTarget, Statement as SqlParserStatement};
- use datatypes::data_type::DataType;
- use datatypes::schema::{ColumnSchema, SchemaRef};
- use futures::{Sink, SinkExt, stream};
-+use influxdb::InfluxdbOptions;
- use pgwire::api::copy::CopyHandler;
- use pgwire::api::results::{CopyResponse, Response, Tag};
- use pgwire::api::{ClientInfo, PgWireConnectionState};
-@@ -80,38 +84,43 @@ use crate::postgres::utils::convert_err;
- /// the per-batch fixed costs negligible.
- pub(crate) const COPY_IN_FLUSH_ROWS: usize = 32768;
+-use crate::storage::consts::is_internal_column;
++use crate::storage::consts::{ReservedColumnId, is_internal_column};
+ use crate::storage::{ColumnId, RegionId};
  
--/// Builds a codec from the format-neutral option set.
--type CodecBuilder = fn(options::CopyOptionSet) -> PgWireResult<Arc<dyn CopyInCodec>>;
-+/// Upper bound of an influxdb COPY FROM STDIN payload. One COPY
-+/// statement is one bounded ingestion request (the whole payload is
-+/// buffered like one HTTP write body); a larger import is multiple COPY
-+/// statements. Streaming ingest may arrive later, with framing owned by
-+/// the shared line-protocol parser rather than the COPY layer.
-+pub(crate) const COPY_IN_MAX_PAYLOAD_BYTES: usize = 64 * 1024 * 1024;
+ pub type Result<T> = std::result::Result<T, MetadataError>;
+@@ -476,6 +478,16 @@ impl RegionMetadata {
+             }
+         );
+ 
++        if self.primary_key_encoding == PrimaryKeyEncoding::Sparse {
++            ensure!(
++                self.primary_key
++                    .starts_with(&[ReservedColumnId::table_id(), ReservedColumnId::tsid()]),
++                InvalidMetaSnafu {
++                    reason: "sparse primary keys must start with (__table_id, __tsid)",
++                }
++            );
++        }
 +
-+/// Builds a format from the format-neutral option set.
-+type FormatBuilder = fn(options::CopyOptionSet) -> PgWireResult<CopyFormat>;
+         if !self.primary_key.is_empty() {
+             let mut pk_ids = HashSet::with_capacity(self.primary_key.len());
+             // Checks column ids in the primary key is valid.
+@@ -523,6 +535,27 @@ impl RegionMetadata {
+                     }
+                 );
  
- /// The registered COPY FROM STDIN formats: accepted `FORMAT` name to
- /// builder. `csv` is the only implemented format; the others are
- /// registered so they report a clear "not supported yet" instead of an
- /// unknown-format error.
--const REGISTERED_FORMATS: &[(&str, CodecBuilder)] = &[
-+const REGISTERED_FORMATS: &[(&str, FormatBuilder)] = &[
-     ("csv", csv::build_csv_codec),
-+    ("influxdb", influxdb::build_influxdb_codec),
-+    ("influxdb_line", influxdb::build_influxdb_codec),
-     ("text", build_unimplemented_text_codec),
-     ("txt", build_unimplemented_text_codec),
-     ("binary", build_unimplemented_binary_codec),
- ];
++                if self.primary_key_encoding == PrimaryKeyEncoding::Sparse {
++                    let schema = &column.column_schema;
++                    let valid = if *column_id == ReservedColumnId::table_id() {
++                        schema.name == DATA_SCHEMA_TABLE_ID_COLUMN_NAME
++                            && schema.data_type == ConcreteDataType::uint32_datatype()
++                            && !schema.is_nullable()
++                    } else if *column_id == ReservedColumnId::tsid() {
++                        schema.name == DATA_SCHEMA_TSID_COLUMN_NAME
++                            && schema.data_type == ConcreteDataType::uint64_datatype()
++                            && !schema.is_nullable()
++                    } else {
++                        !ReservedColumnId::is_reserved(*column_id) && schema.data_type.is_string()
++                    };
++                    ensure!(
++                        valid,
++                        InvalidMetaSnafu {
++                            reason: format!("invalid sparse primary key column {}", schema.name),
++                        }
++                    );
++                }
++
+                 pk_ids.insert(column_id);
+             }
+         }
+@@ -1388,6 +1421,105 @@ mod test {
+         builder.build().unwrap()
+     }
  
--fn build_unimplemented_text_codec(
--    _options: options::CopyOptionSet,
--) -> PgWireResult<Arc<dyn CopyInCodec>> {
-+fn build_unimplemented_text_codec(_options: options::CopyOptionSet) -> PgWireResult<CopyFormat> {
-     Err(unsupported(
-         "the text format is not supported yet; use WITH (FORMAT csv)",
-     ))
- }
- 
--fn build_unimplemented_binary_codec(
--    _options: options::CopyOptionSet,
--) -> PgWireResult<Arc<dyn CopyInCodec>> {
-+fn build_unimplemented_binary_codec(_options: options::CopyOptionSet) -> PgWireResult<CopyFormat> {
-     Err(unsupported(
-         "COPY FROM STDIN WITH (FORMAT binary) is not supported yet",
-     ))
- }
- 
--/// Resolves the format codec from the parsed options.
--fn resolve_codec(options: &mut options::CopyOptionSet) -> PgWireResult<Arc<dyn CopyInCodec>> {
-+/// Resolves the format from the parsed options.
-+fn resolve_format(options: &mut options::CopyOptionSet) -> PgWireResult<CopyFormat> {
-     let name = options.take_format()?.ok_or_else(|| {
-         unsupported(
-             "COPY FROM STDIN requires an explicit format in this version; use WITH (FORMAT csv)",
-@@ -133,15 +142,15 @@ pub(crate) struct CopyFromStdin {
-     table: Vec<String>,
-     /// Requested column list; empty means all columns in table order.
-     columns: Vec<String>,
--    /// The resol
++    #[test]
++    fn test_sparse_primary_key_requires_reserved_columns() {
++        for primary_key in [vec![], vec![1]] {
++            let mut metadata = build_test_region_metadata();
++            if primary_key.is_empty() {
++                metadata.column_metadatas[0].semantic_type = SemanticType::Field;
++            }
++            metadata.primary_key = primary_key;
++            let mut builder = RegionMetadataBuilder::from_existing(metadata);
++            builder.primary_key_encoding(PrimaryKeyEncoding::Sparse);
++            let error = builder.build().unwrap_err();
++            assert_eq!(error.status_code(), StatusCode::InvalidArguments);
++            assert!(
++                error
++                    .to_string()
++                    .contains("sparse primary keys must start with (__table_id, __tsid)")
++            );
++        }
++    }
++
++    #[test]
++    fn test_sparse_reserved_primary_key_contract() {
++        let mut builder = RegionMetadataBuilder::from_existing(build_test_region_metadata());
++        builder.primary_key_encoding(PrimaryKeyEncoding::Sparse);
++        builder.column_metadatas[0].column_schema.data_type = ConcreteDataType::string_datatype();
++        for (name, column_id, data_type) in [
++            (
++                DATA_SCHEMA_TABLE_ID_COLUMN_NAME,
++                ReservedColumnId::table_id(),
++                ConcreteDataType::uint32_datatype(),
++            ),
++            (
++                DATA_SCHEMA_TSID_COLUMN_NAME,
++                ReservedColumnId::tsid(),
++                ConcreteDataType::uint64_datatype(),
++            ),
++        ] {
++            builder.push_column_metadata(ColumnMetadata {
++                column_schema: ColumnSchema::new(name, data_type, false),
++                semantic_type: SemanticType::Tag,
++                column_id,
++            });
++        }
++        builder.primary_key(vec![
++            ReservedColumnId::table_id(),
++            ReservedColumnId::tsid(),
+
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10040** (2026-10-28): ci: enqueue eligible pull requests during the nightly window (@WenyXu)
-- **PR #10034** (2026-10-28): fix(log-store): accept a retried first create of the conditional create probe (@fengjiachun)
-- **PR #10032** (closed): test(promql): cover the canonical merge and the routing node end to end (@discord9)
-- **PR #10031** (closed): feat(promql): route evaluated fragments to their canonical owner (@discord9)
-- **PR #10030** (closed): feat(promql): answer one series per canonical label set in the native path (@discord9)
-- **PR #10026** (2026-10-28): fix(query): keep requested sort when filtering on a lossy cast (@discord9)
+- **PR #10056** (2026-10-29): ci: authenticate ECR Public pulls in benchmark workflows (@WenyXu)
+- **PR #10054** (2026-10-29): chore(ci): slide the compatibility window to v1.3.0 (@discord9)
+- **PR #10053** (2026-10-29): ci: backport scoped heavy CI to narthex (@WenyXu)
+- **PR #10052** (closed): feat(promql): restore the ordered raw series merge (@discord9)
+- **PR #10051** (2026-10-29): chore(ci): update compatibility versions (@MichaelScofield)
+- **PR #10048** (closed): ci(query-regression): update precompiled helpers image (@MichaelScofield)
 
 ---
 
@@ -2791,50 +3146,28 @@ alone — one COPY statem
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. log-store): make raft-engine periodic WAL sync actually fsync (#9715)
+## X. ci): support optional Docker targets for query regression (#10028)
 
 **RULE**:
-When implementing operations in `src/log-store/src/raft_engine/log_store.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/github-script-tests/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `180e2716`: log-store): make raft-engine periodic WAL sync actually fsync (#9715). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec59131d`: ci): support optional Docker targets for query regression (#10028). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/log-store/src/raft_engine/log_store.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/github-script-tests/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Key used by the periodic WAL sync task. Overwritten each period so the
-/// write stays non-empty on raft-engine 0.4.2 (see [`durable_sync`]).
-const PERIODIC_SYNC_MARKER_KEY: &[u8] = b"$wal_periodic_sync";
-
-/// Force an fsync of previously appended WAL data on raft-engine 0.4.2.
-///
-/// `Engine::sync()` writes an empty [`LogBatch`] with `sync = true`, but
-/// 0.4.2's `Engine::write` returns early for empty batches *before* the
-/// fsync (tikv/raft-engine#395). Upstream fixed this in tikv/raft-engine#400,
-/// which is not on crates.io yet. Issuing a minimal non-empty put with
-/// `sync = true` reaches the fsync path on 0.4.2.
-///
-/// `batch` must be empty and can be reused across calls: a successful
-/// `Engine::write` drains its items but keeps its encoding buffer. On error the
-/// batch may be left partially encoded, so callers must discard it.
-fn durable_sync(engine: &Engine, batch: &mut LogBatch) -> raft_engine::Result<usize> {
-    debug_assert!(batch.is_empty());
-    // The value is unused, but it must not decode as a `NamespaceImpl`: the
-    // marker key sorts after `NAMESPACE_PREFIX`, inside the range scanned by
-    // `list_namespaces`. Overwriting the same key keeps the
+        python3 tests/perf/test_query_regression_helpers.py
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        if let Err(e) = tokio::task::spawn_blocking(move || engine.sync()).await {
-            error!(e; "Failed to sync raft engine log files");
-        };
-        Self { engine }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `180e2716` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec59131d` are properly handled with clean fallback behavior.

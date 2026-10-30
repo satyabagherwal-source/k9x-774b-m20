@@ -6128,3 +6128,7 @@ Every entry in this ledger must capture:
 | `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `744cf88f` | Multi-dimensional audit evidence | 2026-10-30T05:39:20.802Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `5916ff02` | Multi-dimensional audit evidence | 2026-10-30T05:39:23.562Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `b286efd7` | Multi-dimensional audit evidence | 2026-10-30T05:39:29.496Z |
+| `learn-github-wasm-bindgen-wasm-pack` | `https://github.com/wasm-bindgen/wasm-pack` | `b9ac5e48` | Multi-dimensional audit evidence | 2026-10-30T05:45:57.406Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `61a8fea1` | Multi-dimensional audit evidence | 2026-10-30T05:46:02.326Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `8a38b901` | Multi-dimensional audit evidence | 2026-10-30T05:46:10.668Z |
+| `learn-github-yshrsmz-buildkonfig` | `https://github.com/yshrsmz/BuildKonfig` | `73f8c406` | Multi-dimensional audit evidence | 2026-10-30T05:47:05.213Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T05:39:29.395Z",
+  "last_updated": "2026-10-30T05:47:05.148Z",
   "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15095,8 +15095,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "8e167104",
-      "content_hash": "6817ae15182494880c02477f005f68b790175619547c3381202536afc6fb7396",
+      "source_version": "8a38b901",
+      "content_hash": "7efe5b99e08f1e695a6366a8bbdcd4af1d490638879868cf2a4cdd2c26192990",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -15144,6 +15144,11 @@
           "number": 5348,
           "title": "log-store): make raft-engine periodic WAL sync actually fsync (#9715)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5616,
+          "title": "ci): support optional Docker targets for query regression (#10028)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15151,7 +15156,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T16:58:59.243Z",
+      "verified_at": "2026-10-30T05:46:10.539Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46948,8 +46953,8 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "d0d87977",
-      "content_hash": "5cc1ad7235d095578cbc472313f8505dc5c9d79c49cde9cfff1b5e0ab91f0bde",
+      "source_version": "61a8fea1",
+      "content_hash": "b91784086871d12370847c05f7b8827672856c467aaf0449c8f723c1fc6edd53",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
@@ -46977,6 +46982,11 @@
           "number": 4944,
           "title": "build(deps): bump the github-dependencies group across 1 directory with 10 updat",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5615,
+          "title": "Merge pull request #18639 from taraasrita10/cephcluster-status-update",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -46984,7 +46994,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:36:23.028Z",
+      "verified_at": "2026-10-30T05:46:02.246Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55732,8 +55742,8 @@
       "slug": "wasm-bindgen-wasm-pack",
       "platform": "github",
       "source_url": "https://github.com/wasm-bindgen/wasm-pack",
-      "source_version": "56d17868",
-      "content_hash": "8c27ec97b197ec69941ddcd623cf6687bad620eaa39002020ecaa1c244afe69b",
+      "source_version": "b9ac5e48",
+      "content_hash": "433068903230fa48a0ffc5981373fce84168193208334dbe261ffb373f325471",
       "dossier_path": "07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wasm-bindgen-wasm-pack-learnings.md",
       "promoted_rules": [
@@ -55766,6 +55776,11 @@
           "number": 5291,
           "title": "Check wasm-bindgen-bot auto-merge when do not land is removed",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5614,
+          "title": "resolve #1420 package.json parsing with two-step deserialization (#1533)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55773,7 +55788,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T13:16:37.461Z",
+      "verified_at": "2026-10-30T05:45:57.326Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57014,14 +57029,29 @@
       "slug": "yshrsmz-buildkonfig",
       "platform": "github",
       "source_url": "https://github.com/yshrsmz/BuildKonfig",
-      "source_version": "f460ddf9",
-      "content_hash": "921dbf6799a3a6a62331356e8396a22adfd77943d54ea3b530023740ed59d22f",
+      "source_version": "73f8c406",
+      "content_hash": "affa0eed135cc972052ef4340eae536a782c4025b8b6d40438b47edcefc8e073",
       "dossier_path": "07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yshrsmz-buildkonfig-learnings.md",
       "promoted_rules": [
         {
           "number": 2759,
           "title": "deps): update dependency org.jetbrains.kotlin:kotlin-gradle-plugin to v2.4.21 (#",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5617,
+          "title": "Gradle Task Output Wiring via Lazy TaskProvider Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5618,
+          "title": "Multiplatform Source Set Constant Overwrite Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5619,
+          "title": "Windows Batch Command Concatenation & Safety Net Exit Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -57030,7 +57060,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T19:03:33.745Z",
+      "verified_at": "2026-10-30T05:47:05.132Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150658,6 +150688,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T05:39:23.460Z"
+    },
+    "rule-5614": {
+      "learning_id": "rule-5614",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5614,
+      "title": "resolve #1420 package.json parsing with two-step deserialization (#1533)",
+      "source_url": "https://github.com/wasm-bindgen/wasm-pack",
+      "source_version": "b9ac5e48",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:45:57.326Z"
+    },
+    "rule-5615": {
+      "learning_id": "rule-5615",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5615,
+      "title": "Merge pull request #18639 from taraasrita10/cephcluster-status-update",
+      "source_url": "https://github.com/rook/rook",
+      "source_version": "61a8fea1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:46:02.246Z"
+    },
+    "rule-5616": {
+      "learning_id": "rule-5616",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5616,
+      "title": "ci): support optional Docker targets for query regression (#10028)",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "8a38b901",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:46:10.539Z"
+    },
+    "rule-5617": {
+      "learning_id": "rule-5617",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5617,
+      "title": "Gradle Task Output Wiring via Lazy TaskProvider Invariant",
+      "source_url": "https://github.com/yshrsmz/BuildKonfig",
+      "source_version": "73f8c406",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:47:05.132Z"
+    },
+    "rule-5618": {
+      "learning_id": "rule-5618",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5618,
+      "title": "Multiplatform Source Set Constant Overwrite Invariant",
+      "source_url": "https://github.com/yshrsmz/BuildKonfig",
+      "source_version": "73f8c406",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:47:05.132Z"
+    },
+    "rule-5619": {
+      "learning_id": "rule-5619",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5619,
+      "title": "Windows Batch Command Concatenation & Safety Net Exit Invariant",
+      "source_url": "https://github.com/yshrsmz/BuildKonfig",
+      "source_version": "73f8c406",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:47:05.132Z"
     }
   },
   "aliases": {

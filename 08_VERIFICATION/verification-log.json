@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-ZDSD",
-    "timestamp": "2026-10-28T01:06:54.733Z",
-    "repository": "asciinema/asciinema",
-    "learningId": "learn-github-asciinema-asciinema",
-    "contentHash": "7888f90039a07cea1c36ea8f298caba049f3c65783842655695848aa4ef768b6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-ZHKW",
-    "timestamp": "2026-10-28T01:06:59.648Z",
-    "repository": "tw93/Mole",
-    "learningId": "learn-github-tw93-mole",
-    "contentHash": "8c0af87aaafb45050ffb7f2b3d4551e2541fcf163b014630060cceaface492ad",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-ZKTF",
-    "timestamp": "2026-10-28T01:07:03.843Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "122e6028301320e66f686620b62342439d0cfbb7164c06b71f21fd8402c5b997",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-ART8",
-    "timestamp": "2026-10-28T01:15:46.124Z",
-    "repository": "lilylilith/QI_2.1_AnyAngle",
-    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-    "contentHash": "cbe867e80fc90b3ff2fd4d90a035417db31d3fc18072216f6b59c913b4ad1b07",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-J3ZT",
     "timestamp": "2026-10-28T01:22:15.161Z",
     "repository": "ClementTsang/bottom",
@@ -7492,6 +7432,66 @@
     "contentHash": "801df97a169325087389ccbbe499594f3ca778ea7cf72d4caafe31fc3cac3dd2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-TXUJ",
+    "timestamp": "2026-10-30T05:45:57.403Z",
+    "repository": "wasm-bindgen/wasm-pack",
+    "learningId": "learn-github-wasm-bindgen-wasm-pack",
+    "contentHash": "433068903230fa48a0ffc5981373fce84168193208334dbe261ffb373f325471",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-U1N7",
+    "timestamp": "2026-10-30T05:46:02.323Z",
+    "repository": "rook/rook",
+    "learningId": "learn-github-rook-rook",
+    "contentHash": "b91784086871d12370847c05f7b8827672856c467aaf0449c8f723c1fc6edd53",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-U82X",
+    "timestamp": "2026-10-30T05:46:10.665Z",
+    "repository": "GreptimeTeam/greptimedb",
+    "learningId": "learn-github-greptimeteam-greptimedb",
+    "contentHash": "7efe5b99e08f1e695a6366a8bbdcd4af1d490638879868cf2a4cdd2c26192990",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-VE62",
+    "timestamp": "2026-10-30T05:47:05.210Z",
+    "repository": "yshrsmz/BuildKonfig",
+    "learningId": "learn-github-yshrsmz-buildkonfig",
+    "contentHash": "affa0eed135cc972052ef4340eae536a782c4025b8b6d40438b47edcefc8e073",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
