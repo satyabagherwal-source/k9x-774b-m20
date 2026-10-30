@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T19:12:25.893Z",
-  "total_verified_learnings": 1176,
+  "last_updated": "2026-10-30T19:19:26.215Z",
+  "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -35939,8 +35939,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "9aa1f674",
-      "content_hash": "050b40df3ed00819aa91af1d4a7025af8408528e83d7f5c956a6494dd19b8a9b",
+      "source_version": "2299d94b",
+      "content_hash": "195442d205a7b20ef092c423fe5094c984884bd08d6fffa5680394128c6caf2f",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -35968,6 +35968,11 @@
           "number": 5492,
           "title": "Merge pull request #560 from lioensky/rivermemo-fix-2.4",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5839,
+          "title": "bilibili): return only requested content for snapshot calls",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35975,7 +35980,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T02:07:31.103Z",
+      "verified_at": "2026-10-30T19:19:26.196Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154969,6 +154974,47 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T19:12:25.883Z"
+    },
+    "learn-huggingface-liquidai-lfm3-1-7b-gguf": {
+      "learning_id": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "LiquidAI/LFM3-1.7B-GGUF",
+      "repository": "LiquidAI/LFM3-1.7B-GGUF",
+      "slug": "hf-liquidai-lfm3-1.7b-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
+      "source_version": "hf-liquidai-lfm3-1.7b-gguf",
+      "content_hash": "597e75a3071d298547c699dac400461746d6c23d699552659160c59791f75e33",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-30T19:19:15.770Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5839": {
+      "learning_id": "rule-5839",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5839,
+      "title": "bilibili): return only requested content for snapshot calls",
+      "source_url": "https://github.com/lioensky/VCPToolBox",
+      "source_version": "2299d94b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T19:19:26.196Z"
     }
   },
   "aliases": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-AHIF",
-    "timestamp": "2026-10-28T13:23:22.791Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-    "contentHash": "0cdfa3036d59c148ecf33ad8b5678472f25c37eac41d807b8c7356f005d326fa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-AN2A",
-    "timestamp": "2026-10-28T13:23:29.986Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "5e7ccda7762de991baf6cadefe643f46fba9fa5dc8070c792d3baeff8275f50a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-J5B0",
     "timestamp": "2026-10-28T13:30:06.876Z",
     "repository": "openai/whisper-large-v3",
@@ -7490,6 +7460,36 @@
     "repository": "rollup/rollup",
     "learningId": "learn-github-rollup-rollup",
     "contentHash": "9908bc5177d3fc4b0c15771d2da70063e3999653b2bfa3ae9e0703196d12d9c1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-VUZW",
+    "timestamp": "2026-10-30T19:19:15.884Z",
+    "repository": "LiquidAI/LFM3-1.7B-GGUF",
+    "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
+    "contentHash": "597e75a3071d298547c699dac400461746d6c23d699552659160c59791f75e33",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-W311",
+    "timestamp": "2026-10-30T19:19:26.293Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "195442d205a7b20ef092c423fe5094c984884bd08d6fffa5680394128c6caf2f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

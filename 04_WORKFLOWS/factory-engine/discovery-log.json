@@ -19888,5 +19888,17 @@
     "downloads": 99353,
     "qualityScore": 3390,
     "discoveredAt": "2026-10-30T17:18:34.528Z"
+  },
+  {
+    "name": "LiquidAI/LFM3-1.7B-GGUF",
+    "fullName": "LiquidAI/LFM3-1.7B-GGUF",
+    "url": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: LiquidAI/LFM3-1.7B-GGUF (142 likes, 97184 downloads)",
+    "likes": 142,
+    "downloads": 97184,
+    "qualityScore": 3420,
+    "discoveredAt": "2026-10-30T19:16:53.200Z"
   }
 ]

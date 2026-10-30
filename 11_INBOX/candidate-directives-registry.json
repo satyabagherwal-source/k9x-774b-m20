@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T17:20:59.954Z",
+  "last_updated": "2026-10-30T19:19:15.899Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3368,6 +3368,39 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-iziz-libphonenumber-ios"
+    },
+    {
+      "id": "CD-VV0B",
+      "directive_title": "Behavioral Parameter Coupling in LLM Distribution",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "LiquidAI/LFM3-1.7B-GGUF",
+      "source_commit": "hf-liquidai-",
+      "date_staged": "2026-10-30",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-liquidai-lfm3-1-7b-gguf"
+    },
+    {
+      "id": "CD-VV0B",
+      "directive_title": "Runtime Version Locking for Binary Artifacts",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "LiquidAI/LFM3-1.7B-GGUF",
+      "source_commit": "hf-liquidai-",
+      "date_staged": "2026-10-30",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-liquidai-lfm3-1-7b-gguf"
+    },
+    {
+      "id": "CD-VV0B",
+      "directive_title": "Quantization-Aware Evaluation Metrics",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "LiquidAI/LFM3-1.7B-GGUF",
+      "source_commit": "hf-liquidai-",
+      "date_staged": "2026-10-30",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-liquidai-lfm3-1-7b-gguf"
     }
   ]
 }

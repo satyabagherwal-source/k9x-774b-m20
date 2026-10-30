@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "9aa1f674",
+    "sourceVersion": "2299d94b",
     "license": "NOASSERTION",
-    "contentHash": "050b40df3ed00819aa91af1d4a7025af8408528e83d7f5c956a6494dd19b8a9b",
-    "lastHarvestedAt": "2026-10-29T02:07:31.197Z",
+    "contentHash": "195442d205a7b20ef092c423fe5094c984884bd08d6fffa5680394128c6caf2f",
+    "lastHarvestedAt": "2026-10-30T19:19:26.297Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -11588,5 +11588,15 @@
     "contentHash": "5f851edd597584da858531565590715c19432ee1575f8fd934ade1f5e3c65fe5",
     "lastHarvestedAt": "2026-10-30T17:21:00.225Z",
     "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism"
+  },
+  "hf-liquidai-lfm3-1.7b-gguf": {
+    "repository": "LiquidAI/LFM3-1.7B-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF",
+    "sourceVersion": "hf-liquidai-lfm3-1.7b-gguf",
+    "license": "Open-Source",
+    "contentHash": "597e75a3071d298547c699dac400461746d6c23d699552659160c59791f75e33",
+    "lastHarvestedAt": "2026-10-30T19:19:15.888Z",
+    "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf"
   }
 }

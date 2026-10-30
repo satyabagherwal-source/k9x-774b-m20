@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T19:12:25.947Z",
-  "total_cycles_completed": 6251,
-  "total_learnings_persisted": 6251,
-  "total_rules_promoted": 5809,
+  "last_updated": "2026-10-30T19:19:26.302Z",
+  "total_cycles_completed": 6253,
+  "total_learnings_persisted": 6253,
+  "total_rules_promoted": 5810,
   "history": [
-    {
-      "timestamp": "2026-10-29T23:34:50.513Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T23:34:58.900Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T23:35:04.693Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T19:12:25.947Z",
       "repository": "rollup/rollup",
       "learningId": "learn-github-rollup-rollup",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T19:19:15.901Z",
+      "repository": "LiquidAI/LFM3-1.7B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T19:19:26.302Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
