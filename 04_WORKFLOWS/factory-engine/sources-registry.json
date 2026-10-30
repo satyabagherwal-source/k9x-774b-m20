@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T04:00:41.850Z",
-    "lastVerified": "2026-10-30T04:00:41.850Z",
+    "lastChecked": "2026-10-30T04:17:57.186Z",
+    "lastVerified": "2026-10-30T04:17:57.186Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -232,8 +232,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T03:18:55.622Z",
-    "lastVerified": "2026-10-30T03:18:55.622Z",
+    "lastChecked": "2026-10-30T04:15:29.543Z",
+    "lastVerified": "2026-10-30T04:15:29.543Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1914,22 +1914,21 @@
     "lastVerified": "2026-10-28T22:32:57.781Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale",
+    "name": "tailscale/tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-29T12:26:04.621Z",
-    "lastVerified": "2026-10-29T12:26:04.621Z",
+    "lastChecked": "2026-10-30T04:15:28.202Z",
+    "lastVerified": "2026-10-30T04:15:28.202Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "5959ad535b2130fc182fb2e5f6cd6ea7b50b5effca8860d43d5bde04612ab38f",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "36e4a6f3e657758c7be7ac583d346a09207e36ef911b5412f05314ca5967cf67",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f7c1b8e5"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -3203,9 +3202,9 @@
   "nasiko-labs-nasiko": {
     "name": "nasiko",
     "officialUrl": "https://github.com/Nasiko-Labs/nasiko",
-    "lastChecked": "2026-10-28T11:52:28.243Z",
+    "lastChecked": "2026-10-30T04:15:14.478Z",
     "revisionIdentifier": "10a08581",
-    "lastVerified": "2026-10-28T11:52:28.244Z"
+    "lastVerified": "2026-10-30T04:15:14.478Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -4962,9 +4961,9 @@
   "cockroachdb-cockroach": {
     "name": "cockroach",
     "officialUrl": "https://github.com/cockroachdb/cockroach",
-    "lastChecked": "2026-10-28T15:36:41.085Z",
+    "lastChecked": "2026-10-30T04:15:27.363Z",
     "revisionIdentifier": "d30c905f",
-    "lastVerified": "2026-10-28T15:36:41.085Z"
+    "lastVerified": "2026-10-30T04:15:27.363Z"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -5390,9 +5389,9 @@
   "octodns-octodns": {
     "name": "octodns",
     "officialUrl": "https://github.com/octodns/octodns",
-    "lastChecked": "2026-10-28T16:27:18.937Z",
+    "lastChecked": "2026-10-30T04:15:22.010Z",
     "revisionIdentifier": "d3d4a37a",
-    "lastVerified": "2026-10-28T16:27:18.937Z"
+    "lastVerified": "2026-10-30T04:15:22.010Z"
   },
   "citusdata-citus": {
     "name": "citus",
@@ -8970,5 +8969,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "matthews-wong-structured-data-validator": {
+    "name": "structured-data-validator",
+    "officialUrl": "https://github.com/matthews-wong/structured-data-validator",
+    "lastChecked": "2026-10-30T04:15:16.960Z",
+    "revisionIdentifier": "e85df7a4",
+    "lastVerified": "2026-10-30T04:15:16.960Z"
+  },
+  "zoontek-react-native-permissions": {
+    "name": "react-native-permissions",
+    "officialUrl": "https://github.com/zoontek/react-native-permissions",
+    "lastChecked": "2026-10-30T04:15:19.454Z",
+    "revisionIdentifier": "4f9f820e",
+    "lastVerified": "2026-10-30T04:15:19.454Z"
   }
 }

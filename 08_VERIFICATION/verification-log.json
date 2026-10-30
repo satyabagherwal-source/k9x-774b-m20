@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-RJIK",
-    "timestamp": "2026-10-28T00:32:49.292Z",
-    "repository": "StarRocks/starrocks",
-    "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "6ddac598a9a2d3645af1f636c999bda1e04b30de8d85467a4c6eb6a451c32d2d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-SICG",
     "timestamp": "2026-10-28T00:33:34.432Z",
     "repository": "CrawlCove/xml-sitemap-validator",
@@ -7490,6 +7475,21 @@
     "repository": "rainbow-me/rainbow",
     "learningId": "learn-github-rainbow-me-rainbow",
     "contentHash": "13b88e1a75b7042d385f6300e10828d9d5fbb2a4dc701df37672339c3f0e8733",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-OPMN",
+    "timestamp": "2026-10-30T04:17:54.623Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "36e4a6f3e657758c7be7ac583d346a09207e36ef911b5412f05314ca5967cf67",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

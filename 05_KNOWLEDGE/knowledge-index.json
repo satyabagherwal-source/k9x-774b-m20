@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T04:00:39.212Z",
+  "last_updated": "2026-10-30T04:17:54.543Z",
   "total_verified_learnings": 1171,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -51708,8 +51708,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "f7c1b8e5",
-      "content_hash": "5959ad535b2130fc182fb2e5f6cd6ea7b50b5effca8860d43d5bde04612ab38f",
+      "source_version": "5a05ac11",
+      "content_hash": "36e4a6f3e657758c7be7ac583d346a09207e36ef911b5412f05314ca5967cf67",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -51812,6 +51812,21 @@
           "number": 5449,
           "title": "hostinfo,ssh/tailssh: don't leak systemd service env to child processes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5596,
+          "title": "Polled File Descriptor Runtime Registration Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5597,
+          "title": "Upstream DNS Fallback Isolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5598,
+          "title": "Chunked UTF-8 Multi-Byte Buffer Splitting Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51819,7 +51834,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T23:05:28.736Z",
+      "verified_at": "2026-10-30T04:17:54.524Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150283,6 +150298,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T04:00:39.193Z"
+    },
+    "rule-5596": {
+      "learning_id": "rule-5596",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5596,
+      "title": "Polled File Descriptor Runtime Registration Invariant",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "5a05ac11",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T04:17:54.524Z"
+    },
+    "rule-5597": {
+      "learning_id": "rule-5597",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5597,
+      "title": "Upstream DNS Fallback Isolation Invariant",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "5a05ac11",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T04:17:54.524Z"
+    },
+    "rule-5598": {
+      "learning_id": "rule-5598",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5598,
+      "title": "Chunked UTF-8 Multi-Byte Buffer Splitting Invariant",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "5a05ac11",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T04:17:54.524Z"
     }
   },
   "aliases": {

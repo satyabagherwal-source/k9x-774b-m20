@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T04:00:39.298Z",
-  "total_cycles_completed": 6078,
-  "total_learnings_persisted": 6078,
-  "total_rules_promoted": 5563,
+  "last_updated": "2026-10-30T04:17:54.633Z",
+  "total_cycles_completed": 6079,
+  "total_learnings_persisted": 6079,
+  "total_rules_promoted": 5566,
   "history": [
-    {
-      "timestamp": "2026-10-28T19:31:50.067Z",
-      "repository": "necolas/react-native-web",
-      "learningId": "learn-github-necolas-react-native-web",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T19:31:55.531Z",
       "repository": "google/embeddinggemma-2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-30T04:00:39.298Z",
       "repository": "rainbow-me/rainbow",
       "learningId": "learn-github-rainbow-me-rainbow",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T04:17:54.633Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
