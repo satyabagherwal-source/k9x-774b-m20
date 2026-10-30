@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T06:43:22.640Z",
-  "total_cycles_completed": 6117,
-  "total_learnings_persisted": 6117,
-  "total_rules_promoted": 5606,
+  "last_updated": "2026-10-30T06:50:12.668Z",
+  "total_cycles_completed": 6120,
+  "total_learnings_persisted": 6120,
+  "total_rules_promoted": 5609,
   "history": [
-    {
-      "timestamp": "2026-10-28T21:30:04.952Z",
-      "repository": "FrancisRing/Prism",
-      "learningId": "learn-huggingface-francisring-prism",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T21:37:08.072Z",
-      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-      "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T21:37:11.107Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T21:37:22.841Z",
       "repository": "weaviate/weaviate",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-30T06:43:22.640Z",
       "repository": "k3s-io/k3s",
       "learningId": "learn-github-k3s-io-k3s",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:50:01.208Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:50:10.732Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:50:12.668Z",
+      "repository": "MariaDB/server",
+      "learningId": "learn-github-mariadb-server",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

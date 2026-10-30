@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-TV5C",
-    "timestamp": "2026-10-28T01:58:36.528Z",
-    "repository": "CrossPaste/crosspaste-desktop",
-    "learningId": "learn-github-crosspaste-crosspaste-desktop",
-    "contentHash": "4951791502e6fe7a8ee4ec6a95fe5d582f36d00f85015e8e25c3710e1e877ed4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-TX6W",
-    "timestamp": "2026-10-28T01:58:39.176Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "0125d197b3a2f087a553040fcd9f1609327cac1fc10eeb7fe7b20bd9cc66ac1b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-21GL",
-    "timestamp": "2026-10-28T02:04:57.957Z",
-    "repository": "vikejs/vike",
-    "learningId": "learn-github-vikejs-vike",
-    "contentHash": "ba45774097cf66e0f47f1b370a59bcf00853e0bd9ef6cc46d05eac22638271a9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-28XG",
     "timestamp": "2026-10-28T02:05:07.636Z",
     "repository": "autotrust/GEV-26B-Decide",
@@ -7490,6 +7445,51 @@
     "repository": "k3s-io/k3s",
     "learningId": "learn-github-k3s-io-k3s",
     "contentHash": "f7d1afd7108b254bdcab209352c5db4d516e05d2085492b7872dbfde568d3f28",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-4BQN",
+    "timestamp": "2026-10-30T06:50:01.199Z",
+    "repository": "embassy-rs/embassy",
+    "learningId": "learn-github-embassy-rs-embassy",
+    "contentHash": "938a6e026a048d5206e367afdbac88f1dd70500f9646155be5235f261cd0899b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-4J37",
+    "timestamp": "2026-10-30T06:50:10.723Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "99b4658319633ba480f0427459925ca0e8aa0f6dc11930828f27aec0b726f709",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-4KKZ",
+    "timestamp": "2026-10-30T06:50:12.659Z",
+    "repository": "MariaDB/server",
+    "learningId": "learn-github-mariadb-server",
+    "contentHash": "b22f2736e562b0824e35a18c8676b41b9704ae1e6d2742dab82a9032dc7c030b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

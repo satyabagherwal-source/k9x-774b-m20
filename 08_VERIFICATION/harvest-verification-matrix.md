@@ -6140,3 +6140,6 @@
 | `CYCLE-20261030-VLO1` | `2026-10-30T06:43:14.161Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5634` | Yes (`87fa322a...`) |
 | `CYCLE-20261030-VOWK` | `2026-10-30T06:43:18.356Z` | `chrisbanes/skills` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5635` | Yes (`a3db5c8f...`) |
 | `CYCLE-20261030-VS7B` | `2026-10-30T06:43:22.631Z` | `k3s-io/k3s` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5636` | Yes (`f7d1afd7...`) |
+| `CYCLE-20261030-4BQN` | `2026-10-30T06:50:01.199Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5637` | Yes (`938a6e02...`) |
+| `CYCLE-20261030-4J37` | `2026-10-30T06:50:10.723Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5638` | Yes (`99b46583...`) |
+| `CYCLE-20261030-4KKZ` | `2026-10-30T06:50:12.659Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5639` | Yes (`b22f2736...`) |

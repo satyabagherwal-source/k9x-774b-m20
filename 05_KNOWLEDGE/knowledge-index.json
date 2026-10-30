@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T06:43:22.560Z",
+  "last_updated": "2026-10-30T06:50:12.589Z",
   "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10928,8 +10928,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "c2413d59",
-      "content_hash": "8610554569eb3a8ae8c0c9ac51e546c42e8da2d2f48402dd457df97c6d154a7f",
+      "source_version": "75f40b38",
+      "content_hash": "938a6e026a048d5206e367afdbac88f1dd70500f9646155be5235f261cd0899b",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -10977,6 +10977,11 @@
           "number": 4742,
           "title": "Direct Memory Access (DMA) Memory Bus Containment Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5637,
+          "title": "chacha counter wrap on 32 bit targets",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10984,7 +10989,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T14:22:26.281Z",
+      "verified_at": "2026-10-30T06:50:01.107Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -36454,8 +36459,8 @@
       "slug": "mariadb-server",
       "platform": "github",
       "source_url": "https://github.com/MariaDB/server",
-      "source_version": "825a9ba9",
-      "content_hash": "917c10c8c2fe112ec9b098b6d93ee8adf0ded0c9828b7acfb5227afe25617dff",
+      "source_version": "5104ebf8",
+      "content_hash": "b22f2736e562b0824e35a18c8676b41b9704ae1e6d2742dab82a9032dc7c030b",
       "dossier_path": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mariadb-server-learnings.md",
       "promoted_rules": [
@@ -36483,6 +36488,11 @@
           "number": 5359,
           "title": "MDEV-41372 Grant_tables::open_and_lock() leaves tables with a dangling pos_in_ta",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5639,
+          "title": "more doxygen formatting added.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36490,7 +36500,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:04:50.099Z",
+      "verified_at": "2026-10-30T06:50:12.570Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44958,8 +44968,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "3cb40f50",
-      "content_hash": "de3689fdf351f3bf0b2b36140286555b68a21cdefc42dffae6d971917210d900",
+      "source_version": "a87694bb",
+      "content_hash": "99b4658319633ba480f0427459925ca0e8aa0f6dc11930828f27aec0b726f709",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -45012,6 +45022,11 @@
           "number": 5377,
           "title": "ui: support unquoted Unicode and dotted PromQL names (#20170)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5638,
+          "title": "storage/remote): fall back to WAL metadata when type-and-unit labels are empty (",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45019,7 +45034,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T19:17:19.899Z",
+      "verified_at": "2026-10-30T06:50:10.630Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -151095,6 +151110,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T06:43:22.541Z"
+    },
+    "rule-5637": {
+      "learning_id": "rule-5637",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5637,
+      "title": "chacha counter wrap on 32 bit targets",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "75f40b38",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:50:01.107Z"
+    },
+    "rule-5638": {
+      "learning_id": "rule-5638",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5638,
+      "title": "storage/remote): fall back to WAL metadata when type-and-unit labels are empty (",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "a87694bb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:50:10.630Z"
+    },
+    "rule-5639": {
+      "learning_id": "rule-5639",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5639,
+      "title": "more doxygen formatting added.",
+      "source_url": "https://github.com/MariaDB/server",
+      "source_version": "5104ebf8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:50:12.570Z"
     }
   },
   "aliases": {

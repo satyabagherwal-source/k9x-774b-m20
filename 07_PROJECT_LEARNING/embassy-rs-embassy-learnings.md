@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source**: github ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
-> **Source Version**: `c2413d59`  
+> **Source Version**: `75f40b38`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T14:22:26.119Z  
+> **Timestamp**: 2026-10-30T06:50:00.576Z  
 > **Learning ID**: `learn-github-embassy-rs-embassy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T14:22:26.113Z  
+> **Harvest Timestamp**: 2026-10-30T06:49:59.010Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10033 stars
+- **Stars / Engagement**: 10048 stars
 
 ---
 
@@ -1435,13 +1435,13 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7382** (2026-10-27): **Dev**
-  *Symptoms*: 
+- **Issue #7395** (2026-10-30): **Revert "stm32/eth: set v2 TX descriptor frame length"**
+  *Symptoms*: Reverts embassy-rs/embassy#7386
   **Post-Mortem & Fix Analysis**:
-  > 👋 Welcome, @GustawB, and thanks for opening your first pull request here!  If you haven't already, please give the [contributor guide](https://github.com/embassy-rs/embassy/blob/main/CONTRIBUTING.md) a read.
+  > reverted by request of @jordens 
 
-- **Issue #7379** (2026-10-27): **Configure XSPI manager initialization**
-  *Symptoms*: Initializing XSPI resets the XSPIM configuration. This needs to be optional, as there are situations where this isn't desired.  My Scenario (STM32N6): - Bootloader initializes XSPIM in multiplexed mode, with XSPI1/2 sharing port 2 and XSPI3 on port 1 - XSPI2 is memory mapped and we jump to it - Firmware running via XSPI2 - Firmware initializes XSPI1 for itself to access port 2, and XSPI3 for port 1   - **CRASH:** The firmware can't be allowed to reset XSPIM, as it's running from it. So any attempt to do so will crash.  @xoviat I'm not sure if this is the best way to go about this, but I feel like anything better would be a much larger refactor. It looks like #7263 is related, but not exactly the same issue
+- **Issue #7390** (2026-10-29): **fix: chacha counter wrap on 32 bit targets**
+  *Symptoms*: Fix an issue with chacha on 32 bit targets where the counter can wrap around, causing either a panic or (if overflow-checks are disabled) an infinite loop.  Adds a HIL test that runs the chacha suites through the rustcrypto drivers on the nrf54l15 dk.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1458,113 +1458,179 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `24bbca50` (2026-10-27)
-**Commit Message**: Fix examples
+### Incident Patch 1: `6af156ff` (2026-10-29)
+**Commit Message**: fix: chacha counter wrap on 32 bit targets
 
-**File**: `examples/stm32h7rs/src/bin/xspi_memory_mapped.rs` (modified, +1/-0)
+Fix an issue with chacha on 32 bit targets where the counter can wrap
+around, causing either a panic or (if overflow-checks are disabled) an
+infinite loop.
+
+Adds a HIL test that runs the chacha suites through the rustcrypto
+drivers on the nrf54l15 dk.
+
+**File**: `embassy-crypto-rustcrypto/src/chacha.rs` (modified, +3/-1)
 ```diff
-@@ -182,6 +182,7 @@ async fn main(_spawner: Spawner) {
-         chip_select_boundary: 0,
-         max_transfer: 0,
-         refresh: 0,
-+        initialize_manager: true,
-     };
- 
-     let xspi = embassy_stm32::xspi::Xspi::new_blocking_xspi_dqs(
+@@ -43,7 +43,9 @@ macro_rules! impl_stream {
+                 fn keystream(&mut self, mut buf: cipher::inout::InOutBuf<'_, '_, u8>) {
+                     while !buf.is_empty() {
+                         let blocks = buf.len() / BLOCK;
+-                        let until_wrap = (u32::MAX - self.counter) as usize + 1;
++                        // 2^32 blocks (counter 0) does not fit a 32-bit usize. Saturating is exact
++                        // here: `blocks` is at most usize::MAX / 64.
++                        let until_wrap = ((u32::MAX - self.counter) as usize).saturating_add(1);
+                         let n = blocks.min(until_wrap);
+                         let (head, tail) = buf.split_at(n * BLOCK);
+                         buf = tail;
 ```
 
-**File**: `examples/stm32n6-flashboot/fsbl/src/main.rs` (modified, +1/-0)
+**File**: `tests/nrf/Cargo.toml` (modified, +9/-1)
 ```diff
-@@ -127,6 +127,7 @@ fn main() -> ! {
-         chip_select_boundary: 0,
-         max_transfer: 0,
-         refresh: 0,
-+        initialize_manager: true,
-     };
+@@ -30,6 +30,7 @@ panic-probe = { version = "1.0.0", features = ["print-defmt"] }
+ portable-atomic = { version = "1.6.0" }
+ embassy-crypto = { version = "0.1.0", path = "../../embassy-crypto", features = ["defmt"] }
+ embassy-crypto-test = { version = "0.1.0", path = "../../embassy-crypto-test", features = ["defmt", "rng"] }
++embassy-crypto-rustcrypto = { version = "0.1.0", path = "../../embassy-crypto-rustcrypto", features = ["embassy-crypto-chacha8", "embassy-crypto-chacha12", "embassy-crypto-chacha20"], optional = true }
  
-     let xspi = Xspi::new_blocking_xspi(
+ [features]
+ nrf51422 = ["embassy-nrf/nrf51",         "embassy-nrf/time-driver-rtc1", "portable-atomic/unsafe-assume-single-core"]
+@@ -51,6 +52,8 @@ two-uarts = []
+ 
+ # The direct-API crypto tests.
+ crypto = []
++# The `embassy-crypto-rustcrypto` software drivers.
++embassy-crypto-rustcrypto = ["dep:embassy-crypto-rustcrypto"]
+ # The accelerator has AES-256 and AES-GCM, which the CryptoCell only has in its 312 version.
+ aes256 = []
+ # The accelerator has the SHA-512 family.
+@@ -168,6 +171,11 @@ name = "crypto_chacha"
+ path = "src/bin/crypto_chacha.rs"
+ required-features = [ "embassy-crypto",]
+ 
++[[bin]]
++name = "crypto_chacha_rustcrypto"
++path = "src/bin/crypto_chacha_rustcrypto.rs"
++required-features = [ "embassy-crypto-rustcrypto",]
++
+ [[bin]]
+ name = "crypto_ec"
+ path = "src/bin/crypto_ec.rs"
+@@ -306,6 +314,6 @@ build = [
+   { target = "thumbv8m.main-none-eabihf", features = ["nrf5340", "embassy-crypto-aes256"], artifact-dir = "out/tests/nrf5340-dk" },
+   { target = "thumbv8m.main-none-eabihf", features = ["nrf9160", "crypto"], artifact-dir = "out/tests/nrf9160-dk" },
+   { target = "thumbv8m.main-none-eabihf", features = ["nrf9160", "embassy-crypto"], artifact-dir = "out/tests/nrf9160-dk" },
+-  { target = "thumbv8m.main-none-eabihf", features = ["nrf54l15", "crypto"], artifact-dir = "out/tests/nrf54l15-dk" },
++  { target = "thumbv8m.main-none-eabihf", features = ["nrf54l15", "crypto", "embassy-crypto-rustcrypto"], artifact-dir = "out/tests/nrf54l15-dk" },
+   { target = "thumbv8m.main-none-eabihf", features = ["nrf54l15", "embassy-crypto-aes256", "embassy-crypto-sha512"], artifact-dir = "out/tests/nrf54l15-dk" }
+ ]
 ```
 
-**File**: `examples/stm32n6/src/bin/xspi_flash.rs` (modified, +1/-0)
+**File**: `tests/nrf/src/bin/crypto_chacha_rustcrypto.rs` (added, +47/-0)
 ```diff
-@@ -64,6 +64,7 @@ async fn main(_spawner: Spawner) {
-         chip_select_boundary: 0,
-         max_transfer: 0,
-         refresh: 0,
-+        initialize_manager: true,
-     };
- 
-     // Create XSPI driver for flash (XSPI2, Port P2 pins)
-```
-
-**File**: `examples/stm32n6/src/bin/xspi_psram.rs` (modified, +1/-0)
-```diff
-@@ -165,6 +165,7 @@ async fn main(_spawner: Spawner) {
-         chip_select_boundary: 14, // 16KB boundary for row crossing
-         max_transfer: 0,
-         refresh: 0,
-+        initialize_manager: true,
-     };
-     // Create XSPI driver for PSRAM (XSPI1, Port 1 pins)
-     // Pin mapping:
+@@ -0,0 +1,47 @@
++// required-features: embassy-crypto-rustcrypto
++#![no_std]
++#![no_main]
++
++//! ChaCha through the `embassy-crypto-rustcrypto` software drivers, against the shared
++//! known-answer suite.
++//!
++//! The vectors start at block counter 0 and wrap the 32-bit counter, which used to make the
++//! driver loop forever on targets with a 32-bit `usize`. Host tests cannot catch that.
++
++#[path = "../common.rs"]
++mod common;
++use defmt::{error, info};
++use defmt_rtt as _;
++use embassy_crypto_rustcrypto as _;
++use embassy_executor::Spawner;
++use panic_probe as _;
++
++teleprobe_meta::timeout!(120);
++
++/// Run every suite, logging each result, and fail at the end if any failed.
++macro_rules! suites {
++    ($($(#[$meta:meta])* $name:ident),* $(,)?) => {{
++        let mut ok = true;
++        $(
++            $(#[$meta])*
++            match embassy_crypto_test::$name() {
++                Ok(stats) => info!("{}: {:?}", stringify!($name), stats),
++                Err(e) => {
++                    error!("{}: {:?}", stringify!($name), e);
++                    ok = false;
++                }
++            }
++        )*
++        defmt::assert!(ok, "some suites failed");
++    }};
++}
++
++#[embassy_executor::main]
++async fn main(_spawner: Spawner) {
++    let _p = embassy_nrf::init(Default::default());
++
++    suites!(chacha8, chacha12, chacha20);
++
++    info!("Test OK");
++    cortex_m::asm::bkpt();
++}
 ```
 
 ---
 
-### Incident Patch 2: `1f82652e` (2026-10-27)
-**Commit Message**: Fix formatting
+### Incident Patch 2: `75f40b38` (2026-10-30)
+**Commit Message**: Merge pull request #7395 from embassy-rs/revert-7386-fix/stm32-eth-v2-tx-frame-length
 
-**File**: `embassy-stm32/build.rs` (modified, +5/-3)
+Revert "stm32/eth: set v2 TX descriptor frame length"
+
+**File**: `embassy-stm32/src/eth/v2/descriptors.rs` (modified, +1/-5)
 ```diff
-@@ -2011,8 +2011,8 @@ fn main() {
-                         // XSPI NCS pin to CSSEL mapping
-                         if pin.signal.contains("NCS") {
-                             let slot: u8 = if pin.signal.ends_with("NCS1") { 0 } else { 1 };
--                            g.extend(quote! { 
--                                sel_trait_impl!(crate::xspi::NCSEither, #peri, #pin_name, #slot); 
-+                            g.extend(quote! {
-+                                sel_trait_impl!(crate::xspi::NCSEither, #peri, #pin_name, #slot);
-                             });
-                         }
-                     }
-@@ -2073,7 +2073,9 @@ fn main() {
-                         quote!()
-                     };
+@@ -95,12 +95,8 @@ impl TDes {
+     /// LD: Contains last buffer of packet
+     /// CIC_FULL: let the MAC compute and insert the IP/TCP/UDP checksums.
+     pub(crate) fn set_owned(&mut self) {
+-        // TDES3[14:0] is the total packet length. TDES2 carries the only
+-        // buffer's length, which is also the total length for this one-buffer
+-        // descriptor implementation.
+-        let frame_len = self.tdes2.get() & EMAC_TDES2_B1L;
+         self.tdes3
+-            .set(EMAC_DES3_FD | EMAC_DES3_LD | EMAC_DES3_OWN | EMAC_TDES3_CIC_FULL | frame_len);
++            .set(EMAC_DES3_FD | EMAC_DES3_LD | EMAC_DES3_OWN | EMAC_TDES3_CIC_FULL);
+     }
  
--                    if (p.name == "OCTOSPIM" && (pin.signal.starts_with("P1_") || pin.signal.starts_with("P2_"))) || p.name == "XSPIM" {
-+                    if (p.name == "OCTOSPIM" && (pin.signal.starts_with("P1_") || pin.signal.starts_with("P2_")))
-+                        || p.name == "XSPIM"
-+                    {
-                         // already handled above
-                         None
-                     } else {
+     #[cfg(feature = "ptp")]
 ```
 
 ---
 
-### Incident Patch 3: `13314746` (2026-10-27)
-**Commit Message**: Fix build
+### Incident Patch 3: `ed12c707` (2026-10-30)
+**Commit Message**: Revert "stm32/eth: set v2 TX descriptor frame length"
 
-**File**: `embassy-stm32/build.rs` (modified, +1/-1)
+**File**: `embassy-stm32/src/eth/v2/descriptors.rs` (modified, +1/-5)
 ```diff
-@@ -2073,7 +2073,7 @@ fn main() {
-                         quote!()
-                     };
+@@ -95,12 +95,8 @@ impl TDes {
+     /// LD: Contains last buffer of packet
+     /// CIC_FULL: let the MAC compute and insert the IP/TCP/UDP checksums.
+     pub(crate) fn set_owned(&mut self) {
+-        // TDES3[14:0] is the total packet length. TDES2 carries the only
+-        // buffer's length, which is also the total length for this one-buffer
+-        // descriptor implementation.
+-        let frame_len = self.tdes2.get() & EMAC_TDES2_B1L;
+         self.tdes3
+-            .set(EMAC_DES3_FD | EMAC_DES3_LD | EMAC_DES3_OWN | EMAC_TDES3_CIC_FULL | frame_len);
++            .set(EMAC_DES3_FD | EMAC_DES3_LD | EMAC_DES3_OWN | EMAC_TDES3_CIC_FULL);
+     }
  
--                    if (p.name == "OCTOSPIM" && (pin.signal.starts_with("P1_") || pin.signal.starts_with("P2_"))) || p.name == "XSPIM"; {
-+                    if (p.name == "OCTOSPIM" && (pin.signal.starts_with("P1_") || pin.signal.starts_with("P2_"))) || p.name == "XSPIM" {
-                         // already handled above
-                         None
-                     } else {
+     #[cfg(feature = "ptp")]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7395** (2026-10-30): Revert "stm32/eth: set v2 TX descriptor frame length" (@xoviat)
+- **PR #7390** (2026-10-29): fix: chacha counter wrap on 32 bit targets (@lulf)
+- **PR #7388** (2026-10-29): stm32/spi: end async slave transfers at deselect, drop the TXC busy-wait (@Sandvoxel)
+- **PR #7386** (2026-10-29): stm32/eth: set v2 TX descriptor frame length (@R4zvi)
+- **PR #7385** (2026-10-29): stm32/timer/input_capture: allow any mode & selection for input capture with DMA (@Clematrics)
 - **PR #7382** (closed): Dev (@GustawB)
-- **PR #7379** (2026-10-27): Configure XSPI manager initialization (@jake-taf)
-- **PR #7378** (2026-10-27): Allow remapping XSPI (@jake-taf)
-- **PR #7377** (2026-10-27): cyw43: add support for the CYW43455 over SDIO (@aalstes)
-- **PR #7376** (2026-10-27): cyw43: wait for the backplane to be idle in reset_core (@aalstes)
-- **PR #7374** (2026-10-27): XSPI xDMA support (@jake-taf)
 
 ---
 
@@ -1584,28 +1650,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in xspi_memory_mapped.rs
+## X. chacha counter wrap on 32 bit targets
 
 **RULE**:
-When implementing operations in `examples/stm32h7rs/src/bin/xspi_memory_mapped.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `embassy-crypto-rustcrypto/src/chacha.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `24bbca50`: examples. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6af156ff`: chacha counter wrap on 32 bit targets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/stm32h7rs/src/bin/xspi_memory_mapped.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `embassy-crypto-rustcrypto/src/chacha.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        initialize_manager: true,
+                        // 2^32 blocks (counter 0) does not fit a 32-bit usize. Saturating is exact
+                        // here: `blocks` is at most usize::MAX / 64.
+                        let until_wrap = ((u32::MAX - self.counter) as usize).saturating_add(1);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                        let until_wrap = (u32::MAX - self.counter) as usize + 1;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `24bbca50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6af156ff` are properly handled with clean fallback behavior.

@@ -6149,3 +6149,6 @@ Every entry in this ledger must capture:
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `c49f0d09` | Multi-dimensional audit evidence | 2026-10-30T06:43:14.164Z |
 | `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `8fc8836c` | Multi-dimensional audit evidence | 2026-10-30T06:43:18.359Z |
 | `learn-github-k3s-io-k3s` | `https://github.com/k3s-io/k3s` | `f2aea320` | Multi-dimensional audit evidence | 2026-10-30T06:43:22.635Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `75f40b38` | Multi-dimensional audit evidence | 2026-10-30T06:50:01.203Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `a87694bb` | Multi-dimensional audit evidence | 2026-10-30T06:50:10.727Z |
+| `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `5104ebf8` | Multi-dimensional audit evidence | 2026-10-30T06:50:12.663Z |

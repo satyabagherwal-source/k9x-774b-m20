@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "c2413d59",
+    "sourceVersion": "75f40b38",
     "license": "Apache-2.0",
-    "contentHash": "8610554569eb3a8ae8c0c9ac51e546c42e8da2d2f48402dd457df97c6d154a7f",
-    "lastHarvestedAt": "2026-10-28T14:22:26.404Z",
+    "contentHash": "938a6e026a048d5206e367afdbac88f1dd70500f9646155be5235f261cd0899b",
+    "lastHarvestedAt": "2026-10-30T06:50:01.203Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -5823,10 +5823,10 @@
     "repository": "MariaDB/server",
     "platform": "github",
     "sourceUrl": "https://github.com/MariaDB/server",
-    "sourceVersion": "825a9ba9",
+    "sourceVersion": "5104ebf8",
     "license": "GPL-2.0",
-    "contentHash": "917c10c8c2fe112ec9b098b6d93ee8adf0ded0c9828b7acfb5227afe25617dff",
-    "lastHarvestedAt": "2026-10-28T18:04:50.189Z",
+    "contentHash": "b22f2736e562b0824e35a18c8676b41b9704ae1e6d2742dab82a9032dc7c030b",
+    "lastHarvestedAt": "2026-10-30T06:50:12.663Z",
     "learningId": "learn-github-mariadb-server"
   },
   "ng-zorro-ng-zorro-antd": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "3cb40f50",
+    "sourceVersion": "a87694bb",
     "license": "Apache-2.0",
-    "contentHash": "de3689fdf351f3bf0b2b36140286555b68a21cdefc42dffae6d971917210d900",
-    "lastHarvestedAt": "2026-10-28T19:17:19.993Z",
+    "contentHash": "99b4658319633ba480f0427459925ca0e8aa0f6dc11930828f27aec0b726f709",
+    "lastHarvestedAt": "2026-10-30T06:50:10.727Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {

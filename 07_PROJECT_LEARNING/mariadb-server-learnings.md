@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source**: github ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
-> **Source Version**: `825a9ba9`  
+> **Source Version**: `5104ebf8`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T18:04:49.604Z  
+> **Timestamp**: 2026-10-30T06:50:12.052Z  
 > **Learning ID**: `learn-github-mariadb-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T18:04:49.596Z  
+> **Harvest Timestamp**: 2026-10-30T06:50:10.947Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8470 stars
+- **Stars / Engagement**: 8479 stars
 
 ---
 
@@ -1175,6 +1175,12 @@ _rl_savestring (s)
   Instrumentation helpers for statements.
 */
 
+/**
+  @defgroup Statement_instrumentation Statement Instrumentation
+  @ingroup Instrumentation_interface
+  @{
+*/
+
 #include "mysql/psi/psi.h"
 
 class Diagnostics_area;
@@ -1187,12 +1193,6 @@ typedef const struct charset_info_st CHARSET_INFO;
 #ifndef PSI_DIGEST_CALL
 #define PSI_DIGEST_CALL(M) PSI_DYNAMIC_CALL(M)
 #endif
-
-/**
-  @defgroup Statement_instrumentation Statement Instrumentation
-  @ingroup Instrumentation_interface
-  @{
-*/
 
 /**
   @def mysql_statement_register(P1, P2, P3)
@@ -1414,6 +1414,14 @@ inline_mysql_end_statement(struct PSI_statement_locker *locker,
   @file
   This service provides functions that allow plugins to support
   the KILL statement.
+*/
+
+/**
+  @defgroup plugin_api_service_kill_statement KILL Statement Service
+  @ingroup plugin_api_services
+
+  This service provides functions that allow plugins to support
+  the KILL statement.
 
   In MySQL support for the KILL statement is cooperative. The KILL
   statement only sets a "killed" flag. This function returns the value
@@ -1421,12 +1429,7 @@ inline_mysql_end_statement(struct PSI_statement_locker *locker,
   time-consuming loops, and gracefully abort the operation if it is
   non-zero.
 
-  thd_killed(thd)
-  @return 0 - no KILL statement was issued, continue normally
-  @return 1 - there was a KILL statement, abort the execution.
-
-  thd_kill_level(thd)
-  @return thd_kill_levels_enum values
+  @{
 */
 
 #ifdef __cplusplus
@@ -1443,9 +1446,22 @@ extern struct kill_statement_service_st {
   enum thd_kill_levels (*thd_kill_level_func)(const MYSQL_THD);
 } *thd_kill_statement_service;
 
-/* backward compatibility helper */
+/**
+  Backward compatibility helper
+
+  @param THD thread handle
+  @retval 0 No KILL statement was issued, continue normally
+  @retval 1 There was a KILL statement, abort the execution.
+*/
 #define thd_killed(THD)   (thd_kill_level(THD) == THD_ABORT_ASAP)
 
+
+/**
+  Check if a KILL statement was issued for the given thread.
+
+  @param THD thread handle
+  @return @ref thd_kill_levels values
+*/
 #ifdef MYSQL_DYNAMIC_PLUGIN
 
 #define thd_kill_level(THD) \
@@ -1460,6 +1476,8 @@ enum thd_kill_levels thd_kill_level(const MYSQL_THD);
 #ifdef __cplusplus
 }
 #endif
+
+/** @} */
 
 #endif
 
@@ -1595,11 +1613,11 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6018** (2026-10-28): **MDEV-41665 InnoDB assertion with result != FTS_INVALID on DELETE IGNORE with FK cascades on tables with FULLTEXT indexes**
-  *Symptoms*: Problem: ======= A foreign key cascade records its FTS operations (FTS_DELETE, FTS_INSERT) with fts_trx_add_op() while the cascade is still being processed, before it is known whether the row operation succeeds. If the row operation then fails with an error that the statement survives, row_mysql_handle_errors() rolls back the data to the row savepoint. The FTS state is not rolled back, because fts_savepoint_rollback_last_stmt() is only called when the whole statement is rolled back.  The stale FTS operations stay in trx->fts_trx. When the next row cascades into the same child row, the same operation is recorded again and fts_trx_row_get_new_state() hits an invalid transition (FTS_DELETE -> FTS_DELETE), which crashes the server.  Solution: ======== Defer the FTS operations of a cascade until the row operation has succeeded.  fts_trx_defer_op(): Queues the statement fts operation in fts_trx_t::pending, and row_update_for_mysql_using_upd_graph() applies them with fts_trx_flush_pending() after row_upd_step() succeeds, before the row's own FTS operations. The queue is discarded at the flushing operation and in error handling part.
+- **Issue #6032** (2026-10-29): **MDEV-39968 sys_vars.session_track_system_variables_basic fail - Plugi…**
+  *Symptoms*: …n is busy (cursor/ps-protocol)  The MDEV-38179 part of the test installs ha_example, connects foo with example_int_var in session_track_system_variables, then does disconnect foo and uninstall soname 'ha_example.so'.  On connect, the sysvars tracker parses the list with find_sys_var(), which locks the example plugin into thd->lex->plugins. Under ps-protocol and cursor-protocol foo runs only prepared statements, so these locks are not released by end of statement and stay until plugin_thdvar_cleanup() at disconnect. Since disconnect does not wait for the server thread to finish, uninstall may find the plugin still referenced and gives "Plugin is busy and will be uninstalled on shutdown".  MDEV-39968 was closed as a duplicate of MDEV-39207, but the MDEV-39207 test fix covered only the 10.11 ha_example part: it moved it to session_track_system_variables_example.test with ps-protocol and cursor-protocol disabled around uninstall. The MDEV-38179 part added in 11.8 stayed in session_track_system_variables_basic.test without any workaround, so it still fails.  The fix waits until foo sessions are gone before uninstall.
 
-- **Issue #6016** (2026-10-28): **MDEV-36295 backport followup, wrong version marker in test file**
-  *Symptoms*: 
+- **Issue #6029** (2026-10-29): **Lower galera version gate to 26.4.28 for MDEV-38920 tests**
+  *Symptoms*: MDEV-38920-evs-config-warn.test and MDEV-38920-install-timer-expired.test gated on galera 26.4.29, so both silently skip on a 26.4.28 provider and give no coverage there. Lowered the gate to 26.4.28, the lowest version confirmed to exercise the fix. Updated the .result files for the "# Correct Galera library found" line check_galera_version.inc now emits.  Assisted-by: Claude:claude-4.6-sonnet
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1616,113 +1634,624 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `825a9ba9` (2026-10-02)
-**Commit Message**: MDEV-41372 Grant_tables::open_and_lock() leaves tables with a dangling pos_in_table_list
+### Incident Patch 1: `5104ebf8` (2026-08-19)
+**Commit Message**: more doxygen formatting added.
 
-Grant_tables::open_and_lock() allocated the TABLE_LIST array with
-my_malloc() and freed it before returning. The opened privilege
-tables stay on thd->open_tables until close_mysql_tables() or the
-end of the statement, and their TABLE::pos_in_table_list still
-pointed into the freed array.
-
-Allocate the array on thd->mem_root instead, so it lives as long
-as the statement. It still stays off the stack, so the MDEV-34388
-fix holds.
-
-**File**: `mysql-test/suite/innodb/r/global_priv_to_innodb.result` (added, +23/-0)
+**File**: `include/mysql/Doxyfile.generated_docs_plugin_api` (modified, +5/-1)
 ```diff
-@@ -0,0 +1,23 @@
-+CREATE USER 'gp_admin'@'localhost' IDENTIFIED BY 'Admin123!';
-+GRANT ALL PRIVILEGES ON *.* TO 'gp_admin'@'localhost' WITH GRANT OPTION;
-+RENAME TABLE mysql.global_priv TO mysql.global_priv_local;
-+CREATE TABLE IF NOT EXISTS mysql.global_priv (
-+Host CHAR(255) BINARY NOT NULL,
-+User CHAR(128) BINARY NOT NULL,
-+Priv JSON NOT NULL,
-+PRIMARY KEY (Host, User)
-+) ENGINE=InnoDB CHARACTER SET utf8mb3 COLLATE utf8mb3_bin;
-+SELECT engine
-+FROM information_schema.tables
-+WHERE table_schema = 'mysql' AND table_name = 'global_priv';
-+engine
-+InnoDB
-+INSERT INTO mysql.global_priv SELECT * FROM mysql.global_priv_local;
-+FLUSH PRIVILEGES;
-+connect  joiner, localhost, gp_admin, Admin123!;
-+USE mysql;
-+disconnect joiner;
-+connection default;
-+DROP TABLE mysql.global_priv;
-+RENAME TABLE mysql.global_priv_local TO mysql.global_priv;
-+DROP USER 'gp_admin'@'localhost';
+@@ -9,4 +9,8 @@ RECURSIVE              = YES
+ GENERATE_HTML          = NO
+ GENERATE_LATEX         = NO
+ GENERATE_XML           = YES
+-PREDEFINED             = HAVE_PSI_SOCKET_INTERFACE HAVE_PSI_1 USE_PSI_1
++GENERATE_TODOLIST      = NO
++GENERATE_TESTLIST      = NO
++GENERATE_BUGLIST       = NO
++GENERATE_DEPRECATEDLIST = NO
++PREDEFINED             = HAVE_PSI_SOCKET_INTERFACE HAVE_PSI_1 USE_PSI_1 MYSQL_DYNAMIC_PLUGIN __cplusplus
 ```
 
-**File**: `mysql-test/suite/innodb/t/global_priv_to_innodb.test` (added, +29/-0)
+**File**: `include/mysql/auth_dialog_client.h` (modified, +10/-2)
 ```diff
-@@ -0,0 +1,29 @@
-+--source include/have_innodb.inc
+@@ -1,4 +1,3 @@
+-#ifndef MYSQL_AUTH_DIALOG_CLIENT_INCLUDED
+ /* Copyright (C) 2010 Sergei Golubchik and Monty Program Ab
+ 
+    This program is free software; you can redistribute it and/or modify
+@@ -14,15 +13,22 @@
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1335 USA */
+ 
++#ifndef MYSQL_AUTH_DIALOG_CLIENT_INCLUDED
++#define MYSQL_AUTH_DIALOG_CLIENT_INCLUDED
 +
-+CREATE USER 'gp_admin'@'localhost' IDENTIFIED BY 'Admin123!';
-+GRANT ALL PRIVILEGES ON *.* TO 'gp_admin'@'localhost' WITH GRANT OPTION;
+ /**
+   @file
+ 
+   Definitions needed to use Dialog client authentication plugin
+ */
+ 
++/**
++  @addtogroup plugin_client_api
++  @{
++ */
 +
-+RENAME TABLE mysql.global_priv TO mysql.global_priv_local;
+ struct st_mysql;
+ 
+-#define MYSQL_AUTH_DIALOG_CLIENT_INCLUDED
+ 
+ /**
+   type of the mysql_authentication_dialog_ask function
+@@ -53,4 +59,6 @@ typedef char *(*mysql_authentication_dialog_ask_t)(struct st_mysql *mysql,
+ #define PASSWORD_QUESTION       "\4"
+ #define LAST_PASSWORD           "\5"
+ 
++/** @} */
 +
-+CREATE TABLE IF NOT EXISTS mysql.global_priv (
-+  Host CHAR(255) BINARY NOT NULL,
-+  User CHAR(128) BINARY NOT NULL,
-+  Priv JSON NOT NULL,
-+  PRIMARY KEY (Host, User)
-+) ENGINE=InnoDB CHARACTER SET utf8mb3 COLLATE utf8mb3_bin;
-+
-+SELECT engine
-+  FROM information_schema.tables
-+ WHERE table_schema = 'mysql' AND table_name = 'global_priv';
-+
-+INSERT INTO mysql.global_priv SELECT * FROM mysql.global_priv_local;
-+FLUSH PRIVILEGES;
-+
-+connect (joiner, localhost, gp_admin, Admin123!);
-+USE mysql;
-+disconnect joiner;
-+
-+connection default;
-+DROP TABLE mysql.global_priv;
-+RENAME TABLE mysql.global_priv_local TO mysql.global_priv;
-+DROP USER 'gp_admin'@'localhost';
+ #endif
 ```
 
-**File**: `sql/sql_acl.cc` (modified, +2/-5)
+**File**: `include/mysql/client_plugin.h` (modified, +9/-2)
 ```diff
-@@ -2751,10 +2751,8 @@ class Grant_tables
-   {
-     DBUG_ENTER("Grant_tables::open_and_lock");
+@@ -1,4 +1,3 @@
+-#ifndef MYSQL_CLIENT_PLUGIN_INCLUDED
+ /* Copyright (C) 2010 Sergei Golubchik and Monty Program Ab
+    Copyright (c) 2010, 2011, Oracle and/or its affiliates.
  
--    TABLE_LIST *first= nullptr, *tables=
--      static_cast<TABLE_LIST*>(my_malloc(PSI_NOT_INSTRUMENTED,
--                                         (USER_TABLE + 1) * sizeof *tables,
--                                         MYF(MY_WME)));
-+    TABLE_LIST *first= nullptr,
-+               *tables= thd->calloc<TABLE_LIST>(USER_TABLE + 1);
-     int res= -1;
-     uint counter;
+@@ -15,15 +14,21 @@
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1335  USA */
  
-@@ -2814,7 +2812,6 @@ class Grant_tables
-     }
++#ifndef MYSQL_CLIENT_PLUGIN_INCLUDED
++#define MYSQL_CLIENT_PLUGIN_INCLUDED
+ /**
+   @file
  
- func_exit:
--    my_free(tables);
-     DBUG_RETURN(res);
-   }
+   MySQL Client Plugin API
  
+   This file defines the API for plugins that work on the client side
+ */
+-#define MYSQL_CLIENT_PLUGIN_INCLUDED
+ 
++/** 
++  @defgroup plugin_client_api Client Plugin API
++  API for plugins that work on the client side
++  @{
++*/
+ /*
+   On Windows, exports from DLL need to be declared
+   Also, plugin needs to be declared as extern "C" because MSVC 
+@@ -185,5 +190,7 @@ mysql_client_register_plugin(struct st_mysql *mysql,
+ **/
+ int mysql_plugin_options(struct st_mysql_client_plugin *plugin,
+                          const char *option, const void *value);
++
++/** @} */
+ #endif
+ 
+```
+
+**File**: `include/mysql/generate_plugin_api_docs.sh` (modified, +39/-3)
+```diff
+@@ -10,12 +10,39 @@
+ #   md/<group>.md - documentation for group <group>
+ #   md/<page>.md - documentation for each <page>
+ # Note: target_dir is created if not present.
+-# Note: requires at least moxygen 2.1.11
++
++# compare version numbers
++# usage: vercmp <versionnr1> <versionnr2>
++#         with format for versions xxx.xxx.xxx
++# returns: -1 if versionnr1 lower
++#          0 if versionnr1 equal
++#          1 if versionnr1 greater
++
++vercmp()
++{
++  local a1 b1 c1 a2 b2 c2
++  v1=$1
++  v2=$2
++  set -- $( echo "$v1" | sed 's/\./ /g' )
++  a1=$1 b1=$2 c1=$3
++  set -- $( echo "$v2" | sed 's/\./ /g' )
++  a2=$1 b2=$2 c2=$3
++  ret=$(( (a1-a2)*1000000+(b1-b2)*1000+c1-c2 ))
++  if [ $ret -lt 0 ] ; then
++    v=-1
++  elif [ $ret -eq 0 ] ; then
++    v=0
++  else
++    v=1
++  fi
++  printf "%d" $v
++  return
++}
+ 
+ set -euo pipefail
+ 
+ # If no target_dir is specified, the current directory is used.
+-if [ -n "$1" ]; then
++if [ -n "${1:-}" ]; then
+     TARGET_DIR="$1"
+ else
+     TARGET_DIR="."
+@@ -24,6 +51,15 @@ fi
+ # Exit on error, undefined variable, or pipe failure
+ set -euo pipefail
+ 
++#check if moxygen version is good enough
++moxygen_version=$(moxygen --version)
++require_moxygen_version="2.1.19"
++if [ $(vercmp "$moxygen_version" "$require_moxygen_version") -lt 0 ]; then
++    echo "moxygen version $require_moxygen_version or higher is required," \
++         "but $moxygen_version is installed."
++    exit 1
++fi
++
+ # Clean up the output directory, if it exists
+ rm -rf "$TARGET_DIR/md"
+ rm -rf "$TARGET_DIR/xml"
+@@ -40,4 +76,4 @@ moxygen --version
+ # Need to EXCLUDE the output directory so that doxygen does not try to parse the generated XML and markdown files
+ (cat Doxyfile.generated_docs_plugin_api ; echo "OUTPUT_DIRECTORY=$TARGET_DIR"; echo "EXCLUDE=$TARGET_DIR/xml $TARGET_DIR/md" ) | doxygen -
+ # run moxygen to generate the plugin API general doc api.md
+-moxygen --quiet --pages --groups --output "$TARGET_DIR/md/%s.md" "$TARGET_DIR/xml"
++moxygen --quiet --pages --groups --flavour=github --output "$TARGET_DIR/md/%s.md" "$TARGET_DIR/xml"
+```
+
+**File**: `include/mysql/index.dox` (modified, +809/-6)
+```diff
+@@ -1,11 +1,814 @@
+ /**
+   @mainpage Plugin API Documentation
+ 
+-  The MariaDB plugin API allows development of plugins that can extend the basic server functionality.
++  MariaDB Server Plugin API is a C-based extensibility framework
++  (largely compatible with MySQL’s but extended) that allows dynamic or
++  static loading of modules to add or modify server behavior without
++  recompiling the core server.
+ 
+-   - Concepts
+-   - Get started: Building a plugin
+-   - Plugin types
+-   - Plugin services
++   - @subpage concepts
++   - @subpage implementation
++   - @subpage make_a_plugin
++   - @ref plugin_types
++   - @ref plugin_api_services_for_plugins
+    - [API reference](api.md#)
+-*/
+\ No newline at end of file
++*/
++
++/**
++  @page concepts Plugin API Concepts
++
++  @section concept_big_picture The Big Picture: The Server, Plugins and Interfaces
++
++  The server does, at certain stages of its execution, call plugin APIs when it
++  needs certain operation performed: e.g. authenticate a user, log a message,
++  read and write from/to a database table etc.
++
++  These API are like written functionality contracts.
++  They allow separating the server functionality from the actual API
++  implementations themselves. And, since the API implementations are a dynamic set,
++  adding new implementations extends the server functionality
++  (e.g. adds new ways a user can be authenticated or message be logged)
++  without having to re-compile and even re-start the server itself.
++
++  The MariaDB server plugin infrastructure uses the following logical terms:
++
++  @section concept_plugin_api Plugin API
++
++  A well defined, versioned and stable interface specification.
++  It's also abstract, as it's not tied to any one specific implementation.
++
++  @section concept_plugin Plugin
++
++  A named and versioned implementation of a specific @ref concept_plugin_api.
++
++  @sa @ref plugin_types for a list of the available plugin types and what they do
++
++  @section concept_plugin_library Plugin Library
++
++  (habitually abbreviated as a plugin)
++  An executable binary that contains one or more @ref concept_plugin that can
++  be accessed by the server when it needs to call plugin API implementations.
++
++  @section concept_plugin_service Plugin Services
++
++  Sometimes plugin code needs to call back into the server.
++
++  The plugin is running into the same process and the server symbols are
++  not hidden. So it can just reference a server symbol: e.g. call a server
++  function or read a server variable. These will get resolved by the OS's
++  dynamic linker (for dynamic plugins) or static linker (for static plugins).
++
++  But this is considered **bad** since there's no guarantee that the plugin's
++  snapshot of what the server symbol is captured during plugin compilation
++  matches the actual server symbol definition inside the running server.
++
++  This is why the plugin infrastructure provides a more controlled way for a
++  plugin to call server code.
++
++  It's called a plugin service.
++
++  Plugin services are a finite set determined at server's and plugin's
++  compile time.
++
++  They guarantee that the service is present, matches the definition and
++  is callable after plugin load.
++  They also provide platform independence as they operate the same on all
++  OSes and architectures.
++
++  @section concept_plugin_system_variables Plugin System Variables
++
++  Plugins can provide their own configuration variables. These become
++  regular server system variables when the plugin is loaded: their values
++  can be stored in config files or passed on the server's command line or
++  via the SET command.
++  When the plugin is unloaded the variables go away with it.
++
++  The variable names known to the server are prefixed with the plugin name
++  so that they do not pollute the namespace. E.g. the variable `foo` becomes
++  known to the server as `bar_plugin_foo` when exported by the plugin `bar_plugin`.
++
++  Each variable has a declared data type.
++
++  Plugin authors must decide if they want to keep a single global value
++  or a per-session value + global value for each variable.
++
++  Plugin authors must also decide if they will allow setting the value at
++  runtime or not. And make sure the plugin code is built to handle value changes
++  mid-flight if they allow it.
++
++  @section concept_plugin_status_variables Plugin Status Variables
++
++  Plugins can also provide their own status variables. Think of status
++  variables as read-only @ref concept_plugin_system_variables that the plugin
++  authors can use to expose volatile data of the plugin state, like e.g. counters,
++  on/off indicators, gauges, progress bars, state names etc.
++
++  Status variables are also lighter weight compared to @ref concept_plugin_system_variables :
++  knowing that they're read-only allows better optimization and less locking when handling them.
++  So, if plugin authors can use status variables, it's advisable that they should.
++
++  Similarly to system variables, the status variables be
+```
+
+**File**: `include/mysql/plugin.h` (modified, +318/-92)
+```diff
+@@ -23,7 +23,16 @@
+ #ifndef MYSQL_PLUGIN_INCLUDED
+ #define MYSQL_PLUGIN_INCLUDED
+ 
+-/*
++/** 
++  @defgroup plugin_api Plugin API
++  The Plugin API is a set of interfaces for handling plugins.
++  @{
++*/
++
++/**
++  @brief Declaration macros for MySQL plugins.
++  @ingroup plugin_declaration
++  
+   On Windows, exports from DLL need to be declared
+   Also, plugin needs to be declared as extern "C" because MSVC 
+   unlike other compilers, uses C++ mangling for variables not only
+@@ -39,6 +48,12 @@
+   #define MYSQL_DLLEXPORT
+ #endif
+ 
++
++/**
++  @brief Implementation independent macro for MySQL plugins
++  @ingroup plugin_declaration
++ */
++
+ #ifdef __cplusplus
+   #define MYSQL_PLUGIN_EXPORT extern "C" MYSQL_DLLEXPORT
+ #else
+@@ -55,10 +70,20 @@ typedef struct THD* MYSQL_THD;
+ #endif
+ 
+ typedef char my_bool;
++
++/**
++   @ingroup plugin_declaration
++   @brief Opaque type for a plugin handle.
++ */
+ typedef void * MYSQL_PLUGIN;
+ 
+ #include <mysql/services.h>
+ 
++/**
++  @addtogroup storage_engine_plugin_data 
++  @{
++*/
++
+ #define MYSQL_XIDDATASIZE 128
+ /**
+   struct st_mysql_xid is binary compatible with the XID structure as
+@@ -76,28 +101,38 @@ struct st_mysql_xid {
+ };
+ typedef struct st_mysql_xid MYSQL_XID;
+ 
++/** @} */
++
+ /*************************************************************************
+   Plugin API. Common for all plugin types.
+ */
+ 
++/**
++  @addtogroup plugin_declaration
++  @{
++*/
+ /** MySQL plugin interface version */
+ #define MYSQL_PLUGIN_INTERFACE_VERSION 0x0105
+ 
+ /** MariaDB plugin interface version */
+ #define MARIA_PLUGIN_INTERFACE_VERSION 0x0110
+ 
+-/*
+-  The allowable types of plugins
++/** @} */
++
++/**
++  @defgroup plugin_types Plugin Types
++  The available plugin APIs (types).
++  @{
+ */
+ #define MYSQL_UDF_PLUGIN             0  /**< not implemented            */
+-#define MYSQL_STORAGE_ENGINE_PLUGIN  1
++#define MYSQL_STORAGE_ENGINE_PLUGIN  1  /**< Storage engine plugin      */
+ #define MYSQL_FTPARSER_PLUGIN        2  /**< Full-text parser plugin    */
+-#define MYSQL_DAEMON_PLUGIN          3
+-#define MYSQL_INFORMATION_SCHEMA_PLUGIN  4
+-#define MYSQL_AUDIT_PLUGIN           5
+-#define MYSQL_REPLICATION_PLUGIN     6
+-#define MYSQL_AUTHENTICATION_PLUGIN  7
+-#define MYSQL_MAX_PLUGIN_TYPE_NUM    12  /**< The number of plugin types */
++#define MYSQL_DAEMON_PLUGIN          3  /**< Daemon plugin              */
++#define MYSQL_INFORMATION_SCHEMA_PLUGIN  4  /**< Information schema plugin */
++#define MYSQL_AUDIT_PLUGIN           5  /**< Audit plugin               */
++#define MYSQL_REPLICATION_PLUGIN     6  /**< Replication plugin         */
++#define MYSQL_AUTHENTICATION_PLUGIN  7  /**< Authentication plugin      */
++#define MYSQL_MAX_PLUGIN_TYPE_NUM    12
+ 
+ /* MariaDB plugin types */
+ /** Client and server password validation */
+@@ -109,6 +144,14 @@ typedef struct st_mysql_xid MYSQL_XID;
+ /**< Plugins for new native SQL functions */
+ #define MariaDB_FUNCTION_PLUGIN 11
+ 
++/** @} */
++
++/**
++  @defgroup plugin_license Plugin License
++  @ingroup plugin_declaration
++  The allowable licenses for plugins
++  @{
++*/
+ /* We use the following strings to define licenses for plugins */
+ #define PLUGIN_LICENSE_PROPRIETARY 0
+ #define PLUGIN_LICENSE_GPL 1
+@@ -117,19 +160,32 @@ typedef struct st_mysql_xid MYSQL_XID;
+ #define PLUGIN_LICENSE_PROPRIETARY_STRING "PROPRIETARY"
+ #define PLUGIN_LICENSE_GPL_STRING "GPL"
+ #define PLUGIN_LICENSE_BSD_STRING "BSD"
++/** @} */
++
+ 
++/**
++  @defgroup plugin_maturity Plugin Maturity
++  @ingroup plugin_declaration
++  The allowable code maturity levels for plugins
++  @{
++*/
+ /* definitions of code maturity for plugins */
+ #define MariaDB_PLUGIN_MATURITY_UNKNOWN 0
+ #define MariaDB_PLUGIN_MATURITY_EXPERIMENTAL 1
+ #define MariaDB_PLUGIN_MATURITY_ALPHA 2
+ #define MariaDB_PLUGIN_MATURITY_BETA 3
+ #define MariaDB_PLUGIN_MATURITY_GAMMA 4
+ #define MariaDB_PLUGIN_MATURITY_STABLE 5
++/** @} */
+ 
+-/*
+-  Macros for beginning and ending plugin declarations.  Between
+-  mysql_declare_plugin and mysql_declare_plugin_end there should
+-  be a st_mysql_plugin struct for each plugin to be declared.
++/**
++  @defgroup plugin_declaration Plugin Declaration
++  How to declare a plugin to the server.
++  
++  Macros for beginning and ending plugin declarations. 
++  Between @ref maria_declare_plugin and @ref maria_declare_plugin_end
++  there should be a @ref st_maria_plugin struct for each plugin to be declared.
++  @{
+ */
+ 
+ 
+@@ -181,28 +237,56 @@ MARIA_DECLARE_PLUGIN__(NAME, \
+ #define mysql_declare_plugin_end ,{0,0,0,0,0,0,0,0,0,0,0,0,0}}
+ #define maria_declare_plugin_end ,{0,0,0,0,0,0,0,0,0,0,0,0,0}}
+ 
+-/*
++/** @} */
++
++/**
++  @defgroup plugin_status_vars Plugin Status Variables
++  @ingroup plugin_declaration
++  @{
++ */
++
++/**
+   declarations for SHOW STATUS support in plugins
+ */
+ enum enum_mysql_show_type
+ {
+-  SHOW_UNDEF, SHOW_BOOL, SHOW_UINT, SHOW_ULONG,
+-  SHOW_ULONGLONG, SHOW_CHAR, SHOW_CHAR_PTR,
+-  SHOW_ARRAY, SHOW_FUNC, SHOW_DOUBLE,
+-  SHOW_SINT, SHOW_SLONG, SHOW_SLONGLONG, SHOW_SIMPLE_FUNC,
+-  SHOW_SIZE_T, SHOW_always
+```
+
+**File**: `include/mysql/plugin_audit.h` (modified, +27/-14)
+```diff
+@@ -17,12 +17,16 @@
+ #ifndef _my_audit_h
+ #define _my_audit_h
+ 
+-/*************************************************************************
+-  API for Audit plugin. (MYSQL_AUDIT_PLUGIN)
+-*/
+ 
+ #include "plugin.h"
+ 
++/**
++   @defgroup audit_plugin_data Audit Plugin
++   @ingroup plugin_types
++   API for Audit plugin. (@ref MYSQL_AUDIT_PLUGIN)
++   @{
++*/
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+@@ -32,14 +36,15 @@ extern "C" {
+ #define MYSQL_AUDIT_INTERFACE_VERSION 0x0304
+ 
+ 
+-/*************************************************************************
+-  AUDIT CLASS : GENERAL
++/**
++  @defgroup audit_general_class Audit Class: General
+   
+   LOG events occurs before emitting to the general query log.
+   ERROR events occur before transmitting errors to the user. 
+   RESULT events occur after transmitting a resultset to the user.
+   STATUS events occur after transmitting a resultset or errors
+   to the user.
++  @{
+ */
+ 
+ #define MYSQL_AUDIT_GENERAL_CLASS 0
+@@ -79,13 +84,15 @@ struct mysql_event_general
+   unsigned long long general_time_microseconds;
+ };
+ 
++/** @} */
++
++/**
++  @defgroup audit_connection_class Audit Class: Connection
+ 
+-/*
+-  AUDIT CLASS : CONNECTION
+-  
+   CONNECT occurs after authentication phase is completed.
+   DISCONNECT occurs after connection is terminated.
+   CHANGE_USER occurs after COM_CHANGE_USER RPC is completed.
++  @{
+ */
+ 
+ #define MYSQL_AUDIT_CONNECTION_CLASS 1
+@@ -118,9 +125,11 @@ struct mysql_event_connection
+   unsigned int tls_version_length;
+ };
+ 
+-/*
+-  AUDIT CLASS : TABLE
+-  
++/** @} */
++
++/**
++  @defgroup audit_table_class Audit Class: Table
++
+   LOCK occurs when a connection "locks" (this does not necessarily mean a table
+   lock and also happens for row-locking engines) the table at the beginning of
+   a statement. This event is generated at the beginning of every statement for
+@@ -129,6 +138,8 @@ struct mysql_event_connection
+   the tables are unlocked).
+ 
+   CREATE/DROP/RENAME occur when a table is created, dropped, or renamed.
++
++  @{
+ */
+ 
+ #define MYSQL_AUDIT_TABLE_CLASS 15
+@@ -162,9 +173,10 @@ struct mysql_event_table
+   unsigned long long query_id;
+ };
+ 
+-/*************************************************************************
+-  Here we define the descriptor structure, that is referred from
+-  st_mysql_plugin.
++/** @} */
++
++/**
++  The descriptor structure, that is referred from @ref st_mysql_plugin.
+ 
+   release_thd() event occurs when the event class consumer is to be
+   disassociated from the specified THD. This would typically occur
+@@ -193,4 +205,5 @@ struct st_mysql_audit
+ }
+ #endif
+ 
++/** @} */
+ #endif
+```
+
+**File**: `include/mysql/plugin_audit.h.pp` (modified, +20/-6)
+```diff
+@@ -560,15 +560,29 @@
+ typedef struct st_mysql_xid MYSQL_XID;
+ enum enum_mysql_show_type
+ {
+-  SHOW_UNDEF, SHOW_BOOL, SHOW_UINT, SHOW_ULONG,
+-  SHOW_ULONGLONG, SHOW_CHAR, SHOW_CHAR_PTR,
+-  SHOW_ARRAY, SHOW_FUNC, SHOW_DOUBLE,
+-  SHOW_SINT, SHOW_SLONG, SHOW_SLONGLONG, SHOW_SIMPLE_FUNC,
+-  SHOW_SIZE_T, SHOW_always_last
++  SHOW_UNDEF,
++  SHOW_BOOL,
++  SHOW_UINT,
++  SHOW_ULONG,
++  SHOW_ULONGLONG,
++  SHOW_CHAR,
++  SHOW_CHAR_PTR,
++  SHOW_ARRAY,
++  SHOW_FUNC,
++  SHOW_DOUBLE,
++  SHOW_SINT,
++  SHOW_SLONG,
++  SHOW_SLONGLONG,
++  SHOW_SIMPLE_FUNC,
++  SHOW_SIZE_T,
++  SHOW_always_last
+ };
+ enum enum_var_type
+ {
+-  SHOW_OPT_DEFAULT= 0, SHOW_OPT_SESSION, SHOW_OPT_GLOBAL, SHOW_OPT_SESSION_NO_LOCK
++  SHOW_OPT_DEFAULT= 0,
++  SHOW_OPT_SESSION,
++  SHOW_OPT_GLOBAL,
++  SHOW_OPT_SESSION_NO_LOCK
+ };
+ struct st_mysql_show_var {
+   const char *name;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6032** (2026-10-29): MDEV-39968 sys_vars.session_track_system_variables_basic fail - Plugi… (@midenok)
+- **PR #6029** (2026-10-29): Lower galera version gate to 26.4.28 for MDEV-38920 tests (@janlindstrom)
+- **PR #6026** (closed): MDEV-41852 Windows fails to build with updated WolfSSL (@grooverdan)
+- **PR #6024** (closed): MariaDB-10.4.39 (@seulement55)
+- **PR #6021** (2026-10-29): MDEV-41738 MEMORY BTREE: DELETE by key prefix skips rows (@sanja-byelkin)
 - **PR #6018** (2026-10-28): MDEV-41665 InnoDB assertion with result != FTS_INVALID on DELETE IGNORE with FK cascades on tables with FULLTEXT indexes (@Thirunarayanan)
-- **PR #6016** (2026-10-28): MDEV-36295 backport followup, wrong version marker in test file (@mariadb-RexJohnston)
-- **PR #6010** (2026-10-27): Fixup be807b2d047: match GnuTLS only in SSL test skips (@vaintroub)
-- **PR #6006** (2026-10-27): Fix SSL test failures with GnuTLS client (11.4) (@midenok)
-- **PR #6005** (2026-10-28): MDEV-38981 Galera loses wsrep_gtid_domain_id after pc.recovery restart (@sjaakola)
-- **PR #6003** (2026-10-27): Fix SSL test failures with GnuTLS client (10.11) (@midenok)
 
 ---
 
@@ -1742,50 +2271,32 @@ fix holds.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. MDEV-41372 Grant_tables::open_and_lock() leaves tables with a dangling pos_in_ta
+## X. more doxygen formatting added.
 
 **RULE**:
-When implementing operations in `mysql-test/suite/innodb/r/global_priv_to_innodb.result`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `include/mysql/Doxyfile.generated_docs_plugin_api`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `825a9ba9`: MDEV-41372 Grant_tables::open_and_lock() leaves tables with a dangling pos_in_table_list. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5104ebf8`: more doxygen formatting added.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/suite/innodb/r/global_priv_to_innodb.result`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `include/mysql/Doxyfile.generated_docs_plugin_api`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-CREATE USER 'gp_admin'@'localhost' IDENTIFIED BY 'Admin123!';
-GRANT ALL PRIVILEGES ON *.* TO 'gp_admin'@'localhost' WITH GRANT OPTION;
-RENAME TABLE mysql.global_priv TO mysql.global_priv_local;
-CREATE TABLE IF NOT EXISTS mysql.global_priv (
-Host CHAR(255) BINARY NOT NULL,
-User CHAR(128) BINARY NOT NULL,
-Priv JSON NOT NULL,
-PRIMARY KEY (Host, User)
-) ENGINE=InnoDB CHARACTER SET utf8mb3 COLLATE utf8mb3_bin;
-SELECT engine
-FROM information_schema.tables
-WHERE table_schema = 'mysql' AND table_name = 'global_priv';
-engine
-InnoDB
-INSERT INTO mysql.global_priv SELECT * FROM mysql.global_priv_local;
-FLUSH PRIVILEGES;
-connect  joiner, localhost, gp_admin, Admin123!;
-USE mysql;
-disconnect joiner;
-connection default;
-DROP TABLE mysql.global_priv;
-RENAME TABLE mysql.global_priv_local TO mysql.global_priv;
-DROP USER 'gp_admin'@'localhost';
+GENERATE_TODOLIST      = NO
+GENERATE_TESTLIST      = NO
+GENERATE_BUGLIST       = NO
+GENERATE_DEPRECATEDLIST = NO
+PREDEFINED             = HAVE_PSI_SOCKET_INTERFACE HAVE_PSI_1 USE_PSI_1 MYSQL_DYNAMIC_PLUGIN __cplusplus
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+PREDEFINED             = HAVE_PSI_SOCKET_INTERFACE HAVE_PSI_1 USE_PSI_1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `825a9ba9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5104ebf8` are properly handled with clean fallback behavior.

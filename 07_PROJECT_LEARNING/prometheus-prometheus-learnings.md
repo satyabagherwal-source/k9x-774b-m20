@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `3cb40f50`  
+> **Source Version**: `a87694bb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T19:17:19.379Z  
+> **Timestamp**: 2026-10-30T06:50:10.089Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T19:17:19.372Z  
+> **Harvest Timestamp**: 2026-10-30T06:50:06.305Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 66831 stars
+- **Stars / Engagement**: 66853 stars
 
 ---
 
@@ -1500,14 +1500,11 @@ func openDir(path string) (fd syscall.Handle, err error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20215** (2026-10-28): **ui: support PromQL bitwise operators**
-  *Symptoms*: <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword -->  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  <!-- Write NONE only if there is no user-facing change.  Otherwise use one of: [FEATURE] [ENHANCEMENT] [PERF] [BUGFIX] [SECURITY] [CHANGE] Following the pattern `[TYPE] Component: description.`  Example: [FEATURE] API: Add 
+- **Issue #20227** (2026-10-29): **docs: simplify 3.16 changelog PR references**
+  *Symptoms*: As we usually do <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword -->  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  <!-- Write NONE only if there is no user-facing change.  Otherwise use one of: [FEATURE] [ENHANCEMENT] [PERF] [BUGFIX] [SECURITY] [CHANGE] Following the pattern `[TYPE] Component: description.`  Example: [
 
-- **Issue #20209** (2026-10-28): **release-3.16: Cherrypick 32bit CI fix**
-  *Symptoms*: cherry pick of  https://github.com/prometheus/prometheus/pull/20201. Also bumps rc version.  ```release-notes NONE ``` 
-  **Post-Mortem & Fix Analysis**:
-  > /prombench 3.15.1
-  > Incorrect `/prombench` syntax;  command requires one argument that matches `(master|main|v[0-9]+\.[0-9]+\.[0-9]+\S*)` regex.  **Available Commands:** * To start benchmark: `/prombench <branch or git tag to compare with>` * To restart benchmark: `/prombench <branch or git tag to compare with>` * To stop benchmark: `/prombench cancel` * To print help: `/prombench help`  **Advanced Flags for `start` and `restart` Commands:** * `--bench.directory=<sub-directory of github.com/prometheus/test-infra/prombench`   * See the details [here](https://github.com/prometheus/test-infra/tree/master/prombench/manifests/prombench#benchmarking-from-the-different-directory), defaults to `manifests/prombench`. * `--bench.version=<branch | @commit>`   * See the details [here](https://github.com/prometheus/test-infra/tree/master/prombench/manifests/prombench#benchmarking-from-the-custom-test-infra-commitbranch), defaults to `master`.  **Examples:** * `/prombench v3.0.0` * `/prombench v3.0.0 --bench.version=@a
+- **Issue #20224** (2026-10-29): **docs: fix flag name for start timestamp processing in API reference**
+  *Symptoms*: ```release-notes [BUGFIX] Docs: Name the correct flag (`--enable-feature=use-start-timestamps`) for the engine-level start timestamp setting in the HTTP API reference. ```  The two `X-Prometheus-Use-Start-Timestamps` header entries in `docs/querying/api.md` point to `--promql.use-start-timestamps`. There is no such flag.  The setting is the `use-start-timestamps` feature flag, enabled with `--enable-feature=use-start-timestamps`, as documented in `docs/feature_flags.md`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1524,751 +1521,355 @@ func openDir(path string) (fd syscall.Handle, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `660c56b1` (2026-10-28)
-**Commit Message**: ui: support unquoted Unicode and dotted PromQL names (#20170)
+### Incident Patch 1: `d6909724` (2026-10-29)
+**Commit Message**: fix(storage/remote): fall back to WAL metadata when type-and-unit labels are empty (#20223)
 
-Signed-off-by: Julien Pivotto <[REDACTED_EMAIL]>
+* storage/remote: fall back to WAL metadata when type-and-unit labels are empty
 
-**File**: `web/ui/module/codemirror-promql/src/complete/hybrid.test.ts` (modified, +67/-43)
+When --enable-feature=type-and-unit-labels is enabled, __type__ or __unit__ may be absent on a series (or removed via write_relabel_configs) even when WAL metadata is present. Fall back to the cached series metadata for Type and Unit when the corresponding label is not set.
+
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+
+* storage/remote: add test cases for partial type and unit label fallback
+
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+
+* docs: document type and unit label fallback to metadata records
+
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Bartek Plotka <[REDACTED_EMAIL]>
+
+**File**: `docs/feature_flags.md` (modified, +1/-0)
 ```diff
-@@ -35,6 +35,30 @@ import nock from 'nock';
+@@ -273,6 +273,7 @@ when wrong types are used on wrong functions, automatic renames, delta types and
+ When this feature is enabled and the metadata WAL records exists, in an unlikely situation when type or unit are different across those,
+ the Prometheus outputs intends to prefer the `__type__` and `__unit__` labels values. For example on Remote Write 2.0,
+ if  the metadata record somehow (e.g. due to bug) says "counter", but `__type__="gauge"` the remote time series will be set to a gauge.
++If either `__type__` or `__unit__` is missing on the series, for example when dropped via relabeling, Remote Write 2.0 falls back to the corresponding value from the metadata record.
  
- describe('analyzeCompletion test', () => {
-   const testCases = [
-+    {
-+      title: 'dotted Unicode metric completion',
-+      expr: '温度.total',
-+      pos: 8,
-+      expectedContext: [
-+        { kind: ContextKind.MetricName, metricName: '温度.total' },
-+        { kind: ContextKind.Function },
-+        { kind: ContextKind.Aggregation },
-+        { kind: ContextKind.Number },
-+      ],
-+    },
-+    {
-+      title: 'dotted Unicode label value completion',
-+      expr: '温度.total{場所.name="東"}',
-+      pos: 19,
-+      expectedContext: [
-+        {
-+          kind: ContextKind.LabelValue,
-+          metricName: '温度.total',
-+          labelName: '場所.name',
-+          matchers: [{ name: '場所.name', type: EqlSingle, value: '東' }],
-+        },
-+      ],
-+    },
-     {
-       title: 'complete bitand operator',
-       expr: 'metric bitand',
-@@ -1147,7 +1171,7 @@ describe('autocomplete promQL test', () => {
-         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, numberTerms, snippets),
-         from: 0,
-         to: 0,
--        validFor: /^[a-zA-Z0-9_:]+$/,
-+        validFor: /^[\p{L}0-9_:.]+$/u,
-       },
-     },
-     {
-@@ -1158,7 +1182,7 @@ describe('autocomplete promQL test', () => {
-         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, numberTerms, snippets),
-         from: 0,
-         to: 3,
--        validFor: /^[a-zA-Z0-9_:]+$/,
-+        validFor: /^[\p{L}0-9_:.]+$/u,
-       },
-     },
-     {
-@@ -1169,7 +1193,7 @@ describe('autocomplete promQL test', () => {
-         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, snippets),
-         from: 4,
-         to: 4,
--        validFor: /^[a-zA-Z0-9_:]+$/,
-+        validFor: /^[\p{L}0-9_:.]+$/u,
-       },
-     },
-     {
-@@ -1180,7 +1204,7 @@ describe('autocomplete promQL test', () => {
-         options: ([] as Completion[]).concat(aggregateOpModifierTerms, binOpTerms),
-         from: 5,
-         to: 5,
--        validFor: /^[a-zA-Z0-9_:]+$/,
-+        validFor: /^[\p{L}0-9_:.]+$/u,
-       },
-     },
-     {
-@@ -1191,7 +1215,7 @@ describe('autocomplete promQL test', () => {
-         options: binOpTerms,
-         from: 13,
-         to: 13,
--        validFor: /^[a-zA-Z0-9_:]+$/,
-+        validFor: /^[\p{L}0-9_:.]+$/u,
-       },
-     },
-     {
-@@ -1202,7 +1226,7 @@ describe('autocomplete promQL test', () => {
-         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, snippets),
-         from: 4,
-         to: 6,
--        validFor: /^[a-zA-Z0-9_:]+$/,
-+        validFor: /^[\p{L}0-9_:.]+$/u,
-       },
-     },
-     {
-@@ -1213,7 +1237,7 @@ describe('autocomplete promQL test', () => {
-         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, snippets),
-         from: 4,
-         to: 28, // should extend to end of 'coredns_cache_hits_total'
--        validFor: /^[a-zA-Z0-9_:]+$/,
-+        validFor: /^[\p{L}0-9_:.]+$/u,
-       },
-     },
-     {
-@@ -1224,7 +1248,7 @@ describe('autocomplete promQL test', () => {
-         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, snippets),
-         from: 5,
-         to: 29, // should extend to end of 'coredns_cache_hits_total'
--        validFor: /^[a-zA-Z0-9_:]+$/,
-+        validFor: /^[\p{L}0-9_:.]+$/u,
-       },
-     },
-     {
-@@ -1235,7 +1259,7 @@ describe('autocomplete promQL test', () => {
-         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, snippets),
-         from: 9,
-         to: 9,
--        validFor: /^[a-zA-Z0-9_:]+$/,
-+        validFor: /^[\p{L}0-9_:.]+$/u,
-       },
-     },
-     {
-@@ -1246,7 +1270,7 @@ describe('autocomplete promQL test', () => {
-         options: ([] as Completion[]).concat(aggregateOpModifierTerms, binOpTerms),
-         from: 18,
-         to: 18,
--        validFor: /^[a-zA-Z0-9_:]+$/,
-+        validFor: /^[\p{L}0-9_:.]+$/u,
-       },
-     },
-     {
-@@ -1257,7 +1281,7 @@ describe('autocomplete promQL test', () => {
-         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, snippets),
-         from: 25,
-         to: 33,
--        validFor: /^[a-zA-Z0-9_:]+$/,
-+        validFor: /^[\p{L}0-9_:.]+$/u,
-       },
-     },
-     {
-@@ -1268,7 +1292,7 @@ describe('autocomplete promQL test', () => {
-         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, binOpModifierTerms, numberTerms, snippets),
-         from: 14,
-         to: 19,
--        validFor: /^[a-zA-Z0-9_:]+$/,
-+        validFor: /^[\p{L}0-9_:.]+$/u,
-       },
-     },
-     {
-@@ -1279,7 +1303,7 @@ describe('autocomplete promQL test', () => {
-         options: ([] as Completion[]).concat(functionIdentifierTerms, aggregateOpTerms, binOpModifierTerms, numberTerms, snippets),
-         from: 40,
-         to: 41,
--        validFor: /^[a-zA-Z0-9_:]+$/,
-+        validFor: /^[\p{L}0-9_:.]+$/u,
-       },
-     },
-     {
-@@ -1290,7 +1314,7 @@ describe('au
+ ## Use Uncached IO
+ 
 ```
 
-**File**: `web/ui/module/codemirror-promql/src/complete/hybrid.ts` (modified, +17/-1)
+**File**: `storage/remote/queue_manager.go` (modified, +20/-19)
 ```diff
-@@ -177,7 +177,7 @@ function arrayToCompletionResult(data: Completion[], from: number, to: number, i
-     from: from,
-     to: to,
-     options: options,
--    validFor: span ? /^[a-zA-Z0-9_:]+$/ : undefined,
-+    validFor: span ? new RegExp('^[\\p{L}0-9_:.]+$', 'u') : undefined,
-   } as CompletionResult;
- }
- 
-@@ -258,6 +258,16 @@ function hasCompleteDurationUnit(state: EditorState, node: SyntaxNode): boolean
-   return durationWithUnitRegexp.test(nodeContent);
- }
- 
-+// External name tokens may leave a bare error node after a complete duration.
-+// Preserve function completion for an unfinished name such as the final s in foo[5mss].
-+function isDurationFunctionFragment(state: EditorState, node: SyntaxNode): boolean {
-+  return (
-+    node.type.id === 0 &&
-+    [MatrixSelector, SubqueryExpr, OffsetExpr, DurationExpr].includes(node.parent?.type.id ?? -1) &&
-+    /^[a-zA-Z_]+$/.test(state.sliceDoc(node.from, node.to))
-+  );
-+}
-+
- // computeStartCompleteLabelPositionInLabelMatcherOrInGroupingLabel calculates the start position only when the node is a LabelMatchers or a GroupingLabels
- function computeStartCompleteLabelPositionInLabelMatcherOrInGroupingLabel(node: SyntaxNode, pos: number): number {
-   // Here we can have two different situations:
-@@ -282,6 +292,8 @@ export function computeStartCompletePosition(state: EditorState, node: SyntaxNod
-   let start = node.from;
-   if (isAfterClosedFunctionCallBody(state, node, pos)) {
-     start = pos;
-+  } else if (isDurationFunctionFragment(state, node)) {
-+    start = node.from;
-   } else if (node.type.id === LabelMatchers || node.type.id === GroupingLabels) {
-     start = computeStartCompleteLabelPositionInLabelMatcherOrInGroupingLabel(node, pos);
-   } else if (
-@@ -334,6 +346,10 @@ export function analyzeCompletion(state: EditorState, node: SyntaxNode, pos: num
-   const result: Context[] = [];
-   switch (node.type.id) {
-     case 0: {
-+      if (isDurationFunctionFragment(state, node)) {
-+        result.push({ kind: ContextKind.DurationExpr });
-+        break;
-+      }
-       // 0 is the id of the error node
-       if (
-         node.parent?.type.id === OffsetExpr ||
-```
-
-**File**: `web/ui/module/codemirror-promql/src/parser/parser.test.ts` (modified, +40/-0)
-```diff
-@@ -19,6 +19,46 @@ import { ValueType } from '../types';
- 
- describe('promql operations', () => {
-   const testCases = [
-+    {
-+      expr: 'foo{service.name="api"}',
-+      expectedValueType: ValueType.vector,
-+      expectedDiag: [] as Diagnostic[],
-+    },
-+    {
-+      expr: 'sum by (service.name, équipe) (rate(http.server.requests[5m]))',
-+      expectedValueType: ValueType.vector,
-+      expectedDiag: [] as Diagnostic[],
-+    },
-+    {
-+      expr: '温度{場所="東京"}',
-+      expectedValueType: ValueType.vector,
-+      expectedDiag: [] as Diagnostic[],
-+    },
-+    {
-+      expr: '𐐀{𐐀="x"}',
-+      expectedValueType: ValueType.vector,
-+      expectedDiag: [] as Diagnostic[],
-+    },
-+    {
-+      expr: 'requests_total + on (service.name) group_left (équipe) service_info',
-+      expectedValueType: ValueType.vector,
-+      expectedDiag: [] as Diagnostic[],
-+    },
-+    {
-+      expr: 'foo > bool.5',
-+      expectedValueType: ValueType.vector,
-+      expectedDiag: [] as Diagnostic[],
-+    },
-+    {
-+      expr: 'topK',
-+      expectedValueType: ValueType.vector,
-+      expectedDiag: [] as Diagnostic[],
-+    },
-+    {
-+      expr: 'Inf.total + Inf',
-+      expectedValueType: ValueType.vector,
-+      expectedDiag: [] as Diagnostic[],
-+    },
-     {
-       expr: '5 bitand 3',
-       expectedValueType: ValueType.scalar,
-```
-
-**File**: `web/ui/module/lezer-promql/src/promql.grammar` (modified, +2/-2)
-```diff
-@@ -359,8 +359,6 @@ durationPrimary[@inline] {
-     ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" ) ( std.digit+ "ms" )? ) |
-     ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" ) )
-   }
--  Identifier { (std.asciiLetter | "_" | ":") (std.asciiLetter | std.digit | "_" | ":" )*}
--  LabelName { (std.asciiLetter | "_") (std.asciiLetter | std.digit | "_")* }
- 
-   // Operator
-   Sub { "-" }
-@@ -385,6 +383,8 @@ durationPrimary[@inline] {
-   At { "@" }
- }
- 
-+@external tokens names from "./tokens" { Identifier, LabelName }
-+
- // Keywords
- 
- @external specialize {Identifier} specializeIdentifier from "./tokens" {
-```
-
-**File**: `web/ui/module/lezer-promql/src/tokens.js` (modified, +41/-0)
-```diff
-@@ -11,7 +11,11 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
-+import { ExternalTokenizer } from "@lezer/lr";
-+
- import {
-+  Identifier,
-+  LabelName,
-   And,
-   Avg,
-   Atan2,
-@@ -54,6 +58,40 @@ import {
-   FillRight,
- } from "./parser.terms.js";
- 
-+// Name starts are Unicode letters or underscores; combining marks require quotes.
-+const nameStart = /[\p{L}_]/u;
-+
-+// InputStream exposes UTF-16 code units; names may contain astral letters.
-+function readCodePoint(input) {
-+  const first = input.next;
-+  if (first >= 0xd800 && first <= 0xdbff) {
-+    const second = input.peek(1);
-+    if (second >= 0xdc00 && second <= 0xdfff) {
-+      return 0x10000 + ((first - 0xd800) << 10) + second - 0xdc00;
-+    }
-+  }
-+  return first;
-+}
-+
-+function isNameStart(ch) {
-+  return ch >= 0 && nameStart.test(String.fromCodePoint(ch));
-+}
-+
-+export const names = new ExternalTokenizer(
-+  (input, stack) => {
-+    const label = stack.canShift(LabelName);
-+    let ch = readCodePoint(input);
-+    if (!isNameStart(ch) && (label || ch !== 58)) return;
-+    // Dots and ASCII digits can follow; only metric names allow colons.
-+    do {
-+      input.advance(ch > 0xffff ? 2 : 1);
-+      ch = readCodePoint(input);
-+    } while (isNameStart(ch) || (ch >= 48 && ch <= 57) || ch === 46 || (!label && ch === 58));
-+    input.acceptToken(label ? LabelName : Identifier);
-+  },
-+  { contextual: true }
-+);
-+
- const keywordTokens = {
-   inf: inf,
-   nan: nan,
-@@ -66,6 +104,7 @@ const keywordTokens = {
- };
- 
- export const specializeIdentifier = (value, stack) => {
-+  if (/[^\x00-\x7f]/.test(value)) return -1;
-   return keywordTokens[value.toLowerCase()] || -1;
- };
- 
-@@ -101,6 +140,8 @@ const contextualKeywordTokens = {
- };
- 
- export const extendIdentifier = (value, stack) => {
-+  // Unicode letters that lowercase to ASCII must remain names, not keywords.
-+  if (/[^\x00-\x7f]/.test(value)) return -1;
-   if (value === "start" && stack.canShift(StartFn)) {
-     return StartFn;
-   }
-```
-
-**File**: `web/ui/module/lezer-promql/test/promql.test.js` (modified, +48/-0)
-```diff
-@@ -14,3 +14,51 @@ for (const file of fs.readdirSync(caseDir)) {
-         for (const { name, run } of fileTests(fs.readFileSync(path.join(caseDir, file), 'utf8'), file)) it(name, () => run(parser));
-     });
- }
-+
-+// Parse strictly so error recovery cannot hide a backend/frontend mismatch.
-+describe('unquoted UTF-8 names', () => {
-+    const strictParser = parser.configure({ strict: true });
-+    const valid = [
-+        'http.server.request.duration{service.name="api"}',
-+        '温度{場所="東京"}',
-+        '𐐀{𐐀="x"}',
-+        'a𐐀9{__名="x"}',
-+        'sum by (service.name, équipe) (rate(http.server.requests[5m]))',
-+        'sum without (場所) (温度)',
-+        'requests_total + on (service.name) group_left (équipe) service_info',
-+        'requests_total + ignoring (service.name) group_right (équipe) service_info',
-+        'foo{a..="b"}',
-+        '_:温度.total',
-+        'foo.',
-+        'foo..bar',
-+        'Inf.total + Inf',
-+        'NaN.total or foo',
-+        'http.server.requests[5m:1m] offset 5m',
-+        'http.server.requests @ 0.5',
-+        'http.server.requests + .5',
-+        'foo > bool.5',
-+        'sum by ("a:b", "ö", "😀") (foo)',
-+        'foo{".name"="x", "ö"="y", "😀"="z"}',
-+    ];
-+    for (const query of valid) {
-+        it(`accepts ${query}`, () => {
-+            expect(() => strictParser.parse(query)).not.toThrow();
-+        });
-+    }
-+    const invalid = [
-+        '.foo', '5foo', 'foo{.label="x"}', 'foo{5label="x"}', 'foo{a:b="x"}',
-+        'foo😀', 'foo١', 'foo²', 'o\u0308', 'foo·bar', 'foo\u200dbar', 'foo\ufffd',
-+        'foo\ud800', 'foo\udc00', 'sum by (o\u0308) (foo)', 'foo{é😀="x"}',
-+        'sum by (a:b) (foo)', 'foo + on (a:b) bar', 'topK(1, foo)',
-+    ];
-+    for (const query of invalid) {
-+        it(`rejects ${query}`, () => {
-+            expect(() => strictParser.parse(query)).toThrow();
-+        });
-+    }
-+    for (const name of ['İnf', 'topK', 'İGNORING', 'on.total', 'sum.total', '𐐀']) {
-+        it(`preserves ${name} as a metric name`, () => {
-+            expect(strictParser.parse(name).toString()).toBe('PromQL(VectorSelector(Identifier))');
-+        });
-+    }
-+});
-```
-
----
-
-### Incident Patch 2: `516bc947` (2026-10-28)
-**Commit Message**: discovery/linode: fix transfer allowance conversion (#20206)
-
-Signed-off-by: Fayez Bast <[REDACTED_EMAIL]>
-
-**File**: `discovery/linode/linode.go` (modified, +1/-1)
-```diff
-@@ -352,7 +352,7 @@ func (d *Discovery) refreshData(ctx context.Context) ([]*targetgroup.Group, erro
- 			linodeLabelSpecsDiskBytes:     model.LabelValue(strconv.FormatInt(int64(instance.Specs.Disk)<<20, 10)),
- 			linodeLabelSpecsMemoryBytes:   model.LabelValue(strconv.FormatInt(int64(instance.Specs.Memory)<<20, 10)),
- 			linodeLabelSpecsVCPUs:         model.LabelValue(strconv.Itoa(instance.Specs.VCPUs)),
--			linodeLabelSpecsTransferBytes: model.LabelValue(strconv.FormatInt(int64(instance.Specs.Transfer)<<20, 10)),
-+			linodeLabelSpecsTransferBytes: model.LabelValue(strconv.FormatInt(int64(instance.Specs.Transfer)<<30, 10)),
+@@ -2317,28 +2317,29 @@ func populateV2TimeSeries(symbolTable *writev2.SymbolsTable, batch []timeSeries,
+ 	var nPendingSamples, nPendingExemplars, nPendingHistograms, nUnexpectedMetadata int
+ 	for nPending, d := range batch {
+ 		pendingData[nPending].Samples = pendingData[nPending].Samples[:0]
+-		switch {
+-		case enableTypeAndUnitLabels:
++		var (
++			mType = model.MetricTypeUnknown
++			unit  string
++			help  string
++		)
++		if !metadata.IsZeroHandle(d.metadata) {
++			meta := d.metadata.Value()
++			mType = meta.Type
++			unit = meta.Unit
++			help = meta.Help
++		}
++		if enableTypeAndUnitLabels {
+ 			m := schema.NewMetadataFromLabels(d.seriesLabels)
+-			pendingData[nPending].Metadata.Type = writev2.FromMetadataType(m.Type)
+-			pendingData[nPending].Metadata.UnitRef = symbolTable.Symbolize(m.Unit)
+-			pendingData[nPending].Metadata.HelpRef = 0 // Type and unit does not give us help.
+-			// Use Help from d.metadata if available.
+-			if !metadata.IsZeroHandle(d.metadata) {
+-				pendingData[nPending].Metadata.HelpRef = symbolTable.Symbolize(d.metadata.Value().Help)
++			if m.Type != model.MetricTypeUnknown {
++				mType = m.Type
++			}
++			if m.Unit != "" {
++				unit = m.Unit
+ 			}
+-		case !metadata.IsZeroHandle(d.metadata):
+-			meta := d.metadata.Value()
+-			pendingData[nPending].Metadata.Type = writev2.FromMetadataType(meta.Type)
+-			pendingData[nPending].Metadata.HelpRef = symbolTable.Symbolize(meta.Help)
+-			pendingData[nPending].Metadata.UnitRef = symbolTable.Symbolize(meta.Unit)
+-		default:
+-			// Safeguard against sending garbage in case of not having metadata
+-			// for whatever reason.
+-			pendingData[nPending].Metadata.Type = writev2.FromMetadataType(model.MetricTypeUnknown)
+-			pendingData[nPending].Metadata.UnitRef = 0
+-			pendingData[nPending].Metadata.HelpRef = 0
  		}
++		pendingData[nPending].Metadata.Type = writev2.FromMetadataType(mType)
++		pendingData[nPending].Metadata.UnitRef = symbolTable.Symbolize(unit)
++		pendingData[nPending].Metadata.HelpRef = symbolTable.Symbolize(help)
  
- 		addr := net.JoinHostPort(publicIPv4, strconv.FormatUint(uint64(d.port), 10))
+ 		if sendExemplars {
+ 			pendingData[nPending].Exemplars = pendingData[nPending].Exemplars[:0]
 ```
 
-**File**: `discovery/linode/linode_test.go` (modified, +7/-7)
+**File**: `storage/remote/queue_manager_test.go` (modified, +39/-0)
 ```diff
-@@ -61,7 +61,7 @@ func TestLinodeSDRefresh(t *testing.T) {
- 				"__meta_linode_specs_disk_bytes":     model.LabelValue("85899345920"),
- 				"__meta_linode_specs_memory_bytes":   model.LabelValue("4294967296"),
- 				"__meta_linode_specs_vcpus":          model.LabelValue("2"),
--				"__meta_linode_specs_transfer_bytes": model.LabelValue("4194304000"),
-+				"__meta_linode_specs_transfer_bytes": model.LabelValue("4294967296000"),
- 				"__meta_linode_extra_ips":            model.LabelValue(",96.126.108.16,192.168.201.25,"),
- 			},
- 			{
-@@ -86,7 +86,7 @@ func TestLinodeSDRefresh(t *testing.T) {
- 				"__meta_linode_specs_disk_bytes":     model.LabelValue("85899345920"),
- 				"__meta_linode_specs_memory_bytes":   model.LabelValue("4294967296"),
- 				"__meta_linode_specs_vcpus":          model.LabelValue("2"),
--				"__meta_linode_specs_transfer_bytes": model.LabelValue("4194304000"),
-+				"__meta_linode_specs_transfer_bytes": model.LabelValue("4294967296000"),
- 			},
- 			{
- 				"__address__":                        model.LabelValue("192.53.120.25:80"),
-@@ -110,7 +110,7 @@ func TestLinodeSDRefresh(t *testing.T) {
- 				"__meta_linode_specs_disk_bytes":     model.LabelValue("53687091200"),
- 				"__meta_linode_specs_memory_bytes":   model.LabelValue("2147483648"),
- 				"__meta_linode_specs_vcpus":          model.LabelValue("1"),
--				"__meta_linode_specs_transfer_bytes": model.LabelValue("2097152000"),
-+				"__meta_linode_specs_transfer_bytes": model.LabelValue("2147483648000"),
- 				"__meta_linode_ipv6_ranges":          model.LabelValue(",2600:3c04:e001:456::/64,"),
- 			},
- 			{
-@@ -135,7 +135,7 @@ func TestLinodeSDRefresh(t *testing.T) {
- 				"__meta_linode_specs_disk_bytes":     model.LabelValue("26843545600"),
- 				"__meta_linode_specs_memory_bytes":   model.LabelValue("1073741824"),
- 				"__meta_linode_specs_vcpus":          model.LabelValue("1"),
--				"__meta_linode_specs_transfer_bytes": model.LabelValue("1048576000"),
-+				"__meta_linode_specs_transfer_bytes": model.LabelValue("1073741824000"),
- 				"__meta_linode_extra_ips":            model.LabelValue(",172.104.18.104,"),
- 				"__meta_linode_ipv6_ranges":          model.LabelValue(",2600:3c03:e000:123::/64,"),
- 			},
-@@ -163,7 +163,7 @@ func TestLinodeSDRefresh(t *testing.T) {
- 				"__meta_linode_specs_disk_bytes":     model.LabelValue("85899345920"),
- 				"__meta_linode_specs_memory_bytes":   model.LabelValue("4294967296"),
- 				"__meta_linode_specs_vcpus":          model.LabelValue("2"),
--				"__meta_linode_specs_transfer_bytes": model.LabelValue("4194304000"),
-+				"__meta_linode_specs_transfer_bytes": model.LabelValue("4294967296000"),
- 				"__meta_linode_extra_ips":            model.LabelValue(",96.126.108.16,192.168.201.25,"),
- 			},
- 			{
-@@ -188,7 +188,7 @@ func TestLinodeSDRefresh(t *testing.T) {
- 				"__meta_linode_specs_disk_bytes":     model.LabelValue("26843545600"),
- 				"__meta_linode_specs_memory_bytes":   model.LabelValue("1073741824"),
- 				"__meta_linode_specs_vcpus":          model.LabelValue("1"),
--				"__meta_linode_specs_transfer_bytes": model.LabelValue("1048576000"),
-+				"__meta_linode_specs_transfer_bytes": model.LabelValue("1073741824000"),
- 				"__meta_linode_extra_ips":            model.LabelValue(",172.104.18.104,"),
- 				"__meta_linode_ipv6_ranges":          model.LabelValue(",2600:3c03:e000:123::/64,"),
- 			},
-@@ -216,7 +216,7 @@ func TestLinodeSDRefresh(t *testing.T) {
- 				"__meta_linode_specs_disk_bytes":     model.LabelValue("53687091200"),
- 				"__meta_linode_specs_memory_bytes":   model.LabelValue("2147483648"),
- 				"__meta_linode_specs_vcpus":          model.LabelValue("1"),
--				"__meta_linode_specs_transfer_bytes": model.LabelValue("2097152000"),
-+				"__meta_linode_specs_transfer_bytes": model.LabelValue("2147483648000"),
- 				"__meta_linode_ipv6_ranges":          model.LabelValue(",2600:3c04:e001:456::/64,"),
- 			},
- 		}},
+@@ -2904,6 +2904,45 @@ func TestPopulateV2TimeSeries_MetadataAndTypeAndUnit(t *testing.T) {
+ 			expectedUnit:      "requests",
+ 			enableTypeAndUnit: true,
+ 		},
++		{
++			name:      "type-and-unit-fallback-to-meta-when-labels-missing",
++			typeLabel: "",
++			unitLabel: "",
++			metadata: &metadata.Metadata{
++				Type: model.MetricTypeGauge,
++				Unit: "bytes",
++				Help: "Test metric",
++			},
++			expectedType:      writev2.Metadata_METRIC_TYPE_GAUGE,
++			expectedUnit:      "bytes",
++			enableTypeAndUnit: true,
++		},
++		{
++			name:      "type-from-label-unit-from-meta",
++			typeLabel: "counter",
++			unitLabel: "",
++			metadata: &metadata.Metadata{
++				Type: model.MetricTypeGauge,
++				Unit: "bytes",
++				Help: "Test metric",
++			},
++			expectedType:      writev2.Metadata_METRIC_TYPE_COUNTER,
++			expectedUnit:      "bytes",
++			enableTypeAndUnit: true,
++		},
++		{
++			name:      "type-from-meta-unit-from-label",
++			typeLabel: "",
++			unitLabel: "requests",
++			metadata: &metadata.Metadata{
++				Type: model.MetricTypeGauge,
++				Unit: "bytes",
++				Help: "Test metric",
++			},
++			expectedType:      writev2.Metadata_METRIC_TYPE_GAUGE,
++			expectedUnit:      "requests",
++			enableTypeAndUnit: true,
++		},
+ 	}
+ 
+ 	for _, tc := range testCases {
 ```
 
 ---
 
-### Incident Patch 3: `74e50be2` (2026-10-28)
-**Commit Message**: ui: support PromQL bitwise operators (#20215)
+### Incident Patch 2: `243670f1` (2026-10-29)
+**Commit Message**: Merge pull request #20169 from roidelapluie/roidelapluie/promql-unquoted-utf8-default
 
-Signed-off-by: Julien Pivotto <[REDACTED_EMAIL]>
+promql: enable unquoted UTF-8 names by default
 
-**File**: `web/ui/mantine-ui/src/promql/ast.ts` (modified, +3/-0)
+**File**: `cmd/prometheus/features_test.go` (modified, +0/-11)
 ```diff
-@@ -48,6 +48,9 @@ export enum binaryOperatorType {
-   or = "or",
-   unless = "unless",
-   atan2 = "atan2",
-+  bitand = "bitand",
-+  bitor = "bitor",
-+  bitxor = "bitxor",
+@@ -132,17 +132,6 @@ func TestSetFeatureListOptions_MetadataWALRecords(t *testing.T) {
+ 	require.True(t, c.agent.EnableMetadataWALRecords)
  }
  
- export const compOperatorTypes: binaryOperatorType[] = [
+-func TestSetFeatureListOptions_UnquotedUTF8Names(t *testing.T) {
+-	for _, enabled := range []bool{false, true} {
+-		c := &flagConfig{}
+-		if enabled {
+-			c.featureList = []string{"promql-unquoted-utf8-names"}
+-		}
+-		require.NoError(t, c.setFeatureListOptions(promslog.NewNopLogger()))
+-		require.Equal(t, enabled, c.parserOpts.EnableUnquotedUTF8Names)
+-	}
+-}
+-
+ func TestSetFeatureListOptions_OTLPDeltaToCumulativeDeprecated(t *testing.T) {
+ 	var output bytes.Buffer
+ 	logger := promslog.New(&promslog.Config{Writer: &output})
 ```
 
-**File**: `web/ui/mantine-ui/src/promql/binOp.test.ts` (modified, +46/-2)
+**File**: `cmd/prometheus/main.go` (modified, +2/-3)
 ```diff
-@@ -6,6 +6,8 @@ import {
-   filteredSampleValue,
-   fnv1a,
-   resultMetric,
-+  scalarBinOp,
-+  vectorElemBinop,
- } from "./binOp";
- import {
-   VectorMatching,
-@@ -3328,11 +3330,53 @@ const testCases: TestCase[] = [
- ];
+@@ -265,8 +265,7 @@ func (c *flagConfig) setFeatureListOptions(logger *slog.Logger) error {
+ 				c.enableConcurrentRuleEval = true
+ 				logger.Info("Experimental concurrent rule evaluation enabled.")
+ 			case "promql-unquoted-utf8-names":
+-				c.parserOpts.EnableUnquotedUTF8Names = true
+-				logger.Info("Experimental unquoted UTF-8 names enabled.")
++				logger.Warn("This option for --enable-feature is now permanently enabled and therefore a no-op.", "option", o)
+ 			case "promql-experimental-functions":
+ 				c.parserOpts.EnableExperimentalFunctions = true
+ 				logger.Info("Experimental PromQL functions enabled.")
+@@ -666,7 +665,7 @@ func main() {
+ 	a.Flag("scrape.discovery-reload-interval", "Interval used by scrape manager to throttle target groups updates.").
+ 		Hidden().Default("5s").SetValue(&cfg.scrape.DiscoveryReloadInterval)
  
- describe("binOp", () => {
-+  describe("bitwise operators", () => {
-+    it.each([
-+      [binaryOperatorType.bitand, 5, 3, 1],
-+      [binaryOperatorType.bitor, 5, 3, 7],
-+      [binaryOperatorType.bitxor, 5, 3, 6],
-+      [binaryOperatorType.bitand, 4294967297, 4294967296, 4294967296],
-+      [
-+        binaryOperatorType.bitor,
-+        4503599627370496,
-+        4503599627370495,
-+        Number.MAX_SAFE_INTEGER,
-+      ],
-+      [
-+        binaryOperatorType.bitxor,
-+        Number.MAX_SAFE_INTEGER,
-+        4503599627370496,
-+        4503599627370495,
-+      ],
-+    ] as const)("%s(%s, %s) = %s", (op, lhs, rhs, expected) => {
-+      expect(scalarBinOp(op, lhs, rhs)).toBe(expected);
-+      expect(vectorElemBinop(op, lhs, rhs)).toEqual({
-+        value: expected,
-+        keep: true,
-+      });
-+    });
-+
-+    it.each([
-+      binaryOperatorType.bitand,
-+      binaryOperatorType.bitor,
-+      binaryOperatorType.bitxor,
-+    ])("%s returns NaN for invalid operands", (op) => {
-+      for (const invalid of [-1, 1.5, NaN, Infinity, -Infinity, 2 ** 53]) {
-+        expect(scalarBinOp(op, invalid, 1)).toBeNaN();
-+        expect(scalarBinOp(op, 1, invalid)).toBeNaN();
-+      }
-+    });
-+  });
-+
-   describe("resultMetric", () => {
--    it("should drop metric name for operations that change meaning", () => {
-+    it.each([
-+      binaryOperatorType.add,
-+      binaryOperatorType.bitand,
-+      binaryOperatorType.bitor,
-+      binaryOperatorType.bitxor,
-+    ])("should drop metric name for %s", (op) => {
-       const lhs: Metric = { __name__: "metric_a", label1: "value1" };
-       const rhs: Metric = { __name__: "metric_b", label2: "value2" };
--      const op = binaryOperatorType.add;
-       const matching = {
-         card: vectorMatchCardinality.oneToMany,
-         on: true,
-```
-
-**File**: `web/ui/mantine-ui/src/promql/binOp.ts` (modified, +30/-0)
-```diff
-@@ -181,6 +181,33 @@ export const vectorElemBinop = (
-       return { value: lhs, keep: lhs <= rhs };
-     case binaryOperatorType.atan2:
-       return { value: Math.atan2(lhs, rhs), keep: true };
-+    case binaryOperatorType.bitand:
-+    case binaryOperatorType.bitor:
-+    case binaryOperatorType.bitxor: {
-+      if (
-+        !Number.isSafeInteger(lhs) ||
-+        !Number.isSafeInteger(rhs) ||
-+        lhs < 0 ||
-+        rhs < 0
-+      ) {
-+        return { value: NaN, keep: true };
-+      }
-+      // BigInt avoids the 32-bit truncation of JavaScript number bitwise operators.
-+      const l = BigInt(lhs);
-+      const r = BigInt(rhs);
-+      let value: bigint;
-+      switch (op) {
-+        case binaryOperatorType.bitand:
-+          value = l & r;
-+          break;
-+        case binaryOperatorType.bitor:
-+          value = l | r;
-+          break;
-+        default:
-+          value = l ^ r;
-+      }
-+      return { value: Number(value), keep: true };
-+    }
-     default:
-       throw new Error("invalid binop");
-   }
-@@ -196,6 +223,9 @@ const shouldDropMetricName = (op: binaryOperatorType): boolean =>
-     binaryOperatorType.pow,
-     binaryOperatorType.mod,
-     binaryOperatorType.atan2,
-+    binaryOperatorType.bitand,
-+    binaryOperatorType.bitor,
-+    binaryOperatorType.bitxor,
-   ].includes(op);
+-	a.Flag("enable-feature", "Comma separated feature names to enable. Valid options: concurrent-rule-eval, created-timestamp-zero-ingestion, delayed-compaction, exemplar-storage, extra-scrape-metrics, histograms-st-encoding, memory-snapshot-on-shutdown, metadata-wal-records, old-ui, openmetrics2, otlp-deltatocumulative, otlp-native-delta-ingestion, promql-binop-fill-modifiers, promql-delayed-name-removal, promql-experimental-functions, promql-native-histograms-as-classic, promql-per-step-stats, promql-unquoted-utf8-names, query-cost, search-api, st-storage, st-synthesis, type-and-unit-labels, use-start-timestamps, use-uncached-io, xor2-encoding, zstd-scrape. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details.").
++	a.Flag("enable-feature", "Comma separated feature names to enable. Valid options: concurrent-rule-eval, created-timestamp-zero-ingestion, delayed-compaction, exemplar-storage, extra-scrape-metrics, histograms-st-encoding, memory-snapshot-on-shutdown, metadata-wal-records, old-ui, openmetrics2, otlp-deltatocumulative, otlp-native-delta-ingestion, promql-binop-fill-modifiers, promql-delayed-name-removal, promql-experimental-functions, promql-native-histograms-as-classic, promql-per-step-stats, query-cost, search-api, st-storage, st-synthesis, type-and-unit-labels, use-start-timestamps, use-uncached-io, xor2-encoding, zstd-scrape. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details.").
+ 		StringsVar(&cfg.featureList)
  
- // Compute the time series labels for the result metric.
+ 	a.Flag("agent", "Run Prometheus in 'Agent mode'.").BoolVar(&agentMode)
 ```
 
-**File**: `web/ui/mantine-ui/src/promql/format.tsx` (modified, +9/-1)
+**File**: `cmd/prometheus/testdata/features.json` (modified, +1/-1)
 ```diff
-@@ -451,7 +451,15 @@ const formatNodeInternal = (
-               showChildren,
-               childMaxDepth
-             )}{" "}
--          {["atan2", "and", "or", "unless"].includes(node.op) ? (
-+          {[
-+            "atan2",
-+            "bitand",
-+            "bitor",
-+            "bitxor",
-+            "and",
-+            "or",
-+            "unless",
-+          ].includes(node.op) ? (
-             <span className="promql-keyword">{node.op}</span>
-           ) : (
-             <span className="promql-operator">{node.op}</span>
+@@ -48,7 +48,7 @@
+     "smoothed": true,
+     "subqueries": true,
+     "type_and_unit_labels": false,
+-    "unquoted_utf8_names": false,
++    "unquoted_utf8_names": true,
+     "without": true
+   },
+   "promql_functions": {
 ```
 
-**File**: `web/ui/mantine-ui/src/promql/utils.ts` (modified, +3/-0)
+**File**: `cmd/promtool/main.go` (modified, +2/-2)
 ```diff
-@@ -43,6 +43,9 @@ const binOpPrecedence = {
-   [binaryOperatorType.or]: 6,
-   [binaryOperatorType.unless]: 5,
-   [binaryOperatorType.atan2]: 2,
-+  [binaryOperatorType.bitand]: 2,
-+  [binaryOperatorType.bitor]: 2,
-+  [binaryOperatorType.bitxor]: 2,
- };
+@@ -324,7 +324,7 @@ func main() {
+ 	promQLLabelsDeleteQuery := promQLLabelsDeleteCmd.Arg("query", "PromQL query.").Required().String()
+ 	promQLLabelsDeleteName := promQLLabelsDeleteCmd.Arg("name", "Name of the label to delete.").Required().String()
  
- export const maybeParenthesizeBinopChild = (
-```
-
-**File**: `web/ui/module/codemirror-promql/src/complete/hybrid.test.ts` (modified, +18/-0)
-```diff
-@@ -35,6 +35,24 @@ import nock from 'nock';
+-	featureList := app.Flag("enable-feature", "Comma separated feature names to enable. Valid options: promql-experimental-functions, promql-delayed-name-removal, promql-unquoted-utf8-names. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details").Default("").Strings()
++	featureList := app.Flag("enable-feature", "Comma separated feature names to enable. Valid options: promql-experimental-functions, promql-delayed-name-removal. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details").Default("").Strings()
  
- describe('analyzeCompletion test', () => {
-   const testCases = [
-+    {
-+      title: 'complete bitand operator',
-+      expr: 'metric bitand',
-+      pos: 13,
-+      expectedContext: [{ kind: ContextKind.BinOp }],
-+    },
-+    {
-+      title: 'complete bitor operator',
-+      expr: 'metric bitor',
-+      pos: 12,
-+      expectedContext: [{ kind: ContextKind.BinOp }],
-+    },
-+    {
-+      title: 'complete bitxor operator',
-+      expr: 'metric bitxor',
-+      pos: 13,
-+      expectedContext: [{ kind: ContextKind.BinOp }],
-+    },
-     {
-       title: 'empty expr',
-       expr: '',
+ 	documentationCmd := app.Command("write-documentation", "Generate command line documentation. Internal use.").Hidden()
+ 
+@@ -367,7 +367,7 @@ func main() {
+ 		for o := range strings.SplitSeq(f, ",") {
+ 			switch o {
+ 			case "promql-unquoted-utf8-names":
+-				promtoolParserOpts.EnableUnquotedUTF8Names = true
++				// This feature is now permanently enabled and therefore a no-op.
+ 			case "promql-experimental-functions":
+ 				promtoolParserOpts.EnableExperimentalFunctions = true
+ 			case "promql-delayed-name-removal":
 ```
 
-**File**: `web/ui/module/codemirror-promql/src/complete/hybrid.ts` (modified, +6/-0)
+**File**: `docs/command-line/prometheus.md` (modified, +1/-1)
 ```diff
-@@ -20,6 +20,9 @@ import {
-   AggregateModifier,
-   And,
-   BinaryExpr,
-+  BitAnd,
-+  BitOr,
-+  BitXor,
-   BoolModifier,
-   Div,
-   Eql,
-@@ -683,6 +686,9 @@ export function analyzeCompletion(state: EditorState, node: SyntaxNode, pos: num
-     case And:
-     case Unless:
-     case Or:
-+    case BitAnd:
-+    case BitOr:
-+    case BitXor:
-     case BinaryExpr:
-       result.push({ kind: ContextKind.BinOp });
-       break;
+@@ -64,7 +64,7 @@ The Prometheus monitoring server
+ | <code class="text-nowrap">--query.timeout</code> | Maximum time a query may take before being aborted. Use with server mode only. | `2m` |
+ | <code class="text-nowrap">--query.max-concurrency</code> | Maximum number of queries executed concurrently. Use with server mode only. | `20` |
+ | <code class="text-nowrap">--query.max-samples</code> | Maximum number of samples a single query can load into memory. Note that queries will fail if they try to load more samples than this into memory, so this also limits the number of samples a query can return. Use with server mode only. | `50000000` |
+-| <code class="text-nowrap">--enable-feature</code> <code class="text-nowrap">...</code> | Comma separated feature names to enable. Valid options: concurrent-rule-eval, created-timestamp-zero-ingestion, delayed-compaction, exemplar-storage, extra-scrape-metrics, histograms-st-encoding, memory-snapshot-on-shutdown, metadata-wal-records, old-ui, openmetrics2, otlp-deltatocumulative, otlp-native-delta-ingestion, promql-binop-fill-modifiers, promql-delayed-name-removal, promql-experimental-functions, promql-native-histograms-as-classic, promql-per-step-stats, promql-unquoted-utf8-names, query-cost, search-api, st-storage, st-synthesis, type-and-unit-labels, use-start-timestamps, use-uncached-io, xor2-encoding, zstd-scrape. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details. |  |
++| <code class="text-nowrap">--enable-feature</code> <code class="text-nowrap">...</code> | Comma separated feature names to enable. Valid options: concurrent-rule-eval, created-timestamp-zero-ingestion, delayed-compaction, exemplar-storage, extra-scrape-metrics, histograms-st-encoding, memory-snapshot-on-shutdown, metadata-wal-records, old-ui, openmetrics2, otlp-deltatocumulative, otlp-native-delta-ingestion, promql-binop-fill-modifiers, promql-delayed-name-removal, promql-experimental-functions, promql-native-histograms-as-classic, promql-per-step-stats, query-cost, search-api, st-storage, st-synthesis, type-and-unit-labels, use-start-timestamps, use-uncached-io, xor2-encoding, zstd-scrape. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details. |  |
+ | <code class="text-nowrap">--agent</code> | Run Prometheus in 'Agent mode'. |  |
+ | <code class="text-nowrap">--log.level</code> | Only log messages with the given severity or above. One of: [debug, info, warn, error] Deprecated: set runtime.log_level in the configuration file instead. | `info` |
+ | <code class="text-nowrap">--log.format</code> | Output format of log messages. One of: [logfmt, json] | `logfmt` |
 ```
 
-**File**: `web/ui/module/codemirror-promql/src/complete/promql.terms.ts` (modified, +3/-0)
+**File**: `docs/command-line/promtool.md` (modified, +1/-1)
 ```diff
-@@ -48,6 +48,9 @@ export const binOpTerms = [
-   { label: '<=' },
-   { label: '!=' },
-   { label: 'atan2' },
-+  { label: 'bitand' },
-+  { label: 'bitor' },
-+  { label: 'bitxor' },
-   { label: 'and' },
-   { label: 'or' },
-   { label: 'unless' },
+@@ -12,7 +12,7 @@ Tooling for the Prometheus monitoring system.
+ | <code class="text-nowrap">-h</code>, <code class="text-nowrap">--help</code> | Show context-sensitive help (also try --help-long and --help-man). |
+ | <code class="text-nowrap">--version</code> | Show application version. |
+ | <code class="text-nowrap">--experimental</code> | Enable experimental commands. |
+-| <code class="text-nowrap">--enable-feature</code> <code class="text-nowrap">...</code> | Comma separated feature names to enable. Valid options: promql-experimental-functions, promql-delayed-name-removal, promql-unquoted-utf8-names. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details |
++| <code class="text-nowrap">--enable-feature</code> <code class="text-nowrap">...</code> | Comma separated feature names to enable. Valid options: promql-experimental-functions, promql-delayed-name-removal. See https://prometheus.io/docs/prometheus/latest/feature_flags/ for more details |
+ 
+ 
+ 
+```
+
+**File**: `docs/feature_flags.md` (modified, +0/-18)
+```diff
+@@ -53,24 +53,6 @@ The Prometheus server exposes two counters for observability: `prometheus_engine
+ When disabled in either the engine or the query, per-step statistics are not
+ computed at all.
+ 
+-## Unquoted UTF-8 names in PromQL
+-
+-`--enable-feature=promql-unquoted-utf8-names`
+-
+-Allows Unicode letters and dots after the first character in unquoted metric and
+-label names. For example:
+-
+-```promql
+-http.server.request.duration{service.name="api"}
+-温度{場所="東京"}
+-sum by (service.name) (rate(http.server.requests[5m]))
+-requests_total + on (service.name) group_left (équipe) service_info
+-```
+-
+-See [metric and label names](querying/basics.md#metric-and-label-names) for the
+-character rules and compatibility details. This flag is also supported by
+-promtool when checking or testing rules and parsing or formatting queries.
+-
+ ## Experimental PromQL functions
+ 
+ `--enable-feature=promql-experimental-functions`
+```
+
+**File**: `docs/querying/basics.md` (modified, +3/-4)
+```diff
+@@ -356,14 +356,13 @@ syntax can be quoted. A quoted metric name goes inside the selector's braces:
+ {"http.server.request.duration", "service.name"="api"}
+ ```
+ 
+-With [`--enable-feature=promql-unquoted-utf8-names`](../feature_flags.md#unquoted-utf-8-names-in-promql),
+-the same selector can be written as:
++The same selector can be written without quotes:
+ 
+ ```promql
+ http.server.request.duration{service.name="api"}
+ ```
+ 
+-When this feature is enabled, unquoted names follow these rules:
++Unquoted names follow these rules:
+ 
+ | Name | First character | Subsequent characters |
+ | --- | --- | --- |
+@@ -395,7 +394,7 @@ a different name.
+ 
+ Quoted and unquoted spellings of the same name select the same series. Quoting
+ remains supported and is required when targeting older PromQL parsers or servers
+-without this feature enabled. The feature does not change storage, ingestion
++without support for these names. These syntax rules do not change storage, ingestion
+ validation, text exposition, or metric name translation.
+ 
+ ### Range Vector Selectors
+```
+
+---
+
+### Incident Patch 3: `3751fccd` (2026-10-29)
+**Commit Message**: docs: fix flag name for start timestamp processing in API reference (#20224)
+
+The two X-Prometheus-Use-Start-Timestamps header entries name the
+engine-level setting --promql.use-start-timestamps. No such flag exists.
+The setting is the use-start-timestamps feature flag, enabled with
+--enable-feature=use-start-timestamps, as feature_flags.md documents.
+
+Signed-off-by: Gauvain CLAUSS <[REDACTED_EMAIL]>
+
+**File**: `docs/querying/api.md` (modified, +2/-2)
+```diff
+@@ -113,7 +113,7 @@ URL query parameters:
+ 
+ Optional HTTP request headers:
+ 
+-- `X-Prometheus-Use-Start-Timestamps: <bool>`: Override the engine-level start timestamp processing setting (`--promql.use-start-timestamps`) for this query. When set to `true`, functions such as `rate()` will use start timestamps from ingested data. When set to `false`, start timestamp processing is disabled for this query. Optional. If omitted, the engine-level default is used.
++- `X-Prometheus-Use-Start-Timestamps: <bool>`: Override the engine-level start timestamp processing setting (`--enable-feature=use-start-timestamps`) for this query. When set to `true`, functions such as `rate()` will use start timestamps from ingested data. When set to `false`, start timestamp processing is disabled for this query. Optional. If omitted, the engine-level default is used.
+ 
+ The current server time is used if the `time` parameter is omitted.
+ 
+@@ -198,7 +198,7 @@ URL query parameters:
+ 
+ Optional HTTP request headers:
+ 
+-- `X-Prometheus-Use-Start-Timestamps: <bool>`: Override the engine-level start timestamp processing setting (`--promql.use-start-timestamps`) for this query. When set to `true`, functions such as `rate()` will use start timestamps from ingested data. When set to `false`, start timestamp processing is disabled for this query. Optional. If omitted, the engine-level default is used.
++- `X-Prometheus-Use-Start-Timestamps: <bool>`: Override the engine-level start timestamp processing setting (`--enable-feature=use-start-timestamps`) for this query. When set to `true`, functions such as `rate()` will use start timestamps from ingested data. When set to `false`, start timestamp processing is disabled for this query. Optional. If omitted, the engine-level default is used.
+ 
+ You can URL-encode these parameters directly in the request body by using the `POST` method and
+ `Content-Type: application/x-www-form-urlencoded` header. This is useful when specifying a large
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20227** (2026-10-29): docs: simplify 3.16 changelog PR references (@roidelapluie)
+- **PR #20224** (2026-10-29): docs: fix flag name for start timestamp processing in API reference (@gauvainw)
+- **PR #20223** (2026-10-29): fix(storage/remote): fall back to WAL metadata when type-and-unit labels are empty (@bwplotka)
+- **PR #20217** (2026-10-29): chore: point pr-triage-board skill link to main branch (@bwplotka)
 - **PR #20215** (2026-10-28): ui: support PromQL bitwise operators (@roidelapluie)
 - **PR #20209** (2026-10-28): release-3.16: Cherrypick 32bit CI fix (@ywwg)
-- **PR #20208** (2026-10-27): release-3.16: Bump rc version for CI (@ywwg)
-- **PR #20206** (2026-10-28): discovery/linode: fix transfer allowance conversion (@FayezBast)
-- **PR #20203** (2026-10-28): fix(ui):zero-only histogram rendering (@FayezBast)
-- **PR #20201** (2026-10-27): ci: pass --security-opt seccomp=unconfined to 386 test container (@bwplotka)
 
 ---
 
@@ -2288,76 +1889,28 @@ Signed-off-by: Julien Pivotto <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui: support unquoted Unicode and dotted PromQL names (#20170)
+## X. storage/remote): fall back to WAL metadata when type-and-unit labels are empty (
 
 **RULE**:
-When implementing operations in `web/ui/module/codemirror-promql/src/complete/hybrid.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/feature_flags.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `660c56b1`: ui: support unquoted Unicode and dotted PromQL names (#20170). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d6909724`: storage/remote): fall back to WAL metadata when type-and-unit labels are empty (#20223). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/ui/module/codemirror-promql/src/complete/hybrid.test.ts`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/feature_flags.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    {
-      title: 'dotted Unicode metric completion',
-      expr: '温度.total',
-      pos: 8,
-      expectedContext: [
-        { kind: ContextKind.MetricName, metricName: '温度.total' },
-        { kind: ContextKind.Function },
-        { kind: ContextKind.Aggregation },
-        { kind: ContextKind.Number },
-      ],
-    },
-    {
-      title: 'dotted Unicode label value completion',
-      expr: '温度.total{場所.name="東"}',
-      pos: 19,
-      expectedContext: [
-        {
-          kind: ContextKind.LabelValue,
-          metricName: '温度.total',
-          labelName: '場所.name',
-          matchers: [{ name: '場所.name', type: EqlSingle, value: '東' }],
-        },
-      ],
-    },
-        validFor: /^[\p{L}0-9_:.]+$/u,
-        validFor: /^[\p{L}0-9_:.]+$/u,
-        validFor: /^[\p{L}0-9_:.]+$/u,
-        validFor: /^[\p{L}0-9_:.]+$/u,
-        validFor: /^[\p{L}0-9_:.]+$/u,
-        validFor: /^[\p{L}0-9_:.]+$/u,
-        validFor: /^[\p{L}0-9_:.]+$/u,
-        validFor: /^[\p{L}0-9_:.]+$/u,
-        validFor: /^[\p{L}0-9_:.]+$/u,
-        validFor: /^[\p{L}0-9_:.]+$/u,
-        validFor: /^[\p{L}0-9_:.]+$/u,
-        validFor: /^[\p{L}0-9_:.]+$/u,
-        validFor: /^[\p{L}0-9_:.]+$/u,
+If either `__type__` or `__unit__` is missing on the series, for example when dropped via relabeling, Remote Write 2.0 falls back to the corresponding value from the metadata record.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        validFor: /^[a-zA-Z0-9_:]+$/,
-        validFor: /^[a-zA-Z0-9_:]+$/,
-        validFor: /^[a-zA-Z0-9_:]+$/,
-        validFor: /^[a-zA-Z0-9_:]+$/,
-        validFor: /^[a-zA-Z0-9_:]+$/,
-        validFor: /^[a-zA-Z0-9_:]+$/,
-        validFor: /^[a-zA-Z0-9_:]+$/,
-        validFor: /^[a-zA-Z0-9_:]+$/,
-        validFor: /^[a-zA-Z0-9_:]+$/,
-        validFor: /^[a-zA-Z0-9_:]+$/,
-        validFor: /^[a-zA-Z0-9_:]+$/,
-        validFor: /^[a-zA-Z0-9_:]+$/,
-        validFor: /^[a-zA-Z0-9_:]+$/,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `660c56b1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d6909724` are properly handled with clean fallback behavior.
