@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T06:57:22.140Z",
-  "total_cycles_completed": 6122,
-  "total_learnings_persisted": 6122,
-  "total_rules_promoted": 5613,
+  "last_updated": "2026-10-30T07:05:28.795Z",
+  "total_cycles_completed": 6123,
+  "total_learnings_persisted": 6123,
+  "total_rules_promoted": 5616,
   "history": [
-    {
-      "timestamp": "2026-10-28T21:43:30.682Z",
-      "repository": "oxc-project/oxc",
-      "learningId": "learn-github-oxc-project-oxc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T21:43:37.951Z",
       "repository": "nats-io/nats-server",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-30T06:57:22.140Z",
       "repository": "joreilly/Confetti",
       "learningId": "learn-github-joreilly-confetti",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T07:05:28.795Z",
+      "repository": "bitnami/sealed-secrets",
+      "learningId": "learn-github-bitnami-sealed-secrets",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

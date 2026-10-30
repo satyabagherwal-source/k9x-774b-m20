@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T06:57:22.053Z",
+  "last_updated": "2026-10-30T07:05:28.719Z",
   "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4692,8 +4692,8 @@
       "slug": "bitnami-sealed-secrets",
       "platform": "github",
       "source_url": "https://github.com/bitnami/sealed-secrets",
-      "source_version": "c58a60f0",
-      "content_hash": "ed66db44b7086880face3c974a16bfcc0bc122f1d10e419ea194ba5b2f15ad88",
+      "source_version": "c22f5839",
+      "content_hash": "41e6c1e6e657ddc183ffb48e2cac73acbf9bb66f2a0f265e48bc3b4c5ef5a2df",
       "dossier_path": "07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md",
       "promoted_rules": [
@@ -4706,6 +4706,21 @@
           "number": 4643,
           "title": "Release carvel package 2.22.0 (#2085)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5644,
+          "title": "Cryptographic Scope-Binding via Authenticated Encryption Labels",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5645,
+          "title": "Mandatory Strategic-Merge Configuration Stripping on Ingest Pipelines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5646,
+          "title": "Template Engine Execution Hardening & Environment Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4713,7 +4728,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T18:19:11.676Z",
+      "verified_at": "2026-10-30T07:05:28.707Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -151228,6 +151243,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T06:57:22.035Z"
+    },
+    "rule-5644": {
+      "learning_id": "rule-5644",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5644,
+      "title": "Cryptographic Scope-Binding via Authenticated Encryption Labels",
+      "source_url": "https://github.com/bitnami/sealed-secrets",
+      "source_version": "c22f5839",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:05:28.707Z"
+    },
+    "rule-5645": {
+      "learning_id": "rule-5645",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5645,
+      "title": "Mandatory Strategic-Merge Configuration Stripping on Ingest Pipelines",
+      "source_url": "https://github.com/bitnami/sealed-secrets",
+      "source_version": "c22f5839",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:05:28.707Z"
+    },
+    "rule-5646": {
+      "learning_id": "rule-5646",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5646,
+      "title": "Template Engine Execution Hardening & Environment Isolation",
+      "source_url": "https://github.com/bitnami/sealed-secrets",
+      "source_version": "c22f5839",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T07:05:28.707Z"
     }
   },
   "aliases": {

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-CQBR",
-    "timestamp": "2026-10-28T02:13:16.743Z",
-    "repository": "msasikanth/twine",
-    "learningId": "learn-github-msasikanth-twine",
-    "contentHash": "a5866c2bc88b125fccfa795d4b7131cbc30ca782a10220746d61c6f66a57ba6c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-CRLX",
     "timestamp": "2026-10-28T02:13:18.405Z",
     "repository": "convaiinnovations/laya",
@@ -7490,6 +7475,21 @@
     "repository": "joreilly/Confetti",
     "learningId": "learn-github-joreilly-confetti",
     "contentHash": "0b0ba83c3d77dc76dcd731851614d8f5aeb561eac9d5c9ad0d12fc8a41c5f496",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-O7H1",
+    "timestamp": "2026-10-30T07:05:28.789Z",
+    "repository": "bitnami/sealed-secrets",
+    "learningId": "learn-github-bitnami-sealed-secrets",
+    "contentHash": "41e6c1e6e657ddc183ffb48e2cac73acbf9bb66f2a0f265e48bc3b4c5ef5a2df",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T06:57:24.691Z",
-    "lastVerified": "2026-10-30T06:57:24.691Z",
+    "lastChecked": "2026-10-30T07:05:31.339Z",
+    "lastVerified": "2026-10-30T07:05:31.339Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -200,11 +200,21 @@
     "lastVerified": "2026-10-28T02:54:45.214Z"
   },
   "bitnami-sealed-secrets": {
-    "name": "sealed-secrets",
+    "name": "bitnami/sealed-secrets",
     "officialUrl": "https://github.com/bitnami/sealed-secrets",
-    "lastChecked": "2026-10-28T19:31:47.525Z",
-    "revisionIdentifier": "c58a60f0",
-    "lastVerified": "2026-10-28T19:31:47.525Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-30T07:03:32.198Z",
+    "lastVerified": "2026-10-30T07:03:32.198Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-bitnami-sealed-secrets",
+    "contentHash": "41e6c1e6e657ddc183ffb48e2cac73acbf9bb66f2a0f265e48bc3b4c5ef5a2df",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "microsoft-security-101": {
     "name": "Security-101",
@@ -404,8 +414,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T06:36:31.727Z",
-    "lastVerified": "2026-10-30T06:36:31.727Z",
+    "lastChecked": "2026-10-30T07:03:35.812Z",
+    "lastVerified": "2026-10-30T07:03:35.812Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1508,12 +1518,12 @@
     "lastVerified": "2026-10-28T21:50:16.352Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "zama-ai/tfhe-rs",
+    "name": "tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T00:46:50.235Z",
-    "lastVerified": "2026-10-30T00:46:50.235Z",
+    "lastChecked": "2026-10-30T07:03:30.890Z",
+    "lastVerified": "2026-10-30T07:03:30.890Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1522,7 +1532,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6753c2a7"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -4393,9 +4404,9 @@
   "webrtc-rs-webrtc": {
     "name": "webrtc",
     "officialUrl": "https://github.com/webrtc-rs/webrtc",
-    "lastChecked": "2026-10-28T14:35:50.751Z",
+    "lastChecked": "2026-10-30T07:03:20.798Z",
     "revisionIdentifier": "1c07e9f0",
-    "lastVerified": "2026-10-28T14:35:50.751Z"
+    "lastVerified": "2026-10-30T07:03:20.798Z"
   },
   "hf-openai-gpt-oss-20b": {
     "name": "openai/gpt-oss-20b",
@@ -6276,9 +6287,9 @@
   "postgresml-postgresml": {
     "name": "postgresml",
     "officialUrl": "https://github.com/postgresml/postgresml",
-    "lastChecked": "2026-10-28T18:27:28.257Z",
+    "lastChecked": "2026-10-30T07:03:33.332Z",
     "revisionIdentifier": "caf2b6cc",
-    "lastVerified": "2026-10-28T18:27:28.257Z"
+    "lastVerified": "2026-10-30T07:03:33.332Z"
   },
   "topgrade-rs-topgrade": {
     "name": "topgrade-rs/topgrade",
@@ -9409,5 +9420,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "trybyte-app-sitemap-validator": {
+    "name": "sitemap-validator",
+    "officialUrl": "https://github.com/trybyte-app/sitemap-validator",
+    "lastChecked": "2026-10-30T07:03:23.304Z",
+    "revisionIdentifier": "a7fc287e",
+    "lastVerified": "2026-10-30T07:03:23.304Z"
+  },
+  "touchlab-kermit": {
+    "name": "Kermit",
+    "officialUrl": "https://github.com/touchlab/Kermit",
+    "lastChecked": "2026-10-30T07:03:25.809Z",
+    "revisionIdentifier": "3a4042f3",
+    "lastVerified": "2026-10-30T07:03:25.809Z"
   }
 }

