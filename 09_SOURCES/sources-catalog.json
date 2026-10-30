@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "5d288a99",
+    "sourceVersion": "a59cd61f",
     "license": "NOASSERTION",
-    "contentHash": "66237bc5972e3435e3b88e0f0a2d257b6331933e119b41785343dd43773b6983",
-    "lastHarvestedAt": "2026-10-30T00:01:13.666Z",
+    "contentHash": "7a58c5023db894bb4c5eed2b11f509ca37e9647d1470d4fc4a2272b643ff6368",
+    "lastHarvestedAt": "2026-10-30T06:23:28.957Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "f2876ace",
+    "sourceVersion": "5f4d2090",
     "license": "Apache-2.0",
-    "contentHash": "256ef83e54d7b4239ab13149fe174215582f079c396cbede281d85e76142bca9",
-    "lastHarvestedAt": "2026-10-28T13:49:57.494Z",
+    "contentHash": "61d059842e91ed8cf88445978cf05c32293e69c1d85f02698a835d22d8fffc87",
+    "lastHarvestedAt": "2026-10-30T06:23:17.845Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "84f84d1f",
+    "sourceVersion": "551d84e7",
     "license": "Apache-2.0",
-    "contentHash": "2f346f7ed42834d07a67ecfa3c9146e458e85abc91bb353c9b1b5bd2a3c9aadc",
-    "lastHarvestedAt": "2026-10-28T17:35:27.745Z",
+    "contentHash": "d85f7d0d7335daf8180186d998e0b32bd1fca4571832e720871dea8a21813634",
+    "lastHarvestedAt": "2026-10-30T06:23:32.511Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "f0af1883",
+    "sourceVersion": "073d2cd5",
     "license": "MPL-2.0",
-    "contentHash": "a56ddbca3d0d61ed94ce4cc118e85baaa8912bf1bb0ecf398d4db39dfb2e05c0",
-    "lastHarvestedAt": "2026-10-28T18:34:39.670Z",
+    "contentHash": "bc670c8b8eefe32e4b10f3603619d1f5774146e2b706e73993fb21fba43c4599",
+    "lastHarvestedAt": "2026-10-30T06:23:24.811Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {

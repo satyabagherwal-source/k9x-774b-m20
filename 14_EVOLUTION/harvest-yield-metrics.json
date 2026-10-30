@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T06:16:38.739Z",
-  "total_cycles_completed": 6105,
-  "total_learnings_persisted": 6105,
-  "total_rules_promoted": 5594,
+  "last_updated": "2026-10-30T06:23:32.516Z",
+  "total_cycles_completed": 6109,
+  "total_learnings_persisted": 6109,
+  "total_rules_promoted": 5598,
   "history": [
-    {
-      "timestamp": "2026-10-28T20:44:29.297Z",
-      "repository": "Kong/kubernetes-ingress-controller",
-      "learningId": "learn-github-kong-kubernetes-ingress-controller",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T20:44:35.016Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T20:50:45.127Z",
-      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T20:50:54.410Z",
-      "repository": "flux-iac/tofu-controller",
-      "learningId": "learn-github-flux-iac-tofu-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T20:57:33.316Z",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-30T06:16:38.739Z",
       "repository": "linkerd/linkerd2",
       "learningId": "learn-github-linkerd-linkerd2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:23:17.850Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:23:24.817Z",
+      "repository": "opentofu/opentofu",
+      "learningId": "learn-github-opentofu-opentofu",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:23:28.963Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:23:32.516Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

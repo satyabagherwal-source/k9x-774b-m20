@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T06:16:38.742Z",
+  "last_updated": "2026-10-30T06:23:32.521Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "66237bc5972e3435e3b88e0f0a2d257b6331933e119b41785343dd43773b6983",
-      "verified_at": "2026-10-30T00:01:13.675Z",
+      "content_hash": "7a58c5023db894bb4c5eed2b11f509ca37e9647d1470d4fc4a2272b643ff6368",
+      "verified_at": "2026-10-30T06:23:28.966Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T00:01:13.675Z"
+      "last_updated": "2026-10-30T06:23:28.966Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -7911,14 +7911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actix-actix-web",
-      "content_hash": "256ef83e54d7b4239ab13149fe174215582f079c396cbede281d85e76142bca9",
-      "verified_at": "2026-10-28T13:49:57.501Z",
+      "content_hash": "61d059842e91ed8cf88445978cf05c32293e69c1d85f02698a835d22d8fffc87",
+      "verified_at": "2026-10-30T06:23:17.854Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T13:49:57.501Z"
+      "last_updated": "2026-10-30T06:23:17.854Z"
     },
     "wix/react-native-ui-lib": {
       "repository": "wix/react-native-ui-lib",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "2f346f7ed42834d07a67ecfa3c9146e458e85abc91bb353c9b1b5bd2a3c9aadc",
-      "verified_at": "2026-10-28T17:35:27.754Z",
+      "content_hash": "d85f7d0d7335daf8180186d998e0b32bd1fca4571832e720871dea8a21813634",
+      "verified_at": "2026-10-30T06:23:32.520Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T17:35:27.754Z"
+      "last_updated": "2026-10-30T06:23:32.520Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -9636,14 +9636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-opentofu-opentofu",
-      "content_hash": "a56ddbca3d0d61ed94ce4cc118e85baaa8912bf1bb0ecf398d4db39dfb2e05c0",
-      "verified_at": "2026-10-28T18:34:39.677Z",
+      "content_hash": "bc670c8b8eefe32e4b10f3603619d1f5774146e2b706e73993fb21fba43c4599",
+      "verified_at": "2026-10-30T06:23:24.820Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:34:39.677Z"
+      "last_updated": "2026-10-30T06:23:24.820Z"
     },
     "surrealdb/surrealdb": {
       "repository": "surrealdb/surrealdb",

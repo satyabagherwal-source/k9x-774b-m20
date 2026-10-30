@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T06:16:38.689Z",
+  "last_updated": "2026-10-30T06:23:32.435Z",
   "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -472,8 +472,8 @@
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "f2876ace",
-      "content_hash": "256ef83e54d7b4239ab13149fe174215582f079c396cbede281d85e76142bca9",
+      "source_version": "5f4d2090",
+      "content_hash": "61d059842e91ed8cf88445978cf05c32293e69c1d85f02698a835d22d8fffc87",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "promoted_rules": [
@@ -506,6 +506,11 @@
           "number": 5298,
           "title": "build(deps): bump taiki-e/install-action from 2.87.30 to 2.87.31 (#4363)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5625,
+          "title": "multipart): accept transport padding after boundary delimiters (#4358)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -513,7 +518,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T13:49:57.432Z",
+      "verified_at": "2026-10-30T06:23:17.745Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13123,8 +13128,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "5d288a99",
-      "content_hash": "66237bc5972e3435e3b88e0f0a2d257b6331933e119b41785343dd43773b6983",
+      "source_version": "a59cd61f",
+      "content_hash": "7a58c5023db894bb4c5eed2b11f509ca37e9647d1470d4fc4a2272b643ff6368",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -13262,6 +13267,11 @@
           "number": 5563,
           "title": "Multi-Process Crash-Loop Breaker Deliberate Stop Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5627,
+          "title": "deps): bump rustls-webpki to 0.103.16 and move gateway image off Debian 11 (#603",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13269,7 +13279,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T00:01:13.565Z",
+      "verified_at": "2026-10-30T06:23:28.830Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42760,8 +42770,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "f0af1883",
-      "content_hash": "a56ddbca3d0d61ed94ce4cc118e85baaa8912bf1bb0ecf398d4db39dfb2e05c0",
+      "source_version": "073d2cd5",
+      "content_hash": "bc670c8b8eefe32e4b10f3603619d1f5774146e2b706e73993fb21fba43c4599",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -42804,6 +42814,11 @@
           "number": 5364,
           "title": "occasional failure in TestContext2Apply_destroyThenUpdate",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5626,
+          "title": "Update cosign (#4791)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42811,7 +42826,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:34:39.591Z",
+      "verified_at": "2026-10-30T06:23:24.704Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57102,8 +57117,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "84f84d1f",
-      "content_hash": "2f346f7ed42834d07a67ecfa3c9146e458e85abc91bb353c9b1b5bd2a3c9aadc",
+      "source_version": "551d84e7",
+      "content_hash": "d85f7d0d7335daf8180186d998e0b32bd1fca4571832e720871dea8a21813634",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -57156,6 +57171,11 @@
           "number": 5353,
           "title": "bundle controller crash on stale spare node operations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5628,
+          "title": "unlock remove race",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57163,7 +57183,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T17:35:27.654Z",
+      "verified_at": "2026-10-30T06:23:32.416Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150867,6 +150887,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T06:16:38.677Z"
+    },
+    "rule-5625": {
+      "learning_id": "rule-5625",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5625,
+      "title": "multipart): accept transport padding after boundary delimiters (#4358)",
+      "source_url": "https://github.com/actix/actix-web",
+      "source_version": "5f4d2090",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:23:17.745Z"
+    },
+    "rule-5626": {
+      "learning_id": "rule-5626",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5626,
+      "title": "Update cosign (#4791)",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "073d2cd5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:23:24.704Z"
+    },
+    "rule-5627": {
+      "learning_id": "rule-5627",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5627,
+      "title": "deps): bump rustls-webpki to 0.103.16 and move gateway image off Debian 11 (#603",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "a59cd61f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:23:28.830Z"
+    },
+    "rule-5628": {
+      "learning_id": "rule-5628",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5628,
+      "title": "unlock remove race",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "551d84e7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:23:32.416Z"
     }
   },
   "aliases": {

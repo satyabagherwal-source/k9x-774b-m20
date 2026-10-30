@@ -6128,3 +6128,7 @@
 | `CYCLE-20261030-PBDE` | `2026-10-30T06:10:21.266Z` | `JuulLabs/kable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5622` | Yes (`2bfc7acb...`) |
 | `CYCLE-20261030-XA8B` | `2026-10-30T06:16:33.035Z` | `kucherenko/jscpd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5623` | Yes (`ee5cbb8f...`) |
 | `CYCLE-20261030-XEML` | `2026-10-30T06:16:38.733Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5624` | Yes (`3a64b4a4...`) |
+| `CYCLE-20261030-5YKX` | `2026-10-30T06:23:17.841Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5625` | Yes (`61d05984...`) |
+| `CYCLE-20261030-63YF` | `2026-10-30T06:23:24.807Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5626` | Yes (`bc670c8b...`) |
+| `CYCLE-20261030-675M` | `2026-10-30T06:23:28.954Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5627` | Yes (`7a58c502...`) |
+| `CYCLE-20261030-69WB` | `2026-10-30T06:23:32.507Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5628` | Yes (`d85f7d0d...`) |

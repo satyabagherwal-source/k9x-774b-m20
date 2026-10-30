@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-S6MT",
-    "timestamp": "2026-10-28T01:29:18.485Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "1968815bb3f19c5a219baeadb5cc2b65ca29fd859240b1eaa6c149a85c591af6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-0P7R",
-    "timestamp": "2026-10-28T01:35:55.815Z",
-    "repository": "o2sh/onefetch",
-    "learningId": "learn-github-o2sh-onefetch",
-    "contentHash": "aabba09dc0425037d2ae0a9db76aac80f8fc8badfdf1cc378b7756684552ce42",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-0VXL",
-    "timestamp": "2026-10-28T01:36:04.521Z",
-    "repository": "mudler/locate-anything.cpp-gguf",
-    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-    "contentHash": "f3f368914fc9e07d4e7f508ec6544bd3d34e770ffac235c7f43ca3404dc56d92",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-0YUZ",
-    "timestamp": "2026-10-28T01:36:08.315Z",
-    "repository": "StarTrail-org/LEANN",
-    "learningId": "learn-github-startrail-org-leann",
-    "contentHash": "7cf2e5452f54e8f930dc0827b88420c5b16584863a43cf95c2fed28f94b2a064",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-9ABS",
     "timestamp": "2026-10-28T01:42:36.424Z",
     "repository": "cloudscape-design/components",
@@ -7490,6 +7430,66 @@
     "repository": "linkerd/linkerd2",
     "learningId": "learn-github-linkerd-linkerd2",
     "contentHash": "3a64b4a40e3f0dc1e1b9eb2eb7dfaca4738763f4caf5925a8086adbbe6d9614b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-5YKX",
+    "timestamp": "2026-10-30T06:23:17.841Z",
+    "repository": "actix/actix-web",
+    "learningId": "learn-github-actix-actix-web",
+    "contentHash": "61d059842e91ed8cf88445978cf05c32293e69c1d85f02698a835d22d8fffc87",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-63YF",
+    "timestamp": "2026-10-30T06:23:24.807Z",
+    "repository": "opentofu/opentofu",
+    "learningId": "learn-github-opentofu-opentofu",
+    "contentHash": "bc670c8b8eefe32e4b10f3603619d1f5774146e2b706e73993fb21fba43c4599",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-675M",
+    "timestamp": "2026-10-30T06:23:28.954Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "7a58c5023db894bb4c5eed2b11f509ca37e9647d1470d4fc4a2272b643ff6368",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-69WB",
+    "timestamp": "2026-10-30T06:23:32.507Z",
+    "repository": "ytsaurus/ytsaurus",
+    "learningId": "learn-github-ytsaurus-ytsaurus",
+    "contentHash": "d85f7d0d7335daf8180186d998e0b32bd1fca4571832e720871dea8a21813634",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

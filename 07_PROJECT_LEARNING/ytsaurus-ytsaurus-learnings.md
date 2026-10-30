@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `84f84d1f`  
+> **Source Version**: `551d84e7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T17:35:27.106Z  
+> **Timestamp**: 2026-10-30T06:23:31.896Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T17:35:27.098Z  
+> **Harvest Timestamp**: 2026-10-30T06:23:31.889Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2325 stars
+- **Stars / Engagement**: 2326 stars
 
 ---
 
@@ -1198,210 +1198,295 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a96535c` (2026-10-28)
-**Commit Message**: Fix bundle controller crash on stale spare node operations
+### Incident Patch 1: `34e9eea9` (2026-10-29)
+**Commit Message**: Fix unlock remove race
+commit_hash:6ed7c31e9012b5ffcdc2a7ea28706120d0398434
 
-Deleting a bundle can leave spare node assignments or releases in its controller state. Skip operations for missing bundles and emit the spare_node_operations_for_missing_bundle alert instead of crashing in GetSpareNodesInfo.
-
-* Changelog entry
-Type: fix
-Component: misc-server
-
-Prevent Bundle Controller from crashing when a deleted bundle still has spare node operations in its state.
-commit_hash:01df0dc133534053f5571f0ab9aab55b98226563
-
-**File**: `yt/yt/server/cell_balancer/node_tag_manager.cpp` (modified, +16/-0)
+**File**: `yt/yt/server/master/cypress_server/cypress_manager.cpp` (modified, +6/-4)
 ```diff
-@@ -891,6 +891,22 @@ TPerDataCenterSpareNodesInfo GetSpareNodesInfo(
- 
-     THashMap<std::string, std::string> operationsToBundle;
-     for (const auto& [bundleName, bundleState] : input.BundleStates) {
-+        if (bundleState->SpareNodeAssignments.empty() && bundleState->SpareNodeReleasements.empty()) {
-+            continue;
-+        }
-+
-+        if (!input.Bundles.contains(bundleName)) {
-+            YT_TLOG_WARNING("Skipping spare node operations for missing bundle")
-+                .With("Bundle", bundleName);
-+
-+            mutations->AlertsToFire.push_back({
-+                .Id = "spare_node_operations_for_missing_bundle",
-+                .BundleName = bundleName,
-+                .Description = Format("Skipping spare node operations for missing bundle %Qv", bundleName),
-+            });
-+            continue;
-+        }
-+
-         for (const auto& [spareNode, _] : bundleState->SpareNodeAssignments) {
-             operationsToBundle[spareNode] = bundleName;
+@@ -2047,6 +2047,12 @@ class TCypressManager
+             }
          }
+ 
++        // Local unbranching may release the last reference and post foreign object removal.
++        // Post the foreign unlock first so that the foreign snapshot reference is released before removal.
++        if (trunkNode->IsExternal()) {
++            PostUnlockForeignNodeRequest(trunkNode, transaction, explicitOnly);
++        }
++
+         // Again, the order is crucial: first unbranch (or update) nodes, then destroy locks.
+ 
+         if (strongestLockModeBefore != strongestLockModeAfter) {
+@@ -2055,10 +2061,6 @@ class TCypressManager
+ 
+         RemoveTransactionNodeLocks(trunkNode, transaction, explicitOnly);
+ 
+-        if (trunkNode->IsExternal()) {
+-            PostUnlockForeignNodeRequest(trunkNode, transaction, explicitOnly);
+-        }
+-
+         YT_TLOG_DEBUG("Node explicitly unlocked")
+             .With("NodeId", trunkNode->GetId())
+             .With("TransactionId", transaction->GetId());
 ```
 
-**File**: `yt/yt/server/cell_balancer/unittests/bundle_scheduler_ut.cpp` (modified, +44/-0)
+**File**: `yt/yt/tests/integration/cypress/test_cypress_acls.py` (modified, +0/-6)
 ```diff
-@@ -4313,6 +4313,50 @@ TEST_P(TNodeTagsFilterManager, TestSpareNodesAreReleasedProperly)
-     EXPECT_EQ(1, std::ssize(mutations.ChangedStates["bigd"]->SpareNodeReleasements));
+@@ -1545,12 +1545,6 @@ def do(input_path, expected_row, expect_alert):
+     @authors("shakurov", "danilalexeev")
+     @pytest.mark.parametrize("removal", ["abort", "unlock"])
+     def test_orphaned_node(self, removal):
+-        if removal == "unlock":
+-            # Using unlock() on snapshot branch leads to
+-            # "Non-zero reference counter after object removal" alert.
+-            # TODO(kvk1920): investigate it.
+-            pytest.skip()
+-
+         create_user("u")
+ 
+         create(
+```
+
+---
+
+### Incident Patch 2: `551d84e7` (2026-10-30)
+**Commit Message**: YT-30203: Fix group by
+commit_hash:417a6237f287bf608d70f2226c58368bb1260a33
+
+**File**: `yt/yt/library/query/engine/folding_profiler.cpp` (modified, +1/-0)
+```diff
+@@ -2255,6 +2255,7 @@ void TQueryProfiler::Profile(
+                 for (const auto& item : orderClause->OrderItems) {
+                     orderExprIds.push_back(
+                         TExpressionProfiler::Profile(item.Expression, sourceSchema, &orderExprFragments));
++                    Fold(orderExprIds.back());
+                     Fold(item.Descending);
+                     isDesc.push_back(item.Descending);
+                     orderColumnTypes.push_back(item.Expression->GetWireType());
+```
+
+**File**: `yt/yt/library/query/unittests/folding_profiler_ut.cpp` (modified, +181/-0)
+```diff
+@@ -803,6 +803,187 @@ TEST_P(TOrderByCacheTest, OrderItemCount)
+         {"a=1;b=2", "a=2;b=1"});
  }
  
-+TEST_P(TNodeTagsFilterManager, SpareNodeOperationsForRemovedBundle)
++TEST_P(TOrderByCacheTest, CombinedGroupByReusedExpressionRoot)
 +{
-+    for (bool releasing : {false, true}) {
-+        auto input = GenerateInputContext(DefaultNodeCount);
-+        auto dataCenters = GetDataCenters(input);
-+        input.Zones["default-zone"]->SpareTargetConfig->TabletNodeCount = GetDataCenterCount();
-+        auto nodeTagFilter = input.Bundles["bigd"]->NodeTagFilter;
-+        auto bundleState = New<TBundleControllerState>();
-+        input.BundleStates["bigd"] = bundleState;
-+        auto& operations = releasing
-+            ? bundleState->SpareNodeReleasements
-+            : bundleState->SpareNodeAssignments;
-+
-+        for (const auto& dataCenter : dataCenters) {
-+            auto spareNodes = GenerateNodesForBundle(input, SpareBundleName, /*nodeCount*/ 1, {.DC = dataCenter});
-+            const auto& nodeName = *spareNodes.begin();
-+            input.TabletNodes[nodeName]->UserTags.insert(nodeTagFilter);
-+            operations[nodeName] = New<TNodeTagFilterOperationState>();
-+        }
-+
-+        EraseOrCrash(input.Bundles, "bigd");
-+
-+        TSchedulerMutations mutations;
-+        ScheduleBundles(input, &mutations);
-+
-+        ASSERT_EQ(1, std::ssize(mutations.AlertsToFire));
-+        EXPECT_EQ("spare_node_operations_for_missing_bundle", mutations.AlertsToFire.front().Id);
-+        EXPECT_EQ("bigd", mutations.AlertsToFire.front().BundleName);
-+
-+        for (const auto& dataCenter : dataCenters) {
-+            const auto& spareNodes = input.ZoneToSpareNodes.at("default-zone").at(dataCenter);
-+            EXPECT_EQ(1, std::ssize(spareNodes.FreeNodes));
-+            EXPECT_TRUE(spareNodes.UsedByBundle.empty());
-+            EXPECT_TRUE(spareNodes.ReleasingByBundle.empty());
-+        }
-+
-+        operations.clear();
-+        mutations = {};
-+        ScheduleBundles(input, &mutations);
-+
-+        CheckEmptyAlerts(mutations);
-+    }
++    CheckCacheReuse(
++        {
++            .Query = "a, b from `//t` group by a, b order by a+b, a limit 1",
++            .ExpectedRows = {"a=1;b=2"},
++        },
++        {
++            .Query = "a, b from `//t` group by a, b order by a+b, b limit 1",
++            .ExpectedRows = {"a=2;b=1"},
++        },
++        MakeInputSplit(),
++        {"a=1;b=2", "a=2;b=1"});
 +}
 +
- TEST_P(TNodeTagsFilterManager, TestSpareNodesAreNotAssignedDuringWriteThreadPoolSizeChange)
- {
-     const auto nodeCountPerDc = 7;
++TEST_P(TOrderByCacheTest, CombinedGroupByExpressionRootOrder)
++{
++    CheckCacheReuse(
++        {
++            .Query = "a, b from `//t` group by a, b order by a+b, a, b limit 2",
++            .ExpectedRows = {"a=1;b=2", "a=2;b=1"},
++        },
++        {
++            .Query = "a, b from `//t` group by a, b order by a+b, b, a limit 2",
++            .ExpectedRows = {"a=2;b=1", "a=1;b=2"},
++        },
++        MakeInputSplit(),
++        {"a=1;b=2", "a=2;b=1"});
++}
++
++TEST_P(TOrderByCacheTest, CombinedGroupByDescendingReusedExpressionRoot)
++{
++    CheckCacheReuse(
++        {
++            .Query = "a, b from `//t` group by a, b order by a+b desc, a desc limit 1",
++            .ExpectedRows = {"a=2;b=1"},
++        },
++        {
++            .Query = "a, b from `//t` group by a, b order by a+b desc, b desc limit 1",
++            .ExpectedRows = {"a=1;b=2"},
++        },
++        MakeInputSplit(),
++        {"a=1;b=2", "a=2;b=1"});
++}
++
++TEST_P(TOrderByCacheTest, CombinedGroupByOffset)
++{
++    CheckCacheReuse(
++        {
++            .Query = "a, b from `//t` group by a, b order by a+b, a offset 1 limit 1",
++            .ExpectedRows = {"a=2;b=1"},
++        },
++        {
++            .Query = "a, b from `//t` group by a, b order by a+b, b offset 1 limit 1",
++            .ExpectedRows = {"a=1;b=2"},
++        },
++        MakeInputSplit(),
++        {"a=1;b=2", "a=2;b=1"});
++}
++
++TEST_P(TOrderByCacheTest, CombinedGroupByStringExpressionRoot)
++{
++    CheckCacheReuse(
++        {
++            .Query = "a, b from `//t` group by a, b order by concat(a,b), a limit 1",
++            .ExpectedRows = {"a=a;b=aa"},
++        },
++        {
++            .Query = "a, b from `//t` group by a, b order by concat(a,b), b limit 1",
++            .ExpectedRows = {"a=aa;b=a"},
++        },
++        MakeInputSplit(EValueType::String),
++        {"a=a;b=aa", "a=aa;b=a"});
++}
++
++TEST_P(TOrderByCacheTest, CombinedGroupByNullableExpressionRoot)
++{
++    CheckCacheReuse(
++        {
++            .Query = "a, b from `//t` group by a, b order by a+b, a limit 1",
++            .ExpectedRows = {"a=#;b=1"},
++        },
++        {
++            .Query = "a, b from `//t` group by a, b order by a+b, b limit 1",
++            .ExpectedRows = {"a=2;b=#"},
++        },
++        MakeInputSplit(),
++        {"a=#;b=1", "a=2;b=#"});
++}
++
++TEST_P(TOrderByCacheTest, CombinedGroupByReusedCompoundExpressionRoot)
++{
++    CheckCacheReuse(
++        {
++            .Query = "a, b from `//t` group by a, b order by (a+b)*(a-b), a+b limit 1",
++            .ExpectedRows = {"a=3;b=-1"},
++        },
++        {
++            .Query = "a, b from `//t` group by a, b order by (a+b)*(a-b), a-b limit 1",
++            .ExpectedRows = {"a=3;b=1"},
++        },
++        MakeInputSplit(),
++        {"a=3;b=1", "a=3;b=-1"});
++}
++
++TEST_P(TOrderByCacheTest, CombinedGroupByComputedKeys)
++{
++    CheckCacheReuse(
++        {
++            .Query = "x, y from `//t` group by a+1 as x, b-1 as y order by x+y, x limit 1",
++            .ExpectedRows = {"x=1;y=2"},
++        },
++        {
++            .Query = "x, y from `//t` group by a+1 as x, b-1 as y order by x+y, y limit 1",
++            .ExpectedRows = {"x=2;y=1"},
++        },
++        MakeInputSplit(),
++        {"a=0;b=3", "a=1;b=2"});
++}
++
++TEST_P(TOrderByCacheTest, CombinedGroupByAggregatePayload)
++{
++    CheckCacheReuse(
++        {
++            .Query = "a, b, sum(v) as s from `//t` group by a, b order by a+b, a limit 1",
++            .ExpectedRows = {"a=1;b=2;s=30"},
++        },
++        {
++            .Query = "a, b, sum(v) as s from `//t` group by a, b order by a+b, b limit 1",
++            .ExpectedRows = {"a=2;b=1;s=7"},
++        },
++        MakeSplit({{"a", EValueType::Int64}, {"b", EValueType::Int64}, {"v", EValueType::Int64}}),
++        {"a=1;b=2;v=10", "a=2;b=1;v=3", "a=1;b=2;v=20", "a=2;b=1;v=4"});
++}
++
++TEST_P(TOrderByCacheTest, CombinedGroupByDifferentDirections)
++{
++    CheckCacheReuse(
++        {
++            .Query = "a, b from `//t` group by a, b order by a+b, a limit 1",
++            .ExpectedRows = {"a=1;b=2"},
++        },
++        {
++            .Query = "a, b from `//t` group by a, b order by a+b, a desc limit 1",
++            .ExpectedRows = {"a=2;b=1"},
++        },
++        MakeInputSplit(),
++        {"a=1;b=2", "a=2;b=1"});
++}
++
++TEST_P(TOrderByCacheTest, CombinedGroupByLiteralValues)
++{
++    CheckCacheReuse(
++        {
++            .Query = "a, b from `//t` group by a, b order by abs(a-1), b l
 ```
 
 ---
 
-### Incident Patch 2: `fdb971b4` (2026-10-28)
-**Commit Message**: Fix race in test_backing_stores
+### Incident Patch 3: `7e077119` (2026-10-30)
+**Commit Message**: Build ESP-IDF 6.1 for ESP32-P4 with ya (3/3)
 
-Store-flush transactions are coordinated by master: master commits first (`@chunk_ids` changes), then the tablet cell commits and sets the backing store. So `assert _has_backing_store(...)` right after `wait(chunk_ids == N)` can run before the tablet cell commit is applied.
+Complete the ESP-IDF 6.1 import after source PRs [16446650](https://nda.ya.ru/t/FjiyOVw57vVfDQ and [16701564](https://nda.ya.ru/t/zBIfzMeF7vVfDR (merged into trunk).
 
-Seen locally: the "Backing store set" log line came about 1ms after the failing orchid read.
+Register the generic Espressif GCC 15.2 toolchain using Sandbox resources, with scoped ESP32-P4 ABI and runtime settings.
 
-The fix waits for the backing store instead.
-commit_hash:a546df2e09404547f0c759cd8f08637018c7a846
+Add the remaining pinned ESP-IDF sources, an acyclic graph for the required standard components, and version-specific Kconfig, linker, partition, NVS and image tools.
 
-**File**: `yt/yt/tests/integration/dynamic_tables/test_sorted_dynamic_tables.py` (modified, +2/-2)
+SDK-only application, feature and bootloader fixtures exercise component compilation and firmware linking; host-tool tests cover configuration and image generation.
+
+Keeps the existing ESP-IDF 5.5 C5/H2 paths isolated.
+commit_hash:337b88ef14deae6f10e33fca3016cdb76f3861af
+
+**File**: `build/ymake_conf.py` (modified, +10/-1)
 ```diff
-@@ -1603,15 +1603,15 @@ def _has_backing_store(address, tablet_id):
+@@ -121,7 +121,8 @@ def __init__(self, name, os, arch):
+         self.is_rv32imc_zicsr = self.arch in ('riscv32_imc_zicsr',)
+         self.is_rv32imc_zicsr_zifencei = self.arch in ('riscv32_imc_zicsr_zifencei',)
  
-         address = get_tablet_leader_address(tablet_id)
+-        self.is_riscv32 = self.is_rv32imc or self.is_rv32imc_zicsr or self.is_rv32imc_zicsr_zifencei
++        self.is_riscv32_esp32p4 = self.arch == 'riscv32_esp32p4'
++        self.is_riscv32 = self.is_rv32imc or self.is_rv32imc_zicsr or self.is_rv32imc_zicsr_zifencei or self.is_riscv32_esp32p4
+         self.is_riscv64 = self.arch == 'riscv64_aw'
+         self.is_riscv64_aw = self.arch == 'riscv64_aw'
  
--        assert _has_backing_store(address, tablet_id)
-+        wait(lambda: _has_backing_store(address, tablet_id))
-         wait(lambda: not _has_backing_store(address, tablet_id))
+@@ -266,6 +267,7 @@ def arch_variables(self):
+             (self.is_power8le, 'ARCH_POWER8LE'),
+             (self.is_power9le, 'ARCH_POWER9LE'),
+             (self.is_riscv32, 'ARCH_RISCV32'),
++            (self.is_riscv32_esp32p4, 'ARCH_RISCV32_ESP32P4'),
+             (self.is_riscv64, 'ARCH_RISCV64'),
+             (self.is_riscv64_aw, 'ARCH_RISCV64_AW'),
+             (self.is_xtensa_hifi4, 'ARCH_XTENSA_HIFI4'),
+@@ -1351,6 +1353,13 @@ def get_os_sdk(target):
+             self.c_flags_platform.append('-march=armv8-a -mthumb -mabi=aapcs -mfpu=neon-fp-armv8 -mfloat-abi=hard')
+             self.setup_zephyr_armv7()
  
-         set("//tmp/t/@backing_store_retention_time", 1000000000)
-         remount_table("//tmp/t")
-         insert_rows("//tmp/t", [{"key": i} for i in range(5)])
-         wait(lambda: len(get("//tmp/t/@chunk_ids")) == 2)
++        if target.is_riscv32_esp32p4:
++            self.c_flags_platform.extend([
++                '-march=rv32imafc_zicsr_zifencei_zaamo_zalrsc_xesploop_xespv',
++                '-mabi=ilp32f',
++                '-mtune=esp-base',
++            ])
++
+         if target.is_rv32imc:
+             self.c_flags_platform.append('-march=rv32imc')
  
--        assert _has_backing_store(address, tablet_id)
-+        wait(lambda: _has_backing_store(address, tablet_id))
-         set("//sys/tablet_cell_bundles/default/@dynamic_options/max_backing_store_memory_ratio", 0.00000001)
-         wait(lambda: not _has_backing_store(address, tablet_id))
- 
-```
-
----
-
-### Incident Patch 3: `b8af6efd` (2026-10-28)
-**Commit Message**: YT-30196: Do not leak tablet_static limit from test_changelog_write_throttler
-
-`test_changelog_write_throttler` set bundle `memory_limits/tablet_static` to "old + 1024" on all nodes (`%true`) and then "restored" it to "old". But "old" came from the `memory_limit_per_category/tablet_static` orchid. For an unconfigured category, that orchid reports usage (0), not the real limit (unlimited). So the test applied a 1024-byte TabletStatic limit on every node. The restore never took effect: `TNodeResourceManager::UpdateMemoryLimits` ignores a 1024 → 0 change because it is within `memory_accounting_tolerance` (1 MB). It also skips `None` categories, so teardown resetting the bundle config does not help either.
-
-Later tests in the same environment cannot preload in-memory stores by reading chunks. Example: `TestDynamicTablesPortal::test_decommission_through_extra_peers_preload` (YT-30196). The extra peer's preload keeps failing with `Preload is cancelled due to memory pressure` (`free_memory 1024`), so the master never switches leadership to it (it waits up to `max_preload_wait_time_before_leader_switch` = 10 min), and `wait_for_cells` times out.
-
-The tablet_static changes served only as a 
-
-**File**: `yt/yt/tests/integration/dynamic_tables/test_dynamic_tables.py` (modified, +0/-18)
-```diff
-@@ -2996,11 +2996,6 @@ def _insert(overdraft_expected, max_attempts=20):
- 
-         assert _insert(False)
- 
--    def _get_orchid_memory_limits(self, node, category):
--        return get(
--            "//sys/cluster_nodes/{0}/orchid/node_resource_manager/memory_limit_per_category/{1}"
--            .format(node, category))
--
-     def _get_random_string(self, length):
-         return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
- 
-@@ -3024,19 +3019,11 @@ def _get_insert_time(rows_count):
-                 insert_rows("//tmp/t", [{"key": i, "value": self._get_random_string(100)}])
-             return time.time() - start_time
- 
--        tablet_id = get("//tmp/t/@tablets/0/tablet_id")
--        node_address = get_tablet_leader_address(tablet_id)
--        old_tablet_static = self._get_orchid_memory_limits(node_address, "tablet_static")
--        new_tablet_static = old_tablet_static + 1024
--
-         expected_max_time = 9
- 
-         bundle_dynamic_config = {
-             "%true": {
-                 "config_annotation": "foo",
--                "memory_limits": {
--                    "tablet_static" : new_tablet_static,
--                },
-                 "medium_throughput_limits" : {
-                     "default" : {
-                         "write_byte_rate" : 50
-@@ -3045,7 +3032,6 @@ def _get_insert_time(rows_count):
-             }
-         }
-         set("//sys/tablet_cell_bundles/@config", bundle_dynamic_config)
--        wait(lambda: self._get_orchid_memory_limits(node_address, "tablet_static") == new_tablet_static)
- 
-         # Wait while changes actually take place
-         wait(lambda: _get_insert_time(5) > expected_max_time)
-@@ -3056,13 +3042,9 @@ def _get_insert_time(rows_count):
-         bundle_dynamic_config = {
-             "%true": {
-                 "config_annotation": "foo",
--                "memory_limits": {
--                    "tablet_static" : old_tablet_static,
--                }
-             }
-         }
-         set("//sys/tablet_cell_bundles/@config", bundle_dynamic_config)
--        wait(lambda: self._get_orchid_memory_limits(node_address, "tablet_static") == old_tablet_static)
- 
-         # Wait while changes actually take place
-         wait(lambda: _get_insert_time(5) < expected_max_time)
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #1885** (closed): Run cross-cluster MR operations by ytsaurus Go SDK (@sagishev)
+- **PR #1884** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1883** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1878** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1877** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 - **PR #1873** (closed): Fix "yt execute" for commands without input data commit_hash:5378810e98c0c97bc9703c2b2319f52f5ef9bde5 (@koct9i)
-- **PR #1872** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 
 ---
 
@@ -1421,34 +1506,24 @@ The tablet_static changes served only as a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bundle controller crash on stale spare node operations
+## X. unlock remove race
 
 **RULE**:
-When implementing operations in `yt/yt/server/cell_balancer/node_tag_manager.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/server/master/cypress_server/cypress_manager.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a96535c`: bundle controller crash on stale spare node operations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `34e9eea9`: unlock remove race. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/server/cell_balancer/node_tag_manager.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/server/master/cypress_server/cypress_manager.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        if (bundleState->SpareNodeAssignments.empty() && bundleState->SpareNodeReleasements.empty()) {
-            continue;
-        }
-
-        if (!input.Bundles.contains(bundleName)) {
-            YT_TLOG_WARNING("Skipping spare node operations for missing bundle")
-                .With("Bundle", bundleName);
-
-            mutations->AlertsToFire.push_back({
-                .Id = "spare_node_operations_for_missing_bundle",
-                .BundleName = bundleName,
-                .Description = Format("Skipping spare node operations for missing bundle %Qv", bundleName),
-            });
-            continue;
+        // Local unbranching may release the last reference and post foreign object removal.
+        // Post the foreign unlock first so that the foreign snapshot reference is released before removal.
+        if (trunkNode->IsExternal()) {
+            PostUnlockForeignNodeRequest(trunkNode, transaction, explicitOnly);
         }
 
 ```
@@ -1456,8 +1531,11 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        if (trunkNode->IsExternal()) {
+            PostUnlockForeignNodeRequest(trunkNode, transaction, explicitOnly);
+        }
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a96535c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `34e9eea9` are properly handled with clean fallback behavior.

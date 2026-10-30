@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source**: github ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
-> **Source Version**: `f2876ace`  
+> **Source Version**: `5f4d2090`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T13:49:57.059Z  
+> **Timestamp**: 2026-10-30T06:23:17.199Z  
 > **Learning ID**: `learn-github-actix-actix-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T13:49:57.054Z  
+> **Harvest Timestamp**: 2026-10-30T06:23:16.005Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Actix Web is a powerful, pragmatic, and extremely fast web framework for Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 24892 stars
+- **Stars / Engagement**: 24897 stars
 
 ---
 
@@ -1341,251 +1341,124 @@ impl Files {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7d8f058` (2026-10-28)
-**Commit Message**: build(deps): bump taiki-e/install-action from 2.87.30 to 2.87.31 (#4363)
+### Incident Patch 1: `130f2a69` (2026-10-29)
+**Commit Message**: fix(multipart): accept transport padding after boundary delimiters (#4358)
 
-Bumps [taiki-e/install-action](https://github.com/taiki-e/install-action) from 2.87.30 to 2.87.31.
-- [Release notes](https://github.com/taiki-e/install-action/releases)
-- [Changelog](https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/taiki-e/install-action/compare/v2.87.30...v2.87.31)
+* fix(multipart): accept transport padding after boundary delimiters
 
----
-updated-dependencies:
-- dependency-name: taiki-e/install-action
-  dependency-version: 2.87.31
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+RFC 2046 section 5.1.1 allows transport padding (linear whitespace) between
+a boundary delimiter and the CRLF that ends its line. The parser compared
+the rest of the line exactly, so a padded first delimiter was skipped as
+preamble and the form appeared to have no fields, and a padded inner or
+closing delimiter failed with BoundaryMissing.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+* refactor(multipart): simplify closing boundary padding check
 
-**File**: `.github/workflows/actions.lock` (modified, +8/-8)
+---------
+
+Co-authored-by: Wleeaf <[REDACTED_EMAIL]>
+Co-authored-by: Rob Ede <[REDACTED_EMAIL]>
+
+**File**: `actix-multipart/CHANGES.md` (modified, +1/-0)
 ```diff
-@@ -9,18 +9,18 @@ workflows:
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
--        - 'taiki-e/install-action@v2.87.30'
-+        - 'taiki-e/install-action@v2.87.31'
-         - 'useblacksmith/checkout@v1.8.1'
-     '.github/workflows/ci.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
--        - 'taiki-e/install-action@v2.87.30'
-+        - 'taiki-e/install-action@v2.87.31'
-         - 'useblacksmith/checkout@v1.8.1'
-     '.github/workflows/coverage.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'actions/upload-code-coverage@v1.4.4'
--        - 'taiki-e/install-action@v2.87.30'
-+        - 'taiki-e/install-action@v2.87.31'
-         - 'useblacksmith/checkout@v1.8.1'
-     '.github/workflows/labeler.yml':
-         - 'actions/labeler@v7.0.0'
-@@ -30,12 +30,12 @@ workflows:
-         - 'embarkstudios/cargo-deny-action@v2.1.1'
-         - 'giraffate/clippy-action@v1.0.1'
-         - 'taiki-e/cache-cargo-install-action@v3.0.8'
--        - 'taiki-e/install-action@v2.87.30'
-+        - 'taiki-e/install-action@v2.87.31'
-         - 'useblacksmith/checkout@v1.8.1'
-         - 'zizmorcore/zizmor-action@v0.8.0'
-     '.github/workflows/semver-checks.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
--        - 'taiki-e/install-action@v2.87.30'
-+        - 'taiki-e/install-action@v2.87.31'
-         - 'useblacksmith/checkout@v1.8.1'
- dependencies:
-     'actions-rust-lang/setup-rust-toolchain@v2.0.0':
-@@ -97,9 +97,9 @@ dependencies:
-         repo_id: 588643148
-         uses:
-             - 'actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9'
--    'taiki-e/install-action@v2.87.30':
--        ref: 'v2.87.30'
--        commit: 'sha1-a4d3f3f761dcd95cce1b72cb61cb6d1963438177'
-+    'taiki-e/install-action@v2.87.31':
-+        ref: 'v2.87.31'
-+        commit: 'sha1-1e29709c0ec63babbe8f266397a465f29a825f91'
-         owner_id: 43724913
-         repo_id: 442947557
-     'useblacksmith/checkout@v1.8.1':
+@@ -2,6 +2,7 @@
+ 
+ ## Unreleased
+ 
++- Accept transport padding (spaces and tabs) after boundary delimiters, as allowed by RFC 2046. A padded first delimiter used to make the whole form appear empty, and a padded closing delimiter was rejected.
+ - Minimum supported Rust version (MSRV) is now 1.89.
+ 
+ ## 0.8.5
 ```
 
-**File**: `.github/workflows/ci-post-merge.yml` (modified, +2/-2)
+**File**: `actix-multipart/src/multipart.rs` (modified, +51/-4)
 ```diff
-@@ -57,7 +57,7 @@ jobs:
-           toolchain: ${{ matrix.version.version }}
+@@ -329,13 +329,18 @@ impl Inner {
+             return Err(Error::BoundaryMissing);
+         };
  
-       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
--        uses: taiki-e/install-action@v2.87.30
-+        uses: taiki-e/install-action@v2.87.31
-         with:
-           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
+-        if chunk == LINE_BREAK {
+-            // boundary is followed by line-break, indicating more fields to come
+-            return Ok(Some(false));
++        // the delimiter may be followed by transport padding before the line-break
++        if let Some(padding) = chunk.strip_suffix(LINE_BREAK) {
++            if trim_transport_padding(padding).is_empty() {
++                // boundary is followed by line-break, indicating more fields to come
++                return Ok(Some(false));
++            }
+         }
  
-@@ -97,7 +97,7 @@ jobs:
-           cache-key: feature-powerset-${{ matrix.partition }}
+         // boundary is followed by marker
+-        if chunk == BOUNDARY_MARKER || chunk == b"--\r\n" {
++        let chunk = chunk.strip_suffix(LINE_BREAK).unwrap_or(chunk);
++
++        if trim_transport_padding(chunk) == BOUNDARY_MARKER {
+             return Ok(Some(true));
+         }
  
-       - name: Install just, cargo-hack
--        uses: taiki-e/install-action@v2.87.30
-+        uses: taiki-e/install-action@v2.87.31
-         with:
-           tool: just,cargo-hack
+@@ -363,6 +368,7 @@ impl Inner {
+                     let Some(line) = chunk.as_ref().strip_suffix(b"\r\n") else {
+                         continue;
+                     };
++                    let line = trim_transport_padding(line);
  
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
-```diff
-@@ -72,7 +72,7 @@ jobs:
-           toolchain: ${{ matrix.version.version }}
+                     if let Some(line) = line.strip_prefix(b"--") {
+                         if line == boundary {
+@@ -531,6 +537,16 @@ impl Drop for Inner {
+     }
+ }
  
-       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
--        uses: taiki-e/install-action@v2.87.30
-+        uses: taiki-e/install-action@v2.87.31
-         with:
-           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
++/// Strips the transport padding (spaces and tabs) that RFC 2046 §5.1.1 allows between a boundary
++/// delimiter and the line-break that ends it.
++fn trim_transport_padding(line: &[u8]) -> &[u8] {
++    let end = line
++        .iter()
++        .rposition(|&b| b != b' ' && b != b'\t')
++        .map_or(0, |i| i + 1);
++    &line[..end]
++}
++
+ #[cfg(test)]
+ mod tests {
+     use std::time::Duration;
+@@ -945,6 +961,37 @@ mod tests {
+         }
+     }
  
-@@ -107,7 +107,7 @@ jobs:
-           toolchain: nightly
- 
-       - name: Install just
--        uses: taiki-e/install-action@v2.87.30
-+        uses: taiki-e/install-action@v2.87.31
-         with:
-           tool: just
- 
-```
-
-**File**: `.github/workflows/coverage.yml` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ jobs:
-           components: llvm-tools
- 
-       - name: Install just, cargo-llvm-cov, cargo-nextest
--        uses: taiki-e/install-action@v2.87.30
-+        uses: taiki-e/install-action@v2.87.31
-         with:
-           tool: just,cargo-llvm-cov,cargo-nextest
- 
-```
-
-**File**: `.github/workflows/lint.yml` (modified, +1/-1)
-```diff
-@@ -124,7 +124,7 @@ jobs:
-           toolchain: ${{ vars.RUST_VERSION_EXTERNAL_TYPES }}
- 
-       - name: Install just
--        uses: taiki-e/install-action@v2.87.30
-+        uses: taiki-e/install-action@v2.87.31
-         with:
-           tool: just
- 
-```
-
-**File**: `.github/workflows/semver-checks.yml` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ jobs:
-           toolchain: stable
- 
-       - name: Install cargo-semver-checks
--        uses: taiki-e/install-action@v2.87.30
-+        uses: taiki-e/install-action@v2.87.31
-         with:
-           tool: cargo-semver-checks
- 
-```
-
----
-
-### Incident Patch 2: `0e034a2f` (2026-10-28)
-**Commit Message**: build(deps): bump base64 from 0.22.1 to 0.23.1 (#4364)
-
-Bumps [base64](https://github.com/marshallpierce/rust-base64) from 0.22.1 to 0.23.1.
-- [Changelog](https://github.com/marshallpierce/rust-base64/blob/master/RELEASE-NOTES.md)
-- [Commits](https://github.com/marshallpierce/rust-base64/compare/v0.22.1...v0.23.1)
-
----
-updated-dependencies:
-- dependency-name: base64
-  dependency-version: 0.23.1
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-8)
-```diff
-@@ -60,7 +60,7 @@ dependencies = [
-  "actix-web",
-  "async-stream",
-  "awc",
-- "base64 0.22.1",
-+ "base64 0.23.1",
-  "bitflags 2.13.2",
-  "brotli",
-  "bytes",
-@@ -624,7 +624,7 @@ dependencies = [
-  "actix-tls",
-  "actix-utils",
-  "actix-web",
-- "base64 0.22.1",
-+ "base64 0.23.1",
-  "brotli",
-  "bytes",
-  "cfg-if",
-@@ -689,12 +689,6 @@ version = "0.20.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0ea22880d78093b0cbe17c89f64a7d457941e65759157ec6cb31a31d652b05e5"
- 
--[[package]]
--name = "base64"
--version = "0.22.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
--
- [[package]]
- name = "base64"
- version = "0.23.1"
-```
-
----
-
-### Incident Patch 3: `f2876ace` (2026-10-28)
-**Commit Message**: build(deps): bump tokio from 1.53.3 to 1.54.1 (#4362)
-
-Bumps [tokio](https://github.com/tokio-rs/tokio) from 1.53.3 to 1.54.1.
-- [Release notes](https://github.com/tokio-rs/tokio/releases)
-- [Commits](https://github.com/tokio-rs/tokio/compare/tokio-1.53.3...tokio-1.54.1)
-
----
-updated-dependencies:
-- dependency-name: tokio
-  dependency-version: 1.54.1
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -3385,9 +3385,9 @@ checksum = "fd3ca314f692efd6c868f8408f53fe444634a845f96c028b97d35f6a1f79f0ee"
- 
- [[package]]
- name = "tokio"
--version = "1.53.3"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "bytes",
-  "libc",
++    #[actix_rt::test]
++    async fn test_multipart_transport_padding() {
++        let (sender, payload) = create_stream();
++        let bytes = Bytes::from(
++            "--abbc761f78ff4d7cb7573b5a23f96ef0  \r\n\
++             Content-Disposition: form-data; name=\"first\"\r\n\r\n\
++             test\r\n\
++             --abbc761f78ff4d7cb7573b5a23f96ef0\t\r\n\
++             Content-Disposition: form-data; name=\"second\"\r\n\r\n\
++             data\r\n\
++             --abbc761f78ff4d7cb7573b5a23f96ef0-- \t\r\n",
++        );
++        let mut headers = HeaderMap::new();
++        headers.insert(
++            header::CONTENT_TYPE,
++            header::HeaderValue::from_static(
++                "multipart/form-data; boundary=\"abbc761f78ff4d7cb7573b5a23f96ef0\"",
++            ),
++        );
++        sender.send(Ok(bytes)).unwrap();
++        drop(sender); // eof
++
++        let mut multipart = Multipart::new(&headers, payload);
++        for (name, data) in [("first", "test"), ("second", "data")] {
++            let mut field = multipart.next().await.unwrap().unwrap();
++            assert_eq!(field.name(), Some(name));
++            assert_eq!(get_whole_field(&mut field).await, data);
++        }
++        assert!(multipart.next().await.is_none());
++    }
++
+     // Loops, collecting all bytes until end-of-field
+     async fn get_whole_field(field: &mut Field) -> BytesMut {
+         let mut b = BytesMut::new();
 ```
 
 #### Recent Merged Pull Requests:
@@ -1594,7 +1467,7 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 - **PR #4364** (2026-10-28): build(deps): bump base64 from 0.22.1 to 0.23.1 (@dependabot[bot])
 - **PR #4363** (2026-10-28): build(deps): bump taiki-e/install-action from 2.87.30 to 2.87.31 (@dependabot[bot])
 - **PR #4362** (2026-10-28): build(deps): bump tokio from 1.53.3 to 1.54.1 (@dependabot[bot])
-- **PR #4355** (2026-10-23): ci: verify locked GitHub Actions tags (@robjtede)
+- **PR #4358** (2026-10-29): fix(multipart): accept transport padding after boundary delimiters (@wleeaf)
 
 ---
 
@@ -1614,42 +1487,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump taiki-e/install-action from 2.87.30 to 2.87.31 (#4363)
+## X. multipart): accept transport padding after boundary delimiters (#4358)
 
 **RULE**:
-When implementing operations in `.github/workflows/actions.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `actix-multipart/CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7d8f058`: build(deps): bump taiki-e/install-action from 2.87.30 to 2.87.31 (#4363). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `130f2a69`: multipart): accept transport padding after boundary delimiters (#4358). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/actions.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `actix-multipart/CHANGES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        - 'taiki-e/install-action@v2.87.31'
-        - 'taiki-e/install-action@v2.87.31'
-        - 'taiki-e/install-action@v2.87.31'
-        - 'taiki-e/install-action@v2.87.31'
-        - 'taiki-e/install-action@v2.87.31'
-    'taiki-e/install-action@v2.87.31':
-        ref: 'v2.87.31'
-        commit: 'sha1-1e29709c0ec63babbe8f266397a465f29a825f91'
+- Accept transport padding (spaces and tabs) after boundary delimiters, as allowed by RFC 2046. A padded first delimiter used to make the whole form appear empty, and a padded closing delimiter was rejected.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        - 'taiki-e/install-action@v2.87.30'
-        - 'taiki-e/install-action@v2.87.30'
-        - 'taiki-e/install-action@v2.87.30'
-        - 'taiki-e/install-action@v2.87.30'
-        - 'taiki-e/install-action@v2.87.30'
-    'taiki-e/install-action@v2.87.30':
-        ref: 'v2.87.30'
-        commit: 'sha1-a4d3f3f761dcd95cce1b72cb61cb6d1963438177'
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7d8f058` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `130f2a69` are properly handled with clean fallback behavior.

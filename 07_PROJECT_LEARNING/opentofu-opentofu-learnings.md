@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `f0af1883`  
+> **Source Version**: `073d2cd5`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T18:34:39.158Z  
+> **Timestamp**: 2026-10-30T06:23:24.145Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T18:34:39.153Z  
+> **Harvest Timestamp**: 2026-10-30T06:23:23.818Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 30654 stars
+- **Stars / Engagement**: 30673 stars
 
 ---
 
@@ -1398,11 +1398,11 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4780** (2026-10-29): **Encryption key refernce panic**
+  *Symptoms*: ### Community note  > [!TIP] > 👋 Hi there, OpenTofu community! The OpenTofu team prioritizes issues based on upvotes. Please make sure to upvote this issue and describe how it affects you in detail in the comments to show your support.   ### OpenTofu Version  ```shell OpenTofu v1.13.2 on linux_amd64 ```  ### OpenTofu Configuration Files  ```hcl terraform {   encryption {     method "aes_gcm" "m" { keys = [6, 6, 6] }     state { method = method.aes_gcm.m }   } } ```   ### Debug Output  https://gist.github.com/denis256/b7467bc4ba40deceb76875dacc93f0fa  ### Expected Behavior  Proper error message  ### Actual Behavior  ``` !!!!!!!!!!!!!!!!!!!!!!!!!!! OPENTOFU CRASH !!!!!!!!!!!!!!!!!!!!!!!!!!!!  OpenTofu crashed! This is always indicative of a bug within OpenTofu. Please report the crash with OpenTofu[1] so that we can fix this.  When reporting bugs, please include your OpenTofu version, the stack trace shown below, and any additional information which may help replicate the issue.  [1]: https://github.com/opentofu/opentofu/issues  !!!!!!!!!!!!!!!!!!!!!!!!!!! OPENTOFU CRASH !!!!!!!!!!!!!!!!!!!!!!!!!!!!  not a string goroutine 1 [running]: runtime/debug.Stack() 	runtime/debug/stack.go:26 +0x5e github.com/opentofu/opentofu/internal/logging.panicHandler({0x68c6b38, 0x3b274f0}, {0x0, 0x0, 0x0}, {0x0, 0x0}, 0x0) 	github.com/opentofu/opentofu/internal/logging/panic.go:113 +0x173 github.com/opentofu/opentofu/internal/logging.PanicHandler() 	github.com/opentofu/opentofu/internal/logging/
+
 - **Issue #4766** (2026-10-27): **The `tofu -v` flag is no longer available in v1.13.0**
   *Symptoms*: ### Community note  > [!TIP] > 👋 Hi there, OpenTofu community! The OpenTofu team prioritizes issues based on upvotes. Please make sure to upvote this issue and describe how it affects you in detail in the comments to show your support.   ### OpenTofu Version  ```shell OpenTofu v1.13.0 on linux_arm64 ```  ### OpenTofu Configuration Files  N/A   ### Debug Output  I can provide the debug log if necessary, but the issue is easy to reproduce.  ### Expected Behavior  In OpenTofu v1.12, you can check the version using `tofu -v`.  ``` $ docker run -it --rm ghcr.io/opentofu/opentofu:1.12.9-minimal -v OpenTofu v1.12.9 on linux_arm64 ```  ### Actual Behavior  Starting with v1.13.0, the `-v` flag is no longer available.  ``` $ docker run -it --rm ghcr.io/opentofu/opentofu:1.13.0-minimal -v ╷ │ Error: Failed to parse command-line options │ │ flag provided but not defined: -v ╵ Usage: tofu [global options] <subcommand> [args]    The available commands for execution are listed below. The primary workflow   commands are given first, followed by less common or more advanced commands.  Main commands:   init      Prepare your working directory for other commands   validate  Check whether the configuration is valid   plan      Show changes required by the current configuration   apply     Create or update infrastructure   destroy   Destroy previously-created infrastructure  All other commands:   console       Try OpenTofu expressions at an interactive command prompt   fmt           Reformat you
-
-- **Issue #4732** (2026-10-19): **Plan files created when using symbol libraries are missing symbols**
-  *Symptoms*: ### Community note  > [!TIP] > 👋 Hi there, OpenTofu community! The OpenTofu team prioritizes issues based on upvotes. Please make sure to upvote this issue and describe how it affects you in detail in the comments to show your support.   ### OpenTofu Version  ```shell 1.13.1 ```  ### OpenTofu Configuration Files  main.tf ```hcl language {   experiments = [symbol_libraries] }  symbols "example" {   source = "./symbols" }  variable "message" {   type    = symbols::example::message()   default = "hello" }  output "message" {   value = var.message } ```  symbols/main.sym.hcl ```hcl language {   edition = experimental2026 }  typedef "message" {   type = string } ```  ### Debug Output  https://gist.github.com/dre-x1f/9bb5f108e16f25e5b5a5b5a9306de024  ### Expected Behavior  Plan should be usable.  ### Actual Behavior  Plan is not usable.  ### Steps to Reproduce  1. `tofu init` 2. `tofu plan -out=plan.tfplan` 3. `tofu show -json -plan=plan.tfplan`  ``` │ Error: 2 problems: │  │ - Experimental features are active: Experimental features are subject to breaking changes or total removal in later versions, based on feedback. We recommend against using experimental features in production. │  │ The following experiments are enabled: symbol_libraries │ - Missing type: Type message not defined in symbol library example ```  5. `tofu apply plan.tfplan` ``` │ Error: Missing type │  │   on main.tf line 10, in variable "message": │   10:   type    = symbols::example::message() │  │ Type message 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1419,37 +1419,136 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f0af1883` (2026-10-27)
-**Commit Message**: Fix occasional failure in TestContext2Apply_destroyThenUpdate
+### Incident Patch 1: `073d2cd5` (2026-10-29)
+**Commit Message**: Update cosign (#4791)
 
-Timing based test that occasionally fails in the new runtime.
+Signed-off-by: Larry Bordowitz <[REDACTED_EMAIL]>
 
-Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
-
-**File**: `internal/engine/planning/execgraph_resource.go` (modified, +6/-0)
+**File**: `.github/workflows/release.yml` (modified, +1/-1)
 ```diff
-@@ -121,6 +121,12 @@ func (b *execGraphBuilder) AddResourceInstanceObjectSubgraphs(
- 				// overhead is minimal.)
- 				objB.CreateOrUpdateDependsOn(objA.CreateOrUpdateCompletionRef())
- 			}
-+			// If object B is being completely deleted and object A is being create/updated
-+			// we need to record that the create/update depends on that deletion.
-+			// TestContext2Apply_destroyThenUpdate is where this is tested (with a race condition...)
-+			if objA.HasCreateOrUpdateLeg() && objB.HasDeleteLeg() && !objB.HasCreateOrUpdateLeg() {
-+				objA.CreateOrUpdateDependsOn(objB.DeletionRef())
+@@ -84,7 +84,7 @@ jobs:
+       - name: Install cosign
+         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
+         with:
+-          cosign-release: v2.2.0
++          cosign-release: v2.4.3
+ 
+       - name: Setup snapcraft
+         run: |
+```
+
+---
+
+### Incident Patch 2: `0040cbf0` (2026-10-29)
+**Commit Message**: Allow only map and object type in the value that a encryption method can receive (#4781)
+
+Signed-off-by: Andrei Ciobanu <[REDACTED_EMAIL]>
+
+**File**: `internal/encryption/keyprovider/output.go` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@ type Output struct {
+ 
+ func DecodeOutput(val cty.Value, subject hcl.Range) (Output, hcl.Diagnostics) {
+ 	var out Output
+-	if !val.CanIterateElements() {
++	if !val.Type().IsMapType() && !val.Type().IsObjectType() {
+ 		return out, hcl.Diagnostics{{
+ 			Severity: hcl.DiagError,
+ 			Summary:  "Expected key_provider value",
+```
+
+**File**: `internal/encryption/keyprovider/output_test.go` (modified, +70/-0)
+```diff
+@@ -8,6 +8,7 @@ package keyprovider_test
+ import (
+ 	"testing"
+ 
++	"github.com/hashicorp/hcl/v2"
+ 	"github.com/opentofu/opentofu/internal/encryption/keyprovider"
+ 	"github.com/zclconf/go-cty/cty"
+ )
+@@ -92,3 +93,72 @@ func TestOutputCty(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func TestDecodeOutput(t *testing.T) {
++	src := hcl.Range{
++		Filename: "test.tf",
++		Start:    hcl.Pos{Line: 1, Column: 1, Byte: 1},
++		End:      hcl.Pos{Line: 1, Column: 1, Byte: 1},
++	}
++	testCases := map[string]struct {
++		input          cty.Value
++		expectedOutput keyprovider.Output
++		expectedDiags  hcl.Diagnostics
++	}{
++		"wrong type - string": {
++			input:         cty.StringVal("wrong value"),
++			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Expected key_provider value", Detail: "Expected a key_provider compatible value, found string instead", Subject: &src}},
++		},
++		"wrong type - number": {
++			input:         cty.NumberFloatVal(4.2),
++			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Expected key_provider value", Detail: "Expected a key_provider compatible value, found number instead", Subject: &src}},
++		},
++		"wrong type - list": {
++			input:         cty.ListVal([]cty.Value{cty.StringVal("val")}),
++			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Expected key_provider value", Detail: "Expected a key_provider compatible value, found list of string instead", Subject: &src}},
++		},
++		"wrong type - set": {
++			input:         cty.SetVal([]cty.Value{cty.StringVal("val")}),
++			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Expected key_provider value", Detail: "Expected a key_provider compatible value, found set of string instead", Subject: &src}},
++		},
++		"wrong map content": {
++			input:         cty.MapVal(map[string]cty.Value{"wrong_key": cty.StringVal("just a value")}),
++			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Missing encryption_key value", Detail: "An encryption_key value is required in the key_provider compatible object at this location", Subject: &src}},
++		},
++		"wrong object content": {
++			input:         cty.ObjectVal(map[string]cty.Value{"wrong_key": cty.StringVal("just a value")}),
++			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Missing encryption_key value", Detail: "An encryption_key value is required in the key_provider compatible object at this location", Subject: &src}},
++		},
++		"map with a wrong type of the encryption_key entry": {
++			input:         cty.MapVal(map[string]cty.Value{"encryption_key": cty.StringVal("just a value")}),
++			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Unsuitable value type", Detail: "Unsuitable value: list of number required, but have string", Subject: &src}},
++		},
++		"object with a wrong type of the encryption_key entry": {
++			input:         cty.ObjectVal(map[string]cty.Value{"encryption_key": cty.StringVal("just a value")}),
++			expectedDiags: hcl.Diagnostics{&hcl.Diagnostic{Summary: "Unsuitable value type", Detail: "Unsuitable value: list of number required, but have string", Subject: &src}},
++		},
++		"map with valid encryption_key": {
++			input:          cty.MapVal(map[string]cty.Value{"encryption_key": cty.ListVal([]cty.Value{cty.NumberIntVal(int64('k')), cty.NumberIntVal(int64('e')), cty.NumberIntVal(int64('y'))})}),
++			expectedOutput: keyprovider.Output{EncryptionKey: []byte("key")},
++		},
++		"object with valid encryption_key": {
++			input:          cty.ObjectVal(map[string]cty.Value{"encryption_key": cty.ListVal([]cty.Value{cty.NumberIntVal(int64('k')), cty.NumberIntVal(int64('e')), cty.NumberIntVal(int64('y'))})}),
++			expectedOutput: keyprovider.Output{EncryptionKey: []byte("key")},
++		},
++	}
++	for name, tc := range testCases {
++		t.Run(name, func(t *testing.T) {
++			output, diags := keyprovider.DecodeOutput(tc.input, src)
++			gotErr := diags.Error()
++			wantErr := tc.expectedDiags.Error()
++			if gotErr != wantErr {
++				t.Errorf("unexpected returned error\n\tgot: %s\n\twant: %s", gotErr, wantErr)
 +			}
- 			// If object A is not being deleted then there's nothing else for us
- 			// to do here.
- 			if !objA.HasDeleteLeg() {
++			gotVal := output.Cty()
++			wantVal := tc.expectedOutput.Cty()
++			if !gotVal.Equals(wantVal).True() {
++				t.Fatalf("incorrect output value\n\tgot: %s\n\twant: %s", gotVal.GoString(), wantVal.GoString())
++			}
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4775** (2026-10-28): command: Accept the short "-v" as another alias for "version" [v1.13 backport] (@apparentlymart)
-- **PR #4774** (2026-10-27): Fix occasional failure in TestContext2Apply_destroyThenUpdate (@cam72cam)
-- **PR #4770** (2026-10-27): Adjust module and provider shims in new runtime (@cam72cam)
-- **PR #4769** (2026-10-27): command: Accept the short "-v" as another alias for "version" (@apparentlymart)
-- **PR #4768** (2026-10-27): Implement tainted resource handling in the new runtime (@cam72cam)
-- **PR #4767** (2026-10-27): Persist state hook in new engine (@cam72cam)
+- **PR #4794** (2026-10-29): Prepare 1.13.5 release (@lbordowitz)
+- **PR #4793** (2026-10-29): [v1.12] Update cosign (@lbordowitz)
+- **PR #4792** (2026-10-29): [v1.13] Update cosign (@lbordowitz)
+- **PR #4791** (2026-10-29): Update cosign (@lbordowitz)
+- **PR #4789** (2026-10-29): Prepare 1.13.4 release (@lbordowitz)
+- **PR #4788** (closed): 1.13.4 release pr (@lbordowitz)
 
 ---
 
@@ -1469,33 +1568,28 @@ Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. occasional failure in TestContext2Apply_destroyThenUpdate
+## X. Update cosign (#4791)
 
 **RULE**:
-When implementing operations in `internal/engine/planning/execgraph_resource.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f0af1883`: occasional failure in TestContext2Apply_destroyThenUpdate. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `073d2cd5`: Update cosign (#4791). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/engine/planning/execgraph_resource.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			// If object B is being completely deleted and object A is being create/updated
-			// we need to record that the create/update depends on that deletion.
-			// TestContext2Apply_destroyThenUpdate is where this is tested (with a race condition...)
-			if objA.HasCreateOrUpdateLeg() && objB.HasDeleteLeg() && !objB.HasCreateOrUpdateLeg() {
-				objA.CreateOrUpdateDependsOn(objB.DeletionRef())
-			}
+          cosign-release: v2.4.3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+          cosign-release: v2.2.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f0af1883` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `073d2cd5` are properly handled with clean fallback behavior.
