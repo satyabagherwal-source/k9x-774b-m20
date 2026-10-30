@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `f2aca49f`  
+> **Source Version**: `cb0936a4`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T22:07:48.262Z  
+> **Timestamp**: 2026-10-30T13:22:20.842Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T22:07:48.057Z  
+> **Harvest Timestamp**: 2026-10-30T13:22:20.238Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11426 stars
+- **Stars / Engagement**: 11435 stars
 
 ---
 
@@ -1920,14 +1920,13 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14767** (2026-10-28): **feat: container `privileged` profile makes sysfs writable**
-  *Symptoms*: Resolves: https://github.com/siderolabs/talos/issues/14764  Setting `ContainerConfig.security.profile` to `privileged` now also makes sysfs writable. 
-  **Post-Mortem & Fix Analysis**:
-  > `qemu/integration` passed on [`ec4fc77` (this PR)](https://github.com/siderolabs/talos/pull/14767/changes/ec4fc77c0536b523ed246c5e3c35cbfae77cc17f)
-  > /m
+- **Issue #14797** (2026-10-30): **fix: open the files of pkg/xfs roots with O_CLOEXEC**
+  *Symptoms*: `UnixRoot.OpenFile` (`unix.Openat`) and `AsOSFile` (`dup`) create descriptors without close-on-exec, unlike the rest of `pkg/xfs`. machined writes and labels `/etc` through these roots, so a service it starts at that moment inherits the descriptor. In enforcing mode SELinux denies it at the exec, which `TestNoHostDenials` caught in #14610:  ``` avc:  denied  { write } for  pid=116 comm="sandboxd" path="/cri/conf.d/base-spec.json" dev="overlay" scontext=system_u:system_r:sandboxd_t:s0 tcontext=system_u:object_r:etc_t:s0 tclass=file permissive=0 ```  In permissive mode, or without SELinux, the descriptor stays open in the service.  Both calls now set close-on-exec, and the xfs tests check the flag (they fail without the fix). Same class as #9412: a few more instances remain on main (kexec memfds, the makefs protofile, `gopacket` packet capture), I will follow up with those and a lint check. 
 
-- **Issue #14764** (2026-10-28): **`privileged` security profile should make sysfs writable**
-  *Symptoms*: Add `oci.WithWriteableSysfs` to containerd options, when `ContainerConfig.security.profile == privileged`.
+- **Issue #14794** (2026-10-29): **fix: ctr `entrypoint`,`arg` replace instead of merge on patch**
+  *Symptoms*: Resolves https://github.com/siderolabs/talos/issues/14773  Fixes the patching strategy for `args`, `entrypoint` when patching the ContainerConfig through a machineconfig patch. 
+  **Post-Mortem & Fix Analysis**:
+  > /m
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1944,241 +1943,391 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0343d803` (2026-10-21)
-**Commit Message**: fix: reconnect log senders when the receiver closes the connection
+### Incident Patch 1: `dfb38dce` (2026-10-26)
+**Commit Message**: chore: fix a few flaky tests
 
-The JSON lines sender never reads from its TCP connection, so it misses
-the receiver's FIN and keeps writing into the half-closed connection:
-writes succeed while they fit into the send buffer, and the messages
-are lost. The kernel log sender hits this every time the receiver
-restarts behind a Kubernetes Service.
+* add a slightly longer timeout to the dns check as sometimes the requests took longer than the default 1s
+* fix a flaky hypervisor test where the controller was sometimes slow to release a mutation claim
+* add a retry to the Exec test helper as some tests restart the kubelet and then try to Exec but the API server still holds it's old connection to the kublet
 
-TCP keepalives are enabled in Talos by default, so just enable TCP user
-timeouts.
+For example: CommonSuite/TestBaseOCISpec test changes the base OCI spec, which restarts CRI on which the kubelet depends so it restarts as well.
 
-Fixes #14701
+Signed-off-by: Orzelius <[REDACTED_EMAIL]>
 
-Signed-off-by: Matthew Kelch <[REDACTED_EMAIL]>
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/runtime/logging/sender_jsonlines.go` (modified, +96/-8)
+**File**: `internal/app/machined/pkg/controllers/hypervisor/cloud_init_iso_test.go` (modified, +19/-1)
 ```diff
-@@ -7,16 +7,24 @@ package logging
+@@ -5,6 +5,7 @@
+ package hypervisor_test
+ 
  import (
- 	"context"
- 	"encoding/json"
 +	"errors"
- 	"fmt"
- 	"maps"
- 	"net"
- 	"net/url"
-+	"syscall"
- 	"time"
+ 	"os"
+ 	"path/filepath"
+ 	"testing"
+@@ -247,7 +248,24 @@ func (s *CloudInitISOSuite) TestRetirementWaitsForMutationClaimEnteredBeforeLibr
  
-+	"golang.org/x/sys/unix"
+ 	asset := filepath.Join(dir, status.TypedSpec().Name)
+ 	marker := hypervisor.ContentLibraryMutationFinalizer(status.TypedSpec().Name)
+-	s.Require().NoError(s.State().AddFinalizer(s.Ctx(), library.Metadata(), marker))
 +
- 	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
- 	"github.com/siderolabs/talos/pkg/machinery/config/config"
- )
- 
-+// tcpUserTimeout bounds how long data sent to the receiver may stay unacknowledged: without it, a receiver
-+// which goes away without closing the connection is noticed only when TCP gives up retransmitting (~15 minutes).
-+const tcpUserTimeout = 60 * time.Second
-+
- type jsonLinesSender struct {
- 	endpoint  *url.URL
- 	extraTags map[string]string
-@@ -83,14 +91,8 @@ func (j *jsonLinesSender) Send(ctx context.Context, e *runtime.LogEvent) error {
- 
- 	defer unlock()
- 
--	// Connect (or "connect" for UDP) if no connection is established already.
--	if j.conn == nil {
--		conn, err := new(net.Dialer).DialContext(ctx, j.endpoint.Scheme, j.endpoint.Host)
--		if err != nil {
--			return err
--		}
--
--		j.conn = conn
-+	if err = j.connect(ctx); err != nil {
-+		return err
- 	}
- 
- 	d, _ := ctx.Deadline()
-@@ -112,6 +114,92 @@ func (j *jsonLinesSender) Send(ctx context.Context, e *runtime.LogEvent) error {
- 	return nil
- }
- 
-+// connect establishes the connection (or "connects" for UDP) unless it is already established.
-+func (j *jsonLinesSender) connect(ctx context.Context) error {
-+	// Reconnect if the receiver has closed the connection.
-+	if j.conn != nil && receiverClosed(j.conn) {
-+		j.conn.Close() //nolint:errcheck
-+		j.conn = nil
-+	}
-+
-+	if j.conn != nil {
-+		return nil
-+	}
-+
-+	var dialer net.Dialer
-+
-+	if j.endpoint.Scheme == "tcp" {
-+		dialer.Control = setTCPUserTimeout
-+	}
-+
-+	conn, err := dialer.DialContext(ctx, j.endpoint.Scheme, j.endpoint.Host)
-+	if err != nil {
-+		return err
-+	}
-+
-+	j.conn = conn
-+
-+	return nil
-+}
-+
-+func setTCPUserTimeout(_, _ string, c syscall.RawConn) error {
-+	var sockErr error
-+
-+	if err := c.Control(func(fd uintptr) {
-+		sockErr = unix.SetsockoptInt(int(fd), unix.IPPROTO_TCP, unix.TCP_USER_TIMEOUT, int(tcpUserTimeout.Milliseconds()))
-+	}); err != nil {
-+		return err
-+	}
-+
-+	if sockErr != nil {
-+		return fmt.Errorf("failed to set TCP_USER_TIMEOUT: %w", sockErr)
-+	}
-+
-+	return nil
-+}
-+
-+// receiverClosed reports whether the receiver has closed the TCP connection (or it has failed).
-+//
-+// The sender never reads from the connection, so it doesn't see the FIN from the receiver, and writes
-+// into the closed connection keep succeeding until the receiver responds with a RST, or, if the receiver
-+// is gone, until TCP gives up retransmitting; anything written until then is lost.
-+//
-+// The check is a non-blocking read: EOF means the receiver has closed the connection.
-+func receiverClosed(conn net.Conn) bool {
-+	tcpConn, ok := conn.(*net.TCPConn)
-+	if !ok {
-+		return false
-+	}
-+
-+	rawConn, err := tcpConn.SyscallConn()
-+	if err != nil {
-+		return true
-+	}
-+
-+	var closed bool
-+
-+	if err = rawConn.Read(func(fd uintptr) bool {
-+		var buf [64]byte
-+
-+		for {
-+			n, err := unix.Read(int(fd), buf[:])
-+			if n > 0 {
-+				// the receiver is not expected to send anything, discard
-+				continue
++	// The controller publishes Ready while still holding this same marker for
++	// the build, so claim it atomically once released.
++	// A plain AddFinalizer would no-op and the controller would then drop it.
++	s.Require().Eventually(func() bool {
++		_, claimErr := s.State().UpdateWithConflicts(s.Ctx(), library.Metadata(), func(r resource.Resource) error {
++			if r.Metadata().Finalizers().Has(marker) {
++				return errors.New("already claimed")
 +			}
 +
-+			// n == 0 is EOF, any other error except for EAGAIN means the connection has failed
-+			closed = !errors.Is(err, unix.EAGAIN)
++			r.Metadata().Finalizers().Add(marker)
 +
-+			return true
-+		}
-+	}); err != nil {
-+		return true
-+	}
++			return nil
++		}, state.WithExpectedPhase(resource.PhaseRunning))
 +
-+	return closed
-+}
++		return claimErr == nil
++	}, 3*time.Second, 10*time.Millisecond, "mutation claim was never released by the controller")
 +
- // Close implements LogSender interface.
- func (j *jsonLinesSender) Close(ctx context.Context) error {
- 	unlock := j.tryLock(ctx)
+ 	_, err = s.State().Teardown(s.Ctx(), library.Metadata())
+ 	s.Require().NoError(err)
+ 
 ```
 
-**File**: `internal/app/machined/pkg/runtime/logging/sender_jsonlines_test.go` (modified, +64/-0)
+**File**: `internal/integration/base/k8s.go` (modified, +18/-3)
 ```diff
-@@ -326,3 +326,67 @@ func TestSenderJSONLines(t *testing.T) { //nolint:tparallel
+@@ -337,10 +337,25 @@ func (p *pod) Exec(ctx context.Context, command string) (string, string, error)
  
- 	cancel()
- }
+ 	var stdout, stderr strings.Builder
+ 
+-	err = websocketExec.StreamWithContext(ctx, remotecommand.StreamOptions{
+-		Stdout: &stdout,
+-		Stderr: &stderr,
++	// the context go-retry passes to the callback expires after the retry window
++	// and would cut off long-running commands so use Retry, not RetryWithContext
++	err = retry.Constant(10*time.Second, retry.WithUnits(time.Second)).Retry(func() error {
++		stdout.Reset()
++		stderr.Reset()
 +
-+func TestSenderJSONLinesReconnect(t *testing.T) {
++		streamErr := websocketExec.StreamWithContext(ctx, remotecommand.StreamOptions{
++			Stdout: &stdout,
++			Stderr: &stderr,
++		})
++		if streamErr != nil && strings.Contains(streamErr.Error(), "error dialing backend") {
++			p.suite.T().Logf("retrying exec in pod %s/%s: %v", p.namespace, p.name, streamErr)
++
++			return retry.ExpectedError(streamErr)
++		}
++
++		return streamErr
+ 	})
++
+ 	if err != nil && !p.quiet {
+ 		p.suite.T().Logf(
+ 			"error executing command in pod %s/%s: %v\n\ncommand %q stdout:\n%s\n\ncommand %q stderr:\n%s",
+```
+
+**File**: `internal/pkg/dns/dns_test.go` (modified, +9/-1)
+```diff
+@@ -5,6 +5,7 @@
+ package dns_test
+ 
+ import (
++	"cmp"
+ 	"context"
+ 	"errors"
+ 	"iter"
+@@ -52,6 +53,9 @@ func TestDNS(t *testing.T) {
+ 		nameservers  []string
+ 		expectedCode int
+ 		errCheck     check.Check
++		// timeout overrides the client timeout,
++		// default is 5s.
++		timeout time.Duration
+ 	}{
+ 		{
+ 			name:         "success",
+@@ -65,6 +69,8 @@ func TestDNS(t *testing.T) {
+ 			hostname:    "google-fail.com",
+ 			nameservers: []string{"242.242.242.242"},
+ 			errCheck:    check.ErrorContains("i/o timeout"),
++			// Must give up before the server's own upstream request timeout answers SERVFAIL.
++			timeout: time.Second,
+ 		},
+ 		{
+ 			name:         "empty destinations",
+@@ -112,8 +118,10 @@ func TestDNS(t *testing.T) {
+ 
+ 				time.Sleep(10 * time.Millisecond)
+ 
++				timeout := cmp.Or(test.timeout, 5*time.Second)
++
+ 				c := dnssrv.Client{
+-					Timeout: time.Second,
++					Timeout: timeout,
+ 				}
+ 
+ 				r, _, err := c.Exchange(createQuery(test.hostname), dnsAddr)
+```
+
+---
+
+### Incident Patch 2: `cb0936a4` (2026-10-29)
+**Commit Message**: fix: open the files of pkg/xfs roots with O_CLOEXEC
+
+UnixRoot.OpenFile (unix.Openat) and AsOSFile (dup) create descriptors
+without close-on-exec, so a service machined starts while it writes or
+labels a file of /etc inherits the descriptor. In enforcing mode
+SELinux denies it at the exec (seen with sandboxd on etc_t), otherwise
+it stays open in the service.
+
+Signed-off-by: Raphaël DUCOM <[REDACTED_EMAIL]>
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/runtime/v1alpha1/bootloader/sdboot/sdboot.go` (modified, +2/-2)
+```diff
+@@ -250,7 +250,7 @@ func (c *Config) KexecLoad(r runtime.Runtime, disk string) error {
+ 			}
+ 		}()
+ 
+-		kernelFd, err = unix.MemfdCreate("vmlinux", 0)
++		kernelFd, err = unix.MemfdCreate("vmlinux", unix.MFD_CLOEXEC)
+ 		if err != nil {
+ 			return fmt.Errorf("memfdCreate: %v", err)
+ 		}
+@@ -267,7 +267,7 @@ func (c *Config) KexecLoad(r runtime.Runtime, disk string) error {
+ 			return fmt.Errorf("failed to seek kernel: %w", err)
+ 		}
+ 
+-		initrdFd, err := unix.MemfdCreate("initrd", 0)
++		initrdFd, err := unix.MemfdCreate("initrd", unix.MFD_CLOEXEC)
+ 		if err != nil {
+ 			return fmt.Errorf("memfdCreate: %v", err)
+ 		}
+```
+
+**File**: `internal/pkg/zboot/zboot.go` (modified, +1/-1)
+```diff
+@@ -51,7 +51,7 @@ func Extract(kernel *os.File) (int, io.Closer, error) {
+ 
+ 	defer z.Close()
+ 
+-	fd, err := unix.MemfdCreate("vmlinux", 0)
++	fd, err := unix.MemfdCreate("vmlinux", unix.MFD_CLOEXEC)
+ 	if err != nil {
+ 		return 0, nil, fmt.Errorf("memfdCreate: %v", err)
+ 	}
+```
+
+**File**: `pkg/xfs/helpers_linux.go` (modified, +3/-2)
+```diff
+@@ -11,7 +11,8 @@ import (
+ 	"fmt"
+ 	"io/fs"
+ 	"os"
+-	"syscall"
++
++	"golang.org/x/sys/unix"
+ )
+ 
+ // AsOSFile attempts to convert fs.File to *os.File.
+@@ -21,7 +22,7 @@ func AsOSFile(f fs.File, name string) (*os.File, error) {
+ 		return nil, errors.ErrUnsupported
+ 	}
+ 
+-	newFd, err := syscall.Dup(int(ff.Fd()))
++	newFd, err := unix.FcntlInt(ff.Fd(), unix.F_DUPFD_CLOEXEC, 0)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("failed to duplicate file descriptor: %w", err)
+ 	}
+```
+
+**File**: `pkg/xfs/helpers_linux_test.go` (added, +44/-0)
+```diff
+@@ -0,0 +1,44 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++//go:build linux
++
++package xfs_test
++
++import (
++	"testing"
++
++	"github.com/stretchr/testify/require"
++
++	"github.com/siderolabs/talos/pkg/xfs"
++)
++
++func TestAsOSFile(t *testing.T) {
 +	t.Parallel()
 +
-+	ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
-+	t.Cleanup(cancel)
-+
-+	lis, err := (&net.ListenConfig{}).Listen(ctx, "tcp", "127.0.0.1:0")
-+	require.NoError(t, err)
-+
-+	endpoint := lis.Addr().String()
-+
-+	sender := logging.NewJSONLines(&loggingDestination{
-+		endpoint: ensure.Value(url.Parse("tcp://" + endpoint)),
-+	})
++	root := &xfs.OSRoot{Shadow: t.TempDir()}
++	require.NoError(t, root.OpenFS())
 +
 +	t.Cleanup(func() {
-+		require.NoError(t, sender.Close(context.Background()))
++		require.NoError(t, root.Close())
 +	})
 +
-+	// send sends a message and returns the connection it was received on.
-+	send := func(lis net.Listener, msg string) net.Conn {
-+		t.Helper()
++	writeFile(t, root, "file", testFileContent)
 +
-+		require.NoError(t, sender.Send(ctx, &runtime.LogEvent{Msg: msg}))
-+
-+		require.NoError(t, lis.(*net.TCPListener).SetDeadline(time.Now().Add(5*time.Second)))
-+
-+		conn, err := lis.Accept()
-+		require.NoError(t, err, "message %q was not sent on a new connection", msg)
-+
-+		require.NoError(t, conn.SetReadDeadline(time.Now().Add(5*time.Second)))
-+
-+		r := bufio.NewReader(conn)
-+
-+		line, err := r.ReadBytes('\n')
-+		require.NoError(t, err)
-+
-+		var m map[string]any
-+
-+		require.NoError(t, json.Unmarshal(line, &m))
-+		require.Equal(t, msg, m["msg"])
-+
-+		return conn
-+	}
-+
-+	conn := send(lis, "before restart")
-+
-+	// The receiver closes the connection.
-+	require.NoError(t, conn.Close())
-+	require.NoError(t, lis.Close())
-+
-+	// A new receiver listens on the same address.
-+	lis, err = (&net.ListenConfig{}).Listen(ctx, "tcp", endpoint)
++	f, err := xfs.Open(root, "file")
 +	require.NoError(t, err)
 +
 +	t.Cleanup(func() {
-+		require.NoError(t, lis.Close())
++		require.NoError(t, f.Close())
 +	})
 +
-+	// The message is sent on a new connection rather than lost in the closed one.
-+	conn = send(lis, "after restart")
-+	require.NoError(t, conn.Close())
++	osf, err := xfs.AsOSFile(f, "file")
++	require.NoError(t, err)
++
++	t.Cleanup(func() {
++		require.NoError(t, osf.Close())
++	})
++
++	assertCloseOnExec(t, osf.Fd())
++}
+```
+
+**File**: `pkg/xfs/root_linux.go` (modified, +1/-1)
+```diff
+@@ -84,7 +84,7 @@ func (root *UnixRoot) Open(name string) (fs.File, error) {
+ 
+ // OpenFile opens a file in the root filesystem with the specified name, flags, and permissions.
+ func (root *UnixRoot) OpenFile(name string, flags int, perm os.FileMode) (File, error) {
+-	fd, err := unix.Openat(root.mntfd, strings.TrimLeft(name, "/"), flags, uint32(perm))
++	fd, err := unix.Openat(root.mntfd, strings.TrimLeft(name, "/"), flags|unix.O_CLOEXEC, uint32(perm))
+ 	if err != nil {
+ 		return nil, err
+ 	}
+```
+
+**File**: `pkg/xfs/root_test.go` (modified, +11/-0)
+```diff
+@@ -11,6 +11,7 @@ import (
+ 
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
++	"golang.org/x/sys/unix"
+ 
+ 	"github.com/siderolabs/talos/pkg/xfs"
+ )
+@@ -46,6 +47,7 @@ func testFilesystem(t *testing.T, rwRoot xfs.Root, roRoot xfs.Root) {
+ 
+ 		actual, err := xfs.OpenFile(rwRoot, name, flags, 0o644)
+ 		require.NoError(t, err)
++		assertCloseOnExec(t, actual.Fd())
+ 		assert.NoError(t, actual.Close())
+ 	})
+ 
+@@ -230,6 +232,15 @@ func testFilesystem(t *testing.T, rwRoot xfs.Root, roRoot xfs.Root) {
+ 	})
+ }
+ 
++// assertCloseOnExec checks that a descriptor does not leak into the processes started while it is open.
++func assertCloseOnExec(tb testing.TB, fd uintptr) {
++	tb.Helper()
++
++	flags, err := unix.FcntlInt(fd, unix.F_GETFD, 0)
++	require.NoError(tb, err)
++	assert.NotZero(tb, flags&unix.FD_CLOEXEC, "descriptor is not close-on-exec")
++}
++
+ func writeFile(tb testing.TB, root xfs.Root, name string, content []byte) {
+ 	tb.Helper()
+ 
+```
+
+---
+
+### Incident Patch 3: `e89db1cd` (2026-10-28)
+**Commit Message**: fix: ctr entrypoint,arg merge on config patch
+
+Aims to fix the patching strategy for `args`, `entrypoint` when patching the ContainerConfig
+through a machineconfig patch.
+
+Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
+
+**File**: `pkg/machinery/config/types/container/container_config.go` (modified, +2/-2)
+```diff
+@@ -87,10 +87,10 @@ type ContainerConfigV1Alpha1 struct {
+ 	//     Overrides the image's ENTRYPOINT.
+ 	//
+ 	//     Unset means the image's own entrypoint is used.
+-	ContainerEntrypoint []string `yaml:"entrypoint,omitempty"`
++	ContainerEntrypoint []string `yaml:"entrypoint,omitempty" merge:"replace"`
+ 	//   description: |
+ 	//     Overrides the image's CMD.
+-	ContainerArgs []string `yaml:"args,omitempty"`
++	ContainerArgs []string `yaml:"args,omitempty" merge:"replace"`
+ 	//   description: |
+ 	//     Overrides the image's WORKDIR.
+ 	ContainerWorkingDir string `yaml:"workingDir,omitempty"`
+```
+
+**File**: `pkg/machinery/config/types/container/container_config_test.go` (modified, +41/-0)
+```diff
+@@ -12,6 +12,7 @@ import (
+ 	"github.com/stretchr/testify/require"
+ 
+ 	"github.com/siderolabs/talos/pkg/machinery/config/configloader"
++	"github.com/siderolabs/talos/pkg/machinery/config/merge"
+ 	"github.com/siderolabs/talos/pkg/machinery/config/types/container"
+ )
+ 
+@@ -651,3 +652,43 @@ type validationMode struct{}
+ func (validationMode) String() string        { return "test" }
+ func (validationMode) RequiresInstall() bool { return false }
+ func (validationMode) InContainer() bool     { return false }
++
++func TestContainerConfigMergeReplacesEntrypointAndArgs(t *testing.T) {
++	t.Parallel()
++
++	base := load(t, `apiVersion: v1alpha1
++kind: ContainerConfig
++name: list-test
++image: docker.io/library/python:3.13-alpine
++entrypoint: ["python3", "-c"]
++args: ["print('one')"]
++`)
++
++	patch := load(t, `apiVersion: v1alpha1
++kind: ContainerConfig
++name: list-test
++image: docker.io/library/python:3.13-alpine
++entrypoint: ["python3", "-u", "-c"]
++args: ["print('two')"]
++`)
++
++	require.NoError(t, merge.Merge(base, patch))
++	assert.Equal(t, []string{"python3", "-u", "-c"}, base.Entrypoint())
++	assert.Equal(t, []string{"print('two')"}, base.Args())
++
++	// Re-applying the same document must be idempotent.
++	require.NoError(t, merge.Merge(base, patch))
++	assert.Equal(t, []string{"python3", "-u", "-c"}, base.Entrypoint())
++	assert.Equal(t, []string{"print('two')"}, base.Args())
++
++	// Omitting the lists in the patch keeps the existing values.
++	omitted := load(t, `apiVersion: v1alpha1
++kind: ContainerConfig
++name: list-test
++image: docker.io/library/python:3.13-alpine
++`)
++
++	require.NoError(t, merge.Merge(base, omitted))
++	assert.Equal(t, []string{"python3", "-u", "-c"}, base.Entrypoint())
++	assert.Equal(t, []string{"print('two')"}, base.Args())
 +}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14767** (2026-10-28): feat: container `privileged` profile makes sysfs writable (@majabojarska)
-- **PR #14761** (2026-10-28): test: disable delegations in the development NFS server (@smira)
-- **PR #14757** (closed): fix: bound the Argon2id memory cost when formatting LUKS2 volumes (@ehbello)
-- **PR #14756** (2026-10-28): feat: bump major versions of Go modules (@smira)
-- **PR #14755** (2026-10-28): refactor: ContainerConfig.dependsOn.network field name (@majabojarska)
-- **PR #14754** (2026-10-27): test: new NVIDIA chart and drivers (@smira)
+- **PR #14797** (2026-10-30): fix: open the files of pkg/xfs roots with O_CLOEXEC (@rducom)
+- **PR #14794** (2026-10-29): fix: ctr `entrypoint`,`arg` replace instead of merge on patch (@majabojarska)
+- **PR #14792** (2026-10-29): fix: rollback alpine version (@shanduur)
+- **PR #14789** (2026-10-29): feat: correct sensitivity or the resources (@smira)
+- **PR #14787** (2026-10-29): feat: update Kubernetes to 1.38.0-alpha.3 (@smira)
+- **PR #14786** (2026-10-29): feat: deprecate the fields of the Talos API client (@utkuozdemir)
 
 ---
 
@@ -2198,78 +2347,46 @@ Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reconnect log senders when the receiver closes the connection
+## X. fix a few flaky tests
 
 **RULE**:
-When implementing operations in `internal/app/machined/pkg/runtime/logging/sender_jsonlines.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/pkg/controllers/hypervisor/cloud_init_iso_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0343d803`: reconnect log senders when the receiver closes the connection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dfb38dce`: fix a few flaky tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/runtime/logging/sender_jsonlines.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/hypervisor/cloud_init_iso_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
 	"errors"
-	"syscall"
-	"golang.org/x/sys/unix"
 
-// tcpUserTimeout bounds how long data sent to the receiver may stay unacknowledged: without it, a receiver
-// which goes away without closing the connection is noticed only when TCP gives up retransmitting (~15 minutes).
-const tcpUserTimeout = 60 * time.Second
+	// The controller publishes Ready while still holding this same marker for
+	// the build, so claim it atomically once released.
+	// A plain AddFinalizer would no-op and the controller would then drop it.
+	s.Require().Eventually(func() bool {
+		_, claimErr := s.State().UpdateWithConflicts(s.Ctx(), library.Metadata(), func(r resource.Resource) error {
+			if r.Metadata().Finalizers().Has(marker) {
+				return errors.New("already claimed")
+			}
 
-	if err = j.connect(ctx); err != nil {
-		return err
-// connect establishes the connection (or "connects" for UDP) unless it is already established.
-func (j *jsonLinesSender) connect(ctx context.Context) error {
-	// Reconnect if the receiver has closed the connection.
-	if j.conn != nil && receiverClosed(j.conn) {
-		j.conn.Close() //nolint:errcheck
-		j.conn = nil
-	}
+			r.Metadata().Finalizers().Add(marker)
 
-	if j.conn != nil {
-		return nil
-	}
+			return nil
+		}, state.WithExpectedPhase(resource.PhaseRunning))
 
-	var dialer net.Dialer
+		return claimErr == nil
+	}, 3*time.Second, 10*time.Millisecond, "mutation claim was never released by the controller")
 
-	if j.endpoint.Scheme == "tcp" {
-		dialer.Control = setTCPUserTimeout
-	}
-
-	conn, err := dialer.DialContext(ctx, j.endpoint.Scheme, j.endpoint.Host)
-	if err != nil {
-		return err
-	}
-
-	j.conn = conn
-
-	return nil
-}
-
-func setTCPUserTimeout(_, _ string, c syscall.RawConn) error {
-	var sockErr error
-
-	if err := c.Control(func(fd uintptr) {
-		sockErr = unix.SetsockoptInt(int(fd), unix.IPPROTO_TCP, unix.TCP_USER_TIMEOUT, int(tcpUserTimeout.Milliseconds()))
-	}); err
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	// Connect (or "connect" for UDP) if no connection is established already.
-	if j.conn == nil {
-		conn, err := new(net.Dialer).DialContext(ctx, j.endpoint.Scheme, j.endpoint.Host)
-		if err != nil {
-			return err
-		}
-
-		j.conn = conn
+	s.Require().NoError(s.State().AddFinalizer(s.Ctx(), library.Metadata(), marker))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0343d803` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dfb38dce` are properly handled with clean fallback behavior.

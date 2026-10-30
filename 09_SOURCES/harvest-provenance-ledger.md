@@ -6202,3 +6202,5 @@ Every entry in this ledger must capture:
 | `learn-github-inikulin-parse5` | `https://github.com/inikulin/parse5` | `8402e101` | Multi-dimensional audit evidence | 2026-10-30T13:11:07.848Z |
 | `learn-github-0xcub3-wblock` | `https://github.com/0xCUB3/wBlock` | `04c047f8` | Multi-dimensional audit evidence | 2026-10-30T13:13:34.903Z |
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `07c53c96` | Multi-dimensional audit evidence | 2026-10-30T13:14:05.387Z |
+| `learn-github-louis-cfm-coucou` | `https://github.com/Louis-CFM/coucou` | `37e457dd` | Multi-dimensional audit evidence | 2026-10-30T13:22:19.365Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `cb0936a4` | Multi-dimensional audit evidence | 2026-10-30T13:22:21.526Z |

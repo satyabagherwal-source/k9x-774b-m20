@@ -6193,3 +6193,5 @@
 | `CYCLE-20261030-QFR8` | `2026-10-30T13:11:07.844Z` | `inikulin/parse5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5753, Rule 5754, Rule 5755` | Yes (`ae3dec40...`) |
 | `CYCLE-20261030-TL84` | `2026-10-30T13:13:34.900Z` | `0xCUB3/wBlock` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5756, Rule 5757, Rule 5758` | Yes (`bf99e823...`) |
 | `CYCLE-20261030-U8QW` | `2026-10-30T13:14:05.384Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5759` | Yes (`89a78d21...`) |
+| `CYCLE-20261030-4TWG` | `2026-10-30T13:22:19.361Z` | `Louis-CFM/coucou` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md` | Yes (`b490d604...`) |
+| `CYCLE-20261030-4VKI` | `2026-10-30T13:22:21.522Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5760` | Yes (`601d5241...`) |

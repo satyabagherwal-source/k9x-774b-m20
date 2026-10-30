@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source**: github ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
-> **Source Version**: `47d1c2da`  
+> **Source Version**: `37e457dd`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T10:33:20.274Z  
+> **Timestamp**: 2026-10-30T13:22:19.085Z  
 > **Learning ID**: `learn-github-louis-cfm-coucou`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Louis-CFM/coucou](https://github.com/Louis-CFM/coucou))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T10:33:14.124Z  
+> **Harvest Timestamp**: 2026-10-30T13:22:17.322Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A tiny friend in your Mac's notch and on your iPhone that keeps an eye on your AI coding agents: Claude Code, Codex, Cursor, Gemini CLI, Antigravity and more. Approve from the notch or your Lock Screen.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6505 stars
+- **Stars / Engagement**: 6783 stars
 
 ---
 
@@ -208,6 +208,22 @@ final class AppState: ObservableObject {
     func fetchModelsIfNeeded(for provider: ChatProvider) {
         guard !loadingProviderModels.contains(provider),
               fetchedProviderModels[provider] == nil else { return }
+        #if !APPSTORE
+        // Through the subscription: Claude Code takes the model aliases; the other tools
+        // use the model chosen in them.
+        if usesSubscription(provider) {
+            providerModelFetchError.removeValue(forKey: provider)
+            if provider == .anthropic {
+                var models = Self.claudeCodeModels
+                if !models.contains(where: { $0.id == claudeModel }) { models.insert((claudeModel, claudeModel), at: 0) }
+                fetchedProviderModels[provider] = models
+            } else {
+                let tool = (provider.installedCLI ?? provider.subscriptionCLIs.first)?.displayName ?? provider.displayName
+                fetchedProviderModels[provider] = [("", String(format: String(localized: "chat.subscriptions.default-model"), tool))]
+            }
+            return
+        }
+        #endif
         // Local providers: fetch from server URL (no API key needed)
         if provider.isLocal {
             let baseURL = provider == .ollama ? ollamaServerURL : lmstudioServerURL
@@ -231,25 +247,7 @@ final class AppState: ObservableObject {
                 case .success(let models):
                     fetchedProviderModels[provider] = models
                     let current = provider == .ollama ? ollamaChatModel : lmstudioChatModel
-                    if !models.contains(where: { $0.id == current }) {
-                        let first = models.first!.id
-                        if provider == .ollama { ollamaChatModel = first }
-                        else                   { lmstudioChatModel = first }
-                    }
-                case .failure:
-                    providerModelFetchError[provider] = "Cannot reach \(normalised). Is the server running?"
-                }
-            }
-            return
-        }
-        // Remote providers: require API key
-        guard let apiKey = KeychainStore.shared.get(provider.keychainKey), !apiKey.isEmpty else {
-            providerModelFetchError[provider] = "No API key — add it in Settings."
-            return
-        }
-        loadingProviderModels.insert(provider)
-        providerModelFetchError.removeValue(forKey: provider)
-     
+   
 ```
 
 ### Core Architecture Module: `NotchBuddy/Sources/App/ApprovalQueue.swift`
@@ -279,6 +277,12 @@ struct QueuedApproval: Equatable, Sendable {
     var bundleId: String = ""
     /// When the request arrived (for the log: how long it waited).
     var received = Date()
+    /// The pill the request shows on when its session popped out of `pillId` (SessionBoard),
+    /// nil when it shows on `pillId` itself.
+    var shownPill: String? = nil
+
+    /// Where the card, the focus and the iPhone find the request.
+    var displayPill: String { shownPill ?? pillId }
 }
 
 struct ApprovalQueue: Sendable {
@@ -557,7 +561,7 @@ final class DemoEngine: ObservableObject {
         if s.pendingApproval?.sessionId == "demo_session" {
             s.pendingApproval = nil
         }
-        // Clear demo question (real questions always have pendingQuestionFD >= 0)
+        // Clear demo question (real questions always hold an nb-hook connection in the queue)
         if !HookServer.shared.hasRealPendingQuestion {
             s.pendingQuestion = nil
         }
@@ -616,8 +620,7 @@ final class DemoEngine: ObservableObject {
 
         // Remove only demo diffs; leave real diffs untouched
         for (pillId, ids) in demoDiffIds {
-            for id in ids {
-          
+            for id in ids 
 ```
 
 ### Core Architecture Module: `NotchBuddy/Sources/App/HookServer.swift`
@@ -668,21 +671,25 @@ final class HookServer: @unchecked Sendable {
     /// One read source per queued request: it notices the client hanging up, and its
     /// cancel handler is the only place the request's fd is closed.
     private var approvalSources: [UUID: any DispatchSourceRead] = [:]
-    private var pendingQuestionFD: Int32 = -1         // held open while user answers AskUserQuestion
-    private var questionFDSource: (any DispatchSourceRead)? = nil  // monitors pendingQuestionFD
+    /// AskUserQuestions waiting for an answer, oldest first, one per session; the head is on
+    /// the card. Each one holds its nb-hook connection open until it is answered or dropped.
+    private var questions = QuestionQueue()
+    /// One read source per waiting question: it notices the client hanging up, and its
+    /// cancel handler is the only place the question's fd is closed.
+    private var questionSources: [UUID: any DispatchSourceRead] = [:]
+    private var shownQuestion: UUID? = nil            // the question the card shows
 
     /// True when a real nb-hook connection is holding the approval fd open.
     @MainActor var hasRealPendingApproval: Bool { !approvals.isEmpty }
-    /// True when a real nb-hook connection is holding the question fd open.
-    @MainActor var hasRealPendingQuestion: Bool { pendingQuestionFD >= 0 }
-    private var questionPillId: String = ""           // pill that owns the pending question
-    private var questionSessionId: String = ""        // sessionId for the pending question (recap tracking)
+    /// True when a real nb-hook connection is holding a question fd open.
+    @MainActor var hasRealPendingQuestion: Bool { !questions.isEmpty }
     private var focusBeforeQuestion: String? = nil    // saved focus to restore after question
     private var activeSessionId: String? = nil        // current Claude Code session
     private var focusBeforeApproval: String? = nil    // saved focus to restore after approval
     private var focusBeforeAlert: String? = nil       // saved focus while another pill's card shows
     private var alertPill: String? = nil              // the pill that took the focus for its alert
     private var sessions = PillSessionRegistry()      // live sessions behind each pill
+    private var board = SessionBoard()                // what each of those sessions shows
 
     private init() {}
 
@@ -691,26 +698,26 @@ final class HookServer: @unchecked Sendable {
     /// Note shown when a request was answered outside Coucou.
     @MainActor
     private func handledNote(pill: String) -> String {
-        switch pill {
+        switch PillCatalog.basePillId(pill) {
         case "agent_cursor":  return "Handled in Cursor."
         case "agent_codex":   return "Handled in Codex."
         case "agent_copilot": return "Handled in Copilot CLI."
         case "agent_muse":    return "Handled in Muse Code."
         case "agent_hermes":  return "Handled in Hermes."
-        default:              return "Handled in \(claudeHostName)."
+        default:              return "Handled in \(claudeHostName(pill: pill))."
         }
     }
 
     /// Note shown when a request waited too long and went back to the agent.
     @MainActor
     private func waitingNote(pill: String) -> String {
-        switch pill {
+        switch PillCatalog.basePillId(pill) {
         case "agent_cursor":  return "Still waiting in Cursor."
         case "agent_codex":   return "Still waiting in Codex."
         case "agent_copilot": return "Still waiting in Copilot CLI."
         case "agent_muse":    return "Still waiting in Muse Code."
         case "agent_hermes":  return "Still waiting in Hermes."
-        default:              return "Still waiting in \(claudeHostName)."
+        default:              return "Still waiting in \(claudeHostName(pill: pill))."
         }
     }
 
@@ -724,17 +731,17 @@ final class HookServer: @unchecked Sendable {
             if shown.queueCount != approvals.count { state.pendingApproval?.queueCount = approvals.count }
             return
         }
-        state.updateTask(id: head.pillId, state: .approval)
+        syncPill(head.pillId)
         state.pendingApproval = ApprovalInfo(sessionId: head.sessionId, tool: head.tool,
                                               command: head.command, inputKey: head.inputKey,
-                                              pillId: head.pillId, id: head.id,
+                                              pillId: head.displayPill, id: head.id,
                                               queueCount: approvals.count,
                                               projectName: head.projectName)
         state.isPinned = true
         // Approval always forces the island open — the user must be able to respond.
         // Save the focus once, so it comes back when the last request is gone.
         if focusBeforeApproval == nil { focusBeforeApproval = state.focusId }
-        withAnimation(.spring(response: 0.5, dampingFraction: 0.72)) { state.focusId = head.pillId }
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.72)) { state.focusId = head.displayPill }
         expandIfNeeded(to: .approval)
     }
 
@@ -761,9 +768,10 @@ final class HookServer: @unchecked Sendable {
         }
 
         let state = AppState.shared
-        if !approvals.hasEntries(forPill: entry.pillId) {
-            state.updateTask(id: entry.pillId, state: .working)
-            clearPillBadge(id: entry.pillId)
+        // The session's pill leaves its approval state; a popped-out one folds back soon after.
+        syncPill(entry.pillId)
+        if !approvals.entries.contains(where: { $0.displayPill == entry.displayPill }) {
+            clearPillBadge(id: entry.displayPill)
         }
         if approvals.head != nil {
             showApprovalHead()
@@ -774,7 +782,7 @@ final class HookServer: @unchecked Sendable {
         state.isPinned = false
         if let prev = focusBeforeApproval {
             focusBeforeApproval = nil
-            if state.focusId == entry.pillId, state.tasks.contains(where: { $0.id == prev }) {
+            if state.focusId == entry.displayPill, state.tasks.contains(where: { $0.id == prev }) {
                 withAnimation(.spring(response: 0.5, dampingFraction: 0.72)) { state.focusId = prev }
             }
         }
@@ -789,50 +797,33 @@ final class HookServer: @unchecked Sendable {
         }
     }
 
-    // MARK: - Question fd helpers
+    // MARK: - Sessions on the board
 
-    @MainActor
-    private func cancelQuestionFDSource() {
-        questionFDSource?.cancel()
-        questionFDSource = nil
+    /// A session's key on the board: its id, or for one that sends none its pill and folder
+    /// (the same key the recap and the question queue use).
+    private static func boardKey(_ session: String, pill: String, cwd: String) -> String {
+        (session == "unknown" || session.isEmpty) ? "\(pill)+\(cwd)" : session
     }
 
+    /// Records what an event says about a session of `pill` on the board.
     @MainActor
-    private func dismissQuestionCard(note: String) {
-        cancelQuestionFDSource()
-        pendingQuestionFD = -1
-        let state = AppState.shared
-        let pillId = questionPillId
-        state.pendingQuestion = nil
-        state.isPinned = false
-        state.updateTask(id: pillId, state: .working)
-        clearPillBadge(id: pillId)
-        if let prev = focusBeforeQuestion {
-            focusBeforeQuestion = nil
-            if state.focusId == pillId, state.tasks.contains(where: { $0.id == prev }) {
-                withAnimation(.spring(response: 0.5, dampingFraction: 0.72)) { state.focusId = prev }
-            }
-        }
-        if !note.isEmpty {
-            state.noteMessage = note
-            state.view = .note
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                NotificationCenter.default.post(name: .islandCollapse, object: nil)
-            }
-        } else {
-            state.view = state.tasks.isEmpty ? .empty : .overview
-        }
+    private func record(pill: String, session key: String, raw: String, title: String,
+                        _ change: (inout BoardSession) -> Void = { _ in }) {
+        board.update(pill: pill, session: key, rawSession: raw, title: title, now: Date(), change)
     }
 
-    /// Called by QuestionView. Sends answers JSON and cleans up.
+    /// The sessions of `pill` waiting for you, with what they wait for (a permission first).
     @MainActor
-    func sendQuestionAnswers(_ answers: [String: Any]) {
-        // Only intercept a demo question — real questions always have a live fd.
-        if DemoEngine.shared.isActive, pendingQuestionFD < 0 {
-            AppState.shared.pendingQuestion = nil
-            AppState.shared.isPinned = false
-            AppState.shared.view = AppState.shared.tasks.isEmpty ? .empty : .overview
-            DemoEngine.shared.handleQ
+    private func waitingSessions(pill: String) -> [String: BotState] {
+        var waiting: [String: BotState] = [:]
+        for q in questions.entries where q.pillId == pill { waiting[q.sessionId] = .question }
+        for a in approvals.entries where a.pillId == pill {
+            waiting[Self.boardKey(a.sessionId, pill: pill, cwd: a.cwd)] = .approval
+        }
+        return waiting
+    }
+
+    /// A session that starts waiting while it shares `pill` with
 ```
 
 ### Core Architecture Module: `NotchBuddy/Sources/App/IslandStateMachine.swift`
@@ -868,8 +859,14 @@ final class IslandStateMachine {
             scheduleHomeCollapse()
         }
     }
-    /// petit → hidden delay (seconds). Override for debug.
-    var petitToHiddenDelay: TimeInterval = 60
+    /// petit → hidden delay (seconds), kept in sync with the absenceInterval preference.
+    var petitToHiddenDelay: TimeInterval = 60 {
+        didSet {
+            guard petitToHiddenDelay != oldValue,
+                  state == .petit, petitHideWork != nil else { return }
+            schedulePetitHide()
+        }
+    }
     /// coucou → petit delay after greeting animation ends (no hover). ~0.6s syncs with canvas collapse.
     var greetAutoCollapseDelay: TimeInterval = 0.6
     /// coucou → petit delay when mouse is hovering over the greeting.
@@ -1349,6 +1346,118 @@ final class ParakeetDictation: @unchecked Sendable {
         re
 ```
 
+### Core Architecture Module: `NotchBuddy/Sources/App/QuestionQueue.swift`
+```
+import Foundation
+
+// MARK: - QuestionQueue
+// Pure FIFO queue of pending AskUserQuestions, one per session. No AppKit, no SwiftUI, no I/O:
+// HookServer owns the sockets, timers and UI, and mutates this value on the main actor only.
+// The head is the question shown on the card; every question keeps its own connection, so an
+// answer always goes back to the session that asked.
+
+struct QueuedQuestion: Equatable, Sendable {
+    let id: UUID
+    /// Client socket, held open until the user answers. Closed by the owner's dispatch source.
+    let fd: Int32
+    /// The session's id, or "<pill>+<cwd>" for a session that sends none.
+    let sessionId: String
+    /// "integration_claude", "agent_cursor" or "agent_codex".
+    let pillId: String
+    let projectName: String
+    let cwd: String
+    let question: AskQuestion
+    /// Which iPhone record carries the question: 1 is the pill's own, 2, 3… one of its own
+    /// (see `phoneRecordId`). Given by the queue, kept for the question's whole life.
+    var slot: Int = 1
+    /// When the question arrived (answers sent before it are not for it).
+    var received = Date()
+    /// The pill the question shows on when its session popped out of `pillId` (SessionBoard),
+    /// nil when it shows on `pillId` itself.
+    var shownPill: String? = nil
+
+    /// Where the card and the focus find the question.
+    var displayPill: String { shownPill ?? pillId }
+
+    /// The iPhone record that shows this question: the popped-out pill's own when its session
+    /// popped out, else the pill's own for the first question behind a pill, "<pill>#q<slot>"
+    /// for the others, so each session's question is answered on its own (a popped-out pill is
+    /// "<pill>#<n>": the two never meet). The iPhone sends this id back with its answer.
+    var phoneRecordId: String { shownPill ?? (slot == 1 ? pillId : "\(pillId)#q\(slot)") }
+}
+
+struct QuestionQueue: Sendable {
+    /// Upper bound of simultaneously pending questions. Each one holds a socket and a 120 s
+    /// timer; beyond this the newest goes back to its terminal.
+    static let maxPending = 5
+
+    enum EnqueueResult: Equatable, Sendable {
+        /// Queued. `replaced` is the same session's earlier question, now taken out of the
+        /// queue: the caller hands it back to its terminal.
+        case accepted(replaced: QueuedQuestion?)
+        case rejectedFull
+    }
+
+    private(set) var entries: [QueuedQuestion] = []
+
+    var head: QueuedQuestion? { entries.first }
+    var count: Int { entries.count }
+    var isEmpty: Bool { entries.isEmpty }
+
+    func contains(id: UUID) -> Bool { entries.contains { $0.id == id } }
+
+    func entry(id: UUID) -> QueuedQuestion? { entries.first { $0.id == id } }
+
+    func hasEntries(forPill pillId: String) -> Bool {
+        entries.contains { $0.pillId == pillId }
+    }
+
+    /// Queues `entry` behind the others and gives it the lowest record slot free on its pill.
+    /// A session waits on one question at a time: a newer one from the same session takes
+    /// the older one's place and slot, and the older is returned so its connection can be answered.
+    mutating func enqueue(_ entry: QueuedQuestion, maxPending: Int = QuestionQueue.maxPending) -> EnqueueResult {
+        var entry = entry
+        if let idx = entries.firstIndex(where: { $0.sessionId == entry.sessionId && $0.pillId == entry.pillId }) {
+            let replaced = entries[idx]
+            entry.slot = replaced.slot
+            entries[idx] = entry
+            return .accepted(replaced: replaced)
+        }
+        guard entries.count < maxPending else { return .rejectedFull }
+        // A popped-out question has its pill's record: the slots count the others only.
+        let taken = Set(entries.filter { $0.pillId == entry.pillId && $0.shownPill == nil }.map(\.slot))
+        entry.slot = (1...).first { !taken.contains($0) }!
+        entries.append(entry)
+        return .accepted(replaced: nil)
+    }
+
+    /// Removes only the entry with this id. Other entries keep their order and slots.
+    @discardableResult
+    mutating func remove(id: UUID) -> QueuedQuestion? {
+        guard let idx = entries.firstIndex(where: { $0.id == id }) else { return nil }
+        return entries.remove(at: idx)
+    }
+
+    /// Empties the queue, oldest first.
+    mutating func removeAll() -> [QueuedQuestion] {
+        defer { entries = [] }
+        return entries
+    }
+
+    /// The waiting question an iPhone answer is for: the same question (`fingerprint`, as
+    /// `fingerprintOf` computes it) on the record the answer names. An answer that names no
+    /// record goes to the oldest such question. nil when none waits any more.
+    static func question(answering fingerprint: String, onRecord recordId: String,
+                         in entries: [QueuedQuestion],
+                         fingerprintOf: (AskQuestion) -> String) -> QueuedQuestion? {
+        let same = entries.filter { fingerprintOf($0.question) == fingerprint }
+        if recordId.isEmpty { return same.first }
+        return same.first { $0.phoneRecordId == recordId }
+    }
+}
+
+```
+
 ### Core Architecture Module: `NotchBuddy/Sources/App/SoundEngine.swift`
 ```
 import AVFoundation
@@ -1735,256 +1844,17 @@ final class UploadSequenceEngine {
             if sim.locked && dist > USC.LOCK_OUT { sim.locked = false }
 ```
 
-### Core Architecture Module: `NotchBuddy/Sources/App/Voice/VoiceEngine.swift`
-```
-#if !APPSTORE
-import AppKit
-import AVFoundation
-import Speech
-
-// MARK: - VoiceEngine
-//
-// Coordinator for the «OK Coucou» voice feature.
-//
-// Reliability features:
-// - Backoff: onWakeWindowEnded reopens with WakeWindowBackoff (0.5 → 5 s exp.);
-//   after maxFastFails consecutive fast-fails, waits for the next VAD segment.
-// - Continuous stall watchdog: if no audio buffer arrives for 2 s while the
-//   pipeline is active, triggers a pipeline rebuild (regardless of VAD state).
-// - Rate-limited rebuilds: ≥5 s between rebuilds, ≤5 per minute. If the limit
-//   is exceeded, audioError is set (shown in Settings → Voice).
-// - AVAudioEngineConfigurationChange (headphone events) triggers rebuild, but
-//   config changes within 1 s of our own engine.start() are ignored (the OS
-//   fires one spuriously on start).
-// - endCommand() is idempotent: if not in command mode, only cancels timers.
-@MainActor
-final class VoiceEngine: ObservableObject {
-    static let shared = VoiceEngine()
-
-    // MARK: - Published state
-
-    @Published var isEnabled: Bool = VoiceSettings.isEnabled {
-        didSet { VoiceSettings.isEnabled = isEnabled; handleEnabledChanged() }
-    }
-    @Published private(set) var isListeningForCommand: Bool = false
-    @Published private(set) var commandTranscript: String = ""
-    @Published private(set) var recognizerUnavailable: Bool = false
-    @Published private(set) var audioError: String? = nil
-    /// Read by Mochi's canvas every frame; not published, so ~20 updates/s while I talk
-    /// don't re-render Settings or the island views.
-    private(set) var micLevel: Double = 0
-
-    // MARK: - Pause reasons
-
-    private var screenLocked    = false
-    private var screenSleeping  = false
-    private var lowPowerMode    = false
-    private var dictationActive = 0
-
-    var isPaused: Bool { screenLocked || screenSleeping || lowPowerMode || dictationActive > 0 }
-
-    // MARK: - Audio pipeline (main-thread owned)
-
-    private var audio:   VoiceAudio?
-    private var spotter: WakeSpotter?
-    private var locale:  Locale?
-
-    private var voiceSegmentActive = false
-
-    // Command session timers
-    private var silenceWork:    DispatchWorkItem?
-    private var commandMaxWork: DispatchWorkItem?
-    private var loggedDropWhileSpeaking = false
-    private var wakeWindowWork: DispatchWorkItem?   // 20 s periodic restart
-
-    private var lastWordCount = 0
-
-    // Backoff / loop prevention
-    private var backoff           = WakeWindowBackoff()
-    private var windowOpenedAt:   Date = .distantPast
-    private var consecErrorStreak = 0
-    private static let maxConsecErrors = 3
-
-    // Music ducking during command (main thread)
-    private var savedMusicVolume:   Int?  = nil
-    private var savedSpotifyVolume: Int?  = nil
-    private var isDuckingMusic             = false
-
-    // Unavailability retry
-    private var unavailableWork:    DispatchWorkItem?
-    private var firstUnavailableAt: Date? = nil
-
-    // Continuous stall watchdog (always active while pipeline is up)
-    private var stallTask:       Task<Void, Never>? = nil
-    private var pipelineStartTime: Date = .distantPast
-
-    // Rebuild rate-limiting
-    private var lastRebuildTime:    Date = .distantPast
-    private var rebuildsThisMinute: Int  = 0
-    private var minuteWindowStart:  Date = .distantPast
-
-    private static let initialTimeout:           TimeInterval = 3.0
-    private static let directListenInitialTimeout: TimeInterval = 5.0   // follow-up: user reads question first
-    private static let directListenMaxTime:        TimeInterval = 20.0
-
-    /// Initial silence timeout for the current direct-listen session.
-    private var directInitialTimeout: TimeInterval = 3.0
-    private static let wakeFirstWordTimeout: TimeInterval = 5.0
-    private static let silenceTimeout:           TimeInterval = 1.5
-    private static let commandMaxTime:           TimeInterval = 20.0
-
-    // Conversation window
-    private(set) var isInConversation: Bool = false
-    private var conversationTurnWork: DispatchWorkItem? = nil
-    private static let wakeWindowMax:            TimeInterval = 20.0
-    private static let stallTimeout:             TimeInterval = 2.0
-    private static let unavailableRebuildDelay:  TimeInterval = 10.0
-    private static let minRebuildInterval:       TimeInterval = 5.0
-    private static let maxRebuildsPerMinute                   = 5
-
-    private static let cancelPhrases = ["annule", "annuler", "cancel", "laisse tomber", "never mind"]
-
-    // MARK: - Init
-
-    private init() {
-        lowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
-        let buildHash = Bundle.main.object(forInfoDictionaryKey: "CoucouGitHash") as? String ?? "unknown"
-        appendAppLog("nb.log", "[Voice] build \(buildHash)")
-        observeSystemEvents()
-        if isEnabled && !isPaused { startAudioPipeline() }
-    }
-
-    // MARK: - Enable / pause
-
-    private func handleEnabledChanged() {
-        if isEnabled && !isPaused { startAudioPipeline() }
-        else                      { stopAudioPipeline() }
-    }
-
-    private func updatePause() {
-        if isPaused { stopAudioPipeline() }
-        else if isEnabled { startAudioPipeline() }
-    }
-
-    func cancelListening() { endCommand(postFinished: false) }
-
-    /// Settings → Voice language changed: restart recognition in the new language.
-    func reloadLanguage() {
-        guard audio != nil else { return }
-        stopAudioPipeline()
-        if isEnabled && !isPaused { startAudioPipeline() }
-        VoiceBrain.shared.endConversation()   // next session gets instructions in the new language
-    }
-
-    /// Start the next conversation turn (re-listen for 8 s without wake phrase).
-    /// Called by IslandWindowController after showing a command result.
-    func startConversationTurn(firstWordTimeout: TimeInterval = 8.0) {
-        isInConversation = true
-        audio?.resetVAD()
-        startListeningDirectly(firstWordTimeout: firstWordTimeout)
-    }
-
-    /// End the conversation window and return to normal wake-phrase mode.
-    func endConversation() {
-        isInConversation = false
-        conversationTurnWork?.cancel()
-        conversationTurnWork = nil
-        endCommand(postFinished: false)
-    }
-
-    /// `firstWordTimeout`: seconds of silence allowed before the first word (default 3 s;
-    /// pass `Self.directListenInitialTimeout` = 5 s for follow-up questions so the user
-    /// has time to read the question before speaking).
-    func startListeningDirectly(firstWordTimeout: TimeInterval = 3.0) {
-        guard isEnabled, !isPaused, !isListeningForCommand else { return }
-        guard let audio = audio, let spotter = spotter, let loc = locale else { return }
-        wakeWindowWork?.cancel(); wakeWindowWork = nil
-        // Close any active wake window first — TTS audio can trigger VAD and leave
-        // an active window open; beginWindow returns false (alreadyActive) otherwise.
-        if spotter.isActive { spotter.endWindow() }
-        isListeningForCommand = true
-        commandTranscript     = ""
-        lastWordCount         = 0
-        directInitialTimeout  = firstWordTimeout
-        loggedDropWhileSpeaking = false
-        audio.bypassVAD       = true
-        duckMusic()
-        appendAppLog("nb.log", "[Voice] direct listen start (firstWordTimeout: \(firstWordTimeout)s)")
-        NotificationCenter.default.post(name: .voiceWoke, object: "direct" as NSString)
-        let preroll = audio.drainPreroll()
-        // startInCommandPhase: skip wake-phrase gate, deliver speech directly as command.
-        let started = spotter.beginWindow(locale: loc, preroll: preroll, startInCommandPhase: true)
-        if !started {
-            appendAppLog("nb.log", "[Voice] direct listen refused (alreadyActive/unavailable), retrying in 150ms")
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { [weak self] in
-                guard let self, self.isListeningForCommand else { return }
-                guard let spotter = self.spotter, let audio = self.audio, let loc = self.locale else { return }
-                let preroll2 = audio.drainPreroll()
-                let started2 = spotter.beginWindow(locale: loc, preroll: preroll2, startInCommandPhase: true)
-                if !started2 {
-                    appendAppLog("nb.log", "[Voice] direct listen still refused, giving up")
-                    self.endCommand(postFinished: true)
-                }
-            }
-        }
-        resetSilenceTimer()
-        let maxItem = DispatchWorkItem { [weak self] in
-            Task { @MainActor in self?.endCommand(postFinished: true) }
-        }
-        commandMaxWork = maxItem
-        DispatchQueue.main.asyncAfter(deadline: .now() + max(Self.directListenMaxTime, firstWordTimeout + 10),
-                                      execute: maxItem)
-    }
-
-    /// Locale used for the current recognition session — nil if pipeline is not running.
-    var speechLocale: Locale? { locale }
-
-    // MARK: - Pipeline lifecycle
-
-    private func startAudioPipeline() {
-        guard audio == nil else { return }
-        guard let loc = suitableLocale() else {
-            recognizerUnavailable = true
-            appendAppLog("nb.log", "[Voice] no suitable on-device recognizer — voice disabled")
-            return
-        }
-        recognizerUnavailable = false
-        audioError = nil
-        locale = loc
-
-        let a = VoiceAudio()
-        let s = WakeSpotter()
-        s.additionalContextualStrings = PillCatalog.available.map { $0.name }
-
-        // ── Spotter callbacks ─────────────────────────────────────────────────
-
-        s.onWake = { [weak self] transcript in
-            self?.wakeDetected(transcript: transcript)
-        }
-
-        s.onCommandUpdate = { [weak self] command in
-            self?.commandUpdate(command)
-        }
-
-        s.onCommandEnd = { [weak self] in
-            self?.endCommand(postFinished: true)
-        }
-
-        s.onWakeWindowEnded = { [weak self] wasError in
-            guard let self, !isListeni
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #949** (2026-10-29): **Coucou 0.5.3 crashes on launch when no microphone is present**
+  *Symptoms*: Coucou 0.5.3 crashes on launch when no microphone is present 27 oct 2026 · @Gabriel Añez Lopez  **Summary** Coucou 0.5.3 aborts on every launch when voice is enabled (voiceEnabled = 1) and the Mac has no audio input device. VoiceAudio.start() calls installTapOnBus on the input node without checking that an input device exists, and AVFAudio throws an uncaught NSException. The app never reaches its UI, so the user cannot turn voice off from Settings. It has crashed 8 times since 2026-10-26 18:22.  **Environment**  App	                   : Coucou 0.5.3 (build 20, commit 95017af), bundle fr.louisraille.NotchBuddy macOS               : 26.6.2 (25G83) Hardware           : Mac mini, Apple M4 (Mac16,10) Audio inputs      : None: the Mac mini has no built-in microphone and nothing is connected Audio outputs    :  Built-in speaker and 2 HDMI/USB-C displays, all 48 kHz Relevant setting : voiceEnabled = 1, flowEngine = parakeet  The system log for 21:51:38 also shows UpdateStreamFormats: 0 input streams and Input render format: 0 ch, 0 Hz from AUHAL just before the throw.  **Root cause and suggested fix** The input node has no hardware format (0 channels, 0 Hz) when there is no input device. VoiceAudio.start() installs the tap with a 44.1 kHz stereo format anyway, and AVFAudio raises an Objective-C exception that Swift cannot catch. SettingsView.init() touches VoiceEngine.shared from the Settings scene body, so the crash happens during app launch, before any window shows. Suggested chang
+
 - **Issue #901** (2026-10-23): **WhatsApp pill shows a conversation ("David") that doesn't exist anywhere on my phone/account**
   *Symptoms*: **What happened**  Coucou's WhatsApp pill showed a conversation with a contact named "David" that does not exist anywhere in my real WhatsApp — not in the main chat list, not in Archived. I confirmed Archived chats actually works (I archived a real old chat as a test, and only that one showed up there — "David" wasn't there either). I have no contact saved as "David", and normally an unsaved number shows as a phone number in WhatsApp, not a name — this showed a name with no number anywhere.  I also searched "David" across my entire WhatsApp (global search, not just chats) — the only match was an unrelated saved contact, "David Jóvenes" (someone from my church group, different full name), with no chat/message history shown for him either. No contact or chat matching plain "David" exists anywhere in my account.  The pill showed: a TikTok link, then (about an hour later) "Video" with a 😂 reaction, as a new unread message. I never clicked the link or opened the video (the island doesn't let you open it directly, and there's no real chat to check it from on my phone).  I logged out the Coucou/GOWA linked device from WhatsApp as a precaution. I also checked my phone's Linked Devices list — only expected devices were there (phone, the Coucou link, my laptop's Chrome), nothing unrecognized.  **What I expected**  The pill should only ever show conversations that genuinely exist on my linked WhatsApp account, since it's supposed to just mirror it.  **How to reproduce**  Unclear — happ
-
-- **Issue #803** (2026-10-19): **Streaming chat uses hard-coded 'Bearer ollama' header — DeepSeek authentication fails**
-  *Symptoms*: **What happened**  When using DeepSeek as the chat provider and asking a streaming chat request, the streaming code path sends a hard-coded Authorization header of `Bearer ollama`. DeepSeek rejects this token and the UI shows an authentication error (e.g. "Authentication Fails, Your api key: ****lama is invalid (request_id: d329d268-498e-4311-a019-66ad591365d7)").  Non-streaming model fetch and non-streaming chat calls succeed when using the correct DeepSeek API key.  **What you expected**  Streaming requests to OpenAI-compatible providers (DeepSeek, Qwen, Moonshot, etc.) should use the same computed Authorization header that the non-streaming requests use (i.e. `Bearer <provider-key>` retrieved from KeychainStore), not the hard-coded `Bearer ollama` value.  **How to reproduce**  1. Configure Coucou Settings → Chat and save a valid DeepSeek API key into the DeepSeek field. 2. Select DeepSeek as the chat provider and pick a streaming-capable model. 3. Ask a question that triggers the streaming path (chat with streaming enabled for DeepSeek). 4. Observe the authentication error in the UI (or check logs under ~/Library/Logs/NotchBuddy/nb.log). Example message previously seen:  ``` Authentication Fails, Your api key: ****lama is invalid (request_id: d329d268-498e-4311-a019-66ad591365d7) ```  5. (Optional) Verify the API key is valid by calling DeepSeek directly from the terminal:  ``` curl -v -H "Authorization: Bearer <YOUR_DEEPSEEK_KEY>" https://api.deepseek.com/v1/models ```  *
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2001,195 +1871,201 @@ final class VoiceEngine: ObservableObject {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `852df6f5` (2026-10-22)
-**Commit Message**: Windows/Linux: keep Mochi whole after a monitor change
+### Incident Patch 1: `f06fc09c` (2026-10-29)
+**Commit Message**: Release prep: Mac 0.5.4, Windows and Linux 0.5.4 (reliability batch)
 
-The canvas bitmaps were sized once for the pixel ratio of the monitor the
-window started on, but drawn at the current one: moved to a monitor with
-another scale, Mochi came out too big and cut (or too small). The island's
-Mochi, the greeting, the mini Mochis, the desktop Mochi and the wardrobe
-icons now resize their bitmap when the ratio changes.
-
-The resolution media query was made once, for the first ratio: after one
-change it never fired again, so the zoom correction missed the next
-monitor. It now re-arms itself after every change, and wakes the island's
-frame loop so Mochi is redrawn at once, even while idle.
-
-**File**: `windows/src/desktop/main.ts` (modified, +5/-0)
-```diff
-@@ -210,6 +210,11 @@ class DesktopMochi {
-     engine.setDancing(this.snap.dancing && !this.asleep);
-     engine.update(dt);
-     const dpr = this.dpr();
-+    // Dragged onto a monitor of another scale, the bitmap follows the ratio.
-+    if (this.canvas.width !== Math.round(PANEL_SIZE * dpr)) {
-+      this.canvas.width = Math.round(PANEL_SIZE * dpr);
-+      this.canvas.height = Math.round(PANEL_SIZE * dpr);
-+    }
-     ctx.setTransform(dpr, 0, 0, dpr, SIDE * dpr, 0);
-     ctx.clearRect(-SIDE, 0, PANEL_SIZE, PANEL_SIZE);
-     ctx.save();
-```
-
-**File**: `windows/src/island/island.ts` (modified, +10/-1)
-```diff
-@@ -85,6 +85,8 @@ export class Island {
-   private lastFrame = 0;
-   private dirty = true;
-   private canvasPx = 0;
-+  /** The pixel ratio Mochi's bitmap was sized for: it changes with the monitor. */
-+  private canvasDpr = 0;
- 
-   // Rust starts the window at full size so the launch greeting has room.
-   private collapsed = false;
-@@ -1015,6 +1017,10 @@ export class Island {
-       const gctx = this.greetingCanvas.getContext("2d");
-       if (gctx) {
-         const dpr = Math.min(2, window.devicePixelRatio || 1);
-+        if (this.greetingCanvas.width !== Math.round(EXPANDED_W * dpr)) {
-+          this.greetingCanvas.width = Math.round(EXPANDED_W * dpr);
-+          this.greetingCanvas.height = Math.round(150 * dpr);
-+        }
-         gctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-         this.greeting.draw(gctx);
-       }
-@@ -1091,8 +1097,11 @@ export class Island {
-     const hCss = w + BOT_OVERHANG;
-     const wCss = w + BOT_SIDE * 2;
-     const dpr = Math.min(2, window.devicePixelRatio || 1);
--    if (this.canvasPx !== w) {
-+    // Drawn at the current ratio, so a bitmap sized for another monitor's
-+    // would show Mochi too big and cut, or too small.
-+    if (this.canvasPx !== w || this.canvasDpr !== dpr) {
-       this.canvasPx = w;
-+      this.canvasDpr = dpr;
-       this.botCanvas.width = Math.round(wCss * dpr);
-       this.botCanvas.height = Math.round(hCss * dpr);
-       this.botCanvas.style.width = `${wCss}px`;
-```
-
-**File**: `windows/src/main.ts` (modified, +14/-2)
-```diff
-@@ -108,10 +108,22 @@ async function main() {
-   await onEvent<null>("screen-changed", async () => {
-     await checkZoom();
-     void Bridge.reposition();
-+    island.ensureRunning();
-   });
- 
--  const mediaQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
--  mediaQuery.addEventListener?.("change", () => void checkZoom());
-+  // A query only matches the ratio it was made for: once it changes, watch the
-+  // new one, or the next monitor's scale goes unnoticed and the zoom stays wrong.
-+  // One frame redraws Mochi at the new ratio, even while the loop is idle.
-+  const watchRatio = () => {
-+    window
-+      .matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`)
-+      .addEventListener?.("change", () => {
-+        watchRatio();
-+        void checkZoom();
-+        island.ensureRunning();
-+      }, { once: true });
-+  };
-+  watchRatio();
- 
-   window.addEventListener(
-     "wheel",
-```
-
-**File**: `windows/src/mochi/minibots.ts` (modified, +6/-0)
-```diff
-@@ -81,6 +81,12 @@ export function tickMiniBots(dt: number) {
-     if (!ctx) continue;
-     mb.engine.setDancing(mb.dancing?.() ?? false);
-     mb.engine.update(dt);
-+    // Sized at creation: the island may have moved to a monitor of another scale.
-+    const px = Math.round(mb.cssSize * dpr);
-+    if (mb.canvas.width !== px) {
-+      mb.canvas.width = px;
-+      mb.canvas.height = px;
-+    }
-     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-     ctx.clearRect(0, 0, mb.cssSize, mb.cssSize);
-     ctx.save();
-```
-
-**File**: `windows/src/views/wardrobe.ts` (modified, +6/-3)
-```diff
-@@ -35,6 +35,7 @@ export function buildWardrobe(actions: ViewActions): ViewHost {
-   let hovered: OutfitSelection | null = null;
-   let drawnSeason: Outfit | null = null;
-   let drawnLanguage = language();
-+  let drawnDpr = 0;
-   const items = new Map<OutfitSelection, { button: HTMLButtonElement; canvas: HTMLCanvasElement }>();
- 
-   const updateNote = () => {
-@@ -67,11 +68,13 @@ export function buildWardrobe(actions: ViewActions): ViewHost {
-   /** Icons are drawn once; only "auto" changes, with the season and its badge's language. */
-   const drawIcons = () => {
-     const season = seasonalOutfit(new Date());
--    if (season === drawnSeason && drawnLanguage === language()) return;
--    const first = drawnSeason == null;
-+    const dpr = Math.min(2, window.devicePixelRatio || 1);
-+    if (season === drawnSeason && drawnLanguage === language() && drawnDpr === dpr) return;
-+    // On a monitor of another scale every icon is drawn again, sharp and whole.
-+    const first = drawnSeason == null || drawnDpr !== dpr;
-     drawnSeason = season;
-     drawnLanguage = language();
--    const dpr = Math.min(2, window.devicePixelRatio || 1);
-+    drawnDpr = dpr;
-     for (const [sel, { canvas }] of items) {
-       if (!first && sel !== "auto") continue;
-       canvas.width = Math.round(ICON * dpr);
-```
-
----
-
-### Incident Patch 2: `45d4bd6f` (2026-10-22)
-**Commit Message**: Windows and Linux 0.5.3: CHANGELOG, README, versions, What's new
+Versions, CHANGELOG sections, README rows and What's new in every language.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
-**File**: `CHANGELOG.md` (modified, +7/-0)
+**File**: `CHANGELOG.md` (modified, +17/-13)
 ```diff
-@@ -1,5 +1,12 @@
+@@ -1,25 +1,29 @@
  # Changelog
  
-+## Windows and Linux 0.5.3 — October 22, 2026
-+
-+WhatsApp comes to Windows and Linux, as on the Mac.
-+
-+- **WhatsApp in the island** *(experimental)* — your incoming WhatsApp messages in a green pill, one row per conversation with initials, name, the last message and the unread count; photos, voice messages and documents show as a label. Click a conversation to read its last ten messages and reply: Enter sends, Shift+Enter starts a new line, Esc goes back. Mochi smiles at a new message. Groups stay quiet unless you're mentioned, chats you ignore never show, and read receipts go only when you open a conversation or reply. Off by default: Settings → Integrations → WhatsApp
-+- **Install WhatsApp in one click** — Coucou downloads GOWA, the open-source gateway, from its GitHub page, checks it against the SHA-256 GOWA publishes, starts it on this computer only and shows the QR code to scan; **Update** fetches GOWA's latest version, and your own GOWA or OpenWA goes under **Advanced**. Messages stay in memory, are never logged or saved, and are forgotten when Coucou quits. Use it on your own account only: WhatsApp may restrict accounts that abuse it
-+
- ## Android 0.3.0 — October 22, 2026
+-## Unreleased
++## 0.5.4 — October 29, 2026
  
- - **Coucou for Android 0.3.0**, by @Rhytam23 — a bigger release (versionCode 3). It works with Coucou 0.5.0 or later on Windows and Linux; the weekly recap needs Coucou 0.5.2 on Windows or Linux.
+-- **Mac: WhatsApp statuses aren't chats** — a contact's WhatsApp Status and channel posts no longer show up as a conversation in the WhatsApp pill (#901, same fix as #910)
+-
+-### Reliability (Mac, Windows, Linux)
+-
+-Bugs reported by @romainb82 and others, fixed by the community.
++Reliability: bugs reported by @romainb82 and others, fixed by the community.
+ 
+ - **The hook server never gives up** — one failed connection no longer stops Coucou from hearing Claude Code until the next launch (#872 by @seongj-un, #853)
+-- **Your own hooks are safe** — installing or removing Coucou's hooks only touches Coucou's own entries, never a hook of yours whose path mentions "coucou" (#944 by @rahul05ranjan, #854); on Windows, the hooks go where `CLAUDE_CONFIG_DIR` points (#810 by @afpruivo)
+-- **Mac: no crash without a microphone** (#950 by @gabbe-swe, #949)
+-- **Mac: "Hide after" is used** — the delay set in Settings now hides the compact island (#780 by @Ohualtex, #675)
+-- **Mac: nothing drawn over the real notch while hidden** (#789 by @orrrrli); a third-party agent's finished card no longer says "Claude Code finished" (#865 by @Ohualtex, #593)
++- **Your own hooks are safe** — installing or removing Coucou's hooks only touches Coucou's own entries, never a hook of yours whose path mentions "coucou" (#944 by @rahul05ranjan, #854)
++- **No crash without a microphone** (#950 by @gabbe-swe, #949)
++- **"Hide after" is used** — the delay set in Settings now hides the compact island (#780 by @Ohualtex, #675)
++- **Nothing drawn over the real notch while hidden** (#789 by @orrrrli); a third-party agent's finished card no longer says "Claude Code finished" (#865 by @Ohualtex, #593)
+ - **Service pills tell the truth** — n8n no longer replays an old run as new at launch, and keeps each run's real time (#948, #861); Stripe no longer adds different currencies together (#938, #860); GitHub counts the stars of all your repositories, past the first 100 (#939, #862); Kraken keeps tickers such as XTZ and ZRX whole (#926, #863). All by @Ohualtex
+-- **Windows: an approval card goes once the terminal has taken over** (#890 by @afpruivo, #857); the relay pipe no longer crashes under many connections (mio 1.2.4, #911 by @afpruivo)
+-- **Windows/Linux: settings saved at the same moment no longer collide** (#888 by @Ohualtex, #858)
+-- **Windows/Linux: the Flow pill's buttons take clicks** and the pill keeps its edge (#760 by @arnavaggarwal-dev, #759); on Linux its toolbar folds even when the leave event is lost (#946 by @dougkusanagi, #584)
++- **WhatsApp statuses aren't chats** — a contact's WhatsApp Status and channel posts no longer show up as a conversation in the WhatsApp pill (#901, same fix as #910)
++
++## Windows and Linux 0.5.4 — October 29, 2026
++
++Reliability: 25 community fixes, shared with the Mac where they apply.
++
++- **The hook relay never gives up** — a failed pipe connection no longer stops Coucou from hearing Claude Code (#872 by @seongj-un, #853); the pipe no longer crashes under many connections (mio 1.2.4, #911 by @afpruivo)
++- **Windows: an approval card goes once the terminal has taken over** (#890 by @afpruivo, #857); the hooks go where `CLAUDE_CONFIG_DIR` points (#810 by @afpruivo)
++- **Settings saved at the same moment no longer collide** (#888 by @Ohualtex, #858)
++- **The Flow pill's buttons take clicks** and the pill keeps its edge (#760 by @arnavaggarwal-dev, #759); on Linux its toolbar folds even when the leave event is lost (#946 by @dougkusanagi, #584)
+ - **Windows: the Settings window opens even when creating it at startup failed** (#807 by @afpruivo, #775); the last edit stays on the ticker after Claude Code finishes (#846 by @afpruivo, #840); the chat field keeps the focus after an answer (#931 by @ce017); no coloured bar under Mochi at 150 % scale (#867 by @PythonTilk)
+ - **WhatsApp groups show their names** instead of "Group <id>" (#907 by @arnavaggarwal-dev)
+ - **OpenCode 2 sessions finish properly in the island** (#808 by @afpruivo, #717)
++- **Service pills tell the truth** — n8n, Stripe and GitHub, as on the Mac (#948, #938, #939 by @Ohualtex)
+ - **Linux: 24-bit microphones work for Flow and notes** (#785 by @eduardo-qts); on Arch, the desktop entry uses the portal's app id (#947 by @rahul05ranjan, #804); the build has no warnings left (#893 by @ZouaouiB)
+ 
+ ## Windows and Linux 0.5.3 — October 22, 2026
 ```
 
-**File**: `README.md` (modified, +5/-4)
+**File**: `NotchBuddy/Resources/Info.plist` (modified, +2/-2)
 ```diff
-@@ -173,6 +173,7 @@ Windows and Linux are released together, under the `windows-v*` and `linux-v*` t
+@@ -34,9 +34,9 @@
+ 	<key>CFBundlePackageType</key>
+ 	<string>APPL</string>
+ 	<key>CFBundleShortVersionString</key>
+-	<string>0.5.3</string>
++	<string>0.5.4</string>
+ 	<key>CFBundleVersion</key>
+-	<string>20</string>
++	<string>21</string>
+ 	<key>LSUIElement</key>
+ 	<true/>
+ 	<key>NSAccessibilityUsageDescription</key>
+```
+
+**File**: `NotchBuddy/Resources/whats-new.json` (modified, +75/-0)
+```diff
+@@ -1,6 +1,81 @@
+ {
+   "about": "What's new, shown once in the notch after Coucou updates itself (WhatsNew.swift). Every Mac release adds its entry here, in the 14 languages, before release.sh: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
+   "releases": [
++    {
++      "version": "0.5.4",
++      "items": [
++        {
++          "icon": "shield",
++          "title": {
++            "en": "Coucou keeps listening",
++            "fr": "Coucou reste à l’écoute",
++            "es": "Coucou sigue escuchando",
++            "pt-BR": "O Coucou continua ouvindo",
++            "ru": "Coucou всегда на связи",
++            "zh-Hans": "Coucou 始终在线",
++            "hi": "Coucou हमेशा सुनता रहे",
++            "ar": "Coucou يبقى منصتًا",
++            "bn": "Coucou সবসময় শোনে",
++            "id": "Coucou terus mendengarkan",
++            "de": "Coucou hört weiter zu",
++            "tr": "Coucou dinlemeye devam eder",
++            "th": "Coucou ฟังต่อเนื่อง",
++            "zh-Hant": "Coucou 始終在線"
++          },
++          "detail": {
++            "en": "One failed connection no longer cuts Claude Code off, and only Coucou’s own hooks are touched.",
++            "fr": "Une connexion ratée ne coupe plus Claude Code, et seuls les hooks de Coucou sont modifiés.",
++            "es": "Una conexión fallida ya no corta Claude Code, y solo se tocan los hooks de Coucou.",
++            "pt-BR": "Uma conexão com falha não corta mais o Claude Code, e só os hooks do Coucou são alterados.",
++            "ru": "Сбой одного соединения больше не отключает Claude Code, а Coucou меняет только свои хуки.",
++            "zh-Hans": "一次连接失败不再让 Claude Code 断开，且只改动 Coucou 自己的 hooks。",
++            "hi": "एक कनेक्शन फ़ेल होने से अब Claude Code नहीं कटता, और सिर्फ़ Coucou के अपने hooks बदलते हैं।",
++            "ar": "لم يعد فشل اتصال واحد يقطع Claude Code، ولا يُعدَّل إلا خطافات Coucou نفسها.",
++            "bn": "একটি সংযোগ ব্যর্থ হলে আর Claude Code বিচ্ছিন্ন হয় না, আর শুধু Coucou-র নিজের hooks বদলায়।",
++            "id": "Satu koneksi gagal tak lagi memutus Claude Code, dan hanya hook milik Coucou yang diubah.",
++            "de": "Eine fehlgeschlagene Verbindung trennt Claude Code nicht mehr, und nur Coucous eigene Hooks werden geändert.",
++            "tr": "Tek bir başarısız bağlantı artık Claude Code’u koparmıyor; yalnızca Coucou’nun kendi hook’ları değişir.",
++            "th": "การเชื่อมต่อที่ล้มเหลวไม่ตัด Claude Code อีกต่อไป และแก้เฉพาะ hooks ของ Coucou เอง",
++            "zh-Hant": "一次連線失敗不再讓 Claude Code 中斷，且只更動 Coucou 自己的 hooks。"
++          }
++        },
++        {
++          "icon": "bug",
++          "title": {
++            "en": "25 community fixes",
++            "fr": "25 correctifs de la communauté",
++            "es": "25 arreglos de la comunidad",
++            "pt-BR": "25 correções da comunidade",
++            "ru": "25 исправлений от сообщества",
++            "zh-Hans": "25 项社区修复",
++            "hi": "समुदाय के 25 सुधार",
++            "ar": "25 إصلاحًا من المجتمع",
++            "bn": "কমিউনিটির ২৫টি সমাধান",
++            "id": "25 perbaikan dari komunitas",
++            "de": "25 Fixes aus der Community",
++            "tr": "Topluluktan 25 düzeltme",
++            "th": "25 การแก้ไขจากชุมชน",
++            "zh-Hant": "25 項社群修正"
++          },
++          "detail": {
++            "en": "No crash without a mic, the hide delay works, and truer n8n, Stripe and GitHub pills.",
++            "fr": "Plus de crash sans micro, le délai de masquage fonctionne, et des pills n8n, Stripe et GitHub plus justes.",
++            "es": "Sin cierres sin micrófono, el retraso para ocultar funciona y pills de n8n, Stripe y GitHub más precisas.",
++            "pt-BR": "Sem travar sem microfone, o tempo para ocultar funciona e pills do n8n, Stripe e GitHub mais precisas.",
++            "ru": "Нет сбоев без микрофона, задержка скрытия работает, а пилюли n8n, Stripe и GitHub точнее.",
++            "zh-Hans": "没有麦克风也不会崩溃，隐藏延迟生效，n8n、Stripe 和 GitHub 胶囊更准确。",
++            "hi": "माइक के बिना क्रैश नहीं, छिपाने की देरी काम करती है, और n8n, Stripe व GitHub पिल्स ज़्यादा सटीक।",
++            "ar": "لا أعطال دون ميكروفون، ومهلة الإخفاء تعمل، وكبسولات n8n وStripe وGitHub أدق.",
++            "bn": "মাইক ছাড়া আর ক্র্যাশ নয়, লুকানোর বিলম্ব কাজ করে, আর n8n, Stripe ও GitHub পিল আরও সঠিক।",
++            "id": "Tak ada crash tanpa mikrofon, jeda sembunyi berfungsi, dan pill n8n, Stripe, GitHub lebih akurat.",
++            "de": "Kein Absturz ohne Mikrofon, die Ausblendverzögerung greift, und genauere n8n-, Stripe- und GitHub-Pills.",
++            "tr": "Mikrofon yokken çökme yok, gizleme gecikmesi çalışıyor; n8n, Stripe ve GitHub hapları daha doğru.",
++            "th": "ไม่แครชเมื่อไม่มีไมค์ ระยะเวลาซ่อนใช้งานได้ และพิลล์ n8n, Stripe, GitHub แม่นยำขึ้น",
++            "zh-Hant": "沒有麥克風也不會當機，隱藏延遲生效，n8n、Stripe 與 GitHub 膠囊更準確。"
++          }
++        }
++      ]
++    },
+     {
+       "version":
+```
+
+**File**: `NotchBuddy/project.yml` (modified, +2/-2)
+```diff
+@@ -140,8 +140,8 @@ targets:
+         CFBundleName: Coucou
+         CFBundleDisplayName: Coucou
+         CFBundleIdentifier: fr.louisraille.NotchBuddy
+-        CFBundleVersion: "20"
+-        CFBundleShortVersionString: "0.5.3"
++        CFBundleVersion: "21"
++        CFBundleShortVersionString: "0.5.4"
+         CFBundlePackageType: APPL
+         LSUIElement: YES
+         NSHighResolutionCapable: YES
+```
+
+**File**: `README.md` (modified, +4/-2)
+```diff
+@@ -148,6 +148,7 @@ macOS releases are published as `v*` tags. See [CHANGELOG.md](CHANGELOG.md) for
+ 
+ | Version | Date | Highlights |
+ |---------|------|------------|
++| [0.5.4](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.4) | Oct 29, 2026 | Reliability: 25 community fixes — the hook server never gives up, your own hooks stay untouched, no crash without a mic, truer n8n, Stripe and GitHub pills |
+ | [0.5.3](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.3) | Oct 22, 2026 | Mochi turns blue when a new version waits; What's new and your Coucou so far after each update; Buy Mochi a coffee |
+ | [0.5.2](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.2) | Oct 20, 2026 | New version in the notch, one click to install it; German, Turkish, Thai, Traditional Chinese; Homebrew; plan approval from the notch |
+ | [0.5.1](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.1) | Oct 18, 2026 | WhatsApp in one click: Coucou installs and starts the gateway, no Terminal |
+@@ -173,6 +174,7 @@ Windows and Linux are released together, under the `windows-v*` and `linux-v*` t
  
  | Windows & Linux | Date | Highlights |
  |---------|------|------------|
-+| 0.5.3 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.3) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.3) | Oct 22, 2026 | WhatsApp in the island (experimental): one-click gateway install, your chats and replies |
++| 0.5.4 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.4) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.4) | Oct 29, 2026 | Reliability: 25 community fixes — the hook server never gives up, approval cards go when the terminal takes over, a sturdier Flow pill, WhatsApp group names |
+ | 0.5.3 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.3) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.3) | Oct 22, 2026 | WhatsApp in the island (experimental): one-click gateway install, your chats and replies |
  | 0.5.2 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.2) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.2) | Oct 22, 2026 | Mochi turns blue when a new version waits, What's new after each update; GitLab and Gitea pills; the weekly recap on Android |
  | 0.5.1 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.1) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.1) | Oct 20, 2026 | New version in the island, one click to install it on Windows; German and Turkish; an optional clock; Linux idle CPU fixed |
- | 0.5.0 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.0) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.0) | Oct 15, 2026 | Catches up with the Mac: the Coucou window, Flow dictation with Parakeet offline (X11 and Wayland), the Notetaker, « OK Coucou » |
-@@ -248,7 +249,7 @@ Download **[Coucou-Windows.msi](https://github.com/Louis-CFM/coucou/releases/dow
+@@ -249,7 +251,7 @@ Download **[Coucou-Windows.msi](https://github.com/Louis-CFM/coucou/releases/dow
  
  This is only because the app isn't signed with a paid certificate yet. Coucou is open source, and Microsoft Defender scans the installer as clean.
  
--**Windows and Linux 0.5.2** turn Mochi blue when a new version waits and show what it brings after the update; they add **GitLab and Gitea** pills. **0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents with approvals from the island, answers to Claude's questions, live diffs, GitHub pull requests and CI, plan usage, local models, the wardrobe, Mochi on the desktop, keyboard shortcuts, the weekly recap and 10 languages. See the [changelog](CHANGELOG.md).
-+**Windows and Linux 0.5.3** bring **WhatsApp** to the island (experimental), with the gateway installed in one click. **0.5.2** turn Mochi blue when a new version waits and show what it brings after the update; they add **GitLab and Gitea** pills. **0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents with approvals from the island, answers to Claude's questions, live diffs, GitHub pull requests and CI, plan usage, local models, the wardrobe, Mochi on the desktop, keyboard shortcuts, the weekly recap and 10 languages. See the [changelog](CHANGELOG.md).
- 
- There is no notch on a PC, so the island slides out of the top edge of the screen
- instead of hiding inside one. See [`windows/README.md`](windows/README.md) for the
-@@ -334,13 +335,13 @@ On the Mac, open Coucou from the Dock or the menu bar: its window has every sett
- | **Flow dictation** *(macOS, GitHub build)* | hold a key, speak, the words are pasted | Coucou → Flow → Settings · the Accessibility and Microphone permissions |
- | **Parakeet** *(macOS, Apple silicon)* | offline dictation, more accurate | Coucou → Flow 
+-**Windows and Linux 0.5.3** bring **WhatsApp** to the island (experimental), with the gateway installed in one click. **0.5.2** turn Mochi blue when a new version waits and show what it brings after the update; they add **GitLab and Gitea** pills. **0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat from your Android phone (Settings → Android phone, off by default). 0.3.0 added open on hover, your own sounds, a colour of your own for each Mochi and the Mochi-to-desktop shortcut; on Linux, the Spotify pill with Mochi dancing to it, global shortcuts on Wayland and "Open terminal" that brings the terminal forward. 0.2.0 caught up with the Mac: Codex, Copilot CLI, Muse Code and six more agents with approvals from the island, answers to Claude's questions, live diffs, GitHub pull requests and CI, plan usage, local models, the wardrobe, Mochi on the desktop, keyboard shortcuts, the weekly recap and 10 languages. See the [changelog](CHANGELOG.md).
++**Windows and Linux 0.5.4** bring 25 reliability fixes from the community. **0.5.3** bring **WhatsApp** to the island (experimental), with the gateway installed in one click. **0.5.2** turn Mochi blue when a new version waits and show what it brings after the update; they add **GitLab and Gitea** pills. **0.5.1** tell you when a new version is out (once you agree) and, on Windows, install it in one click; they also speak German and Turkish. **0.5.0** caught up with the Mac: Coucou is now an app with its own window in the taskbar, **Flow dictation** anywhere (hold right Ctrl, speak, let go) with Parakeet running offline on your computer, the **Notetaker** for your calls, and **« OK Coucou »** to talk to Mochi, powered by Claude with your key. On Linux, dictation works on X11 and Wayland. 0.4.0 paired with [Coucou for Android](#coucou-for-android): approve, answer and chat f
 ```
 
 **File**: `linux/arch/PKGBUILD` (modified, +1/-1)
@@ -2198,8 +2074,8 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
  
  pkgname=coucou-git
  _pkgname=coucou
--pkgver=0.5.2
-+pkgver=0.5.3
+-pkgver=0.5.3
++pkgver=0.5.4
  pkgrel=1
  pkgdesc="Mochi lives at the top of your screen and keeps an eye on your Claude Code sessions"
  arch=('x86_64' 'aarch64')
@@ -2211,8 +2087,8 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
  
  [[package]]
  name = "coucou"
--version = "0.5.2"
-+version = "0.5.3"
+-version = "0.5.3"
++version = "0.5.4"
  dependencies = [
   "arboard",
   "cpal",
@@ -2220,8 +2096,8 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
  
  [[package]]
  name = "coucou-hook"
--version = "0.5.2"
-+version = "0.5.3"
+-version = "0.5.3"
++version = "0.5.4"
  dependencies = [
   "libc",
   "serde_json",
@@ -2233,115 +2109,470 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
  resolver = "2"
  
  [workspace.package]
--version = "0.5.2"
-+version = "0.5.3"
+-version = "0.5.3"
++version = "0.5.4"
  edition = "2021"
  license = "MIT"
  
 ```
 
-**File**: `windows/package-lock.json` (modified, +2/-2)
+---
+
+### Incident Patch 2: `479cf573` (2026-10-29)
+**Commit Message**: Release prep: Mac 0.5.6, Windows and Linux 0.5.6 (chat on your AI subscription, Korean and Japanese)
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
+
+**File**: `CHANGELOG.md` (modified, +11/-0)
 ```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "coucou-windows",
--  "version": "0.5.2",
-+  "version": "0.5.3",
-   "lockfileVersion": 3,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "coucou-windows",
--      "version": "0.5.2",
-+      "version": "0.5.3",
-       "dependencies": {
-         "@tauri-apps/api": "^2"
-       },
+@@ -1,5 +1,16 @@
+ # Changelog
+ 
++## 0.5.6 — October 30, 2026
++
++- **Chat on your own AI subscription** — Settings → Chat → Your AI subscriptions: one switch per provider. On, the chat goes through the provider's official terminal tool, signed in with your own account: Claude Code (Claude plan), Antigravity CLI or Gemini CLI (Google AI plan), Codex CLI (ChatGPT plan), and two new choices in the chat, Cursor CLI and GitHub Copilot CLI. Off, the API key as before. Replaces 0.5.5's hidden rule (empty the key and Claude Code answers): each row says whether the tool is installed, how to install it and how to sign in, and the chat's model chip names the tool that answers. Every run is read-only (plan or ask modes, no shell, no edits), loads none of your hooks, MCP servers or extensions where the tool lets Coucou turn them off, saves no session, and searches the web for the chat only; a dropped file is read with no web. Coucou reads no credential. GitHub build: the App Store build is sandboxed and still needs a key
++- **The tools are found where you installed them** — nvm, fnm, Volta, Bun, pnpm, Homebrew or the tools' own installers, and else through your login shell (a Claude Code installed with npm under nvm was not found before)
++- **Korean** (#880 by @lovyestar) **and Japanese**: 16 languages
++
++## Windows and Linux 0.5.6 — October 30, 2026
++
++- **Chat on your own AI subscription** — the same switches as on the Mac in Settings → Chat (Claude Code, Antigravity CLI or Gemini CLI, Codex CLI, Cursor CLI, Copilot CLI), read-only runs, and the phone's chat takes the same path. Through npm's `.cmd` shims on Windows the prompt goes in on stdin. Without a key and with Claude's switch off, the chat asks for a key instead of answering through Claude Code anyway; Flow's clean-up and the notes of a call still use Claude Code when no key is saved
++- **Korean** (#880 by @lovyestar) **and Japanese**: 14 languages
++
+ ## 0.5.5 — October 29, 2026
+ 
+ - **Chat on your Claude plan, no API key** — with no Anthropic key saved, the chat is answered by your own Claude Code (`claude -p`), signed in with your account. Each run loads none of your settings or hooks, no MCP server, saves no session, and may only search the web or, with no web at all, read the file you dropped (copied alone into a folder of its own). GitHub build: the App Store build is sandboxed and still needs a key. Saving a key switches back to the API
 ```
 
-**File**: `windows/package.json` (modified, +1/-1)
+**File**: `NotchBuddy/Resources/Info.plist` (modified, +2/-2)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "name": "coucou-windows",
-   "private": true,
--  "version": "0.5.2",
-+  "version": "0.5.3",
-   "type": "module",
-   "scripts": {
-     "dev": "vite",
+@@ -36,9 +36,9 @@
+ 	<key>CFBundlePackageType</key>
+ 	<string>APPL</string>
+ 	<key>CFBundleShortVersionString</key>
+-	<string>0.5.5</string>
++	<string>0.5.6</string>
+ 	<key>CFBundleVersion</key>
+-	<string>22</string>
++	<string>23</string>
+ 	<key>LSUIElement</key>
+ 	<true/>
+ 	<key>NSAccessibilityUsageDescription</key>
 ```
 
-**File**: `windows/src-tauri/tauri.conf.json` (modified, +1/-1)
+**File**: `NotchBuddy/Resources/whats-new.json` (modified, +83/-0)
 ```diff
-@@ -1,7 +1,7 @@
+@@ -1,6 +1,89 @@
  {
-   "$schema": "https://schema.tauri.app/config/2",
-   "productName": "Coucou",
--  "version": "0.5.2",
-+  "version": "0.5.3",
-   "identifier": "fr.louisraille.coucou",
-   "build": {
-     "beforeDevCommand": "npm run dev",
+   "about": "What's new, shown once in the notch after Coucou updates itself (WhatsNew.swift). Every Mac release adds its entry here, in the 16 languages, before release.sh: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
+   "releases": [
++    {
++      "version": "0.5.6",
++      "items": [
++        {
++          "icon": "chat",
++          "title": {
++            "en": "Chat on your AI subscription",
++            "fr": "Le chat sur ton abonnement IA",
++            "es": "Chat con tu suscripción de IA",
++            "pt-BR": "Chat com sua assinatura de IA",
++            "ru": "Чат по вашей подписке на ИИ",
++            "zh-Hans": "用你的 AI 订阅聊天",
++            "hi": "अपनी AI सदस्यता से चैट",
++            "ar": "دردشة باشتراكك في الذكاء الاصطناعي",
++            "bn": "আপনার AI সাবস্ক্রিপশনে চ্যাট",
++            "id": "Chat dengan langganan AI-mu",
++            "de": "Chat mit deinem KI-Abo",
++            "tr": "Yapay zekâ aboneliğinizle sohbet",
++            "th": "แชตด้วยการสมัครใช้ AI ของคุณ",
++            "zh-Hant": "用你的 AI 訂閱聊天",
++            "ko": "내 AI 구독으로 채팅",
++            "ja": "AI サブスクリプションでチャット"
++          },
++          "detail": {
++            "en": "Claude, Gemini, ChatGPT, Cursor or Copilot, no key: turn it on in Settings → Chat.",
++            "fr": "Claude, Gemini, ChatGPT, Cursor ou Copilot, sans clé : active-le dans Réglages → Chat.",
++            "es": "Claude, Gemini, ChatGPT, Cursor o Copilot, sin clave: actívalo en Ajustes → Chat.",
++            "pt-BR": "Claude, Gemini, ChatGPT, Cursor ou Copilot, sem chave: ative em Ajustes → Chat.",
++            "ru": "Claude, Gemini, ChatGPT, Cursor или Copilot без ключа: включите в Настройки → Чат.",
++            "zh-Hans": "Claude、Gemini、ChatGPT、Cursor 或 Copilot，无需密钥：在 设置 → 聊天 中开启。",
++            "hi": "Claude, Gemini, ChatGPT, Cursor या Copilot, बिना कुंजी: सेटिंग्स → चैट में चालू करें।",
++            "ar": "Claude وGemini وChatGPT وCursor وCopilot دون مفتاح: فعّله من الإعدادات ← الدردشة.",
++            "bn": "Claude, Gemini, ChatGPT, Cursor বা Copilot, কী ছাড়াই: সেটিংস → চ্যাট-এ চালু করুন।",
++            "id": "Claude, Gemini, ChatGPT, Cursor, atau Copilot, tanpa kunci: nyalakan di Pengaturan → Chat.",
++            "de": "Claude, Gemini, ChatGPT, Cursor oder Copilot ohne Schlüssel: in Einstellungen → Chat einschalten.",
++            "tr": "Claude, Gemini, ChatGPT, Cursor veya Copilot, anahtarsız: Ayarlar → Sohbet'ten açın.",
++            "th": "Claude, Gemini, ChatGPT, Cursor หรือ Copilot โดยไม่ต้องใช้คีย์: เปิดได้ใน การตั้งค่า → แชต",
++            "zh-Hant": "Claude、Gemini、ChatGPT、Cursor 或 Copilot，免金鑰：在 設定 → 聊天 中開啟。",
++            "ko": "Claude, Gemini, ChatGPT, Cursor, Copilot을 키 없이: 설정 → 채팅에서 켜세요.",
++            "ja": "Claude、Gemini、ChatGPT、Cursor、Copilot をキーなしで：設定 → チャットでオンに。"
++          }
++        },
++        {
++          "icon": "languages",
++          "title": {
++            "en": "Korean and Japanese",
++            "fr": "Coréen et japonais",
++            "es": "Coreano y japonés",
++            "pt-BR": "Coreano e japonês",
++            "ru": "Корейский и японский",
++            "zh-Hans": "韩语和日语",
++            "hi": "कोरियाई और जापानी",
++            "ar": "الكورية واليابانية",
++            "bn": "কোরিয়ান ও জাপানি",
++            "id": "Bahasa Korea dan Jepang",
++            "de": "Koreanisch und Japanisch",
++            "tr": "Korece ve Japonca",
++            "th": "ภาษาเกาหลีและญี่ปุ่น",
++            "zh-Hant": "韓文和日文",
++            "ko": "한국어와 일본어",
++            "ja": "韓国語と日本語"
++          },
++          "detail": {
++            "en": "Coucou now speaks 16 languages. Korean thanks to @lovyestar.",
++            "fr": "Coucou parle maintenant 16 langues. Le coréen grâce à @lovyestar.",
++            "es": "Coucou ya habla 16 idiomas. El coreano gracias a @lovyestar.",
++            "pt-BR": "O Coucou agora fala 16 idiomas. O coreano graças a @lovyestar.",
++            "ru": "Coucou теперь говорит на 16 языках. Корейский — благодаря @lovyestar.",
++            "zh-Hans": "Coucou 现在支持 16 种语言。韩语由 @lovyestar 贡献。",
++            "hi": "Coucou अब 16 भाषाएँ बोलता है। कोरियाई @lovyestar की बदौलत।",
++            "ar": "يتحدث Coucou الآن 16 لغة. الكورية بفضل @lovyestar.",
++            "bn": "Coucou এখন 16টি ভাষায় কথা বলে। কোরিয়ান @lovyestar-এর সৌজন্যে।",
++            "id": "Coucou kini berbicara 16 bahasa. Bahasa Korea berkat @lovyestar.",
++            "de": "Coucou spricht jetzt 16 Sprachen. Koreanisch dank @lovyestar.",
++            "tr": "Coucou artık 16 dil konuşuyor. Korece @lovyestar sayesinde.",
++            "th": "ตอนนี้ Coucou พูดได้ 16 ภาษา ภาษาเกาหลีโดย @lovyestar",
++            "zh-Hant": "Coucou 現在支援 16 種語言。韓文由 @lovyestar 貢獻。",
++            "ko": "Coucou가 이제 16개 언어를 지원합니다. 한국어는 @lovyestar 덕분이에요.",
++            "ja": "Coucou は 16 言語に対応しました。韓国語は @lovyestar のおかげです。"
++          }
++        }
++      ]
++    },
+     {
+       "version": "0.5.5",
+ 
+```
+
+**File**: `NotchBuddy/project.yml` (modified, +2/-2)
+```diff
+@@ -140,8 +140,8 @@ targets:
+         CFBundleName: Coucou
+         CFBundleDisplayName: Coucou
+         CFBundleIdentifier: fr.louisraille.NotchBuddy
+-        CFBundleVersion: "22"
+-        CFBundleShortVersionString: "0.5.5"
++        CFBundleVersion: "23"
++        CFBundleShortVersionString: "0.5.6"
+         CFBundlePackageType: APPL
+         LSUIElement: YES
+         NSHighResolutionCapable: YES
+```
+
+**File**: `README.md` (modified, +5/-3)
+```diff
+@@ -66,7 +66,7 @@ Flow dictation and the Notetaker are on the Mac for now; Windows and Linux are n
+ - See what Claude is editing, live in the notch: each file modification shows the file name and +N −M counts in the ticker, tap to read the full diff
+ - ✅ **Approve and answer from the notch** — Claude Code permission requests show up with **Allow / Deny / Always**; `AskUserQuestion` prompts show the choices right in the notch (single or multi-select, up to 4 questions). One click, or "Reply in terminal" to fall back to the CLI. Codex also gets Allow / Deny.
+ - 🧑‍💻 **Jump to the right terminal** — open the exact terminal window of a session *(macOS)*.
+-- 💬 **Chat with Claude, Gemini, OpenAI, DeepSeek, Qwen, Moonshot, or a local model (Ollama / LM Studio)** — click the model name above the chat box to switch provider and pick a model. Cloud providers use your own API key; local providers connect to a server running on your Mac. **No API key?** With Claude Code installed, Claude answers through it, on your Claude plan *(GitHub build, Windows, Linux)*. *(Gemini, OpenAI, DeepSeek, Qwen, Moonshot and local models: macOS)*
++- 💬 **Chat with Claude, Gemini, OpenAI, DeepSeek, Qwen, Moonshot, or a local model (Ollama / LM Studio)** — click the model name above the chat box to switch provider and pick a model. Cloud providers use your own API key; local providers connect to a server running on your Mac. **No API key? Use your subscription**: switch it on in Settings → Chat and the chat goes through the official terminal tool you already pay for, signed in with your own account — Claude Code, Antigravity CLI or Gemini CLI, Codex CLI (ChatGPT), Cursor CLI or GitHub Copilot CLI *(GitHub build, Windows, Linux)*. *(Gemini, OpenAI, DeepSeek, Qwen, Moonshot and local models: macOS)*
+ - 📈 **Portfolio pill** *(macOS)* — track your crypto across 16 networks (Bitcoin, Ethereum, Solana, Polygon, BNB, Avalanche, Arbitrum, Optimism, Base, Dogecoin, Litecoin, TRON, XRP, Cardano, Cosmos, NEAR) and 5 exchanges (Binance, OKX, Bybit, Kraken, Coinbase) in the notch. Live balances, 7-day sparklines and 24-hour price change per holding. Read-only API keys for exchanges, public addresses for wallets — nothing leaves your Mac.
+ - 📊 **Claude plan usage** *(macOS, GitHub build)* — a small pill in the notch header shows your 5-hour and weekly Claude plan limits. Enable it from Settings → Agents → Plan usage. Pro and Max plans only.
+ - 📊 **Codex plan usage** *(macOS, GitHub build)* — a Codex pill next to it shows your Codex limits and how many free resets you have left, read from the Codex CLI. Turn it on in Settings → Agents → Plan usage.
+@@ -148,6 +148,7 @@ macOS releases are published as `v*` tags. See [CHANGELOG.md](CHANGELOG.md) for
+ 
+ | Version | Date | Highlights |
+ |---------|------|------------|
++| [0.5.6](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.6) | Oct 30, 2026 | Chat on your own AI subscription (Claude Code, Antigravity, Gemini CLI, Codex, Cursor, Copilot), switched on in Settings → Chat; Korean and Japanese |
+ | [0.5.5](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.5) | Oct 29, 2026 | Chat on your Claude plan with no API key; each session apart behind its pill, questions side by side; Claude Code on a remote machine |
+ | [0.5.4](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.4) | Oct 29, 2026 | Reliability: 25 community fixes — the hook server never gives up, your own hooks stay untouched, no crash without a mic, truer n8n, Stripe and GitHub pills |
+ | [0.5.3](https://github.com/Louis-CFM/coucou/releases/tag/v0.5.3) | Oct 22, 2026 | Mochi turns blue when a new version waits; What's new and your Coucou so far after each update; Buy Mochi a coffee |
+@@ -175,6 +176,7 @@ Windows and Linux are released together, under the `windows-v*` and `linux-v*` t
+ 
+ | Windows & Linux | Date | Highlights |
+ |---------|------|------------|
++| 0.5.6 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.6) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.6) | Oct 30, 2026 | Chat on your own AI subscription (Claude Code, Antigravity, Gemini CLI, Codex, Cursor, Copilot); Korean and Japanese |
+ | 0.5.5 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.5) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.5) | Oct 29, 2026 | No API key? Your own Claude Code answers the chat, Flow's clean-up and the notes of a call, on your Claude plan |
+ | 0.5.4 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.4) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.4) | Oct 29, 2026 | Reliability: 25 community fixes — the hook server never gives up, approval cards go when the terminal takes over, a sturdier Flow pill, WhatsApp group names |
+ | 0.5.3 · [Windows](https://github.com/Louis-CFM/coucou/releases/tag/windows-v0.5.3) · [Linux](https://github.com/Louis-CFM/coucou/releases/tag/linux-v0.5.3) | Oct 22, 2026 | Wha
+```
+
+**File**: `linux/arch/PKGBUILD` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@
+ 
+ pkgname=coucou-git
+ _pkgname=coucou
+-pkgver=0.5.5
++pkgver=0.5.6
+ pkgrel=1
+ pkgdesc="Mochi lives at the top of your screen and keeps an eye on your Claude Code sessions"
+ arch=('x86_64' 'aarch64')
+```
+
+**File**: `windows/Cargo.lock` (modified, +2/-2)
+```diff
+@@ -719,7 +719,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "coucou"
+-version = "0.5.5"
++version = "0.5.6"
+ dependencies = [
+  "arboard",
+  "cpal",
+@@ -755,7 +755,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "coucou-hook"
+-version = "0.5.5"
++version = "0.5.6"
+ dependencies = [
+  "libc",
+  "serde_json",
+```
+
+**File**: `windows/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@ members = ["src-tauri", "hook"]
+ resolver = "2"
+ 
+ [workspace.package]
+-version = "0.5.5"
++version = "0.5.6"
+ edition = "2021"
+ license = "MIT"
+ 
 ```
 
 ---
 
-### Incident Patch 3: `01f3198e` (2026-10-23)
-**Commit Message**: Merge branch 'fix/whatsapp-status' into integ-910-892
+### Incident Patch 3: `4dd4861a` (2026-10-29)
+**Commit Message**: Japanese on Mac, Windows and Linux
 
-**File**: `NotchBuddy/Sources/App/WhatsAppModels.swift` (modified, +5/-1)
+Every Mac string (930), every Windows and Linux string of extra.json (473),
+and every What's new entry, in Japanese. Added to the language pickers, the
+bundle localizations and the plural rules (one form, as Korean). Mac 16
+languages, Windows and Linux 14.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
+
+**File**: `CLAUDE.md` (modified, +1/-1)
 ```diff
-@@ -74,6 +74,10 @@ struct WAFilters: Equatable, Sendable {
- enum WAJID {
-     static func isGroup(_ jid: String) -> Bool { jid.hasSuffix("@g.us") }
- 
-+    /// Status updates (status@broadcast), broadcast lists and channels (…@newsletter) come in as
-+    /// messages too, but they are not conversations: a contact's Status would become a chat named after them (#901).
-+    static func isConversation(_ jid: String) -> Bool { !jid.hasSuffix("@broadcast") && !jid.hasSuffix("@newsletter") }
-+
-     /// "33612345678@s.whatsapp.net" → "+33 6 12 34 56 78"-ish: the digits with a plus.
-     static func displayNumber(_ jid: String) -> String {
-         let user = jid.split(separator: "@").first.map(String.init) ?? jid
-@@ -130,7 +134,7 @@ struct WAInbox: Equatable, Sendable {
-     mutating func add(_ message: WAMessage, filters: WAFilters, name: String? = nil, history: Bool = false) -> Outcome {
-         guard !seenIds.contains(message.id) else { return .duplicate }
-         let chat = WAJID.normalized(message.chat)
--        guard !filters.ignored.contains(chat) else { return .ignored }
-+        guard WAJID.isConversation(chat), !filters.ignored.contains(chat) else { return .ignored }
-         seenIds.insert(message.id)
-         seenOrder.append(message.id)
-         if seenOrder.count > 2_000 {
+@@ -31,4 +31,4 @@ Windows and Linux: `cd windows && npm install && npm run tauri dev`
+ - Pill IDs are stable contract values (Keychain, UserDefaults, hook routing): never rename an existing pill ID.
+ - New views follow the existing app style. `design/prototype/notch-buddy.html` and `design/captures/` are references for new work, not a reason to change existing views.
+ - Every release adds its CHANGELOG.md section, a row in the README Versions table, and commits the regenerated Info.plist with the new version.
+-- Every release also adds its What's new, shown once in the notch or the island after Coucou updates itself: an entry for the new version in `NotchBuddy/Resources/whats-new.json` (Mac, the 14 languages) or `windows/src/whats-new/whats-new.json` (Windows and Linux, the 12 languages). 1 to 4 items picked from the CHANGELOG section, each with an icon from `scripts/test-whats-new.py`, a short title and one line, translated in every language. `python3 scripts/test-whats-new.py` checks it; CI and `release.sh` fail without it.
++- Every release also adds its What's new, shown once in the notch or the island after Coucou updates itself: an entry for the new version in `NotchBuddy/Resources/whats-new.json` (Mac, the 16 languages) or `windows/src/whats-new/whats-new.json` (Windows and Linux, the 14 languages). 1 to 4 items picked from the CHANGELOG section, each with an icon from `scripts/test-whats-new.py`, a short title and one line, translated in every language. `python3 scripts/test-whats-new.py` checks it; CI and `release.sh` fail without it.
 ```
 
-**File**: `tests/WhatsAppTests.swift` (modified, +10/-0)
+**File**: `NotchBuddy/Resources/Info.plist` (modified, +1/-0)
 ```diff
-@@ -52,6 +52,16 @@ enum WhatsAppTests {
-             check("groups heard when not muted", inbox.add(msg("g3", chat: group, from: "336@s.whatsapp.net"), filters: f) == .notify)
+@@ -22,6 +22,7 @@
+ 		<string>fr</string>
+ 		<string>hi</string>
+ 		<string>id</string>
++		<string>ja</string>
+ 		<string>ko</string>
+ 		<string>pt-BR</string>
+ 		<string>ru</string>
+```
+
+**File**: `NotchBuddy/Resources/InfoAppStore.plist` (modified, +1/-0)
+```diff
+@@ -22,6 +22,7 @@
+ 		<string>fr</string>
+ 		<string>hi</string>
+ 		<string>id</string>
++		<string>ja</string>
+ 		<string>ko</string>
+ 		<string>pt-BR</string>
+ 		<string>ru</string>
+```
+
+**File**: `NotchBuddy/Resources/whats-new.json` (modified, +45/-23)
+```diff
+@@ -1,5 +1,5 @@
+ {
+-  "about": "What's new, shown once in the notch after Coucou updates itself (WhatsNew.swift). Every Mac release adds its entry here, in the 14 languages, before release.sh: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
++  "about": "What's new, shown once in the notch after Coucou updates itself (WhatsNew.swift). Every Mac release adds its entry here, in the 16 languages, before release.sh: 1 to 4 items, a short title and one line each, an icon from scripts/test-whats-new.py. python3 scripts/test-whats-new.py checks it.",
+   "releases": [
+     {
+       "version": "0.5.5",
+@@ -21,7 +21,8 @@
+             "tr": "API anahtarı olmadan sohbet",
+             "th": "แชตโดยไม่ต้องใช้คีย์ API",
+             "zh-Hant": "免 API 金鑰即可聊天",
+-            "ko": "API 키 없이 채팅"
++            "ko": "API 키 없이 채팅",
++            "ja": "API キーなしでチャット"
+           },
+           "detail": {
+             "en": "No key? Your own Claude Code answers, on your Claude plan.",
+@@ -38,7 +39,8 @@
+             "tr": "Anahtar yok mu? Claude Code’un, Claude planınla yanıtlar.",
+             "th": "ไม่มีคีย์? Claude Code ของคุณตอบให้ ด้วยแพ็กเกจ Claude ของคุณ",
+             "zh-Hant": "沒有金鑰？由你的 Claude Code 用你的 Claude 方案回答。",
+-            "ko": "키가 없나요? 내 Claude Code가 내 Claude 요금제로 답합니다."
++            "ko": "키가 없나요? 내 Claude Code가 내 Claude 요금제로 답합니다.",
++            "ja": "キーがなくても、あなたの Claude Code が Claude プランで答えます。"
+           }
+         },
+         {
+@@ -58,7 +60,8 @@
+             "tr": "Her oturum ayrı",
+             "th": "แยกแต่ละเซสชัน",
+             "zh-Hant": "每個工作階段各自獨立",
+-            "ko": "세션마다 따로"
++            "ko": "세션마다 따로",
++            "ja": "セッションごとに分けて"
+           },
+           "detail": {
+             "en": "Two terminals, two names. The session waiting for you takes a place in the grid.",
+@@ -75,7 +78,8 @@
+             "tr": "İki terminal, iki ad. Seni bekleyen oturum ızgarada bir yer alır.",
+             "th": "สองเทอร์มินัล สองชื่อ เซสชันที่รอคุณจะได้ที่ในตาราง",
+             "zh-Hant": "兩個終端機，兩個名稱。等你處理的工作階段會佔據格狀中的一個位置。",
+-            "ko": "터미널 두 개, 이름 두 개. 나를 기다리는 세션이 그리드에 자리를 잡습니다."
++            "ko": "터미널 두 개, 이름 두 개. 나를 기다리는 세션이 그리드에 자리를 잡습니다.",
++            "ja": "ターミナル 2 つなら名前も 2 つ。あなたを待つセッションはグリッドに場所を取ります。"
+           }
          }
+       ]
+@@ -99,7 +103,8 @@
+             "de": "Coucou hört weiter zu",
+             "tr": "Coucou dinlemeye devam eder",
+             "th": "Coucou ฟังต่อเนื่อง",
+-            "zh-Hant": "Coucou 始終在線"
++            "zh-Hant": "Coucou 始終在線",
++            "ja": "Coucou は聞き続けます"
+           },
+           "detail": {
+             "en": "One failed connection no longer cuts Claude Code off, and only Coucou’s own hooks are touched.",
+@@ -115,7 +120,8 @@
+             "de": "Eine fehlgeschlagene Verbindung trennt Claude Code nicht mehr, und nur Coucous eigene Hooks werden geändert.",
+             "tr": "Tek bir başarısız bağlantı artık Claude Code’u koparmıyor; yalnızca Coucou’nun kendi hook’ları değişir.",
+             "th": "การเชื่อมต่อที่ล้มเหลวไม่ตัด Claude Code อีกต่อไป และแก้เฉพาะ hooks ของ Coucou เอง",
+-            "zh-Hant": "一次連線失敗不再讓 Claude Code 中斷，且只更動 Coucou 自己的 hooks。"
++            "zh-Hant": "一次連線失敗不再讓 Claude Code 中斷，且只更動 Coucou 自己的 hooks。",
++            "ja": "1 回接続に失敗しても Claude Code が途切れず、触れるのは Coucou 自身のフックだけです。"
+           }
+         },
+         {
+@@ -134,7 +140,8 @@
+             "de": "25 Fixes aus der Community",
+             "tr": "Topluluktan 25 düzeltme",
+             "th": "25 การแก้ไขจากชุมชน",
+-            "zh-Hant": "25 項社群修正"
++            "zh-Hant": "25 項社群修正",
++            "ja": "コミュニティによる 25 の修正"
+           },
+           "detail": {
+             "en": "No crash without a mic, the hide delay works, and truer n8n, Stripe and GitHub pills.",
+@@ -150,7 +157,8 @@
+             "de": "Kein Absturz ohne Mikrofon, die Ausblendverzögerung greift, und genauere n8n-, Stripe- und GitHub-Pills.",
+             "tr": "Mikrofon yokken çökme yok, gizleme gecikmesi çalışıyor; n8n, Stripe ve GitHub hapları daha doğru.",
+             "th": "ไม่แครชเมื่อไม่มีไมค์ ระยะเวลาซ่อนใช้งานได้ และพิลล์ n8n, Stripe, GitHub แม่นยำขึ้น",
+-            "zh-Hant": "沒有麥克風也不會當機，隱藏延遲生效，n8n、Stripe 與 GitHub 膠囊更準確。"
++            "zh-Hant": "沒有麥克風也不會當機，隱藏延遲生效，n8n、Stripe 與 GitHub 膠囊更準確。",
++            "ja": "マイクがなくてもクラッシュせず、非表示の遅延が機能し、n8n・Stripe・GitHub のピルがより正確に。"
+           }
+         }
+       ]
+@@ -175,7 +183,8 @@
+             "tr": "Güncellemede Mochi maviye döner",
+             "th": "Mochi เป็นสีฟ้าเมื่อมีอัปเดต",
+             "zh-Hant": "有更新時 Mochi 變藍",
+-            "ko": "업데이트가 있으면 모찌가 파랗게 돼요"
++            "ko": "업데이트가 있으면 모찌가 파랗게 돼요",
++            "ja": "アップデートで Mochi が青に"
+           },
+           "detail": {
+             "en": "A new Coucou turns him blue, in the notch and the menu bar. One click installs it.",
+@@ -192,7 +201,8 @@
+             "tr": "Yeni Coucou onu çentikte ve menü çubuğunda maviye çevir
+```
+
+**File**: `NotchBuddy/Sources/App/SettingsView.swift` (modified, +1/-0)
+```diff
+@@ -477,6 +477,7 @@ struct SettingsView: View {
+                     Text("Türkçe").tag("tr")
+                     Text("ไทย").tag("th")
+                     Text("한국어").tag("ko")
++                    Text("日本語").tag("ja")
+                 }
+                 .pickerStyle(.menu)
+                 .labelsHidden()
+```
+
+**File**: `NotchBuddy/project.yml` (modified, +2/-0)
+```diff
+@@ -164,6 +164,7 @@ targets:
+           - fr
+           - hi
+           - id
++          - ja
+           - ko
+           - pt-BR
+           - ru
+@@ -248,6 +249,7 @@ targets:
+           - fr
+           - hi
+           - id
++          - ja
+           - ko
+           - pt-BR
+           - ru
+```
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -88,7 +88,7 @@ Flow dictation and the Notetaker are on the Mac for now; Windows and Linux are n
+ - 📱 **Coucou on iPhone** — your sessions, approvals and services in your pocket, with Live Activities, widgets and Siri. See [Coucou on iPhone](#coucou-on-iphone).
+ - 🤖 **Coucou for Android** — your agents, approvals with your fingerprint, questions, chat and home-screen widgets on an Android phone, linked to Coucou on Windows or Linux over your Wi-Fi. By [@Rhytam23](https://github.com/Rhytam23). See [Coucou for Android](#coucou-for-android).
+ - 📅 **Weekly recap** *(macOS)* — every Monday morning Coucou shows a summary of the past week: time coding, sessions, files, lines changed, commands, permissions, top agent and project, busiest day and longest session. Share it as a 1080 × 1920 image with Mochi — project names optional. All local, no sync.
+-- 🌍 **14 languages** — English, 简体中文, 繁體中文, हिन्दी, Español, العربية, Français, বাংলা, Português, Русский, Bahasa Indonesia, Deutsch, Türkçe, ไทย. Pick one in Settings → General → Language; Traditional Chinese and Thai are on the Mac only for now. Community translations welcome.
++- 🌍 **16 languages** — English, 简体中文, 繁體中文, हिन्दी, Español, العربية, Français, বাংলা, Português, Русский, Bahasa Indonesia, Deutsch, Türkçe, ไทย, 한국어, 日本語. Pick one in Settings → General → Language; Traditional Chinese and Thai are on the Mac only for now. Community translations welcome.
+ - 🔒 **Private by design** — no telemetry, no account. Keys live in your macOS Keychain, Windows Credential Manager or Linux Secret Service (GNOME Keyring, KWallet). The app only talks to the services you plug in (and, once you agree, to GitHub's releases API to tell you about new versions).
  
-+        print("\nStatus updates and channels are not conversations (#901)")
-+        do {
-+            var inbox = WAInbox()
-+            let f = WAFilters()
-+            check("a contact's Status is left out", inbox.add(msg("s1", chat: "status@broadcast", from: "33600000001@s.whatsapp.net", text: "https://vm.tiktok.com/x"), filters: f) == .ignored)
-+            check("a channel post is left out", inbox.add(msg("n1", chat: "120363000000000001@newsletter"), filters: f) == .ignored)
-+            check("nothing shows", inbox.visible(filters: f).isEmpty)
-+            check("people and groups still are", WAJID.isConversation("33600000001@s.whatsapp.net") && WAJID.isConversation("120363@g.us") && WAJID.isConversation("251556368777322@lid"))
-+        }
-+
-         print("\nOnly the last messages are kept")
-         do {
-             var inbox = WAInbox()
+ ## Coucou on iPhone
+```
+
+**File**: `scripts/test-whats-new.py` (modified, +3/-3)
+```diff
+@@ -3,8 +3,8 @@
+ 
+ Coucou shows, once after it updated itself, what the new version brings (an icon, a title and a
+ line per item, in every language the app speaks). The entries live in
+-  NotchBuddy/Resources/whats-new.json   (Mac, the 15 languages of Localizable.xcstrings)
+-  windows/src/whats-new/whats-new.json  (Windows and Linux, the 12 languages of strings.json)
++  NotchBuddy/Resources/whats-new.json   (Mac, the 16 languages of Localizable.xcstrings)
++  windows/src/whats-new/whats-new.json  (Windows and Linux, the languages of strings.json)
+ This test fails when the version the app is about to ship has no entry, or an entry is
+ incomplete. release.sh runs it too, so a release can't go out without its "What's new".
+ 
+@@ -23,7 +23,7 @@
+     "sparkles", "bolt", "puzzle", "paint", "eye", "keyboard", "heart", "clock", "download", "bug",
+ }
+ 
+-MAC_LANGS = ["en", "fr", "es", "pt-BR", "ru", "zh-Hans", "hi", "ar", "bn", "id", "de", "tr", "th", "zh-Hant", "ko"]
++MAC_LANGS = ["en", "fr", "es", "pt-BR", "ru", "zh-Hans", "hi", "ar", "bn", "id", "de", "tr", "th", "zh-Hant", "ko", "ja"]
+ 
+ MAX_ITEMS = 4
+ MAX_TITLE = 48     # characters, any language: one line in the card
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #924** (closed): cargo config to limit build jobs and set dev profile debug level for windows (@SahrulRD-Smatel)
-- **PR #915** (closed): Fix/lyrics lrclib 503 (@Fahmiady11)
-- **PR #910** (2026-10-23): fix(windows): WhatsApp Status updates and channels no longer show as chats (#901) (@afpruivo)
-- **PR #892** (2026-10-23): Windows/Linux: keep Mochi whole after a monitor change (@ZouaouiB)
-- **PR #887** (2026-10-22): Windows and Linux: WhatsApp (experimental), as on the Mac; 0.5.3 (@Louis-CFM)
-- **PR #885** (2026-10-22): Blue Mochi while an update waits, What's new after the update (Mac, Windows, Linux) (@Louis-CFM)
+- **PR #965** (2026-10-29): 0.5.6: chat on your own AI subscription, Korean and Japanese (@Louis-CFM)
+- **PR #962** (2026-10-29): Sessions apart, questions side by side, remote sessions (Mac, iPhone) (@Louis-CFM)
+- **PR #961** (2026-10-29): Chat on your Claude plan, no API key (Mac, Windows, Linux) (@Louis-CFM)
+- **PR #959** (2026-10-29): Reliability batch: 25 community fixes (@Louis-CFM)
+- **PR #950** (2026-10-29): Fix crash on launch when no audio input device is present (@gabbe-swe)
+- **PR #948** (2026-10-29): fix(n8n): seed poller on launch and preserve real execution dates (#861) (@Ohualtex)
 
 ---
 
@@ -2361,32 +2592,53 @@ Claude-Session: https://claude.ai/code/session_01LJm3SRL9k3gBPaVtfPhwcT
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Windows/Linux: keep Mochi whole after a monitor change
+## X. Release prep: Mac 0.5.4, Windows and Linux 0.5.4 (reliability batch)
 
 **RULE**:
-When implementing operations in `windows/src/desktop/main.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Louis-CFM/coucou. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `852df6f5`: Windows/Linux: keep Mochi whole after a monitor change. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f06fc09c`: Release prep: Mac 0.5.4, Windows and Linux 0.5.4 (reliability batch). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `windows/src/desktop/main.ts`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    // Dragged onto a monitor of another scale, the bitmap follows the ratio.
-    if (this.canvas.width !== Math.round(PANEL_SIZE * dpr)) {
-      this.canvas.width = Math.round(PANEL_SIZE * dpr);
-      this.canvas.height = Math.round(PANEL_SIZE * dpr);
-    }
+## 0.5.4 — October 29, 2026
+Reliability: bugs reported by @romainb82 and others, fixed by the community.
+- **Your own hooks are safe** — installing or removing Coucou's hooks only touches Coucou's own entries, never a hook of yours whose path mentions "coucou" (#944 by @rahul05ranjan, #854)
+- **No crash without a microphone** (#950 by @gabbe-swe, #949)
+- **"Hide after" is used** — the delay set in Settings now hides the compact island (#780 by @Ohualtex, #675)
+- **Nothing drawn over the real notch while hidden** (#789 by @orrrrli); a third-party agent's finished card no longer says "Claude Code finished" (#865 by @Ohualtex, #593)
+- **WhatsApp statuses aren't chats** — a contact's WhatsApp Status and channel posts no longer show up as a conversation in the WhatsApp pill (#901, same fix as #910)
+
+## Windows and Linux 0.5.4 — October 29, 2026
+
+Reliability: 25 community fixes, shared with the Mac where they apply.
+
+- **The hook relay never gives up** — a failed pipe connection no longer stops Coucou from hearing Claude Code (#872 by @seongj-un, #853); the pipe no longer crashes under many connections (mio 1.2.4, #911 by @afpruivo)
+- **Windows: an approval card goes once the terminal ha
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+## Unreleased
+- **Mac: WhatsApp statuses aren't chats** — a contact's WhatsApp Status and channel posts no longer show up as a conversation in the WhatsApp pill (#901, same fix as #910)
+
+### Reliability (Mac, Windows, Linux)
+
+Bugs reported by @romainb82 and others, fixed by the community.
+- **Your own hooks are safe** — installing or removing Coucou's hooks only touches Coucou's own entries, never a hook of yours whose path mentions "coucou" (#944 by @rahul05ranjan, #854); on Windows, the hooks go where `CLAUDE_CONFIG_DIR` points (#810 by @afpruivo)
+- **Mac: no crash without a microphone** (#950 by @gabbe-swe, #949)
+- **Mac: "Hide after" is used** — the delay set in Settings now hides the compact island (#780 by @Ohualtex, #675)
+- **Mac: nothing drawn over the real notch while hidden** (#789 by @orrrrli); a third-party agent's finished card no longer says "Claude Code finished" (#865 by @Ohualtex, #593)
+- **Windows: an approval card goes once the terminal has taken over** (#890 by @afpruivo, #857); the relay pipe no longer crashes under many connections (mio 1.2.4, #911 by @afpruivo)
+- **Windows/Linux: settings saved at the same moment no longer collide** (#888 by @Ohualtex, #858)
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `852df6f5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f06fc09c` are properly handled with clean fallback behavior.

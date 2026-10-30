@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T13:14:05.397Z",
+  "last_updated": "2026-10-30T13:22:21.536Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "a7e65e389430839661cb8f5bb404ba33cb3c011e4efc97ced02517fbd8de8b6e",
-      "verified_at": "2026-10-28T22:07:48.687Z",
+      "content_hash": "601d5241c518d7c20b10d892f0d9c6e28b59b1ea08352abc15699940619c3830",
+      "verified_at": "2026-10-30T13:22:21.535Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:07:48.687Z"
+      "last_updated": "2026-10-30T13:22:21.535Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -14001,14 +14001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-louis-cfm-coucou",
-      "content_hash": "2ec8392baa0c0049fd92e7ec72eb0ba467c61a360fa537b42419ea2e04a5055f",
-      "verified_at": "2026-10-26T10:33:20.695Z",
+      "content_hash": "b490d60495b873040b72d5bb7421ff06e2a6e0c6ffb001e7668e803e227a3bbf",
+      "verified_at": "2026-10-30T13:22:19.384Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T10:33:20.695Z"
+      "last_updated": "2026-10-30T13:22:19.384Z"
     },
     "lxml/lxml": {
       "repository": "lxml/lxml",

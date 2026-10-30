@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-WIE8",
-    "timestamp": "2026-10-28T04:48:37.664Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-lightricks-ltx-2-5",
-    "contentHash": "be6ee49c90373d2ce2a7a7896d368dd5362bb4f30580098079791d5d487257aa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-636W",
-    "timestamp": "2026-10-28T04:56:04.520Z",
-    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-    "contentHash": "13b66d234335a5f84b65baf7e62d7f424fbe9b86fc70cd1bf59e901c81463433",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-FSOS",
     "timestamp": "2026-10-28T05:03:37.468Z",
     "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -7490,6 +7460,36 @@
     "repository": "Dicklesworthstone/destructive_command_guard",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
     "contentHash": "89a78d214307951cc52455d6fbaa99ab8b03a498f0b8dce45c2c5dbd0d697ec2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-4TWG",
+    "timestamp": "2026-10-30T13:22:19.361Z",
+    "repository": "Louis-CFM/coucou",
+    "learningId": "learn-github-louis-cfm-coucou",
+    "contentHash": "b490d60495b873040b72d5bb7421ff06e2a6e0c6ffb001e7668e803e227a3bbf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-4VKI",
+    "timestamp": "2026-10-30T13:22:21.522Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "601d5241c518d7c20b10d892f0d9c6e28b59b1ea08352abc15699940619c3830",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

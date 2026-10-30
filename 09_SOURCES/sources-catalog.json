@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "f2aca49f",
+    "sourceVersion": "cb0936a4",
     "license": "MPL-2.0",
-    "contentHash": "a7e65e389430839661cb8f5bb404ba33cb3c011e4efc97ced02517fbd8de8b6e",
-    "lastHarvestedAt": "2026-10-28T22:07:48.681Z",
+    "contentHash": "601d5241c518d7c20b10d892f0d9c6e28b59b1ea08352abc15699940619c3830",
+    "lastHarvestedAt": "2026-10-30T13:22:21.526Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -9303,10 +9303,10 @@
     "repository": "Louis-CFM/coucou",
     "platform": "github",
     "sourceUrl": "https://github.com/Louis-CFM/coucou",
-    "sourceVersion": "47d1c2da",
+    "sourceVersion": "37e457dd",
     "license": "MIT",
-    "contentHash": "2ec8392baa0c0049fd92e7ec72eb0ba467c61a360fa537b42419ea2e04a5055f",
-    "lastHarvestedAt": "2026-10-26T10:33:20.687Z",
+    "contentHash": "b490d60495b873040b72d5bb7421ff06e2a6e0c6ffb001e7668e803e227a3bbf",
+    "lastHarvestedAt": "2026-10-30T13:22:19.365Z",
     "learningId": "learn-github-louis-cfm-coucou"
   },
   "lxml-lxml": {

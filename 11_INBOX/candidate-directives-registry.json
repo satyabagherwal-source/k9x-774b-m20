@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T08:04:38.723Z",
+  "last_updated": "2026-10-30T13:22:19.378Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3313,6 +3313,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-nucleoidai-nucleoid"
+    },
+    {
+      "id": "CD-4TWY",
+      "directive_title": "Release prep: Mac 0.5.4, Windows and Linux 0.5.4 (reliability batch)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Louis-CFM/coucou",
+      "source_commit": "37e457dd",
+      "date_staged": "2026-10-30",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-louis-cfm-coucou"
     }
   ]
 }

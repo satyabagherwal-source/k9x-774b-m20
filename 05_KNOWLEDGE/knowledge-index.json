@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T13:14:05.309Z",
+  "last_updated": "2026-10-30T13:22:21.443Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36190,8 +36190,8 @@
       "slug": "louis-cfm-coucou",
       "platform": "github",
       "source_url": "https://github.com/Louis-CFM/coucou",
-      "source_version": "47d1c2da",
-      "content_hash": "2ec8392baa0c0049fd92e7ec72eb0ba467c61a360fa537b42419ea2e04a5055f",
+      "source_version": "37e457dd",
+      "content_hash": "b490d60495b873040b72d5bb7421ff06e2a6e0c6ffb001e7668e803e227a3bbf",
       "dossier_path": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/louis-cfm-coucou-learnings.md",
       "promoted_rules": [
@@ -36211,7 +36211,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T10:33:20.615Z",
+      "verified_at": "2026-10-30T13:22:19.255Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49300,8 +49300,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "f2aca49f",
-      "content_hash": "a7e65e389430839661cb8f5bb404ba33cb3c011e4efc97ced02517fbd8de8b6e",
+      "source_version": "cb0936a4",
+      "content_hash": "601d5241c518d7c20b10d892f0d9c6e28b59b1ea08352abc15699940619c3830",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -49349,6 +49349,11 @@
           "number": 5424,
           "title": "reconnect log senders when the receiver closes the connection",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5760,
+          "title": "fix a few flaky tests",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49356,7 +49361,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:07:48.613Z",
+      "verified_at": "2026-10-30T13:22:21.423Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153431,6 +153436,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T13:14:05.290Z"
+    },
+    "rule-5760": {
+      "learning_id": "rule-5760",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5760,
+      "title": "fix a few flaky tests",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "cb0936a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:22:21.423Z"
     }
   },
   "aliases": {

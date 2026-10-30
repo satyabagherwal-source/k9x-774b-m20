@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T13:14:07.941Z",
-    "lastVerified": "2026-10-30T13:14:07.941Z",
+    "lastChecked": "2026-10-30T13:22:24.080Z",
+    "lastVerified": "2026-10-30T13:22:24.080Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -342,9 +342,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T11:12:29.757Z",
+    "lastChecked": "2026-10-30T13:22:23.678Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T11:12:29.757Z"
+    "lastVerified": "2026-10-30T13:22:23.678Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -668,9 +668,9 @@
   "qdrant-qdrant": {
     "name": "qdrant",
     "officialUrl": "https://github.com/qdrant/qdrant",
-    "lastChecked": "2026-10-28T21:04:29.479Z",
+    "lastChecked": "2026-10-30T13:22:21.195Z",
     "revisionIdentifier": "222b2e44",
-    "lastVerified": "2026-10-28T21:04:29.479Z"
+    "lastVerified": "2026-10-30T13:22:21.195Z"
   },
   "hf-black-forest-labs-flux.1-dev": {
     "name": "black-forest-labs/FLUX.1-dev",
@@ -992,9 +992,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-10-30T06:10:21.029Z",
+    "lastChecked": "2026-10-30T13:22:18.597Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-10-30T06:10:21.029Z"
+    "lastVerified": "2026-10-30T13:22:18.597Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -1732,14 +1732,14 @@
     "officialUrl": "https://github.com/siderolabs/talos",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T22:07:48.057Z",
-    "lastVerified": "2026-10-28T22:07:48.057Z",
+    "lastChecked": "2026-10-30T13:22:20.238Z",
+    "lastVerified": "2026-10-30T13:22:20.238Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-siderolabs-talos",
-    "contentHash": "a7e65e389430839661cb8f5bb404ba33cb3c011e4efc97ced02517fbd8de8b6e",
+    "contentHash": "601d5241c518d7c20b10d892f0d9c6e28b59b1ea08352abc15699940619c3830",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5613,9 +5613,9 @@
   "golutra-golutra": {
     "name": "golutra",
     "officialUrl": "https://github.com/golutra/golutra",
-    "lastChecked": "2026-10-28T16:45:10.651Z",
+    "lastChecked": "2026-10-30T13:22:08.623Z",
     "revisionIdentifier": "8b68a141",
-    "lastVerified": "2026-10-28T16:45:10.651Z"
+    "lastVerified": "2026-10-30T13:22:08.623Z"
   },
   "hf-facebookai-xlm-roberta-base": {
     "name": "FacebookAI/xlm-roberta-base",
@@ -9936,6 +9936,30 @@
     "contentHash": "bf99e82356b9032a1f99d26e7850209f53c78b29267ac5cb4e318c277f588684",
     "promotedRulesCount": 3,
     "recentFixesCount": 18,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "fb55-css-select": {
+    "name": "css-select",
+    "officialUrl": "https://github.com/fb55/css-select",
+    "lastChecked": "2026-10-30T13:22:11.148Z",
+    "revisionIdentifier": "6e4c7a63",
+    "lastVerified": "2026-10-30T13:22:11.148Z"
+  },
+  "louis-cfm-coucou": {
+    "name": "Louis-CFM/coucou",
+    "officialUrl": "https://github.com/Louis-CFM/coucou",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-30T13:22:17.322Z",
+    "lastVerified": "2026-10-30T13:22:17.322Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-louis-cfm-coucou",
+    "contentHash": "b490d60495b873040b72d5bb7421ff06e2a6e0c6ffb001e7668e803e227a3bbf",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
