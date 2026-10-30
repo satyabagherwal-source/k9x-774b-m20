@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T10:11:43.150Z",
+  "last_updated": "2026-10-30T10:32:10.267Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "d7b26f07ed8057ce50db4b0cff46af06dd8ca2dff1b492edf290c761e2fbdfb5",
-      "verified_at": "2026-10-30T08:04:38.728Z",
+      "content_hash": "de6b4cff5e725735b111df4f99f06f969c5239d6bb43fb56818f1c0abb98d42e",
+      "verified_at": "2026-10-30T10:26:21.632Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T08:04:38.728Z"
+      "last_updated": "2026-10-30T10:26:21.632Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9801,14 +9801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mintplex-labs-anything-llm",
-      "content_hash": "ad70d5e76be8019339067ee5dea5e4c5a011dd33bfd045f14c8a7a29ebd41037",
-      "verified_at": "2026-10-28T02:48:15.780Z",
+      "content_hash": "44c4526fbc2a7889187c73344f583aec113ab0b3c45299e340c3c0e856ed6fc0",
+      "verified_at": "2026-10-30T10:25:35.071Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T02:48:15.780Z"
+      "last_updated": "2026-10-30T10:25:35.071Z"
     },
     "shadcn-ui/taxonomy": {
       "repository": "shadcn-ui/taxonomy",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "9db4c05e7cb8e25eb032086aee91b8053bb61586728d5f8b9105e3ebed812cf2",
-      "verified_at": "2026-10-28T21:04:30.590Z",
+      "content_hash": "9aeffd7cb5baa23f6dd22a87e2d9fd955585852a881d37826f39863759ceb23b",
+      "verified_at": "2026-10-30T10:26:06.758Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T21:04:30.590Z"
+      "last_updated": "2026-10-30T10:26:06.758Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",
@@ -13776,14 +13776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duongductrong-snapzy",
-      "content_hash": "5c8edc02d78e8c185f9b26454631acceb6366147bae5f9c2a09ce2d5be7b39ca",
-      "verified_at": "2026-10-26T05:07:44.900Z",
+      "content_hash": "13854db72430ddf20cdf9cd9e24c1f9e75c61d1e3b87fea66bb74fa18715e2bd",
+      "verified_at": "2026-10-30T10:30:47.831Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T05:07:44.900Z"
+      "last_updated": "2026-10-30T10:30:47.831Z"
     },
     "scrapy-plugins/scrapy-deltafetch": {
       "repository": "scrapy-plugins/scrapy-deltafetch",
@@ -13926,14 +13926,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-webrecorder-browsertrix-crawler",
-      "content_hash": "b8480fd5e02bcd5d17973a1e32980a7446fb6d95d35f334d9321fd09fb3b5149",
-      "verified_at": "2026-10-27T11:49:31.261Z",
+      "content_hash": "a30173ada98e7f0171ab926f79d1175914431a45b57eac1ab0304203431ee2e8",
+      "verified_at": "2026-10-30T10:32:10.267Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:49:31.261Z"
+      "last_updated": "2026-10-30T10:32:10.267Z"
     },
     "pointfreeco/isowords": {
       "repository": "pointfreeco/isowords",

@@ -6180,3 +6180,8 @@ Every entry in this ledger must capture:
 | `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `a5ba070c` | Multi-dimensional audit evidence | 2026-10-30T10:09:26.013Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `5546f767` | Multi-dimensional audit evidence | 2026-10-30T10:10:00.284Z |
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `fd1cf5fc` | Multi-dimensional audit evidence | 2026-10-30T10:11:43.140Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `3661da4c` | Multi-dimensional audit evidence | 2026-10-30T10:25:35.065Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `ed2899ed` | Multi-dimensional audit evidence | 2026-10-30T10:26:06.752Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `fb8018f7` | Multi-dimensional audit evidence | 2026-10-30T10:26:21.627Z |
+| `learn-github-duongductrong-snapzy` | `https://github.com/duongductrong/Snapzy` | `77d3d3fe` | Multi-dimensional audit evidence | 2026-10-30T10:30:47.825Z |
+| `learn-github-webrecorder-browsertrix-crawler` | `https://github.com/webrecorder/browsertrix-crawler` | `3aff4355` | Multi-dimensional audit evidence | 2026-10-30T10:32:10.261Z |

@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T10:11:43.145Z",
-  "total_cycles_completed": 6148,
-  "total_learnings_persisted": 6148,
-  "total_rules_promoted": 5686,
+  "last_updated": "2026-10-30T10:32:10.265Z",
+  "total_cycles_completed": 6153,
+  "total_learnings_persisted": 6153,
+  "total_rules_promoted": 5699,
   "history": [
-    {
-      "timestamp": "2026-10-28T22:45:43.272Z",
-      "repository": "meta/folly",
-      "learningId": "learn-github-meta-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T22:45:45.944Z",
-      "repository": "meshtastic/Meshtastic-Android",
-      "learningId": "learn-github-meshtastic-meshtastic-android",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T22:45:51.775Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B",
-      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T22:45:52.274Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T22:52:11.562Z",
-      "repository": "fishaudio/drama-3",
-      "learningId": "learn-huggingface-fishaudio-drama-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T22:52:12.921Z",
       "repository": "google/tcmalloc",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-10-30T10:11:43.145Z",
       "repository": "ntex-rs/ntex",
       "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T10:25:35.069Z",
+      "repository": "Mintplex-Labs/anything-llm",
+      "learningId": "learn-github-mintplex-labs-anything-llm",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T10:26:06.756Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T10:26:21.630Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T10:30:47.829Z",
+      "repository": "duongductrong/Snapzy",
+      "learningId": "learn-github-duongductrong-snapzy",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T10:32:10.265Z",
+      "repository": "webrecorder/browsertrix-crawler",
+      "learningId": "learn-github-webrecorder-browsertrix-crawler",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

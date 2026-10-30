@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T10:11:43.062Z",
+  "last_updated": "2026-10-30T10:32:10.191Z",
   "total_verified_learnings": 1173,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10466,8 +10466,8 @@
       "slug": "duongductrong-snapzy",
       "platform": "github",
       "source_url": "https://github.com/duongductrong/Snapzy",
-      "source_version": "908119ae",
-      "content_hash": "5c8edc02d78e8c185f9b26454631acceb6366147bae5f9c2a09ce2d5be7b39ca",
+      "source_version": "77d3d3fe",
+      "content_hash": "13854db72430ddf20cdf9cd9e24c1f9e75c61d1e3b87fea66bb74fa18715e2bd",
       "dossier_path": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duongductrong-snapzy-learnings.md",
       "promoted_rules": [
@@ -10485,6 +10485,16 @@
           "number": 4558,
           "title": "Cut paused recording spans by sample timestamps",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5725,
+          "title": "Fail-Safe Event Tap Lifetime & Asynchronous Watchdog Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5726,
+          "title": "Isolation-Safe Unit-Test Lifecycle Invariant (Swift 6 Concurrency)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10492,7 +10502,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T05:07:44.820Z",
+      "verified_at": "2026-10-30T10:30:47.765Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38842,8 +38852,8 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "0941fb03",
-      "content_hash": "ad70d5e76be8019339067ee5dea5e4c5a011dd33bfd045f14c8a7a29ebd41037",
+      "source_version": "3661da4c",
+      "content_hash": "44c4526fbc2a7889187c73344f583aec113ab0b3c45299e340c3c0e856ed6fc0",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
@@ -38886,6 +38896,21 @@
           "number": 5144,
           "title": "skip unnamed header rows in the agent flow API Call block (#6835)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5717,
+          "title": "Tool Call Argument Normalization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5718,
+          "title": "ORM Upsert Return Value Destructuring Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5719,
+          "title": "Bitonal 1-Bit DeviceGray Ingestion Pipeline Preservation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38893,7 +38918,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T02:48:15.698Z",
+      "verified_at": "2026-10-30T10:25:35.005Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41431,8 +41456,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "bd27ee11",
-      "content_hash": "d7b26f07ed8057ce50db4b0cff46af06dd8ca2dff1b492edf290c761e2fbdfb5",
+      "source_version": "fb8018f7",
+      "content_hash": "de6b4cff5e725735b111df4f99f06f969c5239d6bb43fb56818f1c0abb98d42e",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -41575,6 +41600,21 @@
           "number": 5673,
           "title": "Multi-Entity Declarative Graph Isolation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5722,
+          "title": "Separation of Null-Read Invalidation from Truthy Coercion in Reactive Dataflow Graphs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5723,
+          "title": "Transactional Undo Log Inversion Barrier",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5724,
+          "title": "Fresh Context Isolation for Object Segmentation Solvers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41582,7 +41622,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T08:04:38.622Z",
+      "verified_at": "2026-10-30T10:26:21.536Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44366,8 +44406,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "4150cef7",
-      "content_hash": "9db4c05e7cb8e25eb032086aee91b8053bb61586728d5f8b9105e3ebed812cf2",
+      "source_version": "ed2899ed",
+      "content_hash": "9aeffd7cb5baa23f6dd22a87e2d9fd955585852a881d37826f39863759ceb23b",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -44430,6 +44470,16 @@
           "number": 5405,
           "title": "ddl: preserve expression defaults for binary columns (#71285)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5720,
+          "title": "Connection-Multiplexed Listener Draining Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5721,
+          "title": "Monotonic Inversion Nullability Guard for SQL Property Derivation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44437,7 +44487,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T21:04:30.511Z",
+      "verified_at": "2026-10-30T10:26:06.661Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70089,8 +70139,8 @@
       "slug": "webrecorder-browsertrix-crawler",
       "platform": "github",
       "source_url": "https://github.com/webrecorder/browsertrix-crawler",
-      "source_version": "e582608a",
-      "content_hash": "b8480fd5e02bcd5d17973a1e32980a7446fb6d95d35f334d9321fd09fb3b5149",
+      "source_version": "3aff4355",
+      "content_hash": "a30173ada98e7f0171ab926f79d1175914431a45b57eac1ab0304203431ee2e8",
       "dossier_path": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrecorder-browsertrix-crawler-learnings.md",
       "promoted_rules": [
@@ -70103,6 +70153,21 @@
           "number": 4717,
           "title": "build(deps): bump the npm_and_yarn group across 1 directory with 5 updates (#118",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5727,
+          "title": "Atomic Directory Swapping with Rollback Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5728,
+          "title": "Multi-Context Interception Priority and Error-Resilient Continuations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5729,
+          "title": "Decoupled Asynchronous Feed Ingestion with Background Bounded Queue",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -70110,7 +70175,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:49:31.193Z",
+      "verified_at": "2026-10-30T10:32:10.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -152586,6 +152651,188 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T10:11:43.044Z"
+    },
+    "rule-5717": {
+      "learning_id": "rule-5717",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5717,
+      "title": "Tool Call Argument Normalization Invariant",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "3661da4c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:25:35.005Z"
+    },
+    "rule-5718": {
+      "learning_id": "rule-5718",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5718,
+      "title": "ORM Upsert Return Value Destructuring Boundary",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "3661da4c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:25:35.005Z"
+    },
+    "rule-5719": {
+      "learning_id": "rule-5719",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5719,
+      "title": "Bitonal 1-Bit DeviceGray Ingestion Pipeline Preservation",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "3661da4c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:25:35.005Z"
+    },
+    "rule-5720": {
+      "learning_id": "rule-5720",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5720,
+      "title": "Connection-Multiplexed Listener Draining Guard",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "ed2899ed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:26:06.661Z"
+    },
+    "rule-5721": {
+      "learning_id": "rule-5721",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5721,
+      "title": "Monotonic Inversion Nullability Guard for SQL Property Derivation",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "ed2899ed",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:26:06.661Z"
+    },
+    "rule-5722": {
+      "learning_id": "rule-5722",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5722,
+      "title": "Separation of Null-Read Invalidation from Truthy Coercion in Reactive Dataflow Graphs",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "fb8018f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:26:21.536Z"
+    },
+    "rule-5723": {
+      "learning_id": "rule-5723",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5723,
+      "title": "Transactional Undo Log Inversion Barrier",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "fb8018f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:26:21.536Z"
+    },
+    "rule-5724": {
+      "learning_id": "rule-5724",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5724,
+      "title": "Fresh Context Isolation for Object Segmentation Solvers",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "fb8018f7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:26:21.536Z"
+    },
+    "rule-5725": {
+      "learning_id": "rule-5725",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5725,
+      "title": "Fail-Safe Event Tap Lifetime & Asynchronous Watchdog Invariant",
+      "source_url": "https://github.com/duongductrong/Snapzy",
+      "source_version": "77d3d3fe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:30:47.765Z"
+    },
+    "rule-5726": {
+      "learning_id": "rule-5726",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5726,
+      "title": "Isolation-Safe Unit-Test Lifecycle Invariant (Swift 6 Concurrency)",
+      "source_url": "https://github.com/duongductrong/Snapzy",
+      "source_version": "77d3d3fe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:30:47.765Z"
+    },
+    "rule-5727": {
+      "learning_id": "rule-5727",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5727,
+      "title": "Atomic Directory Swapping with Rollback Guard",
+      "source_url": "https://github.com/webrecorder/browsertrix-crawler",
+      "source_version": "3aff4355",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:32:10.178Z"
+    },
+    "rule-5728": {
+      "learning_id": "rule-5728",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5728,
+      "title": "Multi-Context Interception Priority and Error-Resilient Continuations",
+      "source_url": "https://github.com/webrecorder/browsertrix-crawler",
+      "source_version": "3aff4355",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:32:10.179Z"
+    },
+    "rule-5729": {
+      "learning_id": "rule-5729",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5729,
+      "title": "Decoupled Asynchronous Feed Ingestion with Background Bounded Queue",
+      "source_url": "https://github.com/webrecorder/browsertrix-crawler",
+      "source_version": "3aff4355",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:32:10.179Z"
     }
   },
   "aliases": {

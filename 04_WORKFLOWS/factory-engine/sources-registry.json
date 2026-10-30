@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T10:11:45.695Z",
-    "lastVerified": "2026-10-30T10:11:45.695Z",
+    "lastChecked": "2026-10-30T10:32:12.809Z",
+    "lastVerified": "2026-10-30T10:32:12.809Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -123,22 +123,21 @@
     "revisionIdentifier": "0a8dba49"
   },
   "mintplex-labs-anything-llm": {
-    "name": "anything-llm",
+    "name": "Mintplex-Labs/anything-llm",
     "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-28T20:08:45.719Z",
-    "lastVerified": "2026-10-28T20:08:45.719Z",
+    "lastChecked": "2026-10-30T10:23:59.469Z",
+    "lastVerified": "2026-10-30T10:23:59.469Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "ad70d5e76be8019339067ee5dea5e4c5a011dd33bfd045f14c8a7a29ebd41037",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "contentHash": "44c4526fbc2a7889187c73344f583aec113ab0b3c45299e340c3c0e856ed6fc0",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "0941fb03"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
@@ -399,9 +398,9 @@
   "openziti-zrok": {
     "name": "zrok",
     "officialUrl": "https://github.com/openziti/zrok",
-    "lastChecked": "2026-10-30T05:09:53.825Z",
+    "lastChecked": "2026-10-30T10:23:52.007Z",
     "revisionIdentifier": "09ed814e",
-    "lastVerified": "2026-10-30T05:09:53.825Z"
+    "lastVerified": "2026-10-30T10:23:52.007Z"
   },
   "run-llama-llama_index": {
     "name": "llama_index",
@@ -411,22 +410,21 @@
     "lastVerified": "2026-10-28T20:37:50.893Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T09:12:41.488Z",
-    "lastVerified": "2026-10-30T09:12:41.488Z",
+    "lastChecked": "2026-10-30T10:24:01.473Z",
+    "lastVerified": "2026-10-30T10:24:01.473Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d7b26f07ed8057ce50db4b0cff46af06dd8ca2dff1b492edf290c761e2fbdfb5",
-    "promotedRulesCount": 2,
-    "recentFixesCount": 0,
+    "contentHash": "de6b4cff5e725735b111df4f99f06f969c5239d6bb43fb56818f1c0abb98d42e",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "bd27ee11"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -1198,14 +1196,14 @@
     "officialUrl": "https://github.com/pingcap/tidb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T21:04:30.060Z",
-    "lastVerified": "2026-10-28T21:04:30.060Z",
+    "lastChecked": "2026-10-30T10:23:54.703Z",
+    "lastVerified": "2026-10-30T10:23:54.703Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "9db4c05e7cb8e25eb032086aee91b8053bb61586728d5f8b9105e3ebed812cf2",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "9aeffd7cb5baa23f6dd22a87e2d9fd955585852a881d37826f39863759ceb23b",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5190,12 +5188,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "xudong-huang-may": {
-    "name": "Xudong-Huang/may",
+    "name": "may",
     "officialUrl": "https://github.com/Xudong-Huang/may",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T15:58:17.903Z",
-    "lastVerified": "2026-10-28T15:58:17.903Z",
+    "lastChecked": "2026-10-30T10:23:41.984Z",
+    "lastVerified": "2026-10-30T10:23:41.984Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xudong-huang-may",
@@ -5204,7 +5202,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1a717549"
   },
   "hf-venastine-research-xing4.0-29b-a4b-gguf": {
     "name": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -9713,5 +9712,39 @@
     "lastChecked": "2026-10-30T10:07:39.082Z",
     "revisionIdentifier": "83b3e6e0",
     "lastVerified": "2026-10-30T10:07:39.082Z"
+  },
+  "webrecorder-browsertrix-crawler": {
+    "name": "webrecorder/browsertrix-crawler",
+    "officialUrl": "https://github.com/webrecorder/browsertrix-crawler",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T10:23:48.970Z",
+    "lastVerified": "2026-10-30T10:23:48.970Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-webrecorder-browsertrix-crawler",
+    "contentHash": "a30173ada98e7f0171ab926f79d1175914431a45b57eac1ab0304203431ee2e8",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "duongductrong-snapzy": {
+    "name": "duongductrong/Snapzy",
+    "officialUrl": "https://github.com/duongductrong/Snapzy",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-30T10:23:51.146Z",
+    "lastVerified": "2026-10-30T10:23:51.146Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-duongductrong-snapzy",
+    "contentHash": "13854db72430ddf20cdf9cd9e24c1f9e75c61d1e3b87fea66bb74fa18715e2bd",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

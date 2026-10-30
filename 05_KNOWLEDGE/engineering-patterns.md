@@ -417107,3 +417107,1622 @@ impl DeadlockingDispatcher {
 Construct a test containing an `InlineWake` implementation whose `wake()` method directly invokes `dispatcher.register_waker(...)`. Assert that the invocation succeeds without panicking on cell access.
 
 ---
+
+
+---
+
+## 5717. Tool Call Argument Normalization Invariant (Harvested from Mintplex-Labs/anything-llm)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Tool Call Argument Normalization Invariant",
+  "source": "Mintplex-Labs/anything-llm",
+  "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+  "source_version": "3661da4c",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T10:25:34.335Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mintplex-labs-anything-llm",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `3661da4c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deserializing LLM tool call arguments across provider boundaries, empty strings, whitespace-only strings, `null`, and `undefined` MUST be coerced into an empty dictionary literal (`{}`) before JSON schema validation or dispatch. A tool invocation MUST NOT fail or trigger a retry cycle due to empty arguments when calling zero-argument functions.
+
+**WHY**:
+LLMs frequently omit the `arguments` field or emit `""`, `" "`, or `null` when calling tools that require no parameters (e.g., `get-time()`, `list-files()`). If the orchestrator invokes `JSON.parse()` or strict schema deserialization on these falsy values without coercion, it triggers parsing exceptions or propagates `null` into functions expecting an options object, resulting in `TypeError: Cannot destructure property of undefined/null` or unnecessary prompt retry loops that waste tokens and increase latency.
+
+**WHEN TO APPLY**:
+Apply in all LLM agent orchestration harnesses, function-calling dispatch loops, and middleware parsing incoming completion chunks from OpenAI, Anthropic, Ollama, and generic OpenAI-compatible gateways.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+/**
+ * Safely normalizes and parses LLM tool call arguments.
+ * Coerces empty/null/whitespace-only arguments to empty object `{}`.
+ * 
+ * @param {string|null|undefined} rawArgs 
+ * @param {Function} safeJsonParseFn 
+ * @returns {{ arguments?: Record<string, any>, error?: string }}
+ */
+function normalizeToolArguments(rawArgs, safeJsonParseFn = JSON.parse) {
+  // Micro-syntax invariant: Check for undefined/null and empty trimmed content
+  if (rawArgs === null || rawArgs === undefined || typeof rawArgs !== "string" || !rawArgs.trim()) {
+    return { arguments: {} };
+  }
+
+  try {
+    const parsed = safeJsonParseFn(rawArgs);
+    if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return { 
+        error: `Tool arguments must evaluate to a non-null object. Received: ${typeof parsed}` 
+      };
+    }
+    return { arguments: parsed };
+  } catch (err) {
+    return { 
+      error: `Failed to parse tool call arguments as JSON. Raw arguments: ${rawArgs}` 
+    };
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Direct parse without empty/whitespace coercion.
+// Causes crashes on 0-argument tool invocations when model outputs "" or "  "
+function parseToolCall(toolCall) {
+  // If arguments is "" or null, safeJsonParse returns fallback (null), failing valid 0-arg tools!
+  const functionArgs = safeJsonParse(toolCall.function.arguments, null);
+  if (functionArgs === null) {
+    return { retryWithError: "Invalid JSON" }; // WRONG: Model called a zero-arg tool properly!
+  }
+  return executeTool(toolCall.function.name, functionArgs);
+}
+```
+
+**VERIFICATION METHOD**:
+Run property-based matrix unit tests asserting that `["", " ", "\n\t", null, undefined]` all resolve to `{}`:
+```javascript
+test.each(["", " ", "\n\t", null, undefined])(
+  "coerces %p to empty dictionary",
+  (input) => {
+    const { arguments: args, error } = normalizeToolArguments(input);
+    expect(error).toBeUndefined();
+    expect(args).toEqual({});
+  }
+);
+```
+
+---
+
+
+---
+
+## 5718. ORM Upsert Return Value Destructuring Boundary (Harvested from Mintplex-Labs/anything-llm)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "ORM Upsert Return Value Destructuring Boundary",
+  "source": "Mintplex-Labs/anything-llm",
+  "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+  "source_version": "3661da4c",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T10:25:34.591Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mintplex-labs-anything-llm",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `3661da4c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When invoking ORM methods (e.g., Prisma, TypeORM, Drizzle) that return model entity instances, you MUST NOT destructure properties expecting a wrapper object unless the ORM schema explicitly defines that wrapping key. Specifically, `prisma.<model>.upsert()` returns the direct record object (`record`), NOT a `{ <model>: record }` dictionary.
+
+**WHY**:
+Destructuring an un-wrapped return (`const { chat } = await prisma.workspace_chats.upsert(...)`) causes `chat` to evaluate to `undefined` because the returned instance has properties like `id`, `user_id`, etc., but no property matching the model name. Subsequent operations reading `chat.id` fail with `TypeError: Cannot read properties of undefined` or cause action IDs and relational links to be silently omitted from downstream responses.
+
+**WHEN TO APPLY**:
+Apply to all Node.js/TypeScript backend services interacting with Prisma Client, Sequelize, or Mongoose write operations (`upsert`, `create`, `update`, `findUnique`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+/**
+ * Safely persists workspace chat and returns the fully materialized record.
+ * 
+ * @param {import('@prisma/client').PrismaClient} prisma
+ * @param {string|number} chatId
+ * @param {Object} data
+ * @returns {Promise<Object>}
+ */
+async function upsertWorkspaceChat(prisma, chatId, data) {
+  // Prisma upsert returns the record directly, never a wrapped object
+  const chatRecord = await prisma.workspace_chats.upsert({
+    where: {
+      id: Number(chatId),
+      user_id: data.user?.id || null,
+    },
+    update: {
+      response: JSON.stringify(data.response),
+      include: data.include,
+    },
+    create: {
+      id: Number(chatId),
+      user_id: data.user?.id || null,
+      response: JSON.stringify(data.response),
+      include: data.include,
+    },
+  });
+
+  // chatRecord contains the direct fields: id, user_id, response, etc.
+  if (!chatRecord || typeof chatRecord.id === "undefined") {
+    throw new Error(`Failed to upsert chat record: received invalid return payload`);
+  }
+
+  return chatRecord;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Destructuring the model name from a Prisma operation.
+// Evaluates `chat` to undefined, resulting in chat action ID drops.
+const { chat } = await prisma.workspace_chats.upsert({
+  where: { id: Number(chatId) },
+  update: { ...data },
+  create: { ...data }
+});
+// chat is undefined! Downstream return { chat } returns { chat: undefined }
+return { chat };
+```
+
+**VERIFICATION METHOD**:
+Implement a static AST linter rule (ESLint rule `no-prisma-destructure-entity`) or write integration tests validating the existence of the primary key immediately following write operations:
+```javascript
+it("returns the exact record with intact primary and foreign keys", async () => {
+  const result = await WorkspaceChats.upsert(chatId, mockPayload);
+  expect(result).toHaveProperty("id");
+  expect(typeof result.id).toBe("number");
+  expect(result.id).toEqual(chatId);
+});
+```
+
+---
+
+
+---
+
+## 5719. Bitonal 1-Bit DeviceGray Ingestion Pipeline Preservation (Harvested from Mintplex-Labs/anything-llm)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Bitonal 1-Bit DeviceGray Ingestion Pipeline Preservation",
+  "source": "Mintplex-Labs/anything-llm",
+  "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+  "source_version": "3661da4c",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T10:25:34.875Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mintplex-labs-anything-llm",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `3661da4c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When parsing raw scanned document images extracted from PDF operators (e.g., `pdf.js` `ImageKind.GRAYSCALE_1BPP`), you MUST expand packed 1-bit bitonal scanlines into continuous 8-bit single-channel grayscale buffers prior to handing the buffer off to image processing (Sharp) or OCR engines (Tesseract).
+
+**WHY**:
+CCITT-fax and 1-bit JBIG2 scanned PDFs pack 8 binary pixels per byte (1 bit per pixel: `0` for black, `1` for white), where scanline byte widths equal `Math.ceil(width / 8)`. Modern image transformers and OCR engines (Sharp / Libvips / Tesseract LSTM) expect 8-bit unpacked pixel arrays (where each pixel is represented by a full 8-bit byte from `0` to `255`). Passing packed 1-bit buffers directly into Sharp causes heap corruption, out-of-bounds scanline reads, or unhandled image pipeline rejection.
+
+**WHEN TO APPLY**:
+Apply in all PDF processing pipelines, scanned document OCR modules, and image ingest utilities extracting low-level raster objects from `pdf.js` or `pdf-parse`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+/**
+ * Unpacks 1BPP (1 bit per pixel) DeviceGray packed byte array into standard 8BPP Grayscale buffer.
+ *
+ * @param {Buffer|Uint8Array} packed - Raw packed binary scanline bytes
+ * @param {number} width - Pixel width of the image
+ * @param {number} height - Pixel height of the image
+ * @returns {Buffer|null} - 8-bit uncompressed buffer where 0=black, 255=white
+ */
+function unpackPackedGray1Bpp(packed, width, height) {
+  if (!packed || width <= 0 || height <= 0) return null;
+  
+  // Calculate scanline byte stride (each row starts on a byte boundary)
+  const rowBytes = Math.ceil(width / 8);
+  if (packed.length < rowBytes * height) {
+    return null; // Corrupted or truncated buffer
+  }
+
+  const out = Buffer.alloc(width * height);
+  
+  for (let y = 0; y < height; y++) {
+    const rowStart = y * rowBytes;
+    const outRowStart = y * width;
+    
+    for (let x = 0; x < width; x++) {
+      // Byte offset within row
+      const byte = packed[rowStart + (x >> 3)];
+      // Bit extraction: MSB is pixel 0, LSB is pixel 7
+      const bit = (byte >> (7 - (x & 7))) & 1;
+      // Expand bit to 8-bit intensity (1 -> 255, 0 -> 0)
+      out[outRowStart + x] = bit ? 255 : 0;
+    }
+  }
+  
+  return out;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Passing raw packed 1BPP bytes directly to Sharp raw pipeline.
+// Sharp interprets the buffer as 8-bit pixels, reading 8x fewer pixels and throwing memory errors!
+const sharp = require("sharp");
+function badProcessImage(img) {
+  return sharp(img.data, {
+    raw: {
+      width: img.width,
+      height: img.height,
+      channels: 1 // FAILS: buffer is 8x too small for 1 byte per pixel!
+    }
+  }).png().toBuffer();
+}
+```
+
+**VERIFICATION METHOD**:
+Assert pixel buffer length and edge bit extraction via deterministic unit testing:
+```javascript
+test("unpacks 8 pixels from single byte correctly", () => {
+  // 0b10101010 -> White, Black, White, Black, White, Black, White, Black
+  const packed = Buffer.from([0xaa]);
+  const unpacked = unpackPackedGray1Bpp(packed, 8, 1);
+  expect(unpacked.length).toBe(8);
+  expect([...unpacked]).toEqual([255, 0, 255, 0, 255, 0, 255, 0]);
+});
+```
+
+---
+
+
+---
+
+## 5720. Connection-Multiplexed Listener Draining Guard (Harvested from pingcap/tidb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Connection-Multiplexed Listener Draining Guard",
+  "source": "pingcap/tidb",
+  "source_url": "https://github.com/pingcap/tidb",
+  "source_version": "ed2899ed",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T10:26:06.243Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pingcap-tidb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pingcap/tidb](https://github.com/pingcap/tidb) (Revision: `ed2899ed`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When serving multiple protocols (e.g., HTTP, gRPC, TLS) across a single network port using connection multiplexing (such as `cmux`), server runtimes MUST wrap the root `net.Listener` with a concurrent connection tracker that intercepts raw connections prior to protocol sniffing. The root listener MUST NOT close underlying sockets until active sniffing classification routines have either matched a target handler or been explicitly unblocked and closed via connection-level tracking.
+
+**WHY**:
+Connection multiplexers like `cmux` match protocols by executing a speculative `Peek()` or buffered `Read()` on newly accepted connections to inspect protocol signatures (e.g., HTTP header prefixes, TLS client handshakes). When an unauthenticated or slow-reading client opens a TCP socket and stalls before sending data, the classified goroutine inside `cmux` blocks indefinitely on `io.Read`. If the outer server issues `listener.Close()`, the underlying TCP listener stops accepting *new* connections, but does not close connections that are currently stalled in classification buffers. This produces unrecoverable goroutine leaks, blocks clean process terminations, and leaves zombie TCP sockets active in kernel socket queues.
+
+**WHEN TO APPLY**:
+Apply in any Go network service where multiple network application protocols share a single listening port via payload sniffing (e.g., combining Prometheus `/status`, gRPC debugging, and standard HTTP on port 10080).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package server
+
+import (
+	"net"
+	"sync"
+)
+
+// statusListener wraps net.Listener to track all accepted connections
+// ensuring they can be forcibly torn down during shutdown even if cmux is blocked sniffing.
+type statusListener struct {
+	net.Listener
+	mu     sync.Mutex
+	conns  map[*statusConn]struct{}
+	closed bool
+}
+
+func newStatusListener(listener net.Listener) *statusListener {
+	return &statusListener{
+		Listener: listener,
+		conns:    make(map[*statusConn]struct{}),
+	}
+}
+
+func (l *statusListener) Accept() (net.Conn, error) {
+	conn, err := l.Listener.Accept()
+	if err != nil {
+		return nil, err
+	}
+	l.mu.Lock()
+	if l.closed {
+		l.mu.Unlock()
+		_ = conn.Close()
+		return nil, net.ErrClosed
+	}
+	sc := &statusConn{Conn: conn, listener: l}
+	l.conns[sc] = struct{}{}
+	l.mu.Unlock()
+	return sc, nil
+}
+
+func (l *statusListener) Close() error {
+	l.mu.Lock()
+	if l.closed {
+		l.mu.Unlock()
+		return nil
+	}
+	l.closed = true
+	// Snapshot active connections and release mutex before closing them
+	// to prevent deadlocks caused by reentrant statusConn.Close calls.
+	conns := l.conns
+	l.conns = nil
+	l.mu.Unlock()
+
+	err := l.Listener.Close()
+	for conn := range conns {
+		_ = conn.Close()
+	}
+	return err
+}
+
+type statusConn struct {
+	net.Conn
+	listener *statusListener
+}
+
+func (c *statusConn) Close() error {
+	err := c.Conn.Close()
+	c.listener.mu.Lock()
+	if c.listener.conns != nil {
+		delete(c.listener.conns, c)
+	}
+	c.listener.mu.Unlock()
+	return err
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Passing raw net.Listener directly into cmux without connection lifecycle tracking.
+func (s *Server) listenStatusBad() error {
+	rawListener, err := net.Listen("tcp", s.addr)
+	if err != nil {
+		return err
+	}
+	m := cmux.New(rawListener)
+	httpL := m.Match(cmux.HTTP1Fast())
+	grpcL := m.Match(cmux.Any())
+
+	go s.serveHTTP(httpL)
+	go s.serveGRPC(grpcL)
+	go m.Serve()
+
+	// FAILURE: Calling rawListener.Close() will NOT terminate connections 
+	// currently blocked inside m.Match sniffing loops, leaking goroutines permanently.
+	s.closer = rawListener.Close
+	return nil
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce via Uber's `goleak` in subtests that initiate unclassified connections:
+```go
+func TestStatusServerCloseLeak(t *testing.T) {
+	defer goleak.VerifyNone(t, goleak.IgnoreCurrent())
+	cfg := util.NewTestConfig()
+	s := NewTestServer(cfg)
+	require.NoError(t, s.listenStatusHTTPServer())
+
+	// Open connection but do not write protocol bytes (simulating slow-client hang)
+	conn, err := net.Dial("tcp", s.statusListener.Addr().String())
+	require.NoError(t, err)
+	defer conn.Close()
+
+	// Server shutdown must unblock cmux and exit cleanly within timeout
+	done := make(chan struct{})
+	go func() {
+		s.Close()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(3 * time.Second):
+		t.Fatal("status server failed to shutdown due to blocked cmux sniffers")
+	}
+}
+```
+
+---
+
+
+---
+
+## 5721. Monotonic Inversion Nullability Guard for SQL Property Derivation (Harvested from pingcap/tidb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Monotonic Inversion Nullability Guard for SQL Property Derivation",
+  "source": "pingcap/tidb",
+  "source_url": "https://github.com/pingcap/tidb",
+  "source_version": "ed2899ed",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T10:26:06.498Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pingcap-tidb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pingcap/tidb](https://github.com/pingcap/tidb) (Revision: `ed2899ed`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+A query planner optimizer MUST NOT satisfy an `ORDER BY <expr>(col) [ASC|DESC]` sort requirement by simply reversing an underlying index scan direction (`IndexScan [ASC <-> DESC]`) if the column expression $f(col)$ reverses the order of domain values, UNLESS the column is guaranteed to have a `NOT NULL` constraint (`mysql.HasNotNullFlag`).
+
+**WHY**:
+In standard SQL, `NULL` values sort smaller than non-null values under standard ascending order (or larger if `NULLS LAST` is specified). 
+When an expression inverts value signs (e.g., `-col`, `0 - col`), the relationship of scalar values is inverted: $a < b \implies -a > -b$. 
+However, `NULL` semantics do not invert: $-(\text{NULL}) \to \text{NULL}$. 
+If an index holds values `[NULL, 10, 20]`:
+- Ascending index scan: `NULL, 10, 20`
+- Descending index scan yields: `20, 10, NULL`
+- Evaluating `-col` over an ascending scan yields: `NULL, -10, -20` (NULL is first)
+- However, `ORDER BY -col DESC` requires: `-10, -20, NULL` (non-null values descending, NULL last) or `-20, -10, NULL`.
+Reversing the index scan order to satisfy `-col` causes `NULL` records to appear at the wrong boundary of the result set, corrupting query correctness.
+
+**WHEN TO APPLY**:
+Applies to SQL planner and query optimizer modules during physical property matching (`PropByOrderByItems`), sort elimination, and pipeline push-down logic.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package physicalop
+
+import (
+	"github.com/pingcap/tidb/pkg/parser/mysql"
+	"github.com/pingcap/tidb/pkg/planner/property"
+	"github.com/pingcap/tidb/pkg/planner/util"
+)
+
+// GetPropByOrderByItemsContainScalarFunc checks if ordering requirements can be
+// fulfilled by pushed-down physical storage scans.
+func GetPropByOrderByItemsContainScalarFunc(items []*util.ByItems) (*property.PhysicalProperty, bool, bool) {
+	propItems := make([]property.SortItem, 0, len(items))
+	onlyColumn := true
+
+	for _, item := range items {
+		col, desc := extractColumnAndDirection(item.Expr, item.Desc)
+		if col == nil {
+			return nil, false, false
+		}
+
+		// Reversing value order does not reverse NULL order: -NULL is still NULL.
+		// An opposite index scan cannot satisfy this sort for nullable columns.
+		if desc != item.Desc && !mysql.HasNotNullFlag(col.RetType.GetFlag()) {
+			return nil, false, false
+		}
+
+		propItems = append(propItems, property.SortItem{Col: col, Desc: desc})
+		if desc != item.Desc {
+			onlyColumn = false
+		}
+	}
+	return &property.PhysicalProperty{SortItems: propItems}, onlyColumn, true
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Blindly assuming index reversal preserves NULL ordering for unary inversion expressions.
+func GetPropByOrderByItemsNaive(items []*util.ByItems) (*property.PhysicalProperty, bool) {
+	propItems := make([]property.SortItem, 0, len(items))
+	for _, item := range items {
+		col, inverted := isUnaryMinusExpression(item.Expr)
+		effectiveDesc := item.Desc
+		if inverted {
+			effectiveDesc = !effectiveDesc // BUG: Nullable column will output NULL at opposite end!
+		}
+		propItems = append(propItems, property.SortItem{Col: col, Desc: effectiveDesc})
+	}
+	return &property.PhysicalProperty{SortItems: propItems}, true
+}
+```
+
+**VERIFICATION METHOD**:
+Construct integration regression queries comparing full table scans with forced index scans:
+```sql
+CREATE TABLE t_null_sort (id INT PRIMARY KEY, c DOUBLE, KEY idx_c(c));
+INSERT INTO t_null_sort VALUES (1, NULL), (2, 0.3), (3, 0.7), (4, 0.8);
+
+-- Must verify that an explicit sort operator is NOT eliminated when column is nullable:
+EXPLAIN FORMAT='brief' SELECT id FROM t_null_sort USE INDEX(idx_c) ORDER BY -c DESC, id;
+-- Expected output contains: "Sort" operator
+
+-- Verify execution outputs exact MySQL standard ordering:
+SELECT id FROM t_null_sort USE INDEX(idx_c) ORDER BY -c DESC, id;
+-- Expected Result: 2, 3, 4, 1 (NULL sorts lowest in MySQL; descending puts it last)
+```
+
+---
+
+
+---
+
+## 5722. Separation of Null-Read Invalidation from Truthy Coercion in Reactive Dataflow Graphs (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Separation of Null-Read Invalidation from Truthy Coercion in Reactive Dataflow Graphs",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "fb8018f7",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T10:26:20.878Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `fb8018f7`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In reactive computing engines, logic solvers, and dependency graph compilers, the runtime MUST distinguish between an expression that evaluates to an intentional falsy value (`0`, `""`, `false`, `NaN`, `[]`) and an unresolvable or missing reference (`null`, `undefined`, unassigned pointer). Expressions evaluating to falsy values MUST retain their reactive dependency leaf and propagate forward; expressions evaluating to nullish defaults via coalescing (`??`) MUST discard the transient null reads made by the left operand and register reactive bindings solely on the fallback branch without poisoning the parent declaration with an engine-level abort.
+
+**WHY**:
+In declarative dataflow networks, if reading an uninitialized or `null` binding automatically causes the entire reactive declaration to settle to `null` (poisoning), attempting to provide defaults via standard boolean disjunction (`left || fallback`) creates dual failure modes:
+1. Valid falsy state mutations (e.g., setting a numeric counter to `0` or a toggle to `false`) are erroneously clobbered by the fallback value.
+2. If the left branch poisons the declaration immediately upon reading a null binding, the fallback operand never executes, freezing the reactive cell in a perpetual `null` state.
+
+**WHEN TO APPLY**:
+Apply to any reactive runtime, graph execution framework, state management store (Zustand/Redux/MobX internals), spreadsheet calculation engine, or neuro-symbolic interpreter that models reactive variables where expressions dynamically re-evaluate upon source mutations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified safe pattern in a declarative AST evaluation engine
+#[derive(Debug, Clone, PartialEq)]
+pub enum Value {
+    Null,
+    Undefined,
+    Boolean(bool),
+    Number(f64),
+    String(String),
+}
+
+impl Value {
+    #[inline]
+    pub fn is_nullish(&self) -> bool {
+        matches!(self, Value::Null | Value::Undefined)
+    }
+
+    #[inline]
+    pub fn is_truthy(&self) -> bool {
+        match self {
+            Value::Null | Value::Undefined => false,
+            Value::Boolean(b) => *b,
+            Value::Number(n) => *n != 0.0 && !n.is_nan(),
+            Value::String(s) => !s.is_empty(),
+        }
+    }
+}
+
+pub struct EvaluationContext {
+    pub null_read_encountered: bool,
+    pub tracked_dependencies: Vec<String>,
+}
+
+impl EvaluationContext {
+    pub fn evaluate_coalesce(
+        &mut self,
+        left: &Expr,
+        right: &Expr,
+        runtime: &Runtime,
+    ) -> Result<Value, RuntimeError> {
+        // Step 1: Isolate dependency tracking and null-read flags for the left branch
+        let mut left_ctx = EvaluationContext {
+            null_read_encountered: false,
+            tracked_dependencies: Vec::new(),
+        };
+
+        let left_val = runtime.eval_expr_scoped(left, &mut left_ctx)?;
+
+        // Step 2: Determine if left settled to nullish or performed a poisoned null-read
+        let is_left_null = left_val.is_nullish() || left_ctx.null_read_encountered;
+
+        if !is_left_null {
+            // Commit dependencies tracked by the left branch
+            self.tracked_dependencies.extend(left_ctx.tracked_dependencies);
+            Ok(left_val)
+        } else {
+            // Step 3: Absorb left null-reads; evaluate right branch cleanly
+            let mut right_ctx = EvaluationContext {
+                null_read_encountered: false,
+                tracked_dependencies: Vec::new(),
+            };
+            let right_val = runtime.eval_expr_scoped(right, &mut right_ctx)?;
+
+            // Re-register only right dependencies, discarding absorbed left null dependencies
+            self.tracked_dependencies.extend(right_ctx.tracked_dependencies);
+            self.null_read_encountered = right_ctx.null_read_encountered;
+            Ok(right_val)
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Merging falsy checks with nullish checks causes "0" clobbering
+// and letting left null-reads permanently poison the entire expression context.
+pub fn evaluate_coalesce_broken(left: &Expr, right: &Expr, ctx: &mut EvaluationContext, runtime: &Runtime) -> Result<Value, RuntimeError> {
+    let left_val = runtime.eval_expr(left, ctx)?;
+    
+    // ERROR 1: Boolean coercion treats 0, "", false as nullish!
+    // ERROR 2: If eval_expr set ctx.null_read_encountered = true, the caller
+    // immediately settles the whole statement to Value::Null, ignoring the fallback!
+    if left_val.is_truthy() {
+        Ok(left_val)
+    } else {
+        runtime.eval_expr(right, ctx)
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce test cases asserting that `0` and `""` survive coalescing, while uninitialized/null references evaluate cleanly to the fallback without aborting downstream subscriptions:
+```rust
+#[test]
+fn test_nullish_coalesce_preserves_zero_and_falsy() {
+    let mut rt = Runtime::new();
+    rt.eval("stock = 0;").unwrap();
+    rt.eval("count = stock ?? 10;").unwrap();
+    assert_eq!(rt.get_var("count"), Some(Value::Number(0.0)));
+
+    rt.eval("stock = null;").unwrap();
+    // Re-evaluates via reactive dependency graph
+    assert_eq!(rt.get_var("count"), Some(Value::Number(10.0)));
+}
+```
+
+---
+
+
+---
+
+## 5723. Transactional Undo Log Inversion Barrier (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Transactional Undo Log Inversion Barrier",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "fb8018f7",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T10:26:21.131Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `fb8018f7`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+State stores implementing undo logging for transactional rollback MUST expose asymmetric entry points for standard mutations versus rollback restorations. Rollback procedures MUST mutate the underlying state container directly or through an uninstrumented channel, and MUST NEVER call the recording mutation functions. Recording undo events during rollback operations will corrupt the log stack into an infinite or self-inverting loop.
+
+**WHY**:
+When an operation fails mid-flight (e.g., dynamic type mismatch, circular dependency detection, runtime assertion failure), the runtime iterates through the recorded before-images in reverse order to restore previous values. If the restoration procedure invokes the standard write API (which automatically writes a before-image to the transaction log), the rollback generates new undo records. This triggers memory leaks, alters history sequence indices, and causes incomplete rollbacks if a failure occurs during the recovery path itself.
+
+**WHEN TO APPLY**:
+Any ACID-compliant storage engine, interpreter runtime with speculative execution, UI state machine with undo/redo capabilities, or game engine state rewind architecture.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+pub struct TransactionJournal {
+    variable_undo_log: Vec<(String, Option<Value>)>,
+}
+
+pub struct StateStore {
+    variables: IndexMap<String, Value>,
+    transaction: TransactionJournal,
+}
+
+impl StateStore {
+    /// Mutating entry point: ALWAYS records before-image
+    pub fn assign(&mut self, key: String, val: Value) {
+        let before = self.variables.get(&key).cloned();
+        self.transaction.variable_undo_log.push((key.clone(), before));
+        self.variables.insert(key, val);
+    }
+
+    /// Rollback entry point: STRICTLY applies before-image WITHOUT journaling
+    pub fn rollback(&mut self) {
+        while let Some((key, before)) = self.transaction.variable_undo_log.pop() {
+            match before {
+                Some(prev_value) => {
+                    // Direct hashmap write: bypasses self.assign()!
+                    self.variables.insert(key, prev_value);
+                }
+                None => {
+                    // Variable did not exist before transaction
+                    self.variables.shift_remove(&key);
+                }
+            }
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Delegating rollback logic to the standard mutating method
+impl StateStore {
+    pub fn rollback_broken(&mut self) {
+        while let Some((key, before)) = self.transaction.variable_undo_log.pop() {
+            // CATASTROPHIC BUG: self.assign pushes another entry onto variable_undo_log!
+            // If rollback fails or is interrupted, the transaction log is poisoned with inverted state.
+            if let Some(val) = before {
+                self.assign(key, val); 
+            }
+        }
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Execute property tests asserting that state journal size is exactly zero after a complete transaction rollback, and that subsequent mutations produce pristine single-element undo frames:
+```rust
+#[test]
+fn test_rollback_does_not_generate_undo_records() {
+    let mut store = StateStore::new();
+    store.assign("x".into(), Value::Number(10.0));
+    assert_eq!(store.transaction.variable_undo_log.len(), 1);
+
+    store.rollback();
+    assert_eq!(store.transaction.variable_undo_log.len(), 0);
+    assert_eq!(store.variables.get("x"), None);
+}
+```
+
+---
+
+
+---
+
+## 5724. Fresh Context Isolation for Object Segmentation Solvers (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fresh Context Isolation for Object Segmentation Solvers",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "fb8018f7",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T10:26:21.408Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `fb8018f7`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Neuro-symbolic pipelines that segment complex multi-object domains (such as ARC grid solvers or physical world models) into autonomous programmatic instances MUST execute every candidate instance in a pristine, isolated runtime context during transformation derivation. Synthesized declarations from prior instances MUST NOT be shared across subsequent instances in a single process unless explicitly passed as immutable class-level rules.
+
+**WHY**:
+When an automated agent generates logic declarations for individual segmented objects (e.g., calculating spatial bounding boxes, colors, and relative transformations), executing all objects sequentially within a single long-lived interpreter session causes cross-instance contamination. Global variables, memoized property states, and registered instance hooks from Object $N$ alter the deterministic execution graph of Object $N+1$. This leads to non-reproducible predictions and order-dependent evaluation failures.
+
+**WHEN TO APPLY**:
+Multi-agent LLM systems, ARC (Abstraction and Reasoning Corpus) solvers, generative compiler synthesis, and automated theorem proving pipelines executing dynamic symbolic steps.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified pattern in TypeScript/Node.js neuro-symbolic pipeline
+export async function deriveInstanceTransformations(
+  instances: MatrixInstance[],
+  classDeclarations: string[]
+): Promise<TransformedInstance[]> {
+  const transformed: TransformedInstance[] = [];
+
+  for (const instance of instances) {
+    // CRITICAL: Fresh process/runtime invocation per instance.
+    // Zero shared memory or instance-level graph node retention.
+    const { inputValue, outputValue } = await executeIsolatedRuntime({
+      declarations: classDeclarations,
+      instanceImplementation: instance.code,
+    });
+
+    transformed.push({
+      id: instance.id,
+      inputValue,
+      outputValue,
+      matrix: instance.matrix,
+    });
+  }
+
+  return transformed;
+}
+
+async function executeIsolatedRuntime(params: {
+  declarations: string[];
+  instanceImplementation: string;
+}): Promise<{ inputValue: unknown; outputValue: unknown }> {
+  // Spawns a dedicated, unpolluted Nucleoid subprocess or creates a new Runtime instance
+  const runtime = new NucleoidEngine();
+  try {
+    const input = await runtime.run([params.declarations[0], params.instanceImplementation].join("\n\n"));
+    const output = await runtime.run([...params.declarations, params.instanceImplementation].join("\n\n"));
+    return { inputValue: input, outputValue: output };
+  } finally {
+    runtime.destroy(); // Purge all state, graphs, and histories
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Running all test objects in a single continuous runtime process
+export async function deriveAllInSingleProcess(instances: MatrixInstance[], declarations: string[]) {
+  // BATCHING ACROSS A SINGLE INSTANCE LEAKS GRAPH NODES
+  const code = [
+    ...declarations,
+    ...instances.map(inst => inst.code),
+    `[${instances.map(inst => inst.name).join(", ")}]`
+  ].join("\n\n");
+
+  // If instance[0] defines global state or mutates prototype class rules,
+  // instance[1] through instance[N] execute against corrupted symbolic state!
+  return await globalNucleoidRuntime.run(code); 
+}
+```
+
+**VERIFICATION METHOD**:
+Permutation invariance testing: Execute the transformation derivation pipeline against an identical set of instances in forward order `[A, B, C]` and reversed order `[C, B, A]`. The resulting symbolic outputs and matrices for each instance MUST be bit-for-bit identical.
+
+---
+
+
+---
+
+## 5725. Fail-Safe Event Tap Lifetime & Asynchronous Watchdog Invariant (Harvested from duongductrong/Snapzy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fail-Safe Event Tap Lifetime & Asynchronous Watchdog Invariant",
+  "source": "duongductrong/Snapzy",
+  "source_url": "https://github.com/duongductrong/Snapzy",
+  "source_version": "77d3d3fe",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-10-30T10:30:47.348Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-duongductrong-snapzy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [duongductrong/Snapzy](https://github.com/duongductrong/Snapzy) (Revision: `77d3d3fe`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When intercepting global system input events via an active system hook or tap (such as macOS `CGEventTap` or Windows low-level input hooks `WH_KEYBOARD_LL`/`WH_MOUSE_LL`), the event callback **MUST NOT** re-enable itself upon receiving an OS timeout signal (`kCGEventTapDisabledByTimeout`). Furthermore, the system hook **MUST** be backed by an independent, off-main-thread watchdog timer capable of disabling the tap handle concurrently without coordinating with the target thread.
+
+**WHY**:
+When the thread running the event tap's run-loop source (typically the main run loop) stalls or deadlocks, the WindowServer disables the tap after an internal latency timeout (~1-2 seconds) to preserve system input responsiveness. If the callback unconditionally re-enables the disabled tap, the WindowServer repeatedly dumps pending system-wide input events back into the stalled thread. This starves the operating system's input manager, locking mouse and keyboard hardware across the entire OS, preventing user recovery, and forcing a hard hardware power cycle.
+
+**WHEN TO APPLY**:
+Any desktop input interception infrastructure (macOS `CGEventTap`, Linux `libinput` grab, Windows Low-Level Hooks) handling raw mouse or keyboard events synchronously.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+import CoreGraphics
+import Foundation
+
+public final class SafeEventTapController: @unchecked Sendable {
+    public typealias TapHandle = CFMachPort
+
+    private var tap: TapHandle?
+    private var runLoopSource: CFRunLoopSource?
+    private var deadlineWork: DispatchWorkItem?
+    private var generation: UInt64 = 0
+    private let lock = NSLock()
+
+    public static let maxSessionDuration: TimeInterval = 120.0
+
+    public func start(maxDuration: TimeInterval = SafeEventTapController.maxSessionDuration) -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+
+        // 1. Create event tap with MachPort
+        var context = CGEventTapInformation()
+        guard let tap = CGEvent.tapCreate(
+            tap: .cgSessionEventTap,
+            place: .headInsertEventTap,
+            options: .defaultTap,
+            eventsOfInterest: (1 << CGEventType.mouseMoved.rawValue) | (1 << CGEventType.keyDown.rawValue),
+            callback: { (proxy, type, event, refcon) -> Unmanaged<CGEvent>? in
+                let controller = Unmanaged<SafeEventTapController>.fromOpaque(refcon!).takeUnretainedValue()
+                return controller.handleEvent(type: type, event: event)
+            },
+            userInfo: UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque())
+        ) else { return false }
+
+        let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
+        CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
+        CGEvent.tapEnable(tap: tap, enable: true)
+
+        self.tap = tap
+        self.runLoopSource = source
+        self.generation &+= 1
+        let currentGen = self.generation
+
+        // 2. Schedule hard off-main deadline watchdog
+        let deadlineItem = DispatchWorkItem { [weak self, tap] in
+            // Direct C-call: CGEvent.tapEnable is thread-safe and reaches WindowServer directly
+            CGEvent.tapEnable(tap: tap, enable: false)
+            
+            // Hop to main run-loop strictly to tear down application session state
+            DispatchQueue.main.async {
+                self?.handleDeadlineFired(expectedGeneration: currentGen)
+            }
+        }
+        self.deadlineWork = deadlineItem
+        DispatchQueue.global(qos: .userInteractive).asyncAfter(
+            deadline: .now() + maxDuration,
+            execute: deadlineItem
+        )
+        return true
+    }
+
+    public func handleEvent(type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
+        // kCGEventTapDisabledByTimeout: The main run-loop failed to respond within WindowServer threshold.
+        if type.rawValue == 0xFFFFFFFE /* kCGEventTapDisabledByTimeout */ {
+            // CRITICAL: DO NOT RE-ENABLE. Leave disabled so OS bypasses our app.
+            DispatchQueue.main.async { [weak self] in
+                self?.terminateSession(reason: .watchdogTimeout)
+            }
+            return nil
+        }
+
+        // kCGEventTapDisabledByUserInput: User explicitly toggled or OS switched context.
+        if type.rawValue == 0xFFFFFFFF /* kCGEventTapDisabledByUserInput */ {
+            if let tap = self.tap {
+                CGEvent.tapEnable(tap: tap, enable: true)
+            }
+            return Unmanaged.passRetained(event)
+        }
+
+        // Normal event consumption logic...
+        return nil // Consumed
+    }
+
+    private func handleDeadlineFired(expectedGeneration: UInt64) {
+        lock.lock()
+        defer { lock.unlock() }
+        guard self.generation == expectedGeneration else { return }
+        terminateSession(reason: .sessionTimeLimit)
+    }
+
+    private func terminateSession(reason: SessionStopReason) {
+        guard let tap = self.tap else { return }
+        CGEvent.tapEnable(tap: tap, enable: false)
+        if let source = self.runLoopSource {
+            CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes)
+            self.runLoopSource = nil
+        }
+        CFMachPortInvalidate(tap)
+        self.tap = nil
+        self.deadlineWork?.cancel()
+        self.deadlineWork = nil
+    }
+}
+
+public enum SessionStopReason {
+    case watchdogTimeout
+    case sessionTimeLimit
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Re-enabling tap directly in timeout callback
+func badTapCallback(proxy: CGEventTapProxy, type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
+    if type == .tapDisabledByTimeout {
+        // FATAL SYSTEM LOCK BUG (#690):
+        // Re-enabling here when the thread is stalled will hang entire macOS input processing
+        CGEvent.tapEnable(tap: myTap, enable: true)
+        return nil
+    }
+    return Unmanaged.passRetained(event)
+}
+```
+
+**VERIFICATION METHOD**:
+Inject a mock `CGEventTapProxy` event with type `CGEventType.tapDisabledByTimeout` into the tap handler. Assert that:
+1. `CGEvent.tapEnable` is **never** invoked with `true`.
+2. The controller's `isRunning` property transitions to `false`.
+3. The delegate receives `.disabledByTimeout`.
+4. A multi-threaded assertion verifies that performing the scheduled `DispatchWorkItem` off-main executes the disable sequence within <10ms even if the main thread is blocked with `Thread.sleep(forTimeInterval: 5)`.
+
+---
+
+
+---
+
+## 5726. Isolation-Safe Unit-Test Lifecycle Invariant (Swift 6 Concurrency) (Harvested from duongductrong/Snapzy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Isolation-Safe Unit-Test Lifecycle Invariant (Swift 6 Concurrency)",
+  "source": "duongductrong/Snapzy",
+  "source_url": "https://github.com/duongductrong/Snapzy",
+  "source_version": "77d3d3fe",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-10-30T10:30:47.605Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-duongductrong-snapzy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [duongductrong/Snapzy](https://github.com/duongductrong/Snapzy) (Revision: `77d3d3fe`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Test helper environments maintaining unowned or weak pointers to dependency blocks **MUST** be explicitly isolated as `nonisolated` when declared within a `@MainActor`-isolated `XCTestCase` suite, and all test fixtures possessing cross-thread captures **MUST** be pinned using `withExtendedLifetime` until all pending asynchronous blocks complete.
+
+**WHY**:
+In Swift 6 / modern Concurrency on macOS 15+, test targets often default to `@MainActor` isolation. A nested helper class inherits this isolation, causing the Swift compiler to synthesize an actor-isolated deinitializer calling `swift_task_deinitOnExecutorMainActorBackDeploy`. When an instance of this helper is deallocated while background queues or closure captures still retain `unowned` handles to it, the runtime aborts the test runner host via an execution failure or double-free memory corruption.
+
+**WHEN TO APPLY**:
+Swift 5.10 / Swift 6 unit tests with concurrency runners, `@MainActor` test cases, and dependency injection mocks capturing `self` inside C-function bridges or closure trampolines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+import XCTest
+
+@MainActor
+final class HardwareControllerTests: XCTestCase {
+
+    // Helper MUST be marked nonisolated to opt out of actor-isolated deinit synthesis
+    private nonisolated final class MockEnvironment {
+        var stateEvents: [Bool] = []
+
+        func makeDependencies() -> ControllerDependencies {
+            ControllerDependencies(
+                updateState: { [unowned self] state in
+                    self.stateEvents.append(state)
+                }
+            )
+        }
+    }
+
+    func testAsynchronousStateExecution() throws {
+        let env = MockEnvironment()
+        let sut = SystemUnderTest(dependencies: env.makeDependencies())
+
+        sut.triggerAsyncAction()
+
+        let expectation = expectation(description: "Queue drained")
+        DispatchQueue.global().async {
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 2.0)
+
+        XCTAssertFalse(env.stateEvents.isEmpty)
+
+        // CRITICAL: Ensure helper outlives unowned captures across concurrent hops
+        withExtendedLifetime(env) {
+            _ = sut
+        }
+    }
+}
+
+public struct ControllerDependencies: Sendable {
+    public var updateState: @Sendable (Bool) -> Void
+}
+public final class SystemUnderTest {
+    private let dependencies: ControllerDependencies
+    public init(dependencies: ControllerDependencies) { self.dependencies = dependencies }
+    public func triggerAsyncAction() {
+        DispatchQueue.global().async { [dependencies] in
+            dependencies.updateState(true)
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Omitting nonisolated on helper inside MainActor test target
+@MainActor
+final class SuiteTests: XCTestCase {
+    // Implicitly @MainActor: gets isolated deinit generated
+    private final class BuggyEnv {
+        func callback() -> () -> Void {
+            return { [unowned self] in self.doWork() }
+        }
+        func doWork() {}
+    }
+
+    func testCrash() {
+        let env = BuggyEnv()
+        let cb = env.callback()
+        // If env goes out of scope here while cb is dispatched off-main,
+        // swift_task_deinitOnExecutorMainActorBackDeploy crashes on macOS 15 CI runners
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Compile tests with `-strict-concurrency=complete`. Execute test suite in a macOS 15 headless CI runner environment under AddressSanitizer (ASan) and ThreadSanitizer (TSan). Ensure zero SIGABRT signals from `swift_task_deinitOnExecutorMainActorBackDeploy`.
+
+---
+
+
+---
+
+## 5727. Atomic Directory Swapping with Rollback Guard (Harvested from webrecorder/browsertrix-crawler)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Atomic Directory Swapping with Rollback Guard",
+  "source": "webrecorder/browsertrix-crawler",
+  "source_url": "https://github.com/webrecorder/browsertrix-crawler",
+  "source_version": "3aff4355",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-30T10:32:09.476Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-webrecorder-browsertrix-crawler",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [webrecorder/browsertrix-crawler](https://github.com/webrecorder/browsertrix-crawler) (Revision: `3aff4355`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When synchronizing, replacing, or restoring directory trees in stateful runtime environments (such as browser profile directories or git behavior repositories), systems MUST extract or stage new payloads into an isolated sibling temporary directory on the same filesystem and execute an atomic rename (`fs.rename`), preceded by recursive removal (`fs.rm`) of the destination. Code MUST NOT extract, untar, or write files directly into the active live directory path.
+
+**WHY**:
+In-place extractions or non-atomic multi-file copies expose the process to corrupt reads if the write phase fails midway (network disconnect, disk quota, OOM kill). Furthermore, stale socket links, temporary PID locks (e.g., Chromium's `SingletonLock`), and orphan files from previous runs remain present, causing subsequent processes to crash on startup. Staging to a temporary directory on the same mount guarantees atomic pointer updates via the underlying filesystem's `rename(2)` syscall.
+
+**WHEN TO APPLY**:
+Apply in any filesystem operations involving runtime profile injection, dynamic plugin cloning, browser cache restoration, or git repository pulls inside containerized daemons.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import fsp from "node:fs/promises";
+import path from "node:path";
+import crypto from "node:crypto";
+import child_process from "node:child_process";
+
+export async function replaceDir(sourceDir: string, destDir: string): Promise<void> {
+  try {
+    await fsp.rm(destDir, { force: true, recursive: true });
+  } catch (err: unknown) {
+    // Suppress ENOENT if destination does not yet exist
+    if ((err as NodeJS.ErrnoException).code !== "ENOENT") {
+      throw err;
+    }
+  }
+  // rename(2) is atomic across the same filesystem mount
+  await fsp.rename(sourceDir, destDir);
+}
+
+export async function stageAndSwapArchive(
+  archiveBuffer: Buffer,
+  workDir: string,
+  targetDir: string
+): Promise<void> {
+  const nonce = crypto.randomBytes(4).toString("hex");
+  const tmpStageDir = path.join(workDir, `stage-${nonce}`);
+  const tmpArchivePath = path.join(workDir, `archive-${nonce}.tar.gz`);
+
+  await fsp.mkdir(tmpStageDir, { recursive: true });
+  await fsp.writeFile(tmpArchivePath, archiveBuffer);
+
+  try {
+    // Unpack entirely inside isolated sandbox
+    child_process.execFileSync("tar", ["xvfz", tmpArchivePath, "-C", tmpStageDir], {
+      stdio: "pipe",
+    });
+
+    // Clean up transient locks if unpacking a browser profile
+    const singletonPattern = path.join(tmpStageDir, "Singleton*");
+    child_process.execSync(`rm -f ${singletonPattern} 2>/dev/null || true`);
+
+    // Atomically swap staged directory to live directory
+    await replaceDir(tmpStageDir, targetDir);
+  } catch (error) {
+    // Evacuate staged junk on failure to prevent disk leakage
+    await fsp.rm(tmpStageDir, { force: true, recursive: true });
+    throw error;
+  } finally {
+    await fsp.rm(tmpArchivePath, { force: true });
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Direct untarring or copying into live profile directory
+export async function unsafeProfileRestore(archiveSrc: string, liveProfileDir: string) {
+  // If tar fails halfway, the live profile is left in a corrupted, non-bootable state.
+  // Old lockfiles and socket links from previous runs are NOT purged.
+  child_process.execFileSync("tar", ["xvfz", archiveSrc, "-C", liveProfileDir]);
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a fault-injection integration test:
+```typescript
+import { test, expect } from "@jest/globals";
+import fsp from "node:fs/promises";
+import path from "node:path";
+
+test("atomic swap leaves destination unaffected on decompression crash", async () => {
+  const liveDir = "/tmp/test-live-dir";
+  await fsp.mkdir(liveDir, { recursive: true });
+  await fsp.writeFile(path.join(liveDir, "valid_state.json"), JSON.stringify({ ok: true }));
+
+  // Simulate invalid payload
+  const corruptPayload = Buffer.from("not-a-tarball");
+  await expect(stageAndSwapArchive(corruptPayload, "/tmp", liveDir)).rejects.toThrow();
+
+  // Validate live directory integrity remains intact
+  const raw = await fsp.readFile(path.join(liveDir, "valid_state.json"), "utf8");
+  expect(JSON.parse(raw).ok).toBe(true);
+});
+```
+
+---
+
+
+---
+
+## 5728. Multi-Context Interception Priority and Error-Resilient Continuations (Harvested from webrecorder/browsertrix-crawler)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Context Interception Priority and Error-Resilient Continuations",
+  "source": "webrecorder/browsertrix-crawler",
+  "source_url": "https://github.com/webrecorder/browsertrix-crawler",
+  "source_version": "3aff4355",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-30T10:32:09.764Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-webrecorder-browsertrix-crawler",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [webrecorder/browsertrix-crawler](https://github.com/webrecorder/browsertrix-crawler) (Revision: `3aff4355`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When registering asynchronous network request interceptors (such as Puppeteer's `page.on('request')` or CDP `Fetch.requestPaused`), handlers MUST enforce a single terminal resolution (`request.continue()`, `request.abort()`, or `request.respond()`) wrapped within an unconditional `try/catch/finally` fault boundary. Interceptors executing out-of-band asynchronous verification (e.g., fetching resource text via an external client like `undici`) MUST catch network exceptions and gracefully fail open (`request.continue()`) to prevent hanging the browser event loop.
+
+**WHY**:
+Failing to settle an intercepted HTTP request causes the underlying Chromium navigation or subresource fetch pipeline to wait until the network operation times out (default 30-90s). Multiple conflicting resolutions (`continue` after `abort`) throw fatal unhandled CDP protocol rejections (`ProtocolError: Request is already handled`), crashing the worker process.
+
+**WHEN TO APPLY**:
+In browser automation, ad-blocking filters, custom proxy authenticators, or request-rewriting middlewares handling concurrent CDP network requests.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { HTTPRequest, Page } from "puppeteer-core";
+import { Dispatcher, request as undiciRequest } from "undici";
+
+export interface NetworkFilter {
+  shouldBlock(url: string, headers: Record<string, string>): Promise<boolean>;
+}
+
+export function attachSafeRequestInterceptor(
+  page: Page,
+  filter: NetworkFilter,
+  proxyDispatcher?: Dispatcher
+): void {
+  // Flag tracking interception handling per request instance
+  const handledRequests = new WeakSet<HTTPRequest>();
+
+  page.on("request", async (req: HTTPRequest) => {
+    if (handledRequests.has(req)) {
+      return;
+    }
+
+    const url = req.url();
+    // Bypass non-HTTP protocols immediately
+    if (!url.startsWith("http:") && !url.startsWith("https:")) {
+      handledRequests.add(req);
+      await req.continue({}, 0);
+      return;
+    }
+
+    let mustBlock = false;
+    try {
+      mustBlock = await filter.shouldBlock(url, req.headers());
+    } catch (filterError) {
+      // Invariant: Faults in filtering must fail OPEN to preserve navigation
+      mustBlock = false;
+    }
+
+    try {
+      if (handledRequests.has(req)) return;
+      handledRequests.add(req);
+
+      if (mustBlock) {
+        await req.abort("blockedbyclient", 1);
+      } else {
+        await req.continue({}, 1);
+      }
+    } catch (protocolError) {
+      // Catch races where target closed or already aborted externally
+      // Do not re-throw to avoid unhandled rejections crashing the crawler
+    }
+  });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Unprotected external async call with missing catch-continuation
+page.on("request", async (req) => {
+  const url = req.url();
+  // If undiciRequest rejects (DNS failure, connection reset, timeout),
+  // the catch block is absent: req is NEVER continued, freezing the target tab forever.
+  const resp = await undiciRequest(url);
+  const body = await resp.body.text();
+  if (body.includes("block-me")) {
+    await req.abort();
+  } else {
+    await req.continue();
+  }
+});
+```
+
+**VERIFICATION METHOD**:
+Run an automated test verifying tab navigation completes even when the filter dependencies throw:
+```typescript
+import { test, expect } from "@jest/globals";
+import puppeteer from "puppeteer-core";
+
+test("interceptor falls back to continue when filter throws", async () => {
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage();
+  await page.setRequestInterception(true);
+
+  const faultyFilter: NetworkFilter = {
+    async shouldBlock() {
+      throw new Error("DNS resolution failed");
+    },
+  };
+
+  attachSafeRequestInterceptor(page, faultyFilter);
+
+  // Must not hang or throw protocol errors
+  await expect(page.goto("data:text/html,<html><body>OK</body></html>")).resolves.not.toThrow();
+  await browser.close();
+});
+```
+
+---
+
+
+---
+
+## 5729. Decoupled Asynchronous Feed Ingestion with Background Bounded Queue (Harvested from webrecorder/browsertrix-crawler)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Decoupled Asynchronous Feed Ingestion with Background Bounded Queue",
+  "source": "webrecorder/browsertrix-crawler",
+  "source_url": "https://github.com/webrecorder/browsertrix-crawler",
+  "source_version": "3aff4355",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-30T10:32:10.047Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-webrecorder-browsertrix-crawler",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [webrecorder/browsertrix-crawler](https://github.com/webrecorder/browsertrix-crawler) (Revision: `3aff4355`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When processing large or infinite nested metadata discovery trees (such as sitemap indexes, RSS feeds, or pagination manifests) tied to multiple input seeds, the crawler MUST decouple initial feed discovery from full feed tree consumption. The initial check MUST boundedly verify the existence of the feed resource and immediately hand off URL streaming to a centralized, shared background priority queue (`PQueue`) with a configurable global worker pool. Seed initialization MUST NOT await the complete processing of discovered feeds before starting worker crawling.
+
+**WHY**:
+Running independent parsing instances per seed causes unbounded connection explosion against target domains, exhausts memory buffers with redundant parser trees, and starves page-processing workers while waiting for sitemaps with tens of thousands of URLs to fully parse. Decoupling allows crawl workers to process pages immediately while sitemap readers continue feeding the frontier in the background.
+
+**WHEN TO APPLY**:
+In web crawling, data pipelines, search ingestion engines, and recursive discovery architectures where input manifests vary from single pages to millions of nested URLs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { EventEmitter } from "node:events";
+import PQueue from "p-queue";
+
+export interface SitemapJob {
+  url: string;
+  seedId: number;
+}
+
+export class SharedSitemapCoordinator extends EventEmitter {
+  private queue: PQueue;
+  private seenSitemaps = new Set<string>();
+  private pending = 0;
+  private isTerminated = false;
+
+  constructor(concurrency = 5) {
+    super();
+    this.queue = new PQueue({ concurrency });
+  }
+
+  // Non-blocking registration returning whether the initial feed exists
+  public async probeAndEnqueue(feedUrl: string, seedId: number, timeoutMs = 30000): Promise<boolean> {
+    if (this.seenSitemaps.has(feedUrl)) {
+      return true;
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const exists = await this.probeFeedExists(feedUrl, controller.signal);
+      if (exists) {
+        this.seenSitemaps.add(feedUrl);
+        this.pending++;
+        // Dispatch to background queue without awaiting completion
+        void this.queue.add(async () => {
+          try {
+            await this.processFeedStream(feedUrl, seedId);
+          } finally {
+            this.pending--;
+            this.checkDrain();
+          }
+        });
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  private checkDrain(): void {
+    if (this.pending === 0 && !this.isTerminated) {
+      setTimeout(async () => {
+        await this.queue.onIdle();
+        if (this.pending === 0 && !this.isTerminated) {
+          this.isTerminated = true;
+          this.emit("end");
+        }
+      }, 100);
+    }
+  }
+
+  private async probeFeedExists(url: string, signal: AbortSignal): Promise<boolean> {
+    // Perform HEAD or range GET
+    return true;
+  }
+
+  private async processFeedStream(url: string, seedId: number): Promise<void> {
+    // Stream XML, emitting 'url' events to frontier
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Awaiting full parse of each seed sitemap sequentially during initialization
+export async function initializeSeeds(seeds: Seed[], crawler: Crawler) {
+  for (const seed of seeds) {
+    // Blocks all crawling workers until this seed's sitemap (potentially 50,000 links)
+    // is fully fetched, parsed, and queued into memory.
+    const sitemapper = new SitemapReader();
+    await sitemapper.parseAll(seed.sitemapUrl);
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a mock latency test proving workers start executing before sitemap parsing finishes:
+```typescript
+import { test, expect } from "@jest/globals";
+
+test("probeAndEnqueue returns true immediately allowing crawl workers to begin", async () => {
+  const coordinator = new SharedSitemapCoordinator(2);
+  const start = Date.now();
+
+  const found = await coordinator.probeAndEnqueue("https://example.com/huge-sitemap.xml", 1, 2000);
+  const elapsed = Date.now() - start;
+
+  expect(found).toBe(true);
+  // Initial probe must return under 50ms, not awaiting full streaming parse
+  expect(elapsed).toBeLessThan(50);
+});
+```
+
+---

@@ -6171,3 +6171,8 @@
 | `CYCLE-20261030-8RUH` | `2026-10-30T10:09:26.009Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5708, Rule 5710` | Yes (`3338c1ce...`) |
 | `CYCLE-20261030-9IAH` | `2026-10-30T10:10:00.281Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5711, Rule 5712, Rule 5713` | Yes (`680dc689...`) |
 | `CYCLE-20261030-BPNK` | `2026-10-30T10:11:43.136Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5714, Rule 5715, Rule 5716` | Yes (`3feab823...`) |
+| `CYCLE-20261030-TJKN` | `2026-10-30T10:25:35.063Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5717, Rule 5718, Rule 5719` | Yes (`44c4526f...`) |
+| `CYCLE-20261030-U80T` | `2026-10-30T10:26:06.749Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5720, Rule 5721` | Yes (`9aeffd7c...`) |
+| `CYCLE-20261030-UJI0` | `2026-10-30T10:26:21.624Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5722, Rule 5723, Rule 5724` | Yes (`de6b4cff...`) |
+| `CYCLE-20261030-08WE` | `2026-10-30T10:30:47.822Z` | `duongductrong/Snapzy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5725, Rule 5726` | Yes (`13854db7...`) |
+| `CYCLE-20261030-20IA` | `2026-10-30T10:32:10.258Z` | `webrecorder/browsertrix-crawler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5727, Rule 5728, Rule 5729` | Yes (`a30173ad...`) |

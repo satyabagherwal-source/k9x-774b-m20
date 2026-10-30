@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "bd27ee11",
+    "sourceVersion": "fb8018f7",
     "license": "Apache-2.0",
-    "contentHash": "d7b26f07ed8057ce50db4b0cff46af06dd8ca2dff1b492edf290c761e2fbdfb5",
-    "lastHarvestedAt": "2026-10-30T08:04:38.717Z",
+    "contentHash": "de6b4cff5e725735b111df4f99f06f969c5239d6bb43fb56818f1c0abb98d42e",
+    "lastHarvestedAt": "2026-10-30T10:26:21.627Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "0941fb03",
+    "sourceVersion": "3661da4c",
     "license": "MIT",
-    "contentHash": "ad70d5e76be8019339067ee5dea5e4c5a011dd33bfd045f14c8a7a29ebd41037",
-    "lastHarvestedAt": "2026-10-28T02:48:15.772Z",
+    "contentHash": "44c4526fbc2a7889187c73344f583aec113ab0b3c45299e340c3c0e856ed6fc0",
+    "lastHarvestedAt": "2026-10-30T10:25:35.065Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "4150cef7",
+    "sourceVersion": "ed2899ed",
     "license": "Apache-2.0",
-    "contentHash": "9db4c05e7cb8e25eb032086aee91b8053bb61586728d5f8b9105e3ebed812cf2",
-    "lastHarvestedAt": "2026-10-28T21:04:30.583Z",
+    "contentHash": "9aeffd7cb5baa23f6dd22a87e2d9fd955585852a881d37826f39863759ceb23b",
+    "lastHarvestedAt": "2026-10-30T10:26:06.752Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
@@ -9153,10 +9153,10 @@
     "repository": "duongductrong/Snapzy",
     "platform": "github",
     "sourceUrl": "https://github.com/duongductrong/Snapzy",
-    "sourceVersion": "908119ae",
+    "sourceVersion": "77d3d3fe",
     "license": "BSD-3-Clause",
-    "contentHash": "5c8edc02d78e8c185f9b26454631acceb6366147bae5f9c2a09ce2d5be7b39ca",
-    "lastHarvestedAt": "2026-10-26T05:07:44.891Z",
+    "contentHash": "13854db72430ddf20cdf9cd9e24c1f9e75c61d1e3b87fea66bb74fa18715e2bd",
+    "lastHarvestedAt": "2026-10-30T10:30:47.825Z",
     "learningId": "learn-github-duongductrong-snapzy"
   },
   "scrapy-plugins-scrapy-deltafetch": {
@@ -9253,10 +9253,10 @@
     "repository": "webrecorder/browsertrix-crawler",
     "platform": "github",
     "sourceUrl": "https://github.com/webrecorder/browsertrix-crawler",
-    "sourceVersion": "e582608a",
+    "sourceVersion": "3aff4355",
     "license": "AGPL-3.0",
-    "contentHash": "b8480fd5e02bcd5d17973a1e32980a7446fb6d95d35f334d9321fd09fb3b5149",
-    "lastHarvestedAt": "2026-10-27T11:49:31.253Z",
+    "contentHash": "a30173ada98e7f0171ab926f79d1175914431a45b57eac1ab0304203431ee2e8",
+    "lastHarvestedAt": "2026-10-30T10:32:10.261Z",
     "learningId": "learn-github-webrecorder-browsertrix-crawler"
   },
   "pointfreeco-isowords": {
