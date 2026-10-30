@@ -6309,3 +6309,5 @@ Every entry in this ledger must capture:
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `f0861e2a` | Multi-dimensional audit evidence | 2026-10-30T20:22:06.377Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `1a28f170` | Multi-dimensional audit evidence | 2026-10-30T20:22:08.428Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `c187ec5c` | Multi-dimensional audit evidence | 2026-10-30T20:22:10.895Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `6470b5e4` | Multi-dimensional audit evidence | 2026-10-30T20:36:16.821Z |
+| `learn-github-devexpress-testcafe` | `https://github.com/DevExpress/testcafe` | `7245edc4` | Multi-dimensional audit evidence | 2026-10-30T20:36:17.910Z |

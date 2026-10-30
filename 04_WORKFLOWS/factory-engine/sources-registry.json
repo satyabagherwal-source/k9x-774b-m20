@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T20:22:13.453Z",
-    "lastVerified": "2026-10-30T20:22:13.453Z",
+    "lastChecked": "2026-10-30T20:36:24.633Z",
+    "lastVerified": "2026-10-30T20:36:24.633Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -411,8 +411,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T19:54:14.403Z",
-    "lastVerified": "2026-10-30T19:54:14.403Z",
+    "lastChecked": "2026-10-30T20:36:24.622Z",
+    "lastVerified": "2026-10-30T20:36:24.622Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2101,12 +2101,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "mitmproxy-mitmproxy": {
-    "name": "mitmproxy/mitmproxy",
+    "name": "mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-30T16:00:38.265Z",
-    "lastVerified": "2026-10-30T16:00:38.265Z",
+    "lastChecked": "2026-10-30T20:36:19.729Z",
+    "lastVerified": "2026-10-30T20:36:19.729Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -2115,7 +2115,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b08148b3"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -3535,9 +3536,9 @@
   "seekstorm-seekstorm": {
     "name": "SeekStorm",
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
-    "lastChecked": "2026-10-29T12:19:45.323Z",
+    "lastChecked": "2026-10-30T20:36:22.145Z",
     "revisionIdentifier": "ab61bc73",
-    "lastVerified": "2026-10-29T12:19:45.323Z"
+    "lastVerified": "2026-10-30T20:36:22.145Z"
   },
   "pemistahl-grex": {
     "name": "grex",
@@ -4253,9 +4254,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-10-29T17:16:38.277Z",
+    "lastChecked": "2026-10-30T20:36:17.253Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-10-29T17:16:38.277Z"
+    "lastVerified": "2026-10-30T20:36:17.253Z"
   },
   "malisper-pgrust": {
     "name": "pgrust",
@@ -7716,14 +7717,14 @@
     "officialUrl": "https://github.com/tokio-rs/tokio",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T22:07:40.556Z",
-    "lastVerified": "2026-10-28T22:07:40.556Z",
+    "lastChecked": "2026-10-30T20:36:14.520Z",
+    "lastVerified": "2026-10-30T20:36:14.520Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tokio-rs-tokio",
-    "contentHash": "000e6c7499b78b01c1544f09b753b9f501e02909f208f2fb03548d6fb1759f84",
+    "contentHash": "c06962941710be4591a9c8d864e871b8e82d0b35ca4b5d3bc23b9b876e84cdf0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10979,5 +10980,29 @@
     "lastChecked": "2026-10-30T20:21:58.111Z",
     "revisionIdentifier": "3aa55233",
     "lastVerified": "2026-10-30T20:21:58.111Z"
+  },
+  "devexpress-testcafe": {
+    "name": "DevExpress/testcafe",
+    "officialUrl": "https://github.com/DevExpress/testcafe",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-30T20:36:16.983Z",
+    "lastVerified": "2026-10-30T20:36:16.983Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-devexpress-testcafe",
+    "contentHash": "b90af2ed2a5983a7baa29bb9a591a3b869da96795cf6270ccfa007ee77edb9a3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "planetable-planet": {
+    "name": "Planet",
+    "officialUrl": "https://github.com/Planetable/Planet",
+    "lastChecked": "2026-10-30T20:36:15.692Z",
+    "revisionIdentifier": "5294e71c",
+    "lastVerified": "2026-10-30T20:36:15.692Z"
   }
 }

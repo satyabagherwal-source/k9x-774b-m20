@@ -6300,3 +6300,5 @@
 | `CYCLE-20261030-4OBQ` | `2026-10-30T20:22:06.374Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5861` | Yes (`57ea9fa0...`) |
 | `CYCLE-20261030-4PWO` | `2026-10-30T20:22:08.424Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5862` | Yes (`955f469a...`) |
 | `CYCLE-20261030-4RT7` | `2026-10-30T20:22:10.891Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5863` | Yes (`91e4b23f...`) |
+| `CYCLE-20261030-MWJ5` | `2026-10-30T20:36:16.817Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5864` | Yes (`c0696294...`) |
+| `CYCLE-20261030-MXDF` | `2026-10-30T20:36:17.907Z` | `DevExpress/testcafe` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5865` | Yes (`b90af2ed...`) |

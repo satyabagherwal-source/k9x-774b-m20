@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source**: github ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
-> **Source Version**: `e0f829f0`  
+> **Source Version**: `6470b5e4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T22:07:40.740Z  
+> **Timestamp**: 2026-10-30T20:36:16.107Z  
 > **Learning ID**: `learn-github-tokio-rs-tokio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T22:07:40.556Z  
+> **Harvest Timestamp**: 2026-10-30T20:36:14.520Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A runtime for writing reliable asynchronous applications with Rust. Provides I/O, networking, scheduling, timers, ...
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33536 stars
+- **Stars / Engagement**: 33550 stars
 
 ---
 
@@ -1934,13 +1934,14 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8734** (2026-10-28): **stream: prevent duplicate keys in StreamMap::extend**
-  *Symptoms*: ## Motivation  `tokio_stream::StreamMap::extend` was previously delegating directly to `self.entries.extend(iter)` on the underlying vector. This bypassed the key uniqueness invariant of `StreamMap`, allowing duplicate keys to accumulate if a key was inserted first and then re-added via `extend`, or if the incoming iterator contained duplicate keys within itself.  When duplicate keys existed: - `remove(&k)` would only remove the first matching entry, leaving duplicates behind. - `StreamMap::len()` reported inflated counts. - `poll_next` polled multiple streams under the same logical key.  ## Solution  This PR updates `Extend<(K, V)>` for `StreamMap<K, V>` to: 1. Add `where K: Hash + Eq` bounds on the `impl` block, matching `FromIterator<(K, V)>` and `insert`. 2. Route items through `self.insert(key, value)` so that duplicate keys overwrite existing entries as expected of a map. 3. Adds comprehensive unit tests verifying that both existing keys and duplicate keys within the iterator are properly deduplicated and the replaced stream yields the latest values.  Closes #4774
-
-- **Issue #8732** (2026-10-28): **time: add Interval::deadline**
-  *Symptoms*: Interval already tracks the deadline for its next tick internally (poll_tick reads it via self.delay.deadline() to compute the following one), but never exposes it. Sleep::deadline and the already-open Timeout::deadline (#8685) both expose this same kind of information for their own types, so Interval having no way to inspect when its next tick is due was the odd one out.
+- **Issue #8738** (2026-10-29): **Chore(deps): Update parking_lot**
+  *Symptoms*: This udpates `parking_lot` to 0.13.0. It requires bumping the MSRV to 1.95.0 as well.
   **Post-Mortem & Fix Analysis**:
-  > duplicate of #8685
+  > We're not going to bump all the way to 1.95 right now.
+  > But doesn't it match the >=six-month MSRV policy?
+
+- **Issue #8736** (2026-10-29): **rt: fix io_uring shutdown errors (#8634)**
+  *Symptoms*: Below is the original PR content, PR was merged in a different branch than master so re-opening it and merging  -- --  Shutdown errors can leave operations pending. Panicking then drops operation resources that the kernel may still be using.  Drain available completions before retrying EINTR, EBUSY or EAGAIN from shutdown waits. Also retry EINTR during submission .  Before panicking on other shutdown errors, leak thé operation slab to keep pending buffers alive (same for submission flush failures).  (cherry picked from commit 844500fd42537518c997a9461947e91abef727ea)  <!-- Thank you for your Pull Request. Please provide a description above and review the requirements below.  Please read the commit message guidelines when writing your PR description: https://github.com/tokio-rs/tokio/blob/master/docs/contributing/pull-requests.md#commit-message-guidelines  Bug fixes and new features should include tests.  Contributors guide: https://github.com/tokio-rs/tokio/blob/master/CONTRIBUTING.md  The contributors guide includes instructions for running rustfmt and building the documentation, which requires special commands beyond `cargo fmt` and `cargo doc`. --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1957,69 +1958,169 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e0f829f0` (2026-10-28)
-**Commit Message**: time: add `Interval::deadline` (#8732)
+### Incident Patch 1: `63fd6949` (2026-10-29)
+**Commit Message**: rt: fix io_uring shutdown errors (#8634) (#8736)
 
-**File**: `tokio/src/time/interval.rs` (modified, +21/-0)
+Shutdown errors can leave operations pending. Panicking then drops
+operation resources that the kernel may still be using.
+
+Drain available completions before retrying EINTR, EBUSY or EAGAIN
+from shutdown waits. Also retry EINTR during submission .
+
+Before panicking on other shutdown errors, leak thé operation slab
+to keep pending buffers alive (same for submission
+flush failures).
+
+(cherry picked from commit 844500fd42537518c997a9461947e91abef727ea)
+
+Co-authored-by: Thanh Dodeur <[REDACTED_EMAIL]>
+
+**File**: `tokio/src/runtime/io/driver/uring.rs` (modified, +20/-4)
 ```diff
-@@ -634,4 +634,25 @@ impl Interval {
-     pub fn period(&self) -> Duration {
-         self.period
-     }
-+
-+    /// Returns the instant at which the next tick will complete.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use tokio::time::{self, Instant};
-+    ///
-+    /// use std::time::Duration;
-+    ///
-+    /// # #[tokio::main(flavor = "current_thread")]
-+    /// # async fn main() {
-+    /// let start = Instant::now();
-+    /// let interval = time::interval_at(start, Duration::from_millis(10));
-+    ///
-+    /// assert_eq!(interval.deadline(), start);
-+    /// # }
-+    /// ```
-+    pub fn deadline(&self) -> Instant {
-+        self.delay.deadline()
-+    }
- }
+@@ -158,7 +158,11 @@ impl Drop for UringContext {
+ 
+         // Make sure we flush the submission queue before dropping the driver.
+         if !self.ring_mut().submission().is_empty() {
+-            self.submit().expect("Internal error when dropping driver");
++            if let Err(error) = self.submit() {
++                // The kernel may still be using resources from previously submitted operations.
++                mem::forget(mem::take(&mut self.ops));
++                panic!("Internal error when dropping driver: {error:?}");
++            }
+         }
+ 
+         let mut ops = std::mem::take(&mut self.ops);
+@@ -168,9 +172,21 @@ impl Drop for UringContext {
+ 
+         while !ops.is_empty() {
+             // Wait until at least one completion is available.
+-            self.ring_mut()
+-                .submit_and_wait(1)
+-                .expect("Internal error when dropping driver");
++            match self.ring_mut().submit_and_wait(1) {
++                Ok(_) => {}
++                // A failed wait can still leave completions available. Drain them below
++                // before retrying, retaining resources for operations that remain pending.
++                Err(error)
++                    if matches!(
++                        error.raw_os_error(),
++                        Some(libc::EINTR | libc::EBUSY | libc::EAGAIN)
++                    ) => {}
++                Err(error) => {
++                    // The kernel may still be using the resources held by pending operations.
++                    mem::forget(ops);
++                    panic!("Internal error when dropping driver: {error:?}");
++                }
++            }
+ 
+             for cqe in self.ring_mut().completion() {
+                 let idx = cqe.user_data() as usize;
 ```
 
-**File**: `tokio/tests/time_interval.rs` (modified, +15/-0)
+**File**: `tokio/tests/fs_uring.rs` (modified, +86/-0)
 ```diff
-@@ -495,3 +495,18 @@ async fn interval_doesnt_panic_max_duration_when_polling() {
-     let mut timer = task::spawn(time::interval(Duration::MAX));
-     assert_ready!(timer.enter(|cx, mut timer| timer.poll_tick(cx)));
+@@ -122,6 +122,92 @@ fn open_many_files() {
+     }
  }
+ 
++#[cfg(all(feature = "signal", feature = "time"))]
++#[tokio::test]
++async fn shutdown_retries_interrupted_wait() {
++    use std::os::unix::thread::JoinHandleExt;
++    use tokio::signal::unix::{signal, SignalKind};
++    use tokio::time::timeout;
 +
-+#[tokio::test(start_paused = true)]
-+async fn deadline() {
-+    let start = Instant::now();
-+    let mut interval = time::interval_at(start, ms(300));
++    const TIMEOUT: Duration = Duration::from_secs(10);
 +
-+    assert_eq!(interval.deadline(), start);
++    let Ok(ring) = io_uring::IoUring::new(2) else {
++        return;
++    };
++    let mut probe = io_uring::Probe::new();
++    if ring.submitter().register_probe(&mut probe).is_err()
++        || !probe.is_supported(io_uring::opcode::OpenAt::CODE)
++    {
++        return;
++    }
++    drop(ring);
 +
-+    interval.tick().await;
-+    assert_eq!(interval.deadline(), start + ms(300));
++    let dir = tempfile::tempdir().unwrap();
++    let path = dir.path().join("fifo");
++    nix::unistd::mkfifo(&path, nix::sys::stat::Mode::S_IRWXU).unwrap();
++    let mut signal = signal(SignalKind::user_defined1()).unwrap();
++    let (tx, rx) = tokio::sync::oneshot::channel();
++    let open_path = path.clone();
++    let shutdown = std::thread::spawn(move || {
++        let rt = current_rt()();
++        // Initialise io_uring before polling the operation we will cancel.
++        rt.block_on(tokio::fs::File::open("/dev/null")).unwrap();
++        {
++            let _enter = rt.enter();
++            // O_CREAT forces io_uring to use its blocking open path for the FIFO.
++            let mut open = tokio_test::task::spawn(tokio::fs::File::create(open_path));
++            tokio_test::assert_pending!(open.poll());
++        }
++        // SAFETY: gettid take no arguments and returns this thread's ID.
++        tx.send(unsafe { libc::syscall(libc::SYS_gettid) }).unwrap();
++        drop(rt);
++    });
 +
-+    time::advance(ms(300)).await;
-+    interval.tick().await;
-+    assert_eq!(interval.deadline(), start + ms(600));
++    let pthread = shutdown.as_pthread_t();
++    let interrupt_result = tokio::spawn(timeout(TIMEOUT, async move {
++        let tid = rx.await.unwrap();
++        let syscall_path = format!("/proc/self/task/{tid}/syscall");
++        let syscall_number = format!("{} ", libc::SYS_io_uring_enter);
++        let wait_for_uring_enter = || async {
++            while !std::fs::read_to_string(&syscall_path)
++                .unwrap()
++                .starts_with(&syscall_number)
++            {
++                tokio::task::yield_now().await;
++            }
++        };
++        // The FIFO has no reader, so shutdown must wait for the cancelled open.
++        wait_for_uring_enter().await;
++        // SAFETY: the join handle keeps the thread ID valid, and SIGUSR1 has a handler.
++        assert_eq!(
++            unsafe { libc::pthread_kill(pthread as libc::pthread_t, libc::SIGUSR1) },
++            0
++        );
++        signal.recv().await.unwrap();
++        // After signal delivry, another wait proves shutdown retried before we release the FIFO.
++        wait_for_uring_enter().await;
++    }))
++    .await;
++
++    // Release the FIFO before propagating failures. O_RDWR never waits for a peer.
++    let _reader = std::fs::OpenOptions::new()
++        .read(true)
++        .write(true)
++        .open(path)
++        .unwrap();
++    timeout(TIMEOUT, async {
++        while !shutdown.is_finished() {
++            tokio::task::yield_now().await;
++        }
++    })
++    .await
++    .expect("runtime shutdown did not complete");
++    shutdown
++        .join()
++        .unwrap_or_else(|panic| std::panic::resume_unwind(panic));
++    interrupt_result.unwrap().unwrap();
 +}
++
+ #[tokio::test]
+ async fn cancel_op_future() {
+     let (_tmp_file, path): (Vec<NamedTempFile>, Vec<PathBuf>) = create_tmp_files(1);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8738** (closed): Chore(deps): Update parking_lot (@PaulDance)
+- **PR #8736** (2026-10-29): rt: fix io_uring shutdown errors (#8634) (@Daksh14)
 - **PR #8734** (closed): stream: prevent duplicate keys in StreamMap::extend (@Ranjeet2063)
 - **PR #8732** (2026-10-28): time: add Interval::deadline (@stackedbyaradhya)
 - **PR #8729** (closed): time: wake the driver when the paused clock advances (@scrieve)
 - **PR #8728** (2026-10-27): taskdump: release the core borrow before tracing a dump (@scrieve)
-- **PR #8727** (2026-10-26): docs: state UnboundedReceiver::recv_many returns before limit is full (@stepancheg)
-- **PR #8725** (2026-10-25): Merge 'tokio-1.54.x' into 'master' (@Darksonn)
 
 ---
 
@@ -2039,48 +2140,50 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. time: add `Interval::deadline` (#8732)
+## X. rt: fix io_uring shutdown errors (#8634) (#8736)
 
 **RULE**:
-When implementing operations in `tokio/src/time/interval.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tokio/src/runtime/io/driver/uring.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e0f829f0`: time: add `Interval::deadline` (#8732). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `63fd6949`: rt: fix io_uring shutdown errors (#8634) (#8736). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/src/time/interval.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/src/runtime/io/driver/uring.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-    /// Returns the instant at which the next tick will complete.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use tokio::time::{self, Instant};
-    ///
-    /// use std::time::Duration;
-    ///
-    /// # #[tokio::main(flavor = "current_thread")]
-    /// # async fn main() {
-    /// let start = Instant::now();
-    /// let interval = time::interval_at(start, Duration::from_millis(10));
-    ///
-    /// assert_eq!(interval.deadline(), start);
-    /// # }
-    /// ```
-    pub fn deadline(&self) -> Instant {
-        self.delay.deadline()
-    }
+            if let Err(error) = self.submit() {
+                // The kernel may still be using resources from previously submitted operations.
+                mem::forget(mem::take(&mut self.ops));
+                panic!("Internal error when dropping driver: {error:?}");
+            }
+            match self.ring_mut().submit_and_wait(1) {
+                Ok(_) => {}
+                // A failed wait can still leave completions available. Drain them below
+                // before retrying, retaining resources for operations that remain pending.
+                Err(error)
+                    if matches!(
+                        error.raw_os_error(),
+                        Some(libc::EINTR | libc::EBUSY | libc::EAGAIN)
+                    ) => {}
+                Err(error) => {
+                    // The kernel may still be using the resources held by pending operations.
+                    mem::forget(ops);
+                    panic!("Internal error when dropping driver: {error:?}");
+                }
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            self.submit().expect("Internal error when dropping driver");
+            self.ring_mut()
+                .submit_and_wait(1)
+                .expect("Internal error when dropping driver");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e0f829f0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `63fd6949` are properly handled with clean fallback behavior.

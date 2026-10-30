@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-VYHV",
-    "timestamp": "2026-10-28T14:36:03.811Z",
-    "repository": "aquasecurity/trivy",
-    "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "299e51335ae96f5dd4c20f7105f6ad4d7f7a2dd264c8d2752e2a89398fd6919d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-4ODW",
-    "timestamp": "2026-10-28T14:42:50.612Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "a27e64fa6707f20a4659e64ae1671c5e906857e2798f8cb15a4681fd2ccc39b4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-4OYP",
     "timestamp": "2026-10-28T14:42:51.361Z",
     "repository": "bigscience/bloom",
@@ -7490,6 +7460,36 @@
     "repository": "doobidoo/mcp-memory-service",
     "learningId": "learn-github-doobidoo-mcp-memory-service",
     "contentHash": "91e4b23f7c8972b7a35ccdb0ecb3b272a07b3dd2b21f7a5185a9aac6c39106fa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-MWJ5",
+    "timestamp": "2026-10-30T20:36:16.817Z",
+    "repository": "tokio-rs/tokio",
+    "learningId": "learn-github-tokio-rs-tokio",
+    "contentHash": "c06962941710be4591a9c8d864e871b8e82d0b35ca4b5d3bc23b9b876e84cdf0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-MXDF",
+    "timestamp": "2026-10-30T20:36:17.907Z",
+    "repository": "DevExpress/testcafe",
+    "learningId": "learn-github-devexpress-testcafe",
+    "contentHash": "b90af2ed2a5983a7baa29bb9a591a3b869da96795cf6270ccfa007ee77edb9a3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

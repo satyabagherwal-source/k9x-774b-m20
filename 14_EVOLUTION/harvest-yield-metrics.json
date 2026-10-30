@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T20:22:10.901Z",
-  "total_cycles_completed": 6277,
-  "total_learnings_persisted": 6277,
-  "total_rules_promoted": 5834,
+  "last_updated": "2026-10-30T20:36:17.916Z",
+  "total_cycles_completed": 6279,
+  "total_learnings_persisted": 6279,
+  "total_rules_promoted": 5836,
   "history": [
-    {
-      "timestamp": "2026-10-30T04:00:39.298Z",
-      "repository": "rainbow-me/rainbow",
-      "learningId": "learn-github-rainbow-me-rainbow",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T04:17:54.633Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T04:25:13.744Z",
       "repository": "mfontanini/presenterm",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T20:22:10.901Z",
       "repository": "doobidoo/mcp-memory-service",
       "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T20:36:16.828Z",
+      "repository": "tokio-rs/tokio",
+      "learningId": "learn-github-tokio-rs-tokio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T20:36:17.916Z",
+      "repository": "DevExpress/testcafe",
+      "learningId": "learn-github-devexpress-testcafe",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T20:22:10.813Z",
+  "last_updated": "2026-10-30T20:36:17.832Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -53932,8 +53932,8 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "e0f829f0",
-      "content_hash": "000e6c7499b78b01c1544f09b753b9f501e02909f208f2fb03548d6fb1759f84",
+      "source_version": "6470b5e4",
+      "content_hash": "c06962941710be4591a9c8d864e871b8e82d0b35ca4b5d3bc23b9b876e84cdf0",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
@@ -53976,6 +53976,11 @@
           "number": 5420,
           "title": "time: add `Interval::deadline` (#8732)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5864,
+          "title": "rt: fix io_uring shutdown errors (#8634) (#8736)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53983,7 +53988,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:07:41.094Z",
+      "verified_at": "2026-10-30T20:36:16.673Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72885,8 +72890,8 @@
       "slug": "devexpress-testcafe",
       "platform": "github",
       "source_url": "https://github.com/DevExpress/testcafe",
-      "source_version": "1e12423d",
-      "content_hash": "21cafec67df0fd2ff6528c36d05aa69604aec278f8f7a46e33752769301d316f",
+      "source_version": "7245edc4",
+      "content_hash": "b90af2ed2a5983a7baa29bb9a591a3b869da96795cf6270ccfa007ee77edb9a3",
       "dossier_path": "07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/devexpress-testcafe-learnings.md",
       "promoted_rules": [
@@ -72899,6 +72904,11 @@
           "number": 4909,
           "title": "report setNativeDialogHandler(null) without throwing (#8566)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5865,
+          "title": "build: updated testcafe-hammerhead (#8567)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72906,7 +72916,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T16:58:38.984Z",
+      "verified_at": "2026-10-30T20:36:17.813Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155471,6 +155481,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T20:22:10.792Z"
+    },
+    "rule-5864": {
+      "learning_id": "rule-5864",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5864,
+      "title": "rt: fix io_uring shutdown errors (#8634) (#8736)",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "6470b5e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:36:16.673Z"
+    },
+    "rule-5865": {
+      "learning_id": "rule-5865",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5865,
+      "title": "build: updated testcafe-hammerhead (#8567)",
+      "source_url": "https://github.com/DevExpress/testcafe",
+      "source_version": "7245edc4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:36:17.813Z"
     }
   },
   "aliases": {
