@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T23:21:56.661Z",
-  "total_cycles_completed": 6333,
-  "total_learnings_persisted": 6333,
-  "total_rules_promoted": 5907,
+  "last_updated": "2026-10-30T23:28:46.980Z",
+  "total_cycles_completed": 6335,
+  "total_learnings_persisted": 6335,
+  "total_rules_promoted": 5909,
   "history": [
-    {
-      "timestamp": "2026-10-30T08:04:56.460Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T08:18:56.324Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T08:19:29.055Z",
       "repository": "projectcontour/contour",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T23:21:56.661Z",
       "repository": "nitrojs/nitro",
       "learningId": "learn-github-nitrojs-nitro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T23:28:40.911Z",
+      "repository": "storybookjs/storybook",
+      "learningId": "learn-github-storybookjs-storybook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T23:28:46.980Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-HDVQ",
-    "timestamp": "2026-10-28T17:12:41.606Z",
-    "repository": "google/gemma-4-26B-A4B-it",
-    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-    "contentHash": "0149ffe568dc74abdd1b7d8aaa9c099dce4d1b87d7828d8d808f188bdf640e84",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-RKOX",
-    "timestamp": "2026-10-28T17:20:36.993Z",
-    "repository": "intfloat/multilingual-e5-small",
-    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-    "contentHash": "30f59f6bfe23ca939bceefada05575e08c8c8bf220308c1b213a1e91396adf36",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-1C6I",
     "timestamp": "2026-10-28T17:28:12.522Z",
     "repository": "argmaxinc/whisperkit-coreml",
@@ -7490,6 +7460,36 @@
     "repository": "nitrojs/nitro",
     "learningId": "learn-github-nitrojs-nitro",
     "contentHash": "991ecc11f734d4f197fcc1f385eefa9dae27d7aa95678968e55e6acf75e6a701",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-SM2V",
+    "timestamp": "2026-10-30T23:28:40.903Z",
+    "repository": "storybookjs/storybook",
+    "learningId": "learn-github-storybookjs-storybook",
+    "contentHash": "fdf53d19988400a5e1eb7e432b82ad7d58e2383005f0022547970f610bc1811a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-SQRG",
+    "timestamp": "2026-10-30T23:28:46.972Z",
+    "repository": "slatedb/slatedb",
+    "learningId": "learn-github-slatedb-slatedb",
+    "contentHash": "3f1656d8940776a2c6587f13effa8976594ebb822b5b09d58e3c12f631713cd9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

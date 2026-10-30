@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "57677801",
+    "sourceVersion": "b3ea6f99",
     "license": "Apache-2.0",
-    "contentHash": "bc0d324cf66cfaed05c7c7ea2361896e7e69497ab23d9e83cb1b4658211c8a74",
-    "lastHarvestedAt": "2026-10-30T00:25:52.967Z",
+    "contentHash": "3f1656d8940776a2c6587f13effa8976594ebb822b5b09d58e3c12f631713cd9",
+    "lastHarvestedAt": "2026-10-30T23:28:46.975Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -10293,10 +10293,10 @@
     "repository": "storybookjs/storybook",
     "platform": "github",
     "sourceUrl": "https://github.com/storybookjs/storybook",
-    "sourceVersion": "37ded54a",
+    "sourceVersion": "43a13889",
     "license": "MIT",
-    "contentHash": "48b2cd700e9b8b66dff819288edb86355433788f0423e6a2f29bfe93be6e9df7",
-    "lastHarvestedAt": "2026-10-28T03:04:34.023Z",
+    "contentHash": "fdf53d19988400a5e1eb7e432b82ad7d58e2383005f0022547970f610bc1811a",
+    "lastHarvestedAt": "2026-10-30T23:28:40.906Z",
     "learningId": "learn-github-storybookjs-storybook"
   },
   "enaqx-awesome-react": {

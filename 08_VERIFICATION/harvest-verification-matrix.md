@@ -6356,3 +6356,5 @@
 | `CYCLE-20261030-B6KJ` | `2026-10-30T23:15:07.651Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5934` | Yes (`748f72c2...`) |
 | `CYCLE-20261030-JW13` | `2026-10-30T23:21:53.895Z` | `ducaale/xh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5935` | Yes (`ca0eb723...`) |
 | `CYCLE-20261030-JY5O` | `2026-10-30T23:21:56.652Z` | `nitrojs/nitro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5936` | Yes (`991ecc11...`) |
+| `CYCLE-20261030-SM2V` | `2026-10-30T23:28:40.903Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5937` | Yes (`fdf53d19...`) |
+| `CYCLE-20261030-SQRG` | `2026-10-30T23:28:46.972Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5938` | Yes (`3f1656d8...`) |

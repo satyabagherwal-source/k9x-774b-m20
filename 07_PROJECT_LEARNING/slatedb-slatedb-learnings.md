@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source**: github ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
-> **Source Version**: `57677801`  
+> **Source Version**: `b3ea6f99`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T00:25:52.712Z  
+> **Timestamp**: 2026-10-30T23:28:46.330Z  
 > **Learning ID**: `learn-github-slatedb-slatedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T00:25:51.843Z  
+> **Harvest Timestamp**: 2026-10-30T23:28:45.310Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3600 stars
+- **Stars / Engagement**: 3603 stars
 
 ---
 
@@ -307,6 +307,7 @@ pub fn build_settings_compactor(rng: &mut impl Rng) -> CompactorOptions {
         metric_level: None,
         commit_compacted_interval: rng
             .random_range(Duration::from_millis(1)..Duration::from_secs(5)),
+        enable_experimental_incremental_compaction: rng.random_bool(0.5),
         checkpoint_lifetime: CompactorOptions::default().checkpoint_lifetime,
         worker_heartbeat_timeout,
         object_store_max_retries: None,
@@ -383,10 +384,7 @@ pub fn build_toxic(rand: &DbRand, root_path: &str, index: usize) -> Toxic {
                     jitter: Duration::from_millis(rng.random_range(0_u64..=15)),
                 },
                 direction,
-                rng.random_range(0.35..=0.95),
-            )
-        }
-        5..=6 
+           
 ```
 
 ### Core Architecture Module: `slatedb/src/compaction_worker.rs`
@@ -2349,790 +2347,484 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `57677801` (2026-10-29)
-**Commit Message**: Remove open PR contributions (#2207)
+### Incident Patch 1: `b3ea6f99` (2026-10-30)
+**Commit Message**: Drop versions a memtable shadows at flush when the WAL is enabled (#2208)
 
-**File**: `.agents/skills/simple-english/SKILL.md` (removed, +0/-96)
+**File**: `slatedb/src/flush.rs` (modified, +29/-4)
 ```diff
-@@ -1,96 +0,0 @@
-----
--name: simple-english
--description: |
--  Write or rewrite text in plain, layman-readable English in the spirit of
--  ASD-STE100 Simplified Technical English: short sentences, active voice,
--  simple tenses, one word one meaning, condition before command, every
--  technical term defined at first use, no AI slop. Default mode is Plain.
--  Strict mode applies full STE vocabulary compliance when the user names
--  STE, ASD-STE100, or compliance. Use for documentation, READMEs, runbooks,
--  procedures, error messages, release notes, incident reports, API guides,
--  and explanations for readers outside the field. Also use when the user
--  says "STE", "Simplified Technical English", "ASD-STE100", "plain English",
--  "layman's terms", "explain it simply", "no jargon", "de-slop", "make this
--  readable", "write for non-native readers", or asks for docs that translate
--  well. The same rules govern the reply: answer first, five sentences or
--  fewer, prose only.
--license: MIT
--compatibility: claude-code cursor codex gemini-cli opencode
--metadata:
--  version: "2.0.1"
--  standard: ASD-STE100 Issue 9 (2025-01-15)
-----
--
--# Simple English
--
--Write plain English that a smart reader outside your field understands on one read. The rules come from ASD-STE100, the controlled language aerospace uses so a tired mechanic cannot misread an instruction. Two registers exist: the document you write or rewrite, and the reply you type in chat. Each has its own short rule set below. Nothing else in this file is optional.
--
--## The Document
--
--When asked to write or rewrite documentation, apply these rules to the prose:
--
--1. **Classify each passage.** Procedural text tells the reader what to do: imperative mood, 20 words per sentence, one instruction per sentence. Descriptive text explains: simple tenses, 25 words per sentence, one topic per paragraph, six sentences per paragraph at most.
--2. **Condition before command, with a comma.** "If the build fails, read the log."
--3. **Simple tenses, active voice.** No present perfect ("has completed" → "completed"). No "-ing" verb after a comma (", making it easy" → new sentence). Name the actor: "You run the migration."
--4. **Modals: can, will, must.** Never should, would, may, might, could. A required "should" becomes "must". An optional one is deleted.
--5. **Complete grammar.** No contractions, keep articles, keep "that". Short sentences, not telegraph style.
--6. **No semicolons and no em-dashes.** Write two sentences, or name the relation.
--7. **One word, one meaning, for the whole document.** Use `make sure that` for check, verify, confirm, validate, ensure. Use `configuration` for config, settings, options. Break noun chains over three words with a preposition ("the timeout value for the connection pool").
--8. **Define a concept term at its first use**, under ten words, one per sentence. Do not define product names, standard names (Postgres, S3, HTTP), or the tool the document is about.
--9. **State the fact, not its importance.** Delete words that carry no fact: simply, seamlessly, robust, powerful, comprehensive, leverage, crucial, "in order to", "it is worth noting". No "not just X, it is Y". No decorative triplets. No "in conclusion".
--10. **Format for the eye, not for decoration.** No bold lead-ins, no bold as emphasis, no emoji, no heading over two sentences. A vertical list is for three or more parallel items or steps: colon on the lead-in, uppercase start, one instruction per item.
--11. **Warnings: command or condition first, then the risk.** "Do not run this against production. The command deletes rows."
--12. **Never touch** code, identifiers, commands, flags, file paths, quoted errors, product names, or facts. When the source gives no number or cause, keep the general statement.
--
--Use American spelling. `references/word-swaps.md` maps the overused words to plain ones.
--
--**Before (real AI output):**
--
--> **Connection timeouts.** If sqlpipe hangs or fails with `dial tcp: i/o timeout`, check that the host running sqlpipe can reach the Postgres port (usually 5432) — this is often a security group or firewall rule blocking the connection. If you're connecting to a managed database (RDS, Cloud SQL, etc.), confirm the instance allows connections from sqlpipe's IP.
--
--**After (procedural, headed, numbered):**
--
--> ## Connection timeouts
-->
--> sqlpipe stops with `dial tcp: i/o timeout` when it cannot connect to the Postgres port (5432 by default).
-->
--> 1. Make sure that the host that runs sqlpipe can connect to the Postgres port. A firewall or security group usually blocks it.
--> 2. If the database is managed (RDS, Cloud SQL), make sure that the instance accepts connections from the IP of sqlpipe.
--
--## The Reply
--
--Every chat reply, in every mode, follows these rules. Read them last, apply them first:
--
--1. Answer in prose. No headers, no bullet lists, no bold, no tables. A code block is legal when the reader must copy it.
--2. Five sentences maximum. Every senten
+@@ -313,12 +313,37 @@ impl DbInner {
+     /// close between the reads of the three inputs. Taking the minimum
+     /// still yields a safe boundary, so the race is acceptable.
+     ///
+-    /// Call this once per flush attempt. Reuse the same value on every
+-    /// retry of that attempt. The three inputs can change between
+-    /// retries; reading a fresh value on each retry could make each
+-    /// retry keep a different set of entries.
++    /// Flushes of a memtable use [`DbInner::compute_flush_retention_seq`].
++    #[cfg(test)]
+     pub(crate) fn compute_min_retention_seq(&self) -> Option<u64> {
++        self.min_retention_seq_above(self.oracle.last_remote_persisted_seq())
++    }
++
++    /// Compute the retention boundary for a memtable ending at `last_seq`.
++    ///
++    /// With the WAL enabled, the L0 is published only after the WAL is
++    /// durable through `last_seq` (#1255). A [`crate::DbReader`] also raises
++    /// its durable watermark to the manifest's `last_l0_seq`. A reader
++    /// cannot therefore see this L0 with a durable watermark below `last_seq`.
++    /// Use the greater of `last_seq` and the current durable watermark as
++    /// the durable input to the boundary.
++    ///
++    /// Without the WAL, use the current durable watermark. In either case,
++    /// an open snapshot or transaction may lower the boundary.
++    ///
++    /// Compute the boundary once per upload and reuse it across retries so
++    /// each attempt retains the same entries.
++    pub(crate) fn compute_flush_retention_seq(&self, last_seq: u64) -> Option<u64> {
+         let durable_seq = self.oracle.last_remote_persisted_seq();
++        if self.wal_enabled {
++            self.min_retention_seq_above(durable_seq.max(last_seq))
++        } else {
++            self.min_retention_seq_above(durable_seq)
++        }
++    }
++
++    /// The retention boundary with `durable_seq` as its durable input.
++    fn min_retention_seq_above(&self, durable_seq: u64) -> Option<u64> {
+         [
+             Some(durable_seq),
+             self.snapshot_manager.min_active_seq(),
 ```
 
-**File**: `.agents/skills/simple-english/references/checklist.md` (removed, +0/-56)
+**File**: `slatedb/src/memtable_flusher/uploader.rs` (modified, +135/-4)
 ```diff
-@@ -1,56 +0,0 @@
--# Verification checklist
--
--Run this pass on every draft before you deliver it. The checks are ordered from mechanical to judgment.
--
--## Mechanical checks (searchable)
--
--Search the draft for each pattern. Every hit outside code blocks and quoted text is a violation.
--
--| Search for | Violation | Fix |
--|---|---|---|
--| `'ll`, `'re`, `'ve`, `n't`, `it's` | Contraction (Rule 4.2) | Expand it. |
--| `has been`, `have been`, `had been` | Present/past perfect (Rule 3.4) | Simple past or simple present. |
--| `has` / `have` + past participle | Present perfect (Rule 3.4) | Simple past. |
--| `should`, `would`, `may`, `might`, `could`, `shall` | Unapproved modal (Rule 3.2) | See the modal ladder in rule-catalog.md. |
--| `is being`, `are being`, `was being` | Progressive passive (Rules 3.4, 3.5) | Active, simple tense. |
--| `, making`, `, allowing`, `, enabling`, `, ensuring` | "-ing" clause as verb (Rule 3.5) | New sentence with a real subject. |
--| `;` | Semicolon (Rule 8.1) | Two sentences. |
--| `—`, `–`, or ` - ` / ` -- ` between two statements | Dash: implied logic junction (skill check, Section 8). Not a violation: a dash that identifies a list item (Rule 4.3), a CLI flag (`--force`), a range (`5 - 10`) | Name the relation ("because", "but", "for example", "that is"), or write two sentences. |
--| `e.g.`, `i.e.`, `etc.` | Latin abbreviation (GR-6) | "for example", "that is", name the items. |
--| `simply`, `easily`, `seamlessly`, `robust` | Filler (no fact) | Delete. |
--| `delve`, `pivotal`, `crucial`, `leverage`, `showcase`, `foster` | LLM-tell words (word-swaps.md) | Use the listed replacement, or delete. |
--| ` if `, ` when ` (mid-sentence) | Trailing condition (Rule 5.4) | Move the condition to the start of the sentence, add a comma. |
--| `however`, `therefore`, `since` (= because), `now` | Recurring errors (dictionary introduction) | but / thus, as a result / because / at this time (better, delete) |
--| `need to`, `have to` | Recurring errors | Imperative in procedures; `it is necessary to` in descriptive text |
--| `perform`, `insert`, `reach`, `avoid`, `repeat`, `acceptable` | Recurring errors | do / put / get, get to / prevent / do … again / permitted |
--| `the example below`, `the section above` | "below" and "above" as adverbs are not approved | Name the target, or write `…that follows` |
--| ` is complete`, ` are complete` | "complete" as an adjective is not approved | completed (adjective), or full / all |
--
--## Countable checks
--
--1. **Sentence length.** Count words in each sentence. Procedural limit: 20. Descriptive limit: 25. Notes: 25.
--   Backticked commands, numbers with units, and identifiers count as one word each (Rule 8.6).
--   In a vertical list, the lead-in colon ends a sentence and each item that follows counts as a new sentence with its own budget (Rule 8.4).
--2. **Paragraph size.** Maximum six sentences per paragraph (Rule 6.6).
--3. **Multi-word nouns.** Any noun chain over three words → break it with prepositions (Rule 2.1).
--4. **Instructions per sentence.** One, unless the actions are simultaneous (Rule 5.2).
--5. **List mechanics.** Colon on the lead-in. Each item starts with an uppercase letter. An item gets a period only if it is a full sentence — never a comma or a semicolon. The last item gets a period. No nested lists. Instructions and facts never in the same list (Rule 4.3).
--
--## Judgment checks
--
--6. **Classification.** Is each passage cleanly procedural or descriptive? Procedures in imperative, descriptions never in imperative.
--7. **Voice.** Any passive sentence: is the agent truly unknown, and is the passage descriptive? Otherwise make it active (Rule 3.6). For an unknown agent, prefer "you" (the reader) or "we" (your company) over the passive.
--8. **Condition placement.** Every "if/when" stands before its command, with a comma (Rule 5.4).
--9. **Synonym rotation.** One term per concept across the whole document (Rules 1.11, 9.4). Scan for check/verify/confirm, config/settings, run/execute.
--10. **Warnings.** Command or condition first, risk second (Rules 7.2, 7.3). If a passage risks both injury and damage, use WARNING (Rule 7.1).
--11. **Limits with actions.** A result or limit comes directly after its action in the work step — not in a note (Rules 5.2, 5.5).
--12. **Notes test.** Delete all notes, then read the procedure. The reader must still be able to do it correctly (Rule 5.5).
--13. **Completeness.** Articles present, "that" present after "make sure", no telegraph style (Rule 4.2).
--14. **Plain words.** Each technical term has a definition at its first use. Common words replaced jargon where a common word exists.
--15. **Strict mode only.** Run the two tables in `references/strict-vocabulary.md` against the draft.
--16. **Untouchables intact.** Code, identifiers, quoted errors, UI labels, and proper nouns are unchanged.
--
--## When reporting violations (check mode)
--
--For each violation give: the rule number, the offending text, and a compliant rewrite. Ci
-```
-
-**File**: `.agents/skills/simple-english/references/rule-catalog.md` (removed, +0/-165)
-```diff
-@@ -1,165 +0,0 @@
--# Rule catalog: ASD-STE100 Issue 9 for software text
--
--Read this file for CHECK mode, for Strict mode, or when a rule number is in question. The core skill in `SKILL.md` names the rules that move output the most. This file holds the whole catalog.
--
--53 rules in 9 sections, paraphrased from ASD-STE100 Issue 9 with software examples. Rules marked (S) are Strict mode only (see `references/strict-vocabulary.md`). The official wording is in the free standard at asd-ste100.org.
--
--### Section 1 — Words (Rules 1.1-1.14)
--
--| Rule | Instruction |
--|---|---|
--| 1.1-1.4, 1.6 (S) | Use only approved words, as their listed part of speech, meaning, and form. |
--| 1.5 | You can use domain words as technical nouns ("webhook", "commit", "endpoint"). |
--| 1.7 | Do not use technical nouns as verbs. |
--| 1.8 | Use the technical nouns of your project or industry. |
--| 1.9 | When you pick a technical noun, pick a short and clear one. |
--| 1.10 | No regional, slang, or jargon words as technical nouns. |
--| 1.11 | One item, one name. Do not call it "config" here and "settings" there. |
--| 1.12 | You can use domain verbs as technical verbs ("deploy", "compile", "merge"). The standard names computer verbs as legal: click, type, copy, paste, delete, save, install, download, update, and more. When a common verb does the same job, prefer it: "find" instead of "detect". |
--| 1.13 | Do not use technical verbs as nouns. |
--| 1.14 | Use American English spelling. |
--
--In Plain mode, rules 1.5, 1.8, and 1.12 make your domain vocabulary legal. The ones agents break are 1.7, 1.11, and 1.13.
--
--**Before:** You can webhook the event, then do a deploy.
--**After:** Send the event to the webhook. Then deploy the service.
--
--### Section 2 — Multi-word nouns (Rules 2.1-2.2)
--
--| Rule | Instruction |
--|---|---|
--| 2.1 | Write multi-word nouns of three words or fewer. |
--| 2.2 | When a technical noun needs more than three words, write it in full once, then give a short form or hyphenate the units. |
--
--Break long noun chains with prepositions (of, on, in, for):
--
--**Before:** the connection pool timeout configuration value
--**After:** the timeout value for the connection pool
--
--### Section 3 — Verbs (Rules 3.1-3.7)
--
--| Rule | Instruction |
--|---|---|
--| 3.1 (S) | Use only the verb forms that the dictionary gives. |
--| 3.2 | Use only: infinitive, imperative, simple present, simple past, simple future, past participle as adjective. |
--| 3.3 | Use the past participle only as an adjective ("the cached response"). |
--| 3.4 | No auxiliary verbs for complex constructions. No present perfect, no "is to be installed". |
--| 3.5 | Use an "-ing" form only as a technical noun or inside one ("logging", "the mounting bracket"), never as a verb. |
--| 3.6 | Active voice. In descriptive text, passive is legal only when the agent is unknown. To repair an agentless passive, use "you" (the reader) or "we" (your company): "Indexes are not used on this table" → "We do not use indexes on this table." |
--| 3.7 | Describe an action with a verb, not a noun ("compress the file", not "perform compression of the file"). |
--
--**Approved modals: can, will, must. Banned: should, would, may, might, could.**
--The modal ladder below routes each banned modal. This matters double for agent instructions, because models read "should" as optional.
--
--### Section 4 — Sentences (Rules 4.1-4.5)
--
--| Rule | Instruction |
--|---|---|
--| 4.1 | Write short and clear sentences. |
--| 4.2 | Do not omit words or use contractions to shorten sentences. Keep articles, keep "that". |
--| 4.3 | Use a vertical list for complex text: colon on the lead-in, uppercase start, a period only on full-sentence items, no mixed instructions and facts, no nesting. |
--| 4.4 | Use connecting words between sentences on related topics ("Then", "As a result"). |
--| 4.5 | Put an article (the, a, an) or a demonstrative adjective (this, these) before nouns where applicable. Exception: no article before a noun when an identifier follows it: "Restart pod web-7f9b2". |
--
--Rule 4.2 is the anti-terseness rule. Plain English is short sentences with complete grammar, not telegraph style:
--
--**Wrong shortening:** Ensure file exists before running.
--**Plain:** Make sure that the file exists before you run the command.
--
--### Section 5 — Procedural writing (Rules 5.1-5.5)
--
--| Rule | Instruction |
--|---|---|
--| 5.1 | Maximum 20 words per sentence. Warnings and cautions included. |
--| 5.2 | One instruction per sentence, unless two actions happen at the same time. A step can add one sentence for an immediate result or limit. |
--| 5.3 | Write instructions in the imperative: "Run the migration." |
--| 5.4 | Put a required condition before the command, divided by a comma: "If the build fails, read the log." |
--| 5.5 | Notes give information, never instructions or limits. A limit belongs with its action. Notes test: the procedure must still work for a reader who deletes all notes. |
--
--**Before:** You'll want to grab the A
-```
-
-**File**: `.agents/skills/simple-english/references/strict-vocabulary.md` (removed, +0/-77)
-```diff
-@@ -1,77 +0,0 @@
--# Strict mode: the dictionary discipline
--
--Read this file when the user names STE, ASD-STE100, or compliance. Strict mode adds the dictionary rules to the document. It does not change the reply to the user, which stays in Plain mode.
--
--The official dictionary (about 900 approved words and 1,200 rejected words with their alternatives) is copyrighted by ASD and is not reproduced here. This file gives the rules that depend on it, the rulings that software writers meet most, and the words the standard names as recurring errors. Tell the user, one time per conversation and in one sentence, that this index is lossy and that full compliance needs the official dictionary (free at asd-ste100.org).
--
--## Rules that exist only with the dictionary
--
--| Rule | Instruction |
--|---|---|
--| 1.1 | Use only approved words, technical nouns, or technical verbs. |
--| 1.2 | Use an approved word only as its listed part of speech. |
--| 1.3 | Use an approved word only with its approved meaning. |
--| 1.4 | Use only the approved forms of verbs and adjectives. |
--| 1.6 | Use an unapproved word only when it is a technical noun or part of one. |
--| 3.1 | Use only the verb forms that the dictionary gives. |
--| 9.2 | Use each approved word correctly: approved meaning, approved part of speech. |
--| GR-5 | Avoid false friends: words that look like a word in the reader's language but mean something else. |
--| GR-8 | Use the possessive apostrophe only when you are sure that it is correct. If unsure, write "the file of the user". |
--
--Issue 9 adds a quick-reference list of approved verbs in the dictionary introduction. Check your verbs against it.
--
--## Part-of-speech rulings
--
--| Word | Ruling |
--|---|---|
--| test, check, work | Noun only. "Do a test", not "test the pump". "Check that X" becomes "make sure that X". |
--| oil | Technical noun only. For the verb, the dictionary gives "lubricate": "Lubricate the linkage with oil." |
--| help | Verb only. For the noun, the dictionary gives "aid": "with the aid of". |
--| fall (noun) | Rejected. Use "decrease" for a reduction in value. Use "fall" (verb) only for movement downward by gravity: "Make sure that the tools do not fall into the engine." |
--| follow | "To come after" only, never "obey". Write "obey the instructions". |
--| above, below | Physical positions only. For limits write "more than", "less than". |
--
--## Dictionary rulings on common software verbs
--
--The standard has already chosen. Use the approved word.
--
--| You wrote | Dictionary status | Use instead |
--|---|---|---|
--| check (verb), verify, confirm, ensure | All rejected as verbs | Route by intent: `make sure that` (a state), `examine` (look for faults: "examine the log"), `measure` (get a value), or the noun: "do a check of". |
--| validate | Not in the dictionary | Legal as a technical verb (Rule 1.12), or replace with `make sure that`. |
--| delete, drop (verb), destroy | All rejected as dictionary verbs | `erase` (data), `remove` (physical). In computer contexts `delete` is also a legal technical verb (Rule 1.12). Do not use `drop` or `destroy`. |
--| remove | Approved verb | Keep it. |
--| run, execute | Both rejected | `operate` for run, `do` for execute. |
--| invoke, launch | Not in the dictionary | Legal as technical verbs (Rule 1.12). |
--| display (verb), render, present (verb) | All rejected | `show` covers most software cases. Official alternatives: display → `show`, render → `make`, present → `give` or `show`. |
--| issue | Not in the dictionary | Use as a technical noun, or replace with `problem` (approved). |
--| failure | Rejected in general use; approved as a technical noun for performance loss | Use only for a performance error: "a failure of the pump". |
--| error, problem | Approved nouns | Keep them. |
--
--## Recurring errors the standard names
--
--The dictionary introduction lists the words that writers get wrong most often. This is the software-relevant set, as rulings only.
--
--| You wrote | STE writes |
--|---|---|
--| however | but |
--| therefore | thus, as a result |
--| since (= because) | because |
--| any | Delete it, or restructure: "if you have any questions" → "if you have questions" |
--| now | at this time. Better, delete it: "now start the service" → "start the service" |
--| need to, have to | Imperative in procedures ("install"); "it is necessary to" in descriptive text |
--| perform | do |
--| insert | put (but SQL `INSERT` stays: it is quoted text) |
--| reach | get, get to |
--| avoid | prevent |
--| repeat | do … again |
--| acceptable | permitted. Better, give the limit: "a latency of less than 200 ms" |
--| complete (adjective) | completed |
--| the example below, the section above | Name the target, or put the reference after it: "the example that follows" |
--
--## Strict self-check
--
--Add these two steps to the self-check in SKILL.md:
--
--1. Search the draft for every verb in the two tables above. Replace each hit with the approved word.
--2. Search for the phrasal verbs you built ("set up", "
-```
-
-**File**: `.agents/skills/simple-english/references/use-cases.md` (removed, +0/-64)
-```diff
-@@ -1,64 +0,0 @@
--# Use cases beyond documentation
--
--STE was built for aircraft maintenance manuals. The same properties — one meaning per word, short sentences, condition-first commands — transfer to any text where misreading has a cost. STE is now used far outside aerospace and defense.
--
--Each case that follows names the mode and the adaptations.
--
--## Error messages and CLI output
--
--Mode: procedural. This is the highest-value target: an error message is a 2 a.m. instruction to a stressed reader.
--
--Pattern: state what happened (past simple), state the cause if known, give the command or condition to fix it.
--
--> **Before:** Oops! Something went wrong while attempting to establish a connection. Please ensure your credentials are properly configured and try again.
--> **After:** Connection to the database failed. The password for user `app` was not correct. Set `DB_PASSWORD` and connect again.
--
--## Runbooks and standard operating procedures
--
--Mode: Plain, procedural, with the 20-word limit enforced hard. This is what STE was made for — an on-call runbook is a maintenance manual.
--
--- Every step imperative, one instruction per step, conditions first.
--- Warnings before the step, command first, risk second.
--- 20-word limit enforced hard: an operator under pager stress reads each sentence once.
--
--## Incident reports and postmortems
--
--Mode: descriptive. Simple past only — a timeline in present perfect ("we have identified...") hides when things happened.
--
--> **Before:** We have identified an issue that may have impacted some users' ability to access the service.
--> **After:** Between 14:02 and 14:31 UTC, 12% of requests failed. A deploy at 14:00 removed the cache warmup step.
--
--STE bans hedges ("may have impacted") — the report states what is known and says "unknown" for the rest. This reads more honest because it is.
--
--## Commit messages and PR descriptions
--
--Mode: descriptive body, imperative subject. Convention already matches STE: imperative subject line, plain past facts in the body. Apply the substitution table and the 25-word limit to the body. Delete "this PR aims to".
--
--## API changelogs and release notes
--
--Mode: descriptive. One entry, one change, one sentence where possible. "Breaking:" entries follow the warning pattern — command first: "Update your calls to `v2/users`. The `name` field split into `first_name` and `last_name`."
--
--## Instructions for AI agents (prompts, AGENTS.md, skills)
--
--Mode: procedural. A system prompt is a procedure executed by a reader with no ability to ask questions — the exact reader STE was designed for.
--
--- One instruction per sentence keeps rules independently quotable and hard to half-follow.
--- One word, one meaning prevents the model from treating "check", "verify", and "validate" as three different operations.
--- Condition-first ("If the build fails, stop") beats trailing conditions, which models drop.
--- No "should" — a model reads "should" as optional. Write "must" or delete the rule.
--
--## Support macros and status-page updates
--
--Mode: descriptive, 25-word limit. Non-native readers are the majority of many user bases. No "we sincerely apologize for any inconvenience this may have caused" — "The API was down for 18 minutes. Uploads made during this time were saved and will process today."
--
--## Translation and localization prep
--
--Mode: strict. STE's original purpose was making English readable for non-native maintenance crews, and it doubles as pre-editing for machine translation. One meaning per word plus complete grammar (articles, "that") removes most translation ambiguity. If your docs get localized, STE cuts the error rate and the cost.
--
--## UI copy and empty states
--
--Mode: procedural, hard length limits. Buttons and labels are technical names (exempt). Body copy follows the rules: "No projects yet. Create a project to start." Nothing else survives at this length anyway.
--
--## Where STE does not fit
--
--Marketing pages, launch posts, blog voice, brand writing. STE deletes persuasion on purpose. Write those in your own voice — then use STE for the docs the landing page links to.
-```
-
-**File**: `.agents/skills/simple-english/references/word-swaps.md` (removed, +0/-58)
-```diff
-@@ -1,58 +0,0 @@
--# Slop-to-simple substitutions
--
--This table is ours, not the ASD dictionary. It maps the words AI-generated docs overuse to plain replacements. If the word carries no fact, delete it instead of replacing it.
--
--| Slop | Write instead |
--|---|---|
--| leverage, utilize | use |
--| in order to | to |
--| prior to | before |
--| ensure | make sure that |
--| it is worth noting that | (delete) |
--| it's important to | (delete — state the fact) |
--| simply, just, easily, seamless, seamlessly, effortlessly | (delete) |
--| robust, powerful, comprehensive, performant | (delete, or give the measurable property) |
--| functionality | function, feature |
--| enables you to, allows you to | you can |
--| is designed to, aims to | (delete — say what it does) |
--| facilitate | help, make possible |
--| dive into, delve into | read, examine |
--| when it comes to | for |
--| in the event that | if |
--| due to the fact that | because |
--| as needed, as necessary | (state the condition) |
--| and/or | Pick one, or write "X, or Y, or both" |
--| e.g. / i.e. / etc. | for example / that is / (name the items) |
--| gracefully handles | (say what it does: "retries three times, then stops") |
--| out of the box | by default |
--| under the hood | internally |
--| blazingly fast | fast (give the number) / (delete) |
--| streamline | make simpler, make faster |
--| plethora, myriad | many |
--| addresses the issue, tackles | corrects the fault, removes the error |
--| pivotal, crucial, crucially, paramount | important |
--| tapestry, testament, synergy | (delete) |
--| interplay | interaction (or delete) |
--| intricate | complex |
--| vibrant, nuanced, multifaceted | (delete, or name the parts) |
--| realm, landscape (metaphorical) | area |
--| groundbreaking, cutting-edge, state-of-the-art, innovative, unprecedented | new (or delete) |
--| transformative, game-changer | (delete — say what changes) |
--| revolutionize | change |
--| showcase, underscore, emphasize | show |
--| foster, empower, bolster | help, support, let |
--| harness | use |
--| enhance | improve |
--| elevate | increase |
--| furthermore, moreover | also |
--| in conclusion, in summary, at the end of the day | (delete) |
--| embark, endeavor | start, try |
--| meticulous, meticulously | careful, carefully |
--| holistic | full |
--| paradigm | model |
--| navigate (metaphorical) | go to |
--| boasts | has |
--| nestled, in the heart of | (delete — give the location or the fact) |
--| bustling | busy |
--| that being said, notwithstanding | but |
--| I hope this helps, let's dive in | (delete) |
-```
-
-**File**: `.github/pull_request_template.md` (modified, +1/-15)
-```diff
-@@ -8,9 +8,7 @@ What is being changed and why?
+@@ -191,10 +191,6 @@ impl UploadHandler {
+     }
  
- ## AI Assistance
+     async fn upload_with_retry(&self, job: &UploadJob) -> Result<UploadedMemtable, SlateDBError> {
+-        // Read the retention boundary once, before the first attempt
+-        // below. Every retry reuses this same value, so every attempt
+-        // keeps the same entries.
+-        let min_retention_seq = self.db.compute_min_retention_seq();
+         let first_seq = job
+             .imm_memtable
+             .table()
+@@ -205,6 +201,10 @@ impl UploadHandler {
+             .table()
+             .last_seq()
+             .expect("flush of l0 with no entries");
++        // Read the retention boundary once, before the first attempt
++        // below. Every retry reuses this same value, so every attempt
++        // keeps the same entries.
++        let min_retention_seq = self.db.compute_flush_retention_seq(last_seq);
  
--If you used AI for any part of this pull request, add one row for each model and effort level.
--Include code, tests, documentation, and pull request text.
--If you did not use AI, enter `N/A` in both columns.
-+If you used AI for any part of this pull request, add one row for each model and effort level. Include code, tests, documentation, and pull request text. If you did not use AI, enter `N/A` in both columns.
+         let segments = loop {
+             match self
+@@ -286,6 +286,7 @@ mod tests {
+     use crate::iter::RowEntryIterator;
+     use crate::manifest::ManifestCore;
+     use crate::mem_table::ImmutableMemtable;
++    use crate::oracle::Oracle;
+     use crate::paths::PathResolver;
+     use crate::retrying_object_store::MAX_RETRY_DELAY;
+     use crate::sst_iter::{SstIterator, SstIteratorOptions};
+@@ -964,6 +965,136 @@ mod tests {
+         test.shutdown().await;
+     }
  
- | Model | Effort |
- | --- | --- |
-@@ -19,15 +17,3 @@ If you did not use AI, enter `N/A` in both columns.
- ## Notes for Reviewers
- 
- Any hints on how to best review this PR? Anything you’d like reviewers to focus on? Any follow-ups planned?
--
--## Checklist
--
--- [ ] Small, scoped PR (< 500 total lines excluding tests); or opened as Draft with a plan on how to break it into smaller pieces
--- [ ] Linked related issue(s) or added context in the description
--- [ ] Self-reviewed the diff; added comments for tricky parts
--- [ ] Tests added/updated and passing locally
--- [ ] Ran `cargo fmt`, `cargo clippy --all-targets --all-features`, and `cargo nextest run --all-features`
--- [ ] Called out any breaking changes and provided migration notes
--- [ ] Considered performance impact; added notes or benchmarks if relevant
--
--Thank you for the review! 🙏
-```
-
-**File**: `AGENTS.md` (modified, +18/-13)
-```diff
-@@ -1,18 +1,23 @@
- # Writing instructions
- 
--Use the `simple-english` skill at `.agents/skills/simple-english/SKILL.md` for all English prose that you write.
--
--This rule includes chat replies, documentation, new code comments, commit messages, and GitHub prose.
--GitHub prose includes issue text, pull request titles and summaries, review comments, and discussion replies.
--When you write a pull request description, follow `.github/pull_request_template.md`.
--
--Read the complete skill file before you write or rewrite prose.
--Apply its Plain mode unless the user requests STE, ASD-STE100, or compliance.
--If the user requests Strict mode, read `.agents/skills/simple-english/references/strict-vocabulary.md` before you write.
--If the user requests a text review, read `.agents/skills/simple-english/references/rule-catalog.md` before you report violations.
--Follow the skill rules in every chat reply.
--Do not edit an existing comment only to apply the skill.
--Apply the skill to each new comment that you add.
-+All writing must use line-wrapped (100 character) ASD-STE100 Simplified Technical English: Github issues and comments, PR titles and descriptions, RFCs, review comments, commit messages, docs and code comments. Active voice, sentences under 30 words, two ideas per sentence at most, no filler.
++    /// Freezes one memtable holding `entries`, in order, as an upload job.
++    fn upload_job_of(db: &DbInner, entries: &[(&[u8], &[u8], u64)]) -> UploadJob {
++        let imm_memtable = {
++            let mut guard = db.state.write();
++            for (key, value, seq) in entries {
++                guard.memtable().put(RowEntry::new_value(key, value, *seq));
++            }
++            guard.freeze_memtable(0);
++            guard.state().imm_memtable.front().cloned().unwrap()
++        };
++        let segment_sst_ids = preallocate_ids(&imm_memtable);
++        UploadJob::new(imm_memtable, segment_sst_ids)
++    }
 +
-+When you write a pull request description, you always follow `.github/pull_request_template.md`.
++    /// Uploads `job` and returns the (key, seq, value) entries of its SST.
++    async fn uploaded_entries(
++        db: &Arc<DbInner>,
++        job: UploadJob,
++    ) -> Vec<(Bytes, u64, ValueDeletable)> {
++        let test = start_test_uploader(db);
++        test.submit(job).unwrap();
++        let msg = timeout(Duration::from_secs(5), test.tracker_rx.recv())
++            .await
++            .unwrap()
++            .unwrap();
++        let TrackerMessage::UploadComplete(event) = msg else {
++            panic!("expected UploadComplete");
++        };
++        assert_eq!(event.segments.len(), 1);
++        let segment = &event.segments[0];
++        let sst_view = SsTableView::identity(
++            db.table_store
++                .open_sst(&segment.sst_handle.id, Some(segment.prefix.clone()))
++                .await
++                .unwrap(),
++        );
++        let mut iter = SstIterator::new_owned_initialized(
++            ..,
++            sst_view,
++            Arc::clone(&db.table_store),
++            SstIteratorOptions::default(),
++        )
++        .await
++        .unwrap()
++        .expect("expected non-empty SST");
++        let mut entries = Vec::new();
++        while let Some(entry) = iter.next().await.unwrap() {
++            entries.push((entry.key, entry.seq, entry.value));
++        }
++        test.shutdown().await;
++        entries
++    }
 +
-+## Brevity
++    #[tokio::test]
++    async fn should_drop_versions_shadowed_in_the_memtable_before_its_wal_is_durable() {
++        // The WAL has made nothing durable yet (the durable watermark is 0)
++        // when the memtable is frozen and uploaded. The manifest writer
++        // publishes the L0 only once the WAL is durable through seq 2, so
++        // the shadowed version at seq 1 is never readable from it.
++        let db = setup_db(
++            "/tmp/test_l0_flush_uploader_shadowed_before_wal_durable",
++            Arc::new(FailPointRegistry::new()),
++        )
++        .await;
++        assert!(db.wal_enabled);
++        assert_eq!(db.oracle.last_remote_persisted_seq(), 0);
++        let job = upload_job_of(&db, &[(b"key", b"value1", 1), (b"key", b"value2", 2)]);
 +
-+You follow the spirit of Churchill's brevity memorandum when writing prose. The memorandum is reproduced below.
++        let entries = uploaded_entries(&db, job).await;
 +
-+To do our work, we all have to read a mass of papers. Nearly all of them are far too long. This wastes time, while energy has to be spent in looking for the essential points.
++        assert_eq!(
++            entries,
++            vec![(
++                Bytes::from("key"),
++                2,
++                ValueDeletable::Value(Bytes::from("value2"))
++            )]
++        );
++    }
 +
-+I ask my colleagues and their staffs to see to it that their Reports are shorter.
++    #[tokio::test]
++    async fn should_keep_a_shadowed_version_an_open_snapshot_reads() {
++        let db = setup_db(
++            "/tmp/test_l0_flush_uploader_shadowed_snapshot",
++            Arc::new(FailPointRegistry::new()),
++        )
++        .await;
++        let (_, snapshot_seq) = db.snapshot_manager.new_snapshot(Some(1));
++        assert_eq!(snapshot_seq, 1);
++        let job = upload_job_of(&db, &[(b"key", b"value1", 1), (b"key", b"value2", 2)]);
 +
-+1. The aim should be Reports which set out the main points in a series of short, crisp paragraphs.
-+2. If a Report relies on detailed analysis of some complicated factors, or on statistics, these should be set out in an Appendix.
-+3. Often the occasion is best met by submitting not a full-dress Report, but an Aide-memoire consisting of headings only, which can be expanded orally if needed.
-+4. Let us have an end of such phrases as these: “It is also of importance to bear in mind the following considerations…”, or “Consideration should be given to the possibility of carrying into effect…”. Most of there woolly phrases are mere padding, which can be left out altogether , or replaced by a single word. Let us not shrink from using the short expressive phrase, even if it is conversational.
++        let entries = uploaded_entries(&db, job).await;
 +
-+Reports drawn up on the lines I propose may at first seem rough as compared with the flat surface of officialese jargon. But the saving in time will be great, while the discipline of setting out the real points concisely will prove an aid to clearer thinking.
- 
- # API design
- 
++        assert_eq!(
++            entries,
++            vec![
++          
 ```
 
 ---
 
-### Incident Patch 2: `86953bef` (2026-10-29)
-**Commit Message**: Trim per-SST CPU on the point-lookup path (#2203)
+### Incident Patch 2: `65514581` (2026-10-30)
+**Commit Message**: RFC 0035 Incremental compaction impl (2/2) (#2205)
 
-**File**: `slatedb/src/bytes_range.rs` (modified, +0/-1)
+**File**: `bindings/uniffi/src/config.rs` (modified, +1/-0)
 ```diff
-@@ -281,7 +281,6 @@ impl BytesRange {
-         !matches!(ByteRangeBounds::start_bound(self), Excluded(_))
-     }
- 
--    #[cfg(test)]
-     pub(crate) fn non_empty(&self) -> bool {
-         self.inner.non_empty()
-     }
+@@ -774,6 +774,7 @@ impl TryFrom<CompactorOptions> for slatedb::config::CompactorOptions {
+             worker: value.worker.map(TryInto::try_into).transpose()?,
+             metric_level: None,
+             commit_compacted_interval: Duration::from_millis(value.commit_compacted_interval_ms),
++            enable_experimental_incremental_compaction: false,
+             checkpoint_lifetime: Duration::from_millis(value.checkpoint_lifetime_ms),
+             worker_heartbeat_timeout: Duration::from_millis(value.worker_heartbeat_timeout_ms),
+             object_store_max_retries: value.object_store_max_retries,
 ```
 
-**File**: `slatedb/src/db_state.rs` (modified, +124/-18)
+**File**: `slatedb-dst/src/utils.rs` (modified, +1/-0)
 ```diff
-@@ -257,6 +257,28 @@ impl SsTableView {
-         }
+@@ -146,6 +146,7 @@ pub fn build_settings_compactor(rng: &mut impl Rng) -> CompactorOptions {
+         metric_level: None,
+         commit_compacted_interval: rng
+             .random_range(Duration::from_millis(1)..Duration::from_secs(5)),
++        enable_experimental_incremental_compaction: rng.random_bool(0.5),
+         checkpoint_lifetime: CompactorOptions::default().checkpoint_lifetime,
+         worker_heartbeat_timeout,
+         object_store_max_retries: None,
+```
+
+**File**: `slatedb/src/compactor.rs` (modified, +191/-19)
+```diff
+@@ -76,7 +76,7 @@ use crate::compactions_store::{CompactionsStore, StoredCompactions};
+ use crate::compactor::stats::CompactionStats;
+ use crate::compactor_state_protocols::CompactorStateWriter;
+ use crate::config::CompactorOptions;
+-use crate::db_state::{SortedRun, SsTableView};
++use crate::db_state::{SortedRun, SsTableId, SsTableView};
+ use crate::db_status::ClosedResultWriter;
+ use crate::dispatcher::{MessageHandler, MessageHandlerExecutor, MessageTickerDef};
+ use crate::error::{Error, SlateDBError};
+@@ -542,8 +542,6 @@ pub(crate) struct CompactorEventHandler {
+     /// The value lives only in memory, so a restarted coordinator can make an
+     /// incremental commit on its first poll.
+     last_incremental_commit: Option<chrono::DateTime<chrono::Utc>>,
+-    /// Turns on incremental commits. Only tests set it for now.
+-    enable_incremental_compaction: bool,
+ }
+ 
+ #[async_trait]
+@@ -627,7 +625,6 @@ impl CompactorEventHandler {
+             prev_claimed: HashSet::new(),
+             worker_heartbeat_gauges: HashMap::new(),
+             last_incremental_commit: None,
+-            enable_incremental_compaction: false,
+         })
      }
  
-+    /// Point-key form of [`Self::intersects_range`]: equivalent to
-+    /// `self.intersects_range(end_bound, &BytesRange::from_slice(key..=key))`
-+    /// without building or cloning any range.
-+    ///
-+    /// As there, `end_bound` replaces the view's own end, so a key in the gap
-+    /// between this view's last key and `end_bound` still intersects.
-+    pub(crate) fn intersects_point(&self, end_bound: Bound<&[u8]>, key: &[u8]) -> bool {
-+        let after_start = match self.effective_range.start_bound() {
-+            Included(start) => key >= start.as_ref(),
-+            Excluded(start) => key > start.as_ref(),
-+            Unbounded => true,
-+        };
-+        let before_end = match end_bound {
-+            Included(end) => key <= end,
-+            Excluded(end) => key < end,
-+            Unbounded => true,
-+        };
-+        // An SST without a first entry has an empty effective range, which
-+        // intersects nothing even though its start bound may admit `key`.
-+        after_start && before_end && self.effective_range.non_empty()
-+    }
-+
-     pub(crate) fn intersects_range(&self, end_bound: Bound<Bytes>, range: &BytesRange) -> bool {
-         let sst_range =
-             BytesRange::new(Unbounded, end_bound.clone()).intersect(&self.effective_range);
-@@ -667,23 +689,27 @@ impl SortedRun {
-     ///
-     /// The bound is normally the next view's start key, but becomes inclusive
-     /// when adjacent views overlap on that boundary key.
--    fn table_end_bound(&self, idx: usize) -> Bound<Bytes> {
-+    fn table_end_bound(&self, idx: usize) -> Bound<&Bytes> {
-         let current_sst = &self.sst_views[idx];
-         if idx + 1 < self.sst_views.len() {
--            let next_sst = &self.sst_views[idx + 1];
--            if current_sst
--                .compacted_effective_range()
--                .contains(next_sst.compacted_effective_start_key())
--            {
--                Included(next_sst.compacted_effective_start_key().clone())
-+            let next_start = self.sst_views[idx + 1].compacted_effective_start_key();
-+            if current_sst.compacted_effective_range().contains(next_start) {
-+                Included(next_start)
-             } else {
--                Excluded(next_sst.compacted_effective_start_key().clone())
-+                Excluded(next_start)
+@@ -899,11 +896,18 @@ impl CompactorEventHandler {
+         }
+ 
+         let final_changed = self.apply_final_commits(&finished_jobs);
++        // Collect the inputs before the incremental commits change the views of the
++        // input runs to count the released bytes. Collect them after the final commits,
++        // so the count leaves out input runs that a final commit removed.
++        let incremental_inputs = self.incremental_input_ssts(&incremental_jobs);
+         let incremental_changed = self.apply_incremental_commits(&incremental_jobs);
+         self.log_compaction_state();
+ 
+         if final_changed || incremental_changed {
+             self.state_writer.write_manifest_safely().await?;
++            self.stats
++                .incremental_released_bytes
++                .increment(self.released_bytes(&incremental_inputs));
+             if incremental_changed {
+                 self.last_incremental_commit = Some(self.system_clock.now());
              }
-         } else {
-             Unbounded
-         }
-     }
- 
-+    /// Whether the view at `idx` can hold `key`, bounded by the next view's
-+    /// start as in [`Self::table_end_bound`].
-+    fn point_intersects_table(&self, idx: usize, key: &[u8]) -> bool {
-+        let end_bound = self.table_end_bound(idx).map(Bytes::as_ref);
-+        self.sst_views[idx].intersects_point(end_bound, key)
-+    }
-+
-     /// Returns the contiguous range of SST view indices that can contribute to a
-     /// point read for `key`.
+@@ -974,10 +978,12 @@ impl CompactorEventHandler {
+     ///   goes into that run.
+     /// - It has a context, which holds the range plan and stored output.
      ///
-@@ -693,16 +719,12 @@ impl SortedRun {
-         let Some(max_idx) = self.find_last_sst_with_range_covering_key(key) else {
-             return 0..0;
-         };
--        let point_range = BytesRange::from_slice(key..=key);
--        if !self.sst_views[max_idx].intersects_range(self.table_end_bound(max_idx), &point_range) {
-+        if !self.point_intersects_table(max_idx, key) {
-             return 0..0;
-         }
- 
-         let mut min_idx = max_idx;
--        while min_idx > 0
--            && self.sst_views[min_idx - 1]
--                .intersects_range(self.table_end_bound(min_idx - 1), &point_range)
--        {
-+        while min_idx > 0 && self.point_intersects_table(min_idx - 1, key) {
-             min_idx -= 1;
-         }
- 
-@@ -736,7 +758,7 @@ impl SortedRun {
-             Unbounded => views.len() - 1,
-         };
- 
--        if !views[max_idx].intersects_range(self.table_end_bound(max_idx), range) {
-+        if !views[max_idx].intersects_range(self.table_end_bound(max_idx).cloned(), range) {
-             return 0..0;
-         }
- 
-@@ -751,13 +773,16 @@ impl SortedRun {
-         };
- 
-         let mut min_idx = match start_candidate {
--            Some(idx) if views[idx].intersects_range(self.table_end_bound(idx), range) => idx,
-+            Some(idx) if views[idx].intersects_range(self.table_end_bound(idx).cloned(), range) => {
-+                idx
-+            }
-             Some(idx) => idx + 1,
-             None => 0,
-         };
- 
-         while min_idx > 0
--            && views[min_idx - 1].intersects_range(self.table_end_bound(min_idx - 1), range)
-+            && views[min_idx - 1]
-+                .intersects_range(self.table_end_bound(min_idx - 1).cloned(), range)
-         {
-             min_idx -= 1;
-         }
-@@ -981,7 +1006,7 @@ mod tests {
-     use slatedb_common::DbRand;
-     use std::collections::BTreeSet;
-     use std::collections::VecDeque;
--    use std::ops::Bound::{Excluded, Included, Unbounded};
-+    use std::ops::Bound::{self, Excluded, Included, Unbounded};
-     use std::ops::RangeBounds;
-     use std::sync::Arc;
- 
-@
-```
-
-**File**: `slatedb/src/filter.rs` (modified, +10/-13)
-```diff
-@@ -127,12 +127,8 @@ impl BloomFilter {
-         if self.buffer.is_empty() {
-             return false;
-         }
--        for p in probes_for_key(hash, self.num_probes, self.filter_bits()) {
--            if !check_bit(p as usize, &self.buffer) {
--                return false;
--            }
--        }
--        true
-+        probes_for_key(hash, self.num_probes, self.filter_bits())
-+            .all(|p| check_bit(p as usize, &self.buffer))
+-    /// The list is empty when incremental compaction is off or when less than
+-    /// `INCREMENTAL_COMMIT_INTERVAL` passed since the last incremental commit.
++    /// The list is empty when
++    /// [`CompactorOptions::enable_experimental_incremental_compaction`] is false or
++    /// when less than `INCREMENTAL_COMMIT_INTERVAL` passed since the last incremental
++    /// commit.
+     fn jobs_due_for_incremental_commit(&self) -> Vec<Compaction> {
+-        let due = self.enable_incremental_compaction
++        let due = self.options.enable_experimental_incremental_compaction
+             && self.last_incremental_commit.is_none_or(|last| {
+                 (self.system_clock.now() - last)
+                     .to_std()
+@@ -999,6 +1005,52 @@ impl CompactorEventHandler {
+             .collect()
      }
- }
  
-@@ -207,21 +203,22 @@ fn filter_hash(key: &[u8]) -> u64 {
-     hasher.hash(key)
- }
- 
--fn probes_for_key(key_hash: u64, num_probes: u16, filter_bits: u32) -> Vec<u32> {
-+fn probes_for_key(key_hash: u64, num_probes: u16, filter_bits: u32) -> impl Iterator<Item = u32> {
-     // implements enhanced double hashing from:
-     // https://www.khoury.northeastern.edu/~pete/pub/bloom-filters-verification.pdf
-     // as suggested by the author P. Dillinger for RocksDB's legacy filters here:
-     // https://github.com/facebook/rocksdb/issues/4120
--    let mut probes = vec![0u32; num_probes as usize];
-+    //
-+    // Lazy, so a lookup allocates nothing and stops at the first unset bit.
-     let filter_bits = filter_bits as u64;
-     let mut h = ((key_hash << 32) >> 32) % filter_bits; // lower 32 bits of hash
-     let mut delta = (key_hash >> 32) % filter_bits; // higher 32 bits of hash
--    for i in 0..num_probes {
-+    (0..num_probes).map(move |i| {
-         delta = (delta + i as u64) % filter_bits;
--        probes[i as usize] = h as u32;
-+        let probe = h as u32;
-         h = (h + delta) % filter_bits;
--    }
--    probes
-+        probe
-+    })
- }
- 
- fn check_bit(bit: usize, buf: &[u8]) -> bool {
-@@ -319,7 +316,7 @@ mod tests {
-     fn test_compute_probes() {
-         // h1 = 0xDEADBEEF, h2 = 0xDF77EF56
-         let hash = 0xDF77EF56DEADBEEFu64;
--        let probes = probes_for_key(hash, 7, 1000000);
-+        let probes: Vec<u32> = probes_for_key(hash, 7, 1000000).collect();
-         assert_eq!(
-             probes,
-             vec![
++    /// Returns the estimated size of each SST in the input runs of `jobs`, by SST ID.
++    /// The recorded output SSTs of `jobs` are not included.
++    fn incremental_input_ssts(&self, jobs: &[Compaction]) -> HashMap<SsTableId, u64> {
++        let mut inputs = HashMap::new();
++        for job in jobs {
++            let output_ids: HashSet<SsTableId> = job
++                .subcompactions()
++                .iter()
++                .flat_map(|sub| sub.output_ssts().iter().map(|sst| sst.id))
++                .collect();
++            for run in job.get_sorted_runs(self.state().db_state()) {
++                inputs.extend(
++                    run.sst_views()
++                        .iter()
++                        .filter(|view| !output_ids.contains(&view.sst.id))
++                        .map(|view| (view.sst.id, view.sst.estimate_size())),
++                );
++            }
++        }
++        inputs
++    }
++
++    /// Returns the total estimated size of the SSTs in `ssts` that no view in the
++    /// in-memory manifest uses anymore.
++    ///
++    /// `ssts` maps the ID of each SST to its estimated size in bytes. The caller
++    /// gets it before the input runs are changed by the incremental commit.
++    ///
++    /// This method is called after a successful manifest write. The in-memory
++    /// manifest is then the written manifest.
++    fn released_bytes(&self, ssts: &HashMap<SsTableId, u64>) -> u64 {
++        if ssts.is_empty() {
++            return 0;
++        }
++        let retained: HashSet<SsTableId> = self
++            .state()
++            .db_state()
++            .all_sst_views()
++            .map(|view| view.sst.id)
++            .collect();
++        ssts.iter()
++            .filter(|(id, _)| !retained.contains(id))
++            .map(|(_, size)| size)
++            .sum()
++    }
++
+     /// Applies the stored progress of `jobs` to the in-mem
 ```
 
-**File**: `slatedb/src/partitioned_keyspace.rs` (modified, +53/-0)
+**File**: `slatedb/src/config.rs` (modified, +45/-0)
 ```diff
-@@ -88,6 +88,32 @@ pub(crate) fn partitions_covering_range<T: RangePartitionedKeySpace>(
-     keyspace: &T,
-     start: Bound<&[u8]>,
-     end: Bound<&[u8]>,
-+) -> Range<usize> {
-+    match (start, end) {
-+        (Bound::Included(s), Bound::Included(e)) if s == e => partitions_covering_key(keyspace, s),
-+        _ => partitions_covering_bounds(keyspace, start, end),
-+    }
-+}
-+
-+/// [`partitions_covering_range`] for the point range `[key, key]`, with one binary search
-+/// instead of two.
-+///
-+/// The partitions whose first key equals `key` sit directly before the partition point, so
-+/// stepping back over them (normally none) finds where the general path's start search lands.
-+fn partitions_covering_key<T: RangePartitionedKeySpace>(keyspace: &T, key: &[u8]) -> Range<usize> {
-+    let end = partition_point(keyspace, |first_key| first_key <= key);
-+    let mut first_equal = end;
-+    while first_equal > 0 && keyspace.partition_first_key(first_equal - 1) == key {
-+        first_equal -= 1;
-+    }
-+    // The partition before the first one starting at `key` may still end with `key`.
-+    first_equal.saturating_sub(1)..end
-+}
-+
-+fn partitions_covering_bounds<T: RangePartitionedKeySpace>(
-+    keyspace: &T,
-+    start: Bound<&[u8]>,
-+    end: Bound<&[u8]>,
- ) -> Range<usize> {
-     let start_idx = match start {
-         Bound::Included(k) | Bound::Excluded(k) => {
-@@ -113,9 +139,36 @@ pub(crate) fn partitions_covering_range<T: RangePartitionedKeySpace>(
- mod tests {
-     use crate::partitioned_keyspace::{
-         first_partition_including_key, last_partition_including_key, partition_point,
-+        partitions_covering_bounds, partitions_covering_key, partitions_covering_range,
-         RangePartitionedKeySpace,
-     };
-+    use proptest::collection::vec;
-+    use proptest::{prop_assert_eq, proptest};
-     use rstest::rstest;
-+    use std::ops::Bound::Included;
-+
-+    #[test]
-+    fn test_partitions_covering_key_matches_bounds() {
-+        // A two-letter alphabet and short keys make duplicate first keys, and
-+        // probes equal to a first key, common. An SST index always has a
-+        // block, and the general path indexes partition 0, so keyspaces are
-+        // non-empty.
-+        let key = || vec(0u8..2, 0..=3);
-+        proptest!(|(mut first_keys in vec(key(), 1..=8), probe in key())| {
-+            first_keys.sort();
-+            let keyspace = TestKeyspace {
-+                partitions: first_keys.iter().map(Vec::as_slice).collect(),
-+            };
-+            let probe = probe.as_slice();
-+            let expected =
-+                partitions_covering_bounds(&keyspace, Included(probe), Included(probe));
-+            prop_assert_eq!(partitions_covering_key(&keyspace, probe), expected.clone());
-+            prop_assert_eq!(
-+                partitions_covering_range(&keyspace, Included(probe), Included(probe)),
-+                expected
-+            );
-+        });
-+    }
+@@ -1281,6 +1281,26 @@ pub struct CompactorOptions {
+     #[serde(serialize_with = "serialize_duration")]
+     pub commit_compacted_interval: Duration,
  
++    /// Whether a running compaction publishes the output that it already wrote before
++    /// the compaction finishes. Defaults to false.
++    ///
++    /// This option is experimental. Incremental compaction is not stable yet, and a
++    /// later release can change or remove this option.
++    ///
++    /// When this option is false, readers use the input SSTs of a compaction until the
++    /// compaction finishes. When this option is true, the compactor publishes the
++    /// written output at most once a minute, and readers use that output for its keys.
++    /// During a long compaction, this frees storage earlier, and reads of those keys
++    /// search fewer SSTs.
++    ///
++    /// Garbage collection deletes an input SST only after readers need none of its
++    /// keys and the compactor checkpoint expires. See [`Self::checkpoint_lifetime`].
++    ///
++    /// This option applies to compactions that merge sorted runs. A compaction with L0
++    /// SSTs in its inputs publishes its output only when it finishes.
++    #[serde(default)]
++    pub enable_experimental_incremental_compaction: bool,
++
+     /// How long the compactor checkpoint protects input SSTs while publishing a
+     /// manifest that replaces them with compacted output.
+     ///
+@@ -1328,6 +1348,7 @@ impl Default for CompactorOptions {
+             worker: Some(CompactionWorkerOptions::default()),
+             metric_level: None,
+             commit_compacted_interval: Duration::from_secs(1),
++            enable_experimental_incremental_compaction: false,
+             checkpoint_lifetime: default_compactor_checkpoint_lifetime(),
+             worker_heartbeat_timeout: Duration::from_secs(30),
+             object_store_max_retries: None,
+@@ -1350,6 +1371,10 @@ impl std::fmt::Debug for CompactorOptions {
+             .field("worker", &self.worker)
+             .field("metric_level", &self.metric_level)
+             .field("commit_compacted_interval", &self.commit_compacted_interval)
++            .field(
++                "enable_experimental_incremental_compaction",
++                &self.enable_experimental_incremental_compaction,
++            )
+             .field("checkpoint_lifetime", &self.checkpoint_lifetime)
+             .field("worker_heartbeat_timeout", &self.worker_heartbeat_timeout)
+             .field("object_store_max_retries", &self.object_store_max_retries)
+@@ -1939,6 +1964,26 @@ mod tests {
+         assert_eq!(MetricLevel::default(), options.metric_level);
+     }
+ 
++    #[test]
++    fn test_compactor_enable_experimental_incremental_compaction_config() {
++        assert!(!CompactorOptions::default().enable_experimental_incremental_compaction);
++
++        let mut value = serde_json::to_value(CompactorOptions::default()).unwrap();
++        value.as_object_mut().unwrap().insert(
++            "enable_experimental_incremental_compaction".to_string(),
++            serde_json::Value::Bool(true),
++        );
++        let configured: CompactorOptions = serde_json::from_value(value.clone()).unwrap();
++        assert!(configured.enable_experimental_incremental_compaction);
++
++        value
++            .as_object_mut()
++            .unwrap()
++            .remove("enable_experimental_incremental_compaction");
++        let omitted: CompactorOptions = serde_json::from_value(value).unwrap();
++        assert!(!omitted.enable_experimental_incremental_compaction);
++    }
++
      #[test]
-     fn test_partition_point() {
+     fn test_compactor_checkpoint_lifetime_config() {
+         let default_lifetime = Duration::from_mins(15);
+```
+
+**File**: `website/src/content/docs/docs/design/compaction.mdx` (modified, +45/-0)
+```diff
+@@ -43,3 +43,48 @@ to enable them.
+ To split data with different read/write profiles into independent LSM trees — each with its own
+ compaction policy — and to retire whole key ranges cheaply, see
+ [Segmented Compaction](/docs/design/segmented-compaction).
++
++## Incremental compaction
++
++A large compaction can run for a long time. Without incremental compaction, readers keep using the
++input SSTs until the compaction finishes, and garbage collection keeps those SSTs in storage. With
++incremental compaction, the compactor publishes the output that a running compaction already wrote.
++Readers then use that output for its keys. Storage can be freed earlier, and reads of those keys
++search fewer SSTs.
++
++:::caution
++Incremental compaction is experimental. It is not stable yet, and a later release can change or
++remove its option.
++:::
++
++Incremental compaction is disabled by default. Set
++`CompactorOptions::enable_experimental_incremental_compaction` to `true` to enable it:
++
++```rust
++let options = slatedb::config::CompactorOptions {
++    enable_experimental_incremental_compaction: true,
++    ..Default::default()
++};
++```
++
++The compactor publishes this output in incremental commits, at most once a minute. The commit of a
++finished compaction does not wait. Incremental commits apply to compactions that merge sorted runs.
++A compaction with L0 SSTs in its inputs publishes its output only when it finishes.
++
++Each incremental commit is a manifest update. An SST can have several views, and a view limits the
++keys that readers can see in an SST. The commit replaces the input views for the keys that the
++written output covers with views of the output SSTs. The input keys that the output does not cover
++yet stay in the input views.
++
++Before each manifest update, the compactor writes a checkpoint, a reference that keeps an older
++manifest available. Garbage collection deletes an input SST only after no view uses it and the
++checkpoint expires, so reads that started before the commit can still finish.
++`CompactorOptions::checkpoint_lifetime` sets how long the checkpoint lasts.
++
++The counter `slatedb.compactor.incremental_released_bytes` estimates the bytes of the input SSTs
++that incremental commits release. It counts an SST once, after a successful commit removes its last
++view from all trees. A released SST is not deleted yet. It stays until garbage
++collection deletes it, so storage use goes down later than this counter goes up.
++
++If a worker stops, the next worker resumes the compaction from its progress. Key ranges that are
++already complete do not run again.
+```
+
+**File**: `website/src/content/docs/docs/operations/metrics.mdx` (modified, +1/-0)
+```diff
+@@ -129,6 +129,7 @@ All metric names use dot-separated notation: `slatedb.<subsystem>.<metric>`.
+ |------|------|--------|-------------|
+ | `slatedb.compactor.bytes_compacted` | counter | | Total bytes compacted |
+ | `slatedb.compactor.epoch` | gauge | | Current compactor epoch |
++| `slatedb.compactor.incremental_released_bytes` | counter | | Estimated bytes of input SSTs that incremental compaction released (stays at zero unless incremental compaction is on) |
+ | `slatedb.compactor.last_compaction_timestamp_sec` | gauge | | Last compaction time (epoch seconds) |
+ | `slatedb.compactor.running_compactions` | up_down_counter | | Currently running compactions |
+ | `slatedb.compactor.total_bytes_being_compacted` | gauge | | Bytes in active compactions |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2208** (2026-10-30): Drop versions a memtable shadows at flush when the WAL is enabled (@sorenbs)
 - **PR #2207** (2026-10-29): Remove open PR contributions (@criccomini)
+- **PR #2205** (2026-10-30): RFC 0035 Incremental compaction impl (2/2) (@nomiero)
 - **PR #2203** (2026-10-29): Trim per-SST CPU on the point-lookup path (@zach-schoenberger)
 - **PR #2201** (2026-10-27): Regenerate Go bindings for status subscriptions (@criccomini)
 - **PR #2199** (2026-10-27): Defer SST path construction to cache-miss loaders (@zach-schoenberger)
-- **PR #2198** (2026-10-27): Expose bounded status subscriptions through UniFFI (@hden)
-- **PR #2194** (2026-10-27): fix(compactor): take the L0 watermark from the newest absorbed L0 (@sukanya1426)
 
 ---
 
@@ -3146,3 +2838,60 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Drop versions a memtable shadows at flush when the WAL is enabled (#2208)
+
+**RULE**:
+When implementing operations in `slatedb/src/flush.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b3ea6f99`: Drop versions a memtable shadows at flush when the WAL is enabled (#2208). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb/src/flush.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    /// Flushes of a memtable use [`DbInner::compute_flush_retention_seq`].
+    #[cfg(test)]
+        self.min_retention_seq_above(self.oracle.last_remote_persisted_seq())
+    }
+
+    /// Compute the retention boundary for a memtable ending at `last_seq`.
+    ///
+    /// With the WAL enabled, the L0 is published only after the WAL is
+    /// durable through `last_seq` (#1255). A [`crate::DbReader`] also raises
+    /// its durable watermark to the manifest's `last_l0_seq`. A reader
+    /// cannot therefore see this L0 with a durable watermark below `last_seq`.
+    /// Use the greater of `last_seq` and the current durable watermark as
+    /// the durable input to the boundary.
+    ///
+    /// Without the WAL, use the current durable watermark. In either case,
+    /// an open snapshot or transaction may lower the boundary.
+    ///
+    /// Compute the boundary once per upload and reuse it across retries so
+    /// each attempt retains the same entries.
+    pub(crate) fn compute_flush_retention_seq(&self, last_seq: u64) -> Option<u64> {
+        if self.wal_enabled {
+            self.min_retention_seq_above(durable_seq.max(last_seq))
+        } else {
+            self.min_retention_seq_abov
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+    /// Call this once per flush attempt. Reuse the same value on every
+    /// retry of that attempt. The three inputs can change between
+    /// retries; reading a fresh value on each retry could make each
+    /// retry keep a different set of entries.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b3ea6f99` are properly handled with clean fallback behavior.

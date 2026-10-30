@@ -6365,3 +6365,5 @@ Every entry in this ledger must capture:
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `73e3aeca` | Multi-dimensional audit evidence | 2026-10-30T23:15:07.654Z |
 | `learn-github-ducaale-xh` | `https://github.com/ducaale/xh` | `dd424850` | Multi-dimensional audit evidence | 2026-10-30T23:21:53.899Z |
 | `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `f794c378` | Multi-dimensional audit evidence | 2026-10-30T23:21:56.655Z |
+| `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `43a13889` | Multi-dimensional audit evidence | 2026-10-30T23:28:40.906Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `b3ea6f99` | Multi-dimensional audit evidence | 2026-10-30T23:28:46.975Z |

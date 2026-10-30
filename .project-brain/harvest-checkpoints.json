@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T23:21:56.665Z",
+  "last_updated": "2026-10-30T23:28:46.983Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6981,14 +6981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-slatedb-slatedb",
-      "content_hash": "bc0d324cf66cfaed05c7c7ea2361896e7e69497ab23d9e83cb1b4658211c8a74",
-      "verified_at": "2026-10-30T00:25:52.980Z",
+      "content_hash": "3f1656d8940776a2c6587f13effa8976594ebb822b5b09d58e3c12f631713cd9",
+      "verified_at": "2026-10-30T23:28:46.983Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T00:25:52.980Z"
+      "last_updated": "2026-10-30T23:28:46.983Z"
     },
     "react-component/slider": {
       "repository": "react-component/slider",
@@ -15456,14 +15456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-storybookjs-storybook",
-      "content_hash": "48b2cd700e9b8b66dff819288edb86355433788f0423e6a2f29bfe93be6e9df7",
-      "verified_at": "2026-10-28T03:04:34.034Z",
+      "content_hash": "fdf53d19988400a5e1eb7e432b82ad7d58e2383005f0022547970f610bc1811a",
+      "verified_at": "2026-10-30T23:28:40.914Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T03:04:34.034Z"
+      "last_updated": "2026-10-30T23:28:40.914Z"
     },
     "enaqx/awesome-react": {
       "repository": "enaqx/awesome-react",

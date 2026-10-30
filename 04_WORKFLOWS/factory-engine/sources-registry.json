@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T23:22:01.527Z",
-    "lastVerified": "2026-10-30T23:22:01.527Z",
+    "lastChecked": "2026-10-30T23:28:49.511Z",
+    "lastVerified": "2026-10-30T23:28:49.511Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -296,14 +296,14 @@
     "officialUrl": "https://github.com/storybookjs/storybook",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T03:04:33.389Z",
-    "lastVerified": "2026-10-28T03:04:33.389Z",
+    "lastChecked": "2026-10-30T23:28:38.205Z",
+    "lastVerified": "2026-10-30T23:28:38.205Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-storybookjs-storybook",
-    "contentHash": "48b2cd700e9b8b66dff819288edb86355433788f0423e6a2f29bfe93be6e9df7",
+    "contentHash": "fdf53d19988400a5e1eb7e432b82ad7d58e2383005f0022547970f610bc1811a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -423,8 +423,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T22:56:39.774Z",
-    "lastVerified": "2026-10-30T22:56:39.774Z",
+    "lastChecked": "2026-10-30T23:28:43.755Z",
+    "lastVerified": "2026-10-30T23:28:43.755Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1048,9 +1048,9 @@
   "burntsushi-ripgrep": {
     "name": "ripgrep",
     "officialUrl": "https://github.com/BurntSushi/ripgrep",
-    "lastChecked": "2026-10-29T01:17:43.627Z",
+    "lastChecked": "2026-10-30T23:28:28.847Z",
     "revisionIdentifier": "91f5d22e",
-    "lastVerified": "2026-10-29T01:17:43.627Z"
+    "lastVerified": "2026-10-30T23:28:28.847Z"
   },
   "hf-meta-llama-llama-3.1-8b-instruct": {
     "name": "meta-llama/Llama-3.1-8B-Instruct",
@@ -1561,9 +1561,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-10-30T19:28:06.887Z",
+    "lastChecked": "2026-10-30T23:28:38.781Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-10-30T19:28:06.887Z"
+    "lastVerified": "2026-10-30T23:28:38.781Z"
   },
   "seaql-sea-orm": {
     "name": "SeaQL/sea-orm",
@@ -4703,13 +4703,13 @@
     "officialUrl": "https://github.com/slatedb/slatedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T00:25:51.843Z",
-    "lastVerified": "2026-10-30T00:25:51.843Z",
+    "lastChecked": "2026-10-30T23:28:45.310Z",
+    "lastVerified": "2026-10-30T23:28:45.310Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "bc0d324cf66cfaed05c7c7ea2361896e7e69497ab23d9e83cb1b4658211c8a74",
-    "promotedRulesCount": 0,
+    "contentHash": "3f1656d8940776a2c6587f13effa8976594ebb822b5b09d58e3c12f631713cd9",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -5503,9 +5503,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-10-30T03:46:49.239Z",
+    "lastChecked": "2026-10-30T23:28:36.288Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-10-30T03:46:49.239Z"
+    "lastVerified": "2026-10-30T23:28:36.288Z"
   },
   "trinodb-trino": {
     "name": "trinodb/trino",
@@ -11491,5 +11491,12 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "unjs-h3": {
+    "name": "h3",
+    "officialUrl": "https://github.com/unjs/h3",
+    "lastChecked": "2026-10-30T23:28:31.322Z",
+    "revisionIdentifier": "f0e17808",
+    "lastVerified": "2026-10-30T23:28:31.322Z"
   }
 }

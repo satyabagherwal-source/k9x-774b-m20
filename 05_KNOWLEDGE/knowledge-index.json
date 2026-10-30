@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T23:21:56.576Z",
+  "last_updated": "2026-10-30T23:28:46.885Z",
   "total_verified_learnings": 1178,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -50593,8 +50593,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "57677801",
-      "content_hash": "bc0d324cf66cfaed05c7c7ea2361896e7e69497ab23d9e83cb1b4658211c8a74",
+      "source_version": "b3ea6f99",
+      "content_hash": "3f1656d8940776a2c6587f13effa8976594ebb822b5b09d58e3c12f631713cd9",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -50617,6 +50617,11 @@
           "number": 5039,
           "title": "compactor): take the L0 watermark from the newest absorbed L0 (#2194)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5938,
+          "title": "Drop versions a memtable shadows at flush when the WAL is enabled (#2208)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50624,7 +50629,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T00:25:52.867Z",
+      "verified_at": "2026-10-30T23:28:46.864Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51719,8 +51724,8 @@
       "slug": "storybookjs-storybook",
       "platform": "github",
       "source_url": "https://github.com/storybookjs/storybook",
-      "source_version": "37ded54a",
-      "content_hash": "48b2cd700e9b8b66dff819288edb86355433788f0423e6a2f29bfe93be6e9df7",
+      "source_version": "43a13889",
+      "content_hash": "fdf53d19988400a5e1eb7e432b82ad7d58e2383005f0022547970f610bc1811a",
       "dossier_path": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "promoted_rules": [
@@ -51743,6 +51748,11 @@
           "number": 5147,
           "title": "sandbox): pin typescript@^6 in the react-vite bench templates",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5937,
+          "title": "builder-webpack5): resolve declared mocks through webpack's resolver",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51750,7 +51760,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T03:04:33.920Z",
+      "verified_at": "2026-10-30T23:28:40.819Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156888,6 +156898,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T23:21:56.557Z"
+    },
+    "rule-5937": {
+      "learning_id": "rule-5937",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5937,
+      "title": "builder-webpack5): resolve declared mocks through webpack's resolver",
+      "source_url": "https://github.com/storybookjs/storybook",
+      "source_version": "43a13889",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:28:40.819Z"
+    },
+    "rule-5938": {
+      "learning_id": "rule-5938",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5938,
+      "title": "Drop versions a memtable shadows at flush when the WAL is enabled (#2208)",
+      "source_url": "https://github.com/slatedb/slatedb",
+      "source_version": "b3ea6f99",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:28:46.864Z"
     }
   },
   "aliases": {
