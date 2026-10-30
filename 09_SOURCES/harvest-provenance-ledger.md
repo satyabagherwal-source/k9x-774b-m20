@@ -6119,3 +6119,4 @@ Every entry in this ledger must capture:
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `884f38b4` | Multi-dimensional audit evidence | 2026-10-30T04:48:15.580Z |
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `971eca90` | Multi-dimensional audit evidence | 2026-10-30T04:54:32.615Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `eb21c0d1` | Multi-dimensional audit evidence | 2026-10-30T04:54:38.184Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `6d2a138b` | Multi-dimensional audit evidence | 2026-10-30T05:01:23.899Z |

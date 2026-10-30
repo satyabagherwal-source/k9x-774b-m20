@@ -6110,3 +6110,4 @@
 | `CYCLE-20261030-RQOP` | `2026-10-30T04:48:15.577Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5602` | Yes (`ce12403b...`) |
 | `CYCLE-20261030-ZTLW` | `2026-10-30T04:54:32.612Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5603` | Yes (`d7fe7a18...`) |
 | `CYCLE-20261030-ZXWL` | `2026-10-30T04:54:38.181Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5604` | Yes (`333a0dbb...`) |
+| `CYCLE-20261030-8MYF` | `2026-10-30T05:01:23.895Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5605` | Yes (`d854cbc7...`) |

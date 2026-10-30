@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T04:54:38.110Z",
+  "last_updated": "2026-10-30T05:01:23.820Z",
   "total_verified_learnings": 1171,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -37749,8 +37749,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "e14fe198",
-      "content_hash": "a0193d8ee2e08cdb6d941002171f97c270897fa067f39cac56aeba954da0c84e",
+      "source_version": "6d2a138b",
+      "content_hash": "d854cbc78d9d0b81395c36f1fe0ed06984b95aee9523a403e15eb87891b7f013",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -37853,6 +37853,11 @@
           "number": 5533,
           "title": "agent-sre): reject chaos blackout times that cannot be read (#4473)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5605,
+          "title": "agent-rag-governance): audit a denied collection with the query's hash (#4475)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37860,7 +37865,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T17:23:41.604Z",
+      "verified_at": "2026-10-30T05:01:23.801Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150459,6 +150464,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T04:54:38.098Z"
+    },
+    "rule-5605": {
+      "learning_id": "rule-5605",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5605,
+      "title": "agent-rag-governance): audit a denied collection with the query's hash (#4475)",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "6d2a138b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:01:23.801Z"
     }
   },
   "aliases": {

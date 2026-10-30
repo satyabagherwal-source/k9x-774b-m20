@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "e14fe198",
+    "sourceVersion": "6d2a138b",
     "license": "MIT",
-    "contentHash": "a0193d8ee2e08cdb6d941002171f97c270897fa067f39cac56aeba954da0c84e",
-    "lastHarvestedAt": "2026-10-29T17:23:41.699Z",
+    "contentHash": "d854cbc78d9d0b81395c36f1fe0ed06984b95aee9523a403e15eb87891b7f013",
+    "lastHarvestedAt": "2026-10-30T05:01:23.899Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {

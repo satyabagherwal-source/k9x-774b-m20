@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-9RXC",
-    "timestamp": "2026-10-28T00:47:00.000Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "3cd36c16d7803d1a89ca01c33d4e2833366e4b6767b4bfec1f4ef79486a09aea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-IAF1",
     "timestamp": "2026-10-28T00:53:37.213Z",
     "repository": "kgateway-dev/kgateway",
@@ -7490,6 +7475,21 @@
     "repository": "trinodb/trino",
     "learningId": "learn-github-trinodb-trino",
     "contentHash": "333a0dbb335eedc7b759ea3831bc964c8008d258ef268fa2d3601036680a8fd7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-8MYF",
+    "timestamp": "2026-10-30T05:01:23.895Z",
+    "repository": "microsoft/agent-governance-toolkit",
+    "learningId": "learn-github-microsoft-agent-governance-toolkit",
+    "contentHash": "d854cbc78d9d0b81395c36f1fe0ed06984b95aee9523a403e15eb87891b7f013",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

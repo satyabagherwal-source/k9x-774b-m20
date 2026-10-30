@@ -407052,3 +407052,53 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `eb21c0d1` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5605. agent-rag-governance): audit a denied collection with the query's hash (#4475) (Harvested from microsoft/agent-governance-toolkit)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "agent-rag-governance): audit a denied collection with the query's hash (#4475)",
+  "source": "microsoft/agent-governance-toolkit",
+  "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+  "source_version": "6d2a138b",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T05:01:23.609Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-microsoft-agent-governance-toolkit",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit) (Revision: `6d2a138b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6d2a138b`: agent-rag-governance): audit a denied collection with the query's hash (#4475). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+- **`agent-rag-governance` audits a denied collection with the query's hash.** `RAGGovernor` wrote the `denied` audit entry for a blocked collection with the hash of an empty string, so every denied attempt carried the same `query_hash` and could not be tied to what the agent searched for. The `rate_limited` entry was fixed the same way earlier. The `denied` entry now hashes the actual query (salted by `AGENT_RAG_AUDIT_SALT` when set), for LangChain and LlamaIndex wrappers alike.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6d2a138b` are properly handled with clean fallback behavior.

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T04:54:38.187Z",
-  "total_cycles_completed": 6087,
-  "total_learnings_persisted": 6087,
-  "total_rules_promoted": 5574,
+  "last_updated": "2026-10-30T05:01:23.904Z",
+  "total_cycles_completed": 6088,
+  "total_learnings_persisted": 6088,
+  "total_rules_promoted": 5575,
   "history": [
-    {
-      "timestamp": "2026-10-28T19:54:30.028Z",
-      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T20:01:26.253Z",
       "repository": "LiquidAI/d1-3B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-30T04:54:38.187Z",
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T05:01:23.904Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

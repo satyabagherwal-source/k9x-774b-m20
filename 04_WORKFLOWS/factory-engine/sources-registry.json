@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T04:54:40.723Z",
-    "lastVerified": "2026-10-30T04:54:40.723Z",
+    "lastChecked": "2026-10-30T05:01:26.452Z",
+    "lastVerified": "2026-10-30T05:01:26.452Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -311,14 +311,14 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-29T17:23:40.775Z",
-    "lastVerified": "2026-10-29T17:23:40.775Z",
+    "lastChecked": "2026-10-30T05:01:21.967Z",
+    "lastVerified": "2026-10-30T05:01:21.967Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "a0193d8ee2e08cdb6d941002171f97c270897fa067f39cac56aeba954da0c84e",
+    "contentHash": "d854cbc78d9d0b81395c36f1fe0ed06984b95aee9523a403e15eb87891b7f013",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -404,8 +404,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T04:34:53.799Z",
-    "lastVerified": "2026-10-30T04:34:53.799Z",
+    "lastChecked": "2026-10-30T05:01:24.045Z",
+    "lastVerified": "2026-10-30T05:01:24.045Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -3515,9 +3515,9 @@
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
     "officialUrl": "https://github.com/mufeedvh/code2prompt",
-    "lastChecked": "2026-10-28T12:46:26.630Z",
+    "lastChecked": "2026-10-30T05:01:09.032Z",
     "revisionIdentifier": "66585136",
-    "lastVerified": "2026-10-28T12:46:26.630Z"
+    "lastVerified": "2026-10-30T05:01:09.032Z"
   },
   "hf-amazon-chronos-2": {
     "name": "amazon/chronos-2",
@@ -5353,9 +5353,9 @@
   "apache-zookeeper": {
     "name": "zookeeper",
     "officialUrl": "https://github.com/apache/zookeeper",
-    "lastChecked": "2026-10-28T16:19:27.720Z",
+    "lastChecked": "2026-10-30T05:01:21.531Z",
     "revisionIdentifier": "858c8d77",
-    "lastVerified": "2026-10-28T16:19:27.720Z"
+    "lastVerified": "2026-10-30T05:01:21.531Z"
   },
   "kubearmor-kubearmor": {
     "name": "kubearmor/KubeArmor",
@@ -5741,9 +5741,9 @@
   "cycloidio-terracognita": {
     "name": "terracognita",
     "officialUrl": "https://github.com/cycloidio/terracognita",
-    "lastChecked": "2026-10-28T17:12:45.361Z",
+    "lastChecked": "2026-10-30T05:01:16.538Z",
     "revisionIdentifier": "802bd4b5",
-    "lastVerified": "2026-10-28T17:12:45.361Z"
+    "lastVerified": "2026-10-30T05:01:16.538Z"
   },
   "netflix-dynomite": {
     "name": "dynomite",
@@ -9065,5 +9065,19 @@
     "lastChecked": "2026-10-30T04:54:24.255Z",
     "revisionIdentifier": "7844c733",
     "lastVerified": "2026-10-30T04:54:24.256Z"
+  },
+  "samvelik-sitemap-checker": {
+    "name": "sitemap-checker",
+    "officialUrl": "https://github.com/samvelik/sitemap-checker",
+    "lastChecked": "2026-10-30T05:01:11.451Z",
+    "revisionIdentifier": "unknown",
+    "lastVerified": "2026-10-30T05:01:11.451Z"
+  },
+  "hi-manshu-charty": {
+    "name": "charty",
+    "officialUrl": "https://github.com/hi-manshu/charty",
+    "lastChecked": "2026-10-30T05:01:14.072Z",
+    "revisionIdentifier": "c7ba0b05",
+    "lastVerified": "2026-10-30T05:01:14.072Z"
   }
 }
