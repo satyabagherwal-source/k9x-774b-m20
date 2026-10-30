@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T18:07:13.355Z",
+  "last_updated": "2026-10-30T18:18:37.269Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -14781,14 +14781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wzh4869-appports",
-      "content_hash": "5f35440c94b129f87724fcdfa2cc6df7fcb73c756b532f82fca78e05422973ee",
-      "verified_at": "2026-10-26T18:25:35.188Z",
+      "content_hash": "555d49a09bbcd46f1753884c2684dc90b125ff8e5c626eb3eb1f5c65b09f9d8c",
+      "verified_at": "2026-10-30T18:13:39.117Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T18:25:35.188Z"
+      "last_updated": "2026-10-30T18:13:39.117Z"
     },
     "AndyTheFactory/newspaper4k": {
       "repository": "AndyTheFactory/newspaper4k",
@@ -14931,14 +14931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-scrapinghub-dateparser",
-      "content_hash": "42b578ece0d964e82f337ed0a18e7dba4f6cd26c6a8a144fbc28a0fad5285874",
-      "verified_at": "2026-10-27T15:12:07.041Z",
+      "content_hash": "a0a66bb490598aca4cbc7a04cfa8448c5a7296509c38174b5834a0dc24e22995",
+      "verified_at": "2026-10-30T18:18:37.268Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:12:07.041Z"
+      "last_updated": "2026-10-30T18:18:37.268Z"
     },
     "google/closure-compiler": {
       "repository": "google/closure-compiler",

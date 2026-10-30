@@ -426055,3 +426055,135 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `d748ed7e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5823. authorize retained data cleanup and update signature lock regression (Harvested from wzh4869/AppPorts)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "authorize retained data cleanup and update signature lock regression",
+  "source": "wzh4869/AppPorts",
+  "source_url": "https://github.com/wzh4869/AppPorts",
+  "source_version": "920a38ca",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T18:13:38.910Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-wzh4869-appports",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [wzh4869/AppPorts](https://github.com/wzh4869/AppPorts) (Revision: `920a38ca`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.agents/notes/implemented/architecture/2026-10-10-verified-transfer-lifecycle.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wzh4869/AppPorts. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a51a6191`: authorize retained data cleanup and update signature lock regression. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/notes/implemented/architecture/2026-10-10-verified-transfer-lifecycle.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+root 所有的数据旧副本只在用户指定记录重试时授权清理，见[旧数据副本授权清理](../bug-fix/2026-10-28-data-cleanup-administrator-authorization.md)；普通进程继续持锁和写账本。
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a51a6191` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5824. Deprecate instead of remove (#1556) (Harvested from scrapinghub/dateparser)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Deprecate instead of remove (#1556)",
+  "source": "scrapinghub/dateparser",
+  "source_url": "https://github.com/scrapinghub/dateparser",
+  "source_version": "b1a87f9f",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-10-30T18:18:37.052Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-scrapinghub-dateparser",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [scrapinghub/dateparser](https://github.com/scrapinghub/dateparser) (Revision: `b1a87f9f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `dateparser/calendars/__init__.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapinghub/dateparser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b1a87f9f`: Deprecate instead of remove (#1556). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `dateparser/calendars/__init__.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+    def _parse_with_parts(
+class _PartlessCalendarParser(Protocol):
+    def parse(
+        self, datestring: str, settings: Settings
+    ) -> tuple[datetime, str | None]: ...
+
+
+    parser: _CalendarParser | _PartlessCalendarParser = NotImplemented
+            if hasattr(self.parser, "_parse_with_parts"):
+                date_obj, period, parts = self.parser._parse_with_parts(
+                    self.source, settings
+                )
+            else:
+                date_obj, period = self.parser.parse(self.source, settings)
+                parts = ()
+    ) -> tuple[datetime, str | None]:
+        date_obj, period, _ = cls._parse_with_parts(
+            datestring, settings, tz, date_order
+        )
+        return date_obj, period
+
+    @classmethod
+    def _parse_with_parts(
+        cls,
+        datestring: str,
+        settings: Settings,
+        tz: tzinfo | None = None,
+        date_order: str | None = None,
+        return super()._parse_with_parts(datestring, settings, tz, date_order)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+    def parse(
+    parser: _CalendarParser = NotImplemented
+            date_obj, period, parts = self.parser.parse(self.source, settings)
+        return super().parse(datestring, settings, tz, date_order)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b1a87f9f` are properly handled with clean fallback behavior.

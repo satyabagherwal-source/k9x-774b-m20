@@ -6266,3 +6266,5 @@ Every entry in this ledger must capture:
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `fa1943a8` | Multi-dimensional audit evidence | 2026-10-30T18:00:12.835Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `c78633d8` | Multi-dimensional audit evidence | 2026-10-30T18:07:08.488Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `f876742c` | Multi-dimensional audit evidence | 2026-10-30T18:07:13.345Z |
+| `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `920a38ca` | Multi-dimensional audit evidence | 2026-10-30T18:13:39.110Z |
+| `learn-github-scrapinghub-dateparser` | `https://github.com/scrapinghub/dateparser` | `b1a87f9f` | Multi-dimensional audit evidence | 2026-10-30T18:18:37.261Z |

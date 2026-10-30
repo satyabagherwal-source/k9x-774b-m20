@@ -6257,3 +6257,5 @@
 | `CYCLE-20261030-278G` | `2026-10-30T18:00:12.832Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5820` | Yes (`7980539d...`) |
 | `CYCLE-20261030-B3YD` | `2026-10-30T18:07:08.485Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5821` | Yes (`ac76ae61...`) |
 | `CYCLE-20261030-B7P9` | `2026-10-30T18:07:13.341Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5822` | Yes (`6fce9fd0...`) |
+| `CYCLE-20261030-JHCZ` | `2026-10-30T18:13:39.107Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5823` | Yes (`555d49a0...`) |
+| `CYCLE-20261030-PVEZ` | `2026-10-30T18:18:37.259Z` | `scrapinghub/dateparser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5824` | Yes (`a0a66bb4...`) |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T18:07:13.351Z",
-  "total_cycles_completed": 6234,
-  "total_learnings_persisted": 6234,
-  "total_rules_promoted": 5792,
+  "last_updated": "2026-10-30T18:18:37.265Z",
+  "total_cycles_completed": 6236,
+  "total_learnings_persisted": 6236,
+  "total_rules_promoted": 5794,
   "history": [
-    {
-      "timestamp": "2026-10-29T17:23:45.555Z",
-      "repository": "risingwavelabs/risingwave",
-      "learningId": "learn-github-risingwavelabs-risingwave",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T17:40:32.355Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T17:40:37.848Z",
       "repository": "maziyarpanahi/openmed",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T18:07:13.351Z",
       "repository": "Ontos-AI/knowhere",
       "learningId": "learn-github-ontos-ai-knowhere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T18:13:39.114Z",
+      "repository": "wzh4869/AppPorts",
+      "learningId": "learn-github-wzh4869-appports",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T18:18:37.265Z",
+      "repository": "scrapinghub/dateparser",
+      "learningId": "learn-github-scrapinghub-dateparser",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

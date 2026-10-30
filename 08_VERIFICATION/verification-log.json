@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-MSVT",
-    "timestamp": "2026-10-28T12:08:58.553Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "ea5d83279fd31ea1c08d52a97cf5cbaf0b17dfc0cb36432d16af679594c38850",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-MSZT",
-    "timestamp": "2026-10-28T12:08:58.697Z",
-    "repository": "google-bert/bert-base-uncased",
-    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-    "contentHash": "379e96a97eab1f0321a22171560af27f808a37a92cb3de7af70a17181958c9f4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-V7V9",
     "timestamp": "2026-10-28T12:15:31.221Z",
     "repository": "BAAI/bge-m3",
@@ -7490,6 +7460,36 @@
     "repository": "Ontos-AI/knowhere",
     "learningId": "learn-github-ontos-ai-knowhere",
     "contentHash": "6fce9fd0daaecd03b6fd5480451c97eb6545a6f1e4d87d55228d711304f421b0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-JHCZ",
+    "timestamp": "2026-10-30T18:13:39.107Z",
+    "repository": "wzh4869/AppPorts",
+    "learningId": "learn-github-wzh4869-appports",
+    "contentHash": "555d49a09bbcd46f1753884c2684dc90b125ff8e5c626eb3eb1f5c65b09f9d8c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-PVEZ",
+    "timestamp": "2026-10-30T18:18:37.259Z",
+    "repository": "scrapinghub/dateparser",
+    "learningId": "learn-github-scrapinghub-dateparser",
+    "contentHash": "a0a66bb490598aca4cbc7a04cfa8448c5a7296509c38174b5834a0dc24e22995",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

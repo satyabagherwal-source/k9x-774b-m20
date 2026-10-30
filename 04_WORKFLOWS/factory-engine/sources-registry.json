@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T18:07:15.884Z",
-    "lastVerified": "2026-10-30T18:07:15.884Z",
+    "lastChecked": "2026-10-30T18:18:39.810Z",
+    "lastVerified": "2026-10-30T18:18:39.810Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -143,8 +143,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T17:40:39.472Z",
-    "lastVerified": "2026-10-30T17:40:39.472Z",
+    "lastChecked": "2026-10-30T18:13:41.568Z",
+    "lastVerified": "2026-10-30T18:13:41.568Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -920,8 +920,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T13:09:00.863Z",
-    "lastVerified": "2026-10-30T13:09:00.863Z",
+    "lastChecked": "2026-10-30T18:13:36.548Z",
+    "lastVerified": "2026-10-30T18:13:36.548Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -2671,9 +2671,9 @@
   "giancarloerra-socraticode": {
     "name": "SocratiCode",
     "officialUrl": "https://github.com/giancarloerra/SocratiCode",
-    "lastChecked": "2026-10-29T01:09:02.050Z",
+    "lastChecked": "2026-10-30T18:13:39.067Z",
     "revisionIdentifier": "dae6d3a0",
-    "lastVerified": "2026-10-29T01:09:02.050Z"
+    "lastVerified": "2026-10-30T18:13:39.067Z"
   },
   "orange-opensource-hurl": {
     "name": "Orange-OpenSource/hurl",
@@ -3456,8 +3456,8 @@
     "officialUrl": "https://github.com/koderover/zadig",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-29T02:07:21.720Z",
-    "lastVerified": "2026-10-29T02:07:21.720Z",
+    "lastChecked": "2026-10-30T18:13:34.167Z",
+    "lastVerified": "2026-10-30T18:13:34.167Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-koderover-zadig",
@@ -7074,9 +7074,9 @@
   "railwayapp-nixpacks": {
     "name": "nixpacks",
     "officialUrl": "https://github.com/railwayapp/nixpacks",
-    "lastChecked": "2026-10-28T20:01:22.668Z",
+    "lastChecked": "2026-10-30T18:13:26.606Z",
     "revisionIdentifier": "144b4f9a",
-    "lastVerified": "2026-10-28T20:01:22.668Z"
+    "lastVerified": "2026-10-30T18:13:26.606Z"
   },
   "hf-liquidai-d1-3b": {
     "name": "LiquidAI/d1-3B",
@@ -10553,5 +10553,39 @@
     "lastChecked": "2026-10-30T18:06:59.614Z",
     "revisionIdentifier": "0955baef",
     "lastVerified": "2026-10-30T18:06:59.614Z"
+  },
+  "scrapinghub-dateparser": {
+    "name": "scrapinghub/dateparser",
+    "officialUrl": "https://github.com/scrapinghub/dateparser",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-30T18:13:34.895Z",
+    "lastVerified": "2026-10-30T18:13:34.895Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-scrapinghub-dateparser",
+    "contentHash": "a0a66bb490598aca4cbc7a04cfa8448c5a7296509c38174b5834a0dc24e22995",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "wzh4869-appports": {
+    "name": "wzh4869/AppPorts",
+    "officialUrl": "https://github.com/wzh4869/AppPorts",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-30T18:13:37.398Z",
+    "lastVerified": "2026-10-30T18:13:37.398Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-wzh4869-appports",
+    "contentHash": "555d49a09bbcd46f1753884c2684dc90b125ff8e5c626eb3eb1f5c65b09f9d8c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 13,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

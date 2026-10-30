@@ -9823,10 +9823,10 @@
     "repository": "wzh4869/AppPorts",
     "platform": "github",
     "sourceUrl": "https://github.com/wzh4869/AppPorts",
-    "sourceVersion": "412290e7",
+    "sourceVersion": "920a38ca",
     "license": "Apache-2.0",
-    "contentHash": "5f35440c94b129f87724fcdfa2cc6df7fcb73c756b532f82fca78e05422973ee",
-    "lastHarvestedAt": "2026-10-26T18:25:35.181Z",
+    "contentHash": "555d49a09bbcd46f1753884c2684dc90b125ff8e5c626eb3eb1f5c65b09f9d8c",
+    "lastHarvestedAt": "2026-10-30T18:13:39.110Z",
     "learningId": "learn-github-wzh4869-appports"
   },
   "andythefactory-newspaper4k": {
@@ -9923,10 +9923,10 @@
     "repository": "scrapinghub/dateparser",
     "platform": "github",
     "sourceUrl": "https://github.com/scrapinghub/dateparser",
-    "sourceVersion": "f1c58d6a",
+    "sourceVersion": "b1a87f9f",
     "license": "BSD-3-Clause",
-    "contentHash": "42b578ece0d964e82f337ed0a18e7dba4f6cd26c6a8a144fbc28a0fad5285874",
-    "lastHarvestedAt": "2026-10-27T15:12:07.033Z",
+    "contentHash": "a0a66bb490598aca4cbc7a04cfa8448c5a7296509c38174b5834a0dc24e22995",
+    "lastHarvestedAt": "2026-10-30T18:18:37.261Z",
     "learningId": "learn-github-scrapinghub-dateparser"
   },
   "google-closure-compiler": {

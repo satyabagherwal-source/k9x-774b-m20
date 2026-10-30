@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T18:07:13.266Z",
+  "last_updated": "2026-10-30T18:18:37.206Z",
   "total_verified_learnings": 1176,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -57004,8 +57004,8 @@
       "slug": "wzh4869-appports",
       "platform": "github",
       "source_url": "https://github.com/wzh4869/AppPorts",
-      "source_version": "412290e7",
-      "content_hash": "5f35440c94b129f87724fcdfa2cc6df7fcb73c756b532f82fca78e05422973ee",
+      "source_version": "920a38ca",
+      "content_hash": "555d49a09bbcd46f1753884c2684dc90b125ff8e5c626eb3eb1f5c65b09f9d8c",
       "dossier_path": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wzh4869-appports-learnings.md",
       "promoted_rules": [
@@ -57018,6 +57018,11 @@
           "number": 4646,
           "title": "migration): 修正进度阶段与重试范围并优化微小文件复制",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5823,
+          "title": "authorize retained data cleanup and update signature lock regression",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57025,7 +57030,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T18:25:35.120Z",
+      "verified_at": "2026-10-30T18:13:39.044Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71932,8 +71937,8 @@
       "slug": "scrapinghub-dateparser",
       "platform": "github",
       "source_url": "https://github.com/scrapinghub/dateparser",
-      "source_version": "f1c58d6a",
-      "content_hash": "42b578ece0d964e82f337ed0a18e7dba4f6cd26c6a8a144fbc28a0fad5285874",
+      "source_version": "b1a87f9f",
+      "content_hash": "a0a66bb490598aca4cbc7a04cfa8448c5a7296509c38174b5834a0dc24e22995",
       "dossier_path": "07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md",
       "promoted_rules": [
@@ -71956,6 +71961,11 @@
           "number": 4875,
           "title": "CI on the ubuntu-26.04 runner image (#1550)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5824,
+          "title": "Deprecate instead of remove (#1556)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -71963,7 +71973,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:12:06.930Z",
+      "verified_at": "2026-10-30T18:18:37.194Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154665,6 +154675,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T18:07:13.247Z"
+    },
+    "rule-5823": {
+      "learning_id": "rule-5823",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5823,
+      "title": "authorize retained data cleanup and update signature lock regression",
+      "source_url": "https://github.com/wzh4869/AppPorts",
+      "source_version": "920a38ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T18:13:39.044Z"
+    },
+    "rule-5824": {
+      "learning_id": "rule-5824",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5824,
+      "title": "Deprecate instead of remove (#1556)",
+      "source_url": "https://github.com/scrapinghub/dateparser",
+      "source_version": "b1a87f9f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T18:18:37.194Z"
     }
   },
   "aliases": {
