@@ -4743,10 +4743,10 @@
     "repository": "pimalaya/himalaya",
     "platform": "github",
     "sourceUrl": "https://github.com/pimalaya/himalaya",
-    "sourceVersion": "84136bbb",
+    "sourceVersion": "5791471e",
     "license": "Apache-2.0",
-    "contentHash": "39af4dfd6276777bfb6489ef5d2bb51ecfd05bb56e47c788594cd6ecf5ed1594",
-    "lastHarvestedAt": "2026-10-28T13:09:56.152Z",
+    "contentHash": "4a6ccc792c1a98f15f880121473ae422f70813a31bb24d2756407b15b1b520ca",
+    "lastHarvestedAt": "2026-10-30T05:32:00.105Z",
     "learningId": "learn-github-pimalaya-himalaya"
   },
   "shopify-react-native-skia": {
@@ -5913,10 +5913,10 @@
     "repository": "argoproj/argo-workflows",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-workflows",
-    "sourceVersion": "b304fcea",
+    "sourceVersion": "425b8b96",
     "license": "Apache-2.0",
-    "contentHash": "ac288cbf7ea20e33f47906b36dde2eb7106c9be50f0d68eafbc8c8d2de562e82",
-    "lastHarvestedAt": "2026-10-28T17:35:30.685Z",
+    "contentHash": "61da933d785b7d7d537eb8004215924cef5c7c8b08151f35d043e0e9de30d5b2",
+    "lastHarvestedAt": "2026-10-30T05:32:00.514Z",
     "learningId": "learn-github-argoproj-argo-workflows"
   },
   "postgresml-postgresml": {

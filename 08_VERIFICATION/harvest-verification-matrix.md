@@ -6113,3 +6113,5 @@
 | `CYCLE-20261030-8MYF` | `2026-10-30T05:01:23.895Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5605` | Yes (`d854cbc7...`) |
 | `CYCLE-20261030-MSDX` | `2026-10-30T05:12:24.117Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5606, Rule 5607` | Yes (`e170651c...`) |
 | `CYCLE-20261030-W4EE` | `2026-10-30T05:19:39.590Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5608` | Yes (`1815c077...`) |
+| `CYCLE-20261030-BZS6` | `2026-10-30T05:32:00.102Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5609` | Yes (`4a6ccc79...`) |
+| `CYCLE-20261030-C03J` | `2026-10-30T05:32:00.511Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5610` | Yes (`61da933d...`) |

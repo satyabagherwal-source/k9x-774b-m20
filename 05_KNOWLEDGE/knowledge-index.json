@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T05:19:39.505Z",
+  "last_updated": "2026-10-30T05:32:00.437Z",
   "total_verified_learnings": 1171,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3124,8 +3124,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "b304fcea",
-      "content_hash": "ac288cbf7ea20e33f47906b36dde2eb7106c9be50f0d68eafbc8c8d2de562e82",
+      "source_version": "425b8b96",
+      "content_hash": "61da933d785b7d7d537eb8004215924cef5c7c8b08151f35d043e0e9de30d5b2",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -3168,6 +3168,11 @@
           "number": 5354,
           "title": "deps): update module golang.org/x/net to v0.62.0 [security] (main) (#17321)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5610,
+          "title": "deps): update actions/create-github-app-token action to v3.3.0 (main) (#17349)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3175,7 +3180,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T17:35:30.588Z",
+      "verified_at": "2026-10-30T05:32:00.418Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43915,8 +43920,8 @@
       "slug": "pimalaya-himalaya",
       "platform": "github",
       "source_url": "https://github.com/pimalaya/himalaya",
-      "source_version": "84136bbb",
-      "content_hash": "39af4dfd6276777bfb6489ef5d2bb51ecfd05bb56e47c788594cd6ecf5ed1594",
+      "source_version": "5791471e",
+      "content_hash": "4a6ccc792c1a98f15f880121473ae422f70813a31bb24d2756407b15b1b520ca",
       "dossier_path": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md",
       "promoted_rules": [
@@ -43929,6 +43934,11 @@
           "number": 5287,
           "title": "build: bump crates flagged by new RustSec advisories",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5609,
+          "title": "docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail (#796)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43936,7 +43946,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T13:09:56.093Z",
+      "verified_at": "2026-10-30T05:32:00.005Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150535,6 +150545,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T05:19:39.489Z"
+    },
+    "rule-5609": {
+      "learning_id": "rule-5609",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5609,
+      "title": "docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail (#796)",
+      "source_url": "https://github.com/pimalaya/himalaya",
+      "source_version": "5791471e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:32:00.005Z"
+    },
+    "rule-5610": {
+      "learning_id": "rule-5610",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5610,
+      "title": "deps): update actions/create-github-app-token action to v3.3.0 (main) (#17349)",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "425b8b96",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:32:00.419Z"
     }
   },
   "aliases": {

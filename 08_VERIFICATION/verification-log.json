@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-IEZK",
-    "timestamp": "2026-10-28T00:53:43.136Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "5aa699a5dd5d402df457dabfecf54abafb4e0dba067b343f1488cdcf12c17d89",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-QN8Y",
-    "timestamp": "2026-10-28T01:00:07.090Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "3587a635561a965c3e8d5a682fdec4fb1369cda765fad7caa2f215b630d5c35d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-QPXA",
     "timestamp": "2026-10-28T01:00:10.558Z",
     "repository": "arkivanov/Decompose",
@@ -7490,6 +7460,36 @@
     "repository": "StarRocks/starrocks",
     "learningId": "learn-github-starrocks-starrocks",
     "contentHash": "1815c077b520ce845bcd61f60c361ec30d9dbaf0e25b8890d07723b43d1374f3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-BZS6",
+    "timestamp": "2026-10-30T05:32:00.102Z",
+    "repository": "pimalaya/himalaya",
+    "learningId": "learn-github-pimalaya-himalaya",
+    "contentHash": "4a6ccc792c1a98f15f880121473ae422f70813a31bb24d2756407b15b1b520ca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-C03J",
+    "timestamp": "2026-10-30T05:32:00.511Z",
+    "repository": "argoproj/argo-workflows",
+    "learningId": "learn-github-argoproj-argo-workflows",
+    "contentHash": "61da933d785b7d7d537eb8004215924cef5c7c8b08151f35d043e0e9de30d5b2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
