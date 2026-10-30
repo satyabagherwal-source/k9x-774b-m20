@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T06:50:12.673Z",
+  "last_updated": "2026-10-30T06:57:22.144Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "23049e5c3994a89ce86dd1d958633e9c72f7eeaadd47655932a0d333e6262454",
-      "verified_at": "2026-10-28T18:14:10.050Z",
+      "content_hash": "81b3aa5524d4d38afedc05b765608d17ea4220e3e45d0727d597a029f96a8037",
+      "verified_at": "2026-10-30T06:57:00.272Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:14:10.050Z"
+      "last_updated": "2026-10-30T06:57:00.272Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",
@@ -13371,14 +13371,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-joreilly-confetti",
-      "content_hash": "34b69a41ba68726fe52a209e9d4061c46a365c19fa0f6a2d7b8bfdf8324f202f",
-      "verified_at": "2026-10-26T01:37:19.846Z",
+      "content_hash": "0b0ba83c3d77dc76dcd731851614d8f5aeb561eac9d5c9ad0d12fc8a41c5f496",
+      "verified_at": "2026-10-30T06:57:22.143Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T01:37:19.846Z"
+      "last_updated": "2026-10-30T06:57:22.143Z"
     },
     "m0ntydad0n/pseo-engine-oss": {
       "repository": "m0ntydad0n/pseo-engine-oss",

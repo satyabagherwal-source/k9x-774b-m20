@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-28XG",
-    "timestamp": "2026-10-28T02:05:07.636Z",
-    "repository": "autotrust/GEV-26B-Decide",
-    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-    "contentHash": "b7c3e0f3457b75f0487ff8e4128ccd8fdc2574266a1dca281d54f7cf01f07e85",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-2FFP",
-    "timestamp": "2026-10-28T02:05:16.069Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "ce46c98fc9f50371c450eb0ffd82559559f154124c94bc884fc836f16d6309cc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-CQBR",
     "timestamp": "2026-10-28T02:13:16.743Z",
     "repository": "msasikanth/twine",
@@ -7492,6 +7462,36 @@
     "contentHash": "b22f2736e562b0824e35a18c8676b41b9704ae1e6d2742dab82a9032dc7c030b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-DB38",
+    "timestamp": "2026-10-30T06:57:00.260Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "81b3aa5524d4d38afedc05b765608d17ea4220e3e45d0727d597a029f96a8037",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-DRYP",
+    "timestamp": "2026-10-30T06:57:22.129Z",
+    "repository": "joreilly/Confetti",
+    "learningId": "learn-github-joreilly-confetti",
+    "contentHash": "0b0ba83c3d77dc76dcd731851614d8f5aeb561eac9d5c9ad0d12fc8a41c5f496",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

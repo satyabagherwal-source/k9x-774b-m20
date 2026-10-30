@@ -6152,3 +6152,5 @@ Every entry in this ledger must capture:
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `75f40b38` | Multi-dimensional audit evidence | 2026-10-30T06:50:01.203Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `a87694bb` | Multi-dimensional audit evidence | 2026-10-30T06:50:10.727Z |
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `5104ebf8` | Multi-dimensional audit evidence | 2026-10-30T06:50:12.663Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `b60d74c5` | Multi-dimensional audit evidence | 2026-10-30T06:57:00.263Z |
+| `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `3ca053db` | Multi-dimensional audit evidence | 2026-10-30T06:57:22.133Z |

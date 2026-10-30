@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T06:50:12.668Z",
-  "total_cycles_completed": 6120,
-  "total_learnings_persisted": 6120,
-  "total_rules_promoted": 5609,
+  "last_updated": "2026-10-30T06:57:22.140Z",
+  "total_cycles_completed": 6122,
+  "total_learnings_persisted": 6122,
+  "total_rules_promoted": 5613,
   "history": [
-    {
-      "timestamp": "2026-10-28T21:37:22.841Z",
-      "repository": "weaviate/weaviate",
-      "learningId": "learn-github-weaviate-weaviate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T21:43:27.761Z",
-      "repository": "facebook/sam3",
-      "learningId": "learn-huggingface-facebook-sam3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T21:43:30.682Z",
       "repository": "oxc-project/oxc",
@@ -1403,6 +1389,20 @@
       "repository": "MariaDB/server",
       "learningId": "learn-github-mariadb-server",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:57:00.269Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:57:22.140Z",
+      "repository": "joreilly/Confetti",
+      "learningId": "learn-github-joreilly-confetti",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

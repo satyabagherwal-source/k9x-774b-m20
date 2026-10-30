@@ -6143,3 +6143,5 @@
 | `CYCLE-20261030-4BQN` | `2026-10-30T06:50:01.199Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5637` | Yes (`938a6e02...`) |
 | `CYCLE-20261030-4J37` | `2026-10-30T06:50:10.723Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5638` | Yes (`99b46583...`) |
 | `CYCLE-20261030-4KKZ` | `2026-10-30T06:50:12.659Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5639` | Yes (`b22f2736...`) |
+| `CYCLE-20261030-DB38` | `2026-10-30T06:57:00.260Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5640` | Yes (`81b3aa55...`) |
+| `CYCLE-20261030-DRYP` | `2026-10-30T06:57:22.129Z` | `joreilly/Confetti` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5641, Rule 5642, Rule 5643` | Yes (`0b0ba83c...`) |

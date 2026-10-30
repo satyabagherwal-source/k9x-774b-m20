@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "f43ae343",
+    "sourceVersion": "b60d74c5",
     "license": "Apache-2.0",
-    "contentHash": "23049e5c3994a89ce86dd1d958633e9c72f7eeaadd47655932a0d333e6262454",
-    "lastHarvestedAt": "2026-10-28T18:14:10.041Z",
+    "contentHash": "81b3aa5524d4d38afedc05b765608d17ea4220e3e45d0727d597a029f96a8037",
+    "lastHarvestedAt": "2026-10-30T06:57:00.263Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -8883,10 +8883,10 @@
     "repository": "joreilly/Confetti",
     "platform": "github",
     "sourceUrl": "https://github.com/joreilly/Confetti",
-    "sourceVersion": "4e005703",
+    "sourceVersion": "3ca053db",
     "license": "Apache-2.0",
-    "contentHash": "34b69a41ba68726fe52a209e9d4061c46a365c19fa0f6a2d7b8bfdf8324f202f",
-    "lastHarvestedAt": "2026-10-26T01:37:19.836Z",
+    "contentHash": "0b0ba83c3d77dc76dcd731851614d8f5aeb561eac9d5c9ad0d12fc8a41c5f496",
+    "lastHarvestedAt": "2026-10-30T06:57:22.133Z",
     "learningId": "learn-github-joreilly-confetti"
   },
   "m0ntydad0n-pseo-engine-oss": {

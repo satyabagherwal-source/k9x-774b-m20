@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T06:50:12.589Z",
+  "last_updated": "2026-10-30T06:57:22.053Z",
   "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32437,14 +32437,29 @@
       "slug": "joreilly-confetti",
       "platform": "github",
       "source_url": "https://github.com/joreilly/Confetti",
-      "source_version": "4e005703",
-      "content_hash": "34b69a41ba68726fe52a209e9d4061c46a365c19fa0f6a2d7b8bfdf8324f202f",
+      "source_version": "3ca053db",
+      "content_hash": "0b0ba83c3d77dc76dcd731851614d8f5aeb561eac9d5c9ad0d12fc8a41c5f496",
       "dossier_path": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
       "promoted_rules": [
         {
           "number": 2786,
           "title": "Merge pull request #1971 from joreilly/build-step",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5641,
+          "title": "**RULE‑HTTP2‑CLEAR‑TEXT‑ENFORCEMENT**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5642,
+          "title": "**RULE‑COMPOSABLE‑REMEMBER‑RUNNABLE‑STABILITY**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5643,
+          "title": "**RULE‑LOCALDATETIME‑SERIALISATION‑CONSISTENCY**",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -32453,7 +32468,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T01:37:19.736Z",
+      "verified_at": "2026-10-30T06:57:22.035Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -55143,8 +55158,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "f43ae343",
-      "content_hash": "23049e5c3994a89ce86dd1d958633e9c72f7eeaadd47655932a0d333e6262454",
+      "source_version": "b60d74c5",
+      "content_hash": "81b3aa5524d4d38afedc05b765608d17ea4220e3e45d0727d597a029f96a8037",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -55197,6 +55212,11 @@
           "number": 5354,
           "title": "deps): update module golang.org/x/net to v0.62.0 [security]",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5640,
+          "title": "Merge pull request #38353 from vespa-engine/toregge/handle-modified-shared-libra",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55204,7 +55224,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:14:09.950Z",
+      "verified_at": "2026-10-30T06:57:00.170Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -151152,6 +151172,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T06:50:12.570Z"
+    },
+    "rule-5640": {
+      "learning_id": "rule-5640",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5640,
+      "title": "Merge pull request #38353 from vespa-engine/toregge/handle-modified-shared-libra",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "b60d74c5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:57:00.170Z"
+    },
+    "rule-5641": {
+      "learning_id": "rule-5641",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5641,
+      "title": "**RULE‑HTTP2‑CLEAR‑TEXT‑ENFORCEMENT**",
+      "source_url": "https://github.com/joreilly/Confetti",
+      "source_version": "3ca053db",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:57:22.035Z"
+    },
+    "rule-5642": {
+      "learning_id": "rule-5642",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5642,
+      "title": "**RULE‑COMPOSABLE‑REMEMBER‑RUNNABLE‑STABILITY**",
+      "source_url": "https://github.com/joreilly/Confetti",
+      "source_version": "3ca053db",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:57:22.035Z"
+    },
+    "rule-5643": {
+      "learning_id": "rule-5643",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5643,
+      "title": "**RULE‑LOCALDATETIME‑SERIALISATION‑CONSISTENCY**",
+      "source_url": "https://github.com/joreilly/Confetti",
+      "source_version": "3ca053db",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:57:22.035Z"
     }
   },
   "aliases": {
