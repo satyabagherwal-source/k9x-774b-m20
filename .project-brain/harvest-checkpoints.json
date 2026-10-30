@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T18:39:43.756Z",
+  "last_updated": "2026-10-30T18:58:42.024Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "8ac80a4af2b961470583e44373726e9e68ea56aade508670245aaba1e3386bdd",
-      "verified_at": "2026-10-30T16:00:45.488Z",
+      "content_hash": "1e96a4449e82f092dfd760b4b0fe66ed52f61bc5409b8ffbad61ed99726978c5",
+      "verified_at": "2026-10-30T18:58:42.024Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T16:00:45.488Z"
+      "last_updated": "2026-10-30T18:58:42.024Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -11211,14 +11211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
-      "content_hash": "a5d499818071d500711c91125fe6c32a1b580ab1ccb640e4d4efafddd370abdf",
-      "verified_at": "2026-10-28T20:37:49.086Z",
+      "content_hash": "711fddc7256f6cc859b35022e90b734b553b32418cb33844cc099bd6872fafa7",
+      "verified_at": "2026-10-30T18:58:28.580Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T20:37:49.086Z"
+      "last_updated": "2026-10-30T18:58:28.580Z"
     },
     "NativeScript/NativeScript": {
       "repository": "NativeScript/NativeScript",
@@ -15036,14 +15036,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vitejs-vite",
-      "content_hash": "5e135c328a2727106063e8b6e009c05048f349bdb81ec3b918cac8f4bfa7390e",
-      "verified_at": "2026-10-27T15:32:58.474Z",
+      "content_hash": "97e53a3ac40f17b6c2c0a2d6c914a8434b6f98455ee0a96019134553a3ff7780",
+      "verified_at": "2026-10-30T18:58:30.358Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:32:58.474Z"
+      "last_updated": "2026-10-30T18:58:30.358Z"
     },
     "KeyboardKit/KeyboardKit": {
       "repository": "KeyboardKit/KeyboardKit",

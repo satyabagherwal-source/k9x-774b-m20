@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `e83da884`  
+> **Source Version**: `996a3a71`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T20:37:48.448Z  
+> **Timestamp**: 2026-10-30T18:58:27.880Z  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T20:37:48.124Z  
+> **Harvest Timestamp**: 2026-10-30T18:58:26.358Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3392 stars
+- **Stars / Engagement**: 3396 stars
 
 ---
 
@@ -2219,11 +2219,11 @@ impl Transaction {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5008** (2026-10-28): **New session from a project in the web UI starts Claude instead of the configured default agent**
-  *Symptoms*: ### What happened?  My global and profile config both set the default agent to vibe (`[session] default_tool = "vibe"` and `[acp] default_agent = "vibe"`). Sessions created with the normal "New session" wizard correctly use vibe.  But when I add a project and click "New session" on it, the session starts with Claude. This happens for any project that doesn't have a session yet.  Expected: the configured default agent should be used.  ### aoe version and OS  1.21.0 on MacOS  ### AI usage  none
+- **Issue #5056** (2026-10-30): **TUI test harness inherits daemon endpoint and credentials**
+  *Symptoms*: ## What happened?  P3 follow-up from #5028: TUI test processes still inherit `AOE_DAEMON_URL` and `AOE_DAEMON_TOKEN`, although directly launched CLI fixtures now clear them.  ### Reproduction scenario  1. Export a nonempty daemon URL and a sentinel token before the harness's tmux server starts. 2. Run a local TUI fixture, such as `settings_shortcut_bar_hides_the_row_and_survives_restart`, without an explicit remote override. 3. The pane inherits those variables and starts remote-home instead of using the fixture's isolated local state. An existing harness tmux server can retain the same overrides.  Expected: local fixtures ignore inherited daemon discovery settings; only explicit fixture overrides select a remote endpoint. Actual source behavior causes host-dependent startup failures or access to the configured daemon's session state. No destructive remote action or dynamic reproduction is claimed.  Evidence: [tmux launch environment](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/tests/e2e/harness.rs#L875-L895), [peer/server launch](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/tests/e2e/harness.rs#L943-L954), and [remote-mode selection before local startup](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/src/tui/mod.rs#L244-L250).  ### Acceptance  - Apply URL/token isolation at the actual pane launch boundary, including 
 
-- **Issue #5007** (2026-10-28): **Bare repo stored as <project>/.git is detected with repo name .git instead of <project>**
-  *Symptoms*: ### What happened?  I keep my repos as a bare clone directly in the project's .git folder, with worktrees next to it. For example I have the following folder `~/repos/project_name/` which contains these sub-folders:  - `.git/`: bare repo - `main/`: a worktree - `feature-x/`: another worktree  aoe correctly detects that ~/repos/project_name is a bare repo, but it treats `~/repos/project_name/.git` as the project root. As a result, the repo name shows as .git instead of mistral (and the cwd used for the worktree template is incorrect).  Expected: when the bare repo's folder is named .git (or anytime a bare repo is detected, whatever it’s folder name), use its parent (~/repos/project_name here) as the project root, like the .bare layout does.  ### aoe version and OS  1.21.0 on MacOS (homebrew)  ### AI usage  none
+- **Issue #5051** (2026-10-30): **Quote worktree paths in displayed repair commands**
+  *Symptoms*: ## What happened?  P3 recovery-guidance follow-up to #4824. Two degraded-move warnings interpolate the destination directly into a copyable `git worktree repair` command.  ### Source-traced recovery scenario, not an executed reproduction  1. Rename a linked worktree with initialized submodules under a parent such as `/home/alice/My Projects` or `/home/o'connor/projects`. 2. If post-move `.git` pointer conversion fails, read the degraded-result warning. The repair-failure plus failed-rollback branch emits the same kind of command. 3. Copy the suggested command. `git worktree repair /home/alice/My Projects/new` supplies two paths; an unescaped apostrophe can leave an unterminated shell quote.  **Expected:** the command preserves the destination as one literal argument. **Actual:** raw `to.display()` is inserted in [the repair/rollback warning](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/src/git/worktree/relocate.rs#L343) and [the pointer-conversion warning](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/src/git/worktree/relocate.rs#L355). The [parent directory is retained](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/src/session/worktree_edit.rs#L53), so these are supported paths.  ### Correction and acceptance  Quote the destination operand in both displayed commands using existing POSIX word-quoting support that prese
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2240,605 +2240,1162 @@ impl Transaction {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d1f57750` (2026-10-28)
-**Commit Message**: fix(deps): bump pulldown-cmark to 0.13.5 for RUSTSEC-2026-0414 (#5033)
+### Incident Patch 1: `ce52748a` (2026-10-29)
+**Commit Message**: fix(session): remove a purged worktree outside the store locks (#4496)
 
-The advisory covers parsing with `Options::ENABLE_WIKILINKS`, which AoE
-never enables (the TUI's markdown sets only strikethrough and tables),
-so AoE isn't exposed. cargo deny fails Supply Chain on every PR until
-the lockfile moves to the fixed release.
+* fix(session): remove a purged worktree outside the store locks
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+The purge held every profile's save mutex and storage flock for the
+whole git worktree remove, so any TUI save (attaching, status changes)
+froze until it finished, which takes minutes for a large worktree
+under endpoint security. Under the locks the purge now only checks the
+worktree is unused and moves it aside to a private path; the removal
+runs after the locks are released. A worktree that cannot be moved, or
+a multi-repo workspace, is still removed in place.
 
-**File**: `Cargo.lock` (modified, +2/-2)
+🤖 Generated with Claude Code
+
+* fix(session): hide a moved-aside worktree from adoption during its purge
+
+Lock the moved-aside checkout with a purge reason that worktree listings
+skip, remove it without unlocking, move it back when the removal fails,
+and resume an interrupted purge from the original path.
+
+🤖 Generated with Claude Code
+
+* fix(session): keep an adopted or dirtied aside worktree on purge
+
+Judge an aside checkout another session adopted before it was hidden
+where it is instead of moving it back, re-check a non-force removal for
+changes before the double-force remove, and m
+
+**File**: `docs/guides/worktrees.md` (modified, +2/-0)
 ```diff
-@@ -3676,9 +3676,9 @@ dependencies = [
+@@ -97,6 +97,8 @@ Without Force, purge preserves a dirty worktree and retains its session for retr
  
- [[package]]
- name = "pulldown-cmark"
--version = "0.13.4"
-+version = "0.13.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e"
-+checksum = "278e9268c93b9e498a2da46c34d90ba93a3255eb99009646398f34bc73ab36eb"
- dependencies = [
-  "bitflags 2.13.2",
-  "memchr",
+ Native daemon clients can abandon a stuck purge using its current reservation generation. Abandon removes the session record and schedules runtime cleanup; it does not cancel a hook or cleanup already underway, and does not start another worktree or branch removal.
+ 
++**Purging first moves the worktree** to a sibling `.aoe-purge-<session-id>`, marked by an `aoe-purge` file in its git admin directory, which `git worktree list` still shows but aoe hides from sessions, then removes it. A failed removal moves it back. A purge interrupted by a crash is finished on the next purge attempt while its session still exists; otherwise (web deletes remove the session first) `aoe worktree cleanup` lists the `.aoe-purge-<session-id>` checkout as orphaned once no process is still purging it, and can remove it.
++
+ **The default branch's checkout is never removed.** A bare-repo layout keeps
+ that checkout available to other tooling. AoE refuses to remove it or delete
+ its branch, reports the refusal, and deletes the session record instead.
 ```
 
----
-
-### Incident Patch 2: `ae2940c5` (2026-10-27)
-**Commit Message**: fix(acp): keep the idle reaper off starting workers and restore acp logs (#4993)
-
-* fix(acp): keep the idle reaper off a worker that is still starting
-
-A prompt to a long-quiet stopped session resumes its worker, but no
-event newer than the old stop exists until the worker is ready. The
-reaper counted a starting worker as live, saw it past the idle
-threshold, marked it dormant and shut it down, so the prompt got a 503
-and the session recorded idle_auto_stop. Only a running worker is now
-a reap candidate.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(acp): keep the cause chain in worker spawn errors
-
-Spawn errors wrapping an anyhow chain printed only the outer context,
-so a failed previous-runtime cleanup surfaced as a bare "runner
-termination unproven" with no reason.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(migrations): rename cockpit log targets in runtime_filter to acp
-
-v012 retired the cockpit name in config, sessions, the worker dir and
-the events DB, but not the persisted runtime filter. The daemon and
-every runner apply that file at startup, so a filter saved before the
-rename had no acp directive and silently dropped all acp.* logs.
-
-Co-Author
-
-**File**: `src/acp/acp_client/mod.rs` (modified, +1/-1)
+**File**: `src/cli/add.rs` (modified, +3/-0)
 ```diff
-@@ -526,7 +526,7 @@ impl AcpClient {
-             // runner's process group first or its children leak (#1689).
-             crate::process::worker_registry::terminate_and_wait(&session_id.0)
-                 .await
--                .map_err(|e| AcpError::Spawn(format!("previous runtime cleanup: {e}")))?;
-+                .map_err(|e| AcpError::Spawn(format!("previous runtime cleanup: {e:#}")))?;
-             if cancellation.is_cancelled() {
-                 return Err(AcpError::Spawn("launch cancelled before spawning".into()));
+@@ -232,6 +232,9 @@ pub async fn run(profile: &str, args: AddArgs) -> Result<()> {
+     if !args.scratch && !path.is_dir() {
+         bail!("Path is not a directory: {}", path.display());
+     }
++    if !args.scratch {
++        crate::session::builder::ensure_not_purging(&path)?;
++    }
+ 
+     if (!args.extra_repos.is_empty() || !args.projects.is_empty())
+         && explicit_worktree_branch(&args).is_none()
+```
+
+**File**: `src/cli/session.rs` (modified, +4/-0)
+```diff
+@@ -1034,6 +1034,10 @@ async fn import_sessions(profile: &str, args: ImportArgs) -> Result<()> {
+             if already_imported(all_instances, &s.session_id) {
+                 continue;
              }
-```
-
-**File**: `src/acp/acp_client/runner.rs` (modified, +1/-1)
-```diff
-@@ -176,7 +176,7 @@ pub(super) async fn spawn_runner_detached(
-         std::env::current_exe().map_err(|e| AcpError::Spawn(format!("current_exe: {e}")))?;
-     ensure_runner_exe(&current_exe)?;
-     let log_path = crate::process::worker_registry::log_path_for(&session_id)
--        .map_err(|e| AcpError::Spawn(format!("log path: {e}")))?;
-+        .map_err(|e| AcpError::Spawn(format!("log path: {e:#}")))?;
-     if let Some(parent) = log_path.parent() {
-         let _ = std::fs::create_dir_all(parent);
-     }
-```
-
-**File**: `src/acp/runner_lifecycle.rs` (modified, +24/-0)
-```diff
-@@ -151,6 +151,9 @@ struct Construction {
-     retire_previous: std::sync::atomic::AtomicBool,
-     spawn_attestor:
-         Mutex<Option<tokio::sync::mpsc::UnboundedSender<tokio::sync::oneshot::Sender<bool>>>>,
-+    /// Wall-clock ms of admission, refreshed on install so a slow start
-+    /// does not read as idle; atomic only so tests can backdate it.
-+    idle_baseline_ms: std::sync::atomic::AtomicI64,
- }
- 
- impl Default for Construction {
-@@ -171,6 +174,9 @@ impl Default for Construction {
-             previous_runner: Mutex::default(),
-             retire_previous: std::sync::atomic::AtomicBool::new(false),
-             spawn_attestor: Mutex::default(),
-+            idle_baseline_ms: std::sync::atomic::AtomicI64::new(
-+                chrono::Utc::now().timestamp_millis(),
-+            ),
-         }
-     }
- }
-@@ -200,6 +206,20 @@ pub(crate) struct AdapterRetirementRoute {
- }
- 
- impl Lease {
-+    /// When this epoch was admitted or last became running, in ms since the Unix epoch.
-+    pub(crate) fn idle_baseline_ms(&self) -> i64 {
-+        self.construction
-+            .idle_baseline_ms
-+            .load(std::sync::atomic::Ordering::Relaxed)
-+    }
-+
-+    #[cfg(test)]
-+    pub(crate) fn test_backdate_idle_baseline(&self, ms: i64) {
-+        self.construction
-+            .idle_baseline_ms
-+            .store(ms, std::sync::atomic::Ordering::Relaxed);
-+    }
-+
-     /// An attach observes the original runner until installation or an explicit stop.
-     pub(crate) fn is_borrowed_attach(&self) -> bool {
-         !self
-@@ -921,6 +941,10 @@ impl LifecycleTable {
-         }
-         lease.claim_runner_ownership();
-         entry.phase = Phase::Running { identity };
-+        lease.construction.idle_baseline_ms.store(
-+            chrono::Utc::now().timestamp_millis(),
-+            std::sync::atomic::Ordering::Relaxed,
-+        );
-         if let Some(identity) = identity {
-             self.note_generation(&lease.session_id, identity.generation);
-         }
-```
-
-**File**: `src/acp/supervisor/drain.rs` (modified, +3/-3)
-```diff
-@@ -1481,7 +1481,7 @@ mod tests {
-             .await
-             .expect("the replacement freezes proof before its stop gate");
-         assert_eq!(sup.worker_state("s-resp").await, AcpWorkerState::Resuming);
--        sup.shutdown_idle("s-resp").await.expect("cancel");
-+        sup.shutdown_idle("s-resp", None).await.expect("cancel");
-         gate.open.notify_one();
- 
-         tokio::time::timeout(Duration::from_secs(5), drain)
-@@ -2067,7 +2067,7 @@ mod tests {
-             flagged = sup.take_respawned_in_place();
-         }
-         assert_eq!(flagged, vec!["s-crash".to_string()]);
--        sup.shutdown_idle("s-crash").await.expect("shutdown");
-+        sup.shutdown_idle("s-crash", None).await.expect("shutdown");
-     }
- 
-     #[tokio::test]
-@@ -2228,7 +2228,7 @@ mod tests {
-             .host_environment
-             .contains(&("HOOK_VALUE".into(), "kept".into())));
- 
--        sup.shutdown_idle("s-store").await.expect("shutdown");
-+        sup.shutdown_idle("s-store", None).await.expect("shutdown");
-         held_senders.lock().unwrap().clear();
-         tokio::time::timeout(Duration::from_secs(5), drain)
-             .await
-```
-
-**File**: `src/acp/supervisor/launch.rs` (modified, +1/-1)
-```diff
-@@ -345,7 +345,7 @@ impl<S: BroadcastSink> Supervisor<S> {
-         }
-         // Every worker runs through `aoe __acp-runner` so it survives `aoe serve --stop`.
-         let socket_path = worker_registry::socket_path_for(&req.session_id).map_err(|e| {
--            SupervisorError::Acp(AcpError::Spawn(format!("worker socket path: {e}")))
-+            SupervisorError::Acp(AcpError::Spawn(format!("worker socket path: {e:#}")))
-         })?;
-         let mcp_servers = resolve_mcp_servers(
-             &req.agent,
-```
-
-**File**: `src/acp/supervisor/mod.rs` (modified, +10/-0)
-```diff
-@@ -86,6 +86,9 @@ pub enum SupervisorError {
-     /// The previous runner is not proven dead yet.
-     #[error("session {0:?} is still stopping its previous structured view worker")]
-     TeardownPending(String),
-+    /// The worker a caller observed is no longer the running one.
-+    #[error("session {0:?} worker changed before the stop claimed it")]
-+    Superseded(String),
-     #[error(transparent)]
-     Blocked(crate::session::StartBlocked),
-     #[error("session {0:?} no longer exists")]
-@@ -440,6 +443,13 @@ impl<S: BroadcastSink> Supervisor<S> {
-         }
-     }
- 
-+    /// The running epoch, for a caller that must stop only that epoch.
-+    pub(crate) fn running_lease(&self, session_id: &str) -> Option<Lease> {
-+        lock_recover(&self.lifecycle)
-+            .running(session_id)
-+            .map(|(lease, _)| lease)
-+    }
-+
-     /// Whether this session has a worker up or coming up.
-     pub async fn is_running(&self, session_id: &str) -> bool {
-         lock_recover(&self.lifecycle).is_running(session_id)
-```
-
-**File**: `src/acp/supervisor/teardown.rs` (modified, +34/-7)
-```diff
-@@ -456,13 +456,18 @@ impl<S: BroadcastSink> Supervisor<S> {
-     }
-     /// Stop a worker, keeping its agent-side transcript resumable.
-     pub async fn shutdown(&self, session_id: &str) -> Result<(), SupervisorError> {
--        self.shutdown_with_reason(session_id, "user_stopped", false, None)
-+        self.shutdown_with_reason(session_id, "user_stopped", false, None, None)
-             .await
-     }
- 
--    /// Stop a worker reclaimed for inactivity.
--    pub async fn shutdown_idle(&self, session_id: &str) -> Result<(), SupervisorError> {
--        self.shutdown_with_reason(session_id, "idle_auto_stop", false, None)
-+    /// Stop a worker reclaimed for inactivity; with `observed`, only while
-+    /// that epoch is still the running one.
-+    pub(crate) async fn shutdown_idle(
-+        &self,
-+        session_id: &str,
-+        observed: Option<&Lease>,
-+    ) -> Result<(), SupervisorError> {
-+        self.shutdown_with_reason(session_id, "idle_auto_stop", false, None, observed)
-             .await
-     }
- 
-@@ -505,7 +510,13 @@ impl<S: BroadcastSink> Supervisor<S> {
-             .and_then(|target| target.identity)
-             .or_else(|| record_before.as_ref().map(RunnerIdentity::from_record));
-         let stopped = self
--            .shutdown_with_reason(session_id, "user_stopped", delete_adapter_state, expected)
-+            .shutdown_with_reason(
-+                session_id,
-+                "user_stopped",
-+                delete_adapter_state,
-+                expected,
-+                None,
-+            )
-             .await;
-         // The existing synchronous teardown grace precedes the settlement wait.
-         let deadline = tokio::time::Instant::now() + deadline;
-@@ -572,12 +583,22 @@ impl<S: BroadcastSink> Supervisor<S> {
-         stop_reason: &str,
-         delete_adapter_state: bool,
-         expected: Option<&RetirementTarget>,
-+        observed: Option<&Lease>,
-     ) -> Result<(), SupervisorError> {
-         // Same lock order as `begin_resume`, so a resume cannot slip between
-         // the decision and the handle removal.
-         let mut workers = self.workers.lock().await;
-         let decision = {
-             let mut lifecycle = lock_recover(&self.lifecycle);
-+            if observed.is_some_and(|observed| {
-+                lifecycle
-+                    .running(session_id)
-+                    .map(|(lease, _)| lease)
-+                    .as_ref()
-+                    != Some(observed)
-+            }) {
-+                return Err(SupervisorError::Superseded(session_id.into()));
++            if crate::git::GitWorktree::is_within_purging(std::path::Path::new(&s.cwd)) {
++                eprintln!("Skipping {}: its project path is being purged", s.cwd);
++                continue;
 +            }
-             if let Some(target) = expected {
-                 if !lifecycle.prepare_captured_stop(session_id, target.lease.as_ref()) {
-                     return Err(SupervisorError::TeardownPending(session_id.into()));
-@@ -3033,7 +3054,13 @@ mod tests {
-                 None
-             };
-             let result = sup
--                .shutdown_with_reason("s-delete-owned", "user_stopped", true, Some(&retirement))
-+                .shutdown_with_reason(
-+                    "s-delete-owned",
-+                    "user_stopped",
-+                    true,
-+                    Some(&retirement),
-+                    None,
-+                )
-                 .await;
-             assert!(!deleted.load(std::sync::atomic::Ordering::SeqCst));
-             if replace_lease {
-@@ -3190,7 +3217,7 @@ mod tests {
-         let close_response = closed
-             .await
-             .expect("original close entered after workers removal");
--        sup.shutdown_with_reason("s-escalate", "purged", true, None)
-+        sup.shutdown_with_reason("s-escalate", "purged", true, None, None)
-             .await
-             .unwrap();
-         close_response
+             let inst = build_import_instance(s, structured, &group, session_config);
+             ids.push(inst.id.clone());
+             all_instances.push(inst.clone());
 ```
 
-**File**: `src/acp/supervisor/test_support.rs` (modified, +14/-0)
+**File**: `src/cli/worktree.rs` (modified, +238/-46)
 ```diff
-@@ -44,6 +44,20 @@ impl<S: BroadcastSink> Supervisor<S> {
-         lock_recover(&self.lifecycle).adopt_for_stop(session_id)
+@@ -6,7 +6,7 @@ use std::collections::HashSet;
+ use std::path::{Path, PathBuf};
+ 
+ use crate::git::{GitWorktree, WorktreeEntry};
+-use crate::session::Storage;
++use crate::session::{Instance, Storage};
+ 
+ #[derive(Subcommand)]
+ pub enum WorktreeCommands {
+@@ -170,45 +170,146 @@ fn partition_orphaned_worktrees(
+         })
+ }
+ 
+-async fn cleanup_orphaned(profile: &str, force: bool) -> Result<()> {
+-    let storage = Storage::open_unwatched(profile)?;
+-    let (instances, _groups) = storage.load_with_groups()?;
++/// Where a purge moves `inst`'s worktree. A row whose checkout is there is mid-purge or awaiting
++/// its retry, so neither is orphaned.
++fn purge_aside(inst: &Instance) -> Option<PathBuf> {
++    let path = Path::new(&inst.project_path);
++    path.parent()?
++        .join(format!(".aoe-purge-{}", inst.id))
++        .canonicalize()
++        .ok()
++}
+ 
+-    let mut orphaned_sessions = Vec::new();
+-    let mut orphaned_worktrees = Vec::new();
++/// A row is orphaned once its checkout is gone and no lifecycle operation, such as a purge that
++/// may restore it, has it reserved.
++fn is_orphaned_session(inst: &Instance, now: chrono::DateTime<chrono::Utc>) -> bool {
++    if inst.has_fresh_lifecycle_reservation(now) {
++        return false;
++    }
++    if inst.worktree_info.is_some() {
++        !Path::new(&inst.project_path).exists() && purge_aside(inst).is_none()
++    } else if let Some(ws_info) = &inst.workspace_info {
++        !Path::new(&ws_info.workspace_dir).exists()
++    } else {
++        false
++    }
++}
+ 
+-    for inst in &instances {
+-        if let Some(_wt_info) = &inst.worktree_info {
+-            let worktree_path = PathBuf::from(&inst.project_path);
+-            if !worktree_path.exists() {
+-                orphaned_sessions.push(inst.clone());
++pub(crate) fn find_orphaned_sessions(instances: &[Instance]) -> Vec<Instance> {
++    let now = chrono::Utc::now();
++    instances
++        .iter()
++        .filter(|inst| is_orphaned_session(inst, now))
++        .cloned()
++        .collect()
++}
++
++/// Removes the listed rows that are still orphaned, judged again under each row's lifecycle lock
++/// and the store lock. Returns how many were removed.
++pub(crate) fn remove_orphaned_sessions(storage: &Storage, orphans: &[Instance]) -> Result<usize> {
++    let mut held = Vec::new();
++    let mut ids = HashSet::new();
++    for orphan in orphans {
++        match storage.try_acquire_instance_lifecycle_lock(&orphan.id)? {
++            Some(lock) => {
++                held.push(lock);
++                ids.insert(orphan.id.clone());
++            }
++            None => eprintln!("✗ Skipped session {}: it is busy", orphan.id),
++        }
++    }
++    let mut removed = 0;
++    storage.update(|instances, _groups| {
++        let now = chrono::Utc::now();
++        let before = instances.len();
++        instances.retain(|inst| !(ids.contains(&inst.id) && is_orphaned_session(inst, now)));
++        removed = before - instances.len();
++        Ok(())
++    })?;
++    Ok(removed)
++}
++
++/// The removable and the protected orphaned worktrees of `git_wt`'s repository.
++pub(crate) fn find_orphaned_worktrees(
++    instances: &[Instance],
++    git_wt: &GitWorktree,
++) -> Result<(Vec<WorktreeEntry>, Vec<WorktreeEntry>)> {
++    let tracked: HashSet<String> = instances
++        .iter()
++        .flat_map(|inst| {
++            let aside = purge_aside(inst).map(|aside| aside.to_string_lossy().into_owned());
++            std::iter::once(inst.project_path.clone()).chain(aside)
++        })
++        .collect();
++    Ok(partition_orphaned_worktrees(
++        git_wt.list_worktrees_with_abandoned_purges()?,
++        &git_wt.repo_path,
++        &tracked,
++        &git_wt.protected_default_branch_names()?,
++    ))
++}
++
++/// The listed worktrees that are abandoned purges, which keep that classification until removal.
++pub(crate) fn purging_paths(orphans: &[WorktreeEntry]) -> HashSet<PathBuf> {
++    orphans
++        .iter()
++        .filter(|wt| GitWorktree::is_purging(&wt.path))
++        .map(|wt| wt.path.clone())
++        .collect()
++}
++
++/// Removes the listed orphaned worktrees and returns how many were removed. An abandoned purge is
++/// removed only while it is still marked and its claim held: recovery may since have kept it for
++/// a session to adopt.
++pub(crate) fn remove_orphaned_worktrees(
++    git_wt: &GitWorktree,
++    orphans: &[WorktreeEntry],
++    purging: &HashSet<PathBuf>,
++) -> usize {
++    let mut removed = 0;
++    for wt in orphans {
++        let _claim = if purging.contains(&wt.path) {
++            let Some(claim) = GitWorktree::claim_abandoned_purge(&wt.path) else {
++                eprintln!(
++                    "✗ Skipped {}: its purge was resumed or kept",
++                    wt.path.display()
++                );
++                continue;
++            };
++            Some(claim)
++        } else if GitWorktree::is_purging(&wt.path) {
++            eprintln!("✗ Skipped {}: its purge is in progress", wt.path.display());
++     
+```
+
+**File**: `src/git/mod.rs` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@ pub use remote::{
+     get_remote_url,
+ };
+ pub(crate) use worktree::WorktreeCreation;
+-pub use worktree::{GitWorktree, WorktreeEntry};
++pub use worktree::{GitWorktree, PurgeClaim, WorktreeEntry};
+ 
+ /// Open the repository at `path` without searching parents, so an unrelated
+ /// ancestor repo (e.g. a dotfile-managed home) is never found.
+```
+
+**File**: `src/git/worktree/mod.rs` (modified, +127/-0)
+```diff
+@@ -28,6 +28,17 @@ const MUTATION_OBSERVATION_TIMEOUT: Duration = Duration::from_secs(5);
+ /// intentional remove or move.
+ const WORKTREE_LOCK_REASON: &str = "aoe-managed worktree (prevents cross-boundary prune)";
+ 
++/// File in a worktree's admin directory marking a purge in progress. Listings skip a marked
++/// worktree so no session can adopt it; its lock and git's dirty refusal are untouched.
++const PURGE_MARKER: &str = "aoe-purge";
++const PURGE_CLAIM: &str = "aoe-purge.claim";
++
++/// An `flock` on a marked worktree's claim file, held by whoever is finishing its purge. A marked
++/// worktree whose claim is free was abandoned.
++pub struct PurgeClaim {
++    _lock: std::fs::File,
++}
++
+ #[derive(Default)]
+ pub(crate) struct WorktreeCreation {
+     pub branch_created: bool,
+@@ -195,6 +206,72 @@ impl GitWorktree {
+         .map(drop)
      }
  
-+    /// Leave the session mid-start, as an explicit resume does before its worker is ready.
-+    pub(crate) fn test_hold_starting(&self, session_id: &str) -> Lease {
-+        lock_recover(&self.lifecycle)
-+            .admit(session_id, ResumeKind::Spawn)
-+            .expect("admit")
++    fn purge_marker(path: &Path) -> Result<PathBuf> {
++        crate::git::cleanup::read_linked_worktree_gitdir(path)
++            .map(|admin| admin.join(PURGE_MARKER))
++            .ok_or_else(|| GitError::WorktreeNotFound(path.to_path_buf()))
 +    }
 +
-+    /// Finish a start `test_hold_starting` left open, as installation does.
-+    pub(crate) fn test_finish_starting(&self, lease: &Lease) {
-+        lock_recover(&self.lifecycle)
-+            .install(lease, None)
-+            .expect("install");
++    /// Hide `path` from `list_worktrees` while its purge runs, owned by the returned claim.
++    pub fn mark_purging(path: &Path) -> Result<PurgeClaim> {
++        let claim = Self::claim_purge(path)?;
++        std::fs::write(Self::purge_marker(path)?, "")?;
++        Ok(claim)
 +    }
 +
-     /// End a teardown `test_hold_stopping` left open.
-     pub(crate) fn test_settle_stopping(&self, lease: &Lease) {
-         lock_recover(&self.lifecycle).settle(lease, Settlement::Proven);
++    fn claim_purge(path: &Path) -> Result<PurgeClaim> {
++        use fs2::FileExt;
++        let claim_path = Self::purge_marker(path)?.with_file_name(PURGE_CLAIM);
++        let lock = std::fs::OpenOptions::new()
++            .create(true)
++            .write(true)
++            .truncate(false)
++            .open(claim_path)?;
++        lock.try_lock_exclusive().map_err(|_| {
++            GitError::WorktreeCommandFailed(format!(
++                "{} is being purged by another process",
++                path.display()
++            ))
++        })?;
++        Ok(PurgeClaim { _lock: lock })
++    }
++
++    /// A child forked by a concurrent test can hold a dropped claim's descriptor until it execs.
++    #[cfg(test)]
++    pub(crate) fn await_purge_released(path: &Path) {
++        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
++        while Self::claim_purge(path).is_err() {
++            assert!(
++                std::time::Instant::now() < deadline,
++                "purge claim never released"
++            );
++            std::thread::yield_now();
++        }
++    }
++
++    /// Claims a marked worktree whose purge was abandoned, or `None` if its purge is live or it is
++    /// no longer marked.
++    pub fn claim_abandoned_purge(path: &Path) -> Option<PurgeClaim> {
++        let claim = Self::claim_purge(path).ok()?;
++        Self::is_purging(path).then_some(claim)
++    }
++
++    pub fn unmark_purging(path: &Path) -> Result<()> {
++        match std::fs::remove_file(Self::purge_marker(path)?) {
++            Err(error) if error.kind() != std::io::ErrorKind::NotFound => Err(error.into()),
++            _ => Ok(()),
++        }
++    }
++
++    /// Whether `path` is in or under a checkout marked for purging, including through a nested repo.
++    pub(crate) fn is_within_purging(path: &Path) -> bool {
++        path.ancestors().any(Self::is_purging)
++    }
++
++    pub(crate) fn is_purging(path: &Path) -> bool {
++        Self::purge_marker(path).is_ok_and(|marker| marker.exists())
++    }
++
+     /// Unlock `path`'s admin entry, best-effort and idempotent. Must precede
+     /// `git worktree remove`/`move` (both refuse a locked tree) and any prune
+     /// meant to reap the entry. Works from the admin side even when the
+@@ -280,6 +357,15 @@ impl GitWorktree {
+     }
+ 
+     pub fn list_worktrees(&self) -> Result<Vec<WorktreeEntry>> {
++        self.worktree_entries(false)
++    }
++
++    /// Also lists marked worktrees whose purge was abandoned, for cleanup to finish.
++    pub fn list_worktrees_with_abandoned_purges(&self) -> Result<Vec<WorktreeEntry>> {
++        self.worktree_entries(true)
++    }
++
++    fn worktree_entries(&self, include_abandoned: bool) -> Result<Vec<WorktreeEntry>> {
+         let repo = open_repo_at(&self.repo_path)?;
+         let mut entries = vec![];
+         // Bare repos have no main worktree, only linked ones.
+@@ -297,6 +383,9 @@ impl GitWorktree {
+             let Ok(path) = wt.path().canonicalize() else {
+                 continue;
+             };
++            if Self::is_purging(&path) && !(include_abandoned && Self::claim_purge(&path).is_ok()) {
++                continue;
++            }
+             entries.push(WorktreeEntry {
+                 branch: Self::get_current_branch(&path).ok(),
+                 path,
+@@ -679,6 +768,44 @@ mod tests {
+         assert!(wt_path.join(".git").is_file());
+     }
+ 
++    #[test]
++    fn only_cleanup_lists_an_abandoned_purge() {
++        let (dir, _repo) = init_repo();
++        let git_wt = GitWorktree::new(dir.path().to_path_buf()).unwrap();
++        let parent = TempDir::
+```
+
+**File**: `src/git/worktree/relocate.rs` (modified, +1/-1)
+```diff
+@@ -390,7 +390,7 @@ impl GitWorktree {
+ 
+     /// `git worktree repair`, which fixes both the checkout's `.git` pointer and
+     /// the admin `gitdir` file, even when a relative pointer broke in the move.
+-    fn repair_worktree(&self, path: &Path) -> Result<()> {
++    pub(crate) fn repair_worktree(&self, path: &Path) -> Result<()> {
+         run_bounded(
+             &self.repo_path,
+             ["worktree", "repair", path_str(path)?],
+```
+
+**File**: `src/session/builder.rs` (modified, +9/-0)
+```diff
+@@ -651,6 +651,14 @@ pub fn build_instance(
+         })
+ }
+ 
++/// A checkout marked for purging is about to be removed, so no new session may take it.
++pub(crate) fn ensure_not_purging(path: &std::path::Path) -> Result<()> {
++    if crate::git::GitWorktree::is_within_purging(path) {
++        bail!("Project path is being purged: {}", path.display());
++    }
++    Ok(())
++}
++
+ pub(crate) fn plan_instance(
+     params: InstanceParams,
+     existing_titles: &[&str],
+@@ -904,6 +912,7 @@ pub(crate) fn plan_instance(
+         if !final_path_buf.is_dir() {
+             bail!("Project path is not a directory: {}", final_path);
+         }
++        ensure_not_purging(&final_path_buf)?;
+     }
+ 
+     let mut instance = Instance::new(&final_title, &final_path);
 ```
 
 ---
 
-### Incident Patch 3: `d904abd9` (2026-10-28)
-**Commit Message**: fix(web): make the sidebar Projects section consistent with the headers above it (#5006)
+### Incident Patch 2: `ef58696d` (2026-10-30)
+**Commit Message**: fix(session): refuse unattested managed resumes (#4942)
 
-* fix(web): make the sidebar Projects section consistent with the headers above it
+* fix(session): refuse unattested managed resumes
 
-The section said "Projects (N)" and "No saved projects" while listing
-only registered Projects with no live sessions, right under repository
-headers that were themselves registered Projects but carried no mark
-unless pinned.
+Refuse resolver-error fallbacks before retiring a managed pane. Preserve failed conversation identities until an explicit retry or fresh intent, without blocking native user commands or non-agent handoffs.
 
-- The section is now "Projects, no sessions (N)"; the count sits in its
-  own span so it never truncates, and the rail keeps "Projects" with the
-  full label as its title. The empty state reads "No registered
-  projects. Add one to keep a repo handy without a session."
-- Every repository header backed by a registered Project carries a ◇
-  "Project" marker; a pinned one keeps ◆ "Pinned project". Both markers
-  are `role="img"` so the name is announced. The section's rows use ◇
-  too.
-- "Saved project(s)" is gone from user-facing copy: the row marker's
-  title and the wizard's list heading now say "Project(s)".
+Refs #4941
 
-Fixes #4596
+* fix(session): preserve resume preflight invariants
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Keep the durable CAS baseline while refreshing captured identity. Validate Prime fork sources read-only before teardown, leaving copy and rebinding in launch preparation. Honor deliberate fresh intent for opaque wrappers without consuming their prior conversation.
 
-* docs(web): describe the Projects section and markers as the sidebar shows them
+Refs #4941
 
-The dashboard guide still called th
+* fix(session): surface managed resume recovery
 
-**File**: `docs/guides/multi-repo-workspaces.md` (modified, +4/-4)
+Keep refusal guidance visible across daemon and TUI boundaries.
+Preserve mutation receipts without exposing internal diagnostics.
+
+* test(session): distinguish managed refusal paths
+
+* fix(session): classify managed Prime refusals
+
+Apply shared refusal handling before the Prime-specific launch guard.
+Keep fresh launch and explicit pin/fork errors unchanged.
+
+* fix(session): make managed resume recovery actionable
+
+Surface finite causes and explicit retry or fresh instructions without
+ref
+
+**File**: `docs/api.md` (modified, +12/-3)
 ```diff
-@@ -84,9 +84,9 @@ Saved repo paths the pickers draw from, in two scopes:
+@@ -558,11 +558,13 @@ Before delivery, the HTTP endpoint removes bracketed-paste delimiters and remain
+ | `403` | `{"error": "read_only"}` | Server is in read-only mode |
+ | `404` | `{"error": "not_found"}` | No session with that id |
+ | `409` | `{"error": "session_not_running"}` | Session exists but the tmux pane is gone |
+-| `409` | `{"error": "resume_failed", "message": "...", "resume_session_id": "..."}` | Auto-revive tried to resume a stored conversation, but the pane exited before AoE could prove the ID invalid. The ID is preserved for explicit retry or replacement. |
++| `409` | `{"error": "resume_failed", "message": "...", "resume_session_id": "..."}` | Auto-revive tried to resume a stored conversation, but the pane exited during the probe. The ID and failure marker are preserved in this call; the next default revival can start fresh. |
+ | `409` | `{"error": "session_transient", "status": "..."}` | Session is mid-lifecycle and cannot accept input yet |
+ | `409` | `{"error": "session_archived" \| "session_trashed", "message": "..."}` | Session is archived or trashed, even with a live pane or `revive: false`; unarchive or restore it first. `/start`, `/ensure`, `/container-terminal` and structured-view prompts refuse the same way. |
+ | `500` | `{"error": "tmux_error"}` or `{"error": "internal"}` | Unexpected failure (logged server-side) |
  
- See [File Locations](configuration.md#file-locations) for `<app_dir>`. `aoe project add` defaults to global, or to the selected profile with `-p <profile>`; `--scope global` or `--scope profile` overrides that choice. A path already registered in another scope is refused unless `--allow-override` lets a profile entry shadow the global one.
- 
--Saved projects appear in pickers even without sessions. **Pinning** keeps a project header visible when empty; unpinning leaves the registration intact. Only **Remove** or `aoe project remove` deletes the entry.
-+Registered Projects appear in pickers even without sessions. **Pinning** keeps a project header visible when empty; unpinning leaves the registration intact. Only **Remove** or `aoe project remove` deletes the entry.
- 
--Pin from the TUI project view (`g`, Project grouping, then `p` on a header or its context menu), or the web project header's actions menu. Pinning registers an unsaved repo globally and marks it with `◆`. Empty pinned web projects sort below active repositories and retain their **New session** action. Pins live in the registry and appear on the other surface when refreshed.
-+Pin from the TUI project view (`g`, Project grouping, then `p` on a header or its context menu), or the web project header's actions menu. Pinning registers an unregistered repo globally and marks it with `◆`. Empty pinned web projects sort below active repositories and retain their **New session** action. Pins live in the registry and appear on the other surface when refreshed.
- 
- ## CLI
- 
-@@ -100,11 +100,11 @@ From the home view, press `b` (or `B` with strict hotkeys) to open a filterable
- 
- ## Web Dashboard
- 
--Use the sidebar's **Projects** section to add a saved project, edit its default base branch, or remove its registration. Unpin a project first if it is displayed as a persistent repository header. Changing a registration's name, path, or scope requires removing and adding it again. Read-only servers hide mutation controls.
-+Use the sidebar's **Projects, no sessions** section to add a Project, edit its default base branch, or remove its registration. Unpin a project first if it is displayed as a persistent repository header. Changing a registration's name, path, or scope requires removing and adding it again. Read-only servers hide mutation controls.
- 
- Remove targets the registrations represented by that project row, using the profile captured when the action starts. It does not request deletion from unrelated profiles. Global registrations are shared, so removing one changes every profile's merged view.
- 
--Saved-project suggestions in the new-session wizard follow the selected profile. An open project form keeps its original profile even if the daemon's default profile changes. The picker for adding a repository to an existing session uses that session's profile. Unregistered paths can still be entered directly.
-+Registered Project suggestions in the new-session wizard follow the selected profile. An open project form keeps its original profile even if the daemon's default profile changes. The picker for adding a repository to an existing session uses that session's profile. Unregistered paths can still be entered directly.
- 
- Multi-repo sessions are bucketed into a single **Multi-repo** group at the bottom of the sidebar, regardless of which repo was chosen as the primary. Each session row shows a chip per repo under the title.
- 
-```
-
-**File**: `docs/guides/web/dashboard.md` (modified, +2/-2)
-```diff
-@@ -19,7 +19,7 @@ Each sidebar row carries an animated braille glyph encoding the session's state:
- 
- The **New session** wizard is one screen of one-line rows, like the TUI dialog; a row with a chevron opens its details in a panel:
- 
--- **Project**: pick the working directory from the Recent tab, browse for one, clone a URL, or start a scratch session with no path. The Recent tab lists your saved projects under a "Saved projects" section above the directories of your recent sessions. The recent list keeps a project around after its last session is deleted, so you can quickly start there again; entries whose directory no longer exists are dropped.
-+- **Project**: pick the working directory from the Recent tab, browse for one, clone a URL, or start a scratch session with no path. The Recent tab lists your registered Projects under a "Projects" section above the directories of your recent sessions. The recent list keeps a project around after its last session is deleted, so you can quickly start there again; entries whose directory no longer exists are dropped.
- - **Title**: auto-slugifies into a worktree branch name unless you edit the branch.
- - **Group**: search existing groups, including empty groups, or select the create row for a new name; surrounding spaces are trimmed on selection and `/` nests groups. Counts show sessions directly in the group, excluding archived and trashed sessions. Escape closes the suggestions without closing the wizard.
- - **Agent**: the tool, plus instructions, command override, and extra args.
-@@ -106,7 +106,7 @@ With more than one row selected, right-click (long-press on touch) any selected
- 
- ## Projects
- 
--A **Projects** section near the bottom of the sidebar (above "Snoozed & archived") lists your saved projects that are not pinned and have no live session. It is the same registry the new-session wizard's "Saved projects" tab reads, and it shows on every grouping axis. The section is expanded by default; its collapsed state persists per-browser.
-+A **Projects, no sessions** section near the bottom of the sidebar (above "Snoozed & archived") lists your registered Projects that are not pinned and have no live session. It is the same registry the new-session wizard's "Projects" list reads, and it shows on every grouping axis. Repository headers backed by a registered Project carry a ◇ marker, and a pinned one ◆. The section is expanded by default; its collapsed state persists per-browser.
- 
- Pinned projects always render above as their own headers, with or without sessions. Projects with live sessions also render above as normal groups.
- 
-```
-
-**File**: `web/src/components/ProjectsSection.tsx` (modified, +10/-7)
-```diff
-@@ -50,13 +50,16 @@ export function ProjectsSection({
-           data-testid="sidebar-projects-toggle"
-           aria-expanded={expanded}
-           className={`flex-1 min-w-0 flex items-center gap-2 py-1.5 text-[11px] font-mono uppercase text-text-muted hover:text-text-secondary hover:bg-surface-800/40 cursor-pointer transition-colors ${
--            compact ? "px-2" : "px-3 tracking-widest"
-+            compact ? "px-2" : "px-3 tracking-wider"
-           }`}
-         >
-           <FoldChevron className={`shrink-0 transition-transform duration-75 ${expanded ? "" : "-rotate-90"}`} />
--          {/* The count and the wide tracking do not fit the rail, and a clipped
--              "(0)" is exactly what looks broken; truncate the label. See #2288. */}
--          <span className="truncate">Projects{compact ? "" : ` (${visible.length})`}</span>
-+          {/* A clipped count is exactly what looks broken, so the label truncates and the count never
-+              does; the rail has room for neither (#2288). */}
-+          <span className="truncate" title="Projects, no sessions">
-+            {compact ? "Projects" : "Projects, no sessions"}
-+          </span>
-+          {!compact && <span className="shrink-0">({visible.length})</span>}
-         </button>
-         {canAdd && !compact && (
-           <button
-@@ -84,7 +87,7 @@ export function ProjectsSection({
-         ))}
-       {expanded && visible.length === 0 && !compact && (
-         <p className="px-3 py-2 text-[12px] text-text-dim">
--          {query ? "No matching projects." : "No saved projects. Add one to keep a repo handy without a session."}
-+          {query ? "No matching projects." : "No registered Projects. Add one to keep a repo handy without a session."}
-         </p>
-       )}
-     </div>
-@@ -147,8 +150,8 @@ const ProjectRow = memo(function ProjectRow({
-         className="group flex items-center gap-2 px-3 py-1.5 text-text-secondary hover:bg-surface-800/50 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-600 select-none [-webkit-touch-callout:none]"
-         style={repoColorStyle(project.color)}
-       >
--        <span className="shrink-0 text-[10px] leading-none text-text-dim" title="Saved project" aria-hidden>
--          ◆
-+        <span className="shrink-0 text-[10px] leading-none text-text-dim" title="Project" aria-hidden>
-+          ◇
-         </span>
-         <button
-           onClick={() => canModify && onCreateSession(project.repoPath)}
-```
-
-**File**: `web/src/components/__tests__/AddProjectAction.test.tsx` (modified, +1/-1)
-```diff
-@@ -126,7 +126,7 @@ describe("AddProjectModal", () => {
-     openRowMenu(ws());
-     fireEvent.click(screen.getByTestId("sidebar-context-menu-add-project"));
-     fireEvent.change(screen.getByTestId("add-project-modal-input"), { target: { value: "/typed/repo" } });
--    await screen.findByRole("alert");
-+    expect((await screen.findByRole("alert")).textContent).toMatch(/^Projects could not be loaded\./);
-     fail = false;
-     fireEvent.click(screen.getByRole("button", { name: "Retry" }));
-     await screen.findByTitle("/src/frontend");
-```
-
-**File**: `web/src/components/__tests__/ProjectsSection.test.tsx` (modified, +30/-1)
-```diff
-@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
- import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
- 
- import { ProjectsSection } from "../ProjectsSection";
-+import { SidebarCompactContext } from "../../lib/sidebarCompact";
- import type { ProjectInfo, RepoGroup } from "../../lib/types";
- 
- afterEach(cleanup);
-@@ -110,13 +111,41 @@ describe("ProjectsSection", () => {
-     expect(menu.className).toContain("overflow-y-auto");
-   });
- 
-+  it("names what it lists, with a count that matches the rows, and stays short in the rail", () => {
-+    for (const paths of [[], ["/work/alpha"], ["/work/alpha", "/work/beta"]]) {
-+      renderSection({ projects: paths.map((p) => emptyProject(p)) });
-+      const toggle = screen.getByTestId("sidebar-projects-toggle");
-+      expect(Array.from(toggle.querySelectorAll("span"), (span) => span.textContent)).toEqual([
-+        "Projects, no sessions",
-+        `(${paths.length})`,
-+      ]);
-+      expect(screen.queryAllByTestId("sidebar-project-row")).toHaveLength(paths.length);
-+      cleanup();
-+    }
-+    render(
-+      <SidebarCompactContext.Provider value={true}>
-+        <ProjectsSection
-+          projects={[emptyProject("/work/alpha")]}
-+          query=""
-+          offline={false}
-+          onCreateSession={vi.fn()}
-+          onAddProject={vi.fn()}
-+          onEditProject={vi.fn()}
-+          onRemoveProject={vi.fn()}
-+        />
-+      </SidebarCompactContext.Provider>,
-+    );
-+    const label = screen.getByTestId("sidebar-projects-toggle").querySelector("span[title]")!;
-+    expect([label.textContent, label.getAttribute("title")]).toEqual(["Projects", "Projects, no sessions"]);
-+  });
++After a prior failed resume probe, a default restart or send-driven revival can start a new conversation and deliver input there. The old native transcript is not deleted, but its AoE association is abandoned. `/ensure` reports this as `resume_outcome: "fresh_after_failed_resume"` with `prior_session_id` and a message, rather than claiming a successful resume. See [session recovery policy](guides/session-resume.md#pinning-or-resetting-a-conversation) for explicit retry and direct CLI start behavior.
 +
-   it("shows the no-match and empty hints, and nothing when there is no way to add", () => {
-     renderSection({ query: "zzz" });
-     expect(screen.queryByTestId("sidebar-project-row")).toBeNull();
-     expect(screen.getByText("No matching projects.")).toBeTruthy();
-     cleanup();
-     renderSection({ projects: [] });
--    expect(screen.getByText(/No saved projects/)).toBeTruthy();
-+    expect(screen.getByText(/No registered Projects\./)).toBeTruthy();
-     cleanup();
-     renderSection({ projects: [], readOnly: true });
-     expect(screen.queryByTestId("sidebar-projects-section")).toBeNull();
+ Concurrent POSTs to the same `id` are serialized server-side, so two
+ orchestrators racing on the same session won't interleave keystrokes
+ inside the pane. Concurrent POSTs to *different* ids run in parallel.
+@@ -650,13 +652,20 @@ attachment is delivered. Genuine authority loss or an unknown outcome remains
+ blocked until reconciled.
+ 
+ A failed launch can still commit a lifecycle generation. The finite
+-`aoe-error-code` values `start_failed` and `resume_failed`, with valid same-epoch
+-runtime receipt headers, acknowledge that preparation commit, not a successful
++`aoe-error-code` values `start_failed`, `resume_failed`, and
++`managed_resume_refused`, with valid same-epoch runtime receipt headers,
++acknowledge that preparation commit, not a successful
+ launch. Clients must apply its snapshot before retrying. A later send or target
+ probe failure can likewise retain a preparation cursor; it does not acknowledge
+ message delivery. Transport loss or malformed mutation receipts remain unknown;
+ effect-free daemon refusals do not acknowledge a commit.
+ 
++`409 managed_resume_refused` preserves the managed conversation. Its finite
++`aoe-managed-resume-cause` header supplies an application-owned recovery reason.
++Missing, unknown, or ambiguous cause metadata keeps the refusal generic; native
++clients do not read response bodies to derive that reason. See
++[managed resume recovery](guides/session-resume.md#common-managed-resume-and-fork-refusals).
++
+ A failed purge can commit a retained-row failure marker. `409 purge_failed`
+ includes the finite code header and its canonical receipt; clients wait for that
+ snapshot before retrying or escalating. Unlike an unknown outcome, this committed
 ```
 
-**File**: `web/src/components/__tests__/SidebarGroupHeader.test.tsx` (modified, +23/-0)
+**File**: `docs/guides/configuration.md` (modified, +1/-1)
 ```diff
-@@ -205,6 +205,29 @@ describe("SidebarGroupHeader", () => {
+@@ -207,7 +207,7 @@ agent_detect_as = { "lenovo-claude" = "claude" }
+ - **`agent_detect_as`** reuses built-in status detection and ACP adapter inheritance. It never proves which native CLI owns a terminal conversation. Use [status rules](#status-rules-for-custom-agents) when output differs from the built-in.
+ - **`agent_acp_cmd`** (optional): ACP launch command that lets the agent run in the structured view (see below).
+ - **`agent_execution_as`** declares the native agent actually invoked by an opaque wrapper, together with its `agent_config_dir` store contract. This is required for managed resume and fork through such a wrapper.
+-  Bare, non-path wrappers can receive Default automatic resume flags and pane-scoped capture without this contract. Cleared launches selected by a failed-resume marker or disabled `auto_resume_on_restart` start fresh, mint and pass fresh-session flags where supported, and capture the new pane-scoped ID; explicit resume and fork remain unavailable. See [Execution identity and wrappers](session-resume.md#execution-identity-and-wrappers).
++  Bare, non-path wrappers can start fresh and capture their pane-scoped published ID without this contract. Resuming the recorded conversation requires the contract. See [Execution identity and wrappers](session-resume.md#execution-identity-and-wrappers) for wrapper contracts and [Pinning or resetting a conversation](session-resume.md#pinning-or-resetting-a-conversation) for failed-resume recovery.
+ - **`agent_config_dir`** (optional): The config directory the wrapper points its CLI at, when that is not the built-in default (see below).
+ - **`default_tool`** can select a custom-agent name for new sessions.
+ 
+```
+
+**File**: `docs/guides/session-resume.md` (modified, +26/-10)
+```diff
+@@ -1,6 +1,6 @@
+ # Native Session Resume
+ 
+-Explicit resume and fork against a qualified conversation require the native agent, physical store, working directory, and filesystem to agree with the prepared launch. Automatic start and restart also try a stored native ID when its binding cannot be attested, using the agent's normal resume selector and failed-resume probe. A pin or fork that migration left unqualified resumes against configuration-derived context instead of a recorded one, subject to the per-agent limits in [Supported managed contexts](#supported-managed-contexts). A status label or raw session ID does not qualify that ID for explicit use. Existing transcripts are never deleted to repair a mismatch.
++Managed resume requires a resolved native execution context, including automatic start and restart with a recorded conversation ID. If that context cannot be attested, AoE refuses the launch with recovery guidance instead of delegating the ID to unconstrained native lookup. Ordinary pane replacement checks this before retiring the outgoing pane, preserving its recorded identity and transcripts on refusal. This protection does not roll back an earlier explicitly requested container discard or container reconstruction for a tool change. Qualified conversations also validate their agent, store, working directory, and filesystem. A pin or fork that migration left unqualified uses configuration-derived context, subject to [Supported managed contexts](#supported-managed-contexts); a status label or raw ID does not qualify it.
+ 
+ Runtime conversation changes such as `/clear`, `/new`, fork, continue, or a fresh pane generation rotate the recorded identity when the native agent publishes the change. The old identity and any artifact predating the launch boundary cannot be recaptured after an AoE process restart.
+ 
+@@ -28,19 +28,19 @@ Hermes host identity hooks validate the complete JSON payload while retaining on
+ 
+ Sandbox config and conversation stores are staged per AoE instance, including custom `agent_config_dir` roots, and a cross-process lease guards each managed store, so two sessions in the same directory cannot claim each other's conversation.
+ 
+-`agent_detect_as` controls status detection and ACP adapter inheritance, not terminal execution identity. Direct built-in commands identify their native agent independently. Opaque wrappers need the explicit contract described below for explicit resume or fork and capture from shared stores.
++`agent_detect_as` controls status detection and ACP adapter inheritance, not terminal execution identity. Direct built-in commands identify their native agent independently. Opaque wrappers need the explicit contract below for managed resume, fork, and capture from shared stores.
+ 
+ ## Execution identity and wrappers
+ 
+ A conflicting built-in tool and command, such as tool `claude` with command `codex`, is rejected for managed resume and fork. An opaque wrapper requires both `session.agent_execution_as` and `session.agent_config_dir` in trusted global or profile configuration. This asserts that the wrapper invokes that native agent, forwards native arguments unchanged, and uses only the declared store and working-directory/filesystem context. Repository overrides are refused because a repository must not grant itself access to another native conversation store.
+ 
+-A Default start or restart can pass native resume flags to a bare, non-path wrapper mapped by `agent_detect_as` and capture its pane-scoped published ID (for example Claude, Codex, Cursor, or Pi), even without the execution contract. If a failed-resume marker or disabled `auto_resume_on_restart` selects a fresh launch, Cleared intent starts fresh through the same wrapper, minting an ID and passing fresh-session flags where supported, then capturing its pane-scoped publication. The failed-resume marker applies to the next automatic attempt for that ID; a subsequent restart follows the resulting durable conversation state. Neither path proves the wrapper's execution identity or store. Shared-store capture, explicit resume, and fork still require the contract; shell-active commands, remote launchers, paths, and different built-in commands do not gain the exception. A known conversation can also be tried after an external working-directory or store move on Default; its old binding stays authoritative until a qualified observation updates it.
++A bare, non-path wrapper mapped by `agent_detect_as` can still start fresh and capture its pane-scoped published ID without the execution contract. AoE does not preassign a native ID from a status alias alone, including after an explicit fresh choice or disabled `auto_resume_on_restart`. Resuming a published ID still requires the contract. A native selector supplied by the user remains user-owned only when the row has no AoE-managed conversation state; AoE does not inject another selector. A known conversation can still be tried after an external working-directory or store
+```
+
+**File**: `src/cli/session.rs` (modified, +5/-8)
+```diff
+@@ -1241,14 +1241,11 @@ async fn restart_all_sessions(profile: &str, parallel: usize) -> Result<()> {
+     for (_id, title) in &succeeded {
+         println!("  · {}", title);
      }
-   });
+-    if !fresh_after_failed_resume.is_empty() {
++    for (title, sid) in &fresh_after_failed_resume {
+         println!(
+-            "ℹ {} started fresh (a prior resume attempt failed for the stored sid; the old conversation is still reachable via the agent's own resume/history picker):",
+-            fresh_after_failed_resume.len()
++            "  · {}: started fresh after a prior resume failed for sid {}; the old conversation remains in the agent's history",
++            title, sid
+         );
+-        for (title, sid) in &fresh_after_failed_resume {
+-            println!("  · {}: sid {}", title, sid);
+-        }
+     }
+     if !orphaned.is_empty() {
+         println!(
+@@ -1403,8 +1400,8 @@ async fn restart_session(profile: &str, args: SessionIdArgs) -> Result<()> {
+         }
+         StartOutcome::FreshAfterFailedResume { sid } => {
+             println!(
+-                "✓ Restarted session: {} (started fresh; a prior resume attempt failed for sid {sid}, the old conversation is still reachable via the agent's own resume/history picker)",
+-                title
++                "Restarted session: {} (started fresh after a prior resume failed for sid {}; the old conversation remains in the agent's history)",
++                title, sid
+             );
+         }
+         StartOutcome::Resumed | StartOutcome::Fresh => {
+```
+
+**File**: `src/daemon/error.rs` (modified, +91/-0)
+```diff
+@@ -1,8 +1,10 @@
+ //! Fixed error discriminators shared by native clients and daemon handlers.
  
-+  it("marks a header that is a registered Project, and a pinned one more strongly", () => {
-+    const project = { name: "my-project", path: "/p", scope: "global" as const };
-+    // (group, marker shown, its accessible name)
-+    const cases: [Partial<SidebarGroup>, string | null, string | null][] = [
-+      [{}, null, null],
-+      [{ registeredProjects: [project] }, "sidebar-group-project-marker", "Project"],
-+      [
-+        { registeredProjects: [{ ...project, pinned: true }], pinned: true },
-+        "sidebar-group-pinned-marker",
-+        "Pinned project",
-+      ],
-+    ];
-+    for (const [over, testId, name] of cases) {
-+      renderHeader({ group: group(over) });
-+      const markers = ["sidebar-group-project-marker", "sidebar-group-pinned-marker"].filter((id) =>
-+        screen.queryByTestId(id),
-+      );
-+      expect(markers, JSON.stringify(over)).toEqual(testId ? [testId] : []);
-+      if (name) expect(screen.getByRole("img", { name }).getAttribute("title")).toMatch(new RegExp(`^${name}`));
-+      cleanup();
++use crate::session::ManagedResumeCause;
+ use reqwest::{header::HeaderMap, StatusCode};
+ 
+ pub const ERROR_CODE_HEADER: &str = "aoe-error-code";
++pub const MANAGED_RESUME_CAUSE_HEADER: &str = "aoe-managed-resume-cause";
+ 
+ #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+ pub enum ApiErrorCode {
+@@ -16,6 +18,7 @@ pub enum ApiErrorCode {
+     TlsRequired,
+     RuntimeEpochMismatch,
+     ResumeFailed,
++    ManagedResumeRefused(ManagedResumeCause),
+     StartFailed,
+     PurgeFailed,
+     NoRevive,
+@@ -47,6 +50,7 @@ impl ApiErrorCode {
+             Self::TlsRequired => "tls_required",
+             Self::RuntimeEpochMismatch => "runtime_epoch_mismatch",
+             Self::ResumeFailed => "resume_failed",
++            Self::ManagedResumeRefused(_) => "managed_resume_refused",
+             Self::NoRevive => "no_revive",
+             Self::CreationTrustChanged => "creation_trust_changed",
+             Self::CreationCancelled => "creation_cancelled",
+@@ -72,6 +76,7 @@ impl ApiErrorCode {
+             | Self::LifecycleSuperseded
+             | Self::RuntimeEpochMismatch
+             | Self::ResumeFailed
++            | Self::ManagedResumeRefused(_)
+             | Self::PurgeFailed
+             | Self::NoRevive
+             | Self::CreationTrustChanged
+@@ -117,6 +122,7 @@ impl ApiErrorCode {
+             b"tls_required" => Self::TlsRequired,
+             b"runtime_epoch_mismatch" => Self::RuntimeEpochMismatch,
+             b"resume_failed" => Self::ResumeFailed,
++            b"managed_resume_refused" => Self::ManagedResumeRefused(managed_resume_cause(headers)),
+             b"no_revive" => Self::NoRevive,
+             b"creation_trust_changed" => Self::CreationTrustChanged,
+             b"creation_cancelled" => Self::CreationCancelled,
+@@ -137,6 +143,19 @@ impl ApiErrorCode {
+     }
+ }
+ 
++fn managed_resume_cause(headers: &HeaderMap) -> ManagedResumeCause {
++    let mut values = headers.get_all(MANAGED_RESUME_CAUSE_HEADER).iter();
++    match (values.next(), values.next()) {
++        (Some(value), None) => match value.as_bytes() {
++            b"wrapper_contract_required" => ManagedResumeCause::WrapperContractRequired,
++            b"unsupported_managed_arguments" => ManagedResumeCause::UnsupportedManagedArguments,
++            b"opencode_schema_unattested" => ManagedResumeCause::OpenCodeSchemaUnattested,
++            _ => ManagedResumeCause::ExecutionContextUnattested,
++        },
++        _ => ManagedResumeCause::ExecutionContextUnattested,
 +    }
-+  });
++}
 +
-   it("marks the header draggable only with a drag handle", () => {
-     const { rerender } = renderHeader({ dragHandle: dragHandle() });
-     expect(screen.getByTestId("sidebar-group-header").getAttribute("data-draggable")).toBe("true");
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+@@ -217,6 +236,20 @@ mod tests {
+                 Some(ApiErrorCode::SessionTrashed),
+             ),
+             (StatusCode::FORBIDDEN, "session_archived", false, None),
++            (
++                StatusCode::CONFLICT,
++                "managed_resume_refused",
++                false,
++                Some(ApiErrorCode::ManagedResumeRefused(
++                    ManagedResumeCause::ExecutionContextUnattested,
++                )),
++            ),
++            (
++                StatusCode::INTERNAL_SERVER_ERROR,
++                "managed_resume_refused",
++                false,
++                None,
++            ),
+             (
+                 StatusCode::BAD_REQUEST,
+                 "create_hook_failed",
+@@ -244,4 +277,62 @@ mod tests {
+             );
+         }
+     }
++
++    #[test]
++    fn managed_resume_cause_headers_cannot_expand_or_erase_a_refusal() {
++        use ManagedResumeCause::*;
++        for (value, expected) in [
++            ("wrapper_contract_required", WrapperContractRequired),
++            ("unsupported_managed_arguments", UnsupportedManagedArguments),
++            ("opencode_schema_unattested", OpenCodeSchemaUnattested),
++            ("execution_context_unattested", ExecutionContextUnattested),
++            ("secret-token", ExecutionContextUnattested),
++            (
++                "wrapper_contract_required, secret-token",
++                ExecutionContextUnattested,
++            ),
++            ("", ExecutionContextUnattested),
++        ] {
++            let mut headers = HeaderMap::new();
++            headers.insert(MANAGED_RESUME_CAUSE_HEADER, HeaderValue::from_static(value));
++            assert_eq!(
++                ApiErrorCode::from_headers(StatusCode::CONFLICT, &headers, false),
++                None
++            );
++            headers.insert(
++                ERROR_CODE_HEADER,
++                HeaderValue::from_static("managed_resume_refused"),
++            );
++            assert_eq!(
++                ApiErrorCode::from_headers(StatusCode::CONFLICT, &headers, false),
++                Some(ApiErrorCode::ManagedResumeRefused(expected)),
++            );
++            assert_eq!(
++                ApiErrorCode::from_headers(StatusCode::BAD_REQUEST, &headers, false),
++                None
++            );
++            headers.append(MANAGED_RESUME_CAUSE_HEADER, HeaderValue::from_static(value));
++
 ```
 
-**File**: `web/src/components/session-wizard/__tests__/ExtraReposPicker.test.tsx` (modified, +2/-1)
+**File**: `src/daemon/mod.rs` (modified, +143/-5)
 ```diff
-@@ -49,7 +49,8 @@ function setup(over: { selectedPaths?: string[]; repoBases?: Record<string, stri
+@@ -1,7 +1,7 @@
+ //! Reusable client and shared wire contract for the daemon REST API.
  
- const row = (container: HTMLElement, name: string) =>
-   Array.from(container.querySelectorAll("button")).find((b) => b.textContent?.includes(name));
--const loaded = (container: HTMLElement) => waitFor(() => expect(container.textContent).toContain("Saved projects"));
-+const loaded = (container: HTMLElement) =>
-+  waitFor(() => expect(Array.from(container.querySelectorAll("p"), (p) => p.textContent)).toContain("Projects"));
- const addFreeText = (value: string) => {
-   const input = screen.getByPlaceholderText("/path/to/another/repo") as HTMLInputElement;
-   fireEvent.change(input, { target: { value } });
+ mod error;
+-pub use error::{ApiErrorCode, ERROR_CODE_HEADER};
++pub use error::{ApiErrorCode, ERROR_CODE_HEADER, MANAGED_RESUME_CAUSE_HEADER};
+ 
+ pub(crate) mod lifecycle;
+ mod runtime;
+@@ -143,6 +143,7 @@ pub(crate) enum LocalRuntimeError {
+ 
+ fn committed_failure_message(code: ApiErrorCode) -> &'static str {
+     match code {
++        ApiErrorCode::ManagedResumeRefused(cause) => cause.message(),
+         ApiErrorCode::PurgeFailed => "Purge failed; apply its committed state before retrying",
+         ApiErrorCode::ResumeFailed => {
+             "Resume failed after start committed; the conversation is preserved for explicit retry"
+@@ -153,6 +154,7 @@ fn committed_failure_message(code: ApiErrorCode) -> &'static str {
+ 
+ fn daemon_status_message(status: StatusCode, code: Option<ApiErrorCode>, body: &str) -> String {
+     match code {
++        Some(ApiErrorCode::ManagedResumeRefused(cause)) => cause.message().into(),
+         Some(ApiErrorCode::SmartRenameSkipped) => {
+             "Auto-name is unavailable for this session; check its repository and tool configuration"
+                 .into()
+@@ -890,6 +892,7 @@ impl DaemonClient {
+                 Some(
+                     ApiErrorCode::StartFailed
+                         | ApiErrorCode::ResumeFailed
++                        | ApiErrorCode::ManagedResumeRefused(_)
+                         | ApiErrorCode::PurgeFailed
+                 )
+             ) {
+@@ -911,12 +914,14 @@ impl DaemonClient {
+                     return Err(DaemonClientError::InvalidMutationReceipt);
+                 }
+             }
+-            // D1: 409 lifecycle_locked maps from status plus the single finite
+-            // server-owned header without reading the body. 401 maps from status
+-            // alone; neither retains a body or token in the error.
++            // Finite rejections and 401 never retain a response body.
+             if matches!(
+                 code,
+-                Some(ApiErrorCode::LifecycleLocked | ApiErrorCode::LifecycleSuperseded)
++                Some(
++                    ApiErrorCode::LifecycleLocked
++                        | ApiErrorCode::LifecycleSuperseded
++                        | ApiErrorCode::ManagedResumeRefused(_)
++                )
+             ) || status == StatusCode::UNAUTHORIZED
+             {
+                 return Err(DaemonClientError::Status {
+@@ -1782,6 +1787,43 @@ mod tests {
+             (500, "start_failed", "epoch-1", "3", true, false),
+             (409, "resume_failed", "epoch-1", "3", true, false),
+             (409, "purge_failed", "epoch-1", "3", true, false),
++            (409, "managed_resume_refused", "epoch-1", "3", true, false),
++            (409, "managed_resume_refused", "foreign", "3", false, true),
++            (409, "managed_resume_refused", "epoch-1", "0", false, true),
++            (
++                409,
++                "managed_resume_refused",
++                "absent",
++                "absent",
++                false,
++                false,
++            ),
++            (
++                409,
++                "managed_resume_refused",
++                "epoch-1",
++                "absent",
++                false,
++                true,
++            ),
++            (
++                409,
++                "managed_resume_refused",
++                "epoch-1",
++                "3, 4",
++                false,
++                true,
++            ),
++            (500, "managed_resume_refused", "epoch-1", "3", false, false),
++            (
++                409,
++                "managed_resume_refused, resume_failed",
++                "epoch-1",
++                "3",
++                false,
++                false,
++            ),
++            (409, "MANAGED_RESUME_REFUSED", "epoch-1", "3", false, false),
+             (409, "purge_failed", "foreign", "3", false, true),
+             (409, "purge_failed", "epoch-1", "0", false, true),
+             (409, "purge_failed", "absent", "absent", false, true),
+@@ -1870,6 +1912,102 @@ mod tests {
+         );
+     }
+ 
++    #[tokio::test]
++    async fn managed_resume_refusal_recovers_without_reflecting_private_bodies() {
++        use axum::response::IntoResponse;
++        for (unix, authenticated, cause) in [
++            (false, false, "wrapper_contract_required"),
++            (false, true, "wrapper_contract_required"),
++            (true, false, "wrapper_contract_required"),
++            (false, false, "secret-token"),
++        ] {
++            let expected = if cause == "wrapper_contract_required" {
++                crate::session::ManagedResumeCause::WrapperContractRequired
++            } else {
++                crate::session::ManagedResumeCause::ExecutionContextUnattested
++            };
++            let root = tempfile::tempdir().unwrap();
++            let socket = root.path().join("api.sock");
++            let app = axum::Router::new().route(
++                "/api/sessions/
 ```
 
-**File**: `web/src/components/session-wizard/__tests__/ProjectStep.test.tsx` (modified, +2/-1)
+**File**: `src/server/api/sessions/ensure.rs` (modified, +2/-1)
 ```diff
-@@ -120,7 +120,7 @@ describe("recent and saved projects", () => {
-     savedProjects("/repo/alpha", "/repo/dup");
-     sessions(mockSession({ id: "b", project_path: "/repo/beta" }), mockSession({ id: "d", project_path: "/repo/dup" }));
-     renderStep();
--    expect(await screen.findByText("Saved projects", { selector: "p" })).toBeTruthy();
-+    expect(await screen.findByText("Projects", { selector: "p" })).toBeTruthy();
-     expect(header("Recent")).toBeTruthy();
-     expect(screen.getByText("/repo/alpha")).toBeTruthy();
-     expect(screen.getByText("/repo/beta")).toBeTruthy();
-@@ -174,6 +174,7 @@ describe("recent and saved projects", () => {
-         onSelectSavedProject={onSelectSavedProject}
-       />,
-     );
-+    expect((await screen.findByRole("alert")).textContent).toMatch(/^Projects could not be loaded\./);
-     fireEvent.click((await screen.findByText("/repo/alpha")).closest("button")!);
-     expect(onSelectSavedProject.mock.calls).toEqual([[null, "/repo/alpha"]]);
-   });
+@@ -352,7 +352,8 @@ pub(super) async fn agent_target_response(
+                 body["prior_session_id"] = sid.into();
+                 "fresh_after_failed_resume"
+             }
+-        }.into();
++        }
++        .into();
+     }
+     crate::server::runtime::mutation_response(&snapshot.value.cursor, Json(body))
+ }
+```
+
+**File**: `src/server/api/sessions/lifecycle.rs` (modified, +207/-0)
+```diff
+@@ -2908,6 +2908,18 @@ async fn prepare_agent_session_inner(
+                 response
+             } else if error.is::<crate::session::NativeStoreUnavailable>() {
+                 StatusCode::SERVICE_UNAVAILABLE.into_response()
++            } else if let Some(refusal) =
++                error.downcast_ref::<crate::session::ManagedResumeRefused>()
++            {
++                let mut response = crate::server::api::api_error_with_code_header(
++                    crate::daemon::ApiErrorCode::ManagedResumeRefused(refusal.0),
++                    refusal.0.message(),
++                );
++                response.headers_mut().insert(
++                    crate::daemon::MANAGED_RESUME_CAUSE_HEADER,
++                    axum::http::HeaderValue::from_static(refusal.0.as_str()),
++                );
++                response
+             } else {
+                 tracing::warn!(target: "http.api.sessions", session = %id, %error, "session start failed");
+                 api_error(
+@@ -3030,6 +3042,201 @@ mod durable_stop_tests {
+     use super::*;
+     use crate::process::worker_registry::{self, WorkerRecord};
+ 
++    #[tokio::test]
++    #[serial_test::serial]
++    async fn managed_resume_refusal_publishes_safe_recovery_without_replacing_the_pane() {
++        use crate::tmux::test_helpers::{
++            only_pane_id, pane_field, tmux_available, wait_for_pane_command, TmuxTestSession,
++        };
++        if !tmux_available() {
++            return;
++        }
++        let root = tempfile::tempdir_in("/tmp").unwrap();
++        let _home = crate::session::test_support::isolate_app_dir_at(root.path());
++        let _env = crate::session::test_support::EnvGuard::unset(&[
++            "TMUX",
++            "TMUX_PANE",
++            "OMP_SESSION_ID",
++            "PI_SESSION_ID",
++            "AOE_SESSION_ID",
++            "AOE_PROFILE",
++            "AOE_DAEMON_URL",
++            "AOE_DAEMON_TOKEN",
++            "PRIME_AGENT_SESSION_DIR",
++            "PRIME_AGENT_CODING_AGENT_SESSION_DIR",
++            "PRIME_AGENT_CODING_AGENT_DIR",
++        ])
++        .and_set("AOE_TMUX_SOCKET", root.path().join("tmux.sock"));
++        let _omp = crate::session::test_support::install_login_shell_path_command(
++            root.path(),
++            "omp",
++            "#!/bin/sh\nexit 97\n",
++        );
++        let _prime = crate::session::test_support::install_login_shell_path_command(
++            root.path(),
++            "prime-agent",
++            "#!/bin/sh\nexit 97\n",
++        );
++        crate::session::config::update_app_state(|state| {
++            state.has_acknowledged_agent_hooks = true;
++        })
++        .unwrap();
++        crate::session::config::update_config(|config| {
++            config.systemd.enabled = false;
++            config.session.smart_rename = false;
++            config.session.auto_resume_on_restart = true;
++        })
++        .unwrap();
++        let project = root.path().join("private-project");
++        std::fs::create_dir(&project).unwrap();
++        std::fs::create_dir_all(project.join(".prime/agent")).unwrap();
++        std::fs::write(
++            project.join(".prime/agent/settings.json"),
++            r#"{"sessionDir":7}"#,
++        )
++        .unwrap();
++        let transcript = root.path().join("private-transcript.jsonl");
++        std::fs::write(&transcript, "private-conversation-body\n").unwrap();
++        let sid = "11111111-2222-4333-8444-555555555555";
++        for tool in ["omp", "prime-agent"] {
++            let mut row = Instance::new("managed refusal", project.to_str().unwrap());
++            row.tool = tool.into();
++            row.command = tool.into();
++            row.source_profile = "default".into();
++            row.status = Status::Stopped;
++            row.agent_session_id = Some(sid.into());
++            let mut binding = crate::session::ConversationBinding::unknown(sid);
++            binding.transcript_path = Some(transcript.clone());
++            row.agent_session_binding = Some(binding);
++            row.omp_capture_generation = Some("original-generation".into());
++            if tool == "omp" {
++                assert!(row.supports_native_resume());
++            } else {
++                let agent = crate::agents::get_agent("prime-agent").unwrap();
++                assert!(row.launch_invokes_resolved_agent_directly(agent));
++                assert_eq!(row.command, "prime-agent");
++                assert_eq!(row.agent_session_id.as_deref(), Some(sid));
++                assert_eq!(
++                    std::fs::read_to_string(project.join(".prime/agent/settings.json")).unwrap(),
++                    r#"{"sessionDir":7}"#
++                );
++            }
++            assert_eq!(row.resume_intent, crate::session::ResumeIntent::Default);
++            let conversation = row.conversation_state();
++            let name = crate::tmux::Session::generate_name(&row.id, &row.title);
++            let _pane = TmuxTestSession::from_name(&name);
++            assert!(crate::tmux:
+```
+
+---
+
+### Incident Patch 3: `7b7710d2` (2026-10-30)
+**Commit Message**: fix(sandbox): harden the sandbox image registry check (#5073)
+
+* fix(sandbox): harden the sandbox image registry check
+
+The dashboard can now trigger the registry check on demand, so a
+registry's responses are untrusted input.
+
+- Disable redirects and treat any non-2xx as a failure.
+- Refuse a bearer realm that is not https or names a loopback,
+  unspecified or link-local host.
+- Classify failures as registry_unreachable, registry_auth or
+  registry_bad_response. The API returns only the code; the full chain
+  is logged on the daemon.
+- Return no digest when no RepoDigest names the image's repository,
+  instead of the first entry.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(sandbox): treat a rooted localhost realm as local
+
+Addresses review comment from @coderabbitai on #5073.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix(sandbox): match official Docker Hub images by their short name
+
+Addresses review comment from @coderabbitai on #5073.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* test(sandbox): isolate registry client tests from proxies and port reuse
+
+Addresses review comment from @jerome-benoit on #5073.
+
+Co-Authored-By: Claude Sonnet
+
+**File**: `src/containers/image_update.rs` (modified, +306/-51)
+```diff
+@@ -1,5 +1,7 @@
+ //! Detects a newer registry digest for the configured sandbox image; never pulls.
+ 
++use std::net::IpAddr;
++
+ use anyhow::{anyhow, Result};
+ 
+ /// The digest doubles as the snooze key, so a dismissal sticks until the registry moves.
+@@ -54,6 +56,49 @@ pub enum ImageCheck {
+     Unknown(UnknownReason),
+ }
+ 
++/// Why the registry couldn't be asked. The code is what an API client sees; the chain stays
++/// in the logs.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++enum RegistryErrorKind {
++    Unreachable,
++    Auth,
++    BadResponse,
++}
++
++impl RegistryErrorKind {
++    fn code(self) -> &'static str {
++        match self {
++            RegistryErrorKind::Unreachable => "registry_unreachable",
++            RegistryErrorKind::Auth => "registry_auth",
++            RegistryErrorKind::BadResponse => "registry_bad_response",
++        }
++    }
++}
++
++#[derive(Debug, thiserror::Error)]
++#[error("{}", .kind.code())]
++struct RegistryError {
++    kind: RegistryErrorKind,
++    #[source]
++    source: anyhow::Error,
++}
++
++fn fail(kind: RegistryErrorKind, source: impl Into<anyhow::Error>) -> anyhow::Error {
++    RegistryError {
++        kind,
++        source: source.into(),
++    }
++    .into()
++}
++
++/// The short code for an error from [`check_image`]; anything unclassified is a bad response.
++pub fn error_code(error: &anyhow::Error) -> &'static str {
++    error
++        .downcast_ref::<RegistryError>()
++        .map_or(RegistryErrorKind::BadResponse, |e| e.kind)
++        .code()
++}
++
+ const MANIFEST_ACCEPT: &str = "application/vnd.oci.image.index.v1+json, \
+      application/vnd.docker.distribution.manifest.list.v2+json, \
+      application/vnd.docker.distribution.manifest.v2+json, \
+@@ -125,48 +170,50 @@ impl RegistryRef {
+ 
+     async fn fetch_remote_digest(&self, client: &reqwest::Client) -> Result<String> {
+         let url = self.manifest_url();
+-        let resp = client
+-            .get(&url)
+-            .header(reqwest::header::ACCEPT, MANIFEST_ACCEPT)
+-            .send()
+-            .await?;
+-
+-        let resp = if resp.status() == reqwest::StatusCode::UNAUTHORIZED {
+-            let token = self.obtain_token(client, &resp).await?;
++        let request = || {
+             client
+                 .get(&url)
+                 .header(reqwest::header::ACCEPT, MANIFEST_ACCEPT)
+-                .bearer_auth(token)
+-                .send()
+-                .await?
++        };
++        let resp = send(request()).await?;
++
++        let resp = if resp.status() == reqwest::StatusCode::UNAUTHORIZED {
++            let token = self.obtain_token(client, &resp).await?;
++            send(request().bearer_auth(token)).await?
+         } else {
+             resp
+         };
+ 
+-        let resp = resp.error_for_status()?;
++        let resp = ensure_success(resp)?;
+         resp.headers()
+             .get("docker-content-digest")
+             .and_then(|v| v.to_str().ok())
+             .map(|s| s.trim().to_string())
+             .filter(|s| !s.is_empty())
+-            .ok_or_else(|| anyhow!("registry response missing Docker-Content-Digest header"))
++            .ok_or_else(|| {
++                fail(
++                    RegistryErrorKind::BadResponse,
++                    anyhow!("registry response missing Docker-Content-Digest header"),
++                )
++            })
+     }
+ 
+     async fn obtain_token(
+         &self,
+         client: &reqwest::Client,
+         challenge: &reqwest::Response,
+     ) -> Result<String> {
++        let bad = |e: anyhow::Error| fail(RegistryErrorKind::BadResponse, e);
+         let header = challenge
+             .headers()
+             .get(reqwest::header::WWW_AUTHENTICATE)
+             .and_then(|v| v.to_str().ok())
+-            .ok_or_else(|| anyhow!("registry 401 without WWW-Authenticate header"))?;
++            .ok_or_else(|| bad(anyhow!("registry 401 without WWW-Authenticate header")))?;
+ 
+         let params = parse_bearer_challenge(header)
+-            .ok_or_else(|| anyhow!("unsupported WWW-Authenticate challenge: {header}"))?;
++            .ok_or_else(|| bad(anyhow!("unsupported WWW-Authenticate challenge: {header}")))?;
+ 
+-        let mut url = reqwest::Url::parse(&params.realm)?;
++        let mut url = validate_bearer_realm(&params.realm)?;
+         {
+             let mut qp = url.query_pairs_mut();
+             if let Some(service) = &params.service {
+@@ -177,21 +224,71 @@ impl RegistryRef {
+             }
+         }
+ 
+-        let token: TokenResponse = client
+-            .get(url)
+-            .send()
+-            .await?
+-            .error_for_status()?
++        let token: TokenResponse = ensure_success(send(client.get(url)).await?)?
+             .json()
+-            .await?;
++            .await
++            .map_err(|e| bad(e.into()))?;
+ 
+         token
+             .token
+             .or(token.access_token)
+-            .ok_or_else(|| anyhow!("registry token endpoint returned no token"))
++            .ok_or_else(|| bad(anyhow!("registry token endpoint return
+```
+
+**File**: `src/server/api/sandbox_image.rs` (modified, +14/-8)
+```diff
+@@ -44,9 +44,12 @@ impl ImageState {
+             Ok(ImageCheck::Unknown(reason)) => ImageState::Unknown {
+                 reason: reason.code(),
+             },
+-            Err(error) => ImageState::CheckFailed {
+-                error: format!("{error:#}"),
+-            },
++            Err(error) => {
++                tracing::warn!(target: "http.api.sandbox_image", "image check failed: {error:#}");
++                ImageState::CheckFailed {
++                    error: image_update::error_code(&error).to_string(),
++                }
++            }
+         }
+     }
+ }
+@@ -148,8 +151,11 @@ where
+         state
+     })
+     .await
+-    .unwrap_or_else(|e| ImageState::CheckFailed {
+-        error: format!("image check task failed: {e}"),
++    .unwrap_or_else(|e| {
++        tracing::error!(target: "http.api.sandbox_image", "image check task failed: {e}");
++        ImageState::CheckFailed {
++            error: "registry_bad_response".into(),
++        }
+     })
+ }
+ 
+@@ -539,10 +545,10 @@ mod tests {
+                 Ok(ImageCheck::Unknown(UnknownReason::RuntimeUnavailable)),
+                 serde_json::json!({"state": "unknown", "reason": "runtime_unavailable"}),
+             ),
+-            // A registry or network error is never reported as current.
++            // A registry or network error is never reported as current, and the chain stays out.
+             (
+-                Err(anyhow::anyhow!("registry timed out")),
+-                serde_json::json!({"state": "check_failed", "error": "registry timed out"}),
++                Err(anyhow::anyhow!("registry timed out at 10.0.0.5")),
++                serde_json::json!({"state": "check_failed", "error": "registry_bad_response"}),
+             ),
+         ];
+         for (result, expected) in cases {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5037** (2026-10-28): fix(process): stop double-signalling the macOS runner root (@njbrake)
-- **PR #5036** (closed): fix(deps): bump pulldown-cmark to 0.13.5 for RUSTSEC-2026-0414 (@njbrake)
-- **PR #5035** (2026-10-28): fix(deps): pin unicode-width to 0.2.2 so halfwidth dakuten are not counted twice (@njbrake)
-- **PR #5033** (2026-10-28): fix(deps): bump pulldown-cmark to 0.13.5 for RUSTSEC-2026-0414 (@klubrake)
-- **PR #5032** (2026-10-28): fix(web): finish the sidebar keyboard model's loose ends (@klubrake)
-- **PR #5029** (2026-10-28): fix(session): never preclean a sandbox without a managed worktree (@Seluj78)
+- **PR #5133** (2026-10-30): feat(tui): suggestions view with Start via the prefilled new-session dialog (@Seluj78)
+- **PR #5132** (2026-10-30): feat(suggestions): core mapping from provider source keys to projects (@Seluj78)
+- **PR #5131** (2026-10-30): feat(web): suggested sessions view with Start into the prefilled wizard (@Seluj78)
+- **PR #5130** (2026-10-30): feat(plugin-api): setup checks reported by suggestion providers (@Seluj78)
+- **PR #5129** (2026-10-30): feat(suggestions): per-criterion prompt templates applied at prepare (@Seluj78)
+- **PR #5121** (2026-10-30): feat(suggestions): core store, snapshot and HTTP API (no automation) (@Seluj78)
 
 ---
 
@@ -2858,30 +3415,29 @@ The dashboard guide still called th
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump pulldown-cmark to 0.13.5 for RUSTSEC-2026-0414 (#5033)
+## X. session): remove a purged worktree outside the store locks (#4496)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guides/worktrees.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d1f57750`: deps): bump pulldown-cmark to 0.13.5 for RUSTSEC-2026-0414 (#5033). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce52748a`: session): remove a purged worktree outside the store locks (#4496). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guides/worktrees.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.13.5"
-checksum = "278e9268c93b9e498a2da46c34d90ba93a3255eb99009646398f34bc73ab36eb"
+**Purging first moves the worktree** to a sibling `.aoe-purge-<session-id>`, marked by an `aoe-purge` file in its git admin directory, which `git worktree list` still shows but aoe hides from sessions, then removes it. A failed removal moves it back. A purge interrupted by a crash is finished on the next purge attempt while its session still exists; otherwise (web deletes remove the session first) `aoe worktree cleanup` lists the `.aoe-purge-<session-id>` checkout as orphaned once no process is still purging it, and can remove it.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.13.4"
-checksum = "e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d1f57750` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce52748a` are properly handled with clean fallback behavior.

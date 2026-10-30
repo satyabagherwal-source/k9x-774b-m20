@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T18:39:43.666Z",
+  "last_updated": "2026-10-30T18:58:41.951Z",
   "total_verified_learnings": 1176,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -834,8 +834,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "e83da884",
-      "content_hash": "a5d499818071d500711c91125fe6c32a1b580ab1ccb640e4d4efafddd370abdf",
+      "source_version": "996a3a71",
+      "content_hash": "711fddc7256f6cc859b35022e90b734b553b32418cb33844cc099bd6872fafa7",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -888,6 +888,11 @@
           "number": 5397,
           "title": "deps): bump pulldown-cmark to 0.13.5 for RUSTSEC-2026-0414 (#5033)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5833,
+          "title": "session): remove a purged worktree outside the store locks (#4496)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -895,7 +900,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T20:37:48.979Z",
+      "verified_at": "2026-10-30T18:58:28.361Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -4800,8 +4805,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "e29d9471",
-      "content_hash": "8ac80a4af2b961470583e44373726e9e68ea56aade508670245aaba1e3386bdd",
+      "source_version": "5b8effbb",
+      "content_hash": "1e96a4449e82f092dfd760b4b0fe66ed52f61bc5409b8ffbad61ed99726978c5",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4919,6 +4924,11 @@
           "number": 5797,
           "title": "docs: reboot recovery fix, WSL2 autostart note, LongMemEval in benchmarks index",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5835,
+          "title": "deps): bump ed25519-dalek from 2.2.0 to 3.0.0 in /orchestrator (#298)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4926,7 +4936,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T16:00:45.419Z",
+      "verified_at": "2026-10-30T18:58:41.935Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72144,8 +72154,8 @@
       "slug": "vitejs-vite",
       "platform": "github",
       "source_url": "https://github.com/vitejs/vite",
-      "source_version": "cce559ab",
-      "content_hash": "5e135c328a2727106063e8b6e009c05048f349bdb81ec3b918cac8f4bfa7390e",
+      "source_version": "90bc034a",
+      "content_hash": "97e53a3ac40f17b6c2c0a2d6c914a8434b6f98455ee0a96019134553a3ff7780",
       "dossier_path": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitejs-vite-learnings.md",
       "promoted_rules": [
@@ -72163,6 +72173,11 @@
           "number": 4888,
           "title": "test: workaround flaky test failure caused by Rolldown bug (#23872)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5834,
+          "title": "use top-level `input` for SSR build when `build.ssr: true` (#23898)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72170,7 +72185,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:32:58.414Z",
+      "verified_at": "2026-10-30T18:58:30.268Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154855,6 +154870,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T18:39:43.647Z"
+    },
+    "rule-5833": {
+      "learning_id": "rule-5833",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5833,
+      "title": "session): remove a purged worktree outside the store locks (#4496)",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "996a3a71",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T18:58:28.361Z"
+    },
+    "rule-5834": {
+      "learning_id": "rule-5834",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5834,
+      "title": "use top-level `input` for SSR build when `build.ssr: true` (#23898)",
+      "source_url": "https://github.com/vitejs/vite",
+      "source_version": "90bc034a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T18:58:30.268Z"
+    },
+    "rule-5835": {
+      "learning_id": "rule-5835",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5835,
+      "title": "deps): bump ed25519-dalek from 2.2.0 to 3.0.0 in /orchestrator (#298)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "5b8effbb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T18:58:41.935Z"
     }
   },
   "aliases": {

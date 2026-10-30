@@ -6277,3 +6277,6 @@ Every entry in this ledger must capture:
 | `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `59cf48c6` | Multi-dimensional audit evidence | 2026-10-30T18:39:34.638Z |
 | `learn-github-solidjs-solid` | `https://github.com/solidjs/solid` | `bc50fe56` | Multi-dimensional audit evidence | 2026-10-30T18:39:38.105Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `63233bc4` | Multi-dimensional audit evidence | 2026-10-30T18:39:43.746Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `996a3a71` | Multi-dimensional audit evidence | 2026-10-30T18:58:28.572Z |
+| `learn-github-vitejs-vite` | `https://github.com/vitejs/vite` | `90bc034a` | Multi-dimensional audit evidence | 2026-10-30T18:58:30.350Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `5b8effbb` | Multi-dimensional audit evidence | 2026-10-30T18:58:42.016Z |

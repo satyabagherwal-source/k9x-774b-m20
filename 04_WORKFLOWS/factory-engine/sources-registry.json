@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T18:39:46.289Z",
-    "lastVerified": "2026-10-30T18:39:46.289Z",
+    "lastChecked": "2026-10-30T18:58:44.560Z",
+    "lastVerified": "2026-10-30T18:58:44.560Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -139,22 +139,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T18:13:41.568Z",
-    "lastVerified": "2026-10-30T18:13:41.568Z",
+    "lastChecked": "2026-10-30T18:58:41.333Z",
+    "lastVerified": "2026-10-30T18:58:41.333Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "8ac80a4af2b961470583e44373726e9e68ea56aade508670245aaba1e3386bdd",
+    "contentHash": "1e96a4449e82f092dfd760b4b0fe66ed52f61bc5409b8ffbad61ed99726978c5",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e29d9471"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -1250,8 +1249,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T13:46:24.224Z",
-    "lastVerified": "2026-10-30T13:46:24.224Z",
+    "lastChecked": "2026-10-30T18:58:31.717Z",
+    "lastVerified": "2026-10-30T18:58:31.717Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -2889,9 +2888,9 @@
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
-    "lastChecked": "2026-10-29T01:50:00.085Z",
+    "lastChecked": "2026-10-30T18:58:34.178Z",
     "revisionIdentifier": "6d4608c5",
-    "lastVerified": "2026-10-29T01:50:00.085Z"
+    "lastVerified": "2026-10-30T18:58:34.178Z"
   },
   "clementtsang-bottom": {
     "name": "ClementTsang/bottom",
@@ -3618,9 +3617,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-10-29T11:43:50.560Z",
+    "lastChecked": "2026-10-30T18:58:29.221Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-10-29T11:43:50.560Z"
+    "lastVerified": "2026-10-30T18:58:29.221Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -7279,14 +7278,14 @@
     "officialUrl": "https://github.com/agent-of-empires/agent-of-empires",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T20:37:48.124Z",
-    "lastVerified": "2026-10-28T20:37:48.124Z",
+    "lastChecked": "2026-10-30T18:58:26.358Z",
+    "lastVerified": "2026-10-30T18:58:26.358Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "a5d499818071d500711c91125fe6c32a1b580ab1ccb640e4d4efafddd370abdf",
+    "contentHash": "711fddc7256f6cc859b35022e90b734b553b32418cb33844cc099bd6872fafa7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 19,
+    "recentFixesCount": 20,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10678,5 +10677,29 @@
     "lastChecked": "2026-10-30T18:39:30.945Z",
     "revisionIdentifier": "3b772afa",
     "lastVerified": "2026-10-30T18:39:30.945Z"
+  },
+  "vitejs-vite": {
+    "name": "vitejs/vite",
+    "officialUrl": "https://github.com/vitejs/vite",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T18:58:29.524Z",
+    "lastVerified": "2026-10-30T18:58:29.524Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-vitejs-vite",
+    "contentHash": "97e53a3ac40f17b6c2c0a2d6c914a8434b6f98455ee0a96019134553a3ff7780",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 6,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "heckj-swiftui-notes": {
+    "name": "swiftui-notes",
+    "officialUrl": "https://github.com/heckj/swiftui-notes",
+    "lastChecked": "2026-10-30T18:58:26.637Z",
+    "revisionIdentifier": "e7884cce",
+    "lastVerified": "2026-10-30T18:58:26.637Z"
   }
 }

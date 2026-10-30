@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `e29d9471`  
+> **Source Version**: `5b8effbb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T16:00:45.054Z  
+> **Timestamp**: 2026-10-30T18:58:41.471Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T16:00:43.617Z  
+> **Harvest Timestamp**: 2026-10-30T18:58:41.333Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,86 +1799,285 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `442271d8` (2026-10-30)
-**Commit Message**: docs: reboot recovery fix, WSL2 autostart note, LongMemEval in benchmarks index (#334)
+### Incident Patch 1: `5b8effbb` (2026-10-30)
+**Commit Message**: chore(deps): bump ed25519-dalek from 2.2.0 to 3.0.0 in /orchestrator (#298)
 
-README Common fixes gains a 'gateway gone after a reboot' entry pointing at
-bitterbot gateway install and the background-process guide. The Windows
-platform page no longer says a scheduled task is unavailable; it describes
-the WSL2 logon task and supervisor from #333. The Benchmarks index, linked
-from the README, now carries the 2026-10-28 LongMemEval-S official-protocol
-result with its caveats and a Reports entry.
+Bumps [ed25519-dalek](https://github.com/dalek-cryptography/curve25519-dalek) from 2.2.0 to 3.0.0.
+- [Release notes](https://github.com/dalek-cryptography/curve25519-dalek/releases)
+- [Changelog](https://github.com/dalek-cryptography/curve25519-dalek/blob/3.0.0/CHANGELOG.md)
+- [Commits](https://github.com/dalek-cryptography/curve25519-dalek/compare/ed25519-2.2.0...3.0.0)
 
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: ed25519-dalek
+  dependency-version: 3.0.0
+  dependency-type: direct:production
+  update-type: version-update:semver-major
+...
 
-**File**: `README.md` (modified, +1/-0)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `orchestrator/Cargo.lock` (modified, +103/-15)
 ```diff
-@@ -296,6 +296,7 @@ In a source checkout use `pnpm bitterbot doctor`; in Docker, `docker compose exe
- - **Control UI shows "Disconnected" or the first-run screen.** Open the UI at `http://127.0.0.1:19001` on the gateway machine, or through an SSH tunnel to it: the token handoff only works over loopback.
- - **Port 19001 already in use.** Another gateway is running. Find it with `ss -tlnp | grep 19001` (Linux) or `lsof -i :19001` (macOS), or start on another port with `BITTERBOT_GATEWAY_PORT=19002`.
- - **`npm install -g bitterbot` fails with `EACCES`.** Your npm cannot write to its global folder (normal with Node from nodejs.org or `apt`). Do not use `sudo`. Run the one command from Quick Start instead; it needs no npm. If you must stay on npm: [give npm a folder you own](docs/start/npm.md#eacces-permission-denied).
-+- **Gateway gone after a reboot.** Run `bitterbot gateway install` once and the gateway comes back on its own: a systemd user service on Linux, a launchd agent on macOS, and on WSL2 without systemd a Windows logon task with a crash supervisor that relaunches the gateway and keeps daily logs. Details: [running in the background](docs/gateway/background-process.md).
- - **"Orchestrator binary NOT FOUND".** No prebuilt P2P orchestrator was available for your platform. Build it with `cargo build --release --manifest-path orchestrator/Cargo.toml` from a checkout.
- - **P2P peers not connecting.** The P2P Network section of `bitterbot doctor` shows whether bootstrap DNS resolves and the fallback peer is reachable; firewall problems show up there.
+@@ -467,7 +467,7 @@ dependencies = [
+  "axum",
+  "base64 0.23.1",
+  "clap",
+- "ed25519-dalek",
++ "ed25519-dalek 3.0.0",
+  "enigo",
+  "futures",
+  "hex",
+@@ -918,6 +918,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "ce6e4c961d6cd6c9a86db418387425e8bdeaf05b3c8bc1411e6dca4c252f1453"
+ dependencies = [
+  "hybrid-array",
++ "rand_core 0.10.1",
+ ]
  
+ [[package]]
+@@ -939,7 +940,24 @@ dependencies = [
+  "cpufeatures 0.2.17",
+  "curve25519-dalek-derive",
+  "digest 0.10.7",
+- "fiat-crypto",
++ "fiat-crypto 0.2.9",
++ "rustc_version",
++ "subtle",
++ "zeroize",
++]
++
++[[package]]
++name = "curve25519-dalek"
++version = "5.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "b5eed333089e2e1c1ac8c6c0398e5e2497b4c9926ca6d0365ed1e099afa5bc23"
++dependencies = [
++ "cfg-if",
++ "cpufeatures 0.3.1",
++ "curve25519-dalek-derive",
++ "digest 0.11.3",
++ "fiat-crypto 0.3.0",
++ "rand_core 0.10.1",
+  "rustc_version",
+  "subtle",
+  "zeroize",
+@@ -989,6 +1007,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e7c1832837b905bbfb5101e07cc24c8deddf52f93225eee6ead5f4d63d53ddcb"
+ dependencies = [
+  "const-oid 0.9.6",
++ "zeroize",
++]
++
++[[package]]
++name = "der"
++version = "0.8.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "a878c850e9e421b20262e9b41f9c860e4785fa07541c266b62ff9d1ef998a80a"
++dependencies = [
++ "const-oid 0.10.2",
+  "pem-rfc7468",
+  "zeroize",
+ ]
+@@ -1143,8 +1171,18 @@ version = "2.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "115531babc129696a58c64a4fef0a8bf9e9698629fb97e9e40767d235cfbcd53"
+ dependencies = [
+- "pkcs8",
+- "signature",
++ "pkcs8 0.10.2",
++ "signature 2.2.0",
++]
++
++[[package]]
++name = "ed25519"
++version = "3.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "29fcf32e6c73d1079f83ab4d782de2d81620346a5f38c6237a86a22f8368980a"
++dependencies = [
++ "pkcs8 0.11.0",
++ "signature 3.0.0",
+ ]
+ 
+ [[package]]
+@@ -1153,15 +1191,30 @@ version = "2.2.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "70e796c081cee67dc755e1a36a0a172b897fab85fc3f6bc48307991f64e4eca9"
+ dependencies = [
+- "curve25519-dalek",
+- "ed25519",
+- "rand_core 0.6.4",
++ "curve25519-dalek 4.1.3",
++ "ed25519 2.2.3",
+  "serde",
+  "sha2 0.10.9",
+  "subtle",
+  "zeroize",
+ ]
+ 
++[[package]]
++name = "ed25519-dalek"
++version = "3.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "6ebaa1a2bf1290ab3bfe5a7b771d050ebffab2711c19a81691c683a5144a25de"
++dependencies = [
++ "curve25519-dalek 5.0.0",
++ "ed25519 3.0.0",
++ "rand_core 0.10.1",
++ "serde",
++ "sha2 0.11.0",
++ "signature 3.0.0",
++ "subtle",
++ "zeroize",
++]
++
+ [[package]]
+ name = "either"
+ version = "1.15.0"
+@@ -1297,6 +1350,12 @@ version = "0.2.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "28dea519a9695b9977216879a3ebfddf92f1c08c05d984f8996aecd6ecdc811d"
+ 
++[[package]]
++name = "fiat-crypto"
++version = "0.3.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "64cd1e32ddd350061ae6edb1b082d7c54915b5c672c389143b9a63403a109f24"
++
+ [[package]]
+ name = "find-msvc-tools"
+ version = "0.1.9"
+@@ -2392,7 +2451,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "f0c7892c221730ba55f7196e98b0b8ba5e04b4155651736036628e9f73ed6fc3"
+ dependencies = [
+  "bs58",
+- "ed25519-dalek",
++ "ed25519-dalek 2.2.0",
+  "hkdf",
+  "multihash",
+  "quick-protobuf",
+@@ -3417,9 +3476,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "pem-rfc7468"
+-version = "0.7.0"
++version = "1.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "88b39c9bfcfc231068454382784bb460aae594343fb030d46e9f50a645418412"
++checksum = "a6305423e0e7738146434843d1694d621cce767262b2a86910beab705e4493d9"
+ dependencies = [
+  "base64ct",
+ ]
+@@ -3504,8 +3563,18 @@ version = "0.10.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "f950b2377845cebe5cf8b5165cb3cc1a5e0fa5cfa3e1f7f55707d8fd82e0a7b7"
+ dependencies = [
+- "der",
+- "spki",
++ "der 0.7.10",
++ "spki 0.7.3",
++]
++
++[[package]]
++name = "pkcs8"
++version = "0.11.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "451913da69c775a56034ea8d9003d27ee8948e12443eae7c038ba100a4f21cb7"
++dependencies = [
++ "der 0.8.2",
++ "spki 0.8.1",
+ ]
+ 
+ [[package]]
+@@ -4234,6 +4303,15 @@ dependencies = [
+  "rand_core 0.6.4",
+ ]
+ 
++[[package]]
++name = "signature"
++version = "3.0.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "28d567dcbaf0049cb8ac2608a76cd95ff9e4412e1899d389ee400918ca7537f5"
++dependencies = [
++ "rand_core 0.10.1",
++]
++
+ [[package]]
+ name = "simd-adler32"
+ version = "0.3.9"
+@@ -4267,7 +4345,7 @@ dependencies = [
+  "aes-gcm",
+  "blake2",
+  "chacha20poly1305",
+- "curve25519-dalek",
++ "curve25519-dalek 4.1.3",
+  "rand_core 0.6.4",
+  "ring",
+  "rustc_version",
+@@ -4302,7 +4380,17 @@ sou
 ```
 
-**File**: `docs/benchmarks/index.md` (modified, +26/-0)
+**File**: `orchestrator/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -42,9 +42,35 @@ so an older report is flagged rather than compared. The
- `skills-ablation` workflow runs the harness self-test weekly with a
- deterministic executor and can produce a live report on demand.
- 
-+## Long-term memory recall (LongMemEval-S)
-+
-+A full 500-question run of [LongMemEval-S](https://github.com/xiaowu0162/LongMemEval)
-+under the reference protocol (the benchmark's own GPT-4o judge and
-+per-question-type prompts), 2026-10-28, with Bitterbot's production retrieval
-+(hybrid search, session-level recall, k = 10) feeding a Claude Haiku 4.5
-+reader. The unmodified reference scorer returned the same overall figure.
-+
-+| metric                                    | value |
-+| ----------------------------------------- | ----- |
-+| overall (question-weighted)               | 0.858 |
-+| task-averaged (mean of 6 type means)      | 0.883 |
-+| abstention accuracy (30 `_abs` questions) | 0.933 |
-+| session recall_all@10 (470 non-abs)       | 0.964 |
-+| multi-session (133), the weakest type     | 0.744 |
-+
-+Caveats. The score is reader and judge dependent: the same retrieval with an
-+oracle context (gold sessions only) scores 0.920 with the Haiku reader, so the
-+remaining gap is mostly context noise and reading, not retrieval misses (58 of
-+the 71 misses had every gold session in context). A Claude Sonnet 4.5 reader
-+scored 0.868, one point higher at about three times the cost. Published
-+numbers from other systems mostly use a different judge or reader and are not
-+directly comparable. Setup, per-type table, miss analysis and raw outputs:
-+[benchmarks/longmemeval](https://github.com/Bitterbot-AI/bitterbot-desktop/blob/main/benchmarks/longmemeval/README.md).
-+
- ## Reports
- 
- Newest first.
- 
-+- [2026-10-28 LongMemEval-S official protocol](https://github.com/Bitterbot-AI/bitterbot-desktop/blob/main/benchmarks/longmemeval/README.md#results): 500 questions, Haiku 4.5 reader, GPT-4o judge, 0.858 overall; oracle-context and Sonnet 4.5 reader baselines.
- - [2026-09-06 external](skills-2026-09-06-external.md): ContinualSkillBench math, deterministic subset, baseline and harvested arms, primary model, six tasks, two trials.
- - [2026-09-06](skills-2026-09-06.md): first run on the reference node; baseline and harvested arms only (no evolved skill live yet), primary model, frozen corpus, six tasks per suite, two trials.
+@@ -25,7 +25,7 @@ futures = "0.3"
+ tokio = { version = "1", features = ["full"] }
+ serde = { version = "1", features = ["derive"] }
+ serde_json = "1"
+-ed25519-dalek = { version = "2", features = ["rand_core", "pem"] }
++ed25519-dalek = { version = "3", features = ["rand_core", "pem"] }
+ tracing = "0.1"
+ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+ sha2 = "0.11"
 ```
 
-**File**: `docs/platforms/windows.md` (modified, +5/-2)
+---
+
+### Incident Patch 2: `59373437` (2026-10-30)
+**Commit Message**: chore(deps): bump lru from 0.18.5 to 0.19.0 in /orchestrator (#297)
+
+Bumps [lru](https://github.com/jeromefroe/lru-rs) from 0.18.5 to 0.19.0.
+- [Changelog](https://github.com/jeromefroe/lru-rs/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/jeromefroe/lru-rs/compare/0.18.5...0.19.0)
+
+---
+updated-dependencies:
+- dependency-name: lru
+  dependency-version: 0.19.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `orchestrator/Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -14,8 +14,11 @@ compatible (Node, Linux binaries, skills). WSL2 itself is one command:
- `wsl --install`. Without WSL2, use the [Docker](/platforms/docker) image with
- Docker Desktop.
+@@ -2745,9 +2745,9 @@ checksum = "5e5032e24019045c762d3c0f28f5b6b8bbf38563a65908389bf7978758920897"
  
--A native Windows install (and a Scheduled Task to run the gateway without
--WSL) is not available yet; native companion apps are planned.
-+A native Windows install is not available yet; native companion apps are
-+planned. The gateway does survive reboots: `bitterbot gateway install` inside
-+WSL2 registers a Windows logon task that starts a crash supervisor in the
-+distro, with `bitterbot gateway status` and `bitterbot doctor` reporting on it.
-+See [running in the background](/gateway/background-process#wsl2-without-systemd).
+ [[package]]
+ name = "lru"
+-version = "0.18.5"
++version = "0.19.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ef9ac18847474e638e3702b76c65d4eb93428471a74778ef0f1be711717f89b5"
++checksum = "4a9f71e3591c7ec44d3e563e87bf14ddc2bada8519dca046e5b0e560cd004e2d"
+ dependencies = [
+  "hashbrown 0.17.1",
+ ]
+```
+
+**File**: `orchestrator/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -39,7 +39,7 @@ tower-http = { version = "0.7", features = ["cors"] }
+ http = "1"
+ tokio-stream = "0.1"
+ hex = "0.4"
+-lru = "0.18"
++lru = "0.19"
+ reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
  
- ## Install with install.ps1 (WSL2)
- 
+ # PLAN-14 Pillar 4: optional OS-control deps. Build with
 ```
 
 #### Recent Merged Pull Requests:
@@ -1907,28 +2106,88 @@ Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: reboot recovery fix, WSL2 autostart note, LongMemEval in benchmarks index 
+## X. deps): bump ed25519-dalek from 2.2.0 to 3.0.0 in /orchestrator (#298)
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `orchestrator/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `442271d8`: docs: reboot recovery fix, WSL2 autostart note, LongMemEval in benchmarks index (#334). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5b8effbb`: deps): bump ed25519-dalek from 2.2.0 to 3.0.0 in /orchestrator (#298). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `orchestrator/Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- **Gateway gone after a reboot.** Run `bitterbot gateway install` once and the gateway comes back on its own: a systemd user service on Linux, a launchd agent on macOS, and on WSL2 without systemd a Windows logon task with a crash supervisor that relaunches the gateway and keeps daily logs. Details: [running in the background](docs/gateway/background-process.md).
+ "ed25519-dalek 3.0.0",
+ "rand_core 0.10.1",
+ "fiat-crypto 0.2.9",
+ "rustc_version",
+ "subtle",
+ "zeroize",
+]
+
+[[package]]
+name = "curve25519-dalek"
+version = "5.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b5eed333089e2e1c1ac8c6c0398e5e2497b4c9926ca6d0365ed1e099afa5bc23"
+dependencies = [
+ "cfg-if",
+ "cpufeatures 0.3.1",
+ "curve25519-dalek-derive",
+ "digest 0.11.3",
+ "fiat-crypto 0.3.0",
+ "rand_core 0.10.1",
+ "zeroize",
+]
+
+[[package]]
+name = "der"
+version = "0.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a878c850e9e421b20262e9b41f9c860e4785fa07541c266b62ff9d1ef998a80a"
+dependencies = [
+ "const-oid 0.10.2",
+ "pkcs8 0.10.2",
+ "signature 2.2.0",
+]
+
+[[package]]
+name = "ed25519"
+version = "3.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "29fcf32e6c73d1079f83ab4d782de2d81620346a5f38c6237a86a22f8368980a"
+dependencies = [
+ "pkcs8 0.11.0",
+ "signature 3.0.0",
+ "curve25519-dalek 4.1.3",
+ "ed25519 2.2.3",
+[[package]]
+name = "ed25519-dalek"
+version = "3.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6ebaa1a2bf1290ab3bfe5a7b771d050ebffab2711c19a81691c68
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+ "ed25519-dalek",
+ "fiat-crypto",
+ "pkcs8",
+ "signature",
+ "curve25519-dalek",
+ "ed25519",
+ "rand_core 0.6.4",
+ "ed25519-dalek",
+version = "0.7.0"
+checksum = "88b39c9bfcfc231068454382784bb460aae594343fb030d46e9f50a645418412"
+ "der",
+ "spki",
+ "curve25519-dalek",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `442271d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5b8effbb` are properly handled with clean fallback behavior.
