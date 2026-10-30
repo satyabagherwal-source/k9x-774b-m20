@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md`  
 > **Source**: github ([https://github.com/StikDebug/StikDebug](https://github.com/StikDebug/StikDebug))  
-> **Source Version**: `17b1e1d9`  
+> **Source Version**: `97530a90`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T23:34:39.822Z  
+> **Timestamp**: 2026-10-30T15:14:59.732Z  
 > **Learning ID**: `learn-github-stikdebug-stikdebug`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StikDebug/StikDebug](https://github.com/StikDebug/StikDebug))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T23:34:39.814Z  
+> **Harvest Timestamp**: 2026-10-30T15:14:58.896Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An on-device debugger/JIT enabler for iOS versions 17.4+, powered by idevice.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2799 stars
+- **Stars / Engagement**: 2948 stars
 
 ---
 
@@ -218,6 +218,7 @@ enum AppFeature: String, CaseIterable, Identifiable {
     case deviceInfo = "deviceinfo"
     case profiles
     case processes
+    case launchApps = "launchapps"
     case location
     case settings
 
@@ -228,7 +229,7 @@ enum AppFeature: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .home:
-            return "Apps"
+            return "JIT"
         case .scripts:
             return "Scripts"
         case .tools:
@@ -239,6 +240,8 @@ enum AppFeature: String, CaseIterable, Identifiable {
             return "Device Info"
         case .profiles:
             return "App Expiry"
+        case .launchApps:
+            return "Launch Apps"
         case .processes:
             return "Processes"
         case .location:
@@ -251,7 +254,7 @@ enum AppFeature: String, CaseIterable, Identifiable {
     var detail: String {
         switch self {
         case .home:
-            return "Manage installed apps"
+            return "Enable JIT for installed apps"
         case .scripts:
             return "Manage and run JS scripts"
         case .tools:
@@ -262,6 +265,8 @@ enum AppFeature: String, CaseIterable, Identifiable {
             return "View detailed device metadata"
         case .profiles:
             return "Check app expiration dates"
+        case .launchApps:
+            return "Launch installed apps without enabling JIT"
         case .processes:
             return "Inspect running apps"
         case .location:
@@ -283,7 +288,7 @@ enum AppFeature: String, CaseIterable, Identifiable {
     var systemImage: String {
         switch self {
         case .home:
-            return "square.grid.2x2"
+            return "bolt.fill"
         case .scripts:
             return "scroll"
         case .tools:
@@ -294,6 +299,8 @@ enum AppFeature: String, CaseIterable, Identifiable {
             return "iphone.and.arrow.forward"
         case .profiles:
             return "calendar.badge.clock"
+        case .launchApps:
+            return "square.grid.2x2"
         case .processes:
             return "rectangle.stack.person.crop"
         case .location:
@@ -318,6 +325,8 @@ enum AppFeature: String, CaseIterable, Identifiable {
             DeviceInfoView()
         case .profiles:
             ProfileView()
+        case .launchApps:
+            InstalledAppsListView(onSelectApp: { _, _ in }, showDoneButton: false, mode: .launch)
         case .processes:
             ProcessInspectorView()
         case .location:
@@ -330,7 +339,7 @@ enum AppFeature: String, CaseIterable, Identifiable {
 
 extension AppFeature {
     static let mainTabs: [AppFeature] = [.home, .tools, .settings]
-    static let toolList: [AppFeature] = [.scripts, .console, .deviceInfo, .profiles, .processes, .location]
+    static let toolList: [AppFeature] = [.launchApps, .scripts, .console, .deviceInfo, .profiles, .processes, .location]
 }
 
 ```
@@ -1091,7 +1100,7 @@ private enum IdeviceBridge {
         return try body(client)
     }
 
-    static func plistDictionaries(adapter: OpaquePointer, handshake: OpaquePointer) throws -> [[String: Any]] {
+    static func plistDictionaries(adapter: OpaquePointer, handshake: OpaquePointer, applicationType: String? = nil) throws -> [[String: Any]] {
         try withConnectedClient(
             fallback: "Failed to connect to installation proxy",
             missingClientMessage: "Installation proxy client was not created",
@@ -1100,7 +1109,15 @@ private enum IdeviceBridge {
         ) { client in
             var rawApps: UnsafeMutableRawPointer?
             var count = 0
-            if let ffiError = installation_proxy_get_apps(client, nil, nil, 0, &rawApps, &count) {
+            let ffiError: UnsafeMutablePointer<IdeviceFfiError>?
+            if let applicationType {
+                ffiError = applicationType.withCString {
+                    installation_proxy_get_apps(client, $0, nil, 0, &rawApps, &count)
+                }
+            } else {
+                ffiError = installation_proxy_get_apps(client, nil, nil, 0, &rawApps, &count)
+            }
+            if let ffiError {
                 throw consumeFFIError(ffiError, fallback: "Failed to fetch installed apps")
             }
 
@@ -1254,13 +1271,7 @@ extension JITEnableContext {
             }
 
             do {
-                return try IdeviceBridge.withConnectedClient(
-                    fallback: "Failed to connect to image mounter",
-                    missingClientMessage: "Image mounter client was not created",
-                    connect: { image_mounter_connect_rsd(adapter, handshake, $0) },
-                    cleanup: { image_mounter_free($0) }
-                ) { client in
-               
+                return try IdeviceBridge.w
 ```
 
 ### Core Architecture Module: `StikDebug/Device/JITEnableContext.swift`
@@ -1275,8 +1286,9 @@ extension JITEnableContext {
 import Foundation
 import idevice
 import Darwin
+import Network
 
-final class RemotePairingPortResolver: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
+final class RemotePairingPortResolver {
     static let fallback: UInt16 = 49152
     private static let overrideKey = "TunnelRemotePairingPort"
     private static let stateLock = NSLock()
@@ -1289,25 +1301,28 @@ final class RemotePairingPortResolver: NSObject, NetServiceBrowserDelegate, NetS
         return selectedEndpoint
     }
 
-    private static func record(port: UInt16, source: String) {
-        let endpoint = "\(DeviceConnectionContext.targetIPAddress):\(port) (\(source))"
+    private static func record(targetIPAddress: String, port: UInt16, source: String) {
+        let endpoint = "\(targetIPAddress):\(port) (\(source))"
         stateLock.lock()
         selectedEndpoint = endpoint
         stateLock.unlock()
         NSLog("[StikDebug] Remote Pairing selected endpoint: %@", endpoint)
     }
 
-    private let browser = NetServiceBrowser()
-    private var services: [NetService] = []
+    private let discoveryQueue = DispatchQueue(label: "com.stik.remotePairingDiscovery")
+    private let completion = DispatchSemaphore(value: 0)
+    private var browser: NWBrowser?
+    private var connection: NWConnection?
+    private var selectedService: NWEndpoint?
+    private var selectedLoopback = false
     private var resolvedPort: UInt16?
+    private var finished = false
 
-    /// Resolve on a worker thread with an active run loop. An explicit Settings
-    /// override takes precedence when multicast DNS cannot see the local service.
-    static func resolve(timeout: TimeInterval = 5) -> UInt16 {
+    static func resolve(targetIPAddress: String = DeviceConnectionContext.targetIPAddress, timeout: TimeInterval = 5) -> UInt16 {
         let override = (UserDefaults.standard.string(forKey: overrideKey) ?? "")
             .trimmingCharacters(in: .whitespacesAndNewlines)
         if !override.isEmpty, let port = UInt16(override), port != 0 {
-            record(port: port, source: "Manual")
+            record(targetIPAddress: targetIPAddress, port: port, source: "Manual")
             return port
         }
         if !override.isEmpty {
@@ -1315,47 +1330,166 @@ final class RemotePairingPortResolver: NSObject, NetServiceBrowserDelegate, NetS
         }
 
         let result = discover(timeout: timeout)
-        record(port: result.port, source: result.source)
+        record(targetIPAddress: targetIPAddress, port: result.port, source: result.source)
         return result.port
     }
 
     static func discover(timeout: TimeInterval = 5) -> (port: UInt16, source: String) {
         let worker = RemotePairingPortResolver()
-        let completion = DispatchSemaphore(value: 0)
-        DispatchQueue.global(qos: .utility).async {
-            worker.search(timeout: timeout)
-            completion.signal()
+        worker.discoveryQueue.async {
+            worker.startDiscovery()
         }
-        guard completion.wait(timeout: .now() + timeout + 1) == .success else {
+        _ = worker.completion.wait(timeout: .now() + timeout)
+        return worker.discoveryQueue.sync {
+            worker.finishDiscovery()
+            if let port = worker.resolvedPort {
+                return (port, "Bonjour")
+            }
             return (fallback, "Fallback")
         }
-        if let port = worker.resolvedPort {
-            return (port, "Bonjour")
-        }
-        return (fallback, "Fallback")
     }
 
-    private func search(timeout: TimeInterval) {
-        browser.delegate = self
-        browser.schedule(in: .current, forMode: .default)
-        browser.searchForServices(ofType: "_remotepairing._tcp.", inDomain: "local.")
-        let deadline = Date().addingTimeInterval(timeout)
-        while resolvedPort == nil && Date() < deadline {
-            _ = RunLoop.current.run(mode: .default, before: Date().addingTimeInterval(0.1))
+    private static func preferredCandidate(
+        from candidates: [(endpoint: NWEndpoint, isLoopback: Bool)]
+    ) -> (endpoint: NWEndpoint, isLoopback: Bool)? {
+        candidates.first(where: { $0.isLoopback }) ?? candidates.first
+    }
+
+    private func startDiscovery() {
+        guard !finished else { return }
+        let parameters = NWParameters.tcp
+        parameters.includePeerToPeer = true
+        let browser = NWBrowser(
+            for: .bonjour(type: "_remotepairing._tcp", domain: "local."),
+            using: parameters
+        )
+        self.browser = browser
+        browser.browseResultsChangedHandler = { [weak self] results, _ in
+            guard let self, !self.finished else { return }
+            let candidates = results.compactMap { result -> (endpoint: NWEndpoint, isLoopback: Bool)? in
+                guard case .service = result.endpoint else { return nil }
+                let isLoopback = result.interfaces.contains { $0.name.hasPrefix("lo") }
+                return (result.endpoint, isLoopback)
+            }
+            guard let selected = Self.preferredCandidate(from: candidates),
+                  self.selectedService == nil || (!self.selectedLoopback && selected.isLoopback) else {
+                return
+            }
+            self.selectedService = selected.endpoint
+            self.selectedLoopback = selected.isLoopback
+            self.connection?.cancel()
+            let connection = NWConnection(to: selected.endpoint, using: parameters)
+            self.connection = connection
+            connection.pathUpdateHandler = { [weak self, weak connection] path in
+                guard let self, let connection, self.connection === connection, !self.finished else { return }
+                if path.status == .satisfied {
+                    self.recordResolvedPort(from: connection)
+                }
+            }
+            connection.stateUpdateHandler = { [weak self, weak connection] state in
+                guard let self, let connection, self.connection === connection, !self.finished else { return }
+                switch state {
+                case .ready, .waiting:
+                    self.recordResolvedPort(from: connection)
+                case .failed:
+                    self.finishDiscovery()
+                default:
+                    break
+                }
+            }
+            connection.start(queue: self.discoveryQueue)
         }
-        browser.stop()
-        services.forEach { $0.stop() }
+        browser.stateUpdateHandler = { [weak self] state in
+            if case .failed = state {
+                self?.finishDiscovery()
+            }
+        }
+        browser.start(queue: discoveryQueue)
+    }
+
+    private func recordResolvedPort(from connection: NWConnection) {
+        guard case .hostPort(_, let port) = connection.currentPath?.remoteEndpoint,
+              port.rawValue != 0 else { return }
+        resolvedPort = port.rawValue
+        finishDiscovery()
+    }
+
+    private func finishDiscovery() {
+        guard !finished else { return }
+        finished = true
+        browser?.cancel()
+        connection?.cancel()
+        completion.signal()
+    }
+
+}
+
+struct PairingPlacementTarget: Sendable {
+    let pairingFileURL: URL
+    let address: Data
+    let hostname: String
+}
+
+final class PairedDeviceDiscovery: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
+    private let browser = NetServiceBrowser()
+    private var services: [NetService] = []
+    private let peerHost: String?
+    private var resolvedAddress: Data?
+
+    init(address: Data) {
+        peerHost = Self.numericHost(address)
+        super.init()
+        browser.delegate = self
+        browser.includesPeerToPeer = true
+    }
+
+    static func numericHost(_ address: Data) -> String? {
+        guard address.count >= MemoryLayout<sockaddr>.size else { return nil }
+        return address.withUnsafeBytes { bytes in
+            let socketAddress = bytes.baseAddress!.assumingMemoryBound(to: sockaddr.self)
+            let family = Int32(socketAddress.pointee.sa_family)
+            let length: Int
+            switch family {
+            case AF_INET: length = MemoryLayout<sockaddr_in>.size
+            case AF_INET6: length = MemoryLayout<sockaddr_in6>.size
+            default: return nil
+            }
+            guard address.count >= length else { return nil }
+            var host = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+            guard getnameinfo(socketAddress, socklen_t(length), &host, socklen_t(host.count), nil, 0, NI_NUMERICHOST) == 0 else { return nil }
+            return String(cString: host)
+        }
+    }
+
+    func resolve(timeout: TimeInterval = 8) throws -> Data {
+        guard peerHost != nil else {
+            throw NSError(domain: "StikDebug", code: -18, userInfo: [NSLocalizedDescriptionKey: "The paired device has an invalid network address."])
+        }
+        browser.searchForServices(ofType: "_remotepairing._tcp.", inDomain: "local.")
+        defer {
+            browser.stop()
+            services.forEach { $0.stop() }
+        }
+        let deadline = Date().addingTimeInterval(timeout)
+        while resolvedAddress == nil && Date() < deadline {
+            RunLoop.current.run(until: min(deadline, Date().addingTimeInterval(0.05)))
+        }
+        guard let resolvedAddress else {
+            throw NSError(domain: "StikDebug", code: -19, userInfo: [NSLocalizedDescriptionKey: "Could not discover the paired device. Keep both devices on the same Wi-Fi network and try again."])
+        }
+        return resolvedAddress
     }
 
     func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         services.append(service)
+        service.includesPeerToPeer = true
         service.delegate = self
-        service.resolve(withTimeout: 4)
+        service.resolve(withTimeout: 6)
     }
 
     func netServiceDidResolveAddress(_ sender: NetService) {
-        if (1...65535).contains(sender.port), resolvedPort == nil {
-            resolvedPort = UInt16(sender.port)
+        if let address = sender.addresses?.first(where: { Self.numericHost($0) == peerHost }) {
+            resolvedAddress = address
         }
     }
 }
@@ -1390,159 +1524,7 @@ final class JITEnableContext {
         let scribble = enableAll || defaults.bool(forKey: UserDefaults.Keys.mallocScribble)
 
         var envVars: [String] = []
-        if guardEdges {
-            envVars.append("MallocGuardEdges=1")
-        }
-        if scribble {
-            envVars.append("MallocScribble=1")
-        }
-        return envVars
-    }
-
-    private struct TunnelHandles {
-        var adapter: OpaquePointer?
-        var handshake: OpaquePointer?
-
-        mutating func free() {
-            if let handshake {
-                rsd_handshake_free(handshake)
-                self.handshake = nil
-            }
-            if let adapter {
-                adapter_free(adapter)
-                self.adapter = nil
-            }
-        }
-    }
-
-    private var adapter: OpaquePointer?
-    private var handshake: OpaquePointer?
-
-    private let tunnelLock = NSLock()
-    private var tunnelConnecting = false
-    private var tunnelSemaphore: DispatchSemaphore?
-    private var lastTunnelError: NSError?
-
-    private let syslogQueue = DispatchQueue(label: "com.stik.syslogrelay.queue")
-    private var syslogStreaming = false
-    private var syslogClient: OpaquePointer?
-    private var syslogLineHandler: SyslogLineHandler?
-    private var syslogErrorHandler: SyslogErrorHandler?
-
-    var adapterHandle: OpaquePointer? { adapter }
-    var handshakeHandle: OpaquePointer? { handshake }
-
-    private init() {
-        var path = Array(IdeviceLogFileManager.logURL.path.utf8CString)
-        path.withUnsafeMutableBufferPointer { buffer in
-            _ = idevice_init_logger(Info, Debug, buffer.baseAddress)
-        }
-    }
-
-    deinit {
-        stopSyslogRelay()
-        if let handshake {
-            rsd_handshake_free(handshake)
-        }
-        if let adapter {
-            adapter_free(adapter)
-        }
-    }
-
-    private func makeError(_ message: String, code: Int = -1) -> NSError {
-        NSError(
-            domain: "StikDebug",
-            code: code,
-            userInfo: [NSLocalizedDescriptionKey: message]
-        )
-    }
-
-    private func nsString(from cString: UnsafePointer<CChar>?, fallback: String) -> String {
-        guard let cString, let string = String(validatingUTF8: cString) else {
-            return fallback
-        }
-        return string
-    }
-
-    private func error(from ffiError: UnsafeMutablePointer<IdeviceFfiError>?, fallback: String) -> NSError {
-        guard let ffiError else {
-            return makeError(fallback)
-        }
-        let detail = nsString(from: ffiError.pointee.message, fallback: fallback)
-        let message = detail == fallback ? fallback : "\(fallback): \(detail)"
-        let error = makeError(message, code: Int(ffiError.pointee.code))
-        idevice_error_free(ffiError)
-        return error
-    }
-
-    private func routeLog(_ message: String) {
-        if message.localizedCaseInsensitiveContains("error") {
-            LogManager.shared.addErrorLog(message)
-        } else if message.localizedCaseInsensitiveContains("warning") {
-            LogManager.shared.addWarningLog(message)
-        } else if message.localizedCaseInsensitiveContains("debug") {
-            LogManager.shared.addDebugLog(message)
-        } else {
-            LogManager.shared.addInfoLog(message)
-        }
-    }
-
-    private func emitLog(_ message: String, logger: LogFunc?) {
-        routeLog(message)
-        logger?(message)
-    }
-
-    private func getPairingFile() throws -> OpaquePointer {
-        let pairingFileURL = PairingFileStore.prepareURL()
-
-        guard FileManager.default.fileExists(atPath: pairingFileURL.path) else {
-            throw makeError("Pairing file not found!", code: -17)
-        }
-
-        var pairingFile: OpaquePointer?
-        let ffiError = pairingFileURL.path.withCString { path in
-            rp_pairing_file_read(path, &pairingFile)
-        }
-
-        if let ffiError {
-            throw error(from: ffiError, fallback: "Failed to read pairing file!")
-        }
-
-        guard let pairingFile else {
-            throw makeError("Failed to read pairing file!", code: -17)
-        }
-
-        return pairingFile
-    }
-
-    private func createTunnel(hostname: String) throws -> TunnelHandles {
-        let pairingFile = try getPairingFile()
-        defer { rp_pairing_file_free(pairingFile) }
-
-        var addr = sockaddr_in()
-        addr.sin_family = sa_family_t(AF_INET)
-        let remotePairingPort = RemotePairingPortResolver.resolve()
-        addr.sin_port = in_port_t(remotePairingPort).bigEndian
-
-        let deviceIP = DeviceConnectionContext.targetIPAddress
-        let parseResult = deviceIP.withCString { inet_pton(AF_INET, $0, &addr.sin_addr) }
-        guard parseResult == 1 else {
-            throw makeError("Failed to parse target IP address.", code: -18)
-        }
-
-        var tunnel = TunnelHandles()
-        let ffiError = hostname.withCString { hostname in
-            withUnsafePointer(to: &addr) { pointer in
-                pointer.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-                    tunnel_create_rppairing(
-                        $0,
-                        socklen_t(MemoryLayout<sockaddr_in>.stride),
-                        hostname,
-                        pairingFile,
-                        nil,
-                        nil,
-                        &tunnel.adapter,
-                        &tunnel.hand
+        if guardEdges
 ```
 
 
@@ -1551,11 +1533,11 @@ final class JITEnableContext {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #491** (2026-10-26): **⁠[Bug] StikDebug reports successful execution but target app launches with "JIT is not enabled"⁠**
+  *Symptoms*: ### Description  Problem When using StikDebug to launch an app requiring JIT (Just-In-Time compilation), StikDebug completes the process without throwing any errors or warnings. However, once the target application launches, it reports that JIT is not enabled. This appears to be a silent failure where StikDebug dispatches the launch command successfully, but the debugger hook fails somehow!    ### Steps to Reproduce  Steps to i did and got this Error 1. Open StikDebug with active LocalDevVPN / pairing configuration. 2. Select an application that requires JIT. 3. Tap to launch/enable JIT. 4. Observe StikDebug status: No errors shown (indicates success). 5. Target app opens automatically. 6. Target app displays an alert: ⁠"JIT is not enabled"⁠.  ### Expected Behavior  It should’ve worked normally   ### iOS Version  27.0.1  ### Device  Iphone Air  ### StikDebug Version  3.1.15  ### Logs  ```shell  ```  ### Screenshots  _No response_
+
 - **Issue #483** (2026-10-19): **Connection reset by peer**
   *Symptoms*: ### Description  connected localDevVPN said connection reset by peer downgraded to a version below latest and diddnt work  ### Steps to Reproduce  go to localdevvpn press connect  then go to stikdebug error popsup  ### Expected Behavior  i expected it to work not error  ### iOS Version  27  ### Device  iphone 15  ### StikDebug Version  3.1.14 and 3.1.15 idk about others theres no ipa to downgrade too  ### Logs  ```shell  ```  ### Screenshots  _No response_
-
-- **Issue #482** (2026-10-19): **Failed to create tunnel**
-  *Symptoms*: ### Description  When I try to enable JIT on any app or just open StikDebug, it gives me a connection error: Code 16: Failed to create tunnel: InternalError("connect: device socket io failed")  <img width="642" height="1389" alt="Image" src="https://github.com/user-attachments/assets/9d7d4fc3-0fc2-41f3-a85b-3f1ae63f22fb" />  ### Steps to Reproduce  1. Enable LocalDevVPN with default Tunnel IP and Device IP 2. Open StikDebug  ### Expected Behavior  I expected it to not give me an error  ### iOS Version  27.0  ### Device  iPhone 12 Pro Max  ### StikDebug Version  3.1.15  ### Logs  ```shell  ```  ### Screenshots  [idevice_log.txt](https://github.com/user-attachments/files/33505295/idevice_log.txt)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1572,693 +1554,111 @@ final class JITEnableContext {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `17b1e1d9` (2026-10-19)
-**Commit Message**: fix: merge pairing and DDI cleanup
+### Incident Patch 1: `117c158d` (2026-10-29)
+**Commit Message**: fix: release the route when playback finishes so a new spot can be set (#490)
 
-**File**: `StikDebug/Services/DeveloperDiskImageService.swift` (modified, +20/-7)
-```diff
-@@ -12,7 +12,7 @@ final class DeveloperDiskImageService {
-     static var filesAreReady: Bool {
-         downloadItems.allSatisfy {
-             FileManager.default.fileExists(atPath: directoryURL.appendingPathComponent($0.fileName).path)
--        } && (try? String(contentsOf: mountMethodURL, encoding: .utf8)) == mountMethod.rawValue
-+        } && UserDefaults.standard.string(forKey: mountMethodKey) == mountMethod.rawValue
-     }
- 
-     static var usesCryptexDDI: Bool {
-@@ -28,8 +28,13 @@ final class DeveloperDiskImageService {
-     }
- 
-     func downloadMissingFiles() async throws {
--        let installedMethod = try? String(contentsOf: Self.mountMethodURL, encoding: .utf8)
-+        let installedMethod = UserDefaults.standard.string(forKey: Self.mountMethodKey)
-+            ?? (try? String(contentsOf: Self.mountMethodURL, encoding: .utf8))
-         let replaceFiles = installedMethod != Self.mountMethod.rawValue
-+        try removeObsoleteFiles()
-+        if replaceFiles {
-+            UserDefaults.standard.removeObject(forKey: Self.mountMethodKey)
-+        }
- 
-         if !Self.usesCryptexDDI {
-             try removeCryptexOnlyFiles()
-@@ -42,7 +47,7 @@ final class DeveloperDiskImageService {
-             }
-             try await downloadFile(from: item.urlString, to: destinationURL)
-         }
--        try Self.mountMethod.rawValue.write(to: Self.mountMethodURL, atomically: true, encoding: .utf8)
-+        UserDefaults.standard.set(Self.mountMethod.rawValue, forKey: Self.mountMethodKey)
-     }
- 
-     func downloadFile(from urlString: String, to destinationURL: URL) async throws {
-@@ -75,9 +80,8 @@ final class DeveloperDiskImageService {
-         var completedStages = 0.0
- 
-         progressHandler?(0.0, "Removing existing DDI files...")
--        if fileManager.fileExists(atPath: Self.mountMethodURL.path) {
--            try fileManager.removeItem(at: Self.mountMethodURL)
--        }
-+        UserDefaults.standard.removeObject(forKey: Self.mountMethodKey)
-+        try removeObsoleteFiles()
-         if !Self.usesCryptexDDI {
-             try removeCryptexOnlyFiles()
-         }
-@@ -103,11 +107,19 @@ final class DeveloperDiskImageService {
-             progressHandler?(completedStages / totalStages, "\(item.name) ready")
-         }
- 
--        try Self.mountMethod.rawValue.write(to: Self.mountMethodURL, atomically: true, encoding: .utf8)
-+        UserDefaults.standard.set(Self.mountMethod.rawValue, forKey: Self.mountMethodKey)
- 
-         progressHandler?(1.0, "DDI download complete.")
-     }
- 
-+    private func removeObsoleteFiles() throws {
-+        let legacyDirectory = Self.directoryURL.deletingLastPathComponent()
-+            .appendingPathComponent("DDI_Cryptex", isDirectory: true)
-+        for url in [Self.mountMethodURL, legacyDirectory] where fileManager.fileExists(atPath: url.path) {
-+            try fileManager.removeItem(at: url)
-+        }
-+    }
-+
-     private func removeCryptexOnlyFiles() throws {
-         for fileName in Self.cryptexOnlyFileNames {
-             let fileURL = Self.directoryURL.appendingPathComponent(fileName)
-@@ -124,6 +136,7 @@ final class DeveloperDiskImageService {
-             : .personalized
-     }
- 
-+    private static let mountMethodKey = "DDIMountMethod"
-     private static let mountMethodURL = directoryURL.appendingPathComponent("MountMethod")
-     private static let cryptexOnlyFileNames = ["Image.dmg.cryptex_info", "Image.dmg.root_hash"]
- 
-```
+LocationSimulationSession.routeCoordinates was set when a route started and
+only cleared by Stop or by simulating a pin. When playback finished, or
+failed partway, the view handed off to the resend loop at the last point but
+left the route in the session, so isRouteRunning stayed true: map taps,
+search results and bookmarks were ignored, and Reset, route search and
+import stayed disabled. Stop was the only control that worked, which also
+cleared the simulated location and closed the simulation connection.
 
-**File**: `StikDebug/Support/PairingFileStore.swift` (modified, +20/-24)
-```diff
-@@ -28,14 +28,21 @@ enum PairingFileStore {
-         if let documentURL = documentSourceURL(fileManager: fileManager) {
-             if !fileManager.fileExists(atPath: destination.path) ||
-                 !fileManager.contentsEqual(atPath: documentURL.path, andPath: destination.path) {
--                try? replaceItem(at: destination, with: documentURL, fileManager: fileManager)
--                protectPairingFile(at: destination, fileManager: fileManager)
-+                do {
-+                    try replaceItem(at: destination, with: documentURL, fileManager: fileManager)
-+                } catch {
-+                    return destination
-+                }
-             }
-+            protectPairingFile(at: destination, fileManager: fileManager)
-+            removeLegacyCopies(fileManager: fileManager)
-             return destination
-         }
- 
-         if !fileManager.fileExists(atPath: destination.path) {
--            migrateLegacyCopy(to: destination, fileManager: fileManager)
-+            migrateLegacyCopy(fileManager: fileManager)
-+        } else {
-+            removeLegacyCopies(fileManager: fileManager)
-         }
-         return destination
-     }
-@@ -50,6 +57,7 @@ enum PairingFileStore {
- 
-         try replaceItem(at: url, with: documentsDestination, fileManager: fileManager)
-         protectPairingFile(at: url, fileManager: fileManager)
-+        removeLegacyCopies(fileManager: fileManager)
-     }
- 
-     static func importFromPicker(_ sourceURL: URL, fileManager: FileManager = .default) throws {
-@@ -72,6 +80,9 @@ enum PairingFileStore {
-         if fileManager.fileExists(atPath: destination.path) {
-             try fileManager.removeItem(at: destination)
-         }
-+        if fileManager.fileExists(atPath: documentsURL.path) {
-+            try fileManager.removeItem(at: documentsURL)
-+        }
-         removeLegacyCopies(fileManager: fileManager)
-     }
- 
-@@ -83,9 +94,8 @@ enum PairingFileStore {
- 
-     private static var legacyURLs: [URL] {
-         [
--            directoryURL.appendingPathComponent(legacyFileName),
--            documentsURL,
--            URL.documentsDirectory.appendingPathComponent(legacyFileName)
-+            URL.documentsDirectory.appendingPathComponent(legacyFileName),
-+            directoryURL.appendingPathComponent(legacyFileName)
-         ]
-     }
- 
-@@ -94,26 +104,12 @@ enum PairingFileStore {
-     }
- 
-     private static func documentSourceURL(fileManager: FileManager) -> URL? {
--        [documentsURL, URL.documentsDirectory.appendingPathComponent(legacyFileName)]
--            .filter { fileManager.fileExists(atPath: $0.path) }
--            .max {
--                let firstDate = (try? $0.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate ?? .distantPast
--                let secondDate = (try? $1.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate ?? .distantPast
--                return firstDate < secondDate
--            }
-+        fileManager.fileExists(atPath: documentsURL.path) ? documentsURL : nil
-     }
- 
--    private static func migrateLegacyCopy(to destination: URL, fileManager: FileManager) {
-+    private static func migrateLegacyCopy(fileManager: FileManager) {
-         for legacyURL in legacyURLs where fileManager.fileExists(atPath: legacyURL.path) {
--            do {
--                try replaceItem(at: destination, with: legacyURL, fileManager: fileManager)
--            } catch {
--                if let data = try? Data(contentsOf: legacyURL) {
--                    try? data.write(to: destination, options: .atomic)
--                }
--            }
--
--            protectPairingFile(at: destination, fileManager: fileManager)
-+            try? replace(with: legacyURL, fileManager: fileManager)
-             break
-         }
-     }
-@@ -123,8 +119,8 @@ enum PairingFileStore {
-             .deletingLastPathComponent()
-             .appendingPathComponent(UUID().uuidString + ".tmp")
-         try? fileManager.removeItem(at: temporary)
--        try fileManager.copyItem(at: source, to: temporary)
-         defer { try? fileManager.removeItem(at: temporary) }
-+        try fileManager.copyItem(at: source, to: temporary)
- 
-         if fileManager.fileExists(atPath: destination.path) {
-             _ = try fileManager.replaceItemAt(destination, withItemAt: temporary)
-```
+Clear the session's route at both points where playback ends. Once the
+route is released, tapping a new spot and pressing Simulate Location works
+again, reusing the open connection.
 
-**File**: `StikDebug/Views/HomeView.swift` (modified, +29/-4)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `StikDebug/Views/MapSelectionView.swift` (modified, +4/-0)
 ```diff
-@@ -17,7 +17,8 @@ struct HomeView: View {
-     @State private var isShowingPairingFilePicker = false
-     @State private var debugFeedback: DebugFeedback?
-     @State private var pendingExternalURLAction: HomeExternalAction?
--    @State private var pendingLiveContainerApp: LiveContainerApp?
-+    @State private var pendingLiveContainerApp: JITWarningApp?
-+    @State private var pendingStikDebugApp: JITWarningApp?
-     @State private var scriptRunModel: RunJSViewModel?
- 
-     private struct DebugFeedback: Identifiable {
-@@ -27,15 +28,17 @@ struct HomeView: View {
-         let isWorking: Bool
-     }
- 
--    private struct LiveContainerApp {
-+    private struct JITWarningApp {
-         let bundleID: String
-         let name: String
-     }
- 
-     var body: some View {
-         InstalledAppsListView(onSelectApp: { selectedBundle, selectedName in
--            if selectedName.localizedCaseInsensitiveContains("LiveContainer") {
--                pendingLiveContainerApp = LiveContainerApp(bundleID: selectedBundle, name: selectedName)
-+            if selectedBundle == Bundle.main.bundleIdentifier {
-+                pendingStikDebugApp = JITWarningApp(bundleID: selectedBundle, name: selectedName)
-+            } else if selectedName.localizedCaseInsensitiveContains("LiveContainer") {
-+                pendingLiveContainerApp = JITWarningApp(bundleID: selectedBundle, name: selectedName)
-             } else {
-                 enableJITForSelectedApp(bundleID: selectedBundle, name: selectedName)
-             }
-@@ -97,6 +100,28 @@ struct HomeView: View {
-         } message: { _ in
-             Text("StikDebug isn't meant to enable JIT for LiveContainer manually. Select StikDebug in LiveContainer settings, enable \"Run with JIT\" for your app, then open your app normally. It will automatically jump back here.")
-         }
-+        .alert(
-+            "Enable JIT for StikDebug?",
-+            isPresented: Binding(
-+                get: { pendingStikDebugApp != nil },
-+                set: { isPresented in
-+                    if !isPresented {
-+                        pendingStikDebugApp = nil
-+                    }
-+                }
-+            ),
-+            presenting: pendingStikDebugApp
-+        ) { app in
-+            Button("Cancel", role: .cancel) {
-+                pendingStikDebugApp = nil
-+            }
-+            Button("Proceed") {
-+                pendingStikDebugApp = nil
-+                enableJITForSelectedApp(bundleID: app.bundleID, name: app.name)
-+            }
-+        } message: { _ in
-+            Text("StikDebug isn't meant to attach to itself. Enabling JIT for StikDebug serves no purpose. Select the app you want to enable JIT for instead.")
-+        }
-         .fileImporter(
-             isPresented: $isShowingPairingFilePicker,
-             allowedContentTypes: PairingFileStore.supportedContentTypes,
+@@ -1557,6 +1557,7 @@ struct LocationSimulationView: View {
+                     await MainActor.run {
+                         routePlaybackTask = nil
+                         routePlaybackCoordinate = lastSuccessfulCoordinate
++                        LocationSimulationSession.shared.clearRoute()
+                         if let lastSuccessfulCoordinate {
+                             startResendLoop(with: lastSuccessfulCoordinate)
+                         }
+@@ -1577,6 +1578,9 @@ struct LocationSimulationView: View {
+             await MainActor.run {
+                 guard LocationSimulationSession.shared.isCurrentRoute(routeID) else { return }
+                 routePlaybackTask = nil
++                // The route has ended; while it stays set, isRouteRunning keeps
++                // map taps, search, bookmarks and Reset disabled.
++                LocationSimulationSession.shared.clearRoute()
+                 if let lastSuccessfulCoordinate {
+                     routePlaybackCoordinate = lastSuccessfulCoordinate
+                     startResendLoop(with: lastSuccessfulCoordinate)
 ```
 
 ---
 
-### Incident Patch 2: `be0ec905` (2026-10-19)
-**Commit Message**: Revert "Prevent stale legacy pairing files overriding fresh imports (#479)" (#486)
+### Incident Patch 2: `51713a7d` (2026-10-29)
+**Commit Message**: fix: disable raw idevice file logging
 
-This reverts commit 61da4736dd67c4f92c430d38c29a543ffb6e37b8.
-
-**File**: `StikDebug/Support/PairingFileStore.swift` (modified, +25/-25)
+**File**: `StikDebug/Device/JITEnableContext.swift` (modified, +1/-1)
 ```diff
-@@ -17,13 +17,13 @@ enum PairingFileStore {
-     private static let legacyFileName = "rp_pairing_file.plist"
- 
-     static var url: URL {
--        directoryURL(fileManager: .default).appendingPathComponent(fileName)
-+        directoryURL.appendingPathComponent(fileName)
-     }
- 
-     @discardableResult
-     static func prepareURL(fileManager: FileManager = .default) -> URL {
--        let destination = directoryURL(fileManager: fileManager).appendingPathComponent(fileName)
--        try? fileManager.createDirectory(at: directoryURL(fileManager: fileManager), withIntermediateDirectories: true)
-+        let destination = url
-+        try? fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true)
- 
-         if let documentURL = documentSourceURL(fileManager: fileManager) {
-             if !fileManager.fileExists(atPath: destination.path) ||
-@@ -41,16 +41,15 @@ enum PairingFileStore {
-     }
- 
-     static func replace(with sourceURL: URL, fileManager: FileManager = .default) throws {
--        try fileManager.createDirectory(at: directoryURL(fileManager: fileManager), withIntermediateDirectories: true)
-+        try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true)
- 
--        let documentsDestination = documentsURL(fileManager: fileManager)
-+        let documentsDestination = documentsURL
-         if sourceURL.standardizedFileURL != documentsDestination.standardizedFileURL {
-             try replaceItem(at: documentsDestination, with: sourceURL, fileManager: fileManager)
+@@ -291,7 +291,7 @@ final class JITEnableContext {
+     private init() {
+         var path = Array(IdeviceLogFileManager.logURL.path.utf8CString)
+         path.withUnsafeMutableBufferPointer { buffer in
+-            _ = idevice_init_logger(Info, Debug, buffer.baseAddress)
++            _ = idevice_init_logger(Info, Disabled, buffer.baseAddress)
          }
- 
--        let destination = directoryURL(fileManager: fileManager).appendingPathComponent(fileName)
--        try replaceItem(at: destination, with: documentsDestination, fileManager: fileManager)
--        protectPairingFile(at: destination, fileManager: fileManager)
-+        try replaceItem(at: url, with: documentsDestination, fileManager: fileManager)
-+        protectPairingFile(at: url, fileManager: fileManager)
      }
  
-     static func importFromPicker(_ sourceURL: URL, fileManager: FileManager = .default) throws {
-@@ -76,35 +75,36 @@ enum PairingFileStore {
-         removeLegacyCopies(fileManager: fileManager)
-     }
- 
--    private static func directoryURL(fileManager: FileManager) -> URL {
--        fileManager
-+    private static var directoryURL: URL {
-+        FileManager.default
-             .urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-             .appendingPathComponent("Pairing", isDirectory: true)
-     }
- 
--    private static func legacyURLs(fileManager: FileManager) -> [URL] {
-+    private static var legacyURLs: [URL] {
-         [
--            directoryURL(fileManager: fileManager).appendingPathComponent(legacyFileName),
--            documentsURL(fileManager: fileManager),
--            fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
--                .appendingPathComponent(legacyFileName)
-+            directoryURL.appendingPathComponent(legacyFileName),
-+            documentsURL,
-+            URL.documentsDirectory.appendingPathComponent(legacyFileName)
-         ]
-     }
- 
--    private static func documentsURL(fileManager: FileManager) -> URL {
--        fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
--            .appendingPathComponent(fileName)
-+    private static var documentsURL: URL {
-+        URL.documentsDirectory.appendingPathComponent(fileName)
-     }
- 
-     private static func documentSourceURL(fileManager: FileManager) -> URL? {
--        let canonical = documentsURL(fileManager: fileManager)
--        let legacy = canonical.deletingLastPathComponent().appendingPathComponent(legacyFileName)
--        // Imports can preserve old timestamps; the canonical file still takes precedence.
--        return [canonical, legacy].first { fileManager.fileExists(atPath: $0.path) }
-+        [documentsURL, URL.documentsDirectory.appendingPathComponent(legacyFileName)]
-+            .filter { fileManager.fileExists(atPath: $0.path) }
-+            .max {
-+                let firstDate = (try? $0.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate ?? .distantPast
-+                let secondDate = (try? $1.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate ?? .distantPast
-+                return firstDate < secondDate
-+            }
-     }
- 
-     private static func migrateLegacyCopy(to destination: URL, fileManager: FileManager) {
--        for legacyURL in legacyURLs(fileManager: fileManager) where fileManager.fileExists(atPath: legacyURL.path) {
-+        for legacyURL in legacyURLs where fileManager.fileExists(atPath: legacyURL.path) {
-             do {
-                 try replaceItem(at: destination, with: legacyURL, fileManager: fileManager)
-             } catch {
-@@ -123,8 +123,8 @@ enum PairingFileStore {
-             .deletingLastPathComponent()
-             .appendingPathComponent(UUID().uuidString + ".tmp")
-         try? fileManager.removeItem(at: temporary)
-- 
-```
-
-**File**: `StikDebugTests/StikDebugTests.swift` (modified, +0/-101)
-```diff
-@@ -11,86 +11,6 @@ import Testing
- 
- struct StikDebugTests {
- 
--    @Test func pairingImportSurvivesNewerLegacyFile() throws {
--        let fileManager = try PairingFileManager()
--        defer { try? fileManager.removeItem(at: fileManager.root) }
--        let canonical = fileManager.documents.appendingPathComponent(PairingFileStore.fileName)
--        let legacy = fileManager.documents.appendingPathComponent("rp_pairing_file.plist")
--        let source = fileManager.root.appendingPathComponent("import.plist")
--        let imported = Data("imported pairing".utf8)
--        try Data("stale legacy pairing".utf8).write(to: legacy)
--        try fileManager.setAttributes([.modificationDate: Date(timeIntervalSince1970: 200)], ofItemAtPath: legacy.path)
--        try imported.write(to: source)
--        try fileManager.setAttributes([.modificationDate: Date(timeIntervalSince1970: 100)], ofItemAtPath: source.path)
--
--        try PairingFileStore.importFromPicker(source, fileManager: fileManager)
--        for _ in 0..<2 {
--            let active = PairingFileStore.prepareURL(fileManager: fileManager)
--            #expect(try Data(contentsOf: active) == imported)
--            #expect(try fileManager.attributesOfItem(atPath: active.path)[.posixPermissions] as? Int == 0o600)
--        }
--        try PairingFileStore.importFromPicker(canonical, fileManager: fileManager)
--        #expect(throws: (any Error).self) {
--            try PairingFileStore.importFromPicker(fileManager.root.appendingPathComponent("missing.plist"), fileManager: fileManager)
--        }
--        #expect(throws: (any Error).self) {
--            try PairingFileStore.replace(with: fileManager.root.appendingPathComponent("missing.plist"), fileManager: fileManager)
--        }
--        #expect(try Data(contentsOf: canonical) == imported)
--        let active = fileManager.support.appendingPathComponent("Pairing").appendingPathComponent(PairingFileStore.fileName)
--        #expect(try Data(contentsOf: active) == imported)
--        for directory in [fileManager.documents, active.deletingLastPathComponent()] {
--            #expect(try fileManager.contentsOfDirectory(atPath: directory.path).allSatisfy { !$0.hasSuffix(".tmp") })
--        }
--        try PairingFileStore.remove(fileManager: fileManager)
--        #expect(!fileManager.fileExists(atPath: active.path))
--        #expect(!fileManager.fileExists(atPath: canonical.path))
--        #expect(!fileManager.fileExists(atPath: legacy.path))
--    }
--
--    @Test(arguments: [100.0, 200.0, 300.0])
--    func canonicalPairingTakesPrecedence(modificationTime: TimeInterval) throws {
--        let fileManager = try PairingFileManager()
--        defer { try? fileManager.removeItem(at: fileManager.root) }
--        let canonical = fileManager.documents.appendingPathComponent(PairingFileStore.fileName)
--        let legacy = fileManager.documents.appendingPathComponent("rp_pairing_file.plist")
--        let active = PairingFileStore.prepareURL(fileManager: fileManager)
--        try Data("stale active pairing".utf8).write(to: active)
--        try Data("legacy pairing".utf8).write(to: legacy)
--        try fileManager.setAttributes([.modificationDate: Date(timeIntervalSince1970: 200)], ofItemAtPath: legacy.path)
--        let canonicalData = Data("canonical pairing".utf8)
--        try canonicalData.write(to: canonical)
--        try fileManager.setAttributes([.modificationDate: Date(timeIntervalSince1970: modificationTime)], ofItemAtPath: canonical.path)
--        #expect(try Data(contentsOf: PairingFileStore.prepareURL(fileManager: fileManager)) == canonicalData)
--
--        let edited = Data("edited through Files".utf8)
--        try edited.write(to: canonical)
--        try fileManager.setAttributes([.modificationDate: Date(timeIntervalSince1970: 50)], ofItemAtPath: canonical.path)
--        #expect(try Data(contentsOf: PairingFileStore.prepareURL(fileManager: fileManager)) == edited)
--    }
--
--    @Test(arguments: ["documents", "support", "none"])
--    func pairingLegacyMigration(source: String) throws {
--        let fileManager = try PairingFileManager()
--        defer { try? fileManager.removeItem(at: fileManager.root) }
--        let pairingDirectory = fileManager.support.appendingPathComponent("Pairing")
--        let expected = pairingDirectory.appendingPathComponent(PairingFileStore.fileName)
--        let data = Data("legacy pairing".utf8)
--        if source != "none" {
--            let directory = source == "documents" ? fileManager.documents : pairingDirectory
--            try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
--            try data.write(to: directory.appendingPathComponent("rp_pairing_file.plist"))
--        }
--        let active = PairingFileStore.prepareURL(fileManager: fileManager)
--        #expect(active == expected)
--        if source == "none" {
--            #expect(!fileManager.fileExists(atPath: active.path))
--        } else {
--            #expect(try Data(contentsOf: active) == dat
 ```
 
 ---
 
-### Incident Patch 3: `dcfd1b0c` (2026-10-18)
-**Commit Message**: fix: clean up legacy pairing and DDI files and warn on self-attachment
+### Incident Patch 3: `24c239d8` (2026-10-29)
+**Commit Message**: ci: build all fork branches with Xcode 27.1
 
-**File**: `StikDebug/Services/DeveloperDiskImageService.swift` (modified, +20/-7)
+**File**: `.github/workflows/build_ipa.yml` (modified, +8/-3)
 ```diff
-@@ -12,7 +12,7 @@ final class DeveloperDiskImageService {
-     static var filesAreReady: Bool {
-         downloadItems.allSatisfy {
-             FileManager.default.fileExists(atPath: directoryURL.appendingPathComponent($0.fileName).path)
--        } && (try? String(contentsOf: mountMethodURL, encoding: .utf8)) == mountMethod.rawValue
-+        } && UserDefaults.standard.string(forKey: mountMethodKey) == mountMethod.rawValue
-     }
+@@ -2,7 +2,7 @@ name: Build Debug IPA
  
-     static var usesCryptexDDI: Bool {
-@@ -28,8 +28,13 @@ final class DeveloperDiskImageService {
-     }
+ on:
+   push:
+-    branches: [ "main" ]
++    branches: [ "**" ]
+     tags: [ "[0-9]*" ]
+   pull_request:
+     branches: [ "main" ]
+@@ -14,7 +14,12 @@ permissions:
+ jobs:
+   build:
+     name: Build IPA
+-    runs-on: macos-latest
++    if: >-
++      github.event_name != 'push' ||
++      github.ref_type == 'tag' ||
++      github.repository != 'StikDebug/StikDebug' ||
++      github.ref == 'refs/heads/main'
++    runs-on: xcode-27
+     outputs:
+       version: ${{ steps.version.outputs.version }}
+     env:
+@@ -27,7 +32,7 @@ jobs:
+       - name: 2. Configure Xcode Environment
+         uses: maxim-lobanov/setup-xcode@v1
+         with:
+-          xcode-version: '26.6'
++          xcode-version: '27.1'
  
-     func downloadMissingFiles() async throws {
--        let installedMethod = try? String(contentsOf: Self.mountMethodURL, encoding: .utf8)
-+        let installedMethod = UserDefaults.standard.string(forKey: Self.mountMethodKey)
-+            ?? (try? String(contentsOf: Self.mountMethodURL, encoding: .utf8))
-         let replaceFiles = installedMethod != Self.mountMethod.rawValue
-+        try removeObsoleteFiles()
-+        if replaceFiles {
-+            UserDefaults.standard.removeObject(forKey: Self.mountMethodKey)
-+        }
- 
-         if !Self.usesCryptexDDI {
-             try removeCryptexOnlyFiles()
-@@ -42,7 +47,7 @@ final class DeveloperDiskImageService {
-             }
-             try await downloadFile(from: item.urlString, to: destinationURL)
-         }
--        try Self.mountMethod.rawValue.write(to: Self.mountMethodURL, atomically: true, encoding: .utf8)
-+        UserDefaults.standard.set(Self.mountMethod.rawValue, forKey: Self.mountMethodKey)
-     }
- 
-     func downloadFile(from urlString: String, to destinationURL: URL) async throws {
-@@ -75,9 +80,8 @@ final class DeveloperDiskImageService {
-         var completedStages = 0.0
- 
-         progressHandler?(0.0, "Removing existing DDI files...")
--        if fileManager.fileExists(atPath: Self.mountMethodURL.path) {
--            try fileManager.removeItem(at: Self.mountMethodURL)
--        }
-+        UserDefaults.standard.removeObject(forKey: Self.mountMethodKey)
-+        try removeObsoleteFiles()
-         if !Self.usesCryptexDDI {
-             try removeCryptexOnlyFiles()
-         }
-@@ -103,11 +107,19 @@ final class DeveloperDiskImageService {
-             progressHandler?(completedStages / totalStages, "\(item.name) ready")
-         }
- 
--        try Self.mountMethod.rawValue.write(to: Self.mountMethodURL, atomically: true, encoding: .utf8)
-+        UserDefaults.standard.set(Self.mountMethod.rawValue, forKey: Self.mountMethodKey)
- 
-         progressHandler?(1.0, "DDI download complete.")
-     }
- 
-+    private func removeObsoleteFiles() throws {
-+        let legacyDirectory = Self.directoryURL.deletingLastPathComponent()
-+            .appendingPathComponent("DDI_Cryptex", isDirectory: true)
-+        for url in [Self.mountMethodURL, legacyDirectory] where fileManager.fileExists(atPath: url.path) {
-+            try fileManager.removeItem(at: url)
-+        }
-+    }
-+
-     private func removeCryptexOnlyFiles() throws {
-         for fileName in Self.cryptexOnlyFileNames {
-             let fileURL = Self.directoryURL.appendingPathComponent(fileName)
-@@ -124,6 +136,7 @@ final class DeveloperDiskImageService {
-             : .personalized
-     }
- 
-+    private static let mountMethodKey = "DDIMountMethod"
-     private static let mountMethodURL = directoryURL.appendingPathComponent("MountMethod")
-     private static let cryptexOnlyFileNames = ["Image.dmg.cryptex_info", "Image.dmg.root_hash"]
- 
-```
-
-**File**: `StikDebug/Support/PairingFileStore.swift` (modified, +20/-24)
-```diff
-@@ -28,14 +28,21 @@ enum PairingFileStore {
-         if let documentURL = documentSourceURL(fileManager: fileManager) {
-             if !fileManager.fileExists(atPath: destination.path) ||
-                 !fileManager.contentsEqual(atPath: documentURL.path, andPath: destination.path) {
--                try? replaceItem(at: destination, with: documentURL, fileManager: fileManager)
--                protectPairingFile(at: destination, fileManager: fileManager)
-+                do {
-+                    try replaceItem(at: destination, with: documentURL, fileManager: fileManager)
-+                } catch {
-+                    return destination
-+                }
-             }
-+            protectPairingFile(at: destination, fileManager: fileManager)
-+            removeLegacyCopies(fileManager: fileManager)
-             return destination
-         }
- 
-         if !fileManager.fileExists(atPath: destination.path) {
--            migrateLegacyCopy(to: destination, fileManager: fileManager)
-+            migrateLegacyCopy(fileManager: fileManager)
-+        } else {
-+            removeLegacyCopies(fileManager: fileManager)
-         }
-         return destination
-     }
-@@ -50,6 +57,7 @@ enum PairingFileStore {
- 
-         try replaceItem(at: url, with: documentsDestination, fileManager: fileManager)
-         protectPairingFile(at: url, fileManager: fileManager)
-+        removeLegacyCopies(fileManager: fileManager)
-     }
- 
-     static func importFromPicker(_ sourceURL: URL, fileManager: FileManager = .default) throws {
-@@ -72,6 +80,9 @@ enum PairingFileStore {
-         if fileManager.fileExists(atPath: destination.path) {
-             try fileManager.removeItem(at: destination)
-         }
-+        if fileManager.fileExists(atPath: documentsURL.path) {
-+            try fileManager.removeItem(at: documentsURL)
-+        }
-         removeLegacyCopies(fileManager: fileManager)
-     }
- 
-@@ -83,9 +94,8 @@ enum PairingFileStore {
- 
-     private static var legacyURLs: [URL] {
-         [
--            directoryURL.appendingPathComponent(legacyFileName),
--            documentsURL,
--            URL.documentsDirectory.appendingPathComponent(legacyFileName)
-+            URL.documentsDirectory.appendingPathComponent(legacyFileName),
-+            directoryURL.appendingPathComponent(legacyFileName)
-         ]
-     }
- 
-@@ -94,26 +104,12 @@ enum PairingFileStore {
-     }
- 
-     private static func documentSourceURL(fileManager: FileManager) -> URL? {
--        [documentsURL, URL.documentsDirectory.appendingPathComponent(legacyFileName)]
--            .filter { fileManager.fileExists(atPath: $0.path) }
--            .max {
--                let firstDate = (try? $0.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate ?? .distantPast
--                let secondDate = (try? $1.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate ?? .distantPast
--                return firstDate < secondDate
--            }
-+        fileManager.fileExists(atPath: documentsURL.path) ? documentsURL : nil
-     }
- 
--    private static func migrateLegacyCopy(to destination: URL, fileManager: FileManager) {
-+    private static func migrateLegacyCopy(fileManager: FileManager) {
-         for legacyURL in legacyURLs where fileManager.fileExists(atPath: legacyURL.path) {
--            do {
--                try replaceItem(at: destination, with: legacyURL, fileManager: fileManager)
--            } catch {
--                if let data = try? Data(contentsOf: legacyURL) {
--                    try? data.write(to: destination, options: .atomic)
--                }
--            }
--
--            protectPairingFile(at: destination, fileManager: fileManager)
-+            try? replace(with: legacyURL, fileManager: fileManager)
-             break
-         }
-     }
-@@ -123,8 +119,8 @@ enum PairingFileStore {
-             .deletingLastPathComponent()
-             .appendingPathComponent(UUID().uuidString + ".tmp")
-         try? fileManager.removeItem(at: temporary)
--        try fileManager.copyItem(at: source, to: temporary)
-         defer { try? fileManager.removeItem(at: temporary) }
-+        try fileManager.copyItem(at: source, to: temporary)
- 
-         if fileManager.fileExists(atPath: destination.path) {
-             _ = try fileManager.replaceItemAt(destination, withItemAt: temporary)
-```
-
-**File**: `StikDebug/Views/HomeView.swift` (modified, +29/-4)
-```diff
-@@ -17,7 +17,8 @@ struct HomeView: View {
-     @State private var isShowingPairingFilePicker = false
-     @State private var debugFeedback: DebugFeedback?
-     @State private var pendingExternalURLAction: HomeExternalAction?
--    @State private var pendingLiveContainerApp: LiveContainerApp?
-+    @State private var pendingLiveContainerApp: JITWarningApp?
-+    @State private var pendingStikDebugApp: JITWarningApp?
-     @State private var scriptRunModel: RunJSViewModel?
- 
-     private struct DebugFeedback: Identifiable {
-@@ -27,15 +28,17 @@ struct HomeView: View {
-         let isWorking: Bool
-     }
- 
--    private struct LiveContainerApp {
-+    private struct JITWarningApp {
-         let bundleID: String
-         let name: String
-     }
- 
-     var body: some View {
-         InstalledAppsListView(onSelectApp: { selectedBundle, selectedName in
--            if selectedName.localizedCaseInsensitiveContains("LiveContainer") {
--                pendingLiveContainerApp = LiveContainerApp(bundleID: selectedBundle, name: selectedName)
-+            if selectedBundle == Bundle.main.bundleIdentifier {
-+                pendingStikDebugApp = JITWarningApp(bundleID: selectedBundle, name: selectedName)
-+            } else if selectedName.localizedCaseInsensitiveContains("LiveContainer") {
-+                pendingLiveContainerApp = JITWarningApp(bundleID: selectedBundle, name: selectedName)
-             } else {
-                 enableJITForSelectedApp(bundleID: selectedBundle, name: selectedName)
-             }
-@@ -97,6 +100,28 @@ struct HomeView: View {
-         } message: { _ in
-             Text("StikDebug isn't meant to enable JIT for LiveContainer manually. Select StikDebug in LiveContainer settings, enable \"Run with JIT\" for your app, then open your app normally. It will automatically jump back here.")
-         }
-+        .alert(
-+            "Enable JIT for StikDebug?",
-+            isPresented: Binding(
-+                get: { pendingStikDebugApp != nil },
-+                set: { isPresented in
-+                    if !isPresented {
-+                        pendingStikDebugApp = nil
-+                    }
-+                }
-+            ),
-+            presenting: pendingStikDebugApp
-+        ) { app in
-+            Button("Cancel", role: .cancel) {
-+                pendingStikDebugApp = nil
-+            }
-+            Button("Proceed") {
-+                pendingStikDebugApp = nil
-+                enableJITForSelectedApp(bundleID: app.bundleID, name: app.name)
-+            }
-+        } message: { _ in
-+            Text("StikDebug isn't meant to attach to itself. Enabling JIT for StikDebug serves no purpose. Select the app you want to enable JIT for instead.")
-+        }
-         .fileImporter(
-             isPresented: $isShowingPairingFilePicker,
-             allowedContentTypes: PairingFileStore.supportedContentTypes,
+       - name: 3. Compile Project Archive
+         run: |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #490** (2026-10-29): fix: release the route when playback finishes so a new spot can be set (@OpenUmar)
+- **PR #489** (closed): fix: recover from damaged pairing files instead of failing the tunnel (@yukinine-dev)
+- **PR #488** (closed): Add Stikpair feature inside StikDebug. (@Ayan4k)
 - **PR #486** (2026-10-19): Revert "Prevent stale legacy pairing files overriding fresh imports" (@CelloSerenity)
 - **PR #485** (closed): fix: auto-discover the RemotePairing port across reboots (@cklsit)
 - **PR #484** (closed): fix: auto-discover the RemotePairing port across reboots (@cklsit)
-- **PR #480** (closed): fix: discover dynamic Remote Pairing port instead of assuming 49152 (@XMing673)
-- **PR #479** (2026-10-19): Prevent stale legacy pairing files overriding fresh imports (@mvanhorn)
-- **PR #468** (closed): fix(ddi): mount generic Cryptex developer images on iOS 27 (@zeuzmakessoftware)
 
 ---
 
@@ -2278,53 +1678,31 @@ This reverts commit 61da4736dd67c4f92c430d38c29a543ffb6e37b8.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. merge pairing and DDI cleanup
+## X. release the route when playback finishes so a new spot can be set (#490)
 
 **RULE**:
-When implementing operations in `StikDebug/Services/DeveloperDiskImageService.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StikDebug/StikDebug. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `StikDebug/Views/MapSelectionView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StikDebug/StikDebug. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `17b1e1d9`: merge pairing and DDI cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `117c158d`: release the route when playback finishes so a new spot can be set (#490). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `StikDebug/Services/DeveloperDiskImageService.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `StikDebug/Views/MapSelectionView.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        } && UserDefaults.standard.string(forKey: mountMethodKey) == mountMethod.rawValue
-        let installedMethod = UserDefaults.standard.string(forKey: Self.mountMethodKey)
-            ?? (try? String(contentsOf: Self.mountMethodURL, encoding: .utf8))
-        try removeObsoleteFiles()
-        if replaceFiles {
-            UserDefaults.standard.removeObject(forKey: Self.mountMethodKey)
-        }
-        UserDefaults.standard.set(Self.mountMethod.rawValue, forKey: Self.mountMethodKey)
-        UserDefaults.standard.removeObject(forKey: Self.mountMethodKey)
-        try removeObsoleteFiles()
-        UserDefaults.standard.set(Self.mountMethod.rawValue, forKey: Self.mountMethodKey)
-    private func removeObsoleteFiles() throws {
-        let legacyDirectory = Self.directoryURL.deletingLastPathComponent()
-            .appendingPathComponent("DDI_Cryptex", isDirectory: true)
-        for url in [Self.mountMethodURL, legacyDirectory] where fileManager.fileExists(atPath: url.path) {
-            try fileManager.removeItem(at: url)
-        }
-    }
-
-    private static let mountMethodKey = "DDIMountMethod"
+                        LocationSimulationSession.shared.clearRoute()
+                // The route has ended; while it stays set, isRouteRunning keeps
+                // map taps, search, bookmarks and Reset disabled.
+                LocationSimulationSession.shared.clearRoute()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-        } && (try? String(contentsOf: mountMethodURL, encoding: .utf8)) == mountMethod.rawValue
-        let installedMethod = try? String(contentsOf: Self.mountMethodURL, encoding: .utf8)
-        try Self.mountMethod.rawValue.write(to: Self.mountMethodURL, atomically: true, encoding: .utf8)
-        if fileManager.fileExists(atPath: Self.mountMethodURL.path) {
-            try fileManager.removeItem(at: Self.mountMethodURL)
-        }
-        try Self.mountMethod.rawValue.write(to: Self.mountMethodURL, atomically: true, encoding: .utf8)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `17b1e1d9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `117c158d` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T15:08:26.189Z",
+  "last_updated": "2026-10-30T15:15:06.715Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "05e5361b342a66c7a1fa4a9ff9710a4fbd08580ba27a7b842b0ae1acee581d36",
-      "verified_at": "2026-10-30T03:37:00.777Z",
+      "content_hash": "c1cb506289e2ba64f236f88a03a6cb07555b31cfcd3a01e6a2d757f1ec7659e0",
+      "verified_at": "2026-10-30T15:15:06.714Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T03:37:00.777Z"
+      "last_updated": "2026-10-30T15:15:06.714Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -14301,14 +14301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-stikdebug-stikdebug",
-      "content_hash": "dd923dd2d384a06867daaa7b028265a15c2aeca5998a8493ed8bfe6c69c301a2",
-      "verified_at": "2026-10-19T23:34:40.132Z",
+      "content_hash": "10a954c64d7dd3a69ad0985fe0738805ad0869b6f9b8974b32281f7c3959586a",
+      "verified_at": "2026-10-30T15:15:00.317Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T23:34:40.132Z"
+      "last_updated": "2026-10-30T15:15:00.317Z"
     },
     "remarkjs/remark": {
       "repository": "remarkjs/remark",
@@ -14436,14 +14436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-axios-axios",
-      "content_hash": "8d3e5104f396ddedddba651c933c5b990e1afdabd14a023e06d22f060c77489c",
-      "verified_at": "2026-10-27T13:25:18.696Z",
+      "content_hash": "19231c36656aaaaf2a3b8c801f1c7b389bddbc05b94728bc0aceb73a1d4a800d",
+      "verified_at": "2026-10-30T15:14:59.279Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:25:18.696Z"
+      "last_updated": "2026-10-30T15:14:59.279Z"
     },
     "jasonjmcghee/rem": {
       "repository": "jasonjmcghee/rem",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T15:08:26.096Z",
+  "last_updated": "2026-10-30T15:15:06.612Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6614,8 +6614,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "80b1c726",
-      "content_hash": "05e5361b342a66c7a1fa4a9ff9710a4fbd08580ba27a7b842b0ae1acee581d36",
+      "source_version": "662d00cb",
+      "content_hash": "c1cb506289e2ba64f236f88a03a6cb07555b31cfcd3a01e6a2d757f1ec7659e0",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -6788,6 +6788,11 @@
           "number": 5576,
           "title": "eBPF Kernel Scratch Space Auxvar Over Per-CPU Map Replacement",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5785,
+          "title": "ci: Build the docs-builder image for Renovate branches",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6795,7 +6800,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T03:37:00.671Z",
+      "verified_at": "2026-10-30T15:15:06.596Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51245,14 +51250,19 @@
       "slug": "stikdebug-stikdebug",
       "platform": "github",
       "source_url": "https://github.com/StikDebug/StikDebug",
-      "source_version": "17b1e1d9",
-      "content_hash": "dd923dd2d384a06867daaa7b028265a15c2aeca5998a8493ed8bfe6c69c301a2",
+      "source_version": "97530a90",
+      "content_hash": "10a954c64d7dd3a69ad0985fe0738805ad0869b6f9b8974b32281f7c3959586a",
       "dossier_path": "07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/stikdebug-stikdebug-learnings.md",
       "promoted_rules": [
         {
           "number": 2896,
           "title": "merge pairing and DDI cleanup",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5784,
+          "title": "release the route when playback finishes so a new spot can be set (#490)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -51261,7 +51271,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T23:34:40.067Z",
+      "verified_at": "2026-10-30T15:15:00.226Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71144,8 +71154,8 @@
       "slug": "axios-axios",
       "platform": "github",
       "source_url": "https://github.com/axios/axios",
-      "source_version": "0a9b58d5",
-      "content_hash": "8d3e5104f396ddedddba651c933c5b990e1afdabd14a023e06d22f060c77489c",
+      "source_version": "9d11464a",
+      "content_hash": "19231c36656aaaaf2a3b8c801f1c7b389bddbc05b94728bc0aceb73a1d4a800d",
       "dossier_path": "07_PROJECT_LEARNING/axios-axios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/axios-axios-learnings.md",
       "promoted_rules": [
@@ -71173,6 +71183,11 @@
           "number": 4800,
           "title": "docs: identify Axios errors independently of their name (#11374)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5783,
+          "title": "fix line break",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -71180,7 +71195,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:25:18.627Z",
+      "verified_at": "2026-10-30T15:14:59.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153868,6 +153883,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T15:08:26.076Z"
+    },
+    "rule-5783": {
+      "learning_id": "rule-5783",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5783,
+      "title": "fix line break",
+      "source_url": "https://github.com/axios/axios",
+      "source_version": "9d11464a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T15:14:59.178Z"
+    },
+    "rule-5784": {
+      "learning_id": "rule-5784",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5784,
+      "title": "release the route when playback finishes so a new spot can be set (#490)",
+      "source_url": "https://github.com/StikDebug/StikDebug",
+      "source_version": "97530a90",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T15:15:00.226Z"
+    },
+    "rule-5785": {
+      "learning_id": "rule-5785",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5785,
+      "title": "ci: Build the docs-builder image for Renovate branches",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "662d00cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T15:15:06.596Z"
     }
   },
   "aliases": {

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-YGWH",
-    "timestamp": "2026-10-28T06:42:07.505Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-    "contentHash": "be16c01a1943ed1a16c46dc7752bca5b0b5a3424bb7dba155e5f3fecb6d81570",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-C18N",
-    "timestamp": "2026-10-28T06:52:40.391Z",
-    "repository": "ratatui/ratatui",
-    "learningId": "learn-github-ratatui-ratatui",
-    "contentHash": "b025385b59c48242629bd45a2983410122e23571270a54abda87ec3cd9eedc85",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-C6XW",
-    "timestamp": "2026-10-28T06:52:47.780Z",
-    "repository": "inclusionAI/Ming-Image-0.1-Design",
-    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-    "contentHash": "756ca41ddd4e3e825928019abc9c655b0a22de41669355d7e0b9fcc6262ad235",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-CA9Z",
     "timestamp": "2026-10-28T06:52:52.103Z",
     "repository": "crate/crate",
@@ -7490,6 +7445,51 @@
     "repository": "t8y2/dbx",
     "learningId": "learn-github-t8y2-dbx",
     "contentHash": "772aebdd1b79f5c06c0fc6dd9a02eca265e1b0a3bbb69783b4662553c05ea929",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-5PVN",
+    "timestamp": "2026-10-30T15:14:59.267Z",
+    "repository": "axios/axios",
+    "learningId": "learn-github-axios-axios",
+    "contentHash": "19231c36656aaaaf2a3b8c801f1c7b389bddbc05b94728bc0aceb73a1d4a800d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-5QOJ",
+    "timestamp": "2026-10-30T15:15:00.307Z",
+    "repository": "StikDebug/StikDebug",
+    "learningId": "learn-github-stikdebug-stikdebug",
+    "contentHash": "10a954c64d7dd3a69ad0985fe0738805ad0869b6f9b8974b32281f7c3959586a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-5VM8",
+    "timestamp": "2026-10-30T15:15:06.704Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "c1cb506289e2ba64f236f88a03a6cb07555b31cfcd3a01e6a2d757f1ec7659e0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

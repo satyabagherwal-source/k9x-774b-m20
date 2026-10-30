@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "80b1c726",
+    "sourceVersion": "662d00cb",
     "license": "Apache-2.0",
-    "contentHash": "05e5361b342a66c7a1fa4a9ff9710a4fbd08580ba27a7b842b0ae1acee581d36",
-    "lastHarvestedAt": "2026-10-30T03:37:00.768Z",
+    "contentHash": "c1cb506289e2ba64f236f88a03a6cb07555b31cfcd3a01e6a2d757f1ec7659e0",
+    "lastHarvestedAt": "2026-10-30T15:15:06.707Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -9503,10 +9503,10 @@
     "repository": "StikDebug/StikDebug",
     "platform": "github",
     "sourceUrl": "https://github.com/StikDebug/StikDebug",
-    "sourceVersion": "17b1e1d9",
+    "sourceVersion": "97530a90",
     "license": "AGPL-3.0",
-    "contentHash": "dd923dd2d384a06867daaa7b028265a15c2aeca5998a8493ed8bfe6c69c301a2",
-    "lastHarvestedAt": "2026-10-19T23:34:40.124Z",
+    "contentHash": "10a954c64d7dd3a69ad0985fe0738805ad0869b6f9b8974b32281f7c3959586a",
+    "lastHarvestedAt": "2026-10-30T15:15:00.310Z",
     "learningId": "learn-github-stikdebug-stikdebug"
   },
   "remarkjs-remark": {
@@ -9593,10 +9593,10 @@
     "repository": "axios/axios",
     "platform": "github",
     "sourceUrl": "https://github.com/axios/axios",
-    "sourceVersion": "0a9b58d5",
+    "sourceVersion": "9d11464a",
     "license": "MIT",
-    "contentHash": "8d3e5104f396ddedddba651c933c5b990e1afdabd14a023e06d22f060c77489c",
-    "lastHarvestedAt": "2026-10-27T13:25:18.688Z",
+    "contentHash": "19231c36656aaaaf2a3b8c801f1c7b389bddbc05b94728bc0aceb73a1d4a800d",
+    "lastHarvestedAt": "2026-10-30T15:14:59.271Z",
     "learningId": "learn-github-axios-axios"
   },
   "jasonjmcghee-rem": {

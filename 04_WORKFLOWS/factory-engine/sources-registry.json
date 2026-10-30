@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T15:08:28.732Z",
-    "lastVerified": "2026-10-30T15:08:28.732Z",
+    "lastChecked": "2026-10-30T15:15:09.245Z",
+    "lastVerified": "2026-10-30T15:15:09.245Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -144,8 +144,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T14:18:37.197Z",
-    "lastVerified": "2026-10-30T14:18:37.197Z",
+    "lastChecked": "2026-10-30T15:15:03.468Z",
+    "lastVerified": "2026-10-30T15:15:03.468Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1476,9 +1476,9 @@
   "valeriansaliou-sonic": {
     "name": "sonic",
     "officialUrl": "https://github.com/valeriansaliou/sonic",
-    "lastChecked": "2026-10-28T22:33:02.732Z",
+    "lastChecked": "2026-10-30T15:15:01.051Z",
     "revisionIdentifier": "b635a181",
-    "lastVerified": "2026-10-28T22:33:02.732Z"
+    "lastVerified": "2026-10-30T15:15:01.051Z"
   },
   "cachix-devenv": {
     "name": "cachix/devenv",
@@ -1767,22 +1767,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium",
+    "name": "cilium/cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T07:29:57.722Z",
-    "lastVerified": "2026-10-30T07:29:57.722Z",
+    "lastChecked": "2026-10-30T15:15:05.409Z",
+    "lastVerified": "2026-10-30T15:15:05.409Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "05e5361b342a66c7a1fa4a9ff9710a4fbd08580ba27a7b842b0ae1acee581d36",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 3,
+    "contentHash": "c1cb506289e2ba64f236f88a03a6cb07555b31cfcd3a01e6a2d757f1ec7659e0",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "80b1c726"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -2520,9 +2519,9 @@
   "permify-permify": {
     "name": "permify",
     "officialUrl": "https://github.com/Permify/permify",
-    "lastChecked": "2026-10-28T23:30:43.761Z",
+    "lastChecked": "2026-10-30T15:14:56.012Z",
     "revisionIdentifier": "43ce9031",
-    "lastVerified": "2026-10-28T23:30:43.761Z"
+    "lastVerified": "2026-10-30T15:14:56.012Z"
   },
   "crate-crate": {
     "name": "crate/crate",
@@ -6235,9 +6234,9 @@
   "ynqa-jnv": {
     "name": "jnv",
     "officialUrl": "https://github.com/ynqa/jnv",
-    "lastChecked": "2026-10-28T17:56:29.882Z",
+    "lastChecked": "2026-10-30T15:14:48.431Z",
     "revisionIdentifier": "9871ba34",
-    "lastVerified": "2026-10-28T17:56:29.882Z"
+    "lastVerified": "2026-10-30T15:14:48.431Z"
   },
   "hf-google-gemma-4-31b-it": {
     "name": "google/gemma-4-31B-it",
@@ -10211,5 +10210,39 @@
     "lastChecked": "2026-10-30T15:08:12.592Z",
     "revisionIdentifier": "4973be7a",
     "lastVerified": "2026-10-30T15:08:12.592Z"
+  },
+  "axios-axios": {
+    "name": "axios/axios",
+    "officialUrl": "https://github.com/axios/axios",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-30T15:14:57.011Z",
+    "lastVerified": "2026-10-30T15:14:57.011Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-axios-axios",
+    "contentHash": "19231c36656aaaaf2a3b8c801f1c7b389bddbc05b94728bc0aceb73a1d4a800d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "stikdebug-stikdebug": {
+    "name": "StikDebug/StikDebug",
+    "officialUrl": "https://github.com/StikDebug/StikDebug",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-30T15:14:58.896Z",
+    "lastVerified": "2026-10-30T15:14:58.896Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-stikdebug-stikdebug",
+    "contentHash": "10a954c64d7dd3a69ad0985fe0738805ad0869b6f9b8974b32281f7c3959586a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

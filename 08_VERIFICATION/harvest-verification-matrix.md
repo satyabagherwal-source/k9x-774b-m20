@@ -6219,3 +6219,6 @@
 | `CYCLE-20261030-X6PV` | `2026-10-30T15:08:21.187Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5780` | Yes (`beb2939e...`) |
 | `CYCLE-20261030-X7AO` | `2026-10-30T15:08:21.936Z` | `nodejs/undici` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5781` | Yes (`872f1206...`) |
 | `CYCLE-20261030-XAKF` | `2026-10-30T15:08:26.175Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5782` | Yes (`772aebdd...`) |
+| `CYCLE-20261030-5PVN` | `2026-10-30T15:14:59.267Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5783` | Yes (`19231c36...`) |
+| `CYCLE-20261030-5QOJ` | `2026-10-30T15:15:00.307Z` | `StikDebug/StikDebug` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5784` | Yes (`10a954c6...`) |
+| `CYCLE-20261030-5VM8` | `2026-10-30T15:15:06.704Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5785` | Yes (`c1cb5062...`) |
