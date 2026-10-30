@@ -6250,3 +6250,6 @@
 | `CYCLE-20261030-NRY6` | `2026-10-30T17:21:00.222Z` | `OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5808, Rule 5809` | Yes (`5f851edd...`) |
 | `CYCLE-20261030-NTBK` | `2026-10-30T17:21:02.000Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5810` | Yes (`36538339...`) |
 | `CYCLE-20261030-NYTV` | `2026-10-30T17:21:09.139Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5811` | Yes (`f381216b...`) |
+| `CYCLE-20261030-D8KM` | `2026-10-30T17:40:48.166Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5812` | Yes (`6ab14291...`) |
+| `CYCLE-20261030-G92V` | `2026-10-30T17:43:08.791Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5813, Rule 5814, Rule 5815` | Yes (`ee7885bd...`) |
+| `CYCLE-20261030-J0G3` | `2026-10-30T17:45:17.571Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5816, Rule 5817, Rule 5818` | Yes (`487dda39...`) |

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T17:21:11.675Z",
-    "lastVerified": "2026-10-30T17:21:11.675Z",
+    "lastChecked": "2026-10-30T17:45:20.132Z",
+    "lastVerified": "2026-10-30T17:45:20.132Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -143,8 +143,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T16:51:31.497Z",
-    "lastVerified": "2026-10-30T16:51:31.497Z",
+    "lastChecked": "2026-10-30T17:40:39.472Z",
+    "lastVerified": "2026-10-30T17:40:39.472Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -556,22 +556,21 @@
     "lastVerified": "2026-10-30T08:01:54.613Z"
   },
   "nolabs-ai-nono": {
-    "name": "nono",
+    "name": "nolabs-ai/nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T10:54:07.386Z",
-    "lastVerified": "2026-10-30T10:54:07.386Z",
+    "lastChecked": "2026-10-30T17:40:38.302Z",
+    "lastVerified": "2026-10-30T17:40:38.302Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "dd1117eaa358836c8f551cea68a6d6ad633c71c57d82e17a58dfbc8c0c242430",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "contentHash": "ee7885bd641c72dfaf8968611ba64e53f9dfc4f63e8962ed115f1f6579ee9d04",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6880db1c"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vectifyai-pageindex": {
     "name": "VectifyAI/PageIndex",
@@ -2420,9 +2419,9 @@
   "infiniflow-infinity": {
     "name": "infinity",
     "officialUrl": "https://github.com/infiniflow/infinity",
-    "lastChecked": "2026-10-29T00:16:10.815Z",
+    "lastChecked": "2026-10-30T17:40:37.013Z",
     "revisionIdentifier": "6e4ce04b",
-    "lastVerified": "2026-10-29T00:16:10.815Z"
+    "lastVerified": "2026-10-30T17:40:37.013Z"
   },
   "sharkdp-hyperfine": {
     "name": "hyperfine",
@@ -3216,14 +3215,14 @@
     "officialUrl": "https://github.com/skyhook-io/radar",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-29T01:43:15.530Z",
-    "lastVerified": "2026-10-29T01:43:15.530Z",
+    "lastChecked": "2026-10-30T17:40:36.454Z",
+    "lastVerified": "2026-10-30T17:40:36.454Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "a01cf617bae4484ec002ec43a764bc702b99270f9d28144d618bb0c9cdba59bd",
+    "contentHash": "6ab14291c9ea9379b932fa574f99e438ff74079560dfcdc17d19ecab316eb36d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6874,14 +6873,14 @@
     "officialUrl": "https://github.com/zvec-ai/zvec-grep",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T19:31:44.787Z",
-    "lastVerified": "2026-10-28T19:31:44.787Z",
+    "lastChecked": "2026-10-30T17:40:29.016Z",
+    "lastVerified": "2026-10-30T17:40:29.016Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "0c23f62d255b62bafab7faf462846a12a33ae20d3b591a5f37a2b58580951aa5",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "contentHash": "487dda396690ef5d3840f5bdbda0ba84d160b38a2584e0eab7c7103123baf018",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 24,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10497,5 +10496,19 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "andythefactory-newspaper4k": {
+    "name": "newspaper4k",
+    "officialUrl": "https://github.com/AndyTheFactory/newspaper4k",
+    "lastChecked": "2026-10-30T17:40:26.963Z",
+    "revisionIdentifier": "b53a81fc",
+    "lastVerified": "2026-10-30T17:40:26.963Z"
+  },
+  "kartiklabhshetwar-better-shot": {
+    "name": "better-shot",
+    "officialUrl": "https://github.com/KartikLabhshetwar/better-shot",
+    "lastChecked": "2026-10-30T17:40:29.441Z",
+    "revisionIdentifier": "0e005e9c",
+    "lastVerified": "2026-10-30T17:40:29.441Z"
   }
 }

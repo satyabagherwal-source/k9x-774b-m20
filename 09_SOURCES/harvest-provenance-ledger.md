@@ -6259,3 +6259,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism` | `https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | `hf-oliviar` | Multi-dimensional audit evidence | 2026-10-30T17:21:00.225Z |
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `a4447108` | Multi-dimensional audit evidence | 2026-10-30T17:21:02.003Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `20ef3c68` | Multi-dimensional audit evidence | 2026-10-30T17:21:09.142Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `cdd7a29a` | Multi-dimensional audit evidence | 2026-10-30T17:40:48.170Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `f9f58b77` | Multi-dimensional audit evidence | 2026-10-30T17:43:08.794Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `e1f93d25` | Multi-dimensional audit evidence | 2026-10-30T17:45:17.575Z |

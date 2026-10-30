@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "6880db1c",
+    "sourceVersion": "f9f58b77",
     "license": "Apache-2.0",
-    "contentHash": "dd1117eaa358836c8f551cea68a6d6ad633c71c57d82e17a58dfbc8c0c242430",
-    "lastHarvestedAt": "2026-10-29T22:19:21.371Z",
+    "contentHash": "ee7885bd641c72dfaf8968611ba64e53f9dfc4f63e8962ed115f1f6579ee9d04",
+    "lastHarvestedAt": "2026-10-30T17:43:08.794Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "456aea76",
+    "sourceVersion": "cdd7a29a",
     "license": "Apache-2.0",
-    "contentHash": "a01cf617bae4484ec002ec43a764bc702b99270f9d28144d618bb0c9cdba59bd",
-    "lastHarvestedAt": "2026-10-29T01:43:16.155Z",
+    "contentHash": "6ab14291c9ea9379b932fa574f99e438ff74079560dfcdc17d19ecab316eb36d",
+    "lastHarvestedAt": "2026-10-30T17:40:48.170Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "6e71bbb4",
+    "sourceVersion": "e1f93d25",
     "license": "Apache-2.0",
-    "contentHash": "0c23f62d255b62bafab7faf462846a12a33ae20d3b591a5f37a2b58580951aa5",
-    "lastHarvestedAt": "2026-10-28T19:31:45.611Z",
+    "contentHash": "487dda396690ef5d3840f5bdbda0ba84d160b38a2584e0eab7c7103123baf018",
+    "lastHarvestedAt": "2026-10-30T17:45:17.575Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {

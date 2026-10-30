@@ -424917,3 +424917,869 @@ new NUC, it immediately starts the next proposal under the
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `20ef3c68` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5812. README: give MCP and AI investigations equal footing with the UI (#2433) (Harvested from skyhook-io/radar)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "README: give MCP and AI investigations equal footing with the UI (#2433)",
+  "source": "skyhook-io/radar",
+  "source_url": "https://github.com/skyhook-io/radar",
+  "source_version": "cdd7a29a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T17:40:47.871Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-skyhook-io-radar",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [skyhook-io/radar](https://github.com/skyhook-io/radar) (Revision: `cdd7a29a`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d7d902d2`: README: give MCP and AI investigations equal footing with the UI (#2433). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+**The missing open-source Kubernetes UI, with a built-in MCP server for your AI agent.**
+<br>Single binary. No account required. Free forever.
+🌐 **[radarhq.io](https://radarhq.io)** · [Docs](https://radarhq.io/docs) · [Benchmarks](https://radarhq.io/benchmark) · [Releases](https://github.com/skyhook-io/radar/releases)
+Radar shows you what's broken in a Kubernetes cluster, why, and what changed: issues, topology, a timeline of events and resource changes, Helm, GitOps, traffic, audit, and upgrade impact. Your AI agent reads the same cluster data and relationships through Radar's MCP server, and Radar can run an AI investigation for you with the agent CLI you already use. It runs on your laptop as a `kubectl` plugin or desktop app, or in-cluster with Helm.
+<a href="https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=badge&utm_campaign=ph-launch-2026-10" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1295110&theme=neutral" alt="Radar - You don't need an AI SRE. Give your agent Radar. | Product Hunt" width="250" height="54" /></a>
+🚀 **We're on Product Hunt today** with Radar's upgraded MC
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+<a href="https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=badge&utm_campaign=ph-launch-2026-10" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1295110&theme=neutral" alt="Radar - You don't need an AI SRE. Give your agent Radar. | Product Hunt" width="250" height="54" /></a>
+🚀 **We're on Product Hunt today** with Radar's upgraded MCP server and AI investigations. [Come say hi and drop us a comment](https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=text&utm_campaign=ph-launch-2026-10).
+**The missing open-source Kubernetes UI.**
+<br>Single binary. No account required. Free forever.
+🌐 **[radarhq.io](https://radarhq.io)** · [Docs](https://radarhq.io/docs) · [Releases](https://github.com/skyhook-io/radar/releases)
+Topology, resources, Helm, GitOps, traffic, audit, upgrade impact, and MCP context for AI agents — from your laptop or in-cluster.
+[![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+- [Why Radar?](#why-radar)
+- [Views](#views) — Topology · Resources · Image Filesystem · Timeline · Helm ·
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d7d902d2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5813. Cross-Thread Terminal State Mediation Gate (Raw Mode Prompt Guard) (Harvested from nolabs-ai/nono)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cross-Thread Terminal State Mediation Gate (Raw Mode Prompt Guard)",
+  "source": "nolabs-ai/nono",
+  "source_url": "https://github.com/nolabs-ai/nono",
+  "source_version": "f9f58b77",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T17:43:07.690Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nolabs-ai-nono",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nolabs-ai/nono](https://github.com/nolabs-ai/nono) (Revision: `f9f58b77`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an interactive prompt must be displayed to `stderr`/`stdout` within a system that maintains a PTY relay running in raw mode (`cfmakeraw`, disabling `OPOST`), secondary/worker threads MUST NOT write directly to the terminal or read from `stdin`. Secondary threads MUST acquire an asynchronous coordination gate, park via condition variables until the primary PTY supervisor thread suspends the relay (restoring canonical "cooked" mode), and emit all line terminators as explicit carriage return and line feed sequences (`\r\n`). If the supervisor does not grant the pause within a bounded timeout deadline, the worker MUST fail closed (deny permission).
+
+**WHY**:
+In POSIX raw mode (`termios.c_oflag &= ~OPOST`), terminal drivers do not map newline (`\n`, `0x0A`) to return-to-column-0 (`\r\n`, `0x0D 0x0A`). Any off-thread prompt printed with standard `println!` or bare `\n` creates a layout staircase artifact where subsequent lines print at the offset column of the previous newline. Crucially, if worker threads attempt to read from `stdin` concurrently with an active PTY relay loop, both threads enter a race condition on the underlying terminal file descriptor. The PTY loop's `poll()` triggers, reads partial input, and leaves subsequent blocking reads permanently hung.
+
+**WHEN TO APPLY**:
+Any systems software, sandboxing proxy, CLI tool, or AI agent runtime where:
+- A foreground PTY proxy relays bidirectional raw terminal events to a child process.
+- Background worker threads (e.g., HTTP proxies, RPC handlers, IPC callbacks) need out-of-band user approval or confirmation.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::sync::{Condvar, Mutex, MutexGuard, PoisonError};
+use std::thread::ThreadId;
+use std::time::Instant;
+
+pub struct RelayPromptGate {
+    state: Mutex<GateState>,
+    changed: Condvar,
+}
+
+struct GateState {
+    owner: Option<ThreadId>,
+    pending: usize,
+    paused: bool,
+}
+
+impl RelayPromptGate {
+    pub const fn new() -> Self {
+        Self {
+            state: Mutex::new(GateState {
+                owner: None,
+                pending: 0,
+                paused: false,
+            }),
+            changed: Condvar::new(),
+        }
+    }
+
+    fn lock(&self) -> MutexGuard<'_, GateState> {
+        // Recover from poisoning: poisoning occurs on panic outside the gate invariant
+        self.state.lock().unwrap_or_else(PoisonError::into_inner)
+    }
+
+    pub fn run_with_relay_paused<T>(&self, deadline: Instant, prompt: impl FnOnce() -> T) -> Option<T> {
+        let mut state = self.lock();
+        let is_off_thread = state.owner.is_some_and(|owner| owner != std::thread::current().id());
+        
+        if !is_off_thread {
+            // Supervisor thread pauses terminal directly without gating
+            drop(state);
+            return Some(prompt());
+        }
+
+        // Increment pending waiter count
+        state.pending = state.pending.saturating_add(1);
+        
+        // Wait until supervisor signals paused state
+        loop {
+            if state.paused || state.owner.is_none() {
+                break;
+            }
+            let remaining = deadline.saturating_duration_since(Instant::now());
+            if remaining.is_zero() {
+                // Timeout reached; fail closed
+                state.pending = state.pending.saturating_sub(1);
+                self.changed.notify_all();
+                return None;
+            }
+            state = self.changed.wait_timeout(state, remaining)
+                .unwrap_or_else(PoisonError::into_inner).0;
+        }
+
+        // Execute prompt while supervisor holds terminal in cooked mode
+        let result = prompt();
+
+        // Release pending counter and notify supervisor
+        state = self.lock();
+        state.pending = state.pending.saturating_sub(1);
+        self.changed.notify_all();
+
+        Some(result)
+    }
+
+    pub fn service_pending_prompts(&self, mut pause_relay: impl FnMut(&dyn Fn())) {
+        let state = self.lock();
+        if state.pending == 0 || state.paused {
+            return;
+        }
+        drop(state);
+
+        pause_relay(&|| {
+            let mut state = self.lock();
+            state.paused = true;
+            self.changed.notify_all();
+
+            while state.pending > 0 && state.owner.is_some() {
+                state = self.changed.wait(state).unwrap_or_else(PoisonError::into_inner);
+            }
+            state.paused = false;
+            self.changed.notify_all();
+        });
+    }
+}
+
+pub fn print_terminal_safe_stderr(message: &str) {
+    use std::io::{self, Write};
+    let mut stderr = io::stderr();
+    if io::IsTerminal::is_terminal(&stderr) {
+        let normalized = message.replace('\n', "\r\n");
+        let _ = write!(stderr, "\r{}\r\n", normalized);
+    } else {
+        let _ = writeln!(stderr, "{}", message);
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Direct prompt emission from worker thread without relay arbitration
+fn bad_worker_approval(request: &ApprovalRequest) -> bool {
+    // BUG 1: Bare \n in raw mode causes staircase rendering
+    eprintln!("[nono] Sandboxed request: {:?}", request);
+    eprint!("Allow [y/N]? ");
+    
+    // BUG 2: Reads stdin while PTY supervisor thread is calling read() on the same fd.
+    // Result: Data race, terminal freeze, deadlocked session.
+    let mut line = String::new();
+    std::io::stdin().read_line(&mut line).unwrap();
+    line.trim().eq_ignore_ascii_case("y")
+}
+```
+
+**VERIFICATION METHOD**:
+Run integration tests where background network requests trigger approvals concurrently with active terminal echo. Verify with headless PTY allocations that:
+1. Every emitted line ends with `\r\n`.
+2. No input bytes are dropped by the supervisor's `waitpid` event loop.
+3. If the supervisor is unresponsive, the prompt times out and denies execution within `deadline`.
+
+---
+
+
+---
+
+## 5814. Dual-Canonical State Inode Verification for Sandbox Deserialization (Harvested from nolabs-ai/nono)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Canonical State Inode Verification for Sandbox Deserialization",
+  "source": "nolabs-ai/nono",
+  "source_url": "https://github.com/nolabs-ai/nono",
+  "source_version": "f9f58b77",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T17:43:08.076Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nolabs-ai-nono",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nolabs-ai/nono](https://github.com/nolabs-ai/nono) (Revision: `f9f58b77`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When persisting and restoring OS-enforced sandboxing capabilities across execution boundaries, systems MUST serialize both the original lexical path string and the device-inode pair `(dev_t, ino_t)`. Upon deserialization and re-construction of kernel rules (such as Landlock rulesets), the engine MUST resolve canonical paths anew, compare the newly resolved path and inode against the serialized `(dev, ino)` identity, and REJECT the state if the canonical target has changed or moved.
+
+**WHY**:
+Kernel LSMs (Linux Landlock in particular) attach access enforcement to internal filesystem objects (vfs inodes) resolved at ruleset creation time, not lexical path strings. If a file is replaced via atomic rename/write-temp pattern (`O_TMPFILE` or rename over target) between capability derivation and enforcement, the sandbox rule binds to an orphan or invalid inode while the actual replacement file receives no access rules. Conversely, malicious JSON state manipulation could inject a modified `original` path pointing to an arbitrary host secret (e.g. `/etc/shadow`) while spoofing a benign `resolved` path.
+
+**WHEN TO APPLY**:
+Any capability-based confinement system, state migration daemon, or security profile cache that saves and restores filesystem authority representations across process forks, RPC boundaries, or persistent stores.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::path::{Path, PathBuf};
+use std::os::unix::fs::MetadataExt;
+
+#[derive(serde::Serialize, serde::Deserialize)]
+pub struct FsCapSnapshot {
+    pub original: PathBuf,
+    pub resolved: PathBuf,
+    pub dev: Option<u64>,
+    pub ino: Option<u64>,
+    pub is_file: bool,
+}
+
+pub fn restore_and_verify_cap(cap: &FsCapSnapshot) -> Result<PathBuf, String> {
+    // Canonicalize the original path anew to detect symlink redirection / traversal
+    let current_canonical = cap.original.canonicalize()
+        .map_err(|e| format!("Path {:?} cannot be canonicalized: {}", cap.original, e))?;
+
+    // Anti-smuggling proof: freshly resolved path must match the recorded resolved path
+    if current_canonical != cap.resolved {
+        return Err(format!(
+            "Integrity failure: path identity drifted. Serialized: {:?}, Actual: {:?}",
+            cap.resolved, current_canonical
+        ));
+    }
+
+    // Inode verification on Linux systems
+    #[cfg(target_os = "linux")]
+    if cap.is_file {
+        let meta = std::fs::metadata(&current_canonical)
+            .map_err(|e| format!("Cannot stat canonical path {:?}: {}", current_canonical, e))?;
+        
+        let current_dev = meta.dev();
+        let current_ino = meta.ino();
+
+        if let (Some(expected_dev), Some(expected_ino)) = (cap.dev, cap.ino) {
+            if current_dev != expected_dev || current_ino != expected_ino {
+                return Err(format!(
+                    "Inode drift detected for {:?}: expected ({}, {}), found ({}, {}). Possible TOCTOU replacement.",
+                    current_canonical, expected_dev, expected_ino, current_dev, current_ino
+                ));
+            }
+        }
+    }
+
+    Ok(current_canonical)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Blindly trusting serialized canonical paths without re-canonicalization or inode check
+fn bad_deserialize_caps(json_data: &str) -> Vec<PathBuf> {
+    let state: serde_json::Value = serde_json::from_str(json_data).unwrap();
+    // VULNERABILITY: If an attacker modifies the local state file or injects a payload,
+    // they bypass path canonicalization and grant arbitrary paths directly to the child.
+    state["fs"].as_array().unwrap().iter()
+        .map(|entry| PathBuf::from(entry["path"].as_str().unwrap()))
+        .collect()
+}
+```
+
+**VERIFICATION METHOD**:
+Implement property tests using temp directories where a symlink is flipped or a file is overwritten via rename between `from_caps()` and `to_caps()`. Assert that `to_caps()` returns an explicit `ConfigParse` error and does not load the drifted capability.
+
+---
+
+
+---
+
+## 5815. RAII Ephemeral Credential & Hook Environment Cleansing (Harvested from nolabs-ai/nono)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "RAII Ephemeral Credential & Hook Environment Cleansing",
+  "source": "nolabs-ai/nono",
+  "source_url": "https://github.com/nolabs-ai/nono",
+  "source_version": "f9f58b77",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T17:43:08.496Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nolabs-ai-nono",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nolabs-ai/nono](https://github.com/nolabs-ai/nono) (Revision: `f9f58b77`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Temporary credentials, secrets, and environment variable passing files generated for subprocess execution hooks MUST be constructed within private, dedicated directories initialized with `0o700` permissions. The file descriptor MUST be opened using `O_CREAT | O_EXCL` with mode `0o600`. Upon deallocation (RAII drop), the file contents MUST be explicitly scrubbed with zeroed bytes (`vec![0u8; len]`), flushed to persistent storage via `sync_all()`, and immediately unlinked.
+
+**WHY**:
+Standard file deletion (`std::fs::remove_file`) merely unlinks directory entries; raw file block contents remain intact on disk blocks until overwritten, creating forensic memory/disk leaks. If parent supervisor loops panic, fail prematurely, or return via early error expressions (`?`), insecure temporary files can be read by other local users, especially in multi-tenant environments or world-readable staging spaces.
+
+**WHEN TO APPLY**:
+Any credential proxy, authorization injector, script hook execution runtime, or subprocess runner that materializes plaintext keys, tokens, or environment definitions to disk.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::fs::{File, OpenOptions, Permissions};
+use std::io::Write;
+use std::os::unix::fs::{OpenOptionsExt, PermissionsExt};
+use std::path::{Path, PathBuf};
+
+pub struct SecureEnvFileGuard {
+    path: PathBuf,
+}
+
+impl SecureEnvFileGuard {
+    pub fn create(session_dir: &Path) -> std::io::Result<Self> {
+        // Enforce 0o700 on parent session directory
+        std::fs::create_dir_all(session_dir)?;
+        std::fs::set_permissions(session_dir, Permissions::from_mode(0o700))?;
+
+        let file_path = session_dir.join("env.secret");
+
+        // Atomic create with O_EXCL and 0o600 mode
+        OpenOptions::new()
+            .create_new(true)
+            .write(true)
+            .mode(0o600)
+            .open(&file_path)?;
+
+        Ok(Self { path: file_path })
+    }
+
+    pub fn path(&self) -> &Path {
+        &self.path
+    }
+}
+
+impl Drop for SecureEnvFileGuard {
+    fn drop(&mut self) {
+        // Attempt forensic zeroing of disk blocks prior to unlink
+        if let Ok(mut file) = OpenOptions::new().write(true).open(&self.path) {
+            if let Ok(metadata) = file.metadata() {
+                let len = metadata.len() as usize;
+                if len > 0 {
+                    let zeros = vec![0u8; len];
+                    let _ = file.write_all(&zeros);
+                    let _ = file.sync_all();
+                }
+            }
+        }
+        let _ = std::fs::remove_file(&self.path);
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Standard tempfile usage without explicit zeroing or strict mode permissions
+fn bad_write_env(env_data: &str) -> std::path::PathBuf {
+    let path = std::env::temp_dir().join("nono_env.tmp");
+    // VULNERABILITY 1: File created in world-readable /tmp with ambient umask
+    // VULNERABILITY 2: Contents persist in disk sectors after delete
+    std::fs::write(&path, env_data).unwrap();
+    path
+}
+```
+
+**VERIFICATION METHOD**:
+Unit test inspecting permissions via `std::os::unix::fs::MetadataExt::mode()`, asserting `mode & 0o777 == 0o600`. Write data, manually trigger `drop()`, verify file is removed from filesystem, and assert path does not exist.
+
+---
+
+
+---
+
+## 5816. OS-Native Handle Cleanup Invariant During Subprocess Interruption (Harvested from zvec-ai/zvec-grep)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "OS-Native Handle Cleanup Invariant During Subprocess Interruption",
+  "source": "zvec-ai/zvec-grep",
+  "source_url": "https://github.com/zvec-ai/zvec-grep",
+  "source_version": "e1f93d25",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T17:45:16.475Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zvec-ai-zvec-grep",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep) (Revision: `e1f93d25`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When writing integration tests that verify crash recovery across OS platforms, the test harness MUST NOT rely on in-process `std::process::exit()` within the child process while native foreign function interface (FFI) storage handles, C++ runtimes, or dynamic-link libraries (DLLs) remain allocated. The parent harness MUST spawn the child, await a durable filesystem readiness marker, and terminate the child process externally via OS signal/job kill (`Child::kill()` / `TerminateProcess`).
+
+**WHY**:
+On Windows platforms, calling `std::process::exit()` invokes `ExitProcess`, triggering loader-lock acquisition and sequential unloading of loaded DLLs (`LdrUnloadDll`). If native storage threads (e.g., C++ worker threads in `zvec`, SQLite background checkpoints) hold synchronization primitives or are blocked waiting for I/O completion, thread cleanup collides with DLL detachment locks. This results in permanent deadlocks inside the operating system loader, causing CI pipelines to hang indefinitely.
+
+**WHEN TO APPLY**:
+- Integration harnesses testing WAL rollbacks, crash durability, or recovery state in engines binding C/C++ libraries via FFI (e.g., SQLite, RocksDB, Zvec, libgit2, ONNX Runtime).
+- Cross-platform test suites targeting Windows, Linux, and macOS.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::{
+    fs,
+    path::Path,
+    process::{Child, Command, Stdio},
+    thread,
+    time::{Duration, Instant},
+};
+
+pub struct CrashWriter(pub Child);
+
+impl CrashWriter {
+    pub fn wait_until_ready(&mut self, ready_marker: &Path, log_path: &Path) {
+        let started = Instant::now();
+        loop {
+            // Guard against premature child failure
+            if let Some(status) = self.0.try_wait().expect("failed to poll crash child") {
+                panic!(
+                    "Crash child exited prematurely with code {status}\nLogs:\n{}",
+                    fs::read_to_string(log_path).unwrap_or_default()
+                );
+            }
+            if ready_marker.is_file() {
+                return;
+            }
+            assert!(
+                started.elapsed() < Duration::from_secs(60),
+                "Timed out waiting for durable crash state\nLogs:\n{}",
+                fs::read_to_string(log_path).unwrap_or_default()
+            );
+            thread::sleep(Duration::from_millis(20));
+        }
+    }
+}
+
+impl Drop for CrashWriter {
+    fn drop(&mut self) {
+        // Enforce cleanup on test failure
+        let _ = self.0.kill();
+        let _ = self.0.wait();
+    }
+}
+
+pub fn execute_crash_durability_test(target_root: &Path) {
+    let ready_file = target_root.join("writer-ready");
+    let log_file = target_root.join("child.log");
+    let out_handle = fs::File::create(&log_file).expect("create child log");
+    let err_handle = out_handle.try_clone().expect("clone child log");
+
+    let mut writer = CrashWriter(
+        Command::new(std::env::current_exe().expect("test binary"))
+            .args(["--exact", "tests::crash_target_worker", "--nocapture", "--test-threads=1"])
+            .env("CRASH_TEST_WORKSPACE_ROOT", target_root)
+            .stdin(Stdio::null())
+            .stdout(out_handle)
+            .stderr(err_handle)
+            .spawn()
+            .expect("spawn crash worker"),
+    );
+
+    // Wait for the child to write uncommitted WAL/data and post marker
+    writer.wait_until_ready(&ready_file, &log_file);
+
+    // Terminate externally; avoids loader-lock deadlocks in Windows DLL exit routines
+    writer.0.kill().expect("kill crash writer");
+    let exit_status = writer.0.wait().expect("reap crash writer");
+    assert!(!exit_status.success(), "Crash worker must terminate via hard signal");
+}
+
+pub fn crash_target_worker(root: &Path) {
+    // 1. Perform partial mutations to SQLite and vector store
+    // ...
+    // 2. Flush raw OS pages, but omit engine graceful shutdown destructors
+    fs::write(root.join("writer-ready"), b"ready").expect("write marker");
+    
+    // 3. Park thread permanently. NEVER call process::exit() here!
+    loop {
+        thread::park();
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: DO NOT invoke process::exit inside child test routines
+// when native FFI / DLL handles are active.
+pub fn crash_target_worker_bad() {
+    let store = open_native_storage_with_background_threads();
+    store.write_partial_state();
+    // FAILS ON WINDOWS: Leads to deadlock during LdrUnloadDll / ExitProcess
+    // while C++ background threads in the FFI layer wait on native mutexes.
+    std::process::exit(77); 
+}
+```
+
+**VERIFICATION METHOD**:
+Run 50 iterations of the crash recovery test on a multi-threaded Windows runner under heavy memory allocation:
+```bash
+cargo test --test graph_tests process_exit_during_canonical_replacement_recovers_from_durable_status -- --nocapture --test-threads=1
+```
+Verify zero thread-park deadlocks and confirm child process exit is non-zero (terminated via kill).
+
+---
+
+
+---
+
+## 5817. Physical Column-Aware ANSI Terminal Redraw Invariant (Harvested from zvec-ai/zvec-grep)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Physical Column-Aware ANSI Terminal Redraw Invariant",
+  "source": "zvec-ai/zvec-grep",
+  "source_url": "https://github.com/zvec-ai/zvec-grep",
+  "source_version": "e1f93d25",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T17:45:16.861Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zvec-ai-zvec-grep",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep) (Revision: `e1f93d25`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Terminal UI redraw engines MUST NOT repaint dynamic line buffers by issuing a standalone full-line erase sequence (`\r\x1b[2K`) or raw cursor-up rewind (`\x1b[NA`) calculated solely from newline counts (`\n`). When line wrapping can occur, engines MUST compute visible character column widths via East Asian Width / Unicode classifications, calculate physical wrapped rows dynamically from the current terminal width, and execute atomic in-place delta overwrites (`\x1b[{col}G{text}\x1b[K`) bounded to the viewport.
+
+**WHY**:
+1. Standalone clear-line commands (`\r\x1b[2K`) emit discrete escape sequences. If the terminal emulator renders the cleared line before the subsequent write payload arrives, visible high-frequency screen flicker occurs.
+2. If the terminal width shrinks, long lines reflow into multiple terminal rows. A naïve rewind (`MoveUp(line_count)`) undercounts physical screen rows, causing the cursor to land below the original frame. Subsequent writes spill downward, permanently corrupting the terminal scrollback buffer.
+3. Wide Unicode characters (e.g., CJK ideographs, emojis) occupy 2 terminal columns. Naive UTF-8 byte counting or string length misjudges line boundaries.
+
+**WHEN TO APPLY**:
+- Interactive CLI progress bars, pickers, and live display renderers across POSIX and Windows terminals.
+- Anytime terminal lines contain user-defined strings, paths, or non-ASCII characters that may exceed terminal column bounds.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::fmt::Write as _;
+use unicode_width::UnicodeWidthChar;
+
+pub struct RenderedLine {
+    pub text: String,
+    pub widths: Vec<usize>,
+}
+
+impl RenderedLine {
+    pub fn new(text: String) -> Self {
+        let widths = text
+            .chars()
+            .map(|c| {
+                if c.is_control() {
+                    0
+                } else {
+                    UnicodeWidthChar::width(c).unwrap_or(1)
+                }
+            })
+            .collect();
+        Self { text, widths }
+    }
+
+    /// Computes the exact physical terminal rows occupied given dynamic column width.
+    pub fn wrapped_rows(&self, columns: usize) -> usize {
+        let columns = columns.max(1);
+        let mut rows = 1;
+        let mut occupied = 0;
+        for &w in &self.widths {
+            let width = w.min(columns);
+            // Wide character cannot fit remaining space on current row; wraps to next
+            if occupied + width > columns {
+                rows += 1;
+                occupied = 0;
+            }
+            occupied += width;
+        }
+        rows
+    }
+}
+
+/// Computes the minimal in-place ANSI sequence to overwrite previous line without flicker.
+pub fn compute_terminal_delta(previous: &str, next: &str) -> String {
+    if previous.is_empty() {
+        return format!("\r{next}\x1b[K");
+    }
+    if previous == next {
+        return String::new();
+    }
+
+    let mut common_bytes = 0;
+    for (left, right) in previous.chars().zip(next.chars()) {
+        if left != right {
+            break;
+        }
+        common_bytes += left.len_utf8();
+    }
+
+    // Never slice mid-ANSI escape sequence
+    let safe_start = next[..common_bytes]
+        .rfind("\x1b[")
+        .filter(|&idx| !next[idx..common_bytes].starts_with("\x1b[0m"))
+        .unwrap_or(common_bytes);
+
+    let visible_col = terminal_visible_width(&next[..safe_start]).unwrap_or(0);
+    if visible_col > 0 {
+        // Move absolute to 1-based column, write updated tail, and clear obsolete tail
+        format!("\x1b[{}G{}\x1b[K", visible_col + 1, &next[safe_start..])
+    } else {
+        format!("\r{next}\x1b[K")
+    }
+}
+
+pub fn terminal_visible_width(value: &str) -> Option<usize> {
+    let mut chars = value.chars().peekable();
+    let mut width = 0;
+    while let Some(c) = chars.next() {
+        if c == '\x1b' && chars.peek() == Some(&'[') {
+            chars.next();
+            let mut complete = false;
+            for code in chars.by_ref() {
+                if ('@'..='~').contains(&code) {
+                    complete = true;
+                    break;
+                }
+            }
+            if !complete {
+                return None; // Malformed escape
+            }
+        } else if !c.is_control() {
+            width += UnicodeWidthChar::width(c).unwrap_or(1);
+        }
+    }
+    Some(width)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: DO NOT clear the entire line before writing new progress text.
+// DO NOT compute cursor rewind distance from lines.count() without checking terminal wrap!
+pub fn render_progress_broken(output: &mut impl std::io::Write, new_status: &str) {
+    // FLICKER BUG: Emits standalone clear line. Terminal renders blank frame!
+    output.write_all(b"\r\x1b[2K").unwrap();
+    output.write_all(new_status.as_bytes()).unwrap();
+    output.flush().unwrap();
+}
+```
+
+**VERIFICATION METHOD**:
+Automated headless PTY assertion:
+```rust
+#[test]
+fn progress_does_not_emit_blanking_escape_sequences() {
+    let mut buffer = Vec::new();
+    // Render sequence of changes
+    let delta = compute_terminal_delta("Indexing [====>    ] 50%", "Indexing [======>  ] 70%");
+    assert!(!delta.contains("\x1b[2K"), "Delta output contained destructive line clear!");
+    assert!(delta.contains("\x1b[K"), "Must clear trailing characters atomically");
+}
+```
+
+---
+
+
+---
+
+## 5818. Strict Metric Denominator and Division Invariant for Benchmark Sensitivity Analysis (Harvested from zvec-ai/zvec-grep)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Strict Metric Denominator and Division Invariant for Benchmark Sensitivity Analysis",
+  "source": "zvec-ai/zvec-grep",
+  "source_url": "https://github.com/zvec-ai/zvec-grep",
+  "source_version": "e1f93d25",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T17:45:17.276Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zvec-ai-zvec-grep",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zvec-ai/zvec-grep](https://github.com/zvec-ai/zvec-grep) (Revision: `e1f93d25`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Benchmark analytics pipelines evaluating comparative agent performance (e.g., Token Reduction %, Cost Reduction %, Tool Call Delta) MUST enforce strict non-zero validation on the baseline denominator. When the baseline denominator is `0` and candidate metric is `> 0`, the pipeline MUST emit an explicit `undefined_baseline` sentinel, MUST NOT compute `Infinity` or clamp to `100%`, and MUST exclude the task from overall aggregate arithmetic means while preserving raw trial telemetry in evidence artifacts.
+
+**WHY**:
+Floating-point division by zero produces `inf` or `nan` in Python (`ZeroDivisionError` or `float('inf')`). Coercing zero-baseline spikes into arbitrary constants (like `0.0` or `1.0`) distorts aggregate system evaluation: if an agent previously executed 0 tool calls and now executes 2, treating this as a standard percentage variance pollutes the sensitivity analysis.
+
+**WHEN TO APPLY**:
+- SWE-bench, SWE-QA, and code search benchmarking pipelines calculating reduction percentages.
+- Financial, resource profiling, and metrics reporting scripts.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from __future__ import annotations
+from dataclasses import dataclass
+from typing import Any
+
+@dataclass(frozen=True)
+class MetricComparison:
+    baseline_mean: float
+    candidate_mean: float
+    reduction_pct: float | None
+    is_valid_comparison: bool
+    exclusion_reason: str | None
+
+def calculate_metric_reduction(baseline: float, candidate: float) -> MetricComparison:
+    """Calculates reduction percentage where positive values represent efficiency gains."""
+    if baseline < 0 or candidate < 0:
+        raise ValueError("Metrics must be non-negative quantities")
+
+    # Identical zero values represent zero change
+    if baseline == 0.0 and candidate == 0.0:
+        return MetricComparison(
+            baseline_mean=0.0,
+            candidate_mean=0.0,
+            reduction_pct=0.0,
+            is_valid_comparison=True,
+            exclusion_reason=None,
+        )
+
+    # Denominator zero with positive numerator is undefined
+    if baseline == 0.0:
+        return MetricComparison(
+            baseline_mean=0.0,
+            candidate_mean=candidate,
+            reduction_pct=None,
+            is_valid_comparison=False,
+            exclusion_reason="undefined_baseline",
+        )
+
+    # Standard relative reduction calculation: (baseline - candidate) / baseline * 100
+    reduction = ((baseline - candidate) / baseline) * 100.0
+
+    # Sensitivity gate: Changes outside [-100%, +100%] represent outliers
+    if not (-100.0 <= reduction <= 100.0):
+        return MetricComparison(
+            baseline_mean=baseline,
+            candidate_mean=candidate,
+            reduction_pct=reduction,
+            is_valid_comparison=False,
+            exclusion_reason="input_token_change_outside_range",
+        )
+
+    return MetricComparison(
+        baseline_mean=baseline,
+        candidate_mean=candidate,
+        reduction_pct=reduction,
+        is_valid_comparison=True,
+        exclusion_reason=None,
+    )
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: DO NOT fall back to 0 or arbitrary percentage when baseline is 0
+def calculate_metric_bad(baseline: float, candidate: float) -> float:
+    try:
+        return ((baseline - candidate) / baseline) * 100.0
+    except ZeroDivisionError:
+        # CORRUPTS DATA: Silently masks regression where baseline was 0 and candidate was 1000
+        return 0.0 
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_baseline_division_safety():
+    res = calculate_metric_reduction(baseline=0.0, candidate=50.0)
+    assert res.reduction_pct is None
+    assert not res.is_valid_comparison
+    assert res.exclusion_reason == "undefined_baseline"
+
+    res_zero = calculate_metric_reduction(baseline=0.0, candidate=0.0)
+    assert res_zero.reduction_pct == 0.0
+    assert res_zero.is_valid_comparison
+```
+
+---

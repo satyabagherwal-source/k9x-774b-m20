@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T17:21:09.086Z",
+  "last_updated": "2026-10-30T17:45:17.495Z",
   "total_verified_learnings": 1176,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -41369,8 +41369,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "6880db1c",
-      "content_hash": "dd1117eaa358836c8f551cea68a6d6ad633c71c57d82e17a58dfbc8c0c242430",
+      "source_version": "f9f58b77",
+      "content_hash": "ee7885bd641c72dfaf8968611ba64e53f9dfc4f63e8962ed115f1f6579ee9d04",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -41433,6 +41433,21 @@
           "number": 5541,
           "title": "proxy): redeem phantoms inside Basic credentials on token endpoints (#2225)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5813,
+          "title": "Cross-Thread Terminal State Mediation Gate (Raw Mode Prompt Guard)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5814,
+          "title": "Dual-Canonical State Inode Verification for Sandbox Deserialization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5815,
+          "title": "RAII Ephemeral Credential & Hook Environment Cleansing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41440,7 +41455,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T22:19:21.274Z",
+      "verified_at": "2026-10-30T17:43:08.696Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50093,8 +50108,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "456aea76",
-      "content_hash": "a01cf617bae4484ec002ec43a764bc702b99270f9d28144d618bb0c9cdba59bd",
+      "source_version": "cdd7a29a",
+      "content_hash": "6ab14291c9ea9379b932fa574f99e438ff74079560dfcdc17d19ecab316eb36d",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -50152,6 +50167,11 @@
           "number": 5485,
           "title": "Tidy two lines of investigation copy (#2426)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5812,
+          "title": "README: give MCP and AI investigations equal footing with the UI (#2433)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50159,7 +50179,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T01:43:16.058Z",
+      "verified_at": "2026-10-30T17:40:48.071Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58969,8 +58989,8 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "6e71bbb4",
-      "content_hash": "0c23f62d255b62bafab7faf462846a12a33ae20d3b591a5f37a2b58580951aa5",
+      "source_version": "e1f93d25",
+      "content_hash": "487dda396690ef5d3840f5bdbda0ba84d160b38a2584e0eab7c7103123baf018",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
@@ -59028,6 +59048,21 @@
           "number": 5380,
           "title": "daemon): replace legacy servers before Rust startup (#304)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5816,
+          "title": "OS-Native Handle Cleanup Invariant During Subprocess Interruption",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5817,
+          "title": "Physical Column-Aware ANSI Terminal Redraw Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5818,
+          "title": "Strict Metric Denominator and Division Invariant for Benchmark Sensitivity Analysis",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59035,7 +59070,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T19:31:45.516Z",
+      "verified_at": "2026-10-30T17:45:17.477Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154456,6 +154491,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T17:21:09.074Z"
+    },
+    "rule-5812": {
+      "learning_id": "rule-5812",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5812,
+      "title": "README: give MCP and AI investigations equal footing with the UI (#2433)",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "cdd7a29a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T17:40:48.071Z"
+    },
+    "rule-5813": {
+      "learning_id": "rule-5813",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5813,
+      "title": "Cross-Thread Terminal State Mediation Gate (Raw Mode Prompt Guard)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "f9f58b77",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T17:43:08.696Z"
+    },
+    "rule-5814": {
+      "learning_id": "rule-5814",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5814,
+      "title": "Dual-Canonical State Inode Verification for Sandbox Deserialization",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "f9f58b77",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T17:43:08.696Z"
+    },
+    "rule-5815": {
+      "learning_id": "rule-5815",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5815,
+      "title": "RAII Ephemeral Credential & Hook Environment Cleansing",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "f9f58b77",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T17:43:08.696Z"
+    },
+    "rule-5816": {
+      "learning_id": "rule-5816",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5816,
+      "title": "OS-Native Handle Cleanup Invariant During Subprocess Interruption",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "e1f93d25",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T17:45:17.477Z"
+    },
+    "rule-5817": {
+      "learning_id": "rule-5817",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5817,
+      "title": "Physical Column-Aware ANSI Terminal Redraw Invariant",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "e1f93d25",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T17:45:17.477Z"
+    },
+    "rule-5818": {
+      "learning_id": "rule-5818",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5818,
+      "title": "Strict Metric Denominator and Division Invariant for Benchmark Sensitivity Analysis",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "e1f93d25",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T17:45:17.477Z"
     }
   },
   "aliases": {

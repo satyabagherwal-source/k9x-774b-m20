@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `456aea76`  
+> **Source Version**: `cdd7a29a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T01:43:15.538Z  
+> **Timestamp**: 2026-10-30T17:40:47.505Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T01:43:15.530Z  
+> **Harvest Timestamp**: 2026-10-30T17:40:36.454Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3940 stars
+- **Stars / Engagement**: 3989 stars
 
 ---
 
@@ -2228,344 +2228,378 @@ export function AWSMachineRenderer({ data }: Props) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `456aea76` (2026-10-29)
-**Commit Message**: Tidy two lines of investigation copy (#2426)
+### Incident Patch 1: `d7d902d2` (2026-10-29)
+**Commit Message**: README: give MCP and AI investigations equal footing with the UI (#2433)
 
-Two lines of investigation copy that read wrong on live runs.
+## Why
 
-- **Next steps conditions.** A step's condition is the agent's own
-sentence, shown after "Only if". The agent capitalises it, so steps read
-"Only if You know the keys/values checkout needs". An ordinary
-capitalized first word now loses its capital ("Only if you know…");
-names with more capitals stay as written ("Only if ConfigMap…", "Only if
-API traffic…", "Only if OOMKilled…").
-- **Inconclusive verdict hint.** The line under a "couldn't determine"
-verdict said "…or investigate again after addressing any errors shown in
-Activity" on every such verdict, including the ones that hit no errors.
-It now reads "Try a follow-up with more context, or investigate again."
+The Product Hunt launch is about the MCP server and AI investigations,
+but the README introduces MCP at line 500, as the 15th entry under
+Views. This PR gives the agent side roughly equal footing with the UI,
+without turning the page into an AI pitch. It also makes the page easier
+for search engines and AI agents to read, and moves reference detail
+into the docs that own it.
 
-Testing: `vitest run src/components/diagnose` (48 files, 881 tests), tsc
-and eslint pass. Copy-only, so no new tests.
+This edits the existing README rather than rewriting it: the section
+skeleton stays, so the diff reads section by section. Inputs were Roy's
+three format options (A/B/C), a 9-reviewer panel ranking them (C first
+on 7 of 9), and a pass over READMEs that are widely held up as good (uv,
+ripgrep, Headlamp, HolmesGPT, kubernetes-mcp-server, kubectl-ai and
+others).
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+## What changed
 
-**File**: `web/src/components/diagnose/AssessmentCard.tsx` (modified, +8/-5)
+**Top of the page**
+- The one-liner names both halves: "The missing open-source Kubernetes
+UI, with a built-in MCP server for your AI agent."
+- A new lede says what Radar shows, that agents read the same data over
+MCP, and where it runs.
+- A Benchmarks link sits next to Docs and Releases.
+- The Product Hunt badge and launch line stay, moved below the lede s
+
+**File**: `README.md` (modified, +133/-243)
 ```diff
-@@ -1076,7 +1076,13 @@ function DiagnosisResult({
-                 data-step-precondition
-                 className="mb-1.5 text-[13px] leading-snug text-warning-text"
-               >
--                Only if {step.precondition.replace(/^(if|when|once)\s+/i, "")}
-+                {/* The agent writes a full sentence; after "Only if" its first
-+                    capital drops when it is an ordinary word ("You"), never
-+                    for a name with more capitals (API, ConfigMap). */}
-+                Only if{" "}
-+                {step.precondition
-+                  .replace(/^(if|when|once)\s+/i, "")
-+                  .replace(/^[A-Z](?=[a-z]+\b)/, (c) => c.toLowerCase())}
-               </p>
-             ) : null}
-             {isRec && diagnosis.recommendedReason && (
-@@ -1567,10 +1573,7 @@ export function InconclusiveCard({
-       </div>
-       <div className="flex items-start gap-1 px-0.5 text-[11px] text-theme-text-tertiary">
-         <ShieldCheck className="mt-0.5 h-3 w-3 shrink-0" />
--        <span>
--          Try a follow-up with more context, or investigate again after
--          addressing any errors shown in Activity.
--        </span>
-+        <span>Try a follow-up with more context, or investigate again.</span>
-       </div>
-       <AssessmentDetails
-         diagnosis={diagnosis}
+@@ -1,15 +1,15 @@
+ # Radar
+ 
+-<a href="https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=badge&utm_campaign=ph-launch-2026-10" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1295110&theme=neutral" alt="Radar - You don't need an AI SRE. Give your agent Radar. | Product Hunt" width="250" height="54" /></a>
++**The missing open-source Kubernetes UI, with a built-in MCP server for your AI agent.**
++<br>Single binary. No account required. Free forever.
+ 
+-🚀 **We're on Product Hunt today** with Radar's upgraded MCP server and AI investigations. [Come say hi and drop us a comment](https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=text&utm_campaign=ph-launch-2026-10).
++🌐 **[radarhq.io](https://radarhq.io)** · [Docs](https://radarhq.io/docs) · [Benchmarks](https://radarhq.io/benchmark) · [Releases](https://github.com/skyhook-io/radar/releases)
+ 
+-**The missing open-source Kubernetes UI.**
+-<br>Single binary. No account required. Free forever.
++Radar shows you what's broken in a Kubernetes cluster, why, and what changed: issues, topology, a timeline of events and resource changes, Helm, GitOps, traffic, audit, and upgrade impact. Your AI agent reads the same cluster data and relationships through Radar's MCP server, and Radar can run an AI investigation for you with the agent CLI you already use. It runs on your laptop as a `kubectl` plugin or desktop app, or in-cluster with Helm.
+ 
+-🌐 **[radarhq.io](https://radarhq.io)** · [Docs](https://radarhq.io/docs) · [Releases](https://github.com/skyhook-io/radar/releases)
++<a href="https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=badge&utm_campaign=ph-launch-2026-10" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1295110&theme=neutral" alt="Radar - You don't need an AI SRE. Give your agent Radar. | Product Hunt" width="250" height="54" /></a>
+ 
+-Topology, resources, Helm, GitOps, traffic, audit, upgrade impact, and MCP context for AI agents — from your laptop or in-cluster.
++🚀 **We're on Product Hunt today** with Radar's upgraded MCP server and AI investigations. [Come say hi and drop us a comment](https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=text&utm_campaign=ph-launch-2026-10).
+ 
+ [![CI](https://github.com/skyhook-io/radar/actions/workflows/ci.yml/badge.svg)](https://github.com/skyhook-io/radar/actions/workflows/ci.yml)
+ [![CodeQL](https://github.com/skyhook-io/radar/actions/workflows/codeql.yml/badge.svg)](https://github.com/skyhook-io/radar/actions/workflows/codeql.yml)
+@@ -18,15 +18,15 @@ Topology, resources, Helm, GitOps, traffic, audit, upgrade impact, and MCP conte
+ [![Helm repo downloads](https://img.shields.io/github/downloads/skyhook-io/helm-charts/total?logo=helm&label=Helm%20repo%20downloads)](https://artifacthub.io/packages/helm/skyhook/radar)
+ [![Discord](https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white)](https://radarhq.io/community/chat)
+ [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+-[![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+ 
+ <details>
+ <summary><b>Table of contents</b></summary>
+ 
+-- [Why Radar?](#why-radar)
++- [Why Radar?](#why-radar) · [Debugging in the UI](#debugging-in-the-ui)
++- [AI agents: MCP server and AI investigations](#ai-agents-mcp-server-and-ai-investigations) — Connect your agent · AI investigations · Benchmarks
+ - [Installation](#installation)
+ - [Usage](#usage)
+-- [Views](#views) — Topology · Resources · Image Filesystem · Timeline · Helm · Compare · TLS · GitOps · Traffic · Cost · Audit · Upgrade impact · RBAC · MCP · Auth
++- [Views](#views) — Issues · Topology · Resources · Image Filesystem · Timeline · Helm · Compare · TLS · GitOps · Traffic · Metrics · Capacity · Cost · Audit · Network path · Upgrade impact · RBAC · Auth
+ - [Supported Resources](#supported-resources)
+ - [Keyboard Shortcuts](#keyboard-shortcuts)
+ - [Security](#security)
+@@ -35,31 +35,102 @@ Topology, resources, Helm, GitOps, traffic, audit, upgrade impact, and MCP conte
+ </details>
+ 
+ <p align="center">
+-  <img src="docs/screenshot.png" alt="Radar Screenshot" width="800">
++  <img src="docs/screenshot.png" alt="Radar home view for one cluster: pod, deployment and node health, resource utilization, topology, Helm releases, timeline, traffic, and unhealthy workloads" width="800">
+ </p>
+ 
+ **Install and run in 30 seconds:**
+ ```bash
+ curl -fsSL https://get.radarhq.io | sh && kubectl radar
+ ```
+-[More installation options ↓](#installation)
++Or `brew install kubectl-radar`. [Windows, Krew, desktop app and Helm ↓](#installation)
++
++**Then, with Radar running, connect your AI agent** (read-only):
++```bash
++claude mcp add --transport http radar http://localhost:9280/m
+```
+
+**File**: `deploy/helm/radar/README.md` (modified, +6/-1)
+```diff
+@@ -535,7 +535,10 @@ Always granted (required for basic functionality):
+ 
+ | API Group | Resources |
+ |-----------|-----------|
+-| Core (`""`) | pods, services, configmaps, events, namespaces, nodes, pvcs, serviceaccounts, endpoints |
++| Core (`""`) | pods, services, configmaps, events, namespaces, nodes, persistentvolumes, pvcs, serviceaccounts, endpoints, limitranges, resourcequotas |
++| `discovery.k8s.io` | endpointslices |
++| `policy` | poddisruptionbudgets |
++| `storage.k8s.io` | storageclasses |
+ | `apps` | deployments, daemonsets, statefulsets, replicasets, controllerrevisions |
+ | `networking.k8s.io` | ingresses, networkpolicies |
+ | `batch` | jobs, cronjobs |
+@@ -544,6 +547,8 @@ Always granted (required for basic functionality):
+ | `certificates.k8s.io` | podcertificaterequests, clustertrustbundles (stable in Kubernetes 1.37) |
+ | `apiextensions.k8s.io` | customresourcedefinitions (for CRD discovery) |
+ 
++Upgrade impact also gets list-only access to CSIStorageCapacities, FlowSchemas, PriorityLevelConfigurations, and PodSecurityPolicies on clusters where those kinds are served. These reads inspect source-manifest evidence and do not add the kinds to Radar's resource browser.
++
+ ### Privileged Permissions (Opt-in)
+ 
+ Disabled by default for security:
+```
+
+**File**: `docs/configuration.md` (modified, +102/-1)
+```diff
+@@ -1,6 +1,91 @@
+ # Configuration
+ 
+-This document covers Radar's cluster connection behavior. For commands and flags, see the [CLI reference](https://radarhq.io/docs/configuration/cli).
++This document covers Radar's command-line flags and cluster connection behavior. The [CLI reference](https://radarhq.io/docs/configuration/cli) on the docs site covers subcommands.
++
++## CLI flags
++
++Common startup flags for `radar` and `kubectl radar`. `radar --help` lists every flag for the
++installed version. Several flags also take a persistent default from `~/.radar/config.json`; see
++[Persistent Configuration](#persistent-configuration).
++
++| Flag | Default | Description |
++|------|---------|-------------|
++| `--kubeconfig` | `~/.kube/config` | Path to primary kubeconfig file |
++| `--kubeconfig-dir` | | Comma-separated directories containing additional kubeconfig files |
++| `--namespace` | (context namespace) | Initial namespace filter (supports multi-select in the UI; also used as RBAC fallback for namespace-scoped users). Unset, Radar uses your saved pick, then the kubeconfig context's namespace, then all namespaces ([Namespace Picker](#namespace-picker)) |
++| `--namespaces` | (context namespace) | Initial namespace filters as a comma-separated list, e.g. `--namespaces ns1,ns2,ns3`. Use this when your identity can list resources in specific namespaces but cannot list namespaces cluster-wide. |
++| `--namespace-scope` | `false` | Pin namespaced informer caches to a **single** namespace for large clusters (scoping to multiple namespaces is not supported yet). Requires `--namespace`, a kubeconfig context namespace, or a saved local single-namespace pick. Local mode can rebuild the cache when switching namespaces; auth/cloud mode locks the shared cache to the startup namespace. |
++| `--port` | `9280` | Server port |
++| `--listen-address` | `127.0.0.1` | HTTP listen IP address (IPv4 or IPv6), or `localhost`. Bind a specific local IP or use `0.0.0.0` for all interfaces. Non-loopback access needs authentication and network controls. |
++| `--base-path` | | Serve Radar under a URL prefix such as `/radar`. Use when an ingress forwards a subpath without stripping it — everything, including `/api/health`, moves under the prefix. Not supported with `--cloud-url`. |
++| `--allowed-hosts` | | Comma-separated hostnames, besides `localhost`, IP addresses and Kubernetes Service names, that an unauthenticated non-loopback listener answers, e.g. `radar.internal`. Other hostnames are refused so DNS rebinding cannot reach Radar. Exact names, or `*.example.com` for names under a domain (not the domain itself); `*` turns the check off. Env: `RADAR_ALLOWED_HOSTS`. See [HTTP Listener](#http-listener) |
++| `--trusted-origins` | | Comma-separated origins, besides the address Radar is opened at, that may use Radar's API, including changes and terminals, e.g. `http://radar.internal`. Set this when a proxy in front of Radar rewrites the `Host` header and changes fail with "Radar refused this request". Exact origins, no wildcards. Does not apply to `/mcp` (see `RADAR_MCP_TRUSTED_ORIGINS`). Env: `RADAR_TRUSTED_ORIGINS` |
++| `--no-browser` | `false` | Don't auto-open browser |
++| `--browser` | | Browser to use when opening the UI, e.g. `firefox`, `google-chrome`, or `Google Chrome` on macOS |
++| `--timeline-storage` | `memory` | Timeline storage backend: `memory`, `sqlite`, or `postgres` |
++| `--timeline-db` | `~/.radar/timeline.db` | Path to SQLite database (when using sqlite storage) |
++| `--timeline-max-size` | `1Gi` | Maximum SQLite DB + WAL size before pruning oldest events (e.g. `800Mi`, `8Gi`; `0` disables) |
++| `--history-limit` | `10000` | Maximum events to retain in timeline (memory only) |
++| `--disable-exec` | `false` | Disable pod terminal, debug shells and pod file browsing |
++| `--disable-helm-write` | `false` | Disable Helm write operations |
++| `--disable-local-terminal` | `false` | Disable the host local terminal |
++| `--debug-image` | `busybox:latest` | Image for ephemeral debug containers and node debug pods. If built-in restricted PodSecurity rejects the default pod debug container, Radar retries with a restricted-compatible Linux security context using the target/pod non-root UID, or UID `65532` by default; point at a compatible mirror for air-gapped / private-registry clusters. |
++| `--list-page-size` | `0` (off) | Paginate the initial LIST of high-cardinality kinds (Pods, ReplicaSets) at this size. Helps very large clusters that fail to sync; only used when WatchList streaming is unavailable. Try `2000`. |
++| `--context-switch-timeout` | `30s` | Maximum time a kubeconfig context switch may take. Widen on high-latency control planes — see [Tuning for slow clusters](#tuning-for-slow-or-high-latency-clusters). Env: `RADAR_CONTEXT_SWITCH_TIMEOUT`. |
++| `--first-paint-backstop` | `5m` | Hard upper bound on the initial critical-cache sync wait before Radar falls through to a partial-data render. Env: `RADAR_FIRST_PAINT_BACKSTOP`. |
+
 ```
 
 ---
 
-### Incident Patch 2: `7194ce5a` (2026-10-29)
-**Commit Message**: Offer typed Omnibar words as an investigation question (#2398)
-
-Stacked on #2397. Review that one first.
+### Incident Patch 2: `82e70fca` (2026-10-29)
+**Commit Message**: Fix the Home Kubernetes version line wrap and trim the cluster card (#2428)
 
 ## Summary
 
-People already type into the Omnibar. When what they type is a symptom
-("web times out") rather than a resource name, there was nowhere for it
-to go. When the investigation backend accepts questions, the Omnibar now
-ends its list with **Investigate "…" as a question**, naming where it
-will start. Selecting it opens the question composer with those words
-and that scope, so where and since when stay visible before anything
-runs.
+Two small fixes to the left column of the Home cluster card.
 
-![Omnibar investigate
-row](https://github.com/user-attachments/assets/6850938f-5ae0-4334-aadf-173767e26f35)
+**Kubernetes version line wraps as one line.** The line was a flex row,
+so on a long distribution version ("Kubernetes v1.34.11-eks-cfb47f5")
+the version and "· Upgrade impact" shrank into two squeezed columns that
+each wrapped (seen at 1600 and 2000px). It is now inline text that wraps
+naturally. It is still one button to Upgrade impact, and "Upgrade
+impact" still appears only when the cluster is behind the newest minor
+the checks cover.
 
-## What changed
+**Less repetition.**
+- The raw kubeconfig context line is gone. For EKS it is the cluster
+ARN, which repeats the account, region and name shown just above. The
+full context is still in the tooltip on the cluster name, as before. No
+new copy button: the card has no copy pattern to reuse, and the ARN is
+one `kubectl config current-context` away.
+- "Radar vX · What's new" is gone from the card in local mode. What's
+new is in the sidebar, and the running version is in the Settings header
+and the What's new dialog.
+- In-cluster installs keep the version line. It carries the upgrade link
+(Helm release, G
 
-- `Omnibar` takes an optional `onInvestigateQuery({ text, namespaces
-})`. When it's set and there's free text, a row tails the list after
-every resource, command and "See all" row. Matches always come first,
-and the row is only the top choice when nothing else matched. While
-search results for the current words are still loading, Enter doesn't
-pick the row, so typing a resource name and pressing Enter quickly
-doesn't turn it into a question. The row runs on click, so keyboard and
-screen-reader activation work. Any `ns:
-
-**File**: `web/src/components/ui/Omnibar.investigate.test.tsx` (added, +105/-0)
+**File**: `web/src/App.tsx` (modified, +0/-1)
 ```diff
-@@ -0,0 +1,105 @@
-+// @vitest-environment jsdom
-+import { act } from 'react'
-+import { createRoot, type Root } from 'react-dom/client'
-+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-+import { Omnibar } from './Omnibar'
-+import type { SearchHit } from '../../api/client'
-+
-+vi.mock('../../api/usage-data', () => ({ recordUsageEvent: vi.fn() }))
-+
-+Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true })
-+let root: Root
-+let host: HTMLDivElement
-+
-+beforeEach(() => {
-+  vi.useFakeTimers()
-+  Element.prototype.scrollIntoView = vi.fn()
-+  host = document.createElement('div')
-+  document.body.appendChild(host)
-+  root = createRoot(host)
-+})
-+
-+afterEach(() => {
-+  act(() => root.unmount())
-+  host.remove()
-+  document.body.innerHTML = ''
-+  vi.useRealTimers()
-+})
-+
-+function render(onInvestigateQuery: ((query: { text: string; namespaces: string[] }) => void) | undefined, hits: SearchHit[] = []) {
-+  act(() => {
-+    root.render(<Omnibar onOpenResource={vi.fn()} commandItems={[]} searchData={{ hits }} onInvestigateQuery={onInvestigateQuery} />)
-+  })
-+}
-+
-+function typeQuery(text: string) {
-+  const input = host.querySelector('input')!
-+  act(() => input.focus())
-+  act(() => {
-+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, text)
-+    input.dispatchEvent(new Event('input', { bubbles: true }))
-+  })
-+  act(() => { vi.advanceTimersByTime(200) })
-+}
-+
-+const investigateButton = () =>
-+  [...document.body.querySelectorAll('button')].find((b) => b.textContent?.startsWith('Investigate “'))
-+
-+describe('Omnibar investigate row', () => {
-+  it('hands the typed words to the host as a question', () => {
-+    const onInvestigate = vi.fn()
-+    render(onInvestigate)
-+    typeQuery('checkout returns 502s')
-+    const row = investigateButton()
-+    expect(row?.textContent).toContain('Investigate “checkout returns 502s”')
-+    act(() => { row!.click() })
-+    expect(onInvestigate).toHaveBeenCalledWith({ text: 'checkout returns 502s', namespaces: [] })
-+  })
-+
-+  it('comes after a resource match', () => {
-+    render(vi.fn(), [{ score: 1, kind: 'Deployment', group: 'apps', namespace: 'shop', name: 'checkout' }])
-+    typeQuery('checkout')
-+    const rows = [...document.body.querySelectorAll('[data-selected]')]
-+    expect(rows.at(-1)?.textContent).toContain('Investigate “checkout”')
-+    expect(rows[0]?.textContent).not.toContain('Investigate')
-+  })
-+
-+  it('waits for search results before Enter can ask', () => {
-+    const onInvestigate = vi.fn()
-+    act(() => {
-+      root.render(<Omnibar onOpenResource={vi.fn()} commandItems={[]} searchData={{ hits: [] }} isFetching onInvestigateQuery={onInvestigate} />)
-+    })
-+    typeQuery('checkout')
-+    act(() => {
-+      host.querySelector('input')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }))
-+    })
-+    expect(onInvestigate).not.toHaveBeenCalled()
-+  })
-+
-+  it('is absent when the host has no question entry', () => {
-+    render(undefined)
-+    typeQuery('checkout returns 502s')
-+    expect(investigateButton()).toBeUndefined()
-+  })
-+
-+  it('carries ns: modifiers as where to start', () => {
-+    const onInvestigate = vi.fn()
-+    act(() => {
-+      root.render(<Omnibar onOpenResource={vi.fn()} commandItems={[]} searchData={{ hits: [] }} seedNamespaces={['payments']} onInvestigateQuery={onInvestigate} />)
-+    })
-+    typeQuery('slow checkout')
-+    expect(investigateButton()?.textContent).toContain('as a question · in payments')
-+    act(() => { investigateButton()!.click() })
-+    expect(onInvestigate).toHaveBeenCalledWith({ text: 'slow checkout', namespaces: ['payments'] })
-+  })
-+
-+  it('counts a long namespace list instead of naming it', () => {
-+    const namespaces = Array.from({ length: 25 }, (_, i) => `ns-${i}`)
-+    act(() => {
-+      root.render(<Omnibar onOpenResource={vi.fn()} commandItems={[]} searchData={{ hits: [] }} seedNamespaces={namespaces} onInvestigateQuery={vi.fn()} />)
-+    })
-+    typeQuery('pods keep restarting')
-+    expect(investigateButton()?.textContent).toContain('Investigate “pods keep restarting”')
-+    expect(investigateButton()?.textContent).toContain('as a question · in 25 namespaces')
-+  })
-+})
+@@ -2109,7 +2109,6 @@ function AppInner({ manageDocumentTitle = false, documentTitleSuffix, onClusterL
+             onNavigateToView={setMainView}
+             onNavigateToHelmRelease={navCustomization.embedded ? undefined : navigateToHelmRelease}
+             onNavigateToManagerPath={navCustomization.embedded || takeover.gitops ? undefined : navigateToPath}
+-            onShowWhatsNew={!navCustomization.embedded && whatsNewStatus.available ? openWhatsNew : undefined}
+             // Upgrade impact lives under /checks, which a Cloud host takes
+             // over wholesale — its fleet pages have no upgrade sub-route, so
+             // the version line stays plain text there.
 ```
 
-**File**: `web/src/components/ui/Omnibar.tsx` (modified, +47/-3)
+**File**: `web/src/components/home/ClusterHealthCard.tsx` (modified, +6/-15)
 ```diff
-@@ -1,6 +1,6 @@
- import { useState, useMemo, useRef, useEffect, useCallback, forwardRef, useImperativeHandle, type ReactNode } from 'react'
- import { createPortal } from 'react-dom'
--import { Search, CornerDownLeft, Loader2, AlertTriangle, Info } from 'lucide-react'
-+import { Search, CornerDownLeft, Loader2, AlertTriangle, Info, Sparkles } from 'lucide-react'
- import { clsx } from 'clsx'
- import { useAnimatedUnmount } from '../../hooks/useAnimatedUnmount'
- import { TRANSITION_BACKDROP, TRANSITION_MENU, TW_EASE_UI, overlayExitMs, overlayTransitionStyle } from '../../utils/animation'
-@@ -136,6 +136,11 @@ export interface OmnibarProps {
-    *  searching, handing the full (uncapped) query off to the host's dedicated
-    *  search surface. Omit to keep the omnibar a pure launcher. */
-   onViewAllResults?: (query: string) => void
-+  /** When set, an "Investigate" row tails the list while there is free text,
-+   *  handing the words, and any `ns:` modifiers as where to start, to the
-+   *  host's AI investigation composer as a question. It is last so a
-+   *  resource or command match always comes first. */
-+  onInvestigateQuery?: (query: { text: string; namespaces: string[] }) => void
-   /** Empty-launcher content. `true` (default) lists Views + Actions — the
-    *  cmd-K menu. `false` shows only Actions so recents/search lead and views
-    *  surface on type (use when the views are already always-visible, e.g. a
-@@ -153,6 +158,7 @@ type Row =
-   | { id: string; kind: 'resource'; hit: SearchHit; recent?: boolean }
-   | { id: string; kind: 'command'; command: CommandItem }
-   | { id: string; kind: 'viewAll'; query: string; count: number }
-+  | { id: string; kind: 'investigate'; text: string; namespaces: string[] }
- 
- const COMMAND_CATEGORY_ORDER = ['Views', 'Resource Kinds', 'Namespaces', 'Clusters', 'Actions']
- const PAGE = 8
-@@ -184,6 +190,7 @@ export const Omnibar = forwardRef<OmnibarHandle, OmnibarProps>(function Omnibar(
-     loadRecents,
-     recordRecent,
-     onViewAllResults,
-+    onInvestigateQuery,
-     launcherShowsViews = true,
-     placeholder = 'Search resources & commands…',
-     size = 'default',
-@@ -330,9 +337,18 @@ export const Omnibar = forwardRef<OmnibarHandle, OmnibarProps>(function Omnibar(
-     if (onViewAllResults && searchActive && resourceRows.length > 0) {
-       out.push({ id: 'view-all', kind: 'viewAll', query: queryString, count: searchData?.total_matched ?? resourceRows.length })
-     }
-+    if (onInvestigateQuery && freeText) {
-+      out.push({
-+        id: 'investigate',
-+        kind: 'investigate',
-+        text: freeText,
-+        namespaces: pills.filter((pill) => pill.key === 'ns').map((pill) => pill.value),
-+      })
-+    }
-     return out
--  }, [recentRows, leadingKinds, resourceRows, commandGroups, freeText, pills.length, searchActive, onViewAllResults, queryString, searchData])
-+  }, [recentRows, leadingKinds, resourceRows, commandGroups, freeText, pills, searchActive, onViewAllResults, onInvestigateQuery, queryString, searchData])
-   const viewAllRow = rows.find((r): r is Extract<Row, { kind: 'viewAll' }> => r.kind === 'viewAll')
-+  const investigateRow = rows.find((r): r is Extract<Row, { kind: 'investigate' }> => r.kind === 'investigate')
- 
-   // Selection tracked by stable id (not array index) so Enter can never fire a
-   // stale row when the set shifts. Auto-follows the TOP result until the user
-@@ -385,13 +401,15 @@ export const Omnibar = forwardRef<OmnibarHandle, OmnibarProps>(function Omnibar(
-       row.command.action()
-     } else if (row.kind === 'viewAll') {
-       onViewAllResults?.(row.query)
-+    } else if (row.kind === 'investigate') {
-+      onInvestigateQuery?.({ text: row.text, namespaces: row.namespaces })
-     } else {
-       const h = row.hit
-       recordRecent?.({ kind: h.kind, group: h.group, namespace: h.namespace, name: h.name, cluster: h.cluster, clusterName: h.clusterName })
-       onOpenResource(h)
-     }
-     close()
--  }, [onOpenResource, recordRecent, onViewAllResults, close])
-+  }, [onOpenResource, recordRecent, onViewAllResults, onInvestigateQuery, close])
- 
-   // The resources shown don't (yet) belong to the current query: the debounce
-   // hasn't fired, the data is React Query placeholder, or results haven't landed.
-@@ -412,6 +430,9 @@ export const Omnibar = forwardRef<OmnibarHandle, OmnibarProps>(function Omnibar(
-       const row = rows[selectedIndex]
-       if (row) {
-         if (row.kind === 'resource' && resourcesStale) return
-+        // Investigate sits first only until results land; an Enter before
-+        // then is someone looking for a resource, not asking a question.
-+        if (row.kind === 'investigate' && resourcesStale && !userMovedRef.current) return
-         execute(row)
-         return
+@@ -275,17 +275,6 @@ export function ClusterHealthCard({
+               )}
+               {radarVersion}
+               <span><span className="font-mono">{counts.namespaces}</span> namespaces</span>
+-              {/* Show raw kubeconfig context as muted metadata only when
+-                  it differs from the headline AND we're in local mode
+-                  (in-cluster has no meaningful context name, cloud
+-                  shell already renders the canonical name). */}
+-              {cluster.name && cluster.name !== headlineName && deployment.mode === 'local' && (
+-                <Tooltip content={cluster.name}>
+-                <span className="font-mono text-[10px] text-theme-text-disabled break-all leading-snug pt-0.5">
+-                  {cluster.name}
+-                </span>
+-                </Tooltip>
+-              )}
+             </div>
+             {freshness && <div className="mt-2">{freshness}</div>}
+             {nodeVersionSkew && (
+@@ -578,15 +567,17 @@ function KubernetesVersionLine({
        }
-@@ -567,6 +588,29 @@ export const Omnibar = forwardRef<OmnibarHandle, OmnibarProps>(function Omnibar(
-                 <CornerDownLeft className="w-3 h-3 ml-auto shrink-0 text-theme-text-tertiary" />
-               </but
+       wrapperClassName="w-fit"
+     >
++      {/* Inline text, not flex: flex items shrink and wrap separately, which
++          splits a long distribution version and the link into two columns. */}
+       <button
+         onClick={onNavigate}
+-        className="group flex items-center gap-1 hover:text-theme-text-secondary transition-colors"
++        className="group text-left hover:text-theme-text-secondary transition-colors"
+       >
+-        <span>Kubernetes {version}</span>
++        Kubernetes {version}
+         {behind > 0 && (
+-          <span>· Upgrade impact</span>
++          <> · <span className="whitespace-nowrap">Upgrade impact</span></>
+         )}
+-        <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
++        <ArrowRight className="inline-block w-3 h-3 ml-1 align-[-2px] opacity-0 group-hover:opacity-100 transition-opacity" />
+       </button>
+     </Tooltip>
+   )
 ```
 
-**File**: `web/src/components/ui/RadarOmnibar.test.tsx` (modified, +1/-0)
+**File**: `web/src/components/home/HomeView.tsx` (modified, +5/-6)
 ```diff
-@@ -7,6 +7,7 @@ import type { SearchCoverageEntry } from './searchCoverageNote'
- import { coverageOf } from './searchCoverage.fixtures'
+@@ -54,11 +54,9 @@ interface HomeViewProps {
+   onNavigateToUpgradeImpact?: () => void
+   onNavigateToHelmRelease?: (namespace: string, release: string) => void
+   onNavigateToManagerPath?: (path: string) => void
+-  // Present only when release notes exist for this version.
+-  onShowWhatsNew?: () => void
+ }
  
- vi.mock('../../api/usage-data', () => ({ recordUsageEvent: vi.fn() }))
-+vi.mock('../diagnose/DiagnoseContext', () => ({ useDiagnose: () => ({ available: false, questions: false, openQuestion: vi.fn() }) }))
- vi.mock('../../hooks/useRecentResources', () => ({ loadRecentResources: () => [], recordRecentResource: vi.fn() }))
- vi.mock('../../api/apiResources', async (importOriginal) => ({ ...(await importOriginal<object>()), useAPIResources: () => ({ data: [] }) }))
- vi.mock('./command-items', async (importOriginal) => ({ ...(await importOriginal<object>()), useCommandItems: () => [] }))
+-export function HomeView({ namespaces, topology, fallbackClusterLoadState, onNavigateToView, onNavigateToResourceKind, onNavigateToResource, onNavigateToCerts, onNavigateToUpgradeImpact, onNavigateToHelmRelease, onNavigateToManagerPath, onShowWhatsNew }: HomeViewProps) {
++export function HomeView({ namespaces, topology, fallbackClusterLoadState, onNavigateToView, onNavigateToResourceKind, onNavigateToResource, onNavigateToCerts, onNavigateToUpgradeImpact, onNavigateToHelmRelease, onNavigateToManagerPath }: HomeViewProps) {
+   // The card itself decides whether the cluster has a capacity story
+   // (available, softened-denied, or karpenterless-with-managers/groups) and
+   // returns null otherwise — the outer gate only excludes states with nothing
+@@ -142,11 +140,12 @@ export function HomeView({ namespaces, topology, fallbackClusterLoadState, onNav
+         )}
+         {/* Row 1: Cluster Health Card (combined health + resource counts) */}
+         <ClusterHealthCard
+-          radarVersion={versionInfo && deploymentMode !== 'cloud' ? (
++          // A local install shows its version in Settings and upgrades through
++          // the update notification; an in-cluster one is upgraded by whoever
++          // manages it, and this line is where they confirm the new version.
++          radarVersion={versionInfo && deploymentMode === 'in-cluster' ? (
+             <RadarVersionLine
+               version={versionInfo}
+-              showUpgrade={deploymentMode === 'in-cluster'}
+-              onShowWhatsNew={onShowWhatsNew}
+               manager={installationManager}
+               managerLoading={installationManagerLoading}
+               onNavigateToHelmRelease={onNavigateToHelmRelease}
 ```
 
-**File**: `web/src/components/ui/RadarOmnibar.tsx` (modified, +11/-0)
+**File**: `web/src/components/home/RadarVersionLine.test.tsx` (modified, +0/-14)
 ```diff
-@@ -5,6 +5,7 @@ import { useAPIResources } from '../../api/apiResources'
- import { loadRecentResources, recordRecentResource } from '../../hooks/useRecentResources'
- import { useCommandItems, type CommandItemCallbacks } from './command-items'
- import { PENDING_RETRY_BUDGET_MS, PENDING_RETRY_MS, searchCoverageNote } from './searchCoverageNote'
-+import { useDiagnose } from '../diagnose/DiagnoseContext'
+@@ -142,18 +142,4 @@ describe('RadarVersionLine', () => {
+     expect(html).toContain('Open the in-cluster upgrade instructions and apply the change through GitOps')
+     expect(html).not.toContain('Open it to upgrade through GitOps')
+   })
+-
+-  it('offers What\'s new only when the host can open it', () => {
+-    const upToDate = { ...version, latestVersion: '1.2.3', updateAvailable: false }
+-    expect(renderToString(<RadarVersionLine version={upToDate} />)).not.toContain('What&#x27;s new')
+-    expect(renderToString(<RadarVersionLine version={upToDate} onShowWhatsNew={() => {}} />)).toContain('What&#x27;s new')
+-    expect(renderToString(<RadarVersionLine version={version} onShowWhatsNew={() => {}} />)).toContain('What&#x27;s new')
+-  })
+-
+-  it('hides upgrade guidance when the host handles upgrades elsewhere', () => {
+-    const html = renderToString(<RadarVersionLine version={version} showUpgrade={false} onShowWhatsNew={() => {}} />)
+-    expect(html).toContain('v1.2.3')
+-    expect(html).not.toContain('available')
+-    expect(html).toContain('What&#x27;s new')
+-  })
+ })
+```
+
+**File**: `web/src/components/home/RadarVersionLine.tsx` (modified, +3/-28)
+```diff
+@@ -1,4 +1,4 @@
+-import { ArrowUpCircle, Megaphone } from 'lucide-react'
++import { ArrowUpCircle } from 'lucide-react'
+ import { gitOpsRouteForResource } from '@skyhook-io/k8s-ui'
+ import type { CloudConnectSelf, VersionInfo } from '../../api/client'
+ import {
+@@ -14,10 +14,6 @@ interface RadarVersionLineProps {
+   managerLoading?: boolean
+   onNavigateToHelmRelease?: (namespace: string, release: string) => void
+   onNavigateToGitOps?: (path: string) => void
+-  // Local installs upgrade through the update notification, and this line's
+-  // upgrade link points at in-cluster instructions.
+-  showUpgrade?: boolean
+-  onShowWhatsNew?: () => void
+ }
  
- interface RadarOmnibarProps extends CommandItemCallbacks {
-   onOpenResource: (hit: SearchHit) => void
-@@ -55,6 +56,15 @@ export const RadarOmnibar = forwardRef<OmnibarHandle, RadarOmnibarProps>(functio
-   }), [nsScope, apiResources])
+ function displayVersion(version: string): string {
+@@ -30,33 +26,13 @@ export function RadarVersionLine({
+   managerLoading = false,
+   onNavigateToHelmRelease,
+   onNavigateToGitOps,
+-  showUpgrade: upgradeAllowed = true,
+-  onShowWhatsNew,
+ }: RadarVersionLineProps) {
+   const latestVersion = version.latestVersion
+   const updateStatus = getVersionUpdateStatus(version.currentVersion, latestVersion)
+-  const showUpgrade = upgradeAllowed && version.updateAvailable && !!latestVersion && updateStatus.tier !== 'none'
+-  const whatsNew = onShowWhatsNew && (
+-    <span className="inline-flex items-center gap-1">
+-      <span aria-hidden>·</span>
+-      <button
+-        type="button"
+-        onClick={onShowWhatsNew}
+-        className="inline-flex items-center gap-1 text-accent-text hover:text-accent transition-colors"
+-      >
+-        <Megaphone className="h-3.5 w-3.5 shrink-0" aria-hidden />
+-        What's new
+-      </button>
+-    </span>
+-  )
++  const showUpgrade = version.updateAvailable && !!latestVersion && updateStatus.tier !== 'none'
  
-   const commandItems = useCommandItems(callbacks)
-+  // Words that find nothing (or more than a lookup) can become a question;
-+  // the composer opens with them so where and since when stay visible.
-+  const diagnose = useDiagnose()
-+  const onInvestigateQuery = diagnose.available && diagnose.questions
-+    ? // The omnibar seeds its ns: pills from the namespace picker, so no pill
-+      // means the engineer cleared the scope: start across the cluster.
-+      ({ text, namespaces }: { text: string; namespaces: string[] }) =>
-+        diagnose.openQuestion({ text, namespaces })
-+    : undefined
-   const { onNavigateKind } = callbacks
-   const note = searchCoverageNote(searchData?.coverage, {
-     hits: searchData?.hits,
-@@ -80,6 +90,7 @@ export const RadarOmnibar = forwardRef<OmnibarHandle, RadarOmnibarProps>(functio
-       note={note}
-       modifierOptions={modifierOptions}
-       seedNamespaces={nsScope?.actives}
-+      onInvestigateQuery={onInvestigateQuery}
-       loadRecents={() => loadRecentResources(contextKey)}
-       recordRecent={(r) => recordRecentResource(r, contextKey)}
-     />
+   if (!showUpgrade) {
+-    return (
+-      <span className="inline-flex flex-wrap items-center gap-x-1">
+-        <span>Radar <span className="font-mono">{displayVersion(version.currentVersion)}</span></span>
+-        {whatsNew}
+-      </span>
+-    )
++    return <span>Radar <span className="font-mono">{displayVersion(version.currentVersion)}</span></span>
+   }
+ 
+   const controller = manager?.controllerRef
+@@ -135,7 +111,6 @@ export function RadarVersionLine({
+           {action}
+         </Tooltip>
+       </span>
+-      {whatsNew}
+     </span>
+   )
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2436** (2026-10-29): What's New: Radar v1.19.0 release notes (@nadaverell)
+- **PR #2433** (2026-10-29): README: give MCP and AI investigations equal footing with the UI (@nadaverell)
+- **PR #2432** (2026-10-29): Start an investigation from the Home cluster card (@nadaverell)
+- **PR #2431** (2026-10-29): Lead the assessment with its verdict, and show it when a turn finishes (@nadaverell)
+- **PR #2428** (2026-10-29): Fix the Home Kubernetes version line wrap and trim the cluster card (@nadaverell)
 - **PR #2426** (2026-10-29): Tidy two lines of investigation copy (@nadaverell)
-- **PR #2425** (2026-10-29): Reuse dynamic observation views across ownership searches (@nadaverell)
-- **PR #2424** (2026-10-29): Reuse served-version selection within ownership sessions (@nadaverell)
-- **PR #2423** (2026-10-29): Reuse coverage bookkeeping across ownership searches (@nadaverell)
-- **PR #2422** (2026-10-28): Avoid repeated map allocation when sorting GitOps trees (@nadaverell)
-- **PR #2421** (2026-10-28): README: Product Hunt badge for today's launch (@nadaverell)
 
 ---
 
@@ -2585,39 +2619,41 @@ screen-reader activation work. Any `ns:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Tidy two lines of investigation copy (#2426)
+## X. README: give MCP and AI investigations equal footing with the UI (#2433)
 
 **RULE**:
-When implementing operations in `web/src/components/diagnose/AssessmentCard.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `456aea76`: Tidy two lines of investigation copy (#2426). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d7d902d2`: README: give MCP and AI investigations equal footing with the UI (#2433). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/src/components/diagnose/AssessmentCard.tsx`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-                {/* The agent writes a full sentence; after "Only if" its first
-                    capital drops when it is an ordinary word ("You"), never
-                    for a name with more capitals (API, ConfigMap). */}
-                Only if{" "}
-                {step.precondition
-                  .replace(/^(if|when|once)\s+/i, "")
-                  .replace(/^[A-Z](?=[a-z]+\b)/, (c) => c.toLowerCase())}
-        <span>Try a follow-up with more context, or investigate again.</span>
+**The missing open-source Kubernetes UI, with a built-in MCP server for your AI agent.**
+<br>Single binary. No account required. Free forever.
+🌐 **[radarhq.io](https://radarhq.io)** · [Docs](https://radarhq.io/docs) · [Benchmarks](https://radarhq.io/benchmark) · [Releases](https://github.com/skyhook-io/radar/releases)
+Radar shows you what's broken in a Kubernetes cluster, why, and what changed: issues, topology, a timeline of events and resource changes, Helm, GitOps, traffic, audit, and upgrade impact. Your AI agent reads the same cluster data and relationships through Radar's MCP server, and Radar can run an AI investigation for you with the agent CLI you already use. It runs on your laptop as a `kubectl` plugin or desktop app, or in-cluster with Helm.
+<a href="https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=badge&utm_campaign=ph-launch-2026-10" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1295110&theme=neutral" alt="Radar - You don't need an AI SRE. Give your agent Radar. | Product Hunt" width="250" height="54" /></a>
+🚀 **We're on Product Hunt today** with Radar's upgraded MC
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-                Only if {step.precondition.replace(/^(if|when|once)\s+/i, "")}
-        <span>
-          Try a follow-up with more context, or investigate again after
-          addressing any errors shown in Activity.
-        </span>
+<a href="https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=badge&utm_campaign=ph-launch-2026-10" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1295110&theme=neutral" alt="Radar - You don't need an AI SRE. Give your agent Radar. | Product Hunt" width="250" height="54" /></a>
+🚀 **We're on Product Hunt today** with Radar's upgraded MCP server and AI investigations. [Come say hi and drop us a comment](https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=text&utm_campaign=ph-launch-2026-10).
+**The missing open-source Kubernetes UI.**
+<br>Single binary. No account required. Free forever.
+🌐 **[radarhq.io](https://radarhq.io)** · [Docs](https://radarhq.io/docs) · [Releases](https://github.com/skyhook-io/radar/releases)
+Topology, resources, Helm, GitOps, traffic, audit, upgrade impact, and MCP context for AI agents — from your laptop or in-cluster.
+[![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+- [Why Radar?](#why-radar)
+- [Views](#views) — Topology · Resources · Image Filesystem · Timeline · Helm ·
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `456aea76` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d7d902d2` are properly handled with clean fallback behavior.
