@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T22:20:27.461Z",
+  "last_updated": "2026-10-30T22:27:36.383Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8197,8 +8197,8 @@
       "slug": "crossplane-crossplane",
       "platform": "github",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "76a72bee",
-      "content_hash": "f74a89586f2f682040831fd22a069dcccdd2d985f508ca27e3588ce02b0d86ee",
+      "source_version": "504c487e",
+      "content_hash": "c7f94d8303f0310ce5aacfafee72a8ab5b3e72fadf9db30623daba3f76f991bf",
       "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "promoted_rules": [
@@ -8211,6 +8211,11 @@
           "number": 2998,
           "title": "Merge pull request #6935 from adamwg/awg/update-controlled-rollout-design",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5921,
+          "title": "apis): migrate to apimachinery's SchemeBuilder",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8218,7 +8223,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T00:08:01.876Z",
+      "verified_at": "2026-10-30T22:27:31.916Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16456,8 +16461,8 @@
       "slug": "herdrdev-herdr",
       "platform": "github",
       "source_url": "https://github.com/herdrdev/herdr",
-      "source_version": "bc8c2898",
-      "content_hash": "7266e83b80eef2e150bf6bb4b3c17b4a17796ec586c9660b95e679d6cda0c4f4",
+      "source_version": "ee5bfb50",
+      "content_hash": "807dfe4fdc33d156532c1594ba75123a7ce67556ae32e2dad17b850ee1c8e3cf",
       "dossier_path": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
       "promoted_rules": [
@@ -16502,7 +16507,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T23:52:10.782Z",
+      "verified_at": "2026-10-30T22:27:27.404Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54528,8 +54533,8 @@
       "slug": "trailbaseio-trailbase",
       "platform": "github",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "bcd3fde0",
-      "content_hash": "e0c4c6bbea9f7bd2034a52b85704714cf92100d866204268cb4702fc55f4f377",
+      "source_version": "05238c02",
+      "content_hash": "e5db2a879fcaea974d278a46f03f6c72ff69fa56b10dbd2bc19c5996d3076f9a",
       "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
       "promoted_rules": [
@@ -54557,6 +54562,11 @@
           "number": 5548,
           "title": "Rust client's test harness.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5922,
+          "title": "Don't mount \"main\" DB unless requested, fix `trailbase-extension-so` and simplif",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54564,7 +54574,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T22:48:58.384Z",
+      "verified_at": "2026-10-30T22:27:36.362Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -122716,8 +122726,8 @@
       "slug": "gauthierpiarrette-highball",
       "platform": "github",
       "source_url": "https://github.com/gauthierpiarrette/highball",
-      "source_version": "cddc6d1d",
-      "content_hash": "799cac2d6681e1646fc9525d17ecf04c4d6f2d4577ecd930d333f79ed277af31",
+      "source_version": "aac8cdc4",
+      "content_hash": "aa64cc5480a02ea096add31ca8a552b93c3f0ca71dcd67f8deb666531ccad475",
       "dossier_path": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gauthierpiarrette-highball-learnings.md",
       "promoted_rules": [
@@ -122730,6 +122740,11 @@
           "number": 4709,
           "title": "winetricks' wine gets the engine's library paths back. winetricks runs under /bi",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5920,
+          "title": "MoltenVK: the fixes from DiAvisoo's MoltenVK-Detroit for Detroit: Become Human (",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -122737,7 +122752,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:27:25.353Z",
+      "verified_at": "2026-10-30T22:27:30.097Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156537,6 +156552,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T22:20:27.445Z"
+    },
+    "rule-5920": {
+      "learning_id": "rule-5920",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5920,
+      "title": "MoltenVK: the fixes from DiAvisoo's MoltenVK-Detroit for Detroit: Become Human (",
+      "source_url": "https://github.com/gauthierpiarrette/highball",
+      "source_version": "aac8cdc4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:27:30.097Z"
+    },
+    "rule-5921": {
+      "learning_id": "rule-5921",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5921,
+      "title": "apis): migrate to apimachinery's SchemeBuilder",
+      "source_url": "https://github.com/crossplane/crossplane",
+      "source_version": "504c487e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:27:31.916Z"
+    },
+    "rule-5922": {
+      "learning_id": "rule-5922",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5922,
+      "title": "Don't mount \"main\" DB unless requested, fix `trailbase-extension-so` and simplif",
+      "source_url": "https://github.com/trailbaseio/trailbase",
+      "source_version": "05238c02",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:27:36.362Z"
     }
   },
   "aliases": {

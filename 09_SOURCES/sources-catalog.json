@@ -4023,10 +4023,10 @@
     "repository": "trailbaseio/trailbase",
     "platform": "github",
     "sourceUrl": "https://github.com/trailbaseio/trailbase",
-    "sourceVersion": "bcd3fde0",
+    "sourceVersion": "05238c02",
     "license": "OSL-3.0",
-    "contentHash": "e0c4c6bbea9f7bd2034a52b85704714cf92100d866204268cb4702fc55f4f377",
-    "lastHarvestedAt": "2026-10-29T22:48:58.443Z",
+    "contentHash": "e5db2a879fcaea974d278a46f03f6c72ff69fa56b10dbd2bc19c5996d3076f9a",
+    "lastHarvestedAt": "2026-10-30T22:27:36.457Z",
     "learningId": "learn-github-trailbaseio-trailbase"
   },
   "tremorlabs-tremor-npm": {
@@ -4963,10 +4963,10 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "76a72bee",
+    "sourceVersion": "504c487e",
     "license": "Apache-2.0",
-    "contentHash": "f74a89586f2f682040831fd22a069dcccdd2d985f508ca27e3588ce02b0d86ee",
-    "lastHarvestedAt": "2026-10-30T00:08:01.978Z",
+    "contentHash": "c7f94d8303f0310ce5aacfafee72a8ab5b3e72fadf9db30623daba3f76f991bf",
+    "lastHarvestedAt": "2026-10-30T22:27:32.020Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {
@@ -7883,10 +7883,10 @@
     "repository": "herdrdev/herdr",
     "platform": "github",
     "sourceUrl": "https://github.com/herdrdev/herdr",
-    "sourceVersion": "bc8c2898",
+    "sourceVersion": "ee5bfb50",
     "license": "Apache-2.0",
-    "contentHash": "7266e83b80eef2e150bf6bb4b3c17b4a17796ec586c9660b95e679d6cda0c4f4",
-    "lastHarvestedAt": "2026-10-28T23:52:10.875Z",
+    "contentHash": "807dfe4fdc33d156532c1594ba75123a7ce67556ae32e2dad17b850ee1c8e3cf",
+    "lastHarvestedAt": "2026-10-30T22:27:27.517Z",
     "learningId": "learn-github-herdrdev-herdr"
   },
   "darrylmorley-whatcable": {
@@ -10563,10 +10563,10 @@
     "repository": "gauthierpiarrette/highball",
     "platform": "github",
     "sourceUrl": "https://github.com/gauthierpiarrette/highball",
-    "sourceVersion": "cddc6d1d",
+    "sourceVersion": "aac8cdc4",
     "license": "GPL-3.0",
-    "contentHash": "799cac2d6681e1646fc9525d17ecf04c4d6f2d4577ecd930d333f79ed277af31",
-    "lastHarvestedAt": "2026-10-27T11:27:25.426Z",
+    "contentHash": "aa64cc5480a02ea096add31ca8a552b93c3f0ca71dcd67f8deb666531ccad475",
+    "lastHarvestedAt": "2026-10-30T22:27:30.186Z",
     "learningId": "learn-github-gauthierpiarrette-highball"
   },
   "hf-minimaxai-minimax-m3.1-flash": {

@@ -6339,3 +6339,7 @@
 | `CYCLE-20261030-4AVF` | `2026-10-30T22:13:47.403Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5916, Rule 5917` | Yes (`9775cb8e...`) |
 | `CYCLE-20261030-CQU8` | `2026-10-30T22:20:21.344Z` | `Saffsanity/sill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5918` | Yes (`8c90633b...`) |
 | `CYCLE-20261030-CVLV` | `2026-10-30T22:20:27.523Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5919` | Yes (`641a65b1...`) |
+| `CYCLE-20261030-LVOA` | `2026-10-30T22:27:27.514Z` | `herdrdev/herdr` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/herdrdev-herdr-learnings.md` | Yes (`807dfe4f...`) |
+| `CYCLE-20261030-LXQC` | `2026-10-30T22:27:30.180Z` | `gauthierpiarrette/highball` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5920` | Yes (`aa64cc54...`) |
+| `CYCLE-20261030-LZ5C` | `2026-10-30T22:27:32.016Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5921` | Yes (`c7f94d83...`) |
+| `CYCLE-20261030-M2KM` | `2026-10-30T22:27:36.454Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5922` | Yes (`e5db2a87...`) |

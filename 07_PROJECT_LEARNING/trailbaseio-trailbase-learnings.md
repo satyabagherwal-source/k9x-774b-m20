@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source**: github ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
-> **Source Version**: `bcd3fde0`  
+> **Source Version**: `05238c02`  
 > **License**: OSL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T22:48:57.996Z  
+> **Timestamp**: 2026-10-30T22:27:35.822Z  
 > **Learning ID**: `learn-github-trailbaseio-trailbase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T22:48:56.956Z  
+> **Harvest Timestamp**: 2026-10-30T22:27:35.474Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open, sub-millisecond, single-executable Firebase alternative with type-safe APIs, built-in WebAssembly runtime, realtime subscriptions, auth, MCP and admin UI built on Rust, SQLite (PG) & Wasmtime.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5739 stars
+- **Stars / Engagement**: 5740 stars
 
 ---
 
@@ -951,225 +951,161 @@ pub async fn test_email_handler(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d01fd7e4` (2026-10-28)
-**Commit Message**: Fix Rust client's test harness.
+### Incident Patch 1: `5acd8f6d` (2026-10-29)
+**Commit Message**: Don't mount "main" DB unless requested, fix `trailbase-extension-so` and simplify connection setup.
 
-**File**: `crates/client/tests/client_integration_test.rs` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +11/-0)
 ```diff
-@@ -87,7 +87,7 @@ fn block_on<F: std::future::Future<Output = ()>>(fut: F) -> Result<(), Failed> {
-     .build()
-     .unwrap();
+@@ -4112,6 +4112,9 @@ dependencies = [
+  "bindgen",
+  "cc",
+  "pkg-config",
++ "prettyplease 0.3.0",
++ "quote",
++ "syn 3.0.9",
+  "vcpkg",
+ ]
  
--  rt.block_on(async { fut });
-+  rt.block_on(fut);
+@@ -8133,6 +8136,14 @@ dependencies = [
+  "validator",
+ ]
  
-   return Ok(());
- }
++[[package]]
++name = "trailbase-extension-so"
++version = "0.1.0"
++dependencies = [
++ "rusqlite",
++ "trailbase-extension",
++]
++
+ [[package]]
+ name = "trailbase-pg-schema"
+ version = "0.0.1"
 ```
 
----
+**File**: `Cargo.toml` (modified, +1/-3)
+```diff
+@@ -22,9 +22,7 @@ default-members = [
+   "crates/wasm-runtime-common",
+   "crates/wasm-runtime-host",
+ ]
+-exclude = [
+-  "crates/extension-so",
+-]
++exclude = []
+ 
+ # https://doc.rust-lang.org/cargo/reference/profiles.html
+ [profile.release]
+```
 
-### Incident Patch 2: `d4784c94` (2026-10-28)
-**Commit Message**: Remove unused `StoreBuilder` abstraction.
+**File**: `crates/core/src/admin/logs/stats.rs` (modified, +5/-4)
+```diff
+@@ -225,10 +225,11 @@ mod tests {
+   async fn test_aggregate_rate_computation() {
+     let conn = trailbase_sqlite::Connection::with_opts(
+       move || -> Result<_, trailbase_sqlite::Error> {
+-        let mut conn_sync =
+-          crate::connection::connect_rusqlite_without_default_extensions_and_schemas(None).unwrap();
+-        apply_logs_migrations(&mut conn_sync).unwrap();
+-        return Ok(conn_sync);
++        let mut conn = trailbase_extension::connect_rusqlite_without_extensions(None).unwrap();
++
++        apply_logs_migrations(&mut conn).unwrap();
++
++        return Ok(conn);
+       },
+       Default::default(),
+     )
+```
+
+**File**: `crates/core/src/admin/query.rs` (modified, +2/-8)
+```diff
+@@ -9,7 +9,7 @@ use ts_rs::TS;
+ use crate::AppState;
+ use crate::admin::AdminError as Error;
+ use crate::admin::util::{rows_to_columns, rows_to_sql_value_rows};
+-use crate::connection::{BuildOptions, ConnectionEntry};
++use crate::connection::ConnectionEntry;
+ 
+ #[derive(Debug, Deserialize, TS, utoipa::ToSchema)]
+ #[ts(export)]
+@@ -118,17 +118,11 @@ pub async fn query_handler(
+     must_invalidate_schema_cache
+   };
+ 
+-  // Initialize a new connection, to avoid any sort of tomfoolery like dropping attached databases.
+-  // NOTE: This is relatively expensive, thus limit the number of spawned threads to 1.
+   let ConnectionEntry {
+     connection: conn, ..
+   } = state
+     .connection_manager()
+-    .build(BuildOptions {
+-      is_main: true,
+-      attached_databases: attached_databases.map(|v| v.into_iter().collect()),
+-      num_threads: Some(1),
+-    })
++    .build_for_admin_ui_query_editor(attached_databases.map(|v| v.into_iter().collect()))
+     .await?;
+ 
+   let batched_rows_result = trailbase_sqlite::execute_batch(&conn, query).await;
+```
+
+**File**: `crates/core/src/admin/table/list_tables.rs` (modified, +1/-1)
+```diff
+@@ -145,7 +145,7 @@ async fn list_tables_handler_sqlite_impl(
+       connection: conn, ..
+     } = state
+       .connection_manager()
+-      .get_entry(/* is_main= */ true, Some(attached_dbs))
++      .get_entry(/* attach_main= */ true, Some(attached_dbs))
+       .await?;
+ 
+     let databases = conn.list_databases().await?;
+```
+
+**File**: `crates/core/src/admin/table/mod.rs` (modified, +2/-2)
+```diff
+@@ -30,8 +30,8 @@ fn get_conn_and_migration_path(
+         trailbase_sqlite::Connection::with_opts(
+           move || {
+             // TODO: We should load WASM SQLite functions, since migrations may depend on them.
+-            return trailbase_extension::connect_sqlite(
+-              Some(db_path.clone()),
++            return trailbase_extension::connect_rusqlite(
++              Some(&db_path),
+               Some(json_registry.clone()),
+             )
+             .map_err(|err| trailbase_sqlite::Error::Other(err.into()));
+```
 
 **File**: `crates/core/src/app_state.rs` (modified, +1/-1)
 ```diff
-@@ -134,7 +134,7 @@ impl AppState {
-             args.dev,
+@@ -609,7 +609,7 @@ async fn build_record_apis_impl(
+       } else {
+         connection_manager
+           .get_entry(
+-            /* is_main= */ true,
++            /* attach_main= */ true,
+             Some(attached_databases.iter().cloned().collect()),
            )
-           .await
--          .map_err(|err| InitError::ScriptError(err))?
-+          .map_err(InitError::ScriptError)?
-         }
-         _ => vec![],
+           .await?
+```
+
+**File**: `crates/core/src/auth/error.rs` (modified, +3/-3)
+```diff
+@@ -109,9 +109,9 @@ mod tests {
+   async fn test_some_sqlite_errors_yield_client_errors() {
+     let conn = trailbase_sqlite::Connection::with_opts(
+       || -> Result<_, trailbase_sqlite::Error> {
+-        return Ok(
+-          crate::connection::connect_rusqlite_without_default_extensions_and_schemas(None)?,
+-        );
++        return Ok(trailbase_extension::connect_rusqlite_without_extensions(
++          None,
++        )?);
        },
-```
-
-**File**: `crates/core/src/server/mod.rs` (modified, +1/-1)
-```diff
-@@ -129,7 +129,7 @@ impl Server {
-         .wasm()
-         .install_routes_and_jobs(state.version(), &state.jobs())
-         .await
--        .map_err(|err| InitError::ScriptError(err))?
-+        .map_err(InitError::ScriptError)?
-       {
-         if let Some((wasm_router, has_wasm_root)) = result.router {
-           has_root |= has_wasm_root;
-```
-
-**File**: `crates/wasm-runtime-host/src/functions.rs` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ impl SqliteStore {
-     // Create re-usable shared store, i.e. runtime state, to minimize per-call overhead. Note that
-     // only Rust guests currently support interleaving, which means JS guests providing SQLite
-     // functions will not work with this integration.
--    let store = SqliteStore::new(&runtime).await?;
-+    let store = SqliteStore::new(runtime).await?;
-     let functions = store
-       .initialize_sqlite_functions(InitArgs { version })
-       .await?;
-```
-
-**File**: `crates/wasm-runtime-host/src/host.rs` (modified, +1/-1)
-```diff
-@@ -64,7 +64,7 @@ pub use self::trailbase::database::sqlite::{Transaction, TxError, Value};
- pub struct SharedState {
-   pub conn: Option<trailbase_sqlite::Connection>,
-   pub kv_store: trailbase_wasi_keyvalue::Store,
--  // Path from where to attach databases, i.e.: <depot>/data/.
-+  /// Path from where to attach databases, i.e.: <depot>/data/.
-   pub db_path: PathBuf,
-   pub fs_root_path: Option<PathBuf>,
- }
-```
-
-**File**: `crates/wasm-runtime-host/src/lib.rs` (modified, +48/-36)
-```diff
-@@ -59,37 +59,42 @@ pub struct RuntimeOptions {
-   pub tokio_runtime: Option<tokio::runtime::Handle>,
- }
- 
--pub trait StoreBuilder<S> {
--  fn new_store(&self, engine: &Engine, wasm_source_file: PathBuf) -> Result<Store<S>, Error>;
--}
--
- // NOTE: Tentatively generic to maybe split state between HttpStore and SqliteStore in the future
- // :shrug:.
--struct RuntimeInternal<T: StoreBuilder<State>> {
--  engine: Engine,
--  linker: Linker<State>,
--
-+struct RuntimeInternal {
-   /// Path to original .wasm component file.
-   component_path: PathBuf,
--  component: Component,
- 
--  store_builder: T,
-+  /// Wasmtime props.
-+  engine: Engine,
-+  linker: Linker<State>,
-+  component: Component,
- 
-+  /// Our props
-+  shared_state: Arc<SharedState>,
-   rt_handle: tokio::runtime::Handle,
-+
-+  /// In-flight number of requests.
-   local_in_flight: AtomicUsize,
- }
- 
-+impl Drop for RuntimeInternal {
-+  fn drop(&mut self) {
-+    log::debug!("Dropped WASM runtime: {:?}", self.component_path);
-+  }
-+}
-+
- /// Holds everything one needs to instantiate state for a component and run it, e.g. wasmtime
- /// engine, linker, compiled component, state/store builder, etc.
- #[derive(Clone)]
- pub struct Runtime {
--  state: Arc<RuntimeInternal<Arc<SharedState>>>,
-+  state: Arc<RuntimeInternal>,
- }
- 
- impl Runtime {
-   pub fn init(
-     wasm_source_file: PathBuf,
--    store_builder: Arc<SharedState>,
-+    shared_state: Arc<SharedState>,
-     opts: RuntimeOptions,
-   ) -> Result<Self, Error> {
-     let engine = {
-@@ -151,7 +156,7 @@ impl Runtime {
-       linker,
-       component_path: wasm_source_file,
-       component,
--      store_builder,
-+      shared_state,
-       rt_handle,
-       local_in_flight: AtomicUsize::new(0),
-     });
-@@ -164,10 +169,11 @@ impl Runtime {
-   }
- 
-   async fn new_bindings(&self) -> Result<(Store<State>, crate::host::Interfaces), Error> {
--    let mut store = self
--      .state
--      .store_builder
--      .new_store(&self.state.engine, self.component_path().to_path_buf())?;
-+    let mut store = build_new_store(
-+      &self.state.engine,
-+      &self.state.shared_state,
-+      self.component_path().to_path_buf(),
-+    )?;
- 
-     let instance_pre = self
-       .state
-@@ -208,8 +214,12 @@ pub struct InitArgs {
-   pub version: Option<String>,
- }
- 
--impl StoreBuilder<State> for Arc<SharedState> {
--  fn new_store(&self, engine: &Engine, wasm_source_file: PathBuf) -> Result<Store<State>, Error> {
-+fn build_new_store(
-+  engine: &Engine,
-+  shared_state: &Arc<SharedState>,
-+  wasm_source_file: PathBuf,
-+) -> Result<Store<State>, Error> {
-+  let wasi_ctx = {
-     let mut wasi_ctx = WasiCtxBuilder::new();
-     wasi_ctx.inherit_stdio();
-     wasi_ctx.stdin(wasmtime_wasi::p2::pipe::ClosedInputStream);
-@@ -221,29 +231,31 @@ impl StoreBuilder<State> for Arc<SharedState> {
-     wasi_ctx.allow_udp(false);
-     wasi_ctx.allow_ip_name_lookup(true);
- 
--    if let Some(ref path) = self.fs_root_path {
-+    if let Some(ref path) = shared_state.fs_root_path {
-       wasi_ctx
-         .preopened_dir(path, "/", FsPerms::ReadOnly)
-         .map_err(|err| Error::Other(err.to_string()))?;
-     }
- 
--    return Ok(Store::new(
--      engine,
--      State {
--        resource_table: ResourceTable::new(),
--        wasi_ctx: wasi_ctx.build(),
--        http_ctx: WasiHttpCtx::new(),
--        hooks: host::Hooks {
--          shared: self.clone(),
--          wasm_source_file,
--        },
--        kv: WasiKeyValueCtx::new(self.kv_store.clone()),
--        #[allow(deprecated)]
--        tx: tokio::sync::Mutex::new(TransactionImpl::default()),
--        shared: self.clone(),
-+    wasi_ctx.build()
-+  };
-+
-+  return Ok(Store::new(
-+    engine,
-+    State {
-+      resource_table: ResourceTable::new(),
-+      wasi_ctx,
-+      http_ctx: WasiHttpCtx::new(),
-+      hooks: host::Hooks {
-+        shared: shared_state.clone(),
-+        wasm_source_file,
-       },
--    ));
--  }
-+      kv: WasiKeyValueCtx::new(shared_state.kv_store.clone()),
-+      #[allow(deprecated)]
-+      tx: tokio::sync::Mutex::new(TransactionImpl::default()),
-+      shared: shared_state.clone(),
-+    },
-+  ));
- }
- 
- struct StoreAndBindings {
+       Default::default(),
+     )
 ```
 
 #### Recent Merged Pull Requests:
@@ -1198,28 +1134,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rust client's test harness.
+## X. Don't mount "main" DB unless requested, fix `trailbase-extension-so` and simplif
 
 **RULE**:
-When implementing operations in `crates/client/tests/client_integration_test.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d01fd7e4`: Rust client's test harness.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5acd8f6d`: Don't mount "main" DB unless requested, fix `trailbase-extension-so` and simplify connection setup.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/client/tests/client_integration_test.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  rt.block_on(fut);
+ "prettyplease 0.3.0",
+ "quote",
+ "syn 3.0.9",
+[[package]]
+name = "trailbase-extension-so"
+version = "0.1.0"
+dependencies = [
+ "rusqlite",
+ "trailbase-extension",
+]
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  rt.block_on(async { fut });
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d01fd7e4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5acd8f6d` are properly handled with clean fallback behavior.

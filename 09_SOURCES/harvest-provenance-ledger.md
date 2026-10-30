@@ -6348,3 +6348,7 @@ Every entry in this ledger must capture:
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `6c2313a6` | Multi-dimensional audit evidence | 2026-10-30T22:13:47.407Z |
 | `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `e4d30349` | Multi-dimensional audit evidence | 2026-10-30T22:20:21.347Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `6f2a6965` | Multi-dimensional audit evidence | 2026-10-30T22:20:27.526Z |
+| `learn-github-herdrdev-herdr` | `https://github.com/herdrdev/herdr` | `ee5bfb50` | Multi-dimensional audit evidence | 2026-10-30T22:27:27.517Z |
+| `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `aac8cdc4` | Multi-dimensional audit evidence | 2026-10-30T22:27:30.186Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `504c487e` | Multi-dimensional audit evidence | 2026-10-30T22:27:32.020Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `05238c02` | Multi-dimensional audit evidence | 2026-10-30T22:27:36.457Z |

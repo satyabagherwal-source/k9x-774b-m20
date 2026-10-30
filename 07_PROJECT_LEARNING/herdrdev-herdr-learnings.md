@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/herdrdev-herdr-learnings.md`  
 > **Source**: github ([https://github.com/herdrdev/herdr](https://github.com/herdrdev/herdr))  
-> **Source Version**: `bc8c2898`  
+> **Source Version**: `ee5bfb50`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T23:52:10.330Z  
+> **Timestamp**: 2026-10-30T22:27:27.281Z  
 > **Learning ID**: `learn-github-herdrdev-herdr`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/herdrdev-herdr-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/herdrdev/herdr](https://github.com/herdrdev/herdr))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T23:52:09.166Z  
+> **Harvest Timestamp**: 2026-10-30T22:27:25.882Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: the runtime your coding agents live on
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 46353 stars
+- **Stars / Engagement**: 46929 stars
 
 ---
 
@@ -2486,11 +2486,13 @@ export default function (pi) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5678** (2026-10-30): **GPUI: tab bar loading animation stutters on macOS**
+  *Symptoms*: ### Is this a reproducible bug?  - [x] I confirm this is a reproducible bug, not a feature request, idea, question, contribution proposal, or direction check.  ### Current behavior  In the desktop app (GPUI), the loading animation on the top tab bar (shown while an agent in that tab is working) is not smooth: it visibly stutters / drops frames.  There is no setting in `config-gpui.toml` to tune or disable this animation (`[tabs]` only exposes font family/size/fallback).  ### Expected behavior  The tab loading animation runs smoothly, or there is an option to reduce/disable it.  ### Reproduction  1. Open Herdr.app on macOS. 2. Start a coding agent (Claude Code) in a tab and give it work so the tab shows its loading indicator. 3. Watch the indicator on the top tab bar: the motion is choppy.  ### Environment  - Herdr.app (GPUI) 0.1.8, herdr core 0.9.5 (also seen on 0.9.3; Herdr.app restarted after updating) - macOS 15 (Darwin 24.6.0), Apple M2, built-in Retina LCD 2560x1600 - Low Power Mode off, Reduce Motion off - `config-gpui.local.toml`: `layout = "comfortable-rounded"`, `theme = "Follow Herdr"` - Herdr.app sits around 10–14% CPU in normal use, which may be related  Possibly related: #1134 (60Hz limit, TUI). 
+  **Post-Mortem & Fix Analysis**:
+  > Filed in the wrong repo, sorry — this is about the desktop app. Moved to herdrdev/herdr-app#94.
+
 - **Issue #5375** (2026-10-26): **`integration install opencode` ignores XDG_CONFIG_HOME and uses ~/.config/opencode**
   *Symptoms*: ### Is this a reproducible bug?  - [X] I confirm this is a reproducible bug, not a feature request, idea, question, contribution proposal, or direction check. - [X] I reproduced this bug on the version and environment reported below using the exact steps provided.  ### Current behavior  With `XDG_CONFIG_HOME` set, `herdr integration install opencode` still looks for OpenCode's config in `~/.config/opencode`.  If OpenCode's config is only under `$XDG_CONFIG_HOME/opencode`, the install fails with `opencode config directory not found at <HOME>/.config/opencode. install opencode first`. If `~/.config/opencode` also exists, the plugins and `tui.jsonc` are written there, and OpenCode never loads them.  ### Expected behavior  The plugins go to `$XDG_CONFIG_HOME/opencode`, the directory OpenCode reads. `opencode debug paths` reports `config $XDG_CONFIG_HOME/opencode` in the same environment.  ### Reproduction  ```sh S=$(mktemp -d); mkdir -p $S/home $S/xdgconf/opencode HOME=$S/home XDG_CONFIG_HOME=$S/xdgconf herdr integration install opencode # opencode config directory not found at $S/home/.config/opencode. install opencode first  mkdir -p $S/home/.config/opencode HOME=$S/home XDG_CONFIG_HOME=$S/xdgconf herdr integration install opencode # installed opencode integration plugin to $S/home/.config/opencode/plugins/herdr-agent-state.js find $S/xdgconf -type f   # nothing ```  ### Impact  I test OpenCode setups in a sandbox with `XDG_CONFIG_HOME` pointed at a temp directory. The install 
-
-- **Issue #5349** (2026-10-23): **session.json missing after system shutdown, session restores as empty (Linux, 0.9.5)**
-  *Symptoms*: ### Is this a reproducible bug?  - [x] I confirm this is a reproducible bug, not a feature request, idea, question, contribution proposal, or direction check. - [x] I reproduced this bug on the version and environment reported below using the exact steps provided.  ### Current behavior  After a normal system shutdown and boot, herdr starts with a single empty workspace. All previous workspaces, tabs and panes are gone.   herdr-server.log at the next start:   persist.restore outcome="missing" path=~/.config/herdr/session.json  herdr-server.log during the shutdown:   ignoring SIGHUP; server keeps running   pane session terminated pane=N signal=Hangup   (every pane)   server shutdown initiated reason=SIGTERM       (~5s later)  The snapshots in ~/.config/herdr/session-snapshots/ from before the shutdown still contain the full layout.  ### Expected behavior  The saved workspaces, tabs, panes and cwds are restored after reboot.  ### Reproduction  1. Start herdr, open several workspaces/tabs/panes. 2. Shut down the machine reboot 3. Boot and run herdr. Result: empty session, session.json reported missing.  ### Impact  Lose my whole workspace layout on every reboot. Worked fine before 0.9.3.  ### Environment  - Herdr version: 0.9.5 - Update channel (stable or preview): stable - Operating system: Slackware Linux (Current), sysvinit-style shutdown, no systemd - Terminal: Konsole - Shell, if relevant: zsh - Relevant config, if any: [session] resume_agents_on_restore = true; only the ant
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2507,196 +2509,132 @@ export default function (pi) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bc8c2898` (2026-10-28)
-**Commit Message**: ci: close stale issues without outside engagement monthly
+### Incident Patch 1: `ee5bfb50` (2026-10-29)
+**Commit Message**: chore: point agents at the source instead of agent-guide and llms.txt
 
-**File**: `.github/scripts/stale-close.cjs` (added, +233/-0)
+**File**: `docs/next/website/src/content/docs/agent-skill.mdx` (modified, +0/-2)
 ```diff
-@@ -0,0 +1,233 @@
-+// Closes stale issues that never received outside engagement.
-+//
-+// Used by .github/workflows/stale-close.yml through actions/github-script, and
-+// runnable locally as a read-only dry run:
-+//
-+//   node .github/scripts/stale-close.cjs [--repo owner/name] [--out report.md] [--min-age-days 30]
-+//
-+// Locally the token comes from GITHUB_TOKEN or `gh auth token`. The local
-+// runner never writes to GitHub.
-+
-+const MARKER = '<!-- herdr:stale-close -->';
-+const EXTRA_TEAM = ['akbash-bot', 'kangal-bot'];
-+const PAGE_SIZE = 25;
-+const CLOSE_COMMENT = [
-+  MARKER,
-+  "We weren't able to reproduce this, and it hasn't had further reports or activity, so it may already be fixed or no longer relevant. Closing as stale.",
-+  '',
-+  'If you still see this on the latest release, please open a new issue with current details.',
-+].join('\n');
-+
-+const SKIP_REASONS = {
-+  reactions: 'has reactions',
-+  outside_comment: 'outside comment',
-+  linked_pr: 'linked open or merged PR',
-+  too_many_comments: 'too many comments to evaluate (>100)',
-+};
-+
-+const ISSUES_QUERY = `
-+query($owner: String!, $repo: String!, $cursor: String, $pageSize: Int!) {
-+  repository(owner: $owner, name: $repo) {
-+    issues(states: OPEN, first: $pageSize, after: $cursor, orderBy: {field: CREATED_AT, direction: ASC}) {
-+      pageInfo { hasNextPage endCursor }
-+      nodes {
-+        id
-+        number
-+        title
-+        url
-+        createdAt
-+        author { login __typename }
-+        labels(first: 20) { nodes { name } }
-+        reactions { totalCount }
-+        comments(first: 100) {
-+          totalCount
-+          nodes { author { login __typename } }
-+        }
-+        closedByPullRequestsReferences(first: 10, includeClosedPrs: false) {
-+          nodes { number state }
-+        }
-+        timelineItems(first: 100, itemTypes: [CROSS_REFERENCED_EVENT, CONNECTED_EVENT]) {
-+          nodes {
-+            __typename
-+            ... on CrossReferencedEvent { source { __typename ... on PullRequest { number state } } }
-+            ... on ConnectedEvent { subject { __typename ... on PullRequest { number state } } }
-+          }
-+        }
-+      }
-+    }
-+  }
-+  rateLimit { cost remaining }
-+}`;
-+
-+const MAINTAINERS_QUERY = `
-+query($owner: String!, $repo: String!) {
-+  repository(owner: $owner, name: $repo) {
-+    object(expression: "HEAD:.github/MAINTAINERS") { ... on Blob { text } }
-+  }
-+}`;
-+
-+const CLOSE_MUTATION = `
-+mutation($id: ID!, $body: String!) {
-+  addComment(input: {subjectId: $id, body: $body}) { clientMutationId }
-+  closeIssue(input: {issueId: $id, stateReason: NOT_PLANNED}) { issue { number state } }
-+}`;
-+
-+function parseUserList(content) {
-+  return content
-+    .split('\n')
-+    .map(line => line.trim().toLowerCase())
-+    .filter(line => line && !line.startsWith('#'));
-+}
-+
-+function isTeam(team, author) {
-+  if (!author) return false;
-+  const login = author.login.toLowerCase();
-+  return author.__typename === 'Bot' || login.endsWith('[bot]') || team.has(login);
-+}
-+
-+function classify(issue, team) {
-+  if (issue.reactions.totalCount > 0) return 'reactions';
-+  if (issue.comments.totalCount > issue.comments.nodes.length) return 'too_many_comments';
-+  const authorLogin = issue.author?.login.toLowerCase();
-+  const outside = issue.comments.nodes.some(comment =>
-+    !isTeam(team, comment.author) &&
-+    !(comment.author && comment.author.login.toLowerCase() === authorLogin));
-+  if (outside) return 'outside_comment';
-+  const prs = [
-+    ...issue.closedByPullRequestsReferences.nodes,
-+    ...issue.timelineItems.nodes.map(item => item.source ?? item.subject),
-+  ].filter(pr => pr && pr.state);
-+  if (prs.some(pr => pr.state === 'OPEN' || pr.state === 'MERGED')) return 'linked_pr';
-+  return null;
-+}
-+
-+function escapeCell(text) {
-+  return String(text).replace(/\|/g, '\\|').replace(/\n/g, ' ');
-+}
-+
-+function renderReport({ repo, dryRun, minAgeDays, candidates, wouldClose, skipped, team }) {
-+  const verb = dryRun ? 'Would close' : 'Closed';
-+  const lines = [
-+    `# Stale issue close (${dryRun ? 'dry run' : 'live'})`,
-+    '',
-+    `Repository: \`${repo}\` · minimum age: ${minAgeDays} days · team: ${[...team].sort().join(', ')} + bots`,
-+    '',
-+    `- Candidates (open issues older than ${minAgeDays} days): ${candidates}`,
-+    `- ${verb}: ${wouldClose.length}`,
-+  ];
-+  for (const [key, label] of Object.entries(SKIP_REASONS)) {
-+    lines.push(`- Skipped, ${label}: ${skipped[key]}`);
-+  }
-+  lines.push('', `## ${verb}`, '');
-+  if (wouldClose.length === 0) {
-+    lines.push('None.');
-+  } else {
-+    lines.push('| # | Title | Age (days) | Labels | Author |', '|---|---|---|---|---|');
-+    for (const issue of wouldClose) {
-+      lines.push(`| [#${issue.number}](${issue.url}) | ${escapeCell(issue.title)} | ${issue.ageDays} | ${escapeCell(issue.labels.join(', '))} | ${escapeCell(issue.author)} |`);
-+    }
-+  }
-+  return lines.join('\n') + '\n';
-+}
-+
-+async function run({ graphql, owner, repo
+@@ -7,8 +7,6 @@ Herdr ships a reusable agent skill file at [`skills/herdr/SKILL.md`](https://git
+ 
+ Install that file into any coding agent that supports reusable skills or custom instructions. The skill teaches the agent how to control Herdr from inside a Herdr pane.
+ 
+-Herdr also serves a separate guide at [`herdr.dev/agent-guide.md`](https://herdr.dev/agent-guide.md) for a different job: an agent helping a human learn, set up, or troubleshoot Herdr. The skill is for an agent operating Herdr; the guide is for an agent teaching a human.
+-
+ ## What the skill does
+ 
+ The skill tells an agent to use the `herdr` CLI when `HERDR_ENV=1` is set. That means the agent is running inside a Herdr-managed pane and can safely talk to the local Herdr socket.
 ```
 
-**File**: `.github/workflows/stale-close.yml` (added, +46/-0)
+**File**: `docs/next/website/src/content/docs/index.mdx` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,46 @@
-+name: Stale Issue Close
-+
-+on:
-+  schedule:
-+    - cron: '0 6 1 * *'
-+  workflow_dispatch:
-+    inputs:
-+      dry_run:
-+        description: Report what would close without commenting or closing
-+        type: boolean
-+        default: true
-+
-+concurrency:
-+  group: stale-close
-+  cancel-in-progress: false
-+
-+jobs:
-+  stale-close:
-+    if: github.repository == 'herdrdev/herdr'
-+    runs-on: ubuntu-latest
-+    permissions:
-+      contents: read
-+      issues: write
-+    steps:
-+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-+        with:
-+          persist-credentials: false
-+          sparse-checkout: .github/scripts
-+
-+      - name: Close stale issues without outside engagement
-+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
-+        env:
-+          # Scheduled runs close for real. Manual runs close only when dry_run is unchecked.
-+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
-+        with:
-+          github-token: ${{ secrets.KANGAL_GITHUB_TOKEN }}
-+          script: |
-+            const { run } = require(`${process.env.GITHUB_WORKSPACE}/.github/scripts/stale-close.cjs`);
-+            const result = await run({
-+              graphql: github.graphql,
-+              owner: context.repo.owner,
-+              repo: context.repo.repo,
-+              dryRun: process.env.DRY_RUN !== 'false',
-+              log: message => core.info(message),
-+            });
-+            await core.summary.addRaw(result.report).write();
+@@ -36,10 +36,10 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
+ If you already run an AI coding agent, let it handle the onboarding. Paste this prompt:
+ 
+ ```text
+-Help me understand and set up Herdr. Read https://herdr.dev/agent-guide.md first, then walk me through it step by step.
++Help me understand and set up Herdr. Its source and docs are at https://github.com/herdrdev/herdr. Read what you need there, then walk me through it step by step.
+ ```
+ 
+-The guide covers Herdr's concepts, setup, configuration, and common fixes, so your agent can answer from the docs instead of improvising.
++Your agent answers from the real source and docs instead of improvising.
+ 
+ ## Core guides
+ 
+```
+
+**File**: `docs/next/website/src/content/docs/ja/agent-skill.mdx` (modified, +0/-2)
+```diff
+@@ -7,8 +7,6 @@ Herdr は再利用可能なエージェントスキルファイルを [`skills/h
+ 
+ このファイルを、再利用可能なスキルやカスタム指示に対応した任意のコーディングエージェントにインストールしてください。このスキルは、Herdr のペイン内から Herdr を制御する方法をエージェントに教えます。
+ 
+-Herdr は別の用途向けに [`herdr.dev/agent-guide.md`](https://herdr.dev/agent-guide.md) というガイドも提供しています。こちらは、人間が Herdr を学習・セットアップ・トラブルシューティングするのをエージェントが手伝うためのものです。スキルは Herdr を操作するエージェントのため、ガイドは人間に教えるエージェントのためのものです。
+-
+ ## スキルがすること
+ 
+ このスキルは、`HERDR_ENV=1` が設定されているときに `herdr` CLI を使うようエージェントに指示します。これは、エージェントが Herdr 管理下のペイン内で動作しており、ローカルの Herdr ソケットと安全に通信できることを意味します。
+```
+
+**File**: `docs/next/website/src/content/docs/ja/index.mdx` (modified, +2/-2)
+```diff
+@@ -36,10 +36,10 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
+ すでに AI コーディングエージェントを使っていますか? オンボーディングはエージェントに任せましょう。このプロンプトを貼り付けてください:
+ 
+ ```text
+-Help me understand and set up Herdr. Read https://herdr.dev/agent-guide.md first, then walk me through it step by step.
++Help me understand and set up Herdr. Its source and docs are at https://github.com/herdrdev/herdr. Read what you need there, then walk me through it step by step.
+ ```
+ 
+-このガイドはエージェントに Herdr のコンセプト、セットアップ、設定、よくある問題の解決方法を教えるので、エージェントの回答が即興ではなく正確なままになります。
++エージェントは即興ではなく、実際のソースとドキュメントを読んで答えます。
+ 
+ ## コアガイド
+ 
+```
+
+**File**: `docs/next/website/src/content/docs/zh-cn/agent-skill.mdx` (modified, +0/-2)
+```diff
+@@ -7,8 +7,6 @@ Herdr 提供了一个可复用的智能体技能文件: [`skills/herdr/SKILL.md`
+ 
+ 把这个文件安装到任何支持可复用技能或自定义指令的编程智能体中。这份技能教智能体如何在 Herdr 窗格内部控制 Herdr。
+ 
+-Herdr 还提供了另一份用途不同的指南: [`herdr.dev/agent-guide.md`](https://herdr.dev/agent-guide.md),用于让智能体帮助人类学习、安装或排查 Herdr。技能是给操作 Herdr 的智能体用的;指南是给教人类的智能体用的。
+-
+ ## 这份技能做什么
+ 
+ 这份技能告诉智能体: 当 `HERDR_ENV=1` 已设置时,使用 `herdr` CLI。这意味着智能体运行在 Herdr 管理的窗格内,可以安全地与本地 Herdr socket 通信。
+```
+
+**File**: `docs/next/website/src/content/docs/zh-cn/index.mdx` (modified, +2/-2)
+```diff
+@@ -36,10 +36,10 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
+ 已经在用 AI 编程智能体?让它来帮你完成入门。粘贴这个提示词:
+ 
+ ```text
+-Help me understand and set up Herdr. Read https://herdr.dev/agent-guide.md first, then walk me through it step by step.
++Help me understand and set up Herdr. Its source and docs are at https://github.com/herdrdev/herdr. Read what you need there, then walk me through it step by step.
+ ```
+ 
+-这份指南会教你的智能体 Herdr 的概念、安装、配置和常见问题的修复方法,让它的回答保持准确,而不是即兴发挥。
++你的智能体会阅读真实的源码和文档来回答,而不是即兴发挥。
+ 
+ ## 核心指南
+ 
+```
+
+**File**: `src/cli.rs` (modified, +3/-5)
+```diff
+@@ -46,12 +46,10 @@ const TERMINAL_SESSION_CONTROL_USAGE: &str =
+     "usage: herdr terminal session control <target> [--takeover] [--cols N] [--rows N]";
+ pub(crate) const AGENT_HELP_FOOTER: &str = concat!(
+     "Are you an AI? Use these resources ONLY IF your task specifically asks you to:\n",
+-    "  Help a human understand or set up Herdr for the first time:\n",
+-    "    https://herdr.dev/agent-guide.md\n",
+-    "  Debug or investigate a problem with Herdr:\n",
+-    "    https://herdr.dev/llms.txt\n",
+     "  Control Herdr panes, agents, or workspaces:\n",
+-    "    SKIP if a Herdr skill is already in your context. Otherwise run: herdr --skill",
++    "    SKIP if a Herdr skill is already in your context. Otherwise run: herdr --skill\n",
++    "  Help a human understand or set up Herdr, or debug a problem with it:\n",
++    "    read the source and docs: https://github.com/herdrdev/herdr",
+ );
+ 
+ pub(crate) fn parse_token_assignment(raw: &str) -> Result<(String, Option<String>), String> {
+```
+
+**File**: `tests/cli/surface.rs` (modified, +1/-2)
+```diff
+@@ -287,9 +287,8 @@ fn root_and_command_group_help_point_agents_to_plain_text_docs() {
+         let stdout = String::from_utf8_lossy(&output.stdout);
+         for expected in [
+             "Are you an AI? Use these resources ONLY IF your task specifically asks you to:",
+-            "https://herdr.dev/agent-guide.md",
+-            "https://herdr.dev/llms.txt",
+             "herdr --skill",
++            "https://github.com/herdrdev/herdr",
+         ] {
+             assert!(
+                 stdout.contains(expected),
 ```
 
 #### Recent Merged Pull Requests:
@@ -2719,64 +2657,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. ci: close stale issues without outside engagement monthly
-
-**RULE**:
-When implementing operations in `.github/scripts/stale-close.cjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in herdrdev/herdr. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `bc8c2898`: ci: close stale issues without outside engagement monthly. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/stale-close.cjs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-// Closes stale issues that never received outside engagement.
-//
-// Used by .github/workflows/stale-close.yml through actions/github-script, and
-// runnable locally as a read-only dry run:
-//
-//   node .github/scripts/stale-close.cjs [--repo owner/name] [--out report.md] [--min-age-days 30]
-//
-// Locally the token comes from GITHUB_TOKEN or `gh auth token`. The local
-// runner never writes to GitHub.
-
-const MARKER = '<!-- herdr:stale-close -->';
-const EXTRA_TEAM = ['akbash-bot', 'kangal-bot'];
-const PAGE_SIZE = 25;
-const CLOSE_COMMENT = [
-  MARKER,
-  "We weren't able to reproduce this, and it hasn't had further reports or activity, so it may already be fixed or no longer relevant. Closing as stale.",
-  '',
-  'If you still see this on the latest release, please open a new issue with current details.',
-].join('\n');
-
-const SKIP_REASONS = {
-  reactions: 'has reactions',
-  outside_comment: 'outside comment',
-  linked_pr: 'linked open or merged PR',
-  too_many_comments: 'too many comments to evaluate (>100)',
-};
-
-const ISSUES_QUERY = `
-query($owner: String!, $repo: String!, $cursor: String, $pageSize: Int!) {
-  repository(owner: $owner, name: $repo) {
-    issues(states: OPEN, first: $p
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bc8c2898` are properly handled with clean fallback behavior.
