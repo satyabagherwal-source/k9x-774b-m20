@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T16:32:45.937Z",
+  "last_updated": "2026-10-30T16:44:33.430Z",
   "total_verified_learnings": 1175,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15251,8 +15251,8 @@
       "slug": "gravitl-netmaker",
       "platform": "github",
       "source_url": "https://github.com/gravitl/netmaker",
-      "source_version": "0a8dba49",
-      "content_hash": "e3f9828f89ae79739709ca3391861d2aba7b27c4804637c0c6d3afbc625b867d",
+      "source_version": "ee6c2133",
+      "content_hash": "2b2f39c39d2f2531fee0f10e4004445860876eed806ac17493e1241e2f021861",
       "dossier_path": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
       "promoted_rules": [
@@ -15290,6 +15290,11 @@
           "number": 5528,
           "title": "List Auto Relayed Peers for a Node API (#4208)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5802,
+          "title": "Pre-Release Fixes v1.8.0 (#4210)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15297,7 +15302,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T17:03:38.320Z",
+      "verified_at": "2026-10-30T16:39:42.211Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47133,8 +47138,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "91eff8da",
-      "content_hash": "5538f39f701176080ae418b0f3be2bf1fcb23a29d390fb42c27d20aab93a45b5",
+      "source_version": "36cee33a",
+      "content_hash": "de785172c1c2311c7afb7e94c6d6d72cfb811600b0ad9f3c8f0334ec0af2b683",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -47187,6 +47192,11 @@
           "number": 5369,
           "title": "[types] Make schema zstd compression level configurable (#5675)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5803,
+          "title": "[types] Decode flexbuffers network messages from segmented buffers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47194,7 +47204,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:48:30.285Z",
+      "verified_at": "2026-10-30T16:44:33.410Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71479,8 +71489,8 @@
       "slug": "rdflib-rdflib",
       "platform": "github",
       "source_url": "https://github.com/RDFLib/rdflib",
-      "source_version": "8571e879",
-      "content_hash": "6718fc12268c615a2a34b627c10192758af168a70bdc932cf69963e153f03299",
+      "source_version": "f87db10f",
+      "content_hash": "0fba0aed5ae068dcfda1cc8b8b926a9186e3b8f8e13304c3c6be36f1ad0eee86",
       "dossier_path": "07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rdflib-rdflib-learnings.md",
       "promoted_rules": [
@@ -71509,6 +71519,11 @@
           "number": 4829,
           "title": "build(deps-dev): bump pytest-cov from 5.0.0 to 7.1.0 (#3594)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5801,
+          "title": "restrict ConjunctiveGraph.quads() to the requested context (#3499)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -71516,7 +71531,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:07:19.958Z",
+      "verified_at": "2026-10-30T16:39:35.800Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154238,6 +154253,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T16:32:45.918Z"
+    },
+    "rule-5801": {
+      "learning_id": "rule-5801",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5801,
+      "title": "restrict ConjunctiveGraph.quads() to the requested context (#3499)",
+      "source_url": "https://github.com/RDFLib/rdflib",
+      "source_version": "f87db10f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T16:39:35.800Z"
+    },
+    "rule-5802": {
+      "learning_id": "rule-5802",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5802,
+      "title": "Pre-Release Fixes v1.8.0 (#4210)",
+      "source_url": "https://github.com/gravitl/netmaker",
+      "source_version": "ee6c2133",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T16:39:42.211Z"
+    },
+    "rule-5803": {
+      "learning_id": "rule-5803",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5803,
+      "title": "[types] Decode flexbuffers network messages from segmented buffers",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "36cee33a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T16:44:33.410Z"
     }
   },
   "aliases": {

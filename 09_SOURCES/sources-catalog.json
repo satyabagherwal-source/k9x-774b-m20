@@ -3703,10 +3703,10 @@
     "repository": "gravitl/netmaker",
     "platform": "github",
     "sourceUrl": "https://github.com/gravitl/netmaker",
-    "sourceVersion": "0a8dba49",
+    "sourceVersion": "ee6c2133",
     "license": "NOASSERTION",
-    "contentHash": "e3f9828f89ae79739709ca3391861d2aba7b27c4804637c0c6d3afbc625b867d",
-    "lastHarvestedAt": "2026-10-29T17:03:38.416Z",
+    "contentHash": "2b2f39c39d2f2531fee0f10e4004445860876eed806ac17493e1241e2f021861",
+    "lastHarvestedAt": "2026-10-30T16:39:42.313Z",
     "learningId": "learn-github-gravitl-netmaker"
   },
   "pixeltable-pixeltable": {
@@ -6983,10 +6983,10 @@
     "repository": "restatedev/restate",
     "platform": "github",
     "sourceUrl": "https://github.com/restatedev/restate",
-    "sourceVersion": "91eff8da",
+    "sourceVersion": "36cee33a",
     "license": "NOASSERTION",
-    "contentHash": "5538f39f701176080ae418b0f3be2bf1fcb23a29d390fb42c27d20aab93a45b5",
-    "lastHarvestedAt": "2026-10-28T18:48:30.371Z",
+    "contentHash": "de785172c1c2311c7afb7e94c6d6d72cfb811600b0ad9f3c8f0334ec0af2b683",
+    "lastHarvestedAt": "2026-10-30T16:44:33.512Z",
     "learningId": "learn-github-restatedev-restate"
   },
   "kong-kubernetes-ingress-controller": {
@@ -9733,10 +9733,10 @@
     "repository": "RDFLib/rdflib",
     "platform": "github",
     "sourceUrl": "https://github.com/RDFLib/rdflib",
-    "sourceVersion": "8571e879",
+    "sourceVersion": "f87db10f",
     "license": "BSD-3-Clause",
-    "contentHash": "6718fc12268c615a2a34b627c10192758af168a70bdc932cf69963e153f03299",
-    "lastHarvestedAt": "2026-10-27T14:07:20.021Z",
+    "contentHash": "0fba0aed5ae068dcfda1cc8b8b926a9186e3b8f8e13304c3c6be36f1ad0eee86",
+    "lastHarvestedAt": "2026-10-30T16:39:35.933Z",
     "learningId": "learn-github-rdflib-rdflib"
   },
   "kartiklabhshetwar-better-shot": {

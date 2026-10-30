@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T16:32:48.572Z",
-    "lastVerified": "2026-10-30T16:32:48.572Z",
+    "lastChecked": "2026-10-30T16:44:36.068Z",
+    "lastVerified": "2026-10-30T16:44:36.068Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -105,22 +105,21 @@
     "lastVerified": "2026-10-30T06:56:50.648Z"
   },
   "gravitl-netmaker": {
-    "name": "netmaker",
+    "name": "gravitl/netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T09:27:12.759Z",
-    "lastVerified": "2026-10-30T09:27:12.759Z",
+    "lastChecked": "2026-10-30T16:39:41.392Z",
+    "lastVerified": "2026-10-30T16:39:41.392Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "e3f9828f89ae79739709ca3391861d2aba7b27c4804637c0c6d3afbc625b867d",
+    "contentHash": "2b2f39c39d2f2531fee0f10e4004445860876eed806ac17493e1241e2f021861",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "0a8dba49"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -413,8 +412,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T15:49:20.968Z",
-    "lastVerified": "2026-10-30T15:49:20.968Z",
+    "lastChecked": "2026-10-30T16:39:42.310Z",
+    "lastVerified": "2026-10-30T16:39:42.310Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2051,9 +2050,9 @@
   "oramasearch-orama": {
     "name": "orama",
     "officialUrl": "https://github.com/oramasearch/orama",
-    "lastChecked": "2026-10-28T23:30:48.724Z",
+    "lastChecked": "2026-10-30T16:39:39.776Z",
     "revisionIdentifier": "b030e1bd",
-    "lastVerified": "2026-10-28T23:30:48.724Z"
+    "lastVerified": "2026-10-30T16:39:39.776Z"
   },
   "sayanarijit-xplr": {
     "name": "xplr",
@@ -2940,9 +2939,9 @@
   "taubyte-tau": {
     "name": "tau",
     "officialUrl": "https://github.com/taubyte/tau",
-    "lastChecked": "2026-10-29T00:29:45.283Z",
+    "lastChecked": "2026-10-30T16:39:34.785Z",
     "revisionIdentifier": "d9841668",
-    "lastVerified": "2026-10-29T00:29:45.283Z"
+    "lastVerified": "2026-10-30T16:39:34.785Z"
   },
   "xerj-org-xerj": {
     "name": "xerj-org/xerj",
@@ -6622,12 +6621,12 @@
     "officialUrl": "https://github.com/restatedev/restate",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T18:48:29.568Z",
-    "lastVerified": "2026-10-28T18:48:29.568Z",
+    "lastChecked": "2026-10-30T16:39:31.618Z",
+    "lastVerified": "2026-10-30T16:39:31.618Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-restatedev-restate",
-    "contentHash": "5538f39f701176080ae418b0f3be2bf1fcb23a29d390fb42c27d20aab93a45b5",
+    "contentHash": "de785172c1c2311c7afb7e94c6d6d72cfb811600b0ad9f3c8f0334ec0af2b683",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -10381,5 +10380,29 @@
     "lastChecked": "2026-10-30T16:29:48.147Z",
     "revisionIdentifier": "9ae5bc2c",
     "lastVerified": "2026-10-30T16:29:48.147Z"
+  },
+  "rdflib-rdflib": {
+    "name": "RDFLib/rdflib",
+    "officialUrl": "https://github.com/RDFLib/rdflib",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-30T16:39:34.380Z",
+    "lastVerified": "2026-10-30T16:39:34.380Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-rdflib-rdflib",
+    "contentHash": "0fba0aed5ae068dcfda1cc8b8b926a9186e3b8f8e13304c3c6be36f1ad0eee86",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "williewangwei-swiftui-tutorials": {
+    "name": "SwiftUI-Tutorials",
+    "officialUrl": "https://github.com/WillieWangWei/SwiftUI-Tutorials",
+    "lastChecked": "2026-10-30T16:39:32.311Z",
+    "revisionIdentifier": "0ced68b2",
+    "lastVerified": "2026-10-30T16:39:32.311Z"
   }
 }

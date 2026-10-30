@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `91eff8da`  
+> **Source Version**: `36cee33a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T18:48:29.828Z  
+> **Timestamp**: 2026-10-30T16:44:32.797Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T18:48:29.568Z  
+> **Harvest Timestamp**: 2026-10-30T16:39:31.618Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4616 stars
+- **Stars / Engagement**: 4626 stars
 
 ---
 
@@ -1631,920 +1631,216 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `91eff8da` (2026-10-28)
-**Commit Message**: [types] Make schema zstd compression level configurable (#5675)
+### Incident Patch 1: `36cee33a` (2026-10-30)
+**Commit Message**: [types] Decode flexbuffers network messages from segmented buffers
 
-**File**: `crates/types/src/config/common.rs` (modified, +26/-0)
+`decode_as_flexbuffers` decoded only `buf.chunk()`, the first chunk of
+its input. Flexbuffers keeps a message's root at the end of the buffer,
+so a message split across chunks failed to decode. The doc comment
+required unchunked input, but nothing enforced it. It's part of the network contract in all cases.
+
+This is preparation to support segmented input buffers.
+
+It now decodes contiguous input in place, as before, and copies
+segmented input into one buffer first, the same approach the storage
+codec takes for flexbuffers values. Every caller passes a contiguous
+`Bytes` today, so behaviour and cost do not change; this makes the
+codec safe for segmented payloads, such as messages reassembled from
+fragments.
+
+A test decodes a message split at every byte offset, and split three
+ways; it fails without this fix.
+
+**File**: `crates/types/src/net/codec.rs` (modified, +54/-4)
 ```diff
-@@ -901,10 +901,31 @@ pub struct CommonOptions {
-     #[serde(default)]
-     hlc_max_drift: FriendlyDuration,
- 
-+    /// # Schema compression level
-+    ///
-+    /// Zstandard (zstd) compression level for schema data. It always applies
-+    /// to schema updates sent between nodes. It applies to stored schemas only
-+    /// when `experimental-enable-schema-bilrost-encoding` is enabled.
-+    ///
-+    /// `0` (the default) uses zstd's default level (currently `3`). Higher
-+    /// values (up to `19`) produce smaller output but use more CPU on every
-+    /// schema change. Negative values select zstd's faster, lower-ratio modes.
-+    /// Values outside `-22..=19` are clamped to that range. Changing this
-+    /// setting does not affect data that has already been written, and data
-+    /// written at any level can be read by all nodes.
-+    ///
-+    /// Since v1.8.2
-+    #[serde(default, skip_serializing_if = "is_default_compression")]
-+    schema_compression_level: i32,
-+
-     #[serde(flatten)]
-     pub experimental: Experimental,
+@@ -94,18 +94,27 @@ pub fn encode_as_flexbuffers<T: Serialize>(value: T) -> Vec<u8> {
+     flexbuffers::to_vec(value).expect("network message serde can't fail")
  }
  
-+fn is_default_compression(lvl: &i32) -> bool {
-+    *lvl == 0
-+}
+-/// Utility method to decode a [`DeserializeOwned`] type from flexbuffers using serde. the buffer
+-/// must have the complete message and not internally chunked.
++/// Utility method to decode a [`DeserializeOwned`] type from flexbuffers using serde. `buf` must
++/// hold exactly one message, which is consumed. Flexbuffers reads from one contiguous slice:
++/// contiguous input is decoded in place, segmented input is first copied into one buffer.
+ pub fn decode_as_flexbuffers<T: DeserializeOwned>(
+-    buf: impl Buf,
++    mut buf: impl Buf,
+     protocol_version: ProtocolVersion,
+ ) -> Result<T, anyhow::Error> {
+     assert!(
+         protocol_version >= ProtocolVersion::V2,
+         "unknown protocol version should never be set"
+     );
+ 
+-    flexbuffers::from_slice(buf.chunk()).with_context(|| {
++    let len = buf.remaining();
++    let decoded = if buf.chunk().len() == len {
++        let decoded = flexbuffers::from_slice(buf.chunk());
++        buf.advance(len);
++        decoded
++    } else {
++        flexbuffers::from_slice(&buf.copy_to_bytes(len))
++    };
++    decoded.with_context(|| {
+         format!(
+             "failed decoding (flexbuffers) network message {}",
+             type_name::<T>()
+@@ -129,3 +138,44 @@ pub fn decode_as_bilrost<T: OwnedMessage>(
+ 
+     T::decode(buf).context("failed decoding (bilrost) network message")
+ }
 +
- /// Declares the [`Experimental`] feature-flag struct from a list of feature names.
- ///
- /// Each entry is a bare identifier (optionally preceded by doc comments / attributes) inside
-@@ -1338,6 +1359,10 @@ impl CommonOptions {
-             )
-         }
-     }
++#[cfg(test)]
++mod tests {
++    use serde::Deserialize;
 +
-+    pub fn schema_compression_level(&self) -> i32 {
-+        self.schema_compression_level.clamp(-22, 19)
++    use super::*;
++
++    #[derive(Debug, PartialEq, Serialize, Deserialize)]
++    struct Message {
++        id: u64,
++        name: String,
++        values: Vec<u32>,
 +    }
- }
- 
- impl Default for CommonOptions {
-@@ -1397,6 +1422,7 @@ impl Default for CommonOptions {
-             disable_config_sql_table: false,
-             gossip: GossipOptions::default(),
-             hlc_max_drift: FriendlyDuration::from_millis(5000),
-+            schema_compression_level: 0,
-             experimental: Experimental::default(),
-         }
-     }
-```
-
-**File**: `crates/types/src/net/metadata.rs` (modified, +6/-1)
-```diff
-@@ -259,6 +259,7 @@ mod wire {
- 
-     use super::MetadataUpdate;
-     use crate::{
-+        config::Configuration,
-         net::{ProtocolVersion, metadata::MetadataContainer},
-         schema::SchemaUnindexed,
-         storage::{self},
-@@ -330,7 +331,11 @@ mod wire {
-                 )?;
-             }
-             MetadataContainer::Schema(value) => {
--                storage::encode::encode_bilrost_zstd(value.as_ref().deref(), &mut bytes)?;
-+                storage::encode::encode_bilrost_zstd(
-+                    value.as_ref().deref(),
-+                    &mut bytes,
-+                    Configuration::pinned().common.schema_compression_level(),
-+                )?;
-             }
-         };
- 
-```
-
-**File**: `crates/types/src/schema/metadata/lite.rs` (modified, +6/-3)
-```diff
-@@ -699,6 +699,7 @@ mod storage {
-     };
- 
-     use super::SchemaUnindexedLite;
-+    use crate::config::Configuration;
-     use crate::storage;
- 
-     // Mirrors the `SchemaUnindexed` storage codec so both types stay wire-compatible.
-@@ -717,9 +718,11 @@ mod storage {
-                 StorageCodecKind::FlexbuffersSerde => {
-                     storage::encode::encode_serde(self, buf, self.default_codec())
-                 }
--                StorageCodecKind::ZstdBilrostDefault => {
--                    storage::encode::encode_bilrost_zstd(self, buf)
--                }
-+                StorageCodecKind::ZstdBilrostDefault => storage::encode::encode_bilrost_zstd(
-+                    self,
-+                    buf,
-+                    Configuration::pinned().common.schema_compression_level(),
-+                ),
-                 _ => unreachable!("unsupported StorageCodecKind"),
-             }
-         }
-```
-
-**File**: `crates/types/src/schema/metadata/mod.rs` (modified, +6/-3)
-```diff
-@@ -208,6 +208,7 @@ mod storage {
-     };
- 
-     use super::{Schema, SchemaUnindexed};
-+    use crate::config::Configuration;
-     use crate::storage;
- 
-     impl StorageEncode for SchemaUnindexed {
-@@ -225,9 +226,11 @@ mod storage {
-                 StorageCodecKind::FlexbuffersSerde => {
-                     storage::encode::encode_serde(self, buf, self.default_codec())
-                 }
--                StorageCodecKind::ZstdBilrostDefault => {
--                    storage::encode::encode_bilrost_zstd(self, buf)
--                }
-+                StorageCodecKind::ZstdBilrostDefault => storage::encode::encode_bilrost_zstd(
-+                    self,
-+                    buf,
-+                    Configuration::pinned().common.schema_compression_level(),
-+                ),
-                 _ => unreachable!("unsupported StorageCodecKind"),
-             }
-         }
-```
-
-**File**: `crates/types/src/storage/encode.rs` (modified, +2/-1)
-```diff
-@@ -93,8 +93,9 @@ pub fn encode_bilrost_writer<T: bilrost::Message, W: Write>(
- pub fn encode_bilrost_zstd<T: bilrost::Message>(
-     value: &T,
-     buf: &mut BytesMut,
-+    level: i32,
- ) -> Result<(), StorageEncodeError> {
--    let mut compressor = zstd::Encoder::new(buf.writer(), 0)
-+    let mut compressor = zstd::Encoder::new(buf.writer(), level)
-         .map_err(|err| StorageEncodeError::EncodeValue(err.into()))?;
-     encode_bilrost_writer(value, &mut compressor)?;
- 
-```
-
-**File**: `crates/wal-protocol/src/control.rs` (modified, +7/-2)
-```diff
-@@ -246,6 +246,7 @@ pub struct UpsertSchemaCommand {
- mod upsert_schema_storage {
-     use bytes::{Buf, BytesMut};
- 
-+    use restate_types::config::Configuration;
-     use restate_types::storage::{
-         StorageCodecKind, StorageDecode, StorageDecodeError, StorageEncode, StorageEncodeError,
-         decode, encode,
-@@ -264,7 +265,11 @@ mod upsert_schema_storage {
-                 StorageCodecKind::FlexbuffersSerde => {
-                     encode::encode_serde(self, buf, StorageCodecKind::FlexbuffersSerde)
-                 }
--                StorageCodecKind::ZstdBilrostDefault => encode::encode_bilrost_zstd(self, buf),
-+                StorageCodecKind::ZstdBilrostDefault => encode::encode_bilrost_zstd(
-+                    self,
-+                    buf,
-+                    Configuration::pinned().common.schema_compression_level(),
-+                ),
-                 _ => unreachable!("unsupported StorageCodecKind"),
-             }
-         }
-@@ -367,7 +372,7 @@ mod tests {
-                 StorageCodecKind::FlexbuffersSerde => {
-                     encode::encode_serde(&command, &mut buf, codec).unwrap()
-                 }
--                _ => encode::encode_bilrost_zstd(&command, &mut buf).unwrap(),
-+                _ => encode::encode_bilrost_zstd(&command, &mut buf, 0).unwrap(),
-             }
- 
-             // the codec recorded in the envelope header drives the decoding
-```
-
-**File**: `release-notes/unreleased/5675-schema-compression-level.md` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+# Release Notes for PR #5675: Configurable schema compression level
 +
-+## New Feature
++    fn decode(mut buf: impl Buf) -> Message {
++        let message = decode_as_flexbuffers(&mut buf, ProtocolVersion::V2).unwrap();
++        assert!(!buf.has_remaining(), "decoding consumes the message");
++        message
++    }
 +
-+### What Changed
-+
-+A new option, `schema-compression-level`, sets the Zstandard (zstd) compression level Restate uses
-+for schema data. It always applies to schema updates that nodes send to each other. It applies to
-+stored schemas only when `experimental-enable-schema-bilrost-encoding` is enabled.
-+
-+### Why This Matters
-+
-+Clusters with many deployments and services can have large schemas. A higher level makes schema
-+data smaller, at the cost of more CPU every time the schema changes (for example, when you register
-+a deployment). A lower or negative level makes schema changes cheaper but the data larger.
-+
-+### Impact on Users
-+
-+- The default is `0`, which uses zstd's default level (currently `3`), the same level Restate
-+  used before. Nothing changes unless you set the option.
-+- Accepted values are `-22` to `19`. Values outside that range are clamped to it.
-+- Nodes read schema data written at any level, so nodes can use different values, and you can
-+  change the value during a rolling upgrade. Changing it does not rewrite data already stored.
-+
-+### Migration Guidance
-+
-+No action is needed. To change the level:
-+
-+```toml
-+schema-compression-level = 9
-+```
-+
-+or through the environment:
-+
-+```sh
-+RESTATE_SCHEMA_COMPRESSION_LEVEL=9
-+```
-+
-+### Related Issues
-+
-+- PR #5675: Make schema zstd compression level configurable
++    #[test]
++    fn flexbuffers_decode_from_segmented_input() {
++        let message = Message {
++            id: 7,
++            name: "restate".to_owned(),
++            values: vec![1, 2, 3],
++        };
++        let encoded = Bytes::from(encode_as_flexbuffers(&message));
++        assert_eq!(decode(encoded.clone()), message);
++        for at in 0..=encoded.len() {
++            let chained = encoded.slice(..at).chain(encoded.slice(at..));
++            assert_eq!(decode(chained), message, "split at {at}");
++        }
++        let third = encoded.len() / 3;
++        let three = encoded
++            .slice(..third)
++            .chain(encoded.slice(third..2 * third))
++            .chain(encoded.slice(2 * third..));
++        assert_eq!(decode(three), message);
++    }
++}
 ```
 
 ---
 
-### Incident Patch 2: `efa74a95` (2026-10-28)
-**Commit Message**: [ci] Add lockfiles for github actions (#5670)
+### Incident Patch 2: `89e16e6b` (2026-10-30)
+**Commit Message**: Grant packages: write to workflows that push to ghcr.io
 
-Generated by:
+With the GITHUB_TOKEN default switched to read-only, workflows without
+an explicit permissions block can no longer push images or charts to
+ghcr.io. CI on main fails with "installation not allowed to Write
+organization package".
 
-```
-gh extension install github/gh-actions-lock
-gh actions-lock
-```
+- ci.yml: the docker job pushes the image on main
+- docker-refresh.yml, docker-tools.yml: scheduled image pushes
+- helm.yml: pushes the chart; needed for workflow_dispatch runs
+- release.yml / dist-workspace.toml: the release run calls ci.yml, and a
+  called workflow can't get more permissions than its caller grants, so
+  the caller now grants packages: write; regenerated with dist 0.30.3
 
-**File**: `.github/workflows/actions.lock` (added, +273/-0)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/ci.yml` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,273 @@
-+# This file is machine-generated by `gh actions-lock`.
-+# Do not edit by hand; run `gh actions-lock` to update.
-+# Docs: https://gh.io/actions-lockfile
-+version: 'v0.0.3'
-+workflows:
-+    '.github/workflows/ci.yml':
-+        - 'actions-rust-lang/setup-rust-toolchain@v1.17.0'
-+        - 'actions/checkout@v4.4.0'
-+        - 'actions/download-artifact@v8.0.2'
-+        - 'actions/upload-artifact@v4.6.2'
-+        - 'docker/setup-docker-action@v4.7.0'
-+        - 'dtolnay/rust-toolchain@stable'
-+        - 'extractions/setup-just@v3.1.0'
-+        - 'restatedev/e2e@main'
-+        - 'taiki-e/install-action@v2.88.0'
-+        - 'warpbuilds/rust-cache@v2.9.1'
-+    '.github/workflows/cla.yml':
-+        - 'contributor-assistant/github-action@v2.6.1'
-+    '.github/workflows/deps.yml':
-+        - 'actions/checkout@v4.4.0'
-+        - 'embarkstudios/cargo-deny-action@v2.1.1'
-+    '.github/workflows/docker-build-release.yml': []
-+    '.github/workflows/docker-push-release.yml':
-+        - 'actions/download-artifact@v8.0.2'
-+        - 'docker/build-push-action@v6.19.2'
-+        - 'docker/login-action@v3.7.0'
-+        - 'docker/metadata-action@v5.10.0'
-+        - 'docker/setup-buildx-action@v3.12.0'
-+        - 'docker/setup-docker-action@v4.7.0'
-+    '.github/workflows/docker-refresh.yml':
-+        - 'actions/checkout@v4.4.0'
-+        - 'docker/build-push-action@v6.19.2'
-+        - 'docker/login-action@v3.7.0'
-+        - 'docker/metadata-action@v5.10.0'
-+        - 'docker/setup-buildx-action@v3.12.0'
-+        - 'docker/setup-docker-action@v4.7.0'
-+    '.github/workflows/docker-tools.yml':
-+        - 'actions/checkout@v4.4.0'
-+        - 'depot/use-containerd-snapshotter-action@v1.1.1'
-+        - 'docker/build-push-action@v6.19.2'
-+        - 'docker/login-action@v3.7.0'
-+        - 'docker/metadata-action@v5.10.0'
-+        - 'docker/setup-buildx-action@v3.12.0'
-+        - 'reproducible-containers/buildkit-cache-dance@v3.1.2'
-+        - 'taiki-e/install-action@v2.88.0'
-+        - 'warpbuilds/cache@v1.4.13'
-+    '.github/workflows/docker.yml':
-+        - 'actions/checkout@v4.4.0'
-+        - 'actions/upload-artifact@v4.6.2'
-+        - 'depot/use-containerd-snapshotter-action@v1.1.1'
-+        - 'docker/build-push-action@v6.19.2'
-+        - 'docker/login-action@v3.7.0'
-+        - 'docker/metadata-action@v5.10.0'
-+        - 'docker/setup-buildx-action@v3.12.0'
-+        - 'reproducible-containers/buildkit-cache-dance@v3.1.2'
-+        - 'taiki-e/install-action@v2.88.0'
-+        - 'warpbuilds/cache@v1.4.13'
-+    '.github/workflows/hack-clippy.yml':
-+        - 'actions-rust-lang/setup-rust-toolchain@v1.17.0'
-+        - 'actions/checkout@v4.4.0'
-+        - 'extractions/setup-just@v2.0.0'
-+        - 'taiki-e/install-action@v2.88.0'
-+        - 'warpbuilds/rust-cache@v2.9.1'
-+    '.github/workflows/helm.yml':
-+        - 'actions/checkout@v4.4.0'
-+        - 'appany/helm-oci-chart-releaser@v0.4.2'
-+    '.github/workflows/homebrew.yml':
-+        - 'actions/checkout@v4.4.0'
-+        - 'actions/download-artifact@v8.0.2'
-+    '.github/workflows/notarize.yml':
-+        - 'actions/checkout@v4.4.0'
-+        - 'actions/download-artifact@v8.0.2'
-+    '.github/workflows/npm.yml':
-+        - 'actions/checkout@v4.4.0'
-+        - 'actions/download-artifact@v8.0.2'
-+        - 'actions/setup-node@v4.4.0'
-+    '.github/workflows/pullfrog.yml':
-+        - 'actions-rust-lang/setup-rust-toolchain@v1.17.0'
-+        - 'actions/checkout@v6.1.0'
-+        - 'pullfrog/pullfrog@v0.1.102'
-+        - 'taiki-e/install-action@v2.88.0'
-+        - 'warpbuilds/rust-cache@v2.9.1'
-+    '.github/workflows/release-notes.yml':
-+        - 'actions/checkout@v4.4.0'
-+    '.github/workflows/release.yml':
-+        - 'actions/checkout@v4'
-+        - 'actions/download-artifact@v8'
-+        - 'actions/upload-artifact@v4'
-+        - 'extractions/setup-just@v2'
-+        - 'taiki-e/install-action@v2'
-+    '.github/workflows/verify-lockfile.yml':
-+        - 'actions/checkout@v4.4.0'
-+dependencies:
-+    'actions-rust-lang/setup-rust-toolchain@v1.17.0':
-+        ref: 'v1.17.0'
-+        commit: 'sha1-166cdcfd11aee3cb47222f9ddb555ce30ddb9659'
-+        owner_id: 103899579
-+        repo_id: 482610590
-+        uses:
-+            - 'swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4'
-+    'actions/checkout@v4':
-+        ref: 'v4'
-+        commit: 'sha1-11d5960a326750d5838078e36cf38b85af677262'
-+        owner_id: 44036562
-+        repo_id: 197814629
-+    'actions/checkout@v4.4.0':
-+        ref: 'v4.4.0'
-+        commit: 'sha1-11d5960a326750d5838078e36cf38b85af677262'
-+        owner_id: 44036562
-+        repo_id: 197814629
-+    'actions/checkout@v6.1.0':
-+        ref: 'v6.1.0'
-+        commit: 'sha1-d23441a48e516b6c34aea4fa41551a30e30af803'
-+        owner_id: 44036562
-+        repo_id: 197814629
-+    'actions/download-artifact@v8':
-+        ref: 'v8'
-+        commit: 'sha1-9000827ccba6bdab643e8b6fd33ac0654aef8333'
-+        owner_id: 44036562
-+        repo_id: 192626254
-+    'ac
+@@ -147,6 +147,10 @@ jobs:
+ 
+   docker:
+     name: Create docker image
++    # pushes to ghcr.io on main
++    permissions:
++      contents: read
++      packages: write
+     uses: ./.github/workflows/docker.yml
+     with:
+       uploadImageAsTarball: "restate.tar"
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +26/-20)
+**File**: `.github/workflows/docker-refresh.yml` (modified, +3/-0)
 ```diff
-@@ -23,10 +23,10 @@ jobs:
-     env:
-       RUSTFLAGS: -D warnings
-     steps:
--      - uses: actions/checkout@v4
-+      - uses: actions/checkout@v4.4.0
-       - uses: dtolnay/rust-toolchain@stable
-       - name: Install cargo-hakari
--        uses: taiki-e/install-action@v2
-+        uses: taiki-e/install-action@v2.88.0
-         with:
-           tool: cargo-hakari
-       - name: Check workspace-hack Cargo.toml is up-to-date
-@@ -37,19 +37,19 @@ jobs:
-     name: Check CLI SQL tables reference
-     runs-on: warp-ubuntu-latest-x64-4x
-     steps:
--      - uses: actions/checkout@v4
-+      - uses: actions/checkout@v4.4.0
-       - name: Install Rust toolchain
--        uses: actions-rust-lang/setup-rust-toolchain@v1
-+        uses: actions-rust-lang/setup-rust-toolchain@v1.17.0
-         with:
-           rustflags: ""
-           cache: false
-       - name: Setup Rust Caching
--        uses: WarpBuilds/rust-cache@v2 # a fork of Swatinem/rust-cache@v2 that uses warpbuild cache
-+        uses: WarpBuilds/rust-cache@v2.9.1 # a fork of Swatinem/rust-cache@v2 that uses warpbuild cache
-         with:
-           prefix-key: "v1-rust-xtask"
-           cache-on-failure: "true"
-       - name: Install protoc
--        uses: ./.github/actions/install-protoc
-+        uses: $/.github/actions/install-protoc
-       - name: Check cli/src/commands/sql_tables.rs is up-to-date
-         run: |
-           cargo xtask generate-cli-sql-tables > cli/src/commands/sql_tables.rs
-@@ -73,17 +73,17 @@ jobs:
-       # - name: Install liburing
-       #   run: sudo apt-get update && sudo apt-get install -y liburing-dev
- 
--      - uses: actions/checkout@v4
-+      - uses: actions/checkout@v4.4.0
- 
-       - name: Install Rust toolchain
--        uses: actions-rust-lang/setup-rust-toolchain@v1
-+        uses: actions-rust-lang/setup-rust-toolchain@v1.17.0
-         with:
-           components: clippy
-           rustflags: ""
-           cache: false
- 
-       - name: Setup Rust Caching
--        uses: WarpBuilds/rust-cache@v2 # a fork of Swatinem/rust-cache@v2 that uses warpbuild cache
-+        uses: WarpBuilds/rust-cache@v2.9.1 # a fork of Swatinem/rust-cache@v2 that uses warpbuild cache
-         with:
-           prefix-key: "v1-rust"
-           cache-on-failure: "true"
-@@ -92,23 +92,23 @@ jobs:
-         run: df -h / && du -sh target/ 2>/dev/null || true
- 
-       - name: Install cargo-hakari
--        uses: taiki-e/install-action@v2
-+        uses: taiki-e/install-action@v2.88.0
-         with:
-           tool: cargo-hakari
- 
-       - name: Disable hakari
-         run: cargo hakari disable
- 
-       - name: Install protoc
--        uses: ./.github/actions/install-protoc
-+        uses: $/.github/actions/install-protoc
- 
-       - name: Install nextest
--        uses: taiki-e/install-action@v2
-+        uses: taiki-e/install-action@v2.88.0
-         with:
-           tool: nextest@0.9.98
- 
-       - name: Setup just
--        uses: extractions/setup-just@v3
-+        uses: extractions/setup-just@v3.1.0
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
- 
-@@ -135,7 +135,7 @@ jobs:
-       - name: Run doctest
-         run: just doctest
- 
--      - uses: actions/upload-artifact@v4
-+      - uses: actions/upload-artifact@v4.6.2
-         if: always()
-         with:
-           name: local-cluster-runner
-@@ -315,7 +315,7 @@ jobs:
-     needs: docker
-     steps:
-       - name: Set up Docker containerd snapshotter
--        uses: docker/setup-docker-action@v4
-+        uses: docker/setup-docker-action@v4.7.0
-         with:
-           version: "v28.5.2"
-           set-host: true
-@@ -328,7 +328,7 @@ jobs:
- 
-       ### Download the Restate container image, if needed
-       - name: Download restate snapshot from in-progress workflow
--        uses: actions/download-artifact@v8
-+        uses: actions/download-artifact@v8.0.2
-         with:
-           name: restate.tar
-       - name: Install restate snapshot
-@@ -339,6 +339,8 @@ jobs:
- 
-       ### Run e2e tests
-       - name: Run E2E tests
-+        # Pinned to a commit in actions.lock. To pick up the latest e2e main, run:
-+        #   gh actions-lock --relock .github/workflows/ci.yml
-         uses: restatedev/e2e/e2e-tests@main
-         with:
-           testArtifactOutput: e2e-test-report
-@@ -358,7 +360,7 @@ jobs:
-     needs: docker
-     steps:
-       - name: Set up Docker containerd snapshotter
--        uses: docker/setup-docker-action@v4
-+        uses: docker/setup-docker-action@v4.7.0
-         with:
-           version: "v28.5.2"
-           set-host: true
-@@ -371,7 +373,7 @@ jobs:
- 
-       ### Download the Restate container image, if needed
-       - name: Download restate snapshot from in-progress workflow
--        uses: actions/download-artifact@v8
-+        uses: actions/download-artifact@v8.0.2
-         with:
-           name: restate.tar
-       - name: Install restate snapshot
-@@ -382,6 +384,8 @@ jobs:
- 
-       ### Run e2e tests with bilrost schema enabled.
-       - name: Run E2E tests
-+        # Pinned to a commit in actions.lock. To
+@@ -34,6 +34,9 @@ env:
+ jobs:
+   refresh:
+     if: github.repository_owner == 'restatedev'
++    permissions:
++      contents: read
++      packages: write
+     name: Refresh ${{ matrix.image.name }} (minor version offset ${{ matrix.minor-offset }})
+     runs-on: ubuntu-latest
+     strategy:
 ```
 
-**File**: `.github/workflows/deps.yml` (modified, +4/-4)
+**File**: `.github/workflows/docker-tools.yml` (modified, +3/-0)
 ```diff
-@@ -19,16 +19,16 @@ jobs:
+@@ -20,6 +20,9 @@ env:
+ jobs:
+   build-and-push-image:
+     if: github.repository_owner == 'restatedev'
++    permissions:
++      contents: read
++      packages: write
+     runs-on: warp-ubuntu-latest-x64-16x
+     timeout-minutes: 70
+ 
+```
+
+**File**: `.github/workflows/helm.yml` (modified, +3/-0)
+```diff
+@@ -24,6 +24,9 @@ env:
+ jobs:
+   release-helm-chart:
      runs-on: warp-ubuntu-latest-x64-2x
-     continue-on-error: true
++    permissions:
++      contents: read
++      packages: write
      steps:
--    - uses: actions/checkout@v4
--    - uses: EmbarkStudios/cargo-deny-action@v2
-+    - uses: actions/checkout@v4.4.0
-+    - uses: EmbarkStudios/cargo-deny-action@v2.1.1
-       with:
-         command: check advisories
- 
-   bans:
-     timeout-minutes: 10
-     runs-on: warp-ubuntu-latest-x64-2x
-     steps:
--    - uses: actions/checkout@v4
--    - uses: EmbarkStudios/cargo-deny-action@v2
-+    - uses: actions/checkout@v4.4.0
-+    - uses: EmbarkStudios/cargo-deny-action@v2.1.1
-       with:
-         command: check bans licenses sources
+       - name: Checkout
+         uses: actions/checkout@v4.4.0
 ```
 
-**File**: `.github/workflows/docker-push-release.yml` (modified, +10/-10)
+**File**: `.github/workflows/release.yml` (modified, +1/-1)
 ```diff
-@@ -24,7 +24,7 @@ jobs:
-     steps:
-       # support importing oci-format restate.tar
-       - name: Set up Docker containerd snapshotter
--        uses: docker/setup-docker-action@v4
-+        uses: docker/setup-docker-action@v4.7.0
-         with:
-           set-host: true
-           daemon-config: |
-@@ -35,20 +35,20 @@ jobs:
-             }
+@@ -222,7 +222,7 @@ jobs:
+       "contents": "read"
+       "id-token": "write"
+       "issues": "read"
+-      "packages": "read"
++      "packages": "write"
+       "pull-requests": "write"
  
-       - name: Log into GitHub container registry
--        uses: docker/login-action@v3
-+        uses: docker/login-action@v3.7.0
-         with:
-           registry: ${{ env.GHCR_REGISTRY }}
-           username: ${{ env.GHCR_REGISTRY_USERNAME }}
-           password: ${{ env.GHCR_REGISTRY_TOKEN }}
- 
-       - name: Log into DockerHub
--        uses: docker/login-action@v3
-+        uses: docker/login-action@v3.7.0
-         with:
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_PASSWORD }}
- 
-       - name: Download restate snapshot from in-progress workflow
--        uses: actions/download-artifact@v8
-+        uses: actions/download-artifact@v8.0.2
-         with:
-           # the name is docker-build-release, but the extracted file will be 'restate.tar'
-           name: docker-build-release
-@@ -70,23 +70,23 @@ jobs:
-       IMAGE_NAME: "restate-cli"
-     steps:
-       - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@v3
-+        uses: docker/setup-buildx-action@v3.12.0
- 
-       - name: Log into GitHub container registry
--        uses: docker/login-action@v3
-+        uses: docker/login-action@v3.7.0
-         with:
-           registry: ${{ env.GHCR_REGISTRY }}
-           username: ${{ env.GHCR_REGISTRY_USERNAME }}
-           password: ${{ env.GHCR_REGISTRY_TOKEN }}
- 
-       - name: Log into DockerHub
--        uses: docker/login-action@v3
-+        uses: docker/login-action@v3.7.0
-         with:
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_PASSWORD }}
- 
-       - name: Download linux binaries
--        uses: actions/download-artifact@v8
-+        uses: actions/download-artifact@v8.0.2
-         with:
-           pattern: artifacts-*-unknown-linux-musl
-           merge-multiple: true
-@@ -123,7 +123,7 @@ jobs:
- 
-       - name: Extract metadata (tags, labels) for Docker
-         id: meta
--        uses: docker/metadata-action@v5
-+        uses: docker/metadata-action@v5.10.0
-         with:
-           images: |
-             ${{ env.GHCR_REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ env.IMAGE_NAME }}
-@@ -153,7 +153,7 @@ jobs:
-           EOF
- 
-       - name: Build and push multiplatform image
--        uses: docker/build-push-action@v6
-+        uses: docker/build-push-action@v6.19.2
-         with:
-           context: .
-           push: true
+   custom-docker-build-release:
 ```
 
-**File**: `.github/workflows/docker-refresh.yml` (modified, +7/-7)
+**File**: `dist-workspace.toml` (modified, +1/-1)
 ```diff
-@@ -51,7 +51,7 @@ jobs:
-             base: alpine
-     steps:
-       - name: Checkout repository
--        uses: actions/checkout@v4
-+        uses: actions/checkout@v4.4.0
+@@ -43,7 +43,7 @@ checks = "write"
+ contents = "read"
+ id-token = "write"
+ issues = "read"
+-packages = "read"
++packages = "write"
+ pull-requests = "write"
  
-       - name: Determine release
-         id: release
-@@ -73,7 +73,7 @@ jobs:
-           echo "version=${VERSION}" >> $GITHUB_OUTPUT
- 
-       - name: Set up Docker containerd snapshotter
--        uses: docker/setup-docker-action@v4
-+        uses: docker/setup-docker-action@v4.7.0
-         with:
-           daemon-config: |
-             {
-@@ -83,24 +83,24 @@ jobs:
-             }
- 
-       - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@v3
-+        uses: docker/setup-buildx-action@v3.12.0
- 
-       - name: Log into GitHub container registry
--        uses: docker/login-action@v3
-+        uses: docker/login-action@v3.7.0
-         with:
-           registry: ${{ env.GHCR_REGISTRY }}
-           username: ${{ github.actor }}
-           password: ${{ secrets.GITHUB_TOKEN }}
- 
-       - name: Log into DockerHub
--        uses: docker/login-action@v3
-+        uses: docker/login-action@v3.7.0
-         with:
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_PASSWORD }}
- 
-       - name: Extract metadata (tags, labels) for Docker
-         id: meta
--        uses: docker/metadata-action@v5
-+        uses: docker/metadata-action@v5.10.0
-         with:
-           images: |
-             ${{ env.GHCR_REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ matrix.image.name }}
-@@ -113,7 +113,7 @@ jobs:
-             type=semver,pattern={{major}}.{{minor}},value=${{ steps.release.outputs.version }}
- 
-       - name: Build and push refreshed Docker image
--        uses: docker/build-push-action@v6
-+        uses: docker/build-push-action@v6.19.2
-         with:
-           context: .
-           file: docker/Dockerfile.refresh
-```
-
-**File**: `.github/workflows/docker-tools.yml` (modified, +8/-8)
-```diff
-@@ -25,11 +25,11 @@ jobs:
- 
-     steps:
-       - name: Checkout repository
--        uses: actions/checkout@v4
-+        uses: actions/checkout@v4.4.0
- 
-       - name: Install cargo-hakari
-         if: ${{ hashFiles('.config/hakari.toml') != '' }}
--        uses: taiki-e/install-action@v2
-+        uses: taiki-e/install-action@v2.88.0
-         with:
-           tool: cargo-hakari
- 
-@@ -39,18 +39,18 @@ jobs:
- 
-       # this is needed to be able to load and push a multiplatform image in one step
-       - name: Set up Docker containerd snapshotter
--        uses: depot/use-containerd-snapshotter-action@v1
-+        uses: depot/use-containerd-snapshotter-action@v1.1.1
- 
-       - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@v3
-+        uses: docker/setup-buildx-action@v3.12.0
-         with:
-           # https://docs.warpbuild.com/cache/docker-layer-caching#step-1-set-up-docker-buildx-action
-           driver-opts: |
-             network=host
- 
-       - name: Cache sccache
-         id: cache
--        uses: WarpBuilds/cache@v1
-+        uses: WarpBuilds/cache@v1.4.13
-         with:
-           path: sccache-cache
-           key: ${{ runner.os }}-sccache-tools-${{ hashFiles('**/Cargo.lock') }}
-@@ -65,7 +65,7 @@ jobs:
-           skip-extraction: ${{ steps.cache.outputs.cache-hit }}
- 
-       - name: Log into GitHub container registry
--        uses: docker/login-action@v3
-+        uses: docker/login-action@v3.7.0
-         with:
-           registry: ${{ env.GHCR_REGISTRY }}
-           username: ${{ env.GHCR_REGISTRY_USERNAME }}
-@@ -86,7 +86,7 @@ jobs:
- 
-       - name: Extract metadata (tags, labels) for Docker
-         id: meta
--        uses: docker/metadata-action@v5
-+        uses: docker/metadata-action@v5.10.0
-         with:
-           images: |
-             ${{ env.GHCR_REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ env.IMAGE_NAME }}
-@@ -100,7 +100,7 @@ jobs:
- 
-       - name: Build and push Docker image
-         id: build
--        uses: docker/build-push-action@v6
-+        uses: docker/build-push-action@v6.19.2
-         with:
-           context: .
-           file: "docker/tools.Dockerfile"
-```
-
-**File**: `.github/workflows/docker.yml` (modified, +12/-12)
-```diff
-@@ -118,11 +118,11 @@ jobs:
- 
-     steps:
-       - name: Checkout repository
--        uses: actions/checkout@v4
-+        uses: actions/checkout@v4.4.0
- 
-       - name: Install cargo-hakari
-         if: ${{ hashFiles('.config/hakari.toml') != '' }}
--        uses: taiki-e/install-action@v2
-+        uses: taiki-e/install-action@v2.88.0
-         with:
-           tool: cargo-hakari
- 
-@@ -132,18 +132,18 @@ jobs:
- 
-       # this is needed to be able to load and push a multiplatform image in one step
-       - name: Set up Docker containerd snapshotter
--        uses: depot/use-containerd-snapshotter-action@v1
-+        uses: depot/use-containerd-snapshotter-action@v1.1.1
- 
-       - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@v3
-+        uses: docker/setup-buildx-action@v3.12.0
-         with:
-           # https://docs.warpbuild.com/cache/docker-layer-caching#step-1-set-up-docker-buildx-action
-           driver-opts: |
-             network=host
- 
-       - name: Cache sccache
-         id: cache
--        uses: WarpBuilds/cache@v1
-+        uses: WarpBuilds/cache@v1.4.13
-         with:
-           path: sccache-cache
-           key: ${{ runner.os }}-sccache-${{ hashFiles('**/Cargo.lock') }}
-@@ -158,15 +158,15 @@ jobs:
-           skip-extraction: ${{ steps.cache.outputs.cache-hit }}
- 
-       - name: Log into GitHub container registry
--        uses: docker/login-action@v3
-+        uses: docker/login-action@v3.7.0
-         with:
-           registry: ${{ env.GHCR_REGISTRY }}
-           username: ${{ env.GHCR_REGISTRY_USERNAME }}
-           password: ${{ env.GHCR_REGISTRY_TOKEN }}
- 
-       - name: Log into DockerHub
-         if: ${{ inputs.pushToDockerHub }}
--        uses: docker/login-action@v3
-+        uses: docker/login-action@v3.7.0
-         with:
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_PASSWORD }}
-@@ -233,7 +233,7 @@ jobs:
- 
-       - name: Extract metadata (tags, labels) for Docker
-         id: meta
--        uses: docker/metadata-action@v5
-+        uses: docker/metadata-action@v5.10.0
-         with:
-           images: |
-             ${{ env.GHCR_REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ env.IMAGE_NAME }}
-@@ -272,7 +272,7 @@ jobs:
- 
-       - name: Build${{(inputs.uploadImageAsTarball == '' || github.ref == 'refs/heads/main') && ' and push ' || ' '}}Docker image
-         id: build
--        uses: docker/build-push-action@v6
-+        uses: docker/build-push-action@v6.19.2
-         with:
-           context: .
-           file: "docker/Dockerfile"
-@@ -306,7 +306,7 @@ jobs:
- 
-       - name: Upload docker image tar as artifact
-         if: ${{ inputs.uploadImageAsTarball != '' }}
--        uses: actions/upload-artifact@v4
-+        uses: actions/upload-artifact@v4.6.2
-         with:
-           name: ${{ inputs.uploadImageAsTarball }}
-           path: restate.tar
-@@ -315,7 +315,7 @@ jobs:
- 
-       - name: Extract debug symbols
-         if: ${{ inputs.parca }}
--        uses: docker/build-push-action@v6
-+        uses: docker/build-push-action@v6.19.2
-         with:
-           context: .
-           file: "docker/Dockerfile"
-@@ -333,7 +333,7 @@ jobs:
- 
-       - name: Upload debug symbols
-         if: ${{ inputs.parca }}
--        uses: actions/upload-artifact@v4
-+        uses: actions/upload-artifact@v4.6.2
-         with:
-           name: debug-symbols
-           path: ./debug-symbols/**/restate-server.debug
-```
-
-**File**: `.github/workflows/hack-clippy.yml` (modified, +7/-7)
-```diff
-@@ -23,38 +23,38 @@ jobs:
-     env:
-       RUST_BACKTRACE: full
-     steps:
--      - uses: actions/checkout@v4
-+      - uses: actions/checkout@v4.4.0
- 
-       - name: Install Rust toolchain
--        uses: actions-rust-lang/setup-rust-toolchain@v1
-+        uses: actions-rust-lang/setup-rust-toolchain@v1.17.0
-         with:
-           components: clippy
-           rustflags: ""
-           cache: false
- 
-       - name: Setup Rust Caching
--        uses: WarpBuilds/rust-cache@v2 # a fork of Swatinem/rust-cache@v2 that uses warpbuild cache
-+        uses: WarpBuilds/rust-cache@v2.9.1 # a fork of Swatinem/rust-cache@v2 that uses warpbuild cache
-         with:
-           cache-on-failure: "true"
- 
-       - name: Install cargo-hakari and cargo-hack
--        uses: taiki-e/install-action@v2
-+        uses: taiki-e/install-action@v2.88.0
-         with:
-           tool: cargo-hakari,cargo-hack
- 
-       - name: Disable hakari
-         run: cargo hakari disable
- 
-       - name: Install protoc
--        uses: ./.github/actions/install-protoc
-+        uses: $/.github/actions/install-protoc
- 
-       - name: Install nextest
--        uses: taiki-e/install-action@v2
-+        uses: taiki-e/install-action@v2.88.0
-         with:
-           tool: nextest@0.9.98
- 
-       - name: Setup just
--        uses: extractions/setup-just@v2
-+        uses: extractions/setup-just@v2.0.0
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
- 
+ [dist.github-custom-job-permissions.npm]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5675** (2026-10-28): [types] Make schema zstd compression level configurable (@muhamadazmy)
-- **PR #5671** (closed): [test] Await native storage teardown before exiting fixtures (@AhmedSoliman)
-- **PR #5670** (2026-10-28): [ci] Add lockfiles for github actions (@MohamedBassem)
-- **PR #5669** (2026-10-28): [types] Stop compressing internal gRPC traffic by default (@AhmedSoliman)
-- **PR #5668** (2026-10-28): [chore] Bump pulldown-cmark to 0.13.5 for RUSTSEC-2026-0414 (@AhmedSoliman)
-- **PR #5665** (2026-10-28): [snapshots] Track inflight snapshot upload/downloads and their byte rate (@MohamedBassem)
+- **PR #5705** (2026-10-30): Grant packages: write to workflows that push to ghcr.io (@tillrohrmann)
+- **PR #5701** (closed): Remove the unused partition-table CF name override (@AhmedSoliman)
+- **PR #5697** (2026-10-30): Use GitHub App token for CLA signatures repository (@tillrohrmann)
+- **PR #5694** (2026-10-30): [PartitionStore] Delete exported snapshot files if the export is cancelled (@AhmedSoliman)
+- **PR #5691** (2026-10-29): [PartitionStore] Refresh snapshot status without the partition store (@AhmedSoliman)
+- **PR #5690** (2026-10-29): [chore] Bump zip to 9.0.5 for GHSA-m665-v7pm-7grj (@AhmedSoliman)
 
 ---
 
@@ -2564,53 +1860,69 @@ gh actions-lock
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [types] Make schema zstd compression level configurable (#5675)
+## X. [types] Decode flexbuffers network messages from segmented buffers
 
 **RULE**:
-When implementing operations in `crates/types/src/config/common.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/types/src/net/codec.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `91eff8da`: [types] Make schema zstd compression level configurable (#5675). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `36cee33a`: [types] Decode flexbuffers network messages from segmented buffers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/types/src/config/common.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/types/src/net/codec.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// # Schema compression level
-    ///
-    /// Zstandard (zstd) compression level for schema data. It always applies
-    /// to schema updates sent between nodes. It applies to stored schemas only
-    /// when `experimental-enable-schema-bilrost-encoding` is enabled.
-    ///
-    /// `0` (the default) uses zstd's default level (currently `3`). Higher
-    /// values (up to `19`) produce smaller output but use more CPU on every
-    /// schema change. Negative values select zstd's faster, lower-ratio modes.
-    /// Values outside `-22..=19` are clamped to that range. Changing this
-    /// setting does not affect data that has already been written, and data
-    /// written at any level can be read by all nodes.
-    ///
-    /// Since v1.8.2
-    #[serde(default, skip_serializing_if = "is_default_compression")]
-    schema_compression_level: i32,
+/// Utility method to decode a [`DeserializeOwned`] type from flexbuffers using serde. `buf` must
+/// hold exactly one message, which is consumed. Flexbuffers reads from one contiguous slice:
+/// contiguous input is decoded in place, segmented input is first copied into one buffer.
+    mut buf: impl Buf,
+    let len = buf.remaining();
+    let decoded = if buf.chunk().len() == len {
+        let decoded = flexbuffers::from_slice(buf.chunk());
+        buf.advance(len);
+        decoded
+    } else {
+        flexbuffers::from_slice(&buf.copy_to_bytes(len))
+    };
+    decoded.with_context(|| {
 
-fn is_default_compression(lvl: &i32) -> bool {
-    *lvl == 0
-}
+#[cfg(test)]
+mod tests {
+    use serde::Deserialize;
 
+    use super::*;
 
-    pub fn schema_compression_level(&self) -> i32 {
-        self.schema_compression_level.clamp(-22, 19)
+    #[derive(Debug, PartialEq, Serialize, Deserialize)]
+    struct Message {
+        id: u64,
+        name: String,
+        values: Vec<u32>,
     }
-            schema_compression_level: 0,
+
+    fn decode(mut buf: impl Buf) -> Message {
+        let message = decode_as_flexbuffers(&mut buf, ProtocolVersion::V2).unwrap();
+        assert!(!buf.has_remaining(), "decoding consumes the message");
+        message
+    }
+
+    #[test]
+    fn flexbuffers_decode_from_segmented_input() {
+        let message = Message {
+            id: 7,
+            name: "restate".to_owned(),
+   
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+/// Utility method to decode a [`DeserializeOwned`] type from flexbuffers using serde. the buffer
+/// must have the complete message and not internally chunked.
+    buf: impl Buf,
+    flexbuffers::from_slice(buf.chunk()).with_context(|| {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `91eff8da` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `36cee33a` are properly handled with clean fallback behavior.

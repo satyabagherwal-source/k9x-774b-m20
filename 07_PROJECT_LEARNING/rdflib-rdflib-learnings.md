@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rdflib-rdflib-learnings.md`  
 > **Source**: github ([https://github.com/RDFLib/rdflib](https://github.com/RDFLib/rdflib))  
-> **Source Version**: `8571e879`  
+> **Source Version**: `f87db10f`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:07:19.678Z  
+> **Timestamp**: 2026-10-30T16:39:35.221Z  
 > **Learning ID**: `learn-github-rdflib-rdflib`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rdflib-rdflib-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RDFLib/rdflib](https://github.com/RDFLib/rdflib))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:07:18.963Z  
+> **Harvest Timestamp**: 2026-10-30T16:39:34.380Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: RDFLib is a Python library for working with RDF, a simple yet powerful language for representing information.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2540 stars
+- **Stars / Engagement**: 2542 stars
 
 ---
 
@@ -305,16 +305,14 @@ from rdflib.util import guess_format
 
 
 def _help():
-    sys.stderr.write(
-        """
+    sys.stderr.write("""
 program.py [-f <format>] [-o <output>] [files...]
 Read RDF files given on STDOUT - does something to the resulting graph
 If no files are given, read from stdin
 -o specifies file for output, if not given stdout is used
 -f specifies parser to use, if not given it is guessed from extension
 
-"""
-    )
+""")
 
 
 def main(target, _help=_help, options="", stdin=True):
@@ -1195,21 +1193,21 @@ class ConcurrentStore:
         self.__pending_adds = []
 
     def add(self, triple):
-        (s, p, o) = triple
+        s, p, o = triple
         if self.__visit_count == 0:
             self.store.add((s, p, o))
         else:
             self.__pending_adds.append((s, p, o))
 
     def remove(self, triple):
-        (s, p, o) = triple
+        s, p, o = triple
         if self.__visit_count == 0:
             self.store.remove((s, p, o))
         else:
             self.__pending_removes.append((s, p, o))
 
     def triples(self, triple):
-        (su, pr, ob) = triple
+        su, pr, ob = triple
         g = self.store.triples((su, pr, ob))
         pending_removes = self.__pending_removes
         self.__begin_read()
@@ -1241,7 +1239,7 @@ class ConcurrentStore:
         if self.__visit_count == 0:
             pending_removes = self.__pending_removes
             while pending_removes:
-                (s, p, o) = pending_removes.pop()
+                s, p, o = pending_removes.pop()
                 try:
                     self.store.remove((s, p, o))
                 except:  # noqa: E722
@@ -1249,7 +1247,7 @@ class ConcurrentStore:
                     print(s, p, o, "Not in store to remove")
             pending_adds = self.__pending_adds
             while pending_adds:
-                (s, p, o) = pending_adds.pop()
+                s, p, o = pending_adds.pop()
                 self.store.add((s, p, o))
         lock.release()
 
@@ -1740,611 +1738,893 @@ except Exception as e:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `50156d06` (2026-10-26)
-**Commit Message**: build(deps-dev): bump pytest-cov from 5.0.0 to 7.1.0 (#3594)
+### Incident Patch 1: `6262c3ed` (2026-10-28)
+**Commit Message**: fix: restrict ConjunctiveGraph.quads() to the requested context (#3499)
 
-* build(deps-dev): bump pytest-cov from 5.0.0 to 7.1.0
+* fix: restrict ConjunctiveGraph.quads() to the requested context
 
-Bumps [pytest-cov](https://github.com/pytest-dev/pytest-cov) from 5.0.0 to 7.1.0.
-- [Changelog](https://github.com/pytest-dev/pytest-cov/blob/master/CHANGELOG.rst)
-- [Commits](https://github.com/pytest-dev/pytest-cov/compare/v5.0.0...v7.1.0)
+ConjunctiveGraph.quads() passed the requested context to
+Store.triples(), but then yielded one quad per context in the
+store's returned context generator. Memory.triples() reports every
+context a triple appears in, so a triple present in more than one
+graph leaked quads for the other graphs.
 
----
-updated-dependencies:
-- dependency-name: pytest-cov
-  dependency-version: 7.1.0
-  dependency-type: direct:development
-  update-type: version-update:semver-major
-...
+Dataset.quads((None, None, None, <graph>)) therefore returned
+statements belonging to unrelated named graphs whenever those graphs
+shared a triple with the requested one.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+When a context is given, only that context is now yielded; the
+unrestricted case is unchanged.
 
-* fix: restore subprocess coverage with pytest-cov 7
+test_aggregate2 asserted 6 quads for a graph holding 3 triples that
+are also in another graph -- it was encoding the leak -- and is
+corrected to 3.
 
-Enable native subprocess measurement and require compatible coverage and pytest-cov versions. Align the minimum-dependency job to avoid competing collectors from older pytest-cov releases, and add a CLI coverage regression test.
+Closes #3314
 
-Validated tool tests on the current and minimum toolchains (21 passed, 1 skipped each), task validate:static, and uv lock --check.
+* test: cover quads from the default graph
 
 ---------
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Edmond Chuc <[REDACTED_EMAIL]>
+Co-authored-by: Nicholas Car <[REDACTED_EMAIL]>
 
-**File**: `pyproject.toml` (modified, +3/-2)
+**File**: `rdflib/graph.py` (modified, +8/-2)
 ```diff
-@@ -57,8 +57,8 @@ dev = [
- ]
- tests = [
-     "pytest>=7.1.3,<10.0.0",
--    "pytest-cov>=4,<6",
--    "coverage[toml]>=7.0.1,<8.0.0",
-+    "pytest-cov>=7,<8",
-+    "coverage[toml]>=7.10.6,<8.0.0",
-     "types-setuptools>=68.0.0.3,<72.0.0.0",
-     "setuptools>=68,<72",
-     "wheel>=0.42,<0.49",
-@@ -273,6 +273,7 @@ check_untyped_defs = true
+@@ -2356,8 +2356,14 @@ def quads(
+         s, p, o, c = self._spoc(triple_or_quad)
  
- [tool.coverage.run]
- branch = true
-+patch = ["subprocess"]
- source = ["rdflib"]
- omit = ["*/_type_checking.py"]
- relative_files = true
+         for (s, p, o), cg in self.store.triples((s, p, o), context=c):
+-            for ctx in cg:
+-                yield s, p, o, ctx
++            if c is not None:
++                # A context was requested, so only that context is relevant;
++                # the store also reports the other contexts the triple
++                # appears in, which must not leak into the result.
++                yield s, p, o, c
++            else:
++                for ctx in cg:
++                    yield s, p, o, ctx
+ 
+     def triples_choices(
+         self,
 ```
 
-**File**: `test/test_tools/test_csv2rdf.py` (modified, +44/-0)
+**File**: `test/test_dataset/test_dataset.py` (modified, +39/-1)
 ```diff
-@@ -1,7 +1,10 @@
-+import inspect
-+import json
- import os
- import re
- import subprocess
- import sys
-+from pathlib import Path
- from tempfile import mkstemp
- from unittest.mock import mock_open, patch, sentinel
+@@ -11,7 +11,7 @@
+ from rdflib import BNode, Namespace, Node, URIRef, plugin
+ from rdflib.graph import DATASET_DEFAULT_GRAPH_ID, Dataset, Graph
+ from rdflib.store import Store
+-from test.data import CONTEXT1, LIKES, PIZZA, TAREK
++from test.data import CHEESE, CONTEXT1, CONTEXT2, LIKES, PIZZA, TAREK
  
-@@ -29,6 +32,47 @@ def test_csv2rdf_cli(self):
-         assert "<http://example.org/instances/0>" in completed.stdout
-         assert "<http://example.org/props/zip>" in completed.stdout
+ # Will also run SPARQLUpdateStore tests against local SPARQL1.1 endpoint if
+ # available. This assumes SPARQL1.1 query/update endpoints running locally at
+@@ -325,6 +325,44 @@ def test_iter(get_dataset):
+     assert i_new == i_trad  # both should be 3
  
-+    def test_csv2rdf_cli_subprocess_coverage(self, tmp_path: Path):
-+        report_path = tmp_path / "coverage.json"
-+        # Isolate the nested run from coverage already active in this test process.
-+        env = {
-+            key: value
-+            for key, value in os.environ.items()
-+            if not key.startswith(("COVERAGE_", "COV_CORE_"))
-+        }
-+        env["COVERAGE_FILE"] = str(tmp_path / ".coverage")
-+        env["PYTEST_ADDOPTS"] = ""
-+        completed = subprocess.run(
-+            [
-+                sys.executable,
-+                "-m",
-+                "pytest",
-+                f"{Path(__file__).resolve()}::TestCSV2RDF::test_csv2rdf_cli",
-+                "--noconftest",
-+                "-o",
-+                "addopts=",
-+                "--cov",
-+                f"--cov-report=json:{report_path}",
-+            ],
-+            cwd=Path(__file__).resolve().parents[2],
-+            env=env,
-+            capture_output=True,
-+            text=True,
-+        )
-+        assert completed.returncode == 0, completed.stdout + completed.stderr
-+        files = json.loads(report_path.read_text())["files"]
-+        measured = next(
-+            data
-+            for path, data in files.items()
-+            if Path(path).as_posix().endswith("rdflib/tools/csv2rdf.py")
-+        )
-+        # convert() runs only in the CLI child, never during test collection.
-+        source, first_line = inspect.getsourcelines(csv2rdf.CSV2RDF.convert)
-+        body_lines = range(first_line + 1, first_line + len(source))
-+        assert set(measured["executed_lines"]).intersection(
-+            body_lines
-+        ), "Coverage did not measure csv2rdf's subprocess execution"
+ 
++@pytest.mark.parametrize(
++    "graph_name, expected_quads",
++    [
++        (
++            CONTEXT1,
++            {
++                (TAREK, LIKES, PIZZA, CONTEXT1),
++                (TAREK, LIKES, CHEESE, CONTEXT1),
++            },
++        ),
++        (
++            CONTEXT2,
++            {
++                (TAREK, LIKES, PIZZA, CONTEXT2),
++            },
++        ),
++        (
++            DATASET_DEFAULT_GRAPH_ID,
++            {
++                (TAREK, LIKES, CHEESE, DATASET_DEFAULT_GRAPH_ID),
++            },
++        ),
++    ],
++)
++def test_quads_restricted_to_requested_graph(get_dataset, graph_name, expected_quads):
++    """A quad shared by several graphs must only be reported for the graph asked for."""
++    store, d = get_dataset
 +
-     def test_csv2rdf_cli_fileout(self):
-         fh, fname = mkstemp()
-         completed = subprocess.run(
++    d.add((TAREK, LIKES, PIZZA, CONTEXT1))
++    d.add((TAREK, LIKES, CHEESE, CONTEXT1))
++    d.add((TAREK, LIKES, PIZZA, CONTEXT2))
++    d.add((TAREK, LIKES, CHEESE))
++
++    quads = set(d.quads((None, None, None, graph_name)))
++
++    assert quads == expected_quads
++
++
+ def test_graph_without_identifier() -> None:
+     """
+     Graphs with no identifies assigned are identified by Skolem IRIs with a
 ```
 
-**File**: `tox.ini` (modified, +2/-1)
+**File**: `test/test_graph/test_aggregate_graphs.py` (modified, +3/-1)
 ```diff
-@@ -84,7 +84,8 @@ commands =
- base = void
- deps =
-     pytest==7.*
--    pytest-cov==4.*
-+    pytest-cov==7.0.0
-+    coverage[toml]==7.10.6
-     setuptools>=68,<72
- setenv =
-     BERKELEYDB_DIR = /usr
-```
-
-**File**: `uv.lock` (modified, +6/-5)
-```diff
-@@ -1312,15 +1312,16 @@ wheels = [
- 
- [[package]]
- name = "pytest-cov"
--version = "5.0.0"
-+version = "7.1.0"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "coverage", extra = ["toml"] },
-+    { name = "pluggy" },
-     { name = "pytest" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/74/67/00efc8d11b630c56f15f4ad9c7f9223f1e5ec275aaae3fa9118c6a223ad2/pytest-cov-5.0.0.tar.gz", hash = "sha256:5837b58e9f6ebd335b0f8060eecce69b662415b16dc503883a02f45dfeb14857", size = 63042, upload-time = "2024-03-24T20:16:34.856Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/b1/51/a849f96e117386044471c8ec2bd6cfebacda285da9525c9106aeb28da671/pytest_cov-7.1.0.tar.gz", hash = "sha256:30674f2b5f6351aa09702a9c8c364f6a01c27aae0c1366ae8016160d1efc56b2", size = 55592, upload-time = "2026-03-21T20:11:16.284Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/78/3a/af5b4fa5961d9a1e6237b530eb87dd04aea6eb83da09d2a4073d81b54ccf/pytest_cov-5.0.0-py3-none-any.whl", hash = "sha256:4f0764a1219df53214206bf1feea4633c3b558a2925c8b59f144f682861ce652", size = 21990, upload-time = "2024-03-24T20:16:32.444Z" },
-+    { url = "https://files.pythonhosted.org/packages/9d/7a/d968e294073affff457b041c2be9868a40c1c71f4a35fcc1e45e5493067b/pytest_cov-7.1.0-py3-none-any.whl", hash = "sha256:a0461110b7865f9a271aa1b51e516c9a95de9d696734a2f71e3e78f46e1d4678", size = 22876, upload-time = "2026-03-21T20:11:14.438Z" },
- ]
- 
- [[package]]
-@@ -1544,9 +1545,9 @@ docs = [
- ]
- lint = [{ name = "ruff", specifier = "==0.17.0" }]
- tests = [
--    { name = "coverage", extras = ["toml"], specifier = ">=7.0.1,<8.0.0" },
-+    { name = "coverage", extras = ["toml"], specifier = ">=7.10.6,<8.0.0" },
-     { name = "pytest", specifier = ">=7.1.3,<10.0.0" },
--    { name = "pytest-cov", specifier = ">=4,<6" },
-+    { name = "pytest-cov", specifier = ">=7,<8" },
-     { name = "setuptools", specifier = ">=68,<72" },
-     { name = "testcontainers", specifier = ">=4.13.2,<5.0.0" },
-     { name = "types-setuptools", specifier = ">=68.0.0.3,<72.0.0.0" },
+@@ -116,6 +116,8 @@ def test_aggregate2():
+     assert (
+         len(list(g.quads((None, None, None, URIRef("http://example.com/graph2"))))) == 4
+     )
++    # graph4 holds the same 3 triples as graph1; only graph4's own quads are
++    # reported for it.
+     assert (
+         len(
+             list(
+@@ -124,5 +126,5 @@ def test_aggregate2():
+                 )
+             )
+         )
+-        == 6
++        == 3
+     )
 ```
 
 ---
 
-### Incident Patch 2: `31eb39e5` (2026-10-26)
-**Commit Message**: fix: handle RDF/XML predicates and rdf:type objects that cannot be shortened (#3536)
+### Incident Patch 2: `b1fe3a93` (2026-10-28)
+**Commit Message**: Use RDF and XML prefixes in pretty-xml for unbound namespaces (#3537)
 
-XMLSerializer.__bindings() and PrettyXMLSerializer.serialize() called
-NamespaceManager.compute_qname_strict() on every predicate, and in the
-pretty serializer on every rdf:type object, without handling the
-ValueError raised when a URI cannot be split into a namespace and a
-valid, non-empty XML local name. g.serialize(format="xml") therefore
-failed with an opaque internal ValueError: Can't split
-'http://example.org/'.
+* fix: use rdf and xml prefixes in pretty-xml when no namespaces are bound
 
-There are two distinct cases behind that one error:
+* fix: preserve valid XML QNames and empty namespace collections
 
-Predicates genuinely cannot be represented in RDF/XML (a predicate is
-written as an XML element name, which must be a QName). These now raise
-a ValueError naming the offending predicate and explaining why, via a
-small _compute_qname_strict_for_term() helper, instead of an internal
-split_uri error.
+Validate fixed-prefix local names with a cached XML parser check and retain strict namespace-manager fallback. Treat explicitly empty namespace collections separately from omitted values. Add regression coverage for URI suffixes, extended bindings, and Unicode names.
 
-rdf:type objects ARE representable: when the type URI can be shortened
-it is used as the element name, otherwise the subject falls back to
-rdf:Description with an ordinary <rdf:type rdf:resource="..."/>
-property -- PrettyXMLSerializer.subject() already had this fallback,
-but it was unreachable because serialize() raised during namespace
+* fix: reject conflicting XML namespace prefixes
 
+---------
 
-**File**: `rdflib/plugins/serializers/rdfxml.py` (modified, +35/-11)
+Co-authored-by: Edmond Chuc <[REDACTED_EMAIL]>
+
+**File**: `rdflib/plugins/serializers/rdfxml.py` (modified, +6/-3)
 ```diff
-@@ -7,7 +7,7 @@
+@@ -211,7 +211,12 @@ def serialize(
+         assert self.max_depth > 0, "max_depth must be greater than 0"
  
- from rdflib.collection import Collection
- from rdflib.graph import Graph
--from rdflib.namespace import RDF, RDFS, Namespace  # , split_uri
-+from rdflib.namespace import RDF, RDFS, Namespace, NamespaceManager  # , split_uri
- from rdflib.plugins.parsers.RDFVOC import RDFVOC
- from rdflib.plugins.serializers.xmlwriter import XMLWriter
- from rdflib.serializer import Serializer
-@@ -19,6 +19,24 @@
- __all__ = ["fix", "XMLSerializer", "PrettyXMLSerializer"]
- 
- 
-+def _compute_qname_strict_for_term(
-+    nm: NamespaceManager, term: Node
-+) -> tuple[str, str, str]:
-+    """Compute the strict qname for predicate ``term``, raising a clear
-+    error if it cannot be split into a namespace and a valid XML local
-+    name (and therefore cannot be represented in RDF/XML).
-+    """
-+    try:
-+        # type error: Argument 1 to "compute_qname_strict" of "NamespaceManager" has incompatible type "Node"; expected "str"
-+        return nm.compute_qname_strict(term)  # type: ignore[arg-type]
-+    except ValueError as e:
-+        raise ValueError(
-+            f"Cannot serialize predicate {term} to RDF/XML: it cannot be "
-+            "split into a namespace and a valid XML local name, so it "
-+            "cannot be written as an XML element name."
-+        ) from e
-+
-+
- class XMLSerializer(Serializer):
-     """RDF/XML RDF graph serializer."""
- 
-@@ -31,8 +49,7 @@ def __bindings(self) -> Generator[tuple[str, URIRef], None, None]:
-         bindings: dict[str, URIRef] = {}
- 
-         for predicate in set(store.predicates()):
--            # type error: Argument 1 to "compute_qname_strict" of "NamespaceManager" has incompatible type "Node"; expected "str"
--            prefix, namespace, name = nm.compute_qname_strict(predicate)  # type: ignore[arg-type]
-+            prefix, namespace, name = _compute_qname_strict_for_term(nm, predicate)
-             bindings[prefix] = URIRef(namespace)
- 
-         RDFNS = URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#")  # noqa: N806
-@@ -197,13 +214,20 @@ def serialize(
-         self.writer = writer = XMLWriter(stream, nm, encoding)
+         self.nm = nm = store.namespace_manager
+-        self.writer = writer = XMLWriter(stream, nm, encoding)
++        self.writer = writer = XMLWriter(
++            stream,
++            nm,
++            encoding,
++            extra_ns={"rdf": Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")},
++        )
          namespaces = {}
  
--        possible: set[Node] = set(store.predicates()).union(
--            store.objects(None, RDF.type)
--        )
-+        for predicate in set(store.predicates()):
-+            prefix, namespace, local = _compute_qname_strict_for_term(nm, predicate)
-+            namespaces[prefix] = namespace
- 
--        for predicate in possible:
--            # type error: Argument 1 to "compute_qname_strict" of "NamespaceManager" has incompatible type "Node"; expected "str"
--            prefix, namespace, local = nm.compute_qname_strict(predicate)  # type: ignore[arg-type]
-+        # rdf:type objects are only used as element names when they can be
-+        # shortened; the others are written as rdf:type properties of an
-+        # rdf:Description element (see `subject`), so failing to shorten one
-+        # is not an error.
-+        for type_ in store.objects(None, RDF.type):
-+            try:
-+                # type error: Argument 1 to "compute_qname_strict" of "NamespaceManager" has incompatible type "Node"; expected "str"
-+                prefix, namespace, local = nm.compute_qname_strict(type_)  # type: ignore[arg-type]
-+            except ValueError:
-+                continue
+         for predicate in set(store.predicates()):
+@@ -230,8 +235,6 @@ def serialize(
+                 continue
              namespaces[prefix] = namespace
  
-         namespaces["rdf"] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-@@ -264,8 +288,8 @@ def subject(self, subject: Identifier, depth: int = 1):
-             type = first(store.objects(subject, RDF.type))
+-        namespaces["rdf"] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+-
+         writer.push(RDFVOC.RDF)
  
-             try:
--                # type error: Argument 1 to "qname" of "NamespaceManager" has incompatible type "Optional[Node]"; expected "str"
--                self.nm.qname(type)  # type: ignore[arg-type]
-+                # type error: Argument 1 to "qname_strict" of "NamespaceManager" has incompatible type "Optional[Node]"; expected "str"
-+                self.nm.qname_strict(type)  # type: ignore[arg-type]
-             except Exception:
-                 type = None
- 
+         if "xml_base" in kwargs:
 ```
 
-**File**: `test/test_serializers/test_prettyxml.py` (modified, +42/-1)
+**File**: `rdflib/plugins/serializers/xmlwriter.py` (modified, +31/-5)
 ```diff
-@@ -1,6 +1,9 @@
- from io import BytesIO
+@@ -2,9 +2,12 @@
  
--from rdflib.graph import Dataset
-+import pytest
+ import codecs
+ from collections.abc import Iterable
++from functools import lru_cache
+ from typing import IO, TYPE_CHECKING
++from xml.parsers import expat
+ from xml.sax.saxutils import escape, quoteattr
+ 
++from rdflib.namespace import XMLNS, is_ncname
+ from rdflib.term import URIRef
+ 
+ if TYPE_CHECKING:
+@@ -16,6 +19,18 @@
+ ESCAPE_ENTITIES = {"\r": "&#13;"}
+ 
+ 
++@lru_cache(maxsize=512)
++def _is_xml_ncname(name: str) -> bool:
++    """Check local names against the XML parser used by RDFLib."""
++    if not is_ncname(name):
++        return False
++    try:
++        expat.ParserCreate(namespace_separator=" ").Parse(f"<{name}/>", True)
++    except expat.ExpatError:
++        return False
++    return True
 +
-+from rdflib.compare import isomorphic
-+from rdflib.graph import Dataset, Graph
- from rdflib.namespace import RDF, RDFS
++
+ class XMLWriter:
+     """A simple XML writer that writes to a stream."""
+ 
+@@ -85,17 +100,24 @@ def element(
+         self.text(content)
+         self.pop()
+ 
+-    def namespaces(self, namespaces: Iterable[tuple[str, str]] = None) -> None:
+-        if not namespaces:
++    def namespaces(self, namespaces: Iterable[tuple[str, str]] | None = None) -> None:
++        if namespaces is None:
+             namespaces = self.nm.namespaces()
+ 
+         write = self.stream.write
+         write("\n")
+         for prefix, namespace in namespaces:
++            if prefix in self.extra_ns:
++                if prefix and str(namespace) != str(self.extra_ns[prefix]):
++                    raise ValueError(
++                        f"Namespace prefix {prefix!r} is bound to both "
++                        f"{str(namespace)!r} and {str(self.extra_ns[prefix])!r}"
++                    )
++                # Extra default namespaces take precedence, as required by TriX.
++                continue
+             if prefix:
+                 write('  xmlns:%s="%s"\n' % (prefix, namespace))
+-            # Allow user-provided namespace bindings to prevail
+-            elif prefix not in self.extra_ns:
++            else:
+                 write('  xmlns="%s"\n' % namespace)
+ 
+         for prefix, namespace in self.extra_ns.items():
+@@ -122,10 +144,14 @@ def qname(self, uri: str) -> str:
+         or the given namespace manager"""
+ 
+         for pre, ns in self.extra_ns.items():
+-            if uri.startswith(ns):
++            if uri.startswith(ns) and _is_xml_ncname(uri[len(ns) :]):
+                 if pre != "":
+                     return ":".join([pre, uri[len(ns) :]])
+                 else:
+                     return uri[len(ns) :]
+ 
++        # The xml prefix is predefined and never declared
++        if uri.startswith(XMLNS) and _is_xml_ncname(uri[len(XMLNS) :]):
++            return "xml:" + uri[len(XMLNS) :]
++
+         return self.nm.qname_strict(uri)
+```
+
+**File**: `test/test_serializers/test_prettyxml.py` (modified, +105/-1)
+```diff
+@@ -4,7 +4,7 @@
+ 
+ from rdflib.compare import isomorphic
+ from rdflib.graph import Dataset, Graph
+-from rdflib.namespace import RDF, RDFS
++from rdflib.namespace import RDF, RDFS, XMLNS
  from rdflib.plugins.serializers.rdfxml import PrettyXMLSerializer
  from rdflib.term import BNode, Literal, URIRef
-@@ -209,3 +212,41 @@ def _assert_expected_object_types_for_predicates(graph, predicates, types):
-             assert True in some_true, (
-                 "Bad type %s for object when predicate is <%s>." % (type(o), p)
+ 
+@@ -214,6 +214,110 @@ def _assert_expected_object_types_for_predicates(graph, predicates, types):
              )
+ 
+ 
++def test_pretty_xml_bind_namespaces_none():
++    # https://github.com/RDFLib/rdflib/issues/2408
++    graph = Graph(bind_namespaces="none")
++    graph.parse(data='prefix ex: <http://example.org/> ex:a ex:b "test"@en .')
++
++    result = graph.serialize(format="pretty-xml")
++
++    assert "<rdf:RDF" in result
++    assert 'rdf:about="http://example.org/a"' in result
++    assert 'xml:lang="en"' in result
++    assert "ns1" not in result
++    assert isomorphic(graph, Graph().parse(data=result, format="xml"))
 +
 +
-+def test_unprefixable_predicate_raises_clear_error():
-+    """A predicate equal to a bound namespace/prefix cannot be shortened, and should raise a clear error (regression test for issue #2409)."""
-+    g = Graph().parse(data='<a> <> "test"@en .', publicID="http://example.org/")
-+    with pytest.raises(ValueError, match="Cannot serialize predicate"):
-+        g.serialize(format="pretty-xml")
++@pytest.mark.parametrize("bind_namespaces", ["rdflib", "none"])
++@pytest.mark.parametrize("term_role", ["predicate", "type"])
++def test_pretty_xml_conflicting_rdf_prefix(bind_namespaces, term_role):
++    graph = Graph(bind_namespaces=bind_namespaces)
++    graph.bind("rdf", "http://example.org/", replace=True)
++    subject = URIRef("http://example.org/subject")
++    term = URIRef("http://example.org/term")
++    if term_role == "predicate":
++        graph.add((subject, term, Literal("value")))
++    else:
++        graph.add((subject, RDF.type, term))
++
++    with pytest.raises(ValueError, match="Namespace prefix 'rdf' is bound to both"):
++        graph.serialize(format="pretty-xml")
 +
 +
-+@pytest.mark.parametrize("rdf_format", ["xml", "pretty-xml"])
-+def test_unshortenable_rdf_type_object_serializes(rdf_format):
-+    """An rdf:type object that cannot be shortened to a qname (e.g. one equal to a bound namespace/prefix) is representable in RDF/XML as an ordinary rdf:type property, and should serialize and round-trip successfully rather than raising (regression test for issue #2409)."""
-+    g = Graph().parse(
-+        data=(
-+            "<http://example.org/a> a <http://example.org/> ;"
-+            ' <http://example.org/p> "x" .'
-+        ),
-+        format="turtle",
-+    )
++@pytest.mark.parametrize("namespace", [str(RDF), XMLNS])
++@pytest.mark.parametrize("suffix", ["nested/value", "/value", "123value"])
++@pytest.mark.parametrize("term_role", ["predicate", "type"])
++@pytest.mark.parametrize("bind_namespaces", ["rdflib", "none"])
++def test_pretty_xml_invalid_fixed_namespace_local_name(
++    namespace, suffix, term_role, bind_namespaces
++):
++    graph = Graph(bind_namespaces=bind_namespaces)
++    subject = URIRef("http://example.org/subject")
++    term = URIRef(namespace + suffix)
++    if term_role == "predicate":
++        graph.add((subject, term, Literal("value")))
++    else:
++        graph.add((subject, RDF.type, term))
 +
-+    serialized = g.serialize(format=rdf_format)
++    result = graph.serialize(format="pretty-xml")
 +
-+    reparsed = Graph().parse(data=serialized, format="xml")
-+    assert isomorphic(g, reparsed)
-+
-+    if rdf_format == "pretty-xml":
-+        assert "rdf:Description" in serialized
-+        assert '<rdf:type rdf:resource="http://example.org/"/>' in serialized
++    assert isomorphic(graph, Graph().parse(data=result, format="xml"))
 +
 +
-+@pytest.mark.parametrize("rdf_format", ["xml", "pretty-xml"])
-+def test_unshortenable_predicate_raises_in_both_serializers(rdf_format):
-+    """The same unshortenable URI used as a predicate (rather than as an rdf:type object) is not representable in RDF/XML and must still raise, in both serializers (regression test for issue #2409)."""
-+    g = Graph().parse(
-+        data='<http://example.org/a> <http://example.org/> "x" .', format="turtle"
-+    )
-+    with pytest.raises(ValueError, match="Cannot serialize predicate"):
-+        g.serialize(format=rdf_format)
++@pytest.mark.parametrize("namespace", [str(RDF), XMLNS])
++@pytest.mark.parametrize(
++    "subnamespace", ["foo%20", "foo(", "foo)", "fooª", "fooµ", "fooº"]
++)
++@pytest.mark.parametrize("term_role", ["predicate", "type"])
++@pytest.mark.parametrize("bind_namespaces", ["rdflib", "none"])
++def test_pretty_xml_longer_namespace_binding(
++    namespace, subnamespace, term_role, bind_namespaces
++):
++    graph = Graph(bind_namespaces=bind_namespaces)
++    extended = namespace + subnamespace
++    graph.bind("extended", extended)
++    subject = URIRef("http://example.org/subject")
++    term = URIRef(extended + "value")
++    if term_role == "predicate":
++        graph.add((subject, term, Literal("value")))
++    else:
++        graph.add((subject, RDF.type, term))
++
++    result = graph.serialize(format="pretty-xml")
++
++    assert isomorphic(graph, Graph().parse(data=result, format="xml"))
++    assert "<extended:value" in result
++
++
++@pytest.mark.parametrize("namespace", [str(RDF), XMLNS])
++@pytest.mark.parametrize("local_name", ["éclair", "Δelta", "名前", "a\u0301"])
++@pytest.mark.parametrize("term_role", ["predicate", "type"])
++def test_pretty_xml_valid_unicode_local_name(namespace, local_name, term_role):
++    graph = Graph()
++    subject = URIRef("http://example.org/subject")
++    term = URIRef(namespace + local_name)
++    if term_role == "predicate":
++        graph.add((subject, term, Literal("value")))
++    else:
++        graph.add((subject, RDF.type, term))
++
++    result = graph.serialize(format="pretty-xml")
++
++    assert isomorphic(graph, Graph().parse(data=result, format="xml"))
++
++
++@pytest.mark.parametrize("bind_namespaces", ["rdflib", "none"])
++def test_pretty_xml_empty_graph_omits_unused_namespaces(bind_namespaces):
++    graph = Graph(bind_namespaces=bind_namespaces)
++    graph.bind("unused", "http://example.org/?a=1&b=")
++
++    result = graph.serialize(format="pretty-xml")
++
++    assert isomorphic(graph, Graph().parse(data=result, format="xml"))
++    assert result.count("xmlns:") == 1
++    assert 'xmlns:rdf="%s"' % RDF in result
++
++
+ def test_unprefixable_predicate_raises_clear_error():
+     """A predicate equal to a bound namespace/prefix cannot be shortened, and should raise a clear error (regression test for issue #2409)."""
+     g = Graph().parse(data='<a> <> "test"@en .', publicID="http://example.org/")
 ```
 
-**File**: `test/test_serializers/test_serializer_xml.py` (modified, +10/-1)
+**File**: `test/test_serializers/test_xmlwriter_qname.py` (modified, +106/-0)
 ```diff
-@@ -1,6 +1,8 @@
- from io import BytesIO
+@@ -1,4 +1,6 @@
+ import tempfile
++from io import BytesIO
++from xml.etree import ElementTree
  
--from rdflib.graph import Dataset
-+import pytest
-+
-+from rdflib.graph import Dataset, Graph
- from rdflib.namespace import RDFS
- from rdflib.plugins.serializers.rdfxml import XMLSerializer
- from rdflib.term import BNode, URIRef
-@@ -187,3 +189,10 @@ def _assert_expected_object_types_for_predicates(graph, predicates, types):
-             assert True in some_true, (
-                 "Bad type %s for object when predicate is <%s>." % (type(o), p)
-             )
+ import pytest
+ 
+@@ -72,3 +74,107 @@ def test_xmlwriter_qname(uri):
+     xmlwr = XMLWriter(fp, g.namespace_manager, extra_ns={"": TRIXNS, "ex": EXNS})
+ 
+     assert xmlwr.qname(uri[0]) == uri[1]
 +
 +
-+def test_unprefixable_predicate_raises_clear_error():
-+    """A predicate equal to a bound namespace/prefix cannot be shortened, and should raise a clear error (regression test for issue #2409)."""
-+    g = Graph().parse(data='<a> <> "test"@en .', publicID="http://example.org/")
-+    with pytest.raises(ValueError, match="Cannot serialize predicate"):
-+        g.serialize(format="xml")
++@pytest.mark.parametrize(
++    "prefix, namespace",
++    [("rdf", rdflib.Namespace(str(rdflib.RDF))), ("", TRIXNS), ("ex", EXNS)],
++)
++@pytest.mark.parametrize("suffix", ["nested/value", "123value"])
++def test_xmlwriter_extra_namespace_invalid_local_name(prefix, namespace, suffix):
++    graph = rdflib.Graph(bind_namespaces="none")
++    graph.bind(prefix, namespace)
++    writer = XMLWriter(BytesIO(), graph.namespace_manager, extra_ns={prefix: namespace})
++
++    assert writer.qname(namespace[suffix]) == "ns1:value"
++
++
++@pytest.mark.parametrize(
++    "suffix, expected",
++    [
++        ("lang", "xml:lang"),
++        ("/value", "ns1:value"),
++        ("123value", "ns1:namespace123value"),
++    ],
++)
++def test_xmlwriter_xml_namespace_local_name(suffix, expected):
++    graph = rdflib.Graph(bind_namespaces="none")
++    writer = XMLWriter(BytesIO(), graph.namespace_manager)
++
++    assert writer.qname(rdflib.namespace.XMLNS + suffix) == expected
++
++
++@pytest.mark.parametrize(
++    "prefix, namespace",
++    [
++        ("rdf", rdflib.Namespace(str(rdflib.RDF))),
++        ("", TRIXNS),
++        ("ex", EXNS),
++        ("xml", rdflib.Namespace(rdflib.namespace.XMLNS)),
++    ],
++)
++@pytest.mark.parametrize(
++    "subnamespace", ["foo%20", "foo(", "foo)", "fooª", "fooµ", "fooº"]
++)
++def test_xmlwriter_longer_namespace_binding(prefix, namespace, subnamespace):
++    graph = rdflib.Graph(bind_namespaces="none")
++    graph.bind(prefix, namespace)
++    extended = rdflib.Namespace(str(namespace) + subnamespace)
++    graph.bind("extended", extended)
++    extra_ns = {} if prefix == "xml" else {prefix: namespace}
++    writer = XMLWriter(BytesIO(), graph.namespace_manager, extra_ns=extra_ns)
++
++    assert writer.qname(extended.value) == "extended:value"
++
++
++@pytest.mark.parametrize(
++    "namespace, prefix",
++    [(str(rdflib.RDF), "rdf"), (rdflib.namespace.XMLNS, "xml")],
++)
++@pytest.mark.parametrize(
++    "local_name", ["À", "Ö", "Ø", "ö", "ø", "Δelta", "名前", "a\u0301"]
++)
++def test_xmlwriter_valid_unicode_local_name(namespace, prefix, local_name):
++    graph = rdflib.Graph(bind_namespaces="none")
++    writer = XMLWriter(
++        BytesIO(),
++        graph.namespace_manager,
++        extra_ns={"rdf": rdflib.Namespace(str(rdflib.RDF))},
++    )
++
++    assert writer.qname(namespace + local_name) == prefix + ":" + local_name
++
++
++@pytest.mark.parametrize("namespaces", [[], (), {}.items()])
++def test_xmlwriter_explicit_empty_namespaces(namespaces):
++    graph = rdflib.Graph()
++    stream = BytesIO()
++    writer = XMLWriter(stream, graph.namespace_manager, decl=0, extra_ns={"ex": EXNS})
++
++    writer.namespaces(namespaces)
++
++    assert stream.getvalue() == b'\n  xmlns:ex="https://example.org/ns/"\n'
++
++
++def test_xmlwriter_conflicting_namespace_prefix():
++    graph = rdflib.Graph(bind_namespaces="none")
++    graph.bind("ex", EXNS)
++    writer = XMLWriter(BytesIO(), graph.namespace_manager, extra_ns={"ex": TRIXNS})
++
++    with pytest.raises(ValueError, match="Namespace prefix 'ex' is bound to both"):
++        writer.namespaces()
++
++
++def test_xmlwriter_matching_namespace_prefix():
++    graph = rdflib.Graph(bind_namespaces="none")
++    graph.bind("ex", EXNS)
++    stream = BytesIO()
++    writer = XMLWriter(stream, graph.namespace_manager, extra_ns={"ex": EXNS})
++
++    writer.push(EXNS.root)
++    writer.namespaces()
++    writer.pop()
++
++    assert (
++        ElementTree.fromstring(stream.getvalue()).tag == "{https://example.org/ns/}root"
++    )
 ```
 
 ---
 
-### Incident Patch 3: `58c3700e` (2026-10-26)
-**Commit Message**: fix: serialize N-Quads and TriX from a plain Graph (#3535)
+### Incident Patch 3: `f87db10f` (2026-10-28)
+**Commit Message**: fix: count Dataset quads in len() and update documentation (#3515)
 
-* fix: serialize N-Quads and TriX from a plain Graph
+* fix: count Dataset quads in len() and update documentation
 
-N-Quads and TriX rejected non-context-aware stores even though a Graph
-is a valid source of triples. Write Graph data as unlabeled N-Quads and
-drop the TriX guard that blocked an existing Graph write path.
+* fix: count read-only Dataset graphs without writes
 
-* fix: respect graph selection when serializing TriX aggregates
+* fix: exclude quoted formulas from Dataset length
 
-ReadOnlyGraphAggregate inherits ConjunctiveGraph but is not context-aware. Serialize its selected triples through the Graph path instead of enumerating backing-store contexts. Cover independent graph stores and shared stores containing excluded graphs.
+* fix: count Dataset contexts through the owning store
+
+* fix: count asserted Dataset memberships in formula-aware stores
+
+* fix: support blank-node graph selectors in RDF4J size requests
+
+* perf: use native RDF4J repository counts for Dataset length
 
 ---------
 
 Co-authored-by: Edmond Chuc <[REDACTED_EMAIL]>
 
-**File**: `rdflib/plugins/serializers/nquads.py` (modified, +21/-14)
+**File**: `docs/rdf4j.md` (modified, +15/-0)
 ```diff
-@@ -1,27 +1,27 @@
- from __future__ import annotations
+@@ -76,6 +76,21 @@ ds = Dataset(store=store)
  
- import warnings
--from typing import IO, Any
-+from typing import IO, TYPE_CHECKING, Any
+ For more information on how to use RDFLib Graphs and Datasets, see the subsections under [Usage](index.md).
  
- from rdflib.graph import DATASET_DEFAULT_GRAPH_ID, ConjunctiveGraph, Graph
--from rdflib.plugins.serializers.nt import _quoteLiteral
-+from rdflib.plugins.serializers.nt import _nt_row, _quoteLiteral
- from rdflib.serializer import Serializer
- from rdflib.term import Literal
++### Dataset counting performance
++
++`len(ds)` delegates to
++[`RDF4JStore.quad_count()`][rdflib.plugins.stores.rdf4j.RDF4JStore.quad_count],
++which makes one repository-wide size request without listing graphs. This
++also applies when RDF4JStore connects to GraphDB through its RDF4J-compatible
++interface. Counts include explicit statements in the default and named graphs,
++including blank-node graph names, and count a repeated triple once per graph.
++Inferred statements are excluded by the repository size operation, so a query
++that includes inference can return more statements.
++
++`bool(ds)` and `if ds:` make the same size request. Results are not cached;
++each check makes another request. A single request reduces network round trips
++but does not guarantee constant-time work on the server.
++
+ ### Namespaces
  
- __all__ = ["NQuadsSerializer"]
+ When connecting to an RDF4J repository, RDFLib automatically registers a set of built-in namespace prefixes. To disable this behavior, assign a new RDFLib [`NamespaceManager`][rdflib.namespace.NamespaceManager] instance with `bind_namespaces` set to the string `"none"`.
+```
+
+**File**: `docs/upgrade7to8.md` (modified, +20/-0)
+```diff
+@@ -10,3 +10,23 @@ RDFLib 8 requires Python 3.11 or later. Python 3.10 reached end of life on
+ 
+ The optional `lxml` dependency now requires version 4.9.1 or later for
+ Python 3.11 compatibility.
++
++## Dataset length
++
++`len(dataset)` now counts quads: identical triples in different graphs count
++separately, including occurrences in the default graph. Empty named graphs
++and the contents of quoted N3 formulas do not contribute to the count.
++`Graph.__len__()` and `ConjunctiveGraph.__len__()` retain their existing behavior.
++
++Counting delegates to
++[`Store.quad_count()`][rdflib.store.Store.quad_count], which stores can override
++with an equivalent native operation. The Memory store scans asserted graph
++memberships. RDF4JStore uses a single repository-wide size request for RDF4J
++and GraphDB. Other stores may enumerate graphs and count each graph separately,
++potentially issuing multiple remote requests.
++
++`bool(dataset)` and `if dataset:` perform the same count as `len(dataset)`.
++Results are not cached, so repeated checks repeat the work. Avoid assuming
++these operations are constant-time, especially in loops over large or remote
++datasets. A dataset containing only empty named graphs has length zero and is
++false, even though those graph names remain present.
+```
+
+**File**: `examples/datasets.py` (modified, +4/-5)
+```diff
+@@ -66,7 +66,7 @@
+     )
+ )
+ 
+-# We now have 2 distinct quads in the Dataset to the Dataset has a length of 2
++# We now have 2 distinct quads in the Dataset, so the Dataset has a length of 2
+ assert len(d) == 2
+ 
+ # Add another quad to the Dataset specifying a non-existent Graph.
+@@ -179,8 +179,7 @@
+ http://example.com/subject-y, http://example.com/predicate-y, Triple Y, http://example.com/graph-2
+ """
+ 
+-# Adding a triple in graph-1 to graph-2 increases the number of distinct of quads in
+-# the Dataset
++# Adding a triple in graph-1 to graph-2 increases the number of quads in the Dataset
+ d.add(
+     (
+         URIRef("http://example.com/subject-z"),
+@@ -201,8 +200,8 @@
+ http://example.com/subject-z, http://example.com/predicate-z, Triple Z, http://example.com/graph-2
+ """
+ 
+-# but the 'length' of the Dataset is still only 3 as only distinct triples are counted
+-assert len(d) == 3
++# the 'length' of the Dataset is now 4 because each graph occurrence is counted
++assert len(d) == 4
  
  
- class NQuadsSerializer(Serializer):
--    """NQuads RDF graph serializer."""
-+    """NQuads RDF graph serializer.
+ # Looping through triples sees the 'Z' triple only once
+```
+
+**File**: `rdflib/contrib/rdf4j/client.py` (modified, +27/-10)
+```diff
+@@ -43,6 +43,20 @@
+ ObjectType = t.Union[URIRef, Literal, None]
  
--    def __init__(self, store: Graph):
--        if not store.context_aware:
--            raise Exception(
--                "NQuads serialization only makes sense for context-aware stores!"
--            )
-+    Context-aware stores (Dataset / ConjunctiveGraph) are written as quads.
-+    A plain Graph is written as N-Triples-shaped N-Quads (no graph label),
-+    which is valid N-Quads.
-+    """
  
-+    def __init__(self, store: Graph):
-         super(NQuadsSerializer, self).__init__(store)
--        self.store: ConjunctiveGraph
-+        self.store: Graph
- 
-     def serialize(
-         self,
-@@ -38,11 +38,18 @@ def serialize(
-                 f"Given encoding was: {encoding}"
++def _size_context_params(
++    graph_name: IdentifiedNode | Iterable[IdentifiedNode] | str | None,
++) -> dict[str, str | list[str]]:
++    """Encode graph selectors as repeated RDF4J size context parameters."""
++    if graph_name is None:
++        return {}
++    contexts = []
++    for name in (graph_name,) if isinstance(graph_name, str) else graph_name:
++        params: dict[str, str] = {}
++        build_context_param(params, name)
++        contexts.append(params["context"])
++    return {"context": contexts[0] if isinstance(graph_name, str) else contexts}
++
++
+ @dataclass(frozen=True)
+ class NamespaceListingResult:
+     """RDF4J namespace and prefix name result."""
+@@ -425,11 +439,14 @@ def health(self) -> bool:
+                 f"Repository {self._identifier} is not healthy. {err.response.status_code} - {err.response.text}"
              )
-         encoding = self.encoding
--        for context in self.store.contexts():
--            for triple in context:
--                stream.write(
--                    _nq_row(triple, context.identifier).encode(encoding, "replace")
--                )
-+        if self.store.context_aware:
-+            store = self.store
-+            if TYPE_CHECKING:
-+                assert isinstance(store, ConjunctiveGraph)
-+            for context in store.contexts():
-+                for triple in context:
-+                    stream.write(
-+                        _nq_row(triple, context.identifier).encode(encoding, "replace")
-+                    )
-+        else:
-+            for triple in self.store:
-+                stream.write(_nt_row(triple).encode(encoding, "replace"))
-         stream.write("\n".encode("latin-1"))
  
+-    def size(self, graph_name: URIRef | Iterable[URIRef] | str | None = None) -> int:
++    def size(
++        self,
++        graph_name: IdentifiedNode | Iterable[IdentifiedNode] | str | None = None,
++    ) -> int:
+         """The number of statements in the repository or in the specified graph name.
  
-```
-
-**File**: `rdflib/plugins/serializers/trix.py` (modified, +2/-5)
-```diff
-@@ -20,10 +20,6 @@ class TriXSerializer(Serializer):
+         Parameters:
+-            graph_name: Graph name(s) to restrict to.
++            graph_name: Graph name(s) to restrict to, including blank nodes.
  
-     def __init__(self, store: Graph):
-         super(TriXSerializer, self).__init__(store)
--        if not store.context_aware:
--            raise Exception(
--                "TriX serialization only makes sense for context-aware stores"
--            )
+                 The default value `None` queries all graphs.
  
-     def serialize(
-         self,
-@@ -44,7 +40,8 @@ def serialize(
-             self.writer.attribute("http://www.w3.org/XML/1998/namespacebase", base)
-         self.writer.namespaces()
- 
--        if isinstance(self.store, ConjunctiveGraph):
-+        # Non-context-aware aggregates must use their own triple iteration.
-+        if self.store.context_aware and isinstance(self.store, ConjunctiveGraph):
-             for subgraph in self.store.contexts():
-                 self._writeGraph(subgraph)
-         elif isinstance(self.store, Graph):
-```
-
-**File**: `test/test_serializers/test_nquads_default_graph.py` (modified, +36/-1)
-```diff
-@@ -1,4 +1,4 @@
--from rdflib import Dataset
-+from rdflib import Dataset, Graph, Literal, URIRef
- from rdflib.compare import isomorphic
- 
- 
-@@ -37,3 +37,38 @@ def test_nquads_default_graph():
-         assert isomorphic(graph, ds2.graph(graph.identifier)), print(
-             f"{graph.identifier} not isomorphic"
+@@ -442,9 +459,7 @@ def size(self, graph_name: URIRef | Iterable[URIRef] | str | None = None) -> int
+         Raises:
+             RepositoryResponseFormatError: Fails to parse the repository size.
+         """
+-        validate_graph_name(graph_name)
+-        params: dict[str, str] = {}
+-        build_context_param(params, graph_name)
++        params = _size_context_params(graph_name)
+         response = self.http_client.get(
+             f"/repositories/{self.identifier}/size", params=params
          )
-+
-+
-+def test_nquads_serializes_plain_graph():
-+    """N-Quads must accept a non-context-aware Graph (issue #1892)."""
-+    g = Graph()
-+    g.add(
-+        (
-+            URIRef("http://example.org/s"),
-+            URIRef("http://example.org/p"),
-+            Literal("o"),
-+        )
-+    )
-+    data = g.serialize(format="nquads")
-+    assert "<http://example.org/s>" in data
-+    assert '"o"' in data
-+    parsed = Graph()
-+    parsed.parse(data=data, format="nquads")
-+    assert len(parsed) == 1
-+
-+
-+def test_trix_serializes_plain_graph():
-+    """TriX must accept a non-context-aware Graph (issue #1892)."""
-+    g = Graph()
-+    g.add(
-+        (
-+            URIRef("http://example.org/s"),
-+            URIRef("http://example.org/p"),
-+            Literal("o"),
-+        )
-+    )
-+    data = g.serialize(format="trix")
-+    assert "http://example.org/s" in data
-+    parsed = Dataset()
-+    parsed.parse(data=data, format="trix")
-+    assert len(parsed) == 1
+@@ -854,11 +869,14 @@ def ping(self):
+                 f"Transaction ping failed: {response.status_code} - {response.text}"
+             )
+ 
+-    def size(self, graph_name: URIRef | Iterable[URIRef] | str | None = None):
++    def size(
++        self,
++        graph_name: IdentifiedNode | Iterable[IdentifiedNode] | str | None = None,
++    ) -> int:
+         """The number of statements in the repository or in the specified graph name.
+ 
+         Parameters:
+-            graph_name: Graph name(s) to restrict to.
++            graph_name: Graph name(s) to restrict to, including blank nodes.
+ 
+                 The default value `None` queries all graphs.
+ 
+@@ -872,9 +890,8 @@ def size(self, graph_name: URIRef | Iterable[URIRef] | str | None = None):
+             RepositoryResponseFormatError: Fails to parse the repository size.
+         """
+         self._raise_for_closed()
+-        validate_graph_name(graph_name)
+-        params = {"action": "SIZE"}
+-        build_context_param(params, graph_name)
++        params = _size_context_params(graph_name)
++        params["action"] = "SIZE"
+         response = self.repo.http_client.put(self.url, params=params)
+         response.raise_for_status()
+         return self.repo._to_size(response.text)
 ```
 
-**File**: `test/test_serializers/test_serializer.py` (modified, +5/-9)
+**File**: `rdflib/graph.py` (modified, +14/-0)
 ```diff
-@@ -231,19 +231,15 @@ def info_dict(cls) -> GraphFormatInfoDict:
-             ),
-             GraphFormatInfo(
-                 GraphFormat.NQUADS,
--                # TODO FIXME: Currently nquads rejects requests to seralize
--                # non-context-aware stores, this does not make a lot of sense and
--                # should be fixed.
--                #
--                graph_types={GraphType.QUAD},
-+                graph_types={GraphType.TRIPLE, GraphType.QUAD},
-                 encodings={"utf-8"},
-             ),
-             GraphFormatInfo(
-                 GraphFormat.TRIX,
--                # TODO FIXME: Currently trix rejects requests to seralize
--                # non-context-aware stores, this does not make a lot of sense and
--                # should be fixed.
--                #
-+                # TriX can serialize a plain Graph (issue #1892), but parsing
-+                # the result back into a non-context-aware Graph drops triples
-+                # because they land in a named/unnamed dataset graph. Round-trip
-+                # tests therefore stay Dataset-only.
-                 graph_types={GraphType.QUAD},
-                 encodings={"utf-8"},
-             ),
+@@ -2559,6 +2559,9 @@ class Dataset(ConjunctiveGraph):
+     structure to include a graph identifier - archaically called Context - producing
+     'quads' of s, p, o, g.
+ 
++    The length of a Dataset is the number of quads it contains. Identical triples
++    in different graphs are therefore counted separately.
++
+     Triples, or quads, can be added to a Dataset. Triples, or quads with the graph
+     identifer :code:`urn:x-rdflib:default` go into the default graph.
+ 
+@@ -2745,6 +2748,17 @@ def __str__(self) -> str:
+         pattern = "[a rdflib:Dataset;rdflib:storage [a rdflib:Store;rdfs:label '%s']]"
+         return pattern % self.store.__class__.__name__
+ 
++    def __len__(self) -> int:
++        """Number of asserted quads in the dataset.
++
++        Delegates to [`Store.quad_count()`][rdflib.store.Store.quad_count].
++        The cost depends on the store: Memory scans asserted memberships,
++        while RDF4JStore uses one repository-wide size request. Other stores
++        may enumerate graphs and request each graph's length separately.
++        Truth testing also calls this method, and results are not cached.
++        """
++        return self.store.quad_count()
++
+     # type error: Return type "tuple[type[Dataset], tuple[Store, bool]]" of "__reduce__" incompatible with return type "tuple[type[Graph], tuple[Store, IdentifiedNode]]" in supertype "ConjunctiveGraph"
+     # type error: Return type "tuple[type[Dataset], tuple[Store, bool]]" of "__reduce__" incompatible with return type "tuple[type[Graph], tuple[Store, IdentifiedNode]]" in supertype "Graph"
+     def __reduce__(self) -> tuple[type[Dataset], tuple[Store, bool]]:  # type: ignore[override]
 ```
 
-**File**: `test/test_serializers/test_serializer_trix.py` (modified, +30/-1)
+**File**: `rdflib/plugins/stores/rdf4j.py` (modified, +4/-0)
 ```diff
-@@ -1,6 +1,9 @@
- from io import BytesIO
+@@ -220,3 +220,7 @@ def remove_graph(self, graph: Graph) -> None:
  
--from rdflib.graph import Dataset, Graph
-+import pytest
+     def __len__(self, context: _ContextType | None = None) -> int:
+         return self.repo.size(context if context is None else context.identifier)
 +
-+from rdflib.graph import Dataset, Graph, ReadOnlyGraphAggregate
-+from rdflib.namespace import Namespace
- from rdflib.term import Literal, URIRef
++    def quad_count(self) -> int:
++        """Count explicit quads with one repository-wide size request."""
++        return self.repo.size()
+```
+
+**File**: `rdflib/store.py` (modified, +35/-0)
+```diff
+@@ -360,6 +360,41 @@ def __len__(self, context: _ContextType | None = None) -> int:  # type: ignore[e
+             context: a graph instance to query or None
+         """
+ 
++    def quad_count(self) -> int:
++        """Return the number of non-quoted statement memberships in the store.
++
++        Count each graph occurrence separately, including the default graph.
++        Empty graphs contribute zero. This does not change the behavior of
++        [`Store.__len__()`][rdflib.store.Store.__len__].
++
++        Stores can override this operation with an equivalent native count.
++        The fallback scans asserted memberships for formula-aware stores and
++        otherwise enumerates contexts and sums their lengths. The latter may
++        require a remote request per graph, plus context enumeration.
++        """
++        if not self.context_aware:
++            return self.__len__()
++        if self.formula_aware:
++            # Quoted and asserted graphs can share an identifier, so a graph's
++            # type and length cannot distinguish their statement memberships.
++            return sum(
++                1 for _, contexts in self.triples((None, None, None)) for _ in contexts
++            )
++
++        from rdflib.graph import DATASET_DEFAULT_GRAPH_ID, Graph
++
++        count = 0
++        default_graph_seen = False
++        for context in self.contexts():
++            # Some stores return identifiers rather than Graph objects.
++            identifier = context.identifier if isinstance(context, Graph) else context
++            graph = Graph(self, identifier=identifier)
++            count += self.__len__(graph)
++            default_graph_seen |= graph.identifier == DATASET_DEFAULT_GRAPH_ID
++        if not default_graph_seen:
++            count += self.__len__(Graph(self, identifier=DATASET_DEFAULT_GRAPH_ID))
++        return count
++
+     # type error: Missing return statement
+     def contexts(  # type: ignore[empty-body]
+         self, triple: _TripleType | None = None
+```
+
+**File**: `test/test_dataset/test_dataset.py` (modified, +67/-1)
+```diff
+@@ -9,7 +9,7 @@
+ import pytest
+ 
+ from rdflib import BNode, Namespace, Node, URIRef, plugin
+-from rdflib.graph import DATASET_DEFAULT_GRAPH_ID, Dataset, Graph
++from rdflib.graph import DATASET_DEFAULT_GRAPH_ID, Dataset, Graph, QuotedGraph
+ from rdflib.store import Store
+ from test.data import CHEESE, CONTEXT1, CONTEXT2, LIKES, PIZZA, TAREK
+ 
+@@ -200,6 +200,68 @@ def test_default_graph(get_dataset):
+     assert set(dataset.graphs()) == set([dataset.default_graph])
  
  
-@@ -46,6 +49,32 @@ def test_serialize():
-         assert q[0:3] in tg
- 
- 
-+@pytest.mark.parametrize("shared_store", [False, True], ids=["independent", "shared"])
-+def test_serialize_aggregate(shared_store: bool) -> None:
-+    """Only the aggregate's selected triples should appear in its TriX output."""
-+    ex = Namespace("http://example.org/")
++def test_len_counts_quads() -> None:
 +    dataset = Dataset()
-+    if shared_store:
-+        graphs = [dataset.graph(ex.graph1), dataset.graph(ex.graph2)]
++    dataset.graph(URIRef("https://example.com/g1")).add((TAREK, LIKES, PIZZA))
++    dataset.graph(URIRef("https://example.com/g2")).add((TAREK, LIKES, PIZZA))
++
++    assert len(dataset) == 2
++
++
++def test_len_excludes_quoted_formulas() -> None:
++    dataset = Dataset().parse(
++        data="@prefix : <urn:test:> . { :a :b :c } => { :d :e :f } .",
++        format="n3",
++    )
++
++    assert len(dataset) == 1
++    assert sum(1 for _ in dataset.quads()) == 1
++
++
++@pytest.mark.parametrize("quoted_first", [True, False])
++@pytest.mark.parametrize(
++    "identifier",
++    [URIRef("urn:shared"), DATASET_DEFAULT_GRAPH_ID],
++    ids=["named", "default"],
++)
++def test_len_counts_asserted_memberships(
++    identifier: URIRef, quoted_first: bool
++) -> None:
++    dataset = Dataset()
++    additions = [
++        (
++            QuotedGraph(dataset.store, identifier),
++            (URIRef("urn:quoted"), LIKES, PIZZA),
++        ),
++        (
++            Graph(dataset.store, identifier),
++            (URIRef("urn:asserted"), LIKES, PIZZA),
++        ),
++    ]
++    for graph, triple in additions if quoted_first else reversed(additions):
++        graph.add(triple)
++
++    assert len(dataset) == 1
++    assert bool(dataset) is True
++    assert sum(1 for _ in dataset.quads()) == 1
++
++
++@pytest.mark.parametrize("context_kind", ["self", "shared-store", "separate-store"])
++def test_len_counts_dataset_context(context_kind: str) -> None:
++    dataset = Dataset()
++    if context_kind == "self":
++        context = dataset
++    elif context_kind == "shared-store":
++        context = Dataset(store=dataset.store)
 +    else:
-+        graphs = [Graph(), Graph()]
-+    triple1 = (ex.subject1, ex.predicate, Literal("selected 1"))
-+    triple2 = (ex.subject2, ex.predicate, Literal("selected 2"))
-+    graphs[0].add(triple1)
-+    graphs[1].add(triple2)
-+    dataset.graph(ex.excluded).add((ex.excluded, ex.predicate, Literal("excluded")))
++        context = Dataset()
++    dataset.add((TAREK, LIKES, PIZZA, context))
++    dataset.graph(URIRef("urn:other")).add((TAREK, LIKES, PIZZA))
 +
-+    if shared_store:
-+        aggregate = ReadOnlyGraphAggregate(graphs, store=dataset.store)
-+    else:
-+        aggregate = ReadOnlyGraphAggregate(graphs)
-+    data = aggregate.serialize(format="trix")
-+    parsed = Dataset()
-+    parsed.parse(data=data, format="trix")
-+
-+    assert {triple[:3] for triple in parsed.quads()} == {triple1, triple2}
++    assert len(dataset) == 2
++    assert sum(1 for _ in dataset.quads()) == 2
 +
 +
- def test_issue_250():
-     """
+ def test_dataset_default_context_public_access_warns() -> None:
+     dataset = Dataset()
  
+@@ -302,6 +364,9 @@ def test_not_union(get_dataset):
+ def test_iter(get_dataset):
+     store, d = get_dataset
+     """PR 1382: adds __iter__ to Dataset"""
++    if store == "SPARQLUpdateStore":
++        pytest.skip("SPARQLUpdateStore does not expose contexts through triples()")
++
+     uri_a = URIRef("https://example.com/a")
+     uri_b = URIRef("https://example.com/b")
+     uri_c = URIRef("https://example.com/c")
+@@ -329,6 +394,7 @@ def test_iter(get_dataset):
+         i_new += 1
+ 
+     assert i_new == i_trad  # both should be 3
++    assert len(d) == i_new
+ 
+ 
+ @pytest.mark.parametrize(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3643** (2026-10-28): build(deps): bump berkeleydb from 18.1.16 to 18.1.17 (@dependabot[bot])
+- **PR #3642** (2026-10-28): build(deps-dev): bump zensical from 0.0.67 to 0.0.72 (@dependabot[bot])
+- **PR #3641** (2026-10-28): build(deps): bump library/python from 3.15.0-slim to 3.15.1-slim in /docker/latest (@dependabot[bot])
+- **PR #3640** (2026-10-28): build(deps): bump library/python from 3.15.0-slim to 3.15.1-slim in /docker/unstable (@dependabot[bot])
+- **PR #3638** (2026-10-27): move from httpx to httpx2 (@nicholascar)
 - **PR #3637** (2026-10-27): fix: preserve IRIs when relativizing serializer output (@rohithobillaneni)
-- **PR #3636** (2026-10-27): feat: add nq alias for N-Quads (@hifarrer)
-- **PR #3635** (2026-10-26): build!: require Python 3.11 for RDFLib 8 (@edmondchuc)
-- **PR #3634** (2026-10-26): docs: restore example pages and resolve API links (@edmondchuc)
-- **PR #3633** (2026-10-27): build(deps): bump library/python from 3.14.8-slim to 3.15.0-slim in /docker/unstable (@dependabot[bot])
-- **PR #3632** (2026-10-27): build(deps): bump library/python from 3.14.8-slim to 3.15.0-slim in /docker/latest (@dependabot[bot])
 
 ---
 
@@ -2364,31 +2644,36 @@ Co-authored-by: Edmond Chuc <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-dev): bump pytest-cov from 5.0.0 to 7.1.0 (#3594)
+## X. restrict ConjunctiveGraph.quads() to the requested context (#3499)
 
 **RULE**:
-When implementing operations in `pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RDFLib/rdflib. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rdflib/graph.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RDFLib/rdflib. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `50156d06`: build(deps-dev): bump pytest-cov from 5.0.0 to 7.1.0 (#3594). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6262c3ed`: restrict ConjunctiveGraph.quads() to the requested context (#3499). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyproject.toml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `rdflib/graph.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    "pytest-cov>=7,<8",
-    "coverage[toml]>=7.10.6,<8.0.0",
-patch = ["subprocess"]
+            if c is not None:
+                # A context was requested, so only that context is relevant;
+                # the store also reports the other contexts the triple
+                # appears in, which must not leak into the result.
+                yield s, p, o, c
+            else:
+                for ctx in cg:
+                    yield s, p, o, ctx
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    "pytest-cov>=4,<6",
-    "coverage[toml]>=7.0.1,<8.0.0",
+            for ctx in cg:
+                yield s, p, o, ctx
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `50156d06` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6262c3ed` are properly handled with clean fallback behavior.

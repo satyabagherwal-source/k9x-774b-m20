@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T16:32:46.027Z",
+  "last_updated": "2026-10-30T16:44:33.523Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5676,14 +5676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gravitl-netmaker",
-      "content_hash": "e3f9828f89ae79739709ca3391861d2aba7b27c4804637c0c6d3afbc625b867d",
-      "verified_at": "2026-10-29T17:03:38.425Z",
+      "content_hash": "2b2f39c39d2f2531fee0f10e4004445860876eed806ac17493e1241e2f021861",
+      "verified_at": "2026-10-30T16:39:42.323Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T17:03:38.425Z"
+      "last_updated": "2026-10-30T16:39:42.323Z"
     },
     "pixeltable/pixeltable": {
       "repository": "pixeltable/pixeltable",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "5538f39f701176080ae418b0f3be2bf1fcb23a29d390fb42c27d20aab93a45b5",
-      "verified_at": "2026-10-28T18:48:30.379Z",
+      "content_hash": "de785172c1c2311c7afb7e94c6d6d72cfb811600b0ad9f3c8f0334ec0af2b683",
+      "verified_at": "2026-10-30T16:44:33.522Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:48:30.379Z"
+      "last_updated": "2026-10-30T16:44:33.522Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",
@@ -14646,14 +14646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rdflib-rdflib",
-      "content_hash": "6718fc12268c615a2a34b627c10192758af168a70bdc932cf69963e153f03299",
-      "verified_at": "2026-10-27T14:07:20.028Z",
+      "content_hash": "0fba0aed5ae068dcfda1cc8b8b926a9186e3b8f8e13304c3c6be36f1ad0eee86",
+      "verified_at": "2026-10-30T16:39:35.942Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:07:20.028Z"
+      "last_updated": "2026-10-30T16:39:35.942Z"
     },
     "KartikLabhshetwar/better-shot": {
       "repository": "KartikLabhshetwar/better-shot",

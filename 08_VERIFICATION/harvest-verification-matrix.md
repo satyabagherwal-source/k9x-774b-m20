@@ -6238,3 +6238,6 @@
 | `CYCLE-20261030-KNMA` | `2026-10-30T16:22:35.410Z` | `mobile-next/mobile-mcp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5798` | Yes (`c3d80314...`) |
 | `CYCLE-20261030-U9D3` | `2026-10-30T16:30:03.495Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5799` | Yes (`5248660f...`) |
 | `CYCLE-20261030-XQRI` | `2026-10-30T16:32:46.014Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5800` | Yes (`e1d40336...`) |
+| `CYCLE-20261030-6J21` | `2026-10-30T16:39:35.929Z` | `RDFLib/rdflib` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5801` | Yes (`0fba0aed...`) |
+| `CYCLE-20261030-6NZA` | `2026-10-30T16:39:42.310Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5802` | Yes (`2b2f39c3...`) |
+| `CYCLE-20261030-CWO5` | `2026-10-30T16:44:33.509Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5803` | Yes (`de785172...`) |

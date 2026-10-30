@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-QOEO",
-    "timestamp": "2026-10-28T10:20:00.912Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-psrben-visionhope",
-    "contentHash": "c2cd76b795a830c4291740f2007a2da96dc0a0101414a5a12c7e15fbdb1b33e9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-LAKO",
-    "timestamp": "2026-10-28T10:43:49.320Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "6693cca0ba7e82ce2a553b8d18f5babc40160e5bd9828ccf67c53fe048d4caba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-WJP4",
-    "timestamp": "2026-10-28T10:52:34.360Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-    "contentHash": "0ab3c0b63551c4c902b2d01ae13aac6c7bb8e0f9ec21b1e3bacc0843cd045007",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-CKXS",
     "timestamp": "2026-10-28T11:05:02.464Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -7490,6 +7445,51 @@
     "repository": "beclab/Olares",
     "learningId": "learn-github-beclab-olares",
     "contentHash": "e1d403365c53f181ab8e4eec63b14b35828ed9d1fcbbbeb7d0966dd2245fcefb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-6J21",
+    "timestamp": "2026-10-30T16:39:35.929Z",
+    "repository": "RDFLib/rdflib",
+    "learningId": "learn-github-rdflib-rdflib",
+    "contentHash": "0fba0aed5ae068dcfda1cc8b8b926a9186e3b8f8e13304c3c6be36f1ad0eee86",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-6NZA",
+    "timestamp": "2026-10-30T16:39:42.310Z",
+    "repository": "gravitl/netmaker",
+    "learningId": "learn-github-gravitl-netmaker",
+    "contentHash": "2b2f39c39d2f2531fee0f10e4004445860876eed806ac17493e1241e2f021861",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-CWO5",
+    "timestamp": "2026-10-30T16:44:33.509Z",
+    "repository": "restatedev/restate",
+    "learningId": "learn-github-restatedev-restate",
+    "contentHash": "de785172c1c2311c7afb7e94c6d6d72cfb811600b0ad9f3c8f0334ec0af2b683",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

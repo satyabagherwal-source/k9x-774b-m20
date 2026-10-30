@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `0a8dba49`  
+> **Source Version**: `ee6c2133`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T17:03:37.736Z  
+> **Timestamp**: 2026-10-30T16:39:41.602Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T17:03:37.185Z  
+> **Harvest Timestamp**: 2026-10-30T16:39:41.392Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11845 stars
+- **Stars / Engagement**: 11848 stars
 
 ---
 
@@ -1017,179 +1017,318 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0a8dba49` (2026-10-29)
-**Commit Message**: List Auto Relayed Peers for a Node API (#4208)
+### Incident Patch 1: `9acda995` (2026-10-30)
+**Commit Message**: Pre-Release Fixes v1.8.0 (#4210)
 
-**File**: `controllers/middleware.go` (modified, +6/-0)
+* fix(go): validate traffic public key;
+
+* feat(go): rekey tenant idp sync hook;
+
+* feat(go): check if membership exists before creating;
+
+* feat(go): parse node addr without cidr as well;
+
+* feat(go): only check for orphans before the cursor;
+
+* feat(go): normalize usernames in idp synced users;
+
+* feat(go): allow patch method;
+
+* feat(go): allow master user to list all tenants;
+
+* feat(go): publish server sync for non-master pods on idp sync hook rekey;
+
+* feat(go): add before peer can be skipped;
+
+* feat(go): ignore vendor dir;
+
+* fix(go): use normalized usernames when verifying auth request;
+
+* fix(go): return error on user device host sso callback if user is disabled;
+
+**File**: `logic/peers.go` (modified, +9/-9)
 ```diff
-@@ -149,6 +149,12 @@ func userMiddleWare(handler http.Handler) http.Handler {
- 			r.Header.Set("NET_ID", node.Network)
- 
+@@ -407,6 +407,15 @@ func (g *PeerGraph) PeerUpdateForHost(ctx context.Context, network string, host
+ 			if UserDevicesAreNotPeers(host, peerHost) {
+ 				continue
+ 			}
++			if host.EnableFlowLogs {
++				peerIdentity := nodeFlowIdentity(&peer, peerHost)
++				if peer.Address.IP != nil {
++					hostPeerUpdate.AddressIdentityMap[peer.Address.IP.String()+"/32"] = peerIdentity
++				}
++				if peer.Address6.IP != nil {
++					hostPeerUpdate.AddressIdentityMap[peer.Address6.IP.String()+"/128"] = peerIdentity
++				}
++			}
+ 			peerConfig := wgtypes.PeerConfig{
+ 				PublicKey:                   peerHost.PublicKey.Key,
+ 				PersistentKeepaliveInterval: &peerHost.PersistentKeepalive,
+@@ -643,15 +652,6 @@ func (g *PeerGraph) PeerUpdateForHost(ctx context.Context, network string, host
+ 				hostPeerUpdate.PeerIDs[peerHost.PublicKey.String()] = ida
+ 				hostPeerUpdate.NodePeers = append(hostPeerUpdate.NodePeers, nodePeer)
+ 			}
+-			if host.EnableFlowLogs {
+-				peerIdentity := nodeFlowIdentity(&peer, peerHost)
+-				if peer.Address.IP != nil {
+-					hostPeerUpdate.AddressIdentityMap[peer.Address.IP.String()+"/32"] = peerIdentity
+-				}
+-				if peer.Address6.IP != nil {
+-					hostPeerUpdate.AddressIdentityMap[peer.Address6.IP.String()+"/128"] = peerIdentity
+-				}
+-			}
  		}
-+		if strings.Contains(route, "auto_relayed_peers") {
-+			r.Header.Set("TARGET_RSRC", schema.HostRsrc.String())
-+			nodeID := r.Header.Get("TARGET_RSRC_ID")
-+			node, _ := logic.GetNodeByID(nodeID)
-+			r.Header.Set("NET_ID", node.Network)
-+		}
- 		if hostID, ok := params["hostid"]; ok {
- 			r.Header.Set("TARGET_RSRC_ID", hostID)
- 		}
+ 		logInternetEgressBypassConfig(&node, hostPeerUpdate)
+ 		var extPeers []wgtypes.PeerConfig
 ```
 
-**File**: `pro/controllers/auto_relay.go` (modified, +110/-0)
+**File**: `pro/auth/azure-ad.go` (modified, +7/-2)
 ```diff
-@@ -6,10 +6,12 @@ import (
- 	"errors"
- 	"fmt"
- 	"net/http"
-+	"strconv"
+@@ -186,15 +186,18 @@ func (p *AzureADProvider) HandleCallback(w http.ResponseWriter, r *http.Request)
  
- 	"github.com/gorilla/mux"
- 	controller "github.com/gravitl/netmaker/controllers"
- 	"github.com/gravitl/netmaker/db"
-+	dbtypes "github.com/gravitl/netmaker/db/types"
- 	"github.com/gravitl/netmaker/logger"
- 	"github.com/gravitl/netmaker/logic"
- 	"github.com/gravitl/netmaker/middleware"
-@@ -20,6 +22,7 @@ import (
- 	"github.com/gravitl/netmaker/scope"
- 	"github.com/gravitl/netmaker/servercfg"
- 	"golang.org/x/exp/slog"
-+	"gorm.io/gorm"
- )
+ 	newPass, fetchErr := logic.FetchOAuthSecret(r.Context())
+ 	if fetchErr != nil {
++		logger.Log(0, "failed to fetch oauth secret:", fetchErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 	authRequest := models.UserAuthParams{
+-		UserName: content.UserPrincipalName,
++		UserName: user.Username,
+ 		Password: newPass,
+ 	}
+ 	jwt, jwtErr := logic.VerifyAuthRequest(r.Context(), authRequest, state.AppName)
+ 	if jwtErr != nil {
+-		logger.Log(1, "could not parse jwt for user", authRequest.UserName)
++		logger.Log(1, "could not parse jwt for user", authRequest.UserName, jwtErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
  
- // AutoRelayHandlers - handlers for AutoRelay
-@@ -38,6 +41,8 @@ func AutoRelayHandlers(r *mux.Router) {
- 		Methods(http.MethodPut)
- 	r.HandleFunc("/api/v1/node/{nodeid}/auto_relay_check", middleware.Scope(scope.TenantScope, controller.AuthorizeHost(http.HandlerFunc(checkautoRelayCtx)))).
- 		Methods(http.MethodGet)
-+	r.HandleFunc("/api/v1/node/{nodeid}/auto_relayed_peers", middleware.Scope(scope.TenantScope, logic.SecurityCheck(true, http.HandlerFunc(listAutoRelayedPeers)))).
-+		Methods(http.MethodGet)
+@@ -256,6 +259,8 @@ func (p *AzureADProvider) GetUserInfo(state string, code string) (*OAuthUser, er
+ 	if userInfo.Email == "" && userInfo.UserPrincipalName != "" {
+ 		userInfo.Email = userInfo.UserPrincipalName
+ 	}
++	userInfo.Email = normalizeUsername(userInfo.Email)
++	userInfo.UserPrincipalName = normalizeUsername(userInfo.UserPrincipalName)
+ 	if userInfo.Email == "" {
+ 		return userInfo, errors.New("failed to fetch user email from SSO state")
+ 	}
+```
+
+**File**: `pro/auth/github.go` (modified, +8/-4)
+```diff
+@@ -196,15 +196,18 @@ func (p *GitHubProvider) HandleCallback(w http.ResponseWriter, r *http.Request)
+ 
+ 	newPass, fetchErr := logic.FetchOAuthSecret(r.Context())
+ 	if fetchErr != nil {
++		logger.Log(0, "failed to fetch oauth secret:", fetchErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 	authRequest := models.UserAuthParams{
+-		UserName: content.Email,
++		UserName: user.Username,
+ 		Password: newPass,
+ 	}
+ 	jwt, jwtErr := logic.VerifyAuthRequest(r.Context(), authRequest, state.AppName)
+ 	if jwtErr != nil {
+-		logger.Log(1, "could not parse jwt for user", authRequest.UserName)
++		logger.Log(1, "could not parse jwt for user", authRequest.UserName, jwtErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 
+@@ -224,8 +227,8 @@ func (p *GitHubProvider) HandleCallback(w http.ResponseWriter, r *http.Request)
+ 		},
+ 		Origin: schema.Dashboard,
+ 	})
+-	logger.Log(1, "completed github OAuth signin for", content.Email)
+-	http.Redirect(w, r, servercfg.GetFrontendURL()+"/login?login="+jwt+"&user="+content.Email, http.StatusPermanentRedirect)
++	logger.Log(1, "completed github OAuth signin for", user.Username)
++	http.Redirect(w, r, servercfg.GetFrontendURL()+"/login?login="+jwt+"&user="+user.Username, http.StatusPermanentRedirect)
  }
  
- // @Summary     Get auto relay nodes
-@@ -86,6 +91,111 @@ func getAutoRelayGws(w http.ResponseWriter, r *http.Request) {
- 	logic.ReturnSuccessResponseWithJson(w, r, returnautoRelayNodes, "get autorelay node successfully")
+ func (p *GitHubProvider) GetUserInfo(state, code string) (*OAuthUser, error) {
+@@ -270,6 +273,7 @@ func (p *GitHubProvider) GetUserInfo(state, code string) (*OAuthUser, error) {
+ 			logger.Log(0, "failed to fetch user's email from github: ", err.Error())
+ 		}
+ 	}
++	userInfo.Email = normalizeUsername(userInfo.Email)
+ 	if userInfo.Email == "" {
+ 		return userInfo, errors.New("failed to fetch user email from SSO state")
+ 	}
+```
+
+**File**: `pro/auth/google.go` (modified, +8/-4)
+```diff
+@@ -187,15 +187,18 @@ func (p *GoogleProvider) HandleCallback(w http.ResponseWriter, r *http.Request)
+ 
+ 	newPass, fetchErr := logic.FetchOAuthSecret(r.Context())
+ 	if fetchErr != nil {
++		logger.Log(0, "failed to fetch oauth secret:", fetchErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 	authRequest := models.UserAuthParams{
+-		UserName: content.Email,
++		UserName: user.Username,
+ 		Password: newPass,
+ 	}
+ 	jwt, jwtErr := logic.VerifyAuthRequest(r.Context(), authRequest, state.AppName)
+ 	if jwtErr != nil {
+-		logger.Log(1, "could not parse jwt for user", authRequest.UserName)
++		logger.Log(1, "could not parse jwt for user", authRequest.UserName, jwtErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 
+@@ -216,8 +219,8 @@ func (p *GoogleProvider) HandleCallback(w http.ResponseWriter, r *http.Request)
+ 		Origin: schema.Dashboard,
+ 	})
+ 
+-	logger.Log(1, "completed google OAuth signin for", content.Email)
+-	http.Redirect(w, r, fmt.Sprintf("%s/login?login=%s&user=%s", servercfg.GetFrontendURL(), jwt, content.Email), http.StatusPermanentRedirect)
++	logger.Log(1, "completed google OAuth signin for", user.Username)
++	http.Redirect(w, r, fmt.Sprintf("%s/login?login=%s&user=%s", servercfg.GetFrontendURL(), jwt, user.Username), http.StatusPermanentRedirect)
  }
  
-+// @Summary     List a node's auto-relayed peers
-+// @Router      /api/v1/node/{nodeid}/auto_relayed_peers [get]
-+// @Tags        Auto Relay
-+// @Security    oauth
-+// @Produce     json
-+// @Param       nodeid path string true "Node ID"
-+// @Param       q query string false "Search across fields"
-+// @Param       page query int false "Page number"
-+// @Param       per_page query int false "Items per page"
-+// @Success     200 {object} models.PaginatedResponse
-+// @Failure     400 {object} models.ErrorResponse
-+// @Failure     500 {object} models.ErrorResponse
-+func listAutoRelayedPeers(w http.ResponseWriter, r *http.Request) {
-+	var params = mux.Vars(r)
-+	nodeid := params["nodeid"]
-+	node, err := logic.GetNodeByID(nodeid)
-+	if err != nil {
-+		logic.ReturnErrorResponse(w, r, logic.FormatError(err, "badrequest"))
+ func (p *GoogleProvider) GetUserInfo(state string, code string) (*OAuthUser, error) {
+@@ -248,5 +251,6 @@ func (p *GoogleProvider) GetUserInfo(state string, code string) (*OAuthUser, err
+ 		return nil, fmt.Errorf("failed parsing email from response data: %s", err.Error())
+ 	}
+ 	userInfo.AccessToken = string(data)
++	userInfo.Email = normalizeUsername(userInfo.Email)
+ 	return userInfo, nil
+ }
+```
+
+**File**: `pro/auth/headless_callback.go` (modified, +6/-3)
+```diff
+@@ -97,18 +97,21 @@ func HandleHeadlessSSOCallback(w http.ResponseWriter, r *http.Request) {
+ 	}
+ 	newPass, fetchErr := logic.FetchOAuthSecret(r.Context())
+ 	if fetchErr != nil {
++		logger.Log(0, "failed to fetch oauth secret:", fetchErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 	jwt, jwtErr := logic.VerifyAuthRequest(r.Context(), models.UserAuthParams{
+ 		UserName: user.Username,
+ 		Password: newPass,
+ 	}, logic.NetclientApp)
+ 	if jwtErr != nil {
+-		logger.Log(1, "could not parse jwt for user", userClaims.getUserName())
++		logger.Log(1, "could not parse jwt for user", user.Username, jwtErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 
+-	logger.Log(1, "headless SSO login by user:", userClaims.getUserName())
++	logger.Log(1, "headless SSO login by user:", user.Username)
+ 
+ 	// Send OK to user in the browser
+ 	var response bytes.Buffer
+@@ -117,7 +120,7 @@ func HandleHeadlessSSOCallback(w http.ResponseWriter, r *http.Request) {
+ 		Verb: "authenticated",
+ 	}); err != nil {
+ 		logger.Log(0, "Could not render SSO callback template ", err.Error())
+-		response := returnErrTemplate(userClaims.getUserName(), "Could not render SSO callback template", state, reqKeyIf)
++		response := returnErrTemplate(user.Username, "Could not render SSO callback template", state, reqKeyIf)
+ 		w.WriteHeader(http.StatusInternalServerError)
+ 		w.Write(response)
+ 	} else {
+```
+
+**File**: `pro/auth/oidc.go` (modified, +7/-3)
+```diff
+@@ -196,15 +196,18 @@ func (p *OIDCProvider) HandleCallback(w http.ResponseWriter, r *http.Request) {
+ 
+ 	newPass, fetchErr := logic.FetchOAuthSecret(r.Context())
+ 	if fetchErr != nil {
++		logger.Log(0, "failed to fetch oauth secret:", fetchErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 	authRequest := models.UserAuthParams{
+-		UserName: content.Email,
++		UserName: user.Username,
+ 		Password: newPass,
+ 	}
+ 	jwt, jwtErr := logic.VerifyAuthRequest(r.Context(), authRequest, state.AppName)
+ 	if jwtErr != nil {
+ 		logger.Log(1, "could not parse jwt for user", authRequest.UserName, jwtErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 
+@@ -224,8 +227,8 @@ func (p *OIDCProvider) HandleCallback(w http.ResponseWriter, r *http.Request) {
+ 		},
+ 		Origin: schema.Dashboard,
+ 	})
+-	logger.Log(1, "completed OIDC OAuth signin for", content.Email)
+-	http.Redirect(w, r, servercfg.GetFrontendURL()+"/login?login="+jwt+"&user="+content.Email, http.StatusPermanentRedirect)
++	logger.Log(1, "completed OIDC OAuth signin for", user.Username)
++	http.Redirect(w, r, servercfg.GetFrontendURL()+"/login?login="+jwt+"&user="+user.Username, http.StatusPermanentRedirect)
+ }
+ 
+ func (p *OIDCProvider) GetUserInfo(state string, code string) (u *OAuthUser, e error) {
+@@ -265,5 +268,6 @@ func (p *OIDCProvider) GetUserInfo(state string, code string) (u *OAuthUser, e e
+ 		e = fmt.Errorf("error when claiming OIDCUser: %w", err)
+ 	}
+ 	u.ID = StringOrInt(idToken.Subject)
++	u.Email = normalizeUsername(u.Email)
+ 	return
+ }
+```
+
+**File**: `pro/auth/register_callback.go` (modified, +10/-4)
+```diff
+@@ -76,17 +76,23 @@ func HandleHostSSOCallback(w http.ResponseWriter, r *http.Request) {
+ 		return
+ 	}
+ 	if user.PlatformRoleID != schema.AdminRole && user.PlatformRoleID != schema.SuperAdminRole {
+-		response := returnErrTemplate(userClaims.getUserName(), "only admin users can register using SSO", state, reqKeyIf)
++		response := returnErrTemplate(user.Username, "only admin users can register using SSO", state, reqKeyIf)
+ 		w.WriteHeader(http.StatusForbidden)
+ 		w.Write(response)
+ 		return
+ 	}
+-	logger.Log(1, "registering host for user:", userClaims.getUserName(), reqKeyIf.Host.Name, reqKeyIf.Host.ID.String())
++	if user.AccountDisabled {
++		response := returnErrTemplate(user.Username, "user is disabled", state, reqKeyIf)
++		w.WriteHeader(http.StatusForbidden)
++		w.Write(response)
 +		return
 +	}
-+
-+	q := r.URL.Query().Get("q")
-+
-+	var page, pageSize int
-+	page, _ = strconv.Atoi(r.URL.Query().Get("page"))
-+	if page == 0 {
-+		page = 1
-+	}
-+	pageSize, _ = strconv.Atoi(r.URL.Query().Get("per_page"))
-+	if pageSize < 1 || pageSize > 100 {
-+		pageSize = 10
-+	}
-+
-+	peerIDs := make([]interface{}, 0, len(node.AutoRelayedPeers))
-+	for peerID := range node.AutoRelayedPeers {
-+		peerIDs = append(peerIDs, peerID)
-+	}
-+
-+	response := models.PaginatedResponse{
-+		Data:       []models.NodeWithHost{},
-+		Page:       page,
-+		PerPage:    pageSize,
-+		Total:      0,
-+		TotalPages: 1,
-+	}
-+	if len(peerIDs) == 0 {
-+		w.Header().Set("Content-Type", "application/json")
-+		logic.ReturnSuccessResponseWithJson(w, r, response, "fetched auto relayed peers successfully")
-+		return
-+	}
-+
-+	nodeTable := (&schema.Node{}).TableName()
-+	var filters, options []dbtypes.Option
-+	filters = append(filters, dbtypes.WithFilter(fmt.Sprintf("%s.id", nodeTable), peerIDs...))
-+	filters = append(filters, func(db *gorm.DB) *gorm.DB {
-+		return db.Joins("JOIN hosts_v1 ON hosts_v1.id = nodes_v1.host_id")
-+	})
-+	filters = append(filters, dbtypes.WithSearchQuery(
-+		q,
-+		fmt.Sprintf("%s.id", nodeTable),
-+		"hosts_v1.name",
-+		fmt.Sprintf("%s.address", nodeTable),
-+		fmt.Sprintf("%s.address6", nodeTable),
-+	))
-+	options = append(options, filters...)
-+	options = append(options, dbtypes.WithPreloads("Host"))
-+	options = append(options, dbtypes.InAscOrder(fmt.Sprintf("%s.created_at", nodeTable)))
-+	options = append(options, dbtypes.WithPagination(page, pageSize))
-+
-+	_nodes, err := (&schema.Node{}).ListAll(r.Context(), options...)
-+	if err != nil {
-+		err = fmt.Errorf("failed to fetch auto relayed peers for node %s: %v", nodeid, err)
-+		logger.Log(0, r.Header.Get("user"), err.Error())
-+		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
-+		return
-+	}
-+
-+	peers := make([]models.NodeWithHost, 0, len(_nodes))
-+	for _, _node := range _nodes {
-+		var peer models.NodeWithHost
-+		peer.Fill(&_node)
-+		peers = append(peers, peer)
-+	}
-+
-+	total, err := (&schema.Node{}).Count(r.Context(), filters...)
-+	if err != nil {
-+		err = fmt.Errorf("failed to count auto relayed peers for node %s: %v", nodeid, err)
-+		logger.Log(0, r.Header.Get("user"), err.Error())
-+		logic.ReturnErrorResponse(w, r, logic.FormatError(err, logic.Internal))
-+		return
-+	}
-+
-+	totalPages := (total + pageSize - 1) / pageSize
-+	if totalPages == 0 {
-+		totalPages = 1
-+	}
-+
-+	response.Data = peers
-+	response.Total = total
-+	response.TotalPages = totalPages
-+
-+	w.Header().Set("Content-Type", "application/json")
-+	logic.ReturnSuccessResponseWithJson(w, r, response, "fetched auto relayed peers successfully")
-+}
-+
- // @Summary     Create AutoRelay node
- // @Router      /api/v1/node/{nodeid}/auto_relay [post]
- // @Tags        Auto Relay
++	logger.Log(1, "registering host for user:", user.Username, reqKeyIf.Host.Name, reqKeyIf.Host.ID.String())
+ 
+ 	// Send OK to user in the browser
+ 	var response bytes.Buffer
+ 	if err := ssoCallbackTemplate.Execute(&response, ssoCallbackTemplateConfig{
+-		User: userClaims.getUserName(),
++		User: user.Username,
+ 		Verb: "authenticated",
+ 	}); err != nil {
+ 		logger.Log(0, "Could not render SSO callback template ", err.Error())
+@@ -98,7 +104,7 @@ func HandleHostSSOCallback(w http.ResponseWriter, r *http.Request) {
+ 		w.Write(response.Bytes())
+ 	}
+ 
+-	reqKeyIf.User = userClaims.getUserName() // set the cached registering hosts' user
++	reqKeyIf.User = user.Username // set the cached registering hosts' user
+ 	if err = netcache.Set(state, reqKeyIf); err != nil {
+ 		logger.Log(0, "machine failed to complete join on network,", reqKeyIf.Network, "-", err.Error())
+ 		return
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4212** (2026-10-30): NM-356: network-role API access and user-device host auth , Reject host-password JWTs for user-owned devices; AuthorizeHost accepts a user session plus X-Host-ID instead. (@abhishek9686)
+- **PR #4211** (2026-10-30): NM-356: enrich topology and connections with location, is_gw, and egresses  (@abhishek9686)
+- **PR #4210** (2026-10-30): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
 - **PR #4208** (2026-10-29): List Auto Relayed Peers for a Node API (@VishalDalwadi)
 - **PR #4207** (closed): V1.8.0 nm 356 (@abhishek9686)
 - **PR #4206** (2026-10-25): v1.7.0: fix: load user groups via membership for ACL expansion (@abhishek9686)
-- **PR #4200** (2026-10-25): NM-356: keep AllowAll when both default ACL policies are open  (@abhishek9686)
-- **PR #4199** (2026-10-22): NM-356: send force logout on disabling/deleting user accounts and cleanup user devices (@abhishek9686)
-- **PR #4198** (2026-10-21): NM-356: add username filter to nodes api (@abhishek9686)
 
 ---
 
@@ -1209,33 +1348,44 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. List Auto Relayed Peers for a Node API (#4208)
+## X. Pre-Release Fixes v1.8.0 (#4210)
 
 **RULE**:
-When implementing operations in `controllers/middleware.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `logic/peers.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0a8dba49`: List Auto Relayed Peers for a Node API (#4208). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9acda995`: Pre-Release Fixes v1.8.0 (#4210). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/middleware.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `logic/peers.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if strings.Contains(route, "auto_relayed_peers") {
-			r.Header.Set("TARGET_RSRC", schema.HostRsrc.String())
-			nodeID := r.Header.Get("TARGET_RSRC_ID")
-			node, _ := logic.GetNodeByID(nodeID)
-			r.Header.Set("NET_ID", node.Network)
-		}
+			if host.EnableFlowLogs {
+				peerIdentity := nodeFlowIdentity(&peer, peerHost)
+				if peer.Address.IP != nil {
+					hostPeerUpdate.AddressIdentityMap[peer.Address.IP.String()+"/32"] = peerIdentity
+				}
+				if peer.Address6.IP != nil {
+					hostPeerUpdate.AddressIdentityMap[peer.Address6.IP.String()+"/128"] = peerIdentity
+				}
+			}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+			if host.EnableFlowLogs {
+				peerIdentity := nodeFlowIdentity(&peer, peerHost)
+				if peer.Address.IP != nil {
+					hostPeerUpdate.AddressIdentityMap[peer.Address.IP.String()+"/32"] = peerIdentity
+				}
+				if peer.Address6.IP != nil {
+					hostPeerUpdate.AddressIdentityMap[peer.Address6.IP.String()+"/128"] = peerIdentity
+				}
+			}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0a8dba49` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9acda995` are properly handled with clean fallback behavior.

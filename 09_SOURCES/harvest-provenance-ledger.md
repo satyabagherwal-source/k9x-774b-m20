@@ -6247,3 +6247,6 @@ Every entry in this ledger must capture:
 | `learn-github-mobile-next-mobile-mcp` | `https://github.com/mobile-next/mobile-mcp` | `5ca473ff` | Multi-dimensional audit evidence | 2026-10-30T16:22:35.414Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `45e00d4d` | Multi-dimensional audit evidence | 2026-10-30T16:30:03.499Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `f58f1935` | Multi-dimensional audit evidence | 2026-10-30T16:32:46.018Z |
+| `learn-github-rdflib-rdflib` | `https://github.com/RDFLib/rdflib` | `f87db10f` | Multi-dimensional audit evidence | 2026-10-30T16:39:35.933Z |
+| `learn-github-gravitl-netmaker` | `https://github.com/gravitl/netmaker` | `ee6c2133` | Multi-dimensional audit evidence | 2026-10-30T16:39:42.313Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `36cee33a` | Multi-dimensional audit evidence | 2026-10-30T16:44:33.512Z |
