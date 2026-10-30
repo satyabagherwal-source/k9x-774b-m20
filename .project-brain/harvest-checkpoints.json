@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T03:37:09.551Z",
+  "last_updated": "2026-10-30T03:49:00.709Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "acba38cb9feda86f8dc1148d8e60774358bc56eab53cd0f17d646ef448753e3c",
-      "verified_at": "2026-10-29T12:13:31.053Z",
+      "content_hash": "f38ecb1336a4f9ee5520a2ec94813fa084020ab3e6f649300bb243690ea443bb",
+      "verified_at": "2026-10-30T03:48:36.720Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T12:13:31.053Z"
+      "last_updated": "2026-10-30T03:48:36.720Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -7206,14 +7206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sqlpage-sqlpage",
-      "content_hash": "8c86aa6c0e597ca98b1827ad69a9e495ed897fc6fd692dc695facf8cca61863d",
-      "verified_at": "2026-10-27T10:50:51.884Z",
+      "content_hash": "b5fe8e2497324d83831160560774bbd316fbd1fea8a61ee189a45a088c8e8519",
+      "verified_at": "2026-10-30T03:49:00.708Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T10:50:51.884Z"
+      "last_updated": "2026-10-30T03:49:00.708Z"
     },
     "DouyinFE/semi-design": {
       "repository": "DouyinFE/semi-design",

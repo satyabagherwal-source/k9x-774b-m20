@@ -6094,3 +6094,5 @@
 | `CYCLE-20261030-847W` | `2026-10-30T03:37:00.764Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5574, Rule 5575, Rule 5576` | Yes (`05e5361b...`) |
 | `CYCLE-20261030-86ZC` | `2026-10-30T03:37:04.344Z` | `yuezhiai/jonex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5577, Rule 5578, Rule 5579` | Yes (`be89b16c...`) |
 | `CYCLE-20261030-8AZM` | `2026-10-30T03:37:09.538Z` | `thebaselab/codeapp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5580, Rule 5581, Rule 5582` | Yes (`95726c63...`) |
+| `CYCLE-20261030-N17N` | `2026-10-30T03:48:36.707Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5583, Rule 5584, Rule 5585` | Yes (`f38ecb13...`) |
+| `CYCLE-20261030-NJPZ` | `2026-10-30T03:49:00.695Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5586, Rule 5587, Rule 5588` | Yes (`b5fe8e24...`) |

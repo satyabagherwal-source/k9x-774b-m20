@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T03:37:12.101Z",
-    "lastVerified": "2026-10-30T03:37:12.101Z",
+    "lastChecked": "2026-10-30T03:49:03.257Z",
+    "lastVerified": "2026-10-30T03:49:03.257Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -402,8 +402,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T00:40:04.679Z",
-    "lastVerified": "2026-10-30T00:40:04.679Z",
+    "lastChecked": "2026-10-30T03:46:56.737Z",
+    "lastVerified": "2026-10-30T03:46:56.737Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1755,14 +1755,14 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-29T12:13:29.784Z",
-    "lastVerified": "2026-10-29T12:13:29.784Z",
+    "lastChecked": "2026-10-30T03:46:54.973Z",
+    "lastVerified": "2026-10-30T03:46:54.973Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "acba38cb9feda86f8dc1148d8e60774358bc56eab53cd0f17d646ef448753e3c",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "contentHash": "f38ecb1336a4f9ee5520a2ec94813fa084020ab3e6f649300bb243690ea443bb",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 9,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3084,9 +3084,9 @@
   "sigoden-aichat": {
     "name": "aichat",
     "officialUrl": "https://github.com/sigoden/aichat",
-    "lastChecked": "2026-10-28T11:32:10.623Z",
+    "lastChecked": "2026-10-30T03:46:41.737Z",
     "revisionIdentifier": "82976d34",
-    "lastVerified": "2026-10-28T11:32:10.623Z"
+    "lastVerified": "2026-10-30T03:46:41.737Z"
   },
   "hf-cloudflare-clef": {
     "name": "Cloudflare/clef",
@@ -4841,11 +4841,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sqlpage-sqlpage": {
-    "name": "SQLPage",
+    "name": "sqlpage/SQLPage",
     "officialUrl": "https://github.com/sqlpage/SQLPage",
-    "lastChecked": "2026-10-28T15:22:55.196Z",
-    "revisionIdentifier": "1c76855d",
-    "lastVerified": "2026-10-28T15:22:55.196Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-30T03:46:57.451Z",
+    "lastVerified": "2026-10-30T03:46:57.451Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-sqlpage-sqlpage",
+    "contentHash": "b5fe8e2497324d83831160560774bbd316fbd1fea8a61ee189a45a088c8e8519",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mlua-rs-mlua": {
     "name": "mlua",
@@ -5241,9 +5251,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-10-28T16:12:22.676Z",
+    "lastChecked": "2026-10-30T03:46:49.239Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-10-28T16:12:22.676Z"
+    "lastVerified": "2026-10-30T03:46:49.239Z"
   },
   "trinodb-trino": {
     "name": "trinodb/trino",
@@ -8913,5 +8923,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lifesciforge-seo-auditor": {
+    "name": "seo-auditor",
+    "officialUrl": "https://github.com/LifeSciForge/seo-auditor",
+    "lastChecked": "2026-10-30T03:46:44.246Z",
+    "revisionIdentifier": "cb5dbfbf",
+    "lastVerified": "2026-10-30T03:46:44.246Z"
+  },
+  "oliviertassinari-react-swipeable-views": {
+    "name": "react-swipeable-views",
+    "officialUrl": "https://github.com/oliviertassinari/react-swipeable-views",
+    "lastChecked": "2026-10-30T03:46:46.739Z",
+    "revisionIdentifier": "c637ad7d",
+    "lastVerified": "2026-10-30T03:46:46.739Z"
   }
 }

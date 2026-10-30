@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "3ee4f0f4",
+    "sourceVersion": "2e258fc3",
     "license": "MIT",
-    "contentHash": "acba38cb9feda86f8dc1148d8e60774358bc56eab53cd0f17d646ef448753e3c",
-    "lastHarvestedAt": "2026-10-29T12:13:31.042Z",
+    "contentHash": "f38ecb1336a4f9ee5520a2ec94813fa084020ab3e6f649300bb243690ea443bb",
+    "lastHarvestedAt": "2026-10-30T03:48:36.710Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -4723,10 +4723,10 @@
     "repository": "sqlpage/SQLPage",
     "platform": "github",
     "sourceUrl": "https://github.com/sqlpage/SQLPage",
-    "sourceVersion": "1c76855d",
+    "sourceVersion": "41dd9db2",
     "license": "MIT",
-    "contentHash": "8c86aa6c0e597ca98b1827ad69a9e495ed897fc6fd692dc695facf8cca61863d",
-    "lastHarvestedAt": "2026-10-27T10:50:51.878Z",
+    "contentHash": "b5fe8e2497324d83831160560774bbd316fbd1fea8a61ee189a45a088c8e8519",
+    "lastHarvestedAt": "2026-10-30T03:49:00.699Z",
     "learningId": "learn-github-sqlpage-sqlpage"
   },
   "douyinfe-semi-design": {

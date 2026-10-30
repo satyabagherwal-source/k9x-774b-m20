@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T03:37:09.547Z",
-  "total_cycles_completed": 6071,
-  "total_learnings_persisted": 6071,
-  "total_rules_promoted": 5550,
+  "last_updated": "2026-10-30T03:49:00.705Z",
+  "total_cycles_completed": 6073,
+  "total_learnings_persisted": 6073,
+  "total_rules_promoted": 5556,
   "history": [
-    {
-      "timestamp": "2026-10-28T18:57:52.093Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T19:17:09.498Z",
-      "repository": "autotrust/JEV-27B-VL",
-      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T19:17:19.999Z",
       "repository": "prometheus/prometheus",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T03:37:09.547Z",
       "repository": "thebaselab/codeapp",
       "learningId": "learn-github-thebaselab-codeapp",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T03:48:36.716Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T03:49:00.705Z",
+      "repository": "sqlpage/SQLPage",
+      "learningId": "learn-github-sqlpage-sqlpage",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

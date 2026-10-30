@@ -6103,3 +6103,5 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `80b1c726` | Multi-dimensional audit evidence | 2026-10-30T03:37:00.768Z |
 | `learn-github-yuezhiai-jonex` | `https://github.com/yuezhiai/jonex` | `13f93d97` | Multi-dimensional audit evidence | 2026-10-30T03:37:04.347Z |
 | `learn-github-thebaselab-codeapp` | `https://github.com/thebaselab/codeapp` | `8964f069` | Multi-dimensional audit evidence | 2026-10-30T03:37:09.542Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `2e258fc3` | Multi-dimensional audit evidence | 2026-10-30T03:48:36.710Z |
+| `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `41dd9db2` | Multi-dimensional audit evidence | 2026-10-30T03:49:00.699Z |

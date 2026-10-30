@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-1V2Q",
-    "timestamp": "2026-10-28T00:12:51.218Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "5fc2397fafd0151207f62b6a0a3894fa0dc5ee0e3e5ea1b34085fbcea7edff45",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-AEMC",
-    "timestamp": "2026-10-28T00:19:29.796Z",
-    "repository": "Kuddev/pebrel",
-    "learningId": "learn-github-kuddev-pebrel",
-    "contentHash": "dab7649881e8a9357aa22a7c9f3ceaa1370c4101c9c663715ce8ee43f0b56dd4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-AGDG",
     "timestamp": "2026-10-28T00:19:32.068Z",
     "repository": "CrawlCove/hreflang-checker",
@@ -7490,6 +7460,36 @@
     "repository": "thebaselab/codeapp",
     "learningId": "learn-github-thebaselab-codeapp",
     "contentHash": "95726c63598fd5afd031748e630eec65c26c244a650a6f8f0c8b65197571e10d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-N17N",
+    "timestamp": "2026-10-30T03:48:36.707Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "f38ecb1336a4f9ee5520a2ec94813fa084020ab3e6f649300bb243690ea443bb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-NJPZ",
+    "timestamp": "2026-10-30T03:49:00.695Z",
+    "repository": "sqlpage/SQLPage",
+    "learningId": "learn-github-sqlpage-sqlpage",
+    "contentHash": "b5fe8e2497324d83831160560774bbd316fbd1fea8a61ee189a45a088c8e8519",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

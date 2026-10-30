@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T03:37:09.464Z",
+  "last_updated": "2026-10-30T03:49:00.620Z",
   "total_verified_learnings": 1171,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -44700,8 +44700,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "3ee4f0f4",
-      "content_hash": "acba38cb9feda86f8dc1148d8e60774358bc56eab53cd0f17d646ef448753e3c",
+      "source_version": "2e258fc3",
+      "content_hash": "f38ecb1336a4f9ee5520a2ec94813fa084020ab3e6f649300bb243690ea443bb",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -44774,6 +44774,21 @@
           "number": 5378,
           "title": "Merge pull request #7962 from je-bugshell/feat/no-redact-flag",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5583,
+          "title": "Context-Bounded Single-Dial Network Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5584,
+          "title": "Polymorphic YAML-to-JSON Safe Serialization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5585,
+          "title": "Crash-Consistent Atomic Config and State Persistence Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44781,7 +44796,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T12:13:30.916Z",
+      "verified_at": "2026-10-30T03:48:36.611Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50160,8 +50175,8 @@
       "slug": "sqlpage-sqlpage",
       "platform": "github",
       "source_url": "https://github.com/sqlpage/SQLPage",
-      "source_version": "1c76855d",
-      "content_hash": "8c86aa6c0e597ca98b1827ad69a9e495ed897fc6fd692dc695facf8cca61863d",
+      "source_version": "41dd9db2",
+      "content_hash": "b5fe8e2497324d83831160560774bbd316fbd1fea8a61ee189a45a088c8e8519",
       "dossier_path": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
       "promoted_rules": [
@@ -50179,6 +50194,21 @@
           "number": 4689,
           "title": "Refine the official site with a more restrained visual identity (#1561)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5586,
+          "title": "Cross-Dialect SQL Identifier Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5587,
+          "title": "Forwarded Header Trust Barrier in Reverse-Proxy TLS Termination",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5588,
+          "title": "Fail-Closed Error Response Boundary Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50186,7 +50216,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T10:50:51.826Z",
+      "verified_at": "2026-10-30T03:49:00.601Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150036,6 +150066,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T03:37:09.445Z"
+    },
+    "rule-5583": {
+      "learning_id": "rule-5583",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5583,
+      "title": "Context-Bounded Single-Dial Network Invariant",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "2e258fc3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:48:36.612Z"
+    },
+    "rule-5584": {
+      "learning_id": "rule-5584",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5584,
+      "title": "Polymorphic YAML-to-JSON Safe Serialization Invariant",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "2e258fc3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:48:36.612Z"
+    },
+    "rule-5585": {
+      "learning_id": "rule-5585",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5585,
+      "title": "Crash-Consistent Atomic Config and State Persistence Invariant",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "2e258fc3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:48:36.612Z"
+    },
+    "rule-5586": {
+      "learning_id": "rule-5586",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5586,
+      "title": "Cross-Dialect SQL Identifier Isolation",
+      "source_url": "https://github.com/sqlpage/SQLPage",
+      "source_version": "41dd9db2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:49:00.601Z"
+    },
+    "rule-5587": {
+      "learning_id": "rule-5587",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5587,
+      "title": "Forwarded Header Trust Barrier in Reverse-Proxy TLS Termination",
+      "source_url": "https://github.com/sqlpage/SQLPage",
+      "source_version": "41dd9db2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:49:00.601Z"
+    },
+    "rule-5588": {
+      "learning_id": "rule-5588",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5588,
+      "title": "Fail-Closed Error Response Boundary Isolation",
+      "source_url": "https://github.com/sqlpage/SQLPage",
+      "source_version": "41dd9db2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:49:00.601Z"
     }
   },
   "aliases": {

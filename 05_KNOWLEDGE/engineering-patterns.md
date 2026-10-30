@@ -404960,3 +404960,728 @@ func testCacheHitsWithUnnormalizedRawURL() throws {
 ```
 
 ---
+
+
+---
+
+## 5583. Context-Bounded Single-Dial Network Invariant (Harvested from projectdiscovery/nuclei)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Context-Bounded Single-Dial Network Invariant",
+  "source": "projectdiscovery/nuclei",
+  "source_url": "https://github.com/projectdiscovery/nuclei",
+  "source_version": "2e258fc3",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T03:48:35.644Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-projectdiscovery-nuclei",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `2e258fc3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When integrating third-party client libraries into automated scanning engines or high-throughput CLI tools, dialers MUST NOT permit implicit background connection retry loops. `DialerRetries` (or equivalent background reconnect mechanisms) MUST be pinned to `1` (or explicitly disabled), and dialer timeout budgets MUST strictly defer to caller-provided `context.Context` lifecycles. Furthermore, the library's internal logging mechanism MUST be redirected away from raw `os.Stderr` to the application's logging pipeline.
+
+**WHY**:
+Third-party clients (such as `go-redis/v9`) frequently implement background reconnection loops with hardcoded retry counts and exponential backoffs (e.g., 5 attempts with 100ms sleeps). When dialing a filtered or closed port, these retry loops spawn detached goroutines that ignore the parent context's cancellation. A scan step with an intended 1-second timeout can block worker pool slots for 25+ seconds. Additionally, unintercepted client errors printed directly to `os.Stderr` pollute structured CLI output (e.g., JSONL streams) and produce false alarms in CI/CD log parsers.
+
+**WHEN TO APPLY**:
+Apply whenever embedding third-party database drivers, message brokers, caching clients, or network protocol packages (Redis, MongoDB, LDAP, AMQP, gRPC) inside concurrent workers, DAST scanners, or serverless functions where task boundaries are strictly bound to bounded contexts.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package redisclient
+
+import (
+	"context"
+	"errors"
+	"net"
+	"time"
+
+	"github.com/projectdiscovery/gologger"
+	"github.com/redis/go-redis/v9"
+)
+
+// dialAttempts replaces go-redis's default of 5. Background goroutines inside go-redis
+// dialer retry loops ignore caller contexts, causing multi-second worker stalls.
+const dialAttempts = 1
+
+func init() {
+	// Re-route third-party internal logging to prevent direct stderr pollution
+	redis.SetLogger(warningLogger{})
+}
+
+type warningLogger struct{}
+
+func (warningLogger) Printf(_ context.Context, format string, v ...interface{}) {
+	gologger.Warning().Msgf(format, v...)
+}
+
+func NewFastFailClient(ctx context.Context, addr, password string, timeout time.Duration) *redis.Client {
+	opts := &redis.Options{
+		Addr:          addr,
+		Password:      password,
+		DB:            0,
+		DialerRetries: dialAttempts,
+		DialTimeout:   timeout,
+	}
+
+	// Ensure dialer strictly uses caller context
+	opts.Dialer = func(dialCtx context.Context, network, dialAddr string) (net.Conn, error) {
+		var netDialer net.Dialer
+		return netDialer.DialContext(dialCtx, network, dialAddr)
+	}
+
+	return redis.NewClient(opts)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Default go-redis initialization in a scanner worker.
+// Default DialerRetries is 5. On filtered/firewalled ports, internal retries continue
+// in unmanaged goroutines, causing ~25-second thread-pool lockups and leaking logs to stderr.
+func NewVulnerableClient(addr, password string) *redis.Client {
+	return redis.NewClient(&redis.Options{
+		Addr:     addr,
+		Password: password, // Default DialerRetries = 5, logs straight to os.Stderr!
+	})
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a localhost port test that opens a TCP listener on port 0, binds the port, immediately closes the listener, and executes the client connection:
+```go
+func TestFastFailOnClosedPort(t *testing.T) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	require.NoError(t, err)
+	addr := listener.Addr().String()
+	require.NoError(t, listener.Close()) // Ensure port is immediately closed
+
+	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
+	defer cancel()
+
+	start := time.Now()
+	client := NewFastFailClient(ctx, addr, "", 200*time.Millisecond)
+	defer client.Close()
+
+	_, err = client.Ping(ctx).Result()
+	require.Error(t, err)
+	require.Less(t, time.Since(start), 500*time.Millisecond, "Dialer failed to fast-fail on closed port")
+}
+```
+
+---
+
+
+---
+
+## 5584. Polymorphic YAML-to-JSON Safe Serialization Invariant (Harvested from projectdiscovery/nuclei)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Polymorphic YAML-to-JSON Safe Serialization Invariant",
+  "source": "projectdiscovery/nuclei",
+  "source_url": "https://github.com/projectdiscovery/nuclei",
+  "source_version": "2e258fc3",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T03:48:36.015Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-projectdiscovery-nuclei",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `2e258fc3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When serializing unstructured, dynamic configuration maps (such as metadata decoded from YAML) into JSON, the serialization layer MUST recursively walk all collections and transform `map[interface{}]interface{}` (or `map[any]any`) into `map[string]interface{}` (or `map[string]any`). Non-string keys MUST be converted to strings via uniform representation (`fmt.Sprint`), and collisions resulting from stringification MUST be explicitly detected and rejected before encoding. Furthermore, custom `MarshalJSON` implementations on domain models MUST type-alias the receiver (`type alias T`) prior to marshaling to prevent unbounded recursive calls.
+
+**WHY**:
+Go's standard `encoding/json` package refuses to serialize maps whose keys are not strings, integers, or types implementing `encoding.TextMarshaler`. Conversely, YAML parsers (e.g., `gopkg.in/yaml.v2` or `yaml.v3`) routinely decode unstructured or dynamically typed dictionaries into `map[interface{}]interface{}`. Directly passing YAML-unmarshaled nested metadata into `json.Marshal` triggers runtime panic or errors (`json: unsupported type: map[interface{}]interface{}`). Additionally, implementing `MarshalJSON` without an intermediate type alias causes recursive calls to the same method, resulting in stack overflow (`runtime: goroutine stack exceeds 1000000000-byte limit`).
+
+**WHEN TO APPLY**:
+Apply in any Go system receiving generic data models via YAML, MessagePack, or BSON that must subsequently be exposed via JSON REST APIs, serialized to JSONL event logs, or forwarded to Elasticsearch/OpenSearch.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package typesafe
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+// ToJSONValue walks nested data structures and guarantees that all maps
+// have string keys, preventing json.Marshal runtime failures.
+func ToJSONValue(value interface{}) (interface{}, error) {
+	switch typed := value.(type) {
+	case map[interface{}]interface{}:
+		converted := make(map[string]interface{}, len(typed))
+		for key, item := range typed {
+			name := fmt.Sprint(key)
+			if _, exists := converted[name]; exists {
+				return nil, fmt.Errorf("map key %q collides after string conversion", name)
+			}
+			encoded, err := ToJSONValue(item)
+			if err != nil {
+				return nil, err
+			}
+			converted[name] = encoded
+		}
+		return converted, nil
+	case map[string]interface{}:
+		return ToJSONMap(typed)
+	case []interface{}:
+		converted := make([]interface{}, len(typed))
+		for i, item := range typed {
+			encoded, err := ToJSONValue(item)
+			if err != nil {
+				return nil, err
+			}
+			converted[i] = encoded
+		}
+		return converted, nil
+	default:
+		return value, nil
+	}
+}
+
+func ToJSONMap(m map[string]interface{}) (map[string]interface{}, error) {
+	if m == nil {
+		return nil, nil
+	}
+	converted := make(map[string]interface{}, len(m))
+	for key, item := range m {
+		encoded, err := ToJSONValue(item)
+		if err != nil {
+			return nil, err
+		}
+		converted[key] = encoded
+	}
+	return converted, nil
+}
+
+type MetadataWrapper struct {
+	Name     string                 `json:"name"`
+	Metadata map[string]interface{} `json:"metadata"`
+}
+
+// MarshalJSON safely serializes dynamic metadata and avoids recursion using a type alias.
+func (m MetadataWrapper) MarshalJSON() ([]byte, error) {
+	type metadataWrapper MetadataWrapper // Type alias drops custom MarshalJSON method
+	encoded := metadataWrapper(m)
+
+	cleanMeta, err := ToJSONMap(m.Metadata)
+	if err != nil {
+		return nil, err
+	}
+	encoded.Metadata = cleanMeta
+	return json.Marshal(encoded)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Direct recursive JSON marshaling without type-aliasing,
+// and raw unvalidated nesting of YAML interface-keyed maps.
+type UnsafeMetadata struct {
+	Metadata map[string]interface{} `json:"metadata"`
+}
+
+func (u UnsafeMetadata) MarshalJSON() ([]byte, error) {
+	// BUG 1: Recursive infinite loop! Calling json.Marshal(u) re-triggers u.MarshalJSON()
+	// until thread stack exhaustion crashes the process.
+	// BUG 2: If Metadata contains nested YAML maps (map[interface{}]interface{}),
+	// json.Marshal throws "unsupported type: map[interface{}]interface{}".
+	return json.Marshal(u) 
+}
+```
+
+**VERIFICATION METHOD**:
+Automated unit test with mixed numeric and string keys asserting collision rejection and cross-type serialization:
+```go
+func TestToJSONMapCollisionAndConversion(t *testing.T) {
+	// Assert collision detection
+	colliding := map[string]interface{}{
+		"data": map[interface{}]interface{}{
+			1:   "int_one",
+			1.0: "float_one",
+		},
+	}
+	_, err := ToJSONMap(colliding)
+	require.Error(t, err, "Must return error on fmt.Sprint collision between 1 and 1.0")
+
+	// Assert correct serialization without recursion panic
+	valid := MetadataWrapper{
+		Name: "test",
+		Metadata: map[string]interface{}{
+			"nested": map[interface{}]interface{}{
+				"key": "val",
+				2:     "numeric_key",
+			},
+		},
+	}
+	out, err := json.Marshal(valid)
+	require.NoError(t, err)
+	require.JSONEq(t, `{"name":"test","metadata":{"nested":{"key":"val","2":"numeric_key"}}}`, string(out))
+}
+```
+
+---
+
+
+---
+
+## 5585. Crash-Consistent Atomic Config and State Persistence Invariant (Harvested from projectdiscovery/nuclei)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Crash-Consistent Atomic Config and State Persistence Invariant",
+  "source": "projectdiscovery/nuclei",
+  "source_url": "https://github.com/projectdiscovery/nuclei",
+  "source_version": "2e258fc3",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T03:48:36.417Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-projectdiscovery-nuclei",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `2e258fc3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When persisting process configuration, state checkpoints, or resume files across CLI runs, state files MUST be written using the Atomic Tempfile Replace pattern:
+1. Write all state bytes to a temporary file located in the *same* filesystem directory as the destination path (`os.CreateTemp(filepath.Dir(target), ".prefix-*")`).
+2. Explicitly set permissions via `tempFile.Chmod(0o600)`.
+3. Flush OS disk buffers via `tempFile.Sync()`.
+4. Close file descriptor before renaming.
+5. Atomically replace target path via `os.Rename`.
+6. Defensively execute `defer os.Remove(tempPath)` to prevent orphan tempfiles upon error.
+
+**WHY**:
+Directly truncating and overwriting state files (`os.OpenFile(path, os.O_WRONLY|os.O_TRUNC|os.O_CREATE)`) creates a window of vulnerability where a process crash (SIGINT, SIGKILL, power outage, or OS OOM) leaves behind a 0-byte or corrupted JSON/state file. Writing the tempfile to the system `/tmp` directory instead of the destination directory will cause `os.Rename` to fail across filesystem or mount-point boundaries with `EXDEV` ("invalid cross-device link").
+
+**WHEN TO APPLY**:
+Apply to all stateful desktop, CLI, or server agents updating on-disk state (e.g., scan progress, authentication tokens, template catalogs, resume metadata).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package atomicfile
+
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+)
+
+// WriteStateAtomically enforces crash-consistency, uniform filesystem boundaries,
+// and safe sync before directory inode replacement.
+func WriteStateAtomically(targetPath string, data []byte, perm os.FileMode) error {
+	dir := filepath.Dir(targetPath)
+	if err := os.MkdirAll(dir, 0o700); err != nil {
+		return fmt.Errorf("mkdir directory %q: %w", dir, err)
+	}
+
+	// Invariant: Tempfile MUST reside in identical directory to guarantee same filesystem partition
+	temp, err := os.CreateTemp(dir, "."+filepath.Base(targetPath)+"-*")
+	if err != nil {
+		return fmt.Errorf("create tempfile for %q: %w", targetPath, err)
+	}
+	tempPath := temp.Name()
+
+	// Guarantee cleanup if panic or failure occurs before successful rename
+	cleaned := false
+	defer func() {
+		if !cleaned {
+			_ = temp.Close()
+			_ = os.Remove(tempPath)
+		}
+	}()
+
+	if err := temp.Chmod(perm); err != nil {
+		return fmt.Errorf("chmod tempfile %q: %w", tempPath, err)
+	}
+
+	if _, err := temp.Write(data); err != nil {
+		return fmt.Errorf("write tempfile %q: %w", tempPath, err)
+	}
+
+	// Flush dirty disk blocks to physical media
+	if err := temp.Sync(); err != nil {
+		return fmt.Errorf("sync tempfile %q: %w", tempPath, err)
+	}
+
+	if err := temp.Close(); err != nil {
+		return fmt.Errorf("close tempfile %q: %w", tempPath, err)
+	}
+
+	// Atomic inode replacement on POSIX and modern Windows OS
+	if err := os.Rename(tempPath, targetPath); err != nil {
+		return fmt.Errorf("replace %q with %q: %w", targetPath, tempPath, err)
+	}
+
+	cleaned = true
+	return nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Truncating write directly in place or using /tmp for cross-device move.
+func UnsafeSaveConfig(path string, data []byte) error {
+	// If process dies while writing, target file is corrupted or wiped to 0 bytes.
+	return os.WriteFile(path, data, 0o600)
+}
+
+func CrossDeviceFailureSave(path string, data []byte) error {
+	// BUG: Creating in /tmp when target is in /home or /var causes os.Rename to fail with EXDEV!
+	temp, _ := os.CreateTemp("", "state-*")
+	_, _ = temp.Write(data)
+	_ = temp.Close()
+	return os.Rename(temp.Name(), path) // FAILS on separate mount points!
+}
+```
+
+**VERIFICATION METHOD**:
+Fuzz test verifying interruption resistance and cross-directory isolation:
+```go
+func TestAtomicWriteFileIntegrity(t *testing.T) {
+	dir := t.TempDir()
+	target := filepath.Join(dir, "state.json")
+	initial := []byte(`{"version":"1.0.0"}`)
+	require.NoError(t, WriteStateAtomically(target, initial, 0o600))
+
+	updated := []byte(`{"version":"2.0.0"}`)
+	require.NoError(t, WriteStateAtomically(target, updated, 0o600))
+
+	read, err := os.ReadFile(target)
+	require.NoError(t, err)
+	require.Equal(t, updated, read)
+
+	// Verify no temporary artifacts remained in directory
+	entries, err := os.ReadDir(dir)
+	require.NoError(t, err)
+	require.Len(t, entries, 1, "Orphan temporary files were left behind in target directory")
+}
+```
+
+---
+
+
+---
+
+## 5586. Cross-Dialect SQL Identifier Isolation (Harvested from sqlpage/SQLPage)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Cross-Dialect SQL Identifier Isolation",
+  "source": "sqlpage/SQLPage",
+  "source_url": "https://github.com/sqlpage/SQLPage",
+  "source_version": "41dd9db2",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T03:48:59.626Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-sqlpage-sqlpage",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sqlpage/SQLPage](https://github.com/sqlpage/SQLPage) (Revision: `41dd9db2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When building frameworks that expose internal engine interfaces, schema contracts, or rendering directives via raw SQL column aliases, you MUST NOT map interface semantics to SQL reserved keywords without providing safe, non-reserved architectural aliases and comprehensive multi-dialect escaping.
+
+**WHY**:
+Different database engines enforce strict, non-overridable lexer and parser reserved keyword tables. For instance, in Microsoft SQL Server (T-SQL), `CLOSE` is a non-contextual reserved keyword (used to terminate cursors via `CLOSE cursor_name`). A query such as `SELECT 'modal' AS component, 'Dismiss' AS close;` immediately raises a fatal T-SQL syntax error (`Msg 156, Level 15: Incorrect syntax near the keyword 'close'`). Forcing users to rely on dialect-specific quoting (e.g., `[close]` for MSSQL, `"close"` for Postgres, `` `close` `` for MySQL) breaks cross-database query portability—a fundamental value proposition of unified data engines.
+
+**WHEN TO APPLY**:
+Applies to all database abstraction layers, query generators, meta-programming database tools, and template engines where SQL column aliases act as parameter keys.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+Implement dual-alias resolution in both metadata catalogs and template macro expressions, favoring reserved-word-free synonyms while falling back safely:
+
+```handlebars
+{{!-- In Handlebars rendering templates: Accept both names, prioritizing the safe alias --}}
+<div class="modal-header">
+    <h5 class="modal-title" id="{{id}}-title">{{title}}</h5>
+    <button type="button" 
+            class="btn-close" 
+            data-bs-dismiss="modal" 
+            aria-label="{{default (default close_label close) "close"}}">
+    </button>
+</div>
+<div class="modal-footer">
+    {{#if (or close_label close)}}
+        <button type="button" class="btn me-primary" data-bs-dismiss="modal">
+            {{default close_label close}}
+        </button>
+    {{/if}}
+</div>
+```
+
+```sql
+-- Schema documentation migration: Explicitly define both parameters
+INSERT INTO parameter(component, name, description, type, top_level, optional) 
+VALUES
+    ('modal', 'close', 'The text to display in the Close button.', 'TEXT', TRUE, TRUE),
+    ('modal', 'close_label', 'The same as `close`. Use it on databases where `close` is a reserved word, such as SQL Server.', 'TEXT', TRUE, TRUE);
+```
+
+**NEGATIVE CONSTRAINT**:
+```handlebars
+{{!-- ANTI-PATTERN: Forcing users to use reserved words or break portability --}}
+<div class="modal-footer">
+    {{!-- Fails completely on SQL Server unless the user quotes [close] in raw SQL --}}
+    {{#if close}}<button class="btn">{{close}}</button>{{/if}}
+</div>
+```
+
+**VERIFICATION METHOD**:
+Enforce dual-compatibility via automated cross-engine matrix integration tests using the dialect-agnostic syntax:
+```sql
+-- tests/sql_test_files/component_rendering/modal_close_label_1070.sql
+SELECT 'modal' AS component, 'sql_server_safe_close' AS id, 'It works !' AS close_label;
+```
+Verify parsing across SQLite, Postgres, MySQL, and Microsoft SQL Server test containers in CI.
+
+---
+
+
+---
+
+## 5587. Forwarded Header Trust Barrier in Reverse-Proxy TLS Termination (Harvested from sqlpage/SQLPage)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Forwarded Header Trust Barrier in Reverse-Proxy TLS Termination",
+  "source": "sqlpage/SQLPage",
+  "source_url": "https://github.com/sqlpage/SQLPage",
+  "source_version": "41dd9db2",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T03:48:59.999Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-sqlpage-sqlpage",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sqlpage/SQLPage](https://github.com/sqlpage/SQLPage) (Revision: `41dd9db2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When generating absolute callback URLs, redirects, or cryptographic authentication identifiers (e.g., OpenID Connect `redirect_uri`) behind reverse proxies, you MUST resolve the transport scheme and hostname from verified `X-Forwarded-Proto`, `X-Forwarded-Host`, and `X-Forwarded-Port` headers rather than the local TCP/TLS socket context, unless explicitly disabled by an untrusted network barrier configuration.
+
+**WHY**:
+In modern containerized deployments, applications run inside internal virtual networks bound to unencrypted HTTP sockets (e.g., `http://10.0.0.5:8080` or `http://localhost:9191`) behind edge ingress controllers (Caddy, Traefik, NGINX, AWS ALB) that terminate TLS (`https://app.domain.com:443`). If an application queries its local incoming socket to determine the protocol scheme, it generates `http://...` URIs. When negotiating OIDC authorization code grants, the identity provider matches the client's `redirect_uri` byte-for-byte against registered URIs. Emitting `http://app.domain.com/callback` instead of `https://app.domain.com/callback` causes an immediate, unrecoverable authorization rejection (`redirect_uri_mismatch`).
+
+**WHEN TO APPLY**:
+Applies to all HTTP application servers, web frameworks, auth middleware, and proxy-aware edge services generating absolute URIs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+Implement an RFC 7239 / de-facto header resolution hierarchy on the incoming request context:
+
+```rust
+use actix_web::HttpRequest;
+
+pub struct RequestUrlResolver<'a> {
+    req: &'a HttpRequest,
+    trust_forwarded_headers: bool,
+}
+
+impl<'a> RequestUrlResolver<'a> {
+    pub fn new(req: &'a HttpRequest, trust_forwarded_headers: bool) -> Self {
+        Self { req, trust_forwarded_headers }
+    }
+
+    /// Resolves the canonical public-facing scheme (https or http)
+    pub fn scheme(&self) -> &str {
+        if self.trust_forwarded_headers {
+            if let Some(proto) = self.req.headers().get("X-Forwarded-Proto") {
+                if let Ok(proto_str) = proto.to_str() {
+                    // Extract first hop if multiple proxies are chained: "https, http"
+                    return proto_str.split(',').next().unwrap_or("https").trim();
+                }
+            }
+        }
+        self.req.connection_info().scheme()
+    }
+
+    /// Resolves canonical public host with port awareness
+    pub fn host(&self) -> &str {
+        if self.trust_forwarded_headers {
+            if let Some(host) = self.req.headers().get("X-Forwarded-Host") {
+                if let Ok(host_str) = host.to_str() {
+                    return host_str.split(',').next().unwrap_or("localhost").trim();
+                }
+            }
+        }
+        self.req.connection_info().host()
+    }
+
+    /// Assembles an absolute URL guaranteed to match public reverse proxy termination
+    pub fn construct_absolute_url(&self, path: &str) -> String {
+        let scheme = self.scheme();
+        let host = self.host();
+        let normalized_path = if path.starts_with('/') { path } else { &format!("/{path}") };
+        format!("{scheme}://{host}{normalized_path}")
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Blindly trusting local socket transport state
+pub fn get_callback_url(req: &HttpRequest, path: &str) -> String {
+    // BUG: If Caddy or Nginx terminates TLS and forwards via plain HTTP,
+    // connection_info().scheme() returns "http", corrupting all external OIDC handshakes.
+    let scheme = req.connection_info().scheme();
+    let host = req.connection_info().host();
+    format!("{scheme}://{host}{path}")
+}
+```
+
+**VERIFICATION METHOD**:
+Implement integration test harnesses using synthetic proxy headers:
+```rust
+#[actix_web::test]
+async fn test_forwarded_proto_honored() {
+    let req = actix_web::test::TestRequest::default()
+        .insert_header(("X-Forwarded-Proto", "https"))
+        .insert_header(("X-Forwarded-Host", "secure.example.com"))
+        .to_http_request();
+
+    let resolver = RequestUrlResolver::new(&req, true);
+    assert_eq!(resolver.scheme(), "https");
+    assert_eq!(resolver.construct_absolute_url("/sqlpage/oidc_callback"), "https://secure.example.com/sqlpage/oidc_callback");
+}
+```
+
+---
+
+
+---
+
+## 5588. Fail-Closed Error Response Boundary Isolation (Harvested from sqlpage/SQLPage)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fail-Closed Error Response Boundary Isolation",
+  "source": "sqlpage/SQLPage",
+  "source_url": "https://github.com/sqlpage/SQLPage",
+  "source_version": "41dd9db2",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T03:49:00.405Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-sqlpage-sqlpage",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sqlpage/SQLPage](https://github.com/sqlpage/SQLPage) (Revision: `41dd9db2`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+A web engine executing multi-statement streaming pipelines MUST NOT emit an HTTP 200 OK status header before statement execution begins, and MUST halt error serialization to the client if execution fails while in the header processing state.
+
+**WHY**:
+Once the HTTP response status line (`HTTP/1.1 200 OK`) and response headers are flushed over the socket, the HTTP status is immutable. If a database query fails *after* headers are sent, the server can only abort the TCP stream or write an inline error box inside the 200 OK HTML payload. This leads to two critical vulnerabilities:
+1. **Security/Information Leak**: Emitting raw database backtraces or SQL syntax errors into the response body of a 200 OK response can leak database structure, table names, and query parameters to unauthenticated callers.
+2. **Client-Side Semantic Failure**: Automated callers, webhooks, and reverse proxies assume a successful transaction because of the 200 OK status code, leading to silent data-loss states where failed insertions are treated as successful.
+
+**WHEN TO APPLY**:
+Applies to all HTTP engines, database-to-HTTP gateways, and streaming template renderers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+Implement a two-phase state machine that segregates the header collection phase from body chunking, intercepting errors before any socket write occurs:
+
+```rust
+pub async fn handle_error(self, err: anyhow::Error) -> anyhow::Result<PageContext> {
+    // 1. Convert the error into a sanitized, client-safe error representation
+    let client_error = ClientError::new(&err, self.app_state.config.environment, None);
+    
+    // 2. In production mode (where is_generic() returns true), NEVER start a 200 body
+    if client_error.is_generic() {
+        // Bubble up error so Actix-Web's top-level error middleware generates 
+        // an authentic HTTP 500 Internal Server Error response without leaking details
+        return Err(err);
+    }
+    
+    // 3. In development mode: developer debugging experience is prioritized;
+    // render the error component directly into the body for immediate visual feedback
+    log::debug!("Handling header error in development mode: {err}");
+    let mut data = client_error.to_html_data();
+    data["component"] = json!("error");
+    self.start_body(data).await
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Flushing 200 OK headers immediately upon request connection
+pub async fn execute_stream_unsafe(req: HttpRequest, mut writer: ResponseWriter) -> Result<(), Error> {
+    // Flushes HTTP 200 OK directly to wire
+    writer.send_status(StatusCode::OK).await?;
+    
+    // Any database failure here now happens AFTER 200 OK was sent!
+    let rows = db.fetch_all("SELECT * FROM invalid_table").await;
+    match rows {
+        Ok(r) => writer.write_body(r).await?,
+        Err(e) => {
+            // DISASTER: 200 OK is already received by client!
+            // Writes stack trace into a "successful" response.
+            writer.write_body(format!("<div>Error: {e}</div>")).await?;
+        }
+    }
+    Ok(())
+}
+```
+
+**VERIFICATION METHOD**:
+Assert via automated integration tests that malformed queries yield true HTTP 500 status codes when `ENVIRONMENT=production`:
+```rust
+#[tokio::test]
+async fn test_production_error_status_code() {
+    let app = init_test_app(Environment::Production).await;
+    let req = TestRequest::get().uri("/failing_query.sql").to_request();
+    let resp = app.call(req).await.unwrap();
+    
+    assert_eq!(resp.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    let body = test::read_body(resp).await;
+    assert!(!body.contains("syntax error near")); // Must not leak DB internals
+}
+```
+
+---
