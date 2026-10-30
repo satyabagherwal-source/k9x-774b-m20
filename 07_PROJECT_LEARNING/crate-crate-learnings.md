@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `792f7eb0`  
+> **Source Version**: `fa1943a8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T00:29:53.455Z  
+> **Timestamp**: 2026-10-30T18:00:12.202Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T00:29:53.448Z  
+> **Harvest Timestamp**: 2026-10-30T18:00:10.909Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4448 stars
+- **Stars / Engagement**: 4449 stars
 
 ---
 
@@ -555,285 +555,401 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `792f7eb0` (2026-10-28)
-**Commit Message**: Add link to CVE for COPY FROM fix
+### Incident Patch 1: `fa1943a8` (2026-10-27)
+**Commit Message**: Test: fix publisher/subscriber cluster resource leaks when cleanup fails
 
-Follows: #20070
-
-**File**: `docs/appendices/release-notes/6.5.0.rst` (modified, +2/-1)
+**File**: `server/src/test/java/io/crate/integrationtests/LogicalReplicationITestCase.java` (modified, +26/-13)
 ```diff
-@@ -88,7 +88,8 @@ Breaking Changes
- - Added :ref:`copy_from.http.redirects` and :ref:`copy_from.http.blocked_hosts`
-   settings to allow CrateDB administrators to prevent users from accessing HTTP
-   resources from hosts reachable on an internal network or other arbitrary hosts
--  using :ref:`COPY FROM <sql-copy-from>`.
-+  using :ref:`COPY FROM <sql-copy-from>`. For more information see the relevant
-+  `security advisory <https://github.com/crate/crate/security/advisories/GHSA-pfv7-m2fh-6g4v>`__.
+@@ -58,6 +58,7 @@
+ import org.jspecify.annotations.Nullable;
+ import org.junit.After;
+ import org.junit.Before;
++import org.junit.runners.model.MultipleFailureException;
  
-   The ``crate.yml`` shipped with the CrateDB tarball sets the blocked hosts to
-   ``_local_,_site_,_link_`` and disables redirects by default. On new
-```
-
----
-
-### Incident Patch 2: `0431aeb7` (2026-10-28)
-**Commit Message**: Support streaming of UUID values within UncheckedObjectType
-
-The `collect_set` aggregation uses the unchecked object type as partial
-type and that couldn't handle uuid values.
-
-This additionally also extends the `AggregationTestCase` to add a
-streaming roundtrip for the state to cover serialization as part of
-aggregation unit tests. (Unless `randomExtraStates` is false - that's
-set for cases like percentile where the extra state compression would
-lead to slightly different results, breaking tests)
-
-No changes because `count(distinct uuid)` support without group by
-rewrite is new on 6.6
-
-**File**: `server/src/main/java/org/elasticsearch/common/io/stream/StreamInput.java` (modified, +2/-0)
-```diff
-@@ -707,6 +707,8 @@ public Object readGenericValue() throws IOException {
-                 return new PointImpl(readDouble(), readDouble(), JtsSpatialContext.GEO);
-             case 28:
-                 return new BitString(BitSet.valueOf(readByteArray()), readVInt());
-+            case 29:
-+                return readUUID();
-             default:
-                 throw new IOException("Can't read unknown type [" + type + "]");
+ import io.crate.execution.dml.BulkResponse;
+ import io.crate.protocols.postgres.PostgresNetty;
+@@ -131,24 +132,36 @@ public void clearCluster() throws Exception {
+         } catch (Exception e) {
+             // ignore
          }
+-        stopCluster(subscriberCluster);
+-        subscriberCluster = null;
+-        stopCluster(publisherCluster);
+-        publisherCluster = null;
++        try {
++            stopCluster(subscriberCluster, publisherCluster);
++        } finally {
++            subscriberCluster = null;
++            publisherCluster = null;
++        }
+     }
+ 
+-    protected void stopCluster(TestCluster cluster) throws Exception {
+-        if (cluster != null) {
+-            try {
+-                cluster.beforeIndexDeletion();
+-                cluster.assertSeqNos();
+-                cluster.assertSameDocIdsOnShards();
+-                cluster.assertConsistentHistoryBetweenTranslogAndLuceneIndex();
+-            } finally {
++    // Pass all clusters together so cleanup continues even if one cluster fails to stop.
++    static void stopCluster(TestCluster... clusters) throws Exception {
++        List<Throwable> failures = new ArrayList<>();
++        for (TestCluster cluster : clusters) {
++            if (cluster == null) {
++                continue;
++            }
++            try (cluster) {
++                try {
++                    cluster.beforeIndexDeletion();
++                    cluster.assertSeqNos();
++                    cluster.assertSameDocIdsOnShards();
++                    cluster.assertConsistentHistoryBetweenTranslogAndLuceneIndex();
++                } catch (Throwable t) {
++                    failures.add(t);
++                }
+                 cluster.wipe();
+-                cluster.close();
++            } catch (Throwable t) {
++                failures.add(t);
+             }
+         }
++        MultipleFailureException.assertEmpty(failures);
+     }
+ 
+     private void dropSubscriptions() throws Exception {
 ```
 
-**File**: `server/src/main/java/org/elasticsearch/common/io/stream/StreamOutput.java` (modified, +4/-0)
+**File**: `server/src/test/java/io/crate/integrationtests/PgTunnelLogicalReplicationITest.java` (modified, +2/-18)
 ```diff
-@@ -715,6 +715,10 @@ public final void writeOptionalInstant(@Nullable Instant instant) throws IOExcep
-             BitString bs = (BitString) v;
-             o.writeByteArray(bs.bitSet().toByteArray());
-             o.writeVInt(bs.length());
-+        }),
-+        Map.entry(UUID.class, (o, v) -> {
-+            o.writeByte((byte) 29);
-+            o.writeUUID((UUID) v);
-         })
-     );
+@@ -21,6 +21,7 @@
  
-```
-
-**File**: `server/src/test/java/io/crate/execution/engine/aggregation/impl/AverageAggregationTest.java` (modified, +3/-3)
-```diff
-@@ -185,7 +185,7 @@ public void testUnsupportedType() throws Exception {
-     }
+ package io.crate.integrationtests;
  
-     @Test
--    public void test_avg_numeric_on_long_non_doc_values_does_not_overflow() {
-+    public void test_avg_numeric_on_long_non_doc_values_does_not_overflow() throws Exception {
-         Version minNodeVersion = randomBoolean()
-             ? Version.CURRENT
-             : Version.V_4_0_9;
-@@ -215,7 +215,7 @@ public void test_numeric_with_doc_values() throws Exception {
-     }
++import static io.crate.integrationtests.LogicalReplicationITestCase.stopCluster;
+ import static io.crate.testing.Asserts.assertThat;
+ import static org.assertj.core.api.Assertions.assertThat;
  
-     @Test
--    public void test_avg_numeric_on_double_non_doc_values() {
-+    public void test_avg_numeric_on_double_non_doc_values() throws Exception {
-         Version minNodeVersion = randomBoolean()
-             ? Version.CURRENT
-             : Version.V_4_0_9;
-@@ -232,7 +232,7 @@ public void test_avg_numeric_on_double_non_doc_values() {
-     }
- 
-     @Test
--    public void test_avg_numeric_with_precision_and_scale_on_double_non_doc_values() {
-+    public void test_avg_numeric_with_precision_and_scale_on_double_non_doc_values() throws Exception {
-         var type = new NumericType(16, 2);
-         var expected = type.implicitCast(12.4357);
-         assertThat(expected).hasToString("12.44");
-```
-
-**File**: `server/src/test/java/io/crate/execution/engine/aggregation/impl/SumAggregationTest.java` (modified, +5/-5)
-```diff
-@@ -179,7 +179,7 @@ public void testByte() throws Exception {
-     }
- 
-     @Test
--    public void testInterval() {
-+    public void testInterval() throws Exception {
-         assertThat(execPartialAggregationWithoutDocValues(
-                 (IntervalSumAggregation) nodeCtx.functions().getQualified(
-                         Signature.builder(IntervalSumAggregation.NAME, FunctionType.AGGREGATE)
-@@ -210,7 +210,7 @@ public void testUnsupportedType() throws Exception {
-     }
- 
-     @Test
--    public void test_sum_numeric_on_long_non_doc_values_field() {
-+    public void test_sum_numeric_on_long_non_doc_values_field() throws Exception {
-         Version minNodeVersion = randomBoolean()
-             ? Version.CURRENT
-             : Version.V_4_0_9;
-@@ -228,7 +228,7 @@ public void test_sum_numeric_on_long_non_doc_values_field() {
-     }
- 
-     @Test
--    public void test_sum_numeric_on_long_non_doc_values_field_with_overflow() {
-+    public void test_sum_numeric_on_long_non_doc_values_field_with_overflow() throws Exception {
-         Version minNodeVersion = randomBoolean()
-             ? Version.CURRENT
-             : Version.V_4_0_9;
-@@ -245,7 +245,7 @@ public void test_sum_numeric_on_long_non_doc_values_field_with_overflow() {
-     }
- 
-     @Test
--    public void test_sum_numeric_on_floating_point_non_doc_values_field() {
-+    public void test_sum_numeric_on_floating_point_non_doc_values_field() throws Exception {
-         Version minNodeVersion = randomBoolean()
-             ? Version.CURRENT
-             : Version.V_4_0_9;
-@@ -262,7 +262,7 @@ public void test_sum_numeric_on_floating_point_non_doc_values_field() {
-     }
- 
-     @Test
--    public void test_sum_numeric_with_precision_and_scale_on_double_non_doc_values_field() {
-+    public void test_sum_numeric_with_precision_and_scale_on_double_non_doc_values_field() throws Exception {
-         var type = new NumericType(16, 2);
-         var expected = type.implicitCast(12.4357);
-         assertThat(expected.toString()).isEqualTo("12.44");
-```
-
-**File**: `server/src/test/java/io/crate/types/UncheckedObjectTypeTest.java` (modified, +12/-1)
-```diff
-@@ -25,12 +25,17 @@
- 
- import java.io.IOException;
- import java.util.Map;
-+import java.util.function.Supplier;
- 
- import org.elasticsearch.common.io.stream.BytesStreamOutput;
- import org.elasticsearch.common.io.stream.StreamInput;
- import org.elasticsearch.test.ESTestCase;
+@@ -38,7 +39,6 @@
+ import org.elasticsearch.test.MockHttpTransport;
+ import org.elasticsearch.test.NodeConfigurationSource;
+ import org.elasticsearch.test.TestCluster;
+-import org.jspecify.annotations.Nullable;
+ import org.junit.After;
  import org.junit.Test;
  
-+import com.carrotsearch.randomizedtesting.generators.RandomPicks;
-+
-+import io.crate.testing.DataTypeTesting;
-+
- public class UncheckedObjectTypeTest extends ESTestCase {
+@@ -150,21 +150,6 @@ public Path nodeConfigPath(int nodeOrdinal) {
+         return cluster;
+     }
  
-     UncheckedObjectType uncheckedObjectType = UncheckedObjectType.INSTANCE;
-@@ -41,7 +46,13 @@ public void testStreamingMap() throws IOException {
-         int[] arrayValue = {2, 3};
-         String stringKey = "string_key";
-         int intValue = 42;
--        Map<Object, Object> genericValues = Map.of(longKey, arrayValue, stringKey, intValue);
-+        DataType<?> type = RandomPicks.randomFrom(random(), DataTypes.PRIMITIVE_TYPES);
-+        Supplier<?> dataGenerator = DataTypeTesting.getDataGenerator(type);
-+        Map<Object, Object> genericValues = Map.of(
-+            longKey, arrayValue,
-+            stringKey, intValue,
-+            "type_" + type.getName(), dataGenerator.get()
-+        );
- 
-         BytesStreamOutput out = new BytesStreamOutput();
-         uncheckedObjectType.writeValueTo(out, genericValues);
-```
-
-**File**: `server/src/testFixtures/java/io/crate/operation/aggregation/AggregationTestCase.java` (modified, +17/-3)
-```diff
-@@ -55,6 +55,7 @@
- import org.elasticsearch.cluster.routing.ShardRoutingState;
- import org.elasticsearch.cluster.routing.TestShardRouting;
- import org.elasticsearch.common.UUIDs;
-+import org.elasticsearch.common.io.stream.BytesStreamOutput;
- import org.elasticsearch.common.lucene.uid.Versions;
- import org.elasticsearch.common.settings.Settings;
- import org.elasticsearch.common.util.BigArrays;
-@@ -84,6 +85,7 @@
- import org.elasticsearch.threadpool.ThreadPool;
- import org.jspecify.annotations.Nullable;
- 
-+import io.crate.Streamer;
- import io.crate.analyze.WhereClause;
- import io.crate.common.collections.Lists;
- import io.crate.common.io.IOUtils;
-@@ -304,7 +306,7 @@ private void assertResultIsOrderInsensitive(AggregationFunction aggregationFunct
-                                                 AggregationFunction terminatePartialAggFunction,
-                                                 Object[][] data,
-                                                 boolean randomExtraStates,
--                                                Object expectedResult) {
-+                                                Object expectedResult) throws Exception {
-         List<Object[]> shuffledRows = new ArrayList<>(Arrays.asList(data));
-         Collections.shuffle(shuffledRows, random());
-         Object[][] shuffledData = shuffledRows.toArray(new Object[0][]);
-@@ -330,14 +332,15 @@ private void assertResultIsOrderInsensitive(AggregationFunction aggregationFunct
-     protected Object execPartialAggregationWithoutDocValues(AggregationFunction function,
-                                                             Object[][] data,
-                                                             boolean randomExtraStates,
--                                                            Version minNodeVersion) {
-+                                                            Version minNodeVersion) throws Exception {
-         var argumentsSize = function.signature().getArgumentTypes().size();
-         RowCollectExpression[] inputs = new RowCollectExpression[argumentsSize];
-         for (int i = 0; i < argumentsSize; i++) {
-             inputs[i] = new RowCollectExpression(i);
-         }
- 
-         ArrayList<Object> states = new ArrayList<>();
-+        boolean streamState = randomBoolean();
-         states.add(function.newState(RAM_ACCOUNTING, minNodeVersion, memoryManager));
-         for (Row row : new ArrayBucket(data)) {
-             for (RowCollectExpression input : inputs) {
-@@ -347,7 +350,18 @@ protected Object execPartialAggregationWithoutDocValues(AggregationFunction func
-                 states.add(function.newState(RAM_ACCOUNTING, minNodeVersion, memoryManager));
+-    private void stopCluster(@Nullable TestCluster cluster) throws Exception {
+-        if (cluster == null) {
+-            return;
+-        }
+-        try {
+-            cluster.beforeIndexDeletion();
+-            cluster.assertSeqNos();
+-            cluster.assertSameDocIdsOnShards();
+-            cluster.assertConsistentHistoryBetweenTranslogAndLuceneIndex();
+-        } finally {
+-            cluster.wipe();
+-            cluster.close();
+-        }
+-    }
+-
+     @After
+     public void clearClusters() throws Exception {
+         if (subscriber != null) {
+@@ -174,8 +159,7 @@ public void clearClusters() throws Exception {
+                 // ignore
              }
-             int idx = states.size() - 1;
--            states.set(idx, function.iterate(RAM_ACCOUNTING, memoryManager, states.get(idx), inputs));
-+            Object newState = function.iterate(RAM_ACCOUNTING, memoryManager, states.get(idx), inputs);
-+            if (streamState && randomExtraStates) {
-+                streamState = false;
-+                Streamer streamer = function.partialType().streamer();
-+                try (var out = new BytesStreamOutput()) {
-+                    streamer.writeValueTo(out, newState);
-+                    try (var in = out.bytes().streamInput()) {
-+                        newState = streamer.readValueFrom(in);
-+                    }
-+                }
-+            }
-+            states.set(idx, newState);
          }
-         Object state = states.get(0);
-         for (int i = 1; i < states.size(); i++) {
+-        stopCluster(publisherCluster);
+-        stopCluster(subscriberCluster);
++        stopCluster(publisherCluster, subscriberCluster);
+     }
+ 
+     @Test
 ```
 
 ---
 
-### Incident Patch 3: `914ab442` (2026-10-28)
-**Commit Message**: Fix blackbox fdw tests
+### Incident Patch 2: `df2a1dcb` (2026-10-29)
+**Commit Message**: Fix flaky percentile on interval blackbox test
 
-Drop server (and the table) with cascade
+This was a flaky test
 
-Follows: #20182
+The reason is the boxes didn't line up all the time depending on what
+now()` returned.
 
-**File**: `docs/admin/fdw.rst` (modified, +5/-0)
+Reproduce the error with:
+
+cr> select percentile('2026-10-29 12:14:50Z' - date, 0.5) as median_age from locations
+... where date is not null;
++------------------------+
+| median_age             |
++------------------------+
+| ... days ...           |
++------------------------+
+SELECT 1 row in set (... sec)
+
+We now make the test deterministic so that the borders
+stay fixed
+
+**File**: `docs/general/builtins/aggregation.rst` (modified, +6/-6)
 ```diff
-@@ -189,6 +189,11 @@ Usage::
-   +------------+-----------------+----------+------+
-   SELECT 6 rows in set (... sec)
+@@ -742,13 +742,13 @@ result is returned.
+ When supplied an ``interval`` type column (e.g., from timestamp subtraction),
+ the function will return an ``interval``::
  
-+.. hide:
-+
-+  cr> DROP SERVER my_parquet CASCADE;
-+  DROP OK, 1 row affected (... sec)
-+
- .. note::
+-    cr> select percentile(now() - date, 0.5) as median_age from locations
++    cr> select percentile('2026-10-29 12:14:50Z' - date, 0.5) as median_age from locations
+     ... where date is not null;
+-    +------------------------+
+-    | median_age             |
+-    +------------------------+
+-    | ... days ...           |
+-    +------------------------+
++    +--------------------+
++    | median_age         |
++    +--------------------+
++    | 4853 days 12:14:50 |
++    +--------------------+
+     SELECT 1 row in set (... sec)
  
-    In order to query :ref:`Object column with dynamic column policy <type-object-columns-dynamic>`,
+ To be able to calculate percentiles over a huge amount of data and to scale out
+```
+
+---
+
+### Incident Patch 3: `beb0c93f` (2026-10-28)
+**Commit Message**: Require AL for pg_tunnel
+
+**File**: `server/src/main/java/io/crate/protocols/postgres/PostgresNetty.java` (modified, +1/-0)
+```diff
+@@ -190,6 +190,7 @@ protected void initChannel(Channel ch) {
+                         chPipeline.addLast("dispatcher", new Netty4MessageChannelHandler(pageCacheRecycler, transport));
+                     },
+                     authentication,
++                    roles,
+                     sslContextProvider
+                 );
+                 pipeline.addLast("frame-decoder", postgresWireProtocol.decoder);
+```
+
+**File**: `server/src/main/java/io/crate/protocols/postgres/PostgresWireProtocol.java` (modified, +10/-0)
+```diff
+@@ -58,6 +58,7 @@
+ import io.crate.auth.Protocol;
+ import io.crate.common.annotations.VisibleForTesting;
+ import io.crate.common.collections.Lists;
++import io.crate.exceptions.UnauthorizedException;
+ import io.crate.expression.symbol.Literal;
+ import io.crate.expression.symbol.Symbol;
+ import io.crate.metadata.settings.CoordinatorSessionSettings;
+@@ -68,6 +69,7 @@
+ import io.crate.protocols.postgres.types.PGType;
+ import io.crate.protocols.postgres.types.PGTypes;
+ import io.crate.role.Role;
++import io.crate.role.Roles;
+ import io.crate.session.DescribeResult;
+ import io.crate.session.ResultReceiver;
+ import io.crate.session.Session;
+@@ -219,6 +221,7 @@ public class PostgresWireProtocol {
+     private final SessionSettingRegistry sessionSettingRegistry;
+     private final Function<CoordinatorSessionSettings, AccessControl> getAccessControl;
+     private final Authentication authService;
++    private final Roles roles;
+     private final Consumer<ChannelPipeline> addTransportHandler;
+ 
+     private DelayableWriteChannel channel;
+@@ -236,12 +239,14 @@ public class PostgresWireProtocol {
+                          Function<CoordinatorSessionSettings, AccessControl> getAcessControl,
+                          Consumer<ChannelPipeline> addTransportHandler,
+                          Authentication authService,
++                         Roles roles,
+                          Supplier<SslContext> getSslContext) {
+         this.sessions = sessions;
+         this.sessionSettingRegistry = sessionSettingRegistry;
+         this.getAccessControl = getAcessControl;
+         this.addTransportHandler = addTransportHandler;
+         this.authService = authService;
++        this.roles = roles;
+         this.decoder = new PgDecoder(getSslContext);
+         this.handler = new MessageHandler();
+     }
+@@ -488,6 +493,11 @@ private void finishAuthentication(Channel channel) {
+         assert authContext != null : "finishAuthentication() requires an authContext instance";
+         try {
+             Role authenticatedUser = authContext.authenticate();
++            if (properties.containsKey("CrateDBTransport") && !roles.hasALPrivileges(authenticatedUser)) {
++                throw new UnauthorizedException(
++                    "User '%s' requested the pg_tunnel mode, but has no AL privileges.".formatted(authenticatedUser.name())
++                );
++            }
+             String database = properties.getProperty("database");
+             session = sessions.newSession(authContext.connectionProperties(), database, authenticatedUser);
+             String options = properties.getProperty("options");
+```
+
+**File**: `server/src/test/java/io/crate/integrationtests/LogicalReplicationITestCase.java` (modified, +1/-1)
+```diff
+@@ -23,7 +23,6 @@
+ 
+ import static io.crate.replication.logical.LogicalReplicationSettings.REPLICATION_READ_POLL_DURATION;
+ import static io.crate.testing.Asserts.assertThat;
+-import static org.assertj.core.api.Assertions.assertThat;
+ import static org.elasticsearch.discovery.DiscoveryModule.DISCOVERY_SEED_PROVIDERS_SETTING;
+ import static org.elasticsearch.discovery.SettingsBasedSeedHostsProvider.DISCOVERY_SEED_HOSTS_SETTING;
+ 
+@@ -294,6 +293,7 @@ protected void createPublication(String pub, boolean isForAllTables, List<String
+             executeOnPublisher("CREATE PUBLICATION " + pub + " FOR TABLE " + tablesAsString);
+         }
+         executeOnPublisher("CREATE USER " + SUBSCRIBING_USER);
++        executeOnPublisher("GRANT AL TO " + SUBSCRIBING_USER);
+         if (!tablesAsString.isEmpty()) {
+             executeOnPublisher("GRANT DQL ON TABLE " + tablesAsString + " TO " + SUBSCRIBING_USER);
+         }
+```
+
+**File**: `server/src/test/java/io/crate/protocols/postgres/PostgresWireProtocolTest.java` (modified, +200/-15)
+```diff
+@@ -45,6 +45,7 @@
+ import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.concurrent.atomic.AtomicInteger;
+ import java.util.concurrent.atomic.AtomicReference;
++import java.util.function.BiConsumer;
+ import java.util.function.Supplier;
+ 
+ import org.elasticsearch.Version;
+@@ -64,8 +65,10 @@
+ import io.crate.analyze.QueriedSelectRelation;
+ import io.crate.auth.AccessControl;
+ import io.crate.auth.AlwaysOKAuthentication;
++import io.crate.auth.Authentication;
+ import io.crate.auth.AuthenticationMethod;
+ import io.crate.auth.Credentials;
++import io.crate.auth.PasswordAuthenticationMethod;
+ import io.crate.data.InMemoryBatchIterator;
+ import io.crate.data.Row;
+ import io.crate.data.Row1;
+@@ -83,7 +86,12 @@
+ import io.crate.protocols.postgres.ClientMessages.DescribeType;
+ import io.crate.protocols.postgres.types.PGType;
+ import io.crate.protocols.postgres.types.PGTypes;
++import io.crate.role.Permission;
++import io.crate.role.Policy;
++import io.crate.role.Privilege;
+ import io.crate.role.Role;
++import io.crate.role.Roles;
++import io.crate.role.Securable;
+ import io.crate.role.metadata.RolesHelper;
+ import io.crate.session.Session;
+ import io.crate.session.Sessions;
+@@ -95,6 +103,7 @@
+ import io.netty.channel.Channel;
+ import io.netty.channel.ChannelHandler;
+ import io.netty.channel.embedded.EmbeddedChannel;
++import io.netty.handler.flow.FlowControlHandler;
+ import io.netty.handler.ssl.SslContext;
+ import io.netty.handler.ssl.SslContextBuilder;
+ import io.netty.handler.ssl.SslHandler;
+@@ -106,12 +115,27 @@ public class PostgresWireProtocolTest extends CrateDummyClusterServiceUnitTest {
+     private Sessions sessions;
+     private EmbeddedChannel channel;
+     private SQLExecutor executor;
++    private Roles roles;
++    private Authentication authentication;
+ 
+     @Before
+     public void prepare() throws Exception {
+         executor = SQLExecutor.of(clusterService)
+             .addTable("create table users (name text not null)");
+         sessions = executor.sqlOperations;
++
++        roles = () -> List.of(Role.CRATE_USER);
++        authentication = (_, _) -> new AuthenticationMethod() {
++            @Override
++            public AuthToken authenticate(Credentials credentials, ConnectionProperties connProperties) {
++                return AuthToken.of(roles.findUser(credentials.username()));
++            }
++
++            @Override
++            public String name() {
++                return PasswordAuthenticationMethod.NAME;
++            }
++        };
+     }
+ 
+     @After
+@@ -132,6 +156,7 @@ public void testHandleEmptySimpleQuery() throws Exception {
+                 _ -> AccessControl.DISABLED,
+                 _ -> {},
+                 new AlwaysOKAuthentication(() -> List.of(Role.CRATE_USER)),
++                roles,
+                 () -> null
+             );
+         channel = new EmbeddedChannel(ctx.decoder, ctx.handler);
+@@ -158,6 +183,7 @@ public void test_simple_query_sends_ready_for_query_with_current_transaction_sta
+                 _ -> AccessControl.DISABLED,
+                 _ -> {},
+                 new AlwaysOKAuthentication(() -> List.of(Role.CRATE_USER)),
++                roles,
+                 () -> null
+             );
+         channel = new EmbeddedChannel(ctx.decoder, ctx.handler);
+@@ -184,7 +210,9 @@ public void test_channel_is_flushed_after_receiving_flush_request() throws Excep
+                 _ -> AccessControl.DISABLED,
+                 _ -> {},
+                 new AlwaysOKAuthentication(() -> List.of(Role.CRATE_USER)),
+-                () -> null);
++                roles,
++                () -> null
++            );
+         AtomicBoolean flushed = new AtomicBoolean(false);
+         channel = new EmbeddedChannel(ctx.decoder, ctx.handler) {
+             @Override
+@@ -228,7 +256,9 @@ public void testBindMessageCanBeReadIfTypeForParamsIsUnknown() throws Exception
+                 _ -> AccessControl.DISABLED,
+                 _ -> {},
+                 new AlwaysOKAuthentication(() -> List.of(Role.CRATE_USER)),
+-                () -> null);
++                roles,
++                () -> null
++            );
+         channel = new EmbeddedChannel(ctx.decoder, ctx.handler);
+ 
+         ByteBuf buffer = Unpooled.buffer();
+@@ -255,7 +285,9 @@ public void testDescribePortalMessage() throws Exception {
+                 _ -> AccessControl.DISABLED,
+                 _ -> {},
+                 new AlwaysOKAuthentication(() -> List.of(Role.CRATE_USER)),
+-                () -> null);
++                roles,
++                () -> null
++            );
+ 
+         channel = new EmbeddedChannel(ctx.decoder, ctx.handler);
+         {
+@@ -315,7 +347,9 @@ public void testDescribeStatementMessage() throws Exception {
+                 _ -> AccessControl.DISABLED,
+                 _ -> {},
+                 new AlwaysOKAuthentication(() -> List.of(Role.CRATE_USER)),
+-                () -> null);
++                roles,
++                () -> null
++            );
+ 
+         channel = new EmbeddedChanne
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20502** (2026-10-28): Add link to CVE for COPY FROM fix (backport #20497) (@mergify[bot])
-- **PR #20501** (2026-10-28): Fix blackbox fdw tests (@matriv)
-- **PR #20499** (2026-10-28): Fail CREATE FUNCTION when creating a function with the same signature (backport #20494) (@mergify[bot])
-- **PR #20498** (2026-10-28): Fail CREATE FUNCTION when creating a function with the same signature (backport #20494) (@mergify[bot])
-- **PR #20497** (2026-10-28): Add link to CVE for COPY FROM fix (@matriv)
-- **PR #20496** (2026-10-28): Compress percentile state only on terminatePartial (backport #20488) (@mergify[bot])
+- **PR #20524** (2026-10-30): Test: fix publisher/subscriber cluster resource leaks when cleanup fails (backport #20478) (@mergify[bot])
+- **PR #20523** (2026-10-30): Test: fix publisher/subscriber cluster resource leaks when cleanup fails (backport #20478) (@mergify[bot])
+- **PR #20521** (2026-10-29): Fix flaky percentile on interval blackbox test (backport #20517) (@mergify[bot])
+- **PR #20520** (2026-10-29): Fix flaky percentile on interval blackbox test (backport #20517) (@mergify[bot])
+- **PR #20519** (2026-10-29): Check privileges of subqueries in VALUES and JOIN conditions (@matriv)
+- **PR #20518** (2026-10-29): Check privileges of subqueries in VALUES and JOIN conditions (@matriv)
 
 ---
 
@@ -853,29 +969,65 @@ Follows: #20182
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add link to CVE for COPY FROM fix
+## X. Test: fix publisher/subscriber cluster resource leaks when cleanup fails
 
 **RULE**:
-When implementing operations in `docs/appendices/release-notes/6.5.0.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/src/test/java/io/crate/integrationtests/LogicalReplicationITestCase.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `792f7eb0`: Add link to CVE for COPY FROM fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fa1943a8`: Test: fix publisher/subscriber cluster resource leaks when cleanup fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.0.rst`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/test/java/io/crate/integrationtests/LogicalReplicationITestCase.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-  using :ref:`COPY FROM <sql-copy-from>`. For more information see the relevant
-  `security advisory <https://github.com/crate/crate/security/advisories/GHSA-pfv7-m2fh-6g4v>`__.
+import org.junit.runners.model.MultipleFailureException;
+        try {
+            stopCluster(subscriberCluster, publisherCluster);
+        } finally {
+            subscriberCluster = null;
+            publisherCluster = null;
+        }
+    // Pass all clusters together so cleanup continues even if one cluster fails to stop.
+    static void stopCluster(TestCluster... clusters) throws Exception {
+        List<Throwable> failures = new ArrayList<>();
+        for (TestCluster cluster : clusters) {
+            if (cluster == null) {
+                continue;
+            }
+            try (cluster) {
+                try {
+                    cluster.beforeIndexDeletion();
+                    cluster.assertSeqNos();
+                    cluster.assertSameDocIdsOnShards();
+                    cluster.assertConsistentHistoryBetweenTranslogAndLuceneIndex();
+                } catch (Throwable t) {
+                    failures.add(t);
+                }
+            } catch (Throwable t) {
+                failures.add(t);
+        MultipleFailureException.assertEmpty(failures);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-  using :ref:`COPY FROM <sql-copy-from>`.
+        stopCluster(subscriberCluster);
+        subscriberCluster = null;
+        stopCluster(publisherCluster);
+        publisherCluster = null;
+    protected void stopCluster(TestCluster cluster) throws Exception {
+        if (cluster != null) {
+            try {
+                cluster.beforeIndexDeletion();
+                cluster.assertSeqNos();
+                cluster.assertSameDocIdsOnShards();
+                cluster.assertConsistentHistoryBetweenTranslogAndLuceneIndex();
+            } finally {
+                cluster.close();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `792f7eb0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fa1943a8` are properly handled with clean fallback behavior.

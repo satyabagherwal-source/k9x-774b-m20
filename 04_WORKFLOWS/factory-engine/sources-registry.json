@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T17:51:42.575Z",
-    "lastVerified": "2026-10-30T17:51:42.575Z",
+    "lastChecked": "2026-10-30T18:00:15.370Z",
+    "lastVerified": "2026-10-30T18:00:15.370Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -341,9 +341,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T17:14:37.242Z",
+    "lastChecked": "2026-10-30T18:00:08.206Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T17:14:37.242Z"
+    "lastVerified": "2026-10-30T18:00:08.206Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -727,8 +727,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T11:28:09.550Z",
-    "lastVerified": "2026-10-30T11:28:09.550Z",
+    "lastChecked": "2026-10-30T18:00:03.343Z",
+    "lastVerified": "2026-10-30T18:00:03.343Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -2532,14 +2532,14 @@
     "officialUrl": "https://github.com/crate/crate",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-29T00:29:53.448Z",
-    "lastVerified": "2026-10-29T00:29:53.448Z",
+    "lastChecked": "2026-10-30T18:00:10.909Z",
+    "lastVerified": "2026-10-30T18:00:10.909Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crate-crate",
-    "contentHash": "bb8f0a5abb5523801bee05550e02ebca2e8b01507b0db9067feabd9a0f4570b2",
+    "contentHash": "7980539d4b3378ca2d3c2c10ff746b6a438ba6344901dcaabf6d816723daafe9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3333,9 +3333,9 @@
   "dragonflyoss-dragonfly": {
     "name": "dragonfly",
     "officialUrl": "https://github.com/dragonflyoss/dragonfly",
-    "lastChecked": "2026-10-29T02:00:10.112Z",
+    "lastChecked": "2026-10-30T18:00:00.820Z",
     "revisionIdentifier": "fce3dc25",
-    "lastVerified": "2026-10-29T02:00:10.112Z"
+    "lastVerified": "2026-10-30T18:00:00.820Z"
   },
   "matrixorigin-matrixone": {
     "name": "matrixorigin/matrixone",
@@ -6977,9 +6977,9 @@
   "bgreenwell-doxx": {
     "name": "doxx",
     "officialUrl": "https://github.com/bgreenwell/doxx",
-    "lastChecked": "2026-10-28T19:46:37.194Z",
+    "lastChecked": "2026-10-30T17:59:53.213Z",
     "revisionIdentifier": "062819a1",
-    "lastVerified": "2026-10-28T19:46:37.194Z"
+    "lastVerified": "2026-10-30T17:59:53.213Z"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
     "name": "unsloth/embeddinggemma-2-GGUF",
@@ -10524,5 +10524,19 @@
     "lastChecked": "2026-10-30T17:51:30.694Z",
     "revisionIdentifier": "4c59ff25",
     "lastVerified": "2026-10-30T17:51:30.694Z"
+  },
+  "mozilla-readability": {
+    "name": "readability",
+    "officialUrl": "https://github.com/mozilla/readability",
+    "lastChecked": "2026-10-30T17:59:55.750Z",
+    "revisionIdentifier": "ab4027a8",
+    "lastVerified": "2026-10-30T17:59:55.750Z"
+  },
+  "aheze-popovers": {
+    "name": "Popovers",
+    "officialUrl": "https://github.com/aheze/Popovers",
+    "lastChecked": "2026-10-30T17:59:58.209Z",
+    "revisionIdentifier": "576b4d3e",
+    "lastVerified": "2026-10-30T17:59:58.209Z"
   }
 }

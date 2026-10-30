@@ -6254,3 +6254,4 @@
 | `CYCLE-20261030-G92V` | `2026-10-30T17:43:08.791Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5813, Rule 5814, Rule 5815` | Yes (`ee7885bd...`) |
 | `CYCLE-20261030-J0G3` | `2026-10-30T17:45:17.571Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5816, Rule 5817, Rule 5818` | Yes (`487dda39...`) |
 | `CYCLE-20261030-R7K7` | `2026-10-30T17:51:40.039Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5819` | Yes (`06448b2f...`) |
+| `CYCLE-20261030-278G` | `2026-10-30T18:00:12.832Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5820` | Yes (`7980539d...`) |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-DX6H",
-    "timestamp": "2026-10-28T12:02:04.217Z",
-    "repository": "koderover/zadig",
-    "learningId": "learn-github-koderover-zadig",
-    "contentHash": "67455395300af59245fd7f1ae68e149a49185baac42b770ba8d749ab70e94bae",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-DZJV",
     "timestamp": "2026-10-28T12:02:07.291Z",
     "repository": "google/electra-base-discriminator",
@@ -7490,6 +7475,21 @@
     "repository": "okteto/okteto",
     "learningId": "learn-github-okteto-okteto",
     "contentHash": "06448b2f0ab90f6598b48c3fd9fcd185b83ba47c4d1c750fdd52e53627b58c03",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-278G",
+    "timestamp": "2026-10-30T18:00:12.832Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "7980539d4b3378ca2d3c2c10ff746b6a438ba6344901dcaabf6d816723daafe9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

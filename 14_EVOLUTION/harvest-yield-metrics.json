@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T17:51:40.045Z",
-  "total_cycles_completed": 6231,
-  "total_learnings_persisted": 6231,
-  "total_rules_promoted": 5789,
+  "last_updated": "2026-10-30T18:00:12.840Z",
+  "total_cycles_completed": 6232,
+  "total_learnings_persisted": 6232,
+  "total_rules_promoted": 5790,
   "history": [
-    {
-      "timestamp": "2026-10-29T17:16:50.008Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T17:23:31.867Z",
       "repository": "Kuddev/pebrel",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-30T17:51:40.045Z",
       "repository": "okteto/okteto",
       "learningId": "learn-github-okteto-okteto",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T18:00:12.840Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -6263,3 +6263,4 @@ Every entry in this ledger must capture:
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `f9f58b77` | Multi-dimensional audit evidence | 2026-10-30T17:43:08.794Z |
 | `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `e1f93d25` | Multi-dimensional audit evidence | 2026-10-30T17:45:17.575Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `bb9214a9` | Multi-dimensional audit evidence | 2026-10-30T17:51:40.042Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `fa1943a8` | Multi-dimensional audit evidence | 2026-10-30T18:00:12.835Z |

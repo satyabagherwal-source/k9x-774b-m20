@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T17:51:39.993Z",
+  "last_updated": "2026-10-30T18:00:12.766Z",
   "total_verified_learnings": 1176,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7913,8 +7913,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "792f7eb0",
-      "content_hash": "bb8f0a5abb5523801bee05550e02ebca2e8b01507b0db9067feabd9a0f4570b2",
+      "source_version": "fa1943a8",
+      "content_hash": "7980539d4b3378ca2d3c2c10ff746b6a438ba6344901dcaabf6d816723daafe9",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -7962,6 +7962,11 @@
           "number": 5474,
           "title": "Add link to CVE for COPY FROM fix",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5820,
+          "title": "Test: fix publisher/subscriber cluster resource leaks when cleanup fails",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7969,7 +7974,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T00:29:53.971Z",
+      "verified_at": "2026-10-30T18:00:12.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154608,6 +154613,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T17:51:39.981Z"
+    },
+    "rule-5820": {
+      "learning_id": "rule-5820",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5820,
+      "title": "Test: fix publisher/subscriber cluster resource leaks when cleanup fails",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "fa1943a8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T18:00:12.741Z"
     }
   },
   "aliases": {
