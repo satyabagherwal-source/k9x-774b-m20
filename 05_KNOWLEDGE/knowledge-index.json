@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T06:01:56.318Z",
+  "last_updated": "2026-10-30T06:10:21.191Z",
   "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -32708,8 +32708,8 @@
       "slug": "juullabs-kable",
       "platform": "github",
       "source_url": "https://github.com/JuulLabs/kable",
-      "source_version": "ad88767b",
-      "content_hash": "2cead0ed8412d1997863d5a46d1fc142ef46bcf7dfe854ad2f539fc2af0013ac",
+      "source_version": "019179ff",
+      "content_hash": "2bfc7acbc77bf7a1eee8d0b75eef6d3a01b164922e9182bc82b810dac78df42b",
       "dossier_path": "07_PROJECT_LEARNING/juullabs-kable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juullabs-kable-learnings.md",
       "promoted_rules": [
@@ -32722,6 +32722,11 @@
           "number": 4508,
           "title": "Update Rust crate tokio to v1.54.0 (#1288)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5622,
+          "title": "Update agp to v9.4.1 (#1279)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32729,7 +32734,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T00:41:58.188Z",
+      "verified_at": "2026-10-30T06:10:21.172Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150810,6 +150815,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T06:01:56.299Z"
+    },
+    "rule-5622": {
+      "learning_id": "rule-5622",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5622,
+      "title": "Update agp to v9.4.1 (#1279)",
+      "source_url": "https://github.com/JuulLabs/kable",
+      "source_version": "019179ff",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:10:21.172Z"
     }
   },
   "aliases": {

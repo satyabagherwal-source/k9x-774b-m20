@@ -8773,10 +8773,10 @@
     "repository": "JuulLabs/kable",
     "platform": "github",
     "sourceUrl": "https://github.com/JuulLabs/kable",
-    "sourceVersion": "ad88767b",
+    "sourceVersion": "019179ff",
     "license": "Apache-2.0",
-    "contentHash": "2cead0ed8412d1997863d5a46d1fc142ef46bcf7dfe854ad2f539fc2af0013ac",
-    "lastHarvestedAt": "2026-10-26T00:41:58.244Z",
+    "contentHash": "2bfc7acbc77bf7a1eee8d0b75eef6d3a01b164922e9182bc82b810dac78df42b",
+    "lastHarvestedAt": "2026-10-30T06:10:21.269Z",
     "learningId": "learn-github-juullabs-kable"
   },
   "tmolavi-siteprobe": {

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T06:01:58.950Z",
-    "lastVerified": "2026-10-30T06:01:58.950Z",
+    "lastChecked": "2026-10-30T06:10:26.036Z",
+    "lastVerified": "2026-10-30T06:10:26.036Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -404,8 +404,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T05:39:26.060Z",
-    "lastVerified": "2026-10-30T05:39:26.060Z",
+    "lastChecked": "2026-10-30T06:10:26.025Z",
+    "lastVerified": "2026-10-30T06:10:26.025Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -943,9 +943,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-10-29T23:34:54.715Z",
+    "lastChecked": "2026-10-30T06:10:21.029Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-10-29T23:34:54.715Z"
+    "lastVerified": "2026-10-30T06:10:21.029Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -3901,9 +3901,9 @@
   "mtkennerly-ludusavi": {
     "name": "ludusavi",
     "officialUrl": "https://github.com/mtkennerly/ludusavi",
-    "lastChecked": "2026-10-28T13:36:37.956Z",
+    "lastChecked": "2026-10-30T06:10:11.013Z",
     "revisionIdentifier": "95b651aa",
-    "lastVerified": "2026-10-28T13:36:37.956Z"
+    "lastVerified": "2026-10-30T06:10:11.013Z"
   },
   "hf-black-forest-labs-flux.1-schnell": {
     "name": "black-forest-labs/FLUX.1-schnell",
@@ -5804,9 +5804,9 @@
   "olric-data-olric": {
     "name": "olric",
     "officialUrl": "https://github.com/olric-data/olric",
-    "lastChecked": "2026-10-28T17:20:45.710Z",
+    "lastChecked": "2026-10-30T06:10:23.547Z",
     "revisionIdentifier": "c49c44a8",
-    "lastVerified": "2026-10-28T17:20:45.710Z"
+    "lastVerified": "2026-10-30T06:10:23.547Z"
   },
   "graphprotocol-graph-node": {
     "name": "graph-node",
@@ -6172,9 +6172,9 @@
   "kubeshark-kubeshark": {
     "name": "kubeshark",
     "officialUrl": "https://github.com/kubeshark/kubeshark",
-    "lastChecked": "2026-10-28T18:13:58.413Z",
+    "lastChecked": "2026-10-30T06:10:18.512Z",
     "revisionIdentifier": "b79aa01a",
-    "lastVerified": "2026-10-28T18:13:58.413Z"
+    "lastVerified": "2026-10-30T06:10:18.512Z"
   },
   "vespa-engine-vespa": {
     "name": "vespa-engine/vespa",
@@ -9235,5 +9235,29 @@
     "lastChecked": "2026-10-30T06:01:43.550Z",
     "revisionIdentifier": "3048f024",
     "lastVerified": "2026-10-30T06:01:43.550Z"
+  },
+  "ugolbck-seofordev": {
+    "name": "seofordev",
+    "officialUrl": "https://github.com/ugolbck/seofordev",
+    "lastChecked": "2026-10-30T06:10:13.515Z",
+    "revisionIdentifier": "d791e6dd",
+    "lastVerified": "2026-10-30T06:10:13.515Z"
+  },
+  "juullabs-kable": {
+    "name": "JuulLabs/kable",
+    "officialUrl": "https://github.com/JuulLabs/kable",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-30T06:10:19.627Z",
+    "lastVerified": "2026-10-30T06:10:19.627Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-juullabs-kable",
+    "contentHash": "2bfc7acbc77bf7a1eee8d0b75eef6d3a01b164922e9182bc82b810dac78df42b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

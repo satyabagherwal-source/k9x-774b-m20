@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T06:01:56.411Z",
+  "last_updated": "2026-10-30T06:10:21.279Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -13206,14 +13206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juullabs-kable",
-      "content_hash": "2cead0ed8412d1997863d5a46d1fc142ef46bcf7dfe854ad2f539fc2af0013ac",
-      "verified_at": "2026-10-26T00:41:58.251Z",
+      "content_hash": "2bfc7acbc77bf7a1eee8d0b75eef6d3a01b164922e9182bc82b810dac78df42b",
+      "verified_at": "2026-10-30T06:10:21.278Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T00:41:58.251Z"
+      "last_updated": "2026-10-30T06:10:21.278Z"
     },
     "tmolavi/siteprobe": {
       "repository": "tmolavi/siteprobe",
