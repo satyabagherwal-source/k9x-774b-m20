@@ -6191,3 +6191,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-lfm3-audio-2b` | `https://huggingface.co/LiquidAI/LFM3-Audio-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-30T10:42:07.290Z |
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `58d7d2f9` | Multi-dimensional audit evidence | 2026-10-30T10:56:08.270Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `d2240721` | Multi-dimensional audit evidence | 2026-10-30T10:56:34.531Z |
+| `learn-github-revenuecat-purchases-ios` | `https://github.com/RevenueCat/purchases-ios` | `373c6305` | Multi-dimensional audit evidence | 2026-10-30T11:12:26.046Z |
+| `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `3e7d9ba6` | Multi-dimensional audit evidence | 2026-10-30T11:17:22.257Z |

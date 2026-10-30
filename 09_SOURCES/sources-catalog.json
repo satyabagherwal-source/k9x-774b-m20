@@ -5993,10 +5993,10 @@
     "repository": "nezhahq/nezha",
     "platform": "github",
     "sourceUrl": "https://github.com/nezhahq/nezha",
-    "sourceVersion": "a6a16eab",
+    "sourceVersion": "3e7d9ba6",
     "license": "WTFPL",
-    "contentHash": "9cc592a839c79e5a463cc3c1c976ad5307ee4623478a9ec2a44993a59e45fdc6",
-    "lastHarvestedAt": "2026-10-27T13:35:08.421Z",
+    "contentHash": "2e773a0681f7679e1f39f779e914d989323c9dae17bec38c8eb5de206fe1de27",
+    "lastHarvestedAt": "2026-10-30T11:17:22.257Z",
     "learningId": "learn-github-nezhahq-nezha"
   },
   "tiajinsha-jkvideo": {
@@ -9213,10 +9213,10 @@
     "repository": "RevenueCat/purchases-ios",
     "platform": "github",
     "sourceUrl": "https://github.com/RevenueCat/purchases-ios",
-    "sourceVersion": "742a03ea",
+    "sourceVersion": "373c6305",
     "license": "MIT",
-    "contentHash": "7089b1d9ab9fd504d40d7ab2a2653ddd5ee2879c007f72cf8d6a4a4f0116a8e6",
-    "lastHarvestedAt": "2026-10-26T09:24:30.254Z",
+    "contentHash": "4b4cf40ce2a4a9465fb3e8df022edacb4591f284c3fa360884d77ce0e862326a",
+    "lastHarvestedAt": "2026-10-30T11:12:26.046Z",
     "learningId": "learn-github-revenuecat-purchases-ios"
   },
   "hf-reflection-beam-1.0-501b-a23b": {

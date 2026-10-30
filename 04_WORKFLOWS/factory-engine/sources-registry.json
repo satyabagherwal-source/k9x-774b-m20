@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T10:56:37.092Z",
-    "lastVerified": "2026-10-30T10:56:37.092Z",
+    "lastChecked": "2026-10-30T11:17:24.801Z",
+    "lastVerified": "2026-10-30T11:17:24.801Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -342,9 +342,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T10:07:49.067Z",
+    "lastChecked": "2026-10-30T11:12:29.757Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T10:07:49.067Z"
+    "lastVerified": "2026-10-30T11:12:29.757Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -404,9 +404,9 @@
   "run-llama-llama_index": {
     "name": "llama_index",
     "officialUrl": "https://github.com/run-llama/llama_index",
-    "lastChecked": "2026-10-28T20:37:50.893Z",
+    "lastChecked": "2026-10-30T11:12:27.488Z",
     "revisionIdentifier": "619d7466",
-    "lastVerified": "2026-10-28T20:37:50.893Z"
+    "lastVerified": "2026-10-30T11:12:27.488Z"
   },
   "nucleoidai-nucleoid": {
     "name": "NucleoidAI/Nucleoid",
@@ -651,9 +651,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-10-30T05:39:21.088Z",
+    "lastChecked": "2026-10-30T11:12:24.844Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-10-30T05:39:21.088Z"
+    "lastVerified": "2026-10-30T11:12:24.844Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -1429,9 +1429,9 @@
   "go-kratos-kratos": {
     "name": "kratos",
     "officialUrl": "https://github.com/go-kratos/kratos",
-    "lastChecked": "2026-10-28T21:37:11.901Z",
+    "lastChecked": "2026-10-30T11:12:22.330Z",
     "revisionIdentifier": "dd0fb7df",
-    "lastVerified": "2026-10-28T21:37:11.901Z"
+    "lastVerified": "2026-10-30T11:12:22.330Z"
   },
   "lunasec-io-lunasec": {
     "name": "lunasec",
@@ -5328,11 +5328,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nezhahq-nezha": {
-    "name": "nezha",
+    "name": "nezhahq/nezha",
     "officialUrl": "https://github.com/nezhahq/nezha",
-    "lastChecked": "2026-10-28T16:12:15.244Z",
-    "revisionIdentifier": "a6a16eab",
-    "lastVerified": "2026-10-28T16:12:15.244Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-30T11:12:19.576Z",
+    "lastVerified": "2026-10-30T11:12:19.576Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nezhahq-nezha",
+    "contentHash": "2e773a0681f7679e1f39f779e914d989323c9dae17bec38c8eb5de206fe1de27",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-openai-clip-vit-base-patch32": {
     "name": "openai/clip-vit-base-patch32",
@@ -9820,5 +9830,29 @@
     "lastChecked": "2026-10-30T10:54:02.394Z",
     "revisionIdentifier": "cf7c6eed",
     "lastVerified": "2026-10-30T10:54:02.394Z"
+  },
+  "lxml-lxml": {
+    "name": "lxml",
+    "officialUrl": "https://github.com/lxml/lxml",
+    "lastChecked": "2026-10-30T11:12:17.336Z",
+    "revisionIdentifier": "ebaa7fc0",
+    "lastVerified": "2026-10-30T11:12:17.336Z"
+  },
+  "revenuecat-purchases-ios": {
+    "name": "RevenueCat/purchases-ios",
+    "officialUrl": "https://github.com/RevenueCat/purchases-ios",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-30T11:12:24.115Z",
+    "lastVerified": "2026-10-30T11:12:24.115Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-revenuecat-purchases-ios",
+    "contentHash": "4b4cf40ce2a4a9465fb3e8df022edacb4591f284c3fa360884d77ce0e862326a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

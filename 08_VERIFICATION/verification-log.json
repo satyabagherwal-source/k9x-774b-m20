@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-XU7K",
-    "timestamp": "2026-10-28T04:21:40.016Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-xingchen-agi-teleocr",
-    "contentHash": "c2e631605ffbe0a0873d4f113ed5d62e049e431189cbe7bace7e88174ecb2684",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-Y3VE",
-    "timestamp": "2026-10-28T04:21:52.538Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "8b716857b0c7a91e71590a99cff0d68b17935830aedcbdeb9d54a384ffaf5ebb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-6D5C",
     "timestamp": "2026-10-28T04:28:17.808Z",
     "repository": "Qwen/Qwen-Image-2.1",
@@ -7492,6 +7462,36 @@
     "contentHash": "033ab191b0d22d1adc8e8c48f1f90dbbd45510cbc42aa4dd68b63dd40f3a5ad6",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-HSJF",
+    "timestamp": "2026-10-30T11:12:26.043Z",
+    "repository": "RevenueCat/purchases-ios",
+    "learningId": "learn-github-revenuecat-purchases-ios",
+    "contentHash": "4b4cf40ce2a4a9465fb3e8df022edacb4591f284c3fa360884d77ce0e862326a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-O53I",
+    "timestamp": "2026-10-30T11:17:22.254Z",
+    "repository": "nezhahq/nezha",
+    "learningId": "learn-github-nezhahq-nezha",
+    "contentHash": "2e773a0681f7679e1f39f779e914d989323c9dae17bec38c8eb5de206fe1de27",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

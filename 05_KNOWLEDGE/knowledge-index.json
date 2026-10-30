@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T10:56:34.449Z",
+  "last_updated": "2026-10-30T11:17:22.191Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -40804,8 +40804,8 @@
       "slug": "nezhahq-nezha",
       "platform": "github",
       "source_url": "https://github.com/nezhahq/nezha",
-      "source_version": "a6a16eab",
-      "content_hash": "9cc592a839c79e5a463cc3c1c976ad5307ee4623478a9ec2a44993a59e45fdc6",
+      "source_version": "3e7d9ba6",
+      "content_hash": "2e773a0681f7679e1f39f779e914d989323c9dae17bec38c8eb5de206fe1de27",
       "dossier_path": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
       "promoted_rules": [
@@ -40838,6 +40838,11 @@
           "number": 4808,
           "title": "security: close OAuth and agent control lifecycle regressions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5743,
+          "title": "safely remove inactive custom frontends",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40845,7 +40850,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:35:08.348Z",
+      "verified_at": "2026-10-30T11:17:22.174Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47046,8 +47051,8 @@
       "slug": "revenuecat-purchases-ios",
       "platform": "github",
       "source_url": "https://github.com/RevenueCat/purchases-ios",
-      "source_version": "742a03ea",
-      "content_hash": "7089b1d9ab9fd504d40d7ab2a2653ddd5ee2879c007f72cf8d6a4a4f0116a8e6",
+      "source_version": "373c6305",
+      "content_hash": "4b4cf40ce2a4a9465fb3e8df022edacb4591f284c3fa360884d77ce0e862326a",
       "dossier_path": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md",
       "promoted_rules": [
@@ -47065,6 +47070,11 @@
           "number": 4571,
           "title": "paywalls) Native delayed back button (#8114)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5742,
+          "title": "build: don't block releases on CocoaPods publishing (#8125)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47072,7 +47082,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T09:24:30.182Z",
+      "verified_at": "2026-10-30T11:12:25.964Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153089,6 +153099,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T10:56:34.430Z"
+    },
+    "rule-5742": {
+      "learning_id": "rule-5742",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5742,
+      "title": "build: don't block releases on CocoaPods publishing (#8125)",
+      "source_url": "https://github.com/RevenueCat/purchases-ios",
+      "source_version": "373c6305",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T11:12:25.964Z"
+    },
+    "rule-5743": {
+      "learning_id": "rule-5743",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5743,
+      "title": "safely remove inactive custom frontends",
+      "source_url": "https://github.com/nezhahq/nezha",
+      "source_version": "3e7d9ba6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T11:17:22.174Z"
     }
   },
   "aliases": {

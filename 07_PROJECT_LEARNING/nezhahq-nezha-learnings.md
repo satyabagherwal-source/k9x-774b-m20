@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nezhahq-nezha-learnings.md`  
 > **Source**: github ([https://github.com/nezhahq/nezha](https://github.com/nezhahq/nezha))  
-> **Source Version**: `a6a16eab`  
+> **Source Version**: `3e7d9ba6`  
 > **License**: WTFPL  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:35:07.984Z  
+> **Timestamp**: 2026-10-30T11:17:21.680Z  
 > **Learning ID**: `learn-github-nezhahq-nezha`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nezhahq-nezha-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nezhahq/nezha](https://github.com/nezhahq/nezha))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:35:06.688Z  
+> **Harvest Timestamp**: 2026-10-30T11:12:19.576Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: :trollface: Self-hosted, lightweight server and website monitoring and O&M tool
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10375 stars
+- **Stars / Engagement**: 10383 stars
 
 ---
 
@@ -962,826 +962,384 @@ func GjsonIter(json string) (iter.Seq2[string, string], error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7cd0371b` (2026-10-26)
-**Commit Message**: security: close OAuth and agent control lifecycle regressions
+### Incident Patch 1: `3e7d9ba6` (2026-10-29)
+**Commit Message**: feat: safely remove inactive custom frontends
 
-Restore session-aware OAuth binding and read public authentication URLs from committed host policy snapshots. Keep MCP, configuration, upgrade and alert-command admission tied to actual transport sends, while allowing transfer rollback and reply processing to complete without circular lock waits.
-
-Add authenticated-route, persistence rollback, transfer-result ordering and stalled-send regression coverage. Capture task identity before request contexts can be recycled.
+Update bundled admin frontend to v2.6.1 and official user frontend to v2.7.0.
 
 Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
 
-**File**: `cmd/dashboard/controller/controller.go` (modified, +2/-1)
+**File**: `cmd/dashboard/controller/frontend.go` (modified, +18/-0)
 ```diff
-@@ -87,10 +87,11 @@ func routers(r *gin.Engine, frontendDist fs.FS) {
- 
- 	api := r.Group("api/v1")
- 	api.POST("/login", authMiddleware.LoginHandler)
--	api.GET("/oauth2/:provider", commonHandler(oauth2redirect))
- 
- 	fallbackAuthMw := fallbackAuthMiddleware(authMiddleware)
- 	fallbackAuth := api.Group("", fallbackAuthMw)
-+	// Binding needs the real JWT session; anonymous OAuth login remains available.
-+	fallbackAuth.GET("/oauth2/:provider", commonHandler(oauth2redirect))
- 	fallbackAuth.GET("/setting", commonHandler(listConfig))
- 	fallbackAuth.GET("/oauth2/callback", commonHandler(oauth2callback(authMiddleware)))
- 
-```
-
-**File**: `cmd/dashboard/controller/mcp_oauth.go` (modified, +2/-1)
-```diff
-@@ -53,7 +53,8 @@ func mcpOAuthIssuer() (string, error) {
- 	if singleton.Conf == nil || !singleton.Conf.MCPEnabled() {
- 		return "", errors.New("MCP is disabled")
- 	}
--	host := singleton.Conf.DashboardHost
-+	// Issuers must not observe a host before persistence succeeds or during rollback.
-+	host := singleton.Conf.NATDomainPolicySnapshot().DashboardHost
- 	u, err := url.Parse("https://" + host)
- 	if err != nil || host == "" || u.Host != host || u.Hostname() == "" || u.User != nil || u.Path != "" || u.RawQuery != "" || u.Fragment != "" || strings.ContainsAny(host, "\\\r\n\t ") || singleton.Conf.JWTSecretKey == "" {
- 		return "", errors.New("configure dashboard_host as the public HTTPS host before using MCP OAuth")
-```
-
-**File**: `cmd/dashboard/controller/mcp_transfer.go` (modified, +4/-2)
-```diff
-@@ -107,9 +107,11 @@ func mcpTransferURLBase(c *gin.Context) (string, error) {
- 	}
- 
- 	requestHost := strings.TrimSpace(c.Request.Host)
--	host := strings.TrimSpace(singleton.Conf.DashboardHost)
-+	// Bearer URLs must use only persisted host settings, including reservations.
-+	policy := singleton.Conf.NATDomainPolicySnapshot()
-+	host := strings.TrimSpace(policy.DashboardHost)
- 	if host == "" {
--		if !singleton.IsReservedDashboardHost(requestHost) {
-+		if !policy.IsReservedHost(requestHost) {
- 			return "", errMCPTransferHostNotConfigured
- 		}
- 		host = requestHost
-```
-
-**File**: `cmd/dashboard/controller/oauth2.go` (modified, +6/-2)
-```diff
-@@ -39,8 +39,12 @@ func getRedirectURL(c *gin.Context) string {
- 		scheme = "https://"
- 	}
- 	host := c.Request.Host
--	if !singleton.IsReservedDashboardHost(host) && singleton.Conf != nil && singleton.Conf.DashboardHost != "" {
--		host = singleton.Conf.DashboardHost
-+	if singleton.Conf != nil {
-+		// Check reservations and canonical host from one committed configuration.
-+		policy := singleton.Conf.NATDomainPolicySnapshot()
-+		if !policy.IsReservedHost(host) && policy.DashboardHost != "" {
-+			host = policy.DashboardHost
-+		}
- 	}
- 	return scheme + host + "/api/v1/oauth2/callback"
+@@ -18,6 +18,7 @@ func registerFrontendRoutes(auth *gin.RouterGroup) {
+ 	frontends.GET("/releases", adminHandler(listFrontendReleases))
+ 	frontends.POST("/install", adminHandler(installFrontend))
+ 	frontends.POST("/activate", adminHandler(activateFrontend))
++	frontends.POST("/remove", adminHandler(removeFrontend))
  }
-```
-
-**File**: `cmd/dashboard/controller/oauth_route_and_config_regression_test.go` (added, +161/-0)
-```diff
-@@ -0,0 +1,161 @@
-+package controller
+ 
+ type frontendStatus struct {
+@@ -122,3 +123,20 @@ func activateFrontend(c *gin.Context) (any, error) {
+ 	}
+ 	return nil, errors.New("frontend is not installed for the selected role")
+ }
 +
-+import (
-+	"encoding/json"
-+	"errors"
-+	"net/http"
-+	"net/http/httptest"
-+	"net/url"
-+	"testing"
-+	"time"
-+
-+	"github.com/gin-gonic/gin"
-+	"github.com/nezhahq/nezha/model"
-+	"github.com/nezhahq/nezha/service/singleton"
-+	"github.com/patrickmn/go-cache"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestOAuthBindingThroughAuthenticatedDashboardRoute(t *testing.T) {
-+	session := setupMCPOAuthSession(t)
-+	previousCache := singleton.Cache
-+	singleton.Cache = cache.New(time.Minute, time.Minute)
-+	t.Cleanup(func() { singleton.Cache = previousCache })
-+	singleton.Conf.Oauth2 = map[string]*model.Oauth2Config{"github": {ClientID: "dashboard", Endpoint: model.Oauth2Endpoint{AuthURL: "https://provider.example/authorize"}}}
-+	for _, test := range []struct {
-+		name, action     string
-+		browser, success bool
-+	}{
-+		{"authenticated binding", "2", true, true},
-+		{"anonymous binding", "2", false, false},
-+		{"anonymous login", "1", false, true},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			response := session.request(t, http.MethodGet, "/api/v1/oauth2/github?type="+test.action, nil, test.browser)
-+			var body struct {
-+				Success bool                      `json:"success"`
-+				Data    model.Oauth2LoginResponse `json:"data"`
-+			}
-+			require.NoError(t, json.Unmarshal(response.Body.Bytes(), &body))
-+			require.Equal(t, test.success, body.Success, response.Body.String())
-+			if !test.success {
-+				require.Empty(t, response.Result().Cookies())
-+				require.Empty(t, body.Data.Redirect)
-+				return
-+			}
-+			redirect, err := url.Parse(body.Data.Redirect)
-+			require.NoError(t, err)
-+			require.Equal(t, "provider.example", redirect.Host)
-+			var stateCookie *http.Cookie
-+			for _, cookie := range response.Result().Cookies() {
-+				if cookie.Name == "nz-o2s" {
-+					stateCookie = cookie
-+				}
-+			}
-+			require.NotNil(t, stateCookie)
-+			cached, ok := singleton.Cache.Get(model.CacheKeyOauth2State + stateCookie.Value)
-+			require.True(t, ok)
-+			state := cached.(*model.Oauth2State)
-+			require.Equal(t, redirect.Query().Get("state"), state.State)
-+			require.Equal(t, "github", state.Provider)
-+			if test.browser {
-+				require.Equal(t, session.userID, state.UserID)
-+				var stored model.JWTSession
-+				require.NoError(t, singleton.DB.Where("key_id = ?", state.SessionID).First(&stored).Error)
-+				require.Equal(t, session.userID, stored.UserID)
-+				require.Equal(t, model.RTypeBind, state.Action)
-+			} else {
-+				require.Zero(t, state.UserID)
-+				require.Empty(t, state.SessionID)
-+				require.Equal(t, model.RTypeLogin, state.Action)
-+			}
-+		})
++// Remove frontend
++// @Summary Remove an inactive custom frontend and its files
++// @Security BearerAuth
++// @Tags admin required
++// @Accept json
++// @Param body body frontendActivateForm true "Installed frontend"
++// @Produce json
++// @Success 200 {object} model.CommonResponse[any]
++// @Router /frontend/remove [post]
++func removeFrontend(c *gin.Context) (any, error) {
++	var form frontendActivateForm
++	if err := c.ShouldBindJSON(&form); err != nil {
++		return nil, err
 +	}
++	return nil, singleton.Conf.RemoveFrontend(form.Path, form.IsAdmin)
 +}
-+
-+func TestPublicAuthenticationURLsWaitForConfigCommit(t *testing.T) {
-+	for _, reader := range []string{"issuer", "transfer", "oauth callback"} {
-+		for _, rollback := range []bool{false, true} {
-+			name := reader + "/commit"
-+			if rollback {
-+				name = reader + "/rollback"
-+			}
-+			t.Run(name, func(t *testing.T) {
-+				cleanup, _ := setupMCPTest(t)
-+				defer cleanup()
-+				singleton.Conf.JWTSecretKey = "configuration-commit-signing-key"
-+				entered, finish := make(chan struct{}), make(chan struct{})
-+				committed := make(chan error, 1)
-+				persistenceError := errors.New("persistence failed")
-+				go func() {
-+					committed <- singleton.Conf.CommitNATDomainPolicy(model.SettingForm{DashboardHost: "new.example.com"}, func() error {
-+						close(entered)
-+						<-finish
-+						if rollback {
-+							return persistenceError
-+						}
-+						return nil
-+					})
-+				}()
-+				<-entered
-+				type outcome struct {
-+					value string
-+					err   error
-+				}
-+				started, result := make(chan struct{}), make(chan outcome, 1)
-+				go func() {
-+					c, _ := gin.CreateTestContext(httptest.NewRecorder())
-+					c.Request = httptest.NewRequest(http.MethodGet, "https://untrusted.example/", nil)
-+					c.Request.Header.Set("X-Forwarded-Proto", "https")
-+					close(started)
-+					var value string
-+					var err error
-+					switch reader {
-+					case "issuer":
-+						value, err = mcpOAuthIssuer()
-+					case "transfer":
-+						value, err = mcpTransferURLBase(c)
-+					default:
-+						value = getRedirectURL(c)
-+					}
-+					result <- outcome{value, err}
-+				}()
-+				<-started
-+				var early *outcome
-+				select {
-+				case got := <-result:
-+					early = &got
-+				case <-time.After(50 * time.Millisecond):
-+				}
-+				close(finish)
-+				err := <-committed
-+				if rollback {
-+					require.ErrorIs(t, err, persistenceError)
-+				} else {
-+					require.NoError(t, err)
-+				}
-+				var got outcome
-+				if early != nil {
-+					got = *early
-+					t.Error("authentication URL read uncommitted configuration")
-+				} else {
-+					select {
-+					case got = <-result:
-+					case <-time.After(time.Second):
-+						t.Fatal("configuration reader did not resume")
-+					}
-+				}
-+				require.NoError(t, got.err)
-+				host := "new.example.com"
-+				if rollback {
-+					host = "example.com"
-+				}
-+				want := "https://" + host
-+				if reader == "oauth callback" {
-+				
 ```
 
-**File**: `cmd/dashboard/controller/server.go` (modified, +13/-15)
+**File**: `cmd/dashboard/controller/frontend_management_test.go` (modified, +48/-0)
 ```diff
-@@ -200,9 +200,11 @@ func forceUpdateServer(c *gin.Context) (*model.ServerTaskResponse, error) {
- 			continue
- 		}
- 		if server.GetTaskStream() != nil {
--			if err := server.SendTask(&pb.Task{
-+			// Upgrade is a control operation too; recheck ownership and pending
-+			// transitions at the actual send, including timeout cleanup.
-+			if err := server.SendTaskGuarded(&pb.Task{
- 				Type: model.TaskTypeUpgrade,
--			}); err != nil {
-+			}, serverTaskAdmission(c, sid)); err != nil {
- 				if errors.Is(err, model.ErrTaskStreamOffline) {
- 					forceUpdateResp.Offline = append(forceUpdateResp.Offline, sid)
- 				} else {
-@@ -245,26 +247,28 @@ func getServerConfig(c *gin.Context) (string, error) {
- 	if controlErr != nil {
- 		return "", controlErr
+@@ -96,6 +96,7 @@ func TestFrontendManagementRejectsUnauthorizedRolesAndScopes(t *testing.T) {
+ 				{"GET", "/api/v1/frontend/releases?repository=https://github.com/owner/site", ""},
+ 				{"POST", "/api/v1/frontend/install", `{"repository":"https://github.com/owner/site","tag":"v1"}`},
+ 				{"POST", "/api/v1/frontend/activate", `{"path":"installed-user"}`},
++				{"POST", "/api/v1/frontend/remove", `{"path":"installed-user"}`},
+ 			} {
+ 				response := frontendManagementRequest(t, router, endpoint.method, endpoint.path, endpoint.body)
+ 				var result model.CommonResponse[any]
+@@ -228,6 +229,7 @@ func TestFrontendManagementCSRFRejectsMissingAndForgedTokens(t *testing.T) {
+ 	for _, endpoint := range []struct{ path, body string }{
+ 		{"/api/v1/frontend/install", `{"repository":"https://github.com/owner/site","tag":"v1"}`},
+ 		{"/api/v1/frontend/activate", `{"path":"installed-user"}`},
++		{"/api/v1/frontend/remove", `{"path":"installed-user"}`},
+ 	} {
+ 		for _, token := range []string{"", "forged-csrf-token"} {
+ 			request := httptest.NewRequest("POST", endpoint.path, strings.NewReader(endpoint.body))
+@@ -374,3 +376,49 @@ func TestFrontendSwitchInvalidatesSameNameAssetCache(t *testing.T) {
+ 		})
  	}
--	defer releaseControl()
-+	releaseControl() // Waiting for ConfigCache must not block ownership rollback.
- 	if s.GetTaskStream() == nil {
- 		return "", nil
- 	}
- 
--	if err := s.SendTask(&pb.Task{
-+	if err := s.SendTaskGuarded(&pb.Task{
- 		Type: model.TaskTypeReportConfig,
--	}); err != nil {
-+	}, serverTaskAdmission(c, id)); err != nil {
- 		if errors.Is(err, model.ErrTaskStreamOffline) {
- 			return "", nil
- 		}
- 		return "", err
- 	}
- 
- 	timeout := time.NewTimer(time.Second * 10)
-+	defer timeout.Stop()
- 	select {
-+	case <-c.Request.Context().Done():
-+		return "", c.Request.Context().Err()
- 	case <-timeout.C:
- 		return "", singleton.Localizer.ErrorT("operation timeout")
- 	case data := <-s.ConfigCache:
--		timeout.Stop()
- 		switch data := data.(type) {
- 		case string:
- 			return data, nil
-@@ -330,15 +334,9 @@ func setServerConfig(c *gin.Context) (*model.ServerTaskResponse, error) {
- 					respMu.Unlock()
- 					continue
- 				}
--				releaseControl, controlErr := beginServerControl(c, s.ID)
--				if controlErr != nil {
--					respMu.Lock()
--					resp.Failure = append(resp.Failure, s.ID)
--					respMu.Unlock()
--					continue
--				}
--				sendErr := s.SendTask(task)
--				releaseControl()
-+				// The transport can still be sending after its deadline returns.
-+				// Keep ownership admission with the actual Send, not the HTTP call.
-+				sendErr := s.SendTaskGuarded(task, serverTaskAdmission(c, s.ID))
- 				if err := sendErr; err != nil {
- 					respMu.Lock()
- 					if errors.Is(err, model.ErrTaskStreamOffline) {
+ }
++
++func TestFrontendRemovalProtectsActiveAndBuiltinTemplates(t *testing.T) {
++	configPath := frontendManagementFixture(t)
++	router := frontendManagementRouter(&model.User{Role: model.RoleAdmin}, nil)
++	remove := func(body string, success bool) {
++		t.Helper()
++		response := frontendManagementRequest(t, router, "POST", "/api/v1/frontend/remove", body)
++		var result model.CommonResponse[any]
++		require.NoError(t, json.Unmarshal(response.Body.Bytes(), &result), response.Body.String())
++		require.Equal(t, success, result.Success, response.Body.String())
++		if !success {
++			require.NotEmpty(t, result.Error)
++		}
++	}
++	for _, body := range []string{`{}`, `{"path":"user-dist"}`, `{"path":"admin-dist","is_admin":true}`, `{"path":"missing"}`, `{"path":"../config.yaml"}`, `{"path":"installed-admin"}`, `{"path":"installed-user","is_admin":true}`} {
++		remove(body, false)
++	}
++	for _, role := range []struct {
++		path  string
++		admin bool
++	}{{"installed-user", false}, {"installed-admin", true}} {
++		body, err := json.Marshal(frontendActivateForm{Path: role.path, IsAdmin: role.admin})
++		require.NoError(t, err)
++		response := frontendManagementRequest(t, router, "POST", "/api/v1/frontend/activate", string(body))
++		var activation model.CommonResponse[any]
++		require.NoError(t, json.Unmarshal(response.Body.Bytes(), &activation))
++		require.True(t, activation.Success)
++		directory := filepath.Join(filepath.Dir(configPath), "frontends", role.path)
++		remove(string(body), false)
++		require.FileExists(t, filepath.Join(directory, "dist", "index.html"))
++		user, admin := "user-dist", "admin-dist"
++		require.NoError(t, singleton.Conf.CommitFrontendSelection(&user, &admin, singleton.Conf.Save))
++		remove(string(body), true)
++		require.NoDirExists(t, directory)
++		require.NoError(t, singleton.InitConfigFromPath(configPath))
++		for _, template := range singleton.Conf.AvailableFrontendTemplates() {
++			require.NotEqual(t, role.path, template.Path)
++		}
++		response = frontendManagementRequest(t, router, "POST", "/api/v1/frontend/activate", string(body))
++		activation = model.CommonResponse[any]{}
++		require.NoError(t, json.Unmarshal(response.Body.Bytes(), &activation))
++		require.False(t, activation.Success)
++		require.Contains(t, activation.Error, "not installed")
++	}
++	require.FileExists(t, configPath)
++}
 ```
 
-**File**: `cmd/dashboard/controller/server_config_lease_regression_test.go` (added, +134/-0)
+**File**: `docs/frontend-releases.md` (modified, +6/-0)
 ```diff
-@@ -0,0 +1,134 @@
-+package controller
+@@ -36,6 +36,12 @@ dist.zip
+ 
+ 若第三方管理前端无法正常使用，可使用管理员 PAT（`nezha:admin:*` scope）请求 `POST /api/v1/frontend/activate`，JSON 为 `{"path":"admin-dist","is_admin":true}`；也可停止面板，将配置中的 `admin_template` 改回 `admin-dist`，再启动。用户前端对应 `user-dist`。
+ 
++## 删除旧版本
 +
-+import (
-+	"context"
-+	"testing"
-+	"time"
++安装新版本不会自动删除旧版本。切换成功后，可在前端管理中删除不再需要的自定义版本；确认后同时清理安装目录和列表记录。当前启用的版本与内置前端不可删除，需要先切换到其他版本再删除。删除无法撤销，再次使用需重新安装。
 +
-+	"github.com/gin-gonic/gin"
-+	"github.com/nezhahq/nezha/model"
-+	pb "github.com/nezhahq/nezha/proto"
-+	"github.com/nezhahq/nezha/service/singleton"
-+	"github.com/stretchr/testify/require"
-+)
++管理员也可请求 `POST /api/v1/frontend/remove`，JSON 为 `{"path":"安装记录中的 path","is_admin":false}`；管理前端使用 `is_admin:true`。接口要求管理员权限及 `nezha:admin:*` scope（使用 PAT 时），并与启用操作互斥，防止启用已删除的版本。
 +
-+type configurationLeaseTaskStream struct {
-+	pb.NezhaService_RequestTaskServer
-+	sent   chan *pb.Task
-+	resume chan struct{}
-+}
-+
-+func (s *configurationLeaseTaskStream) Context() context.Context { return context.Background() }
-+func (s *configurationLeaseTaskStream) Send(task *pb.Task) error {
-+	if task.Type == model.TaskTypeServerTransferApply {
+ ## 开发与发版
+ 
+ 此功能需要配套的 `admin-frontend` 页面。正式发版时，先在管理前端仓库创建 tag 触发 release，再更新本仓库 `service/singleton/frontend-templates.yaml` 中管理前端的版本并构建面板。仅发布后端而继续嵌入旧管理前端，不会出现新的管理入口。
+```
+
+**File**: `pkg/frontend/store.go` (modified, +33/-0)
+```diff
+@@ -211,6 +211,39 @@ func (s *Store) Install(ctx context.Context, repository, tag string, admin bool)
+ 	return &template, nil
+ }
+ 
++// Remove deletes an inactive custom installation; callers must serialize selection
++// changes with this operation and reject currently selected templates.
++func (s *Store) Remove(id string, admin bool) error {
++	s.installMu.Lock()
++	defer s.installMu.Unlock()
++	s.mu.Lock()
++	defer s.mu.Unlock()
++	// Never interpret caller-controlled paths as filesystem paths before matching
++	// the catalog and validating a single directory component.
++	if id == "." || id == ".." || strings.ContainsAny(id, "/\\") || id == "" {
++		return errors.New("invalid frontend path")
++	}
++	for i, template := range s.templates {
++		if template.Path != id || template.IsAdmin != admin {
++			continue
++		}
++		if !template.Custom || template.IsOfficial {
++			return errors.New("built-in frontends cannot be removed")
++		}
++		root, err := os.OpenRoot(s.root)
++		if err != nil {
++			return err
++		}
++		defer root.Close()
++		if err := root.RemoveAll(id); err != nil {
++			return err
++		}
++		s.templates = append(s.templates[:i], s.templates[i+1:]...)
 +		return nil
 +	}
-+	s.sent <- task
-+	if s.resume != nil {
-+		<-s.resume
-+	}
-+	return nil
++	return errors.New("frontend is not installed for the selected role")
 +}
 +
-+func setupConfigurationLeaseTransfer(t *testing.T) (*model.Server, uint64) {
-+	t.Helper()
-+	cleanup := setupRetryServerTransferFixture(t)
-+	previousConf, previousLoc := singleton.Conf, singleton.Loc
-+	singleton.Conf = &singleton.ConfigClass{Config: &model.Config{}}
-+	singleton.Loc = time.UTC
-+	t.Cleanup(func() { cleanup(); singleton.Conf, singleton.Loc = previousConf, previousLoc })
-+	db, err := singleton.DB.DB()
-+	require.NoError(t, err)
-+	db.SetMaxOpenConns(1)
-+	t.Cleanup(func() { db.Close() })
-+	seedServer(t, 1, 100)
-+	transferID := seedPendingTransfer(t, 1, 100, 200, 100)
-+	server, ok := singleton.ServerShared.Get(1)
-+	require.True(t, ok)
-+	return server, transferID
-+}
-+
-+func TestServerConfigReadReleasesControlBeforeWaitingForReply(t *testing.T) {
-+	server, transferID := setupConfigurationLeaseTransfer(t)
-+	stream := &configurationLeaseTaskStream{sent: make(chan *pb.Task, 1)}
-+	server.SetTaskStream(stream)
-+	c := ctxAs(1, model.RoleAdmin)
-+	c.Params = gin.Params{{Key: "id", Value: "1"}}
-+	type outcome struct {
-+		data string
-+		err  error
-+	}
-+	done := make(chan outcome, 1)
-+	go func() { data, err := getServerConfig(c); done <- outcome{data, err} }()
-+	require.Equal(t, uint64(model.TaskTypeReportConfig), (<-stream.sent).Type)
-+	rollback := make(chan error, 1)
-+	go func() {
-+		_, err := singleton.ServerTransferShared.MarkFailed(transferID, "agent rejected transfer")
-+		rollback <- err
-+		server.ConfigCache <- "agent configuration"
-+	}()
-+	var got outcome
-+	select {
-+	case got = <-done:
-+	case <-time.After(time.Second):
-+		t.Error("configuration read blocked rollback while waiting for its reply")
-+		server.ConfigCache <- "cleanup configuration"
-+		got = <-done
-+	}
-+	require.NoError(t, <-rollback)
-+	require.NoError(t, got.err)
-+	require.Equal(t, "agent configuration", got.data)
-+	require.Equal(t, uint64(100), server.GetUserID())
-+}
-+
-+func TestServerConfigWriteKeepsControlUntilTimedOutSendReturns(t *testing.T) {
-+	server, transferID := setupConfigurationLeaseTransfer(t)
-+	stream := &configurationLeaseTaskStream{sent: make(chan *pb.Task, 1), resume: make(chan struct{})}
-+	server.SetTaskStream(stream)
-+	c := ctxAs(1, model.RoleAdmin)
-+	bindJSON(c, model.ServerConfigForm{Servers: []uint64{1}, Config: `{"debug":true}`})
-+	type outcome struct {
-+		response *model.ServerTaskResponse
-+		err      error
-+	}
-+	done := make(chan outcome, 1)
-+	go func() { response, err := setServerConfig(c); done <- outcome{response, err} }()
-+	task := <-stream.sent
-+	require.Equal(t, uint64(model.TaskTypeApplyConfig), task.Type)
-+	require.Equal(t, `{"debug":true}`, task.Data)
-+	got := <-done
-+	require.NoError(t, got.err)
-+	require.Equal(t, []uint64{1}, got.response.Failure)
-+	require.Empty(t, got.response.Success)
-+	rollback := make(chan error, 1)
-+	go func() {
-+		_, err := singleton.ServerTransferShared.MarkFailed(transferID, "agent rejected transfer")
-+		rollback <- err
-+	}()
-+	var early bool
-+	select {
-+	case err := <-rollback:
-+		require.NoError(t, err)
-+		early = true
-+	case <-time.After(100 * time.Millisecond):
-+	}
-+	close(stream.resume)
-+	if !early {
-+		require.NoError(t, <-rollback)
-+	}
-+	require.False(t, early, "ownership changed while the old configuration was still being sent")
-+	require.Equal(t, uint64(100), server.GetUserID())
-+}
-+
-+func TestForceUpdateRejectsPendingTransferOwner(t *testing.T) {
-+	server, _ := setupConfigurationLeaseTransfer(t)
-+	stream := &configurationLeaseTaskStream{sent: make(chan *pb.Task, 1)}
-+	server.SetTaskStream(stream)
-+	c := ctxAs(200, model.RoleMember)
-+	bindJSON(c, []uint64{server.ID})
-+	response, err := forceUpdateServer(c)
-+	require.NoError(t, err)
-+	require.Empty(t, response.Success)
-+	require.Equal(t, []uint64{server.ID}, response.Failure)
-+	require.Empty(t, stream.sent, "the pending destination must not dispatch an Agent upgrade")
-+}
-```
-
-**File**: `cmd/dashboard/controller/server_control.go` (modified, +17/-3)
-```diff
-@@ -7,11 +7,25 @@ import (
- )
- 
- func beginServerControl(c *gin.Context, serverID uint64) (func(), error) {
-+	return serverTaskAdmission(c, serverID)()
-+}
-+
-+// Capture request identity before sending: a timed-out Send can outlive Gin's
-+// request context. Its final admission must not read a recycled *gin.Context.
-+func serverTaskAdmission(c *gin.Context, serverID uint64) func() (func(), error) {
- 	user, ok := c.Get(model.CtxKeyAuthorizedUser)
- 	if !ok || !patAllowsServer(c, serverID) {
--		return nil, singleton.Localizer.ErrorT("permission denied")
-+		err := singleton.Localizer.ErrorT("permission denied")
-+		return func() (func(), error) { return nil, err }
- 	}
- 	caller := user.(*model.User)
--	release, _, err := singleton.BeginServerControl(serverID, caller.ID, caller.Role.IsAdmin())
--	return release, err
-+	userID, admin := caller.ID, caller.Role.IsAdmin()
-+	ctx := c.Request.Context()
-+	return func() (func(), error) {
-+		if err := ctx.Err(); err != nil {
-+			return nil, err
-+		}
-+		release, _, err := singleton.BeginServerControl(serverID, userID, admin)
-+		return release, err
-+	}
- }
-```
-
----
-
-### Incident Patch 2: `027bfcf6` (2026-10-26)
-**Commit Message**: security: enforce dashboard authorization and resource boundaries
-
-Harden tenant permissions, transfer admission, authentication and bounded request handling. Add member NAT domain settings, migration guidance and regression coverage.
-
-Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
-
-**File**: `cmd/dashboard/controller/access_log.go` (added, +43/-0)
-```diff
-@@ -0,0 +1,43 @@
-+package controller
-+
-+import (
-+	"fmt"
-+	"github.com/gin-gonic/gin"
-+	"log"
-+	"net/http"
-+	"net/url"
-+	"strings"
-+)
-+
-+func credentialFreeRequestPath(path string) string {
-+	parsed, err := url.ParseRequestURI(path)
-+	if err != nil {
-+		return "[invalid request path]"
-+	}
-+	path = parsed.Path // Never log query values: JWT, OAuth codes and state can all appear here.
-+	for _, prefix := range []string{"/mcp/download/", "/mcp/upload/"} {
-+		if strings.HasPrefix(path, prefix) {
-+			return prefix + "[redacted]"
-+		}
-+	}
-+	return path
-+}
-+
-+func dashboardRequestLogger() gin.HandlerFunc {
-+	return gin.LoggerWithFormatter(func(entry gin.LogFormatterParams) string {
-+		return fmt.Sprintf("[GIN] %s | %d | %s | %q | %s %q\n", entry.TimeStamp.Format("2006/01/02 15:04:05"), entry.StatusCode, entry.Latency, entry.ClientIP, entry.Method, credentialFreeRequestPath(entry.Path))
-+	})
-+}
-+
-+func dashboardRecovery() gin.HandlerFunc {
-+	return func(c *gin.Context) {
-+		defer func() {
-+			if recover() != nil {
-+				// Gin's default recovery dumps the request, including cookie and URL credentials.
-+				log.Printf("NEZHA>> recovered request panic: %s %q", c.Request.Method, credentialFreeRequestPath(c.Request.URL.RequestURI()))
-+				c.AbortWithStatus(http.StatusInternalServerError)
-+			}
-+		}()
-+		c.Next()
-+	}
-+}
-```
-
-**File**: `cmd/dashboard/controller/access_log_test.go` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+package controller
-+
-+import (
-+	"bytes"
-+	"net/http/httptest"
-+	"testing"
-+
-+	"github.com/gin-gonic/gin"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestAccessLogOmitsCredentialURLs(t *testing.T) {
-+	var output bytes.Buffer
-+	original := gin.DefaultWriter
-+	gin.DefaultWriter = &output
-+	defer func() { gin.DefaultWriter = original }()
-+	router := gin.New()
-+	router.Use(dashboardRequestLogger())
-+	router.GET("/ws", func(c *gin.Context) { c.Status(204) })
-+	router.GET("/mcp/download/:token", func(c *gin.Context) { c.Status(204) })
-+	for _, path := range []string{"/ws?token=synthetic-session-credential", "/mcp/download/synthetic-transfer-credential?query=sensitive"} {
-+		router.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest("GET", path, nil))
-+	}
-+	require.NotContains(t, output.String(), "synthetic-session-credential")
-+	require.NotContains(t, output.String(), "synthetic-transfer-credential")
-+	require.NotContains(t, output.String(), "query=sensitive")
-+	require.Contains(t, output.String(), "/ws")
-+	require.Contains(t, output.String(), "/mcp/download/")
-+}
-```
-
-**File**: `cmd/dashboard/controller/agentcompat_capability_nat_test.go` (modified, +5/-0)
-```diff
-@@ -18,6 +18,11 @@ import (
- func TestAgentcompatNATCapabilityUsesExactCurrentProfilePermission(t *testing.T) {
- 	cleanup, userID := setupMCPTest(t)
- 	t.Cleanup(cleanup)
-+	oldUsers := singleton.UserInfoMap
-+	singleton.UserInfoMap = map[uint64]model.UserInfo{userID: {Role: model.RoleMember}, 999: {Role: model.RoleMember}}
-+	t.Cleanup(func() { singleton.UserInfoMap = oldUsers })
-+	singleton.Conf.DashboardHost = "panel.example"
-+	singleton.Conf.NATMemberDomains = []string{"private-profile.example", "foreign-profile.example"}
- 	handler := rpc.NewNezhaHandler()
- 	originalHandler := rpc.NezhaHandlerSingleton
- 	originalNAT := singleton.NATShared
-```
-
-**File**: `cmd/dashboard/controller/alertrule.go` (modified, +3/-0)
-```diff
-@@ -195,6 +195,9 @@ func validateRule(c *gin.Context, r *model.AlertRule) error {
- 					return singleton.Localizer.ErrorT("duration is too large")
- 				}
- 			} else {
-+				if rule.CycleStart != nil && rule.CycleStart.Year() < 2000 {
-+					return singleton.Localizer.ErrorT("cycle_start must be in year 2000 or later")
-+				}
- 				if !rule.HasSafeCycleUnit() {
- 					return singleton.Localizer.ErrorT("invalid cycle unit")
- 				}
-```
-
-**File**: `cmd/dashboard/controller/controller.go` (modified, +2/-1)
-```diff
-@@ -29,7 +29,8 @@ import (
- 
- func ServeWeb(frontendDist fs.FS) http.Handler {
- 	gin.SetMode(gin.ReleaseMode)
--	r := gin.Default()
-+	r := gin.New()
-+	r.Use(dashboardRequestLogger(), dashboardRecovery())
- 
- 	if singleton.Conf.Debug {
- 		gin.SetMode(gin.DebugMode)
-```
-
-**File**: `cmd/dashboard/controller/cron.go` (modified, +35/-2)
-```diff
-@@ -3,6 +3,7 @@ package controller
- import (
- 	"slices"
- 	"strconv"
-+	"sync/atomic"
- 
- 	"github.com/gin-gonic/gin"
- 	"github.com/jinzhu/copier"
-@@ -43,6 +44,11 @@ func listCron(c *gin.Context) ([]*model.Cron, error) {
- // @Success 200 {object} model.CommonResponse[uint64]
- // @Router /cron [post]
- func createCron(c *gin.Context) (uint64, error) {
-+	// Scheduled commands execute autonomously; write scope cannot imply execution.
-+	if tok := APITokenFromContext(c); tok != nil && !tok.HasScope(model.ScopeCronExec) {
-+		return 0, singleton.Localizer.ErrorT("permission denied")
-+	}
-+
- 	var cf model.CronForm
- 	var cr model.Cron
- 
-@@ -81,17 +87,28 @@ func createCron(c *gin.Context) (uint64, error) {
- 	}
- 
- 	var err error
-+	var committed atomic.Bool
- 	if cf.TaskType == model.CronTypeCronTask {
--		if cr.CronJobID, err = singleton.CronShared.AddFunc(cr.Scheduler, singleton.CronTrigger(&cr)); err != nil {
-+		if cr.CronJobID, err = singleton.CronShared.AddFunc(cr.Scheduler, func() {
-+			// Scheduler callbacks must not observe an uncommitted row or its mutable ID.
-+			if committed.Load() {
-+				singleton.CronTrigger(&cr)()
-+			}
-+		}); err != nil {
- 			return 0, err
- 		}
- 	}
- 
- 	if err = singleton.DB.Create(&cr).Error; err != nil {
-+		// Registration is provisional until persistence succeeds.
-+		if cr.CronJobID != 0 {
-+			singleton.CronShared.Remove(cr.CronJobID)
-+		}
- 		return 0, newGormError("%v", err)
- 	}
- 
- 	singleton.CronShared.Update(&cr)
-+	committed.Store(true)
- 	return cr.ID, nil
- }
- 
-@@ -108,6 +125,11 @@ func createCron(c *gin.Context) (uint64, error) {
- // @Success 200 {object} model.CommonResponse[any]
- // @Router /cron/{id} [patch]
- func updateCron(c *gin.Context) (any, error) {
-+	// Scheduled commands execute autonomously; write scope cannot imply execution.
-+	if tok := APITokenFromContext(c); tok != nil && !tok.HasScope(model.ScopeCronExec) {
-+		return nil, singleton.Localizer.ErrorT("permission denied")
-+	}
-+
- 	idStr := c.Param("id")
- 	id, err := strconv.ParseUint(idStr, 10, 64)
+ func extractDistribution(ctx context.Context, archivePath, destination string) error {
+ 	archive, err := zip.OpenReader(archivePath)
  	if err != nil {
-@@ -157,18 +179,29 @@ func updateCron(c *gin.Context) (any, error) {
- 		return nil, singleton.Localizer.ErrorT("scheduled tasks cannot be triggered by alarms")
+```
+
+**File**: `pkg/frontend/store_test.go` (modified, +66/-0)
+```diff
+@@ -217,3 +217,69 @@ func TestDistributionCannotWriteThroughExistingEscapingSymlink(t *testing.T) {
+ 		t.Errorf("outside file changed: %q %v", data, err)
  	}
- 
-+	var committed atomic.Bool
-+	cr.CronJobID = 0 // Only remove the newly registered job on failure, never the prior live job.
- 	// 对于计划任务类型，需要更新CronJob
- 	if cf.TaskType == model.CronTypeCronTask {
--		if cr.CronJobID, err = singleton.CronShared.AddFunc(cr.Scheduler, singleton.CronTrigger(&cr)); err != nil {
-+		if cr.CronJobID, err = singleton.CronShared.AddFunc(cr.Scheduler, func() {
-+			// Scheduler callbacks must not observe an uncommitted row or its mutable ID.
-+			if committed.Load() {
-+				singleton.CronTrigger(&cr)()
-+			}
-+		}); err != nil {
- 			return nil, err
- 		}
- 	}
- 
- 	if err = singleton.DB.Save(&cr).Error; err != nil {
-+		if cr.CronJobID != 0 {
-+			singleton.CronShared.Remove(cr.CronJobID)
+ }
++
++func TestRemoveCustomFrontendConfinesFilesAndAllowsReinstall(t *testing.T) {
++	store, _ := installationStore(t, distributionZIP(t, "dist/index.html"), "")
++	template, err := store.Install(context.Background(), "https://github.com/owner/site", "v1.0.0", false)
++	if err != nil {
++		t.Fatal(err)
++	}
++	outside := t.TempDir()
++	canary := filepath.Join(outside, "retained.txt")
++	if err := os.WriteFile(canary, []byte("retained"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	if err := os.Symlink(outside, filepath.Join(store.Directory(template.Path), "outside")); err != nil {
++		t.Fatal(err)
++	}
++	for _, id := range []string{"user-dist", "", ".", "..", "../retained.txt", "/etc", `..\outside`, "missing"} {
++		if err := store.Remove(id, false); err == nil {
++			t.Fatalf("removed invalid or built-in path %q", id)
 +		}
- 		return nil, newGormError("%v", err)
- 	}
- 
- 	singleton.CronShared.Update(&cr)
-+	committed.Store(true)
- 	return nil, nil
- }
- 
-```
-
-**File**: `cmd/dashboard/controller/cron_service_cover_pat_test.go` (modified, +7/-0)
-```diff
-@@ -124,6 +124,7 @@ func TestCreateCron_RejectsCoverAllForServerLimitedPAT(t *testing.T) {
- 	setupCoverPATFixture(t)
- 
- 	tok := &model.APIToken{ID: 17, UserID: 100}
-+	tok.SetScopes([]string{model.ScopeCronWrite, model.ScopeCronExec})
- 	tok.SetServerIDs([]uint64{1})
- 
- 	r := coverPATRouter(t, tok, commonHandler(createCron))
-@@ -161,6 +162,7 @@ func TestCreateCron_RejectsCoverIgnoreAllWithEmptyServersForLimitedPAT(t *testin
- 	setupCoverPATFixture(t)
- 
- 	tok := &model.APIToken{ID: 18, UserID: 100}
-+	tok.SetScopes([]string{model.ScopeCronWrite, model.ScopeCronExec})
- 	tok.SetServerIDs([]uint64{1})
- 
- 	r := coverPATRouter(t, tok, commonHandler(createCron))
-@@ -195,6 +197,7 @@ func TestCreateService_AllowsCoverIgnoreAllEmptySkipForLimitedPAT(t *testing.T)
- 	setupCoverPATFixture(t)
- 
- 	tok := &model.APIToken{ID: 21, UserID: 100}
-+	tok.SetScopes([]string{model.ScopeCronWrite, model.ScopeCronExec})
- 	tok.SetServerIDs([]uint64{1})
- 
- 	r := coverPATRouter(t, tok, commonHandler(createService))
-@@ -220,6 +223,7 @@ func TestCreateService_RejectsCoverAllForServerLimitedPAT(t *testing.T) {
- 	setupCoverPATFixture(t)
- 
- 	tok := &model.APIToken{ID: 19, UserID: 100}
-+	tok.SetScopes([]string{model.ScopeCronWrite, model.ScopeCronExec})
- 	tok.SetServerIDs([]uint64{1})
- 
- 	r := coverPATRouter(t, tok, commonHandler(createService))
-@@ -256,6 +260,7 @@ func TestCreateCron_RejectsCoverAllWithDenyListCoveringOnlyWhitelistedServers(t
- 	setupCoverPATFixture(t)
- 
- 	tok := &model.APIToken{ID: 31, UserID: 100}
-+	tok.SetScopes([]string{model.ScopeCronWrite, model.ScopeCronExec})
- 	tok.SetServerIDs([]uint64{1})
- 
- 	r := coverPATRouter(t, tok, commonHandler(createCron))
-@@ -292,6 +297,7 @@ func TestCreateCron_AllowsCoverAllWhenDenyListCoversAllNonWhitelistedServers(t *
- 	setupCoverPATFixture(t)
- 
- 	tok := &model.APIToken{ID: 41, UserID: 100}
-+	tok.SetScopes([]string{model.ScopeCronWrite, model.ScopeCronExec})
- 	tok.SetServerIDs([]uint64{1})
- 
- 	r := coverPATRouter(t, tok, commonHandler(createCron))
-@@ -321,6 +327,7 @@ func TestCreateService_RejectsCoverAllWithSkipListCoveringOnlyWhitelistedServers
- 	setupCoverPATFixture(t)
- 
- 	tok := &model.APIToken{ID: 32, UserID: 100}
-+	tok.SetScopes([]string{model.ScopeCronWrite, model.ScopeCronExec})
- 	tok.SetServerIDs([]uint64{1})
- 
- 	r := coverPATRouter(t, tok, commonHandler(createService))
-```
-
-**File**: `cmd/dashboard/controller/dashboard_credential_nat_flow_test.go` (modified, +10/-4)
-```diff
-@@ -31,12 +31,15 @@ func setupNATFlowTest(t *testing.T) (*rpcService.NezhaHandler, *model.Server, *n
- 	setupDashboardCredentialTest(t)
- 
- 	require.NoError(t, singleton.DB.AutoMigrate(&model.Server{}))
-+	originalUsers := singleton.UserInfoMap
-+	singleton.UserInfoMap = map[uint64]model.UserInfo{1: {Role: model.RoleAdmin}}
- 	originalServerShared, originalHandler := singleton.ServerShared, rpcService.NezhaHandlerSingleton
- 	t.Cleanup(func() {
-+		singleton.UserInfoMap = originalUsers
- 		singleton.ServerShared, rpcService.NezhaHandlerSingleton = originalServerShared, originalHandler
- 	})
- 
--	serverRow := &model.Server{Common: model.Common{ID: 7}, UUID: "nat-credential-flow-test", Name: "nat-credential-flow-test"}
-+	serverRow := &model.Server{Common: model.Common{ID: 7, UserID: 1}, UUID: "nat-credential-flow-test", Name: "nat-credential-flow-test"}
- 	require.NoError(t, singleton.DB.Create(serverRow).Error)
- 	singleton.ServerShared = singleton.NewServerClass()
- 	handler := rpcService.NewNezhaHandler()
-@@ -103,7 +106,7 @@ func TestServeNATWithRealClassifierStripsDashboardCredentialsFromAllChannels(t *
- 
- 			done := make(chan struct{})
- 			go func() {
--				rpc.ServeNAT(writer, request, &model.NAT{ServerID: server.ID, Host: "target.example"})
-+				rpc.ServeNAT(writer, request, &model.NAT{Common: model.Common{UserID: 1}, ServerID: server.ID, Host: "target.example"})
- 				close(done)
- 			}()
- 			select {
-@@ -161,7 +164,7 @@ func TestServeNATWithRealClassifierKeepsForeignCredentials(t *testing.T) {
- 
- 	done := make(chan struct{})
- 	go func() {
--		rpc.ServeNAT(writer, request, &model.NAT{ServerID: server.ID, Host: "target.example"})
-+		rpc.ServeNAT(writer, request, &model.NAT{Common: model.Common{UserID: 1}, ServerID: server.ID, Host: "target.example"})
- 		close(done)
- 	}()
- 	select {
-@@ -242,7 +245,10 @@ type natFlowAgent struct {
- 	once      sync.Once
- }
- 
--func (agent *natFlowAgent) Read([]byte) (int, error) { return 0, io.EOF }
-+func (agent *natFlowAgent) Read([]byte) (int, error) {
-+	<-agent.writeDone
-+	return 0, io.EOF
++	}
++	if err := store.Remove(template.Path, true); err == nil {
++		t.Fatal("removed wrong role")
++	}
++	if err := store.Remove(template.Path, false); err != nil {
++		t.Fatal(err)
++	}
++	if _, err := os.Stat(filepath.Join(store.root, template.Path)); !os.IsNotExist(err) {
++		t.Fatalf("installation remains: %v", err)
++	}
++	if data, err := os.ReadFile(canary); err != nil || string(data) != "retained" {
++		t.Fatalf("outside file changed: %q %v", data, err)
++	}
++	if len(store.Templates()) != 1 {
++		t.Fatalf("catalog still contains installation: %+v", store.Templates())
++	}
++	reinstalled, err := store.Install(context.Background(), "https://github.com/owner/site", "v1.0.0", false)
++	if err != nil || reinstalled.Path != template.Path {
++		t.Fatalf("cannot reinstall: %+v %v", reinstalled, err)
++	}
 +}
- func (agent *natFlowAgent) Write(data []byte) (int, error) {
- 	agent.mu.Lock()
- 	agent.written.Write(data)
++
++func TestRemoveFilesystemFailurePreservesCatalog(t *testing.T) {
++	store, _ := installationStore(t, distributionZIP(t, "dist/index.html"), "")
++	template, err := store.Install(context.Background(), "https://github.com/owner/site", "v1.0.0", false)
++	if err != nil {
++		t.Fatal(err)
++	}
++	// Replace the root with a regular file to force a real error even as root.
++	saved := store.root + "-unavailable"
++	if err := os.Rename(store.root, saved); err != nil {
++		t.Fatal(err)
++	}
++	defer os.RemoveAll(saved)
++	if err := os.WriteFile(store.root, nil, 0600); err != nil {
++		t.Fatal(err)
++	}
++	if err := store.Remove(template.Path, false); err == nil {
++		t.Fatal("filesystem failure reported as success")
++	}
++	if len(store.Templates()) != 2 {
++		t.Fatal("failed deletion removed catalog entry")
++	}
++	if _, err := os.Stat(filepath.Join(saved, template.Path, "dist", "index.html")); err != nil {
++		t.Fatal(err)
++	}
++}
+```
+
+**File**: `service/singleton/config.go` (modified, +37/-1)
+```diff
+@@ -1,6 +1,7 @@
+ package singleton
+ 
+ import (
++	"errors"
+ 	"log"
+ 	"path/filepath"
+ 	"strconv"
+@@ -128,10 +129,32 @@ func (c *ConfigClass) FrontendSelection() (user, admin string) {
+ }
+ 
+ // CommitFrontendSelection publishes the selection only after persistence succeeds.
+-// Requests already serving the previous version keep their immutable directory.
++// Previous versions remain installed until explicitly removed.
+ func (c *ConfigClass) CommitFrontendSelection(user, admin *string, persist func() error) error {
+ 	c.frontendSelectionMu.Lock()
+ 	defer c.frontendSelectionMu.Unlock()
++	// Revalidate under the same lock as removal: a handler's earlier catalog
++	// snapshot may refer to a version deleted while it waited for this lock.
++	if c.FrontendStore != nil {
++		for _, selection := range []struct {
++			path  *string
++			admin bool
++		}{{user, false}, {admin, true}} {
++			if selection.path == nil {
++				continue
++			}
++			valid := false
++			for _, template := range c.FrontendStore.Templates() {
++				if template.Path == *selection.path && template.IsAdmin == selection.admin {
++					valid = true
++					break
++				}
++			}
++			if !valid {
++				return errors.New("frontend is not installed for the selected role")
++			}
++		}
++	}
+ 	previousUser, previousAdmin := c.UserTemplate, c.AdminTemplate
+ 	if user != nil {
+ 		c.UserTemplate = *user
+@@ -145,3 +168,16 @@ func (c *ConfigClass) CommitFrontendSelection(user, admin *string, persist func(
+ 	}
+ 	return nil
+ }
++
++// RemoveFrontend keeps active-version protection atomic with activation and settings updates.
++func (c *ConfigClass) RemoveFrontend(path string, admin bool) error {
++	c.frontendSelectionMu.Lock()
++	defer c.frontendSelectionMu.Unlock()
++	if c.FrontendStore == nil {
++		return errors.New("frontend storage is not initialized")
++	}
++	if path == c.UserTemplate || path == c.AdminTemplate {
++		return errors.New("active frontends cannot be removed")
++	}
++	return c.FrontendStore.Remove(path, admin)
++}
+```
+
+**File**: `service/singleton/frontend-templates.yaml` (modified, +2/-2)
+```diff
+@@ -2,14 +2,14 @@
+   name: "OfficialAdmin"
+   repository: "https://github.com/nezhahq/admin-frontend"
+   author: "nezhahq"
+-  version: "v2.6.0"
++  version: "v2.6.1"
+   is_admin: true
+   is_official: true
+ - path: "user-dist"
+   name: "Official"
+   repository: "https://github.com/hamster1963/nezha-dash-v2"
+   author: "hamster1963"
+-  version: "v2.6.0"
++  version: "v2.7.0"
+   is_official: true
+ - path: "nezha-pixel-dist"
+   name: "Nezha-Pixel"
+```
+
+**File**: `service/singleton/frontend_selection_test.go` (modified, +36/-0)
+```diff
+@@ -2,6 +2,9 @@ package singleton
+ 
+ import (
+ 	"errors"
++	"github.com/nezhahq/nezha/pkg/frontend"
++	"os"
++	"path/filepath"
+ 	"sync"
+ 	"testing"
+ 
+@@ -37,3 +40,36 @@ func TestFrontendSelectionRollbackAndConcurrentSnapshots(t *testing.T) {
+ 	}
+ 	workers.Wait()
+ }
++
++func TestFrontendRemovalSerializesWithActivation(t *testing.T) {
++	for iteration := 0; iteration < 30; iteration++ {
++		root := t.TempDir()
++		id := "installed-user"
++		directory := filepath.Join(root, id, "dist")
++		require.NoError(t, os.MkdirAll(directory, 0750))
++		require.NoError(t, os.WriteFile(filepath.Join(directory, "index.html"), []byte("frontend"), 0600))
++		require.NoError(t, os.WriteFile(filepath.Join(root, id, "metadata.json"), []byte(`{"path":"installed-user","custom":true}`), 0600))
++		store, err := frontend.NewStore(root, []frontend.Template{{Path: "user-dist"}})
++		require.NoError(t, err)
++		conf := &ConfigClass{Config: &model.Config{ConfigDashboard: model.ConfigDashboard{UserTemplate: "user-dist"}}, FrontendStore: store}
++		start := make(chan struct{})
++		activated, removed := make(chan error, 1), make(chan error, 1)
++		go func() { <-start; activated <- conf.CommitFrontendSelection(&id, nil, func() error { return nil }) }()
++		go func() { <-start; removed <- conf.RemoveFrontend(id, false) }()
++		close(start)
++		activationErr, removalErr := <-activated, <-removed
++		selected, _ := conf.FrontendSelection()
++		if activationErr == nil {
++			require.Error(t, removalErr)
++			require.Equal(t, id, selected)
++			require.FileExists(t, filepath.Join(directory, "index.html"))
++		} else {
++			require.NoError(t, removalErr)
++			require.Equal(t, "user-dist", selected)
++			require.NoDirExists(t, directory)
++			persisted := false
++			require.Error(t, conf.CommitFrontendSelection(&id, nil, func() error { persisted = true; return nil }))
++			require.False(t, persisted, "deleted selection must be rejected before persistence")
++		}
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1810,29 +1368,45 @@ Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security: close OAuth and agent control lifecycle regressions
+## X. safely remove inactive custom frontends
 
 **RULE**:
-When implementing operations in `cmd/dashboard/controller/controller.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nezhahq/nezha. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/dashboard/controller/frontend.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nezhahq/nezha. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7cd0371b`: security: close OAuth and agent control lifecycle regressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3e7d9ba6`: safely remove inactive custom frontends. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/dashboard/controller/controller.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/dashboard/controller/frontend.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Binding needs the real JWT session; anonymous OAuth login remains available.
-	fallbackAuth.GET("/oauth2/:provider", commonHandler(oauth2redirect))
+	frontends.POST("/remove", adminHandler(removeFrontend))
+
+// Remove frontend
+// @Summary Remove an inactive custom frontend and its files
+// @Security BearerAuth
+// @Tags admin required
+// @Accept json
+// @Param body body frontendActivateForm true "Installed frontend"
+// @Produce json
+// @Success 200 {object} model.CommonResponse[any]
+// @Router /frontend/remove [post]
+func removeFrontend(c *gin.Context) (any, error) {
+	var form frontendActivateForm
+	if err := c.ShouldBindJSON(&form); err != nil {
+		return nil, err
+	}
+	return nil, singleton.Conf.RemoveFrontend(form.Path, form.IsAdmin)
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	api.GET("/oauth2/:provider", commonHandler(oauth2redirect))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7cd0371b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3e7d9ba6` are properly handled with clean fallback behavior.
