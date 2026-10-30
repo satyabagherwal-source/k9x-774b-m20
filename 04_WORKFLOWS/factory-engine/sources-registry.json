@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T17:45:20.132Z",
-    "lastVerified": "2026-10-30T17:45:20.132Z",
+    "lastChecked": "2026-10-30T17:51:42.575Z",
+    "lastVerified": "2026-10-30T17:51:42.575Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -243,8 +243,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T17:06:03.582Z",
-    "lastVerified": "2026-10-30T17:06:03.582Z",
+    "lastChecked": "2026-10-30T17:51:40.858Z",
+    "lastVerified": "2026-10-30T17:51:40.858Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -660,9 +660,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-10-30T11:12:24.844Z",
+    "lastChecked": "2026-10-30T17:51:35.741Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-10-30T11:12:24.844Z"
+    "lastVerified": "2026-10-30T17:51:35.741Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -2474,9 +2474,9 @@
   "caviraoss-longmemory": {
     "name": "LongMemory",
     "officialUrl": "https://github.com/CaviraOSS/LongMemory",
-    "lastChecked": "2026-10-29T00:22:59.189Z",
+    "lastChecked": "2026-10-30T17:51:38.196Z",
     "revisionIdentifier": "8badf44d48d0d72a07e1ea3daf1ecbd76ae1a357",
-    "lastVerified": "2026-10-29T00:22:59.189Z"
+    "lastVerified": "2026-10-30T17:51:38.196Z"
   },
   "ratatui-ratatui": {
     "name": "ratatui",
@@ -3270,14 +3270,14 @@
     "officialUrl": "https://github.com/okteto/okteto",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-29T01:49:58.788Z",
-    "lastVerified": "2026-10-29T01:49:58.788Z",
+    "lastChecked": "2026-10-30T17:51:38.247Z",
+    "lastVerified": "2026-10-30T17:51:38.247Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-okteto-okteto",
-    "contentHash": "3978f573b551cad0ed65b6c7c52ade6445f5d61eb3fea30516df386405237fdb",
+    "contentHash": "06448b2f0ab90f6598b48c3fd9fcd185b83ba47c4d1c750fdd52e53627b58c03",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6939,9 +6939,9 @@
   "ouch-org-ouch": {
     "name": "ouch",
     "officialUrl": "https://github.com/ouch-org/ouch",
-    "lastChecked": "2026-10-28T19:38:52.396Z",
+    "lastChecked": "2026-10-30T17:51:25.761Z",
     "revisionIdentifier": "6df14b05",
-    "lastVerified": "2026-10-28T19:38:52.396Z"
+    "lastVerified": "2026-10-30T17:51:25.761Z"
   },
   "hf-canberkkkkkk-ema-lightning": {
     "name": "canberkkkkkk/ema-lightning",
@@ -10510,5 +10510,19 @@
     "lastChecked": "2026-10-30T17:40:29.441Z",
     "revisionIdentifier": "0e005e9c",
     "lastVerified": "2026-10-30T17:40:29.441Z"
+  },
+  "goose3-goose3": {
+    "name": "goose3",
+    "officialUrl": "https://github.com/goose3/goose3",
+    "lastChecked": "2026-10-30T17:51:28.179Z",
+    "revisionIdentifier": "87b6003d",
+    "lastVerified": "2026-10-30T17:51:28.179Z"
+  },
+  "sozercan-kaset": {
+    "name": "kaset",
+    "officialUrl": "https://github.com/sozercan/kaset",
+    "lastChecked": "2026-10-30T17:51:30.694Z",
+    "revisionIdentifier": "4c59ff25",
+    "lastVerified": "2026-10-30T17:51:30.694Z"
   }
 }

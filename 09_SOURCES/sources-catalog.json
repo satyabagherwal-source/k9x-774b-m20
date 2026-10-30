@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "75f7d7b4",
+    "sourceVersion": "bb9214a9",
     "license": "Apache-2.0",
-    "contentHash": "3978f573b551cad0ed65b6c7c52ade6445f5d61eb3fea30516df386405237fdb",
-    "lastHarvestedAt": "2026-10-29T01:49:59.422Z",
+    "contentHash": "06448b2f0ab90f6598b48c3fd9fcd185b83ba47c4d1c750fdd52e53627b58c03",
+    "lastHarvestedAt": "2026-10-30T17:51:40.042Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {

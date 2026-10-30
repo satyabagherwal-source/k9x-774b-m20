@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source**: github ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
-> **Source Version**: `75f7d7b4`  
+> **Source Version**: `bb9214a9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T01:49:58.796Z  
+> **Timestamp**: 2026-10-30T17:51:39.575Z  
 > **Learning ID**: `learn-github-okteto-okteto`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T01:49:58.788Z  
+> **Harvest Timestamp**: 2026-10-30T17:51:38.247Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1502,809 +1502,158 @@ func startCommand(cmd *exec.Cmd) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `75f7d7b4` (2026-10-28)
-**Commit Message**: PROD-552: Stop copying shared namespace endpoints in the gateway-api divert driver (#5225)
+### Incident Patch 1: `bb9214a9` (2026-10-30)
+**Commit Message**: fix(compose): keep numbers and booleans from interpolated variables (#5217)
 
-* feat(divert): stop copying shared namespace endpoints in gateway-api
+A plain scalar like ${REPLICAS} is resolved as a string before expansion, so the encoder wrote the expanded value back quoted and fields like replicas, scale or public failed to unmarshal. Keep the int, float or bool tag when the expanded plain value resolves to one.
 
-The gateway-api divert driver no longer creates ingresses or
-ExternalName services in the developer namespace for endpoints of the
-shared namespace that weren't deployed by the deploy operation. Only
-the ingresses deployed in the developer namespace are diverted: those
-matching an ingress of the shared namespace get the divert header
-annotation, as before.
+Signed-off-by: Raphael Fakhri <[REDACTED_EMAIL]>
 
-The driver no longer lists services of the shared namespace. Copies
-created by previous CLI versions are left as they are and are removed
-by `okteto destroy`.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Nacho Fuertes <[REDACTED_EMAIL]>
-
-* fix(divert): patch the divert header annotation of ingresses
-
-Use a merge patch with only the divert header annotation instead of
-updating the whole ingress. The API server applies it over the latest
-version, so a concurrent change no longer makes the annotation get lost
-while the ingress is reported as diverted.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Nacho Fuertes <[REDACTED_EMAIL]>
-
-**File**: `pkg/divert/gatewayapi/cache.go` (modified, +1/-12)
+**File**: `pkg/model/stack_expander.go` (modified, +26/-0)
 ```diff
-@@ -24,7 +24,6 @@ import (
- 
- type cache struct {
- 	divertIngresses    map[string]*networkingv1.Ingress
--	divertServices     map[string]*apiv1.Service
- 	developerIngresses map[string]*networkingv1.Ingress
- 	developerServices  map[string]*apiv1.Service
- 	divertResources    map[string]*k8s.Divert
-@@ -33,7 +32,6 @@ type cache struct {
- func (d *Driver) initCache(ctx context.Context) error {
- 	d.cache = &cache{
- 		divertIngresses:    map[string]*networkingv1.Ingress{},
--		divertServices:     map[string]*apiv1.Service{},
- 		developerIngresses: map[string]*networkingv1.Ingress{},
- 		developerServices:  map[string]*apiv1.Service{},
- 		divertResources:    map[string]*k8s.Divert{},
-@@ -47,15 +45,6 @@ func (d *Driver) initCache(ctx context.Context) error {
- 		d.cache.divertIngresses[iList.Items[i].Name] = &iList.Items[i]
- 	}
- 
--	// Service cache for diverted namespace
--	sList, err := d.client.CoreV1().Services(d.divert.Namespace).List(ctx, metav1.ListOptions{})
--	if err != nil {
--		return err
--	}
--	for i := range sList.Items {
--		d.cache.divertServices[sList.Items[i].Name] = &sList.Items[i]
--	}
--
- 	// Ingress cache for developer namespace
- 	iList, err = d.client.NetworkingV1().Ingresses(d.namespace).List(ctx, metav1.ListOptions{})
- 	if err != nil {
-@@ -66,7 +55,7 @@ func (d *Driver) initCache(ctx context.Context) error {
- 	}
- 
- 	// Service cache for developer namespace
--	sList, err = d.client.CoreV1().Services(d.namespace).List(ctx, metav1.ListOptions{})
-+	sList, err := d.client.CoreV1().Services(d.namespace).List(ctx, metav1.ListOptions{})
- 	if err != nil {
- 		return err
- 	}
-```
-
-**File**: `pkg/divert/gatewayapi/cache_test.go` (modified, +0/-1)
-```diff
-@@ -91,7 +91,6 @@ func Test_initCache(t *testing.T) {
- 	assert.Equal(t, map[string]*networkingv1.Ingress{"i1": i1}, d.cache.developerIngresses)
- 	assert.Equal(t, map[string]*networkingv1.Ingress{"i3": i3}, d.cache.divertIngresses)
- 	assert.Equal(t, map[string]*apiv1.Service{"s1": s1}, d.cache.developerServices)
--	assert.Equal(t, map[string]*apiv1.Service{"s3": s3}, d.cache.divertServices)
- 	assert.Equal(t, map[string]*k8s.Divert{"test-divert-1": div}, d.cache.divertResources)
- 
- 	divertManager.AssertExpectations(t)
-```
-
-**File**: `pkg/divert/gatewayapi/divert.go` (modified, +9/-2)
-```diff
-@@ -76,7 +76,14 @@ func (d *Driver) Deploy(ctx context.Context) error {
- 		return fmt.Errorf("error deleting orphan divert resources: %w", err)
- 	}
- 
--	for name, in := range d.cache.divertIngresses {
-+	for name := range d.cache.divertIngresses {
-+		// Ingresses of the shared namespace are not created in the developer namespace, only the ones
-+		// deployed there are diverted
-+		in, ok := d.cache.developerIngresses[name]
-+		if !ok {
-+			continue
+@@ -27,6 +27,14 @@ func expandEnvScalarNode(node *yaml3.Node) (*yaml3.Node, error) {
+ 		if err != nil {
+ 			return node, err
+ 		}
++		if expandValue != node.Value && node.Style == 0 && node.ShortTag() == "!!str" {
++			// a plain scalar like ${REPLICAS} is resolved as a string before expansion. Keep the value as a
++			// number or boolean when it expands to one, otherwise the encoder quotes it and fields like
++			// replicas or public fail to unmarshal
++			if tag := resolveExpandedScalarTag(expandValue); tag != "" {
++				node.Tag = tag
++			}
 +		}
-+
- 		select {
- 		case <-ctx.Done():
- 			oktetoLog.Infof("deployDivert context cancelled")
-@@ -85,7 +92,7 @@ func (d *Driver) Deploy(ctx context.Context) error {
- 			oktetoLog.Spinner(fmt.Sprintf("Diverting ingress %s/%s...", in.Namespace, in.Name))
- 			oktetoLog.StartSpinner()
- 			defer oktetoLog.StopSpinner()
--			if err := d.divertIngress(ctx, name); err != nil {
-+			if err := d.divertIngress(ctx, in); err != nil {
- 				return err
- 			}
- 			oktetoLog.StopSpinner()
-```
-
-**File**: `pkg/divert/gatewayapi/divert_test.go` (modified, +89/-412)
-```diff
-@@ -24,9 +24,10 @@ import (
- 	"github.com/stretchr/testify/mock"
- 	"github.com/stretchr/testify/require"
- 	apiv1 "k8s.io/api/core/v1"
--	networkingv1 "k8s.io/api/networking/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/client-go/kubernetes/fake"
-+	k8stesting "k8s.io/client-go/testing"
- )
- 
- type fakeDivertManager struct {
-@@ -442,443 +443,119 @@ func Test_UpdatePod(t *testing.T) {
+ 		node.Value = expandValue
+ 		return node, nil
  	}
+@@ -41,6 +49,24 @@ func expandEnvScalarNode(node *yaml3.Node) (*yaml3.Node, error) {
+ 	return node, nil
  }
  
--func Test_divertIngresses(t *testing.T) {
-+// requireDeveloperNamespace checks the annotations of the ingresses in the developer namespace, by name,
-+// and that no service was created there
-+func requireDeveloperNamespace(t *testing.T, c *fake.Clientset, expectedIngresses map[string]map[string]string) {
-+	t.Helper()
- 	ctx := context.Background()
--	i1 := &networkingv1.Ingress{
--		ObjectMeta: metav1.ObjectMeta{
--			Name:      "i1",
--			Namespace: "cindy",
--			Labels: map[string]string{
--				model.DeployedByLabel: "test",
--				"l1":                  "v1",
--			},
--			Annotations: map[string]string{
--				"a1":                                    "v1",
--				model.OktetoDivertedNamespaceAnnotation: "staging",
--				model.OktetoDivertHeaderAnnotation:      "cindy",
--			},
--		},
--		Spec: networkingv1.IngressSpec{
--			Rules: []networkingv1.IngressRule{
--				{
--					Host: "i1-cindy.okteto.dev",
--					IngressRuleValue: networkingv1.IngressRuleValue{
--						HTTP: &networkingv1.HTTPIngressRuleValue{
--							Paths: []networkingv1.HTTPIngressPath{
--								{
--									Backend: networkingv1.IngressBackend{
--										Service: &networkingv1.IngressServiceBackend{
--											Name: "s1",
--										},
--									},
--								},
--							},
--						},
--					},
--				},
--			},
--			TLS: []networkingv1.IngressTLS{
--				{
--					Hosts: []string{"i1-cindy.okteto.dev"},
--				},
--			},
--		},
--	}
--	expectedI1 := i1.DeepCopy()
--	di1 := &networkingv1.Ingress{
--		ObjectMeta: metav1.ObjectMeta{
--			Name:      "i1",
--			Namespace: "staging",
--			Labels: map[string]string{
--				model.DeployedByLabel: "staging",
--				"l1":                  "v2",
--			},
--			Annotations: map[string]string{"a1": "v2"},
--		},
--		Spec: networkingv1.IngressSpec{
--			Rules: []networkingv1.IngressRule{
--				{
--					Host: "i1-staging.okteto.dev",
--					IngressRuleValue: networkingv1.IngressRuleValue{
--						HTTP: &networkingv1.HTTPIngressRuleValue{
--							Paths: []networkingv1.HTTPIngressPath{
--								{
--									Backend: networkingv1.IngressBackend{
--										Service: &networkingv1.IngressServiceBackend{
--											Name: "s1",
--										},
--									},
--								},
--							},
--						},
--					},
--				},
--			},
--			TLS: []networkingv1.IngressTLS{
--				{
--					Hosts: []string{"i1-staging.okteto.dev"},
--				},
--			},
--		},
-+	ingresses, err := c.NetworkingV1().Ingresses("cindy").List(ctx, metav1.ListOptions{})
-+	require.NoError(t, err)
-+	annotations := map[string]map[string]string{}
-+	for _, in := range ingresses.Items {
-+		annotations[in.Name] = in.Annotations
- 	}
-+	require.Equal(t, expectedIngresses, annotations)
- 
--	i2 := &networkingv1.Ingress{
--		ObjectMeta: metav1.ObjectMeta{
--			Name:      "i2",
--			Namespace: "cindy",
--			Labels: map[string]string{
--				model.DeployedByLabel: "test",
--				"l1":                  "v1",
--			},
--			Annotations: map[string]string{
--				model.OktetoAutoCreateAnnotation:        "true",
--				model.OktetoDivertedNamespaceAnnotation: "staging",
--				"a1":                                    "v1",
--			},
--		},
--		Spec: networkingv1.IngressSpec{
--			Rules: []networkingv1.IngressRule{
--				{
--					Host: "i2-cindy.okteto.dev",
--					IngressRuleValue: networkingv1.IngressRuleValue{
--						HTTP: &networkingv1.HTTPIngressRuleValue{
--							Paths: []networkingv1.HTTPIngressPath{
--								{
--									Backend: networkingv1.IngressBackend{
--										Service: &networkingv1.IngressServiceBackend{
--											Name: "s2",
--										},
--									},
--								},
--							},
--						},
--					},
--				},
--			},
--			TLS: []networkingv1.IngressTLS{
--				{
--					Hosts: []string{"i2-cindy.okteto.dev"},
--				},
--			},
--		},
--	}
--	expectedI2 := &networkingv1.Ingress{
--		ObjectMeta: metav1.ObjectMeta{
--			Name:      "i2",
--			Namespace: "cindy",
--			Labels: map[string]string{
--				model.DeployedByLabel: "test",
--				"l1":                  "v2",
--			},
--			Annotations: map[string]string{
--				model.OktetoAutoCreateAnnotation:        "true",
--				model.OktetoDivertedNamespaceAnnotation: "staging",
--				model.OktetoDivertHeaderAnnotation:      "cindy",
--				"a1":                                    "v2",
--			},
--		},
--		Spec: networkingv1.IngressSpec{
--			Rules: []networkingv1.IngressRule{
--				{
--					Host: "i2-cindy.okteto.dev",
--					IngressRuleValue: networkingv1.IngressRuleValue{
--						HTTP: &networkingv1.HTTPIngressRuleValue{
--							Paths: []networkingv1.HTTPIngressPath{
--								{
--									Backend: networkingv1.IngressBackend{
--										Service: &networkingv1.IngressServiceBackend{
--											Name: "s2",
--										},
--								
-```
-
-**File**: `pkg/divert/gatewayapi/ingresses.go` (modified, +21/-94)
-```diff
-@@ -15,111 +15,38 @@ package gatewayapi
- 
- import (
- 	"context"
--	"fmt"
--	"reflect"
--	"strings"
-+	"encoding/json"
- 
--	"github.com/okteto/okteto/pkg/format"
--	"github.com/okteto/okteto/pkg/k8s/labels"
- 	oktetoLog "github.com/okteto/okteto/pkg/log"
- 	"github.com/okteto/okteto/pkg/model"
- 	networkingv1 "k8s.io/api/networking/v1"
--	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/types"
- )
- 
--func (d *Driver) divertIngress(ctx context.Context, name string) error {
--	from := d.cache.divertIngresses[name]
--	in, ok := d.cache.developerIngresses[name]
--
--	// Ingresses that are deployed as part of the current deployment will never
--	// enter this block because they are always precreated
--	if !ok {
--		in = translateIngress(d.name, d.namespace, from)
--		oktetoLog.Infof("creating ingress %s/%s", in.Namespace, in.Name)
--		if _, err := d.client.NetworkingV1().Ingresses(d.namespace).Create(ctx, in, metav1.CreateOptions{}); err != nil {
--			if !k8sErrors.IsAlreadyExists(err) {
--				return err
--			}
--			in, err = d.client.NetworkingV1().Ingresses(d.namespace).Get(ctx, in.Name, metav1.GetOptions{})
--			if err != nil {
--				return err
--			}
--			// the ingress was created, refresh the cache
--			d.cache.developerIngresses[name] = in
--		}
--	} else {
--		updatedIn := in.DeepCopy()
--		if in.Annotations[model.OktetoAutoCreateAnnotation] == "true" {
--			// ingress was created by divert
--			updatedIn = translateIngress(d.name, d.namespace, d.cache.divertIngresses[name])
--		}
--
--		// apply the header annotations always even if the ingress was created in the child namespace
--		updatedIn.Annotations[model.OktetoDivertHeaderAnnotation] = updatedIn.Namespace
--
--		if !isEqualIngress(in, updatedIn) {
--			oktetoLog.Infof("updating ingress %s/%s", updatedIn.Namespace, updatedIn.Name)
--			if _, err := d.client.NetworkingV1().Ingresses(d.namespace).Update(ctx, updatedIn, metav1.UpdateOptions{}); err != nil {
--				if !k8sErrors.IsConflict(err) {
--					return err
--				}
--				// the ingress was updated, refresh the cache
--				updatedIn, err = d.client.NetworkingV1().Ingresses(d.namespace).Get(ctx, in.Name, metav1.GetOptions{})
--				if err != nil {
--					return err
--				}
--			}
--			d.cache.developerIngresses[name] = updatedIn
--			in = updatedIn
--		}
-+// divertIngress applies the divert header annotation to an ingress deployed in the developer namespace.
-+// It uses a merge patch so the API server applies the annotation over the latest version of the ingress
-+func (d *Driver) divertIngress(ctx context.Context, in *networkingv1.Ingress) error {
-+	if in.Annotations[model.OktetoDivertHeaderAnnotation] == in.Namespace {
-+		return nil
- 	}
- 
--	for _, rule := range in.Spec.Rules {
--		for _, path := range rule.IngressRuleValue.HTTP.Paths {
--			if err := d.divertService(ctx, path.Backend.Service.Name); err != nil {
--				return fmt.Errorf("error diverting ingress '%s/%s' service '%s': %w", in.Namespace, in.Name, path.Backend.Service.Name, err)
--			}
--		}
--	}
--	return nil
--}
--
--func translateIngress(name, namespace string, from *networkingv1.Ingress) *networkingv1.Ingress {
--	result := &networkingv1.Ingress{
--		ObjectMeta: metav1.ObjectMeta{
--			Name:        from.Name,
--			Namespace:   namespace,
--			Labels:      from.Labels,
--			Annotations: from.Annotations,
-+	patch, err := json.Marshal(map[string]any{
-+		"metadata": map[string]any{
-+			"annotations": map[string]string{
-+				model.OktetoDivertHeaderAnnotation: in.Namespace,
-+			},
- 		},
--		Spec: from.Spec,
-+	})
-+	if err != nil {
-+		return err
- 	}
--	if result.Annotations == nil {
--		result.Annotations = map[string]string{}
--	}
--	result.Annotations[model.OktetoAutoCreateAnnotation] = "true"
--	result.Annotations[model.OktetoDivertedNamespaceAnnotation] = from.Namespace
--	result.Annotations[model.OktetoDivertHeaderAnnotation] = namespace
- 
--	labels.SetInMetadata(&result.ObjectMeta, model.DeployedByLabel, format.ResourceK8sMetaString(name))
--	for i := range result.Spec.Rules {
--		result.Spec.Rules[i].Host = strings.ReplaceAll(result.Spec.Rules[i].Host, from.Namespace, namespace)
--	}
--	for i := range result.Spec.TLS {
--		for j := range result.Spec.TLS[i].Hosts {
--			result.Spec.TLS[i].Hosts[j] = strings.ReplaceAll(result.Spec.TLS[i].Hosts[j], from.Namespace, namespace)
--		}
-+	oktetoLog.Infof("patching ingress %s/%s", in.Namespace, in.Name)
-+	updatedIn, err := d.client.NetworkingV1().Ingresses(d.namespace).Patch(ctx, in.Name, types.MergePatchType, patch, metav1.PatchOptions{})
-+	if err != nil {
-+		return err
- 	}
--	return result
--}
--
--func isEqualIngress(in1 *networkingv1.Ingress, in2 *networkingv1.Ingress) bool {
--	if in1.Annotations == nil {
--		in1.Annotations = map[string]string{}
--	}
--	if in2.Annotations == nil {
--		in2.Annotations = map[string]string{}
--	}
--	return reflect.DeepEqual(in1.Spec, in2.Spec) && reflect.DeepEqual(in1.Labels, in2.Labels) && reflect.DeepEqual(in1.Annotations, in2.Annotations)
-+	d.cache.developerIngresses[in.Name] = 
-```
-
-**File**: `pkg/divert/gatewayapi/ingresses_test.go` (modified, +122/-86)
-```diff
-@@ -14,108 +14,144 @@
- package gatewayapi
- 
- import (
-+	"context"
-+	"errors"
- 	"testing"
- 
- 	"github.com/okteto/okteto/pkg/model"
--	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
- 	networkingv1 "k8s.io/api/networking/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/client-go/kubernetes/fake"
-+	k8stesting "k8s.io/client-go/testing"
- )
- 
--func Test_translateIngress(t *testing.T) {
--	var tests = []struct {
--		in       *networkingv1.Ingress
--		expected *networkingv1.Ingress
--		name     string
--	}{
--		{
--			name: "ok",
--			in: &networkingv1.Ingress{
--				ObjectMeta: metav1.ObjectMeta{
--					Name:        "name",
--					Namespace:   "staging",
--					Labels:      map[string]string{"l1": "v1"},
--					Annotations: map[string]string{"a1": "v1"},
--				},
--				Spec: networkingv1.IngressSpec{
--					Rules: []networkingv1.IngressRule{
--						{
--							Host: "test-staging.okteto.dev",
--						},
--					},
--					TLS: []networkingv1.IngressTLS{
--						{
--							Hosts: []string{"test-staging.okteto.dev"},
-+// newIngress returns an ingress routing the host "<name>-<namespace>.okteto.dev" to the given service
-+func newIngress(name, namespace, service string, annotations map[string]string) *networkingv1.Ingress {
-+	host := name + "-" + namespace + ".okteto.dev"
-+	return &networkingv1.Ingress{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:        name,
-+			Namespace:   namespace,
-+			Labels:      map[string]string{model.DeployedByLabel: "test"},
-+			Annotations: annotations,
-+		},
-+		Spec: networkingv1.IngressSpec{
-+			Rules: []networkingv1.IngressRule{
-+				{
-+					Host: host,
-+					IngressRuleValue: networkingv1.IngressRuleValue{
-+						HTTP: &networkingv1.HTTPIngressRuleValue{
-+							Paths: []networkingv1.HTTPIngressPath{
-+								{
-+									Backend: networkingv1.IngressBackend{
-+										Service: &networkingv1.IngressServiceBackend{
-+											Name: service,
-+										},
-+									},
-+								},
-+							},
- 						},
- 					},
- 				},
- 			},
--			expected: &networkingv1.Ingress{
--				ObjectMeta: metav1.ObjectMeta{
--					Name:      "name",
--					Namespace: "cindy",
--					Labels: map[string]string{
--						model.DeployedByLabel: "test",
--						"l1":                  "v1",
--					},
--					Annotations: map[string]string{
--						model.OktetoAutoCreateAnnotation:        "true",
--						model.OktetoDivertedNamespaceAnnotation: "staging",
--						model.OktetoDivertHeaderAnnotation:      "cindy",
--						"a1":                                    "v1",
--					},
--				},
--				Spec: networkingv1.IngressSpec{
--					Rules: []networkingv1.IngressRule{
--						{
--							Host: "test-cindy.okteto.dev",
--						},
--					},
--					TLS: []networkingv1.IngressTLS{
--						{
--							Hosts: []string{"test-cindy.okteto.dev"},
--						},
--					},
-+			TLS: []networkingv1.IngressTLS{
-+				{
-+					Hosts: []string{host},
- 				},
- 			},
- 		},
--		{
--			name: "empty",
--			in: &networkingv1.Ingress{
--				ObjectMeta: metav1.ObjectMeta{
--					Name:      "name",
--					Namespace: "staging",
--				},
--				Spec: networkingv1.IngressSpec{
--					Rules: []networkingv1.IngressRule{},
--					TLS:   []networkingv1.IngressTLS{},
--				},
--			},
--			expected: &networkingv1.Ingress{
--				ObjectMeta: metav1.ObjectMeta{
--					Name:      "name",
--					Namespace: "cindy",
--					Labels: map[string]string{
--						model.DeployedByLabel: "test",
--					},
--					Annotations: map[string]string{
--						model.OktetoAutoCreateAnnotation:        "true",
--						model.OktetoDivertedNamespaceAnnotation: "staging",
--						model.OktetoDivertHeaderAnnotation:      "cindy",
--					},
--				},
--				Spec: networkingv1.IngressSpec{
--					Rules: []networkingv1.IngressRule{},
--					TLS:   []networkingv1.IngressTLS{},
--				},
--			},
++// resolveExpandedScalarTag returns the tag of value when it is a plain int, float or bool scalar, or "" otherwise
++func resolveExpandedScalarTag(value string) string {
++	doc := yaml3.Node{}
++	if err := yaml3.Unmarshal([]byte(value), &doc); err != nil || len(doc.Content) != 1 {
++		return ""
++	}
++	node := doc.Content[0]
++	if node.Kind != yaml3.ScalarNode || node.Style != 0 || node.Value != value {
++		return ""
++	}
++	switch tag := node.ShortTag(); tag {
++	case "!!int", "!!float", "!!bool":
++		return tag
++	default:
++		return ""
 +	}
 +}
 +
-+func newIngressDriver(c *fake.Clientset, in *networkingv1.Ingress) *Driver {
-+	return &Driver{
-+		client:    c,
-+		name:      "test",
-+		namespace: "cindy",
-+		divert:    model.DivertDeploy{Namespace: "staging"},
-+		cache: &cache{
-+			developerIngresses: map[string]*networkingv1.Ingress{in.Name: in},
- 		},
- 	}
+ // ExpandStackEnvs returns the stack manifest with expanded envs
+ func ExpandStackEnvs(file []byte) ([]byte, error) {
+ 	doc := yaml3.Node{}
+```
+
+**File**: `pkg/model/stack_test.go` (modified, +36/-0)
+```diff
+@@ -361,6 +361,42 @@ services:
+ 	assert.Equal(t, string(manifest), string(s.Manifest))
+ }
+ 
++func Test_ReadStackComposeInterpolatedTypes(t *testing.T) {
++	t.Setenv("REPLICAS", "3")
++	t.Setenv("PUBLIC", "true")
++	t.Setenv("SCALE", "2")
++	t.Setenv("VERSION", "1.10")
++	t.Setenv("ZIP", "0123")
++	t.Setenv("ANSWER", "yes")
++	manifest := []byte(`services:
++  app:
++    image: okteto/vote:1
++    public: ${PUBLIC}
++    deploy:
++      replicas: ${REPLICAS}
++    environment:
++      VERSION: ${VERSION}
++      ZIP: ${ZIP}
++      ANSWER: ${ANSWER}
++      QUOTED: "${REPLICAS}"
++  worker:
++    image: okteto/vote:1
++    scale: ${SCALE}`)
++	s, err := ReadStack(manifest, true)
++	require.NoError(t, err)
++
++	app := s.Services["app"]
++	assert.Equal(t, int32(3), app.Replicas)
++	assert.True(t, app.Public)
++	assert.Equal(t, env.Environment{
++		{Name: "ANSWER", Value: "yes"},
++		{Name: "QUOTED", Value: "3"},
++		{Name: "VERSION", Value: "1.10"},
++		{Name: "ZIP", Value: "0123"},
++	}, app.Environment)
++	assert.Equal(t, int32(2), s.Services["worker"].Replicas)
 +}
 +
-+func Test_divertIngress_AddsHeaderAnnotation(t *testing.T) {
-+	ctx := context.Background()
-+	in := newIngress("i1", "cindy", "s1", map[string]string{"a1": "v1"})
-+	c := fake.NewClientset(in)
-+	d := newIngressDriver(c, in)
-+
-+	err := d.divertIngress(ctx, in)
-+	require.NoError(t, err)
- 
--	for _, tt := range tests {
--		t.Run(tt.name, func(t *testing.T) {
--			result := translateIngress("test", "cindy", tt.in)
--			assert.Equal(t, result, tt.expected)
--		})
-+	expected := newIngress("i1", "cindy", "s1", map[string]string{
-+		"a1":                               "v1",
-+		model.OktetoDivertHeaderAnnotation: "cindy",
-+	})
-+	result, err := c.NetworkingV1().Ingresses("cindy").Get(ctx, "i1", metav1.GetOptions{})
-+	require.NoError(t, err)
-+	require.Equal(t, expected.Annotations, result.Annotations)
-+	require.Equal(t, expected.Labels, result.Labels)
-+	require.Equal(t, expected.Spec, result.Spec)
-+	require.Equal
+ func TestStack_validate(t *testing.T) {
+ 	tests := []struct {
+ 		stack *Stack
 ```
 
-**File**: `pkg/divert/gatewayapi/services.go` (removed, +0/-72)
+---
+
+### Incident Patch 2: `ce177ed5` (2026-10-29)
+**Commit Message**: build(deps): bump github.com/go-jose/go-jose/v4 from 4.1.5 to 4.1.6 (#5227)
+
+Bumps [github.com/go-jose/go-jose/v4](https://github.com/go-jose/go-jose) from 4.1.5 to 4.1.6.
+- [Release notes](https://github.com/go-jose/go-jose/releases)
+- [Commits](https://github.com/go-jose/go-jose/compare/v4.1.5...v4.1.6)
+
+---
+updated-dependencies:
+- dependency-name: github.com/go-jose/go-jose/v4
+  dependency-version: 4.1.6
+  dependency-type: indirect
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -1,72 +0,0 @@
--// Copyright 2023 The Okteto Authors
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--// http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--package gatewayapi
--
--import (
--	"context"
--	"fmt"
--
--	"github.com/okteto/okteto/pkg/format"
--	"github.com/okteto/okteto/pkg/k8s/labels"
--	oktetoLog "github.com/okteto/okteto/pkg/log"
--	"github.com/okteto/okteto/pkg/model"
--	apiv1 "k8s.io/api/core/v1"
--	k8sErrors "k8s.io/apimachinery/pkg/api/errors"
--	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
--)
--
--func (d *Driver) divertService(ctx context.Context, name string) error {
--	from, ok := d.cache.divertServices[name]
--	if !ok {
--		oktetoLog.Infof("service %s not found", name)
--		return nil
--	}
--
--	if _, ok := d.cache.developerServices[name]; !ok {
--		newS := translateService(d.name, d.namespace, from)
--		oktetoLog.Infof("creating service %s/%s", newS.Namespace, newS.Name)
--		if _, err := d.client.CoreV1().Services(d.namespace).Create(ctx, newS, metav1.CreateOptions{}); err != nil {
--			if !k8sErrors.IsAlreadyExists(err) {
--				return err
--			}
--		}
--		d.cache.developerServices[name] = newS
--		return nil
--	}
--
--	return nil
--
--}
--
--func translateService(name, namespace string, s *apiv1.Service) *apiv1.Service {
--	result := &apiv1.Service{
--		ObjectMeta: metav1.ObjectMeta{
--			Name:        s.Name,
--			Namespace:   namespace,
--			Labels:      s.Labels,
--			Annotations: s.Annotations,
--		},
--		Spec: apiv1.ServiceSpec{
--			Type:         apiv1.ServiceTypeExternalName,
--			ExternalName: fmt.Sprintf("%s.%s.svc.cluster.local", s.Name, s.Namespace),
--		},
--	}
--	labels.SetInMetadata(&result.ObjectMeta, model.DeployedByLabel, format.ResourceK8sMetaString(name))
--	if result.Annotations == nil {
--		result.Annotations = map[string]string{}
--	}
--	result.Annotations[model.OktetoAutoCreateAnnotation] = "true"
--	result.Annotations[model.OktetoDivertedNamespaceAnnotation] = s.Namespace
--	return result
--}
+@@ -212,7 +212,7 @@ require (
+ 	github.com/fxamacker/cbor/v2 v2.9.4 // indirect
+ 	github.com/go-git/gcfg/v2 v2.0.2 // indirect
+ 	github.com/go-git/go-billy/v6 v6.0.0-alpha.2 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.5 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-openapi/swag/cmdutils v0.28.0 // indirect
+ 	github.com/go-openapi/swag/conv v0.28.0 // indirect
+ 	github.com/go-openapi/swag/fileutils v0.28.0 // indirect
 ```
 
-**File**: `pkg/divert/gatewayapi/services_test.go` (removed, +0/-110)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -1,110 +0,0 @@
--// Copyright 2023 The Okteto Authors
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--// http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--package gatewayapi
--
--import (
--	"testing"
--
--	"github.com/okteto/okteto/pkg/model"
--	"github.com/stretchr/testify/assert"
--	apiv1 "k8s.io/api/core/v1"
--	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
--)
--
--func Test_translateService(t *testing.T) {
--	var tests = []struct {
--		s        *apiv1.Service
--		expected *apiv1.Service
--		name     string
--	}{
--		{
--			name: "ok",
--			s: &apiv1.Service{
--				ObjectMeta: metav1.ObjectMeta{
--					Name:        "name",
--					Namespace:   "staging",
--					Labels:      map[string]string{"l1": "v1"},
--					Annotations: map[string]string{"a1": "v1"},
--				},
--				Spec: apiv1.ServiceSpec{
--					Type: apiv1.ServiceTypeClusterIP,
--					Ports: []apiv1.ServicePort{
--						{
--							Name: "port",
--							Port: 8080,
--						},
--					},
--					ClusterIP:  "my-ip",
--					ClusterIPs: []string{"my-ip"},
--					Selector:   map[string]string{"label": "value"},
--				},
--			},
--			expected: &apiv1.Service{
--				ObjectMeta: metav1.ObjectMeta{
--					Name:      "name",
--					Namespace: "cindy",
--					Labels: map[string]string{
--						model.DeployedByLabel: "test",
--						"l1":                  "v1",
--					},
--					Annotations: map[string]string{
--						model.OktetoAutoCreateAnnotation:        "true",
--						"a1":                                    "v1",
--						model.OktetoDivertedNamespaceAnnotation: "staging",
--					},
--				},
--				Spec: apiv1.ServiceSpec{
--					Type:         apiv1.ServiceTypeExternalName,
--					ExternalName: "name.staging.svc.cluster.local",
--				},
--			},
--		},
--		{
--			name: "empty",
--			s: &apiv1.Service{
--				ObjectMeta: metav1.ObjectMeta{
--					Name:      "name",
--					Namespace: "staging",
--				},
--				Spec: apiv1.ServiceSpec{
--					Type: apiv1.ServiceTypeExternalName,
--				},
--			},
--			expected: &apiv1.Service{
--				ObjectMeta: metav1.ObjectMeta{
--					Name:      "name",
--					Namespace: "cindy",
--					Labels: map[string]string{
--						model.DeployedByLabel: "test",
--					},
--					Annotations: map[string]string{
--						model.OktetoAutoCreateAnnotation:        "true",
--						model.OktetoDivertedNamespaceAnnotation: "staging",
--					},
--				},
--				Spec: apiv1.ServiceSpec{
--					Type:         apiv1.ServiceTypeExternalName,
--					ExternalName: "name.staging.svc.cluster.local",
--				},
--			},
--		},
--	}
--
--	for _, tt := range tests {
--		t.Run(tt.name, func(t *testing.T) {
--			result := translateService("test", "cindy", tt.s)
--			assert.Equal(t, result, tt.expected)
--		})
--	}
--}
+@@ -261,8 +261,8 @@ github.com/go-git/go-git/v6 v6.0.0-alpha.5 h1:sE+OlkHgYWNMVmN1s9sR7uyFgsWLtxcNWs
+ github.com/go-git/go-git/v6 v6.0.0-alpha.5/go.mod h1:3IjhiZnM+uBmUrOGSeqrJpsmi4Vd0H2NZO/uK2a7d0s=
+ github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
+ github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
+-github.com/go-jose/go-jose/v4 v4.1.5 h1:RjgjO2LOtWOJKUC5wpwY9LR3B3vwVAz6JS2YHfYU6eA=
+-github.com/go-jose/go-jose/v4 v4.1.5/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
+ github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
+ github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5235** (2026-10-30): chore(deps): Update module github.com/posthog/posthog-go to v1.27.1 (@oktetobot)
+- **PR #5229** (closed): chore(deps): Update module github.com/go-jose/go-jose/v4 to v4.1.6 [SECURITY] (@oktetobot)
+- **PR #5228** (2026-10-29): Added .claude/tasks.local to the gitignore file (@ifbyol)
+- **PR #5227** (2026-10-29): build(deps): bump github.com/go-jose/go-jose/v4 from 4.1.5 to 4.1.6 (@dependabot[bot])
 - **PR #5226** (2026-10-28): chore(deps): Update module golang.org/x/sync to v0.24.0 (@oktetobot)
 - **PR #5225** (2026-10-28): PROD-552: Stop copying shared namespace endpoints in the gateway-api divert driver (@ifbyol)
-- **PR #5222** (2026-10-26): build(deps): bump body-parser from 1.20.6 to 1.20.9 in /samples/node.js (@dependabot[bot])
-- **PR #5221** (2026-10-26): PROD-551: Rename the default divert driver from nginx to gateway-api (@ifbyol)
-- **PR #5218** (2026-10-26): chore(deps): Update kubernetes to v0.37.1 (@oktetobot)
-- **PR #5216** (2026-10-26): chore(deps): Update module github.com/posthog/posthog-go to v1.27.0 (@oktetobot)
 
 ---
 
@@ -2324,39 +1673,53 @@ Signed-off-by: Nacho Fuertes <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. PROD-552: Stop copying shared namespace endpoints in the gateway-api divert driv
+## X. compose): keep numbers and booleans from interpolated variables (#5217)
 
 **RULE**:
-When implementing operations in `pkg/divert/gatewayapi/cache.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/model/stack_expander.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `75f7d7b4`: PROD-552: Stop copying shared namespace endpoints in the gateway-api divert driver (#5225). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bb9214a9`: compose): keep numbers and booleans from interpolated variables (#5217). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/divert/gatewayapi/cache.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/model/stack_expander.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	sList, err := d.client.CoreV1().Services(d.namespace).List(ctx, metav1.ListOptions{})
+		if expandValue != node.Value && node.Style == 0 && node.ShortTag() == "!!str" {
+			// a plain scalar like ${REPLICAS} is resolved as a string before expansion. Keep the value as a
+			// number or boolean when it expands to one, otherwise the encoder quotes it and fields like
+			// replicas or public fail to unmarshal
+			if tag := resolveExpandedScalarTag(expandValue); tag != "" {
+				node.Tag = tag
+			}
+		}
+// resolveExpandedScalarTag returns the tag of value when it is a plain int, float or bool scalar, or "" otherwise
+func resolveExpandedScalarTag(value string) string {
+	doc := yaml3.Node{}
+	if err := yaml3.Unmarshal([]byte(value), &doc); err != nil || len(doc.Content) != 1 {
+		return ""
+	}
+	node := doc.Content[0]
+	if node.Kind != yaml3.ScalarNode || node.Style != 0 || node.Value != value {
+		return ""
+	}
+	switch tag := node.ShortTag(); tag {
+	case "!!int", "!!float", "!!bool":
+		return tag
+	default:
+		return ""
+	}
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	divertServices     map[string]*apiv1.Service
-		divertServices:     map[string]*apiv1.Service{},
-	// Service cache for diverted namespace
-	sList, err := d.client.CoreV1().Services(d.divert.Namespace).List(ctx, metav1.ListOptions{})
-	if err != nil {
-		return err
-	}
-	for i := range sList.Items {
-		d.cache.divertServices[sList.Items[i].Name] = &sList.Items[i]
-	}
-
-	sList, err = d.client.CoreV1().Services(d.namespace).List(ctx, metav1.ListOptions{})
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `75f7d7b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bb9214a9` are properly handled with clean fallback behavior.

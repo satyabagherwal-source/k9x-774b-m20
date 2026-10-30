@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-DRXC",
-    "timestamp": "2026-10-28T12:01:57.408Z",
-    "repository": "mfontanini/presenterm",
-    "learningId": "learn-github-mfontanini-presenterm",
-    "contentHash": "a419bb33f510cf60995efa906099efd60d1875a61a6964000eab1fa10d414a91",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-DX6H",
     "timestamp": "2026-10-28T12:02:04.217Z",
     "repository": "koderover/zadig",
@@ -7492,6 +7477,21 @@
     "contentHash": "487dda396690ef5d3840f5bdbda0ba84d160b38a2584e0eab7c7103123baf018",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-R7K7",
+    "timestamp": "2026-10-30T17:51:40.039Z",
+    "repository": "okteto/okteto",
+    "learningId": "learn-github-okteto-okteto",
+    "contentHash": "06448b2f0ab90f6598b48c3fd9fcd185b83ba47c4d1c750fdd52e53627b58c03",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

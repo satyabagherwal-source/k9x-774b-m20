@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T17:45:17.580Z",
-  "total_cycles_completed": 6230,
-  "total_learnings_persisted": 6230,
-  "total_rules_promoted": 5788,
+  "last_updated": "2026-10-30T17:51:40.045Z",
+  "total_cycles_completed": 6231,
+  "total_learnings_persisted": 6231,
+  "total_rules_promoted": 5789,
   "history": [
-    {
-      "timestamp": "2026-10-29T17:16:39.877Z",
-      "repository": "tach-org/tach",
-      "learningId": "learn-github-tach-org-tach",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T17:16:50.008Z",
       "repository": "pixeltable/pixeltable",
@@ -1403,6 +1396,13 @@
       "repository": "zvec-ai/zvec-grep",
       "learningId": "learn-github-zvec-ai-zvec-grep",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T17:51:40.045Z",
+      "repository": "okteto/okteto",
+      "learningId": "learn-github-okteto-okteto",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

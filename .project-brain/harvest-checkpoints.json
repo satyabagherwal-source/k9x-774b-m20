@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T17:45:17.584Z",
+  "last_updated": "2026-10-30T17:51:40.049Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5316,14 +5316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-okteto-okteto",
-      "content_hash": "3978f573b551cad0ed65b6c7c52ade6445f5d61eb3fea30516df386405237fdb",
-      "verified_at": "2026-10-29T01:49:59.431Z",
+      "content_hash": "06448b2f0ab90f6598b48c3fd9fcd185b83ba47c4d1c750fdd52e53627b58c03",
+      "verified_at": "2026-10-30T17:51:40.048Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T01:49:59.431Z"
+      "last_updated": "2026-10-30T17:51:40.048Z"
     },
     "supervc-stack/VectorChord": {
       "repository": "supervc-stack/VectorChord",

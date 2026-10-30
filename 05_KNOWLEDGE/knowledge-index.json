@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T17:45:17.495Z",
+  "last_updated": "2026-10-30T17:51:39.993Z",
   "total_verified_learnings": 1176,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42322,8 +42322,8 @@
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "75f7d7b4",
-      "content_hash": "3978f573b551cad0ed65b6c7c52ade6445f5d61eb3fea30516df386405237fdb",
+      "source_version": "bb9214a9",
+      "content_hash": "06448b2f0ab90f6598b48c3fd9fcd185b83ba47c4d1c750fdd52e53627b58c03",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "promoted_rules": [
@@ -42356,6 +42356,11 @@
           "number": 5487,
           "title": "PROD-552: Stop copying shared namespace endpoints in the gateway-api divert driv",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5819,
+          "title": "compose): keep numbers and booleans from interpolated variables (#5217)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42363,7 +42368,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T01:49:59.327Z",
+      "verified_at": "2026-10-30T17:51:39.981Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154589,6 +154594,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T17:45:17.477Z"
+    },
+    "rule-5819": {
+      "learning_id": "rule-5819",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5819,
+      "title": "compose): keep numbers and booleans from interpolated variables (#5217)",
+      "source_url": "https://github.com/okteto/okteto",
+      "source_version": "bb9214a9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T17:51:39.981Z"
     }
   },
   "aliases": {
