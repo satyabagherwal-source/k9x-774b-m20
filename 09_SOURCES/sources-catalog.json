@@ -10683,10 +10683,10 @@
     "repository": "makecindy/cindy",
     "platform": "github",
     "sourceUrl": "https://github.com/makecindy/cindy",
-    "sourceVersion": "b486def1",
+    "sourceVersion": "a9030276",
     "license": "Apache-2.0",
-    "contentHash": "269ed3435abe182b501541a019614794eb73cc5313092da5a32ca9a7a57b8cdb",
-    "lastHarvestedAt": "2026-10-27T21:36:36.836Z",
+    "contentHash": "d289841d161fd825ac18ce126a1abd145e191ac9ed0d66e5b9e58cc2155183a5",
+    "lastHarvestedAt": "2026-10-30T22:41:01.474Z",
     "learningId": "learn-github-makecindy-cindy"
   },
   "fei2411-ds-bot": {

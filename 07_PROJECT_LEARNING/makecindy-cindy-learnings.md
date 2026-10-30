@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/makecindy-cindy-learnings.md`  
 > **Source**: github ([https://github.com/makecindy/cindy](https://github.com/makecindy/cindy))  
-> **Source Version**: `b486def1`  
+> **Source Version**: `a9030276`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T21:36:36.389Z  
+> **Timestamp**: 2026-10-30T22:41:00.992Z  
 > **Learning ID**: `learn-github-makecindy-cindy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/makecindy-cindy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/makecindy/cindy](https://github.com/makecindy/cindy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T21:36:35.976Z  
+> **Harvest Timestamp**: 2026-10-30T22:40:59.260Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Consider it done. The open-source AI agent that works out of the box · 想到，就能做到。开源、开箱即用的 AI Agent。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 7404 stars
+- **Stars / Engagement**: 8706 stars
 
 ---
 
@@ -468,6 +468,41 @@ print("wrote background.pdf")
 
 ```
 
+### Core Architecture Module: `apps/desktop/scripts/fixtures/cindy-ai-identity/state.ts`
+```
+import type { ProviderView } from '@cindy/model-providers';
+import i18n from '../../../src/renderer/i18n';
+import { cindyAiAccountName, cindyAiAccountLogoKind } from '../../../src/shared/cindyAiPresentation';
+
+// Stubbed hooks are separate modules; share only this public fixture selector.
+const fixtureState = globalThis as typeof globalThis & { __cindyAiScenario?: string };
+export const setScenario = (value: string) => { fixtureState.__cindyAiScenario = value === 'default' ? 'personal' : value; };
+const user = () => fixtureState.__cindyAiScenario === 'personal'
+  ? { membershipKind: 'personal' as const, orgSlug: null, orgName: null }
+  : { membershipKind: 'org' as const, orgSlug: fixtureState.__cindyAiScenario === 'xd' ? 'xd' : 'example', orgName: 'Example International Game Studio' };
+
+export const useAuth = () => ({ mode: 'cloud', dataOwnerId: 'fixture', dataOwnerGeneration: 1, user: user() });
+export const useOptionalAuthDeviceId = () => 'fixture-device';
+export const useOptionalAuthUser = () => user();
+export const useProviders = () => ({
+  providers: [{
+    id: 'xd', name: cindyAiAccountName(user(), key => i18n.t(key)), source: 'builtin',
+    logoKind: cindyAiAccountLogoKind(user()),
+    agents: ['codex'], auth: { method: 'managed' }, routing: { codex: {} }, connected: true,
+    models: { codex: [{ id: 'auto', name: 'Auto', group: 'gpt', contextWindow: 272000, efforts: [] }] },
+  } as ProviderView],
+  providerOrder: ['xd'], ownerGeneration: 1, loading: false, refetch: async () => true,
+});
+export const useApiKey = () => ({ key: 'fixture-key', hasSavedKey: true, clearKey: async () => true });
+export const useModelAccessStatus = () => ({ state: 'ok', source: 'server', accountTier: null, endpoint: null });
+export const useModelAccessCreditUsageResult = () => ({ usage: null, loading: false, refresh: async () => {} });
+export const useClaudeAccountUsageResult = () => ({ usage: null, unlimited: true, loading: false, refresh: async () => {} });
+export const useXdAssetPrimaryAction = () => null;
+export const isChatGptConnectionConnected = () => false;
+export const useCodexAuth = () => ({ state: { kind: 'unauthenticated' }, recoveryCheck: 'idle', refresh: async () => {} });
+
+```
+
 ### Core Architecture Module: `apps/desktop/scripts/fixtures/orca-worker-project/ui-page.mjs`
 ```
 import assert from 'node:assert/strict';
@@ -553,6 +588,13 @@ export default {
         .getByText(await ui.t('orca.workerProject.direct', { project: 'cindy', branch: 'main' }))
         .waitFor();
       await ui.capture('explicit-main-checkout');
+      await page.getByText(await ui.t('orca.workerProject.newWorktree'), { exact: true }).click();
+      const sourceBranch = page.getByRole('button', {
+        name: await ui.t('newChat.branchChip.label'),
+        exact: true,
+      });
+      assert.equal(await sourceBranch.textContent(), 'main');
+      await ui.capture('same-repo-source-branch');
       await page.getByRole('button', { name: 'cindy', exact: true }).click();
       await page.getByRole('button', { name: 'cindy /projects/cindy', exact: true }).click();
       await page.getByRole('button', { name: current, exact: true }).waitFor();
@@ -656,6 +698,13 @@ export default {
         .waitFor();
     }
     await ui.capture('other-project');
+    await page.getByText(await ui.t('orca.workerProject.newWorktree'), { exact: true }).click();
+    const rememberedBranch = page.getByRole('button', {
+      name: await ui.t('newChat.branchChip.label'),
+      exact: true,
+    });
+    assert.equal(await rememberedBranch.textContent(), 'release/v2');
+    await ui.capture('remembered-source-branch');
   },
 };
 
@@ -856,8 +905,32 @@ void mountPage({
         },
       },
     },
-    worktreeBranchSyncStatus: async ({ branch }: { branch: string }) => ({ branch, remote: 'origin', remoteBranch: branch, remoteOnly: false, ahead: 0, behind: 3, dirtyFiles: 2, checkoutPath: inherited.directory }),
-    worktreeSyncBranch: async ({ branch }: { branch: string }) => ({ updated: 3, status: { branch, remote: 'origin', remoteBranch: branch, remoteOnly: false, ahead: 0, behind: 0, dirtyFiles: 2 } }),
+    worktreeBranchSyncStatus: async ({ branch }: { branch: string }) => ({
+      branch,
+      remote: 'origin',
+      remoteBranch: branch,
+      remoteOnly: false,
+      ahead: 0,
+      behind: 3,
+      dirtyFiles: 2,
+      checkoutPath: inherited.directory,
+    }),
+    worktreeSyncBranch: async ({ branch }: { branch: string }) => ({
+      updated: 3,
+      status: {
+        branch,
+        remote: 'origin',
+        remoteBranch: branch,
+        remoteOnly: false,
+        ahead: 0,
+        behind: 0,
+        dirtyFiles: 2,
+      },
+    }),
+    getNewMakerWorktreeBranchPreference: async (baseRepo: string) =>
+      ['/projects/design-system', '/projects/cindy'].includes(baseRepo)
+        ? { baseRepo, sourceBranch: 'release/v2', revision: 1 }
+        : null,
     worktreeListBranches: async () => ({
       remoteDefaultBranch: 'refs/remotes/origin/main',
       branches: ['main', 'feat/worker-project-picker', 'release/v2'],
@@ -1137,32 +1210,22 @@ process.exitCode = resultExitCode;
 
 ```
 
-### Core Architecture Module: `apps/desktop/src/capture-renderer/directLinkHost.ts`
-```
-import { createDirectRtcRuntime, createDirectRuntimeHost } from '@cindy/device-link';
-import type { DirectLinkHostApi } from '../shared/directLink';
-
-/** No UI, media capture, filesystem or credentials in this data-only process. */
-export function startDirectLinkHost(api: DirectLinkHostApi) {
-  const host = createDirectRuntimeHost(createDirectRtcRuntime(), api.event);
-  const off = api.onCommand((command) => { void host.command(command); });
-  void api.register().catch(() => host.dispose());
-  return () => { off(); host.dispose(); };
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7494** (2026-10-27): **bug(maker-core): 子 Agent 的内部 hook 被误报为工具审批，工具名与参数丢失**
-  *Symptoms*: ## 问题描述 / What happened  在 Pi + Auto-review 任务中委派子 Agent 后，部分工具调用显示为：  ```text Subagent: tool Requested by #7387 本轮范围清理独立静态审阅 ```  审批卡的操作详情只有 `{}`，而不是真实工具和命令。自动审阅因此给出：  ```text 该工具调用未提供具体动作或参数，无法确认它是否属于任务的测试收尾范围。 ```  子 Agent 的原始权限载荷中实际包含完整的工具名、参数和命令，并非 Agent 没有提供。  **期望：** 内部同步 hook 不应被展示为工具审批；真正的权限请求应保留工具名和参数。Auto-review 不应因为宿主丢失信息而把原本明确授权的操作交给用户反复确认。  ## 环境 / Environment  - Cindy：`0.1.118` - 安装构建提交：`fa952a2d098b8669122d5013c442bb14308961f7` - 平台：Windows 11 家庭中文版，`10.0.26200` - Agent：Pi；权限模式：Auto-review - 执行形态：Durable Pi Subagent - 发生时间：2026-10-27  ## 复现步骤 / Steps to reproduce  1. 在 Auto-review 模式下创建 Pi 任务。 2. 通过 `subagent` 委派子 Agent 执行只读审阅或代码任务。 3. 子 Agent 使用产生 `tool.before` 内部事件的工具，且随后进入审批流程。 4. 观察审批卡显示 `Subagent: tool`，参数为 `{}`；自动审阅以缺少动作或参数为由要求确认。  现场包含不同 ID 的多次审批。是否还存在同一审批被重复处理，尚需另查，不将“每张卡都由重复弹窗产生”作为本 Issue 的结论。  ## 日志与截图 / Logs & screenshots  ### 根因：内部 hook 被误当成权限请求  子 Agent 的两种事件共用 `ctx.ui.input(...)` 通道：  | 事件 | 用途 | | --- | --- | | `cindy:harness-hook` | `tool.before` 等内部同步事件 | | `cindy:permission` | 真正的工具权限请求 |  [`cindy-bridge-source.ts:4643`](https://github.com/makecindy/cindy/blob/45f34bcd/packages/maker-core/src/agents/pi/cindy-bridge-source.ts#L4643) 发出内部事件，[`cindy-subagent-runner-source.ts:920`](https://github.com/makecindy/cindy/blob/45f34bcd/packages/maker-core/src/agents/pi/cindy-subagent-runner-source.ts#L920) 将 `extension_ui_request` 保存为 `pendingApprovals`。  父 Agent 的转发器 [`resolvePiSubagentApproval()`](https://github.com/makecindy/cindy/blob/45f34bcd/pack
+- **Issue #8005** (2026-10-30): **导入的 Codex 对话继续使用时，同一条回复会显示两份**
+  *Symptoms*: **提交人**: 匿名 **客户端版本**: 0.1.120  ---  从本机 Codex 历史导入一个对话后，在 Cindy 里继续使用该对话时，同一轮回复会成对出现。  可复现情况：  1. 在设置的 Session Import 中导入一条本机 Codex 对话。 2. 打开导入后的任务，继续发消息让 Codex 回复。 3. 每轮结束后，聊天记录里出现两条几乎相同的助手回复。一条是当场回复；另一条是导入副本，通常晚几秒，末尾可能多一段记忆引用。过程说明也会这样成对显示。  这不是模型把同一件事又推理了一遍。两份正文相同，导入副本没有新结论。当前没有开关可以关掉这种重复显示，也没有批量删除已有副本的入口。逐条删除只能清掉已经写入的那一条，后续回复仍可能再出现一份。  期望：导入后继续使用的 Codex 对话，每轮只显示一份回复。与当场回复对应的导入副本应自动合并或跳过，即使导入副本多了记忆引用，或导入时间和当场回复略有差别。  实际出现问题的引擎是 Codex。具体对话标题、项目路径和业务内容未公开。 --- ## 提交时的任务环境  仅代表提交时快照,不一定是故障环境。OS 来自提交客户端本机,不含 SSH 远端主机;Harness / 模型来自当前任务。与运行环境无关的反馈可忽略本段。 **OS**: win32 x64 (10.0.19045) **Harness**: Pi **Model ID**: ` grok-4.7 ` **界面语言**: zh-CN
+  **Post-Mortem & Fix Analysis**:
+  > ### 更新与判断  更新：导入的本机 Codex 对话在 Cindy 中续聊时保持单份回复呈现并同步清理旧副本是符合预期的交互体验。针对提报的成对回复与存量副本残留，DavidShenXD 已提交修复 PR #8025，统一了实时消息与 rollout 导入记录的匹配逻辑，支持末尾记忆引用剥离、原生消息 ID/阶段匹配、存量副本软隐藏与多端删除通知。  当前桌面端本地数据库已具备针对文件引用（`:codex-file-citation`）的去重能力，真正缺少的是对 Codex rollout 追写的末尾记忆引用（memory citation）以及过程说明（commentary）的规范化与多端同步处理。随着 PR #8025 的提交，工作重点已从根因定位转向解决代码审查指出的代码围栏误判等边界缺陷，并在真实模型环境中完成实机验收。  ### 行动  1. **解决代码审查反馈（建议由 PR 作者 DavidShenXD 接续）**：    - **精确围栏识别**：修改 `apps/desktop/src/main/localDb/worker/opHandlers/tx.ts` 及 `WorkerThreadTransport.ts` 中的代码围栏检查，由当前的全文反引号/波浪线计数改为按行匹配围栏字符与长度，避免当回复包含代码块示例（如四反引号包裹三反引号）时被误判为未闭合，导致末尾记忆引用剥离失败并再次产生双份回复。    - **补全实时行广播**：在事务为实时消息行补上记忆引用与阶段信息后，复用消息行完整广播通知，确保已打开的各端不仅能删除旧副本，还能同步更新实时行的引用展示。    - **优化导入检查开销**：评估并采用版本标识代替每次导入检查时对本地历史全量序列化与哈希的做法，降低长会话翻页时的内存与延迟开销。  2. **原场景端到端验收**：    - 在包含修复的构建中，导入真实本机 Codex 对话并发起多轮续聊（覆盖普通文本、含过程说明 commentary、带代码块示例及产生末尾记忆引用的场景）。    - 验证当场助手回复与过程说明均仅展示一份；已打开的客户端（桌面及移动端）在收到删除广播后平滑移除旧导入副本；已回退的消息不会因历史文件重读而再次导入。    - **完成条件**：PR #8025 修复上述边界缺陷并通过 CI，且在真
+  > 已提交修复 PR：https://github.com/makecindy/cindy/pull/8025  修复 Codex 导入历史后续聊时，实时消息与带记忆引用的历史副本重复显示的问题；补齐已有副本的删除通知，让桌面和手机同步移除，并保留回退后的去重约束。  相关回归与导入测试共 1,080 项通过，Desktop/Mobile 类型检查通过。导入测试使用隔离的真实 rollout 文件和 SQLite；真实模型续聊与跨设备实机界面尚未验收。
 
-- **Issue #7437** (2026-10-27): **bug: remote task selection changes after opening Settings and returning**
-  *Symptoms*: ### 问题描述 / What happened  In Cindy remote-control mode, the selected task (session) is not preserved when visiting Settings and returning to the main screen. After selecting task A, opening Settings, and going back, a different task B becomes active without the user selecting it.  Expected: returning from Settings restores the same task A on the same remote device, provided that task still exists and is accessible.  Actual: another task becomes active. Which task is chosen and whether the behavior occurs on every navigation have not yet been established.  ### 环境 / Environment  - Desktop-to-desktop remote use between two Macs. - Reported on 2026-10-27. - Cindy version/commit on each computer: not captured for this report. - Exact macOS versions and install method: not captured.  ### 复现步骤 / Steps to reproduce  1. Use Cindy on one computer to access tasks on another computer in remote-control mode. 2. Select an existing task A on the main Cindy screen. 3. Open the Settings panel. 4. Return to the main Cindy screen. 5. Observe that a different task B is active instead of A.  These steps describe the user's observation; they have not yet been independently reproduced or traced. No root cause is claimed.  ### 日志与截图 / Logs & screenshots  No trace or screenshot captured for this specific navigation failure yet. No evidence of task data loss is reported.  ### Related reports checked  - #4138 (closed): the same Settings-and-back path could stay on “Loading…” rather than restore the pre
+- **Issue #7906** (2026-10-30): **Nova 模型工具调用失败重试后反复报 Duplicate function_call_output 400 错误**
+  *Symptoms*: **提交人**: taogecool yi **客户端版本**: 0.1.120  ---  ## 现象  使用 Amazon Nova 系列模型（经 OpenRouter / litellm 路由）时，会话中发生一次工具调用失败并重试后，后续每次请求都会返回 400，模型无法再回复。该问题反复出现，只能新开会话绕开。  ## 报错  ``` litellm.BadRequestError: OpenrouterException - NovaException "Duplicate function_call_output for call_id '...'. Each function_call must have exactly one matching function_call_output" code: 400 ```  ## 复现路径  1. 会话中触发一次工具调用（例如生成 PDF），该次调用失败。 2. 助手重试 / 换方式继续。 3. 之后继续对话，模型请求即报上述 400，且反复出现；换会话后才恢复。  ## 推测原因  发送给 Nova 的历史里出现了两个 `function_call_output` 对应同一个 `call_id`。Nova 对工具调用的一一映射校验很严格，重复即硬报 400。疑似在工具结果去重 / 会话历史重建（重试或上下文重建）时未保证 `call_id` 唯一。  ## 影响  该会话被彻底卡死，无法继续回复，只能新开会话绕开。 --- ## 提交时的任务环境  仅代表提交时快照,不一定是故障环境。OS 来自提交客户端本机,不含 SSH 远端主机;Harness / 模型来自当前任务。与运行环境无关的反馈可忽略本段。 **OS**: win32 x64 (10.0.19045) **Harness**: Pi **Model ID**: ` deepseek/deepseek-v4-pro ` **界面语言**: en
+  **Post-Mortem & Fix Analysis**:
+  > ### 判断  在工具调用失败并重试的场景下保障会话可持续推进，是多模型协作与工具调用的重要基础能力。进一步检查发现，当前系统在 Anthropic Messages 协议层（`packages/model-compat/src/cindy/proxy/transform.ts`）已具备成熟的 `dedupeDuplicateToolUseIds` 唯一化与 `createDuplicateToolUseIdRecoveryRule` 400 透明重试机制，但在 OpenAI Responses 协议（`codex-proxy-host.ts` 与 `@cindy/model-compat`）的出站处理中，尚未对 `call_id` 的跨轮重复或多次输出建立类似保护。Amazon Nova 经 OpenRouter 路由至 AWS Bedrock Converse API 时，上游对全会话上下文中的工具调用 ID 执行严格的唯一性与 1:1 配对校验，历史中一旦出现重复的 `call_id` 或多余的 `function_call_output` 即判定非法并硬报 400。由于该错误历史随会话上下文持续重放，导致后续每轮请求均确定性失败，会话被永久卡死。此问题值得推进修复。  ### 关键证据与技术依据  1. **协议层校验差异**：在 Amazon Bedrock Converse API 及其经 OpenRouter 转换的 Responses API 规范中，整个会话历史中的 `toolUseId` / `call_id` 必须严格全局唯一，且每个调用必须且只能对应一个结果。当模型重试或历史重放时生成或带入相同的 `call_id`，上游即直接返回 `400: Duplicate function_call_output for call_id '...'. Each function_call must have exactly one matching function_call_output`。 2. **现有防护范围不对称**：Cindy 在 `packages/model-compat/src/cindy/proxy/transform.ts` 中针对 Anthropic 协议已实现了 `dedupeDuplicateToolUseIdsInMes
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1179,734 +1242,773 @@ export function startDirectLinkHost(api: DirectLinkHostApi) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b486def1` (2026-10-27)
-**Commit Message**: Merge pull request #7556 from 321sssrt-bit/fix/7424-autoreview-pasted-text
+### Incident Patch 1: `0f724deb` (2026-10-30)
+**Commit Message**: fix(ci): raise brand terminology guard git ls-files maxBuffer
 
-fix(auto-review): 保留粘贴正文中的用户授权与限制
+git ls-files -z exceeds Node's default 1 MiB spawnSync maxBuffer, so the
+child is killed and check:brand-terminology fails with exit null.
 
-**File**: `apps/desktop/src/main/maker-ipc/__tests__/autoReviewUserIntent.test.ts` (modified, +27/-2)
+Signed-off-by: Cursor Agent <[REDACTED_EMAIL]>
+Co-authored-by: Chris Zhang <[REDACTED_EMAIL]>
+
+**File**: `scripts/brand-terminology-guard.mjs` (modified, +1/-0)
 ```diff
-@@ -4,12 +4,38 @@ import {
-   AUTO_REVIEW_DELEGATED_CONTINUATION,
-   restoreAutoReviewUserIntent,
-   restoreAutoReviewSteerIntent,
-+  readAutoReviewUserText,
-   currentAutoReviewResourceIntent,
-   type AutoReviewHistoryMessage,
- } from '../autoReviewUserIntent';
- import { projectPersistedAgentFacingUserText } from '@cindy/maker-shared/agent-input-projection';
- import { formatQuoteForSend, formatQuotesForSend } from '@cindy/maker-shared/chat-quotes';
+@@ -78,6 +78,7 @@ function fail(message) {
  
-+describe('pasted authored text', () => {
-+  // #7424 / unit: production readText/resource projection must preserve exact owner authorization.
-+  // Existing negatives cover structured resources, not paste-only or mixed input; the minimal old
-+  // failure is any non-empty pastedTextRanges returning null/''. Long paste and restrictions are observable auth evidence.
-+  const longPaste = Array.from({ length: 24 }, (_, index) => `第 ${index + 1} 行：允许本地修改和测试。`).join('\n');
-+  it.each([
-+    { name: 'full paste', prefix: '', pasted: `${longPaste}\n不要 push、不要发布。`, suffix: '' },
-+    { name: 'mixed input', prefix: '先检查现状。\n', pasted: longPaste,
-+      suffix: '\n允许本地修改和测试，但不要 push、不要发布。' },
-+  ])('preserves the complete authorization for $name', ({ prefix, pasted, suffix }) => {
-+    const text = `${prefix}${pasted}${suffix}`;
-+    const content = { text, pastedTextRanges: [{ start: prefix.length, end: prefix.length + pasted.length }] };
-+    expect(readAutoReviewUserText(content)).toBe(text);
-+    expect(currentAutoReviewResourceIntent(content, text)).toBe(text);
-+    expect(currentAutoReviewResourceIntent(content, projectPersistedAgentFacingUserText(content)!)).toBe(text);
-+  });
+ const listed = spawnSync('git', ['ls-files', '-z'], {
+   encoding: 'buffer',
++  maxBuffer: 64 * 1024 * 1024,
+ });
+ 
+ if (listed.status !== 0) {
+```
+
+---
+
+### Incident Patch 2: `a9030276` (2026-10-30)
+**Commit Message**: Merge pull request #5194 from lengjingxu/fix/provider-connection-save-feedback
+
+fix(providers): 保存时不再静默丢弃空 runtime 上的协议选择
+
+**File**: `apps/desktop/src/renderer/components/settings/ProviderConnectionDialog.tsx` (modified, +35/-1)
+```diff
+@@ -299,6 +299,24 @@ function emptyRuntime(agent: DialogAgentKind): RuntimeFields {
+   };
+ }
+ 
++/**
++ * 这个 runtime 上是否存在「保存时会悄悄丢掉」的协议选择。
++ *
++ * 未填写 baseUrl 的 runtime 会被保存逻辑整段跳过（视为未配置）。对打开时就没有端点的
++ * runtime，跳过等于丢掉用户刚点选的协议——按钮已高亮、保存返回成功、重开却回到默认。
++ * 这种草稿必须报错拦下。
++ *
++ * 但清空 baseUrl 也是用户移除一个已配置 runtime 的方式；此时丢弃是用户的意图，不能拦。
++ * 两者的分界是打开时该 runtime 有没有端点。
++ */
++function runtimeHasUnsavedProtocolChoice(
++  agent: DialogAgentKind,
++  runtime: RuntimeFields,
++  hadConfiguredEndpoint: boolean,
++): boolean {
++  return !hadConfiguredEndpoint && runtime.wireProtocol !== defaultWireFor(agent);
++}
 +
-+  it('restores a persisted pasted message once on retry', () => {
-+    const text = '允许本地修改和测试，但不要 push、不要发布。';
-+    const content = { text, pastedTextRanges: [{ start: 0, end: text.length }] };
-+    const message = { ...user(text, 'pasted'), content };
-+    expect(restoreAutoReviewUserIntent([message], { clientId: 'pasted', content })).toBe(text);
-+  });
+ function initRuntimes(initial?: CustomProviderConfig): Record<DialogAgentKind, RuntimeFields> {
+   const out: Record<DialogAgentKind, RuntimeFields> = {
+     'claude-code': emptyRuntime('claude-code'),
+@@ -1908,9 +1926,25 @@ export function ProviderConnectionDialog({
+     const keys: RuntimeKeys = {};
+     for (const a of VISIBLE_AGENTS) {
+       const rf = rt[a];
++      // 上游规则：pi 目录预选时，仍跟随默认连接、未独立配置的 runtime 整段跳过。
+       if (simpleAdding && activeTab === 'pi' && !rt.pi.catalogPresetId && a !== 'pi'
+         && (!draft?.config.runtimes[a] || followsDefaultConnection(a, rf, rt.pi))) continue;
+-      if (!rf.baseUrl.trim()) continue; // 该 runtime 未配置
++      if (!rf.baseUrl.trim()) {
++        // 未配置的 runtime 整段跳过。但用户若已在这里选过协议，跳过即静默丢弃该选择；
++        // 要求补全基础 URL，让「改了协议却没保存上」变成一个看得见的错误。
++        if (
++          runtimeHasUnsavedProtocolChoice(
++            a,
++            rf,
++            Boolean(initial?.runtimes[a]?.baseUrl.trim()),
++          )
++        ) {
++          setActiveTab(a);
++          reportFieldError(`${a}:baseUrl`, t('settings.providers.custom.errors.baseUrlRequired'));
++          return;
++        }
++        continue; // 该 runtime 未配置
++      }
+       try {
+         const u = new URL(rf.baseUrl.trim());
+         if (u.protocol !== 'http:' && u.protocol !== 'https:') {
+```
+
+**File**: `apps/desktop/src/renderer/components/settings/__tests__/CustomProviderDialogAccessibility.test.tsx` (modified, +91/-0)
+```diff
+@@ -2075,6 +2075,97 @@ it('saves OpenRouter OAuth connections that leave scopes empty for provider defa
+   });
+ });
+ 
++it('blocks a save that would silently drop a protocol picked on an unconfigured runtime', async () => {
++  // 只在未配置的 runtime 上选了协议、没填基础 URL：保存逻辑过去会整段跳过该 runtime，
++  // 按钮已高亮、保存返回成功、重开却回到默认协议。这类草稿必须报错拦下。
++  const user = userEvent.setup();
++  renderExpandedConnection(
++    <ProviderConnectionDialog
++      initial={{
++        id: 'command', name: 'command', auth: { method: 'apiKey' },
++        runtimes: { 'claude-code': {
++          baseUrl: 'https://api.commandcode.ai/provider/v1/',
++          wireProtocol: 'openai-chat',
++          models: [{ id: 'gpt-5.2-codex', name: 'GPT-5.2 Codex' }],
++        } },
++      }}
++      focusAgent="codex"
++      onSaved={vi.fn()}
++      onClose={vi.fn()}
++    />,
++  );
++  await waitForInitialDialogFocus();
++  // 上游重构后协议按钮前多了一个折叠区里的空 aria-pressed 按钮，按 label 定位更稳。
++  const chatProtocol = screen.getByRole('button', { name: 'settings.providers.custom.wireProtocol.chat' });
++  await user.click(chatProtocol);
++  await user.click(screen.getByRole('button', { name: 'settings.providers.custom.save' }));
++
++  expect(customProviderMocks.updateCustomProvider).not.toHaveBeenCalled();
++  const error = document.querySelector('[id$="baseUrl-error"]');
++  expect(error?.textContent).toBe('settings.providers.custom.errors.baseUrlRequired');
++  expect(document.activeElement?.id).toBe(error?.id?.replace('-error', ''));
 +});
 +
- describe('authored text beside structured references', () => {
-   // unit: Composer list markers are structure, not an owner's new request.
-   it.each(['- ', '2) ', '3、', '+ \n  • '])('discards reference-only list scaffolding %j without discarding real words', prefix => {
-@@ -35,7 +61,7 @@ describe('authored text beside structured references', () => {
-     expect(currentAutoReviewResourceIntent(content, text).trim()).toBe(request);
-     expect(currentAutoReviewResourceIntent(content, wire).trim()).toBe(request);
-     expect(currentAutoReviewResourceIntent(content, `${wire} changed`)).toBe('');
--    expect(currentAutoReviewResourceIntent({ ...content, pastedTextRanges: [{}] }, wire)).toBe('');
-+    expect(currentAutoReviewResourceIntent({ ...content, pastedTextRanges: [{}] }, wire).trim()).toBe(request);
-     const invalid = { ...content, agentReferences: [{ ...content.agentReferences[0], end: href.length + 1 }] };
-     expect(currentAutoReviewResourceIntent(invalid, projectPersistedAgentFacingUserText(invalid)!)).toBe('');
-   });
-@@ -271,7 +297,6 @@ describe('restored Auto authorization', () => {
-   it.each([
-     { quotesEncoded: true },
-     { sessionReferences: [{}] },
--    { pastedTextRanges: [{}] },
-     { images: [{}] },
-     { files: [{}] },
-   ])(
++it('still saves when an unconfigured runtime keeps its default protocol', async () => {
++  const user = userEvent.setup();
++  render(
++    <ProviderConnectionDialog
++      initial={{
++        id: 'command', name: 'command', auth: { method: 'apiKey' },
++        runtimes: { 'claude-code': {
++          baseUrl: 'https://api.commandcode.ai/provider/v1/',
++          wireProtocol: 'openai-chat',
++          models: [{ id: 'gpt-5.2-codex', name: 'GPT-5.2 Codex' }],
++        } },
++      }}
++      focusAgent="claude-code"
++      onSaved={vi.fn()}
++      onClose={vi.fn()}
++    />,
++  );
++  await waitForInitialDialogFocus();
++  await user.click(screen.getByRole('button', { name: 'settings.providers.custom.save' }));
++
++  await waitFor(() => expect(customProviderMocks.updateCustomProvider).toHaveBeenCalledOnce());
++  expect(Object.keys(customProviderMocks.updateCustomProvider.mock.calls[0][0].runtimes)).toEqual([
++    'claude-code',
++  ]);
++});
++
++it('still lets an endpoint-less runtime be removed by clearing its base URL', async () => {
++  // 清空baseUrl 是移除一个已配置 runtime 的方式。丢弃它的协议是用户意图，不能被上面的
++  // 守卫拦下——两者的分界是该 runtime 打开时有没有端点。
++  const user = userEvent.setup();
++  render(
++    <ProviderConnectionDialog
++      initial={{
++        id: 'two-runtime', name: 'Two runtime', auth: { method: 'apiKey' },
++        runtimes: {
++          'claude-code': {
++            baseUrl: 'https://a.example.test/v1', models: [{ id: 'm', name: 'M' }],
++          },
++          codex: {
++            baseUrl: 'https://a.example.test/v2',
++            wireProtocol: 'openai-chat',
++            models: [{ id: 'm', name: 'M' }],
++          },
++        },
++      }}
++      focusAgent="codex"
++      onSaved={vi.fn()}
++      onClose={vi.fn()}
++    />,
++  );
++  await waitForInitialDialogFocus();
++  await user.clear(screen.getByLabelText('settings.providers.custom.fields.baseUrl'));
++  await user.click(screen.getByRole('button', { name: 'settings.providers.custom.save' }));
++
++  await waitFor(() => expect(customProviderMocks.updateCustomProvider).toHaveBeenCalledOnce());
++  expect(Object.keys(customProviderMocks.updateCustomProvider.mock.calls[0][0].runtimes)).toEqual([
++    'claude-code',
++  ]);
++});
++
+ it('main provider form contains Tab and blocks dismissal only during the actual save', async () => {
+   let finish!: () => void;
+   customProviderMocks.readCustomProviderKey.mockResolvedValue(null);
 ```
 
-**File**: `apps/desktop/src/main/maker-ipc/__tests__/makerSendTransaction.test.ts` (modified, +28/-0)
+**File**: `apps/desktop/src/renderer/i18n/locales/en/common.json` (modified, +1/-0)
 ```diff
-@@ -3553,6 +3553,34 @@ describe('session-agent-switch handoff injection', () => {
-       agentMeta: stored!.agentMeta as Record<string, unknown> }])).toBe(request);
-   });
- 
-+  // #7424 / unit: the trusted queue and accepted transaction must persist the exact pasted owner request.
-+  // Adjacent reference tests did not cover paste ranges; the minimal old failure stamps '' for text + ranges.
-+  it.each([false, true])('preserves pasted authorization through queue and persistence (deviceLink=%s)', async deviceLink => {
-+    const text = '允许本地修改和测试，但不要 push、不要发布。';
-+    const content = { text, pastedTextRanges: [{ start: 0, end: text.length }] };
-+    const queued = stampTrustedDesktopQueuedOrigin({ clientId: 'pasted-request', text,
-+      persistedContent: content, files: [],
-+    } as unknown as AgentInputQueuedMessage, deviceLink);
-+    expect(queued.autoReviewUserText).toBe(text);
-+    const { deps, session } = createDeps();
-+    await createMakerSendTransaction(deps).sendToAgentAccepted('session-1', text, undefined, {
-+      [AUTO_REVIEW_SOURCE_CONTENT]: queued.autoReviewUserText,
-+      persistUserMessage: { clientId: queued.clientId, content, delivery: 'turn' },
-+    });
-+    expect(vi.mocked(session.send).mock.lastCall?.[1]?.[AUTO_REVIEW_USER_INTENT]).toBe(text);
-+    expect(vi.mocked(deps.createDbMessage).mock.lastCall?.[1].agentMeta?.autoReviewUserText).toBe(text);
-+  });
-+
-+  it.each([false, true])('rejects pasted authorization when persisted and wire text diverge (deviceLink=%s)', deviceLink => {
-+    const persisted = { text: '允许 push。', pastedTextRanges: [{ start: 0, end: 6 }] };
-+    for (const persistedContent of [persisted, JSON.stringify(persisted)]) {
-+      const queued = stampTrustedDesktopQueuedOrigin({ clientId: 'pasted-mismatch', text: '不要 push。',
-+        persistedContent, files: [],
-+      } as unknown as AgentInputQueuedMessage, deviceLink);
-+      expect(queued.autoReviewUserText).toBe('');
-+    }
-+  });
-+
-   // unit: a forwarded quote must survive persistence without becoming permission.
-   it('persists host request evidence without restoring the target previous grant', async () => {
-     const { deps, session } = createDeps({ readAutoReviewHistory: async () => [{
+@@ -3634,6 +3634,7 @@
+           "nameRequired": "Display name is required",
+           "runtimeRequired": "Configure at least one runtime (its base URL and models)",
+           "baseUrlInvalid": "Base URL must be a valid http(s) address",
++          "baseUrlRequired": "Enter this runtime's Base URL, or switch its protocol back to the default",
+           "contextWindowInvalid": "Context window must be a valid positive integer (separators allowed between digit groups)",
+           "requestPathInvalid": "Begin the exact request path with a single /. Do not use fragments or . and .. path segments; percent-encode spaces and unsafe characters.",
+           "modelRequired": "Add at least one model",
 ```
 
-**File**: `apps/desktop/src/main/maker-ipc/autoReviewUserIntent.ts` (modified, +2/-4)
+**File**: `apps/desktop/src/renderer/i18n/locales/ja/common.json` (modified, +1/-0)
 ```diff
-@@ -64,10 +64,8 @@ export function currentAutoReviewResourceIntent(
-   // Queue admission carries Composer text; direct consumers may already carry
-   // its agent-facing projection. Both must match this same persisted envelope.
-   if (value.text !== wireText && projectPersistedAgentFacingUserText(content) !== wireText) return '';
--  // Pasted text still lacks a verified authored projection. Structured references,
--  // however, have validated spans: discard those spans, not the owner's adjacent
--  // request. Attached session transcripts are separate from value.text entirely.
--  if (Array.isArray(value.pastedTextRanges) && value.pastedTextRanges.length > 0) return '';
-+  // Structured references have validated spans: discard those spans, not the
-+  // owner's adjacent request. Attached session transcripts are separate from value.text entirely.
-   const references = readAgentInputReferences(value.agentReferences, value.text);
-   if (Array.isArray(value.agentReferences) && references.length !== value.agentReferences.length) return '';
-   const parts: string[] = [];
+@@ -3604,6 +3604,7 @@
+           "nameRequired": "表示名を入力してください",
+           "runtimeRequired": "Runtime を 1 つ以上設定してください（ベース URL とモデル）",
+           "baseUrlInvalid": "ベース URL は有効な http(s) アドレスである必要があります",
++          "baseUrlRequired": "この Runtime のベース URL を入力するか、プロトコルを既定に戻してください",
+           "contextWindowInvalid": "コンテキストウィンドウは有効な正の整数である必要があります（数字グループの間に区切り記号を使用できます）",
+           "requestPathInvalid": "正確なリクエストパスは 1 つの / で始め、フラグメントや .、.. のパスセグメントを含めないでください。空白や安全でない文字はパーセントエンコードしてください。",
+           "modelRequired": "モデルを 1 つ以上追加してください",
 ```
 
-**File**: `apps/desktop/src/main/maker-ipc/makerSendTransaction.ts` (modified, +1/-1)
+**File**: `apps/desktop/src/renderer/i18n/locales/ko/common.json` (modified, +1/-0)
 ```diff
-@@ -187,7 +187,7 @@ export function stampTrustedDesktopQueuedOrigin(
-   // Keep the complete input until the shared atomic history budget is applied.
-   // Pre-compacting a revocation would leave older grants beside an omission marker.
-   if (ordinary) explicitUserItem.autoReviewUserText =
--    readAutoReviewUserText(item.persistedContent) ?? currentAutoReviewResourceIntent(item.persistedContent, item.text);
-+    readAutoReviewUserText(item.persistedContent, item.text) ?? currentAutoReviewResourceIntent(item.persistedContent, item.text);
-   if (deviceLinkInvoke || !canTrustDesktopPiCommand(item)) return explicitUserItem;
-   const receipt: TrustedDesktopPiCommandSnapshot = {
-     version: 1,
+@@ -3604,6 +3604,7 @@
+           "nameRequired": "표시 이름을 입력하세요",
+           "runtimeRequired": "Runtime을 하나 이상 구성하세요(기본 URL과 모델)",
+           "baseUrlInvalid": "기본 URL은 유효한 http(s) 주소여야 합니다",
++          "baseUrlRequired": "이 Runtime의 기본 URL을 입력하거나 프로토콜을 기본값으로 되돌리세요",
+           "contextWindowInvalid": "컨텍스트 윈도우는 유효한 양의 정수여야 합니다(숫자 그룹 사이에 구분 기호 사용 가능)",
+           "requestPathInvalid": "정확한 요청 경로는 단일 /로 시작해야 하며 프래그먼트나 . 또는 .. 경로 세그먼트를 포함하면 안 됩니다. 공백과 안전하지 않은 문자는 퍼센트 인코딩하세요.",
+           "modelRequired": "모델을 하나 이상 추가하세요",
 ```
 
-**File**: `packages/maker-shared/src/autoReviewIntent.ts` (modified, +2/-2)
+**File**: `apps/desktop/src/renderer/i18n/locales/zh-CN/common.json` (modified, +1/-0)
 ```diff
-@@ -255,7 +255,7 @@ export function createAutoReviewIntentProjection() {
-       : null;
-   }
- 
--  function readAutoReviewUserText(content: unknown): string | null {
-+  function readAutoReviewUserText(content: unknown, wireText?: string): string | null {
-     if (typeof content === "string") {
-       try {
-         content = JSON.parse(content);
-@@ -276,10 +276,10 @@ export function createAutoReviewIntentProjection() {
-         "sessionReferences",
-         "agentReferences",
-         "references",
--        "pastedTextRanges",
-       ].some((key) => Array.isArray(value[key]) && value[key].length > 0)
-     )
-       return null;
-+    if (wireText !== undefined && value.text !== wireText) return null;
-     return value.text;
-   }
- 
+@@ -3604,6 +3604,7 @@
+           "nameRequired": "请填写显示名称",
+           "runtimeRequired": "请至少配置一个 Runtime（填写它的基础 URL 和模型）",
+           "baseUrlInvalid": "基础 URL 必须是合法的 http(s) 地址",
++          "baseUrlRequired": "请填写该 Runtime 的基础 URL，或把协议改回默认",
+           "contextWindowInvalid": "上下文窗口必须是合法的正整数（数字组之间可用分隔符）",
+           "requestPathInvalid": "精确请求路径需以单个 / 开头，不含片段标识或 .、.. 路径段；空格和不安全字符请使用百分号编码",
+           "modelRequired": "请至少添加一个模型",
 ```
 
----
-
-### Incident Patch 2: `1ad20186` (2026-10-27)
-**Commit Message**: Merge pull request #7192 from techsaurabh-394/fix/issue-7169-codex-hooks-conversion
-
-fix(cross-agent-convert): 修正 Codex hooks 双向转换的顶层结构并避免重复提示
-
-**File**: `apps/desktop/src/main/cross-agent-convert/__tests__/detector.test.ts` (modified, +43/-0)
+**File**: `apps/desktop/src/renderer/i18n/locales/zh-TW/common.json` (modified, +1/-0)
 ```diff
-@@ -227,4 +227,47 @@ describe('detect — hooks', () => {
-     const r = await detect({ workingDir: tmpDir, agentKind: 'codex' });
-     expect(r.items.find((i) => i.kind === 'hooks')).toBeUndefined();
-   });
-+
-+  it('to-claude: source has only hooks.json (no hooks/ dir) and target has hooks config → no item', async () => {
-+    await fs.mkdir(path.join(tmpDir, '.codex'), { recursive: true });
-+    await fs.writeFile(path.join(tmpDir, '.codex', 'hooks.json'), JSON.stringify({ hooks: { Stop: [] } }));
-+    await fs.mkdir(path.join(tmpDir, '.claude'), { recursive: true });
-+    await fs.writeFile(path.join(tmpDir, '.claude', 'settings.json'), JSON.stringify({ hooks: { Stop: [] } }));
-+    const r = await detect({ workingDir: tmpDir, agentKind: 'claude-code' });
-+    expect(r.items.find((i) => i.kind === 'hooks')).toBeUndefined();
-+  });
-+
-+  it('to-claude: source has only hooks.json and target lacks hooks → 1 item', async () => {
-+    await fs.mkdir(path.join(tmpDir, '.codex'), { recursive: true });
-+    await fs.writeFile(path.join(tmpDir, '.codex', 'hooks.json'), JSON.stringify({ hooks: { Stop: [] } }));
-+    const r = await detect({ workingDir: tmpDir, agentKind: 'claude-code' });
-+    expect(r.items.find((i) => i.kind === 'hooks')).toBeDefined();
-+  });
-+
-+  it('to-claude: target has legacy nested settings.hooks.hooks → item so the repair can run', async () => {
-+    await fs.mkdir(path.join(tmpDir, '.codex'), { recursive: true });
-+    await fs.writeFile(path.join(tmpDir, '.codex', 'hooks.json'), JSON.stringify({ hooks: { Stop: [] } }));
-+    await fs.mkdir(path.join(tmpDir, '.claude'), { recursive: true });
-+    await fs.writeFile(path.join(tmpDir, '.claude', 'settings.json'), JSON.stringify({ hooks: { hooks: { Stop: [] } } }));
-+    const r = await detect({ workingDir: tmpDir, agentKind: 'claude-code' });
-+    expect(r.items.find((i) => i.kind === 'hooks')).toBeDefined();
-+  });
-+
-+  it('to-codex: target has legacy flat hooks.json → item so the wrapper upgrade can run', async () => {
-+    await fs.mkdir(path.join(tmpDir, '.claude'), { recursive: true });
-+    await fs.writeFile(path.join(tmpDir, '.claude', 'settings.json'), JSON.stringify({ hooks: { Stop: [] } }));
-+    await fs.mkdir(path.join(tmpDir, '.codex'), { recursive: true });
-+    await fs.writeFile(path.join(tmpDir, '.codex', 'hooks.json'), JSON.stringify({ Stop: [] }));
-+    const r = await detect({ workingDir: tmpDir, agentKind: 'codex' });
-+    expect(r.items.find((i) => i.kind === 'hooks')).toBeDefined();
-+  });
-+
-+  it('to-codex: target already has wrapped hooks.json → no item', async () => {
-+    await fs.mkdir(path.join(tmpDir, '.claude'), { recursive: true });
-+    await fs.writeFile(path.join(tmpDir, '.claude', 'settings.json'), JSON.stringify({ hooks: { Stop: [] } }));
-+    await fs.mkdir(path.join(tmpDir, '.codex'), { recursive: true });
-+    await fs.writeFile(path.join(tmpDir, '.codex', 'hooks.json'), JSON.stringify({ hooks: { Stop: [] } }));
-+    const r = await detect({ workingDir: tmpDir, agentKind: 'codex' });
-+    expect(r.items.find((i) => i.kind === 'hooks')).toBeUndefined();
-+  });
- });
-```
-
-**File**: `apps/desktop/src/main/cross-agent-convert/__tests__/hooks.test.ts` (modified, +80/-7)
-```diff
-@@ -52,9 +52,11 @@ describe('convertHooks — to-codex', () => {
-     expect(await fs.readFile(path.join(wd, '.codex', 'hooks', 'pre.sh'), 'utf8')).toContain('echo hi');
-     const json = JSON.parse(await fs.readFile(path.join(wd, '.codex', 'hooks.json'), 'utf8'));
-     // Codex 用 camelCase 与 Claude 完全一致
--    expect(json.PreToolUse).toBeDefined();
--    expect(JSON.stringify(json.PreToolUse)).toContain('.codex/hooks/pre.sh');
--    expect(JSON.stringify(json.PreToolUse)).not.toContain('.claude/hooks/');
-+    // Codex 规范：事件放在顶层 "hooks" 对象内
-+    expect(json.PreToolUse).toBeUndefined();
-+    expect(json.hooks.PreToolUse).toBeDefined();
-+    expect(JSON.stringify(json.hooks.PreToolUse)).toContain('.codex/hooks/pre.sh');
-+    expect(JSON.stringify(json.hooks.PreToolUse)).not.toContain('.claude/hooks/');
-   });
- 
-   it('skips events that already exist in target hooks.json (no overwrite)', async () => {
-@@ -67,13 +69,52 @@ describe('convertHooks — to-codex', () => {
-     }));
-     await fs.mkdir(path.join(wd, '.codex'), { recursive: true });
-     await fs.writeFile(path.join(wd, '.codex', 'hooks.json'), JSON.stringify({
--      PreToolUse: 'USER_ORIGINAL',
-+      hooks: { PreToolUse: 'USER_ORIGINAL' },
-     }));
- 
-     const r = await convertHooks(toCodexItem());
-     expect(r.status).toBe('success'); // still success because script was copied
-     const json = JSON.parse(await fs.readFile(path.join(wd, '.codex', 'hooks.json'), 'utf8'));
--    expect(json.PreToolUse).toBe('USER_ORIGINAL');
-+    expect(json.hooks.PreToolUse).toBe('USER_ORIGINAL');
-+  });
-+
-+  it('upgrades a legacy flat hooks.json into the wrapped { hooks: {...} } shape', async () => {
-+    await fs.mkdir(path.join(wd, '.claude'), { recursive: true });
-+    await fs.writeFile(path.join(wd, '.claude', 'settings.json'), JSON.stringify({
-+      hooks: { Stop: [{ hooks: [{ type: 'command', command: 'echo stop' }] }] },
-+    }));
-+    await fs.mkdir(path.join(wd, '.codex'), { recursive: true });
-+    await fs.writeFile(path.join(wd, '.codex', 'hooks.json'), JSON.stringify({ PreToolUse: 'FLAT' }));
-+
-+    const r = await convertHooks({ ...toCodexItem(), source: path.join(wd, '.claude', 'hooks') });
-+    expect(r.status).toBe('success');
-+    const json = JSON.parse(await fs.readFile(path.join(wd, '.codex', 'hooks.json'), 'utf8'));
-+    expect(json.PreToolUse).toBeUndefined();
-+    expect(json.hooks.PreToolUse).toBe('FLAT');
-+    expect(json.hooks.Stop).toBeDefined();
-+  });
-+
-+  it('flattens a mis-nested settings.hooks.hooks when reading Claude hooks', async () => {
-+    await fs.mkdir(path.join(wd, '.claude'), { recursive: true });
-+    await fs.writeFile(path.join(wd, '.claude', 'settings.json'), JSON.stringify({
-+      hooks: { hooks: { SessionStart: [{ hooks: [{ type: 'command', command: 'echo s' }] }] } },
-+    }));
-+    const r = await convertHooks(toCodexItem());
-+    expect(r.status).toBe('success');
-+    const json = JSON.parse(await fs.readFile(path.join(wd, '.codex', 'hooks.json'), 'utf8'));
-+    expect(json.hooks.SessionStart).toBeDefined();
-+    expect(json.hooks.hooks).toBeUndefined();
-+  });
-+  it('upgrades a legacy flat hooks.json even when no event or script is added', async () => {
-+    await fs.mkdir(path.join(wd, '.claude'), { recursive: true });
-+    await fs.writeFile(path.join(wd, '.claude', 'settings.json'), JSON.stringify({ hooks: { Stop: [{ a: 1 }] } }));
-+    await fs.mkdir(path.join(wd, '.codex'), { recursive: true });
-+    await fs.writeFile(path.join(wd, '.codex', 'hooks.json'), JSON.stringify({ Stop: [{ a: 1 }] }));
-+
-+    const r = await convertHooks(toCodexItem());
-+    expect(r.status).toBe('success');
-+    const json = JSON.parse(await fs.readFile(path.join(wd, '.codex', 'hooks.json'), 'utf8'));
-+    expect(json).toEqual({ hooks: { Stop: [{ a: 1 }] } });
-   });
- });
- 
-@@ -84,7 +125,7 @@ describe('convertHooks — to-claude', () => {
-     await fs.mkdir(codexHooks, { recursive: true });
-     await fs.writeFile(path.join(codexHooks, 'p.sh'), 'echo p');
-     await fs.writeFile(codexJson, JSON.stringify({
--      PreToolUse: { command: '.codex/hooks/p.sh' },
-+      hooks: { PreToolUse: [{ matcher: '*', hooks: [{ type: 'command', command: '.codex/hooks/p.sh' }] }] },
-     }));
- 
-     const r = await convertHooks(toClaudeItem());
-@@ -93,6 +134,37 @@ describe('convertHooks — to-claude', () => {
-     const settings = JSON.parse(await fs.readFile(path.join(wd, '.claude', 'settings.json'), 'utf8'));
-     expect(settings.hooks.PreToolUse).toBeDefined();
-     expect(JSON.stringify(settings.hooks.PreToolUse)).toContain('.claude/hooks/p.sh');
-+    // 不得把 Codex 的外层 "hooks" 包装当作事件名写进 settings.hooks
-+    expect(settings.hooks.hooks).toBeUndefined();
-+  });
-+
-+  it('still accepts a legacy flat hooks.json', async () => {
-+    await fs.mkdir(path.join(wd, '.codex'), { recursive: true });
-+    await fs.writeFile(path.join(wd, '.codex', 'hooks.json'), JSON.stringify({
-+      Stop: [{ hooks: [{ type: 'command', command: 'echo x' }] }],
-+    }));
-+    c
-```
-
-**File**: `apps/desktop/src/main/cross-agent-convert/converters/hooks.ts` (modified, +58/-13)
-```diff
-@@ -32,6 +32,40 @@ export interface ConvertOutcome {
- const CLAUDE_HOOKS_PATH_PATTERN = /\.claude\/hooks\//g;
- const CODEX_HOOKS_PATH_PATTERN = /\.codex\/hooks\//g;
- 
-+/** 判断是否为普通 JSON 对象。 */
-+function isPlainObject(v: unknown): v is Record<string, unknown> {
-+  return v !== null && typeof v === 'object' && !Array.isArray(v);
-+}
-+
-+/**
-+ * 取出 Codex hooks.json 里的事件表。
-+ * Codex 规范顶层是 `{ "hooks": { <Event>: [...] } }`；同时兼容早期平铺写法 `{ <Event>: [...] }`
-+ * （平铺时忽略非事件的 "hooks" 键本身）。
-+ */
-+function extractCodexEvents(root: Record<string, unknown>): Record<string, unknown> {
-+  if (isPlainObject(root.hooks)) return root.hooks;
-+  const flat: Record<string, unknown> = {};
-+  for (const [k, v] of Object.entries(root)) {
-+    if (k === 'hooks') continue;
-+    flat[k] = v;
-+  }
-+  return flat;
-+}
-+
-+/** 修复存量错误嵌套的 settings.hooks.hooks：把内层事件拍平到 settings.hooks 上（已有同名事件不覆盖）。 */
-+function unwrapNestedClaudeHooks(hooks: Record<string, unknown>): Record<string, unknown> {
-+  const nested = hooks.hooks;
-+  if (!isPlainObject(nested)) return hooks;
-+  const out: Record<string, unknown> = {};
-+  for (const [k, v] of Object.entries(hooks)) {
-+    if (k !== 'hooks') out[k] = v;
-+  }
-+  for (const [k, v] of Object.entries(nested)) {
-+    if (!(k in out)) out[k] = v;
-+  }
-+  return out;
-+}
-+
- async function exists(p: string): Promise<boolean> {
-   try {
-     await fs.access(p);
-@@ -137,35 +171,44 @@ async function convertToCodex(item: MigrationItem): Promise<ConvertOutcome> {
-   const hadExisting = await exists(codexHooksJson);
-   if (hadExisting) {
-     const parsed = await readJsonIfExists(codexHooksJson);
--    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
--      existing = parsed as Record<string, unknown>;
--    }
-+    if (isPlainObject(parsed)) existing = parsed;
-+  }
-+  // Codex 规范：事件放在顶层 "hooks" 对象内；旧的平铺文件就地升级为包装结构
-+  const codexEvents = extractCodexEvents(existing);
-+  // 旧平铺文件（有事件但无顶层 hooks 包装）即使没有新增也要写回升级
-+  const upgraded = hadExisting && !isPlainObject(existing.hooks) && Object.keys(codexEvents).length > 0;
-+  const codexRoot: Record<string, unknown> = {};
-+  for (const [k, v] of Object.entries(existing)) {
-+    if (k === 'hooks' || k in codexEvents) continue;
-+    codexRoot[k] = v;
-   }
- 
-   let added = 0;
-   let skipped = 0;
-   if (claudeHooks) {
--    for (const [eventName, eventConfig] of Object.entries(claudeHooks)) {
--      if (eventName in existing) {
-+    for (const [eventName, eventConfig] of Object.entries(unwrapNestedClaudeHooks(claudeHooks))) {
-+      if (eventName in codexEvents) {
-         skipped += 1;
-         continue;
-       }
--      existing[eventName] = rewriteHookEntry(eventConfig, 'to-codex');
-+      codexEvents[eventName] = rewriteHookEntry(eventConfig, 'to-codex');
-       added += 1;
-     }
-   }
- 
--  if (added === 0 && scriptResult.copied === 0) {
-+  if (added === 0 && scriptResult.copied === 0 && !upgraded) {
-     return { status: 'skipped', detail: '所有 hook 已存在' };
-   }
- 
-   await fs.mkdir(path.dirname(codexHooksJson), { recursive: true });
--  await fs.writeFile(codexHooksJson, JSON.stringify(existing, null, 2), 'utf8');
-+  codexRoot.hooks = codexEvents;
-+  await fs.writeFile(codexHooksJson, JSON.stringify(codexRoot, null, 2), 'utf8');
- 
-   const parts: string[] = [];
-   if (scriptResult.copied > 0) parts.push(`脚本 ${scriptResult.copied}`);
-   if (added > 0) parts.push(`索引 ${added}`);
-   if (skipped > 0) parts.push(`跳过 ${skipped}`);
-+  if (upgraded) parts.push('升级为 hooks 包装结构');
-   return { status: 'success', detail: parts.join(', ') };
- }
- 
-@@ -188,9 +231,7 @@ async function convertToClaude(item: MigrationItem): Promise<ConvertOutcome> {
-   let codexHooks: Record<string, unknown> = {};
-   try {
-     const parsed = await readJsonIfExists(codexHooksJson);
--    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
--      codexHooks = parsed as Record<string, unknown>;
--    }
-+    if (isPlainObject(parsed)) codexHooks = extractCodexEvents(parsed);
-   } catch (err) {
-     return { status: 'failed', detail: `hooks.json 解析失败: ${err instanceof Error ? err.message : String(err)}` };
-   }
-@@ -204,7 +245,10 @@ async function convertToClaude(item: MigrationItem): Promise<ConvertOutcome> {
-       settings = parsed as Record<string, unknown>;
-     }
-   }
--  const existingHooks = (settings.hooks ?? {}) as Record<string, unknown>;
-+  // 存量错误嵌套 settings.hooks.hooks 一并拍平修复
-+  const rawHooks = isPlainObject(settings.hooks) ? settings.hooks : {};
-+  const existingHooks = unwrapNestedClaudeHooks(rawHooks);
-+  const repaired = existingHooks !== rawHooks;
- 
-   let added = 0;
-   let skipped = 0;
-@@ -217,7 +261,7 @@ async function convertToClaude(item: MigrationItem): Promise<ConvertOutcome> {
-     added += 1;
-   }
- 
--  if (added === 0 && scriptResult.copied === 0) {
-+  if (added === 0 && scriptResult.copied === 0 && !repaired) {
-     return { status: 'skipped', detail: '所有 hook 已存在' };
-   }
- 
-@@ -229,6 +273,7 @@ async function convertToClaude(item: MigrationItem): Promise<ConvertOutc
-```
-
-**File**: `apps/desktop/src/main/cross-agent-convert/detector.ts` (modified, +34/-4)
-```diff
-@@ -213,9 +213,11 @@ async function detectHooks(wd: string, direction: MigrationDirection, items: Mig
-     const hasSourceJson = await isNonEmptyTextFile(codexHooksJson);
-     if (!hasSourceDir && !hasSourceJson) return;
-     // 目标缺失判断：claude settings.json 不存在 / 不含 hooks 段，或 .claude/hooks/ 不存在
--    const claudeSettingsHasHooks = await fileHasJsonKey(claudeSettings, 'hooks');
-+    // 存量错误嵌套 settings.hooks.hooks 不算完备，需放行让 converter 拍平修复
-+    const claudeSettingsHasHooks = await claudeSettingsHooksWellFormed(claudeSettings);
-     const claudeHooksDirExists = await isDir(claudeHooksDir);
--    if (claudeSettingsHasHooks && claudeHooksDirExists) return;
-+    // 按源端资产对齐：源端只有 hooks.json、没有 hooks/ 目录时，目标有 hooks 配置即视为完备
-+    if ((!hasSourceJson || claudeSettingsHasHooks) && (!hasSourceDir || claudeHooksDirExists)) return;
-     items.push({
-       id: 'hooks:0',
-       kind: 'hooks',
-@@ -228,9 +230,10 @@ async function detectHooks(wd: string, direction: MigrationDirection, items: Mig
-     const hasSourceDir = await isDir(claudeHooksDir);
-     const hasSourceJson = await fileHasJsonKey(claudeSettings, 'hooks');
-     if (!hasSourceDir && !hasSourceJson) return;
--    const codexHooksJsonExists = await isNonEmptyTextFile(codexHooksJson);
-+    // 旧平铺 hooks.json 缺少顶层 hooks 包装，不算完备，需放行让 converter 就地升级
-+    const codexHooksJsonExists = await codexHooksJsonWellFormed(codexHooksJson);
-     const codexHooksDirExists = await isDir(codexHooksDir);
--    if (codexHooksJsonExists && codexHooksDirExists) return;
-+    if ((!hasSourceJson || codexHooksJsonExists) && (!hasSourceDir || codexHooksDirExists)) return;
-     items.push({
-       id: 'hooks:0',
-       kind: 'hooks',
-@@ -272,6 +275,33 @@ async function detectMcp(wd: string, direction: MigrationDirection, items: Migra
-   }
- }
- 
-+/** .claude/settings.json 含 hooks 段，且不是旧版错误产物 hooks.hooks。 */
-+async function claudeSettingsHooksWellFormed(p: string): Promise<boolean> {
-+  try {
-+    const parsed = JSON.parse(await fs.readFile(p, 'utf8'));
-+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return false;
-+    const hooks = (parsed as Record<string, unknown>).hooks;
-+    if (!hooks || typeof hooks !== 'object' || Array.isArray(hooks)) return false;
-+    const nested = (hooks as Record<string, unknown>).hooks;
-+    return !(nested && typeof nested === 'object' && !Array.isArray(nested));
-+  } catch {
-+    return false;
-+  }
-+}
-+
-+/** .codex/hooks.json 非空且不是旧平铺写法（有事件却没有顶层 hooks 包装）。 */
-+async function codexHooksJsonWellFormed(p: string): Promise<boolean> {
-+  try {
-+    const parsed = JSON.parse(await fs.readFile(p, 'utf8'));
-+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return false;
-+    const rec = parsed as Record<string, unknown>;
-+    if (rec.hooks && typeof rec.hooks === 'object' && !Array.isArray(rec.hooks)) return true;
-+    return Object.keys(rec).filter((k) => k !== 'hooks').length === 0;
-+  } catch {
-+    return false;
-+  }
-+}
-+
- async function fileHasJsonKey(p: string, key: string): Promise<boolean> {
-   try {
-     const raw = await fs.readFile(p, 'utf8');
+@@ -3604,6 +3604,7 @@
+           "nameRequired": "請填寫顯示名稱",
+           "runtimeRequired": "請至少配置一個 Runtime（填寫它的基礎 URL 和模型）",
+           "baseUrlInvalid": "基礎 URL 必須是合法的 http(s) 地址",
++          "baseUrlRequired": "請填寫該 Runtime 的基礎 URL，或把協議改回預設",
+           "contextWindowInvalid": "上下文視窗必須是合法的正整數（數字組之間可用分隔符）",
+           "requestPathInvalid": "精確請求路徑需以單個 / 開頭，不含片段標識或 .、.. 路徑段；空格和不安全字元請使用百分號編碼",
+           "modelRequired": "請至少新增一個模型",
 ```
 
 ---
 
-### Incident Patch 3: `02193df4` (2026-10-27)
-**Commit Message**: Merge pull request #7551 from xuzini-xzn/fix/pi-websocket-handshake-lifecycle
+### Incident Patch 3: `cf8d2e79` (2026-10-30)
+**Commit Message**: Merge remote-tracking branch 'upstream/main' into fix/provider-connection-save-feedback
 
-fix(proxy): bound pending websocket handshakes
-
-**File**: `packages/anthropic-compat-proxy/src/server-websocket.test.ts` (modified, +105/-31)
+**File**: `apps/desktop/help-knowledge/voice-input.md` (modified, +1/-1)
 ```diff
-@@ -1,4 +1,4 @@
--import { ClientRequest, createServer, type IncomingMessage } from 'node:http';
-+import { createServer, globalAgent, type IncomingMessage } from 'node:http';
- import { connect, Socket } from 'node:net';
- import type { Duplex } from 'node:stream';
- import { afterEach, describe, expect, it, vi } from 'vitest';
-@@ -28,6 +28,21 @@ afterEach(async () => {
-   while (cleanups.length) await cleanups.pop()!();
- });
+@@ -18,7 +18,7 @@ Voice input lets you dictate instead of typing. The recognized text goes into th
  
-+// Exercise the production deadline without a 15-second real wait. Real HTTP,
-+// DNS-pending sockets and callbacks still run; only expiry is triggered manually.
-+function captureHandshakeDeadlines() {
-+  const timers = vi.spyOn(globalThis, 'setTimeout');
-+  cleanups.push(() => {
-+    for (let i = 0; i < timers.mock.calls.length; i += 1) {
-+      if (timers.mock.calls[i][1] === 15_000) clearTimeout(timers.mock.results[i].value);
-+    }
-+    timers.mockRestore();
-+  });
-+  return () => timers.mock.calls.flatMap(([callback, delay], i) => delay === 15_000
-+    ? [{ fire: callback as () => void, timer: timers.mock.results[i].value }]
-+    : []);
+ - **Service source → Voice service** — **Cindy official service** (default; uses your Cindy sign-in) or **Custom voice service** (choose a recognition model that uses its own credentials, or **Custom realtime ASR** with your own WebSocket URL, model, and API key; **Test connection** checks it). When you're not signed in, use a custom service.
+ - **Basics:**
+-  - **Language** — **Auto** (default) / Simplified Chinese / Traditional Chinese / English / Japanese / Korean. The China edition defaults to Simplified Chinese. There's no free-form locale field.
++  - **Language** — **Auto** (default) / Simplified Chinese / Traditional Chinese / English / Japanese / Korean / Spanish. The China edition defaults to Simplified Chinese. There's no free-form locale field.
+   - **Microphone** — **Auto** (system default) or a specific device.
+   - **Shortcut** — click to record a new one: a key combination, a standalone F1–F24 key, or (macOS) holding Left/Right Command, Option, Control, or Fn. **Clear** removes it. Cindy rejects shortcuts that conflict with system or common editing shortcuts.
+ - **Refinement:**
+```
+
+**File**: `apps/desktop/scripts/fixtures/companion-message-actions/fixture.tsx` (added, +186/-0)
+```diff
+@@ -0,0 +1,186 @@
++import { useState, type ComponentProps } from 'react';
++import { mountPage, subscription } from '../../ui-page/harness';
++import { ChatInput } from '../../../src/renderer/components/new-chat/ChatInput';
++import { getDefaultVoiceInputSettings } from '../../../src/shared/voiceInputData';
++
++// The fixture's custom origin lacks secure-context randomUUID. These IDs only
++// identify in-memory send snapshots; production uses Chromium's secure implementation.
++if (!crypto.randomUUID) {
++  let sequence = 0;
++  crypto.randomUUID = () => `00000000-0000-4000-8000-${String(++sequence).padStart(12, '0')}`;
 +}
 +
- function upgradeRequest(
-   path: string,
-   host: string,
-@@ -293,21 +308,24 @@ describe('anthropic-compat-proxy websocket upgrades', () => {
-     expect(upstream.received.join('')).toContain('PING');
-   });
- 
--  it('uses a short timeout for the websocket handshake', async () => {
--    const setTimeoutSpy = vi.spyOn(ClientRequest.prototype, 'setTimeout');
-+  it('removes the handshake deadline after 101 and ignores a late expiry callback', async () => {
-+    const deadlines = captureHandshakeDeadlines();
-+    const cleared = vi.spyOn(globalThis, 'clearTimeout');
-     try {
-       const upstream = await startUpgradeUpstream();
-       proxy = await createAnthropicCompatProxy({
--        upstream: 'http://unused.invalid',
--        transformRequest: [],
-+        upstream: 'http://unused.invalid', transformRequest: [],
-         resolveWebSocketUpstream: () => upstream.url,
-       });
--
-       const response = await openUpgrade(proxy.url);
-       expect(response.head).toContain('HTTP/1.1 101 Switching Protocols');
--      expect(setTimeoutSpy.mock.calls.some(([timeout]) => timeout === 15_000)).toBe(true);
-+      expect(deadlines()).toHaveLength(1);
-+      expect(cleared).toHaveBeenCalledWith(deadlines()[0].timer);
-+      deadlines()[0].fire();
-+      response.socket.write('PING');
-+      expect(await waitForSocketText(response.socket, response.rest, 'PONG')).toContain('PONG');
-     } finally {
--      setTimeoutSpy.mockRestore();
-+      cleared.mockRestore();
-     }
-   });
- 
-@@ -529,41 +547,97 @@ describe('anthropic-compat-proxy websocket upgrades', () => {
-     );
-   });
- 
--  it('returns 504 instead of falling back when the websocket handshake times out', async () => {
-+  it('bounds a websocket handshake even when DNS never completes', async () => {
-+    const deadlines = captureHandshakeDeadlines();
-+    const originalCreateConnection = globalAgent.createConnection;
-+    let pendingSocket: Socket | undefined;
-+    const createConnection = vi.spyOn(globalAgent, 'createConnection').mockImplementationOnce(options => {
-+      // Real ClientRequest/socket, but no external DNS or network fault timing.
-+      const socket = originalCreateConnection.call(globalAgent, { ...options, lookup: () => {} });
-+      if (!(socket instanceof Socket)) throw new Error('fixture requires a real pending socket');
-+      pendingSocket = socket;
-+      sockets.add(socket);
-+      return socket;
++import { AssistantMessage } from '../../../src/renderer/components/chat/AssistantMessage';
++import { UserMessage } from '../../../src/renderer/components/chat/UserMessage';
++import { BotChatQuoteProvider } from '../../../src/renderer/features/bots/botChatQuoteContext';
++import { BotChatQuoteComposerPreview } from '../../../src/renderer/features/bots/BotChatQuoteViews';
++import {
++  setPendingBotReplyQuote,
++  usePendingBotReplyQuote,
++} from '../../../src/renderer/features/bots/botDmQuote';
++import { BotDmThreadsProvider } from '../../../src/renderer/features/bots/botDmThreadsContext';
++import { BotDmThreadPanel } from '../../../src/renderer/features/bots/BotDmThreadViews';
++const rootSessionId = 'fixture-companion';
++const bot = { id: 'fixture-bot', name: 'Aster', avatar: null };
++const messages = [
++  { clientId: 'owner', role: 'user', content: '请帮我核对消息下的操作。', images: [], files: [] },
++  {
++    clientId: 'answer',
++    role: 'assistant',
++    content: '已沿用现有组件。正文可以直接选择，引用后也可以继续编辑草稿。',
++    images: [],
++    files: [],
++  },
++];
++const getMessage = (id: string) => messages.find((m) => m.clientId === id) as any;
++const names = { owner: 'Chris', companion: 'Aster' };
++const noop = () => {};
++function Fixture({ kind }: { kind: string }) {
++  const quote = usePendingBotReplyQuote(rootSessionId);
++  const [topic, setTopic] = useState<string | null>(null);
++  const thread: any = {
++    rootClientId: 'answer',
++    replyCount: 3,
++    lastReplyAt: Date.now() - 120000,
++    lastAssistantAt: Date.now() - 120000,
++    sessionId: 'fixture-topic',
++  };
++  const quoteContext = {
++    sessionId: rootSessionId,
++    names,
++    getMessage,
++    isFirstReplyFor: () => false,
++    showReplyTargets: false,
++    quote: (q: any) => setPendingBotReplyQuote(rootSessionId, q),
++    locate: noop,
++  };
++  const threads = {
++    botId: bot.id,
++    botName: bot.name,
++    bot,
++    rootSessionId,
++    threads: new Map(kind === 'default' ? [] : [['answer', thread]]),
++    openRootClientId: topic,
++    isUnread: () => kind === 'unread',
++    openThread: setTopic,
++  };
++  const files: ComponentProps<typeof ChatInput>['attachmentState'] = {
++    attachments: [],
++    hasAttachments: false,
++    addFiles: async () => {},
++    addClipboardImage: async () => {},
++    rejections: [],
++    dismissRejection: noop,
++    clearRejections: noop,
++    addFolderPath: noop,
++    pendingFoldersVersion: 0,
++    consumePendingFolders: () => [],
++    addFileMention: noop,
++    pendingFileMentionsVersion: 0,
++    consumePendingFileMentions: () => [],
++    removeFile: noop,
++    updateFile: noop,
++    discardFiles: noop,
++    clearFiles: noop,
++    restoreFiles: (files) => [...files],
++  };
++  return (
++    <BotChatQuoteProvider value={quoteContext}>
++      <BotDmThreadsProvider value={threads}>
++        <main className="flex h-screen bg-[var(--surface)] text-[var(--text-primary)]">
++          <div className="mx-auto flex w-full min-w-0 max-w-[1014px] flex-col gap-6 overflow-y-auto px-[50px] py-6">
++            <div data-owner>
++              <UserMessage
++                workingDir="/fixture"
++                content={messages[0].content}
++                images={[]}
++                files={[]}
++                sessionId={rootSessionId}
++                messageClientId="owner"
++                simplifiedBotConversation
++              />
++            </div>
++            <div data-answer>
++              <AssistantMessage
++                workingDir="/fixture"
++                content={messages[1].content}
++                isStreaming={false}
++                currentSessionId={rootSessionId}
++                messageClientId="answer"
++                showActionBar
++                simplifiedBotConversation
++              />
++            </div>
++            <div data-fixture-composer>
++              <ChatInput
++                sessionId="fixture-companion"
++                focusRequest={quote}
++                topSlot={
++                  quote ? (
++                    <BotChatQuoteComposerPreview
++                      sessionId={rootSessionId}
++                      quote={quote}
++                      getMessage={getMessage}
++                      names={names}
++                    />
++                  ) : undefined
++                }
++                initialWorkingDir="/fixture"
++                runtimeAgentKind="codex"
++               
+```
+
+**File**: `apps/desktop/scripts/fixtures/companion-message-actions/ui-page.mjs` (added, +108/-0)
+```diff
+@@ -0,0 +1,108 @@
++import assert from 'node:assert/strict';
++import composer from '../companion-composer/ui-page.mjs';
++const stubs = { ...composer.stubs };
++delete stubs['src/renderer/components/new-chat/ExtraDirsButton'];
++export default {
++  name: 'companion-message-actions',
++  entry: './fixture.tsx',
++  viewport: { width: 1000, height: 650 },
++  real: 'AssistantMessage, UserMessage, MessageActionBar, BotDmThreadPreview/Panel, BotChatQuoteComposerPreview, ChatInput, original menus and themes',
++  notCovered:
++    'Live model/server persistence and OS clipboard. The isolated host denies clipboard; a recorder verifies requested text and feedback. Topic panel uses real failed state with sample data; native mobile tested separately.',
++  stubs: {
++    ...stubs,
++    'src/renderer/components/chat/GhostToolCard':
++      'export const GhostToolCard=()=>{throw new Error("No plugin cards in this fixture")};',
++
++    'src/renderer/features/cc-agent/CCAgentSessionView':
++      'export const CCAgentSessionView=()=>{throw new Error("No ready runtime in this fixture")};',
++    'src/renderer/lib/makerChatStore': {
++      partial:
++        'export const makerChatStore={subscribe:()=>()=>{},getSnapshot:()=>window.__threadRoot,getAgentSwitchIntent:()=>null,getAgentSwitchIntentRev:()=>0};',
++    },
++    'src/renderer/voice-input/workletUrl':
++      'export const getVoiceInputWorkletUrl=()=>{throw new Error("not covered")};',
++  },
++  cases: {
++    default: { about: 'No topic: quote/copy always visible, create topic in More' },
++    read: { about: 'Original topic entry with count/time' },
++    unread: { about: 'Original topic entry with unread indicator' },
++  },
++  async ready(page) {
++    await page.locator('[contenteditable=true]').waitFor();
++    await page.evaluate(() =>
++      Object.defineProperty(navigator, 'clipboard', {
++        configurable: true,
++        value: {
++          writeText: async (text) => {
++            window.__copiedText = text;
++          },
++        },
++      }),
++    );
++  },
++  async check(page, ui) {
++    const reply = page
++      .locator('[data-answer]')
++      .getByRole('button', { name: await ui.t('chat.messageActionBar.reply'), exact: true });
++    assert(await reply.isVisible());
++    const before = await reply.boundingBox();
++    assert.equal(before.width, 32);
++    assert.equal(before.height, 32);
++    const editor = page.locator('[contenteditable=true]');
++    await editor.fill('Keep this draft');
++    await reply.click();
++    await page.getByTestId('bot-group-quote-preview').waitFor();
++    assert((await editor.innerText()).includes('Keep this draft'));
++    await ui.capture('quote');
++    await page
++      .getByRole('button', { name: await ui.t('bots.groupChat.quote.remove'), exact: true })
++      .click();
++    assert((await editor.innerText()).includes('Keep this draft'));
++    assert.equal(await page.getByTestId('bot-group-quote-preview').count(), 0);
++    const copy = page
++      .locator('[data-answer]')
++      .getByRole('button', { name: await ui.t('chat.messageActionBar.copy'), exact: true });
++    // Let the existing hover-enter reset commit before testing the next copy feedback.
++    await copy.hover();
++    await page.evaluate(
++      () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
++    );
++    await copy.click();
++    await page.locator('[data-answer] .lucide-check').waitFor({ timeout: 3000 });
++    assert.equal(
++      await page.evaluate(() => window.__copiedText),
++      '已沿用现有组件。正文可以直接选择，引用后也可以继续编辑草稿。',
++    );
++    const more = page
++      .locator('[data-answer]')
++      .getByRole('button', { name: await ui.t('chat.messageActionBar.moreActions'), exact: true });
++    await more.click();
++    const label = await ui.t(
++      ui.case === 'default'
++        ? 'bots.groupChat.server.startTopic'
++        : 'bots.groupChat.server.openTopic',
++      { count: 3 },
++    );
++    await page.getByRole('menuitem', { name: label, exact: true }).waitFor();
++    await ui.capture('more');
++    await page.getByRole('menuitem', { name: label, exact: true }).click();
++    await page.locator('[data-dm-thread-panel]').waitFor();
++    assert.equal(await page.getByRole('menu').count(), 0);
++    await ui.capture('topic');
++    await page.getByRole('button', { name: await ui.t('bots.close'), exact: true }).click();
++    await page.locator('[data-dm-thread-panel]').waitFor({ state: 'detached' });
++    assert.equal(
++      await page.locator('[data-dm-thread-preview]').count(),
++      ui.case === 'default' ? 0 : 1,
++    );
++    const p = page.locator('[data-answer] [data-bot-reply-bubble] p').first();
++    await p.evaluate((el) => {
++      const r = document.createRange();
++      r.selectNodeContents(el);
++      getSelection().removeAllRanges();
++      getSelection().addRange(r);
 +    });
-+    try {
-+      const upstream = await startUpgradeUpstream();
-+      proxy = await createAnthropicCompatProxy({
-+        upstream: 'http://unused.invalid', transformRequest: [],
-+        resolveWebSocketUpstream: ({ url }) => url === '/stall' ? 'http://pending-lookup.invalid' : upstream.url,
++    assert((await page.evaluate(() => getSelection().toString())).length > 5);
++  },
++};
+```
+
+**File**: `apps/desktop/scripts/fixtures/group-control/group-control-fixture.tsx` (modified, +2/-0)
+```diff
+@@ -18,6 +18,7 @@ if (!crypto.randomUUID) {
+ interface GroupData {
+   /** Controlled receipts for the real renderer send/settle layout regression. */
+   sendStatus?: boolean;
++  sharePending?: boolean;
+   workState?: 'thinking' | 'reading-file' | 'testing' | 'waiting' | 'stopping' | 'unknown';
+   workRemote?: boolean;
+   workParallel?: boolean;
+@@ -351,6 +352,7 @@ void mountPage({
+           ownedBots: async () => ({ ok: true, bots: [] }),
+           manage: forbid('maker.chatServer.manage'),
+           ...(data.threadPanel ? { thread, followThread } : {}),
++          ...(data.sharePending ? { shareToMain: () => new Promise(() => {}) } : {}),
+         },
+         updateBotGroup: forbid('maker.updateBotGroup'),
+       },
+```
+
+**File**: `apps/desktop/scripts/fixtures/group-control/ui-page.mjs` (modified, +18/-1)
+```diff
+@@ -31,8 +31,12 @@ export default {
+   viewport: { width: 1280, height: 800 },
+   real: 'BotGroupChatView (timeline, composer, send button, header registration), ControlledBanner, ContentHeader shell, Markdown, theme, fonts and translations',
+   notCovered:
+-    'Real IPC/network sending (send-status controls host receipts), round control, real device-link control and revocation, answering pending interactions, plans and attachments; the bubbles case shows a task snapshot, not a live task; the sidebar is an empty frame',
++    'Real IPC/network sending (send-status/share-pending control host receipts), round control, real device-link control and revocation, answering pending owner interactions, plans and attachment IO; the bubbles case shows a task snapshot, not a live task; the sidebar is an empty frame',
+   cases: {
++    'share-pending': {
++      about: 'Pending topic copy appears in the main chat while the host receipt is unresolved',
++      data: { ...base, bubbles: true, threadPanel: true, sharePending: true },
++    },
+     'send-status': {
+       about: 'Mac send flicker regression: real composer/outbox/timeline, controlled slow receipt; row geometry stays stable and failed sends remain retryable',
+       data: { ...base, messages: 40, sendStatus: true },
+@@ -132,6 +136,19 @@ export default {
+   },
+   async check(page, ui) {
+     const definition = this.cases[ui.case];
++    if (ui.case === 'share-pending') {
++      await page.locator('[data-bot-group-message-id="a1"] [data-thread-preview]').click();
++      const source = page.locator('aside [data-bot-group-message-id="r1"]');
++      await source.hover();
++      await source.getByRole('button', { name: await ui.t('chat.messageActionBar.moreActions'), exact: true }).click();
++      await page.getByRole('menuitem', { name: await ui.t('bots.groupChat.server.thread.postToMain'), exact: true }).click();
++      const pending = page.locator('[data-testid="bot-group-timeline"] [data-bot-group-message-id="pending:share:r1"]');
++      await pending.waitFor({ timeout: 1500 });
++      assert.equal(await pending.locator('article').getAttribute('aria-busy'), 'true');
++      await pending.scrollIntoViewIfNeeded();
++      await ui.capture('share-pending');
++      return;
++    }
+     if (ui.case === 'send-status') {
+       // Renderer integration: jsdom's send tests cannot measure the 600ms layout jump.
+       const input = page.locator('textarea');
+```
+
+**File**: `apps/desktop/src/main/maker-host/__tests__/codexProxyHost.test.ts` (modified, +80/-3)
+```diff
+@@ -808,6 +808,81 @@ describe('chatBridgeCapabilitiesForRoute', () => {
+     expect(capabilities.passthroughFields).not.toContain('top_logprobs');
+   });
+ 
++  // #7906: first 400 repairs the persisted history pair, then only that thread is pre-cleaned.
++  it('recovers duplicate Responses call IDs and keeps later turns from repeating the 400', async () => {
++    const host = await freshCodexProxyHost(true);
++    const actual = await vi.importActual<typeof import('@cindy/anthropic-compat-proxy')>('@cindy/anthropic-compat-proxy');
++    const requests: Array<Record<string, unknown>> = [];
++    const upstream = createServer(async (req, res) => {
++      const chunks: Buffer[] = [];
++      for await (const chunk of req) chunks.push(Buffer.from(chunk));
++      const body = JSON.parse(Buffer.concat(chunks).toString('utf8')) as Record<string, unknown>;
++      requests.push(body);
++      const input = body.input as Array<Record<string, unknown>>;
++      const callIds = input.filter(item => item.type === 'function_call' || item.type === 'custom_tool_call').map(item => item.call_id);
++      const outputIds = input.filter(item => item.type === 'function_call_output' || item.type === 'custom_tool_call_output').map(item => item.call_id);
++      const hasDuplicateCall = new Set(callIds).size !== callIds.length;
++      const hasDuplicateOutput = new Set(outputIds).size !== outputIds.length;
++      if (hasDuplicateCall || hasDuplicateOutput) {
++        res.writeHead(400, { 'content-type': 'application/json' });
++        res.end(JSON.stringify({ error: { message: "Duplicate function_call_output for call_id 'call_retry'. Each function_call must have exactly one matching function_call_output" } }));
++        return;
++      }
++      res.writeHead(200, { 'content-type': 'application/json' });
++      res.end(JSON.stringify({ output: [] }));
++    });
++    await new Promise<void>(resolve => upstream.listen(0, '127.0.0.1', resolve));
++    const upstreamUrl = `http://127.0.0.1:${(upstream.address() as AddressInfo).port}`;
++    mockState.createAnthropicCompatProxy.mockImplementation((opts: Parameters<typeof actual.createAnthropicCompatProxy>[0]) =>
++      actual.createAnthropicCompatProxy({
++        ...opts,
++        upstream: upstreamUrl,
++        resolveOutboundProxy: () => null,
++        routingTransform: async (body, ctx) => ({ ...(await opts.routingTransform?.(body, ctx)), upstreamOverride: upstreamUrl }),
++      }),
++    );
++    const input = [
++      { type: 'function_call', id: 'fc_1', call_id: 'call_retry', name: 'write', arguments: '{}' },
++      { type: 'function_call_output', id: 'fco_1', call_id: 'call_retry', output: 'failed' },
++      { type: 'function_call', id: 'fc_2', call_id: 'call_retry', name: 'write', arguments: '{}' },
++      { type: 'function_call_output', id: 'fco_2', call_id: 'call_retry', output: 'succeeded' },
++    ];
++    const post = () => new Promise<number | undefined>((resolve, reject) => {
++      const req = httpRequest(host.getCodexProxyEndpoint() + '/v1/responses', {
++        method: 'POST',
++        headers: { 'content-type': 'application/json', 'thread-id': 'thread-7906' },
++      }, res => {
++        res.resume();
++        res.once('end', () => resolve(res.statusCode));
 +      });
-+      const failed = readUpgradeFailure(proxy.url, '/stall');
-+      await vi.waitFor(() => expect(pendingSocket?.connecting).toBe(true));
-+      expect(deadlines(), 'the handshake deadline must run before the socket connects').toHaveLength(1);
-+      const healthy = await openUpgrade(proxy.url);
-+      deadlines()[0].fire();
-+      expect(await failed).toBe('HTTP/1.1 504 Gateway Timeout\r\nConnection: close\r\n\r\n');
-+      expect(pendingSocket?.destroyed).toBe(true);
-+      healthy.socket.write('PING');
-+      expect(await waitForSocketText(healthy.socket, healthy.rest, 'PONG')).toContain('PONG');
-+      expect(deadlines()).toHaveLength(2);
++      req.once('error', reject);
++      req.end(JSON.stringify({ model: 'amazon/nova-pro-v1', input }));
++    });
++
++    try {
++      await host.ensureCodexProxyReady();
++      expect(await post()).toBe(200);
++      expect(requests).toHaveLength(2);
++      expect(requests[1]?.input).toEqual([
++        input[0], input[1],
++        { ...input[2], call_id: 'call_retry__cindy_dup_2' },
++        { ...input[3], call_id: 'call_retry__cindy_dup_2' },
++      ]);
++
++      expect(await post()).toBe(200);
++      expect(requests).toHaveLength(3);
++      expect(requests[2]?.input).toEqual(requests[1]?.input);
 +    } finally {
-+      createConnection.mockRestore();
++      host.unregister('session-7906');
++      const { responsesToolCallHistoryStripController } = await import('../thread-strip-controllers.js');
++      responsesToolCallHistoryStripController.clear('thread-7906');
++      await host.disposeCodexProxy();
++      upstream.closeAllConnections();
++      await new Promise<void>(resolve => upstream.close(() => resolve()));
++      mockState.realStripTransforms = false;
 +    }
 +  });
 +
-+  it('returns 504 when partial response headers never complete the handshake', async () => {
-+    const deadlines = captureHandshakeDeadlines();
-     const upstream = createServer();
-+    let handshakeStarted = false;
-     upstream.on('upgrade', (_req, socket) => {
-       sockets.add(socket);
--      // Intentionally leave the handshake pending. The ClientRequest timeout spy below
--      // fires the production timeout callback without making this test wait 15 sec
+   it.each([
+     'https://api.moonshot.cn/v1',
+     'https://api.moonshot.ai/v1/',
+@@ -2787,15 +2862,15 @@ describe('codex proxy host', () => {
+         // upstream 是函数形态(每请求现取,model-access 下发可运行期换 endpoint);
+         // 断言其当前求值 = 网关 base + /v1
+         upstream: expect.any(Function),
+-        // [armed HTTP recovery strip(WS 错误后落回 HTTP 即激活对应 strip), encrypted activeStrip, image generation activeStrip, provider-aware Guardian reviewer, locked Subagent route, instructions 注入, locked Subagent exec guard, Gateway 原生 web_search, 跨来源压缩块兼容, xAI ModelInput activeStrip, responses item id activeStrip(#4738), responses item id length activeStrip(#4227), exec function adapter, strict gateway history
 ```
 
-**File**: `packages/anthropic-compat-proxy/src/server.ts` (modified, +26/-4)
+**File**: `apps/desktop/src/main/maker-host/codex-proxy-host.ts` (modified, +24/-1)
 ```diff
-@@ -2871,6 +2871,12 @@ export async function createAnthropicCompatProxy(opts: ProxyOptions): Promise<Pr
-     let settled = false;
-     let upstreamReqForEarlyClose: ClientRequest | null = null;
-     let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-+    let handshakeTimer: ReturnType<typeof setTimeout> | null = null;
-+    const clearHandshakeTimer = (): void => {
-+      if (handshakeTimer === null) return;
-+      clearTimeout(handshakeTimer);
-+      handshakeTimer = null;
-+    };
-     let upstreamAttempt = 0;
-     let removeAuthorizationListener: (() => void) | undefined;
-     let authorizeWebSocket: (() => boolean) | undefined;
-@@ -2907,6 +2913,7 @@ export async function createAnthropicCompatProxy(opts: ProxyOptions): Promise<Pr
-     const settle = (why: string, err?: Error): void => {
-       if (settled) return;
-       settled = true;
-+      clearHandshakeTimer();
-       removeAuthorizationListener?.();
-       if (reconnectTimer !== null) {
-         clearTimeout(reconnectTimer);
-@@ -2926,6 +2933,14 @@ export async function createAnthropicCompatProxy(opts: ProxyOptions): Promise<Pr
+@@ -25,7 +25,7 @@ import {
+ } from '@cindy/model-providers';
+ import { reconcileOutboundReasoningEffort } from './outbound-reasoning-effort.js';
+ import { createPiProviderFetch, handlePiProviderRequest, invocationModelRecord, nativeBridgeApiKey, readBoundedResponseText, requiresNativeProviderAuth } from './pi-provider-transport.js';
+-import { normalizeProviderRequest, normalizeMiniMaxResponsesReasoning } from '@cindy/model-compat';
++import { normalizeProviderRequest, normalizeMiniMaxResponsesReasoning, normalizeRepeatedResponseToolCallIdsFromBody } from '@cindy/model-compat';
+ import { createCodexResponsesCompatibilityAdapter, sanitizeXaiTools, hasCacheOnlySearchProhibition, sanitizeByteDanceSeedTools, normalizeByteDanceSeedInput, sanitizeByteDanceSeedReasoning, normalizeStrictGatewayHistory, sanitizeDeepSeekV4CustomTools } from '@cindy/model-compat';
+ import { peekGrokAccessToken } from './grok-oauth-login.js';
+ import { bearerAccessTokenFromHeaders } from './chatgpt-bridge-auth-invalidation.js';
+@@ -77,6 +77,7 @@ import {
+   type RequestTransformCtx,
+   type RoutingDecision,
+   type RoutingTransform,
++  type RecoveryRule,
+ } from '@cindy/anthropic-compat-proxy';
+ import { buildVisionBridgeProxyTransform } from '../vision-bridge/vision-bridge-controller.js';
+ import {
+@@ -142,6 +143,7 @@ import {
+   responsesItemIdStripController,
+   responsesItemIdLengthStripController,
+   responsesReasoningContentStripController,
++  responsesToolCallHistoryStripController,
+   xaiModelInputStripController,
+ } from './thread-strip-controllers.js';
+ import { createMakerLogger } from './logger-adapter.js';
+@@ -246,6 +248,19 @@ const responsesItemIdLengthRecoveryRule = createResponsesItemIdLengthRecoveryRul
+ const responsesReasoningContentRecoveryRule = createResponsesReasoningContentRecoveryRule({
+   onRetry: (threadId, model) => responsesReasoningContentStripController.markActive(threadId, model),
+ });
++const duplicateResponsesToolCallRecoveryRule: RecoveryRule = {
++  id: 'duplicate_responses_tool_call',
++  enabled: () => true,
++  matches: (errorText) => /duplicate\s+function_call_output\s+for\s+call_id/i.test(errorText),
++  strip: normalizeRepeatedResponseToolCallIdsFromBody,
++  onRetry: (threadId, model) => responsesToolCallHistoryStripController.markActive(threadId, model),
++  useUpstreamModel: true,
++  applyOnUnmatchedRetry: false,
++  // 只修重复的工具 ID。这条规则的判据绑在「上游明确说 call_id 重复」上,不能顺带
++  // 叠洗别的 strip:encrypted-content 那条会在同一次透明重试里删掉上游从未拒绝过的
++  // 加密/reasoning 内容,并把删除带进后续轮次(与 responses_reasoning_content 同处理)。
++  allowExtraRules: false,
++};
+ const xaiModelInputRecoveryRule = createXaiModelInputRecoveryRule({
+   onRetry: (threadId, model) => xaiModelInputStripController.markActive(threadId, model),
+ });
+@@ -256,6 +271,7 @@ const CODEX_BODY_RECOVERY_RULES = [
+   responsesItemIdPrefixRecoveryRule,
+   responsesItemIdLengthRecoveryRule,
+   responsesReasoningContentRecoveryRule,
++  duplicateResponsesToolCallRecoveryRule,
+   xaiModelInputRecoveryRule,
+   vllmResponsesCompatibilityRule,
+ ] as const;
+@@ -3311,6 +3327,11 @@ function createTransformRequestChain(
+     // Run after every provider dialect rewrite: xAI can also turn custom calls into functions.
+     // This covers native-custom routes and tool-less /responses/compact without changing call_id.
+     normalizeResponsesToolItemIds,
++    createActiveStripTransform({
++      controller: responsesToolCallHistoryStripController,
++      enabled: () => true,
++      strip: normalizeRepeatedResponseToolCallIdsFromBody,
++    }),
+     stripNonAnthropicFields,
+   ];
+   if (process.env.XDT_CODEX_PROXY_DUMP_TRANSFORMED_BODY === '1') {
+@@ -4041,6 +4062,7 @@ function clearSessionThreads(sessionId: string): string[] {
+       httpRecoveryReasonByThread.delete(threadId);
+       pendingHttpRecoveryStripByThread.delete(threadId);
+       responsesReasoningContentStripController.clear(threadId);
++      responsesToolCallHistoryStripController.clear(threadId);
+     }
+   }
+   return threadIds;
+@@ -4079,6 +4101,7 @@ export async function disposeCodexProxy(): Promise<void> {
+   for (const threadId of threadToSession.keys()) {
+     registry.delete(threadId);
+     responsesReasoningContentStripController.clear(threadId);
++    responsesToolCallHistoryStripController.clear(threadId);
+   }
+   sessionToThread.clear();
+   sessionToThreads.clear();
+```
+
+**File**: `apps/desktop/src/main/maker-host/thread-strip-controllers.ts` (modified, +3/-0)
+```diff
+@@ -22,6 +22,9 @@ export const responsesItemIdLengthStripController = createThreadStripController(
+ // Raw reasoning content rejected after a provider switch; marked only by its own recovery rule.
+ export const responsesReasoningContentStripController = createThreadStripController();
  
-     // client 可能在 resolveOutboundForTarget 尚未返回时就离开。close 必须立即归还预占
-     // 槽位;若上游请求已经创建,同时终止它,避免无人接收的握手继续占网络资源。
-+    // Before 101 there is no pipe to propagate FIN. An abandoned handshake
-+    // can otherwise stay half-open until its upstream eventually responds.
-+    clientSocket.on('end', () => {
-+      if (established || settled) return;
-+      settle('client-end-before-upgrade');
-+      upstreamReqForEarlyClose?.destroy();
-+      clientSocket.end();
-+    });
-     clientSocket.on('close', () => {
-       settle('client-close');
-       if (!established) {
-@@ -2966,6 +2981,7 @@ export async function createAnthropicCompatProxy(opts: ProxyOptions): Promise<Pr
++// Responses tool call IDs rejected by strict gateways; after recovery, pre-clean later turns.
++export const responsesToolCallHistoryStripController = createThreadStripController();
++
+ // 空 thinking 块主动剥离 —— always-on(删空块零成本)。必须与上面是独立实例。
+ export const emptyThinkingStripController = createThreadStripController();
  
-     const scheduleReconnectAttempt = (why: string, err?: Error): void => {
-       if (!locallyAcceptedForReconnect || settled || clientSocket.destroyed) return;
-+      clearHandshakeTimer();
-       upstreamReqForEarlyClose = null;
-       const exponent = Math.max(0, Math.min(upstreamAttempt - 1, 8));
-       const delayMs = Math.min(
-@@ -3061,6 +3077,7 @@ export async function createAnthropicCompatProxy(opts: ProxyOptions): Promise<Pr
-       ): void => {
-         if (attemptSettled || established || settled) return;
-         attemptSettled = true;
-+        clearHandshakeTimer();
-         if (locallyAcceptedForReconnect) {
-           scheduleReconnectAttempt(why, err);
-           return;
-@@ -3069,20 +3086,24 @@ export async function createAnthropicCompatProxy(opts: ProxyOptions): Promise<Pr
-         writeUpgradeFailure(clientSocket, status, message);
-       };
- 
--      // 握手阶段必须有独立的秒级上限(上游可能既不回 101 也不回响应)。
--      // **建立成功后立刻解除**，避免任何握手 timer 误杀正常长连接。
--      upstreamReq.setTimeout(WEBSOCKET_UPGRADE_TIMEOUT_MS, () => {
-+      // Request/socket idle timeouts start after connection and reset on traffic.
-+      // Bound the entire network handshake, including DNS/TCP/TLS, instead.
-+      // This deadline is removed on 101; it never limits model inference.
-+      handshakeTimer = setTimeout(() => {
-+        if (attemptSettled || established || settled) return;
-         logger.warn?.('upgrade handshake timed out', { reqId, path: upstreamPath });
-         failTransientAttempt('handshake-timeout', 504, 'Gateway Timeout');
-         upstreamReq.destroy();
--      });
-+      }, WEBSOCKET_UPGRADE_TIMEOUT_MS);
-+      handshakeTimer.unref?.();
- 
-       upstreamReq.on('upgrade', (upstreamRes, upstreamSocket: Socket, upstreamHead: Buffer) => {
-         if (attemptSettled) {
-           upstreamSocket.destroy();
-           return;
-         }
-         attemptSettled = true;
-+        clearHandshakeTimer();
-         upstreamReqForEarlyClose = null;
-         // 解除握手超时(长连接不能被它杀掉)。
-         upstreamReq.setTimeout(0);
-@@ -3213,6 +3234,7 @@ export async function createAnthropicCompatProxy(opts: ProxyOptions): Promise<Pr
-           return;
-         }
-         attemptSettled = true;
-+        clearHandshakeTimer();
-         upstreamReqForEarlyClose = null;
-         settle('upstream-refused');
-         const status = upstreamRes.statusCode ?? 502;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7556** (2026-10-27): fix(auto-review): 保留粘贴正文中的用户授权与限制 (@321sssrt-bit)
-- **PR #7553** (2026-10-27): fix(mobile): reserve streaming action row space (@zqchris)
-- **PR #7551** (2026-10-27): fix(proxy): bound pending websocket handshakes (@xuzini-xzn)
-- **PR #7549** (2026-10-27): fix(models): use host root for Agnes Messages requests (@zqchris)
-- **PR #7546** (2026-10-27): feat(tasks): unify teammate filters and ownership across devices (@zqchris)
-- **PR #7543** (2026-10-27): fix(mobile): preserve send row measurement on confirmation (@zqchris)
+- **PR #8147** (2026-10-30): fix(chat): 消除桌面和手机重复错误提示 (@zqchris)
+- **PR #8144** (2026-10-30): fix(ci): brand terminology guard git ls-files maxBuffer (@zqchris)
+- **PR #8140** (2026-10-30): fix(chat): 缩短话题回复与贴回群聊等待 (@xd-bobo)
+- **PR #8116** (2026-10-30): feat(x): 支持原视频分块上传与浏览器视频发帖 (@MagicLizi)
+- **PR #8112** (2026-10-30): fix: allow group companions from other devices (@zqchris)
+- **PR #8104** (2026-10-30): feat(voice-input): 语音输入识别语言新增西班牙语 (@techsaurabh-394)
 
 ---
 
@@ -1926,45 +2028,28 @@ fix(proxy): bound pending websocket handshakes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7556 from 321sssrt-bit/fix/7424-autoreview-pasted-text
+## X. ci): raise brand terminology guard git ls-files maxBuffer
 
 **RULE**:
-When implementing operations in `apps/desktop/src/main/maker-ipc/__tests__/autoReviewUserIntent.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/brand-terminology-guard.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b486def1`: Merge pull request #7556 from 321sssrt-bit/fix/7424-autoreview-pasted-text. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0f724deb`: ci): raise brand terminology guard git ls-files maxBuffer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/main/maker-ipc/__tests__/autoReviewUserIntent.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/brand-terminology-guard.mjs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  readAutoReviewUserText,
-describe('pasted authored text', () => {
-  // #7424 / unit: production readText/resource projection must preserve exact owner authorization.
-  // Existing negatives cover structured resources, not paste-only or mixed input; the minimal old
-  // failure is any non-empty pastedTextRanges returning null/''. Long paste and restrictions are observable auth evidence.
-  const longPaste = Array.from({ length: 24 }, (_, index) => `第 ${index + 1} 行：允许本地修改和测试。`).join('\n');
-  it.each([
-    { name: 'full paste', prefix: '', pasted: `${longPaste}\n不要 push、不要发布。`, suffix: '' },
-    { name: 'mixed input', prefix: '先检查现状。\n', pasted: longPaste,
-      suffix: '\n允许本地修改和测试，但不要 push、不要发布。' },
-  ])('preserves the complete authorization for $name', ({ prefix, pasted, suffix }) => {
-    const text = `${prefix}${pasted}${suffix}`;
-    const content = { text, pastedTextRanges: [{ start: prefix.length, end: prefix.length + pasted.length }] };
-    expect(readAutoReviewUserText(content)).toBe(text);
-    expect(currentAutoReviewResourceIntent(content, text)).toBe(text);
-    expect(currentAutoReviewResourceIntent(content, projectPersistedAgentFacingUserText(content)!)).toBe(text);
-  }
+  maxBuffer: 64 * 1024 * 1024,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    expect(currentAutoReviewResourceIntent({ ...content, pastedTextRanges: [{}] }, wire)).toBe('');
-    { pastedTextRanges: [{}] },
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b486def1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0f724deb` are properly handled with clean fallback behavior.

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T22:34:44.883Z",
-    "lastVerified": "2026-10-30T22:34:44.883Z",
+    "lastChecked": "2026-10-30T22:41:04.016Z",
+    "lastVerified": "2026-10-30T22:41:04.016Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -243,8 +243,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T22:10:29.797Z",
-    "lastVerified": "2026-10-30T22:10:29.797Z",
+    "lastChecked": "2026-10-30T22:41:03.697Z",
+    "lastVerified": "2026-10-30T22:41:03.697Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -348,9 +348,9 @@
   "lapce-lapce": {
     "name": "lapce",
     "officialUrl": "https://github.com/lapce/lapce",
-    "lastChecked": "2026-10-29T00:02:22.038Z",
+    "lastChecked": "2026-10-30T22:40:48.723Z",
     "revisionIdentifier": "f66ffaa9",
-    "lastVerified": "2026-10-29T00:02:22.038Z"
+    "lastVerified": "2026-10-30T22:40:48.723Z"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
     "name": "sentence-transformers/all-MiniLM-L6-v2",
@@ -1084,12 +1084,12 @@
     "revisionIdentifier": "e2db61bd"
   },
   "provablehq-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T18:32:37.759Z",
-    "lastVerified": "2026-10-30T18:32:37.759Z",
+    "lastChecked": "2026-10-30T22:40:58.756Z",
+    "lastVerified": "2026-10-30T22:40:58.756Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -1098,7 +1098,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e8618dbc"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -4335,12 +4336,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "typedb-typedb": {
-    "name": "typedb/typedb",
+    "name": "typedb",
     "officialUrl": "https://github.com/typedb/typedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T23:28:41.815Z",
-    "lastVerified": "2026-10-29T23:28:41.815Z",
+    "lastChecked": "2026-10-30T22:41:01.165Z",
+    "lastVerified": "2026-10-30T22:41:01.165Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-typedb-typedb",
@@ -4349,7 +4350,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "77d1bd0e"
   },
   "transact-rs-sqlx": {
     "name": "sqlx",
@@ -5095,12 +5097,12 @@
     "lastVerified": "2026-10-28T15:29:38.669Z"
   },
   "bridgecrewio-checkov": {
-    "name": "bridgecrewio/checkov",
+    "name": "checkov",
     "officialUrl": "https://github.com/bridgecrewio/checkov",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-30T00:25:47.080Z",
-    "lastVerified": "2026-10-30T00:25:47.080Z",
+    "lastChecked": "2026-10-30T22:40:56.238Z",
+    "lastVerified": "2026-10-30T22:40:56.238Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bridgecrewio-checkov",
@@ -5109,7 +5111,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3bdc054c"
   },
   "etcd-io-etcd": {
     "name": "etcd-io/etcd",
@@ -11364,6 +11367,30 @@
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rubenverborgh-sparql.js": {
+    "name": "SPARQL.js",
+    "officialUrl": "https://github.com/RubenVerborgh/SPARQL.js",
+    "lastChecked": "2026-10-30T22:40:51.145Z",
+    "revisionIdentifier": "91cbd01b",
+    "lastVerified": "2026-10-30T22:40:51.145Z"
+  },
+  "makecindy-cindy": {
+    "name": "makecindy/cindy",
+    "officialUrl": "https://github.com/makecindy/cindy",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T22:40:59.260Z",
+    "lastVerified": "2026-10-30T22:40:59.260Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-makecindy-cindy",
+    "contentHash": "d289841d161fd825ac18ce126a1abd145e191ac9ed0d66e5b9e58cc2155183a5",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 16,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

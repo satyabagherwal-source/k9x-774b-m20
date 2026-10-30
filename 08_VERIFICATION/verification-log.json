@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-3HEJ",
-    "timestamp": "2026-10-28T16:33:53.371Z",
-    "repository": "StarRocks/starrocks",
-    "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "5309c3901a2225789354b5746b011c03cbfca1899343cba282348da73771a228",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-I37H",
     "timestamp": "2026-10-28T16:45:14.813Z",
     "repository": "FacebookAI/xlm-roberta-base",
@@ -7490,6 +7475,21 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "9b69cb0843be714d525993b309c800a5af7951c25d4722c23968bb7849e2da99",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-3BQ8",
+    "timestamp": "2026-10-30T22:41:01.472Z",
+    "repository": "makecindy/cindy",
+    "learningId": "learn-github-makecindy-cindy",
+    "contentHash": "d289841d161fd825ac18ce126a1abd145e191ac9ed0d66e5b9e58cc2155183a5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T22:34:42.243Z",
+  "last_updated": "2026-10-30T22:41:01.418Z",
   "total_verified_learnings": 1178,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -129265,8 +129265,8 @@
       "slug": "makecindy-cindy",
       "platform": "github",
       "source_url": "https://github.com/makecindy/cindy",
-      "source_version": "b486def1",
-      "content_hash": "269ed3435abe182b501541a019614794eb73cc5313092da5a32ca9a7a57b8cdb",
+      "source_version": "a9030276",
+      "content_hash": "d289841d161fd825ac18ce126a1abd145e191ac9ed0d66e5b9e58cc2155183a5",
       "dossier_path": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/makecindy-cindy-learnings.md",
       "promoted_rules": [
@@ -129289,6 +129289,11 @@
           "number": 5025,
           "title": "Merge pull request #7556 from 321sssrt-bit/fix/7424-autoreview-pasted-text",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5927,
+          "title": "ci): raise brand terminology guard git ls-files maxBuffer",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -129296,7 +129301,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T21:36:36.757Z",
+      "verified_at": "2026-10-30T22:41:01.406Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156698,6 +156703,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T22:34:42.218Z"
+    },
+    "rule-5927": {
+      "learning_id": "rule-5927",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5927,
+      "title": "ci): raise brand terminology guard git ls-files maxBuffer",
+      "source_url": "https://github.com/makecindy/cindy",
+      "source_version": "a9030276",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:41:01.406Z"
     }
   },
   "aliases": {

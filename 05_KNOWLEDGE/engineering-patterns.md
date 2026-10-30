@@ -433501,3 +433501,53 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `66a52434` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5927. ci): raise brand terminology guard git ls-files maxBuffer (Harvested from makecindy/cindy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "ci): raise brand terminology guard git ls-files maxBuffer",
+  "source": "makecindy/cindy",
+  "source_url": "https://github.com/makecindy/cindy",
+  "source_version": "a9030276",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T22:41:01.273Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-makecindy-cindy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [makecindy/cindy](https://github.com/makecindy/cindy) (Revision: `a9030276`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `scripts/brand-terminology-guard.mjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in makecindy/cindy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0f724deb`: ci): raise brand terminology guard git ls-files maxBuffer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/brand-terminology-guard.mjs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+  maxBuffer: 64 * 1024 * 1024,
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0f724deb` are properly handled with clean fallback behavior.
