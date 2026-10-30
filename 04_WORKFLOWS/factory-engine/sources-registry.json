@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T19:58:29.208Z",
-    "lastVerified": "2026-10-30T19:58:29.208Z",
+    "lastChecked": "2026-10-30T20:05:23.520Z",
+    "lastVerified": "2026-10-30T20:05:23.520Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -139,22 +139,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T19:28:11.867Z",
-    "lastVerified": "2026-10-30T19:28:11.867Z",
+    "lastChecked": "2026-10-30T20:05:19.419Z",
+    "lastVerified": "2026-10-30T20:05:19.419Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "1e96a4449e82f092dfd760b4b0fe66ed52f61bc5409b8ffbad61ed99726978c5",
+    "contentHash": "54ababb59a494807269abf25fbffecc3f044110386ddbc6709a33a5f1abd2ce0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5b8effbb"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -1865,22 +1864,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "nuclei",
+    "name": "projectdiscovery/nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T15:21:59.938Z",
-    "lastVerified": "2026-10-30T15:21:59.938Z",
+    "lastChecked": "2026-10-30T20:05:14.330Z",
+    "lastVerified": "2026-10-30T20:05:14.330Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "f38ecb1336a4f9ee5520a2ec94813fa084020ab3e6f649300bb243690ea443bb",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 9,
+    "contentHash": "c5ec86e0489df88cbfb5bb272258f0c7d25b75441e3e0cb8545ac37fafe9f9a1",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2e258fc3"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -3342,14 +3340,14 @@
     "officialUrl": "https://github.com/matrixorigin/matrixone",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-29T11:56:36.050Z",
-    "lastVerified": "2026-10-29T11:56:36.050Z",
+    "lastChecked": "2026-10-30T20:05:18.535Z",
+    "lastVerified": "2026-10-30T20:05:18.535Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "f44d9d40eb560c0f169cbef4741a282dfc8c8bd502e7d641acddc3217a30c6c2",
+    "contentHash": "dc9eb7205aec62d31ec20750713ccabb8da844ee549c07afbd85bf7edc7c9f2c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 21,
+    "recentFixesCount": 26,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4059,9 +4057,9 @@
   "kubeshop-botkube": {
     "name": "botkube",
     "officialUrl": "https://github.com/kubeshop/botkube",
-    "lastChecked": "2026-10-29T16:36:41.085Z",
+    "lastChecked": "2026-10-30T20:05:07.455Z",
     "revisionIdentifier": "ee94e191",
-    "lastVerified": "2026-10-29T16:36:41.085Z"
+    "lastVerified": "2026-10-30T20:05:07.455Z"
   },
   "materializeinc-materialize": {
     "name": "MaterializeInc/materialize",
@@ -7594,14 +7592,14 @@
     "officialUrl": "https://github.com/oxc-project/oxc",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T21:43:30.299Z",
-    "lastVerified": "2026-10-28T21:43:30.299Z",
+    "lastChecked": "2026-10-30T20:05:06.200Z",
+    "lastVerified": "2026-10-30T20:05:06.200Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "8a9c8d74e95de0c8af9e46fb4e60dc5fd09d63a17df54764b8e8ed3fdb3c55ad",
+    "contentHash": "c2d52c4683f5017446d47529cb2a1df91b5f0238a8deb54372adc88377e43b2f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10898,5 +10896,29 @@
     "lastChecked": "2026-10-30T19:54:04.409Z",
     "revisionIdentifier": "49bf1f37",
     "lastVerified": "2026-10-30T19:54:04.409Z"
+  },
+  "vitest-dev-vitest": {
+    "name": "vitest-dev/vitest",
+    "officialUrl": "https://github.com/vitest-dev/vitest",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T20:05:08.334Z",
+    "lastVerified": "2026-10-30T20:05:08.334Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-vitest-dev-vitest",
+    "contentHash": "da9d0efad6726bb1ecd4b8ac8756a4dac86cb169902548abd92445d99b32b417",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 20,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apple-sample-food-truck": {
+    "name": "sample-food-truck",
+    "officialUrl": "https://github.com/apple/sample-food-truck",
+    "lastChecked": "2026-10-30T20:05:04.909Z",
+    "revisionIdentifier": "3954a769",
+    "lastVerified": "2026-10-30T20:05:04.909Z"
   }
 }

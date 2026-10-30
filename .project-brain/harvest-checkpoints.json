@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T19:58:26.665Z",
+  "last_updated": "2026-10-30T20:05:20.991Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "1e96a4449e82f092dfd760b4b0fe66ed52f61bc5409b8ffbad61ed99726978c5",
-      "verified_at": "2026-10-30T18:58:42.024Z",
+      "content_hash": "54ababb59a494807269abf25fbffecc3f044110386ddbc6709a33a5f1abd2ce0",
+      "verified_at": "2026-10-30T20:05:20.990Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T18:58:42.024Z"
+      "last_updated": "2026-10-30T20:05:20.990Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "f44d9d40eb560c0f169cbef4741a282dfc8c8bd502e7d641acddc3217a30c6c2",
-      "verified_at": "2026-10-29T12:01:49.121Z",
+      "content_hash": "dc9eb7205aec62d31ec20750713ccabb8da844ee549c07afbd85bf7edc7c9f2c",
+      "verified_at": "2026-10-30T20:05:20.624Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T12:01:49.121Z"
+      "last_updated": "2026-10-30T20:05:20.624Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "f38ecb1336a4f9ee5520a2ec94813fa084020ab3e6f649300bb243690ea443bb",
-      "verified_at": "2026-10-30T03:48:36.720Z",
+      "content_hash": "c5ec86e0489df88cbfb5bb272258f0c7d25b75441e3e0cb8545ac37fafe9f9a1",
+      "verified_at": "2026-10-30T20:05:16.273Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T03:48:36.720Z"
+      "last_updated": "2026-10-30T20:05:16.273Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "8a9c8d74e95de0c8af9e46fb4e60dc5fd09d63a17df54764b8e8ed3fdb3c55ad",
-      "verified_at": "2026-10-28T21:43:30.684Z",
+      "content_hash": "c2d52c4683f5017446d47529cb2a1df91b5f0238a8deb54372adc88377e43b2f",
+      "verified_at": "2026-10-30T20:05:08.684Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T21:43:30.684Z"
+      "last_updated": "2026-10-30T20:05:08.684Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",
@@ -15216,14 +15216,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vitest-dev-vitest",
-      "content_hash": "b44bf11cfbed153e28939a4755ae96ff90926df89f018b34af34ba0fb1a40e45",
-      "verified_at": "2026-10-27T16:51:54.932Z",
+      "content_hash": "da9d0efad6726bb1ecd4b8ac8756a4dac86cb169902548abd92445d99b32b417",
+      "verified_at": "2026-10-30T20:05:09.741Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T16:51:54.932Z"
+      "last_updated": "2026-10-30T20:05:09.741Z"
     },
     "Mijick/Popups": {
       "repository": "Mijick/Popups",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T19:58:26.585Z",
+  "last_updated": "2026-10-30T20:05:20.912Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4825,8 +4825,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "5b8effbb",
-      "content_hash": "1e96a4449e82f092dfd760b4b0fe66ed52f61bc5409b8ffbad61ed99726978c5",
+      "source_version": "a7767075",
+      "content_hash": "54ababb59a494807269abf25fbffecc3f044110386ddbc6709a33a5f1abd2ce0",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4949,6 +4949,11 @@
           "number": 5835,
           "title": "deps): bump ed25519-dalek from 2.2.0 to 3.0.0 in /orchestrator (#298)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5857,
+          "title": "orchestrator): reconcile Cargo.lock after the ed25519-dalek and sha2 bumps (#336",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4956,7 +4961,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:58:41.935Z",
+      "verified_at": "2026-10-30T20:05:20.889Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37113,8 +37118,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "36d6c793",
-      "content_hash": "f44d9d40eb560c0f169cbef4741a282dfc8c8bd502e7d641acddc3217a30c6c2",
+      "source_version": "91dfab21",
+      "content_hash": "dc9eb7205aec62d31ec20750713ccabb8da844ee549c07afbd85bf7edc7c9f2c",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -37147,6 +37152,11 @@
           "number": 5501,
           "title": "use JSON value identity in window partitions and correlated LIMIT (#31681)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5856,
+          "title": "plan): MySQL implicit boolean semantics for ENUM/SET, BIT literals and JSON cond",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37154,7 +37164,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T12:01:49.003Z",
+      "verified_at": "2026-10-30T20:05:20.516Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43944,8 +43954,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "36bf2b88",
-      "content_hash": "8a9c8d74e95de0c8af9e46fb4e60dc5fd09d63a17df54764b8e8ed3fdb3c55ad",
+      "source_version": "bb947dc1",
+      "content_hash": "c2d52c4683f5017446d47529cb2a1df91b5f0238a8deb54372adc88377e43b2f",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -43988,6 +43998,11 @@
           "number": 5412,
           "title": "coverage): clone missing submodules once (#28325)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5853,
+          "title": "track_memory_allocs): add allocation tracking for linter rules (#28470)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43995,7 +44010,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T21:43:30.616Z",
+      "verified_at": "2026-10-30T20:05:08.575Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -45485,8 +45500,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "2e258fc3",
-      "content_hash": "f38ecb1336a4f9ee5520a2ec94813fa084020ab3e6f649300bb243690ea443bb",
+      "source_version": "df57ae6d",
+      "content_hash": "c5ec86e0489df88cbfb5bb272258f0c7d25b75441e3e0cb8545ac37fafe9f9a1",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -45574,6 +45589,11 @@
           "number": 5585,
           "title": "Crash-Consistent Atomic Config and State Persistence Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5855,
+          "title": "openapi,swagger): skip null spec entries instead of panicking",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45581,7 +45601,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T03:48:36.611Z",
+      "verified_at": "2026-10-30T20:05:16.166Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72661,8 +72681,8 @@
       "slug": "vitest-dev-vitest",
       "platform": "github",
       "source_url": "https://github.com/vitest-dev/vitest",
-      "source_version": "1a77c6cb",
-      "content_hash": "b44bf11cfbed153e28939a4755ae96ff90926df89f018b34af34ba0fb1a40e45",
+      "source_version": "42770759",
+      "content_hash": "da9d0efad6726bb1ecd4b8ac8756a4dac86cb169902548abd92445d99b32b417",
       "dossier_path": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vitest-dev-vitest-learnings.md",
       "promoted_rules": [
@@ -72690,6 +72710,11 @@
           "number": 4906,
           "title": "browser): don't hang in `page.viewport()` (#11738)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5854,
+          "title": "cache): do not fail when the cache dir is unwritable (#11781)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72697,7 +72722,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T16:51:54.832Z",
+      "verified_at": "2026-10-30T20:05:09.605Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155262,6 +155287,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T19:58:26.573Z"
+    },
+    "rule-5853": {
+      "learning_id": "rule-5853",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5853,
+      "title": "track_memory_allocs): add allocation tracking for linter rules (#28470)",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "bb947dc1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:05:08.575Z"
+    },
+    "rule-5854": {
+      "learning_id": "rule-5854",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5854,
+      "title": "cache): do not fail when the cache dir is unwritable (#11781)",
+      "source_url": "https://github.com/vitest-dev/vitest",
+      "source_version": "42770759",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:05:09.605Z"
+    },
+    "rule-5855": {
+      "learning_id": "rule-5855",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5855,
+      "title": "openapi,swagger): skip null spec entries instead of panicking",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "df57ae6d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:05:16.166Z"
+    },
+    "rule-5856": {
+      "learning_id": "rule-5856",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5856,
+      "title": "plan): MySQL implicit boolean semantics for ENUM/SET, BIT literals and JSON cond",
+      "source_url": "https://github.com/matrixorigin/matrixone",
+      "source_version": "91dfab21",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:05:20.516Z"
+    },
+    "rule-5857": {
+      "learning_id": "rule-5857",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5857,
+      "title": "orchestrator): reconcile Cargo.lock after the ed25519-dalek and sha2 bumps (#336",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "a7767075",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:05:20.889Z"
     }
   },
   "aliases": {

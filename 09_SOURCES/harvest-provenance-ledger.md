@@ -6296,3 +6296,8 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `d91ed8e6` | Multi-dimensional audit evidence | 2026-10-30T19:54:17.049Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `514f09ca` | Multi-dimensional audit evidence | 2026-10-30T19:54:18.234Z |
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `10db33df` | Multi-dimensional audit evidence | 2026-10-30T19:58:26.659Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `bb947dc1` | Multi-dimensional audit evidence | 2026-10-30T20:05:08.676Z |
+| `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `42770759` | Multi-dimensional audit evidence | 2026-10-30T20:05:09.733Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `df57ae6d` | Multi-dimensional audit evidence | 2026-10-30T20:05:16.265Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `91dfab21` | Multi-dimensional audit evidence | 2026-10-30T20:05:20.616Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `a7767075` | Multi-dimensional audit evidence | 2026-10-30T20:05:20.983Z |

@@ -6287,3 +6287,8 @@
 | `CYCLE-20261030-4W9I` | `2026-10-30T19:54:17.046Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5848` | Yes (`6f3ca876...`) |
 | `CYCLE-20261030-4X6F` | `2026-10-30T19:54:18.231Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5849` | Yes (`0df43974...`) |
 | `CYCLE-20261030-A8V4` | `2026-10-30T19:58:26.656Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5850, Rule 5851, Rule 5852` | Yes (`af85799f...`) |
+| `CYCLE-20261030-IV28` | `2026-10-30T20:05:08.672Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5853` | Yes (`c2d52c46...`) |
+| `CYCLE-20261030-IVVM` | `2026-10-30T20:05:09.730Z` | `vitest-dev/vitest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5854` | Yes (`da9d0efa...`) |
+| `CYCLE-20261030-J0X2` | `2026-10-30T20:05:16.262Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5855` | Yes (`c5ec86e0...`) |
+| `CYCLE-20261030-J49X` | `2026-10-30T20:05:20.613Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5856` | Yes (`dc9eb720...`) |
+| `CYCLE-20261030-J4K1` | `2026-10-30T20:05:20.977Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5857` | Yes (`54ababb5...`) |

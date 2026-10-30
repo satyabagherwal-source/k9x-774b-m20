@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `36d6c793`  
+> **Source Version**: `91dfab21`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T12:01:48.415Z  
+> **Timestamp**: 2026-10-30T20:05:19.934Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T11:56:36.050Z  
+> **Harvest Timestamp**: 2026-10-30T20:05:18.535Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -526,6 +526,295 @@ class ConnectionHooksDemo:
          
 ```
 
+### Core Architecture Module: `clients/python/matrixone/_analytics_workers.py`
+```
+# Copyright 2026 Matrix Origin
+# Licensed under the Apache License, Version 2.0.
+"""Per-client bounded blocking work, independent of an asyncio loop's lifetime."""
+
+import asyncio
+import os
+import threading
+import uuid
+from collections import deque
+from concurrent.futures import Future, ThreadPoolExecutor
+from functools import partial
+from contextvars import copy_context
+
+
+async def _wait(future):
+    wrapped = asyncio.wrap_future(future)
+    try:
+        return await asyncio.shield(wrapped)
+    except asyncio.CancelledError:
+        # Completion/accounting belongs to the concurrent future, even if the
+        # awaiting loop is gone. Consume an eventual asyncio-side exception.
+        wrapped.add_done_callback(lambda done: None if done.cancelled() else done.exception())
+        raise
+
+
+class _Executor:
+    """Retire a failed generation before another job can enter its queue."""
+
+    def __init__(self, capacity, prefix, on_failure=None):
+        self._executor = ThreadPoolExecutor(max_workers=capacity, thread_name_prefix=prefix)
+        self._lock = threading.Lock()
+        self._failure = None
+        self._on_failure = on_failure
+
+    @property
+    def failed(self):
+        with self._lock:
+            return self._failure is not None
+
+    def submit(self, function, *args, _register=None, **kwargs):
+        decision = threading.Event()
+        accepted = False
+        rejection = None
+
+        def execute():
+            decision.wait()
+            if accepted:
+                return function(*args, **kwargs)
+            raise RuntimeError('Analytics submission was rejected') from rejection
+
+        with self._lock:
+            if self._failure is not None:
+                raise RuntimeError(
+                    'Analytics worker generation failed; reconnect or retry cleanup explicitly'
+                ) from self._failure
+            try:
+                future = self._executor.submit(execute)
+                if _register is not None:
+                    _register(future)
+                accepted = True
+            except BaseException as error:
+                # CPython may enqueue before thread creation raises. That
+                # wrapper must never perform unrecorded work later.
+                rejection = self._failure = error
+                try:
+                    self._executor.shutdown(wait=False)
+                except BaseException as cleanup_error:
+                    error.cleanup_error = cleanup_error
+                if self._on_failure is not None:
+                    self._on_failure()
+                raise
+            finally:
+                decision.set()
+        return future
+
+
+class _Admission:
+    def __init__(self, capacity, executor=None):
+        self._available = capacity
+        self._executor = executor
+        self._waiters = deque()
+        self._lock = threading.Lock()
+        self._closed = False
+
+    async def acquire(self):
+        future = Future()
+        with self._lock:
+            if self._closed:
+                raise RuntimeError('Analytics admission is closed')
+            if self._available:
+                self._available -= 1
+                future.set_result(_Lease(self))
+            else:
+                self._waiters.append(future)
+        try:
+            return await _wait(future)
+        except BaseException:
+            if future.cancel():
+                with self._lock:
+                    try:
+                        self._waiters.remove(future)
+                    except ValueError:
+                        pass
+            else:
+                # A grant may be marked running without having a result yet.
+                # Never block this event loop waiting for its producer thread.
+                def return_grant(done):
+                    if not done.cancelled() and done.exception() is None:
+                        done.result().release()
+
+                future.add_done_callback(return_grant)
+            raise
+
+    def release(self):
+        granted = None
+        with self._lock:
+            while self._waiters:
+                future = self._waiters.popleft()
+                if future.set_running_or_notify_cancel():
+                    granted = future
+                    break
+            if granted is None:
+                self._available += 1
+        if granted is not None:
+            # Completion callbacks may return a canceled caller's grant and
+            # therefore reacquire this admission lock.
+            granted.set_result(_Lease(self))
+
+    def set_open(self, value):
+        rejected = []
+        with self._lock:
+            self._closed = not value
+            if not value:
+                while self._waiters:
+                    future = self._waiters.popleft()
+                    if future.set_running_or_notify_cancel():
+                        rejected.append(future)
+        for future in rejected:
+            future.set_exception(RuntimeError('Analytics admission is closed'))
+
+
+class _Lease:
+    """A canceled await does not release a still-running worker's admission."""
+
+    def __init__(self, admission):
+        self._admission = admission
+        self._lock = threading.Lock()
+        self._future = None
+        self._closed = False
+
+    def submit(self, function, *args, _on_submitted=None, **kwargs):
+        with self._lock:
+            if self._closed or self._future is not None:
+                raise RuntimeError('Worker lease is closed or already running')
+            context = copy_context()
+
+            def registered(future):
+                future.add_done_callback(self._completed)
+                self._future = future
+                if _on_submitted is not None:
+                    _on_submitted(future)
+
+            return self._admission._executor.submit(
+                context.run, partial(function, *args, **kwargs), _register=registered
+            )
+
+    async def run(self, function, *args, **kwargs):
+        return await _wait(self.submit(function, *args, **kwargs))
+
+    def _completed(self, future):
+        with self._lock:
+            if self._future is not future:
+                return
+            self._future = None
+            release = self._closed
+        if release:
+            self._admission.release()
+
+    def release(self):
+        with self._lock:
+            if self._closed:
+                return
+            self._closed = True
+            release = self._future is None
+        if release:
+            self._admission.release()
+
+
+class AnalyticsWorkers:
+    """Two CPU/I/O jobs and two staged uploads, plus one independent unlink lane.
+
+    Keep this owner across reconnects. A blocked foreign reader or filesystem
+    operation cannot be forcibly interrupted; it stays charged until completion.
+    """
+
+    def __init__(self):
+        self.workers = _Admission(2)
+        self._executor = self._cpu_executor()
+        self.workers._executor = self._executor
+        self._unlink_executor = _Executor(1, 'mo-unlink')
+        self._staging = _Admission(2)
+        self._lock = threading.Lock()
+        self._uploads = {}
+        self._unlink_queue = deque()
+        self._unlink_active = None
+
+    def _cpu_executor(self):
+        return _Executor(2, 'mo-analytics', lambda: self.workers.set_open(False))
+
+    def set_open(self, value):
+        if value and self._executor.failed:
+            self._executor = self._cpu_executor()
+            self.workers._executor = self._executor
+        self.workers.set_open(value)
+        self._staging.set_open(value)
+        if not value:
+            with self._lock:
+                uploads = tuple(self._uploads.values())
+            for upload in uploads:
+                upload.cancelled.set()
+
+    async def run(self, function, *args, **kwargs):
+        cancelled = threading.Event()
+        lease = await self.workers.acquire()
+        try:
+            return await lease.run(function, *args, cancelled=cancelled, **kwargs)
+        except BaseException:
+            cancelled.set()
+            raise
+        finally:
+            lease.release()
+
+    async def upload(self):
+        permit = await self._staging.acquire()
+        upload = StagingOperation(self, permit)
+        with self._lock:
+            self._uploads[upload.id] = upload
+        return upload
+
+    def pending(self):
+        with self._lock:
+            uploads = tuple(self._uploads.values())
+        return tuple(upload.status() for upload in uploads)
+
+    async def retry_cleanup(self, operation_id):
+        with self._lock:
+            upload = self._uploads[operation_id]
+            if self._unlink_executor.failed:
+                self._unlink_executor = _Executor(1, 'mo-unlink')
+        with upload._lock:
+            if upload._cleanup_error is None:
+                raise RuntimeError('Operation does not have a failed cleanup')
+            upload._cleanup_error = None
+            upload._cleanup = Future()
+            completion = upload._cleanup
+            upload._cleanup_queued = False
+        upload.finish()
+        await _wait(completion)
+
+    def _enqueue_unlink(self, upload):
+        with self._lock:
+            self._unlink_queue.append(upload)
+        self._dispatch_unlink()
+
+    def _dispatch_unlink(self):
+        with self._lock:
+            if self._unlink_active is not None or not self._unlink_queue:
+                return
+            upload = self._unlink_queue.popleft()
+            self._unlink_active = upload
+        # Submit just one item. The bounded staging owners retain queued work;
+        # ThreadPoolExecutor's unbounded queue is never used as admission.
+        with upload._lock:
+            completion = upload._cleanup
+        try:
+            future = self._unlink_executor.submit(upload._unlink)
+        except BaseException as error:
+            future = Future()
+            future.set_exception(error)
+        future.add_done_callback(partial(self._unlinked, upload, completion))
+
+    def _unlinked(self, upload, completion, future):
+        try:
+            error = future.exception()
+    
+```
+
 ### Core Architecture Module: `clients/python/matrixone/_utils.py`
 ```
 """Shared internal utilities for MatrixOne SDK modules."""
@@ -541,7 +830,7 @@ except ImportError:
     SQLALCHEMY_AVAILABLE = False
 
 
-def get_table_name(table: Union[str, Type]) -> str:
+def get_table_name(table: Union[str, Type], *, quoted=False) -> str:
     """Extract table name from string or ORM model.
 
     Supports:
@@ -549,19 +838,28 @@ def get_table_name(table: Union[str, Type]) -> str:
     - "db.table_name"
     - ORM model's resolved table name and schema for db.table
     """
+    from ._sql_literals import sql_identifier, sql_object_name
+
     if isinstance(table, str):
-        return table
+        return sql_object_name(table, qualified=True) if quoted else table
     if SQLALCHEMY_AVAILABLE:
         mapped_table = getattr(table, '__table__', None)
         if isinstance(mapped_table, Table):
+            if quoted:
+                name = sql_identifier(mapped_table.name)
+                return sql_identifier(mapped_table.schema) + '.' + name if mapped_table.schema else name
             return mapped_table.fullname
     if SQLALCHEMY_AVAILABLE and hasattr(table, '__tablename__'):
         name = table.__tablename__
         if hasattr(table, '__table_args__'):
             args = table.__table_args__
             if isinstance(args, dict) and 'schema' in args:
-                return f"{args['schema']}.{name}"
-        return name
+                return (
+                    sql_identifier(args['schema']) + '.' + sql_identifier(name)
+                    if quoted
+                    else f"{args['schema']}.{name}"
+                )
+        return sql_identifier(name) if quoted else name
     raise ValueError(f"Invalid table parameter: {table}. Expected string or ORM model.")
 
 
@@ -700,6 +998,25 @@ def result_returns_rows(result):
         return bool(declared)
     return callable(getattr(result, 'keys', None)) and callable(getattr(result, 'fetchall', None))
 
+
+def rows_from_result(result):
+    """Read a manager-owned result from buffered Client or SQLAlchemy Session."""
+    if result is None:
+        return []
+    rows = getattr(result, 'rows', None)
+    return rows if rows is not None else result.fetchall()
+
+
+def stage_file_uri(name, filename):
+    """Encode a logical Stage identifier while preserving legacy filename syntax."""
+    import re
+    from urllib.parse import quote
+    from ._sql_literals import sql_identifier
+
+    sql_identifier(name)  # Shared identifier bounds/NUL validation.
+    root = 'stage://' + name if re.fullmatch(r'[A-Za-z0-9_.-]+', name) else 'stage:///' + quote(name, safe='')
+    return root + '/' + filename
+
 ```
 
 ### Core Architecture Module: `clients/python/matrixone/connection_hooks.py`
@@ -725,6 +1042,7 @@ Connection hooks for MatrixOne clients
 from enum import Enum
 from contextvars import ContextVar
 import inspect
+import threading
 from typing import Callable, List, Optional, Union
 
 from sqlalchemy import event, text
@@ -732,6 +1050,7 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 _initializing_clients = ContextVar('matrixone_initializing_clients', default=())
+_settings_registration = threading.Lock()
 
 
 def assert_not_in_hook(client):
@@ -776,6 +1095,11 @@ class ConnectionHook:
         }
         self._client_ref = None  # Will be set when hook is attached to a client
         self._async_engine = False
+        self._settings = {}
+        self._settings_revision = 0
+        self._settings_lock = threading.Lock()
+        self._settings_publication_lock = threading.Lock()
+        self._settings_token = object()
 
     def set_client(self, client):
         """Set the client reference for this hook"""
@@ -793,6 +1117,22 @@ class ConnectionHook:
         # Existing engine connections may predate hook attachment. Record.info
         # is cleared by SQLAlchemy when a physical connection is replaced.
         self._on_connect_sync(dbapi_connection, connection_record)
+        self._apply_settings(dbapi_connection, connection_record)
+
+    def _apply_settings(self, connection, record):
+        if not self._settings:
+            return
+        with self._settings_lock:
+            revision, settings = self._settings_revision, self._settings
+        if record.info.get(self._settings_token) == revision:
+            return
+        cursor = connection.cursor()
+        try:
+            for name, value in settings.items():
+                cursor.execute('SET ' + name + ' = %s', (value,))
+        finally:
+            cursor.close()
+        record.info[self._settings_token] = revision
 
     def _on_connect_sync(self, dbapi_connection, connection_record):
         client = self._client_ref
@@ -898,22 +1238,7 @@ class ConnectionHook:
                     client.logger.warning(f"Unknown connection action: {action}")
 
             # Execute custom hook if provided
-            if self.custom_hook:
-                if hasattr(self.custom_hook, '__call__'):
-                    # Check if it's an async function
-                    if (
-                        hasattr(self.custom_hook, '__code__') and self.custom_hook.__code__.co_flags & 0x80
-                    ):  # Check if async
-                        await self.custom_hook(client)
-                    else:
-                        # Try to call it as sync, but handle potential async functions
-                        try:
-                            result = self.custom_hook(client)
-                            # If it returns a coroutine, await it
-                            if hasattr(result, '__await__'):
-                                await result
-                        except TypeError as e:
-                            if "object NoneType can't be used in 'await' expression" in st
+
 ```
 
 ### Core Architecture Module: `clients/python/matrixone/index_utils.py`
@@ -936,136 +1261,96 @@ class ConnectionHook:
 Index utilities - Shared logic for secondary index operations
 """
 
-from typing import List, Tuple
+
+def read_index_metadata(connection, table_name, database=None):
+    """Resolve the tenant/database and index keys on the counting connection."""
+    from sqlalchemy import text
+    from ._sql_literals import identifier_parts
+
+    parts = identifier_parts(table_name, qualified=True)
+    if len(parts) == 2:
+        if database is not None and database != parts[0]:
+            raise ValueError('Explicit database conflicts with qualified table name')
+        database = parts[0]
+    elif database is None:
+        result = connection.exec_driver_sql('SELECT DATABASE()')
+        try:
+            database = result.scalar()
+        finally:
+            result.close()
+    if not database:
+        raise ValueError('Index verification requires a database')
+    result = connection.execute(
+        text("""
+        SELECT i.id, i.name, i.index_table_name, i.type, i.column_name,
+               i.ordinal_position, i.algo, i.algo_table_type
+        FROM mo_catalog.mo_indexes i JOIN mo_catalog.mo_tables t ON i.table_id=t.rel_id
+        WHERE t.account_id=CURRENT_ACCOUNT_ID()
+          AND (t.reldatabase=:database OR (@@lower_case_table_names<>0 AND LOWER(t.reldatabase)=LOWER(:database)))
+          AND (t.relname=:table OR (@@lower_case_table_names<>0 AND LOWER(t.relname)=LOWER(:table)))
+          AND i.type IN ('MULTIPLE','UNIQUE')
+        ORDER BY i.id, i.ordinal_position
+    """),
+        {'database': database, 'table': parts[-1]},
+    )
+    try:
+        return database, parts[-1], result.fetchall()
+    finally:
+        result.close()
 
 
-def build_get_index_tables_sql(table_name: str, database: str = None) -> Tuple[str, Tuple]:
-    """
-    Build SQL to get all secondary index table names for a given table.
+def index_count_report(connection, table_name):
+    """Count UNIQUE entries against non-NULL keys, within one read transaction."""
+    from ._sql_literals import sql_identifier
 
-    This includes both MULTIPLE (regular secondary indexes) and UNIQUE indexes.
-
-    Args:
-        table_name: Name of the table
-        database: Name of the database (optional, but recommended to avoid cross-database conflicts)
-
-    Returns:
-        Tuple of (sql, params)
-    """
-    if database:
-        sql = """
-            SELECT DISTINCT index_table_name
-            FROM mo_catalog.mo_indexes
-            JOIN mo_catalog.mo_tables ON mo_indexes.table_id = mo_tables.rel_id
-            WHERE relname = ? AND reldatabase = ? AND type IN ('MULTIPLE', 'UNIQUE')
-        """
-        return sql, (table_name, database)
-    else:
-        # Fallback to old behavior if database is not provided
-        sql = """
-            SELECT DISTINCT index_table_name
-            FROM mo_catalog.mo_indexes
-            JOIN mo_catalog.mo_tables ON mo_indexes.table_id = mo_tables.rel_id
-            WHERE relname = ? AND type IN ('MULTIPLE', 'UNIQUE')
-        """
-        return sql, (table_name,)
-
-
-def build_get_index_table_by_name_sql(table_name: str, index_name: str, database: str = None) -> Tuple[str, Tuple]:
-    """
-    Build SQL to get the physical table name of a secondary index by its index name.
-
-    Args:
-        table_name: Name of the table
-        index_name: Name of the secondary index
-        database: Name of the database (optional, but recommended to avoid cross-database conflicts)
-
-    Returns:
-        Tuple of (sql, params)
-    """
-    if database:
-        sql = """
-            SELECT DISTINCT index_table_name
-            FROM mo_catalog.mo_indexes
-            JOIN mo_catalog.mo_tables ON mo_indexes.table_id = mo_tables.rel_id
-            WHERE relname = ? AND name = ? AND reldatabase = ?
-        """
-        return sql, (table_name, index_name, database)
-    else:
-        # Fallback to old behavior if database is not provided
-        sql = """
-            SELECT DISTINCT index_table_name
-            FROM mo_catalog.mo_indexes
-            JOIN mo_catalog.mo_tables ON mo_indexes.table_id = mo_tables.rel_id
-            WHERE relname = ? AND name = ?
-        """
-        return sql, (table_name, index_name)
+    database, table, metadata = read_index_metadata(connection, table_name)
+    quote = lambda name: sql_identifier(name, force=True)
+    target = quote(database) + '.' + quote(table)
+    groups = {}
+    for identity, name, physical, kind, column, ordinal, algorithm, family in metadata:
+        if not physical or str(algorithm or '').lower() not in ('', 'btree') or family:
+            raise ValueError('Count verification supports ordinary and UNIQUE B-tree indexes only')
+        key = (identity, name, physical, kind)
+        groups.setdefault(key, []).append((ordinal, column))
+    aggregates = ['COUNT(*) AS main_count']
+    expectations = []
+    actuals = []
+    for (_, name, physical, kind), columns in groups.items():
+        if kind == 'UNIQUE':
+            if [position for position, _ in columns] != list(range(1, len(columns) + 1)):
+                raise ValueError('Incomplete UNIQUE index key metadata')
+            predicate = ' AND '.join(quote(column) + ' IS NOT NULL' for _, column in columns)
+            expected_position = len(aggregates)
+            aggregates.append('COUNT(CASE WHEN ' + predicate + ' THEN 1 END) AS expected_' + str(expected_position))
+        else:
+            expected_position = 0
+        expectations.append((name, physical, expected_position))
+        actuals.append('(SELECT COUNT(*) FROM ' + quote(database) + '.' + quote(physical) + ')')
+    sql = 'SELECT counts.*' + (', ' + ', '.join(actuals) if actuals else '')
+    sql += ' FROM (SELECT ' + ', '.join(aggregates) + ' FROM ' + target + ') AS counts'
+    result = connection.exec_driver_sql(sql, execution_options={'no_parameters': True})
+    try:
+        row = result.fetchone()
+    finally:
+        result.close()
+    details = [
+        {'name': name, 'table': physical, 'expected': row[expected], 'actual': row[len(aggregates) + index]}
+        for index, (name, physical, expected) in enumerate(expectations)
+    ]
+    return row[0], details
 
 
-def build_verify_counts_sql(table_name: str, index_tables: List[str]) -> str:
-    """
-    Build SQL to verify counts of main table and all index tables in a single query.
-
-    Args:
-        table_name: Name of the main table
-        index_tables: List of index table names
-
-    Returns:
-        SQL string
-    """
-    table_name = table_name.replace("`", "``")
-    index_tables = [name.replace("`", "``") for name in index_tables]
-
-    if not index_tables:
-        return f"SELECT COUNT(*) FROM `{table_name}`"
-
-    select_parts = [f"(SELECT COUNT(*) FROM `{table_name}`) as main_count"]
-    for idx, index_table in enumerate(index_tables):
-        select_parts.append(f"(SELECT COUNT(*) FROM `{index_table}`) as idx{idx}_count")
-
-    return "SELECT " + ", ".join(select_parts)
-
-
-def process_verify_result(table_name: str, index_tables: List[str], row: Tuple) -> int:
-    """
-    Process the verification result and raise exception if counts don't match.
-
-    Args:
-        table_name: Name of the main table
-        index_tables: List of index table names
-        row: Result row from the verification SQL
-
-    Returns:
-        Row count if verification succeeds
-
-    Raises:
-        ValueError: If any index table has a different count
-    """
-    main_count = row[0]
-
-    if not index_tables:
-        return main_count
-
-    index_counts = {}
-    mismatch = []
-
-    for idx, index_table in enumerate(index_tables):
-        index_count = row[idx + 1]
-        index_counts[index_table] = index_count
-        if index_count != main_count:
-            mismatch.append(index_table)
-
-    # If there's a mismatch, raise an exception with details
-    if mismatch:
-        error_details = [f"Main table '{table_name}': {main_count} rows"]
-        for index_table, count in index_counts.items():
-            status = "✗ MISMATCH" if index_table in mismatch else "✓"
-            error_details.append(f"{status} Index '{index_table}': {count} rows")
-
-        error_msg = "Index count verification failed!\n" + "\n".join(error_details)
-        raise ValueError(error_msg)
-
-    return main_count
+def verify_count_report(report):
+    count, details = report
+    mismatches = [item for item in details if item['actual'] != item['expected']]
+    if mismatches:
+        raise ValueError(
+            'Index count verification failed!\n'
+            + '\n'.join(
+                '%s: %s entries, expected %s' % (item['name'], item['actual'], item['expected']) for item in mismatches
+            )
+        )
+    return count
 
 ```
 
@@ -2040,270 +2325,17 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ```
 
-### Core Architecture Module: `optools/tpch_compare/worker_stream.go`
-```
-// Copyright 2026 Matrix Origin
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package main
-
-import (
-	"context"
-	"database/sql"
-	"errors"
-	"fmt"
-	"io"
-	"math/rand/v2"
-	"os"
-	"path/filepath"
-	"slices"
-	"strings"
-	"sync"
-	"time"
-)
-
-type workerControl struct{ gate, events *os.File }
-
-func (c *workerControl) close() { _ = c.gate.Close(); _ = c.events.Close() }
-func (c *workerControl) barrier(event string) error {
-	if c == nil {
-		return nil
-	}
-	if _, err := fmt.Fprintln(c.events, event); err != nil {
-		return err
-	}
-	var b [1]byte
-	_, err := io.ReadFull(c.gate, b[:])
-	if err != nil {
-		return err
-	}
-	if b[0] != 'g' {
-		return errors.New("invalid controller gate")
-	}
-	return nil
-}
-
-func (c *workerControl) step(start bool, stream, query int, deadline int64) error {
-	if c == nil {
-		return nil
-	}
-	state := "end"
-	if start {
-		state = "start"
-	}
-	_, err := fmt.Fprintf(c.events, "%s %d %d %d\n", state, stream, query, deadline)
-	return err
-}
-
-type waveClock struct {
-	mu          sync.Mutex
-	first, last time.Time
-}
-
-func (w *waveClock) start(t time.Time) {
-	w.mu.Lock()
-	defer w.mu.Unlock()
-	if w.first.IsZero() || t.Before(w.first) {
-		w.first = t
-	}
-}
-func (w *waveClock) finish(t time.Time) {
-	w.mu.Lock()
-	defer w.mu.Unlock()
-	if t.After(w.last) {
-		w.last = t
-	}
-}
-func (w *waveClock) elapsed() int64 {
-	if w.first.IsZero() || w.last.IsZero() {
-		return 0
-	}
-	return w.last.Sub(w.first).Nanoseconds()
-}
-
-func queryPermutation(queries []int, stream int, seed uint64) []int {
-	out := slices.Clone(queries)
-	if stream > 0 {
-		rng := rand.New(rand.NewPCG(seed, uint64(stream)))
-		rng.Shuffle(len(out), func(i, j int) { out[i], out[j] = out[j], out[i] })
-	}
-	return out
-}
-
-func runQueryStreams(ctx context.Context, db *sql.DB, first *sql.Conn, r WorkerRequest, d Dataset, control *workerControl, evidence *runtimeEvidence) (out []QueryReceipt, waveNS int64, retErr error) {
-	seen := map[int]bool{}
-	for _, n := range r.Queries {
-		if n < 1 || n > 22 || seen[n] {
-			return nil, 0, errors.New("invalid or duplicate query selection")
-		}
-		seen[n] = true
-	}
-	conns := []*sql.Conn{first}
-	for i := 1; i < r.Clients; i++ {
-		conn, err := configureConn(ctx, db, r.Engine)
-		if err != nil {
-			return nil, 0, err
-		}
-		defer func() { retErr = errors.Join(retErr, conn.Close()) }()
-		conns = append(conns, conn)
-	}
-	if r.Warmup {
-		warmQueries := allQueries()
-		if r.WarmupSelected {
-			warmQueries = r.Queries
-		}
-		for _, n := range warmQueries {
-			q := d.Queries[n-1].rendered(fmt.Sprintf("warm_%d_%d", os.Getpid(), n))
-			path := filepath.Join(r.OutputRoot, fmt.Sprintf("warm-q%02d.rows", n))
-			deadline := r.QueryDeadlineNS
-			if value := r.DeadlinesNS[n]; value > 0 {
-				deadline = value
-			}
-			qctx, cancel := context.WithTimeoutCause(ctx, time.Duration(deadline), errors.New("warmup deadline"))
-			if err := control.step(true, 0, n, deadline); err != nil {
-				cancel()
-				return nil, 0, err
-			}
-			_, err := executeUnit(qctx, first, q, path, captureDisk)
-			cancel()
-			err = errors.Join(err, control.step(false, 0, n, 0))
-			if err != nil {
-				return nil, 0, fmt.Errorf("warmup: %w", err)
-			}
-			if err := os.Remove(path); err != nil {
-				return nil, 0, err
-			}
-		}
-	}
-	if err := configureNativeProfile(ctx, first, r); err != nil {
-		return nil, 0, err
-	}
-	finishProfile, err := workerProfileStart(r)
-	if err != nil {
-		return nil, 0, err
-	}
-	defer func() { retErr = errors.Join(retErr, finishProfile()) }()
-	if r.Profile != nil && (r.Profile.Kind == "alloc" || r.Profile.Kind == "wait") {
-		if err := goProfileSnapshot(r.OutputRoot, "before", r.Profile.Kind); err != nil {
-			return nil, 0, err
-		}
-	}
-	if evidence != nil {
-		evidence.before = runtimeSnapshot()
-	}
-	if err := control.barrier("ready"); err != nil {
-		return nil, 0, err
-	}
-	streamsCtx, cancel := context.WithCancelCause(ctx)
-	defer cancel(nil)
-	type streamResult struct {
-		stream  int
-		queries []QueryReceipt
-		err     error
-	}
-	results := make(chan streamResult, r.Clients)
-	start := make(chan struct{})
-	clock := &waveClock{}
-	for stream, conn := range conns {
-		go func() {
-			result := streamResult{stream: stream}
-			defer func() { results <- result }()
-			<-start
-			for rep := 0; rep < r.Repetitions; rep++ {
-				for _, n := range queryPermutation(r.Queries, stream, r.Seed) {
-					q := d.Queries[n-1].rendered(fmt.Sprintf("%d_%d_%d_%d", os.Getpid(), stream, rep, n))
-					var native *nativeProfile
-					if r.Profile != nil && r.Profile.Kind == "operator" {
-						native = &nativeProfile{engine: r.Engine.Name, root: r.OutputRoot, prefix: fmt.Sprintf("native-q%02d-s%d-r%d", n, stream, rep), selectIndex: q.ResultStatement, plainSelect: q.Statements[q.ResultStatement]}
-						if r.Engine.Name == "mo" {
-							q.Statements[q.ResultStatement] = "EXPLAIN ANALYZE " + q.Statements[q.ResultStatement]
-							q.Columns = []Column{{Kind: "text"}}
-						}
-					}
-					if r.Unlimited && q.Limit > 0 {
-						q.Statements[q.ResultStatement] = strings.TrimSuffix(q.Statements[q.ResultStatement], fmt.Sprintf(" LIMIT %d", q.Limit))
-						q.Limit = 0
-					}
-					deadline := r.QueryDeadlineNS
-					if limit := r.DeadlinesNS[n]; limit > 0 {
-						deadline = limit
-					}
-					qctx, qcancel := context.WithTimeoutCause(streamsCtx, time.Duration(deadline), fmt.Errorf("query Q%d deadline", n))
-					if err := control.step(true, stream, n, deadline); err != nil {
-						qcancel()
-						result.err = err
-						cancel(err)
-						return
-					}
-					cap, err := executeUnitClock(qctx, conn, q, filepath.Join(r.OutputRoot, fmt.Sprintf("q%02d-s%02d-%04d.rows", n, stream, rep)), captureDisk, clock, native)
-					qcancel()
-					err = errors.Join(err, control.step(false, stream, n, 0))
-					receipt := QueryReceipt{Query: n, Repetition: rep, Stream: stream, Capture: cap}
-					if err == nil && r.Reference {
-						err = qualifyReference(r.DatasetRoot, d, q, r.OutputRoot, cap)
-						receipt.Reference = "pass"
-						if err != nil {
-							receipt.Reference = "failed"
-						}
-					}
-					if err != nil {
-						receipt.Error = err.Error()
-					}
-					result.queries = append(result.queries, receipt)
-					if err != nil {
-						result.err = err
-						cancel(err)
-						return
-					}
-				}
-			}
-		}()
-	}
-	close(start)
-	ordered := make([]streamResult, r.Clients)
-	for range r.Clients {
-		res := <-results
-		ordered[res.stream] = res
-		retErr = errors.Join(retErr, res.err)
-	}
-	waveNS = clock.elapsed()
-	for _, res := range ordered {
-		out = append(out, res.queries...)
-	}
-	if evidence != nil {
-		evidence.after = runtimeSnapshot()
-	}
-	retErr = errors.Join(retErr, control.barrier("done"))
-	if r.Profile != nil && (r.Profile.Kind == "alloc" || r.Profile.Kind == "wait") {
-		retErr = errors.Join(retErr, goProfileSnapshot(r.OutputRoot, "after", r.Profile.Kind))
-	}
-	return out, waveNS, retErr
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #31753** (2026-10-29): **test: cover IVF rank option isolation and overrides**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  - #30414  ## What this PR does / why we need it:  Extend IVF rank option regression coverage for query-level nprobe overrides and session isolation. Two connections exercise distinct session values, a query override, and recovery after invalid options; a small fixture compares POST and FORCE results.  Validation: native libraries and service built on macOS arm64 CPU. The rank-options SQL case passed twice (63/63 each) with the official tester; the vector directory passed with 3362 successful statements and two existing ignored statements. The tester did not compare JDBC metadata. CI remains pending. GPU search was not run, and the original high-dimensional data and queries were unavailable; these results do not guarantee recall on arbitrary data.  Performance: test-only changes; no production runtime impact.  Related 4.2-dev PR: #31754 
+- **Issue #31935** (2026-10-30): **plan: support DROP VIEW with multiple views (#31910)**
+  *Symptoms*: Fixes #31910  ## Summary `DROP VIEW v1, v2 [, ...]` and `DROP VIEW IF EXISTS v1, v2, ...` failed with `20105 not supported: drop multiple (N) view`. They now work like MySQL (`DROP VIEW [IF EXISTS] view_name [, view_name] ...`) and like MO's own `DROP TABLE t1, t2`.  ## Cause `buildDropView` rejected any statement with more than one name. The executor already supports a multi-target `plan.DropTable` (`Tables`, used by `DROP TABLE t1, t2`), and each entry carries its own `IsView`.  ## Fix - `pkg/sql/plan/build_ddl.go`: move the per-name logic into `buildDropViewSingle` (unchanged rules: missing view / base table → `ErrBadView` without IF EXISTS; with IF EXISTS a missing view is skipped and a same-named base table is a no-op, never dropped; subscription views rejected). With several names, every entry is resolved first and placed in `DropTable.Tables`, so an error on any name drops nothing (MySQL behaves the same way). - `pkg/frontend/authenticate.go`: for a multi-name DROP VIEW, check DROP VIEW privilege per target (`authenticateMultiDropViewTargets`, same idea as `authenticateMultiDropTableTargets`), so a list spanning databases is not authorized by the first database only.  ## Evidence (before / after) - UT `pkg/sql/plan/build_ddl_drop_multi_view_test.go` (3 tests): RED on main (`not supported: drop multiple (3) view`), GREEN with the fix. `go test ./pkg/sql/plan/` ok; `./pkg/frontend -run 'Privilege|Authenticate|DropView|DropTable|determine'` ok. - E2E on single-node builds
 
-- **Issue #31713** (2026-10-29): **fix(python): preserve double column type**
-  *Symptoms*: ## What type of PR is this?  - [x] BUG - [x] Test and CI  ## Which issue(s) this PR fixes  Fixes #31651  ## What this PR does / why we need it  The simplified Python SDK table API routes both `float` and `double` through SQLAlchemy `Float`, so a requested DOUBLE column is emitted as FLOAT and loses range and precision.  Use the MySQL `DOUBLE` type for double columns while keeping FLOAT unchanged. Preserve the public builder's precision-only and scale-only call compatibility; precision and scale are applied when both are supplied.  ## Verification  - Before the fix, the new regression failed because the DOUBLE column was a `Float()`. - Focused table-builder tests: 9 passed. - Complete Python offline suite: 2,335 passed. - Black, Flake8, `compileall`, and `git diff --check`: passed. - sdist and wheel build plus Twine checks: passed. - Independent review found a precision-only compatibility regression in the first candidate; the final candidate fixes it and was approved with no remaining blockers.  Scope: 2 files, +40/-9. No server or wire-protocol changes.
+- **Issue #31934** (2026-10-30): **fix(ci): cancel obsolete PR runs and avoid post-merge main checks**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Refs #29249  ## What this PR does / why we need it:  Cancel obsolete ALL CI runs when a PR closes, using the existing controller and two minutes of cleanup grace before force cancellation. Revalidate PR closure and run attempts; protect reopened PRs, post-close reruns, other forks and branches still needed by another open PR.  Avoid repeating tests after merges to main: retain pre-merge checks and release-branch check-in regression, with daily/manual SCA and Maven warming. The lightweight close-event cancellation controller still releases stale work. Align native-contract assertions with the retained PR path filters.  Reduce cold SCA setup by installing pinned, SHA256-verified golangci-lint 2.14.0 release binaries on supported Go 1.27 hosts through the existing downloader. Bound the download to 60 seconds and retain source fallback. Publish the tool cache before native/analysis work can fail. Other tool versions and source installation remain pinned.  Validation: 45 Node helper tests, native build contracts, 16 GPU/toolchain tests, downloader failure/atomicity tests, actionlint for eight workflows, syntax and diff checks pass. Real Linux/macOS arm64 release binaries were verified and executed; the macOS binary passed a focused project lint check. Full local tool installation remains blocked by e
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2320,8 +2352,8 @@ func runQueryStreams(ctx context.Context, db *sql.DB, first *sql.Conn, r WorkerR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d950fdcd` (2026-10-29)
-**Commit Message**: fix: use JSON value identity in window partitions and correlated LIMIT (#31681)
+### Incident Patch 1: `d8c90c20` (2026-10-30)
+**Commit Message**: fix(plan): MySQL implicit boolean semantics for ENUM/SET, BIT literals and JSON conditions (#31492)
 
 ## What type of PR is this?
 
@@ -2335,872 +2367,240 @@ Observed empirical fixes and code patches:
 
 ## Which issue(s) this PR fixes:
 
-Fixes #31636
+Related to #30931
+Related to #30930
+Related to #30932
 
 ## What this PR does / why we need it:
 
-Two SQL-visible symptoms came from comparing JSON partition keys by raw
-bytes:
+Consolidated group #30931: ENUM/SET truthiness, BIT value literals, JSON
+IF/CASE conditions. Each defect traces to a surface consuming display
+text or a strict cast where the stored payload was required.
 
-- `PARTITION BY` a JSON column split SQL-equal values: `1` and `1.0`
-landed in different window partitions and returned wrong `ROW_NUMBER`,
-`COUNT` and `SUM`.
-- The correlated `ORDER BY ... LIMIT 1` subquery, rewritten as
-`ROW_NUMBER` over the correlation keys and joined back by JSON equality,
-returned multiple rows per outer row.
+Root causes
+- **#30931 (master)** ENUM/SET column references bind as display calls;
+boolean contexts string-parsed labels: `IF(e,1,0)`/`IF(s,1,0)` returned
+0 for every nonzero ordinal/bitmap, `WHERE e`/`s` and `e AND 1` failed
+with 'a' is not a valid bool expression', grouped/DISTINCT boundaries
+lost storage identity, and numeric SET IN/NOT IN comparisons re-parsed
+labels after a review-round condition narrowing. On the persisted path
+the binder binds raw storage (uint64/T_enum), which base already
+evaluates correctly - so the r8 round also removed an over-broad feature
+classification that refused native ses
 
-Both wrong results persisted through `INSERT SELECT`. Root cause: the
-non-ORDER comparator `pkg/compare.New()` fell back to a raw-byte
-`strCompare` for `T_json` (the colexec partition operator uses it to
-split window feeds), and `pkg/partition.Partition()` routed `T_json` to
-`bytesPartition` for the window operator's internal identity detector.
-
-Fix: both paths now reuse the JSON value-identity detector that ORDER BY
-already applies (`jsonCompare` / `jsonOrderPar
-
-**File**: `pkg/compare/compare.go` (modified, +6/-10)
+**File**: `docs/design/20261027-implicit-boolean-semantics-enum-set-bit-json.md` (added, +217/-0)
 ```diff
-@@ -174,18 +174,14 @@ func newCompareFor(typ types.Type, desc, nullsLast, sqlOrder bool) Compare {
- 		}
- 		return newCompare(types.GenericAscCompare[types.MoYear], genericCopy[types.MoYear], nullsLast)
- 	case types.T_json:
--		if sqlOrder {
--			return &jsonCompare{
--				desc:        desc,
--				nullsLast:   nullsLast,
--				vs:          make([]*vector.Vector, 2),
--				isConstNull: make([]bool, 2),
--			}
--		}
--		return &strCompare{
-+		// JSON equality/identity follows MySQL JSON value semantics, never raw
-+		// bytes: 1, 1.0 and 1e0 are one value, and members/elements compare by
-+		// their own typed semantics. This is the same comparator ORDER BY uses,
-+		// so grouping/splitting consumers (window PARTITION BY feeds, transfer
-+		// identity checks) agree with the SQL = operator and GROUP BY.
-+		return &jsonCompare{
- 			desc:        desc,
- 			nullsLast:   nullsLast,
--			typ:         typ,
- 			vs:          make([]*vector.Vector, 2),
- 			isConstNull: make([]bool, 2),
- 		}
+@@ -0,0 +1,217 @@
++# Implicit boolean semantics for ENUM/SET, BIT literals, and JSON conditions
++
++- Status: Review required
++- Tracking issue: [#30931](https://github.com/matrixorigin/matrixone/issues/30931) (consolidated group: #30930, #30932)
++- Implementation PR: [#31492](https://github.com/matrixorigin/matrixone/pull/31492) - implemented from revision 8; after the revision-9 deviation repair lands, the PR description and implementation review must link THIS revision and its hash
++- Design revision: 9
++- Last updated: 2026-10-30
++- Supersedes revision 8 (SHA256 15d933cf6ac0608423409fa31173d969cc8de16a01be3ee969e0c8678ad6d73a, the independently PASSed predecessor, returned with round-9 finding P2 - the minted per-feature MORPC slot and its version-gate wiring violate the repository's shutdown-only upgrade contract, `.agents/skills/mo-dev/references/upgrade-compatibility.md:13-40`), which superseded revision 7 (SHA256 ea470bd602e6209e383d96db1c1480f5e807a95b147230e48c9b96ac4ed3bb31, returned with finding F8 - exempt SET storage semantics from the boolean-condition contracts), which superseded revision 6 (SHA256 1cec7f6e700f2f3863aea39214475fce3bd3d73e33ef5d2e07608e85105ed1c1, returned with finding R2 - close the expired-but-serving old-CN path before authoring opens), revision 5 (bd774cfa..., finding R1 startup vs already-serving closure), revision 4 (921a53533489bc123ecc296455e72a3d92d926fdf263beb7870d199eb98501bb, finding P2 durable-floor ownership), revision 3 (4bd0cb7d..., findings H1-H2), revision 2 (791b1dfa..., findings G1-G4), and revision 1 (f0a689b7..., findings F1-F5). Revision 7 verified the R2 finding against the code - all anchors confirmed, none refuted - and distinguished heartbeat expiry (control-plane tick arithmetic carrying no shutdown evidence) from verified process shutdown/session drain, removed the unsupported automatic-exclusion-of-the-expired-CN claim, and stated the load-bearing rollout prerequisite of that revision's fence: verified retirement of every below-floor CN process before authoring new-operand definitions (retired together with the fence by the round-9 correction); every other revision-7 decision retains its approval in this revision. Revision 8 applies the F8 correction: SET storage conditions no longer classify as boolean-condition contracts because their executors (numeric iffCheck admission, the uint64 truth kernel, the numeric-to-BOOL cast) are unchanged in every receiver and session mode, so SET persisted/generated expressions keep base-native access with byte-identical answers; D8 item 6 documents the cross-mode consumption gate's exact scope, and Section 9 adds the SET persisted no-contract battery. Revision 9 applies the round-9 P2 correction: D8 is rescoped from a cross-version capability fence to a same-binary, same-version cross-mode contract - the minted protocol slot, every version-gate wire, and every gate-behavior test are removed (Section 3 deviation list, Section 7) - while every other revision-2..8 decision (the invariant, matrices, truth kernels, grouping activation and zones, the two-carrier mode propagation, the F8 SET scope, and the cross-mode consumption gate itself) is retained unchanged. The preserved pre-revision-9 implementation in PR #31492 predates this revision and is adapted only at the listed deviation points after this revision passes.
++
++## 0. Revision history and finding disposition
++
++Round-1 findings F1-F5 (resolved in revision 2): F1 grouping-extension activation (code + probe); F2 coercion/mode matrix (code + probe); F3 remote mixed-version (code); F4 duplicated overflow-folding numeric parser (code + probe); F5 cross-boundary silent truth loss against a falsified lossless claim (probe). All confirmed; decisions D6-D10 resulted.
++
++Round-2 findings G1-G4 (resolved in revision 3): G1 D10 zone overlap against the repository's own complete-domain reversibility rule (mysqlSpecialNumericTypeReversible, mysql_special_types.go:915-929, plus the saved probe-2 two-ordinal table); G2 D9 reuse target's extension dispatch (func_cast.go:7639-7642/8055-8086) contradicting the pinned "0x10" -> false oracle; G3 native-mode parity missing a gate on group-key construction (group_binder.go:220-241 has no mode guard); G4 D8 validation structural-only while encodeRemoteScopeWithProtocol plus the json_string_consumers/quantile protocol-test batteries provide the behavioral shape. All confirmed; decisions D9/D10 revised, D11 added, D8 validation re-planned.
++
++### Round-3 review findings (H1-H2, resolved in revision 4)
++
++| Finding | Disposition (revision 4) |
++| --- | --- |
++| H1 D8 covered remote pipelines but not persisted expressions: a generated `CASE WHEN j` can reach an older CN through catalog metadata and execute locally, bypassing stream confirmation and the old BOOL-vector assumption; the existing durable authoring/read owners were not covered | Confirmed by code: generated-column authoring persists the bound expression through the catalog 
 ```
 
-**File**: `pkg/compare/compare_test.go` (modified, +175/-5)
+**File**: `pkg/pb/plan/string_literal_form.go` (modified, +78/-1)
 ```diff
-@@ -171,11 +171,54 @@ func TestNewOrderJSONUsesSQLComparison(t *testing.T) {
- 	physical := New(types.T_json.ToType(), false, false)
- 	physical.Set(0, vec)
- 	physical.Set(1, vec)
--	require.Equal(t,
--		bytes.Compare(vec.GetBytesAt(0), vec.GetBytesAt(2)),
--		physical.Compare(0, 1, 0, 2),
--		"generic JSON comparison keeps its physical byte-order contract",
--	)
-+	require.Zero(t, physical.Compare(0, 1, 1, 4),
-+		"generic JSON identity treats SQL numeric peers as equal")
-+	require.Negative(t, physical.Compare(0, 1, 0, 2),
-+		"generic JSON identity keeps SQL value ordering (numbers before booleans)")
-+}
-+
-+func TestNewJSONIdentityUsesSQLValueSemantics(t *testing.T) {
-+	mp := mpool.MustNewZero()
-+	vec := vector.NewVec(types.T_json.ToType())
-+	defer vec.Free(mp)
-+	values := []string{"1", "1.0", "1e0", `{"a":1}`, `{"a":1.0}`, "[1]", "[1.0]", "2", "2.0"}
-+	rowOf := make(map[string]int64)
-+	for i, value := range values {
-+		jsonValue, err := bytejson.ParseFromString(value)
-+		require.NoError(t, err)
-+		encoded, err := jsonValue.Marshal()
-+		require.NoError(t, err)
-+		require.NoError(t, vector.AppendBytes(vec, encoded, false, mp))
-+		rowOf[value] = int64(i)
-+	}
-+	require.NoError(t, vector.AppendBytes(vec, nil, true, mp))
-+	nullRow := int64(len(values))
-+
-+	c := New(types.T_json.ToType(), false, false)
-+	c.Set(0, vec)
-+	c.Set(1, vec)
-+	require.Zero(t, c.Compare(0, 1, rowOf["1"], rowOf["1.0"]),
-+		"JSON numbers 1 and 1.0 are one identity")
-+	require.Zero(t, c.Compare(0, 1, rowOf["1"], rowOf["1e0"]),
-+		"JSON numbers 1 and 1e0 are one identity")
-+	require.Zero(t, c.Compare(0, 1, rowOf[`{"a":1}`], rowOf[`{"a":1.0}`]),
-+		"object members compare by their own typed semantics")
-+	require.Zero(t, c.Compare(0, 1, rowOf["[1]"], rowOf["[1.0]"]),
-+		"array elements compare by their own typed semantics")
-+	require.NotZero(t, c.Compare(0, 1, rowOf["1"], rowOf["2"]),
-+		"different JSON values keep different identities")
-+	require.NotZero(t, c.Compare(0, 1, rowOf["[1]"], rowOf[`{"a":1}`]),
-+		"an array is never an object")
-+	require.Zero(t, c.Compare(0, 1, nullRow, nullRow),
-+		"NULL equals NULL in grouping identity")
-+	require.NotZero(t, c.Compare(0, 1, nullRow, rowOf["1"]),
-+		"NULL differs from a value")
-+
-+	desc := New(types.T_json.ToType(), true, false)
-+	desc.Set(0, vec)
-+	desc.Set(1, vec)
-+	require.Zero(t, desc.Compare(0, 1, rowOf["1.0"], rowOf["1"]),
-+		"DESC keeps SQL-equal JSON values as peers")
+@@ -299,6 +299,7 @@ const (
+ 	planBooleanTypeID                int32 = 10
+ 	planJSONTypeID                   int32 = 62
+ 	planInt32TypeID                  int32 = 22
++	planEnumTypeID                   int32 = 66
+ 	// These stable function IDs are mirrored from pkg/sql/plan/function to
+ 	// avoid a dependency cycle. The generic CAST operator is not an assignment
+ 	// bounds check; these three internal assignment casts are.
+@@ -458,6 +459,17 @@ type RemoteExpressionFeatures struct {
+ 	// LeastGreatestCollationSemantics requires v117 for appended overload 4.
+ 	// Released overload 0 retains its historical byte-order contract.
+ 	LeastGreatestCollationSemantics bool
++	// JSONBooleanConditionContracts marks expressions whose evaluation depends
++	// on the MySQL conditional-boolean contracts fixed by this change: IF/CASE
++	// condition slots that admit T_json in-domain (values evaluated with MySQL
++	// conditional numeric coercion) and the ENUM storage-truth admission that
++	// casts the stored ordinal to BOOL. Under the repository's shutdown-only
++	// upgrade contract every in-cluster peer runs the same binary, so the
++	// flag requires no protocol version; its consumer is the persisted
++	// expression cross-mode consumption gate (pkg/sql/plan/persisted_ip.go),
++	// which keeps a MatrixOne-native session from re-binding a catalog
++	// definition authored under the MySQL contracts.
++	JSONBooleanConditionContracts bool
  }
  
- func TestJSONOrderMetadataAndCopy(t *testing.T) {
-@@ -456,3 +499,130 @@ func TestDomainlessNullCompare(t *testing.T) {
- 		})
+ func (features RemoteExpressionFeatures) Any() bool {
+@@ -496,7 +508,8 @@ func (features RemoteExpressionFeatures) Any() bool {
+ 		features.DecimalStatisticalResultContracts ||
+ 		features.TableCollationFunction ||
+ 		features.InvalidDecimalStatisticalResultContract || features.ScalarDivision ||
+-		features.LeastGreatestCollationSemantics
++		features.LeastGreatestCollationSemantics ||
++		features.JSONBooleanConditionContracts
+ }
+ 
+ func isPlanMediumIntType(typ Type) bool {
+@@ -934,6 +947,66 @@ func isExpressionResultMetadataContract(expr *Expr) bool {
  	}
  }
-+
-+func TestJSONCompareCrossVectorConstNullAndTypeControls(t *testing.T) {
-+	mp := mpool.MustNewZero()
-+
-+	appendJSON := func(v *vector.Vector, s string) {
-+		bj, err := bytejson.ParseFromString(s)
-+		require.NoError(t, err)
-+		enc, err := bj.Marshal()
-+		require.NoError(t, err)
-+		require.NoError(t, vector.AppendBytes(v, enc, false, mp))
+ 
++// isMySQLBooleanConditionContractNode reports whether one expression node uses
++// a boolean-condition semantic that depends on the MySQL conditional-boolean
++// contracts fixed by this change: a T_json condition slot of IF/CASE that
++// evaluates in-domain with MySQL conditional numeric coercion (native-mode
++// statements keep the pre-change admission), or the ENUM storage-truth
++// admission that casts the stored ordinal to BOOL. The walk flag feeds only
++// the same-version cross-mode consumption gate in pkg/sql/plan/persisted_ip.go:
++// under the repository's shutdown-only upgrade contract every in-cluster
++// worker and rebinder runs the same binary, so the expression carries no
++// protocol requirement: no per-feature MORPC version and no
++// version gate. SET storage conditions are exempt (design revision
++// 8, finding F8): the persisted binder binds their raw uint64
++// storage type and
++// MySQL-mode query plans recover the same numeric operand, so the
++// pre-existing numeric admission, uint64 truth and numeric-to-BOOL cast
++// kernels evaluate them identically in any receiver and session mode -
++// classifying them would refuse an unchanged execution and lock native
++// sessions out of SET catalog definitions base already serves.
++func isMySQLBooleanConditionContractNode(expr *Expr, fn *Function, id int32) bool {
++	if fn == nil {
++		return false
 +	}
++	switch id {
++	case 21: // generic CAST
++		if expr == nil || expr.Typ.Id != planBooleanTypeID {
++			return false
++		}
++		if len(fn.Args) == 0 || fn.Args[0] == nil {
++			return false
++		}
++		src := fn.Args[0].Typ
++		return src.Id == planEnumTypeID
++	case iffFunctionID:
++		if len(fn.Args) == 0 || fn.Args[0] == nil {
++			return false
++		}
++		// iffCheck admits the ENUM condition in-domain exactly the way
++		// caseCheck's condition slots stay typed, so the IFF condition needs
++		// the same consumption-gate mark the CASE contract does: an ENUM
++		// condition evaluates through the new storage-truth kernel on a
++		// MySQL-mode statement, while a native-mode session keeps the old
++		// admission. A SET condition keeps its raw numeric uint64 type here
++		// and everywhere else, so the unchanged kernel row never needs the
++		// mark.
++		cond := fn.Args[0].Typ
++		return cond.Id == planJSONTypeID || cond.Id == planEnumTypeID
++	case caseFunctionID:
++		for i := 0; i+1 < len(fn.Args); i += 2 {
++			arg := fn.Args[i]
++			if arg == nil {
++				continue
++			}
++			if arg.Typ.Id == planJSONTypeID || arg.Typ.Id == planEnumTypeID {
++				return true
++			}
++		}
++	}
++	return false
++}
 +
-+	// cross-vector: equal JSON values in distinct vectors stay peers, and
-+	// desc inversion keeps them peers while flipping unequal pairs
-+	left := vector.NewVec(types.T_json.ToType())
-+	defer left.Free(mp)
-+	right := vector.NewVec(types.T_json.ToType())
-+	defer right.Free(mp)
-+	appendJSON(left, "1")
-+	appendJSON(left, "2")
-+	appendJSON(right, "1.0")
-+	appendJSON(right, "3")
-+
-+	c := New(types.T_json.ToType(), false, false)
-+	c.Set(0, left)
-+	c.Set(1, right)
-+	require.Zero(t, c.Compare(0, 1, 0, 0), "cross-vector 1 equals 1.0")
-+	require.Negative(t, c.Compare(0, 1, 0, 1), "cross-vector 2 sorts before 3")
-+	desc := New(types.T_json.ToType(), true, false)
-+	desc.Set(0, left)
-+	desc.Set(1, right)
-+	require.Zero(t, desc.Compare(0, 1, 0, 0), "desc cross-vector keeps 1 and 1.0 peers")
-+	require.Positive(t, desc.Compare(0, 1, 0, 1), "desc cross-vector inverts 2 vs 3")
-+
-+	// const-null side: never equal to a value, equal to another NULL, via the
-+	// same nullsCompare contract strCompare applies
-+	constNull := vector.NewConstNull(types.T_json.ToType(), 1, mp)
-+	defer constNull.Free(mp)
-+	cc := New(types.T_json.ToType(), false, false)
-+	cc.Set(0, constNull)
-+	cc.Set(1, left)
-+	require.NotZero(t, cc.Compare(0, 1, 0, 0), "const NULL differs from a value")
-+	cc2 := New(types.T_json.ToType(), false, false)
-+	cc2.Set(0, constNull)
-+	cc2.Set(1, constNull)
-+	require.Zero(t, cc2.Compare(0, 1, 0, 0), "const NULL equals const NULL")
-+
-+	// reverse controls: ordinary types are untouched by the JSON change
-+	ivec := vector.NewVec(types.T_int64.ToType())
-+	defer ivec.Free(mp)
-+	require.NoError(t, vector.AppendFixedList(ivec, []int64{1, 2}, nil, mp))
-+	i := New(types.T_int64.ToType(), false, false)
-+	i.Set(0, ivec)
-+	i.Set(1, ivec)
-+	require.Negative(t, i.Compare(0, 1, 0, 1), "int64 1 sorts before 2")
-+	idi := New(types.T_int64.ToType(), true, false)
-+	idi.Set(0, ivec)
-+	idi.Set(1, ivec)
-+	require.Positive(t, idi.Compare(0, 1, 0, 1), "desc int64 inverts")
-+
-+	svec := vector.NewVec(types.T_varchar.ToType())
-+	defer svec.Free(mp)
-+	require.NoError(t, vector.AppendStringList(svec, []s
+ // RequiredRemoteExpressionFeatures reports the independent versioned
+ // expression features present in owner. Keep the features separate so callers
+ // can retain precise diagnostics, while sharing one owner walk so adding one
+@@ -1018,6 +1091,10 @@ func RequiredRemoteExpressionFeatures(owner any) (features RemoteExpressionFeatu
+ 					fn.Args[0] != nil && fn.Args[0].Typ.Id == 55 { // CAST YEAR -> BIT
+ 					features.
 ```
 
-**File**: `pkg/partition/partition.go` (modified, +9/-2)
+**File**: `pkg/sql/colexec/evalExpression.go` (modified, +41/-8)
 ```diff
-@@ -248,15 +248,22 @@ func Partition(sels []int64, diffs []bool, partitions []int64, vec *vector.Vecto
- 		return genericPartition[types.Rowid](sels, diffs, partitions, vec)
- 	case types.T_Blockid:
- 		return genericPartition[types.Blockid](sels, diffs, partitions, vec)
--	case types.T_char, types.T_varchar, types.T_json, types.T_text,
-+	case types.T_json:
-+		// Partition identity for JSON follows MySQL JSON value semantics,
-+		// matching how GROUP BY, DISTINCT and the comparison operators treat
-+		// the type: 1, 1.0 and 1e0 are one value, not byte-distinct
-+		// partitions. Reuses the JSON peer-group detector ORDER BY already
-+		// applies, so PARTITION BY and ORDER BY agree on grouped values.
-+		return jsonOrderPartition(sels, diffs, partitions, vec)
-+	case types.T_char, types.T_varchar, types.T_text,
- 		types.T_binary, types.T_varbinary, types.T_blob,
- 		types.T_array_float32, types.T_array_float64,
- 		types.T_array_bf16, types.T_array_float16, types.T_array_int8, types.T_array_uint8,
- 		types.T_datalink:
--		return bytesPartition(sels, diffs, partitions, vec)
- 		//Used by ORDER_BY SQL clause.
- 		//Byte partition logic doesn't use byte.Compare or Str.
- 		//Hence, we can use bytesPartition here.
-+		return bytesPartition(sels, diffs, partitions, vec)
- 	default:
- 		if vec.IsConst() {
- 			// Even untyped NULL contributes no boundaries. This path never
-```
-
-**File**: `pkg/partition/partition_test.go` (modified, +47/-0)
-```diff
-@@ -363,3 +363,50 @@ func TestPartitionAccumulatesDiffs(t *testing.T) {
- 		require.Equal(t, []int64{0, 1, 2}, ps)
- 	})
- }
-+
-+func TestPartitionJSONValueIdentity(t *testing.T) {
-+	mp := mpool.MustNewZero()
-+
-+	jsonVec := func(values ...any) *vector.Vector {
-+		vec := vector.NewVec(types.T_json.ToType())
-+		for _, v := range values {
-+			if s, ok := v.(string); ok {
-+				bj, err := types.ParseStringToByteJson(s)
-+				require.NoError(t, err)
-+				data, err := bj.Marshal()
-+				require.NoError(t, err)
-+				require.NoError(t, vector.AppendBytes(vec, data, false, mp))
+@@ -1593,6 +1593,7 @@ func (expr *FunctionExpressionExecutor) iffNullResult(index, length int) (*vecto
+ func (expr *FunctionExpressionExecutor) EvalCase(proc *process.Process, batches []*batch.Batch, selectList []bool) (err error) {
+ 	expr.resetFlowControlPrepareParamKind()
+ 	rowCount := expressionRowCount(batches)
++	mode := function.CompatibilityModeFromProcess(proc)
+ 	if len(expr.selectList1) < rowCount {
+ 		expr.selectList1 = make([]bool, rowCount)
+ 		expr.selectList2 = make([]bool, rowCount)
+@@ -1612,15 +1613,47 @@ func (expr *FunctionExpressionExecutor) EvalCase(proc *process.Process, batches
+ 			return err
+ 		}
+ 		if i != len(expr.parameterExecutor)-1 {
+-			bs := vector.GenerateFunctionFixedTypeParameter[bool](expr.parameterResults[i])
++			if expr.parameterResults[i].GetType().Oid == types.T_json {
++				if mode != function.SQLCompatibilityMySQL {
++					// A native-mode statement never binds a JSON condition, so
++					// reaching one here means a persisted expression authored
++					// with the conditional contracts is being consumed
++					// cross-mode. Fail closed with the typed error instead of
++					// letting the BOOL parameter decoding assert on a T_json
++					// vector and never decode JSON as BOOL.
++					return moerr.NewNotSupported(proc.Ctx,
++						"JSON CASE condition requires the MySQL conditional boolean contracts; a MatrixOne native-mode session cannot evaluate it")
++				}
++				// A JSON condition keeps its own domain through the searched CASE
++				// and evaluates per row with MySQL conditional numeric coercion,
++				// the same kernel IF uses. Only an explicit CAST takes the strict
++				// JSON-to-BOOL path, which the BOOL parameter wrapper below would
++				// also wrongly demand here. A native-mode statement never binds a
++				// JSON condition (legacy admission), so it keeps the base
++				// behavior below byte-identically.
++				for j := 0; j < rowCount; j++ {
++					truth, evalErr := function.IffConditionTruthyAt(expr.parameterResults[i], uint64(j), mode)
++					if evalErr != nil {
++						return evalErr
++					}
++					if remaining[j] && truth {
++						remaining[j] = false
++						selectedBranch[j] = true
++					} else {
++						selectedBranch[j] = false
++					}
++				}
 +			} else {
-+				require.NoError(t, vector.AppendBytes(vec, nil, true, mp))
-+			}
-+		}
-+		return vec
-+	}
-+
-+	run := func(vec *vector.Vector, n int) []int64 {
-+		sels := make([]int64, n)
-+		for i := range sels {
-+			sels[i] = int64(i)
-+		}
-+		diffs := make([]bool, n)
-+		partitions := make([]int64, 0, n)
-+		return Partition(sels, diffs, partitions, vec)
-+	}
-+
-+	// JSON value identity: 1, 1.0 and a repeated 1 are one partition;
-+	// 2, 2.0 one partition; NULL forms its own trailing group.
-+	vec := jsonVec("1", "1.0", "1", "2", "2.0", nil)
-+	require.Equal(t, []int64{0, 3, 5}, run(vec, 6))
-+
-+	// Objects compare by member semantics, arrays by element semantics:
-+	// {"a":1} equals {"a":1.0} and [1] equals [1.0], but an object never
-+	// equals an array.
-+	vec2 := jsonVec(`{"a":1}`, `{"a":1.0}`, `[1]`, `[1.0]`)
-+	require.Equal(t, []int64{0, 2}, run(vec2, 4))
-+
-+	// Scoped change: non-JSON strings keep byte-identity partitioning.
-+	sv := vector.NewVec(types.T_varchar.ToType())
-+	require.NoError(t, vector.AppendBytes(sv, []byte("1"), false, mp))
-+	require.NoError(t, vector.AppendBytes(sv, []byte("1.0"), false, mp))
-+	require.Equal(t, []int64{0, 1}, run(sv, 2))
-+}
-```
-
-**File**: `test/distributed/cases/window/json_value_identity_window_31636.result` (added, +155/-0)
-```diff
-@@ -0,0 +1,155 @@
-+drop database if exists issue31636_json_window;
-+create database issue31636_json_window;
-+use issue31636_json_window;
-+create table src(id int primary key, j json, v int);
-+insert into src values
-+(1, '1', 10),
-+(2, '1.0', 20),
-+(3, '1', 30),
-+(4, '2', 40),
-+(5, '2.0', 50),
-+(6, null, 60);
-+select count(*) as cnt, sum(v) as total from src group by j order by sum(v), count(*);
-+➤ cnt[-5,64,0]  ¦  total[-5,64,0]  𝄀
-+1  ¦  60  𝄀
-+3  ¦  60  𝄀
-+2  ¦  90
-+select count(distinct j) as dj from src;
-+➤ dj[-5,64,0]  𝄀
-+2
-+select id,
-+row_number() over(partition by j order by id) as rn,
-+sum(v) over(partition by j order by id rows unbounded preceding) as total
-+from src order by id;
-+➤ id[4,32,0]  ¦  rn[-5,64,0]  ¦  total[-5,64,0]  𝄀
-+1  ¦  1  ¦  10  𝄀
-+2  ¦  2  ¦  30  𝄀
-+3  ¦  3  ¦  60  𝄀
-+4  ¦  1  ¦  40  𝄀
-+5  ¦  2  ¦  90  𝄀
-+6  ¦  1  ¦  60
-+select id,
-+count(*) over(partition by j) as cnt,
-+sum(v) over(partition by j) as total
-+from src order by id;
-+➤ id[4,32,0]  ¦  cnt[-5,64,0]  ¦  total[-5,64,0]  𝄀
-+1  ¦  3  ¦  60  𝄀
-+2  ¦  3  ¦  60  𝄀
-+3  ¦  3  ¦  60  𝄀
-+4  ¦  2  ¦  90  𝄀
-+5  ¦  2  ¦  90  𝄀
-+6  ¦  1  ¦  60
-+select l.id,
-+(select r.id from src r where r.j = l.j order by r.id desc limit 1) as picked
-+from src l order by l.id;
-+➤ id[4,32,0]  ¦  picked[4,32,0]  𝄀
-+1  ¦  3  𝄀
-+2  ¦  3  𝄀
-+3  ¦  3  𝄀
-+4  ¦  5  𝄀
-+5  ¦  5  𝄀
-+6  ¦  null
-+select l.id,
-+(select r.id from src r where r.j = l.j order by r.id desc limit 1 offset 1) as picked
-+from src l order by l.id;
-+➤ id[4,32,0]  ¦  picked[4,32,0]  𝄀
-+1  ¦  2  𝄀
-+2  ¦  2  𝄀
-+3  ¦  2  𝄀
-+4  ¦  4  𝄀
-+5  ¦  4  𝄀
-+6  ¦  null
-+select l.id,
-+(select max(r.id) from src r where r.j = l.j) as picked
-+from src l order by l.id;
-+➤ id[4,32,0]  ¦  picked[4,32,0]  𝄀
-+1  ¦  3  𝄀
-+2  ¦  3  𝄀
-+3  ¦  3  𝄀
-+4  ¦  5  𝄀
-+5  ¦  5  𝄀
-+6  ¦  null
-+create table copied(id int primary key, rn bigint, total bigint);
-+insert into copied
-+select id,
-+row_number() over(partition by j order by id),
-+sum(v) over(partition by j order by id rows unbounded preceding)
-+from src;
-+select * from copied order by id;
-+➤ id[4,32,0]  ¦  rn[-5,64,0]  ¦  total[-5,64,0]  𝄀
-+1  ¦  1  ¦  10  𝄀
-+2  ¦  2  ¦  30  𝄀
-+3  ¦  3  ¦  60  𝄀
-+4  ¦  1  ¦  40  𝄀
-+5  ¦  2  ¦  90  𝄀
-+6  ¦  1  ¦  60
-+create table picked(id int primary key, picked int);
-+insert into picked
-+select l.id, (select r.id from src r where r.j = l.j order by r.id desc limit 1)
-+from src l;
-+select * from picked order by id;
-+➤ id[4,32,0]  ¦  picked[4,32,0]  𝄀
-+1  ¦  3  𝄀
-+2  ¦  3  𝄀
-+3  ¦  3  𝄀
-+4  ¦  5  𝄀
-+5  ¦  5  𝄀
-+6  ¦  null
-+create table jforms(id int primary key, j json);
-+insert into jforms values
-+(1, '1'),
-+(2, '1.0'),
-+(3, '1e0'),
-+(4, '{"a": 1}'),
-+(5, '{"a": 1.0}'),
-+(6, '[1]'),
-+(7, '[1.0]'),
-+(8, null),
-+(9, null);
-+select id,
-+count(*) over(partition by j) as cnt,
-+row_number() over(partition by j order by id) as rn
-+from jforms order by id;
-+➤ id[4,32,0]  ¦  cnt[-5,64,0]  ¦  rn[-5,64,0]  𝄀
-+1  ¦  3  ¦  1  𝄀
-+2  ¦  3  ¦  2  𝄀
-+3  ¦  3  ¦  3  𝄀
-+4  ¦  2  ¦  1  𝄀
-+5  ¦  2  ¦  2  𝄀
-+6  ¦  2  ¦  1  𝄀
-+7  ¦  2  ¦  2  𝄀
-+8  ¦  2  ¦  1  𝄀
-+9  ¦  2  ¦  2
-+create table nform(id int primary key, s varchar(10), d decimal(10, 2));
-+insert into nform values (1, '1', 1), (2, '1.0', 1.0);
-+select id, count(*) over(partition by s) as cnt from nform order by id;
-+➤ id[4,32,0]  ¦  cnt[-5,64,0]  𝄀
-+1  ¦  1  𝄀
-+2  ¦  1
-+select id, count(*) over(partition by d) as cnt from nform order by id;
-+➤ id[4,32,0]  ¦  cnt[-5,64,0]  𝄀
-+1  ¦  2  𝄀
-+2  ¦  2
-+create table keyed(id int primary key, rn bigint, total bigint);
-+insert into keyed values (1, 1, 10);
-+insert into keyed
-+select id,
-+row_number() over(partition by j order by id),
-+sum(v) over(partition by j order by id rows unbounded preceding)
-+from src;
-+Duplicate entry '1' for key 'id'
-+select count(*) as cnt from keyed;
-+➤ cnt[-5,64,0]  𝄀
-+1
-+select * from keyed order by id;
-+➤ id[4,32,0]  ¦  rn[-5,64,0]  ¦  total[-5,64,0]  𝄀
-+1  ¦  1  ¦  10
-+select count(*) as cnt, sum(v) as total from src group by j order by sum(v), count(*);
-+➤ cnt[-5,64,0]  ¦  total[-5,64,0]  𝄀
-+1  ¦  60  𝄀
-+3  ¦  60  𝄀
-+2  ¦  90
-+select 1;
-+➤ 1[-5,64,0]  𝄀
-+1
-+drop database if exists issue31636_json_window;
-```
-
-**File**: `test/distributed/cases/window/json_value_identity_window_31636.sql` (added, +105/-0)
-```diff
-@@ -0,0 +1,105 @@
-+-- issue #31636 persistent regression: JSON value identity must drive window
-+-- PARTITION BY segmentation and the correlated pagination rewrite exactly as
-+-- GROUP BY / DISTINCT / comparison operators treat JSON values.
-+drop database if exists issue31636_json_window;
-+create database issue31636_json_window;
-+use issue31636_json_window;
-+
-+-- source data from the issue: JSON numeric twins, duplicate keys and NULL
-+create table src(id int primary key, j json, v int);
-+insert into src values
-+    (1, '1', 10),
-+    (2, '1.0', 20),
-+    (3, '1', 30),
-+    (4, '2', 40),
-+    (5, '2.0', 50),
-+    (6, null, 60);
-+
-+-- controls: value semantics that main already gets right
-+select count(*) as cnt, sum(v) as total from src group by j order by sum(v), count(*);
-+select count(distinct j) as dj from src;
-+
-+-- W1: ranked + running window over JSON partition keys
-+select id,
-+       row_number() over(partition by j order by id) as rn,
-+       sum(v) over(partition by j order by id rows unbounded preceding) as total
-+from src order by id;
-+
-+-- W2: whole-partition window aggregates
-+select id,
-+       count(*) over(partition by j) as cnt,
-+       sum(v) over(partition by j) as total
-+from src order by id;
-+
-+-- S1: correlated scalar with ORDER BY ... LIMIT 1
-+select l.id,
-+       (select r.id from src r where r.j = l.j order by r.id desc limit 1) as picked
-+from src l order by l.id;
-+
-+-- S3: correlated scalar with ORDER BY ... LIMIT 1 OFFSET 1
-+select l.id,
-+       (select r.id from src r where r.j = l.j order by r.id desc limit 1 offset 1) as picked
-+from src l order by l.id;
-+
-+-- S2 control: equivalent MAX form
-+select l.id,
-+       (select max(r.id) from src r where r.j = l.j) as picked
-+from src l order by l.id;
-+
-+-- P1: INSERT SELECT persistence of window results
-+create table copied(id int primary key, rn bigint, total bigint);
-+insert into copied
-+select id,
-+       row_number() over(partition by j order by id),
-+       sum(v) over(partition by j order by id rows unbounded preceding)
-+from src;
-+select * from copied order by id;
-+
-+-- P2: INSERT SELECT persistence of the correlated LIMIT scalar must persist
-+-- one row per outer row instead of the multi-row rewrite output
-+create table picked(id int primary key, picked int);
-+insert into picked
-+select l.id, (select r.id from src r where r.j = l.j order by r.id desc limit 1)
-+from src l;
-+select * from picked order by id;
-+
-+-- J1: number spellings, objects, arrays and NULL share one JSON identity
-+create table jforms(id int primary key, j json);
-+insert into jforms values
-+    (1, '1'),
-+    (2, '1.0'),
-+    (3, '1e0'),
-+    (4, '{"a": 1}'),
-+    (5, '{"a": 1.0}'),
-+    (6, '[1]'),
-+    (7, '[1.0]'),
-+    (8, null),
-+    (9, null);
-+select id,
-+       count(*) over(partition by j) as cnt,
-+       row_number() over(partition by j order by id) as rn
-+from jforms order by id;
-+
-+-- N1: non-JSON controls keep their own semantics
-+create table nform(id int primary key, s varchar(10), d decimal(10, 2));
-+insert into nform values (1, '1', 1), (2, '1.0', 1.0);
-+select id, count(*) over(partition by s) as cnt from nform order by id;
-+select id, count(*) over(partition by d) as cnt from nform order by id;
-+
-+-- E1: statement atomicity of the window INSERT SELECT under a duplicate-PK
-+-- failure: the target keeps its prior state and the source is untouched
-+create table keyed(id int primary key, rn bigint, total bigint);
-+insert into keyed values (1, 1, 10);
-+insert into keyed
-+select id,
-+       row_number() over(partition by j order by id),
-+       sum(v) over(partition by j order by id rows unbounded preceding)
-+from src;
-+select count(*) as cnt from keyed;
-+select * from keyed order by id;
-+select count(*) as cnt, sum(v) as total from src group by j order by sum(v), count(*);
-+
-+-- same-connection reuse after the failed statement
-+select 1;
-+
-+drop database if exists issue31636_json_window;
-```
-
----
-
-### Incident Patch 2: `fc688227` (2026-10-29)
-**Commit Message**: test(ci): reduce repeated planner work and stabilize async fixtures (#31627)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [ ] BUG
-- [x] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [x] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Related: #31611, #31545, #31491, #29562. The production initialization
-conflict and the two CI timeouts whose causes are not established are
-not claimed as fixed.
-
-## What this PR does / why we need it:
-
-Reduce repeated planner race-test work while retaining all 37 named
-ALTER witnesses, every precision's changed expression, exact result
-checks, and the representative two-expression session boundaries. For 23
-intermediate precisions, simplify the unchanged expression; retain the
-two-complex-expression cases at precision and session boundaries. Extend
-the existing direct binding/projection comparison across all 31
-precisions with a positive creation-session match. This deliberately
-reduces the two-complex-expression cross product; the direct comparison
-does not replace that entire combination coverage.
-
-Match asynchronous test setup to the behavior being asserted. Stop and
-join the publication executor before directly invokin
-
-**File**: `pkg/sql/plan/float_string_scope_session_test.go` (modified, +39/-14)
-```diff
-@@ -272,7 +272,14 @@ func testLegacyFloatAlteredSessionWitnesses(t *testing.T, part int) {
- 			// origin boundaries and precision zero. Every precision still
- 			// exercises migration, LOAD, and its exact result.
- 			fullProof := tc.precision == 0 || tc.precision == 4 || tc.precision == 8 || tc.precision == 30
--			compiler, source := legacyFloatScopeTable(t, "create table t(a double,g varchar(200) default("+expression+"),h varchar(200) default("+expression+"))", 4, time.FixedZone("creation", 8*3600+60))
-+			// Keep two complex witnesses for named sessions and decimal boundaries;
-+			// intermediate precisions need only one to exercise the changed session.
-+			twoWitnesses := fullProof || tc.precision == 1 || tc.precision == 15 || tc.precision == 28 || tc.precision == 29
-+			gExpression := expression
-+			if !twoWitnesses {
-+				gExpression = "concat(a)"
-+			}
-+			compiler, source := legacyFloatScopeTable(t, "create table t(a double,g varchar(200) default("+gExpression+"),h varchar(200) default("+expression+"))", 4, time.FixedZone("creation", 8*3600+60))
- 			func() {
- 				proc := compiler.GetProcess()
- 				reading := compiler.GetContext()
-@@ -301,11 +308,19 @@ func testLegacyFloatAlteredSessionWitnesses(t *testing.T, part int) {
- 				require.NoError(t, err)
- 				source = altered
- 			}()
-+			require.True(t, hasLegacyFloatStringCast(tableDumpDDLColumn(t, source, "g").Default.Expr))
-+			require.True(t, hasLegacyFloatStringCast(tableDumpDDLColumn(t, source, "h").Default.Expr))
- 			before := proto.Clone(source)
- 			execution := CloneTableDefForPlan(source, true)
- 			require.NoError(t, MigrateLegacyFloatStringTableDef(compiler, execution))
- 			const full = "-0.0000000000000012345678901234568"
--			require.Equal(t, full+"1970-01-01 08:01:000.1429", executeLegacyFloatScope(t, compiler, execution, "g"))
-+			wantG := full
-+			if twoWitnesses {
-+				wantG += "1970-01-01 08:01:000.1429"
-+			}
-+			require.Equal(t, wantG, executeLegacyFloatScope(t, compiler, execution, "g"))
-+			require.False(t, hasLegacyFloatStringCast(tableDumpDDLColumn(t, execution, "g").Default.Expr))
-+			require.False(t, hasLegacyFloatStringCast(tableDumpDDLColumn(t, execution, "h").Default.Expr))
- 			// Exact rational rounding is independent of the SQL decimal/format owners.
- 			fraction := new(big.Rat).SetFrac64(1, 7).FloatString(int(tc.precision))
- 			if tc.precision == 4 {
-@@ -324,8 +339,9 @@ func testLegacyFloatAlteredSessionWitnesses(t *testing.T, part int) {
- 				_, err := AnalyzeTableDumpBindings(compiler, execution, nil)
- 				require.NoError(t, err)
++				bs := vector.GenerateFunctionFixedTypeParameter[bool](expr.parameterResults[i])
+ 
+-			for j := 0; j < rowCount; j++ {
+-				b, null := bs.GetValue(uint64(j))
+-				if remaining[j] && !null && b {
+-					remaining[j] = false
+-					selectedBranch[j] = true
+-				} else {
+-					selectedBranch[j] = false
++				for j := 0; j < rowCount; j++ {
++					b, null := bs.GetValue(uint64(j))
++					if remaining[j] && !null && b {
++						remaining[j] = false
++						selectedBranch[j] = true
++					} else {
++						selectedBranch[j] = false
++					}
+ 				}
  			}
--			_, err := AnalyzeTableDumpBindings(compiler, execution, execution)
-+			sensitive, err := AnalyzeTableDumpBindings(compiler, execution, execution)
- 			require.NoError(t, err)
-+			require.True(t, sensitive)
- 			require.Same(t, time.UTC, compiler.GetProcess().GetSessionInfo().TimeZone)
- 			require.Equal(t, "en_US", compiler.GetProcess().GetSessionInfo().LCTimeNames)
- 			migrated := proto.Clone(execution)
-@@ -607,26 +623,29 @@ func TestLegacyFloatSessionProbeProofBoundary(t *testing.T) {
- func TestLegacyFloatSessionProjectionMatchesBinding(t *testing.T) {
- 	const plainSQL = "create table t(a double,g varchar(200) default(concat(a,cast(concat(from_unixtime(0),cast(1 as decimal(10,0))/cast(7 as decimal(10,0))) as char(100)))))"
- 	zone := time.FixedZone("creation", 8*3600+60)
--	for _, precision := range []int32{4, 30} {
--		for _, sql := range []string{plainSQL,
--			"create table t(a double,g varchar(200) default(concat(a,cast(concat(date_format(from_unixtime(0),'%M %H:%i'),cast(hour(from_unixtime(0)) as double)*cast('1e20' as double)) as char(100)))))",
--		} {
-+	for precision := int32(0); precision <= 30; precision++ {
-+		sqls := []string{plainSQL}
-+		if precision == 4 || precision == 30 {
-+			sqls = append(sqls, "create table t(a double,g varchar(200) default(concat(a,cast(concat(date_format(from_unixtime(0),'%M %H:%i'),cast(hour(from_unixtime(0)) as double)*cast('1e20' as double)) as char(100)))))")
-+		}
-+		for _, sql := range sqls {
- 			compiler, source := legacyFloatScopeTable(t, sql, precision, zone)
- 			col := tableDumpDDLColumn(t, source, "g")
- 			item := tableDumpExpression{kind: "default", name: col.Name, col: col, expr: col.Default.Expr, origin: col.Default.OriginString}
- 			stmt, ast, _, err := parseTableDumpExpression(compiler.GetContext(), item.origin, "")
--			require.NoError(t, err)
-+			require.NoError(t, err, "precision=%d sql=%s", precision, sql)
- 			defer stmt.Free()
- 			budget := &tableDumpBindingBudget{}
-+			creationMatch := false
- 			for _, format := range []tableDumpBindingMode{0, tableDumpBindingLegacyFloatFormatting} {
- 				search := tableDumpSessionCandidate{increment: int64(precision), mode: tableDumpBindingLegacyFloat | format}
- 				dependency := &tableDumpDefaultSession{captureUnfolded: true}
- 				folded, err := bindTableDumpExpression(compiler, source, item, ast, search.increment, search.mode, dependency)
--				require.NoError(t, err)
-+				require.NoError(t, err, "pre
+ 			expr.parameterResults[i+1], err = expr.parameterExecutor[i+1].Eval(proc, batches, selectedBranch)
 ```
 
-**File**: `pkg/tests/issues/isolated/idle_lock_route_scale_down_test.go` (modified, +5/-3)
+**File**: `pkg/sql/colexec/evaluate_case_json_bool_test.go` (added, +177/-0)
 ```diff
-@@ -28,6 +28,7 @@ import (
- 	pb "github.com/matrixorigin/matrixone/pkg/pb/lock"
- 	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
- 	"github.com/matrixorigin/matrixone/pkg/pb/timestamp"
-+	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- )
- 
-@@ -164,14 +165,15 @@ func testDropDatabaseAfterCNScaleDown(t *testing.T, cleanupDuringRetirement bool
- 	}
- 	// Observe cache eviction without refreshing it through a SQL probe.
- 	// GetLockTableBind only reads local state and performs no allocation/RPC.
--	require.Eventually(t, func() bool {
-+	require.EventuallyWithT(t, func(collect *assert.CollectT) {
- 		for _, id := range catalogIDs {
- 			current, err := locks[survivor].GetLockTableBind(0, id)
- 			if err != nil || (current.Valid && current.ServiceID != locks[survivor].GetServiceID()) {
--				return false
-+				collect.Errorf("catalog route table=%d bind=%s expected local owner=%s or no binding, error=%v",
-+					id, current.DebugString(), locks[survivor].GetServiceID(), err)
-+				return
- 			}
- 		}
--		return true
- 	}, time.Minute, 50*time.Millisecond, "all cached catalog routes to both retired CNs must converge")
- 	// Separately wait for TN's retirement authority. This probe may allocate
- 	// the new TN binding, but deliberately does not publish a CN route.
-```
-
-**File**: `pkg/tests/issues/table_statistics_owner_test.go` (modified, +6/-2)
-```diff
-@@ -125,9 +125,13 @@ func TestShowTableStatusWithIndexes(t *testing.T) {
- 			_, err := conn.ExecContext(cleanup, "rollback")
- 			assert.NoError(t, err)
- 			_, err = conn.ExecContext(cleanup, "drop database `"+dbName+"`")
--			assert.NoError(t, err)
-+			if !assert.NoError(t, err) {
-+				return
-+			}
- 			var remaining int
--			assert.NoError(t, conn.QueryRowContext(cleanup, "select count(*) from mo_catalog.mo_database where datname = ?", dbName).Scan(&remaining))
-+			if !assert.NoError(t, conn.QueryRowContext(cleanup, "select count(*) from mo_catalog.mo_database where datname = ?", dbName).Scan(&remaining)) {
-+				return
-+			}
- 			assert.Zero(t, remaining)
- 		}()
- 		for _, statement := range []string{
-```
-
-**File**: `pkg/vm/engine/test/publication_test.go` (modified, +10/-1)
-```diff
-@@ -4661,7 +4661,7 @@ func TestCCPRExecutorWithGC(t *testing.T) {
- 
- 	for time.Since(startTime2) < maxWaitTime2 {
- 		taskEntry, ok := exec.GetTask(taskID)
--		if ok && taskEntry.DropAt != nil {
-+		if ok && taskEntry.SubscriptionState == publication.SubscriptionStateDropped && taskEntry.DropAt != nil {
- 			// Verify drop_at is approximately 2 hours ago (allow some tolerance)
- 			expectedTime := dropAtTime
- 			actualTime := *taskEntry.DropAt
-@@ -4676,6 +4676,15 @@ func TestCCPRExecutorWithGC(t *testing.T) {
- 
- 	require.True(t, dropAtUpdatedInMemory, "drop_at should be updated in executor's task entry")
- 
-+	// The production run loop serializes logtail updates and GC. Stop and join
-+	// that loop before invoking GC directly from this test goroutine.
-+	exec.Stop()
-+	taskEntry, ok := exec.GetTask(taskID)
-+	require.True(t, ok)
-+	require.Equal(t, publication.SubscriptionStateDropped, taskEntry.SubscriptionState)
-+	require.NotNil(t, taskEntry.DropAt)
-+	require.WithinDuration(t, dropAtTime, *taskEntry.DropAt, time.Minute)
-+
- 	// Step 8: Manually trigger GC
- 	exec.GCInMemoryTask(0)
- 	_, ok = exec.GetTask(taskID)
-```
-
-**File**: `test/distributed/cases/pessimistic_transaction/clone/clone_in_alter_table.result` (modified, +11/-4)
-```diff
-@@ -2,6 +2,10 @@ drop database if exists test;
- create database test;
- use test;
- create table t1(a int, b int, c int, d int, e int, index(b), index compIdx(c, d), unique index(e));
-+set experimental_hnsw_index = 1;
-+create table t2 (a bigint primary key auto_increment, b vecf32(3), c vecf32(3), d text, index ivfIdx using ivfflat(b) lists=5 op_type "vector_l2_ops", index hnswIdx using hnsw(c) op_type 'vector_l2_ops', fulltext(d));
-+insert into t2(b,c,d) select CONCAT('[',FLOOR(RAND() * 9),',', FLOOR(RAND() * 9), ',', FLOOR(RAND() * 9),']'), CONCAT('[',FLOOR(RAND() * 9),',', FLOOR(RAND() * 9), ',', FLOOR(RAND() * 9),']'), * from generate_series(1, 1000)g;
-+insert into t2(b,c,d) values("[1,1,1]","[1,1,1]","111"),("[9,9,9]","[9,9,9]","999");
- insert into t1 select *,*,*,*,* from generate_series(1, 100*100*10)g;
- delete from t1 where a in (1, 1111, 11111);
- select * from t1 where a in (1, 1111, 11111);
-@@ -116,10 +120,13 @@ a    b_2    c    d    e    f
- 890    888.0    888    888    888    null
- 8890    8888.0    8888    8888    8888    null
- 88890    88888.0    88888    88888    88888    null
--set experimental_hnsw_index = 1;
--create table t2 (a bigint primary key auto_increment, b vecf32(3), c vecf32(3), d text, index ivfIdx using ivfflat(b) lists=5 op_type "vector_l2_ops", index hnswIdx using hnsw(c) op_type 'vector_l2_ops', fulltext(d));
--insert into t2(b,c,d) select CONCAT('[',FLOOR(RAND() * 9),',', FLOOR(RAND() * 9), ',', FLOOR(RAND() * 9),']'), CONCAT('[',FLOOR(RAND() * 9),',', FLOOR(RAND() * 9), ',', FLOOR(RAND() * 9),']'), * from generate_series(1, 1000)g;
--insert into t2(b,c,d) values("[1,1,1]","[1,1,1]","111"),("[9,9,9]","[9,9,9]","999");
-+set @t2_hnsw_meta = (select index_table_name from mo_catalog.mo_indexes where name = 'hnswIdx' and algo = 'hnsw' and algo_table_type = 'hnsw_meta' and table_id = (select rel_id from mo_catalog.mo_tables where account_id = 0 and reldatabase = database() and relname = 't2'));
-+set @wait_t2_hnsw_sql = concat('select coalesce(sum(nrow), 0) = 1002 as ready from `', database(), '`.`', @t2_hnsw_meta, '` for update');
-+prepare wait_t2_hnsw from @wait_t2_hnsw_sql;
-+execute wait_t2_hnsw;
-+ready
-+1
-+deallocate prepare wait_t2_hnsw;
- alter table t2 add column f int;
- select floor(max(l2_distance(b, "[1,1,1]"))) from t2;
- floor(max(l2_distance(b, [1,1,1])))
-```
-
-**File**: `test/distributed/cases/pessimistic_transaction/clone/clone_in_alter_table.sql` (modified, +17/-4)
-```diff
-@@ -4,6 +4,12 @@ use test;
- 
- create table t1(a int, b int, c int, d int, e int, index(b), index compIdx(c, d), unique index(e));
- 
-+-- Build the independent asynchronous fixture while the ordinary-index cases run.
-+set experimental_hnsw_index = 1;
-+create table t2 (a bigint primary key auto_increment, b vecf32(3), c vecf32(3), d text, index ivfIdx using ivfflat(b) lists=5 op_type "vector_l2_ops", index hnswIdx using hnsw(c) op_type 'vector_l2_ops', fulltext(d));
-+insert into t2(b,c,d) select CONCAT('[',FLOOR(RAND() * 9),',', FLOOR(RAND() * 9), ',', FLOOR(RAND() * 9),']'), CONCAT('[',FLOOR(RAND() * 9),',', FLOOR(RAND() * 9), ',', FLOOR(RAND() * 9),']'), * from generate_series(1, 1000)g;
-+insert into t2(b,c,d) values("[1,1,1]","[1,1,1]","111"),("[9,9,9]","[9,9,9]","999");
-+
- -- test 1: add normal col
- insert into t1 select *,*,*,*,* from generate_series(1, 100*100*10)g;
- delete from t1 where a in (1, 1111, 11111);
-@@ -79,10 +85,17 @@ alter table t1 add column f int;
- update t1 set a = a + 1 where c in (8,88,888,8888,88888);
- select * from t1 where c in (8,88,888,8888,88888);
- 
--set experimental_hnsw_index = 1;
--create table t2 (a bigint primary key auto_increment, b vecf32(3), c vecf32(3), d text, index ivfIdx using ivfflat(b) lists=5 op_type "vector_l2_ops", index hnswIdx using hnsw(c) op_type 'vector_l2_ops', fulltext(d));
--insert into t2(b,c,d) select CONCAT('[',FLOOR(RAND() * 9),',', FLOOR(RAND() * 9), ',', FLOOR(RAND() * 9),']'), CONCAT('[',FLOOR(RAND() * 9),',', FLOOR(RAND() * 9), ',', FLOOR(RAND() * 9),']'), * from generate_series(1, 1000)g;
--insert into t2(b,c,d) values("[1,1,1]","[1,1,1]","111"),("[9,9,9]","[9,9,9]","999");
-+
-+
-+-- This case checks index preservation by ALTER COPY. Wait for both committed
-+-- inserts to reach HNSW and its saving transaction to release the model lock.
-+set @t2_hnsw_meta = (select index_table_name from mo_catalog.mo_indexes where name = 'hnswIdx' and algo = 'hnsw' and algo_table_type = 'hnsw_meta' and table_id = (select rel_id from mo_catalog.mo_tables where account_id = 0 and reldatabase = database() and relname = 't2'));
-+set @wait_t2_hnsw_sql = concat('select coalesce(sum(nrow), 0) = 1002 as ready from `', database(), '`.`', @t2_hnsw_meta, '` for update');
-+prepare wait_t2_hnsw from @wait_t2_hnsw_sql;
-+-- @metacmp(false)
-+-- @wait_expect(1, 120)
-+execute wait_t2_hnsw;
-+deallocate prepare wait_t2_hnsw;
- 
- alter table t2 add column f int;
- select floor(max(l2_distance(b, "[1,1,1]"))) from t2;
-```
-
----
-
-### Incident Patch 3: `37a9d62e` (2026-10-29)
-**Commit Message**: fix: clamp ADDTIME/SUBTIME TIME overflow; NULL invalid TIME() strings (#31589)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Fixes #31365
-
-## What this PR does / why we need it:
-
-MatrixOne returned NULL for ADDTIME/SUBTIME results beyond the
-+/-838:59:59 TIME boundary while its own CAST-to-TIME path clamps to
-that boundary, and TIME() with an invalid string argument failed the
-whole statement with ERROR 1690. Both diverge from MySQL and contradict
-MO's CAST behavior. The row-local NULL change also required planner
-metadata and the historical dump/binding eras to stay truthful across
-four review rounds:
-- CTAS/view materialization, information_schema and the client
-NOT_NULL_FLAG must not promise NOT NULL for a result that can be NULL
-(review 5686137613).
-- Pre-8dd dump origins published NOT NULL metadata for persisted TIME()
-string generated expressions; the dump consumer's exact-tree comparison
-rejects any mismatch (review 5688430687).
-- The intermediate post-8dd era that predates this change kept TIME()
-string nodes NOT NULL while DATE string c
-
-**File**: `pkg/sql/colexec/evalExpression_zonemap_test.go` (modified, +1/-1)
-```diff
-@@ -1199,7 +1199,7 @@ func TestEvaluateFilterByZoneMapConstantDiagnostics(t *testing.T) {
- 	proc.WarningSink = sink
- 	addTime := &plan.Expr{Typ: plan.Type{Id: int32(types.T_varchar), Width: 29, Scale: 6}, Expr: &plan.Expr_F{F: &plan.Function{
- 		Func: &plan.ObjectRef{Obj: function.EncodeOverloadID(function.ADDTIME, 9), ObjName: "addtime"},
--		Args: []*plan.Expr{plan2.MakePlan2StringConstExprWithType("838:59:59"), plan2.MakePlan2StringConstExprWithType("00:00:01")},
-+		Args: []*plan.Expr{plan2.MakePlan2StringConstExprWithType("9999-12-31 23:59:59.999999"), plan2.MakePlan2StringConstExprWithType("00:00:00.000001")},
- 	}}}
- 	expr := bindZoneMapFunction(t, proc, "=", addTime, plan2.MakePlan2StringConstExprWithType("other"))
- 	func() {
-```
-
-**File**: `pkg/sql/plan/build_ddl_time_nullability_test.go` (added, +75/-0)
-```diff
-@@ -0,0 +1,75 @@
-+// Copyright 2021 - 2026 Matrix Origin
+@@ -0,0 +1,177 @@
++// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
 +// You may obtain a copy of the License at
 +//
-+//      http://www.apache.org/licenses/LICENSE-2.0
++//	http://www.apache.org/licenses/LICENSE-2.0
 +//
 +// Unless required by applicable law or agreed to in writing, software
 +// distributed under the License is distributed on an "AS IS" BASIS,
@@ -3208,334 +2608,1311 @@ string nodes NOT NULL while DATE string c
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package plan
++package colexec
 +
 +import (
 +	"testing"
 +
-+	"github.com/stretchr/testify/require"
-+
++	"github.com/matrixorigin/matrixone/pkg/container/batch"
 +	"github.com/matrixorigin/matrixone/pkg/container/types"
-+	"github.com/matrixorigin/matrixone/pkg/pb/plan"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	"github.com/matrixorigin/matrixone/pkg/sql/plan/function"
++	"github.com/matrixorigin/matrixone/pkg/testutil"
++	"github.com/matrixorigin/matrixone/pkg/vm/process"
++	"github.com/stretchr/testify/require"
 +)
 +
-+// TIME() over a NOT NULL string column synthesizes NULL with a truncation
-+// warning for invalid input, so view and CTAS materialization must derive a
-+// nullable column instead of promising NOT NULL metadata. The numeric
-+// overload keeps failing the whole statement instead of producing NULL and
-+// therefore keeps its NOT NULL inference.
-+func TestBuildCreateTimeConversionNullabilityMetadata(t *testing.T) {
-+	for _, tc := range []struct {
-+		name      string
-+		selectSQL string
-+		nullable  bool
++// captureSelectExecutor returns a fixed vector from every evaluation and
++// records the row mask each call received, so a test can assert which rows a
++// flow-control evaluator routed to which arm.
++type captureSelectExecutor struct {
++	result *vector.Vector
++	seen   [][]bool
++}
++
++func (c *captureSelectExecutor) Eval(_ *process.Process, _ []*batch.Batch, selectList []bool) (*vector.Vector, error) {
++	c.seen = append(c.seen, append([]bool(nil), selectList...))
++	return c.result, nil
++}
++
++func (c *captureSelectExecutor) EvalWithoutResultReusing(_ *process.Process, _ []*batch.Batch, selectList []bool) (*vector.Vector, error) {
++	c.seen = append(c.seen, append([]bool(nil), selectList...))
++	return c.result, nil
++}
++
++func (c *captureSelectExecutor) ResetForNextQuery() {}
++
++func (c *captureSelectExecutor) Free() {}
++
++func (c *captureSelectExecutor) IsColumnExpr() bool { return false }
++
++func (c *captureSelectExecutor) TypeName() string { return "capture" }
++
++// TestEvalCaseJsonConditionInDomain pins the flow-control CASE evaluator on a
++// JSON condition: the condition stays in its own domain (the BOOL parameter
++// wrapper must not touch the JSON vector, which used to panic with a
++// JSON-to-[]bool type assertion) and each arm is evaluated for exactly the
++// rows whose MySQL conditional numeric truth selects it.
++func TestEvalCaseJsonConditionInDomain(t *testing.T) {
++	proc := testutil.NewProcess(t)
++
++	encodeJSON := func(text string) []byte {
++		bj, err := types.ParseStringToByteJson(text)
++		require.NoError(t, err)
++		packed, err := bj.Marshal()
++		require.NoError(t, err)
++		return packed
++	}
++
++	conditions := []struct {
++		name string
++		data []byte
++		null bool
 +	}{
-+		{
-+			name:      "string conversion stays nullable from a not null column",
-+			selectSQL: `select time(n.n_name) as tv from nation n`,
-+			nullable:  true,
-+		},
-+		{
-+			name:      "numeric conversion keeps its not null inference",
-+			selectSQL: `select time(n.n_nationkey) as tv from nation n`,
-+			nullable:  false,
-+		},
++		{name: `"2tail" numeric prefix is true`, data: encodeJSON(`"2tail"`)},
++		{name: `"abc" is false`, data: encodeJSON(`"abc"`)},
++		{name: `" 12" is true`, data: encodeJSON(`" 12"`)},
++		{name: `string "true" is false`, data: encodeJSON(`"true"`)},
++		{name: "sql null selects else", data: encodeJSON(`"1"`), null: true},
++	}
++
++	condVec := vector.NewVec(types.T_json.ToType())
++	defer condVec.Free(proc.Mp())
++	thenVec := vector.NewVec(types.T_int64.ToType())
++	defer thenVec.Free(proc.Mp())
++	elseVec := vector.NewVec(types.T_int64.ToType())
++	defer elseVec.Free(proc.Mp())
++	for i, cond := range conditions {
++		require.NoError(t, vector.AppendBytes(condVec, cond.data, cond.null, proc.Mp()))
++		require.NoError(t, vector.AppendFixed(thenVec, int64(10+i), false, proc.Mp()))
++		require.NoError(t, vector.AppendFixed(elseVec, int64(-1), false, proc.Mp()))
++	}
++
++	condExec := &captureSelectExecutor{result: condVec}
++	thenExec := &captureSelectExecutor{result: thenVec}
++	elseExec := &captureSelectExecutor{result: elseVec}
++	expr := &FunctionExpressionExecutor{
++		parameterResults:  make([]*vector.Vector, 3),
++		parameterExecutor: []ExpressionExecutor{condExec, thenExec, elseExec},
++	}
++	expr.fid = function.CASE
++	expr.resultType = types.T_int64.ToType()
++
++	input := batch.NewWithSize(1)
++	t.Cleanup(func() { input.Clean(proc.Mp()) })
++	input.Vecs[0] = condVec
++	input.SetRowCount(len(conditions))
++
++	require.NotPanics(t, func() {
++		require.NoError(t, expr.EvalCase(proc, []*batch.Batch{input}, nil))
++	})
++
++	require.Len(t, condExec.seen, 1)
++	for row := range conditions {
++		require.True(t, condExec.seen[0][row], "every row must reach the condition")
++	}
++	require.Len(t, thenExec.seen, 1, "the THEN arm must be evaluated exactly once")
++	require.Equal(t, []bool{true, false, true, false, false}, thenExec.seen[0],
++		"THEN must cover exactly the conditionally-true JSON rows")
++	require.Len(t, elseExec.seen, 1, "the ELSE arm must be evaluated exactly once")
++	require.Equal(t, []bool{false, true, false, true, true}, elseExec.seen[0],
++		"ELSE must cover the false and SQL-NULL JSON rows")
++}
++
++// TestEvalCaseJsonConditionNeverDecodesJsonAsBoolInNativeMode pins the review
++// repair (finding 5): a JSON condition vector only ev
+```
+
+**File**: `pkg/sql/colexec/group/group_test.go` (modified, +81/-0)
+```diff
+@@ -5815,3 +5815,84 @@ func TestJSONMinMaxFinalGroupPhysicalSpillReload(t *testing.T) {
+ 	require.Len(t, seen, 64)
+ 	require.Positive(t, g.OpAnalyzer.GetOpStats().SpillRows, "final group must physically spill")
+ }
++
++// TestGroupJointGroupingFlagsPreserveStorageTruthOnActiveArms pins the D6
++// joint activation contract at the operator seam (review repair, finding 1):
++// the rollup replacement nulls every flag-false group-by vector, so an arm
++// whose visible display key is active but whose hidden storage sibling is
++// flag-false loses the storage truth on EVERY active group. The planner side
++// must therefore activate both slots together; this test records the operator
++// consequence of each flag shape: joint activation keeps both key vectors
++// real, an inactive arm nulls both, and a display-only activation nulls the
++// storage sibling (the pre-fix symptom the planner repair removes).
++func TestGroupJointGroupingFlagsPreserveStorageTruthOnActiveArms(t *testing.T) {
++	for _, tc := range []struct {
++		name            string
++		flags           []bool
++		wantRows        int
++		wantStorageKept bool
++	}{
++		{name: "joint active display and storage keep truth", flags: []bool{true, true}, wantRows: 3, wantStorageKept: true},
++		{name: "inactive arm nulls both key vectors", flags: []bool{false, false}, wantRows: 1, wantStorageKept: false},
++		{name: "display-only activation nulls the storage sibling", flags: []bool{true, false}, wantRows: 2, wantStorageKept: false},
 +	} {
 +		t.Run(tc.name, func(t *testing.T) {
-+			for _, prefix := range []string{"create view tv_view (tv) as ", "create table tv_ctas as "} {
-+				func() {
-+					sql := prefix + tc.selectSQL
-+					ctx := &rootSQLCompilerContext{MockCompilerContext: NewMockCompilerContext(false, newPlanTestProcess(t)), rootSQL: sql}
-+					stmt, err := parsers.ParseOne(t.Context(), dialect.MYSQL, sql, 1)
-+					require.NoError(t, err)
-+					defer stmt.Free()
-+					p, err := BuildPlan(ctx, stmt, false)
-+					require.NoError(t, err)
-+					var cols []*plan.ColDef
-+					if view := p.GetDdl().GetCreateView(); view != nil {
-+						cols = view.TableDef.Cols
-+					} else {
-+						cols = p.GetDdl().GetCreateTable().TableDef.Cols
-+					}
-+					require.NotEmpty(t, cols)
-+					require.Equal(t, "tv", cols[0].Name)
-+					require.Equal(t, int32(types.T_time), cols[0].Typ.Id)
-+					require.Equal(t, tc.nullable, cols[0].Default.NullAbility,
-+						"materialized TIME() metadata must match the runtime NULL behavior")
-+				}()
++			proc := testutil.NewProcess(t)
++			input := batch.NewWithSize(3)
++			input.Vecs[0] = testutil.MakeVarcharVector([]string{"a", "a", "b"}, nil, proc.Mp())
++			input.Vecs[1] = testutil.MakeInt32Vector([]int32{1, 2, 2}, nil, proc.Mp())
++			input.Vecs[2] = testutil.MakeInt32Vector([]int32{1, 1, 1}, nil, proc.Mp())
++			input.SetRowCount(3)
++
++			child := colexec.NewMockOperator().WithBatchs([]*batch.Batch{input})
++			partial := newGroupOp(proc, []*plan.Expr{
++				colExpr(0, types.T_varchar), colExpr(1, types.T_int32),
++			}, []aggexec.AggFuncExecExpression{sumAgg(2)})
++			partial.NeedEval = false
++			partial.GroupingFlag = tc.flags
++			partial.AppendChild(child)
++			require.NoError(t, partial.Prepare(proc))
++			partialOutputs := collectBatches(t, partial, proc)
++			partials := make([]*batch.Batch, len(partialOutputs))
++			for i := range partialOutputs {
++				partials[i] = cloneBatch(t, proc, partialOutputs[i])
 +			}
++
++			partial.Free(proc, false, nil)
++			child.Free(proc, false, nil)
++
++			mergeChild := colexec.NewMockOperator().WithBatchs(partials)
++			merge := newMergeGroupOp([]aggexec.AggFuncExecExpression{sumAgg(2)})
++			merge.GroupingAware = true
++			merge.AppendChild(mergeChild)
++			require.NoError(t, merge.Prepare(proc))
++			outputs := collectBatches(t, merge, proc)
++
++			rows := 0
++			storageNulls := 0
++			for _, output := range outputs {
++				rows += output.RowCount()
++				wrapper := vector.GenerateFunctionFixedTypeParameter[int32](output.Vecs[1])
++				for row := uint64(0); row < uint64(output.RowCount()); row++ {
++					_, isNull := wrapper.GetValue(row)
++					if isNull {
++						storageNulls++
++					}
++				}
++			}
++			require.Equal(t, tc.wantRows, rows)
++			if tc.wantStorageKept {
++				require.Zero(t, storageNulls,
++					"an activated arm keeps the storage sibling's truth on every group")
++			} else {
++				require.Equal(t, rows, storageNulls,
++					"every flag-false storage slot is a rollup NULL on every arm")
++			}
++
++			merge.Free(proc, false, nil)
++			mergeChild.Free(proc, false, nil)
++			proc.Free()
++			require.Zero(t, proc.Mp().CurrNB())
 +		})
 +	}
 +}
 ```
 
-**File**: `pkg/sql/plan/function/baseTemplate.go` (modified, +72/-0)
+**File**: `pkg/sql/plan/base_binder.go` (modified, +89/-1)
 ```diff
-@@ -3367,6 +3367,78 @@ func opUnaryBytesToFixedWithErrorCheck[
- 	return nil
+@@ -106,6 +106,31 @@ func (b *baseBinder) baseBindExpr(astExpr tree.Expr, depth int32, isRoot bool) (
+ 				return
+ 			}
+ 
++			// NOT evaluates its operand with MySQL numeric truth, so the
++			// stored ENUM ordinal or SET bitmap must survive both the display
++			// wrapper and the display-typed reference a GROUP BY flattening
++			// leaves behind. Unrelated operands pass through unchanged.
++			expr, err = b.mysqlSpecialBooleanTruthyOperand(b.GetContext(), expr)
++			if err != nil {
++				return
++			}
++			// NOT binds through the expression-plan entry, whose checker only
++			// consults the general implicit-cast table - base keeps no
++			// ENUM -> BOOL row there, and the contract must not add one
++			// (it would leak admission into native mode). Normalize the
++			// recovered ENUM operand through the explicit storage-truth BOOL
++			// cast, the same wrap the boolean-truth recovery loop applies for
++			// AND/OR/XOR; a native-mode statement skips this and keeps the
++			// base checker failure byte-identically.
++			if function.MySQLConditionalBooleanContracts(b.GetContext()) &&
++				isEnumPlanType(&expr.Typ) {
++				expr, err = makePlan2CastExpr(b.GetContext(), expr,
++					plan.Type{Id: int32(types.T_bool)})
++				if err != nil {
++					return
++				}
++			}
++
+ 			expr, err = BindFuncExprImplByPlanExpr(b.GetContext(), "not", []*plan.Expr{expr})
+ 		}
+ 
+@@ -250,6 +275,22 @@ func (b *baseBinder) baseBindExpr(astExpr tree.Expr, depth int32, isRoot bool) (
+ 		// must start from the stored ordinal/bitmap instead of that string.
+ 		if makeTypeByPlan2Type(typ).IsNumeric() {
+ 			expr, _ = storedMySQLSpecialTypeExpr(expr)
++		} else if types.T(typ.Id) == types.T_bool {
++			// The explicit CAST ... AS BOOL shares the boolean-truth storage
++			// contract: a projected display label (GROUP BY / DISTINCT /
++			// derived boundary) resolves through the same provenance-aware
++			// recovery as IF/CASE and the logical consumers, so the pending
++			// cast converts the recovered stored ordinal/bitmap instead of
++			// re-parsing the label text. The recovery carries its own D11 gate
++			// and D10 zone semantics: a native-mode statement keeps the
++			// pre-contract display bind untouched, and an ambiguous
++			// declaration fails closed across a display-decoding boundary.
++			recovered, recoveryErr := b.mysqlSpecialBooleanTruthyOperand(b.GetContext(), expr)
++			if recoveryErr != nil {
++				err = recoveryErr
++				return
++			}
++			expr = recovered
+ 		}
+ 		if b.builder != nil {
+ 			var rewritten bool
+@@ -11965,7 +12006,18 @@ func (b *baseBinder) bindInetNtoaBinaryLiteral(astExpr *tree.NumVal, typ Type) (
+ 	return expr, nil
  }
  
-+// opUnaryBytesToFixedWithNullOnError evaluates a unary bytes-to-fixed function
-+// and marks affected rows NULL when resultFn fails, instead of failing the
-+// whole statement with resultFn's error.
-+func opUnaryBytesToFixedWithNullOnError[
-+	Tr types.FixedSizeTExceptStrType](parameters []*vector.Vector, result vector.FunctionResultWrapper, _ *process.Process, length int,
-+	resultFn func(v []byte) (Tr, error), selectList *FunctionSelectList) error {
-+	if length == 0 {
-+		return nil
+-func (b *baseBinder) GetContext() context.Context { return b.sysCtx }
++// GetContext returns the binder's owning context with the D11 statement
++// compatibility scalar attached, so the condition admission sites (IF/CASE
++// typing, the boolean-context rewrites) see the same one-scalar decision the
++// BindContext resolved. A resolved scalar overrides anything inherited on
++// sysCtx; contexts without the scalar (tests, DUMP origin validation) keep
++// the MySQL-compatible default, matching the resolver's default.
++func (b *baseBinder) GetContext() context.Context {
++	if b.ctx != nil && b.ctx.mysqlConditionalBooleanContractsValid {
++		return function.WithMySQLConditionalBooleanContracts(b.sysCtx, b.ctx.mysqlConditionalBooleanContracts)
 +	}
-+	result.UseOptFunctionParamFrame(1)
-+	rs := vector.MustFunctionResult[Tr](result)
-+	p1 := vector.OptGetBytesParamFromWrapper(rs, 0, parameters[0])
-+	rsVec := rs.GetResultVector()
-+	rss := vector.MustFixedColNoTypeCheck[Tr](rsVec)
-+
-+	c1 := parameters[0].IsConst()
-+	rsNull := rsVec.GetNulls()
-+	rsAnyNull, allMasked := applyFunctionSelection(rsNull, selectList, length)
-+	if allMasked {
-+		nulls.AddRange(rsNull, 0, uint64(length))
-+		return nil
-+	}
-+	if c1 {
-+		v1, null1 := p1.GetStrValue(0)
-+		if null1 {
-+			nulls.AddRange(rsNull, 0, uint64(length))
-+		} else {
-+			r, err := resultFn(v1)
-+			if err != nil {
-+				nulls.AddRange(rsNull, 0, uint64(length))
-+				return nil
-+			}
-+			rowCount := uint64(length)
-+			for i := uint64(0); i < rowCount; i++ {
-+				rss[i] = r
-+			}
-+		}
-+		return nil
-+	}
-+
-+	// basic case.
-+	if p1.WithAnyNullValue() || rsAnyNull {
-+		nulls.Or(rsNull, parameters[0].GetNulls(), rsNull)
-+		rowCount := uint64(length)
-+		for i := uint64(0); i < rowCount; i++ {
-+			if rsNull.Contains(i) {
-+				continue
-+			}
-+			v1, _ := p1.GetStrValue(i)
-+			r, err := resultFn(v1)
-+			if err != nil {
-+				rsNull.Add(i)
-+				continue
-+			}
-+			rss[i] = r
-+		}
-+		return nil
-+	}
-+
-+	rowCount := uint64(length)
-+	for i := uint64(0); i < rowCount; i++ {
-+		v1, _ := p1.GetStrValue(i)
-+		r, err := resultFn(v1)
-+		if err != nil {
-+			rsNull.Add(i)
-+			continue
-+		}
-+		rss[i] = r
-+	}
-+	return nil
++	return b.sysCtx
 +}
-+
- func opUnaryStrToFixedWithErrorCheck[
- 	Tr types.FixedSizeTExceptStrType](parameters []*vector.Vector, result vector.FunctionResultWrapper, _ *process.Process, length int,
- 	resultFn func(v string) (Tr, error), selectList *FunctionSelectList) error {
+ 
+ // GetProcess exposes the compile session's process to the window-function
+ // binder surface so constant-expression folding uses the same deterministic
+@@ -12242,6 +12294,42 @@ func rewriteMySQLSpecialTypeDisplayCast(ctx context.Context, expr *Expr, toType
+ 			return bitmap, false, nil
+ 		}
+ 	}
++	if types.T(toType.Id) == types.T_bool && function.MySQLConditionalBooleanContracts(ctx) {
++		// D11 gate: this whole BOOL-target block binds with the MySQL
++		// storage-truth contracts; a native-mode statement falls through to the
++		// pre-contract behavior below, so explicit CAST ... AS BOOL keeps the
++		// base bind/execute outcome byte-identically.
++		// MySQL BIT (b'..') and HEX (x'..' / 0x..) literals are numeric bit
++		// strings: a boolean context evaluates their payload numerically instead
++		// of re-parsing the raw bytes as text. Fold the constant so logical
++		// operators, CASE WHEN and predicates match the numeric semantics
++		// arithmetic already gives these literals. Binary introducer strings are
++		// excluded on purpose; they keep ordinary string truthiness.
++		if isBinaryNumericLiteral(expr) {
++			if literal := expr.GetLit(); literal != nil && !literal.Isnull {
++				nonzero := false
++				for _, b := range []byte(literal.GetSval()) {
++					if b != 0 {
++						nonzero = true
++						break
++					}
++				}
++				// The folded BOOL constant is already the boolean value; the
++				// pending cast must not wrap it again.
++				return makePlan2BoolConstExprWithType(nonzero), true, nil
++			}
++		}
++		// Boolean contracts (WHERE/HAVING/ON predicates, AND/O
 ```
 
-**File**: `pkg/sql/plan/function/func_binary.go` (modified, +41/-14)
+**File**: `pkg/sql/plan/bind_context.go` (modified, +9/-0)
 ```diff
-@@ -4552,9 +4552,44 @@ func appendTimeIntervalOverflowWarning(proc *process.Process) {
+@@ -68,11 +68,20 @@ func NewBindContext(builder *QueryBuilder, parent *BindContext) *BindContext {
+ 			requiredProtocol := int64(0)
+ 			bc.persistedExpressionProtocolRequirement = &requiredProtocol
+ 		}
++		if parent == nil {
++			// D11 carrier one: resolve the statement compatibility scalar once
++			// at (root) BindContext entry from the session flag the executors
++			// read. Children inherit it below.
++			bc.mysqlConditionalBooleanContracts = function.MySQLConditionalBooleanContractsFromProcess(builder.compCtx.GetProcess())
++			bc.mysqlConditionalBooleanContractsValid = true
++		}
+ 	}
+ 
+ 	if parent != nil {
+ 		bc.persistedExpressionProtocolRequirement = parent.persistedExpressionProtocolRequirement
+ 		bc.ctasExecutionProtocolRequirement = parent.ctasExecutionProtocolRequirement
++		bc.mysqlConditionalBooleanContracts = parent.mysqlConditionalBooleanContracts
++		bc.mysqlConditionalBooleanContractsValid = parent.mysqlConditionalBooleanContractsValid
+ 		bc.existentialBlock = parent.existentialBlock
+ 		bc.subqueryNestingDepth = parent.subqueryNestingDepth
+ 		bc.lower = parent.lower
+```
+
+**File**: `pkg/sql/plan/bind_insert.go` (modified, +16/-0)
+```diff
+@@ -2967,6 +2967,13 @@ func (builder *QueryBuilder) appendDedupAndMultiUpdateNodesForBindInsert(
+ 			if err != nil {
+ 				return 0, err
+ 			}
++			// Same cross-mode consumption boundary as the plain insert path:
++			// a native-mode ODKU statement must fail closed on a persisted
++			// definition that needs the conditional boolean contracts.
++			if err := RequireMySQLConditionalBooleanConsumption(
++				builder.GetContext(), builder.compCtx.GetProcess(), genExpr); err != nil {
++				return 0, err
++			}
+ 			replaceColRefTag(genExpr, 0, scanTag)
+ 			updateExprs[col.Name] = genExpr
+ 			updateColIdxList = append(updateColIdxList, int32(i))
+@@ -5584,6 +5591,15 @@ func (builder *QueryBuilder) appendNodesForInsertStmt(
+ 		if err != nil {
+ 			return 0, nil, nil, -1, err
+ 		}
++		// The copied catalog expression is rebound against THIS statement: a
++		// definition that needs the conditional boolean contracts evaluates
++		// with those kernels only on a MySQL-mode session, and a native-mode
++		// DML statement must fail closed at plan time instead of pushing a
++		// persisted JSON condition into the pre-contract BOOL decoding.
++		if err := RequireMySQLConditionalBooleanConsumption(
++			builder.GetContext(), builder.compCtx.GetProcess(), genExpr); err != nil {
++			return 0, nil, nil, -1, err
++		}
+ 		proj1Pos := genColIdxToProj1Pos[i]
+ 		columnExprs[int32(i)] = genExpr
+ 		colIdxToProjPos[int32(i)] = int32(proj1Pos)
+```
+
+---
+
+### Incident Patch 2: `8197e28b` (2026-10-30)
+**Commit Message**: fix(sysview): publish declared COLUMNS metadata, numeric SUB_PART and full generated expressions (#31489)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Related to #30936.
+Related to #30935.
+Related to #30937.
+
+## What this PR does / why we need it:
+
+Fixes the declared-catalog metadata defects of #30936/#30935/#30937 and
+delivers the corrected
+identities through the repository's supported model: **unconditional
+publication plus one
+idempotent stored-view refresh hop**. No feature-specific protocol gate
+and no mixed-version
+fallback exists in this PR: after the first implementation review every
+such mechanism was
+removed (`MORPCLatestVersion` stays 134, no read substitution, no
+admission survey, no per-tenant
+floor), while the stored-view migration the reviewers called "necessary"
+is retained.
+
+### Design record (design-first review chain)
+
+The change is triggered (persisted-view migration, upgrade recovery,
+cross-subsystem changes), so
+the repository's design gate applies:
+`docs/design/20261026-declared-catalog-metadata-publication-and-repair.md`
+
+**File**: `pkg/bootstrap/columns_upgrade_test.go` (modified, +191/-1)
+```diff
+@@ -4,7 +4,7 @@
+ // you may not use this file except in compliance with the License.
+ // You may obtain a copy of the License at
+ //
+-//     http://www.apache.org/licenses/LICENSE-2.0
++//      http://www.apache.org/licenses/LICENSE-2.0
+ //
+ // Unless required by applicable law or agreed to in writing, software
+ // distributed under the License is distributed on an "AS IS" BASIS,
+@@ -16,17 +16,22 @@ package bootstrap
+ 
+ import (
+ 	"errors"
++	"fmt"
+ 	"strings"
+ 	"testing"
+ 
+ 	"github.com/golang/mock/gomock"
+ 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions"
++	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_18"
++	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_7"
+ 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
+ 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
+ 	"github.com/matrixorigin/matrixone/pkg/common/runtime"
+ 	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/defines"
+ 	mock_frontend "github.com/matrixorigin/matrixone/pkg/frontend/test"
+ 	pbtxn "github.com/matrixorigin/matrixone/pkg/pb/txn"
++	"github.com/matrixorigin/matrixone/pkg/txn/clock"
+ 	"github.com/matrixorigin/matrixone/pkg/util/executor"
+ 	"github.com/matrixorigin/matrixone/pkg/util/sysview"
+ 	"github.com/stretchr/testify/require"
+@@ -110,3 +115,188 @@ func TestColumnsUpgradeAdmissionAndIdempotence(t *testing.T) {
+ 		})
  	}
  }
- 
-+// timeArithmeticResult computes the ADDTIME/SUBTIME TIME-domain result and
-+// clamps values beyond the MySQL TIME boundary to +-MySQLTimeMax, matching the
-+// CAST-to-TIME path instead of discarding the computed duration as NULL.
-+// The returned bool reports that clamping happened.
- func timeArithmeticResult(first, second types.Time, subtract bool) (types.Time, bool) {
--	result, overflow, _ := doTimeInterval(first, int64(second), types.MicroSecond, subtract)
--	return result, overflow
-+	delta := int64(second)
-+	if subtract {
-+		if delta == math.MinInt64 {
-+			// first - MinInt64 == first + 2^63 is never negative, so move the
-+			// subtraction once into uint64 space where the exact result
-+			// cannot overflow again. Only first within
-+			// [MinInt64, MinInt64+MySQLTimeMax] stays inside the TIME range;
-+			// the 2^63 offset is the exact unsigned form of -MinInt64.
-+			sum64 := uint64(int64(first)) + (uint64(1) << 63)
-+			if sum64 <= uint64(types.MySQLTimeMax) {
-+				return types.Time(sum64), false
-+			}
-+			return types.MySQLTimeMax, true
-+		}
-+		delta = -delta
-+	}
-+	sum, ok := safeTimestampWindowSum(int64(first), delta)
-+	if !ok {
-+		// An int64 overflow needs same-sign operands, so the direction of the
-+		// out-of-range result stays unambiguous.
-+		if int64(first) < 0 || delta < 0 {
-+			return -types.MySQLTimeMax, true
-+		}
-+		return types.MySQLTimeMax, true
-+	}
-+	value := types.Time(sum)
-+	if value >= -types.MySQLTimeMax && value <= types.MySQLTimeMax {
-+		return value, false
-+	}
-+	if value < 0 {
-+		return -types.MySQLTimeMax, true
-+	}
-+	return types.MySQLTimeMax, true
- }
- 
- // Both operands may use the wider internal duration domain; only the final
-@@ -4619,13 +4654,9 @@ func addTimeToString(ivecs []*vector.Vector, result vector.FunctionResultWrapper
- 			outputScale = scale
- 		}
- 		if kind == temporalStringTime {
--			resultTime, overflow := timeArithmeticResult(time1, time2, false)
--			if overflow {
-+			resultTime, clamped := timeArithmeticResult(time1, time2, false)
-+			if clamped {
- 				appendTimeIntervalOverflowWarning(proc)
--				if err := rs.AppendBytes(nil, true); err != nil {
--					return err
--				}
--				continue
- 			}
- 			if err := appendStringTimeResult(rs, resultTime, outputScale); err != nil {
- 				return err
-@@ -4876,13 +4907,9 @@ func subTimeFromString(ivecs []*vector.Vector, result vector.FunctionResultWrapp
- 			outputScale = scale
- 		}
- 		if kind == temporalStringTime {
--			resultTime, overflow := timeArithmeticResult(time1, time2, true)
--			if overflow {
-+			resultTime, clamped := timeArithmeticResult(time1, time2, true)
-+			if clamped {
- 				appendTimeIntervalOverflowWarning(proc)
--				if err := rs.AppendBytes(nil, true); err != nil {
--					return err
--				}
--				continue
- 			}
- 			if err := appendStringTimeResult(rs, resultTime, outputScale); err != nil {
- 				return err
++
++// TestColumnsUpgradeReachesExistingTenants drives the retained 4.0.19 tenant
++// hop (design 5.2, routes per D14-2; renumbered by revision 10 onto the
++// consolidated ladder): a 4.0.7 account holding any pre-correction
++// information_schema identity is rewritten to exactly the published
++// identities through the per-account walk, which steps the upstream 4.0.18
++// handle and the final vehicle; a current account is a no-op, a mid-hop DDL
++// failure leaves the account marker untouched and retries cleanly.
++func TestColumnsUpgradeReachesExistingTenants(t *testing.T) {
++	runtime.RunTest("", func(runtime.Runtime) {
++		frozen := v4_0_7.Handler.Metadata()
++		current := versions.Version{Version: frozen.Version, VersionOffset: frozen.VersionOffset, State: versions.StateReady}
++		columnsDefinition := sysview.InformationSchemaColumnsBinaryFamilyNullDDL()
++		statisticsDefinition := sysview.InformationSchemaStatisticsDDL
++		tenantVersion := "4.0.7"
++		var queuedVersion, queuedRoute bool
++		var writes []string
++		failStatistics := false
++		injected := errors.New("injected STATISTICS create failure")
++		op := mock_frontend.NewMockTxnOperator(gomock.NewController(t))
++		op.EXPECT().TxnOptions().Return(pbtxn.TxnOptions{}).AnyTimes()
++		op.EXPECT().Txn().Return(pbtxn.TxnMeta{}).AnyTimes()
++		exec := executor.NewMemExecutor2(func(sql string) (executor.Result, error) {
++			switch {
++			case strings.HasPrefix(sql, "SELECT reldatabase, relname, account_id FROM mo_catalog.mo_tables"):
++				return newBootstrapStringResult("mo_catalog"), nil
++			case sql == versions.LatestVersionSQL:
++				return recoveryVersionResult(t, current), nil
++			case strings.HasPrefix(sql, "select version from mo_version"):
++				// The latest ready version that the route chains from.
++				return newBootstrapStringResult(frozen.Version), nil
++			case strings.HasPrefix(sql, "select state from mo_version"):
++				// The queued forward version has no row yet; the checker
++				// proceeds to enqueue it with its route.
++				return executor.Result{}, nil
++			case strings.HasPrefix(sql, "insert into mo_version"):
++				// The registered forward version carries the two shared entries.
++				require.Contains(t, sql, "'4.0.19', 2, 0")
++				queuedVersion = true
++			case strings.HasPrefix(sql, "insert into mo_upgrade"):
++				require.Contains(t, sql, "'4.0.7'")
++				require.Contains(t, sql, "'4.0.19'")
++				queuedRoute = true
++			case strings.HasPrefix(sql, "select create_version from mo_account"):
++				return newBootstrapStringResult(tenantVersion), nil
++			case strings.Contains(sql, "relname = 'COLUMNS'"), strings.Contains(sql, "relname = 'columns'"):
++				return newBootstrapStringResult(columnsDefinition), nil
++			case strings.Contains(sql, "relname = 'STATISTICS'"), strings.Contains(sql, "relname = 'statistics'"):
++				return newBootstrapStringResult(statisticsDefinition), nil
++			case strings.HasPrefix(sql, "select rel_id, rel_logical_id, relkind from mo_catalog.mo_tables"):
++				return executor.Result{}, nil
++			case sql == "SELECT mo_ctl('cn', 'GetProtocolVersion', '')":
++				return newBootstrapStringResult(`{"result":"cn:118"}`), nil
++			case sql == strings.Replace(sysview.InformationSchemaColumnsDDL, "CREATE VIEW ", "CREATE OR REPLACE VIEW ", 1):
++				writes = append(writes, sql)
++				columnsDefinition = sysview.InformationSchemaColumnsDDL
++			case sql == strings.Replace(sysview.InformationSchemaStatisticsPrefixSubPartDDL, "CREATE VIEW ", "CREATE OR REPLACE VIEW ", 1):
++				writes = append(writes, sql)
++				if failStatistics {
++					return executor.Result{}, injected
++				
 ```
 
-**File**: `pkg/sql/plan/function/func_binary_test.go` (modified, +1/-1)
+**File**: `pkg/bootstrap/custom_upgrade.go` (modified, +8/-0)
 ```diff
-@@ -15809,7 +15809,7 @@ func TestStringTimeArithmeticKeepsTimeDomain(t *testing.T) {
+@@ -201,6 +201,14 @@ func (s *service) UpgradeOneTenant(ctx context.Context, tenantID int32) error {
+ 						from = v.Metadata().Version
+ 					}
+ 				}
++				// A manual upgrade reports success only with the account at the
++				// cluster's final version. The re-planned loop below still takes
++				// over after a committed paged 4.0.7 stage, so only a non-pending
++				// shortfall is terminal here instead of being cached as success.
++				if !pendingV407 && from != currentCN.Version {
++					return moerr.NewInvalidInputNoCtxf("cannot upgrade tenant version %s to current cn version %s",
++						from, currentCN.Version)
++				}
+ 				return nil
+ 			},
+ 			opts)
+```
+
+**File**: `pkg/bootstrap/service_statistics_upgrade_test.go` (modified, +7/-5)
+```diff
+@@ -22,6 +22,7 @@ import (
+ 
+ 	"github.com/golang/mock/gomock"
+ 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions"
++	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_18"
+ 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_6"
+ 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_7"
+ 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
+@@ -50,9 +51,10 @@ func TestPublishedCatalogUpgradeRoutes(t *testing.T) {
+ 		offset        uint32
+ 		hops          [][2]string
+ 	}{
+-		{name: "4.1", version: "4.0.1", offset: 1, hops: [][2]string{{"4.0.1", "4.0.2"}, {"4.0.2", "4.0.3"}, {"4.0.3", "4.0.4"}, {"4.0.4", "4.0.5"}, {"4.0.5", "4.0.6"}, {"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}}},
+-		{name: "4.2", version: "4.0.6", offset: 5, hops: [][2]string{{"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}}},
+-		{name: "4.0.7", version: "4.0.7", offset: v4_0_7.Handler.Metadata().VersionOffset, hops: [][2]string{{"4.0.7", "4.0.18"}}},
++		{name: "4.1", version: "4.0.1", offset: 1, hops: [][2]string{{"4.0.1", "4.0.2"}, {"4.0.2", "4.0.3"}, {"4.0.3", "4.0.4"}, {"4.0.4", "4.0.5"}, {"4.0.5", "4.0.6"}, {"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}, {"4.0.18", "4.0.19"}}},
++		{name: "4.2", version: "4.0.6", offset: 5, hops: [][2]string{{"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}, {"4.0.18", "4.0.19"}}},
++		{name: "4.0.7_frozen", version: "4.0.7", offset: v4_0_7.Handler.Metadata().VersionOffset, hops: [][2]string{{"4.0.7", "4.0.19"}}},
++		{name: "4.0.18_main_era", version: "4.0.18", offset: v4_0_18.Handler.Metadata().VersionOffset, hops: [][2]string{{"4.0.18", "4.0.19"}}},
  	} {
  		t.Run(tc.name, func(t *testing.T) {
- 			case1 := NewFunctionTestCase(proc, []FunctionTestInput{first, second},
--				NewFunctionTestResult(types.New(types.T_varchar, 0, 6), false, tc.want, []bool{false, tc.name == "add", false, true}), tc.fn)
-+				NewFunctionTestResult(types.New(types.T_varchar, 0, 6), false, tc.want, []bool{false, false, false, true}), tc.fn)
- 			ok, info := case1.RunAndFree()
- 			require.True(t, ok, info)
+ 			runtime.RunTest("", func(runtime.Runtime) {
+@@ -72,12 +74,12 @@ func TestPublishedCatalogUpgradeRoutes(t *testing.T) {
+ 				}, &testTxnOperator{})
+ 				s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec, func(s *service) { s.initUpgrade() })
+ 				t.Cleanup(s.stopper.Stop)
+-				require.Equal(t, "4.0.18", s.GetFinalVersion())
++				require.Equal(t, "4.0.19", s.GetFinalVersion())
+ 				require.Equal(t, uint32(5), v4_0_6.Handler.Metadata().VersionOffset)
+ 				require.NoError(t, s.doCheckUpgrade(t.Context()))
+ 				require.Len(t, upgrades, len(tc.hops))
+ 				for i, hop := range tc.hops {
+-					require.Contains(t, upgrades[i], fmt.Sprintf("values ('%s', '%s', '4.0.18',", hop[0], hop[1]))
++					require.Contains(t, upgrades[i], fmt.Sprintf("values ('%s', '%s', '4.0.19',", hop[0], hop[1]))
+ 				}
+ 			})
  		})
 ```
 
-**File**: `pkg/sql/plan/function/func_time_result.go` (modified, +8/-1)
+**File**: `pkg/bootstrap/service_upgrade.go` (modified, +18/-0)
 ```diff
-@@ -82,19 +82,26 @@ func timeResultArithmetic(parameters []*vector.Vector, result vector.FunctionRes
+@@ -499,6 +499,14 @@ func (s *service) checkUpgradeRecovery(target versions.Version, txn executor.Txn
+ 			(u.State != versions.StateCreated && u.State != versions.StateUpgradingTenant && u.State != versions.StateReady) {
+ 			return &terminalUpgradeError{moerr.NewInvalidStateNoCtxf("cannot resume invalid upgrade step %s", u.String())}
  		}
- 		var value types.Time
- 		var overflow bool
-+		nullResult := false
- 		if kind == temporalStringDateTime {
- 			var calendar types.Datetime
- 			calendar, overflow = datetimeArithmeticResult(date, delta, subtract)
- 			if !overflow {
- 				value, _ = timestampPairDatetimeToTime(calendar)
-+			} else {
-+				// Calendar arithmetic keeps NULL on datetime-domain overflow,
-+				// matching DATE_ADD on datetime input.
-+				nullResult = true
- 			}
- 		} else {
-+			// TIME-domain results clamp to the MySQL TIME boundary exactly
-+			// like the CAST path instead of losing the computed duration.
- 			value, overflow = timeArithmeticResult(duration, delta, subtract)
- 		}
- 		if overflow {
- 			appendTimeIntervalOverflowWarning(proc)
- 		}
--		if err := results.Append(value, overflow); err != nil {
-+		if err := results.Append(value, nullResult); err != nil {
- 			return err
++		// Offset-only legs target only the frozen 4.0.7 stage, whose only
++		// durable per-account progress marker cannot identify two offsets
++		// of the same version. Reject resumption here exactly as the
++		// pre-mutation check rejects creating it.
++		if u.FromVersion == v4_0_7.Handler.Metadata().Version &&
++			u.ToVersion == v4_0_7.Handler.Metadata().Version {
++			return &terminalUpgradeError{moerr.NewInvalidStateNoCtx("unsupported in-progress 4.0.7 offset-only upgrade; 4.0.7 is frozen and further migrations require a new catalog version")}
++		}
+ 		supported := false
+ 		for _, h := range s.handles {
+ 			v := h.Metadata()
+@@ -512,6 +520,16 @@ func (s *service) checkUpgradeRecovery(target versions.Version, txn executor.Txn
+ 			return &terminalUpgradeError{moerr.NewInvalidStateNoCtxf("cannot resume unsupported upgrade step %s", u.String())}
  		}
  	}
-```
-
-**File**: `pkg/sql/plan/function/func_unary.go` (modified, +10/-2)
-```diff
-@@ -6406,10 +6406,18 @@ func Int64ToTime(ivecs []*vector.Vector, result vector.FunctionResultWrapper, pr
- 
- func DateStringToTime(ivecs []*vector.Vector, result vector.FunctionResultWrapper, proc *process.Process, length int, selectList *FunctionSelectList) error {
- 	scale := result.GetResultVector().GetType().Scale
--	return opUnaryBytesToFixedWithErrorCheck[types.Time](ivecs, result, proc, length, func(v []byte) (types.Time, error) {
-+	return opUnaryBytesToFixedWithNullOnError[types.Time](ivecs, result, proc, length, func(v []byte) (types.Time, error) {
- 		t, e := types.ParseTime(string(v), scale)
- 		if e != nil {
--			return 0, moerr.NewOutOfRangeNoCtxf("time", "'%s'", string(v))
-+			// MySQL doctrine: TIME() yields NULL with a truncation warning for
-+			// an invalid argument instead of failing the whole statement.
-+			if proc != nil {
-+				if appender, ok := proc.GetWarningSink().(warningDiagnosticAppender); ok {
-+					appender.AppendWarningDiagnostic(moerr.ER_TRUNCATED_WRONG_VALUE,
-+						fmt.Sprintf("Truncated incorrect time value: '%s'", string(v)))
-+				}
-+			}
-+			return 0, e
- 		}
- 		return clampPublicTimeResult(proc, t, scale), nil
- 	}, selectList)
-```
-
-**File**: `pkg/sql/plan/function/function.go` (modified, +11/-0)
-```diff
-@@ -901,6 +901,17 @@ func deduceNotNullable(ctx context.Context, overloadID int64, args []*plan.Expr)
- 		if oid == 0 || oid == 2 || ((oid == 3 || oid == 4) && !LegacyTemporalNullability(ctx)) {
- 			return false
- 		}
-+	case TIME:
-+		// String conversions synthesize NULL with a truncation warning for
-+		// invalid input even when the argument is NOT NULL. The typed and
-+		// numeric overloads fail the statement instead of producing NULL
-+		// and keep their NOT NULL inference. Historical dump bindings keep
-+		// their pre-8dd published NOT NULL metadata, and the intermediate
-+		// post-8dd era that predates the NULL synthesis change kept TIME
-+		// NOT NULL while DATE conversions were already nullable.
-+		if oid >= 5 && oid <= 8 && !LegacyTemporalNullability(ctx) && !LegacyTimeNullability(ctx) {
-+			return false
++	// A retained route to the frozen 4.0.7 stage needs the same catalog
++	// admission upstream enforces before creating it: a final above 4.0.7
++	// reaches this resume path without any other admission check.
++	// canResumeUpgrade already pinned the route to the registered frozen
++	// handle's offset.
++	if target.Version == v4_0_7.Handler.Metadata().Version {
++		if err := rejectLegacyCDCTasks(txn); err != nil {
++			return err
 +		}
- 	case CAST:
- 		if (oid == 0 || oid == 1) && len(args) == 2 &&
- 			types.T(args[0].Typ.Id).IsMySQLString() && types.T(args[1].Typ.Id) == types.T_datetime && !LegacyTemporalNullability(ctx) {
++	}
+ 	return nil
+ }
+ 
+```
+
+**File**: `pkg/bootstrap/service_upgrade_cdc_test.go` (modified, +115/-0)
+```diff
+@@ -22,6 +22,9 @@ import (
+ 	"testing"
+ 
+ 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions"
++	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_18"
++	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_19"
++	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_6"
+ 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_7"
+ 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
+ 	"github.com/matrixorigin/matrixone/pkg/common/runtime"
+@@ -112,3 +115,115 @@ func TestLegacyCDCAdmissionBeforeUpgradeMutation(t *testing.T) {
+ 		})
+ 	}
+ }
++
++// TestLegacyCDCAdmissionEmptyCatalogAdmitsSourceOnward pins that a source
++// below the frozen stage with no legacy CDC tasks admits past the gate and
++// proceeds to create the consolidated route - the successor keeps upstream's
++// admission/passage contract at the 4.0.19 final.
++func TestLegacyCDCAdmissionEmptyCatalogAdmitsSourceOnward(t *testing.T) {
++	runtime.RunTest("", func(runtime.Runtime) {
++		source := v4_0_6.Handler.Metadata()
++		var routes []string
++		exec := executor.NewMemExecutor2(func(sql string) (executor.Result, error) {
++			switch {
++			case strings.HasPrefix(sql, "SELECT reldatabase, relname, account_id FROM mo_catalog.mo_tables"):
++				return newBootstrapStringResult("mo_catalog"), nil
++			case sql == versions.LatestVersionSQL:
++				return recoveryVersionResult(t, versions.Version{Version: source.Version, VersionOffset: source.VersionOffset, State: versions.StateReady}), nil
++			case strings.Contains(sql, "from mo_catalog.mo_cdc_task"):
++				return executor.Result{}, nil
++			case strings.Contains(sql, "select version from mo_version"):
++				return newBootstrapStringResult(source.Version), nil
++			case strings.HasPrefix(sql, "insert into mo_upgrade"):
++				routes = append(routes, sql)
++				return executor.Result{}, nil
++			default:
++				return executor.Result{}, nil
++			}
++		}, &testTxnOperator{})
++		s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec, func(s *service) { s.initUpgrade() })
++		t.Cleanup(s.stopper.Stop)
++		require.NoError(t, s.doCheckUpgrade(t.Context()))
++		require.Len(t, routes, 3, "an admitted 4.0.6 source chains through the frozen stage, the upstream 4.0.18 handle and the final vehicle")
++		require.Contains(t, fmt.Sprint(routes), fmt.Sprintf("'%s', '%s', '4.0.19',", source.Version, v4_0_7.Handler.Metadata().Version))
++		require.Contains(t, fmt.Sprint(routes), fmt.Sprintf("'%s', '%s', '4.0.19',", v4_0_7.Handler.Metadata().Version, v4_0_18.Handler.Metadata().Version))
++		require.Contains(t, fmt.Sprint(routes), fmt.Sprintf("'%s', '%s', '4.0.19',", v4_0_18.Handler.Metadata().Version, v4_0_19.Handler.Metadata().Version))
++	})
++}
++
++// TestLegacyCDCReadErrorStaysRetryableAtAdmission pins the successor's
++// create-admission contract for a transient catalog read: the wrapped error
++// stays retryable, terminates nothing, and no mutation runs.
++func TestLegacyCDCReadErrorStaysRetryableAtAdmission(t *testing.T) {
++	runtime.RunTest("", func(runtime.Runtime) {
++		source := v4_0_6.Handler.Metadata()
++		want := errors.New("catalog read failed")
++		exec := executor.NewMemExecutor2(func(sql string) (executor.Result, error) {
++			switch {
++			case strings.HasPrefix(sql, "SELECT reldatabase, relname, account_id FROM mo_catalog.mo_tables"):
++				return newBootstrapStringResult("mo_catalog"), nil
++			case sql == versions.LatestVersionSQL:
++				return recoveryVersionResult(t, versions.Version{Version: source.Version, VersionOffset: source.VersionOffset, State: versions.StateReady}), nil
++			case strings.Contains(sql, "from mo_catalog.mo_cdc_task"):
++				return executor.Result{}, want
++			default:
++				return executor.Result{}, fmt.Errorf("no mutation may follow a failed read: %s", sql)
++			}
++		}, &testTxnOperator{})
++		s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec, func(s *service) { s.initUpgrade() })
++		t.Cleanup(s.stopper.Stop)
++		err := s.doCheckUpgrade(t.Context())
++		require.ErrorIs(t, err, want)
++		var terminal *terminalUpgradeError
++		require.False(t, errors.As(err, &terminal))
++		require.False(t, s.upgrade.finalVersionCompleted.Load())
++	})
++}
++
++// TestLegacyCDCAdmissionRecoveryEnforcedBeforeResumeVerdict pins the
++// recovery-path admission the successor registration newly reaches: a
++// retained route to the frozen 4.0.7 stage admits only after the legacy CDC
++// catalog is clean, and the paused-task rejection stays terminal before the
++// resume verdict.
++func TestLegacyCDCAdmissionRecoveryEnforcedBeforeResumeVerdict(t *testing.T) {
++	frozen := v4_0_7.Handler.Metadata()
++	target := versions.Version{Version: frozen.Version, VersionOffset: frozen.VersionOffset, State: versions.StateCreated}
++	from := v4_0_6.Handler.Metadata().Version
++	for _, paused := range []bool{true, false} {
++		t.Run(fmt.Sprintf("paused=%v", paused), func(t *testing.T) {
++			runtime.RunTest("", func(runtime.Runtime) {
++				t
+```
+
+**File**: `pkg/bootstrap/service_upgrade_crossing_test.go` (modified, +28/-22)
+```diff
+@@ -34,7 +34,7 @@ import (
+ 
+ // crossingFakeDB is a stateful in-memory catalog for the frozen-4.0.7
+ // crossing fixtures. The route of the integrated binary is keyed by the new
+-// final row (4.0.18, 1); older retained routes (4.0.6/4.0.7 sources) live
++// final row (4.0.19, 2); older retained routes (4.0.6/4.0.7 sources) live
+ // under their own keys. Any read of an intermediate mo_version marker is a
+ // hard error: the v36 persistence model proves such a row can never exist,
+ // so the production flow must never look for one.
+@@ -60,7 +60,7 @@ type crossingFakeDB struct {
+ 	strict       bool
+ }
+ 
+-const crossingFinalDDLKey = "'4.0.18'"
++const crossingFinalDDLKey = "'4.0.19'"
+ 
+ func crossingVersion(metadata versions.Version) versions.Version {
+ 	return metadata
+@@ -107,7 +107,7 @@ func (db *crossingFakeDB) exec(sql string) (executor.Result, error) {
+ 	case sql == versions.LatestVersionSQL:
+ 		v := db.latest
+ 		if db.finalExists {
+-			v = versions.Version{Version: "4.0.18", VersionOffset: 1, State: db.finalState}
++			v = versions.Version{Version: "4.0.19", VersionOffset: 2, State: db.finalState}
+ 		}
+ 		return recoveryVersionResult(db.t, v), nil
+ 	case strings.HasPrefix(sql, "select state from mo_version"):
+@@ -279,10 +279,12 @@ func newCrossingService(t *testing.T, db *crossingFakeDB) *service {
+ func crossingFinalSteps() []versions.VersionUpgrade {
+ 	v407 := v4_0_7.Handler.Metadata()
+ 	return []versions.VersionUpgrade{
+-		{ID: 10, FromVersion: "4.0.6", ToVersion: "4.0.7", FinalVersion: "4.0.18", FinalVersionOffset: 1,
++		{ID: 10, FromVersion: "4.0.6", ToVersion: "4.0.7", FinalVersion: "4.0.19", FinalVersionOffset: 2,
+ 			State: versions.StateCreated, UpgradeOrder: 0, UpgradeCluster: v407.UpgradeCluster, UpgradeTenant: v407.UpgradeTenant, TotalTenant: 0, ReadyTenant: 0},
+-		{ID: 11, FromVersion: "4.0.7", ToVersion: "4.0.18", FinalVersion: "4.0.18", FinalVersionOffset: 1,
++		{ID: 11, FromVersion: "4.0.7", ToVersion: "4.0.18", FinalVersion: "4.0.19", FinalVersionOffset: 2,
+ 			State: versions.StateCreated, UpgradeOrder: 1, UpgradeCluster: versions.No, UpgradeTenant: versions.Yes, TotalTenant: 0, ReadyTenant: 0},
++		{ID: 12, FromVersion: "4.0.18", ToVersion: "4.0.19", FinalVersion: "4.0.19", FinalVersionOffset: 2,
++			State: versions.StateCreated, UpgradeOrder: 2, UpgradeCluster: versions.No, UpgradeTenant: versions.Yes, TotalTenant: 0, ReadyTenant: 0},
+ 	}
+ }
+ 
+@@ -347,13 +349,15 @@ func TestCrossingLegacyCDCGateMatrix(t *testing.T) {
+ 						return
+ 					}
+ 					require.NoError(t, err)
+-					require.Equal(t, 1, db.cdcReads, "the preflight runs once on an eligible source")
+ 					switch src.name {
+ 					case "ready-4.0.5":
+-						requireCrossingRouteShape(t, db.finalSteps, [][2]string{{"4.0.5", "4.0.6"}, {"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}})
++						require.Equal(t, 1, db.cdcReads, "the creation preflight runs once on an eligible source")
++						requireCrossingRouteShape(t, db.finalSteps, [][2]string{{"4.0.5", "4.0.6"}, {"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}, {"4.0.18", "4.0.19"}})
+ 					case "ready-4.0.6":
+-						requireCrossingRouteShape(t, db.finalSteps, [][2]string{{"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}})
++						require.Equal(t, 1, db.cdcReads, "the creation preflight runs once on an eligible source")
++						requireCrossingRouteShape(t, db.finalSteps, [][2]string{{"4.0.6", "4.0.7"}, {"4.0.7", "4.0.18"}, {"4.0.18", "4.0.19"}})
+ 					case "interrupted-4.0.7":
++						require.Equal(t, 2, db.cdcReads, "the crossing preflight and the frozen-4.0.7 resume admission each read the legacy gate once")
+ 						require.False(t, db.finalExists, "an interrupted 4.0.7 is retained, not re-routed")
+ 						require.Empty(t, db.mutations(), "recovery validation is read-only")
+ 					}
+@@ -369,26 +373,27 @@ func requireCrossingRouteShape(t *testing.T, steps []versions.VersionUpgrade, wa
+ 	for i, pair := range want {
+ 		require.Equal(t, pair[0], steps[i].FromVersion)
+ 		require.Equal(t, pair[1], steps[i].ToVersion)
+-		require.Equal(t, "4.0.18", steps[i].FinalVersion)
+-		require.Equal(t, uint32(1), steps[i].FinalVersionOffset)
++		require.Equal(t, "4.0.19", steps[i].FinalVersion)
++		require.Equal(t, uint32(2), steps[i].FinalVersionOffset)
+ 		require.Equal(t, versions.StateCreated, steps[i].State)
+ 		require.Equal(t, int32(i), steps[i].UpgradeOrder)
+ 	}
+ }
+ 
+ // (vi) REAL-ROUTE interruption, mid-crossing: the persisted shape the
+-// integrated binary writes for a 4.0.6 -> 4.0.18 route (final row
+-// 4.0.18/1 Created, steps [4.0.6 -> 4.0.7, 4.0.7 -> 4.0.18] under key
+-// (4.0.18, 1), no intermediate mo_version marker) interrupted BEFORE the
+-// 4.0.7 step completes. The restart must terminally reject a seeded legacy
+-// task before any catalog mutation and must never look for a 4.0.7 marker.
++// integrated binary writes for a 4.0.6 -> 4.0.19 route (final row
++// 4.0.19/2 Created, steps [4.0.6 -> 4.0.7, 4.0.7 -> 4.0.18, 4.0.18 ->
++// 4.0.19] under key (4.0.19, 2), no intermediate mo_version marker)
++// interrupted BEFORE the 4.
+```
+
+**File**: `pkg/bootstrap/service_upgrade_recovery_test.go` (modified, +68/-0)
+```diff
+@@ -25,6 +25,7 @@ import (
+ 	"time"
+ 
+ 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions"
++	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_19"
+ 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_7"
+ 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
+ 	"github.com/matrixorigin/matrixone/pkg/common/runtime"
+@@ -557,6 +558,11 @@ func (e *recoveryTestExecutor) exec(sql string) (executor.Result, error) {
+ 		res.NewBatchWithRowCount(1)
+ 		require.NoError(e.t, executor.AppendFixedRows(res, 0, []int32{state}))
+ 		return res.GetResult(), nil
++	case strings.Contains(sql, "from mo_catalog.mo_cdc_task"):
++		// The re-keyed recheck admission probes the CDC catalog before a
++		// non-ready final row is accepted (design D11-1); an empty task
++		// catalog admits the retained route.
++		return executor.Result{}, nil
+ 	case strings.Contains(sql, "from mo_upgrade"):
+ 		if strings.Contains(sql, "'4.0.12'") {
+ 			return ownRecoveryResult(e.t, buildUpgradeVersionResult(11, versions.StateCreated, "4.0.11", "4.0.12", 1, 0, versions.No, versions.No, 0, 0)), nil
+@@ -789,3 +795,65 @@ func TestV407RejectsInterruptedOffsetOnlyRouteBeforeMutation(t *testing.T) {
+ 		require.False(t, s.upgrade.finalVersionCompleted.Load())
+ 	})
+ }
++
++// TestV407InterruptedOffsetOnlyRouteRejectedAtRecoveryValidation closes the
++// resume path the successor registration newly reaches: an unfinished route
++// to the frozen identity that carries a 4.0.7 -> 4.0.7 leg terminates in the
++// recovery validation with the same message as the pre-mutation check.
++func TestV407InterruptedOffsetOnlyRouteRejectedAtRecoveryValidation(t *testing.T) {
++	runtime.RunTest("", func(runtime.Runtime) {
++		frozen := v4_0_7.Handler.Metadata()
++		target := versions.Version{Version: frozen.Version, VersionOffset: frozen.VersionOffset, State: versions.StateCreated}
++		txn := executor.NewMemTxnExecutor(func(sql string) (executor.Result, error) {
++			switch {
++			case strings.Contains(sql, "from mo_upgrade"):
++				return ownRecoveryResult(t, buildUpgradeVersionResult(10, versions.StateUpgradingTenant, frozen.Version, frozen.Version, frozen.VersionOffset, 0, versions.Yes, versions.Yes, 1, 0)), nil
++			default:
++				return executor.Result{}, fmt.Errorf("recovery validation may read only the retained route: %s", sql)
++			}
++		}, &testTxnOperator{})
++		s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, nil, func(s *service) { s.initUpgrade() })
++		t.Cleanup(s.stopper.Stop)
++		require.True(t, s.canResumeUpgrade(target),
++			"the registered handle's offset keeps the frozen identity resumable; the offset-only leg must reject it")
++		err := s.checkUpgradeRecovery(target, txn)
++		require.ErrorContains(t, err, "unsupported in-progress 4.0.7 offset-only upgrade")
++		var terminal *terminalUpgradeError
++		require.ErrorAs(t, err, &terminal)
++	})
++}
++
++// TestV407ReadyFrozenSourceCreatesDirectRoute pins the one allowed
++// frozen-source transition at the successor final: a ready 4.0.7 row at the
++// registered handle's offset skips the pre-mutation rejections, admits with
++// no legacy CDC source below the frozen stage, and takes the single direct
++// succession hop.
++func TestV407ReadyFrozenSourceCreatesDirectRoute(t *testing.T) {
++	runtime.RunTest("", func(runtime.Runtime) {
++		frozen := v4_0_7.Handler.Metadata()
++		var routes []string
++		exec := executor.NewMemExecutor2(func(sql string) (executor.Result, error) {
++			switch {
++			case strings.HasPrefix(sql, "SELECT reldatabase, relname, account_id FROM mo_catalog.mo_tables"):
++				return newBootstrapStringResult("mo_catalog"), nil
++			case sql == versions.LatestVersionSQL:
++				return recoveryVersionResult(t, versions.Version{Version: frozen.Version, VersionOffset: frozen.VersionOffset, State: versions.StateReady}), nil
++			case strings.Contains(sql, "select version from mo_version"):
++				return newBootstrapStringResult(frozen.Version), nil
++			case strings.HasPrefix(sql, "insert into mo_upgrade"):
++				routes = append(routes, sql)
++				return executor.Result{}, nil
++			case strings.Contains(sql, "from mo_catalog.mo_cdc_task"):
++				return executor.Result{}, fmt.Errorf("a ready frozen identity is a post-4.0.7 source: %s", sql)
++			default:
++				return executor.Result{}, nil
++			}
++		}, &testTxnOperator{})
++		s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec, func(s *service) { s.initUpgrade() })
++		t.Cleanup(s.stopper.Stop)
++		require.NoError(t, s.doCheckUpgrade(t.Context()))
++		require.Len(t, routes, 1, "the valid frozen identity takes the single direct succession hop")
++		require.Contains(t, routes[0], fmt.Sprintf("'%s', '%s', '%s',", frozen.Version, v4_0_19.Handler.Metadata().Version, v4_0_19.Handler.Metadata().Version))
++		require.False(t, s.upgrade.finalVersionCompleted.Load())
++	})
++}
+```
+
+**File**: `pkg/bootstrap/service_upgrade_tenant_v407_test.go` (modified, +437/-6)
+```diff
+@@ -17,18 +17,24 @@ package bootstrap
+ import (
+ 	"context"
+ 	"fmt"
++	"os"
+ 	"strings"
+ 	"testing"
+ 
+ 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions"
++	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_18"
++	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_19"
+ 	"github.com/matrixorigin/matrixone/pkg/bootstrap/versions/v4_0_7"
+ 	"github.com/matrixorigin/matrixone/pkg/catalog"
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
+ 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
+ 	"github.com/matrixorigin/matrixone/pkg/common/runtime"
+ 	"github.com/matrixorigin/matrixone/pkg/container/types"
+ 	"github.com/matrixorigin/matrixone/pkg/defines"
++	"github.com/matrixorigin/matrixone/pkg/pb/txn"
+ 	"github.com/matrixorigin/matrixone/pkg/txn/clock"
+ 	"github.com/matrixorigin/matrixone/pkg/util/executor"
++	"github.com/matrixorigin/matrixone/pkg/util/sysview"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -76,11 +82,11 @@ func TestV407TaskCompletionAfterLastAccountCommit(t *testing.T) {
+ }
+ 
+ // A ready semantic version has no offset progress to replay. On the
+-// integrated chain the final handle is 4.0.18, so the converged leg uses a
+-// cluster READY at 4.0.18/1 with the account already at 4.0.18: the manual
++// merged chain the final handle is 4.0.19, so the converged leg uses a
++// cluster READY at 4.0.19/2 with the account already at 4.0.19: the manual
+ // path reads its route state, runs no migration SQL, and caches the account.
+ // The frozen-4.0.7 staging pins the other reachable branch of the same
+-// boundary: a CN at final 4.0.18 refuses a manual tenant upgrade while the
++// boundary: a CN at final 4.0.19 refuses a manual tenant upgrade while the
+ // cluster still reports 4.0.7 as its latest version, because its own cluster
+ // route has not been created yet. The final==4.0.7 arm inside
+ // UpgradeOneTenant can no longer fire on this binary; the frozen offset-only
+@@ -90,8 +96,8 @@ func TestManualV407ReadyAccountDoesNotReplay(t *testing.T) {
+ 	for _, midRoll := range []bool{false, true} {
+ 		t.Run(fmt.Sprint(midRoll), func(t *testing.T) {
+ 			runtime.RunTest("", func(runtime.Runtime) {
+-				accountVersion := "4.0.18"
+-				latest := versions.Version{Version: "4.0.18", VersionOffset: 1, State: versions.StateReady}
++				accountVersion := "4.0.19"
++				latest := versions.Version{Version: "4.0.19", VersionOffset: v4_0_19.Handler.Metadata().VersionOffset, State: versions.StateReady}
+ 				wantReads := 3
+ 				if midRoll {
+ 					accountVersion = final.Version
+@@ -118,7 +124,7 @@ func TestManualV407ReadyAccountDoesNotReplay(t *testing.T) {
+ 				err := s.UpgradeOneTenant(t.Context(), 7)
+ 				if midRoll {
+ 					require.ErrorContains(t, err,
+-						"tenant upgrade requires current cn version 4.0.18 to match cluster latest version 4.0.7")
++						"tenant upgrade requires current cn version 4.0.19 to match cluster latest version 4.0.7")
+ 					require.Empty(t, s.mu.tenants)
+ 				} else {
+ 					require.NoError(t, err)
+@@ -131,6 +137,57 @@ func TestManualV407ReadyAccountDoesNotReplay(t *testing.T) {
+ 	}
+ }
+ 
++// An account at the cluster's final version has no migration to replay. A
++// restarted CN must skip DDL rather than silently rebuilding existing objects
++// and grants - including a differently stamped final row from another
++// generation, which never reaches the tenant walk.
++func TestManualFinalReadyAccountDoesNotReplay(t *testing.T) {
++	for _, mismatch := range []bool{false, true} {
++		t.Run(fmt.Sprint(mismatch), func(t *testing.T) {
++			runtime.RunTest("", func(runtime.Runtime) {
++				final := v4_0_19.Handler.Metadata()
++				offset := final.VersionOffset
++				if mismatch {
++					offset++
++				}
++				reads := 0
++				exec := executor.NewMemExecutor2(func(sql string) (executor.Result, error) {
++					reads++
++					switch {
++					case sql == "select create_version from mo_account where account_id = 7":
++						return newBootstrapStringResult(final.Version), nil
++					case sql == versions.LatestVersionSQL:
++						return statisticsLatestVersionResult(t, versions.Version{Version: final.Version, VersionOffset: offset}, versions.StateReady), nil
++					case strings.Contains(sql, "from mo_upgrade"):
++						return executor.Result{}, nil
++					default:
++						t.Fatalf("ready account must not run migrations: %s", sql)
++						return executor.Result{}, nil
++					}
++				}, &testTxnOperator{})
++				s := newServiceForTest("", &memLocker{}, clock.NewHLCClock(func() int64 { return 0 }, 0), nil, exec, func(s *service) { s.initUpgrade() })
++				t.Cleanup(s.stopper.Stop)
++				err := s.UpgradeOneTenant(t.Context(), 7)
++				require.NoError(t, err)
++				require.True(t, s.mu.tenants[7])
++				// A differently stamped final row skips the walk entirely; the
++				// matching row reads the retained route and replays nothing.
++				if mismatch {
++					require.Equal(t, 2, reads)
++				} else {
++					require.Equal(t, 3, reads)
++				}
++				require.NoError(t, s.UpgradeOneTenant(t.Context(), 7))
++				if mismatc
+```
+
+---
+
+### Incident Patch 3: `91dfab21` (2026-10-30)
+**Commit Message**: fix(python-sdk): unify SQL, transaction and driver boundaries (#31889)
+
+## What type of PR is this?
+
+- [x] API-change
+- [x] BUG
+- [x] Improvement
+- [x] Documentation
+- [ ] Feature
+- [x] Test and CI
+- [x] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Closes #30242
+Closes #31149
+Closes #30059
+Closes #31845
+Closes #31840
+Closes #31404
+Closes #31403
+Closes #31400
+Closes #31399
+Closes #31394
+
+## What this PR does / why we need it:
+
+Repair the shared Python SDK boundaries behind the ten assigned reports
+in one change. A duplicate-key COMMIT reply now reports a rejected write
+with `committed=False`; a lost successful reply remains unknown. All
+search builders quote MATCH identifiers correctly, preserve explicit
+zero pagination, and share safe native mode rendering. Vector index
+creation and deletion share validation and execution instead of
+swallowing failures in repeated paths.
+
+- Repair async ORM bytes binding at the common
+dialect/physical-connection boundary. Install one instance-local
+hexadecimal binary encoder per connection, preserving the original
+nonbinary encoder and module globals. Move the existing pre-ping
+compatibility setting to the actual engine/pool owner so warmed 
+
+**File**: `.github/ci/change-scope.test.cjs` (modified, +9/-5)
+```diff
+@@ -558,15 +558,19 @@ test('the reusable SDK owner preserves the matrix and isolates untrusted checkou
+   assert.match(offline, /flake8 matrixone --select=E9,F63,F7,F82/);
+   assert.match(offline, /if: \$\{\{ matrix.python == '3.12' && matrix.sqlalchemy == '>=2.0,<2.1' \}\}/);
+   assert.match(offline, /fail-fast: false/);
+-  const pythons = ['3.10', '3.12'];
+-  const sqlalchemy = ['>=1.4,<1.5', '>=2.0,<2.1', '>=2.1,<3'];
+-  for (const python of pythons) assert.ok(offline.includes(`'${python}'`));
+-  for (const range of sqlalchemy) assert.ok(offline.includes(`'${range}'`));
++  assert.match(offline, /^        python: \['3\.10', '3\.12'\]$/m);
++  assert.match(offline, /^        sqlalchemy: \['>=1\.4\.54,<1\.5', '>=2\.0,<2\.1', '>=2\.1,<3'\]$/m);
+   assert.match(offline, /exclude:\n          - python: '3.10'\n            sqlalchemy: '>=2.1,<3'/);
++  assert.match(offline, /include:\n          - python: '3\.10'\n            sqlalchemy: '==1\.4\.54'/);
+   assert.match(offline, /include:[\s\S]*?- python: '3.11'\n            sqlalchemy: '>=2.1,<3'/);
++  assert.match(offline, /SQLALCHEMY_RANGE: \$\{\{ matrix\.sqlalchemy \}\}/);
++  assert.match(offline, /"SQLAlchemy\[asyncio\]\$\{SQLALCHEMY_RANGE\}"/);
++  assert.match(offline, /- name: Assert exact supported SQLAlchemy floor\n        if: \$\{\{ matrix\.sqlalchemy == '==1\.4\.54' \}\}\n        run: python -c "import sqlalchemy; assert sqlalchemy\.__version__ == '1\.4\.54', sqlalchemy\.__version__"/);
++  assert.ok(offline.indexOf('Assert exact supported SQLAlchemy floor') < offline.indexOf('Run required offline contracts without skips'));
+   assert.match(offline, /name: python-sdk-\$\{\{ github.event.pull_request.head.sha \|\| github.sha \}\}-\$\{\{ github.run_id \}\}-\$\{\{ github.run_attempt \}\}-\$\{\{ strategy.job-index \}\}/);
+   assert.match(offline, /if: \$\{\{ !cancelled\(\) \}\}/);
+   const core = checkoutSpec(sections['core-import']);
++  assert.match(sections['core-import'], /include:\n          - python: '3\.8'\n            sqlalchemy: '==1\.4\.54'/);
+   assert.equal(core.repository, checkout.repository);
+   assert.equal(core.ref, checkout.ref);
+   assert.equal(core['persist-credentials'], 'false');
+@@ -587,7 +591,7 @@ test('the reusable SDK owner preserves the matrix and isolates untrusted checkou
+     assert.equal(result.status === 0, database !== '', result.stderr);
+     if (!database) assert.match(result.stderr, /Configure MATRIXONE_DATABASE/);
+   }
+-  assert.match(offline, /python scripts\/run_contracts\.py --output offline-contracts/);
++  assert.match(offline, /- name: Run required offline contracts without skips\n        run: python scripts\/run_contracts\.py --output offline-contracts/);
+   assert.match(sections.online, /python scripts\/run_contracts\.py --server "\$SDK_SERVER_TARGET" --output online-contracts/);
+   assert.ok(readFileSync(join(__dirname, '../../clients/python/scripts/run_contracts.py'), 'utf8').length > 0);
+   const group = sdk.match(/^  group: (.*)$/m)[1];
+```
+
+**File**: `.github/workflows/python-sdk.yml` (modified, +17/-2)
+```diff
+@@ -29,11 +29,13 @@ jobs:
+       fail-fast: false
+       matrix:
+         python: ['3.10', '3.12']
+-        sqlalchemy: ['>=1.4,<1.5', '>=2.0,<2.1', '>=2.1,<3']
++        sqlalchemy: ['>=1.4.54,<1.5', '>=2.0,<2.1', '>=2.1,<3']
+         exclude:
+           - python: '3.10'
+             sqlalchemy: '>=2.1,<3'
+         include:
++          - python: '3.10'
++            sqlalchemy: '==1.4.54'
+           - python: '3.12'
+             sqlalchemy: '==2.0.43'
+           # SQLAlchemy 2.1 requires Python >=3.11.
+@@ -70,6 +72,19 @@ jobs:
+           SQLALCHEMY_RANGE: ${{ matrix.sqlalchemy }}
+         run: |
+           python -m pip install -e '.[test]' "SQLAlchemy[asyncio]${SQLALCHEMY_RANGE}" pytest-asyncio pytest-subtests
++      - name: Assert exact supported SQLAlchemy floor
++        if: ${{ matrix.sqlalchemy == '==1.4.54' }}
++        run: python -c "import sqlalchemy; assert sqlalchemy.__version__ == '1.4.54', sqlalchemy.__version__"
++      - name: Pin and verify the async driver regression tuple
++        if: ${{ matrix.sqlalchemy == '==2.0.43' }}
++        run: |
++          python -m pip install 'PyMySQL==1.2.3' 'aiomysql==0.3.2'
++          python - <<'PYDRIVERS'
++          from importlib.metadata import version
++          assert version('SQLAlchemy') == '2.0.43'
++          assert version('PyMySQL') == '1.2.3'
++          assert version('aiomysql') == '0.3.2'
++          PYDRIVERS
+       - name: Check fatal Python errors
+         if: ${{ matrix.python == '3.12' && matrix.sqlalchemy == '>=2.0,<2.1' }}
+         run: |
+@@ -102,7 +117,7 @@ jobs:
+       matrix:
+         include:
+           - python: '3.8'
+-            sqlalchemy: '>=1.4,<1.5'
++            sqlalchemy: '==1.4.54'
+           - python: '3.9'
+             sqlalchemy: '>=2.0,<2.1'
+     defaults:
+```
+
+**File**: `clients/python/SDK_CI.md` (modified, +7/-1)
+```diff
+@@ -9,9 +9,15 @@ The existing `CI Required` aggregate enforces the SDK call's result, including
+ failures, cancellations and missing results. SDK-only skips do not provide kernel
+ coverage or online SDK certification.
+ 
++The supported SQLAlchemy minimum is **1.4.54**. An exact 1.4.54 cell
++runs the full offline contracts and asserts the installed version; the Python
++3.8 installed-core cell also pins that minimum. SQLAlchemy 1.4.24 fails verified
++escaped expanding-bind and cancelled-connection cleanup contracts.
++
+ Offline contracts run on Python 3.10/3.12 with SQLAlchemy 1.4/2.0 and Python
+ 3.11/3.12 with SQLAlchemy 2.1 (which requires Python >=3.11). An additional Python
+-3.12 cell fixes SQLAlchemy at 2.0.43 for the pre-ping regression. Each cell runs
++3.12 cell fixes SQLAlchemy at 2.0.43 with PyMySQL 1.2.3 and aiomysql 0.3.2
++for pre-ping and binary binding, asserting all three distribution versions. Each cell runs
+ `scripts/run_contracts.py`, which records source/dependency provenance and rejects
+ failures, errors, skips, empty selections and source changes during execution.
+ Analytics offline checks run separately; their online-only skips do not weaken
+```
+
+**File**: `clients/python/docs/async-analytics-and-execution.md` (modified, +99/-1)
+```diff
+@@ -20,7 +20,9 @@ Shorthand table definitions preserve `datetime(6)`, `timestamp(3)` and `time(6)`
+ creation and DROP. SQLAlchemy reflection also recognizes existing F16, BF16,
+ INT8 and UINT8 vectors; Arrow support is qualified separately.
+ 
+-SQLAlchemy 1.4.24 or newer is required: projection inference uses
++SQLAlchemy 1.4.54 or newer is required. SQLAlchemy 1.4.24 has verified
++escaped expanding-bind and cancelled physical-connection cleanup failures. The
++SDK also requires the following public APIs: projection inference uses
+ `Select.get_final_froms()` (1.4.23), and native async streams use the public
+ `driver_connection` accessor (1.4.24). SQLAlchemy 2.1 itself requires Python
+ 3.11 or newer; Python 3.8/3.9 use a compatible 1.4/2.0 series.
+@@ -218,3 +220,99 @@ requests fail before any CREATE/ALTER mutation; equals signs in values work.
+ 
+ See [design revision 2.3](design/systemic-sdk-boundaries.md) for ownership,
+ compatibility and failure-path decisions.
++
++
++### Explicit snapshot support
++
++Importing `matrixone` or its SQLAlchemy extensions does not modify SQLAlchemy's
++`Select` class. Prefer `select(User, snapshot='nightly')` from `matrixone`, or
++annotate an existing statement with `with_snapshot(statement, 'nightly')`.
++The same helpers and `compile_select` are exported by `matrixone.sqlalchemy_ext`.
++Both forms return a new statement; the original remains a live query.
++
++Applications retaining the legacy `statement.with_snapshot('nightly')` spelling
++must call `enable_snapshot_method()` once at startup. This is a process-wide
++opt-in; it refuses to overwrite a method or attribute installed by another
++library. Configure it before concurrent class modifications. Unsupported snapshot
++sources continue to fail explicitly rather than silently reading live data.
++
++### Search and index boundaries
++
++`boolean_match()` defaults to Boolean mode. The higher-level
++`FulltextSearchBuilder` defaults to natural-language mode; choose
++`.with_mode(FulltextSearchMode.BOOLEAN)` when supplying Boolean operators.
++Explicit `LIMIT 0` and `OFFSET 0` remain in generated SQL, including offsets
++without a limit. MATCH identifier components are always backtick-quoted.
++Strings may name `column`, `table.column` or `database.table.column`; SQLAlchemy
++column objects retain atomic names, including dots and embedded backticks.
++
++The builders' `.where()`, projections, table and ordering fragments remain
++caller-owned SQL. Do not interpolate untrusted values into these fragments;
++use a parameterized SQLAlchemy statement for that purpose. Structured Boolean
++terms retain MatrixOne grammar (`stop-fire` and `c++` are valid terms); phrase
++contents with embedded quotes/backslashes cannot be represented and fail early.
++Raw-mode builders also preserve `IN BM25 MODE` and natural-language query
++expansion. Unsupported modes raise `ValueError`; the filter and legacy builder
++retain their existing fallback for unknown modes. Query-expansion syntax is
++rendered as `WITH QUERY EXPANSION`; execution still
++depends on server support.
++
++Vector index numeric options accept positive signed 64-bit integers or `None`
++to use the server default; booleans, strings, fractional values, zero and negative
++values are rejected before DDL or setup SQL. The same validation applies to
++later option assignments. Server algorithm-specific limits remain server-owned.
++The five native metric names (L2, L2 squared, inner product, cosine and L1) are
++recognized case-insensitively; empty `op_type` retains the server's L2 default.
++The server decides which metrics each algorithm supports. Unknown safe index
++keywords remain available for server plugins.
++
++Index class/instance `create` and `drop` return `True` on success and now raise
++execution errors instead of printing them and returning `False`. Catch the
++original SQLAlchemy/database exception to distinguish failure from success.
++Names use the same quoting boundary for create and drop; no retry, capability
++probe, or extra query is added to the execution path.
++
++
++### Complete-SQL builder parameters
++
++`MatrixOneSQLBuilder.build_with_parameter_substitution()`, `str(builder)` and
++its convenience helpers use the execution path's existing lexical renderer.
++Only executable `?` markers are substituted, values are rendered by type, and
++missing/extra values fail before execution. `build()` continues to return SQL
++and its parameter list. The builder retains its historical qmark-only style;
++modulo expressions using columns such as `s` or `scol` are left intact. The
++Client/Session renderer's existing `%s` support is unchanged.
++
++Convenience helpers reject nonempty `where_params` when conditions are absent
++or empty (including empty condition iterators), in both parameterized and
++complete-SQL modes. Empty parameters remain valid without conditions. Vector distance
++values use the existing string-token boundary; column names, expressions and
++other raw SQL fragments remain caller-owned. Rendered values are
+```
+
+**File**: `clients/python/docs/design/analytics-arrow-upload.md` (modified, +7/-1)
+```diff
+@@ -33,7 +33,13 @@ Create one owned unique IPC file in the caller's existing staging directory. Wri
+ After staging completes, create a new table (`create=True`) or append (`create=False`) and execute native Arrow `LOAD DATA` in one transaction. Hold UTC, STRICT_ALL_TABLES and TN primary-key checks through COMMIT, then restore session settings.
+ 
+ - Before-commit errors: roll back creation/append; no partial rows.
+-- Disconnection during COMMIT: `AnalyticsCommitUnknownError`, `committed=None`; reconcile rather than retry.
++- An acknowledged, non-invalidated PyMySQL/aiomysql duplicate-key (1062)
++  COMMIT reply: `AnalyticsCommitRejectedError`, `committed=False`, with
++  original errno/cause and row count when known. The failed connection is
++  still discarded. File imports share this transaction classification.
++- Other COMMIT errors, cancellation or missing replies: `AnalyticsCommitUnknownError`, `committed=None`; reconcile rather than retry.
++  Cancellation retains its cancellation exception with the same unknown state.
++  The SDK does not infer rollback from arbitrary error codes or retry writes.
+ - Acknowledged commit followed by session/staging cleanup failure: `AnalyticsCleanupError`, `committed=True`, with row count.
+ - If a primary input/DB error is already active, attach `rollback_error`, `cleanup_error` or `staging_cleanup_error` instead of replacing it.
+ 
+```
+
+**File**: `clients/python/docs/design/systemic-sdk-boundaries.md` (modified, +1/-1)
+```diff
+@@ -162,7 +162,7 @@ qualified negative target for native Arrow LOAD and the new Stage literal cases.
+ ## Validation and compatibility
+ 
+ Core Python 3.8 remains available without Arrow. Analytics requires Python 3.9+.
+-SQLAlchemy >=1.4.24 is the supported floor; 2.1 requires Python >=3.11. Driver-bound
++SQLAlchemy >=1.4.54 is the supported floor; 2.1 requires Python >=3.11. Driver-bound
+ execution is explicit and does not reinterpret existing SDK text placeholders.
+ 
+ Validation maps shared compilation to real SQLAlchemy controls, async ownership
+```
+
+**File**: `clients/python/docs/installation.rst` (modified, +3/-3)
+```diff
+@@ -66,9 +66,9 @@ Requirements
+ ------------
+ 
+ * Python 3.8 or higher
+-* PyMySQL >= 1.0.0
+-* aiomysql >= 0.1.0
+-* SQLAlchemy >= 1.4.0
++* PyMySQL >= 1.0.0, != 1.2.1, != 1.2.2, < 1.3
++* aiomysql >= 0.2.0
++* SQLAlchemy >= 1.4.54, < 3
+ * typing-extensions >= 4.0.0
+ * python-dateutil >= 2.8.0
+ 
+```
+
+**File**: `clients/python/docs/requirements.txt` (modified, +2/-2)
+```diff
+@@ -7,9 +7,9 @@ sphinx-rtd-theme>=1.0,<3.0
+ sphinx-autobuild>=2021.3.14
+ 
+ # Required for autodoc to work with the source code
+-PyMySQL>=1.0.0
++PyMySQL>=1.0.0,!=1.2.1,!=1.2.2,<1.3
+ aiomysql>=0.2.0
+-SQLAlchemy>=1.4.0,<3.0.0
++SQLAlchemy>=1.4.54,<3.0.0
+ typing-extensions>=4.0.0
+ python-dateutil>=2.8.0
+ numpy>=1.20.0,<2.0.0
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31753** (2026-10-29): test: cover IVF rank option isolation and overrides (@iamlinjunhong)
-- **PR #31713** (closed): fix(python): preserve double column type (@MatrixAdventurer)
-- **PR #31705** (2026-10-29): Handle unterminated CSV fields at EOF during load (@iamlinjunhong)
-- **PR #31704** (2026-10-29): fix(vector): preserve const-null clone backing ownership (@XuPeng-SH)
-- **PR #31699** (2026-10-29): [4.2] Fix vector ownership on clone and transaction errors (@XuPeng-SH)
-- **PR #31694** (2026-10-29): fix(python): reject unsafe clone flag immediately (@MatrixAdventurer)
+- **PR #31935** (closed): plan: support DROP VIEW with multiple views (#31910) (@MatrixAdventurer)
+- **PR #31934** (2026-10-30): fix(ci): cancel obsolete PR runs and avoid post-merge main checks (@XuPeng-SH)
+- **PR #31933** (2026-10-30): fix(ci): repair shared UT lifecycle and trim redundant fixtures (@XuPeng-SH)
+- **PR #31932** (closed): Preserve borrowed vector snapshots and backing ownership (@iamlinjunhong)
+- **PR #31925** (closed): test(bvt): cover external CSV table read consistency and read-only rejections (@MatrixAdventurer)
+- **PR #31924** (closed): test(bvt): cover data branch table shapes, vector index metric consistency and multibyte charset parity (@MatrixAdventurer)
 
 ---
 
@@ -3555,42 +3932,35 @@ string nodes NOT NULL while DATE string c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. use JSON value identity in window partitions and correlated LIMIT (#31681)
+## X. plan): MySQL implicit boolean semantics for ENUM/SET, BIT literals and JSON cond
 
 **RULE**:
-When implementing operations in `pkg/compare/compare.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/design/20261027-implicit-boolean-semantics-enum-set-bit-json.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d950fdcd`: use JSON value identity in window partitions and correlated LIMIT (#31681). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d8c90c20`: plan): MySQL implicit boolean semantics for ENUM/SET, BIT literals and JSON conditions (#31492). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/compare/compare.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/20261027-implicit-boolean-semantics-enum-set-bit-json.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// JSON equality/identity follows MySQL JSON value semantics, never raw
-		// bytes: 1, 1.0 and 1e0 are one value, and members/elements compare by
-		// their own typed semantics. This is the same comparator ORDER BY uses,
-		// so grouping/splitting consumers (window PARTITION BY feeds, transfer
-		// identity checks) agree with the SQL = operator and GROUP BY.
-		return &jsonCompare{
+# Implicit boolean semantics for ENUM/SET, BIT literals, and JSON conditions
+
+- Status: Review required
+- Tracking issue: [#30931](https://github.com/matrixorigin/matrixone/issues/30931) (consolidated group: #30930, #30932)
+- Implementation PR: [#31492](https://github.com/matrixorigin/matrixone/pull/31492) - implemented from revision 8; after the revision-9 deviation repair lands, the PR description and implementation review must link THIS revision and its hash
+- Design revision: 9
+- Last updated: 2026-10-30
+- Supersedes revision 8 (SHA256 15d933cf6ac0608423409fa31173d969cc8de16a01be3ee969e0c8678ad6d73a, the independently PASSed predecessor, returned with round-9 finding P2 - the minted per-feature MORPC slot and its version-gate wiring violate the repository's shutdown-only upgrade contract, `.agents/skills/mo-dev/references/upgrade-compatibility.md:13-40`), which superseded revision 7 (SHA256 ea470bd602e6209e383d96db1c1480f5e807a95b147230e48c9b96ac4ed3bb31, returned with finding F8 - exempt SET storage semantics from the boolean-condition contracts), which superseded revision 6 (SHA256 1cec7f6e700f2f3863aea39214475fce3bd3d73e33ef5d2e07608e85105ed1c1, returned with finding R2 - cl
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		if sqlOrder {
-			return &jsonCompare{
-				desc:        desc,
-				nullsLast:   nullsLast,
-				vs:          make([]*vector.Vector, 2),
-				isConstNull: make([]bool, 2),
-			}
-		}
-		return &strCompare{
-			typ:         typ,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d950fdcd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d8c90c20` are properly handled with clean fallback behavior.

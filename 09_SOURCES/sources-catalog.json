@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "5b8effbb",
+    "sourceVersion": "a7767075",
     "license": "MIT",
-    "contentHash": "1e96a4449e82f092dfd760b4b0fe66ed52f61bc5409b8ffbad61ed99726978c5",
-    "lastHarvestedAt": "2026-10-30T18:58:42.016Z",
+    "contentHash": "54ababb59a494807269abf25fbffecc3f044110386ddbc6709a33a5f1abd2ce0",
+    "lastHarvestedAt": "2026-10-30T20:05:20.983Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "36d6c793",
+    "sourceVersion": "91dfab21",
     "license": "Apache-2.0",
-    "contentHash": "f44d9d40eb560c0f169cbef4741a282dfc8c8bd502e7d641acddc3217a30c6c2",
-    "lastHarvestedAt": "2026-10-29T12:01:49.113Z",
+    "contentHash": "dc9eb7205aec62d31ec20750713ccabb8da844ee549c07afbd85bf7edc7c9f2c",
+    "lastHarvestedAt": "2026-10-30T20:05:20.616Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "2e258fc3",
+    "sourceVersion": "df57ae6d",
     "license": "MIT",
-    "contentHash": "f38ecb1336a4f9ee5520a2ec94813fa084020ab3e6f649300bb243690ea443bb",
-    "lastHarvestedAt": "2026-10-30T03:48:36.710Z",
+    "contentHash": "c5ec86e0489df88cbfb5bb272258f0c7d25b75441e3e0cb8545ac37fafe9f9a1",
+    "lastHarvestedAt": "2026-10-30T20:05:16.265Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "36bf2b88",
+    "sourceVersion": "bb947dc1",
     "license": "MIT",
-    "contentHash": "8a9c8d74e95de0c8af9e46fb4e60dc5fd09d63a17df54764b8e8ed3fdb3c55ad",
-    "lastHarvestedAt": "2026-10-28T21:43:30.679Z",
+    "contentHash": "c2d52c4683f5017446d47529cb2a1df91b5f0238a8deb54372adc88377e43b2f",
+    "lastHarvestedAt": "2026-10-30T20:05:08.676Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {
@@ -10113,10 +10113,10 @@
     "repository": "vitest-dev/vitest",
     "platform": "github",
     "sourceUrl": "https://github.com/vitest-dev/vitest",
-    "sourceVersion": "1a77c6cb",
+    "sourceVersion": "42770759",
     "license": "MIT",
-    "contentHash": "b44bf11cfbed153e28939a4755ae96ff90926df89f018b34af34ba0fb1a40e45",
-    "lastHarvestedAt": "2026-10-27T16:51:54.924Z",
+    "contentHash": "da9d0efad6726bb1ecd4b8ac8756a4dac86cb169902548abd92445d99b32b417",
+    "lastHarvestedAt": "2026-10-30T20:05:09.733Z",
     "learningId": "learn-github-vitest-dev-vitest"
   },
   "mijick-popups": {
