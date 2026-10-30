@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `b0563444`  
+> **Source Version**: `f301e7f4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T22:07:53.626Z  
+> **Timestamp**: 2026-10-30T14:33:37.570Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T22:07:53.622Z  
+> **Harvest Timestamp**: 2026-10-30T14:33:36.141Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25076 stars
+- **Stars / Engagement**: 25093 stars
 
 ---
 
@@ -1376,11 +1376,13 @@ async fn main() -> Result<(), Error> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10970** (2026-10-28): **build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript**
-  *Symptoms*: Bumps [undici](https://github.com/nodejs/undici) from 8.11.2 to 8.12.3. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/nodejs/undici/releases">undici's releases</a>.</em></p> <blockquote> <h2>v8.12.3</h2> <h2>What's Changed</h2> <ul> <li>ci: use Python 3.14 for the WPT server on macOS by <a href="https://github.com/mrityunjay-pandey"><code>@​mrityunjay-pandey</code></a> in <a href="https://redirect.github.com/nodejs/undici/pull/6029">nodejs/undici#6029</a></li> <li>build(deps-dev): bump neostandard from 0.13.0 to 0.14.0 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot] in <a href="https://redirect.github.com/nodejs/undici/pull/6006">nodejs/undici#6006</a></li> <li>build(deps-dev): bump eslint from 9.39.4 to 10.12.0 by <a href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot] in <a href="https://redirect.github.com/nodejs/undici/pull/5967">nodejs/undici#5967</a></li> <li>docs: document the options of interceptors.cache() by <a href="https://github.com/qodelicious"><code>@​qodelicious</code></a> in <a href="https://redirect.github.com/nodejs/undici/pull/6050">nodejs/undici#6050</a></li> <li>fix(h2): replace a connection that stops responding after a stream timeout by <a href="https://github.com/mcollina"><code>@​mcollina</code></a> in <a href="https://redirect.github.com/nodejs/undici/pull/6052">nodejs/undici#6052</a></li> <li>fix(pool): keep caller async context for queued requests by <a h
+- **Issue #11079** (2026-10-30): **postgres: name the statements the session runs itself (SessionStmt)**
+  *Symptoms*: ## Description  Adds `turso_pg_parser::translator::session_stmt`, which returns a `SessionStmt` for each kind of statement the PostgreSQL session runs itself instead of translating it, and `None` for everything else:  | `SessionStmt` | Statements | |---|---| | `Set(PgSetStmt)` | `SET`, `SET ... TO DEFAULT`, `SET ... FROM CURRENT`, `RESET` of one parameter | | `SetTransaction` | `SET TRANSACTION`, `SET SESSION CHARACTERISTICS AS TRANSACTION` | | `Show(PgShowStmt)` | `SHOW` | | `ResetAll` / `DiscardAll` | `RESET ALL` / `DISCARD ALL` | | `CreateSchema(PgCreateSchemaStmt)` / `DropSchema(PgDropSchemaStmt)` | `CREATE SCHEMA` / `DROP SCHEMA` | | `RefreshMatview` | `REFRESH MATERIALIZED VIEW` | | `CommentOn` | `COMMENT ON` | | `CopyFrom(PgCopyFromStmt)` | `COPY ... FROM` a file |  The session's `try_prepare_special` now makes one `session_stmt` call and matches on the result, instead of trying each `try_extract_*` / `is_*` in turn. There's no behaviour change: the same extractors run in the same order, with the same errors.  Test: `translator::tests::session_stmt_names_each_kind_the_session_runs` (each kind is recognized, and translated statements give `None`). The existing `turso_pg` and `turso_pg_parser` tests pass.  ## Motivation and context  A consumer of turso_pg that needs to know which statements the session handles itself (for example a server deciding each statement's effect for its permissions) can now call this one function and get all of turso's dispatch, instead of repea
+  **Post-Mortem & Fix Analysis**:
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **improve performance by 24.98%**  <details> <summary><b>2 warnings, 1 note</b></summary>  > :warning: **Unable to measure the execution of 1 benchmark** > > This benchmark measured no execution time, so its result is not comparable and counts as unchanged. This usually happens when the compiler removes the code under test. > > [Prevent compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > [See affected benchmarks](https://app.codspeed.io/tursodatabase/turso/branches/pg-session-stmt?q=has%3Aoptimized_out&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  > :warning: **85 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measure th
 
-- **Issue #10969** (2026-10-28): **build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /examples/react-native**
-  *Symptoms*: Bumps [launch-editor](https://github.com/vitejs/launch-editor) from 2.14.1 to 2.14.2. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/vitejs/launch-editor/commit/b5334895a00f8000ef3b6a46f2aa9e1a62eb27b4"><code>b533489</code></a> v2.14.2</li> <li><a href="https://github.com/vitejs/launch-editor/commit/f13cd835d4b8e860b1d4d080ad8a490cc2463679"><code>f13cd83</code></a> fix: check file existence after path resolution (<a href="https://redirect.github.com/vitejs/launch-editor/issues/157">#157</a>)</li> <li><a href="https://github.com/vitejs/launch-editor/commit/f6e6701bb1f16f2dd242b321374f1b6cca6eb6d4"><code>f6e6701</code></a> fix: ensure filenames passed to editors are not considered as flags (<a href="https://redirect.github.com/vitejs/launch-editor/issues/156">#156</a>)</li> <li><a href="https://github.com/vitejs/launch-editor/commit/3c2f9bf2ff8fe63d056a8f9cc52d825b66ca79fc"><code>3c2f9bf</code></a> fix: reject paths containing <code>%</code> on windows (<a href="https://redirect.github.com/vitejs/launch-editor/issues/155">#155</a>)</li> <li><a href="https://github.com/vitejs/launch-editor/commit/ecdfce1f9ec56a9c08f225f27d8047f3cf9690b1"><code>ecdfce1</code></a> refactor: extract <code>constructWindowsLaunchCommand</code> (<a href="https://redirect.github.com/vitejs/launch-editor/issues/154">#154</a>)</li> <li><a href="https://github.com/vitejs/launch-editor/commit/24d5d8442a022a83c9c9c486b18a3bc4236cf45a"><code>24d5d84</code></a> fix: correctly show e
+- **Issue #11071** (2026-10-30): **bindings/c: return NULL for an out-of-range column index**
+  *Symptoms*: ## Problem  ```c sqlite3_prepare_v2(db, "SELECT 1 AS a", -1, &stmt, NULL); sqlite3_column_name(stmt, -1); // Turso:  process aborts (panic: TryFromIntError) // SQLite: returns NULL ```  In `bindings/c/src/lib.rs`, the C API functions turn the column index into a Rust index without checking it:  - `sqlite3_column_name` and `sqlite3_column_table_name` call `idx.try_into().unwrap()`, which panics on a negative index. - `sqlite3_column_decltype` uses `idx as usize`, which turns -1 into a huge number.  For any index outside the result, the getters in `core/statement.rs` panic with `expect("No column")`. That covers both negative indexes and indexes past the last column. These are `extern "C"` functions, so the panic cannot unwind and the process aborts.  ## Fix  A new helper, `result_column_index`, returns `None` when the index is negative or not less than `num_columns()`. All three functions return NULL in that case, as SQLite does.  The core getters are not changed. Rust callers inside Turso only pass indexes they got from `num_columns()`, so for them an out-of-range index is still a bug and should still panic.  ## Tests  - `test_sqlite3_column_name` in `bindings/c/tests/compat/mod.rs`   <details>Replaces the commented-out out-of-range check. For each index in -1, 2, 5, `i32::MIN` and `i32::MAX`, it checks that `sqlite3_column_name`, `sqlite3_column_table_name` and `sqlite3_column_decltype` all return NULL. The query has 2 columns. On main the test aborts at the first call. With
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1397,157 +1399,719 @@ async fn main() -> Result<(), Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ccebb425` (2026-10-28)
-**Commit Message**: Merge 'build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript' from app/dependabot
+### Incident Patch 1: `06f11088` (2026-10-30)
+**Commit Message**: Merge 'bindings/c: return NULL for an out-of-range column index' from app/turso-github-handyman
 
-Bumps [undici](https://github.com/nodejs/undici) from 8.11.2 to 8.12.3.
-<details> <summary>Release notes</summary> <p><em>Sourced from <a
-href="https://github.com/nodejs/undici/releases">undici's
-releases</a>.</em></p> <blockquote> <h2>v8.12.3</h2> <h2>What's
-Changed</h2> <ul> <li>ci: use Python 3.14 for the WPT server on macOS by
-<a href="https://github.com/mrityunjay-pandey"><code>@​mrityunjay-
-pandey</code></a> in <a href="https://redirect.github.com/nodejs/undici/
-pull/6029">nodejs/undici#6029</a></li> <li>build(deps-dev): bump
-neostandard from 0.13.0 to 0.14.0 by <a
-href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot]
-in <a href="https://redirect.github.com/nodejs/undici/pull/6006">nodejs/
-undici#6006</a></li> <li>build(deps-dev): bump eslint from 9.39.4 to
-10.12.0 by <a
-href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot]
-in <a href="https://redirect.github.com/nodejs/undici/pull/5967">nodejs/
-undici#5967</a></li> <li>docs: document the options of
-interceptors.cache() by <a
-href="https://github.com/qodelicious"><code>@​qodelicious</code></a
+## Problem
 
-**File**: `bindings/javascript/yarn.lock` (modified, +3/-3)
+```c
+sqlite3_prepare_v2(db, "SELECT 1 AS a", -1, &stmt, NULL);
+sqlite3_column_name(stmt, -1);
+// Turso:  process aborts (panic: TryFromIntError)
+// SQLite: returns NULL
+```
+
+In `bindings/c/src/lib.rs`, the C API functions turn the column index
+into a Rust index without checking it:
+
+- `sqlite3_column_name` and `sqlite3_column_table_name` call
+`idx.try_into().unwrap()`, which panics on a negative index.
+- `sqlite3_column_decltype` uses `idx as usize`, which turns -1 into a
+huge number.
+
+For any index outside the result, the getters in `core/statement.rs`
+panic with `expect("No column")`. That covers both negative indexes and
+indexes past the last column. These are `extern "C"` functions, so the
+panic cannot unwind and the process aborts.
+
+## Fix
+
+A new helper, `result_column_index`, returns `None` when the index is
+negative or not less than `num_columns()`. All three functions return
+NULL in that case, as SQLite does.
+
+The core getters are not changed. Rust callers inside Turso only pass
+indexes they got from `num_columns()`, so for them an out-of-range index
+is still a bug a
+
+**File**: `bindings/c/src/lib.rs` (modified, +18/-3)
 ```diff
-@@ -3368,9 +3368,9 @@ __metadata:
-   linkType: hard
+@@ -2363,8 +2363,11 @@ pub unsafe extern "C" fn sqlite3_column_decltype(
+     idx: ffi::c_int,
+ ) -> *const ffi::c_char {
+     let stmt = &mut *stmt;
++    let Some(idx) = result_column_index(stmt, idx) else {
++        return std::ptr::null();
++    };
  
- "undici@npm:^8.4.1":
--  version: 8.11.2
--  resolution: "undici@npm:8.11.2"
--  checksum: 10c0/106f6991178fb7562fd90cdec7993c5f807a9428682306091f0c4b27fc474ec291f868e29972c6252988bf061ad193df943b3b99e775be157a28d92bbb95699d
-+  version: 8.12.3
-+  resolution: "undici@npm:8.12.3"
-+  checksum: 10c0/714919e62b4160eea195fb35c7f5c4907235741e47bfde8a014ac58f6d24df13434e23400d7f48e2c455fd2b259d27f07fce514f04a5b4e99936ba62cbc4bb71
-   languageName: node
-   linkType: hard
+-    if let Some(val) = stmt.stmt.get_column_decltype(idx as usize) {
++    if let Some(val) = stmt.stmt.get_column_decltype(idx) {
+         let c_string = CString::new(val).expect("CString::new failed");
+         c_string.into_raw()
+     } else {
+@@ -2377,8 +2380,10 @@ pub unsafe extern "C" fn sqlite3_column_name(
+     stmt: *mut sqlite3_stmt,
+     idx: ffi::c_int,
+ ) -> *const ffi::c_char {
+-    let idx = idx.try_into().unwrap();
+     let stmt = &mut *stmt;
++    let Some(idx) = result_column_index(stmt, idx) else {
++        return std::ptr::null();
++    };
  
+     let binding = stmt.stmt.get_column_name(idx).into_owned();
+     let val = binding.as_str();
+@@ -2396,8 +2401,10 @@ pub unsafe extern "C" fn sqlite3_column_table_name(
+     stmt: *mut sqlite3_stmt,
+     idx: ffi::c_int,
+ ) -> *const ffi::c_char {
+-    let idx = idx.try_into().unwrap();
+     let stmt = &mut *stmt;
++    let Some(idx) = result_column_index(stmt, idx) else {
++        return std::ptr::null();
++    };
+ 
+     let binding = stmt
+         .stmt
+@@ -2414,6 +2421,14 @@ pub unsafe extern "C" fn sqlite3_column_table_name(
+     c_string.into_raw()
+ }
+ 
++/// Converts a C column index to `usize`, or returns None when it is outside
++/// the statement's result columns, as SQLite does for an out-of-range index.
++fn result_column_index(stmt: &sqlite3_stmt, idx: ffi::c_int) -> Option<usize> {
++    usize::try_from(idx)
++        .ok()
++        .filter(|&idx| idx < stmt.stmt.num_columns())
++}
++
+ /// Returns the value at column `idx` of the current row, or None when there
+ /// is no current row or the index is out of range.
+ unsafe fn column_value(stmt: *mut sqlite3_stmt, idx: ffi::c_int) -> Option<&'static Value> {
+```
+
+**File**: `bindings/c/tests/compat/mod.rs` (modified, +5/-3)
+```diff
+@@ -655,9 +655,11 @@ mod tests {
+             let name2_str = std::ffi::CStr::from_ptr(name2).to_str().unwrap();
+             assert_eq!(name2_str, "value");
+ 
+-            // will lead to panic
+-            //let invalid = sqlite3_column_name(stmt, 5);
+-            //assert!(invalid.is_null());
++            for invalid_idx in [-1, 2, 5, i32::MIN, i32::MAX] {
++                assert!(sqlite3_column_name(stmt, invalid_idx).is_null());
++                assert!(sqlite3_column_table_name(stmt, invalid_idx).is_null());
++                assert!(sqlite3_column_decltype(stmt, invalid_idx).is_null());
++            }
+ 
+             assert_eq!(sqlite3_finalize(stmt), SQLITE_OK);
+             assert_eq!(sqlite3_close(db), SQLITE_OK);
 ```
 
 ---
 
-### Incident Patch 2: `d3bff3e6` (2026-10-28)
-**Commit Message**: Merge 'build(deps): bump rustls from 0.23.45 to 0.23.46' from app/dependabot
+### Incident Patch 2: `3729e534` (2026-10-30)
+**Commit Message**: Merge 'core: fix silently wrong custom-type arithmetic, remove arithmetic OPERATOR clauses' from Jussi Saurio
 
-Bumps [rustls](https://github.com/rustls/rustls) from 0.23.45 to
-0.23.46. <details> <summary>Commits</summary> <ul> <li><a href="https://
-github.com/rustls/rustls/commit/f04804fa13341a9b1dc02b5d1dd8a746f2c4b7fb
-"><code>f04804f</code></a> Delay saving KX hint until handshake
-confirmation</li> <li><a href="https://github.com/rustls/rustls/commit/0
-49d39b975ef5c39f546a10fa03d420dcf053510"><code>049d39b</code></a> Bump
-version to 0.23.46</li> <li><a href="https://github.com/rustls/rustls/co
-mmit/6d0ba089d6d446959d113bdad43042780949ba48"><code>6d0ba08</code></a>
-Eliminate secret from impl Debug for
-<code>ServerSessionValue</code></li> <li><a href="https://github.com/rus
-tls/rustls/commit/2b82b8141ae090fa193a9961705598b81d3aae9c"><code>2b82b8
-1</code></a> unbuffered: update TLS 1.3 traffic keys before exhausting
-them</li> <li><a href="https://github.com/rustls/rustls/commit/74343e704
-7d7179b9bd7e67cef543b6c490518a1"><code>74343e7</code></a> conn: update
-TLS 1.3 traffic keys within fragmented writes</li> <li><a href="https://
-github.com/rustls/rustls/commit/795eea719e9491ee45aae38acc62a60a98969fbe
-"><code>795eea
+## Summary
 
-**File**: `Cargo.lock` (modified, +2/-2)
+On main, math on custom types gives wrong answers without an error. This
+PR:
+
+- Removes `OPERATOR '+'`, `'-'` and the other math operators from CREATE
+TYPE. `OPERATOR '<'` stays for now; #11072 removes it.
+- Adds the math for built-in types (numeric, date, smallint, bigint) to
+core, with the type of each result.
+- Makes generated columns see the real value, not the stored one.
+- Makes numeric math on a blob an error.
+
+Examples:
+
+- **Wrong math on main:**
+  ```sql
+  SELECT numeric_col % 2 FROM t;        -- numeric_col = 9.5.         main: 1.0    now: 1.50
+  SELECT (date_col - 5) + 1 FROM t;     -- date_col = 2024-01-01.     main: 2024   now: 2023-12-28
+  SELECT date_col * 2 FROM t;           -- main: 4048   now: error: operator does not exist: date * integer
+  ```
+- **Generated columns:**
+  ```sql
+  INSERT INTO g(cents_col) VALUES (10) RETURNING gen;  -- type cents stores value * 100; gen AS (cents_col). main: 1000   now: 10
+  ```
+- **Removed:**
+  ```sql
+  CREATE TYPE my_int BASE integer ENCODE value DECODE value OPERATOR '+' abs;
+  -- now: error: CREATE TYPE do
+
+**File**: `cli/manuals/custom-types.md` (modified, +19/-26)
 ```diff
-@@ -5438,9 +5438,9 @@ dependencies = [
+@@ -6,7 +6,7 @@ display_name: "custom types"
  
- [[package]]
- name = "rustls"
--version = "0.23.45"
-+version = "0.23.46"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634"
-+checksum = "48e13bd8c0e9365c43cfa5c9e8f9ad49d3c8444926c9aac819e0e4dc503c8fdf"
- dependencies = [
-  "aws-lc-rs",
-  "log",
+ ## Overview
+ 
+-Turso extends SQLite's STRICT table type system with user-defined custom types. Custom types let you define how values are encoded before storage and decoded when read, enforce domain constraints at the storage layer, attach operators, and provide defaults — all declared in pure SQL.
++Turso extends SQLite's STRICT table type system with user-defined custom types. Custom types let you define how values are encoded before storage and decoded when read, enforce domain constraints at the storage layer, and provide defaults — all declared in pure SQL.
+ 
+ Custom types work only with **STRICT** tables (which are always enabled):
+ 
+@@ -23,15 +23,15 @@ CREATE TYPE type_name BASE base_type
+     [ENCODE encode_expr]
+     [COERCE coerce_expr]
+     [DECODE decode_expr]
+-    [OPERATOR 'op' [function_name] ...]
++    [OPERATOR '<']
+     [DEFAULT default_expr];
+ ```
+ 
+ - **BASE** — The underlying SQLite storage type (`text`, `integer`, `real`, `blob`).
+ - **ENCODE** — Expression applied to `value` before writing to disk.
+ - **COERCE** — (Optional) Expression that fits the encoded `value` to the column's type parameters, such as a maximum length. See [Parametric Types](#parametric-types).
+ - **DECODE** — Expression applied to `value` when reading from disk.
+-- **OPERATOR** — (Optional) Function to call for an arithmetic operator (`+`, `-`, `*`, `/`, `%`) on values of the type. See [Operators](#operators). A plain `OPERATOR '<'` lets ORDER BY and CREATE INDEX sort the type; see [Ordering](#ordering).
++- **OPERATOR '<'** — (Optional) Lets ORDER BY and CREATE INDEX sort the type; see [Ordering](#ordering). Arithmetic operators can't be declared; see [Operators](#operators).
+ - **DEFAULT** — (Optional) Default value for columns of this type when no value is supplied.
+ 
+ The special identifier `value` refers to the input being encoded or decoded.
+@@ -98,26 +98,16 @@ INSERT INTO t1 VALUES ('not json');    -- Error: malformed JSON
+ 
+ ## Operators
+ 
+-Custom types can map arithmetic operators to functions, so expressions like `val + val` call a user-defined function:
++A user-defined type has no arithmetic operators. `val + 1` on a column of the type fails:
+ 
+ ```sql
+-CREATE TYPE uint BASE text
+-    ENCODE test_uint_encode(value)
+-    DECODE test_uint_decode(value)
+-    OPERATOR '+' test_uint_add;
+-
+-CREATE TABLE t1(val uint) STRICT;
+-INSERT INTO t1 VALUES (20);
+-INSERT INTO t1 VALUES (30);
+-
+-SELECT val + val FROM t1;
+--- 40
+--- 60
++CREATE TYPE cents BASE integer ENCODE value * 100 DECODE value / 100;
++CREATE TABLE prices(amount cents) STRICT;
++SELECT amount + 1 FROM prices;
++-- Error: operator does not exist: cents + integer
+ ```
+ 
+-The function runs when both operands are of the type, or one is of the type and the other is a literal (encoded first). Otherwise SQLite's operator runs on the values the columns read as. The built-in `date` type declares `+` and `-`, and `numeric` declares `+`, `-`, `*` and `/`.
+-
+-`OPERATOR '<'` takes no function; see [Ordering](#ordering). Other comparison operators can't be declared: `OPERATOR '='` fails with `OPERATOR '=' is not supported: values of a custom type compare by their decoded value`.
++The built-in types `date`, `numeric`, `smallint` and `bigint` have arithmetic operators. The only OPERATOR clause `CREATE TYPE` accepts is a plain `OPERATOR '<'`; see [Ordering](#ordering). Any other fails: `OPERATOR '+' f` fails with `CREATE TYPE does not accept OPERATOR '+': only OPERATOR '<' is supported`.
+ 
+ ## Ordering
+ 
+@@ -154,18 +144,21 @@ SELECT val FROM t ORDER BY val;
+ 
+ ### Types with Their Own Order
+ 
+-The built-in `numeric` type and arrays have their own order, set by Turso. It is used in every comparison of their values: `=`, `<` and the other operators, IN, BETWEEN, `CASE x WHEN`, `nullif`, `IS`, `min`/`max`, ORDER BY, GROUP BY, DISTINCT, UNION/INTERSECT/EXCEPT, window `PARTITION BY`, joins and indexes. The same query returns the same rows with and without an index:
++The built-in `numeric` type and arrays have their own order, set by Turso. It is used in every comparison of their values: `=`, `<` and the other operators, IN, BETWEEN, `CASE x WHEN`, `nullif`, `IS`, `min`/`max`, ORDER BY, GROUP BY, DISTINCT, UNION/INTERSECT/EXCEPT, window `PARTITION BY`, joins and indexes. The same query returns the same rows with and without an index, and expressions of the type compare the same way:
+ 
+ ```sql
+-CREATE TABLE t(id INTEGER PRIMARY KEY, n numeric(10,2)) STRICT;
+-INSERT INTO t VALUES (1, 4.50), (2, 9.50), (3, 10);
+-SELECT max(n) FROM t;                    -- 10.00, not '9.50'
+-SELECT id FROM t WHERE n IN (4.5, 10);   -- 1, 3
+-SELECT id FROM t WHERE n = 4.504;        -- nothing: the constant is not rounded to 2 places
++CREATE TABLE t(id INTEGER PRIMARY KEY, n numeric(10,2), i integer) STRICT;
++INSERT INTO t VALUES (1, 4.50, 6), (2, 9.50, 0);
++SELECT max(n + i) FROM t;            -- 10.50, not '9.50'
++SELECT id FROM t WHERE n + i IN (10.
+```
+
+**File**: `core/dialect/sqlite/mod.rs` (modified, +3/-4)
+```diff
+@@ -534,10 +534,6 @@ pub fn resolve_builtin_function(name: &str, arg_count: usize) -> crate::Result<O
+         // Test type functions (for custom type system testing)
+         "test_uint_encode" => Ok(Some(Func::Scalar(ScalarFunc::TestUintEncode))),
+         "test_uint_decode" => Ok(Some(Func::Scalar(ScalarFunc::TestUintDecode))),
+-        "test_uint_add" => Ok(Some(Func::Scalar(ScalarFunc::TestUintAdd))),
+-        "test_uint_sub" => Ok(Some(Func::Scalar(ScalarFunc::TestUintSub))),
+-        "test_uint_mul" => Ok(Some(Func::Scalar(ScalarFunc::TestUintMul))),
+-        "test_uint_div" => Ok(Some(Func::Scalar(ScalarFunc::TestUintDiv))),
+         #[cfg(feature = "test_helper")]
+         "test_nondet_counter" => Ok(Some(Func::Scalar(ScalarFunc::TestNondetCounter))),
+         "string_reverse" | "reverse" => Ok(Some(Func::Scalar(ScalarFunc::StringReverse))),
+@@ -557,8 +553,11 @@ pub fn resolve_builtin_function(name: &str, arg_count: usize) -> crate::Result<O
+         "numeric_sub" => Ok(Some(Func::Scalar(ScalarFunc::NumericSub))),
+         "numeric_mul" => Ok(Some(Func::Scalar(ScalarFunc::NumericMul))),
+         "numeric_div" => Ok(Some(Func::Scalar(ScalarFunc::NumericDiv))),
++        "numeric_mod" => Ok(Some(Func::Scalar(ScalarFunc::NumericMod))),
++        "numeric_neg" => Ok(Some(Func::Scalar(ScalarFunc::NumericNeg))),
+         "date_plus" => Ok(Some(Func::Scalar(ScalarFunc::DatePlus))),
+         "date_minus" => Ok(Some(Func::Scalar(ScalarFunc::DateMinus))),
++        "date_diff" => Ok(Some(Func::Scalar(ScalarFunc::DateDiff))),
+         // Array construction / element access (desugared from syntax)
+         "array" => Ok(Some(Func::Scalar(ScalarFunc::Array))),
+         "array_element" => Ok(Some(Func::Scalar(ScalarFunc::ArrayElement))),
+```
+
+**File**: `core/function.rs` (modified, +19/-20)
+```diff
+@@ -946,10 +946,6 @@ pub enum ScalarFunc {
+     // Test type functions (for custom type system testing)
+     TestUintEncode,
+     TestUintDecode,
+-    TestUintAdd,
+-    TestUintSub,
+-    TestUintMul,
+-    TestUintDiv,
+     /// Test-only: returns a monotonically increasing 64-bit integer on every
+     /// evaluation. Used to verify that the planner does not deduplicate
+     /// equivalent SQL calls that contain nondeterministic functions.
+@@ -974,9 +970,12 @@ pub enum ScalarFunc {
+     NumericSub,
+     NumericMul,
+     NumericDiv,
++    NumericMod,
++    NumericNeg,
+     // Date type functions
+     DatePlus,
+     DateMinus,
++    DateDiff,
+     // Array construction / element access (desugared from ARRAY[…] and expr[n] syntax)
+     Array,
+     ArrayElement,
+@@ -1079,13 +1078,9 @@ impl Deterministic for ScalarFunc {
+             ScalarFunc::ConnTxnId => false, // depends on connection state
+             ScalarFunc::IsAutocommit => false, // depends on connection state
+             ScalarFunc::SequenceWatermark => false, // depends on active MVCC transactions
+-            ScalarFunc::TestUintEncode
+-            | ScalarFunc::TestUintDecode
+-            | ScalarFunc::TestUintAdd
+-            | ScalarFunc::TestUintSub
+-            | ScalarFunc::TestUintMul
+-            | ScalarFunc::TestUintDiv
+-            | ScalarFunc::StringReverse => true,
++            ScalarFunc::TestUintEncode | ScalarFunc::TestUintDecode | ScalarFunc::StringReverse => {
++                true
++            }
+             ScalarFunc::Gcd
+             | ScalarFunc::Lcm
+             | ScalarFunc::Repeat
+@@ -1103,8 +1098,11 @@ impl Deterministic for ScalarFunc {
+             | ScalarFunc::NumericSub
+             | ScalarFunc::NumericMul
+             | ScalarFunc::NumericDiv
++            | ScalarFunc::NumericMod
++            | ScalarFunc::NumericNeg
+             | ScalarFunc::DatePlus
+-            | ScalarFunc::DateMinus => true,
++            | ScalarFunc::DateMinus
++            | ScalarFunc::DateDiff => true,
+             ScalarFunc::Array
+             | ScalarFunc::ArrayElement
+             | ScalarFunc::ArraySetElement
+@@ -1241,10 +1239,6 @@ impl Display for ScalarFunc {
+             Self::SequenceWatermark => "sequence_watermark_experimental",
+             Self::TestUintEncode => "test_uint_encode",
+             Self::TestUintDecode => "test_uint_decode",
+-            Self::TestUintAdd => "test_uint_add",
+-            Self::TestUintSub => "test_uint_sub",
+-            Self::TestUintMul => "test_uint_mul",
+-            Self::TestUintDiv => "test_uint_div",
+             #[cfg(feature = "test_helper")]
+             Self::TestNondetCounter => "test_nondet_counter",
+             Self::StringReverse => "string_reverse",
+@@ -1263,8 +1257,11 @@ impl Display for ScalarFunc {
+             Self::NumericSub => "numeric_sub",
+             Self::NumericMul => "numeric_mul",
+             Self::NumericDiv => "numeric_div",
++            Self::NumericMod => "numeric_mod",
++            Self::NumericNeg => "numeric_neg",
+             Self::DatePlus => "date_plus",
+             Self::DateMinus => "date_minus",
++            Self::DateDiff => "date_diff",
+             Self::Array => "array",
+             Self::ArrayElement => "array_element",
+             Self::ArraySetElement => "array_set_element",
+@@ -1394,21 +1391,23 @@ impl ScalarFunc {
+             // SQL-standard string and math extensions
+             Self::Gcd | Self::Lcm | Self::Repeat => &[2],
+             Self::Lpad | Self::Rpad => &[2, 3],
+-            // Test functions for custom types (1-arg encode/decode, 2-arg operators)
++            // Test functions for custom types
+             Self::TestUintEncode | Self::TestUintDecode | Self::StringReverse => &[1],
+-            Self::TestUintAdd | Self::TestUintSub | Self::TestUintMul | Self::TestUintDiv => &[2],
+             // Built-in type functions
+             Self::BooleanToInt
+             | Self::IntToBoolean
+             | Self::ValidateIpAddr
+             | Self::NumericEncode
+-            | Self::NumericDecode => &[1],
++            | Self::NumericDecode
++            | Self::NumericNeg => &[1],
+             Self::NumericAdd
+             | Self::NumericSub
+             | Self::NumericMul
+             | Self::NumericDiv
++            | Self::NumericMod
+             | Self::DatePlus
+-            | Self::DateMinus => &[2],
++            | Self::DateMinus
++            | Self::DateDiff => &[2],
+             Self::NumericFit => &[3],
+             // Array construction / element access
+             Self::Array => &[-1], // variable arity
+```
+
+**File**: `core/functions/datetime.rs` (modified, +12/-1)
+```diff
+@@ -1044,18 +1044,29 @@ pub fn exec_date_plus(clock: &dyn Clock, lhs: &Value, rhs: &Value) -> Result<Val
+     }
+ }
+ 
++/// `date - days`: the date that many days earlier.
+ pub fn exec_date_minus(clock: &dyn Clock, lhs: &Value, rhs: &Value) -> Result<Value> {
+     match (lhs, rhs) {
+         (Value::Null, _) | (_, Value::Null) => Ok(Value::Null),
+         (Value::Text(_), Value::Numeric(Numeric::Integer(days))) => {
+             add_days(clock, lhs, days.saturating_neg())
+         }
++        _ => Err(crate::LimboError::Constraint(
++            "only an integer number of days can be subtracted from a date".to_string(),
++        )),
++    }
++}
++
++/// `date - date`: the number of days from the second date to the first.
++pub fn exec_date_diff(clock: &dyn Clock, lhs: &Value, rhs: &Value) -> Result<Value> {
++    match (lhs, rhs) {
++        (Value::Null, _) | (_, Value::Null) => Ok(Value::Null),
+         (Value::Text(_), Value::Text(_)) => {
+             let days = julian_day(clock, lhs)? - julian_day(clock, rhs)?;
+             Ok(Value::from_i64(days.round() as i64))
+         }
+         _ => Err(crate::LimboError::Constraint(
+-            "only an integer number of days or a date can be subtracted from a date".to_string(),
++            "a date can only be subtracted from a date".to_string(),
+         )),
+     }
+ }
+```
+
+**File**: `core/numeric/decimal.rs` (modified, +9/-4)
+```diff
+@@ -16,15 +16,20 @@ const MAX_SCALE_MAGNITUDE: i64 = 1_000_000;
+ const MAX_INTEGER_DIGITS: i64 = 131_072;
+ pub(crate) const MAX_FRACTION_DIGITS: i64 = 16_383;
+ 
+-/// The numeric value of `val`: an integer, a real, text such as `1.5` or `1e5`,
+-/// or a stored numeric blob. Every numeric function reads its arguments with
+-/// this, so they all accept the same values within the same limits.
++/// The numeric value of `val`: an integer, a real, or text such as `1.5` or
++/// `1e5`. Every numeric function reads its arguments with this, so they all
++/// accept the same values within the same limits. A blob is not a number, even
++/// one that holds a stored numeric: `n + x` with a blob in `x` is an error.
+ pub fn numeric_from_value(val: &Value) -> crate::Result<BigDecimal> {
+     let value = match val {
+         Value::Numeric(Numeric::Integer(i)) => return Ok(BigDecimal::from(*i)),
+         Value::Numeric(Numeric::Float(f)) => parse_numeric(&f.to_string())?,
+         Value::Text(t) => parse_numeric(t.as_str())?,
+-        Value::Blob(b) => blob_to_bigdecimal(b)?,
++        Value::Blob(_) => {
++            return Err(LimboError::Constraint(
++                "invalid input syntax for type numeric: a blob is not a number".to_string(),
++            ))
++        }
+         _ => {
+             return Err(LimboError::Constraint(format!(
+                 "invalid input syntax for type numeric: \"{val}\""
+```
+
+**File**: `core/schema.rs` (modified, +199/-11)
+```diff
+@@ -250,12 +250,55 @@ pub enum TypeDefKind {
+         /// SQLite does.
+         ordering: Option<TypeOrdering>,
+         operators: std::vec::Vec<TypeOperator>,
++        /// How operators such as `+` and `-x` run on values of this type.
++        operator_signatures: std::vec::Vec<OperatorSignature>,
+         default: Option<Box<ast::Expr>>,
+     },
+     Struct(StructDef),
+     Union(UnionDef),
+ }
+ 
++/// One way an operator runs when an operand has a custom type: `args[0] op
++/// args[1]`, or `op args[0]` for a prefix operator such as `-x`, runs `func`,
++/// or SQLite's operator when `func` is `None`.
++#[derive(Debug, Clone)]
++pub struct OperatorSignature {
++    /// One of [BINARY_OPERATORS] or [PREFIX_OPERATORS].
++    pub op: &'static str,
++    /// One operand for a prefix operator, two for a binary one.
++    pub args: std::vec::Vec<OperatorArg>,
++    pub func: Option<String>,
++    /// The type `func` returns. `None` when SQLite's operator runs.
++    pub result: Option<&'static str>,
++}
++/// An operand that a signature accepts. "This type" is the type that declares
++/// the signature.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub enum OperatorArg {
++    /// A literal that this type's ENCODE accepts. It is encoded before the call.
++    EncodableLiteral,
++    /// Any value of this type.
++    Value,
++    /// A value SQLite can compute with: anything without a custom type, or a
++    /// value of a type whose only way to run the operator is SQLite's.
++    PlainValue,
++    /// A `PlainValue` that is an integer, or whose type is not known before the
++    /// statement runs, such as a parameter. The function rejects anything else.
++    Integer,
++    /// A `PlainValue` that is neither a `Real` nor a blob.
++    Exact,
++    /// A REAL value: a REAL column, a CAST to REAL, arithmetic on two plain
++    /// values. A decimal written in the statement, such as `0.5`, `-0.5` or
++    /// the `0.5` of `(SELECT 0.5)`, is not one: as in PostgreSQL, it is an
++    /// exact number.
++    Real,
++}
++
++/// The operators whose function an operand's custom type decides. Comparisons
++/// are decided separately, and unary `+` gives its operand unchanged.
++pub const BINARY_OPERATORS: [&str; 9] = ["+", "-", "*", "/", "%", "&", "|", "<<", ">>"];
++pub const PREFIX_OPERATORS: [&str; 2] = ["-", "~"];
++
+ /// The order of a built-in type whose stored values do not sort in the type's
+ /// order: numeric is stored as a blob. Every other type, and every user type,
+ /// sorts and compares by its stored value as SQLite does.
+@@ -266,6 +309,96 @@ fn builtin_ordering(type_name: &str) -> Option<TypeOrdering> {
+     }
+ }
+ 
++/// Operators on built-in types. User types have none: `x + 1` on a user type is
++/// an error. The functions read plain values as they are, so nothing is encoded first:
++/// - `numeric op x` and `x op numeric` for `+ - * / %`, and `-numeric`, compute
++///   exactly, and the result is a numeric. Encoding a literal to the column's type would round it
++///   to the column's scale first (`n * 0.005` would be `n * 0.01`). With a REAL
++///   value `+ - * /` are SQLite's operators and give a REAL, as PostgreSQL gives
++///   double precision; `%` with a REAL value does not exist, as in PostgreSQL.
++/// - `date + integer`, `integer + date` and `date - integer` add or subtract
++///   days and give a date. `date - date` gives the number of days between them;
++///   a text literal on either side is encoded to a date first. Each signature
++///   has its own function, so its result type is known before the statement
++///   runs.
++/// - `smallint` and `bigint` store plain integers, so SQLite's operators run,
++///   including `-`, `~`, `&`, `|`, `<<` and `>>`.
++///
++/// Other built-in types have no operators, and these types have no others:
++/// `-date` and `numeric & 1` are errors, as in PostgreSQL.
++fn builtin_signatures(type_name: &str) -> std::vec::Vec<OperatorSignature> {
++    use OperatorArg::{EncodableLiteral, Exact, Integer, Real, Value};
++    let call = |op, args: &[OperatorArg], func: &str, result| OperatorSignature {
++        op,
++        args: args.to_vec(),
++        func: Some(func.to_string()),
++        result,
++    };
++    match type_name {
++        "numeric" => {
++            let mut signatures = std::vec::Vec::new();
++            for (op, func) in [
++                ("+", "numeric_add"),
++                ("-", "numeric_sub"),
++                ("*", "numeric_mul"),
++                ("/", "numeric_div"),
++                ("%", "numeric_mod"),
++            ] {
++                for args in [[Value, Value], [Value, Exact], [Exact, Value]] {
++                    signatures.push(call(op, &args, func, Some("numeric")));
++                }
++                if op != "%" {
++                    signatures.extend(sqlite_operator(op, Real));
++                }
++            }
++            signatures.push(call("-", &[Value], "numeric_neg", Some("numeric")));
++            signatures
++        }
++        "date" => std::vec![
++            call("+"
+```
+
+**File**: `core/translate/alter.rs` (modified, +13/-6)
+```diff
+@@ -2,7 +2,7 @@ use crate::alloc::TursoIteratorExt;
+ use crate::namespace::{demangle_name, NamespaceId, NamespaceRef};
+ use crate::sync::Arc;
+ use crate::translate::collate::CollationSeq;
+-use crate::{turso_assert_eq, turso_assert_ne};
++use crate::{turso_assert_eq, turso_assert_ne, SymbolTable};
+ use turso_parser::{
+     ast::{self, TableInternalId},
+     parser::Parser,
+@@ -40,7 +40,7 @@ use crate::{
+     },
+     vdbe::{
+         affinity::Affinity,
+-        builder::{CursorType, DmlColumnContext, ProgramBuilder},
++        builder::{CursorType, DmlColumnContext, DmlRowForm, ProgramBuilder},
+         insn::{to_u32, AddColumnData, CmpInsFlags, Cookie, Insn, RegisterOrLiteral},
+     },
+     vtab::VirtualTable,
+@@ -652,8 +652,13 @@ fn emit_column_constraints_validation(
+         program.emit_column_or_rowid(cursor_id, idx, layout.to_register(base_dest_reg, idx));
+     }
+ 
+-    let dml_ctx =
+-        DmlColumnContext::layout(resolved_table.columns(), base_dest_reg, rowid_reg, layout);
++    let dml_ctx = DmlColumnContext::layout(
++        resolved_table.columns(),
++        base_dest_reg,
++        rowid_reg,
++        layout,
++        DmlRowForm::Stored,
++    );
+     compute_virtual_columns(
+         program,
+         &resolved_table.columns_topo_sort()?,
+@@ -1960,6 +1965,7 @@ pub fn translate_alter_table(
+                     &table_indexes,
+                     column_index,
+                     resolver.schema(),
++                    resolver.catalog.symbol_table,
+                 )?;
+             }
+ 
+@@ -2418,6 +2424,7 @@ fn reject_change_of_indexed_column_order(
+     indexes: &[Arc<Index>],
+     column_index: usize,
+     schema: &Schema,
++    syms: &SymbolTable,
+ ) -> Result<()> {
+     let column_name = original_table.columns()[column_index]
+         .name
+@@ -2453,8 +2460,8 @@ fn reject_change_of_indexed_column_order(
+                     .expect("expression index column must have an expression");
+                 let mut renamed = expr.as_ref().clone();
+                 rename_identifiers(&mut renamed, column_name, new_column_name);
+-                expression_type_ordering(expr, original_table, schema)?
+-                    != expression_type_ordering(&renamed, rewritten_table, schema)?
++                expression_type_ordering(expr, original_table, schema, syms)?
++                    != expression_type_ordering(&renamed, rewritten_table, schema, syms)?
+             } else {
+                 false
+             };
+```
+
+**File**: `core/translate/collate.rs` (modified, +3/-0)
+```diff
+@@ -1596,6 +1596,8 @@ mod typed_value_order_tests {
+         // ORDER BY
+         ("SELECT n FROM t ORDER BY n", 0),
+         ("SELECT n FROM t ORDER BY a DESC, b", 0),
++        ("SELECT n FROM t ORDER BY likely(n), coalesce(n, 1)", 0),
++        ("SELECT n + 1 AS x FROM t ORDER BY x", 0),
+         // GROUP BY
+         ("SELECT n FROM t GROUP BY n", 0),
+         ("SELECT a, b FROM t GROUP BY a, b", 0),
+@@ -1641,6 +1643,7 @@ mod typed_value_order_tests {
+         ("SELECT n FROM t WHERE string_to_array('9', ',') = b", 0),
+         // A compound subquery in FROM.
+         ("SELECT x FROM (SELECT n AS x FROM t UNION ALL SELECT m FROM u) WHERE x > 1.5", 0),
++        ("SELECT DISTINCT x FROM (SELECT 1 AS x UNION ALL SELECT n FROM t)", 0),
+         // Automatic indexes.
+         ("SELECT t.n FROM t, u WHERE t.n = u.m AND u.m > 1", 0),
+     ];
 ```
 
 ---
 
-### Incident Patch 3: `b84291bb` (2026-10-28)
-**Commit Message**: Merge 'build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /examples/react-native' from app/dependabot
+### Incident Patch 3: `bf505a85` (2026-10-30)
+**Commit Message**: bindings/c: return NULL for an out-of-range column index
 
-Bumps [launch-editor](https://github.com/vitejs/launch-editor) from
-2.14.1 to 2.14.2. <details> <summary>Commits</summary> <ul> <li><a
-href="https://github.com/vitejs/launch-editor/commit/b5334895a00f8000ef3
-b6a46f2aa9e1a62eb27b4"><code>b533489</code></a> v2.14.2</li> <li><a
-href="https://github.com/vitejs/launch-editor/commit/f13cd835d4b8e860b1d
-4d080ad8a490cc2463679"><code>f13cd83</code></a> fix: check file
-existence after path resolution (<a
-href="https://redirect.github.com/vitejs/launch-
-editor/issues/157">#157</a>)</li> <li><a
-href="https://github.com/vitejs/launch-editor/commit/f6e6701bb1f16f2dd24
-2b321374f1b6cca6eb6d4"><code>f6e6701</code></a> fix: ensure filenames
-passed to editors are not considered as flags (<a
-href="https://redirect.github.com/vitejs/launch-
-editor/issues/156">#156</a>)</li> <li><a
-href="https://github.com/vitejs/launch-editor/commit/3c2f9bf2ff8fe63d056
-a8f9cc52d825b66ca79fc"><code>3c2f9bf</code></a> fix: reject paths
-containing <code>%</code> on windows (<a
-href="https://redirect.github.com/vitejs/launch-
-editor/issues/155">#155</a>)</li> <li><a
+Fixes #10424
 
-**File**: `examples/react-native/package-lock.json` (modified, +6/-6)
+Co-authored-by: hsusul <[REDACTED_EMAIL]>
+
+**File**: `bindings/c/src/lib.rs` (modified, +18/-3)
 ```diff
-@@ -42,7 +42,7 @@
-     },
-     "../../bindings/react-native": {
-       "name": "@tursodatabase/sync-react-native",
--      "version": "0.8.0",
-+      "version": "0.9.0-pre.1",
-       "license": "MIT",
-       "dependencies": {
-         "@babel/runtime": "^7.25.0"
-@@ -8428,14 +8428,14 @@
-       }
-     },
-     "node_modules/launch-editor": {
--      "version": "2.14.1",
--      "resolved": "https://registry.npmjs.org/launch-editor/-/launch-editor-2.14.1.tgz",
--      "integrity": "sha512-QWBrQsMpH7gPr965dsKD/3cKWiNoTjpATQf++Xq63N6sKRGMwlVXz41O1IZTMfZQgBctD/K5Zt06+/I6pP6+HA==",
-+      "version": "2.14.2",
-+      "resolved": "https://registry.npmjs.org/launch-editor/-/launch-editor-2.14.2.tgz",
-+      "integrity": "sha512-NHJEb30MGBCkmZXLZwz25t37QR4aY03ZzPYUJXOJaOa92uWwExI9SBQUuIznBYc1xkD7cJNGX7oc3Nl3sq2kQQ==",
-       "devOptional": true,
-       "license": "MIT",
-       "dependencies": {
-         "picocolors": "^1.1.1",
--        "shell-quote": "^1.8.4"
-+        "shell-quote": "^1.10.0"
-       }
-     },
-     "node_modules/leven": {
-@@ -11635,7 +11635,7 @@
-       "version": "5.9.3",
-       "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
-       "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
--      "dev": true,
-+      "devOptional": true,
-       "license": "Apache-2.0",
-       "bin": {
-         "tsc": "bin/tsc",
+@@ -2363,8 +2363,11 @@ pub unsafe extern "C" fn sqlite3_column_decltype(
+     idx: ffi::c_int,
+ ) -> *const ffi::c_char {
+     let stmt = &mut *stmt;
++    let Some(idx) = result_column_index(stmt, idx) else {
++        return std::ptr::null();
++    };
+ 
+-    if let Some(val) = stmt.stmt.get_column_decltype(idx as usize) {
++    if let Some(val) = stmt.stmt.get_column_decltype(idx) {
+         let c_string = CString::new(val).expect("CString::new failed");
+         c_string.into_raw()
+     } else {
+@@ -2377,8 +2380,10 @@ pub unsafe extern "C" fn sqlite3_column_name(
+     stmt: *mut sqlite3_stmt,
+     idx: ffi::c_int,
+ ) -> *const ffi::c_char {
+-    let idx = idx.try_into().unwrap();
+     let stmt = &mut *stmt;
++    let Some(idx) = result_column_index(stmt, idx) else {
++        return std::ptr::null();
++    };
+ 
+     let binding = stmt.stmt.get_column_name(idx).into_owned();
+     let val = binding.as_str();
+@@ -2396,8 +2401,10 @@ pub unsafe extern "C" fn sqlite3_column_table_name(
+     stmt: *mut sqlite3_stmt,
+     idx: ffi::c_int,
+ ) -> *const ffi::c_char {
+-    let idx = idx.try_into().unwrap();
+     let stmt = &mut *stmt;
++    let Some(idx) = result_column_index(stmt, idx) else {
++        return std::ptr::null();
++    };
+ 
+     let binding = stmt
+         .stmt
+@@ -2414,6 +2421,14 @@ pub unsafe extern "C" fn sqlite3_column_table_name(
+     c_string.into_raw()
+ }
+ 
++/// Converts a C column index to `usize`, or returns None when it is outside
++/// the statement's result columns, as SQLite does for an out-of-range index.
++fn result_column_index(stmt: &sqlite3_stmt, idx: ffi::c_int) -> Option<usize> {
++    usize::try_from(idx)
++        .ok()
++        .filter(|&idx| idx < stmt.stmt.num_columns())
++}
++
+ /// Returns the value at column `idx` of the current row, or None when there
+ /// is no current row or the index is out of range.
+ unsafe fn column_value(stmt: *mut sqlite3_stmt, idx: ffi::c_int) -> Option<&'static Value> {
+```
+
+**File**: `bindings/c/tests/compat/mod.rs` (modified, +5/-3)
+```diff
+@@ -655,9 +655,11 @@ mod tests {
+             let name2_str = std::ffi::CStr::from_ptr(name2).to_str().unwrap();
+             assert_eq!(name2_str, "value");
+ 
+-            // will lead to panic
+-            //let invalid = sqlite3_column_name(stmt, 5);
+-            //assert!(invalid.is_null());
++            for invalid_idx in [-1, 2, 5, i32::MIN, i32::MAX] {
++                assert!(sqlite3_column_name(stmt, invalid_idx).is_null());
++                assert!(sqlite3_column_table_name(stmt, invalid_idx).is_null());
++                assert!(sqlite3_column_decltype(stmt, invalid_idx).is_null());
++            }
+ 
+             assert_eq!(sqlite3_finalize(stmt), SQLITE_OK);
+             assert_eq!(sqlite3_close(db), SQLITE_OK);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10970** (2026-10-28): build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript (@dependabot[bot])
-- **PR #10969** (2026-10-28): build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /examples/react-native (@dependabot[bot])
-- **PR #10964** (2026-10-28): Match SQLite formatting for empty json_pretty containers (@deepak-swami007)
-- **PR #10963** (2026-10-28): Skip erroring constant projections when WHERE is false (@deepak-swami007)
-- **PR #10960** (2026-10-28): core/translate: keep an index method's LIMIT off aggregate and DISTINCT queries (@cmolocznik)
-- **PR #10950** (2026-10-28): core/json: classify BLOB arguments as JSONB the way SQLite does (@turso-github-handyman[bot])
+- **PR #11079** (2026-10-30): postgres: name the statements the session runs itself (SessionStmt) (@sivukhin)
+- **PR #11071** (2026-10-30): bindings/c: return NULL for an out-of-range column index (@turso-github-handyman[bot])
+- **PR #11058** (2026-10-30): core/schema: reject CURRENT_* literals in partial index WHERE clauses (@turso-github-handyman[bot])
+- **PR #11055** (2026-10-30): bindings/python: accept a callable remote_url in sync connect (@turso-github-handyman[bot])
+- **PR #11044** (2026-10-30): core/translate: read integer PRAGMA values like sqlite3Atoi (@sarankumar1325)
+- **PR #11043** (2026-10-30): postgres: report 42P07 for a duplicate table whose name has "no such table" (@sarankumar1325)
 
 ---
 
@@ -1567,32 +2131,47 @@ editor/issues/155">#155</a>)</li> <li><a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript' f
+## X. Merge 'bindings/c: return NULL for an out-of-range column index' from app/turso-
 
 **RULE**:
-When implementing operations in `bindings/javascript/yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bindings/c/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ccebb425`: Merge 'build(deps): bump undici from 8.11.2 to 8.12.3 in /bindings/javascript' from app/dependabot. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `06f11088`: Merge 'bindings/c: return NULL for an out-of-range column index' from app/turso-github-handyman. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bindings/javascript/yarn.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bindings/c/src/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  version: 8.12.3
-  resolution: "undici@npm:8.12.3"
-  checksum: 10c0/714919e62b4160eea195fb35c7f5c4907235741e47bfde8a014ac58f6d24df13434e23400d7f48e2c455fd2b259d27f07fce514f04a5b4e99936ba62cbc4bb71
+    let Some(idx) = result_column_index(stmt, idx) else {
+        return std::ptr::null();
+    };
+    if let Some(val) = stmt.stmt.get_column_decltype(idx) {
+    let Some(idx) = result_column_index(stmt, idx) else {
+        return std::ptr::null();
+    };
+    let Some(idx) = result_column_index(stmt, idx) else {
+        return std::ptr::null();
+    };
+/// Converts a C column index to `usize`, or returns None when it is outside
+/// the statement's result columns, as SQLite does for an out-of-range index.
+fn result_column_index(stmt: &sqlite3_stmt, idx: ffi::c_int) -> Option<usize> {
+    usize::try_from(idx)
+        .ok()
+        .filter(|&idx| idx < stmt.stmt.num_columns())
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  version: 8.11.2
-  resolution: "undici@npm:8.11.2"
-  checksum: 10c0/106f6991178fb7562fd90cdec7993c5f807a9428682306091f0c4b27fc474ec291f868e29972c6252988bf061ad193df943b3b99e775be157a28d92bbb95699d
+    if let Some(val) = stmt.stmt.get_column_decltype(idx as usize) {
+    let idx = idx.try_into().unwrap();
+    let idx = idx.try_into().unwrap();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ccebb425` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `06f11088` are properly handled with clean fallback behavior.

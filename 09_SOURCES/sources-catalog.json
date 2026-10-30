@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "3d36f6ee",
+    "sourceVersion": "aa5046f0",
     "license": "Apache-2.0",
-    "contentHash": "d285d027494ac53b7635c474bcd7b18d6335a61bf06235674d0ba56f449345b4",
-    "lastHarvestedAt": "2026-10-28T22:59:06.583Z",
+    "contentHash": "d99339b2cb43e2b7e2f4326322248389ed0ce543306c534eadc83259bed8d255",
+    "lastHarvestedAt": "2026-10-30T14:33:34.057Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "b0563444",
+    "sourceVersion": "f301e7f4",
     "license": "MIT",
-    "contentHash": "d1ffe8b80c033e36d3a38be54e6d2774fef6d2ddf318c89cf154128281c4e7a5",
-    "lastHarvestedAt": "2026-10-28T22:07:53.898Z",
+    "contentHash": "d503df5d134a9528f91e562a0b414d009c2a9152f1e48768175e0dfad5c86f03",
+    "lastHarvestedAt": "2026-10-30T14:33:38.005Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T14:18:45.014Z",
-    "lastVerified": "2026-10-30T14:18:45.014Z",
+    "lastChecked": "2026-10-30T14:33:40.541Z",
+    "lastVerified": "2026-10-30T14:33:40.541Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -244,8 +244,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T13:46:29.228Z",
-    "lastVerified": "2026-10-30T13:46:29.228Z",
+    "lastChecked": "2026-10-30T14:33:33.759Z",
+    "lastVerified": "2026-10-30T14:33:33.759Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1272,14 +1272,14 @@
     "officialUrl": "https://github.com/tursodatabase/turso",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T22:07:53.622Z",
-    "lastVerified": "2026-10-28T22:07:53.622Z",
+    "lastChecked": "2026-10-30T14:33:36.141Z",
+    "lastVerified": "2026-10-30T14:33:36.141Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "d1ffe8b80c033e36d3a38be54e6d2774fef6d2ddf318c89cf154128281c4e7a5",
+    "contentHash": "d503df5d134a9528f91e562a0b414d009c2a9152f1e48768175e0dfad5c86f03",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1541,9 +1541,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-10-30T06:56:53.193Z",
+    "lastChecked": "2026-10-30T14:33:28.632Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-10-30T06:56:53.193Z"
+    "lastVerified": "2026-10-30T14:33:28.632Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -2337,14 +2337,14 @@
     "officialUrl": "https://github.com/authzed/spicedb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T22:59:05.889Z",
-    "lastVerified": "2026-10-28T22:59:05.889Z",
+    "lastChecked": "2026-10-30T14:33:31.436Z",
+    "lastVerified": "2026-10-30T14:33:31.436Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-authzed-spicedb",
-    "contentHash": "d285d027494ac53b7635c474bcd7b18d6335a61bf06235674d0ba56f449345b4",
+    "contentHash": "d99339b2cb43e2b7e2f4326322248389ed0ce543306c534eadc83259bed8d255",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6021,9 +6021,9 @@
   "vercel-labs-opensrc": {
     "name": "opensrc",
     "officialUrl": "https://github.com/vercel-labs/opensrc",
-    "lastChecked": "2026-10-28T17:35:05.288Z",
+    "lastChecked": "2026-10-30T14:33:18.623Z",
     "revisionIdentifier": "b51de608",
-    "lastVerified": "2026-10-28T17:35:05.288Z"
+    "lastVerified": "2026-10-30T14:33:18.623Z"
   },
   "hf-qwen-qwen3-8b": {
     "name": "Qwen/Qwen3-8B",
@@ -10120,5 +10120,19 @@
     "lastChecked": "2026-10-30T14:18:27.154Z",
     "revisionIdentifier": "c7c08652",
     "lastVerified": "2026-10-30T14:18:27.154Z"
+  },
+  "wooorm-parse-entities": {
+    "name": "parse-entities",
+    "officialUrl": "https://github.com/wooorm/parse-entities",
+    "lastChecked": "2026-10-30T14:33:21.117Z",
+    "revisionIdentifier": "07f0abed",
+    "lastVerified": "2026-10-30T14:33:21.117Z"
+  },
+  "sparrowcode-alertkit": {
+    "name": "AlertKit",
+    "officialUrl": "https://github.com/sparrowcode/AlertKit",
+    "lastChecked": "2026-10-30T14:33:23.647Z",
+    "revisionIdentifier": "e8a0208c",
+    "lastVerified": "2026-10-30T14:33:23.647Z"
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T14:18:42.408Z",
+  "last_updated": "2026-10-30T14:33:37.956Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3864,8 +3864,8 @@
       "slug": "authzed-spicedb",
       "platform": "github",
       "source_url": "https://github.com/authzed/spicedb",
-      "source_version": "3d36f6ee",
-      "content_hash": "d285d027494ac53b7635c474bcd7b18d6335a61bf06235674d0ba56f449345b4",
+      "source_version": "aa5046f0",
+      "content_hash": "d99339b2cb43e2b7e2f4326322248389ed0ce543306c534eadc83259bed8d255",
       "dossier_path": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
       "promoted_rules": [
@@ -3898,6 +3898,11 @@
           "number": 5446,
           "title": "satisfy panic, must-call and mutex analyzers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5774,
+          "title": "query): isolate optimizations and add semantic properties",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3905,7 +3910,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:59:06.481Z",
+      "verified_at": "2026-10-30T14:33:33.993Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54571,13 +54576,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-limbo",
+      "slug": "tursodatabase-turso",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/limbo",
-      "source_version": "e70cdbcd",
-      "content_hash": "203c7d657158b7d9444b35c1e2e03e4d896fedc776c25eb3cb1cdef7dab74967",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "f301e7f4",
+      "content_hash": "d503df5d134a9528f91e562a0b414d009c2a9152f1e48768175e0dfad5c86f03",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
         {
           "number": 2188,
@@ -54663,6 +54668,11 @@
           "number": 5696,
           "title": "Cooperative Microtask Polling in Async I/O Storage Drivers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5775,
+          "title": "Merge 'bindings/c: return NULL for an out-of-range column index' from app/turso-",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54670,7 +54680,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T08:56:42.680Z",
+      "verified_at": "2026-10-30T14:33:37.944Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153697,6 +153707,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T14:18:42.384Z"
+    },
+    "rule-5774": {
+      "learning_id": "rule-5774",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5774,
+      "title": "query): isolate optimizations and add semantic properties",
+      "source_url": "https://github.com/authzed/spicedb",
+      "source_version": "aa5046f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T14:33:33.993Z"
+    },
+    "rule-5775": {
+      "learning_id": "rule-5775",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5775,
+      "title": "Merge 'bindings/c: return NULL for an out-of-range column index' from app/turso-",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "f301e7f4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T14:33:37.944Z"
     }
   },
   "aliases": {

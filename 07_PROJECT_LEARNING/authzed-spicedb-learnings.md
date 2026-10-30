@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source**: github ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
-> **Source Version**: `3d36f6ee`  
+> **Source Version**: `aa5046f0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T22:59:05.896Z  
+> **Timestamp**: 2026-10-30T14:33:33.631Z  
 > **Learning ID**: `learn-github-authzed-spicedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T22:59:05.889Z  
+> **Harvest Timestamp**: 2026-10-30T14:33:31.436Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7176 stars
+- **Stars / Engagement**: 7179 stars
 
 ---
 
@@ -1109,1309 +1109,936 @@ func inputMessagesForService[S any](
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4aaf4761` (2026-10-27)
-**Commit Message**: fix: satisfy panic, must-call and mutex analyzers
+### Incident Patch 1: `aa5046f0` (2026-10-05)
+**Commit Message**: refactor(query): isolate optimizations and add semantic properties
 
-**File**: `internal/datastore/proxy/poolsim/poolsim.go` (modified, +8/-5)
+**File**: `internal/dispatch/dispatch_optimizer.go` (modified, +3/-84)
 ```diff
-@@ -62,17 +62,17 @@ type Datastore struct {
- 	failOnNested   bool
+@@ -1,6 +1,7 @@
+ package dispatch
  
- 	heldMu sync.Mutex
--	held   map[uint64]int
-+	held   map[uint64]int // GUARDED_BY(heldMu)
- 
- 	nestedCount  atomic.Int64
- 	timeoutCount atomic.Int64
- 	inUse        atomic.Int64
- 	maxInUse     atomic.Int64
- }
- 
--// New wraps the delegate datastore with a simulated connection pool of the given
--// size.
--func New(delegate datastore.Datastore, size int, opts ...Option) *Datastore {
-+// MustNew wraps the delegate datastore with a simulated connection pool of the
-+// given size, which must be at least 1.
-+func MustNew(delegate datastore.Datastore, size int, opts ...Option) *Datastore {
- 	if size < 1 {
- 		panic("poolsim: pool size must be at least 1")
- 	}
-@@ -112,7 +112,10 @@ func (d *Datastore) Unwrap() datastore.Datastore {
- }
- 
- func (d *Datastore) acquire(operation string) (func(), error) {
--	gid := goroutineid.Current()
-+	gid, err := goroutineid.Current()
-+	if err != nil {
-+		return nil, err
-+	}
- 
- 	d.heldMu.Lock()
- 	alreadyHeld := d.held[gid]
-```
-
-**File**: `internal/datastore/proxy/poolsim/poolsim_test.go` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ func newTestPool(t *testing.T, size int, opts ...Option) (*Datastore, datastore.
- 	require.NoError(t, err)
- 
- 	ds, rev := testfixtures.StandardDatastoreWithData(t, rawDS)
--	return New(ds, size, opts...), rev
-+	return MustNew(ds, size, opts...), rev
- }
- 
- func TestIteratorHoldsConnectionUntilIterationEnds(t *testing.T) {
-```
-
-**File**: `internal/dispatch/graph/poolnesting_test.go` (modified, +1/-1)
-```diff
-@@ -184,7 +184,7 @@ func newPoolNestingFixture(t *testing.T, config poolNestingConfig, poolSize int,
- 	})
- 	require.NoError(t, err)
- 
--	pool := poolsim.New(testfixtures.NewValidatingDatastore(rawDS), poolSize, opts...)
-+	pool := poolsim.MustNew(testfixtures.NewValidatingDatastore(rawDS), poolSize, opts...)
- 
- 	// Use a real (cold) schema cache and hash, as the server does.
- 	schemaCache, err := cache.NewStandardCache[datalayer.SchemaCacheKey, *datastore.ReadOnlyStoredSchema](&cache.Config{
-```
-
-**File**: `internal/goroutineid/goroutineid.go` (modified, +11/-2)
-```diff
-@@ -13,7 +13,7 @@ import (
- var goroutinePrefix = []byte("goroutine ")
- 
- // Current returns the ID of the calling goroutine.
--func Current() uint64 {
-+func Current() (uint64, error) {
- 	var buf [64]byte
- 	n := runtime.Stack(buf[:], false)
- 	b := bytes.TrimPrefix(buf[:n], goroutinePrefix)
-@@ -22,7 +22,16 @@ func Current() uint64 {
- 	}
- 	id, err := strconv.ParseUint(string(b), 10, 64)
- 	if err != nil {
--		panic(fmt.Sprintf("goroutineid: unable to parse goroutine ID: %v", err))
-+		return 0, fmt.Errorf("unable to parse goroutine ID: %w", err)
-+	}
-+	return id, nil
-+}
-+
-+// MustCurrent returns the ID of the calling goroutine, panicking if it cannot be determined.
-+func MustCurrent() uint64 {
-+	id, err := Current()
-+	if err != nil {
-+		panic(err)
- 	}
- 	return id
- }
-```
-
-**File**: `internal/goroutineid/goroutineid_test.go` (modified, +3/-3)
-```diff
-@@ -7,11 +7,11 @@ import (
+ import (
++	"github.com/authzed/spicedb/internal/dispatch/queryopt/dispatchwrap"
+ 	"github.com/authzed/spicedb/pkg/query"
+ 	"github.com/authzed/spicedb/pkg/query/queryopt"
  )
+@@ -9,91 +10,9 @@ import (
+ // dispatch-wrap-alias optimization. Callers fetch the registered Optimizer by
+ // this name when they want to apply the wrap as a standalone step after the
+ // usual queryopt.OptimizersForRequest set.
+-const DispatchWrapAliasOptimizationName = "dispatch-wrap-alias"
++const DispatchWrapAliasOptimizationName = dispatchwrap.Name
  
- func TestCurrent(t *testing.T) {
--	id := Current()
-+	id := MustCurrent()
- 	require.Positive(t, id)
--	require.Equal(t, id, Current())
-+	require.Equal(t, id, MustCurrent())
- 
- 	other := make(chan uint64)
--	go func() { other <- Current() }()
-+	go func() { other <- MustCurrent() }()
- 	require.NotEqual(t, id, <-other)
- }
-```
-
-**File**: `internal/graph/readahead.go` (modified, +8/-15)
-```diff
-@@ -15,26 +15,22 @@ import (
- // long the consumer takes to process them (including any datastore access of its own), while
- // still letting processing start with the first result.
- //
--// If the consumer stops early, reading stops at the next result. A panic while reading is
--// re-raised on the consumer's goroutine.
-+// If the consumer stops early, reading stops at the next result.
- func readAheadRelationships(it datastore.RelationshipIterator) datastore.RelationshipIterator {
- 	return func(yield func(tuple.Relationship, error) bool) {
- 		var (
--			mu       sync.Mutex
--			ready    = sync.NewCond(&mu)
--			buffer   []tuple.Relationship
--			done     bool
--			stopped  bool
--			readErr  error
--			panicked any
-+			mu      sync.Mutex
-+			ready   = sync.NewCond(&mu)
-+			buffer  []tuple.Relationship
-+			done    bool
-+			stopped bool
-+			readErr error
- 		)
- 
- 		go func() {
- 			defer func() {
--				r := recover()
- 				mu.Lock()
- 				done = true
--				panicked = r
- 				mu.Unlock()
- 				ready.Signal()
- 			}()
-@@ -71,7 +67,7 @@ func readAheadRelationships(it datastore.RelationshipIterator) datastore.Relatio
- 			// Swap buffers, so the reader appends to the (emptied) previous batch while this one
- 			// is consumed.
- 			batch, buffer = buffer, batch[:0]
--			finished, err, p := done, readErr, panicked
-+			finished, err := done, readErr
- 			mu.Unlock()
- 
- 			for _, rel := range batch {
-@@ -81,9 +77,6 @@ func readAheadRelationships(it datastore.RelationshipIterator) datastore.Relatio
- 			}
- 
- 			if finished {
--				if p != nil {
--					panic(p)
--				}
- 				if err != nil {
- 					yield(tuple.Relationship{}, err)
- 				}
-```
-
-**File**: `internal/graph/readahead_test.go` (modified, +0/-12)
-```diff
-@@ -110,15 +110,3 @@ func TestReadAheadRelationshipsStopsReadingWhenConsumerStops(t *testing.T) {
- 		require.Fail(t, "source iterator kept being read after the consumer stopped")
- 	}
- }
--
--func TestReadAheadRelationshipsRepanicsOnConsumer(t *testing.T) {
--	source := func(yield func(tuple.Relationship, error) bool) {
--		yield(tuple.MustParse("document:first#viewer@user:tom"), nil)
--		panic("source panicked")
--	}
--
--	require.PanicsWithValue(t, "source panicked", func() {
--		for range readAheadRelationships(source) {
--		}
+-func init() {
+-	queryopt.MustRegisterOptimization(queryopt.Optimizer{
+-		Name: DispatchWrapAliasOptimizationName,
+-		Description: `
+-		Wraps every AliasIteratorType node in a DispatchIteratorType passthrough
+-		so the dispatch layer can recognize the (definition, relation) boundary
+-		as a dispatch candidate without re-deriving it at runtime. Aliases whose
+-		subtree contains an unmatched RecursiveSentinel are left unwrapped — the
+-		sentinel must execute inside the collection context established by its
+-		matching RecursiveIterator, which is broken by an RPC hop.
+-		`,
+-		NewTransform: func(_ queryopt.RequestParams) queryopt.OutlineTransform {
+-			return func(outline query.Outline) query.Outline {
+-				return query.MutateOutline(outline, []query.OutlineMutation{wrapAliasWithDispatch})
+-			}
+-		},
 -	})
 -}
-```
-
-**File**: `pkg/datalayer/heldreads_ci.go` (modified, +2/-2)
-```diff
-@@ -23,7 +23,7 @@ func trackHeldIterator(operation string, it datastore.RelationshipIterator) data
- 	return func(yield func(tuple.Relationship, error) bool) {
- 		assertNoHeldIterator(operation)
- 
--		gid := goroutineid.Current()
-+		gid := goroutineid.MustCurrent()
- 		heldIterators.Lock()
- 		heldIterators.byGoroutine[gid] = append(heldIterators.byGoroutine[gid], operation)
- 		heldIterators.Unlock()
-@@ -48,7 +48,7 @@ func trackHeldIterator(operation string, it datastore.RelationshipIterator) data
- }
- 
- func assertNoHeldIterator(operation string) {
--	gid := goroutineid.Current()
-+	gid := goroutineid.MustCurrent()
- 	heldIterators.Lock()
- 	held := strings.Join(heldIterators.byGoroutine[gid], ", ")
- 	heldIterators.Unlock()
-```
-
----
-
-### Incident Patch 2: `b728df93` (2026-10-27)
-**Commit Message**: fix(graph): prevent read pool deadlocks from nested connection acquisition
-
-SQL datastores hold a pooled connection while a relationship iterator is
-being consumed. Code that issued another datastore read, or dispatched
-work that does, while still iterating needed a second connection from the
-same pool; once every connection was held by such a caller, the pool
-deadlocked, and since datastore reads do not observe client cancellation,
-the server stayed wedged until restarted.
-
-- LookupResources3 no longer dispatches while its relationships query is
-  open: requests without a limit read the query ahead on a separate
-  goroutine, and requests with a limit read in pages.
-- Expand reads the schema before iterating relationships for arrows,
-  rather than once per relationship.
-- In CI builds, the datalayer panics if a goroutine issues a datastore
-  read while iterating a relationships query, so new occurrences are
-  caught by the existing test suite.
-
-With the single-store schema (--experimental-schema-mode=read-new-*),
-caveat and namespace definitions are loaded before relationships are
-read, which resolves the caveated LookupResources deadlock reported in
-during iteration and is not add
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
- 
- ## [Unreleased]
- ### Fixed
-+- LookupResources and Expand: the read connection pool can no longer deadlock because a request held one connection while waiting for another. LookupResources dispatched further lookups while its relationships query still held its connection, so on a schema of several levels every connection in the pool could end up held by a request waiting for another one. Since client cancellation does not reach the pool, the server stayed stuck until restarted. LookupResources now reads the relationships for each query in full before dispatching, with a single query when the request has no limit, and in pages when it does. Expand over an arrow now reads the schema before reading relationships, instead of once per relationship. With the single-store schema (`--experimental-schema-mode` set to `read-new-write-both` or `read-new-write-new`), caveat and namespace definitions are loaded before relationships are read, which also resolves the caveated LookupResources deadlock reported in the issue. The default legacy schema mode still loads definitions while relationships are being read, and is not fixed by this change. (https://github.com/authzed/spicedb/issues/3433)
- - Dispatch: LookupResources cursors are now locked to the dispatcher that produced them when secondary dispatchers are configured. Previously a cursor returned by a secondary was never tagged, and LookupResources3 cursors were never checked at all, so every page raced the primary against the secondaries and a cursor produced by one could be sent to the other, failing the request with an invalid cursor error. A cursor without a secondary tag is now resumed by the primary only.
- - Dispatch and telemetry: CA bundles read from disk via `--dispatch-upstream-ca-path` and the telemetry client's CA path are now re-read on every outbound TLS handshake, so a rotated certificate authority is picked up without a process restart. Previously the CA pool was set once at startup and stayed fixed for the life of the process, causing handshakes to fail with "certificate signed by unknown authority" after the old CA was retired. (https://github.com/authzed/spicedb/pull/3296)
- - Caching: dispatch, cluster dispatch, relationship chunk and full relation cache entries again expire one TTL after they are written, as they did before v1.54.0. Since the move to Otter, every read pushed an entry's expiration out by another TTL, so a result that was read more often than the TTL never expired. On MySQL, where the revision only advances on writes, an expired relationship could then keep granting a permission indefinitely, even with `fully_consistent`, until the next write. The namespace cache, whose entries cannot go stale, still extends its TTL on reads. (https://github.com/authzed/spicedb/issues/3431)
-```
-
-**File**: `internal/datastore/postgres/lr3_bench_test.go` (added, +103/-0)
-```diff
-@@ -0,0 +1,103 @@
-+//go:build datastore && postgres
-+// +build datastore,postgres
-+
-+package postgres
-+
-+import (
-+	"context"
-+	"fmt"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/authzed/spicedb/internal/dispatch"
-+	"github.com/authzed/spicedb/internal/dispatch/graph"
-+	testdatastore "github.com/authzed/spicedb/internal/testserver/datastore"
-+	"github.com/authzed/spicedb/pkg/datalayer"
-+	"github.com/authzed/spicedb/pkg/datastore"
-+	core "github.com/authzed/spicedb/pkg/proto/core/v1"
-+	v1 "github.com/authzed/spicedb/pkg/proto/dispatch/v1"
-+	"github.com/authzed/spicedb/pkg/tuple"
-+)
-+
-+// BenchmarkLookupResources3Fanout measures LookupResources over a single subject with a large
-+// number of directly related resources, which LookupResources reads from the datastore in pages.
-+func BenchmarkLookupResources3Fanout(b *testing.B) {
-+	engine := testdatastore.RunPostgresForTesting(b, postgresConfig.pgVersion, postgresConfig.pgbouncer)
-+
-+	for _, resourceCount := range []int{1_000, 10_000, 100_000} {
-+		b.Run(fmt.Sprintf("resources=%d", resourceCount), func(b *testing.B) {
-+			ds := engine.NewDatastore(b, func(_, uri string) datastore.Datastore {
-+				ds, err := NewPostgresDatastore(b.Context(), uri, RevisionQuantization(0))
-+				require.NoError(b, err)
-+				return ds
-+			})
-+
-+			_, err := datalayer.WriteStoredSchemaForTest(b.Context(), ds, `
-+				definition user {}
-+
-+				definition document {
-+					relation viewer: user
-+					permission view = viewer
-+				}
-+			`)
-+			require.NoError(b, err)
-+
-+			var revision datastore.Revision
-+			const writeBatchSize = 5_000
-+			for start := 0; start < resourceCount; start += writeBatchSize {
-+				revision, err = ds.ReadWriteTx(b.Context(), func(ctx context.Context, rwt datastore.ReadWriteTransaction) error {
-+					mutations := make([]tuple.RelationshipUpdate, 0, writeBatchSize)
-+					for i := start; i < min(start+writeBatchSize, resourceCount); i++ {
-+						mutations = append(mutations, tuple.Create(tuple.MustParse(fmt.Sprintf("document:doc%d#viewer@user:tom", i))))
-+					}
-+					return rwt.WriteRelationships(ctx, mutations)
-+				})
-+				require.NoError(b, err)
-+			}
-+
-+			head, err := ds.HeadRevision(b.Context())
-+			require.NoError(b, err)
-+
-+			params := graph.MustNewDefaultDispatcherParametersForTesting()
-+			dispatcher, err := graph.NewLocalOnlyDispatcher(params)
-+			require.NoError(b, err)
-+			b.Cleanup(func() { _ = dispatcher.Close() })
-+
-+			ctx := datalayer.ContextWithHandle(b.Context())
-+			require.NoError(b, datalayer.SetInContext(ctx, datalayer.NewDataLayer(ds, datalayer.WithSchemaMode(datalayer.SchemaModeReadNewWriteNew))))
-+
-+			for _, limit := range []uint32{0, 100} {
-+				b.Run(fmt.Sprintf("limit=%d", limit), func(b *testing.B) {
-+					expectedCount := resourceCount
-+					if limit > 0 {
-+						expectedCount = int(limit)
-+					}
-+
-+					for b.Loop() {
-+						stream := dispatch.NewCollectingDispatchStream[*v1.DispatchLookupResources3Response](ctx)
-+						err := dispatcher.DispatchLookupResources3(&v1.DispatchLookupResources3Request{
-+							ResourceRelation: &core.RelationReference{Namespace: "document", Relation: "view"},
-+							SubjectRelation:  &core.RelationReference{Namespace: "user", Relation: tuple.Ellipsis},
-+							SubjectIds:       []string{"tom"},
-+							TerminalSubject:  tuple.CoreONR("user", "tom", tuple.Ellipsis),
-+							Metadata: &v1.ResolverMeta{
-+								AtRevision:     revision.String(),
-+								DepthRemaining: 50,
-+								SchemaHash:     []byte(head.SchemaHash),
-+							},
-+							OptionalLimit: limit,
-+						}, stream)
-+						require.NoError(b, err)
-+
-+						count := 0
-+						for _, result := range stream.Results() {
-+							count += len(result.Items)
-+						}
-+						require.Equal(b, expectedCount, count)
-+					}
-+				})
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `internal/datastore/postgres/poolnesting_test.go` (added, +164/-0)
-```diff
-@@ -0,0 +1,164 @@
-+//go:build datastore && postgres
-+// +build datastore,postgres
-+
-+package postgres
-+
-+import (
-+	"context"
-+	"fmt"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	"google.golang.org/protobuf/types/known/structpb"
-+
-+	"github.com/authzed/spicedb/internal/dispatch"
-+	"github.com/authzed/spicedb/internal/dispatch/graph"
-+	testdatastore "github.com/authzed/spicedb/internal/testserver/datastore"
-+	"github.com/authzed/spicedb/pkg/datalayer"
-+	"github.com/authzed/spicedb/pkg/datastore"
-+	core "github.com/authzed/spicedb/pkg/proto/core/v1"
-+	v1 "github.com/authzed/spicedb/pkg/proto/dispatch/v1"
-+	"github.com/authzed/spicedb/pkg/tuple"
-+)
-+
-+const poolNestingSchema = `
-+	caveat allowed(flag bool) {
-+		flag
-+	}
-+
-+	definition user {}
-+
-+	definition group {
-+		relation member: user
-+	}
-+
-+	definition document {
-+		relation viewer: user with allowed | group#member
-+		permission view = viewer
-+	}
-+`
-+
-+// TestLookupResourcesWithSingleReadConnection covers
-+// https://github.com/authzed/spicedb/issues/3433 against a real pgxpool: with a single
-+// read connection, LookupResources must never wait for a second read connection while a
-+// relationships query still holds the first.
-+//
-+// The schema is read from the single-store schema, bypassing the schema cache, so that
-+// every schema read goes to the datastore.
-+func TestLookupResourcesWithSingleReadConnection(t *testing.T) {
-+	b := testdatastore.RunPostgresForTesting(t, postgresConfig.pgVersion, postgresConfig.pgbouncer)
-+
-+	// More groups than LookupResources reads from the datastore per page (10 chunks of 100).
-+	const fanoutGroupCount = 1050
-+	fanout := make([]tuple.Relationship, 0, 2*fanoutGroupCount)
-+	for i := range fanoutGroupCount {
-+		fanout = append(fanout,
-+			tuple.MustParse(fmt.Sprintf("group:g%d#member@user:bob", i)),
-+			tuple.MustParse(fmt.Sprintf("document:fanout#viewer@group:g%d#member", i)),
-+		)
-+	}
-+
-+	tcs := []struct {
-+		name          string
-+		relationships []tuple.Relationship
-+		subjectID     string
-+		expected      string
-+	}{
-+		{
-+			"caveated relationship",
-+			[]tuple.Relationship{tuple.MustParse(`document:one#viewer@user:alice[allowed:{"flag":true}]`)},
-+			"alice",
-+			"one",
-+		},
-+		{
-+			"fanout larger than a datastore page",
-+			fanout,
-+			"bob",
-+			"fanout",
-+		},
-+	}
-+
-+	for _, tc := range tcs {
-+		t.Run(tc.name, func(t *testing.T) {
-+			// Migrate a fresh database, then open our own datastore over it: the datastore
-+			// returned by NewDatastore is closed in a test cleanup, which blocks forever on
-+			// a deadlocked pool.
-+			var uri string
-+			b.NewDatastore(t, func(engine, migratedURI string) datastore.Datastore {
-+				uri = migratedURI
-+				ds, err := NewPostgresDatastore(t.Context(), migratedURI)
-+				require.NoError(t, err)
-+				return ds
-+			})
-+
-+			ds, err := NewPostgresDatastore(context.Background(), uri,
-+				RevisionQuantization(0),
-+				ReadConnsMinOpen(1),
-+				ReadConnsMaxOpen(1),
-+			)
-+			require.NoError(t, err)
-+
-+			_, err = datalayer.WriteStoredSchemaForTest(t.Context(), ds, poolNestingSchema)
-+			require.NoError(t, err)
-+
-+			revision, err := ds.ReadWriteTx(t.Context(), func(ctx context.Context, rwt datastore.ReadWriteTransaction) error {
-+				mutations := make([]tuple.RelationshipUpdate, 0, len(tc.relationships))
-+				for _, rel := range tc.relationships {
-+					mutations = append(mutations, tuple.Create(rel))
-+				}
-+				return rwt.WriteRelationships(ctx, mutations)
-+			})
-+			require.NoError(t, err)
-+
-+			params := graph.MustNewDefaultDispatcherParametersForTesting()
-+			params.ConcurrencyLimits = graph.SharedConcurrencyLimits(1)
-+			dispatcher, err := graph.NewLocalOnlyDispatcher(params)
-+			require.NoError(t, err)
-+
-+			caveatContext, err := structpb.NewStruct(map[string]any{"flag": true})
-+			require.NoError(t, err)
-+
-+			ctx, cancel := context.WithTimeout(datalayer.ContextWithHandle(t.Context()), 30*time.Second)
-+			defer cancel()
-+			require.NoError(t, datalayer.SetInContext(ctx, datalayer.NewDataLayer(ds, datalayer.WithSchemaMode(datalayer.SchemaModeReadNewWriteNew))))
-+
-+			stream := dispatch.NewCloningCollectingDispatchStream[*v1.DispatchLookupResources3Response](ctx)
-+			done := make(chan error, 1)
-+			go func() {
-+				done <- dispatcher.DispatchLookupResources3(&v1.DispatchLookupResources3Request{
-+					ResourceRelation: &core.RelationReference{Namespace: "document", Relation: "view"},
-+					SubjectRelation:  &core.RelationReference{Namespace: "user", Relation: tuple.Ellipsis},
-+					SubjectIds:       []string{tc.subjectID},
-+					TerminalSubject:  tuple.CoreONR("user", tc.subjectID, tuple.Ellipsis),
-+					Metadata: &v1.ResolverMeta{
-+						AtRevision:     revision.String(),
-+						DepthRemaining: 50,
-+						SchemaHash:     []byte(datalayer.NoSchemaHashForTesting),
-+					},
-+					Context: caveatContext,
-+				}, stream)
-+			}()
-+
-+			select {
-+			case err := <-done:
-+				require.NoError(t, err)
-+				found := map[string]struct{}{}
-+				for _, result := range 
-```
-
-**File**: `internal/datastore/proxy/poolsim/poolsim.go` (added, +283/-0)
-```diff
-@@ -0,0 +1,283 @@
-+// Package poolsim provides a datastore proxy that models a fixed-size database
-+// connection pool in front of any datastore, so that code which holds one pooled
-+// connection while requesting another can be detected deterministically in tests,
-+// regardless of the backing datastore.
-+//
-+// The SQL datastores check a connection out of their pool for the full lifetime of
-+// a relationship iterator: rows are streamed off the open connection while the
-+// consumer's loop body runs. Any datastore access made from inside that loop body
-+// therefore needs a *second* connection from the same pool. If every connection in
-+// the pool is held by such a caller, none can make progress and the pool deadlocks
-+// (see https://github.com/authzed/spicedb/issues/3433).
-+package poolsim
-+
-+import (
-+	"context"
-+	"errors"
-+	"fmt"
-+	"sync"
-+	"sync/atomic"
-+	"time"
-+
-+	"github.com/authzed/spicedb/internal/goroutineid"
-+	"github.com/authzed/spicedb/pkg/datastore"
-+	"github.com/authzed/spicedb/pkg/datastore/options"
-+	core "github.com/authzed/spicedb/pkg/proto/core/v1"
-+	"github.com/authzed/spicedb/pkg/tuple"
-+)
-+
-+// ErrNestedAcquire is returned when a goroutine that already holds a simulated
-+// connection requests another one.
-+var ErrNestedAcquire = errors.New("nested connection acquisition: goroutine already holds a pooled connection")
-+
-+// ErrPoolExhausted is returned when a simulated connection could not be acquired
-+// within the configured acquire timeout.
-+var ErrPoolExhausted = errors.New("connection pool exhausted: timed out waiting for a pooled connection")
-+
-+// Option configures the simulated pool.
-+type Option func(*Datastore)
-+
-+// WithAcquireTimeout sets how long an acquisition waits for a free connection
-+// before failing with ErrPoolExhausted. Real SpiceDB reads detach the caller's
-+// cancellation before reaching the pool, so a real acquisition never gives up;
-+// the timeout exists only so that tests fail instead of hanging.
-+func WithAcquireTimeout(timeout time.Duration) Option {
-+	return func(d *Datastore) { d.acquireTimeout = timeout }
-+}
-+
-+// WithAllowNestedAcquire disables failing fast when a goroutine that already
-+// holds a connection requests another. Nested acquisitions are still counted, and
-+// will block on the pool like a real one would.
-+func WithAllowNestedAcquire() Option {
-+	return func(d *Datastore) { d.failOnNested = false }
-+}
-+
-+// Datastore is a datastore proxy that models a fixed-size connection pool for
-+// all reads made via SnapshotReader.
-+type Datastore struct {
-+	datastore.Datastore
-+
-+	slots          chan struct{}
-+	acquireTimeout time.Duration
-+	failOnNested   bool
-+
-+	heldMu sync.Mutex
-+	held   map[uint64]int
-+
-+	nestedCount  atomic.Int64
-+	timeoutCount atomic.Int64
-+	inUse        atomic.Int64
-+	maxInUse     atomic.Int64
-+}
-+
-+// New wraps the delegate datastore with a simulated connection pool of the given
-+// size.
-+func New(delegate datastore.Datastore, size int, opts ...Option) *Datastore {
-+	if size < 1 {
-+		panic("poolsim: pool size must be at least 1")
-+	}
-+
-+	d := &Datastore{
-+		Datastore:      delegate,
-+		slots:          make(chan struct{}, size),
-+		acquireTimeout: 10 * time.Second,
-+		failOnNested:   true,
-+		held:           map[uint64]int{},
-+	}
-+	for _, opt := range opts {
-+		opt(d)
-+	}
-+	return d
-+}
-+
-+// NestedAcquisitions returns the number of times a goroutine that already held
-+// a connection requested another.
-+func (d *Datastore) NestedAcquisitions() int64 { return d.nestedCount.Load() }
-+
-+// AcquireTimeouts returns the number of acquisitions that timed out.
-+func (d *Datastore) AcquireTimeouts() int64 { return d.timeoutCount.Load() }
-+
-+// MaxInUse returns the high-water mark of simultaneously held connections.
-+func (d *Datastore) MaxInUse() int64 { return d.maxInUse.Load() }
-+
-+// InUse returns the number of connections currently held.
-+func (d *Datastore) InUse() int64 { return d.inUse.Load() }
-+
-+func (d *Datastore) SnapshotReader(rev datastore.Revision) datastore.Reader {
-+	return &reader{d.Datastore.SnapshotReader(rev), d}
-+}
-+
-+func (d *Datastore) Unwrap() datastore.Datastore {
-+	return d.Datastore
-+}
-+
-+func (d *Datastore) acquire(operation string) (func(), error) {
-+	gid := goroutineid.Current()
-+
-+	d.heldMu.Lock()
-+	alreadyHeld := d.held[gid]
-+	d.heldMu.Unlock()
-+
-+	if alreadyHeld > 0 {
-+		d.nestedCount.Add(1)
-+		if d.failOnNested {
-+			return nil, fmt.Errorf("%w (operation %s)", ErrNestedAcquire, operation)
-+		}
-+	}
-+
-+	timer := time.NewTimer(d.acquireTimeout)
-+	defer timer.Stop()
-+
-+	select {
-+	case d.slots <- struct{}{}:
-+	case <-timer.C:
-+		d.timeoutCount.Add(1)
-+		return nil, fmt.Errorf("%w (operation %s, waited %s)", ErrPoolExhausted, operation, d.acquireTimeout)
-+	}
-+
-+	inUse := d.inUse.Add(1)
-+	for {
-+		current := d.maxInUse.Load()
-+		if inUse <= current || d.maxInUse.CompareAndSwap(current, inUse) {
-+			break
-+		}
-+	}
-+
-+	d.heldMu.Lock()
-+	d.held[gid]++
-+	d.heldMu.Unlock()
-+
-+	var once sync.Once
-+	return 
-```
-
-**File**: `internal/datastore/proxy/poolsim/poolsim_test.go` (added, +102/-0)
-```diff
-@@ -0,0 +1,102 @@
-+package poolsim
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/authzed/spicedb/internal/datastore/dsfortesting"
-+	"github.com/authzed/spicedb/internal/datastore/memdb"
-+	"github.com/authzed/spicedb/internal/testfixtures"
-+	"github.com/authzed/spicedb/pkg/datastore"
-+	"github.com/authzed/spicedb/pkg/datastore/options"
-+	"github.com/authzed/spicedb/pkg/datastore/queryshape"
-+)
-+
-+func newTestPool(t *testing.T, size int, opts ...Option) (*Datastore, datastore.Revision) {
-+	rawDS, err := dsfortesting.NewMemDBDatastoreForTesting(t, 0, 0, memdb.DisableGC)
-+	require.NoError(t, err)
-+
-+	ds, rev := testfixtures.StandardDatastoreWithData(t, rawDS)
-+	return New(ds, size, opts...), rev
-+}
-+
-+func TestIteratorHoldsConnectionUntilIterationEnds(t *testing.T) {
-+	pool, rev := newTestPool(t, 2)
-+	reader := pool.SnapshotReader(rev)
-+
-+	it, err := reader.QueryRelationships(t.Context(), datastore.RelationshipsFilter{OptionalResourceType: "document"}, options.WithQueryShape(queryshape.FindResourceOfType))
-+	require.NoError(t, err)
-+	require.Equal(t, int64(0), pool.InUse(), "query should not hold a connection until iterated")
-+
-+	count := 0
-+	for _, err := range it {
-+		require.NoError(t, err)
-+		require.Equal(t, int64(1), pool.InUse())
-+		count++
-+	}
-+	require.Positive(t, count)
-+	require.Equal(t, int64(0), pool.InUse())
-+
-+	// Breaking out early must also release.
-+	it, err = reader.QueryRelationships(t.Context(), datastore.RelationshipsFilter{OptionalResourceType: "document"}, options.WithQueryShape(queryshape.FindResourceOfType))
-+	require.NoError(t, err)
-+	for range it {
-+		break
-+	}
-+	require.Equal(t, int64(0), pool.InUse())
-+}
-+
-+func TestNestedAcquireFailsFast(t *testing.T) {
-+	pool, rev := newTestPool(t, 2)
-+	reader := pool.SnapshotReader(rev)
-+
-+	it, err := reader.QueryRelationships(t.Context(), datastore.RelationshipsFilter{OptionalResourceType: "document"}, options.WithQueryShape(queryshape.FindResourceOfType))
-+	require.NoError(t, err)
-+
-+	for _, err := range it {
-+		require.NoError(t, err)
-+		_, _, err := reader.LegacyReadNamespaceByName(t.Context(), "document")
-+		require.ErrorIs(t, err, ErrNestedAcquire)
-+		break
-+	}
-+
-+	require.Equal(t, int64(1), pool.NestedAcquisitions())
-+	require.Equal(t, int64(0), pool.InUse())
-+}
-+
-+func TestNestedAcquireDeadlocksWhenAllowed(t *testing.T) {
-+	pool, rev := newTestPool(t, 1, WithAllowNestedAcquire(), WithAcquireTimeout(50*time.Millisecond))
-+	reader := pool.SnapshotReader(rev)
-+
-+	it, err := reader.QueryRelationships(t.Context(), datastore.RelationshipsFilter{OptionalResourceType: "document"}, options.WithQueryShape(queryshape.FindResourceOfType))
-+	require.NoError(t, err)
-+
-+	for _, err := range it {
-+		require.NoError(t, err)
-+		_, _, err := reader.LegacyReadNamespaceByName(t.Context(), "document")
-+		require.ErrorIs(t, err, ErrPoolExhausted)
-+		break
-+	}
-+
-+	require.Equal(t, int64(1), pool.NestedAcquisitions())
-+	require.Equal(t, int64(1), pool.AcquireTimeouts())
-+}
-+
-+func TestSequentialAccessDoesNotNest(t *testing.T) {
-+	pool, rev := newTestPool(t, 1)
-+	reader := pool.SnapshotReader(rev)
-+
-+	it, err := reader.QueryRelationships(t.Context(), datastore.RelationshipsFilter{OptionalResourceType: "document"}, options.WithQueryShape(queryshape.FindResourceOfType))
-+	require.NoError(t, err)
-+
-+	rels, err := datastore.IteratorToSlice(it)
-+	require.NoError(t, err)
-+	require.NotEmpty(t, rels)
-+
-+	_, _, err = reader.LegacyReadNamespaceByName(t.Context(), "document")
-+	require.NoError(t, err)
-+	require.Equal(t, int64(0), pool.NestedAcquisitions())
-+	require.Equal(t, int64(1), pool.MaxInUse())
-+}
-```
-
-**File**: `internal/dispatch/graph/poolnesting_test.go` (added, +397/-0)
-```diff
-@@ -0,0 +1,397 @@
-+package graph
-+
-+import (
-+	"context"
-+	"fmt"
-+	"slices"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+	"google.golang.org/protobuf/types/known/structpb"
-+
-+	"github.com/authzed/spicedb/internal/datastore/dsfortesting"
-+	"github.com/authzed/spicedb/internal/datastore/memdb"
-+	"github.com/authzed/spicedb/internal/datastore/proxy/poolsim"
-+	"github.com/authzed/spicedb/internal/dispatch"
-+	"github.com/authzed/spicedb/internal/testfixtures"
-+	"github.com/authzed/spicedb/pkg/cache"
-+	"github.com/authzed/spicedb/pkg/datalayer"
-+	"github.com/authzed/spicedb/pkg/datastore"
-+	"github.com/authzed/spicedb/pkg/genutil/mapz"
-+	v1 "github.com/authzed/spicedb/pkg/proto/dispatch/v1"
-+	"github.com/authzed/spicedb/pkg/tuple"
-+)
-+
-+// The tests in this file run each dispatch operation against a datastore fronted by a
-+// simulated connection pool (see poolsim), to detect code that requests a second pooled
-+// connection while already holding one. With a real SQL datastore, such code deadlocks
-+// the read pool once every connection is held by a caller waiting for another
-+// (https://github.com/authzed/spicedb/issues/3433).
-+
-+const poolNestingSchema = `
-+	caveat allowed(flag bool) {
-+		flag
-+	}
-+
-+	definition user {}
-+
-+	definition group {
-+		relation member: user | user with allowed | group#member
-+	}
-+
-+	definition document {
-+		relation viewer: user | user with allowed | group#member
-+		relation banned: user
-+		relation parent: folder
-+		relation member_group: group
-+
-+		permission view = viewer
-+		permission view_unless_banned = viewer - banned
-+		permission view_via_parent = parent->view
-+		permission view_via_all_groups = member_group.all(member)
-+	}
-+
-+	definition folder {
-+		relation viewer: user | user with allowed | group#member
-+		permission view = viewer
-+	}
-+`
-+
-+var poolNestingRelationships = []tuple.Relationship{
-+	// Caveated direct relationship, as in the issue.
-+	tuple.MustParse(`document:caveated#viewer@user:alice[allowed:{"flag":true}]`),
-+
-+	// Nested group membership, requiring a recursive dispatch.
-+	tuple.MustParse("group:inner#member@user:bob"),
-+	tuple.MustParse("group:outer#member@group:inner#member"),
-+	tuple.MustParse("document:nested#viewer@group:outer#member"),
-+
-+	// Caveated nested group membership.
-+	tuple.MustParse(`group:caveatedgroup#member@user:carol[allowed:{"flag":true}]`),
-+	tuple.MustParse("document:caveatednested#viewer@group:caveatedgroup#member"),
-+
-+	// Exclusion, which LookupResources filters with a check.
-+	tuple.MustParse("document:excluded#viewer@user:dan"),
-+	tuple.MustParse("document:excluded#banned@user:dan"),
-+	tuple.MustParse("document:notexcluded#viewer@user:dan"),
-+
-+	// Arrow.
-+	tuple.MustParse("folder:somefolder#viewer@group:outer#member"),
-+	tuple.MustParse("document:infolder#parent@folder:somefolder"),
-+
-+	// Intersection arrow.
-+	tuple.MustParse("document:allgroups#member_group@group:inner"),
-+}
-+
-+// fanoutGroupCount is larger than both the dispatch chunk size used for testing (100) and the
-+// LookupResources datastore page size (10 chunks), so that LookupResources hands full chunks to
-+// its mapper, and reads more than one page of relationships.
-+const fanoutGroupCount = 1050
-+
-+func init() {
-+	for i := range fanoutGroupCount {
-+		poolNestingRelationships = append(poolNestingRelationships,
-+			tuple.MustParse(fmt.Sprintf("group:fanout%d#member@user:erin", i)),
-+		)
-+	}
-+	poolNestingRelationships = append(poolNestingRelationships,
-+		tuple.MustParse("group:fanout0#member@user:frank"),
-+		tuple.MustParse("document:fanout#viewer@group:fanout0#member"),
-+	)
-+	for i := 1; i < fanoutGroupCount; i++ {
-+		poolNestingRelationships = append(poolNestingRelationships,
-+			tuple.MustParse(fmt.Sprintf("document:fanout#viewer@group:fanout%d#member", i)),
-+		)
-+	}
-+}
-+
-+type poolNestingCase struct {
-+	name       string
-+	permission string
-+	subject    tuple.ObjectAndRelation
-+	expected   []string
-+}
-+
-+var poolNestingLookupCases = []poolNestingCase{
-+	{"caveated direct relationship (#3433)", "view", tuple.ONR("user", "alice", "..."), []string{"caveated"}},
-+	{"nested groups", "view", tuple.ONR("user", "bob", "..."), []string{"nested"}},
-+	{"caveated nested group", "view", tuple.ONR("user", "carol", "..."), []string{"caveatednested"}},
-+	{"exclusion", "view_unless_banned", tuple.ONR("user", "dan", "..."), []string{"notexcluded"}},
-+	{"arrow over nested groups", "view_via_parent", tuple.ONR("user", "bob", "..."), []string{"infolder"}},
-+	{"intersection arrow", "view_via_all_groups", tuple.ONR("user", "bob", "..."), []string{"allgroups"}},
-+	{"fanout larger than a datastore page", "view", tuple.ONR("user", "erin", "..."), []string{"fanout"}},
-+}
-+
-+// The legacy schema mode is not covered: it loads namespace and caveat definitions lazily, one
-+// at a time, including while relationship iterators are open. The single-store schema is loaded
-+// in full before any relationships are read, and is the supported path forward.
-+type poolNestingConfig
-```
-
-**File**: `internal/goroutineid/goroutineid.go` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+// Package goroutineid exposes the ID of the calling goroutine, for debugging and test-only
-+// checks that need to associate state with a goroutine. It is too slow for use on hot paths in
-+// production builds.
-+package goroutineid
-+
-+import (
-+	"bytes"
-+	"fmt"
-+	"runtime"
-+	"strconv"
-+)
-+
-+var goroutinePrefix = []byte("goroutine ")
-+
-+// Current returns the ID of the calling goroutine.
-+func Current() uint64 {
-+	var buf [64]byte
-+	n := runtime.Stack(buf[:], false)
-+	b := bytes.TrimPrefix(buf[:n], goroutinePrefix)
-+	if i := bytes.IndexByte(b, ' '); i >= 0 {
-+		b = b[:i]
-+	}
-+	id, err := strconv.ParseUint(string(b), 10, 64)
-+	if err != nil {
-+		panic(fmt.Sprintf("goroutineid: unable to parse goroutine ID: %v", err))
-+	}
-+	return id
-+}
-```
-
-**File**: `internal/goroutineid/goroutineid_test.go` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+package goroutineid
-+
-+import (
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestCurrent(t *testing.T) {
-+	id := Current()
-+	require.Positive(t, id)
-+	require.Equal(t, id, Current())
-+
-+	other := make(chan uint64)
-+	go func() { other <- Current() }()
-+	require.NotEqual(t, id, <-other)
-+}
-```
-
----
-
-### Incident Patch 3: `07befa05` (2026-10-28)
-**Commit Message**: fix(dispatch): lock LookupResources cursors to the dispatcher that produced them (#3435)
-
-* fix(dispatch): lock LookupResources cursors to the dispatcher that produced them
-
-The secondary cursor lock never took effect: the hedged path published a
-winning secondary's results without tagging their cursors, and LR3 requests
-were never checked since their cursor is a []string rather than *v1.Cursor.
-Every page raced the primary against the secondaries, so a cursor produced
-by one could be resumed by the other and fail as invalid.
-
-Secondary results are now tagged in the hedged path, at the front of LR2
-cursors and at the head (end) of LR3 cursor stacks, so a tag nested under a
-primary-produced head stays in place for the sub-dispatch it belongs to. A
-tagged cursor is stripped and routed only to its secondary; an untagged
-cursor is routed only to the primary.
-
-* test(dispatch): annotate the cursor echo service's guarded field
-
-* fix(dispatch): handle every streaming dispatch type in the cursor lock
-
-The cursor lock matched requests and responses through interfaces, so a
-streaming type whose cursor didn't fit them, like LookupResources3's
-[]string, silently skipped the lock. stripCursorD
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
- 
- ## [Unreleased]
- ### Fixed
-+- Dispatch: LookupResources cursors are now locked to the dispatcher that produced them when secondary dispatchers are configured. Previously a cursor returned by a secondary was never tagged, and LookupResources3 cursors were never checked at all, so every page raced the primary against the secondaries and a cursor produced by one could be sent to the other, failing the request with an invalid cursor error. A cursor without a secondary tag is now resumed by the primary only.
- - Dispatch and telemetry: CA bundles read from disk via `--dispatch-upstream-ca-path` and the telemetry client's CA path are now re-read on every outbound TLS handshake, so a rotated certificate authority is picked up without a process restart. Previously the CA pool was set once at startup and stayed fixed for the life of the process, causing handshakes to fail with "certificate signed by unknown authority" after the old CA was retired. (https://github.com/authzed/spicedb/pull/3296)
- - Caching: dispatch, cluster dispatch, relationship chunk and full relation cache entries again expire one TTL after they are written, as they did before v1.54.0. Since the move to Otter, every read pushed an entry's expiration out by another TTL, so a result that was read more often than the TTL never expired. On MySQL, where the revision only advances on writes, an expired relationship could then keep granting a permission indefinitely, even with `fully_consistent`, until the next write. The namespace cache, whose entries cannot go stale, still extends its TTL on reads. (https://github.com/authzed/spicedb/issues/3431)
- - Schema validation: schemas that transitively include wildcard subjects are now consistently rejected, even when unrelated definitions reuse the same relation names. (https://github.com/authzed/spicedb/pull/3421)
-```
-
-**File**: `internal/dispatch/remote/cluster.go` (modified, +93/-45)
-```diff
-@@ -406,16 +406,6 @@ func dispatchSyncRequest[Q requestMessage, S responseMessage](
- 	return *new(S), foundError
- }
- 
--type requestMessageWithCursor interface {
--	requestMessage
--	GetOptionalCursor() *v1.Cursor
+-
+-// wrapAliasWithDispatch is a bottom-up OutlineMutation that wraps each
+-// AliasIteratorType node in a DispatchIteratorType node. The wrap is the
+-// static portion of the old DispatchExecutor.shouldDispatchAlias check:
+-//   - the "is this an alias" test becomes "is this outline node an alias?"
+-//   - the sentinel-recursion guard runs over the outline subtree
+-//
+-// The remaining runtime guard (in-progress dispatch-key cycle break) cannot
+-// be made static and stays in the executor.
+-func wrapAliasWithDispatch(outline query.Outline) query.Outline {
+-	if outline.Type != query.AliasIteratorType {
+-		return outline
+-	}
+-	if containsUnmatchedRecursiveSentinelOutline(outline) {
+-		return outline
+-	}
+-	// New node has ID==0; ApplyOptimizations runs FillMissingNodeIDs after the
+-	// transform, which assigns it a fresh ID and records its canonical key.
+-	return query.Outline{
+-		Type:        DispatchIteratorType,
+-		SubOutlines: []query.Outline{outline},
+-	}
 -}
 -
--type responseMessageWithCursor interface {
--	responseMessage
--	GetAfterResponseCursor() *v1.Cursor
--}
+-// containsUnmatchedRecursiveSentinelOutline is the outline-time mirror of
+-// containsUnmatchedRecursiveSentinel (executor.go): it walks an outline
+-// subtree and reports whether any RecursiveSentinel has no RecursiveIterator
+-// with the same (definition, relation) key in the same subtree. An unmatched
+-// sentinel means dispatching this subtree would sever the sentinel from the
+-// collection context its iterator establishes.
+-func containsUnmatchedRecursiveSentinelOutline(root query.Outline) bool {
+-	var iteratorKeys map[recursiveKey]struct{}
+-	var sentinelKeys map[recursiveKey]struct{}
 -
- type receiver[S any] interface {
- 	Recv() (S, error)
- 	grpc.ClientStream
-@@ -449,23 +439,76 @@ func publishClient[R any](ctx context.Context, client receiver[R], reqKey string
- 		}
- 		isFirstResult = false
- 
--		if secondaryDispatchName != primaryDispatcher {
--			if supportsCursors, ok := any(result).(responseMessageWithCursor); ok {
--				afterResponseCursor := supportsCursors.GetAfterResponseCursor()
--				if afterResponseCursor == nil {
--					return spiceerrors.MustBugf("received a nil after response cursor for secondary dispatch")
+-	var walk func(query.Outline)
+-	walk = func(node query.Outline) {
+-		switch node.Type {
+-		case query.RecursiveIteratorType:
+-			if node.Args != nil {
+-				if iteratorKeys == nil {
+-					iteratorKeys = make(map[recursiveKey]struct{})
 -				}
--				afterResponseCursor.Sections = append([]string{secondaryCursorPrefix + secondaryDispatchName}, afterResponseCursor.Sections...)
+-				iteratorKeys[recursiveKey{node.Args.DefinitionName, node.Args.RelationName}] = struct{}{}
+-			}
+-		case query.RecursiveSentinelIteratorType:
+-			if node.Args != nil {
+-				if sentinelKeys == nil {
+-					sentinelKeys = make(map[recursiveKey]struct{})
+-				}
+-				sentinelKeys[recursiveKey{node.Args.DefinitionName, node.Args.RelationName}] = struct{}{}
 -			}
 -		}
--
- 		serr := stream.Publish(result)
- 		if serr != nil {
- 			return serr
- 		}
- 	}
- }
- 
-+// stripCursorDispatcherTag removes the secondary tag from the request's cursor, if any, and returns the
-+// name of the dispatcher that produced the cursor, or "" if the request has no cursor. LR2 cursors carry
-+// the tag at the front, while LR3 cursors are stacks whose head is the last section. Every streaming
-+// request type must be handled here, so that none skips the cursor lock unnoticed.
-+func stripCursorDispatcherTag(req any) (string, error) {
-+	switch r := req.(type) {
-+	case *v1.DispatchLookupResources3Request:
-+		last := len(r.OptionalCursor) - 1
-+		if last < 0 {
-+			return "", nil
-+		}
-+		if name, ok := strings.CutPrefix(r.OptionalCursor[last], secondaryCursorPrefix); ok {
-+			r.OptionalCursor = r.OptionalCursor[:last]
-+			return name, nil
-+		}
-+		return primaryDispatcher, nil
-+
-+	case *v1.DispatchLookupResources2Request:
-+		cursor := r.GetOptionalCursor()
-+		if len(cursor.GetSections()) == 0 {
-+			return "", nil
-+		}
-+		if name, ok := strings.CutPrefix(cursor.Sections[0], secondaryCursorPrefix); ok {
-+			cursor.Sections = cursor.Sections[1:]
-+			return name, nil
-+		}
-+		return primaryDispatcher, nil
-+
-+	case *v1.DispatchLookupSubjectsRequest:
-+		return "", nil
-+
-+	default:
-+		return "", spiceerrors.MustBugf("unhandled streaming dispatch request type %T", req)
-+	}
-+}
-+
-+// tagCursorWithSecondary marks the result's cursors as produced by the named secondary dispatcher. Like
-+// stripCursorDispatcherTag, it must handle every streaming response type.
-+func tagCursorWithSecondary(result any, secondaryDispatchName string) error {
-+	tag := secondaryCursorPrefix + secondaryDispatchName
-+	switch r := result.(type) {
-+	case *v1.DispatchLookupResources3Response:
-+		for _, item := range r.Items {
-+			if len(item.AfterResponseCursorSections) > 0 {
-+				item.AfterResponseCursorSections = append(item.AfterResponseCursorSections, tag)
-+			}
-+		}
-+		return nil
-+
-+	case *v1.DispatchLookupResources2Response:
-+		if cursor := r.GetAfterResponseCursor(); cursor != nil {
-+			cursor.Sections = append([]string{tag}, cursor.Sections...)
-+		}
-+		return nil
-+
-+	case *v1.DispatchLookupSubjectsResponse:
-+		return nil
-+
-+	default:
-+		return spiceerrors.MustBugf("unhandled streaming dispatch response type %T", result)
-+	}
-+}
-+
- type ctxAndCancel struct {
- 	ctx    context.Context
- 	cancel context.CancelFunc
-@@ -495,38 +538,37 @@ func dispatchStreamingRequest[Q streamingRequestMessage, R any](
- 		return publishClient(ctxWithTimeout, client, reqKey, stream, primaryDispatcher)
- 	}
- 
--	// Check the cursor to see if the dispatch went to one of the secondary endpoints.
--	cursorLockedSecondaryName := ""
--	if cursorSupports, ok := any(req).(requestMessageWithCursor); ok {
--		cursor := cursorSupports.GetOptionalCursor()
--		if cursor != nil && len(cursor.Sections) > 0 {
--			if after, ok0 := strings.CutPrefix(cursor.Sections[0], secondaryCursorPrefix); ok0 {
--				cursorLockedSecondaryName = after
--				cursor.Sections = cursor.Sections[1:]
--			}
+-		for _, sub := range node.SubOutlines {
+-			walk(sub)
 -		}
 -	}
+-	walk(root)
 -
- 	// Find the set of valid secondary dispatchers, if any.
- 	validSecondaryDispatchers := make([]SecondaryDispatch, 0, len(cr.secondaryDispatch))
- 	allowPrimary := true
--	if cursorLockedSecondaryName != "" {
-+	cursorLockedDispatcherName, err := stripCursorDispatcherTag(req)
+-	for k := range sentinelKeys {
+-		if _, managed := iteratorKeys[k]; !managed {
+-			return true
+-		}
+-	}
+-	return false
+-}
++func init() { queryopt.MustRegisterOptimization(dispatchwrap.New(DispatchIteratorType)) }
+ 
+ // ApplyDispatchWrap runs only the dispatch-wrap-alias optimization on the
+ // given CanonicalOutline. It exists for callers (dispatch service handlers,
+```
+
+**File**: `internal/dispatch/dispatch_optimizer_test.go` (modified, +1/-121)
+```diff
+@@ -21,27 +21,6 @@ func aliasOutline(defName, relName string, child query.Outline) query.Outline {
+ 	}
+ }
+ 
+-func recursiveOutline(defName, relName string, child query.Outline) query.Outline {
+-	return query.Outline{
+-		Type: query.RecursiveIteratorType,
+-		Args: &query.IteratorArgs{
+-			DefinitionName: defName,
+-			RelationName:   relName,
+-		},
+-		SubOutlines: []query.Outline{child},
+-	}
+-}
+-
+-func sentinelOutline(defName, relName string) query.Outline {
+-	return query.Outline{
+-		Type: query.RecursiveSentinelIteratorType,
+-		Args: &query.IteratorArgs{
+-			DefinitionName: defName,
+-			RelationName:   relName,
+-		},
+-	}
+-}
+-
+ func dsOutline() query.Outline {
+ 	rel := schema.NewTestBaseRelationWithFeatures("document", "viewer", "user", "", "", false)
+ 	return query.Outline{
+@@ -50,106 +29,7 @@ func dsOutline() query.Outline {
+ 	}
+ }
+ 
+-// runDispatchWrap canonicalizes outline then runs only the dispatch-wrap
+-// optimization on it, returning the resulting root outline.
+-func runDispatchWrap(t *testing.T, outline query.Outline) query.Outline {
+-	t.Helper()
+-	co, err := query.CanonicalizeOutline(outline)
+-	require.NoError(t, err)
+-	res, err := ApplyDispatchWrap(co, queryopt.RequestParams{})
+-	require.NoError(t, err)
+-	return res.Root
+-}
+-
+-func TestDispatchWrapOptimizer(t *testing.T) {
+-	t.Run("wraps a single alias", func(t *testing.T) {
+-		input := aliasOutline("document", "viewer", dsOutline())
+-		got := runDispatchWrap(t, input)
+-
+-		require.Equal(t, DispatchIteratorType, got.Type)
+-		require.Len(t, got.SubOutlines, 1)
+-		require.Equal(t, query.AliasIteratorType, got.SubOutlines[0].Type)
+-		require.Equal(t, "viewer", got.SubOutlines[0].Args.RelationName)
+-		// child unchanged
+-		require.Len(t, got.SubOutlines[0].SubOutlines, 1)
+-		require.Equal(t, query.DatastoreIteratorType, got.SubOutlines[0].SubOutlines[0].Type)
+-	})
+-
+-	t.Run("leaves non-alias outlines alone", func(t *testing.T) {
+-		input := dsOutline()
+-		got := runDispatchWrap(t, input)
+-		require.Equal(t, query.DatastoreIteratorType, got.Type)
+-	})
+-
+-	t.Run("wraps nested aliases at every level", func(t *testing.T) {
+-		// Alias("perm")(Union[ Alias("view")(DS), DS ])
+-		inner := aliasOutline("document", "view", dsOutline())
+-		union := query.Outline{
+-			Type:        query.UnionIteratorType,
+-			SubOutlines: []query.Outline{inner, dsOutline()},
+-		}
+-		input := aliasOutline("document", "perm", union)
+-
+-		got := runDispatchWrap(t, input)
+-
+-		// Outer alias is wrapped
+-		require.Equal(t, DispatchIteratorType, got.Type)
+-		outerAlias := got.SubOutlines[0]
+-		require.Equal(t, query.AliasIteratorType, outerAlias.Type)
+-		require.Equal(t, "perm", outerAlias.Args.RelationName)
+-
+-		// Inner alias inside the union is also wrapped
+-		gotUnion := outerAlias.SubOutlines[0]
+-		require.Equal(t, query.UnionIteratorType, gotUnion.Type)
+-		require.Len(t, gotUnion.SubOutlines, 2)
+-		require.Equal(t, DispatchIteratorType, gotUnion.SubOutlines[0].Type)
+-		require.Equal(t, query.AliasIteratorType, gotUnion.SubOutlines[0].SubOutlines[0].Type)
+-		require.Equal(t, "view", gotUnion.SubOutlines[0].SubOutlines[0].Args.RelationName)
+-	})
+-
+-	t.Run("wraps alias whose subtree has a matched sentinel/iterator pair", func(t *testing.T) {
+-		// Alias("view")(Recursive("folder","viewer")(Sentinel("folder","viewer")))
+-		// The recursive iterator inside the alias matches the sentinel's key, so
+-		// the dispatch boundary is safe.
+-		input := aliasOutline("document", "view",
+-			recursiveOutline("folder", "viewer", sentinelOutline("folder", "viewer")),
+-		)
+-		got := runDispatchWrap(t, input)
+-		require.Equal(t, DispatchIteratorType, got.Type, "expected wrap; matched sentinel/iterator pair is dispatch-safe")
+-	})
+-
+-	t.Run("does NOT wrap alias whose subtree contains an unmatched sentinel", func(t *testing.T) {
+-		// Alias("view")(Union[ Sentinel("folder","viewer"), DS ])
+-		// No RecursiveIterator with key folder#viewer exists in the alias's
+-		// subtree, so dispatching the alias would sever the sentinel from its
+-		// collection context.
+-		input := aliasOutline("document", "view",
+-			query.Outline{
+-				Type: query.UnionIteratorType,
+-				SubOutlines: []query.Outline{
+-					sentinelOutline("folder", "viewer"),
+-					dsOutline(),
+-				},
+-			},
+-		)
+-		got := runDispatchWrap(t, input)
+-		require.Equal(t, query.AliasIteratorType, got.Type,
+-			"alias with unmatched sentinel should remain unwrapped to preserve sentinel collection context")
+-	})
+-
+-	t.Run("assigns IDs and canonical keys to newly-wrapped nodes", func(t *testing.T) {
+-		input := aliasOutline("document", "viewer", dsOutline())
+-		co, err := query.CanonicalizeOutline(input)
+-		require.NoError(t, err)
+-		res, err := ApplyDispatchWrap(co, queryopt.RequestParams{})
+-		require.NoError(t, err)
+-
+-		require.NotZero(t, res.Root.ID, "Dispatch root must have an ID assigned by FillMissingNodeIDs")
+-		key, ok := res.CanonicalKeys[res.Root.ID]
+-		require.True(t, ok, "Dispatch root must have a canonical key recorded")
+-		require.N
+```
+
+**File**: `internal/dispatch/queryopt/dispatchwrap/README.md` (added, +47/-0)
+```diff
+@@ -0,0 +1,47 @@
++# Dispatch alias wrapping
++
++Registered name: `dispatch-wrap-alias`. Factory:
++`New(iteratorType query.IteratorType) optimization.Optimizer`.
++The dispatch package supplies its real DispatchIteratorType and registers the pass.
++
++## Transformation
++
++`Alias(view)(child)` becomes `Dispatch(Alias(view)(child))` for eligible aliases.
++The wrapper is a local passthrough iterator marking a potential RPC boundary.
++
++## Inputs and signals
++
++Alias shape and recursive iterator/sentinel identities drive this pass. It uses
++neither request parameters nor observed execution statistics. The supplied
++iterator type avoids a dependency on the parent dispatch package.
++
++## Correctness and applicability
++
++An alias with an unmatched recursive sentinel stays unwrapped: an RPC could
++separate the sentinel from its collection context. A matching recursive
++iterator inside the subtree makes the static boundary eligible. Runtime
++in-progress dispatch-key cycle checks remain the executor's responsibility.
++New wrappers receive IDs and canonical keys through ApplyOptimizations.
++
++## Ordering and expected performance
++
++Applied separately after standard queryopt passes and before advising. Marking
++boundaries during planning avoids rediscovering them during execution. Walking
++alias subtrees adds planning cost; RPC/caching benefits require dispatch-layer
++measurements. Reapplying this pass is not an idempotent operation.
++
++## Tests
++
++Colocated unit tests cover eligible aliases, matching/unmatched recursion and
++new node identities. A parent integration test exercises ApplyDispatchWrap and
++compilation to the real DispatchIterator. Shared properties run with that real
++iterator in local mode over arbitrary generated schemas, nested aliases and
++recursive boundaries. RPC behavior remains covered by dispatch tests.
++
++```sh
++go test ./internal/dispatch ./internal/dispatch/queryopt/dispatchwrap
++go test ./internal/dispatch/queryopt/dispatchwrap -run TestSemanticEquivalence -rapid.checks=1000
++```
++
++Use Rapid's emitted seed/failure-file command for replay. See the
++[shared harness](../../../queryopttest/README.md).
+```
+
+**File**: `internal/dispatch/queryopt/dispatchwrap/optimization.go` (added, +95/-0)
+```diff
+@@ -0,0 +1,95 @@
++package dispatchwrap
++
++import (
++	"github.com/authzed/spicedb/pkg/query"
++	"github.com/authzed/spicedb/pkg/query/queryopt/optimization"
++)
++
++const Name = "dispatch-wrap-alias"
++
++type recursiveKey struct{ definition, relation string }
++
++// New returns a dispatch-boundary optimization using the supplied iterator type.
++func New(iteratorType query.IteratorType) optimization.Optimizer {
++	return optimization.Optimizer{
++		Name: Name,
++		Description: `
++		Wraps every AliasIteratorType node in a DispatchIteratorType passthrough
++		so the dispatch layer can recognize the (definition, relation) boundary
++		as a dispatch candidate without re-deriving it at runtime. Aliases whose
++		subtree contains an unmatched RecursiveSentinel are left unwrapped — the
++		sentinel must execute inside the collection context established by its
++		matching RecursiveIterator, which is broken by an RPC hop.
++		`,
++		NewTransform: func(_ optimization.RequestParams) optimization.OutlineTransform {
++			return func(outline query.Outline) query.Outline {
++				return query.MutateOutline(outline, []query.OutlineMutation{func(node query.Outline) query.Outline { return wrapAliasWithDispatch(node, iteratorType) }})
++			}
++		},
++	}
++}
++
++// wrapAliasWithDispatch is a bottom-up OutlineMutation that wraps each
++// AliasIteratorType node in a DispatchIteratorType node. The wrap is the
++// static portion of the old DispatchExecutor.shouldDispatchAlias check:
++//   - the "is this an alias" test becomes "is this outline node an alias?"
++//   - the sentinel-recursion guard runs over the outline subtree
++//
++// The remaining runtime guard (in-progress dispatch-key cycle break) cannot
++// be made static and stays in the executor.
++func wrapAliasWithDispatch(outline query.Outline, iteratorType query.IteratorType) query.Outline {
++	if outline.Type != query.AliasIteratorType {
++		return outline
++	}
++	if containsUnmatchedRecursiveSentinelOutline(outline) {
++		return outline
++	}
++	// New node has ID==0; ApplyOptimizations runs FillMissingNodeIDs after the
++	// transform, which assigns it a fresh ID and records its canonical key.
++	return query.Outline{
++		Type:        iteratorType,
++		SubOutlines: []query.Outline{outline},
++	}
++}
++
++// containsUnmatchedRecursiveSentinelOutline is the outline-time mirror of
++// containsUnmatchedRecursiveSentinel (executor.go): it walks an outline
++// subtree and reports whether any RecursiveSentinel has no RecursiveIterator
++// with the same (definition, relation) key in the same subtree. An unmatched
++// sentinel means dispatching this subtree would sever the sentinel from the
++// collection context its iterator establishes.
++func containsUnmatchedRecursiveSentinelOutline(root query.Outline) bool {
++	var iteratorKeys map[recursiveKey]struct{}
++	var sentinelKeys map[recursiveKey]struct{}
++
++	var walk func(query.Outline)
++	walk = func(node query.Outline) {
++		switch node.Type {
++		case query.RecursiveIteratorType:
++			if node.Args != nil {
++				if iteratorKeys == nil {
++					iteratorKeys = make(map[recursiveKey]struct{})
++				}
++				iteratorKeys[recursiveKey{node.Args.DefinitionName, node.Args.RelationName}] = struct{}{}
++			}
++		case query.RecursiveSentinelIteratorType:
++			if node.Args != nil {
++				if sentinelKeys == nil {
++					sentinelKeys = make(map[recursiveKey]struct{})
++				}
++				sentinelKeys[recursiveKey{node.Args.DefinitionName, node.Args.RelationName}] = struct{}{}
++			}
++		}
++		for _, sub := range node.SubOutlines {
++			walk(sub)
++		}
++	}
++	walk(root)
++
++	for k := range sentinelKeys {
++		if _, managed := iteratorKeys[k]; !managed {
++			return true
++		}
++	}
++	return false
++}
+```
+
+**File**: `internal/dispatch/queryopt/dispatchwrap/optimization_test.go` (added, +172/-0)
+```diff
+@@ -0,0 +1,172 @@
++package dispatchwrap_test
++
++import (
++	"testing"
++
++	"github.com/stretchr/testify/require"
++
++	"github.com/authzed/spicedb/internal/dispatch"
++	"github.com/authzed/spicedb/internal/dispatch/queryopt/dispatchwrap"
++	"github.com/authzed/spicedb/pkg/query"
++	"github.com/authzed/spicedb/pkg/query/queryopt"
++	"github.com/authzed/spicedb/pkg/schema/v2"
++)
++
++func aliasOutline(defName, relName string, child query.Outline) query.Outline {
++	return query.Outline{
++		Type: query.AliasIteratorType,
++		Args: &query.IteratorArgs{
++			DefinitionName: defName,
++			RelationName:   relName,
++		},
++		SubOutlines: []query.Outline{child},
++	}
++}
++
++func recursiveOutline(defName, relName string, child query.Outline) query.Outline {
++	return query.Outline{
++		Type: query.RecursiveIteratorType,
++		Args: &query.IteratorArgs{
++			DefinitionName: defName,
++			RelationName:   relName,
++		},
++		SubOutlines: []query.Outline{child},
++	}
++}
++
++func sentinelOutline(defName, relName string) query.Outline {
++	return query.Outline{
++		Type: query.RecursiveSentinelIteratorType,
++		Args: &query.IteratorArgs{
++			DefinitionName: defName,
++			RelationName:   relName,
++		},
++	}
++}
++
++func dsOutline() query.Outline {
++	rel := schema.NewTestBaseRelationWithFeatures("document", "viewer", "user", "", "", false)
++	return query.Outline{
++		Type: query.DatastoreIteratorType,
++		Args: &query.IteratorArgs{Relation: rel},
++	}
++}
++
++// runDispatchWrap canonicalizes outline then runs only the dispatch-wrap
++// optimization on it, returning the resulting root outline.
++func runDispatchWrap(t *testing.T, outline query.Outline) query.Outline {
++	t.Helper()
++	co, err := query.CanonicalizeOutline(outline)
++	require.NoError(t, err)
++	res, err := queryopt.ApplyOptimizations(co, []queryopt.Optimizer{dispatchwrap.New(dispatch.DispatchIteratorType)}, queryopt.RequestParams{})
++	require.NoError(t, err)
++	return res.Root
++}
++
++func TestDispatchWrapOptimizer(t *testing.T) {
++	t.Run("wraps a single alias", func(t *testing.T) {
++		input := aliasOutline("document", "viewer", dsOutline())
++		got := runDispatchWrap(t, input)
++
++		require.Equal(t, dispatch.DispatchIteratorType, got.Type)
++		require.Len(t, got.SubOutlines, 1)
++		require.Equal(t, query.AliasIteratorType, got.SubOutlines[0].Type)
++		require.Equal(t, "viewer", got.SubOutlines[0].Args.RelationName)
++		// child unchanged
++		require.Len(t, got.SubOutlines[0].SubOutlines, 1)
++		require.Equal(t, query.DatastoreIteratorType, got.SubOutlines[0].SubOutlines[0].Type)
++	})
++
++	t.Run("leaves non-alias outlines alone", func(t *testing.T) {
++		input := dsOutline()
++		got := runDispatchWrap(t, input)
++		require.Equal(t, query.DatastoreIteratorType, got.Type)
++	})
++
++	t.Run("wraps nested aliases at every level", func(t *testing.T) {
++		// Alias("perm")(Union[ Alias("view")(DS), DS ])
++		inner := aliasOutline("document", "view", dsOutline())
++		union := query.Outline{
++			Type:        query.UnionIteratorType,
++			SubOutlines: []query.Outline{inner, dsOutline()},
++		}
++		input := aliasOutline("document", "perm", union)
++
++		got := runDispatchWrap(t, input)
++
++		// Outer alias is wrapped
++		require.Equal(t, dispatch.DispatchIteratorType, got.Type)
++		outerAlias := got.SubOutlines[0]
++		require.Equal(t, query.AliasIteratorType, outerAlias.Type)
++		require.Equal(t, "perm", outerAlias.Args.RelationName)
++
++		// Inner alias inside the union is also wrapped
++		gotUnion := outerAlias.SubOutlines[0]
++		require.Equal(t, query.UnionIteratorType, gotUnion.Type)
++		require.Len(t, gotUnion.SubOutlines, 2)
++		require.Equal(t, dispatch.DispatchIteratorType, gotUnion.SubOutlines[0].Type)
++		require.Equal(t, query.AliasIteratorType, gotUnion.SubOutlines[0].SubOutlines[0].Type)
++		require.Equal(t, "view", gotUnion.SubOutlines[0].SubOutlines[0].Args.RelationName)
++	})
++
++	t.Run("wraps alias whose subtree has a matched sentinel/iterator pair", func(t *testing.T) {
++		// Alias("view")(Recursive("folder","viewer")(Sentinel("folder","viewer")))
++		// The recursive iterator inside the alias matches the sentinel's key, so
++		// the dispatch boundary is safe.
++		input := aliasOutline("document", "view",
++			recursiveOutline("folder", "viewer", sentinelOutline("folder", "viewer")),
++		)
++		got := runDispatchWrap(t, input)
++		require.Equal(t, dispatch.DispatchIteratorType, got.Type, "expected wrap; matched sentinel/iterator pair is dispatch-safe")
++	})
++
++	t.Run("does NOT wrap alias whose subtree contains an unmatched sentinel", func(t *testing.T) {
++		// Alias("view")(Union[ Sentinel("folder","viewer"), DS ])
++		// No RecursiveIterator with key folder#viewer exists in the alias's
++		// subtree, so dispatching the alias would sever the sentinel from its
++		// collection context.
++		input := aliasOutline("document", "view",
++			query.Outline{
++				Type: query.UnionIteratorType,
++				SubOutlines: []query.Outline{
++					sentinelOutline("folder", "viewer"),
++					dsOutline(),
++				},
++			},
++		)
++		got := runDispatchWrap(t, input)
++		require.
+```
+
+**File**: `internal/dispatch/queryopt/dispatchwrap/property_test.go` (added, +47/-0)
+```diff
+@@ -0,0 +1,47 @@
++package dispatchwrap_test
++
++import (
++	"testing"
++
++	"pgregory.net/rapid"
++
++	"github.com/authzed/spicedb/internal/dispatch"
++	"github.com/authzed/spicedb/internal/dispatch/queryopt/dispatchwrap"
++	"github.com/authzed/spicedb/internal/queryopttest"
++)
++
++func TestSemanticEquivalence(t *testing.T) {
++	queryopttest.Check(t, queryopttest.Config{
++		Optimizer: dispatchwrap.New(dispatch.DispatchIteratorType),
++
++		Cases: map[string]func(*rapid.T) queryopttest.Case{
++			"nested-aliases": func(t *rapid.T) queryopttest.Case {
++				c := queryopttest.ParseCase(t, `definition user {}
++definition document {
++ relation viewer: user
++ permission read = viewer
++ permission view = read
++}`)
++				c.Relationships = queryopttest.Relationships(t, "document:o_a#viewer@user:o_a", "document:o_b#viewer@user:o_b")
++				c.Requests = queryopttest.Requests("document", "view", "user")
++				c.RequireChange = true
++
++				return c
++			},
++			"recursive-boundaries": func(t *rapid.T) queryopttest.Case {
++				c := queryopttest.ParseCase(t, `definition user {}
++definition group {
++ relation direct: user
++ relation parent: group
++ permission member = direct + parent->member
++ permission view = member
++}`)
++				c.Relationships = queryopttest.Relationships(t, "group:o_a#direct@user:o_a", "group:o_b#parent@group:o_a", "group:o_a#parent@group:o_b")
++				c.Requests = queryopttest.Requests("group", "view", "user")
++				c.RequireChange = true
++
++				return c
++			},
++		},
++	})
++}
+```
+
+**File**: `internal/queryopttest/README.md` (added, +78/-0)
+```diff
+@@ -0,0 +1,78 @@
++# Per-optimization semantic properties
++
++This test-only package runs Rapid properties over the repository's generated
++schemas/relationships and pass-specific targeted cases. It applies exactly
++one descriptor and compares independent unmodified/optimized plans against the
++same memdb revision, with fresh iterators, contexts and caveat runners.
++
++## Using the runner
++
++Call Check from an external test package with Config{Optimizer: pass.New(),
++Cases: ...}. Add Applicable when the pass is safe only for certain requests.
++Optional Setup runs once before properties for iterator registration/setup;
++the harness itself does not import dispatch. See each optimization's
++property_test.go for runnable examples.
++
++The broad suite uses schema/v2/testing.CheckWithSchema, at most 20 relationships,
++a connected three-ID pool plus an absent query ID, and two sampled targets with
++all three operations (six requests). Named subject relations are sampled too.
++Schema generation is already bounded to three expression levels.
++
++Cases maps names to Rapid generators returning Case. ParseCase compiles a DSL
++schema and retains original caveat definitions: Schema.ToDefinitions currently
++omits their parameter types, so caveated cases must carry CaveatDefinitions.
++Relationships selects valid candidate tuples with randomized inclusion, always
++keeping the first. Requests supplies nine requests covering all three operations
++and positive/negative anchors. Generators may construct their own schemas,
++relationships, requests and contexts for more varied shapes.
++
++RequireChange rejects a targeted case unless an applicable request changes its
++outline. No-applicable-request cases fail. Unsupported operations, compilation,
++datastore and execution errors fail rather than counting as equivalence.
++
++## What is compared
++
++Check compares effective membership and partial-context state. Lookups compare
++order-independent endpoint/relation membership after OR-merging duplicate grants.
++Caveat expressions are evaluated with the same complete or partial context;
++raw syntax and path provenance are not semantic equality requirements.
++
++For IterSubjects, the runner seals operation/target state before invoking the
++context, following existing wildcard tests and dispatch receivers. This observes
++the iterator set before the public API wrapper strips wildcard paths. Public
++LookupSubjects projection behavior is a separate API concern; a redundant
++conditional concrete path can change that projection even when the underlying
++wildcard set is equivalent. These properties assert iterator permission
++semantics, not equality of that lossy projection.
++
++Wildcards are expanded over every explicitly mentioned ID
++(including exclusions) and a generic unmentioned-subject class. This checks
++finite subjects and preserves the wildcard's meaning beyond the sampled object
++pool. Conditional exclusions subtract their caveat from the wildcard grant.
++Subject type/relation and resource/relation identities remain part of lookup keys.
++This comparator targets permission semantics, not pagination, metadata,
++expiration time transitions or relationship-read/performance equivalence.
++
++Supply contexts that exercise all relevant caveat outcomes. Sampled equivalence
++is not a proof for arbitrary caveat expressions or object populations. The broad
++schema generator currently lacks caveats, wildcards, permission alias chains and
++recursive permissions; local targeted families fill those gaps for each pass.
++Native-vs-planner integration properties remain a separate independent oracle.
++
++## Replay and extending coverage
++
++```sh
++go test ./pkg/query/queryopt/caveatpushdown -run TestSemanticEquivalence
++go test ./pkg/query/queryopt/caveatpushdown -run TestSemanticEquivalence -rapid.checks=1000
++```
++
++Rapid prints a minimized failure-file command and a seed. Replay with the emitted
++-run and -rapid.failfile, or -rapid.seed. Only pass Rapid flags to test packages
++that import Rapid (the catalog's own test binary does not). Diagnostics include
++the optimization, schema, relationships, request, context and before/after outlines.
++Persist semantic regression cases as explicit unit tests or useful replay files;
++setup-error artifacts do not belong in the shipped regression corpus.
++
++Harness self-tests deliberately add/remove access and strip conditional access.
++Comparator tests pin order/duplicate invariance, subject identities, missing
++context and wildcard exclusion behavior.
+```
+
+**File**: `internal/queryopttest/compare.go` (added, +131/-0)
+```diff
+@@ -0,0 +1,131 @@
++package queryopttest
++
++import (
++	"context"
++	"fmt"
++	"maps"
++	"reflect"
++	"slices"
++
++	"github.com/authzed/spicedb/internal/caveats"
++	"github.com/authzed/spicedb/pkg/caveats/types"
++	core "github.com/authzed/spicedb/pkg/proto/core/v1"
++	"github.com/authzed/spicedb/pkg/query"
++	"github.com/authzed/spicedb/pkg/tuple"
++)
++
++// decision distinguishes denial, unconditional access and residual partial access.
++type decision struct {
++	Allowed bool
++	Missing []string
++}
++
++func evaluate(ctx context.Context, reader caveats.CaveatDefinitionLookup, expr *core.CaveatExpression, values map[string]any) (decision, error) {
++	if expr == nil {
++		return decision{Allowed: true}, nil
++	}
++	result, err := caveats.RunSingleCaveatExpression(ctx, types.Default.TypeSet, expr, values, reader, caveats.RunCaveatExpressionNoDebugging)
++	if err != nil {
++		return decision{}, err
++	}
++	if result.IsPartial() {
++		missing, err := result.MissingVarNames()
++		if err != nil {
++			return decision{}, err
++		}
++		slices.Sort(missing)
++		return decision{Allowed: true, Missing: missing}, nil
++	}
++	return decision{Allowed: result.Value()}, nil
++}
++
++func orExpr(a, b *core.CaveatExpression) *core.CaveatExpression {
++	if a == nil || b == nil {
++		return nil
++	}
++	return caveats.Or(a, b)
++}
++
++func compareResults(ctx context.Context, reader caveats.CaveatDefinitionLookup, op query.Operation, left, right []*query.Path, values map[string]any) error {
++	// All explicitly mentioned IDs, including excluded ones, plus '*' as the
++	// generic unmentioned subject class. This checks wildcard meaning without
++	// depending on how an iterator splits wildcard and concrete grants.
++	ids := map[string]bool{}
++	var collect func(*query.Path)
++	collect = func(p *query.Path) {
++		if p.Subject.ObjectID != tuple.PublicWildcard {
++			ids[p.Subject.ObjectID] = true
++		}
++		for _, e := range p.ExcludedSubjects {
++			collect(e)
++		}
++	}
++	for _, p := range left {
++		collect(p)
++	}
++	for _, p := range right {
++		collect(p)
++	}
++	domain := slices.Sorted(maps.Keys(ids))
++	domain = append(domain, tuple.PublicWildcard)
++	normalize := func(paths []*query.Path) (map[string]decision, error) {
++		exprs := map[string]*core.CaveatExpression{}
++		for _, p := range paths {
++			subjects := []string{p.Subject.ObjectID}
++			if p.Subject.ObjectID == tuple.PublicWildcard && op == query.OperationIterSubjects {
++				subjects = domain
++			}
++			for _, id := range subjects {
++				expr, present := p.Caveat, true
++				if p.Subject.ObjectID == tuple.PublicWildcard && id != tuple.PublicWildcard {
++					for _, excluded := range p.ExcludedSubjects {
++						if excluded.Subject.ObjectType != p.Subject.ObjectType || excluded.Subject.Relation != p.Subject.Relation || excluded.Subject.ObjectID != id {
++							continue
++						}
++						if excluded.Caveat == nil {
++							present = false
++							break
++						}
++						expr = caveats.And(expr, caveats.Invert(excluded.Caveat))
++					}
++				}
++				if !present {
++					continue
++				}
++				subject := p.Subject
++				subject.ObjectID = id
++				key := fmt.Sprintf("%s#%s@%s", p.Resource.Key(), p.Relation, tuple.StringONR(subject))
++				if op == query.OperationCheck {
++					key = "check"
++				}
++				if previous, ok := exprs[key]; ok {
++					expr = orExpr(previous, expr)
++				}
++				exprs[key] = expr
++			}
++		}
++		result := map[string]decision{}
++		for _, key := range slices.Sorted(maps.Keys(exprs)) {
++			d, err := evaluate(ctx, reader, exprs[key], values)
++			if err != nil {
++				return nil, err
++			}
++			if d.Allowed {
++				result[key] = d
++			}
++		}
++		return result, nil
++	}
++	a, err := normalize(left)
 +	if err != nil {
 +		return err
 +	}
-+	switch cursorLockedDispatcherName {
-+	case primaryDispatcher:
-+		// An untagged cursor was produced by the primary, so no secondary can resume it.
-+
-+	case "":
-+		if expr, ok := cr.secondaryDispatchExprs[reqKey]; ok {
-+			dispatcherNames, err := RunDispatchExpr(expr, req)
-+			if err != nil {
-+				log.Ctx(ctxWithTimeout).Warn().Err(err).Msg("error when trying to evaluate the dispatch expression")
-+			} else {
-+				for _, secondaryDispatchName := range dispatcherNames {
-+					if sd, ok := cr.secondaryDispatch[secondaryDispatchName]; ok {
-+						validSecondaryDispatchers = append(validSecondaryDispatchers
-```
-
-**File**: `internal/dispatch/remote/cluster_cursor_lock_test.go` (added, +219/-0)
-```diff
-@@ -0,0 +1,219 @@
-+package remote
-+
-+import (
-+	"slices"
-+	"sync"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/authzed/spicedb/internal/dispatch"
-+	"github.com/authzed/spicedb/internal/dispatch/keys"
-+	"github.com/authzed/spicedb/pkg/datalayer"
-+	corev1 "github.com/authzed/spicedb/pkg/proto/core/v1"
-+	v1 "github.com/authzed/spicedb/pkg/proto/dispatch/v1"
-+)
-+
-+// cursorEchoDispatchSvc returns a single result whose cursor is the received cursor with its name appended.
-+type cursorEchoDispatchSvc struct {
-+	v1.UnimplementedDispatchServiceServer
-+
-+	name      string
-+	sleepTime time.Duration
-+
-+	lock            sync.Mutex
-+	receivedCursors [][]string // GUARDED_BY(lock)
-+}
-+
-+func (s *cursorEchoDispatchSvc) record(cursor []string) []string {
-+	s.lock.Lock()
-+	defer s.lock.Unlock()
-+	s.receivedCursors = append(s.receivedCursors, slices.Clone(cursor))
-+	return append(slices.Clone(cursor), s.name)
-+}
-+
-+func (s *cursorEchoDispatchSvc) received() [][]string {
-+	s.lock.Lock()
-+	defer s.lock.Unlock()
-+	return slices.Clone(s.receivedCursors)
-+}
-+
-+func (s *cursorEchoDispatchSvc) reset() {
-+	s.lock.Lock()
-+	defer s.lock.Unlock()
-+	s.receivedCursors = nil
-+}
-+
-+func (s *cursorEchoDispatchSvc) DispatchLookupResources3(req *v1.DispatchLookupResources3Request, srv v1.DispatchService_DispatchLookupResources3Server) error {
-+	cursor := s.record(req.OptionalCursor)
-+	time.Sleep(s.sleepTime)
-+	return srv.Send(&v1.DispatchLookupResources3Response{
-+		Items: []*v1.LR3Item{{ResourceId: s.name, AfterResponseCursorSections: cursor}},
-+	})
-+}
-+
-+func (s *cursorEchoDispatchSvc) DispatchLookupResources2(req *v1.DispatchLookupResources2Request, srv v1.DispatchService_DispatchLookupResources2Server) error {
-+	cursor := s.record(req.OptionalCursor.GetSections())
-+	time.Sleep(s.sleepTime)
-+	return srv.Send(&v1.DispatchLookupResources2Response{
-+		Resource:            &v1.PossibleResource{ResourceId: s.name},
-+		Metadata:            &v1.ResponseMeta{DispatchCount: 1},
-+		AfterResponseCursor: &v1.Cursor{Sections: cursor, DispatchVersion: 1},
-+	})
-+}
-+
-+func newCursorEchoDispatcher(t *testing.T) (dispatch.Dispatcher, *cursorEchoDispatchSvc, *cursorEchoDispatchSvc) {
-+	t.Helper()
-+
-+	primary := &cursorEchoDispatchSvc{name: "primary", sleepTime: 100 * time.Millisecond}
-+	secondary := &cursorEchoDispatchSvc{name: "secondary"}
-+	primaryConn := connectionForDispatching(t, primary)
-+	secondaryConn := connectionForDispatching(t, secondary)
-+
-+	parsed, err := ParseDispatchExpression("lookupresources", "['secondary']")
-+	require.NoError(t, err)
-+
-+	dispatcher, err := NewClusterDispatcher(v1.NewDispatchServiceClient(primaryConn), primaryConn, ClusterDispatcherConfig{
-+		KeyHandler:             &keys.DirectKeyHandler{},
-+		DispatchOverallTimeout: 30 * time.Second,
-+	}, map[string]SecondaryDispatch{
-+		"secondary": {Name: "secondary", Client: v1.NewDispatchServiceClient(secondaryConn), MaximumPrimaryHedgingDelay: 5 * time.Millisecond},
-+	}, map[string]*DispatchExpr{
-+		"lookupresources": parsed,
-+	}, 0*time.Second)
-+	require.NoError(t, err)
-+
-+	return dispatcher, primary, secondary
-+}
-+
-+func lr3Page(t *testing.T, dispatcher dispatch.Dispatcher, cursor []string) *v1.LR3Item {
-+	t.Helper()
-+
-+	stream := dispatch.NewCollectingDispatchStream[*v1.DispatchLookupResources3Response](t.Context())
-+	err := dispatcher.DispatchLookupResources3(&v1.DispatchLookupResources3Request{
-+		ResourceRelation: &corev1.RelationReference{Namespace: "document", Relation: "view"},
-+		SubjectRelation:  &corev1.RelationReference{Namespace: "user", Relation: "..."},
-+		SubjectIds:       []string{"subject"},
-+		TerminalSubject:  &corev1.ObjectAndRelation{Namespace: "user", ObjectId: "subject", Relation: "..."},
-+		Metadata: &v1.ResolverMeta{
-+			AtRevision: "1", DepthRemaining: 50, SchemaHash: []byte(datalayer.NoSchemaHashForTesting),
-+		},
-+		OptionalCursor: cursor,
-+		OptionalLimit:  1,
-+	}, stream)
-+	require.NoError(t, err)
-+	require.Len(t, stream.Results(), 1)
-+	require.Len(t, stream.Results()[0].Items, 1)
-+	return stream.Results()[0].Items[0]
-+}
-+
-+func lr2Page(t *testing.T, dispatcher dispatch.Dispatcher, cursor []string) *v1.DispatchLookupResources2Response {
-+	t.Helper()
-+
-+	var optionalCursor *v1.Cursor
-+	if cursor != nil {
-+		optionalCursor = &v1.Cursor{Sections: cursor, DispatchVersion: 1}
++	b, err := normalize(right)
++	if err != nil {
++		return err
 +	}
-+
-+	stream := dispatch.NewCollectingDispatchStream[*v1.DispatchLookupResources2Response](t.Context())
-+	err := dispatcher.DispatchLookupResources2(&v1.DispatchLookupResources2Request{
-+		ResourceRelation: &corev1.RelationReference{Namespace: "document", Relation: "view"},
-+		SubjectRelation:  &corev1.RelationReference{Namespace: "user", Relation: "..."},
-+		SubjectIds:       []string{"subject"},
-+		TerminalSubject:  &corev1.ObjectAndRelation{Namespace: "user", ObjectId: "subject", Relation: "..."},
-+		Metadata: &v1.ResolverMeta{
-+			AtRevision: "1", DepthRemaining: 50, SchemaHash: []byte(datalayer.NoSchemaHashForTesting),
-+		},
-+		OptionalCursor: 
++	if !reflect.DeepEqual(a, b) {
++		return fmt.Errorf("results differ: before=%v after=%v", a, b)
++	}
++	return nil
++}
 ```
 
-**File**: `internal/dispatch/remote/cluster_test.go` (modified, +2/-2)
+---
+
+### Incident Patch 2: `ee09063a` (2026-10-29)
+**Commit Message**: test(datastores): stop a slow write failing the quantized revision test (#3368)
+
+* test(datastores): stop a slow write failing the quantized revision test
+
+The test writes a relationship and immediately checks that its revision is
+readable, against a two second GC window. CockroachDB's write revision is the
+transaction's own timestamp, so a write transaction that runs for longer than
+that window hands back a revision which is already expired when it returns -
+before quantization comes into it at all. On a loaded runner, where around a
+hundred subtests share one database container, writes do get that slow.
+
+The property being guarded is real, and sound by construction: the revision
+advertised at the end of a bucket is at most the follower read delay plus one
+quantization old, which here is one second against a two second window. What
+the test could not guarantee was that its own steps ran fast enough for the
+result to mean anything.
+
+Each pass now times its steps. When the write, or the read of the advertised
+revision, took long enough to age that revision out on its own, the pass is
+retried instead of failed - five times, after which the test fails and says the
+machine never gave i
+
+**File**: `pkg/datastore/test/revisions.go` (modified, +69/-20)
 ```diff
-@@ -423,7 +423,7 @@ func TestLRSecondaryDispatch(t *testing.T) {
- 			false,
- 		},
- 		{
--			"cursored multidispatch to invalid secondary",
-+			"untagged cursor is locked to the primary",
- 			"['secondary']",
- 			&v1.DispatchLookupResources2Request{
- 				ResourceRelation: &corev1.RelationReference{
-@@ -449,7 +449,7 @@ func TestLRSecondaryDispatch(t *testing.T) {
- 					SchemaHash:     []byte(datalayer.NoSchemaHashForTesting),
- 				},
- 			},
--			2, // Falls back to the default secondary.
-+			1, // Produced by the primary, so no secondary can resume it.
- 			false,
- 		},
- 		{
+@@ -339,6 +339,10 @@ func QuantizedRevisionStaysReadableTest(t *testing.T, tester DatastoreTester) {
+ 		// before it in the datastore, which would put it in the previous bucket
+ 		// and test nothing. This margin absorbs any skew smaller than itself.
+ 		clockSkewBuffer = 100 * time.Millisecond
++
++		// How many times to retry a pass that ran too slowly to conclude
++		// anything. See onePass below.
++		maxAttempts = 5
+ 	)
+ 
+ 	require := require.New(t)
+@@ -348,34 +352,79 @@ func QuantizedRevisionStaysReadableTest(t *testing.T, tester DatastoreTester) {
+ 		WithGCRetentionWindow(GCRetentionWindow(gcWindow)), 1)
+ 	require.NoError(err)
+ 
+-	ctx, cancel := context.WithTimeout(t.Context(), 30*time.Second)
++	// Only here so a hung call fails the test instead of hanging it, with room
++	// for every attempt below.
++	ctx, cancel := context.WithTimeout(t.Context(), 2*time.Minute)
+ 	defer cancel()
+ 
+ 	setupDatastore(t, ds)
+ 
+-	// Land just inside a fresh bucket and write there, so that what gets
+-	// advertised for the rest of the bucket dates from the top of it. Postgres
+-	// and MySQL advertise the first transaction in the bucket, which is this
+-	// write; memdb, CRDB and Spanner advertise the bucket start itself.
+-	time.Sleep(time.Until(nextQuantizationBoundary(time.Now(), quantization)) + clockSkewBuffer)
++	// onePass writes at the top of a quantization bucket and then, at the far end
++	// of that same bucket, checks that the revision advertised there is still
++	// readable.
++	//
++	// Every revision goes stale once it is older than the GC window, so a step of
++	// this test that takes that long ages its own revision out whatever
++	// quantization does. onePass therefore times its steps and returns a reason
++	// rather than failing when they ran too slowly to conclude anything: the GC
++	// window is deliberately only twice the quantization, and a loaded machine
++	// overshoots that on its own.
++	onePass := func(attempt int) (tuple.Relationship, datastore.Revision, string) {
++		// Land just inside a fresh bucket and write there, so that what gets
++		// advertised for the rest of the bucket dates from the top of it. Postgres
++		// and MySQL advertise the first transaction in the bucket, which is this
++		// write; memdb, CRDB and Spanner advertise the bucket start itself.
++		time.Sleep(time.Until(nextQuantizationBoundary(time.Now(), quantization)) + clockSkewBuffer)
++
++		rel := makeTestRel(fmt.Sprintf("photo%d", attempt), "owner")
++		started := time.Now()
++		writtenAt, err := common.WriteRelationships(ctx, ds, tuple.UpdateOperationCreate, rel)
++		require.NoError(err)
+ 
+-	rel := makeTestRel("photo", "owner")
+-	writtenAt, err := common.WriteRelationships(ctx, ds, tuple.UpdateOperationCreate, rel)
+-	require.NoError(err)
+-	require.NoError(ds.CheckRevision(ctx, writtenAt))
++		// The write's revision was assigned somewhere inside that call, so it is
++		// at most this old once the check has run.
++		checkErr := ds.CheckRevision(ctx, writtenAt)
++		if elapsed := time.Since(started); checkErr != nil && elapsed >= gcWindow {
++			return rel, writtenAt, fmt.Sprintf("writing a relationship and checking its revision took %s, a whole %s GC window", elapsed, gcWindow)
++		}
++		require.NoError(checkErr, "a revision that was just written must be readable")
+ 
+-	// Sleep to the far end of the bucket, where the advertised revision is at
+-	// its oldest and closest to aging out.
+-	time.Sleep(time.Until(nextQuantizationBoundary(time.Now(), quantization)) - clockSkewBuffer)
++		// Sleep to the far end of the bucket, where the advertised revision is at
++		// its oldest and closest to aging out.
++		time.Sleep(time.Until(nextQuantizationBoundary(time.Now(), quantization)) - clockSkewBuffer)
+ 
+-	// Sample a few times: every request in this bucket gets the same revision,
+-	// so an aged-out one fails for all of them, not just one.
+-	for range 5 {
+-		optimized, err := ds.OptimizedRevision(ctx)
+-		require.NoError(err)
+-		require.NoError(ds.CheckRevision(ctx, optimized.Revision),
+-			"revision advertised at the end of the quantization window must still be within the GC window")
++		// Sample a few times: every request in this bucket gets the same revision,
++		// so an aged-out one fails for all of them, not just one.
++		for range 5 {
++			started := time.Now()
++			optimized, err := ds.OptimizedRevision(ctx)
++			require.NoError(err)
++
++			// The advertised revision dates from the start of its bucket at the
++			// oldest, so it is at most a quantization plus this sample old.
++			checkErr := ds.CheckRevision(ctx, optimized.Revision)
++			if elapsed := time.Since(started); checkErr != nil && quantization+elapsed >= gcWindow {
++				return rel, writtenAt, fmt.Sprintf("reading the advertised revision and checking it took %s, which on top of the %s quantization reaches the %s GC window", elapsed, quantization, gcWindow)
++			}
++			require.NoError(checkErr,
++				"revision advertised at the end of the quantization window must still be within the GC window")
++		}
++
++		ret
 ```
 
 #### Recent Merged Pull Requests:
@@ -2440,39 +2067,54 @@ streaming type whose cursor didn't fit them, like LookupResources3's
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. satisfy panic, must-call and mutex analyzers
+## X. query): isolate optimizations and add semantic properties
 
 **RULE**:
-When implementing operations in `internal/datastore/proxy/poolsim/poolsim.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/dispatch/dispatch_optimizer.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4aaf4761`: satisfy panic, must-call and mutex analyzers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa5046f0`: query): isolate optimizations and add semantic properties. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/datastore/proxy/poolsim/poolsim.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/dispatch/dispatch_optimizer.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	held   map[uint64]int // GUARDED_BY(heldMu)
-// MustNew wraps the delegate datastore with a simulated connection pool of the
-// given size, which must be at least 1.
-func MustNew(delegate datastore.Datastore, size int, opts ...Option) *Datastore {
-	gid, err := goroutineid.Current()
-	if err != nil {
-		return nil, err
-	}
+	"github.com/authzed/spicedb/internal/dispatch/queryopt/dispatchwrap"
+const DispatchWrapAliasOptimizationName = dispatchwrap.Name
+func init() { queryopt.MustRegisterOptimization(dispatchwrap.New(DispatchIteratorType)) }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	held   map[uint64]int
-// New wraps the delegate datastore with a simulated connection pool of the given
-// size.
-func New(delegate datastore.Datastore, size int, opts ...Option) *Datastore {
-	gid := goroutineid.Current()
+const DispatchWrapAliasOptimizationName = "dispatch-wrap-alias"
+func init() {
+	queryopt.MustRegisterOptimization(queryopt.Optimizer{
+		Name: DispatchWrapAliasOptimizationName,
+		Description: `
+		Wraps every AliasIteratorType node in a DispatchIteratorType passthrough
+		so the dispatch layer can recognize the (definition, relation) boundary
+		as a dispatch candidate without re-deriving it at runtime. Aliases whose
+		subtree contains an unmatched RecursiveSentinel are left unwrapped — the
+		sentinel must execute inside the collection context established by its
+		matching RecursiveIterator, which is broken by an RPC hop.
+		`,
+		NewTransform: func(_ queryopt.RequestParams) queryopt.OutlineTransform {
+			return func(outline query.Outline) query.Outline {
+				return query.MutateOutline(outline, []query.OutlineMutation{wrapAliasWithDispatch})
+			}
+		},
+	})
+}
+
+// wrapAliasWithDispatch is a bottom-up OutlineMutation that wraps each
+// AliasIteratorType node in a DispatchIteratorType node. The wrap is the
+// static portion of the old DispatchExecutor.shouldDispatchAlias check:
+//   - the "is this an alias" test becomes "is this outline node an alias?"
+//   - the sentinel-recursion guard runs
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4aaf4761` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa5046f0` are properly handled with clean fallback behavior.

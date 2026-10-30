@@ -6219,3 +6219,5 @@ Every entry in this ledger must capture:
 | `learn-github-syntax-tree-hast-util-to-html` | `https://github.com/syntax-tree/hast-util-to-html` | `9c689126` | Multi-dimensional audit evidence | 2026-10-30T14:11:51.817Z |
 | `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `b1a36daf` | Multi-dimensional audit evidence | 2026-10-30T14:11:52.138Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `7eadd80c` | Multi-dimensional audit evidence | 2026-10-30T14:18:42.477Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `aa5046f0` | Multi-dimensional audit evidence | 2026-10-30T14:33:34.057Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `f301e7f4` | Multi-dimensional audit evidence | 2026-10-30T14:33:38.005Z |
