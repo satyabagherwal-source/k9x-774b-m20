@@ -6096,3 +6096,4 @@ Every entry in this ledger must capture:
 | `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `3bdc054c` | Multi-dimensional audit evidence | 2026-10-30T00:25:48.188Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `57677801` | Multi-dimensional audit evidence | 2026-10-30T00:25:52.967Z |
 | `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `b5f80988` | Multi-dimensional audit evidence | 2026-10-30T00:27:04.701Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `4b4d8cd5` | Multi-dimensional audit evidence | 2026-10-30T00:33:13.966Z |

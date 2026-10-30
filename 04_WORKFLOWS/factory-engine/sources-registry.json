@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T00:27:07.237Z",
-    "lastVerified": "2026-10-30T00:27:07.237Z",
+    "lastChecked": "2026-10-30T00:33:22.110Z",
+    "lastVerified": "2026-10-30T00:33:22.110Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -331,9 +331,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-29T23:57:10.047Z",
+    "lastChecked": "2026-10-30T00:33:22.102Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-29T23:57:10.047Z"
+    "lastVerified": "2026-10-30T00:33:22.102Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1362,9 +1362,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-10-29T11:29:07.778Z",
+    "lastChecked": "2026-10-30T00:33:17.144Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-10-29T11:29:07.778Z"
+    "lastVerified": "2026-10-30T00:33:17.144Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2917,11 +2917,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "gitoxidelabs-gitoxide": {
-    "name": "gitoxide",
+    "name": "GitoxideLabs/gitoxide",
     "officialUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "lastChecked": "2026-10-28T11:02:01.895Z",
-    "revisionIdentifier": "c24e68c2",
-    "lastVerified": "2026-10-28T11:02:01.895Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-30T00:33:12.376Z",
+    "lastVerified": "2026-10-30T00:33:12.376Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-gitoxidelabs-gitoxide",
+    "contentHash": "07236104327b0ee6b04a34e358835c73b48864a2eb6dd0c3e9e3f9d9081c337f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 14,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -4538,9 +4548,9 @@
   "tako8ki-gobang": {
     "name": "gobang",
     "officialUrl": "https://github.com/TaKO8Ki/gobang",
-    "lastChecked": "2026-10-28T14:49:42.514Z",
+    "lastChecked": "2026-10-30T00:33:19.569Z",
     "revisionIdentifier": "7b1b5f7e",
-    "lastVerified": "2026-10-28T14:49:42.514Z"
+    "lastVerified": "2026-10-30T00:33:19.569Z"
   },
   "salvo-rs-salvo": {
     "name": "salvo-rs/salvo",
@@ -4936,9 +4946,9 @@
   "orange-cyberdefense-goad": {
     "name": "GOAD",
     "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
-    "lastChecked": "2026-10-28T15:36:35.668Z",
+    "lastChecked": "2026-10-30T00:33:14.646Z",
     "revisionIdentifier": "74af01eb",
-    "lastVerified": "2026-10-28T15:36:35.668Z"
+    "lastVerified": "2026-10-30T00:33:14.646Z"
   },
   "cockroachdb-cockroach": {
     "name": "cockroach",
@@ -8779,5 +8789,19 @@
     "lastChecked": "2026-10-30T00:25:39.477Z",
     "revisionIdentifier": "2fb03e84",
     "lastVerified": "2026-10-30T00:25:39.477Z"
+  },
+  "kaimodev-trivium": {
+    "name": "trivium",
+    "officialUrl": "https://github.com/KaiMOdev/trivium",
+    "lastChecked": "2026-10-30T00:33:09.632Z",
+    "revisionIdentifier": "6f50e34a69",
+    "lastVerified": "2026-10-30T00:33:09.632Z"
+  },
+  "touchlab-xcode-kotlin": {
+    "name": "xcode-kotlin",
+    "officialUrl": "https://github.com/touchlab/xcode-kotlin",
+    "lastChecked": "2026-10-30T00:33:12.114Z",
+    "revisionIdentifier": "56560d20",
+    "lastVerified": "2026-10-30T00:33:12.114Z"
   }
 }

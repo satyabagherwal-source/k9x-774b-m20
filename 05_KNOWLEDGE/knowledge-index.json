@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T00:27:04.608Z",
+  "last_updated": "2026-10-30T00:33:13.919Z",
   "total_verified_learnings": 1169,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13807,8 +13807,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "c24e68c2",
-      "content_hash": "e7dbe430457dff235a3d3b76f6fc6a5ff6d1f98ce30ae009a86cfe5eec98eab0",
+      "source_version": "4b4d8cd5",
+      "content_hash": "07236104327b0ee6b04a34e358835c73b48864a2eb6dd0c3e9e3f9d9081c337f",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -13851,6 +13851,11 @@
           "number": 5107,
           "title": "gix-traverse): limit hidden history before uncached topo walks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5569,
+          "title": "Update `pulldown-cmark` to fix the CI advisory check",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13858,7 +13863,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T01:42:39.552Z",
+      "verified_at": "2026-10-30T00:33:13.907Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149714,6 +149719,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T00:27:04.587Z"
+    },
+    "rule-5569": {
+      "learning_id": "rule-5569",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5569,
+      "title": "Update `pulldown-cmark` to fix the CI advisory check",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "4b4d8cd5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T00:33:13.907Z"
     }
   },
   "aliases": {
