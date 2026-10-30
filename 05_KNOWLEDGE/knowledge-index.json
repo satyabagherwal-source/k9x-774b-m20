@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T08:20:08.849Z",
+  "last_updated": "2026-10-30T08:41:45.863Z",
   "total_verified_learnings": 1173,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34141,8 +34141,8 @@
       "slug": "kube-rs-kube",
       "platform": "github",
       "source_url": "https://github.com/kube-rs/kube",
-      "source_version": "a38f4c6c",
-      "content_hash": "9a20d4319691c7239dddb1409b840c0f34a7824c144f54a7d98f99f86462b902",
+      "source_version": "3b135fab",
+      "content_hash": "94cb740579a11c32e0a61d0c8bc4545133997f3735959bc4f39bcf596d043ab5",
       "dossier_path": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
       "promoted_rules": [
@@ -34160,6 +34160,21 @@
           "number": 5007,
           "title": "Import busybox into k3d as a single-platform tarball (#2119)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5686,
+          "title": "Zero-Allocation Stack Pinning for Local Asynchronous Stream Consumers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5687,
+          "title": "Explicit Fallback Semantics for HTTP Multi-Member Stream Decompressors",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5688,
+          "title": "Structural Deserializer Guard for Polydisperse Nullable Arrays",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34167,7 +34182,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T21:01:37.818Z",
+      "verified_at": "2026-10-30T08:40:59.213Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38875,8 +38890,8 @@
       "slug": "mitmproxy-mitmproxy",
       "platform": "github",
       "source_url": "https://github.com/mitmproxy/mitmproxy",
-      "source_version": "df14a286",
-      "content_hash": "b04f3807570f9796d2092e587998a5ac12086e9283fb37e64e54b1d5d6183813",
+      "source_version": "71740ecb",
+      "content_hash": "50a515b1b890604af918a5e0e37cba3315ecb35e94371af20fdb74098135dd7c",
       "dossier_path": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md",
       "promoted_rules": [
@@ -38969,6 +38984,16 @@
           "number": 4921,
           "title": "filters like !(~s) being rejected as invalid (#8537)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5689,
+          "title": "Invariant Assertion Expression Completeness Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5690,
+          "title": "Addon State Lifecycle Decoupling Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38976,7 +39001,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:16:56.602Z",
+      "verified_at": "2026-10-30T08:41:45.851Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -152054,6 +152079,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T08:20:08.834Z"
+    },
+    "rule-5686": {
+      "learning_id": "rule-5686",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5686,
+      "title": "Zero-Allocation Stack Pinning for Local Asynchronous Stream Consumers",
+      "source_url": "https://github.com/kube-rs/kube",
+      "source_version": "3b135fab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:40:59.214Z"
+    },
+    "rule-5687": {
+      "learning_id": "rule-5687",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5687,
+      "title": "Explicit Fallback Semantics for HTTP Multi-Member Stream Decompressors",
+      "source_url": "https://github.com/kube-rs/kube",
+      "source_version": "3b135fab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:40:59.214Z"
+    },
+    "rule-5688": {
+      "learning_id": "rule-5688",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5688,
+      "title": "Structural Deserializer Guard for Polydisperse Nullable Arrays",
+      "source_url": "https://github.com/kube-rs/kube",
+      "source_version": "3b135fab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:40:59.214Z"
+    },
+    "rule-5689": {
+      "learning_id": "rule-5689",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5689,
+      "title": "Invariant Assertion Expression Completeness Rule",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "71740ecb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:41:45.851Z"
+    },
+    "rule-5690": {
+      "learning_id": "rule-5690",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5690,
+      "title": "Addon State Lifecycle Decoupling Rule",
+      "source_url": "https://github.com/mitmproxy/mitmproxy",
+      "source_version": "71740ecb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T08:41:45.851Z"
     }
   },
   "aliases": {

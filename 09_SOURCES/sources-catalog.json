@@ -3403,10 +3403,10 @@
     "repository": "mitmproxy/mitmproxy",
     "platform": "github",
     "sourceUrl": "https://github.com/mitmproxy/mitmproxy",
-    "sourceVersion": "df14a286",
+    "sourceVersion": "71740ecb",
     "license": "MIT",
-    "contentHash": "b04f3807570f9796d2092e587998a5ac12086e9283fb37e64e54b1d5d6183813",
-    "lastHarvestedAt": "2026-10-27T17:16:56.687Z",
+    "contentHash": "50a515b1b890604af918a5e0e37cba3315ecb35e94371af20fdb74098135dd7c",
+    "lastHarvestedAt": "2026-10-30T08:41:45.926Z",
     "learningId": "learn-github-mitmproxy-mitmproxy"
   },
   "parthsarthi03-raptor": {
@@ -6843,10 +6843,10 @@
     "repository": "kube-rs/kube",
     "platform": "github",
     "sourceUrl": "https://github.com/kube-rs/kube",
-    "sourceVersion": "a38f4c6c",
+    "sourceVersion": "3b135fab",
     "license": "Apache-2.0",
-    "contentHash": "9a20d4319691c7239dddb1409b840c0f34a7824c144f54a7d98f99f86462b902",
-    "lastHarvestedAt": "2026-10-27T21:01:37.915Z",
+    "contentHash": "94cb740579a11c32e0a61d0c8bc4545133997f3735959bc4f39bcf596d043ab5",
+    "lastHarvestedAt": "2026-10-30T08:40:59.317Z",
     "learningId": "learn-github-kube-rs-kube"
   },
   "weaviate-weaviate": {

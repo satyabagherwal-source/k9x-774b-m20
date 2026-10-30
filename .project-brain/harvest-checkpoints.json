@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T08:20:08.968Z",
+  "last_updated": "2026-10-30T08:41:45.932Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5226,14 +5226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mitmproxy-mitmproxy",
-      "content_hash": "b04f3807570f9796d2092e587998a5ac12086e9283fb37e64e54b1d5d6183813",
-      "verified_at": "2026-10-27T17:16:56.694Z",
+      "content_hash": "50a515b1b890604af918a5e0e37cba3315ecb35e94371af20fdb74098135dd7c",
+      "verified_at": "2026-10-30T08:41:45.932Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T17:16:56.694Z"
+      "last_updated": "2026-10-30T08:41:45.932Z"
     },
     "parthsarthi03/raptor": {
       "repository": "parthsarthi03/raptor",
@@ -10326,14 +10326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kube-rs-kube",
-      "content_hash": "9a20d4319691c7239dddb1409b840c0f34a7824c144f54a7d98f99f86462b902",
-      "verified_at": "2026-10-27T21:01:37.924Z",
+      "content_hash": "94cb740579a11c32e0a61d0c8bc4545133997f3735959bc4f39bcf596d043ab5",
+      "verified_at": "2026-10-30T08:40:59.323Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T21:01:37.924Z"
+      "last_updated": "2026-10-30T08:40:59.323Z"
     },
     "weaviate/weaviate": {
       "repository": "weaviate/weaviate",

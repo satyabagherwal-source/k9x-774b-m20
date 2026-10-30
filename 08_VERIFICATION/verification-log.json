@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-U96H",
-    "timestamp": "2026-10-28T02:54:53.945Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-    "contentHash": "265fc7d943e247cc55abc22e06e8b9d6384f93d83107269bd717fd6908d409ac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-6JKO",
-    "timestamp": "2026-10-28T03:04:27.288Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-    "contentHash": "b1540a850266e3c2df61c115737a3dd64f98de2c3412d8d3655d211c7ba5fb8d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-6ORN",
     "timestamp": "2026-10-28T03:04:34.019Z",
     "repository": "storybookjs/storybook",
@@ -7492,6 +7462,36 @@
     "contentHash": "46ed292cb83180032c2731a115707c541d5c0f638af6685be483d0ad0d7b781f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-316A",
+    "timestamp": "2026-10-30T08:40:59.314Z",
+    "repository": "kube-rs/kube",
+    "learningId": "learn-github-kube-rs-kube",
+    "contentHash": "94cb740579a11c32e0a61d0c8bc4545133997f3735959bc4f39bcf596d043ab5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-414Z",
+    "timestamp": "2026-10-30T08:41:45.923Z",
+    "repository": "mitmproxy/mitmproxy",
+    "learningId": "learn-github-mitmproxy-mitmproxy",
+    "contentHash": "50a515b1b890604af918a5e0e37cba3315ecb35e94371af20fdb74098135dd7c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

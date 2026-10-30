@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T08:20:08.965Z",
-  "total_cycles_completed": 6137,
-  "total_learnings_persisted": 6137,
-  "total_rules_promoted": 5655,
+  "last_updated": "2026-10-30T08:41:45.929Z",
+  "total_cycles_completed": 6139,
+  "total_learnings_persisted": 6139,
+  "total_rules_promoted": 5660,
   "history": [
-    {
-      "timestamp": "2026-10-28T22:14:08.057Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T22:26:32.108Z",
-      "repository": "astral-sh/uv",
-      "learningId": "learn-github-astral-sh-uv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T22:26:37.031Z",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -1403,6 +1389,20 @@
       "repository": "yattee/yattee",
       "learningId": "learn-github-yattee-yattee",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T08:40:59.321Z",
+      "repository": "kube-rs/kube",
+      "learningId": "learn-github-kube-rs-kube",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T08:41:45.929Z",
+      "repository": "mitmproxy/mitmproxy",
+      "learningId": "learn-github-mitmproxy-mitmproxy",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

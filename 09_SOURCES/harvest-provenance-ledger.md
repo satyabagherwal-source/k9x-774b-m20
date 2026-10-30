@@ -6169,3 +6169,5 @@ Every entry in this ledger must capture:
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `d7fbe7d3` | Multi-dimensional audit evidence | 2026-10-30T08:18:56.320Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `05abe826` | Multi-dimensional audit evidence | 2026-10-30T08:19:29.050Z |
 | `learn-github-yattee-yattee` | `https://github.com/yattee/yattee` | `03599d33` | Multi-dimensional audit evidence | 2026-10-30T08:20:08.960Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `3b135fab` | Multi-dimensional audit evidence | 2026-10-30T08:40:59.317Z |
+| `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `71740ecb` | Multi-dimensional audit evidence | 2026-10-30T08:41:45.926Z |
