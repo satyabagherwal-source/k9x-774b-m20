@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-29T23:41:37.732Z",
+  "last_updated": "2026-10-30T00:01:13.996Z",
   "total_verified_learnings": 1169,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -11118,8 +11118,8 @@
       "slug": "encoredev-encore",
       "platform": "github",
       "source_url": "https://github.com/encoredev/encore",
-      "source_version": "c2881447",
-      "content_hash": "08b00e47bc910600566193dba6e8bca44bc84d6794595d7271f890f1d9fc1152",
+      "source_version": "7f38d5dd",
+      "content_hash": "5590c56e2859508c564a1a0a7e6106c54ff1cd739db8d45db728afa0175b9144",
       "dossier_path": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/encoredev-encore-learnings.md",
       "promoted_rules": [
@@ -11162,6 +11162,21 @@
           "number": 4884,
           "title": "LLM rules setup and update LLM instructions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5562,
+          "title": "Pointer-Decoupled AST Metadata Materialization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5563,
+          "title": "Multi-Provider Infrastructure Configuration Aggregation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5564,
+          "title": "WHATWG Forbidden Response Header Exclusion Invariant in Codegen",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11169,7 +11184,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:29:31.164Z",
+      "verified_at": "2026-10-30T00:01:13.972Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13043,8 +13058,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "c1a950a9",
-      "content_hash": "222bdfd8e1be1fc906adee54d255bf56a1333993da22b880fef60a46ce29f50b",
+      "source_version": "5d288a99",
+      "content_hash": "66237bc5972e3435e3b88e0f0a2d257b6331933e119b41785343dd43773b6983",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -13172,6 +13187,16 @@
           "number": 5414,
           "title": "test: cover delegate contract notification end to end (#6022)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5562,
+          "title": "Distinct Packet ID Spaces Across Protocol Control and Data Lifecycles",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5563,
+          "title": "Multi-Process Crash-Loop Breaker Deliberate Stop Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13179,7 +13204,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T21:43:39.454Z",
+      "verified_at": "2026-10-30T00:01:13.565Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -31869,17 +31894,33 @@
       "slug": "jellyfin-swiftfin",
       "platform": "github",
       "source_url": "https://github.com/jellyfin/Swiftfin",
-      "source_version": "2e354062",
-      "content_hash": "97ce928dc7e25c5931d0dd8fb77648e14945bce6838cd66dec690bf15351dd04",
+      "source_version": "10629aba",
+      "content_hash": "469f802562c4b637b809153c2f1a66263880d15ea4a4ecc712cc3791992b2268",
       "dossier_path": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 5559,
+          "title": "Single-Flight Seek Coalescing with Structural UUID Fencing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5560,
+          "title": "Epsilon-Hysteresis Thresholding on Scroll-State Publishers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5561,
+          "title": "Allocation-Shielded Deferred State Initialization via DynamicProperty Boxes",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T20:49:20.077Z",
+      "verified_at": "2026-10-29T23:59:03.415Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149513,6 +149554,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-29T23:41:37.717Z"
+    },
+    "rule-5559": {
+      "learning_id": "rule-5559",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5559,
+      "title": "Single-Flight Seek Coalescing with Structural UUID Fencing",
+      "source_url": "https://github.com/jellyfin/Swiftfin",
+      "source_version": "10629aba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T23:59:03.415Z"
+    },
+    "rule-5560": {
+      "learning_id": "rule-5560",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5560,
+      "title": "Epsilon-Hysteresis Thresholding on Scroll-State Publishers",
+      "source_url": "https://github.com/jellyfin/Swiftfin",
+      "source_version": "10629aba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T23:59:03.415Z"
+    },
+    "rule-5561": {
+      "learning_id": "rule-5561",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5561,
+      "title": "Allocation-Shielded Deferred State Initialization via DynamicProperty Boxes",
+      "source_url": "https://github.com/jellyfin/Swiftfin",
+      "source_version": "10629aba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-29T23:59:03.415Z"
+    },
+    "rule-5562": {
+      "learning_id": "rule-5562",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5562,
+      "title": "Pointer-Decoupled AST Metadata Materialization",
+      "source_url": "https://github.com/encoredev/encore",
+      "source_version": "7f38d5dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T00:01:13.972Z"
+    },
+    "rule-5563": {
+      "learning_id": "rule-5563",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5563,
+      "title": "Multi-Provider Infrastructure Configuration Aggregation Invariant",
+      "source_url": "https://github.com/encoredev/encore",
+      "source_version": "7f38d5dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T00:01:13.972Z"
+    },
+    "rule-5564": {
+      "learning_id": "rule-5564",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5564,
+      "title": "WHATWG Forbidden Response Header Exclusion Invariant in Codegen",
+      "source_url": "https://github.com/encoredev/encore",
+      "source_version": "7f38d5dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T00:01:13.972Z"
     }
   },
   "aliases": {

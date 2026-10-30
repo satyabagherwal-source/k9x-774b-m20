@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-29T23:41:37.799Z",
-  "total_cycles_completed": 6055,
-  "total_learnings_persisted": 6055,
-  "total_rules_promoted": 5523,
+  "last_updated": "2026-10-30T00:01:14.083Z",
+  "total_cycles_completed": 6058,
+  "total_learnings_persisted": 6058,
+  "total_rules_promoted": 5531,
   "history": [
-    {
-      "timestamp": "2026-10-28T18:34:32.978Z",
-      "repository": "topgrade-rs/topgrade",
-      "learningId": "learn-github-topgrade-rs-topgrade",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T18:34:38.287Z",
-      "repository": "onejs/one",
-      "learningId": "learn-github-onejs-one",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T18:34:39.674Z",
-      "repository": "opentofu/opentofu",
-      "learningId": "learn-github-opentofu-opentofu",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T18:34:46.040Z",
       "repository": "genkit-ai/genkit",
@@ -1403,6 +1382,27 @@
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-29T23:59:03.524Z",
+      "repository": "jellyfin/Swiftfin",
+      "learningId": "learn-github-jellyfin-swiftfin",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T00:01:13.672Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T00:01:14.083Z",
+      "repository": "encoredev/encore",
+      "learningId": "learn-github-encoredev-encore",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

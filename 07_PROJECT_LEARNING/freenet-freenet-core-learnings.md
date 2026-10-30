@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `c1a950a9`  
+> **Source Version**: `5d288a99`  
 > **License**: NOASSERTION  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T21:43:39.111Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-30T00:01:12.468Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1923 +12,476 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): freenet/freenet-core
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T21:43:39.107Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): freenet/freenet-core
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `freenet/freenet-core`
-- **Description**: Declare your digital independence
-- **Primary Language / Ecosystem**: Rust
-- **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3110 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+`freenet-core` is a decentralized, cryptographically verified peer-to-peer (P2P) network implementing a global distributed key-value store and application runtime. It executes verifiable state transitions via WebAssembly (Wasm) contracts and coordinates data persistence across a dynamic Small-World Distributed Hash Table (DHT) ring.
+
+```
+                              +---------------------------------------+
+                              |         Wasm Contract Engine          |
+                              |   (Wasmtime, State Delta Reductions)  |
+                              +-------------------+-------------------+
+                                                  |
+                                                  v
++------------------------+    +-------------------+-------------------+    +------------------------+
+|      WebSocket API     |--->|          Node Operations              |<---|     Network Bridge     |
+|   (Client RPC & Sub)   |    | (Put, Get, Update, Subscribe, Delegate|    |    (Peer Connection)   |
++------------------------+    +-------------------+-------------------+    +-----------+------------+
+                                                  |                                    |
+                                                  v                                    v
+                              +-------------------+-------------------+    +-----------+------------+
+                              |         Ring / Routing Table          |    |     SentPacketTracker  |
+                              |  (Small-World Distance Minimization)  |    |  (Loss, RTO, LEDBAT)   |
+                              +-------------------+-------------------+    +-----------+------------+
+                                                  |                                    |
+                                                  v                                    v
+                              +-------------------+-------------------+    +-----------+------------+
+                              |        Storage Engine (redb)          |    |   DemuxSocket (UDP)    |
+                              |  (State, Parameters, State Summaries) |    |  [Legacy UDP | QUIC]   |
+                              +---------------------------------------+    +------------------------+
+```
+
+### Critical Subsystem Boundaries and Invariants
+1. **Transport Layer & Multiplexing (`crates/core/src/transport/`)**:
+   - Manages symmetric encryption, hole punching, packet sequencing, and congestion control (LEDBAT++, BBR, FixedRate) across heterogeneous topologies.
+   - Operates a unified `DemuxSocket` that classifies raw datagrams into legacy encrypted UDP packets and QUIC packets.
+   - Enforces strict packet sequence spaces: Handshake control packets and application data packets must maintain non-overlapping sequence IDs to prevent duplicate ack suppression and false RTT sampling.
+
+2. **Network Bridge & Connection Management (`node/network_bridge/p2p_protoc.rs`)**:
+   - Implements `P2pConnManager`, orchestrating gateway handshakes, NAT hole-punching timeouts (`NAT_TRAVERSAL_DEADLINE = 3s`), and transport transitions.
+   - Manages state gating via the `QuicCrashBreaker`, isolating crash-loop failures from transport upgrades.
+
+3. **Crash-Loop Breakers & Process Superposition (`transport/quic/breaker.rs`)**:
+   - Employs on-disk marker coordination (`quic_breaker`) across process lifetimes to detect abnormal terminations (SIGSEGV, unhandled panics, unexpected SIGKILL) occurring while experimental subsystems (QUIC) are armed.
+   - Provides an inter-process deliberate stop protocol via filesystem markers to distinguish supervisor lifecycle terminations (`kill`, `restart`, `update`) from uncontrolled faults.
+
+4. **Wasm Execution & Delegate Pipeline (`crates/core/src/contract/`, `pool.rs`)**:
+   - Sandboxes untrusted contract verification and state delta reduction using `wasmtime` without stack switching (`wasmtime-continuation-start` disabled for cross-architecture stability).
+   - Utilizes a pooled worker architecture (`RuntimePool`) where every worker thread, whether initialized at startup or lazily replaced after worker crashes, must receive contract notification sinks.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: Cargo.toml, README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `crates/core/benches/transport/allocation_overhead.rs`
-```
-//! Allocation overhead microbenchmarks
-//!
-//! Measures the specific allocation patterns we're optimizing:
-//! 1. Arc<[u8]> vs Box<[u8]> for packet data
-//! 2. Vec::split_off vs Bytes::slice for stream fragmentation
-
-use bytes::Bytes;
-use criterion::{BenchmarkId, Criterion, Throughput};
-use std::hint::black_box;
-use std::sync::Arc;
-
-/// Maximum packet data size (same as transport layer MAX_PACKET_SIZE)
-const MAX_PACKET_SIZE: usize = 1200;
-
-/// Largest payload one packet carries: MAX_PACKET_SIZE minus the packet-type
-/// byte, the 12-byte nonce and the 16-byte tag (the transport's MAX_DATA_SIZE).
-const MAX_PAYLOAD_SIZE: usize = MAX_PACKET_SIZE - 1 - 12 - 16;
-
-/// Fragment size for stream tests (same as MAX_DATA_SIZE - overhead)
-const FRAGMENT_SIZE: usize = 1130;
-
-/// Benchmark Arc<[u8]> vs Box<[u8]> creation from a buffer
-///
-/// This simulates what happens in `prepared_send()`:
-/// - Current: `self.data[..self.size].into()` creates Arc<[u8]>
-/// - Proposed: Same but creates Box<[u8]>
-pub fn bench_packet_allocation(c: &mut Criterion) {
-    let mut group = c.benchmark_group("allocation/packet_data");
-
-    // Pre-allocate a buffer like PacketData does
-    let buffer: [u8; MAX_PACKET_SIZE] = [0xAB; MAX_PACKET_SIZE];
-    let sizes = [64, 256, 1024, MAX_PACKET_SIZE];
-
-    for &size in &sizes {
-        group.throughput(Throughput::Elements(1));
-
-        // Current: Arc<[u8]>
-        group.bench_with_input(BenchmarkId::new("arc", size), &size, |b, &sz| {
-            b.iter(|| {
-                let arc: Arc<[u8]> = buffer[..sz].into();
-                black_box(arc)
-            });
-        });
-
-        // Proposed: Box<[u8]>
-        group.bench_with_input(BenchmarkId::new("box", size), &size, |b, &sz| {
-            b.iter(|| {
-                let boxed: Box<[u8]> = buffer[..sz].into();
-                black_box(boxed)
-            });
-        });
-
-        // Alternative: Vec<u8>
-        group.bench_with_input(BenchmarkId::new("vec", size), &size, |b, &sz| {
-            b.iter(|| {
-                let vec: Vec<u8> = buffer[..sz].to_vec();
-                black_box(vec)
-            });
-        });
-    }
-
-    group.finish();
-}
-
-/// Benchmark Vec::split_off vs Bytes::slice for stream fragmentation
-///
-/// This simulates what happens in send_stream():
-/// - Current: `stream_to_send.split_off(MAX_DATA_SIZE)` allocates a new Vec
-/// - Proposed: `stream_to_send.slice(..MAX_DATA_SIZE)` is zero-copy
-pub fn bench_fragmentation(c: &mut Criterion) {
-    let mut group = c.benchmark_group("allocation/fragmentation");
-
-    // Test with various stream sizes (number of fragments)
-    let stream_sizes: [(usize, &str); 4] = [
-        (4 * 1024, "4KB"),     // ~3 fragments
-        (64 * 1024, "64KB"),   // ~45 fragments
-        (256 * 1024, "256KB"), // ~180 fragments
-        (1024 * 1024, "1MB"),  // ~720 fragments
-    ];
-
-    for (size, label) in stream_sizes {
-        let num_fragments = size.div_ceil(FRAGMENT_SIZE);
-        group.throughput(Throughput::Elements(num_fragments as u64));
-
-        // Current: Vec::split_off (allocates per fragment)
-        group.bench_with_input(BenchmarkId::new("vec_split_off", label), &size, |b, &sz| {
-            b.iter(|| {
-                let mut stream = vec![0xABu8; sz];
-                let mut fragments = Vec::new();
-
-                while !stream.is_empty() {
-                    let split_at = stream.len().min(FRAGMENT_SIZE);
-                    let rest = if stream.len() > split_at {
-                        let mut rest = stream.split_off(split_at);
-                        std::mem::swap(&mut stream, &mut rest);
-                        rest
-                    } else {
-                        std::mem::take(&mut stream)
-                    };
-                    fragments.push(rest);
-                }
-
-                black_box(fragments)
-            });
-        });
-
-        // Proposed: Bytes::slice (zero-copy)
-        group.bench_with_input(BenchmarkId::new("bytes_slice", label), &size, |b, &sz| {
-            b.iter(|| {
-                let stream = Bytes::from(vec![0xABu8; sz]);
-                let mut fragments = Vec::new();
-                let mut offset = 0;
-
-                while offset < stream.len() {
-                    let end = (offset + FRAGMENT_SIZE).min(stream.len());
-                    fragments.push(stream.slice(offset..end));
-                    offset = end;
-                }
-
-                black_box(fragments)
-            });
-        });
-
-        // Also test pre-allocated Bytes (simulates if caller provides Bytes)
-        group.bench_with_input(
-            BenchmarkId::new("bytes_slice_preallocated", label),
-            &size,
-            |b, &sz| {
-                // Pre-allocate outside the benchmark loop
-                let stream = Bytes::from(vec![0xABu8; sz]);
-
-                b.iter(|| {
-                    let mut fragments = Vec::new();
-                    let mut offset = 0;
-
-                    while offset < stream.len() {
-                        let end = (offset + FRAGMENT_SIZE).min(stream.len());
-                        fragments.push(stream.slice(offset..end));
-                        offset = end;
-                    }
-
-                    black_box(fragments)
-                });
-            },
-        );
-    }
-
-    group.finish();
-}
-
-/// Benchmark the full packet preparation path
-///
-/// Simulates the complete flow: serialize -> encrypt -> prepare for send
-/// This helps measure the relative contribution of allocation overhead.
-pub fn bench_packet_preparation(c: &mut Criterion) {
-    use aes_gcm::{Aes128Gcm, KeyInit, aead::AeadInPlace};
-
-    let mut group = c.benchmark_group("allocation/packet_preparation");
-
-    let key: [u8; 16] = [0x42u8; 16];
-    let cipher = Aes128Gcm::new(&key.into());
-    let nonce: [u8; 12] = [0u8; 12];
-
-    let sizes = [64, 256, 1024, MAX_PAYLOAD_SIZE];
-
-    for &size in &sizes {
-        group.throughput(Throughput::Bytes(size as u64));
-
-        // Current path: encrypt in place, then create Arc
-        group.bench_with_input(
-            BenchmarkId::new("encrypt_then_arc", size),
-            &size,
-            |b, &sz| {
-                let mut buffer = [0u8; MAX_PACKET_SIZE];
-                buffer[12..12 + sz].fill(0xAB);
-
-                b.iter(|| {
-                    // Reset buffer
-                    buffer[12..12 + sz].fill(0xAB);
-
-                    // Encrypt in place
-                    let tag = cipher
-                        .encrypt_in_place_detached((&nonce).into(), &[], &mut buffer[12..12 + sz])
-                        .unwrap();
-
-                    // Copy nonce and tag
-                    buffer[..12].copy_from_slice(&nonce);
-                    buffer[12 + sz..12 + sz + 16].copy_from_slice(&tag);
-
-                    // Create Arc (current behavior)
-                    let packet_size = 12 + sz + 16;
-                    let arc: Arc<[u8]> = buffer[..packet_size].into();
-                    black_box(arc)
-                });
-            },
-        );
-
-        // Proposed path: encrypt in place, then create Box
-        group.bench_with_input(
-            BenchmarkId::new("encrypt_then_box", size),
-            &size,
-            |b, &sz| {
-                let mut buffer = [0u8; MAX_PACKET_SIZE];
-                buffer[12..12 + sz].fill(0xAB);
-
-                b.iter(|| {
-                    // Reset buffer
-                    buffer[12..12 + sz].fill(0xAB);
-
-                    // Encrypt in place
-                    let tag = cipher
-                        .encrypt_in_place_detached((&nonce).into(), &[], &mut buffer[12..12 + sz])
-                        .unwrap();
-
-                    // Copy nonce and tag
-                    buffer[..12].copy_from_slice(&nonce);
-                    buffer[12 + sz..12 + sz + 16].copy_from_slice(&tag);
-
-                    // Create Box (proposed behavior)
-                    let packet_size = 12 + sz + 16;
-                    let boxed: Box<[u8]> = buffer[..packet_size].into();
-                    black_box(boxed)
-                });
-            },
-        );
-    }
-
-    group.finish();
-}
-
-```
-
-### Core Architecture Module: `crates/core/benches/transport/blackbox.rs`
-```
-//! Transport Layer Benchmarks (Blackbox) with VirtualTime
-//!
-//! These benchmarks test the actual Freenet transport code (PeerConnection,
-//! connection_handler, encryption) with mock sockets and VirtualTime.
-//!
-//! Uses VirtualTime for instant execution of network operations.
-//! Expected runtime: ~30 seconds (vs ~5-10 minutes with real time)
-//!
-//! What's measured:
-//! - Message throughput: Full pipeline (serialize → encrypt → channel → decrypt)
-//! - Connection establishment: Full handshake timing
-
-use criterion::{BenchmarkId, Criterion, Throughput};
-use dashmap::DashMap;
-use freenet::simulation::{TimeSource, VirtualTime};
-use freenet::transport::mock_transport::{Channels, PacketDelayPolicy, PacketDropPolicy};
-use std::hint::black_box as std_black_box;
-use std::sync::Arc;
-use std::time::Duration;
-
-use super::common::create_peer_pair_with_virtual_time;
-
-/// Benchmark connection establishment between two mock peers with VirtualTime.
-///
-/// This measures the full handshake: key exchange, encryption setup, etc.
-/// With VirtualTime, handshakes complete instantly while tracking virtual elapsed time.
-pub fn bench_connection_establishment(c: &mut Criterion) {
-    let rt = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(2)
-        .enable_all()
-        .build()
-        .unwrap();
-
-    let time_source = VirtualTime::new();
-
-    let mut group = c.benchmark_group("transport/connection");
-    group.sample_size(10);
-
-    let ts = time_source.clone();
-    group.bench_function("establish", |b| {
-        b.to_async(&rt).iter_custom(|iters| {
-            let ts = ts.clone();
-            async move {
-                let mut total_virtual_time = Duration::ZERO;
-
-                for _ in 0..iters {
-                    let channels: Channels = Arc::new(DashMap::new());
-
-                    // Create peers with VirtualTime
-                    let (peer_a_pub, mut peer_a, peer_a_addr) =
-                        match freenet::transport::mock_transport::create_mock_peer_with_virtual_time(
-                            PacketDropPolicy::ReceiveAll,
-                            PacketDelayPolicy::NoDelay,
-                            channels.clone(),
-                            ts.clone(),
-                        )
-                        .await
-                        {
-                            Ok(p) => p,
-                            Err(e) => {
-                                eprintln!("establish peer_a creation failed: {:?}", e);
-                                continue;
-                            }
-                        };
-
-                    let (peer_b_pub, mut peer_b, peer_b_addr) =
-                        match freenet::transport::mock_transport::create_mock_peer_with_virtual_time(
-                            PacketDropPolicy::ReceiveAll,
-                            PacketDelayPolicy::NoDelay,
-                            channels,
-                            ts.clone(),
-                        )
-                        .await
-                        {
-                            Ok(p) => p,
-                            Err(e) => {
-                                eprintln!("establish peer_b creation failed: {:?}", e);
-                                continue;
-                            }
-                        };
-
-                    let start_virtual = ts.now_nanos();
-
-                    // Establish connection from both sides
-                    let (conn_a_inner, conn_b_inner) = futures::join!(
-                        peer_a.connect(peer_b_pub, peer_b_addr),
-                        peer_b.connect(peer_a_pub, peer_a_addr),
-                    );
-                    let (conn_a, conn_b) = futures::join!(conn_a_inner, conn_b_inner);
-
-                    let end_virtual = ts.now_nanos();
-                    total_virtual_time +=
-                        Duration::from_nanos(end_virtual.saturating_sub(start_virtual));
-
-                    // Connection established - drop the connections
-                    drop(conn_a.ok());
-                    drop(conn_b.ok());
-                }
-
-                total_virtual_time
-            }
-        });
-    });
-
-    group.finish();
-}
-
-/// Benchmark message throughput between two connected mock peers with VirtualTime.
-///
-/// This measures the full pipeline: serialize → encrypt → channel → decrypt → deserialize
-/// With VirtualTime, all operations complete instantly while tracking virtual elapsed time.
-pub fn bench_message_throughput(c: &mut Criterion) {
-    let rt = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(4)
-        .enable_all()
-        .build()
-        .unwrap();
-
-    let time_source = VirtualTime::new();
-
-    let mut group = c.benchmark_group("transport/throughput");
-    group.sample_size(10);
-
-    // Test different message sizes
-    for &size in &[64, 256, 1024, 1364] {
-        group.throughput(Throughput::Bytes(size as u64));
-
-        let ts = time_source.clone();
-        group.bench_with_input(BenchmarkId::new("bytes", size), &size, |b, &sz| {
-            b.to_async(&rt).iter_custom(|iters| {
-                let ts = ts.clone();
-                async move {
-                    let mut total_virtual_time = Duration::ZERO;
-
-                    for _ in 0..iters {
-                        let channels: Channels = Arc::new(DashMap::new());
-                        let message = vec![0xABu8; sz];
-
-                        // Create peers with VirtualTime
-                        let mut peers = create_peer_pair_with_virtual_time(
-                            channels,
-                            Duration::ZERO,
-                            ts.clone(),
-                        )
-                        .await
-                        .connect()
-                        .await;
-
-                        let start_virtual = ts.now_nanos();
-
-                        // Send and receive message
-                        if let Err(e) = peers.conn_a.send(message).await {
-                            eprintln!("throughput send failed: {:?}", e);
-                            continue;
-                        }
-                        match peers.conn_b.recv().await {
-                            Ok(received) => {
-                                std_black_box(received);
-                            }
-                            Err(e) => {
-                                eprintln!("throughput recv failed: {:?}", e);
-                                continue;
-                            }
-                        }
-
-                        let end_virtual = ts.now_nanos();
-                        total_virtual_time +=
-                            Duration::from_nanos(end_virtual.saturating_sub(start_virtual));
-                    }
-
-                    total_virtual_time
-                }
-            });
-        });
-    }
-
-    group.finish();
-}
-
-```
-
-### Core Architecture Module: `crates/core/benches/transport/common.rs`
-```
-//! Common utilities for transport benchmarks
-//!
-//! This module provides shared helpers to reduce duplication across benchmark files.
-//! Key abstractions:
-//! - `ConnectedPeerPair`: Encapsulates peer creation + connection establishment
-//! - Runtime/throughput/formatting utilities
-//!
-//! ## Usage
-//!
-//! ```rust,ignore
-//! use common::{create_connected_peers, ConnectedPeerPair};
-//!
-//! // Simple case - instant connection
-//! let ConnectedPeerPair { mut conn_a, mut conn_b, .. } = create_connected_peers().await;
-//!
-//! // With delay
-//! let mut peers = create_connected_peers_with_delay(Duration::from_millis(2)).await;
-//! peers.warmup(5, 1024).await; // 5 warmup transfers of 1KB each
-//! ```
-
-use criterion::measurement::{Measurement, ValueFormatter};
-use dashmap::DashMap;
-use freenet::simulation::{RealTime, TimeSource, VirtualTime};
-use freenet::transport::congestion_control::{CongestionControlAlgorithm, CongestionControlConfig};
-use freenet::transport::mock_transport::{
-    Channels, MockSocket, PacketDelayPolicy, PacketDropPolicy, create_mock_peer,
-    create_mock_peer_with_congestion_config, create_mock_peer_with_delay,
-    create_mock_peer_with_virtual_time,
-};
-use freenet::transport::{OutboundConnectionHandler, PeerConnection, TransportPublicKey};
-use std::net::SocketAddr;
-use std::sync::Arc;
-use std::time::Duration;
-
-// =============================================================================
-// Runtime Creation
-// =============================================================================
-
-/// Create a multi-threaded tokio runtime for benchmarks
-///
-/// Uses 4 worker threads which is suitable for most benchmark scenarios.
-pub fn create_benchmark_runtime() -> tokio::runtime::Runtime {
-    tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(4)
-        .enable_all()
-        .build()
-        .expect("Failed to create benchmark runtime")
-}
-
-// =============================================================================
-// Congestion Control Configuration
-// =============================================================================
-
-/// Get the congestion control algorithm from environment variable.
-///
-/// Set `FREENET_CONGESTION_ALGO` to:
-/// - `fixedrate` or `fixed` - Use FixedRate (10 Mbps per connection)
-/// - `bbr` or `BBR` - Use BBR (Bottleneck Bandwidth and RTT)
-/// - `ledbat` or `LEDBAT` - Use LEDBAT++ (Low Extra Delay Background Transport)
-///
-/// If not set, defaults to `CongestionControlAlgorithm::default()` (production default).
-///
-/// ## Example
-///
-/// ```bash
-/// # Run benchmarks with BBR for comparison
-/// FREENET_CONGESTION_ALGO=bbr cargo bench --bench transport_ci
-///
-/// # Run benchmarks with production default
-/// cargo bench --bench transport_ci
-/// ```
-pub fn get_congestion_algorithm() -> CongestionControlAlgorithm {
-    match std::env::var("FREENET_CONGESTION_ALGO")
-        .unwrap_or_default()
-        .to_lowercase()
-        .as_str()
-    {
-        "ledbat" => CongestionControlAlgorithm::Ledbat,
-        "bbr" => CongestionControlAlgorithm::Bbr,
-        "fixedrate" | "fixed" | "" => CongestionControlAlgorithm::default(),
-        other => {
-            eprintln!(
-                "Warning: Unknown FREENET_CONGESTION_ALGO value '{}', using default",
-                other
-            );
-            CongestionControlAlgorithm::default()
-        }
-    }
-}
-
-/// Get the congestion control configuration from environment variable.
-///
-/// Returns the appropriate `CongestionControlConfig` based on `FREENET_CONGESTION_ALGO`.
-/// This is a convenience wrapper around `get_congestion_algorithm()`.
-pub fn get_congestion_config() -> CongestionControlConfig {
-    CongestionControlConfig::new(get_congestion_algorithm())
-}
-
-/// Print the current congestion control configuration.
-///
-/// Call this at the start of benchmark runs to show which algorithm is being tested.
-pub fn print_congestion_config() {
-    let algo = get_congestion_algorithm();
-    eprintln!(
-        "Benchmark congestion control: {} (set FREENET_CONGESTION_ALGO to switch)",
-        algo
-    );
-}
-
-// =============================================================================
-// Peer Creation & Connection
-// =============================================================================
-
-/// Unconnected peer pair
-///
-/// Created by `create_peer_pair()` functions. Call `.connect()` to establish
-/// bidirectional connections and get a `ConnectedPeerPair`.
-///
-/// Generic over `TS: TimeSource` to support both RealTime (wall-clock) and
-/// VirtualTime (instant simulation) timing modes.
-pub struct PeerPair<TS: TimeSource = RealTime> {
-    pub peer_a_pub: TransportPublicKey,
-    pub peer_a: OutboundConnectionHandler<MockSocket, TS>,
-    pub peer_a_addr: SocketAddr,
-    pub peer_b_pub: TransportPublicKey,
-    pub peer_b: OutboundConnectionHandler<MockSocket, TS>,
-    pub peer_b_addr: SocketAddr,
-    /// Keep channels alive - dropping this closes MockSocket inbound channels
-    #[allow(dead_code)]
-    channels: Channels,
-}
-
-/// Connected peer pair ready for data transfer
-///
-/// Encapsulates both connections and their peer handlers. The channels map
-/// MUST be kept alive - dropping it closes the MockSocket inbound channels
-/// which causes the listener tasks to exit and `ConnectionClosed` errors.
-///
-/// Generic over `TS: TimeSource` to support both RealTime (wall-clock) and
-/// VirtualTime (instant simulation) timing modes.
-///
-/// ## Example
-///
-/// ```rust,ignore
-/// let ConnectedPeerPair { mut conn_a, mut conn_b, .. } = create_connected_peers().await;
-/// conn_a.send(message).await.unwrap();
-/// let received: Vec<u8> = conn_b.recv().await.unwrap();
-/// ```
-pub struct ConnectedPeerPair<TS: TimeSource = RealTime> {
-    pub conn_a: PeerConnection<MockSocket, TS>,
-    pub conn_b: PeerConnection<MockSocket, TS>,
-    /// Must keep peer_a alive for send_queue channel
-    #[allow(dead_code)]
-    peer_a: OutboundConnectionHandler<MockSocket, TS>,
-    /// Must keep peer_b alive for send_queue channel
-    #[allow(dead_code)]
-    peer_b: OutboundConnectionHandler<MockSocket, TS>,
-    /// Keep channels alive - dropping this closes MockSocket inbound channels
-    #[allow(dead_code)]
-    channels: Channels,
-}
-
-impl PeerPair<RealTime> {
-    /// Establish bidirectional connections between peers (RealTime variant)
-    ///
-    /// This performs the connection handshake and returns a `ConnectedPeerPair`
-    /// ready for data transfer.
-    pub async fn connect(mut self) -> ConnectedPeerPair<RealTime> {
-        let (conn_a_inner, conn_b_inner) = futures::join!(
-            self.peer_a.connect(self.peer_b_pub, self.peer_b_addr),
-            self.peer_b.connect(self.peer_a_pub, self.peer_a_addr),
-        );
-        let (conn_a, conn_b) = futures::join!(conn_a_inner, conn_b_inner);
-        let (conn_a, conn_b) = (conn_a.expect("connect A"), conn_b.expect("connect B"));
-
-        ConnectedPeerPair {
-            conn_a,
-            conn_b,
-            peer_a: self.peer_a,
-            peer_b: self.peer_b,
-            channels: self.channels,
-        }
-    }
-}
-
-impl PeerPair<VirtualTime> {
-    /// Establish bidirectional connections between peers (VirtualTime variant)
-    ///
-    /// This performs the connection handshake and returns a `ConnectedPeerPair`
-    /// ready for data transfer. Uses VirtualTime for instant delay simulation.
-    pub async fn connect(mut self) -> ConnectedPeerPair<VirtualTime> {
-        let (conn_a_inner, conn_b_inner) = futures::join!(
-            self.peer_a.connect(self.peer_b_pub, self.peer_b_addr),
-            self.peer_b.connect(self.peer_a_pub, self.peer_a_addr),
-        );
-        let (conn_a, conn_b) = futures::join!(conn_a_inner, conn_b_inner);
-        let (conn_a, conn_b) = (conn_a.expect("connect A"), conn_b.expect("connect B"));
-
-        ConnectedPeerPair {
-            conn_a,
-            conn_b,
-            peer_a: self.peer_a,
-            peer_b: self.peer_b,
-            channels: self.channels,
-        }
-    }
-}
-
-impl<TS: TimeSource> ConnectedPeerPair<TS> {
-    /// Warmup the connection with N transfers to stabilize LEDBAT cwnd
-    ///
-    /// Performs `iterations` send/receive cycles to allow LEDBAT congestion
-    /// control to reach steady state before measurements begin.
-    ///
-    /// Returns the number of successful warmup iterations. If warmup fails
-    /// early, benchmarks can still proceed (the connection may be less stable).
-    ///
-    /// ## Example
-    ///
-    /// ```rust,ignore
-    /// let mut peers = create_connected_peers().await;
-    /// let completed = peers.warmup(5, 65536).await; // 5 x 64KB warmup transfers
-    /// ```
-    pub async fn warmup(&mut self, iterations: usize, message_size: usize) -> usize {
-        let mut completed = 0;
-        for i in 0..iterations {
-            let msg = vec![0xABu8; message_size];
-            if let Err(e) = self.conn_a.send(msg).await {
-                eprintln!("Warmup send {} failed: {:?}", i, e);
-                break;
-            }
-            match self.conn_b.recv().await {
-                Ok(_) => completed += 1,
-                Err(e) => {
-                    eprintln!("Warmup recv {} failed: {:?}", i, e);
-                    break;
-                }
-            }
-        }
-        completed
-    }
-
-    /// Get mutable references to both connections
-    ///
-    /// Useful when you need to pass connections separately to different tasks.
-    pub fn connections_mut(
-        &mut self,
-    ) -> (
-        &mut PeerConnection<MockSocket, TS>,
-        &mut PeerConnection<MockSocket, TS>,
-    ) {
-        (&mut self.conn_a, &mut self.conn_b)
-    }
-}
-
-/// Create a new pair of mock peers with no delay
-pub async fn create_peer_pair(channels: Channels) -> PeerPair {
-    let (peer_a_pub, peer_a, peer_a_addr) =
-        create_mock_peer(PacketDropPolicy::ReceiveAll, channels.clone())
-            .await
-            .expect("create peer A");
-
-    let (peer_b_pub, peer_b, peer_b_addr) =
-        create_mock_peer(PacketDropPolicy::ReceiveAll, channels.clon
-```
-
-### Core Architecture Module: `crates/core/benches/transport/ledbat_validation.rs`
-```
-//! LEDBAT Validation Benchmarks with VirtualTime
-//!
-//! These benchmarks test LEDBAT congestion control behavior with separate
-//! cold start and warm connection measurements.
-//!
-//! Uses VirtualTime for instant execution of network operations.
-//! Expected runtime: ~30 seconds (vs ~5-10 minutes with real time)
-//!
-//! **Design principles:**
-//! - Cold start: Create new connection per iteration (measures connection + transfer)
-//! - Warm connection: Reuse connection across iterations (measures pure transfer)
-//! - Keep OutboundConnectionHandler alive to prevent channel closure
-
-use criterion::{Criterion, Throughput};
-use dashmap::DashMap;
-use freenet::simulation::{TimeSource, VirtualTime};
-use freenet::transport::mock_transport::Channels;
-use std::hint::black_box as std_black_box;
-use std::sync::Arc;
-use std::time::Duration;
-
-use super::common::{SMALL_SIZES, create_peer_pair_with_virtual_time, spawn_auto_advance_task};
-
-/// Cold start benchmark with VirtualTime: measures connection establishment + transfer
-///
-/// Each iteration creates a fresh connection, measuring real cold-start behavior.
-/// With VirtualTime, connection handshakes complete instantly.
-pub fn bench_large_transfer_validation(c: &mut Criterion) {
-    // Use multi-threaded runtime to allow packet delivery to proceed concurrently
-    let rt = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(4)
-        .enable_all()
-        .build()
-        .unwrap();
-
-    let mut group = c.benchmark_group("ledbat/cold_start");
-    group.sample_size(10);
-
-    // Test multiple sizes: 1KB, 4KB, 16KB
-    for &(size, name) in SMALL_SIZES {
-        group.throughput(Throughput::Bytes(size as u64));
-
-        group.bench_function(name, |b| {
-            b.to_async(&rt).iter_custom(|iters| {
-                async move {
-                    // Create FRESH VirtualTime for each iter_custom call
-                    let ts = VirtualTime::new();
-
-                    // Spawn auto-advance task BEFORE connection - handshake has
-                    // VirtualTime-dependent timeouts that require time to advance
-                    let auto_advance = spawn_auto_advance_task(ts.clone());
-
-                    let channels: Channels = Arc::new(DashMap::new());
-                    let mut peers =
-                        create_peer_pair_with_virtual_time(channels, Duration::ZERO, ts.clone())
-                            .await
-                            .connect()
-                            .await;
-
-                    let mut total_virtual_time = Duration::ZERO;
-
-                    for _ in 0..iters {
-                        let message = vec![0xABu8; size];
-                        let start_virtual = ts.now_nanos();
-
-                        // Transfer
-                        if let Err(e) = peers.conn_a.send(message).await {
-                            eprintln!("ledbat_cold send failed: {:?}", e);
-                            continue;
-                        }
-                        match peers.conn_b.recv().await {
-                            Ok(received) => {
-                                std_black_box(received);
-                            }
-                            Err(e) => {
-                                eprintln!("ledbat_cold recv failed: {:?}", e);
-                                continue;
-                            }
-                        }
-
-                        let end_virtual = ts.now_nanos();
-                        total_virtual_time +=
-                            Duration::from_nanos(end_virtual.saturating_sub(start_virtual));
-                    }
-
-                    // Stop the auto-advance task
-                    auto_advance.abort();
-
-                    total_virtual_time
-                }
-            });
-        });
-    }
-
-    group.finish();
-}
-
-/// Warm connection benchmark with VirtualTime: measures pure transfer throughput
-///
-/// Connection is established once with warmup, then measures steady-state throughput.
-/// With VirtualTime, all operations complete instantly while tracking virtual elapsed time.
-pub fn bench_1mb_transfer_validation(c: &mut Criterion) {
-    // Use multi-threaded runtime to allow packet delivery to proceed concurrently
-    let rt = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(4)
-        .enable_all()
-        .build()
-        .unwrap();
-
-    let mut group = c.benchmark_group("ledbat/warm_connection");
-    group.sample_size(10);
-
-    // Test multiple sizes: 1KB, 4KB, 16KB
-    for &(size, name) in SMALL_SIZES {
-        group.throughput(Throughput::Bytes(size as u64));
-
-        group.bench_function(name, |b| {
-            b.to_async(&rt).iter_custom(|iters| {
-                async move {
-                    // Create FRESH VirtualTime for each iter_custom call
-                    let ts = VirtualTime::new();
-
-                    // Spawn auto-advance task BEFORE connection - handshake has
-                    // VirtualTime-dependent timeouts that require time to advance
-                    let auto_advance = spawn_auto_advance_task(ts.clone());
-
-                    let channels: Channels = Arc::new(DashMap::new());
-                    let mut peers =
-                        create_peer_pair_with_virtual_time(channels, Duration::ZERO, ts.clone())
-                            .await
-                            .connect()
-                            .await;
-
-                    let mut total_virtual_time = Duration::ZERO;
-
-                    // Warmup: 5 transfers to stabilize LEDBAT cwnd
-                    for i in 0..5 {
-                        let warmup_msg = vec![0xABu8; size];
-                        if let Err(e) = peers.conn_a.send(warmup_msg).await {
-                            eprintln!("ledbat warmup send {} failed: {:?}", i, e);
-                            break;
-                        }
-                        match peers.conn_b.recv().await {
-                            Ok(_) => {}
-                            Err(e) => {
-                                eprintln!("ledbat warmup recv {} failed: {:?}", i, e);
-                                break;
-                            }
-                        }
-                    }
-
-                    // Measured iterations
-                    for _ in 0..iters {
-                        let message = vec![0xABu8; size];
-                        let start_virtual = ts.now_nanos();
-
-                        if let Err(e) = peers.conn_a.send(message).await {
-                            eprintln!("ledbat_warm send failed: {:?}", e);
-                            continue;
-                        }
-                        match peers.conn_b.recv().await {
-                            Ok(received) => {
-                                std_black_box(received);
-                            }
-                            Err(e) => {
-                                eprintln!("ledbat_warm recv failed: {:?}", e);
-                                continue;
-                            }
-                        }
-
-                        let end_virtual = ts.now_nanos();
-                        total_virtual_time +=
-                            Duration::from_nanos(end_virtual.saturating_sub(start_virtual));
-                    }
-
-                    // Stop the auto-advance task
-                    auto_advance.abort();
-
-                    total_virtual_time
-                }
-            });
-        });
-    }
-
-    group.finish();
-}
-
-```
-
-### Core Architecture Module: `crates/core/benches/transport/level0.rs`
-```
-//! Level 0: Pure Logic - ZERO noise path
-//!
-//! These benchmarks have:
-//! - No async runtime
-//! - No tracing (even disabled tracing has macro overhead)
-//! - No allocation in hot path
-//! - Pre-computed inputs
-//! - Deterministic operations
-
-use criterion::{BenchmarkId, Criterion, Throughput};
-use std::hint::black_box as std_black_box;
-
-use aes_gcm::{
-    Aes128Gcm,
-    aead::{AeadInPlace, KeyInit},
-};
-
-/// Payload sizes to benchmark (bytes)
-const PAYLOAD_SIZES: &[usize] = &[
-    64,   // Tiny message
-    256,  // Small message
-    1024, // 1KB
-    1171, // Max single-packet payload: 1200 - type byte - nonce - tag
-];
-
-/// AES-GCM encryption - the core crypto operation
-///
-/// This measures ONLY the AES-GCM encrypt operation with:
-/// - Pre-allocated buffer (reused)
-/// - Pre-computed key and nonce
-/// - No allocation, no branching, no logging
-pub fn bench_aes_gcm_encrypt(c: &mut Criterion) {
-    let mut group = c.benchmark_group("level0/crypto/encrypt");
-
-    // Pre-compute cipher once
-    let key: [u8; 16] = [
-        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
-        0x0f,
-    ];
-    let cipher = Aes128Gcm::new(&key.into());
-
-    // Fixed nonce (in real code this would be random, but we're measuring encrypt speed)
-    let nonce: [u8; 12] = [0u8; 12];
-
-    for &size in PAYLOAD_SIZES {
-        group.throughput(Throughput::Bytes(size as u64));
-
-        // Pre-allocate buffer with extra space for in-place encryption
-        let mut buffer = vec![0xABu8; size];
-
-        group.bench_with_input(BenchmarkId::new("aes128gcm", size), &size, |b, &_size| {
-            b.iter(|| {
-                // Reset buffer (minimal overhead - just memset)
-                buffer.fill(0xAB);
-
-                // The actual operation we're measuring
-                let tag = cipher
-                    .encrypt_in_place_detached(
-                        (&nonce).into(),
-                        &[], // No AAD
-                        &mut buffer,
-                    )
-                    .expect("encryption failed");
-
-                // Prevent dead code elimination without adding overhead
-                std_black_box(&tag);
-                std_black_box(&buffer);
-            });
-        });
-    }
-
-    group.finish();
-}
-
-/// AES-GCM decryption
-pub fn bench_aes_gcm_decrypt(c: &mut Criterion) {
-    let mut group = c.benchmark_group("level0/crypto/decrypt");
-
-    let key: [u8; 16] = [
-        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
-        0x0f,
-    ];
-    let cipher = Aes128Gcm::new(&key.into());
-    let nonce: [u8; 12] = [0u8; 12];
-
-    for &size in PAYLOAD_SIZES {
-        group.throughput(Throughput::Bytes(size as u64));
-
-        // Pre-encrypt data to create valid ciphertext
-        let mut plaintext = vec![0xABu8; size];
-        let tag = cipher
-            .encrypt_in_place_detached((&nonce).into(), &[], &mut plaintext)
-            .unwrap();
-        let ciphertext_template = plaintext.clone();
-
-        // Working buffer for decryption
-        let mut buffer = vec![0u8; size];
-
-        group.bench_with_input(BenchmarkId::new("aes128gcm", size), &size, |b, &_size| {
-            b.iter(|| {
-                // Copy ciphertext (simulates receiving packet)
-                buffer.copy_from_slice(&ciphertext_template);
-
-                // The actual operation
-                cipher
-                    .decrypt_in_place_detached((&nonce).into(), &[], &mut buffer, &tag)
-                    .expect("decryption failed");
-
-                std_black_box(&buffer);
-            });
-        });
-    }
-
-    group.finish();
-}
-
-/// Nonce generation comparison: random vs counter
-///
-/// Counter-based nonces are much faster and equally secure for our use case
-pub fn bench_nonce_generation(c: &mut Criterion) {
-    use std::sync::atomic::{AtomicU64, Ordering};
-
-    let mut group = c.benchmark_group("level0/crypto/nonce");
-
-    // Random nonce generation
-    group.bench_function("random", |b| {
-        b.iter(|| {
-            let nonce: [u8; 12] = rand::random();
-            std_black_box(nonce);
-        });
-    });
-
-    // Counter-based nonce (much faster)
-    let counter = AtomicU64::new(0);
-    group.bench_function("counter", |b| {
-        b.iter(|| {
-            let val = counter.fetch_add(1, Ordering::Relaxed);
-            let mut nonce = [0u8; 12];
-            nonce[..8].copy_from_slice(&val.to_le_bytes());
-            std_black_box(nonce);
-        });
-    });
-
-    // Counter with additional entropy (connection ID in upper bytes)
-    group.bench_function("counter_with_connid", |b| {
-        let conn_id: u32 = 0x12345678;
-        b.iter(|| {
-            let val = counter.fetch_add(1, Ordering::Relaxed);
-            let mut nonce = [0u8; 12];
-            nonce[..8].copy_from_slice(&val.to_le_bytes());
-            nonce[8..].copy_from_slice(&conn_id.to_le_bytes());
-            std_black_box(nonce);
-        });
-    });
-
-    group.finish();
-}
-
-/// Bincode serialization - measures pure serialization overhead
-pub fn bench_serialization(c: &mut Criterion) {
-    use serde::{Deserialize, Serialize};
-
-    // Simplified message structure matching SymmetricMessage
-    #[derive(Serialize, Deserialize, Clone)]
-    struct BenchMessage {
-        packet_id: u32,
-        confirm_receipt: Vec<u32>,
-        payload_type: u8, // Discriminant
-        payload: Vec<u8>,
-    }
-
-    let mut group = c.benchmark_group("level0/serialization");
-
-    for &size in PAYLOAD_SIZES {
-        group.throughput(Throughput::Bytes(size as u64));
-
-        // Pre-create message
-        let msg = BenchMessage {
-            packet_id: 12345,
-            confirm_receipt: vec![1, 2, 3, 4, 5],
-            payload_type: 1,
-            payload: vec![0xABu8; size],
-        };
-
-        // Pre-allocate output buffer
-        let mut output_buf = vec![0u8; size + 100]; // Extra for headers
-
-        group.bench_with_input(BenchmarkId::new("serialize", size), &msg, |b, msg| {
-            b.iter(|| {
-                // Serialize into pre-allocated buffer
-                let written = bincode::serialize_into(output_buf.as_mut_slice(), msg).is_ok();
-                std_black_box(written);
-                std_black_box(&output_buf);
-            });
-        });
-
-        // Pre-serialize for deserialization bench
-        let serialized = bincode::serialize(&msg).unwrap();
-
-        group.bench_with_input(
-            BenchmarkId::new("deserialize", size),
-            &serialized,
-            |b, data| {
-                b.iter(|| {
-                    let msg: BenchMessage = bincode::deserialize(data).unwrap();
-                    std_black_box(msg);
-                });
-            },
-        );
-    }
-
-    group.finish();
-}
-
-/// Combined encrypt + serialize (full packet creation path)
-pub fn bench_packet_creation(c: &mut Criterion) {
-    use serde::{Deserialize, Serialize};
-
-    #[derive(Serialize, Deserialize)]
-    struct BenchMessage {
-        packet_id: u32,
-        confirm_receipt: Vec<u32>,
-        payload: Vec<u8>,
-    }
-
-    let mut group = c.benchmark_group("level0/packet_creation");
-
-    let key: [u8; 16] = [0x42u8; 16];
-    let cipher = Aes128Gcm::new(&key.into());
-    let nonce: [u8; 12] = [0u8; 12];
-
-    for &size in PAYLOAD_SIZES {
-        group.throughput(Throughput::Bytes(size as u64));
-
-        let msg = BenchMessage {
-            packet_id: 12345,
-            confirm_receipt: vec![1, 2, 3],
-            payload: vec![0xABu8; size],
-        };
-
-        // Max packet buffer
-        let mut packet_buf = vec![0u8; 1500];
-
-        group.bench_with_input(
-            BenchmarkId::new("serialize_then_encrypt", size),
-            &msg,
-            |b, msg| {
-                b.iter(|| {
-                    // Step 1: Serialize
-                    let serialized_len = bincode::serialized_size(msg).unwrap() as usize;
-                    bincode::serialize_into(&mut packet_buf[..serialized_len], msg).unwrap();
-
-                    // Step 2: Encrypt in place
-                    let tag = cipher
-                        .encrypt_in_place_detached(
-                            (&nonce).into(),
-                            &[],
-                            &mut packet_buf[..serialized_len],
-                        )
-                        .unwrap();
-
-                    std_black_box(&tag);
-                    std_black_box(&packet_buf);
-                });
-            },
-        );
-    }
-
-    group.finish();
-}
-
-```
-
-### Core Architecture Module: `crates/core/benches/transport/level1.rs`
-```
-//! Level 1: Mock I/O - Protocol logic without syscalls
-//!
-//! Uses tokio channels to simulate network I/O without actual syscalls.
-//! Measures: async overhead, channel throughput, protocol state machines
-
-use criterion::{BatchSize, BenchmarkId, Criterion, Throughput};
-use std::hint::black_box as std_black_box;
-use std::sync::Arc;
-use tokio::sync::mpsc;
-
-/// Channel throughput - critical path for packet routing
-///
-/// Tests different buffer sizes to find optimal configuration
-pub fn bench_channel_throughput(c: &mut Criterion) {
-    // Create runtime ONCE, outside benchmark
-    let rt = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(2)
-        .enable_all()
-        .build()
-        .unwrap();
-
-    let mut group = c.benchmark_group("level1/channel/throughput");
-    group.throughput(Throughput::Elements(1000));
-
-    // Test various buffer sizes
-    for buffer_size in [1, 10, 100, 1000] {
-        // Pre-create packet data outside the benchmark loop
-        let packet: Arc<[u8]> = vec![0u8; 1200].into();
-
-        group.bench_with_input(
-            BenchmarkId::new("buffer", buffer_size),
-            &buffer_size,
-            |b, &buf_size| {
-                let packet = packet.clone();
-                b.to_async(&rt).iter_batched(
-                    // Setup: create channel and clone packet (not measured)
-                    || {
-                        let p = packet.clone();
-                        (mpsc::channel::<Arc<[u8]>>(buf_size), p)
-                    },
-                    // Routine: send 1000 packets (measured)
-                    |((tx, mut rx), packet)| async move {
-                        // Spawn receiver
-                        let receiver = tokio::spawn(async move {
-                            let mut count = 0;
-                            while rx.recv().await.is_some() {
-                                count += 1;
-                            }
-                            count
-                        });
-
-                        // Send packets
-                        for _ in 0..1000 {
-                            tx.send(packet.clone()).await.unwrap();
-                        }
-                        drop(tx); // Close channel
-
-                        let count = receiver.await.unwrap();
-                        std_black_box(count);
-                    },
-                    BatchSize::SmallInput,
-                );
-            },
-        );
-    }
-
-    group.finish();
-}
-
-```
-
-### Core Architecture Module: `crates/core/benches/transport/level2.rs`
-```
-//! Level 2: Loopback - Real sockets, kernel involved
-//!
-//! WARNING: Results vary significantly based on:
-//! - Kernel version and configuration
-//! - CPU frequency scaling
-//! - Other system load
-//! - Socket buffer sizes
-
-use criterion::{BenchmarkId, Criterion, Throughput};
-
-/// Raw UDP syscall overhead
-pub fn bench_udp_syscall(c: &mut Criterion) {
-    let rt = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(1)
-        .enable_all()
-        .build()
-        .unwrap();
-
-    let mut group = c.benchmark_group("level2/udp/syscall");
-
-    // Pre-create socket outside the benchmark
-    let socket = rt.block_on(async {
-        let socket = tokio::net::UdpSocket::bind("127.0.0.1:0").await.unwrap();
-        let addr = socket.local_addr().unwrap();
-        socket.connect(addr).await.unwrap();
-        socket
-    });
-    let socket = std::sync::Arc::new(socket);
-
-    // Single send syscall
-    let socket_clone = socket.clone();
-    group.bench_function("send_1400b", |b| {
-        let socket = socket_clone.clone();
-        b.to_async(&rt).iter(|| {
-            let socket = socket.clone();
-            async move {
-                let buf = [0u8; 1400];
-                socket.send(&buf).await.unwrap();
-            }
-        });
-    });
-
-    // Send + recv roundtrip
-    group.bench_function("roundtrip_1400b", |b| {
-        let socket = socket.clone();
-        b.to_async(&rt).iter(|| {
-            let socket = socket.clone();
-            async move {
-                let send_buf = [0u8; 1400];
-                let mut recv_buf = [0u8; 1500];
-                socket.send(&send_buf).await.unwrap();
-                socket.recv(&mut recv_buf).await.unwrap();
-            }
-        });
-    });
-
-    group.finish();
-}
-
-/// Burst send performance (no batching, sequential sends)
-pub fn bench_udp_burst(c: &mut Criterion) {
-    let rt = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(1)
-        .enable_all()
-        .build()
-        .unwrap();
-
-    let mut group = c.benchmark_group("level2/udp/burst");
-
-    // Pre-create socket
-    let socket = rt.block_on(async {
-        let socket = tokio::net::UdpSocket::bind("127.0.0.1:0").await.unwrap();
-        let addr = socket.local_addr().unwrap();
-        socket.connect(addr).await.unwrap();
-        socket
-    });
-    let socket = std::sync::Arc::new(socket);
-
-    for count in [10, 100, 1000] {
-        group.throughput(Throughput::Elements(count as u64));
-
-        let socket = socket.clone();
-        group.bench_with_input(BenchmarkId::new("packets", count), &count, |b, &n| {
-            let socket = socket.clone();
-            b.to_async(&rt).iter(move || {
-                let socket = socket.clone();
-                async move {
-                    let buf = [0u8; 1400];
-                    for _ in 0..n {
-                        socket.send(&buf).await.unwrap();
-                    }
-                }
-            });
-        });
-    }
-
-    group.finish();
-}
-
-```
-
-### Core Architecture Module: `crates/core/benches/transport/level3.rs`
-```
-//! Level 3: Stress Tests
-
-use criterion::Criterion;
-use std::time::Duration;
-
-/// Maximum sustainable send rate
-pub fn bench_max_send_rate(c: &mut Criterion) {
-    let rt = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(2)
-        .enable_all()
-        .build()
-        .unwrap();
-
-    let mut group = c.benchmark_group("level3/stress/send_rate");
-    group.sample_size(10);
-    group.measurement_time(Duration::from_secs(10));
-
-    // Pre-create socket
-    let socket = rt.block_on(async {
-        let socket = tokio::net::UdpSocket::bind("127.0.0.1:0").await.unwrap();
-        let addr = socket.local_addr().unwrap();
-        socket.connect(addr).await.unwrap();
-        socket
-    });
-    let socket = std::sync::Arc::new(socket);
-
-    group.bench_function("10k_packets", |b| {
-        let socket = socket.clone();
-        b.to_async(&rt).iter(|| {
-            let socket = socket.clone();
-            async move {
-                let buf = [0u8; 1400];
-                for _ in 0..10_000 {
-                    let _sent = socket.send(&buf).await;
-                }
-            }
-        });
-    });
-
-    group.finish();
-}
-
-```
-
-### Core Architecture Module: `crates/core/benches/transport/manual_throughput.rs`
-```
-//! Manual Throughput Benchmarks
-//!
-//! Custom harness for testing large transfer throughput without criterion.
-//! Criterion's warmup phase hangs with 16KB+ transfers, so we use
-//! manual timing instead.
-//!
-//! Tests:
-//! - Cold start vs warm connection throughput (1KB, 4KB, 16KB)
-//! - Connection reuse speedup (warm connection should be 5-25x faster)
-//!
-//! Run with: `cargo test --release --bench transport_manual --features bench -- --nocapture`
-//!
-//! **Expected runtime: ~3-5 minutes**
-//!
-//! Use when:
-//! - Testing congestion control changes
-//! - Validating slow start behavior
-//! - Measuring cold-start vs steady-state performance
-
-use std::time::{Duration, Instant};
-
-use super::common::{
-    calculate_throughput_mbps, create_connected_peers, create_connected_peers_with_delay,
-    format_duration, format_throughput, new_channels,
-};
-
-/// Run a manual throughput benchmark with specified parameters
-async fn bench_throughput(
-    message_size: usize,
-    iterations: usize,
-    rtt_delay: Option<Duration>,
-    warmup_iterations: usize,
-) -> (Duration, f64) {
-    eprintln!("  [DEBUG] Creating channels...");
-
-    let mut peers = if let Some(delay) = rtt_delay {
-        create_connected_peers_with_delay(delay).await
-    } else {
-        create_connected_peers().await
-    };
-
-    eprintln!(
-        "  [DEBUG] Running {} warmup iterations...",
-        warmup_iterations
-    );
-    // Warmup phase
-    for i in 0..warmup_iterations {
-        let msg = vec![0xABu8; message_size];
-        peers.conn_a.send(msg).await.unwrap();
-        let _: Vec<u8> = peers.conn_b.recv().await.unwrap();
-        if i == 0 {
-            eprintln!("  [DEBUG] First warmup iteration complete");
-        }
-    }
-
-    eprintln!("  [DEBUG] Running {} benchmark iterations...", iterations);
-    // Benchmark phase
-    let start = Instant::now();
-    for i in 0..iterations {
-        let msg = vec![0xABu8; message_size];
-        peers.conn_a.send(msg).await.unwrap();
-        let _: Vec<u8> = peers.conn_b.recv().await.unwrap();
-        if i == 0 {
-            eprintln!("  [DEBUG] First benchmark iteration complete");
-        }
-    }
-    let elapsed = start.elapsed();
-    eprintln!("  [DEBUG] Benchmark complete");
-
-    // Calculate throughput
-    let total_bytes = message_size * iterations;
-    let throughput_mbps = calculate_throughput_mbps(total_bytes, elapsed);
-
-    // Peers kept alive until function completes
-    (elapsed, throughput_mbps)
-}
-
-#[tokio::test]
-async fn manual_throughput_single_test() {
-    println!("\n=== Simple Single Test ===\n");
-    eprintln!("[DEBUG] Starting simple 1KB test");
-    let (elapsed, mbps) = bench_throughput(1024, 5, None, 1).await;
-    println!("1 KB: time={:?} throughput={:.2} Mbps", elapsed, mbps);
-    println!("\n=== Test Complete ===\n");
-}
-
-#[tokio::test]
-async fn manual_throughput_benchmarks() {
-    println!("\n=== Manual Throughput Benchmarks ===\n");
-    println!("Testing large transfers with warm connection (reused)\n");
-
-    // Limited sizes due to timeout issues with 64KB+
-    // 64KB+ appears to hang even on single iteration (likely in cleanup/teardown)
-    let test_configs = vec![
-        (1024, "1 KB"),
-        (4 * 1024, "4 KB"),
-        (16 * 1024, "16 KB"),
-        (32 * 1024, "32 KB"),
-    ];
-
-    // Test with instant RTT (0ms) - single iteration only due to timeout issues
-    println!("--- Instant RTT (0ms) ---\n");
-    println!(
-        "NOTE: Using single iteration per size due to hang issues with 16KB+ on second iteration\n"
-    );
-    for (size, label) in &test_configs {
-        eprintln!("[DEBUG] Starting benchmark for {}", label);
-        let (elapsed, mbps) = bench_throughput(*size, 1, None, 0).await;
-        println!(
-            "{:>8}: time={:>12} throughput={:>12}",
-            label,
-            format_duration(elapsed),
-            format_throughput(mbps)
-        );
-    }
-
-    // Test with LAN RTT (2ms) - single iteration only
-    println!("\n--- LAN RTT (2ms) ---\n");
-    println!("NOTE: Using single iteration per size due to timeout issues\n");
-    for (size, label) in &test_configs {
-        eprintln!("[DEBUG] Starting benchmark for {} with 2ms RTT", label);
-        let (elapsed, mbps) = bench_throughput(*size, 1, Some(Duration::from_millis(2)), 0).await;
-        println!(
-            "{:>8}: time={:>12} throughput={:>12}",
-            label,
-            format_duration(elapsed),
-            format_throughput(mbps)
-        );
-    }
-
-    println!("\n=== Benchmark Complete ===\n");
-}
-
-/// Test continuous message sending (sustained throughput)
-#[tokio::test]
-async fn manual_sustained_throughput() {
-    println!("\n=== Sustained Throughput Test ===\n");
-    println!("Sending multiple messages continuously on same connection\n");
-
-    let test_configs = vec![
-        (1024, 100, "1 KB × 100"),
-        (1024, 500, "1 KB × 500"), // Test more iterations with size that works
-        (4096, 10, "4 KB × 10"),   // Reduce iterations for larger sizes
-    ];
-
-    for (size, iterations, label) in test_configs {
-        eprintln!("[DEBUG] Starting sustained test: {}", label);
-
-        let mut peers = create_connected_peers().await;
-
-        eprintln!(
-            "  [DEBUG] Sending {} messages of {} bytes...",
-            iterations, size
-        );
-        let start = Instant::now();
-        for i in 0..iterations {
-            let msg = vec![0xABu8; size];
-            peers.conn_a.send(msg).await.unwrap();
-            let _: Vec<u8> = peers.conn_b.recv().await.unwrap();
-            if i == 0 {
-                eprintln!("  [DEBUG] First message complete");
-            }
-        }
-        let elapsed = start.elapsed();
-
-        let total_bytes = size * iterations;
-        let throughput_mbps = calculate_throughput_mbps(total_bytes, elapsed);
-
-        println!(
-            "{:>12}: total_time={:>10} aggregate_throughput={:>12}",
-            label,
-            format_duration(elapsed),
-            format_throughput(throughput_mbps)
-        );
-    }
-
-    println!("\n=== Sustained Test Complete ===\n");
-}
-
-/// Test multiple concurrent streams
-#[tokio::test]
-async fn manual_concurrent_streams() {
-    println!("\n=== Concurrent Streams Test ===\n");
-    println!("Multiple peer pairs sending simultaneously\n");
-
-    let num_streams = 4;
-    let message_size = 1024; // 1KB (4KB causes hangs)
-    let iterations = 25;
-
-    eprintln!("[DEBUG] Creating {} concurrent streams", num_streams);
-
-    let channels = new_channels();
-
-    // Create multiple peer pairs
-    let mut tasks = Vec::new();
-
-    for stream_id in 0..num_streams {
-        let channels_clone = channels.clone();
-
-        let task = tokio::spawn(async move {
-            eprintln!("  [DEBUG] Stream {} starting...", stream_id);
-
-            // Create connected peers for this stream
-            use super::common::create_peer_pair;
-            let mut peers = create_peer_pair(channels_clone).await.connect().await;
-
-            // Send messages
-            let start = Instant::now();
-            for _ in 0..iterations {
-                let msg = vec![0xABu8; message_size];
-                peers.conn_a.send(msg).await.unwrap();
-                let _: Vec<u8> = peers.conn_b.recv().await.unwrap();
-            }
-            let elapsed = start.elapsed();
-
-            eprintln!("  [DEBUG] Stream {} complete in {:?}", stream_id, elapsed);
-            (stream_id, elapsed)
-        });
-
-        tasks.push(task);
-    }
-
-    // Wait for all streams to complete
-    let start = Instant::now();
-    let results = futures::future::join_all(tasks).await;
-    let total_elapsed = start.elapsed();
-
-    // Calculate aggregate throughput
-    let total_bytes = message_size * iterations * num_streams;
-    let aggregate_mbps = calculate_throughput_mbps(total_bytes, total_elapsed);
-
-    println!("Streams: {}", num_streams);
-    println!("Message size: {} KB", message_size / 1024);
-    println!("Messages per stream: {}", iterations);
-    println!("Total data: {:.2} MB", total_bytes as f64 / 1_000_000.0);
-    println!("Total time: {}", format_duration(total_elapsed));
-    println!(
-        "Aggregate throughput: {}",
-        format_throughput(aggregate_mbps)
-    );
-
-    println!("\nPer-stream times:");
-    for (stream_id, elapsed) in results.into_iter().flatten() {
-        println!("  Stream {}: {}", stream_id, format_duration(elapsed));
-    }
-
-    println!("\n=== Concurrent Test Complete ===\n");
-}
-
-/// Test maximum bandwidth utilization
-#[tokio::test]
-async fn manual_bandwidth_saturation() {
-    println!("\n=== Bandwidth Saturation Test ===\n");
-    println!("Sending messages as fast as possible\n");
-
-    let message_size = 1024; // 1KB messages
-    let duration_secs = 2; // Send for 2 seconds
-
-    eprintln!("[DEBUG] Creating connection...");
-    let mut peers = create_connected_peers().await;
-
-    eprintln!("[DEBUG] Sending messages for {} seconds...", duration_secs);
-    let start = Instant::now();
-    let deadline = start + Duration::from_secs(duration_secs);
-    let mut count = 0;
-
-    while Instant::now() < deadline {
-        let msg = vec![0xABu8; message_size];
-        peers.conn_a.send(msg).await.unwrap();
-        let _: Vec<u8> = peers.conn_b.recv().await.unwrap();
-        count += 1;
-
-        if count == 1 {
-            eprintln!("[DEBUG] First message complete");
-        }
-    }
-
-    let elapsed = start.elapsed();
-    let total_bytes = message_size * count;
-    let throughput_mbps = calculate_throughput_mbps(total_bytes, elapsed);
-
-    println!("Duration: {}", format_duration(elapsed));
-    println!("Messages sent: {}", count);
-    println!("Total data: {:.2} MB", total_bytes as f64 / 1_000_000.0);
-    println!("Throughput: {}", format_throughput(throughput_mbps));
-    println!("Messages/sec: {:.2}", count as f64 / elapsed.as_secs_f64());
-
-    println!("\n=== Saturation Test Complete ===\n");
-}
-
-```
-
-### Core Architecture Module: `crates/core/benches/transport/mod.rs`
-```
-//! Transport benchmark modules
-//!
-//! This module re-exports all transport benchmark functions from their
-//! respective submodules for use in benchmark binaries.
-//!
-//! Note: dead_code and unused_imports warnings are expected since each
-//! benchmark binary only uses a subset of these functions.
-
-#![allow(dead_code)]
-#![allow(unused_imports)]
-
-pub mod allocation_overhead;
-pub mod blackbox;
-pub mod common; // Shared utilities for reducing duplication
-pub mod ledbat_validation;
-pub mod level0;
-pub mod level1;
-pub mod level2;
-pub mod level3;
-pub mod manual_throughput;
-pub mod slow_start;
-pub mod streaming;
-pub mod streaming_buffer;
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6023** (2026-10-28): **fix(deps): bump webpki-roots to 1.0.11 to drop distrusted eMudhra roots**
-  *Symptoms*: Bumps `webpki-roots` to 1.0.11 (lockfile only).  1.0.10/1.0.11 remove the eMudhra emSign roots (`emSign ECC Root CA - G3`, `emSign ECC Root CA - C3`, `emSign Root CA - C1`) following the eMudhra intermediate-key compromise disclosed on 2026-10-17 (https://emudhra.we-have-a-problem.com/). Clients that use rustls with `webpki-roots` (reqwest `rustls-tls`, ureq) do not enforce Certificate Transparency, so until this bump they accept certificates issued from the compromised intermediates.  Older pinned versions also drop the roots Mozilla has since retired (e.g. DigiCert Global Root CA, GTS Root R2), which matches the current Mozilla root store and Chrome/Firefox behaviour.  `emSign Root CA - G1` stays in 1.0.11: it is not in the affected chains, which are `emSign Root TLS CA - G3` (cross-signed by `emSign ECC Root CA - G3`) and `AAA Certificate Services` (already absent from webpki-roots 1.x).  No code changes; the only diff is the `webpki-roots` version and checksum in `Cargo.lock` (including nested lockfiles where present).  [AI-assisted - Claude]  https://claude.ai/code/session_01VjxvYQoRo5qL4X8u3uRJ1T 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Claude Rule Review: Failed to run  The Claude rule review step failed (likely an authentication or API issue). Check the [workflow logs](https://github.com/freenet/freenet-core/actions/runs/40723705254) for details.  --- *Advisory review against `.claude/rules/`. Critical patterns are enforced by the Rule Lint CI job.*
-  > test-exempt: lockfile-only bump of the `webpki-roots` data crate (root-certificate list). There is no freenet-core behaviour to reproduce in a unit test; the change is verified by the lockfile diff (only `webpki-roots` version/checksum lines change, checksum matches crates.io) and by confirming the emSign roots are absent from the 1.0.11 source.  [AI-assisted - Claude]
-
-- **Issue #6022** (2026-10-28): **test: cover delegate contract notification end to end**
-  *Symptoms*: ## Problem  The delegate contract-notification path has three legs and no test crossed all three:  1. `RuntimePool` hands every executor the notification sender (three sites in `pool.rs`: the first executor, the ones built in the loop, and a replacement after a worker is rebuilt). 2. The executor's post-commit fan-out looks up the contract's delegate subscribers and enqueues one notification each (`send_delegate_contract_notifications`). 3. The contract loop takes the receiver and runs the delegate for each notification (`handle_delegate_notification`).  An executor built without the sender returns from the fan-out silently, so losing any one of those wiring sites turns the whole path into a no-op that reports no error anywhere. #5488 asks for coverage of legs 1 and 3.  `test_delegate_subscribe_reaches_the_network_for_an_unseen_contract` covers the subscribe being accepted, and its docstring says, correctly, that it does not cover notifications then flowing. This is that second half.  ## Solution  One single-node `#[freenet_test]`: client PUT, delegate subscribe, client UPDATE, then assert the delegate's `ContractNotificationReceived` arrives on the test's own socket carrying the state the UPDATE installed.  **Why the notification is observable on this socket.** A notification-driven delegate run has no originating client request to answer, so `route_notification_outbound` fans the run's residual `ApplicationMessage`s out through `delegate_app_registry` instead. The test clie
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `c1a950a9` (2026-10-28)
-**Commit Message**: test: cover delegate contract notification end to end (#6022)
-
-Co-authored-by: Your Name <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5 <[REDACTED_EMAIL]>
-
-**File**: `crates/core/tests/operations.rs` (modified, +282/-0)
-```diff
-@@ -4030,6 +4030,288 @@ async fn test_delegate_contract_put_and_update(ctx: &mut TestContext) -> TestRes
-     Ok(())
- }
- 
-+/// E2E test for #5488: an UPDATE to a contract a delegate subscribed to runs
-+/// that delegate, and the delegate's output reaches the app that subscribed.
-+///
-+/// **What was uncovered.** The notification path has three legs and no test
-+/// crossed all three. `RuntimePool` hands every executor the notification
-+/// sender (three sites in `pool.rs`: the first executor, the ones built in the
-+/// loop, and a replacement after a worker is rebuilt); the executor's
-+/// post-commit fan-out looks up the contract's delegate subscribers and
-+/// enqueues one notification each (`send_delegate_contract_notifications`); and
-+/// the contract loop takes the receiver and runs the delegate for each
-+/// (`handle_delegate_notification`). An executor built without the sender
-+/// returns from the fan-out silently, so losing any one of those wiring sites
-+/// turns the whole path into a no-op that reports no error anywhere.
-+/// `test_delegate_subscribe_reaches_the_network_for_an_unseen_contract` covers
-+/// the subscribe being accepted, and says — correctly — that it does not cover
-+/// notifications then flowing. This is that second half.
-+///
-+/// **Why the notification is observable on this socket.** A notification-driven
-+/// delegate run has no originating client request to answer, so
-+/// `route_notification_outbound` fans the run's residual `ApplicationMessage`s
-+/// out through `delegate_app_registry` instead. This client is in that
-+/// registry: an app registers by talking to a delegate over a connection that
-+/// carries a notification channel, which any `ApplicationMessages` request
-+/// does (`client_events.rs`), so the `SubscribeContract` command in step 3 both
-+/// creates the subscription and registers the socket that observes it. What
-+/// arrives is a `DelegateResponse` holding exactly one value, because
-+/// `route_notification_outbound` builds one response per `ApplicationMessage`.
-+///
-+/// **Isolation from the rest of this binary.** Delegate subscriptions are a
-+/// process-global registry keyed by contract instance id, and the app registry
-+/// is keyed by delegate key; both are shared by every node in the test binary,
-+/// and only plain `cargo test` can see interference through them (nextest's
-+/// process-per-test hides it). So this test gives both its contract and its
-+/// delegate parameters that no other test uses, which makes its instance id and
-+/// its delegate key its own: nothing else here can update the contract it
-+/// subscribed to, and its notification cannot land on another test's delegate
-+/// socket. Step 4 still matches on the notification's `contract_id` rather than
-+/// accepting the first one to arrive, because that check is free and does not
-+/// depend on the paragraph above staying true.
-+///
-+/// **If this test fails, which leg broke.** Step 3 failing means the
-+/// subscription was never created, so steps 4 and 5 would be vacuous. Step 5
-+/// timing out after step 3 passed and the `UpdateResponse` arrived means the
-+/// commit happened and the notification did not: that is the path this test
-+/// exists to watch, and it is the shape a lost `pool.rs` wiring site produces.
-+#[freenet_test(
-+    health_check_readiness = true,
-+    nodes = ["gateway"],
-+    timeout_secs = 300,
-+    startup_wait_secs = 20,
-+    tokio_flavor = "multi_thread",
-+    tokio_worker_threads = 4
-+)]
-+async fn test_delegate_is_notified_when_a_subscribed_contract_updates(
-+    ctx: &mut TestContext,
-+) -> TestResult {
-+    const TEST_DELEGATE: &str = "test-delegate-capabilities";
-+    const TEST_CONTRACT: &str = "test-contract-integration";
-+    // Parameters nobody else in this binary uses, per "Isolation" above.
-+    const TEST_PARAMS: &[u8] = b"5488-delegate-notification";
-+
-+    let contract = load_contract(TEST_CONTRACT, Parameters::from(TEST_PARAMS.to_vec()))?;
-+    let contract_key = contract.key();
-+    let contract_id = *contract_key.id();
-+    let delegate_params = Parameters::from(TEST_PARAMS.to_vec());
-+    let delegate = load_delegate(TEST_DELEGATE, delegate_params.clone())?;
-+    let delegate_key = delegate.key().clone();
-+
-+    let gateway = ctx.node("gateway")?;
-+    tokio::time::sleep(Duration::from_secs(3)).await;
-+
-+    let uri = gateway.ws_url();
-+    let (stream, _) = connect_async(&uri).await?;
-+    let mut client = WebApi::start(stream);
-+
-+    // Step 1: register the delegate.
-+    tracing::info!("Step 1: registering delegate");
-+    client
-+        .send(ClientRequest::DelegateOp(
-+            freenet_stdlib::client_api::DelegateRequest::RegisterDelegate {
-+                delegate: delegate.clone(),
-+                cipher: TEST_DELEGATE_CIPHER,
-+                nonce: TEST_DELEGATE_NONCE,
-+            },
-+        ))
-+        .await?;
-+    match timeout(Duration::from_secs(30), client.recv()).await?? {
-+        HostResponse::DelegateResponse { key, .. } =
-```
-
-#### Recent Merged Pull Requests:
-- **PR #6023** (2026-10-28): fix(deps): bump webpki-roots to 1.0.11 to drop distrusted eMudhra roots (@sanity)
-- **PR #6022** (2026-10-28): test: cover delegate contract notification end to end (@tyrion777-stack)
-- **PR #6016** (2026-10-27): build: release 0.2.151 (@sanity)
-- **PR #6015** (2026-10-27): feat(conformance): report-only removal tier in policy::decide (@sanity)
-- **PR #6014** (2026-10-27): chore(release): record that 0.2.151 ships the repaired visited-peers indices (@sanity)
-- **PR #6013** (closed): build: release 0.2.151 (@sanity)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. test: cover delegate contract notification end to end (#6022)
-
+### 1. Distinct Packet ID Spaces Across Protocol Control and Data Lifecycles
 **RULE**:
-When implementing operations in `crates/core/tests/operations.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+In any custom transport or session multiplexing layer that computes Round-Trip Time (RTT), congestion control state, or duplicate delivery suppression based on packet sequence IDs, control packet identifiers (such as handshake acknowledgments) and application payload identifiers **MUST NOT** share identical sequence values within the same connection context. Initial application data packet IDs **MUST** start at `FIRST_CONTROL_PACKET_ID + 1` (or be strictly segregated into disjoint sequence spaces).
 
 **WHY**:
-Prevents defects observed in production commit `c1a950a9`: test: cover delegate contract notification end to end (#6022). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+When a handshake completion acknowledgment and the initial data frame share the same sequence ID (e.g., `packet_id = 0`):
+1. Any delayed or resent handshake acknowledgment arriving after connection establishment will trigger a receipt for `packet_id = 0`.
+2. The sender's packet tracker matches this receipt against the pending *data* packet `0`, marking it acknowledged and computing a corrupted, near-zero RTT sample.
+3. If the actual data packet `0` is lost in transit, the sender will never retransmit it because its sequence slot was prematurely marked cleared by the control acknowledgment.
+4. If deduplication filters register `packet_id = 0` during the handshake, subsequent arrival of the first real data packet is dropped as a duplicate payload.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/tests/operations.rs`.
+Apply to any custom network transport, UDP framing protocol, WebRTC data-channel wrapper, or overlay network routing layer where control handshakes transition into sequenced message streams over symmetric encryption contexts.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
-// Verified production-grade fix pattern:
-/// E2E test for #5488: an UPDATE to a contract a delegate subscribed to runs
-/// that delegate, and the delegate's output reaches the app that subscribed.
-///
-/// **What was uncovered.** The notification path has three legs and no test
-/// crossed all three. `RuntimePool` hands every executor the notification
-/// sender (three sites in `pool.rs`: the first executor, the ones built in the
-/// loop, and a replacement after a worker is rebuilt); the executor's
-/// post-commit fan-out looks up the contract's delegate subscribers and
-/// enqueues one notification each (`send_delegate_contract_notifications`); and
-/// the contract loop takes the receiver and runs the delegate for each
-/// (`handle_delegate_notification`). An executor built without the sender
-/// returns from the fan-out silently, so losing any one of those wiring sites
-/// turns the whole path into a no-op that reports no error anywhere.
-/// `test_delegate_subscribe_reaches_the_network_for_an_unseen_contract` covers
-/// the subscribe being accepted, and says — correctly — that it does not cover
-/// notifications then flowing. This is that second half.
-///
-/// **Why the notification is observable on this socket.** A noti
+// crates/core/src/transport/connection_handler.rs
+
+pub type PacketId = u32;
+
+pub struct SymmetricMessage {
+    pub const FIRST_PACKET_ID: PacketId = 0;
+}
+
+/// FIRST_DATA_PACKET_ID is strictly offset from the handshake control packet ID (0).
+/// This prevents cross-talk where a delayed control receipt credits application data.
+pub const FIRST_DATA_PACKET_ID: PacketId = SymmetricMessage::FIRST_PACKET_ID + 1;
+
+/// The packet sequence counter for a newly established connection MUST start
+/// at FIRST_DATA_PACKET_ID, reserving FIRST_PACKET_ID strictly for handshake acks.
+pub fn initialize_data_packet_counter() -> std::sync::Arc<std::sync::atomic::AtomicU32> {
+    std::sync::Arc::new(std::sync::atomic::AtomicU32::new(FIRST_DATA_PACKET_ID))
+}
+
+pub fn allocate_next_data_packet_id(counter: &std::sync::atomic::AtomicU32) -> PacketId {
+    counter.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+}
+
+/// Deduplication and receipt acknowledgment policy enforcing separation.
+#[derive(Debug, PartialEq, Eq)]
+pub enum ReceiptPolicy {
+    /// Tracked packet: ack generated, packet ID registered in dedup window.
+    AckAndDedup { reack_duplicate: bool },
+    /// Untracked control packet: acknowledged to satisfy remote sender,
+    /// but NEVER recorded into data deduplication history.
+    AckWithoutDedup,
+}
+
+pub fn determine_receipt_policy(packet_id: PacketId, is_handshake_ack: bool) -> ReceiptPolicy {
+    if is_handshake_ack || packet_id == SymmetricMessage::FIRST_PACKET_ID {
+        // Control frames must not pollute data deduplication tables
+        ReceiptPolicy::AckWithoutDedup
+    } else {
+        ReceiptPolicy::AckAndDedup { reack_duplicate: true }
+    }
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// ANTI-PATTERN: Reusing ID 0 for both control signaling and data streams
+pub fn initialize_flawed_connection() -> std::sync::Arc<std::sync::atomic::AtomicU32> {
+    // BUG: First data packet will receive ID 0.
+    // If remote re-sends its handshake ack (also ID 0), its receipt will clear this data packet!
+    std::sync::Arc::new(std::sync::atomic::AtomicU32::new(0))
+}
+
+pub fn handle_packet_receipt(tracker: &mut SentPacketTracker, acked_id: u32) {
+    // BUG: Blindly removes packet_id 0 from tracker without validating
+    // whether the ack was meant for the handshake completion or payload data.
+    if let Some(in_flight) = tracker.inflight_packets.remove(&acked_id) {
+        tracker.update_rtt(in_flight.sent_time.elapsed());
+    }
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c1a950a9` are properly handled with clean fallback behavior.
+Verify using a deterministic virtual-time network test where packet `0` control ack crosses with data packet `FIRST_DATA_PACKET_ID`:
+```rust
+#[tokio::test(start_paused = true)]
+async fn test_first_data_packet_not_cleared_by_handshake_ack_receipt() {
+    let mut sent_tracker = SentPacketTracker::new();
+    
+    // Register data packet 1 (FIRST_DATA_PACKET_ID)
+    sent_tracker.report_sent_packet(FIRST_DATA_PACKET_ID, vec![1, 2, 3].into());
+    
+    // Simulate delayed arrival of handshake ack receipt (id = 0)
+    sent_tracker.confirm_receipt(SymmetricMessage::FIRST_PACKET_ID);
+    
+    // The data packet must still be marked in-flight and not prematurely acked
+    assert!(
+        sent_tracker.contains_packet(FIRST_DATA_PACKET_ID),
+        "Data packet 1 was erroneously cleared by receipt for packet 0"
+    );
+}
+```
+
+---
+
+### 2. Multi-Process Crash-Loop Breaker Deliberate Stop Invariant
+**RULE**:
+In software architectures employing persistent, on-disk markers to detect crash loops and disable unstable subsystems (e.g., experimental transports or kernel bypasses), any supervisory parent process that forcefully terminates a child process via asynchronous signals (`SIGKILL`, `SIGTERM`, `TerminateProcess`) **MUST** write an explicit, atomic, out-of-band "deliberate stop note" referencing the child's exact Process ID (PID) **immediately prior to** emitting the kill signal. The child process **MUST NOT** arm its persistent crash marker until signal handlers are installed and the initial boot grace period has passed.
+
+**WHY**:
+Without an out-of-band deliberate termination note:
+1. When a supervisor, systemd unit, tray process, or auto-updater stops or restarts a healthy daemon (e.g., during software updates, user logout, or configuration reload), the child receives an uncatchable signal (`SIGKILL`) or is aborted during teardown before running clean shutdown hooks.
+2. On subsequent boot, the crash breaker reads the persisted on-disk marker as an un-cleared crash, categorizing the intentional termination as a catastrophic process failure.
+3. Once the failure streak threshold is crossed, the crash breaker trips, disabling critical subsystems for long cooldown windows (e.g., 24 hours), causing severe degraded service across healthy deployments.
+
+**WHEN TO APPLY**:
+Apply to daemons, p2p nodes, browser engines, database servers, and headless runtimes utilizing auto-recovery circuits, watchdog timers, or self-disabling experimental features running under external supervisor processes (systemd, Windows Services, macOS launchd, custom wrappers).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Parent / Supervisor Process Implementation
+pub fn stop_child_safely(child: &mut std::process::Child, stop_note_dir: &std::path::Path) -> std::io::Result<()> {
+    let pid = child.id();
+    let note_path = stop_note_dir.join(format!("deliberate_stop_{}.pid", pid));
+    
+    // 1. Atomically record the child's PID as an intentional termination
+    // MUST execute immediately before issuing the kill syscall.
+    std::fs::write(&note_path, pid.to_string())?;
+    
+    // 2. Terminate the child
+    child.kill()?;
+    child.wait()?;
+    
+    Ok(())
+}
+
+// Child Daemon Boot & Crash Recovery Gate
+#[derive(Debug, PartialEq, Eq)]
+pub enum BreakerVerdict {
+    AllowSubsystem,
+    SuppressSubsystem { reason: &'static str },
+}
+
+pub fn evaluate_crash_breaker(
+    marker_path: &std::path::Path,
+    stop_note_dir: &std::path::Path,
+    previous_pid: Option<u32>,
+) -> BreakerVerdict {
+    if !marker_path.exists() {
+        return BreakerVerdict::AllowSubsystem;
+    }
+    
+    // Check if the previous run's exit was recorded as a deliberate supervisor stop
+    if let Some(old_pid) = previous_pid {
+        let note_path = stop_note_dir.join(format!("deliberate_stop_{}.pid", old_pid));
+        if note_path.exists() {
+            // Clean up the consumed note
+            let _ = std::fs::remove_file(note_path);
+            let _ = std::fs::remove_file(marker_path);
+            return BreakerVerdict::AllowSubsystem;
+        }
+    }
+    
+    // If the marker exists and no deliberate stop note was filed, this was an uncontrolled crash
+    BreakerVerdict::SuppressSubsystem { reason: "Abnormal process termination detected" }
+}
+
+// Delayed arming pattern in Child Process
+pub fn bootstrap_daemon() -> std::io::Result<()> {
+    // Phase 1: Initialize process infrastructure, parse arguments
+    
+    // Phase 2: Install Unix Signal Handlers (SIGTERM, SIGINT)
+    #[cfg(unix)]
+    let (mut term_stream, mut int_stream) = install_signals()?;
+    
+    // Phase 3: ARM the crash breaker ONLY after signals are guaranteed to be intercepted.
+    // Signals arriving prior to this point do not count as a crash of the subsystem.
+    arm_crash_breaker_marker()?;
+    
+    // Phase 4: Run event loop
+    // Phase 5: On clean shutdown, disarm marker BEFORE dropping runtime
+    disarm_crash_breaker_marker()?;
+    Ok(())
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Supervisor killing child without out-of-band communication,
+// leaving child-side disk marker permanently armed.
+fn handle_wrapper_quit(mut child: std::process::Child) {
+    // BUG: Child is killed instantly; no cleanup hooks run.
+    // Child's marker on disk remains active. Next startup will trip the circuit breaker.
+    let _ = child.kill();
+    let _ = child.wait();
+}
+
+fn initialize_child_early_marker() {
+    // BUG: Marker is written before signal handlers exist.
+    // A SIGTERM during configuration loading causes an unhandled exit,
+    // permanently corrupting the breaker state.
+    std::fs::write("/var/run/node_quic.marker", b"ARMED").unwrap();
+}
+```
+
+**VERIFICATION METHOD**:
+Compile an architectural test enforcing that every AST node issuing a child process termination is immediately preceded by the deliberate stop call:
+```rust
+#[test]
+fn supervisor_must_file_stop_note_before_every_kill_invocation() {
+    let source_code = include_str!("../service/wrapper.rs");
+    // Parse syntax tree or perform normalized token sequence scan
+    let normalized: String = source_code.split_whitespace().collect();
+    
+    // Assert that every .kill() token is immediately preceded by record_quic_breaker_deliberate_stop
+    for (idx, _) in normalized.match_indices(".kill()") {
+        let prefix = &normalized[..idx];
+        assert!(
+            prefix.ends_with("record_quic_breaker_deliberate_stop(&quic_stop_note,child.id());"),
+            "Discovered un-annotated child.kill() at offset {}", idx
+        );
+    }
+}
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Handshake Ack Packet ID Collision with First Data Packet (BUG-FREENET-01)
+- **Context**: `crates/core/src/transport/connection_handler.rs`, `peer_connection.rs`
+- **What Was Expected**: When two nodes establish an encrypted UDP channel, the gateway or peer completing the handshake transmits an acknowledgment, followed by application data frames. Application packets must be tracked for retransmission, RTT estimation, and ordered acknowledgment.
+- **What Actually Happened**: The handshake completion ack was allocated `packet_id = 0`. The outbound data frame sequencer also initialized its counter to `0`. When a remote peer received a retransmitted handshake ack (due to race conditions or packet re-ordering), it emitted a confirmation receipt for `packet_id = 0`. The sender received this receipt and matched it against its in-flight queue, where data packet `0` resided. The tracker marked data packet `0` as acknowledged, computed an invalid sub-millisecond RTT sample, and evicted the packet from the retransmission buffer. When the physical data packet `0` was dropped on the wire, the node never retransmitted it, causing stalled contract transfers and dropped messages.
+- **Evidence in Repo**: Commit `c13d8a22`, PR #6008, `.claude/rules/transport.md`.
+- **Root Cause**: Sequence number domain overlap between control-plane completion receipts and data-plane frames combined with a deduplication rule that exempted connection acks from deduplication caches.
+- **Remediation Code Diff**:
+```rust
+--- a/crates/core/src/transport/connection_handler.rs
++++ b/crates/core/src/transport/connection_handler.rs
+@@ -1669,6 +1653,27 @@ pub(super) const NAT_TRAVERSAL_MAX_ATTEMPTS: usize = 10;
++/// Packet id of a connection's first data packet. Id 0
++/// ([`SymmetricMessage::FIRST_PACKET_ID`]) is the handshake's success acks'
++/// id, and a remote answers every success ack it receives on an established
++/// connection with a receipt for id 0 (`receipt_policy`), including a resend
++/// of the handshake ack that crossed our completion on the wire. If our first
++/// data packet were id 0 too, that receipt would be credited to it: a false
++/// RTT sample, and the packet released as delivered, so never retransmitted
++/// if it was lost.
++pub(super) const FIRST_DATA_PACKET_ID: super::PacketId = SymmetricMessage::FIRST_PACKET_ID + 1;
++
++/// The id counter for a new connection's data packets.
++pub(super) fn data_packet_ids() -> Arc<AtomicU32> {
++    Arc::new(AtomicU32::new(FIRST_DATA_PACKET_ID))
++}
+@@ -2046,10 +2051,14 @@ impl<S: Socket, T: TimeSource> UdpPacketsListener<S, T> {
+-                        Ok((outbound_remote_conn, inbound_remote_connection, outbound_ack_packet)) => {
++                        Ok((outbound_remote_conn, inbound_remote_connection)) => {
+                             let remote_addr = outbound_remote_conn.remote_addr;
+-                            let sent_tracker = outbound_remote_conn.sent_tracker.clone();
+-                                sent_tracker.lock().report_sent_packet(
+-                                    SymmetricMessage::FIRST_PACKET_ID,
+-                                    outbound_ack_packet.prepared_send(),
+-                                );
+```
+- **Lesson**: Never let ephemeral handshake control tokens share identity or tracking space with reliable, retransmittable transport streams.
+
+---
+
+### Incident 2: QUIC Crash-Loop Breaker False Trip on Supervisor Deliberate Kills (BUG-FREENET-02)
+- **Context**: `crates/core/src/bin/commands/service/wrapper.rs`, `crates/core/src/bin/commands/service.rs`
+- **What Was Expected**: The QUIC crash-loop breaker monitors unexpected node crashes (panics, memory corruption, segfaults) and falls back to UDP transport if the node dies repeatedly during the startup window. Intentional supervisor operations (tray `Restart`, `Quit`, `Stop`, or bundle auto-updates) must not trip the circuit breaker.
+- **What Actually Happened**: On macOS and Unix systems, the supervisor process (`run_wrapper_loop`) managed the child process. When a user requested a Restart, Quit, or when an auto-update completed, the supervisor invoked `child.kill()`. The child terminated without executing user-space cleanup hooks, leaving the crash breaker's on-disk marker armed. Upon next restart, the breaker counted this as an abnormal termination. After repeated restarts, the breaker tripped, locking nodes out of QUIC transport for 24 hours.
+- **Evidence in Repo**: Commit `a7a1e43c`, PR #6029, `quic_breaker_pin_body` integration test.
+- **Root Cause**: Asymmetric process signaling where external `SIGKILL` bypasses user-space shutdown classification without an out-of-band communication channel to signal supervisor intentionality.
+- **Remediation Code Diff**:
+```rust
+--- a/crates/core/src/bin/commands/service/wrapper.rs
++++ b/crates/core/src/bin/commands/service/wrapper.rs
+@@ -934,6 +936,11 @@ fn run_wrapper_loop(
++        // macOS: where this wrapper notes the child's pid before stopping it
++        // with a hard kill (tray Restart, Stop, Quit, update), so the QUIC
++        // crash-loop breaker does not read that kill as a crash (#5940).
++        #[cfg(target_os = "macos")]
++        cmd.env(freenet::QUIC_BREAKER_STOP_NOTE_ENV_VAR, &quic_stop_note);
+@@ -992,18 +999,33 @@ fn run_wrapper_loop(
+                     match action {
+                         super::super::tray::TrayAction::Quit => {
++                            #[cfg(target_os = "macos")]
++                            freenet::record_quic_breaker_deliberate_stop(
++                                &quic_stop_note,
++                                child.id(),
++                            );
+                             drop(child.kill());
+                             drop(child.wait());
+```
+- **Lesson**: When implementing durable state crash breakers, every external force-kill path in the process tree must atomically persist a pre-kill intentionality token.
+
+---
+
+### Incident 3: Premature Signal Handshake Crash Window in Daemon Startup (BUG-FREENET-03)
+- **Context**: `crates/core/src/bin/freenet.rs`
+- **What Was Expected**: If an operator starts a node and immediately issues a `SIGTERM` (e.g., systemd rapid test or fast restart), the node should shut down cleanly without being flagged as crashed.
+- **What Actually Happened**: The crash breaker was enabled before the asynchronous runtime installed its signal handlers for `SIGTERM` and `SIGINT`. If `SIGTERM` arrived while configuration was being read or while sockets were binding, the process defaulted to OS-level abrupt termination. The shutdown classification function `quic_breaker_exit_is_clean` was never reached, leaving the disk marker armed.
+- **Evidence in Repo**: Commit `a7a1e43c`, `crates/core/src/bin/freenet.rs:403-413`.
+- **Root Cause**: Order of initialization defect where the fault-detection marker was armed before the signal traps capable of executing graceful termination were active.
+- **Remediation Code Diff**:
+```rust
+--- a/crates/core/src/bin/freenet.rs
++++ b/crates/core/src/bin/freenet.rs
+@@ -403,6 +408,11 @@ async fn run_network_node_with_signals(
+     #[cfg(unix)]
+     let mut sigterm = signal::unix::signal(signal::unix::SignalKind::terminate())
+         .context("failed to install SIGTERM handler")?;
++    // The QUIC crash-loop breaker arms its marker only from here on (#5940):
++    // a SIGTERM before the handler exists ends the node without its clean
++    // exit, which would read as a crash.
++    #[cfg(unix)]
++    freenet::quic_breaker_signals_ready();
+```
+- **Lesson**: The fault detection boundary must be armed *after* and disarmed *before* the operational lifetime of graceful signal handlers.
+
+---
+
+### Incident 4: Missing Wiring Coverage in Delegate Notification Pool Executors (BUG-FREENET-04)
+- **Context**: `crates/core/src/contract/pool.rs`, Issue #6034, PR #6022
+- **What Was Expected**: When a delegate contract processes state changes, notifications must be dispatched to listeners across all available executors in the `RuntimePool`. If an executor terminates due to a panic or resource boundary, its dynamically spawned replacement executor must retain identical notification channels.
+- **What Actually Happened**: The notification channel sender was wired only into the initial executor (index 0). Dynamically spawned replacement executors and executors in subsequent pool slots (indices 1..N) lacked the notification sender wiring. Because an executor without a sender returned from `send_delegate_contract_notifications` silently without error, contracts executed on slots 1..N or on replaced slots silently dropped all notifications.
+- **Evidence in Repo**: Issue #6034 post-mortem: *"pop_executor returns the first free slot, so a sequential single-node test always runs on slot 0 and only ever exercises the first-executor site... An executor with no sender returns without an error, so a slot that missed the wiring is indistinguishable from a contract nobody subscribed to."*
+- **Root Cause**: Asymmetric pool initialization logic coupled with silent failure on missing channels, masked by tests that exercised only pool slot 0.
+- **Remediation Code Diff**:
+```rust
+// Verified Architectural Pattern in crates/core/src/contract/pool.rs
+impl RuntimePool {
+    fn spawn_executor(&self, slot_idx: usize) -> ExecutorHandle {
+        // Enforce that every executor instance, whether initial or dynamically replaced,
+        // receives a cloned handle to the delegate notification dispatcher.
+        let notification_sender = self.notification_sender.clone();
+        tokio::spawn(async move {
+            let mut executor = WasmExecutor::new();
+            executor.attach_notification_sender(notification_sender);
+            executor.run_loop().await;
+        })
+    }
+}
+```
+- **Lesson**: Pool-allocated workers must be constructed through a single factory method that enforces uniform capability injection across both static initialization and dynamic replenishment paths.
+
+---
+
+### Incident 5: Dual-Handshake Hole Punch Race Stalling Completion under Loss (BUG-FREENET-05)
+- **Context**: `crates/core/src/transport/link_model/r1_tests.rs`
+- **What Was Expected**: When two nodes initiate bidirectional NAT hole punching over UDP, both ends complete the handshake even if packet loss drops initial acknowledgment frames.
+- **What Actually Happened**: Under 1% synthetic packet loss in simulation, 1 in 30 seeds failed with `"max connection attempts reached"` within 3 seconds. The test harness awaited both peer connections concurrently via `futures::join!(conn_a, conn_b)`. If Peer A completed its handshake first, its underlying `PeerConnection` receive loop was not polled while the test remained blocked waiting for Peer B. When Peer B lost its completion acknowledgment, it resent handshake probes to Peer A. Because Peer A was not yet executing its receive loop, Peer B never received an `ack_ok` response and timed out.
+- **Evidence in Repo**: Commit `c13d8a22`, `crates/core/src/transport/link_model/r1_tests.rs:497-540`.
+- **Root Cause**: Test harness failed to model production runtime behavior: in production, `peer_connection_listener` is immediately spawned as a background task upon connection establishment to service reciprocal control frames.
+- **Remediation Code Diff**:
+```rust
+--- a/crates/core/src/transport/link_model/r1_tests.rs
++++ b/crates/core/src/transport/link_model/r1_tests.rs
+@@ -497,19 +497,66 @@ fn reoffered_share(...) -> f64 { ... }
++async fn connect_pair<S: Socket>(
++    a: impl Future<Output = Result<PeerConnection<S, VirtualTime>, TransportError>>,
++    b: impl Future<Output = Result<PeerConnection<S, VirtualTime>, TransportError>>,
++) -> (
++    Result<PeerConnection<S, VirtualTime>, TransportError>,
++    Result<PeerConnection<S, VirtualTime>, TransportError>,
++) {
++    async fn serve<S: Socket>(
++        conn: &mut Option<Result<PeerConnection<S, VirtualTime>, TransportError>>,
++    ) -> Result<Vec<u8>, TransportError> {
++        match conn {
++            Some(Ok(c)) => c.recv().await,
++            _ => std::future::pending().await,
++        }
++    }
++
++    let mut a = std::pin::pin!(a);
++    let mut b = std::pin::pin!(b);
++    let mut conn_a = None;
++    let mut conn_b = None;
++    while conn_a.is_none() || conn_b.is_none() {
++        tokio::select! {
++            biased;
++            r = &mut a, if conn_a.is_none() => conn_a = Some(r),
++            r = &mut b, if conn_b.is_none() => conn_b = Some(r),
++            r = serve(&mut conn_a) => panic!("a received {r:?} before the transfer began"),
++            r = serve(&mut conn_b) => panic!("b received {r:?} before the transfer began"),
++        }
++    }
++    (conn_a.expect("set above"), conn_b.expect("set above"))
++}
+```
+- **Lesson**: Handshake completion is a cooperative protocol: established connections must actively service the wire to allow lagging peers to finish their handshake transition.
+
+---
+
+### Incident 6: Transport Migration Drift and Unchecked Config Rollback Crash (BUG-FREENET-06)
+- **Context**: `crates/core/src/config.rs`, `crates/core/src/transport/quic.rs`, PR #6038
+- **What Was Expected**: Upgrading node configurations to support QUIC negotiation must allow safe downgrades. If an operator updates `config.toml` with new keys (`transport-quic = "shadow"`, `quic-max-paths = 100`) and subsequently rolls back the node binary to an earlier release, the older binary must not panic or abort on unknown values.
+- **What Actually Happened**: Standard strongly-typed deserialization (`toml::from_str::<Config>`) failed catastrophically when encountering new enum variants or schema extensions, triggering restart loops during emergency binary rollbacks.
+- **Evidence in Repo**: Commit `5d288a99`, PR #6038, `lenient_count` deserialization handlers.
+- **Root Cause**: Rigid schema validation on configuration files intended to survive operational downgrades and rollbacks across forward-deployed fleet binaries.
+- **Remediation Code Diff**:
+```rust
+--- a/crates/core/src/transport/quic.rs
++++ b/crates/core/src/transport/quic.rs
+@@ -108,16 +125,35 @@ impl QuicMode {
+         match value.map(|v| v.trim().to_ascii_lowercase()) {
+             None => Self::Off,
+             Some(v) if v == Self::OFF => Self::Off,
++            Some(v) if v == Self::SHADOW => Self::Shadow,
+             Some(v) if v == Self::PREFER => Self::Prefer,
+             Some(other) => {
+                 tracing::warn!(
+                     transport_quic = %other,
+-                    "Unknown transport-quic value; QUIC stays off. Known values: off, prefer"
++                    "Unknown transport-quic value; QUIC stays off. Known values: off, shadow, prefer"
+                 );
+                 Self::Off
+             }
+         }
+     }
+```
+- **Lesson**: In distributed systems where binary rollbacks are an emergency recovery mechanism, configuration parsers must parse forward-compatible configuration options lenient

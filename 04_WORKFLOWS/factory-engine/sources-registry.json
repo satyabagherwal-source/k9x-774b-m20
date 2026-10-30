@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-29T23:41:40.329Z",
-    "lastVerified": "2026-10-29T23:41:40.329Z",
+    "lastChecked": "2026-10-30T00:01:16.616Z",
+    "lastVerified": "2026-10-30T00:01:16.616Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -330,9 +330,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-29T23:09:35.862Z",
+    "lastChecked": "2026-10-29T23:57:10.047Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-29T23:09:35.862Z"
+    "lastVerified": "2026-10-29T23:57:10.047Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1071,22 +1071,21 @@
     "lastVerified": "2026-10-28T20:57:39.373Z"
   },
   "freenet-freenet-core": {
-    "name": "freenet-core",
+    "name": "freenet/freenet-core",
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T02:00:12.658Z",
-    "lastVerified": "2026-10-29T02:00:12.658Z",
+    "lastChecked": "2026-10-29T23:57:11.418Z",
+    "lastVerified": "2026-10-29T23:57:11.418Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "222bdfd8e1be1fc906adee54d255bf56a1333993da22b880fef60a46ce29f50b",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "66237bc5972e3435e3b88e0f0a2d257b6331933e119b41785343dd43773b6983",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c1a950a9"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "clockworklabs-spacetimedb": {
     "name": "clockworklabs/SpacetimeDB",
@@ -2689,9 +2688,9 @@
   "xampprocky-tokei": {
     "name": "tokei",
     "officialUrl": "https://github.com/XAMPPRocky/tokei",
-    "lastChecked": "2026-10-28T09:25:07.951Z",
+    "lastChecked": "2026-10-29T23:56:55.169Z",
     "revisionIdentifier": "c14f7447",
-    "lastVerified": "2026-10-28T09:25:07.951Z"
+    "lastVerified": "2026-10-29T23:56:55.169Z"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
     "name": "Alissonerdx/BFS-Best-Face-Swap",
@@ -4288,9 +4287,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-10-28T14:22:31.636Z",
+    "lastChecked": "2026-10-29T23:57:07.573Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-10-28T14:22:31.636Z"
+    "lastVerified": "2026-10-29T23:57:07.573Z"
   },
   "telemt-telemt": {
     "name": "telemt",
@@ -4664,11 +4663,21 @@
     "lastVerified": "2026-10-28T15:09:42.989Z"
   },
   "encoredev-encore": {
-    "name": "encore",
+    "name": "encoredev/encore",
     "officialUrl": "https://github.com/encoredev/encore",
-    "lastChecked": "2026-10-28T15:09:45.311Z",
-    "revisionIdentifier": "c2881447",
-    "lastVerified": "2026-10-28T15:09:45.311Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-29T23:57:10.981Z",
+    "lastVerified": "2026-10-29T23:57:10.981Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-encoredev-encore",
+    "contentHash": "5590c56e2859508c564a1a0a7e6106c54ff1cd739db8d45db728afa0175b9144",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "skytable-skytable": {
     "name": "skytable",
@@ -8663,5 +8672,29 @@
     "lastChecked": "2026-10-29T23:41:26.400Z",
     "revisionIdentifier": "e66db5be",
     "lastVerified": "2026-10-29T23:41:26.400Z"
+  },
+  "janreges-siteone-crawler": {
+    "name": "siteone-crawler",
+    "officialUrl": "https://github.com/janreges/siteone-crawler",
+    "lastChecked": "2026-10-29T23:56:57.532Z",
+    "revisionIdentifier": "f3d967b190",
+    "lastVerified": "2026-10-29T23:56:57.532Z"
+  },
+  "jellyfin-swiftfin": {
+    "name": "jellyfin/Swiftfin",
+    "officialUrl": "https://github.com/jellyfin/Swiftfin",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-29T23:57:09.478Z",
+    "lastVerified": "2026-10-29T23:57:09.478Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-jellyfin-swiftfin",
+    "contentHash": "469f802562c4b637b809153c2f1a66263880d15ea4a4ecc712cc3791992b2268",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "c1a950a9",
+    "sourceVersion": "5d288a99",
     "license": "NOASSERTION",
-    "contentHash": "222bdfd8e1be1fc906adee54d255bf56a1333993da22b880fef60a46ce29f50b",
-    "lastHarvestedAt": "2026-10-28T21:43:39.510Z",
+    "contentHash": "66237bc5972e3435e3b88e0f0a2d257b6331933e119b41785343dd43773b6983",
+    "lastHarvestedAt": "2026-10-30T00:01:13.666Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -4903,10 +4903,10 @@
     "repository": "encoredev/encore",
     "platform": "github",
     "sourceUrl": "https://github.com/encoredev/encore",
-    "sourceVersion": "c2881447",
+    "sourceVersion": "7f38d5dd",
     "license": "MPL-2.0",
-    "contentHash": "08b00e47bc910600566193dba6e8bca44bc84d6794595d7271f890f1d9fc1152",
-    "lastHarvestedAt": "2026-10-27T15:29:31.251Z",
+    "contentHash": "5590c56e2859508c564a1a0a7e6106c54ff1cd739db8d45db728afa0175b9144",
+    "lastHarvestedAt": "2026-10-30T00:01:14.077Z",
     "learningId": "learn-github-encoredev-encore"
   },
   "rqlite-rqlite": {
@@ -8333,10 +8333,10 @@
     "repository": "jellyfin/Swiftfin",
     "platform": "github",
     "sourceUrl": "https://github.com/jellyfin/Swiftfin",
-    "sourceVersion": "2e354062",
+    "sourceVersion": "10629aba",
     "license": "MPL-2.0",
-    "contentHash": "97ce928dc7e25c5931d0dd8fb77648e14945bce6838cd66dec690bf15351dd04",
-    "lastHarvestedAt": "2026-10-25T20:49:20.125Z",
+    "contentHash": "469f802562c4b637b809153c2f1a66263880d15ea4a4ecc712cc3791992b2268",
+    "lastHarvestedAt": "2026-10-29T23:59:03.519Z",
     "learningId": "learn-github-jellyfin-swiftfin"
   },
   "sergdort-moderncleanarchitectureswiftui": {

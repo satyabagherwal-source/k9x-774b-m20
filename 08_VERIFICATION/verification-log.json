@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-8C1K",
-    "timestamp": "2026-10-27T23:21:53.912Z",
-    "repository": "etcd-io/etcd",
-    "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "05ad899c9cac58dd7dc4677ae385566c731021351ec958f568093c20fd8fd154",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-S2YO",
-    "timestamp": "2026-10-27T23:37:15.264Z",
-    "repository": "metalbear-co/mirrord",
-    "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "ce862687cd8417c169b2e67af0995a8666ecfeb200a0ebdf7c614ea4ec1b69b3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261027-0U1X",
-    "timestamp": "2026-10-27T23:44:03.621Z",
-    "repository": "iconoir-icons/iconoir",
-    "learningId": "learn-github-iconoir-icons-iconoir",
-    "contentHash": "81a2ebac0e67dcc96b4ed97844f3e43307f821f61c3e938c0a596cdcb6e5a8b3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261027-0YCG",
     "timestamp": "2026-10-27T23:44:09.184Z",
     "repository": "freenet/freenet-core",
@@ -7492,6 +7447,51 @@
     "contentHash": "5cc1f7c77d8c26226f31348c7d4cd767ca6e46c51d849cdb669036d5e31baff3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261029-FTQZ",
+    "timestamp": "2026-10-29T23:59:03.515Z",
+    "repository": "jellyfin/Swiftfin",
+    "learningId": "learn-github-jellyfin-swiftfin",
+    "contentHash": "469f802562c4b637b809153c2f1a66263880d15ea4a4ecc712cc3791992b2268",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-IM66",
+    "timestamp": "2026-10-30T00:01:13.662Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "66237bc5972e3435e3b88e0f0a2d257b6331933e119b41785343dd43773b6983",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-IMHL",
+    "timestamp": "2026-10-30T00:01:14.073Z",
+    "repository": "encoredev/encore",
+    "learningId": "learn-github-encoredev-encore",
+    "contentHash": "5590c56e2859508c564a1a0a7e6106c54ff1cd739db8d45db728afa0175b9144",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

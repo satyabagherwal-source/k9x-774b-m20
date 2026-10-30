@@ -6078,3 +6078,6 @@
 | `CYCLE-20261029-KV2M` | `2026-10-29T23:34:58.894Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5556` | Yes (`6ecc4d2c...`) |
 | `CYCLE-20261029-KZJE` | `2026-10-29T23:35:04.682Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5557` | Yes (`ef0ec722...`) |
 | `CYCLE-20261029-TEV3` | `2026-10-29T23:41:37.791Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5558` | Yes (`5cc1f7c7...`) |
+| `CYCLE-20261029-FTQZ` | `2026-10-29T23:59:03.515Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5559, Rule 5560, Rule 5561` | Yes (`469f8025...`) |
+| `CYCLE-20261030-IM66` | `2026-10-30T00:01:13.662Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5562, Rule 5563` | Yes (`66237bc5...`) |
+| `CYCLE-20261030-IMHL` | `2026-10-30T00:01:14.073Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5562, Rule 5563, Rule 5564` | Yes (`5590c56e...`) |

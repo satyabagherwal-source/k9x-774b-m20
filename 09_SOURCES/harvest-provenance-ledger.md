@@ -6087,3 +6087,6 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `21f38da0` | Multi-dimensional audit evidence | 2026-10-29T23:34:58.896Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `f9ac780a` | Multi-dimensional audit evidence | 2026-10-29T23:35:04.688Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `22c4a97a` | Multi-dimensional audit evidence | 2026-10-29T23:41:37.795Z |
+| `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `10629aba` | Multi-dimensional audit evidence | 2026-10-29T23:59:03.519Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `5d288a99` | Multi-dimensional audit evidence | 2026-10-30T00:01:13.666Z |
+| `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `7f38d5dd` | Multi-dimensional audit evidence | 2026-10-30T00:01:14.077Z |
