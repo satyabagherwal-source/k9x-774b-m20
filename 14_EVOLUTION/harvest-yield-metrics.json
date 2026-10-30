@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T22:03:36.500Z",
-  "total_cycles_completed": 6311,
-  "total_learnings_persisted": 6311,
-  "total_rules_promoted": 5884,
+  "last_updated": "2026-10-30T22:13:47.413Z",
+  "total_cycles_completed": 6314,
+  "total_learnings_persisted": 6314,
+  "total_rules_promoted": 5888,
   "history": [
-    {
-      "timestamp": "2026-10-30T06:29:51.664Z",
-      "repository": "cryfs/cryfs",
-      "learningId": "learn-github-cryfs-cryfs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T06:36:32.242Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T06:36:34.373Z",
-      "repository": "StarTrail-org/LEANN",
-      "learningId": "learn-github-startrail-org-leann",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T06:43:14.170Z",
       "repository": "grpc/grpc-rust",
@@ -1403,6 +1382,27 @@
       "repository": "maxrave-dev/kotlin-footguns",
       "learningId": "learn-github-maxrave-dev-kotlin-footguns",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T22:10:24.961Z",
+      "repository": "iliyami/MacSai",
+      "learningId": "learn-github-iliyami-macsai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T22:10:33.387Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T22:13:47.413Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `820c7511`  
+> **Source Version**: `0fa4f5f1`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T22:19:22.891Z  
+> **Timestamp**: 2026-10-30T22:10:32.701Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T22:19:22.537Z  
+> **Harvest Timestamp**: 2026-10-30T22:10:31.573Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6390 stars
+- **Stars / Engagement**: 6391 stars
 
 ---
 
@@ -1064,11 +1064,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40358** (2026-10-29): **adapter: don't force a group commit when a session ends**
-  *Symptoms*: Closes: [DB-234](https://linear.app/materializeinc/issue/DB-234)  ### Motivation  When a session ends, `handle_terminate` retracts its `mz_sessions` row with `BuiltinTableAppend::defer`, which triggers a group commit right away. Internal system writes skip the group committer's throttle, and every group commit moves every system table to a new timestamp. So each closed session hands every dataflow on `mz_catalog_server` a new timestamp on every worker, and connection churn costs catalog server CPU per connection. Clients that open a connection per query hit this, and so does the Console, which runs each `/api/sql` request in its own session. In production, bursts of a few hundred connections a minute have pushed a 31-core catalog server from about 23% to 77% of its CPU limit.  #31309 fixed the same problem for session start by moving the insert to `background()`. This makes the retraction at session end match, so it rides the next group commit. Nothing waited on this write before (its notify was already dropped). The trade-off is that a closed session can stay visible in `mz_sessions` for up to about a second.  ### Measurements  Local `bin/environmentd --optimized`, `mz_catalog_server` at 8 workers, 700 connections at 13 per second, each running `SELECT 1`, same binary with and without the change:  | | Before | After | | -- | -- | -- | | Catalog server CPU while connections churn | 65.6% of 8 workers | 13.0% | | Catalog server CPU per connection | 326 ms | 3 ms | | Group comm
+- **Issue #40379** (2026-10-30): **doc: lead v26.48 Kafka sink headers note with the transactional use case**
+  *Symptoms*: Reframes the v26.48 "Kafka sink headers are generally available" release note around the customer so-what: using the `materialize-sink-id` header to deliver transactionally consistent updates to downstream systems, with a link to the [Transactional downstream updates using Kafka](https://materialize.com/docs/export-data/patterns/transactional-downstream-updates-kafka/) pattern up front. The `HEADERS` GA detail moves to a second paragraph.  The section anchor (`#v26.48-kafka-sink-headers-ga`) is unchanged so existing links keep working.  Feedback from the #shipped-it post that the original note didn't land the "so what" for customers.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #40356** (2026-10-29): **ci: Ignore CLA for devin bot**
-  *Symptoms*: 
+- **Issue #40375** (2026-10-30): **release: mark v26.48 as released**
+  *Symptoms*: Opened and merged by the Complete release workflow in MaterializeInc/release, which marks shipped releases as released in the user-facing docs.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1085,384 +1085,529 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2f061db0` (2026-10-29)
-**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.262 to 1.0.263 in the simple group (#40340)
+### Incident Patch 1: `225e7beb` (2026-10-30)
+**Commit Message**: build(deps): bump msgpack from 1.2.3 to 1.2.4 in /misc/dbt-materialize in the simple group (#40362)
 
-Bumps the simple group with 1 update:
-[anthropics/claude-code-action](https://github.com/anthropics/claude-code-action).
+Bumps the simple group in /misc/dbt-materialize with 1 update:
+[msgpack](https://github.com/msgpack/msgpack-python).
 
-Updates `anthropics/claude-code-action` from 1.0.262 to 1.0.263
+Updates `msgpack` from 1.2.3 to 1.2.4
 <details>
 <summary>Release notes</summary>
 <p><em>Sourced from <a
-href="https://github.com/anthropics/claude-code-action/releases">anthropics/claude-code-action's
+href="https://github.com/msgpack/msgpack-python/releases">msgpack's
 releases</a>.</em></p>
 <blockquote>
-<h2>v1.0.263</h2>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/anthropics/claude-code-action/compare/v1.0.262...v1.0.263">https://github.com/anthropics/claude-code-action/compare/v1.0.262...v1.0.263</a></p>
-</blockquote>
-</details>
-<details>
-<summary>Commits</summary>
+<h2>v1.2.4</h2>
+<h2>What's Changed</h2>
 <ul>
-<li><a
-href="https://github.com/anthropics/claude-code-action/commit/8041f1d17e0e7d2f2cfe35002962e9f26237c0bb"><code>8041f1d</code></a>
-chore: bump Claude Code to 2.1.311 and Agent SDK to 0.3.311</li>
-<li>See full diff in <a
-href="https://github.com/anthropics/claude-code-action/compare/925afb53776cf1a2b738c6bdbed37b4d4000ef13...8041f1d17e0e7d2f2cfe35002962e9f26237c0bb">compare
-view</a></li>
-</ul>
-</details>
-<br />
+<li>fallback: pass object_pairs_hook a list of pairs by <a
+href="https://github.com/youdie006"><code>@​youdie006</code></a> in <a
+href="https://redirect.github.com/msgpack/msgpack-python/pull/744">msgpack/msgpack-python#744</a></li>
+<li>fallback: leave the object unread when a header type does not match
+by <a
+href="https://github.com/Shaisolaris"><code>@​Shaisolaris</code></a> in
+<a
+href="https://redirect.github.com/msgpack/msgpack-python/pull/748">msgpack/msgpack-python#748</a></li>
+<li>Bump the all-dependencies group with 3 updates by <a
+href="https://github.com/dependabot"><code>@​dependabot</code></a>[bot]
+in <a
+href="https://redirect.github.com/msgpack/msgpack-python/pull/749">msgpack/msgpack-python#749</a></li>
+<
 
-
-
-**File**: `.github/workflows/claude.yml` (modified, +1/-1)
+**File**: `misc/dbt-materialize/requirements.txt` (modified, +1/-1)
 ```diff
-@@ -51,7 +51,7 @@ jobs:
-       # branch.
-       - name: Run Claude Code
-         id: claude
--        uses: anthropics/claude-code-action@925afb53776cf1a2b738c6bdbed37b4d4000ef13 # v1.0.262
-+        uses: anthropics/claude-code-action@8041f1d17e0e7d2f2cfe35002962e9f26237c0bb # v1.0.263
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-           additional_permissions: |
+@@ -29,7 +29,7 @@ leather==0.4.1
+ MarkupSafe==3.0.4
+ mashumaro==3.17
+ more-itertools==10.8.0
+-msgpack==1.2.3
++msgpack==1.2.4
+ networkx==3.4.2
+ orderly-set==5.5.0
+ packaging==26.3
 ```
 
 ---
 
-### Incident Patch 2: `76d959be` (2026-10-29)
-**Commit Message**: build(deps): bump the simple group across 1 directory with 2 updates (#40343)
-
-Bumps the simple group with 2 updates in the /test/adbc directory:
-[adbc-driver-manager](https://github.com/apache/arrow-adbc) and
-[adbc-driver-postgresql](https://github.com/apache/arrow-adbc).
-
-Updates `adbc-driver-manager` from 1.12.0 to 1.13.0
-<details>
-<summary>Changelog</summary>
-<p><em>Sourced from <a
-href="https://github.com/apache/arrow-adbc/blob/main/CHANGELOG.md">adbc-driver-manager's
-changelog</a>.</em></p>
-<blockquote>
-<!-- raw HTML omitted -->
-<h1>ADBC Changelog</h1>
-<h2>ADBC Libraries 0.1.0 (2022-12-25)</h2>
-<h3>Fix</h3>
-<ul>
-<li><strong>python</strong>: make package names consistent (<a
-href="https://redirect.github.com/apache/arrow-adbc/issues/258">#258</a>)</li>
-<li><strong>c/driver_manager</strong>: accept connection options
-pre-Init (<a
-href="https://redirect.github.com/apache/arrow-adbc/issues/230">#230</a>)</li>
-<li><strong>c/driver_manager,c/driver/postgres</strong>: fix version
-inference from Git tags (<a
-href="https://redirect.github.com/apache/arrow-adbc/issues/184">#184</a>)</li>
-<li><strong>c/driver/postgres</strong>: fix duplicate symbols; add note
-about PKG_CONFIG_PATH (<a
-h
-
-**File**: `test/adbc/requirements.txt` (modified, +2/-2)
-```diff
-@@ -1,4 +1,4 @@
--adbc-driver-manager==1.12.0
--adbc-driver-postgresql==1.12.0
-+adbc-driver-manager==1.13.0
-+adbc-driver-postgresql==1.13.0
- duckdb==2.0.0
- pyarrow==26.0.0
-```
-
----
-
-### Incident Patch 3: `077d0f3a` (2026-10-29)
-**Commit Message**: Report SQL string 'NULL' for table column defaults (#40316)
-
-Before, tables whose columns' defaults were undefined we'd store their
-`mz_columns` default value as the SQL string 'NULL' but would store it
-as NULL for other relation objects. In #40001 , we decided to unify the
-behavior and store it as NULL for tables too. However, this created a
-regression in our terraform provider where it'd drop and create tables
-with no defaults on their columns because of a schema mismatch. Thus we
-change it back to the SQL string `NULL`.
+### Incident Patch 2: `8e3d7d73` (2026-10-30)
+**Commit Message**: doc: publish Iceberg guide for S3-compatible storage and REST catalogs (#40104)
 
 ### Motivation
 
-Closes: [SQL-839](https://linear.app/materializeinc/issue/SQL-839)
+[EDU-106](https://linear.app/materializeinc/issue/EDU-106). Publishes
+the unpublished REST catalog draft as a Polaris + MinIO guide that uses
+vended credentials.
 
 ### Verification
 
-We still get pg compatibility by just changing the definition of the
-information_schema / pg views. This is why we don't need to update any
-of the SLT tests related to those views.
+Ran every step against emulator v26.47.0, Polaris 1.7.0 and MinIO. A
+subagent also followed the guide word for word, and upsert and append
+sinks both committed to the bucket. Tested failure cases and recorded
+their errors: no `SCOPE`, a principal role the principal doesn't have,
+missing data privileges, no `ACCESS DELEGATION`, and an endpoint that
+can't be reached. `hugo` build passes and the anchors resolve. CI covers
+this code path in `test/iceberg/vended-credentials.td`.
+
+---
+_Generated by [Claude
+Code](https://claude.ai/code/session_01FbYd9BRUmRYvY51XAhiasR)_
 
 ---------
 
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+Co-authored-by: Claude <[REDACTED_EMAIL]>
+Co-authored-by: Valerie Chiang <[REDACTED_EMAIL]>
 
-**File**: `doc/user/content/sql/system-catalog/mz_catalog.md` (modified, +1/-1)
+**File**: `doc/user/content/export-data/iceberg-rest.md` (modified, +199/-170)
 ```diff
-@@ -162,7 +162,7 @@ Field            | Type        | Meaning
- `position`       | [`uint8`]   | The 1-indexed position of the column in its containing table, source, or view.
- `nullable`       | [`boolean`] | Can the column contain a `NULL` value?
- `type`           | [`text`]    | The data type of the column.
--`default`        | [`text`]    | The default expression of the column, or `NULL` if it has none.
-+`default`        | [`text`]    | The default expression of the column. A table column without one reads as the string `NULL`.
- `type_oid`       | [`oid`]     | The OID of the type of the column (references `mz_types`).
- `type_mod`       | [`integer`] | The packed type identifier of the column.
+@@ -1,169 +1,202 @@
+ ---
+-title: "Iceberg REST catalog with S3-compatible storage"
+-description: "How to export results from Materialize to Apache Iceberg tables in a catalog implementing the Iceberg REST specification, backed by S3-compatible object storage."
+-draft: true
+-#menu:
+-  #main:
+-    #parent: sink-iceberg
+-    #name: "REST catalog"
+-    #weight: 40
++title: "S3-compatible storage and Iceberg REST catalogs"
++description: "How to export results from Materialize to Apache Iceberg tables in an Iceberg REST catalog, such as Apache Polaris, backed by S3-compatible object storage, such as MinIO."
++menu:
++  main:
++    parent: sink-iceberg
++    name: "S3-compatible storage and REST catalogs"
++    weight: 40
+ aliases:
+   - /serve-results/sink/iceberg-rest/
+ ---
  
-```
-
-**File**: `misc/python/materialize/checks/all_checks/item_columns.py` (modified, +1/-39)
-```diff
-@@ -93,12 +93,7 @@ def manipulate(self) -> list[Testdrive]:
+ {{< public-preview />}}
  
-     def validate(self) -> Testdrive:
-         return Testdrive(dedent("""
--                # On releases before 26.49 mz_columns is a table the adapter packs,
--                # which reports the string NULL for a table column without a default.
--                # From 26.49 on it is a materialized view over the stored CREATE TABLE,
--                # where no default reads as SQL NULL. Upgrade scenarios validate on
--                # both sides of that line.
--                >[version<2604900] SELECT r.name, c.position, c.name, c.nullable, c.type, c.default, t.name, c.type_mod
-+                > SELECT r.name, c.position, c.name, c.nullable, c.type, c.default, t.name, c.type_mod
-                   FROM mz_columns c
-                   JOIN mz_relations r ON r.id = c.id
-                   JOIN mz_types t ON t.oid = c.type_oid
-@@ -131,39 +126,6 @@ def validate(self) -> Testdrive:
-                 item_columns_middle_table 2 b true item_columns_list NULL item_columns_list -1
-                 item_columns_middle_table 3 c true text NULL text -1
- 
--                >[version>=2604900] SELECT r.name, c.position, c.name, c.nullable, c.type, c.default, t.name, c.type_mod
--                  FROM mz_columns c
--                  JOIN mz_relations r ON r.id = c.id
--                  JOIN mz_types t ON t.oid = c.type_oid
--                  WHERE r.name LIKE 'item_columns_%'
--                  ORDER BY r.name, c.position
--                item_columns_final_view 1 a true integer <null> int4 -1
--                item_columns_final_view 2 b true item_columns_list <null> item_columns_list -1
--                item_columns_final_view 3 c true text <null> text -1
--                item_columns_initial_mv 1 a false integer <null> int4 -1
--                item_columns_initial_mv 2 b true text <null> text -1
--                item_columns_initial_mv 3 c1 true numeric <null> numeric -1
--                item_columns_initial_table 1 a false integer <null> int4 -1
--                item_columns_initial_table 2 b true text 'b' text -1
--                item_columns_initial_table 3 c true numeric <null> numeric 2555910
--                item_columns_initial_table 4 d true item_columns_list <null> item_columns_list -1
--                item_columns_initial_table 5 e true item_columns_record <null> item_columns_record -1
--                item_columns_initial_table 6 f true "timestamp without time zone" <null> timestamp 3
--                item_columns_initial_table 7 g true integer[] <null> _int4 -1
--                item_columns_initial_table 8 i true integer <null> int4 -1
--                item_columns_initial_view 1 a false integer <null> int4 -1
--                item_columns_initial_view 2 b true text <null> text -1
--                item_columns_initial_view 3 c1 true numeric <null> numeric -1
--                item_columns_initial_view 4 d true item_columns_list <null> item_columns_list -1
--                item_columns_initial_view 5 e true item_columns_record <null> item_columns_record -1
--                item_columns_initial_view 6 f true "timestamp without time zone" <null> timestamp 3
--                item_columns_initial_view 7 g true integer[] <null> _int4 -1
--                item_columns_middle_mv 1 a true integer <null> int4 -1
--                item_columns_middle_mv 2 b true item_columns_list <null> item_columns_list -1
--                item_columns_middle_table 1 a true integer <null> int4 -1
--                item_columns_middle_table 2 b true item_columns_list <null> item_columns_list -1
--                item_columns_middle_table 3 c true text <null> text -1
+-This guide walks you through the steps required to set up Iceberg sinks in
+-Materialize Cloud against a catalog that implements the [Iceberg REST catalog
+-specification](https://iceberg.apache.org/spec/) with OAuth2 client credentials,
+-and whose tables are stored in Amazon S3 or an S3-compatible object store such as
+-MinIO. [Apache Polaris](https://polaris.apache.org/) is the catalog Materialize
+-tests this path against.
 -
-                 > SELECT i.name, ic.index_position, ic.on_position, ic.on_expression, ic.nullable
-                   FROM mz_index_columns ic
-                   JOIN mz_indexes i ON i.id = ic.index_id
+-Some catalogs have their own guide, because they authenticate differently or need
+-specific options:
+-
+-- [AWS S3 Tables](/export-data/iceberg-aws/), which authenticates through
+-  an AWS connection.
+-- [GCP BigLake](/export-data/iceberg-gcp/), which authenticates through a
+-  GCP connection.
+-- [Databricks Unity Catalog](/export-data/iceberg-databricks/), which
+-  authenticates with OAuth2 but manages its own storage.
+-
+-## How Materialize reaches your storage
+-
+-An Iceberg catalog connection to a REST catalog carries **no** storage
+-configuration of its own: no endpoint, no region, and no S3 access keys. Every
+-option in the connection is about reaching the *catalog*. Materialize learns how
+-to reach the *storage* from the catalog itself, one of two ways:
+-
+-| Path | How it works | When to use it |
+-| --- | --- | --- |
+-| Catalog-supplied properties | The catalog returns storage properties (`s3.endpoint`, `s3.region`, `s3.access-key-id`, ...) when Materialize loads its configuration and tables. Materialize passes them to its S3 client unchanged. | The catalog is configured with credentials it is willing to hand to clients. |
+-| Credential vending | With `ACCESS DELEGATION = 'vended-credentials'`, Materialize asks the catalog for temporary, table-scoped credentials and uses only those. | The catalog withholds long-lived credentials, or you would rather not have them leave the catalog. |
+-
+-The practical consequence: **the S3-compatible endpoint is configured on the
+-catalog, not in Materialize.** A catalog that returns no usable storage
+-configuration leaves the sink unable to write, even though the connection itself
+-validates.
+-
+-An `AWS CONNECTION` cannot be used to supply the endpoint and keys instead:
+-`CATALOG TYPE = 'rest'` rejects it, since that option exists for [AWS S3
+-Tables](/export-data/iceberg-aws/), whose catalog and storage are both
+-authenticated with SigV4.
+-
+-{{< note >}}
+-Materialize's Iceberg sinks are tested against Apache Polaris with MinIO storage.
+-Other catalog and storage combinations use the same code path, but are not
+-covered by Materialize's tests.
+-{{< /note >}}
++This guide walks you through setting up an Iceberg sink to a catalog that
++implements the [Iceberg REST catalog
++specification](https://iceberg.apache.org/rest-catalog-spec/), with tables
++stored in Amazon S3 or S3-compatible object storage. The examples use [Apache
++Polaris](https://polaris.apache.org/) as the catalog and MinIO as the object
++store.
+ 
+-## Prerequisites
+-
+-### A REST catalog reachable from Materialize
+-
+-The catalog's REST endpoint, its OAuth2 token endpoint, and the object storage
+-behind it must all be reachable from Materialize over the public internet.
+-Iceberg catalog connections do not support tunneling through [AWS
+-PrivateLink](/sql/create-connection/#aws-privatelink) or [SSH
+-bastion hosts](/sql/create-connection/#ssh-tunnel), so a catalog that is only
+-reachable inside a private network cannot be used.
+-
+-If any of those endpoints sits behind a firewall, allow traffic from the [static
+-egress IP addresses](/ingest-data/network-security/static-ips/) associated with
+-your Materialize region.
+-
+-### OAuth2 client credentials
++Materialize does not take a storage endpoint or storage credentials of its own.
++The catalog supplies both: with [credential
++vending](/sql/create-connection/#iceberg-catalog-access-delegation), it hands
++Materialize temporary credentials scoped to the table it writes.
+ 
+-Materialize authenticates to the catalog with the OAuth2 client credentials
+-grant: it exchanges a client ID and client secret for a bearer token, and
+-refreshes the token as it expires. Create a catalog principal for Materialize and
+-obtain its client ID and client secret.
++{{< tip >}}
++Some c
 ```
 
-**File**: `src/catalog-decode/src/create_sql.rs` (modified, +15/-9)
+**File**: `doc/user/content/export-data/iceberg.md` (modified, +4/-0)
 ```diff
-@@ -275,9 +275,12 @@ pub fn item_details(a: &str) -> Result<serde_json::Value, String> {
-                             _ => None,
-                         })
-                         .filter(|expr| !is_null_literal(expr))
--                        .map_or(serde_json::Value::Null, |expr| {
--                            json!(expr.to_ast_string_stable())
--                        })
-+                        // A column without a default reads as the string NULL. Clients compare
-+                        // against that string, and the Terraform provider replaces a table whose
-+                        // column default reads as SQL NULL (SQL-839).
-+                        // TODO(DEX-197): Switch to SQL NULL once released providers read it as
-+                        // no default.
-+                        .map_or_else(|| json!("NULL"), |expr| json!(expr.to_ast_string_stable()))
-                 })
-                 .collect();
-             info.insert("column_defaults", json!(column_defaults));
-@@ -2031,7 +2034,10 @@ mod tests {
+@@ -31,6 +31,10 @@ the catalog hosting them:
+ - [Databricks Unity Catalog](/export-data/iceberg-databricks/)[^4] on
+   AWS, which authenticates with the OAuth2 credentials of a Databricks service
+   principal.
++- [S3-compatible storage and Iceberg REST
++  catalogs](/export-data/iceberg-rest/), such as Apache Polaris with MinIO,
++  which authenticates with OAuth2 client credentials and writes with
++  catalog-vended storage credentials.
  
-         let plain = super::item_details("CREATE TABLE \"materialize\".\"public\".\"t\" (a int4)")
-             .expect("ok");
--        assert_eq!(plain, json!({ "type": "table", "column_defaults": [null] }));
-+        assert_eq!(
-+            plain,
-+            json!({ "type": "table", "column_defaults": ["NULL"] })
-+        );
- 
-         let webhook = super::item_details(
-             "CREATE TABLE \"materialize\".\"public\".\"wht\" FROM WEBHOOK BODY FORMAT JSON",
-@@ -2044,20 +2050,20 @@ mod tests {
-     fn item_details_reports_column_defaults() {
-         let sql = r#"CREATE TABLE "materialize"."public"."t" ("a" [s20 AS "pg_catalog"."int4"] DEFAULT 1 + 1, "b" [s46 AS "pg_catalog"."text"] NOT NULL, "c" [s46 AS "pg_catalog"."text"] VERSION ADDED 1)"#;
-         let out = super::item_details(sql).expect("ok");
--        assert_eq!(out["column_defaults"], json!(["1 + 1", null, null]));
-+        assert_eq!(out["column_defaults"], json!(["1 + 1", "NULL", "NULL"]));
- 
--        // A bare NULL literal is no default, a cast of one is an expression.
-+        // A bare NULL literal reads as no default, a cast of one as an expression.
-         let sql = r#"CREATE TABLE "materialize"."public"."t" ("a" [s46 AS "pg_catalog"."text"] DEFAULT NULL, "b" [s46 AS "pg_catalog"."text"] DEFAULT (NULL), "c" [s46 AS "pg_catalog"."text"] DEFAULT NULL::[s46 AS "pg_catalog"."text"])"#;
-         let out = super::item_details(sql).expect("ok");
-         assert_eq!(
-             out["column_defaults"],
--            json!([null, null, "NULL::[s46 AS \"pg_catalog\".\"text\"]"])
-+            json!(["NULL", "NULL", "NULL::[s46 AS \"pg_catalog\".\"text\"]"])
-         );
- 
-         // The last of several defaults applies, even when it is a bare NULL.
-         let sql = r#"CREATE TABLE "materialize"."public"."t" ("a" [s20 AS "pg_catalog"."int4"] DEFAULT 1 DEFAULT 2, "b" [s20 AS "pg_catalog"."int4"] DEFAULT 5 DEFAULT NULL)"#;
-         let out = super::item_details(sql).expect("ok");
--        assert_eq!(out["column_defaults"], json!(["2", null]));
-+        assert_eq!(out["column_defaults"], json!(["2", "NULL"]));
- 
-         let sql =
-             r#"CREATE TABLE "t" FROM SOURCE [u1 AS "materialize"."public"."s"] (REFERENCE = "t")"#;
-@@ -2069,7 +2075,7 @@ mod tests {
-     fn item_details_packs_as_jsonb_for_any_column_name() {
-         let sql = r#"CREATE TABLE "materialize"."public"."t" ("$serde_json::private::Number" [s20 AS "pg_catalog"."int4"] DEFAULT 5, "b" [s46 AS "pg_catalog"."text"])"#;
-         let out = super::item_details(sql).expect("ok");
--        assert_eq!(out["column_defaults"], json!(["5", null]));
-+        assert_eq!(out["column_defaults"], json!(["5", "NULL"]));
-         mz_repr::adt::jsonb::Jsonb::from_serde_json(out).expect("packs as jsonb");
-     }
+ ## Consume an Iceberg sink
  
 ```
 
-**File**: `src/catalog/src/builtin/builtin.rs` (modified, +13/-10)
+**File**: `doc/user/content/sql/create-connection.md` (modified, +1/-1)
 ```diff
-@@ -575,15 +575,17 @@ fn make_builtin_columns_sql(
-     generated: [&BuiltinView; 7],
-     columns: &mut BuiltinView,
- ) {
--    // Map to (schema, relation, desc)
-+    // Map to (schema, relation, desc, is_table)
-     let relations = builtin_items
-         .iter()
-         .filter_map(|b| match b {
--            Builtin::Table(t) => Some((t.schema, t.name, Cow::Borrowed(&t.desc))),
--            Builtin::Source(s) => Some((s.schema, s.name, Cow::Borrowed(&s.desc))),
--            Builtin::Log(l) => Some((l.schema, l.name, Cow::Owned(l.variant.desc()))),
--            Builtin::View(v) => Some((v.schema, v.name, Cow::Borrowed(&v.desc))),
--            Builtin::MaterializedView(mv) => Some((mv.schema, mv.name, Cow::Borrowed(&mv.desc))),
-+            Builtin::Table(t) => Some((t.schema, t.name, Cow::Borrowed(&t.desc), true)),
-+            Builtin::Source(s) => Some((s.schema, s.name, Cow::Borrowed(&s.desc), false)),
-+            Builtin::Log(l) => Some((l.schema, l.name, Cow::Owned(l.variant.desc()), false)),
-+            Builtin::View(v) => Some((v.schema, v.name, Cow::Borrowed(&v.desc), false)),
-+            Builtin::MaterializedView(mv) => {
-+                Some((mv.schema, mv.name, Cow::Borrowed(&mv.desc), false))
-+            }
-             Builtin::Type(_) | Builtin::Func(_) | Builtin::Index(_) | Builtin::Connection(_) => {
-                 None
-             }
-@@ -593,10 +595,10 @@ fn make_builtin_columns_sql(
-                 .iter()
-                 .copied()
-                 .chain([&*columns])
--                .map(|v| (v.schema, v.name, Cow::Borrowed(&v.desc))),
-+                .map(|v| (v.schema, v.name, Cow::Borrowed(&v.desc), false)),
-         );
-     let values = relations
--        .flat_map(|(schema, relation, desc)| {
-+        .flat_map(|(schema, relation, desc, is_table)| {
-             let schema = escaped_string_literal(schema);
-             let relation = escaped_string_literal(relation);
-             desc.iter()
-@@ -611,8 +613,9 @@ fn make_builtin_columns_sql(
-                         i + 1,
-                         typ.nullable,
-                         escaped_string_literal(pg_type.name()),
--                        // No builtin relation has column defaults.
--                        "NULL",
-+                        // A builtin table's columns have no defaults, which reads as the
-+                        // string NULL, see the `default` column of `mz_columns`.
-+                        if is_table { "'NULL'" } else { "NULL" },
-                         pg_type.oid(),
-                         pg_type.typmod(),
-                     )
-```
-
-**File**: `src/catalog/src/builtin/information_schema.rs` (modified, +2/-1)
-```diff
-@@ -71,7 +71,8 @@ SELECT
-     o.name AS table_name,
-     c.name AS column_name,
-     c.position::int8 AS ordinal_position,
--    c.default AS column_default,
-+    -- The string NULL is a table column without a default.
-+    nullif(c.default, 'NULL') AS column_default,
-     CASE WHEN c.nullable THEN 'YES' ELSE 'NO' END AS is_nullable,
-     c.type AS data_type,
-     NULL::pg_catalog.int4 AS character_maximum_length,
-```
-
-**File**: `src/catalog/src/builtin/mz_catalog.rs` (modified, +1/-1)
-```diff
-@@ -764,7 +764,7 @@ SELECT * FROM builtin_columns",
-             ("type", "The data type of the column."),
-             (
-                 "default",
--                "The default expression of the column, or `NULL` if it has none.",
-+                "The default expression of the column. A table column without one reads as the string `NULL`.",
-             ),
-             (
-                 "type_oid",
-```
-
-**File**: `src/catalog/src/builtin/mz_internal.rs` (modified, +4/-2)
-```diff
-@@ -5079,7 +5079,8 @@ SELECT
-     -- https://github.com/MaterializeInc/materialize/pull/34649#issuecomment-3714291409
-     0::int2 as attndims,
-     NOT nullable as attnotnull,
--    mz_columns.default IS NOT NULL as atthasdef,
-+    -- The string NULL is a table column without a default.
-+    coalesce(mz_columns.default <> 'NULL', false) as atthasdef,
-     ''::pg_catalog.\"char\" as attidentity,
-     -- MZ doesn't support generated columns so attgenerated is filled with ''
-     ''::pg_catalog.\"char\" as attgenerated,
-@@ -5144,7 +5145,8 @@ SELECT
-     mz_columns.default AS adsrc
- FROM mz_catalog.mz_columns
-     JOIN mz_catalog.mz_objects ON mz_columns.id = mz_objects.id
--WHERE default IS NOT NULL",
-+-- The string NULL is a table column without a default, see mz_columns.
-+WHERE default <> 'NULL'",
-     access: vec![PUBLIC_SELECT],
-     ontology: None,
- });
-```
-
-**File**: `test/sqllogictest/autogenerated/mz_catalog.slt` (modified, +1/-1)
-```diff
-@@ -114,7 +114,7 @@ name  text  The␠name␠of␠the␠column.
- position  uint8  The␠1-indexed␠position␠of␠the␠column␠in␠its␠containing␠table,␠source,␠or␠view.
- nullable  boolean  Can␠the␠column␠contain␠a␠`NULL`␠value?
- type  text  The␠data␠type␠of␠the␠column.
--default  text  The␠default␠expression␠of␠the␠column,␠or␠`NULL`␠if␠it␠has␠none.
-+default  text  The␠default␠expression␠of␠the␠column.␠A␠table␠column␠without␠one␠reads␠as␠the␠string␠`NULL`.
- type_oid  oid  The␠OID␠of␠the␠type␠of␠the␠column␠(references␠`mz_types`).
- type_mod  integer  The␠packed␠type␠identifier␠of␠the␠column.
+@@ -934,7 +934,7 @@ Materialize supports the following catalog type and destination combinations:
+ | --- | --- | --- |
+ | `'s3tablesrest'` | [AWS S3 Tables](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-tables.html) | [AWS connection](#aws) |
+ | `'rest'` | [Google Cloud BigLake](https://docs.cloud.google.com/lakehouse/docs/lakehouse-iceberg-rest-catalog) {{< private-preview-inline />}} | [GCP connection](#gcp) |
+-| `'rest'` | Any [Iceberg REST catalog](https://iceberg.apache.org/spec/), including [Databricks Unity Catalog](/export-data/iceberg-databricks/) | OAuth2 credentials in a secret |
++| `'rest'` | Any [Iceberg REST catalog](https://iceberg.apache.org/rest-catalog-spec/), including [Databricks Unity Catalog](/export-data/iceberg-databricks/) and [Apache Polaris](/export-data/iceberg-rest/) | OAuth2 credentials in a secret |
  
+ #### Syntax {#iceberg-catalog-syntax}
+ 
+```
+
+**File**: `doc/user/data/examples/create_connection.yml` (modified, +18/-1)
+```diff
+@@ -799,7 +799,8 @@
+         CREDENTIAL = SECRET <secret_name>,
+         OAUTH2 SERVER URL = '<token_url>',
+         SCOPE = '<scope>',
+-        ACCESS DELEGATION = 'vended-credentials'
++        ACCESS DELEGATION = 'vended-credentials',
++        STORAGE PROVIDER = '<provider>'
+     );
+   syntax_elements:
+     - name: "`<connection_name>`"
+@@ -834,6 +835,10 @@
+ 
+         Required for catalogs that serve their token endpoint elsewhere, or
+         behind an auth gateway that will not serve an unauthenticated exchange.
++
++        The URL must resolve to a public address. Materialize sends the
++        credential to it, so it rejects a URL that resolves to a private address
++        when the connection is created.
+     - name: "`SCOPE`"
+       description: |
+         *Value:* `text`. Optional.
+@@ -849,6 +854,18 @@
+         as the only way to reach it.
+ 
+         See [Storage access delegation](/sql/create-connection/#iceberg-catalog-access-delegation).
++    - name: "`STORAGE PROVIDER`"
++      description: |
++        *Value:* `'s3'`, `'gcs'`, or `'adls'`. Optional. Defaults to `'s3'`.
++
++        The object store holding the catalog's data files: Amazon S3 or an
++        S3-compatible store, Google Cloud Storage, or Azure Data Lake Storage
++        Gen2. The catalog reports where data files live but not what kind of
++        store they are in, so Materialize uses this to pick its storage client.
++
++        Not supported with `CATALOG TYPE = 's3tablesrest'`, which always stores
++        data in S3. A connection that authenticates with a GCP connection always
++        uses `'gcs'`, and rejects any other value.
+ 
+ - name: "example-iceberg-catalog-connection"
+   description: |
+```
+
+---
+
+### Incident Patch 3: `0fa4f5f1` (2026-10-30)
+**Commit Message**: ci: Switch us from Hetzner to AWS, fix issues found during runs (#40351)
+
+We want to run with AWS for 1 week instead of Hetzner, and compare the
+actual costs. The main difference is that Hetzner charges us by the
+hour, while with AWS we can terminate agents by the minute.
+
+Test run: https://buildkite.com/materialize/nightly/builds/18641
+
+**File**: `ci/mkpipeline.py` (modified, +28/-9)
+```diff
+@@ -25,6 +25,7 @@
+ import copy
+ import hashlib
+ import os
++import re
+ import sys
+ import threading
+ import traceback
+@@ -388,14 +389,16 @@ def fetch_hashes() -> None:
+     truncate_skip_length(pipeline)
+     handle_sanitizer_skip(pipeline, args.sanitizer)
+     prioritize_pipeline(pipeline, args.priority)
++    # Before `switch_jobs_to_aws`, so that steps on the default queue are
++    # switched too.
++    set_default_agents_queue(pipeline)
+     switch_jobs_to_aws(pipeline, args.priority)
+     # After `switch_jobs_to_aws`, so that the queue a step ends up on is the one
+     # that gets sized up. The other order lets the aarch64 to x86_64 fallback
+     # land on a smaller machine than the size-up asked for.
+     increase_agents_timeouts(pipeline, args.sanitizer, args.coverage)
+     permit_rerunning_successful_steps(pipeline)
+     set_retry_on_agent_lost(pipeline)
+-    set_default_agents_queue(pipeline)
+     unparallelize(pipeline)
+     expand_parallel_concurrency_groups(pipeline)
+     set_parallelism_name(pipeline)
+@@ -571,7 +574,9 @@ def increase_agents_timeouts(
+             if step.get("id") == "build-aarch64":
+                 step["name"] = "Build aarch64 with coverage"
+             if step.get("id") == "cargo-test":
+-                step["agents"]["queue"] = "hetzner-x86-64-dedi-32cpu-128gb"
++                # Keep a step that `switch_jobs_to_aws` moved on AWS.
++                if step["agents"]["queue"].startswith("hetzner-"):
++                    step["agents"]["queue"] = "hetzner-x86-64-dedi-32cpu-128gb"
+                 step.pop("parallelism", None)
+     else:
+         for step in steps(pipeline):
+@@ -589,13 +594,18 @@ def rewrite_step_dependency(step: dict[str, Any], old: str, new: str) -> None:
+         step["depends_on"] = [new if dep == old else dep for dep in d]
+ 
+ 
++# Matches the purpose suffix of a dedicated queue, for example `-doctests` in
++# hetzner-x86-64-16cpu-32gb-doctests.
++HETZNER_DEDICATED_QUEUE_SUFFIX = re.compile(r"(?<=gb)-[a-z-]+$")
++
++
+ def switch_jobs_to_aws(pipeline: Any, priority: int) -> None:
+     """Switch jobs to AWS if Hetzner is currently overloaded"""
+     # If Hetzner is entirely broken, you have to take these actions to switch everything back to AWS:
+     # - CI_FORCE_SWITCH_TO_AWS env variable to 1
+     # - Reconfigure the agent from hetzner-aarch64-4cpu-8gb to linux-aarch64-small in https://buildkite.com/materialize/test/settings/steps and other pipelines
+-    # - Reconfigure the agent from hetzner-aarch64-4cpu-8gb to linux-aarch64-small in ci/mkpipeline.sh
+ 
++    force = ui.env_is_truthy("CI_FORCE_SWITCH_TO_AWS", "1")
+     stuck: set[str] = set()
+     # TODO(def-): Remove me when Hetzner fixes its aarch64 availability
+     stuck.update(
+@@ -607,7 +617,7 @@ def switch_jobs_to_aws(pipeline: Any, priority: int) -> None:
+         ]
+     )
+ 
+-    if ui.env_is_truthy("CI_FORCE_SWITCH_TO_AWS", "0"):
++    if force:
+         stuck = set(
+             {
+                 "hetzner-x86-64-16cpu-32gb",
+@@ -702,8 +712,14 @@ def switch_jobs_to_aws(pipeline: Any, priority: int) -> None:
+             continue
+ 
+         agent = step["agents"].get("queue", None)
+-        if not agent in stuck:
++        if not agent or not agent.startswith("hetzner-"):
++            continue
++        # Dedicated queues like hetzner-x86-64-16cpu-32gb-doctests are separate
++        # agent pools, so they only count as stuck by their own name, but they
++        # map to AWS like the machine size they are named after.
++        if agent not in stuck and not force:
+             continue
++        agent = HETZNER_DEDICATED_QUEUE_SUFFIX.sub("", agent)
+ 
+         if agent == "hetzner-aarch64-2cpu-4gb":
+             if "hetzner-x86-64-2cpu-4gb" not in stuck:
+@@ -748,11 +764,14 @@ def switch_jobs_to_aws(pipeline: Any, priority: int) -> None:
+             "hetzner-x86-64-dedi-16cpu-64gb",
+         ):
+             step["agents"]["queue"] = "linux-x86_64-large"
+-        elif agent in (
+-            "hetzner-x86-64-dedi-32cpu-128gb",
+-            "hetzner-x86-64-dedi-48cpu-192gb",
+-        ):
++        elif agent == "hetzner-x86-64-dedi-32cpu-128gb":
+             step["agents"]["queue"] = "builder-linux-x86_64"
++        elif agent == "hetzner-x86-64-dedi-48cpu-192gb":
++            step["agents"]["queue"] = "l-builder-linux-x86_64"
++        else:
++            print(
++                f"+++ WARNING: No AWS fallback for Hetzner queue {step['agents']['queue']}, keeping it"
++            )
+ 
+ 
+ def permit_rerunning_successful_steps(pipeline: Any) -> None:
+```
+
+**File**: `ci/release-qualification/pipeline.template.yml` (modified, +1/-1)
+```diff
+@@ -823,7 +823,7 @@ steps:
+         timeout_in_minutes: 240
+         agents:
+           # building is expensive
+-          queue: hetzner-x86-64-16cpu-32gb
++          queue: hetzner-x86-64-dedi-16cpu-64gb
+         env:
+           # New versions of Docker don't work with GHCR + local builds
+           MZ_GHCR: 0
+```
+
+**File**: `misc/python/materialize/checks/mzcompose_actions.py` (modified, +3/-1)
+```diff
+@@ -252,7 +252,9 @@ def __init__(self, scenario: "Scenario", mz_service: str | None = None) -> None:
+ 
+     def execute(self, e: Executor) -> None:
+         c = e.mzcompose_composition()
+-        iceberg_credentials = setup_polaris_for_iceberg(c)
++        iceberg_credentials = setup_polaris_for_iceberg(
++            c, polaris_extra_environment=["JAVA_OPTS_APPEND=-Xmx2g"]
++        )
+         input = dedent(
+             f"""
+             > CREATE VIEW iceberg_credentials AS SELECT '{iceberg_credentials[0]}' AS user, '{iceberg_credentials[1]}' AS key;
+```
+
+**File**: `misc/python/materialize/mzcompose/composition.py` (modified, +5/-5)
+```diff
+@@ -150,6 +150,7 @@ def __init__(
+         self._tls = threading.local()
+         self.sources_and_sinks_ignored_from_validation = set()
+         self.is_sanity_restart_mz = sanity_restart_mz
++        self.sanity_restart_max_retries = 60
+         self.current_test_case_name_override: str | None = None
+         self.host_network = host_network
+         self.resolve_image_specs = resolve_image_specs
+@@ -1396,15 +1397,14 @@ def sanity_restart_mz(self) -> None:
+ 
+             self.sql("SELECT 1")
+ 
+-            NUM_RETRIES = 60
+-            for i in range(NUM_RETRIES + 1):
++            num_retries = self.sanity_restart_max_retries
++            for i in range(num_retries + 1):
+                 error = self.validate_sources_sinks_clusters()
+                 if not error:
+                     break
+-                if i == NUM_RETRIES:
++                if i == num_retries:
+                     raise ValueError(error)
+-                # Sources and cluster replicas need a few seconds to start up
+-                print(f"Retrying ({i + 1}/{NUM_RETRIES})...")
++                print(f"Retrying ({i + 1}/{num_retries})...")
+                 time.sleep(1)
+         else:
+             ui.header(
+```
+
+**File**: `misc/python/materialize/mzcompose/helpers/iceberg.py` (modified, +2/-0)
+```diff
+@@ -235,6 +235,7 @@ def setup_polaris_for_iceberg(
+     namespace: str = "default_namespace",
+     vended: bool = False,
+     static_credentials: bool = True,
++    polaris_extra_environment: list[str] = [],
+ ) -> tuple[str, str]:
+     """
+     Set up Polaris catalog with MinIO for Iceberg sink usage.
+@@ -274,6 +275,7 @@ def setup_polaris_for_iceberg(
+     with c.override(
+         Polaris(
+             extra_environment=[
++                *polaris_extra_environment,
+                 f"AWS_ACCESS_KEY_ID={username}",
+                 f"AWS_SECRET_ACCESS_KEY={key}",
+             ],
+```
+
+**File**: `misc/python/materialize/mzcompose/services/postgres.py` (modified, +1/-1)
+```diff
+@@ -75,7 +75,7 @@ def __init__(
+                 "ports": ports,
+                 "environment": environment,
+                 "healthcheck": {
+-                    "test": ["CMD", "pg_isready", "-U", "postgres"],
++                    "test": ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "postgres"],
+                     "interval": "1s",
+                     "start_period": "30s",
+                 },
+```
+
+**File**: `misc/python/materialize/scalability/endpoint/endpoints.py` (modified, +20/-3)
+```diff
+@@ -9,11 +9,12 @@
+ 
+ import psycopg
+ 
+-from materialize import git
++from materialize import git, spawn
+ from materialize.docker import get_mz_version_from_image_tag
+ from materialize.mz_version import MzVersion
+ from materialize.mzcompose import ADDITIONAL_BENCHMARKING_SYSTEM_PARAMETERS
+ from materialize.mzcompose.composition import Composition
++from materialize.mzcompose.services.balancerd import Balancerd
+ from materialize.mzcompose.services.listener_config import (
+     resolve_listeners_config_path,
+ )
+@@ -218,8 +219,24 @@ def up_internal(self) -> None:
+             self.composition.sql("grant materialize to user1;")
+ 
+             if self.use_balancerd:
+-                self.composition.up("balancerd")
+-                self._port = self.composition.default_port("balancerd")
++                container_id = self.composition.container_id("materialized")
++                assert container_id is not None
++                backend_ip = spawn.capture(
++                    [
++                        "docker",
++                        "inspect",
++                        "--format={{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}",
++                        container_id,
++                    ]
++                ).strip()
++                with self.composition.override(
++                    Balancerd(
++                        static_resolver_addr=f"{backend_ip}:6875",
++                        https_resolver_template=f"{backend_ip}:6876",
++                    )
++                ):
++                    self.composition.up("balancerd")
++                    self._port = self.composition.default_port("balancerd")
+             else:
+                 self._port = self.composition.default_port("materialized")
+             # TODO: Also make it work through balancerd
+```
+
+**File**: `misc/python/materialize/sqlsmith.py` (modified, +1/-0)
+```diff
+@@ -66,6 +66,7 @@
+     "timestamp out of range",
+     "date out of range",
+     "integer out of range",
++    "OID out of range",
+     "unterminated escape sequence in LIKE",
+     "null character not permitted",
+     "is defined for numbers between",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40358** (2026-10-29): adapter: don't force a group commit when a session ends (@leedqin)
-- **PR #40356** (2026-10-29): ci: Ignore CLA for devin bot (@def-)
-- **PR #40349** (2026-10-29): build(deps): Downgrade psycopg to 3.3.3 in ci/builder (@def-)
-- **PR #40348** (2026-10-29): ci: check the system parameter catalog in cargo test (@antiguru)
-- **PR #40347** (2026-10-29): orchestratord: Add PodDisruptionBudgets for balancerd and console (@alex-hunt-materialize)
-- **PR #40345** (2026-10-29): ci: Nightly fixes (2026-10-29) (@def-)
+- **PR #40379** (2026-10-30): doc: lead v26.48 Kafka sink headers note with the transactional use case (@val-materialize)
+- **PR #40375** (2026-10-30): release: mark v26.48 as released (@materialize-bot)
+- **PR #40374** (closed): v26.48.2 release notes (@bosconi)
+- **PR #40373** (closed): v26.48.1 release notes (@bosconi)
+- **PR #40364** (2026-10-30): compute: default enable_columnar_accumulable_diff to true (@antiguru)
+- **PR #40362** (2026-10-30): build(deps): bump msgpack from 1.2.3 to 1.2.4 in /misc/dbt-materialize in the simple group (@dependabot[bot])
 
 ---
 
@@ -1482,28 +1627,28 @@ Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump anthropics/claude-code-action from 1.0.262 to 1.0.263 in the s
+## X. build(deps): bump msgpack from 1.2.3 to 1.2.4 in /misc/dbt-materialize in the si
 
 **RULE**:
-When implementing operations in `.github/workflows/claude.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `misc/dbt-materialize/requirements.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2f061db0`: build(deps): bump anthropics/claude-code-action from 1.0.262 to 1.0.263 in the simple group (#40340). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `225e7beb`: build(deps): bump msgpack from 1.2.3 to 1.2.4 in /misc/dbt-materialize in the simple group (#40362). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `misc/dbt-materialize/requirements.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: anthropics/claude-code-action@8041f1d17e0e7d2f2cfe35002962e9f26237c0bb # v1.0.263
+msgpack==1.2.4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: anthropics/claude-code-action@925afb53776cf1a2b738c6bdbed37b4d4000ef13 # v1.0.262
+msgpack==1.2.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2f061db0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `225e7beb` are properly handled with clean fallback behavior.

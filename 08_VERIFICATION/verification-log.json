@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-2WZN",
-    "timestamp": "2026-10-28T16:05:27.299Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "ab57601d992c08bb9c795bb61728bb0a2d8446af3c5205be0e4bfcfd35fb5710",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-2X7Q",
-    "timestamp": "2026-10-28T16:05:27.590Z",
-    "repository": "arangodb/arangodb",
-    "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "85cf1a39197ef429b8a974a7cec1366e4b526fcf357f4163e79596d4f57205ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-BQO1",
-    "timestamp": "2026-10-28T16:12:19.009Z",
-    "repository": "openai/clip-vit-base-patch32",
-    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-    "contentHash": "d4580dd96e79e73a8d1235507b34a2a52c2365f861bc64c56af973f09a6f7c8b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-C32H",
     "timestamp": "2026-10-28T16:12:35.081Z",
     "repository": "trinodb/trino",
@@ -7492,6 +7447,51 @@
     "contentHash": "2d0bcbab0f80caa742ce4706cc21389b383c83d1a14fdc3829ee4d6a8afd9e82",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-ZYNS",
+    "timestamp": "2026-10-30T22:10:24.952Z",
+    "repository": "iliyami/MacSai",
+    "learningId": "learn-github-iliyami-macsai",
+    "contentHash": "228d2f55f4a8ab1f2ce689e07e885ff22afdd2777e846697b064684a075fedf1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-055T",
+    "timestamp": "2026-10-30T22:10:33.377Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "c76bc9bf010169a14f1c5906d076e561aa5d2afe32fbc4b25b583e03d06ffb1e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-4AVF",
+    "timestamp": "2026-10-30T22:13:47.403Z",
+    "repository": "rtk-ai/rtk",
+    "learningId": "learn-github-rtk-ai-rtk",
+    "contentHash": "9775cb8e7eadd4bec1e4b47ab9756b2535a79d7278e36a3cbb3e1ca85a964f01",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

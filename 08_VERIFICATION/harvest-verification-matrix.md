@@ -6334,3 +6334,6 @@
 | `CYCLE-20261030-QWNQ` | `2026-10-30T22:03:22.454Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5907` | Yes (`ccfbf5c9...`) |
 | `CYCLE-20261030-R2TC` | `2026-10-30T22:03:30.432Z` | `rmax/scrapy-redis` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5908, Rule 5909, Rule 5910` | Yes (`b6e85171...`) |
 | `CYCLE-20261030-R7HN` | `2026-10-30T22:03:36.491Z` | `maxrave-dev/kotlin-footguns` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5911, Rule 5912, Rule 5913` | Yes (`2d0bcbab...`) |
+| `CYCLE-20261030-ZYNS` | `2026-10-30T22:10:24.952Z` | `iliyami/MacSai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5914` | Yes (`228d2f55...`) |
+| `CYCLE-20261030-055T` | `2026-10-30T22:10:33.377Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5915` | Yes (`c76bc9bf...`) |
+| `CYCLE-20261030-4AVF` | `2026-10-30T22:13:47.403Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5916, Rule 5917` | Yes (`9775cb8e...`) |

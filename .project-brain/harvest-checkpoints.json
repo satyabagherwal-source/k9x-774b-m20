@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T22:03:36.504Z",
+  "last_updated": "2026-10-30T22:13:47.418Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2039,14 +2039,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iliyami-macsai",
-      "content_hash": "fdc8bbe824435691ad48c51cf83c479717b8c94d4c5baa04fd906ca75e4cddf7",
-      "verified_at": "2026-10-23T06:09:24.092Z",
+      "content_hash": "228d2f55f4a8ab1f2ce689e07e885ff22afdd2777e846697b064684a075fedf1",
+      "verified_at": "2026-10-30T22:10:24.964Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-23T06:09:24.092Z"
+      "last_updated": "2026-10-30T22:10:24.964Z"
     },
     "duty1g/x64dbg-mcp-server": {
       "repository": "duty1g/x64dbg-mcp-server",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "2be09102bb4777b21b89fe57ee0525dc3354c5c02ac80e3c41f27a17c263508f",
-      "verified_at": "2026-10-29T22:19:23.518Z",
+      "content_hash": "c76bc9bf010169a14f1c5906d076e561aa5d2afe32fbc4b25b583e03d06ffb1e",
+      "verified_at": "2026-10-30T22:10:33.391Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T22:19:23.518Z"
+      "last_updated": "2026-10-30T22:10:33.391Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
@@ -11796,14 +11796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rtk-ai-rtk",
-      "content_hash": "0a7364ed4fccb6138237720879aae72e28f824d3e6afd3d15e0d965a4d1ac9c4",
-      "verified_at": "2026-10-28T23:30:41.646Z",
+      "content_hash": "9775cb8e7eadd4bec1e4b47ab9756b2535a79d7278e36a3cbb3e1ca85a964f01",
+      "verified_at": "2026-10-30T22:13:47.417Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T23:30:41.646Z"
+      "last_updated": "2026-10-30T22:13:47.417Z"
     },
     "gao-sun/eul": {
       "repository": "gao-sun/eul",

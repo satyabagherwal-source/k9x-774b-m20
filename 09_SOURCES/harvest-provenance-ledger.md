@@ -6343,3 +6343,6 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `7a257031` | Multi-dimensional audit evidence | 2026-10-30T22:03:22.458Z |
 | `learn-github-rmax-scrapy-redis` | `https://github.com/rmax/scrapy-redis` | `2cafe98f` | Multi-dimensional audit evidence | 2026-10-30T22:03:30.439Z |
 | `learn-github-maxrave-dev-kotlin-footguns` | `https://github.com/maxrave-dev/kotlin-footguns` | `2c391bc9` | Multi-dimensional audit evidence | 2026-10-30T22:03:36.495Z |
+| `learn-github-iliyami-macsai` | `https://github.com/iliyami/MacSai` | `8accd9cb` | Multi-dimensional audit evidence | 2026-10-30T22:10:24.956Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `0fa4f5f1` | Multi-dimensional audit evidence | 2026-10-30T22:10:33.381Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `6c2313a6` | Multi-dimensional audit evidence | 2026-10-30T22:13:47.407Z |

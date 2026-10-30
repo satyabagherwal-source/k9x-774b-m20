@@ -1303,10 +1303,10 @@
     "repository": "iliyami/MacSai",
     "platform": "github",
     "sourceUrl": "https://github.com/iliyami/MacSai",
-    "sourceVersion": "d4ccd8a7",
+    "sourceVersion": "8accd9cb",
     "license": "BSD-3-Clause",
-    "contentHash": "fdc8bbe824435691ad48c51cf83c479717b8c94d4c5baa04fd906ca75e4cddf7",
-    "lastHarvestedAt": "2026-10-23T06:09:24.078Z",
+    "contentHash": "228d2f55f4a8ab1f2ce689e07e885ff22afdd2777e846697b064684a075fedf1",
+    "lastHarvestedAt": "2026-10-30T22:10:24.956Z",
     "learningId": "learn-github-iliyami-macsai"
   },
   "duty1g-x64dbg-mcp-server": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "820c7511",
+    "sourceVersion": "0fa4f5f1",
     "license": "NOASSERTION",
-    "contentHash": "2be09102bb4777b21b89fe57ee0525dc3354c5c02ac80e3c41f27a17c263508f",
-    "lastHarvestedAt": "2026-10-29T22:19:23.509Z",
+    "contentHash": "c76bc9bf010169a14f1c5906d076e561aa5d2afe32fbc4b25b583e03d06ffb1e",
+    "lastHarvestedAt": "2026-10-30T22:10:33.381Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "5f4a4dcb",
+    "sourceVersion": "6c2313a6",
     "license": "Apache-2.0",
-    "contentHash": "0a7364ed4fccb6138237720879aae72e28f824d3e6afd3d15e0d965a4d1ac9c4",
-    "lastHarvestedAt": "2026-10-28T23:30:41.638Z",
+    "contentHash": "9775cb8e7eadd4bec1e4b47ab9756b2535a79d7278e36a3cbb3e1ca85a964f01",
+    "lastHarvestedAt": "2026-10-30T22:13:47.407Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {

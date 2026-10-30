@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T22:03:36.415Z",
+  "last_updated": "2026-10-30T22:13:47.327Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -37110,8 +37110,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "820c7511",
-      "content_hash": "2be09102bb4777b21b89fe57ee0525dc3354c5c02ac80e3c41f27a17c263508f",
+      "source_version": "0fa4f5f1",
+      "content_hash": "c76bc9bf010169a14f1c5906d076e561aa5d2afe32fbc4b25b583e03d06ffb1e",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -37169,6 +37169,11 @@
           "number": 5542,
           "title": "build(deps): bump anthropics/claude-code-action from 1.0.262 to 1.0.263 in the s",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5915,
+          "title": "build(deps): bump msgpack from 1.2.3 to 1.2.4 in /misc/dbt-materialize in the si",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37176,7 +37181,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T22:19:23.413Z",
+      "verified_at": "2026-10-30T22:10:33.277Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -48048,8 +48053,8 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "5f4a4dcb",
-      "content_hash": "0a7364ed4fccb6138237720879aae72e28f824d3e6afd3d15e0d965a4d1ac9c4",
+      "source_version": "6c2313a6",
+      "content_hash": "9775cb8e7eadd4bec1e4b47ab9756b2535a79d7278e36a3cbb3e1ca85a964f01",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
@@ -48092,6 +48097,16 @@
           "number": 5453,
           "title": "Merge pull request #4712 from rtk-ai/dependabot/cargo/develop/clap-4.6.7",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5916,
+          "title": "Dual-Run Baseline Comparison for Transformation Filters",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5917,
+          "title": "Isolated Non-Blocking Side-Effect Installation Invariants",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48099,7 +48114,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T23:30:41.543Z",
+      "verified_at": "2026-10-30T22:13:47.307Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -65362,8 +65377,8 @@
       "slug": "iliyami-macsai",
       "platform": "github",
       "source_url": "https://github.com/iliyami/MacSai",
-      "source_version": "d4ccd8a7",
-      "content_hash": "fdc8bbe824435691ad48c51cf83c479717b8c94d4c5baa04fd906ca75e4cddf7",
+      "source_version": "8accd9cb",
+      "content_hash": "228d2f55f4a8ab1f2ce689e07e885ff22afdd2777e846697b064684a075fedf1",
       "dossier_path": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
       "promoted_rules": [
@@ -65381,6 +65396,11 @@
           "number": 3780,
           "title": "Match malware against Apple's on-disk XProtect signatures (#239)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5914,
+          "title": "Show swap under memory and add opt-in swap and memory pressure alerts (#261)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -65388,7 +65408,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T06:09:24.010Z",
+      "verified_at": "2026-10-30T22:10:24.854Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156423,6 +156443,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T22:03:36.396Z"
+    },
+    "rule-5914": {
+      "learning_id": "rule-5914",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5914,
+      "title": "Show swap under memory and add opt-in swap and memory pressure alerts (#261)",
+      "source_url": "https://github.com/iliyami/MacSai",
+      "source_version": "8accd9cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:10:24.854Z"
+    },
+    "rule-5915": {
+      "learning_id": "rule-5915",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5915,
+      "title": "build(deps): bump msgpack from 1.2.3 to 1.2.4 in /misc/dbt-materialize in the si",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "0fa4f5f1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:10:33.277Z"
+    },
+    "rule-5916": {
+      "learning_id": "rule-5916",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5916,
+      "title": "Dual-Run Baseline Comparison for Transformation Filters",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "6c2313a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:13:47.307Z"
+    },
+    "rule-5917": {
+      "learning_id": "rule-5917",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5917,
+      "title": "Isolated Non-Blocking Side-Effect Installation Invariants",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "6c2313a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:13:47.307Z"
     }
   },
   "aliases": {
