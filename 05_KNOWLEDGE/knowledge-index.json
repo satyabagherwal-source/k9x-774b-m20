@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T05:54:02.370Z",
+  "last_updated": "2026-10-30T06:01:56.318Z",
   "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -42326,8 +42326,8 @@
       "slug": "open-policy-agent-opa",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/opa",
-      "source_version": "d6b52e2e",
-      "content_hash": "d41b9d948c3facce3019c7273c5f8a5a6ea5c2bbe9bdc4e0871ac4ba466fef4b",
+      "source_version": "fdee1bd9",
+      "content_hash": "c5f5880bb236e6438227044d4393aa2a1138fabf6d7242abdd95a82798c6a6b3",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
       "promoted_rules": [
@@ -42375,6 +42375,11 @@
           "number": 5358,
           "title": "ast: add regression test for rule conflict reporting (#9443)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5621,
+          "title": "ast: probe base data collections without converting them (#9447)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42382,7 +42387,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:04:44.625Z",
+      "verified_at": "2026-10-30T06:01:56.299Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150791,6 +150796,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T05:54:02.350Z"
+    },
+    "rule-5621": {
+      "learning_id": "rule-5621",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5621,
+      "title": "ast: probe base data collections without converting them (#9447)",
+      "source_url": "https://github.com/open-policy-agent/opa",
+      "source_version": "fdee1bd9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:01:56.299Z"
     }
   },
   "aliases": {

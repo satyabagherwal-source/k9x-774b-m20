@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T05:54:02.459Z",
+  "last_updated": "2026-10-30T06:01:56.411Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "d41b9d948c3facce3019c7273c5f8a5a6ea5c2bbe9bdc4e0871ac4ba466fef4b",
-      "verified_at": "2026-10-28T18:04:44.729Z",
+      "content_hash": "c5f5880bb236e6438227044d4393aa2a1138fabf6d7242abdd95a82798c6a6b3",
+      "verified_at": "2026-10-30T06:01:56.410Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T18:04:44.729Z"
+      "last_updated": "2026-10-30T06:01:56.410Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",

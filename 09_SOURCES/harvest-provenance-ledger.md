@@ -6133,3 +6133,4 @@ Every entry in this ledger must capture:
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `8a38b901` | Multi-dimensional audit evidence | 2026-10-30T05:46:10.668Z |
 | `learn-github-yshrsmz-buildkonfig` | `https://github.com/yshrsmz/BuildKonfig` | `73f8c406` | Multi-dimensional audit evidence | 2026-10-30T05:47:05.213Z |
 | `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `98d21e92` | Multi-dimensional audit evidence | 2026-10-30T05:54:02.447Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `fdee1bd9` | Multi-dimensional audit evidence | 2026-10-30T06:01:56.401Z |

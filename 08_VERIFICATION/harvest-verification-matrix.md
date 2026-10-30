@@ -6124,3 +6124,4 @@
 | `CYCLE-20261030-U82X` | `2026-10-30T05:46:10.665Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5616` | Yes (`7efe5b99...`) |
 | `CYCLE-20261030-VE62` | `2026-10-30T05:47:05.210Z` | `yshrsmz/BuildKonfig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5617, Rule 5618, Rule 5619` | Yes (`affa0eed...`) |
 | `CYCLE-20261030-4C3V` | `2026-10-30T05:54:02.443Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5620` | Yes (`81fe04ed...`) |
+| `CYCLE-20261030-EHT9` | `2026-10-30T06:01:56.397Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5621` | Yes (`c5f5880b...`) |

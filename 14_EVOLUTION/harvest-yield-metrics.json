@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T05:54:02.455Z",
-  "total_cycles_completed": 6101,
-  "total_learnings_persisted": 6101,
-  "total_rules_promoted": 5590,
+  "last_updated": "2026-10-30T06:01:56.406Z",
+  "total_cycles_completed": 6102,
+  "total_learnings_persisted": 6102,
+  "total_rules_promoted": 5591,
   "history": [
-    {
-      "timestamp": "2026-10-28T20:37:51.368Z",
-      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T20:37:58.048Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-30T05:54:02.455Z",
       "repository": "ydb-platform/ydb",
       "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:01:56.406Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
