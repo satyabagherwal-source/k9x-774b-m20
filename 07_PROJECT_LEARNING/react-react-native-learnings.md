@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source**: github ([https://github.com/react/react-native](https://github.com/react/react-native))  
-> **Source Version**: `eaf4c261`  
+> **Source Version**: `73e3aeca`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T02:48:07.953Z  
+> **Timestamp**: 2026-10-30T23:15:07.096Z  
 > **Learning ID**: `learn-github-react-react-native`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/react-native](https://github.com/react/react-native))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T02:48:07.825Z  
+> **Harvest Timestamp**: 2026-10-30T23:15:06.992Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A framework for building native applications using React
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 126804 stars
+- **Stars / Engagement**: 126836 stars
 
 ---
 
@@ -617,1071 +617,458 @@ export {prepareDebuggerShellFromDotSlashFile};
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb90a8d2` (2026-10-27)
-**Commit Message**: Sync OSS Fabric renderers for null-target native events (#59546)
+### Incident Patch 1: `a5e20424` (2026-10-30)
+**Commit Message**: Compile folly's SanitizeLeak.cpp in Fantom's tester
 
-Summary:
+## Summary:
 
-Regenerate the development, production, and profiling Fabric renderer bundles from React revision `dc9aed364252a34966f4f2c4a98272317fdddb60`. Native events whose view has unmounted now reach the responder system even when their event target is null.
+Fantom's tester doesn't link when it's built with AddressSanitizer. Under `-fsanitize=address`, folly headers like `small_vector.h` and `Singleton.h` call `folly::detail::annotate_object_leaked_impl` and `annotate_object_collected_impl`, and only `folly/memory/SanitizeLeak.cpp` defines them. Fantom's folly build compiles `SanitizeAddress.cpp` and `SanitizeThread.cpp` but not that file, so the link fails on both symbols.
 
-This renderer-only update retains React version `19.3.0` and leaves package metadata and dependency versions unchanged.
+This adds `folly/memory/SanitizeLeak.cpp` to `folly_runtime_SRC`, which the `RCT-Folly` podspec already compiles. Without ASan the file only defines those functions, nothing calls them.
 
-Changelog:
-[General][Fixed] - Fix lost taps after a touched view unmounts when EventTarget event dispatching is enabled
+Fixes #59668
 
-Reviewed By: javache
+## Changelog:
 
-Differential Revision: D127828293
+[INTERNAL] [FIXED] - Fix Fantom tester link under AddressSanitizer by compiling folly's SanitizeLeak.cpp
 
-Pull Request resolved: https://github.com/react/react-native/pull/59546
+## Test Plan:
 
-**File**: `packages/react-native/Libraries/Renderer/implementations/ReactFabric-dev.js` (modified, +26/-26)
+I couldn't run the full Fantom build here, so I checked the link against folly v2024.11.18.00 (the version Fantom pins) with clang and `-fsanitize=address`. A small program using `folly::small_vector`, linked with the `folly_runtime` sources it needs, fails with undefined `annotate_object_leaked_impl` / `annotate_object_collected_impl`. Adding `SanitizeLeak.cpp` makes i
+
+**File**: `private/react-native-fantom/tester/third-party/folly/CMakeLists.txt` (modified, +1/-0)
 ```diff
-@@ -7,7 +7,7 @@
-  * @noflow
-  * @nolint
-  * @preventMunge
-- * @generated SignedSource<<12e935271cee5bbb34114c56f570f060>>
-+ * @generated SignedSource<<b2da61aa9e350b425820dfd464cce486>>
-  *
-  * This file was sync'd from the facebook/react repository.
-  */
-@@ -1307,12 +1307,11 @@ __DEV__ &&
-           (_enableNativeEventTargetEventDispatching =
-             "function" === typeof event && event()));
-         if (_enableNativeEventTargetEventDispatching)
--          null != eventTarget &&
--            reactPrivateInterface.dispatchNativeEvent(
--              eventTarget,
--              topLevelType,
--              nativeEvent
--            );
-+          reactPrivateInterface.dispatchNativeEvent(
-+            eventTarget,
-+            topLevelType,
-+            nativeEvent
-+          );
-         else {
-           event = eventTarget;
-           for (
-@@ -4094,7 +4093,7 @@ __DEV__ &&
-             )),
-           thenable.then(noop, noop),
-           (thenable = index));
--      if (void 0 === thenable._debugInfo) {
-+      if (void 0 === thenable._debugInfo && Object.isExtensible(thenable)) {
-         thenableState = performance.now();
-         trackedThenables = thenable.displayName;
-         var ioInfo = {
-@@ -11766,17 +11765,16 @@ __DEV__ &&
-           current = finishedWork.alternate,
-           flags = finishedWork.flags;
-         switch (finishedWork.tag) {
--          case 0:
--          case 11:
--          case 15:
--            break;
-           case 1:
-             0 !== (flags & 1024) &&
-               null !== current &&
-               commitClassSnapshot(finishedWork, current);
-             break;
-           case 3:
-             break;
-+          case 0:
-+          case 11:
-+          case 15:
-           case 5:
-           case 26:
-           case 27:
-@@ -12363,8 +12361,8 @@ __DEV__ &&
-             null !== current)
-           )
-             for (var ii = 0; ii < current.length; ii++) {
--              var _eventPayloads$ii2 = current[ii];
--              _eventPayloads$ii2.ref.impl = _eventPayloads$ii2.nextImpl;
-+              var _eventPayloads$ii = current[ii];
-+              _eventPayloads$ii.ref.impl = _eventPayloads$ii.nextImpl;
-             }
-           recursivelyTraverseMutationEffects(root, finishedWork, lanes);
-           commitReconciliationEffects(finishedWork);
-@@ -12484,18 +12482,18 @@ __DEV__ &&
-           break;
-         case 22:
-           ii = null !== finishedWork.memoizedState;
--          _eventPayloads$ii2 =
-+          _eventPayloads$ii =
-             null !== current && null !== current.memoizedState;
-           if (finishedWork.mode & 1) {
-             var prevOffscreenSubtreeIsHidden = offscreenSubtreeIsHidden,
-               prevOffscreenSubtreeWasHidden = offscreenSubtreeWasHidden;
-             offscreenSubtreeIsHidden = prevOffscreenSubtreeIsHidden || ii;
-             offscreenSubtreeWasHidden =
--              prevOffscreenSubtreeWasHidden || _eventPayloads$ii2;
-+              prevOffscreenSubtreeWasHidden || _eventPayloads$ii;
-             recursivelyTraverseMutationEffects(root, finishedWork, lanes);
-             offscreenSubtreeWasHidden = prevOffscreenSubtreeWasHidden;
-             offscreenSubtreeIsHidden = prevOffscreenSubtreeIsHidden;
--            _eventPayloads$ii2 &&
-+            _eventPayloads$ii &&
-               !ii &&
-               !prevOffscreenSubtreeIsHidden &&
-               !prevOffscreenSubtreeWasHidden &&
-@@ -12517,11 +12515,11 @@ __DEV__ &&
-               : root._visibility | OffscreenVisible),
-             !ii ||
-               null === current ||
--              _eventPayloads$ii2 ||
-+              _eventPayloads$ii ||
-               offscreenSubtreeIsHidden ||
-               offscreenSubtreeWasHidden ||
-               0 === (finishedWork.mode & 1) ||
--              ((root = _eventPayloads$ii2 || offscreenSubtreeWasHidden),
-+              ((root = _eventPayloads$ii || offscreenSubtreeWasHidden),
-               (lanes = offscreenSubtreeIsHidden),
-               (current = offscreenSubtreeWasHidden),
-               (offscreenSubtreeIsHidden = ii || offscreenSubtreeIsHidden),
-@@ -12563,18 +12561,18 @@ __DEV__ &&
-               safelyDetachRef(current, current.return));
-           flags = pushMutationContext();
-           ii = inUpdateViewTransition;
--          _eventPayloads$ii2 = (lanes & 335544064) === lanes;
-+          _eventPayloads$ii = (lanes & 335544064) === lanes;
-           prevOffscreenSubtreeIsHidden = finishedWork.memoizedProps;
-           inUpdateViewTransition =
--            _eventPayloads$ii2 &&
-+            _eventPayloads$ii &&
-             "none" !==
-               getViewTransitionClassName(
-                 prevOffscreenSubtreeIsHidden.default,
-                 prevOffscreenSubtreeIsHidden.update
-               );
-           recursivelyTraverseMutationEffects(root, finishedWork, lanes);
-           commitReconciliationEffects(finishedWork);
--          _eventPayloads$ii2 &&
-+          _eventPayloads$ii &&
-             null !== current &&
-       
-```
-
-**File**: `packages/react-native/Libraries/Renderer/implementations/ReactFabric-prod.js` (modified, +49/-49)
-```diff
-@@ -7,7 +7,7 @@
-  * @noflow
-  * @nolint
-  * @preventMunge
-- * @generated SignedSource<<3c59d85aa170213f7f757b2501b0b2f6>>
-+ * @generated SignedSource<<f1159e174e2c4ae02640d6a11e18b4b1>>
-  *
-  * This file was sync'd from the facebook/react repository.
-  */
-@@ -1209,7 +1209,7 @@ eventPluginOrder = Array.prototype.slice.call([
-   "ReactNativeBridgeEventPlugin"
- ]);
- recomputePluginOrdering();
--var injectedNamesToPlugins$jscomp$inline_294 = {
-+var injectedNamesToPlugins$jscomp$inline_295 = {
-     ResponderEventPlugin: ResponderEventPlugin,
-     ReactNativeBridgeEventPlugin: {
-       eventTypes: {},
-@@ -1255,32 +1255,32 @@ var injectedNamesToPlugins$jscomp$inline_294 = {
-       }
-     }
-   },
--  isOrderingDirty$jscomp$inline_295 = !1,
--  pluginName$jscomp$inline_296;
--for (pluginName$jscomp$inline_296 in injectedNamesToPlugins$jscomp$inline_294)
-+  isOrderingDirty$jscomp$inline_296 = !1,
-+  pluginName$jscomp$inline_297;
-+for (pluginName$jscomp$inline_297 in injectedNamesToPlugins$jscomp$inline_295)
-   if (
--    injectedNamesToPlugins$jscomp$inline_294.hasOwnProperty(
--      pluginName$jscomp$inline_296
-+    injectedNamesToPlugins$jscomp$inline_295.hasOwnProperty(
-+      pluginName$jscomp$inline_297
-     )
-   ) {
--    var pluginModule$jscomp$inline_297 =
--      injectedNamesToPlugins$jscomp$inline_294[pluginName$jscomp$inline_296];
-+    var pluginModule$jscomp$inline_298 =
-+      injectedNamesToPlugins$jscomp$inline_295[pluginName$jscomp$inline_297];
-     if (
--      !namesToPlugins.hasOwnProperty(pluginName$jscomp$inline_296) ||
--      namesToPlugins[pluginName$jscomp$inline_296] !==
--        pluginModule$jscomp$inline_297
-+      !namesToPlugins.hasOwnProperty(pluginName$jscomp$inline_297) ||
-+      namesToPlugins[pluginName$jscomp$inline_297] !==
-+        pluginModule$jscomp$inline_298
-     ) {
--      if (namesToPlugins[pluginName$jscomp$inline_296])
-+      if (namesToPlugins[pluginName$jscomp$inline_297])
-         throw Error(
-           "EventPluginRegistry: Cannot inject two different event plugins using the same name, `" +
--            (pluginName$jscomp$inline_296 + "`.")
-+            (pluginName$jscomp$inline_297 + "`.")
-         );
--      namesToPlugins[pluginName$jscomp$inline_296] =
--        pluginModule$jscomp$inline_297;
--      isOrderingDirty$jscomp$inline_295 = !0;
-+      namesToPlugins[pluginName$jscomp$inline_297] =
-+        pluginModule$jscomp$inline_298;
-+      isOrderingDirty$jscomp$inline_296 = !0;
-     }
-   }
--isOrderingDirty$jscomp$inline_295 && recomputePluginOrdering();
-+isOrderingDirty$jscomp$inline_296 && recomputePluginOrdering();
- function batchedUpdatesImpl(fn, bookkeeping) {
-   return fn(bookkeeping);
- }
-@@ -1338,12 +1338,11 @@ function dispatchEvent(target, topLevelType, nativeEventParam) {
-       (_enableNativeEventTargetEventDispatching =
-         "function" === typeof event && event()));
-     if (_enableNativeEventTargetEventDispatching)
--      null != eventTarget &&
--        reactPrivateInterface.dispatchNativeEvent(
--          eventTarget,
--          topLevelType,
--          nativeEvent
--        );
-+      reactPrivateInterface.dispatchNativeEvent(
-+        eventTarget,
-+        topLevelType,
-+        nativeEvent
-+      );
-     else {
-       event = eventTarget;
-       for (
-@@ -8391,10 +8390,6 @@ function commitBeforeMutationEffects_complete(
-       current = fiber.alternate,
-       flags = fiber.flags;
-     switch (fiber.tag) {
--      case 0:
--      case 11:
--      case 15:
--        break;
-       case 1:
-         if (0 !== (flags & 1024) && null !== current) {
-           isViewTransitionEligible = void 0;
-@@ -8419,6 +8414,9 @@ function commitBeforeMutationEffects_complete(
-         break;
-       case 3:
-         break;
-+      case 0:
-+      case 11:
-+      case 15:
-       case 5:
-       case 26:
-       case 27:
-@@ -8797,8 +8795,8 @@ function commitMutationEffectsOnFiber(finishedWork, root, lanes) {
-         null !== current)
-       )
-         for (var ii = 0; ii < current.length; ii++) {
--          var _eventPayloads$ii2 = current[ii];
--          _eventPayloads$ii2.ref.impl = _eventPayloads$ii2.nextImpl;
-+          var _eventPayloads$ii = current[ii];
-+          _eventPayloads$ii.ref.impl = _eventPayloads$ii.nextImpl;
-         }
-       recursivelyTraverseMutationEffects(root, finishedWork, lanes);
-       commitReconciliationEffects(finishedWork);
-@@ -8897,13 +8895,13 @@ function commitMutationEffectsOnFiber(finishedWork, root, lanes) {
-       break;
-     case 22:
-       ii = null !== finishedWork.memoizedState;
--      _eventPayloads$ii2 = null !== current && null !== current.memoizedState;
-+      _eventPayloads$ii = null !== current && null !== current.memoizedState;
-       if (finishedWork.mode & 1) {
-         var prevOffscreenSubtreeIsHidden = offscreenSubtreeIsHidden,
-           prevOffscreenSubtreeWasHidden = offscreenSubtreeWasHidden;
-         offscreenSubtreeIsHidden = prevOffscreenSubtreeIsHidden || ii;
-         offscreenSubtreeWasHidden =
--          prevOffscreenSubtr
-```
-
-**File**: `packages/react-native/Libraries/Renderer/implementations/ReactFabric-profiling.js` (modified, +65/-63)
-```diff
-@@ -7,7 +7,7 @@
-  * @noflow
-  * @nolint
-  * @preventMunge
-- * @generated SignedSource<<c279b1ba2ec8b8df254cf8204b4d5b10>>
-+ * @generated SignedSource<<9f9934c9c6457b3e7ada8ebf2d803424>>
-  *
-  * This file was sync'd from the facebook/react repository.
-  */
-@@ -1276,7 +1276,7 @@ eventPluginOrder = Array.prototype.slice.call([
-   "ReactNativeBridgeEventPlugin"
- ]);
- recomputePluginOrdering();
--var injectedNamesToPlugins$jscomp$inline_336 = {
-+var injectedNamesToPlugins$jscomp$inline_337 = {
-     ResponderEventPlugin: ResponderEventPlugin,
-     ReactNativeBridgeEventPlugin: {
-       eventTypes: {},
-@@ -1322,32 +1322,32 @@ var injectedNamesToPlugins$jscomp$inline_336 = {
-       }
-     }
-   },
--  isOrderingDirty$jscomp$inline_337 = !1,
--  pluginName$jscomp$inline_338;
--for (pluginName$jscomp$inline_338 in injectedNamesToPlugins$jscomp$inline_336)
-+  isOrderingDirty$jscomp$inline_338 = !1,
-+  pluginName$jscomp$inline_339;
-+for (pluginName$jscomp$inline_339 in injectedNamesToPlugins$jscomp$inline_337)
-   if (
--    injectedNamesToPlugins$jscomp$inline_336.hasOwnProperty(
--      pluginName$jscomp$inline_338
-+    injectedNamesToPlugins$jscomp$inline_337.hasOwnProperty(
-+      pluginName$jscomp$inline_339
-     )
-   ) {
--    var pluginModule$jscomp$inline_339 =
--      injectedNamesToPlugins$jscomp$inline_336[pluginName$jscomp$inline_338];
-+    var pluginModule$jscomp$inline_340 =
-+      injectedNamesToPlugins$jscomp$inline_337[pluginName$jscomp$inline_339];
-     if (
--      !namesToPlugins.hasOwnProperty(pluginName$jscomp$inline_338) ||
--      namesToPlugins[pluginName$jscomp$inline_338] !==
--        pluginModule$jscomp$inline_339
-+      !namesToPlugins.hasOwnProperty(pluginName$jscomp$inline_339) ||
-+      namesToPlugins[pluginName$jscomp$inline_339] !==
-+        pluginModule$jscomp$inline_340
-     ) {
--      if (namesToPlugins[pluginName$jscomp$inline_338])
-+      if (namesToPlugins[pluginName$jscomp$inline_339])
-         throw Error(
-           "EventPluginRegistry: Cannot inject two different event plugins using the same name, `" +
--            (pluginName$jscomp$inline_338 + "`.")
-+            (pluginName$jscomp$inline_339 + "`.")
-         );
--      namesToPlugins[pluginName$jscomp$inline_338] =
--        pluginModule$jscomp$inline_339;
--      isOrderingDirty$jscomp$inline_337 = !0;
-+      namesToPlugins[pluginName$jscomp$inline_339] =
-+        pluginModule$jscomp$inline_340;
-+      isOrderingDirty$jscomp$inline_338 = !0;
-     }
-   }
--isOrderingDirty$jscomp$inline_337 && recomputePluginOrdering();
-+isOrderingDirty$jscomp$inline_338 && recomputePluginOrdering();
- function batchedUpdatesImpl(fn, bookkeeping) {
-   return fn(bookkeeping);
- }
-@@ -1405,12 +1405,11 @@ function dispatchEvent(target, topLevelType, nativeEventParam) {
-       (_enableNativeEventTargetEventDispatching =
-         "function" === typeof event && event()));
-     if (_enableNativeEventTargetEventDispatching)
--      null != eventTarget &&
--        reactPrivateInterface.dispatchNativeEvent(
--          eventTarget,
--          topLevelType,
--          nativeEvent
--        );
-+      reactPrivateInterface.dispatchNativeEvent(
-+        eventTarget,
-+        topLevelType,
-+        nativeEvent
-+      );
-     else {
-       event = eventTarget;
-       for (
-@@ -9090,10 +9089,6 @@ function commitBeforeMutationEffects_complete(
-       current = fiber.alternate,
-       flags = fiber.flags;
-     switch (fiber.tag) {
--      case 0:
--      case 11:
--      case 15:
--        break;
-       case 1:
-         if (0 !== (flags & 1024) && null !== current) {
-           isViewTransitionEligible = void 0;
-@@ -9118,6 +9113,9 @@ function commitBeforeMutationEffects_complete(
-         break;
-       case 3:
-         break;
-+      case 0:
-+      case 11:
-+      case 15:
-       case 5:
-       case 26:
-       case 27:
-@@ -9622,8 +9620,8 @@ function commitMutationEffectsOnFiber(finishedWork, root, lanes) {
-         null !== current)
-       )
-         for (var ii = 0; ii < current.length; ii++) {
--          var _eventPayloads$ii2 = current[ii];
--          _eventPayloads$ii2.ref.impl = _eventPayloads$ii2.nextImpl;
-+          var _eventPayloads$ii = current[ii];
-+          _eventPayloads$ii.ref.impl = _eventPayloads$ii.nextImpl;
-         }
-       recursivelyTraverseMutationEffects(root, finishedWork, lanes);
-       commitReconciliationEffects(finishedWork);
-@@ -9727,17 +9725,17 @@ function commitMutationEffectsOnFiber(finishedWork, root, lanes) {
-       break;
-     case 22:
-       ii = null !== finishedWork.memoizedState;
--      _eventPayloads$ii2 = null !== current && null !== current.memoizedState;
-+      _eventPayloads$ii = null !== current && null !== current.memoizedState;
-       if (finishedWork.mode & 1) {
-         var prevOffscreenSubtreeIsHidden = offscreenSubtreeIsHidden,
-           prevOffscreenSubtreeWasHidden = offscreenSubtreeWasHidden;
-         offscreenSubtreeIsHidden = prevOffscreenSubtreeIsHidden || ii;
-         offscreenSubtreeWasHidden =
--          prevOffscreenSubtr
+@@ -48,6 +48,7 @@ SET(folly_runtime_SRC
+         folly/lang/SafeAssert.cpp
+         folly/lang/ToAscii.cpp
+         folly/memory/SanitizeAddress.cpp
++        folly/memory/SanitizeLeak.cpp
+         folly/memory/detail/MallocImpl.cpp
+         folly/net/NetOps.cpp
+         folly/portability/SysUio.cpp
 ```
 
 ---
 
-### Incident Patch 2: `f14a2518` (2026-10-27)
-**Commit Message**: Reland: [Android] Fix Text and ScrollView payloads that Props 2.0 sends wrong or drops (#59388)
+### Incident Patch 2: `ede7ebf7` (2026-10-30)
+**Commit Message**: Fix Swift formatter detection when version is main
+
+## Summary:
+
+Fixes #59598. Some Swift toolchains report `main` for `swift format --version`, so the formatter is skipped even when the toolchain meets the minimum version. When `swift format` reports `main`, check `swift --version` and use it to enforce the existing minimum version. Other formatter candidates still require a parseable formatter version.
+
+## Changelog:
+
+[INTERNAL] [FIXED] - Detect the Swift toolchain version when `swift format` reports `main`.
+
+## Test Plan:
+
+- Ran `NODE_PATH=/Volumes/SSD512/Work/mobile/force-mobile/node_modules /Volumes/SSD512/Work/mobile/force-mobile/node_modules/.bin/jest scripts/__tests__/format-swift-test.js --runInBand --config '{"rootDir":"/tmp/react-native-contribution","testEnvironment":"node","transform":{}}'`: 2 tests passed. The Swift 6.4 case failed before the change; the Swift 6.2 case remains rejected.
+- Ran `git diff --check`: passed.
+- Xcode 27.1 was not available for an end-to-end check. The test simulates its reported version output. Full repository checks were not run.
+
+Differential Revision: D128394284
+
+Pull Request resolved: https://github.com/react/react-native/pull/59623
+
+**File**: `scripts/__tests__/format-swift-test.js` (added, +63/-0)
+```diff
+@@ -0,0 +1,63 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ * @noflow
++ * @format
++ */
++
++'use strict';
++
++jest.mock('../format-utils', () => ({
++  IS_META_CHECKOUT: false,
++  commandVersion: jest.fn(),
++  findMetaTool: jest.fn(() => null),
++}));
++jest.mock('tinyglobby', () => ({globSync: jest.fn(() => [])}));
++
++const originalSwiftFormat = process.env.SWIFT_FORMAT;
++
++beforeEach(() => {
++  delete process.env.SWIFT_FORMAT;
++});
++
++afterEach(() => {
++  if (originalSwiftFormat === undefined) {
++    delete process.env.SWIFT_FORMAT;
++  } else {
++    process.env.SWIFT_FORMAT = originalSwiftFormat;
++  }
++  jest.resetModules();
++  jest.clearAllMocks();
++  jest.restoreAllMocks();
++});
++
++test.each([
++  ['6.4', true],
++  ['6.2', false],
++])(
++  'checks the Swift toolchain version when the formatter reports main (%s)',
++  (version, accepted) => {
++    const {commandVersion} = require('../format-utils');
++    const {globSync} = require('tinyglobby');
++    commandVersion.mockImplementation((command, args) => {
++      if (command === 'swift' && args?.[0] === 'format') {
++        return {status: 0, output: 'main'};
++      }
++      if (command === 'swift') {
++        return {
++          status: 0,
++          output: `Apple Swift version ${version} (swiftlang)`,
++        };
++      }
++      return {status: 1, output: ''};
++    });
++    jest.spyOn(console, 'warn').mockImplementation(() => {});
++
++    require('../format-swift');
++
++    expect(globSync).toHaveBeenCalledTimes(accepted ? 1 : 0);
++  },
++);
+```
+
+**File**: `scripts/format-swift.js` (modified, +14/-1)
+```diff
+@@ -81,7 +81,20 @@ function findSwiftFormat() {
+   }
+   for (const [command, prefixArguments] of candidates) {
+     const result = commandVersion(command, prefixArguments);
+-    const version = parseSwiftFormatVersion(result.output);
++    let version = parseSwiftFormatVersion(result.output);
++    if (
++      result.status === 0 &&
++      version == null &&
++      result.output.trim() === 'main' &&
++      command === 'swift' &&
++      prefixArguments.length === 1 &&
++      prefixArguments[0] === 'format'
++    ) {
++      const toolchain = commandVersion(command);
++      if (toolchain.status === 0) {
++        version = parseSwiftFormatVersion(toolchain.output);
++      }
++    }
+     if (
+       result.status === 0 &&
+       version != null &&
+```
+
+---
+
+### Incident Patch 3: `97f6997e` (2026-10-30)
+**Commit Message**: Avoid global JNI ref copies in FabricUIManager lookups
 
 Summary:
+Keep a stable owning global JNI reference in the context container and expose a borrowed alias under the existing `FabricUIManager` key. Use alias reads for synchronous Android Fabric measurement, colour resolution and image prefetching, avoiding global-reference allocation and release on each lookup.
 
-Reland of https://github.com/react/react-native/pull/59080, which was reverted together with https://github.com/react/react-native/pull/59079. Code outside this repository that compiles against these headers also read `snapToAlignment` as a non-optional value.
+Add instrumentation coverage for exact alias/owner handle identity, mixed legacy global-ref and alias readers, and legacy-copy validity after the aliased handle owner is released. Stale global-ref readers still depend on the current fbjni wrapper representation; these tests exercise that compatibility, not a type-safe C++ guarantee.
 
-With Props 2.0 on Android (`enableExclusivePropsUpdateAndroid` and the related flags), the Text and ScrollView payloads come from `getDiffProps`. Some props come out wrong:
+Changelog: [Internal]
 
-- A removed Text `letterSpacing`: sent as `NaN`, which Java ignores, so the old spacing stays.
-- `scrollsChildToFocus`: never sent.
-- `snapToAlignment`: an explicit `"start"` is not sent on mount, and removing another alignment sends `"start"`.
-- `decelerationRate={0.998}`: not sent, because the C++ default is the iOS rate, 0.998. Android ScrollViews start at 0.985.
-- A removed `nestedScrollEnabled` or `sendMomentumEvents`: stays on.
+Differential Revision: D128203842
 
-This PR sends `null` for a removed `letterSpacing`, adds `scrollsChildToFocus` on Android, makes `snapToAlignment` optional, defaults `decelerationRate` to 0.985 on Android, and resets the two booleans to `false`. iOS 
+Pull Request resolved: https://github.com/react/react-native/pull/59617
 
-**File**: `packages/react-native/React/Fabric/Mounting/ComponentViews/ScrollView/RCTScrollViewComponentView.mm` (modified, +2/-1)
+**File**: `packages/react-native/ReactAndroid/src/main/jni/react/fabric/FabricUIManager.cpp` (modified, +2/-2)
 ```diff
-@@ -412,7 +412,8 @@ - (void)updateProps:(const Props::Shared &)props oldProps:(const Props::Shared &
- 
-   auto *scrollView = (RCTEnhancedScrollView *)_scrollView;
-   if (oldScrollViewProps.snapToAlignment != newScrollViewProps.snapToAlignment) {
--    scrollView.snapToAlignment = RCTNSStringFromString(toString(newScrollViewProps.snapToAlignment));
-+    scrollView.snapToAlignment =
-+        RCTNSStringFromString(toString(newScrollViewProps.snapToAlignment.value_or(ScrollViewSnapToAlignment::Start)));
+@@ -23,8 +23,8 @@ Size measureHostComponent(
+     return {};
    }
  
-   scrollView.snapToStart = newScrollViewProps.snapToStart;
+-  const auto fabricUIManager =
+-      contextContainer->at<jni::global_ref<jobject>>("FabricUIManager");
++  auto fabricUIManager =
++      contextContainer->at<jni::alias_ref<jobject>>("FabricUIManager");
+   static const auto measure =
+       jni::findClassStatic("com/facebook/react/fabric/FabricUIManager")
+           ->getMethod<jlong(
 ```
 
-**File**: `packages/react-native/ReactCommon/react/renderer/components/scrollview/BaseScrollViewProps.cpp` (modified, +2/-5)
+**File**: `packages/react-native/ReactAndroid/src/main/jni/react/fabric/FabricUIManagerBinding.cpp` (modified, +6/-1)
 ```diff
-@@ -80,7 +80,7 @@ BaseScrollViewProps::BaseScrollViewProps(
-           rawProps,
-           "decelerationRate",
-           sourceProps.decelerationRate,
--          (Float)0.998)),
-+          kDefaultDecelerationRate)),
-       endDraggingSensitivityMultiplier(convertRawProp(
-           context,
-           rawProps,
-@@ -427,10 +427,7 @@ SharedDebugStringConvertibleList BaseScrollViewProps::getDebugProps() const {
-               "snapToInterval",
-               snapToInterval,
-               defaultScrollViewProps.snapToInterval),
--          debugStringConvertibleItem(
--              "snapToAlignment",
--              snapToAlignment,
--              defaultScrollViewProps.snapToAlignment),
-+          debugStringConvertibleItem("snapToAlignment", snapToAlignment),
-           debugStringConvertibleItem(
-               "disableIntervalMomentum",
-               disableIntervalMomentum,
-```
-
-**File**: `packages/react-native/ReactCommon/react/renderer/components/scrollview/BaseScrollViewProps.h` (modified, +8/-2)
-```diff
-@@ -41,7 +41,13 @@ class BaseScrollViewProps : public ViewProps {
-   bool automaticallyAdjustContentInsets{};
-   bool automaticallyAdjustsScrollIndicatorInsets{true};
-   bool automaticallyAdjustKeyboardInsets{false};
--  Float decelerationRate{0.998f};
-+#ifdef ANDROID
-+  // ReactScrollView's initial rate.
-+  static constexpr Float kDefaultDecelerationRate = 0.985f;
-+#else
-+  static constexpr Float kDefaultDecelerationRate = 0.998f;
-+#endif
-+  Float decelerationRate{kDefaultDecelerationRate};
-   Float endDraggingSensitivityMultiplier{1};
-   bool directionalLockEnabled{};
-   ScrollViewIndicatorStyle indicatorStyle{};
-@@ -63,7 +69,7 @@ class BaseScrollViewProps : public ViewProps {
-   Point contentOffset{};
-   EdgeInsets scrollIndicatorInsets{};
-   Float snapToInterval{};
--  ScrollViewSnapToAlignment snapToAlignment{};
-+  std::optional<ScrollViewSnapToAlignment> snapToAlignment{};
-   bool disableIntervalMomentum{false};
-   std::vector<Float> snapToOffsets{};
-   bool snapToStart{true};
-```
-
-**File**: `packages/react-native/ReactCommon/react/renderer/components/scrollview/platform/android/react/renderer/components/scrollview/HostPlatformScrollViewProps.cpp` (modified, +20/-13)
-```diff
-@@ -49,7 +49,13 @@ HostPlatformScrollViewProps::HostPlatformScrollViewProps(
-           rawProps,
-           "endFillColor",
-           sourceProps.endFillColor,
--          clearColor())) {}
-+          clearColor())),
-+      scrollsChildToFocus(convertRawProp(
-+          context,
-+          rawProps,
-+          "scrollsChildToFocus",
-+          sourceProps.scrollsChildToFocus,
-+          true)) {}
+@@ -609,7 +609,12 @@ void FabricUIManagerBinding::installFabricUIManager(
+         globalJavaUiManager);
+   };
  
- void HostPlatformScrollViewProps::setProp(
-     const PropsParserContext& context,
-@@ -69,6 +75,7 @@ void HostPlatformScrollViewProps::setProp(
-     RAW_SET_PROP_SWITCH_CASE_BASIC(fadingEdgeLength);
-     RAW_SET_PROP_SWITCH_CASE_BASIC(overScrollMode);
-     RAW_SET_PROP_SWITCH_CASE_BASIC(endFillColor);
-+    RAW_SET_PROP_SWITCH_CASE_BASIC(scrollsChildToFocus);
-   }
+-  contextContainer->insert("FabricUIManager", globalJavaUiManager);
++  auto fabricUIManagerOwner =
++      std::make_shared<jni::global_ref<jobject>>(globalJavaUiManager);
++  // The alias and its owner must stay registered for the container's lifetime.
++  contextContainer->insert("FabricUIManagerOwner", fabricUIManagerOwner);
++  contextContainer->insert(
++      "FabricUIManager", jni::alias_ref<jobject>(*fabricUIManagerOwner));
+ 
+   animationChoreographer_ = std::make_shared<AndroidAnimationChoreographer>();
+ 
+```
+
+**File**: `packages/react-native/ReactAndroid/src/main/jni/react/fabric/test_helper/FabricMountingManagerTestHelper.cpp` (modified, +62/-0)
+```diff
+@@ -79,6 +79,63 @@ std::vector<Tag> toTags(jni::alias_ref<jni::JArrayInt> tags) {
+   return {region.get(), region.get() + tags->size()};
  }
  
-@@ -96,7 +103,11 @@ SharedDebugStringConvertibleList HostPlatformScrollViewProps::getDebugProps()
-           debugStringConvertibleItem(
-               "endFillColor",
-               endFillColor,
--              defaultScrollViewProps.endFillColor)};
-+              defaultScrollViewProps.endFillColor),
-+          debugStringConvertibleItem(
-+              "scrollsChildToFocus",
-+              scrollsChildToFocus,
-+              defaultScrollViewProps.scrollsChildToFocus)};
- }
- #endif
++bool fabricUIManagerAliasUsesOwnedHandle(
++    [[maybe_unused]] jni::alias_ref<jclass> javaClass,
++    jni::alias_ref<JFabricUIManager::javaobject> javaUIManager) {
++  auto contextContainer =
++      javaUIManager->getBinding()->getScheduler()->getContextContainer();
++  auto owner = contextContainer->at<std::shared_ptr<jni::global_ref<jobject>>>(
++      "FabricUIManagerOwner");
++  auto alias = contextContainer->at<jni::alias_ref<jobject>>("FabricUIManager");
++  auto env = jni::Environment::current();
++  return alias.get() == owner->get() &&
++      env->GetObjectRefType(alias.get()) == JNIGlobalRefType &&
++      jni::isSameObject(alias.get(), javaUIManager.get());
++}
++
++jni::local_ref<JFabricUIManager::javaobject> readFabricUIManagerFromContext(
++    [[maybe_unused]] jni::alias_ref<jclass> javaClass,
++    jni::alias_ref<JFabricUIManager::javaobject> javaUIManager,
++    jboolean useGlobalRef,
++    jboolean uninstall) {
++  static const auto bindingField =
++      JFabricUIManager::javaClassStatic()
++          ->getField<FabricUIManagerBinding::javaobject>("mBinding");
++  static const auto unregister =
++      jni::findClassStatic("com/facebook/react/fabric/FabricUIManagerBinding")
++          ->getMethod<void()>("unregister");
++  auto javaBinding = javaUIManager->getFieldValue(bindingField);
++  auto contextContainer =
++      javaBinding->cthis()->getScheduler()->getContextContainer();
++  if (useGlobalRef != 0) {
++    auto global =
++        contextContainer->at<jni::global_ref<jobject>>("FabricUIManager");
++    if (uninstall != 0) {
++      std::weak_ptr<jni::global_ref<jobject>> owner =
++          contextContainer->at<std::shared_ptr<jni::global_ref<jobject>>>(
++              "FabricUIManagerOwner");
++      unregister(javaBinding);
++      contextContainer->erase("FabricUIManager");
++      contextContainer->erase("FabricUIManagerOwner");
++      if (!owner.expired()) {
++        jni::throwNewJavaException(
++            "java/lang/AssertionError",
++            "FabricUIManager owner survived teardown");
++      }
++      contextContainer.reset();
++    }
++    return jni::make_local(
++        jni::static_ref_cast<JFabricUIManager::javaobject>(
++            jni::alias_ref<jobject>(global)));
++  }
++  if (uninstall != 0) {
++    unregister(javaBinding);
++  }
++  auto alias = contextContainer->at<jni::alias_ref<jobject>>("FabricUIManager");
++  return jni::make_local(
++      jni::static_ref_cast<JFabricUIManager::javaobject>(alias));
++}
++
+ } // namespace
  
-@@ -301,17 +312,9 @@ folly::dynamic HostPlatformScrollViewProps::getDiffProps(
+ FabricMountingManagerTestHelper::FabricMountingManagerTestHelper(
+@@ -402,6 +459,11 @@ FabricMountingManagerTestHelper::pulledDeleteTags() {
+ 
+ void FabricMountingManagerTestHelper::registerNatives() {
+   registerHybrid({
++      makeNativeMethod(
++          "fabricUIManagerAliasUsesOwnedHandle",
++          fabricUIManagerAliasUsesOwnedHandle),
++      makeNativeMethod(
++          "readFabricUIManagerFromContext", readFabricUIManagerFromContext),
+       makeNativeMethod(
+           "initHybrid", FabricMountingManagerTestHelper::initHybrid),
+       makeNativeMethod(
+```
+
+**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/fabric/FabricMountingManagerInstrumentationTest.kt` (modified, +68/-3)
+```diff
+@@ -252,7 +252,7 @@ class FabricMountingManagerInstrumentationTest {
    }
  
-   if (snapToAlignment != oldProps->snapToAlignment) {
--    switch (snapToAlignment) {
--      case ScrollViewSnapToAlignment::Start:
--        result["snapToAlignment"] = "start";
--        break;
--      case ScrollViewSnapToAlignment::Center:
--        result["snapToAlignment"] = "center";
--        break;
--      case ScrollViewSnapToAlignment::End:
--        result["snapToAlignment"] = "end";
--        break;
--    }
-+    result["snapToAlignment"] = snapToAlignment.has_value()
-+        ? toString(*snapToAlignment)
-+        : folly::dynamic(nullptr);
+   private fun mountPaddedView(
+-      fixTextLayoutOnPixelDensityChange: Boolean
++      fixTextLayoutOnPixelDensityChange: Boolean,
+   ): Pair<FabricMountingManagerTestHelper, ReactViewGroup> {
+     val fabricUIManager = createFabricUIManager(listOf(PaddingViewManager()))
+     val helper = FabricMountingManagerTestHelper.create(fabricUIManager)
+@@ -281,7 +281,7 @@ class FabricMountingManagerInstrumentationTest {
+     ReactNativeFeatureFlagsCxxInterop.dangerouslyForceOverride(
+         object : ReactNativeFeatureFlagsDefaults() {
+           override fun enableMountingCoordinatorPullModelAndroid(): Boolean = true
+-        }
++        },
+     )
    }
  
-   if (disableIntervalMomentum != oldProps->disableIntervalMomentum) {
-@@ -380,6 +383,10 @@ folly::dynamic HostPlatformScrollViewProps::getDiffProps(
-     result["endFillColor"] = *endFillColor;
+@@ -501,7 +501,7 @@ class FabricMountingManagerInstrumentationTest {
+           override fun enablePropsUpdateReconciliationAndroid(): Boolean = pullModel
+ 
+           override fun enablePreallocatedPropsDiffOnInsertAndroid(): Boolean = pullModel
+-        }
++        },
+     )
    }
  
-+  if (scrollsChildToFocus != oldProps->scrollsChildToFocus) {
-+    result["scrollsChildToFocus"] = scrollsChildToFocus;
+@@ -582,6 +582,71 @@ class FabricMountingManagerInstrumentationTest {
+     return surfaceId to { fabricUIManager.stopSurface(surfaceId) }
+   }
+ 
++  @Test
++  fun native_fabricUIManagerContext_aliasUsesOwnedGlobalHandle() {
++    val fabricUIManager = createFabricUIManager()
++    registerBinding(fabricUIManager)
++
++    assertThat(FabricMountingManagerTestHelper.fabricUIManagerAliasUsesOwnedHandle(fabricUIManager))
++        .isTrue()
++    assertThat(
++            FabricMountingManagerTestHelper.readFabricUIManagerFromContext(
++                fabricUIManager,
++                useGlobalRef = false,
++                uninstall = false,
++            ),
++        )
++        .isSameAs(fabricUIManager)
 +  }
 +
-   return result;
- }
- 
++  @Test
++  fun native_fabricUIManagerContext_legacyCopiesLeaveAliasValid() {
++    val fabricUIManager = createFabricUIManager()
++    registerBinding(fabricUIManager)
++
++    repeat(64) {
++      assertThat(
++              FabricMountingManagerTestHelper.readFabricUIManagerFromContext(
++                  fabricUIManager,
++                  useGlobalRef = true,
++                  uninstall = false,
++              ),
++          )
++          .isSameAs(fabricUIManager)
++      assertThat(
++              FabricMountingManagerTestHelper.fabricUIManagerAliasUsesOwnedHandle(fabricUIManager),
++          )
++          .isTrue()
++      assertThat(
++              FabricMountingManagerTestHelper.readFabricUIManagerFromContext(
++                  fabricUIManager,
++                  useGlobalRef = false,
++                  uninstall = false,
++              ),
++          )
++          .isSameAs(fabricUIManager)
++    }
++  }
++
++  @Test
++  fun native_fabricUIManagerContext_readsSurviveUninstall() {
++    for (useGlobalRef in listOf(false, true)) {
++      repeat(8) {
++        val fabricUIManager = createFabricUIManager()
++        registerBinding(fabricUIManager)
++
++        assertThat(
++                FabricMountingManagerTestHelper.readFabricUIManagerFromContext(
++                    fabricUIManager,
++                    useGlobalRef = useGlobalRef,
++                    uninstall = true,
++                ),
++            )
++            .isSameAs(fabricUIManager)
++      }
++    }
++  }
++
+   @Test
+   fun native_stopSurfaceWithSurfaceHandler_pullModel_pullsDeletes() {
+     assertStoppingSurfacePullsDeletes(pullModel = true, ::startBridgelessSurface)
 ```
 
-**File**: `packages/react-native/ReactCommon/react/renderer/components/scrollview/platform/android/react/renderer/components/scrollview/HostPlatformScrollViewProps.h` (modified, +1/-0)
+**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/fabric/FabricMountingManagerTestHelper.kt` (modified, +10/-0)
 ```diff
-@@ -38,6 +38,7 @@ class HostPlatformScrollViewProps : public BaseScrollViewProps {
-   folly::dynamic fadingEdgeLength{};
-   std::string overScrollMode{"auto"};
-   SharedColor endFillColor{clearColor()};
-+  bool scrollsChildToFocus{true};
- 
- #pragma mark - DebugStringConvertible
- 
-```
-
-**File**: `packages/react-native/ReactCommon/react/renderer/components/scrollview/tests/ScrollViewPropsDiffTest.cpp` (added, +70/-0)
-```diff
-@@ -0,0 +1,70 @@
-+/*
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ */
-+
-+#include <gtest/gtest.h>
-+
-+#include <react/renderer/components/scrollview/ScrollViewProps.h>
-+#include <react/test_utils/PropsPayloads.h>
-+
-+#ifdef RN_SERIALIZABLE_STATE
-+
-+namespace facebook::react {
-+
-+namespace {
-+
-+using folly::dynamic;
-+
-+void expectPayloads(const std::vector<PropsCommit>& commits) {
-+  expectPayloadsMatchRawProps<ScrollViewProps>(commits);
-+}
-+
-+} // namespace
-+
-+// ReactScrollViewManager has a setter for it; with
-+// enableExclusivePropsUpdateAndroid there is no rawProps fallback.
-+TEST(ScrollViewPropsDiffTest, emitsScrollsChildToFocus) {
-+  expectPayloads({{dynamic::object("scrollsChildToFocus", false)}});
-+}
-+
-+// Android ScrollViews start with snapping alignment disabled, and
-+// setSnapToAlignment disables it for null.
-+TEST(
-+    ScrollViewPropsDiffTest,
-+    keepsAnExplicitSnapToAlignmentStartApartFromUnset) {
-+  expectPayloads({
-+      {dynamic::object("snapToAlignment", "start")},
-+      {dynamic::object("snapToAlignment", "center")},
-+      {dynamic::object("snapToAlignment", nullptr)},
-+  });
-+}
-+
-+// Android ScrollViews start decelerating at 0.985 (ReactScrollViewHelper).
-+// A removed rate restores it; Props 1.5 sends null, which the setter reads as
-+// 0.
-+TEST(ScrollViewPropsDiffTest, emitsAnExplicitDecelerationRate) {
-+  expectPayloads({
-+      {dynamic::object("decelerationRate", 0.998)},
-+      {dynamic::object("decelerationRate", nullptr),
-+       dynamic::object("decelerationRate", 0.985)},
-+  });
-+}
-+
-+// The ScrollView managers turn both off for null.
-+TEST(ScrollViewPropsDiffTest, removingNestedScrollAndMomentumEventsEmitsFalse) {
-+  expectPayloads({
-+      {dynamic::object("nestedScrollEnabled", true)(
-+          "sendMomentumEvents", true)},
-+      {dynamic::object("nestedScrollEnabled", nullptr)(
-+           "sendMomentumEvents", nullptr),
-+       dynamic::object("nestedScrollEnabled", false)(
-+           "sendMomentumEvents", false)},
-+  });
-+}
-+
-+} // namespace facebook::react
-+
-+#endif
-```
-
-**File**: `packages/react-native/ReactCommon/react/renderer/components/text/BaseTextProps.cpp` (modified, +5/-1)
-```diff
-@@ -13,6 +13,8 @@
- #include <react/renderer/debug/DebugStringConvertibleItem.h>
- #include <react/utils/FloatComparison.h>
- 
-+#include <cmath>
-+
- namespace facebook::react {
- 
- static TextAttributes convertRawProp(
-@@ -436,7 +438,9 @@ void BaseTextProps::appendTextAttributesProps(
-   if (!floatEquality(
-           textAttributes.letterSpacing,
-           oldProps->textAttributes.letterSpacing)) {
--    result["letterSpacing"] = textAttributes.letterSpacing;
-+    result["letterSpacing"] = std::isnan(textAttributes.letterSpacing)
-+        ? folly::dynamic(nullptr)
-+        : textAttributes.letterSpacing;
-   }
- 
-   if (textAttributes.textTransform != oldProps->textAttributes.textTransform) {
-```
-
-**File**: `packages/react-native/ReactCommon/react/renderer/components/text/tests/ParagraphPropsDiffTest.cpp` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+/*
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ */
-+
-+#include <gtest/gtest.h>
-+
-+#include <react/renderer/components/text/ParagraphProps.h>
-+#include <react/test_utils/PropsPayloads.h>
-+
-+#ifdef RN_SERIALIZABLE_STATE
-+
-+namespace facebook::react {
-+
-+using folly::dynamic;
-+
-+// ReactTextViewManager resets letterSpacing to 0 for null;
-+// ReactTextView.setLetterSpacing ignores NaN.
-+TEST(ParagraphPropsDiffTest, removingLetterSpacingEmitsNull) {
-+  expectPayloadsMatchRawProps<ParagraphProps>({
-+      {dynamic::object("letterSpacing", 4.0)},
-+      {dynamic::object("letterSpacing", nullptr)},
-+  });
-+}
-+
-+} // namespace facebook::react
-+
-+#endif
-```
-
----
-
-### Incident Patch 3: `546d0149` (2026-10-27)
-**Commit Message**: Reland: [Android] Fix View accessibility payloads that Props 2.0 sends wrong or drops (#59387)
-
-Summary:
-
-Reland of https://github.com/react/react-native/pull/59079. It was reverted because code outside this repository that compiles against these headers still read `role` as a plain `Role` and stopped compiling.
-
-With Props 2.0 on Android (`enableExclusivePropsUpdateAndroid` and the related flags), `BaseViewManager` receives the View payload from `getDiffProps`. Some accessibility props come out wrong:
-
-- Changing one member of `accessibilityState`, such as `busy`: only that member is sent, and Java treats the map as the whole state, so a selected, disabled view becomes unselected and enabled.
-- A removed `accessibilityRole` or `role`: not cleared.
-- An explicit `role="none"`: not sent on mount, so the view falls back to `accessibilityRole`.
-- A removed `accessibilityValue`: sent as `{}`, so the old value stays in the content description.
-
-This PR sends `accessibilityState` in full, clears a removed role or value, and makes `role` optional so that unset and `"none"` differ. Nothing changes on Android with the flags off. iOS shares the props constructor, so a removed role is now als
-
-**File**: `packages/react-native/React/Fabric/Mounting/ComponentViews/View/RCTViewComponentView.mm` (modified, +5/-4)
-```diff
-@@ -67,7 +67,7 @@ static BOOL RCTViewIsInteractiveAccessibilityElement(UIView *view, const ViewPro
- 
-   // `role` wins over the legacy `accessibilityRole` when both are set, matching
-   // how the traits themselves are resolved.
--  if (props.role != Role::None) {
-+  if (props.role.value_or(Role::None) != Role::None) {
-     static const std::unordered_set<Role> interactiveRoles{
-         Role::Button,
-         Role::Checkbox,
-@@ -82,7 +82,7 @@ static BOOL RCTViewIsInteractiveAccessibilityElement(UIView *view, const ViewPro
-         Role::Switch,
-         Role::Tab,
-         Role::Treeitem};
--    return interactiveRoles.contains(props.role);
-+    return interactiveRoles.contains(*props.role);
-   }
- 
-   static const std::unordered_set<std::string_view> interactiveAccessibilityRoles{
-@@ -1690,8 +1690,9 @@ - (NSString *)accessibilityValue
-   }
- 
-   NSMutableArray *valueComponents = [NSMutableArray new];
--  NSString *roleString = (props.role != Role::None) ? [NSString stringWithUTF8String:toString(props.role).c_str()]
--                                                    : [NSString stringWithUTF8String:props.accessibilityRole.c_str()];
-+  NSString *roleString = (props.role.value_or(Role::None) != Role::None)
-+      ? [NSString stringWithUTF8String:toString(*props.role).c_str()]
-+      : [NSString stringWithUTF8String:props.accessibilityRole.c_str()];
- 
-   // In iOS, checkbox and radio buttons aren't recognized as traits. However,
-   // because our apps use checkbox and radio buttons often, we should announce
-```
-
-**File**: `packages/react-native/ReactCommon/react/renderer/components/view/AccessibilityProps.cpp` (modified, +7/-8)
-```diff
-@@ -18,12 +18,12 @@ namespace facebook::react {
- // members. This makes accessibilityTraits the single source of truth.
- // See: github.com/facebook/react-native/issues/57515
- static AccessibilityTraits deriveAccessibilityTraits(
--    Role role,
-+    std::optional<Role> role,
-     const std::string& accessibilityRole,
-     const std::optional<AccessibilityState>& accessibilityState) {
-   AccessibilityTraits traits = AccessibilityTraits::None;
--  if (role != Role::None) {
--    fromString(toString(role), traits);
-+  if (role.value_or(Role::None) != Role::None) {
-+    fromString(toString(*role), traits);
-   } else if (!accessibilityRole.empty()) {
-     fromString(accessibilityRole, traits);
-   }
-@@ -179,16 +179,15 @@ AccessibilityProps::AccessibilityProps(
-   auto* accessibilityRoleValue = rawProps.at("accessibilityRole");
-   auto* roleValue = rawProps.at("role");
- 
--  if (accessibilityRoleValue == nullptr ||
--      !accessibilityRoleValue->hasValue()) {
-+  if (accessibilityRoleValue == nullptr) {
-     accessibilityRole = sourceProps.accessibilityRole;
--  } else {
-+  } else if (accessibilityRoleValue->hasValue()) {
-     fromRawValue(context, *accessibilityRoleValue, accessibilityRole);
-   }
- 
--  if (roleValue == nullptr || !roleValue->hasValue()) {
-+  if (roleValue == nullptr) {
-     role = sourceProps.role;
--  } else {
-+  } else if (roleValue->hasValue()) {
-     fromRawValue(context, *roleValue, role);
-   }
- 
-```
-
-**File**: `packages/react-native/ReactCommon/react/renderer/components/view/AccessibilityProps.h` (modified, +1/-1)
-```diff
-@@ -56,7 +56,7 @@ class AccessibilityProps {
-   bool onAccessibilityEscape{};
-   bool onAccessibilityAction{};
-   ImportantForAccessibility importantForAccessibility{ImportantForAccessibility::Auto};
--  Role role{Role::None};
-+  std::optional<Role> role{};
-   std::string testId;
- 
- #pragma mark - DebugStringConvertible
-```
-
-**File**: `packages/react-native/ReactCommon/react/renderer/components/view/platform/android/react/renderer/components/view/HostPlatformViewProps.cpp` (modified, +37/-50)
-```diff
-@@ -395,58 +395,39 @@ inline static void updateNativeDrawableProp(
-   result[propName] = nativeDrawableResult;
- }
- 
--inline static void updateAccessibilityStateProp(
--    folly::dynamic& result,
--    const std::optional<AccessibilityState>& newState,
--    const std::optional<AccessibilityState>& oldState) {
--  folly::dynamic resultState = folly::dynamic::object();
--
--  if (!newState.has_value() && oldState.has_value()) {
--    result["accessibilityState"] = resultState;
--    return;
--  }
-+static folly::dynamic toDynamic(const AccessibilityState& state) {
-+  folly::dynamic result = folly::dynamic::object();
-+  result["disabled"] = state.disabled;
- 
--  if (!oldState.has_value() || newState->disabled != oldState->disabled) {
--    resultState["disabled"] = newState->disabled;
-+  // Omitting the key when `selected` is unset is what tells the platform the
-+  // component is not selectable. BaseViewManager#setViewState falls back to
-+  // `setSelected(false)` for an absent key, so the rendered result is
-+  // unchanged from when this was a plain `bool`.
-+  if (state.selected.has_value()) {
-+    result["selected"] = state.selected.value();
-   }
- 
--  if (!oldState.has_value() || newState->selected != oldState->selected) {
--    // Omitting the key when `selected` is unset is what tells the platform the
--    // component is not selectable. BaseViewManager#setViewState falls back to
--    // `setSelected(false)` for an absent key, so the rendered result is
--    // unchanged from when this was a plain `bool`.
--    if (newState->selected.has_value()) {
--      resultState["selected"] = newState->selected.value();
--    }
--  }
-+  result["busy"] = state.busy;
- 
--  if (!oldState.has_value() || newState->busy != oldState->busy) {
--    resultState["busy"] = newState->busy;
-+  if (state.expanded.has_value()) {
-+    result["expanded"] = state.expanded.value();
-   }
- 
--  if (!oldState.has_value() || newState->expanded != oldState->expanded) {
--    if (newState->expanded.has_value()) {
--      resultState["expanded"] = newState->expanded.value();
--    }
-+  switch (state.checked) {
-+    case AccessibilityState::Unchecked:
-+      result["checked"] = false;
-+      break;
-+    case AccessibilityState::Checked:
-+      result["checked"] = true;
-+      break;
-+    case AccessibilityState::Mixed:
-+      result["checked"] = "mixed";
-+      break;
-+    case AccessibilityState::None:
-+      result["checked"] = "none";
-+      break;
-   }
--
--  if (!oldState.has_value() || newState->checked != oldState->checked) {
--    switch (newState->checked) {
--      case AccessibilityState::Unchecked:
--        resultState["checked"] = false;
--        break;
--      case AccessibilityState::Checked:
--        resultState["checked"] = true;
--        break;
--      case AccessibilityState::Mixed:
--        resultState["checked"] = "mixed";
--        break;
--      case AccessibilityState::None:
--        resultState["checked"] = "none";
--        break;
--    }
--  }
--  result["accessibilityState"] = resultState;
-+  return result;
- }
- 
- static folly::dynamic toDynamic(
-@@ -540,7 +521,8 @@ folly::dynamic HostPlatformViewProps::getDiffProps(
-   }
- 
-   if (role != oldProps->role) {
--    result["role"] = toString(role);
-+    result["role"] =
-+        role.has_value() ? toString(*role) : folly::dynamic(nullptr);
-   }
- 
-   if (opacity != oldProps->opacity) {
-@@ -907,8 +889,9 @@ folly::dynamic HostPlatformViewProps::getDiffProps(
-   // Accessibility
- 
-   if (accessibilityState != oldProps->accessibilityState) {
--    updateAccessibilityStateProp(
--        result, accessibilityState, oldProps->accessibilityState);
-+    result["accessibilityState"] = accessibilityState.has_value()
-+        ? toDynamic(*accessibilityState)
-+        : folly::dynamic::object();
-   }
- 
-   if (accessibilityLabel != oldProps->accessibilityLabel) {
-@@ -941,7 +924,9 @@ folly::dynamic HostPlatformViewProps::getDiffProps(
-   }
- 
-   if (accessibilityRole != oldProps->accessibilityRole) {
--    result["accessibilityRole"] = accessibilityRole;
-+    result["accessibilityRole"] = accessibilityRole.empty()
-+        ? folly::dynamic(nullptr)
-+        : folly::dynamic(accessibilityRole);
-   }
- 
-   if (accessibilityLanguage != oldProps->accessibilityLanguage) {
-@@ -962,7 +947,9 @@ folly::dynamic HostPlatformViewProps::getDiffProps(
-     if (accessibilityValue.text.has_value()) {
-       accessibilityValueObject["text"] = accessibilityValue.text.value();
+@@ -90,6 +90,16 @@ private constructor(fabricUIManager: FabricUIManager) : HybridClassBase() {
+       SoLoader.loadLibrary("fabricjni_test_helper")
      }
--    result["accessibilityValue"] = accessibilityValueObject;
-+    result["accessibilityValue"] = accessibilityValueObject.empty()
-+        ? folly::dynamic(nullptr)
-+        : accessibilityValueObject;
-   }
  
-   if (accessibilityActions != oldProps->accessibilityActions) {
++    @JvmStatic
++    external fun fabricUIManagerAliasUsesOwnedHandle(fabricUIManager: FabricUIManager): Boolean
++
++    @JvmStatic
++    external fun readFabricUIManagerFromContext(
++        fabricUIManager: FabricUIManager,
++        useGlobalRef: Boolean,
++        uninstall: Boolean,
++    ): FabricUIManager
++
+     @JvmStatic
+     fun create(fabricUIManager: FabricUIManager): FabricMountingManagerTestHelper {
+       return FabricMountingManagerTestHelper(fabricUIManager)
 ```
 
-**File**: `packages/react-native/ReactCommon/react/renderer/components/view/tests/ViewPropsDiffTest.cpp` (modified, +49/-0)
+**File**: `packages/react-native/ReactCommon/react/renderer/components/modal/ModalHostViewComponentDescriptor.cpp` (modified, +2/-2)
 ```diff
-@@ -103,6 +103,55 @@ TEST(ViewPropsDiffTest, gradientColorHintEmitsNullColor) {
-                       "position", nullptr)))))}});
- }
+@@ -21,8 +21,8 @@ State::Shared ModalHostViewComponentDescriptor::createInitialState(
  
-+// BaseViewManager.setViewState replaces the whole state: an absent `selected`
-+// deselects the view and an absent `disabled` re-enables it. Props 2.0 sends an
-+// unset `checked` as "none", which Java ignores.
-+TEST(ViewPropsDiffTest, emitsTheWholeAccessibilityStateWhenOneMemberChanges) {
-+  auto state = [](bool busy) {
-+    return dynamic::object("selected", true)("disabled", true)("busy", busy);
-+  };
-+  auto sentState = [&](bool busy) {
-+    return dynamic::object(
-+        "accessibilityState", state(busy)("checked", "none"));
-+  };
-+  expectPayloads({
-+      {dynamic::object("accessibilityState", state(false)), sentState(false)},
-+      {dynamic::object("accessibilityState", state(true)), sentState(true)},
-+  });
-+}
-+
-+// React sends a removed prop as null on top of the previous props.
-+// BaseViewManager clears the role only for null, and
-+// AccessibilityRole.fromValue("") throws.
-+TEST(ViewPropsDiffTest, removingAccessibilityRoleEmitsNull) {
-+  expectPayloads({
-+      {dynamic::object("accessibilityRole", "button")},
-+      {dynamic::object("accessibilityRole", nullptr)},
-+  });
-+}
-+
-+// BaseViewManager falls back to accessibilityRole only for a null role.
-+TEST(ViewPropsDiffTest, removingRoleEmitsNull) {
-+  expectPayloads({
-+      {dynamic::object("role", "button")},
-+      {dynamic::object("role", nullptr)},
-+  });
-+}
-+
-+// An explicit role="none" overrides accessibilityRole.
-+TEST(ViewPropsDiffTest, emitsAnExplicitRoleNone) {
-+  expectPayloads(
-+      {{dynamic::object("role", "none")("accessibilityRole", "button")}});
-+}
-+
-+// BaseViewManager clears the value and the content description only for null.
-+TEST(ViewPropsDiffTest, removingAccessibilityValueEmitsNull) {
-+  expectPayloads({
-+      {dynamic::object("accessibilityValue", dynamic::object("text", "50%"))},
-+      {dynamic::object("accessibilityValue", nullptr)},
-+  });
-+}
-+
- } // namespace facebook::react
+   int surfaceId = family->getSurfaceId();
  
- #endif
+-  const jni::global_ref<jobject>& fabricUIManager =
+-      contextContainer_->at<jni::global_ref<jobject>>("FabricUIManager");
++  auto fabricUIManager =
++      contextContainer_->at<jni::alias_ref<jobject>>("FabricUIManager");
+ 
+   static auto getEncodedScreenSizeWithoutVerticalInsets =
+       jni::findClassStatic(UIManagerJavaDescriptor)
 ```
 
-**File**: `scripts/cxx-api/api-snapshots/ReactAndroidDebugCxx.api` (modified, +1/-1)
+**File**: `packages/react-native/ReactCommon/react/renderer/components/textinput/platform/android/react/renderer/components/androidtextinput/AndroidTextInputComponentDescriptor.h` (modified, +1/-2)
 ```diff
-@@ -700,8 +700,8 @@ class facebook::react::AccessibilityProps {
-   public facebook::react::AccessibilityTraits accessibilityTraits;
-   public facebook::react::AccessibilityValue accessibilityValue;
-   public facebook::react::ImportantForAccessibility importantForAccessibility;
--  public facebook::react::Role role;
-   public std::optional<facebook::react::AccessibilityState> accessibilityState;
-+  public std::optional<facebook::react::Role> role;
-   public std::string accessibilityHint;
-   public std::string accessibilityLabel;
-   public std::string accessibilityLanguage;
+@@ -44,8 +44,7 @@ class AndroidTextInputComponentDescriptor final : public ConcreteComponentDescri
+     if (surfaceIdToThemePaddingMap_.find(surfaceId) != surfaceIdToThemePaddingMap_.end()) {
+       theme = surfaceIdToThemePaddingMap_[surfaceId];
+     } else {
+-      const jni::global_ref<jobject> &fabricUIManager =
+-          contextContainer_->at<jni::global_ref<jobject>>("FabricUIManager");
++      auto fabricUIManager = contextContainer_->at<jni::alias_ref<jobject>>("FabricUIManager");
+ 
+       auto env = jni::Environment::current();
+       auto defaultTextInputPaddingArray = env->NewFloatArray(4);
 ```
 
-**File**: `scripts/cxx-api/api-snapshots/ReactAndroidFrameworksCxx.api` (modified, +1/-1)
+**File**: `packages/react-native/ReactCommon/react/renderer/graphics/platform/android/react/renderer/graphics/PlatformColorParser.cpp` (modified, +2/-2)
 ```diff
-@@ -1016,8 +1016,8 @@ class facebook::react::AccessibilityProps {
-   public facebook::react::AccessibilityTraits accessibilityTraits;
-   public facebook::react::AccessibilityValue accessibilityValue;
-   public facebook::react::ImportantForAccessibility importantForAccessibility;
--  public facebook::react::Role role;
-   public std::optional<facebook::react::AccessibilityState> accessibilityState;
-+  public std::optional<facebook::react::Role> role;
-   public std::string accessibilityHint;
-   public std::string accessibilityLabel;
-   public std::string accessibilityLanguage;
-```
-
-**File**: `scripts/cxx-api/api-snapshots/ReactAndroidNewarchCxx.api` (modified, +1/-1)
-```diff
-@@ -700,8 +700,8 @@ class facebook::react::AccessibilityProps {
-   public facebook::react::AccessibilityTraits accessibilityTraits;
-   public facebook::react::AccessibilityValue accessibilityValue;
-   public facebook::react::ImportantForAccessibility importantForAccessibility;
--  public facebook::react::Role role;
-   public std::optional<facebook::react::AccessibilityState> accessibilityState;
-+  public std::optional<facebook::react::Role> role;
-   public std::string accessibilityHint;
-   public std::string accessibilityLabel;
-   public std::string accessibilityLanguage;
+@@ -91,8 +91,8 @@ SharedColor parsePlatformColor(
+         if (iterator != getColorCache.end()) {
+           resolvedColor = iterator->second;
+         } else {
+-          const auto& fabricUIManager =
+-              contextContainer.at<jni::global_ref<jobject>>("FabricUIManager");
++          auto fabricUIManager =
++              contextContainer.at<jni::alias_ref<jobject>>("FabricUIManager");
+           // Boxed Integer: null is an explicit miss; a non-null value may be 0
+           // (transparent black).
+           static auto getColorFromJava =
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #59553** (closed): Remove 4 unused bindings and eslint-disable block from TypeDiffing-test.js (@meta-codesync[bot])
-- **PR #59546** (2026-10-27): Sync OSS Fabric renderers for null-target native events (#59546) (@rubennorte)
-- **PR #59545** (2026-10-27): Run the unmounted-touch responder test with both dispatch systems (#59545) (@rubennorte)
-- **PR #59541** (2026-10-27): [RN][Changelog] Add changelog for v0.88.1 (@react-native-bot)
-- **PR #59535** (closed): Update Kotlin to 2.3.21 (#59535) (@cortinico)
-- **PR #59522** (closed): Process responder events for touches whose target unmounted (@lazerg)
+- **PR #59675** (2026-10-30): Bump nlohmann_json to 3.12.0 so Fantom's tester builds with newer Clang (@lazerg)
+- **PR #59674** (2026-10-30): Compile folly's SanitizeLeak.cpp in Fantom's tester (@lazerg)
+- **PR #59660** (closed): Regenerate constexpr trait API snapshots (@javache)
+- **PR #59658** (2026-10-30): Make shadow node traits constexpr (#59658) (@javache)
+- **PR #59657** (2026-10-30): Compare prop name pointers before their characters in RawPropsParser (@hryhoriiK97)
+- **PR #59652** (closed): Keep the ShadowNode vtable compatible after the asLayoutable change (@hryhoriiK97)
 
 ---
 
@@ -1701,68 +1088,28 @@ This PR sends `accessibilityState` in full, clears a removed role or value, and 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Sync OSS Fabric renderers for null-target native events (#59546)
+## X. Compile folly's SanitizeLeak.cpp in Fantom's tester
 
 **RULE**:
-When implementing operations in `packages/react-native/Libraries/Renderer/implementations/ReactFabric-dev.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `private/react-native-fantom/tester/third-party/folly/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb90a8d2`: Sync OSS Fabric renderers for null-target native events (#59546). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a5e20424`: Compile folly's SanitizeLeak.cpp in Fantom's tester. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/Libraries/Renderer/implementations/ReactFabric-dev.js`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `private/react-native-fantom/tester/third-party/folly/CMakeLists.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
- * @generated SignedSource<<b2da61aa9e350b425820dfd464cce486>>
-          reactPrivateInterface.dispatchNativeEvent(
-            eventTarget,
-            topLevelType,
-            nativeEvent
-          );
-      if (void 0 === thenable._debugInfo && Object.isExtensible(thenable)) {
-          case 0:
-          case 11:
-          case 15:
-              var _eventPayloads$ii = current[ii];
-              _eventPayloads$ii.ref.impl = _eventPayloads$ii.nextImpl;
-          _eventPayloads$ii =
-              prevOffscreenSubtreeWasHidden || _eventPayloads$ii;
-            _eventPayloads$ii &&
-              _eventPayloads$ii ||
-              ((root = _eventPayloads$ii || offscreenSubtreeWasHidden),
-          _eventPayloads$ii = (lanes & 335544064) === lanes;
-            _eventPayloads$ii &&
-          _eventPayloads$ii &&
+        folly/memory/SanitizeLeak.cpp
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
- * @generated SignedSource<<12e935271cee5bbb34114c56f570f060>>
-          null != eventTarget &&
-            reactPrivateInterface.dispatchNativeEvent(
-              eventTarget,
-              topLevelType,
-              nativeEvent
-            );
-      if (void 0 === thenable._debugInfo) {
-          case 0:
-          case 11:
-          case 15:
-            break;
-              var _eventPayloads$ii2 = current[ii];
-              _eventPayloads$ii2.ref.impl = _eventPayloads$ii2.nextImpl;
-          _eventPayloads$ii2 =
-              prevOffscreenSubtreeWasHidden || _eventPayloads$ii2;
-            _eventPayloads$ii2 &&
-              _eventPayloads$ii2 ||
-              ((root = _eventPayloads$ii2 || offscreenSubtreeWasHidden),
-          _eventPayloads$ii2 = (lanes & 335544064) === lanes;
-            _eventPayloads$ii2 &&
-          _eventPayloads$ii2 &&
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb90a8d2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a5e20424` are properly handled with clean fallback behavior.

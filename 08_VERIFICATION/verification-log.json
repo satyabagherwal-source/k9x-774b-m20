@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-8EXL",
-    "timestamp": "2026-10-28T17:05:43.065Z",
-    "repository": "nomic-ai/nomic-embed-text-v1.5",
-    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-    "contentHash": "a2635af6c9c848da37527c7f8860918c36d26092aadfe239ca787095470d17c2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-8GPW",
-    "timestamp": "2026-10-28T17:05:45.380Z",
-    "repository": "Ataraxy-Labs/sem",
-    "learningId": "learn-github-ataraxy-labs-sem",
-    "contentHash": "9ea765aba68ac92abed64f1a6c26fff6288cb5e1d1d241634e2ae70522f375ec",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-8MEA",
     "timestamp": "2026-10-28T17:05:52.738Z",
     "repository": "kcl-lang/kcl",
@@ -7490,6 +7460,36 @@
     "repository": "kirillzyusko/react-native-keyboard-controller",
     "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
     "contentHash": "afb1520f0148a66eb124dd0c31edbe1a06649049da9157b0cab46b566b90bf77",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-B365",
+    "timestamp": "2026-10-30T23:15:03.245Z",
+    "repository": "max-sixty/worktrunk",
+    "learningId": "learn-github-max-sixty-worktrunk",
+    "contentHash": "5eba1cd958ab7e21cd338798bd27e05b9c641518775587a16886f5dfead9dd2d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-B6KJ",
+    "timestamp": "2026-10-30T23:15:07.651Z",
+    "repository": "react/react-native",
+    "learningId": "learn-github-react-react-native",
+    "contentHash": "748f72c2e393413d2d6e3f1ae3ad537257e5e4408f3299062e386c78d9624a8d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

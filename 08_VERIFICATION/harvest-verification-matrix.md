@@ -6352,3 +6352,5 @@
 | `CYCLE-20261030-NA7G` | `2026-10-30T22:56:32.620Z` | `pallets/flask` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5930` | Yes (`1339d2f0...`) |
 | `CYCLE-20261030-YIYK` | `2026-10-30T23:05:17.180Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5931` | Yes (`08a13f00...`) |
 | `CYCLE-20261030-YM4Z` | `2026-10-30T23:05:21.299Z` | `kirillzyusko/react-native-keyboard-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5932` | Yes (`afb1520f...`) |
+| `CYCLE-20261030-B365` | `2026-10-30T23:15:03.245Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5933` | Yes (`5eba1cd9...`) |
+| `CYCLE-20261030-B6KJ` | `2026-10-30T23:15:07.651Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5934` | Yes (`748f72c2...`) |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T23:05:21.308Z",
-  "total_cycles_completed": 6329,
-  "total_learnings_persisted": 6329,
-  "total_rules_promoted": 5903,
+  "last_updated": "2026-10-30T23:15:07.659Z",
+  "total_cycles_completed": 6331,
+  "total_learnings_persisted": 6331,
+  "total_rules_promoted": 5905,
   "history": [
-    {
-      "timestamp": "2026-10-30T07:48:07.521Z",
-      "repository": "salvo-rs/salvo",
-      "learningId": "learn-github-salvo-rs-salvo",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T08:04:02.169Z",
-      "repository": "Pika-Labs/Pika-H3-Flex",
-      "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T08:04:03.933Z",
       "repository": "scrapy/scrapy",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T23:05:21.308Z",
       "repository": "kirillzyusko/react-native-keyboard-controller",
       "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T23:15:03.252Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T23:15:07.659Z",
+      "repository": "react/react-native",
+      "learningId": "learn-github-react-react-native",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

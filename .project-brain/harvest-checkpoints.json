@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T23:05:21.312Z",
+  "last_updated": "2026-10-30T23:15:07.662Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "f7a3e7e2a72b7a5bc030ed89b840f4a1ce97667b45634214f845b4cdb3e42c26",
-      "verified_at": "2026-10-29T00:29:42.240Z",
+      "content_hash": "5eba1cd958ab7e21cd338798bd27e05b9c641518775587a16886f5dfead9dd2d",
+      "verified_at": "2026-10-30T23:15:03.255Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T00:29:42.240Z"
+      "last_updated": "2026-10-30T23:15:03.255Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",
@@ -15426,14 +15426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-react-native",
-      "content_hash": "12568cc57fd01ba3506f8ea69bc79657d6bddc6607c4a7fab1a32ffcffd55481",
-      "verified_at": "2026-10-28T02:48:08.373Z",
+      "content_hash": "748f72c2e393413d2d6e3f1ae3ad537257e5e4408f3299062e386c78d9624a8d",
+      "verified_at": "2026-10-30T23:15:07.661Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T02:48:08.373Z"
+      "last_updated": "2026-10-30T23:15:07.661Z"
     },
     "faker-js/faker": {
       "repository": "faker-js/faker",

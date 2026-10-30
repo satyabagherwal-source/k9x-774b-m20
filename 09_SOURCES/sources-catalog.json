@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "16d52e58",
+    "sourceVersion": "4907d2dd",
     "license": "NOASSERTION",
-    "contentHash": "f7a3e7e2a72b7a5bc030ed89b840f4a1ce97667b45634214f845b4cdb3e42c26",
-    "lastHarvestedAt": "2026-10-29T00:29:42.232Z",
+    "contentHash": "5eba1cd958ab7e21cd338798bd27e05b9c641518775587a16886f5dfead9dd2d",
+    "lastHarvestedAt": "2026-10-30T23:15:03.248Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -10273,10 +10273,10 @@
     "repository": "react/react-native",
     "platform": "github",
     "sourceUrl": "https://github.com/react/react-native",
-    "sourceVersion": "eaf4c261",
+    "sourceVersion": "73e3aeca",
     "license": "MIT",
-    "contentHash": "12568cc57fd01ba3506f8ea69bc79657d6bddc6607c4a7fab1a32ffcffd55481",
-    "lastHarvestedAt": "2026-10-28T02:48:08.365Z",
+    "contentHash": "748f72c2e393413d2d6e3f1ae3ad537257e5e4408f3299062e386c78d9624a8d",
+    "lastHarvestedAt": "2026-10-30T23:15:07.654Z",
     "learningId": "learn-github-react-react-native"
   },
   "faker-js-faker": {

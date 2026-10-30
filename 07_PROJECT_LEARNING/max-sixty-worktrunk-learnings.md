@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `16d52e58`  
+> **Source Version**: `4907d2dd`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T00:29:41.620Z  
+> **Timestamp**: 2026-10-30T23:15:02.689Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T00:29:40.805Z  
+> **Harvest Timestamp**: 2026-10-30T23:15:01.350Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9544 stars
+- **Stars / Engagement**: 9563 stars
 
 ---
 
@@ -2118,277 +2118,378 @@ impl LayoutConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b131f1a3` (2026-10-28)
-**Commit Message**: fix(list): restore task progress in the loading footer (#4620)
+### Incident Patch 1: `4907d2dd` (2026-10-29)
+**Commit Message**: fix(remove): find Linux reap candidates through procfs (#4631)
 
-Restore the completed/total task counter removed in #4333 while keeping
-the inventory and clipped-row counts. The initial frame says “loading
-details…” until the task plan exists, then shows `N/M tasks complete`,
-including results for off-screen rows. Progress comes first so it
-remains visible in narrow terminals; stalled loading keeps the counter
-and identifies pending work.
-
-PTY regressions cover full and clipped tables at 150 and 60 columns,
-checking monotonic progress and matching totals. A gated summary task
-exercises the actual stall callback at `1/2` complete, then verifies
-progress reaches `2/2` after release. All 12 focused progress/stall
-tests passed, and live Leaf checks passed at 80 and 60 columns.
-
-> _This was written by Codex on behalf of max-sixty_
-
-**File**: `src/commands/list/collect/mod.rs` (modified, +28/-9)
+**File**: `flake.nix` (modified, +3/-3)
 ```diff
-@@ -753,9 +753,13 @@ fn render_reveal(
-         .collect()
- }
- 
--fn format_loading_footer(footer_base: &str) -> String {
-+fn format_loading_footer(footer_base: &str, progress: Option<(usize, usize)>) -> String {
-     let dim = Style::new().dimmed();
--    format!("{INFO_SYMBOL} {dim}{footer_base} — loading details…{dim:#}")
-+    let message = match progress {
-+        Some((completed, total)) => format!("{completed}/{total} tasks complete — {footer_base}"),
-+        None => format!("{footer_base} — loading details…"),
-+    };
-+    format!("{INFO_SYMBOL} {dim}{message}{dim:#}")
- }
- 
- /// Build the progressive-table footer shown while the drain is stalled.
-@@ -765,11 +769,12 @@ fn format_loading_footer(footer_base: &str) -> String {
- /// `pending_count` is the total outstanding-result count (≥ 1).
- fn format_stall_footer(
-     footer_base: &str,
-+    completed: usize,
-+    total: usize,
-     pending_count: usize,
-     first_kind: TaskKind,
-     first_name: &str,
- ) -> String {
--    let dim = Style::new().dimmed();
-     let kind_name = first_kind.display_name();
-     let waiting_clause = if pending_count == 1 {
-         cformat!("waiting on <underline>{kind_name}</> for <underline>{first_name}</>")
-@@ -778,7 +783,10 @@ fn format_stall_footer(
-             "waiting on {pending_count} tasks, including <underline>{kind_name}</> for <underline>{first_name}</>"
-         )
-     };
--    cformat!("{INFO_SYMBOL} {dim}{footer_base} — no recent progress; {waiting_clause}{dim:#}")
-+    format_loading_footer(
-+        &format!("no recent progress; {waiting_clause} — {footer_base}"),
-+        Some((completed, total)),
-+    )
- }
- 
- /// Caps on the message shown per failed task: at most `MAX_LINES` lines,
-@@ -1562,7 +1570,7 @@ pub fn collect(
-                 all_items.len()
-             );
-         }
--        table.update_footer(format_loading_footer(&footer_base));
-+        table.update_footer(format_loading_footer(&footer_base, None));
-         table.render_skeleton()?;
-         worktrunk::trace::instant("Skeleton rendered");
-         Some(table)
-@@ -1901,6 +1909,10 @@ pub fn collect(
-             .map(|item| layout.render_skeleton_row(item, placeholder).render())
-             .collect();
-         if let Some(table) = progressive_table.as_mut() {
-+            table.update_footer(format_loading_footer(
-+                &footer_base,
-+                Some((0, expected_results.count())),
-+            ));
-             for (idx, row) in commit_rows.iter().enumerate() {
-                 table.update_row(idx, row.clone());
-             }
-@@ -1997,7 +2009,10 @@ pub fn collect(
-                             s.progress_overflow = true;
-                         }
- 
--                        let footer_msg = format_loading_footer(&footer_base);
-+                        let footer_msg = format_loading_footer(
-+                            &footer_base,
-+                            Some((s.completed_results, total_results)),
-+                        );
-                         s.table.update_footer(footer_msg);
-                         s.table.update_row(item_idx, rendered.clone());
- 
-@@ -2041,6 +2056,8 @@ pub fn collect(
-                         let mut s = state_cell.borrow_mut();
-                         let footer_msg = format_stall_footer(
-                             &footer_base,
-+                            s.completed_results,
-+                            total_results,
-                             pending_count,
-                             first_kind,
-                             first_name,
-@@ -2446,24 +2463,26 @@ mod tests {
- 
-     #[test]
-     fn test_format_stall_footer_single_pending() {
--        let rendered = format_stall_footer("3 worktrees", 1, TaskKind::CiStatus, "feat");
-+        let rendered = format_stall_footer("3 worktrees", 11, 12, 1, TaskKind::CiStatus, "feat");
-         assert_snapshot!(
-             rendered.ansi_strip(),
--            @"○ 3 worktrees — no recent progress; waiting on CI status for feat"
-+            @"○ 11/12 tasks complete — no recent progress; waiting on CI status for feat — 3 worktrees"
-         );
-     }
- 
-     #[test]
-     fn test_format_stall_footer_many_pending() {
-         let rendered = format_stall_footer(
-             "3 worktrees — first 2 of 3 shown",
-+            9,
-+            12,
-             3,
-             TaskKind::CiStatus,
-             "feat",
-         );
-         assert_snapshot!(
-             rendered.ansi_strip(),
--            @"○ 3 worktrees — first 2 of 3 shown — no recent progress; waiting on 3 tasks, including CI status for feat"
-+            @"○ 9/12 tasks complete — no recent progress; waiting on 3 tasks, including CI status for feat — 3 worktrees — first 2 of 3 shown"
-         );
-     }
- 
+@@ -164,9 +164,9 @@
+               src = pkgs.lib.cleanSource ./.;
+               # Tests shell out to a few host tools — `git` for the harness,
+               # `python3` for argv-quoting and post-start fixtures, `ps`
+-              # (procps) for the pgid invariant test, `lsof` for the
+-              # `--reap` process-discovery test, `ssh-keygen` (openssh) for
+-              # the `--no-ff` commit-signing test. Without these on PATH
++              # (procps) for process checks, `lsof` for fsmonitor socket
++              # discovery, and `ssh-keygen` (openssh) for the `--no-ff`
++              # commit-signing test. Without these on PATH
+               # the sandbox surfaces them as `No such file or directory`.
+               nativeBuildInputs = commonArgs.nativeBuildInputs ++ [
+                 pkgs.git
 ```
 
-**File**: `tests/integration_tests/list_progressive.rs` (modified, +97/-8)
+**File**: `src/git/reap.rs` (modified, +53/-19)
 ```diff
-@@ -5,14 +5,14 @@
- #![cfg(all(unix, feature = "shell-integration-tests"))]
+@@ -11,11 +11,10 @@
+ //! # Discovery
+ //!
+ //! Processes are discovered by working directory: any process whose `cwd` is
+-//! at or under the worktree path. `lsof -d cwd` reports every visible
+-//! process's cwd in one call; [`parse_lsof_cwd`] parses it and the caller
+-//! filters by path prefix. This is deliberately scoped to processes the
+-//! invoking user can see (no root), matching the `lsof` reliance already
+-//! established by [`super::fsmonitor`].
++//! at or under the worktree path. Linux reads `/proc/<pid>/cwd` directly so a
++//! system-wide `lsof` scan cannot time out and hide all candidates. Other Unix
++//! systems use `lsof -d cwd`; [`parse_lsof_cwd`] parses its output. Both paths
++//! skip processes whose cwd cannot be read and filter by the worktree prefix.
+ //!
+ //! # Data-safety contract
+ //!
+@@ -56,11 +55,11 @@ use crate::shell_exec::Cmd;
+ use super::fsmonitor::{NixSignaller, REAP_KILL_DEADLINE, escalate_terminate};
  
- use crate::common::progressive_output::{ProgressiveCaptureOptions, capture_progressive_output};
--use crate::common::pty::{build_pty_command, exec_cmd_in_pty};
-+use crate::common::pty::{build_pty_command, exec_cmd_in_pty, exec_cmd_in_pty_prompted_with};
- use crate::common::{TestRepo, repo, wt_bin};
- use ansi_str::AnsiStr;
- use rstest::rstest;
+ /// One process discovered under a worktree: its PID, short command name, and
+-/// the working directory `lsof` reported.
++/// the working directory reported by the platform's process probe.
+ #[derive(Debug, Clone, PartialEq, Eq)]
+ pub struct CwdProcess {
+     pub pid: u32,
+-    /// Short command name from `lsof` (truncated to ~9 chars by `lsof`).
++    /// Short command name from `/proc` or `lsof`.
+     pub command: String,
+     pub cwd: PathBuf,
+ }
+@@ -180,14 +179,49 @@ fn without_controlling_terminal(pids: &[u32]) -> HashSet<u32> {
+ /// current `wt` process. This is the raw discovery step, *before* the
+ /// controlling-terminal guard — [`collect_reapable`] layers that on top.
+ ///
+-/// Best-effort: an `lsof` spawn failure yields an empty list. `lsof -d cwd` is
+-/// run system-wide rather than with `+D <path>` so it never walks the
+-/// worktree's file tree; the prefix filter is applied here instead. Results
+-/// are sorted by PID for stable output.
++/// Best-effort: unreadable or disappeared processes are skipped. On non-Linux
++/// Unix, an `lsof` spawn failure yields an empty list. Results are sorted by
++/// PID for stable output.
+ pub fn processes_under(worktree_path: &Path) -> Vec<CwdProcess> {
+     let canonical =
+         dunce::canonicalize(worktree_path).unwrap_or_else(|_| worktree_path.to_path_buf());
++    let self_pid = std::process::id();
++
++    #[cfg(target_os = "linux")]
++    let processes = processes_from_proc(Path::new("/proc"));
++    #[cfg(not(target_os = "linux"))]
++    let processes = processes_from_lsof();
++
++    let mut candidates: Vec<CwdProcess> = processes
++        .into_iter()
++        .filter(|p| p.pid != self_pid)
++        .filter(|p| p.cwd.starts_with(&canonical))
++        .collect();
++    candidates.sort_by_key(|p| p.pid);
++    candidates
++}
++
++#[cfg(target_os = "linux")]
++fn processes_from_proc(proc_root: &Path) -> Vec<CwdProcess> {
++    let Ok(entries) = std::fs::read_dir(proc_root) else {
++        return Vec::new();
++    };
++    entries
++        .filter_map(Result::ok)
++        .filter_map(|entry| {
++            let pid = entry.file_name().to_str()?.parse::<u32>().ok()?;
++            let cwd = std::fs::read_link(entry.path().join("cwd")).ok()?;
++            let command = std::fs::read_to_string(entry.path().join("comm"))
++                .unwrap_or_default()
++                .trim_end_matches('\n')
++                .to_owned();
++            Some(CwdProcess { pid, command, cwd })
++        })
++        .collect()
++}
  
--/// Loading footers describe the inventory separately from the displayed rows,
--/// both before results arrive and as rows fill in. Capture the complete PTY
--/// stream so even a fast run must exercise its initial loading footer.
-+/// Loading footers distinguish inventory, visible rows, and task progress.
-+/// Capture the complete PTY stream so even a fast run exercises the counter,
-+/// including progress from off-screen rows.
- #[test]
- fn test_list_progressive_loading_footer() {
-     let mut repo = TestRepo::standard_main_only();
-@@ -22,14 +22,23 @@ fn test_list_progressive_loading_footer() {
-         repo.run_git(&["branch", branch]);
-     }
++#[cfg(not(target_os = "linux"))]
++fn processes_from_lsof() -> Vec<CwdProcess> {
+     // `lsof -d cwd` lists every visible process's cwd. It exits non-zero when
+     // some processes are inaccessible (other users), but still prints the
+     // accessible ones — so parse whatever stdout we got rather than gating on
+@@ -200,14 +234,7 @@ pub fn processes_under(worktree_path: &Path) -> Vec<CwdProcess> {
+         return Vec::new();
+     };
  
--    for (height, expected) in [
--        (30, "○ 3 worktrees, 2 branches — loading details…"),
-+    let progress_pattern =
-+        regex::Regex::new(r"○ (\d+)/(\d+) tasks complete — (\d+ worktrees[^\r\n]*)").unwrap();
-+    let mut previous_total = None;
-+    for (height, width, expected) in [
-+        (30, 150, "○ 3 worktrees, 2 branches — loading details…"),
-         (
-             9,
-+            150,
-             "○ 3 worktrees, 2 branches — first 3 of 5 shown — loading details…",
-         ),
-+        (
-+            9,
-+            60,
-+            "○ 3 worktrees, 2 branches — first 3 of 5 shown — loading de…",
-+        ),
-     ] {
--        let pair = crate::common::open_pty_with_size(height, 150);
-+        let pair = crate::common::open_pty_with_size(height, width);
-         let cmd = build_pty_command(
-             wt_bin().to_str().unwrap(),
-             &["list", "--progressive", "--branches"],
-@@ -47,7 +56,7 @@ fn test_list_progressive_loading_footer() {
-         let output = raw.ansi_strip();
-         let loading_footers: Vec<_> = output
-             .lines()
--            .filter(|line| line.contains("loading details…"))
-+            .filter(|line| line.contains(" — loading "))
-             .map(|line| &line[line.find('○').unwrap()..])
-             .collect();
-         assert!(
-@@ -57,13 +66,93 @@ fn test_list_progressive_loading_footer() {
-         for footer in loading_footers {
-             assert_eq!(footer.trim_end(), expected);
-         }
-+        let progress: Vec<_> = progress_pattern
-+            .captures_iter(&output)
-+            .map(|capture| {
-+                if width == 150 {
-+                    assert_eq!(
-+                        &capture[3],
-+                        expected
-+                            .strip_prefix("○ ")
-+                            .unwrap()
-+                            .strip_suffix(" — loading details…")
-+                            .unwrap()
-+                    );
-+                }
-+                (
-+                    capture[1].parse::<usize>().unwrap(),
-+                    capture[2].parse::<usize>().unwrap(),
-+                )
-+            })
-+            .collect();
-+        let total = progress.last().expect("task counter missing").1;
-+        assert!(total > 0);
-+        assert_eq!(progress.first(), Some(&(0, total)));
-+        assert_eq!(progress.last(), Some(&(total, total)));
-+        assert!(
-+            progress
-+                .iter()
-+                .all(|&(_, denominator)| denominator == total)
-+        );
-+        assert!(progress.windows(2).all(|pair| pair[0].0 <= pair[1].0));
-+        if let Some(previous_total) = previous_total {
-+            assert_eq!(
-+                total, previous_total,
-+                "clipping must not change task totals"
-+            );
-+        }
-+        previous_total = Some(total);
-         assert!(
-             output.contains("Showing 3 worktrees, 2 branches"),
-             "final summary missing: {output}"
-         );
-     }
+-    let self_pid = std::process::id();
+-    let mut candidates: Vec<CwdProcess> = parse_lsof_cwd(&String::from_utf8_lossy(&output.stdout))
+-        .into_iter()
+-        .filter(|p| p.pid != self_pid)
+-        .filter(|p| p.cwd.starts_with(&canonical))
+-        .collect();
+-    candidates.sort_by_key(|p| p.pid);
+-    candidates
++    parse_lsof_cwd(&String::from_utf8_lossy(&output.stdout))
  }
  
-+/// Keep one summary pending until the stall footer is visible, then let it
-+/// finish. Dropping the gate also releases the command if the test panics.
-+#[test]
-+fn test_list_progressive_stall_keeps_task_progress() {
-+    let mut repo = TestRepo::standard_main_only();
-+    repo.add_worktree("clean");
-+    std::fs::write(repo.root_path().join("file.txt"), "changed\n").unwrap();
-+    repo.write_test_config(
-+        r#"
-+[list]
-+columns = ["branch", "summary"]
+ /// Discover the processes eligible for reaping under `worktree_path`.
+@@ -260,6 +287,13 @@ pub fn reap_summary(count: usize, gone: usize) -> Result<String, String> {
+ mod tests {
+     use super::*;
+ 
++    #[cfg(target_os = "linux")]
++    #[test]
++    fn missing_procfs_yields_no_processes() {
++        let root = tempfile::tempdir().unwrap();
++        assert!(processes_from_proc(&root.path().join("absent")).is_empty());
++    }
 +
-+[commit.generation]
-+command = 'cat >/dev/null; while [ -e "$WORKTRUNK_TEST_SUMMARY_GATE" ]; do sleep 0.05; done; echo Update content'
-+"#,
+     #[test]
+     fn parse_lsof_cwd_extracts_pid_command_and_path() {
+         let stdout = "\
+```
+
+**File**: `tests/integration_tests/remove.rs` (modified, +36/-16)
+```diff
+@@ -211,29 +211,42 @@ fn test_remove_reap_kills_process(mut repo: TestRepo) {
+         .unwrap();
+     let pid = child.id();
+ 
+-    // Wait until lsof reports the child's cwd — fast when idle, but under
+-    // suite load a single probe can burn its whole 5s in-process timeout;
+-    // `wait_for` carries the suite's generous presence-poll deadline.
+-    wait_for(
+-        &format!("child {pid} in cwd discovery — is lsof installed and able to read process cwds?"),
+-        || {
+-            reap::processes_under(&canonical)
+-                .iter()
+-                .any(|p| p.pid == pid)
+-        },
+-    );
++    // Wait until the platform probe reports the child's cwd.
++    wait_for(&format!("child {pid} in cwd discovery"), || {
++        reap::processes_under(&canonical)
++            .iter()
++            .any(|p| p.pid == pid)
++    });
+ 
+     // The guard reaps the child iff it holds no controlling terminal — which
+     // it inherited from this process's session, so read the session directly:
+     // `/dev/tty` opens iff the session has a controlling terminal.
+     let will_reap = std::fs::File::open("/dev/tty").is_err();
+ 
++    // Linux discovery must not depend on lsof completing its system-wide
++    // scan. An empty lsof result reproduces the timeout's lost output.
++    #[cfg(target_os = "linux")]
++    let mock_path = {
++        use crate::common::mock_commands::{MockConfig, MockResponse};
++        let bin_dir = repo.root_path().join(".bin");
++        std::fs::create_dir_all(&bin_dir).unwrap();
++        MockConfig::new("lsof")
++            .command("_default", MockResponse::output(""))
++            .write(&bin_dir);
++        let mut paths: Vec<std::path::PathBuf> = std::env::var_os("PATH")
++            .map(|p| std::env::split_paths(&p).collect())
++            .unwrap_or_default();
++        paths.insert(0, bin_dir.clone());
++        (std::env::join_paths(paths).unwrap(), bin_dir)
++    };
++
+     let run_remove = |repo: &TestRepo| {
+-        let output = repo
+-            .wt_command()
+-            .args(["remove", "--reap", "feature-reapkill"])
+-            .output()
+-            .unwrap();
++        let mut cmd = repo.wt_command();
++        cmd.args(["remove", "--reap", "feature-reapkill"]);
++        #[cfg(target_os = "linux")]
++        cmd.env("PATH", &mock_path.0)
++            .env("WORKTRUNK_TEST_MOCK_CONFIG_DIR", &mock_path.1);
++        let output = cmd.output().unwrap();
+         String::from_utf8_lossy(&output.stderr).into_owned()
+     };
+ 
+@@ -245,6 +258,13 @@ fn test_remove_reap_kills_process(mut repo: TestRepo) {
+         // thread already blocked in `wait()` reaps it the instant it exits.
+         let reaper = std::thread::spawn(move || child.wait().unwrap());
+         let stderr = run_remove(&repo);
++        if !stderr.contains("Reaping 1 process under") {
++            // On a regression, release the test child promptly before failing.
++            let _ = nix::sys::signal::kill(
++                nix::unistd::Pid::from_raw(pid as i32),
++                nix::sys::signal::Signal::SIGKILL,
++            );
++        }
+         let status = reaper.join().unwrap();
+ 
+         assert!(
+```
+
+---
+
+### Incident Patch 2: `e82f74e5` (2026-10-29)
+**Commit Message**: fix(tether): stop supervised processes on Ctrl-C (#4623)
+
+**File**: `src/commands/step/tether.rs` (modified, +34/-9)
+```diff
+@@ -27,6 +27,7 @@
+ //! outlive it — Windows neither reparents to a single init nor offers a pgid.
+ 
+ use std::path::Path;
++use std::sync::Arc;
+ use std::time::Duration;
+ 
+ use anyhow::{Context, Result};
+@@ -65,31 +66,45 @@ pub(crate) fn step_tether(command: &[String], working_dir: Option<&Path>) -> Res
+     // shell's directory.
+     worktrunk::shell_exec::scrub_directive_env_vars(&mut cmd);
+     set_new_process_group(&mut cmd);
++    // The supervised command is in a different process group, so terminal
++    // Ctrl-C reaches this supervisor alone. Hold a foreground signal lease
++    // while it runs; the reaper observes cancellation and sweeps its group.
++    #[cfg(unix)]
++    let signals = worktrunk::signal_forwarder::ForegroundSignals::install(
++        worktrunk::shell_exec::TerminalInterrupt::Cancels,
++    )?;
+     let mut trace = CommandTrace::new(None, &command.join(" "));
+-    let mut child = match worktrunk::shell_exec::spawn(&mut cmd) {
++    #[cfg(unix)]
++    let spawned = signals.spawn(&mut cmd);
++    #[cfg(windows)]
++    let spawned = worktrunk::shell_exec::spawn_shared_child(&mut cmd).map_err(anyhow::Error::from);
++    let child = match spawned {
+         Ok(child) => child,
+         Err(e) => {
+-            trace.fail(&e);
++            trace.fail(e.as_ref());
+             return Err(e).with_context(|| format!("spawn tethered command: {}", command[0]));
+         }
+     };
++    let child = Arc::new(child);
+     let id = child.id();
+ 
+-    // Reaper: polls until the worktree is gone, then kills the tree so the
+-    // supervised child exits and `wait` returns. Only spawned when there is a
+-    // worktree to watch; otherwise teardown relies solely on the command's
+-    // own exit.
+-    if let Some(dir) = worktree {
++    // Reaper: polls for worktree removal or command interruption, then kills
++    // the tree so the supervised child exits and `wait` returns.
++    if worktree.is_some() || cfg!(unix) {
+         std::thread::spawn(move || {
+-            while !worktree_gone(&dir) {
++            while !worktree.as_deref().is_some_and(worktree_gone) && !interrupted() {
+                 std::thread::sleep(POLL_INTERVAL);
+             }
+             kill_process_tree(id);
+         });
+     }
+ 
+     // Block until the child exits — killed by the reaper, or on its own.
+-    match child.wait() {
++    #[cfg(unix)]
++    let waited = signals.wait(&child).map(|outcome| outcome.status);
++    #[cfg(windows)]
++    let waited = child.wait();
++    match waited {
+         Ok(status) => trace.complete(status.success()),
+         Err(e) => trace.fail(&e),
+     }
+@@ -104,6 +119,16 @@ pub(crate) fn step_tether(command: &[String], working_dir: Option<&Path>) -> Res
+     Ok(())
+ }
+ 
++#[cfg(unix)]
++fn interrupted() -> bool {
++    worktrunk::signal_forwarder::operation_interrupt_signal().is_some()
++}
++
++#[cfg(windows)]
++fn interrupted() -> bool {
++    false
++}
++
+ /// The worktree path no longer resolves. Only `NotFound` counts as gone; a
+ /// transient stat error (`EACCES`, `EIO`) is not a removal, so the reaper
+ /// keeps waiting rather than tearing down a live server.
+```
+
+**File**: `tests/integration_tests/step_tether.rs` (modified, +50/-0)
+```diff
+@@ -133,6 +133,56 @@ fn test_tether_kills_process_group_when_command_exits(repo: TestRepo) {
+     );
+ }
+ 
++/// A terminal Ctrl-C reaches the supervisor's foreground group, while the
++/// supervised command is in a separate group. The supervisor must still reap
++/// that command before it exits.
++#[rstest]
++fn test_tether_kills_process_group_when_interrupted(repo: TestRepo) {
++    use std::os::unix::process::CommandExt;
++
++    let pidfile = repo.home_path().join("tether-interrupted.pgid");
++    let snippet = format!(
++        "printf %s \"$$\" > \"{}\"; exec sleep 600",
++        pidfile.display()
 +    );
-+    let mut gate = Some(tempfile::NamedTempFile::new_in(repo.home_path()).unwrap());
-+    let mut env = repo.test_env_vars();
-+    env.push((
-+        "WORKTRUNK_TEST_SUMMARY_GATE".to_owned(),
-+        gate.as_ref().unwrap().path().to_str().unwrap().to_owned(),
-+    ));
-+    let cmd = build_pty_command
++    let mut command = repo.wt_command();
++    command
++        .args(["step", "tether", "--", "sh", "-c", &snippet])
++        .current_dir(repo.path())
++        .stdin(Stdio::null())
++        .stdout(Stdio::null())
++        .stderr(Stdio::null())
++        .process_group(0);
++    let mut supervisor = command.spawn().expect("spawn wt step tether");
++    wait_for_file_content(&pidfile);
++    let pgid: i32 = std::fs::read_to_string(&pidfile)
++        .unwrap()
++        .trim()
++        .parse()
++        .expect("supervised command PID");
++    assert_ne!(supervisor.id() as i32, pgid);
++    assert!(
++        group_alive(pgid),
++        "supervised group should be alive before Ctrl-C"
++    );
++
++    kill(
++        Pid::from_raw(-(supervisor.id() as i32)),
++        nix::sys::signal::Signal::SIGINT,
++    )
++    .expect("signal the supervisor's foreground group");
++    let supervisor_exited = wait_until(|| supervisor.try_wait().unwrap().is_some());
++    let group_gone = wait_until(|| !group_alive(pgid));
++
++    // Clean up before asserting so a failure cannot leak the sleep.
++    let _ = kill(Pid::from_raw(-pgid), nix::sys::signal::Signal::SIGKILL);
++    let _ = supervisor.kill();
++    let _ = supervisor.wait();
++
++    assert!(supervisor_exited, "the supervisor should exit after Ctrl-C");
++    assert!(group_gone, "Ctrl-C must kill the supervised process group");
++}
++
+ /// The global `-C <dir>` flag runs the tethered command in that directory —
+ /// the canonical way to start a server from a subdirectory (Astro in `docs/`,
+ /// a dev server in `frontend/`) given the command runs directly with no shell
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4633** (closed): chore: bump max-sixty/tend from 0.3.15 to 0.3.18 (@dependabot[bot])
+- **PR #4631** (2026-10-29): fix(remove): find Linux reap candidates through procfs (@worktrunk-bot)
+- **PR #4625** (closed): chore: bump max-sixty/tend from 0.3.15 to 0.3.17 (@dependabot[bot])
+- **PR #4623** (2026-10-29): fix(tether): stop supervised processes on Ctrl-C (@worktrunk-bot)
 - **PR #4620** (2026-10-28): fix(list): restore task progress in the loading footer (@max-sixty)
-- **PR #4613** (2026-10-27): feat(completion): complete remote-qualified switch branches (@worktrunk-bot)
-- **PR #4611** (2026-10-27): Prevent log permission repair from changing symlink targets (@worktrunk-bot)
-- **PR #4609** (2026-10-27): Serialize signal scope retirement with signal receipt (@max-sixty)
-- **PR #4608** (2026-10-27): Read the cd directive file as-is in every shell wrapper (@max-sixty)
-- **PR #4607** (closed): test(signals): wait for wt receipt before alias child exits (@worktrunk-bot)
+- **PR #4617** (closed): chore: bump max-sixty/tend from 0.3.15 to 0.3.16 (@dependabot[bot])
 
 ---
 
@@ -2408,60 +2509,32 @@ tests passed, and live Leaf checks passed at 80 and 60 columns.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. list): restore task progress in the loading footer (#4620)
+## X. remove): find Linux reap candidates through procfs (#4631)
 
 **RULE**:
-When implementing operations in `src/commands/list/collect/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b131f1a3`: list): restore task progress in the loading footer (#4620). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4907d2dd`: remove): find Linux reap candidates through procfs (#4631). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/list/collect/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-fn format_loading_footer(footer_base: &str, progress: Option<(usize, usize)>) -> String {
-    let message = match progress {
-        Some((completed, total)) => format!("{completed}/{total} tasks complete — {footer_base}"),
-        None => format!("{footer_base} — loading details…"),
-    };
-    format!("{INFO_SYMBOL} {dim}{message}{dim:#}")
-    completed: usize,
-    total: usize,
-    format_loading_footer(
-        &format!("no recent progress; {waiting_clause} — {footer_base}"),
-        Some((completed, total)),
-    )
-        table.update_footer(format_loading_footer(&footer_base, None));
-            table.update_footer(format_loading_footer(
-                &footer_base,
-                Some((0, expected_results.count())),
-            ));
-                        let footer_msg = format_loading_footer(
-                            &footer_base,
-                            Some((s.completed_results, total_results)),
-                        );
-                            s.completed_results,
-                            total_results,
-        let rendered = format_stall_footer("3 worktrees", 11, 12, 1, TaskKind::CiStatus, "feat");
-            @"○ 11/12 tasks complete — no recent progre
+              # (procps) for process checks, `lsof` for fsmonitor socket
+              # discovery, and `ssh-keygen` (openssh) for the `--no-ff`
+              # commit-signing test. Without these on PATH
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-fn format_loading_footer(footer_base: &str) -> String {
-    format!("{INFO_SYMBOL} {dim}{footer_base} — loading details…{dim:#}")
-    let dim = Style::new().dimmed();
-    cformat!("{INFO_SYMBOL} {dim}{footer_base} — no recent progress; {waiting_clause}{dim:#}")
-        table.update_footer(format_loading_footer(&footer_base));
-                        let footer_msg = format_loading_footer(&footer_base);
-        let rendered = format_stall_footer("3 worktrees", 1, TaskKind::CiStatus, "feat");
-            @"○ 3 worktrees — no recent progress; waiting on CI status for feat"
-            @"○ 3 worktrees — first 2 of 3 shown — no recent progress; waiting on 3 tasks, including CI status for feat"
+              # (procps) for the pgid invariant test, `lsof` for the
+              # `--reap` process-discovery test, `ssh-keygen` (openssh) for
+              # the `--no-ff` commit-signing test. Without these on PATH
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b131f1a3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4907d2dd` are properly handled with clean fallback behavior.

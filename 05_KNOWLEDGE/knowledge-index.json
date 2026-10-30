@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T23:05:21.219Z",
+  "last_updated": "2026-10-30T23:15:07.587Z",
   "total_verified_learnings": 1178,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -37354,8 +37354,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "16d52e58",
-      "content_hash": "f7a3e7e2a72b7a5bc030ed89b840f4a1ce97667b45634214f845b4cdb3e42c26",
+      "source_version": "4907d2dd",
+      "content_hash": "5eba1cd958ab7e21cd338798bd27e05b9c641518775587a16886f5dfead9dd2d",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -37398,6 +37398,11 @@
           "number": 5473,
           "title": "list): restore task progress in the loading footer (#4620)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5933,
+          "title": "remove): find Linux reap candidates through procfs (#4631)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37405,7 +37410,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T00:29:42.139Z",
+      "verified_at": "2026-10-30T23:15:03.165Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47013,8 +47018,8 @@
       "slug": "react-react-native",
       "platform": "github",
       "source_url": "https://github.com/react/react-native",
-      "source_version": "eaf4c261",
-      "content_hash": "12568cc57fd01ba3506f8ea69bc79657d6bddc6607c4a7fab1a32ffcffd55481",
+      "source_version": "73e3aeca",
+      "content_hash": "748f72c2e393413d2d6e3f1ae3ad537257e5e4408f3299062e386c78d9624a8d",
       "dossier_path": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "promoted_rules": [
@@ -47032,6 +47037,11 @@
           "number": 5140,
           "title": "Sync OSS Fabric renderers for null-target native events (#59546)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5934,
+          "title": "Compile folly's SanitizeLeak.cpp in Fantom's tester",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47039,7 +47049,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T02:48:08.291Z",
+      "verified_at": "2026-10-30T23:15:07.570Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156812,6 +156822,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T23:05:21.198Z"
+    },
+    "rule-5933": {
+      "learning_id": "rule-5933",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5933,
+      "title": "remove): find Linux reap candidates through procfs (#4631)",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "4907d2dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:15:03.165Z"
+    },
+    "rule-5934": {
+      "learning_id": "rule-5934",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5934,
+      "title": "Compile folly's SanitizeLeak.cpp in Fantom's tester",
+      "source_url": "https://github.com/react/react-native",
+      "source_version": "73e3aeca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:15:07.570Z"
     }
   },
   "aliases": {
