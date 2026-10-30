@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T06:23:35.068Z",
-    "lastVerified": "2026-10-30T06:23:35.068Z",
+    "lastChecked": "2026-10-30T06:29:54.197Z",
+    "lastVerified": "2026-10-30T06:29:54.197Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -333,9 +333,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T06:01:53.552Z",
+    "lastChecked": "2026-10-30T06:29:48.574Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T06:01:53.552Z"
+    "lastVerified": "2026-10-30T06:29:48.574Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1168,11 +1168,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cryfs-cryfs": {
-    "name": "cryfs",
+    "name": "cryfs/cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-10-30T00:07:58.796Z",
-    "revisionIdentifier": "ad1f72d5",
-    "lastVerified": "2026-10-30T00:07:58.796Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-30T06:29:51.074Z",
+    "lastVerified": "2026-10-30T06:29:51.074Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-cryfs-cryfs",
+    "contentHash": "bb118e0dbd3a12acb855f4510478124d7cf61470566b95b84b960a4f8979d471",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tursodatabase-turso": {
     "name": "tursodatabase/turso",
@@ -4087,9 +4097,9 @@
   "gitui-org-gitui": {
     "name": "gitui",
     "officialUrl": "https://github.com/gitui-org/gitui",
-    "lastChecked": "2026-10-28T13:56:42.783Z",
+    "lastChecked": "2026-10-30T06:29:33.677Z",
     "revisionIdentifier": "d7214ecc",
-    "lastVerified": "2026-10-28T13:56:42.783Z"
+    "lastVerified": "2026-10-30T06:29:33.677Z"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
     "name": "deepseek-ai/DeepSeek-V4-Pro",
@@ -5970,9 +5980,9 @@
   "apache-incubator-pegasus": {
     "name": "incubator-pegasus",
     "officialUrl": "https://github.com/apache/incubator-pegasus",
-    "lastChecked": "2026-10-28T17:42:53.208Z",
+    "lastChecked": "2026-10-30T06:29:46.218Z",
     "revisionIdentifier": "75015467",
-    "lastVerified": "2026-10-28T17:42:53.208Z"
+    "lastVerified": "2026-10-30T06:29:46.218Z"
   },
   "dalance-procs": {
     "name": "procs",
@@ -6380,14 +6390,14 @@
     "officialUrl": "https://github.com/temporalio/temporal",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T18:41:55.719Z",
-    "lastVerified": "2026-10-28T18:41:55.719Z",
+    "lastChecked": "2026-10-30T06:29:46.757Z",
+    "lastVerified": "2026-10-30T06:29:46.757Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "0ee572161c6c4dd82fbea7caabc95c044bd100a56923194e80c24f547ba528d1",
+    "contentHash": "324c9ccf38323938dfcfe96c95797bee924c8777b5dbf7d2444fd61e44715a4f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -9288,5 +9298,29 @@
     "lastChecked": "2026-10-30T06:23:16.651Z",
     "revisionIdentifier": "9cdc4556",
     "lastVerified": "2026-10-30T06:23:16.651Z"
+  },
+  "sundios-seo-dashboard": {
+    "name": "SEO-Dashboard",
+    "officialUrl": "https://github.com/sundios/SEO-Dashboard",
+    "lastChecked": "2026-10-30T06:29:36.035Z",
+    "revisionIdentifier": "8ca76eb6",
+    "lastVerified": "2026-10-30T06:29:36.035Z"
+  },
+  "mikepenz-multiplatform-markdown-renderer": {
+    "name": "mikepenz/multiplatform-markdown-renderer",
+    "officialUrl": "https://github.com/mikepenz/multiplatform-markdown-renderer",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-30T06:29:43.787Z",
+    "lastVerified": "2026-10-30T06:29:43.787Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
+    "contentHash": "0c85086e990db0e15c72bd0bca6f68663aa7b1a64b9aed9474455e5fafe4b6a4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

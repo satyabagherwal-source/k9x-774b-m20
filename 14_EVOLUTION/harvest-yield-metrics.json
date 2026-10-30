@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T06:23:32.516Z",
-  "total_cycles_completed": 6109,
-  "total_learnings_persisted": 6109,
-  "total_rules_promoted": 5598,
+  "last_updated": "2026-10-30T06:29:51.664Z",
+  "total_cycles_completed": 6112,
+  "total_learnings_persisted": 6112,
+  "total_rules_promoted": 5601,
   "history": [
-    {
-      "timestamp": "2026-10-28T20:57:33.316Z",
-      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T20:57:34.993Z",
-      "repository": "Qwen/Qwen-Image-2.1-Turbo",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T21:04:20.308Z",
-      "repository": "Phocinae/Phocinae-Largha-150M-v1",
-      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T21:04:27.670Z",
       "repository": "microsoft/react-native-windows",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-30T06:23:32.516Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:29:45.163Z",
+      "repository": "mikepenz/multiplatform-markdown-renderer",
+      "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:29:47.660Z",
+      "repository": "temporalio/temporal",
+      "learningId": "learn-github-temporalio-temporal",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T06:29:51.664Z",
+      "repository": "cryfs/cryfs",
+      "learningId": "learn-github-cryfs-cryfs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T06:23:32.435Z",
+  "last_updated": "2026-10-30T06:29:51.615Z",
   "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8020,14 +8020,19 @@
       "slug": "cryfs-cryfs",
       "platform": "github",
       "source_url": "https://github.com/cryfs/cryfs",
-      "source_version": "ad1f72d5",
-      "content_hash": "0b8945b80cac5c9f8b0b4b7f211d45b0b53418a3f8907ca4a3d5a9028888bf31",
+      "source_version": "e2da97b1",
+      "content_hash": "bb118e0dbd3a12acb855f4510478124d7cf61470566b95b84b960a4f8979d471",
       "dossier_path": "07_PROJECT_LEARNING/cryfs-cryfs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cryfs-cryfs-learnings.md",
       "promoted_rules": [
         {
           "number": 1784,
           "title": "Add TODOs for the rename follow-ups found while fixing #672 (#673)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5631,
+          "title": "Don't panic when a rename within a directory overwrites a loaded node (#676)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -8036,7 +8041,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T22:29:32.705Z",
+      "verified_at": "2026-10-30T06:29:51.604Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38347,14 +38352,19 @@
       "slug": "mikepenz-multiplatform-markdown-renderer",
       "platform": "github",
       "source_url": "https://github.com/mikepenz/multiplatform-markdown-renderer",
-      "source_version": "71a5b18c",
-      "content_hash": "d3bca0526017b5f97432fad399e0eab9606ddb00efd69db8ab4d8063f7300dbe",
+      "source_version": "09b21ae4",
+      "content_hash": "0c85086e990db0e15c72bd0bca6f68663aa7b1a64b9aed9474455e5fafe4b6a4",
       "dossier_path": "07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
       "promoted_rules": [
         {
           "number": 2778,
           "title": "Merge pull request #652 from mikepenz/test/detached-placement-regression",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5629,
+          "title": "deps): update dependency com.mikepenz:version-catalog to v0.23.2 (#657)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -38363,7 +38373,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T19:50:14.069Z",
+      "verified_at": "2026-10-30T06:29:45.100Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52382,8 +52392,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "59a75202",
-      "content_hash": "0ee572161c6c4dd82fbea7caabc95c044bd100a56923194e80c24f547ba528d1",
+      "source_version": "7726647d",
+      "content_hash": "324c9ccf38323938dfcfe96c95797bee924c8777b5dbf7d2444fd61e44715a4f",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -52431,6 +52441,11 @@
           "number": 5366,
           "title": "SignalWithStart hang on orphaned current-execution pointer (#11774)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5630,
+          "title": "Render percentage point comparisons with percent sign (#12282)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52438,7 +52453,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T18:41:56.780Z",
+      "verified_at": "2026-10-30T06:29:47.600Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150943,6 +150958,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T06:23:32.416Z"
+    },
+    "rule-5629": {
+      "learning_id": "rule-5629",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5629,
+      "title": "deps): update dependency com.mikepenz:version-catalog to v0.23.2 (#657)",
+      "source_url": "https://github.com/mikepenz/multiplatform-markdown-renderer",
+      "source_version": "09b21ae4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:29:45.100Z"
+    },
+    "rule-5630": {
+      "learning_id": "rule-5630",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5630,
+      "title": "Render percentage point comparisons with percent sign (#12282)",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "7726647d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:29:47.600Z"
+    },
+    "rule-5631": {
+      "learning_id": "rule-5631",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5631,
+      "title": "Don't panic when a rename within a directory overwrites a loaded node (#676)",
+      "source_url": "https://github.com/cryfs/cryfs",
+      "source_version": "e2da97b1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T06:29:51.604Z"
     }
   },
   "aliases": {

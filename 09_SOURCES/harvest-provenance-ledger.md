@@ -6141,3 +6141,6 @@ Every entry in this ledger must capture:
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `073d2cd5` | Multi-dimensional audit evidence | 2026-10-30T06:23:24.811Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `a59cd61f` | Multi-dimensional audit evidence | 2026-10-30T06:23:28.957Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `551d84e7` | Multi-dimensional audit evidence | 2026-10-30T06:23:32.511Z |
+| `learn-github-mikepenz-multiplatform-markdown-renderer` | `https://github.com/mikepenz/multiplatform-markdown-renderer` | `09b21ae4` | Multi-dimensional audit evidence | 2026-10-30T06:29:45.159Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `7726647d` | Multi-dimensional audit evidence | 2026-10-30T06:29:47.656Z |
+| `learn-github-cryfs-cryfs` | `https://github.com/cryfs/cryfs` | `e2da97b1` | Multi-dimensional audit evidence | 2026-10-30T06:29:51.660Z |

@@ -6132,3 +6132,6 @@
 | `CYCLE-20261030-63YF` | `2026-10-30T06:23:24.807Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5626` | Yes (`bc670c8b...`) |
 | `CYCLE-20261030-675M` | `2026-10-30T06:23:28.954Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5627` | Yes (`7a58c502...`) |
 | `CYCLE-20261030-69WB` | `2026-10-30T06:23:32.507Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5628` | Yes (`d85f7d0d...`) |
+| `CYCLE-20261030-E9FO` | `2026-10-30T06:29:45.156Z` | `mikepenz/multiplatform-markdown-renderer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5629` | Yes (`0c85086e...`) |
+| `CYCLE-20261030-EBD1` | `2026-10-30T06:29:47.653Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5630` | Yes (`324c9ccf...`) |
+| `CYCLE-20261030-EEGA` | `2026-10-30T06:29:51.658Z` | `cryfs/cryfs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5631` | Yes (`bb118e0d...`) |

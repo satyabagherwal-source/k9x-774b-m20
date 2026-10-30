@@ -2983,10 +2983,10 @@
     "repository": "cryfs/cryfs",
     "platform": "github",
     "sourceUrl": "https://github.com/cryfs/cryfs",
-    "sourceVersion": "ad1f72d5",
+    "sourceVersion": "e2da97b1",
     "license": "LGPL-3.0",
-    "contentHash": "0b8945b80cac5c9f8b0b4b7f211d45b0b53418a3f8907ca4a3d5a9028888bf31",
-    "lastHarvestedAt": "2026-10-18T22:29:32.741Z",
+    "contentHash": "bb118e0dbd3a12acb855f4510478124d7cf61470566b95b84b960a4f8979d471",
+    "lastHarvestedAt": "2026-10-30T06:29:51.660Z",
     "learningId": "learn-github-cryfs-cryfs"
   },
   "lioensky-vcptoolbox": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "59a75202",
+    "sourceVersion": "7726647d",
     "license": "MIT",
-    "contentHash": "0ee572161c6c4dd82fbea7caabc95c044bd100a56923194e80c24f547ba528d1",
-    "lastHarvestedAt": "2026-10-28T18:41:56.880Z",
+    "contentHash": "324c9ccf38323938dfcfe96c95797bee924c8777b5dbf7d2444fd61e44715a4f",
+    "lastHarvestedAt": "2026-10-30T06:29:47.656Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -8833,10 +8833,10 @@
     "repository": "mikepenz/multiplatform-markdown-renderer",
     "platform": "github",
     "sourceUrl": "https://github.com/mikepenz/multiplatform-markdown-renderer",
-    "sourceVersion": "71a5b18c",
+    "sourceVersion": "09b21ae4",
     "license": "Apache-2.0",
-    "contentHash": "d3bca0526017b5f97432fad399e0eab9606ddb00efd69db8ab4d8063f7300dbe",
-    "lastHarvestedAt": "2026-10-19T19:50:14.125Z",
+    "contentHash": "0c85086e990db0e15c72bd0bca6f68663aa7b1a64b9aed9474455e5fafe4b6a4",
+    "lastHarvestedAt": "2026-10-30T06:29:45.159Z",
     "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer"
   },
   "kamgurgul-cpu-info": {

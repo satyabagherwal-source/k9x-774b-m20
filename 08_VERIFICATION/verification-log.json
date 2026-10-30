@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-9ABS",
-    "timestamp": "2026-10-28T01:42:36.424Z",
-    "repository": "cloudscape-design/components",
-    "learningId": "learn-github-cloudscape-design-components",
-    "contentHash": "6e942899332cf7c76d038eebbbd5a50c07a626ef4cbe82e1ac0159d7e077236a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-9CSQ",
-    "timestamp": "2026-10-28T01:42:39.626Z",
-    "repository": "GitoxideLabs/gitoxide",
-    "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "e7dbe430457dff235a3d3b76f6fc6a5ff6d1f98ce30ae009a86cfe5eec98eab0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-9EWL",
-    "timestamp": "2026-10-28T01:42:42.357Z",
-    "repository": "OpenMOSS-Team/MOSS-Image-Base",
-    "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-    "contentHash": "5821491fadf5d2f489d06db013eabcb4bffe4f1726680ea356db5d8232926368",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-9FMJ",
     "timestamp": "2026-10-28T01:42:43.291Z",
     "repository": "microsoft/react-native-windows",
@@ -7490,6 +7445,51 @@
     "repository": "ytsaurus/ytsaurus",
     "learningId": "learn-github-ytsaurus-ytsaurus",
     "contentHash": "d85f7d0d7335daf8180186d998e0b32bd1fca4571832e720871dea8a21813634",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-E9FO",
+    "timestamp": "2026-10-30T06:29:45.156Z",
+    "repository": "mikepenz/multiplatform-markdown-renderer",
+    "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
+    "contentHash": "0c85086e990db0e15c72bd0bca6f68663aa7b1a64b9aed9474455e5fafe4b6a4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-EBD1",
+    "timestamp": "2026-10-30T06:29:47.653Z",
+    "repository": "temporalio/temporal",
+    "learningId": "learn-github-temporalio-temporal",
+    "contentHash": "324c9ccf38323938dfcfe96c95797bee924c8777b5dbf7d2444fd61e44715a4f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-EEGA",
+    "timestamp": "2026-10-30T06:29:51.658Z",
+    "repository": "cryfs/cryfs",
+    "learningId": "learn-github-cryfs-cryfs",
+    "contentHash": "bb118e0dbd3a12acb855f4510478124d7cf61470566b95b84b960a4f8979d471",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
