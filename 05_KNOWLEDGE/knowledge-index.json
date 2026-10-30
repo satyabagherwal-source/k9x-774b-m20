@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T21:19:36.920Z",
+  "last_updated": "2026-10-30T21:34:22.095Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2816,8 +2816,8 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "6ec0da29",
-      "content_hash": "0ebc2b3c1bc04ded2fb800eee0496ac5d2168c6bb7df51504d9ac037b9c71038",
+      "source_version": "e2c05f7a",
+      "content_hash": "bd7d3e1acde156f8e2cf1623d1f76a0b5f0572817de99884e34b44aea01cdc9c",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
@@ -2870,6 +2870,11 @@
           "number": 5547,
           "title": "crypto): report the EC-P-192 algorithm for P-192 keys and certificates (#11431)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5884,
+          "title": "containerd): export image by its stored name (#11511)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2877,7 +2882,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T22:48:51.933Z",
+      "verified_at": "2026-10-30T21:30:01.073Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15063,8 +15068,8 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "e0db02c5",
-      "content_hash": "5928d835d9d7bb1eafcdbb12cdf3ecb461e260f4f525a008a98cde634c80a592",
+      "source_version": "02c67d98",
+      "content_hash": "eb092257778872858fcadd9ccd61594aad66386dd5045c716eb951d206d2fe9c",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
@@ -15107,6 +15112,21 @@
           "number": 5443,
           "title": "Track whether a non-default region factory has ever been installed via `has_cust",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5890,
+          "title": "Integer Wraparound Guard on Pointer/Byte Metric Conversions",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5891,
+          "title": "Guard Band & Clamping on Dynamic Size-Class Rescaling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5892,
+          "title": "Asynchronous Multi-State Allocation Reclamation Window Accounting",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15114,7 +15134,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:52:12.831Z",
+      "verified_at": "2026-10-30T21:33:51.393Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43561,17 +43581,23 @@
       "slug": "openziti-zrok",
       "platform": "github",
       "source_url": "https://github.com/openziti/zrok",
-      "source_version": "09ed814e",
-      "content_hash": "d9841fa6a1e9ceb549cf23e107fb5add82128689bf0af29c74902558f68a7605",
+      "source_version": "fea58ae4",
+      "content_hash": "ecbf70b59f40eac765b00020c6be542ede46fbef4b4a1b69ab15d108665f789d",
       "dossier_path": "07_PROJECT_LEARNING/openziti-zrok-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openziti-zrok-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 5886,
+          "title": "add isolated macos agent smoke workflow; verify named share shutdown and replay;",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T21:07:47.489Z",
+      "verified_at": "2026-10-30T21:30:07.203Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44967,8 +44993,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "e1ee0571",
-      "content_hash": "cff5d829548d8e0e8d388732cef157791e2cbe56246d398596b2ba010adbfe2c",
+      "source_version": "9eb81f37",
+      "content_hash": "d647357ff6de7cc6ad45db06383bcf2f5544c6c0c0a181b58d93b95ccb8683c6",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -44996,6 +45022,11 @@
           "number": 5531,
           "title": "[PXT-1570] Retry throttled Bedrock calls; classify Pixeltable errors by error co",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5885,
+          "title": "Windows flake in test_udf_module_import_error (stale import cache) (#1877)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45003,7 +45034,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T17:16:49.902Z",
+      "verified_at": "2026-10-30T21:30:06.739Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50814,8 +50845,8 @@
       "slug": "software-mansion-react-native-screens",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-screens",
-      "source_version": "ae5d475e",
-      "content_hash": "45fbd34f3c555a0bdc09831005725b3bf05b2bdd11e8314442d7ed9d719a352b",
+      "source_version": "ec16f25b",
+      "content_hash": "155a1050654fbdbc9d143f3643e24f37eb331359d06863b76ff24ba3999b1149",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-screens-learnings.md",
       "promoted_rules": [
@@ -50833,6 +50864,11 @@
           "number": 4468,
           "title": "iOS, Stack v4): iterate over a copy of reactSubviews when updating header shadow",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5893,
+          "title": "iOS, Stack v4): restore navigation bar alpha after a cancelled zoom dismissal (#",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50840,7 +50876,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T22:07:15.871Z",
+      "verified_at": "2026-10-30T21:34:22.079Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73195,8 +73231,8 @@
       "slug": "mochajs-mocha",
       "platform": "github",
       "source_url": "https://github.com/mochajs/mocha",
-      "source_version": "2a386426",
-      "content_hash": "b6358dac7fbac407e6b254c0f2316f3fa330ac96a33624f6f8ac6faca44023bd",
+      "source_version": "5b5afa7b",
+      "content_hash": "d92fbe8d482bbb44e37c471cb426b12ed0f519d136e2db6b849c05e4b538f812",
       "dossier_path": "07_PROJECT_LEARNING/mochajs-mocha-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mochajs-mocha-learnings.md",
       "promoted_rules": [
@@ -73209,6 +73245,21 @@
           "number": 4933,
           "title": "fix site deploy (#6452)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5887,
+          "title": "Cooperative Timeslice Event Loop Scheduling for UI Runtimes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5888,
+          "title": "State-Gated Deferred Dispatch Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5889,
+          "title": "Worker Pool Deadlock Protection & Starvation Drain",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -73216,7 +73267,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:03:26.195Z",
+      "verified_at": "2026-10-30T21:32:49.676Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155852,6 +155903,146 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T21:19:36.908Z"
+    },
+    "rule-5884": {
+      "learning_id": "rule-5884",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5884,
+      "title": "containerd): export image by its stored name (#11511)",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "e2c05f7a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:30:01.073Z"
+    },
+    "rule-5885": {
+      "learning_id": "rule-5885",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5885,
+      "title": "Windows flake in test_udf_module_import_error (stale import cache) (#1877)",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "9eb81f37",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:30:06.739Z"
+    },
+    "rule-5886": {
+      "learning_id": "rule-5886",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5886,
+      "title": "add isolated macos agent smoke workflow; verify named share shutdown and replay;",
+      "source_url": "https://github.com/openziti/zrok",
+      "source_version": "fea58ae4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:30:07.203Z"
+    },
+    "rule-5887": {
+      "learning_id": "rule-5887",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5887,
+      "title": "Cooperative Timeslice Event Loop Scheduling for UI Runtimes",
+      "source_url": "https://github.com/mochajs/mocha",
+      "source_version": "5b5afa7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:32:49.676Z"
+    },
+    "rule-5888": {
+      "learning_id": "rule-5888",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5888,
+      "title": "State-Gated Deferred Dispatch Invariant",
+      "source_url": "https://github.com/mochajs/mocha",
+      "source_version": "5b5afa7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:32:49.676Z"
+    },
+    "rule-5889": {
+      "learning_id": "rule-5889",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5889,
+      "title": "Worker Pool Deadlock Protection & Starvation Drain",
+      "source_url": "https://github.com/mochajs/mocha",
+      "source_version": "5b5afa7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:32:49.676Z"
+    },
+    "rule-5890": {
+      "learning_id": "rule-5890",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5890,
+      "title": "Integer Wraparound Guard on Pointer/Byte Metric Conversions",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "02c67d98",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:33:51.393Z"
+    },
+    "rule-5891": {
+      "learning_id": "rule-5891",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5891,
+      "title": "Guard Band & Clamping on Dynamic Size-Class Rescaling",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "02c67d98",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:33:51.393Z"
+    },
+    "rule-5892": {
+      "learning_id": "rule-5892",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5892,
+      "title": "Asynchronous Multi-State Allocation Reclamation Window Accounting",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "02c67d98",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:33:51.393Z"
+    },
+    "rule-5893": {
+      "learning_id": "rule-5893",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5893,
+      "title": "iOS, Stack v4): restore navigation bar alpha after a cancelled zoom dismissal (#",
+      "source_url": "https://github.com/software-mansion/react-native-screens",
+      "source_version": "ec16f25b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:34:22.079Z"
     }
   },
   "aliases": {

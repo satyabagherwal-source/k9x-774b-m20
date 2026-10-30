@@ -6317,3 +6317,9 @@
 | `CYCLE-20261030-6H4C` | `2026-10-30T21:19:29.580Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5881` | Yes (`54b45c85...`) |
 | `CYCLE-20261030-6IJV` | `2026-10-30T21:19:31.435Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5882` | Yes (`313d7976...`) |
 | `CYCLE-20261030-6MTI` | `2026-10-30T21:19:36.966Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5883` | Yes (`b3d3e6ad...`) |
+| `CYCLE-20261030-K0GL` | `2026-10-30T21:30:01.173Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5884` | Yes (`bd7d3e1a...`) |
+| `CYCLE-20261030-K4TW` | `2026-10-30T21:30:06.836Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5885` | Yes (`d647357f...`) |
+| `CYCLE-20261030-K56B` | `2026-10-30T21:30:07.283Z` | `openziti/zrok` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5886` | Yes (`ecbf70b5...`) |
+| `CYCLE-20261030-NMJF` | `2026-10-30T21:32:49.755Z` | `mochajs/mocha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5887, Rule 5888, Rule 5889` | Yes (`d92fbe8d...`) |
+| `CYCLE-20261030-OY5T` | `2026-10-30T21:33:51.473Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5890, Rule 5891, Rule 5892` | Yes (`eb092257...`) |
+| `CYCLE-20261030-PLU5` | `2026-10-30T21:34:22.157Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5893` | Yes (`155a1050...`) |

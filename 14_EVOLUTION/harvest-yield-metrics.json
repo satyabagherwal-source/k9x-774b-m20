@@ -1,52 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T21:19:36.973Z",
-  "total_cycles_completed": 6294,
-  "total_learnings_persisted": 6294,
-  "total_rules_promoted": 5854,
+  "last_updated": "2026-10-30T21:34:22.165Z",
+  "total_cycles_completed": 6300,
+  "total_learnings_persisted": 6300,
+  "total_rules_promoted": 5864,
   "history": [
-    {
-      "timestamp": "2026-10-30T05:39:23.567Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T05:39:29.504Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T05:45:57.411Z",
-      "repository": "wasm-bindgen/wasm-pack",
-      "learningId": "learn-github-wasm-bindgen-wasm-pack",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T05:46:02.330Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T05:46:10.672Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T05:47:05.218Z",
-      "repository": "yshrsmz/BuildKonfig",
-      "learningId": "learn-github-yshrsmz-buildkonfig",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T05:54:02.455Z",
       "repository": "ydb-platform/ydb",
@@ -1402,6 +1360,48 @@
       "timestamp": "2026-10-30T21:19:36.973Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T21:30:01.181Z",
+      "repository": "aquasecurity/trivy",
+      "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T21:30:06.843Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T21:30:07.291Z",
+      "repository": "openziti/zrok",
+      "learningId": "learn-github-openziti-zrok",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T21:32:49.763Z",
+      "repository": "mochajs/mocha",
+      "learningId": "learn-github-mochajs-mocha",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T21:33:51.481Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T21:34:22.165Z",
+      "repository": "software-mansion/react-native-screens",
+      "learningId": "learn-github-software-mansion-react-native-screens",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

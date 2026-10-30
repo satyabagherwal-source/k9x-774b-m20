@@ -2213,10 +2213,10 @@
     "repository": "openziti/zrok",
     "platform": "github",
     "sourceUrl": "https://github.com/openziti/zrok",
-    "sourceVersion": "09ed814e",
+    "sourceVersion": "fea58ae4",
     "license": "Apache-2.0",
-    "contentHash": "d9841fa6a1e9ceb549cf23e107fb5add82128689bf0af29c74902558f68a7605",
-    "lastHarvestedAt": "2026-10-18T21:07:47.533Z",
+    "contentHash": "ecbf70b59f40eac765b00020c6be542ede46fbef4b4a1b69ab15d108665f789d",
+    "lastHarvestedAt": "2026-10-30T21:30:07.287Z",
     "learningId": "learn-github-openziti-zrok"
   },
   "crate-crate": {
@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "e1ee0571",
+    "sourceVersion": "9eb81f37",
     "license": "Apache-2.0",
-    "contentHash": "cff5d829548d8e0e8d388732cef157791e2cbe56246d398596b2ba010adbfe2c",
-    "lastHarvestedAt": "2026-10-29T17:16:50.002Z",
+    "contentHash": "d647357ff6de7cc6ad45db06383bcf2f5544c6c0c0a181b58d93b95ccb8683c6",
+    "lastHarvestedAt": "2026-10-30T21:30:06.839Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "6ec0da29",
+    "sourceVersion": "e2c05f7a",
     "license": "Apache-2.0",
-    "contentHash": "0ebc2b3c1bc04ded2fb800eee0496ac5d2168c6bb7df51504d9ac037b9c71038",
-    "lastHarvestedAt": "2026-10-29T22:48:51.996Z",
+    "contentHash": "bd7d3e1acde156f8e2cf1623d1f76a0b5f0572817de99884e34b44aea01cdc9c",
+    "lastHarvestedAt": "2026-10-30T21:30:01.176Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "e0db02c5",
+    "sourceVersion": "02c67d98",
     "license": "Apache-2.0",
-    "contentHash": "5928d835d9d7bb1eafcdbb12cdf3ecb461e260f4f525a008a98cde634c80a592",
-    "lastHarvestedAt": "2026-10-28T22:52:12.916Z",
+    "contentHash": "eb092257778872858fcadd9ccd61594aad66386dd5045c716eb951d206d2fe9c",
+    "lastHarvestedAt": "2026-10-30T21:33:51.476Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {
@@ -8463,10 +8463,10 @@
     "repository": "software-mansion/react-native-screens",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-screens",
-    "sourceVersion": "ae5d475e",
+    "sourceVersion": "ec16f25b",
     "license": "MIT",
-    "contentHash": "45fbd34f3c555a0bdc09831005725b3bf05b2bdd11e8314442d7ed9d719a352b",
-    "lastHarvestedAt": "2026-10-25T22:07:15.952Z",
+    "contentHash": "155a1050654fbdbc9d143f3643e24f37eb331359d06863b76ff24ba3999b1149",
+    "lastHarvestedAt": "2026-10-30T21:34:22.160Z",
     "learningId": "learn-github-software-mansion-react-native-screens"
   },
   "speedyapply-jobspy": {
@@ -10243,10 +10243,10 @@
     "repository": "mochajs/mocha",
     "platform": "github",
     "sourceUrl": "https://github.com/mochajs/mocha",
-    "sourceVersion": "2a386426",
+    "sourceVersion": "5b5afa7b",
     "license": "MIT",
-    "contentHash": "b6358dac7fbac407e6b254c0f2316f3fa330ac96a33624f6f8ac6faca44023bd",
-    "lastHarvestedAt": "2026-10-27T18:03:26.257Z",
+    "contentHash": "d92fbe8d482bbb44e37c471cb426b12ed0f519d136e2db6b849c05e4b538f812",
+    "lastHarvestedAt": "2026-10-30T21:32:49.758Z",
     "learningId": "learn-github-mochajs-mocha"
   },
   "justjavac-free-programming-books-zh_cn": {

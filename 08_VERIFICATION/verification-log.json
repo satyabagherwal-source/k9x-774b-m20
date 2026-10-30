@@ -1,95 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-K2E7",
-    "timestamp": "2026-10-28T15:22:48.223Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "6827f340668693dee5bcafa2cf33bde34c166aa1920eab97ac6643fcf5efcbe7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-K8KL",
-    "timestamp": "2026-10-28T15:22:56.229Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "850dec4bddce7b6cfed5b9697fd102bb314e88b1ec3222652c02941faf2fba85",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-KDR3",
-    "timestamp": "2026-10-28T15:23:02.943Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "4707d3ed96ad179955a89e15acb4958a1eda9dee0598ee3766618fd8ef533a59",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-T1BJ",
-    "timestamp": "2026-10-28T15:29:46.735Z",
-    "repository": "Aleph-Alpha/Kolibri-1",
-    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
-    "contentHash": "f99e620b40220844d8f98adbabbfb2d593884cc0b73a39f6517bcbd7cdcf2162",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-T3XA",
-    "timestamp": "2026-10-28T15:29:50.110Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "0c9b9b1d7cebd9d44847afa88a2c9134f737d6c7e9c3504fcbfefdca519e87ec",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-T4Y8",
-    "timestamp": "2026-10-28T15:29:51.440Z",
-    "repository": "etcd-io/etcd",
-    "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "94c541cf0f326ca0c7eddd731c3705bc7e42aa2858144af562ad060ade713532",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-1Q0N",
     "timestamp": "2026-10-28T15:36:31.991Z",
     "repository": "FermionResearch/Phonon-2",
@@ -7490,6 +7400,96 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "b3d3e6adddea708bd5a2b3512c43f4e6c15fbd10ae1a88f297582f75750b78c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-K0GL",
+    "timestamp": "2026-10-30T21:30:01.173Z",
+    "repository": "aquasecurity/trivy",
+    "learningId": "learn-github-aquasecurity-trivy",
+    "contentHash": "bd7d3e1acde156f8e2cf1623d1f76a0b5f0572817de99884e34b44aea01cdc9c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-K4TW",
+    "timestamp": "2026-10-30T21:30:06.836Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "d647357ff6de7cc6ad45db06383bcf2f5544c6c0c0a181b58d93b95ccb8683c6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-K56B",
+    "timestamp": "2026-10-30T21:30:07.283Z",
+    "repository": "openziti/zrok",
+    "learningId": "learn-github-openziti-zrok",
+    "contentHash": "ecbf70b59f40eac765b00020c6be542ede46fbef4b4a1b69ab15d108665f789d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-NMJF",
+    "timestamp": "2026-10-30T21:32:49.755Z",
+    "repository": "mochajs/mocha",
+    "learningId": "learn-github-mochajs-mocha",
+    "contentHash": "d92fbe8d482bbb44e37c471cb426b12ed0f519d136e2db6b849c05e4b538f812",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-OY5T",
+    "timestamp": "2026-10-30T21:33:51.473Z",
+    "repository": "google/tcmalloc",
+    "learningId": "learn-github-google-tcmalloc",
+    "contentHash": "eb092257778872858fcadd9ccd61594aad66386dd5045c716eb951d206d2fe9c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-PLU5",
+    "timestamp": "2026-10-30T21:34:22.157Z",
+    "repository": "software-mansion/react-native-screens",
+    "learningId": "learn-github-software-mansion-react-native-screens",
+    "contentHash": "155a1050654fbdbc9d143f3643e24f37eb331359d06863b76ff24ba3999b1149",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

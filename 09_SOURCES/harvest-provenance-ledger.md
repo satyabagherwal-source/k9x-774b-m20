@@ -6326,3 +6326,9 @@ Every entry in this ledger must capture:
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `d40e1b2d` | Multi-dimensional audit evidence | 2026-10-30T21:19:29.582Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `d1d0ccea` | Multi-dimensional audit evidence | 2026-10-30T21:19:31.438Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `1f4828f8` | Multi-dimensional audit evidence | 2026-10-30T21:19:36.969Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `e2c05f7a` | Multi-dimensional audit evidence | 2026-10-30T21:30:01.176Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `9eb81f37` | Multi-dimensional audit evidence | 2026-10-30T21:30:06.839Z |
+| `learn-github-openziti-zrok` | `https://github.com/openziti/zrok` | `fea58ae4` | Multi-dimensional audit evidence | 2026-10-30T21:30:07.287Z |
+| `learn-github-mochajs-mocha` | `https://github.com/mochajs/mocha` | `5b5afa7b` | Multi-dimensional audit evidence | 2026-10-30T21:32:49.758Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `02c67d98` | Multi-dimensional audit evidence | 2026-10-30T21:33:51.476Z |
+| `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `ec16f25b` | Multi-dimensional audit evidence | 2026-10-30T21:34:22.160Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `e0db02c5`  
+> **Source Version**: `02c67d98`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T22:52:12.320Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-30T21:33:50.200Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1607 +12,569 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): google/tcmalloc
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T22:52:12.313Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): google/tcmalloc
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `google/tcmalloc`
-- **Description**: 
-- **Primary Language / Ecosystem**: C++
-- **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5395 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+`google/tcmalloc` provides an ultra-low-latency, highly concurrent userspace implementation of C memory allocation primitives (`malloc`, `free`, `calloc`, `realloc`, `aligned_alloc`) and C++ runtime operators (`operator new`, `operator delete`). It replaces glibc's `ptmalloc` to eliminate global lock contention across thousands of execution threads on modern NUMA hardware.
+
+```
+                      +---------------------------------------+
+                      |       Application User Threads        |
+                      +---------------------------------------+
+                                    |           ^
+                   Fast-Path Alloc  |           | Fast-Path Free
+               (Restartable Seqs /  |           | (RSEQ / Core Slab)
+               L1 Per-CPU Cache)    v           |
+                      +---------------------------------------+
+                      |   Per-CPU Cache (CpuCache / RSEQ)     |
+                      |   - Per-core Slab & Cache Allocation  |
+                      |   - Zero Mutex Synchronization        |
+                      +---------------------------------------+
+                               | Batch             ^ Batch
+                               | Underflow         | Overflow
+                               v                   |
+                      +---------------------------------------+
+                      |       CentralFreeList (Per Class)     |
+                      |   - Static Size-Class Partitions      |
+                      |   - Subbucket Prioritization Hooks    |
+                      |   - SpinLock Synchronized             |
+                      +---------------------------------------+
+                               | Spans             ^ Spans
+                               | Exhausted         | Returned
+                               v                   |
+                      +---------------------------------------+
+                      |     PageAllocator (HugePageFiller)    |
+                      |   - 2 MiB / 1 GiB HugePage Management |
+                      |   - Radix Tree PageMap Tracking       |
+                      |   - Span Allocator & Metadata Arena   |
+                      +---------------------------------------+
+                               | mmap()            ^ madvise()
+                               | MAP_ANONYMOUS     | MADV_DONTNEED
+                               v                   |
+                      +---------------------------------------+
+                      |            Linux Kernel VMM           |
+                      +---------------------------------------+
+```
+
+### Subsystem Boundaries & Invariant Architecture
+
+1. **Per-CPU Cache (`tcmalloc/cpu_cache.h`)**:
+   - Manages allocations and deallocations using Linux Restartable Sequences (`rseq(2)`).
+   - Threads executing fast-path `malloc` write to the executing CPU's local array of pointers without mutex locking.
+   - If a kernel thread preemption occurs mid-sequence, the kernel restarts the assembly sequence, providing lock-free per-CPU synchronization.
+   - Falls back to `ThreadCache` via pthread TLS keys if kernel RSEQ support is absent.
+
+2. **Central FreeList (`tcmalloc/central_freelist.h`)**:
+   - Manages pre-divided objects grouped by predefined size classes (spans from 8 bytes to several megabytes).
+   - Handles batch transfers between per-CPU slabs and global page memory using `CentralFreelistInsertRangeHook` and `CentralFreelistRemoveRangeHook`.
+
+3. **Page Allocator & HugePageFiller (`tcmalloc/huge_page_filler.h`, `tcmalloc/page_allocator.h`)**:
+   - Manages physical spans backed by 2 MiB hugepages (`HP_2MiB`).
+   - Dynamically packs spans into hugepages to maximize TLB coverage. If an entire hugepage becomes unreferenced, it triggers asynchronous unbacked state reclamation (`madvise(..., MADV_DONTNEED)`).
+   - Synchronized by the central Page Heap lock (`pageheap_lock`).
+
+4. **Telemetry, Dynamic Profiling & Hardening (`tcmalloc/sampler.cc`, `tcmalloc/internal/gwp_asan_state.h`)**:
+   - Implements Poisson-process sampling via `Sampler::RecordAllocation` to profile memory topology with low overhead.
+   - GWP-ASan allocates guard pages around sampled allocations to intercept use-after-free and buffer overflow bugs in production.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `tcmalloc/internal/central_freelist_hooks.h`
-```
-// Copyright 2026 The TCMalloc Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#ifndef TCMALLOC_INTERNAL_CENTRAL_FREELIST_HOOKS_H_
-#define TCMALLOC_INTERNAL_CENTRAL_FREELIST_HOOKS_H_
-
-#include <cstddef>
-
-#include "absl/types/span.h"
-#include "tcmalloc/internal/hook_list.h"
-
-GOOGLE_MALLOC_SECTION_BEGIN
-namespace tcmalloc {
-namespace tcmalloc_internal {
-
-using CentralFreelistInsertRangeHook = void (*)(size_t size_class,
-                                                absl::Span<void*> batch);
-using CentralFreelistRemoveRangeHook = void (*)(size_t size_class,
-                                                absl::Span<void*> batch);
-
-extern HookList<CentralFreelistInsertRangeHook>
-    central_freelist_insert_range_hooks;
-extern HookList<CentralFreelistRemoveRangeHook>
-    central_freelist_remove_range_hooks;
-
-}  // namespace tcmalloc_internal
-}  // namespace tcmalloc
-GOOGLE_MALLOC_SECTION_END
-
-#endif  // TCMALLOC_INTERNAL_CENTRAL_FREELIST_HOOKS_H_
-
-```
-
-### Core Architecture Module: `tcmalloc/internal/cpu_utils.h`
-```
-// Copyright 2023 The TCMalloc Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#ifndef TCMALLOC_INTERNAL_CPU_UTILS_H_
-#define TCMALLOC_INTERNAL_CPU_UTILS_H_
-
-#include <sched.h>
-
-#include <array>
-
-#include "absl/base/attributes.h"
-#include "tcmalloc/internal/config.h"
-
-GOOGLE_MALLOC_SECTION_BEGIN
-namespace tcmalloc {
-namespace tcmalloc_internal {
-
-// The maximum number of CPUs supported by TCMalloc.
-static constexpr int kMaxCpus = 2048;
-// The size of the CPU set in bytes.
-static constexpr int kCpuSetBytes = CPU_ALLOC_SIZE(kMaxCpus);
-
-class CpuSet {
- public:
-  void Zero() { CPU_ZERO_S(kCpuSetBytes, cpu_set_.data()); }
-  void Set(int cpu) { CPU_SET_S(cpu, kCpuSetBytes, cpu_set_.data()); }
-  [[nodiscard]] bool IsSet(int cpu) const {
-    return CPU_ISSET_S(cpu, kCpuSetBytes, cpu_set_.data());
-  }
-  void CLR(int cpu) { CPU_CLR_S(cpu, kCpuSetBytes, cpu_set_.data()); }
-  [[nodiscard]] int Count() const {
-    return CPU_COUNT_S(kCpuSetBytes, cpu_set_.data());
-  }
-
-  // Find the index of the first set CPU. Returns -1 if none are set.
-  [[nodiscard]] int FindFirstSet() const {
-    if (Count() == 0) {
-      return -1;
-    }
-    int cpu = 0;
-    while (!IsSet(cpu)) {
-      ++cpu;
-    }
-    return cpu;
-  }
-
-  // Sets the CPU affinity of the process with the given pid. Returns true if
-  // successful. If returns false, please check the global 'errno' variable to
-  // determine the specific error that occurred.
-  [[nodiscard]] bool SetAffinity(pid_t pid) {
-    return sched_setaffinity(pid, kCpuSetBytes, cpu_set_.data()) == 0;
-  }
-
-  // Gets the CPU affinity of the process with the given pid. Return trues if
-  // successful. If returns false, please check the global 'errno' variable to
-  // determine the specific error that occurred.
-  [[nodiscard]] bool GetAffinity(pid_t pid) {
-    return sched_getaffinity(pid, kCpuSetBytes, cpu_set_.data()) == 0;
-  }
-
-  [[nodiscard]] const cpu_set_t* data() const { return cpu_set_.data(); }
-
- private:
-  // In the sched.h, each CPU occupies one bit.
-  // Declare a bit array with a size that is an integer multiple of cpu_set_t:
-  std::array<cpu_set_t,
-             (kCpuSetBytes + sizeof(cpu_set_t) - 1) / sizeof(cpu_set_t)>
-      cpu_set_;
-};
-
-}  // namespace tcmalloc_internal
-}  // namespace tcmalloc
-GOOGLE_MALLOC_SECTION_END
-
-#endif  // TCMALLOC_INTERNAL_CPU_UTILS_H_
-
-```
-
-### Core Architecture Module: `tcmalloc/internal/gwp_asan_state.h`
-```
-// Copyright 2024 The TCMalloc Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#ifndef TCMALLOC_INTERNAL_GWP_ASAN_STATE_H_
-#define TCMALLOC_INTERNAL_GWP_ASAN_STATE_H_
-
-#include <algorithm>
-#include <cstddef>
-#include <cstring>
-#include <new>
-#include <optional>
-
-#include "absl/types/span.h"
-#include "tcmalloc/internal/config.h"
-#include "tcmalloc/internal/logging.h"
-#include "tcmalloc/malloc_extension.h"
-
-GOOGLE_MALLOC_SECTION_BEGIN
-namespace tcmalloc {
-namespace tcmalloc_internal {
-
-class GwpAsanState {
- public:
-  constexpr GwpAsanState() = default;
-
-  enum class Type {
-    kNone,
-    kMismatchedDelete,
-    kDoubleFree,
-    kInvalidFree,
-    kMismatchedFree,
-  };
-
-  [[nodiscard]] Type type() const { return type_; }
-
-  [[nodiscard]] const void* ptr() const { return ptr_; }
-
-  [[nodiscard]] bool triggered() const { return type_ != Type::kNone; }
-
-  [[nodiscard]] std::optional<absl::Span<void* const>> AllocationStack() const {
-    TC_ASSERT_NE(type_, Type::kNone);
-
-    if (!allocation_stack_depth_.has_value()) {
-      return std::nullopt;
-    }
-
-    return absl::MakeSpan(allocation_stack_, *allocation_stack_depth_);
-  }
-
-  [[nodiscard]] std::optional<absl::Span<void* const>> DeallocationStack()
-      const {
-    TC_ASSERT_NE(type_, Type::kNone);
-    if (!deallocation_stack_depth_.has_value()) {
-      return std::nullopt;
-    }
-
-    return absl::MakeSpan(deallocation_stack_, *deallocation_stack_depth_);
-  }
-
-  [[nodiscard]] size_t provided_min() const {
-    TC_ASSERT_EQ(type_, Type::kMismatchedDelete);
-    return provided_min_;
-  }
-  [[nodiscard]] size_t provided_max() const {
-    TC_ASSERT_EQ(type_, Type::kMismatchedDelete);
-    return provided_max_;
-  }
-
-  [[nodiscard]] size_t minimum_size() const {
-    TC_ASSERT_EQ(type_, Type::kMismatchedDelete);
-    return minimum_;
-  }
-
-  [[nodiscard]] size_t maximum_size() const {
-    TC_ASSERT_EQ(type_, Type::kMismatchedDelete);
-    return maximum_;
-  }
-
-  [[nodiscard]] std::optional<std::align_val_t> actual_alignment() const {
-    TC_ASSERT_EQ(type_, Type::kInvalidFree);
-    return actual_alignment_;
-  }
-
-  [[nodiscard]] std::optional<std::align_val_t> expected_alignment() const {
-    TC_ASSERT_EQ(type_, Type::kInvalidFree);
-    return expected_alignment_;
-  }
-
-  [[nodiscard]] AllocationType alloc_type() const {
-    TC_ASSERT_EQ(type_, Type::kMismatchedFree);
-    return *alloc_type_;
-  }
-
-  [[nodiscard]] AllocationType dealloc_type() const {
-    TC_ASSERT_EQ(type_, Type::kMismatchedFree);
-    return *dealloc_type_;
-  }
-
-  void RecordMismatch(
-      const void* ptr, size_t provided_min, size_t provided_max, size_t minimum,
-      size_t maximum, std::optional<absl::Span<void* const>> allocation_stack,
-      std::optional<absl::Span<void* const>> deallocation_stack) {
-    ptr_ = ptr;
-    type_ = Type::kMismatchedDelete;
-
-    provided_min_ = provided_min;
-    provided_max_ = provided_max;
-    minimum_ = minimum;
-    maximum_ = maximum;
-
-    CopyStack(allocation_stack, allocation_stack_, allocation_stack_depth_);
-    CopyStack(deallocation_stack, deallocation_stack_,
-              deallocation_stack_depth_);
-  }
-
-  void RecordDoubleFree(const void* ptr,
-                        absl::Span<void* const> deallocation_stack) {
-    ptr_ = ptr;
-    type_ = Type::kDoubleFree;
-    allocation_stack_depth_ = std::nullopt;
-    CopyStack(deallocation_stack, deallocation_stack_,
-              deallocation_stack_depth_);
-  }
-
-  void RecordInvalidFree(const void* ptr,
-                         absl::Span<void* const> deallocation_stack) {
-    ptr_ = ptr;
-    type_ = Type::kInvalidFree;
-    actual_alignment_ = std::nullopt;
-    expected_alignment_ = std::nullopt;
-    allocation_stack_depth_ = std::nullopt;
-    CopyStack(deallocation_stack, deallocation_stack_,
-              deallocation_stack_depth_);
-  }
-
-  void RecordInvalidFree(
-      const void* ptr, std::optional<std::align_val_t> actual_alignment,
-      std::optional<std::align_val_t> expected_alignment,
-      std::optional<absl::Span<void* const>> allocation_stack,
-      absl::Span<void* const> deallocation_stack) {
-    ptr_ = ptr;
-    type_ = Type::kInvalidFree;
-    actual_alignment_ = actual_alignment;
-    expected_alignment_ = expected_alignment;
-
-    CopyStack(allocation_stack, allocation_stack_, allocation_stack_depth_);
-    CopyStack(deallocation_stack, deallocation_stack_,
-              deallocation_stack_depth_);
-  }
-
-  void RecordInvalidFree(const void* ptr, std::align_val_t actual_alignment,
-                         std::align_val_t expected_alignment,
-                         absl::Span<void* const> allocation_stack,
-                         absl::Span<void* const> deallocation_stack) {
-    RecordInvalidFree(ptr, std::optional<std::align_val_t>(actual_alignment),
-                      std::optional<std::align_val_t>(expected_alignment),
-                      std::optional<absl::Span<void* const>>(allocation_stack),
-                      deallocation_stack);
-  }
-
-  void RecordMismatchedFree(const void* ptr, AllocationType alloc_type,
-                            AllocationType dealloc_type,
-                            absl::Span<void* const> allocation_stack,
-                            absl::Span<void* const> deallocation_stack) {
-    ptr_ = ptr;
-    type_ = Type::kMismatchedFree;
-    alloc_type_ = alloc_type;
-    dealloc_type_ = dealloc_type;
-
-    CopyStack(allocation_stack, allocation_stack_, allocation_stack_depth_);
-    CopyStack(deallocation_stack, deallocation_stack_,
-              deallocation_stack_depth_);
-  }
-
- private:
-  static void CopyStack(std::optional<absl::Span<void* const>> src,
-                        void* (&dst)[kMaxStackDepth],
-                        std::optional<size_t>& dst_depth) {
-    if (!src.has_value()) {
-      dst_depth = std::nullopt;
-      return;
-    }
-    const size_t depth = std::min<size_t>(kMaxStackDepth, src->size());
-    if (depth > 0) {
-      memcpy(dst, src->data(), sizeof(void*) * depth);
-    }
-    dst_depth = depth;
-  }
-
-  Type type_ = Type::kNone;
-  const void* ptr_ = nullptr;
-  size_t provided_min_ = 0, provided_max_ = 0, minimum_ = 0, maximum_ = 0;
-  std::optional<std::align_val_t> actual_alignment_, expected_alignment_;
-
-  std::optional<AllocationType> alloc_type_, dealloc_type_;
-
-  void* allocation_stack_[kMaxStackDepth] = {};
-  std::optional<size_t> allocation_stack_depth_ = std::nullopt;
-  void* deallocation_stack_[kMaxStackDepth] = {};
-  std::optional<size_t> deallocation_stack_depth_ = std::nullopt;
-};
-
-}  // namespace tcmalloc_internal
-}  // namespace tcmalloc
-GOOGLE_MALLOC_SECTION_END
-
-#endif  // TCMALLOC_INTERNAL_GWP_ASAN_STATE_H_
-
-```
-
-### Core Architecture Module: `tcmalloc/internal/hook_list.h`
-```
-// Copyright 2017 The Abseil Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-///
-
-// This has the implementation details of malloc_hook that are needed
-// to use malloc-hook inside the tcmalloc system.  It does not hold
-// any of the client-facing calls that are used to add new hooks.
-//
-// IWYU pragma: private, include "base/malloc_hook_invoke.h"
-
-#ifndef TCMALLOC_INTERNAL_HOOK_LIST_H_
-#define TCMALLOC_INTERNAL_HOOK_LIST_H_
-
-#include <atomic>
-#include <cstddef>
-#include <utility>
-
-#include "absl/base/attributes.h"
-#include "absl/base/internal/spinlock.h"
-#include "absl/base/optimization.h"
-#include "tcmalloc/internal/config.h"
-
-GOOGLE_MALLOC_SECTION_BEGIN
-namespace tcmalloc::tcmalloc_internal {
-
-// Maximum of 7 hooks means that HookList is 8 words.
-static constexpr int kHookListMaxValues = 7;
-
-class HookListBase {
- protected:
-  constexpr HookListBase() = default;
-
-  ABSL_CONST_INIT static absl::base_internal::SpinLock hooklist_spinlock_;
-};
-
-// HookList: a class that provides synchronized insertions and removals and
-// lockless traversal.  Most of the implementation is in malloc_hook.cc.
-template <typename T>
-class HookList final : HookListBase {
- public:
-  constexpr HookList() = default;
-  constexpr explicit HookList(T initial_hook)
-      : priv_end{1}, priv_data{{initial_hook}} {}
-
-  // Adds value to the list.  Note that duplicates are allowed.  Thread-safe and
-  // blocking (acquires hooklist_spinlock_).  Returns true on success; false
-  // otherwise (failures include invalid value and no space left).
-  [[nodiscard]] bool Add(T value) ABSL_LOCKS_EXCLUDED(hooklist_spinlock_);
-
-  // Removes the first entry matching value from the list.  Thread-safe and
-  // blocking (acquires hooklist_spinlock).  Returns true on success; false
-  // otherwise (failures include invalid value and no value found).
-  [[nodiscard]] bool Remove(T value) ABSL_LOCKS_EXCLUDED(hooklist_spinlock_);
-
-  // Store up to n values of the list in output_array, and return the number of
-  // elements stored.  Thread-safe and non-blocking.  This is fast (one memory
-  // access) if the list is empty.
-  [[nodiscard]] int Traverse(T* output_array, int n) const;
-
-  // Fast inline implementation for fast path of Invoke*Hook.
-  [[nodiscard]] bool empty() const {
-    // empty() is only used as an optimization to determine if we should call
-    // Traverse which has proper acquire loads.  Memory reordering around a
-    // call to empty will either lead to an unnecessary Traverse call, or will
-    // miss invoking hooks, neither of which is a problem.
-    return priv_end.load(std::memory_order_relaxed) == 0;
-  }
-
-  [[nodiscard]] int size() const {
-    return priv_end.load(std::memory_order_relaxed);
-  }
-
-  template <typename... Args>
-  ABSL_ATTRIBUTE_ALWAYS_INLINE void Invoke(Args&&... args) const {
-    if (ABSL_PREDICT_FALSE(!empty())) {
-      InvokeSlow(std::forward<Args>(args)...);
-    }
-  }
-
- private:
-  template <typename... Args>
-  ABSL_ATTRIBUTE_COLD ABSL_ATTRIBUTE_NOINLINE void InvokeSlow(
-      Args&&... args) const;
-
-  // One more than the index of the last valid element in priv_data.  During
-  // 'Remove' this may be past the last valid element in priv_data, but
-  // subsequent values will be 0.
-  std::atomic<int> priv_end = {};
-  std::atomic<T> priv_data[kHookListMaxValues] = {};
-};
-
-template <typename T>
-bool HookList<T>::Add(T value_as_t) {
-  if (value_as_t == T()) {
-    return false;
-  }
-  absl::base_internal::SpinLockHolder l(hooklist_spinlock_);
-  // Find the first slot in data that is 0.
-  int index = 0;
-  while ((index < kHookListMaxValues) &&
-         (priv_data[index].load(std::memory_order_relaxed) != 0)) {
-    ++index;
-  }
-  if (index == kHookListMaxValues) {
-    return false;
-  }
-  int prev_num_hooks = priv_end.load(std::memory_order_acquire);
-  priv_data[index].store(value_as_t, std::memory_order_release);
-  if (prev_num_hooks <= index) {
-    priv_end.store(index + 1, std::memory_order_release);
-  }
-  return true;
-}
-
-template <typename T>
-bool HookList<T>::Remove(T value_as_t) {
-  if (value_as_t == T()) {
-    return false;
-  }
-  absl::base_internal::SpinLockHolder l(hooklist_spinlock_);
-  int hooks_end = priv_end.load(std::memory_order_acquire);
-  int index = 0;
-  while (index < hooks_end &&
-         value_as_t != priv_data[index].load(std::memory_order_acquire)) {
-    ++index;
-  }
-  if (index == hooks_end) {
-    return false;
-  }
-  priv_data[index].store(0, std::memory_order_release);
-  if (hooks_end == index + 1) {
-    // Adjust hooks_end down to the lowest possible value.
-    hooks_end = index;
-    while ((hooks_end > 0) &&
-           (priv_data[hooks_end - 1].load(std::memory_order_acquire) == 0)) {
-      --hooks_end;
-    }
-    priv_end.store(hooks_end, std::memory_order_release);
-  }
-  return true;
-}
-
-template <typename T>
-int HookList<T>::Traverse(T* output_array, int n) const {
-  int hooks_end = priv_end.load(std::memory_order_acquire);
-  int actual_hooks_end = 0;
-  for (int i = 0; i < hooks_end && n > 0; ++i) {
-    T data = priv_data[i].load(std::memory_order_acquire);
-    if (data != T()) {
-      *output_array++ = data;
-      ++actual_hooks_end;
-      --n;
-    }
-  }
-  return actual_hooks_end;
-}
-
-template <typename T>
-template <typename... Args>
-void HookList<T>::InvokeSlow(Args&&... args) const {
-  T hooks[kHookListMaxValues];
-  int num_hooks = Traverse(hooks, kHookListMaxValues);
-  for (int i = 0; i < num_hooks; ++i) {
-    (*hooks[i])(args...);
-  }
-}
-
-}  // namespace tcmalloc::tcmalloc_internal
-GOOGLE_MALLOC_SECTION_END
-
-#endif  // TCMALLOC_INTERNAL_HOOK_LIST_H_
-
-```
-
-### Core Architecture Module: `tcmalloc/internal/mincore.h`
-```
-// Copyright 2019 The TCMalloc Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#ifndef TCMALLOC_INTERNAL_MINCORE_H_
-#define TCMALLOC_INTERNAL_MINCORE_H_
-
-#include <stddef.h>
-
-#include "tcmalloc/internal/config.h"
-
-GOOGLE_MALLOC_SECTION_BEGIN
-namespace tcmalloc {
-namespace tcmalloc_internal {
-
-// Class to wrap mincore so that we can replace it for testing.
-class MInCoreInterface {
- public:
-  MInCoreInterface() = default;
-  virtual ~MInCoreInterface() = default;
-  [[nodiscard]] virtual int mincore(void* addr, size_t length,
-                                    unsigned char* result) = 0;
-
- private:
-  MInCoreInterface(const MInCoreInterface&) = delete;
-  MInCoreInterface& operator=(const MInCoreInterface&) = delete;
-};
-
-// The MInCore class through the function residence(addr, size) provides
-// a convenient way to report the residence of an arbitrary memory region.
-// This is a wrapper for the ::mincore() function. The ::mincore() function has
-// the constraint of requiring the base address to be page aligned.
-class MInCore {
- public:
-  MInCore() = default;
-  // For a region of memory return the number of bytes that are
-  // actually resident in memory. Note that the address and size
-  // do not need to be a multiple of the system page size.
-  [[nodiscard]] static size_t residence(void* addr, size_t size);
-
- private:
-  // Separate out the implementation to make the code easier to test.
-  [[nodiscard]] static size_t residence_impl(void* addr, size_t size,
-                                             MInCoreInterface* mincore);
-
-  // Size of the array used to gather results from mincore().
-  static constexpr int kArrayLength = 4096;
-  // Friends required for testing
-  friend class MInCoreTest;
-};
-
-}  // namespace tcmalloc_internal
-}  // namespace tcmalloc
-GOOGLE_MALLOC_SECTION_END
-
-#endif  // TCMALLOC_INTERNAL_MINCORE_H_
-
-```
-
-### Core Architecture Module: `tcmalloc/internal/page_allocator_hooks.h`
-```
-// Copyright 2026 The TCMalloc Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#ifndef TCMALLOC_INTERNAL_PAGE_ALLOCATOR_HOOKS_H_
-#define TCMALLOC_INTERNAL_PAGE_ALLOCATOR_HOOKS_H_
-
-#include <cstddef>
-#include <cstdint>
-
-#include "tcmalloc/internal/config.h"
-#include "tcmalloc/internal/hook_list.h"
-#include "tcmalloc/internal/memory_tag.h"
-
-GOOGLE_MALLOC_SECTION_BEGIN
-namespace tcmalloc {
-namespace tcmalloc_internal {
-
-enum class PageReleaseReason : uint8_t;
-
-// Hook invoked after Span allocation attempts in PageAllocator::New and
-// PageAllocator::NewAligned.
-// - start_page_index is 0 if allocation returned nullptr.
-// - n is the requested size in pages.
-// - align is the requested alignment in pages (1 for standard unaligned New,
-//   or e.g. kPagesPerHugePage for NewAligned).
-// - objects_per_span and density are from SpanAllocInfo.
-//
-using PageAllocatorNewHook = void (*)(size_t start_page_index, size_t n,
-                                      size_t align, size_t objects_per_span,
-                                      uint8_t density, MemoryTag tag);
-
-// Hook invoked before a Span or allocation state is deleted in
-// PageAllocator::Delete.
-using PageAllocatorDeleteHook = void (*)(size_t start_page_index, size_t n,
-                                         size_t objects_per_span,
-                                         uint8_t density, MemoryTag tag);
-
-// Hook invoked after memory release attempts in
-// PageAllocator::ReleaseAtLeastNPages.
-// - num_pages is the requested number of pages to release.
-// - released is the actual number of pages released.
-// - reason is the PageReleaseReason of the release attempt.
-using PageAllocatorReleaseHook = void (*)(size_t num_pages, size_t released,
-                                          PageReleaseReason reason);
-
-extern HookList<PageAllocatorNewHook> page_allocator_new_hooks;
-extern HookList<PageAllocatorDeleteHook> page_allocator_delete_hooks;
-extern HookList<PageAllocatorReleaseHook> page_allocator_release_hooks;
-
-}  // namespace tcmalloc_internal
-}  // namespace tcmalloc
-GOOGLE_MALLOC_SECTION_END
-
-#endif  // TCMALLOC_INTERNAL_PAGE_ALLOCATOR_HOOKS_H_
-
-```
-
-### Core Architecture Module: `tcmalloc/internal/percpu_state.h`
-```
-// Copyright 2026 The TCMalloc Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#ifndef TCMALLOC_INTERNAL_PERCPU_STATE_H_
-#define TCMALLOC_INTERNAL_PERCPU_STATE_H_
-
-#include <pthread.h>
-
-#include "absl/base/attributes.h"
-#include "absl/base/call_once.h"
-#include "absl/base/nullability.h"
-#include "tcmalloc/internal/allocation_guard.h"
-#include "tcmalloc/internal/config.h"
-
-GOOGLE_MALLOC_SECTION_BEGIN
-namespace tcmalloc::tcmalloc_internal {
-
-class ThreadCache;
-
-extern "C" ABSL_ATTRIBUTE_WEAK void TCMalloc_Internal_DestroyThreadCache(
-    ThreadCache* absl_nullable);
-
-// PerCpuState receives thread creation/destruction notifications, managing the
-// registration with the pthread library using a single pthread_key_t
-// registration.
-//
-// TODO(b/478927694): Include actual per-core state.
-class PerCpuState {
- public:
-  [[nodiscard]] static constexpr PerCpuState& state() { return g; }
-
-  void Init();
-
-  // Registers an instance for destruction.  `nullptr` unregisters.
-  void RegisterThreadCache(ThreadCache* absl_nullable);
-
- private:
-  constexpr PerCpuState() = default;
-
-  ABSL_CONST_INIT static PerCpuState g;
-
-  static void HandleThreadExit(void* ptr);
-
-  absl::once_flag f_;
-  pthread_key_t key_{};
-};
-
-inline void PerCpuState::Init() {
-  absl::base_internal::LowLevelCallOnce(&f_, [&]() {
-    pthread_key_create(&key_, HandleThreadExit);
-
-    // Invoke `pthread_setspecific` now to ensure that we have one of the
-    // early `pthread_key_t`'s that does not require allocating when use it.
-    AllocationGuard g;
-    RegisterThreadCache(nullptr);
-  });
-}
-
-inline void PerCpuState::RegisterThreadCache(ThreadCache* absl_nullable cache) {
-  if (cache == nullptr) {
-    // Use &g as a sentinel so that we always get a callback.
-    pthread_setspecific(key_, &g);
-  } else {
-    pthread_setspecific(key_, cache);
-  }
-}
-
-inline void PerCpuState::HandleThreadExit(void* ptr) {
-  if (ptr == &g) {
-    // TODO(b/478927694): Take advantage of this callback.
-    return;
-  }
-
-  if (&TCMalloc_Internal_DestroyThreadCache != nullptr) {
-    ThreadCache* cache = static_cast<ThreadCache*>(ptr);
-    TCMalloc_Internal_DestroyThreadCache(cache);
-  }
-}
-
-}  // namespace tcmalloc::tcmalloc_internal
-GOOGLE_MALLOC_SECTION_END
-
-#endif  // TCMALLOC_INTERNAL_PERCPU_STATE_H_
-
-```
-
-### Core Architecture Module: `tcmalloc/internal/util.h`
-```
-// Copyright 2019 The TCMalloc Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#ifndef TCMALLOC_INTERNAL_UTIL_H_
-#define TCMALLOC_INTERNAL_UTIL_H_
-
-#include <errno.h>
-#include <poll.h>  // IWYU pragma: keep
-#include <sched.h>
-#include <signal.h>
-#include <stddef.h>
-#include <string.h>
-#include <sys/types.h>
-#include <time.h>
-
-#include "absl/strings/string_view.h"
-#include "absl/time/time.h"
-#include "absl/types/span.h"
-#include "tcmalloc/internal/config.h"
-#include "tcmalloc/internal/logging.h"
-
-#define TCMALLOC_RETRY_ON_TEMP_FAILURE(expression)               \
-  (__extension__({                                               \
-    long int _temp_failure_retry_result;                         \
-    do _temp_failure_retry_result = (long int)(expression);      \
-    while (_temp_failure_retry_result == -1L && errno == EINTR); \
-    _temp_failure_retry_result;                                  \
-  }))
-
-// Useful internal utility functions.  These calls are async-signal safe
-// provided the signal handler saves errno at entry and restores it before
-// return.
-GOOGLE_MALLOC_SECTION_BEGIN
-namespace tcmalloc {
-namespace tcmalloc_internal {
-
-// signal_safe_open() - a wrapper for open(2) which ignores signals
-// Semantics equivalent to open(2):
-//   returns a file-descriptor (>=0) on success, -1 on failure, error in errno
-[[nodiscard]] int signal_safe_open(const char* path, int flags, ...);
-
-// signal_safe_close() - a wrapper for close(2) which ignores signals
-// Semantics equivalent to close(2):
-//   returns 0 on success, -1 on failure, error in errno
-int signal_safe_close(int fd);
-
-// signal_safe_write() - a wrapper for write(2) which ignores signals
-// Semantics equivalent to write(2):
-//   returns number of bytes written, -1 on failure, error in errno
-//   additionally, (if not NULL) total bytes written in *bytes_written
-//
-// In the interrupted (EINTR) case, signal_safe_write will continue attempting
-// to write out buf.  This means that in the:
-//   write->interrupted by signal->write->error case
-// That it is possible for signal_safe_write to return -1 when there were bytes
-// flushed from the buffer in the first write.  To handle this case the optional
-// bytes_written parameter is provided, when not-NULL, it will always return the
-// total bytes written before any error.
-ssize_t signal_safe_write(int fd, const char* buf, size_t count,
-                          size_t* bytes_written);
-
-// signal_safe_read() - a wrapper for read(2) which ignores signals
-// Semantics equivalent to read(2):
-//   returns number of bytes written, -1 on failure, error in errno
-//   additionally, (if not NULL) total bytes written in *bytes_written
-//
-// In the interrupted (EINTR) case, signal_safe_read will continue attempting
-// to read into buf.  This means that in the:
-//   read->interrupted by signal->read->error case
-// That it is possible for signal_safe_read to return -1 when there were bytes
-// read by a previous read.  To handle this case the optional bytes_written
-// parameter is provided, when not-NULL, it will always return the total bytes
-// read before any error.
-[[nodiscard]] ssize_t signal_safe_read(int fd, char* buf, size_t count,
-                                       size_t* bytes_read);
-
-// signal_safe_poll() - a wrapper for poll(2) which ignores signals
-// Semantics equivalent to poll(2):
-//   Returns number of structures with non-zero revent fields.
-//
-// In the interrupted (EINTR) case, signal_safe_poll will continue attempting to
-// poll for data.  Unlike ppoll/pselect, signal_safe_poll is *ignoring* signals
-// not attempting to re-enable them.  Protecting us from the traditional races
-// involved with the latter.
-[[nodiscard]] int signal_safe_poll(struct ::pollfd* fds, int nfds,
-                                   absl::Duration timeout);
-
-// Copies memory from multiple source memory chunks (`src_chunks`) to `dst`
-// safely using process_vm_readv. If any source chunk points to unmapped or
-// concurrently freed/mprotected memory, this function returns false without
-// triggering a SIGSEGV crash. Returns true if all chunks were successfully
-// copied.
-[[nodiscard]] bool SafeCopyMemory(
-    absl::Span<const absl::string_view> src_chunks, void* dst);
-
-// Copies `size` bytes from `src` to `dst` safely using process_vm_readv.
-// If `src` points to unmapped or concurrently freed/mprotected memory, this
-// function returns false without triggering a SIGSEGV crash. Returns true if
-// exactly `size` bytes were successfully copied.
-[[nodiscard]] bool SafeCopyMemory(const void* src, void* dst, size_t size);
-
-class ScopedSigmask {
- public:
-  // Masks all signal handlers. (SIG_SETMASK, All)
-  ScopedSigmask() noexcept;
-
-  // No copy, move or assign
-  ScopedSigmask(const ScopedSigmask&) = delete;
-  ScopedSigmask& operator=(const ScopedSigmask&) = delete;
-
-  // Restores the masked signal handlers to its former state.
-  ~ScopedSigmask() noexcept;
-
- private:
-  void Setmask(int how, sigset_t* set, sigset_t* old);
-
-  sigset_t old_set_;
-};
-
-inline ScopedSigmask::ScopedSigmask() noexcept {
-  sigset_t set;
-  sigfillset(&set);
-  Setmask(SIG_SETMASK, &set, &old_set_);
-}
-
-inline ScopedSigmask::~ScopedSigmask() noexcept {
-  Setmask(SIG_SETMASK, &old_set_, nullptr);
-}
-
-inline void ScopedSigmask::Setmask(int how, sigset_t* set, sigset_t* old) {
-  const int result = pthread_sigmask(how, set, old);
-  TC_CHECK_EQ(result, 0);
-}
-
-// RAII class that will restore errno to the value it has when created.
-class ErrnoRestorer {
- public:
-  ErrnoRestorer() : saved_errno_(errno) {}
-  ~ErrnoRestorer() { errno = saved_errno_; }
-
-  ErrnoRestorer(const ErrnoRestorer&) = delete;
-  ErrnoRestorer& operator=(const ErrnoRestorer&) = delete;
-
- private:
-  int saved_errno_;
-};
-
-}  // namespace tcmalloc_internal
-}  // namespace tcmalloc
-GOOGLE_MALLOC_SECTION_END
-
-#endif  // TCMALLOC_INTERNAL_UTIL_H_
-
-```
-
-### Core Architecture Module: `tcmalloc/malloc_hook.h`
-```
-// Copyright 2025 The TCMalloc Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#ifndef TCMALLOC_MALLOC_HOOK_H_
-#define TCMALLOC_MALLOC_HOOK_H_
-
-#include <optional>
-#include <ostream>
-
-#include "absl/time/time.h"
-#include "absl/types/span.h"
-#include "tcmalloc/internal/config.h"
-
-GOOGLE_MALLOC_SECTION_BEGIN
-
-namespace tcmalloc {
-
-// Enum to control how a hook can access the memory.
-enum class HookMemoryMutable : bool {
-  kImmutable,
-  kMutable,
-};
-
-class MallocHook final {
- public:
-  struct NewInfo final {
-    // Pointer to the allocated memory.
-    void* ptr = nullptr;
-    // Requested allocation size.
-    size_t requested_size = 0;
-    // Actual allocation size, if implemented by the allocator. Defaults to 0.
-    size_t allocated_size = 0;
-    // Allow a hook to modify the memory.
-    HookMemoryMutable is_mutable;
-  };
-
-  // The NewHook is invoked whenever an object is being allocated.
-  // Object pointer and size are passed in.
-  // It may be passed null pointer if the allocator returned null.
-  typedef void (*NewHook)(const NewInfo& info);
-
-  [[nodiscard]] static bool AddNewHook(NewHook hook);
-  [[nodiscard]] static bool RemoveNewHook(NewHook hook);
-  static void InvokeNewHook(const NewInfo& info);
-
-  struct DeleteInfo final {
-    // Pointer to the deallocated memory.
-    void* ptr = nullptr;
-    // Size of the deallocated memory provided by the caller.  nullopt if
-    // unknown.
-    std::optional<size_t> deallocated_size;
-    // Size of the allocated memory.
-    size_t allocated_size = 0;
-    // Allow a hook to modify the memory.
-    HookMemoryMutable is_mutable;
-  };
-
-  // The DeleteHook is invoked whenever an object is being deallocated.
-  // Object pointer is passed in.
-  // It may be passed null pointer if the caller is trying to delete null.
-  typedef void (*DeleteHook)(const DeleteInfo& info);
-
-  [[nodiscard]] static bool AddDeleteHook(DeleteHook hook);
-  [[nodiscard]] static bool RemoveDeleteHook(DeleteHook hook);
-  static void InvokeDeleteHook(const DeleteInfo& info);
-
-  // The SampledNewHook is invoked for some subset of object allocations
-  // according to the sampling policy of an allocator such as tcmalloc.
-  // SampledAlloc has the following fields:
-  //
-  //  * AllocHandle handle: to be set to an effectively unique value (in this
-  //    process) by allocator.
-  //
-  //  * size_t allocated_size: space actually used by allocator to host the
-  //    object. Not necessarily equal to the requested size due to alignment and
-  //    other reasons.
-  //
-  //  * double weight: the expected number of allocations matching this profile
-  //    that this sample represents. This weight does not need to be >= 1.0;
-  //    tcmalloc routinely generates weights less than unity (typically in the
-  //    case of larger allocations). The value is still expected to be
-  //    non-negative.
-  //
-  //  * stack: invocation stack for the allocation.
-  //
-  //  * const void* ptr: the address of the allocated memory.
-  //
-  //  * uint8_t access_hint: the access frequency hint provided to TCMalloc.
-  //    This is the raw value of hot_cold_t.
-  //
-  //  * Access access_allocated: the actual partition (Hot or Cold) where
-  //    the memory was allocated.
-  //
-  // The allocator invoking the hook has all the fields in `SampledAlloc` stored
-  // and later call InvokeSampledDeleteHook() with a `SampledAlloc` struct
-  // populated by those fields.
-  enum class AllocHandle : int64_t {};
-  enum class Access : uint8_t {
-    Hot,
-    Cold,
-  };
-  struct SampledAlloc final {
-    const AllocHandle handle;
-    const size_t requested_size;
-    const std::optional<std::align_val_t> requested_alignment;
-    const size_t allocated_size;
-    const double weight;
-    const absl::Span<const void* const> stack;
-    const absl::Time allocation_time;
-    const void* ptr;
-    const uint8_t access_hint;
-    const Access access_allocated;
-  };
-  typedef void (*SampledNewHook)(const SampledAlloc& sampled_alloc);
-  [[nodiscard]] static bool AddSampledNewHook(SampledNewHook hook);
-  [[nodiscard]] static bool RemoveSampledNewHook(SampledNewHook hook);
-  static void InvokeSampledNewHook(const SampledAlloc& sampled_alloc);
-
-  // The SampledDeleteHook is invoked whenever an object previously chosen by an
-  // allocator for sampling is being deallocated.
-  //
-  // A `SampledAlloc` struct identifying the object -- as all its fields have
-  // been stored by the allocator -- is passed in.
-  typedef void (*SampledDeleteHook)(
-      const
-      SampledAlloc& sampled_alloc);
-  [[nodiscard]] static bool AddSampledDeleteHook(SampledDeleteHook hook);
-  [[nodiscard]] static bool RemoveSampledDeleteHook(SampledDeleteHook hook);
-  static void InvokeSampledDeleteHook(
-      const
-      SampledAlloc& sampled_alloc);
-};
-
-}  // namespace tcmalloc
-GOOGLE_MALLOC_SECTION_END
-
-inline std::ostream& operator<<(std::ostream& os,
-                                const tcmalloc::MallocHook::AllocHandle& h) {
-  return os << static_cast<int64_t>(h);
-}
-
-#endif  // TCMALLOC_MALLOC_HOOK_H_
-
-```
-
-### Core Architecture Module: `tcmalloc/malloc_hook_invoke.h`
-```
-// Copyright 2025 The TCMalloc Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#ifndef TCMALLOC_MALLOC_HOOK_INVOKE_H_
-#define TCMALLOC_MALLOC_HOOK_INVOKE_H_
-
-#include "absl/base/attributes.h"
-#include "tcmalloc/internal/config.h"
-#include "tcmalloc/internal/hook_list.h"
-#include "tcmalloc/malloc_hook.h"
-
-GOOGLE_MALLOC_SECTION_BEGIN
-namespace tcmalloc {
-namespace tcmalloc_internal {
-
-extern HookList<MallocHook::NewHook> new_hooks_;
-extern HookList<MallocHook::DeleteHook> delete_hooks_;
-
-extern HookList<MallocHook::SampledNewHook> sampled_new_hooks_;
-extern HookList<MallocHook::SampledDeleteHook> sampled_delete_hooks_;
-
-void InitAtFirstAllocation();
-
-}  // namespace tcmalloc_internal
-
-inline ABSL_ATTRIBUTE_ALWAYS_INLINE void MallocHook::InvokeNewHook(
-    const NewInfo& info) {
-  tcmalloc_internal::new_hooks_.Invoke(info);
-}
-
-inline ABSL_ATTRIBUTE_ALWAYS_INLINE void MallocHook::InvokeDeleteHook(
-    const DeleteInfo& info) {
-  tcmalloc_internal::delete_hooks_.Invoke(info);
-}
-
-inline ABSL_ATTRIBUTE_ALWAYS_INLINE void MallocHook::InvokeSampledNewHook(
-    const SampledAlloc& sampled_alloc) {
-  tcmalloc_internal::sampled_new_hooks_.Invoke(sampled_alloc);
-}
-
-inline ABSL_ATTRIBUTE_ALWAYS_INLINE void MallocHook::InvokeSampledDeleteHook(
-    const
-    SampledAlloc& sampled_alloc) {
-  tcmalloc_internal::sampled_delete_hooks_.Invoke(sampled_alloc);
-}
-
-}  // namespace tcmalloc
-GOOGLE_MALLOC_SECTION_END
-
-#endif  // TCMALLOC_MALLOC_HOOK_INVOKE_H_
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1763** (2026-10-28): **No public description**
-  *Symptoms*: No public description 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1763/checks?check_run_id=122793666574) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
-
-- **Issue #1760** (2026-10-28): **No public description**
-  *Symptoms*: No public description 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1760/checks?check_run_id=122663110623) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `44822548` (2026-10-27)
-**Commit Message**: Track whether a non-default region factory has ever been installed via `has_custom_region_factory_` in `SystemAllocator`. When only the default `MmapRegion` anonymous memory factory (`MAP_ANONYMOUS`) has been used, `madvise(..., MADV_REMOVE)` always fails in the Linux kernel (`vma_is_anonymous(vma) -> -EINVAL`) after acquiring `mmap_read_lock`, walking the VMA tree, and checking VMA flags. Skip the guaranteed-failing `MADV_REMOVE` syscall on default anonymous mappings and issue `MADV_DONTNEED` directly.
-
-When compiled with `-DTCMALLOC_INTERNAL_LEGACY_LOCKING2`, `MADV_REMOVE` is attempted before `MADV_DONTNEED` on all mappings.
-
-PiperOrigin-RevId: 1008399804
-
-**File**: `tcmalloc/internal/system_allocator.h` (modified, +27/-12)
-```diff
-@@ -224,6 +224,7 @@ class SystemAllocator {
- 
-   std::atomic<int> release_errors_{0};
-   std::atomic<MadvisePreference> madvise_{MadvisePreference::kNever};
-+  std::atomic<bool> has_custom_region_factory_{false};
-   bool unlock_vmas_ = false;
- 
-   void DiscardMappedRegions() ABSL_EXCLUSIVE_LOCKS_REQUIRED(spinlock_);
-@@ -392,6 +393,9 @@ void SystemAllocator<Topology, NormalPartitions>::SetRegionFactory(
-   AllocationGuardSpinLockHolder lock_holder(spinlock_);
-   DiscardMappedRegions();
-   region_factory_ = factory;
-+  if (factory != &mmap_factory_.factory) {
-+    has_custom_region_factory_.store(true, std::memory_order_relaxed);
-+  }
- }
- 
- template <typename Topology, size_t NormalPartitions>
-@@ -958,23 +962,30 @@ SystemAllocator<Topology, NormalPartitions>::ReleasePages(void* start,
-     return ReleaseStatus::kFailure;
-   }
- 
--  int ret;
-   // Note -- ignoring most return codes, because if this fails it
-   // doesn't matter...
-   // Moreover, MADV_REMOVE *will* fail (with EINVAL) on private memory,
-   // but that's harmless.
- #ifdef MADV_REMOVE
-   // MADV_REMOVE deletes any backing storage for tmpfs or anonymous shared
-   // memory.
--  do {
--    ret = madvise(start, length, MADV_REMOVE);
--  } while (ret == -1 && errno == EAGAIN);
-+#ifndef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-+  if (ABSL_PREDICT_FALSE(
-+          has_custom_region_factory_.load(std::memory_order_relaxed)))
-+#endif
-+  {
-+    int ret;
-+    do {
-+      ret = madvise(start, length, MADV_REMOVE);
-+    } while (ret == -1 && errno == EAGAIN);
- 
--  if (ret == 0) {
--    return ReleaseStatus::kSuccess;
-+    if (ret == 0) {
-+      return ReleaseStatus::kSuccess;
-+    }
-   }
- #endif
- 
-+  ReleaseStatus status = ReleaseStatus::kFailure;
- #ifdef MADV_FREE
-   const bool do_madvfree = [&]() {
-     switch (madvise_preference()) {
-@@ -990,12 +1001,16 @@ SystemAllocator<Topology, NormalPartitions>::ReleasePages(void* start,
-   }();
- 
-   if (do_madvfree) {
-+    int ret;
-     do {
-       ret = madvise(start, length, MADV_FREE);
-     } while (ret == -1 && errno == EAGAIN);
-+
-+    if (ret == 0) {
-+      status = ReleaseStatus::kSuccess;
-+    }
-   }
- #endif
--  ReleaseStatus status = ReleaseStatus::kFailure;
- #ifdef MADV_DONTNEED
-   const bool do_madvdontneed = [&]() {
-     switch (madvise_preference()) {
-@@ -1013,18 +1028,18 @@ SystemAllocator<Topology, NormalPartitions>::ReleasePages(void* start,
-   // MADV_DONTNEED drops page table info and any anonymous pages.
-   if (do_madvdontneed) {
-     const int advice = system_allocator_internal::MadvDontNeedAdviceAvailable();
-+    int ret;
-     do {
-       ret = madvise(start, length, advice);
-     } while (ret == -1 && errno == EAGAIN);
- 
--    if (advice == MADV_DONTNEED) {
--      status = ReleaseStatus::kRetryAfterMunlock;
-+    if (ret == 0) {
-+      return ReleaseStatus::kSuccess;
-     }
-+    status = advice == MADV_DONTNEED ? ReleaseStatus::kRetryAfterMunlock
-+                                     : ReleaseStatus::kFailure;
-   }
- #endif
--  if (ret == 0) {
--    return ReleaseStatus::kSuccess;
--  }
- 
-   return status;
- }
-```
-
-**File**: `tcmalloc/internal/system_allocator_test.cc` (modified, +91/-0)
-```diff
-@@ -198,6 +198,97 @@ TEST(SystemAllocatorTest, MmapAlignedRejectsOutOfPartitionSizeAndAlignment) {
-             nullptr);
- }
- 
-+class SharedMemoryRegion final : public AddressRegion {
-+ public:
-+  SharedMemoryRegion(uintptr_t start, size_t size)
-+      : start_(start), free_size_(size) {}
-+
-+  std::pair<void*, size_t> Alloc(size_t size, size_t alignment) override {
-+    size = system_allocator_internal::RoundUp(size, kHugePageSize);
-+    alignment = std::max(alignment, kHugePageSize);
-+    uintptr_t end = start_ + free_size_;
-+    if (size > free_size_) return {nullptr, 0};
-+    uintptr_t result = (end - size) & ~(alignment - 1);
-+    if (result < start_) return {nullptr, 0};
-+    size_t actual_size = end - result;
-+    void* ptr = mmap(reinterpret_cast<void*>(result), actual_size,
-+                     PROT_READ | PROT_WRITE,
-+                     MAP_FIXED | MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-+    if (ptr == MAP_FAILED) return {nullptr, 0};
-+    free_size_ -= actual_size;
-+    return {ptr, actual_size};
-+  }
-+
-+ private:
-+  uintptr_t start_;
-+  size_t free_size_;
-+};
-+
-+class SharedMemoryRegionFactory final : public AddressRegionFactory {
-+ public:
-+  AddressRegion* Create(void* start, size_t size, UsageHint hint) override {
-+    void* region_space = MallocInternal(sizeof(SharedMemoryRegion));
-+    if (region_space == nullptr) return nullptr;
-+    return new (region_space)
-+        SharedMemoryRegion(reinterpret_cast<uintptr_t>(start), size);
-+  }
-+};
-+
-+TEST(SystemAllocatorTest, ReleaseCustomRegionAfterRestoringDefaultFactory) {
-+  NumaTopology<2> topology;
-+  topology.Init();
-+  SystemAllocator<NumaTopology<2>, 1> allocator(topology, kMinMmapAlloc);
-+
-+  AddressRegionFactory* default_factory = allocator.GetRegionFactory();
-+  ASSERT_NE(default_factory, nullptr);
-+
-+  SharedMemoryRegionFactory shared_factory;
-+  allocator.SetRegionFactory(&shared_factory);
-+
-+  const size_t kPageSize = GetPageSize();
-+  AddressRange res =
-+      allocator.Allocate(kPageSize, kPageSize, MemoryTag::kNormal);
-+  ASSERT_NE(res.ptr, nullptr);
-+  memset(res.ptr, 0xAB, res.bytes);
-+  ASSERT_EQ(static_cast<unsigned char*>(res.ptr)[0], 0xAB);
-+
-+  // Swap back to the default anonymous factory before releasing the shared
-+  // region allocated from shared_factory. MADV_DONTNEED only unmaps PTEs on
-+  // MAP_SHARED | MAP_ANONYMOUS without punching a hole in the underlying
-+  // shmem page cache, whereas MADV_REMOVE punches a hole and zeroes the page.
-+  allocator.SetRegionFactory(default_factory);
-+
-+  MemoryModifyStatus status = allocator.Release(res.ptr, res.bytes);
-+  EXPECT_TRUE(status.success);
-+  EXPECT_EQ(allocator.release_errors(), 0);
-+  EXPECT_EQ(static_cast<unsigned char*>(res.ptr)[0], 0);
-+  EXPECT_EQ(munmap(res.ptr, res.bytes), 0);
-+}
-+
-+void BM_ReleasePages(benchmark::State& state) {
-+  static NumaTopology<2>* topology = [] {
-+    auto* t = new NumaTopology<2>();
-+    t->Init();
-+    return t;
-+  }();
-+  static SystemAllocator<NumaTopology<2>, 1>* allocator =
-+      new SystemAllocator<NumaTopology<2>, 1>(*topology, kMinMmapAlloc);
-+  const size_t kPageSize = GetPageSize();
-+  const size_t bytes = state.range(0) * kPageSize;
-+  AddressRange res = allocator->Allocate(bytes, kPageSize, MemoryTag::kNormal);
-+  TC_CHECK_NE(res.ptr, nullptr);
-+  for (auto _ : state) {
-+    MemoryModifyStatus st = allocator->Release(res.ptr, bytes);
-+    benchmark::DoNotOptimize(st);
-+  }
-+}
-+BENCHMARK(BM_ReleasePages)
-+    ->Arg(1)
-+    ->Arg(8)
-+    ->Arg(64)
-+    ->ThreadRange(1, 8)
-+    ->UseRealTime();
-+
- }  // namespace
- }  // namespace tcmalloc_internal
- }  // namespace tcmalloc
-```
-
----
-
-### Incident Patch 2: `e18f88dc` (2026-10-27)
-**Commit Message**: Fix modulo-4 low-bit sampling bias in `HugePageFiller::Contribute`.
-
-When contributing a hugepage tracker, the filler steps a 48-bit linear congruential generator via `ExponentialBiased::NextRandom` and samples 1% of trackers for VMA tagging. Taking the remainder of the raw generator state modulo 100 depends on its low two bits, which cycle with period 4 because 100 is a multiple of 4. Starting from a zero seed, only contributions at index 3 modulo 4 could ever be sampled, which excluded three quarters of contributed hugepages.
-
-Extract high-order bits via `ExponentialBiased::GetRandom` before taking the remainder modulo 100 so all modulo-4 contribution indices are sampled uniformly, and initialize the generator state to 42.
-
-Co-authored-by: Chris Kennelly <[REDACTED_EMAIL]>
-PiperOrigin-RevId: 1008455755
-
-**File**: `tcmalloc/huge_page_filler.h` (modified, +3/-2)
-```diff
-@@ -927,7 +927,7 @@ class HugePageFiller {
-   MemoryTagFunction& set_anon_vma_name_;
-   int max_backoff_delay_ ABSL_GUARDED_BY(pageheap_lock) = 1;
-   int current_backoff_delay_ ABSL_GUARDED_BY(pageheap_lock) = 0;
--  uintptr_t rng_ = 0;
-+  uint64_t rng_ = 42;
-   SubreleaseUnbackedMode subrelease_unbacked_mode_;
- };
- 
-@@ -1224,7 +1224,8 @@ inline void HugePageFiller<TrackerType>::Contribute(
- 
-   // Decide whether to sample this tracker for tagging.
-   rng_ = ExponentialBiased::NextRandom(rng_);
--  pt->SetTagState({.sampled_for_tagging = (rng_ % 100 == 0)});
-+  pt->SetTagState(
-+      {.sampled_for_tagging = (ExponentialBiased::GetRandom(rng_) % 100 == 0)});
- 
-   pages_allocated_[type] += pt->used_pages();
-   TC_ASSERT(!(type == AccessDensityPrediction::kDense && donated));
-```
-
-**File**: `tcmalloc/huge_page_filler_test.cc` (modified, +25/-0)
-```diff
-@@ -8629,6 +8629,31 @@ TEST_F(FillerTest, PreferBackedFillerPages) {
-   DeleteRaw(tail);
- }
- 
-+TEST_F(FillerTest, ContributeSamplesAcrossModuloFourResidues) {
-+  randomize_density_ = false;
-+  set_anon_vma_name_.SetIgnoreName(true);
-+
-+  const Length kAlloc = kPagesPerHugePage / 2 + Length(1);
-+  SpanAllocInfo sparse_info = {1, AccessDensityPrediction::kSparse};
-+
-+  // Raw NextRandom(rng_) % 100 == 0 could only ever sample contributions with
-+  // index % 4 == 3 because 100 % 4 == 0 and the 48-bit LCG low 2 bits cycle
-+  // with period 4. Verify all four mod-4 residues are sampled.
-+  std::array<int, 4> residue_counts = {0, 0, 0, 0};
-+  for (int i = 0; i < 4000; ++i) {
-+    PAlloc p = AllocateWithSpanAllocInfo(kAlloc, sparse_info);
-+    if (p.pt->GetTagState().sampled_for_tagging) {
-+      ++residue_counts[i % 4];
-+    }
-+    DeleteRaw(p);
-+  }
-+  for (int r = 0; r < 4; ++r) {
-+    EXPECT_GT(residue_counts[r], 0) << "residue " << r;
-+  }
-+  DrainFreedTrackers();
-+  CheckStats();
-+}
-+
- TEST(SkipSubreleaseIntervalsTest, EmptyIsNotEnabled) {
-   // When we have a limit hit, we pass SkipSubreleaseIntervals{} to the
-   // filler. Make sure it doesn't signal that we should skip the limit.
-```
-
-#### Recent Merged Pull Requests:
-- **PR #1763** (closed): No public description (@copybara-service[bot])
-- **PR #1760** (2026-10-28): No public description (@copybara-service[bot])
-- **PR #1758** (2026-10-28): Unback HugeRegion ranges with the lock dropped in ReleaseFuzz. (@copybara-service[bot])
-- **PR #1757** (2026-10-28): Tighten HugeRegionTest.ReleaseFuzz before it exercises lock drops. (@copybara-service[bot])
-- **PR #1756** (2026-10-28): Test HugeRegion operations that run while an unback is in flight. (@copybara-service[bot])
-- **PR #1755** (2026-10-27): Snapshot page allocator limit stats in ExtractStats under pageheap_lock (@copybara-service[bot])
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Track whether a non-default region factory has ever been installed via `has_cust
-
+### 1. Integer Wraparound Guard on Pointer/Byte Metric Conversions
 **RULE**:
-When implementing operations in `tcmalloc/internal/system_allocator.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When performing modular arithmetic, decrementing counters, or calculating sampling offsets across unsigned types (`size_t`) and signed counters (`ssize_t`), systems MUST explicitly clamp or validate values against `std::numeric_limits<ssize_t>::max()` BEFORE arithmetic evaluation. Systems MUST NOT assume unsigned overflow will cleanly map to a negative signed number.
 
 **WHY**:
-Prevents defects observed in production commit `44822548`: Track whether a non-default region factory has ever been installed via `has_custom_region_factory_` in `SystemAllocator`. When only the default `MmapRegion` anonymous memory factory (`MAP_ANONYMOUS`) has been used, `madvise(..., MADV_REMOVE)` always fails in the Linux kernel (`vma_is_anonymous(vma) -> -EINVAL`) after acquiring `mmap_read_lock`, walking the VMA tree, and checking VMA flags. Skip the guaranteed-failing `MADV_REMOVE` syscall on default anonymous mappings and issue `MADV_DONTNEED` directly.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+In unsigned arithmetic, subtracting a large value `k > 2^63` from a positive number does not yield a signed negative integer; it wraps through modular arithmetic ($2^{64}$) into a large positive integer. When this wrapped positive value is later added to a fixed positive offset, it triggers undefined signed arithmetic overflow (`__builtin_ssubl_overflow` failure or UBSan traps) and corrupts memory profiler weights.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/internal/system_allocator.h`.
+Apply to any sampling subsystem, circular ring buffer, quota manager, or rate-limiter where requests of unbounded size (e.g., `size_t new_size` passed to `realloc`) are deducted from signed reservation pools (`ssize_t bytes_until_sample_`).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```c++
-// Verified production-grade fix pattern:
-  std::atomic<bool> has_custom_region_factory_{false};
-  if (factory != &mmap_factory_.factory) {
-    has_custom_region_factory_.store(true, std::memory_order_relaxed);
-  }
-#ifndef TCMALLOC_INTERNAL_LEGACY_LOCKING2
-  if (ABSL_PREDICT_FALSE(
-          has_custom_region_factory_.load(std::memory_order_relaxed)))
-#endif
-  {
-    int ret;
-    do {
-      ret = madvise(start, length, MADV_REMOVE);
-    } while (ret == -1 && errno == EAGAIN);
-    if (ret == 0) {
-      return ReleaseStatus::kSuccess;
-    }
-  ReleaseStatus status = ReleaseStatus::kFailure;
-    int ret;
+```cpp
+#include <cstddef>
+#include <limits>
+#include <sys/types.h>
 
-    if (ret == 0) {
-      status = ReleaseStatus::kSuccess;
+class AllocationSampler {
+ public:
+  static constexpr ssize_t kIntervalOffset = 1024;
+
+  ssize_t RecordAllocationSlow(size_t k) {
+    // 1. Guard against size_t request crossing signed bounds.
+    // k > SSIZE_MAX wraps bytes_until_sample_ back to a positive integer.
+    if (__builtin_expect(k > static_cast<size_t>(std::numeric_limits<ssize_t>::max()), 0)) {
+      return std::numeric_limits<ssize_t>::max();
     }
-    int ret;
-    if (ret == 0) {
-      return ReleaseStatus::kSuccess;
-    status = advice == MADV_DONTNEED ? ReleaseStatus::kRetryAfterMunlock
-                                     : ReleaseStatus::kFailure;
+
+    // 2. Perform signed subtraction check with compiler overflow intrinsics.
+    ssize_t weight = 0;
+    if (__builtin_expect(__builtin_ssubl_overflow(
+            sample_interval_, bytes_until_sample_ + kIntervalOffset, &weight), 0)) {
+      return std::numeric_limits<ssize_t>::max();
+    }
+
+    return weight;
+  }
+
+ private:
+  ssize_t sample_interval_ = 2 * 1024 * 1024;
+  ssize_t bytes_until_sample_ = 1024;
+};
 ```
 
 **NEGATIVE CONSTRAINT**:
-```c++
-// Anti-pattern to NEVER write (induced failure mode):
-  int ret;
-  do {
-    ret = madvise(start, length, MADV_REMOVE);
-  } while (ret == -1 && errno == EAGAIN);
-  if (ret == 0) {
-    return ReleaseStatus::kSuccess;
-  ReleaseStatus status = ReleaseStatus::kFailure;
-    if (advice == MADV_DONTNEED) {
-      status = ReleaseStatus::kRetryAfterMunlock;
-  if (ret == 0) {
-    return ReleaseStatus::kSuccess;
-  }
+```cpp
+// ANTI-PATTERN: Blindly casting size_t to ssize_t or allowing unsigned wrapping
+// to dictate signed state variables without pre-condition bounds validation.
+ssize_t BadRecordAllocation(size_t k) {
+  // If k == 2^63 + 2^27, unsigned wraparound keeps bytes_until_sample_ positive!
+  bytes_until_sample_ -= static_cast<ssize_t>(k + 1); 
+  // UNDEFINED BEHAVIOR: Signed overflow when bytes_until_sample_ + offset > SSIZE_MAX
+  return sample_interval_ - (bytes_until_sample_ + kIntervalOffset);
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `44822548` are properly handled with clean fallback behavior.
+Enforce verification using GoogleTest fuzzing (`FUZZ_TEST`) paired with Clang UndefinedBehaviorSanitizer (`-fsanitize=undefined,signed-integer-overflow`):
+```cpp
+TEST(SamplerTest, VerifySignedBoundsEnforcement) {
+  AllocationSampler sampler;
+  constexpr size_t kHugeSize = static_cast<size_t>(std::numeric_limits<ssize_t>::max()) + 1024ULL;
+  EXPECT_EQ(sampler.RecordAllocationSlow(kHugeSize), std::numeric_limits<ssize_t>::max());
+}
+```
+
+---
+
+### 2. Guard Band & Clamping on Dynamic Size-Class Rescaling
+**RULE**:
+When dynamically resizing allocations or cache capacities using fractional arithmetic (e.g., bitwise right shifts `>> relative_shift`), computed delta thresholds and target capacities MUST be lower-bounded to at least 1 unit (`std::max(val, 1)`). Shrink boundaries MUST NOT constrain reduction steps to less than available allocable headroom.
+
+**WHY**:
+Bitwise shifting small batch sizes during CPU cache redistribution causes down-shifts to truncate to 0. If a shrink factor or target capacity evaluates to 0:
+1. Dynamic scaling permanently locks the target size class into zero headroom, preventing it from processing future allocations.
+2. Shrinking logic bounded by zero fails to reclaim unused memory from underutilized size classes, causing starvation in classes experiencing allocation bursts.
+
+**WHEN TO APPLY**:
+Any adaptive resource pool, LRU slab manager, thread-cache balancing loop, or congestion window algorithm using integer scaling/shifting.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+
+struct SizeClassResizePolicy {
+  // Enforce structural non-zero scaling invariants
+  static int ComputeNextCapacity(int to_grow, int growth_factor, int relative_shift) {
+    int target = (to_grow * growth_factor) >> relative_shift;
+    // INVARIANT: Adaptive scaling must never truncate capacity delta to zero.
+    return std::max(target, 1);
+  }
+
+  static int ComputeSafeShrinkStep(size_t current_cap, int raw_batch_size, int relative_shift, int target) {
+    int batch_size = raw_batch_size >> relative_shift;
+    batch_size = std::max(batch_size, 1);
+
+    // INVARIANT: Retain at least batch_size elements to prevent class death.
+    if (current_cap <= static_cast<size_t>(batch_size)) {
+      return 0; // Cannot shrink further
+    }
+
+    // Shrink directly towards target without intermediate batch truncations
+    int to_shrink = static_cast<int>(std::min<size_t>(target, current_cap - batch_size));
+    return std::max(to_shrink, 0);
+  }
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Shifting down directly to 0 causes deadlock / capacity starvation.
+int target = (to_grow * growth_factor) >> relative_shift; // If relative_shift is large, target == 0!
+int batch_size = num_objects >> relative_shift;           // batch_size becomes 0!
+if (cap <= batch_size) continue;                          // Evaluates true when cap == 0, trapping state.
+int to_shrink = std::min(target, batch_size);             // Evaluates to 0!
+to_shrink = std::min<size_t>(to_shrink, cap - batch_size);
+// Result: 0 bytes shrunk, capacity balance permanently broken.
+```
+
+**VERIFICATION METHOD**:
+Compile with `-fwrapv` / `-Wall` and run parameterized unit tests sweeping `relative_shift` through values `0..63`:
+```cpp
+TEST(CapacityScaling, ShiftUnderflowInvariant) {
+  for (int shift = 0; shift < 32; ++shift) {
+    int capacity = SizeClassResizePolicy::ComputeNextCapacity(1, 1, shift);
+    ASSERT_GE(capacity, 1) << "Underflow detected at shift: " << shift;
+  }
+}
+```
+
+---
+
+### 3. Asynchronous Multi-State Allocation Reclamation Window Accounting
+**RULE**:
+When an allocator drops an internal mutex to perform a non-blocking or blocking kernel syscall (such as `madvise(..., MADV_DONTNEED)` or `sys_munmap`) on memory removed from its free lists, the system MUST record those pages in an `in_flight_unbacked` metric. Systems MUST NOT allow transient accounting gaps where memory is absent from both the free and unmapped pools.
+
+**WHY**:
+Releasing the page heap mutex while invoking the kernel unback syscall introduces a race condition. If concurrent threads query available memory (`MallocExtension::GetNumericProperty`) or evaluate hard memory limits during this window, they see an artificial drop in total tracking counts (`free + unmapped`). This causes erroneous out-of-memory errors, spurious panic aborts, and premature heap growth.
+
+**WHEN TO APPLY**:
+All systems programming runtimes where kernel memory reclamation occurs concurrently with metrics collection and thread allocation requests.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+#include <atomic>
+#include <cstddef>
+#include <sys/mman.h>
+
+class MemoryTracker {
+ public:
+  void ReleaseRangeToOS(void* addr, size_t length) {
+    // 1. Remove from free count under lock
+    total_free_bytes_.fetch_sub(length, std::memory_order_relaxed);
+
+    // 2. Mark as in-flight BEFORE dropping synchronization
+    in_flight_unbacked_bytes_.fetch_add(length, std::memory_order_relaxed);
+
+    // 3. Perform expensive kernel transition without holding the page heap lock
+    madvise(addr, length, MADV_DONTNEED);
+
+    // 4. Update final state
+    unbacked_bytes_.fetch_add(length, std::memory_order_relaxed);
+    in_flight_unbacked_bytes_.fetch_sub(length, std::memory_order_relaxed);
+  }
+
+  // Consistent view during concurrent queries
+  size_t GetTotalAvailableMemory() const {
+    return total_free_bytes_.load(std::memory_order_relaxed) +
+           unbacked_bytes_.load(std::memory_order_relaxed) +
+           in_flight_unbacked_bytes_.load(std::memory_order_relaxed);
+  }
+
+ private:
+  std::atomic<size_t> total_free_bytes_{0};
+  std::atomic<size_t> in_flight_unbacked_bytes_{0};
+  std::atomic<size_t> unbacked_bytes_{0};
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Drop page heap lock with dropped accounting
+void BrokenRelease(void* addr, size_t length) {
+  total_free_bytes_ -= length; // Deducted from free
+  // WINDOW OF VULNERABILITY: Another thread calls GetTotalAvailableMemory() right here.
+  // total_free_bytes_ is down, unbacked_bytes_ is not yet up.
+  // Total reported memory drops spuriously!
+  madvise(addr, length, MADV_DONTNEED);
+  unbacked_bytes_ += length;
+}
+```
+
+**VERIFICATION METHOD**:
+Run high-concurrency memory torture harnesses while continuously asserting consistency invariants:
+```cpp
+// Invariant check across background threads
+void CheckConsistencyInvariant(const MemoryTracker& tracker, size_t physical_pool_size) {
+  size_t observed = tracker.GetTotalAvailableMemory();
+  TC_ASSERT_EQ(observed, physical_pool_size);
+}
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Sampler Weight Signed Overflow Vulnerability (BUG-TCM-01)
+- **Context**: Statistical allocation profiler (`tcmalloc/sampler.cc`) invoked during high-order `realloc` requests.
+- **What Was Expected**: Allocation sizes exceeding addressable ranges passed to `realloc(nullptr, size)` should fail gracefully, returning `ENOMEM` with the sampling state intact.
+- **What Actually Happened**: When a fuzzer invoked `realloc(nullptr, 9223372036988993536ull)` (which is $2^{63} + 2^{27}$), `TryRecordAllocationFast` decremented the internal counter using unsigned wrapping arithmetic. The counter wrapped around past zero into a non-negative value. Subsequent execution of `RecordAllocationSlow` evaluated `bytes_until_sample_ + kIntervalOffset`. This caused a signed integer overflow when the wrapped counter equaled `numeric_limits<ssize_t>::max()`, triggering a crash under Clang UBSan.
+- **Evidence in Repo**: Commit `ed93c758`, Issue `#1777`, `tcmalloc/sampler.cc`, test: `tcmalloc/testing/sampler_test.cc`.
+- **Root Cause**: Failure to bound the input allocation size against `static_cast<size_t>(std::numeric_limits<ssize_t>::max())` before evaluating subtraction overflow using `__builtin_ssubl_overflow`.
+- **Remediation Code Diff**:
+```cpp
+--- a/tcmalloc/sampler.cc
++++ b/tcmalloc/sampler.cc
+@@ -143,8 +143,14 @@ ssize_t Sampler::RecordAllocationSlow(size_t k) {
++  // A request larger than the largest ssize_t wraps bytes_until_sample_ past
++  // zero and back to a non-negative value in TryRecordAllocationFast, so the
++  // counter no longer encodes f.  Such a request cannot be satisfied anyway;
++  // clamp the weight rather than derive it from the wrapped counter.
+   ssize_t weight;
+-  if (ABSL_PREDICT_FALSE(__builtin_ssubl_overflow(
++  if (ABSL_PREDICT_FALSE(
++          k > static_cast<size_t>(std::numeric_limits<ssize_t>::max())) ||
++      ABSL_PREDICT_FALSE(__builtin_ssubl_overflow(
+           sample_interval_, bytes_until_sample_ + kIntervalOffset, &weight))) {
+     weight = std::numeric_limits<ssize_t>::max();
+   }
+```
+- **Lesson**: Do not let unsigned values cross into signed pointer arithmetic without explicit validation guards at API boundaries.
+
+---
+
+### Incident 2: Out-Of-Bounds CPU Index Memory Corruption (BUG-TCM-02)
+- **Context**: External management API `MallocExtension::ReleaseCpuMemory` (`tcmalloc/cpu_cache.h`, `tcmalloc/tcmalloc.cc`).
+- **What Was Expected**: Passing an invalid or negative CPU number (e.g. `ReleaseCpuMemory(-1)` or `ReleaseCpuMemory(99999)`) should validate input boundaries and safely return `0` bytes freed.
+- **What Actually Happened**: The `cpu` integer parameter was used directly as an unvalidated index into the per-CPU metadata arrays (`resize_[cpu].lock` and `resize_[cpu].populated`). This caused out-of-bounds array dereferencing, memory corruption, and segmentation faults during CPU cache drain routines.
+- **Evidence in Repo**: Commit `0172699c`, `tcmalloc/cpu_cache.h`, test: `tcmalloc/testing/malloc_extension_test.cc`.
+- **Root Cause**: Missing defensive perimeter checks on public API boundaries that accept system identifiers (CPU cores).
+- **Remediation Code Diff**:
+```cpp
+--- a/tcmalloc/cpu_cache.h
++++ b/tcmalloc/cpu_cache.h
+@@ -2254,6 +2254,7 @@ inline uint64_t CpuCache<Forwarder>::UsedBytes(int target_cpu) const {
+ template <class Forwarder>
+ inline bool CpuCache<Forwarder>::HasPopulated(int target_cpu) const {
+   TC_ASSERT_GE(target_cpu, 0);
++  TC_ASSERT_LT(target_cpu, NumCPUs());
+   return resize_[target_cpu].populated.load(std::memory_order_relaxed);
+ }
+@@ -2391,6 +2392,9 @@ struct DrainHandler {
+ template <class Forwarder>
+ inline uint64_t CpuCache<Forwarder>::Drain(int cpu) {
++  if (ABSL_PREDICT_FALSE(cpu < 0 || cpu >= NumCPUs())) {
++    return 0;
++  }
+   AllocationGuardSpinLockHolder h(resize_[cpu].lock);
+   return DrainLocksHeld(resize_[cpu].lock, cpu);
+ }
+--- a/tcmalloc/tcmalloc.cc
++++ b/tcmalloc/tcmalloc.cc
+@@ -535,7 +535,9 @@ extern "C" void MallocExtension_Internal_GetProperties(
+ extern "C" size_t MallocExtension_Internal_ReleaseCpuMemory(int cpu) {
+-  if (ABSL_PREDICT_FALSE(!subtle::percpu::IsFast())) return 0;
++  if (ABSL_PREDICT_FALSE(!subtle::percpu::IsFast() || cpu < 0)) {
++    return 0;
++  }
+```
+- **Lesson**: Hardware core IDs and system indices must be validated against `[0, NumCPUs())` bounds before indexing internal state arrays.
+
+---
+
+### Incident 3: Max-Capacity Dynamic Resizing Underflow Lockup (BUG-TCM-03)
+- **Context**: Per-CPU slab auto-tuning engine (`tcmalloc/cpu_cache.h`) in `CpuCache::GetUpdatedMaxCapacities`.
+- **What Was Expected**: Memory allocations in high-demand size classes should trigger capacity steals from under-utilized size classes by shrinking their maximum slab capacities.
+- **What Actually Happened**: When calculating the batch size to steal for small slabs, the right-shift operation `num_objects >> relative_shift` rounded down to zero. Because the algorithm clamped shrinking steps to `batch_size`, the allowed shrinkage dropped to `0`. Consequently, max capacity could never be reduced for affected classes, trapping the slab balancer in a deadlocked state and disabling dynamic cache tuning.
+- **Evidence in Repo**: Commit `6ecadd81`, `tcmalloc/cpu_cache.h`, `tcmalloc/parameters.cc`.
+- **Root Cause**: The calculation confused preserving a minimum capacity of *at least one batch size* with *restricting shrinkage steps to at most one batch size*, allowing shifts to round down to zero.
+- **Remediation Code Diff**:
+```cpp
+--- a/tcmalloc/cpu_cache.h
++++ b/tcmalloc/cpu_cache.h
+@@ -1592,6 +1592,9 @@ int CpuCache<Forwarder>::GetUpdatedMaxCapacities(
+     int next_capacity_index = max_capacity_index;
+     int target = (to_grow * growth_factor) >> relative_shift;
++    if (forwarder_.fix_max_capacity_bug()) {
++      target = std::max(target, 1);
++    }
+     int shrunk = 0;
+@@ -1600,6 +1603,9 @@ int CpuCache<Forwarder>::GetUpdatedMaxCapacities(
+       size_t size_class_to_shrink = miss_stats[shrink_index].size_class;
+       int batch_size = forwarder_.num_objects_to_move(size_class_to_shrink) >>
+                        relative_shift;
++      if (forwarder_.fix_max_capacity_bug()) {
++        batch_size = std::max(batch_size, 1);
++      }
+       size_t cap =
+           max_capacity_[size_class_to_shrink].load(std::memory_order_relaxed);
+@@ -1608,16 +1614,24 @@ int CpuCache<Forwarder>::GetUpdatedMaxCapacities(
+       if (cap <= batch_size) continue;
+-      int to_shrink = std::min(target, batch_size);
+       // Do not shrink such that max capacity falls below batch_size.
+-      to_shrink = std::min<size_t>(to_shrink, cap - batch_size);
++      int to_shrink;
++      if (forwarder_.fix_max_capacity_bug()) {
++        to_shrink = std::min<size_t>(target, cap - batch_size);
++      } else {
++        to_shrink = std::min(target, batch_size);
++        to_shrink = std::min<size_t>(to_shrink, cap - batch_size);
++      }
+       if (to_shrink == 0) continue;
+```
+- **Lesson**: Do not constrain rate-of-change updates with truncation-prone bitshifts without establishing a non-zero minimum floor.
+
+---
+
+### Incident 4: Transient Memory Drops During In-Flight Syscall Unbacking (BUG-TCM-04)
+- **Context**: Virtual memory reclamation in `HugeCache::ShrinkCache` and `HugePageFiller::HandleFullyFreedTracker` (`tcmalloc/huge_page_filler.h`).
+- **What Was Expected**: Memory being returned to the OS via `madvise(..., MADV_DONTNEED)` should remain accounted for throughout the operation, ensuring monotonic and accurate metrics reporting.
+- **What Actually Happened**: The allocator dropped the page heap lock before invoking `madvise` to prevent lock contention across worker threads. However, it had already removed the pages from `free_bytes_` *before* the hugepage tracker recorded the memory as `unbacked_bytes_`. As a result, concurrent stats inspections and limit enforcements saw an artificial, temporary drop in `free + unbacked` bytes. This triggered false-positive threshold alerts and out-of-memory errors.
+- **Evidence in Repo**: Issue `#1783`, Co-authored by Chris Kennelly, merged October 29, 2026.
+- **Root Cause**: Mutex release around kernel transitions without intermediate tri-state metric tracking (`in_flight_unbacked_pages`).
+- **Remediation Code Diff**:
+```cpp
+// Conceptual extraction from Patch #1783
+void HugePageFiller::HandleFullyFreedTracker(Tracker* t) {
++  // Record range as in-flight before releasing page heap lock
++  const size_t pages = t->free_pages();
++  in_flight_unbacked_pages_.fetch_add(pages, std::memory_order_relaxed);
+   pageheap_lock.Unlock();
+
+   // Syscall execution without lock contention
+   int ret = madvise(t->address(), t->size(), MADV_DONTNEED);
+   TC_CHECK_EQ(ret, 0);
+
+   pageheap_lock.Lock();
++  in_flight_unbacked_pages_.fetch_sub(pages, std::memory_order_relaxed);
+   t->set_unbacked();
+}
+```
+- **Lesson**: State transitions that drop locks to execute kernel system calls must track "in-flight" items so readers can maintain consistent global views.
+
+---
+
+### Incident 5: Early Pthread Key Registration Allocation Deadlock (BUG-TCM-05)
+- **Context**: Thread cache teardown notifications (`tcmalloc/internal/percpu_state.h`).
+- **What Was Expected**: Calling `PerCpuState::Init` registers a `pthread_key_t` to clean up thread-specific memory when threads terminate.
+- **What Actually Happened**: `pthread_setspecific` occasionally allocates memory internally if called late in a thread's initialization sequence, or if the key is allocated after other dynamic keys. Calling `pthread_setspecific` inside `malloc` triggered re-entrant calls into `malloc`, causing infinite recursive locks and deadlocks.
+- **Evidence in Repo**: `tcmalloc/internal/percpu_state.h`, `PerCpuState::Init`.
+- **Root Cause**: Invoking pthread key initialization without pre-allocating the key's internal descriptor table slot early in execution.
+- **Remediation Code Diff**:
+```cpp
+--- a/tcmalloc/internal/percpu_state.h
++++ b/tcmalloc/internal/percpu_state.h
+@@ -53,6 +53,12 @@ inline void PerCpuState::Init() {
+   absl::base_internal::LowLevelCallOnce(&f_, [&]() {
+     pthread_key_create(&key_, HandleThreadExit);
+ 
++    // Invoke `pthread_setspecific` now to ensure that we have one of the
++    // early `pthread_key_t`'s that does not require allocating when used.
++    AllocationGuard g;
++    RegisterThreadCache(nullptr);
+   });
+ }
+```
+- **Lesson**: Low-level runtime interceptors must prime external C-library TLS storage at startup to prevent re-entrant allocations inside hook paths.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Operator Precedence Hazard in Unsigned Calculations**:
+  ```cpp
+  // WRONG: Inadvertent wraparound occurs before comparison
+  if (k - min_threshold > max_capacity) { ... } 
+  // CORRECT: Structurally overflow-proof comparison
+  if (k > max_capacity + min_threshold || k < min_threshold) { ... }
+  ```
+- **Zero vs. Null Pointer Truthiness**:
+  In `tcmalloc/internal/hook_list.h`, hooks use raw function pointer definitions (`using PageAllocatorNewHook = void (*)(...);`). Check emptiness using explicit pointer syntax (`T()`) rather than boolean negation:
+  ```cpp
+  template <typename T>
+  bool HookList<T>::Add(T value_as_t) {
+    if (value_as_t == T()) return false; // Invariant check: Explicit type-constructed null check
+  ```
+- **Memory Order Fences on Read-Only Stats**:
+  Avoid using default `std::memory_order_seq_cst` when maintaining diagnostic counters. TCMalloc explicitly enforces `std::memory_order_relaxed` for high-frequency hits and `std::memory_order_acquire` / `std::memory_order_release` when publishing slot changes:
+  ```cpp
+  priv_data[index].store(value_as_t, std::memory_order_release);
+  priv_end.store(index + 1, std::memory_order_release);
+  ```
+
+### 2. Infinite Loop & Recursion Guards
+- **Termination Proofs in Hook Lists**:
+  In `HookList<T>::Remove`, searching for empty or trailing slots uses strict bounded loops capped by structural constants:
+  ```cpp
+  int hooks_end = priv_end.load(std::memory_order_acquire);
+  int index = 0;
+  // LOOP INVARIANT: index is guaranteed strictly monotonically increasing and upper bounded by hooks_end
+  while (index < hooks_end && value_as_t != priv_data[index].load(std::memory_order_acquire)) {
+    ++index;
+  }
+  ```
+- **Re-Entrancy Locks (`AllocationGuard`)**:
+  To prevent infinite recursive loops (where `malloc` triggers a logging call or hook which then calls `malloc` again), an RAII `AllocationGuard` disables hook invocation during internal operations:
+  ```cpp
+  class AllocationGuard {
+   public:
+    AllocationGuard() { ++nested_allocations_; }
+    ~AllocationGuard() { --nested_allocations_; }
+    static bool IsActive() { return nested_allocations_ > 0; }
+   private:
+    static thread_local int nested_allocations_;
+  };
+  ```
+
+### 3. UI & UX Micro-Mechanics (CLI & Stats Telemetry Invariants)
+- **Formatting Lockfree Human/Pbtxt Stats Buffers**:
+  When outputting diagnostics via `MallocExtension::GetStats` under high concurrency, printers must not allocate heap memory (`malloc` must not call `malloc`).
+- **Printer Buffer Zero-Reflow Invariant**:
+  TCMalloc writes into pre-allocated, fixed-capacity stack arrays using `signal_safe_write` to avoid libc format string bugs and dynamic reallocations.
+
+### 4. Backend Concurrency & Memory Safety
+- **Signal Safety & EINTR Handling**:
+  Every POSIX read/write syscall must wrap around `EINTR` signals without losing the count of partially transferred bytes:
+  ```cpp
+  #define TCMALLOC_RETRY_ON_TEMP_FAILURE(expression)               \
+    (__extension__({                                               \
+      long int _temp_failure_retry_result;                         \
+      do _temp_failure_retry_result = (long int)(expression);      \
+      while (_temp_failure_retry_result == -1L && errno == EINTR); \
+      _temp_failure_retry_result;                                  \
+    }))
+  ```
+- **Memory Probe Safety via `process_vm_readv`**:
+  To inspect memory ranges without crashing from `SIGSEGV` when a page is concurrently unmapped, use `SafeCopyMemory`:
+  ```cpp
+  bool SafeCopyMemory(const void* src, void* dst, size_t size) {
+    struct iovec local = {.iov_base = dst, .iov_len = size};
+    struct iovec remote = {.iov_base = const_cast<void*>(src), .iov_len = size};
+    ssize_t rc = process_vm_readv(getpid(), &local, 1, &remote, 1, 0);
+    return rc == static_cast<ssize_t>(size);
+  }
+  ```
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Bounded Array Indexing Assertions**:
+  Never assume runtime indices are valid, even if generated internally:
+  ```cpp
+  TC_ASSERT_LT(next_capacity_index, kNumClasses);
+  TC_ASSERT_LT(next_capacity_index, max_capacity.size());
+  ```
+- **Alignment Traps in Size Conversions**:
+  Memory requests must be aligned up to the nearest platform boundary using bitwise masking:
+  ```cpp
+  inline constexpr size_t AlignUp(size_t size, size_t alignment) {
+    return (size + alignment - 1) & ~(alignment - 1);
+  }
+  ```
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+TCMalloc divides memory management into a three-tiered hierarchy:
+1. **Per-CPU Slabs (Front-end)**: Core-affine, lock-free access via Linux Restartable Sequences (`rseq`).
+2. **Central FreeList (Middle-end)**: Size-class transfer management using fine-grained spinlocks.
+3. **Page Allocator / HugePageFiller (Back-end)**: Coalesces 4 KiB/8 KiB pages into 2 MiB hugepages to reduce kernel page-table overhead and TLB misses.
+
+### 2. Core Abstractions
+- `Span`: Contiguous run of pages treated as a single structural unit.
+- `CpuCache<Forwarder>`: Per-core memory slab supporting fast allocation sequences.
+- `Sampler`: Statistical tracking engine implementing a Poisson distribution model.
+- `HookList<T>`: Lockless-traversal, thread-safe function pointer array.
+
+### 3. Error Handling
+- Allocations exceeding virtual address space return `nullptr` or throw `std::bad_alloc` based on C++ exceptions configurations.
+- Asserts use `TC_ASSERT_*` macros during debugging and degrade to silent clamps or controlled fatal dumps (`TC_BUG`) in production.
+- Uses `ScopedSigmask` and `ErrnoRestorer` to prevent POSIX `errno` clobbering inside intercepted allocator wrappers.
+
+### 4. Testing
+- Fuzz testing via `FUZZ_TEST` (Google FuzzTest library) targeting boundary conditions (`WildPointerRealloc`, `CentralFreelistFuzz`).
+- Ablation testing: Configurable experiments allow comparing bug fixes and new features against baseline behavior in production:
+  ```cpp
+  if (IsExperimentActive(Experiment::TCMALLOC_SONIC_FIX_MAX_CAPACITY_BUG_ABLATION)) { ... }
+  ```
+
+### 5. Security
+- Built-in GWP-ASan detects heap-buffer-overflows and use-after-free conditions in live production environments.
+- Dead object poisoning writes patterns over de

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T21:19:36.976Z",
+  "last_updated": "2026-10-30T21:34:22.168Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3456,14 +3456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openziti-zrok",
-      "content_hash": "d9841fa6a1e9ceb549cf23e107fb5add82128689bf0af29c74902558f68a7605",
-      "verified_at": "2026-10-18T21:07:47.546Z",
+      "content_hash": "ecbf70b59f40eac765b00020c6be542ede46fbef4b4a1b69ab15d108665f789d",
+      "verified_at": "2026-10-30T21:30:07.295Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T21:07:47.552Z"
+      "last_updated": "2026-10-30T21:30:07.295Z"
     },
     "crate/crate": {
       "repository": "crate/crate",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "cff5d829548d8e0e8d388732cef157791e2cbe56246d398596b2ba010adbfe2c",
-      "verified_at": "2026-10-29T17:16:50.011Z",
+      "content_hash": "d647357ff6de7cc6ad45db06383bcf2f5544c6c0c0a181b58d93b95ccb8683c6",
+      "verified_at": "2026-10-30T21:30:06.848Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T17:16:50.011Z"
+      "last_updated": "2026-10-30T21:30:06.848Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "0ebc2b3c1bc04ded2fb800eee0496ac5d2168c6bb7df51504d9ac037b9c71038",
-      "verified_at": "2026-10-29T22:48:52.002Z",
+      "content_hash": "bd7d3e1acde156f8e2cf1623d1f76a0b5f0572817de99884e34b44aea01cdc9c",
+      "verified_at": "2026-10-30T21:30:01.183Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T22:48:52.002Z"
+      "last_updated": "2026-10-30T21:30:01.183Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "5928d835d9d7bb1eafcdbb12cdf3ecb461e260f4f525a008a98cde634c80a592",
-      "verified_at": "2026-10-28T22:52:12.924Z",
+      "content_hash": "eb092257778872858fcadd9ccd61594aad66386dd5045c716eb951d206d2fe9c",
+      "verified_at": "2026-10-30T21:33:51.484Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:52:12.924Z"
+      "last_updated": "2026-10-30T21:33:51.484Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",
@@ -12741,14 +12741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-software-mansion-react-native-screens",
-      "content_hash": "45fbd34f3c555a0bdc09831005725b3bf05b2bdd11e8314442d7ed9d719a352b",
-      "verified_at": "2026-10-25T22:07:15.973Z",
+      "content_hash": "155a1050654fbdbc9d143f3643e24f37eb331359d06863b76ff24ba3999b1149",
+      "verified_at": "2026-10-30T21:34:22.167Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T22:07:15.973Z"
+      "last_updated": "2026-10-30T21:34:22.167Z"
     },
     "speedyapply/JobSpy": {
       "repository": "speedyapply/JobSpy",
@@ -15381,14 +15381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mochajs-mocha",
-      "content_hash": "b6358dac7fbac407e6b254c0f2316f3fa330ac96a33624f6f8ac6faca44023bd",
-      "verified_at": "2026-10-27T18:03:26.264Z",
+      "content_hash": "d92fbe8d482bbb44e37c471cb426b12ed0f519d136e2db6b849c05e4b538f812",
+      "verified_at": "2026-10-30T21:32:49.766Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T18:03:26.264Z"
+      "last_updated": "2026-10-30T21:32:49.766Z"
     },
     "justjavac/free-programming-books-zh_CN": {
       "repository": "justjavac/free-programming-books-zh_CN",
