@@ -1913,10 +1913,10 @@
     "repository": "rmax/scrapy-redis",
     "platform": "github",
     "sourceUrl": "https://github.com/rmax/scrapy-redis",
-    "sourceVersion": "931336e7",
+    "sourceVersion": "2cafe98f",
     "license": "MIT",
-    "contentHash": "3307e5982c4b255ef3af5adce349bf2e6ea6bcd95534a6fe6a3d1fa5f6ea8a7c",
-    "lastHarvestedAt": "2026-10-27T19:20:20.310Z",
+    "contentHash": "b6e85171d03852811fce958ae625c1df125ae85ae9b6927e675aa8b34ef68c71",
+    "lastHarvestedAt": "2026-10-30T22:03:30.439Z",
     "learningId": "learn-github-rmax-scrapy-redis"
   },
   "cypress-io-cypress": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "21f38da0",
+    "sourceVersion": "7a257031",
     "license": "Apache-2.0",
-    "contentHash": "6ecc4d2c1558085832dc5bd570735697570110e986456e20513da06da236f1d1",
-    "lastHarvestedAt": "2026-10-29T23:34:58.896Z",
+    "contentHash": "ccfbf5c92491151f57a4675b4469ad7836ea90ef73b6c5db6e7e43634e50402a",
+    "lastHarvestedAt": "2026-10-30T22:03:22.458Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
@@ -10233,10 +10233,10 @@
     "repository": "maxrave-dev/kotlin-footguns",
     "platform": "github",
     "sourceUrl": "https://github.com/maxrave-dev/kotlin-footguns",
-    "sourceVersion": "dfcbe320",
+    "sourceVersion": "2c391bc9",
     "license": "GPL-3.0",
-    "contentHash": "5cd17ea5cde09f7e071b3803ace60b1bb2038a1bfc0244c968e50863bbfbca2e",
-    "lastHarvestedAt": "2026-10-20T03:53:30.684Z",
+    "contentHash": "2d0bcbab0f80caa742ce4706cc21389b383c83d1a14fdc3829ee4d6a8afd9e82",
+    "lastHarvestedAt": "2026-10-30T22:03:36.495Z",
     "learningId": "learn-github-maxrave-dev-kotlin-footguns"
   },
   "mochajs-mocha": {

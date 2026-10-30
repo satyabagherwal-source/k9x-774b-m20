@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T21:55:57.822Z",
-    "lastVerified": "2026-10-30T21:55:57.822Z",
+    "lastChecked": "2026-10-30T22:03:39.049Z",
+    "lastVerified": "2026-10-30T22:03:39.049Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -139,12 +139,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T21:19:36.535Z",
-    "lastVerified": "2026-10-30T21:19:36.535Z",
+    "lastChecked": "2026-10-30T22:03:23.902Z",
+    "lastVerified": "2026-10-30T22:03:23.902Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -153,7 +153,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1f4828f8"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -671,9 +672,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-10-30T17:51:35.741Z",
+    "lastChecked": "2026-10-30T22:03:18.888Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-10-30T17:51:35.741Z"
+    "lastVerified": "2026-10-30T22:03:18.888Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -4031,9 +4032,9 @@
   "erikgrinaker-toydb": {
     "name": "toydb",
     "officialUrl": "https://github.com/erikgrinaker/toydb",
-    "lastChecked": "2026-10-29T22:07:05.221Z",
+    "lastChecked": "2026-10-30T22:03:21.456Z",
     "revisionIdentifier": "2d7cd32e",
-    "lastVerified": "2026-10-29T22:07:05.221Z"
+    "lastVerified": "2026-10-30T22:03:21.456Z"
   },
   "sharkdp-pastel": {
     "name": "pastel",
@@ -4812,14 +4813,14 @@
     "officialUrl": "https://github.com/aws/aws-cdk",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-29T23:34:58.213Z",
-    "lastVerified": "2026-10-29T23:34:58.213Z",
+    "lastChecked": "2026-10-30T22:03:21.672Z",
+    "lastVerified": "2026-10-30T22:03:21.672Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "6ecc4d2c1558085832dc5bd570735697570110e986456e20513da06da236f1d1",
+    "contentHash": "ccfbf5c92491151f57a4675b4469ad7836ea90ef73b6c5db6e7e43634e50402a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8135,9 +8136,9 @@
   "mrjackwills-oxker": {
     "name": "oxker",
     "officialUrl": "https://github.com/mrjackwills/oxker",
-    "lastChecked": "2026-10-28T23:18:39.351Z",
+    "lastChecked": "2026-10-30T22:03:08.856Z",
     "revisionIdentifier": "791342c0",
-    "lastVerified": "2026-10-28T23:18:39.351Z"
+    "lastVerified": "2026-10-30T22:03:08.856Z"
   },
   "hf-liquidai-lfm2.5-24b-a2b-gguf": {
     "name": "LiquidAI/LFM2.5-24B-A2B-GGUF",
@@ -11224,6 +11225,40 @@
     "contentHash": "1ecda6003c472b79564e8ade8d3d85336024165e2ab7dfb79f4586a33a94a518",
     "promotedRulesCount": 3,
     "recentFixesCount": 12,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rmax-scrapy-redis": {
+    "name": "rmax/scrapy-redis",
+    "officialUrl": "https://github.com/rmax/scrapy-redis",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-30T22:03:16.518Z",
+    "lastVerified": "2026-10-30T22:03:16.518Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-rmax-scrapy-redis",
+    "contentHash": "b6e85171d03852811fce958ae625c1df125ae85ae9b6927e675aa8b34ef68c71",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "maxrave-dev-kotlin-footguns": {
+    "name": "maxrave-dev/kotlin-footguns",
+    "officialUrl": "https://github.com/maxrave-dev/kotlin-footguns",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-30T22:03:17.112Z",
+    "lastVerified": "2026-10-30T22:03:17.112Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-maxrave-dev-kotlin-footguns",
+    "contentHash": "2d0bcbab0f80caa742ce4706cc21389b383c83d1a14fdc3829ee4d6a8afd9e82",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

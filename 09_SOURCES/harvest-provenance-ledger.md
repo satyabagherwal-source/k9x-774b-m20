@@ -6340,3 +6340,6 @@ Every entry in this ledger must capture:
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `9b54b543` | Multi-dimensional audit evidence | 2026-10-30T21:55:42.026Z |
 | `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `e1f9a84a` | Multi-dimensional audit evidence | 2026-10-30T21:55:49.001Z |
 | `learn-github-electron-electron` | `https://github.com/electron/electron` | `8c8f8165` | Multi-dimensional audit evidence | 2026-10-30T21:55:55.265Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `7a257031` | Multi-dimensional audit evidence | 2026-10-30T22:03:22.458Z |
+| `learn-github-rmax-scrapy-redis` | `https://github.com/rmax/scrapy-redis` | `2cafe98f` | Multi-dimensional audit evidence | 2026-10-30T22:03:30.439Z |
+| `learn-github-maxrave-dev-kotlin-footguns` | `https://github.com/maxrave-dev/kotlin-footguns` | `2c391bc9` | Multi-dimensional audit evidence | 2026-10-30T22:03:36.495Z |

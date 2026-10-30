@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T21:55:55.270Z",
-  "total_cycles_completed": 6308,
-  "total_learnings_persisted": 6308,
-  "total_rules_promoted": 5877,
+  "last_updated": "2026-10-30T22:03:36.500Z",
+  "total_cycles_completed": 6311,
+  "total_learnings_persisted": 6311,
+  "total_rules_promoted": 5884,
   "history": [
-    {
-      "timestamp": "2026-10-30T06:23:32.516Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T06:29:45.163Z",
-      "repository": "mikepenz/multiplatform-markdown-renderer",
-      "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T06:29:47.660Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T06:29:51.664Z",
       "repository": "cryfs/cryfs",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-30T21:55:55.270Z",
       "repository": "electron/electron",
       "learningId": "learn-github-electron-electron",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T22:03:22.463Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T22:03:30.444Z",
+      "repository": "rmax/scrapy-redis",
+      "learningId": "learn-github-rmax-scrapy-redis",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T22:03:36.500Z",
+      "repository": "maxrave-dev/kotlin-footguns",
+      "learningId": "learn-github-maxrave-dev-kotlin-footguns",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

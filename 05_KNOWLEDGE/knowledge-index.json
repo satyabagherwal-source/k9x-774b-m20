@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T21:55:55.182Z",
+  "last_updated": "2026-10-30T22:03:36.415Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4125,8 +4125,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "21f38da0",
-      "content_hash": "6ecc4d2c1558085832dc5bd570735697570110e986456e20513da06da236f1d1",
+      "source_version": "7a257031",
+      "content_hash": "ccfbf5c92491151f57a4675b4469ad7836ea90ef73b6c5db6e7e43634e50402a",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -4174,6 +4174,11 @@
           "number": 5556,
           "title": "redshift-alpha): align qualified table names (#39304)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5907,
+          "title": "security-guardian): test every rule against a failing and a passing fixture (#39",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4181,7 +4186,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T23:34:58.837Z",
+      "verified_at": "2026-10-30T22:03:22.360Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37422,14 +37427,29 @@
       "slug": "maxrave-dev-kotlin-footguns",
       "platform": "github",
       "source_url": "https://github.com/maxrave-dev/kotlin-footguns",
-      "source_version": "dfcbe320",
-      "content_hash": "5cd17ea5cde09f7e071b3803ace60b1bb2038a1bfc0244c968e50863bbfbca2e",
+      "source_version": "2c391bc9",
+      "content_hash": "2d0bcbab0f80caa742ce4706cc21389b383c83d1a14fdc3829ee4d6a8afd9e82",
       "dossier_path": "07_PROJECT_LEARNING/maxrave-dev-kotlin-footguns-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/maxrave-dev-kotlin-footguns-learnings.md",
       "promoted_rules": [
         {
           "number": 3029,
           "title": "Merge pull request #5 from maxrave-dev/chore/bump-v2.2.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5911,
+          "title": "**Never concatenate or interpolate un‑escaped user data into raw SQL statements**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5912,
+          "title": "**Guard every `NOT IN (SELECT …)` sub‑query with a non‑null predicate**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5913,
+          "title": "**Never place a `.clickable` modifier before a `.clip` modifier in the same Compose modifier chain**",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -37440,7 +37460,7 @@
       "historical_learning_ids": [
         "learn-github-maxrave-dev-kotlin-footguns-mv0k10g5"
       ],
-      "verified_at": "2026-10-20T03:53:30.605Z",
+      "verified_at": "2026-10-30T22:03:36.396Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73484,8 +73504,8 @@
       "slug": "rmax-scrapy-redis",
       "platform": "github",
       "source_url": "https://github.com/rmax/scrapy-redis",
-      "source_version": "931336e7",
-      "content_hash": "3307e5982c4b255ef3af5adce349bf2e6ea6bcd95534a6fe6a3d1fa5f6ea8a7c",
+      "source_version": "2cafe98f",
+      "content_hash": "b6e85171d03852811fce958ae625c1df125ae85ae9b6927e675aa8b34ef68c71",
       "dossier_path": "07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md",
       "promoted_rules": [
@@ -73518,6 +73538,21 @@
           "number": 4961,
           "title": "Backward Compatibility via Fallback Serialization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5908,
+          "title": "Atomic Read-Remove Invariant for Distributed Queues",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5909,
+          "title": "Serializer Contract Enforcement at Initialization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5910,
+          "title": "Configuration Precedence & Falsy Value Handling",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -73525,7 +73560,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T19:20:20.248Z",
+      "verified_at": "2026-10-30T22:03:30.333Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156290,6 +156325,104 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T21:55:55.163Z"
+    },
+    "rule-5907": {
+      "learning_id": "rule-5907",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5907,
+      "title": "security-guardian): test every rule against a failing and a passing fixture (#39",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "7a257031",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:03:22.360Z"
+    },
+    "rule-5908": {
+      "learning_id": "rule-5908",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5908,
+      "title": "Atomic Read-Remove Invariant for Distributed Queues",
+      "source_url": "https://github.com/rmax/scrapy-redis",
+      "source_version": "2cafe98f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:03:30.333Z"
+    },
+    "rule-5909": {
+      "learning_id": "rule-5909",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5909,
+      "title": "Serializer Contract Enforcement at Initialization",
+      "source_url": "https://github.com/rmax/scrapy-redis",
+      "source_version": "2cafe98f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:03:30.333Z"
+    },
+    "rule-5910": {
+      "learning_id": "rule-5910",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5910,
+      "title": "Configuration Precedence & Falsy Value Handling",
+      "source_url": "https://github.com/rmax/scrapy-redis",
+      "source_version": "2cafe98f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:03:30.333Z"
+    },
+    "rule-5911": {
+      "learning_id": "rule-5911",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5911,
+      "title": "**Never concatenate or interpolate un‑escaped user data into raw SQL statements**",
+      "source_url": "https://github.com/maxrave-dev/kotlin-footguns",
+      "source_version": "2c391bc9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:03:36.396Z"
+    },
+    "rule-5912": {
+      "learning_id": "rule-5912",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5912,
+      "title": "**Guard every `NOT IN (SELECT …)` sub‑query with a non‑null predicate**",
+      "source_url": "https://github.com/maxrave-dev/kotlin-footguns",
+      "source_version": "2c391bc9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:03:36.396Z"
+    },
+    "rule-5913": {
+      "learning_id": "rule-5913",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5913,
+      "title": "**Never place a `.clickable` modifier before a `.clip` modifier in the same Compose modifier chain**",
+      "source_url": "https://github.com/maxrave-dev/kotlin-footguns",
+      "source_version": "2c391bc9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:03:36.396Z"
     }
   },
   "aliases": {

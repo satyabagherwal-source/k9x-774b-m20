@@ -6331,3 +6331,6 @@
 | `CYCLE-20261030-H1DY` | `2026-10-30T21:55:42.022Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5899, Rule 5900, Rule 5901` | Yes (`3cb07140...`) |
 | `CYCLE-20261030-H6RP` | `2026-10-30T21:55:48.997Z` | `faker-js/faker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5902, Rule 5903` | Yes (`f777c3db...`) |
 | `CYCLE-20261030-HBLP` | `2026-10-30T21:55:55.261Z` | `electron/electron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5904, Rule 5905, Rule 5906` | Yes (`1ecda600...`) |
+| `CYCLE-20261030-QWNQ` | `2026-10-30T22:03:22.454Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5907` | Yes (`ccfbf5c9...`) |
+| `CYCLE-20261030-R2TC` | `2026-10-30T22:03:30.432Z` | `rmax/scrapy-redis` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5908, Rule 5909, Rule 5910` | Yes (`b6e85171...`) |
+| `CYCLE-20261030-R7HN` | `2026-10-30T22:03:36.491Z` | `maxrave-dev/kotlin-footguns` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5911, Rule 5912, Rule 5913` | Yes (`2d0bcbab...`) |
