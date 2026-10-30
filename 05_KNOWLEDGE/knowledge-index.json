@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T00:40:04.275Z",
+  "last_updated": "2026-10-30T00:46:52.048Z",
   "total_verified_learnings": 1169,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -57114,8 +57114,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "ecd3935b",
-      "content_hash": "369b3482dcc7888e7b1449a31329a90a78c998e583d1155e2928f9cc6c9fce29",
+      "source_version": "6753c2a7",
+      "content_hash": "2d547157429a25812a13a88fa2d0641dba4b69f58bc01836e267a54d0c178031",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -57188,6 +57188,11 @@
           "number": 5500,
           "title": "gpu): run initcheck and synchcheck (#4113)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5571,
+          "title": "gpu): fix cmux metadata (#4116)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57195,7 +57200,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T11:52:50.563Z",
+      "verified_at": "2026-10-30T00:46:52.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149752,6 +149757,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T00:40:04.256Z"
+    },
+    "rule-5571": {
+      "learning_id": "rule-5571",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5571,
+      "title": "gpu): fix cmux metadata (#4116)",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "6753c2a7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T00:46:52.029Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `ecd3935b`  
+> **Source Version**: `6753c2a7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T11:52:49.974Z  
+> **Timestamp**: 2026-10-30T00:46:51.491Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T11:47:41.718Z  
+> **Harvest Timestamp**: 2026-10-30T00:46:50.235Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1927,384 +1927,137 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ecd3935b` (2026-10-29)
-**Commit Message**: chore(gpu): run initcheck and synchcheck (#4113)
+### Incident Patch 1: `c8cf7821` (2026-10-29)
+**Commit Message**: fix(gpu): fix cmux metadata (#4116)
 
-**File**: `.github/workflows/gpu_memory_sanitizer_h100_2gpu_par.yml` (modified, +25/-5)
+**File**: `tfhe/src/high_level_api/booleans/base.rs` (modified, +40/-4)
 ```diff
-@@ -1,4 +1,4 @@
--# Run compute-sanitizer memcheck and racecheck in parallel on a 2xH100 machine
-+# Run compute-sanitizer memcheck in parallel with racecheck, initcheck and synccheck on a 2xH100 machine
- name: gpu_memory_sanitizer_h100_2gpu_par
- 
- env:
-@@ -53,6 +53,7 @@ jobs:
-               - tfhe/Cargo.toml
-               - tfhe/build.rs
-               - backends/tfhe-cuda-backend/**
-+              - scripts/check_memory_errors.sh
-               - tfhe/src/core_crypto/gpu/**
-               - tfhe/src/integer/gpu/**
-               - tfhe/src/shortint/parameters/**
-@@ -145,7 +146,9 @@ jobs:
-       - name: Install cargo-nextest
-         run: make install_cargo_nextest
- 
--      - name: Run memcheck and racecheck in parallel
-+      # memcheck runs alone on GPU0. racecheck, initcheck and synccheck share the same
-+      # narrow test set and GTest binary, so they run one after the other on GPU1.
-+      - name: Run memcheck in parallel with racecheck, initcheck and synccheck
-         run: |
-           run_memcheck() {
-             local rc=0
-@@ -158,15 +161,32 @@ jobs:
-             CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_racecheck_relaxed_pbs128 || rc=$?
-             echo "${rc}" > /tmp/racecheck.rc
-           }
-+          run_initcheck() {
-+            local rc=0
-+            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_initcheck || rc=$?
-+            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_initcheck_relaxed_pbs128 || rc=$?
-+            echo "${rc}" > /tmp/initcheck.rc
-+          }
-+          run_synccheck() {
-+            local rc=0
-+            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_synccheck || rc=$?
-+            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_synccheck_relaxed_pbs128 || rc=$?
-+            echo "${rc}" > /tmp/synccheck.rc
-+          }
-+          run_gpu1_lane() {
-+            run_racecheck 2>&1 | sed -u 's/^/[racecheck] /'
-+            run_initcheck 2>&1 | sed -u 's/^/[initcheck] /'
-+            run_synccheck 2>&1 | sed -u 's/^/[synccheck] /'
-+          }
-           run_memcheck 2>&1 | sed -u 's/^/[memcheck]  /' &
-           PID0=$!
--          run_racecheck 2>&1 | sed -u 's/^/[racecheck] /' &
-+          run_gpu1_lane &
-           PID1=$!
-           wait "${PID0}" || true
-           wait "${PID1}" || true
- 
-           STATUS=0
--          for lane in memcheck racecheck; do
-+          for lane in memcheck racecheck initcheck synccheck; do
-             rc="$(cat "/tmp/${lane}.rc" 2>/dev/null || true)"
-             rc="${rc:-1}"
-             if [ "${rc}" -eq 0 ]; then
-@@ -198,7 +218,7 @@ jobs:
-         uses: rtCamp/action-slack-notify@33ca3be66c6f378fe1610fd1d5258632dbed5e58
-         env:
-           SLACK_COLOR: ${{ needs.cuda-tests-linux.result }}
--          SLACK_MESSAGE: "GPU Memory Sanitizer (memcheck + racecheck parallel) finished with status: ${{ needs.cuda-tests-linux.result }}. (${{ env.PULL_REQUEST_MD_LINK }}[action run](${{ env.ACTION_RUN_URL }}))"
-+          SLACK_MESSAGE: "GPU Memory Sanitizer (memcheck + racecheck/initcheck/synccheck parallel) finished with status: ${{ needs.cuda-tests-linux.result }}. (${{ env.PULL_REQUEST_MD_LINK }}[action run](${{ env.ACTION_RUN_URL }}))"
- 
-   teardown-instance:
-     name: gpu_memory_sanitizer_h100_2gpu_par/teardown-instance
+@@ -23,6 +23,8 @@ use crate::integer::prelude::*;
+ use crate::integer::BooleanBlock;
+ use crate::named::Named;
+ use crate::prelude::FheWait;
++#[cfg(feature = "gpu")]
++use crate::shortint::ciphertext::Degree;
+ use crate::shortint::ciphertext::NotTrivialCiphertextError;
+ use crate::shortint::parameters::CiphertextConformanceParams;
+ use crate::shortint::AtomicPatternParameters;
+@@ -478,13 +480,30 @@ impl ScalarIfThenElse<&Self, &Self> for FheBool {
+             #[cfg(feature = "gpu")]
+             InternalServerKey::Cuda(cuda_key) => {
+                 let streams = &cuda_key.streams;
+-                let inner = cuda_key.key.key.if_then_else(
++                let mut inner = cuda_key.key.key.if_then_else(
+                     &CudaBooleanBlock(self.ciphertext.on_gpu(streams).duplicate(streams)),
+                     &*ct_then.ciphertext.on_gpu(streams),
+                     &*ct_else.ciphertext.on_gpu(streams),
+                     streams,
+                 );
+-                let boolean_inner = CudaBooleanBlock(inner);
++                // The result encrypts one of the two boolean branches, so its degree
++                // is bounded by the max of the branch degrees. The generic radix
++                // cmux instead sets the worst case of its final message-extraction
++                // LUT (message_modulus - 1), which the boolean wrapper rejects.
++                let branches_max_degree = ct_then.ciphertext.on_gpu(streams).ciphertext.info.blocks
++                    [0]
++                .degree
++                .get()
++                .max(
++                    ct_else.ciphertext.on_gpu(streams).ciphertext.info.blocks[0]
++                        .degree
++                        .get(),
++                );
++                inner.ciphertext.info.blocks[0].degree = Degree::new(branches_max_degree);
++                // Use the checked constructor so an invalid degree on a value
++                // meant to be boolean fails here rather than at a later use.
++                let boolean_inner =
++                    CudaBooleanBlock::from_cuda_radix_ciphertext(inner.into_inner());
+                 (InnerBoolean::Cuda(boolean_inner), cuda_key.tag.clone())
+             }
+             #[cfg(feature = "hpu")]
+@@ -676,13 +695,30 @@ impl IfThenElse<Self> for FheBool {
+             #[cfg(feature = "gpu")]
+             InternalServerKey::Cuda(cuda_key) => {
+                 let streams = &cuda_key.streams;
+-                let inner = cuda_key.key.key.if_then_else(
++                let mut inner = cuda_key.key.key.if_then_else(
+                     &CudaBooleanBlock(self.ciphertext.on_gpu(streams).duplicate(streams)),
+                     &*ct_then.ciphertext.on_gpu(streams),
+                     &*ct_else.ciphertext.on_gpu(streams),
+                     streams,
+                 );
+-                let boolean_inner = CudaBooleanBlock(inner);
++                // The result encrypts one of the two boolean branches, so its degree
++                // is bounded by the max of the branch degrees. The generic radix
++                // cmux instead sets the worst case of its final message-extraction
++                // LUT (message_modulus - 1), which the boolean wrapper rejects.
++                let branches_max_degree = ct_then.ciphertext.on_gpu(streams).ciphertext.info.blocks
++                    [0]
++                .degree
++                .get()
++                .max(
++                    ct_else.ciphertext.on_gpu(streams).ciphertext.info.blocks[0]
++                        .degree
++                        .get(),
++                );
++                inner.ciphertext.info.blocks[0].degree = Degree::new(branches_max_degree);
++                // Use the checked constructor so an invalid degree on a value
++                // meant to be boolean fails here rather than at a later use.
++                let boolean_inner =
++                    CudaBooleanBlock::from_cuda_radix_ciphertext(inner.into_inner());
+                 (InnerBoolean::Cuda(boolean_inner), cuda_key.tag.clone())
+             }
+             #[cfg(feature = "hpu")]
 ```
 
-**File**: `Makefile` (modified, +37/-2)
+**File**: `tfhe/src/high_level_api/tests/gpu.rs` (modified, +31/-0)
 ```diff
-@@ -1056,17 +1056,34 @@ test_high_level_api_gpu_memcheck: install_cargo_nextest
- 	export RUSTFLAGS="-C target-cpu=x86-64" && \
- 	export CARGO_PROFILE="$(CARGO_PROFILE)" && scripts/check_memory_errors.sh --memcheck
- 
--.PHONY: test_gpu_racecheck # Run compute-sanitizer racecheck on GPU tests (Rust u128 PBS + CUDA backend GTest PBS/KS)
--test_gpu_racecheck: install_cargo_nextest
-+.PHONY: build_gpu_sanitizer_gtest # Build the CUDA backend GTest binary used by the compute-sanitizer targets
-+build_gpu_sanitizer_gtest:
- 	mkdir -p "$(TFHECUDA_BUILD)" && \
- 		cd "$(TFHECUDA_BUILD)" && \
- 		cmake .. -DCMAKE_BUILD_TYPE=Release -DTFHE_CUDA_BACKEND_BUILD_TESTS=ON && \
- 		"$(MAKE)" -j "$(CPU_COUNT)" test_tfhe_cuda_backend
-+
-+.PHONY: test_gpu_racecheck # Run compute-sanitizer racecheck on GPU tests (Rust u128 PBS + CUDA backend GTest PBS/KS)
-+test_gpu_racecheck: install_cargo_nextest build_gpu_sanitizer_gtest
- 	export RUSTFLAGS="-C target-cpu=x86-64" && \
- 	export CARGO_PROFILE="$(CARGO_PROFILE)" && \
- 	SANITIZER_GTEST_EXE="$(CURDIR)/$(TFHECUDA_BUILD)/tests_and_benchmarks/tests/test_tfhe_cuda_backend" \
- 		scripts/check_memory_errors.sh --racecheck
- 
-+.PHONY: test_gpu_initcheck # Run compute-sanitizer initcheck on GPU tests (Rust u128 PBS + CUDA backend GTest PBS/KS)
-+test_gpu_initcheck: install_cargo_nextest build_gpu_sanitizer_gtest
-+	export RUSTFLAGS="-C target-cpu=x86-64" && \
-+	export CARGO_PROFILE="$(CARGO_PROFILE)" && \
-+	SANITIZER_GTEST_EXE="$(CURDIR)/$(TFHECUDA_BUILD)/tests_and_benchmarks/tests/test_tfhe_cuda_backend" \
-+		scripts/check_memory_errors.sh --initcheck
-+
-+.PHONY: test_gpu_synccheck # Run compute-sanitizer synccheck on GPU tests (Rust u128 PBS + CUDA backend GTest PBS/KS)
-+test_gpu_synccheck: install_cargo_nextest build_gpu_sanitizer_gtest
-+	export RUSTFLAGS="-C target-cpu=x86-64" && \
-+	export CARGO_PROFILE="$(CARGO_PROFILE)" && \
-+	SANITIZER_GTEST_EXE="$(CURDIR)/$(TFHECUDA_BUILD)/tests_and_benchmarks/tests/test_tfhe_cuda_backend" \
-+		scripts/check_memory_errors.sh --synccheck
-+
- # The relaxed flavor is opted into process-wide, and the 128-bit PBS panics on any
- # shape other than the noise-squashing one, so the filter is narrowed to the single
- # classical PBS128 test instead of the default racecheck set. Needs an sm_90 GPU.
-@@ -1079,6 +1096,24 @@ test_gpu_racecheck_relaxed_pbs128: install_cargo_nextest
- 	export SANITIZER_TEST_EXCLUDES_GPU_RACECHECK='' && \
- 		scripts/check_memory_errors.sh --racecheck
- 
-+.PHONY: test_gpu_initcheck_relaxed_pbs128 # Run compute-sanitizer initcheck on the 128-bit PBS with the relaxed (host-driven TBC) flavor
-+test_gpu_initcheck_relaxed_pbs128: install_cargo_nextest
-+	export RUSTFLAGS="-C target-cpu=x86-64" && \
-+	export CARGO_PROFILE="$(CARGO_PROFILE)" && \
-+	export TFHE_RS_GPU_PBS128_RELAXED=1 && \
-+	export SANITIZER_TEST_FILTER_GPU_INITCHECK='test_bootstrap_u128_with_squashing' && \
-+	export SANITIZER_TEST_EXCLUDES_GPU_INITCHECK='' && \
-+		scripts/check_memory_errors.sh --initcheck
-+
-+.PHONY: test_gpu_synccheck_relaxed_pbs128 # Run compute-sanitizer synccheck on the 128-bit PBS with the relaxed (host-driven TBC) flavor
-+test_gpu_synccheck_relaxed_pbs128: install_cargo_nextest
-+	export RUSTFLAGS="-C target-cpu=x86-64" && \
-+	export CARGO_PROFILE="$(CARGO_PROFILE)" && \
-+	export TFHE_RS_GPU_PBS128_RELAXED=1 && \
-+	export SANITIZER_TEST_FILTER_GPU_SYNCCHECK='test_bootstrap_u128_with_squashing' && \
-+	export SANITIZER_TEST_EXCLUDES_GPU_SYNCCHECK='' && \
-+		scripts/check_memory_errors.sh --synccheck
-+
- .PHONY: test_zk_pok_gpu_sanitizer # Run compute-sanitizer memcheck on Rust zk-pok GPU tests
- test_zk_pok_gpu_sanitizer: install_cargo_nextest
- 	export RUSTFLAGS="-C target-cpu=x86-64" && \
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/src/pbs/programmable_bootstrap_classic.cuh` (modified, +14/-9)
-```diff
-@@ -372,9 +372,13 @@ device_programmable_bootstrap_specialized_2_2_params(
-                          (glwe_dimension * polynomial_size + 1) +
-                      threadIdx.y * polynomial_size];
- 
-+  // The mask (threadIdx.y < glwe_dimension) and body threads take different
-+  // paths below, so the block is synchronized once here for all of them
-+  __syncthreads();
-   if (blockIdx.z == 0) {
-     if (threadIdx.y < glwe_dimension) {
--      sample_extract_mask<Torus, params>(block_lwe_array_out, accumulator);
-+      sample_extract_mask<Torus, params, false>(block_lwe_array_out,
-+                                                accumulator);
- 
-       if (num_many_lut > 1) {
-         for (int i = 1; i < num_many_lut; i++) {
-@@ -386,12 +390,11 @@ device_programmable_bootstrap_specialized_2_2_params(
-                                       (glwe_dimension * polynomial_size + 1) +
-                                   threadIdx.y * polynomial_size];
- 
--          sample_extract_mask<Torus, params>(next_block_lwe_array_out,
--                                             accumulator, 1, i * lut_stride);
-+          sample_extract_mask<Torus, params, false>(
-+              next_block_lwe_array_out, accumulator, 1, i * lut_stride);
-         }
-       }
-     } else if (threadIdx.y == glwe_dimension) {
--      __syncthreads();
-       sample_extract_body<Torus, params>(block_lwe_array_out, accumulator, 0);
- 
-       if (num_many_lut > 1) {
-@@ -712,16 +715,19 @@ device_programmable_bootstrap_specialized_2_2_params_throughput(
-     }
-   }
- 
--  // Sample extraction follows the same logic than other pbs
-+  // Sample extraction follows the same logic than other pbs. The mask
-+  // (threadIdx.y < glwe_dimension) and body threads take different paths
-+  // below, so the block is synchronized once here for all of them
-+  __syncthreads();
-   if (blockIdx.z == 0) {
-     auto block_lwe_array_out =
-         &lwe_array_out[lwe_output_indexes[blockIdx.x] *
-                            (glwe_dimension * polynomial_size + 1) +
-                        threadIdx.y * polynomial_size];
- 
-     if (threadIdx.y < glwe_dimension) {
--      sample_extract_mask<Torus, params>(block_lwe_array_out,
--                                         final_accumulator);
-+      sample_extract_mask<Torus, params, false>(block_lwe_array_out,
-+                                                final_accumulator);
- 
-       if (num_many_lut > 1) {
-         for (int n = 1; n < num_many_lut; n++) {
-@@ -732,12 +738,11 @@ device_programmable_bootstrap_specialized_2_2_params_throughput(
-               &next_lwe_array_out[lwe_output_indexes[blockIdx.x] *
-                                       (glwe_dimension * polynomial_size + 1) +
-                                   threadIdx.y * polynomial_size];
--          sample_extract_mask<Torus, params>(
-+          sample_extract_mask<Torus, params, false>(
-               next_block_lwe_array_out, final_accumulator, 1, n * lut_stride);
-         }
-       }
-     } else if (threadIdx.y == glwe_dimension) {
--      __syncthreads();
-       sample_extract_body<Torus, params>(block_lwe_array_out, final_accumulator,
-                                          0);
- 
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/src/polynomial/functions.cuh` (modified, +8/-3)
-```diff
-@@ -477,7 +477,10 @@ __device__ void sample_extract_body(Torus *lwe_array_out, Torus const *glwe,
+@@ -79,6 +79,37 @@ fn test_drop_rayon_pool_with_gpu_server_key_thread_locals() {
+     drop(pool);
  }
  
- // Extracts the mask from the nth-LWE in a GLWE.
--template <typename Torus, class params>
-+// With block_sync = false the caller must synchronize the block before the
-+// call and must not write to glwe concurrently; this is needed when only part
-+// of the block executes the extraction (barriers would otherwise diverge).
-+template <typename Torus, class params, bool block_sync = true>
- __device__ void sample_extract_mask(Torus *lwe_array_out, Torus const *glwe,
-                                     uint32_t glwe_dimension = 1,
-                                     uint32_t nth = 0) {
-@@ -486,7 +489,8 @@ __device__ void sample_extract_mask(Torus *lwe_array_out, Torus const *glwe,
-         (Torus *)lwe_array_out + (ptrdiff_t)(z * params::degree);
-     Torus *glwe_slice = (Torus *)glwe + (ptrdiff_t)(z * params::degree);
- 
--    __syncthreads();
-+    if constexpr (block_sync)
-+      __syncthreads();
-     // Reverse the glwe
-     // Set ACC = -ACC
-     int tid = threadIdx.x;
-@@ -497,7 +501,8 @@ __device__ void sample_extract_mask(Torus *lwe_array_out, Torus const *glwe,
-       result[i] = SEL(-x, x, tid >= params::degree - nth);
-       tid = tid + params::degree / params::opt;
-     }
--    __syncthreads();
-+    if constexpr (block_sync)
-+      __syncthreads();
- 
-     // Perform ACC * X
-     // (equivalent to multiply_by_monomial_negacyclic_inplace(1))
-```
-
-**File**: `ci/gpu_workflows_table.py` (modified, +2/-0)
-```diff
-@@ -236,6 +236,8 @@ def parse_workflow(path: Path, slab: dict) -> dict:
-     "test_signed_integer_fake_multi_gpu",
-     "test_high_level_api_noise_squash_relaxed_pbs128_gpu",
-     "test_gpu_racecheck_relaxed_pbs128",
-+    "test_gpu_initcheck_relaxed_pbs128",
-+    "test_gpu_synccheck_relaxed_pbs128",
- ]
- 
- 
-```
-
-**File**: `scripts/check_memory_errors.sh` (modified, +56/-14)
-```diff
-@@ -5,6 +5,8 @@ set -euo pipefail
- RUN_VALGRIND=0
- RUN_MEMCHECK=0
- RUN_RACECHECK=0
-+RUN_INITCHECK=0
-+RUN_SYNCCHECK=0
- 
- while [ -n "${1:-}" ]; do
-    case "$1" in
-@@ -25,6 +27,14 @@ while [ -n "${1:-}" ]; do
-             RUN_RACECHECK=1
-             ;;
- 
-+        "--initcheck" )
-+            RUN_INITCHECK=1
-+            ;;
++/// Regression test: on GPU, a select with boolean branches used to return a
++/// CudaBooleanBlock whose degree metadata was the message-extraction LUT's
++/// worst case (message_modulus - 1) instead of <= 1. The value was correct,
++/// but the first boolean op consuming the result panicked on the
++/// CudaBooleanBlock degree assert.
++#[test]
++fn test_gpu_bool_if_then_else_result_is_usable() {
++    let config = ConfigBuilder::default().build();
++    let cks = ClientKey::generate(config);
++    let compressed_sks = CompressedServerKey::new(&cks);
++    set_server_key(compressed_sks.decompress_to_gpu());
 +
-+        "--synccheck" )
-+            RUN_SYNCCHECK=1
-+            ;;
++    for cond in [false, true] {
++        for a in [false, true] {
++            for b in [false, true] {
++                let ct_cond = FheBool::encrypt(cond, &cks);
++                let ct_a = FheBool::encrypt(a, &cks);
++                let ct_b = FheBool::encrypt(b, &cks);
 +
-         *)
-             echo "Unknown param : $1"
-             exit 1
-@@ -33,8 +43,9 @@ while [ -n "${1:-}" ]; do
-    shift
- done
- 
--if [[ "${RUN_VALGRIND}" == "0" && "${RUN_MEMCHECK}" == "0" && "${RUN_RACECHECK}" == "0" ]]; then
--  echo "Usage: check_memory_errors.sh [--gpu] [--memcheck] [--racecheck] [--cpu]"
-+if [[ "${RUN_VALGRIND}" == "0" && "${RUN_MEMCHECK}" == "0" && "${RUN_RACECHECK}" == "0" \
-+      && "${RUN_INITCHECK}" == "0" && "${RUN_SYNCCHECK}" == "0" ]]; then
-+  echo "Usage: check_memory_errors.sh [--gpu] [--memcheck] [--racecheck] [--initcheck] [--synccheck] [--cpu]"
-   exit 1
- fi
- 
-@@ -49,6 +60,11 @@ SANITIZER_TEST_EXCLUDES_GPU="${SANITIZER_TEST_EXCLUDES_GPU:-array|modulus_switch
- # Racecheck runs only the two u128 PBS tests — they use is_sanitizer_run() to limit to 2 iterations
- SANITIZER_TEST_FILTER_GPU_RACECHECK="${SANITIZER_TEST_FILTER_GPU_RACECHECK:-test_bootstrap_u128_with_squashing|test_multibit_bootstrap_u128_with_squashing|test_compressed_ct_list_gpu_many_sizes}"
- SANITIZER_TEST_EXCLUDES_GPU_RACECHECK="${SANITIZER_TEST_EXCLUDES_GPU_RACECHECK:-}"
-+# Initcheck and synccheck default to the same narrow test set as racecheck
-+SANITIZER_TEST_FILTER_GPU_INITCHECK="${SANITIZER_TEST_FILTER_GPU_INITCHECK:-${SANITIZER_TEST_FILTER_GPU_RACECHECK}}"
-+SANITIZER_TEST_EXCLUDES_GPU_INITCHECK="${SANITIZER_TEST_EXCLUDES_GPU_INITCHECK:-${SANITIZER_TEST_EXCLUDES_GPU_RACECHECK}}"
-+SANITIZER_TEST_FILTER_GPU_SYNCCHECK="${SANITIZER_TEST_FILTER_GPU_SYNCCHECK:-${SANITIZER_TEST_FILTER_GPU_RACECHECK}}"
-+SANITIZER_TEST_EXCLUDES_GPU_SYNCCHECK="${SANITIZER_TEST_EXCLUDES_GPU_SYNCCHECK:-${SANITIZER_TEST_EXCLUDES_GPU_RACECHECK}}"
- SANITIZER_TEST_EXE_GLOB="${SANITIZER_TEST_EXE_GLOB:-tfhe-*}"
- SANITIZER_TEST_TIMEOUT="${SANITIZER_TEST_TIMEOUT:-1800}"
- SANITIZER_LAUNCH_TIMEOUT="${SANITIZER_LAUNCH_TIMEOUT:-600}"
-@@ -115,19 +131,33 @@ run_compute_sanitizer_tool() {
-   local CS_TOOL="$1"
-   export TFHE_RS_COMPUTE_SANITIZER=1
- 
--  # Select the right filter: racecheck uses a narrower set (only u128 PBS tests)
-+  # Select the right filter: racecheck, initcheck and synccheck use a narrower set (only u128 PBS tests)
-   local TEST_FILTER="${SANITIZER_TEST_FILTER_GPU}"
-   local TEST_EXCLUDES="${SANITIZER_TEST_EXCLUDES_GPU}"
--  if [[ "${CS_TOOL}" == "racecheck" ]]; then
--    TEST_FILTER="${SANITIZER_TEST_FILTER_GPU_RACECHECK}"
--    TEST_EXCLUDES="${SANITIZER_TEST_EXCLUDES_GPU_RACECHECK}"
--  fi
-+  case "${CS_TOOL}" in
-+    racecheck)
-+      TEST_FILTER="${SANITIZER_TEST_FILTER_GPU_RACECHECK}"
-+      TEST_EXCLUDES="${SANITIZER_TEST_EXCLUDES_GPU_RACECHECK}"
-+      ;;
-+    initcheck)
-+      TEST_FILTER="${SANITIZER_TEST_FILTER_GPU_INITCHECK}"
-+      TEST_EXCLUDES="${SANITIZER_TEST_EXCLUDES_GPU_INITCHECK}"
-+      ;;
-+    synccheck)
-+      TEST_FILTER="${SANITIZER_TEST_FILTER_GPU_SYNCCHECK}"
-+      TEST_EXCLUDES="${SANITIZER_TEST_EXCLUDES_GPU_SYNCCHECK}"
-+      ;;
-+  esac
++                let selected = ct_cond.if_then_else(&ct_a, &ct_b);
++                // Consuming the result is what used to panic
++                let consumed = &selected | &ct_a;
 +
-+  # Per-tool temporary files so that sanitizer runs launched in parallel don't clobber each other
-+  local TEST_LIST="/tmp/test_list_${CS_TOOL}.txt"
-+  local SANITIZER_LOG="/tmp/sanitizer_output_${CS_TOOL}.log"
- 
-   # List the tests into a temporary file using the GPU feature set
-   RUSTFLAGS="$RUSTFLAGS" cargo nextest list --cargo-profile "${CARGO_PROFILE}" \
--            --features="${SANITIZER_CARGO_FEATURES_GPU}" -p "${SANITIZER_CARGO_PACKAGE}" &> /tmp/test_list.txt
-+            --features="${SANITIZER_CARGO_FEATURES_GPU}" -p "${SANITIZER_CARGO_PACKAGE}" &> "${TEST_LIST}"
- 
--  TESTS_TO_RUN=$(sed -e $'s/\x1b\[[0-9;]*m//g' < /tmp/test_list.txt \
-+  TESTS_TO_RUN=$(sed -e $'s/\x1b\[[0-9;]*m//g' < "${TEST_LIST}" \
-       | grep -E "${TEST_FILTER}" \
-       | { if [[ -n "${TEST_EXCLUDES}" ]]; then grep -vE "${TEST_EXCLUDES}"; else cat; fi; } \
-       | grep -o '[^ ]\+$')
-@@ -149,7 +179,7 @@ run_compute_sanitizer_tool() {
-         echo "Running compute-sanitizer (${CS_TOOL}) on [${IDX}/${TOTAL}] $(date '+%Y-%m-%d %H:%M:%S'): $t"
-         CS_EXIT=0
- 
--        # memcheck supports --leak-check; racecheck does not
-+        # memcheck supports --leak-check; the other tools do not
-         CS_EXTRA_ARGS=""
-         if [[ "${CS_TOOL}" == "memcheck" ]]; then
-           CS_EXTRA_ARGS="--leak-check=full"
-@@ -160,8 +190,8 @@ run_compute_sanitizer_tool() {
-             compute-sanitizer --tool "${CS_TOOL}" ${CS_EXTRA_ARGS} \
-             --error-exitcode=1 --launch-timeout "${SANITIZER_LAUNCH_TIMEOUT}" \
-             --target-processes=all \
--            "$EXECUTABLE" --exact "$t" > /tmp/sanitizer_output.log 2>&1 || CS_EXIT=$?
--        cat /tmp/sanitizer_output.log
-+            "$EXECUTABLE
++                let expected = if cond { a } else { b };
++                assert_eq!(selected.decrypt(&cks), expected);
++                assert_eq!(consumed.decrypt(&cks), expected | a);
++            }
++        }
++    }
++}
++
+ #[test]
+ fn test_gpu_selection() {
+     let config = ConfigBuilder::default().build();
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4121** (2026-10-28): chore(tfhe-lints): bump dylint 6.3.0 (@nsarlin-zama)
+- **PR #4116** (2026-10-29): fix(gpu): fix cmux metadata (@guillermo-oyarzun)
 - **PR #4115** (2026-10-28): chore(deps-dev): bump fast-uri from 3.1.7 to 3.1.9 in /tfhe/web_wasm_parallel_tests (@dependabot[bot])
+- **PR #4114** (2026-10-29): chore(gpu)!: make all unchecked gpu entry points pub(crate) (@agnesLeroy)
 - **PR #4113** (2026-10-29): chore(gpu): run initcheck and synccheck besides racecheck in ci (@agnesLeroy)
 - **PR #4111** (2026-10-27): chore(deps-dev): bump fast-uri from 3.1.8 to 3.1.9 in /utils/wasm-par-mq/web_tests (@dependabot[bot])
-- **PR #4108** (2026-10-26): chore: move CODEOWNERS back because reviewable does not check all locations (@IceTDrinker)
-- **PR #4107** (2026-10-26): chore(data-extractor): update tokio to 1.54.1 (@nsarlin-zama)
 
 ---
 
@@ -2324,55 +2077,52 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): run initcheck and synchcheck (#4113)
+## X. gpu): fix cmux metadata (#4116)
 
 **RULE**:
-When implementing operations in `.github/workflows/gpu_memory_sanitizer_h100_2gpu_par.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tfhe/src/high_level_api/booleans/base.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ecd3935b`: gpu): run initcheck and synchcheck (#4113). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8cf7821`: gpu): fix cmux metadata (#4116). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/gpu_memory_sanitizer_h100_2gpu_par.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/booleans/base.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Run compute-sanitizer memcheck in parallel with racecheck, initcheck and synccheck on a 2xH100 machine
-              - scripts/check_memory_errors.sh
-      # memcheck runs alone on GPU0. racecheck, initcheck and synccheck share the same
-      # narrow test set and GTest binary, so they run one after the other on GPU1.
-      - name: Run memcheck in parallel with racecheck, initcheck and synccheck
-          run_initcheck() {
-            local rc=0
-            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_initcheck || rc=$?
-            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_initcheck_relaxed_pbs128 || rc=$?
-            echo "${rc}" > /tmp/initcheck.rc
-          }
-          run_synccheck() {
-            local rc=0
-            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_synccheck || rc=$?
-            CUDA_VISIBLE_DEVICES=${GPU1} make test_gpu_synccheck_relaxed_pbs128 || rc=$?
-            echo "${rc}" > /tmp/synccheck.rc
-          }
-          run_gpu1_lane() {
-            run_racecheck 2>&1 | sed -u 's/^/[racecheck] /'
-            run_initcheck 2>&1 | sed -u 's/^/[initcheck] /'
-            run_synccheck 2>&1 | sed -u 's/^/[synccheck] /'
-          }
-          run_gpu1_lane &
-          f
+#[cfg(feature = "gpu")]
+use crate::shortint::ciphertext::Degree;
+                let mut inner = cuda_key.key.key.if_then_else(
+                // The result encrypts one of the two boolean branches, so its degree
+                // is bounded by the max of the branch degrees. The generic radix
+                // cmux instead sets the worst case of its final message-extraction
+                // LUT (message_modulus - 1), which the boolean wrapper rejects.
+                let branches_max_degree = ct_then.ciphertext.on_gpu(streams).ciphertext.info.blocks
+                    [0]
+                .degree
+                .get()
+                .max(
+                    ct_else.ciphertext.on_gpu(streams).ciphertext.info.blocks[0]
+                        .degree
+                        .get(),
+                );
+                inner.ciphertext.info.blocks[0].degree = Degree::new(branches_max_degree);
+                // Use the checked constructor so an invalid degree on a value
+                // meant to be boolean fails here rather than at a later use.
+                let boolean_inner =
+                    CudaBooleanBlock::from_cuda_radix_ciphertext(inner.into_inner());
+            
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-# Run compute-sanitizer memcheck and racecheck in parallel on a 2xH100 machine
-      - name: Run memcheck and racecheck in parallel
-          run_racecheck 2>&1 | sed -u 's/^/[racecheck] /' &
-          for lane in memcheck racecheck; do
-          SLACK_MESSAGE: "GPU Memory Sanitizer (memcheck + racecheck parallel) finished with status: ${{ needs.cuda-tests-linux.result }}. (${{ env.PULL_REQUEST_MD_LINK }}[action run](${{ env.ACTION_RUN_URL }}))"
+                let inner = cuda_key.key.key.if_then_else(
+                let boolean_inner = CudaBooleanBlock(inner);
+                let inner = cuda_key.key.key.if_then_else(
+                let boolean_inner = CudaBooleanBlock(inner);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ecd3935b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8cf7821` are properly handled with clean fallback behavior.

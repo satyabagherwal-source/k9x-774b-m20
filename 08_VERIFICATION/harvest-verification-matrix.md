@@ -6089,3 +6089,4 @@
 | `CYCLE-20261030-FUYI` | `2026-10-30T00:27:04.698Z` | `o2sh/onefetch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5567, Rule 5568` | Yes (`f088eb01...`) |
 | `CYCLE-20261030-NRVV` | `2026-10-30T00:33:13.963Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5569` | Yes (`07236104...`) |
 | `CYCLE-20261030-WKJO` | `2026-10-30T00:40:04.356Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5570` | Yes (`e3fb7162...`) |
+| `CYCLE-20261030-5B6H` | `2026-10-30T00:46:52.121Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5571` | Yes (`2d547157...`) |

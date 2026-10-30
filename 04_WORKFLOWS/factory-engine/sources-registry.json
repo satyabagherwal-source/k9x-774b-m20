@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T00:40:06.914Z",
-    "lastVerified": "2026-10-30T00:40:06.914Z",
+    "lastChecked": "2026-10-30T00:46:54.678Z",
+    "lastVerified": "2026-10-30T00:46:54.678Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -143,8 +143,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T00:19:02.146Z",
-    "lastVerified": "2026-10-30T00:19:02.146Z",
+    "lastChecked": "2026-10-30T00:46:50.776Z",
+    "lastVerified": "2026-10-30T00:46:50.776Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -1498,14 +1498,14 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T11:47:41.718Z",
-    "lastVerified": "2026-10-29T11:47:41.718Z",
+    "lastChecked": "2026-10-30T00:46:50.235Z",
+    "lastVerified": "2026-10-30T00:46:50.235Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "369b3482dcc7888e7b1449a31329a90a78c998e583d1155e2928f9cc6c9fce29",
+    "contentHash": "2d547157429a25812a13a88fa2d0641dba4b69f58bc01836e267a54d0c178031",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3029,9 +3029,9 @@
   "ekzhang-bore": {
     "name": "bore",
     "officialUrl": "https://github.com/ekzhang/bore",
-    "lastChecked": "2026-10-28T11:23:39.198Z",
+    "lastChecked": "2026-10-30T00:46:35.731Z",
     "revisionIdentifier": "00a735a8",
-    "lastVerified": "2026-10-28T11:23:39.198Z"
+    "lastVerified": "2026-10-30T00:46:35.731Z"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
     "name": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -4668,9 +4668,9 @@
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
     "officialUrl": "https://github.com/orbitinghail/sqlsync",
-    "lastChecked": "2026-10-28T15:03:28.377Z",
+    "lastChecked": "2026-10-30T00:46:48.234Z",
     "revisionIdentifier": "7dc1af6b",
-    "lastVerified": "2026-10-28T15:03:28.377Z"
+    "lastVerified": "2026-10-30T00:46:48.234Z"
   },
   "async-rs-async-std": {
     "name": "async-std",
@@ -5076,9 +5076,9 @@
   "aquasecurity-tfsec": {
     "name": "tfsec",
     "officialUrl": "https://github.com/aquasecurity/tfsec",
-    "lastChecked": "2026-10-28T15:50:34.333Z",
+    "lastChecked": "2026-10-30T00:46:43.310Z",
     "revisionIdentifier": "b692c20b",
-    "lastVerified": "2026-10-28T15:50:34.333Z"
+    "lastVerified": "2026-10-30T00:46:43.310Z"
   },
   "rqlite-rqlite": {
     "name": "rqlite/rqlite",
@@ -8827,5 +8827,19 @@
     "lastChecked": "2026-10-30T00:39:54.678Z",
     "revisionIdentifier": "25bb2b91",
     "lastVerified": "2026-10-30T00:39:54.678Z"
+  },
+  "pas7-studio-nextjs-sitemap-hreflang": {
+    "name": "nextjs-sitemap-hreflang",
+    "officialUrl": "https://github.com/pas7-studio/nextjs-sitemap-hreflang",
+    "lastChecked": "2026-10-30T00:46:38.288Z",
+    "revisionIdentifier": "1faa101f3b",
+    "lastVerified": "2026-10-30T00:46:38.288Z"
+  },
+  "dimillian-redditos": {
+    "name": "RedditOS",
+    "officialUrl": "https://github.com/Dimillian/RedditOS",
+    "lastChecked": "2026-10-30T00:46:40.741Z",
+    "revisionIdentifier": "525cd241",
+    "lastVerified": "2026-10-30T00:46:40.741Z"
   }
 }

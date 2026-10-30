@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-SVBO",
-    "timestamp": "2026-10-28T00:05:51.636Z",
-    "repository": "flox/flox",
-    "learningId": "learn-github-flox-flox",
-    "contentHash": "d215a78f59ea570b54eb7f3732aa8b83ed0207fc0c3f1dcfeac0d37f98c79863",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-T0AH",
     "timestamp": "2026-10-28T00:05:58.073Z",
     "repository": "authzed/spicedb",
@@ -7490,6 +7475,21 @@
     "repository": "gocd/gocd",
     "learningId": "learn-github-gocd-gocd",
     "contentHash": "e3fb7162431fa253be18959e029d7fbc007f312cf304b246db6dc56c47cf9da8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-5B6H",
+    "timestamp": "2026-10-30T00:46:52.121Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "2d547157429a25812a13a88fa2d0641dba4b69f58bc01836e267a54d0c178031",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

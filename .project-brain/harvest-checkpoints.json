@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T00:40:04.370Z",
+  "last_updated": "2026-10-30T00:46:52.135Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "369b3482dcc7888e7b1449a31329a90a78c998e583d1155e2928f9cc6c9fce29",
-      "verified_at": "2026-10-29T11:52:50.689Z",
+      "content_hash": "2d547157429a25812a13a88fa2d0641dba4b69f58bc01836e267a54d0c178031",
+      "verified_at": "2026-10-30T00:46:52.134Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T11:52:50.689Z"
+      "last_updated": "2026-10-30T00:46:52.134Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",

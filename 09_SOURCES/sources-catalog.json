@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "ecd3935b",
+    "sourceVersion": "6753c2a7",
     "license": "NOASSERTION",
-    "contentHash": "369b3482dcc7888e7b1449a31329a90a78c998e583d1155e2928f9cc6c9fce29",
-    "lastHarvestedAt": "2026-10-29T11:52:50.681Z",
+    "contentHash": "2d547157429a25812a13a88fa2d0641dba4b69f58bc01836e267a54d0c178031",
+    "lastHarvestedAt": "2026-10-30T00:46:52.125Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {

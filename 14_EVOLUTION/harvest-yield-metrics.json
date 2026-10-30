@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T00:40:04.366Z",
-  "total_cycles_completed": 6066,
-  "total_learnings_persisted": 6066,
-  "total_rules_promoted": 5538,
+  "last_updated": "2026-10-30T00:46:52.131Z",
+  "total_cycles_completed": 6067,
+  "total_learnings_persisted": 6067,
+  "total_rules_promoted": 5539,
   "history": [
-    {
-      "timestamp": "2026-10-28T18:48:42.524Z",
-      "repository": "dragonflydb/dragonfly",
-      "learningId": "learn-github-dragonflydb-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T18:57:36.559Z",
       "repository": "jialinyyzz/humanizer",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-30T00:40:04.366Z",
       "repository": "gocd/gocd",
       "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T00:46:52.131Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
