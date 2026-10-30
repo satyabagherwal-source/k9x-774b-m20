@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "76d7ef16",
+    "sourceVersion": "63233bc4",
     "license": "NOASSERTION",
-    "contentHash": "a375a812a0a069ea53055d0af301b02953a05b6805b3aef6ec2ef8211200fe19",
-    "lastHarvestedAt": "2026-10-30T13:37:39.835Z",
+    "contentHash": "a6ecc87b80eb24378c3ea944e65df961bd01dea11f28f8f9b09b8e95d8b65784",
+    "lastHarvestedAt": "2026-10-30T18:39:43.746Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -7413,10 +7413,10 @@
     "repository": "bahdotsh/wrkflw",
     "platform": "github",
     "sourceUrl": "https://github.com/bahdotsh/wrkflw",
-    "sourceVersion": "248a4190",
+    "sourceVersion": "59cf48c6",
     "license": "MIT",
-    "contentHash": "9683f885c164d0f64d380994fc9d32b8a91736cfcbf48b3c61b83b519a897d93",
-    "lastHarvestedAt": "2026-10-19T08:58:37.174Z",
+    "contentHash": "208e3afe876b454101aab0dd30cf6252abde007d442714c833654e88dc6a5cf8",
+    "lastHarvestedAt": "2026-10-30T18:39:34.638Z",
     "learningId": "learn-github-bahdotsh-wrkflw"
   },
   "jordanbaird-ice": {
@@ -9973,10 +9973,10 @@
     "repository": "solidjs/solid",
     "platform": "github",
     "sourceUrl": "https://github.com/solidjs/solid",
-    "sourceVersion": "25138e1c",
+    "sourceVersion": "bc50fe56",
     "license": "MIT",
-    "contentHash": "a90f4b42e2dce8fcbb207aabcd5f1a7b0fbbc5a481a501408b5f431ca16cd133",
-    "lastHarvestedAt": "2026-10-20T02:15:34.684Z",
+    "contentHash": "ef02bdc03299045193f7abbe1f8663bdf1e668085cb79f2fcc9b0d5ffbdd7aec",
+    "lastHarvestedAt": "2026-10-30T18:39:38.105Z",
     "learningId": "learn-github-solidjs-solid"
   },
   "zekunyan-ttgtagcollectionview": {

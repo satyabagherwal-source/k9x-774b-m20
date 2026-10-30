@@ -6265,3 +6265,6 @@
 | `CYCLE-20261030-7PNR` | `2026-10-30T18:32:29.607Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5828` | Yes (`098168d8...`) |
 | `CYCLE-20261030-7TYD` | `2026-10-30T18:32:35.173Z` | `dosco/graphjin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5829` | Yes (`fd7e17c5...`) |
 | `CYCLE-20261030-7WI4` | `2026-10-30T18:32:38.476Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3992` | Yes (`9b05e741...`) |
+| `CYCLE-20261030-GTM2` | `2026-10-30T18:39:34.634Z` | `bahdotsh/wrkflw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5830` | Yes (`208e3afe...`) |
+| `CYCLE-20261030-GWAE` | `2026-10-30T18:39:38.102Z` | `solidjs/solid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5831` | Yes (`ef02bdc0...`) |
+| `CYCLE-20261030-H0N2` | `2026-10-30T18:39:43.742Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5832` | Yes (`a6ecc87b...`) |

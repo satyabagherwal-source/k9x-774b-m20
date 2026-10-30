@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `76d7ef16`  
+> **Source Version**: `63233bc4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T13:37:39.134Z  
+> **Timestamp**: 2026-10-30T18:39:43.041Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T13:37:38.827Z  
+> **Harvest Timestamp**: 2026-10-30T18:39:42.204Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,11 +1738,14 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6054** (2026-10-30): **fix: skip validate_state when an update leaves the state unchanged**
-  *Symptoms*: ## Problem  In `crates/core/src/contract/executor/runtime/executor_impl.rs`, the upsert path ran `validate_state` on the merged state, through `fetch_related_for_validation`, before checking whether the merge had changed anything. Updates that leave the state unchanged therefore paid a full validation of bytes that were validated when they were stored. These include duplicates, replayed deltas, and records the contract's merge drops. That validation could also trigger a related-contract fetch. For a contract whose `validate_state` checks signatures over a large state, that is most of its time budget per message, spent on a no-op.  ## Approach  When the merge leaves the stored state unchanged, return `NoChange` before validating. Every state that differs from the stored one is still validated, and an invalid one is still rejected.  The same rule already applied one step earlier: the byte-identical incoming-state short-circuit (#4151) skips revalidating the stored state.  Two parts of the old code could no longer be reached and are reduced: - **Recovery condition.** A corrupted-state recovery cannot end with the stored state. Recovery installs the incoming full state, and an incoming state identical to the stored one has already returned at that short-circuit. The check is now a `debug_assert!`. - **Post-validation branch.** The old branch for an unchanged state after validation is removed. Its body, the changed-state path, is unchanged apart from indentation.  The rest of the 
+- **Issue #6057** (2026-10-30): **feat(transport): add QUIC control frames, bounded sends and stream-slot reservation**
+  *Symptoms*: ## Problem  Shadow mode (#5940, e5a) needs three pieces before the upgrade state machine can be written:  - a control message to confirm a QUIC path is ready; - sends with a time limit that distinguish "not sent" from "may have arrived"; - stream slots that streamed messages cannot use up, so short and control messages still get through.  A shadow path must also refuse application data without charging the inbound budget it shares with UDP.  All of this is dead code until e5a-5b wires it in. Nothing changes while QUIC is off, and `QuicPathLimits::DEFAULT` still accepts data.  ## Approach  **`QuicControl { Ready, ReadyAck }`** (`quic/control.rs`), one per uni stream: ``` version u8 (1) | type u8 (0 Ready, 1 ReadyAck) | attempt u32 BE | caps u32 BE ``` - Exactly 10 bytes. - Version is checked first, so a later version is `UnknownVersion` at any length. - Unknown caps bits are cleared on decode, so a later release can add bits that old nodes ignore. - An unknown type or a wrong length, including trailing bytes, is refused without a panic and counted per path. Adding a field therefore needs a new version. This is stricter than `UpgradeControl`, where bincode tolerates trailing bytes. - The caps travel in `Ready` and `ReadyAck` themselves, so they cannot announce a new version for the first frame. `Ready` stays at version 1 until the sender knows by another route: the caps of the `Offer` it received (client side only), or a release floor on the peer's version. - `attempt` is not i
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> ### Claude Rule Review: Failed to run  The Claude rule review step failed (likely an authentication or API issue). Check the [workflow logs](https://github.com/freenet/freenet-core/actions/runs/41099434866) for details.  --- *Advisory review against `.claude/rules/`. Critical patterns are enforced by the Rule Lint CI job.*
+  > ## ⚠️ Extended Benchmark Regressions Detected  Some extended benchmarks show performance regressions.  **Note**: Extended benchmarks include high-latency and packet-loss scenarios which have higher variance than standard CI benchmarks.  [View full results](https://github.com/freenet/freenet-core/actions/runs/41099436993)  [View full benchmark summary](https://github.com/freenet/freenet-core/actions/runs/41099436993)
 
-- **Issue #6052** (2026-10-30): **test: bind the fdev websocket test to an OS-assigned port**
-  *Symptoms*: ## Problem  `test_websocket_client_waits_for_put_response` in `crates/fdev/tests/websocket_response.rs` failed intermittently with `bind: AddrInUse` at its `TcpListener::bind`. The test bound a fixed localhost port counting up from 54000. That port is inside Linux's ephemeral range (32768-60999), so on a busy machine an outgoing connection can already hold it as its source port. When that happened, nothing was listening on 54000: `ss` showed only a TIME-WAIT socket whose local end was 127.0.0.1:54000.  ## Approach  Bind port 0 and read the assigned port back from `local_addr()`. The `AtomicU16` port counter is removed. No other test in the fdev crate binds a fixed port. `testing/network/v1.rs` binds a socket its caller supplies, and the `8080` in `commands/v1.rs` only builds a URL string.  ## Testing  - **Deterministic reproduction.** With a listener holding 127.0.0.1:54000, the test binary built from `origin/main` fails with `AddrInUse`, and the binary built from this branch passes. - **Repeat runs.** `cargo test -p fdev --test websocket_response` passed 20 times out of 20 in a loop on nova. - **Lints.** `cargo fmt --all --check` and `cargo clippy --all-targets -p fdev -- -D warnings` are clean.  [AI-assisted - Claude]  https://claude.ai/code/session_01XxpwztPzPYgRQuNM3tr9JW 
+- **Issue #6056** (2026-10-30): **build: release 0.2.152**
+  *Symptoms*: **Automated release PR**  - freenet: → **0.2.152** - fdev: → **0.3.314**  This PR will auto-merge once GitHub CI passes. Generated by: `.github/workflows/release.yml` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1759,1325 +1762,925 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `76d7ef16` (2026-10-30)
-**Commit Message**: fix(transport): contain panics in the QUIC socket adapter without aborting the node (#6027)
+### Incident Patch 1: `63233bc4` (2026-10-30)
+**Commit Message**: feat(transport): add QUIC control frames, bounded sends and stream-slot reservation (#6057)
 
-**File**: `.claude/rules/transport.md` (modified, +99/-14)
+**File**: `.claude/rules/transport.md` (modified, +100/-25)
 ```diff
-@@ -368,7 +368,9 @@ plus `egress_bytes`, `egress_bytes_waited`, `egress_wait_us_sum` / `_max`,
- ignored (`upgrade_control_received`) and hole-punch handshake packets dropped,
- one count per packet, because they were not encrypted under the attempt's
- inbound session key (`handshake_unauthenticated_dropped`), QUIC endpoint deaths
--(`quic_endpoint_down`), QUIC crash-loop breaker trips at startup
-+(`quic_endpoint_down`), panics the QUIC socket adapter caught
-+(`quic_adapter_panicked`, once per endpoint; the process keeps running
-+and no breaker state is left), QUIC crash-loop breaker trips at startup
- (`quic_breaker_trips`, counted for any abnormal end of a QUIC-enabled run, not
- only a QUIC fault; see `quic/breaker.rs`) and whether the breaker keeps QUIC
- off in this process (`quic_breaker_suppressed`, a state that is never reset and
-@@ -1332,18 +1334,93 @@ Liveness ("alive" = the endpoint driver has not ENDED; it does not mean
-   quic_endpoint_down. Its connections end, accept() returns None and
-   connect() fails as EndpointDown. The UDP transport is untouched.
-   → NEVER feed endpoint death to ListenerExit: that exits the node.
--  → What this covers is narrow. quinn's driver returns only on a receive
--    I/O error and QuicSocket never returns one, so in production today it
--    cannot return at all; tests inject the error (socket::ReceiveFault).
--    The one real way it ends is a PANIC, which is NOT contained: quinn
--    0.11.12 polls the driver holding its endpoint state mutex
--    (endpoint.rs line 370), so a panic poisons it and every later lock
--    panics too, in EndpointDriver::drop (line 403), Accept::poll (line
--    651, the accept loop), connect (line 214) and the connection drivers;
--    one of those running during the unwind aborts the process. A panic is
--    never reported as Down. Containing a quinn panic (catch the unwind,
--    leak the driver instead of dropping it, guard the accept loop) is a
--    separate PREREQUISITE before QUIC is on by default.
-+  → quinn's driver returns only on a receive I/O error. QuicSocket returns
-+    one only after it caught a panic (below); tests inject one
-+    (socket::SocketFaults::fail_receive).
-+  → PANICS. The node relies on panic = "unwind". A build with
-+    panic = "abort" still compiles, but QuicEndpoint::bind refuses
-+    (require_unwinding, through bind_checked so tests drive it) and the
-+    node runs with QUIC off; log_startup says so instead of describing the
-+    configured mode. This covers a profile-level abort only.
-+    CONTAINED: a panic in the socket adapter (QuicSocket::poll_recv,
-+    try_send, QuicPoller::poll_writable), which quinn calls holding its
-+    endpoint or connection state lock. The adapter catches it before it
-+    unwinds into quinn (no lock poisoned), and
-+    EndpointHealth::adapter_panicked turns the endpoint Down, counts
-+    quic_adapter_panicked once per endpoint and logs ERROR once (quinn
-+    also logs its own ERROR "I/O error" for each of its drivers that ends
-+    with the error, so expect up to one such line per connection). The call
-+    returns an io error (never Ready(Ok)/Ok, which would make a lasting
-+    fault repeat on every transmit), ending that driver. From then on
-+    every adapter call returns that error before the adapter's own code
-+    runs (one AtomicBool load), so a lasting fault is hit once per
-+    endpoint, and the adapter wakes the endpoint driver so it ends
-+    promptly.
-+  → After an adapter panic NOTHING more leaves the endpoint: no
-+    CONNECTION_CLOSE reaches any peer, and peers find out from their own
-+    idle timeout. Sending one would not work anyway: EndpointDriver::drop
-+    drops each connection's event channel, and a connection driver that
-+    sees that ends with INTERNAL_ERROR before it transmits (quinn 0.11.12
-+    ConnectionDriver::poll). Pinned by
-+    an_adapter_panic_ends_every_connection_and_counts_once.
-+  → On EVERY Down (a returned driver too) each connection's watcher closes
-+    it locally with DOWNGRADE; that is what fails calls waiting on a
-+    driver that ended. QuicCloser counts a close in quic_close_sent_* only
-+    while it can be sent (EndpointHealth::closes_can_be_sent: not Down,
-+    no adapter panic), so the watcher's close and any close after an
-+    adapter panic are not counted. Released alone closes nothing. An
-+    adapter panic after Released is counted and logged but leaves it
-+    Released; since every send of the endpoint then fails (which can end
-+    any connection driver without closing its connection), each watcher
-+    also closes its connection when EndpointHealth::adapter_panic_watch
-+    turns true (pinned by an_adapter_panic_after_release_closes_its_connections).
-+  → connect refuses before quinn sees the attempt when the endpoint is
-+    Down or the adapter flag is set (EndpointHealth::refuses_connects).
-+    After a driver return quinn already refuses; after an adapter panic it
-+    refuses only once the woken endpoint driver has ru
+@@ -404,10 +404,10 @@ upper bound; the known undercounts (a sample skipped at a window boundary,
+ arrivals older than the horizon or past the 1024 cap, streams the 1024-stream
+ budget refused) are listed in the module doc. So `ge_T / conns_sampled` can
+ support LOWERING `MAX_UNI_STREAMS` (`quic/config.rs`), never raising it; a
+-limit that is too low costs only sender back-pressure, and QUIC shadow mode
+-(e5a) is expected to confirm the value on real QUIC before any default
+-changes. It says nothing about the memory a peer opening streams on purpose
+-can hold (the per-path ceiling's job). `inbound_concurrency_max` is diagnostic
++limit that is too low costs only sender back-pressure. Shadow mode carries no
++data, so it cannot confirm the value; rollout stage 3 (data on QUIC, opt-in)
++is the first measurement on real QUIC. The gauge says nothing about the memory
++a peer opening streams on purpose can hold (the per-path ceiling's job). `inbound_concurrency_max` is diagnostic
+ only (one peer can drive it to the cap with a burst or an inflated RTT). The
+ counts sit under one mutex taken only on a connection's first sample of a
+ window or a new peak, and by the snapshot, which advances the window and
+@@ -919,7 +919,7 @@ exposes (its module doc lists the few it does not):
+   grease_quic_bit(false) (the demux rule depends on it), versions [1],
+   max_udp_payload / initial and min MTU 1200, no MTU discovery, no GSO,
+   keepalive 15 s (None when the TimeSource disables keepalive), idle = the
+-  TimeSource's connection idle timeout, Cubic, 64 uni / 1 bidi streams,
++  TimeSource's connection idle timeout, Cubic, 64 uni / 0 bidi streams,
+   stream / receive / send window = clamp(5% of memory / (2 x
+   max-number-of-connections), 128 KiB, 2 MiB), no unreliable datagrams, no
+   spin bit, migration off, max_incoming 64, incoming buffers 64 KiB / 1 MiB,
+@@ -954,9 +954,8 @@ acknowledgement-only packets tracked after the last ack-eliciting send, up
+ to quinn-proto's cap of 1000; M2 must re-check this term against
+ quinn-proto's behaviour). Not measured: datagram sizes other than 1200 B,
+ quinn's endpoint-to-connection datagram queue, send-side packet records and
+-the buffers behind sent data, allocators other than jemalloc, the
+-bidirectional control stream (`MAX_BIDI_STREAMS`), CRYPTO-frame reassembly
+-(quinn-proto's second assembler, `crypto_buffer_size` 16 KiB), and arrival
++the buffers behind sent data, allocators other than jemalloc, CRYPTO-frame
++reassembly (quinn-proto's second assembler, `crypto_buffer_size` 16 KiB), and arrival
+ orders other than a single gap at offset 0. Some quinn terms depend on
+ traffic rate and time rather than configuration, as the UDP transport's
+ dedup window and sent-packet tracker do, so the per-path ceiling (memory
+@@ -1103,26 +1102,69 @@ FrameHeader::decode refuses, never panics: unknown version or kind;
+   fewer than 18 bytes. The sender builds headers through the same
+   checks. A new kind or field needs a new version, sent only to a peer
+   that said it reads it.
+-Sending (QuicPath::send_short / send_stream / send_stream_chunks /
+-  send_control): returns when the peer's QUIC stack acked every byte, or
++Sending (QuicPath::send_short_bounded / send_stream_bounded /
++  send_stream_chunks_bounded / send_control_bounded; the forms without a
++  deadline are #[cfg(test)]): returns when the peer's QUIC stack acked every byte, or
+   Stopped(code). A message that fits in the flow window can be acked
+   before the receiver reads its header, so a refusal may read as success
+   at the sender, as on UDP, and so may one dropped for a full channel:
+-  sent is NOT delivered. send_stream_chunks resets the stream if the
++  sent is NOT delivered. send_stream_chunks_bounded resets the stream if the
+   source fails or delivers a different length. quinn's MAX_UNI_STREAMS (64)
+   uni streams are the back-pressure (open_uni waits; quinn returns
+-  credit only after more than an eighth of the limit is freed). Short and
+-  control messages share those slots with streamed messages, so e5 must
+-  keep slots for them or carry control on the reserved bidi stream (see
+-  the MAX_UNI_STREAMS doc).
++  credit only after more than an eighth of the limit is freed).
++  Slot reservation: send_stream_bounded / send_stream_chunks_bounded each
++  hold one of
++  the path's STREAMED_SEND_LIMIT semaphore permits from before open_uni
++  until they return; a streamed send past the limit waits for a permit
++  without opening a stream. Short and control sends take no permit. The
++  limit divides as STREAMED_SEND_LIMIT 48 + UNANNOUNCED_CREDIT_SLACK 8 +
++  RESERVED_UNI_STREAMS 8 = MAX_UNI_STREAMS 64 (quinn leaves up to
++  MAX_UNI_STREAMS / 8 freed slots with no MAX_STREAMS frame written). The
++  reserve holds on a steady path: every streamed send still holds its permit
++  or its stream was freed at the receiver, no MAX_STREAMS frame is lost,
++  queued or in flight, and short and
++  control messages hold no more than the reserve (pinned
 ```
 
-**File**: `crates/core/Cargo.toml` (modified, +9/-1)
+**File**: `crates/core/src/transport.rs` (modified, +4/-2)
 ```diff
-@@ -124,7 +124,15 @@ rustls = { version = "0.23", default-features = false, features = ["std"] }
- # crate's own Runtime over TimeSource, so simulation drives it), no
- # platform-verifier (peers are authenticated by raw public keys, never by a CA
- # root store), and no aws-lc-rs (deny.toml bans it).
--quinn = { version = "0.11.12", default-features = false, features = ["rustls-ring"] }
-+# Pinned exactly: the panic containment in transport/quic relies on quinn
-+# 0.11.12 internals (driver poll order, which destructors lock, respond()
-+# sending without poll_writable). See .claude/rules/transport.md (PANICS)
-+# and re-check those before bumping. This freezes quinn only: quinn-proto and
-+# quinn-udp still float, which is intended, as the internals relied on live
-+# in quinn itself. It also stops `cargo update` (and automated bumps) from
-+# taking quinn patch releases, security fixes included, so taking one is a
-+# deliberate step: bump this pin and re-check the transport.md items.
-+quinn = { version = "=0.11.12", default-features = false, features = ["rustls-ring"] }
- # quinn's protocol crate, already in the graph under quinn. Named directly only
- # for `InvalidCid`, which quinn does not re-export and a connection-ID
- # generator's `validate` must return (transport/quic/cid.rs). No features of
-```
-
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +8/-2)
-```diff
-@@ -3035,6 +3035,10 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
-                 "quic_endpoint_down".into(),
-                 serde_json::json!(snapshot.quic_endpoint_down),
-             );
-+            m.insert(
-+                "quic_adapter_panicked".into(),
-+                serde_json::json!(snapshot.quic_adapter_panicked),
-+            );
-             m.insert(
-                 "quic_breaker_trips".into(),
-                 serde_json::json!(snapshot.quic_breaker_trips),
-@@ -7745,12 +7749,13 @@ mod tests {
-         }
-     }
- 
--    /// The event-log JSON carries the QUIC endpoint-down and close-code
--    /// counts, with the same values serde gives.
-+    /// The event-log JSON carries the QUIC endpoint-down, adapter-panic and
-+    /// close-code counts, with the same values serde gives.
-     #[test]
-     fn transport_snapshot_json_carries_quic_endpoint_and_close_counts() {
-         let snapshot = crate::transport::metrics::TransportSnapshot {
-             quic_endpoint_down: 1,
-+            quic_adapter_panicked: 5,
-             quic_close_sent_node_dropped_peer: 2,
-             quic_close_sent_downgrade: 3,
-             quic_close_sent_identity_mismatch: 4,
-@@ -7766,6 +7771,7 @@ mod tests {
-         )));
-         for (key, expected) in [
-             ("quic_endpoint_down", 1),
-+            ("quic_adapter_panicked", 5),
-             ("quic_close_sent_node_dropped_peer", 2),
-             ("quic_close_sent_downgrade", 3),
-             ("quic_close_sent_identity_mismatch", 4),
-```
-
-**File**: `crates/core/src/transport/metrics.rs` (modified, +76/-3)
-```diff
-@@ -614,17 +614,28 @@ pub struct TransportMetrics {
-     conn_identity: [AtomicU32; ConnIdentity::COUNT],
- 
-     /// Times the QUIC endpoint went down while the node still held it (its
--    /// driver future returned), after which the node runs with QUIC off
--    /// (reset each snapshot). At most one per endpoint.
-+    /// driver future returned, or the QUIC socket adapter caught a panic),
-+    /// after which the node runs with QUIC off (reset each snapshot). At
-+    /// most one per endpoint.
-     quic_endpoint_down: AtomicU64,
-+    /// QUIC endpoints whose socket adapter caught a panic, at most one per
-+    /// endpoint however often the fault repeats; each turns that endpoint
-+    /// off, unless the node had already released it (reset each snapshot).
-+    /// A panic in a path's receive task is not counted here
-+    /// (`receive_task_panicked`), and a panic in quinn's own driver code is
-+    /// not caught at all.
-+    quic_adapter_panicked: AtomicU64,
-     /// Times the QUIC crash-loop breaker tripped at startup (reset each
-     /// snapshot; at most one per process).
-     quic_breaker_trips: AtomicU64,
-     /// Whether the crash-loop breaker keeps QUIC off in this process (a
-     /// state, never reset).
-     quic_breaker_suppressed: AtomicBool,
-     /// QUIC connections this node closed, by [`QuicCloseCode`] (reset each
--    /// snapshot).
-+    /// snapshot). Counted when the close is queued, and only while it can
-+    /// still be sent (not after the endpoint went Down or its socket adapter
-+    /// caught a panic); a panic between the count and quinn's transmit can
-+    /// still leave a counted close unsent, so this is an upper bound.
-     quic_close_sent: [AtomicU64; QuicCloseCode::COUNT],
- 
-     /// The current snapshot period, starting at 1 and advanced by each
-@@ -790,6 +801,11 @@ struct NatDetailCounters {
-     /// down (bounded), one per `record_quic_endpoint_down`.
-     #[cfg(test)]
-     quic_endpoint_down_at: parking_lot::Mutex<std::collections::VecDeque<SocketAddr>>,
-+    /// Test-only log of the local addresses of QUIC endpoints whose socket
-+    /// adapter caught a panic (bounded), one per
-+    /// `record_quic_adapter_panicked`.
-+    #[cfg(test)]
-+    quic_adapter_panicked_at: parking_lot::Mutex<std::collections::VecDeque<SocketAddr>>,
-     /// Test-only log of QUIC closes this node sent, with the remote
-     /// (bounded).
-     #[cfg(test)]
-@@ -1010,6 +1026,7 @@ impl TransportMetrics {
-             handshake_unauthenticated_dropped: AtomicU64::new(0),
-             conn_identity: Default::default(),
-             quic_endpoint_down: AtomicU64::new(0),
-+            quic_adapter_panicked: AtomicU64::new(0),
-             quic_breaker_trips: AtomicU64::new(0),
-             quic_breaker_suppressed: AtomicBool::new(false),
-             quic_close_sent: Default::default(),
-@@ -1448,6 +1465,28 @@ impl TransportMetrics {
-         self.quic_endpoint_down.fetch_add(1, Ordering::Relaxed);
-     }
- 
-+    /// The socket adapter of the QUIC endpoint bound at `local` caught its
-+    /// first panic (`local` is never exported).
-+    pub(crate) fn record_quic_adapter_panicked(&self, local: SocketAddr) {
-+        #[cfg(test)]
-+        push_test_log(&self.nat_detail.quic_adapter_panicked_at, local);
-+        #[cfg(not(test))]
-+        let _ = local;
-+        self.quic_adapter_panicked.fetch_add(1, Ordering::Relaxed);
-+    }
-+
-+    /// Test-only: how many times a socket-adapter panic was counted for the
-+    /// QUIC endpoint bound at `local`.
-+    #[cfg(test)]
-+    pub(crate) fn quic_adapter_panicked_at(&self, local: SocketAddr) -> usize {
-+        self.nat_detail
-+            .quic_adapter_panicked_at
-+            .lock()
-+            .iter()
-+            .filter(|addr| **addr == local)
-+            .count()
-+    }
-+
-     /// The QUIC crash-loop breaker tripped at startup
-     /// (`quic::breaker`).
-     pub(crate) fn record_quic_breaker_trip(&self) {
-@@ -2086,6 +2125,7 @@ impl TransportMetrics {
-             upgrade_control_received: get64(&self.upgrade_control_received),
-             handshake_unauthenticated_dropped: get64(&self.handshake_unauthenticated_dropped),
-             quic_endpoint_down: get64(&self.quic_endpoint_down),
-+            quic_adapter_panicked: get64(&self.quic_adapter_panicked),
-             quic_breaker_trips: get64(&self.quic_breaker_trips),
-             quic_breaker_suppressed: self.quic_breaker_suppressed.load(Ordering::Relaxed),
-             quic_close_sent_node_dropped_peer: get64(
-@@ -2615,6 +2655,10 @@ pub struct TransportSnapshot {
-     /// Times the QUIC endpoint went down while the node held it; the node
-     /// then runs with QUIC off (#5940 e4).
-     pub quic_endpoint_down: u64,
-+    /// QUIC endpoints whose socket adapter caught a panic (at most one per
-+    /// endpoint); each turns that endpoint off unless the node had already
-+    /// released it (#5940). Not counted: a panic in a path's receive task.
-+    pub quic_adapter_panicked: u64,
-     /// Times the QUIC
-```
-
-**File**: `crates/core/src/transport/quic.rs` (modified, +167/-19)
-```diff
-@@ -76,7 +76,6 @@ use identity::{PeerKey, QuicIdentity};
- use liveness::EndpointHealth;
- 
- pub(crate) use config::QuicSettings;
--#[cfg(test)]
- pub(crate) use liveness::QuicAvailability;
- pub(crate) use liveness::QuicAvailabilityWatch;
- 
-@@ -202,11 +201,14 @@ pub(crate) struct EndpointCore {
-     identity: Arc<QuicIdentity>,
-     /// The transport key each allowed client must present.
-     expected_clients: Arc<ExpectedClients>,
-+    /// The endpoint's health, handed to each connection (its watcher, and
-+    /// its closer, which does not count a close after an adapter panic).
-+    health: Arc<EndpointHealth>,
-     /// The QUIC transmits the egress cap holds (`socket::CapHolds`).
-     cap_holds: Arc<socket::CapHolds>,
--    /// Test hook that ends quinn's endpoint driver.
-+    /// Test hooks that inject faults into quinn's drivers.
-     #[cfg(test)]
--    receive_fault: Arc<socket::ReceiveFault>,
-+    faults: Arc<socket::SocketFaults>,
-     /// The type name of the clock quinn runs on (tests).
-     #[cfg(any(test, feature = "testing"))]
-     clock: &'static str,
-@@ -383,6 +385,30 @@ pub(crate) enum QuicConnectError {
-     Connection(#[from] quinn::ConnectionError),
- }
- 
-+/// The QUIC transport contains a panic in its socket adapter by catching
-+/// the unwind (`socket`, `liveness`). A build with `panic = "abort"` cannot
-+/// do that: the first such panic would end the process. So the endpoint is
-+/// refused there, and the node runs with QUIC off (`bind_or_warn` logs it).
-+/// A runtime check rather than a compile-time one, so such a build still
-+/// compiles and runs with QUIC off. It covers a build whose profile sets
-+/// `panic = "abort"`; this crate built to unwind and then linked into an
-+/// aborting binary passes it.
-+fn require_unwinding(unwinds: bool) -> io::Result<()> {
-+    if unwinds {
-+        Ok(())
-+    } else {
-+        Err(io::Error::new(
-+            io::ErrorKind::Unsupported,
-+            "this build aborts on panic (panic = \"abort\"), and the QUIC transport \
-+             needs panics to unwind to contain them",
-+        ))
-+    }
-+}
-+
-+/// Whether this build unwinds on panic, which the QUIC transport needs
-+/// ([`require_unwinding`]).
-+pub(crate) const UNWINDS: bool = cfg!(panic = "unwind");
-+
- impl QuicEndpoint {
-     /// Build an endpoint over `socket`, which must be the socket the
-     /// listener reads (it fills the QUIC ingress queue), bound at
-@@ -398,14 +424,30 @@ impl QuicEndpoint {
-     /// endpoint receives nothing until a peer is allowed
-     /// ([`Self::allow_peer`], or a connection this endpoint opens). Fails if
-     /// the socket's ingress was already enabled, or if the TLS
--    /// configuration cannot be built.
-+    /// configuration cannot be built, or if the build aborts on panic
-+    /// ([`require_unwinding`]).
-+    #[cfg_attr(not(test), allow(dead_code))]
-     pub(crate) fn bind<S: Socket, T: TimeSource>(
-         socket: Arc<DemuxSocket<S>>,
-         local_addr: SocketAddr,
-         time: T,
-         settings: &QuicSettings,
-         keypair: &TransportKeypair,
-     ) -> io::Result<Self> {
-+        Self::bind_checked(UNWINDS, socket, local_addr, time, settings, keypair)
-+    }
-+
-+    /// [`Self::bind`] for a build that does (`unwinds`) or does not unwind
-+    /// on panic; tests drive the aborting case through it.
-+    fn bind_checked<S: Socket, T: TimeSource>(
-+        unwinds: bool,
-+        socket: Arc<DemuxSocket<S>>,
-+        local_addr: SocketAddr,
-+        time: T,
-+        settings: &QuicSettings,
-+        keypair: &TransportKeypair,
-+    ) -> io::Result<Self> {
-+        require_unwinding(unwinds)?;
-         Self::bind_with(
-             socket,
-             local_addr,
-@@ -416,22 +458,35 @@ impl QuicEndpoint {
-         )
-     }
- 
--    /// [`Self::bind`], or `None` with a WARN when it fails, so a node with
--    /// `transport-quic = "prefer"` still starts, with QUIC off.
-+    /// Build the endpoint as [`Self::bind`] describes, for this build
-+    /// ([`UNWINDS`], through [`Self::bind_checked`]), or `None` with a WARN
-+    /// when it fails, so a node with QUIC on still starts, with QUIC off.
-     pub(crate) fn bind_or_warn<S: Socket, T: TimeSource>(
-         socket: Arc<DemuxSocket<S>>,
-         local_addr: SocketAddr,
-         time: T,
-         settings: &QuicSettings,
-         keypair: &TransportKeypair,
-     ) -> Option<Self> {
--        match Self::bind(socket, local_addr, time, settings, keypair) {
-+        Self::bind_or_warn_checked(UNWINDS, socket, local_addr, time, settings, keypair)
-+    }
-+
-+    /// [`Self::bind_or_warn`] through [`Self::bind_checked`].
-+    fn bind_or_warn_checked<S: Socket, T: TimeSource>(
-+        unwinds: bool,
-+        socket: Arc<DemuxSocket<S>>,
-+        local_addr: SocketAddr,
-+        time: T,
-+        settings: &QuicSettings,
-+        keypair: &TransportKeypair,
-+    ) -> Option<Self> {
-+        match Self::bind_checked(unwinds, socket, local_addr, time, settings, keypair) {
-             Ok(endpoint) => Some(endpoint
-```
-
-**File**: `crates/core/src/transport/quic/liveness.rs` (modified, +184/-17)
-```diff
-@@ -20,21 +20,62 @@
- //! - a driver task dropped without finishing (the runtime shutting down) is
- //!   not reported: the process is ending.
- //!
--//! What this does NOT cover: a PANIC in the driver. quinn's driver returns
--//! only on an I/O error from `drive_recv`, and [`QuicSocket`] never returns
--//! one, so in production today the driver cannot return at all; the only
--//! way it ends is a panic, and a panic is not contained. quinn 0.11.12 polls
--//! the driver while holding its endpoint state mutex
--//! (`EndpointDriver::poll`, `endpoint.rs` line 370: `state.lock().unwrap()`),
--//! so a panic there poisons it, and every later lock of it panics too:
--//! `EndpointDriver::drop` (line 403), `Accept::poll` (line 651, inside
--//! `quic_accept_loop`), `connect` (line 214) and the connection drivers. Where
--//! one of those runs while the first panic is still unwinding, the process
--//! aborts. So this circuit only reports a driver that RETURNED (tests inject
--//! that with a receive error, `socket::ReceiveFault`). Containing a quinn
--//! panic (catch the unwind, leak the driver instead of dropping it, guard
--//! the accept loop against the poisoned lock) is a separate prerequisite
--//! before QUIC is on by default.
-+//! Panics. The node relies on unwinding (`panic = "unwind"`; a build that
-+//! aborts on panic refuses to build the endpoint, `super::require_unwinding`,
-+//! and runs with QUIC off), and what a panic does depends on where it
-+//! starts:
-+//!
-+//! - In the node's socket adapter ([`QuicSocket`]: `poll_recv`, `try_send`,
-+//!   `poll_writable`), which quinn calls while holding its endpoint or
-+//!   connection state lock: CONTAINED. The adapter catches it before it
-+//!   unwinds into quinn, so no lock is poisoned, and reports it through
-+//!   [`EndpointHealth::adapter_panicked`]: the endpoint is `Down` (counted
-+//!   in `quic_endpoint_down` and `quic_adapter_panicked`, and logged at
-+//!   ERROR once by the node; quinn also logs its own ERROR "I/O error" for
-+//!   each of its drivers that ends with the error, so a busy endpoint logs
-+//!   one such line per connection whose driver ran into it), and the
-+//!   adapter returns an I/O error, which ends the quinn driver that called
-+//!   it cleanly. From then on every adapter call returns
-+//!   that error without running the adapter's code. QUIC then stays off
-+//!   until the node restarts: the endpoint driver ends at its next receive;
-+//!   `connect` refuses at once (`QuicEndpoint::connect` checks);
-+//!   a handshake in progress ends with an error (quinn's implicit close, see
-+//!   `QuicIncoming::establish`); and each connection is closed locally by
-+//!   its watcher (`QuicConnection::new`), so callers get an error instead of
-+//!   waiting on a driver that has stopped. Peers are not told: no
-+//!   CONNECTION_CLOSE leaves (see `socket`), so they find out from their own
-+//!   idle timeout. A panic after the node released the endpoint is counted
-+//!   and logged but leaves it `Released`; its connections (which the node
-+//!   may still hold) are closed locally by their watchers all the same,
-+//!   since every send of the endpoint now fails (see the watcher in
-+//!   `QuicConnection::new`).
-+//! - In the node's own per-connection tasks (the path's receive task, see
-+//!   `path::supervise_receive`): contained per connection, which is closed
-+//!   with DOWNGRADE, and not counted in `quic_adapter_panicked`.
-+//! - In the node's runtime adapter ([`QuicRuntime`]: `now`, and
-+//!   `QuicTimer::reset` / `poll`, which call the `TimeSource`, including
-+//!   `sleep_until`): NOT contained. quinn calls them from its drivers under
-+//!   the same state lock, so a panic there behaves as one in quinn's own
-+//!   code (below). They have no error to return a panic as (`now` must
-+//!   return an `Instant`), so they are not wrapped like the socket adapter.
-+//! - In quinn's own code inside its endpoint or connection driver: NOT
-+//!   contained, and it can abort the process. quinn 0.11.12 polls each
-+//!   driver holding a `std::sync::Mutex` it locks with `.lock().unwrap()`,
-+//!   so the panic poisons it, and quinn's destructors unwrap the poisoned
-+//!   lock. For the endpoint driver that happens on every such panic: quinn
-+//!   spawns it inside its own `async` block, and the unwind out of that
-+//!   block drops the driver there, before any catch around the spawned
-+//!   future (ours or tokio's) runs. `EndpointDriver::drop`
-+//!   (`endpoint.rs:403`) and then `EndpointRef::drop` (`endpoint.rs:724`)
-+//!   lock the poisoned mutex during the unwind, and the process aborts. For
-+//!   a connection driver, `SendStream`, `RecvStream` and the last
-+//!   `Connection` handle lock in their `Drop`, so dropping one afterwards
-+//!   panics in whatever task drops it, and aborts the process if that drop
-+//!   runs during an unwind. The fix belongs in quinn: those destructors
-+//!   must tolerate a poisoned lock (both `endpoint.rs:403` and `:724` for
-+//! 
-```
-
-**File**: `crates/core/src/transport/quic/socket.rs` (modified, +307/-46)
-```diff
-@@ -4,6 +4,32 @@
- //! fills; the endpoint never reads the UDP socket itself. Sending goes
- //! through the demux socket without waiting, and when the node has an egress
- //! cap each datagram is admitted by it first.
-+//!
-+//! quinn calls `poll_recv`, `try_send` and `poll_writable` while it holds its
-+//! endpoint or connection state lock. A panic in them is caught here, before
-+//! it unwinds into quinn (where it would poison that lock), and reported
-+//! ([`EndpointHealth::adapter_panicked`]): the endpoint goes `Down`. The call
-+//! then returns an I/O error, which ends the quinn driver that made it
-+//! without looping. Every later call returns one too (one atomic load,
-+//! before the adapter's own code runs), so a fault that lasts is hit once
-+//! per endpoint, and the endpoint driver is woken for its next receive, so
-+//! it ends promptly. See `super::liveness` for what is and is not
-+//! contained.
-+//!
-+//! Sends fail too, so the endpoint's other connections do not send their
-+//! CONNECTION_CLOSE: their peers learn of the end only from their own idle
-+//! timeout. Sending it would not work anyway: once the endpoint driver
-+//! ends, quinn's `EndpointDriver::drop` drops each connection's event
-+//! channel, and a connection driver that sees that ends with
-+//! INTERNAL_ERROR before it transmits (quinn 0.11.12,
-+//! `ConnectionDriver::poll`), which is what usually happens first. Pinned
-+//! by `an_adapter_panic_ends_every_connection_and_counts_once`.
-+//!
-+//! The catches use `AssertUnwindSafe`: the state a panic can interrupt here
-+//! (the demux socket, its egress cap and allow-set) is shared with the UDP
-+//! transport and is left as the panic left it, not repaired. Their locks
-+//! (`parking_lot`, `DashMap`) do not poison, so UDP keeps working, but a
-+//! panic part way through an update there could leave a count off.
- 
- use std::fmt;
- use std::io::{self, IoSliceMut};
-@@ -18,6 +44,7 @@ use quinn::udp::{RecvMeta, Transmit};
- use quinn::{AsyncUdpSocket, UdpPoller};
- 
- use super::config::MAX_UDP_PAYLOAD;
-+use super::liveness::EndpointHealth;
- use crate::transport::demux::{DemuxSocket, QuicIngressReceiver};
- use crate::transport::egress_cap::AdmissionWaiter;
- use crate::transport::{Socket, normalize_mapped_addr};
-@@ -134,31 +161,117 @@ pub(crate) struct QuicSocket<S> {
-     send_errors: AtomicU64,
-     /// Whether the ingress queue's sending side is gone has been logged.
-     ingress_closed_logged: AtomicBool,
--    /// Test hook: make the next receive fail, which ends quinn's endpoint
--    /// driver.
-+    /// Told of a panic caught here.
-+    health: Arc<EndpointHealth>,
-+    /// The endpoint driver's waker from its last receive, woken when the
-+    /// adapter catches a panic so the driver comes back to receive, gets the
-+    /// error and ends (it might otherwise wait for a datagram that never
-+    /// comes, since the endpoint's connections let their addresses go).
-+    receive_waker: futures::task::AtomicWaker,
-+    /// Test hooks: faults injected into quinn's drivers.
-     #[cfg(test)]
--    receive_fault: Arc<ReceiveFault>,
-+    faults: Arc<SocketFaults>,
- }
- 
--/// Test hook: a socket error quinn's endpoint driver cannot get past, the
--/// way a socket that fails for good would end it.
-+/// Test hooks: faults injected into quinn's drivers through this socket.
- #[cfg(test)]
- #[derive(Default)]
--pub(crate) struct ReceiveFault {
--    tripped: AtomicBool,
-+pub(crate) struct SocketFaults {
-+    /// What the endpoint's next receive does (`RECEIVE_*`).
-+    receive: std::sync::atomic::AtomicU8,
-     waker: parking_lot::Mutex<Option<std::task::Waker>>,
-+    /// What the next write-readiness poll does (`WRITABLE_*`).
-+    writable: std::sync::atomic::AtomicU8,
-+    /// Write-readiness polls that reached the adapter's panicking hook.
-+    writable_panics: AtomicU64,
-+    /// Every send panics in the adapter's own code.
-+    panic_sends: AtomicBool,
-+    /// Every send returns `WouldBlock`, as when the socket's buffer or the
-+    /// egress cap is short.
-+    block_sends: AtomicBool,
-+    /// Sends that reached the adapter's panicking hook.
-+    send_panics: AtomicU64,
- }
- 
- #[cfg(test)]
--impl ReceiveFault {
--    /// Fail the endpoint's next receive, and wake the driver so it makes
--    /// one.
--    pub(crate) fn trip(&self) {
--        self.tripped.store(true, Ordering::Release);
-+const RECEIVE_OK: u8 = 0;
-+#[cfg(test)]
-+const RECEIVE_ERROR: u8 = 1;
-+/// A panic in the adapter's own code, which it catches.
-+#[cfg(test)]
-+const RECEIVE_PANIC: u8 = 2;
-+/// A panic that unwinds through quinn, as one in quinn's own code would.
-+#[cfg(test)]
-+const RECEIVE_PANIC_IN_QUINN: u8 = 3;
-+/// Every write-readiness poll panics in the adapter's own code.
-+#[cfg(test)]
-+const WRITABLE_PANIC: u8 = 1;
-+/// The next write-readiness poll panics in the adapter's own code, once.
-+#[cfg(test)]
-+const WRITABLE_PANIC_ONCE: u8 = 2;
-+/// Panics of a lasting write-readiness fault after which its hook reports
-+/// `Pending` instead 
-```
-
-**File**: `crates/core/src/transport/quic/tests.rs` (modified, +1111/-1)
-```diff
-@@ -593,6 +593,7 @@ async fn attempt(
-                             incoming.permit,
-                             Some(incoming.hold),
-                             incoming.peer,
-+                            incoming.health,
-                             incoming.cap_holds,
-                         ))
+@@ -1200,10 +1200,11 @@ mod tests {
+                 TransportError::Quic(QuicError(kind)) => match kind {
+                     // Codes that refuse the message itself, written out per
+                     // namespace: stops 0x11 HEADER_REFUSED, 0x15 OVERLONG,
+-                    // 0x18 FRAGMENT_REFUSED; resets 0x22 LENGTH_MISMATCH.
++                    // 0x18 FRAGMENT_REFUSED, 0x19 NOT_ACCEPTING_DATA; resets
++                    // 0x22 LENGTH_MISMATCH.
+                     // Every other code in each namespace, known or not, is
+                     // retryable.
+-                    QuicErrorKind::Stopped { code } if ![0x11, 0x15, 0x18].contains(code) => {
++                    QuicErrorKind::Stopped { code } if ![0x11, 0x15, 0x18, 0x19].contains(code) => {
+                         (ErrorScope::Transient, true, false)
                      }
-@@ -1816,7 +1817,12 @@ fn the_socket_never_batches() {
-             None,
-         ));
-         let ingress = demux.enable_quic_ingress().unwrap();
--        let socket = super::socket::QuicSocket::new(demux, ingress, addr);
-+        let socket = super::socket::QuicSocket::new(
-+            demux,
-+            ingress,
-+            addr,
-+            super::liveness::EndpointHealth::new(addr),
-+        );
-         check(&socket);
-         unregister_network_time_source(network);
-     });
-@@ -2021,6 +2027,7 @@ fn scripted(
-             demux.clone(),
-             ingress,
-             local,
-+            super::liveness::EndpointHealth::new(local),
-         )),
-         demux,
-     )
-@@ -2716,6 +2723,9 @@ fn endpoint_death_turns_quic_off_without_stopping_the_node() {
-             QuicErrorKind::EndpointDown,
-             "{ended:?}"
-         );
-+        assert!(ended_by_endpoint_down(&ended), "{ended:?}");
-+        // The watcher's close on Down is not counted as a close sent.
-+        assert!(TRANSPORT_METRICS.quic_close_sent_to(pair.b_addr).is_empty());
-         let refused = pair
-             .a
-             .connect(pair.b_addr, &pair.b_key())
-@@ -3165,3 +3175,1103 @@ fn concurrent_closers_close_and_count_once() {
-         assert_eq!(TRANSPORT_METRICS.quic_close_sent_to(pair.b_addr).len(), 1);
-     });
- }
-+
-+/// Whether `error` is one of the two ways a connection ends locally when its
-+/// endpoint goes down: the watcher's local close, or quinn's own
-+/// INTERNAL_ERROR when the endpoint driver was dropped. Any other error (a
-+/// peer's close, a crypto or protocol error, an idle timeout) is not.
-+fn ended_by_endpoint_down(error: &quinn::ConnectionError) -> bool {
-+    match error {
-+        quinn::ConnectionError::LocallyClosed => true,
-+        quinn::ConnectionError::TransportError(e) => {
-+            e.code == quinn::TransportErrorCode::INTERNAL_ERROR
-+        }
-+        quinn::ConnectionError::VersionMismatch
-+        | quinn::ConnectionError::ConnectionClosed(_)
-+        | quinn::ConnectionError::ApplicationClosed(_)
-+        | quinn::ConnectionError::Reset
-+        | quinn::ConnectionError::TimedOut
-+        | quinn::ConnectionError::CidsExhausted => false,
-+    }
-+}
-+
-+/// Set in the child process [`in_child`] starts.
-+const PANIC_CHILD_ENV: &str = "FREENET_QUIC_PANIC_CHILD";
-+
-+/// Run `body` in a child process: the test binary re-run on the one test
-+/// named `name` (under `transport::quic::tests`). A panic that is not
-+/// contained aborts the process, and that must fail one test, not take
-+/// every test running beside it down.
-+fn in_child(name: &str, body: impl FnOnce()) {
-+    if std::env::var_os(PANIC_CHILD_ENV).is_some() {
-+        body();
-+        return;
-+    }
-+    let (test, output) = run_child(name);
-+    let stdout = String::from_utf8_lossy(&output.stdout);
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    assert!(
-+        output.status.success(),
-+        "the child running {test} failed ({}).\nstdout:\n{stdout}\nstderr:\n{stderr}",
-+        output.status
-+    );
-+    // libtest exits 0 when its filter matches nothing: a rename must fail.
-+    assert!(
-+        stdout.contains("1 passed"),
-+        "the child did not run {test}; was it renamed?\nstdout:\n{stdout}\nstderr:\n{stderr}"
-+    );
-+}
-+
-+/// Re-run the test binary on the one test `name`, with [`PANIC_CHILD_ENV`].
-+fn run_child(name: &str) -> (String, std::process::Output) {
-+    // The running image: after a concurrent rebuild replaces the test
-+    // binary, Linux current_exe() reports "<path> (deleted)" (#5185).
-+    let exe = if cfg!(target_os = "linux") {
-+        std::path::PathBuf::from("/proc/self/exe")
-+    } else {
-+        std::env::current_exe().expect("test binary path")
-+    };
-+    let test = format!("transport::quic::tests::{name}");
-+    let mut command = std::process::Command::new(exe);
-+    // Core dumps off in the child: one that aborts (the pinned test does, by
-+    // design) must not leave a core file on the host.
-+    #[cfg(unix)]
-+    // SAFETY: setrlimit(2) is async-signal-safe, and the struct it reads is
-+    // owned by the closure.
-+    unsafe {
-+        use std::os::unix::process::CommandExt;
-+        command.pre_exec(|| {
-+            let none = libc::rlimit {
-+                rlim_cur: 0,
-+                rlim_max: 0,
-+            };
-+            if libc::setrlimit(libc::RLIMIT_CORE, &none) != 0 {
-+                return Err(std::io::Error::last_os_error());
-+            }
-+            Ok(())
-+        });
-+    }
-+    let mut child = command
-+        .args(["--exact", "--test-threads=1", "--nocapture", &test])
-+        .env(PANIC_CHILD_ENV, "1")
-+        .st
+                     QuicErrorKind::Reset { code } if *code != 0x22 => {
+@@ -1248,6 +1249,7 @@ mod tests {
+             TransportError::from(QuicErrorKind::Stopped { code: 0x13 }),
+             TransportError::from(QuicErrorKind::Stopped { code: 0x17 }),
+             TransportError::from(QuicErrorKind::Stopped { code: 0x18 }),
++            TransportError::from(QuicErrorKind::Stopped { code: 0x19 }),
+             TransportError::from(QuicErrorKind::Reset { code: 0x22 }),
+             TransportError::from(QuicErrorKind::Stopped { code: 0x1f }),
+             // Cross-namespace values: a reset carrying a deterministic stop
 ```
 
----
-
-### Incident Patch 2: `6111b563` (2026-10-30)
-**Commit Message**: fix: skip validate_state when an update leaves the state unchanged (#6054)
-
-**File**: `crates/core/src/contract/executor/mock_wasm_runtime.rs` (modified, +9/-0)
+**File**: `crates/core/src/transport/quic.rs` (modified, +1/-0)
 ```diff
-@@ -21,6 +21,9 @@ pub(crate) enum ValidateOverride {
-     EmptyRequestRelated,
-     /// `Valid` exactly when the predicate holds for the state bytes.
-     ValidWhen(fn(&[u8]) -> bool),
-+    /// Always `Valid`, recording the bytes of every state validated, so a test
-+    /// can assert which states were (and were not) validated.
-+    Record(std::sync::Arc<std::sync::Mutex<Vec<Vec<u8>>>>),
- }
- 
- /// Configurable `update_state` behavior for testing related contract flows.
-@@ -285,6 +288,12 @@ impl ContractRuntimeInterface for MockWasmRuntime {
-                         ValidateResult::Invalid
-                     }
-                 }
-+                ValidateOverride::Record(seen) => {
-+                    seen.lock()
-+                        .unwrap_or_else(|e| e.into_inner())
-+                        .push(_state.as_ref().to_vec());
-+                    ValidateResult::Valid
-+                }
-             });
-         }
-         Ok(ValidateResult::Valid)
+@@ -40,6 +40,7 @@
+ pub(crate) mod breaker;
+ pub(crate) mod cid;
+ pub(crate) mod config;
++pub(crate) mod control;
+ pub(crate) mod error;
+ pub(crate) mod framing;
+ pub(crate) mod identity;
 ```
 
-**File**: `crates/core/src/contract/executor/pool_tests.rs` (modified, +1/-0)
+**File**: `crates/core/src/transport/quic/config.rs` (modified, +67/-16)
 ```diff
-@@ -7,6 +7,7 @@ mod delegate_notification_wasm_tests;
- mod disk_budget_gate_tests;
- mod identical_input_probe_tests;
- mod merge_rejected_tests;
-+mod no_change_validation_tests;
- mod non_idempotent_detector_tests;
- #[cfg(feature = "wasmtime-backend")]
- mod params_integrity_wasm_tests;
-```
-
-**File**: `crates/core/src/contract/executor/pool_tests/no_change_validation_tests.rs` (added, +368/-0)
-```diff
-@@ -0,0 +1,368 @@
-+//! Regression tests for #6050: an update whose merge leaves the stored state
-+//! unchanged must not run `validate_state` on that unchanged state.
-+//!
-+//! The stored state was validated when it was stored, so validating identical
-+//! bytes again adds nothing, and for a contract whose `validate_state` checks
-+//! signatures over a large state it was most of the cost of every duplicate or
-+//! replayed update. Every state that DOES change must still be validated, and an
-+//! invalid one must still be rejected.
-+
-+use either::Either;
-+use freenet_stdlib::prelude::*;
-+use std::cell::RefCell;
-+use std::rc::Rc;
-+use std::sync::{Arc, Mutex};
-+
-+use crate::contract::executor::mock_wasm_runtime::{
-+    MockWasmRuntime, UpdateOverride, ValidateOverride,
-+};
-+use crate::contract::executor::{ContractExecutor, Executor, UpsertOutcome, UpsertResult};
-+use crate::wasm_runtime::MockStateStorage;
-+
-+const STORED: [u8; 3] = [1, 2, 3];
-+
-+/// An executor holding a contract whose stored state is [`STORED`].
-+async fn executor_with_stored_state(
-+    name: &str,
-+) -> (Executor<MockWasmRuntime, MockStateStorage>, ContractKey) {
-+    let mut executor = Executor::new_mock_wasm(name, MockStateStorage::new(), None, None)
-+        .await
-+        .expect("create MockWasmRuntime executor");
-+    let code = ContractCode::from(name.as_bytes().to_vec());
-+    let contract = ContractContainer::Wasm(ContractWasmAPIVersion::V1(WrappedContract::new(
-+        Arc::new(code),
-+        Parameters::from(vec![]),
-+    )));
-+    let key = contract.key();
-+    executor
-+        .upsert_contract_state(
-+            key,
-+            Either::Left(WrappedState::new(STORED.to_vec())),
-+            RelatedContracts::default(),
-+            Some(contract),
-+        )
-+        .await
-+        .expect("initial PUT should succeed");
-+    (executor, key)
-+}
-+
-+/// Record every state `validate_state` is called on from here on.
-+fn record_validations(
-+    executor: &mut Executor<MockWasmRuntime, MockStateStorage>,
-+    key: &ContractKey,
-+) -> Arc<Mutex<Vec<Vec<u8>>>> {
-+    let seen = Arc::new(Mutex::new(Vec::new()));
-+    executor
-+        .runtime
-+        .validate_overrides
-+        .insert(*key.id(), ValidateOverride::Record(seen.clone()));
-+    seen
-+}
-+
-+fn keep_current(current: &[u8], _incoming: &[u8]) -> Vec<u8> {
-+    current.to_vec()
-+}
-+
-+fn take_incoming(_current: &[u8], incoming: &[u8]) -> Vec<u8> {
-+    incoming.to_vec()
-+}
-+
-+fn union(current: &[u8], incoming: &[u8]) -> Vec<u8> {
-+    let mut out = [current, incoming].concat();
-+    out.sort_unstable();
-+    out.dedup();
-+    out
-+}
-+
-+/// A full state the merge drops leaves the stored state unchanged. Only the
-+/// incoming full state is validated (on entry, as before); the stored state is not
-+/// validated again.
-+#[tokio::test(flavor = "current_thread")]
-+async fn a_dropped_full_state_does_not_validate_the_unchanged_state() {
-+    let (mut executor, key) = executor_with_stored_state("dropped_full_state").await;
-+    executor
-+        .runtime
-+        .update_overrides
-+        .insert(*key.id(), UpdateOverride::MergeWith(keep_current));
-+    let seen = record_validations(&mut executor, &key);
-+
-+    let result = executor
-+        .upsert_contract_state(
-+            key,
-+            Either::Left(WrappedState::new(vec![9])),
-+            RelatedContracts::default(),
-+            None,
-+        )
-+        .await
-+        .expect("a dropped update is not an error");
-+    assert!(matches!(result, UpsertResult::NoChange), "{result:?}");
-+    assert_eq!(*seen.lock().unwrap(), vec![vec![9]]);
-+}
-+
-+/// A delta the merge ignores leaves the stored state unchanged and validates
-+/// nothing.
-+#[tokio::test(flavor = "current_thread")]
-+async fn an_ignored_delta_validates_nothing() {
-+    let (mut executor, key) = executor_with_stored_state("ignored_delta").await;
-+    executor
-+        .runtime
-+        .update_overrides
-+        .insert(*key.id(), UpdateOverride::MergeWith(keep_current));
-+    let seen = record_validations(&mut executor, &key);
-+
-+    let result = executor
-+        .upsert_contract_state(
-+            key,
-+            Either::Right(StateDelta::from(vec![7])),
-+            RelatedContracts::default(),
-+            None,
-+        )
-+        .await
-+        .expect("an ignored delta is not an error");
-+    assert!(matches!(result, UpsertResult::NoChange), "{result:?}");
-+    assert!(
-+        seen.lock().unwrap().is_empty(),
-+        "{:?}",
-+        seen.lock().unwrap()
-+    );
-+}
-+
-+/// The same holds through the deferrable entry the UPDATE driver uses: a no-op
-+/// completes as `NoChange` without validating.
-+#[tokio::test(flavor = "current_thread")]
-+async fn a_no_op_through_the_deferrable_entry_validates_nothing() {
-+    let (mut executor, key) = executor_with_stored_state("deferrable_no_op").await;
-+    executor
-+        .runtime
-+        .update_overrides
-+        .insert(*key.id(), UpdateOverride::MergeWith(keep_current));
-+    let seen = record_vali
-```
-
-**File**: `crates/core/src/contract/executor/runtime/executor_impl.rs` (modified, +67/-55)
-```diff
-@@ -1285,6 +1285,28 @@ where
-                 .remove(&key);
-         }
- 
-+        // A merge that left the stored state unchanged needs no validation: those
-+        // bytes were validated when they were stored, and validating them again
-+        // costs a full `validate_state` (and possibly a related-contract fetch)
-+        // on every duplicate or replayed update (#6050).
-+        //
-+        // Consequence: a stored state that has become invalid since it was stored
-+        // (post-write corruption that still decodes, a time-dependent
-+        // `validate_state`, a related contract that changed) no longer makes a
-+        // no-op update fail with "invalid outcome state". It is surfaced by the
-+        // next update that changes it. No repair depended on the old error: it
-+        // re-fired on every update and never replaced the state.
-+        if updated_state.as_ref() == current_state.as_ref() {
-+            // Recovery installs the incoming full state, and an incoming state
-+            // identical to the stored one already returned at the byte-identical
-+            // short-circuit above, so a recovery cannot end here.
-+            debug_assert!(
-+                !recovery_performed,
-+                "a corrupted-state recovery produced the stored state"
-+            );
-+            return Ok(UpsertResult::NoChange);
-+        }
-+
-         let result = self
-             .fetch_related_for_validation(
-                 &key,
-@@ -1298,64 +1320,54 @@ where
-         if result != ValidateResult::Valid {
-             return Err(Self::validation_error(key, result));
-         }
--        if updated_state.as_ref() == current_state.as_ref() {
--            Ok(UpsertResult::NoChange)
--        } else {
--            // Sampled re-apply probe. With low probability, re-apply the
--            // incoming full state to `updated_state`. A re-apply that changes
--            // the content is a strict associativity failure on (S, X, X); the
--            // contract is flagged only when the conformance verifier's heal
--            // step shows the merge does not settle (a mutate-on-every-apply or
--            // cycling contract, which storms the network), not when it changes
--            // once and reconciles. See `reapply_probe` and
--            // `crate::ring::broken_invariants`.
--            //
--            // `RelatedState` inputs are skipped: re-applying a cross-
--            // contract state hint isn't required to be a no-op by the
--            // contract ABI, so probing it can produce false positives.
--            // Not after a corrupted-state recovery: there `updated_state` is the
--            // incoming state rather than a merge with the stored one, so the
--            // probe's premise does not hold. Not after a related-state retry
--            // either: there `updated_state` was computed with fetched
--            // `RelatedState` entries that the probe's re-apply would lack.
--            if !recovery_performed && !related_retry_performed {
--                self.maybe_probe_idempotency(
--                    &key,
--                    &params,
--                    &current_state,
--                    &updated_state,
--                    &updates,
--                )
-+        // Sampled re-apply probe. With low probability, re-apply the
-+        // incoming full state to `updated_state`. A re-apply that changes
-+        // the content is a strict associativity failure on (S, X, X); the
-+        // contract is flagged only when the conformance verifier's heal
-+        // step shows the merge does not settle (a mutate-on-every-apply or
-+        // cycling contract, which storms the network), not when it changes
-+        // once and reconciles. See `reapply_probe` and
-+        // `crate::ring::broken_invariants`.
-+        //
-+        // `RelatedState` inputs are skipped: re-applying a cross-
-+        // contract state hint isn't required to be a no-op by the
-+        // contract ABI, so probing it can produce false positives.
-+        // Not after a corrupted-state recovery: there `updated_state` is the
-+        // incoming state rather than a merge with the stored one, so the
-+        // probe's premise does not hold. Not after a related-state retry
-+        // either: there `updated_state` was computed with fetched
-+        // `RelatedState` entries that the probe's re-apply would lack.
-+        if !recovery_performed && !related_retry_performed {
-+            self.maybe_probe_idempotency(&key, &params, &current_state, &updated_state, &updates)
-                 .await;
--            }
--
--            if self
--                .op_manager
--                .as_ref()
--                .map(|m| m.ring.is_contract_broken(&key))
--                .unwrap_or(false)
--            {
--                // Probe just flagged this contract (or it was already
--                // flagged). Skip the commit so we don't extend the
--                // problematic state, and surface the suppression to
--                // ca
-```
-
----
-
-### Incident Patch 3: `fe2341c5` (2026-10-30)
-**Commit Message**: fix(fdev): count verify-merge cases that never ran (#6043)
-
-**File**: `crates/core/src/conformance.rs` (modified, +1/-1)
-```diff
-@@ -146,7 +146,7 @@ pub use evidence::{
-     EvidenceRejected,
- };
- pub use focus::FocusSelector;
--pub use generator::{GeneratorConfig, generate_cases};
-+pub use generator::{GeneratedCases, GeneratorConfig, generate_cases, generate_cases_counted};
- pub use host_clock::{
-     HOST_CLOCK_DEPRECATION_DOC, HOST_CLOCK_IMPORT, HOST_CLOCK_NAMESPACE, imports_host_clock,
- };
-```
-
-**File**: `crates/core/src/conformance/generator.rs` (modified, +163/-34)
-```diff
-@@ -171,8 +171,15 @@ pub struct GeneratorConfig {
-     pub properties: Vec<ConformanceProperty>,
-     /// Skip any case whose inputs exceed this. Keeps a handful of very large states
-     /// from dominating the run.
-+    ///
-+    /// A skipped case never runs, so a property can read as held while the cases
-+    /// that would break it were the ones skipped. A contract that is wrong only near
-+    /// its size cap is exactly that shape (#5705). [`generate_cases_counted`]
-+    /// counts the cases skipped for size and for the case budget per property, and
-+    /// `fdev verify-merge` reports them. Cases left out by state sampling are not
-+    /// counted; only the number of states sampled is. The shadow prober still uses the uncounted [`generate_cases`]; see #6044.
-     pub max_case_bytes: usize,
--    /// Cap on states considered for pairing, since pairs grow quadratically.
-+    /// Cap on states the state-based laws use, since pairs grow quadratically.
-     pub max_states_paired: usize,
-     /// Cap on recorded steps considered for `TransitionPathAgreement`.
-     ///
-@@ -199,56 +206,138 @@ impl Default for GeneratorConfig {
-     }
- }
- 
--/// Build cases from a corpus.
-+/// What [`generate_cases_counted`] built, and what it refused to build.
-+#[derive(Debug, Default, Clone)]
-+pub struct GeneratedCases {
-+    pub cases: Vec<ConformanceCase>,
-+    /// One entry per entry of [`GeneratorConfig::properties`], in that order: how
-+    /// many cases were built for the property and then dropped because their inputs
-+    /// exceeded [`GeneratorConfig::max_case_bytes`].
-+    ///
-+    /// Zero entries are kept, so a consumer can tell "nothing was skipped" from
-+    /// "this property was not counted".
-+    pub oversized: Vec<(ConformanceProperty, usize)>,
-+    /// Parallel to `oversized`: cases that passed the size limit and were then left
-+    /// out because the [`GeneratorConfig::max_cases`] budget ran out first.
-+    ///
-+    /// Disjoint from `oversized`, so the two add up to every built case that did not
-+    /// run. Raising the size limit can move cases from `oversized` to here, which is
-+    /// why the budget needs its own count.
-+    pub budget_cut: Vec<(ConformanceProperty, usize)>,
-+    /// How many states the state-based laws used, out of `corpus.states.len()`.
-+    /// Below the total when the corpus exceeds [`GeneratorConfig::max_states_paired`].
-+    pub states_paired: usize,
-+    /// How many recorded transitions were used, out of `corpus.transitions.len()`.
-+    /// Below the total when the corpus exceeds [`GeneratorConfig::max_transitions`].
-+    pub transitions_sampled: usize,
-+}
-+
-+impl GeneratedCases {
-+    /// Over-size cases across every property.
-+    pub fn oversized_total(&self) -> usize {
-+        self.oversized.iter().map(|(_, n)| n).sum()
-+    }
-+
-+    /// Budget-cut cases across every property.
-+    pub fn budget_cut_total(&self) -> usize {
-+        self.budget_cut.iter().map(|(_, n)| n).sum()
-+    }
-+}
-+
-+/// Build cases from a corpus, discarding the count of over-size cases skipped.
-+///
-+/// A thin wrapper over [`generate_cases_counted`] for callers that only need the
-+/// cases. A caller that reports a verdict to anyone must use the counted form:
-+/// without the count, "every case held" cannot be told apart from "the cases that
-+/// would have failed were too large to run" (#5705).
-+pub fn generate_cases(corpus: &Corpus, config: &GeneratorConfig) -> Vec<ConformanceCase> {
-+    generate_cases_counted(corpus, config).cases
-+}
-+
-+/// Build cases from a corpus, and count the cases skipped for size and for budget.
+@@ -28,8 +28,6 @@
+ //! - send-side packet records and the buffers behind sent data;
+ //! - allocators other than jemalloc on linux-gnu (macOS and Windows builds
+ //!   round differently);
+-//! - data on the bidirectional control stream ([`MAX_BIDI_STREAMS`]); the
+-//!   measured streams are unidirectional;
+ //! - CRYPTO-frame reassembly, quinn-proto's second assembler (its buffer is
+ //!   `crypto_buffer_size`, 16 KiB here);
+ //! - arrival orders other than a single gap at offset 0 of each stream.
+@@ -76,13 +74,11 @@ pub(crate) const KEEPALIVE_INTERVAL: Duration = Duration::from_secs(15);
+ /// than an eighth of the limit has been freed), so a sender can wait with
+ /// as few as seven eighths of the limit open at the receiver.
  ///
+-/// e5 constraint: short messages and control frames take slots from the
+-/// same pool as streamed messages, and a streamed message holds its slot
+-/// for its whole transfer. Since every send must be bounded by a timeout
+-/// (`path` module doc), a short or control message queued behind long
+-/// transfers can time out. e5 must keep slots for them (cap concurrent
+-/// outbound streamed messages below this value) or carry control frames on
+-/// the bidirectional stream reserved for it ([`MAX_BIDI_STREAMS`]).
++/// Short messages and control frames take slots from the same pool as
++/// streamed messages, and a streamed message holds its slot for its whole
++/// transfer. A path caps its outbound streamed messages at
++/// [`STREAMED_SEND_LIMIT`] to keep [`RESERVED_UNI_STREAMS`] slots for short
++/// messages and control frames on a steady path (see there).
+ ///
+ /// Set from the `inbound_concurrency` gauge (#5993), which estimates on
+ /// the UDP transport how many inbound streams each connection would hold
+@@ -106,13 +102,69 @@ pub(crate) const KEEPALIVE_INTERVAL: Duration = Duration::from_secs(15);
+ ///
+ /// The estimate is built to err high (see
+ /// `peer_connection::inbound_concurrency`), so it can justify lowering
+-/// this value, never raising it. QUIC shadow-mode data (e5a, #5940) on
+-/// real QUIC connections may justify raising it.
++/// this value, never raising it. Shadow mode carries no data, so it cannot
++/// confirm or justify the value either. Rollout stage 3 (#5940: data on
++/// QUIC, opt-in) is the first measurement on real QUIC that can.
+ pub(crate) const MAX_UNI_STREAMS: u32 = 64;
+ 
+-/// Concurrent bidirectional streams a peer may open: one, kept for a control
+-/// stream; messages use unidirectional streams.
+-pub(crate) const MAX_BIDI_STREAMS: u32 = 1;
++/// Uni stream slots left for short messages and control frames when every
++/// streamed-message permit is held and the unannounced credit is at
++/// [`UNANNOUNCED_CREDIT_SLACK`]. What that holds under is on
++/// [`STREAMED_SEND_LIMIT`].
++pub(crate) const RESERVED_UNI_STREAMS: u32 = 8;
++
++/// Slots the receiver has freed but has not yet written a MAX_STREAMS frame
++/// for: quinn writes one only once more than `MAX_UNI_STREAMS / 8` streams
++/// have been freed since the last (quinn-proto 0.11.19 `queue_max_stream_id`),
++/// and the sender cannot use a slot until the frame reaches it.
++pub(crate) const UNANNOUNCED_CREDIT_SLACK: u32 = MAX_UNI_STREAMS / 8;
++
++/// Streamed messages (`QuicPath::send_stream_bounded`,
++/// `send_stream_chunks_bounded`) a path sends at once. The limit is divided as
++/// `STREAMED_SEND_LIMIT + UNANNOUNCED_CREDIT_SLACK + RESERVED_UNI_STREAMS =
++/// MAX_UNI_STREAMS` (48 + 8 + 8 = 64). A streamed send past it waits for one
++/// of the path's permits before it opens its stream. Short messages and
++/// control frames take no permit.
++///
++/// The reserve holds on a steady path: every streamed send still holds its
++/// permit or its stream has been freed at the receiver, no MAX_STREAMS frame
++/// is lost, queued or in flight, and short messages and control frames hold
++/// no more than the reserve. A short message or control frame then finds a stream slot
++/// whatever the streamed messages are doing (pinned by
++/// `a_short_still_sends_while_streamed_messages_are_blocked`).
++///
++/// Constraints for carrying data on a path, none of which arises on a shadow
++/// path because it sends only control frames:
++/// - A permit returns before the slot does. A send that times out after
++///   its stream's end was sent is not reset, so its stream holds its slot
++///   until the backlog drains, the worst case. A reset or a stop from the
++///   peer returns the permit before the receiver has freed the stream, and
++///   so does an acknowledgement, which can come before the receiver has
++///   read the stream to its end. Decide there whether to hold the permit
++///   until the stream is acknowledged.
++/// - Credit the sender does not know about can exceed
++///   [`UNANNOUNCED_CREDIT_SLACK`] while a MAX_STREAMS frame is lost, queued
++///   or in flight. quinn counts credit as announced when it writes the frame
++///   (`sent_max_remote`), so 9 freed slots on their way plus 8 freed since
++///   are 17 the sender
+```
+
+**File**: `crates/core/src/transport/quic/control.rs` (added, +248/-0)
+```diff
+@@ -0,0 +1,248 @@
++//! The payload of a QUIC path control frame (#5940).
++//!
++//! `Ready` and `ReadyAck` finish an upgrade on a new QUIC connection, each as
++//! a `Control` frame ([`super::framing`]) on its own uni stream. Control
++//! frames take no streamed-message permit, so on a steady path
++//! (`config::STREAMED_SEND_LIMIT`) streamed messages do not keep them waiting
++//! for a stream slot.
++//!
++//! ```text
++//! offset  size  field
++//! 0       1     version   CONTROL_VERSION (1)
++//! 1       1     type      0 Ready, 1 ReadyAck
++//! 2       4     attempt   big-endian u32, the upgrade attempt
++//! 6       4     caps      big-endian u32, capability bits
++//! ```
++//!
++//! [`CONTROL_LEN`] (10) bytes, exactly. `attempt` is the `attempt` of the
++//! `UpgradeControl` Offer this connection was made for, so a frame from an
++//! earlier attempt can be told apart. `caps` carries what the sender
++//! supports on this path, for negotiating data; no bit is defined yet
++//! ([`caps::KNOWN`] is 0).
++//!
++//! Compatibility rules:
++//! - Unknown caps bits are ignored: [`QuicControl::decode`] clears every bit
++//!   not in [`caps::KNOWN`], so nothing on this node can act on a bit it
++//!   does not know. A new bit is how a newer node says it supports more.
++//! - An unknown version, an unknown type, or a length other than
++//!   [`CONTROL_LEN`] is refused ([`ControlError`]), never a panic. The
++//!   receiving path counts each, only through `QuicPath::decode_control`
++//!   ([`QuicControl::decode`] counts nothing). The sender
++//!   learns nothing: its send reports `Sent`.
++//! - A new type or field needs a new version. Bytes past the end are refused,
++//!   so a field cannot be appended silently. `UpgradeControl` is different:
++//!   bincode tolerates trailing bytes there, so a field appended to it would
++//!   be ignored and it grows by caps-gated variants instead.
++//! - A sender cannot learn from these frames that the peer reads a new
++//!   version, because `caps` travels in `Ready` and `ReadyAck` themselves.
++//!   `Ready` stays at version 1 until the sender knows by another route: the
++//!   caps of the `UpgradeControl::Offer` it received (the client side only),
++//!   or a release floor on the peer's version, as `may_send_upgrade` is.
++
++/// The control payload version this node writes and the only one it reads.
++pub(crate) const CONTROL_VERSION: u8 = 1;
++
++/// Length of a version 1 control payload in bytes.
++pub(crate) const CONTROL_LEN: usize = 10;
++
++/// Capability bits carried in [`QuicControl`].
++pub(crate) mod caps {
++    /// Every bit this node knows. None is defined yet.
++    pub(crate) const KNOWN: u32 = 0;
++}
++
++/// A control message on a QUIC path.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++#[cfg_attr(not(test), allow(dead_code))]
++pub(crate) enum QuicControl {
++    /// The sender's path is up and reads control frames.
++    Ready { attempt: u32, caps: u32 },
++    /// The reply to `Ready`.
++    ReadyAck { attempt: u32, caps: u32 },
++}
++
++/// Why a control payload was refused. Each has its own counter on the
++/// receiving path (`QuicInboundOutcome`).
++#[derive(Debug, Clone, Copy, PartialEq, Eq, thiserror::Error)]
++pub(crate) enum ControlError {
++    /// No bytes at all. Not reachable from a real stream: the frame header
++    /// refuses a control length of 0.
++    #[error("empty control payload")]
++    Empty,
++    /// A version this node does not read.
++    #[error("unknown control version {0}")]
++    UnknownVersion(u8),
++    /// A type byte this node does not know.
++    #[error("unknown control type {0}")]
++    UnknownType(u8),
++    /// A version 1 payload that is not [`CONTROL_LEN`] bytes long.
++    #[error("control payload of {0} bytes, expected {CONTROL_LEN}")]
++    WrongLength(usize),
++}
++
++const TYPE_READY: u8 = 0;
++const TYPE_READY_ACK: u8 = 1;
++
++#[cfg_attr(not(test), allow(dead_code))]
++impl QuicControl {
++    /// The attempt the frame belongs to.
++    pub(crate) fn attempt(&self) -> u32 {
++        match *self {
++            Self::Ready { attempt, .. } | Self::ReadyAck { attempt, .. } => attempt,
++        }
++    }
++
++    /// The capability bits, only those in [`caps::KNOWN`] once decoded.
++    pub(crate) fn caps(&self) -> u32 {
++        match *self {
++            Self::Ready { caps, .. } | Self::ReadyAck { caps, .. } => caps,
++        }
++    }
++
++    /// The payload's bytes.
++    pub(crate) fn encode(&self) -> [u8; CONTROL_LEN] {
++        let (kind, attempt, caps) = match *self {
++            Self::Ready { attempt, caps } => (TYPE_READY, attempt, caps),
++            Self::ReadyAck { attempt, caps } => (TYPE_READY_ACK, attempt, caps),
++        };
++        let mut out = [0u8; CONTROL_LEN];
++        out[0] = CONTROL_VERSION;
++        out[1] = kind;
++        out[2..6].copy_from_slice(&attempt.to_be_bytes());
++        out[6..10].copy_from_slice(&caps.to_be_bytes());
++        out
++    }
++
++    /// Parse a payload. The version is checked first, so a payload of a
++    /// later version is `Unk
+```
+
+**File**: `crates/core/src/transport/quic/error.rs` (modified, +5/-3)
+```diff
+@@ -76,7 +76,7 @@ const _: () = {
+     let reset = reset_code::ALL;
+     // No code is used twice, within or across the namespaces.
+     let all_len = close.len() + stop.len() + reset.len();
+-    let mut all = [0u32; 5 + 8 + 2];
++    let mut all = [0u32; 5 + 9 + 2];
+     assert!(all.len() == all_len, "update the combined length");
+     let mut n = 0;
+     let mut i = 0;
+@@ -247,15 +247,17 @@ pub(in crate::transport) fn attribute(
+ /// Whether a stream the peer STOPPED with `code` may succeed on a retry
+ /// (a new stream), like the UDP transport's `OutboundStreamFailed`. Not
+ /// retryable, because the same message fails the same way every time:
+-/// `HEADER_REFUSED`, `OVERLONG` and `FRAGMENT_REFUSED` (the receiver's
+-/// buffer refused a fragment of this shape). Every other stop code is
++/// `HEADER_REFUSED`, `OVERLONG`, `FRAGMENT_REFUSED` (the receiver's buffer
++/// refused a fragment of this shape) and `NOT_ACCEPTING_DATA` (the path
++/// accepts no data for as long as it lives). Every other stop code is
+ /// retryable: budget, channel-full, eviction, id-in-use, cancellation by
+ /// the consumer, and stop codes this node does not know.
+ pub(in crate::transport) fn stop_is_retryable(code: u64) -> bool {
+     ![
+         stop_code::HEADER_REFUSED,
+         stop_code::OVERLONG,
+         stop_code::FRAGMENT_REFUSED,
++        stop_code::NOT_ACCEPTING_DATA,
+     ]
+     .into_iter()
+     .any(|deterministic| u64::from(deterministic) == code)
+```
+
+**File**: `crates/core/src/transport/quic/error/tests.rs` (modified, +3/-1)
+```diff
+@@ -424,6 +424,7 @@ fn stream_kinds_keep_the_connection_and_the_rest_end_it() {
+         (stop_code::EVICTED, true),
+         (stop_code::CANCELLED, true),
+         (stop_code::FRAGMENT_REFUSED, false),
++        (stop_code::NOT_ACCEPTING_DATA, false),
+         (reset_code::LENGTH_MISMATCH, true),
+         (0x1f, true),
+         (9, true),
+@@ -436,6 +437,7 @@ fn stream_kinds_keep_the_connection_and_the_rest_end_it() {
+         (stop_code::HEADER_REFUSED, true),
+         (stop_code::OVERLONG, true),
+         (stop_code::FRAGMENT_REFUSED, true),
++        (stop_code::NOT_ACCEPTING_DATA, true),
+         (0x2f, true),
+         (9, true),
+     ];
+@@ -446,7 +448,7 @@ fn stream_kinds_keep_the_connection_and_the_rest_end_it() {
+     );
+     assert_eq!(
+         resets.len(),
+-        reset_code::ALL.len() + 5,
++        reset_code::ALL.len() + 6,
+         "every reset code has a row"
+     );
+     let scope = |retryable: bool| {
+```
+
+**File**: `crates/core/src/transport/quic/path.rs` (modified, +250/-29)
+```diff
+@@ -10,11 +10,13 @@
+ //! the receiver has read one to its end: that limit is the path's
+ //! back-pressure.
+ //!
+-//! Sending: [`QuicPath::send_short`], [`QuicPath::send_stream`] (from bytes),
+-//! [`QuicPath::send_stream_chunks`] (from a stream of chunks, such as an
+-//! inbound stream being piped onward) and [`QuicPath::send_control`]. Each
+-//! returns once the peer's QUIC stack has acknowledged every byte, or with
+-//! the code the peer stopped the stream with ([`QuicSendError::Stopped`]).
++//! Sending: [`QuicPath::send_short_bounded`],
++//! [`QuicPath::send_stream_bounded`] (from bytes),
++//! [`QuicPath::send_stream_chunks_bounded`] (from a stream of chunks, such as
++//! an inbound stream being piped onward) and
++//! [`QuicPath::send_control_bounded`]. Each returns once the peer's QUIC stack
++//! has acknowledged every byte, with the code the peer stopped the stream with
++//! ([`QuicSendError::Stopped`]), or at its deadline ([`bounded`]).
+ //! A stop is seen only if it arrives before every byte is acknowledged: a
+ //! message that fits in the flow-control window can be acknowledged before
+ //! the receiver reads its header, and its refusal then reads as success at
+@@ -29,17 +31,27 @@
+ //! `open_uni` waits for a stream credit, a write waits for flow-control
+ //! credit, and the final wait for acknowledgement has no deadline of its
+ //! own (only quinn's connection idle timeout ends it, and keepalives keep a
+-//! connection alive). e5 callers MUST bound every send with a timeout.
++//! connection alive). Every send the node makes goes through a
++//! `send_*_bounded` method ([`bounded`]), which also says whether a timed-out
++//! message may have been delivered; the forms without a deadline exist only
++//! in tests.
+ //!
+ //! Cancel safety: dropping a send future before it returns resets the
+ //! stream ([`reset_code::SENDER_ABORTED`]), so the receiver sees
+ //! `ResetByPeer` and cancels its handle; it never sees a stream that ends
+ //! early as if it were complete or truncated. A dropped short message or
+ //! control frame is lost. A send future dropped while it waits for
+ //! acknowledgement (after `finish` was issued) is NOT reset: every byte
+-//! was already written, so the message may still be delivered. For e5, a
+-//! timeout that fires during that wait means "maybe delivered", not
+-//! "failed".
++//! was already written, so the message may still be delivered:
++//! [`bounded_send`] reports a timeout there as `MaybeDelivered`, not
++//! `Failed`.
++//!
++//! Streamed messages take one permit each, at most
++//! `config::STREAMED_SEND_LIMIT` at once, which keeps uni stream slots for
++//! short messages and control frames on a steady path (see that constant for
++//! what steady means and where a slot can be missing). A path in shadow mode
++//! ([`QuicPathLimits::SHADOW`]) refuses inbound data with
++//! [`stop_code::NOT_ACCEPTING_DATA`] before charging anything.
+ //!
+ //! Known quinn cost (quinn 0.11.12): `SendStream::stopped()` registers an
+ //! `Arc<Notify>` in the connection's `stopped` map, removed only when quinn
+@@ -93,6 +105,7 @@
+ //! [`MAX_UNI_STREAMS`]: super::config::MAX_UNI_STREAMS
+ //! [`StreamHandle`]: crate::transport::peer_connection::streaming::StreamHandle
+ 
++pub(crate) mod bounded;
+ pub(crate) mod inbound;
+ 
+ #[cfg(test)]
+@@ -102,12 +115,15 @@ use std::future::Future;
+ use std::pin::Pin;
+ use std::sync::Arc;
+ use std::sync::atomic::{AtomicU64, Ordering};
++use std::time::Duration;
+ 
+ use bytes::Bytes;
+ use futures::{Stream, StreamExt};
+ use tokio::sync::mpsc;
+ 
+ use super::QuicConnection;
++use super::config::STREAMED_SEND_LIMIT;
++use super::control::{ControlError, QuicControl};
+ use super::framing::{FrameHeader, HeaderError};
+ use super::identity::PeerKey;
+ use super::recycle::{self, SendAborts};
+@@ -123,6 +139,9 @@ use crate::transport::peer_connection::streaming::{
+     MAX_INBOUND_STREAM_BYTES_PER_CONNECTION, MAX_INBOUND_STREAMS_PER_CONNECTION,
+ };
+ 
++#[cfg_attr(not(test), allow(unused_imports))]
++pub(crate) use bounded::{BoundedSend, MaybeDelivered, SendFailure};
++use bounded::{SendProgress, bounded_send};
+ pub(crate) use inbound::{InboundShort, InboundStreamArrival};
+ 
+ /// Application error codes a receiver stops a stream with (STOP_SENDING),
+@@ -147,10 +166,20 @@ pub(crate) mod stop_code {
+     /// The receiver's stream buffer refused a fragment (a shape it cannot
+     /// hold; not expected). The same message fails the same way again.
+     pub(crate) const FRAGMENT_REFUSED: u32 = 0x18;
++    /// The path carries control frames only (shadow mode): a Short or
++    /// Stream frame is refused before anything is charged. Data may be sent
++    /// on a path only after caps negotiation said the peer accepts it, so
++    /// this is a counter of a sender that did not, and not a fallback signal
++    /// a sender can rely on: a small message can be fully acknowledged before
++    /// the stop arrives, and the sender then sees `Sent` for what was
++    /// discarded. A sender that does see the stop
+```
+
+---
+
+### Incident Patch 2: `ecbe941e` (2026-10-30)
+**Commit Message**: fix(conformance): queue verify-merge cases newest first and build them lazily (#6055)
+
+**File**: `crates/core/src/conformance/generator.rs` (modified, +358/-155)
+```diff
+@@ -4,6 +4,7 @@
+ //! counterexample proves a defect. So the generator's job is coverage of *kinds* of
+ //! failure, not exhaustiveness.
+ 
++use std::rc::Rc;
+ use std::sync::Arc;
+ 
+ use freenet_stdlib::prelude::RelatedContracts;
+@@ -176,8 +177,13 @@ pub struct GeneratorConfig {
+     /// that would break it were the ones skipped. A contract that is wrong only near
+     /// its size cap is exactly that shape (#5705). [`generate_cases_counted`]
+     /// counts the cases skipped for size and for the case budget per property, and
+-    /// `fdev verify-merge` reports them. Cases left out by state sampling are not
+-    /// counted; only the number of states sampled is. The shadow prober still uses the uncounted [`generate_cases`]; see #6044.
++    /// `fdev verify-merge` reports them, along with the cases sampling left out
++    /// ([`GeneratedCases::not_sampled`]). The shadow prober still uses the uncounted
++    /// [`generate_cases`]; see #6044.
++    ///
++    /// Raising this is not purely additive for associativity: its cap then fills
++    /// with triples containing the big states, which are queued first, so triples of
++    /// small states that ran before may no longer run.
+     pub max_case_bytes: usize,
+     /// Cap on states the state-based laws use, since pairs grow quadratically.
+     pub max_states_paired: usize,
+@@ -206,24 +212,41 @@ impl Default for GeneratorConfig {
+     }
+ }
+ 
++#[cfg(test)]
++thread_local! {
++    /// Cases the generator has constructed on this thread, so a test can check that
++    /// the work done tracks the case budget rather than the size of the queue.
++    pub(super) static CASES_BUILT: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
++}
++
+ /// What [`generate_cases_counted`] built, and what it refused to build.
+ #[derive(Debug, Default, Clone)]
+ pub struct GeneratedCases {
+     pub cases: Vec<ConformanceCase>,
+     /// One entry per entry of [`GeneratorConfig::properties`], in that order: how
+-    /// many cases were built for the property and then dropped because their inputs
++    /// many of the cases offered to the property were dropped because their inputs
+     /// exceeded [`GeneratorConfig::max_case_bytes`].
+     ///
++    /// For associativity this counts the triples over the limit among those walked.
++    /// The walk goes on past them until its cap of `2n` can run, so at most `2n` of
++    /// them could run with a higher limit.
++    ///
+     /// Zero entries are kept, so a consumer can tell "nothing was skipped" from
+     /// "this property was not counted".
+     pub oversized: Vec<(ConformanceProperty, usize)>,
+     /// Parallel to `oversized`: cases that passed the size limit and were then left
+     /// out because the [`GeneratorConfig::max_cases`] budget ran out first.
+     ///
+-    /// Disjoint from `oversized`, so the two add up to every built case that did not
+-    /// run. Raising the size limit can move cases from `oversized` to here, which is
++    /// Disjoint from `oversized`, so the two add up to every offered case that did
++    /// not run. Raising the size limit can move cases from `oversized` to here, which is
+     /// why the budget needs its own count.
+     pub budget_cut: Vec<(ConformanceProperty, usize)>,
++    /// Parallel to `oversized`: cases never offered at all, because the state or
++    /// transition sample left their inputs out, or because the associativity walk
++    /// stopped at its cap. What the property would have had with every state and
++    /// transition in the corpus, minus what it was offered. Disjoint from the size
++    /// and budget counts, which are taken over the cases that were offered.
++    pub not_sampled: Vec<(ConformanceProperty, usize)>,
+     /// How many states the state-based laws used, out of `corpus.states.len()`.
+     /// Below the total when the corpus exceeds [`GeneratorConfig::max_states_paired`].
+     pub states_paired: usize,
+@@ -238,6 +261,13 @@ impl GeneratedCases {
+         self.oversized.iter().map(|(_, n)| n).sum()
+     }
+ 
++    /// Unsampled cases across every property.
++    pub fn not_sampled_total(&self) -> usize {
++        self.not_sampled
++            .iter()
++            .fold(0usize, |total, (_, n)| total.saturating_add(*n))
++    }
++
+     /// Budget-cut cases across every property.
+     pub fn budget_cut_total(&self) -> usize {
+         self.budget_cut.iter().map(|(_, n)| n).sum()
+@@ -259,91 +289,249 @@ pub fn generate_cases(corpus: &Corpus, config: &GeneratorConfig) -> Vec<Conforma
  /// Deterministic given `(corpus, config)`: the same inputs produce the same cases in
  /// the same order, so a run that finds something can be re-run and a run that finds
  /// nothing can be compared against a later one.
--pub fn generate_cases(corpus: &Corpus, config: &GeneratorConfig) -> Vec<ConformanceCase> {
-+pub fn generate_cases_counted(corpus: &Corpus, config: &GeneratorConfig) -> GeneratedCases {
-+    let zeros = || config.properties.iter().map(|p| (*p, 0)).collect();
-     if corpus.is_empty() {
--        return Vec::new();
-+        return GeneratedCases {
-+            cases: Vec::new(),
-+            oversized: zeros(),
-+            budget_cut: zeros(),
-+            states_paired: 0,
-+            transitions_sampled: 0,
-+        };
-     }
- 
-     // Per-property queues, filled independently and then interleaved. The
-     // interleave is the point: a corpus big enough to blow the case budget on
-     // commutativity alone would otherwise never reach associativity, and the
-     // budget would silently decide which laws get checked.
-     let mut queues: Vec<Vec<ConformanceCase>> = Vec::new();
-+    let mut oversized = Vec::with_capacity(config.properties.len());
-     for property in &config.properties {
--        queues.push(cases_for(*property, corpus, config));
-+        let (queue, skipped) = cases_for(*property, corpus, config);
-+        queues.push(queue);
-+       
++///
++/// Each property's cases are described as [`Spec`]s first and built only when the
++/// budget takes them, so the work done tracks [`GeneratorConfig::max_cases`] rather
++/// than the size of the queue. The specs past the budget are still walked, cheaply,
++/// so the size and budget counts st
 ```
 
-**File**: `crates/core/src/conformance/tests.rs` (modified, +318/-7)
+**File**: `crates/core/src/conformance/tests.rs` (modified, +448/-5)
 ```diff
-@@ -22,7 +22,9 @@ use super::evidence::{
-     ConformanceEvidence, EvidenceError, EvidenceRejected, MAX_EVIDENCE_ENCODED_BYTES,
-     MAX_EVIDENCE_INPUT_BYTES, MAX_EVIDENCE_RELATED, MAX_EVIDENCE_TEXT_BYTES,
- };
--use super::generator::{Corpus, GeneratorConfig, generate_cases};
-+use super::generator::{
-+    Corpus, GeneratedCases, GeneratorConfig, generate_cases, generate_cases_counted,
-+};
- use super::oracle::{ConformanceOracle, OracleError};
- use super::property::{
-     ConformanceProperty, IdempotenceSettling, Inconclusive, OutputDigest, PremiseSource,
-@@ -2751,13 +2753,12 @@ fn the_transition_branch_is_bounded_and_strided() {
-     assert_eq!(cases.len(), 4, "the cap must bind");
+@@ -2735,7 +2735,7 @@ fn a_corpus_of_steps_alone_is_not_empty() {
+ /// one contract's step history crowd the interleave and decide which laws the case
+ /// budget reaches — the thing the interleave exists to prevent.
+ ///
+-/// Strided, not truncated, for the same reason `paired_states` strides: steps arrive
++/// Strided, not truncated, for the same reason the state sample strides: steps arrive
+ /// in time order, so the first N are all from the same few minutes.
+ #[test]
+ fn the_transition_branch_is_bounded_and_strided() {
+@@ -2754,11 +2754,11 @@ fn the_transition_branch_is_bounded_and_strided() {
      // Strided over the whole history rather than the first four.
      //
--    // Say what this actually pins: the four selected steps are spread across the
--    // range, not the first four. Index 39 is NOT selected — a stride of 10 from 0
--    // reaches 30 — so this is not a claim that the newest step is reachable. What it
--    // rules out is truncation, under which the bases would be `[0, 1, 2, 3]` and a
--    // contract would only ever be checked against its own oldest few minutes.
-+    // The four selected steps are spread across the range, not the first four, and
-+    // the last is the newest step (39), not the stride's 30 (#5705). Truncation
-+    // would give `[0, 1, 2, 3]` and check a contract only against its own oldest few
-+    // minutes.
+     // The four selected steps are spread across the range, not the first four, and
+-    // the last is the newest step (39), not the stride's 30 (#5705). Truncation
+-    // would give `[0, 1, 2, 3]` and check a contract only against its own oldest few
+-    // minutes.
++    // include the newest step (39), not the stride's 30 (#5705). They are queued
++    // newest first (#6053). Truncation would give `[0, 1, 2, 3]` and check a
++    // contract only against its own oldest few minutes.
      let bases: Vec<u8> = cases.iter().map(|c| c.states[0][0]).collect();
--    assert_eq!(bases, vec![0, 10, 20, 30]);
-+    assert_eq!(bases, vec![0, 10, 20, 39]);
+-    assert_eq!(bases, vec![0, 10, 20, 39]);
++    assert_eq!(bases, vec![39, 20, 10, 0]);
      assert_ne!(
          bases,
          vec![0, 1, 2, 3],
-@@ -4108,6 +4109,316 @@ fn a_tight_case_budget_still_covers_every_law() {
-     );
+@@ -4394,6 +4394,449 @@ fn a_size_tie_keeps_the_later_largest_state() {
+     assert!(!picked.contains(&Bytes::from(states[9].clone())));
  }
  
-+/// Regression (#5705): a case over `max_case_bytes` was dropped without a count.
-+///
-+/// The report counted only the cases that ran, so a property whose breaking cases
-+/// were all too large read as held. The count must come from the filter itself and
-+/// must equal exactly what the filter dropped: raising the limit must turn every
-+/// counted case into a generated one, and no more.
++/// The budget cuts older cases first (#6053): every property queues the cases
++/// of the last-supplied and the largest state ahead of the rest, so a budget
++/// smaller than the queue still runs them. Orientation is unchanged: every pair is
++/// still `(earlier, later)`.
 +#[test]
-+fn oversized_cases_are_counted_per_property_not_dropped_silently() {
-+    // Three small states and one large one. Commutativity pairs all four: six pairs,
-+    // three of which include the large state.
-+    let corpus = Corpus::from_states(vec![vec![1, 1], vec![2, 2], vec![3, 3], vec![9; 64]]);
-+    let limited = GeneratorConfig {
-+        properties: vec![
-+            ConformanceProperty::StateCommutativity,
-+            ConformanceProperty::StateIdempotence,
-+        ],
-+        max_case_bytes: 16,
++fn a_tight_budget_runs_the_newest_and_largest_pairs_first() {
++    let mut states: Vec<Vec<u8>> = (0..10u8).map(|i| vec![i]).collect();
++    states[3] = vec![3; 8];
++    let index = |s: &Bytes| {
++        states
++            .iter()
++            .position(|x| x.as_slice() == s.as_ref())
++            .unwrap()
++    };
++    let config = GeneratorConfig {
++        properties: vec![ConformanceProperty::StateCommutativity],
++        // The newest state's 9 pairs plus the largest state's other 8, out of 45.
++        max_cases: 17,
 +        ..Default::default()
 +    };
-+    let generated = generate_cases_counted(&corpus, &limited);
-+    assert_eq!(
-+        generated.oversized,
-+        vec![
-+            (ConformanceProperty::StateCommutativity, 3),
-+            (ConformanceProperty::StateIdempotence, 1),
-+        ],
-+        "every case dropped for size must be counted against its property"
-+    );
-+    assert_eq!(generated.oversized_total(), 4);
-+    assert_eq!(generated.cases.len(), 3 + 3);
-+
-+    let unlimited = GeneratorConfig {
-+        max_case_bytes: usize::MAX,
-+        ..limited.clone()
++    let generated = generate_cases_counted(&Corpus::from_states(states.clone()), &config);
++    assert_eq!(generated.budget_cut_total(), 45 - 17);
++    let with = |i: usize| {
++        generated
++            .cases
++            .iter()
++            .filter(|c| c.states.iter().any(|s| index(s) == i))
++            .count()
 +    };
-+    let all = generate_cases_counted(&corpus, &unlimited);
-+    assert_eq!(all.oversized_total(), 0);
-+    assert_eq!(
-+        all.cases.len(),
-+        generated.cases.len() + generated.oversized_total(),
-+        "the count must be exactly the cases the size limit removed"
-+    );
-+
-+    // A property every one of whose cases is too large produces no case at all, and
-+    // the count is the only thing that says why.
-+    let huge = Corpus::from_states(vec![vec![7; 64], vec![8; 64]]);
-+    let none = generate_cases_counted(&huge, &limited);
-+    assert!(none.cases.is_empty());
-+    assert_eq!(
-+        none.oversized,
-+        vec![
-+            (ConformanceProperty::StateCommutativity, 1),
-+            (ConformanceProperty::StateIdempotence, 2),
-+        ]
-+    );
-+    // The uncounted wrapper still returns the same cases.
-+    assert_eq!(
-+        generate_cases(&corpus, &limited).len(),
-+        generated.cases.len()
-+    );
++    assert_eq!(with(9), 9, "every pair with the newest state must run");
++    assert_eq!(with(3), 9, "every pair with the largest state must run");
++    for c in &generated.cases {
++        assert!(
++            index(&c.states[0]) < index(&c.states[1]),
++            "pairs must stay (earlier, later)"
++        );
++    }
 +}
 +
-+/// Every property's size count is exactly what the size limit removed.
-+///
-+/// One corpus that feeds every generator branch (pairs, triples, deltas with a shared
-+/// base, summaries, a recorded transition), run over every property. Raising the size
-+/// limit must turn each property's counted cases into generated ones and no more, so
-+/// a branch that dropped a case without counting it fails here.
++/// The last-supplied transition is queued first.
 +#[test]
-+fn every_property_counts_exactly_the_cases_the_size_limit_removed() {
-+    let big = vec![9u8; 64];
-+    let base = bytes(&[1, 1]);
++fn a_tight_budget_runs_the_last_transition_first() {
 +    let corpus = Corpus {
-+        deltas: vec![bytes(&[5]), bytes(&[6]), bytes(&big)],
-+        delta_bases: vec![Some(base.clone()), Some(base.clone()), Some(base)],
-+        summaries: vec![bytes(&[7]), bytes(&big)],
-+        transiti
++        transitions: (0..5u8).map(|i| (bytes(&[i]), bytes(&[i, 1]))).collect(),
++        ..Corpus::from_states(vec![vec![1]])
++    };
++    let config = GeneratorConfig {
++        properties: vec![ConformanceProperty::TransitionPathAgreement],
++        max_cases: 1,
++        ..Default::default()
++    };
++    let cases = generate_cases_counted(&corpus, &config).cases;
++    assert_eq!(cases.len(), 1);
++    assert_eq!(cases[0].states[0], bytes(&[4]));
++}
++
++/// Delta laws queue the newest state first and, for it, the newest delta first.
++#[test]
++fn a_tight_budget_runs_the_newest_state_and_delta_first() {
++    let corpus = Corpus {
++        deltas: vec![bytes(&[50]), bytes(&[51]), bytes(&[52])],
++        ..Corpus::from_states(vec![vec![1], vec![2], vec![3]])
++    };
++    let config = GeneratorConfig {
++        properties: vec![ConformanceProperty::DeltaIdempotence],
++        max_cases: 1,
++        ..Default::default()
++    };
++    let cases = generate_cases_counted(&corpus, &config).cases;
++    assert_eq!(cases.len(), 1);
++    assert_eq!(cases[0].states, vec![bytes(&[3])]);
++    assert_eq!(cases[0].deltas, vec![bytes(&[52])]);
++}
++
++/// Associativity queues triples containing the newest state first; element order
++/// within a triple follows the existing `(i, j, (i + j + 1 + seed) % n)` rule, under
++/// which the newest state can only be the third element.
++#[test]
++fn a_tight_budget_runs_triples_with_the_newest_state_first() {
++    let states: Vec<Vec<u8>> = (0..10u8).map(|i| vec![i]).collect();
++    let config = GeneratorConfig {
++        properties: vec![ConformanceProperty::StateAssociativity],
++        max_cases: 3,
++        ..Default::default()
++    };
++    let cases = generate_cases_counted(&Corpus::from_states(states), &config).cases;
++    assert_eq!(cases.len(), 3);
++    
 ```
 
-**File**: `crates/fdev/src/conformance.rs` (modified, +1074/-68)
+**File**: `crates/fdev/src/conformance.rs` (modified, +193/-14)
 ```diff
-@@ -32,10 +32,10 @@ use freenet::conformance::generator::Corpus;
- use freenet::conformance::host_clock;
- use freenet::conformance::verifier::Bytes;
- use freenet::conformance::{
--    ConformanceCase, ConformanceEvidence, ConformanceProperty, EvidenceRejected, GeneratorConfig,
--    IdempotenceSettling, Inconclusive, MinimizeConfig, OracleBuildError, PropertyOutcome,
--    RemovalTier, ReplayBundle, RuntimeOracle, Severity, Transition, generate_cases,
--    minimize_toward, removal_tier, verify_case,
-+    ConformanceCase, ConformanceEvidence, ConformanceProperty, EvidenceRejected, GeneratedCases,
-+    GeneratorConfig, IdempotenceSettling, Inconclusive, MinimizeConfig, OracleBuildError,
-+    PropertyOutcome, RemovalTier, ReplayBundle, RuntimeOracle, Severity, Transition,
-+    generate_cases_counted, minimize_toward, removal_tier, verify_case,
- };
- use freenet_stdlib::prelude::{CodeHash, ContractCode, ContractInstanceId, State, UpdateData};
- use serde::Serialize;
-@@ -49,6 +49,9 @@ use serde::Serialize;
- /// (`Severity::Violation`) does, including a break of a law the network only
- /// reports and never acts on (`freenet::conformance::policy::removal_tier`): an
- /// author should hear about every broken law, whatever the network does about it.
-+/// Cases skipped for size or for the case budget do not change the exit code while
-+/// any case runs; the report counts them per property. A run where every case was
-+/// skipped checked nothing and exits non-zero.
- #[derive(clap::Parser, Clone)]
- pub struct ConformanceConfig {
-     /// Path to the compiled contract WASM. Required unless `--bundle` supplies
-@@ -115,6 +118,21 @@ pub struct ConformanceConfig {
+@@ -124,15 +124,29 @@ pub struct ConformanceConfig {
+     ///
+     /// Skipped cases never run, so a property can hold on the cases that ran
+     /// while the cases that would break it were skipped. The report counts the
+-    /// cases skipped for size and for the case budget per property; cases left
+-    /// out by state sampling are reported only as states sampled of total.
++    /// cases skipped for size and for the case budget per property, and the
++    /// cases sampling never built.
+     /// Skipped cases do not change the exit code, unless every case was skipped,
+     /// which exits non-zero. Raise this to check a contract at its size ceiling:
+     /// a merge that is wrong only for a full-size state is invisible below it.
+-    /// Has no effect with `--evidence`, which re-checks one shipped case.
++    /// Raising it is not purely additive for `state_associativity`: its cap then
++    /// fills with triples containing the big states, so triples of small states that
++    /// ran before may no longer run. Has no effect with `--evidence`, which
++    /// re-checks one shipped case.
      #[arg(long)]
-     pub(crate) max_cases: Option<usize>,
+     pub(crate) max_case_bytes: Option<usize>,
  
-+    /// Skip any generated case whose inputs (states, deltas and summary) total
-+    /// more than this many bytes. Defaults to the generator's own default
-+    /// (currently 4 MiB).
++    /// How many states the state-based laws sample from a larger corpus, from 3
++    /// to 1000. Defaults to the generator's own default. The last-supplied and the
++    /// largest state are always sampled.
 +    ///
-+    /// Skipped cases never run, so a property can hold on the cases that ran
-+    /// while the cases that would break it were skipped. The report counts the
-+    /// cases skipped for size and for the case budget per property; cases left
-+    /// out by state sampling are reported only as states sampled of total.
-+    /// Skipped cases do not change the exit code, unless every case was skipped,
-+    /// which exits non-zero. Raise this to check a contract at its size ceiling:
-+    /// a merge that is wrong only for a full-size state is invisible below it.
-+    /// Has no effect with `--evidence`, which re-checks one shipped case.
-+    #[arg(long)]
-+    pub(crate) max_case_bytes: Option<usize>,
++    /// Only the cases that run are built, but every pair of the sample is still
++    /// walked to keep the skip counts exact, so generation time is quadratic in
++    /// this value, and linear in the number of delta pairs. More pairs also compete
++    /// for the same `--max-cases` budget.
++    #[arg(long, value_parser = parse_max_states_paired)]
++    pub(crate) max_states_paired: Option<usize>,
 +
      /// Restrict which laws to check, by name (e.g. `state_commutativity`).
      /// Repeat for multiple. Defaults to every property.
      #[arg(long = "property")]
-@@ -186,31 +204,19 @@ pub async fn conformance(config: ConformanceConfig) -> anyhow::Result<()> {
-         anyhow::bail!("no states to check: the corpus is empty");
+@@ -323,6 +337,9 @@ fn generator_config(
+     if let Some(max_case_bytes) = config.max_case_bytes {
+         generator_config.max_case_bytes = max_case_bytes;
      }
- 
--    let mut generator_config = GeneratorConfig::default();
--    if let Some(max_cases) = config.max_cases {
--        generator_config.max_cases = max_cases;
--    }
--    if !properties.is_empty() {
--        generator_config.properties = properties;
--    }
--
--    let cases = generate_cases(&corpus, &generator_config);
-+    let generator_config = generator_config(&config, properties);
-+    let generated = generate_cases_counted(&corpus, &generator_config);
-     // A run that checked nothing must not report success. Restricting to a property
-     // whose inputs the corpus cannot supply (commutativity with one state, delta
-     // idempotence with no captured deltas) otherwise prints "0 cases run" and exits
-     // 0, which any automation reads as "this contract passed".
--    if cases.is_empty() {
-+    if generated.cases.is_empty() {
-         report_code_diagnostics_standalone(&code_diagnostics);
--        anyhow::bail!(
--            "no cases could be generated from this corpus: {} state(s), {} delta(s), \
--             {} summary/summaries for the selected properties. Nothing was checked, \
--             so this is not a pass — supply more states (commutativity and \
--             reconciliation need at least two), captured deltas for the delta \
--             properties, or --transition BASE RESULT for transition_path_agreement.",
--            corpus.states.len(),
--            corpus.deltas.len(),
--            corpus.summaries.len(),
--        );
-+        anyhow::bail!(no_cases_message(
-+            &corpus,
-+            &generated.oversized,
-+            generator_config.max_case_bytes,
-+        ));
++    if let Some(max_states_paired) = config.max_states_paired {
++        generator_config.max_states_paired = max_states_paired;
++    }
+     if !properties.is_empty() {
+         generator_config.properties = properties;
      }
+@@ -359,10 +376,19 @@ fn no_cases_message(
+         return message;
+     }
+     message.push_str(&format!(
+-        ". {skipped} case(s) were built and every one was skipped because its \
++        ". {skipped} case(s) were considered and every one was skipped because its \
+          inputs exceeded --max-case-bytes ({max_case_bytes} bytes); raise \
+          --max-case-bytes to check them."
+     ));
++    if oversized
++        .iter()
++        .any(|(p, n)| *p == ConformanceProperty::StateAssociativity && *n > 0)
++    {
++        message.push_str(
++            " For state_associativity that count is the triples over the limit among \
++             those walked; at most two per sampled state can run.",
++        );
++    }
+     if lacked_inputs {
+         message.push_str(&format!(
+             " The properties with no case at all need more inputs: {advice}"
+@@ -549,6 +575,24 @@ fn exit_code<'a>(outcomes: impl IntoIterator<Item = &'a PropertyOutcome>) -> i32
+     }
+ }
  
-     if let Some(path) = &config.bundle_out {
-@@ -223,28 +229,26 @@ pub async fn conformance(config: ConformanceConfig) -> anyhow::Result<()> {
-     let instance = oracle.instance_id();
-     let _ = warn_on_reversed_transitions(&mut oracle, &hand_supplied_steps);
- 
--    let outcomes: Vec<(ConformanceCase, PropertyOutcome)> = cases
--        .into_iter()
--        .map(|case| {
--           
++/// Upper bound on `--max-states-paired`. Generation walks every pair of the sample,
++/// so its cost is quadratic in it, and linear in the number of delta pairs. With
++/// every law and 8 deltas (28 delta pairs), generation took about 0.8 s at 1000 in a
++/// debug build (2026-10-30), 1.4 s when every case was over the size limit, and about
++/// 3 s at 2000.
++const MAX_STATES_PAIRED_LIMIT: usize = 1000;
++
++fn parse_max_states_paired(value: &str) -> Result<usize, String> {
++    let n: usize = value.parse().map_err(|e| format!("{e}"))?;
++    if (3..=MAX_STATES_PAIRED_LIMIT).contains(&n) {
++        Ok(n)
++    } else {
++        // Below 3 no triple can be built, so associativity would have no case and
++        // the report would blame the corpus.
++        Err(format!("must be from 3 to {MAX_STATES_PAIRED_LIMIT}"))
++    }
++}
++
+ /// Parse `--property` names against [`ConformanceProperty::ALL`].
+ ///
+ /// Returns an empty vec (meaning "every property") when `names` is empty, so
+@@ -1456,11 +1500,27 @@ struct Report {
+     /// Without it a property could read as held when the cases that would have
+     /// broken it were the ones skipped: a contract that is wrong only near its size
+     /// cap is exactly that shape (#5705).
++    ///
++    /// For associativity this is the triples over the limit among those walked, at
++    /// most `2n` of which could run with a higher limit. Raising the limit is not
++    /// purely additive there: the cap then fills with triples containing the big
++    /// states, so triples of small states that ran before may no longer run.
+     cases_skipped_oversized: usize,
+     /// Cases within the size limit that never ran
 ```
 
 **File**: `crates/fdev/src/main.rs` (modified, +1/-0)
 ```diff
-@@ -307,6 +307,7 @@ mod tests {
-             bundle: None,
+@@ -308,6 +308,7 @@ mod tests {
              contract_store: None,
              max_cases: None,
-+            max_case_bytes: None,
+             max_case_bytes: None,
++            max_states_paired: None,
              properties: Vec::new(),
              json: false,
              evidence_out: None,
 ```
 
+---
+
+### Incident Patch 3: `8942fd23` (2026-10-30)
+**Commit Message**: build: release 0.2.152 (#6056)
+
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
+```diff
+@@ -1899,7 +1899,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "fdev"
+-version = "0.3.313"
++version = "0.3.314"
+ dependencies = [
+  "anyhow",
+  "axum",
+@@ -2078,7 +2078,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "freenet"
+-version = "0.2.151"
++version = "0.2.152"
+ dependencies = [
+  "aes-gcm",
+  "ahash",
+```
+
+**File**: `apps/freenet-ping/Cargo.lock` (modified, +1/-1)
+```diff
+@@ -1715,7 +1715,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "freenet"
+-version = "0.2.151"
++version = "0.2.152"
+ dependencies = [
+  "aes-gcm",
+  "ahash",
+```
+
+**File**: `crates/core/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "freenet"
+-version = "0.2.151"
++version = "0.2.152"
+ edition = "2024"
+ rust-version = "1.85"
+ publish = true
+```
+
+**File**: `crates/fdev/Cargo.toml` (modified, +4/-4)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "fdev"
+-version = "0.3.313"
++version = "0.3.314"
+ edition = "2024"
+ rust-version = "1.85"
+ publish = true
+@@ -14,12 +14,12 @@ readme = "README.md"
+ # (v0.2.x), so we embed the matching freenet version literally — `v{ version }`
+ # would expand to the fdev crate version and 404. release.yml rewrites the
+ # `vX.Y.Z` segment whenever the freenet version is bumped (issue #3995).
+-pkg-url = "{ repo }/releases/download/v0.2.151/fdev-{ target }.tar.gz"
++pkg-url = "{ repo }/releases/download/v0.2.152/fdev-{ target }.tar.gz"
+ pkg-fmt = "tgz"
+ bin-dir = "fdev"
+ 
+ [package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
+-pkg-url = "{ repo }/releases/download/v0.2.151/fdev-{ target }.zip"
++pkg-url = "{ repo }/releases/download/v0.2.152/fdev-{ target }.zip"
+ pkg-fmt = "zip"
+ bin-dir = "fdev.exe"
+ 
+@@ -56,7 +56,7 @@ ed25519-dalek = { version = "2", features = ["rand_core", "serde"] }
+ hex = { workspace = true }
+ 
+ # internal
+-freenet = { path = "../core", version = "0.2.151", features = ["testing"] }
++freenet = { path = "../core", version = "0.2.152", features = ["testing"] }
+ freenet-stdlib = { workspace = true }
+ 
+ [dev-dependencies]
+```
+
 #### Recent Merged Pull Requests:
+- **PR #6057** (2026-10-30): feat(transport): add QUIC control frames, bounded sends and stream-slot reservation (@sanity)
+- **PR #6056** (2026-10-30): build: release 0.2.152 (@sanity)
+- **PR #6055** (2026-10-30): fix(conformance): queue verify-merge cases newest first and build them lazily (@sanity)
 - **PR #6054** (2026-10-30): fix: skip validate_state when an update leaves the state unchanged (@sanity)
 - **PR #6052** (2026-10-30): test: bind the fdev websocket test to an OS-assigned port (@sanity)
 - **PR #6051** (2026-10-30): fix(transport): keep the configured bandwidth-limit on every rate update (@sanity)
-- **PR #6046** (2026-10-30): docs: state the real per-connection bandwidth default (@sanity)
-- **PR #6043** (2026-10-30): fix(fdev): count verify-merge cases that never ran (@sanity)
-- **PR #6042** (2026-10-30): fix(ci): run the NixOS module VM test on a runner that provides KVM (@sanity)
 
 ---
 
@@ -3097,13 +2700,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transport): contain panics in the QUIC socket adapter without aborting the node 
+## X. transport): add QUIC control frames, bounded sends and stream-slot reservation (
 
 **RULE**:
 When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `76d7ef16`: transport): contain panics in the QUIC socket adapter without aborting the node (#6027). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `63233bc4`: transport): add QUIC control frames, bounded sends and stream-slot reservation (#6057). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
@@ -3111,44 +2714,44 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-(`quic_endpoint_down`), panics the QUIC socket adapter caught
-(`quic_adapter_panicked`, once per endpoint; the process keeps running
-and no breaker state is left), QUIC crash-loop breaker trips at startup
-  → quinn's driver returns only on a receive I/O error. QuicSocket returns
-    one only after it caught a panic (below); tests inject one
-    (socket::SocketFaults::fail_receive).
-  → PANICS. The node relies on panic = "unwind". A build with
-    panic = "abort" still compiles, but QuicEndpoint::bind refuses
-    (require_unwinding, through bind_checked so tests drive it) and the
-    node runs with QUIC off; log_startup says so instead of describing the
-    configured mode. This covers a profile-level abort only.
-    CONTAINED: a panic in the socket adapter (QuicSocket::poll_recv,
-    try_send, QuicPoller::poll_writable), which quinn calls holding its
-    endpoint or connection state lock. The adapter catches it before it
-    unwinds into quinn (no lock poisoned), and
-    EndpointHealth::adapter_panicked turns the endpoint Down, counts
-    quic_adapter_panicked once per endpoint and logs ERROR once (quinn
-    also logs its own ERROR "I/O error" for each of its drivers that ends
-    
+limit that is too low costs only sender back-pressure. Shadow mode carries no
+data, so it cannot confirm the value; rollout stage 3 (data on QUIC, opt-in)
+is the first measurement on real QUIC. The gauge says nothing about the memory
+a peer opening streams on purpose can hold (the per-path ceiling's job). `inbound_concurrency_max` is diagnostic
+  TimeSource's connection idle timeout, Cubic, 64 uni / 0 bidi streams,
+the buffers behind sent data, allocators other than jemalloc, CRYPTO-frame
+reassembly (quinn-proto's second assembler, `crypto_buffer_size` 16 KiB), and arrival
+Sending (QuicPath::send_short_bounded / send_stream_bounded /
+  send_stream_chunks_bounded / send_control_bounded; the forms without a
+  deadline are #[cfg(test)]): returns when the peer's QUIC stack acked every byte, or
+  sent is NOT delivered. send_stream_chunks_bounded resets the stream if the
+  credit only after more than an eighth of the limit is freed).
+  Slot reservation: send_stream_bounded / send_stream_chunks_bounded each
+  hold one of
+  the path's STREAMED_SEND_LIMIT semaphore permits from before open_uni
+  until they return; a streamed send past the limit waits for a permit
+  without opening a stream.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-(`quic_endpoint_down`), QUIC crash-loop breaker trips at startup
-  → What this covers is narrow. quinn's driver returns only on a receive
-    I/O error and QuicSocket never returns one, so in production today it
-    cannot return at all; tests inject the error (socket::ReceiveFault).
-    The one real way it ends is a PANIC, which is NOT contained: quinn
-    0.11.12 polls the driver holding its endpoint state mutex
-    (endpoint.rs line 370), so a panic poisons it and every later lock
-    panics too, in EndpointDriver::drop (line 403), Accept::poll (line
-    651, the accept loop), connect (line 214) and the connection drivers;
-    one of those running during the unwind aborts the process. A panic is
-    never reported as Down. Containing a quinn panic (catch the unwind,
-    leak the driver instead of dropping it, guard the accept loop) is a
-    separate PREREQUISITE before QUIC is on by default.
+limit that is too low costs only sender back-pressure, and QUIC shadow mode
+(e5a) is expected to confirm the value on real QUIC before any default
+changes. It says nothing about the memory a peer opening streams on purpose
+can hold (the per-path ceiling's job). `inbound_concurrency_max` is diagnostic
+  TimeSource's connection idle timeout, Cubic, 64 uni / 1 bidi streams,
+the buffers behind sent data, allocators other than jemalloc, the
+bidirectional control stream (`MAX_BIDI_STREAMS`), CRYPTO-frame reassembly
+(quinn-proto's second assembler, `crypto_buffer_size` 16 KiB), and arrival
+Sending (QuicPath::send_short / send_stream / send_stream_chunks /
+  send_control): returns when the peer's QUIC stack acked every byte, or
+  sent is NOT delivered. send_stream_chunks resets the stream if the
+  credit only after more than an eighth of the limit is freed). Short and
+  control messages share those slots with streamed messages, so e5 must
+  keep slots for them or carry control on the reserved bidi stream (see
+  the MAX_UNI_STREAMS doc).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `76d7ef16` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `63233bc4` are properly handled with clean fallback behavior.

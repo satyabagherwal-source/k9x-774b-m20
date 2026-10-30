@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/solidjs-solid-learnings.md`  
 > **Source**: github ([https://github.com/solidjs/solid](https://github.com/solidjs/solid))  
-> **Source Version**: `25138e1c`  
+> **Source Version**: `bc50fe56`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T02:15:34.420Z  
+> **Timestamp**: 2026-10-30T18:39:37.385Z  
 > **Learning ID**: `learn-github-solidjs-solid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/solidjs-solid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/solidjs/solid](https://github.com/solidjs/solid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T02:15:34.150Z  
+> **Harvest Timestamp**: 2026-10-30T18:39:32.629Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A declarative, efficient, and flexible JavaScript library for building user interfaces.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 36141 stars
+- **Stars / Engagement**: 36193 stars
 
 ---
 
@@ -1493,462 +1493,299 @@ export { withSolid, customElement };
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cdc01cc5` (2026-07-01)
-**Commit Message**: chore: bump seroval minimum to 1.5.4 for security fixes
+### Incident Patch 1: `fb50357c` (2026-10-29)
+**Commit Message**: fix: keep createRoot's dispose function from retaining fn (#4096)
 
-Ensures npm consumers of solid-js resolve patched seroval and
-seroval-plugins versions compatible with dom-expressions.
+createRoot created the dispose function inside its own scope, which also
+holds fn, so holding the dispose function kept fn and everything it closes
+over alive. mapArray and indexArray keep each row's dispose function, and
+each row's fn closes over the list the row was created from, so a mounted
+<For>/<Index> row kept that whole list reachable, including items removed
+from it later. Build the dispose function in a separate helper that closes
+over the root only.
 
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
+Fixes #4095
 
-**File**: `.changeset/bump-seroval-security.md` (added, +5/-0)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.changeset/create-root-dispose-retention.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +"solid-js": patch
 +---
 +
-+Bump minimum seroval and seroval-plugins to 1.5.4 for security fixes
++Stop a `createRoot` dispose function from retaining the root's `fn`. The dispose function shared `createRoot`'s scope, so holding it kept `fn` and everything `fn` closes over alive: every `mapArray`/`indexArray` row (and so every `<For>`/`<Index>` row) kept the list it was created from, including items later removed from it.
 ```
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `packages/solid/src/reactive/signal.ts` (modified, +8/-1)
 ```diff
-@@ -48,7 +48,7 @@
-     "rollup": "^4.24.0",
-     "rollup-plugin-cleanup": "^3.2.1",
-     "rollup-plugin-copy": "^3.4.0",
--    "seroval": "~1.5.0",
-+    "seroval": "~1.5.4",
-     "simple-git-hooks": "^2.8.1",
-     "symlink-dir": "^5.0.1",
-     "tsconfig-replace-paths": "^0.0.11",
-```
-
-**File**: `packages/solid/package.json` (modified, +2/-2)
-```diff
-@@ -237,7 +237,7 @@
-   ],
-   "dependencies": {
-     "csstype": "^3.1.0",
--    "seroval": "~1.5.0",
--    "seroval-plugins": "~1.5.0"
-+    "seroval": "~1.5.4",
-+    "seroval-plugins": "~1.5.4"
+@@ -169,7 +169,7 @@ export function createRoot<T>(fn: RootFunction<T>, detachedOwner?: typeof Owner)
+               throw new Error("Dispose method must be an explicit argument to createRoot function");
+             })
+         : fn
+-      : () => fn(() => untrack(() => cleanNode(root)));
++      : () => fn(createDisposer(root));
+ 
+   if (IS_DEV) DevHooks.afterCreateOwner && DevHooks.afterCreateOwner(root);
+ 
+@@ -184,6 +184,13 @@ export function createRoot<T>(fn: RootFunction<T>, detachedOwner?: typeof Owner)
    }
+ }
+ 
++// Created outside createRoot so the dispose function does not share its scope,
++// which holds `fn`: whoever keeps the dispose function would keep `fn` and
++// everything it closes over (e.g. the list a mapArray row was created from).
++function createDisposer(root: Owner) {
++  return () => untrack(() => cleanNode(root));
++}
++
+ export type Accessor<T> = () => T;
+ 
+ export type Setter<in out T> = {
+```
+
+**File**: `packages/solid/test/array.spec.ts` (modified, +28/-0)
+```diff
+@@ -1,4 +1,6 @@
+ import { describe, expect, test } from "vitest";
++import { setFlagsFromString } from "v8";
++import { runInNewContext } from "vm";
+ import { mapArray, indexArray, createSignal, createMemo, createRoot } from "../src/index.js";
+ 
+ describe("Map operator", () => {
+@@ -26,6 +28,32 @@ describe("Map operator", () => {
+       expect(r()).toEqual([6, 8, 10]);
+     });
+   });
++
++  test("a surviving row does not retain removed items", async () => {
++    setFlagsFromString("--expose-gc");
++    const gc: () => void = runInNewContext("gc");
++    const kept = {};
++    let removed: WeakRef<object>, set: (v: object[]) => void;
++    const dispose = createRoot(dispose => {
++      const [s, setS] = createSignal(createItems()),
++        r = createMemo(mapArray(s, v => v));
++      set = setS;
++      r();
++      return dispose;
++    });
++    function createItems() {
++      const item = {};
++      removed = new WeakRef(item);
++      return [kept, item];
++    }
++    // The row for `kept` was created from the original list.
++    set!([kept]);
++    // WeakRef targets stay alive until the current job ends.
++    await new Promise(r => setTimeout(r, 0));
++    gc();
++    expect(removed!.deref()).toBeUndefined();
++    dispose();
++  });
+ });
+ 
+ describe("Index operator", () => {
+```
+
+---
+
+### Incident Patch 2: `63210b70` (2026-10-29)
+**Commit Message**: fix(store): preserve reconciled array length on the server (#4266)
+
+**File**: `.changeset/server-reconcile-array-length.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++"solid-js": patch
++---
++
++Preserve the target array length when reconciling stores on the server.
+```
+
+**File**: `packages/solid/store/src/server.ts` (modified, +1/-0)
+```diff
+@@ -153,6 +153,7 @@ export function reconcile<T extends U, U extends object>(
+     for (let i = 0, len = previousKeys.length; i < len; i++) {
+       if (value[previousKeys[i]] === undefined) setProperty(state, previousKeys[i], undefined);
+     }
++    if (Array.isArray(state) && Array.isArray(value)) setProperty(state, "length", value.length);
+     return state as T;
+   };
  }
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +34/-25)
+**File**: `packages/solid/test/server/reconcile-array-length.spec.ts` (added, +30/-0)
 ```diff
-@@ -58,7 +58,7 @@ importers:
-         version: 3.2.3
-       dom-expressions:
-         specifier: 0.40.8
--        version: 0.40.8(csstype@3.2.3)(seroval-plugins@1.5.0(seroval@1.5.0))(seroval@1.5.0)
-+        version: 0.40.8(csstype@3.2.3)(seroval-plugins@1.5.4(seroval@1.5.4))(seroval@1.5.4)
-       hyper-dom-expressions:
-         specifier: 0.40.8
-         version: 0.40.8
-@@ -90,8 +90,8 @@ importers:
-         specifier: ^3.4.0
-         version: 3.5.0
-       seroval:
--        specifier: ~1.5.0
--        version: 1.5.0
-+        specifier: ~1.5.4
-+        version: 1.5.4
-       simple-git-hooks:
-         specifier: ^2.8.1
-         version: 2.13.1
-@@ -109,7 +109,7 @@ importers:
-         version: 5.7.3
-       vite-plugin-solid:
-         specifier: ^2.6.1
--        version: 2.11.10(solid-js@1.9.12)(vite@5.4.21(@types/node@22.19.7))
-+        version: 2.11.10(solid-js@1.9.13)(vite@5.4.21(@types/node@22.19.7))
-       vitest:
-         specifier: ^2.1.2
-         version: 2.1.9(@types/node@22.19.7)(jsdom@25.0.1)
-@@ -132,11 +132,11 @@ importers:
-         specifier: ^3.1.0
-         version: 3.2.3
-       seroval:
--        specifier: ~1.5.0
--        version: 1.5.0
-+        specifier: ~1.5.4
-+        version: 1.5.4
-       seroval-plugins:
--        specifier: ~1.5.0
--        version: 1.5.0(seroval@1.5.0)
-+        specifier: ~1.5.4
-+        version: 1.5.4(seroval@1.5.4)
- 
-   packages/solid-element:
-     dependencies:
-@@ -2794,14 +2794,14 @@ packages:
-     resolution: {integrity: sha512-VMbMxbDeehAxpOtWJXlcUS5E8iXh6QmN+BkRX1GARS3wRaXEEgzCcB10gTQazO42tpNIya8xIyNx8fll1OFPrg==}
-     engines: {node: '>= 0.8.0'}
- 
--  seroval-plugins@1.5.0:
--    resolution: {integrity: sha512-EAHqADIQondwRZIdeW2I636zgsODzoBDwb3PT/+7TLDWyw1Dy/Xv7iGUIEXXav7usHDE9HVhOU61irI3EnyyHA==}
-+  seroval-plugins@1.5.4:
-+    resolution: {integrity: sha512-S0xQPhUTefAhNvNWFg0c1J8qJArHt5KdtJ/cFAofo06KD1MVSeFWyl4iiu+ApDIuw0WhjpOfCdgConOfAnLgkw==}
-     engines: {node: '>=10'}
-     peerDependencies:
-       seroval: ^1.0
- 
--  seroval@1.5.0:
--    resolution: {integrity: sha512-OE4cvmJ1uSPrKorFIH9/w/Qwuvi/IMcGbv5RKgcJ/zjA/IohDLU6SVaxFN9FwajbP7nsX0dQqMDes1whk3y+yw==}
-+  seroval@1.5.4:
-+    resolution: {integrity: sha512-46uFvgrXTVxZcUorgSSRZ4y+ieqLLQRMlG4bnCZKW3qI6BZm7Rg4ntMW4p1mILEEBZWrFlcpp0AyIIlM6jD9iw==}
-     engines: {node: '>=10'}
- 
-   serve-static@1.16.3:
-@@ -2890,6 +2890,9 @@ packages:
-   solid-js@1.9.12:
-     resolution: {integrity: sha512-QzKaSJq2/iDrWR1As6MHZQ8fQkdOBf8GReYb7L5iKwMGceg7HxDcaOHk0at66tNgn9U2U7dXo8ZZpLIAmGMzgw==}
- 
-+  solid-js@1.9.13:
-+    resolution: {integrity: sha512-6hJeJMOcEX8ktqjpDoJZEmld3ijvcvWBDtiXBm7f4332SiFN66QeAQI1REQshvyUoISsSeJ4PHDauKYbwao9JQ==}
+@@ -0,0 +1,30 @@
++import { describe, expect, test } from "vitest";
++import { createStore, reconcile, unwrap } from "../../store/src/server.js";
 +
-   solid-refresh@0.6.3:
-     resolution: {integrity: sha512-F3aPsX6hVw9ttm5LYlth8Q15x6MlI/J3Dn+o3EQyRTtTxidepSTwAYdozt01/YA+7ObcciagGEyXIopGZzQtbA==}
-     peerDependencies:
-@@ -5039,12 +5042,12 @@ snapshots:
-     dependencies:
-       path-type: 4.0.0
- 
--  dom-expressions@0.40.8(csstype@3.2.3)(seroval-plugins@1.5.0(seroval@1.5.0))(seroval@1.5.0):
-+  dom-expressions@0.40.8(csstype@3.2.3)(seroval-plugins@1.5.4(seroval@1.5.4))(seroval@1.5.4):
-     dependencies:
-       babel-plugin-transform-rename-import: 2.3.0
-       csstype: 3.2.3
--      seroval: 1.5.0
--      seroval-plugins: 1.5.0(seroval@1.5.0)
-+      seroval: 1.5.4
-+      seroval-plugins: 1.5.4(seroval@1.5.4)
- 
-   dunder-proto@1.0.1:
-     dependencies:
-@@ -6351,11 +6354,11 @@ snapshots:
-     transitivePeerDependencies:
-       - supports-color
- 
--  seroval-plugins@1.5.0(seroval@1.5.0):
-+  seroval-plugins@1.5.4(seroval@1.5.4):
-     dependencies:
--      seroval: 1.5.0
-+      seroval: 1.5.4
- 
--  seroval@1.5.0: {}
-+  seroval@1.5.4: {}
- 
-   serve-static@1.16.3:
-     dependencies:
-@@ -6453,15 +6456,21 @@ snapshots:
-   solid-js@1.9.12:
-     dependencies:
-       csstype: 3.2.3
--      seroval: 1.5.0
--      seroval-plugins: 1.5.0(seroval@1.5.0)
-+      seroval: 1.5.4
-+      seroval-plugins: 1.5.4(seroval@1.5.4)
++describe("reconcile array length on the server", () => {
++  const cases: [string, (number | undefined)[], (number | undefined)[]][] = [
++    ["shortens an array", [1, 2, 3], [4]],
++    ["clears an array", [1, 2], []],
++    ["grows an array", [1], [1, 2, 3]],
++    ["preserves trailing undefined entries", [1], [1, undefined]],
++    ["preserves sparse array length", [1], new Array(3)]
++  ];
 +
-+  solid-js@1.9.13:
-+    dependencies:
-+      csstype: 3.2.3
-+      seroval: 1.5.4
-+      seroval-plugins: 1.5.4(seroval@1.5.4)
- 
--  solid-refresh@0.6.3(solid-js@1.9.12):
-+  solid-refresh@0.6.3(solid-js@1.9.13):
-     dependencies:
-       '@babel/generator': 7.28.6
-       '@babel/helper-module-imports': 7.28.6
-       '@babel/types': 7.28.6
--      solid-js: 1.9.12
-+      solid-js: 1.9.13
-     transitivePeerDependencies:
-       - supports-color
- 
-@@ -6784,14 +6793,14 @@ snapshots:
-       - supports-color
-       - terser
- 
--  vite-plugin-solid@2.11.10(solid-js@1.9.12)(vite@5.4.21(@types/node@22.19.7)):
-+  vite-plugin-solid@2.11.10(solid-js@1.9.13)(vite@5.4.21(@types/node@22.19.7)):
-     dependencies:
-       '@babel/core': 7.28.6
-       '@types/babel__core': 7.20.5
-       babel-preset-solid: link:packages/babel-preset-solid
-       merge-anything: 5.1.7
--      solid-js: 1.9.12
--      solid-refresh: 0.6.3(solid-js@1.9.12)
-+      solid-js: 1.9.13
-+      solid-refresh: 0.6.3(solid-js@1.9.13)
-       vite: 5.4.21(@types/node@22.19.7)
-       vitefu: 1.1.1(vite@5
-```
-
-**File**: `pnpm-workspace.yaml` (modified, +5/-0)
-```diff
-@@ -1,2 +1,7 @@
- packages:
-   - 'packages/*'
-+
-+overrides:
-+  babel-preset-solid: workspace:*
-+  seroval: ~1.5.4
-+  seroval-plugins: ~1.5.4
-```
-
----
-
-### Incident Patch 2: `c6aa6728` (2026-08-17)
-**Commit Message**: fix: re-subscribe external sources after a transition
-
-A computation created during startTransition only tracked the transition-scoped external source. Once that source was disposed, later enableExternalSource updates were lost.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `.changeset/external-source-transition-subscription.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"solid-js": patch
-+---
-+
-+Re-subscribe `enableExternalSource` computations to the ordinary source after a transition. A computation created while a transition was running only tracked the transition-scoped source; once that source was disposed, later external updates were lost.
-```
-
-**File**: `packages/solid/src/reactive/signal.ts` (modified, +10/-0)
-```diff
-@@ -1487,11 +1487,20 @@ function createComputation<Next, Init = unknown>(
-     const ordinary = ExternalSourceConfig.factory(sourceFn, trigger);
-     onCleanup(() => ordinary.dispose());
-     let inTransition: ExternalSource | undefined;
-+    let trackedOrdinary = false;
-     const triggerInTransition: () => void = () =>
-       startTransition(trigger).then(() => {
-         if (inTransition) {
-           inTransition.dispose();
-           inTransition = undefined;
-+          // A computation created while a transition was running only ever
-+          // tracked the transition-scoped source, so its ordinary source has no
-+          // recorded dependencies. Now that the transition is over, re-trigger
-+          // once so the computation runs through `ordinary` again and
-+          // re-subscribes; otherwise it would never receive further external
-+          // updates. If the computation was disposed in the meantime this is a
-+          // no-op because it is no longer an observer of `track`.
-+          if (!trackedOrdinary) trigger();
-         }
-       });
-     c.fn = x => {
-@@ -1501,6 +1510,7 @@ function createComputation<Next, Init = unknown>(
-           inTransition = ExternalSourceConfig!.factory(sourceFn, triggerInTransition);
-         return inTransition.track(x);
-       }
-+      trackedOrdinary = true;
-       return ordinary.track(x);
-     };
-   }
-```
-
-**File**: `packages/solid/test/external-source.spec.ts` (modified, +41/-0)
-```diff
-@@ -128,6 +128,47 @@ describe("external source", () => {
-     });
-   });
- 
-+  it("should keep receiving external updates after being created during a transition", async () => {
-+    // Initialize SuspenseContext so startTransition creates a real Transition
-+    getSuspenseContext();
-+
-+    const waitFor = async (fn: () => boolean) => {
-+      for (let i = 0; i < 50 && !fn(); i++) {
-+        await new Promise(resolve => setTimeout(resolve, 0));
-+      }
-+    };
-+
-+    await createRoot(async dispose => {
-+      const e = new ExternalSource(0);
-+      let memo: (() => number) | undefined;
-+
-+      // Create the memo while a transition is running. Its first run tracks
-+      // dependencies on the transition-scoped external source, never on the
-+      // ordinary one.
-+      await startTransition(() => {
-+        memo = createMemo(() => e.get());
-+      });
-+      expect(memo!()).toBe(0);
-+
-+      // First external update is delivered through the transition-scoped source.
-+      e.update(1);
-+      await waitFor(() => memo!() === 1);
-+      expect(memo!()).toBe(1);
-+      // Let triggerInTransition's .then() dispose the transition-scoped source
-+      // and re-subscribe on the ordinary one.
-+      await new Promise(resolve => setTimeout(resolve, 0));
-+
-+      // Second external update must still be delivered. Before the fix the
-+      // transition-scoped source had been disposed and the ordinary source was
-+      // never subscribed, so this update was silently lost.
-+      e.update(2);
-+      await waitFor(() => memo!() === 2);
-+      expect(memo!()).toBe(2);
-+
-+      dispose();
-+    });
++  test.each(cases)("%s at the root", (_, initial, next) => {
++    const original = initial.slice();
++    const [state, setState] = createStore(original);
++    setState(reconcile(next));
++    expect(state).toHaveLength(next.length);
++    expect([...state]).toEqual([...next]);
++    expect(unwrap(state)).toBe(original);
 +  });
 +
-   afterEach(() => {
-     vi.resetModules();
-   });
++  test.each(cases)("%s on a nested path", (_, initial, next) => {
++    const original = initial.slice();
++    const [state, setState] = createStore({ items: original });
++    setState("items", reconcile(next));
++    expect(state.items).toHaveLength(next.length);
++    expect([...state.items]).toEqual([...next]);
++    expect(unwrap(state.items)).toBe(original);
++  });
++});
 ```
 
 ---
 
-### Incident Patch 3: `3ae39cd4` (2026-07-01)
-**Commit Message**: Merge pull request #2730 from MRJCrunch/fix/lazy-resource-leak
+### Incident Patch 3: `82202158` (2026-10-29)
+**Commit Message**: fix(solid): render a resolved lazy() component synchronously on remount (#4135)
 
-fix: release lazy() resource and suspense contexts on dispose
+Disposing a lazy() instance cleared the shared component cache even after
+the module had loaded, so the next mount rendered nothing or the Suspense
+fallback. Only release that cache while it still points at the in-flight
+resource.
 
-**File**: `.changeset/fix-lazy-resource-leak.md` (added, +5/-0)
+Fixes #4118
+
+Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
+
+**File**: `.changeset/fix-lazy-remount.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +"solid-js": patch
 +---
 +
-+Fix memory leak with nested `lazy()` components. `lazy()` cached its `createResource` accessor in a module-scoped variable and `createResource` never released its Suspense contexts on disposal, so a disposed component tree (and its detached DOM) stayed reachable across navigations when `lazy()` boundaries were nested. The module-pinned accessor is now released on cleanup, and the resource clears its Suspense contexts and pending promise on disposal.
++Fix `lazy()` rendering nothing, or the Suspense fallback, when an already-loaded component is mounted again. Disposing an instance still releases the shared resource while its import is in flight or has failed, so that load can be collected and retried, but a resolved module stays cached and the next mount renders synchronously.
 ```
 
-**File**: `packages/solid/src/reactive/signal.ts` (modified, +8/-0)
+**File**: `packages/solid/src/render/component.ts` (modified, +6/-1)
 ```diff
-@@ -633,6 +633,14 @@ export function createResource<T, S, R>(
-       resolved ? "ready" : "unresolved"
-     );
- 
-+  if (Owner)
-+    onCleanup(() => {
-+      for (const c of contexts.keys()) c.decrement!();
-+      contexts.clear();
-+      if (Transition && pr) Transition.promises.delete(pr);
-+      pr = null;
-+    });
-+
-   if (sharedConfig.context) {
-     id = sharedConfig.getNextContextId();
-     if (options.ssrLoadFrom === "initial") initP = options.initialValue as T;
-```
-
-**File**: `packages/solid/src/render/component.ts` (modified, +4/-2)
-```diff
-@@ -3,6 +3,7 @@ import {
-   createSignal,
-   createResource,
-   createMemo,
-+  onCleanup,
-   devComponent,
-   $PROXY,
-   SUPPORTS_PROXY,
-@@ -356,7 +357,7 @@ export function splitProps<
- export function lazy<T extends Component<any>>(
-   fn: () => Promise<{ default: T }>
- ): T & { preload: () => Promise<{ default: T }> } {
--  let comp: () => T | undefined;
-+  let comp: (() => T | undefined) | undefined;
-   let p: Promise<{ default: T }> | undefined;
-   const wrap: T & { preload?: () => void } = ((props: any) => {
-     const ctx = sharedConfig.context;
-@@ -374,10 +375,11 @@ export function lazy<T extends Component<any>>(
+@@ -405,7 +405,12 @@ export function lazy<T extends Component<any>>(
      } else if (!comp) {
-       const [s] = createResource<T>(() => (p || (p = fn())).then(mod => mod.default));
+       const [s] = createResource<T>(() => load().then(mod => mod.default));
        comp = s;
-+      onCleanup(() => (comp = undefined));
+-      onCleanup(() => (comp = undefined));
++      // `load()` replaces `comp` with the resolved component. Only drop the shared
++      // cache while it still points at this resource, so an in-flight or failed
++      // import can be collected and retried without blanking a module that loaded.
++      onCleanup(() => {
++        if (comp === s) comp = undefined;
++      });
      }
      let Comp: T | undefined;
      return createMemo(() =>
--      (Comp = comp())
-+      (Comp = comp?.())
-         ? untrack(() => {
-             if (IS_DEV) Object.assign(Comp!, { [$DEVCOMP]: true });
-             if (!ctx || sharedConfig.done) return Comp!(props);
 ```
 
-**File**: `packages/solid/web/test/lazy.spec.tsx` (added, +61/-0)
+**File**: `packages/solid/web/test/lazy.spec.tsx` (modified, +67/-1)
 ```diff
-@@ -0,0 +1,61 @@
-+/**
-+ * @jsxImportSource solid-js
-+ * @vitest-environment jsdom
-+ */
-+import { describe, expect, test } from "vitest";
-+import { lazy, Component } from "../../src/index.js";
-+import { render, Suspense } from "../src/index.js";
+@@ -3,7 +3,7 @@
+  * @vitest-environment jsdom
+  */
+ import { describe, expect, test } from "vitest";
+-import { lazy, Component, ErrorBoundary, sharedConfig } from "../../src/index.js";
++import { createRoot, lazy, Component, ErrorBoundary, sharedConfig } from "../../src/index.js";
+ import { hydrate, render, Suspense } from "../src/index.js";
+ 
+ describe("lazy() disposal", () => {
+@@ -59,6 +59,72 @@ describe("lazy() disposal", () => {
+     second.dispose();
+   });
+ 
++  test("remounting an already-loaded lazy() component renders synchronously", async () => {
++    const flush = () => new Promise<void>(r => setTimeout(r, 0));
++    const read = (value: unknown) =>
++      typeof value === "function" ? (value as () => unknown)() : value;
 +
-+describe("lazy() disposal", () => {
-+  test("nested lazy boundaries remount after navigation-style dispose", async () => {
-+    const Child: Component<{ label: string }> = props => <span>{props.label}</span>;
-+    const innerResolvers: Array<(mod: { default: Component<{ label: string }> }) => void> = [];
-+    const InnerLazy = lazy<{ label: string }>(
-+      () => new Promise(resolve => innerResolvers.push(resolve))
-+    );
++    const Loaded: Component = () => "loaded";
++    const Lazy1 = lazy(() => Promise.resolve({ default: Loaded }));
++    const first1 = createRoot(dispose => ({ dispose, value: Lazy1({}) }));
++    await flush();
++    expect(read(first1.value)).toBe("loaded");
++    first1.dispose();
++    const second1 = createRoot(dispose => ({ dispose, value: Lazy1({}) }));
++    expect(read(second1.value)).toBe("loaded");
++    second1.dispose();
 +
-+    const Route = () => (
-+      <Suspense fallback="inner-loading">
-+        <InnerLazy label="page-content" />
++    const Lazy2 = lazy(() => Promise.resolve({ default: () => "loaded" }));
++    const view = () => (
++      <Suspense fallback="fallback">
++        <Lazy2 />
 +      </Suspense>
 +    );
++    const first2 = createRoot(dispose => ({ dispose, value: view() }));
++    await flush();
++    expect(read(first2.value)).toBe("loaded");
++    first2.dispose();
++    const second2 = createRoot(dispose => ({ dispose, value: view() }));
++    expect(read(second2.value)).toBe("loaded");
++    second2.dispose();
++  });
 +
-+    let routeImports = 0;
-+    const RouteLazy = lazy(() => {
-+      routeImports++;
-+      return Promise.resolve({ default: Route });
++  test("a rejected lazy() import is retried after its root is disposed", async () => {
++    const flush = () => new Promise<void>(r => setTimeout(r, 0));
++    let attempts = 0;
++    let shouldFail = true;
++    const LazyComp = lazy(async () => {
++      attempts++;
++      if (shouldFail) throw new Error("network error");
++      return { default: () => "loaded" };
 +    });
-+
 +    const mount = () => {
 +      const div = document.createElement("div");
 +      const dispose = render(
 +        () => (
-+          <Suspense fallback="outer-loading">
-+            <RouteLazy />
-+          </Suspense>
++          <ErrorBoundary fallback={(err: Error) => `error:${err.message}`}>
++            <LazyComp />
++          </ErrorBoundary>
 +        ),
 +        div
 +      );
 +      return { div, dispose };
 +    };
 +
-+    const resolvePending = async () => {
-+      await Promise.resolve();
-+      await Promise.resolve();
-+      for (const resolve of innerResolvers.splice(0)) resolve({ default: Child });
-+      await Promise.resolve();
-+      await Promise.resolve();
-+    };
-+
 +    const first = mount();
-+    await resolvePending();
-+    expect(first.div.textContent).toBe("page-content");
++    await flush();
++    expect(first.div.textContent).toBe("error:network error");
++    expect(attempts).toBe(1);
 +    first.dispose();
 +
++    shouldFail = false;
 +    const second = mount();
-+    await resolvePending();
-+    expect(second.div.textContent).toBe("page-content");
-+    expect(routeImports).toBe(1);
++    await flush();
++    expect(second.div.textContent).toBe("loaded");
++    expect(attempts).toBe(2);
 +    second.dispose();
 +  });
-+});
++
+   test("lazy() retries import function on subsequent load if previous promise rejected", async () => {
+     let attempts = 0;
+     let shouldFail = true;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4164** (2026-10-19): fix(signals): a lazy memo read only through a rebuilt child memo is not released mid-pass (#4142) (@ryansolid)
-- **PR #4161** (2026-10-19): fix(web): async-mode SSR output independent of settle order (#4028) (@ryansolid)
-- **PR #4160** (2026-10-19): fix(web): keep a streaming frame's flight origin for late-mounted consumers (#4140) (@ryansolid)
-- **PR #4159** (2026-10-19): fix(signals): an unread key written beside a held sibling publishes at flush (#4146) (@ryansolid)
-- **PR #4158** (2026-10-19): fix(signals): route async protocol throws and error-formatting failures to the memo (#4112) (@ryansolid)
-- **PR #4157** (2026-10-20): fix(signals): a NotReady comparator read is a change, not an error (#4111) (@ryansolid)
+- **PR #4490** (2026-10-30): test(signals): pin #4474 at the ruled screen; D-22 ruling text (@ryansolid)
+- **PR #4487** (2026-10-30): test(signals): pin #4469's plain reader at the commit; D-23 known deviation (@ryansolid)
+- **PR #4479** (2026-10-30): fix(signals): an unread derived store's derive holds nothing (@ryansolid)
+- **PR #4477** (2026-10-30): fix(signals): a lane's held reader settling never makes the flush join the lane (#4440) (@ryansolid)
+- **PR #4472** (2026-10-30): fix(signals): a netted write read in a strict untrack is no staged read; seat rows D1''/L1''/V3'' (@ryansolid)
+- **PR #4471** (2026-10-30): fix(signals): a verdict reader born into a hold joins it at its re-pass (#4467) (@ryansolid)
 
 ---
 
@@ -1968,16 +1805,16 @@ fix: release lazy() resource and suspense contexts on dispose
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump seroval minimum to 1.5.4 for security fixes
+## X. keep createRoot's dispose function from retaining fn (#4096)
 
 **RULE**:
-When implementing operations in `.changeset/bump-seroval-security.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in solidjs/solid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/create-root-dispose-retention.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in solidjs/solid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cdc01cc5`: bump seroval minimum to 1.5.4 for security fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fb50357c`: keep createRoot's dispose function from retaining fn (#4096). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/bump-seroval-security.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/create-root-dispose-retention.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
@@ -1986,7 +1823,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 "solid-js": patch
 ---
 
-Bump minimum seroval and seroval-plugins to 1.5.4 for security fixes
+Stop a `createRoot` dispose function from retaining the root's `fn`. The dispose function shared `createRoot`'s scope, so holding it kept `fn` and everything `fn` closes over alive: every `mapArray`/`indexArray` row (and so every `<For>`/`<Index>` row) kept the list it was created from, including items later removed from it.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1996,4 +1833,4 @@ Bump minimum seroval and seroval-plugins to 1.5.4 for security fixes
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cdc01cc5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fb50357c` are properly handled with clean fallback behavior.

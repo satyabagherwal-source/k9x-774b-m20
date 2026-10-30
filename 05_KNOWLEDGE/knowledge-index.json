@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T18:32:38.392Z",
+  "last_updated": "2026-10-30T18:39:43.666Z",
   "total_verified_learnings": 1176,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4246,14 +4246,19 @@
       "slug": "bahdotsh-wrkflw",
       "platform": "github",
       "source_url": "https://github.com/bahdotsh/wrkflw",
-      "source_version": "248a4190",
-      "content_hash": "9683f885c164d0f64d380994fc9d32b8a91736cfcbf48b3c61b83b519a897d93",
+      "source_version": "59cf48c6",
+      "content_hash": "208e3afe876b454101aab0dd30cf6252abde007d442714c833654e88dc6a5cf8",
       "dossier_path": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md",
       "promoted_rules": [
         {
           "number": 2446,
           "title": "ui): ship screens 4, 7, 8 and the Tweaks overlay (#105)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5830,
+          "title": "executor): harden custom shell script path handling (#133)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -4262,7 +4267,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T08:58:37.121Z",
+      "verified_at": "2026-10-30T18:39:34.535Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13368,8 +13373,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "76d7ef16",
-      "content_hash": "a375a812a0a069ea53055d0af301b02953a05b6805b3aef6ec2ef8211200fe19",
+      "source_version": "63233bc4",
+      "content_hash": "a6ecc87b80eb24378c3ea944e65df961bd01dea11f28f8f9b09b8e95d8b65784",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -13517,6 +13522,11 @@
           "number": 5766,
           "title": "transport): contain panics in the QUIC socket adapter without aborting the node",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5832,
+          "title": "transport): add QUIC control frames, bounded sends and stream-slot reservation (",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13524,7 +13534,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:37:39.706Z",
+      "verified_at": "2026-10-30T18:39:43.647Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72096,14 +72106,19 @@
       "slug": "solidjs-solid",
       "platform": "github",
       "source_url": "https://github.com/solidjs/solid",
-      "source_version": "25138e1c",
-      "content_hash": "a90f4b42e2dce8fcbb207aabcd5f1a7b0fbbc5a481a501408b5f431ca16cd133",
+      "source_version": "bc50fe56",
+      "content_hash": "ef02bdc03299045193f7abbe1f8663bdf1e668085cb79f2fcc9b0d5ffbdd7aec",
       "dossier_path": "07_PROJECT_LEARNING/solidjs-solid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/solidjs-solid-learnings.md",
       "promoted_rules": [
         {
           "number": 2990,
           "title": "bump seroval minimum to 1.5.4 for security fixes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5831,
+          "title": "keep createRoot's dispose function from retaining fn (#4096)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -72112,7 +72127,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T02:15:34.620Z",
+      "verified_at": "2026-10-30T18:39:37.972Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154798,6 +154813,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T18:32:35.076Z"
+    },
+    "rule-5830": {
+      "learning_id": "rule-5830",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5830,
+      "title": "executor): harden custom shell script path handling (#133)",
+      "source_url": "https://github.com/bahdotsh/wrkflw",
+      "source_version": "59cf48c6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T18:39:34.535Z"
+    },
+    "rule-5831": {
+      "learning_id": "rule-5831",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5831,
+      "title": "keep createRoot's dispose function from retaining fn (#4096)",
+      "source_url": "https://github.com/solidjs/solid",
+      "source_version": "bc50fe56",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T18:39:37.972Z"
+    },
+    "rule-5832": {
+      "learning_id": "rule-5832",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5832,
+      "title": "transport): add QUIC control frames, bounded sends and stream-slot reservation (",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "63233bc4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T18:39:43.647Z"
     }
   },
   "aliases": {
