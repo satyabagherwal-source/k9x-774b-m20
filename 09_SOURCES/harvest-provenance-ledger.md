@@ -6231,3 +6231,5 @@ Every entry in this ledger must capture:
 | `learn-github-axios-axios` | `https://github.com/axios/axios` | `9d11464a` | Multi-dimensional audit evidence | 2026-10-30T15:14:59.271Z |
 | `learn-github-stikdebug-stikdebug` | `https://github.com/StikDebug/StikDebug` | `97530a90` | Multi-dimensional audit evidence | 2026-10-30T15:15:00.310Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `662d00cb` | Multi-dimensional audit evidence | 2026-10-30T15:15:06.707Z |
+| `learn-github-seaql-sea-orm` | `https://github.com/SeaQL/sea-orm` | `c5dffaa1` | Multi-dimensional audit evidence | 2026-10-30T15:22:10.555Z |
+| `learn-github-superhighfives-pika` | `https://github.com/superhighfives/pika` | `1e16dfd2` | Multi-dimensional audit evidence | 2026-10-30T15:25:41.610Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/seaql-sea-orm-learnings.md`  
 > **Source**: github ([https://github.com/SeaQL/sea-orm](https://github.com/SeaQL/sea-orm))  
-> **Source Version**: `ae19417d`  
+> **Source Version**: `c5dffaa1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T01:37:27.134Z  
+> **Timestamp**: 2026-10-30T15:22:09.830Z  
 > **Learning ID**: `learn-github-seaql-sea-orm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/seaql-sea-orm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SeaQL/sea-orm](https://github.com/SeaQL/sea-orm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T01:37:27.127Z  
+> **Harvest Timestamp**: 2026-10-30T15:22:08.561Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🐚 A powerful relational ORM for Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9934 stars
+- **Stars / Engagement**: 9944 stars
 
 ---
 
@@ -482,11 +482,11 @@ impl BackgroundWorker<DownloadWorkerArgs> for DownloadWorker {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3243** (2026-10-25): **Update smol for testing**
+- **Issue #3250** (2026-10-30): **Stop converting PostgreSQL enums to custom types**
   *Symptoms*: 
 
-- **Issue #3242** (2026-10-25): **Avoid allocating the prefixed column name in TryGetable::try_get**
-  *Symptoms*: Joined selects (`find_also_related`, `SelectTwo` and up, the 1-1 joins in the entity loader) read their columns as `A_id`, `B_name` and so on. `TryGetable::try_get` built that name with `format!` for every column of every row, so a 40k row join does a few hundred thousand tiny heap allocations just for column names.  This joins prefix and column in a 64 byte stack buffer and only falls back to `format!` for longer names. Custom `TryGetable` impls and `dynamic::Model` go through the same default method, so they get it too.  `fruit::Entity::find().find_also_related(cake::Entity).all(&db)` over 40,000 rows on SQLite, release build, best of 60 runs, allocations counted with a counting global allocator:  | | master | this PR | |---|---|---| | time | 116–132 ms | 59–95 ms | | allocations | 369,414 | 124,031 | | bytes allocated | 21.7 MB | 19.0 MB |  The machine was busy during the runs, so take the timings as rough. The allocation counts are exact.  Added unit tests for the helper (multi-byte names, the 64/65 byte boundary) and for `try_get` with a prefix on a mock row, including a column name long enough to hit the fallback. `sea-orm-sync` has the same change. 
+- **Issue #3249** (2026-10-29): **Quote mixed-case Postgres enum names in CREATE TABLE**
+  *Symptoms*: ## PR Info  - Closes #3248  ## Bug Fixes  - [x] On Postgres, an `ActiveEnum` with a mixed-case `enum_name` (e.g. `"Platform"`) can now be used with `Schema::create_table_from_entity` / `SchemaBuilder::apply`.  `CREATE TYPE` quotes the enum name (`CREATE TYPE "Platform" ...`), but `column_def_from_entity_column` turned the enum into a bare `ColumnType::Custom(name)`, which sea-query writes without quotes. Postgres then folds `Platform` to `platform` and `CREATE TABLE` fails with `type "platform" does not exist`.  The column type is now quoted when the name is not a plain lowercase identifier:  ```sql -- before CREATE TABLE "User" ( ..., "platform" Platform NOT NULL ) -- after CREATE TABLE "User" ( ..., "platform" "Platform" NOT NULL ) ```  Lowercase names (`tea`, `plain_kind`, ...) are written exactly as before, so the existing Postgres schema tests that compare against `ColumnDef::enumeration(...)` are unaffected. Names that already contain `"` are left alone. The same change is mirrored in `sea-orm-sync`.  ## Tests  - New unit test `test_create_table_from_entity_quotes_mixed_case_postgres_enum` checks the `CREATE TYPE` and `CREATE TABLE` output for a mixed-case and a lowercase enum (it fails without the fix). - `cargo test --lib` (258 passed) and `cargo test --lib schema::entity` in `sea-orm-sync`; `cargo clippy --lib` and rustfmt clean for the changed file.  I used an AI assistant while preparing this change and reviewed and tested it myself. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -503,257 +503,110 @@ impl BackgroundWorker<DownloadWorkerArgs> for DownloadWorker {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae19417d` (2026-10-06)
-**Commit Message**: Run SQLite migrations in transactions by default
+### Incident Patch 1: `c5dffaa1` (2026-10-30)
+**Commit Message**: Stop converting PostgreSQL enums to custom types
 
-**File**: `.github/workflows/rust.yml` (modified, +1/-0)
+**File**: `sea-orm-sync/src/schema/entity.rs` (modified, +22/-3)
 ```diff
-@@ -344,6 +344,7 @@ jobs:
-       - run: cargo test --test '*' --features tests-features,sqlx-sqlite,runtime-${{ matrix.runtime }}
-       - run: cargo test --manifest-path sea-orm-migration/Cargo.toml --test '*' --features sqlx-sqlite,runtime-${{ matrix.runtime }} --no-run
-       - run: cargo test --manifest-path sea-orm-migration/Cargo.toml --test '*' --features sqlx-sqlite,runtime-${{ matrix.runtime }}
-+      - run: cargo test --manifest-path sea-orm-migration/Cargo.toml --test '*' --features sqlx-sqlite,runtime-${{ matrix.runtime }},feat-sqlite-transactional-migrations
- 
-   rusqlite:
-     name: rusqlite
-```
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
- 
- - Support invoking `sea-orm-cli` as a Cargo subcommand (`cargo sea generate entity`, `cargo sea migrate`) https://github.com/SeaQL/sea-orm/pull/3187
- 
-+- Add the opt-in `feat-sqlite-transactional-migrations` feature to `sea-orm-migration` to run SQLite migrations in transactions by default
-+
- ### Enhancements
- 
- - Use streaming collection by default for `.all()`, pagination, and cursor queries on SQLx backends https://github.com/SeaQL/sea-orm/pull/3215
-```
-
-**File**: `sea-orm-migration/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -45,6 +45,7 @@ tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
- cli = ["clap", "dotenvy", "sea-orm-cli/cli"]
- default = ["cli"]
- entity-registry = ["sea-orm/entity-registry"]
-+feat-sqlite-transactional-migrations = []
- runtime-async-std = [
-     "sea-orm/runtime-async-std",
-     "sea-schema/runtime-async-std",
-```
-
-**File**: `sea-orm-migration/src/lib.rs` (modified, +2/-1)
-```diff
-@@ -34,7 +34,8 @@ pub trait MigrationTrait: MigrationName + Send + Sync {
- 
-     /// Control whether this migration runs inside a transaction.
-     ///
--    /// - `None` (default): follow backend convention (Postgres = transaction, MySQL/SQLite = no transaction)
-+    /// - `None` (default): use a transaction on Postgres, and on SQLite when
-+    ///   `feat-sqlite-transactional-migrations` is enabled
-     /// - `Some(true)`: force wrapping in a transaction on any backend
-     /// - `Some(false)`: disable automatic transaction wrapping (use `manager.begin()` for manual control)
-     fn use_transaction(&self) -> Option<bool> {
-```
-
-**File**: `sea-orm-migration/src/migrator/exec.rs` (modified, +5/-1)
-```diff
-@@ -200,7 +200,11 @@ async fn drop_everything_impl<C: ConnectionTrait>(db: &C) -> Result<(), DbErr> {
- fn should_use_transaction(migration: &dyn crate::MigrationTrait, backend: DbBackend) -> bool {
-     match migration.use_transaction() {
-         Some(v) => v,
--        None => backend == DbBackend::Postgres,
-+        None => match backend {
-+            DbBackend::Postgres => true,
-+            DbBackend::Sqlite => cfg!(feature = "feat-sqlite-transactional-migrations"),
-+            _ => false,
-+        },
-     }
- }
- 
-```
-
-**File**: `sea-orm-migration/tests/common/migration/m20250101_000001_create_test_table.rs` (modified, +5/-11)
-```diff
-@@ -1,9 +1,9 @@
- use sea_orm_migration::prelude::*;
- use sea_orm_migration::schema::*;
--use sea_orm_migration::sea_orm::DbBackend;
- 
- pub struct Migration {
-     pub use_transaction: Option<bool>,
-+    pub expect_transaction: bool,
-     pub should_fail: bool,
- }
- 
-@@ -20,13 +20,10 @@ impl MigrationTrait for Migration {
+@@ -241,13 +241,12 @@ where
+ {
+     let orm_column_def = column.def();
+     let types = match &orm_column_def.col_type {
+-        ColumnType::Enum { name, variants } => match backend {
++        ColumnType::Enum { variants, .. } => match backend {
+             DbBackend::MySql => {
+                 let variants: Vec<String> = variants.iter().map(|v| v.to_string()).collect();
+                 ColumnType::custom(format!("ENUM('{}')", variants.join("', '")))
+             }
+-            DbBackend::Postgres => ColumnType::Custom(name.clone()),
+-            DbBackend::Sqlite => orm_column_def.col_type,
++            DbBackend::Postgres | DbBackend::Sqlite => orm_column_def.col_type,
+         },
+         _ => orm_column_def.col_type,
+     };
+@@ -332,6 +331,26 @@ mod tests {
+         }
      }
  
-     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
--        let expect_txn = self
--            .use_transaction
--            .unwrap_or(manager.get_database_backend() == DbBackend::Postgres);
-         assert_eq!(
-             manager.get_connection().is_transaction(),
--            expect_txn,
--            "up: expected is_transaction() = {expect_txn}"
-+            self.expect_transaction,
-+            "up: unexpected transaction state"
-         );
- 
-         manager
-@@ -47,13 +44,10 @@ impl MigrationTrait for Migration {
-     }
- 
-     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
--        let expect_txn = self
--            .use_transaction
--            .unwrap_or(manager.get_database_backend() == DbBackend::Postgres);
-         assert_eq!(
-             manager.get_connection().is_transaction(),
--            expect_txn,
--            "down: expected is_transaction() = {expect_txn}"
-+            self.expect_transaction,
-+            "down: unexpected transaction state"
-         );
- 
-         manager
++    #[test]
++    fn postgres_enum_columns_preserve_their_definition() {
++        let schema = Schema::new(DbBackend::Postgres);
++        let column = schema.get_column_def::<lunch_set::Entity>(lunch_set::Column::Tea);
++
++        assert_eq!(
++            column.get_column_type(),
++            Some(&ColumnType::Enum {
++                name: "tea".into(),
++                variants: vec!["EverydayTea".into(), "BreakfastTea".into()],
++            })
++        );
++        assert_eq!(
++            schema
++                .create_table_from_entity(lunch_set::Entity)
++                .to_string(PostgresQueryBuilder),
++            r#"CREATE TABLE "lunch_set" ( "id" integer GENERATED BY DEFAULT AS IDENTITY NOT NULL PRIMARY KEY, "name" varchar NOT NULL, "tea" tea NOT NULL )"#
++        );
++    }
++
+     fn get_cake_filling_price_stmt() -> TableCreateStatement {
+         Table::create()
+             .col(
 ```
 
-**File**: `sea-orm-migration/tests/common/migrator/transaction_test.rs` (modified, +2/-0)
+**File**: `src/schema/entity.rs` (modified, +22/-3)
 ```diff
-@@ -3,6 +3,7 @@ use sea_orm_migration::{MigratorTraitSelf, prelude::*};
- 
- pub struct Migrator {
-     pub use_transaction: Option<bool>,
-+    pub expect_transaction: bool,
-     pub should_fail: bool,
- }
- 
-@@ -11,6 +12,7 @@ impl MigratorTraitSelf for Migrator {
-     fn migrations(&self) -> Vec<Box<dyn MigrationTrait>> {
-         vec![Box::new(m20250101_000001_create_test_table::Migration {
-             use_transaction: self.use_transaction,
-+            expect_transaction: self.expect_transaction,
-             should_fail: self.should_fail,
-         })]
+@@ -241,13 +241,12 @@ where
+ {
+     let orm_column_def = column.def();
+     let types = match &orm_column_def.col_type {
+-        ColumnType::Enum { name, variants } => match backend {
++        ColumnType::Enum { variants, .. } => match backend {
+             DbBackend::MySql => {
+                 let variants: Vec<String> = variants.iter().map(|v| v.to_string()).collect();
+                 ColumnType::custom(format!("ENUM('{}')", variants.join("', '")))
+             }
+-            DbBackend::Postgres => ColumnType::Custom(name.clone()),
+-            DbBackend::Sqlite => orm_column_def.col_type,
++            DbBackend::Postgres | DbBackend::Sqlite => orm_column_def.col_type,
+         },
+         _ => orm_column_def.col_type,
+     };
+@@ -332,6 +331,26 @@ mod tests {
+         }
      }
-```
-
-**File**: `sea-orm-migration/tests/main.rs` (modified, +24/-5)
-```diff
-@@ -241,10 +241,16 @@ where
-     assert!(!manager.has_table("cake").await?);
-     assert!(!manager.has_table("fruit").await?);
  
--    // Tests rolling back a failing migration on Postgres.
-+    let uses_transactions_by_default = match db.get_database_backend() {
-+        DbBackend::Postgres => true,
-+        DbBackend::Sqlite => cfg!(feature = "feat-sqlite-transactional-migrations"),
-+        _ => false,
-+    };
++    #[test]
++    fn postgres_enum_columns_preserve_their_definition() {
++        let schema = Schema::new(DbBackend::Postgres);
++        let column = schema.get_column_def::<lunch_set::Entity>(lunch_set::Column::Tea);
 +
-+    // Tests rolling back a failing migration in a transaction.
-     // With per-migration transactions, only the failing migration is rolled back;
-     // earlier migrations that committed successfully are preserved.
--    if matches!(db.get_database_backend(), DbBackend::Postgres) {
-+    if uses_transactions_by_default {
-         println!("\nRoll back changes when encounter errors");
- 
-         // Set a flag to throw error inside `m20230109_000001_seed_cake_table.rs`
-@@ -269,6 +275,8 @@ where
-         assert!(manager.has_table("cake").await?);
-         assert!(manager.has_table("fruit").await?);
- 
-+        assert_eq!(migrator.get_applied_migrations(db).await?.len(), 5);
++        assert_eq!(
++            column.get_column_type(),
++            Some(&ColumnType::Enum {
++                name: "tea".into(),
++                variants: vec!["EverydayTea".into(), "BreakfastTea".into()],
++            })
++        );
++        assert_eq!(
++            schema
++                .create_table_from_entity(lunch_set::Entity)
++                .to_string(PostgresQueryBuilder),
++            r#"CREATE TABLE "lunch_set" ( "id" integer GENERATED BY DEFAULT AS IDENTITY NOT NULL PRIMARY KEY, "name" varchar NOT NULL, "tea" tea NOT NULL )"#
++        );
++    }
 +
-         // Unset the flag
-         unsafe {
-             std::env::remove_var("ABORT_MIGRATION");
-@@ -298,12 +306,12 @@ where
-     assert!(manager.has_column("cake", "name").await?);
-     assert!(manager.has_column("fruit", "cake_id").await?);
- 
--    // Tests rolling back a failing migration-down on Postgres.
-+    // Tests rolling back a failing down migration in a transaction.
-     // With per-migration transactions, rollbacks happen one at a time in reverse.
-     // Migrations 6-2 roll back and commit successfully. Migration 1 (drops cake
-     // then ABORTs) fails, so its DROP is restored. But migration 2's DROP of
-     // the fruit table already committed.
--    if matches!(db.get_database_backend(), DbBackend::Postgres) {
-+    if uses_transactions_by_default {
-         println!("\nRoll back changes when encounter errors");
- 
-         // Set a flag to throw error inside `m20220118_000001_create_cake_table.rs`
-@@ -328,6 +336,8 @@ where
-         assert!(manager.has_table("cake").await?);
-         assert!(!manager.has_table("fruit").await?);
- 
-+        assert_eq!(migrator.get_applied_migrations(db).await?.len(), 1);
-+
-         // Unset the flag
-         unsafe {
-             std::env::remove_var("ABORT_MIGRATION");
-@@ -374,11 +384,16 @@ async fn run_transaction_test(url: &str, db_name: &str, schema: &str) -> Result<
-     let backend = db.get_database_backend();
-     let manager = SchemaManager::new(db);
- 
--    // use_transaction = None: Postgres wraps by default, others don't.
-+    // use_transaction = None: follows the backend default.
-     // The assertion happens inside the migration's up()/down() body.
-     println!("\nTransaction test: use_transaction = None");
-     let m = transaction_test::Migrator {
-         use_transaction: None,
-+        expect_transaction: match backend {
-+            DbBackend::Postgres => true,
-+            DbBackend::Sqlite => cfg!(feature = "feat-sqlite-transactional-migrations"),
-+            _ => false,
-+        },
-         should_fail: false,
-     };
-     m.up(db, None).await?;
-@@ -391,6 +406,7 @@ async fn run_transaction_test(url: &str, db_name: &str, schema: &str) -> Result<
-     println!("\nTransaction test: use_transaction = Some(true)");
-     let m = transaction_test::Migrator {
-         use_transaction: Some(true),
-+        expect_transaction: true,
-         should_fail: false,
-     };
-     m.up(db, None).await?;
-@@ -403,6 +419,7 @@ async fn run_transaction_test(url: &str, db_name: &str, schema: &str) -> Result<
-     println!("\nTransaction test: use_transaction = Some(false)");
-     let m = transaction_test::Migrator {
-         use_transaction: Some(false),
-+        expect_transaction: false,
-         should_fail: false,
-     };
-     m.up(db, None).await?;
-@@ -415,6 +432,7 @@ async fn run_transaction_test(url: &str, db_name: &str, schema: &str) -> Result<
-     println!("\nTransaction test: failure with transaction");
-     let m = transaction_test::Migrator {
-         use_transaction: Some(true),
-+        expect_transaction: true,
-         should_fail: true,
-     };
-     assert!(m.up(db, None).await.is_err());
-@@ -430,6 +448,7 @@ async fn run_transaction_test(url: &str, db_name: &str, schema: &str) -> Result<
-     println!("\nTransaction test: failure without transaction");
-     let m = transaction_test::Migrator {
-         use_transaction: Some(false),
-+        expect_transaction: false,
-         should_fail: true,
-     };
-     assert!(m.up(db, None).await.is_err());
+     fn get_cake_filling_price_stmt() -> TableCreateStatement {
+         Table::create()
+             .col(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3250** (2026-10-30): Stop converting PostgreSQL enums to custom types (@Huliiiiii)
+- **PR #3249** (closed): Quote mixed-case Postgres enum names in CREATE TABLE (@sarankumar1325)
 - **PR #3243** (2026-10-25): Update smol for testing (@Huliiiiii)
 - **PR #3242** (2026-10-25): Avoid allocating the prefixed column name in TryGetable::try_get (@patrick-immometrica)
 - **PR #3241** (2026-10-25): Use a HashSet to check existing junction links in establish_links (@patrick-immometrica)
 - **PR #3240** (2026-10-25): Move loaded models out instead of cloning them in the loader (@patrick-immometrica)
-- **PR #3233** (2026-10-12): Support `rename` in `DeriveIntoActiveModel` (@Huliiiiii)
-- **PR #3229** (2026-10-10): Ignore `clippy::unused-async-trait-impl` warnings in `EntityLoader` (@kapalla)
 
 ---
 
@@ -773,28 +626,51 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Run SQLite migrations in transactions by default
+## X. Stop converting PostgreSQL enums to custom types
 
 **RULE**:
-When implementing operations in `.github/workflows/rust.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeaQL/sea-orm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sea-orm-sync/src/schema/entity.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeaQL/sea-orm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae19417d`: Run SQLite migrations in transactions by default. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c5dffaa1`: Stop converting PostgreSQL enums to custom types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sea-orm-sync/src/schema/entity.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - run: cargo test --manifest-path sea-orm-migration/Cargo.toml --test '*' --features sqlx-sqlite,runtime-${{ matrix.runtime }},feat-sqlite-transactional-migrations
+        ColumnType::Enum { variants, .. } => match backend {
+            DbBackend::Postgres | DbBackend::Sqlite => orm_column_def.col_type,
+    #[test]
+    fn postgres_enum_columns_preserve_their_definition() {
+        let schema = Schema::new(DbBackend::Postgres);
+        let column = schema.get_column_def::<lunch_set::Entity>(lunch_set::Column::Tea);
+
+        assert_eq!(
+            column.get_column_type(),
+            Some(&ColumnType::Enum {
+                name: "tea".into(),
+                variants: vec!["EverydayTea".into(), "BreakfastTea".into()],
+            })
+        );
+        assert_eq!(
+            schema
+                .create_table_from_entity(lunch_set::Entity)
+                .to_string(PostgresQueryBuilder),
+            r#"CREATE TABLE "lunch_set" ( "id" integer GENERATED BY DEFAULT AS IDENTITY NOT NULL PRIMARY KEY, "name" varchar NOT NULL, "tea" tea NOT NULL )"#
+        );
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        ColumnType::Enum { name, variants } => match backend {
+            DbBackend::Postgres => ColumnType::Custom(name.clone()),
+            DbBackend::Sqlite => orm_column_def.col_type,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae19417d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c5dffaa1` are properly handled with clean fallback behavior.

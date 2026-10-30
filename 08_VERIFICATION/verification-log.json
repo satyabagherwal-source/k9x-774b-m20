@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-CA9Z",
-    "timestamp": "2026-10-28T06:52:52.103Z",
-    "repository": "crate/crate",
-    "learningId": "learn-github-crate-crate",
-    "contentHash": "9dc98a70b57751aac921ab5ca7e59fa152a2c9b1002d9bfc2cc6b9fc39a95ab2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-C9ZS",
-    "timestamp": "2026-10-28T07:20:51.352Z",
-    "repository": "Ontos-AI/knowhere",
-    "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "bd8dbcf028e3e669538ed8664b388c3456844d0a9bd51f073671b74eab62601b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-E47J",
     "timestamp": "2026-10-28T07:22:17.167Z",
     "repository": "1jehuang/jcode",
@@ -7490,6 +7460,36 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "c1cb506289e2ba64f236f88a03a6cb07555b31cfcd3a01e6a2d757f1ec7659e0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-EYNN",
+    "timestamp": "2026-10-30T15:22:10.547Z",
+    "repository": "SeaQL/sea-orm",
+    "learningId": "learn-github-seaql-sea-orm",
+    "contentHash": "8ec576a7f0c3e0d1cd8654b8f8958bfeed28505a1327c909140c30ca667b18e3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-JHIE",
+    "timestamp": "2026-10-30T15:25:41.606Z",
+    "repository": "superhighfives/pika",
+    "learningId": "learn-github-superhighfives-pika",
+    "contentHash": "afa835e5fb5f1c44852fcb8bd56687e973b3e3ba25d4d64a742758471df6dbd1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

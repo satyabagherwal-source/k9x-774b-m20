@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/superhighfives-pika-learnings.md`  
 > **Source**: github ([https://github.com/superhighfives/pika](https://github.com/superhighfives/pika))  
-> **Source Version**: `48edc688`  
+> **Source Version**: `1e16dfd2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:29:01.169Z  
+> **Timestamp**: 2026-10-30T15:25:40.866Z  
 > **Learning ID**: `learn-github-superhighfives-pika`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/superhighfives-pika-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/superhighfives/pika](https://github.com/superhighfives/pika))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:29:00.657Z  
+> **Harvest Timestamp**: 2026-10-30T15:21:59.238Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source colour picker app for macOS
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2600 stars
+- **Stars / Engagement**: 2604 stars
 
 ---
 
@@ -1453,94 +1453,37 @@ enum PikaText {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b52461c2` (2026-10-26)
-**Commit Message**: Bump version to 2.0.2 (build 111/112)
+### Incident Patch 1: `1e16dfd2` (2026-10-26)
+**Commit Message**: CI: skip the Claude review on PRs from forks (#325)
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+GitHub doesn't pass secrets to fork PR runs, so the review failed at the
+app token step on every one (#324). Matches the guard in tests.yml.
 
-**File**: `Pika.xcodeproj/project.pbxproj` (modified, +8/-8)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/claude-code-review.yml` (modified, +5/-0)
 ```diff
-@@ -1397,7 +1397,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 110;
-+				CURRENT_PROJECT_VERSION = 111;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-@@ -1411,7 +1411,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 2.0.2-beta1;
-+				MARKETING_VERSION = 2.0.2;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG TARGET_SPARKLE";
-@@ -1429,7 +1429,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 110;
-+				CURRENT_PROJECT_VERSION = 111;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-@@ -1443,7 +1443,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 2.0.2-beta1;
-+				MARKETING_VERSION = 2.0.2;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = TARGET_SPARKLE;
-@@ -1462,7 +1462,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 109;
-+				CURRENT_PROJECT_VERSION = 112;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-@@ -1476,7 +1476,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 2.0.2-beta1;
-+				MARKETING_VERSION = 2.0.2;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG TARGET_MAS";
-@@ -1496,7 +1496,7 @@
- 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
- 				CODE_SIGN_STYLE = Automatic;
- 				COMBINE_HIDPI_IMAGES = YES;
--				CURRENT_PROJECT_VERSION = 109;
-+				CURRENT_PROJECT_VERSION = 112;
- 				DEAD_CODE_STRIPPING = YES;
- 				DEVELOPMENT_ASSET_PATHS = "\"Pika/Preview Content\"";
- 				DEVELOPMENT_TEAM = TGHU37N6EX;
-@@ -1510,7 +1510,7 @@
- 					"@executable_path/../Frameworks",
- 				);
- 				MACOSX_DEPLOYMENT_TARGET = 14.0;
--				MARKETING_VERSION = 2.0.2-beta1;
-+				MARKETING_VERSION = 2.0.2;
- 				PRODUCT_BUNDLE_IDENTIFIER = com.superhighfives.Pika;
- 				PRODUCT_NAME = Pika;
- 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = TARGET_MAS;
+@@ -24,6 +24,11 @@ jobs:
+     # posting a review. tests.yml already builds and runs the suite (~90s), so
+     # the review doesn't need to. Reading-only, it runs fast on the default
+     # ubuntu runner and posts every time.
++    #
++    # Skipped for PRs from forks, like tests.yml: GitHub doesn't pass secrets to
++    # those runs, so the app token step fails before the review starts. Merge a
++    # fork PR into a branch here to have that branch's PR reviewed.
++    if: github.event.pull_request.head.repo.full_name == github.repository
+     uses: superhighfives/control-room/.github/workflows/review.yml@main
+     secrets:
+       CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #325** (2026-10-26): CI: skip the Claude review on PRs from forks (@superhighfives)
 - **PR #324** (2026-10-26): Add Persian (fa) localization (@aliafshany)
 - **PR #323** (2026-10-22): Settings: show what CSS copy gives in P3, and say so for Match display (@superhighfives)
 - **PR #322** (2026-10-21): Treat a display profile that's Display P3 in all but name as P3 (@superhighfives)
 - **PR #321** (2026-10-21): Clear history keeps the current colours (@superhighfives)
 - **PR #320** (2026-10-21): Check a Color: its own colour and a cleaner layout; no colour space dropdown on the readout (@superhighfives)
-- **PR #319** (2026-10-26): Pika 2.0.2 (@superhighfives)
 
 ---
 
@@ -1560,42 +1503,32 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump version to 2.0.2 (build 111/112)
+## X. CI: skip the Claude review on PRs from forks (#325)
 
 **RULE**:
-When implementing operations in `Pika.xcodeproj/project.pbxproj`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in superhighfives/pika. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in superhighfives/pika. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b52461c2`: Bump version to 2.0.2 (build 111/112). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1e16dfd2`: CI: skip the Claude review on PRs from forks (#325). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Pika.xcodeproj/project.pbxproj`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-				CURRENT_PROJECT_VERSION = 111;
-				MARKETING_VERSION = 2.0.2;
-				CURRENT_PROJECT_VERSION = 111;
-				MARKETING_VERSION = 2.0.2;
-				CURRENT_PROJECT_VERSION = 112;
-				MARKETING_VERSION = 2.0.2;
-				CURRENT_PROJECT_VERSION = 112;
-				MARKETING_VERSION = 2.0.2;
+    #
+    # Skipped for PRs from forks, like tests.yml: GitHub doesn't pass secrets to
+    # those runs, so the app token step fails before the review starts. Merge a
+    # fork PR into a branch here to have that branch's PR reviewed.
+    if: github.event.pull_request.head.repo.full_name == github.repository
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-				CURRENT_PROJECT_VERSION = 110;
-				MARKETING_VERSION = 2.0.2-beta1;
-				CURRENT_PROJECT_VERSION = 110;
-				MARKETING_VERSION = 2.0.2-beta1;
-				CURRENT_PROJECT_VERSION = 109;
-				MARKETING_VERSION = 2.0.2-beta1;
-				CURRENT_PROJECT_VERSION = 109;
-				MARKETING_VERSION = 2.0.2-beta1;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b52461c2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1e16dfd2` are properly handled with clean fallback behavior.

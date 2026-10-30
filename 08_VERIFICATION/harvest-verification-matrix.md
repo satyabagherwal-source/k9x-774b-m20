@@ -6222,3 +6222,5 @@
 | `CYCLE-20261030-5PVN` | `2026-10-30T15:14:59.267Z` | `axios/axios` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5783` | Yes (`19231c36...`) |
 | `CYCLE-20261030-5QOJ` | `2026-10-30T15:15:00.307Z` | `StikDebug/StikDebug` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5784` | Yes (`10a954c6...`) |
 | `CYCLE-20261030-5VM8` | `2026-10-30T15:15:06.704Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5785` | Yes (`c1cb5062...`) |
+| `CYCLE-20261030-EYNN` | `2026-10-30T15:22:10.547Z` | `SeaQL/sea-orm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5786` | Yes (`8ec576a7...`) |
+| `CYCLE-20261030-JHIE` | `2026-10-30T15:25:41.606Z` | `superhighfives/pika` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5787` | Yes (`afa835e5...`) |

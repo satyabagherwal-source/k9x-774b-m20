@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T15:15:09.245Z",
-    "lastVerified": "2026-10-30T15:15:09.245Z",
+    "lastChecked": "2026-10-30T15:25:44.155Z",
+    "lastVerified": "2026-10-30T15:25:44.155Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -244,8 +244,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T14:33:33.759Z",
-    "lastVerified": "2026-10-30T14:33:33.759Z",
+    "lastChecked": "2026-10-30T15:22:04.947Z",
+    "lastVerified": "2026-10-30T15:22:04.947Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1546,11 +1546,21 @@
     "lastVerified": "2026-10-30T14:33:28.632Z"
   },
   "seaql-sea-orm": {
-    "name": "sea-orm",
+    "name": "SeaQL/sea-orm",
     "officialUrl": "https://github.com/SeaQL/sea-orm",
-    "lastChecked": "2026-10-28T22:39:37.994Z",
-    "revisionIdentifier": "ae19417d",
-    "lastVerified": "2026-10-28T22:39:37.994Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-30T15:22:08.561Z",
+    "lastVerified": "2026-10-30T15:22:08.561Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-seaql-sea-orm",
+    "contentHash": "8ec576a7f0c3e0d1cd8654b8f8958bfeed28505a1327c909140c30ca667b18e3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "watchexec-watchexec": {
     "name": "watchexec",
@@ -1863,8 +1873,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T07:46:02.506Z",
-    "lastVerified": "2026-10-30T07:46:02.506Z",
+    "lastChecked": "2026-10-30T15:21:59.938Z",
+    "lastVerified": "2026-10-30T15:21:59.938Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -2584,9 +2594,9 @@
   "easegress-io-easegress": {
     "name": "easegress",
     "officialUrl": "https://github.com/easegress-io/easegress",
-    "lastChecked": "2026-10-28T23:43:01.731Z",
+    "lastChecked": "2026-10-30T15:21:57.378Z",
     "revisionIdentifier": "48bacc2e",
-    "lastVerified": "2026-10-28T23:43:01.731Z"
+    "lastVerified": "2026-10-30T15:21:57.378Z"
   },
   "ontos-ai-knowhere": {
     "name": "Ontos-AI/knowhere",
@@ -6279,9 +6289,9 @@
   "pauljuliusmartinez-jless": {
     "name": "jless",
     "officialUrl": "https://github.com/PaulJuliusMartinez/jless",
-    "lastChecked": "2026-10-28T18:04:31.175Z",
+    "lastChecked": "2026-10-30T15:21:49.848Z",
     "revisionIdentifier": "e6cdef71",
-    "lastVerified": "2026-10-28T18:04:31.175Z"
+    "lastVerified": "2026-10-30T15:21:49.848Z"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
     "name": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -10241,6 +10251,30 @@
     "contentHash": "10a954c64d7dd3a69ad0985fe0738805ad0869b6f9b8974b32281f7c3959586a",
     "promotedRulesCount": 1,
     "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "psf-requests": {
+    "name": "requests",
+    "officialUrl": "https://github.com/psf/requests",
+    "lastChecked": "2026-10-30T15:21:52.386Z",
+    "revisionIdentifier": "3c7baaa0",
+    "lastVerified": "2026-10-30T15:21:52.386Z"
+  },
+  "superhighfives-pika": {
+    "name": "superhighfives/pika",
+    "officialUrl": "https://github.com/superhighfives/pika",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-30T15:21:59.238Z",
+    "lastVerified": "2026-10-30T15:21:59.238Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-superhighfives-pika",
+    "contentHash": "afa835e5fb5f1c44852fcb8bd56687e973b3e3ba25d4d64a742758471df6dbd1",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

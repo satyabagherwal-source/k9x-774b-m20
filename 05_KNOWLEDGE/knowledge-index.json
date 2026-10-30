@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T15:15:06.612Z",
+  "last_updated": "2026-10-30T15:25:41.526Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -48581,8 +48581,8 @@
       "slug": "seaql-sea-orm",
       "platform": "github",
       "source_url": "https://github.com/SeaQL/sea-orm",
-      "source_version": "ae19417d",
-      "content_hash": "89eb108f427f8e95e06fbc5b13a196f6fc62d3615f28be538afc1eaeae032677",
+      "source_version": "c5dffaa1",
+      "content_hash": "8ec576a7f0c3e0d1cd8654b8f8958bfeed28505a1327c909140c30ca667b18e3",
       "dossier_path": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seaql-sea-orm-learnings.md",
       "promoted_rules": [
@@ -48610,6 +48610,11 @@
           "number": 4526,
           "title": "Run SQLite migrations in transactions by default",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5786,
+          "title": "Stop converting PostgreSQL enums to custom types",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -48617,7 +48622,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T01:37:27.469Z",
+      "verified_at": "2026-10-30T15:22:10.442Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51560,8 +51565,8 @@
       "slug": "superhighfives-pika",
       "platform": "github",
       "source_url": "https://github.com/superhighfives/pika",
-      "source_version": "48edc688",
-      "content_hash": "eb85ffa9bafae230442a9b076186c756ec070e1fdc89732adcfdf66e78cf682d",
+      "source_version": "1e16dfd2",
+      "content_hash": "afa835e5fb5f1c44852fcb8bd56687e973b3e3ba25d4d64a742758471df6dbd1",
       "dossier_path": "07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/superhighfives-pika-learnings.md",
       "promoted_rules": [
@@ -51574,6 +51579,11 @@
           "number": 4608,
           "title": "Bump version to 2.0.2 (build 111/112)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5787,
+          "title": "CI: skip the Claude review on PRs from forks (#325)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51581,7 +51591,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T13:29:01.617Z",
+      "verified_at": "2026-10-30T15:25:41.503Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153925,6 +153935,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T15:15:06.596Z"
+    },
+    "rule-5786": {
+      "learning_id": "rule-5786",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5786,
+      "title": "Stop converting PostgreSQL enums to custom types",
+      "source_url": "https://github.com/SeaQL/sea-orm",
+      "source_version": "c5dffaa1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T15:22:10.442Z"
+    },
+    "rule-5787": {
+      "learning_id": "rule-5787",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5787,
+      "title": "CI: skip the Claude review on PRs from forks (#325)",
+      "source_url": "https://github.com/superhighfives/pika",
+      "source_version": "1e16dfd2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T15:25:41.503Z"
     }
   },
   "aliases": {

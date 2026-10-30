@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T15:15:06.711Z",
-  "total_cycles_completed": 6199,
-  "total_learnings_persisted": 6199,
-  "total_rules_promoted": 5755,
+  "last_updated": "2026-10-30T15:25:41.615Z",
+  "total_cycles_completed": 6201,
+  "total_learnings_persisted": 6201,
+  "total_rules_promoted": 5757,
   "history": [
-    {
-      "timestamp": "2026-10-29T02:07:19.233Z",
-      "repository": "cachix/devenv",
-      "learningId": "learn-github-cachix-devenv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T02:07:31.202Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T11:01:48.003Z",
       "repository": "fabio-rovai/open-ontologies",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T15:15:06.711Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T15:22:10.560Z",
+      "repository": "SeaQL/sea-orm",
+      "learningId": "learn-github-seaql-sea-orm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T15:25:41.615Z",
+      "repository": "superhighfives/pika",
+      "learningId": "learn-github-superhighfives-pika",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
