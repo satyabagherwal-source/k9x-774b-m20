@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T17:14:41.347Z",
+  "last_updated": "2026-10-30T17:21:09.148Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "e46e7ba6eff98acd1d401d4c7c736ab942375b848a209ce0df0a116db8863f3c",
-      "verified_at": "2026-10-30T11:28:20.340Z",
+      "content_hash": "f381216bdace17db07c372ed1171fce2ebd025f8d90f6bd9024cc5fca9856c39",
+      "verified_at": "2026-10-30T17:21:09.148Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T11:28:20.340Z"
+      "last_updated": "2026-10-30T17:21:09.148Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "8595aef285f42f86b74a33918ae736c61c3c2b3efa106d1f7c8bc3027db8b882",
-      "verified_at": "2026-10-29T01:24:49.162Z",
+      "content_hash": "36538339e0938a4de261cb406eac0eec2c969c65554894128b8dd5a3ecc353ee",
+      "verified_at": "2026-10-30T17:21:02.009Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T01:24:49.162Z"
+      "last_updated": "2026-10-30T17:21:02.009Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",
@@ -14631,14 +14631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iziz-libphonenumber-ios",
-      "content_hash": "db38d84dd89676d95fb129ce514dcf8f484a46ee0d45569db43c6067c71856af",
-      "verified_at": "2026-10-20T00:44:04.885Z",
+      "content_hash": "9ce68ff66914374646906bcfa27d2c400fd1bd517f615f28d88a47bc30fffd6f",
+      "verified_at": "2026-10-30T17:20:59.957Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-20T00:44:04.885Z"
+      "last_updated": "2026-10-30T17:20:59.957Z"
     },
     "RDFLib/rdflib": {
       "repository": "RDFLib/rdflib",
@@ -17414,6 +17414,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-30T16:22:35.424Z"
+    },
+    "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM": {
+      "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+      "content_hash": "5f851edd597584da858531565590715c19432ee1575f8fd934ade1f5e3c65fe5",
+      "verified_at": "2026-10-30T17:21:00.231Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-30T17:21:00.231Z"
     }
   },
   "repos": {

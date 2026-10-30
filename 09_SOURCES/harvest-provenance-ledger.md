@@ -6255,3 +6255,7 @@ Every entry in this ledger must capture:
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `95cd5f20` | Multi-dimensional audit evidence | 2026-10-30T17:06:08.847Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `1bb45751` | Multi-dimensional audit evidence | 2026-10-30T17:06:08.867Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `ae198feb` | Multi-dimensional audit evidence | 2026-10-30T17:14:41.340Z |
+| `learn-github-iziz-libphonenumber-ios` | `https://github.com/iziz/libPhoneNumber-iOS` | `15df36de` | Multi-dimensional audit evidence | 2026-10-30T17:20:59.950Z |
+| `learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism` | `https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | `hf-oliviar` | Multi-dimensional audit evidence | 2026-10-30T17:21:00.225Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `a4447108` | Multi-dimensional audit evidence | 2026-10-30T17:21:02.003Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `20ef3c68` | Multi-dimensional audit evidence | 2026-10-30T17:21:09.142Z |

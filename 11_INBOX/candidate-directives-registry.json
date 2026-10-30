@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T16:51:23.175Z",
+  "last_updated": "2026-10-30T17:20:59.954Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3357,6 +3357,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-github-jhspetersson-fselect"
+    },
+    {
+      "id": "CD-NRQQ",
+      "directive_title": "release): merge metadata update for 2.1.3",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "iziz/libPhoneNumber-iOS",
+      "source_commit": "15df36de",
+      "date_staged": "2026-10-30",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-iziz-libphonenumber-ios"
     }
   ]
 }

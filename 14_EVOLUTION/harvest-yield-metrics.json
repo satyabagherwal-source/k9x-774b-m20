@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T17:14:41.344Z",
-  "total_cycles_completed": 6223,
-  "total_learnings_persisted": 6223,
-  "total_rules_promoted": 5777,
+  "last_updated": "2026-10-30T17:21:09.146Z",
+  "total_cycles_completed": 6227,
+  "total_learnings_persisted": 6227,
+  "total_rules_promoted": 5781,
   "history": [
-    {
-      "timestamp": "2026-10-29T16:48:26.044Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T16:51:00.660Z",
-      "repository": "Jakeschincariol/arena-skill",
-      "learningId": "learn-github-jakeschincariol-arena-skill",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T16:51:23.868Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T17:03:35.274Z",
-      "repository": "modelcontextprotocol/kotlin-sdk",
-      "learningId": "learn-github-modelcontextprotocol-kotlin-sdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T17:03:38.028Z",
       "repository": "zarf-dev/zarf",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-30T17:14:41.344Z",
       "repository": "paradedb/paradedb",
       "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T17:20:59.955Z",
+      "repository": "iziz/libPhoneNumber-iOS",
+      "learningId": "learn-github-iziz-libphonenumber-ios",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T17:21:00.229Z",
+      "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+      "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T17:21:02.007Z",
+      "repository": "kumahq/kuma",
+      "learningId": "learn-github-kumahq-kuma",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T17:21:09.146Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

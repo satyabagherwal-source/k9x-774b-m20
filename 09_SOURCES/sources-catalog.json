@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "43480947",
+    "sourceVersion": "20ef3c68",
     "license": "Apache-2.0",
-    "contentHash": "e46e7ba6eff98acd1d401d4c7c736ab942375b848a209ce0df0a116db8863f3c",
-    "lastHarvestedAt": "2026-10-30T11:28:20.333Z",
+    "contentHash": "f381216bdace17db07c372ed1171fce2ebd025f8d90f6bd9024cc5fca9856c39",
+    "lastHarvestedAt": "2026-10-30T17:21:09.142Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "35fa93a9",
+    "sourceVersion": "a4447108",
     "license": "Apache-2.0",
-    "contentHash": "8595aef285f42f86b74a33918ae736c61c3c2b3efa106d1f7c8bc3027db8b882",
-    "lastHarvestedAt": "2026-10-29T01:24:49.153Z",
+    "contentHash": "36538339e0938a4de261cb406eac0eec2c969c65554894128b8dd5a3ecc353ee",
+    "lastHarvestedAt": "2026-10-30T17:21:02.003Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {
@@ -9723,10 +9723,10 @@
     "repository": "iziz/libPhoneNumber-iOS",
     "platform": "github",
     "sourceUrl": "https://github.com/iziz/libPhoneNumber-iOS",
-    "sourceVersion": "85d5486d",
+    "sourceVersion": "15df36de",
     "license": "Apache-2.0",
-    "contentHash": "db38d84dd89676d95fb129ce514dcf8f484a46ee0d45569db43c6067c71856af",
-    "lastHarvestedAt": "2026-10-20T00:44:04.880Z",
+    "contentHash": "9ce68ff66914374646906bcfa27d2c400fd1bd517f615f28d88a47bc30fffd6f",
+    "lastHarvestedAt": "2026-10-30T17:20:59.950Z",
     "learningId": "learn-github-iziz-libphonenumber-ios"
   },
   "rdflib-rdflib": {
@@ -11578,5 +11578,15 @@
     "contentHash": "c3d803148d7d6a448648038c8109a2ed0d99d36323071a820e809433dcef71c1",
     "lastHarvestedAt": "2026-10-30T16:22:35.414Z",
     "learningId": "learn-github-mobile-next-mobile-mcp"
+  },
+  "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism": {
+    "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+    "sourceVersion": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+    "license": "Open-Source",
+    "contentHash": "5f851edd597584da858531565590715c19432ee1575f8fd934ade1f5e3c65fe5",
+    "lastHarvestedAt": "2026-10-30T17:21:00.225Z",
+    "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism"
   }
 }

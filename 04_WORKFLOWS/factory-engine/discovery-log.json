@@ -19876,5 +19876,17 @@
     "qualityScore": 5727,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-30T16:08:59.048Z"
+  },
+  {
+    "name": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+    "fullName": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+    "url": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM (139 likes, 99353 downloads)",
+    "likes": 139,
+    "downloads": 99353,
+    "qualityScore": 3390,
+    "discoveredAt": "2026-10-30T17:18:34.528Z"
   }
 ]

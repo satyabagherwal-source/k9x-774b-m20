@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T17:14:41.251Z",
-  "total_verified_learnings": 1175,
+  "last_updated": "2026-10-30T17:21:09.086Z",
+  "total_verified_learnings": 1176,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -32034,8 +32034,8 @@
       "slug": "iziz-libphonenumber-ios",
       "platform": "github",
       "source_url": "https://github.com/iziz/libPhoneNumber-iOS",
-      "source_version": "85d5486d",
-      "content_hash": "db38d84dd89676d95fb129ce514dcf8f484a46ee0d45569db43c6067c71856af",
+      "source_version": "15df36de",
+      "content_hash": "9ce68ff66914374646906bcfa27d2c400fd1bd517f615f28d88a47bc30fffd6f",
       "dossier_path": "07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md",
       "promoted_rules": [
@@ -32050,7 +32050,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-20T00:44:04.834Z",
+      "verified_at": "2026-10-30T17:20:59.827Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34889,8 +34889,8 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "35fa93a9",
-      "content_hash": "8595aef285f42f86b74a33918ae736c61c3c2b3efa106d1f7c8bc3027db8b882",
+      "source_version": "a4447108",
+      "content_hash": "36538339e0938a4de261cb406eac0eec2c969c65554894128b8dd5a3ecc353ee",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [
@@ -34928,6 +34928,11 @@
           "number": 5483,
           "title": "ci(pr-comments): require exact maintainer match (#19294)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5810,
+          "title": "ci(actions): run PR CI for pull requests into security/** branches (#19308)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34935,7 +34940,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T01:24:49.053Z",
+      "verified_at": "2026-10-30T17:21:01.942Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41661,8 +41666,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "43480947",
-      "content_hash": "e46e7ba6eff98acd1d401d4c7c736ab942375b848a209ce0df0a116db8863f3c",
+      "source_version": "20ef3c68",
+      "content_hash": "f381216bdace17db07c372ed1171fce2ebd025f8d90f6bd9024cc5fca9856c39",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -41825,6 +41830,11 @@
           "number": 5746,
           "title": "Add optional hints to proposal workflows",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5811,
+          "title": "Require fresh sessions for proposal cycles",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41832,7 +41842,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T11:28:20.224Z",
+      "verified_at": "2026-10-30T17:21:09.074Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154352,6 +154362,100 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T17:14:41.235Z"
+    },
+    "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism": {
+      "learning_id": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+      "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+      "slug": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+      "source_version": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+      "content_hash": "5f851edd597584da858531565590715c19432ee1575f8fd934ade1f5e3c65fe5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5808,
+          "title": "Spectral Separation of Signal and Noise in Weight Merging",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5809,
+          "title": "Geometric Interpolation for Vector Magnitude and Direction",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-30T17:21:00.163Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5808": {
+      "learning_id": "rule-5808",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5808,
+      "title": "Spectral Separation of Signal and Noise in Weight Merging",
+      "source_url": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+      "source_version": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T17:21:00.163Z"
+    },
+    "rule-5809": {
+      "learning_id": "rule-5809",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5809,
+      "title": "Geometric Interpolation for Vector Magnitude and Direction",
+      "source_url": "https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+      "source_version": "hf-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T17:21:00.163Z"
+    },
+    "rule-5810": {
+      "learning_id": "rule-5810",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5810,
+      "title": "ci(actions): run PR CI for pull requests into security/** branches (#19308)",
+      "source_url": "https://github.com/kumahq/kuma",
+      "source_version": "a4447108",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T17:21:01.942Z"
+    },
+    "rule-5811": {
+      "learning_id": "rule-5811",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5811,
+      "title": "Require fresh sessions for proposal cycles",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "20ef3c68",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T17:21:09.074Z"
     }
   },
   "aliases": {

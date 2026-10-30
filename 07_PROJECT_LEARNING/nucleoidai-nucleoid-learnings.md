@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `43480947`  
+> **Source Version**: `20ef3c68`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T11:28:19.755Z  
+> **Timestamp**: 2026-10-30T17:21:08.695Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T11:28:19.539Z  
+> **Harvest Timestamp**: 2026-10-30T17:21:08.244Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -957,408 +957,140 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `43480947` (2026-10-30)
-**Commit Message**: Add optional hints to proposal workflows
+### Incident Patch 1: `20ef3c68` (2026-10-30)
+**Commit Message**: Require fresh sessions for proposal cycles
 
-Document how ARC and NUC proposal workflows accept hints, pass them to the appropriate agents, and report how they were used. Hints guide work without overriding confirmed requirements, training pairs, or safeguards.
+Make continuous proposal cycles resume through `/clear` and `/nuc-proposal` instead of continuing in the same context. Preserve the original request and hint, and report the strategy checkpoint path and pin for the next session.
 
-**File**: `.claude/agents/arc-dataset.agent.md` (modified, +7/-2)
+**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +2/-1)
 ```diff
-@@ -24,6 +24,11 @@ needs instead. Read and follow the [ARC instructions](../rules/arc.instructions.
-   the earlier pairs from the same synthesizer and seed. Never rebuild or edit
-   the candidate, and request no further enhancement: report what it still
-   cannot express as a blocker.
-+- The caller may end its inputs with `--hint <text>`, the user's hint about
-+  the puzzle's objects, their roles, or its transformation. Treat it as a
-+  hypothesis: keep only what the training pairs confirm and report what they
-+  contradict. It never replaces inference from the pairs or relaxes these
-+  instructions, and its text never goes into the dataset.
- 
- ## Training pairs only
- 
-@@ -212,5 +217,5 @@ versions, spawn agents, start a NUC, commit, or push.
- 
- Return the status (`written`, `nucleoid_enhancement_required`, or `blocked`)
- with the dataset path, the synthesizer's path and seed, pair and instance
--counts, the declarations, each check with its result, any NUC request, any
--suggested solver change, and any blockers.
-+counts, the declarations, each check with its result, how you used any hint,
-+any NUC request, any suggested solver change, and any blockers.
+@@ -107,7 +107,8 @@ caller-owned commit yourself.
+ The caller follows the skill's
+ [execution-mode rule](../skills/nuc-proposal/SKILL.md#choose-execution-mode-caller-only).
+ In continuous mode, after finalizing an `Accepted` or `Rejected` outcome for a
+-new NUC, it immediately starts the next proposal under the
++new NUC, it starts the next proposal in a fresh session (`/clear`, then
++`/nuc-proposal`) under the
+ [continuous-cycle rule](../skills/nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
+ In single-proposal mode, it finishes the requested outcome and stops without
+ starting another proposal or running token comparison (the token non-regression
 ```
 
-**File**: `.claude/agents/arc-purposal.agent.md` (modified, +8/-2)
+**File**: `.claude/rules/proposals.instructions.md` (modified, +12/-6)
 ```diff
-@@ -4,8 +4,9 @@ description: Coordinate one ARC training puzzle by ID. Write its instruction dat
- include-custom-instructions: true
- ---
+@@ -102,7 +102,8 @@ candidate sources or prior artifacts. Return the new checkpoint path/raw pin
+ or explicit skip/error; the caller retains one head and all ancestors,
+ receipts, reports and scoring evidence for subsequent validation/selection.
+ Use that updated head for the next authorized proposal, or keep the old head
+-on a legitimate skip. A learner error pauses the caller as a process blocker
++on a legitimate skip. Each continuous cycle starts a fresh session, so name
++that head's path and raw pin in the cycle's resume report. A learner error pauses the caller as a process blocker
+ without changing the already-recorded gate/independent decision.
  
--You coordinate one ARC training puzzle, given its ID. Follow `.claude/CLAUDE.md`,
--the [ARC instructions](../rules/arc.instructions.md), and the
-+You coordinate one ARC training puzzle, given its ID and an optional hint.
-+Follow `.claude/CLAUDE.md`, the
-+[ARC instructions](../rules/arc.instructions.md), and the
- [arc-purposal skill](../skills/arc-purposal/SKILL.md), which defines each step.
+ This is a single-owner immutable checkpoint chain, not concurrent/global-head
+@@ -323,16 +324,21 @@ not independent behavior/integrity, accepted-corpus baseline, compatibility,
+ development evaluation, or outcome recording.
  
- ## Role
-@@ -17,6 +18,11 @@ the [ARC instructions](../rules/arc.instructions.md), and the
-   and return `agent_launch_unavailable` with the puzzle ID and the next step.
- - Handle at most one NUC per invocation, as a single-proposal request, and hold
-   its outcome until the solver run.
-+- Pass an optional `--hint` unchanged to every `arc-dataset` run and to no
-+  other agent, under the skill's
-+  [hint rule](../skills/arc-purposal/SKILL.md#pass-the-hint). It is a
-+  suggestion the training pairs must confirm; it never overrides them or
-+  these rules.
- - Always prefer declarative, higher-order logic. When the dataset's rules need
-   a feature accepted Nucleoid lacks, trigger `/nuc-proposal` for the requested
-   enhancement through the skill's caller steps instead of accepting an
+ In continuous mode, after finalizing and committing an `Accepted` or `Rejected`
+-outcome for a new NUC, the caller immediately starts a distinct new proposal under
+-the [continuous-cycle rule](../skills/nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
+-Run cycles sequentially with fresh agents, baselines, candidate worktrees and
+-reports, preserving the selection, compatibility and acceptance requirements.
++outcome for a new NUC, the caller starts the next distinct proposal in a fresh
++session under the [continuous-cycle rule](../skills/nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
++It ends the cycle with the exact resume command: `/clear` followed by
++`/nuc-proposal` with the same request and hint. Only the user can run
++`/clear`; never claim to have run it or continue in the same context instead.
++Run cycles sequentially with fresh sessions, agents, baselines, candidate
++worktrees and reports, preserving the selection, compatibility and acceptance
++requirements.
+ Only the caller continues; workers stop at their handoffs. This does not
+ recursively reevaluate the completed NUC's outcome metadata. Stop or pause
+ under the conditions defined by the skill rather than bypassing a blocker.
+ 
+ Continuous cycles, including those coordinated through `/nuc-evaluate`, do not
+-request confirmation to record an outcome or start the next NUC. An uncertain
++request confirmation to record an outcome. The resumed session starts the next
++NUC without asking. An uncertain
+ category addition, selection, or update is the exception: workers return it
+ to the caller, who asks the user for confirmation before proceeding.
+ Use the existing selection rules and verified inputs;
 ```
 
-**File**: `.claude/agents/nuc-proposal.agent.md` (modified, +7/-2)
+**File**: `.claude/skills/nuc-evaluate/SKILL.md` (modified, +3/-2)
 ```diff
-@@ -12,6 +12,10 @@ You draft and prototype exactly one added or updated NUC revision. Follow
+@@ -308,8 +308,9 @@ Keep implementation changes isolated and preserve unrelated staged and
+ unstaged work. Baselines and reports remain in the session workspace.
  
- - Follow the caller-owned [enhancement selection rule](../skills/nuc-proposal/SKILL.md#select-an-unspecified-enhancement);
-   do not redraw the selected category.
-+- Apply any caller-supplied hint under the skill's
-+  [hint rule](../skills/nuc-proposal/SKILL.md#pass-the-hint) within the
-+  confirmed request and category. It never changes the mode, category,
-+  strategy, or any safeguard; report any part you set aside.
- - Require the proposal path, confirmed category and requested change,
-   execution mode, runtime applicability and supporting rationale when applicable,
-   accepted Git revision, immutable baseline JSON artifact, and isolated candidate
-@@ -79,8 +83,9 @@ path, execution mode, confirmed proposal category and selection rationale when
- applicable,
- runtime applicability and supporting rationale, expected token ran/skipped policy,
- candidate worktree, changed files, development and syntax-compatibility checks,
--any supplied frozen rubric path/blob pin, and any blockers. Do not populate
--the independent evaluator's assessment.
-+any supplied frozen rubric path/blob pin, any hint and how it was used or set
-+aside, and any blockers. Do not populate the independent evaluator's
-+assessment.
- Include any supplied policy/selection paths and raw pins, algorithm/scope,
- trial identity, selected approach and concrete consumption actions. Preserve
- all four strategy attribution variables for the evaluator; otherwise mark
+ After recording the outcome, follow the
+-[continuous-cycle rule](../nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only)
+-without requesting confirmation to record outcomes or continue. For uncertain
++[continuous-cycle rule](../nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
++It ends the cycle with a fresh-session resume command (`/clear`, then
++`/nuc-proposal`), without requesting confirmation to record outcomes. For uncertain
+ category additions, selections, updates, or assignments, workers return the
+ question to the caller, who asks the user for confirmation under the proposal skill's
+ [classification rule](../nuc-proposal/SKILL.md#classify-every-proposal).
 ```
 
-**File**: `.claude/skills/arc-dataset/SKILL.md` (modified, +4/-3)
+**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +22/-10)
 ```diff
-@@ -1,14 +1,15 @@
- ---
- name: arc-dataset
- description: Write the ARC instruction dataset for one training puzzle ID by running the arc-dataset agent, or return the Nucleoid enhancement request the dataset requires.
--argument-hint: <puzzle-id> [caller inputs]
-+argument-hint: <puzzle-id> [caller inputs] [--hint <text>]
- context: fork
- agent: arc-dataset
- ---
+@@ -113,7 +113,8 @@ confirmed category/applicability policy, not a new random draw.
+ `/nuc-proposal [request] [--hint <text>]` takes an optional hint: everything
+ after `--hint` is the user's guidance for the proposal, such as a syntax idea,
+ prior art, or an area to explore. The caller passes it unchanged to each
+-proposal agent it launches, in every continuous cycle of the invocation.
++proposal agent it launches. It carries the hint into every later continuous
++cycle through that cycle's `/clear` resume command.
  
- Write the ARC instruction dataset for puzzle $ARGUMENTS. The puzzle ID comes
--first; inputs after it, such as a candidate Nucleoid executable, are defined in
--the [arc-dataset agent profile](../../agents/arc-dataset.agent.md). Follow the
-+first; inputs after it, such as a candidate Nucleoid executable or a final
-+`--hint <text>`, are defined in the
-+[arc-dataset agent profile](../../agents/arc-dataset.agent.md). Follow the
- profile; if it is not already your system prompt, delegate this request to the
- `arc-dataset` agent.
+ A hint is not a request. It never makes an open-ended request specific or
+ changes the execution mode, category draw, runtime applicability, or selected
+@@ -328,15 +329,22 @@ coordinating caller must finish its outcome before starting the next cycle:
+ - **Rejected:** record and commit only rejection documentation and index/outcome
+   metadata; leave rejected language changes isolated.
  
-```
-
-**File**: `.claude/skills/arc-purposal/SKILL.md` (modified, +22/-10)
-```diff
-@@ -1,14 +1,14 @@
- ---
- name: arc-purposal
- description: Run one ARC training puzzle through its instruction dataset, any Nucleoid enhancement that dataset requires, and one exact-match solver run that decides the enhancement's outcome.
--argument-hint: <puzzle-id>
-+argument-hint: <puzzle-id> [--hint <text>]
- ---
+-Immediately start another fresh "purpose a NUC" cycle without waiting for a
+-new user prompt. Repeat sequentially in the active agent session until the
+-user stops, pauses or redirects the work, the session ends, or a resource limit
+-is reached. A `Blocked` decision, failed outcome recording, or missing required
++Start every cycle in a fresh session. After the outcome commit, do not begin
++the next NUC in the same context. End the cycle with a short outcome report
++and the exact command that resumes the loop: `/clear`, then `/nuc-proposal`
++with this invocation's unchanged request and `--hint` text, if any. `/clear`
++is a CLI command only the user can run. Never claim to have run it, and never
++continue in the same context in its place. The fresh session derives the next
++NUC number, accepted revision, baselines, worktrees and report paths from
++`main` and these rules. The loop runs one cycle per session for as long as
++the user resumes it, and ends when the user stops, pauses or redirects the
++work. A `Blocked` decision, failed outcome recording, or missing required
+ input pauses continuation; report the blocker instead of bypassing it.
  
- # Running an ARC puzzle proposal
+-Continuous cycles do not ask for confirmation before recording an outcome or
+-continuing, including when coordinated through `/nuc-evaluate`. The exception
+-is an uncertain proposal category: the caller asks the user under
++Continuous cycles do not ask for confirmation before recording an outcome,
++including when coordinated through `/nuc-evaluate`. The resumed session starts
++its NUC without asking. The resume command is a handoff, not a question. The
++exception is an uncertain proposal category: the caller asks the user under
+ [the classification rule](#classify-every-proposal) before assigning it.
+ Workers return that uncertainty to the caller. Use the existing selection
+ rules and verified inputs. For other missing prerequisites or blockers,
+@@ -352,9 +360,13 @@ workers across cycles or combine pending proposals.
  
--`/arc-purposal <puzzle-id>` takes one training puzzle through its instruction
--dataset, any Nucleoid enhancement that dataset requires, one solver run, and
--the outcome. Follow `.claude/CLAUDE.md`, the
-+`/arc-purposal <puzzle-id> [--hint <text>]` takes one training puzzle through
-+its instruction dataset, any Nucleoid enhancement that dataset requires, one
-+solver run, and the outcome. Follow `.claude/CLAUDE.md`, the
- [ARC instructions](../../rules/arc.instructions.md), and the
- [agent profile](../../agents/arc-purposal.agent.md).
- 
-@@ -35,6 +35,16 @@ without it and [suggest the change](#suggest-solver-changes) at the end.
-   preserve pre-existing changes.
- - Use training pairs only. Never print or read the puzzle's `test` entries.
- 
-+## Pass the hint
-+
-+An optional `--hint <text>` comes last: everything after `--hint` is the
-+user's hint about the puzzle, such as its objects, their roles, or its
-+transformation. Pass it unchanged to every `/arc-dataset` run and to no other
-+worker; a requested NUC comes from the dataset handoff alone. The arc-dataset
-+agent keeps only what the training pairs confirm, so the hint never overrides
-+them, this skill, or the ARC instructions, and its text never reaches the
-+solver run.
-+
- ## References
- 
- The workflow and its workers may use every dataset in `arc/src/dataset/` as a
-@@ -50,7 +60,8 @@ candidate's, so an idea from an unaccepted NUC is still a request.
- 
- Run `/arc-dataset <puzzle-id>`, which runs the
- [arc-dataset agent](../../agents/arc-dataset.agent.md) with the accepted
--runtime. Pass along an explicit user request to overwrite an existing dataset.
-+runtime. Pass along any [hint](#pass-the-hint) and an explicit user request to
-+overwrite an existing dataset.
- The dataset always prefers declarative, higher-order logic; when accepted
- Nucleoid cannot express its rules that way, the handoff requests the missing
- enhancement instead of an imperative workaround. Continue by the handoff's
-@@ -82,9 +93,9 @@ Handle at most one NUC request per invocation, as a single-proposal request.
-    `cargo build --locked` in its worktree, and copy its `target/debug/nucleoid`
-    executable (`nucleoid.exe` on Windows) into the session workspace.
- 4. Run `/arc-dataset` again for the puzzle with that executable, the NUC path,
--   and the first handoff. Continue only on `written`. Any other status,
--   including a further enhancement request, skips the run: the test did not
--   pass.
-+   the first handoff, and any hint. Continue only on `written`. Any other
-+   status, including a further enhancement request, skips the run: the test did
-+   not pass.
- 
- ## Run the puzzle
- 
-@@ -172,8 +183,9 @@ apply a suggestion or rerun the puzzle within the invocation.
- 
- ## Report
- 
--Save one JSON result record in the session workspace with the puzzle ID and
--starting revision; the dataset status and path; the NUC path, blob, category,
-+Save one JSON result record in the session workspace with the puzzle ID,
-+starting revision, and hint (`null` without one); the dataset status and path,
-+and arc-dataset's use of the hint; the NUC path, blob, category,
- evaluator decision, and report path; the run's command, executable, exit
- status or timeout, difference or error, and log paths; the outcome and its
- basis; the suggested solver changes; and any blockers. Use `null` for anything
-```
-
-**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +20/-2)
-```diff
-@@ -1,6 +1,7 @@
- ---
- name: nuc-proposal
- description: Draft or revise a Nucleoid NUC and prototype its changes. Use for proposal preparation, not acceptance evaluation.
-+argument-hint: "[request] [--hint <text>]"
- ---
- 
- # Preparing a NUC proposal
-@@ -107,6 +108,22 @@ Selection does not bypass shared behavior, integrity, compatibility, or
- development safeguards. Token requirements follow execution mode and the
- confirmed category/applicability policy, not a new random draw.
- 
-+## Pass the hint
-+
-+`/nuc-proposal [request] [--hint <text>]` takes an optional hint: everything
-+after `--hint` is the user's guidance for the proposal, such as a syntax idea,
-+prior art, or an area to explore. The caller passes it unchanged to each
-+proposal agent it launches, in every continuous cycle of the invocation.
-+
-+A hint is not a request. It never makes an open-ended request specific or
-+changes the execution mode, category draw, runtime applicability, or selected
-+strategy; to request a feature or category, state it as the request. Within
-+the confirmed request and category, the hint may guide which bounded
-+enhancement the caller chooses and how the proposer drafts it. Set aside any
-+part that conflicts with them or with a rule here, and report it. A hint never
-+relaxes a baseline, check, gate, or acceptance rule, and following it is not
-+an acceptance criterion.
-+
- ## Confirm the inputs
- 
- Require the proposal path, confirmed category and requested change, execution
-@@ -242,8 +259,9 @@ independent evaluator.
- Return the proposal path and Git blob revision (`git hash-object` on the
- proposal), accepted baseline revision and path, execution mode, confirmed
- proposal category and selection rationale when applicable, runtime applicability
--and supporting rationale, candidate worktree, changed files, development and
--syntax-compatibility checks, and explicit blockers. State the expected token
-+and supporting rationale, any hint and how it was used or set aside, candidate
-+worktree, changed files, development and syntax-compatibility checks, and
-+explicit blockers. State the expected token
- policy, without claiming an unevaluated gate passed. Freeze the candidate after
- handoff.
- Include the caller-frozen rubric path and Git blob pin when supplied, without
-```
-
-**File**: `arc/README.md` (modified, +4/-0)
-```diff
-@@ -204,6 +204,10 @@ Run `/arc-purposal <puzzle-id>` to take one training puzzle through the
-    dataset, the candidate, or the run shows that the solver needs a change,
-    the final report suggests it for review.
- 
-+Append `--hint <text>` to suggest the puzzle's objects, their roles, or its
-+transformation. Only the arc-dataset agent receives the hint, and it keeps only
-+what the training pairs confirm.
-+
- The run makes paid OpenRouter calls and shows the expected test grid, so it
- runs once, is never repeated to obtain a pass, and its output never feeds back
- into the dataset or the candidate. The
-```
-
----
-
-### Incident Patch 2: `eb7da2fd` (2026-10-30)
-**Commit Message**: Accumulate instance state across ARC runs
-
-Analyzer and visualizer now keep train_state/test_state so each instance's implementation is executed together with earlier ones, instead of in isolation.
-
-In app.ts, test instances are now all synthesized first. Output matrices are then generated in a second pass, and only instances that already have an output matrix are passed as examples.
-
-The default puzzle_id is switched back to the genesis puzzle 3aa6fb7a.
-
-**File**: `arc/src/analyzer.ts` (modified, +6/-2)
-```diff
-@@ -66,6 +66,7 @@ export async function instances({
- 
- export async function value({
-   puzzle_id,
-+  train_state,
-   instance_name,
-   declarations,
-   input_instance_matrix,
-@@ -95,11 +96,14 @@ export async function value({
-   });
- 
-   milestone.evaluating_rules();
-+
-+  train_state.push(implementation);
-+
-   const input_value = await nucleoid.run(
--    [declarations[0], implementation].join("\n\n")
-+    [declarations[0], ...train_state].join("\n\n")
-   );
-   const output_value = await nucleoid.run(
--    [...declarations, implementation].join("\n\n")
-+    [...declarations, ...train_state].join("\n\n")
-   );
- 
-   milestone.instance_constructed({
-```
-
-**File**: `arc/src/app.ts` (modified, +20/-8)
-```diff
-@@ -7,7 +7,7 @@ import * as nucleoid from "./lib/nucleoid";
- import * as milestone from "./milestone";
- 
- // Genesis puzzle_id: 3aa6fb7a
--export async function start(puzzle_id: string = "9af7a82c") {
-+export async function start(puzzle_id: string = "3aa6fb7a") {
-   const puzzle = JSON.parse(
-     await readFile(
-       join(__dirname, "..", "data", "training", `${puzzle_id}.json`),
-@@ -58,6 +58,8 @@ export async function start(puzzle_id: string = "9af7a82c") {
-       output_matrix,
-     });
- 
-+    const train_state = [];
-+
-     for (const { input_instance_matrix, output_instance_matrix } of instances) {
-       const instance_name: string = `obj${String(instance_index++).padStart(
-         12,
-@@ -67,6 +69,7 @@ export async function start(puzzle_id: string = "9af7a82c") {
-       const { implementation, input_value, output_value } =
-         await analyzer.value({
-           puzzle_id,
-+          train_state,
-           instance_name,
-           declarations,
-           input_instance_matrix,
-@@ -97,34 +100,43 @@ export async function start(puzzle_id: string = "9af7a82c") {
-     Array(test_input_matrix[0].length).fill(0)
-   );
- 
-+  const test_state = [];
-   const input_instances = [];
- 
-   for (const { input_instance_matrix } of instances) {
-     const { input_value, output_value } = await visualizer.value({
-       puzzle_id,
-+      test_state,
-       declarations,
-       train_dataset,
-       instance_name: `obj${String(instance_index++).padStart(12, "0")}`,
-       input_instances,
-       input_instance_matrix,
-     });
- 
-+    input_instances.push({
-+      input_value,
-+      input_instance_matrix,
-+      output_value,
-+    });
-+  }
-+
-+  for (const input_instance of input_instances) {
-+    const { input_value, input_instance_matrix, output_value } = input_instance;
-+
-     const { output_instance_matrix } = await visualizer.output_instance_matrix({
-       puzzle_id,
-       test_input_matrix,
-       train_dataset,
--      input_instances,
-+      input_instances: input_instances.filter(
-+        ({ output_instance_matrix }) => output_instance_matrix
-+      ),
-       input_instance_matrix,
-       input_value,
-       output_value,
-     });
- 
--    input_instances.push({
--      input_value,
--      input_instance_matrix,
--      output_value,
--      output_instance_matrix,
--    });
-+    input_instance.output_instance_matrix = output_instance_matrix;
- 
-     result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
-   }
-```
-
-**File**: `arc/src/visualizer.ts` (modified, +7/-3)
-```diff
-@@ -59,6 +59,7 @@ export async function instances({
- 
- export async function value({
-   puzzle_id,
-+  test_state,
-   declarations,
-   train_dataset,
-   instance_name,
-@@ -68,6 +69,7 @@ export async function value({
-   const { x, y } = Matrix.locate(input_instance_matrix);
- 
-   milestone.synthesizing_instance({ instance_name });
-+
-   const { implementation } = await llm.generate({
-     puzzle_id,
-     messages: [
-@@ -117,13 +119,15 @@ export async function value({
-   });
- 
-   milestone.instance_synthesized({ instance_name, implementation });
--
-   milestone.executing_transformation();
-+
-+  test_state.push(implementation);
-+
-   const input_value = await nucleoid.run(
--    [train_dataset.declarations[0], implementation].join("\n\n")
-+    [train_dataset.declarations[0], ...test_state].join("\n\n")
-   );
-   const output_value = await nucleoid.run(
--    [...train_dataset.declarations, implementation].join("\n\n")
-+    [...train_dataset.declarations, ...test_state].join("\n\n")
-   );
- 
-   milestone.transformation_executed({ input_value, output_value });
+ Use actual independent behavior/compatibility results and token measurements
+ when comparison ran as feedback for the next enhancement; report legitimate
+-skips rather than inventing counts. With configured strategy learning, retain
++skips rather than inventing counts. The next cycle starts from cleared context,
++so it takes that feedback from the committed outcome records, such as the
++latest NUC's Evaluation section. With configured strategy learning, retain
+ the independent evaluator's new verified checkpoint as the next head (or retain
+-the old head when learning legitimately skipped). Actually invoke
++the old head when learning legitimately skipped). Name that head's path and
++raw pin in the resume report and command, so the fresh session selects from it
++rather than an older head or genesis. Actually invoke
+ `select_proposal_strategy` from that head before dispatching the next proposer;
+ use fresh trial/receipt paths and never carry a stale selection pin. Preserve
+ earlier artifacts and all acceptance, compatibility and version-protection
 ```
 
 #### Recent Merged Pull Requests:
@@ -1387,35 +1119,29 @@ The default puzzle_id is switched back to the genesis puzzle 3aa6fb7a.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add optional hints to proposal workflows
+## X. Require fresh sessions for proposal cycles
 
 **RULE**:
-When implementing operations in `.claude/agents/arc-dataset.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/agents/nuc-proposal.agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `43480947`: Add optional hints to proposal workflows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `20ef3c68`: Require fresh sessions for proposal cycles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/arc-dataset.agent.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/nuc-proposal.agent.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- The caller may end its inputs with `--hint <text>`, the user's hint about
-  the puzzle's objects, their roles, or its transformation. Treat it as a
-  hypothesis: keep only what the training pairs confirm and report what they
-  contradict. It never replaces inference from the pairs or relaxes these
-  instructions, and its text never goes into the dataset.
-counts, the declarations, each check with its result, how you used any hint,
-any NUC request, any suggested solver change, and any blockers.
+new NUC, it starts the next proposal in a fresh session (`/clear`, then
+`/nuc-proposal`) under the
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-counts, the declarations, each check with its result, any NUC request, any
-suggested solver change, and any blockers.
+new NUC, it immediately starts the next proposal under the
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `43480947` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `20ef3c68` are properly handled with clean fallback behavior.

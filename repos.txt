@@ -4722,3 +4722,7 @@ https://huggingface.co/LiquidAI/LFM3-Audio-2B
 # --- Automatically Discovered by AI Scout Engine [2026-10-30T16:12:24.310Z] ---
 # [AI-AGENTS] mobile-next/mobile-mcp (5727 score) - Model Context Protocol Server for Mobile Automation and Scraping (iOS, Android, 
 https://github.com/mobile-next/mobile-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-30T17:20:42.851Z] ---
+# [HUGGINGFACE-AI-MODELS] OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM (3390 score) - Verified Hugging Face Model: OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRI
+https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM

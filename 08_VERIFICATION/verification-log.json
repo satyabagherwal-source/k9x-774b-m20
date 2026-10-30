@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-0T1C",
-    "timestamp": "2026-10-28T11:23:52.704Z",
-    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-    "contentHash": "306dd3e645f1d1c179068b17173522c117d339bcbcaea4f481428003d4001df0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-BU7W",
-    "timestamp": "2026-10-28T11:32:27.452Z",
-    "repository": "okteto/okteto",
-    "learningId": "learn-github-okteto-okteto",
-    "contentHash": "2ac18930a7f0de830889fa2dec5075e87713e9bc64f802d9393057ae3bdb0c5b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-GS2K",
-    "timestamp": "2026-10-28T11:36:17.948Z",
-    "repository": "Cloudflare/clef",
-    "learningId": "learn-huggingface-cloudflare-clef",
-    "contentHash": "3318a21943a9ec24a2677c642acaad65153f19fe4cc01393032dfdba8f3f26ab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-TQKW",
-    "timestamp": "2026-10-28T11:46:22.544Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-cloudflare-clef-flash",
-    "contentHash": "a5548a20aab4e8e5fda457c57fe986ca502e982ecf3407fc8354e58ae98aec70",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-TXAQ",
     "timestamp": "2026-10-28T11:46:31.250Z",
     "repository": "matrixorigin/matrixone",
@@ -7490,6 +7430,66 @@
     "repository": "paradedb/paradedb",
     "learningId": "learn-github-paradedb-paradedb",
     "contentHash": "1e3f88d81a80f8e3777011f1e462521cfb45faec2ec5d34860684944477e1e7e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-NRQJ",
+    "timestamp": "2026-10-30T17:20:59.947Z",
+    "repository": "iziz/libPhoneNumber-iOS",
+    "learningId": "learn-github-iziz-libphonenumber-ios",
+    "contentHash": "9ce68ff66914374646906bcfa27d2c400fd1bd517f615f28d88a47bc30fffd6f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-NRY6",
+    "timestamp": "2026-10-30T17:21:00.222Z",
+    "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
+    "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
+    "contentHash": "5f851edd597584da858531565590715c19432ee1575f8fd934ade1f5e3c65fe5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-NTBK",
+    "timestamp": "2026-10-30T17:21:02.000Z",
+    "repository": "kumahq/kuma",
+    "learningId": "learn-github-kumahq-kuma",
+    "contentHash": "36538339e0938a4de261cb406eac0eec2c969c65554894128b8dd5a3ecc353ee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-NYTV",
+    "timestamp": "2026-10-30T17:21:09.139Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "f381216bdace17db07c372ed1171fce2ebd025f8d90f6bd9024cc5fca9856c39",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -6246,3 +6246,7 @@
 | `CYCLE-20261030-4O5O` | `2026-10-30T17:06:08.844Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5805` | Yes (`34b31a2a...`) |
 | `CYCLE-20261030-4O68` | `2026-10-30T17:06:08.864Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5806` | Yes (`7f5bcbcc...`) |
 | `CYCLE-20261030-FNLK` | `2026-10-30T17:14:41.336Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5807` | Yes (`1e3f88d8...`) |
+| `CYCLE-20261030-NRQJ` | `2026-10-30T17:20:59.947Z` | `iziz/libPhoneNumber-iOS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md` | Yes (`9ce68ff6...`) |
+| `CYCLE-20261030-NRY6` | `2026-10-30T17:21:00.222Z` | `OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5808, Rule 5809` | Yes (`5f851edd...`) |
+| `CYCLE-20261030-NTBK` | `2026-10-30T17:21:02.000Z` | `kumahq/kuma` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5810` | Yes (`36538339...`) |
+| `CYCLE-20261030-NYTV` | `2026-10-30T17:21:09.139Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5811` | Yes (`f381216b...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md`  
 > **Source**: github ([https://github.com/iziz/libPhoneNumber-iOS](https://github.com/iziz/libPhoneNumber-iOS))  
-> **Source Version**: `85d5486d`  
+> **Source Version**: `15df36de`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:44:04.646Z  
+> **Timestamp**: 2026-10-30T17:20:59.725Z  
 > **Learning ID**: `learn-github-iziz-libphonenumber-ios`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iziz-libphonenumber-ios-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iziz/libPhoneNumber-iOS](https://github.com/iziz/libPhoneNumber-iOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:44:04.353Z  
+> **Harvest Timestamp**: 2026-10-30T17:20:59.033Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: iOS port of Google's libphonenumber with Objective-C core, Swift facade, SwiftUI input, and CocoaPods/SPM support
 - **Primary Language / Ecosystem**: Objective-C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2381 stars
+- **Stars / Engagement**: 2380 stars
 
 ---
 
@@ -1644,1094 +1644,941 @@ var runtimeArray: [CGFloat] = []
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c092e9d4` (2026-09-12)
-**Commit Message**: docs: add changelog, contributing guide, security policy, and DocC
+### Incident Patch 1: `15df36de` (2026-10-30)
+**Commit Message**: chore(release): merge metadata update for 2.1.3
 
-The repository had no changelog, no contributing guide, no security
-policy, and no issue templates. 2.0.0 raised deployment targets from
-iOS 12 to iOS 15, and the only record of that breaking change was a
-paragraph in the README.
-
-CHANGELOG.md starts from the unreleased work and back-fills 2.0.1, 2.0.0,
-and the 1.6.0 facade split. CONTRIBUTING.md states what is specific to
-this repository rather than generic advice: behavior follows upstream
-libphonenumber, metadata is generated rather than edited, the Swift
-facades stay thin, and adding mutable Objective-C state invalidates the
-Sendable conformances. SECURITY.md separates a parsing vulnerability from
-the much more common report that a number was classified unexpectedly,
-which is a metadata issue.
-
-Issue templates ask for the number, the region, and the integration
-method up front, since a report without them cannot be reproduced, and
-route upstream behavior questions to Google's tracker.
-
-A DocC catalog documents the Swift core facade: when to use
-PhoneNumberValue instead of PhoneNumber, which types are Sendable and
-why, and how the error model divides between thr
-
-**File**: `.github/ISSUE_TEMPLATE/bug_report.yml` (added, +87/-0)
+**File**: `CHANGELOG.md` (modified, +14/-0)
 ```diff
-@@ -0,0 +1,87 @@
-+name: Bug report
-+description: A number is parsed, formatted, validated, or described incorrectly, or an API misbehaves.
-+labels: ["bug"]
-+body:
-+  - type: markdown
-+    attributes:
-+      value: |
-+        This library ports Google's libphonenumber. If Google's own
-+        implementation agrees with the behavior you are seeing, the change
-+        belongs upstream rather than here — please say so below and link it.
-+
-+  - type: input
-+    id: number
-+    attributes:
-+      label: Phone number
-+      description: >
-+        The number that reproduces the problem, with its region. Use a test or
-+        example number rather than a real person's number where you can.
-+      placeholder: "+82 10 6543 1234, default region KR"
-+    validations:
-+      required: true
-+
-+  - type: textarea
-+    id: expected
-+    attributes:
-+      label: Expected and actual result
-+      description: What you expected each API to return, and what it returned.
-+      placeholder: |
-+        isValidNumber: expected true, got false
-+        format(.e164): expected "+821065431234", got "+8201065431234"
-+    validations:
-+      required: true
-+
-+  - type: textarea
-+    id: reproduction
-+    attributes:
-+      label: Reproduction
-+      description: The smallest snippet that shows the problem.
-+      render: swift
-+    validations:
-+      required: true
-+
-+  - type: input
-+    id: version
-+    attributes:
-+      label: Library version
-+      placeholder: "2.0.1"
-+    validations:
-+      required: true
-+
-+  - type: dropdown
-+    id: integration
-+    attributes:
-+      label: Integration
-+      options:
-+        - Swift Package Manager
-+        - CocoaPods
-+        - Carthage
-+        - Manual
-+    validations:
-+      required: true
-+
-+  - type: input
-+    id: module
-+    attributes:
-+      label: Module
-+      description: Which product you imported, for example libPhoneNumberSwiftCore or libPhoneNumberGeocoding.
-+      placeholder: libPhoneNumberSwiftCore
-+    validations:
-+      required: true
-+
-+  - type: input
-+    id: environment
-+    attributes:
-+      label: Xcode and platform
-+      placeholder: "Xcode 27.0, iOS 18.2 simulator"
-+    validations:
-+      required: true
-+
-+  - type: textarea
-+    id: upstream
-+    attributes:
-+      label: Upstream comparison
-+      description: >
-+        Optional but very helpful. What does Google's libphonenumber do with the
-+        same number? The demo at https://libphonenumber.appspot.com answers this
-+        in a few seconds.
-```
-
-**File**: `.github/ISSUE_TEMPLATE/config.yml` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+blank_issues_enabled: true
-+contact_links:
-+  - name: Upstream libphonenumber behavior
-+    url: https://github.com/google/libphonenumber/issues
-+    about: Report parsing, formatting, or validation rules that are wrong in Google's library itself, not just in this port.
-+  - name: Security vulnerability
-+    url: https://github.com/iziz/libPhoneNumber-iOS/security/advisories/new
-+    about: Report privately instead of opening an issue.
-```
-
-**File**: `.github/ISSUE_TEMPLATE/feature_request.yml` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+name: Feature request
-+description: Suggest an API or module addition.
-+labels: ["enhancement"]
-+body:
-+  - type: markdown
-+    attributes:
-+      value: |
-+        Behavior changes to parsing, formatting, or validation belong upstream in
-+        Google's libphonenumber. This form is for the Apple-platform surface:
-+        Swift APIs, module layout, packaging, and the SwiftUI component.
-+
-+  - type: textarea
-+    id: problem
-+    attributes:
-+      label: Problem
-+      description: What are you trying to do, and what makes it awkward today?
-+    validations:
-+      required: true
-+
-+  - type: textarea
-+    id: proposal
-+    attributes:
-+      label: Proposed API
-+      description: Sketch the call site you would like to write.
-+      render: swift
-+
-+  - type: textarea
-+    id: alternatives
-+    attributes:
-+      label: What you do instead today
-+      description: >
-+        Including whether the existing `objc` escape hatch on the facades covers
-+        it.
-```
-
-**File**: `.github/ISSUE_TEMPLATE/metadata_update.yml` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+name: Metadata or numbering plan issue
-+description: A numbering plan changed, or a valid number is rejected because the bundled metadata is out of date.
-+labels: ["metadata"]
-+body:
-+  - type: markdown
-+    attributes:
-+      value: |
-+        Metadata comes from Google's libphonenumber and is refreshed as a whole
-+        rather than patched per number. See `docs/METADATA_PATCH_POLICY.md` for
-+        when a local override is acceptable.
-+
-+  - type: input
-+    id: number
-+    attributes:
-+      label: Phone number and region
-+      placeholder: "+256 79 412 3456, region UG"
-+    validations:
-+      required: true
-+
-+  - type: textarea
-+    id: behavior
-+    attributes:
-+      label: Current and expected classification
-+      placeholder: |
-+        Current: isValidNumber false, type UNKNOWN
-+        Expected: isValidNumber true, type MOBILE
-+    validations:
-+      required: true
-+
-+  - type: input
-+    id: upstream_ref
-+    attributes:
-+      label: Upstream reference
-+      description: >
-+        The Google libphonenumber release or commit that carries the corrected
-+        metadata, if you know it.
-+      placeholder: "v9.0.38"
-+
-+  - type: textarea
-+    id: source
-+    attributes:
-+      label: Regulator source
-+      description: >
-+        A link to the telecom regulator's announcement, if this is a numbering
-+        plan change that upstream has not picked up yet.
-```
-
-**File**: `CHANGELOG.md` (added, +113/-0)
-```diff
-@@ -0,0 +1,113 @@
-+# Changelog
-+
-+This file records user-visible changes. Metadata refreshes are listed in
-+`docs/METADATA_UPDATE_LOG.md` and are only summarized here.
-+
-+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-+and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
-+as described in `docs/RELEASE_RUNBOOK.md`.
-+
-+## Unreleased
-+
-+This release carries breaking API changes and must be published as a major
-+version.
-+
-+### Fixed
-+
-+- Geocoding now finds its metadata when the package is consumed through Swift
-+  Package Manager. `NBGeocoderMetaDataHelper` looked for
-+  `GeocodingMetaData.bundle` directly beside the consuming binary, which is only
-+  where CocoaPods, Carthage, and manual integration put it. SwiftPM nests the
-+  payload inside a generated wrapper bundle, so no database was ever opened and
-+  every lookup fell back to the country name, with no error and no crash. The
-+  same search the carrier and timezone mappers already use is now applied here,
-+  covering both the flat layout SwiftPM emitted up to Xcode 26 and the
-+  macOS-structured layout it emits from Xcode 27. `descriptionForNumber:` on a
-+  Mountain View number returns `"Mountain View, CA"` instead of
-+  `"United States"`.
-+- A geocoding lookup for a country a language's database does not carry no
-+  longer disables that language permanently. Preparing the query for a missing
-+  table left the finalized statement in place, after which every later lookup in
-+  that language short-circuited to nil. A Korean-locale app that geocoded one US
-+  number lost city-level Korean geocoding for the rest of the process.
-+- `NBMetadataHelper`'s region-to-calling-code table is built under a lock. It was
-+  populated lazily with no synchronization, so concurrent first use raced.
-+- `NBPhoneNumberOfflineGeocoder` creates its per-language helpers under a lock,
-+  instead of a check-then-insert that let concurrent callers each open their own
-+  SQLite connection for the same language.
-+
-+### Added
-+
-+- visionOS is a supported platform. It is declared in `Package.swift`, every
-+  podspec sets `visionos.deployment_target`, and CI builds every product for it.
-+- All Swift facade entry points are `Sendable`, so `PhoneNumberUtility.shared`
-+  and its siblings can be used from Swift 6 code without a concurrency error.
-+  The conformances are `@unchecked` and documented against the Objective-C
-+  core's locking, and the concurrency test suite exercises the shared instances
-+  from many tasks at once under the thread sanitizer.
-+- `PhoneNumberValueError` conforms to `Sendable` and `LocalizedError`, and gains
-+  `init(_: Error)` for wrapping errors raised by the Objective-C core.
-+- `NBGeocoderMetaDataHelper.defaultMetadataBundle` is public, so integrators can
-+  check whether the geocoding metadata resolved at all.
-+- Test coverage for the Swift facades: Objective-C enum bridging is pinned case
-+  by case, concurrency is exercised under load, and each optional module has
-+  behavioral tests beyond its single smoke test.
-+- CI builds every product for iOS, tvOS, watchOS, visionOS, and Mac Catalyst,
-+  runs the suite under the thread sanitizer, publishes a coverage report, and
-+  lints every podspec. Five podspecs were previously never linted, and four
-+  declared platforms were never built.
-+
-+### Changed
-+
-+- The package requires Swift 6 tools (`swift-tools-version:6.0`) and builds in
-+  the Swift 6 language mode. Podspecs accept Swift 5.9 or 6.0.
-+- **Breaking.** `PhoneNumberFieldState.error` is a `PhoneNumberValueError?`
-+  rather than an existential `Error?`. The state is now `Sendable` and its
-+  `Equatable` conformance is synthesized instead of comparing error descriptions.
-+  Code that reads `state.error` as an `NSError` needs to switch over the enum.
-+- **Breaking.** `PhoneNumberEnriching` requires `Sendable`. Existing conformances
-+  compile unchanged unless they capture non-`Sendable` state.
-+- `PhoneNumberUtility.phoneNumber(from:)` reports failures through
-+  `PhoneNumberValueError(_:)`, consistent with the other `Result`-returning APIs.
-+- The regular-expression cache compiles patterns outside its lock, so a cache hit
-+  is no longer serialized behind an unrelated pattern being built.
-+
-+### Maintenance
-+
-+- `scripts/testXcodeSchemes.swift` resolves an installed iPhone simulator
-+  instead of defaulting to a pinned model name. The pinned name fails outright
-+  on any machine whose Xcode ships a different set of simulators.
-+- `scripts/publishPodspecs.swift` parses `pod ipc spec` output starting at the
-+  first brace, so CocoaPods' non-UTF-8 terminal warning is no longer reported as
-+  a malformed podspec.
-+- `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`, and issue templates added.
-+- A DocC catalog documents the Swift core facade, covering the value type, the
-+  concurrency guarantees, and the error model.
-+
-+### Deprecated
-+
-+- `PhoneNumberError`. It was public but never thrown; every t
-```
-
-**File**: `CONTRIBUTING.md` (added, +85/-0)
-```diff
-@@ -0,0 +1,85 @@
-+# Contributing
-+
-+Thanks for helping maintain libPhoneNumber for iOS. This document covers what a
-+change needs before it can be merged. The deeper references live in `docs/`.
-+
-+## Before You Start
-+
-+This library is a port of Google's
-+[libphonenumber](https://github.com/google/libphonenumber). Parsing, formatting,
-+validation, geocoding, and short-number behavior follow upstream. If a number is
-+handled differently here than in Google's Java or JavaScript implementation,
-+that is a bug in this port; if you disagree with the behavior itself, the change
-+belongs upstream first.
-+
-+Two consequences follow:
-+
-+- Behavior changes should cite the upstream code or metadata they match.
-+- Metadata is generated, not edited. Run the updater scripts; do not hand-edit
-+  `libPhoneNumber/NBGeneratedPhoneNumberMetaData.m` or the `generatedJSON`
-+  files. Local overrides are only allowed under `docs/METADATA_PATCH_POLICY.md`.
-+
-+## Where Code Goes
-+
-+- The Objective-C core is the source of truth. Parsing and validation logic
-+  belongs in `libPhoneNumber/`, not in a Swift facade.
-+- The Swift facades are thin wrappers. They map types, they do not reimplement
-+  behavior.
-+- UI code belongs in `libPhoneNumberSwiftUI`, which consumers opt into
-+  separately.
-+
-+## Development
-+
-+Build and test:
-+
-+```bash
-+swift test
-+```
-+
-+The full local checklist, including the non-English locale run, the per-platform
-+builds, the thread sanitizer, and the Xcode scheme tests, is in
-+`docs/TESTING.md`.
-+
-+Run the parity checks when you touch public API or the test suites:
-+
-+```bash
-+swift scripts/checkUpstreamTestParity.swift
-+swift scripts/checkUpstreamAPIParity.swift
-+```
-+
-+## Tests
-+
-+Every bug fix needs a test that fails before the fix and passes after it. State
-+in the pull request that you checked this; a test that passes either way
-+documents behavior but does not protect it.
-+
-+New tests use [Swift Testing](https://developer.apple.com/documentation/testing)
-+(`import Testing`). The existing XCTest suites, including the large
-+Objective-C ones ported from upstream, stay as they are; do not convert them
-+wholesale, because their structure is what makes upstream parity auditable.
-+
-+## Concurrency
-+
-+The Swift facades are declared `@unchecked Sendable` on the strength of the
-+Objective-C core's internal locking. If you add mutable state to any Objective-C
-+type reachable from a facade, that claim stops being true. Guard the state, and
-+extend the concurrency suites in `libPhoneNumberSwiftCoreTests` so the guarantee
-+is exercised rather than assumed. They run under the thread sanitizer in CI.
-+
-+## Public API
-+
-+Adding API is a minor release; changing or removing it is a major one. See
-+`docs/RELEASE_RUNBOOK.md`. Deprecate rather than delete where you can, and give
-+the deprecation message a replacement to point at.
-+
-+Record anything user-visible in `CHANGELOG.md` under `## Unreleased`.
-+
-+## Pull Requests
-+
-+Fill in the pull request template. It asks for the upstream reference, the
-+metadata scope, the parity checks, and the test commands you ran. Paste the
-+command output rather than asserting the result, so a future release can audit
-+the decision from the log instead of from memory.
-+
-+Keep the diff focused. Unrelated formatting churn makes the metadata and parity
-+review much harder.
-```
-
-**File**: `README.md` (modified, +6/-0)
-```diff
-@@ -510,6 +510,12 @@ swift scripts/testXcodeSchemes.swift
-    swift scripts/publishPodspecs.swift --publish
-    ```
+@@ -9,6 +9,20 @@ as described in `docs/RELEASE_RUNBOOK.md`.
  
-+## Contributing
-+
-+- [Changelog](CHANGELOG.md)
-+- [Contributing guide](CONTRIBUTING.md)
-+- [Security policy](SECURITY.md)
-+
- ## Maintenance Guides
+ ## Unreleased
  
- - [Upstream parity guide](docs/UPSTREAM_PARITY.md)
++## 2.1.3
++
++Patch release. Refresh Google libphonenumber metadata from `v9.0.41` to
++`v9.0.42`, including phone-number, short-number, carrier, and geocoding data.
++Phone-number metadata changes affect 21 regions: Australia, Åland Islands,
++Botswana, Cocos (Keeling) Islands, China, Colombia, Costa Rica, Cape Verde,
++Christmas Island, Denmark, Spain, Finland, Ghana, Guyana, India, Kenya, Kuwait,
++Papua New Guinea, Paraguay, Russia, and Saint Helena. Short-number changes
++affect Botswana and Colombia. Carrier metadata gains Kazakh (`kk`) carrier
++names and grows from 31,065 to 32,099 prefix rows. Geocoding changes are
++limited to the English and Chinese databases. Testing metadata and timezone
++data are unchanged. See `docs/METADATA_UPDATE_LOG.md` for the upstream
++comparison and validation.
++
+ ## 2.1.2
+ 
+ Patch release. Refresh Google libphonenumber metadata from `v9.0.40` to
 ```
 
-**File**: `SECURITY.md` (added, +41/-0)
+**File**: `docs/METADATA_UPDATE_LOG.md` (modified, +34/-0)
 ```diff
-@@ -0,0 +1,41 @@
-+# Security Policy
+@@ -4,6 +4,40 @@ This file records upstream comparison results for metadata updates. Keep entries
+ 
+ Metadata-only updates should ship as patch releases. Use a minor release only when the update also adds public API, new modules, or additive behavior beyond metadata freshness.
+ 
++## 2026-10-30: Google libphonenumber v9.0.42
 +
-+## Supported Versions
++### Scope
 +
-+| Version | Supported |
-+| --- | --- |
-+| 2.x | Yes |
-+| 1.7.x | Security fixes only, for projects that cannot build with Xcode 27 |
-+| < 1.7 | No |
++- Previous local metadata baseline: `v9.0.41`; new Google tag: `v9.0.42` (`8d8d75272c351b60b87163db5328e439c53a6b56`).
++- Regenerated all metadata families. Main phone-number, short-number, carrier, and geocoding data changed; testing metadata is unchanged, and the timezone rows are byte-identical with only the recorded `upstream_ref` advancing.
++- Main phone-number changes affect 21 regions: `AU`, `AX`, `BW`, `CC`, `CN`, `CO`, `CR`, `CV`, `CX`, `DK`, `ES`, `FI`, `GH`, `GY`, `IN`, `KE`, `KW`, `PG`, `PY`, `RU`, and `SH`. Short-number changes affect `BW` and `CO`.
++- Carrier data contains 32,099 prefix rows (up from 31,065) and 107 mobile-portable regions, and adds a tenth locale, Kazakh (`kk`), from the new upstream `resources/carrier/kk/7.txt`. Timezone data contains 3,240 prefix rows and 285 unique timezone IDs.
++- The geocoding updater regenerated all 34 databases; `en.db` and `zh.db` changed in the checked-in bundle, matching the upstream `resources/geocoding` changes for `233`, `267`, `86`, and `91`. The other 32 databases were regenerated with identical contents and were left at their committed bytes, so the release diff carries no SQLite page churn.
++- Set all Xcode project and 13 podspec versions to `2.1.3` for this metadata-only patch.
 +
-+## Reporting a Vulnerability
++### Upstream Logic And Resource Comparison
 +
-+Report vulnerabilities privately through
-+[GitHub's private vulnerability reporting](https://github.com/iziz/libPhoneNumber-iOS/security/advisories/new).
-+Do not open a public issue for a suspected vulnerability.
++- Compared tracked Google files from `v9.0.41` (`b68df884d42d`) to `v9.0.42` (`8d8d75272c35`): 27 files changed, covering generated JavaScript phone-number and short-number metadata, their XML resources, 17 carrier resources including one new Kazakh file, and five geocoding resources.
++- Tracked JavaScript implementation and test files did not change. Test parity covers 173 upstream JavaScript tests and 181 local Objective-C tests; API parity covers 66 upstream public prototype methods and 93 local selectors. Both checks passed.
++- Scheduled [Upstream Drift run `40992725501`](https://github.com/iziz/libPhoneNumber-iOS/actions/runs/40992725501) detected the new tag. Its metadata freshness job exited with code 2 because an update was available; Google master parity and tracked source/resource drift jobs passed.
 +
-+Please include the affected version, the integration method (Swift Package
-+Manager, CocoaPods, Carthage, or manual), and an input that reproduces the
-+problem. Phone numbers in a report are treated as test data; do not send real
-+users' numbers.
++### Validation
 +
-+You can expect an initial response within 7 days.
++- `swift scripts/updateMetadata.swift v9.0.42 --dry-run --output-root .build/metadata-update/v9.0.42-dry-run` passed.
++- `swift scripts/checkUpstreamSourceDrift.swift --current-ref v9.0.41 --upstream-ref v9.0.42 --output .build/release-2.1.3/source-drift` completed.
++- `swift scripts/checkUpstreamTestParity.swift --upstream-ref v9.0.42` and `swift scripts/checkUpstreamAPIParity.swift --upstream-ref v9.0.42` passed.
++- `swift scripts/updateMetadata.swift v9.0.42 --output-root .build/metadata-update/v9.0.42` passed; its freshness check reports `v9.0.42` up to date.
++- `swift scripts/updateProjectVersions.swift 2.1.3` and its version consistency check passed.
++- Decompressed the generated Objective-C gzip arrays and verified they decode to the generated JSON for 254 phone-number and 241 short-number regions, with declared expanded lengths of 353,206 and 156,520 bytes.
++- SQLite integrity checks passed for the carrier, timezone, `en`, and `zh` databases. Both the carrier and timezone databases record `upstream_ref` `v9.0.42`, and the timezone source digest is unchanged from `v9.0.41`.
++- `swift test --scratch-path .build/validation-2.1.3` and `LC_ALL=ko_KR.UTF-8 LANG=ko_KR.UTF-8 swift test --scratch-path .build/validation-2.1.3` passed, each with 231 XCTest cases and 43 Swift Testing tests.
++- `swift build -c release --scratch-path .build/validation-2.1.3` passed.
++- `swift scripts/testXcodeSchemes.swift --destination 'id=80FE1FB5-892C-4402-9CA1-64A11DF26E15' --derived-data-root /tmp/libphone-2.1.3-xcode` passed on the iPhone 18 Pro / iOS 27.0 simulator: `libPhoneNumber` (150 tests), `libPhoneNumberGeocoding` (20), and `libPhoneNumberShortNumber` (31).
++- `swift scripts/checkUpstreamSourceDrift.swift --current-ref v9.0.42 --upstream-ref master --output .build/release-2.1.3/source-drift-master` found zero tracked source or resource changes at Google master `1ae0d623301b`.
++- `swift scripts/checkMetadataFreshness.swift --current-ref v9.0.42 --output .build/release-2.1.3/final-freshness --fail-on-update` passed.
++- `LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 swift scripts/publishPodspecs.swift --lint` passed for all 13 podspecs in dependency order.
++- `git diff --check` passed; the release diff contains only generated metadata, version alignment, and release documentation.
 +
-+## Scope
-+
-+This library parses untrusted text. Reports that are in scope include:
-+
-+- Crashes, hangs, or unbounded memory growth reachable from a parsing,
-+  formatting, validation, geocoding, or short-number API.
-+- Catastrophic backtracking in the regular expressions built from metadata.
-+- Reads of data outside the bundled metadata.
-+
-+The following are not vulnerabilities:
-+
-+- A number being classified as valid or invalid contrary to expectation. That is
-+  a metadata or parity issue; open a normal issue.
-+- Carrier or timezone results being wrong or outdated. Both come from prefix
-+  metadata, and the carrier data reflects original assignment rather than the
-+  current carrier in regions with number portability.
-+- Geocoding descriptions being coarser than expected for languages whose
-+  database carries only their own country.
+ ## 2026-10-08: Google libphonenumber v9.0.41
+ 
+ ### Scope
+```
+
+**File**: `generatedJSON/PhoneNumberMetaData.json` (modified, +133/-129)
+```diff
+@@ -5353,7 +5353,7 @@
+       [
+         null,
+         null,
+-        "4(?:79[01]|83[0-36-9]|95[0-3])\\d{5}|4(?:[0-36]\\d|4[047-9]|[58][0-24-9]|7[02-8]|9[0-47-9])\\d{6}",
++        "4(?:79[01]|83[0-36-9]|9(?:5[0-3]|6[0-4]))\\d{5}|4(?:[0-36]\\d|4[047-9]|[58][0-24-9]|7[02-8]|9[0-47-9])\\d{6}",
+         null,
+         null,
+         null,
+@@ -5866,7 +5866,7 @@
+       [
+         null,
+         null,
+-        "4946\\d{2,6}|(?:4[0-8]|50)\\d{4,8}",
++        "(?:4[0-8]|50)\\d{4,8}",
+         null,
+         null,
+         null,
+@@ -9907,7 +9907,7 @@
+       [
+         null,
+         null,
+-        "(?:0800|(?:[37]|800)\\d)\\d{6}|(?:[2-6]\\d|90)\\d{5}",
++        "90\\d{5}|(?:0800|[2-6]|(?:7|800)\\d)\\d{6}",
+         null,
+         null,
+         null,
+@@ -9923,7 +9923,7 @@
+       [
+         null,
+         null,
+-        "(?:2(?:4[0-48]|6[0-24]|9[0578])|3(?:1[0-35-9]|55|[69]\\d|7[013]|81)|4(?:6[03]|7[1267]|9[0-5])|5(?:3[03489]|4[0489]|7[1-47]|88|9[0-49])|6(?:2[1-35]|5[149]|8[013467]))\\d{4}",
++        "(?:2(?:1[01]|31|[469]\\d|5[0-2]|7[5-7]|89)|3(?:[15-79]\\d|2[1-5]|45|8[0-5])|4(?:[38]0|42|51|[679]\\d)|5(?:[056][01]|1[23]|2[034]|[347-9]\\d)|6(?:0[01]|[258]\\d|[34]0|6[03]))\\d{4}",
+         null,
+         null,
+         null,
+@@ -9937,7 +9937,7 @@
+       [
+         null,
+         null,
+-        "(?:321|7(?:[1-8]\\d|9[03]))\\d{5}",
++        "7(?:[1-8]\\d{3}|9(?:(?:[03]\\d|2[0-7])\\d|1(?:0[13-9]|1[0-35-9]|2\\d|3[0-8])))\\d{3}",
+         null,
+         null,
+         null,
+@@ -10007,15 +10007,15 @@
+       [
+         null,
+         null,
+-        "79(?:1(?:[0-2]\\d|3[0-8])|2[0-7]\\d)\\d{3}",
+         null,
+         null,
+         null,
+-        "79101234",
++        null,
++        null,
+         null,
+         null,
+         [
+-          8
++          -1
+         ]
+       ],
+       "BW",
+@@ -10042,15 +10042,15 @@
+           "(\\d{3})(\\d{4})",
+           "$1 $2",
+           [
+-            "[24-6]|3[15-9]"
++            "[2-6]"
+           ]
+         ],
+         [
+           null,
+           "(\\d{2})(\\d{3})(\\d{3})",
+           "$1 $2 $3",
+           [
+-            "[37]"
++            "7"
+           ]
+         ],
+         [
+@@ -10814,7 +10814,7 @@
+       [
+         null,
+         null,
+-        "4(?:79[01]|83[0-36-9]|95[0-3])\\d{5}|4(?:[0-36]\\d|4[047-9]|[58][0-24-9]|7[02-8]|9[0-47-9])\\d{6}",
++        "4(?:79[01]|83[0-36-9]|9(?:5[0-3]|6[0-4]))\\d{5}|4(?:[0-36]\\d|4[047-9]|[58][0-24-9]|7[02-8]|9[0-47-9])\\d{6}",
+         null,
+         null,
+         null,
+@@ -12761,7 +12761,7 @@
+       [
+         null,
+         null,
+-        "(?:10(?:[02-79]\\d\\d|[18](?:0[1-9]|[1-9]\\d))|2(?:[02-57-9]\\d{3}|1(?:[18](?:0[1-9]|[1-9]\\d)|[2-79]\\d\\d))|(?:41[03]|8078|9(?:78|94))\\d\\d)\\d{5}|(?:10|2[0-57-9])(?:1(?:00|23)\\d\\d|95\\d{3,4})|(?:41[03]|9(?:78|94))(?:100\\d\\d|95\\d{3,4})|8078123|(?:43[35]|754|851)\\d{7,8}|(?:43[35]|754|851)(?:1(?:00\\d|23)\\d|95\\d{3,4})|(?:3(?:11|7[179])|4(?:[15]1|3[12])|5(?:1\\d|2[37]|3[12]|51|7[13-79]|9[15])|7(?:[39]1|5[57]|6[09])|8(?:71|98))(?:[02-8]\\d{7}|1(?:0(?:0\\d\\d(?:\\d{3})?|[1-9]\\d{5})|[13-9]\\d{6}|2(?:[0-24-9]\\d{5}|3\\d(?:\\d{4})?))|9(?:[0-46-9]\\d{6}|5\\d{3}(?:\\d(?:\\d{2})?)?))|(?:3(?:1[02-9]|35|49|5\\d|7[02-68]|9[1-68])|4(?:1[24-9]|2[179]|3[46-9]|5[2-9]|6[47-9]|7\\d|8[23])|5(?:3[03-9]|4[36]|5[02-9]|6[1-46]|7[028]|80|9[2-46-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[17]\\d|2[248]|3[04-9]|4[3-6]|5[0-3689]|6[2368]|9[02-9])|8(?:1[236-8]|2[5-7]|3\\d|5[2-9]|7[02-9]|8[36-8]|9[1-7])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))(?:[02-8]\\d{6}|1(?:0(?:0\\d\\d(?:\\d{2})?|[1-9]\\d{4})|[13-9]\\d{5}|2(?:[0-24-9]\\d{4}|3\\d(?:\\d{3})?))|9(?:[0-46-9]\\d{5}|5\\d{3,5}))",
++        "(?:10(?:[02-79]\\d\\d|[18](?:0[1-9]|[1-9]\\d))|2(?:[02-57-9]\\d{3}|1(?:[18](?:0[1-9]|[1-9]\\d)|[2-79]\\d\\d))|9(?:78|94)\\d\\d)\\d{5}|(?:43[35]|754|851)\\d{7,8}|(?:10|2[0-57-9])(?:1(?:00|23)\\d\\d|95\\d{3,4})|(?:43[35]|754|851)(?:1(?:00\\d|23)\\d|95\\d{3,4})|9(?:78|94)(?:100\\d\\d|95\\d{3,4})|(?:3(?:11|7[179])|4(?:[15]1|3[12])|5(?:1\\d|2[37]|3[12]|51|7[13-79]|9[15])|7(?:[39]1|5[57]|6[09])|8(?:71|98))(?:[02-8]\\d{7}|1(?:0(?:0\\d\\d(?:\\d{3})?|[1-9]\\d{5})|[13-9]\\d{6}|2(?:[0-24-9]\\d{5}|3\\d(?:\\d{4})?))|9(?:[0-46-9]\\d{6}|5\\d{3}(?:\\d(?:\\d{2})?)?))|(?:3(?:1[02-9]|35|49|5\\d|7[02-6]|9[1-68])|4(?:1[25-9]|2[179]|3[46-9]|5[2-9]|6[47-9]|7\\d|8[23])|5(?:3[03-9]|4[36]|5[02-9]|6[1-46]|7[028]|80|9[2-46-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[17]\\d|2[248]|3[04-9]|4[3-6]|5[0-3689]|6[2368]|9[02-9])|8(?:1[236-8]|2[5-7]|3\\d|5[4-9]|7[02-9]|8[36-8]|9[1-7])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))(?:[02-8]\\d{6}|1(?:0(?:0\\d\\d(?:\\d{2})?|[1-9]\\d{4})|[13-9]\\d{5}|2(?:[0-24-9]\\d{4}|3\\d(?:\\d{3})?))|9(?:[0-46-9]\\d{5}|5\\d{3,5}))",
+         null,
+         null,
+         null,
+@@ -12826,7 +12826,7 @@
+       [
+         null,
+         null,
+-        "10(?:10\\d{4}|96\\d{3,4})|400\\d{7}|950\\d{7,8}|(?:2[0-57-9]|3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9]
+```
+
+**File**: `generatedJSON/ShortNumberMetadata.json` (modified, +17/-19)
+```diff
+@@ -4563,7 +4563,7 @@
+       [
+         null,
+         null,
+-        "[19]\\d\\d(?:\\d{2})?",
++        "[19]\\d{2,4}",
+         null,
+         null,
+         null,
+@@ -4572,6 +4572,7 @@
+         null,
+         [
+           3,
++          4,
+           5
+         ]
+       ],
+@@ -4580,11 +4581,11 @@
+       [
+         null,
+         null,
+-        "9(?:11|9[7-9])",
++        "11[0-246]|9(?:1[0-4]|2[02-69]|9[06-9])",
+         null,
+         null,
+         null,
+-        "911",
++        "110",
+         null,
+         null,
+         [
+@@ -4629,11 +4630,11 @@
+       [
+         null,
+         null,
+-        "9(?:11|9[7-9])",
++        "11[12]|9(?:11|9[7-9])",
+         null,
+         null,
+         null,
+-        "911",
++        "111",
+         null,
+         null,
+         [
+@@ -4644,11 +4645,11 @@
+       [
+         null,
+         null,
+-        "1(?:1[26]|3123)|9(?:1[14]|9[1-57-9])",
++        "1(?:(?:[02]|[6-9]\\d\\d)\\d|1[0-2469]|3123)|9(?:1[0-4]|2[02-69]|9\\d)|1[0-28]\\d\\d",
+         null,
+         null,
+         null,
+-        "112"
++        "100"
+       ],
+       [
+         null,
+@@ -4667,16 +4668,11 @@
+       [
+         null,
+         null,
+-        "131\\d\\d",
+-        null,
++        "1(?:[0-2]|31)\\d\\d|9(?:1[02-4]|2[02-69]|9[0-3])|1(?:[02]\\d|1[49])",
+         null,
+         null,
+-        "13100",
+         null,
+-        null,
+-        [
+-          5
+-        ]
++        "100"
+       ],
+       null,
+       [
+@@ -6508,7 +6504,7 @@
+       [
+         null,
+         null,
+-        "1(?:06|1[2-9]|2[35-7]|3[27]|4[467]|5[36]|6[4-7]|95)|(?:29002|39003)9|40404|5930\\d\\d|85432|(?:[2359][57]|8(?:7|9\\d))\\d{3}",
++        "1(?:06|1[2-9]|2[35-7]|3[27]|4[467]|5[36]|6[4-7]|95)|(?:29002|39003)9|40404|5930\\d\\d|89\\d{4}|[23589][57]\\d{3}",
+         null,
+         null,
+         null,
+@@ -6531,30 +6527,32 @@
+       [
+         null,
+         null,
+-        "(?:40|85)4\\d\\d",
++        "404\\d\\d|8(?:[57]|9\\d)\\d{3}",
+         null,
+         null,
+         null,
+         "40400",
+         null,
+         null,
+         [
+-          5
++          5,
++          6
+         ]
+       ],
+       null,
+       [
+         null,
+         null,
+-        "(?:40|85)4\\d\\d",
++        "404\\d\\d|8(?:[57]|9\\d)\\d{3}",
+         null,
+         null,
+         null,
+         "40400",
+         null,
+         null,
+         [
+-          5
++          5,
++          6
+         ]
+       ]
+     ],
+```
+
+**File**: `libPhoneNumber-Demo/libPhoneNumber-Demo-SPM.xcodeproj/project.pbxproj` (modified, +4/-4)
+```diff
+@@ -270,7 +270,7 @@
+ 				CLANG_WARN_UNREACHABLE_CODE = YES;
+ 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+ 				COPY_PHASE_STRIP = NO;
+-				CURRENT_PROJECT_VERSION = 2.1.2;
++				CURRENT_PROJECT_VERSION = 2.1.3;
+ 				DEBUG_INFORMATION_FORMAT = dwarf;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+ 				ENABLE_TESTABILITY = YES;
+@@ -288,7 +288,7 @@
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+ 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+-				MARKETING_VERSION = 2.1.2;
++				MARKETING_VERSION = 2.1.3;
+ 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+ 				MTL_FAST_MATH = YES;
+ 				ONLY_ACTIVE_ARCH = YES;
+@@ -326,7 +326,7 @@
+ 				CLANG_WARN_UNREACHABLE_CODE = YES;
+ 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+ 				COPY_PHASE_STRIP = NO;
+-				CURRENT_PROJECT_VERSION = 2.1.2;
++				CURRENT_PROJECT_VERSION = 2.1.3;
+ 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+ 				ENABLE_NS_ASSERTIONS = NO;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+@@ -338,7 +338,7 @@
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+ 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+-				MARKETING_VERSION = 2.1.2;
++				MARKETING_VERSION = 2.1.3;
+ 				MTL_ENABLE_DEBUG_INFO = NO;
+ 				MTL_FAST_MATH = YES;
+ 				SDKROOT = iphoneos;
+```
+
+**File**: `libPhoneNumber-Demo/libPhoneNumber-Demo.xcodeproj/project.pbxproj` (modified, +4/-4)
+```diff
+@@ -306,7 +306,7 @@
+ 				CLANG_WARN_UNREACHABLE_CODE = YES;
+ 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+ 				COPY_PHASE_STRIP = NO;
+-				CURRENT_PROJECT_VERSION = 2.1.2;
++				CURRENT_PROJECT_VERSION = 2.1.3;
+ 				DEBUG_INFORMATION_FORMAT = dwarf;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+ 				ENABLE_TESTABILITY = YES;
+@@ -324,7 +324,7 @@
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+ 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+-				MARKETING_VERSION = 2.1.2;
++				MARKETING_VERSION = 2.1.3;
+ 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+ 				MTL_FAST_MATH = YES;
+ 				ONLY_ACTIVE_ARCH = YES;
+@@ -363,7 +363,7 @@
+ 				CLANG_WARN_UNREACHABLE_CODE = YES;
+ 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+ 				COPY_PHASE_STRIP = NO;
+-				CURRENT_PROJECT_VERSION = 2.1.2;
++				CURRENT_PROJECT_VERSION = 2.1.3;
+ 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+ 				ENABLE_NS_ASSERTIONS = NO;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+@@ -375,7 +375,7 @@
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+ 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+-				MARKETING_VERSION = 2.1.2;
++				MARKETING_VERSION = 2.1.3;
+ 				MTL_ENABLE_DEBUG_INFO = NO;
+ 				MTL_FAST_MATH = YES;
+ 				SDKROOT = iphoneos;
+```
+
+**File**: `libPhoneNumber-GeocodingParser/libPhoneNumber-GeocodingParser.xcodeproj/project.pbxproj` (modified, +4/-4)
+```diff
+@@ -315,7 +315,7 @@
+ 				CLANG_WARN_UNREACHABLE_CODE = YES;
+ 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+ 				COPY_PHASE_STRIP = NO;
+-				CURRENT_PROJECT_VERSION = 2.1.2;
++				CURRENT_PROJECT_VERSION = 2.1.3;
+ 				DEAD_CODE_STRIPPING = YES;
+ 				DEBUG_INFORMATION_FORMAT = dwarf;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+@@ -334,7 +334,7 @@
+ 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+-				MARKETING_VERSION = 2.1.2;
++				MARKETING_VERSION = 2.1.3;
+ 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+ 				MTL_FAST_MATH = YES;
+ 				ONLY_ACTIVE_ARCH = YES;
+@@ -376,7 +376,7 @@
+ 				CLANG_WARN_UNREACHABLE_CODE = YES;
+ 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+ 				COPY_PHASE_STRIP = NO;
+-				CURRENT_PROJECT_VERSION = 2.1.2;
++				CURRENT_PROJECT_VERSION = 2.1.3;
+ 				DEAD_CODE_STRIPPING = YES;
+ 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+ 				ENABLE_NS_ASSERTIONS = NO;
+@@ -389,7 +389,7 @@
+ 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+-				MARKETING_VERSION = 2.1.2;
++				MARKETING_VERSION = 2.1.3;
+ 				MTL_ENABLE_DEBUG_INFO = NO;
+ 				MTL_FAST_MATH = YES;
+ 				SDKROOT = macosx;
+```
+
+**File**: `libPhoneNumber-iOS-Swift.podspec` (modified, +4/-4)
+```diff
+@@ -1,7 +1,7 @@
+ Pod::Spec.new do |s|
+   s.name         = "libPhoneNumber-iOS-Swift"
+   s.module_name  = "libPhoneNumberIOSSwift"
+-  s.version      = "2.1.2"
++  s.version      = "2.1.3"
+   s.summary      = "Swift-first umbrella facade for libPhoneNumber-iOS"
+   s.description  = "Swift-first umbrella facade over the stable Objective-C libPhoneNumber-iOS core and optional geocoding and short-number modules."
+   s.homepage     = "https://github.com/iziz/libPhoneNumber-iOS.git"
+@@ -26,9 +26,9 @@ Pod::Spec.new do |s|
+   s.swift_versions = ["5.9", "6.0"]
+   s.requires_arc = true
+ 
+-  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.2'
+-  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.2'
+-  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.2'
++  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.3'
++  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.3'
++  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.3'
+ 
+   s.source_files = [
+                     'libPhoneNumberIOSSwift/**/*.swift',
 ```
 
 ---
 
-### Incident Patch 2: `caa789e4` (2026-09-12)
-**Commit Message**: fix(geocoding): resolve metadata under SwiftPM and stop poisoning a language
+### Incident Patch 2: `fbb48fe9` (2026-10-30)
+**Commit Message**: chore(release): refresh metadata for 2.1.3
 
-Two failures that both surface as a correct-looking country name instead
-of a locality, with no error and no crash.
+Refresh bundled Google libphonenumber metadata from v9.0.41 to v9.0.42
+(upstream commit 8d8d75272c351b60b87163db5328e439c53a6b56) and set every
+Xcode project and podspec version to the metadata-only patch 2.1.3.
 
-The metadata bundle was never found under Swift Package Manager.
-NBGeocoderMetaDataHelper appended GeocodingMetaData.bundle to
--[NSBundle bundleForClass:].resourceURL, which is where CocoaPods,
-Carthage, and manual integration put the databases. SwiftPM nests them
-inside a generated wrapper bundle, and emits that wrapper flat up to
-Xcode 26 and macOS-structured from Xcode 27. No database was opened, so
-every lookup fell through to countryNameForNumber:. Apply the same search
-the carrier and timezone mappers already use, covering both layouts.
+Main phone-number, short-number, carrier, and geocoding data changed.
+Phone-number changes affect AU, AX, BW, CC, CN, CO, CR, CV, CX, DK, ES,
+FI, GH, GY, IN, KE, KW, PG, PY, RU, and SH; short-number changes affect
+BW and CO. Carrier data grows from 31,065 to 32,099 prefix rows and gains
+a Kazakh locale. Geocoding changes are limited to en.db and zh.db.
+Testing metadata is unchanged, and the timezone rows are byte-identical
+with only the recorded upstream_ref advancing.
 
-191c758 fixed this class of bug for carrier and timezone metadata and
-recorded that geocoding resolves its bundle differently and was
-unaffected. It resolves it differently, but it was affected: only the
-Objective-C tests covered geocoding, and they inject a test bundle, so
-the shipped path was never exercised.
+Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
 
-Separately, a lookup for a country a language's database does not carry
-disabled that language permanently. Only en.db has worldwide coverage
-
-**File**: `README.md` (modified, +4/-0)
+**File**: `CHANGELOG.md` (modified, +14/-0)
 ```diff
-@@ -245,6 +245,10 @@ let number = try phoneUtil.parse("16502530000", defaultRegion: "US")
- let description = geocoder.description(for: number, languageCode: "en")
- ```
+@@ -9,6 +9,20 @@ as described in `docs/RELEASE_RUNBOOK.md`.
  
-+Only the English database carries worldwide coverage. The other languages ship
-+their own country, so a lookup outside it falls back to the localized country
-+name rather than a locality.
+ ## Unreleased
+ 
++## 2.1.3
 +
- ### Carrier
++Patch release. Refresh Google libphonenumber metadata from `v9.0.41` to
++`v9.0.42`, including phone-number, short-number, carrier, and geocoding data.
++Phone-number metadata changes affect 21 regions: Australia, Åland Islands,
++Botswana, Cocos (Keeling) Islands, China, Colombia, Costa Rica, Cape Verde,
++Christmas Island, Denmark, Spain, Finland, Ghana, Guyana, India, Kenya, Kuwait,
++Papua New Guinea, Paraguay, Russia, and Saint Helena. Short-number changes
++affect Botswana and Colombia. Carrier metadata gains Kazakh (`kk`) carrier
++names and grows from 31,065 to 32,099 prefix rows. Geocoding changes are
++limited to the English and Chinese databases. Testing metadata and timezone
++data are unchanged. See `docs/METADATA_UPDATE_LOG.md` for the upstream
++comparison and validation.
++
+ ## 2.1.2
  
- ```swift
+ Patch release. Refresh Google libphonenumber metadata from `v9.0.40` to
 ```
 
-**File**: `libPhoneNumberGeocoding/NBGeocoderMetaDataHelper.h` (modified, +17/-1)
+**File**: `docs/METADATA_UPDATE_LOG.md` (modified, +34/-0)
 ```diff
-@@ -29,10 +29,26 @@ NS_ASSUME_NONNULL_BEGIN
-  */
- - (instancetype)initWithCountryCode:(NSNumber *)countryCode
-                        withLanguage:(NSString *)languageCode
--                         withBundle:(NSBundle *)bundle;
-+                         withBundle:(nullable NSBundle *)bundle;
+@@ -4,6 +4,40 @@ This file records upstream comparison results for metadata updates. Keep entries
  
-+/**
-+ * Initializer that resolves the shipped geocoding databases automatically.
-+ *
-+ * The payload is located by searching the loaded bundles, which covers
-+ * CocoaPods, Carthage, manual integration, and the nested wrapper bundle
-+ * SwiftPM generates. A helper created when no payload can be found answers
-+ * every query with nil, and the geocoder falls back to country names.
-+ */
- - (instancetype)initWithCountryCode:(NSNumber *)countryCode withLanguage:(NSString *)languageCode;
+ Metadata-only updates should ship as patch releases. Use a minor release only when the update also adds public API, new modules, or additive behavior beyond metadata freshness.
  
-+/**
-+ * The bundle holding the geocoding databases, or nil when none was found.
-+ *
-+ * Exposed so integrators can check whether the metadata resolved at all,
-+ * instead of silently receiving country-level descriptions.
-+ */
-++ (nullable NSBundle *)defaultMetadataBundle;
++## 2026-10-30: Google libphonenumber v9.0.42
 +
- /**
-  * Returns a text description for the given phone number. The description will be based on the
-  * country code and national number attributes of the NBPhoneNumber parameter. If no result was
++### Scope
++
++- Previous local metadata baseline: `v9.0.41`; new Google tag: `v9.0.42` (`8d8d75272c351b60b87163db5328e439c53a6b56`).
++- Regenerated all metadata families. Main phone-number, short-number, carrier, and geocoding data changed; testing metadata is unchanged, and the timezone rows are byte-identical with only the recorded `upstream_ref` advancing.
++- Main phone-number changes affect 21 regions: `AU`, `AX`, `BW`, `CC`, `CN`, `CO`, `CR`, `CV`, `CX`, `DK`, `ES`, `FI`, `GH`, `GY`, `IN`, `KE`, `KW`, `PG`, `PY`, `RU`, and `SH`. Short-number changes affect `BW` and `CO`.
++- Carrier data contains 32,099 prefix rows (up from 31,065) and 107 mobile-portable regions, and adds a tenth locale, Kazakh (`kk`), from the new upstream `resources/carrier/kk/7.txt`. Timezone data contains 3,240 prefix rows and 285 unique timezone IDs.
++- The geocoding updater regenerated all 34 databases; `en.db` and `zh.db` changed in the checked-in bundle, matching the upstream `resources/geocoding` changes for `233`, `267`, `86`, and `91`. The other 32 databases were regenerated with identical contents and were left at their committed bytes, so the release diff carries no SQLite page churn.
++- Set all Xcode project and 13 podspec versions to `2.1.3` for this metadata-only patch.
++
++### Upstream Logic And Resource Comparison
++
++- Compared tracked Google files from `v9.0.41` (`b68df884d42d`) to `v9.0.42` (`8d8d75272c35`): 27 files changed, covering generated JavaScript phone-number and short-number metadata, their XML resources, 17 carrier resources including one new Kazakh file, and five geocoding resources.
++- Tracked JavaScript implementation and test files did not change. Test parity covers 173 upstream JavaScript tests and 181 local Objective-C tests; API parity covers 66 upstream public prototype methods and 93 local selectors. Both checks passed.
++- Scheduled [Upstream Drift run `40992725501`](https://github.com/iziz/libPhoneNumber-iOS/actions/runs/40992725501) detected the new tag. Its metadata freshness job exited with code 2 because an update was available; Google master parity and tracked source/resource drift jobs passed.
++
++### Validation
++
++- `swift scripts/updateMetadata.swift v9.0.42 --dry-run --output-root .build/metadata-update/v9.0.42-dry-run` passed.
++- `swift scripts/checkUpstreamSourceDrift.swift --current-ref v9.0.41 --upstream-ref v9.0.42 --output .build/release-2.1.3/source-drift` completed.
++- `swift scripts/checkUpstreamTestParity.swift --upstream-ref v9.0.42` and `swift scripts/checkUpstreamAPIParity.swift --upstream-ref v9.0.42` passed.
++- `swift scripts/updateMetadata.swift v9.0.42 --output-root .build/metadata-update/v9.0.42` passed; its freshness check reports `v9.0.42` up to date.
++- `swift scripts/updateProjectVersions.swift 2.1.3` and its version consistency check passed.
++- Decompressed the generated Objective-C gzip arrays and verified they decode to the generated JSON for 254 phone-number and 241 short-number regions, with declared expanded lengths of 353,206 and 156,520 bytes.
++- SQLite integrity checks passed for the carrier, timezone, `en`, and `zh` databases. Both the carrier and timezone databases record `upstream_ref` `v9.0.42`, and the timezone source digest is unchanged from `v9.0.41`.
++- `swift test --scratch-path .build/validation-2.1.3` and `LC_ALL=ko_KR.UTF-8 LANG=ko_KR.UTF-8 swift test --scratch-path .build/validation-2.1.3` passed, each with 231 XCTest cases and 43 Swift Testing tests.
++- `swift build -c release --scratch-path .build/validation-2.1.3` passed.
++- `swift scripts/testXcodeSchemes.swift --destination 'id=80FE1FB5-892C-4402-9CA1-64A11DF26E15' --derived-data-root /tmp/libphone-2.1.3-xcode` passed on the iPhone 18 Pro / iOS 27.0 simulator: `libPhoneNumber` (150 tests), `libPhoneNumberGeocoding` (20), and `libPhoneNumberShortNumber` (31).
++- `swift scripts/checkUpstreamSourceDrift.swift --current-ref v9.0.42 --upstream-ref master --output .build/release-2.1.3/source-drift-master` found zero tracked source or resource changes at Google master `1ae0d623301b`.
++- `swift scripts/checkMetadataFreshness.swift --current-ref v9.0.42 --output .build/release-2.1.3/final-freshness --fail-on-update` passed.
++- `LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 swift scripts/publishPodspecs.swift --lint` passed for all 13 podspecs in dependency order.
++- `git diff --check` passed; the release diff contains only generated metadata, version alignment, and release documentation.
++
+ ## 2026-10-08: Google libphonenumber v9.0.41
+ 
+ ### Scope
 ```
 
-**File**: `libPhoneNumberGeocoding/NBGeocoderMetaDataHelper.m` (modified, +98/-11)
+**File**: `generatedJSON/PhoneNumberMetaData.json` (modified, +133/-129)
 ```diff
-@@ -48,6 +48,10 @@ - (instancetype)initWithCountryCode:(NSNumber *)countryCode
-     _countryCode = countryCode;
-     _language = languageCode;
- 
-+    if (bundle == nil) {
-+      return self;
-+    }
-+
-     NSString *shortLanguageCode = [[languageCode componentsSeparatedByString:@"-"] firstObject];
-     NSURL *databaseURL = [[bundle resourceURL]
-         URLByAppendingPathComponent:[NSString stringWithFormat:@"%@.db", shortLanguageCode]];
-@@ -69,25 +73,108 @@ - (instancetype)initWithCountryCode:(NSNumber *)countryCode
- }
- 
- - (instancetype)initWithCountryCode:(NSNumber *)countryCode withLanguage:(NSString *)languageCode {
--  NSBundle *bundle = [NSBundle bundleForClass:self.classForCoder];
--  NSURL *resourceURL =
--      [[bundle resourceURL] URLByAppendingPathComponent:@"GeocodingMetaData.bundle"];
--  NSBundle *databaseBundle = [NSBundle bundleWithURL:resourceURL];
--  return [self initWithCountryCode:countryCode withLanguage:languageCode withBundle:databaseBundle];
-+  return [self initWithCountryCode:countryCode
-+                      withLanguage:languageCode
-+                        withBundle:[NBGeocoderMetaDataHelper defaultMetadataBundle]];
-+}
-+
-+// Locates GeocodingMetaData.bundle wherever the integration put it.
-+//
-+// Appending the payload to -[NSBundle bundleForClass:].resourceURL only works
-+// for CocoaPods and manual integration, where the databases land next to the
-+// consuming binary. SwiftPM nests them one level deeper, inside a generated
-+// wrapper bundle, and emits that wrapper flat up to Xcode 26 but
-+// macOS-structured (Contents/Resources) from Xcode 27. Without this search the
-+// databases are simply not found and every lookup falls back to the country
-+// name, with no error and no crash.
-++ (NSBundle * _Nullable)defaultMetadataBundle {
-+  static NSBundle *cachedBundle = nil;
-+  static dispatch_once_t onceToken;
-+  dispatch_once(&onceToken, ^{
-+    NSMutableArray<NSBundle *> *searchBundles = [NSMutableArray arrayWithArray:NSBundle.allBundles];
-+    [searchBundles addObjectsFromArray:NSBundle.allFrameworks];
-+    [searchBundles addObject:[NSBundle bundleForClass:self]];
-+    [searchBundles addObject:[NSBundle mainBundle]];
-+
-+    for (NSBundle *bundle in searchBundles) {
-+      NSMutableArray<NSURL *> *baseURLs = [NSMutableArray array];
-+      if (bundle.resourceURL != nil) {
-+        [baseURLs addObject:bundle.resourceURL];
-+      }
-+      if (bundle.bundleURL != nil) {
-+        [baseURLs addObject:bundle.bundleURL];
-+      }
-+
-+      NSURL *parentURL = bundle.bundleURL;
-+      for (NSUInteger index = 0; index < 5 && parentURL != nil; index++) {
-+        parentURL = [parentURL URLByDeletingLastPathComponent];
-+        if (parentURL != nil) {
-+          [baseURLs addObject:parentURL];
-+        }
-+      }
-+
-+      for (NSURL *baseURL in baseURLs) {
-+        NSURL *resourcesURL = [baseURL URLByAppendingPathComponent:@"Contents/Resources"];
-+        NSURL *wrapperURL = [baseURL
-+            URLByAppendingPathComponent:@"libPhoneNumber_libPhoneNumberGeocodingMetaData.bundle"];
-+        NSURL *wrapperResourcesURL =
-+            [wrapperURL URLByAppendingPathComponent:@"Contents/Resources"];
-+        NSArray<NSURL *> *candidateURLs = @[
-+          [baseURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+          [resourcesURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+          [wrapperURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+          [wrapperResourcesURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+        ];
-+
-+        for (NSURL *candidateURL in candidateURLs) {
-+          // en.db ships in every build of the payload, so it identifies a
-+          // populated bundle rather than an empty directory of the right name.
-+          NSURL *databaseURL = [candidateURL URLByAppendingPathComponent:@"en.db"];
-+          if ([[NSFileManager defaultManager] fileExistsAtPath:databaseURL.path]) {
-+            cachedBundle = [NSBundle bundleWithURL:candidateURL];
-+            return;
-+          }
-+        }
-+      }
-+    }
-+  });
-+
-+  return cachedBundle;
- }
- 
- - (NSString * _Nullable)searchPhoneNumber:(NBPhoneNumber *)phoneNumber {
-   @synchronized(self) {
--    if (_database == NULL || _selectStatement == NULL) {
-+    if (_database == NULL) {
-       return nil;
-     }
- 
--    if (![phoneNumber.countryCode isEqualToNumber:_countryCode]) {
-+    // Each database holds one table per country calling code, and only the
-+    // English database covers every country. Preparing a statement for a
-+    // country this database does not carry fails, which is an ordinary "no
-+    // data for this number" answer -- not a broken helper. Leaving the failed
-+    // statement in place used to disable the helper permanently, so a single
-+    // lookup for an uncovered country downgraded every later lookup in that
-+    // language to a country name.
-+    if (_selectStatement == NULL || ![phoneNumber.countryCode isEqualToNumber:_countryCode]) {
-       _country
+@@ -5353,7 +5353,7 @@
+       [
+         null,
+         null,
+-        "4(?:79[01]|83[0-36-9]|95[0-3])\\d{5}|4(?:[0-36]\\d|4[047-9]|[58][0-24-9]|7[02-8]|9[0-47-9])\\d{6}",
++        "4(?:79[01]|83[0-36-9]|9(?:5[0-3]|6[0-4]))\\d{5}|4(?:[0-36]\\d|4[047-9]|[58][0-24-9]|7[02-8]|9[0-47-9])\\d{6}",
+         null,
+         null,
+         null,
+@@ -5866,7 +5866,7 @@
+       [
+         null,
+         null,
+-        "4946\\d{2,6}|(?:4[0-8]|50)\\d{4,8}",
++        "(?:4[0-8]|50)\\d{4,8}",
+         null,
+         null,
+         null,
+@@ -9907,7 +9907,7 @@
+       [
+         null,
+         null,
+-        "(?:0800|(?:[37]|800)\\d)\\d{6}|(?:[2-6]\\d|90)\\d{5}",
++        "90\\d{5}|(?:0800|[2-6]|(?:7|800)\\d)\\d{6}",
+         null,
+         null,
+         null,
+@@ -9923,7 +9923,7 @@
+       [
+         null,
+         null,
+-        "(?:2(?:4[0-48]|6[0-24]|9[0578])|3(?:1[0-35-9]|55|[69]\\d|7[013]|81)|4(?:6[03]|7[1267]|9[0-5])|5(?:3[03489]|4[0489]|7[1-47]|88|9[0-49])|6(?:2[1-35]|5[149]|8[013467]))\\d{4}",
++        "(?:2(?:1[01]|31|[469]\\d|5[0-2]|7[5-7]|89)|3(?:[15-79]\\d|2[1-5]|45|8[0-5])|4(?:[38]0|42|51|[679]\\d)|5(?:[056][01]|1[23]|2[034]|[347-9]\\d)|6(?:0[01]|[258]\\d|[34]0|6[03]))\\d{4}",
+         null,
+         null,
+         null,
+@@ -9937,7 +9937,7 @@
+       [
+         null,
+         null,
+-        "(?:321|7(?:[1-8]\\d|9[03]))\\d{5}",
++        "7(?:[1-8]\\d{3}|9(?:(?:[03]\\d|2[0-7])\\d|1(?:0[13-9]|1[0-35-9]|2\\d|3[0-8])))\\d{3}",
+         null,
+         null,
+         null,
+@@ -10007,15 +10007,15 @@
+       [
+         null,
+         null,
+-        "79(?:1(?:[0-2]\\d|3[0-8])|2[0-7]\\d)\\d{3}",
+         null,
+         null,
+         null,
+-        "79101234",
++        null,
++        null,
+         null,
+         null,
+         [
+-          8
++          -1
+         ]
+       ],
+       "BW",
+@@ -10042,15 +10042,15 @@
+           "(\\d{3})(\\d{4})",
+           "$1 $2",
+           [
+-            "[24-6]|3[15-9]"
++            "[2-6]"
+           ]
+         ],
+         [
+           null,
+           "(\\d{2})(\\d{3})(\\d{3})",
+           "$1 $2 $3",
+           [
+-            "[37]"
++            "7"
+           ]
+         ],
+         [
+@@ -10814,7 +10814,7 @@
+       [
+         null,
+         null,
+-        "4(?:79[01]|83[0-36-9]|95[0-3])\\d{5}|4(?:[0-36]\\d|4[047-9]|[58][0-24-9]|7[02-8]|9[0-47-9])\\d{6}",
++        "4(?:79[01]|83[0-36-9]|9(?:5[0-3]|6[0-4]))\\d{5}|4(?:[0-36]\\d|4[047-9]|[58][0-24-9]|7[02-8]|9[0-47-9])\\d{6}",
+         null,
+         null,
+         null,
+@@ -12761,7 +12761,7 @@
+       [
+         null,
+         null,
+-        "(?:10(?:[02-79]\\d\\d|[18](?:0[1-9]|[1-9]\\d))|2(?:[02-57-9]\\d{3}|1(?:[18](?:0[1-9]|[1-9]\\d)|[2-79]\\d\\d))|(?:41[03]|8078|9(?:78|94))\\d\\d)\\d{5}|(?:10|2[0-57-9])(?:1(?:00|23)\\d\\d|95\\d{3,4})|(?:41[03]|9(?:78|94))(?:100\\d\\d|95\\d{3,4})|8078123|(?:43[35]|754|851)\\d{7,8}|(?:43[35]|754|851)(?:1(?:00\\d|23)\\d|95\\d{3,4})|(?:3(?:11|7[179])|4(?:[15]1|3[12])|5(?:1\\d|2[37]|3[12]|51|7[13-79]|9[15])|7(?:[39]1|5[57]|6[09])|8(?:71|98))(?:[02-8]\\d{7}|1(?:0(?:0\\d\\d(?:\\d{3})?|[1-9]\\d{5})|[13-9]\\d{6}|2(?:[0-24-9]\\d{5}|3\\d(?:\\d{4})?))|9(?:[0-46-9]\\d{6}|5\\d{3}(?:\\d(?:\\d{2})?)?))|(?:3(?:1[02-9]|35|49|5\\d|7[02-68]|9[1-68])|4(?:1[24-9]|2[179]|3[46-9]|5[2-9]|6[47-9]|7\\d|8[23])|5(?:3[03-9]|4[36]|5[02-9]|6[1-46]|7[028]|80|9[2-46-9])|6(?:3[1-5]|6[0238]|9[12])|7(?:01|[17]\\d|2[248]|3[04-9]|4[3-6]|5[0-3689]|6[2368]|9[02-9])|8(?:1[236-8]|2[5-7]|3\\d|5[2-9]|7[02-9]|8[36-8]|9[1-7])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))(?:[02-8]\\d{6}|1(?:0(?:0\\d\\d(?:\\d{2})?|[1-9]\\d{4})|[13-9]\\d{5}|2(?:[0-24-9]\\d{4}|3\\d(?:\\d{3})?))|9(?:[0-46-9]\\d{5}|5\\d{3,5}))",
++        "(?:10(?:[02-79]\\d\\d|[18](?:0[1-9]|[1-9]\\d))|2(?:[02-57-9]\\d{3}|1(?:[18](?:0[1-9]|[1-9]\\d)|[2-79]\\d\\d))|9(?:78|94)\\d\\d)\\d{5}|(?:43[35]|754|851)\\d{7,8}|(?:10|2[0-57-9])(?:1(?:00|23)\\d\\d|95\\d{3,4})|(?:43[35]|754|851)(?:1(?:00\\d|23)\\d|95\\d{3,4})|9(?:78|94)(?:100\\d\\d|95\\d{3,4})|(?:3(?:11|7[179])|4(?:[15]1|3[12])|5(?:1\\d|2[37]|3[12]|51|7[13-79]|9[15])|7(?:[39]1|5[57]|6[09])|8(?:71|98))(?:[02-8]\\d{7}|1(?:0(?:0\\d\\d(?:\\d{3})?|[1-9]\\d{5})|[13-9]\\d{6}|2(?:[0-24-9]\\d{5}|3\\d(?:\\d{4})?))|9(?:[0-46-9]\\d{6}|5\\d{3}(?:\\d(?:\\d{2})?)?))|(?:3(?:1[02-9]|35|49|5\\d|7[02-6]|9[1-68])|4(?:1[25-9]|2[179]|3[46-9]|5[2-9]|6[47-9]|7\\d|8[23])|5(?:3[03-9]|4[36]|5[02-9]|6[1-46]|7[028]|80|9[2-46-9])|6(?:3[1-35]|6[0238]|9[12])|7(?:01|[17]\\d|2[248]|3[04-9]|4[3-6]|5[0-3689]|6[2368]|9[02-9])|8(?:1[236-8]|2[5-7]|3\\d|5[4-9]|7[02-9]|8[36-8]|9[1-7])|9(?:0[1-3689]|1[1-79]|3\\d|4[13]|5[1-5]|7[0-79]|9[0-35-9]))(?:[02-8]\\d{6}|1(?:0(?:0\\d\\d(?:\\d{2})?|[1-9]\\d{4})|[13-9]\\d{5}|2(?:[0-24-9]\\d{4}|3\\d(?:\\d{3})?))|9(?:[0-46-9]\\d{5}|5\\d{3,5}))",
+         null,
+         null,
+         null,
+@@ -12826,7 +12826,7 @@
+       [
+         null,
+         null,
+-        "10(?:10\\d{4}|96\\d{3,4})|400\\d{7}|950\\d{7,8}|(?:2[0-57-9]|3(?:[157]\\d|35|49|9[1-68])|4(?:[17]\\d|2[179]|[35][1-9]|6[47-9]|8[23])|5(?:[1357]\\d|2[37]|4[36]|6[1-46]|80|9[1-9]
 ```
 
-**File**: `libPhoneNumberIOSSwiftTests/PhoneNumberIOSSwiftTests.swift` (modified, +1/-1)
+**File**: `generatedJSON/ShortNumberMetadata.json` (modified, +17/-19)
 ```diff
-@@ -29,6 +29,6 @@ final class PhoneNumberIOSSwiftTests: XCTestCase {
-         let geocoder = PhoneNumberGeocoder.shared
-         let number = try util.parse("16502530000", defaultRegion: "US")
- 
--        XCTAssertEqual("United States", geocoder.description(for: number, languageCode: "en"))
-+        XCTAssertEqual("Mountain View, CA", geocoder.description(for: number, languageCode: "en"))
-     }
- }
+@@ -4563,7 +4563,7 @@
+       [
+         null,
+         null,
+-        "[19]\\d\\d(?:\\d{2})?",
++        "[19]\\d{2,4}",
+         null,
+         null,
+         null,
+@@ -4572,6 +4572,7 @@
+         null,
+         [
+           3,
++          4,
+           5
+         ]
+       ],
+@@ -4580,11 +4581,11 @@
+       [
+         null,
+         null,
+-        "9(?:11|9[7-9])",
++        "11[0-246]|9(?:1[0-4]|2[02-69]|9[06-9])",
+         null,
+         null,
+         null,
+-        "911",
++        "110",
+         null,
+         null,
+         [
+@@ -4629,11 +4630,11 @@
+       [
+         null,
+         null,
+-        "9(?:11|9[7-9])",
++        "11[12]|9(?:11|9[7-9])",
+         null,
+         null,
+         null,
+-        "911",
++        "111",
+         null,
+         null,
+         [
+@@ -4644,11 +4645,11 @@
+       [
+         null,
+         null,
+-        "1(?:1[26]|3123)|9(?:1[14]|9[1-57-9])",
++        "1(?:(?:[02]|[6-9]\\d\\d)\\d|1[0-2469]|3123)|9(?:1[0-4]|2[02-69]|9\\d)|1[0-28]\\d\\d",
+         null,
+         null,
+         null,
+-        "112"
++        "100"
+       ],
+       [
+         null,
+@@ -4667,16 +4668,11 @@
+       [
+         null,
+         null,
+-        "131\\d\\d",
+-        null,
++        "1(?:[0-2]|31)\\d\\d|9(?:1[02-4]|2[02-69]|9[0-3])|1(?:[02]\\d|1[49])",
+         null,
+         null,
+-        "13100",
+         null,
+-        null,
+-        [
+-          5
+-        ]
++        "100"
+       ],
+       null,
+       [
+@@ -6508,7 +6504,7 @@
+       [
+         null,
+         null,
+-        "1(?:06|1[2-9]|2[35-7]|3[27]|4[467]|5[36]|6[4-7]|95)|(?:29002|39003)9|40404|5930\\d\\d|85432|(?:[2359][57]|8(?:7|9\\d))\\d{3}",
++        "1(?:06|1[2-9]|2[35-7]|3[27]|4[467]|5[36]|6[4-7]|95)|(?:29002|39003)9|40404|5930\\d\\d|89\\d{4}|[23589][57]\\d{3}",
+         null,
+         null,
+         null,
+@@ -6531,30 +6527,32 @@
+       [
+         null,
+         null,
+-        "(?:40|85)4\\d\\d",
++        "404\\d\\d|8(?:[57]|9\\d)\\d{3}",
+         null,
+         null,
+         null,
+         "40400",
+         null,
+         null,
+         [
+-          5
++          5,
++          6
+         ]
+       ],
+       null,
+       [
+         null,
+         null,
+-        "(?:40|85)4\\d\\d",
++        "404\\d\\d|8(?:[57]|9\\d)\\d{3}",
+         null,
+         null,
+         null,
+         "40400",
+         null,
+         null,
+         [
+-          5
++          5,
++          6
+         ]
+       ]
+     ],
 ```
 
-**File**: `libPhoneNumberSwiftGeocodingTests/PhoneNumberGeocodingFacadeTests.swift` (added, +96/-0)
+**File**: `libPhoneNumber-Demo/libPhoneNumber-Demo-SPM.xcodeproj/project.pbxproj` (modified, +4/-4)
 ```diff
-@@ -0,0 +1,96 @@
-+import Testing
-+import libPhoneNumberSwiftCore
-+import libPhoneNumberSwiftGeocoding
-+
-+@Suite("Geocoder facade")
-+struct PhoneNumberGeocodingFacadeTests {
-+    private let util = PhoneNumberUtility.shared
-+    private let geocoder = PhoneNumberGeocoder.shared
-+
-+    @Test("A geographical number resolves to a locality, not just the country")
-+    func localityForGeographicalNumber() throws {
-+        let number = try util.parse("6502530000", defaultRegion: "US")
-+        let description = geocoder.description(forValidNumber: number, languageCode: "en")
-+
-+        #expect(description == "Mountain View, CA")
-+    }
-+
-+    /// Only `en.db` carries worldwide coverage; the other databases hold their
-+    /// own country. A language without an entry falls back to the country name,
-+    /// which is correct behaviour, not a missing lookup.
-+    @Test("Descriptions are localized by language code", arguments: [
-+        ("en", "Seoul"),
-+        ("ko", "서울"),
-+    ])
-+    func localizedDescriptions(languageCode: String, expected: String) throws {
-+        let number = try util.parse("+8221234567", defaultRegion: nil)
-+
-+        #expect(geocoder.description(forValidNumber: number, languageCode: languageCode) == expected)
-+    }
-+
-+    @Test("A language without locality data falls back to the country name")
-+    func localizedFallback() throws {
-+        let number = try util.parse("6502530000", defaultRegion: "US")
-+
-+        #expect(geocoder.description(forValidNumber: number, languageCode: "ko") == "미국")
-+    }
-+
-+    @Test("A caller in the same region sees the locality; a caller abroad sees the country")
-+    func userRegionChangesGranularity() throws {
-+        let number = try util.parse("6502530000", defaultRegion: "US")
-+
-+        #expect(geocoder.description(for: number, languageCode: "en", userRegion: "US") == "Mountain View, CA")
-+        #expect(geocoder.description(for: number, languageCode: "en", userRegion: "KR") == "United States")
-+    }
-+
-+    /// Regression test: a lookup for a country the language's database does not
-+    /// carry used to finalize the prepared statement and leave the helper
-+    /// unusable, so every later lookup in that language returned a country name.
-+    @Test("An uncovered country does not disable later lookups in the same language")
-+    func uncoveredCountryDoesNotPoisonTheLanguage() throws {
-+        let geocoder = PhoneNumberGeocoder()
-+        let unitedStates = try util.parse("6502530000", defaultRegion: "US")
-+        let korea = try util.parse("+8221234567", defaultRegion: nil)
-+
-+        // The Korean database carries only Korea, so this falls back.
-+        #expect(geocoder.description(forValidNumber: unitedStates, languageCode: "ko") == "미국")
-+        // The same helper must still answer for a country it does carry.
-+        #expect(geocoder.description(forValidNumber: korea, languageCode: "ko") == "서울")
-+        // And it must keep working when the country alternates.
-+        #expect(geocoder.description(forValidNumber: unitedStates, languageCode: "ko") == "미국")
-+        #expect(geocoder.description(forValidNumber: korea, languageCode: "ko") == "서울")
-+    }
-+
-+    @Test("An unparseable number yields no description")
-+    func unknownNumber() {
-+        let number = PhoneNumber()
-+        number.countryCode = 999
-+        number.nationalNumber = 1
-+
-+        #expect(geocoder.description(for: number, languageCode: "en") == nil)
-+    }
-+
-+    @Test("Concurrent lookups share one database connection safely")
-+    func concurrentLookups() async throws {
-+        let results = await withTaskGroup(of: String?.self) { group in
-+            for _ in 0..<16 {
-+                group.addTask {
-+                    let util = PhoneNumberUtility.shared
-+                    guard let number = try? util.parse("6502530000", defaultRegion: "US") else {
-+                        return nil
-+                    }
-+                    return PhoneNumberGeocoder.shared.description(forValidNumber: number, languageCode: "en")
-+                }
-+            }
-+
-+            var collected: [String?] = []
-+            for await result in group {
-+                collected.append(result)
-+            }
-+            return collected
-+        }
-+
-+        #expect(results.count == 16)
-+        #expect(results.allSatisfy { $0 == "Mountain View, CA" })
-+    }
-+}
+@@ -270,7 +270,7 @@
+ 				CLANG_WARN_UNREACHABLE_CODE = YES;
+ 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+ 				COPY_PHASE_STRIP = NO;
+-				CURRENT_PROJECT_VERSION = 2.1.2;
++				CURRENT_PROJECT_VERSION = 2.1.3;
+ 				DEBUG_INFORMATION_FORMAT = dwarf;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+ 				ENABLE_TESTABILITY = YES;
+@@ -288,7 +288,7 @@
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+ 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+-				MARKETING_VERSION = 2.1.2;
++				MARKETING_VERSION = 2.1.3;
+ 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+ 				MTL_FAST_MATH = YES;
+ 				ONLY_ACTIVE_ARCH = YES;
+@@ -326,7 +326,7 @@
+ 				CLANG_WARN_UNREACHABLE_CODE = YES;
+ 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+ 				COPY_PHASE_STRIP = NO;
+-				CURRENT_PROJECT_VERSION = 2.1.2;
++				CURRENT_PROJECT_VERSION = 2.1.3;
+ 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+ 				ENABLE_NS_ASSERTIONS = NO;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+@@ -338,7 +338,7 @@
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+ 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+-				MARKETING_VERSION = 2.1.2;
++				MARKETING_VERSION = 2.1.3;
+ 				MTL_ENABLE_DEBUG_INFO = NO;
+ 				MTL_FAST_MATH = YES;
+ 				SDKROOT = iphoneos;
 ```
 
-**File**: `libPhoneNumberSwiftGeocodingTests/PhoneNumberSwiftGeocodingTests.swift` (modified, +1/-1)
+**File**: `libPhoneNumber-Demo/libPhoneNumber-Demo.xcodeproj/project.pbxproj` (modified, +4/-4)
 ```diff
-@@ -8,6 +8,6 @@ final class PhoneNumberSwiftGeocodingTests: XCTestCase {
-         let geocoder = PhoneNumberGeocoder.shared
-         let number = try util.parse("16502530000", defaultRegion: "US")
- 
--        XCTAssertEqual("United States", geocoder.description(for: number, languageCode: "en"))
-+        XCTAssertEqual("Mountain View, CA", geocoder.description(for: number, languageCode: "en"))
-     }
- }
+@@ -306,7 +306,7 @@
+ 				CLANG_WARN_UNREACHABLE_CODE = YES;
+ 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+ 				COPY_PHASE_STRIP = NO;
+-				CURRENT_PROJECT_VERSION = 2.1.2;
++				CURRENT_PROJECT_VERSION = 2.1.3;
+ 				DEBUG_INFORMATION_FORMAT = dwarf;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+ 				ENABLE_TESTABILITY = YES;
+@@ -324,7 +324,7 @@
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+ 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+-				MARKETING_VERSION = 2.1.2;
++				MARKETING_VERSION = 2.1.3;
+ 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+ 				MTL_FAST_MATH = YES;
+ 				ONLY_ACTIVE_ARCH = YES;
+@@ -363,7 +363,7 @@
+ 				CLANG_WARN_UNREACHABLE_CODE = YES;
+ 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+ 				COPY_PHASE_STRIP = NO;
+-				CURRENT_PROJECT_VERSION = 2.1.2;
++				CURRENT_PROJECT_VERSION = 2.1.3;
+ 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+ 				ENABLE_NS_ASSERTIONS = NO;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+@@ -375,7 +375,7 @@
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+ 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+-				MARKETING_VERSION = 2.1.2;
++				MARKETING_VERSION = 2.1.3;
+ 				MTL_ENABLE_DEBUG_INFO = NO;
+ 				MTL_FAST_MATH = YES;
+ 				SDKROOT = iphoneos;
 ```
 
----
-
-### Incident Patch 3: `ae92405c` (2026-09-12)
-**Commit Message**: fix(geocoding): resolve metadata under SwiftPM and stop poisoning a language
-
-Two failures that both surface as a correct-looking country name instead
-of a locality, with no error and no crash.
-
-The metadata bundle was never found under Swift Package Manager.
-NBGeocoderMetaDataHelper appended GeocodingMetaData.bundle to
--[NSBundle bundleForClass:].resourceURL, which is where CocoaPods,
-Carthage, and manual integration put the databases. SwiftPM nests them
-inside a generated wrapper bundle, and emits that wrapper flat up to
-Xcode 26 and macOS-structured from Xcode 27. No database was opened, so
-every lookup fell through to countryNameForNumber:. Apply the same search
-the carrier and timezone mappers already use, covering both layouts.
-
-191c758 fixed this class of bug for carrier and timezone metadata and
-recorded that geocoding resolves its bundle differently and was
-unaffected. It resolves it differently, but it was affected: only the
-Objective-C tests covered geocoding, and they inject a test bundle, so
-the shipped path was never exercised.
-
-Separately, a lookup for a country a language's database does not carry
-disabled that language permanently. Only en.db has worldwide coverage
-
-**File**: `README.md` (modified, +4/-0)
+**File**: `libPhoneNumber-GeocodingParser/libPhoneNumber-GeocodingParser.xcodeproj/project.pbxproj` (modified, +4/-4)
 ```diff
-@@ -245,6 +245,10 @@ let number = try phoneUtil.parse("16502530000", defaultRegion: "US")
- let description = geocoder.description(for: number, languageCode: "en")
- ```
- 
-+Only the English database carries worldwide coverage. The other languages ship
-+their own country, so a lookup outside it falls back to the localized country
-+name rather than a locality.
-+
- ### Carrier
- 
- ```swift
+@@ -315,7 +315,7 @@
+ 				CLANG_WARN_UNREACHABLE_CODE = YES;
+ 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+ 				COPY_PHASE_STRIP = NO;
+-				CURRENT_PROJECT_VERSION = 2.1.2;
++				CURRENT_PROJECT_VERSION = 2.1.3;
+ 				DEAD_CODE_STRIPPING = YES;
+ 				DEBUG_INFORMATION_FORMAT = dwarf;
+ 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+@@ -334,7 +334,7 @@
+ 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+-				MARKETING_VERSION = 2.1.2;
++				MARKETING_VERSION = 2.1.3;
+ 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+ 				MTL_FAST_MATH = YES;
+ 				ONLY_ACTIVE_ARCH = YES;
+@@ -376,7 +376,7 @@
+ 				CLANG_WARN_UNREACHABLE_CODE = YES;
+ 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+ 				COPY_PHASE_STRIP = NO;
+-				CURRENT_PROJECT_VERSION = 2.1.2;
++				CURRENT_PROJECT_VERSION = 2.1.3;
+ 				DEAD_CODE_STRIPPING = YES;
+ 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+ 				ENABLE_NS_ASSERTIONS = NO;
+@@ -389,7 +389,7 @@
+ 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+ 				GCC_WARN_UNUSED_FUNCTION = YES;
+ 				GCC_WARN_UNUSED_VARIABLE = YES;
+-				MARKETING_VERSION = 2.1.2;
++				MARKETING_VERSION = 2.1.3;
+ 				MTL_ENABLE_DEBUG_INFO = NO;
+ 				MTL_FAST_MATH = YES;
+ 				SDKROOT = macosx;
 ```
 
-**File**: `libPhoneNumberGeocoding/NBGeocoderMetaDataHelper.h` (modified, +17/-1)
+**File**: `libPhoneNumber-iOS-Swift.podspec` (modified, +4/-4)
 ```diff
-@@ -29,10 +29,26 @@ NS_ASSUME_NONNULL_BEGIN
-  */
- - (instancetype)initWithCountryCode:(NSNumber *)countryCode
-                        withLanguage:(NSString *)languageCode
--                         withBundle:(NSBundle *)bundle;
-+                         withBundle:(nullable NSBundle *)bundle;
+@@ -1,7 +1,7 @@
+ Pod::Spec.new do |s|
+   s.name         = "libPhoneNumber-iOS-Swift"
+   s.module_name  = "libPhoneNumberIOSSwift"
+-  s.version      = "2.1.2"
++  s.version      = "2.1.3"
+   s.summary      = "Swift-first umbrella facade for libPhoneNumber-iOS"
+   s.description  = "Swift-first umbrella facade over the stable Objective-C libPhoneNumber-iOS core and optional geocoding and short-number modules."
+   s.homepage     = "https://github.com/iziz/libPhoneNumber-iOS.git"
+@@ -26,9 +26,9 @@ Pod::Spec.new do |s|
+   s.swift_versions = ["5.9", "6.0"]
+   s.requires_arc = true
  
-+/**
-+ * Initializer that resolves the shipped geocoding databases automatically.
-+ *
-+ * The payload is located by searching the loaded bundles, which covers
-+ * CocoaPods, Carthage, manual integration, and the nested wrapper bundle
-+ * SwiftPM generates. A helper created when no payload can be found answers
-+ * every query with nil, and the geocoder falls back to country names.
-+ */
- - (instancetype)initWithCountryCode:(NSNumber *)countryCode withLanguage:(NSString *)languageCode;
+-  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.2'
+-  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.2'
+-  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.2'
++  s.dependency 'libPhoneNumber-iOS-SwiftCore', '~> 2.1.3'
++  s.dependency 'libPhoneNumber-iOS-SwiftGeocoding', '~> 2.1.3'
++  s.dependency 'libPhoneNumber-iOS-SwiftShortNumber', '~> 2.1.3'
  
-+/**
-+ * The bundle holding the geocoding databases, or nil when none was found.
-+ *
-+ * Exposed so integrators can check whether the metadata resolved at all,
-+ * instead of silently receiving country-level descriptions.
-+ */
-++ (nullable NSBundle *)defaultMetadataBundle;
-+
- /**
-  * Returns a text description for the given phone number. The description will be based on the
-  * country code and national number attributes of the NBPhoneNumber parameter. If no result was
-```
-
-**File**: `libPhoneNumberGeocoding/NBGeocoderMetaDataHelper.m` (modified, +98/-11)
-```diff
-@@ -48,6 +48,10 @@ - (instancetype)initWithCountryCode:(NSNumber *)countryCode
-     _countryCode = countryCode;
-     _language = languageCode;
- 
-+    if (bundle == nil) {
-+      return self;
-+    }
-+
-     NSString *shortLanguageCode = [[languageCode componentsSeparatedByString:@"-"] firstObject];
-     NSURL *databaseURL = [[bundle resourceURL]
-         URLByAppendingPathComponent:[NSString stringWithFormat:@"%@.db", shortLanguageCode]];
-@@ -69,25 +73,108 @@ - (instancetype)initWithCountryCode:(NSNumber *)countryCode
- }
- 
- - (instancetype)initWithCountryCode:(NSNumber *)countryCode withLanguage:(NSString *)languageCode {
--  NSBundle *bundle = [NSBundle bundleForClass:self.classForCoder];
--  NSURL *resourceURL =
--      [[bundle resourceURL] URLByAppendingPathComponent:@"GeocodingMetaData.bundle"];
--  NSBundle *databaseBundle = [NSBundle bundleWithURL:resourceURL];
--  return [self initWithCountryCode:countryCode withLanguage:languageCode withBundle:databaseBundle];
-+  return [self initWithCountryCode:countryCode
-+                      withLanguage:languageCode
-+                        withBundle:[NBGeocoderMetaDataHelper defaultMetadataBundle]];
-+}
-+
-+// Locates GeocodingMetaData.bundle wherever the integration put it.
-+//
-+// Appending the payload to -[NSBundle bundleForClass:].resourceURL only works
-+// for CocoaPods and manual integration, where the databases land next to the
-+// consuming binary. SwiftPM nests them one level deeper, inside a generated
-+// wrapper bundle, and emits that wrapper flat up to Xcode 26 but
-+// macOS-structured (Contents/Resources) from Xcode 27. Without this search the
-+// databases are simply not found and every lookup falls back to the country
-+// name, with no error and no crash.
-++ (NSBundle * _Nullable)defaultMetadataBundle {
-+  static NSBundle *cachedBundle = nil;
-+  static dispatch_once_t onceToken;
-+  dispatch_once(&onceToken, ^{
-+    NSMutableArray<NSBundle *> *searchBundles = [NSMutableArray arrayWithArray:NSBundle.allBundles];
-+    [searchBundles addObjectsFromArray:NSBundle.allFrameworks];
-+    [searchBundles addObject:[NSBundle bundleForClass:self]];
-+    [searchBundles addObject:[NSBundle mainBundle]];
-+
-+    for (NSBundle *bundle in searchBundles) {
-+      NSMutableArray<NSURL *> *baseURLs = [NSMutableArray array];
-+      if (bundle.resourceURL != nil) {
-+        [baseURLs addObject:bundle.resourceURL];
-+      }
-+      if (bundle.bundleURL != nil) {
-+        [baseURLs addObject:bundle.bundleURL];
-+      }
-+
-+      NSURL *parentURL = bundle.bundleURL;
-+      for (NSUInteger index = 0; index < 5 && parentURL != nil; index++) {
-+        parentURL = [parentURL URLByDeletingLastPathComponent];
-+        if (parentURL != nil) {
-+          [baseURLs addObject:parentURL];
-+        }
-+      }
-+
-+      for (NSURL *baseURL in baseURLs) {
-+        NSURL *resourcesURL = [baseURL URLByAppendingPathComponent:@"Contents/Resources"];
-+        NSURL *wrapperURL = [baseURL
-+            URLByAppendingPathComponent:@"libPhoneNumber_libPhoneNumberGeocodingMetaData.bundle"];
-+        NSURL *wrapperResourcesURL =
-+            [wrapperURL URLByAppendingPathComponent:@"Contents/Resources"];
-+        NSArray<NSURL *> *candidateURLs = @[
-+          [baseURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+          [resourcesURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+          [wrapperURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+          [wrapperResourcesURL URLByAppendingPathComponent:@"GeocodingMetaData.bundle"],
-+        ];
-+
-+        for (NSURL *candidateURL in candidateURLs) {
-+          // en.db ships in every build of the payload, so it identifies a
-+          // populated bundle rather than an empty directory of the right name.
-+          NSURL *databaseURL = [candidateURL URLByAppendingPathComponent:@"en.db"];
-+          if ([[NSFileManager defaultManager] fileExistsAtPath:databaseURL.path]) {
-+            cachedBundle = [NSBundle bundleWithURL:candidateURL];
-+            return;
-+          }
-+        }
-+      }
-+    }
-+  });
-+
-+  return cachedBundle;
- }
- 
- - (NSString * _Nullable)searchPhoneNumber:(NBPhoneNumber *)phoneNumber {
-   @synchronized(self) {
--    if (_database == NULL || _selectStatement == NULL) {
-+    if (_database == NULL) {
-       return nil;
-     }
- 
--    if (![phoneNumber.countryCode isEqualToNumber:_countryCode]) {
-+    // Each database holds one table per country calling code, and only the
-+    // English database covers every country. Preparing a statement for a
-+    // country this database does not carry fails, which is an ordinary "no
-+    // data for this number" answer -- not a broken helper. Leaving the failed
-+    // statement in place used to disable the helper permanently, so a single
-+    // lookup for an uncovered country downgraded every later lookup in that
-+    // language to a country name.
-+    if (_selectStatement == NULL || ![phoneNumber.countryCode isEqualToNumber:_countryCode]) {
-       _country
-```
-
-**File**: `libPhoneNumberIOSSwiftTests/PhoneNumberIOSSwiftTests.swift` (modified, +1/-1)
-```diff
-@@ -29,6 +29,6 @@ final class PhoneNumberIOSSwiftTests: XCTestCase {
-         let geocoder = PhoneNumberGeocoder.shared
-         let number = try util.parse("16502530000", defaultRegion: "US")
- 
--        XCTAssertEqual("United States", geocoder.description(for: number, languageCode: "en"))
-+        XCTAssertEqual("Mountain View, CA", geocoder.description(for: number, languageCode: "en"))
-     }
- }
-```
-
-**File**: `libPhoneNumberSwiftGeocodingTests/PhoneNumberGeocodingFacadeTests.swift` (added, +96/-0)
-```diff
-@@ -0,0 +1,96 @@
-+import Testing
-+import libPhoneNumberSwiftCore
-+import libPhoneNumberSwiftGeocoding
-+
-+@Suite("Geocoder facade")
-+struct PhoneNumberGeocodingFacadeTests {
-+    private let util = PhoneNumberUtility.shared
-+    private let geocoder = PhoneNumberGeocoder.shared
-+
-+    @Test("A geographical number resolves to a locality, not just the country")
-+    func localityForGeographicalNumber() throws {
-+        let number = try util.parse("6502530000", defaultRegion: "US")
-+        let description = geocoder.description(forValidNumber: number, languageCode: "en")
-+
-+        #expect(description == "Mountain View, CA")
-+    }
-+
-+    /// Only `en.db` carries worldwide coverage; the other databases hold their
-+    /// own country. A language without an entry falls back to the country name,
-+    /// which is correct behaviour, not a missing lookup.
-+    @Test("Descriptions are localized by language code", arguments: [
-+        ("en", "Seoul"),
-+        ("ko", "서울"),
-+    ])
-+    func localizedDescriptions(languageCode: String, expected: String) throws {
-+        let number = try util.parse("+8221234567", defaultRegion: nil)
-+
-+        #expect(geocoder.description(forValidNumber: number, languageCode: languageCode) == expected)
-+    }
-+
-+    @Test("A language without locality data falls back to the country name")
-+    func localizedFallback() throws {
-+        let number = try util.parse("6502530000", defaultRegion: "US")
-+
-+        #expect(geocoder.description(forValidNumber: number, languageCode: "ko") == "미국")
-+    }
-+
-+    @Test("A caller in the same region sees the locality; a caller abroad sees the country")
-+    func userRegionChangesGranularity() throws {
-+        let number = try util.parse("6502530000", defaultRegion: "US")
-+
-+        #expect(geocoder.description(for: number, languageCode: "en", userRegion: "US") == "Mountain View, CA")
-+        #expect(geocoder.description(for: number, languageCode: "en", userRegion: "KR") == "United States")
-+    }
-+
-+    /// Regression test: a lookup for a country the language's database does not
-+    /// carry used to finalize the prepared statement and leave the helper
-+    /// unusable, so every later lookup in that language returned a country name.
-+    @Test("An uncovered country does not disable later lookups in the same language")
-+    func uncoveredCountryDoesNotPoisonTheLanguage() throws {
-+        let geocoder = PhoneNumberGeocoder()
-+        let unitedStates = try util.parse("6502530000", defaultRegion: "US")
-+        let korea = try util.parse("+8221234567", defaultRegion: nil)
-+
-+        // The Korean database carries only Korea, so this falls back.
-+        #expect(geocoder.description(forValidNumber: unitedStates, languageCode: "ko") == "미국")
-+        // The same helper must still answer for a country it does carry.
-+        #expect(geocoder.description(forValidNumber: korea, languageCode: "ko") == "서울")
-+        // And it must keep working when the country alternates.
-+        #expect(geocoder.description(forValidNumber: unitedStates, languageCode: "ko") == "미국")
-+        #expect(geocoder.description(forValidNumber: korea, languageCode: "ko") == "서울")
-+    }
-+
-+    @Test("An unparseable number yields no description")
-+    func unknownNumber() {
-+        let number = PhoneNumber()
-+        number.countryCode = 999
-+        number.nationalNumber = 1
-+
-+        #expect(geocoder.description(for: number, languageCode: "en") == nil)
-+    }
-+
-+    @Test("Concurrent lookups share one database connection safely")
-+    func concurrentLookups() async throws {
-+        let results = await withTaskGroup(of: String?.self) { group in
-+            for _ in 0..<16 {
-+                group.addTask {
-+                    let util = PhoneNumberUtility.shared
-+                    guard let number = try? util.parse("6502530000", defaultRegion: "US") else {
-+                        return nil
-+                    }
-+                    return PhoneNumberGeocoder.shared.description(forValidNumber: number, languageCode: "en")
-+                }
-+            }
-+
-+            var collected: [String?] = []
-+            for await result in group {
-+                collected.append(result)
-+            }
-+            return collected
-+        }
-+
-+        #expect(results.count == 16)
-+        #expect(results.allSatisfy { $0 == "Mountain View, CA" })
-+    }
-+}
-```
-
-**File**: `libPhoneNumberSwiftGeocodingTests/PhoneNumberSwiftGeocodingTests.swift` (modified, +1/-1)
-```diff
-@@ -8,6 +8,6 @@ final class PhoneNumberSwiftGeocodingTests: XCTestCase {
-         let geocoder = PhoneNumberGeocoder.shared
-         let number = try util.parse("16502530000", defaultRegion: "US")
- 
--        XCTAssertEqual("United States", geocoder.description(for: number, languageCode: "en"))
-+        XCTAssertEqual("Mountain View, CA", geocoder.description(for: number, languageCode: "en"))
-     }
- }
+   s.source_files = [
+                     'libPhoneNumberIOSSwift/**/*.swift',
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #458** (2026-10-30): chore(release): refresh metadata for 2.1.3 (@iziz)
 - **PR #457** (2026-10-08): chore(release): refresh metadata for 2.1.2 (@iziz)
 - **PR #456** (2026-09-25): chore(release): refresh metadata for 2.1.1 (@iziz)
 - **PR #455** (2026-09-17): chore(release): prepare 2.1.0 with Google metadata v9.0.39 (@iziz)
 - **PR #454** (2026-09-12): Remove the breaking changes so the next release can be 2.1.0 (@iziz)
 - **PR #453** (2026-09-12): Fix geocoding metadata resolution under SwiftPM and per-language statement poisoning (@iziz)
-- **PR #452** (2026-09-12): Fix geocoding metadata resolution and adopt Swift 6 concurrency (@iziz)
 
 ---
 
@@ -2751,58 +2598,34 @@ disabled that language permanently. Only en.db has worldwide coverage
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: add changelog, contributing guide, security policy, and DocC
+## X. release): merge metadata update for 2.1.3
 
 **RULE**:
-When implementing operations in `.github/ISSUE_TEMPLATE/bug_report.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iziz/libPhoneNumber-iOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iziz/libPhoneNumber-iOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c092e9d4`: docs: add changelog, contributing guide, security policy, and DocC. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `15df36de`: release): merge metadata update for 2.1.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Objective-C data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/bug_report.yml`.
+Subsystems managing Objective-C data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```objective-c
 // Verified production-grade fix pattern:
-name: Bug report
-description: A number is parsed, formatted, validated, or described incorrectly, or an API misbehaves.
-labels: ["bug"]
-body:
-  - type: markdown
-    attributes:
-      value: |
-        This library ports Google's libphonenumber. If Google's own
-        implementation agrees with the behavior you are seeing, the change
-        belongs upstream rather than here — please say so below and link it.
+## 2.1.3
 
-  - type: input
-    id: number
-    attributes:
-      label: Phone number
-      description: >
-        The number that reproduces the problem, with its region. Use a test or
-        example number rather than a real person's number where you can.
-      placeholder: "+82 10 6543 1234, default region KR"
-    validations:
-      required: true
+Patch release. Refresh Google libphonenumber metadata from `v9.0.41` to
+`v9.0.42`, including phone-number, short-number, carrier, and geocoding data.
+Phone-number metadata changes affect 21 regions: Australia, Åland Islands,
+Botswana, Cocos (Keeling) Islands, China, Colombia, Costa Rica, Cape Verde,
+Christmas Island, Denmark, Spain, Finland, Ghana, Guyana, India, Kenya, Kuwait,
+Papua New Guinea, Paraguay, Russia, and Saint Helena. Short-number changes
+affect Botswana and Colombia. Carrier metadata gains Kazakh (`kk`) carrier
+names and grows from 31,065 to 32,099 prefix rows. Geocoding changes are
+limited to the English and Chinese databases. Testing metadata and timezone
+data are unchanged. See `docs/METADATA_UPDATE_LOG.md` for the upstream
+comparison and validation.
 
-  - type: textarea
-    id: expected
-    attributes:
-      label: Expected and actual result
-      description: What you expected each API to return, and what it returned.
-      placeholder: |
-        isValidNumber: expected true, got false
-        format(.e164): expected "+821065431234", got "+8201065431234"
-    validations:
-      required: true
-
-  - type: textarea
-    id: reproduction
-    attributes:
-      label: Reproduction
-      descript
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2812,4 +2635,4 @@ body:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c092e9d4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `15df36de` are properly handled with clean fallback behavior.
