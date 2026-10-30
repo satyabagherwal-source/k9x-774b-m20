@@ -4730,3 +4730,7 @@ https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM
 # --- Automatically Discovered by AI Scout Engine [2026-10-30T19:19:01.576Z] ---
 # [HUGGINGFACE-AI-MODELS] LiquidAI/LFM3-1.7B-GGUF (3420 score) - Verified Hugging Face Model: LiquidAI/LFM3-1.7B-GGUF (142 likes, 97184 downloads
 https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-30T22:34:14.734Z] ---
+# [HUGGINGFACE-AI-MODELS] speridlabs/idol (1641 score) - Verified Hugging Face Model: speridlabs/idol (142 likes, 221 downloads)
+https://huggingface.co/speridlabs/idol

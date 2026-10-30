@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T22:27:36.466Z",
+  "last_updated": "2026-10-30T22:34:42.351Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "b3d3e6adddea708bd5a2b3512c43f4e6c15fbd10ae1a88f297582f75750b78c8",
-      "verified_at": "2026-10-30T21:19:36.975Z",
+      "content_hash": "9b69cb0843be714d525993b309c800a5af7951c25d4722c23968bb7849e2da99",
+      "verified_at": "2026-10-30T22:34:42.351Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T21:19:36.975Z"
+      "last_updated": "2026-10-30T22:34:42.351Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "48ec877ee8008ca008567c10afde96c298348bd18579e3304b6d6d4ba2e32ba9",
-      "verified_at": "2026-10-30T00:19:01.099Z",
+      "content_hash": "839a6ac8a62e4b59d0b79dd4da9f1b29cfd85a015fc05184bcc8f30440965519",
+      "verified_at": "2026-10-30T22:34:34.285Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T00:19:01.099Z"
+      "last_updated": "2026-10-30T22:34:34.285Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",
@@ -17444,6 +17444,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-30T19:19:15.904Z"
+    },
+    "speridlabs/idol": {
+      "repository": "speridlabs/idol",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-speridlabs-idol",
+      "content_hash": "d6a086941e54d2fa3a0bbd586fa187814e902650e76a052ec19cdc48e8550c3a",
+      "verified_at": "2026-10-30T22:34:31.585Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-30T22:34:31.585Z"
     }
   },
   "repos": {

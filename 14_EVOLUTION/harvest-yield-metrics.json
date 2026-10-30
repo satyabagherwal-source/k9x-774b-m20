@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T22:27:36.462Z",
-  "total_cycles_completed": 6320,
-  "total_learnings_persisted": 6320,
-  "total_rules_promoted": 5893,
+  "last_updated": "2026-10-30T22:34:42.347Z",
+  "total_cycles_completed": 6323,
+  "total_learnings_persisted": 6323,
+  "total_rules_promoted": 5897,
   "history": [
-    {
-      "timestamp": "2026-10-30T06:57:00.269Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T06:57:22.140Z",
-      "repository": "joreilly/Confetti",
-      "learningId": "learn-github-joreilly-confetti",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T07:05:28.795Z",
-      "repository": "bitnami/sealed-secrets",
-      "learningId": "learn-github-bitnami-sealed-secrets",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T07:18:07.937Z",
       "repository": "genkit-ai/genkit",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-30T22:27:36.462Z",
       "repository": "trailbaseio/trailbase",
       "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T22:34:31.582Z",
+      "repository": "speridlabs/idol",
+      "learningId": "learn-huggingface-speridlabs-idol",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T22:34:34.281Z",
+      "repository": "meshery/meshery",
+      "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T22:34:42.347Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

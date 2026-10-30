@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T22:27:39.012Z",
-    "lastVerified": "2026-10-30T22:27:39.012Z",
+    "lastChecked": "2026-10-30T22:34:44.883Z",
+    "lastVerified": "2026-10-30T22:34:44.883Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -139,22 +139,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T22:03:23.902Z",
-    "lastVerified": "2026-10-30T22:03:23.902Z",
+    "lastChecked": "2026-10-30T22:34:40.202Z",
+    "lastVerified": "2026-10-30T22:34:40.202Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "b3d3e6adddea708bd5a2b3512c43f4e6c15fbd10ae1a88f297582f75750b78c8",
+    "contentHash": "9b69cb0843be714d525993b309c800a5af7951c25d4722c23968bb7849e2da99",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "1f4828f8"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1024,9 +1023,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-10-30T18:25:32.092Z",
+    "lastChecked": "2026-10-30T22:34:30.290Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-10-30T18:25:32.092Z"
+    "lastVerified": "2026-10-30T22:34:30.290Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -4273,9 +4272,9 @@
   "malisper-pgrust": {
     "name": "pgrust",
     "officialUrl": "https://github.com/malisper/pgrust",
-    "lastChecked": "2026-10-29T23:09:33.315Z",
+    "lastChecked": "2026-10-30T22:34:32.712Z",
     "revisionIdentifier": "38634b40",
-    "lastVerified": "2026-10-29T23:09:33.315Z"
+    "lastVerified": "2026-10-30T22:34:32.712Z"
   },
   "gitui-org-gitui": {
     "name": "gitui",
@@ -5035,14 +5034,14 @@
     "officialUrl": "https://github.com/meshery/meshery",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T00:18:59.012Z",
-    "lastVerified": "2026-10-30T00:18:59.012Z",
+    "lastChecked": "2026-10-30T22:34:32.417Z",
+    "lastVerified": "2026-10-30T22:34:32.417Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meshery-meshery",
-    "contentHash": "48ec877ee8008ca008567c10afde96c298348bd18579e3304b6d6d4ba2e32ba9",
+    "contentHash": "839a6ac8a62e4b59d0b79dd4da9f1b29cfd85a015fc05184bcc8f30440965519",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11334,6 +11333,37 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "syntax-tree-mdast": {
+    "name": "mdast",
+    "officialUrl": "https://github.com/syntax-tree/mdast",
+    "lastChecked": "2026-10-30T22:34:22.667Z",
+    "revisionIdentifier": "c034ec9d",
+    "lastVerified": "2026-10-30T22:34:22.667Z"
+  },
+  "shiguangschedule-shiguangschedule": {
+    "name": "shiguangschedule",
+    "officialUrl": "https://github.com/ShiGuangSchedule/shiguangschedule",
+    "lastChecked": "2026-10-30T22:34:25.128Z",
+    "revisionIdentifier": "feabb68f",
+    "lastVerified": "2026-10-30T22:34:25.128Z"
+  },
+  "hf-speridlabs-idol": {
+    "name": "speridlabs/idol",
+    "officialUrl": "https://huggingface.co/speridlabs/idol",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-30T22:34:20.300Z",
+    "lastVerified": "2026-10-30T22:34:20.300Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-speridlabs-idol",
+    "contentHash": "d6a086941e54d2fa3a0bbd586fa187814e902650e76a052ec19cdc48e8550c3a",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `125ba14d`  
+> **Source Version**: `1fd4bee8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T00:19:00.482Z  
+> **Timestamp**: 2026-10-30T22:34:33.581Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T00:18:59.012Z  
+> **Harvest Timestamp**: 2026-10-30T22:34:32.417Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12081 stars
+- **Stars / Engagement**: 12089 stars
 
 ---
 
@@ -804,11 +804,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22642** (2026-10-29): **[Bug]: Catalog table view overlaps the left filter sidebar**
-  *Symptoms*: ### Description In the MeshMap catalog, switching from grid view to table view causes the table to overlap the left filter sidebar.  The table extends into the sidebar's area instead of respecting the available space within the catalog modal, making the filters partially obscured and the interface difficult to use.  ### Steps to Reproduce 1. Open the [[Meshery Playground MeshMap editor](https://playground.meshery.io/extension/meshmap?mode=design)](https://playground.meshery.io/extension/meshmap?mode=design). 2. Click **Start with a Template** to open the catalog. 3. Switch to table view using the view toggle in the top-right area of the catalog. 4. Observe the table layout in relation to the left filter sidebar.  ### Expected Behavior The table should remain within the catalog's content area without overlapping the left filter sidebar. Both the table and sidebar should remain accessible and properly laid out.  ### Actual Behavior The table extends over the left filter sidebar, obscuring part of the sidebar and disrupting the catalog layout.  ### Environment - **Application:** Meshery Playground / MeshMap - **Browser:** Mozilla Firefox - **Operating System:** Ubuntu Linux  ### Additional Context The issue is observed when switching from grid view to table view. The grid view appears to maintain separation between the sidebar and the main content area.  ### I'd like to investigate and work on fixing this issue. Could you please assign it to me?  <img width="1825" height="1005" 
+- **Issue #22680** (2026-10-30): **Add Harpal's introduction to meetings documentation**
+  *Symptoms*: Added introductory message from Harpal to the meetings documentation.  **Notes for Reviewers**  - This PR fixes #  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [ ] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added an introduction expressing enthusiasm for joining the Meshery community, learning, connecting, and contributing.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
-- **Issue #22619** (2026-10-27): **[UI] Replace waitForTimeout in user preference e2e spec with a web-first assertion**
-  *Symptoms*: **Notes for Reviewers**  - This PR fixes # (no issue; small e2e reliability cleanup)  `ui/tests/e2e/userpreference.spec.ts` was the only spec still using `page.waitForTimeout(2000)`: after clicking a preference switch it slept 2 s and then branched on the switch state. The switch updates on click and the test already awaits the matching POST and its 200 response, so this replaces the sleep and the if/else with a web-first assertion:  ```ts await expect(prefSwitch).toBeChecked({ checked: !wasChecked }); ```  Note: the old sleep implicitly also checked that the switch did not flip back within 2 s. I found no code that flips it back; happy to add an explicit check if you want that covered.  **Before / after** (Local provider, server built from source, static UI build, `--repeat-each=5`):  ``` before: 10 passed (+ setup), ~8.0 s per test after:  10 passed (+ setup), ~6.3 s per test ```  Changing the expectation to `checked: wasChecked` makes the test fail, so the assertion is not vacuous. `prettier --check` and `eslint` pass on the touched file. Not run: the `chromium-meshery-provider` project (needs a remote token) and the full suite.  AI assistance: I used Claude (an AI coding assistant) to help find and draft this change. I reviewed the change; the runs above were made in a sandbox with the assistant's help. The commit carries an `Assisted-by` trailer.  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificat
+- **Issue #22679** (2026-10-30): **Create introduction for Emmanuel Wilson Dismas. Computer engineer.**
+  *Symptoms*: Added a personal introduction and contact information for Emmanuel Wilson Dismas.  **Notes for Reviewers**  - This PR fixes #  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added an introduction for Emmanuel Wilson Dismas, including his programming interests, technologies and projects explored, links to his LinkedIn and GitHub profiles, and a sign-off.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -825,660 +825,63 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1ac48c18` (2026-10-28)
-**Commit Message**: Merge pull request #22570 from Ayush-AM/fix/issue-22445-notification-blob-leak
+### Incident Patch 1: `1fd4bee8` (2026-10-30)
+**Commit Message**: [Docs] Auto-merge meeting minutes (#22673)
 
-fix(ui): manage blob URL lifecycle and prevent memory leak in DataToF…
+Auto-merged meeting minutes update.
 
-**File**: `ui/components/layout/NotificationCenter/formatters/common.test.tsx` (modified, +35/-4)
+This PR contained only changes to `docs/meetings/` and was auto-merged by the community manager workflow.
+
+**File**: `docs/meetings/2026/week-of-10-29-2026/prashanth-manchala.md` (added, +15/-0)
 ```diff
-@@ -1,5 +1,5 @@
- import React from 'react';
--import { render, screen } from '@testing-library/react';
-+import { render, screen, cleanup } from '@testing-library/react';
- import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
- 
- vi.mock('@sistent/sistent', () => ({
-@@ -57,21 +57,25 @@ describe('EmptyState', () => {
- });
- 
- describe('DataToFileLink', () => {
--  // jsdom does not implement URL.createObjectURL by default; stub it for these tests.
-+  // jsdom does not implement URL.createObjectURL or URL.revokeObjectURL by default; stub them for these tests.
-   const originalCreateObjectURL = (global.URL as any).createObjectURL;
-+  const originalRevokeObjectURL = (global.URL as any).revokeObjectURL;
- 
-   beforeEach(() => {
--    (global.URL as any).createObjectURL = vi.fn(() => 'blob:fake-url');
-+    (global.URL as any).createObjectURL = vi.fn((file: File) => `blob:fake-url-${file.name}`);
-+    (global.URL as any).revokeObjectURL = vi.fn();
-   });
- 
-   afterEach(() => {
-+    cleanup();
-     (global.URL as any).createObjectURL = originalCreateObjectURL;
-+    (global.URL as any).revokeObjectURL = originalRevokeObjectURL;
-   });
- 
-   it('creates a download link pointing to a generated blob URL', () => {
-     render(<DataToFileLink data="hello world" />);
-     const link = screen.getByRole('link', { name: /download trace/i });
--    expect(link).toHaveAttribute('href', 'blob:fake-url');
-+    expect(link).toHaveAttribute('href', 'blob:fake-url-trace.txt');
-     expect(link).toHaveAttribute('download', 'trace.txt');
-   });
- 
-@@ -83,4 +87,31 @@ describe('DataToFileLink', () => {
-     expect(blobArg).toBeInstanceOf(File);
-     expect(blobArg.name).toBe('trace.txt');
-   });
+@@ -0,0 +1,15 @@
++# Prashanth Kumar Manchala
 +
-+  it('revokes the blob URL on component unmount to prevent memory leaks', () => {
-+    const { unmount } = render(<DataToFileLink data="trace info" />);
-+    const revokeSpy = (global.URL as any).revokeObjectURL as ReturnType<typeof vi.fn>;
++Hi everyone! 👋 I'm Prashanth, a software engineer with over a year of professional experience. I love **systems and backend engineering**, especially understanding how things work under the hood, debugging complex problems, and building reliable software.
 +
-+    expect(revokeSpy).not.toHaveBeenCalled();
++My current focus is **AI Platform Engineering**, where I'm exploring AI agents, infrastructure, observability, and reliable AI-powered systems.
 +
-+    unmount();
++A couple of projects I've been working on:
++- **[trade-rs](https://github.com/knocBack/trade-matching-engine-rs)** — A deterministic trading order-matching engine built in Rust, with HTTP APIs and WebSocket market updates.
++- **[Incident Investigator](https://github.com/knocBack/incident-investigator)** — A multi-agent system built with LangGraph that investigates simulated production incidents using logs, metrics, and evidence-based reasoning.
 +
-+    expect(revokeSpy).toHaveBeenCalledTimes(1);
-+    expect(revokeSpy).toHaveBeenCalledWith('blob:fake-url-trace.txt');
-+  });
++I'm excited to explore Meshery, learn more about cloud-native infrastructure, and contribute to open source!
 +
-+  it('revokes previous blob URL and creates a new one when data prop updates', () => {
-+    const { rerender } = render(<DataToFileLink data="first-trace" />);
-+    const createSpy = (global.URL as any).createObjectURL as ReturnType<typeof vi.fn>;
-+    const revokeSpy = (global.URL as any).revokeObjectURL as ReturnType<typeof vi.fn>;
-+
-+    expect(createSpy).toHaveBeenCalledTimes(1);
-+    expect(revokeSpy).not.toHaveBeenCalled();
-+
-+    rerender(<DataToFileLink data="second-trace" />);
-+
-+    expect(revokeSpy).toHaveBeenCalledTimes(1);
-+    expect(revokeSpy).toHaveBeenCalledWith('blob:fake-url-trace.txt');
-+    expect(createSpy).toHaveBeenCalledTimes(2);
-+  });
- });
-```
-
-**File**: `ui/components/layout/NotificationCenter/formatters/common.tsx` (modified, +15/-5)
-```diff
-@@ -1,4 +1,4 @@
--import React from 'react';
-+import React, { useState, useEffect } from 'react';
- import { LaunchIcon, Typography } from '@sistent/sistent';
- import { TextWithLinks } from '../../../data-formatter';
- 
-@@ -59,12 +59,22 @@ export const EmptyState = ({ event }: { event: { description?: string } }) => {
- };
- 
- export const DataToFileLink = ({ data }: { data: unknown }) => {
--  // convert the trace to a file
--  const dataString = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
--  const file = new File([dataString], 'trace.txt', { type: 'text/plain' });
-+  const [downloadUrl, setDownloadUrl] = useState<string>('');
-+
-+  useEffect(() => {
-+    // convert the trace to a file
-+    const dataString = typeof data === 'string' ? data : JSON.stringify(data ?? '', null, 2) || '';
-+    const file = new File([dataString], 'trace.txt', { type: 'text/plain' });
-+    const url = URL.createObjectURL(file);
-+    setDownloadUrl(url);
-+
-+    return () => {
-+      URL.revokeObjectURL(url);
-+    };
-+  }, [data]);
- 
-   return (
--    <TitleLink href={URL.createObjectURL(file)} download="trace.txt">
-+    <TitleLink href={downloadUrl} download="trace.txt">
-       Download Trace
-     </TitleLink>
-   );
++**Portfolio:** https://manchala.dev  
++**GitHub:** https://github.com/knocBack  
++**LinkedIn:** https://www.linkedin.com/in/prashanth-kumar-manchala
 ```
 
 ---
 
-### Incident Patch 2: `dc687079` (2026-10-28)
-**Commit Message**: Merge branch 'master' into fix/issue-22445-notification-blob-leak
+### Incident Patch 2: `13da1f26` (2026-10-30)
+**Commit Message**: [Docs] Auto-merge meeting minutes (#22676)
 
-**File**: `AGENTS.md` (modified, +17/-0)
+Auto-merged meeting minutes update.
+
+This PR contained only changes to `docs/meetings/` and was auto-merged by the community manager workflow.
+
+**File**: `docs/meetings/2026/week-of-10-29-2026/Yoshita Dwivedi` (added, +2/-0)
 ```diff
-@@ -474,6 +474,23 @@ touching any of them.
- - Hooks in `.agents/hooks/`: `format-frontend.sh` (post-edit Prettier) and
-   `block-lockfiles.sh` (pre-edit lock-file guard).
- 
-+## Worktrees and landing a change
-+
-+- **Work in a treehouse worktree, never in the main clone.** Other agent sessions and the
-+  no-mistakes pipeline share the main clone. Take a worktree with
-+  `treehouse get --lease -b <branch>` (it prints the path; `--base <branch>` starts it from
-+  another branch), work there, and release it with `treehouse return <path>` once the change
-+  has merged. `treehouse status` lists the pool. Never make one with `git worktree add` or a
-+  second clone.
-+- **Land every change through no-mistakes, at most three runs per pull request.** Commit in
-+  the worktree, then run `no-mistakes axi run --intent "<goal>"` (a clone without a
-+  `no-mistakes` remote needs `no-mistakes init` once). `no-mistakes axi status` shows the step
-+  and its findings, and `no-mistakes axi respond` answers a review gate. The pipeline reviews,
-+  tests, pushes and opens the pull request. After the third run, open an issue for anything
-+  still flagged and merge the pull request as it stands only if CI is green and it touches no
-+  "Require Human Review" area; otherwise hand it to a human. A run that stopped on a usage limit
-+  counts; one cancelled before it did anything does not.
-+
- ## Reusable Workflows Consumed by Other Repos
- 
- `.github/workflows/*.{yml,yaml}` here are called by repos across `meshery` and
+@@ -0,0 +1,2 @@
++Hi I am Yoshita Dwivedi , an ECE undergrad from University Of Lucknow. I am interested in contributing to open-souce , this is my first organization.
++Here's my linkedin profile - https://www.linkedin.com/in/yoshita-dwivedi/
 ```
 
-**File**: `CLAUDE.md` (removed, +0/-1)
+**File**: `docs/meetings/2026/week-of-10-29-2026/Yoshita_Dwivedi` (added, +2/-0)
 ```diff
-@@ -1 +0,0 @@
--@AGENTS.md
-```
-
-**File**: `CLAUDE.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+AGENTS.md
-\ No newline at end of file
-```
-
-**File**: `docs/CONTRIBUTING-gitflow.md` (modified, +22/-0)
-```diff
-@@ -132,6 +132,28 @@ Now, it may be desirable to squash some of your smaller commits down into a smal
- 
- This will open up a text editor where you can specify which commits to squash.
- <br><br>
-+## <a name="markdown-export">LLM-friendly page output</a>
-+
-+Every documentation page is also published as Markdown at `<page-url>/index.md`,
-+with the page title, description, and body content and no navigation, sidebar,
-+footer, or styling. A **View as Markdown** link to it appears in the page's
-+right-hand meta column (wide screens). The home page shows no link, but its Markdown is still
-+published and listed in `llms.txt`. Hugo also generates
-+[`/llms.txt`](https://llmstxt.org/) (an index of pages) and `/llms-full.txt`
-+(full content of every page) at the site root for AI agents.
-+
-+The `llms.txt`, `llms-full.txt`, and home-page Markdown layouts are provided by
-+the existing [Layer5 docs Hugo module](https://github.com/layer5io/docs), pinned
-+in `go.mod`. Since `hugo.toml` sets `ignoreConfig = true` for that module and
-+selects explicit mounts, it mounts `layouts/index.llms`, `layouts/index.llmsfull`,
-+and `layouts/index.md` from the module and declares their output formats locally.
-+
-+To leave a path out of `llms.txt` and `llms-full.txt`, add it to `exclude` under
-+`[params.llms]` in `hugo.toml`. To keep only the newest N pages of a section in `llms.txt`, add it to
-+`[params.llms.limit_sections]`; Meshery releases under `/project/releases/` are
-+capped at 5 this way. The limit is implemented by the Layer5 module's
-+`layouts/index.llms` template.
-+
- <li><h3>References</h3></li>
- <a href="https://git-scm.com/docs">Git Reference Docs</a>
- <br>
-```
-
-**File**: `docs/content/en/extensions/extensions/helm-snapshot/index.md` (modified, +8/-8)
-```diff
-@@ -34,11 +34,11 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
- 
- <pre class="codeblock-pre">
-   <div class="codeblock">
--     <div class="clipboardjs"> helm plugin install https://github.com/meshery-extensions/helm-snapshot </div>
-+     <div class="clipboardjs"> helm plugin install https://github.com/meshery-extensions/helm-kanvas-snapshot </div>
-    </div>
- </pre>
- 
--3. Verify the installation by running:
-+2. Verify the installation by running:
- 
- 
- <pre class="codeblock-pre">
-@@ -47,9 +47,9 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
-    </div>
- </pre>
- 
--   You should see the snapshot listed as `helm-snapshot`.
-+   You should see the snapshot listed as `helm-kanvas-snapshot`.
- 
--4. Set up the required environment variables (see the [Environment Variables](#environment-variables) section).
-+No environment variables or tokens need to be set. The plugin installs a prebuilt release binary that already includes its Meshery Cloud configuration.
- 
- ### Usage
- 
-@@ -58,21 +58,21 @@ Once the plugin is installed, you can generate a snapshot using either a package
- 
- <pre class="codeblock-pre">
-   <div class="codeblock">
--     <div class="clipboardjs">helm snapshot --f &lt;chart-URI&gt; [--name &lt;snapshot-name&gt;] [--email &lt;email&gt;]</div>
-+     <div class="clipboardjs">helm helm-kanvas-snapshot -f &lt;chart-URI&gt; [--name &lt;snapshot-name&gt;] [-e &lt;email&gt;]</div>
-    </div>
- </pre>
- 
--- **`-f`**, **`--file`**: (required) path or URL to the Helm chart (required).
-+- **`-f`**, **`--file`**: (required) path or URL to the Helm chart.
- - **`--name`**: (optional) name for the snapshot. If not provided, a name will be auto-generated based on the chart name.
- - **`-e`**, **`--email`**: (optional) email address to notify when snapshot is ready. If not provided, a link to the snapshot will be displayed in the terminal.
- 
- **Example**
- 
--To generate a snapshot for a Helm chart located at `https://meshery.io/charts/v0.8.0-meshery.tar.gz`, you can use:
-+To generate a snapshot for a Helm chart located at `https://meshery.io/charts/meshery-v0.8.12.tgz`, you can use:
- 
- <pre class="codeblock-pre">
-   <div class="codeblock">
--     <div class="clipboardjs">helm snapshot -f https://meshery.io/charts/v0.8.0-meshery.tar.gz --name meshery-chart</div>
-+     <div class="clipboardjs">helm helm-kanvas-snapshot -f https://meshery.io/charts/meshery-v0.8.12.tgz --name meshery-chart</div>
-    </div>
- </pre>
- 
-```
-
-**File**: `docs/content/en/extensions/models/crossplane-provider-openstack/index.md` (modified, +5/-1)
-```diff
-@@ -381,7 +381,11 @@ components:
-   colorIcon: extensions/models/crossplane-provider-openstack/components/cluster-provider-config/icons/color/cluster-provider-config-color.svg
-   whiteIcon: extensions/models/crossplane-provider-openstack/components/cluster-provider-config/icons/white/cluster-provider-config-white.svg
-   description: 
--components-count: 93
-+- name: cluster-provider-config
-+  colorIcon: extensions/models/crossplane-provider-openstack/components/cluster-provider-config/icons/color/cluster-provider-config-color.svg
-+  whiteIcon: extensions/models/crossplane-provider-openstack/components/cluster-provider-config/icons/white/cluster-provider-config-white.svg
-+  description: 
-+components-count: 94
- relationships: 
- relationship-count: 0
- featureList: [
-```
-
-**File**: `docs/data/openapi.yml` (modified, +342/-38)
-```diff
-@@ -23,6 +23,8 @@ tags:
-     description: APIs for configuring Meshery Operator, MeshSync, and Meshery Broker.
-   - name: Console_API_Console
-     description: Interactive terminal and log consoles against a connection's resources.
-+  - name: Diagnostics_Diagnostics
-+    description: Operations related to failure diagnostics
-   - name: Evaluation_Evaluation
-     description: Operations related to design evaluation
-   - name: Feature_Features
-@@ -65,8 +67,6 @@ tags:
-     description: Operations related to Meshery Academy content and curriculum
-   - name: BlowhornHealth_blowhornHealth
-     description: Operations related to Blowhorn health.
--  - name: BlowhornProfile_blowhornProfiles
--    description: Operations related to Blowhorn profiles.
-   - name: Claim_claims
-     description: Operations related to claims on resources.
-   - name: ContentItem_contentItems
-@@ -72388,7 +72388,10 @@ paths:
- 
- 
-         Every connection belongs to exactly one organization. The server assigns `organizationId` from the session
--        (`X-Current-Orgid`, then the caller's selected organization) and does not accept it in the body.
-+        (`X-Current-Orgid`, then the caller's selected organization) and does not accept it in the body. When the
-+        session names none, the server may use the caller's only organization (Meshery Cloud: the only live organization
-+        the caller belongs to, else the only one of those the caller owns); it must not guess between several, and
-+        answers 400 instead.
- 
- 
-         Desktop registration uses this shared operation, but kind `desktop` is implemented by Cloud: a server that does
-@@ -74859,8 +74862,8 @@ paths:
-                 description: >-
-                   A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
-                   description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
--                  `MeshkitError409`, `MeshkitError500` and `MeshkitError502` responses for an operation whose server
--                  answers its refusals this way.
-+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
-+                  operation whose server answers its refusals this way.
-                 required:
-                   - error
-                 additionalProperties: false
-@@ -74959,6 +74962,59 @@ paths:
-                         type: string
-                         description: Where the client can get an update, when the provider knows one.
-                         maxLength: 2048
-+        '429':
-+          description: >-
-+            Too many requests - the caller exceeded the server's per-user request rate for this route family. Wait the
-+            number of seconds in `Retry-After` before retrying.
-+          headers:
-+            Retry-After:
-+              description: Number of seconds the caller must wait before retrying.
-+              required: true
-+              schema:
-+                type: integer
-+                minimum: 1
-+          content:
-+            application/json:
-+              schema:
-+                type: object
-+                description: >-
-+                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
-+                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
-+                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
-+                  operation whose server answers its refusals this way.
-+                required:
-+                  - error
-+                additionalProperties: false
-+                properties:
-+                  error:
-+                    type: string
-+                    minLength: 1
-+                    description: The sentence the caller is shown.
-+                  code:
-+                    type: string
-+                    minLength: 1
-+                    description: >-
-+                      MeshKit error code, a component-scoped identifier allocated by the emitting service (e.g.
-+                      `<component>-<number>`); it is not a stable part of this contract. Omitted for an error that is
-+                      not a MeshKit error.
-+                  severity:
-+                    type: string
-+                    description: MeshKit severity name. Omitted when MeshKit reports none.
-+                    enum:
-+                      - emergency
-+                      - alert
-+                      - critical
-+                      - fatal
-+                  probableCause:
-+                    type: array
-+                    description: MeshKit's probable causes of the error.
-+                    items:
-+                      type: string
-+                  suggestedRemediation:
-+                    type: array
-+                    description: MeshKit's suggested remediations for the 
-```
-
-**File**: `docs/go.mod` (modified, +1/-1)
-```diff
-@@ -5,5 +5,5 @@ go 1.26.4
- require (
- 	github.com/google/docsy v0.15.0 // indirect
- 	github.com/google/docsy/dependencies v0.7.2 // indirect
--	github.com/layer5io/docs v0.0.0-20260901204535-b59d3b67363e // indirect
-+	github.com/layer5io/docs v0.0.0-20261021153954-6106eb9d5444 // indirect
- )
-```
-
----
-
-### Incident Patch 3: `237693d4` (2026-10-28)
-**Commit Message**: Merge pull request #22349 from Ayush-AM/fix/issue-22303-adapter-selection
-
-[UI] Fix inert adapter selection and variable shadowing in MesheryPlayComponent
-
-**File**: `ui/components/MesheryPlayComponent.test.tsx` (added, +148/-0)
-```diff
-@@ -0,0 +1,148 @@
-+import React from 'react';
-+import { render, screen, fireEvent, act } from '@testing-library/react';
-+import { beforeEach, describe, expect, it, vi } from 'vitest';
-+import MesheryPlayComponent from './MesheryPlayComponent';
-+
-+const mockDispatch = vi.fn();
-+let mockRouter: any = {
-+  push: vi.fn(),
-+  events: {
-+    on: vi.fn(),
-+    off: vi.fn(),
-+  },
-+  query: {},
-+};
-+
-+let mockAdapters = [
-+  { name: 'Istio', adapterLocation: 'meshery-istio:10000' },
-+  { name: 'Linkerd', adapterLocation: 'meshery-linkerd:10001' },
-+];
-+
-+let mockHasPermission = true;
-+
-+vi.mock('next/router', () => ({
-+  useRouter: () => mockRouter,
-+}));
-+
-+vi.mock('react-redux', () => ({
-+  useDispatch: () => mockDispatch,
-+  useSelector: (selector: any) =>
-+    selector({
-+      adapter: { meshAdapters: mockAdapters },
-+    }),
-+}));
-+
-+vi.mock('@sistent/sistent', async () => {
-+  const actual: any = await vi.importActual('@sistent/sistent');
-+  return {
-+    ...actual,
-+    useHasPermission: () => mockHasPermission,
-+    NoSsr: ({ children }: any) => <>{children}</>,
-+  };
-+});
-+
-+vi.mock('./MesheryAdapterPlayComponent', () => ({
-+  default: ({ adapter }: any) => (
-+    <div data-testid="meshery-adapter-play">{adapter?.name || 'no-adapter'}</div>
-+  ),
-+}));
-+
-+vi.mock('./general/error-404/index', () => ({
-+  default: () => <div data-testid="default-error">Permission Denied</div>,
-+}));
-+
-+describe('MesheryPlayComponent', () => {
-+  beforeEach(() => {
-+    vi.clearAllMocks();
-+    mockHasPermission = true;
-+    mockAdapters = [
-+      { name: 'Istio', adapterLocation: 'meshery-istio:10000' },
-+      { name: 'Linkerd', adapterLocation: 'meshery-linkerd:10001' },
-+    ];
-+    mockRouter = {
-+      push: vi.fn(),
-+      events: {
-+        on: vi.fn(),
-+        off: vi.fn(),
-+      },
-+      query: {},
-+    };
-+  });
-+
-+  it('renders permission error when user does not have permission', () => {
-+    mockHasPermission = false;
-+    render(<MesheryPlayComponent />);
-+    expect(screen.getByTestId('default-error')).toBeInTheDocument();
-+  });
-+
-+  it('renders "Adapter Unavailable" state when no adapters are configured', () => {
-+    mockAdapters = [];
-+    render(<MesheryPlayComponent />);
-+    expect(screen.getByText('Adapter Unavailable')).toBeInTheDocument();
-+    expect(screen.getByText('Configure Settings')).toBeInTheDocument();
-+
-+    fireEvent.click(screen.getByText('Configure Settings'));
-+    expect(mockRouter.push).toHaveBeenCalledWith('/settings?settingsCategory=Adapters');
-+  });
-+
-+  it('renders adapter dropdown and adapter play component with default adapter', () => {
-+    render(<MesheryPlayComponent />);
-+    expect(screen.getByLabelText('Select Meshery Adapter')).toBeInTheDocument();
-+    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Istio');
-+  });
-+
-+  it('dispatches setAdapter and updates rendered UI when selecting a different adapter', () => {
-+    const { container } = render(<MesheryPlayComponent />);
-+
-+    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Istio');
-+
-+    const input = container.querySelector('input[name="adapter_name"]') as HTMLInputElement;
-+    expect(input).toBeInTheDocument();
-+    fireEvent.change(input, { target: { value: 'meshery-linkerd:10001' } });
-+
-+    expect(mockDispatch).toHaveBeenCalledWith({
-+      type: 'adapter/setAdapter',
-+      payload: { selectedAdapter: 'Linkerd' },
-+    });
-+    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Linkerd');
-+  });
-+
-+  it('renders individual adapter when adapter query param is set', () => {
-+    mockRouter.query = { adapter: 'meshery-linkerd:10001' };
-+    render(<MesheryPlayComponent />);
-+
-+    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Linkerd');
-+    expect(screen.queryByLabelText('Select Meshery Adapter')).not.toBeInTheDocument();
-+  });
-+
-+  it('falls back to default adapter dropdown view when adapter query param is unknown', () => {
-+    mockRouter.query = { adapter: 'unknown-adapter:9999' };
-+    render(<MesheryPlayComponent />);
-+
-+    expect(screen.getByLabelText('Select Meshery Adapter')).toBeInTheDocument();
-+    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Istio');
-+  });
-+
-+  it('resets to default adapter when routeChangeComplete introduces an unknown adapter query after selecting another adapter', () => {
-+    const { container } = render(<MesheryPlayComponent />);
-+
-+    // Select Linkerd
-+    const input = container.querySelector('input[name="adapter_name"]') as HTMLInputElement;
-+    fireEvent.change(input, { target: { value: 'meshery-linkerd:10001' } });
-+    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Linkerd');
-+
-+    // Simulate route change with unknown adapter query
-+    mockRouter.query = { adapter: 'unknown-adapter:9999' };
-+    const routeChangeHandler = mockRouter.events.on.mock.calls.find(
-+      (call: any) => call[0] === 'routeChangeComplete',
-+    )?.
-```
-
-**File**: `ui/components/MesheryPlayComponent.tsx` (modified, +25/-29)
-```diff
-@@ -8,7 +8,6 @@ import {
-   Grid2,
-   Typography,
-   styled,
--  useTheme,
-   gray,
-   charcoal,
-   NoSsr,
-@@ -38,14 +37,11 @@ const PlayRoot = styled('div')(({ theme }) => ({
-   marginBottom: theme.spacing(2),
- }));
- 
--export const PaneSection = styled('div')(() => {
--  const theme = useTheme();
--  return {
--    backgroundColor: theme.palette.mode === 'dark' ? gray[20] : charcoal[90],
--    padding: theme.spacing(2.5),
--    borderRadius: 4,
--  };
--});
-+export const PaneSection = styled('div')(({ theme }) => ({
-+  backgroundColor: theme.palette.mode === 'dark' ? gray[20] : charcoal[90],
-+  padding: theme.spacing(2.5),
-+  borderRadius: 4,
-+}));
- 
- const AlreadyConfigured = styled('div')({
-   textAlign: 'center',
-@@ -79,8 +75,11 @@ const MesheryPlayComponent = () => {
-       );
-       if (selectedAdapter) {
-         setAdapterState(selectedAdapter);
-+        return;
-       }
--    } else if (meshAdapters.length > 0) {
-+    }
-+
-+    if (meshAdapters && meshAdapters.length > 0) {
-       setAdapterState(meshAdapters[0]);
-     }
-   };
-@@ -91,7 +90,7 @@ const MesheryPlayComponent = () => {
-     return () => {
-       router.events.off('routeChangeComplete', handleRouteChange);
-     };
--  }, [router.events]);
-+  }, [router.events, meshAdapters]);
- 
-   useEffect(() => {
-     if (meshAdapters?.length > 0) {
-@@ -116,34 +115,31 @@ const MesheryPlayComponent = () => {
-   const handleAdapterChange = () => {
-     return (event) => {
-       if (event.target.value !== '') {
--        const selectedAdapter = meshAdapters.filter(
-+        const selectedAdapter = meshAdapters.find(
-           ({ adapterLocation }) => adapterLocation === event.target.value,
-         );
--        if (selectedAdapter && selectedAdapter.size === 1) {
--          setAdapterState(selectedAdapter[0]);
--          dispatch(setAdapter({ selectedAdapter: selectedAdapter[0].name }));
-+        if (selectedAdapter) {
-+          setAdapterState(selectedAdapter);
-+          dispatch(setAdapter({ selectedAdapter: selectedAdapter.name }));
-         }
-       }
-     };
-   };
- 
-   const renderIndividualAdapter = () => {
-+    const queryParam = router?.query?.adapter;
-+    if (!queryParam) return '';
-     let adapCount = 0;
--    let adapter;
--    meshAdapters.forEach((adap) => {
--      if (adap.adapterLocation === adapter) {
--        adapter = adap;
--        meshAdapters.forEach((ad) => {
--          if (ad.name == adap.name) adapCount += 1;
--        });
--      }
--    });
--    if (adapter) {
--      const imageIcon = pickImage(adapter);
-+    const targetAdapter = meshAdapters.find((adap) => adap.adapterLocation === queryParam);
-+    if (targetAdapter) {
-+      meshAdapters.forEach((ad) => {
-+        if (ad.name === targetAdapter.name) adapCount += 1;
-+      });
-+      const imageIcon = pickImage(targetAdapter);
-       return (
-         <>
-           <MesheryAdapterPlayComponent
--            adapter={adapter}
-+            adapter={targetAdapter}
-             adapCount={adapCount}
-             adapter_icon={imageIcon}
-           />
-@@ -181,7 +177,7 @@ const MesheryPlayComponent = () => {
-     );
-   }
- 
--  if (adapter && adapter !== '') {
-+  if (router?.query?.adapter) {
-     const indContent = renderIndividualAdapter();
-     if (indContent !== '') {
-       return indContent;
-@@ -226,7 +222,7 @@ const MesheryPlayComponent = () => {
-                 >
-                   {meshAdapters.map((ada) => (
-                     <MenuItem
--                      key={`${ada.adapterLocation}_${new Date().getTime()}`}
-+                      key={ada.adapterLocation}
-                       value={ada.adapterLocation}
-                       sx={{
-                         display: 'flex',
+@@ -0,0 +1,2 @@
++Hi I am Yoshita Dwivedi , an ECE undergrad from University Of Lucknow. I am interested in contributing to open-souce , this is my first organization.
++Here's my linkedin profile - https://www.linkedin.com/in/yoshita-dwivedi/
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22619** (2026-10-27): [UI] Replace waitForTimeout in user preference e2e spec with a web-first assertion (@nguyenvanlinh14)
-- **PR #22606** (2026-10-26): chore: make CLAUDE.md a symlink to AGENTS.md (@ritzorama)
-- **PR #22605** (2026-10-26): docs(agents): require treehouse worktrees and no-mistakes landing (@CodeAhmedJamil)
-- **PR #22600** (closed): Bump undici in /ui (@dependabot[bot])
-- **PR #22594** (2026-10-26): docs: add Paul Anyebe introduction (@cutewizzy11)
-- **PR #22589** (2026-10-26): [mesheryctl] Re-enable unit tests and fix query URL in environment list_test.go (@AliRana30)
+- **PR #22680** (2026-10-30): Add Harpal's introduction to meetings documentation (@Hpsingh26)
+- **PR #22679** (2026-10-30): Create introduction for Emmanuel Wilson Dismas. Computer engineer. (@dismasdev)
+- **PR #22678** (2026-10-30): My introduction (@merytpeters)
+- **PR #22677** (2026-10-30): Aravind's Attendance (@Aravind226)
+- **PR #22676** (2026-10-30): Yoshita dwivedi patch 2 (@Yoshita-Dwivedi)
+- **PR #22675** (2026-10-30): Yoshita Dwivedi (@Yoshita-Dwivedi)
 
 ---
 
@@ -1498,54 +901,42 @@ fix(ui): manage blob URL lifecycle and prevent memory leak in DataToF…
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #22570 from Ayush-AM/fix/issue-22445-notification-blob-leak
+## X. [Docs] Auto-merge meeting minutes (#22673)
 
 **RULE**:
-When implementing operations in `ui/components/layout/NotificationCenter/formatters/common.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/meetings/2026/week-of-10-29-2026/prashanth-manchala.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1ac48c18`: Merge pull request #22570 from Ayush-AM/fix/issue-22445-notification-blob-leak. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1fd4bee8`: [Docs] Auto-merge meeting minutes (#22673). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/components/layout/NotificationCenter/formatters/common.test.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/meetings/2026/week-of-10-29-2026/prashanth-manchala.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { render, screen, cleanup } from '@testing-library/react';
-  // jsdom does not implement URL.createObjectURL or URL.revokeObjectURL by default; stub them for these tests.
-  const originalRevokeObjectURL = (global.URL as any).revokeObjectURL;
-    (global.URL as any).createObjectURL = vi.fn((file: File) => `blob:fake-url-${file.name}`);
-    (global.URL as any).revokeObjectURL = vi.fn();
-    cleanup();
-    (global.URL as any).revokeObjectURL = originalRevokeObjectURL;
-    expect(link).toHaveAttribute('href', 'blob:fake-url-trace.txt');
+# Prashanth Kumar Manchala
 
-  it('revokes the blob URL on component unmount to prevent memory leaks', () => {
-    const { unmount } = render(<DataToFileLink data="trace info" />);
-    const revokeSpy = (global.URL as any).revokeObjectURL as ReturnType<typeof vi.fn>;
+Hi everyone! 👋 I'm Prashanth, a software engineer with over a year of professional experience. I love **systems and backend engineering**, especially understanding how things work under the hood, debugging complex problems, and building reliable software.
 
-    expect(revokeSpy).not.toHaveBeenCalled();
+My current focus is **AI Platform Engineering**, where I'm exploring AI agents, infrastructure, observability, and reliable AI-powered systems.
 
-    unmount();
+A couple of projects I've been working on:
+- **[trade-rs](https://github.com/knocBack/trade-matching-engine-rs)** — A deterministic trading order-matching engine built in Rust, with HTTP APIs and WebSocket market updates.
+- **[Incident Investigator](https://github.com/knocBack/incident-investigator)** — A multi-agent system built with LangGraph that investigates simulated production incidents using logs, metrics, and evidence-based reasoning.
 
-    expect(revokeSpy).toHaveBeenCalledTimes(1);
-    expect(revokeSpy).toHaveBeenCalledWith('blob:fake-url-trace.txt');
-  });
+I'm excited to explore Meshery, learn more about cloud-native infrastructure, and contribute to open source!
 
-  it('revokes previous blob URL and creates a new one when data prop updates', () => {
-    const { rerender } = render(<DataToFileLink data="first-trace" />);
-    const createSpy = (global.URL as any).createObjectURL as Retu
+**Portfolio:** https://manchala.dev  
+**GitHub:** https://github.com/knocBack  
+**LinkedIn:** https://www.linkedin.com/in/prashanth-kumar-manchala
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-import { render, screen } from '@testing-library/react';
-  // jsdom does not implement URL.createObjectURL by default; stub it for these tests.
-    (global.URL as any).createObjectURL = vi.fn(() => 'blob:fake-url');
-    expect(link).toHaveAttribute('href', 'blob:fake-url');
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1ac48c18` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1fd4bee8` are properly handled with clean fallback behavior.

@@ -6352,3 +6352,6 @@ Every entry in this ledger must capture:
 | `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `aac8cdc4` | Multi-dimensional audit evidence | 2026-10-30T22:27:30.186Z |
 | `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `504c487e` | Multi-dimensional audit evidence | 2026-10-30T22:27:32.020Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `05238c02` | Multi-dimensional audit evidence | 2026-10-30T22:27:36.457Z |
+| `learn-huggingface-speridlabs-idol` | `https://huggingface.co/speridlabs/idol` | `hf-speridl` | Multi-dimensional audit evidence | 2026-10-30T22:34:31.576Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `1fd4bee8` | Multi-dimensional audit evidence | 2026-10-30T22:34:34.275Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `66a52434` | Multi-dimensional audit evidence | 2026-10-30T22:34:42.342Z |

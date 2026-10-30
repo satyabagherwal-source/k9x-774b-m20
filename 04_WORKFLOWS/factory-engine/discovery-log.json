@@ -19900,5 +19900,17 @@
     "downloads": 97184,
     "qualityScore": 3420,
     "discoveredAt": "2026-10-30T19:16:53.200Z"
+  },
+  {
+    "name": "speridlabs/idol",
+    "fullName": "speridlabs/idol",
+    "url": "https://huggingface.co/speridlabs/idol",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: speridlabs/idol (142 likes, 221 downloads)",
+    "likes": 142,
+    "downloads": 221,
+    "qualityScore": 1641,
+    "discoveredAt": "2026-10-30T22:32:06.476Z"
   }
 ]

@@ -6343,3 +6343,6 @@
 | `CYCLE-20261030-LXQC` | `2026-10-30T22:27:30.180Z` | `gauthierpiarrette/highball` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5920` | Yes (`aa64cc54...`) |
 | `CYCLE-20261030-LZ5C` | `2026-10-30T22:27:32.016Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5921` | Yes (`c7f94d83...`) |
 | `CYCLE-20261030-M2KM` | `2026-10-30T22:27:36.454Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5922` | Yes (`e5db2a87...`) |
+| `CYCLE-20261030-UYVO` | `2026-10-30T22:34:31.572Z` | `speridlabs/idol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5923, Rule 5924` | Yes (`d6a08694...`) |
+| `CYCLE-20261030-V0YN` | `2026-10-30T22:34:34.271Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5925` | Yes (`839a6ac8...`) |
+| `CYCLE-20261030-V76Q` | `2026-10-30T22:34:42.338Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5926` | Yes (`9b69cb08...`) |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T22:27:36.383Z",
-  "total_verified_learnings": 1177,
+  "last_updated": "2026-10-30T22:34:42.243Z",
+  "total_verified_learnings": 1178,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -4845,8 +4845,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "1f4828f8",
-      "content_hash": "b3d3e6adddea708bd5a2b3512c43f4e6c15fbd10ae1a88f297582f75750b78c8",
+      "source_version": "66a52434",
+      "content_hash": "9b69cb0843be714d525993b309c800a5af7951c25d4722c23968bb7849e2da99",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4984,6 +4984,11 @@
           "number": 5883,
           "title": "deps): bump the npm-minor-patch group across 1 directory with 19 updates (#339)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5926,
+          "title": "deps-dev): bump the bundler group across 1 directory with 2 updates (#324)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4991,7 +4996,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:19:36.908Z",
+      "verified_at": "2026-10-30T22:34:42.218Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37986,8 +37991,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "125ba14d",
-      "content_hash": "48ec877ee8008ca008567c10afde96c298348bd18579e3304b6d6d4ba2e32ba9",
+      "source_version": "1fd4bee8",
+      "content_hash": "839a6ac8a62e4b59d0b79dd4da9f1b29cfd85a015fc05184bcc8f30440965519",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -38040,6 +38045,11 @@
           "number": 5566,
           "title": "Merge pull request #22570 from Ayush-AM/fix/issue-22445-notification-blob-leak",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5925,
+          "title": "[Docs] Auto-merge meeting minutes (#22673)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38047,7 +38057,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T00:19:00.994Z",
+      "verified_at": "2026-10-30T22:34:34.171Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156594,6 +156604,100 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T22:27:36.362Z"
+    },
+    "learn-huggingface-speridlabs-idol": {
+      "learning_id": "learn-huggingface-speridlabs-idol",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "speridlabs/idol",
+      "repository": "speridlabs/idol",
+      "slug": "hf-speridlabs-idol",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/speridlabs/idol",
+      "source_version": "hf-speridlabs-idol",
+      "content_hash": "d6a086941e54d2fa3a0bbd586fa187814e902650e76a052ec19cdc48e8550c3a",
+      "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5923,
+          "title": "Hierarchical Spatial Decoupling for High-Resolution 3D Generation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5924,
+          "title": "Gated Dependency Fail-Fast Validation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-30T22:34:31.473Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5923": {
+      "learning_id": "rule-5923",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5923,
+      "title": "Hierarchical Spatial Decoupling for High-Resolution 3D Generation",
+      "source_url": "https://huggingface.co/speridlabs/idol",
+      "source_version": "hf-speridlabs-idol",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:34:31.473Z"
+    },
+    "rule-5924": {
+      "learning_id": "rule-5924",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5924,
+      "title": "Gated Dependency Fail-Fast Validation",
+      "source_url": "https://huggingface.co/speridlabs/idol",
+      "source_version": "hf-speridlabs-idol",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:34:31.473Z"
+    },
+    "rule-5925": {
+      "learning_id": "rule-5925",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5925,
+      "title": "[Docs] Auto-merge meeting minutes (#22673)",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "1fd4bee8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:34:34.171Z"
+    },
+    "rule-5926": {
+      "learning_id": "rule-5926",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5926,
+      "title": "deps-dev): bump the bundler group across 1 directory with 2 updates (#324)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "66a52434",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:34:42.218Z"
     }
   },
   "aliases": {

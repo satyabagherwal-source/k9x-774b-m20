@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "1f4828f8",
+    "sourceVersion": "66a52434",
     "license": "MIT",
-    "contentHash": "b3d3e6adddea708bd5a2b3512c43f4e6c15fbd10ae1a88f297582f75750b78c8",
-    "lastHarvestedAt": "2026-10-30T21:19:36.969Z",
+    "contentHash": "9b69cb0843be714d525993b309c800a5af7951c25d4722c23968bb7849e2da99",
+    "lastHarvestedAt": "2026-10-30T22:34:42.342Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "125ba14d",
+    "sourceVersion": "1fd4bee8",
     "license": "Apache-2.0",
-    "contentHash": "48ec877ee8008ca008567c10afde96c298348bd18579e3304b6d6d4ba2e32ba9",
-    "lastHarvestedAt": "2026-10-30T00:19:01.090Z",
+    "contentHash": "839a6ac8a62e4b59d0b79dd4da9f1b29cfd85a015fc05184bcc8f30440965519",
+    "lastHarvestedAt": "2026-10-30T22:34:34.275Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -11598,5 +11598,15 @@
     "contentHash": "597e75a3071d298547c699dac400461746d6c23d699552659160c59791f75e33",
     "lastHarvestedAt": "2026-10-30T19:19:15.888Z",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf"
+  },
+  "hf-speridlabs-idol": {
+    "repository": "speridlabs/idol",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/speridlabs/idol",
+    "sourceVersion": "hf-speridlabs-idol",
+    "license": "Open-Source",
+    "contentHash": "d6a086941e54d2fa3a0bbd586fa187814e902650e76a052ec19cdc48e8550c3a",
+    "lastHarvestedAt": "2026-10-30T22:34:31.576Z",
+    "learningId": "learn-huggingface-speridlabs-idol"
   }
 }

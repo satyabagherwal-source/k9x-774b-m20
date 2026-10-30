@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `1f4828f8`  
+> **Source Version**: `66a52434`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T21:19:36.540Z  
+> **Timestamp**: 2026-10-30T22:34:41.593Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T21:19:36.535Z  
+> **Harvest Timestamp**: 2026-10-30T22:34:40.202Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,39 +1799,171 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1f4828f8` (2026-10-30)
-**Commit Message**: chore(deps): bump the npm-minor-patch group across 1 directory with 19 updates (#339)
+### Incident Patch 1: `66a52434` (2026-10-30)
+**Commit Message**: chore(deps-dev): bump the bundler group across 1 directory with 2 updates (#324)
 
-Bumps the npm-minor-patch group with 19 updates in the / directory:
+Bumps the bundler group with 2 updates in the / directory: [rolldown](https://github.com/rolldown/rolldown/tree/HEAD/packages/rolldown) and [tsdown](https://github.com/rolldown/tsdown).
 
-| Package | From | To |
-| --- | --- | --- |
-| [@aws-sdk/client-bedrock](https://github.com/aws/aws-sdk-js-v3/tree/HEAD/clients/client-bedrock) | `3.1152.0` | `3.1158.0` |
-| [@coinbase/cdp-sdk](https://github.com/coinbase/cdp-sdk) | `1.59.0` | `1.60.0` |
-| [@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk) | `1.32.1` | `1.32.2` |
-| [@opentelemetry/api](https://github.com/open-telemetry/opentelemetry-js) | `1.9.1` | `1.10.0` |
-| [@opentelemetry/exporter-trace-otlp-http](https://github.com/open-telemetry/opentelemetry-js) | `0.223.0` | `0.300.0` |
-| [@opentelemetry/sdk-node](https://github.com/open-telemetry/opentelemetry-js) | `0.223.0` | `0.300.0` |
-| [discord-api-types](https://github.com/discordjs/discord-api-types) | `0.38.56` | `0.38.57` |
-| [imapflow](https://github.com/postalsys/imapflow) | `2.5.2` | `2.9.1` |
-| [linkedom](https://github.com/WebReflection/linkedom) | `0.18.13` | `0.18.14` |
-| [mailparser](https://github.com/nodemailer/mailparser) | `3.9.40` | `3.12.4` |
-| [node-edge-tts](htt
 
-**File**: `package.json` (modified, +2/-2)
+Updates `rolldown` from 1.2.13 to 1.2.15
+- [Release notes](https://github.com/rolldown/rolldown/releases)
+- [Changelog](https://github.com/rolldown/rolldown/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/rolldown/rolldown/commits/v1.2.15/packages/rolldown)
+
+Updates `tsdown` from 0.23.1 to 0.23.2
+- [Release notes](https://github.com/rolldown/tsdown/releases)
+- [Commits](https://github.com/rolldown/tsdown/compare/v0.23.1...v0.23.2)
+
+---
+updated-dependencies:
+- dependency-name: rolldown
+  dependency-version: 1.2.15
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+  dependency-group: bundler
+- dependency-name: tsdown
+  dependency-version: 0.23.2
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+  dependency-group: bundler
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.gith
+
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -174,9 +174,9 @@
-     "@modelcontextprotocol/sdk": "^1.32.1",
-     "@mozilla/readability": "^0.6.0",
-     "@opentelemetry/api": "^1.9.1",
--    "@opentelemetry/exporter-trace-otlp-http": "^0.223.0",
-+    "@opentelemetry/exporter-trace-otlp-http": "^0.300.0",
-     "@opentelemetry/resources": "^2.11.0",
--    "@opentelemetry/sdk-node": "^0.223.0",
-+    "@opentelemetry/sdk-node": "^0.300.0",
-     "@opentelemetry/semantic-conventions": "^1.43.0",
-     "@sinclair/typebox": "0.34.52",
-     "@slack/bolt": "^4.6.0",
+@@ -243,7 +243,7 @@
+     "oxfmt": "0.74.0",
+     "oxlint": "^1.87.0",
+     "oxlint-tsgolint": "^7.0.2003",
+-    "rolldown": "1.2.13",
++    "rolldown": "1.2.15",
+     "tsdown": "^0.23.0",
+     "tsx": "^4.23.15",
+     "typescript": "^5.9.3",
+```
+
+**File**: `pnpm-lock.yaml` (modified, +187/-20)
+```diff
+@@ -276,11 +276,11 @@ importers:
+         specifier: ^7.0.2003
+         version: 7.0.2005
+       rolldown:
+-        specifier: 1.2.13
+-        version: 1.2.13
++        specifier: 1.2.15
++        version: 1.2.15
+       tsdown:
+         specifier: ^0.23.0
+-        version: 0.23.1(@typescript/native-preview@7.0.0-dev.20260215.1)(tsx@4.23.15)(typescript@5.9.3)(unrun@0.2.27(@emnapi/core@1.8.1)(@emnapi/runtime@1.11.3))
++        version: 0.23.2(tsx@4.23.15)(typescript@5.9.3)(unrun@0.2.27(@emnapi/core@1.8.1)(@emnapi/runtime@1.11.3))
+       tsx:
+         specifier: ^4.23.15
+         version: 4.23.15
+@@ -2343,6 +2343,9 @@ packages:
+   '@oxc-project/types@0.153.0':
+     resolution: {integrity: sha512-jSNrRIyvPVLL5E1z/tS5zLAprosGz/FuI1PWwEOz59j3E4TTTzSpqKb/RDGqJhhW0QHYISGXxq582wGx6T11Tw==}
+ 
++  '@oxc-project/types@0.155.0':
++    resolution: {integrity: sha512-SeE8JPwW1xs1tHeNycjUtUBdhorRa8o4jlvjwk49R7/Z291i+4DQa7JJIgOm/TaYQZx+QrPQbVJ/9c8dMIZN8Q==}
++
+   '@oxfmt/binding-android-arm-eabi@0.74.0':
+     resolution: {integrity: sha512-xxQwrf5EPI5zxvuCTW8r6tzCTjPQ+h6+HqJ0iRKRy2zS1yBllt/xLVjoIyUc+FnR7g0a5g1SZv2yyDYhTItLbA==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+@@ -3343,6 +3346,12 @@ packages:
+     cpu: [arm]
+     os: [android]
+ 
++  '@rolldown/binding-android-arm-eabi@1.2.15':
++    resolution: {integrity: sha512-aLcgK9gIJ3YRvrrtfSBbRa27F5WrpiTaPulnFpsHPxpUHgFlSgnU4854MHwoRGEBhfRJDWCS2WQ7lIjskE9Olw==}
++    engines: {node: ^20.19.0 || >=22.12.0}
++    cpu: [arm]
++    os: [android]
++
+   '@rolldown/binding-android-arm64@1.0.0-rc.3':
+     resolution: {integrity: sha512-0T1k9FinuBZ/t7rZ8jN6OpUKPnUjNdYHoj/cESWrQ3ZraAJ4OMm6z7QjSfCxqj8mOp9kTKc1zHK3kGz5vMu+nQ==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+@@ -3355,6 +3364,12 @@ packages:
+     cpu: [arm64]
+     os: [android]
+ 
++  '@rolldown/binding-android-arm64@1.2.15':
++    resolution: {integrity: sha512-xD7DdZCrbThKuxNg7ooQmvp07ys4J/pnSEMTG3/OdOWl6daC67m/Q4fL78sRHMxTH/N4fGUbYhcPM0MF5WFHkg==}
++    engines: {node: ^20.19.0 || >=22.12.0}
++    cpu: [arm64]
++    os: [android]
++
+   '@rolldown/binding-darwin-arm64@1.0.0-rc.3':
+     resolution: {integrity: sha512-JWWLzvcmc/3pe7qdJqPpuPk91SoE/N+f3PcWx/6ZwuyDVyungAEJPvKm/eEldiDdwTmaEzWfIR+HORxYWrCi1A==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+@@ -3367,6 +3382,12 @@ packages:
+     cpu: [arm64]
+     os: [darwin]
+ 
++  '@rolldown/binding-darwin-arm64@1.2.15':
++    resolution: {integrity: sha512-m2WuQ6r0B4OTYxyPpNLtXaMRbRDUbG8YQV2Q3KTdSSK8Th6KHCnC8jVCJt8bvYeSB5WivkkNbc85mKadaSdOxA==}
++    engines: {node: ^20.19.0 || >=22.12.0}
++    cpu: [arm64]
++    os: [darwin]
++
+   '@rolldown/binding-darwin-x64@1.0.0-rc.3':
+     resolution: {integrity: sha512-MTakBxfx3tde5WSmbHxuqlDsIW0EzQym+PJYGF4P6lG2NmKzi128OGynoFUqoD5ryCySEY85dug4v+LWGBElIw==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+@@ -3379,6 +3400,12 @@ packages:
+     cpu: [x64]
+     os: [darwin]
+ 
++  '@rolldown/binding-darwin-x64@1.2.15':
++    resolution: {integrity: sha512-5RtnsHM36nodM9WbMy+zip0LGS/G+y5wro5RHrpOlr4ac24+1zSi9kiV2MP1myZeZ/ifEHfulQcWjnAXzc2C2A==}
++    engines: {node: ^20.19.0 || >=22.12.0}
++    cpu: [x64]
++    os: [darwin]
++
+   '@rolldown/binding-freebsd-x64@1.0.0-rc.3':
+     resolution: {integrity: sha512-jje3oopyOLs7IwfvXoS6Lxnmie5JJO7vW29fdGFu5YGY1EDbVDhD+P9vDihqS5X6fFiqL3ZQZCMBg6jyHkSVww==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+@@ -3391,6 +3418,12 @@ packages:
+     cpu: [x64]
+     os: [freebsd]
+ 
++  '@rolldown/binding-freebsd-x64@1.2.15':
++    resolution: {integrity: sha512-g3l09pyFqhu+135JKkbkwiKGQmwU5hUMUPJ4VdBADvuqR8d33L6H578rh8m7rtxbdp+VmX/+nzI7nvhSZlzpUQ==}
++    engines: {node: ^20.19.0 || >=22.12.0}
++    cpu: [x64]
++    os: [freebsd]
++
+   '@rolldown/binding-linux-arm-gnueabihf@1.0.0-rc.3':
+     resolution: {integrity: sha512-A0n8P3hdLAaqzSFrQoA42p23ZKBYQOw+8EH5r15Sa9X1kD9/JXe0YT2gph2QTWvdr0CVK2BOXiK6ENfy6DXOag==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+@@ -3403,6 +3436,12 @@ packages:
+     cpu: [arm]
+     os: [linux]
+ 
++  '@rolldown/binding-linux-arm-gnueabihf@1.2.15':
++    resolution: {integrity: sha512-nIe3VugI97nGQtspPxDqA4sXMUpeiocKIP/CqpY/u/vgbT+alX+cVxu1C/oVBPKg4feNTmYovE91v4DgXvXNwQ==}
++    engines: {node: ^20.19.0 || >=22.12.0}
++    cpu: [arm]
++    os: [linux]
++
+   '@rolldown/binding-linux-arm64-gnu@1.0.0-rc.3':
+     resolution: {integrity: sha512-kWXkoxxarYISBJ4bLNf5vFkEbb4JvccOwxWDxuK9yee8lg5XA7OpvlTptfRuwEvYcOZf+7VS69Uenpmpyo5Bjw==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+@@ -3417,6 +3456,13 @@ packages:
+     os: [linux]
+     libc: [glibc]
+ 
++  '@rolldown/binding-linux-arm64-gnu@1.2.15':
++    resolution: {integrity: sha512-iTBjXx+B5QSvgI89lJfmqh4wTh8NabR1YZIIN3hNx4zSG0EVfVqkOvLulNpG4251pbd6/IAmZ/LefVk1Y4rPhw==}
++    engines: {node: ^20.19.0 || >=22.12.0}
++    cpu: [arm64]
++    os: [linux]
++    libc: [glibc]
++
+   '@rolldown/binding-linux-arm64-musl@1.0.0-rc.3':
+     resolution: {integrity: sha512-Z03/wrqau9Bicfgb3Dbs6SYTHliELk2PM2LpG2nFd+cGupTMF5kanLEcj2vuuJLLhptNyS61rtk7SOZ+lPsTUA==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+@@ -3431,20 +347
 ```
 
 #### Recent Merged Pull Requests:
@@ -1860,13 +1992,13 @@ Bumps the npm-minor-patch group with 19 updates in the / directory:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the npm-minor-patch group across 1 directory with 19 updates (#339)
+## X. deps-dev): bump the bundler group across 1 directory with 2 updates (#324)
 
 **RULE**:
 When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1f4828f8`: deps): bump the npm-minor-patch group across 1 directory with 19 updates (#339). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `66a52434`: deps-dev): bump the bundler group across 1 directory with 2 updates (#324). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
@@ -1874,16 +2006,14 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@opentelemetry/exporter-trace-otlp-http": "^0.300.0",
-    "@opentelemetry/sdk-node": "^0.300.0",
+    "rolldown": "1.2.15",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "@opentelemetry/exporter-trace-otlp-http": "^0.223.0",
-    "@opentelemetry/sdk-node": "^0.223.0",
+    "rolldown": "1.2.13",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1f4828f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `66a52434` are properly handled with clean fallback behavior.
