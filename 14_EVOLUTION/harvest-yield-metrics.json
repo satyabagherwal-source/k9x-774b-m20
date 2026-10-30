@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T23:51:45.582Z",
-  "total_cycles_completed": 6342,
-  "total_learnings_persisted": 6342,
-  "total_rules_promoted": 5916,
+  "last_updated": "2026-10-30T23:58:47.399Z",
+  "total_cycles_completed": 6344,
+  "total_learnings_persisted": 6344,
+  "total_rules_promoted": 5920,
   "history": [
-    {
-      "timestamp": "2026-10-30T09:30:00.631Z",
-      "repository": "tickernelz/opencode-mem",
-      "learningId": "learn-github-tickernelz-opencode-mem",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T09:53:21.478Z",
-      "repository": "cloudwego/volo",
-      "learningId": "learn-github-cloudwego-volo",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T10:09:25.888Z",
       "repository": "webrecorder/pywb",
@@ -1403,6 +1389,20 @@
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T23:58:42.167Z",
+      "repository": "expo/expo",
+      "learningId": "learn-github-expo-expo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T23:58:47.399Z",
+      "repository": "autogluon/chronos-2",
+      "learningId": "learn-huggingface-autogluon-chronos-2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

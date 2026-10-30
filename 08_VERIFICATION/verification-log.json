@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-K9RG",
-    "timestamp": "2026-10-28T17:42:55.852Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "bc6905ed852da8d96a08791329b631066ab219bca4d3f14d909344059718202e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-SV2A",
-    "timestamp": "2026-10-28T17:49:36.706Z",
-    "repository": "BAAI/bge-base-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
-    "contentHash": "d1d27dfdc614f3a83ca090c8f329ad999545fb03b0802808228f959e918ac951",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-T4S3",
     "timestamp": "2026-10-28T17:49:49.299Z",
     "repository": "freenet/freenet-core",
@@ -7492,6 +7462,36 @@
     "contentHash": "4a39912ee49d8786b39759b9d4b68c9eb3eb09aadb5dfc52e13e8dd532cea64d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-V7XQ",
+    "timestamp": "2026-10-30T23:58:42.158Z",
+    "repository": "expo/expo",
+    "learningId": "learn-github-expo-expo",
+    "contentHash": "56331f858777dcdb4117d81bc292c2fd262346af323c3e3c472b2550b05d4b01",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-VBZ2",
+    "timestamp": "2026-10-30T23:58:47.390Z",
+    "repository": "autogluon/chronos-2",
+    "learningId": "learn-huggingface-autogluon-chronos-2",
+    "contentHash": "debcaee89572850bbc5506261280e443ecc9d7c3616fad4266e2fb980675913f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

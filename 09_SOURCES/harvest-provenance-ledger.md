@@ -6374,3 +6374,5 @@ Every entry in this ledger must capture:
 | `learn-github-meta-docusaurus` | `https://github.com/facebook/docusaurus` | `65316774` | Multi-dimensional audit evidence | 2026-10-30T23:51:40.163Z |
 | `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `2e131019` | Multi-dimensional audit evidence | 2026-10-30T23:51:40.303Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `ef31e883` | Multi-dimensional audit evidence | 2026-10-30T23:51:45.576Z |
+| `learn-github-expo-expo` | `https://github.com/expo/expo` | `48362988` | Multi-dimensional audit evidence | 2026-10-30T23:58:42.162Z |
+| `learn-huggingface-autogluon-chronos-2` | `https://huggingface.co/autogluon/chronos-2` | `hf-autoglu` | Multi-dimensional audit evidence | 2026-10-30T23:58:47.394Z |

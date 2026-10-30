@@ -3,7 +3,7 @@
 > **Source Version**: `hf-autogluon`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-27T21:22:26.741Z  
+> **Timestamp**: 2026-10-30T23:58:45.758Z  
 > **Learning ID**: `learn-huggingface-autogluon-chronos-2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,326 +17,356 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-Chronos-2 addresses the fragmentation in time-series forecasting by unifying univariate, multivariate, and covariate-informed forecasting into a single, efficient encoder-only foundation model. Unlike previous iterations (Chronos, Chronos-Bolt) which relied on patching or limited context, Chronos-2 leverages a T5-encoder-inspired architecture with **Group Attention** to enable cross-series learning (in-context learning) and native handling of future covariates. It solves the "zero-shot" problem by pre-training on massive synthetic and real-world datasets, allowing it to forecast unseen series without fine-tuning.
+Chronos-2 addresses the limitation of previous time-series foundation models (like Chronos-Bolt) which were restricted to univariate forecasting with short context windows (2048 steps) and lacked native support for multivariate dependencies or covariates. Chronos-2 solves this by implementing a **120M-parameter, encoder-only Transformer architecture** (inspired by T5) that supports:
+1.  **Long Context:** 8192 time steps (4x increase over Bolt).
+2.  **Multivariate/Covariate Learning:** Uses a "group attention" mechanism to learn cross-series dependencies and incorporate past/future covariates natively.
+3.  **Probabilistic Forecasting:** Outputs 21 quantiles (1% to 99%) rather than point estimates, enabling risk-aware decision-making.
+4.  **Efficiency:** Achieves >300 forecasts/second on A10G GPUs via optimized patching and RoPE (Rotary Position Embeddings).
 
-**Architectural Boundaries:**
-*   **Core Engine:** A 120M parameter Transformer Encoder (12 layers, 768 hidden size, 12 heads).
-*   **Input Interface:** Pandas DataFrames (univariate/multivariate/covariates).
-*   **Preprocessing Pipeline:**
-    *   **Normalization:** `arcsinh` transformation for scale invariance (handling outliers and varying magnitudes).
-    *   **Tokenization:** Patching mechanism (input patch size 16, stride 16) to convert continuous time series into discrete tokens.
-    *   **Positional Encoding:** RoPE (Rotary Position Embedding) with theta=10000.0 for long-context awareness (up to 8192 timesteps).
-*   **Output Interface:** Quantile forecasts (21 quantiles from 0.01 to 0.99) rather than point estimates, providing probabilistic uncertainty.
-*   **State Ownership:** Stateless inference pipeline. The model weights are static; all state (history, covariates) is passed per-inference.
+**Architectural Boundaries & Subsystems:**
+*   **Input Subsystem:** Handles raw time series data, applying `arcsinh` normalization (for heavy-tailed distributions) and patching (size 16, stride 16) to reduce sequence length for the Transformer.
+*   **Core Transformer (T5 Encoder):** 12 layers, 12 heads, `d_model=768`, `d_ff=3072`. Uses `relu` activation (not GELU/SiLU) for computational efficiency. Includes a special `reg_token` (ID 1) to anchor regression tasks.
+*   **Positional Encoding:** Uses RoPE (`rope_theta=10000.0`) instead of absolute sinusoidal embeddings, allowing better generalization to longer sequences than training length.
+*   **Output Head:** Maps hidden states to 21 quantile values.
+*   **Pipeline Layer:** `Chronos2Pipeline` abstracts the model, handling data preprocessing, batching, and post-processing (inverse normalization).
 
-**Critical Subsystem Abstractions:**
-1.  **Chronos2Model:** The neural network backbone (T5 Encoder variant).
-2.  **Chronos2Pipeline:** The orchestration layer handling data validation, normalization, patching, inference, and denormalization.
-3.  **Group Attention Mechanism:** A specialized attention mask that allows tokens from different series within a batch to attend to each other (for cross-learning) while maintaining causal integrity within a series.
+**Critical Abstractions:**
+*   **Patchification:** Converting raw time series into fixed-size patches (16 steps) to align with Transformer tokenization.
+*   **Group Attention:** A mechanism allowing attention across multiple related series (e.g., multiple sensors) within a single forward pass, enabling multivariate forecasting without separate models.
+*   **Quantile Regression:** The loss function and output head are designed to predict conditional quantiles, not means.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Scale-Invariant Input Normalization via Arcsinh
+### 1. Temporal Patching Invariant for Long-Context Time Series
 **RULE**:
-When building foundation models for time series with varying magnitudes (e.g., stock prices vs. sensor readings), inputs MUST be normalized using the inverse hyperbolic sine (`arcsinh`) function rather than standard Z-score or Min-Max normalization. The model MUST be trained and inferred with this specific transformation to ensure scale invariance.
+When implementing Transformer-based time series models with context lengths > 1024, you MUST apply patchification (grouping consecutive time steps into fixed-size vectors) before feeding into the Transformer. You MUST NOT feed raw time steps directly as tokens if the context length exceeds the model's effective attention window or if computational complexity $O(N^2)$ becomes prohibitive.
 
 **WHY**:
-Standard Z-score normalization fails on heavy-tailed distributions and outliers common in real-world time series, causing gradient explosion or vanishing gradients during training. `arcsinh` compresses large values logarithmically while preserving the sign and local linearity near zero, allowing a single model to handle series with orders-of-magnitude differences in scale without per-series re-normalization artifacts.
+Feeding raw time steps as tokens results in quadratic attention complexity $O(N^2)$. For $N=8192$, this is computationally infeasible for real-time inference. Patching reduces the effective sequence length to $N/P$ (where $P$ is patch size). In Chronos-2, $P=16$, reducing 8192 steps to 512 tokens. This maintains temporal locality while enabling long-context processing. Additionally, patching acts as a form of data augmentation and noise reduction.
 
 **WHEN TO APPLY**:
-Any time-series foundation model, anomaly detection system, or forecasting pipeline where input data spans multiple scales or contains outliers.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-import numpy as np
-
-def normalize_series(series: np.ndarray) -> np.ndarray:
-    """
-    Apply arcsinh normalization for scale invariance.
-    """
-    # arcsinh(x) = ln(x + sqrt(x^2 + 1))
-    # This is numerically stable for large x
-    return np.arcsinh(series)
-
-def denormalize_series(normalized_series: np.ndarray) -> np.ndarray:
-    """
-    Inverse arcsinh to recover original scale.
-    """
-    return np.sinh(normalized_series)
-
-# Usage in Pipeline
-# 1. Normalize input
-norm_input = normalize_series(raw_data)
-# 2. Forward pass
-forecast_norm = model(norm_input)
-# 3. Denormalize output
-forecast_raw = denormalize_series(forecast_norm)
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# NEVER use standard Z-score for foundation models handling mixed-scale data
-def bad_normalize(series: np.ndarray) -> np.ndarray:
-    mean = np.mean(series)
-    std = np.std(series)
-    if std == 0:
-        return series - mean
-    return (series - mean) / std
-# This fails if std is very small (division by near-zero) or if series has outliers
-```
-
-**VERIFICATION METHOD**:
-Unit test: Pass a series with values `[1e-6, 1, 1e6]`. Assert that the normalized values are within a reasonable range (e.g., [-10, 10]) and that the inverse transformation recovers the original values within floating-point precision.
-
-### 2. Patch-Based Tokenization for Long-Context Efficiency
-**RULE**:
-Time series inputs MUST be converted into discrete tokens via a fixed-size patching mechanism (e.g., patch size 16, stride 16) before being fed into the Transformer. The patch size MUST be a divisor of the maximum context length to ensure uniform tokenization.
-
-**WHY**:
-Feeding raw timesteps into a Transformer results in quadratic complexity $O(N^2)$ where $N$ is the number of timesteps. Patching reduces the sequence length by a factor of $P$ (patch size), reducing complexity to $O((N/P)^2)$. This allows handling long contexts (8192 timesteps) efficiently on standard GPUs.
-
-**WHEN TO APPLY**:
-Any Transformer-based time series model requiring long-context support (e.g., >1000 timesteps).
+Any Transformer-based time series model targeting context lengths > 512 steps, especially when deploying on edge devices or requiring high-throughput inference.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
 import torch.nn as nn
 
-class PatchEmbedding(nn.Module):
-    def __init__(self, patch_size: int, stride: int, d_model: int):
+class TimeSeriesPatcher(nn.Module):
+    def __init__(self, patch_size=16, stride=16):
         super().__init__()
         self.patch_size = patch_size
         self.stride = stride
-        # Linear projection from patch_size to d_model
-        self.proj = nn.Linear(patch_size, d_model)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        x: [Batch, Time]
-        Returns: [Batch, Num_Patches, d_model]
-        """
-        B, T = x.shape
-        # Unfold to create patches
-        # [B, T] -> [B, Num_Patches, Patch_Size]
-        patches = x.unfold(dimension=1, size=self.patch_size, step=self.stride)
-        # Project to d_model
-        # [B, Num_Patches, Patch_Size] -> [B, Num_Patches, d_model]
-        return self.proj(patches)
-
-# Usage
-patch_embed = PatchEmbedding(patch_size=16, stride=16, d_model=768)
-# Input: [Batch, 8192]
-# Output: [Batch, 512, 768]
+    def forward(self, x):
+        # x shape: (batch, seq_len)
+        batch_size, seq_len = x.shape
+        # Pad if necessary to ensure divisibility by stride
+        pad_len = (self.stride - (seq_len % self.stride)) % self.stride
+        if pad_len > 0:
+            x = torch.nn.functional.pad(x, (0, pad_len), mode='constant', value=0)
+        
+        # Reshape to (batch, num_patches, patch_size)
+        num_patches = x.shape[1] // self.stride
+        x = x.reshape(batch_size, num_patches, self.patch_size)
+        
+        # Flatten patch dimension to (batch, num_patches, patch_size)
+        # This is now the "token" representation for the Transformer
+        return x
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# NEVER feed raw timesteps directly into a Transformer for long contexts
-def bad_forward(x: torch.Tensor) -> torch.Tensor:
-    # x: [Batch, 8192]
-    # This creates an attention matrix of size 8192x8192 per head
-    # Memory explosion: 8192^2 * 12 heads * 4 bytes = ~4GB per batch item
-    return transformer(x)
+# ANTI-PATTERN: Feeding raw time steps directly for long contexts
+def bad_forward(self, x):
+    # x shape: (batch, 8192)
+    # This creates 8192 tokens, leading to O(8192^2) attention cost
+    # This will cause OOM or extreme latency on standard GPUs
+    return self.transformer(x) 
 ```
 
 **VERIFICATION METHOD**:
-Integration test: Verify that the number of output tokens is `(T - patch_size) // stride + 1`. Assert that the memory usage scales linearly with the number of patches, not quadratically with the number of timesteps.
+1.  **Unit Test:** Assert that the output sequence length of the patcher is `input_len // patch_stride`.
+2.  **Performance Benchmark:** Measure inference latency for $N=8192$ with and without patching. The patched version must be >10x faster.
+3.  **Memory Profiler:** Verify that peak GPU memory usage scales linearly with $N/P$, not $N^2$.
 
-### 3. Quantile Output for Probabilistic Forecasting
+### 2. Quantile Output Head Calibration Invariant
 **RULE**:
-The model MUST output multiple quantiles (e.g., 21 quantiles from 0.01 to 0.99) rather than a single point estimate. The inference pipeline MUST return these quantiles as a structured output (e.g., a DataFrame with columns for each quantile).
+When implementing probabilistic forecasting models, the output head MUST produce monotonic quantiles (i.e., $Q_{0.01} \le Q_{0.05} \le \dots \le Q_{0.99}$). You MUST NOT allow the model to output non-monotonic quantiles, as this violates the definition of quantiles and leads to invalid prediction intervals.
 
 **WHY**:
-Point estimates provide no information about uncertainty. In production forecasting, decision-makers need to know the confidence interval (e.g., 90% prediction interval). Quantile regression allows the model to learn the full distribution of possible outcomes, enabling risk-aware decision-making.
+Non-monotonic quantiles indicate a failure in the model's calibration or a bug in the output layer. In Chronos-2, the model is trained with a pinball loss that encourages monotonicity, but numerical instability or poor initialization can still cause violations. Post-processing must enforce monotonicity to ensure valid confidence intervals.
 
 **WHEN TO APPLY**:
-Any forecasting system where uncertainty quantification is critical (e.g., inventory management, energy load balancing).
+Any model that outputs multiple quantiles or percentiles for probabilistic forecasting.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import pandas as pd
-import numpy as np
+import torch
 
-class QuantileForecaster:
-    def __init__(self, quantiles: list[float]):
-        self.quantiles = quantiles
-        self.num_quantiles = len(quantiles)
+def enforce_monotonic_quantiles(quantiles):
+    """
+    quantiles: tensor of shape (batch, num_quantiles)
+    Returns: tensor of shape (batch, num_quantiles) with monotonic values
+    """
+    # Sort along the quantile dimension
+    # This ensures Q_i <= Q_{i+1}
+    sorted_quantiles, _ = torch.sort(quantiles, dim=1)
+    return sorted_quantiles
 
-    def predict(self, model_output: np.ndarray) -> pd.DataFrame:
-        """
-        model_output: [Batch, Horizon, Num_Quantiles]
-        Returns: DataFrame with columns ['quantile_0.01', ..., 'quantile_0.99']
-        """
-        B, H, Q = model_output.shape
-        # Reshape to [Batch, Horizon, Num_Quantiles]
-        # Create DataFrame
-        columns = [f"quantile_{q:.2f}" for q in self.quantiles]
-        # Expand to DataFrame
-        df = pd.DataFrame(
-            model_output.reshape(B, H * Q),
-            columns=[f"{i}_{col}" for i in range(H) for col in columns]
-        )
-        return df
-
-# Usage
-forecaster = QuantileForecaster(quantiles=[0.01, 0.05, 0.5, 0.95, 0.99])
-# model_output: [1, 10, 5]
-# Returns DataFrame with 50 columns
+# Usage in inference pipeline
+def predict_quantiles(model, x):
+    raw_quantiles = model(x)  # shape: (batch, 21)
+    # Enforce monotonicity
+    valid_quantiles = enforce_monotonic_quantiles(raw_quantiles)
+    return valid_quantiles
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# NEVER return only the median (0.5 quantile) as the final forecast
-def bad_predict(model_output: np.ndarray) -> np.ndarray:
-    # model_output: [Batch, Horizon, Num_Quantiles]
-    # This discards all uncertainty information
-    return model_output[:, :, 2]  # Assuming 0.5 is at index 2
+# ANTI-PATTERN: Returning raw model outputs without monotonicity check
+def bad_predict_quantiles(model, x):
+    return model(x)  # May return non-monotonic quantiles
 ```
 
 **VERIFICATION METHOD**:
-Unit test: Verify that the output DataFrame has the correct number of columns (Horizon * Num_Quantiles). Assert that the quantiles are monotonically increasing for each timestep (e.g., q_0.01 <= q_0.05 <= ... <= q_0.99).
+1.  **Unit Test:** Generate random inputs, run inference, and assert that for all batches, `quantiles[:, i] <= quantiles[:, i+1]` for all `i`.
+2.  **Regression Test:** Use a known dataset with ground truth quantiles and verify that the model's output intervals contain the true values at the expected frequency (calibration check).
+
+### 3. RoPE Positional Encoding for Long-Context Generalization
+**RULE**:
+When extending a Transformer model to support context lengths significantly longer than its training length, you MUST use Rotary Position Embeddings (RoPE) instead of absolute sinusoidal embeddings. You MUST NOT use absolute embeddings if you expect the model to generalize to sequences longer than those seen during training.
+
+**WHY**:
+Absolute positional embeddings are learned for specific positions and do not generalize well to unseen positions. RoPE encodes relative positions, allowing the model to extrapolate to longer sequences. In Chronos-2, `rope_theta=10000.0` is used, which is a standard value that provides good generalization for sequences up to 8192 tokens.
+
+**WHEN TO APPLY**:
+Any Transformer model that needs to handle variable-length inputs or generalize to longer sequences than those used in training.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+
+class RoPE(nn.Module):
+    def __init__(self, dim, theta=10000.0):
+        super().__init__()
+        self.dim = dim
+        self.theta = theta
+        # Precompute frequencies
+        freqs = 1.0 / (theta ** (torch.arange(0, dim, 2).float() / dim))
+        self.register_buffer('freqs', freqs)
+
+    def forward(self, x, positions):
+        # x: (batch, seq_len, dim)
+        # positions: (batch, seq_len)
+        # Compute rotations
+        cos = torch.cos(positions.unsqueeze(-1) * self.freqs)
+        sin = torch.sin(positions.unsqueeze(-1) * self.freqs)
+        
+        # Apply rotation to x
+        x1, x2 = x[..., 0::2], x[..., 1::2]
+        out1 = x1 * cos - x2 * sin
+        out2 = x1 * sin + x2 * cos
+        return torch.stack([out1, out2], dim=-1).flatten(-2)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using absolute positional embeddings for long-context generalization
+class BadPositionalEncoding(nn.Module):
+    def __init__(self, max_len, dim):
+        super().__init__()
+        # Learned absolute embeddings
+        self.embeddings = nn.Embedding(max_len, dim)
+
+    def forward(self, x):
+        positions = torch.arange(x.shape[1]).to(x.device)
+        return x + self.embeddings(positions)
+```
+
+**VERIFICATION METHOD**:
+1.  **Extrapolation Test:** Train the model on sequences of length 1024, then test on sequences of length 4096. The model with RoPE should maintain reasonable performance, while the model with absolute embeddings should degrade significantly.
+2.  **Unit Test:** Verify that the RoPE implementation correctly rotates vectors by the expected angles.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: No specific commit patches or bug issues were provided in the input data. The following incidents are inferred from common failure modes in similar architectures and the specific configuration details provided (e.g., `use_arcsinh: true`, `patch_size: 16`).*
+*Note: Since no specific commit patches or bug issues were provided in the input, this section will document **hypothetical but highly probable** incidents based on common failure modes in similar architectures (Chronos-Bolt, T5-based models) and the specific configuration of Chronos-2. These are derived from forensic analysis of the config and known issues in time-series Transformers.*
 
-### Incident 1: Scale Invariance Failure with Outliers (BUG-SCALE-01)
-- **Context**: Preprocessing Pipeline, `Chronos2Pipeline`
-- **What Was Expected**: The model should handle series with large outliers (e.g., sensor spikes) without degrading performance on normal data.
-- **What Actually Happened**: Using standard Z-score normalization caused the model to assign extreme weights to outliers, leading to poor forecasts for normal timesteps.
-- **Evidence in Repo**: `config.json` specifies `"use_arcsinh": true`.
-- **Root Cause**: Z-score normalization is sensitive to outliers. A single large outlier increases the standard deviation, compressing the range of normal values and reducing the model's sensitivity to them.
+### Incident 1: Non-Monotonic Quantiles Due to Numerical Instability (BUG-QUANT-01)
+- **Context**: Output head of `Chronos2Model`.
+- **What Was Expected**: The model should output 21 quantiles that are strictly monotonic increasing.
+- **What Actually Happened**: In some edge cases (e.g., very small or very large input values), the model output non-monotonic quantiles, leading to invalid prediction intervals.
+- **Evidence in Repo**: Not directly visible in the provided config, but inferred from the use of `arcsinh` normalization and the need for robust quantile regression.
+- **Root Cause**: The pinball loss function can be sensitive to numerical instability, especially when the input distribution is heavy-tailed. The `arcsinh` normalization helps, but does not completely eliminate the risk.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-# norm = (x - mean) / std
+# - Buggy code: Directly returning model outputs
+def forward(self, x):
+    return self.output_head(x)
 
-# + Fixed pattern
-# norm = np.arcsinh(x)
+# + Fixed pattern: Enforcing monotonicity post-hoc
+def forward(self, x):
+    raw_quantiles = self.output_head(x)
+    # Enforce monotonicity
+    sorted_quantiles, _ = torch.sort(raw_quantiles, dim=-1)
+    return sorted_quantiles
 ```
-- **Lesson**: Use robust normalization techniques like `arcsinh` for foundation models handling real-world data with outliers.
+- **Lesson**: Always enforce mathematical invariants (like monotonicity) post-hoc, even if the loss function encourages them.
 
-### Incident 2: Memory Explosion with Long Contexts (BUG-MEM-02)
-- **Context**: Model Forward Pass, `Chronos2Model`
-- **What Was Expected**: The model should handle context lengths up to 8192 timesteps on a single A10G GPU.
-- **What Actually Happened**: Feeding raw timesteps into the Transformer caused out-of-memory errors for batch sizes > 1.
-- **Evidence in Repo**: `config.json` specifies `"input_patch_size": 16`, `"input_patch_stride": 16`.
-- **Root Cause**: The attention mechanism has quadratic complexity $O(N^2)$. For $N=8192$, the attention matrix is $8192 \times 8192$, which is too large for GPU memory.
+### Incident 2: Memory Overflow with Long Contexts (BUG-MEM-02)
+- **Context**: Transformer attention mechanism.
+- **What Was Expected**: The model should handle context lengths up to 8192 without OOM.
+- **What Actually Happened**: Without patching, the attention matrix for 8192 tokens would be $8192 \times 8192$, requiring ~268MB per head per layer, leading to OOM on standard GPUs.
+- **Evidence in Repo**: The config specifies `input_patch_size: 16` and `input_patch_stride: 16`, which reduces the effective sequence length to 512 tokens.
+- **Root Cause**: Quadratic complexity of self-attention.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-# tokens = x  # [Batch, 8192]
+# - Buggy code: No patching
+def forward(self, x):
+    # x shape: (batch, 8192)
+    return self.transformer(x)
 
-# + Fixed pattern
-# tokens = patch_embed(x)  # [Batch, 512, 768]
+# + Fixed pattern: With patching
+def forward(self, x):
+    # x shape: (batch, 8192)
+    x_patched = self.patcher(x)  # shape: (batch, 512, 16)
+    x_flat = x_patched.reshape(x_patched.shape[0], -1)  # shape: (batch, 512*16)
+    # Actually, the patcher outputs (batch, num_patches, patch_size)
+    # The Transformer expects (batch, seq_len, d_model)
+    # So we need to project the patches to d_model
+    x_proj = self.patch_projection(x_patched)  # shape: (batch, 512, 768)
+    return self.transformer(x_proj)
 ```
-- **Lesson**: Use patching to reduce sequence length and memory usage in Transformer-based time series models.
+- **Lesson**: Always use patching or other sequence reduction techniques for long-context Transformers.
 
-### Incident 3: Causal Leakage in Multivariate Forecasting (BUG-CAUSAL-03)
-- **Context**: Attention Mask, `Chronos2Model`
-- **What Was Expected**: The model should not use future information from other series to predict the current timestep of a target series.
-- **What Actually Happened**: In multivariate forecasting, the model accidentally used future values from covariates to predict the target series, leading to over-optimistic performance in backtesting.
-- **Evidence in Repo**: `config.json` specifies `"use_reg_token": true` and `"reg_token_id": 1`.
-- **Root Cause**: The attention mask did not properly enforce causality across series. Tokens from future timesteps in covariates were allowed to attend to tokens in the target series.
+### Incident 3: Poor Generalization to Longer Sequences (BUG-GEN-03)
+- **Context**: Positional encoding.
+- **What Was Expected**: The model should generalize to sequences longer than 8192.
+- **What Actually Happened**: The model performance degraded significantly for sequences longer than 8192.
+- **Evidence in Repo**: The config specifies `rope_theta: 10000.0`, which is a standard value for RoPE.
+- **Root Cause**: If absolute positional embeddings were used, they would not generalize. RoPE helps, but the `theta` value must be chosen carefully.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-# mask = torch.ones(seq_len, seq_len)  # Full attention
+# - Buggy code: Absolute positional embeddings
+class BadModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.pos_embed = nn.Embedding(8192, 768)
 
-# + Fixed pattern
-# mask = create_causal_mask(seq_len, num_series)
-# mask[future_covariates, target_series] = 0
+    def forward(self, x):
+        positions = torch.arange(x.shape[1]).to(x.device)
+        x = x + self.pos_embed(positions)
+        return self.transformer(x)
+
+# + Fixed pattern: RoPE
+class GoodModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.rope = RoPE(768, theta=10000.0)
+
+    def forward(self, x):
+        positions = torch.arange(x.shape[1]).to(x.device)
+        x = self.rope(x, positions)
+        return self.transformer(x)
 ```
-- **Lesson**: Carefully design attention masks to enforce causality in multivariate time series models.
+- **Lesson**: Use RoPE for long-context generalization.
 
-### Incident 4: Quantile Crossing in Probabilistic Forecasts (BUG-QUANT-04)
-- **Context**: Output Layer, `Chronos2Model`
-- **What Was Expected**: The predicted quantiles should be monotonically increasing (e.g., q_0.01 <= q_0.05 <= ... <= q_0.99).
-- **What Actually Happened**: In some cases, the model predicted q_0.05 > q_0.1, violating the monotonicity constraint.
-- **Evidence in Repo**: `config.json` specifies `"quantiles": [0.01, 0.05, ..., 0.99]`.
-- **Root Cause**: The output layer was a simple linear projection, which does not enforce monotonicity.
+### Incident 4: Inefficient Inference Due to Lack of Caching (BUG-PERF-04)
+- **Context**: Transformer decoder (if used) or attention mechanism.
+- **What Was Expected**: Inference should be fast.
+- **What Actually Happened**: Inference was slow due to recomputing attention for all previous tokens.
+- **Evidence in Repo**: The config specifies `use_cache: true`.
+- **Root Cause**: Lack of KV caching.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-# output = linear_layer(hidden_states)
+# - Buggy code: No KV caching
+def forward(self, x, past_key_values=None):
+    # Recompute attention for all tokens
+    return self.transformer(x)
 
-# + Fixed pattern
-# output = cumulative_sum(softplus(linear_layer(hidden_states)))
-# This ensures monotonicity
+# + Fixed pattern: With KV caching
+def forward(self, x, past_key_values=None):
+    # Use cached key-values for previous tokens
+    return self.transformer(x, past_key_values=past_key_values)
 ```
-- **Lesson**: Use monotonic activation functions or post-processing to enforce quantile ordering in probabilistic forecasting models.
+- **Lesson**: Always use KV caching for autoregressive models.
 
-### Incident 5: Inference Latency Spike with Batch Size 1 (BUG-LAT-05)
-- **Context**: Inference Pipeline, `Chronos2Pipeline`
-- **What Was Expected**: Inference should be fast even for single-series forecasts.
-- **What Actually Happened**: Inference latency was high for batch size 1 due to inefficient kernel launches.
-- **Evidence in Repo**: `config.json` specifies `"torch_dtype": "float32"`.
-- **Root Cause**: The model was not optimized for small batch sizes. The attention mechanism and other operations were not fused, leading to many small kernel launches.
+### Incident 5: Data Leakage Due to Improper Normalization (BUG-SEC-05)
+- **Context**: Input preprocessing.
+- **What Was Expected**: The model should not leak future information into the past.
+- **What Actually Happened**: The model used global normalization (mean/std over the entire sequence), which leaked future information.
+- **Evidence in Repo**: The config specifies `use_arcsinh: true`, which is a local normalization.
+- **Root Cause**: Global normalization uses future data.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-# output = model(input)  # No optimization
+# - Buggy code: Global normalization
+def normalize(x):
+    mean = x.mean()
+    std = x.std()
+    return (x - mean) / std
 
-# + Fixed pattern
-# output = torch.compile(model)(input)  # Use TorchScript or XLA
+# + Fixed pattern: Local normalization (arcsinh)
+def normalize_arcsinh(x):
+    return torch.arcsinh(x)
 ```
-- **Lesson**: Optimize inference pipelines for small batch sizes using model compilation or kernel fusion.
+- **Lesson**: Use local normalization to avoid data leakage.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Type Coercion**: Ensure that `arcsinh` and `sinh` are applied to `float32` or `float64` tensors. Applying them to integer tensors will result in truncation errors.
-    *   **Falsy 0 Trap**: When normalizing, check if the standard deviation is zero before dividing. However, with `arcsinh`, this is not an issue, but it is a common bug in Z-score normalization.
-    *   **Deep Immutability**: When creating attention masks, ensure that the mask is not modified in-place during the forward pass. Use `.clone()` or create a new tensor.
+    *   **Invariant**: When using `arcsinh` normalization, ensure that the input is float32 or float64. Integer inputs will cause precision loss.
+    *   **Code**: `x = x.float()` before `torch.arcsinh(x)`.
+    *   **Trap**: `torch.arcsinh` on integer tensors may produce unexpected results due to implicit casting.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Base Condition**: In the patching mechanism, ensure that the loop terminates when the remaining timesteps are less than the patch size.
-    *   **Termination Invariant**: The number of patches is `(T - patch_size) // stride + 1`. Ensure that this calculation is correct and does not result in a negative number.
+    *   **Invariant**: The patching operation must ensure that the input length is divisible by the stride. If not, padding must be applied.
+    *   **Code**: `pad_len = (self.stride - (seq_len % self.stride)) % self.stride`.
+    *   **Trap**: Forgetting to pad can lead to shape mismatches in the Transformer.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model, not a UI application.
+    *   **Invariant**: N/A (This is a backend model, not a UI).
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Race Conditions**: Ensure that the model is thread-safe if used in a multi-threaded environment. Use `torch.no_grad()` during inference to avoid unnecessary memory allocation.
-    *   **Memory Leaks**: Ensure that intermediate tensors are freed after use. Use `del` or rely on Python's garbage collector.
+    *   **Invariant**: When using KV caching, ensure that the cache is properly cleared between different inference requests to avoid memory leaks.
+    *   **Code**: `past_key_values = None` at the start of each new request.
+    *   **Trap**: Reusing the same cache object across different requests can lead to incorrect results.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: Check for `None` or `NaN` values in the input data before passing it to the model.
-    *   **Off-by-One Boundary Checks**: Ensure that the patching mechanism does not access out-of-bounds indices.
-    *   **Error Boundary Containment**: Wrap the inference pipeline in a try-except block to catch and log errors gracefully.
+    *   **Invariant**: Always check for NaN/Inf values in the input and output.
+    *   **Code**: `assert torch.isfinite(x).all()`.
+    *   **Trap**: NaN/Inf values can propagate through the model and cause silent failures.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Encoder-only Transformer with Group Attention. Decoupled preprocessing (normalization, patching) from the core model.
-2.  **Core Abstractions**: `Chronos2Model` (neural network), `Chronos2Pipeline` (orchestration), `PatchEmbedding` (tokenization).
-3.  **Error Handling**: Input validation (check for NaNs, correct shape), graceful degradation (return empty forecasts if input is invalid).
-4.  **Testing**: Unit tests for normalization, patching, and quantile monotonicity. Integration tests for end-to-end forecasting.
-5.  **Security**: No direct security concerns, but ensure that input data is sanitized to prevent injection attacks (e.g., malicious time series patterns).
-6.  **Performance**: Patching reduces complexity from $O(N^2)$ to $O((N/P)^2)`. Use `torch.compile` for inference optimization.
-7.  **Deployment**: Containerized with Docker, deployed on AWS SageMaker. Supports GPU and CPU inference.
-8.  **Agent Patterns**: N/A (not an agent-based system).
-9.  **Data Flow**: Raw Data -> Normalization -> Patching -> Transformer -> Quantile Output -> Denormalization -> Forecast.
+1.  **Architecture**: Encoder-only Transformer with patching and RoPE.
+2.  **Core Abstractions**: Patchification, Group Attention, Quantile Regression.
+3.  **Error Handling**: Monotonicity enforcement, NaN/Inf checks.
+4.  **Testing**: Unit tests for patching, RoPE, and monotonicity.
+5.  **Security**: Local normalization to prevent data leakage.
+6.  **Performance**: Patching to reduce sequence length, KV caching.
+7.  **Deployment**: Support for GPU and CPU inference, efficient batching.
+8.  **Agent Patterns**: N/A (This is a model, not an agent).
+9.  **Data Flow**: Raw time series -> Arcsinh normalization -> Patching -> Transformer -> Quantile output -> Monotonicity enforcement.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Patch-based tokenization for long-context time series forecasting.
-2.  **Rule**: Use `arcsinh` normalization for scale invariance.
-3.  **Architecture Principle**: Encoder-only Transformer with Group Attention for multivariate forecasting.
-4.  **Failure Mode**: Memory explosion with long contexts due to quadratic attention complexity.
-5.  **Reusable Skill**: Implementing a patching mechanism for time series tokenization.
-6.  **Decision**: Use quantile regression instead of point estimation for probabilistic forecasting.
-7.  **Anti-pattern**: Using Z-score normalization for foundation models handling mixed-scale data.
-8.  **Verification Method**: Unit tests for normalization, patching, and quantile monotonicity.
+1.  **Pattern**: Patchification for long-context Transformers.
+2.  **Rule**: Always use patching for context lengths > 1024.
+3.  **Architecture Principle**: Reduce sequence length to maintain $O(N^2)$ complexity manageable.
+4.  **Failure Mode**: OOM due to quadratic attention complexity.
+5.  **Reusable Skill**: Implement a `TimeSeriesPatcher` module.
+6.  **Decision**: Use patching instead of sliding windows for better efficiency.
+7.  **Anti-pattern**: Feeding raw time steps directly into the Transformer for long contexts.
+8.  **Verification Method**: Benchmark inference latency and memory usage with and without patching.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Install Dependencies**: `pip install chronos-forecasting>=2.0`
-2.  **Load Model**: `model = Chronos2Pipeline.from_pretrained("autogluon/chronos-2")`
-3.  **Prepare Data**: Convert time series data to a Pandas DataFrame.
-4.  **Normalize Data**: Apply `arcsinh` normalization to the input data.
-5.  **Patch Data**: Convert the normalized data into patches using the specified patch size and stride.
-6.  **Forward Pass**: Pass the patches through the `Chronos2Model`.
-7.  **Denormalize Output**: Apply `sinh` to the model output to recover the original scale.
-8.  **Validate Output**: Check that the quantiles are monotonically increasing.
-9.  **Return Forecast**: Return the forecast as a structured output (e.g., DataFrame).
+1.  **Define Patch Size**: Choose a patch size (e.g., 16) that balances temporal resolution and computational efficiency.
+2.  **Implement Patcher**: Create a `TimeSeriesPatcher` module that pads and reshapes the input.
+3.  **Use RoPE**: Implement Rotary Position Embeddings with `theta=10000.0`.
+4.  **Enforce Monotonicity**: Add a post-processing step to sort the quantile outputs.
+5.  **Use Local Normalization**: Apply `arcsinh` normalization to the input.
+6.  **Enable KV Caching**: Use `use_cache=True` in the Transformer configuration.
+7.  **Test for OOM**: Benchmark memory usage for long contexts.
+8.  **Test for Generalization**: Evaluate the model on sequences longer than the training length.

@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T23:51:48.128Z",
-    "lastVerified": "2026-10-30T23:51:48.128Z",
+    "lastChecked": "2026-10-30T23:58:49.936Z",
+    "lastVerified": "2026-10-30T23:58:49.936Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -423,8 +423,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T23:28:43.755Z",
-    "lastVerified": "2026-10-30T23:28:43.755Z",
+    "lastChecked": "2026-10-30T23:58:45.475Z",
+    "lastVerified": "2026-10-30T23:58:45.475Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -651,14 +651,14 @@
     "officialUrl": "https://github.com/expo/expo",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T03:31:28.981Z",
-    "lastVerified": "2026-10-28T03:31:28.981Z",
+    "lastChecked": "2026-10-30T23:58:40.947Z",
+    "lastVerified": "2026-10-30T23:58:40.947Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-expo-expo",
-    "contentHash": "3f2da62970527b8f2278cdb801cdb9541fe95df1b6e690d83b92e7eb96623077",
+    "contentHash": "56331f858777dcdb4117d81bc292c2fd262346af323c3e3c472b2550b05d4b01",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1379,9 +1379,9 @@
   "ajeetdsouza-zoxide": {
     "name": "zoxide",
     "officialUrl": "https://github.com/ajeetdsouza/zoxide",
-    "lastChecked": "2026-10-29T02:00:02.637Z",
+    "lastChecked": "2026-10-30T23:58:30.482Z",
     "revisionIdentifier": "f0b31631",
-    "lastVerified": "2026-10-29T02:00:02.637Z"
+    "lastVerified": "2026-10-30T23:58:30.482Z"
   },
   "hf-nvidia-nemotron-3-diarization": {
     "name": "nvidia/Nemotron-3-Diarization",
@@ -1899,12 +1899,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "projectdiscovery/nuclei",
+    "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T20:05:14.330Z",
-    "lastVerified": "2026-10-30T20:05:14.330Z",
+    "lastChecked": "2026-10-30T23:58:40.546Z",
+    "lastVerified": "2026-10-30T23:58:40.546Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -1913,7 +1913,8 @@
     "recentFixesCount": 5,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "df57ae6d"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -4953,9 +4954,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-10-30T03:18:53.197Z",
+    "lastChecked": "2026-10-30T23:58:43.058Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-10-30T03:18:53.197Z"
+    "lastVerified": "2026-10-30T23:58:43.058Z"
   },
   "datadog-glommio": {
     "name": "glommio",
@@ -5777,9 +5778,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-10-30T04:34:46.321Z",
+    "lastChecked": "2026-10-30T23:58:37.993Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-10-30T04:34:46.321Z"
+    "lastVerified": "2026-10-30T23:58:37.993Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -11539,6 +11540,23 @@
     "promotedRulesCount": 1,
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-autogluon-chronos-2": {
+    "name": "autogluon/chronos-2",
+    "officialUrl": "https://huggingface.co/autogluon/chronos-2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-30T23:58:33.157Z",
+    "lastVerified": "2026-10-30T23:58:33.157Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-autogluon-chronos-2",
+    "contentHash": "debcaee89572850bbc5506261280e443ecc9d7c3616fad4266e2fb980675913f",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

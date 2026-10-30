@@ -2065,8 +2065,8 @@
     "sourceUrl": "https://huggingface.co/autogluon/chronos-2",
     "sourceVersion": "hf-autogluon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "e22938979b5255c547bb3c3dd8e3fb3dd6a878bd3667df982b251229a5d59c4c",
-    "lastHarvestedAt": "2026-10-27T21:22:27.635Z",
+    "contentHash": "debcaee89572850bbc5506261280e443ecc9d7c3616fad4266e2fb980675913f",
+    "lastHarvestedAt": "2026-10-30T23:58:47.394Z",
     "learningId": "learn-huggingface-autogluon-chronos-2"
   },
   "deeplethe-solid-glass": {
@@ -10333,10 +10333,10 @@
     "repository": "expo/expo",
     "platform": "github",
     "sourceUrl": "https://github.com/expo/expo",
-    "sourceVersion": "142ce925",
+    "sourceVersion": "48362988",
     "license": "MIT",
-    "contentHash": "3f2da62970527b8f2278cdb801cdb9541fe95df1b6e690d83b92e7eb96623077",
-    "lastHarvestedAt": "2026-10-28T03:31:29.784Z",
+    "contentHash": "56331f858777dcdb4117d81bc292c2fd262346af323c3e3c472b2550b05d4b01",
+    "lastHarvestedAt": "2026-10-30T23:58:42.162Z",
     "learningId": "learn-github-expo-expo"
   },
   "vercel-swr": {

@@ -6365,3 +6365,5 @@
 | `CYCLE-20261030-M6BI` | `2026-10-30T23:51:40.158Z` | `meta/docusaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5942` | Yes (`1055de04...`) |
 | `CYCLE-20261030-M6FG` | `2026-10-30T23:51:40.300Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5943` | Yes (`c5989e2e...`) |
 | `CYCLE-20261030-MAHX` | `2026-10-30T23:51:45.573Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5944` | Yes (`4a39912e...`) |
+| `CYCLE-20261030-V7XQ` | `2026-10-30T23:58:42.158Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5945` | Yes (`56331f85...`) |
+| `CYCLE-20261030-VBZ2` | `2026-10-30T23:58:47.390Z` | `autogluon/chronos-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5946, Rule 5947, Rule 5948` | Yes (`debcaee8...`) |

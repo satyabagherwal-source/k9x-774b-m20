@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T23:51:45.501Z",
+  "last_updated": "2026-10-30T23:58:47.293Z",
   "total_verified_learnings": 1179,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -12334,8 +12334,8 @@
       "slug": "expo-expo",
       "platform": "github",
       "source_url": "https://github.com/expo/expo",
-      "source_version": "142ce925",
-      "content_hash": "3f2da62970527b8f2278cdb801cdb9541fe95df1b6e690d83b92e7eb96623077",
+      "source_version": "48362988",
+      "content_hash": "56331f858777dcdb4117d81bc292c2fd262346af323c3e3c472b2550b05d4b01",
       "dossier_path": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "promoted_rules": [
@@ -12358,6 +12358,11 @@
           "number": 5151,
           "title": "[ui] Apply themeVariant and draw no container behind the inline community DateTi",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5945,
+          "title": "[docs] Add Agentic workflows section with four quick start guides (#52087)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12365,7 +12370,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T03:31:29.657Z",
+      "verified_at": "2026-10-30T23:58:42.060Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -74153,7 +74158,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autogluon/chronos-2",
       "source_version": "hf-autogluon-chronos-2",
-      "content_hash": "e22938979b5255c547bb3c3dd8e3fb3dd6a878bd3667df982b251229a5d59c4c",
+      "content_hash": "debcaee89572850bbc5506261280e443ecc9d7c3616fad4266e2fb980675913f",
       "dossier_path": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autogluon-chronos-2-learnings.md",
       "promoted_rules": [
@@ -74211,6 +74216,21 @@
           "number": 5018,
           "title": "Quantile Output for Probabilistic Forecasting",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5946,
+          "title": "Temporal Patching Invariant for Long-Context Time Series",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5947,
+          "title": "Quantile Output Head Calibration Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5948,
+          "title": "RoPE Positional Encoding for Long-Context Generalization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -74218,7 +74238,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T21:22:27.558Z",
+      "verified_at": "2026-10-30T23:58:47.269Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -157068,6 +157088,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T23:51:45.482Z"
+    },
+    "rule-5945": {
+      "learning_id": "rule-5945",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5945,
+      "title": "[docs] Add Agentic workflows section with four quick start guides (#52087)",
+      "source_url": "https://github.com/expo/expo",
+      "source_version": "48362988",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:58:42.060Z"
+    },
+    "rule-5946": {
+      "learning_id": "rule-5946",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5946,
+      "title": "Temporal Patching Invariant for Long-Context Time Series",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:58:47.269Z"
+    },
+    "rule-5947": {
+      "learning_id": "rule-5947",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5947,
+      "title": "Quantile Output Head Calibration Invariant",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:58:47.269Z"
+    },
+    "rule-5948": {
+      "learning_id": "rule-5948",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5948,
+      "title": "RoPE Positional Encoding for Long-Context Generalization",
+      "source_url": "https://huggingface.co/autogluon/chronos-2",
+      "source_version": "hf-autogluon-chronos-2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:58:47.269Z"
     }
   },
   "aliases": {
