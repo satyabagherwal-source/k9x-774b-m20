@@ -19807,5 +19807,20 @@
     "downloads": 6189,
     "qualityScore": 3400,
     "discoveredAt": "2026-10-30T03:16:27.223Z"
+  },
+  {
+    "name": "jonex",
+    "fullName": "yuezhiai/jonex",
+    "url": "https://github.com/yuezhiai/jonex",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "All-in-One Multimodal Parsing Engine + Ontology-Powered, LLM Wiki-Driven AI-Ready Knowledge Engine",
+    "stars": 1513,
+    "forks": 275,
+    "openIssues": 35,
+    "language": "Python",
+    "qualityScore": 1059,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-30T03:31:10.458Z"
   }
 ]

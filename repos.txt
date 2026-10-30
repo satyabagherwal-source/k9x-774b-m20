@@ -4702,3 +4702,7 @@ https://github.com/CherryHQ/cherry-studio
 # --- Automatically Discovered by AI Scout Engine [2026-10-30T03:18:35.258Z] ---
 # [HUGGINGFACE-AI-MODELS] LiconStudio/Minimax-H3-VBVR (3400 score) - Verified Hugging Face Model: LiconStudio/Minimax-H3-VBVR (140 likes, 6189 downlo
 https://huggingface.co/LiconStudio/Minimax-H3-VBVR
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-30T03:34:50.942Z] ---
+# [AI-AGENTS] yuezhiai/jonex (1059 score) - All-in-One Multimodal Parsing Engine + Ontology-Powered, LLM Wiki-Driven AI-Read
+https://github.com/yuezhiai/jonex

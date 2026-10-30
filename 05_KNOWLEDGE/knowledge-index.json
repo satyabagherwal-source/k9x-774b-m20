@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T03:18:51.974Z",
-  "total_verified_learnings": 1170,
+  "last_updated": "2026-10-30T03:37:09.464Z",
+  "total_verified_learnings": 1171,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -6514,8 +6514,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "e5827d55",
-      "content_hash": "c17c3265685a5588e113cb2bc9389af6c0b2598d3f99ff2f4808d92024d7b9d6",
+      "source_version": "80b1c726",
+      "content_hash": "05e5361b342a66c7a1fa4a9ff9710a4fbd08580ba27a7b842b0ae1acee581d36",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -6673,6 +6673,21 @@
           "number": 5503,
           "title": "deps): update module github.com/go-jose/go-jose/v4 to v4.1.6 [security]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5574,
+          "title": "Pre-Calculated Buffer Allocation Sizing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5575,
+          "title": "High-Performance Zero-Allocation Structured IP Domain Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5576,
+          "title": "eBPF Kernel Scratch Space Auxvar Over Per-CPU Map Replacement",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6680,7 +6695,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T12:08:54.389Z",
+      "verified_at": "2026-10-30T03:37:00.671Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52537,8 +52552,8 @@
       "slug": "thebaselab-codeapp",
       "platform": "github",
       "source_url": "https://github.com/thebaselab/codeapp",
-      "source_version": "9b8475e2",
-      "content_hash": "b5de191c0931e776f5060201b4de451c8bd73902fa3df6e1524498155edc894a",
+      "source_version": "8964f069",
+      "content_hash": "95726c63598fd5afd031748e630eec65c26c244a650a6f8f0c8b65197571e10d",
       "dossier_path": "07_PROJECT_LEARNING/thebaselab-codeapp-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thebaselab-codeapp-learnings.md",
       "promoted_rules": [
@@ -52556,6 +52571,21 @@
           "number": 2698,
           "title": "Deliberate Deferred Tree Invalidation in Complex SwiftUI View Hierarchies",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5580,
+          "title": "Swift Async Continuation Single-Resume Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5581,
+          "title": "Libgit2 Working Tree Modification Pre-Merge Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5582,
+          "title": "Canonicalized Cache Key Invariant for File Storage & Diff Lookup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52563,7 +52593,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T17:03:59.670Z",
+      "verified_at": "2026-10-30T03:37:09.445Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149837,6 +149867,175 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T03:18:51.962Z"
+    },
+    "rule-5574": {
+      "learning_id": "rule-5574",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5574,
+      "title": "Pre-Calculated Buffer Allocation Sizing Invariant",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "80b1c726",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:37:00.671Z"
+    },
+    "rule-5575": {
+      "learning_id": "rule-5575",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5575,
+      "title": "High-Performance Zero-Allocation Structured IP Domain Boundary",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "80b1c726",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:37:00.671Z"
+    },
+    "rule-5576": {
+      "learning_id": "rule-5576",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5576,
+      "title": "eBPF Kernel Scratch Space Auxvar Over Per-CPU Map Replacement",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "80b1c726",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:37:00.671Z"
+    },
+    "learn-github-yuezhiai-jonex": {
+      "learning_id": "learn-github-yuezhiai-jonex",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "yuezhiai/jonex",
+      "repository": "yuezhiai/jonex",
+      "slug": "yuezhiai-jonex",
+      "platform": "github",
+      "source_url": "https://github.com/yuezhiai/jonex",
+      "source_version": "13f93d97",
+      "content_hash": "be89b16c379c66021e0f32f75dfa6eb38e96e42ac2121593546d7f6c2fbd4c04",
+      "dossier_path": "07_PROJECT_LEARNING/yuezhiai-jonex-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/yuezhiai-jonex-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5577,
+          "title": "Multi-Tier Distributed Secret Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5578,
+          "title": "Strict Grounded Evidence Span-Binding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5579,
+          "title": "Fail-Closed Cryptographic Startup Isolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-30T03:37:04.248Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5577": {
+      "learning_id": "rule-5577",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5577,
+      "title": "Multi-Tier Distributed Secret Alignment Invariant",
+      "source_url": "https://github.com/yuezhiai/jonex",
+      "source_version": "13f93d97",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:37:04.248Z"
+    },
+    "rule-5578": {
+      "learning_id": "rule-5578",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5578,
+      "title": "Strict Grounded Evidence Span-Binding Invariant",
+      "source_url": "https://github.com/yuezhiai/jonex",
+      "source_version": "13f93d97",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:37:04.248Z"
+    },
+    "rule-5579": {
+      "learning_id": "rule-5579",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5579,
+      "title": "Fail-Closed Cryptographic Startup Isolation Invariant",
+      "source_url": "https://github.com/yuezhiai/jonex",
+      "source_version": "13f93d97",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:37:04.248Z"
+    },
+    "rule-5580": {
+      "learning_id": "rule-5580",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5580,
+      "title": "Swift Async Continuation Single-Resume Invariant",
+      "source_url": "https://github.com/thebaselab/codeapp",
+      "source_version": "8964f069",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:37:09.445Z"
+    },
+    "rule-5581": {
+      "learning_id": "rule-5581",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5581,
+      "title": "Libgit2 Working Tree Modification Pre-Merge Guard",
+      "source_url": "https://github.com/thebaselab/codeapp",
+      "source_version": "8964f069",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:37:09.445Z"
+    },
+    "rule-5582": {
+      "learning_id": "rule-5582",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5582,
+      "title": "Canonicalized Cache Key Invariant for File Storage & Diff Lookup",
+      "source_url": "https://github.com/thebaselab/codeapp",
+      "source_version": "8964f069",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T03:37:09.445Z"
     }
   },
   "aliases": {

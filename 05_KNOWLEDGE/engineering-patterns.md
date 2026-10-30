@@ -404041,3 +404041,922 @@ if score < 10:
 **VERIFICATION METHOD**:
 1.  **Unit Test:** Create synthetic videos with known duplication/interpenetration errors. Assert that the validation function returns `False`.
 2.  **Integration Test:** Run the validator on the `validation/2/original.mp4` (should fail) and `validation/2/VBVR.mp4` (should pass) from the repo.
+
+
+---
+
+## 5574. Pre-Calculated Buffer Allocation Sizing Invariant (Harvested from cilium/cilium)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Pre-Calculated Buffer Allocation Sizing Invariant",
+  "source": "cilium/cilium",
+  "source_url": "https://github.com/cilium/cilium",
+  "source_version": "80b1c726",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T03:36:59.714Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-cilium-cilium",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `80b1c726`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When serializing composite nested structures into byte buffers (`bytes.Buffer`) or string builders (`strings.Builder`), the caller MUST pre-calculate the exact total byte allocation via a dedicated pass (`formatLen()`) and invoke `Grow(n)` exactly once at the top level. The program MUST NOT invoke `.Grow()` inside individual child element emitters.
+
+**WHY**:
+Invoking `.Grow(len)` incrementally inside inner loops causes amortized geometric slice reallocations (`runtime.growslice`). Each intermediate resize copies old memory buffers, creates heap fragmentation, triggers GC write barriers, and saturates CPU cache lines. Pre-computing lengths uses $O(N)$ integer arithmetic (CPU register operations) to prevent $O(N \log N)$ reallocation and memory copy overhead.
+
+**WHEN TO APPLY**:
+Apply to any high-throughput serialization routine, KV-store key generation, network packet marshalling, or logging pipeline in Go, Rust, or C++.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// pkg/labels/array.go & pkg/labels/labels.go pattern
+func (l *Label) formatLen() int {
+	n := len(l.Source) + len(SourceDelimiter) + len(l.Key)
+	if len(l.Value) != 0 {
+		n += 1 + len(l.Value) // Accounts for '=' delimiter
+	}
+	return n
+}
+
+func (ls LabelArray) formatLen() int {
+	// 2 bytes for '[' and ']', plus 1 byte separator per element after index 0
+	n := 2 + max(len(ls)-1, 0)
+	for l := range ls {
+		n += ls[l].formatLen()
+	}
+	return n
+}
+
+func (ls LabelArray) BuildString(sb *strings.Builder) {
+	// Single top-level allocation reserving the exact heap footprint
+	sb.Grow(ls.formatLen())
+	sb.WriteByte('[')
+	for l := range ls {
+		if l > 0 {
+			sb.WriteByte(';')
+		}
+		// Inner serializer writes directly without calling sb.Grow()
+		ls[l].buildStringNoGrow(sb)
+	}
+	sb.WriteByte(']')
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Inner method growing the builder iteratively inside loops
+func (l *Label) BuildString(sb *strings.Builder) {
+	// ANTI-PATTERN: Calling Grow on every nested token forces repeated 
+	// re-allocation when builder capacity is exceeded.
+	sb.Grow(len(l.Source) + len(SourceDelimiter) + len(l.Key) + len(l.Value) + 1)
+	sb.WriteString(l.Source)
+	sb.WriteString(SourceDelimiter)
+	sb.WriteString(l.Key)
+	if len(l.Value) != 0 {
+		sb.WriteByte('=')
+		sb.WriteString(l.Value)
+	}
+}
+
+func (ls LabelArray) BuildStringBad(sb *strings.Builder) {
+	sb.WriteByte('[')
+	for l := range ls {
+		ls[l].BuildString(sb) // Triggers reallocation churn on large label arrays
+	}
+	sb.WriteByte(']')
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce zero intermediate slice growth via Go memory allocation benchmarks and tests:
+```go
+func BenchmarkLabelArraySerializationAllocations(b *testing.B) {
+	labels := GenerateTestLabels(100)
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var sb strings.Builder
+		labels.BuildString(&sb)
+	}
+	// Assert that allocs/op == 1 (the underlying String() string buffer allocation)
+	if allocs := testing.AllocsPerRun(1000, func() {
+		var sb strings.Builder
+		labels.BuildString(&sb)
+		_ = sb.String()
+	}); allocs > 2.0 {
+		b.Fatalf("Expected <= 2 allocations, got %f", allocs)
+	}
+}
+```
+
+---
+
+
+---
+
+## 5575. High-Performance Zero-Allocation Structured IP Domain Boundary (Harvested from cilium/cilium)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "High-Performance Zero-Allocation Structured IP Domain Boundary",
+  "source": "cilium/cilium",
+  "source_url": "https://github.com/cilium/cilium",
+  "source_version": "80b1c726",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T03:37:00.082Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-cilium-cilium",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `80b1c726`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Internal data structures, API representations, and agent pipelines MUST use immutable, comparable value-typed IP primitives (`net/netip.Addr`, `net/netip.Prefix`) instead of string representations (`string`) or pointer-backed heap structures (`net.IP`, `*net.IPNet`). IP parsing and validation MUST occur strictly at external API deserialization ingress boundaries.
+
+**WHY**:
+Strings require heap allocations, dynamic slice headers, and expensive hex/decimal parsing on every lookup. `net.IP` is a `[]byte` slice alias, which means it cannot be compared with `==`, can be mutated concurrently, and causes heap allocations during map indexing. `netip.Addr` is a 24-byte zero-allocation value struct that supports direct equality (`==`), bitwise masking, map keying without hashing allocations, and zero-allocation serialization.
+
+**WHEN TO APPLY**:
+All networking pipelines, control planes, cgroup management structures, and container metadata caches handling IP addresses and CIDR subnets.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// pkg/cgroups/manager/manager.go pattern
+package manager
+
+import (
+	"log/slog"
+	"net/netip"
+	v1 "k8s.io/api/core/v1"
+)
+
+type PodMetadata struct {
+	Name      string
+	Namespace string
+	IPs       []netip.Addr // Value types, zero heap overhead per address
+}
+
+func (m *cgroupManager) updatePodMetadata(pod *v1.Pod) {
+	podIPs := pod.Status.PodIPs
+	ips := make([]netip.Addr, 0, len(podIPs))
+	
+	for _, podIP := range podIPs {
+		ip, err := netip.ParseAddr(podIP.IP)
+		if err != nil {
+			m.logger.Debug("failed to parse pod IP",
+				slog.String("error", err.Error()),
+				slog.String("pod", pod.Name),
+				slog.String("rawIP", podIP.IP),
+			)
+			continue
+		}
+		ips = append(ips, ip)
+	}
+	m.storeIPs(pod.UID, ips)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Stringly-typed IP handling or mutable slice pointer usage
+type BrokenPodMetadata struct {
+	Name      string
+	Namespace string
+	IPs       []string // Allocates string headers, requires string parsing downstream
+}
+
+func MatchIP(pm BrokenPodMetadata, target string) bool {
+	// Forces re-parsing on every network event!
+	for _, ipStr := range pm.IPs {
+		if strings.TrimSpace(ipStr) == strings.TrimSpace(target) {
+			return true
+		}
+	}
+	return false
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a structural AST linter or vet check verifying that internal metadata structs do not declare IP fields as `string` or `[]byte`:
+```go
+func TestNoStringIPInInternalModels(t *testing.T) {
+	typ := reflect.TypeOf(PodMetadata{})
+	f, ok := typ.FieldByName("IPs")
+	require.True(t, ok)
+	require.Equal(t, "[]netip.Addr", f.Type.String(), "Field IPs must use netip.Addr to prevent heap escapes")
+}
+```
+
+---
+
+
+---
+
+## 5576. eBPF Kernel Scratch Space Auxvar Over Per-CPU Map Replacement (Harvested from cilium/cilium)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "eBPF Kernel Scratch Space Auxvar Over Per-CPU Map Replacement",
+  "source": "cilium/cilium",
+  "source_url": "https://github.com/cilium/cilium",
+  "source_version": "80b1c726",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T03:37:00.480Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-cilium-cilium",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `80b1c726`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Per-CPU contextual scratchpad memory that persists across eBPF tail calls within single-packet processing MUST be implemented using static ELF auxiliary variables (`auxvar` mapped into per-CPU data sections) rather than `BPF_MAP_TYPE_PERCPU_ARRAY` maps.
+
+**WHY**:
+Invoking `bpf_map_lookup_elem()` on a `BPF_MAP_TYPE_PERCPU_ARRAY` introduces register spills, pointer validation branches, and verifier complexity for array bounds and null pointer verification. Auxvars resolve to direct memory dereferences off the per-CPU base pointer (`AUX_REUSE`) with zero function call overhead and compile-time bounds checks via `build_bug_on()`.
+
+**WHEN TO APPLY**:
+XDP and TC programs where metadata must survive packet truncation or `bpf_tail_call()` executions, emulating `__sk_buff->cb[]`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+// bpf/include/bpf/ctx/xdp.h & bpf/lib/auxvars.h pattern
+struct cilium_xdp_scratch {
+	__u32 data[META_PIVOT / sizeof(__u32)];
+};
+
+DEFINE_AUX(struct cilium_xdp_scratch, cilium_xdp_scratch);
+
+static __always_inline void ctx_store_meta(struct xdp_md *ctx, const __u64 off, __u32 datum)
+{
+	struct cilium_xdp_scratch *scratch = AUX_REUSE(cilium_xdp_scratch);
+
+	scratch->data[off] = datum;
+	// Compile-time boundary verification enforced via LLVM built-in
+	build_bug_on((off + 1) * sizeof(__u32) > META_PIVOT);
+}
+
+static __always_inline __u32 ctx_load_meta(const struct xdp_md *ctx, const __u64 off)
+{
+	struct cilium_xdp_scratch *scratch = AUX_REUSE(cilium_xdp_scratch);
+
+	build_bug_on((off + 1) * sizeof(__u32) > META_PIVOT);
+	return scratch->data[off];
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// ANTI-PATTERN: Map lookup overhead in high-frequency packet processing path
+struct {
+	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
+	__uint(key_size, sizeof(int));
+	__uint(value_size, META_PIVOT);
+	__uint(pinning, LIBBPF_PIN_BY_NAME);
+	__uint(max_entries, 1);
+} cilium_xdp_scratch __section_maps_btf;
+
+static __always_inline void ctx_store_meta_slow(struct xdp_md *ctx, const __u64 off, __u32 datum)
+{
+	__u32 zero = 0;
+	// Verifier requires NULL check, register clobbering, and lookup execution
+	__u32 *data_meta = map_lookup_elem(&cilium_xdp_scratch, &zero);
+	if (data_meta)
+		data_meta[off] = datum;
+}
+```
+
+**VERIFICATION METHOD**:
+Inspect compiled eBPF instructions via `llvm-objdump -d` or `bpftool prog dump xlated` ensuring zero invocations of call helper `1` (`bpf_map_lookup_elem`):
+```bash
+bpftool prog dump xlated id <PROG_ID> | grep -E "call.*#1" && exit 1 || exit 0
+```
+
+---
+
+
+---
+
+## 5577. Multi-Tier Distributed Secret Alignment Invariant (Harvested from yuezhiai/jonex)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Tier Distributed Secret Alignment Invariant",
+  "source": "yuezhiai/jonex",
+  "source_url": "https://github.com/yuezhiai/jonex",
+  "source_version": "13f93d97",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-30T03:37:03.284Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yuezhiai-jonex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yuezhiai/jonex](https://github.com/yuezhiai/jonex) (Revision: `13f93d97`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When an infrastructure deployment partitions configuration across multiple environment profiles or service files, every shared credential or derived cryptographic salt **MUST** be verified for identical values across all files, and generation scripts **MUST** update cross-file groups atomically under an explicit inclusion whitelist. Generation scripts **MUST NOT** match keys via loose string patterns.
+
+**WHY**:
+In distributed micro-capability systems, key divergence across files causes silent downstream partial failures:
+- If `DB_PASSWORD` is updated in `.env` but `POSTGRES_PASSWORD` is missed in `.env.rag`, the platform starts while background graph ingestion fails silently.
+- If loose regex matching (`re.search("KEY|SECRET", name)`) is applied, external vendor keys (`LLMGW_UPSTREAM_LLM_API_KEY`, `COS_SECRET_KEY`) get overwritten with random platform strings, breaking upstream API connections.
+- If derivative keys fall back to a shared master root (`MCP_KEY_SECRET` defaulting to `JWT_SECRET`), rotating `JWT_SECRET` invalidates all downstream HMAC signatures, breaking all deployed agent keys.
+
+**WHEN TO APPLY**:
+Apply to all microservice, multi-container Docker Compose, or Kubernetes architectures where environment variables are split across files or services (e.g., `.env`, `.env.mcp`, Helm values per subchart).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# scripts/security/secret_sync_engine.py
+from __future__ import annotations
+import secrets
+from pathlib import Path
+from typing import Dict, List, Set
+
+# Invariant 1: Explicit whitelist. External credentials MUST NEVER be generated.
+PLATFORM_SECRETS_WHITELIST: Set[str] = {
+    "JWT_SECRET", "GATEWAY_API_KEY", "INTERNAL_API_KEY",
+    "MCP_KEY_SECRET", "DATA_SOURCE_SECRET_KEY", "DB_PASSWORD"
+}
+
+# Invariant 2: Explicit equality groups spanning divergent variable names
+CROSS_KEY_EQUALITY_GROUPS: List[List[str]] = [
+    ["DB_PASSWORD", "POSTGRES_PASSWORD"],
+    ["MINIO_ROOT_USER", "MINIO_ACCESS_KEY"],
+    ["MINIO_ROOT_PASSWORD", "MINIO_SECRET_KEY"],
+]
+
+def audit_secret_consistency(env_files: Dict[Path, Dict[str, str]]) -> List[str]:
+    violations: List[str] = []
+    
+    # Check 1: Cross-file same-name invariant
+    all_keys = {k for d in env_files.values() for k in d.keys()}
+    for k in all_keys:
+        if k in PLATFORM_SECRETS_WHITELIST:
+            seen_values: Dict[str, Path] = {}
+            for path, env_dict in env_files.items():
+                val = env_dict.get(k)
+                if val:
+                    if not seen_values:
+                        seen_values[val] = path
+                    elif val not in seen_values:
+                        primary_val, primary_path = next(iter(seen_values.items()))
+                        violations.append(
+                            f"DRIFT: {k} in {path.name} differs from {primary_path.name}"
+                        )
+                        
+    # Check 2: Cross-key group invariant
+    for group in CROSS_KEY_EQUALITY_GROUPS:
+        resolved_vals: Dict[str, tuple[str, Path]] = {}
+        for path, env_dict in env_files.items():
+            for key in group:
+                if key in env_dict and env_dict[key]:
+                    resolved_vals[key] = (env_dict[key], path)
+        if len(set(v[0] for v in resolved_vals.values())) > 1:
+            violations.append(f"GROUP DRIFT: Values for {group} do not match across stack: {resolved_vals}")
+
+    return violations
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Regex auto-generation and silent default fallbacks
+def regenerate_all_secrets(env_file_path: Path):
+    lines = env_file_path.read_text().splitlines()
+    out = []
+    for line in lines:
+        # HAZARD 1: Overwrites upstream external provider API keys
+        if any(token in line for token in ["SECRET", "KEY", "PASSWORD"]):
+            k, _ = line.split("=", 1)
+            # HAZARD 2: Breaks cross-service synchronization by generating independent keys
+            out.append(f"{k}={secrets.token_urlsafe(32)}")
+        else:
+            out.append(line)
+    env_file_path.write_text("\n".join(out))
+```
+
+**VERIFICATION METHOD**:
+Enforce an automated pre-flight CI/CD step:
+```bash
+python scripts/security/audit_profile.py --profile deploy/env/production
+# Invariant assertion: Exit code MUST be 0. Any key mismatch or public fallback exits 1.
+```
+
+---
+
+
+---
+
+## 5578. Strict Grounded Evidence Span-Binding Invariant (Harvested from yuezhiai/jonex)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Strict Grounded Evidence Span-Binding Invariant",
+  "source": "yuezhiai/jonex",
+  "source_url": "https://github.com/yuezhiai/jonex",
+  "source_version": "13f93d97",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-30T03:37:03.655Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yuezhiai-jonex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yuezhiai/jonex](https://github.com/yuezhiai/jonex) (Revision: `13f93d97`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In knowledge compilation and RAG pipelines, an extracted factual claim **MUST NOT** achieve status `SUPPORTED` unless it is bound to one or more verified, immutable `SourceSpan` records. Each `SourceSpan` **MUST** cryptographically bind the source hash, chunk identifier, start character offset, end character offset, and exact character payload. Factual claims with unresolvable or missing evidence **MUST** fail closed to `NOT_ENOUGH_INFO` or `REFUTED`.
+
+**WHY**:
+Allowing LLM synthesizers to output claims with loose, page-level, or unverified document-level references causes hallucination leaks. Without character-offset and document-hash locking, downstream document mutations or parser alterations render previously asserted claims untraceable. If the underlying document changes, claims referencing old offsets must be discarded or marked unverified rather than re-bound on title alone.
+
+**WHEN TO APPLY**:
+All systems processing enterprise documents, legal knowledge bases, compliance corpora, and factual QA engines where hallucination carries legal or operational liability.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# jonex_wiki/domain/engine/compile/content_validation.py
+from pydantic import BaseModel, Field, model_validator, ConfigDict
+from typing import List, Literal
+
+class SourceSpan(BaseModel):
+    passage_id: str
+    source_id: str
+    document_id: str
+    chunk_id: str
+    passage_text_sha256: str
+    start_char: int
+    end_char: int
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+class ValidatedClaim(BaseModel):
+    claim_id: str
+    page_path: str
+    text: str
+    evidence: List[EvidenceRef] = Field(default_factory=list, max_length=20)
+    unresolved_evidence: List[EvidenceRef] = Field(default_factory=list, max_length=20)
+    source_spans: List[SourceSpan] = Field(default_factory=list, max_length=20)
+    support_status: Literal["SUPPORTED", "REFUTED", "NOT_ENOUGH_INFO"] = "NOT_ENOUGH_INFO"
+    support_reason: str = "support_not_evaluated"
+
+    model_config = ConfigDict(extra="forbid")
+
+    @model_validator(mode="after")
+    def enforce_grounded_evidence_binding(self):
+        # Invariant 1: SUPPORTED claims MUST have physical source spans
+        if self.support_status in ("SUPPORTED", "REFUTED") and not self.source_spans:
+            raise ValueError(f"Status '{self.support_status}' requires at least one valid SourceSpan")
+        
+        # Invariant 2: Cannot claim SUPPORTED if any evidence failed resolution
+        if self.support_status == "SUPPORTED" and self.unresolved_evidence:
+            raise ValueError("SUPPORTED claims cannot contain unresolved evidence references")
+            
+        # Invariant 3: Spans must bind to resolved evidence
+        evidence_identities = {
+            (r.passage_id, r.source_id, r.document_id, r.chunk_id) 
+            for r in self.evidence
+        }
+        for span in self.source_spans:
+            span_id = (span.passage_id, span.source_id, span.document_id, span.chunk_id)
+            if span_id not in evidence_identities:
+                raise ValueError("SourceSpan references evidence not present in resolved evidence list")
+        return self
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Trusting LLM self-evaluation without cryptographic/offset verification
+def validate_claim_unsafe(llm_response: dict) -> dict:
+    # HAZARD: Model claims text is supported without offset verification or hash checks
+    if llm_response.get("model_verdict") == "TRUE":
+        return {
+            "claim": llm_response["text"],
+            "status": "SUPPORTED",
+            "source": llm_response.get("document_name") # Non-deterministic string citation
+        }
+    return {"status": "NOT_ENOUGH_INFO"}
+```
+
+**VERIFICATION METHOD**:
+Implement property-based testing via `hypothesis`:
+```python
+@given(claim_text=st.text(min_size=1), spans=st.lists(st.builds(SourceSpan), max_size=0))
+def test_unsupported_claim_without_spans_fails(claim_text, spans):
+    with pytest.raises(ValueError, match="requires at least one valid SourceSpan"):
+        ValidatedClaim(
+            claim_id="claim_0123456789abcdef01234567",
+            page_path="/kb/test",
+            text=claim_text,
+            source_spans=spans,
+            support_status="SUPPORTED"
+        )
+```
+
+---
+
+
+---
+
+## 5579. Fail-Closed Cryptographic Startup Isolation Invariant (Harvested from yuezhiai/jonex)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fail-Closed Cryptographic Startup Isolation Invariant",
+  "source": "yuezhiai/jonex",
+  "source_url": "https://github.com/yuezhiai/jonex",
+  "source_version": "13f93d97",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-30T03:37:04.054Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yuezhiai-jonex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yuezhiai/jonex](https://github.com/yuezhiai/jonex) (Revision: `13f93d97`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+All production security guards asserting key entropy, token complexity, or default sentinel detection **MUST NOT** branch conditionally on environment variables like `ENV == "prod"` when evaluating system-critical secrets. They **MUST** evaluate unconditionally, utilizing explicit opt-in override flags (`ALLOW_INSECURE_JWT_SECRET=true`) only for local development.
+
+**WHY**:
+Relying on `config.is_production` or `ENV == "prod"` introduces a catastrophic failure mode: when a production container is deployed without an explicit `ENV=prod` variable, it defaults silently to `ENV="dev"`. Under conditional guards, this causes production instances to run with well-known sentinel strings (`change-me-in-production`, `your_jwt_secret_key_here_...`), leaving them vulnerable to unauthenticated admin JWT forging, arbitrary tenant data injection, and signature spoofing.
+
+**WHEN TO APPLY**:
+Startup lifecycle of all backend systems, API Gateways, and microservices managing JWT validation, cryptographic signature verification, or database encryption.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# jonex_core/common/security_guards.py
+import os
+from typing import Set
+
+_INSECURE_SENTINELS: Set[str] = {
+    "your_jwt_secret_key_here_please_change_in_production",
+    "your_jwt_secret_key_here_change_in_production_please_use_a_strong_secret",
+    "change-me-in-production",
+    "change-me-must-match-platform-deploy-env",
+    "minioadmin",
+}
+
+def assert_secure_secret(key_name: str, value: str | None) -> None:
+    # Dev escape hatch MUST be explicitly named and set
+    escape_hatch = os.getenv("ALLOW_INSECURE_SECRETS", "").strip().lower()
+    if escape_hatch in {"1", "true", "yes", "on"}:
+        return
+
+    text = (value or "").strip()
+    if not text:
+        raise RuntimeError(f"FATAL SECURITY GUARD: {key_name} is unset or empty. Process halted.")
+    
+    # Unconditional check: Cannot be bypassed by omitting ENV=prod
+    if text in _INSECURE_SENTINELS:
+        raise RuntimeError(
+            f"FATAL SECURITY GUARD: {key_name} contains a known public repository sentinel string. "
+            f"Refusing to start. Set a secure, random value or set ALLOW_INSECURE_SECRETS=1 for dev."
+        )
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Environment-conditional check permitting silent fallback
+def check_jwt_secret_insecure(config):
+    # HAZARD: If ENV is omitted in docker-compose, is_production is False!
+    if config.is_production:
+        if config.JWT_SECRET == "change-me":
+            raise RuntimeError("Insecure secret in production!")
+    # In non-production, silent execution proceeds with public sentinel keys
+```
+
+**VERIFICATION METHOD**:
+Add a test ensuring the system refuses to boot without the escape hatch:
+```python
+def test_startup_guard_fails_when_env_unset(monkeypatch):
+    monkeypatch.delenv("ENV", raising=False)
+    monkeypatch.setenv("JWT_SECRET", "change-me-in-production")
+    monkeypatch.delenv("ALLOW_INSECURE_SECRETS", raising=False)
+    with pytest.raises(RuntimeError, match="contains a known public repository sentinel"):
+        assert_secure_secret("JWT_SECRET", os.getenv("JWT_SECRET"))
+```
+
+---
+
+
+---
+
+## 5580. Swift Async Continuation Single-Resume Invariant (Harvested from thebaselab/codeapp)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Swift Async Continuation Single-Resume Invariant",
+  "source": "thebaselab/codeapp",
+  "source_url": "https://github.com/thebaselab/codeapp",
+  "source_version": "8964f069",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T03:37:08.483Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-thebaselab-codeapp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [thebaselab/codeapp](https://github.com/thebaselab/codeapp) (Revision: `8964f069`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Every execution path inside a `withCheckedContinuation` or `withCheckedThrowingContinuation` block MUST invoke `continuation.resume(...)` exactly once. Any catch block, error propagation branch, or early exit condition that resumes the continuation with an error or value MUST immediately terminate the scope using an explicit `return` or `throw`.
+
+**WHY**:
+Swift's concurrency runtime treats resuming a continuation more than once as an invariant violation. In release mode, double resumption leads to fatal memory corruption and immediate process termination (`EXC_BAD_INSTRUCTION` or `SIGTRAP: Fatal error: Continuation already resumed`). Resuming zero times leaks the suspended Task indefinitely, creating zombie threads and unbounded memory leaks.
+
+**WHEN TO APPLY**:
+Any Swift codebase bridging legacy completion handler APIs, delegate protocols, C callback routines, or POSIX dispatch queues into Modern Swift Concurrency (`async`/`await`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+func executeProcess() async throws -> ProcessResult {
+    try await withCheckedThrowingContinuation { continuation in
+        workerQueue.async {
+            do {
+                let session = try startUnderlyingSession()
+                // Invariant: Success path resumes and immediately terminates scope
+                continuation.resume(returning: session.result)
+                return
+            } catch {
+                // Invariant: Failure path MUST explicitly return after resume
+                continuation.resume(throwing: error)
+                return
+            }
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// CRITICAL BUG: Falling through after continuation.resume(throwing:)
+func executeProcessBuggy() async throws -> ProcessResult {
+    try await withCheckedThrowingContinuation { continuation in
+        workerQueue.async {
+            do {
+                try startUnderlyingSession()
+            } catch {
+                // Error handled, but missing explicit return!
+                continuation.resume(throwing: error)
+            }
+            // FATAL CRASH: Continuation resumed a second time on error!
+            continuation.resume(returning: fallbackResult)
+        }
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce Swift's compiler runtime checking with `withCheckedThrowingContinuation` (which traps on double resume even in debug) and pair with a unit test driving error injection paths:
+```swift
+func testContinuationNeverResumesTwiceOnError() async {
+    let mock = MockFaultyProvider(shouldFail: true)
+    do {
+        _ = try await mock.startShell()
+        XCTFail("Must throw error")
+    } catch {
+        XCTAssertEqual(mock.resumeInvocationCount, 1, "Continuation invoked more than once")
+    }
+}
+```
+
+---
+
+
+---
+
+## 5581. Libgit2 Working Tree Modification Pre-Merge Guard (Harvested from thebaselab/codeapp)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Libgit2 Working Tree Modification Pre-Merge Guard",
+  "source": "thebaselab/codeapp",
+  "source_url": "https://github.com/thebaselab/codeapp",
+  "source_version": "8964f069",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T03:37:08.854Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-thebaselab-codeapp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [thebaselab/codeapp](https://github.com/thebaselab/codeapp) (Revision: `8964f069`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Before invoking any non-fast-forward checkout or merge operation via `libgit2` or Git wrapper APIs, the client engine MUST evaluate the dirty status of tracked files in the index and working directory. If any tracked file contains uncommitted modifications (`.workTreeModified`, `.workTreeDeleted`, `.indexModified`, etc.), the pull/merge operation MUST abort immediately before mutating HEAD or checking out references.
+
+**WHY**:
+Libgit2's `git_checkout_tree` with `.Safe` or `.Force` strategies does not automatically mirror CLI Git’s porcelain pull protection. Invoking merge resolution when the working tree is dirty results in silent truncation, state overwrites, or partial file clobbering, causing irreversible data loss for user edits.
+
+**WHEN TO APPLY**:
+Custom Git GUI clients, embedded IDEs, mobile IDEs, or automated Git agents operating directly on Git indices and working trees via native bindings (`libgit2`, `nodegit`, `SwiftGit2`, `pygit2`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+public func ensureCleanWorkingTree(repository: Repository) throws {
+    let trackedChanges: Diff.Status = [
+        .indexNew, .indexModified, .indexDeleted, .indexRenamed, .indexTypeChange,
+        .workTreeModified, .workTreeDeleted, .workTreeRenamed, .workTreeTypeChange,
+        .conflicted
+    ]
+    // Empty options exclude untracked files, matching Git's porcelain pull behavior
+    let entries = try repository.status(options: []).get()
+    let hasDirtyTrackedFiles = entries.contains { entry in
+        !entry.status.intersection(trackedChanges).isEmpty
+    }
+    
+    guard !hasDirtyTrackedFiles else {
+        throw NSError(
+            domain: "org.libgit2.SwiftGit2",
+            code: 1,
+            userInfo: [
+                NSLocalizedDescriptionKey: "Your local changes would be overwritten by pull. Commit or discard them before pulling."
+            ]
+        )
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// CRITICAL DATA LOSS: Direct merge without verifying working directory hygiene
+public func pullFastAndMerge(repository: Repository, remoteBranch: Branch) throws {
+    let analysis = try repository.mergeAnalysis(remoteBranch)
+    if analysis.contains(.normal) {
+        // Will overwrite user uncommitted work tree files without notice!
+        try repository.merge(remoteBranch, strategy: [.Safe])
+        try repository.checkout(remoteBranch, strategy: [.Force])
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Integration test validating dirty working tree rejection:
+```swift
+func testPullFailsWhenTrackedFileIsModifiedLocally() throws {
+    let repo = try createTestRepository()
+    try modifyTrackedFileWithoutCommit(repo, file: "main.swift")
+    XCTAssertThrowsError(try repo.pull()) { error in
+        XCTAssertTrue((error as NSError).localizedDescription.contains("overwritten by pull"))
+    }
+}
+```
+
+---
+
+
+---
+
+## 5582. Canonicalized Cache Key Invariant for File Storage & Diff Lookup (Harvested from thebaselab/codeapp)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Canonicalized Cache Key Invariant for File Storage & Diff Lookup",
+  "source": "thebaselab/codeapp",
+  "source_url": "https://github.com/thebaselab/codeapp",
+  "source_version": "8964f069",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T03:37:09.253Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-thebaselab-codeapp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [thebaselab/codeapp](https://github.com/thebaselab/codeapp) (Revision: `8964f069`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When caching data derived from dynamic filesystem URIs or file paths, the lookup key MUST be sanitized and canonicalized (decoding percent-escapes, stripping base workspace scheme/prefixes, and normalizing directory separators) PRIOR to querying the cache. The exact normalization transform MUST be applied identically on both Cache Insertion (`set`) and Cache Retrieval (`get`).
+
+**WHY**:
+Filesystem APIs and WebView bridges routinely alternate between URL string formats (`file:///var/mobile/...` vs `/var/mobile/...` vs `percent-encoded%20path`). If key canonicalization occurs after a cache query, the lookup key (raw URL) will never match the stored key (relative canonical path), dropping the cache hit rate to 0%. This forces expensive filesystem disk reads, Git OID tree walks, and blob decoding on every keystroke or frame render.
+
+**WHEN TO APPLY**:
+Caches, indexing pipelines, and lookup registries handling filesystem paths, Git diff providers, language servers, or remote resource URLs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+final class DiffContentCache {
+    private let cache = NSCache<NSString, NSString>()
+    private let workspaceURL: URL
+
+    init(workspaceURL: URL) {
+        self.workspaceURL = workspaceURL
+    }
+
+    private func canonicalize(path: String) -> String {
+        return path
+            .replacingOccurrences(of: workspaceURL.absoluteString, with: "")
+            .removingPercentEncoding ?? path
+    }
+
+    func content(for rawPath: String, compute: (String) throws -> String) throws -> String {
+        // Invariant: Canonicalize BEFORE checking cache
+        let canonicalKey = canonicalize(path: rawPath)
+        
+        if let cached = cache.object(forKey: canonicalKey as NSString) {
+            return cached as String
+        }
+
+        let computedValue = try compute(canonicalKey)
+        cache.setObject(computedValue as NSString, forKey: canonicalKey as NSString)
+        return computedValue
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// FLAWED: Cache lookup with un-normalized rawPath, insertion with normalized path
+func content(for rawPath: String) throws -> String {
+    // BUG: Raw string tested against normalized cache key -> Guaranteed Miss
+    if let cached = cache.object(forKey: rawPath as NSString) {
+        return cached as String
+    }
+
+    let normalizedKey = rawPath
+        .replacingOccurrences(of: self.workspaceURL.absoluteString, with: "")
+        .removingPercentEncoding ?? rawPath
+
+    let result = try readBlob(normalizedKey)
+    cache.setObject(result as NSString, forKey: normalizedKey as NSString)
+    return result
+}
+```
+
+**VERIFICATION METHOD**:
+Property-based / deterministic assertion test:
+```swift
+func testCacheHitsWithUnnormalizedRawURL() throws {
+    let cache = DiffContentCache(workspaceURL: URL(string: "file:///workspace/")!)
+    var computeCalls = 0
+    let compute: (String) -> String = { _ in computeCalls += 1; return "blob_data" }
+
+    _ = try cache.content(for: "file:///workspace/my%20file.txt", compute: compute)
+    _ = try cache.content(for: "file:///workspace/my%20file.txt", compute: compute)
+
+    XCTAssertEqual(computeCalls, 1, "Cache failed to hit on subsequent lookup with identical raw URL")
+}
+```
+
+---

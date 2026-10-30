@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "e5827d55",
+    "sourceVersion": "80b1c726",
     "license": "Apache-2.0",
-    "contentHash": "c17c3265685a5588e113cb2bc9389af6c0b2598d3f99ff2f4808d92024d7b9d6",
-    "lastHarvestedAt": "2026-10-29T12:08:54.465Z",
+    "contentHash": "05e5361b342a66c7a1fa4a9ff9710a4fbd08580ba27a7b842b0ae1acee581d36",
+    "lastHarvestedAt": "2026-10-30T03:37:00.768Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -8423,10 +8423,10 @@
     "repository": "thebaselab/codeapp",
     "platform": "github",
     "sourceUrl": "https://github.com/thebaselab/codeapp",
-    "sourceVersion": "9b8475e2",
+    "sourceVersion": "8964f069",
     "license": "MIT",
-    "contentHash": "b5de191c0931e776f5060201b4de451c8bd73902fa3df6e1524498155edc894a",
-    "lastHarvestedAt": "2026-10-19T17:03:59.726Z",
+    "contentHash": "95726c63598fd5afd031748e630eec65c26c244a650a6f8f0c8b65197571e10d",
+    "lastHarvestedAt": "2026-10-30T03:37:09.542Z",
     "learningId": "learn-github-thebaselab-codeapp"
   },
   "callstack-react-native-builder-bob": {
@@ -11528,5 +11528,15 @@
     "contentHash": "4a2f4c0b7787fe31e5162e1f32ff4c77016bb870d5f7f543d54ca85ad725fc4c",
     "lastHarvestedAt": "2026-10-30T03:18:52.149Z",
     "learningId": "learn-huggingface-liconstudio-minimax-h3-vbvr"
+  },
+  "yuezhiai-jonex": {
+    "repository": "yuezhiai/jonex",
+    "platform": "github",
+    "sourceUrl": "https://github.com/yuezhiai/jonex",
+    "sourceVersion": "13f93d97",
+    "license": "NOASSERTION",
+    "contentHash": "be89b16c379c66021e0f32f75dfa6eb38e96e42ac2121593546d7f6c2fbd4c04",
+    "lastHarvestedAt": "2026-10-30T03:37:04.347Z",
+    "learningId": "learn-github-yuezhiai-jonex"
   }
 }

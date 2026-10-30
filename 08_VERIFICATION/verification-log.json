@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-T255",
-    "timestamp": "2026-10-28T00:06:00.473Z",
-    "repository": "RustCrypto/hashes",
-    "learningId": "learn-github-rustcrypto-hashes",
-    "contentHash": "def25cb24481f513f26578543d021720a2b6765f237d6be46fc5691e7f2961c3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-T5Q1",
-    "timestamp": "2026-10-28T00:06:05.113Z",
-    "repository": "arangodb/arangodb",
-    "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "4bfe01815f7385ece1612375b784826be7b016ef4f6d4facee2d4389ff63c3b5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-1QEL",
-    "timestamp": "2026-10-28T00:12:45.165Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "c19357b819f711a04f562b44d720865949a27b06dea375f5a82046760d9e980a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-1V2Q",
     "timestamp": "2026-10-28T00:12:51.218Z",
     "repository": "trinodb/trino",
@@ -7492,6 +7447,51 @@
     "contentHash": "4a2f4c0b7787fe31e5162e1f32ff4c77016bb870d5f7f543d54ca85ad725fc4c",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-847W",
+    "timestamp": "2026-10-30T03:37:00.764Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "05e5361b342a66c7a1fa4a9ff9710a4fbd08580ba27a7b842b0ae1acee581d36",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-86ZC",
+    "timestamp": "2026-10-30T03:37:04.344Z",
+    "repository": "yuezhiai/jonex",
+    "learningId": "learn-github-yuezhiai-jonex",
+    "contentHash": "be89b16c379c66021e0f32f75dfa6eb38e96e42ac2121593546d7f6c2fbd4c04",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-8AZM",
+    "timestamp": "2026-10-30T03:37:09.538Z",
+    "repository": "thebaselab/codeapp",
+    "learningId": "learn-github-thebaselab-codeapp",
+    "contentHash": "95726c63598fd5afd031748e630eec65c26c244a650a6f8f0c8b65197571e10d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

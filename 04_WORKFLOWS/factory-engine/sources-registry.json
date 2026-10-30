@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T03:18:55.633Z",
-    "lastVerified": "2026-10-30T03:18:55.633Z",
+    "lastChecked": "2026-10-30T03:37:12.101Z",
+    "lastVerified": "2026-10-30T03:37:12.101Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -331,9 +331,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T00:33:22.102Z",
+    "lastChecked": "2026-10-30T03:35:11.290Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T00:33:22.102Z"
+    "lastVerified": "2026-10-30T03:35:11.290Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1663,13 +1663,13 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-29T12:08:53.764Z",
-    "lastVerified": "2026-10-29T12:08:53.764Z",
+    "lastChecked": "2026-10-30T03:35:11.396Z",
+    "lastVerified": "2026-10-30T03:35:11.396Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "c17c3265685a5588e113cb2bc9389af6c0b2598d3f99ff2f4808d92024d7b9d6",
-    "promotedRulesCount": 1,
+    "contentHash": "05e5361b342a66c7a1fa4a9ff9710a4fbd08580ba27a7b842b0ae1acee581d36",
+    "promotedRulesCount": 3,
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -4778,9 +4778,9 @@
   "sfu-db-connector-x": {
     "name": "connector-x",
     "officialUrl": "https://github.com/sfu-db/connector-x",
-    "lastChecked": "2026-10-28T15:16:36.040Z",
+    "lastChecked": "2026-10-30T03:35:08.791Z",
     "revisionIdentifier": "0f5ee234",
-    "lastVerified": "2026-10-28T15:16:36.040Z"
+    "lastVerified": "2026-10-30T03:35:08.791Z"
   },
   "nvidia-cuda-rust": {
     "name": "NVIDIA/cuda-rust",
@@ -5186,9 +5186,9 @@
   "diggerhq-digger": {
     "name": "digger",
     "officialUrl": "https://github.com/diggerhq/digger",
-    "lastChecked": "2026-10-28T16:05:13.930Z",
+    "lastChecked": "2026-10-30T03:35:03.826Z",
     "revisionIdentifier": "7c237c09",
-    "lastVerified": "2026-10-28T16:05:13.930Z"
+    "lastVerified": "2026-10-30T03:35:03.826Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -8870,6 +8870,47 @@
     "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "alfa546-crawler": {
+    "name": "Crawler",
+    "officialUrl": "https://github.com/alfa546/Crawler",
+    "lastChecked": "2026-10-30T03:34:58.821Z",
+    "revisionIdentifier": "65a7b32f96",
+    "lastVerified": "2026-10-30T03:34:58.821Z"
+  },
+  "thebaselab-codeapp": {
+    "name": "thebaselab/codeapp",
+    "officialUrl": "https://github.com/thebaselab/codeapp",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-30T03:35:05.943Z",
+    "lastVerified": "2026-10-30T03:35:05.943Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-thebaselab-codeapp",
+    "contentHash": "95726c63598fd5afd031748e630eec65c26c244a650a6f8f0c8b65197571e10d",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 9,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "yuezhiai-jonex": {
+    "name": "yuezhiai/jonex",
+    "officialUrl": "https://github.com/yuezhiai/jonex",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-30T03:34:55.561Z",
+    "lastVerified": "2026-10-30T03:34:55.561Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-yuezhiai-jonex",
+    "contentHash": "be89b16c379c66021e0f32f75dfa6eb38e96e42ac2121593546d7f6c2fbd4c04",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 9,
+    "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   }

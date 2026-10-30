@@ -6091,3 +6091,6 @@
 | `CYCLE-20261030-WKJO` | `2026-10-30T00:40:04.356Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5570` | Yes (`e3fb7162...`) |
 | `CYCLE-20261030-5B6H` | `2026-10-30T00:46:52.121Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5571` | Yes (`2d547157...`) |
 | `CYCLE-20261030-KS8J` | `2026-10-30T03:18:52.147Z` | `LiconStudio/Minimax-H3-VBVR` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5572, Rule 5573` | Yes (`4a2f4c0b...`) |
+| `CYCLE-20261030-847W` | `2026-10-30T03:37:00.764Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5574, Rule 5575, Rule 5576` | Yes (`05e5361b...`) |
+| `CYCLE-20261030-86ZC` | `2026-10-30T03:37:04.344Z` | `yuezhiai/jonex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5577, Rule 5578, Rule 5579` | Yes (`be89b16c...`) |
+| `CYCLE-20261030-8AZM` | `2026-10-30T03:37:09.538Z` | `thebaselab/codeapp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5580, Rule 5581, Rule 5582` | Yes (`95726c63...`) |
