@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-11WJ",
-    "timestamp": "2026-10-28T00:40:13.027Z",
-    "repository": "Tencent-TDS/KuiklyUI",
-    "learningId": "learn-github-tencent-tds-kuiklyui",
-    "contentHash": "82cf314822b6db6f049f46443a927b5ae2fc218bea12a4bc0e2837cde3608041",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-15LK",
     "timestamp": "2026-10-28T00:40:17.816Z",
     "repository": "cilium/cilium",
@@ -7490,6 +7475,21 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
     "contentHash": "2231007cc11ac40e5d2aaebfffda9a27e1058ecf8defd66a8cb4651c6813ca06",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-JJC0",
+    "timestamp": "2026-10-30T04:41:52.800Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "4bcb0fafe291a9cf7f96db74f9019462bfddcd2d8eacbe9da820fc6eac94392d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

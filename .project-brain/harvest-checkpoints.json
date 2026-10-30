@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T04:35:01.152Z",
+  "last_updated": "2026-10-30T04:41:52.813Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7581,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "f2938dfb7266ca12b65fccf7339bb15b096374d163e4914b5dab0351382efc0a",
-      "verified_at": "2026-10-27T23:59:30.641Z",
+      "content_hash": "4bcb0fafe291a9cf7f96db74f9019462bfddcd2d8eacbe9da820fc6eac94392d",
+      "verified_at": "2026-10-30T04:41:52.812Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T23:59:30.641Z"
+      "last_updated": "2026-10-30T04:41:52.812Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",

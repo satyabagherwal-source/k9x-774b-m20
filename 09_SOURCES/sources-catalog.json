@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "1f6fd502",
+    "sourceVersion": "c53afefe",
     "license": "Apache-2.0",
-    "contentHash": "f2938dfb7266ca12b65fccf7339bb15b096374d163e4914b5dab0351382efc0a",
-    "lastHarvestedAt": "2026-10-27T23:59:30.632Z",
+    "contentHash": "4bcb0fafe291a9cf7f96db74f9019462bfddcd2d8eacbe9da820fc6eac94392d",
+    "lastHarvestedAt": "2026-10-30T04:41:52.803Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T04:35:01.148Z",
-  "total_cycles_completed": 6083,
-  "total_learnings_persisted": 6083,
-  "total_rules_promoted": 5570,
+  "last_updated": "2026-10-30T04:41:52.809Z",
+  "total_cycles_completed": 6084,
+  "total_learnings_persisted": 6084,
+  "total_rules_promoted": 5571,
   "history": [
-    {
-      "timestamp": "2026-10-28T19:46:40.763Z",
-      "repository": "unsloth/embeddinggemma-2-GGUF",
-      "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T19:46:48.200Z",
       "repository": "Tencent-TDS/KuiklyUI",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-30T04:35:01.148Z",
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T04:41:52.809Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

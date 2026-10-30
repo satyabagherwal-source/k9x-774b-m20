@@ -6115,3 +6115,4 @@ Every entry in this ledger must capture:
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `858b475a` | Multi-dimensional audit evidence | 2026-10-30T04:25:25.344Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `8b10e2d9` | Multi-dimensional audit evidence | 2026-10-30T04:34:56.919Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `22c4a97a` | Multi-dimensional audit evidence | 2026-10-30T04:35:01.143Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `c53afefe` | Multi-dimensional audit evidence | 2026-10-30T04:41:52.803Z |

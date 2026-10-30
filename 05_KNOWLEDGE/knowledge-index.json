@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T04:35:01.060Z",
+  "last_updated": "2026-10-30T04:41:52.727Z",
   "total_verified_learnings": 1171,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2492,8 +2492,8 @@
       "slug": "apple-foundationdb",
       "platform": "github",
       "source_url": "https://github.com/apple/foundationdb",
-      "source_version": "1f6fd502",
-      "content_hash": "f2938dfb7266ca12b65fccf7339bb15b096374d163e4914b5dab0351382efc0a",
+      "source_version": "c53afefe",
+      "content_hash": "4bcb0fafe291a9cf7f96db74f9019462bfddcd2d8eacbe9da820fc6eac94392d",
       "dossier_path": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apple-foundationdb-learnings.md",
       "promoted_rules": [
@@ -2531,6 +2531,11 @@
           "number": 5064,
           "title": "show mutation log type in status output in fdbbackup, fdbcli, fdbrestore (#14321",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5601,
+          "title": "fdbclient: misc gcc compile warning fixes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2538,7 +2543,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T23:59:30.523Z",
+      "verified_at": "2026-10-30T04:41:52.709Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150383,6 +150388,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T04:25:25.248Z"
+    },
+    "rule-5601": {
+      "learning_id": "rule-5601",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5601,
+      "title": "fdbclient: misc gcc compile warning fixes",
+      "source_url": "https://github.com/apple/foundationdb",
+      "source_version": "c53afefe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T04:41:52.709Z"
     }
   },
   "aliases": {

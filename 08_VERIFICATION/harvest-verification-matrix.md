@@ -6106,3 +6106,4 @@
 | `CYCLE-20261030-YDEL` | `2026-10-30T04:25:25.341Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5600` | Yes (`6f0ccb8a...`) |
 | `CYCLE-20261030-AMFN` | `2026-10-30T04:34:56.915Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`1d474b37...`) |
 | `CYCLE-20261030-APOZ` | `2026-10-30T04:35:01.139Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5558` | Yes (`2231007c...`) |
+| `CYCLE-20261030-JJC0` | `2026-10-30T04:41:52.800Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5601` | Yes (`4bcb0faf...`) |
