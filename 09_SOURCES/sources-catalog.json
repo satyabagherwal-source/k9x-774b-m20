@@ -2543,10 +2543,10 @@
     "repository": "sharkdp/fd",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/fd",
-    "sourceVersion": "b7a0a29d",
+    "sourceVersion": "8b14e8dc",
     "license": "Apache-2.0",
-    "contentHash": "269d75418535dfb1bb6217b57ea04dc502a40613796e48fdb892c0b42f25bc4a",
-    "lastHarvestedAt": "2026-10-29T01:43:11.957Z",
+    "contentHash": "8d388fd9ffe6bf081b2b0fd84405f4b57f2f48785f455550652d5fe1496afaf8",
+    "lastHarvestedAt": "2026-10-30T23:44:47.307Z",
     "learningId": "learn-github-sharkdp-fd"
   },
   "maotoumao-musicfree": {
@@ -10323,10 +10323,10 @@
     "repository": "appwrite/appwrite",
     "platform": "github",
     "sourceUrl": "https://github.com/appwrite/appwrite",
-    "sourceVersion": "4bd8931f",
+    "sourceVersion": "b805c0a5",
     "license": "BSD-3-Clause",
-    "contentHash": "2b93e8de1461fd61f14e4daa19436ef5d35f3266e969298559880bf8315ec309",
-    "lastHarvestedAt": "2026-10-28T03:18:00.107Z",
+    "contentHash": "b61dc41f03b1e73b3ddb251a8ae6a44028c31f2711415dd247d8e44bfb86351a",
+    "lastHarvestedAt": "2026-10-30T23:44:49.370Z",
     "learningId": "learn-github-appwrite-appwrite"
   },
   "expo-expo": {

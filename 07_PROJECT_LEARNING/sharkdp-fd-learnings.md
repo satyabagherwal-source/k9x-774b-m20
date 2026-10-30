@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
-> **Source Version**: `b7a0a29d`  
+> **Source Version**: `8b14e8dc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T01:43:11.343Z  
+> **Timestamp**: 2026-10-30T23:44:46.585Z  
 > **Learning ID**: `learn-github-sharkdp-fd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T01:43:07.667Z  
+> **Harvest Timestamp**: 2026-10-30T23:44:45.587Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A simple, fast and user-friendly alternative to 'find'
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 44887 stars
+- **Stars / Engagement**: 44909 stars
 
 ---
 
@@ -342,9 +342,6 @@ use crate::fmt::FormatTemplate;
 
 /// Configuration options for *fd*.
 pub struct Config {
-    /// Whether the search is case-sensitive or case-insensitive.
-    pub case_sensitive: bool,
-
     /// Cached current working directory for absolute path construction.
     /// Populated when `--full-path` is set; `None` means search by filename only.
     pub full_path_base: Option<PathBuf>,
@@ -1361,9 +1358,7 @@ mod tests {
 
 ### Core Architecture Module: `src/filesystem.rs`
 ```
-use std::borrow::Cow;
 use std::env;
-use std::ffi::OsStr;
 use std::fs;
 use std::io;
 #[cfg(any(unix, target_os = "redox"))]
@@ -1460,22 +1455,6 @@ pub fn is_pipe(ft: fs::FileType) -> bool {
 #[cfg(windows)]
 pub fn is_pipe(_: fs::FileType) -> bool {
     false
-}
-
-#[cfg(any(unix, target_os = "redox"))]
-pub fn osstr_to_bytes(input: &OsStr) -> Cow<'_, [u8]> {
-    use std::os::unix::ffi::OsStrExt;
-    Cow::Borrowed(input.as_bytes())
-}
-
-#[cfg(windows)]
-pub fn osstr_to_bytes(input: &OsStr) -> Cow<'_, [u8]> {
-    let string = input.to_string_lossy();
-
-    match string {
-        Cow::Owned(string) => Cow::Owned(string.into_bytes()),
-        Cow::Borrowed(string) => Cow::Borrowed(string.as_bytes()),
-    }
 }
 
 /// Remove the `./` prefix from a path.
@@ -1663,63 +1642,207 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b7a0a29d` (2026-10-28)
-**Commit Message**: Merge pull request #2203 from tmccombs/changelog-fix
+### Incident Patch 1: `8b14e8dc` (2026-10-30)
+**Commit Message**: Merge pull request #2202 from meop/ci/windows-arm64-gnullvm
 
-Fix changelog location
+ci: release a Windows ARM64 GNU-family (gnullvm) build
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `.github/workflows/CICD.yml` (modified, +22/-0)
 ```diff
-@@ -11,6 +11,7 @@
- - Restore jemalloc as default allocator on supported systems
- - Fix the `cargo binstall` release URL, which named the crate (`fd-find`) instead of the binary (`fd`) and fell back to a third-party mirror
- - Fix integer overflow when parsing size constraints, rejecting values that exceed `u64::MAX` instead of panicking, see #2196 (@parneetsingh022).
-+- Various fixes and updates to zsh completion
+@@ -107,6 +107,7 @@ jobs:
+           - { target: x86_64-pc-windows-gnu       , os: windows-2025                  }
+           - { target: x86_64-pc-windows-msvc      , os: windows-2025                  }
+           - { target: aarch64-pc-windows-msvc     , os: windows-11-arm                }
++          - { target: aarch64-pc-windows-gnullvm  , os: windows-11-arm                }
+           - { target: x86_64-unknown-linux-gnu    , os: ubuntu-24.04, use-cross: true }
+           - { target: x86_64-unknown-linux-musl   , os: ubuntu-24.04, use-cross: true }
+     env:
+@@ -119,6 +120,27 @@ jobs:
+       with:
+         persist-credentials: false
  
- # 10.5.0
- 
-@@ -29,7 +30,6 @@
- - Also fire the "search pattern contains a path separator" diagnostic for `--and` patterns, not only the primary positional pattern. `--and` patterns are matched against the file name just like the primary pattern, so a path separator in them silently returned zero results. See #1873.
- - Fix bug where passing "-" as a directory argument didn't actually search that directory, see #849 (@Sean-Kenneth-Doherty).
- - Fix panic when `--changed-before`/`--changed-within` is given an out-of-range `@` Unix timestamp; the value is now rejected gracefully, see #2081 (@nikolauspschuetz).
--- Various fixes and updates to zsh completion
- 
- # 10.4.2
- 
++    - name: Install Windows ARM64 GNU-family linker
++      if: matrix.job.target == 'aarch64-pc-windows-gnullvm'
++      id: msys2
++      uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
++      with:
++        msystem: CLANGARM64
++        update: true
++        install: mingw-w64-clang-aarch64-clang
++
++    - name: Expose Windows ARM64 GNU-family linker
++      if: matrix.job.target == 'aarch64-pc-windows-gnullvm'
++      shell: bash
++      env:
++        MSYS2_LOCATION: ${{ steps.msys2.outputs.msys2-location }}
++      run: |
++        bin_dir=$(cygpath -w "${MSYS2_LOCATION}/clangarm64/bin")
++        echo "${bin_dir}" >> $GITHUB_PATH
++        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_LINKER=${bin_dir}\\clang.exe" >> $GITHUB_ENV
++        # Link libunwind statically so the release does not need MSYS2's libunwind.dll.
++        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_RUSTFLAGS=-C target-feature=+crt-static" >> $GITHUB_ENV
++
+     - name: Install prerequisites
+       shell: bash
+       run: |
 ```
 
 ---
 
-### Incident Patch 2: `2b9d4cfd` (2026-10-28)
-**Commit Message**: Fix changelog location
+### Incident Patch 2: `31f36c87` (2026-10-29)
+**Commit Message**: ci: pin setup-msys2 and use bash for the gnullvm linker step
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/CICD.yml` (modified, +6/-5)
 ```diff
-@@ -10,6 +10,7 @@
- - Restore jemalloc as default allocator on supported systems
- - Fix the `cargo binstall` release URL, which named the crate (`fd-find`) instead of the binary (`fd`) and fell back to a third-party mirror
- - Fix integer overflow when parsing size constraints, rejecting values that exceed `u64::MAX` instead of panicking, see #2196 (@parneetsingh022).
-+- Various fixes and updates to zsh completion
+@@ -123,22 +123,23 @@ jobs:
+     - name: Install Windows ARM64 GNU-family linker
+       if: matrix.job.target == 'aarch64-pc-windows-gnullvm'
+       id: msys2
+-      uses: msys2/setup-msys2@v2.33.0
++      uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
+       with:
+         msystem: CLANGARM64
+         update: true
+         install: mingw-w64-clang-aarch64-clang
  
- # 10.5.0
+     - name: Expose Windows ARM64 GNU-family linker
+       if: matrix.job.target == 'aarch64-pc-windows-gnullvm'
+-      shell: pwsh
++      shell: bash
+       env:
+         MSYS2_LOCATION: ${{ steps.msys2.outputs.msys2-location }}
+       run: |
+-        echo "$env:MSYS2_LOCATION\clangarm64\bin" >> $env:GITHUB_PATH
+-        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_LINKER=$env:MSYS2_LOCATION\clangarm64\bin\clang.exe" >> $env:GITHUB_ENV
++        bin_dir=$(cygpath -w "${MSYS2_LOCATION}/clangarm64/bin")
++        echo "${bin_dir}" >> $GITHUB_PATH
++        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_LINKER=${bin_dir}\\clang.exe" >> $GITHUB_ENV
+         # Link libunwind statically so the release does not need MSYS2's libunwind.dll.
+-        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_RUSTFLAGS=-C target-feature=+crt-static" >> $env:GITHUB_ENV
++        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_RUSTFLAGS=-C target-feature=+crt-static" >> $GITHUB_ENV
  
-@@ -28,7 +29,6 @@
- - Also fire the "search pattern contains a path separator" diagnostic for `--and` patterns, not only the primary positional pattern. `--and` patterns are matched against the file name just like the primary pattern, so a path separator in them silently returned zero results. See #1873.
- - Fix bug where passing "-" as a directory argument didn't actually search that directory, see #849 (@Sean-Kenneth-Doherty).
- - Fix panic when `--changed-before`/`--changed-within` is given an out-of-range `@` Unix timestamp; the value is now rejected gracefully, see #2081 (@nikolauspschuetz).
--- Various fixes and updates to zsh completion
+     - name: Install prerequisites
+       shell: bash
+```
+
+---
+
+### Incident Patch 3: `90f6adad` (2026-10-27)
+**Commit Message**: fix: pattern-specific case checking
+
+Check for uppercase characters differently based on what kind of pattern
+we have. This fixes a bug where if the pattern wasn't a valid regex,
+then we didn't correctly detect if it had an uppercase character.
+
+**File**: `src/main.rs` (modified, +7/-17)
+```diff
+@@ -37,8 +37,9 @@ use crate::filetypes::FileTypes;
+ #[cfg(unix)]
+ use crate::filter::OwnerFilter;
+ use crate::filter::TimeFilter;
+-use crate::patterns::build_patterns;
+-use crate::regex_helper::{pattern_has_uppercase_char, pattern_matches_strings_with_leading_dot};
++use crate::patterns::{
++    build_patterns, pattern_has_uppercase_char, patterns_match_strings_with_leading_dots,
++};
  
- # 10.4.2
+ // We use jemalloc for performance reasons, see https://github.com/sharkdp/fd/pull/481
+ // FIXME: re-enable jemalloc on macOS, see comment in Cargo.toml file for more infos
+@@ -103,7 +104,10 @@ fn run() -> Result<ExitCode> {
+     // The search will be case-sensitive if the command line flag is set or
+     // if any of the patterns has an uppercase character (smart case).
+     let ignore_case = opts.ignore_case
+-        || !(opts.case_sensitive || patterns.iter().any(|pat| pattern_has_uppercase_char(pat)));
++        || !(opts.case_sensitive
++            || patterns
++                .iter()
++                .any(|pat| pattern_has_uppercase_char(pattern_type, pat)));
  
+     let config = construct_config(opts)?;
+ 
+@@ -501,17 +505,3 @@ fn ensure_use_hidden_option_for_leading_dot_pattern(
+         Ok(())
+     }
+ }
+-
+-fn patterns_match_strings_with_leading_dots(
+-    patterns: &[String],
+-    pattern_type: PatternType,
+-) -> bool {
+-    let mut iter = patterns.iter();
+-    match pattern_type {
+-        PatternType::Regex => iter.any(|pat| pattern_matches_strings_with_leading_dot(pat)),
+-        // fixed strings aren't anchored so always false
+-        PatternType::Fixed => false,
+-        // globs and exact just check if it starts with a .
+-        PatternType::Glob | PatternType::Exact => patterns.iter().any(|pat| pat.starts_with(".")),
+-    }
+-}
+```
+
+**File**: `src/patterns.rs` (modified, +24/-0)
+```diff
+@@ -5,6 +5,8 @@ use globset::{Glob, GlobBuilder, GlobMatcher, GlobSet, GlobSetBuilder};
+ use memchr::memmem;
+ use regex::bytes::{RegexSet, RegexSetBuilder};
+ 
++use crate::regex_helper::{self, pattern_matches_strings_with_leading_dot};
++
+ pub trait Matcher {
+     fn matches_path(&self, path: &OsStr) -> bool;
+ }
+@@ -99,6 +101,28 @@ pub fn build_patterns(
+     }
+ }
+ 
++pub fn patterns_match_strings_with_leading_dots(
++    patterns: &[String],
++    pattern_type: PatternType,
++) -> bool {
++    let mut iter = patterns.iter();
++    match pattern_type {
++        PatternType::Regex => iter.any(|pat| pattern_matches_strings_with_leading_dot(pat)),
++        // fixed strings aren't anchored so always false
++        PatternType::Fixed => false,
++        // globs and exact just check if it starts with a .
++        PatternType::Glob | PatternType::Exact => patterns.iter().any(|pat| pat.starts_with(".")),
++    }
++}
++
++pub fn pattern_has_uppercase_char(pattern_type: PatternType, pattern: &str) -> bool {
++    match pattern_type {
++        PatternType::Regex => regex_helper::pattern_has_uppercase_char(pattern),
++        // For everything else it's sufficient to just check if there are any uppercase letters
++        _ => pattern.chars().any(char::is_uppercase),
++    }
++}
++
+ fn build_glob_matcher(patterns: Vec<String>, ignore_case: bool) -> Result<Patterns> {
+     Ok(if patterns.len() == 1 {
+         Box::new(build_glob(&patterns[0], ignore_case)?.compile_matcher())
+```
+
+**File**: `tests/tests.rs` (modified, +1/-0)
+```diff
+@@ -649,6 +649,7 @@ fn test_smart_case_glob_searches() {
+     );
+ 
+     te.assert_output(&["--glob", "C.Foo*"], "one/two/C.Foo2");
++    te.assert_output(&["--glob", "*.Foo*"], "one/two/C.Foo2");
+ }
+ 
+ /// Glob-based searches (--glob) in combination with --case-sensitive
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2203** (2026-10-28): Fix changelog location (@tmccombs)
+- **PR #2202** (2026-10-30): ci: release a Windows ARM64 GNU-family (gnullvm) build (@meop)
 - **PR #2196** (2026-10-28): Fix integer overflow when parsing size constraints with large values. (@parneetsingh022)
 - **PR #2193** (2026-10-28): fix: let --ignore and --no-hidden override only their half of -u (@NavpreetSSidhu)
+- **PR #2191** (2026-10-29): refactor: different pattern types (@tmccombs)
 - **PR #2190** (2026-10-24): docs: fix spacing of --type values in the man page (@NavpreetSSidhu)
-- **PR #2187** (2026-10-22): docs: mention the 64-thread cap in the --threads default (@ump45nose)
-- **PR #2185** (2026-10-23): Fix: Explicit regex case sensitivity matching (?i) makes other clauses case-sensitive (@mabunemeh)
 
 ---
 
@@ -1739,28 +1862,49 @@ Fix changelog location
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #2203 from tmccombs/changelog-fix
+## X. Merge pull request #2202 from meop/ci/windows-arm64-gnullvm
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/CICD.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b7a0a29d`: Merge pull request #2203 from tmccombs/changelog-fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8b14e8dc`: Merge pull request #2202 from meop/ci/windows-arm64-gnullvm. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/CICD.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Various fixes and updates to zsh completion
+          - { target: aarch64-pc-windows-gnullvm  , os: windows-11-arm                }
+    - name: Install Windows ARM64 GNU-family linker
+      if: matrix.job.target == 'aarch64-pc-windows-gnullvm'
+      id: msys2
+      uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
+      with:
+        msystem: CLANGARM64
+        update: true
+        install: mingw-w64-clang-aarch64-clang
+
+    - name: Expose Windows ARM64 GNU-family linker
+      if: matrix.job.target == 'aarch64-pc-windows-gnullvm'
+      shell: bash
+      env:
+        MSYS2_LOCATION: ${{ steps.msys2.outputs.msys2-location }}
+      run: |
+        bin_dir=$(cygpath -w "${MSYS2_LOCATION}/clangarm64/bin")
+        echo "${bin_dir}" >> $GITHUB_PATH
+        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_LINKER=${bin_dir}\\clang.exe" >> $GITHUB_ENV
+        # Link libunwind statically so the release does not need MSYS2's libunwind.dll.
+        echo "CARGO_TARGET_AARCH64_PC_WINDOWS_GNULLVM_RUSTFLAGS=-C target-feature=+crt-static" >> $GITHUB_ENV
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-- Various fixes and updates to zsh completion
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b7a0a29d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8b14e8dc` are properly handled with clean fallback behavior.

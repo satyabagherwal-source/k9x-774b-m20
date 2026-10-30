@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T23:35:17.723Z",
-    "lastVerified": "2026-10-30T23:35:17.723Z",
+    "lastChecked": "2026-10-30T23:44:53.292Z",
+    "lastVerified": "2026-10-30T23:44:53.292Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -244,8 +244,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T23:15:12.066Z",
-    "lastVerified": "2026-10-30T23:15:12.066Z",
+    "lastChecked": "2026-10-30T23:44:53.283Z",
+    "lastVerified": "2026-10-30T23:44:53.283Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -465,14 +465,14 @@
     "officialUrl": "https://github.com/appwrite/appwrite",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T03:17:58.826Z",
-    "lastVerified": "2026-10-28T03:17:58.826Z",
+    "lastChecked": "2026-10-30T23:44:48.666Z",
+    "lastVerified": "2026-10-30T23:44:48.666Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-appwrite-appwrite",
-    "contentHash": "2b93e8de1461fd61f14e4daa19436ef5d35f3266e969298559880bf8315ec309",
+    "contentHash": "b61dc41f03b1e73b3ddb251a8ae6a44028c31f2711415dd247d8e44bfb86351a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 27,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1216,14 +1216,14 @@
     "officialUrl": "https://github.com/sharkdp/fd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T01:43:07.667Z",
-    "lastVerified": "2026-10-29T01:43:07.667Z",
+    "lastChecked": "2026-10-30T23:44:45.587Z",
+    "lastVerified": "2026-10-30T23:44:45.587Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-fd",
-    "contentHash": "269d75418535dfb1bb6217b57ea04dc502a40613796e48fdb892c0b42f25bc4a",
+    "contentHash": "8d388fd9ffe6bf081b2b0fd84405f4b57f2f48785f455550652d5fe1496afaf8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1717,9 +1717,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-10-30T19:42:43.274Z",
+    "lastChecked": "2026-10-30T23:44:48.351Z",
     "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-10-30T19:42:43.274Z"
+    "lastVerified": "2026-10-30T23:44:48.351Z"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -4842,9 +4842,9 @@
   "gluesql-gluesql": {
     "name": "gluesql",
     "officialUrl": "https://github.com/gluesql/gluesql",
-    "lastChecked": "2026-10-30T00:40:02.290Z",
+    "lastChecked": "2026-10-30T23:44:50.771Z",
     "revisionIdentifier": "42a4b418",
-    "lastVerified": "2026-10-30T00:40:02.290Z"
+    "lastVerified": "2026-10-30T23:44:50.771Z"
   },
   "ekzhang-rustpad": {
     "name": "rustpad",
@@ -5647,9 +5647,9 @@
   "octodns-octodns": {
     "name": "octodns",
     "officialUrl": "https://github.com/octodns/octodns",
-    "lastChecked": "2026-10-30T04:15:22.010Z",
+    "lastChecked": "2026-10-30T23:44:45.702Z",
     "revisionIdentifier": "d3d4a37a",
-    "lastVerified": "2026-10-30T04:15:22.010Z"
+    "lastVerified": "2026-10-30T23:44:45.702Z"
   },
   "citusdata-citus": {
     "name": "citusdata/citus",
@@ -11507,5 +11507,12 @@
     "lastChecked": "2026-10-30T23:35:05.215Z",
     "revisionIdentifier": "1dbc37fd",
     "lastVerified": "2026-10-30T23:35:05.215Z"
+  },
+  "unjs-ufo": {
+    "name": "ufo",
+    "officialUrl": "https://github.com/unjs/ufo",
+    "lastChecked": "2026-10-30T23:44:40.640Z",
+    "revisionIdentifier": "f06c800d",
+    "lastVerified": "2026-10-30T23:44:40.640Z"
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T23:35:08.436Z",
+  "last_updated": "2026-10-30T23:44:49.270Z",
   "total_verified_learnings": 1178,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2708,8 +2708,8 @@
       "slug": "appwrite-appwrite",
       "platform": "github",
       "source_url": "https://github.com/appwrite/appwrite",
-      "source_version": "4bd8931f",
-      "content_hash": "2b93e8de1461fd61f14e4daa19436ef5d35f3266e969298559880bf8315ec309",
+      "source_version": "b805c0a5",
+      "content_hash": "b61dc41f03b1e73b3ddb251a8ae6a44028c31f2711415dd247d8e44bfb86351a",
       "dossier_path": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "promoted_rules": [
@@ -2732,6 +2732,11 @@
           "number": 5148,
           "title": "vcs): follow an Entire repository to the installation that pushes it",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5941,
+          "title": "docs(functions): tighten email trigger docs and render docs arrow links",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2739,7 +2744,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T03:18:00.013Z",
+      "verified_at": "2026-10-30T23:44:49.247Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -49467,8 +49472,8 @@
       "slug": "sharkdp-fd",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/fd",
-      "source_version": "b7a0a29d",
-      "content_hash": "269d75418535dfb1bb6217b57ea04dc502a40613796e48fdb892c0b42f25bc4a",
+      "source_version": "8b14e8dc",
+      "content_hash": "8d388fd9ffe6bf081b2b0fd84405f4b57f2f48785f455550652d5fe1496afaf8",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-fd-learnings.md",
       "promoted_rules": [
@@ -49506,6 +49511,11 @@
           "number": 5484,
           "title": "Merge pull request #2203 from tmccombs/changelog-fix",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5940,
+          "title": "Merge pull request #2202 from meop/ci/windows-arm64-gnullvm",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49513,7 +49523,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T01:43:11.863Z",
+      "verified_at": "2026-10-30T23:44:47.207Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156945,6 +156955,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T23:35:08.424Z"
+    },
+    "rule-5940": {
+      "learning_id": "rule-5940",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5940,
+      "title": "Merge pull request #2202 from meop/ci/windows-arm64-gnullvm",
+      "source_url": "https://github.com/sharkdp/fd",
+      "source_version": "8b14e8dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:44:47.207Z"
+    },
+    "rule-5941": {
+      "learning_id": "rule-5941",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5941,
+      "title": "docs(functions): tighten email trigger docs and render docs arrow links",
+      "source_url": "https://github.com/appwrite/appwrite",
+      "source_version": "b805c0a5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:44:49.247Z"
     }
   },
   "aliases": {

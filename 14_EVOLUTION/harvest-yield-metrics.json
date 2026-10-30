@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T23:35:08.492Z",
-  "total_cycles_completed": 6336,
-  "total_learnings_persisted": 6336,
-  "total_rules_promoted": 5910,
+  "last_updated": "2026-10-30T23:44:49.375Z",
+  "total_cycles_completed": 6338,
+  "total_learnings_persisted": 6338,
+  "total_rules_promoted": 5912,
   "history": [
-    {
-      "timestamp": "2026-10-30T08:20:08.965Z",
-      "repository": "yattee/yattee",
-      "learningId": "learn-github-yattee-yattee",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T08:40:59.321Z",
-      "repository": "kube-rs/kube",
-      "learningId": "learn-github-kube-rs-kube",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T08:41:45.929Z",
       "repository": "mitmproxy/mitmproxy",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T23:35:08.492Z",
       "repository": "sharkdp/bat",
       "learningId": "learn-github-sharkdp-bat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T23:44:47.313Z",
+      "repository": "sharkdp/fd",
+      "learningId": "learn-github-sharkdp-fd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T23:44:49.375Z",
+      "repository": "appwrite/appwrite",
+      "learningId": "learn-github-appwrite-appwrite",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

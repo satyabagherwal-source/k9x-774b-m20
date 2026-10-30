@@ -6368,3 +6368,5 @@ Every entry in this ledger must capture:
 | `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `43a13889` | Multi-dimensional audit evidence | 2026-10-30T23:28:40.906Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `b3ea6f99` | Multi-dimensional audit evidence | 2026-10-30T23:28:46.975Z |
 | `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `8f5727ea` | Multi-dimensional audit evidence | 2026-10-30T23:35:08.488Z |
+| `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `8b14e8dc` | Multi-dimensional audit evidence | 2026-10-30T23:44:47.307Z |
+| `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `b805c0a5` | Multi-dimensional audit evidence | 2026-10-30T23:44:49.370Z |

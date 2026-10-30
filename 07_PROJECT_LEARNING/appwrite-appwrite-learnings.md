@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source**: github ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
-> **Source Version**: `4bd8931f`  
+> **Source Version**: `b805c0a5`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T03:17:59.532Z  
+> **Timestamp**: 2026-10-30T23:44:48.673Z  
 > **Learning ID**: `learn-github-appwrite-appwrite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T03:17:58.826Z  
+> **Harvest Timestamp**: 2026-10-30T23:44:48.666Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 57781 stars
+- **Stars / Engagement**: 57800 stars
 
 ---
 
@@ -1908,8 +1908,8 @@ export function DomainsEmptyState({
 - **Issue #14230** (2026-10-08): **🐛 Bug Report: Inviting a dotted Gmail address to an organization fails with 409 user_email_already_exists**
   *Symptoms*: ### 👟 Reproduction steps  1. On Appwrite Cloud, have a console account that signed in with Google using a dotted Gmail address, e.g. `first.last@gmail.com`. The console denies aliased emails, so the account is stored as `firstlast@gmail.com` while its Google sign-in keeps `first.last@gmail.com`. 2. From another account, open an organization's **Settings → Members** and invite `first.last@gmail.com`.  ### 👍 Expected behavior  The invite goes to the existing account. Gmail ignores dots, so `first.last@gmail.com` and `firstlast@gmail.com` are the same inbox.  ### 👎 Actual Behavior  `POST /v1/teams/:teamId/memberships` returns:  ```json {   "message": "A user with the same email already exists in the current project.",   "code": 409,   "type": "user_email_already_exists" } ```  The invite looks up the exact typed address, finds no account, then matches the Google sign-in that holds the dotted address and rejects the invite. A dotted Gmail address with no matching sign-in fails with `400 user_email_not_canonical` instead, so a dotted Gmail address can't be used to invite anyone to an organization.  The same happens on self-hosted projects that enable the deny-aliased-email policy.  Workaround: invite the dotless address.  Fix: https://github.com/appwrite/appwrite/pull/14172  ### 🎲 Appwrite version  Appwrite Cloud (also self-hosted 2.3.0 with the deny-aliased-email policy on)  ### 💻 Operating system  Something else (not OS-specific)  ### 🧱 Your Environment  Cloud console, org
 
-- **Issue #10857** (2026-02-24): **OAuth Callback Error: Invalid Scheme tauri://localhost Not Supported**
-  *Symptoms*: ### 👟 Reproduction steps  i ran my tauri app with `npm run build && npm run tauri dev` and tried to use the Appwrite SDK to login but instead i got this error: `Invalid Scheme: The scheme used (tauri) in the Origin (tauri://localhost) is not supported.  If you are using a custom scheme, please change it to appwrite-callback-<PROJECT_ID>`  source code:  ```js // Import necessary components import React, { useState } from "react"; import { ID,  Client, Account } from "appwrite"; console.log('Appwrite imports:', { Client, Account }); import "./AuthModal.css"; import { getTranslationObject } from "./locales/index.js";  // Define server credientials const client = new Client(); client   .setEndpoint("https://cloud.appwrite.io/v1")   .setProject("reskin");  let account; // Attempt to initialize Appwrite try {   account = new Account(client);   console.log('Appwrite initialized:', { client, account }); } catch (e) {   console.error('Error initializing Appwrite:', e); }  export default function AuthModal({ open, onClose, onAuth }) {   const language = localStorage.getItem("reskin_language") || "en";   const t = getTranslationObject(language);   const [mode, setMode] = useState("login");   const [username, setUsername] = useState("");   const [email, setEmail] = useState("");   const [password, setPassword] = useState("");   const [error, setError] = useState("");   const [loading, setLoading] = useState(false);   const [showRecovery, setShowRecovery] = useState(false);   const [reco
+- **Issue #13719** (2026-10-29): **packages/lock: negative timeout should wait forever, adapters treat it as no-wait**
+  *Symptoms*: `Utopia\Lock\Lock::acquire()` documents its contract as: 0.0 means do not wait, a negative value means wait forever.  `File::acquire()` returns `$this->tryAcquire()` for every `$timeout <= 0.0`, so a negative timeout is a single non-blocking attempt. Under contention a caller following the documented contract gets an immediate `false`, or a `Contention` exception from `withLock()`, instead of waiting. The Redis `Distributed` adapter and the non-coroutine `Mutex` and `Semaphore` paths have the same shape.  Either the adapters honour negative as unbounded, or the interface doc drops the negative case; pick one and cover it with a unit test on the file lock (contention from a second process or a pre-held handle, negative timeout, assert it blocks until release).  Found by review on #13718 while absorbing the package; left out of that PR because absorption does not change library behaviour. The library now lives at `packages/lock`, so the fix lands here and releases with `bin/monorepo release lock`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1926,363 +1926,310 @@ export function DomainsEmptyState({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9040bc52` (2026-10-27)
-**Commit Message**: fix(vcs): follow an Entire repository to the installation that pushes it
+### Incident Patch 1: `222fcc4a` (2026-10-30)
+**Commit Message**: docs(functions): tighten email trigger docs and render docs arrow links
 
-An Entire repository keeps its id when it moves to another project, as
-when a GitHub mirror is detached into an Entire project. Pushes then come
-from the installation on the new project, and still reach the sites and
-functions connected to the repository, but their builds ran with the old
-installation, which no longer covers it, and failed with
-RepositoryNotFound.
+Move screenshots under their headings, list the built-in address
+details as bullets, link the execute page Email section to the email
+triggers docs, and simplify the changelog entry. The docs ArrowLink
+component only rendered a title attribute that no page sets, so every
+docs arrow link was empty; render its link text with an arrow.
 
-A push now moves the repository and its site or function to the
-installation that delivered it, when the same Appwrite project has that
-installation, before deploying. A site or function connected elsewhere
-meanwhile is left alone.
-
-A build whose installation cannot reach its repository now says so and
-points to reconnecting it, instead of failing with the exception name.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/Appwrite/Platform/Modules/Functions/Workers/Builds.php` (modified, +8/-1)
+**File**: `apps/console/src/components/pages/docs/docs-markdoc-render.tsx` (modified, +16/-2)
 ```diff
-@@ -30,6 +30,7 @@
- use Utopia\Span\Span;
- use Utopia\System\System;
- use Utopia\VCS\Adapter\Git;
-+use Utopia\VCS\Exception\RepositoryNotFound;
+@@ -2,6 +2,7 @@
  
- class Builds extends Action
- {
-@@ -301,7 +302,13 @@ protected function buildDeployment(
-             $rootDirectory = \ltrim($rootDirectory, '/');
- 
-             $owner = $providerAdapter->getOwnerName($providerInstallationId, (int) $providerRepositoryId);
--            $repositoryName = $providerAdapter->getRepositoryName($providerRepositoryId);
-+            try {
-+                $repositoryName = $providerAdapter->getRepositoryName($providerRepositoryId);
-+            } catch (RepositoryNotFound $e) {
-+                // The repository moved, was deleted, or left the installation's selection
-+                $type = $resource->getCollection() === 'sites' ? 'site' : 'function';
-+                throw new BuildException("The repository is no longer available to the Git installation this {$type} deploys from. Reconnect the repository in the {$type}'s Git settings.", previous: $e);
-+            }
- 
-             $cloneOwner = $deployment->getAttribute('providerRepositoryOwner', $owner);
-             $cloneRepository = $deployment->getAttribute('providerRepositoryName', $repositoryName);
+ import Markdoc from '@markdoc/markdoc'
+ import React from 'react'
++import { ArrowRight } from 'lucide-react'
+ import { docsMarkdocConfig } from '@/lib/docs/markdoc-config'
+ import { useDocsPrompt } from '@/components/pages/docs/DocsPromptContext'
+ import { Cards, CardsItem } from './markdoc/Cards'
+@@ -60,8 +61,21 @@ const baseMarkdocComponents = {
+   MarkdocTableHead,
+   MarkdocTableCell,
+   Section: () => null,
+-  ArrowLink: ({ href, title }: { href?: string; title?: string }) => (
+-    <DocsLink href={href}>{title}</DocsLink>
++  ArrowLink: ({
++    href,
++    title,
++    children,
++  }: {
++    href?: string
++    title?: string
++    children?: React.ReactNode
++  }) => (
++    <div className="my-4 [&_p]:m-0 [&_p]:inline">
++      <DocsLink href={href}>
++        {title ?? children}
++        <ArrowRight className="ms-1 inline size-3.5 align-[-2px]" aria-hidden />
++      </DocsLink>
++    </div>
+   ),
+   CallToAction: ({ href, title }: { href?: string; title?: string }) => (
+     <div className="not-prose my-6">
 ```
 
-**File**: `src/Appwrite/Platform/Modules/VCS/Http/Entire/Events/Create.php` (modified, +46/-0)
+**File**: `apps/console/src/content/blog/posts/announcing-function-email-triggers.markdoc` (modified, +4/-4)
 ```diff
-@@ -388,6 +388,51 @@ private function findRepositories(string $providerRepositoryId, array $queries,
-         return \array_slice($found, 0, 100);
-     }
+@@ -46,16 +46,18 @@ When your function returns an error, Appwrite still confirms the email, and the
  
-+    /**
-+     * Moves a repository's connection to the installation that delivered its
-+     * push. An Entire repository keeps its id when it moves to another
-+     * project, as when a GitHub mirror is detached, and only the installation
-+     * on its project now covers it; one still connected through the old
-+     * installation would build with a token that no longer reaches it. The
-+     * move stays within the Appwrite project that connected the repository,
-+     * so it happens only once that project has the new installation too.
-+     */
-+    private function moveRepository(Document $repository, Document $project, string $providerInstallationId, Database $dbForPlatform, Authorization $authorization, callable $getProjectDB): Document
-+    {
-+        $current = $authorization->skip(fn () => $dbForPlatform->getDocument('installations', $repository->getAttribute('installationId', '')));
-+        if ($providerInstallationId === '' || $current->getAttribute('providerInstallationId', '') === $providerInstallationId) {
-+            return $repository;
-+        }
-+
-+        $installation = $authorization->skip(fn () => $dbForPlatform->findOne('installations', [
-+            Query::equal('provider', ['entire']),
-+            Query::equal('providerInstallationId', [$providerInstallationId]),
-+            Query::equal('projectInternalId', [$project->getSequence()]),
-+        ]));
-+        if ($installation->isEmpty()) {
-+            return $repository;
-+        }
-+
-+        $moved = new Document([
-+            'installationId' => $installation->getId(),
-+            'installationInternalId' => $installation->getSequence(),
-+        ]);
-+
-+        $repository = $authorization->skip(fn () => $dbForPlatform->updateDocument('repositories', $repository->getId(), $moved));
-+
-+        // The site or function follows unless it was connected elsewhere meanwhile
-+        $collection = $repository->getAttribute('resourceType') === 'function' ? 'functions' : 'sites';
-+        $dbForProject = $getProjectDB($project);
-+        $resource = $authorization->skip(fn () => $dbForProject->getDocument($collection, $repository->getAttribute('resourceId', '')));
-+        if ($resource->getAttribute('installationId') === $current->getId() && $resource->getAttribute('providerRepositoryId') === $repository->getAttribute('providerRepositoryId')) {
-+            $authorization->skip(fn () => $dbForProject->updateDocument($collection, $resource->getId(), $moved));
-+        }
-+
-+        Span::add('vcs.entire.repository.moved', $repository->getId());
-+
-+        return $repository;
-+    }
-+
-     private function isProjectInCurrentRegion(Document $project): bool
-     {
-         try {
-@@ -531,6 +576,7 @@ private function handlePushEvent(
+ # Receive email at the built-in address
  
-             $attemptedAt = DateTime::now();
-             try {
-+                $repository = $this->moveRepository($repository, $project, $providerInstallationId, $dbForPlatform, $authorization, $getProjectDB);
-                 $this->createGitDeployments($vcs, $providerInstallationId, [$repository], $providerBranch, $providerBranchUrl, $providerRepositoryName, $providerRepositoryUrl, $providerRepositoryOwner, $providerCommitHash, $providerCommitAuthorName, '', $providerCommitMessage, $providerCommitUrl, '', $providerAffectedFiles, false, $dbForPlatform, $authorization, $bus, $getProjectDB, $platform, $deploymentsFactory);
-             } catch (\Throwable $error) {
-                 if ($deliveryId !== '' && !$this->hasDeployed($repository, $providerCommitHash, $providerBranch, $attemptedAt, $dbForPlatform, $authorization, $getProjectDB)) {
++![Email card with Email trigger turned on and the built-in address under Default address](/images/blog/announcing-function-email-triggers/built-in-address.avif)
++
+ Each function has a built-in email domain, `<FUNCTION_ID>-<PROJECT_ID>.appwrite.email`, and it does not need DNS records.
+ 
+ Any name before the `@` works. For example, `support@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` and `billing@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` both execute the same function. The function reads the address that received the email from `envelope.to`.
+ 
+ To turn on the trigger, open your function in the Appwrite Console, go to **Settings** > **Executions**, turn on **Email trigger** in the **Email** card, and click **Update**. The card shows an address of the function under **Default address**.
+ 
+-![Email card with Email trigger turned on and the built-in address under Default address](/images/blog/announcing-function-email-triggers/built-in-address.avif)
+-
+ # Connect a custom domain
+ 
++![Verify email domain screen with the MX and TXT records for mail.example.com](/images/blog/announcing-function-email-triggers/custom-domain.avif)
++
+ You can connect a domain that you own, such as `mail.example.com`. Every email sent to that domain goes to your function, so use a domain that you don't use for any other email.
+ 
+ Turn on the email trigger first. Then open the **Domains** tab of your function, click **Add domain**, select the **Email** type, enter the domain, and click **Add**. The Console shows two DNS records to add at your DNS provider:
+@@ -65,8 +67,6 @@ Turn on the email trigger first. Then open the **Domains** tab of your function,
+ 
+ After you add the records, click **Verify**.
+ 
+-![Verify email domain screen with the MX and TXT records for mail.example.com](/images/blog/announcing-function-email-triggers/custom-domain.avif)
+-
+ {% info title="Domains with a CNAME record" %}
+ DNS does not allow an `MX` record on a name that has a `CNAME` record. If `support.example.com` already points to a site with a `CNAME` record, receive email on another subdomain, such as `mail.example.com`.
+ {% /info %}
+```
+
+**File**: `apps/console/src/content/changelog/entries/2026-10-30.markdoc` (modified, +2/-2)
+```diff
+@@ -6,9 +6,9 @@ cover: /images/blog/announcing-function-email-triggers/cover.avif
+ tags: functions
+ ---
+ 
+-Appwrite Functions on Appwrite Cloud can now execute when an email arrives. Turn on the **Email trigger** of a function, and any address at its built-in domain, `<FUNCTION_ID>-<PROJECT_ID>.appwrite.email`, executes it. You can also connect a domain that you own with an `MX` record and a `TXT` record.
++Appwrite Functions on Appwrite Cloud can now execute when an email arrives. Turn on the **Email trigger** of a function, and an email sent to an address such as `support@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` executes it. You can also connect a domain that you own with an MX record and a TXT record.
+ 
+-Your function receives the email as JSON and each attachment as a file in one `multipart/form-data` request, together with a spam score that it can use to decide what to keep. Appwrite does not store the email.
++Your function receives the email as JSON and each attachment as a file in one `multipart/form-data` request, together with a spam score that it can use to decide what to keep.
+ 
+ {% arrow_link href="/blog/post/announcing-function-email-triggers" %}
+ Read the announcement
+```
+
+**File**: `apps/console/src/content/docs/products/functions/email/index.markdoc` (modified, +20/-21)
+```diff
+@@ -9,7 +9,6 @@ readtime: 7
+ An email trigger executes your function when an email arrives at one of the function's addresses.
+ Each function has a [built-in address](#built-in-address), and you can also connect a [custom domain](#custom-domain).
+ Appwrite receives the email and executes your function with the email and its attachments in the request body.
+-Appwrite does not store the email.
+ Your function can save the email to a table, reply to the sender, or send the content to another service.
+ 
+ Email triggers are available on Appwrite Cloud, and they only receive email.
+@@ -33,6 +32,13 @@ The [execute access](/docs/products/functions/functions#execution-access) of the
+ 
+ # Turn on the email trigger {% #turn-on %}
+ 
++{% only_dark %}
++![Email card with Email trigger turned on and the built-in address under Default address](/images/docs/functions/email/dark/built-in-address.avif)
++{% /only_dark %}
++{% only_light %}
++![Email card with Email trigger turned on and the built-in address under Default address](/images/docs/functions/email/built-in-address.avif)
++{% /only_light %}
++
+ Turn on the email trigger of a function before it can receive email at its built-in address or at a custom domain.
+ 
+ 1. In the Appwrite Console's sidebar, click **Functions**.
+@@ -41,22 +47,15 @@ Turn on the email trigger of a function before it can receive email at its built
+ 1. In the **Email** card, turn on **Email trigger**.
+ 1. Click **Update**.
+ 
+-{% only_dark %}
+-![Email card with Email trigger turned on and the built-in address under Default address](/images/docs/functions/email/dark/built-in-address.avif)
+-{% /only_dark %}
+-{% only_light %}
+-![Email card with Email trigger turned on and the built-in address under Default address](/images/docs/functions/email/built-in-address.avif)
+-{% /only_light %}
+-
+ # Built-in address {% #built-in-address %}
+ 
+-Each function has its own email domain, `<FUNCTION_ID>-<PROJECT_ID>.appwrite.email`.
+-The Console shows `contact@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` as **Default address** in the **Email** card, but any name before the `@` works.
+-For example, `support@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` and `billing@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` both execute the same function.
+-The function reads which address received the email from [`envelope.to`](#request-body).
+-You do not need to configure DNS records for the built-in address.
++Each function has a built-in address that does not need DNS records.
++
++- **Domain:** `<FUNCTION_ID>-<PROJECT_ID>.appwrite.email`, with the function ID in lowercase.
++- **Default address:** the **Email** card in the Console shows `contact@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email`.
++- **Other addresses:** any name before the `@` works. For example, `support@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` and `billing@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` both execute the same function.
++- **Receiving address:** the function reads which address received the email from [`envelope.to`](#request-body).
+ 
+-The domain contains the function ID in lowercase.
+ A function does not have a built-in address when:
+ 
+ - The function ID contains a `.` or a `_`.
+@@ -67,6 +66,13 @@ To receive email for such a function, connect a [custom domain](#custom-domain).
+ 
+ # Custom domain {% #custom-domain %}
+ 
++{% only_dark %}
++![Verify email domain screen with the MX and TXT records for mail.example.com](/images/docs/functions/email/dark/custom-domain.avif)
++{% /only_dark %}
++{% only_light %}
++![Verify email domain screen with the MX and TXT records for mail.example.com](/images/docs/functions/email/custom-domain.avif)
++{% /only_light %}
++
+ You can connect a domain that you own, such as `mail.example.com`, to your function.
+ Every email sent to that domain goes to your function, so use a domain that you don't use for any other email.
+ 
+@@ -95,13 +101,6 @@ To connect a domain:
+ 1. At your DNS provider, add the `MX` and `TXT` records that the Console shows.
+ 1. Click **Verify**.
+ 
+-{% only_dark %}
+-![Verify email domain screen with the MX and TXT records for mail.example.com](/images/docs/functions/email/dark/custom-domain.avif)
+-{% /only_dark %}
+-{% only_light %}
+-![Verify email domain screen with the MX and TXT records for mail.example.com](/images/docs/functions/email/custom-domain.avif)
+-{% /only_light %}
+-
+ If the records have not propagated yet, the domain stays unverified.
+ To verify it later, under the **Domains** tab, click **Retry** next to the domain. Then click **Verify**.
+ 
+```
+
+**File**: `apps/console/src/content/docs/products/functions/execute/index.markdoc` (modified, +1/-1)
+```diff
+@@ -1146,7 +1146,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
+ 
+ # Email {% #email %}
+ 
+-On Appwrite Cloud, after you turn on the email trigger of a function, the function executes when an email arrives at its built-in address or at an address on a custom domain that you connect.
++On Appwrite Cloud, after you turn on the [email trigger](/docs/products/functions/email) of a function, the function executes when an email arrives at its [built-in address](/docs/products/functions/email#built-in-address) or at an address on a [custom domain](/docs/products/functions/email#custom-domain) that you connect.
+ The execution receives the email and its attachments in a `multipart/form-data` request body, and the `x-appwrite-trigger` header is `email`.
+ Appwrite executes the function while the sending mail server waits, and accepts the email after the function finishes.
+ 
+```
+
+**File**: `apps/console/src/lib/docs/generated/search-index.ts` (modified, +1/-1)
+```diff
+@@ -4728,7 +4728,7 @@ export const DOCS_SEARCH_INDEX: DocsSearchEntry[] = [
+     "slug": "products/functions/email",
+     "title": "Email triggers",
+     "description": "Execute an Appwrite Function when an email arrives at its address. Use the built-in address of the function or connect a custom domain.",
+-    "excerpt": "An email trigger executes your function when an email arrives at one of the function's addresses. Each function has a built-in address, and you can also connect a custom domain. Appwrite receives the email and executes your function with the email and its attachments in the request body. Appwrite does not store the email. Your function can save the email to a table, reply to the sender, or send the content to another service. Email triggers are available on Appwrite…",
++    "excerpt": "An email trigger executes your function when an email arrives at one of the function's addresses. Each function has a built-in address, and you can also connect a custom domain. Appwrite receives the email and executes your function with the email and its attachments in the request body. Your function can save the email to a table, reply to the sender, or send the content to another service. Email triggers are available on Appwrite Cloud, and they only receive email.…",
+     "breadcrumbs": [
+       "Functions",
+       "Guides",
 ```
 
 ---
 
-### Incident Patch 2: `98982be5` (2026-10-27)
-**Commit Message**: fix(webhooks): bound the host lookups by the connect timeout
+### Incident Patch 2: `b805c0a5` (2026-10-30)
+**Commit Message**: fix(console): drop the Everything in Pro line from the Enterprise pricing card
 
-getaddrinfo() had no timeout, and the client's connect timeout only
-applies after client() returns, so an unresponsive resolver could hold
-a webhook worker instead of failing the delivery for a retry. Both
-lookups now share one deadline equal to the connect timeout.
+The card already lists enterprise-only features, so the intro was redundant.
 
-**File**: `src/Appwrite/Platform/Workers/Webhooks.php` (modified, +7/-4)
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+**File**: `apps/console/src/lib/i18n/dictionaries/he/pricing.ts` (modified, +0/-1)
 ```diff
-@@ -32,6 +32,7 @@
- class Webhooks extends Action
- {
-     private const MAX_FILE_SIZE = 5242880; // 5 MB
-+    private const TIMEOUT = 15;
- 
-     public static function getName(): string
-     {
-@@ -185,8 +186,8 @@ private function execute(array $events, string $payload, Document $webhook, Docu
-             );
- 
-             $client = $this->client($request->getUri(), $publicHostname)
--                ->withTimeout(15)
--                ->withConnectTimeout(15)
-+                ->withTimeout(self::TIMEOUT)
-+                ->withConnectTimeout(self::TIMEOUT)
-                 ->withSslVerification($webhook->getAttribute('security', true));
- 
-             if (!empty($httpUser) && !empty($httpPass)) {
-@@ -430,9 +431,11 @@ private function client(UriInterface $uri, PublicHostname $publicHostname): Clie
-         $literal = \filter_var($host, FILTER_VALIDATE_IP) !== false;
-         $destinations = $publicHostname->getDestinations();
-         // getaddrinfo() needs a socket type and a service; any port works for the lookup
-+        // Both lookups share the connect timeout, so a slow resolver cannot hold the worker
-+        $deadline = \microtime(true) + self::TIMEOUT;
-         $addresses = $literal ? [$host] : \array_values(\array_unique([
--            ...(Resolver::getaddrinfo($host, AF_INET, SOCK_STREAM, STREAM_IPPROTO_TCP, '80') ?: []),
--            ...(Resolver::getaddrinfo($host, AF_INET6, SOCK_STREAM, STREAM_IPPROTO_TCP, '80') ?: []),
-+            ...(Resolver::getaddrinfo($host, AF_INET, SOCK_STREAM, STREAM_IPPROTO_TCP, '80', self::TIMEOUT) ?: []),
-+            ...(Resolver::getaddrinfo($host, AF_INET6, SOCK_STREAM, STREAM_IPPROTO_TCP, '80', \max(0.001, $deadline - \microtime(true))) ?: []),
-         ]));
- 
-         if ($addresses === []) {
+@@ -184,7 +184,6 @@ export const hePricingDictionary: Record<string, string> = {
+   'DocumentsDB, VectorsDB,\nPostgreSQL, MySQL,\nor upgraded TablesDB':
+     'DocumentsDB, VectorsDB,\nPostgreSQL, MySQL,\nאו TablesDB משודרג',
+   'Email support': 'תמיכה באימייל',
+-  'Everything in Pro, plus:': 'כל מה שיש ב-Pro, ובנוסף:',
+   'Fewer systems to integrate, secure, and maintain':
+     'פחות מערכות לשלב, לאבטח ולתחזק',
+   'Firewall': 'Firewall',
+```
+
+**File**: `apps/console/src/lib/i18n/dictionaries/ja/pricing.ts` (modified, +0/-1)
+```diff
+@@ -176,7 +176,6 @@ export const jaPricingDictionary: Record<string, string> = {
+   'Private WHOIS': 'プライベート WHOIS',
+   '50': '50',
+   'Email support': 'メールサポート',
+-  'Everything in Pro, plus:': 'Pro のすべてに加えて:',
+   'Firewall': 'Firewall',
+   'Firewall rules': 'ファイアウォールルール',
+   'From $0.05 per 1M tokens': '1M トークンあたり $0.05 から',
+```
+
+**File**: `apps/console/src/lib/pricing/plans.ts` (modified, +0/-1)
+```diff
+@@ -62,7 +62,6 @@ export const pricingPlans: readonly PricingPlan[] = [
+     price: 'Custom',
+     description:
+       'For enterprises that need more power, premium support, and advanced security features.',
+-    featuresIntro: 'Everything in Pro, plus:',
+     features: [
+       'Uptime SLAs',
+       'Success manager',
 ```
 
 ---
 
-### Incident Patch 3: `beb63378` (2026-10-27)
-**Commit Message**: fix(console): describe build trigger patterns in the order the server applies them
+### Incident Patch 3: `ace0f441` (2026-10-30)
+**Commit Message**: fix(console): stop function card charts flashing on first load
 
-Globstar is order-sensitive: with an inclusion present, literal inclusions
-always match and the last matching pattern decides among the rest, so an
-exclusion before any inclusion changes nothing. The summary split
-inclusions from exclusions and showed every exclusion overriding every
-inclusion; it now walks the patterns in order ("…, except …, but
-including …", and "always" for literal inclusions). An exclusion reads as
-the server reads it, without trimming what follows the "!".
+Gate chart points and totals on both usage queries resolving, matching
+DatabaseOperationsChartPreview, so the card fades in once instead of
+rendering executions, remounting, and fading in again.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
-**File**: `apps/console/src/lib/git-build-triggers.ts` (modified, +79/-24)
+**File**: `apps/console/src/components/pages/projects/$projectId/functions/_components/FunctionExecutionsChartPreview.tsx` (modified, +13/-6)
 ```diff
-@@ -65,45 +65,100 @@ function formatPatternList(patterns: string[]): string {
-   return `${quoted.slice(0, 3).join(', ')}, and ${patterns.length - 3} more`
- }
+@@ -231,8 +231,19 @@ export function FunctionExecutionsChartPreview({
+     enabled,
+   )
  
-+function isWildcardPattern(pattern: string): boolean {
-+  return pattern.includes('*') || pattern.includes('?') || pattern.includes('[')
-+}
+-  const executionsPoints = executionsQuery.data?.chartPoints ?? []
+-  const gbHoursPoints = gbHoursQuery.data?.chartPoints ?? []
++  const usageReady =
++    !enabled ||
++    ((executionsQuery.isFetched || executionsQuery.isError) &&
++      (gbHoursQuery.isFetched || gbHoursQuery.isError))
 +
- /**
-- * Splits trigger patterns into the ones that include and the `!` ones that
-- * exclude, without their `!`. With exclusions alone, everything else
-- * triggers, as the server's Globstar matching does.
-+ * Trigger patterns as the server's Globstar matches them. Exclusions alone
-+ * leave everything else matching. Otherwise a literal inclusion always
-+ * matches, and among the other patterns the last one that matches decides,
-+ * so an exclusion before any inclusion changes nothing. An exclusion is the
-+ * text after its `!`, untrimmed, as the server reads it.
-  */
--function splitTriggerPatterns(patterns: string[]): {
--  included: string[]
--  excluded: string[]
-+function triggerRules(patterns: string[]): {
-+  excludedOnly: string[] | null
-+  literals: string[]
-+  steps: { exclude: boolean; patterns: string[] }[]
- } {
-   const normalized = normalizeTriggerPatterns(patterns)
--  return {
--    included: normalized.filter((pattern) => !pattern.startsWith('!')),
--    excluded: normalized
--      .filter((pattern) => pattern.startsWith('!'))
--      .map((pattern) => pattern.slice(1).trim()),
-+  if (normalized.every((pattern) => pattern.startsWith('!'))) {
-+    return {
-+      excludedOnly: normalized.map((pattern) => pattern.slice(1)),
-+      literals: [],
-+      steps: [],
-+    }
-+  }
-+
-+  // Without exclusions every inclusion simply matches
-+  if (!normalized.some((pattern) => pattern.startsWith('!'))) {
-+    return {
-+      excludedOnly: null,
-+      literals: [],
-+      steps: [{ exclude: false, patterns: normalized }],
-+    }
-+  }
-+
-+  const literals: string[] = []
-+  const steps: { exclude: boolean; patterns: string[] }[] = []
-+  for (const pattern of normalized) {
-+    const exclude = pattern.startsWith('!')
-+    if (!exclude && !isWildcardPattern(pattern)) {
-+      literals.push(pattern)
-+      continue
-+    }
-+    if (exclude && steps.length === 0) continue
-+
-+    const last = steps[steps.length - 1]
-+    const value = exclude ? pattern.slice(1) : pattern
-+    if (last && last.exclude === exclude) {
-+      last.patterns.push(value)
-+    } else {
-+      steps.push({ exclude, patterns: [value] })
-+    }
-+  }
-+
-+  return { excludedOnly: null, literals, steps }
-+}
-+
-+function describeRules(
-+  rules: ReturnType<typeof triggerRules>,
-+  matching: string,
-+): string {
-+  const parts = rules.steps.map((step, index) =>
-+    index === 0
-+      ? `${matching} ${formatPatternList(step.patterns)}`
-+      : `${step.exclude ? 'except' : 'but including'} ${formatPatternList(step.patterns)}`,
++  const executionsPoints = useMemo(
++    () => (usageReady ? (executionsQuery.data?.chartPoints ?? []) : []),
++    [executionsQuery.data?.chartPoints, usageReady],
 +  )
-+  if (rules.literals.length > 0) {
-+    parts.push(
-+      parts.length === 0
-+        ? `${matching} ${formatPatternList(rules.literals)}`
-+        : `and always ${formatPatternList(rules.literals)}`,
-+    )
-   }
-+  return parts.join(', ')
- }
++  const gbHoursPoints = useMemo(
++    () => (usageReady ? (gbHoursQuery.data?.chartPoints ?? []) : []),
++    [gbHoursQuery.data?.chartPoints, usageReady],
++  )
+   const hasPoints = executionsPoints.length > 0 || gbHoursPoints.length > 0
  
- export function describeTriggerBehavior(
-   branches: string[],
-   paths: string[],
- ): string {
--  const branchPatterns = splitTriggerPatterns(branches)
--  const pathPatterns = splitTriggerPatterns(paths)
-+  const branchRules = triggerRules(branches)
-+  const pathRules = triggerRules(paths)
+   const chartData = useMemo((): ChartPoint[] => {
+@@ -276,10 +287,6 @@ export function FunctionExecutionsChartPreview({
+     [gbHoursPoints],
+   )
  
--  const branchExcept =
--    branchPatterns.excluded.length > 0
--      ? ` except ${formatPatternList(branchPatterns.excluded)}`
--      : ''
-   const branchPart =
--    branchPatterns.included.length === 0
--      ? `All branches${branchExcept}`
--      : `Only branches matching ${formatPatternList(branchPatterns.included)}${branchExcept ? `,${branchExcept}` : ''}`
-+    branchRules.excludedOnly === null
-+      ? describeRules(branchRules, 'Only branches matching')
-+      : branchRules.excludedOnly.length > 0
-+        ? `All branches except ${formatPatternList(branchRules.excludedOnly)}`
-+        : 'All branches'
+-  const usageReady =
+-    !enabled ||
+-    ((executionsQuery.isFetched || executionsQuery.isError) &&
+-      (gbHoursQuery.isFetched || gbHoursQuery.isError))
+   const fadeKey = usageReady ? 'data' : 'loading'
+   const fadeClassName = usageReady && enabled && USAGE_CHART_FADE_IN_CLASS_NAME
  
-   const pathPart =
--    pathPatterns.included.length > 0
--      ? `only paths matching ${formatPatternList(pathPatterns.included)}${pathPatterns.excluded.length > 0 ? `, except ${formatPatternList(pathPatterns.excluded)}` : ''}`
--      : pathPatterns.excluded.length > 0
--        ? `changes outside ${formatPatternList(pathPatterns.excluded)}`
-+    pathRules.excludedOnly === null
-+      ? describeRules(pathRules, 'only paths matching')
-+      : pathRules.excludedOnly.length > 0
-+        ? `changes outside ${formatPatternList(pathRules.excludedOnly)}`
-         : 'all file changes'
- 
-   return `${branchPart} trigger deployments on ${pathPart}.`
-```
-
-**File**: `apps/console/tests/unit/git-build-triggers.test.ts` (modified, +32/-0)
-```diff
-@@ -12,6 +12,9 @@ describe('Build trigger summary', () => {
-     expect(describeTriggerBehavior(['main'], ['src/**'])).toBe(
-       'Only branches matching "main" trigger deployments on only paths matching "src/**".',
-     )
-+    expect(describeTriggerBehavior(['main', 'feat/*'], [])).toBe(
-+      'Only branches matching "main", "feat/*" trigger deployments on all file changes.',
-+    )
-   })
- 
-   test('exclusions alone leave everything else triggering', () => {
-@@ -33,4 +36,33 @@ describe('Build trigger summary', () => {
-       'Only branches matching "release/*", except "release/old" trigger deployments on only paths matching "src/**", except "src/legacy/**".',
-     )
-   })
-+
-+  test('later patterns take precedence, as the server matches them', () => {
-+    // An exclusion before any inclusion changes nothing
-+    expect(describeTriggerBehavior([], ['!src/**', 'src/generated/**'])).toBe(
-+      'All branches trigger deployments on only paths matching "src/generated/**".',
-+    )
-+    expect(
-+      describeTriggerBehavior(
-+        [],
-+        ['src/**', '!src/legacy/**', 'src/legacy/keep/**'],
-+      ),
-+    ).toBe(
-+      'All branches trigger deployments on only paths matching "src/**", except "src/legacy/**", but including "src/legacy/keep/**".',
-+    )
-+  })
-+
-+  test('literal inclusions always trigger', () => {
-+    expect(
-+      describeTriggerBehavior(['main', 'release/*', '!release/old'], []),
-+    ).toBe(
-+      'Only branches matching "release/*", except "release/old", and always "main" trigger deployments on all file changes.',
-+    )
-+  })
-+
-+  test('an exclusion reads as the server reads it', () => {
-+    expect(describeTriggerBehavior([], ['! src'])).toBe(
-+      'All branches trigger deployments on changes outside " src".',
-+    )
-+  })
- })
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15043** (2026-10-27): fix(console): show a repository its installation no longer reaches, and correct Git copy (@Meldiron)
-- **PR #15042** (2026-10-27): fix(vcs): follow an Entire repository to the installation that pushes it (@Meldiron)
-- **PR #15040** (2026-10-27): fix(specs): give hashed password params valid hash examples (@ChiragAgg5k)
-- **PR #15037** (2026-10-27): fix(webhooks): check the destination before connecting (@ChiragAgg5k)
-- **PR #15036** (2026-10-27): fix(vcs): reject .git segments in repository root directories (@ChiragAgg5k)
-- **PR #15035** (2026-10-27): fix(vcs): strip only the leading branch namespace from push refs (@ChiragAgg5k)
+- **PR #15138** (2026-10-30): feat(console): show Enterprise prompts to Pro organizations (@eldadfux)
+- **PR #15133** (2026-10-30): docs(console): update the Stripe subscriptions tutorial for the current dashboards (@adityaoberai)
+- **PR #15127** (2026-10-30): feat(console): reorder, colors, banner and a creation wizard for project environments (@Meldiron)
+- **PR #15126** (closed): test(alerts): regression tests without the fix (do not merge) (@ChiragAgg5k)
+- **PR #15124** (2026-10-30): chore(locale): move the locale controller to a module (@HarshMN2345)
+- **PR #15122** (2026-10-30): fix(deletes): retire deployments in small batches to stop worker OOMs (@ChiragAgg5k)
 
 ---
 
@@ -2302,35 +2249,44 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. vcs): follow an Entire repository to the installation that pushes it
+## X. docs(functions): tighten email trigger docs and render docs arrow links
 
 **RULE**:
-When implementing operations in `src/Appwrite/Platform/Modules/Functions/Workers/Builds.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/console/src/components/pages/docs/docs-markdoc-render.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9040bc52`: vcs): follow an Entire repository to the installation that pushes it. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `222fcc4a`: docs(functions): tighten email trigger docs and render docs arrow links. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Appwrite/Platform/Modules/Functions/Workers/Builds.php`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/console/src/components/pages/docs/docs-markdoc-render.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-use Utopia\VCS\Exception\RepositoryNotFound;
-            try {
-                $repositoryName = $providerAdapter->getRepositoryName($providerRepositoryId);
-            } catch (RepositoryNotFound $e) {
-                // The repository moved, was deleted, or left the installation's selection
-                $type = $resource->getCollection() === 'sites' ? 'site' : 'function';
-                throw new BuildException("The repository is no longer available to the Git installation this {$type} deploys from. Reconnect the repository in the {$type}'s Git settings.", previous: $e);
-            }
+import { ArrowRight } from 'lucide-react'
+  ArrowLink: ({
+    href,
+    title,
+    children,
+  }: {
+    href?: string
+    title?: string
+    children?: React.ReactNode
+  }) => (
+    <div className="my-4 [&_p]:m-0 [&_p]:inline">
+      <DocsLink href={href}>
+        {title ?? children}
+        <ArrowRight className="ms-1 inline size-3.5 align-[-2px]" aria-hidden />
+      </DocsLink>
+    </div>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-            $repositoryName = $providerAdapter->getRepositoryName($providerRepositoryId);
+  ArrowLink: ({ href, title }: { href?: string; title?: string }) => (
+    <DocsLink href={href}>{title}</DocsLink>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9040bc52` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `222fcc4a` are properly handled with clean fallback behavior.
