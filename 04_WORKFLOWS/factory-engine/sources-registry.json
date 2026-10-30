@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T04:25:27.900Z",
-    "lastVerified": "2026-10-30T04:25:27.900Z",
+    "lastChecked": "2026-10-30T04:35:03.686Z",
+    "lastVerified": "2026-10-30T04:35:03.686Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -401,8 +401,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T03:46:56.737Z",
-    "lastVerified": "2026-10-30T03:46:56.737Z",
+    "lastChecked": "2026-10-30T04:34:53.799Z",
+    "lastVerified": "2026-10-30T04:34:53.799Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -2048,22 +2048,21 @@
     "lastVerified": "2026-10-28T22:45:43.332Z"
   },
   "aleo-labs-protocol-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T16:36:43.664Z",
-    "lastVerified": "2026-10-29T16:36:43.664Z",
+    "lastChecked": "2026-10-30T04:34:52.759Z",
+    "lastVerified": "2026-10-30T04:34:52.759Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "1d9b2ae0dc011a9dd30b1e2fc797e4be684b21983545208cc37aee4d9d1a169a",
+    "contentHash": "2231007cc11ac40e5d2aaebfffda9a27e1058ecf8defd66a8cb4651c6813ca06",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "1f4eee02"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -3333,9 +3332,9 @@
   "vi-websocat": {
     "name": "websocat",
     "officialUrl": "https://github.com/vi/websocat",
-    "lastChecked": "2026-10-28T12:08:41.959Z",
+    "lastChecked": "2026-10-30T04:34:38.762Z",
     "revisionIdentifier": "3a3574cd",
-    "lastVerified": "2026-10-28T12:08:41.959Z"
+    "lastVerified": "2026-10-30T04:34:38.762Z"
   },
   "hf-google-bert-bert-base-uncased": {
     "name": "google-bert/bert-base-uncased",
@@ -5093,13 +5092,13 @@
     "officialUrl": "https://github.com/rqlite/rqlite",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T15:50:44.500Z",
-    "lastVerified": "2026-10-28T15:50:44.500Z",
+    "lastChecked": "2026-10-30T04:34:55.397Z",
+    "lastVerified": "2026-10-30T04:34:55.397Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rqlite-rqlite",
-    "contentHash": "382dce74826b2f3e80e50e89df3419d05e87eb871642355d04fb193e15d201f3",
-    "promotedRulesCount": 0,
+    "contentHash": "1d474b37489814984b5396127a50dc3af10f2fa7bef78b9c17e4b189e1c0fb3e",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -5499,9 +5498,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-10-28T16:45:19.529Z",
+    "lastChecked": "2026-10-30T04:34:46.321Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-10-28T16:45:19.529Z"
+    "lastVerified": "2026-10-30T04:34:46.321Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -8997,5 +8996,19 @@
     "lastChecked": "2026-10-30T04:25:11.240Z",
     "revisionIdentifier": "fd9b358e",
     "lastVerified": "2026-10-30T04:25:11.240Z"
+  },
+  "crawlcove-crawlcove-hreflang-checker": {
+    "name": "crawlcove-hreflang-checker",
+    "officialUrl": "https://github.com/CrawlCove/crawlcove-hreflang-checker",
+    "lastChecked": "2026-10-30T04:34:41.288Z",
+    "revisionIdentifier": "3e8c680f",
+    "lastVerified": "2026-10-30T04:34:41.288Z"
+  },
+  "kdchang-reactjs101": {
+    "name": "reactjs101",
+    "officialUrl": "https://github.com/kdchang/reactjs101",
+    "lastChecked": "2026-10-30T04:34:43.790Z",
+    "revisionIdentifier": "9a6f238b",
+    "lastVerified": "2026-10-30T04:34:43.790Z"
   }
 }

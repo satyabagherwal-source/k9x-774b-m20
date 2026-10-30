@@ -6113,3 +6113,5 @@ Every entry in this ledger must capture:
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `5a05ac11` | Multi-dimensional audit evidence | 2026-10-30T04:17:54.626Z |
 | `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `11d2b279` | Multi-dimensional audit evidence | 2026-10-30T04:25:13.738Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `858b475a` | Multi-dimensional audit evidence | 2026-10-30T04:25:25.344Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `8b10e2d9` | Multi-dimensional audit evidence | 2026-10-30T04:34:56.919Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `22c4a97a` | Multi-dimensional audit evidence | 2026-10-30T04:35:01.143Z |

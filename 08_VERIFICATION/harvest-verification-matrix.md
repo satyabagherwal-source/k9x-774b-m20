@@ -6104,3 +6104,5 @@
 | `CYCLE-20261030-OPMN` | `2026-10-30T04:17:54.623Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5596, Rule 5597, Rule 5598` | Yes (`36e4a6f3...`) |
 | `CYCLE-20261030-Y4G6` | `2026-10-30T04:25:13.734Z` | `mfontanini/presenterm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5599` | Yes (`f152cd42...`) |
 | `CYCLE-20261030-YDEL` | `2026-10-30T04:25:25.341Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5600` | Yes (`6f0ccb8a...`) |
+| `CYCLE-20261030-AMFN` | `2026-10-30T04:34:56.915Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2926` | Yes (`1d474b37...`) |
+| `CYCLE-20261030-APOZ` | `2026-10-30T04:35:01.139Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5558` | Yes (`2231007c...`) |

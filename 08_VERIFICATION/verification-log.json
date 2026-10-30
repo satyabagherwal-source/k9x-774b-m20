@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-0Z0E",
-    "timestamp": "2026-10-28T00:40:09.278Z",
-    "repository": "ratatui/ratatui",
-    "learningId": "learn-github-ratatui-ratatui",
-    "contentHash": "6f539dfe39b4200e5e461f15f3db0d688c94c4f2b806d9fd4d983b973fc91259",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-101P",
-    "timestamp": "2026-10-28T00:40:10.621Z",
-    "repository": "fastify/fastify",
-    "learningId": "learn-github-fastify-fastify",
-    "contentHash": "68686cc77fd7887aeb2e755b13eb02254e81dea2267b7496595508ab03d98c35",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-11WJ",
     "timestamp": "2026-10-28T00:40:13.027Z",
     "repository": "Tencent-TDS/KuiklyUI",
@@ -7490,6 +7460,36 @@
     "repository": "apache/shardingsphere",
     "learningId": "learn-github-apache-shardingsphere",
     "contentHash": "6f0ccb8ab6b31dfc30fb89cf48ab910e992e8f9febbc362349d59e00c426f11e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-AMFN",
+    "timestamp": "2026-10-30T04:34:56.915Z",
+    "repository": "rqlite/rqlite",
+    "learningId": "learn-github-rqlite-rqlite",
+    "contentHash": "1d474b37489814984b5396127a50dc3af10f2fa7bef78b9c17e4b189e1c0fb3e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-APOZ",
+    "timestamp": "2026-10-30T04:35:01.139Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "2231007cc11ac40e5d2aaebfffda9a27e1058ecf8defd66a8cb4651c6813ca06",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

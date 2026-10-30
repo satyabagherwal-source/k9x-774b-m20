@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "1f4eee02",
+    "sourceVersion": "22c4a97a",
     "license": "Apache-2.0",
-    "contentHash": "1d9b2ae0dc011a9dd30b1e2fc797e4be684b21983545208cc37aee4d9d1a169a",
-    "lastHarvestedAt": "2026-10-28T19:46:53.277Z",
+    "contentHash": "2231007cc11ac40e5d2aaebfffda9a27e1058ecf8defd66a8cb4651c6813ca06",
+    "lastHarvestedAt": "2026-10-30T04:35:01.143Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "ce215261",
+    "sourceVersion": "8b10e2d9",
     "license": "MIT",
-    "contentHash": "382dce74826b2f3e80e50e89df3419d05e87eb871642355d04fb193e15d201f3",
-    "lastHarvestedAt": "2026-10-28T15:50:44.994Z",
+    "contentHash": "1d474b37489814984b5396127a50dc3af10f2fa7bef78b9c17e4b189e1c0fb3e",
+    "lastHarvestedAt": "2026-10-30T04:34:56.919Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {

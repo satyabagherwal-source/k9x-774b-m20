@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T04:25:25.267Z",
+  "last_updated": "2026-10-30T04:35:01.060Z",
   "total_verified_learnings": 1171,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -46971,8 +46971,8 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "ce215261",
-      "content_hash": "382dce74826b2f3e80e50e89df3419d05e87eb871642355d04fb193e15d201f3",
+      "source_version": "8b10e2d9",
+      "content_hash": "1d474b37489814984b5396127a50dc3af10f2fa7bef78b9c17e4b189e1c0fb3e",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
@@ -46985,6 +46985,11 @@
           "number": 2657,
           "title": "Don't require non-zero probe time in Test_NodeTest_Reuse",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 2926,
+          "title": "Update README.md",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 3370,
@@ -47007,7 +47012,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T15:50:44.885Z",
+      "verified_at": "2026-10-30T04:34:56.817Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -66356,13 +66361,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "22c4a97a",
-      "content_hash": "5cc1f7c77d8c26226f31348c7d4cd767ca6e46c51d849cdb669036d5e31baff3",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "content_hash": "2231007cc11ac40e5d2aaebfffda9a27e1058ecf8defd66a8cb4651c6813ca06",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -66432,7 +66437,7 @@
         {
           "number": 5558,
           "title": "Merge pull request #4588 from aleo-labs-protocol/fix/block-sync-dropped-requests",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -66440,7 +66445,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T23:41:37.716Z",
+      "verified_at": "2026-10-30T04:35:01.042Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -108512,14 +108517,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 2926,
       "title": "Update README.md",
-      "source_url": "https://github.com/SeekStorm/SeekStorm",
-      "source_version": "b0015350",
+      "source_url": "https://github.com/rqlite/rqlite",
+      "source_version": "8b10e2d9",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-23T10:45:12.368Z"
+      "verified_at": "2026-10-30T04:34:56.817Z"
     },
     "rule-2927": {
       "learning_id": "rule-2927",
@@ -149701,14 +149706,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 5558,
       "title": "Merge pull request #4588 from aleo-labs-protocol/fix/block-sync-dropped-requests",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "22c4a97a",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-29T23:41:37.717Z"
+      "verified_at": "2026-10-30T04:35:01.042Z"
     },
     "rule-5559": {
       "learning_id": "rule-5559",

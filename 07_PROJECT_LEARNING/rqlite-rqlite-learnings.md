@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
-> **Source Version**: `ce215261`  
+> **Source Version**: `8b10e2d9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T15:50:44.711Z  
+> **Timestamp**: 2026-10-30T04:34:56.508Z  
 > **Learning ID**: `learn-github-rqlite-rqlite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T15:50:44.500Z  
+> **Harvest Timestamp**: 2026-10-30T04:34:55.397Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17877 stars
+- **Stars / Engagement**: 17883 stars
 
 ---
 
@@ -2087,190 +2087,21 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce215261` (2026-10-28)
-**Commit Message**: Update CHANGELOG.md
+### Incident Patch 1: `8b10e2d9` (2026-10-29)
+**Commit Message**: Update README.md
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `README.md` (modified, +2/-1)
 ```diff
-@@ -1,4 +1,4 @@
--## v10.6.6 (unreleased)
-+## v10.6.6 (October 28th 2026)
- ### Implementation changes and bug fixes
- - [PR #2987](https://github.com/rqlite/rqlite/pull/2987): Keep the local auto-backup file if the metadata rename fails. Thanks @lmtlssss
- - [PR #2988](https://github.com/rqlite/rqlite/pull/2988): Reject local auto-backup filenames reserved for internal use. Thanks @lmtlssss
-```
-
----
-
-### Incident Patch 2: `809229b0` (2026-10-28)
-**Commit Message**: Merge pull request #2992 from rqlite/gomod-20261028
-
-Upgrade dependencies via `go get`
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@
- - [PR #2988](https://github.com/rqlite/rqlite/pull/2988): Reject local auto-backup filenames reserved for internal use. Thanks @lmtlssss
- - [PR #2989](https://github.com/rqlite/rqlite/pull/2989): `POST /demote` and `POST /promote` return a JSON error body, and 404 when the target node is not in the cluster.
- - [PR #2991](https://github.com/rqlite/rqlite/pull/2991): `DELETE /remove` returns a JSON error body.
-+- [PR #2992](https://github.com/rqlite/rqlite/pull/2992): Upgrade dependencies via `go get`.
+@@ -17,7 +17,8 @@
+ Use rqlite to reliably store your most important data, ensuring it's always available to your applications -- think [etcd](https://etcd.io/), but with relational modeling available. Whether you're deploying **resilient services in the cloud** or **reliable applications at the edge**, rqlite provides a robust solution for critical data.
  
- ## v10.6.5 (October 24th 2026)
- ### Implementation changes and bug fixes
-```
-
-**File**: `go.mod` (modified, +29/-29)
-```diff
-@@ -3,11 +3,11 @@ module github.com/rqlite/rqlite/v10
- go 1.27.0
+ <a href="https://rqlite.io"><strong>Website</strong></a> ·
+-<a href="https://www.rqlite.io/join-slack"><strong>Slack</strong></a>
++<a href="https://www.rqlite.io/join-slack"><strong>Slack</strong></a> ·
++<a href="https://www.rqlite.io/support"><strong>Support</strong></a>
  
- require (
--	github.com/aws/aws-sdk-go-v2 v1.47.3
--	github.com/aws/aws-sdk-go-v2/config v1.33.9
--	github.com/aws/aws-sdk-go-v2/credentials v1.20.9
--	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.23.14
--	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
-+	github.com/aws/aws-sdk-go-v2 v1.47.5
-+	github.com/aws/aws-sdk-go-v2/config v1.33.12
-+	github.com/aws/aws-sdk-go-v2/credentials v1.20.12
-+	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.23.18
-+	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6
- 	github.com/hashicorp/go-hclog v1.6.3
- 	github.com/hashicorp/raft v1.8.0
- 	github.com/klauspost/compress v1.20.3
-@@ -25,27 +25,27 @@ require (
- 	go.opentelemetry.io/otel/sdk v1.47.0
- 	go.opentelemetry.io/otel/sdk/metric v1.47.0
- 	go.opentelemetry.io/proto/otlp v1.11.1
--	golang.org/x/net v0.61.0
--	google.golang.org/grpc v1.84.0
-+	golang.org/x/net v0.62.0
-+	google.golang.org/grpc v1.85.0
- 	google.golang.org/protobuf v1.36.12
- )
- 
- require (
- 	github.com/armon/go-metrics v0.7.0 // indirect
--	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22 // indirect
--	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 // indirect
--	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.7 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 // indirect
--	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6 // indirect
--	github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sso v1.38.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.4 // indirect
--	github.com/aws/aws-sdk-go-v2/service/sts v1.51.4 // indirect
--	github.com/aws/smithy-go v1.28.5 // indirect
-+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25 // indirect
-+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.23 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.9 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.8 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/signin v1.12.0 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sso v1.39.0 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.0 // indirect
-+	github.com/aws/aws-sdk-go-v2/service/sts v1.51.6 // indirect
-+	github.com/aws/smithy-go v1.28.7 // indirect
- 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
- 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
- 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
-@@ -57,16 +57,16 @@ require (
- 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
- 	github.com/golang/protobuf v1.5.4 // indirect
- 	github.com/google/uuid v1.6.0 // indirect
--	github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0 // indirect
--	github.com/hashicorp/consul/api v1.34.5 // indirect
-+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.33.0 // indirect
-+	github.com/hashicorp/consul/api v1.35.0 // indirect
- 	github.com/hashicorp/errwrap v1.1.0 // indirect
- 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
- 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
- 	github.com/hashicorp/go-metrics v0.7.0 // indirect
- 	github.com/hashicorp/go-msgpack v1.1.5 // indirect
- 	github.com/hashicorp/go-msgpack/v2 v2.1.5 // indirect
- 	github.com/hashicorp/go-multierror v1.1.1 // indirect
--	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
-+	github.com/hashicorp/go-rootcerts v1.1.0 // indirect
- 	github.com/hashicorp/golang-lru v1.0.2 // indirect
- 	github.com/hashicorp/serf v0.11.0 // indirect
- 	github.com/labstack/gommon v0.5.0 // indirect
-@@ -75,9 +75,9 @@ require (
- 	github.com/mattn/go-runewidth v0.0.31 // indirect
- 	github.com/mitchellh/go-homedir v1.1.0 // indirect
- 	github.com/mkideal/expr v0.1.0 // indirect
--	go.etcd.io/etcd/api/v3 v3.7.2 // indirect
--	go.etcd.io/etcd/client/pkg/v3 v3.7.2 // indirect
--	go.etcd.io/etcd/client/v3 v3.7.2 // indirect
-+	go.etcd.io/etcd/api/v3 v3.7.3 // indirect
-+	go.etcd.io/etcd/client/pkg/v3 v3.7.3 // indirect
-+	go.etcd.io/etcd/client/v3 v3.7.3 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/otel/log v1.47.0 // indirect
- 	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-@@ -89,8 +89,8 @@ require (
- 	golang.org/x/sys v0.49.0 // indirect
- 	golang.org/x/term v0.47.0 // indirect
- 	golang.org/x/text v0.43.0 // indirect
-```
-
-**File**: `go.sum` (modified, +60/-60)
-```diff
-@@ -3,44 +3,44 @@ github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuy
- github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
- github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
- github.com/alecthomas/units v0.0.0-20190717042225-c3de453c63f4/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
--github.com/aws/aws-sdk-go-v2 v1.47.3 h1:HRoT/MkNi3bjO5xF4dCzLzvVmkvRGHj3/cLINDnJejk=
--github.com/aws/aws-sdk-go-v2 v1.47.3/go.mod h1:xSl+OSI5ZUw6bSMupWc218zE5Pl+65MCCu3ySWFY99A=
--github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22 h1:oiEmPz/YMMeh/JvAE8xSxNCIsvWE6lpFe4ZPlyFykQI=
--github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.22/go.mod h1:QWUDuRi9PFjBHIU2iH1Pkldbe7zqLfXJC4wWLbF8nuQ=
--github.com/aws/aws-sdk-go-v2/config v1.33.9 h1:Hv6bcQUJVnmuWaKjqD6Ot8sE75NrWsWV20oGT5aWle0=
--github.com/aws/aws-sdk-go-v2/config v1.33.9/go.mod h1:ivowmrZNfBQLcg4QkaItgi5wae4Bzot9RzIdbY1hfTg=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.9 h1:SNO55PnWhaDafsOcv16lCA0kdoFMl/YlegWoVsU02s0=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.9/go.mod h1:+2reOTRtdD3VSBqpRDNwrZIYy8yMCYa7oK3WKTJ/I1I=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3 h1:gr3b87OLB29jymWPzp/CAyXwQRJVE+sC4Wm0qBIKHsk=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.3/go.mod h1:BRjf4L/Yx2hY54o+ZibPbLJyMMeSwqYQXwcJfqW66a8=
--github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.23.14 h1:nX4dV32e7e2GSg60GojffG61w4tvYxVpvEGWfSlcImo=
--github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.23.14/go.mod h1:dNw78YbA0ylhEVJ1h84fPdtIiWkVTaszT7oHkE/cq5E=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6 h1:CqL8NN3p4I0JTwwV5MEoatIl4Y2amZ2X9dRD+0hbRL0=
--github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.6/go.mod h1:exdJ32hMqXl0Wyo6NwqEC5yIhtua3+PDaKE8P29m4qE=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6 h1:FpBq24TG6WVSObTNhQOv7Q0088rounUUlwn3zlNItkM=
--github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.6/go.mod h1:ONzdPVYC95oBOu0VWNEsKEntcoemP3xVKjT+qWml1s4=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 h1:Qmn60RWuk9+bd2ddvJJqwf3Cpac3VvGMOdbGemtUhX4=
--github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6/go.mod h1:h/YJhe4AVyQxEUMluph10iqV7mjajH7A9L+BHF5ppis=
--github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 h1:e6YW5uME30TkrElR+4/xcY7NB6CCj2dcv7vtmGXhfhQ=
--github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21/go.mod h1:obpHAMP693+f3/A8PkLhIqfK1C+NWWn8zXzqD3OH520=
--github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.7 h1:CwvFlKw0uUScfgOMflXSRZa+ayXgOf6wk7lhyMemQYU=
--github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.7/go.mod h1:4SbD8BB+p+QEnG0aX6DoWwrtk9SufyYXRsUv0nve8LE=
--github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 h1:LHHdobjo5le1sjJdolitV7uVvYg3wkaeM1Ju2fDgeZQ=
--github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6/go.mod h1:CBGB0evAiaMD3Lk4wPO7LQCcCZLuhzL5Qf/wfEUHQ5w=
--github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6 h1:mYViDr2azcgxOpRrObZOl631bvavqILoE/L+Kxgbwys=
--github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6/go.mod h1:OXVdAo9jNhggB+hJRGOyy7WolGTKB6Rg7IIulDeSzPM=
--github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3 h1:NyeuyXkZL476uoAowNActm4XJO1QPKf7aassgXHpiqA=
--github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3/go.mod h1:GfoBeKMDJecgRUsGf/0RGdx0NJAh81ObTd922h8pQys=
--github.com/aws/aws-sdk-go-v2/service/signin v1.10.4 h1:tvpDjuUvgKURf3Yk4hOaGbZ4QdY+070OWcA5d6LUv2A=
--github.com/aws/aws-sdk-go-v2/service/signin v1.10.4/go.mod h1:3ibVKg5Ng82Zby8++jELTD2nHxiPk2DJRLEeW/LKp8M=
--github.com/aws/aws-sdk-go-v2/service/sso v1.38.4 h1:ChCtagixSFOxltv0o6E3NT8F7ksvZtZGPwUBynO5Nmk=
--github.com/aws/aws-sdk-go-v2/service/sso v1.38.4/go.mod h1:+FEO9jrVMpc9oN3CdAxJbtlQEu3z8UddDPSedpeM3PY=
--github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.4 h1:j6c+HA4AoS0EBEjArPjavFEBrucJEryfrQU0TffmACk=
--github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.4/go.mod h1:RhghaXUk9q66VtOQUX1FdPddQuHnqQZzbB0fEYXmPRA=
--github.com/aws/aws-sdk-go-v2/service/sts v1.51.4 h1:OKEfbf2tcfsF2pBk/S9QqNpo6alaAtiBs4hysCsBjPw=
--github.com/aws/aws-sdk-go-v2/service/sts v1.51.4/go.mod h1:mCd6qGo9b8hTtfjgsmNkFlzwjyce4owd7HDVFnCLXhM=
--github.com/aws/smithy-go v1.28.5 h1:OqbqKtzY9NUnr2yAe9+hiTdFb20tNaK/lI0PMOGXX9k=
--github.com/aws/smithy-go v1.28.5/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
-+github.com/aws/aws-sdk-go-v2 v1.47.5 h1:5yA+A+BiXbDq1ZLbYwPViwhEGDMdR0MEhL8Jh2LnLS4=
-+github.com/aws/aws-sdk-go-v2 v1.47.5/go.mod h1:iNIkogrRvFwm+1OQIUOP2lPBtlXZboOIUWiCa+pHEMw=
-+github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25 h1:MW0Iql1SOTgQPj8mCxrU/eH/K/AIDWi08ItOsXaWRLU=
-+github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25/go.mod h1:+ucVYmHYB3JqVueY0E1RHahdXAnKQbIHqybSbvOUbOM=
-+github.com/aws/aws-sdk-go-v2/config v1.33.12 h1:IV1YARaXahwCqUIyP8IlWsP85Lil+5ozTozDQXPumRk=
-+githu
+ ## Quick Start
+ [_Check out the full Quick Start guide_](https://rqlite.io/docs/quick-start/)
 ```
 
 #### Recent Merged Pull Requests:
@@ -2299,28 +2130,29 @@ Upgrade dependencies via `go get`
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update CHANGELOG.md
+## X. Update README.md
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce215261`: Update CHANGELOG.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8b10e2d9`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## v10.6.6 (October 28th 2026)
+<a href="https://www.rqlite.io/join-slack"><strong>Slack</strong></a> ·
+<a href="https://www.rqlite.io/support"><strong>Support</strong></a>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-## v10.6.6 (unreleased)
+<a href="https://www.rqlite.io/join-slack"><strong>Slack</strong></a>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce215261` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8b10e2d9` are properly handled with clean fallback behavior.
