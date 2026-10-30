@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T16:00:45.485Z",
-  "total_cycles_completed": 6212,
-  "total_learnings_persisted": 6212,
-  "total_rules_promoted": 5767,
+  "last_updated": "2026-10-30T16:22:35.420Z",
+  "total_cycles_completed": 6213,
+  "total_learnings_persisted": 6213,
+  "total_rules_promoted": 5768,
   "history": [
-    {
-      "timestamp": "2026-10-29T12:13:31.050Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T12:13:33.989Z",
       "repository": "doobidoo/mcp-memory-service",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-30T16:00:45.485Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T16:22:35.420Z",
+      "repository": "mobile-next/mobile-mcp",
+      "learningId": "learn-github-mobile-next-mobile-mcp",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

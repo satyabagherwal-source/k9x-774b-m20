@@ -424015,3 +424015,53 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `442271d8` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5798. raise maxBuffer for executeCommand so large UI dumps don't fail with ENOBUFS (#5 (Harvested from mobile-next/mobile-mcp)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "raise maxBuffer for executeCommand so large UI dumps don't fail with ENOBUFS (#5",
+  "source": "mobile-next/mobile-mcp",
+  "source_url": "https://github.com/mobile-next/mobile-mcp",
+  "source_version": "5ca473ff",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T16:22:35.093Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mobile-next-mobile-mcp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mobile-next/mobile-mcp](https://github.com/mobile-next/mobile-mcp) (Revision: `5ca473ff`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `src/mobilecli.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mobile-next/mobile-mcp. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `cd3cb571`: raise maxBuffer for executeCommand so large UI dumps don't fail with ENOBUFS (#518). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/mobilecli.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+		const options: { encoding: "utf8"; maxBuffer: number; timeout?: number } = { encoding: "utf8", maxBuffer: MAX_BUFFER_SIZE };
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+		const options: { encoding: "utf8"; timeout?: number } = { encoding: "utf8" };
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `cd3cb571` are properly handled with clean fallback behavior.

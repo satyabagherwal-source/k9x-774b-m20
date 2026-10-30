@@ -11568,5 +11568,15 @@
     "contentHash": "9c92f6081c12c259d0e873d358be1ea55eb19b2fca7df7f3690f21c8cd7f3b4c",
     "lastHarvestedAt": "2026-10-30T10:42:07.290Z",
     "learningId": "learn-huggingface-liquidai-lfm3-audio-2b"
+  },
+  "mobile-next-mobile-mcp": {
+    "repository": "mobile-next/mobile-mcp",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mobile-next/mobile-mcp",
+    "sourceVersion": "5ca473ff",
+    "license": "Apache-2.0",
+    "contentHash": "c3d803148d7d6a448648038c8109a2ed0d99d36323071a820e809433dcef71c1",
+    "lastHarvestedAt": "2026-10-30T16:22:35.414Z",
+    "learningId": "learn-github-mobile-next-mobile-mcp"
   }
 }

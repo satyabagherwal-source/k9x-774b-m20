@@ -19861,5 +19861,20 @@
     "downloads": 3550,
     "qualityScore": 3400,
     "discoveredAt": "2026-10-30T10:38:28.818Z"
+  },
+  {
+    "name": "mobile-mcp",
+    "fullName": "mobile-next/mobile-mcp",
+    "url": "https://github.com/mobile-next/mobile-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Model Context Protocol Server for Mobile Automation and Scraping (iOS, Android, Emulators, Simulators and Real Devices)",
+    "stars": 10147,
+    "forks": 910,
+    "openIssues": 65,
+    "language": "TypeScript",
+    "qualityScore": 5727,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-30T16:08:59.048Z"
   }
 ]

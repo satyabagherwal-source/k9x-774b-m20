@@ -6235,3 +6235,4 @@
 | `CYCLE-20261030-SG72` | `2026-10-30T16:00:39.422Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5795` | Yes (`22096d72...`) |
 | `CYCLE-20261030-SJM3` | `2026-10-30T16:00:43.851Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5796` | Yes (`35c53f8e...`) |
 | `CYCLE-20261030-SKVB` | `2026-10-30T16:00:45.479Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5797` | Yes (`8ac80a4a...`) |
+| `CYCLE-20261030-KNMA` | `2026-10-30T16:22:35.410Z` | `mobile-next/mobile-mcp` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5798` | Yes (`c3d80314...`) |

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T16:00:48.020Z",
-    "lastVerified": "2026-10-30T16:00:48.020Z",
+    "lastChecked": "2026-10-30T16:22:37.973Z",
+    "lastVerified": "2026-10-30T16:22:37.973Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -243,8 +243,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T15:22:04.947Z",
-    "lastVerified": "2026-10-30T15:22:04.947Z",
+    "lastChecked": "2026-10-30T16:12:45.878Z",
+    "lastVerified": "2026-10-30T16:12:45.878Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1887,9 +1887,9 @@
   "zilliztech-claude-context": {
     "name": "claude-context",
     "officialUrl": "https://github.com/zilliztech/claude-context",
-    "lastChecked": "2026-10-28T23:05:26.808Z",
+    "lastChecked": "2026-10-30T16:12:42.252Z",
     "revisionIdentifier": "6fc318b4",
-    "lastVerified": "2026-10-28T23:05:26.808Z"
+    "lastVerified": "2026-10-30T16:12:42.252Z"
   },
   "unhappychoice-gitlogue": {
     "name": "unhappychoice/gitlogue",
@@ -2190,8 +2190,8 @@
     "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T08:53:32.028Z",
-    "lastVerified": "2026-10-30T08:53:32.028Z",
+    "lastChecked": "2026-10-30T16:12:39.848Z",
+    "lastVerified": "2026-10-30T16:12:39.848Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -2813,9 +2813,9 @@
   "openkruise-kruise": {
     "name": "kruise",
     "officialUrl": "https://github.com/openkruise/kruise",
-    "lastChecked": "2026-10-29T00:16:05.878Z",
+    "lastChecked": "2026-10-30T16:12:37.334Z",
     "revisionIdentifier": "4fdf516e",
-    "lastVerified": "2026-10-29T00:16:05.878Z"
+    "lastVerified": "2026-10-30T16:12:37.334Z"
   },
   "pingcap-autoflow": {
     "name": "autoflow",
@@ -10336,5 +10336,36 @@
     "lastChecked": "2026-10-30T16:00:28.404Z",
     "revisionIdentifier": "1211aa6b",
     "lastVerified": "2026-10-30T16:00:28.404Z"
+  },
+  "digitalbazaar-jsonld.js": {
+    "name": "jsonld.js",
+    "officialUrl": "https://github.com/digitalbazaar/jsonld.js",
+    "lastChecked": "2026-10-30T16:12:32.284Z",
+    "revisionIdentifier": "7a93609e",
+    "lastVerified": "2026-10-30T16:12:32.284Z"
+  },
+  "jasonjmcghee-rem": {
+    "name": "rem",
+    "officialUrl": "https://github.com/jasonjmcghee/rem",
+    "lastChecked": "2026-10-30T16:12:34.746Z",
+    "revisionIdentifier": "f4f68049",
+    "lastVerified": "2026-10-30T16:12:34.746Z"
+  },
+  "mobile-next-mobile-mcp": {
+    "name": "mobile-next/mobile-mcp",
+    "officialUrl": "https://github.com/mobile-next/mobile-mcp",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T16:12:29.069Z",
+    "lastVerified": "2026-10-30T16:12:29.069Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-mobile-next-mobile-mcp",
+    "contentHash": "c3d803148d7d6a448648038c8109a2ed0d99d36323071a820e809433dcef71c1",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 15,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

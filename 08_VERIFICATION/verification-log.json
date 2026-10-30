@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-C649",
-    "timestamp": "2026-10-28T09:40:44.409Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-    "contentHash": "798c3315bb5cc109077cc88fea7151f30bd1429729f83859cbb508853ace5f1c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-55MI",
     "timestamp": "2026-10-28T10:03:16.794Z",
     "repository": "xerj-org/xerj",
@@ -7490,6 +7475,21 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "8ac80a4af2b961470583e44373726e9e68ea56aade508670245aaba1e3386bdd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-KNMA",
+    "timestamp": "2026-10-30T16:22:35.410Z",
+    "repository": "mobile-next/mobile-mcp",
+    "learningId": "learn-github-mobile-next-mobile-mcp",
+    "contentHash": "c3d803148d7d6a448648038c8109a2ed0d99d36323071a820e809433dcef71c1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
