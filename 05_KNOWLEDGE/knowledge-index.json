@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T05:12:24.042Z",
+  "last_updated": "2026-10-30T05:19:39.505Z",
   "total_verified_learnings": 1171,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -50436,8 +50436,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "7e354c62",
-      "content_hash": "5309c3901a2225789354b5746b011c03cbfca1899343cba282348da73771a228",
+      "source_version": "a2cbe29a",
+      "content_hash": "1815c077b520ce845bcd61f60c361ec30d9dbaf0e25b8890d07723b43d1374f3",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -50485,6 +50485,11 @@
           "number": 5344,
           "title": "[BugFix][RB-654] Stop two Iceberg FE hangs: profile explain partition listing an",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5608,
+          "title": "[BugFix][RB-833][CVE] Bump guava to 33.7.2 and snappy-java to 1.1.10.9 (#81859)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -50492,7 +50497,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T16:33:53.312Z",
+      "verified_at": "2026-10-30T05:19:39.489Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150516,6 +150521,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T05:12:24.022Z"
+    },
+    "rule-5608": {
+      "learning_id": "rule-5608",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5608,
+      "title": "[BugFix][RB-833][CVE] Bump guava to 33.7.2 and snappy-java to 1.1.10.9 (#81859)",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "a2cbe29a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:19:39.489Z"
     }
   },
   "aliases": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T05:12:24.126Z",
-  "total_cycles_completed": 6089,
-  "total_learnings_persisted": 6089,
-  "total_rules_promoted": 5577,
+  "last_updated": "2026-10-30T05:19:39.598Z",
+  "total_cycles_completed": 6090,
+  "total_learnings_persisted": 6090,
+  "total_rules_promoted": 5578,
   "history": [
-    {
-      "timestamp": "2026-10-28T20:01:42.189Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T20:01:43.244Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -1403,6 +1396,13 @@
       "repository": "citusdata/citus",
       "learningId": "learn-github-citusdata-citus",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T05:19:39.598Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

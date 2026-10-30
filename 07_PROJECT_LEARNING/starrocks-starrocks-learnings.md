@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `7e354c62`  
+> **Source Version**: `a2cbe29a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T16:33:52.982Z  
+> **Timestamp**: 2026-10-30T05:19:39.020Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T16:33:52.977Z  
+> **Harvest Timestamp**: 2026-10-30T05:19:37.999Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12213 stars
+- **Stars / Engagement**: 12218 stars
 
 ---
 
@@ -1818,940 +1818,535 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `99d51e09` (2026-10-28)
-**Commit Message**: [BugFix][RB-654] Stop two Iceberg FE hangs: profile explain partition listing and OSS read-ahead wait (#81711)
+### Incident Patch 1: `5618f1a4` (2026-10-30)
+**Commit Message**: [BugFix][RB-833][CVE] Bump guava to 33.7.2 and snappy-java to 1.1.10.9 (#81859)
 
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
+Signed-off-by: Kevin Cai <[REDACTED_EMAIL]>
+Co-authored-by: Kevin Cai <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/planner/IcebergScanNode.java` (modified, +31/-22)
+**File**: `fe/build.gradle.kts` (modified, +3/-2)
 ```diff
-@@ -399,28 +399,7 @@ protected String getNodeExplainString(String prefix, TExplainLevel detailLevel)
-         }
- 
-         if (detailLevel == TExplainLevel.VERBOSE && !isResourceMappingCatalog(icebergTable.getCatalogName())) {
--            ConnectorMetadataRequestContext requestContext = new ConnectorMetadataRequestContext();
--            requestContext.setTableVersionRange(tvrVersionRange);
--            List<String> partitionNames = GlobalStateMgr.getCurrentState().getMetadataMgr().listPartitionNames(
--                    icebergTable.getCatalogName(), icebergTable.getCatalogDBName(),
--                    icebergTable.getCatalogTableName(), requestContext);
--
--            if (selectedPartitionCount == -1) {
--                if (scanRangeSource != null) {
--                    // we have to consume all scan ranges to know how many partition been selected.
--                    while (scanRangeSource.hasMoreOutput()) {
--                        scanRangeSource.getOutputs(1000);
--                    }
--                    selectedPartitionCount = scanRangeSource.selectedPartitionCount();
--                } else {
--                    selectedPartitionCount = 0;
--                }
--            }
--
--            output.append(prefix).append(
--                    String.format("partitions=%s/%s", selectedPartitionCount,
--                            partitionNames.isEmpty() ? 1 : partitionNames.size()));
--            output.append("\n");
-+            appendPartitionsExplain(output, prefix);
- 
-             //record scan metrics, should cosume all scan ranges too.
-             //print scan metrics
-@@ -446,6 +425,36 @@ protected String getNodeExplainString(String prefix, TExplainLevel detailLevel)
-         return output.toString();
-     }
- 
-+    // Lists every partition of the table and may plan all scan ranges. Skipped when the finished query's plan is
-+    // rendered into its profile: nothing bounds that metadata read once the query has ended.
-+    private void appendPartitionsExplain(StringBuilder output, String prefix) {
-+        ConnectContext connectContext = ConnectContext.get();
-+        if (connectContext != null && connectContext.isExplainForProfile()) {
-+            return;
-+        }
-+        ConnectorMetadataRequestContext requestContext = new ConnectorMetadataRequestContext();
-+        requestContext.setTableVersionRange(tvrVersionRange);
-+        List<String> partitionNames = GlobalStateMgr.getCurrentState().getMetadataMgr().listPartitionNames(
-+                icebergTable.getCatalogName(), icebergTable.getCatalogDBName(),
-+                icebergTable.getCatalogTableName(), requestContext);
-+        if (selectedPartitionCount == -1) {
-+            if (scanRangeSource != null) {
-+                // we have to consume all scan ranges to know how many partition been selected.
-+                while (scanRangeSource.hasMoreOutput()) {
-+                    scanRangeSource.getOutputs(1000);
-+                }
-+                selectedPartitionCount = scanRangeSource.selectedPartitionCount();
-+            } else {
-+                selectedPartitionCount = 0;
-+            }
-+        }
-+
-+        output.append(prefix).append(
-+                String.format("partitions=%s/%s", selectedPartitionCount,
-+                        partitionNames.isEmpty() ? 1 : partitionNames.size()));
-+        output.append("\n");
-+    }
-+
-     @Override
-     protected void toThrift(TPlanNode msg) {
-         msg.node_type = TPlanNodeType.HDFS_SCAN_NODE;
+@@ -124,8 +124,9 @@ subprojects {
+             implementation("com.github.oshi:oshi-core:6.2.1")
+             implementation("com.github.seancfoley:ipaddress:5.4.2")
+             implementation("com.google.cloud.bigdataoss:gcs-connector:${project.ext["gcs.connector.version"]}")
++            implementation("com.google.code.findbugs:jsr305:3.0.2")
+             implementation("com.google.code.gson:gson:2.8.9")
+-            implementation("com.google.guava:guava:32.0.1-jre")
++            implementation("com.google.guava:guava:33.7.2-jre")
+             implementation("com.google.protobuf:protobuf-java:${project.ext["protobuf-java.version"]}")
+             implementation("com.google.protobuf:protobuf-java-util:${project.ext["protobuf-java.version"]}")
+             implementation("com.microsoft.sqlserver:mssql-jdbc:12.4.2.jre11")
+@@ -264,7 +265,7 @@ subprojects {
+             implementation("org.roaringbitmap:RoaringBitmap:0.8.13")
+             implementation("org.scala-lang:scala-library:2.12.10")
+             implementation("org.slf4j:slf4j-api:1.7.30")
+-            implementation("org.xerial.snappy:snappy-java:1.1.10.5")
++            implementation("org.xerial.snappy:snappy-java:1.1.10.9")
+             implementation("software.amazon.awssdk:dynamodb:${project.ext["aws-v2-sdk.version"]}")
+             implementation("software.amazon.awssdk:glue:${project.ext["aws-v2-sdk.version"]}")
+             implementation("software.amazon.awssdk:kms:${project.ext["aws-v2-sdk.version"]}")
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/qe/ConnectContext.java` (modified, +12/-0)
+**File**: `fe/fe-core/build.gradle.kts` (modified, +1/-0)
 ```diff
-@@ -234,6 +234,10 @@ public class ConnectContext {
+@@ -93,6 +93,7 @@ dependencies {
+     implementation("com.github.oshi:oshi-core")
+     implementation("com.github.seancfoley:ipaddress")
+     implementation("com.google.cloud.bigdataoss:gcs-connector")
++    implementation("com.google.code.findbugs:jsr305")
+     implementation("com.google.code.gson:gson")
+     implementation("com.google.guava:guava")
+     implementation("com.google.protobuf:protobuf-java")
+```
+
+**File**: `fe/fe-core/pom.xml` (modified, +6/-0)
+```diff
+@@ -235,6 +235,12 @@ under the License.
+             <artifactId>guava</artifactId>
+         </dependency>
  
-     protected StatementBase.ExplainLevel explainLevel;
++        <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
++        <dependency>
++            <groupId>com.google.code.findbugs</groupId>
++            <artifactId>jsr305</artifactId>
++        </dependency>
++
+         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+         <dependency>
+             <groupId>com.fasterxml.jackson.core</groupId>
+```
+
+**File**: `fe/fe-parser/build.gradle.kts` (modified, +1/-0)
+```diff
+@@ -31,6 +31,7 @@ dependencies {
+     implementation("org.antlr:antlr4-runtime")
+     implementation("org.apache.commons:commons-lang3")
+     implementation("com.google.guava:guava")
++    implementation("com.google.code.findbugs:jsr305")
+     implementation("javax.validation:validation-api")
  
-+    // Set while the finished query's plan is rendered into its profile; scan nodes skip explain lines that read
-+    // remote metadata, since nothing bounds that read after the query has ended.
-+    protected boolean explainForProfile = false;
+     testImplementation("org.junit.jupiter:junit-jupiter")
+```
+
+**File**: `fe/fe-parser/pom.xml` (modified, +4/-0)
+```diff
+@@ -40,6 +40,10 @@
+             <groupId>com.google.guava</groupId>
+             <artifactId>guava</artifactId>
+         </dependency>
++        <dependency>
++            <groupId>com.google.code.findbugs</groupId>
++            <artifactId>jsr305</artifactId>
++        </dependency>
+         <dependency>
+             <groupId>javax.validation</groupId>
+             <artifactId>validation-api</artifactId>
+```
+
+**File**: `fe/pom.xml` (modified, +9/-2)
+```diff
+@@ -367,7 +367,14 @@ under the License.
+             <dependency>
+                 <groupId>com.google.guava</groupId>
+                 <artifactId>guava</artifactId>
+-                <version>32.0.1-jre</version>
++                <version>33.7.2-jre</version>
++            </dependency>
 +
-     protected TWorkGroup resourceGroup;
++            <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
++            <dependency>
++                <groupId>com.google.code.findbugs</groupId>
++                <artifactId>jsr305</artifactId>
++                <version>3.0.2</version>
+             </dependency>
  
-     protected volatile boolean isPending = false;
-@@ -1132,6 +1136,14 @@ public void setExplainLevel(StatementBase.ExplainLevel explainLevel) {
-         this.explainLevel = explainLevel;
-     }
+             <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+@@ -1648,7 +1655,7 @@ under the License.
+             <dependency>
+                 <groupId>org.xerial.snappy</groupId>
+                 <artifactId>snappy-java</artifactId>
+-                <version>1.1.10.5</version>
++                <version>1.1.10.9</version>
+             </dependency>
  
-+    public boolean isExplainForProfile() {
-+        return explainForProfile;
-+    }
-+
-+    public void setExplainForProfile(boolean explainForProfile) {
-+        this.explainForProfile = explainForProfile;
-+    }
-+
-     public TWorkGroup getResourceGroup() {
-         return resourceGroup;
-     }
+             <dependency>
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/qe/StmtExecutor.java` (modified, +2/-0)
+**File**: `fs_brokers/apache_hdfs_broker/src/pom.xml` (modified, +8/-1)
 ```diff
-@@ -1823,8 +1823,10 @@ private void maybeEmbedExplainPlanInProfile(RuntimeProfile profile, ExecPlan pla
-             String explainPlan;
-             try {
-                 sv.setEnableDesensitizeExplain(forceDesensitize);
-+                context.setExplainForProfile(true);
-                 explainPlan = plan.getExplainString(TExplainLevel.COSTS);
-             } finally {
-+                context.setExplainForProfile(false);
-                 sv.setEnableDesensitizeExplain(prevDesensitize);
-             }
-             // Defense in depth: also strip credential-bearing literals (e.g. FILES("...")
+@@ -41,7 +41,7 @@ under the License.
+         <maven.compiler.source>1.8</maven.compiler.source>
+         <maven.compiler.target>1.8</maven.compiler.target>
+         <hadoop.version>3.4.3</hadoop.version>
+-        <guava.version>32.0.1-jre</guava.version>
++        <guava.version>33.7.2-jre</guava.version>
+         <zookeeper.version>3.9.6</zookeeper.version>
+         <protobuf.version>3.25.5</protobuf.version>
+         <thrift.version>0.24.0</thrift.version>
+@@ -56,6 +56,7 @@ under the License.
+         <bouncycastle.version>1.86</bouncycastle.version>
+         <httpclient5.version>5.6.4</httpclient5.version>
+         <httpcore5.version>5.4.3</httpcore5.version>
++        <snappy-java.version>1.1.10.9</snappy-java.version>
+     </properties>
+ 
+     <profiles>
+@@ -151,6 +152,12 @@ under the License.
+                 <version>${httpcore5.version}</version>
+             </dependency>
+ 
++            <dependency>
++                <groupId>org.xerial.snappy</groupId>
++                <artifactId>snappy-java</artifactId>
++                <version>${snappy-java.version}</version>
++            </dependency>
++
+             <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
+             <dependency>
+                 <groupId>commons-cli</groupId>
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/qe/StmtExecutorTest.java` (modified, +1/-0)
+**File**: `java-extensions/hive-reader/pom.xml` (modified, +1/-1)
 ```diff
-@@ -1373,6 +1373,7 @@ public String getWarehouseComputeResourceName(ComputeResource computeResource) {
-         String embedded = onSummary.getInfoString(ProfileKeyDictionary.EXPLAIN_PLAN);
-         Assertions.assertNotNull(embedded,
-                 "ExplainPlan must be embedded when enable_explain_in_profile is true");
-+        Assertions.assertFalse(onCtx.isExplainForProfile(), "Embedding must reset explainForProfile after rendering");
-         Assertions.assertTrue(embedded.contains("PLAN FRAGMENT"),
-                 "Embedded explain plan should contain rendered fragment headers");
-         Assertions.assertTrue(embedded.contains("OlapScanNode"),
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/IcebergExplainInProfileTest.java` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+// Copyright 2021-present StarRocks, Inc. All rights reserved.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package com.starrocks.sql.plan;
-+
-+import org.junit.jupiter.api.Assertions;
-+import org.junit.jupiter.api.Test;
-+
-+/**
-+ * The partition line of an Iceberg scan lists every partition of the table. The plan embedded into a finished
-+ * query's profile (enable_explain_in_profile) skips it, since nothing bounds that metadata read after the query.
-+ */
-+public class IcebergExplainInProfileTest extends ConnectorPlanTestBase {
-+
-+    @Test
-+    public void testExplainForProfileSkipsPartitionLine() throws Exception {
-+        String sql = "select * from iceberg0.unpartitioned_db.t0";
-+        String plan = getVerboseExplain(sql);
-+        Assertions.assertTrue(plan.contains("partitions="), plan);
-+
-+        connectContext.setExplainForProfile(true);
-+        try {
-+            plan = getVerboseExplain(sql);
-+        } finally {
-+            connectContext.setExplainForProfile(false);
-+        }
-+        Assertions.assertTrue(plan.contains("IcebergScanNode"), plan);
-+        Assertions.assertFalse(plan.contains("partitions="), plan);
-+    }
-+}
-```
-
-**File**: `java-extensions/hadoop-ext/src/main/java/org/apache/hadoop/fs/aliyun/oss/ReadBuffer.java` (added, +125/-0)
-```diff
-@@ -0,0 +1,125 @@
-+// Copyright 2021-present StarRocks, Inc. All rights reserved.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+// This file is based on code available under the Apache license here:
-+// https://github.com/apache/hadoop/blob/rel/release-3.4.3/hadoop-tools/hadoop-aliyun/src/main/java/org/apache/hadoop/fs/aliyun/oss/ReadBuffer.java
-+
-+/*
-+ * Licensed to the Apache Software Foundation (ASF) under one
-+ * or more contributor license agreements.  See the NOTICE file
-+ * distributed with this work for additional information
-+ * regarding copyright ownership.  The ASF licenses this file
-+ * to you under the Apache License, Version 2.0 (the
-+ * "License"); you may not use this file except in compliance
-+ * with the License.  You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package org.apache.hadoop.fs.aliyun.oss;
-+
-+import org.slf4j.Logger;
-+import org.slf4j.LoggerFactory;
-+
-+import java.util.concurrent.TimeUnit;
-+import java.util.concurrent.locks.Condition;
-+import java.util.concurrent.locks.ReentrantLock;
-+
-+/**
-+ * This class is used by {@link AliyunOSSInputStream}
-+ * and {@link AliyunOSSFileReaderTask} to buffer data that read from oss.
-+ *
-+ * StarRocks: {@link #await} is bounded. AliyunOSSInputStream.reopen() waits here for the read-ahead task to fill the
-+ * buffer, but that task can be lost without signalling: a shut-down executor only logs the rejected task, and an
-+ * Error thrown inside the task skips signalAll(). The reader then parked forever with no timeout. After the bound,
-+ * the buffer is marked ERROR, so reopen() fails with an IOException instead.
-+ */
-+public class ReadBuffer {
-+    private static final Logger LOG = LoggerFactory.getLogger(ReadBuffer.class);
-+
-+    // Far above a 512 KB part read that succeeds or fails through the OSS client's own timeouts and retries.
-+    static long awaitTimeoutNanos = TimeUnit.MINUTES.toNanos(10);
-+
-+    enum STATUS {
-+        INIT, SUCCESS, ERROR
-+    }
-+
-+    private final ReentrantLock lock = new ReentrantLock();
-+
-+    private Condition readyCondition = lock.newCondition();
-+
-+    private byte[] buffer;
-+    private STATUS status;
-+    private long byteStart;
-+    private long byteEnd;
-+
-+    public ReadBuffer(long byteStart, long byteEnd) {
-+        this.buffer = new byte[(int) (byteEnd - byteStart) + 1];
-+
-+        this.status = STATUS.INIT;
-+        this.byteStart = byteStart;
-+        this.byteEnd = byteEnd;
-+    }
-+
-+    public void lock() {
-+        lock.lock();
-+    }
-+
-+    public void unlock() {
-+        lock.unlock();
-+    }
-+
-+    public void await(STATUS waitStatus) throws InterruptedException {
-+        long remainingNanos = awaitTimeoutNanos;
-+        while (this.status == waitStatus) {
-+            if (remainingNanos <= 0) {
-+                LOG.warn("Read-ahead of bytes [{}, {}] did not finish within {} s, failing the read",
-+                        byteStart, byteEnd, TimeUnit.NANOSECONDS.toSeconds(awaitTimeoutNanos));
-+                this.status = STATUS.ERROR;
-+                return;
-+            }
-+            remainingNanos = readyCondition.awaitNanos(remainingNanos);
-+        }
-+    }
-+
-+    public void signalAll() {
-+        readyCondition.signalAll();
-+    }
-+
-+    public byte[] getBuffer() {
-+        return buffer;
-+    }
-+
-+    public STATUS getStatus() {
-+        return status;
-+    }
-+
-+    public void setStatus(STATUS status) {
-+        this.status = status;
-+    }
-+
-+    public long getByteStart() {
-+        return byteStart;
-+    }
-+
-+    public long getByteEnd() {
-+        return byteEnd;
-+    }
-+}
-```
-
-**File**: `java-extensions/hadoop-ext/src/test/java/org/apache/hadoop/fs/aliyun/oss/ReadBufferTest.java` (added, +76/-0)
-```diff
-@@ -0,0 +1,76 @@
-+// Copyright 2021-present StarRocks, Inc. All rights reserved.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     https://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package org.apache.hadoop.fs.aliyun.oss;
-+
-+import org.junit.jupiter.api.AfterEach;
-+import org.junit.jupiter.api.Assertions;
-+import org.junit.jupiter.api.BeforeEach;
-+import org.junit.jupiter.api.Test;
-+
-+import java.util.concurrent.TimeUnit;
-+
-+public class ReadBufferTest {
-+    private long previousTimeoutNanos;
-+
-+    @BeforeEach
-+    public void setUp() {
-+        previousTimeoutNanos = ReadBuffer.awaitTimeoutNanos;
-+    }
-+
-+    @AfterEach
-+    public void tearDown() {
-+        ReadBuffer.awaitTimeoutNanos = previousTimeoutNanos;
-+    }
-+
-+    @Test
-+    public void testLostReadAheadTaskFailsTheWaitInsteadOfHanging() throws Exception {
-+        ReadBuffer.awaitTimeoutNanos = TimeUnit.MILLISECONDS.toNanos(100);
-+        // No task ever fills or signals this buffer, as when the executor dropped it.
-+        ReadBuffer readBuffer = new ReadBuffer(0, 9);
-+        readBuffer.lock();
-+        try {
-+            readBuffer.await(ReadBuffer.STATUS.INIT);
-+        } finally {
-+            readBuffer.unlock();
-+        }
-+        Assertions.assertEquals(ReadBuffer.STATUS.ERROR, readBuffer.getStatus());
-+    }
-+
-+    @Test
-+    public void testSignalledReadAheadTaskEndsTheWait() throws Exception {
-+        ReadBuffer.awaitTimeoutNanos = TimeUnit.MINUTES.toNanos(1);
-+        ReadBuffer readBuffer = new ReadBuffer(0, 9);
-+        Thread task = new Thread(() -> {
-+            readBuffer.lock();
-+            try {
-+                readBuffer.setStatus(ReadBuffer.STATUS.SUCCESS);
-+                readBuffer.signalAll();
-+            } finally {
-+                readBuffer.unlock();
-+            }
-+        });
-+        long start = System.nanoTime();
-+        readBuffer.lock();
-+        try {
-+            task.start();
-+            readBuffer.await(ReadBuffer.STATUS.INIT);
-+        } finally {
-+            readBuffer.unlock();
-+        }
-+        task.join();
-+        Assertions.assertEquals(ReadBuffer.STATUS.SUCCESS, readBuffer.getStatus());
-+        Assertions.assertTrue(System.nanoTime() - start < TimeUnit.SECONDS.toNanos(30));
-+    }
-+}
+@@ -11,7 +11,7 @@
+     <packaging>jar</packaging>
+ 
+     <properties>
+-        <guava.version>32.0.1-jre</guava.version>
++        <guava.version>33.7.2-jre</guava.version>
+         <java-extensions.home>${basedir}/../</java-extensions.home>
+         <avro.version>1.11.4</avro.version>
+     </properties>
 ```
 
 ---
 
-### Incident Patch 2: `7e354c62` (2026-10-28)
-**Commit Message**: [BugFix] Account buffered pass-through chunks in query and process memory (#80910)
+### Incident Patch 2: `ced99d45` (2026-10-30)
+**Commit Message**: [BugFix][RB-726] Release idle Iceberg commit executor threads (#81805)
 
-Signed-off-by: Drake Wang <[REDACTED_EMAIL]>
-Co-authored-by: trueeyu <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: GavinMar <[REDACTED_EMAIL]>
+Co-authored-by: Gavin <[REDACTED_EMAIL]>
 
-**File**: `be/src/compute_env/data_stream/data_stream_recvr.cpp` (modified, +1/-1)
+**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/IcebergCommitQueueManager.java` (modified, +8/-2)
 ```diff
-@@ -187,7 +187,7 @@ DataStreamRecvr::DataStreamRecvr(DataStreamMgr* stream_mgr, RuntimeState* runtim
+@@ -62,6 +62,8 @@ public class IcebergCommitQueueManager {
  
-     _metrics.resize(degree_of_parallelism);
+     private static final Logger LOG = LogManager.getLogger(IcebergCommitQueueManager.class);
  
--    _pass_through_context.init();
-+    _pass_through_context.init(_query_mem_tracker);
-     if (runtime_state->query_options().__isset.transmission_encode_level) {
-         _encode_level = runtime_state->query_options().transmission_encode_level;
-     }
++    private static final long EXECUTOR_IDLE_THREAD_TIMEOUT_SECONDS = 60L;
++
+     /**
+      * Configuration for the commit queue manager.
+      */
+@@ -235,6 +237,8 @@ public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+                             " seconds but queue still at capacity. Consider increasing iceberg_commit_queue_max_size " +
+                             "or iceberg_commit_queue_timeout_seconds.");
+                 }
++                // the idle worker may have timed out before the offer, leaving the task without a thread
++                executor.prestartCoreThread();
+             } catch (InterruptedException e) {
+                 Thread.currentThread().interrupt();
+                 throw new RejectedExecutionException("Interrupted while waiting for commit queue capacity", e);
+@@ -418,13 +422,15 @@ private TableCommitExecutor getOrCreateTableExecutor(TableCommitKey key) {
+                 // When queue is full, block until capacity is available.
+                 // The wait time is set to half of the commit timeout to leave room for actual execution.
+                 long maxQueueWaitSeconds = config.getTimeoutSeconds() / 2;
+-                ExecutorService executor = new ThreadPoolExecutor(
++                ThreadPoolExecutor executor = new ThreadPoolExecutor(
+                         1,  // corePoolSize
+                         1,  // maximumPoolSize
+-                        0L, TimeUnit.MILLISECONDS,  // idle thread timeout
++                        EXECUTOR_IDLE_THREAD_TIMEOUT_SECONDS, TimeUnit.SECONDS,  // idle thread timeout
+                         new LinkedBlockingQueue<>(config.getMaxQueueSize()),  // bounded queue
+                         threadFactory,
+                         new BlockWhenQueueFullPolicy(maxQueueWaitSeconds));
++                // release the thread of an idle table (e.g. dropped) instead of holding it until cache eviction
++                executor.allowCoreThreadTimeOut(true);
+                 LOG.info("Created commit queue executor for {}.{}.{}, max queue size: {}, " +
+                                 "max queue wait: {} seconds (commit timeout: {} seconds)",
+                         key.catalogName, key.dbName, key.tableName, config.getMaxQueueSize(),
 ```
 
-**File**: `be/src/compute_env/data_stream/local_pass_through_buffer.cpp` (modified, +51/-14)
+**File**: `fe/fe-core/src/test/java/com/starrocks/connector/iceberg/IcebergCommitQueueManagerTest.java` (modified, +38/-0)
 ```diff
-@@ -22,15 +22,37 @@
- 
- namespace starrocks {
- 
-+// A buffered chunk is allocated by the sender thread and freed by the receiver thread. While it waits in
-+// the channel it belongs to neither instance, so it is parked on the query tracker, the common ancestor
-+// of both instances: the query, resource group, query pool and process trackers keep counting it, and
-+// only the instance trackers change. The global passthrough tracker is not part of the tracker tree; it
-+// mirrors the parked bytes for diagnosis. Without a query tracker, fall back to the process tracker, the
-+// common ancestor of every tracker, so the process tracker still counts the bytes.
-+static MemTracker* parking_tracker(MemTracker* query_mem_tracker) {
-+    return query_mem_tracker != nullptr ? query_mem_tracker : RuntimeEnv::GetInstance()->process_mem_tracker();
-+}
-+
-+static void park_buffered_bytes(MemTracker* query_mem_tracker, int64_t bytes) {
-+    CurrentThread::current().mem_transfer_to(parking_tracker(query_mem_tracker), bytes);
-+    RuntimeEnv::GetInstance()->passthrough_mem_tracker()->consume(bytes);
-+}
-+
-+// Hand parked bytes to the current thread's tracker, which then frees them or keeps them as its own.
-+static void unpark_buffered_bytes(MemTracker* query_mem_tracker, int64_t bytes) {
-+    CurrentThread::current().mem_transfer_from(parking_tracker(query_mem_tracker), bytes);
-+    RuntimeEnv::GetInstance()->passthrough_mem_tracker()->release(bytes);
-+}
-+
- // channel per [sender_id]
- class PassThroughSenderChannel {
- public:
--    PassThroughSenderChannel(std::atomic_int64_t& total_bytes) : _total_bytes(total_bytes) {}
-+    // `query_mem_tracker` is owned by the PassThroughChannel, which outlives this sender channel.
-+    PassThroughSenderChannel(std::atomic_int64_t& total_bytes, MemTracker* query_mem_tracker)
-+            : _total_bytes(total_bytes), _query_mem_tracker(query_mem_tracker) {}
- 
-     ~PassThroughSenderChannel() {
-         if (_physical_bytes > 0) {
--            CurrentThread::current().mem_consume(_physical_bytes);
--            RuntimeEnv::GetInstance()->passthrough_mem_tracker()->release(_physical_bytes);
-+            unpark_buffered_bytes(_query_mem_tracker, _physical_bytes);
-         }
+@@ -315,6 +315,23 @@ public void testBlockWhenQueueFullPolicyTimesOutWhenQueueFull() throws Exception
+         executor.shutdownNow();
      }
  
-@@ -40,8 +62,7 @@ class PassThroughSenderChannel {
-         auto clone = chunk->clone_unique();
-         int64_t physical_bytes = CurrentThread::current().get_consumed_bytes() - before_bytes;
-         DCHECK_GE(physical_bytes, 0);
--        CurrentThread::current().mem_release(physical_bytes);
--        RuntimeEnv::GetInstance()->passthrough_mem_tracker()->consume(physical_bytes);
-+        park_buffered_bytes(_query_mem_tracker, physical_bytes);
- 
-         std::unique_lock lock(_mutex);
-         _buffer.emplace_back(std::make_pair(std::move(clone), driver_sequence));
-@@ -53,22 +74,19 @@ class PassThroughSenderChannel {
-         std::unique_lock lock(_mutex);
-         chunks->swap(_buffer);
-         bytes->swap(_bytes);
--        RuntimeEnv::GetInstance()->passthrough_mem_tracker()->release(_physical_bytes);
--        // Consume physical bytes in current MemTracker, since later it would be released
--        CurrentThread::current().mem_consume(_physical_bytes);
-+        unpark_buffered_bytes(_query_mem_tracker, _physical_bytes);
-         _total_bytes -= _physical_bytes;
-         _physical_bytes = 0;
-     }
-     // Drop everything buffered without handing it to a consumer. Used when the receiver is
-     // cancelled/closed: nobody will ever pull these chunks, so free them now instead of
-     // holding the memory until query teardown. The accounting mirrors the destructor:
--    // pre-charge the physical bytes to the current MemTracker so the immediate _buffer.clear()
--    // frees net-zero on it, and release them from the global passthrough tracker.
-+    // transfer ownership without changing common ancestors. The immediate _buffer.clear() then
-+    // frees net-zero on the current tracker.
-     void clear() {
-         std::unique_lock lock(_mutex);
-         if (_physical_bytes > 0) {
--            CurrentThread::current().mem_consume(_physical_bytes);
--            RuntimeEnv::GetInstance()->passthrough_mem_tracker()->release(_physical_bytes);
-+            unpark_buffered_bytes(_query_mem_tracker, _physical_bytes);
-             _total_bytes -= _physical_bytes;
-             _physical_bytes = 0;
-         }
-@@ -82,6 +100,7 @@ class PassThroughSenderChannel {
-     std::vector<size_t> _bytes;
-     int64_t _physical_bytes = 0; // Physical consumed bytes for each chunk
-     std::atomic_int64_t& _total_bytes;
-+    MemTracker* const _query_mem_tracker;
- };
- 
- // channel per [fragment_instance_id, dest_node_id]
-@@ -91,7 +110,7 @@ class PassThroughChannel {
-         std::unique_lock lock(_mutex);
-         auto it = _sender_id_to_channel.find(sender_id);
-         if (it == _sender_id_to_channel.end()) {
--            auto* channel = new PassThroughSenderChannel(_total_bytes);
-+            auto* channel = new PassThroughSenderChannel(_total_
-```
-
-**File**: `be/src/compute_env/data_stream/local_pass_through_buffer.h` (modified, +7/-1)
-```diff
-@@ -26,6 +26,8 @@
- 
- namespace starrocks {
- 
-+class MemTracker;
-+
- // To manage pass through chunks between sink/sources in the same process.
- using ChunkUniquePtrVector = std::vector<std::pair<ChunkUniquePtr, int32_t>>;
- class PassThroughChannel;
-@@ -69,7 +71,11 @@ class PassThroughContext {
- public:
-     PassThroughContext(PassThroughChunkBuffer* chunk_buffer, const TUniqueId& fragment_instance_id, PlanNodeId node_id)
-             : _chunk_buffer(chunk_buffer), _fragment_instance_id(fragment_instance_id), _node_id(node_id) {}
--    void init();
-+    // `query_mem_tracker` is the query tracker shared by the sender and receiver instances (they always
-+    // belong to the same query on this BE). Buffered chunks are parked on it while they wait in the
-+    // channel, so they stay inside the query, resource group and process budgets. Without it the
-+    // chunks are only tracked by the global passthrough tracker, outside the process tree.
-+    void init(std::shared_ptr<MemTracker> query_mem_tracker = nullptr);
-     void append_chunk(int sender_id, const Chunk* chunk, size_t chunk_size, int32_t driver_sequence);
-     void pull_chunks(int sender_id, ChunkUniquePtrVector* chunks, std::vector<size_t>* bytes);
-     int64_t total_bytes() const;
-```
-
-**File**: `be/src/exec/pipeline/exchange/exchange_sink_operator.cpp` (modified, +4/-4)
-```diff
-@@ -126,7 +126,7 @@ class ExchangeSinkOperator::Channel {
-     Status _close_internal(RuntimeState* state, FragmentContext* fragment_ctx);
- 
-     bool _check_use_pass_through();
--    void _prepare_pass_through();
-+    void _prepare_pass_through(RuntimeState* state);
-     // Account the memory retained by _chunks[driver_sequence] into the parent's profile counter.
-     // Container (capacity) usage is re-read each time, which is O(#columns); memory referenced by
-     // out-of-line objects (JSON, bitmap, HLL, ...) is only measured for the rows just appended and
-@@ -186,8 +186,8 @@ bool ExchangeSinkOperator::Channel::_check_use_pass_through() {
-     return is_local();
- }
- 
--void ExchangeSinkOperator::Channel::_prepare_pass_through() {
--    _pass_through_context.init();
-+void ExchangeSinkOperator::Channel::_prepare_pass_through(RuntimeState* state) {
-+    _pass_through_context.init(state->query_mem_tracker_ptr());
-     _use_pass_through = _check_use_pass_through();
- }
- 
-@@ -217,7 +217,7 @@ Status ExchangeSinkOperator::Channel::init(RuntimeState* state) {
-         return Status::InternalError(msg);
-     }
- 
--    _prepare_pass_through();
-+    _prepare_pass_through(state);
-     _ignore_local_data = _enable_exchange_perf && is_local();
- 
-     _is_inited = true;
-```
-
-**File**: `be/src/http/default_path_handlers.cpp` (modified, +2/-1)
-```diff
-@@ -189,7 +189,8 @@ void MemTrackerWebPageHandler::handle(const RuntimeEnv& runtime_env, MemTracker*
-             auto* update_item = update_mem_tracker->get_snapshot(&obj_pool, upper_level);
-             update_item->parent = root;
- 
--            // passthrough memory tracker not in RootMemTrackerTree
-+            // passthrough memory tracker not in RootMemTrackerTree. It only mirrors bytes that the query
-+            // trackers (and so the process tracker) already count, so it is shown for diagnosis only.
-             MemTracker* passthrough_mem_tracker = runtime_env.passthrough_mem_tracker();
-             auto* passthrough_item = passthrough_mem_tracker->get_snapshot(&obj_pool, upper_level);
-             passthrough_item->parent = root;
-```
-
-**File**: `be/src/runtime/current_thread.h` (modified, +41/-0)
-```diff
-@@ -196,6 +196,28 @@ class CurrentThread {
-             }
-         }
- 
-+        void transfer_to(MemTracker* tracker, int64_t size) {
-+            commit(false);
-+            if (auto* current = CurrentThread::mem_tracker(); current != nullptr) {
-+                current->transfer_to(tracker, size);
-+            } else {
-+                tracker->consume(size);
-+            }
-+            _deallocated_cache_size += size;
-+            _total_consumed_bytes -= size;
-+        }
-+
-+        void transfer_from(MemTracker* tracker, int64_t size) {
-+            commit(false);
-+            if (auto* current = CurrentThread::mem_tracker(); current != nullptr) {
-+                tracker->transfer_to(current, size);
-+            } else {
-+                tracker->release(size);
-+            }
-+            _allocated_cache_size += size;
-+            _total_consumed_bytes += size;
-+        }
-+
-         void commit(bool is_ctx_shift) {
-             MemTracker* cur_tracker = CurrentThread::mem_tracker();
-             if (cur_tracker != nullptr) {
-@@ -366,6 +388,25 @@ class CurrentThread {
-         }
-     }
- 
-+    // Transfer already-accounted bytes (e.g. a get_consumed_bytes() delta) to another tracker.
-+    // This is not a free: do not recycle the charge into the thread's reservation. Flush
-+    // pending allocations, then leave all common ancestors unchanged during the transfer.
-+    void mem_transfer_to(MemTracker* tracker, int64_t size) {
-+        DCHECK_GE(size, 0);
-+        if (size != 0) {
-+            _mem_cache_manager.transfer_to(tracker, size);
++    @Test
++    public void testBlockWhenQueueFullPolicyStartsWorkerWhenPoolIsEmpty() throws Exception {
++        // the idle worker may time out while the handler is about to enqueue
++        RejectedExecutionHandler policy = newBlockWhenQueueFullPolicy(1);
++        ThreadPoolExecutor executor = new ThreadPoolExecutor(
++                1, 1, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1));
++        executor.allowCoreThreadTimeOut(true);
++        assertEquals(0, executor.getPoolSize());
++        CountDownLatch done = new CountDownLatch(1);
++        try {
++            policy.rejectedExecution(done::countDown, executor);
++            assertTrue(done.await(5, TimeUnit.SECONDS));
++        } finally {
++            executor.shutdownNow();
 +        }
 +    }
 +
-+    // Receive already-accounted memory. This is not an allocation and must not consume a
-+    // reservation; the eventual free will release this transferred charge normally.
-+    void mem_transfer_from(MemTracker* tracker, int64_t size) {
-+        DCHECK_GE(size, 0);
-+        if (size != 0) {
-+            _mem_cache_manager.transfer_from(tracker, size);
-+        }
-+    }
-+
-     static void mem_consume_without_cache(int64_t size) {
-         MemTracker* cur_tracker = mem_tracker();
-         if (cur_tracker != nullptr && size != 0) {
-```
-
-**File**: `be/src/runtime/mem_tracker.h` (modified, +20/-0)
-```diff
-@@ -221,6 +221,26 @@ class MemTracker {
-         }
-     }
- 
-+    // Reclassify live memory without changing any shared ancestor (in particular process).
-+    // The two tracker paths are immutable. Their common suffix must not be debited/credited,
-+    // even temporarily: concurrent limit checks observe those counters.
-+    void transfer_to(MemTracker* dst, int64_t bytes) {
-+        DCHECK(dst != nullptr);
-+        DCHECK_GE(bytes, 0);
-+        size_t src_end = _all_trackers.size();
-+        size_t dst_end = dst->_all_trackers.size();
-+        while (src_end > 0 && dst_end > 0 && _all_trackers[src_end - 1] == dst->_all_trackers[dst_end - 1]) {
-+            --src_end;
-+            --dst_end;
-+        }
-+        for (size_t i = 0; i < src_end; ++i) {
-+            _all_trackers[i]->_consumption->add(-bytes);
-+        }
-+        for (size_t i = 0; i < dst_end; ++i) {
-+            dst->_all_trackers[i]->_consumption->add(bytes);
-+        }
-+    }
-+
-     // the function can be used to transform memory stats from process mem_tracker to child mem_tracker
-     void consume_without_root(int64_t bytes) {
-         if (bytes == 0) {
-```
-
-**File**: `be/src/runtime/runtime_env.cpp` (modified, +3/-0)
-```diff
-@@ -318,6 +318,9 @@ Status RuntimeEnv::_init_mem_tracker(MetricRegistry* metrics) {
-     _jit_cache_mem_tracker = regist_tracker(MemTrackerType::JIT_CACHE, -1, process_mem_tracker());
-     _update_mem_tracker = regist_tracker(MemTrackerType::UPDATE, calc_max_update_memory(bytes_limit), nullptr);
-     _update_mem_tracker->set_level(2);
-+    // Diagnostic only: mirrors the bytes buffered in local pass-through channels. Those bytes are
-+    // already accounted on the query tracker (or the process tracker as a fallback), so keep this
-+    // tracker out of the tree, or they would be counted twice.
-     _passthrough_mem_tracker = regist_tracker(MemTrackerType::PASSTHROUGH, -1, nullptr);
-     _passthrough_mem_tracker->set_level(2);
-     _brpc_iobuf_mem_tracker = regist_tracker(MemTrackerType::BRPC_IOBUF, -1, nullptr);
-```
-
----
-
-### Incident Patch 3: `e568fbf8` (2026-10-28)
-**Commit Message**: [BugFix][RB-225] Keep Iceberg equality deletes applied when identity column optimize is off (#81760)
-
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/rule/transformation/IcebergEqualityDeleteRewriteRule.java` (modified, +7/-0)
-```diff
-@@ -477,6 +477,13 @@ private static Set<String> runtimeFilterPruningColumns(OptimizerContext context,
-         if (!context.getSessionVariable().isEnableIcebergEqDeleteRuntimeFilterPruning()) {
-             return Set.of();
-         }
-+        // only the delete scan always takes these columns from partition metadata; with the switch off the data-file
-+        // scan reads them from the file, which may not store them (e.g. migrated Hive files), and a NULL never matches,
-+        // so match by $partition_key instead, unless a real column of that name leaves no partition match at all
-+        if (!context.getSessionVariable().getEnableIcebergIdentityColumnOptimize() &&
-+                icebergTable.getNativeTable().schema().caseInsensitiveFindField(PARTITION_KEY) == null) {
-+            return Set.of();
-+        }
-         Set<String> scanColumnNames = scan.getColRefToColumnMetaMap().values().stream()
-                 .map(Column::getName)
-                 .collect(Collectors.toSet());
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/optimizer/rule/transformation/IcebergEqualityDeleteRewriteRuleTest.java` (modified, +67/-18)
-```diff
-@@ -22,6 +22,7 @@
- import com.starrocks.connector.exception.StarRocksConnectorException;
- import com.starrocks.connector.iceberg.IcebergApiConverter;
- import com.starrocks.connector.iceberg.IcebergDeleteSchema;
-+import com.starrocks.qe.ConnectContext;
- import com.starrocks.sql.ast.expression.BinaryType;
- import com.starrocks.sql.optimizer.OptExpression;
- import com.starrocks.sql.optimizer.OptimizerFactory;
-@@ -346,10 +347,72 @@ private void collectBinaryTypes(ScalarOperator op, Map<String, BinaryType> out)
-     // VARCHAR $partition_key: the data-file scan reads it next to the key, and the delete scan takes it as a slot.
      @Test
-     public void testPartitionColumnReplacesPartitionKeyWhenNotSelected() {
--        Schema schema = new Schema(
-+        OptExpression antiJoin = rewriteEqDeleteScanSelectingV(new ConnectContext());
-+        LogicalIcebergScanOperator withDeleteScan = antiJoin.inputAt(0).getOp().cast();
-+        LogicalIcebergEqualityDeleteScanOperator eqDeleteScan = antiJoin.inputAt(1).getOp().cast();
-+        Set<String> withDeleteColumns = Set.copyOf(withDeleteScan.getColumnNameToColRefMap().keySet());
-+        Assertions.assertTrue(withDeleteColumns.containsAll(Set.of("id", "p", "v")), withDeleteColumns.toString());
-+        Assertions.assertFalse(withDeleteColumns.contains(PARTITION_KEY), withDeleteColumns.toString());
-+        Assertions.assertEquals(Set.of("p"), eqDeleteScan.getRuntimeFilterPruningColumns());
-+
-+        Map<String, BinaryType> onTypes = new HashMap<>();
-+        collectBinaryTypes(((LogicalJoinOperator) antiJoin.getOp())
-+                .getOnPredicate(), onTypes);
-+        Assertions.assertEquals(Map.of("id", BinaryType.EQ_FOR_NULL, "p", BinaryType.EQ_FOR_NULL,
-+                DATA_SEQUENCE_NUMBER, BinaryType.LT), onTypes);
-+    }
-+
-+    // With enable_iceberg_identity_column_optimize off the data-file scan reads the partition column from the file,
-+    // which may not store it, so the match falls back to $partition_key instead of a NULL that never matches.
-+    @Test
-+    public void testPartitionKeyKeptWhenIdentityColumnOptimizeOff() {
-+        ConnectContext connectContext = new ConnectContext();
-+        connectContext.getSessionVariable().setEnableIcebergIdentityColumnOptimize(false);
-+        OptExpression antiJoin = rewriteEqDeleteScanSelectingV(connectContext);
-+        LogicalIcebergScanOperator withDeleteScan = antiJoin.inputAt(0).getOp().cast();
-+        LogicalIcebergEqualityDeleteScanOperator eqDeleteScan = antiJoin.inputAt(1).getOp().cast();
-+        Set<String> withDeleteColumns = Set.copyOf(withDeleteScan.getColumnNameToColRefMap().keySet());
-+        Assertions.assertTrue(withDeleteColumns.contains(PARTITION_KEY), withDeleteColumns.toString());
-+        Assertions.assertEquals(Set.of(), eqDeleteScan.getRuntimeFilterPruningColumns());
-+
-+        Map<String, BinaryType> onTypes = new HashMap<>();
-+        collectBinaryTypes(((LogicalJoinOperator) antiJoin.getOp())
-+                .getOnPredicate(), onTypes);
-+        Assertions.assertEquals(Map.of("id", BinaryType.EQ_FOR_NULL, PARTITION_KEY, BinaryType.EQ,
-+                DATA_SEQUENCE_NUMBER, BinaryType.LT), onTypes);
-+    }
-+
-+    // A real $partition_key column leaves no $partition_key match, so the identity column keeps the match even with
-+    // enable_iceberg_identity_column_optimize off; dropping it would let a delete reach rows of other partitions.
-+    @Test
-+    public void testIdentityColumnKeptWithPartitionKeyColumnWhenIdentityColumnOptimizeOff() {
-+        ConnectContext connectContext = new ConnectContext();
-+        connectContext.getSessionVariable().setEnableIcebergIdentityColumnOptimize(false);
-+        OptExpression antiJoin = rewriteEqDeleteScanSelectingV(connectContext, new Schema(
-+                Types.NestedField.optional(1, "id", Types.IntegerType.get()),
-+                Types.NestedField.optional(2, "p", Types.IntegerType.get()),
-+                Types.NestedField.optional(3, "v", Types.IntegerType.get()),
-+                Types.NestedField.optional(4, PARTITION_KEY, Types.StringType.get())));
-+        LogicalIcebergEqualityDeleteScanOperator eqDeleteScan = antiJoin.inputAt(1).getOp().cast();
-+        Assertions.assertEquals(Set.of("p"), eqDeleteScan.getRuntimeFilterPruningColumns());
-+
-+        Map<String, BinaryType> onTypes = new HashMap<>();
-+        collectBinaryTypes(((LogicalJoinOperator) antiJoin.getOp())
-+                .getOnPredicate(), onTypes);
-+        Assertions.assertEquals(Map.of("id", BinaryType.EQ_FOR_NULL, "p", BinaryType.EQ_FOR_NULL,
-+                DATA_SEQUENCE_NUMBER, BinaryType.LT), onTypes);
-+    }
-+
-+    // rewrites a scan of tb(id, p, v) partitioned by identity(p) with an equality delete on id, selecting v only, as
-+    // `select sum(v) from tb` does after column pruning; returns the anti join
-+    private static OptExpression rewriteEqDeleteScanSelectingV(ConnectContext connectContext) {
-+        return rewriteEqDeleteScanSelectingV(connectCo
-```
-
-**File**: `test/sql/test_iceberg/R/test_iceberg_eq_delete_rf_pruning` (modified, +65/-0)
-```diff
-@@ -319,6 +319,62 @@ select m.* from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.mixed m join dim_p d on
- set enable_read_iceberg_equality_delete_with_partition_evolution = false;
- -- result:
- -- !result
-+create table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_src(
-+    id int,
-+    v string,
-+    p int
-+) partition by(p) properties ("location" = "oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_src");
-+-- result:
-+-- !result
-+insert into hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_src values (1, 'a1', 1), (2, 'a2', 1), (1, 'b1', 2), (2, 'b2', 2);
-+-- result:
-+-- !result
-+create table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated(
-+    id int,
-+    v string,
-+    p int
-+) partition by(p) properties ("format-version" = "2");
-+-- result:
-+-- !result
-+alter table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated execute add_files(location="oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_src", file_format="parquet");
-+-- result:
-+-- !result
-+create table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_deletes(
-+    id int,
-+    p int
-+) partition by(p) properties ("location" = "oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_deletes");
-+-- result:
-+-- !result
-+insert into hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_deletes values (1, 1), (2, 2);
-+-- result:
-+-- !result
-+alter table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated execute add_equality_delete_files(location="oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_deletes", file_format="parquet", equality_columns="id");
-+-- result:
-+-- !result
-+select v from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated order by v;
-+-- result:
-+a2
-+b1
-+-- !result
-+set enable_iceberg_identity_column_optimize = false;
-+-- result:
-+-- !result
-+function: assert_explain_contains('select v from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated', '$partition_key')
-+-- result:
-+None
-+-- !result
-+select v from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated order by v;
-+-- result:
-+a2
-+b1
-+-- !result
-+select count(*) from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated;
-+-- result:
-+2
-+-- !result
-+set enable_iceberg_identity_column_optimize = true;
-+-- result:
-+-- !result
- function: assert_explain_not_contains("delete from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.fact where p in (select p from db_${uuid0}.dim_p) and v = 'a2'", 'Runtime filter pruning columns')
- -- result:
- None
-@@ -358,6 +414,15 @@ drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.mixed_global_deletes force;
- drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.mixed_part_deletes force;
- -- result:
- -- !result
-+drop table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated force;
-+-- result:
-+-- !result
-+drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_src force;
-+-- result:
-+-- !result
-+drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_deletes force;
-+-- result:
-+-- !result
- drop database iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0};
- -- result:
- -- !result
-```
-
-**File**: `test/sql/test_iceberg/T/test_iceberg_eq_delete_rf_pruning` (modified, +37/-0)
-```diff
-@@ -178,6 +178,40 @@ function: assert_explain_not_contains('select m.* from iceberg_eq_rf_${uuid0}.eq
- select m.* from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.mixed m join dim_p d on m.p = d.p order by m.id;
- set enable_read_iceberg_equality_delete_with_partition_evolution = false;
+     public void testBlockWhenQueueFullPolicyWithInterrupted() throws Exception {
+         RejectedExecutionHandler policy = newBlockWhenQueueFullPolicy(1);
+@@ -633,6 +650,27 @@ public void testDisableCommitQueue() throws Exception {
+         }
+     }
  
-+-- data files without the partition column (hive-written, registered with add_files): with
-+-- enable_iceberg_identity_column_optimize off the data-file scan would read p as NULL, so the match keeps $partition_key
-+create table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_src(
-+    id int,
-+    v string,
-+    p int
-+) partition by(p) properties ("location" = "oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_src");
++    @Test
++    public void testIdleTableExecutorReleasesThread() throws Exception {
++        manager.submitCommit("catalog", "db", "table", () -> {});
++        ThreadPoolExecutor executor = (ThreadPoolExecutor) getExecutorForKey(manager,
++                newTableCommitKey("catalog", "db", "table"));
++        assertEquals(1, executor.getPoolSize());
 +
-+insert into hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_src values (1, 'a1', 1), (2, 'a2', 1), (1, 'b1', 2), (2, 'b2', 2);
++        // shorten the idle timeout so the test does not wait for the production value
++        executor.setKeepAliveTime(50, TimeUnit.MILLISECONDS);
++        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
++        while (executor.getPoolSize() > 0 && System.nanoTime() < deadline) {
++            Thread.sleep(20);
++        }
++        assertEquals(0, executor.getPoolSize());
 +
-+create table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated(
-+    id int,
-+    v string,
-+    p int
-+) partition by(p) properties ("format-version" = "2");
++        // the executor stays usable after its thread exits
++        AtomicInteger counter = new AtomicInteger();
++        assertTrue(manager.submitCommit("catalog", "db", "table", counter::incrementAndGet).isSuccess());
++        assertEquals(1, counter.get());
++    }
 +
-+alter table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated execute add_files(location="oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_src", file_format="parquet");
+     @Test
+     public void testShutdownTableExecutor() {
+         // Create a table executor by submitting a commit
+```
+
+---
+
+### Incident Patch 3: `4276cd4c` (2026-10-30)
+**Commit Message**: [BugFix] Cap JSON parse nesting depth to stop a BE crash (#79338)
+
+Signed-off-by: Alberic <[REDACTED_EMAIL]>
+
+**File**: `be/src/column/variant_encoder.cpp` (modified, +4/-1)
+```diff
+@@ -818,7 +818,10 @@ StatusOr<VariantRowValue> VariantEncoder::encode_json_text_to_variant(std::strin
+     // error-code API: a throw per non-JSON row would be far too expensive. The catch only remains as a safety
+     // net for exceptions that are not caused by the input, so it costs nothing on the hot path.
+     try {
+-        auto builder = vpack::Parser::tryFromJson(json_text.data(), json_text.size(), nullptr);
++        // Honor the shared JSON nesting-depth cap here too; over-deep input then fails to parse and
++        // falls back to string storage below, like any other non-JSON text.
++        auto options = JsonValue::parse_options_from_config();
++        auto builder = vpack::Parser::tryFromJson(json_text.data(), json_text.size(), nullptr, &options);
+         if (builder == nullptr) {
+             return encode_json_to_variant(JsonValue::from_string(Slice(json_text.data(), json_text.size())));
+         }
+```
+
+**File**: `be/src/common/config.h` (modified, +7/-0)
+```diff
+@@ -2329,6 +2329,13 @@ CONF_mDouble(json_flat_sparsity_factor, "0.3");
+ // the maximum number of extracted JSON sub-field
+ CONF_mInt32(json_flat_column_max, "100");
+ 
++// Maximum object/array nesting depth accepted when parsing JSON (parse_json, CAST AS JSON, JSON
++// column ingest, ...). The velocypack parser recurses once per level, so an unbounded depth lets a
++// crafted document overflow the thread stack and abort the BE. A positive value sets the cap; 0 or
++// below keeps the parser's built-in default (1024) rather than disabling the check, so the guard
++// cannot be silently turned off by leaving it unset. Mutable so it can be tuned without a restart.
++CONF_mInt32(json_max_parse_nesting_depth, "1024");
 +
-+create table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_deletes(
-+    id int,
-+    p int
-+) partition by(p) properties ("location" = "oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_deletes");
+ // for whitelist on flat json remain data, max set 1kb
+ CONF_mInt32(json_flat_remain_filter_max_bytes, "1024");
+ // ======================= FLAT JSON end ==============================================
+```
+
+**File**: `be/src/common/config_fwd_headers_manifest.json` (modified, +1/-0)
+```diff
+@@ -345,6 +345,7 @@
+         "json_flat_null_factor",
+         "json_flat_sparsity_factor",
+         "json_flat_column_max",
++        "json_max_parse_nesting_depth",
+         "json_flat_remain_filter_max_bytes"
+       ]
+     },
+```
+
+**File**: `be/src/common/config_json_flat_fwd.h` (modified, +7/-0)
+```diff
+@@ -64,6 +64,13 @@ CONF_mDouble(json_flat_sparsity_factor, "0.3");
+ // the maximum number of extracted JSON sub-field
+ CONF_mInt32(json_flat_column_max, "100");
+ 
++// Maximum object/array nesting depth accepted when parsing JSON (parse_json, CAST AS JSON, JSON
++// column ingest, ...). The velocypack parser recurses once per level, so an unbounded depth lets a
++// crafted document overflow the thread stack and abort the BE. A positive value sets the cap; 0 or
++// below keeps the parser's built-in default (1024) rather than disabling the check, so the guard
++// cannot be silently turned off by leaving it unset. Mutable so it can be tuned without a restart.
++CONF_mInt32(json_max_parse_nesting_depth, "1024");
 +
-+insert into hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_deletes values (1, 1), (2, 2);
+ // for whitelist on flat json remain data, max set 1kb
+ CONF_mInt32(json_flat_remain_filter_max_bytes, "1024");
+ 
+```
+
+**File**: `be/src/exprs/ai/ai_function_result.cpp` (modified, +9/-4)
+```diff
+@@ -64,10 +64,14 @@ StatusOr<JsonValue> parse_object(std::string_view text) {
+     if (text.size() > kJSONLengthLimit) {
+         return Status::CapacityLimitExceed("AI JSON result exceeds maximum JSON length");
+     }
+-    // VPack's conversion is recursive and has no nesting limit. Validate the
+-    // provider-controlled JSON with the bounded, non-recursive DOM parser first.
++    // VPack's conversion is recursive. Validate the provider-controlled JSON with the bounded,
++    // non-recursive DOM parser first, then parse under the same cap. The depth limit follows
++    // json_max_parse_nesting_depth, but this provider-controlled path never allows more than 64
++    // levels, which also bounds VPack's recursion.
++    int max_depth = JsonValue::max_nesting_depth();
++    size_t simdjson_depth = max_depth < 64 ? static_cast<size_t>(max_depth) : 64;
+     simdjson::dom::parser parser;
+-    auto error = parser.allocate(text.size(), 64);
++    auto error = parser.allocate(text.size(), simdjson_depth);
+     if (error == simdjson::SUCCESS) {
+         error = parser.parse(text.data(), text.size()).error();
+     }
+@@ -78,7 +82,8 @@ StatusOr<JsonValue> parse_object(std::string_view text) {
+         return malformed_result();
+     }
+     try {
+-        auto builder = vpack::Parser::fromJson(text.data(), text.size());
++        vpack::Options options = JsonValue::parse_options_from_config();
++        auto builder = vpack::Parser::fromJson(text.data(), text.size(), &options);
+         JsonValue json;
+         json.assign(*builder);
+         return json;
+```
+
+**File**: `be/src/types/json_value.cpp` (modified, +16/-1)
+```diff
+@@ -21,6 +21,7 @@
+ 
+ #include "base/status.h"
+ #include "base/statusor.h"
++#include "common/config_json_flat_fwd.h"
+ #include "types/json_value_converter.h"
+ #include "velocypack/ValueType.h"
+ #include "velocypack/vpack.h"
+@@ -88,6 +89,19 @@ static bool is_json_start_char(char ch) {
+     return ch == '{' || ch == '[' || ch == '"';
+ }
+ 
++int JsonValue::max_nesting_depth() {
++    // A positive config value sets the cap; 0 or below falls back to the built-in default so the
++    // guard cannot be silently disabled (e.g. before config::init() runs the value is still 0).
++    int cap = config::json_max_parse_nesting_depth;
++    return cap > 0 ? cap : 1024;
++}
 +
-+alter table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated execute add_equality_delete_files(location="oss://${oss_bucket}/eq_rf_db_${uuid0}/migrated_deletes", file_format="parquet", equality_columns="id");
++vpack::Options JsonValue::parse_options_from_config() {
++    vpack::Options options = vpack::Options::Defaults;
++    options.maxNestingDepth = static_cast<unsigned int>(max_nesting_depth());
++    return options;
++}
 +
-+select v from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated order by v;
-+set enable_iceberg_identity_column_optimize = false;
-+function: assert_explain_contains('select v from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated', '$partition_key')
-+select v from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated order by v;
-+select count(*) from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated;
-+set enable_iceberg_identity_column_optimize = true;
-+
- -- a DML target keeps every delete
- function: assert_explain_not_contains("delete from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.fact where p in (select p from db_${uuid0}.dim_p) and v = 'a2'", 'Runtime filter pruning columns')
- delete from iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.fact where p in (select p from db_${uuid0}.dim_p) and v = 'a2';
-@@ -192,6 +226,9 @@ drop table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.fact_null force;
- drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.fact_null_deletes force;
- drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.mixed_global_deletes force;
- drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.mixed_part_deletes force;
-+drop table iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated force;
-+drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_src force;
-+drop table hive_eq_rf_${uuid0}.eq_rf_db_${uuid0}.migrated_deletes force;
- drop database iceberg_eq_rf_${uuid0}.eq_rf_db_${uuid0};
- drop database db_${uuid0};
- drop catalog iceberg_eq_rf_${uuid0};
+ StatusOr<JsonValue> JsonValue::parse_json_or_string(const Slice& src) {
+     if (src.size > kJSONLengthLimit) {
+         return Status::NotSupported("JSON string exceed maximum length 16MB");
+@@ -104,7 +118,8 @@ StatusOr<JsonValue> JsonValue::parse_json_or_string(const Slice& src) {
+             // error-code API: reporting it by throwing costs a full C++ unwind per row and serializes all
+             // threads on the unwinder lock.
+             vpack::Exception error(vpack::Exception::InternalError);
+-            auto b = vpack::Parser::tryFromJson(src.get_data(), src.get_size(), &error);
++            vpack::Options options = parse_options_from_config();
++            auto b = vpack::Parser::tryFromJson(src.get_data(), src.get_size(), &error, &options);
+             if (b == nullptr) {
+                 return fromVPackException(error);
+             }
+```
+
+**File**: `be/src/types/json_value.h` (modified, +8/-0)
+```diff
+@@ -33,6 +33,7 @@ namespace arangodb::velocypack {
+ class Slice;
+ class Builder;
+ class Exception;
++struct Options;
+ enum class ValueType : uint8_t;
+ } // namespace arangodb::velocypack
+ 
+@@ -124,6 +125,13 @@ class JsonValue {
+     static StatusOr<JsonValue> parse(const Slice& src);
+     // Try to parse it as JSON object, otherwise consider it as a string
+     static StatusOr<JsonValue> parse_json_or_string(const Slice& src);
++    // Effective JSON nesting-depth cap from config (json_max_parse_nesting_depth), with a built-in
++    // fallback (1024) so it is never silently disabled. Single source of truth shared by the
++    // velocypack parse path (parse_options_from_config) and the simdjson ingest path (SimdJsonConverter).
++    static int max_nesting_depth();
++    // Build velocypack parse options from config (applies json_max_parse_nesting_depth). Shared by
++    // every JSON parse entrypoint so the nesting-depth cap stays uniform and honors the config.
++    static vpack::Options parse_options_from_config();
+ 
+     ////////////////// serialization  //////////////////////
+     size_t serialize(uint8_t* dst) const;
+```
+
+**File**: `be/src/types/json_value_converter.cpp` (modified, +21/-9)
+```diff
+@@ -37,7 +37,7 @@ class SimdJsonConverter {
+     static StatusOr<JsonValue> create(SimdJsonValue value) {
+         try {
+             vpack::Builder builder;
+-            RETURN_IF_ERROR(convert(value, {}, false, &builder));
++            RETURN_IF_ERROR(convert(value, {}, false, &builder, 0, JsonValue::max_nesting_depth()));
+             return JsonValue(builder.slice());
+         } catch (simdjson::simdjson_error& e) {
+             // raw_json_token() returns a bounded string_view into the input buffer. Constructing a
+@@ -61,7 +61,7 @@ class SimdJsonConverter {
+     static StatusOr<JsonValue> create(SimdJsonObject value) {
+         try {
+             vpack::Builder builder;
+-            RETURN_IF_ERROR(convert(value, {}, false, &builder));
++            RETURN_IF_ERROR(convert(value, {}, false, &builder, 0, JsonValue::max_nesting_depth()));
+             return JsonValue(builder.slice());
+         } catch (simdjson::simdjson_error& e) {
+             // raw_json() spans the object but consume()s it, so on a malformed document (iterate()
+@@ -80,14 +80,18 @@ class SimdJsonConverter {
+     }
+ 
+ private:
+-    static Status convert(SimdJsonValue value, std::string_view field_name, bool is_object, vpack::Builder* builder) {
++    // This path recurses once per JSON nesting level and builds the vpack::Builder directly, never
++    // through vpack::Parser, so the parser's maxNestingDepth cap does not reach it. Apply the shared
++    // JSON depth cap (JsonValue::max_nesting_depth()) here too, resolved once and threaded down.
++    static Status convert(SimdJsonValue value, std::string_view field_name, bool is_object, vpack::Builder* builder,
++                          int depth, int max_depth) {
+         switch (value.type()) {
+         case so::json_type::array: {
+-            RETURN_IF_ERROR(convert(value.get_array().value(), field_name, is_object, builder));
++            RETURN_IF_ERROR(convert(value.get_array().value(), field_name, is_object, builder, depth, max_depth));
+             break;
+         }
+         case so::json_type::object: {
+-            RETURN_IF_ERROR(convert(value.get_object().value(), field_name, is_object, builder));
++            RETURN_IF_ERROR(convert(value.get_object().value(), field_name, is_object, builder, depth, max_depth));
+             break;
+         }
+         case so::json_type::number: {
+@@ -116,7 +120,11 @@ class SimdJsonConverter {
+         return Status::OK();
+     }
+ 
+-    static Status convert(SimdJsonObject obj, std::string_view field_name, bool is_object, vpack::Builder* builder) {
++    static Status convert(SimdJsonObject obj, std::string_view field_name, bool is_object, vpack::Builder* builder,
++                          int depth, int max_depth) {
++        if (depth + 1 > max_depth) {
++            return Status::DataQualityError(strings::Substitute("JSON nesting depth exceeds maximum $0", max_depth));
++        }
+         if (is_object) {
+             builder->add(toStringRef(field_name), vpack::Value(vpack::ValueType::Object));
+         } else {
+@@ -126,20 +134,24 @@ class SimdJsonConverter {
+             faststring buffer;
+             auto key = field_unescaped_key_safe(field, &buffer);
+             auto value = field.value().value();
+-            RETURN_IF_ERROR(convert(value, key.value(), true, builder));
++            RETURN_IF_ERROR(convert(value, key.value(), true, builder, depth + 1, max_depth));
+         }
+         builder->close();
+         return Status::OK();
+     }
+ 
+-    static Status convert(SimdJsonArray arr, std::string_view field_name, bool is_object, vpack::Builder* builder) {
++    static Status convert(SimdJsonArray arr, std::string_view field_name, bool is_object, vpack::Builder* builder,
++                          int depth, int max_depth) {
++        if (depth + 1 > max_depth) {
++            return Status::DataQualityError(strings::Substitute("JSON nesting depth exceeds maximum $0", max_depth));
++        }
+         if (is_object) {
+             builder->add(toStringRef(field_name), vpack::Value(vpack::ValueType::Array));
+         } else {
+             builder->add(vpack::Value(vpack::ValueType::Array));
+         }
+         for (auto element : arr) {
+-            RETURN_IF_ERROR(convert(element.value(), {}, false, builder));
++            RETURN_IF_ERROR(convert(element.value(), {}, false, builder, depth + 1, max_depth));
+         }
+         builder->close();
+         return Status::OK();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #81780** (2026-10-28): [BugFix] Account buffered pass-through chunks in query and process memory (backport #80910) (@mergify[bot])
-- **PR #81764** (2026-10-28): [Enhancement][RB-424] Support rollups, synchronous MVs and sort-key changes on range tables with AUTO_INCREMENT (backport #81757) (@mergify[bot])
-- **PR #81760** (2026-10-28): [BugFix][RB-225] Keep Iceberg equality deletes applied when identity column optimize is off (@starrocks-bot[bot])
-- **PR #81759** (2026-10-28): [Enhancement][RB-225] Cut the Iceberg equality-delete anti join cost: fixed-width partition match and key filters on the delete scan (@starrocks-bot[bot])
-- **PR #81757** (2026-10-28): [Enhancement][RB-424] Support rollups, synchronous MVs and sort-key changes on range tables with AUTO_INCREMENT (@starrocks-bot[bot])
-- **PR #81755** (closed): [Tool] Set fe version to 4.2.0 (@huailiu1122)
+- **PR #81911** (closed): [UT] Check whole result columns with debug_string in BE tests (@trueeyu)
+- **PR #81907** (2026-10-30): [UT] Use ColumnTestHelper::build_column in BE tests (backport #81898) (@mergify[bot])
+- **PR #81898** (2026-10-30): [UT] Use ColumnTestHelper::build_column in BE tests (@trueeyu)
+- **PR #81896** (2026-10-30): [Tool] Codex review: recognize private StarRocks org members as trusted authors (@huailiu1122)
+- **PR #81895** (2026-10-30): [UT] Add ColumnTestHelper::build_array_column and use it in array function tests (backport #81890) (@mergify[bot])
+- **PR #81894** (2026-10-30): [BugFix][RB-841] Keep const IN-predicate value lists free of column refs (backport #81825) (@mergify[bot])
 
 ---
 
@@ -2771,66 +2366,31 @@ Co-authored-by: tqqq <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix][RB-654] Stop two Iceberg FE hangs: profile explain partition listing an
+## X. [BugFix][RB-833][CVE] Bump guava to 33.7.2 and snappy-java to 1.1.10.9 (#81859)
 
 **RULE**:
-When implementing operations in `fe/fe-core/src/main/java/com/starrocks/planner/IcebergScanNode.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fe/build.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `99d51e09`: [BugFix][RB-654] Stop two Iceberg FE hangs: profile explain partition listing and OSS read-ahead wait (#81711). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5618f1a4`: [BugFix][RB-833][CVE] Bump guava to 33.7.2 and snappy-java to 1.1.10.9 (#81859). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/fe-core/src/main/java/com/starrocks/planner/IcebergScanNode.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `fe/build.gradle.kts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-            appendPartitionsExplain(output, prefix);
-    // Lists every partition of the table and may plan all scan ranges. Skipped when the finished query's plan is
-    // rendered into its profile: nothing bounds that metadata read once the query has ended.
-    private void appendPartitionsExplain(StringBuilder output, String prefix) {
-        ConnectContext connectContext = ConnectContext.get();
-        if (connectContext != null && connectContext.isExplainForProfile()) {
-            return;
-        }
-        ConnectorMetadataRequestContext requestContext = new ConnectorMetadataRequestContext();
-        requestContext.setTableVersionRange(tvrVersionRange);
-        List<String> partitionNames = GlobalStateMgr.getCurrentState().getMetadataMgr().listPartitionNames(
-                icebergTable.getCatalogName(), icebergTable.getCatalogDBName(),
-                icebergTable.getCatalogTableName(), requestContext);
-        if (selectedPartitionCount == -1) {
-            if (scanRangeSource != null) {
-                // we have to consume all scan ranges to know how many partition been selected.
-                while (scanRangeSource.hasMoreOutput()) {
-                    scanRangeSour
+            implementation("com.google.code.findbugs:jsr305:3.0.2")
+            implementation("com.google.guava:guava:33.7.2-jre")
+            implementation("org.xerial.snappy:snappy-java:1.1.10.9")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-            ConnectorMetadataRequestContext requestContext = new ConnectorMetadataRequestContext();
-            requestContext.setTableVersionRange(tvrVersionRange);
-            List<String> partitionNames = GlobalStateMgr.getCurrentState().getMetadataMgr().listPartitionNames(
-                    icebergTable.getCatalogName(), icebergTable.getCatalogDBName(),
-                    icebergTable.getCatalogTableName(), requestContext);
-
-            if (selectedPartitionCount == -1) {
-                if (scanRangeSource != null) {
-                    // we have to consume all scan ranges to know how many partition been selected.
-                    while (scanRangeSource.hasMoreOutput()) {
-                        scanRangeSource.getOutputs(1000);
-                    }
-                    selectedPartitionCount = scanRangeSource.selectedPartitionCount();
-                } else {
-                    selectedPartitionCount = 0;
-                }
-            }
-
-            output.append(prefix).append(
-                    String.format("partitions=%s/%s", selectedPartitionCount,
-                            partitionNames.isEmpty() ? 1 : partitionNames.size()));
-            output.append("\n"
+            implementation("com.google.guava:guava:32.0.1-jre")
+            implementation("org.xerial.snappy:snappy-java:1.1.10.5")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `99d51e09` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5618f1a4` are properly handled with clean fallback behavior.

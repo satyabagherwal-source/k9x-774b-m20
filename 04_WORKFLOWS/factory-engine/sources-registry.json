@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T05:12:26.668Z",
-    "lastVerified": "2026-10-30T05:12:26.668Z",
+    "lastChecked": "2026-10-30T05:19:42.132Z",
+    "lastVerified": "2026-10-30T05:19:42.132Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -235,8 +235,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T04:48:10.328Z",
-    "lastVerified": "2026-10-30T04:48:10.328Z",
+    "lastChecked": "2026-10-30T05:19:34.412Z",
+    "lastVerified": "2026-10-30T05:19:34.412Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -468,9 +468,9 @@
   "smallstep-cli": {
     "name": "cli",
     "officialUrl": "https://github.com/smallstep/cli",
-    "lastChecked": "2026-10-29T22:07:02.773Z",
+    "lastChecked": "2026-10-30T05:19:29.339Z",
     "revisionIdentifier": "824bfd6b",
-    "lastVerified": "2026-10-29T22:07:02.773Z"
+    "lastVerified": "2026-10-30T05:19:29.339Z"
   },
   "milvus-io-milvus": {
     "name": "milvus-io/milvus",
@@ -3615,9 +3615,9 @@
   "chmln-sd": {
     "name": "sd",
     "officialUrl": "https://github.com/chmln/sd",
-    "lastChecked": "2026-10-28T13:03:27.714Z",
+    "lastChecked": "2026-10-30T05:19:19.257Z",
     "revisionIdentifier": "44febdf8",
-    "lastVerified": "2026-10-28T13:03:27.714Z"
+    "lastVerified": "2026-10-30T05:19:19.257Z"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
     "name": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -5475,14 +5475,14 @@
     "officialUrl": "https://github.com/StarRocks/starrocks",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-28T16:33:52.977Z",
-    "lastVerified": "2026-10-28T16:33:52.977Z",
+    "lastChecked": "2026-10-30T05:19:37.999Z",
+    "lastVerified": "2026-10-30T05:19:37.999Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "5309c3901a2225789354b5746b011c03cbfca1899343cba282348da73771a228",
+    "contentHash": "1815c077b520ce845bcd61f60c361ec30d9dbaf0e25b8890d07723b43d1374f3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 13,
+    "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5841,9 +5841,9 @@
   "camptocamp-terraboard": {
     "name": "terraboard",
     "officialUrl": "https://github.com/camptocamp/terraboard",
-    "lastChecked": "2026-10-28T17:28:09.290Z",
+    "lastChecked": "2026-10-30T05:19:26.791Z",
     "revisionIdentifier": "6f6b6b60",
-    "lastVerified": "2026-10-28T17:28:09.290Z"
+    "lastVerified": "2026-10-30T05:19:26.791Z"
   },
   "lindb-lindb": {
     "name": "lindb",
@@ -9103,5 +9103,19 @@
     "lastChecked": "2026-10-30T05:09:48.832Z",
     "revisionIdentifier": "4b060c7e",
     "lastVerified": "2026-10-30T05:09:48.832Z"
+  },
+  "crawlcove-crawlcove-sitemap-validator": {
+    "name": "crawlcove-sitemap-validator",
+    "officialUrl": "https://github.com/CrawlCove/crawlcove-sitemap-validator",
+    "lastChecked": "2026-10-30T05:19:21.739Z",
+    "revisionIdentifier": "8aeca12b",
+    "lastVerified": "2026-10-30T05:19:21.739Z"
+  },
+  "simonschubert-kai": {
+    "name": "Kai",
+    "officialUrl": "https://github.com/SimonSchubert/Kai",
+    "lastChecked": "2026-10-30T05:19:24.239Z",
+    "revisionIdentifier": "bd774d32",
+    "lastVerified": "2026-10-30T05:19:24.239Z"
   }
 }

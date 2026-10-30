@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T05:12:24.131Z",
+  "last_updated": "2026-10-30T05:19:39.602Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "5309c3901a2225789354b5746b011c03cbfca1899343cba282348da73771a228",
-      "verified_at": "2026-10-28T16:33:53.380Z",
+      "content_hash": "1815c077b520ce845bcd61f60c361ec30d9dbaf0e25b8890d07723b43d1374f3",
+      "verified_at": "2026-10-30T05:19:39.601Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T16:33:53.380Z"
+      "last_updated": "2026-10-30T05:19:39.602Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",

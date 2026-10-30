@@ -6112,3 +6112,4 @@
 | `CYCLE-20261030-ZXWL` | `2026-10-30T04:54:38.181Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5604` | Yes (`333a0dbb...`) |
 | `CYCLE-20261030-8MYF` | `2026-10-30T05:01:23.895Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5605` | Yes (`d854cbc7...`) |
 | `CYCLE-20261030-MSDX` | `2026-10-30T05:12:24.117Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5606, Rule 5607` | Yes (`e170651c...`) |
+| `CYCLE-20261030-W4EE` | `2026-10-30T05:19:39.590Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5608` | Yes (`1815c077...`) |
