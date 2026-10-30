@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T04:17:54.637Z",
+  "last_updated": "2026-10-30T04:25:25.355Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6621,14 +6621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mfontanini-presenterm",
-      "content_hash": "a419bb33f510cf60995efa906099efd60d1875a61a6964000eab1fa10d414a91",
-      "verified_at": "2026-10-28T12:01:57.423Z",
+      "content_hash": "f152cd42ec8d4c37ba1f2b7e871cfb33c0ee46dc7154c93962e77faab58ee2ec",
+      "verified_at": "2026-10-30T04:25:13.747Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T12:01:57.423Z"
+      "last_updated": "2026-10-30T04:25:13.747Z"
     },
     "ritz078/transform": {
       "repository": "ritz078/transform",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "59289a7f64515d0b6b5e836af1749143d89a0d3662716aa1070fe692f1cf27b2",
-      "verified_at": "2026-10-28T15:43:25.915Z",
+      "content_hash": "6f0ccb8ab6b31dfc30fb89cf48ab910e992e8f9febbc362349d59e00c426f11e",
+      "verified_at": "2026-10-30T04:25:25.354Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T15:43:25.915Z"
+      "last_updated": "2026-10-30T04:25:25.354Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T04:17:54.633Z",
-  "total_cycles_completed": 6079,
-  "total_learnings_persisted": 6079,
-  "total_rules_promoted": 5566,
+  "last_updated": "2026-10-30T04:25:25.350Z",
+  "total_cycles_completed": 6081,
+  "total_learnings_persisted": 6081,
+  "total_rules_promoted": 5568,
   "history": [
-    {
-      "timestamp": "2026-10-28T19:31:55.531Z",
-      "repository": "google/embeddinggemma-2",
-      "learningId": "learn-huggingface-google-embeddinggemma-2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T19:31:55.590Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T19:32:01.169Z",
       "repository": "tursodatabase/turso",
@@ -1403,6 +1389,20 @@
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T04:25:13.744Z",
+      "repository": "mfontanini/presenterm",
+      "learningId": "learn-github-mfontanini-presenterm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T04:25:25.350Z",
+      "repository": "apache/shardingsphere",
+      "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

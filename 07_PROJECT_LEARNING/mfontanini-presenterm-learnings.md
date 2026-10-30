@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source**: github ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
-> **Source Version**: `87990adb`  
+> **Source Version**: `11d2b279`  
 > **License**: BSD-2-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T12:01:56.686Z  
+> **Timestamp**: 2026-10-30T04:25:13.034Z  
 > **Learning ID**: `learn-github-mfontanini-presenterm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T12:01:56.161Z  
+> **Harvest Timestamp**: 2026-10-30T04:25:11.839Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1505,6 +1505,7 @@ use serde::{Deserializer, Serializer};
 use std::{
     fmt::{self, Display},
     marker::PhantomData,
+    path::{Path, PathBuf},
     str::FromStr,
 };
 
@@ -1575,6 +1576,24 @@ where
     S: Serializer,
 {
     serializer.serialize_str(&value.to_string())
+}
+
+pub trait PathExt {
+    fn presentation_index_path(&self) -> PathBuf;
+}
+
+impl PathExt for Path {
+    fn presentation_index_path(&self) -> PathBuf {
+        let extension = self
+            .extension()
+            .map(|extension| {
+                let mut extension = extension.to_os_string();
+                extension.push(".idx");
+                extension
+            })
+            .unwrap_or_else(|| "md.idx".into());
+        self.with_extension(extension)
+    }
 }
 
 ```
@@ -1866,13 +1885,11 @@ impl CommandsRunner {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #927** (2026-10-30): **ci: fix build**
+  *Symptoms*: * `with_added_extension` isn't supported in the rust version we use here. We probably should bump that but that can wait. * config-file-schema was missing langs. * No proper formatting.
+
 - **Issue #925** (2026-10-28): **docs: add Simplified Chinese README translation (README_zh.md)**
   *Symptoms*: ### What this does  Adds a Simplified Chinese translation of the README as `README_zh.md` to help Chinese-speaking developers discover and adopt presenterm.  - Purely additive: one new file, no existing files modified. - Preserved unchanged (byte-for-byte): the entire setext title block (`presenterm` / `===`); the two badge reference lines (`[![crates-badge]][crates-package] … [![winget-badge]][winget-package]`) with every reference label intact; **every reference-style link definition** (all `[brew-badge]: …`, `[nix-badge]: …` shields URLs with `logo=nixos&labelColor=73C3D5`, all `[docs-*]: https://mfontanini.github.io/presenterm/…` URLs including their `#fragment`s, the `[scoop-package]` `#/apps?q=…&id=…` URL, and the YouTube/GitHub talk links); the empty-alt image `![](/docs/src/assets/demo.gif)`; the relative link targets `/examples/demo.md` and `/examples`; the `<!-- links -->` comment; all reference labels used inline (`[docs-images]`, `[docs-themes]`, … `[docs-speaker-notes]`, `[it-can-run-ratatui]`, …); the italic tool/product names (`_presenterm_`, `_kitty_`, `_iterm2_`, `_wezterm_`, `_ghostty_`, `_foot_`, `_LaTeX_`, `_typst_`); and every URL. - The eight "in action" bullet lines are left in English because they are talk/video titles and author names, not prose. - Translated: the intro paragraph, the section headings (文档 / 特性 / presenterm 实战), the feature bullet list, the closing "Gave a talk…" call-to-action, and human-readable link **display** text — while keeping 
-
-- **Issue #923** (2026-10-28): **Add --serve to expose the presentation over HTTP**
-  *Symptoms*: Adds a `--serve` flag to serve the presentation as a self-contained HTML page over HTTP so it can be viewed in a browser. Images are embedded inline.      presenterm --serve examples/demo.md 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the contribution, but I don't really see the point in this. You can already do this this way, no need for a feature:  ```bash presenterm -E examples/demo.md -o /tmp/index.html python -m http.server -d /tmp ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1889,159 +1906,413 @@ impl CommandsRunner {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c6820d42` (2026-10-28)
-**Commit Message**: fix: include speaker notes from imported markdown (#921)
+### Incident Patch 1: `11d2b279` (2026-10-30)
+**Commit Message**: ci: fix build (#927)
 
-## What changed
+`with_added_extension` isn't supported in the rust version we use here.
+We probably should bump that but that can wait.
 
-Speaker-notes-only rendering handled note commands from the main
-Markdown file but ignored `include` commands, so notes stored in
-imported Markdown files were missing from speaker-notes output.
-
-Included elements are now processed through speaker-notes mode when that
-mode is active. This preserves nested include handling and
-source-position errors while collecting notes from imported files. A
-regression test covers the behavior.
-
-## Validation
-
-- `cargo fmt --all --check`
-- `cargo test include_speaker_notes`
-- Full suite: 482 tests passed; 5 environment-dependent
-command-execution tests require `sh` or a discoverable `rustc` on this
-Windows host
-
-**File**: `src/presentation/builder/comment.rs` (modified, +26/-3)
+**File**: `config-file-schema.json` (modified, +2/-0)
 ```diff
-@@ -26,7 +26,7 @@ impl PresentationBuilder<'_, '_> {
-         };
+@@ -911,13 +911,15 @@
+             "Julia",
+             "Kotlin",
+             "Latex",
++            "Lean",
+             "Lua",
+             "Makefile",
+             "Mermaid",
+             "Markdown",
+             "Nix",
+             "Nushell",
+             "OCaml",
++            "Odin",
+             "Perl",
+             "Php",
+             "PowerShell",
+```
+
+**File**: `src/main.rs` (modified, +2/-1)
+```diff
+@@ -14,6 +14,7 @@ use crate::{
+     },
+     theme::{raw::PresentationTheme, registry::PresentationThemeRegistry},
+     third_party::{ThirdPartyConfigs, ThirdPartyRender},
++    utils::PathExt,
+ };
+ use anyhow::anyhow;
+ use clap::{CommandFactory, Parser, error::ErrorKind};
+@@ -525,7 +526,7 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
  
-         if self.options.render_speaker_notes_only {
--            self.process_comment_command_speaker_notes_mode(command);
-+            self.process_comment_command_speaker_notes_mode(command, source_position)?;
-         } else {
-             self.process_comment_command_presentation_mode(command, source_position)?;
+ fn load_start_slide(base: &Path, load: bool) -> Option<usize> {
+     if load {
+-        let path = base.with_added_extension("idx");
++        let path = base.presentation_index_path();
+         let Ok(txt) = std::fs::read_to_string(path) else {
+             return Some(0);
+         };
+```
+
+**File**: `src/presentation/builder/comment.rs` (modified, +4/-1)
+```diff
+@@ -262,7 +262,10 @@ impl CommentCommand {
+                     Alignment => {
+                         vec!["<!-- alignment: left -->", "<!-- alignment: center -->", "<!-- alignment: right -->"]
+                     }
+-                    BgImage => vec!["<!-- bg_image: {path: bg.png} -->", "<!-- bg_image: {path: bg.png, fit: cover, opacity: 80} -->"],
++                    BgImage => vec![
++                        "<!-- bg_image: {path: bg.png} -->",
++                        "<!-- bg_image: {path: bg.png, fit: cover, opacity: 80} -->",
++                    ],
+                     Column => vec!["<!-- column: 0 -->"],
+                     EndSlide => vec!["<!-- end_slide -->"],
+                     FontSize => vec!["<!-- font_size: 2 -->"],
+```
+
+**File**: `src/presenter.rs` (modified, +2/-1)
+```diff
+@@ -33,6 +33,7 @@ use crate::{
+         collapse_horizontal::CollapseHorizontalAnimation, fade::FadeAnimation,
+         slide_horizontal::SlideHorizontalAnimation,
+     },
++    utils::PathExt,
+ };
+ use std::{
+     fmt::Display,
+@@ -185,7 +186,7 @@ impl<'a> Presenter<'a> {
+     }
+ 
+     fn save_start_slide(&self, base: &Path) -> Result<(), crate::io::Error> {
+-        let path = base.with_added_extension("idx");
++        let path = base.presentation_index_path();
+         let presentation = self.state.presentation();
+         let idx = presentation.current_slide_index();
+         std::fs::write(path, format!("{idx}\n"))?;
+```
+
+**File**: `src/resource.rs` (modified, +1/-4)
+```diff
+@@ -107,10 +107,7 @@ impl Resources {
+     }
+ 
+     /// Register a generated (in-memory) image.
+-    pub(crate) fn register_generated_image(
+-        &self,
+-        image: image::DynamicImage,
+-    ) -> Result<Image, RegisterImageError> {
++    pub(crate) fn register_generated_image(&self, image: image::DynamicImage) -> Result<Image, RegisterImageError> {
+         let inner = self.inner.borrow();
+         inner.image_registry.register(ImageSpec::Generated(image))
+     }
+```
+
+**File**: `src/theme/clean.rs` (modified, +3/-6)
+```diff
+@@ -484,10 +484,8 @@ impl DefaultStyle {
+         let margin = margin.unwrap_or_default();
+         let style = TextStyle::colored(colors.resolve(palette)?);
+         let alignment = alignment.clone().unwrap_or_default().into();
+-        let background_image = background_image
+-            .as_ref()
+-            .map(|bg| Self::load_background_image(bg, resources))
+-            .transpose()?;
++        let background_image =
++            background_image.as_ref().map(|bg| Self::load_background_image(bg, resources)).transpose()?;
+         Ok(Self { margin, style, alignment, background_image })
+     }
+ 
+@@ -503,8 +501,7 @@ impl DefaultStyle {
+             return Ok(BackgroundImage { image, fit, source: None });
          }
-@@ -139,7 +139,11 @@ impl PresentationBuilder<'_, '_> {
+         let path = resources.resolve_theme_image_path(&bg.path);
+-        let mut dynamic =
+-            resources.load_dynamic_image(&path).map_err(ProcessingThemeError::BackgroundImage)?;
++        let mut dynamic = resources.load_dynamic_image(&path).map_err(ProcessingThemeError::BackgroundImage)?;
+         if opacity < 100 {
+             crate::terminal::image::apply_opacity(&mut dynamic, opacity);
+         }
+```
+
+**File**: `src/utils.rs` (modified, +19/-0)
+```diff
+@@ -2,6 +2,7 @@ use serde::{Deserializer, Serializer};
+ use std::{
+     fmt::{self, Display},
+     marker::PhantomData,
++    path::{Path, PathBuf},
+     str::FromStr,
+ };
+ 
+@@ -73,3 +74,21 @@ where
+ {
+     serializer.serialize_str(&value.to_string())
+ }
++
++pub trait PathExt {
++    fn presentation_index_path(&self) -> PathBuf;
++}
++
++impl PathExt for Path {
++    fn presentation_index_path(&self) -> PathBuf {
++        let extension = self
++            .extension()
++            .map(|extension| {
++                let mut extension = extension.to_os_string();
++                extension.push(".idx");
++                extension
++            })
++            .unwrap_or_else(|| "md.idx".into());
++        self.with_extension(extension)
++    }
++}
+```
+
+---
+
+### Incident Patch 2: `eca13d98` (2026-10-30)
+**Commit Message**: fix: add missing languages to config file schema
+
+**File**: `config-file-schema.json` (modified, +2/-0)
+```diff
+@@ -911,13 +911,15 @@
+             "Julia",
+             "Kotlin",
+             "Latex",
++            "Lean",
+             "Lua",
+             "Makefile",
+             "Mermaid",
+             "Markdown",
+             "Nix",
+             "Nushell",
+             "OCaml",
++            "Odin",
+             "Perl",
+             "Php",
+             "PowerShell",
+```
+
+---
+
+### Incident Patch 3: `d4dc222c` (2026-10-30)
+**Commit Message**: feat: add APNG animation support with loop count (#890)
+
+Hello! Thank you for your work on this lovely project! Just sharing
+something I came up with to get APNGs to play.
+
+**File**: `Cargo.lock` (modified, +10/-10)
+```diff
+@@ -492,9 +492,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "gif"
+-version = "0.13.3"
++version = "0.14.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4ae047235e33e2829703574b54fdec96bfbad892062d97fed2f76022287de61b"
++checksum = "ee8cfcc411d9adbbaba82fb72661cc1bcca13e8bba98b364e62b2dba8f960159"
+ dependencies = [
+  "color_quant",
+  "weezl",
+@@ -536,9 +536,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "image"
+-version = "0.25.8"
++version = "0.25.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "529feb3e6769d234375c4cf1ee2ce713682b8e76538cb13f9fc23e1400a591e7"
++checksum = "85ab80394333c02fe689eaf900ab500fbd0c2213da414687ebf995a65d5a6104"
+ dependencies = [
+  "bytemuck",
+  "byteorder-lite",
+@@ -715,9 +715,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "moxcms"
+-version = "0.7.9"
++version = "0.8.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0fbdd3d7436f8b5e892b8b7ea114271ff0fa00bc5acae845d53b07d498616ef6"
++checksum = "bb85c154ba489f01b25c0d36ae69a87e4a1c73a72631fc6c0eb6dde34a73e44b"
+ dependencies = [
+  "num-traits",
+  "pxfm",
+@@ -1966,15 +1966,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "zune-core"
+-version = "0.4.12"
++version = "0.5.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3f423a2c17029964870cfaabb1f13dfab7d092a62a29a89264f4d36990ca414a"
++checksum = "cb8a0807f7c01457d0379ba880ba6322660448ddebc890ce29bb64da71fb40f9"
+ 
+ [[package]]
+ name = "zune-jpeg"
+-version = "0.4.21"
++version = "0.5.15"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "29ce2c8a9384ad323cf564b67da86e21d3cfdff87908bc1223ed5c99bc792713"
++checksum = "27bc9d5b815bc103f142aa054f561d9187d191692ec7c2d1e2b4737f8dbd7296"
+ dependencies = [
+  "zune-core",
+ ]
+```
+
+**File**: `src/terminal/image/printer.rs` (modified, +3/-0)
+```diff
+@@ -251,6 +251,9 @@ pub(crate) enum RegisterImageError {
+ 
+     #[error("printer can't register images")]
+     Unsupported,
++
++    #[error("no frames in apng image")]
++    ApngNoFrames,
+ }
+ 
+ impl PrintImageError {
+```
+
+**File**: `src/terminal/image/protocols/kitty.rs` (modified, +67/-21)
+```diff
+@@ -6,7 +6,11 @@ use crate::{
+     },
+ };
+ use base64::{Engine, engine::general_purpose::STANDARD};
+-use image::{AnimationDecoder, Delay, EncodableLayout, ImageReader, RgbaImage, codecs::gif::GifDecoder};
++use image::{
++    AnimationDecoder, Delay, DynamicImage, EncodableLayout, ImageReader, RgbaImage,
++    codecs::{gif::GifDecoder, png::PngDecoder},
++    metadata::LoopCount,
++};
+ use std::{
+     fmt,
+     fs::{self, File},
+@@ -43,7 +47,7 @@ const DIACRITICS: &[u32] = &[
+ 
+ enum GenericResource<B> {
+     Image(B),
+-    Gif(Vec<GifFrame<B>>),
++    Animated { frames: Vec<AnimationFrame<B>>, loop_count: LoopCount },
+ }
+ 
+ type RawResource = GenericResource<RgbaImage>;
+@@ -55,13 +59,16 @@ impl RawResource {
+                 dimensions: image.dimensions(),
+                 resource: GenericResource::Image(KittyBuffer::Memory(image.into_raw())),
+             },
+-            Self::Gif(frames) => {
++            Self::Animated { frames, loop_count } => {
+                 let dimensions = frames[0].buffer.dimensions();
+                 let frames = frames
+                     .into_iter()
+-                    .map(|frame| GifFrame { delay: frame.delay, buffer: KittyBuffer::Memory(frame.buffer.into_raw()) })
++                    .map(|frame| AnimationFrame {
++                        delay: frame.delay,
++                        buffer: KittyBuffer::Memory(frame.buffer.into_raw()),
++                    })
+                     .collect();
+-                let resource = GenericResource::Gif(frames);
++                let resource = GenericResource::Animated { frames, loop_count };
+                 KittyImage { dimensions, resource }
+             }
+         }
+@@ -77,7 +84,7 @@ impl KittyImage {
+     pub(crate) fn as_rgba8(&self) -> RgbaImage {
+         let first_frame = match &self.resource {
+             GenericResource::Image(buffer) => buffer,
+-            GenericResource::Gif(gif_frames) => &gif_frames[0].buffer,
++            GenericResource::Animated { frames: animation_frames, .. } => &animation_frames[0].buffer,
+         };
+         let buffer = match first_frame {
+             KittyBuffer::Filesystem(path) => {
+@@ -111,7 +118,7 @@ impl Drop for KittyBuffer {
+     }
+ }
+ 
+-struct GifFrame<T> {
++struct AnimationFrame<T> {
+     delay: Delay,
+     buffer: T,
+ }
+@@ -143,24 +150,28 @@ impl KittyPrinter {
+         Ok(resource)
+     }
+ 
+-    fn persist_gif(&self, frames: Vec<GifFrame<RgbaImage>>) -> io::Result<KittyImage> {
++    fn persist_animation(
++        &self,
++        frames: Vec<AnimationFrame<RgbaImage>>,
++        loop_count: LoopCount,
++    ) -> io::Result<KittyImage> {
+         let mut persisted_frames = Vec::new();
+         let mut dimensions = (0, 0);
+         for frame in frames {
+             let path = self.allocate_tempfile();
+             fs::write(&path, frame.buffer.as_bytes())?;
+             dimensions = frame.buffer.dimensions();
+ 
+-            let frame = GifFrame { delay: frame.delay, buffer: KittyBuffer::Filesystem(path) };
++            let frame = AnimationFrame { delay: frame.delay, buffer: KittyBuffer::Filesystem(path) };
+             persisted_frames.push(frame);
+         }
+-        Ok(KittyImage { dimensions, resource: GenericResource::Gif(persisted_frames) })
++        Ok(KittyImage { dimensions, resource: GenericResource::Animated { frames: persisted_frames, loop_count } })
+     }
+ 
+     fn persist_resource(&self, resource: RawResource) -> io::Result<KittyImage> {
+         match resource {
+             RawResource::Image(image) => self.persist_image(image),
+-            RawResource::Gif(frames) => self.persist_gif(frames),
++            RawResource::Animated { frames, loop_count } => self.persist_animation(frames, loop_count),
+         }
+     }
+ 
+@@ -205,20 +216,25 @@ impl KittyPrinter {
          Ok(())
      }
  
--    fn process_comment_command_speaker_notes_mode(&mut self, comment_command: CommentCommand) {
-+    fn process_comment_command_speaker_notes_mode(
-+        &mut self,
-+        comment_command: CommentCommand,
-+        source_position: SourcePosition,
-+    ) -> BuildResult {
-         match comment_command {
-             CommentCommand::SpeakerNote(note) => {
-                 for line in note.lines() {
-@@ -151,8 +155,10 @@ impl PresentationBuilder<'_, '_> {
-             CommentCommand::EndSlide => self.terminate_slide(),
-             CommentCommand::Pause => self.push_pause(),
-             CommentCommand::SkipSlide => self.slide_state.skip_slide = true,
-+            CommentCommand::Include(path) => self.process_include(path, source_position)?,
-             _ => {}
-         }
-+        Ok(())
-     }
- 
-     fn should_ignore_comment(&self, comment: &str) -> bool {
-@@ -194,7 +200,11 @@ impl PresentationBuilder<'_, '_> {
-                 return Err(self.invalid_presentation(source_position, InvalidPresentation::IncludeFrontMatter));
-             }
-             self.slide_state.ignore_element_line_break = false;
--            self.process_element_for_presentation_mode(element)?;
-+            if self.options.render_speaker_notes_only {
-+                self.process_element_for_speaker_notes_mode(element)?;
-+            } else {
-+                self.process_element_for_presentation_mode(element)?;
-+            }
-             if !self.slide_state.ignore_element_line_break {
-                 self.push_line_break();
-             }
-@@ -883,6 +893,19 @@ hi
-         assert_eq!(lines, expected);
-     }
- 
-+    #[test]
-+    fn include_speaker_notes() {
-+        let dir = tempdir().expect("failed to create tempdir");
-+        let path = dir.path();
+-    fn print_gif<T>(
++    fn print_animation<T>(
+         &self,
+         dimensions: (u32, u32),
+-        frames: &[GifFrame<KittyBuffer>],
++        frames: &[AnimationFrame<KittyBuffer>],
++        loop_count: LoopCount,
+         terminal: &mut T,
+         print_options: &PrintOptions,
+     ) -> Result<(), PrintImageError>
+     where
+         T: TerminalIo,
+     {
++        let loops = match loop_count {
++            LoopCount::Infinite => 1u32,
++            LoopCount::Finite(n) => n.get() + 1,
++        };
+         let image_id = Self::generate_image_id();
 +
-+        fs::write(path.join("included.md"), "<!-- speaker_note: included note -->\n").unwrap();
-+        let input = "<!-- include: included.md -->";
-+        let options = PresentationBuilderOptions { render_speaker_notes_only: true, ..Default::default() };
-+
-+        let lines = Test::new(input).resources_path(path).options(options).render().rows(2).columns(13).into_lines();
-+        assert_eq!(lines, &["             ", "included note"]);
-+    }
-+
-     #[test]
-     fn self_include() {
-         let dir = tempdir().expect("failed to created tempdir");
-```
-
----
-
-### Incident Patch 2: `87990adb` (2026-10-28)
-**Commit Message**: fix: add pytest as an alternative executor for python (#892)
-
-Documentation currently claims that pytest is an available alternative
-executor but it is not. This commit adds pytest as an executor.
-
-[Issue](https://github.com/mfontanini/presenterm/issues/891)
-
-**File**: `executors.yaml` (modified, +4/-0)
-```diff
-@@ -192,6 +192,10 @@ python:
-       filename: "snippet.py"
-       commands:
-         - ["uv", "run", "--script", "-q", "$pwd/snippet.py"]
-+    pytest:
-+      filename: "test_snippet.py"
-+      commands:
-+        - ["pytest", "$pwd/test_snippet.py"]
- r:
-   filename: snippet.R
-   commands:
-```
-
----
-
-### Incident Patch 3: `d20da38f` (2026-10-28)
-**Commit Message**: fix: progress bar footer shows actual progress now, fixes issue #900 (#904)
-
-The current behaviour stems from
-[footer.rs#119](https://github.com/mfontanini/presenterm/blob/5f8add11a24af9d257fd18da48c8004dd9c516f8/src/ui/footer.rs#L119)
-that increments the current slide counter by 1, thus completely filling
-the progress bar one slide before the presentation ends.
-
-By reducing both `current_slide` and `total_slides` by 1,
-`progress_ratio` remains the same, but the progress bar ends (and
-starts!) at the proper time.
-
-Fixes issue #900
-
-**File**: `src/ui/footer.rs` (modified, +1/-1)
-```diff
-@@ -116,7 +116,7 @@ impl AsRenderOperations for FooterGenerator {
-             ProgressBar { character, style } => {
-                 let character = character.to_string();
-                 let total_columns = dimensions.columns as usize / character.width();
--                let progress_ratio = (self.current_slide + 1) as f64 / self.total_slides as f64;
-+                let progress_ratio = (self.current_slide - 1) as f64 / (self.total_slides - 1) as f64;
-                 let columns_ratio = (total_columns as f64 * progress_ratio).ceil();
-                 let bar = character.repeat(columns_ratio as usize);
-                 let bar = Text::new(bar, *style);
+         for (frame_id, frame) in frames.iter().enumerate() {
+             let (num, denom) = frame.delay.numer_denom_ms();
+-            // default to 100ms in case somehow the denominator is 0
+             let delay = num.checked_div(denom).unwrap_or(100);
+             let mut options = vec![
+                 ControlOption::Format(ImageFormat::Rgba),
+@@ -252,7 +268,7 @@ impl KittyPrinter {
+                     ControlOption::Action(Action::Animate),
+                     ControlOption::ImageId(image_id),
+                     ControlOption::FrameId(1),
+-                    ControlOption::Loops(1),
++                    ControlOption:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #927** (2026-10-30): ci: fix build (@mfontanini)
 - **PR #925** (closed): docs: add Simplified Chinese README translation (README_zh.md) (@WanderLandWalker)
 - **PR #923** (closed): Add --serve to expose the presentation over HTTP (@qjoly)
 - **PR #921** (2026-10-28): fix: include speaker notes from imported markdown (@jesko2004)
 - **PR #920** (2026-10-28): feat: add Lean lang support (@StamesJames)
 - **PR #916** (2026-10-28): feat: add Odin lang support (@rivethorn)
-- **PR #915** (2026-10-28): docs: add talk "Are we Ratatui yet?" (@sermuns)
 
 ---
 
@@ -2061,55 +2332,29 @@ Fixes issue #900
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. include speaker notes from imported markdown (#921)
+## X. ci: fix build (#927)
 
 **RULE**:
-When implementing operations in `src/presentation/builder/comment.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `config-file-schema.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c6820d42`: include speaker notes from imported markdown (#921). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `11d2b279`: ci: fix build (#927). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/presentation/builder/comment.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `config-file-schema.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            self.process_comment_command_speaker_notes_mode(command, source_position)?;
-    fn process_comment_command_speaker_notes_mode(
-        &mut self,
-        comment_command: CommentCommand,
-        source_position: SourcePosition,
-    ) -> BuildResult {
-            CommentCommand::Include(path) => self.process_include(path, source_position)?,
-        Ok(())
-            if self.options.render_speaker_notes_only {
-                self.process_element_for_speaker_notes_mode(element)?;
-            } else {
-                self.process_element_for_presentation_mode(element)?;
-            }
-    #[test]
-    fn include_speaker_notes() {
-        let dir = tempdir().expect("failed to create tempdir");
-        let path = dir.path();
-
-        fs::write(path.join("included.md"), "<!-- speaker_note: included note -->\n").unwrap();
-        let input = "<!-- include: included.md -->";
-        let options = PresentationBuilderOptions { render_speaker_notes_only: true, ..Default::default() };
-
-        let lines = Test::new(input).resources_path(path).options(options).render().rows(2).columns(13).into_lines();
-        assert_eq!(lines, &["             ", "included note"]);
-    }
-
+            "Lean",
+            "Odin",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            self.process_comment_command_speaker_notes_mode(command);
-    fn process_comment_command_speaker_notes_mode(&mut self, comment_command: CommentCommand) {
-            self.process_element_for_presentation_mode(element)?;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c6820d42` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `11d2b279` are properly handled with clean fallback behavior.

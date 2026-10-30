@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-SICG",
-    "timestamp": "2026-10-28T00:33:34.432Z",
-    "repository": "CrawlCove/xml-sitemap-validator",
-    "learningId": "learn-github-crawlcove-xml-sitemap-validator",
-    "contentHash": "b62e6a50ba48954690fda691764b76d585b0684fa746aead186cc31ab78f7187",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-0X3U",
-    "timestamp": "2026-10-28T00:40:06.810Z",
-    "repository": "primer/react",
-    "learningId": "learn-github-primer-react",
-    "contentHash": "f190b7cc4d51f7f2f22d34dc2b672a4764dcd1626392e02654cba075f77e83bf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-0Z0E",
     "timestamp": "2026-10-28T00:40:09.278Z",
     "repository": "ratatui/ratatui",
@@ -7492,6 +7462,36 @@
     "contentHash": "36e4a6f3e657758c7be7ac583d346a09207e36ef911b5412f05314ca5967cf67",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-Y4G6",
+    "timestamp": "2026-10-30T04:25:13.734Z",
+    "repository": "mfontanini/presenterm",
+    "learningId": "learn-github-mfontanini-presenterm",
+    "contentHash": "f152cd42ec8d4c37ba1f2b7e871cfb33c0ee46dc7154c93962e77faab58ee2ec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-YDEL",
+    "timestamp": "2026-10-30T04:25:25.341Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "6f0ccb8ab6b31dfc30fb89cf48ab910e992e8f9febbc362349d59e00c426f11e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

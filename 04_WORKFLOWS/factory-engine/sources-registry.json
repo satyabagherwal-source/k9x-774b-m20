@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T04:17:57.186Z",
-    "lastVerified": "2026-10-30T04:17:57.186Z",
+    "lastChecked": "2026-10-30T04:25:27.900Z",
+    "lastVerified": "2026-10-30T04:25:27.900Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -330,9 +330,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T03:35:11.290Z",
+    "lastChecked": "2026-10-30T04:25:21.212Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T03:35:11.290Z"
+    "lastVerified": "2026-10-30T04:25:21.212Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1988,9 +1988,9 @@
   "mitmproxy-mitmproxy": {
     "name": "mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
-    "lastChecked": "2026-10-29T16:13:36.456Z",
+    "lastChecked": "2026-10-30T04:25:16.296Z",
     "revisionIdentifier": "df14a286",
-    "lastVerified": "2026-10-29T16:13:36.456Z"
+    "lastVerified": "2026-10-30T04:25:16.296Z"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -3259,14 +3259,14 @@
     "officialUrl": "https://github.com/mfontanini/presenterm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T12:01:56.161Z",
-    "lastVerified": "2026-10-28T12:01:56.161Z",
+    "lastChecked": "2026-10-30T04:25:11.839Z",
+    "lastVerified": "2026-10-30T04:25:11.839Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mfontanini-presenterm",
-    "contentHash": "a419bb33f510cf60995efa906099efd60d1875a61a6964000eab1fa10d414a91",
+    "contentHash": "f152cd42ec8d4c37ba1f2b7e871cfb33c0ee46dc7154c93962e77faab58ee2ec",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5028,12 +5028,12 @@
     "officialUrl": "https://github.com/apache/shardingsphere",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-28T15:43:25.037Z",
-    "lastVerified": "2026-10-28T15:43:25.037Z",
+    "lastChecked": "2026-10-30T04:25:24.465Z",
+    "lastVerified": "2026-10-30T04:25:24.465Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "59289a7f64515d0b6b5e836af1749143d89a0d3662716aa1070fe692f1cf27b2",
+    "contentHash": "6f0ccb8ab6b31dfc30fb89cf48ab910e992e8f9febbc362349d59e00c426f11e",
     "promotedRulesCount": 1,
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
@@ -5444,9 +5444,9 @@
   "checkmarx-kics": {
     "name": "kics",
     "officialUrl": "https://github.com/Checkmarx/kics",
-    "lastChecked": "2026-10-28T16:33:40.760Z",
+    "lastChecked": "2026-10-30T04:25:13.771Z",
     "revisionIdentifier": "0f99087a",
-    "lastVerified": "2026-10-28T16:33:40.760Z"
+    "lastVerified": "2026-10-30T04:25:13.771Z"
   },
   "starrocks-starrocks": {
     "name": "StarRocks/starrocks",
@@ -8983,5 +8983,19 @@
     "lastChecked": "2026-10-30T04:15:19.454Z",
     "revisionIdentifier": "4f9f820e",
     "lastVerified": "2026-10-30T04:15:19.454Z"
+  },
+  "a4csi-schema-org-validate": {
+    "name": "schema-org-validate",
+    "officialUrl": "https://github.com/a4csi/schema-org-validate",
+    "lastChecked": "2026-10-30T04:25:08.750Z",
+    "revisionIdentifier": "79086e29",
+    "lastVerified": "2026-10-30T04:25:08.750Z"
+  },
+  "obytes-react-native-template-obytes": {
+    "name": "react-native-template-obytes",
+    "officialUrl": "https://github.com/obytes/react-native-template-obytes",
+    "lastChecked": "2026-10-30T04:25:11.240Z",
+    "revisionIdentifier": "fd9b358e",
+    "lastVerified": "2026-10-30T04:25:11.240Z"
   }
 }

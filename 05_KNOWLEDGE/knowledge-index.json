@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T04:17:54.543Z",
+  "last_updated": "2026-10-30T04:25:25.267Z",
   "total_verified_learnings": 1171,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2273,8 +2273,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "5c3acbfd",
-      "content_hash": "59289a7f64515d0b6b5e836af1749143d89a0d3662716aa1070fe692f1cf27b2",
+      "source_version": "858b475a",
+      "content_hash": "6f0ccb8ab6b31dfc30fb89cf48ab910e992e8f9febbc362349d59e00c426f11e",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -2327,6 +2327,11 @@
           "number": 5330,
           "title": "Build current table binder contexts lazily in ProjectionsSegmentBinder (#40364)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5600,
+          "title": "OWASP database caching and nightly timeout (#40388)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2334,7 +2339,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T15:43:25.794Z",
+      "verified_at": "2026-10-30T04:25:25.248Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37575,8 +37580,8 @@
       "slug": "mfontanini-presenterm",
       "platform": "github",
       "source_url": "https://github.com/mfontanini/presenterm",
-      "source_version": "87990adb",
-      "content_hash": "a419bb33f510cf60995efa906099efd60d1875a61a6964000eab1fa10d414a91",
+      "source_version": "11d2b279",
+      "content_hash": "f152cd42ec8d4c37ba1f2b7e871cfb33c0ee46dc7154c93962e77faab58ee2ec",
       "dossier_path": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
       "promoted_rules": [
@@ -37589,6 +37594,11 @@
           "number": 5273,
           "title": "include speaker notes from imported markdown (#921)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5599,
+          "title": "ci: fix build (#927)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37596,7 +37606,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T12:01:57.302Z",
+      "verified_at": "2026-10-30T04:25:13.610Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150340,6 +150350,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T04:17:54.524Z"
+    },
+    "rule-5599": {
+      "learning_id": "rule-5599",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5599,
+      "title": "ci: fix build (#927)",
+      "source_url": "https://github.com/mfontanini/presenterm",
+      "source_version": "11d2b279",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T04:25:13.610Z"
+    },
+    "rule-5600": {
+      "learning_id": "rule-5600",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5600,
+      "title": "OWASP database caching and nightly timeout (#40388)",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "858b475a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T04:25:25.248Z"
     }
   },
   "aliases": {

@@ -6111,3 +6111,5 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `fe517486` | Multi-dimensional audit evidence | 2026-10-30T03:59:44.940Z |
 | `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `11a07420` | Multi-dimensional audit evidence | 2026-10-30T04:00:39.293Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `5a05ac11` | Multi-dimensional audit evidence | 2026-10-30T04:17:54.626Z |
+| `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `11d2b279` | Multi-dimensional audit evidence | 2026-10-30T04:25:13.738Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `858b475a` | Multi-dimensional audit evidence | 2026-10-30T04:25:25.344Z |

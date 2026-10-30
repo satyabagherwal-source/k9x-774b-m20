@@ -4333,10 +4333,10 @@
     "repository": "mfontanini/presenterm",
     "platform": "github",
     "sourceUrl": "https://github.com/mfontanini/presenterm",
-    "sourceVersion": "87990adb",
+    "sourceVersion": "11d2b279",
     "license": "BSD-2-Clause",
-    "contentHash": "a419bb33f510cf60995efa906099efd60d1875a61a6964000eab1fa10d414a91",
-    "lastHarvestedAt": "2026-10-28T12:01:57.413Z",
+    "contentHash": "f152cd42ec8d4c37ba1f2b7e871cfb33c0ee46dc7154c93962e77faab58ee2ec",
+    "lastHarvestedAt": "2026-10-30T04:25:13.738Z",
     "learningId": "learn-github-mfontanini-presenterm"
   },
   "ritz078-transform": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "5c3acbfd",
+    "sourceVersion": "858b475a",
     "license": "Apache-2.0",
-    "contentHash": "59289a7f64515d0b6b5e836af1749143d89a0d3662716aa1070fe692f1cf27b2",
-    "lastHarvestedAt": "2026-10-28T15:43:25.907Z",
+    "contentHash": "6f0ccb8ab6b31dfc30fb89cf48ab910e992e8f9febbc362349d59e00c426f11e",
+    "lastHarvestedAt": "2026-10-30T04:25:25.344Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
