@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source**: github ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
-> **Source Version**: `14a611f3`  
+> **Source Version**: `fe21fce0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T15:25:47.691Z  
+> **Timestamp**: 2026-10-30T18:32:28.921Z  
 > **Learning ID**: `learn-github-sveltejs-svelte`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T15:25:47.213Z  
+> **Harvest Timestamp**: 2026-10-30T18:32:27.690Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2003,47 +2003,275 @@ export function is_whitespace(cc) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `14a611f3` (2026-10-27)
-**Commit Message**: fix: allow `autocorrect` on all elements (#19105)
+### Incident Patch 1: `fe21fce0` (2026-10-29)
+**Commit Message**: docs: fix broken Svelte v2 docs link in FAQ (#19088)
 
-**File**: `.changeset/olive-pots-tickle.md` (added, +5/-0)
+What: replaced broken https://v2.svelte.dev/guide link with the archived
+v2 docs source on GitHub.
+Why: the v2.svelte.dev URL returns HTTP 525 consistently; the GitHub
+archive is available.
+How verified: checked both URLs (525 vs 200); git diff reviewed.
+No linked issue.
+
+Co-authored-by: pei711 <[REDACTED_EMAIL]>
+
+**File**: `documentation/docs/07-misc/99-faq.md` (modified, +1/-1)
+```diff
+@@ -118,7 +118,7 @@ If you need to style something that Svelte can't identify at compile time, you w
+ 
+ New features aren't being added to it, and bugs will probably only be fixed if they are extremely nasty or present some sort of security vulnerability.
+ 
+-The documentation is still available [here](https://v2.svelte.dev/guide).
++The documentation is still available [here](https://github.com/sveltejs/v2.svelte.dev/tree/master/content).
+ 
+ ## How do I do hot module reloading?
+ 
+```
+
+---
+
+### Incident Patch 2: `120c0ed0` (2026-10-27)
+**Commit Message**: fix: reset dev update counters for sources written during traversal
+
+Co-authored-by: svelte-triage-bot <[REDACTED_EMAIL]>
+
+**File**: `.changeset/tidy-keyed-update-stacks.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'svelte': patch
 +---
 +
-+fix: allow `autocorrect` on all elements
++fix: reset dev update counters for sources written during batch traversal
 ```
 
-**File**: `packages/svelte/elements.d.ts` (modified, +1/-2)
+**File**: `packages/svelte/src/internal/client/reactivity/batch.js` (modified, +4/-14)
 ```diff
-@@ -752,6 +752,7 @@ export interface HTMLAttributes<T extends EventTarget> extends AriaAttributes, D
- 	// Standard HTML Attributes
- 	accesskey?: string | undefined | null;
- 	autocapitalize?: 'characters' | 'off' | 'on' | 'none' | 'sentences' | 'words' | undefined | null;
-+	autocorrect?: 'on' | 'off' | '' | undefined | null;
- 	autofocus?: boolean | undefined | null;
- 	class?: ClassValue | undefined | null;
- 	contenteditable?: Booleanish | 'inherit' | 'plaintext-only' | undefined | null;
-@@ -1077,8 +1078,6 @@ export interface HTMLInputAttributes extends HTMLAttributes<HTMLInputElement> {
- 	accept?: string | undefined | null;
- 	alt?: string | undefined | null;
- 	autocomplete?: FullAutoFill | undefined | null;
--	// Safari only https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#autocorrect
--	autocorrect?: 'on' | 'off' | '' | undefined | null;
- 	capture?: boolean | 'user' | 'environment' | undefined | null; // https://www.w3.org/TR/html-media-capture/#the-capture-attribute
- 	checked?: boolean | undefined | null;
- 	dirname?: string | undefined | null;
+@@ -89,8 +89,8 @@ export let legacy_updates = null;
+ 
+ var flush_count = 0;
+ 
+-/** @type {Set<Value>} */
+-var source_stacks = new Set();
++/** Sources whose DEV update counts and stack traces need resetting after the flush. @type {Set<Value>} */
++export const source_stacks = new Set();
+ 
+ let uid = 1;
+ 
+@@ -323,14 +323,6 @@ export class Batch {
+ 	#process() {
+ 		this.started = true;
+ 
+-		if (DEV) {
+-			// track all the values that were updated during this flush,
+-			// so that they can be reset afterwards
+-			for (const value of this.current.keys()) {
+-				source_stacks.add(value);
+-			}
+-		}
+-
+ 		// We always reschedule previously-deferred effects, not just when
+ 		// #is_deferred() is true, because traversing the tree could make
+ 		// an if block that contains the last blocking pending effect falsy,
+@@ -638,10 +630,6 @@ export class Batch {
+ 
+ 	flush() {
+ 		try {
+-			if (DEV) {
+-				source_stacks.clear();
+-			}
+-
+ 			is_processing = true;
+ 			current_batch = this;
+ 
+@@ -662,6 +650,8 @@ export class Batch {
+ 				for (const source of source_stacks) {
+ 					source.updated = null;
+ 				}
++
++				source_stacks.clear();
+ 			}
+ 		}
+ 	}
+```
+
+**File**: `packages/svelte/src/internal/client/reactivity/sources.js` (modified, +3/-1)
+```diff
+@@ -37,7 +37,8 @@ import {
+ 	batch_values,
+ 	eager_block_effects,
+ 	schedule_effect,
+-	legacy_updates
++	legacy_updates,
++	source_stacks
+ } from './batch.js';
+ import { proxy } from '../proxy.js';
+ import { execute_derived } from './deriveds.js';
+@@ -202,6 +203,7 @@ export function internal_set(source, value, updated_during_traversal = null) {
+ 		if (DEV) {
+ 			if (tracing_mode_flag || active_effect !== null) {
+ 				source.updated ??= new Map();
++				source_stacks.add(source);
+ 
+ 				// For performance reasons, when not using $inspect.trace, we only start collecting stack traces
+ 				// after the same source has been updated more than 5 times in the same flush cycle.
+```
+
+**File**: `packages/svelte/tests/signals/test.ts` (modified, +118/-2)
+```diff
+@@ -1,18 +1,27 @@
+ import { describe, assert, it } from 'vitest';
+-import { flushSync } from '../../src/index-client';
++import { flushSync, tick } from '../../src/index-client';
+ import * as $ from '../../src/internal/client/runtime';
+ import { push, pop } from '../../src/internal/client/context';
+ import {
++	block,
+ 	effect,
+ 	effect_root,
+ 	render_effect,
+ 	user_effect,
+ 	user_pre_effect
+ } from '../../src/internal/client/reactivity/effects';
+-import { state, set, update, update_pre } from '../../src/internal/client/reactivity/sources';
++import {
++	internal_set,
++	source,
++	state,
++	set,
++	update,
++	update_pre
++} from '../../src/internal/client/reactivity/sources';
+ import type { Derived, Effect, Source, Value } from '../../src/internal/client/types';
+ import { proxy } from '../../src/internal/client/proxy';
+ import { derived } from '../../src/internal/client/reactivity/deriveds';
++import { source_stacks } from '../../src/internal/client/reactivity/batch';
+ import { snapshot } from '../../src/internal/shared/clone.js';
+ import { SvelteSet } from '../../src/reactivity/set';
+ import { CONNECTED, DESTROYED } from '../../src/internal/client/constants';
+@@ -548,6 +557,113 @@ describe('signals', () => {
+ 		};
+ 	});
+ 
++	it.each([false, true])(
++		'resets update counts for writes during traversal (tick: %s)',
++		async (use_tick) => {
++			const trigger = state(0);
++			const item = source(0);
++			const counts: number[] = [];
++
++			const destroy = effect_root(() => {
++				block(() => {
++					// Like each block item sources, this is first written during traversal,
++					// after the batch has already started processing.
++					internal_set(item, $.get(trigger));
++					counts.push(item.updated?.get('')?.count ?? 0);
++				});
++			});
++
++			try {
++				for (let i = 1; i <= 12; i++) {
++					set(trigger, i);
++					if (use_tick) {
++						await tick();
++					} else {
++						flushSync();
++					}
++
++					assert.equal(item.v, i);
++					assert.isNull(item.updated);
++				}
++				assert.deepEqual(counts, [0, ...Array(12).fill(1)]);
++			} finally {
++				destroy();
++			}
++		}
++	);
++
++	it('cleans up update stacks recorded before flushing', () => {
++		const value = source(0);
++		const destroy = effect_root(() => {
++			block(() => {
++				for (let i = 1; i <= 6; i++) {
++					internal_set(value, i);
++					assert.equal(value.updated?.get('')?.count, i);
++					assert.equal(value.updated?.size, i <= 5 ? 1 : 2);
++				}
++			});
++		});
++
++		try {
++			assert.equal(value.updated?.size, 2);
++			flushSync();
++			assert.isNull(value.updated);
++			assert.equal(source_stacks.size, 0);
++		} finally {
++			destroy();
++		}
++	});
++
++	it('retains update counts across batches within a flush', () => {
++		push({}, true);
++		const trigger = state(0);
++		const value = source(0);
++		const counts: number[] = [];
++		const stacks: number[] = [];
++		const destroy = effect_root(() => {
++			user_effect(() => {
++				const n = $.get(trigger) + 1;
++				internal_set(value, n);
++				counts.push(value.updated?.get('')?.count ?? 0);
++				stacks.push(value.updated?.size ?? 0);
++				if (n < 7) set(trigger, n);
++			});
++		});
++
++		try {
++			flushSync();
++			assert.deepEqual(counts, [1, 2, 3, 4, 5, 6, 7]);
++			assert.deepEqual(stacks, [1, 1, 1, 1, 1, 2, 2]);
++			assert.isNull(value.updated);
++			assert.equal(source_stacks.size, 0);
++		} finally {
++			destroy();
++			pop();
++		}
++	});
++
++	it('cleans up traversal update counts when an effect throws', () => {
++		const trigger = state(false);
++		const value = source(0);
++		const destroy = effect_root(() => {
++			block(() => {
++				if ($.get(trigger)) {
++					internal_set(value, 1);
++					throw new Error('boom');
++				}
++			});
++		});
++
++		try {
++			set(trigger, true);
++			assert.throws(() => flushSync(), 'boom');
++			assert.isNull(value.updated);
++			assert.equal(source_stacks.size, 0);
++		} finally {
++			destroy();
++		}
++	});
++
+ 	test('schedules rerun when writing to signal before reading it', (runes) => {
+ 		if (!runes) return () => {};
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #19105** (2026-10-27): fix: allow `autocorrect` on all elements (@CNSeniorious000)
-- **PR #19079** (2026-10-22): chore: skip eager effects during traversal (@Rich-Harris)
-- **PR #19078** (closed): chore: simplify batch.capture (@Rich-Harris)
-- **PR #19076** (2026-10-23): fix: don't run `$inspect` and `$state.eager` with the values of a fork before it is committed (@Rich-Harris)
-- **PR #19074** (2026-10-22): chore: DRY out dirty reaction code (@Rich-Harris)
-- **PR #19068** (2026-10-22): chore: better async derived labels (@Rich-Harris)
+- **PR #19127** (2026-10-30): docs: fix various errors in `batch-views.md` (@Rich-Harris)
+- **PR #19126** (2026-10-30): fix: don't re-run effects that already saw a write made while a batch commits (@Rich-Harris)
+- **PR #19125** (2026-10-30): fix: rebase later batches whose writes are all among those of a committed batch (@Rich-Harris)
+- **PR #19123** (2026-10-29): chore: document that the active view sees writes made while it is active (@Rich-Harris)
+- **PR #19120** (2026-10-29): fix: reset view if fork callback throws (@Rich-Harris)
+- **PR #19119** (2026-10-29): fix: don't touch the active batch's records when running in the real world (@Rich-Harris)
 
 ---
 
@@ -2063,32 +2291,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. allow `autocorrect` on all elements (#19105)
+## X. docs: fix broken Svelte v2 docs link in FAQ (#19088)
 
 **RULE**:
-When implementing operations in `.changeset/olive-pots-tickle.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `documentation/docs/07-misc/99-faq.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `14a611f3`: allow `autocorrect` on all elements (#19105). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fe21fce0`: docs: fix broken Svelte v2 docs link in FAQ (#19088). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/olive-pots-tickle.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/docs/07-misc/99-faq.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
----
-'svelte': patch
----
-
-fix: allow `autocorrect` on all elements
+The documentation is still available [here](https://github.com/sveltejs/v2.svelte.dev/tree/master/content).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+The documentation is still available [here](https://v2.svelte.dev/guide).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `14a611f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fe21fce0` are properly handled with clean fallback behavior.

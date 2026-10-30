@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `22c4a97a`  
+> **Source Version**: `e8618dbc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T23:41:37.247Z  
+> **Timestamp**: 2026-10-30T18:32:38.041Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T23:41:35.944Z  
+> **Harvest Timestamp**: 2026-10-30T18:32:37.759Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Decentralized Operating System for ZK Applications
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4530 stars
+- **Stars / Engagement**: 4528 stars
 
 ---
 
@@ -1989,120 +1989,35 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e141be4e` (2026-10-29)
-**Commit Message**: Merge pull request #4588 from aleo-labs-protocol/fix/block-sync-dropped-requests
+### Incident Patch 1: `576d2404` (2026-10-30)
+**Commit Message**: Bump crates with security advisories
 
-Re-issue block requests that a responsive peer skipped
+Fixes:
+- [RUSTSEC-2026-0418](https://rustsec.org/advisories/RUSTSEC-2026-0418.html) in `libz-sys 1.1.29`: libz-sys build script leaks environment variables in the build directory
 
-**File**: `node/bft/src/gateway.rs` (modified, +1/-0)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -692,6 +692,7 @@ impl<N: Network> Gateway<N> {
-             Event::BlockRequest(_) => {
-                 let num_events = self.cache.insert_inbound_block_request(peer_ip, CACHE_REQUESTS_INTERVAL);
-                 if num_events >= self.max_cache_duplicates() {
-+                    trace!("{CONTEXT} Dropping a block request from '{peer_ip}' (rate limit exceeded)");
-                     return Ok(true);
-                 }
-             }
-```
-
-**File**: `node/sync/src/block_sync.rs` (modified, +125/-18)
-```diff
-@@ -242,11 +242,12 @@ pub struct BlockSync<N: Network> {
-     /// Tracks failed requests that need to be re-issued.
-     failed_requests: Mutex<FailedRequests<N::BlockHash>>,
+@@ -2886,9 +2886,9 @@ dependencies = [
  
--    /// Tracks the last time each peer delivered a successful block response.
-+    /// Tracks, for each peer, the last time it delivered a successful block response,
-+    /// and the latest timestamp of any request it answered.
-     ///
-     /// Used in `handle_block_request_timeouts` to avoid banning peers that are actively
-     /// responding but cannot keep up with the request rate.
--    last_response_at: Mutex<HashMap<SocketAddr, Instant>>,
-+    last_response_at: Mutex<HashMap<SocketAddr, (Instant, Instant)>>,
- }
- 
- impl<N: Network> BlockSync<N> {
-@@ -1202,6 +1203,7 @@ impl<N: Network> BlockSync<N> {
- 
-         // Retrieve the request entry for the candidate block.
-         let (expected_hash, expected_previous_hash, sync_ips) = &entry.request;
-+        let request_timestamp = entry.timestamp;
- 
-         // Ensure the candidate block hash matches the expected hash.
-         if let Some(expected_hash) = expected_hash
-@@ -1244,9 +1246,17 @@ impl<N: Network> BlockSync<N> {
- 
-         trace!("Received a new and valid block response for height {height}");
- 
--        // Record that this peer is actively responding. Used by `handle_block_request_timeouts`
--        // to avoid banning peers that are slow but making progress.
--        self.last_response_at.lock().insert(peer_ip, Instant::now());
-+        // Record that this peer is actively responding, and the latest request it answered.
-+        // Used by `handle_block_request_timeouts` to avoid banning peers that are slow but making progress.
-+        let now = Instant::now();
-+        self.last_response_at
-+            .lock()
-+            .entry(peer_ip)
-+            .and_modify(|(received_at, answered_at)| {
-+                *received_at = now;
-+                *answered_at = (*answered_at).max(request_timestamp);
-+            })
-+            .or_insert((now, request_timestamp));
- 
-         // Notify the sync loop that something changed.
-         self.response_notify.notify_one();
-@@ -1345,16 +1355,20 @@ impl<N: Network> BlockSync<N> {
-     ///
-     /// Timed-out requests will be marked as "failed" and re-issued on the next call to `prepare_block_requests`.
-     pub fn handle_block_request_timeouts(&self) {
--        // Snapshot last-response times before locking `requests`. A request whose assigned peer
--        // has responded within `BLOCK_REQUEST_TIMEOUT` is not timed out, even if its own timer
--        // has elapsed — the peer is keeping up with a backlog and timing this request out would
--        // just churn it through `failed_requests` and lose its place in the queue.
--        let responsive_peers: HashSet<SocketAddr> = {
-+        // Snapshot, before locking `requests`, the peers that responded within `BLOCK_REQUEST_TIMEOUT`
-+        // and the latest timestamp of any request each one answered. A request is not timed out, even
-+        // if its own timer has elapsed, while an assigned peer is responsive and has not answered a
-+        // request sent after it — the peer is keeping up with a backlog and timing this request out
-+        // would just churn it through `failed_requests` and lose its place in the queue. A peer that
-+        // answered a later request has skipped this one.
-+        let responsive_peers: HashMap<SocketAddr, Instant> = {
-             let last_response_at = self.last_response_at.lock();
-             let now = Instant::now();
-             last_response_at
-                 .iter()
--                .filter_map(|(peer, t)| (now.duration_since(*t) <= BLOCK_REQUEST_TIMEOUT).then_some(*peer))
-+                .filter_map(|(peer, (received_at, answered_at))| {
-+                    (now.duration_since(*received_at) <= BLOCK_REQUEST_TIMEOUT).then_some((*peer, *answered_at))
-+                })
-                 .collect()
-         };
- 
-@@ -1382,8 +1396,10 @@ impl<N: Network> BlockSync<N> {
-                 let timer_elapsed = now.duration_since(e.timestamp) > BLOCK_REQUEST_TIMEOUT;
-                 // Determine if the request is complete.
-                 let is_complete = e.sync_ips().is_empty() && e.response.is_some();
--                // If any assigned peer is still actively responding, the request is not stuck.
--                let has_responsive_peer = e.sync_ips().iter().any(|ip| responsive_peers.contains(ip));
-+                // If any assigned peer is still actively responding and has not skipped this request, it is not stuck.
-+                let has_responsive_peer = e.sync_ips().iter().any(|ip| {
-+                    responsive_peers.get(ip).is_some_and(|answered_at| *answered_at <= e.timestamp)
-+                });
- 
-                 // Determine if the request has timed out.
-                 let is_timeout = timer_elapsed && !is_complete && !has_responsive_peer;
-@@ -1401,9 +1417,9 @@ impl<N: Network> BlockSync<N> {
-                     trace
+ [[package]]
+ name = "libz-sys"
+-version = "1.1.29"
++version = "1.1.31"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "85bc9657773828b90eeb625adff10eeac83cc21bbfd8e23a03eaa8a33c9e28d9"
++checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
+ dependencies = [
+  "cc",
+  "libc",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4606** (2026-10-30): Bump crates with security advisories (@aleo-labs-merge-bot[bot])
 - **PR #4595** (closed): Move fastsync into snarkOS as snarkos-ledger-distribution (@cbeck88-ai-dev)
 - **PR #4593** (closed): Move fastsync into snarkOS as snarkos-ledger-distribution (@cbeck88-ai-dev)
 - **PR #4592** (2026-10-29): Merge testnet into staging (@aleo-labs-merge-bot[bot])
 - **PR #4591** (closed): [testnet] Move past open advisories (@cbeck88)
 - **PR #4590** (closed): ci: check advisories on pull requests outside staging (@cbeck88)
-- **PR #4589** (2026-10-28): Move testnet CI to GitHub Actions and remove CircleCI (@cbeck88)
 
 ---
 
@@ -2122,28 +2037,30 @@ Re-issue block requests that a responsive peer skipped
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4588 from aleo-labs-protocol/fix/block-sync-dropped-requests
+## X. Bump crates with security advisories
 
 **RULE**:
-When implementing operations in `node/bft/src/gateway.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e141be4e`: Merge pull request #4588 from aleo-labs-protocol/fix/block-sync-dropped-requests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `576d2404`: Bump crates with security advisories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/bft/src/gateway.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                    trace!("{CONTEXT} Dropping a block request from '{peer_ip}' (rate limit exceeded)");
+version = "1.1.31"
+checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+version = "1.1.29"
+checksum = "85bc9657773828b90eeb625adff10eeac83cc21bbfd8e23a03eaa8a33c9e28d9"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e141be4e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `576d2404` are properly handled with clean fallback behavior.

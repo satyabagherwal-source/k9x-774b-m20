@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T18:25:44.839Z",
-    "lastVerified": "2026-10-30T18:25:44.839Z",
+    "lastChecked": "2026-10-30T18:32:41.026Z",
+    "lastVerified": "2026-10-30T18:32:41.026Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -340,9 +340,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T18:00:08.206Z",
+    "lastChecked": "2026-10-30T18:32:35.866Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T18:00:08.206Z"
+    "lastVerified": "2026-10-30T18:32:35.866Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1072,22 +1072,21 @@
     "revisionIdentifier": "e2db61bd"
   },
   "provablehq-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T13:28:37.774Z",
-    "lastVerified": "2026-10-30T13:28:37.774Z",
+    "lastChecked": "2026-10-30T18:32:37.759Z",
+    "lastVerified": "2026-10-30T18:32:37.759Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "5cc1f7c77d8c26226f31348c7d4cd767ca6e46c51d849cdb669036d5e31baff3",
+    "contentHash": "9b05e7410c8d68c9ac4a9db0e2f581464ce191382c2279b8f727b9f91ba2d272",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "22c4a97a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -2780,9 +2779,9 @@
   "pinecone-io-examples": {
     "name": "examples",
     "officialUrl": "https://github.com/pinecone-io/examples",
-    "lastChecked": "2026-10-29T01:24:48.108Z",
+    "lastChecked": "2026-10-30T18:32:33.102Z",
     "revisionIdentifier": "db002421",
-    "lastVerified": "2026-10-29T01:24:48.108Z"
+    "lastVerified": "2026-10-30T18:32:33.102Z"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
     "name": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -3517,11 +3516,21 @@
     "lastVerified": "2026-10-28T12:08:47.007Z"
   },
   "dosco-graphjin": {
-    "name": "graphjin",
+    "name": "dosco/graphjin",
     "officialUrl": "https://github.com/dosco/graphjin",
-    "lastChecked": "2026-10-29T10:59:00.649Z",
-    "revisionIdentifier": "b60d3fc5",
-    "lastVerified": "2026-10-29T10:59:00.649Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-30T18:32:34.184Z",
+    "lastVerified": "2026-10-30T18:32:34.184Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-dosco-graphjin",
+    "contentHash": "fd7e17c514aaa5a336791674b2e66748872502fcd1a3effcffebfc373ab5035c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "seekstorm-seekstorm": {
     "name": "SeekStorm",
@@ -7162,9 +7171,9 @@
   "killercup-cargo-edit": {
     "name": "cargo-edit",
     "officialUrl": "https://github.com/killercup/cargo-edit",
-    "lastChecked": "2026-10-28T20:15:36.703Z",
+    "lastChecked": "2026-10-30T18:32:20.554Z",
     "revisionIdentifier": "5cf6c0ba",
-    "lastVerified": "2026-10-28T20:15:36.703Z"
+    "lastVerified": "2026-10-30T18:32:20.554Z"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
     "name": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -10611,5 +10620,29 @@
     "lastChecked": "2026-10-30T18:25:26.956Z",
     "revisionIdentifier": "b75268ca",
     "lastVerified": "2026-10-30T18:25:26.956Z"
+  },
+  "sveltejs-svelte": {
+    "name": "sveltejs/svelte",
+    "officialUrl": "https://github.com/sveltejs/svelte",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-30T18:32:27.690Z",
+    "lastVerified": "2026-10-30T18:32:27.690Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-sveltejs-svelte",
+    "contentHash": "098168d8626fbdec00d4f4043453a8f2e7000075a978503e4e252123624163f6",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jaywcjlove-devhub": {
+    "name": "DevHub",
+    "officialUrl": "https://github.com/jaywcjlove/DevHub",
+    "lastChecked": "2026-10-30T18:32:25.603Z",
+    "revisionIdentifier": "15d258ec",
+    "lastVerified": "2026-10-30T18:32:25.603Z"
   }
 }

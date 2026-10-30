@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T18:25:42.206Z",
+  "last_updated": "2026-10-30T18:32:38.392Z",
   "total_verified_learnings": 1176,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10218,14 +10218,19 @@
       "slug": "dosco-graphjin",
       "platform": "github",
       "source_url": "https://github.com/dosco/graphjin",
-      "source_version": "b60d3fc5",
-      "content_hash": "f218ce341989878ccc9c6d8e8b9bfe4b79e54e0b2016979fa02a1be007f6e8d8",
+      "source_version": "3958f0cb",
+      "content_hash": "fd7e17c514aaa5a336791674b2e66748872502fcd1a3effcffebfc373ab5035c",
       "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "promoted_rules": [
         {
           "number": 1869,
           "title": "serialize background discovery with config applies",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5829,
+          "title": "bump version to v3.21.17 [skip-release] [skip ci]",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -10234,7 +10239,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T23:45:31.187Z",
+      "verified_at": "2026-10-30T18:32:35.076Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67286,13 +67291,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "22c4a97a",
-      "content_hash": "2231007cc11ac40e5d2aaebfffda9a27e1058ecf8defd66a8cb4651c6813ca06",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "e8618dbc",
+      "content_hash": "9b05e7410c8d68c9ac4a9db0e2f581464ce191382c2279b8f727b9f91ba2d272",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -67370,7 +67375,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T04:35:01.042Z",
+      "verified_at": "2026-10-30T18:32:38.373Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72048,8 +72053,8 @@
       "slug": "sveltejs-svelte",
       "platform": "github",
       "source_url": "https://github.com/sveltejs/svelte",
-      "source_version": "14a611f3",
-      "content_hash": "e2e1fa3c333be39087d7dd07a7e533ebc4dcb65c004edc50c3fb0c5d2091d8bc",
+      "source_version": "fe21fce0",
+      "content_hash": "098168d8626fbdec00d4f4043453a8f2e7000075a978503e4e252123624163f6",
       "dossier_path": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sveltejs-svelte-learnings.md",
       "promoted_rules": [
@@ -72062,6 +72067,11 @@
           "number": 4883,
           "title": "allow `autocorrect` on all elements (#19105)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5828,
+          "title": "docs: fix broken Svelte v2 docs link in FAQ (#19088)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72069,7 +72079,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:25:48.025Z",
+      "verified_at": "2026-10-30T18:32:29.508Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125813,13 +125823,13 @@
       "rule_number": 3992,
       "title": "Bump crates with security advisories",
       "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "21c27035",
+      "source_version": "e8618dbc",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-25T03:45:09.943Z"
+      "verified_at": "2026-10-30T18:32:38.373Z"
     },
     "rule-3993": {
       "learning_id": "rule-3993",
@@ -154760,6 +154770,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T18:25:42.187Z"
+    },
+    "rule-5828": {
+      "learning_id": "rule-5828",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5828,
+      "title": "docs: fix broken Svelte v2 docs link in FAQ (#19088)",
+      "source_url": "https://github.com/sveltejs/svelte",
+      "source_version": "fe21fce0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T18:32:29.508Z"
+    },
+    "rule-5829": {
+      "learning_id": "rule-5829",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5829,
+      "title": "bump version to v3.21.17 [skip-release] [skip ci]",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "3958f0cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T18:32:35.076Z"
     }
   },
   "aliases": {

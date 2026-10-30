@@ -6271,3 +6271,6 @@ Every entry in this ledger must capture:
 | `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `9067b20c` | Multi-dimensional audit evidence | 2026-10-30T18:25:28.441Z |
 | `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `7a8ed58c` | Multi-dimensional audit evidence | 2026-10-30T18:25:30.380Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8e1490fa` | Multi-dimensional audit evidence | 2026-10-30T18:25:42.285Z |
+| `learn-github-sveltejs-svelte` | `https://github.com/sveltejs/svelte` | `fe21fce0` | Multi-dimensional audit evidence | 2026-10-30T18:32:29.610Z |
+| `learn-github-dosco-graphjin` | `https://github.com/dosco/graphjin` | `3958f0cb` | Multi-dimensional audit evidence | 2026-10-30T18:32:35.176Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `e8618dbc` | Multi-dimensional audit evidence | 2026-10-30T18:32:38.480Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T18:25:42.295Z",
+  "last_updated": "2026-10-30T18:32:38.490Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "2231007cc11ac40e5d2aaebfffda9a27e1058ecf8defd66a8cb4651c6813ca06",
-      "verified_at": "2026-10-30T04:35:01.152Z",
+      "content_hash": "9b05e7410c8d68c9ac4a9db0e2f581464ce191382c2279b8f727b9f91ba2d272",
+      "verified_at": "2026-10-30T18:32:38.489Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T04:35:01.152Z"
+      "last_updated": "2026-10-30T18:32:38.489Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -5661,14 +5661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dosco-graphjin",
-      "content_hash": "f218ce341989878ccc9c6d8e8b9bfe4b79e54e0b2016979fa02a1be007f6e8d8",
-      "verified_at": "2026-10-18T23:45:31.243Z",
+      "content_hash": "fd7e17c514aaa5a336791674b2e66748872502fcd1a3effcffebfc373ab5035c",
+      "verified_at": "2026-10-30T18:32:35.185Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-18T23:45:31.243Z"
+      "last_updated": "2026-10-30T18:32:35.185Z"
     },
     "gravitl/netmaker": {
       "repository": "gravitl/netmaker",
@@ -14991,14 +14991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sveltejs-svelte",
-      "content_hash": "e2e1fa3c333be39087d7dd07a7e533ebc4dcb65c004edc50c3fb0c5d2091d8bc",
-      "verified_at": "2026-10-27T15:25:48.110Z",
+      "content_hash": "098168d8626fbdec00d4f4043453a8f2e7000075a978503e4e252123624163f6",
+      "verified_at": "2026-10-30T18:32:29.619Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T15:25:48.110Z"
+      "last_updated": "2026-10-30T18:32:29.619Z"
     },
     "solidjs/solid": {
       "repository": "solidjs/solid",

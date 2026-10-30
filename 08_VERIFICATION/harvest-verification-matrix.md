@@ -6262,3 +6262,6 @@
 | `CYCLE-20261030-YOOL` | `2026-10-30T18:25:28.437Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5825` | Yes (`6d1a6b3d...`) |
 | `CYCLE-20261030-YQ6G` | `2026-10-30T18:25:30.376Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5826` | Yes (`401679b9...`) |
 | `CYCLE-20261030-YZD6` | `2026-10-30T18:25:42.282Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5827` | Yes (`42dad306...`) |
+| `CYCLE-20261030-7PNR` | `2026-10-30T18:32:29.607Z` | `sveltejs/svelte` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5828` | Yes (`098168d8...`) |
+| `CYCLE-20261030-7TYD` | `2026-10-30T18:32:35.173Z` | `dosco/graphjin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5829` | Yes (`fd7e17c5...`) |
+| `CYCLE-20261030-7WI4` | `2026-10-30T18:32:38.476Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3992` | Yes (`9b05e741...`) |

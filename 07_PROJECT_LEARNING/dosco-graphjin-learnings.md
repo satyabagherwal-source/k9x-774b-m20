@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source**: github ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
-> **Source Version**: `b60d3fc5`  
+> **Source Version**: `3958f0cb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:45:31.015Z  
+> **Timestamp**: 2026-10-30T18:32:34.506Z  
 > **Learning ID**: `learn-github-dosco-graphjin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:45:29.701Z  
+> **Harvest Timestamp**: 2026-10-30T18:32:34.184Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One governed graph for AI agents — GraphQL + MCP over your databases, files, APIs, and code
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3213 stars
+- **Stars / Engagement**: 3225 stars
 
 ---
 
@@ -2730,276 +2730,269 @@ func
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a44cbd2` (2026-10-07)
-**Commit Message**: fix: serialize background discovery with config applies
+### Incident Patch 1: `3958f0cb` (2026-10-29)
+**Commit Message**: chore: bump version to v3.21.17 [skip-release] [skip ci]
 
-Background discovery after a config apply ran without the config lock.
-A second apply or a shutdown then changed the same service fields, and
-the race detector failed the source-scoped reload tests on master.
-
-Background discovery now holds the config lock. A newer apply or a
-shutdown cancels a pending run, and shutdown closes discovery under the
-lock.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `serv/api.go` (modified, +3/-3)
+**File**: `agent/go.mod` (modified, +1/-1)
 ```diff
-@@ -137,6 +137,8 @@ type graphjinService struct {
- 	watchCoord           watchCoordinator
- 	watchSnoozeMu        sync.Mutex
- 	watchSnoozeLastSweep time.Time
-+	discoveryBgMu        sync.Mutex
-+	discoveryBgCancel    context.CancelFunc
- 	revisionSignalWG     sync.WaitGroup
- 	revisionConsumerWG   sync.WaitGroup
- 	catalogMu            sync.Mutex
-@@ -443,9 +445,7 @@ func (s *graphjinService) closeServResources() {
- 	if s.semantic != nil {
- 		s.semantic.Close()
- 	}
--	if s.discovery != nil {
--		s.discovery.Close()
--	}
-+	s.closeDiscovery()
- 	if s.closeFn != nil {
- 		s.closeFn()
- 	}
-```
-
-**File**: `serv/discovery_generations.go` (modified, +41/-6)
-```diff
-@@ -398,13 +398,48 @@ func (m *discoveryGenerationManager) RefreshNow(ctx context.Context) error {
- 	}
- }
- 
--var discoveryReconfigureMu sync.Mutex
--
-+// reconfigureDiscoveryInBackground runs discovery after a config apply returns.
-+// It holds the config lock, so the next apply waits for it. A newer apply or
-+// shutdown cancels a pending run.
- func (s *graphjinService) reconfigureDiscoveryInBackground(ctx context.Context) {
--	discoveryReconfigureMu.Lock()
--	defer discoveryReconfigureMu.Unlock()
--	if err := s.reconfigureDiscoveryAfterConfigChange(ctx); err != nil && s.log != nil {
--		s.log.Warnf("coordinated discovery refresh error: %s", redactRuntimeError(err))
-+	s = s.liveService()
-+	ctx, cancel := context.WithCancel(context.WithoutCancel(ctx))
-+	s.discoveryBgMu.Lock()
-+	if s.discoveryBgCancel != nil {
-+		s.discoveryBgCancel()
-+	}
-+	s.discoveryBgCancel = cancel
-+	s.discoveryBgMu.Unlock()
-+
-+	s.revisionConsumerWG.Add(1)
-+	go func() {
-+		defer s.revisionConsumerWG.Done()
-+		defer cancel()
-+		lock := s.configLocker()
-+		lock.Lock()
-+		defer lock.Unlock()
-+		if ctx.Err() != nil {
-+			return
-+		}
-+		if err := s.reconfigureDiscoveryAfterConfigChange(ctx); err != nil && ctx.Err() == nil && s.log != nil {
-+			s.log.Warnf("coordinated discovery refresh error: %s", redactRuntimeError(err))
-+		}
-+	}()
-+}
-+
-+// closeDiscovery cancels a pending background run and closes discovery once
-+// a running one releases the config lock.
-+func (s *graphjinService) closeDiscovery() {
-+	s.discoveryBgMu.Lock()
-+	if s.discoveryBgCancel != nil {
-+		s.discoveryBgCancel()
-+	}
-+	s.discoveryBgMu.Unlock()
-+	lock := s.configLocker()
-+	lock.Lock()
-+	defer lock.Unlock()
-+	if s.discovery != nil {
-+		s.discovery.Close()
- 	}
- }
+@@ -5,7 +5,7 @@ go 1.25.0
+ require (
+ 	github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd
+ 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
+-	github.com/dosco/graphjin/core/v3 v3.21.16
++	github.com/dosco/graphjin/core/v3 v3.21.17
+ 	github.com/gofrs/flock v0.13.0
+ )
  
 ```
 
-**File**: `serv/mcp_config.go` (modified, +1/-1)
+**File**: `auth/go.mod` (modified, +1/-1)
 ```diff
-@@ -880,7 +880,7 @@ func (ms *mcpServer) handleUpdateCurrentConfig(ctx context.Context, req mcp.Call
- 	refreshDiscovery := false
- 	defer func() {
- 		if refreshDiscovery {
--			go ms.service.reconfigureDiscoveryInBackground(context.WithoutCancel(ctx))
-+			ms.service.reconfigureDiscoveryInBackground(ctx)
- 		}
- 	}()
+@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/auth/v3
+ go 1.25.0
+ 
+ require (
+-	github.com/dosco/graphjin/core/v3 v3.21.16
++	github.com/dosco/graphjin/core/v3 v3.21.17
+ 	github.com/golang-jwt/jwt/v5 v5.3.1
+ 	github.com/lestrrat-go/jwx v1.2.31
+ 	github.com/stretchr/testify v1.11.1
+```
+
+**File**: `cmd/go.mod` (modified, +5/-5)
+```diff
+@@ -5,13 +5,13 @@ go 1.25.5
+ require (
+ 	github.com/brianvoe/gofakeit/v6 v6.28.0
+ 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
+-	github.com/dosco/graphjin/agent/v3 v3.21.16
+-	github.com/dosco/graphjin/auth/v3 v3.21.16
+-	github.com/dosco/graphjin/core/v3 v3.21.16
++	github.com/dosco/graphjin/agent/v3 v3.21.17
++	github.com/dosco/graphjin/auth/v3 v3.21.17
++	github.com/dosco/graphjin/core/v3 v3.21.17
+ 	github.com/dosco/graphjin/examples v0.0.0
+ 	github.com/dosco/graphjin/hostedemu v0.0.0
+ 	github.com/dosco/graphjin/mongodriver v0.0.0
+-	github.com/dosco/graphjin/serv/v3 v3.21.16
++	github.com/dosco/graphjin/serv/v3 v3.21.17
+ 	github.com/gosimple/slug v1.15.0
+ 	github.com/jackc/pgx/v5 v5.7.6
+ 	github.com/jvatic/goja-babel v0.0.0-20250906111304-06c40d6b931b
+@@ -111,7 +111,7 @@ require (
+ 	github.com/docker/docker v28.5.2+incompatible // indirect
+ 	github.com/docker/go-connections v0.6.0 // indirect
+ 	github.com/docker/go-units v0.5.0 // indirect
+-	github.com/dosco/graphjin/plugin/otel/v3 v3.21.16 // indirect
++	github.com/dosco/graphjin/plugin/otel/v3 v3.21.17 // indirect
+ 	github.com/duckdb/duckdb-go-bindings v0.10502.0 // indirect
+ 	github.com/duckdb/duckdb-go-bindings/lib/darwin-amd64 v0.10502.0 // indirect
+ 	github.com/duckdb/duckdb-go-bindings/lib/darwin-arm64 v0.10502.0 // indirect
+```
+
+**File**: `conf/go.mod` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/conf/v3
+ go 1.25.0
+ 
+ require (
+-	github.com/dosco/graphjin/core/v3 v3.21.16
++	github.com/dosco/graphjin/core/v3 v3.21.17
+ 	gopkg.in/yaml.v3 v3.0.1
+ )
  
 ```
 
----
-
-### Incident Patch 2: `7df5acb6` (2026-10-10)
-**Commit Message**: fix: keep operator lists out of the operator_set search summary
-
-The per-family operator lists in the operator.filters summary made the
-row rank into unrelated seed searches. It pushed help:runtime out of the
-watch delivery seed, so the security gate intercepted the write and the
-replayed script looped on duplicate catalog calls. Move the lists to the
-row's Arguments, which agents read but search does not index.
-
-**File**: `core/internal/catalog/language.go` (modified, +16/-16)
+**File**: `package-lock.json` (modified, +2/-2)
 ```diff
-@@ -1,10 +1,6 @@
- package catalog
+@@ -1,12 +1,12 @@
+ {
+   "name": "graphjin",
+-  "version": "3.21.16",
++  "version": "3.21.17",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "graphjin",
+-      "version": "3.21.16",
++      "version": "3.21.17",
+       "hasInstallScript": true,
+       "license": "Apache-2.0",
+       "dependencies": {
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "graphjin",
+-  "version": "3.21.16",
++  "version": "3.21.17",
+   "description": "GraphJin — one governed graph for AI agents: GraphQL + MCP over your databases, files, APIs, and code",
+   "bin": {
+     "graphjin": "bin/graphjin.js"
+```
+
+**File**: `plugin/otel/go.mod` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/plugin/otel/v3
+ go 1.25.0
  
--import (
--	"strings"
--
--	"github.com/dosco/graphjin/core/v3/whereop"
--)
-+import "github.com/dosco/graphjin/core/v3/whereop"
- 
- type Feature struct {
- 	ID             string
-@@ -258,17 +254,21 @@ var languageFeatures = []Feature{
- 		SuggestedNext:  []string{"query_catalog", "graphjin_repair"},
- 	},
- 	{
--		ID:    "operator.filters",
--		Kind:  "operator_set",
--		Name:  "filter operators",
--		Scope: "where",
--		Summary: "GraphJin where operators are typed by column shape. " +
--			"Numeric and date/timestamp columns: " + strings.Join(whereop.FamilyOperators(whereop.Temporal), ", ") + ". " +
--			"Text columns: " + strings.Join(whereop.FamilyOperators(whereop.Text), ", ") + ". " +
--			"Boolean and uuid columns: " + strings.Join(whereop.FamilyOperators(whereop.Boolean), ", ") + ". " +
--			"JSON columns: " + strings.Join(whereop.FamilyOperators(whereop.JSON), ", ") + ". " +
--			"Array columns: " + strings.Join(whereop.FamilyOperators(whereop.Array), ", ") + ". " +
--			"Spatial columns: " + strings.Join(whereop.FamilyOperators(whereop.Geometry), ", ") + ".",
-+		ID:      "operator.filters",
-+		Kind:    "operator_set",
-+		Name:    "filter operators",
-+		Scope:   "where",
-+		Summary: "GraphJin where operators are typed by column shape.",
-+		// Kept out of Summary: Summary is search-indexed, and the full lists
-+		// pull this row into unrelated seed searches.
-+		Arguments: []FeatureArg{
-+			{Name: "numeric and date/timestamp columns", Values: whereop.FamilyOperators(whereop.Temporal)},
-+			{Name: "text columns", Values: whereop.FamilyOperators(whereop.Text)},
-+			{Name: "boolean and uuid columns", Values: whereop.FamilyOperators(whereop.Boolean)},
-+			{Name: "json columns", Values: whereop.FamilyOperators(whereop.JSON)},
-+			{Name: "array columns", Values: whereop.FamilyOperators(whereop.Array)},
-+			{Name: "spatial columns", Values: whereop.FamilyOperators(whereop.Geometry)},
-+		},
- 		Examples: []string{
- 			`where: { price: { gt: 50 }, name: { ilike: "%shoe%" }, id: { in: [1, 2, 3] } }`,
- 			`where: { created_at: { gte: "2025-01-01", lt: "2026-01-01" } }`,
+ require (
+-	github.com/dosco/graphjin/core/v3 v3.21.16
++	github.com/dosco/graphjin/core/v3 v3.21.17
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.67.0
+ 	go.opentelemetry.io/otel v1.43.0
+ 	go.opentelemetry.io/otel/trace v1.43.0
+```
+
+**File**: `serv/go.mod` (modified, +4/-4)
+```diff
+@@ -8,14 +8,14 @@ require (
+ 	github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd
+ 	github.com/coder/websocket v1.8.15
+ 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
+-	github.com/dosco/graphjin/agent/v3 v3.21.16
+-	github.com/dosco/graphjin/auth/v3 v3.21.16
++	github.com/dosco/graphjin/agent/v3 v3.21.17
++	github.com/dosco/graphjin/auth/v3 v3.21.17
+ 	github.com/dosco/graphjin/cassandradriver v0.0.0
+ 	github.com/dosco/graphjin/clickhousedriver v0.0.0
+ 	github.com/dosco/graphjin/codesql v0.0.0
+-	github.com/dosco/graphjin/core/v3 v3.21.16
++	github.com/dosco/graphjin/core/v3 v3.21.17
+ 	github.com/dosco/graphjin/mongodriver v0.0.0
+-	github.com/dosco/graphjin/plugin/otel/v3 v3.21.16
++	github.com/dosco/graphjin/plugin/otel/v3 v3.21.17
+ 	github.com/fsnotify/fsnotify v1.9.0
+ 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
+ 	github.com/go-pkgz/expirable-cache v1.0.0
 ```
 
 ---
 
-### Incident Patch 3: `13a29df6` (2026-10-07)
-**Commit Message**: Merge pull request #654 from dosco/fix/background-discovery-config-lock
+### Incident Patch 2: `19fcd561` (2026-10-29)
+**Commit Message**: chore: upgrade Ax Go dependency to 25.4.7
 
-fix: serialize background discovery with config applies
-
-**File**: `serv/api.go` (modified, +3/-3)
+**File**: `agent/go.mod` (modified, +1/-1)
 ```diff
-@@ -137,6 +137,8 @@ type graphjinService struct {
- 	watchCoord           watchCoordinator
- 	watchSnoozeMu        sync.Mutex
- 	watchSnoozeLastSweep time.Time
-+	discoveryBgMu        sync.Mutex
-+	discoveryBgCancel    context.CancelFunc
- 	revisionSignalWG     sync.WaitGroup
- 	revisionConsumerWG   sync.WaitGroup
- 	catalogMu            sync.Mutex
-@@ -443,9 +445,7 @@ func (s *graphjinService) closeServResources() {
- 	if s.semantic != nil {
- 		s.semantic.Close()
- 	}
--	if s.discovery != nil {
--		s.discovery.Close()
--	}
-+	s.closeDiscovery()
- 	if s.closeFn != nil {
- 		s.closeFn()
- 	}
+@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/agent/v3
+ go 1.25.0
+ 
+ require (
+-	github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d
++	github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd
+ 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
+ 	github.com/dosco/graphjin/core/v3 v3.21.16
+ 	github.com/gofrs/flock v0.13.0
 ```
 
-**File**: `serv/discovery_generations.go` (modified, +41/-6)
+**File**: `agent/go.sum` (modified, +2/-0)
 ```diff
-@@ -398,13 +398,48 @@ func (m *discoveryGenerationManager) RefreshNow(ctx context.Context) error {
- 	}
- }
- 
--var discoveryReconfigureMu sync.Mutex
--
-+// reconfigureDiscoveryInBackground runs discovery after a config apply returns.
-+// It holds the config lock, so the next apply waits for it. A newer apply or
-+// shutdown cancels a pending run.
- func (s *graphjinService) reconfigureDiscoveryInBackground(ctx context.Context) {
--	discoveryReconfigureMu.Lock()
--	defer discoveryReconfigureMu.Unlock()
--	if err := s.reconfigureDiscoveryAfterConfigChange(ctx); err != nil && s.log != nil {
--		s.log.Warnf("coordinated discovery refresh error: %s", redactRuntimeError(err))
-+	s = s.liveService()
-+	ctx, cancel := context.WithCancel(context.WithoutCancel(ctx))
-+	s.discoveryBgMu.Lock()
-+	if s.discoveryBgCancel != nil {
-+		s.discoveryBgCancel()
-+	}
-+	s.discoveryBgCancel = cancel
-+	s.discoveryBgMu.Unlock()
-+
-+	s.revisionConsumerWG.Add(1)
-+	go func() {
-+		defer s.revisionConsumerWG.Done()
-+		defer cancel()
-+		lock := s.configLocker()
-+		lock.Lock()
-+		defer lock.Unlock()
-+		if ctx.Err() != nil {
-+			return
-+		}
-+		if err := s.reconfigureDiscoveryAfterConfigChange(ctx); err != nil && ctx.Err() == nil && s.log != nil {
-+			s.log.Warnf("coordinated discovery refresh error: %s", redactRuntimeError(err))
-+		}
-+	}()
-+}
-+
-+// closeDiscovery cancels a pending background run and closes discovery once
-+// a running one releases the config lock.
-+func (s *graphjinService) closeDiscovery() {
-+	s.discoveryBgMu.Lock()
-+	if s.discoveryBgCancel != nil {
-+		s.discoveryBgCancel()
-+	}
-+	s.discoveryBgMu.Unlock()
-+	lock := s.configLocker()
-+	lock.Lock()
-+	defer lock.Unlock()
-+	if s.discovery != nil {
-+		s.discovery.Close()
- 	}
- }
- 
+@@ -68,6 +68,8 @@ github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823 h1:Xy7EhzXzJ
+ github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
+ github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d h1:9F3h6PRIkfH0RS5AZHASlOGmGHo1j7gE7s7kTCatXzY=
+ github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
++github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd h1:XSvyci9wwo6zmxvwzOsVJqFs99nsw1SOA1imgJZD3hM=
++github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
+ github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
+ github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
+ github.com/coder/websocket v1.8.15 h1:6B2JPeOGlpff2Uz6vOEH1Vzpi0iUz20A+lPVhPHtNUA=
 ```
 
-**File**: `serv/mcp_config.go` (modified, +1/-1)
+**File**: `cmd/go.mod` (modified, +1/-1)
 ```diff
-@@ -880,7 +880,7 @@ func (ms *mcpServer) handleUpdateCurrentConfig(ctx context.Context, req mcp.Call
- 	refreshDiscovery := false
- 	defer func() {
- 		if refreshDiscovery {
--			go ms.service.reconfigureDiscoveryInBackground(context.WithoutCancel(ctx))
-+			ms.service.reconfigureDiscoveryInBackground(ctx)
- 		}
- 	}()
- 
+@@ -90,7 +90,7 @@ require (
+ 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.30.0 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.17 // indirect
+ 	github.com/aws/smithy-go v1.22.5 // indirect
+-	github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d // indirect
++	github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd // indirect
+ 	github.com/bahlo/generic-list-go v0.2.0 // indirect
+ 	github.com/buger/jsonparser v1.1.1 // indirect
+ 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
+```
+
+**File**: `cmd/go.sum` (modified, +2/-0)
+```diff
+@@ -139,6 +139,8 @@ github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823 h1:Xy7EhzXzJ
+ github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
+ github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d h1:9F3h6PRIkfH0RS5AZHASlOGmGHo1j7gE7s7kTCatXzY=
+ github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
++github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd h1:XSvyci9wwo6zmxvwzOsVJqFs99nsw1SOA1imgJZD3hM=
++github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
+ github.com/bahlo/generic-list-go v0.2.0 h1:5sz/EEAK+ls5wF+NeqDpk5+iNdMDXrh3z3nPnH1Wvgk=
+ github.com/bahlo/generic-list-go v0.2.0/go.mod h1:2KvAjgMlE5NNynlg/5iLrrCCZ2+5xWbdbCW3pNTGyYg=
+ github.com/bitly/go-hostpool v0.0.0-20171023180738-a3a6125de932 h1:mXoPYz/Ul5HYEDvkta6I8/rnYM5gSdSV2tJ6XbZuEtY=
+```
+
+**File**: `serv/go.mod` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ go 1.25.5
+ require (
+ 	cloud.google.com/go/storage v1.62.1
+ 	github.com/ClickHouse/clickhouse-go/v2 v2.46.0
+-	github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d
++	github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd
+ 	github.com/coder/websocket v1.8.15
+ 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
+ 	github.com/dosco/graphjin/agent/v3 v3.21.16
+```
+
+**File**: `serv/go.sum` (modified, +2/-0)
+```diff
+@@ -110,6 +110,8 @@ github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823 h1:Xy7EhzXzJ
+ github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
+ github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d h1:9F3h6PRIkfH0RS5AZHASlOGmGHo1j7gE7s7kTCatXzY=
+ github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
++github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd h1:XSvyci9wwo6zmxvwzOsVJqFs99nsw1SOA1imgJZD3hM=
++github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
+ github.com/bahlo/generic-list-go v0.2.0 h1:5sz/EEAK+ls5wF+NeqDpk5+iNdMDXrh3z3nPnH1Wvgk=
+ github.com/bahlo/generic-list-go v0.2.0/go.mod h1:2KvAjgMlE5NNynlg/5iLrrCCZ2+5xWbdbCW3pNTGyYg=
+ github.com/bitly/go-hostpool v0.0.0-20171023180738-a3a6125de932 h1:mXoPYz/Ul5HYEDvkta6I8/rnYM5gSdSV2tJ6XbZuEtY=
+```
+
+**File**: `tests/go.mod` (modified, +1/-1)
+```diff
+@@ -85,7 +85,7 @@ require (
+ 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.30.0 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.17 // indirect
+ 	github.com/aws/smithy-go v1.22.5 // indirect
+-	github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d // indirect
++	github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd // indirect
+ 	github.com/bahlo/generic-list-go v0.2.0 // indirect
+ 	github.com/buger/jsonparser v1.1.1 // indirect
+ 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
+```
+
+**File**: `tests/go.sum` (modified, +4/-0)
+```diff
+@@ -142,6 +142,8 @@ github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823 h1:Xy7EhzXzJ
+ github.com/ax-llm/ax/packages/go v0.0.0-20261011084219-1d8965b83823/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
+ github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d h1:9F3h6PRIkfH0RS5AZHASlOGmGHo1j7gE7s7kTCatXzY=
+ github.com/ax-llm/ax/packages/go v0.0.0-20261013031334-36aa1a5e415d/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
++github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd h1:XSvyci9wwo6zmxvwzOsVJqFs99nsw1SOA1imgJZD3hM=
++github.com/ax-llm/ax/packages/go v0.0.0-20261029090635-42fceae3d6cd/go.mod h1:dMQJNsAs4WqQTLoZzr4W0JXx6ULZqcDq8C71XFrihvc=
+ github.com/bahlo/generic-list-go v0.2.0 h1:5sz/EEAK+ls5wF+NeqDpk5+iNdMDXrh3z3nPnH1Wvgk=
+ github.com/bahlo/generic-list-go v0.2.0/go.mod h1:2KvAjgMlE5NNynlg/5iLrrCCZ2+5xWbdbCW3pNTGyYg=
+ github.com/bitly/go-hostpool v0.0.0-20171023180738-a3a6125de932 h1:mXoPYz/Ul5HYEDvkta6I8/rnYM5gSdSV2tJ6XbZuEtY=
+@@ -210,6 +212,7 @@ github.com/dosco/graphjin/auth/v3 v3.20.70/go.mod h1:Pe8eqGttGh+/FDMIuDhp7kxL5fK
+ github.com/dosco/graphjin/auth/v3 v3.20.72/go.mod h1:kTIUQyUz3qFQWqPi6HjweONg7hdeqv2QMRGW3ZtIHFk=
+ github.com/dosco/graphjin/auth/v3 v3.21.2/go.mod h1:4tMAg1E0X05PbpSWCt+bmmpOD/IRuN8Ui1GGwE3Afak=
+ github.com/dosco/graphjin/auth/v3 v3.21.12/go.mod h1:hyc2tzV3qEqGBUQ/PwyyW8Uz4PW+zT3ezGRkgh0rmRQ=
++github.com/dosco/graphjin/auth/v3 v3.21.16/go.mod h1:BG4OIIP2mwVbXwjP0yKxN3AfTRNFdSxXV717dTuCnaY=
+ github.com/dosco/graphjin/plugin/otel/v3 v3.20.2 h1:8Knx+Z9Qj89bWM6tk7hMErSxPJyC9hXEgC78nvHNyWo=
+ github.com/dosco/graphjin/plugin/otel/v3 v3.20.2/go.mod h1:E27uxul4hpT9JoC+aTwITUR215ta5QmKJGRBeG8MEZQ=
+ github.com/dosco/graphjin/plugin/otel/v3 v3.20.20/go.mod h1:V0pdkiiKEmp0M0cO0Slxghvwzuymh9hMgX+YYjempbI=
+@@ -226,6 +229,7 @@ github.com/dosco/graphjin/plugin/otel/v3 v3.20.70/go.mod h1:juwDtCjaep2M86GF1eBw
+ github.com/dosco/graphjin/plugin/otel/v3 v3.20.72/go.mod h1:odAOJOO2WBrc9CZn8SH/TKFderngyMvpFQZ3vmlQ6Do=
+ github.com/dosco/graphjin/plugin/otel/v3 v3.21.2/go.mod h1:mD5qNbTsar5630NC66ItMc0Y8eJnSzEVb6k/bLMXoqs=
+ github.com/dosco/graphjin/plugin/otel/v3 v3.21.12/go.mod h1:TNkbOANp6J2K4nXD3myqFU95b58ROVIuEd3dsAOoTgk=
++github.com/dosco/graphjin/plugin/otel/v3 v3.21.16/go.mod h1:BJQovNHMhx97RMBLR/IiIetOVdhhievrQBDPup+QaKI=
+ github.com/duckdb/duckdb-go-bindings v0.10502.0 h1:Uhg/dfvPLQv4cH35lMD48hqUcdOh2Z7bcuykjr4qnOA=
+ github.com/duckdb/duckdb-go-bindings v0.10502.0/go.mod h1:8KF3oEKrmYdSbZnQ1BPTdxAZDHRaM1LEv+oBvL2nSLk=
+ github.com/duckdb/duckdb-go-bindings/lib/darwin-amd64 v0.10502.0 h1:1GxSHSI1ef3sCdDVrJ9l8s6aTd7P1K788os9lHrs43g=
 ```
 
 #### Recent Merged Pull Requests:
@@ -3028,32 +3021,28 @@ fix: serialize background discovery with config applies
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. serialize background discovery with config applies
+## X. bump version to v3.21.17 [skip-release] [skip ci]
 
 **RULE**:
-When implementing operations in `serv/api.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `agent/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a44cbd2`: serialize background discovery with config applies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3958f0cb`: bump version to v3.21.17 [skip-release] [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `serv/api.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	discoveryBgMu        sync.Mutex
-	discoveryBgCancel    context.CancelFunc
-	s.closeDiscovery()
+	github.com/dosco/graphjin/core/v3 v3.21.17
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if s.discovery != nil {
-		s.discovery.Close()
-	}
+	github.com/dosco/graphjin/core/v3 v3.21.16
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a44cbd2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3958f0cb` are properly handled with clean fallback behavior.
