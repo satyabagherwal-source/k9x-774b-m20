@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T22:13:47.413Z",
-  "total_cycles_completed": 6314,
-  "total_learnings_persisted": 6314,
-  "total_rules_promoted": 5888,
+  "last_updated": "2026-10-30T22:20:27.531Z",
+  "total_cycles_completed": 6316,
+  "total_learnings_persisted": 6316,
+  "total_rules_promoted": 5890,
   "history": [
-    {
-      "timestamp": "2026-10-30T06:43:14.170Z",
-      "repository": "grpc/grpc-rust",
-      "learningId": "learn-github-grpc-grpc-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T06:43:18.364Z",
-      "repository": "chrisbanes/skills",
-      "learningId": "learn-github-chrisbanes-skills",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T06:43:22.640Z",
       "repository": "k3s-io/k3s",
@@ -1403,6 +1389,20 @@
       "repository": "rtk-ai/rtk",
       "learningId": "learn-github-rtk-ai-rtk",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T22:20:21.352Z",
+      "repository": "Saffsanity/sill",
+      "learningId": "learn-github-saffsanity-sill",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T22:20:27.531Z",
+      "repository": "HelixDB/helix-db",
+      "learningId": "learn-github-helixdb-helix-db",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -6337,3 +6337,5 @@
 | `CYCLE-20261030-ZYNS` | `2026-10-30T22:10:24.952Z` | `iliyami/MacSai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5914` | Yes (`228d2f55...`) |
 | `CYCLE-20261030-055T` | `2026-10-30T22:10:33.377Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5915` | Yes (`c76bc9bf...`) |
 | `CYCLE-20261030-4AVF` | `2026-10-30T22:13:47.403Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5916, Rule 5917` | Yes (`9775cb8e...`) |
+| `CYCLE-20261030-CQU8` | `2026-10-30T22:20:21.344Z` | `Saffsanity/sill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5918` | Yes (`8c90633b...`) |
+| `CYCLE-20261030-CVLV` | `2026-10-30T22:20:27.523Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5919` | Yes (`641a65b1...`) |

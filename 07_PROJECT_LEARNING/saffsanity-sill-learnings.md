@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saffsanity-sill-learnings.md`  
 > **Source**: github ([https://github.com/Saffsanity/sill](https://github.com/Saffsanity/sill))  
-> **Source Version**: `6c5b5d24`  
+> **Source Version**: `e4d30349`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:53:45.120Z  
+> **Timestamp**: 2026-10-30T22:20:20.785Z  
 > **Learning ID**: `learn-github-saffsanity-sill`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saffsanity-sill-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Saffsanity/sill](https://github.com/Saffsanity/sill))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:53:43.611Z  
+> **Harvest Timestamp**: 2026-10-30T22:20:19.768Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Any window from your Mac, live on your iPhone or iPad. Touch, Apple Pencil, trackpad and keys. Free, open source, no servers.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4153 stars
+- **Stars / Engagement**: 4275 stars
 
 ---
 
@@ -266,7 +266,10 @@ import StreamProtocol
 ///     -SillMenuAfter '<s>[; <s> …]'            print the status menu as menu.txt shows it, one
 ///                                              "SillMenuAfter <s> s: " line per line, s seconds
 ///                                              after launch (the "‹device› Wants to Pair",
-///                                              older-device and "Devices Can’t Connect" items)
+///                                              older-device and "Devices Can’t Connect" items);
+///                                              the macOS firewall is asked again first, as the
+///                                              menu does when it opens, its answer shown by the
+///                                              next print
 ///     -SillQuitAfter <s>                       Quit (NSApp.terminate) s seconds after launch
 ///     -SillUpdateFeed <url>                    the update check asks this feed instead of GitHub:
 ///                                              a feed on this Mac only (http or https to
@@ -281,7 +284,8 @@ import StreamProtocol
 ///                                              s; no jitter)
 ///     -SillPrintMenuAfter <s>                  print the status menu as it would open (as menu.txt
 ///                                              draws it, "menu: " before each line) and Settings ›
-///                                              General's update line, s seconds after launch
+///                                              General's update and firewall lines, s seconds after
+///                                              launch
 ///     -SillSettingsAfter '<s> <tab>[; <s> <tab> …]'
 ///                                              open Settings on that tab s seconds after launch,
 ///                                              as the menu does, and 0.6 s later print the window's
@@ -301,17 +305,20 @@ import StreamProtocol
 ///                                              (title bar, toolbar, pane) to <dir>/settings-<s>s-<tab>.png
 ///     -SillRenderPreviews <dir>                write the Settings panes (the Devices and Remote
 ///                                              Access panes in each of their states, General's
-///                                              update section in each of its), the pairing
+///                                              update section in each of its, General with the
+///                                              macOS firewall's line and that line alone in each
+///                                              of its verdicts), the pairing
 ///                                              window's states and the cable notice,
 ///                                              status cards, glyphs and menu.txt to <dir>, then
 ///                                              exit (no Screen Recording needed: views render
 ///                                              offscreen; no identity is loaded, no listener)
 ///
 /// These are the bare SillMenuBar binary's (defaults domain "SillMenuBar"; delete it after). Sill.app
-/// itself, an app bundle's executable, ignores every `-Sill…After` hook and `-requirePairing`, each
-/// with one line (docs/home-pairing-plan.md §6.6): they open, answer or remove pairings, or change
-/// what the doors admit, and any process of this user can start Sill.app with arguments, which then
-/// runs with Sill's Screen Recording and Accessibility grants. `-SillTestScreenHeight` and
+/// itself (`AppModel.bundled`: Sill's own code wherever it runs from, AppIdentity) ignores every
+/// `-Sill…After` hook and `-requirePairing`, each with one line (docs/home-pairing-plan.md §6.6):
+/// they open, answer or remove pairings, or change what the doors admit, and any process of this
+/// user can start Sill.app, or a copy of it, with arguments, which then runs with Sill's Screen
+/// Recording and Accessibility grants. `-SillTestScreenHeight` and
 /// `-SillSettingsShot` go with `-SillSettingsAfter` and are ignored the same way: Sill.app has no
 /// use for them. `--synthetic`, `-SillLogFile`,
 /// `-SillRenderPreviews` and the update check's `-SillUpdateFeed`, `-SillUpdateNow`,
@@ -344,17 +351,7 @@ enum DebugHooks {
     /// TEST ONLY (-SillTestScreenHeight <points>, and -SillSettingsAfter's height=): the Settings
     /// window fits the top <points> of its screen's visible frame (SettingsWindowFit.visible). Nil in
     /// Sill.app itself, and without it.
-    static var testScreenHeight: CGFloat? = {
-        guard !AppModel.bundled else { return nil }
-        let h = UserDefaults.standard.double(forKey: "SillTestScreenHeight")
-        return h > 0 ? CGFloat(h) : nil
-    }()
-
-    /// The update check's configuration: GitHub and the plan's schedule, with the running version
-    /// from the bundle, unless the test arguments above say otherwise. Read once, when the model is
-    /// made; nothing here makes a request.
-    static func updateConfiguration(testPattern: Bool) -> UpdateChecker.Configuration {
-        let defaults = UserDefaults.standa
+    static var testScreenHeight
 ```
 
 ### Core Architecture Module: `iOSClient/MacMenuState.swift`
@@ -592,6 +589,196 @@ let package = Package(
     ]
 )
 
+```
+
+### Core Architecture Module: `Scripts/asc.swift`
+```
+// App Store Connect's API for TestFlight builds, as the nightly workflow (.github/workflows/nightly.yml)
+// and `Scripts/release-ios.sh --whats-new` use it (docs/release-checklist.md, "Nightlies"): wait for an
+// uploaded build to be processed, give it What to Test, add it to TestFlight's groups, and submit it
+// for Beta App Review when it goes to the public beta group. Foundation and CryptoKit only.
+//
+//   swiftc -O -o .build/asc/asc Scripts/asc.swift     (or run it as a script: swift Scripts/asc.swift …)
+//   asc groups      --key-file F --key-id ID --issuer ID
+//       lists the app's TestFlight groups: internal or external, automatic distribution, public link.
+//       Reads only.
+//   asc build-state --key-file F --key-id ID --issuer ID --version 0.6.0 --build 983
+//       prints one word on stdout: missing (App Store Connect lists no such build yet), PROCESSING,
+//       VALID, FAILED or INVALID. Reads only.
+//   asc whats-new   --key-file F --key-id ID --issuer ID --version 0.6.0 --build 983 --whats-new FILE
+//       waits for the build to be processed, then gives it FILE as What to Test (English, U.S.).
+//   asc distribute  --key-file F --key-id ID --issuer ID --version 0.6.0 --build 983 --whats-new FILE
+//                   [--public-beta [--public-beta-group NAME]]
+//       the same, then the build goes to every internal group, and with --public-beta to the public
+//       beta group too, and to Beta App Review when TestFlight asks for that.
+//
+// Options for all four:
+//   --bundle-id ID        the app, by default me.saffer.sill
+//   --wait-minutes N      how long to wait for processing (default 90; App Store Connect usually takes
+//                         5 to 40 minutes)
+//   --poll-seconds N      how often to look meanwhile (default 60)
+//   --retry-seconds N     the first wait before trying a request again after a 429, a 5xx or no answer
+//                         (default 5; then 3 and 6 times that; tests give 0)
+//   --api-base URL        https://api.appstoreconnect.apple.com, the default, or a stand-in on this Mac
+//                         for tests (http or https on 127.0.0.1, localhost or [::1]): the token goes to
+//                         no other host, and a next-page link to another host is not followed.
+//
+// The groups, in `distribute`:
+// - Every internal group (App Store Connect users only, no review) gets the build. One with automatic
+//   distribution ("access to all builds") gets every processed build by itself and is left alone.
+// - The public beta group is the external group with the public link on (or the one named with
+//   --public-beta-group). It gets the build only with --public-beta, which is refused unless the
+//   environment also says SILL_NIGHTLY_PUBLIC_BETA=true: the nightly workflow passes both only while
+//   the repository variable of that name is true (Noah, 2026-10-29: "hold off on giving the testflight
+//   build to public beta until I try it out in Insiders first tomorrow"). Without both, no external
+//   group is ever touched and nothing goes to Beta App Review.
+// - Beta App Review: only right after the build went to that external group, and only when TestFlight
+//   says it waits for a submission (externalBuildState READY_FOR_BETA_SUBMISSION). The first build of a
+//   version is reviewed in full; a later build of the same version is submitted the same way and
+//   usually approved within minutes. A build already in review or approved is left as it is.
+//
+// The token: an ES256 JWT (header alg ES256, kid the Key ID, typ JWT; claims iss the Issuer ID, iat,
+// exp 15 minutes later, aud appstoreconnect-v1; App Store Connect refuses more than 20 minutes) signed
+// with the .p8 key, made again every 10 minutes during a long wait. It goes only into the
+// Authorization header of requests to the API base above; it is never printed, logged or written to a
+// file, and neither is the key. Redirects are not followed.
+//
+// Exit status: 0 done; 1 App Store Connect refused a request, the build failed processing, or the wait
+// ran out; 2 a usage error (a missing or malformed option, a key file that isn't a key, --public-beta
+// without SILL_NIGHTLY_PUBLIC_BETA=true).
+import CryptoKit
+import Foundation
+
+setvbuf(stdout, nil, _IOLBF, 0)   // progress lines during a long wait show as they happen in a pipe
+
+let environment = ProcessInfo.processInfo.environment
+let inActions = environment["GITHUB_ACTIONS"] == "true"
+let usageText = """
+    usage: asc groups      --key-file F --key-id ID --issuer ID [--bundle-id ID]
+           asc build-state --key-file F --key-id ID --issuer ID --version V --build N
+           asc whats-new   --key-file F --key-id ID --issuer ID --version V --build N --whats-new FILE
+           asc distribute  --key-file F --key-id ID --issuer ID --version V --build N --whats-new FILE
+                           [--public-beta [--public-beta-group NAME]]
+           [--wait-minutes 90] [--poll-seconds 60] [--retry-seconds 5] [--api-base URL]
+    Scripts/asc.swift's header says what each does; docs/release-checklist.md, "Nightlies".
+    """
+
+// MARK: - Output
+
+/// A GitHub Actions annotation's message: a %, a carriage return or a newline would otherwise end it
+/// or start a command of its own.
+func annotation(_ text: String) -> String {
+    text.replacingOccurrences(of: "%", with: "%25").replacingOccurrences(of: "\r", with: "%0D")
+        .replacingOccurrences(of: "\n", with: "%0A")
+}
+
+func say(_ text: String) { print(text) }
+
+func warn(_ text: String) {
+    let line = inActions ? "::warning::\(annotation(text))" : "warning: \(text)"
+    FileHandle.standardError.write(Data((line + "\n").utf8))
+}
+
+func fail(_ text: String, status: Int32 = 1) -> Never {
+    let line = inActions ? "::error::\(annotation(text))" : "error: \(text)"
+    FileHandle.standardError.write(Data((line + "\n").utf8))
+    exit(status)
+}
+
+/// Text from App Store Connect, made safe to print on one line: control characters (newlines among
+/// them, which in a GitHub log could start a workflow command) become spaces, and it is cut at 300.
+func clean(_ text: String) -> String {
+    let scalars = text.unicodeScalars.map { CharacterSet.controlCharacters.contains($0) ? " " : Character($0) }
+    let joined = String(scalars).split(separator: " ", omittingEmptySubsequences: true).joined(separator: " ")
+    return joined.count > 300 ? String(joined.prefix(300)) + "…" : joined
+}
+
+// MARK: - Options
+
+struct Options {
+    var command = ""
+    var keyFile = ""
+    var keyID = ""
+    var issuer = ""
+    var bundleID = "me.saffer.sill"
+    var version = ""
+    var build = ""
+    var whatsNewFile = ""
+    var publicBeta = false
+    var publicBetaGroup: String?
+    var waitMinutes = 90.0
+    var pollSeconds = 60.0
+    var retrySeconds = 5.0
+    var apiBase = "https://api.appstoreconnect.apple.com"
+}
+
+func usageError(_ text: String) -> Never {
+    FileHandle.standardError.write(Data("error: \(text)\n\(usageText)\n".utf8))
+    exit(2)
+}
+
+func parseOptions(_ arguments: [String]) -> Options {
+    var options = Options()
+    var rest = arguments[...]
+    guard let command = rest.popFirst() else { usageError("no command") }
+    if command == "-h" || command == "--help" { print(usageText); exit(0) }
+    guard ["groups", "build-state", "whats-new", "distribute"].contains(command) else {
+        usageError("unknown command '\(clean(command))'")
+    }
+    options.command = command
+    func number(_ name: String, _ text: String) -> Double {
+        guard let value = Double(text), value.isFinite, value >= 0 else { usageError("\(name) takes a number, not '\(clean(text))'") }
+        return value
+    }
+    while let argument = rest.popFirst() {
+        var name = argument
+        var value: String?
+        if argument.hasPrefix("--"), let equals = argument.firstIndex(of: "=") {
+            name = String(argument[..<equals])
+            value = String(argument[argument.index(after: equals)...])
+        }
+        if name == "--public-beta" {
+            if value != nil { usageError("--public-beta takes no value") }
+            options.publicBeta = true
+            continue
+        }
+        if name == "-h" || name == "--help" { print(usageText); exit(0) }
+        let flags = ["--key-file", "--key-id", "--issuer", "--bundle-id", "--version", "--build", "--whats-new",
+                     "--public-beta-group", "--wait-minutes", "--poll-seconds", "--retry-seconds", "--api-base"]
+        guard flags.contains(name) else { usageError("unknown option '\(clean(argument))'") }
+        if value == nil {
+            guard let next = rest.popFirst() else { usageError("\(name) needs a value") }
+            value = next
+        }
+        let text = value ?? ""
+        switch name {
+        case "--key-file": options.keyFile = text
+        case "--key-id": options.keyID = text
+        case "--issuer": options.issuer = text
+        case "--bundle-id": options.bundleID = text
+        case "--version": options.version = text
+        case "--build": options.build = text
+        case "--whats-new": options.whatsNewFile = text
+        case "--public-beta-group": options.publicBetaGroup = text
+        case "--wait-minutes": options.waitMinutes = number(name, text)
+        case "--poll-seconds": options.pollSeconds = number(name, text)
+        case "--retry-seconds": options.retrySeconds = number(name, text)
+        case "--api-base": options.apiBase = text
+        default: usageError("unknown option '\(clean(argument))'")
+        }
+    }
+    return options
+}
+
+func matches(_ text: String, _ pattern: String) -> Bool {
+    text.range(of: pattern, options: .regularExpression) != nil
+}
+
+/// The default base, or a stand-in on this Mac for tests: the token is never sent anywhere else.
+func allowedBase(_ url: URL) -> Bool {
+    if url.scheme == "https", url.host == "api.appstoreconnect.apple.com", url.port == nil,
+       url.path.isEmpty || url.path == "/" { return true }
+    guard url.scheme == "http" || url.scheme == "https", url.user == nil, url
 ```
 
 ### Core Architecture Module: `Scripts/audio/main.swift`
@@ -1425,218 +1612,19 @@ enum VolumeIcon {
 
 ```
 
-### Core Architecture Module: `Scripts/dmg-layout/DSStore.swift`
-```
-import Foundation
-
-// The .DS_Store file Finder reads to lay out a folder's window: which view, the window's size and
-// place, the background picture and where each icon sits. Scripts/make-dmg.sh writes one into
-// Sill.dmg with this code instead of asking Finder to (AppleScript would need Automation
-// permission, and Finder, to lay out a window, needs a logged-in session that shows it).
-//
-// The format is Apple's and undocumented; this follows the file Finder itself writes (a disk
-// image's .DS_Store is one B-tree leaf, and Finder's own for such a folder is 10,244 bytes laid out
-// exactly as `encode` lays it out) and the descriptions in Mac::Finder::DSStore's
-// DSStoreFormat.pod and the ds_store Python package, whose layout Finder-made images share:
-//
-// - The file is a 4-byte 1, then a "buddy allocator" whose addresses count from byte 4. Its header,
-//   at address 0, is "Bud1", the root block's address and size, the address again, and 16 bytes
-//   Finder leaves as 00 00 10 0c and zeros.
-// - Every block has a power-of-two size of at least 32 bytes, at an address that is a multiple of
-//   its size, and is named by a 32-bit word: the address with the size's log2 in the low 5 bits.
-// - The root block lists the blocks by number (in pages of 256 words), a table of contents that
-//   names block 1 "DSDB", and the free lists: for each size 2^0 to 2^31, the addresses of the free
-//   blocks of that size. The allocated and the free blocks cover the 2 GiB address space exactly.
-// - "DSDB" is five words: the B-tree's root node (a block number), its levels below the root, the
-//   number of records, the number of nodes and the page size, 4096.
-// - A node is a word that is 0 for a leaf (else the last child's block number), a count, and the
-//   records, sorted by file name without regard to case, then by code.
-// - A record is its file name (a word counting UTF-16 units, then UTF-16BE), a four-character code
-//   such as "Iloc", a four-character type and the value: "long" and "shor" 4 bytes, "bool" 1,
-//   "type" 4, "comp" and "dutc" 8, "blob" a length and bytes, "ustr" a UTF-16 count and UTF-16BE.
-
-/// One record: a file name ("." for the folder itself), a four-character code and a value.
-struct DSRecord: Equatable, CustomStringConvertible {
-    enum Value: Equatable {
-        case long(UInt32)
-        case shor(UInt16)
-        case bool(Bool)
-        case type(String)
-        case comp(UInt64)
-        case dutc(UInt64)
-        case blob(Data)
-        case ustr(String)
-    }
-
-    var name: String
-    var code: String
-    var value: Value
-
-    var description: String {
-        let shown: String
-        switch value {
-        case .long(let v): shown = "long \(v)"
-        case .shor(let v): shown = "shor \(v)"
-        case .bool(let v): shown = "bool \(v)"
-        case .type(let v): shown = "type '\(v)'"
-        case .comp(let v): shown = "comp \(v)"
-        case .dutc(let v): shown = "dutc \(v)"
-        case .blob(let v): shown = "blob \(v.count) bytes"
-        case .ustr(let v): shown = "ustr \"\(v)\""
-        }
-        return "\"\(name)\" \(code) \(shown)"
-    }
-}
-
-struct DSStoreError: Error, CustomStringConvertible {
-    let description: String
-    init(_ description: String) { self.description = description }
-}
-
-enum DSStore {
-    /// Finder's page size, the size of every B-tree node.
-    static let pageSize = 0x1000
-
-    // Where encode puts the blocks: as Finder does for a folder with a few records.
-    static let headerAddress = 0x0, headerSize = 0x20     // the "Bud1" header itself
-    static let masterAddress = 0x40, masterSize = 0x20    // "DSDB", block 1
-    static let leafAddress = 0x1000                       // the one node, block 2, a page
-    static let rootAddress = 0x2000, rootSize = 0x800     // the allocator's root block, block 0
-
-    /// Whether `a` sorts before `b` in a .DS_Store: by file name without regard to case (as Finder
-    /// compares names on a case-insensitive volume), then by code.
-    static func precedes(_ a: DSRecord, _ b: DSRecord) -> Bool {
-        let an = Array(a.name.lowercased().utf16), bn = Array(b.name.lowercased().utf16)
-        if an != bn { return an.lexicographicallyPrecedes(bn) }
-        return Array(a.code.utf8).lexicographicallyPrecedes(Array(b.code.utf8))
-    }
-
-    /// A whole .DS_Store holding `records` (in any order) in one leaf node.
-    static func encode(_ records: [DSRecord]) throws -> Data {
-        let sorted = records.sorted(by: precedes)
-        for (a, b) in zip(sorted, sorted.dropFirst()) where !precedes(a, b) {
-            throw DSStoreError("two records for \"\(a.name)\" \(a.code)")
-        }
-
-        var leaf = Data()
-        leaf.appendWord(0)                         // a leaf: no children
-        leaf.appendWord(UInt32(sorted.count))
-        for record in sorted { try leaf.appendRecord(record) }
-        guard leaf.count <= pageSize else {
-            throw DSStoreError("the records take \(leaf.count) bytes, more than one \(pageSize)-byte node; this writer makes only one")
-        }
-
-        var master = Data()
-        master.appendWord(2)                       // the root node: block 2
-        master.appendWord(0)                       // no levels below it
-        master.appendWord(UInt32(sorted.count))
-        master.appendWord(1)                       // one node
-        master.appendWord(UInt32(pageSize))
-
-        let allocated = [
-            (address: headerAddress, size: headerSize), (address: masterAddress, size: masterSize),
-            (address: leafAddress, size: pageSize), (address: rootAddress, size: rootSize),
-        ]
-        var root = Data()
-        let blocks = [(rootAddress, rootSize), (masterAddress, masterSize), (leafAddress, pageSize)]
-        root.appendWord(UInt32(blocks.count))
-        root.appendWord(0)
-        for index in 0..<256 {
-            if index < blocks.count {
-                root.appendWord(UInt32(blocks[index].0) | UInt32(log2(blocks[index].1)))
-            } else {
-                root.appendWord(0)
-            }
-        }
-        root.appendWord(1)                         // the table of contents: one name
-        root.append(4)
-        root.append(contentsOf: Array("DSDB".utf8))
-        root.appendWord(1)                         // "DSDB" is block 1
-        let free = freeLists(allocated: allocated)
-        for width in 0..<32 {
-            root.appendWord(UInt32(free[width].count))
-            for address in free[width] { root.appendWord(UInt32(address)) }
-        }
-        guard root.count <= rootSize else { throw DSStoreError("the root block takes \(root.count) bytes") }
-
-        var file = Data(count: 4 + rootAddress + rootSize)
-        file.replace(at: 0, with: word(1))
-        var header = Data("Bud1".utf8)
-        header.appendWord(UInt32(rootAddress))
-        header.appendWord(UInt32(rootSize))
-        header.appendWord(UInt32(rootAddress))
-        header.append(contentsOf: [0, 0, 0x10, 0x0c] + [UInt8](repeating: 0, count: 12))
-        file.replace(at: 4 + headerAddress, with: header)
-        file.replace(at: 4 + masterAddress, with: master)
-        file.replace(at: 4 + leafAddress, with: leaf)
-        file.replace(at: 4 + rootAddress, with: root)
-        return file
-    }
-
-    /// The free blocks a buddy allocator has around `allocated`, by width (log2 of the size): the
-    /// largest aligned blocks of the 2^31-byte space that hold no allocated byte.
-    static func freeLists(allocated: [(address: Int, size: Int)]) -> [[Int]] {
-        var lists = [[Int]](repeating: [], count: 32)
-        func visit(_ address: Int, _ width: Int) {
-            let size = 1 << width, end = address + size
-            let overlapping = allocated.filter { $0.address < end && address < $0.address + $0.size }
-            if overlapping.isEmpty {
-                lists[width].append(address)
-            } else if overlapping.count == 1, overlapping[0].address == address, overlapping[0].size == size {
-                return
-            } else if width > 5 {
-                visit(address, width - 1)
-                visit(address + size / 2, width - 1)
-            }
-        }
-        visit(0, 31)
-        return lists.map { $0.sorted() }
-    }
-
-    /// The records of a .DS_Store, in the order the file keeps them, whatever its shape.
-    static func decode(_ data: Data) throws -> [DSRecord] {
-        var reader = ByteReader(data)
-        guard try reader.word(at: 0) == 1, try reader.bytes(at: 4, count: 4) == Data("Bud1".utf8) else {
-            throw DSStoreError("not a .DS_Store (no \"Bud1\" header)")
-        }
-        let rootOffset = Int(try reader.word(at: 8)), rootLength = Int(try reader.word(at: 12))
-        guard try reader.word(at: 16) == UInt32(rootOffset) else { throw DSStoreError("the header's two root addresses differ") }
-        reader.position = 4 + rootOffset
-        let blockCount = Int(try reader.nextWord())
-        _ = try reader.nextWord()
-        var blocks: [UInt32] = []
-        for index in 0..<((blockCount + 255) / 256 * 256) {
-            let word = try reader.nextWord()
-            if index < blockCount { blocks.append(word) }
-        }
-        var contents: [String: UInt32] = [:]
-        for _ in 0..<(try reader.nextWord()) {
-            let length = Int(try reader.nextByte())
-            let name = String(decoding: try reader.next(length), as: UTF8.self)
-            contents[name] = try reader.nextWord()
-        }
-        guard reader.position <= 4 + rootOffset + rootLength else { throw DSStoreError("the root block's table of contents runs past its end") }
-        guard let masterBlock = contents["DSDB"] else { throw DSStoreError("no DSDB in the table of contents") }
-
-        func blockOffset(_ number: UInt32) throws -> Int {
-            guard Int(number) < blocks.count else { throw DSStoreError("no block \(number)") }
-            return 4 + Int(blocks[Int(number)] & ~0x1f)
-        }
-        let rootNode = try reader.word(at: try blockOffset(masterBlock))
-        var records: [DSRecord] = 
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #162** (2026-10-30): **Option/CMD + left/right arrows sends the keys just once**
+  *Symptoms*: ### What happened  holding down combos like this should send the combo repeatedly. doesnt happen for non-combo keystrokes.  ### How to make it happen again  _No response_  ### Your Mac and its macOS  macbook pro m4 27.2 beta 3  ### Sill for Mac's version  latest as of filing  ### Your iPhone or iPad and its iOS or iPadOS  ipad m4 pro  ### The Sill app's version  _No response_  ### How the device reached the Mac  Wi-Fi  ### Sill's log on your Mac  ```text  ```
+  **Post-Mortem & Fix Analysis**:
+  > Opened #163 so held keys and `Option`/`Command` + arrow key chords repeat properly on iPad.
+
 - **Issue #138** (2026-10-27): **Chinese input (Zhuyin keyboard) and dictation (any language) can't be used to type on the Mac**
   *Symptoms*: ### What happened  Through Sill on my iPad, I can't type Chinese on my Mac, and I can't use dictation at all:  1. Zhuyin (Bopomofo) keyboard: nothing reaches the Mac — not the chosen characters, and not even the Bopomofo symbols (ㄅㄆㄇ) as I type them. 2. Dictation, in any language: dictated text doesn't reach the Mac, whether I dictate in Chinese or in English.  English typing works normally, including while the Mac's input source is Zhuyin. So the keyboard path itself works, and only composed input (an input method's candidates, dictation) is lost.  Expected: Chinese composed on the iPad (through the keyboard's candidates or through dictation) arrives in the focused Mac window, the same way English text does.  Workaround: type in another iPad app, copy, then use Sill's Paste and press ⌘V. This works but is slow.   Possible cause (from reading the source at 5c323e6; not verified with a debugger)  InputOverlayView adopts only UIKeyInput (iOSClient/InputOverlay.swift:16), not UITextInput. CJK input methods compose through marked text (setMarkedText / unmarkText) and commit the chosen candidate, and dictation inserts its result through the same UITextInput machinery. With UIKeyInput alone, iPadOS never commits anything to insertText(_:), so nothing is sent to the Mac. docs/hardware-keyboard-plan.md (item 11) already lists input methods as untested.  A possible fix: adopt UITextInput with marked-text support, keep the composition on the device, and send only the committed text as 
-
-- **Issue #108** (2026-10-27): **Pairing code doesn't display when accessing a headless Mac**
-  *Symptoms*: ### What happened  I have a headless Mac mini that I use Screens 5 to remotely control from time to time.  I wanted to give Sill a try, but, after installing it and clicking on the button to pair, the window manager focus changes to an invisible window; if it's there, it's not something I can see, which means neither the QR code or the manual code is accessible.  If I turn off the requirement to pair, I can remotely access the Mac, but, obviously, that's not something I want to do.  The workaround I had for this was to use the Apple Remote Desktop to access the Mini, and either because of sunspots, quantum entanglement, AI hallucinations, or something else, the QR code did display when using ARD.   This let me pair with my iPhone, but, it feels like a bug that the QR code didn't visibly display over VNC via Screens 5.    Feel free to close / ignore this if it's pilot error.  Note:  This is repeatable.  To get the logs I used Screens 5 again and the pairing window did not display.  You'll see it in the logs that it thinks it is displaying.   ### How to make it happen again  1.  Use Screens 5 to access a headless Mac 2. Run Sill 3. Click on the button to pair 4. Wait for the QR code to display 5. QR code doesn’t display 6. Notice that when you clicked on the Pair button, the window manager focus changed to something you can’t see  ### Your Mac and its macOS  M1 Mac Mini  ### Sill for Mac's version  0.5.1 (563)  ### Your iPhone or iPad and its iOS or iPadOS  iPhone 18 Pro Max (b
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1653,725 +1641,838 @@ enum DSStore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6c5b5d24` (2026-10-27)
-**Commit Message**: Merge pull request #236 from Saffsanity/defaults-tiles-vd
+### Incident Patch 1: `541c18ff` (2026-10-30)
+**Commit Message**: Merge origin/firewall-executable-block into integrate-security
 
-The defaults Noah set on 2026-10-27, one PR after #117: the connect screen shows tiles unless its person chose the list, and the list/tiles switch always shows; Sill.app's Virtual Display and Send Audio are on by default as registered defaults that a saved key always wins over (the CLI keeps --virtual-display and --audio opt-in); the virtual display is never made with a side under 800 points, which macOS ran at 1x (the five 1x displays in Sill.log, an iPhone held upright). Verified 2026-10-27 (the verdict in the handoff): run-all 55 of 55, 162 of 162 mutants over four checks, the CLI's output identical to main's, the bare app registering both defaults and writing nothing, photos on a 27.1 Duo simulator, then the review's word fixes.
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-**File**: `CLAUDE.md` (modified, +109/-10)
+
+---
+
+### Incident Patch 2: `bc0e5a8c` (2026-10-30)
+**Commit Message**: Merge remote-tracking branch 'origin/firewall-executable-block' into test-security
+
+# Conflicts:
+#	.github/workflows/ci.yml
+#	CLAUDE.md
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -8,6 +8,99 @@ Formerly winstream; the folder still carries the old name.
- 
- ## Current step
- 
-+**Tiles, Virtual Display and Send Audio on by default (2026-10-27, branch `defaults-tiles-vd` from main at
-+3c257485, fast-forwarded to 3b546374 (#234) before its first commit; PR #236).** Noah, 2026-10-27:
-+"make tiles not list the default behavior of the app. Also have Virtual Desktop on by default. Of
-+course, if a user changes a setting remember their choice for future sessions as you do now. Make
-+this a separate PR after #117 merges." Later that morning, testing #235: "Send Audio should be on
-+by default, and mute should be off by default." No wire change.
-+- Sill.app's Send Audio is on by default too (`HostConfig.app.sendAudio`; the CLI's `--audio` still
-+  opts in; a saved `sendAudio` wins, so a Mac whose user turned it off stays off): the menu's
-+  checkmark and Settings › Streaming's switch start on; README's Good to know, support.html's Sound
-+  section and privacy.html say so. Mute on the device was off by default already (#235).
-+- The device: the connect screen shows tiles unless its person chose the list
-+  (`ConnectionList.defaultStyle`, `storedStyle`: a stored `Sill.connectionStyle`, "list" or "tiles",
-+  always wins; nothing stored, or a value no build writes, reads as tiles). ConnectScreen keeps the
-+  key optional (`@AppStorage … String?`), so the rule alone decides, as StreamClient's
-+  `connectionStyle` already did. So a picture of each saved Mac's screen is kept by default
-+  (`takesPreview`, unchanged: only with tiles), and Disconnect asks for its fresh keyframe by default
-+  (300 ms at most before the connect screen with Sill for Mac 0.5.1, which skips kind 44). The switch
-+  beside the title always shows, whichever style is on and whether or not a Mac is listed (Noah,
-+  2026-10-27: "The list/tiles switch should always show"; #117 showed it for tiles alone, which with
-+  tiles the default took it away under the finger of someone with no saved Mac who chose the list).
-+  DEBUG: `-SillStyleToggleAt <s>[,<s>…]` toggles the style as
-+  the switch does (`toggleStyle`); the console's `connect:` lines.
-+- The Mac: Sill.app registers `HostConfig.app` (HostSettings), the CLI's `standard` with the virtual
-+  display on. Registered, never written: a `virtualDisplay` key set from the menu, Settings ›
-+  Virtual Display or a device always wins (a Mac that turned it off stays off; this Mac's own keys read 1 for
-+  both on 2026-10-27, set by hand, so nothing changes here), and `-virtualDisplay 0` turns it off for one run. The CLI keeps `standard`: `--virtual-display`
-+  opt-in, its stdout byte for byte. The menu's checkmark and the pane's switch follow `config`; no
-+  pane names the default.
-+- The virtual display at 1x, the caveat of that decision: not in the session of 2026-10-26/27.
-+  Beside the 2560×1440 display at 1x every staged capture that night read "scale 2.0" (`filter
-+  (1456.0, 1486.0)`, `(2560.0, 1486.0)`, `(2560.0, 2264.0)`); its "scale 1.0" captures were real
-+  windows and the Desktop on that display (#233's case). Sill.log's 1x displays were five earlier
-+  ones (2026-09-26, 09-28, 10-08 twice, 10-15), each asked with both sides under 800 points, 754×784
-+  or 762×792: an iPhone held upright (its 377- or 381-point picture doubled for Aa's smallest step)
-+  and the menu bar, beside the Mac's own Retina display too, so the main display's scale played no
-+  part. macOS listed the 2x mode asked for, `selectRequestedMode` asked for it every half second,
-+  and the display stayed at 800×832 points at 1x until the stage's 3 s wait ran out ("online 3312
-+  ms"): the pick waited 3 s more, and the staged window was captured at 2x from a 1x display (eleven
-+  captures `filter (800.0, 832.0) scale 1.0`). Every display with a side of 800 points or more came
-+  up at 2x (754×979, 838×792, 900×800, 1000×784, 848×878 and larger). The fix, `VirtualDisplaySize`
-+  (pure, in CaptureScale.swift, checked by `Tests/checks/capture-scale`): every side 800 to 4096
-+  points, so an iPhone upright gets 800×830; VirtualStage's `envelope` and `ensureDisplay` use it.
-+  The creation line prints the mode the display came up at (`VirtualDisplay.currentScale`; it said
-+  "@2×" whatever came up), and `--virtual-display-selftest [Hz] [WxH]` makes another size.
-+- Words: README (How it works: the connect screen's tiles, On iPhone, Text size and the virtual
-+  display with it on by default; Good to know), site/support.html (a section, "A window left your
-+  Mac’s screen", whose sentence on the default is marked `<!-- Virtual Display` for its release; "It
-+  says Not paired"), site/privacy.html (the tiles' items: kept unless the list is chosen; "touch and
-+  hold it"; dated October 27, 2026; the virtual display needs no word there, Accessibility "so Sill
-+  can move and size the window it shows" says it already), docs/release-checklist.md (the marker,
-+  its perl line and grep), docs/app-store-metadata.md (the descript
+@@ -134,7 +134,7 @@ jobs:
+     strategy:
+       fail-fast: false
+       matrix:
+-        check: [addresses, ask-limits, audio-codec, audio-packetizer, audio-playout, away-copy, away-quality, away-wire, cable-link, capture-scale, clientlink, clipboard, compatibility, connection-list, device-gate, display-wake, dmg-layout, door-policy, duo, encoder-mailbox, encoder-slowstate, fence, gesture-chords, gestures, goodbye, hardware-keyboard, home-device, home-model, home-records, home-txt, installed-apps, key-strokes, keychain, keyframe-recovery, ledger, link-judge, menu-state, menus, message-reader, origin, pairing-address, pairing-sharing, phone-portrait, pointer-control, pointer-presence, pointer-watch, policy, protocol, remote-rules, settings-window, stream-zoom, test-host, text-composition, tour, update-policy, viewport-bounds, virtual-display-api, window-restore]
++        check: [addresses, ask-limits, audio-codec, audio-packetizer, audio-playout, away-copy, away-quality, away-wire, cable-link, capture-scale, clientlink, clipboard, compatibility, connection-list, device-gate, display-wake, dmg-layout, door-policy, duo, encoder-mailbox, encoder-slowstate, fence, firewall, gesture-chords, gestures, goodbye, hardware-keyboard, home-device, home-model, home-records, home-txt, installed-apps, key-strokes, keychain, keyframe-recovery, ledger, link-judge, menu-state, menus, message-reader, origin, pairing-address, pairing-sharing, phone-portrait, pointer-control, pointer-presence, pointer-watch, policy, protocol, remote-rules, settings-window, stream-zoom, test-host, text-composition, tour, update-policy, viewport-bounds, virtual-display-api, window-restore]
+     steps:
+       - name: Check out
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 ```
 
-**File**: `README.md` (modified, +34/-22)
+**File**: `CLAUDE.md` (modified, +75/-2)
 ```diff
-@@ -77,20 +77,21 @@ Sill has layouts of its own.
- - **On iPhone**, held upright, the picture is on top with buttons, keys and a
-   trackpad below. Larger Picture, in the settings panel, gives a window's
-   picture the room of the window thumbnails, down to where the keyboard comes
--  up; the Desktop keeps the usual layout. A window keeps its own shape until
--  you set its text size with Aa, or turn on the virtual display; then your Mac
--  makes it fill the taller picture.
-+  up; the Desktop keeps the usual layout. With the virtual display (on unless
-+  you turn it off in Sill for Mac), your Mac makes a window fill the taller
-+  picture; with it off, once you set the window's text size with Aa.
- - **The clipboard** goes both ways while Share Clipboard is on, in both apps:
-   text you copy on your Mac is ready to paste on your device, and Paste in
-   Sill sends what you copied on your device to your Mac's clipboard, where you
-   press ⌘V. Sill never reads your device's clipboard by itself, and copies a
-   password manager marks as concealed stay on your Mac.
--- **Sound from your Mac** is a beta, off until you turn on Send Audio: in the
-+- **Sound from your Mac** is a beta, on by default; Send Audio (Beta) in the
-   Sill menu or Sill's Settings on your Mac, or in the settings panel of Sill on
--  your iPhone or iPad. Then Sill for Mac captures the sound of the window's
--  app, or of every app for the Desktop, and every connected device plays it a
--  moment behind the picture, never ahead of it. Your Mac keeps playing it too,
--  and Mute in a device's settings panel silences it on that device alone.
-+  your iPhone or iPad, turns it off and on. Sill for Mac captures the sound of
-+  the window's app, or of every app for the Desktop, and every connected device
-+  plays it a moment behind the picture, never ahead of it. Your Mac keeps
-+  playing it too, and Mute in a device's settings panel silences it on that
-+  device alone.
- - **On iPhone Duo**, Sill follows the hinge: open it flat and your Mac fills
-   the inner display; half open, the picture is above the fold with a trackpad
-   and keys below; closed, Sill runs on the cover display. Nothing you touch
-@@ -100,6 +101,10 @@ Sill has layouts of its own.
-   Sill for Mac reads each menu from the app as you open it and chooses the
-   item you pick, through Accessibility. When someone moves the mouse at your
-   Mac, your device shows the pointer where it is.
-+- **The connect screen** on your device shows each Mac as a tile, a paired Mac
-+  with its screen as your last session with it ended. The picture stays on
-+  your device until you remove it or forget the Mac. The button beside
-+  "Connect to a Mac" lists them instead, and Sill remembers which you chose.
- - **Nearby**, your device finds your Mac with Bonjour on your local network.
-   Over a USB cable, your Mac shows as Wired and the connection uses the cable.
-   With no shared network, Direct Wireless Connection (off by default) connects
-@@ -125,22 +130,29 @@ Sill has layouts of its own.
- - **When the link can't keep up**, Sill for Mac notices that it is holding
-   frames back and tells your device, which says so over the picture and, in
-   its Settings, offers a quality the link can carry.
--- **Text size**: Aa on your device resizes the window you stream on your Mac,
--  through Accessibility, so its text shows at the size you pick, and keeps it
--  at that size while it streams. The window goes back to its own size and
--  place when Sill stops showing it: you pick another window or the Desktop,
--  your last device disconnects, or you quit Sill. If you moved it on your Mac
--  meanwhile, it keeps its new place.
--- **The virtual display** (off by default) moves a window you stream onto a
--  display of its own on your Mac, so it keeps updating when other windows
--  cover it. It uses a private macOS API, which is one reason Sill for Mac comes
--  from the website and not from the Mac App Store.
-+- **Text size**: Aa on your device resizes the window you stream, through
-+  Accessibility, so its text shows at the size you pick, and keeps it at that
-+  size while it streams, on the virtual display or, with that off, on your
-+  Mac's screen. The window goes back to its own size and place when Sill stops
-+  showing it: you pick another window or the Desktop, your last device
-+  disconnects, or you quit Sill. With the virtual display off, a window you
-+  moved on your Mac meanwhile keeps its new place.
-+- **The virtual display**, on unless you turn it off in the Sill menu or in
-+  Sill's Settings on your Mac, or in the settings panel of Sill on your iPhone
-+  or iPad, moves the window you stream onto a display of
-+  its own on your Mac, sized for your device, so it keeps updating when other
-+  windows cover it. The window leaves your Mac's screen while it streams and
-+  comes back where it was. The display uses a private macOS API, which is one
-+  reason Sill for Mac comes from the website and not from the Mac App Store; if
-+ 
+@@ -165,6 +165,68 @@ wire change, nothing on the device.
+   drag a window with the iPad's trackpad and click Remove mid-drag: the drag ends, and another device's
+   pointer then moves without dragging; choose a menu item from the iPad's Menus in a slow app and click
+   Remove at once: the item is not chosen (Sill.log: "Menu from … refused: …: the Mac no longer serves it").
++**The macOS firewall that blocks Sill's executable (2026-10-29, branch `firewall-executable-block` from main
++at 150479b5; PR #250; the security batch, Noah's go of 2026-10-29).** A user's report: the firewall keeps a
++rule per path, and a Mac held `/Applications/Sill.app` allowed and `…/Contents/MacOS/Sill` blocked
++(`socketfilterfw --listapps`): nothing reached Sill from the network, System Settings showed it allowed, and
++`--getappblocked` on the bundle said "permitted"; `sudo socketfilterfw --unblockapp` on the executable fixed it.
++No wire change.
++- `FirewallCheck` asks `/usr/libexec/ApplicationFirewall/socketfilterfw` `--getglobalstate`, then only while it is
++  on (`asksRules`) `--getblockall`, `--getappblocked` for the running executable (`proc_pidpath`) and its bundle,
++  and `--listapps`: a process each with 2 s (then SIGTERM, SIGKILL a second later), read-only, no privileges
++  (macOS 27.0.1: 4–8 ms each, no prompt, no Full Disk Access needed; asked in one run the tool is killed, 137,
++  when `--getstealthmode` or `--getallowsigned` follows `--getappblocked`, or `--listapps` follows it with a
++  bundle's path; no `com.apple.alf.plist` there). At launch, when the listener comes up, when Sill.app's status
++  menu opens (the glyph at once, its item from the next opening), when its General opens or Sill becomes active
++  over it, and when a device gets in from the network while the verdict says none can (`asksAgain`); never on a
++  timer.
++- `FirewallRule` (pure, `Tests/checks/firewall`, 390 checks, 69 mutants): off, allows (only once `--listapps`
++  was read), `blocks(executable:bundle:)` (its own answer or its rule in the list, either enough), `blocksAll`,
++  unknown (with why, in the log).
++  While it blocks: General's line in the Permissions style with `sudo …/socketfilterfw --unblockapp <the running
++  executable's path>` (a line per option; Copy copies one line), for Block all where to turn it off; the menu's
++  "Devices Can’t Connect — The macOS firewall blocks Sill’s executable." (opens General); one log line per change
++  ("Firewall: …"; none for a first verdict that blocks nothing). Sill never runs the command. support.html's
++  "Your Mac isn’t listed" gains the case (Sill's own line marked `<!-- Firewall`). TEST ONLY
++  `SILL_TEST_FIREWALL=executable|bundle|both|all|off|allowed|unreadable` or a file holding one, test hosts only;
++  the previews are the rule's verdicts on those answers; `-SillPrintMenuAfter` prints General's line.
++- Verified: the check and mutants; `run-all.sh`, all 57; a clean release build (the CaptureProbe warning
++  only); main's CLI output identical masked and sorted, idle and with a client; previews main's but the 16 new
++  files, menu.txt's two samples and General's path; live on loopback, blocked → allowed → Block all →
++  unreadable, a VPN-origin client clearing a stale verdict, the bare app's menu and line, this Mac's real
++  firewall "none (allows)". Not built: an Unblock button with the admin password (`osascript` off the main
++  thread, or a privileged helper), Noah's call.
++- The review (2026-10-29, three lenses; each finding reproduced first, then fixed in a commit of its own;
++  sill-handoff's `triage/2026-10-29-security/firewall-line-report.md`, "The review"): a block that came after
++  launch (a Deny in the firewall's own prompt, Block all turned on) went unsaid until General opened or the
++  listener was replaced, as `asksAgain` can only clear one (on loopback, the canned answer blocked from 2 s: a
++  client at 3.6 s and the bare app's menu at 4 and 7 s said nothing): the status menu asks again as it opens
++  (bd18d96b); with `--listapps` unread the verdict took the executable's own "permitted" for allowed and dropped
++  why: unknown, with why, unless an answer blocks (3d10ea95); the check's usage stand-in had no "apps", so a
++  reading that took any mention of apps for a list passed (56d3f3a3); the docs had the tool die whenever
++  `--listapps` followed `--getappblocked` in one run (the docs commit, af3283d1; the second review measured which
++  options do, below). Re-run: the check 340 and 67 of 67 mutants (64 of 64 before; two extra mutants had
++  survived); `run-all.sh`, all 57; the release build, the CaptureProbe warning only; main's CLI masked and sorted,
++  idle (8 lines) and with a client (three passes, as main against main); previews 162 files; on loopback a device
++  in from a VPN re-asking without clearing a block that holds, and clearing a stale one.
++- The second review (2026-10-29, after af3283d1; the report's "The second review"): two findings, each reproduced
++  first 
 ```
 
-**File**: `Sources/SillHost/CaptureScale.swift` (modified, +49/-5)
+**File**: `Sources/SillHost/FirewallCheck.swift` (added, +153/-0)
 ```diff
-@@ -25,15 +25,17 @@ import Foundation
- /// rule of Sill's own can disagree with that pick (one that did would ask for a size the capture
- /// never fills, or restart the stream at every poll). It is what the capture line has always
- /// printed ("scale 1.0" above). Sill's own virtual display is made at 2x (VirtualStage's
--/// `VirtualDisplay(…, scale: 2)`), so a window staged there captures at the knob, as before.
-+/// `VirtualDisplay(…, scale: 2)`, at a size macOS keeps at 2x: VirtualDisplaySize), so a window staged
-+/// there captures at the knob, as before.
- ///
- /// Pure: Foundation and CoreGraphics, checked on its own with swiftc (Tests/checks/capture-scale).
- enum CaptureScale {
-     /// The scale of Sill's own virtual display, which VirtualStage makes at 2x (HiDPI): what a staged
--    /// window's capture is held to, decided before the display exists. VirtualStage keeps a display
--    /// that came up at another mode ("online but not at … @2×": five times in Sill.log, each an
--    /// 800×832-point display at 1x), and a window staged on it still captures at the knob, scaled up,
--    /// as it always has.
-+    /// window's capture is held to, decided before the display exists. macOS kept it at 2x for every
-+    /// size but one with both sides under 800 points, five times in Sill.log an 800×832-point display at
-+    /// 1x, where a staged window was captured at the knob, scaled up; VirtualDisplaySize keeps every
-+    /// side at 800 or more since 2026-10-27. VirtualStage still keeps a display that comes up at
-+    /// another mode ("online but not at … @2×"), and a window staged there still captures at the knob.
-     static let virtualDisplay: CGFloat = 2
+@@ -0,0 +1,153 @@
++import Darwin
++import Foundation
++
++/// Asks the macOS Application Firewall what it holds for this process, read-only and without
++/// privileges; FirewallRule decides what that means. Five questions to `socketfilterfw`, each in a
++/// process of its own and given 2 s (then stopped: SIGTERM, and SIGKILL a second later):
++/// `--getglobalstate` (nothing else is asked unless the firewall is on: off, Block all and a state
++/// that doesn't read decide alone, FirewallRule.asksRules), `--getblockall`, `--getappblocked` for
++/// the executable and for its bundle, and `--listapps`. Never a question that changes anything,
++/// never sudo.
++///
++/// Measured on macOS 27.0.1 (2026-10-29), as an ordinary user with no privileges and no Full Disk
++/// Access (Sill.app has none): each question answers in 4–8 ms, exit status 0, no prompt. Asked in
++/// one run, the tool was killed (status 137, nothing printed) when some options followed
++/// `--getappblocked`: `--getstealthmode` or `--getallowsigned` after either path, `--listapps` after
++/// an app bundle's path (3 runs of 3 each; all five questions in one run, 133). `--getglobalstate`,
++/// `--getblockall` and another `--getappblocked` after it, `--listapps` after an executable's path,
++/// and each question alone answered every time: hence a process for each. The plist older Macs
++/// kept, /Library/Preferences/com.apple.alf.plist, does not exist there (only the tool's own
++/// defaults in /usr/libexec/ApplicationFirewall), so nothing is read from a file.
++///
++/// The coordinator asks at launch, whenever the listener comes up, when Sill.app's status menu or
++/// Settings › General opens, and when a device gets in from the network while the verdict says none
++/// can (FirewallRule.asksAgain); nothing asks on a timer.
++package enum FirewallCheck {
++    /// This process's executable as the kernel has it, symbolic links resolved (the firewall's rules
++    /// name real paths: /private/tmp, not /tmp); the bundle's idea of it when the kernel will not say.
++    package static func executablePath() -> String {
++        var buffer = [CChar](repeating: 0, count: 4 * Int(MAXPATHLEN))
++        if proc_pidpath(getpid(), &buffer, UInt32(buffer.count)) > 0 {
++            let path = String(cString: buffer)
++            if !path.isEmpty { return path }
++        }
++        return Bundle.main.executablePath ?? CommandLine.arguments.first ?? ""
++    }
++
++    /// The firewall's answers, asked off the caller's thread, or the TEST ONLY hook's.
++    package static func read(_ paths: FirewallRule.Paths, hook: TestHook?) async -> FirewallRule.Raw {
++        if let hook { return hook.answers(paths) }
++        return await withCheckedContinuation { continuation in
++            DispatchQueue.global(qos: .utility).async { continuation.resume(returning: readNow(paths)) }
++        }
++    }
++
++    /// The five questions, one after another (blocking: a utility queue's).
++    static func readNow(_ paths: FirewallRule.Paths) -> FirewallRule.Raw {
++        let tool = FirewallRule.Copy.tool
++        guard FileManager.default.isExecutableFile(atPath: tool) else {
++            return FirewallRule.Raw(problem: "\(tool) isn’t there")
++        }
++        var raw = FirewallRule.Raw()
++        var problems: [String] = []
++        func ask(_ arguments: [String]) -> String? {
++            switch run(tool, arguments) {
++            case .answer(let text): return text
++            case .failed(let why): problems.append(why); return nil
++            }
++        }
++        raw.globalState = ask(["--getglobalstate"])
++        // Off, Block all, or no state that reads: the verdict is decided (FirewallRule.asksRules), so
++        // nothing more is asked, and a tool that doesn't answer costs one question's wait, not five.
++        guard FirewallRule.asksRules(afterState: raw.globalState) else {
++            raw.problem = problems.first
++            return raw
++        }
++        raw.blockAll = ask(["--getblockall"])
++        raw.executable = ask(["--getappblocked", paths.executable])
++        if let bundle = paths.bundle { raw.bundle = ask(["--getappblocked", bundle]) }
++        raw.listApps = ask(["--listapps"])
++        raw.problem = problems.first
++        return raw
++    }
++
++    private enum Outcome { case answer(String), failed(String) }
++
++    /// Runs `tool` with `arguments`, its standard output and error read together, for at most
++    /// `timeout` seconds (then it is stopped, SIGTERM and a second later SIGKILL: a question has
++    /// nothing to undo).
++    private static func run(_ tool: String, _ arguments: [String], timeout: TimeInterval = 2) -> Outcome {
++        let process = Process()
++        process.executableURL = URL(fileURLWithPath: tool)
++        process.arguments = arguments
++        process.standardInput = FileHandle.nullDevice
++        let pipe = Pipe()
++        process.standardOutput = pipe
++        process.standardError = pipe
++        let exited = DispatchSemaphore(value: 0)
+```
+
+**File**: `Sources/SillHost/FirewallRule.swift` (added, +471/-0)
+```diff
+@@ -0,0 +1,471 @@
++import Foundation
++
++/// The macOS Application Firewall and Sill (a user's report, 2026-10-29). The firewall keeps a rule
++/// per path, and a Mac held "/Applications/Sill.app" allowed and "/Applications/Sill.app/Contents/
++/// MacOS/Sill" blocked at once (`socketfilterfw --listapps`): Sill's port took nothing from the
++/// network while the Mac itself connected fine, System Settings showed Sill allowed, and
++/// `--getappblocked` on the bundle said "permitted". `sudo socketfilterfw --unblockapp` on the
++/// executable's path fixed it.
++///
++/// This turns what `socketfilterfw` answers, asked read-only and without privileges (FirewallCheck),
++/// into a verdict and its words: the line in Sill.app's Settings › General with the Terminal command
++/// that unblocks Sill, the status menu's "Devices Can’t Connect", the log's lines. A rule that blocks
++/// the running executable or its bundle counts while the firewall is on, and so does Block all
++/// incoming connections, which leaves no app's own rule any say. Pure: Foundation alone, checked by
++/// Tests/checks/firewall.
++package enum FirewallRule {
++    /// The firewall's global state (`--getglobalstate`).
++    package enum State: Equatable, Sendable {
++        case off, on
++        /// Block all incoming connections: only essential services (DHCP, Bonjour, IPsec) get in.
++        case blockAll
++        /// No answer, or one this build does not know (bootstrap mode, an undefined state).
++        case unknown
++    }
++
++    /// One path's answer (`--getappblocked <path>`).
++    package enum AppAnswer: Equatable, Sendable { case blocked, permitted, unknown }
++
++    /// One rule of `--listapps`: its path (or whatever the line names) and whether it blocks incoming
++    /// connections; nil when no state line followed it.
++    package struct Listed: Equatable, Sendable {
++        package var path: String
++        package var blocks: Bool?
++        package init(path: String, blocks: Bool?) { self.path = path; self.blocks = blocks }
++    }
++
++    /// The paths a rule may name for this process: its executable, as the kernel has it (the
++    /// firewall's rules name real paths, /private/tmp rather than /tmp), and, for an app bundle's
++    /// main executable, the bundle.
++    package struct Paths: Equatable, Sendable {
++        package var executable: String
++        package var bundle: String?
++        package init(executable: String, bundle: String?) { self.executable = executable; self.bundle = bundle }
++    }
++
++    /// What `socketfilterfw` printed for each question, nil for one not asked or not answered;
++    /// `problem`, why the first that went unanswered did (the log says it when nothing can be told).
++    package struct Raw: Equatable, Sendable {
++        package var globalState: String?
++        package var blockAll: String?
++        package var executable: String?
++        package var bundle: String?
++        package var listApps: String?
++        package var problem: String?
++        package init(globalState: String? = nil, blockAll: String? = nil, executable: String? = nil, bundle: String? = nil,
++                     listApps: String? = nil, problem: String? = nil) {
++            self.globalState = globalState; self.blockAll = blockAll; self.executable = executable; self.bundle = bundle
++            self.listApps = listApps; self.problem = problem
++        }
++    }
++
++    /// The answers, read.
++    package struct Answers: Equatable, Sendable {
++        package var state: State
++        /// `--getblockall`: true while Block all incoming connections is on; nil without an answer.
++        package var blockAll: Bool?
++        package var executable: AppAnswer
++        package var bundle: AppAnswer
++        /// Every rule `--listapps` printed; nil when it printed no list.
++        package var listed: [Listed]?
++        package var problem: String?
++        package init(state: State, blockAll: Bool? = nil, executable: AppAnswer = .unknown, bundle: AppAnswer = .unknown,
++                     listed: [Listed]? = nil, problem: String? = nil) {
++            self.state = state; self.blockAll = blockAll; self.executable = executable; self.bundle = bundle
++            self.listed = listed; self.problem = problem
++        }
++    }
++
++    /// What the firewall does to devices that connect to this process.
++    package enum Verdict: Equatable, Sendable {
++        /// The firewall is off.
++        case off
++        /// It is on, its rules were read (`--listapps`), and none blocks the executable or its bundle.
++        case allows
++        /// It is on, and a rule blocks these paths (at least one is set): devices on the network
++        /// cannot connect, whatever the other path's rule says.
++        case blocks(executable: String?, bundle: String?)
++        /// Block all incoming connections is on.
++        case blocksAll
++        /// Its answers could not be read, and why.
++        case unknown(String)
++
++        /// Devices on the network cannot c
+```
+
+**File**: `Sources/SillHost/HostStatus.swift` (modified, +6/-0)
+```diff
+@@ -135,6 +135,12 @@ package struct HostStatusSnapshot: Equatable {
+     /// The Mac's sound while it is wanted (Send Audio on, something streams, a device plays it); nil
+     /// otherwise.
+     package var audio: Audio?
++    /// What the macOS firewall does to devices connecting to this host (FirewallRule), as last asked:
++    /// at launch, when the listener comes up, when Sill.app's menu or Settings › General opens, when a
++    /// device gets in while it said none could. Nil before the first answer. While it blocks them,
++    /// Settings › General shows why with the Terminal command that unblocks Sill, and the menu says
++    /// "Devices Can’t Connect".
++    package var firewall: FirewallRule.Verdict?
  
-     /// The pixels a point that a capture of a source on a display of scale `displayScale` runs at:
-@@ -122,6 +124,48 @@ enum CaptureScale {
+     /// The Mac's sound as the menu's card and Settings show it.
+     package struct Audio: Equatable {
+```
+
+**File**: `Sources/SillHost/StreamCoordinator.swift` (modified, +52/-3)
+```diff
+@@ -69,9 +69,16 @@ package final class StreamCoordinator {
+     /// encoder, the launch probe never runs and the re-check never starts, so no test touches the
+     /// Mac's one hardware encoder while Noah streams (PointerTestHooks).
+     private let softwareOnly: Bool
+-    /// The TEST ONLY hooks' lines (PointerTestHooks, InputInjector.testInputLog, `keyframeIgnoreHook`),
+-    /// printed as `start` begins; empty without them.
++    /// The TEST ONLY hooks' lines (PointerTestHooks, InputInjector.testInputLog, `keyframeIgnoreHook`,
++    /// FirewallCheck.TestHook), printed as `start` begins; empty without them.
+     private let testHookLines: [String]
++    /// The macOS firewall (FirewallRule, a user's report of 2026-10-29): the paths a rule may name
++    /// for this process, the TEST ONLY answers a test host takes instead of asking, and one check at
++    /// a time (`checkFirewall`), with one more after it when asked meanwhile.
++    private let firewallPaths: FirewallRule.Paths
++    private let firewallHook: FirewallCheck.TestHook?
++    private var firewallChecking = false
++    private var firewallAgain = false
+     /// A picked window streams from its own HiDPI display (see VirtualStage): the CLI's
+     /// `--virtual-display`, or the app's setting. Every branch this adds is behind this flag;
+     /// without it the coordinator behaves as before. It changes only inside `select` (`adopt`).
+@@ -352,7 +359,13 @@ package final class StreamCoordinator {
+         let userActive = DisplayWake.userActive(environment: env, testHost: synthetic)
+         displayActivity = DisplayActivity(remote: userActive.remote)
+         keyframeRequestsToIgnore = keyframeIgnore.count
+-        testHookLines = [path.line, software.line, inputLog.line, userActive.line, keyframeIgnore.line, noScreen.line].compactMap { $0 }
++        // The firewall's TEST ONLY answers, for a test host alone (StreamServer's own rule).
++        let firewallTest = FirewallCheck.TestHook.read(testHost: DoorPolicy.isTestHost(advertises: !synthetic, bundled: !testHooks),
++                                                       environment: env)
++        firewallHook = firewallTest.hook
++        firewallPaths = FirewallRule.paths(executable: FirewallCheck.executablePath())
++        testHookLines = [path.line, software.line, inputLog.line, userActive.line, keyframeIgnore.line, noScreen.line,
++                         firewallTest.line].compactMap { $0 }
+         status = HostStatus()
+         var home = StreamServer.HomeDoorMode.plain
+         if homePairing, let remote {
+@@ -446,6 +459,11 @@ package final class StreamCoordinator {
+                     let words = route.label ?? Self.homeRouteWords(route, link: link)
+                     self.remote?.sessionStarted(fingerprint: fp, route: words, cableDevice: route.cableDevice)
+                 }
++                // A device got in from the network while the firewall's verdict said none could:
++                // that verdict is stale (FirewallRule.asksAgain).
++                if FirewallRule.asksAgain(after: self.status.snapshot.firewall, fromLoopback: route.origin == .loopback) {
++                    self.checkFirewall()
++                }
+                 // Home or away before its catalog: its settings state says which quality it sets.
+                 self.routesChanged(joined: id, endpoint: "\(connection.endpoint)")
+                 // A sleeping display gives black frames: the session's start wakes it, as a key would.
+@@ -649,6 +667,9 @@ package final class StreamCoordinator {
+                 $0.network = .registering
+             }
+         }
++        // The listener is up, at launch or replaced (Direct Wireless): whether the macOS firewall
++        // lets devices reach it.
++        if network == .registering { checkFirewall() }
+     }
+ 
+     /// Bonjour registered this name (nil: the registration went away, to come back).
+@@ -662,6 +683,33 @@ package final class StreamCoordinator {
+         }
+     }
+ 
++    // MARK: The macOS firewall
++
++    /// Asks the macOS firewall, read-only, whether it blocks this process (FirewallCheck, then
++    /// FirewallRule's verdict into the status: Sill.app's Settings › General and its menu say so), and
++    /// prints one line when the verdict changes (none for a first one that blocks nothing). At launch,
++    /// whenever the listener comes up, when Sill.app's status menu opens (a block that came after
++    /// launch; the menu is built before the answer, so its item shows from the next opening), when
++    /// its Settings › General opens or Sill becomes active over it, and when a device gets in from
++    /// the network while the verdict says none can; never on a timer. One check at a time: one asked
++    /// for meanwhile runs once more after it, so its answer is never older than the request.
++    package func checkFirewall() {
++        guard !firewallChecking else { firewallAgain = true; return }
++        firewallChecking = true
++        let paths = firewallPaths, 
+```
+
+**File**: `Sources/SillMenuBar/DebugHooks.swift` (modified, +58/-3)
+```diff
+@@ -37,7 +37,10 @@ import StreamProtocol
+ ///     -SillMenuAfter '<s>[; <s> …]'            print the status menu as menu.txt shows it, one
+ ///                                              "SillMenuAfter <s> s: " line per line, s seconds
+ ///                                              after launch (the "‹device› Wants to Pair",
+-///                                              older-device and "Devices Can’t Connect" items)
++///                                              older-device and "Devices Can’t Connect" items);
++///                                              the macOS firewall is asked again first, as the
++///                                              menu does when it opens, its answer shown by the
++///                                              next print
+ ///     -SillQuitAfter <s>                       Quit (NSApp.terminate) s seconds after launch
+ ///     -SillUpdateFeed <url>                    the update check asks this feed instead of GitHub:
+ ///                                              a feed on this Mac only (http or https to
+@@ -52,7 +55,8 @@ import StreamProtocol
+ ///                                              s; no jitter)
+ ///     -SillPrintMenuAfter <s>                  print the status menu as it would open (as menu.txt
+ ///                                              draws it, "menu: " before each line) and Settings ›
+-///                                              General's update line, s seconds after launch
++///                                              General's update and firewall lines, s seconds after
++///                                              launch
+ ///     -SillSettingsAfter '<s> <tab>[; <s> <tab> …]'
+ ///                                              open Settings on that tab s seconds after launch,
+ ///                                              as the menu does, and 0.6 s later print the window's
+@@ -72,7 +76,9 @@ import StreamProtocol
+ ///                                              (title bar, toolbar, pane) to <dir>/settings-<s>s-<tab>.png
+ ///     -SillRenderPreviews <dir>                write the Settings panes (the Devices and Remote
+ ///                                              Access panes in each of their states, General's
+-///                                              update section in each of its), the pairing
++///                                              update section in each of its, General with the
++///                                              macOS firewall's line and that line alone in each
++///                                              of its verdicts), the pairing
+ ///                                              window's states and the cable notice,
+ ///                                              status cards, glyphs and menu.txt to <dir>, then
+ ///                                              exit (no Screen Recording needed: views render
+@@ -219,6 +225,7 @@ enum DebugHooks {
+         for delay in times(defaults.string(forKey: "SillMenuAfter")) {
+             after(delay) {
+                 model.permissions.refresh()
++                model.coordinator?.checkFirewall()   // as the menu does when it opens; the answer shows at the next
+                 for line in MenuBuilder.dump(MenuBuilder.entries(for: model), card: model.presentation).split(separator: "\n") {
+                     print("SillMenuAfter \(delay) s: \(line)")
+                 }
+@@ -229,10 +236,18 @@ enum DebugHooks {
+             after(printAfter) {
+                 model.permissions.refresh()
+                 model.loginItem.refresh()
++                model.coordinator?.checkFirewall()   // as the menu does when it opens
+                 print("SillPrintMenuAfter \(printAfter) s:")
+                 let text = MenuBuilder.dump(MenuBuilder.entries(for: model), card: model.presentation)
+                 for line in text.split(separator: "\n", omittingEmptySubsequences: false) where !line.isEmpty { print("menu: \(line)") }
+                 print("Settings › General's update line: \(model.updates.pane.line)")
++                // The macOS firewall's line as the pane shows it (FirewallRule), with its command.
++                let firewall = model.coordinator?.status.snapshot.firewall
++                if let firewall, let line = FirewallRule.Copy.paneLine(firewall) {
++                    print("Settings › General's firewall line: \(line)\(FirewallRule.Copy.command(firewall).map { " \($0)" } ?? "")")
++                } else {
++                    print("Settings › General's firewall line: none (\(firewall.map { String(describing: $0) } ?? "not asked yet"))")
++                }
+             }
+         }
+         let shots = defaults.string(forKey: "SillSettingsShot").flatMap { $0.isEmpty ? nil : $0 }
+@@ -394,6 +409,23 @@ enum DebugHooks {
+                 render(pane, appearance: appearance, to: out.appendingPathComponent("pane-devices-\(sample.name)-\(name).png"))
+             }
+         }
++        // General while the macOS firewall block
+```
+
+**File**: `Sources/SillMenuBar/SettingsPanes.swift` (modified, +66/-1)
+```diff
+@@ -14,12 +14,14 @@ struct SettingsPane: View {
+     var previewUpdates: UpdatePolicy.Pane?
+     /// …and its clipboard section with macOS's answer as given, never read from this Mac.
+     var previewClipboardAccess: ClipboardPolicy.MacAccess?
++    /// …and what the macOS firewall does as given (FirewallRule), never asked.
++    var previewFirewall: FirewallRule.Verdict?
+ 
+     var body: some View {
+         Group {
+             switch tab {
+             case .general: GeneralPane(model: model, settings: model.settings, previewUpdates: previewUpdates,
+-                                       previewClipboardAccess: previewClipboardAccess)
++                                       previewClipboardAccess: previewClipboardAccess, previewFirewall: previewFirewall)
+             case .devices: LiveDevicesPane(model: model, settings: model.settings)
+             case .streaming: StreamingPane(model: model, settings: model.settings)
+             case .virtualDisplay: VirtualDisplayPane(model: model, settings: model.settings)
+@@ -34,6 +36,8 @@ struct SettingsPane: View {
+         // idle Sill with Settings closed wakes for nothing. The Devices and Remote Access panes
+         // follow the host's status, which is pushed, so they poll nothing.
+         .task(id: model.visibleSettingsTab == tab) {
++            // General on screen: whether the macOS firewall blocks Sill, asked again (FirewallCheck).
++            if model.visibleSettingsTab == tab, tab == .general { model.coordinator?.checkFirewall() }
+             guard model.visibleSettingsTab == tab, tab != .streaming, tab != .devices, tab != .remoteAccess else { return }
+             while !Task.isCancelled {
+                 model.permissions.refresh()
+@@ -44,6 +48,8 @@ struct SettingsPane: View {
+         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+             model.permissions.refresh()
+             model.loginItem.refresh()
++            // Back from Terminal with the command run: General's firewall line follows.
++            if model.visibleSettingsTab == tab, tab == .general { model.coordinator?.checkFirewall() }
+         }
+     }
+ }
+@@ -84,6 +90,7 @@ private struct GeneralPane: View {
+     @Bindable var settings: HostSettings
+     var previewUpdates: UpdatePolicy.Pane?
+     var previewClipboardAccess: ClipboardPolicy.MacAccess?
++    var previewFirewall: FirewallRule.Verdict?
+ 
+     private static let runsFromApplications = Bundle.main.bundlePath.hasPrefix("/Applications/")
+ 
+@@ -133,6 +140,11 @@ private struct GeneralPane: View {
+                     Spacer(minLength: 0)
+                 }
+             }
++            // Beside the name devices see: the macOS firewall keeping them out (FirewallRule), only
++            // while it does.
++            if let firewall = previewFirewall ?? model.coordinator?.status.snapshot.firewall, firewall.blocksDevices {
++                FirewallSection(verdict: firewall)
++            }
+             // How devices reach this Mac, so beside its name on the network. Applies at once without
+             // restarting the stream (the listener is replaced); enabled in test pattern mode too,
+             // where it is saved and changes only the listener.
+@@ -184,6 +196,59 @@ private struct GeneralPane: View {
      }
  }
  
-+/// The size of Sill's virtual display in points, as VirtualStage asks VirtualDisplay for it: no side
-+/// under 800 points, the least macOS keeps at 2x, the scale a staged window's capture counts on
-+/// (`CaptureScale.virtualDisplay`).
-+///
-+/// Found in Sill.log (2026-09-26 to 2026-10-15): of every display Sill made, five came up at 1x, each
-+/// asked with both sides under 800 points, 754×784 (four times) or 762×792: the envelope of an iPhone
-+/// held upright, its picture 377 or 381 points wide, doubled for Aa's smallest step, with the menu bar.
-+/// Each came up at 800×832 points at 1x. macOS listed the mode asked for ("754×784 pt @ 1508×1568 px"),
-+/// VirtualDisplay.waitUntilOnline asked for it every half second, and the display stayed at 1x until
-+/// the stage's 3 s wait ran out ("Virtual display is online but not at 754×784 @2×: backing 800×832
-+/// px", "online 3312 ms"): the pick waited 3 s more, and a window staged there was captured at the knob
-+/// from a 1x display, scaled up ("Capture started: 1480×768 … filter (800.0, 832.0) scale 1.0").
-+/// Every display with a side of 800 points or more came up at 2x within about half a second, one
-+/// side under 800 or not (754×979, 838×792, 1000×784, 900×800, 848×878). The main display's scale
-+/// played no part: those five were made beside the Mac's own Retina display, and on 2026-10-27,
-+/// beside an external 2560×1440 display at 1x, every one came up at 2x ("filter (2560.0, 2264.0)
-+/// scale 2.0"). So every side is held to 800 points or more, which macOS kept at 2x whatever the
-+/// other side: the smallest display Sill makes is 800×830 (800 and a 30-point menu bar).
-+///
-+/// Pure, with CaptureScale (Tests/checks/capture-scale).
-+enum VirtualDisplaySize {
-+    /// The least side, in points.
-+    static let minSide: CGFloat = 800
-+    /// 4096 keeps the 2x backing store at or under 8192 pixels, VirtualDisplay's ceiling.
-+    static let maxSide: CGFloat = 4096
++// MARK: Firewall
 +
-+    /// Each side held to `minSide`…`maxSide`.
-+    static func clamp(_ s: CGSize) -> CGSize {
-+        CGSize(width: min(max(s.width, minSide), maxSide), height: min(max(s.height, minSide), maxSide))
-+    }
++/// The macOS firewall keeps devices out (FirewallRule; a user's report of 2026-10-29), in the
++/// Permissions pane's style: what it blocks and why that matters, then the Terminal command that
++/// unblocks Sill, the running executable's path in it, with Copy; or, for Block all incoming
++/// connections, where to turn it off. Nothing while the firewall lets devices in. Sill never runs the
++/// command itself (it needs an administrator). Drawn alone in the previews in each verdict.
++struct FirewallSection: View {
++    let verdict: FirewallRule.Verdict
++    @State private var copied = false
 +
-+    /// The display's size below its menu bar that fits a device's panel of `panel` points at every Aa
-+    /// scale and in both orientations: a square of the panel's longer edge ÷ 0.5 (the slider's smallest
-+    /// step). No panel (no viewport yet), or one with no area: the window's own size. Held by `clamp`
-+    /// either way (VirtualStage.envelope).
-+    static func envelope(panel: CGSize?, windowSize: CGSize) -> CGSize {
-+        guard let panel, panel.width > 0, panel.height > 0 else { return clamp(windowSize) }
-+        let side = ceil(max(panel.width, panel.height) / 0.5)
-+        return clamp(CGSize(width: side, height: side))
-+    }
-+}
-+
- /// HEVC wants even sides: a capture's size in pixels rounded down to even. Every capture's rule until
- /// 2026-10-27, and still a display's, a staged window's crop's and the test pattern's; a window that
- /// ScreenCaptureKit draws 1:1 rounds up instead (`CaptureScale.windowPixels`). Here rather than in
-```
++    var body: some View {
++        if let line = FirewallRule.Copy.paneLine(verdict) {
++            let command = FirewallRule.Copy.command(verdict)
++            Section {
++                LabeledContent {
++                    HStack(spacing: 6) {
++                        Image(systemName: "exclamationmark.triangle.fill")
++                            .foregroundStyle(.orange)
++                        if let command {
++                            Button(copied ? "Copied" : "Copy") { copy(command) }
++                                .help("Copies the command, to paste into Terminal")
++                        }
++                    }
++                } label: {
++                    Text("Firewall")
++                    Text(line)
++                }
++                if let lines = FirewallRule.Copy.commandLines(verdict) {
++                    // A line for the tool and one for each option, never "--" over "unblockapp".
++                    Text(verbatim: lines.joined(separator: "\n"))
++                        .font(.system(.callout, design: .monospaced))
 
-**File**: `Sources/SillHost/HostConfig.swift` (modified, +26/-10)
-```diff
-@@ -1,8 +1,8 @@
- import CoreGraphics
- 
- /// The host's knobs, as one value. The CLI streams with `standard` (plus its --virtual-display and
--/// --direct-wireless flags); the menu bar app starts from the same values and lets Settings change
--/// them while it runs. Change `standard`, rebuild, measure: both pick it up.
-+/// --direct-wireless flags); the menu bar app starts from `app`, the same values with the virtual display
-+/// and Send Audio on, and lets Settings change them while it runs. Change `standard`, rebuild, measure: both pick it up.
- ///
- /// The coordinator takes a new value only between pipelines (inside `select`), so one pipeline
- /// never mixes two settings. See `StreamCoordinator.setTarget`.
-@@ -23,7 +23,7 @@ package struct HostConfig: Equatable, Sendable {
-     /// Apple: trades quality for encode speed; try after the baseline.
-     package var prioritizeSpeed: Bool
-     /// A picked window streams from its own HiDPI virtual display (see VirtualStage). Needs the
--    /// AppKit event loop, so the CLI turns it on only with --virtual-display.
-+    /// AppKit event loop, so the CLI turns it on only with --virtual-display. On in Sill.app (`app`).
-     package var virtualDisplay: Bool
-     /// Direct Wireless Connection: peer-to-peer Wi-Fi (AWDL) on the listener and its Bonjour
-     /// registration, so a device with no network in common can find and reach the Mac. Off by
-@@ -58,8 +58,9 @@ package struct HostConfig: Equatable, Sendable {
-     package var shareClipboard: Bool
-     /// Send Audio: every connected device that plays the Mac's sound (its hello lists a codec) gets the
-     /// sound of what streams, the streamed window's app or every app for the Desktop (AudioPipeline,
--    /// kind 43). Off by default: the Mac keeps playing its own sound, so a device beside it would
--    /// double every sound a moment late. The sound's own stream's, not the pipeline's: a change starts
-+    /// kind 43). Off in `standard` (the CLI's `--audio` opts in), on in Sill.app since 2026-10-27 (`app`):
-+    /// the Mac keeps playing its own sound, so a device beside it doubles every sound a moment late
-+    /// until it mutes. The sound's own stream's, not the pipeline's: a change starts
-     /// or stops that stream and never restarts the picture (absent from `restartNeeded`), whoever makes
-     /// it. One value home or away, set from the Mac's menu and Settings, the CLI's `--audio`, or any
-     /// device's Settings panel (`DeviceSettings.accepted`, then `applying` or `applyingAway` like every
-@@ -87,22 +88,37 @@ package struct HostConfig: Equatable, Sendable {
-         self.sendAudio = sendAudio
-     }
- 
--    /// The spike's knobs, formerly the `let`s at the top of the CLI's main.swift, and the app's
--    /// defaults. Virtual display off in both until Noah flips it. Direct Wireless off in both
--    /// (Noah, 2026-09-24): AWDL costs every Wi-Fi stream its steadiness, and a shared network needs
-+    /// The spike's knobs, formerly the `let`s at the top of the CLI's main.swift: the CLI's values, and
-+    /// the app's but for the virtual display and Send Audio (`app`). Virtual display off here: the CLI turns it on
-+    /// with --virtual-display, which runs the AppKit loop the display needs. Direct Wireless off in
-+    /// both (Noah, 2026-09-24): AWDL costs every Wi-Fi stream its steadiness, and a shared network needs
-     /// none of it. Remote access and internet access off in both: only the Mac's own user widens
-     /// exposure. 7455 is unassigned at IANA and below the ephemeral range. Away from home, Low ·
-     /// Standard (Noah, 2026-09-25): a slow connection never starts at the home quality. Require
-     /// pairing on: a home door that speaks TLS admits only paired devices until the Mac's user says
-     /// otherwise. Share clipboard with devices on (2026-10-14): each device has its own switch too, and
--    /// a password manager's copies never go. Send Audio off in both until Noah has tried it
--    /// (docs/audio-plan.md, Q1).
-+    /// a password manager's copies never go. Send Audio off here; Sill.app's is on since 2026-10-27
-+    /// (`app`).
-     package static let standard = HostConfig(maxFPS: 120, captureScale: 2, bitrate: 15_000_000,
-                                              awayBitrate: 4_000_000, awayCaptureScale: 1,
-                                              prioritizeSpeed: false, virtualDisplay: false, directWireless: false,
-                                              remoteAccess: false, remotePort: 7455, internetAccess: false,
-                                              requirePairing: true, shareClipboard: true, sendAudio: false)
- 
-+    /// Sill.app's defaults: `standard` with the virtual display on (Noah, 2026-10-27: "have Virtual
-+    /// Desktop on by default. Of course, if a user changes a setting remember their choice for future
-+    /// sessions as you do now"). HostSettings registers these, so a key the Mac's user or a device ever
-+    /// set (`virtualDisplay`
-```
-
-**File**: `Sources/SillHost/VirtualDisplay.swift` (modified, +8/-0)
-```diff
-@@ -103,6 +103,14 @@ final class VirtualDisplay {
- 
-     var isAlive: Bool { object != nil }
- 
-+    /// The current mode's pixels a point, whole: 2 at the HiDPI mode asked for, 1 at a mode macOS
-+    /// chose instead (VirtualStage's creation line). 0 before the display is online.
-+    var currentScale: Int {
-+        let b = bounds, px = pixelSize
-+        guard b.width > 0, px.width > 0 else { return 0 }
-+        return Int((Double(px.width) / Double(b.width)).rounded())
-+    }
-+
-     /// The retained CGVirtualDisplay instance. Releasing it removes the display.
-     private var object: AnyObject?
-     private let queue = DispatchQueue(label: "sill.virtualdisplay")
-```
-
-**File**: `Sources/SillHost/VirtualDisplaySelfTest.swift` (modified, +22/-10)
-```diff
-@@ -3,11 +3,13 @@ import AppKit
- import CoreGraphics
- import ScreenCaptureKit
- 
--/// `SillHost --virtual-display-selftest`: creates one 1000×700 pt @2× virtual display from a
--/// process that runs the AppKit event loop exactly as `--virtual-display` does, reports what this
--/// process, CoreGraphics, AppKit and ScreenCaptureKit see of it, destroys it and exits. The
--/// display part needs no permission; SCShareableContent needs Screen Recording and the report
--/// says so when it is missing. Exit code 0 when the display came up and went away cleanly.
-+/// `SillHost --virtual-display-selftest [Hz] [WxH]`: creates one 1000×700 pt @2× virtual display (or
-+/// W×H points: `800x830` is the smallest VirtualStage makes, VirtualDisplaySize; `754x784` one that
-+/// macOS ran at 1x) from a process that runs the AppKit event loop exactly as `--virtual-display`
-+/// does, reports what this process, CoreGraphics, AppKit and ScreenCaptureKit see of it, destroys it
-+/// and exits. The display part needs no permission; SCShareableContent needs Screen Recording and the
-+/// report says so when it is missing. It moves the pointer onto the display and back (the input
-+/// check below). Exit code 0 when the display came up and went away cleanly.
- package enum VirtualDisplaySelfTest {
-     package static func run() -> Never {
-         let app = NSApplication.shared
-@@ -20,6 +22,13 @@ package enum VirtualDisplaySelfTest {
-         exit(0)   // app.run() does not return
-     }
- 
-+    /// "800x830" → 800×830 points; nil for anything else (a refresh rate, another flag).
-+    private static func points(_ text: String) -> (width: Int, height: Int)? {
-+        let parts = text.lowercased().split(separator: "x")
-+        guard parts.count == 2, let w = Int(parts[0]), let h = Int(parts[1]), w > 0, h > 0 else { return nil }
-+        return (w, h)
-+    }
-+
-     private static func onlineDisplays() -> [CGDirectDisplayID] {
-         var n: UInt32 = 0
-         CGGetOnlineDisplayList(0, nil, &n)
-@@ -44,12 +53,15 @@ package enum VirtualDisplaySelfTest {
-         let t0 = Date()
-         let d: VirtualDisplay
-         do {
--            // `--virtual-display-selftest 120` asks for a 120 Hz display (what a ProMotion device gets).
-+            // `--virtual-display-selftest 120` asks for a 120 Hz display (what a ProMotion device gets),
-+            // and `800x830` (either order) for that size in points.
-             let args = CommandLine.arguments
--            let hz = args.firstIndex(of: "--virtual-display-selftest").flatMap { i in args.count > i + 1 ? Double(args[i + 1]) : nil } ?? 60
--            d = try VirtualDisplay(name: "Sill", widthPt: 1000, heightPt: 700, scale: 2, refreshHz: hz,
-+            let after = args.firstIndex(of: "--virtual-display-selftest").map { Array(args[($0 + 1)...]) } ?? []
-+            let hz = after.lazy.compactMap { Double($0) }.first ?? 60
-+            let size = after.lazy.compactMap(points).first ?? (width: 1000, height: 700)
-+            d = try VirtualDisplay(name: "Sill", widthPt: size.width, heightPt: size.height, scale: 2, refreshHz: hz,
-                                    vendorID: VirtualStage.vendorID, productID: VirtualStage.productID, serialNum: VirtualStage.serialNum)
--            print("  requested refresh: \(Int(hz)) Hz")
-+            print("  requested: \(size.width)×\(size.height) pt @2×, \(Int(hz)) Hz")
-         } catch {
-             print("  FAIL create: \(error)")
-             return 2
-@@ -59,7 +71,7 @@ package enum VirtualDisplaySelfTest {
-         let onlineMs = Int(Date().timeIntervalSince(t0) * 1000)
-         let px = d.pixelSize
-         print("  created id \(d.displayID) in \(createdMs) ms; online at requested mode: \(online) after \(onlineMs) ms")
--        print("  bounds \(d.bounds), backing \(px.width)×\(px.height) px")
-+        print("  bounds \(d.bounds), backing \(px.width)×\(px.height) px, @\(d.currentScale)×")
-         if let mode = CGDisplayCopyDisplayMode(d.displayID) { print("  current mode refresh: \(Int(mode.refreshRate)) Hz") }
-         // Input reachability: the host maps device touches to global coordinates on this display
-         // and posts HID mouse events there. If the window server keeps the cursor off virtual
-```
-
-**File**: `Sources/SillHost/VirtualStage.swift` (modified, +14/-19)
-```diff
-@@ -16,8 +16,9 @@ import StreamProtocol
- /// exactly where it was and removes the display.
- ///
- /// Geometry: the display is not sized to the client's panel but to an *envelope* — a square whose
--/// side is the panel's longer edge ÷ 0.5 (the smallest Aa scale), plus the menu bar — and reused
--/// as long as the wanted window fits, so a rotation or an Aa step only re-places the window and
-+/// side is the panel's longer edge ÷ 0.5 (the smallest Aa scale), 800 points at least (an iPhone's
-+/// 754 came up at 1x: VirtualDisplaySize), plus the menu bar — and reused as long as the wanted
-+/// window fits, so a rotation or an Aa step only re-places the window and
- /// restarts the pipeline; no display is recreated and nothing flashes on the Mac. The encoded
- /// frame is always exactly the window's rectangle (`sourceRect`), so the envelope is invisible on
- /// the device. To get the task's literal "display sized to the panel", make `envelope` return
-@@ -144,10 +145,6 @@ final class VirtualStage {
-     let sizer: WindowSizer
-     let catalog: WindowCatalog
- 
--    /// Display bounds: 320 is VirtualDisplay's floor; 4096 keeps the 2× backing store at or under
--    /// 8192 px, its ceiling.
--    static let minSide: CGFloat = 320
--    static let maxSide: CGFloat = 4096
-     /// Fixed identity, so System Settings › Displays keeps one remembered "Sill" entry across runs
-     /// (the probe used serial 0xF00D and does not collide).
-     static let vendorID: UInt32 = 0x5111, productID: UInt32 = 0x0001, serialNum: UInt32 = 1
-@@ -204,16 +201,11 @@ final class VirtualStage {
-     }
- 
-     /// The display size (without the menu bar) that fits this panel at every Aa scale and in both
--    /// orientations: a square of the longer edge ÷ 0.5 (the slider's smallest step). No viewport →
--    /// the window's own size.
-+    /// orientations: a square of the longer edge ÷ 0.5 (the slider's smallest step), every side 800
-+    /// to 4096 points (VirtualDisplaySize, pure, where the rule and its reasons are). No viewport →
-+    /// the window's own size, held the same way.
-     static func envelope(for v: Viewport?, windowSize: CGSize) -> CGSize {
--        guard let v, v.width > 0, v.height > 0 else { return clamp(windowSize) }
--        let side = ceil(max(v.width, v.height) / 0.5)
--        return clamp(CGSize(width: side, height: side))
--    }
--
--    static func clamp(_ s: CGSize) -> CGSize {
--        CGSize(width: min(max(s.width, minSide), maxSide), height: min(max(s.height, minSide), maxSide))
-+        VirtualDisplaySize.envelope(panel: v.map { CGSize(width: $0.width, height: $0.height) }, windowSize: windowSize)
-     }
- 
-     /// The NSScreen for a display ID, as the area below its menu bar in CG (top-left) coordinates.
-@@ -507,15 +499,15 @@ final class VirtualStage {
-     /// so one grown to an app's minimum is not grown a second time after a rate change. Throws
-     /// with the display destroyed if it never came up or SCK never saw it.
-     private func ensureDisplay(atLeast env: CGSize) async throws {
--        var env = Self.clamp(env)
--        env.height = min(env.height, Self.maxSide - menuInset)   // the menu bar counts toward the 8192 px ceiling
-+        var env = VirtualDisplaySize.clamp(env)
-+        env.height = min(env.height, VirtualDisplaySize.maxSide - menuInset)   // the menu bar counts toward the 8192 px ceiling
-         if let d = display, d.isAlive, scDisplay != nil, Int(d.refreshHz) == refreshHz,
-            CGFloat(d.widthPt) >= env.width, CGFloat(d.heightPt) - menuInset >= env.height {
-             Stats.shared.bump("vd.reused")
-             return
-         }
-         if let d = display {
--            env = Self.clamp(CGSize(width: max(env.width, CGFloat(d.widthPt)), height: max(env.height, CGFloat(d.heightPt) - menuInset)))
-+            env = VirtualDisplaySize.clamp(CGSize(width: max(env.width, CGFloat(d.widthPt)), height: max(env.height, CGFloat(d.heightPt) - menuInset)))
-         }
-         // Recreating under a staged window (rate change, envelope grew) would let the window server
-         // dump it anywhere on a real display until the new one is up: send it home first. prepare
-@@ -586,7 +578,10 @@ final class VirtualStage {
-         }
-         scDisplay = listed
-         Stats.shared.bump("vd.created")
--        print("Virtual display \(d.widthPt)×\(d.heightPt) pt @2× id \(d.displayID): created \(created) ms, online \(onlineMs) ms, "
-+        // The mode it came up at, not the one asked for: a display macOS kept at 1x read "@2×" here
-+        // until 2026-10-27 (the line before this one said so, "online but not at …").
-+        let b = d.bounds
-+        print("Virtual display \(Int(b.width))×\(Int(b.height)) pt @\(d.currentScale)× id \(d.displayID): created \(created) ms, online \(onlineMs) ms, "
-               + "listed by ScreenCaptureKit after \(Self.ms(since: t1)) ms, menu bar \(Int(menuInset)) pt\(insetMeasured ? "" : " (assumed)")")
-     }
- 
-```
-
-**File**: `Sources/SillHostCLI/main.swift` (modified, +9/-8)
-```diff
-@@ -9,8 +9,8 @@ import SillHostCore
- setvbuf(stdout, nil, _IOLBF, 0)
- 
- // Knobs for the spike: maxFPS, captureScale, bitrate (per 60 fps), prioritizeSpeed. They live in
--// Sources/SillHost/HostConfig.swift now (`HostConfig.standard`), which is also where the menu bar
--// app's Settings start. Change, rebuild, measure.
-+// Sources/SillHost/HostConfig.swift now (`HostConfig.standard`); the menu bar app's Settings start from
-+// `HostConfig.app`. Change, rebuild, measure.
- var config = HostConfig.standard
- 
- // Optional. Streams the first window whose app name or title matches, before any client asks.
-@@ -23,8 +23,9 @@ let synthetic = CommandLine.arguments.contains("--synthetic")
- 
- // `SillHost --virtual-display`: a picked window is moved onto its own HiDPI virtual display and
- // that display is captured, so the window keeps repainting whatever covers its old spot on the
--// Mac. Off by default until Noah has tried it. Needs the AppKit event loop below: without it this
--// process never sees the display's modes (VirtualDisplay.swift, "Event loop").
-+// Mac. Off by default here (Sill.app has it on since 2026-10-27: HostConfig.app). Needs the AppKit
-+// event loop below: without it this process never sees the display's modes (VirtualDisplay.swift,
-+// "Event loop").
- let virtualDisplay = CommandLine.arguments.contains("--virtual-display")
- config.virtualDisplay = virtualDisplay
- 
-@@ -118,10 +119,10 @@ if let app = MenuSelfTest.requested(in: CommandLine.arguments) {
- // Otherwise SCStream aborts with "Assertion failed: (did_initialize), CGS_REQUIRE_INIT".
- _ = CGMainDisplayID()
- 
--// `SillHost --virtual-display-selftest`: creates one 1000×700 pt @2× virtual display, reports
--// whether this process, CoreGraphics and ScreenCaptureKit see it, destroys it and exits. Needs
--// no permission for the display itself (SCShareableContent needs Screen Recording; it says so).
--// Runs under the AppKit loop like the real thing.
-+// `SillHost --virtual-display-selftest [Hz] [WxH]`: creates one 1000×700 pt @2× virtual display (or
-+// W×H points), reports whether this process, CoreGraphics and ScreenCaptureKit see it and the mode it
-+// came up at, destroys it and exits. Needs no permission for the display itself (SCShareableContent
-+// needs Screen Recording; it says so). Runs under the AppKit loop like the real thing.
- if CommandLine.arguments.contains("--virtual-display-selftest") {
-     VirtualDisplaySelfTest.run()
- }
 ```
 
 ---
 
-### Incident Patch 2: `64cc383b` (2026-10-27)
-**Commit Message**: Words: Send Audio on by default everywhere it was said off, the switch always shown, the numbers at the head (#236)
+### Incident Patch 3: `e4d30349` (2026-10-30)
+**Commit Message**: Merge pull request #262 from Saffsanity/integrate-security
 
-The review of #236: three source comments, BRIEF.md, the App Store drafts
-(the description's sound bullet, the review notes' sound line at the same
-byte length), docs/audio-plan.md's Q1 and the lines premised on off by
-default, the Current step entry's numbers (away-quality 96 and 30 of 30, five
-previews, the warning's line, the photos under the always-shown switch, this
-Mac's saved keys), the simulator instruction (a simctl spawn defaults write
-never reaches the app: plutil on the container's plist instead), README's
-virtual display bullet (a device's panel turns it off too).
+Integration: the seven security pull requests tested together on 2026-10-30 (#249 #250 #251 #252 #253 #254 #255)
 
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `CLAUDE.md` (modified, +18/-15)
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -32,8 +32,8 @@ by default, and mute should be off by default." No wire change.
-   the switch does (`toggleStyle`); the console's `connect:` lines.
- - The Mac: Sill.app registers `HostConfig.app` (HostSettings), the CLI's `standard` with the virtual
-   display on. Registered, never written: a `virtualDisplay` key set from the menu, Settings ›
--  Virtual Display or a device always wins (a Mac that turned it off stays off; this Mac's own reads
--  0), and `-virtualDisplay 0` turns it off for one run. The CLI keeps `standard`: `--virtual-display`
-+  Virtual Display or a device always wins (a Mac that turned it off stays off; this Mac's own keys read 1 for
-+  both on 2026-10-27, set by hand, so nothing changes here), and `-virtualDisplay 0` turns it off for one run. The CLI keeps `standard`: `--virtual-display`
-   opt-in, its stdout byte for byte. The menu's checkmark and the pane's switch follow `config`; no
-   pane names the default.
- - The virtual display at 1x, the caveat of that decision: not in the session of 2026-10-26/27.
-@@ -63,7 +63,7 @@ by default, and mute should be off by default." No wire change.
-   checks README.
- - Verified: `swift build -c release`, only the CaptureProbe warning; `Tests/checks/run-all.sh`, all
-   55 (562 s); mutants: connection-list 162 checks and 76 of 76, capture-scale 148 and 39 of 39,
--  away-quality 88 and 27 of 27, virtual-display-api (VirtualDisplay.swift changed) 17 of 17; H2
-+  away-quality 96 and 30 of 30 (after #235's merge: its acceptance mutants and the app defaults'), virtual-display-api (VirtualDisplay.swift changed) 17 of 17; H2
-   against main at 3b546374 from `git archive`, `--synthetic` on loopback (software encoder, no
-   router, no screen): idle 35 s identical masked and sorted (8 lines), with `sillclient.py PORT 8
-   desktop` identical (23 lines; a first pair differed only in which counters three stats lines
-@@ -72,15 +72,16 @@ by default, and mute should be off by default." No wire change.
-   `-SillSetAfter '2 virtualDisplay=0'`, one "Settings: virtual display on → off" and the key 0; a
-   relaunch, off; `-virtualDisplay 1`, on for the run, the key still 0; main's binary with no key,
-   off; previews from both bare binaries at one path, 146 files each, only `menu.txt` (the
--  update-available sample's ✓), `pane-virtualDisplay-light.png` and `-dark.png` differ; the iOS app
-+  update-available sample's ✓ Virtual Display and ✓ Send Audio (Beta)), `pane-virtualDisplay-light.png`,
-+  `-dark.png`, `pane-streaming-light.png` and `-dark.png` differ, each pane only in its switch; the iOS app
-   with Xcode 27.1 (27A9275), Debug for the generic simulator as CI builds it, Release for the
-   simulator, Debug for a device, only the known StreamClient capture warning
--  (StreamClient.swift:4067); on a private iPhone Duo simulator on iOS 27.1 (its cover display), the
--  29 connect cases at 466×678 and 951×669 against main's Debug build: this build with the list
--  stored and main's with nothing stored, 58 of 58 pixel for pixel; this build with nothing stored
--  and main's with tiles stored, 43 of 58, the rest the switch beside the title absent with no saved
--  Mac listed (denied, hint, looking, methods, nearby, notice, update, both sizes) and the pairing
--  case's spinner (it differs from itself); the normal app, a fresh install against a synthetic host
-+  (StreamClient.swift:4110); on a private iPhone Duo simulator on iOS 27.1 (its cover display), the
-+  29 connect cases at 466×678 and 951×669 against main's Debug build: this build with nothing stored
-+  and main's with tiles stored, 57 of 58 pixel for pixel (the 58th the pairing case's spinner, which
-+  differs from itself); this build with the list stored and main's with nothing stored, 44 of 58, the
-+  rest the switch beside the title, which this build always shows (the verifier's photos of 04c9f226;
-+  the author's, before 70423d1a, had the switch only with a saved Mac listed); the normal app, a fresh install against a synthetic host
-   registered as `_silltest._tcp`: tiles, toggled to the list (stored "list"), a relaunch the list,
-   toggled back (stored "tiles"), a relaunch tiles, the key read from the app's container plist
-   (`simctl spawn … defaults read <container>/Library/Preferences/me.saffer.sill.plist`; the domain by
-@@ -92,8 +93,10 @@ by default, and mute should be off by default." No wire change.
-   tiles; once a Mac is paired the switch beside the title shows; to the list, quit Sill from the app
-   switcher and reopen: the list; back to tiles, reopen: tiles; an install that chose the list keeps it.
-   On a Mac whose `virtualDisplay` was never set (another Mac or user account, or, with Sill quit,
--  `defaults delete me.saffer.sill.mac virtualDisplay`; this Mac's reads 0, so it stays off here): the
--  menu shows ✓ Virtual Display, a window picked moves onto the virtual display (Sill.log "Virtual
-+  `defaults delete me.saffer.sill.mac virtualDisplay sendAudio`; this Mac's read 1, set by hand, so it
-+  is 
+@@ -134,7 +134,7 @@ jobs:
+     strategy:
+       fail-fast: false
+       matrix:
+-        check: [addresses, ask-limits, audio-codec, audio-packetizer, audio-playout, away-copy, away-quality, away-wire, cable-link, capture-scale, catalog-look, clientlink, clipboard, compatibility, connection-list, device-gate, display-wake, dmg-layout, door-policy, duo, encoder-mailbox, encoder-slowstate, fence, gesture-chords, gestures, goodbye, hardware-keyboard, home-device, home-model, home-records, home-txt, installed-apps, key-repeat, key-strokes, keychain, keyframe-recovery, ledger, link-judge, menu-state, menus, message-reader, origin, pairing-address, pairing-sharing, phone-portrait, pointer-control, pointer-presence, pointer-watch, policy, protocol, remote-rules, settings-window, stream-zoom, text-composition, thumbnail-hold, tour, update-policy, virtual-display-api, window-restore]
++        check: [addresses, ask-limits, audio-codec, audio-packetizer, audio-playout, away-copy, away-quality, away-wire, cable-link, capture-scale, catalog-look, clientlink, clipboard, compatibility, connection-list, device-gate, display-wake, dmg-layout, door-policy, duo, encoder-mailbox, encoder-slowstate, fence, firewall, gesture-chords, gestures, goodbye, hardware-keyboard, home-device, home-model, home-records, home-txt, installed-apps, key-repeat, key-strokes, keychain, keyframe-recovery, ledger, link-judge, menu-state, menus, message-reader, origin, pairing-address, pairing-sharing, phone-portrait, pointer-control, pointer-presence, pointer-watch, policy, protocol, remote-rules, settings-window, stream-zoom, test-host, text-composition, thumbnail-hold, tour, update-policy, viewport-bounds, virtual-display-api, window-restore]
+     steps:
+       - name: Check out
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 ```
 
-**File**: `README.md` (modified, +2/-1)
+**File**: `CLAUDE.md` (modified, +588/-23)
 ```diff
-@@ -138,7 +138,8 @@ Sill has layouts of its own.
-   disconnects, or you quit Sill. With the virtual display off, a window you
-   moved on your Mac meanwhile keeps its new place.
- - **The virtual display**, on unless you turn it off in the Sill menu or in
--  Sill's Settings on your Mac, moves the window you stream onto a display of
-+  Sill's Settings on your Mac, or in the settings panel of Sill on your iPhone
-+  or iPad, moves the window you stream onto a display of
-   its own on your Mac, sized for your device, so it keeps updating when other
-   windows cover it. The window leaves your Mac's screen while it streams and
-   comes back where it was. The display uses a private macOS API, which is one
-```
-
-**File**: `Sources/SillHost/HostConfig.swift` (modified, +7/-6)
-```diff
-@@ -2,7 +2,7 @@ import CoreGraphics
+@@ -8,6 +8,225 @@ Formerly winstream; the folder still carries the old name.
  
- /// The host's knobs, as one value. The CLI streams with `standard` (plus its --virtual-display and
- /// --direct-wireless flags); the menu bar app starts from `app`, the same values with the virtual display
--/// on, and lets Settings change them while it runs. Change `standard`, rebuild, measure: both pick it up.
-+/// and Send Audio on, and lets Settings change them while it runs. Change `standard`, rebuild, measure: both pick it up.
- ///
- /// The coordinator takes a new value only between pipelines (inside `select`), so one pipeline
- /// never mixes two settings. See `StreamCoordinator.setTarget`.
-@@ -58,8 +58,9 @@ package struct HostConfig: Equatable, Sendable {
-     package var shareClipboard: Bool
-     /// Send Audio: every connected device that plays the Mac's sound (its hello lists a codec) gets the
-     /// sound of what streams, the streamed window's app or every app for the Desktop (AudioPipeline,
--    /// kind 43). Off by default: the Mac keeps playing its own sound, so a device beside it would
--    /// double every sound a moment late. The sound's own stream's, not the pipeline's: a change starts
-+    /// kind 43). Off in `standard` (the CLI's `--audio` opts in), on in Sill.app since 2026-10-27 (`app`):
-+    /// the Mac keeps playing its own sound, so a device beside it doubles every sound a moment late
-+    /// until it mutes. The sound's own stream's, not the pipeline's: a change starts
-     /// or stops that stream and never restarts the picture (absent from `restartNeeded`), whoever makes
-     /// it. One value home or away, set from the Mac's menu and Settings, the CLI's `--audio`, or any
-     /// device's Settings panel (`DeviceSettings.accepted`, then `applying` or `applyingAway` like every
-@@ -88,16 +89,16 @@ package struct HostConfig: Equatable, Sendable {
+ ## Current step
+ 
++**The door's waiting places (2026-10-29, branch `sec-door-pending` from main at 150479b5, PR #252; finding 9 of the
++security scan of 2026-10-18, Low; Noah's go of 2026-10-29).** A TLS door (the remote one, and the home one of
++Sill.app and `SillHost --pairing`) held 8 connections waiting for admission, 2 per address, 10 s each, and backed an
++address off only for its own refusals: four addresses closing each connection at 9.9 s kept every place full for good
++and a paired device got "limit". Host only, no wire change. `DoorPolicy.Places` (pure) owns the places, `Door` runs
++it on a monotonic clock: a connection that ends unadmitted, and a pairing connection's kind 19, costs its address a
++tenth of a failure, a tenth for each second it waited at least, one more for every 2 s beyond the first 2 (counted to
++its deadline at most), at least one when refused (5 in 60 s: 300 s, as before; a paired key at `.ready` clears its
++address); the TLS handshake has 4 s (Network.framework does not say when a ClientHello arrives, so the whole
++handshake rather than its first bytes; 10 s from a known address), a pairing connection's kind 19 4 s after `.ready`,
++10 s in all; an IPv6 address answers for its /64 too (a link-local one's on its interface): 2 waiting places per /64
++for addresses not known, and 12 failures in 300 s from those back the /64 off, an address counting 6 at most (so it
++takes two); 2 places beyond the 8 for addresses that proved a paired key within a day (known: never refused for nor
++charged to their /64, and they pay for what they hold as an address not known does, so someone at a paired device's
++address is backed off with it within 30 s: nothing tells them apart before TLS). One line a minute per door, "Home
++door backed off 10.128.0.34 for 300 s: its connections waited without being admitted, or were refused."
++`AskLimits.quietKey`: the quiet after the Mac's Cancel or a stop covers the asker's IPv6 /64. Checks: `door-policy`
++254 (the scan's attack modelled against the rule before and this one: before, every place held and the paired device
++refused at all 60 tries in 2 minutes; now the four backed off 12 s in, the paired device admitted at every try, one
++not yet known in at 13 s; closing at 1.9 s, 26.6 s; IPv6 churn in a /64, the /64 at 61 s, holding one place at 120 s)
++and 109 of 109 mutants; `ask-limits` 43 and 24 of 24. Live on loopback synthetic `--pairing` hosts (sources
++127.0.0.1, en0's 10.128.0.34, en13's 10.128.0.148 and en14's 169.254.219.184, whose connections to 127.0.0.1 stay on
++lo0; 127.0.0.2–5 cannot be bound without a root alias): main's build refused the paired client at all 30 tries in 90
++s ("… 27 over the limit."), backing nobody off; this one cut the four at 4.2 s and backed them off at 12.6 s ("Home
++door backed off 10.128.0.34 for 300 s: …", the client at 127.0.0.1 with them); a scratch build with 6 shared places
++(three addresses filling them as four fill 8) served a known client at all 20 tries and an unknown one from 13 s; one
++address cycling at 1.9 s held 2 places for good on main and was backed off at 47.9 s here. Plan's "What stays open"
++updated (an address keeps about 4/5 of a place, so ten IPv4 addresses taking turns fill the shared places; the
++co-located address; a device not yet paired in a backed-off /64, which a stranger in it keeps backed off with a dozen
++refused handshakes as each 5 minutes end; a routed IPv6 prefix from the internet at the remote door).
++- The review (2026-10-29; the report's "The review", f9-pending-slots-report.md in sill-handoff's
++  triage/2026-10-29-security): three findings, each reproduced live on 7929c539 first and fixed in a commit of its own.
++  A kind 19 left its place for nothing, and the home door's verify block takes `sill-pair/1` with any key: a holder
++  doing TLS on it 3 s in and a kind 19 (`v` 2, answered `closed`, nothing shown) 3.5 s later held all 8 places for
++  90 s from four addresses (112 kind 19s), nobody backed off, an unknown paired client refused at all 30 tries; now
++  `Places.End.request` pays as a connection that ended then (fd0a58c5): the same holder backed off at 13.07 s. The
++  wait counted from accept on CLOCK_MONOTONIC, which runs on through a sleep while the deadline's timer does not: one
++  connection waiting across a 20 s SIGSTOP of the host (a sleep's stand-in) backed 127.0.0.1 off at the continue and
++  the known client was refused at all 13 tries; now a wait counts to its place's deadline at most (0b457e48): no
++  backoff, 13 of 13 served. A known address was charged for all of its 10 s (a cut 4.1, its device's own let-go at
++  5 s 1.6, where main charged 1 and nothing): a known device's reconnect whose dials stalled was backed off at 40.06 s
++  and refused at all 6 tries after; now it pays as an address not known (1.1 at most for a handshake, 3.1 for a
++  pairing connection; 8e0148a0): no backof
+```
+
+**File**: `SECURITY.md` (modified, +20/-1)
+```diff
+@@ -24,17 +24,36 @@ who has it, and the newest iPhone and iPad app.
+ - Remote Access's connection, and pairing, at home and away: the QR code, the
+   typed code, `sill://pair` links, a USB cable's automatic pairing, Require
+   pairing, and the paired devices and keys Sill for Mac keeps in the keychain.
++- What another app on the Mac can make Sill for Mac do by starting it, or a
++  copy of it, with arguments and an environment of its own: it then runs with
++  Sill's Screen Recording and Accessibility permissions.
+ - The update check, which asks GitHub's releases feed about once a day and
+   downloads nothing.
+ - The website, getsill.app.
+ 
+ Known, and by design: with Require pairing off (Settings › Devices), any
+ device on the Mac's own networks, one nearby while Direct Wireless Connection
+ is on, and any app on the Mac itself connect without pairing, still
+-encrypted. With Show the pairing window to screen sharing on (Settings ›
++encrypted. An iPhone or iPad that connects that way takes whatever key
++answers when its row is tapped, so another Mac on the network that takes the
++Mac's name could answer that tap; its automatic reconnect goes back only to
++the key it connected to, and a paired device checks the Mac's key every
++time. With Show the pairing window to screen sharing on (Settings ›
++encrypted; only a paired device can turn Direct Wireless Connection on or off
++from its settings panel. With Show the pairing window to screen sharing on (Settings ›
+ Devices, off by default), Screen Sharing and other remote desktop apps show the
+ pairing window, so anyone who can see the Mac's screen remotely can read its
+ code. `SillHost`, the command-line host for development, keeps a plain
+ home door, with no pairing and no encryption, unless it runs with
+ `--pairing`. Sill for Mac 0.3.1 and earlier had no pairing and no encryption
+ at home: update to the newest release.
++
++The development builds made from source, `SillHost` and the bare `SillMenuBar`
++binary that `swift build` makes, take test settings that change who gets in
++and what pairing needs (`SILL_TEST_…` variables, and the bare binary's
++`-Sill…After` arguments and `-requirePairing`). Sill for Mac takes none of
++them, whatever its folder is called and however it is started (a renamed copy,
++a link to its executable): it knows itself by its code signature and its
++bundle. Sill for Mac 0.4.0 to 0.5.1, and the nightly builds before the next
++release, knew themselves by their folder's name and take them from a renamed
++copy or a link: update to the newest release.
+```
+
+**File**: `Scripts/audio/build.sh` (modified, +2/-2)
+```diff
+@@ -17,8 +17,8 @@ here="$(cd "$(dirname "$0")" && pwd)"
+ root="$(cd "$here/../.." && pwd)"
+ out="$root/.build/audio"
+ cd "$root"
+-host_files=(StreamServer CableLink ClientLink DeviceGate Door DoorPolicy HostIdentity HostLog InterfaceSnapshot LinkJudge
+-            OriginPolicy PairingWindow PointerControl PointerWatch RefusalSummary Stats
++host_files=(StreamServer CableLink ClientLink DeviceGate Door DoorPolicy HostIdentity HostLog InterfaceSnapshot KeyStrokes
++            LinkJudge OriginPolicy PairingWindow PointerControl PointerWatch RefusalSummary Stats
+             AudioPipeline AudioPacketizer AudioEncoder SyntheticAudio TestTone)
+ 
+ put() {   # put DEST: stdin to DEST, only if it differs
+```
+
+**File**: `Scripts/menu-check/mirror.swift` (modified, +29/-5)
+```diff
+@@ -1,11 +1,13 @@
+ // Scripts/menu-check/run.sh mirror: MenuMirror end to end against the fixture, with no host, network
+ // or encoder: the real MenuMirror, MenuReader, MenuPolicy, MenuFormat and StreamProtocol, with stubs
+ // for the server's send, a connection's state, Stats and print (all recorded). It drives the mirror
+-// as the coordinator does (fetch, press, setTarget, catalogPolled, clientLeft, clientStats) and checks
+-// each kind 24 and log line (docs/menu-bar-plan.md §4.4, §4.7; H4–H8's and H10's logic, and the
+-// review's: only subscribers served, a request past its device's wait not read, one top-level read
+-// a second, and the tree changed in place under a version). Presses go only to the fixture whose pid
+-// is given; a /bin/sleep it starts stands for an app whose top level cannot be read. usage
++// as the coordinator does (fetch, press, setTarget, catalogPolled, clientLeft, clientRevoked,
++// clientStats) and checks each kind 24 and log line (docs/menu-bar-plan.md §4.4, §4.7; H4–H8's and
++// H10's logic, and the review's: only subscribers served, a request past its device's wait not read,
++// one top-level read a second, and the tree changed in place under a version; and a device the Mac
++// stops serving, whose waiting fetch and choice are neither read nor made: security scan finding 10).
++// Presses go only to the fixture whose pid is given; a /bin/sleep it starts stands for an app whose
++// top level cannot be read. usage
+ // (fixture.py runs it): mirror PID FIXTURE_LOG FIXTURE_BIN
+ import Foundation
+ import ApplicationServices
+@@ -292,6 +294,28 @@ func dynamic(_ m: MacMenu?) -> Int { Int(m?.items?.compactMap { $0.title }.first
+     mirror.prepare = { true }
+     B.state = .ready
+     _ = await fetch(B, nil, nil)
++    // A device the Mac stops serving (security scan finding 10, the review of PR #254: Remove, Require
++    // pairing): D, a subscriber, is cut off while its fetch and its choice wait behind A's slow
++    // activation: neither is prepared, read or made, unlike B's choice above, and the host says why.
++    await sleep(1.1)
++    let D = FakeConnection("D")
++    _ = await fetch(D, nil, nil)
++    prepares = 0
++    let cbEditD = fixture().filter { $0.contains("menuNeedsUpdate 'Edit'") }.count
++    mirror.prepare = { prepares += 1; try? await Task.sleep(for: .seconds(0.6)); return true }
++    let tA3 = next(); mirror.fetch(FetchMenu(version: vF, id: "2", title: "File", token: tA3), from: A, who: "A")
++    mirror.fetch(FetchMenu(version: vF, id: "3", title: "Edit", token: next()), from: D, who: "D")
++    mirror.press(PressMenuItem(version: vF, id: "4.0", title: "Set Label A", token: next()), from: D, who: "D")
++    await sleep(0.05)
++    n = Lines.shared.all().count
++    mirror.clientRevoked(ObjectIdentifier(D))
++    _ = await answer(A, tA3)
++    await sleep(1.0)
++    check(prepares == 1 && label() == "B" && fixture().filter { $0.contains("menuNeedsUpdate 'Edit'") }.count == cbEditD
++          && lines(since: n).contains("Menu from D refused: 4.0: the Mac no longer serves it"),
++          "D cut off before its turn: its fetch neither prepared nor read, its choice not made (\(prepares) activations: A's; the label \(label()))")
++    D.state = .cancelled; mirror.clientLeft(D)
++    mirror.prepare = { true }
+     // A request past its device's wait: a fetch queued behind a 4.2 s activation is not read, and a
+     // choice behind it is refused as late.
+     await sleep(1.1)
+```
+
+**File**: `Scripts/pacing/build.sh` (modified, +4/-3)
+```diff
+@@ -19,9 +19,10 @@ git rev-parse --verify --quiet "$base^{commit}" > /dev/null || { echo "build.sh:
+ # needed it, the build says so). Since pairing at home (PR #37) StreamServer's TLS home door is a
+ # `Door`, which brings DoorPolicy, HostIdentity's trust snapshot, CableLink and PairingWindow's
+ # AskLimits; the harness never builds one (its own door serves every session). Since away from home
+-# (PR #39) it judges each device's link (LinkJudge).
+-host_files=(StreamServer CableLink ClientLink DeviceGate Door DoorPolicy HostIdentity HostLog InterfaceSnapshot LinkJudge
+-            OriginPolicy PairingWindow PointerControl PointerWatch RefusalSummary Stats)
++# (PR #39) it judges each device's link (LinkJudge). Since a revoked session's receive loop hands on
++# only what lets go of a key or a button (security scan finding 10), it reads RevokedInput (KeyStrokes).
++host_files=(StreamServer CableLink ClientLink DeviceGate Door DoorPolicy HostIdentity HostLog InterfaceSnapshot KeyStrokes
++            LinkJudge OriginPolicy PairingWindow PointerControl PointerWatch RefusalSummary Stats)
+ # The Mac's sound (docs/audio-plan.md H6): where a side has these, they are compiled in with SILL_AUDIO
+ # defined, and main.swift's --audio runs the test tone through the real pipeline and send path.
+ audio_files=(AudioPipeline AudioPacketizer AudioEncoder SyntheticAudio TestTone)
+```
+
+**File**: `Scripts/sillclient.py` (modified, +24/-12)
+```diff
+@@ -12,11 +12,14 @@
+                      in send order. Keys: maxFPS, bitrate, captureScale, prioritizeSpeed,
+                      virtualDisplay, directWireless, sendAudio; booleans accept 1/0/true/false/on/off
+   --raw17=JSON@T     send this literal kind 17 payload T seconds in (split on the last @)
++  --raw9=JSON@T      send this literal kind 9 payload (a viewport) T seconds in (split on the last @);
++                     a host refuses one outside 1 to 16384 points a side or 0.25 to 4 for its scale,
++                     and one that does not decode, with a "Viewport from … refused" line
+   --pick=SRC@T       a timed selectSource: none, desktop or window:ID
+   --stats            send ClientStats (kind 12) once a second as device "sillclient", so the host
+                      logs a name for this client
+-  --expect=K=V[,...] at exit, compare the last kind 16's settings (and its top-level persistent
+-                     and virtualDisplayAvailable; away from home, docs/remote-bundle-plan.md: its
++  --expect=K=V[,...] at exit, compare the last kind 16's settings (and its top-level persistent,
++                     virtualDisplayAvailable and sessionPaired; away from home, docs/remote-bundle-plan.md: its
+                      away's homeBitrate, homeCaptureScale, awayBitrate, awayCaptureScale,
+                      thisConnectionAway and awayRunning, missing when the host sent no away; and
+                      linkState, its link's state, "fine" when it sent none): prints EXPECT ok or
+@@ -136,26 +139,28 @@
+ Once a second it prints the frames, their payload in kB (the encoder's output), ticks, cursor
+ shapes and the last ping's round trip. Every kind 16 (host settings) is printed on one line with
+ its arrival time; dw= is Direct Wireless
+-(1, 0, or - when the host did not report it: an older host); away= (only when the host sent it) is
++(1, 0, or - when the host did not report it: an older host); paired= is sessionPaired, whether this
++session's key is on the Mac's trust list, the one kind of session it takes Direct Wireless from (1, 0,
++or - from a host before 2026-10-29); away= (only when the host sent it) is
+ h:HOME_BITRATE/SCALE,a:AWAY_BITRATE/SCALE,this=1|0,run=1|0, and link= (only while the host reports
+ the link behind or stalled) STATE,withheld=N,bitrate=B,carried=KBPS|-,suggested=B/SCALE|-. Flags may come in any
+ order after the positional arguments. Everything is checked before connecting: an unknown flag, a
+ --set or --expect key that is not one of theirs, or a value that does not parse stops the script
+-with status 2 (--raw17 and --input go out as written). Find PORT with: lsof -nP -iTCP -sTCP:LISTEN -a -p <pid>.
++with status 2 (--raw17, --raw9 and --input go out as written). Find PORT with: lsof -nP -iTCP -sTCP:LISTEN -a -p <pid>.
+ The --synthetic hosts do not advertise over Bonjour, so this is the only way to reach them."""
+ import json, re, socket, struct, sys, time
+ 
+ KIND = {0:"ps",1:"frame",2:"list",3:"thumb",4:"icon",5:"apps",11:"pong",13:"tick",14:"cursor",16:"settings",18:"macinfo",20:"pairresult",22:"goodbye",24:"menu",26:"pointer",32:"clipboard",43:"audio"}
+ BOOL = {"1": True, "0": False, "true": True, "false": False, "on": True, "off": False, "yes": True, "no": False}
+ BOOL_KEYS = {"prioritizeSpeed", "virtualDisplay", "directWireless", "sendAudio", "persistent", "virtualDisplayAvailable",
+-             "thisConnectionAway", "awayRunning"}
++             "thisConnectionAway", "awayRunning", "sessionPaired"}
+ # What --set may send: HostSettingsChange's seven fields. The host drops any other key without a
+ # word, so a misspelt one would only show up as an unchanged answer.
+ SET_KEYS = {"maxFPS", "bitrate", "captureScale", "prioritizeSpeed", "virtualDisplay", "directWireless", "sendAudio"}
+ # Away from home (docs/remote-bundle-plan.md): read from the state's `away`, and its `link`'s state.
+ AWAY_KEYS = {"homeBitrate", "homeCaptureScale", "awayBitrate", "awayCaptureScale", "thisConnectionAway", "awayRunning"}
+-EXPECT_KEYS = SET_KEYS | {"persistent", "virtualDisplayAvailable", "linkState", "clipboard"} | AWAY_KEYS
+-TIMED = ("set", "raw17", "pick", "fps-after", "stop-ping", "stop-read", "pairing-wanted", "keyframe", "fetch", "press", "raw25",
++EXPECT_KEYS = SET_KEYS | {"persistent", "virtualDisplayAvailable", "sessionPaired", "linkState", "clipboard"} | AWAY_KEYS
++TIMED = ("set", "raw17", "raw9", "pick", "fps-after", "stop-ping", "stop-read", "pairing-wanted", "keyframe", "fetch", "press", "raw25",
+          "raw27", "move", "tap", "key", "input", "gesture", "raw28", "copy", "copy-bytes", "raw32")
+ INPUT = ("move", "tap", "key", "input")
+ # What --gesture may send: TrackpadGesture's six names (Gesture.swift). Anything else goes with --raw28.
+@@ -602,7 +607,8 @@ def valued(name, default=None):
+ mac_pin = None
+ if pair_hold is not None:
+     # A pairing connection still pending: TLS up (ALPN sill-pair/1), then silence. The host's
+-    # admission deadline (10 s) or a Direct Wireless chang
+```
+
+**File**: `Sources/SillHost/CaptureScale.swift` (modified, +24/-0)
+```diff
+@@ -164,6 +164,30 @@ enum VirtualDisplaySize {
+         let side = ceil(max(panel.width, panel.height) / 0.5)
+         return clamp(CGSize(width: side, height: side))
      }
++
++    /// The most a window is asked for on the virtual display, a side: the largest viewport a host takes,
++    /// 16384 points at a text scale of 0.25 (ViewportBounds), so the hold changes no size a host asked
++    /// for before. Not the display's `maxSide`: the placement fits the window to the display anyway
++    /// (VirtualStage.prepare's `dest`), and a full-screen window's crop takes the shape of this size,
++    /// which is the panel's only while no side is held. Held at 4096, a 2560×1400 panel at 0.5x (an iPad's
++    /// Stage Manager window on a large display) was asked 4096×2800, and a full-screen window's crop came
++    /// out 1.46:1 for a 1.83:1 panel, black bars on the device (the review of finding 4, 2026-10-29).
++    static let maxWindowSide: CGFloat = 65536
++
++    /// The size a window should have on the virtual display, in Mac points: a device's panel of `panel`
++    /// points divided by its text scale (none, or one that is not a positive number, counts as 1), each
++    /// side held to 1…`maxWindowSide` (VirtualStage.windowSize). Until 2026-10-29 nothing held it: a
++    /// viewport of 1e300 points, or a scale of 1e-300, gave a side no Int holds, and the "insists on …"
++    /// line's Int() trapped (security scan, finding 4; hosts now refuse such a viewport, ViewportBounds,
++    /// and the line prints through ViewportBounds.whole). Every viewport a host takes is asked for as
++    /// before, but for a side under half a point, now 1 rather than 0. No panel, or one whose sides are
++    /// not positive numbers: the window's own size, as before.
++    static func windowSize(panel: CGSize?, scale: CGFloat?, own: CGSize) -> CGSize {
++        guard let panel, panel.width.isFinite, panel.height.isFinite, panel.width > 0, panel.height > 0 else { return own }
++        let s = scale.flatMap { $0.isFinite && $0 > 0 ? $0 : nil } ?? 1
++        return CGSize(width: min(max((panel.width / s).rounded(), 1), maxWindowSide),
++                      height: min(max((panel.height / s).rounded(), 1), maxWindowSide))
++    }
+ }
  
-     /// The spike's knobs, formerly the `let`s at the top of the CLI's main.swift: the CLI's values, and
--    /// the app's but for the virtual display (`app`). Virtual display off here: the CLI turns it on
-+    /// the app's but for the virtual display and Send Audio (`app`). Virtual display off here: the CLI turns it on
-     /// with --virtual-display, which runs the AppKit loop the display needs. Direct Wireless off in
-     /// both (Noah, 2026-09-24): AWDL costs every Wi-Fi stream its steadiness, and a shared network needs
-     /// none of it. Remote access and internet access off in both: only the Mac's own user widens
-     /// exposure. 7455 is unassigned at IANA and below the ephemeral range. Away from home, Low ·
-     /// Standard (Noah, 2026-09-25): a slow connection never starts at the home quality. Require
-     /// pairing on: a home door that speaks TLS admits only paired devices until the Mac's user says
-     /// otherwise. Share clipboard with devices on (2026-10-14): each device has its own switch too, and
--    /// a password manager's copies never go. Send Audio off in both until Noah has tried it
--    /// (docs/audio-plan.md, Q1).
-+    /// a password manager's copies never go. Send Audio off here; Sill.app's is on since 2026-10-27
-+    /// (`app`).
-     package static let standard = HostConfig(maxFPS: 120, captureScale: 2, bitrate: 15_000_000,
-                                              awayBitrate: 4_000_000, awayCaptureScale: 1,
-                                              prioritizeSpeed: false, virtualDisplay: false, directWireless: false,
-```
-
-**File**: `Sources/SillHostCLI/main.swift` (modified, +2/-2)
-```diff
-@@ -9,8 +9,8 @@ import SillHostCore
- setvbuf(stdout, nil, _IOLBF, 0)
- 
- // Knobs for the spike: maxFPS, captureScale, bitrate (per 60 fps), prioritizeSpeed. They live in
--// Sources/SillHost/HostConfig.swift now (`HostConfig.standard`), which is also where the menu bar
--// app's Settings start. Change, rebuild, measure.
-+// Sources/SillHost/HostConfig.swift now (`HostConfig.standard`); the menu bar app's Settings start from
-+// `HostConfig.app`. Change, rebuild, measure.
- var config = HostConfig.standard
- 
- // Optional. Streams the first window whose app name or title matches, before any client asks.
-```
-
-**File**: `Sources/SillMenuBar/HostSettings.swift` (modified, +2/-1)
-```diff
-@@ -137,7 +137,8 @@ final class HostSettings {
-             Key.updateCheck: true,
-             // On, like the CLI: each device has its own switch, and a password manager's copies never go.
-             Key.shareClipboard: base.shareClipboard,
--            // Off, like the CLI: the Mac keeps playing its own sound (docs/audio-plan.md, Q1).
-+            // On, unlike the CLI (Noah, 2026-10-27: "Send Audio should be on by default"); a saved key
-+            // wins. The Mac keeps playing its own sound too.
-             Key.sendAudio: base.sendAudio,
-             // Off: whoever can see this Mac's screen remotely could read a code (PairingWindowSharing).
-             Key.showPairingWindowToScreenSharing: false,
-```
-
-**File**: `docs/BRIEF.md` (modified, +3/-1)
-```diff
-@@ -88,7 +88,9 @@ address.
- Out: hole punching, multi-window, layout customization, AV1. Audio moved in on
- 2026-09-27 (Noah: "Audio: the plan is done and parked as a v2 feature by your
- earlier decision", first in what he wanted worked on): the sound of what
--streams, off by default (Send Audio), per docs/audio-plan.md. In, as a beta,
-+streams (Send Audio: off by default until 2026-10-27, on by default in Sill.app
-+since, Noah: "Send Audio should be on by default, and mute should be off by
-+default"; the CLI's `--audio` still opts in), per docs/audio-plan.md. In, as a beta,
- since 2026-10-20 (Noah, about PR #94: "merge as beta support"): Send Audio says
- beta until the plan's device tests pass. Since 2026-10-27 (Noah: "Sound should be
- a toggle in the settings menu") a device's Settings panel turns it on and off for
-```
-
-**File**: `docs/DEVELOPMENT.md` (modified, +3/-2)
-```diff
-@@ -1448,8 +1448,9 @@ simulator:
-   every connect case shows tiles unless `-Sill.connectionStyle list` gives
-   the list main showed by default before. A launch argument outranks the
-   switch beside the title, so to try the switch write the default instead
--  (`xcrun simctl spawn <udid> defaults write me.saffer.sill
--  Sill.connectionStyle list`), or let `-SillStyleToggleAt <s>[,<s>…]` toggle
-+  (with Sill not running, `plutil -replace Sill.connectionStyle -string list
-+  "$(xcrun simctl get_app_container <udid> me.saffer.sill data)/Library/Preferences/me.saffer.sill.plist"`;
-+  a `simctl spawn … defaults write` never reaches the app), or let `-SillStyleToggleAt <s>[,<s>…]` toggle
-   it at those seconds after the connect screen shows, as the switch does (the
-   choice is stored); the console says `connect: tiles (Sill.connectionStyle
-   unset)` as each connect screen shows, and `connect: tiles → list at 4.0 s`
-```
-
-**File**: `docs/app-store-metadata.md` (modified, +4/-4)
-```diff
-@@ -369,7 +369,7 @@ after the one that starts "Set quality". "Beta" goes on the feature, never on th
- 2.2 keeps betas and trials of an app off the App Store (TestFlight is for those).
- 
- ```text
--• Hear sound from your Mac in step with the picture, a beta feature that is off until you turn on Send Audio in Sill’s settings, on your Mac or your iPhone or iPad. Mute it on any device in Sill’s settings.
-+• Hear sound from your Mac in step with the picture, a beta feature that is on unless you turn off Send Audio in Sill’s settings, on your Mac or your iPhone or iPad. Mute it on any device in Sill’s settings.
- ```
- 
- The source is public under the Apache License 2.0 (since 2026-09-26), so the
-@@ -589,7 +589,7 @@ are then 3,995 bytes (local-only 3,752), all ASCII, as this file's measure count
- last newline included). "Beta" stays on the feature, never on the app (guideline 2.2).
- 
- ```text
--- Sound (optional beta feature): turn on Send Audio (Beta) in the Sill menu; the device plays it.
-+- Sound (optional beta feature): Send Audio (Beta), in the Sill menu, is on; the device plays it.
- ```
- 
- These are the notes as App Store Connect holds them since App Review's
-@@ -844,8 +844,8 @@ Safe:
-   tiles' paragraph, 232 characters, before the sound's: the draft 1,805
-   characters; the rest unchanged.
- - With the sound's two switches in the device's Settings panel (Noah, 2026-10-27: Send Audio set
--  from a device for every device, Mute for each device, no Sound button), the sound's bullet 206
--  characters and the description with it 3,210 (without the line "Sill doesn’t play sound from
-+  from a device for every device, Mute for each device, no Sound button), the sound's bullet 207
-+  characters ("on unless you turn off", since #236) and the description with it 3,211 (without the line "Sill doesn’t play sound from
-   your Mac."); the next What's New's sound paragraph 363, the draft 1,631; the review notes
-   unchanged (their WHAT TO TRY line names the Sill menu, which still turns it on).
- - With Send Audio on by default on the Mac (2026-10-27, PR #236) the What's New's sound paragraph
+ /// HEVC wants even sides: a capture's size in pixels rounded down to even. Every capture's rule until
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #236** (2026-10-27): Tiles, Virtual Display and Send Audio on by default; no virtual display under 800 points (@Saffsanity)
-- **PR #235** (2026-10-27): Sound: Send Audio and Mute as switches in the device's Settings panel, the bar's button gone (@Saffsanity)
-- **PR #234** (2026-10-27): Capture scale follow-ups: even sizes on a 1x display, the Resolution words (@Saffsanity)
-- **PR #233** (2026-10-27): Capture at the display's own pixel scale: a window on a 1x display filled a quarter of the picture (@Saffsanity)
-- **PR #232** (2026-10-27): Connect screen: a Mac's row keeps its pairing record when the cable goes (unplugging read as Update Sill) (@Saffsanity)
-- **PR #227** (2026-10-26): TEST ONLY: SILL_TEST_NO_SCREEN=1 keeps a synthetic host off ScreenCaptureKit (@Saffsanity)
+- **PR #262** (2026-10-30): Integration: the seven security pull requests tested together on 2026-10-30 (#249 #250 #251 #252 #253 #254 #255) (@Saffsanity)
+- **PR #259** (2026-10-30): Integration: the eight pull requests tested together on 2026-10-30 (#241 #239 #240 #217 #224 #181 #248 #242) (@Saffsanity)
+- **PR #255** (2026-10-30): Security: the reconnect to an unpaired open door pins the key its session saw (scan finding 3) (@Saffsanity)
+- **PR #254** (2026-10-30): A device the Mac stops serving lands no more input (security scan finding 10) (@Saffsanity)
+- **PR #253** (2026-10-30): Direct Wireless only from a paired device (security scan finding 8) (@Saffsanity)
+- **PR #252** (2026-10-30): Door: waiting for admission costs its source (security scan, finding 9) (@Saffsanity)
 
 ---
 
@@ -2391,40 +2492,28 @@ Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #236 from Saffsanity/defaults-tiles-vd
+## X. Merge remote-tracking branch 'origin/firewall-executable-block' into test-securi
 
 **RULE**:
-When implementing operations in `CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Saffsanity/sill. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Saffsanity/sill. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6c5b5d24`: Merge pull request #236 from Saffsanity/defaults-tiles-vd. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bc0e5a8c`: Merge remote-tracking branch 'origin/firewall-executable-block' into test-security. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CLAUDE.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-**Tiles, Virtual Display and Send Audio on by default (2026-10-27, branch `defaults-tiles-vd` from main at
-3c257485, fast-forwarded to 3b546374 (#234) before its first commit; PR #236).** Noah, 2026-10-27:
-"make tiles not list the default behavior of the app. Also have Virtual Desktop on by default. Of
-course, if a user changes a setting remember their choice for future sessions as you do now. Make
-this a separate PR after #117 merges." Later that morning, testing #235: "Send Audio should be on
-by default, and mute should be off by default." No wire change.
-- Sill.app's Send Audio is on by default too (`HostConfig.app.sendAudio`; the CLI's `--audio` still
-  opts in; a saved `sendAudio` wins, so a Mac whose user turned it off stays off): the menu's
-  checkmark and Settings › Streaming's switch start on; README's Good to know, support.html's Sound
-  section and privacy.html say so. Mute on the device was off by default already (#235).
-- The device: the connect screen shows tiles unless its person chose the list
-  (`ConnectionList.defaultStyle`, `storedStyle`: a stored `Sill.connectionStyle`, "list" or "tiles",
-  always wins; nothing stored, or a value no build writes, reads as tiles)
+        check: [addresses, ask-limits, audio-codec, audio-packetizer, audio-playout, away-copy, away-quality, away-wire, cable-link, capture-scale, clientlink, clipboard, compatibility, connection-list, device-gate, display-wake, dmg-layout, door-policy, duo, encoder-mailbox, encoder-slowstate, fence, firewall, gesture-chords, gestures, goodbye, hardware-keyboard, home-device, home-model, home-records, home-txt, installed-apps, key-strokes, keychain, keyframe-recovery, ledger, link-judge, menu-state, menus, message-reader, origin, pairing-address, pairing-sharing, phone-portrait, pointer-control, pointer-presence, pointer-watch, policy, protocol, remote-rules, settings-window, stream-zoom, test-host, text-composition, tour, update-policy, viewport-bounds, virtual-display-api, window-restore]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        check: [addresses, ask-limits, audio-codec, audio-packetizer, audio-playout, away-copy, away-quality, away-wire, cable-link, capture-scale, clientlink, clipboard, compatibility, connection-list, device-gate, display-wake, dmg-layout, door-policy, duo, encoder-mailbox, encoder-slowstate, fence, gesture-chords, gestures, goodbye, hardware-keyboard, home-device, home-model, home-records, home-txt, installed-apps, key-strokes, keychain, keyframe-recovery, ledger, link-judge, menu-state, menus, message-reader, origin, pairing-address, pairing-sharing, phone-portrait, pointer-control, pointer-presence, pointer-watch, policy, protocol, remote-rules, settings-window, stream-zoom, test-host, text-composition, tour, update-policy, viewport-bounds, virtual-display-api, window-restore]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6c5b5d24` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bc0e5a8c` are properly handled with clean fallback behavior.

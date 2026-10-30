@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source**: github ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
-> **Source Version**: `42946e05`  
+> **Source Version**: `6f2a6965`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T22:26:12.121Z  
+> **Timestamp**: 2026-10-30T22:20:26.972Z  
 > **Learning ID**: `learn-github-helixdb-helix-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/helixdb-helix-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/HelixDB/helix-db](https://github.com/HelixDB/helix-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T22:26:11.984Z  
+> **Harvest Timestamp**: 2026-10-30T22:20:26.756Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: HelixDB is an OLTP graph database with native vector and full-text search built in Rust on Object Storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6251 stars
+- **Stars / Engagement**: 6255 stars
 
 ---
 
@@ -2047,96 +2047,571 @@ impl QueuedTextReplacement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `42946e05` (2026-10-29)
-**Commit Message**: fix: fsync every write to local disk storage (#1228)
+### Incident Patch 1: `6f2a6965` (2026-10-30)
+**Commit Message**: Map every query error code to one transport class (#1229)
 
-## What
+## Problem
 
-Disk mode (`HELIX_DATA_DIR`) opened its object store with
-`LocalFileSystem::new_with_prefix(root)`, which defaults to `fsync:
-false`. Every SST, manifest and WAL put was a write and a rename, never
-flushed. This turns on `with_fsync(true)`: each put now fsyncs its file
-before the rename or link and its directory after.
+A duplicate unique value (for example a second node with the same
+`User.email`) reached clients as the wrong error:
 
-## Why
+- standalone server: HTTP 500
+- Helix Cloud: HTTP 503 `write_outcome_unknown`, which tells the client
+the write may have committed
 
-A write sent with `x-helix-await-durable` is acknowledged once SlateDB's
-put returns, but without fsync it may still be only in the page cache. A
-crash, or a writeback error the kernel never reports (such as a Docker
-Desktop disk image that can't grow on a full host disk), can leave a
-manifest naming files whose bytes never reached the disk. Related:
-HelixDB/helix-foundry#138 (a compacted SST with a checksum mismatch on a
-Docker Desktop install).
+The write was rejected before commit, so it should be a definitive 409.
+The cause was untyped classification: the query service picked a class
+through a predicate chain that fell through to `Execution`, and each
+transport kept its own status table. Several other codes were
+misreported the same way.
 
-## Tested
+## Change
 
-On EC2 (c7i.8xlarge, data on its own EBS volume), images built from main
-with and without this change, running durable writes at 8 to 32 threads:
+- `helix_ast::error_code::QueryFailureClass` plus
+`QueryErrorCode::failure_class()`, an exhaustive match. The class alone
+sets the HTTP status, gRPC code, `retryable` hint, and whether a failed
+write is proven to have committed nothing (`rejects_before_commit`). A
+new code does not compile until it is classified.
+- `QueryServiceError::classify()` is now `error_code().failure_class()`.
+helix-server's HTTP and gRPC responses derive every status from the
+code; no hand-picked statuses remain.
+- Typed `HelixDbError::UnboundParameter` / `unbound_parameter` replaces
+a 
 
-| Test | Without | With |
-|---|---|---|
-| Hard reset mid-load (`sysrq-b`, 2 runs each) | Won't open (`empty
-manifest`); 300+ empty files, including manifests and compacted SSTs |
-Opens; every key s
-
-**File**: `crates/db/src/lib.rs` (modified, +18/-1)
+**File**: `bindings/uniffi/src/error.rs` (modified, +50/-21)
 ```diff
-@@ -386,8 +386,11 @@ impl HelixDbSource {
-                 Ok((token.database().to_string(), token.object_store()))
-             }
-             Self::Disk { root, database } => {
-+                // A write is durable once SlateDB's put returns, so every put fsyncs its file
-+                // and directory. Without it, a crash or a writeback error the kernel never
-+                // reports leaves a manifest naming an SST whose bytes never reached the disk.
-                 let object_store: Arc<dyn ObjectStore> =
--                    Arc::new(LocalFileSystem::new_with_prefix(root)?);
-+                    Arc::new(LocalFileSystem::new_with_prefix(root)?.with_fsync(true));
-                 Ok((database, object_store))
-             }
-             Self::ObjectStorage {
-@@ -4223,6 +4226,20 @@ mod tests {
-         assert_eq!(slate_db.metadata_bytes(), 128 * 1024 * 1024);
+@@ -73,20 +73,15 @@ impl From<HelixDbError> for HelixError {
+     /// Classifies a detailed database error without exposing Rust-only payload types.
+     ///
+     /// The original display message is retained for diagnostics. The category
+-    /// distinguishes caller-correctable vector configuration/input and active-text
+-    /// admission failures from invalid stored vector rows, which indicate an internal invariant
+-    /// violation rather than malformed foreign-language API usage. Retryable
++    /// distinguishes caller-correctable failures (invalid input, missing
++    /// elements, a duplicate unique value, active-text admission) from invalid
++    /// stored vector rows, which indicate an internal invariant violation
++    /// rather than malformed foreign-language API usage. Retryable
+     /// request-view changes remain transaction failures so foreign callers can
+     /// apply the same retry policy as a storage transaction conflict.
+     fn from(error: HelixDbError) -> Self {
+         let error_code = error.error_code().to_string();
+         let msg = error.to_string();
+-        if error.is_invalid_input() {
+-            return Self::InvalidRequest {
+-                error: error_code,
+-                msg,
+-            };
+-        }
+         match error {
+             HelixDbError::Config(_)
+             | HelixDbError::InvalidVectorConfig(_)
+@@ -99,6 +94,7 @@ impl From<HelixDbError> for HelixError {
+                 msg,
+             },
+             HelixDbError::Query(_)
++            | HelixDbError::UnboundParameter { .. }
+             | HelixDbError::InvalidQueryJson(_)
+             | HelixDbError::Encoding(EncodingError::InvalidTenantId(_))
+             | HelixDbError::IndexBusy { .. }
+@@ -111,7 +107,18 @@ impl From<HelixDbError> for HelixError {
+             | HelixDbError::SecondaryIndexValue(_)
+             | HelixDbError::SecondaryLifecycleSteppingRequiresDisabledMode
+             | HelixDbError::MigrationSteppingRequiresDisabledMode
+-            | HelixDbError::IndexOperationBatchTooLarge { .. } => Self::InvalidRequest {
++            | HelixDbError::IndexOperationBatchTooLarge { .. }
++            | HelixDbError::InvalidNodeId(_)
++            | HelixDbError::NodeNotFound(_)
++            | HelixDbError::EdgeNotFound { .. }
++            | HelixDbError::IndexAlreadyExists(_)
++            | HelixDbError::IndexNotFound(_)
++            | HelixDbError::UniqueConstraintViolation { .. }
++            | HelixDbError::UnsupportedUniqueIndexValueType { .. }
++            | HelixDbError::InvalidDimension { .. }
++            | HelixDbError::InvalidVectorComponent { .. }
++            | HelixDbError::VectorComponentMagnitudeExceeded { .. }
++            | HelixDbError::ZeroNormCosineVector => Self::InvalidRequest {
+                 error: error_code,
+                 msg,
+             },
+@@ -135,17 +142,6 @@ impl From<HelixDbError> for HelixError {
+                 msg,
+             },
+             HelixDbError::Encoding(_)
+-            | HelixDbError::InvalidNodeId(_)
+-            | HelixDbError::NodeNotFound(_)
+-            | HelixDbError::EdgeNotFound { .. }
+-            | HelixDbError::IndexAlreadyExists(_)
+-            | HelixDbError::IndexNotFound(_)
+-            | HelixDbError::UniqueConstraintViolation { .. }
+-            | HelixDbError::UnsupportedUniqueIndexValueType { .. }
+-            | HelixDbError::InvalidDimension { .. }
+-            | HelixDbError::InvalidVectorComponent { .. }
+-            | HelixDbError::VectorComponentMagnitudeExceeded { .. }
+-            | HelixDbError::ZeroNormCosineVector
+             | HelixDbError::InvalidVectorItem(_)
+             | HelixDbError::IndexLifecycleUnavailable { .. }
+             | HelixDbError::InvalidIndexV2Model(_)
+@@ -225,6 +221,39 @@ mod tests {
+         ));
      }
  
 +    #[test]
-+    fn disk_source_fsyncs_every_write() {
-+        let root = tempfile::tempdir().expect("disk root");
-+        let (database, object_store) = HelixDbSource::Disk {
-+            root: root.path().to_path_buf(),
-+            database: "disk-fsync".to_owned(),
++    fn caller_correctable_conflicts_and_missing_elements_are_invalid_requests() {
++        for (error, code) in [
++            (
++                HelixDbError::UniqueConstraintViolation {
++                    label: "User".to_string(),
++                    property: "email".to_string(),
++                    value: "<hashed secondary value>".to_string(),
++                    existing_node_id: 1,
++                    attempted_node_id: 2,
++                },
++                "unique_constraint_violation",
++            ),
++            (HelixDbError::NodeNotFound(7), "node_not_found"),
++            (
++                HelixDbError::IndexNotFound("documents".to_string()),
++                "index_not_found",
++            ),
++            (
++                HelixDbError::UnboundParameter {
++                    used_as: db::error::ParameterUse::Value,
++                    name: "ids".to_string(),
++                },
++                "unbound_parameter",
++            ),
++        ] {
++            assert!(matches!(
++                HelixError::from(error),
++                HelixError::InvalidRequest { error, .. } if error == code
++            ));
 +        }
-+        .into_parts()
-+        .expect("disk object store");
-+        assert_eq!(database, "disk-fsync");
-+        // LocalFileSystem shows its fsync setting only through Debug.
-+        assert!(format!("{object_store:?}").contains("fsync: true"));
 +    }
 +
-     #[tokio::test]
-     async fn cache_stats_are_publishable_without_cache_io() {
-         let db = HelixDB::open(HelixDbSource::InMemory {
+     #[test]
+     fn r
 ```
 
-**File**: `scripts/db-production-coverage-baselines.json` (modified, +1/-1)
+**File**: `crates/ast/src/error_code.rs` (modified, +340/-41)
 ```diff
-@@ -2,7 +2,7 @@
+@@ -176,6 +176,8 @@ pub enum QueryErrorCode {
+     InvalidVectorConfiguration,
+     /// A query payload or encoded query is invalid.
+     InvalidQuery,
++    /// The query reads a parameter the request did not bind.
++    UnboundParameter,
+     /// The operation requires a writer database handle.
+     WriterModeRequired,
+     /// The operation requires a standalone reader database handle.
+@@ -210,43 +212,248 @@ pub enum QueryErrorCode {
+     InternalError,
+ }
+ 
+-impl QueryErrorCode {
+-    /// Whether database execution rejected caller-controlled input or mutation size.
+-    ///
+-    /// This is the shared classification for typed vector validation and active-text
+-    /// admission errors. It excludes persisted-data corruption and storage failures;
+-    /// request syntax and planner errors have their own transport classifications.
++/// How every transport reports a [`QueryErrorCode`].
++///
++/// Each code has exactly one class ([`QueryErrorCode::failure_class`]), and the
++/// class alone decides the HTTP status, the gRPC code, the `retryable` hint and
++/// whether a failed write is proven to have committed nothing. Transports match
++/// on the class rather than on codes, so a new code cannot reach a client with
++/// a status chosen by a fallthrough.
++///
++/// ```
++/// use helix_ast::error_code::{QueryErrorCode, QueryFailureClass};
++/// let class = QueryErrorCode::UniqueConstraintViolation.failure_class();
++/// assert_eq!(class, QueryFailureClass::StateConflict);
++/// assert_eq!(class.http_status(), 409);
++/// assert_eq!(class.retryable(), Some(false));
++/// assert!(class.rejects_before_commit());
++/// ```
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
++pub enum QueryFailureClass {
++    /// The request or the data it carries is invalid; resending it unchanged
++    /// fails again.
++    InvalidRequest,
++    /// Query planning rejected the request before execution started.
++    Planning,
++    /// The request names a node, edge, index or index operation that does not
++    /// exist.
++    NotFound,
++    /// Concurrent work aborted the request: a transaction conflict, a changed
++    /// reader view or a stale index generation. An unchanged retry may succeed.
++    Conflict,
++    /// The request conflicts with the database's current state, such as a
++    /// unique value another node already owns or an index that is busy.
++    /// Resending it unchanged fails again until that state changes.
++    StateConflict,
++    /// Asynchronous index work is saturated. An unchanged retry may succeed
++    /// once outstanding work is published.
++    Backpressure,
++    /// The request exceeded its own resource budget.
++    ResourceLimit,
++    /// The request ran past its deadline. A write may have committed.
++    Timeout,
++    /// This database handle cannot serve the request: it is the wrong mode,
++    /// closed, retiring or not yet migrated.
++    Unavailable,
++    /// A started commit's outcome cannot be proven either way.
++    CommitOutcomeUnknown,
++    /// The database failed internally. A write may have committed.
++    Internal,
++}
++
++impl QueryFailureClass {
++    /// HTTP status every Helix HTTP endpoint returns for this class.
++    #[must_use]
++    pub const fn http_status(self) -> u16 {
++        match self {
++            Self::InvalidRequest | Self::Planning => 400,
++            Self::NotFound => 404,
++            Self::Timeout => 408,
++            Self::Conflict | Self::StateConflict => 409,
++            Self::Backpressure | Self::ResourceLimit => 429,
++            Self::Internal => 500,
++            Self::Unavailable | Self::CommitOutcomeUnknown => 503,
++        }
++    }
++
++    /// Canonical gRPC status code number every Helix gRPC service returns for
++    /// this class.
+     ///
+     /// ```
+-    /// use helix_ast::error_code::QueryErrorCode;
+-    /// assert!(QueryErrorCode::ActiveTextMutationLimitExceeded.is_invalid_database_input());
+-    /// assert!(!QueryErrorCode::StorageError.is_invalid_database_input());
++    /// use helix_ast::error_code::QueryFailureClass;
++    /// // INVALID_ARGUMENT
++    /// assert_eq!(QueryFailureClass::InvalidRequest.grpc_code(), 3);
+     /// ```
+     #[must_use]
+-    pub const fn is_invalid_database_input(self) -> bool {
+-        matches!(
+-            self,
+-            Self::InvalidVectorDimension
+-                | Self::InvalidVectorComponent
+-                | Self::VectorComponentMagnitudeExceeded
+-                | Self::ZeroNormCosineVector
+-                | Self::ActiveTextMutationLimitExceeded
+-                | Self::IndexOperationBatchTooLarge
+-        )
++    pub const fn grpc_code(self) -> i32 {
++        const INVALID_ARGUMENT: i32 = 3;
++        const DEADLINE_EXCEEDED: i32 = 4;
++        const NOT_FOUND: i32 = 5;
++        const RESOURCE_EXHAUSTED: i32 = 8;
++        const FAILED_PRECONDITION: i32 = 9;
++        const ABORTED: i32 = 10;
++        const INTERNAL: i32 = 13;
++        const UNAVAILABLE: i32 = 14;
++        match self {
++            Self::InvalidRequest | Self::P
+```
+
+**File**: `crates/db/src/error.rs` (modified, +85/-28)
+```diff
+@@ -141,6 +141,27 @@ impl core::fmt::Display for IndexOperationBatchResource {
+     }
+ }
+ 
++/// Where a query read a parameter the request did not bind.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub enum ParameterUse {
++    /// A value, ID list, bound or expression input.
++    Value,
++    /// A count window size.
++    CountWindow,
++    /// The list a `foreach` iterates.
++    ForEach,
++}
++
++impl core::fmt::Display for ParameterUse {
++    fn fmt(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
++        formatter.write_str(match self {
++            Self::Value => "parameter",
++            Self::CountWindow => "count window parameter",
++            Self::ForEach => "foreach parameter",
++        })
++    }
++}
++
+ /// Serialized resource whose Active text-mutation preflight exceeded policy.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub enum ActiveTextMutationResource {
+@@ -471,6 +492,15 @@ pub enum HelixDbError {
+     #[error("Query error: {0}")]
+     Query(String),
+ 
++    /// The query read a parameter the request did not bind.
++    #[error("Query error: {used_as} `{name}` is not bound")]
++    UnboundParameter {
++        /// How the query read the parameter.
++        used_as: ParameterUse,
++        /// Parameter name.
++        name: String,
++    },
++
+     /// Query planning failed before execution started.
+     #[error("planner error: {0}")]
+     Planner(#[from] helix_planner::error::PlannerError),
+@@ -726,6 +756,7 @@ impl HelixDbError {
+             }
+             Self::InvalidVectorConfig(_) => error_code::QueryErrorCode::InvalidVectorConfiguration,
+             Self::Query(_) => error_code::QueryErrorCode::InvalidQuery,
++            Self::UnboundParameter { .. } => error_code::QueryErrorCode::UnboundParameter,
+             Self::Planner(error) => error.error_code(),
+             Self::InvalidQueryJson(_) => error_code::QueryErrorCode::InvalidQueryJson,
+             Self::WriterModeRequired { .. } => error_code::QueryErrorCode::WriterModeRequired,
+@@ -806,7 +837,7 @@ impl HelixDbError {
+     /// later succeed.
+     #[must_use]
+     pub fn is_index_backpressure(&self) -> bool {
+-        self.error_code().is_retryable_backpressure()
++        self.error_code() == error_code::QueryErrorCode::IndexBackpressure
+     }
+ 
+     /// Returns true when the error represents a retryable transaction conflict.
+@@ -816,27 +847,6 @@ impl HelixDbError {
+             || matches!(self, Self::Storage(storage_err) if storage_err.kind() == ErrorKind::Transaction)
+     }
+ 
+-    /// Returns true for caller-controlled vector input or active-text admission failures.
+-    ///
+-    /// Query transports and telemetry share this classification. Storage failures,
+-    /// invalid persisted rows, and unknown commit outcomes are deliberately excluded.
+-    /// This does not classify arbitrary string-based `Query` errors as caller mistakes.
+-    ///
+-    /// ```
+-    /// use db::error::{ActiveTextMutationResource, HelixDbError};
+-    /// let error = HelixDbError::ActiveTextMutationLimitExceeded {
+-    ///     resource: ActiveTextMutationResource::Entities,
+-    ///     observed: 513,
+-    ///     limit: 512,
+-    /// };
+-    /// assert!(error.is_invalid_input());
+-    /// assert!(!error.is_transaction_conflict());
+-    /// ```
+-    #[must_use]
+-    pub fn is_invalid_input(&self) -> bool {
+-        self.error_code().is_invalid_database_input()
+-    }
+-
+     /// Returns true when a public vector failed caller-controlled validation.
+     ///
+     /// Invalid persisted vector rows use [`Self::InvalidVectorItem`] or a
+@@ -928,7 +938,7 @@ mod tests {
+     }
+ 
+     #[test]
+-    fn invalid_input_classification_does_not_hide_internal_or_ambiguous_failures() {
++    fn invalid_request_classification_does_not_hide_internal_or_ambiguous_failures() {
+         for error in [
+             HelixDbError::WriterFencedCommitOutcomeUnknown,
+             HelixDbError::InvariantViolation("corrupt row".to_string()),
+@@ -937,7 +947,11 @@ mod tests {
+             HelixDbError::Query("execution failure".to_string()),
+             HelixDbError::IndexBusy { state: "building" },
+         ] {
+-            assert!(!error.is_invalid_input());
++            assert_ne!(
++                error.error_code().failure_class(),
++                error_code::QueryFailureClass::InvalidRequest,
++                "{error}"
++            );
+         }
+     }
+ 
+@@ -961,7 +975,10 @@ mod tests {
+         assert!(invalid_inputs
+             .iter()
+             .all(HelixDbError::is_invalid_vector_input));
+-        assert!(invalid_inputs.iter().all(HelixDbError::is_invalid_input));
++        assert!(invalid_inputs
++            .iter()
++            .all(|error| error.error_code().failure_class()
++                == error_code::QueryFailureClass::InvalidRequest));
+ 
+         assert!(
+             !HelixDbError::InvalidVectorItem(VectorItemDecodeError::HeaderMismatch)
+@@ -1029,6 +1046,13 @@ mod tests {
+                 Code::EdgeNotFound,
+             ),
+             (Hel
+```
+
+**File**: `crates/db/src/execution/interpreter/access/params.rs` (modified, +4/-3)
+```diff
+@@ -20,9 +20,10 @@ impl<'db> ExecutionContext<'db> {
+             return ast_ids(value, param);
+         }
+         let Some(value) = self.params.query_values.get(param) else {
+-            return Err(HelixDbError::Query(format!(
+-                "parameter `{param}` is not bound"
+-            )));
++            return Err(HelixDbError::UnboundParameter {
++                used_as: crate::error::ParameterUse::Value,
++                name: param.to_string(),
++            });
+         };
+         query_parameter_ids(value, param)
+     }
+```
+
+**File**: `crates/db/src/execution/interpreter/access/search/input.rs` (modified, +2/-2)
+```diff
+@@ -268,14 +268,14 @@ mod tests {
+         );
+         assert!(matches!(
+             context.search_query_vector(&vector_unbound).await,
+-            Err(HelixDbError::Query(message)) if message == "parameter `unbound` is not bound"
++            Err(HelixDbError::UnboundParameter { used_as: crate::error::ParameterUse::Value, name }) if name == "unbound"
+         ));
+         let text_unbound = ir::TextQueryInputPlan::Expr(
+             ir::SearchQueryExprPlan::new(Expr::param("unbound")).unwrap(),
+         );
+         assert!(matches!(
+             context.search_query_text(&text_unbound).await,
+-            Err(HelixDbError::Query(message)) if message == "parameter `unbound` is not bound"
++            Err(HelixDbError::UnboundParameter { used_as: crate::error::ParameterUse::Value, name }) if name == "unbound"
+         ));
+     }
+ }
+```
+
+**File**: `crates/db/src/execution/interpreter/control/foreach.rs` (modified, +4/-3)
+```diff
+@@ -70,9 +70,10 @@ impl<'db> ExecutionContext<'db> {
+             return query_parameter_frames(param, value);
+         }
+ 
+-        Err(HelixDbError::Query(format!(
+-            "foreach parameter `{param}` is not bound"
+-        )))
++        Err(HelixDbError::UnboundParameter {
++            used_as: crate::error::ParameterUse::ForEach,
++            name: param.to_string(),
++        })
+     }
+ }
+ 
+```
+
+**File**: `crates/db/src/execution/interpreter/count.rs` (modified, +4/-3)
+```diff
+@@ -526,9 +526,10 @@ impl<'db> ExecutionContext<'db> {
+             });
+         }
+         let Some(value) = self.params.query_values.get(name) else {
+-            return Err(HelixDbError::Query(format!(
+-                "count window parameter `{name}` is not bound"
+-            )));
++            return Err(HelixDbError::UnboundParameter {
++                used_as: crate::error::ParameterUse::CountWindow,
++                name: name.to_string(),
++            });
+         };
+         let QueryValue::I64(value) = value else {
+             return Err(HelixDbError::Query(format!(
+```
+
+**File**: `crates/db/src/execution/interpreter/scheduler/tests/pull_regions.rs` (modified, +2/-2)
+```diff
+@@ -352,8 +352,8 @@ async fn region_counting_its_own_rows_skips_the_deferred_flush() {
+         },
+     )
+     .await;
+-    let Err(HelixDbError::Query(message)) = result else {
++    let Err(HelixDbError::UnboundParameter { name, .. }) = result else {
+         panic!("the unbound source parameter fails before any flush: {result:?}");
+     };
+-    assert!(message.contains("`unbound` is not bound"), "{message}");
++    assert_eq!(name, "unbound");
+ }
+```
+
+---
+
+### Incident Patch 2: `611a886d` (2026-10-30)
+**Commit Message**: Pin the raw storage conflict arm and ratchet the db coverage digest
+
+HelixDbError::error_code's Storage(Transaction) arm was only reached when
+writers in another test happened to collide, so error.rs lines 676, 677,
+680 and 681 flipped the digest between runs of identical source. Force
+the conflict with two overlapping transactions so the arm is always
+covered. Removing those lines from a 9961 list reproduces CI's 9957 sha.
+
+**File**: `crates/db/tests/production_internal_contracts.rs` (modified, +35/-0)
+```diff
+@@ -19,6 +19,41 @@ async fn id_allocator_concurrent_first_allocations_share_one_lease() {
+     db::production_coverage::id_allocator_concurrent_first_allocation_contract().await;
+ }
+ 
++/// Verifies a raw SlateDB write conflict reports the transaction-conflict code.
++///
++/// The overlapping transactions force the conflict, so this arm's coverage does not depend on
++/// another test's writers happening to collide.
++#[tokio::test]
++async fn storage_write_conflict_reports_transaction_conflict_code() {
++    let storage = slatedb::Db::builder(
++        "storage-write-conflict",
++        std::sync::Arc::new(slatedb::object_store::memory::InMemory::new()),
++    )
++    .build()
++    .await
++    .expect("in-memory database opens");
++    let first = storage
++        .begin(slatedb::IsolationLevel::Snapshot)
++        .await
++        .expect("first transaction begins");
++    let second = storage
++        .begin(slatedb::IsolationLevel::Snapshot)
++        .await
++        .expect("second transaction begins");
++    first.put(b"key", b"first").expect("first write buffers");
++    second.put(b"key", b"second").expect("second write buffers");
++    first.commit().await.expect("first transaction commits");
++    let conflict = second
++        .commit()
++        .await
++        .expect_err("second transaction conflicts");
++
++    assert_eq!(
++        db::error::HelixDbError::from(conflict).error_code(),
++        helix_ast::error_code::QueryErrorCode::TransactionConflict,
++    );
++}
++
+ /// Verifies graph mutation no-op detection preserves exact V1 representation.
+ #[test]
+ fn graph_mutation_representation_is_recursive_and_bit_exact() {
+```
+
+**File**: `scripts/db-production-coverage-baselines.json` (modified, +2/-2)
+```diff
+@@ -1,8 +1,8 @@
+ {
    "schema_version": 1,
    "uncovered_non_vector_source_lines": {
-     "count": 9968,
--    "sha256": "4b108f83468b8352dd37cd401bc2fcfea1a92517f2d69d0379eb9980b80770b7",
-+    "sha256": "ed47b53e4050d5ff16dc299d54045e8fc3987598f56efb8422fc4f6393b03ad3",
+-    "count": 9961,
+-    "sha256": "a0643e55726672df46c4f09e277595bf8a162503dd710cadecc4dfc92191cc61",
++    "count": 9957,
++    "sha256": "7ce562bfd04f85595cc6fd31ef5fe1ffcbb873a211cb2b0f2bb5126313779e78",
      "classification": "test-required",
      "reason": "Every uncovered production source line outside vector search and its stochastic vector key/value codecs remains in the explicit production-linked test backlog. The digest makes additions, removals, and newly covered lines require a reviewed baseline update; vector code remains enforced by the whole-DB and dedicated vector thresholds plus finer named-test, architecture, invariant, and platform classifications."
    },
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1229** (2026-10-30): Map every query error code to one transport class (@xav-db)
 - **PR #1228** (2026-10-29): fix: fsync every write to local disk storage (@xav-db)
 - **PR #1226** (2026-10-25): chore(deps): bump the npm_and_yarn group across 1 directory with 3 updates (@dependabot[bot])
 - **PR #1225** (2026-10-23): docs: explain storage-level tenant database isolation (@xav-db)
 - **PR #1224** (2026-10-25): fix: reject inner types in Go SDK ParamObject (@Tyagiquamar)
 - **PR #1223** (2026-10-26): docs: bring Helix Foundry up to date with prod: Helix MCP, API sources, AI models, usage, the Ask home (@xav-db)
-- **PR #1221** (2026-10-25): chore(deps): bump follow-redirects from 1.16.0 to 1.16.1 in /docs in the npm_and_yarn group across 1 directory (@dependabot[bot])
 
 ---
 
@@ -2156,45 +2631,69 @@ Opens; every key s
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fsync every write to local disk storage (#1228)
+## X. Map every query error code to one transport class (#1229)
 
 **RULE**:
-When implementing operations in `crates/db/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bindings/uniffi/src/error.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in HelixDB/helix-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `42946e05`: fsync every write to local disk storage (#1228). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f2a6965`: Map every query error code to one transport class (#1229). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/db/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `bindings/uniffi/src/error.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                // A write is durable once SlateDB's put returns, so every put fsyncs its file
-                // and directory. Without it, a crash or a writeback error the kernel never
-                // reports leaves a manifest naming an SST whose bytes never reached the disk.
-                    Arc::new(LocalFileSystem::new_with_prefix(root)?.with_fsync(true));
+    /// distinguishes caller-correctable failures (invalid input, missing
+    /// elements, a duplicate unique value, active-text admission) from invalid
+    /// stored vector rows, which indicate an internal invariant violation
+    /// rather than malformed foreign-language API usage. Retryable
+            | HelixDbError::UnboundParameter { .. }
+            | HelixDbError::IndexOperationBatchTooLarge { .. }
+            | HelixDbError::InvalidNodeId(_)
+            | HelixDbError::NodeNotFound(_)
+            | HelixDbError::EdgeNotFound { .. }
+            | HelixDbError::IndexAlreadyExists(_)
+            | HelixDbError::IndexNotFound(_)
+            | HelixDbError::UniqueConstraintViolation { .. }
+            | HelixDbError::UnsupportedUniqueIndexValueType { .. }
+            | HelixDbError::InvalidDimension { .. }
+            | HelixDbError::InvalidVectorComponent { .. }
+            | HelixDbError::VectorComponentMagnitudeExceeded { .. }
+            | HelixDbError::ZeroNormCosineVector => Self::InvalidRequest {
     #[test]
-    fn disk_source_fsyncs_every_write() {
-        let root = tempfile::tempdir().expect("disk root");
-        let (database, object_store) = HelixDbSource::Disk {
-            root: root.path().to_path_buf(),
-            database: "disk-fsync".to_owned(),
-        }
-        .into_parts()
-        .expect("disk object store");
-        assert_eq!(database, "disk-fsync");
-        // LocalFileSystem shows its fsync setting only through Debug.
-        assert!(format!("{object_store:?}").contains("fsync: true"));
-    }
-
+    fn caller_correctable_conflicts_and_missing_elements_are_invalid_requests() {
+        for (error, code) in [
+            (
+                HelixDbError::Unique
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                    Arc::new(LocalFileSystem::new_with_prefix(root)?);
+    /// distinguishes caller-correctable vector configuration/input and active-text
+    /// admission failures from invalid stored vector rows, which indicate an internal invariant
+    /// violation rather than malformed foreign-language API usage. Retryable
+        if error.is_invalid_input() {
+            return Self::InvalidRequest {
+                error: error_code,
+                msg,
+            };
+        }
+            | HelixDbError::IndexOperationBatchTooLarge { .. } => Self::InvalidRequest {
+            | HelixDbError::InvalidNodeId(_)
+            | HelixDbError::NodeNotFound(_)
+            | HelixDbError::EdgeNotFound { .. }
+            | HelixDbError::IndexAlreadyExists(_)
+            | HelixDbError::IndexNotFound(_)
+            | HelixDbError::UniqueConstraintViolation { .. }
+            | HelixDbError::UnsupportedUniqueIndexValueType { .. }
+            | HelixDbError::InvalidDimension { .. }
+            | HelixDbError::InvalidVectorComponent { .. }
+            | HelixDbError::VectorComponentMagnitudeExceeded { .. }
+            | HelixDbError::ZeroNormCosineVector
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `42946e05` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f2a6965` are properly handled with clean fallback behavior.

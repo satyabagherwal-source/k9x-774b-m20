@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T22:13:49.954Z",
-    "lastVerified": "2026-10-30T22:13:49.954Z",
+    "lastChecked": "2026-10-30T22:20:30.072Z",
+    "lastVerified": "2026-10-30T22:20:30.072Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -157,12 +157,12 @@
     "revisionIdentifier": "1f4828f8"
   },
   "sxyazi-yazi": {
-    "name": "sxyazi/yazi",
+    "name": "yazi",
     "officialUrl": "https://github.com/sxyazi/yazi",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T23:42:57.973Z",
-    "lastVerified": "2026-10-28T23:42:57.973Z",
+    "lastChecked": "2026-10-30T22:20:10.123Z",
+    "lastVerified": "2026-10-30T22:20:10.123Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sxyazi-yazi",
@@ -171,7 +171,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ec4ce8f2"
   },
   "hf-edge0-audio8-asr-infinite": {
     "name": "Edge0/Audio8-ASR-Infinite",
@@ -341,9 +342,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T21:41:15.667Z",
+    "lastChecked": "2026-10-30T22:20:25.059Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T21:41:15.667Z"
+    "lastVerified": "2026-10-30T22:20:25.059Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -857,9 +858,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-10-30T18:07:04.647Z",
+    "lastChecked": "2026-10-30T22:20:20.060Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-10-30T18:07:04.647Z"
+    "lastVerified": "2026-10-30T22:20:20.060Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "NirDiamant/RAG_Techniques",
@@ -4134,14 +4135,14 @@
     "officialUrl": "https://github.com/HelixDB/helix-db",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T22:26:11.984Z",
-    "lastVerified": "2026-10-29T22:26:11.984Z",
+    "lastChecked": "2026-10-30T22:20:26.756Z",
+    "lastVerified": "2026-10-30T22:20:26.756Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-helixdb-helix-db",
-    "contentHash": "d37fee1faf04a78fd51353c2d8749cb5c99d38ac0155354e6a987c4948b36317",
+    "contentHash": "641a65b18416823e697e4023e92b78cc6414eaf767ca3f89cee64c62a5c7012c",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4909,12 +4910,12 @@
     "lastVerified": "2026-10-28T15:09:42.989Z"
   },
   "encoredev-encore": {
-    "name": "encoredev/encore",
+    "name": "encore",
     "officialUrl": "https://github.com/encoredev/encore",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-29T23:57:10.981Z",
-    "lastVerified": "2026-10-29T23:57:10.981Z",
+    "lastChecked": "2026-10-30T22:20:17.658Z",
+    "lastVerified": "2026-10-30T22:20:17.658Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-encoredev-encore",
@@ -4923,7 +4924,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "7f38d5dd"
   },
   "skytable-skytable": {
     "name": "skytable",
@@ -11283,6 +11285,30 @@
     "contentHash": "228d2f55f4a8ab1f2ce689e07e885ff22afdd2777e846697b064684a075fedf1",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "scrapinghub-scrapy-poet": {
+    "name": "scrapy-poet",
+    "officialUrl": "https://github.com/scrapinghub/scrapy-poet",
+    "lastChecked": "2026-10-30T22:20:12.605Z",
+    "revisionIdentifier": "fd700743",
+    "lastVerified": "2026-10-30T22:20:12.605Z"
+  },
+  "saffsanity-sill": {
+    "name": "Saffsanity/sill",
+    "officialUrl": "https://github.com/Saffsanity/sill",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-30T22:20:19.768Z",
+    "lastVerified": "2026-10-30T22:20:19.768Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-saffsanity-sill",
+    "contentHash": "8c90633bfe82cd004cdb2c2766f7c372a40212ccade23c094d2197428b331179",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 13,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

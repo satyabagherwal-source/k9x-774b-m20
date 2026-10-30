@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T22:13:47.327Z",
+  "last_updated": "2026-10-30T22:20:27.461Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16398,8 +16398,8 @@
       "slug": "helixdb-helix-db",
       "platform": "github",
       "source_url": "https://github.com/HelixDB/helix-db",
-      "source_version": "42946e05",
-      "content_hash": "d37fee1faf04a78fd51353c2d8749cb5c99d38ac0155354e6a987c4948b36317",
+      "source_version": "6f2a6965",
+      "content_hash": "641a65b18416823e697e4023e92b78cc6414eaf767ca3f89cee64c62a5c7012c",
       "dossier_path": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/helixdb-helix-db-learnings.md",
       "promoted_rules": [
@@ -16427,6 +16427,11 @@
           "number": 5544,
           "title": "fsync every write to local disk storage (#1228)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5919,
+          "title": "Map every query error code to one transport class (#1229)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16434,7 +16439,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T22:26:12.657Z",
+      "verified_at": "2026-10-30T22:20:27.445Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67817,8 +67822,8 @@
       "slug": "saffsanity-sill",
       "platform": "github",
       "source_url": "https://github.com/Saffsanity/sill",
-      "source_version": "6c5b5d24",
-      "content_hash": "f8c3c4e05ee42f8b690e00d136c9320c57eaac7be893e23dd50ad2cd29ca31b9",
+      "source_version": "e4d30349",
+      "content_hash": "8c90633bfe82cd004cdb2c2766f7c372a40212ccade23c094d2197428b331179",
       "dossier_path": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
       "promoted_rules": [
@@ -67836,6 +67841,11 @@
           "number": 4767,
           "title": "Merge pull request #236 from Saffsanity/defaults-tiles-vd",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5918,
+          "title": "Merge remote-tracking branch 'origin/firewall-executable-block' into test-securi",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -67843,7 +67853,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:53:45.465Z",
+      "verified_at": "2026-10-30T22:20:21.265Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156499,6 +156509,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T22:13:47.307Z"
+    },
+    "rule-5918": {
+      "learning_id": "rule-5918",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5918,
+      "title": "Merge remote-tracking branch 'origin/firewall-executable-block' into test-securi",
+      "source_url": "https://github.com/Saffsanity/sill",
+      "source_version": "e4d30349",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:20:21.265Z"
+    },
+    "rule-5919": {
+      "learning_id": "rule-5919",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5919,
+      "title": "Map every query error code to one transport class (#1229)",
+      "source_url": "https://github.com/HelixDB/helix-db",
+      "source_version": "6f2a6965",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:20:27.445Z"
     }
   },
   "aliases": {

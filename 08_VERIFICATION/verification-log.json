@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-C32H",
-    "timestamp": "2026-10-28T16:12:35.081Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "315f257de9758ddee97063aa7f1f8658976f2ffe076962336a493b86519dbb8c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-KRZ2",
-    "timestamp": "2026-10-28T16:19:20.606Z",
-    "repository": "u-root/u-root",
-    "learningId": "learn-github-u-root-u-root",
-    "contentHash": "39eea9f70deaa46ded912eb0afbe459b7fe87eb82438bf2be24679ae5b435dfc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-KW1C",
     "timestamp": "2026-10-28T16:19:25.872Z",
     "repository": "callstack/agent-device",
@@ -7492,6 +7462,36 @@
     "contentHash": "9775cb8e7eadd4bec1e4b47ab9756b2535a79d7278e36a3cbb3e1ca85a964f01",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-CQU8",
+    "timestamp": "2026-10-30T22:20:21.344Z",
+    "repository": "Saffsanity/sill",
+    "learningId": "learn-github-saffsanity-sill",
+    "contentHash": "8c90633bfe82cd004cdb2c2766f7c372a40212ccade23c094d2197428b331179",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-CVLV",
+    "timestamp": "2026-10-30T22:20:27.523Z",
+    "repository": "HelixDB/helix-db",
+    "learningId": "learn-github-helixdb-helix-db",
+    "contentHash": "641a65b18416823e697e4023e92b78cc6414eaf767ca3f89cee64c62a5c7012c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

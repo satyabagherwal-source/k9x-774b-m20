@@ -1613,10 +1613,10 @@
     "repository": "Saffsanity/sill",
     "platform": "github",
     "sourceUrl": "https://github.com/Saffsanity/sill",
-    "sourceVersion": "6c5b5d24",
+    "sourceVersion": "e4d30349",
     "license": "Apache-2.0",
-    "contentHash": "f8c3c4e05ee42f8b690e00d136c9320c57eaac7be893e23dd50ad2cd29ca31b9",
-    "lastHarvestedAt": "2026-10-27T12:53:45.535Z",
+    "contentHash": "8c90633bfe82cd004cdb2c2766f7c372a40212ccade23c094d2197428b331179",
+    "lastHarvestedAt": "2026-10-30T22:20:21.347Z",
     "learningId": "learn-github-saffsanity-sill"
   },
   "textbee-textbee": {
@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "42946e05",
+    "sourceVersion": "6f2a6965",
     "license": "Apache-2.0",
-    "contentHash": "d37fee1faf04a78fd51353c2d8749cb5c99d38ac0155354e6a987c4948b36317",
-    "lastHarvestedAt": "2026-10-29T22:26:12.753Z",
+    "contentHash": "641a65b18416823e697e4023e92b78cc6414eaf767ca3f89cee64c62a5c7012c",
+    "lastHarvestedAt": "2026-10-30T22:20:27.526Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
