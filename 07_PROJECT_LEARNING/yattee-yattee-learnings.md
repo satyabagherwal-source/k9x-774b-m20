@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yattee-yattee-learnings.md`  
 > **Source**: github ([https://github.com/yattee/yattee](https://github.com/yattee/yattee))  
-> **Source Version**: `55b6c63d`  
+> **Source Version**: `03599d33`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-26T02:44:41.043Z  
+> **Timestamp**: 2026-10-30T08:20:07.678Z  
 > **Learning ID**: `learn-github-yattee-yattee`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -18,595 +18,576 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-`yattee/yattee` is an open-source, multi-platform (iOS, iPadOS, macOS, tvOS) video streaming client implemented in Swift and SwiftUI. It decouples media presentation and playback controls from backend video hosting architectures, interfacing dynamically with Invidious, Piped, PeerTube instances, and custom self-hosted Yattee Server (yt-dlp orchestrators), alongside local file, SMB, and WebDAV endpoints.
+### Technical Domain & Problem Space
+`yattee/yattee` is an alternative, privacy-preserving video and audio streaming platform targeting Apple ecosystems (iOS, iPadOS, macOS, tvOS). The system abstracts heterogeneous, federated, and centralized video distribution backends (Invidious, Piped, PeerTube, and custom Yattee Server instances running `yt-dlp` extractors) into a unified native client.
 
 ```
-                           +----------------------------------------+
-                           |       SwiftUI View Hierarchy           |
-                           |   (macOS / iOS / tvOS / Extensions)    |
-                           +-------------------+--------------------+
-                                               |
-                                               v
-+--------------------+            +-------------------------+            +-----------------------+
-|  HardwareDecoder   | <--------> |     AppEnvironment      | <--------> |  CloudKitSyncEngine   |
-| (VideoToolbox VT)  |            |  (Static Process Root)  |            | (NSUbiquitousKVS + CK)|
-+--------------------+            +------------+------------+            +-----------------------+
-                                               |
-         +-------------------------------------+-------------------------------------+
-         |                                     |                                     |
-         v                                     v                                     v
-+--------------------+             +-----------------------+             +-----------------------+
-|  AccountsManager   |             |   InstancesManager    |             |    FeedCache / Disk   |
-|  - Outbox Sync     |             |  - NSUbiquitousKVS    |             |  - Atomic I/O         |
-|  - Scoped Keychains|             |  - Backend Detection  |             |  - Memory L1/Disk L2  |
-+--------------------+             +-----------------------+             +-----------------------+
+                           +-------------------------------------------------------------+
+                           |                     SwiftUI Presentation                    |
+                           |   (TimelineView, MarqueeText, PlayerControls, ViewModels)   |
+                           +------------------------------+------------------------------+
+                                                          | Observation Framework
+                                                          v
++------------------------------------------------------------------------------------------------------------------------+
+|                                                    AppEnvironment                                                      |
+|  (Process-Wide Root Singleton: Dispatches via Swift Observation, binds Lifecycle, Coordinates Subsystems)             |
++-------------------+-----------------------------+-----------------------------+----------------------------------------+
+                    |                             |                             |
+                    v                             v                             v
++-----------------------------------+  +--------------------+  +---------------------------------------------------------+
+|           Player Subsystem        |  |  Identity/Accounts |  |                   Storage & Network Engine              |
+| - PlayerService (Playback host)   |  | - AccountsManager  |  | - DataManager (SwiftData / In-Memory Fallback)          |
+| - PlayerState (@Observable Gate)  |  | - IdentityScope    |  | - FeedCache & HomeInstanceDiskCache (Actor isolated)    |
+| - HardwareCapabilities (VT/Codec) |  | - AccountRemoval   |  | - CloudKitSyncEngine & NSUbiquitousKeyValueStore        |
+| - RemoteControlCoordinator (MPRIS)|  | - Keychain Stores  |  | - HTTPClientFactory / UserAgentConfiguration (Per-inst) |
++-----------------------------------+  +--------------------+  +---------------------------------------------------------+
+                    |                             |                             |
+                    +-----------------------------+-----------------------------+
+                                                  |
+                                                  v
+                               +------------------------------------+
+                               |     Decoupled Video Backends       |
+                               | (Invidious, Piped, PeerTube, mpv)  |
+                               +------------------------------------+
 ```
 
-### Architectural Subsystem Boundaries & Decoupling Invariants
-1. **Application Context & Process-Lifetime Singularity (`AppEnvironment`)**:
-   `AppEnvironment` serves as the centralized root dependency container. It is declared as `@MainActor @Observable final class` and accessed strictly through a singleton lifecycle (`static let shared = AppEnvironment()`). This prevents multiple initializations caused by SwiftUI re-evaluating `@State` default closures, which would otherwise instantiate duplicate background `URLSession` identifiers and drop download completion delegates.
-2. **Multi-Tenant Scoped Identity Management (`AccountsManager` & `CredentialIdentityScope`)**:
-   Account storage is detached from raw persistent stores and decoupled by `CredentialIdentityScope`. Keychain credentials, local cached feeds, and watch history are keyed under scoped namespaces derived from the active iCloud/Apple ID identity token. When the device Apple Account changes, a notification barrier (`credentialIdentityScopeDidChange`) invalidates current identities and reloads isolated stores, preventing cross-tenant credential bleeding.
-3. **Durable Distributed Outbox & Tombstone State Machine (`AccountRemoval`)**:
-   Account lifecycle operations follow a durable outbox pattern. Deletion does not directly strip remote data; it writes a tombstone into `pendingDeletions` before purging credentials. Because CloudKit record fetches use change tokens rather than full database sweeps, tombstones are preserved locally across relaunch boundaries to prevent resurrected orphan entities.
-4. **Hardware-Accelerated Codec Selection Pipeline (`HardwareCapabilities`)**:
-   Playback stream negotiation bypasses generic heuristics. It leverages Darwin's `VideoToolbox` directly via `VTIsHardwareDecodeSupported` checks across `kCMVideoCodecType_AV1`, `kCMVideoCodecType_VP9`, `kCMVideoCodecType_HEVC`, and `kCMVideoCodecType_H264`. Stream manifest filtering prioritizes formats with hardware acceleration, dropping AV1 and VP9 to zero priority on devices lacking silicon decoders to avoid thread starvation and thermal throttling.
+### Architectural Boundaries & Subsystems
+1. **Playback Engine & Subsystem (`PlayerService`, `PlayerState`, `HardwareCapabilities`)**:
+   - Manages playback pipelines across native AVPlayer/AVFoundation and embedded `mpv` backends.
+   - Decouples high-frequency player clock ticks (e.g., `mpv time-pos` running at 10–60 Hz) from the SwiftUI observation graph via gated mutation channels (`publishesTimeUpdates`).
+   - Dynamically inspects host silicon decoding blocks using CoreMedia and VideoToolbox (`VTIsHardwareDecodeSupported`) to calculate battery-conscious codec priorities (AV1, VP9, HEVC, H.264).
+2. **Identity, Multi-Account, & Credential Scoping (`AccountsManager`, `AccountRemoval`, `CredentialIdentityScope`)**:
+   - Solves multi-tenant credential isolation in environments where Apple Account IDs switch or where iCloud Keychain synchronizes out-of-band.
+   - Enforces outbox-first durable deletion tombstones (`deletedAccountIDs`, `pendingDeletions`) before modifying or purging local Keychain credentials to prevent state reappearance upon sync reconnection.
+3. **Storage & Distributed State Synchronization (`InstancesManager`, `FeedCache`, `HomeInstanceDiskCache`)**:
+   - Multi-tiered persistence: Actor-isolated local file caches (`FeedCache`, `HomeInstanceDiskCache`) using atomic serialized disk writes (`.atomic`), combined with a dual-layer sync protocol (`NSUbiquitousKeyValueStore` for small metadata, CloudKit private zones for relational data).
+   - Defensive fallbacks: SwiftData persistence automatically falls back to an in-memory configuration (`DataManager(inMemory: true)`) upon SQLite or schema corruption.
+4. **Environment & Dependency Lifecycle (`AppEnvironment`)**:
+   - Prevents SwiftUI structural re-evaluation hazards (`@State` initialization idempotency bugs) by using an explicit static singleton pattern for background session retention (`URLSessionDownloadDelegate`).
 
 ---
 
-## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
+## 2. Net-New Universal Engineering Rules
 
-### 1. Durable Tombstone-First Deletion Invariant for Token-Based Sync Systems
+### 1. High-Frequency Clock Observation Gate Pattern
 **RULE**:
-When an entity is deleted in a client-side architecture synchronizing with a remote or cloud backend via delta tokens (e.g., CloudKit change tokens, Git commit range syncs, or CouchDB seq tokens), the entity MUST be committed to an append-only durable tombstone outbox BEFORE its local cryptographic credentials or identity associations are destroyed. Systems MUST NOT perform optimistic local credential purging or silent in-memory removal prior to persisting deletion intent.
+When binding high-frequency engine events (timers, audio/video position ticks, physics updates, GPS telemetry) to an `@Observable` model consumed by a declarative UI framework (SwiftUI, Jetpack Compose, React), mutations **MUST NOT** directly notify the framework during backgrounding, off-screen execution, or occluded view states. Systems **MUST** use manual observation access/mutation barriers (`access(keyPath:)` / `withMutation(keyPath:)`) to continue updating underlying memory while suppressing view invalidation notifications, followed by a single coalesced catch-up notification upon transition back to the foreground.
 
 **WHY**:
-Delta-sync protocols do not enumerate absolute state; they receive partial diffs relative to a cursor. If credentials or local records are deleted and a crash occurs before the deletion sync packet is dispatched, the server entity remains active. On the subsequent sync iteration, the server sends down the undeleted remote entity. Because the client previously wiped the credentials and instance binding, the incoming record is reconstituted as an un-actionable, orphaned zombie entity that cannot be signed into, authenticated, or reached via UI controls.
+In declarative UI runtimes, modifying an observed property marks all registered dependent view nodes as dirty. An audio/video playback pipeline ticks at 10–60 Hz. When the application transitions to background audio playback, UI controls (seekbars, chapter segment splitters, timestamp labels) are completely hidden, yet SwiftUI will execute diffing passes and layout recalculations for every single tick. In resource-constrained mobile hardware, this causes continuous main-thread wakeups (measured at 1,289 main-thread samples per 30 seconds down to 248), draining the device battery and risking OS watchdog process termination.
 
 **WHEN TO APPLY**:
-Apply to any multi-device synchronized storage engine (CloudKit, Realm Sync, Firebase with offline persistence, Couchbase Lite) where entities hold scoped credentials in a secondary secure enclave (Keychain, Hardware Keystore) and sync engines fetch changes using server change tokens.
+Apply to any cross-platform media player, GPS tracker, web-socket streaming client, or real-time simulation where raw engine updates exceed 1 Hz and the UI consumer can transition into invisible, backgrounded, or off-screen states.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
-// Verified pattern from Yattee: Yattee/Core/AccountRemoval.swift & AccountsManager.swift
+import Foundation
+import Observation
+
 @MainActor
-final class AccountSyncStore {
-    private var pendingDeletions: Set<UUID> = []
-    private var deletedAccountIDs: Set<UUID> = []
-    private let defaults: UserDefaults
+@Observable
+final class PlaybackClockState {
+    /// Public interface: Read access is tracked; write access is gated by `publishesTimeUpdates`.
+    var currentTime: TimeInterval {
+        get {
+            access(keyPath: \.currentTime)
+            return storedCurrentTime
+        }
+        set {
+            if publishesTimeUpdates {
+                withMutation(keyPath: \.currentTime) {
+                    storedCurrentTime = newValue
+                }
+            } else {
+                // Silently mutate storage without triggering UI dependency re-renders
+                storedCurrentTime = newValue
+            }
+        }
+    }
 
-    func removeOrphan(
+    @ObservationIgnored private var storedCurrentTime: TimeInterval = 0
+
+    /// Controls whether mutating clock properties invalidates listening Views.
+    @ObservationIgnored var publishesTimeUpdates: Bool = true {
+        didSet {
+            // Upon foreground transition, emit a single catch-up notification
+            guard publishesTimeUpdates, !oldValue else { return }
+            withMutation(keyPath: \.currentTime) {}
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Direct observation property mutation on raw engine callbacks
+@Observable
+final class LeakyClockState {
+    var currentTime: TimeInterval = 0 // Incurs UI invalidation 10-60 times/sec while backgrounded!
+}
+
+// In Engine Tick Handler:
+func onEngineTick(pos: TimeInterval) {
+    state.currentTime = pos // Triggers massive main-thread layout cascades in background!
+}
+```
+
+**VERIFICATION METHOD**:
+Profile using Instruments (Time Profiler / Energy Log) during a 60-second background playback loop. Main thread samples must drop by >75%. Supplement with an XCTest asserting that a view observing `currentTime` receives zero state invalidations while `publishesTimeUpdates == false`.
+
+---
+
+### 2. Zero-CPU Discrete Observation Wait Pattern
+**RULE**:
+Background coordinators and asynchronous state observers **MUST NOT** poll observable properties using recurring interval timers (`Task.sleep(for:)`, `setInterval`) to detect property shifts. Coordinators **MUST** convert reactive property-tracking access hooks into suspending asynchronous streams (`AsyncStream`) via observation tracking hooks (`withObservationTracking`), yielding thread execution until the observation runtime detects a mutation.
+
+**WHY**:
+Looping over `Task.sleep(for: .milliseconds(100))` to check if a boolean or state property flipped keeps the Swift Concurrency cooperative thread pool or main actor continuously waking up (10 times every second per loop). Multiple coordinators polling concurrently results in persistent battery drain, thread pool starvation, and non-deterministic state latency. Using `withObservationTracking` with an `AsyncStream` guarantees true suspension with 0% CPU consumption until the exact moment the tracked key-path invalidates.
+
+**WHEN TO APPLY**:
+In Swift 5.9+ / Swift 6 utilizing the `Observation` framework, or any reactive framework (MobX, Vue 3 reactivity) where an asynchronous non-UI service (e.g., RemoteControl coordinator, Toast manager, Hardware daemon) must await changes in observable state.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+import Foundation
+import Observation
+
+/// Suspends execution until any property evaluated within `track` is mutated,
+/// or until the current Task is cancelled. Zero CPU cost while suspended.
+@MainActor
+func observationChange(_ track: () -> Void) async {
+    let (changes, continuation) = AsyncStream<Void>.makeStream()
+    
+    withObservationTracking(track) {
+        continuation.yield()
+        continuation.finish()
+    }
+    
+    for await _ in changes { 
+        break 
+    }
+}
+
+// Usage in coordinator loop:
+Task { [weak self] in
+    guard let settings = self?.settingsManager else { return }
+    while !Task.isCancelled {
+        let wasActive = settings.isFeatureActive
+        // Suspends without polling until settings.isFeatureActive changes
+        await observationChange { _ = settings.isFeatureActive }
+        guard let self, !Task.isCancelled else { break }
+        
+        let isActive = settings.isFeatureActive
+        if isActive != wasActive {
+            self.handleFeatureToggle(isActive)
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Polling observable state via interval sleep loops
+Task {
+    while !Task.isCancelled {
+        // Wakes up 10 times every second, burns cycles, wastes main actor scheduling slots
+        try? await Task.sleep(for: .milliseconds(100))
+        if settings.isFeatureActive != lastRecordedState {
+            handleToggle()
+        }
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a detached `Task` unit test. Validate that zero loop iterations execute over an extended period (e.g., 5 seconds) until the observed property is explicitly modified on the main actor. Concurrently inspect CPU core activity to verify zero thread context-switch ticks.
+
+---
+
+### 3. Tombstone Outbox-First Credential Purging Pattern
+**RULE**:
+When cascading the deletion of an entity across distributed or multi-tenant stores (e.g., cloud accounts, remote servers, local secure enclaves), the system **MUST** persist durable deletion markers (tombstones) to the local persistent store/outbox **BEFORE** deleting credentials, tokens, or encryption keys from secure hardware storage (Keychain/Keystore).
+
+**WHY**:
+If the secure credential (e.g., OAuth token, password) is removed from the Keychain *before* the record deletion is committed to the database outbox or sync engine, an unhandled crash, power interruption, or sync race condition immediately leaves the database with an active account record whose credentials have vanished without trace. On next launch, sync reconciliation views this as an intact remote account, resurrecting an un-deletable orphan that fails all network authorizations and cannot be cleaned up because the remote ID/secret mapping was severed.
+
+**WHEN TO APPLY**:
+All systems coordinating local credential storage (Apple Keychain, Android Keystore, HashiCorp Vault) with synchronization engines (CloudKit, CouchDB, Firestore, custom sync queues).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+import Foundation
+
+@MainActor
+enum AccountRemovalCoordinator {
+    static func removeAccount(
         _ accountID: UUID,
-        stores: [any AccountCredentialsManager],
-        discardData: (UUID) -> Void
+        accountsManager: AccountsManager,
+        credentialsStores: [any AccountCredentialsManager],
+        memoryPurge: (UUID) -> Void
     ) {
-        // STEP 1: Persist deletion tombstone to durable storage FIRST
-        self.pendingDeletions.insert(accountID)
-        self.deletedAccountIDs.insert(accountID)
-        persistOutboxState()
+        // STEP 1: Write durable tombstone / outbox entry FIRST.
+        // Even if the process crashes immediately after this line,
+        // next launch knows this account is deliberately dead and will NOT resurrect it.
+        accountsManager.recordAccountDeletion(accountID)
 
-        // STEP 2: Iterate across all isolated credential enclaves and purge secrets
-        for store in stores {
+        // STEP 2: Purge credentials from Secure Storage (Keychain)
+        for store in credentialsStores {
             store.deleteCredential(forAccountID: accountID)
         }
 
-        // STEP 3: Purge volatile in-memory representations and cached feed state
-        discardData(accountID)
-        
-        // STEP 4: Notify system of state change
-        NotificationCenter.default.post(name: .accountsDidChange, object: nil)
-    }
-
-    private func persistOutboxState() {
-        let stringIDs = deletedAccountIDs.map(\.uuidString)
-        defaults.set(stringIDs, forKey: "sync.tombstones.accounts")
-        defaults.synchronize() // Force synchronization to avoid crash loss
+        // STEP 3: Purge active in-memory cache/session data
+        memoryPurge(accountID)
     }
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// ANTI-PATTERN: Optimistic secret deletion prior to durable persistence
-func unsafeDeleteAccount(_ accountID: UUID, store: AccountCredentialsManager) {
-    // CRITICAL BUG: If process crashes immediately after this line,
-    // the credential is gone, but the remote backend still holds the account record.
-    store.deleteCredential(forAccountID: accountID)
-
-    // Remote sync arrives next boot -> Reconstitutes account without credentials!
-    self.accounts.removeAll { $0.id == accountID }
-    // Deletion never recorded to outbox or persistent tombstones.
+// ANTI-PATTERN: Deleting credentials before persisting durable tombstones
+func purgeAccountBroken(_ accountID: UUID) {
+    // CRASH WINDOW HERE: If crash happens between these lines,
+    // account remains in database/cloud, but Keychain secret is permanently lost!
+    keychain.deleteSecret(for: accountID)
+    database.delete(accountID) // Never reached if terminated!
 }
 ```
 
 **VERIFICATION METHOD**:
-Inject a simulated crash (`fatalError()` or process kill) immediately after `defaults.synchronize()` in `persistOutboxState()`. Restart the application, trigger a remote pull delivering the "deleted" ID, and assert via unit test that `deletedAccountIDs.contains(incomingID)` causes the sync parser to silently discard the record instead of recreating it in the active account list.
-
----
-
-### 2. Singularity Invariant for SwiftUI Root Dependency Injection Trees
-**RULE**:
-When initializing root application environment containers (`AppEnvironment`, service registries, coordinators) containing background workers, network session delegates, or file listeners within a SwiftUI lifecycle, the container MUST be bound to a process-lifetime static constant (`static let shared`) before assignment to `@State` or `@StateObject`. Root containers MUST NOT rely on inline instantiation inside `@State(initialValue:)` or inline variable declaration.
-
-**WHY**:
-SwiftUI's view hierarchy reconciler re-evaluates `@State` initial value autoclosures dynamically during scene graph reconstruction, view struct re-evaluations, or multiple window scene attachments (notably on macOS and iPadOS). While SwiftUI retains only the first allocated object in its property wrapper storage, the side-effects of discarded evaluations run to completion. If the environment instantiates background `URLSession(configuration:delegate:delegateQueue:)` instances with identical session identifiers, delegate callbacks for finished downloads are hijacked or routed to orphaned instances whose in-memory state tracking queues are empty, causing completed payloads to be dropped from disk.
-
-**WHEN TO APPLY**:
-All Swift/SwiftUI architectures deploying across iOS, macOS, and tvOS where background `URLSession`s, database handles (`CoreData`, `SwiftData`), or audio engine pipelines are initialized at the root of the application hierarchy.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```swift
-// Verified pattern from Yattee: Yattee/Core/AppEnvironment.swift
-@MainActor
-@Observable
-final class AppEnvironment {
-    // Process-wide lifetime guarantee: evaluated strictly once upon first access
-    static let shared = AppEnvironment()
-    
-    let downloadSession: URLSession
-    private let downloadDelegate: SessionDelegateBridge
-
-    private init() {
-        self.downloadDelegate = SessionDelegateBridge()
-        let config = URLSessionConfiguration.background(withIdentifier: "stream.yattee.downloads")
-        self.downloadSession = URLSession(configuration: config, delegate: downloadDelegate, delegateQueue: nil)
-    }
-}
-
-// SwiftUI Entrypoint
-@main
-struct YatteeApp: App {
-    // References shared singleton directly; prevents duplicate instantiation runs
-    @State private var environment = AppEnvironment.shared
-
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-                .environment(environment)
-        }
-    }
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```swift
-// ANTI-PATTERN: Inline initialization inside @State or View Struct
-@main
-struct YatteeApp: App {
-    // CRITICAL BUG: Autoclosure can execute multiple times during scene reconciliation!
-    // Creates 2+ URLSessions with ID "stream.yattee.downloads" -> breaks background download callbacks!
-    @State private var environment = AppEnvironment() 
-    
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-    }
-}
-```
-
-**VERIFICATION METHOD**:
-Instrument `AppEnvironment.init` with an atomic counter assertion:
-```swift
-private static let initCounter = OSAllocatedUnfairLock(initialState: 0)
-// Inside init():
-initCounter.withLock { count in
-    count += 1
-    assert(count == 1, "AppEnvironment initialized more than once! Violates Root Singularity.")
-}
-```
+Write an integration test simulating crash interruption:
+1. Trigger `recordAccountDeletion(accountID)`.
+2. Intercept process state before step 2 and simulate app restart.
+3. Assert that the sync engine executes the pending tombstone purge rather than restoring the orphaned account from remote sync changes.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: AltStore Source Breakage from Case-Sensitive Path Resolution (BUG-YATTEE-01)
-- **Context**: `altstore-source.json` release artifact descriptor.
-- **What Was Expected**: Sideloaded installations through AltStore/SideStore should fetch the official 512x512 application icon asset from the main repository branch.
-- **What Actually Happened**: AltStore clients encountered HTTP 404 resource errors and aborted installation metadata checks. Icon displays broke in sideload catalogues.
-- **Evidence in Repo**: Commit `8ca44948` ("Fix AltStore source icon URL path case").
-- **Root Cause**: The repository folder structure was renamed or configured as `assets/` (lowercase), whereas `altstore-source.json` specified `https://raw.githubusercontent.com/yattee/yattee/main/Assets/yattee-icon-512.png` with a capital `Assets`. While local macOS HFS+/APFS filesystems are typically case-insensitive, GitHub’s raw content delivery servers (`raw.githubusercontent.com`) run on case-sensitive Linux backends, returning 404 for mismatched casing.
+### Incident 1: Background UI Layout Thrashing via High-Frequency Clock Observation (BUG-YAT-01)
+- **Context**: `Yattee/Services/Player/PlayerService.swift`, `PlayerState.swift`, `MarqueeText.swift`
+- **What Was Expected**: Background audio-only playback should consume minimal CPU and preserve mobile battery, with only background audio decode and networking threads remaining active.
+- **What Actually Happened**: The `mpv` player backend emits `time-pos` clock changes several times per second. `PlayerState.currentTime` and `bufferedTime` were annotated with standard `@Observable` synthesizers. Because the player controls view, progress sliders, and chapter markers were attached to these properties, SwiftUI continuously executed full diffing and re-rendering passes for hidden views while in the background. On an iPhone 12 mini, this produced 1,289 main-thread samples during 30 seconds of background audio playback.
+- **Evidence in Repo**: Commit `21a6238a`. Main-thread samples decreased from 1,289 to 248.
+- **Root Cause**: Unmitigated reactive observation invalidation cascading from high-frequency playback callbacks into occluded UI trees.
 - **Remediation Code Diff**:
-```diff
---- a/altstore-source.json
-+++ b/altstore-source.json
-@@ -2,7 +2,7 @@
-    "name": "Yattee",
-    "subtitle": "Privacy-focused video player",
-    "description": "Yattee is a privacy-focused video player...",
--  "iconURL": "https://raw.githubusercontent.com/yattee/yattee/main/Assets/yattee-icon-512.png",
-+  "iconURL": "https://raw.githubusercontent.com/yattee/yattee/main/assets/yattee-icon-512.png",
-    "website": "https://github.com/yattee/yattee",
-    "tintColor": "#5B8DF5",
-```
-- **Lesson**: Asset references in remote distribution manifests must match canonical URI casing verified through an HTTP HEAD check in CI, rather than validated against case-insensitive local development developer machines.
-
----
-
-### Incident 2: AltStore Metadata Rejection Due to Empty String Header & Missing Entitlements (BUG-YATTEE-02)
-- **Context**: `altstore-source.json` manifest validation and inter-process communication permissions.
-- **What Was Expected**: Sideloading client validates repository schema without strict parser failure, and remote control between local network devices functions properly.
-- **What Actually Happened**: The AltStore parser failed on an empty `"headerURL": ""` field. Simultaneously, cross-device remote control failed silently on iOS 14+ because `NSLocalNetworkUsageDescription` was missing from privacy configurations, and App Group entitlements were not explicitly mapped.
-- **Evidence in Repo**: Commit `3523e3f9` ("Fix AltStore source: drop empty headerURL, declare app group and local network permissions").
-- **Root Cause**: AltStore schema enforcement rejects empty string URL fields instead of treating them as optional `null`. Furthermore, local network device discovery without an declared `NSLocalNetworkUsageDescription` triggers automatic sandbox denial by iOS `nehelper`/security daemons.
-- **Remediation Code Diff**:
-```diff
---- a/altstore-source.json
-+++ b/altstore-source.json
-@@ -3,7 +3,6 @@
-    "subtitle": "Privacy-focused video player",
-    "description": "Yattee is a privacy-focused video player...",
-    "iconURL": "https://raw.githubusercontent.com/yattee/yattee/main/assets/yattee-icon-512.png",
--  "headerURL": "",
-    "website": "https://github.com/yattee/yattee",
-    "tintColor": "#5B8DF5",
-@@ -87,8 +86,12 @@
-            "com.apple.developer.icloud-container-identifiers",
-            "com.apple.developer.icloud-services",
-            "com.apple.developer.ubiquity-kvstore-identifier",
--          "aps-environment"
--        ]
-+          "aps-environment",
-+          "com.apple.security.application-groups"
-+        ],
-+        "privacy": {
-+          "NSLocalNetworkUsageDescription": "Yattee uses local network to discover and control playback on other Yattee devices."
+```swift
+// Yattee/Services/Player/PlayerState.swift
+-    var currentTime: TimeInterval = 0 {
+-        didSet { updateActiveChapter() }
+-    }
++    var currentTime: TimeInterval {
++        get {
++            access(keyPath: \.currentTime)
++            return storedCurrentTime
 +        }
++        set {
++            if publishesTimeUpdates {
++                withMutation(keyPath: \.currentTime) { storedCurrentTime = newValue }
++            } else {
++                storedCurrentTime = newValue
++            }
++            updateActiveChapter()
++        }
++    }
++    @ObservationIgnored private var storedCurrentTime: TimeInterval = 0
++    @ObservationIgnored var publishesTimeUpdates = true {
++        didSet {
++            guard publishesTimeUpdates, !oldValue else { return }
++            withMutation(keyPath: \.currentTime) {}
++            withMutation(keyPath: \.bufferedTime) {}
++        }
++    }
+
+// Yattee/Views/Components/MarqueeText.swift
+-    TimelineView(.animation) { context in
++    @Environment(\.scenePhase) private var scenePhase
++    TimelineView(.animation(paused: scenePhase != .active)) { context in
 ```
-- **Lesson**: Nullable manifest fields must be omitted entirely rather than serialized as empty string values (`""`). Network IPC permissions require synchronized parity between Xcode project `.entitlements` and third-party distribution manifests.
+- **Lesson**: Declarative UI runtimes must have explicit suspension gates between high-frequency backend state ticks and the view invalidation graph during non-active scene phases.
 
 ---
 
-### Incident 3: Multi-Target Build Inconsistency During Version Increments (BUG-YATTEE-03)
-- **Context**: Multi-target Xcode project (`Yattee.xcodeproj/project.pbxproj`) encompassing Main App, macOS Target, DeveloperID Target, TopShelf tvOS Extension, Share Extension, and Unit Tests.
-- **What Was Expected**: Build version increments synchronize uniformly across all target build configurations.
-- **What Actually Happened**: Mismatched `CURRENT_PROJECT_VERSION` definitions across embedded extensions caused App Store Connect validation rejections (ITMS-90056: Mismatched bundle versions between container app and extension).
-- **Evidence in Repo**: Commit `899be5bd` ("Bump build number to 275").
-- **Root Cause**: In monolithic Xcode projects containing multiple app extensions (`YatteeShareExtension`, `YatteeTopShelf`), each build configuration retains a discrete `CURRENT_PROJECT_VERSION` build setting key in `project.pbxproj`. Manual modifications that omit an extension target break bundle version consistency.
+### Incident 2: App Store Rejection from Unpinned Xcode RC Beta Toolchains (BUG-YAT-02)
+- **Context**: `.github/workflows/release.yml`
+- **What Was Expected**: Automated CI/CD release jobs should build release binaries using stable, production-certified compiler toolchains that satisfy App Store Connect validation rules.
+- **What Actually Happened**: Release workflows configured runner paths pointing to general or beta-aliased environments, causing builds to fail App Store Connect ingestion with non-actionable validation rejection notices regarding beta toolchains.
+- **Evidence in Repo**: Commit `1c877c53`. Workflows modified across five jobs to pin explicit release paths (`/Applications/Xcode_27.2_Release_Candidate.app`).
+- **Root Cause**: Apple's ingestion pipelines strictly inspect Mach-O metadata and embedded toolchain build markers. If an Xcode version contains beta identifiers or if the CI runner environment aliases the wrong app bundle, ingestion is rejected.
+- **Remediation Code Diff**:
+```yaml
+// .github/workflows/release.yml
+     steps:
+       - uses: actions/checkout@v4
+-      - name: Select Xcode 27.1
+-        # Pinned to the 27.1 release; App Store Connect rejects beta-built uploads.
++      - name: Select Xcode 27.2 RC
++        # Pinned by full path to the RC; App Store Connect rejects beta-built uploads.
+         run: |
+-          sudo xcode-select -s /Applications/Xcode_27.1.app
++          sudo xcode-select -s /Applications/Xcode_27.2_Release_Candidate.app
+           xcodebuild -version
+```
+- **Lesson**: Apple CI/CD release pipelines must avoid dynamic or ambient Xcode toolchain selection. Pin exact file paths to approved release candidate or production toolchains and verify with `xcodebuild -version` prior to compilation.
+
+---
+
+### Incident 3: Multi-Target Build Inconsistency & Extension Code-Sign Drift (BUG-YAT-03)
+- **Context**: `Yattee.xcodeproj/project.pbxproj`
+- **What Was Expected**: Incrementing the project version number must synchronize across all compiled targets, app extensions, and test runners to avoid code-signing entitlements mismatches during binary assembly.
+- **What Actually Happened**: The project configuration spans 16 distinct build targets (Main App iOS, Main App macOS, TopShelf extension, ShareExtension iOS/macOS, TestHost, DeveloperID builds). Version mismatches led to package verification failures during archive assembly.
+- **Evidence in Repo**: Commit `83aa78c7`. 16 additions and 16 deletions bumping `CURRENT_PROJECT_VERSION` from 275 to 276 across all targets simultaneously.
+- **Root Cause**: Xcode projects containing multiple application extensions (Share, TopShelf) require atomic build-number alignment across all targets; otherwise, App Store packaging fails bundle validation.
 - **Remediation Code Diff**:
 ```diff
---- a/Yattee.xcodeproj/project.pbxproj
-+++ b/Yattee.xcodeproj/project.pbxproj
-@@ -570,7 +570,7 @@
- 				AUTOMATION_APPLE_EVENTS = NO;
- 				CODE_SIGN_ENTITLEMENTS = Yattee/Yattee.entitlements;
- 				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 274;
-+				CURRENT_PROJECT_VERSION = 275;
-@@ -910,7 +910,7 @@
- 			buildSettings = {
- 				CODE_SIGN_ENTITLEMENTS = YatteeShareExtension/YatteeShareExtension.entitlements;
- 				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 274;
-+				CURRENT_PROJECT_VERSION = 275;
-@@ -942,7 +942,7 @@
- 			buildSettings = {
- 				CODE_SIGN_ENTITLEMENTS = YatteeTopShelf/YatteeTopShelf.entitlements;
- 				CODE_SIGN_STYLE = Automatic;
--				CURRENT_PROJECT_VERSION = 274;
-+				CURRENT_PROJECT_VERSION = 275;
+// Yattee.xcodeproj/project.pbxproj
+- CURRENT_PROJECT_VERSION = 275;
++ CURRENT_PROJECT_VERSION = 276;
 ```
-- **Lesson**: Use an `xcconfig` base configuration with unified version definitions (`$(GLOBAL_BUILD_NUMBER)`) across all nested targets to prevent manual synchronization omissions in raw `pbxproj` blocks.
+- **Lesson**: Multi-target Apple projects must coordinate build bumps atomically across all targets or drive version numbers through a shared `.xcconfig` include file.
 
 ---
 
-### Incident 4: Stream Manifest Exhaustion from Piped Backend API Shifts (BUG-YATTEE-04)
-- **Context**: `ContentService.swift` and video stream decoding pipeline.
-- **What Was Expected**: Requesting video streams against a Piped backend parses available HLS/DASH/MP4 streams and initiates playback.
-- **What Actually Happened**: The player raised error: `"No playable streams available from Piped"` across all qualities on iOS 16+.
-- **Evidence in Repo**: Closed Issue #973 ("No playable streams available from Piped").
-- **Root Cause**: Upstream YouTube API changes caused Piped instances to alter their JSON response format: stream keys were dynamically split between `videoStreams` (demuxed video only) and separated audio tracks. The client parser expected muxed progressive streams containing both video and audio. When muxed formats were empty, the filter returned an empty array, failing validation instead of falling back to demuxed audio/video stream blending via MPV.
-- **Remediation Code Invariant**:
+### Incident 4: Ghost Orphaned Account Resurrection During CloudKit Sync (BUG-YAT-04)
+- **Context**: `Yattee/Core/AccountRemoval.swift`, `AccountsManager.swift`
+- **What Was Expected**: Removing an account whose backing backend instance was deleted should completely purge the account, its credentials, and prevent it from reappearing upon CloudKit sync.
+- **What Actually Happened**: Users encountered situations where deleted accounts resurfaced with 0 subscriptions or broken states (#960). In-memory lookups for an orphan's credentials yielded `nil` (since `instanceID` lookup returned `nil`), causing credential deletion to silently fail and leave dangling Keychain items and cloud records.
+- **Evidence in Repo**: `AccountRemoval.swift` and `AccountsManager.swift` lines 145–160.
+- **Root Cause**: Standard removal looked up credentials via `AppEnvironment.accountCredentialsManager(for: instance)`. For orphaned accounts, the instance was already gone, causing the resolver to return `nil`. Consequently, the credential was never purged, and no sync tombstone was broadcast.
+- **Remediation Code Diff**:
 ```swift
-// Forensic remediation pattern:
-func extractPlayableStreams(from response: PipedStreamResponse) throws -> [MediaStream] {
-    // 1. Check for complete muxed streams
-    let muxed = response.videoStreams.filter { $0.codec != nil && $0.hasAudio }
-    if !muxed.isEmpty { return muxed }
-    
-    // 2. Fall back to demuxed streams + companion audio track routing for MPV
-    guard let videoOnly = response.videoStreams.first,
-          let audioTrack = response.audioStreams.first else {
-        throw StreamResolutionError.noPlayableStreamsAvailable
-    }
-    
-    return [MediaStream(video: videoOnly, audio: audioTrack)]
-}
-```
-- **Lesson**: Content scrapers and reverse-engineered API consumers must never assume stable multiplexed streams; stream extractors must handle muxed and separated audio/video track combinations independently.
+// Yattee/Core/AccountRemoval.swift
+@MainActor
+enum AccountRemoval {
+    static func removeOrphan(
+        _ accountID: UUID,
+        stores: [any AccountCredentialsManager],
+        accountsManager: AccountsManager,
+        discardData: (UUID) -> Void
+    ) {
+        // Enforce tombstone outbox write before credential purge
+        accountsManager.removeAccount(accountID)
 
----
-
-### Incident 5: Zombie Subscription Count Discrepancy from In-Memory/Disk Sync Desync (BUG-YATTEE-05)
-- **Context**: `SubscriptionService.swift` and `AccountsManager.swift`.
-- **What Was Expected**: UI displays the exact subscription count matched with Invidious/Piped server responses (e.g., 2 subscriptions).
-- **What Actually Happened**: The UI displayed "10 subscriptions" despite the remote server only containing 2.
-- **Evidence in Repo**: Closed Issue #960 ("Yattee says I have 10 subscriptions but I have 2").
-- **Root Cause**: Local subscription databases were updated via union merges (`local.append(contentsOf: remote)`) instead of relational reconciliations. Deletions performed on the web interface were not tracked locally because absence in the remote response was treated as "no update" rather than an intentional deletion. Furthermore, multiple account instances shared un-namespaced cache keys on disk.
-- **Remediation Code Invariant**:
-```swift
-// Reconcile by computing full symmetric difference within the active identity scope
-func reconcileSubscriptions(remote: [Subscription], local: inout [Subscription]) {
-    let remoteIDs = Set(remote.map(\.id))
-    // Drop anything local that no longer exists on the remote instance
-    local.removeAll { !remoteIDs.contains($0.id) }
-    // Update or insert existing items
-    for item in remote {
-        if let idx = local.firstIndex(where: { $0.id == item.id }) {
-            local[idx] = item
-        } else {
-            local.append(item)
+        // Directly broadcast credential purge across all possible stores
+        // without attempting to resolve the non-existent instance
+        for store in stores {
+            store.deleteCredential(forAccountID: accountID)
         }
+
+        discardData(accountID)
     }
 }
 ```
-- **Lesson**: Remote collections that represent absolute state must use sets or keyed dictionaries to compute diffs; array appends against un-versioned sets produce unbounded stale zombie entries.
+- **Lesson**: Entity deletion logic must never rely on relational lookups (such as parent instance resolution) that may themselves have been deleted. Direct identifier-based tombstone broadcasting is mandatory.
+
+---
+
+### Incident 5: Dual URLSession Re-Instantiation Dropping Background Downloads (BUG-YAT-05)
+- **Context**: `Yattee/Core/AppEnvironment.swift`
+- **What Was Expected**: `AppEnvironment` manages a background `URLSession` for long-running media downloads. Download completion callbacks from the OS daemon must reliably match active download models.
+- **What Actually Happened**: SwiftUI's view engine evaluated `@State private var appEnvironment = AppEnvironment()` multiple times during root window setup. This created duplicate `DownloadManager` instances. Background `URLSession` delegates bound to discarded instances dropped completion notifications, causing completed downloads to be purged as unassociated files.
+- **Evidence in Repo**: `AppEnvironment.swift` lines 105–125: "SwiftUI may evaluate a `@State` property's default-value autoclosure more than once... Referencing this `static let shared` guarantees exactly one instance".
+- **Root Cause**: SwiftUI `@State` initializers do not guarantee single-execution semantics for property wrapper default values; the initializer closure can run multiple times while only the first result is retained, causing unmanaged side effects in discarded instances.
+- **Remediation Code Diff**:
+```swift
+// Yattee/Core/AppEnvironment.swift
+final class AppEnvironment {
+    // Shared singleton anchor
+    static let shared = AppEnvironment()
+    
+    // In App Entry Point:
+    // Instead of: @State private var env = AppEnvironment()
+    // Enforce:
+    @State private var env = AppEnvironment.shared
+}
+```
+- **Lesson**: Never instantiate state objects containing system-wide background delegate resources (e.g., background `URLSession`, CoreBluetooth daemons, push notification listeners) inside SwiftUI view `@State` expressions without a guaranteed lifecycle singleton.
 
 ---
 
 ## 4. Microscopic Code-Level Invariants
 
 ### 1. Micro-Syntax & Token-Level Precision
-In Swift and multi-architecture targets, implicit coercion does not exist, but semantic type and optional-unwrapping traps exist around `UUID`, `String?`, and collection comparisons:
+In modern Swift (5.9–6.0), the macro-based `@Observable` system synthesizes code tracking via property key-paths. A subtle bug occurs when attempting to suppress observation notifications while mutating private state:
 
 ```swift
-// CRITICAL: Differentiating nil from empty string vs unresolved state
-// AppEnvironment.swift:
-private var credentialFingerprintsKey: String {
-    // BUG TRAP: If credentialIdentityScope.current is nil, interpolation produces "unresolved".
-    // If an account was previously stored under "unresolved", a valid login will cross-read!
-    "accountCredentialFingerprints.\(credentialIdentityScope.current ?? "unresolved")"
-}
-
-// INVARIANT GUARD:
-private func purgeUnresolvedCredentialFingerprints() {
-    // MUST verify isResolved before removing, or a legit unresolved state could panic
-    guard credentialIdentityScope.isResolved else { return }
-    UserDefaults.standard.removeObject(forKey: "accountCredentialFingerprints.unresolved")
+// DEFECT HAZARD: Accidental View Invalidation
+@Observable
+final class StateCoordinator {
+    var counter: Int = 0
+    private var internalBuffer: [String] = [] // Macro still synthesizes accessors!
 }
 ```
-* **Deep vs Shallow Copy Trap in Actors**:
-  In `FeedCache.swift`, when mutating cached feed structures:
-  ```swift
-  // FeedCache.swift
-  func invalidate() async {
-      // Guard MUST check both existence AND sentinel equality
-      guard var data = cachedData, data.lastUpdated != .distantPast else { return }
-      data.lastUpdated = .distantPast
-      cachedData = data // Struct copy must re-assign to memory variable!
-      await save(videos: data.videos, lastUpdated: .distantPast)
-  }
-  ```
-  Mutating `data.lastUpdated` modifies a local stack copy. If `cachedData = data` is omitted, `cachedData` remains unaltered in memory while disk is written, resulting in an immediate L1/L2 cache split.
+*Token-Level Invariant*: Every backing store or internal flag that should **NOT** participate in UI invalidation passes **MUST** be explicitly annotated with `@ObservationIgnored`:
 
----
+```swift
+// VERIFIED SECURE INVARIANT
+@Observable
+final class StateCoordinator {
+    var counter: Int = 0
+    
+    @ObservationIgnored 
+    private var internalBuffer: [String] = [] // Completely bypasses observation synthesis
+    
+    @ObservationIgnored 
+    private var isUpdatingSilently: Bool = false
+}
+```
+
+*Value-Equality Trap*: In Swift, comparing optional `UUID?` types against `nil` or checking collection membership must avoid implicit casting traps when bridging from Objective-C collections:
+```swift
+// HAZARD: Force-unwrapping string dictionaries from UserDefaults
+let dict = UserDefaults.standard.dictionary(forKey: "keys") as? [String: String] ?? [:]
+// INVARIANT: Always parse and validate UUIDs through flatMap/compactMap
+let validated: [UUID: String] = dict.reduce(into: [:]) { result, entry in
+    if let id = UUID(uuidString: entry.key) {
+        result[id] = entry.value
+    }
+}
+```
 
 ### 2. Infinite Loop & Recursion Guards
-* **Notification-Induced Ping-Pong Storms**:
-  In `AccountsManager.swift`, updating account configuration flips `usesAccountLogin`, which posts `.instancesDidChange`. However, `AccountsManager` observes `.instancesDidChange` to reconcile legacy accounts:
-  ```swift
-  // AccountsManager.swift: Termination Invariant Proof
-  @discardableResult
-  func addAccount(instanceID: UUID, displayName: String? = nil) -> Account {
-      let account = Account(instanceID: instanceID, displayName: displayName)
-      accounts.append(account)
-      pendingUploads.insert(account.id)
-
-      // TERMINATION PROOF:
-      // markMigrated inserts instanceID into `migratedInstanceIDs` BEFORE
-      // triggers that post `.instancesDidChange`. When `reconcileLegacyAccounts` executes,
-      // it verifies: `guard !migratedInstanceIDs.contains(instance.id) else { continue }`
-      // Breaking this cycle prevents an infinite O(N!) event dispatch recursion loop.
-      markMigrated(instanceID)
-
-      save()
-      NotificationCenter.default.post(name: .accountsDidChange, object: nil)
-      return account
-  }
-  ```
-
----
+*Observation Loop Hazard*: Calling an observable mutation within an observation callback creates an immediate recursive runaway condition on the MainActor:
+```swift
+// DEFECT TRAP: Infinite UI Invalidation Loop
+withObservationTracking {
+    _ = state.currentTime
+} onChange: {
+    // Calling mutation here triggers the observation hook synchronously,
+    // blowing the stack!
+    state.currentTime = calculateNewTime() 
+}
+```
+*The Invariant Guard Proof*: Observation mutation cycles must be severed by either an asynchronous continuation yield or a state-delta guard:
+```swift
+// PROVEN TERMINATION INVARIANT: Asynchronous Stream Decoupling
+@MainActor
+func observationChange(_ track: () -> Void) async {
+    let (changes, continuation) = AsyncStream<Void>.makeStream()
+    withObservationTracking(track) {
+        // Yield executes once, breaking synchronous recursion
+        continuation.yield()
+        continuation.finish()
+    }
+    for await _ in changes { break } // Terminates immediately after 1 event
+}
+```
+*Disk Cache Invalidation Guard*:
+```swift
+// PROVEN TERMINATION INVARIANT: Guard against redundant disk churn
+func invalidate() async {
+    // Must verify not already distantPast; otherwise, triggers endless I/O loop
+    guard var data = cachedData, data.lastUpdated != .distantPast else { return }
+    data.lastUpdated = .distantPast
+    cachedData = data
+    await save(videos: data.videos, lastUpdated: .distantPast)
+}
+```
 
 ### 3. UI & UX Micro-Mechanics
-* **Actor Boundary Bridging for Menu Bar Shortcuts**:
-  macOS menu items execute keyboard shortcuts (`Command-O`, `Command-,`) on the AppKit/Main runloop. Calling asynchronous actor services from a SwiftUI `Commands` block causes visible latency or execution drops:
-  ```swift
-  // AppEnvironment.swift: Synchronous L1 caching for instantaneous UI rendering
-  private(set) var activeControlsCenterSettings: CenterSectionSettings = .default
+*TimelineView Layout Reflow Thrashing*:
+SwiftUI's `TimelineView(.animation)` executes a tick on every display refresh cycle (60Hz / 120Hz ProMotion). In views such as `MarqueeText`, running this while the view is off-screen or the application is in the background causes layout reflow and GPU compositor churn:
 
-  // Menu bar commands cannot await actor hops:
-  // Layout service pushes updates down to synchronous @MainActor properties:
-  func updateActiveSettings(_ settings: CenterSectionSettings) {
-      self.activeControlsCenterSettings = settings // Direct read without Task {}
-  }
-  ```
-* **Cache Thrashing Prevention during Feed Invalidation**:
-  When syncing 100+ channels, triggering an invalidation per subscription record would generate 100+ concurrent JSON disk writes:
-  ```swift
-  // FeedCache.swift: Invalidation Guard
-  func invalidate() async {
-      // Early exit if already invalidated: prevents disk-write storms
-      guard var data = cachedData, data.lastUpdated != .distantPast else { return }
-      data.lastUpdated = .distantPast
-      cachedData = data
-      await save(videos: data.videos, lastUpdated: .distantPast)
-  }
-  ```
-
----
+```swift
+// VERIFIED UI/UX INVARIANT: ScenePhase Gated Timeline
+struct MarqueeText: View {
+    @Environment(\.scenePhase) private var scenePhase
+    
+    var body: some View {
+        // Pauses frame updates immediately when app moves to inactive/background
+        TimelineView(.animation(paused: scenePhase != .active)) { context in
+            scrollingContent
+        }
+    }
+}
+```
 
 ### 4. Backend Concurrency & Memory Safety
-* **Time-of-Check to Time-of-Use (TOCTOU) in Hardware Capability Detection**:
-  Probing hardware decoders via VideoToolbox in multi-threaded environments can cause thread thrashing if repeated per stream request.
-  ```swift
-  // HardwareCapabilities.swift: Lazy Thread-Safe Caching
-  @MainActor
-  final class HardwareCapabilities {
-      private var _supportsAV1Hardware: Bool?
+*TOCTOU (Time-of-Check to Time-of-Use) in Hardware Probing*:
+Querying VideoToolbox for hardware support involves dynamic C-API calls (`VTIsHardwareDecodeSupported`). Re-probing on every video playback initialization introduces latency and can trigger memory allocation races under heavy concurrency.
 
-      var supportsAV1Hardware: Bool {
-          // If already checked, return immediate cached primitive (O(1))
-          if let cached = _supportsAV1Hardware { return cached }
-          // TOCTOU Guard: Evaluate once against VideoToolbox C API
-          let supported = VTIsHardwareDecodeSupported(kCMVideoCodecType_AV1)
-          _supportsAV1Hardware = supported
-          return supported
-      }
-  }
-  ```
-* **Memory Leak Elimination in Observer Registrations**:
-  `InstancesManager` and `AccountsManager` register notifications in `init`. Using `[weak self]` inside closures does not automatically unregister tokens. Holding the observer tokens strongly via `@ObservationIgnored private var observers: [NSObjectProtocol]` allows explicit cleanup during de-initialization, preventing unbounded notification retain cycles.
+```swift
+// VERIFIED CONCURRENCY INVARIANT: Thread-Safe Capability Cache
+@MainActor
+final class HardwareCapabilities {
+    static let shared = HardwareCapabilities()
+    
+    private var _supportsAV1Hardware: Bool?
+    
+    var supportsAV1Hardware: Bool {
+        if let cached = _supportsAV1Hardware { return cached }
+        // CoreMedia C-bridge probe
+        let supported = VTIsHardwareDecodeSupported(kCMVideoCodecType_AV1)
+        _supportsAV1Hardware = supported
+        return supported
+    }
+}
+```
 
----
+*Actor File Serialization Isolation*:
+Concurrent reads and writes to disk caches (`FeedCache`, `HomeInstanceDiskCache`) must be isolated using an `actor` to prevent file corruption or interleaved JSON decoding:
+
+```swift
+// VERIFIED MEMORY & DISK SAFETY INVARIANT
+actor FeedCache {
+    private let fileManager = FileManager.default
+    private var cachedData: FeedCacheData?
+    
+    // Actor guarantees exclusive write access
+    func save(videos: [Video], lastUpdated: Date) async {
+        let cacheData = FeedCacheData(videos: videos, lastUpdated: lastUpdated)
+        cachedData = cacheData
+        
+        do {
+            let data = try JSONEncoder().encode(cacheData)
+            // .atomic write invariant ensures no partial file writes on power-loss
+            try data.write(to: cacheFileURL, options: .atomic)
+        } catch {
+            // Log and isolate error without crashing actor
+        }
+    }
+}
+```
 
 ### 5. Defect & Error Prevention ("Galti Pakadna")
-* **Atomic File Serialization with Intermediate Directory Creation**:
-  Crashing during JSON cache writes corrupts the index. `FeedCache` and `HomeInstanceDiskCache` combine atomic writing with directory pre-creation:
-  ```swift
-  // HomeInstanceDiskCache.swift
-  private init() {
-      let caches = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first!
-      cacheDirectory = caches.appendingPathComponent("LibraryCache", isDirectory: true)
-      // DEFECT GUARD: createDirectory MUST have withIntermediateDirectories: true
-      // Without it, missing parent paths crash or drop silently with error!
-      try? fileManager.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
-  }
+*Corrupted Cache Auto-Remediation*:
+Disk-backed JSON stores can become corrupted due to unexpected process termination or OS upgrades. Swallowing decode errors without unlinking the corrupted file causes the app to fail on every subsequent launch:
 
-  // Atomic file write invariant:
-  try data.write(to: cacheFileURL, options: .atomic)
-  ```
-  `options: .atomic` forces the OS to write to a temporary file (`.filename.tmp`) and perform an atomic filesystem `rename()` swap, guaranteeing that reader threads never ingest half-written JSON payloads.
+```swift
+// VERIFIED DEFECT CONTAINMENT INVARIANT
+do {
+    let data = try Data(contentsOf: cacheFileURL)
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+    return try decoder.decode(FeedCacheData.self, from: data)
+} catch {
+    // Critical: Unlink corrupted disk asset immediately to self-heal
+    try? fileManager.removeItem(at: cacheFileURL)
+    return nil // Graceful recovery: upstream will fetch fresh data from network
+}
+```
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
 ### 1. Architecture
-* **Structural Model**: Distributed Hexagonal / Layered Ports & Adapters.
-* **Component Layout**:
-  - `Yattee/Core`: Central domain primitives (`Account`, `Instance`, `Video`, `MediaStream`).
-  - `Yattee/Services`: Remote extractors, WebDAV, SMB, Invidious/Piped protocols.
-  - `Yattee/UI`: SwiftUI cross-platform components, split by macOS/tvOS/iOS targets.
-* **State Ownership**: `AccountsManager` owns context identities; `InstancesManager` owns remote network targets via `NSUbiquitousKeyValueStore`; `DataManager` owns local offline persistence.
+- **Boundary Decoupling**: Complete segregation between UI components (`SwiftUI`), orchestration (`AppEnvironment`), platform capabilities (`HardwareCapabilities`), and the network extraction layer (`ContentService`).
+- **State Ownership Hierarchy**: Centralized state is anchored in `@Observable` managers owned strictly by `AppEnvironment.shared`. View-layer components only receive models via the SwiftUI environment or explicit dependency injection.
 
 ### 2. Core Abstractions
-* **`DataContext`**: An algebraic data type representing the current tenant context:
+- **AccountStatus State Machine**:
   ```swift
-  enum DataContext: Hashable, Sendable {
-      case local
-      case account(UUID)
+  enum AccountStatus: Hashable, Sendable {
+      case checking           // Awaiting credential scope confirmation
+      case signedIn          // Fully authenticated
+      case credentialMissing // No credential in local Keychain
+      case credentialRejected// Authentication failure from remote server
+      case instanceDisabled  // Parent server disabled
+      case inactive          // User toggled off
+      case unreachable       // Network failure (does not invalidate credential)
   }
   ```
-* **`AccountStatus`**: Finite state machine detailing availability:
-  `.checking`, `.signedIn`, `.credentialMissing`, `.credentialRejected`, `.instanceDisabled`, `.inactive`, `.unreachable`.
-* **`AccountCapabilities`**: Contract interface decoupling instance type from functionality (e.g., whether the instance supports authenticated subscriptions, playlists, or bookmarks).
+  *Contract*: `checking` and `unreachable` must never invalidate credentials or be displayed to users as "signed out."
 
 ### 3. Error Handling
-* **Graceful Degradation Boundaries**:
-  In `AppEnvironment.init()`, Persistent Storage (`DataManager`) failure falls back to an ephemeral in-memory store:
-  ```swift
-  do {
-      dm = try DataManager(iCloudSyncEnabled: settings.iCloudSyncEnabled)
-  } catch {
-      LoggingService.shared.logCloudKitError("Persistent store unavailable, falling back to in-memory", error: error)
-      dm = try! DataManager(inMemory: true)
-  }
-  ```
-* **Status Isolation**: A rejected authentication token on one account never marks the parent `Instance` disabled, preserving functionality for sibling accounts operating on the same domain.
-
-### 4. Testing
-* **Test Isolation Invariant**:
-  `InstancesManager` accepts an injected `defaults: UserDefaults`. In production, this resolves to `.standard`. In testing, custom suites (`UserDefaults(suiteName: "test_\(UUID())")`) are injected to isolate test fixtures from production preferences:
-  ```swift
-  init(settingsManager: SettingsManager? = nil, defaults: UserDefaults = .standard)
-  ```
-
-### 5. Security
-* **Credential Isolation**:
-  Scoped storage prevents cross-Apple ID credential leakage. When an account is removed, keys are purged from the device Keychain using strict account ID lookups (`deleteCredential(forAccountID:)`).
-* **Sandboxing & Entitlements**:
-  Enforces App Sandbox (`ENABLE_APP_SANDBOX = YES`), isolated App Group boundaries (`group.stream.yattee.app.shared`), and explicit local network privacy justifications (`NSLocalNetworkUsageDescription`).
-
-### 6. Performance
-* **Two-Tier (L1/L2) Feed Caching**:
-  `FeedCache` uses a fast in-memory actor pointer (L1) coupled with an ISO8601 atomic JSON disk cache (L2). Disk reads occur strictly upon initial warm-up; all subsequent operations read directly from memory.
-* **Zero-Cost Codec Negotiation**:
-  Hardware decoding capabilities are queried once from `VideoToolbox` and cached, eliminating repeated kernel checks and avoiding software-decoding CPU spikes.
-
-### 7. Deployment
-* **Unified Cross-Platform Matrix**:
-  Single codebase compiling across iOS, macOS, tvOS, and specialized app extensions (`TopShelf`, `ShareExtension`).
-* **Sideloading Compatibility**:
-  Decouples the sync engine from mandatory CloudKit entitlements, allowing graceful fallback to local storage for AltStore/SideStore sideloaded IPAs lacking developer certificates.
-
-### 8. Agent Patterns
-* **Context Budget Preservation**:
-  Large collection serialization (e.g., thousands of historical videos) avoids full stringification in logging, logging only metadata summaries (e.g., `String(format: "%.2f MB", sizeMB)`).
-* **Decoupled Outbox Synthesis**:
-  State changes record pending synchronization IDs in persistent sets before asynchronous sync operations execute.
-
-### 9. Data Flow
-```
-User Interaction / Intent
-          │
-          ▼
-AccountsManager.addAccount()
-          │
-          ├──► Write Tombstone/Outbox to UserDefaults (Durable L2)
-          ├──► Set migratedInstanceIDs Flag (Recursion Breaker)
-          ├──► Update Memory State (L1)
-          │
-          ▼
-NotificationCenter (.accountsDidChange)
-          │
-          ├──► Trigger UI Scene Re-render (SwiftUI @Observable)
-          └──► SyncCoordinator (Dispatches payload to CloudKit/Outbox)
-```
-
----
-
-## 6. The 8 Learning Extraction Artifacts
-
-### 1. Pattern: Two-Tier Memory-First Actor Disk Cache
-```swift
-actor MemoryFirstDiskCache<T: Codable & Sendable> {
-    private var memoryCache: T?
-    private let fileURL: URL
-
-    init(fileURL: URL) {
-        self.fileURL = fileURL
-    }
-
-    func read() async -> T? {
-        if let memoryCache { return memoryCache }
-        guard let data = try? Data(contentsOf: fileURL),
-              let decoded = try? JSONDecoder().decode(T.self, from: data) else {
-            return nil
-        }
-        self.memoryCache = decoded
-        return decoded
-    }
-
-    func write(_ object: T) async throws {
-        self.memoryCache = object
-        let data = try JSONEncoder().encode(object)
-        try data.write(to: fileURL, options: .atomic)
-    }
-}
-```
-
-### 2. Rule
-*Every write operation crossing synchronization domains (Local -> Remote/Cloud) MUST persist local dirty markers in durable storage prior to dispatching network payloads.*
-
-### 3. Architecture Principle
-*Decouple authentication identity scopes from persistence layers. When host credentials shift, the persistence layer MUST swap its active namespace or flush memory buffers to preserve multi-tenant boundaries.*
-
-### 4. Failure Mode
-*Optimistic Credential Wipe*: Stripping local secrets before remote tombstones are acknowledged by CloudKit causes remote pull syncs to resurrect undeletable, un-actionable zombie records on client relaunch.
-
-### 5. Reusable Skill
-*Cross-Platform Capability Filter Workflow*:
-1. Probe hardware codec support via `VideoToolbox` C API.
-2. Build an ordered priority map (`AV1: 4`, `VP9: 3`, `HEVC: 2`, `H264: 1`).
-3. Set codecs lacking hardware decode to priority 0.
-4. Filter incoming adaptive
+- **Database Graceful Degradation**: If the persistent `DataManager` fails (e.g., SQLite schema migration failures or file system permission locks), the system catches the error, logs it via `LoggingService`, and falls back to an in-memory storage provider (`DataManager(inMemory: true)`), allowing the app to

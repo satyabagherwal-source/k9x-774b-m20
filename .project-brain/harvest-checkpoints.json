@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T08:04:56.464Z",
+  "last_updated": "2026-10-30T08:20:08.968Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "7085872d11094bf33227e91288037ca8e4a4957258adbbf828ddd04a8dd97aca",
-      "verified_at": "2026-10-28T19:17:25.378Z",
+      "content_hash": "5d01b0f63089e826fb9dc9f478a8b22e2c576666646ee89f397c3cd39ab21ce4",
+      "verified_at": "2026-10-30T08:18:56.328Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T19:17:25.378Z"
+      "last_updated": "2026-10-30T08:18:56.328Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -10251,14 +10251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectcontour-contour",
-      "content_hash": "f765451d79a1f264a68db03628b73bfbcfb2ce071ccea011ab930beb9bd0d131",
-      "verified_at": "2026-10-28T20:08:46.317Z",
+      "content_hash": "0565e439ff3dd6bf37741e6b12bf49746bc5a409fb9e4d92d1bcb11176d05f5c",
+      "verified_at": "2026-10-30T08:19:29.058Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T20:08:46.317Z"
+      "last_updated": "2026-10-30T08:19:29.058Z"
     },
     "topoteretes/cognee": {
       "repository": "topoteretes/cognee",
@@ -13596,14 +13596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yattee-yattee",
-      "content_hash": "afa15f5183743991888148815800793f3fe7894e14543744272d6a8966fab85f",
-      "verified_at": "2026-10-26T02:44:41.438Z",
+      "content_hash": "46ed292cb83180032c2731a115707c541d5c0f638af6685be483d0ad0d7b781f",
+      "verified_at": "2026-10-30T08:20:08.968Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T02:44:41.438Z"
+      "last_updated": "2026-10-30T08:20:08.968Z"
     },
     "Shubham0812/SwiftUI-Animations": {
       "repository": "Shubham0812/SwiftUI-Animations",

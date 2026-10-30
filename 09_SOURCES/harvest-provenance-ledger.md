@@ -6166,3 +6166,6 @@ Every entry in this ledger must capture:
 | `learn-github-scrapy-scrapy` | `https://github.com/scrapy/scrapy` | `71e4b2b0` | Multi-dimensional audit evidence | 2026-10-30T08:04:03.927Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bd27ee11` | Multi-dimensional audit evidence | 2026-10-30T08:04:38.717Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `ed0443f1` | Multi-dimensional audit evidence | 2026-10-30T08:04:56.454Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `d7fbe7d3` | Multi-dimensional audit evidence | 2026-10-30T08:18:56.320Z |
+| `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `05abe826` | Multi-dimensional audit evidence | 2026-10-30T08:19:29.050Z |
+| `learn-github-yattee-yattee` | `https://github.com/yattee/yattee` | `03599d33` | Multi-dimensional audit evidence | 2026-10-30T08:20:08.960Z |

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-LK8A",
-    "timestamp": "2026-10-28T02:48:08.362Z",
-    "repository": "react/react-native",
-    "learningId": "learn-github-react-react-native",
-    "contentHash": "12568cc57fd01ba3506f8ea69bc79657d6bddc6607c4a7fab1a32ffcffd55481",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-LLDI",
-    "timestamp": "2026-10-28T02:48:09.846Z",
-    "repository": "convaiinnovations/laya",
-    "learningId": "learn-huggingface-convaiinnovations-laya",
-    "contentHash": "e702af5da38c78e6fabb31508ecda255a175c6c1e118a2e12380f8b748fe5907",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-LPY1",
-    "timestamp": "2026-10-28T02:48:15.769Z",
-    "repository": "Mintplex-Labs/anything-llm",
-    "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "ad70d5e76be8019339067ee5dea5e4c5a011dd33bfd045f14c8a7a29ebd41037",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-U96H",
     "timestamp": "2026-10-28T02:54:53.945Z",
     "repository": "Edge0/Audio8-ASR-Infinite",
@@ -7490,6 +7445,51 @@
     "repository": "duckdb/duckdb",
     "learningId": "learn-github-duckdb-duckdb",
     "contentHash": "f400ec526dadff2abdbf6aa355c276ca9fd26068c2d58253edf5e283ec2e5eb1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-AOCD",
+    "timestamp": "2026-10-30T08:18:56.317Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "5d01b0f63089e826fb9dc9f478a8b22e2c576666646ee89f397c3cd39ab21ce4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-BDLJ",
+    "timestamp": "2026-10-30T08:19:29.047Z",
+    "repository": "projectcontour/contour",
+    "learningId": "learn-github-projectcontour-contour",
+    "contentHash": "0565e439ff3dd6bf37741e6b12bf49746bc5a409fb9e4d92d1bcb11176d05f5c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-C8E4",
+    "timestamp": "2026-10-30T08:20:08.957Z",
+    "repository": "yattee/yattee",
+    "learningId": "learn-github-yattee-yattee",
+    "contentHash": "46ed292cb83180032c2731a115707c541d5c0f638af6685be483d0ad0d7b781f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

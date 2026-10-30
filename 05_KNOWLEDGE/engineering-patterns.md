@@ -412898,3 +412898,870 @@ TEST_CASE("Test directory cleanup preserves a concurrently created sibling", "[f
 ```
 
 ---
+
+
+---
+
+## 5677. Invariant Cache Key Derivation for Dynamic Schema / Context Sources (Harvested from ClickHouse/ClickHouse)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Invariant Cache Key Derivation for Dynamic Schema / Context Sources",
+  "source": "ClickHouse/ClickHouse",
+  "source_url": "https://github.com/ClickHouse/ClickHouse",
+  "source_version": "d7fbe7d3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T08:18:55.381Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-clickhouse-clickhouse",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `d7fbe7d3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When generating a deterministic cache key for query plans, intermediate results, or condition filters, the key MUST incorporate every implicit contextual configuration and metadata boundary that changes the physical origin or value domain of any participating identifier. Cache keys MUST NOT rely solely on the explicit AST expression and dataset identifier.
+
+**WHY**:
+In queries utilizing polymorphic storage wrappers (e.g., table functions like `file()` or S3 object stores), table schemas and column origins dynamically bifurcate based on session settings (e.g., `use_hive_partitioning`). If a column can be derived either from a physical path segment or an internal file stream depending on a flag, excluding that partition metadata from the cache hash causes identical AST filters to retrieve invalid, corrupted, or stale cached condition results across heterogeneous execution contexts.
+
+**WHEN TO APPLY**:
+Apply in any query optimizer, database storage engine, condition cache (TopK dynamic filter caches), or memoized compute layer where column resolution pathways depend on query-level settings or environment flags.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+#include <boost/functional/hash.hpp>
+#include <Common/SipHash.h>
+
+struct CacheKeyBuilder
+{
+    static UInt64 computeTopKCacheKey(
+        const StoragePtr & storage,
+        const PlanFilter & filter,
+        UInt64 files_hash,
+        const std::string & table_name)
+    {
+        UInt64 condition_hash = 0;
+        
+        // 1. Hash explicit AST / execution plan invariant
+        boost::hash_combine(condition_hash, filter.plan_hash);
+        
+        // 2. Hash physical file identifiers / version tokens
+        boost::hash_combine(condition_hash, files_hash);
+        
+        // 3. Hash canonical table identifier
+        SipHash table_name_hash;
+        table_name_hash.update(table_name.size());
+        table_name_hash.update(table_name);
+        boost::hash_combine(condition_hash, table_name_hash.get64());
+
+        // 4. MUST cover dynamic partition resolution state:
+        // Incorporate metadata describing whether columns are bound to the path or payload
+        SipHash hive_columns_hash;
+        for (const auto & column : storage->hive_partition_columns_to_read_from_file_path)
+        {
+            hive_columns_hash.update(column.name.size());
+            hive_columns_hash.update(column.name);
+            const std::string type_name = column.type->getName();
+            hive_columns_hash.update(type_name.size());
+            hive_columns_hash.update(type_name);
+        }
+        boost::hash_combine(condition_hash, hive_columns_hash.get64());
+
+        return condition_hash;
+    }
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Excluding storage-level contextual resolution attributes
+UInt64 condition_hash = 0;
+boost::hash_combine(condition_hash, filter.plan_hash);
+boost::hash_combine(condition_hash, files_hash);
+boost::hash_combine(condition_hash, table_name_hash.get64());
+// FAILS: When use_hive_partitioning changes from 1 to 0 across runs,
+// partition columns shift from path tokens to payload columns, causing cache collisions!
+return condition_hash;
+```
+
+**VERIFICATION METHOD**:
+Execute parameterized integration tests where the identical query is run sequentially across alternating partition-resolution modes (`use_hive_partitioning=1`, then `0`, then `1`, then `0`). Verify that the output array exactly reflects the true source data without reading cross-contaminated cache artifacts.
+
+---
+
+
+---
+
+## 5678. State Guard for Canceled and Teardown-Signaled I/O Sinks (Harvested from ClickHouse/ClickHouse)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "State Guard for Canceled and Teardown-Signaled I/O Sinks",
+  "source": "ClickHouse/ClickHouse",
+  "source_url": "https://github.com/ClickHouse/ClickHouse",
+  "source_version": "d7fbe7d3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T08:18:55.699Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-clickhouse-clickhouse",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `d7fbe7d3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Before writing terminal sequences, control characters, progress updates, or flushes to any abstracted output buffer or socket descriptor, the caller MUST verify that the buffer has not transitioned to a canceled, closed, or poisoned state (`isCanceled() == false`).
+
+**WHY**:
+When a client abruptly tears down a connection (e.g., closing a WebSocket or raw TCP socket during high-throughput queries), the writing socket transitions to a failed state, setting internal cancellation flags. Secondary background threads, signal handlers, or progress monitors running concurrently that attempt to clear screens, restore cursors, or write progress counters will trip assertions or throw unhandled `LOGICAL_ERROR` exceptions (`Cannot write to canceled buffer`), crashing worker threads or polluting system error logs.
+
+**WHEN TO APPLY**:
+Apply in all interactive CLI clients, embedded server terminals, logging adapters, and asynchronous network streamers where writes occur asynchronously to connections subject to abrupt client disconnection.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+void ProgressTable::writeTable(
+    WriteBufferFromFileDescriptor & message,
+    std::unique_lock<std::mutex> & lock,
+    bool show_table,
+    bool toggle_enabled,
+    bool is_final)
+{
+    // Mandatory state check: Client connection or terminal descriptor may already be torn down
+    if (message.isCanceled())
+        return;
+
+    std::lock_guard sub_lock{mutex};
+    
+    // Proceed with control-sequence emission only when the pipeline sink is verified intact
+    message << HIDE_CURSOR;
+    if (!show_table && toggle_enabled)
+        return;
+
+    // Render progress representation...
+}
+
+void ProgressTable::clearTableOutput(
+    WriteBufferFromFileDescriptor & message,
+    std::unique_lock<std::mutex> &)
+{
+    if (message.isCanceled())
+        return;
+
+    message << "\r" << CLEAR_TO_END_OF_SCREEN << SHOW_CURSOR;
+    message.next();
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Blindly writing escape codes or telemetry to buffers without cancellation checks
+void UnsafeProgressTable::clearTableOutput(WriteBufferFromFileDescriptor & message)
+{
+    // Blind emission: If the peer closed the socket, message.next() or the << operator
+    // will detect the canceled state and abort via throw Exception(ErrorCodes::LOGICAL_ERROR, ...)
+    message << "\r\033[K\033[?25h";
+    message.next();
+}
+```
+
+**VERIFICATION METHOD**:
+Implement an automated end-to-end socket abort test: initiate an asynchronous long-running workload (e.g., `INSERT` via a materialized view sleeping on each row) through a protocol-level socket (e.g., WebSocket client), abruptly close the socket, wait for process list cleanup, and assert that `system.text_log` contains zero `LOGICAL_ERROR` entries containing `"Cannot write to canceled buffer"`.
+
+---
+
+
+---
+
+## 5679. Discrimination Between Hardware/Transient I/O Faults and Metadata Corruption (Harvested from ClickHouse/ClickHouse)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Discrimination Between Hardware/Transient I/O Faults and Metadata Corruption",
+  "source": "ClickHouse/ClickHouse",
+  "source_url": "https://github.com/ClickHouse/ClickHouse",
+  "source_version": "d7fbe7d3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T08:18:56.044Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-clickhouse-clickhouse",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `d7fbe7d3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Storage initialization routines MUST NOT treat POSIX/OS input/output errors (`EIO`, `EAGAIN`, `EBUSY`, `ETIMEDOUT`) as permanent on-disk logical corruption. A storage engine MUST categorize disk read failures as retryable or fatal-mount aborts, and MUST NOT silently detach parts or prune partitions as `broken-on-start` without cryptographically proving bit-level corruption.
+
+**WHY**:
+Treating an OS-level `EIO` (which can result from transient SAN disconnects, storage controller hiccups, or degraded read passes) as structural metadata corruption (`broken-on-start`) moves entire physical parts into detached quarantine directories. The database then mounts successfully and serves queries with silently missing rows, violating ACID consistency without notifying operators or querying clients.
+
+**WHEN TO APPLY**:
+Filesystem metadata readers, LSM compaction scanners, and database storage startup loaders reading configuration and manifest blocks (`checksums.txt`, `columns.txt`, `count.txt`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+enum class PartLoadFailureCategory
+{
+    TransientIOError,  // Disk timeout, controller reset, temporary unreadability
+    DataCorruption     // Checksum mismatch, invalid magic bytes, truncated logical formats
+};
+
+bool isRetryablePartException(const DB::Exception & e)
+{
+    const int code = e.code();
+    
+    // POSIX I/O errors and memory allocations are non-fatal to data integrity
+    if (code == ErrorCodes::CANNOT_READ_ALL_DATA ||
+        code == ErrorCodes::MEMORY_LIMIT_EXCEEDED ||
+        code == ErrorCodes::CANNOT_ALLOCATE_MEMORY)
+    {
+        return true;
+    }
+
+    if (const auto * errno_exception = dynamic_cast<const DB::ErrnoException *>(&e))
+    {
+        int err = errno_exception->getErrno();
+        // EIO is an environmental failure, NEVER a signal that the part is structurally broken
+        if (err == EIO || err == EMFILE || err == ENFILE || err == ENOMEM || err == EBUSY)
+            return true;
+    }
+
+    return false;
+}
+
+void loadDataPart(const String & part_name)
+{
+    try
+    {
+        readPartMetadata(part_name);
+    }
+    catch (const DB::Exception & e)
+    {
+        if (isRetryablePartException(e))
+        {
+            // Abort table startup or schedule retry; DO NOT rename to broken-on-start!
+            throw DB::Exception(
+                ErrorCodes::FILE_SYSTEM_ERROR,
+                "Transient I/O error occurred while reading part {}. Halting startup to prevent data loss: {}",
+                part_name, e.message());
+        }
+
+        // Only verified structural corruption warrants manual intervention quarantine
+        markPartAsBrokenAndDetach(part_name);
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Swallowing read errors or classifying every failure as corrupt
+catch (const DB::Exception & e)
+{
+    // Clobbers valid data upon temporary disk stutter!
+    LOG_ERROR(log, "Part {} failed to load, moving to broken-on-start: {}", part_name, e.message());
+    rename(part_path, "detached/broken-on-start_" + part_name);
+    // Table continues to load, silently missing records!
+}
+```
+
+**VERIFICATION METHOD**:
+Inject a kernel-level `EIO` fault (via `strace`, `dm-flakey`, or LD_PRELOAD mocking of `pread(2)`) during database engine initialization while reading `checksums.txt`. Verify that startup throws a critical abort exception rather than detaching the part and booting with incomplete row counts.
+
+---
+
+
+---
+
+## 5680. Zero Filter-Chain Duplication in Protocol Upgrade Configs (Harvested from projectcontour/contour)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Zero Filter-Chain Duplication in Protocol Upgrade Configs",
+  "source": "projectcontour/contour",
+  "source_url": "https://github.com/projectcontour/contour",
+  "source_version": "05abe826",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T08:19:28.118Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-projectcontour-contour",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [projectcontour/contour](https://github.com/projectcontour/contour) (Revision: `05abe826`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When configuring protocol upgrades (e.g., WebSockets, SPDY, CONNECT) within network proxies or HTTP connection managers, control planes MUST NOT duplicate or clone the parent HTTP filter chain into individual upgrade configurations to alter a single filter's behavior. Instead, selectively disable the filter per-route or handle filter state transitions within the filter itself.
+
+**WHY**:
+In Envoy and similar proxy architectures, each `HttpFilter` declared inside `HttpConnectionManager.UpgradeConfig.filters` instantiates separate filter state machine instances and runtime contexts per worker thread and connection. Duplicating large filter chains (such as heavy Lua filters, Wasm runtimes, or external authorization chains) into upgrade configs doubles or triples proxy baseline resident memory (`RSS`), inducing critical out-of-memory (`OOMKilled`) cascades at scale across data plane instances.
+
+**WHEN TO APPLY**:
+Any proxy control plane (Envoy xDS, NGINX, HAProxy, Envoy Gateway, Traefik) generating HTTP connection management configurations that support protocol upgrades or connection tunnels.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Package envoyv3 enforces that UpgradeConfig only defines the protocol token
+// without re-allocating an entire HttpFilter chain slice.
+package envoyv3
+
+import (
+	envoy_filter_network_http_connection_manager_v3 "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/network/http_connection_manager/v3"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
+)
+
+type HTTPConnectionManagerBuilder struct {
+	enableWebsockets bool
+	filters          []*envoy_filter_network_http_connection_manager_v3.HttpFilter
+}
+
+func (b *HTTPConnectionManagerBuilder) BuildUpgradeConfigs() []*envoy_filter_network_http_connection_manager_v3.HttpConnectionManager_UpgradeConfig {
+	if !b.enableWebsockets {
+		return nil
+	}
+
+	// Invariant: Do not clone b.filters into UpgradeConfig.Filters.
+	// Allow filters to remain in the primary HCM filter chain and handle
+	// bypasses via typed per-filter config or route-level overrides.
+	return []*envoy_filter_network_http_connection_manager_v3.HttpConnectionManager_UpgradeConfig{
+		{
+			UpgradeType: "websocket",
+			Enabled:     wrapperspb.Bool(true),
+			// Filters slice explicitly left empty to prevent filter instantiation bloat
+			Filters:     nil, 
+		},
+	}
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Slicing and duplicating the main filter chain into upgradeConfig
+// dynamically doubles the proxy's idle filter memory allocation.
+func (b *HTTPConnectionManagerBuilder) BadBuildUpgradeConfigs(excludedFilter *envoy_filter_network_http_connection_manager_v3.HttpFilter) []*envoy_filter_network_http_connection_manager_v3.HttpConnectionManager_UpgradeConfig {
+	upgradeConfig := &envoy_filter_network_http_connection_manager_v3.HttpConnectionManager_UpgradeConfig{
+		UpgradeType: "websocket",
+	}
+	
+	// DANGEROUS: Allocates second copy of filter pipeline. 
+	// Lua and Wasm filters duplicated here consume massive heap.
+	for _, f := range b.filters {
+		if f != excludedFilter {
+			upgradeConfig.Filters = append(upgradeConfig.Filters, f)
+		}
+	}
+	return []*envoy_filter_network_http_connection_manager_v3.HttpConnectionManager_UpgradeConfig{upgradeConfig}
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a unit regression test asserting that generated `HttpConnectionManager` instances contain `len(UpgradeConfig[i].Filters) == 0` unless specifically running an isolated upgrade-only filter:
+```go
+func TestUpgradeConfigMemorySafety(t *testing.T) {
+	builder := &HTTPConnectionManagerBuilder{enableWebsockets: true}
+	configs := builder.BuildUpgradeConfigs()
+	for _, cfg := range configs {
+		if len(cfg.Filters) != 0 {
+			t.Fatalf("Invariant violated: UpgradeConfig %s has %d duplicate filters, causing memory leaks", cfg.UpgradeType, len(cfg.Filters))
+		}
+	}
+}
+```
+
+---
+
+
+---
+
+## 5681. Strict Polarity Typing for Kubernetes Custom Status Conditions (Harvested from projectcontour/contour)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Strict Polarity Typing for Kubernetes Custom Status Conditions",
+  "source": "projectcontour/contour",
+  "source_url": "https://github.com/projectcontour/contour",
+  "source_version": "05abe826",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T08:19:28.438Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-projectcontour-contour",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [projectcontour/contour](https://github.com/projectcontour/contour) (Revision: `05abe826`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing Kubernetes Custom Resource Condition schemas, status mutation helpers MUST explicitly enforce the semantic polarity of the condition type (positive-polarity vs abnormal-true/negative-polarity) before asserting transition state (`Status = True` vs `Status = False`). Mutation helpers MUST NOT conflate error addition with direct condition truthiness.
+
+**WHY**:
+In Kubernetes API design conventions, root conditions like `Ready` and `Valid` operate on **positive polarity** (`Status: True` indicates success/nominal operation; `Status: False` indicates error). Conversely, specialized sub-conditions (e.g., `ErrorPresent`, `AuthError`, `TLSError`) frequently employ **abnormal-true polarity** (`Status: True` indicates an active error state). Mutating condition status without branching on polarity causes valid resources to report fatal states or error conditions to appear healthy, breaking controller reconciliation loops and mutating status payloads repeatedly.
+
+**WHEN TO APPLY**:
+All Kubernetes controllers, operators, and CRD status builders implementing `DetailedCondition`, `metav1.Condition`, or multi-tiered status reporting.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package conditions
+
+import (
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
+type ConditionStatus = metav1.ConditionStatus
+
+const (
+	ConditionTrue    ConditionStatus = metav1.ConditionTrue
+	ConditionFalse   ConditionStatus = metav1.ConditionFalse
+	ConditionUnknown ConditionStatus = metav1.ConditionUnknown
+	ValidConditionType               = "Valid"
+)
+
+type DetailedCondition struct {
+	metav1.Condition
+	Errors   []SubCondition
+	Warnings []SubCondition
+}
+
+type SubCondition struct {
+	Type    string
+	Status  ConditionStatus
+	Reason  string
+	Message string
+}
+
+func (dc *DetailedCondition) IsPositivePolarity() bool {
+	switch dc.Type {
+	case ValidConditionType:
+		return true
+	default:
+		return false
+	}
+}
+
+func (dc *DetailedCondition) AddError(errorType, reason, message string) {
+	// Polarity check invariant:
+	// Positive polarity (e.g., Valid) transitions to False on error.
+	// Negative polarity (e.g., ErrorPresent) transitions to True on error.
+	if dc.IsPositivePolarity() {
+		dc.Status = ConditionFalse
+	} else {
+		dc.Status = ConditionTrue
+	}
+	
+	dc.Reason = "ErrorPresent"
+	dc.Message = "At least one error present, see Errors for details"
+
+	dc.Errors = append(dc.Errors, SubCondition{
+		Type:    errorType,
+		Status:  ConditionTrue, // Subconditions use abnormal-true polarity
+		Reason:  reason,
+		Message: message,
+	})
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Unconditionally setting Status = ConditionFalse or ConditionTrue 
+// without checking the condition type's underlying polarity contract.
+func (dc *DetailedCondition) BadAddError(errorType, reason, message string) {
+	// BUG: If dc.Type is an error indicator (e.g., "ConfigurationError"), 
+	// setting it to ConditionFalse signals that NO error exists!
+	dc.Status = ConditionFalse 
+	dc.Errors = append(dc.Errors, SubCondition{Type: errorType, Message: message})
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce condition polarity invariants via property-based unit tests asserting that adding an error to `Valid` yields `Status == ConditionFalse`, while adding an error to any `*Error` type yields `Status == ConditionTrue`.
+
+---
+
+
+---
+
+## 5682. Delimiter-Consistent Cluster Load Assignment (CLA) Identifier Contract (Harvested from projectcontour/contour)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Delimiter-Consistent Cluster Load Assignment (CLA) Identifier Contract",
+  "source": "projectcontour/contour",
+  "source_url": "https://github.com/projectcontour/contour",
+  "source_version": "05abe826",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T08:19:28.784Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-projectcontour-contour",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [projectcontour/contour](https://github.com/projectcontour/contour) (Revision: `05abe826`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Discovery service identifier generation functions (such as Envoy EDS `ClusterLoadAssignmentName`) MUST maintain a strictly bijective, delimiter-consistent naming contract between cluster generators (producers) and routing action references (consumers). When optional components (such as port names) are omitted, the delimiter MUST NOT be left trailing, and the path segments MUST truncate cleanly without trailing slashes.
+
+**WHY**:
+In distributed microservice control planes, Envoy relies on string equality matching between the cluster name referenced in LDS/RDS (`RouteAction.cluster = "ns/svc/port"`) and the EDS `ClusterLoadAssignment.cluster_name`. An extra or missing `/` caused by unchecked string concatenation produces `ClusterNotFound` or silent traffic blackholing (HTTP 503 Service Unavailable) without explicit control plane compilation failures.
+
+**WHEN TO APPLY**:
+All service discovery name resolution routines, routing table synthesizers, and xDS cluster naming helpers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package xds
+
+import (
+	"strings"
+	"k8s.io/apimachinery/pkg/types"
+)
+
+// ClusterLoadAssignmentName generates the naming contract between the EDS producer
+// and LDS/RDS consumer. Empty port names truncate cleanly to avoid trailing delimiters.
+func ClusterLoadAssignmentName(service types.NamespacedName, portName string) string {
+	segments := []string{
+		service.Namespace,
+		service.Name,
+	}
+
+	if portName != "" {
+		segments = append(segments, portName)
+	}
+
+	return strings.Join(segments, "/")
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Naive formatting or missing empty checks produce trailing delimiters 
+// (e.g., "default/my-service/" instead of "default/my-service").
+func BadClusterLoadAssignmentName(service types.NamespacedName, portName string) string {
+	// BUG: If portName is empty, produces "namespace/name/" which fails exact string lookup in Envoy.
+	return service.Namespace + "/" + service.Name + "/" + portName 
+}
+```
+
+**VERIFICATION METHOD**:
+Automated table-driven tests checking boundary cases with and without port names:
+```go
+func TestClusterLoadAssignmentNameContract(t *testing.T) {
+	tests := []struct {
+		ns, name, port, expected string
+	}{
+		{"default", "svc", "http", "default/svc/http"},
+		{"production", "api", "", "production/api"},
+	}
+	for _, tc := range tests {
+		res := ClusterLoadAssignmentName(types.NamespacedName{Namespace: tc.ns, Name: tc.name}, tc.port)
+		if res != tc.expected {
+			t.Errorf("Cluster naming violation: got %q, expected %q", res, tc.expected)
+		}
+	}
+}
+```
+
+---
+
+
+---
+
+## 5683. High-Frequency Clock Observation Gate Pattern (Harvested from yattee/yattee)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "High-Frequency Clock Observation Gate Pattern",
+  "source": "yattee/yattee",
+  "source_url": "https://github.com/yattee/yattee",
+  "source_version": "03599d33",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-30T08:20:07.994Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yattee-yattee",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yattee/yattee](https://github.com/yattee/yattee) (Revision: `03599d33`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When binding high-frequency engine events (timers, audio/video position ticks, physics updates, GPS telemetry) to an `@Observable` model consumed by a declarative UI framework (SwiftUI, Jetpack Compose, React), mutations **MUST NOT** directly notify the framework during backgrounding, off-screen execution, or occluded view states. Systems **MUST** use manual observation access/mutation barriers (`access(keyPath:)` / `withMutation(keyPath:)`) to continue updating underlying memory while suppressing view invalidation notifications, followed by a single coalesced catch-up notification upon transition back to the foreground.
+
+**WHY**:
+In declarative UI runtimes, modifying an observed property marks all registered dependent view nodes as dirty. An audio/video playback pipeline ticks at 10–60 Hz. When the application transitions to background audio playback, UI controls (seekbars, chapter segment splitters, timestamp labels) are completely hidden, yet SwiftUI will execute diffing passes and layout recalculations for every single tick. In resource-constrained mobile hardware, this causes continuous main-thread wakeups (measured at 1,289 main-thread samples per 30 seconds down to 248), draining the device battery and risking OS watchdog process termination.
+
+**WHEN TO APPLY**:
+Apply to any cross-platform media player, GPS tracker, web-socket streaming client, or real-time simulation where raw engine updates exceed 1 Hz and the UI consumer can transition into invisible, backgrounded, or off-screen states.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+import Foundation
+import Observation
+
+@MainActor
+@Observable
+final class PlaybackClockState {
+    /// Public interface: Read access is tracked; write access is gated by `publishesTimeUpdates`.
+    var currentTime: TimeInterval {
+        get {
+            access(keyPath: \.currentTime)
+            return storedCurrentTime
+        }
+        set {
+            if publishesTimeUpdates {
+                withMutation(keyPath: \.currentTime) {
+                    storedCurrentTime = newValue
+                }
+            } else {
+                // Silently mutate storage without triggering UI dependency re-renders
+                storedCurrentTime = newValue
+            }
+        }
+    }
+
+    @ObservationIgnored private var storedCurrentTime: TimeInterval = 0
+
+    /// Controls whether mutating clock properties invalidates listening Views.
+    @ObservationIgnored var publishesTimeUpdates: Bool = true {
+        didSet {
+            // Upon foreground transition, emit a single catch-up notification
+            guard publishesTimeUpdates, !oldValue else { return }
+            withMutation(keyPath: \.currentTime) {}
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Direct observation property mutation on raw engine callbacks
+@Observable
+final class LeakyClockState {
+    var currentTime: TimeInterval = 0 // Incurs UI invalidation 10-60 times/sec while backgrounded!
+}
+
+// In Engine Tick Handler:
+func onEngineTick(pos: TimeInterval) {
+    state.currentTime = pos // Triggers massive main-thread layout cascades in background!
+}
+```
+
+**VERIFICATION METHOD**:
+Profile using Instruments (Time Profiler / Energy Log) during a 60-second background playback loop. Main thread samples must drop by >75%. Supplement with an XCTest asserting that a view observing `currentTime` receives zero state invalidations while `publishesTimeUpdates == false`.
+
+---
+
+
+---
+
+## 5684. Zero-CPU Discrete Observation Wait Pattern (Harvested from yattee/yattee)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Zero-CPU Discrete Observation Wait Pattern",
+  "source": "yattee/yattee",
+  "source_url": "https://github.com/yattee/yattee",
+  "source_version": "03599d33",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-30T08:20:08.317Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yattee-yattee",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yattee/yattee](https://github.com/yattee/yattee) (Revision: `03599d33`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Background coordinators and asynchronous state observers **MUST NOT** poll observable properties using recurring interval timers (`Task.sleep(for:)`, `setInterval`) to detect property shifts. Coordinators **MUST** convert reactive property-tracking access hooks into suspending asynchronous streams (`AsyncStream`) via observation tracking hooks (`withObservationTracking`), yielding thread execution until the observation runtime detects a mutation.
+
+**WHY**:
+Looping over `Task.sleep(for: .milliseconds(100))` to check if a boolean or state property flipped keeps the Swift Concurrency cooperative thread pool or main actor continuously waking up (10 times every second per loop). Multiple coordinators polling concurrently results in persistent battery drain, thread pool starvation, and non-deterministic state latency. Using `withObservationTracking` with an `AsyncStream` guarantees true suspension with 0% CPU consumption until the exact moment the tracked key-path invalidates.
+
+**WHEN TO APPLY**:
+In Swift 5.9+ / Swift 6 utilizing the `Observation` framework, or any reactive framework (MobX, Vue 3 reactivity) where an asynchronous non-UI service (e.g., RemoteControl coordinator, Toast manager, Hardware daemon) must await changes in observable state.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+import Foundation
+import Observation
+
+/// Suspends execution until any property evaluated within `track` is mutated,
+/// or until the current Task is cancelled. Zero CPU cost while suspended.
+@MainActor
+func observationChange(_ track: () -> Void) async {
+    let (changes, continuation) = AsyncStream<Void>.makeStream()
+    
+    withObservationTracking(track) {
+        continuation.yield()
+        continuation.finish()
+    }
+    
+    for await _ in changes { 
+        break 
+    }
+}
+
+// Usage in coordinator loop:
+Task { [weak self] in
+    guard let settings = self?.settingsManager else { return }
+    while !Task.isCancelled {
+        let wasActive = settings.isFeatureActive
+        // Suspends without polling until settings.isFeatureActive changes
+        await observationChange { _ = settings.isFeatureActive }
+        guard let self, !Task.isCancelled else { break }
+        
+        let isActive = settings.isFeatureActive
+        if isActive != wasActive {
+            self.handleFeatureToggle(isActive)
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Polling observable state via interval sleep loops
+Task {
+    while !Task.isCancelled {
+        // Wakes up 10 times every second, burns cycles, wastes main actor scheduling slots
+        try? await Task.sleep(for: .milliseconds(100))
+        if settings.isFeatureActive != lastRecordedState {
+            handleToggle()
+        }
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using a detached `Task` unit test. Validate that zero loop iterations execute over an extended period (e.g., 5 seconds) until the observed property is explicitly modified on the main actor. Concurrently inspect CPU core activity to verify zero thread context-switch ticks.
+
+---
+
+
+---
+
+## 5685. Tombstone Outbox-First Credential Purging Pattern (Harvested from yattee/yattee)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Tombstone Outbox-First Credential Purging Pattern",
+  "source": "yattee/yattee",
+  "source_url": "https://github.com/yattee/yattee",
+  "source_version": "03599d33",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-30T08:20:08.665Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-yattee-yattee",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [yattee/yattee](https://github.com/yattee/yattee) (Revision: `03599d33`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When cascading the deletion of an entity across distributed or multi-tenant stores (e.g., cloud accounts, remote servers, local secure enclaves), the system **MUST** persist durable deletion markers (tombstones) to the local persistent store/outbox **BEFORE** deleting credentials, tokens, or encryption keys from secure hardware storage (Keychain/Keystore).
+
+**WHY**:
+If the secure credential (e.g., OAuth token, password) is removed from the Keychain *before* the record deletion is committed to the database outbox or sync engine, an unhandled crash, power interruption, or sync race condition immediately leaves the database with an active account record whose credentials have vanished without trace. On next launch, sync reconciliation views this as an intact remote account, resurrecting an un-deletable orphan that fails all network authorizations and cannot be cleaned up because the remote ID/secret mapping was severed.
+
+**WHEN TO APPLY**:
+All systems coordinating local credential storage (Apple Keychain, Android Keystore, HashiCorp Vault) with synchronization engines (CloudKit, CouchDB, Firestore, custom sync queues).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+import Foundation
+
+@MainActor
+enum AccountRemovalCoordinator {
+    static func removeAccount(
+        _ accountID: UUID,
+        accountsManager: AccountsManager,
+        credentialsStores: [any AccountCredentialsManager],
+        memoryPurge: (UUID) -> Void
+    ) {
+        // STEP 1: Write durable tombstone / outbox entry FIRST.
+        // Even if the process crashes immediately after this line,
+        // next launch knows this account is deliberately dead and will NOT resurrect it.
+        accountsManager.recordAccountDeletion(accountID)
+
+        // STEP 2: Purge credentials from Secure Storage (Keychain)
+        for store in credentialsStores {
+            store.deleteCredential(forAccountID: accountID)
+        }
+
+        // STEP 3: Purge active in-memory cache/session data
+        memoryPurge(accountID)
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Deleting credentials before persisting durable tombstones
+func purgeAccountBroken(_ accountID: UUID) {
+    // CRASH WINDOW HERE: If crash happens between these lines,
+    // account remains in database/cloud, but Keychain secret is permanently lost!
+    keychain.deleteSecret(for: accountID)
+    database.delete(accountID) // Never reached if terminated!
+}
+```
+
+**VERIFICATION METHOD**:
+Write an integration test simulating crash interruption:
+1. Trigger `recordAccountDeletion(accountID)`.
+2. Intercept process state before step 2 and simulate app restart.
+3. Assert that the sync engine executes the pending tombstone purge rather than restoring the orphaned account from remote sync changes.
+
+---

@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "6f2ed958",
+    "sourceVersion": "d7fbe7d3",
     "license": "Apache-2.0",
-    "contentHash": "7085872d11094bf33227e91288037ca8e4a4957258adbbf828ddd04a8dd97aca",
-    "lastHarvestedAt": "2026-10-28T19:17:25.370Z",
+    "contentHash": "5d01b0f63089e826fb9dc9f478a8b22e2c576666646ee89f397c3cd39ab21ce4",
+    "lastHarvestedAt": "2026-10-30T08:18:56.320Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -6793,10 +6793,10 @@
     "repository": "projectcontour/contour",
     "platform": "github",
     "sourceUrl": "https://github.com/projectcontour/contour",
-    "sourceVersion": "74909745",
+    "sourceVersion": "05abe826",
     "license": "Apache-2.0",
-    "contentHash": "f765451d79a1f264a68db03628b73bfbcfb2ce071ccea011ab930beb9bd0d131",
-    "lastHarvestedAt": "2026-10-28T20:08:46.303Z",
+    "contentHash": "0565e439ff3dd6bf37741e6b12bf49746bc5a409fb9e4d92d1bcb11176d05f5c",
+    "lastHarvestedAt": "2026-10-30T08:19:29.050Z",
     "learningId": "learn-github-projectcontour-contour"
   },
   "topoteretes-cognee": {
@@ -9033,10 +9033,10 @@
     "repository": "yattee/yattee",
     "platform": "github",
     "sourceUrl": "https://github.com/yattee/yattee",
-    "sourceVersion": "55b6c63d",
+    "sourceVersion": "03599d33",
     "license": "AGPL-3.0",
-    "contentHash": "afa15f5183743991888148815800793f3fe7894e14543744272d6a8966fab85f",
-    "lastHarvestedAt": "2026-10-26T02:44:41.433Z",
+    "contentHash": "46ed292cb83180032c2731a115707c541d5c0f638af6685be483d0ad0d7b781f",
+    "lastHarvestedAt": "2026-10-30T08:20:08.960Z",
     "learningId": "learn-github-yattee-yattee"
   },
   "shubham0812-swiftui-animations": {

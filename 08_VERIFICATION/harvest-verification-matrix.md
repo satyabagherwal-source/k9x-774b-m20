@@ -6157,3 +6157,6 @@
 | `CYCLE-20261030-RJRN` | `2026-10-30T08:04:03.923Z` | `scrapy/scrapy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5669, Rule 5670, Rule 5671` | Yes (`a776ddb6...`) |
 | `CYCLE-20261030-SAM1` | `2026-10-30T08:04:38.713Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5672, Rule 5673` | Yes (`d7b26f07...`) |
 | `CYCLE-20261030-SOAR` | `2026-10-30T08:04:56.451Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5674, Rule 5675, Rule 5676` | Yes (`f400ec52...`) |
+| `CYCLE-20261030-AOCD` | `2026-10-30T08:18:56.317Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5677, Rule 5678, Rule 5679` | Yes (`5d01b0f6...`) |
+| `CYCLE-20261030-BDLJ` | `2026-10-30T08:19:29.047Z` | `projectcontour/contour` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5680, Rule 5681, Rule 5682` | Yes (`0565e439...`) |
+| `CYCLE-20261030-C8E4` | `2026-10-30T08:20:08.957Z` | `yattee/yattee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5683, Rule 5684, Rule 5685` | Yes (`46ed292c...`) |

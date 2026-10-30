@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T08:04:56.460Z",
-  "total_cycles_completed": 6134,
-  "total_learnings_persisted": 6134,
-  "total_rules_promoted": 5646,
+  "last_updated": "2026-10-30T08:20:08.965Z",
+  "total_cycles_completed": 6137,
+  "total_learnings_persisted": 6137,
+  "total_rules_promoted": 5655,
   "history": [
-    {
-      "timestamp": "2026-10-28T22:07:53.902Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T22:13:58.458Z",
-      "repository": "autotrust/JEV-35B",
-      "learningId": "learn-huggingface-autotrust-jev-35b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T22:14:01.339Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T22:14:08.057Z",
       "repository": "moby/buildkit",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-30T08:04:56.460Z",
       "repository": "duckdb/duckdb",
       "learningId": "learn-github-duckdb-duckdb",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T08:18:56.324Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T08:19:29.055Z",
+      "repository": "projectcontour/contour",
+      "learningId": "learn-github-projectcontour-contour",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T08:20:08.965Z",
+      "repository": "yattee/yattee",
+      "learningId": "learn-github-yattee-yattee",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
