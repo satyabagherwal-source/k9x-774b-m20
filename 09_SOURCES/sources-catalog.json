@@ -5843,10 +5843,10 @@
     "repository": "cloudwego/volo",
     "platform": "github",
     "sourceUrl": "https://github.com/cloudwego/volo",
-    "sourceVersion": "80913ce4",
+    "sourceVersion": "0bc881c4",
     "license": "Apache-2.0",
-    "contentHash": "f1ac5848331bef55cda361fe6e8fb2db9ededfc7d5ff1fb21f5f21f9fbd2dc77",
-    "lastHarvestedAt": "2026-10-27T13:22:12.985Z",
+    "contentHash": "8686b99aae482629749feb30f1f766c4caa239ab533ae0fca76d1afe201c548c",
+    "lastHarvestedAt": "2026-10-30T09:53:21.475Z",
     "learningId": "learn-github-cloudwego-volo"
   },
   "itinance-react-native-fs": {

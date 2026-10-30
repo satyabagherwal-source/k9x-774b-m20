@@ -6175,3 +6175,4 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `e70cdbcd` | Multi-dimensional audit evidence | 2026-10-30T08:56:42.779Z |
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `76ac1021` | Multi-dimensional audit evidence | 2026-10-30T09:15:15.899Z |
 | `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `0d964894` | Multi-dimensional audit evidence | 2026-10-30T09:30:00.627Z |
+| `learn-github-cloudwego-volo` | `https://github.com/cloudwego/volo` | `0bc881c4` | Multi-dimensional audit evidence | 2026-10-30T09:53:21.475Z |

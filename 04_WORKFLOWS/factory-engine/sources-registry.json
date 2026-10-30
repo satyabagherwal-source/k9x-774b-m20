@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T09:30:03.174Z",
-    "lastVerified": "2026-10-30T09:30:03.174Z",
+    "lastChecked": "2026-10-30T09:53:24.019Z",
+    "lastVerified": "2026-10-30T09:53:24.019Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -219,9 +219,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-10-30T04:54:29.235Z",
+    "lastChecked": "2026-10-30T09:44:30.568Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-10-30T04:54:29.235Z"
+    "lastVerified": "2026-10-30T09:44:30.568Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -245,8 +245,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T08:36:31.931Z",
-    "lastVerified": "2026-10-30T08:36:31.931Z",
+    "lastChecked": "2026-10-30T09:44:35.697Z",
+    "lastVerified": "2026-10-30T09:44:35.697Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1017,12 +1017,12 @@
     "lastVerified": "2026-10-28T04:10:03.199Z"
   },
   "flux-iac-tofu-controller": {
-    "name": "flux-iac/tofu-controller",
+    "name": "tofu-controller",
     "officialUrl": "https://github.com/flux-iac/tofu-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T20:50:53.958Z",
-    "lastVerified": "2026-10-28T20:50:53.958Z",
+    "lastChecked": "2026-10-30T09:44:28.142Z",
+    "lastVerified": "2026-10-30T09:44:28.142Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-flux-iac-tofu-controller",
@@ -1031,7 +1031,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e2db61bd"
   },
   "provablehq-snarkos": {
     "name": "snarkOS",
@@ -4983,11 +4984,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cloudwego-volo": {
-    "name": "volo",
+    "name": "cloudwego/volo",
     "officialUrl": "https://github.com/cloudwego/volo",
-    "lastChecked": "2026-10-28T15:36:28.150Z",
-    "revisionIdentifier": "80913ce4",
-    "lastVerified": "2026-10-28T15:36:28.150Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-30T09:44:25.415Z",
+    "lastVerified": "2026-10-30T09:44:25.415Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-cloudwego-volo",
+    "contentHash": "8686b99aae482629749feb30f1f766c4caa239ab533ae0fca76d1afe201c548c",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-fermionresearch-phonon-2": {
     "name": "FermionResearch/Phonon-2",
@@ -6928,9 +6939,9 @@
   "pathwaycom-serviette": {
     "name": "serviette",
     "officialUrl": "https://github.com/pathwaycom/serviette",
-    "lastChecked": "2026-10-28T19:54:38.884Z",
+    "lastChecked": "2026-10-30T09:44:33.084Z",
     "revisionIdentifier": "e2a7a09b",
-    "lastVerified": "2026-10-28T19:54:38.884Z"
+    "lastVerified": "2026-10-30T09:44:33.084Z"
   },
   "railwayapp-nixpacks": {
     "name": "nixpacks",
@@ -9653,5 +9664,19 @@
     "lastChecked": "2026-10-30T09:27:07.530Z",
     "revisionIdentifier": "67e3ee9a",
     "lastVerified": "2026-10-30T09:27:07.530Z"
+  },
+  "jina-ai-reader": {
+    "name": "reader",
+    "officialUrl": "https://github.com/jina-ai/reader",
+    "lastChecked": "2026-10-30T09:44:23.073Z",
+    "revisionIdentifier": "1574bfd3",
+    "lastVerified": "2026-10-30T09:44:23.073Z"
+  },
+  "rechsteiner-parchment": {
+    "name": "Parchment",
+    "officialUrl": "https://github.com/rechsteiner/Parchment",
+    "lastChecked": "2026-10-30T09:44:25.626Z",
+    "revisionIdentifier": "dfb23ea5",
+    "lastVerified": "2026-10-30T09:44:25.626Z"
   }
 }

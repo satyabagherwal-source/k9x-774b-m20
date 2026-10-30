@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T09:30:00.561Z",
+  "last_updated": "2026-10-30T09:53:21.410Z",
   "total_verified_learnings": 1173,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7260,14 +7260,29 @@
       "slug": "cloudwego-volo",
       "platform": "github",
       "source_url": "https://github.com/cloudwego/volo",
-      "source_version": "80913ce4",
-      "content_hash": "f1ac5848331bef55cda361fe6e8fb2db9ededfc7d5ff1fb21f5f21f9fbd2dc77",
+      "source_version": "0bc881c4",
+      "content_hash": "8686b99aae482629749feb30f1f766c4caa239ab533ae0fca76d1afe201c548c",
       "dossier_path": "07_PROJECT_LEARNING/cloudwego-volo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cloudwego-volo-learnings.md",
       "promoted_rules": [
         {
           "number": 4797,
           "title": "volo-thrift): count biz-error headers in TTHeader encode_size (#677)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5703,
+          "title": "Absolute Root-Qualified Prelude Emission in Code Generators",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5704,
+          "title": "Dual-Invariant Symmetry Between Header Size Estimation and Serialization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5705,
+          "title": "Strict Containment Canonicalization for Static Directory Path Resolution",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -7276,7 +7291,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:22:12.872Z",
+      "verified_at": "2026-10-30T09:53:21.398Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -152377,6 +152392,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T09:30:00.546Z"
+    },
+    "rule-5703": {
+      "learning_id": "rule-5703",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5703,
+      "title": "Absolute Root-Qualified Prelude Emission in Code Generators",
+      "source_url": "https://github.com/cloudwego/volo",
+      "source_version": "0bc881c4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T09:53:21.398Z"
+    },
+    "rule-5704": {
+      "learning_id": "rule-5704",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5704,
+      "title": "Dual-Invariant Symmetry Between Header Size Estimation and Serialization",
+      "source_url": "https://github.com/cloudwego/volo",
+      "source_version": "0bc881c4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T09:53:21.398Z"
+    },
+    "rule-5705": {
+      "learning_id": "rule-5705",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5705,
+      "title": "Strict Containment Canonicalization for Static Directory Path Resolution",
+      "source_url": "https://github.com/cloudwego/volo",
+      "source_version": "0bc881c4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T09:53:21.398Z"
     }
   },
   "aliases": {
