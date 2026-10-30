@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T23:15:12.075Z",
-    "lastVerified": "2026-10-30T23:15:12.075Z",
+    "lastChecked": "2026-10-30T23:22:01.527Z",
+    "lastVerified": "2026-10-30T23:22:01.527Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -194,9 +194,9 @@
   "justjavac-free-programming-books-zh_cn": {
     "name": "free-programming-books-zh_CN",
     "officialUrl": "https://github.com/justjavac/free-programming-books-zh_CN",
-    "lastChecked": "2026-10-28T02:54:45.214Z",
+    "lastChecked": "2026-10-30T23:21:51.541Z",
     "revisionIdentifier": "cc1108ac",
-    "lastVerified": "2026-10-28T02:54:45.214Z"
+    "lastVerified": "2026-10-30T23:21:51.541Z"
   },
   "bitnami-sealed-secrets": {
     "name": "bitnami/sealed-secrets",
@@ -342,9 +342,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T22:50:02.462Z",
+    "lastChecked": "2026-10-30T23:22:01.515Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T22:50:02.462Z"
+    "lastVerified": "2026-10-30T23:22:01.515Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -963,11 +963,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "ducaale-xh": {
-    "name": "xh",
+    "name": "ducaale/xh",
     "officialUrl": "https://github.com/ducaale/xh",
-    "lastChecked": "2026-10-29T00:41:19.242Z",
-    "revisionIdentifier": "309b1359",
-    "lastVerified": "2026-10-29T00:41:19.242Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-30T23:21:50.741Z",
+    "lastVerified": "2026-10-30T23:21:50.741Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-ducaale-xh",
+    "contentHash": "ca0eb72308150ae53f4533e36a059ea7caaca3dc7df11b5f6f4f9de5c9d67eb6",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-stabilityai-stable-diffusion-xl-base-1.0": {
     "name": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -1479,9 +1489,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-10-30T19:19:17.146Z",
+    "lastChecked": "2026-10-30T23:21:56.688Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-10-30T19:19:17.146Z"
+    "lastVerified": "2026-10-30T23:21:56.688Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -4636,9 +4646,9 @@
   "amrdeveloper-gql": {
     "name": "GQL",
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
-    "lastChecked": "2026-10-30T00:18:59.543Z",
+    "lastChecked": "2026-10-30T23:21:59.052Z",
     "revisionIdentifier": "3a76cfee",
-    "lastVerified": "2026-10-30T00:18:59.543Z"
+    "lastVerified": "2026-10-30T23:21:59.052Z"
   },
   "smol-rs-smol": {
     "name": "smol",
@@ -5428,9 +5438,9 @@
   "diggerhq-digger": {
     "name": "digger",
     "officialUrl": "https://github.com/diggerhq/digger",
-    "lastChecked": "2026-10-30T03:35:03.826Z",
+    "lastChecked": "2026-10-30T23:21:54.112Z",
     "revisionIdentifier": "7c237c09",
-    "lastVerified": "2026-10-30T03:35:03.826Z"
+    "lastVerified": "2026-10-30T23:21:54.112Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -11464,5 +11474,22 @@
     "lastChecked": "2026-10-30T23:14:59.586Z",
     "revisionIdentifier": "1c6f1b0f",
     "lastVerified": "2026-10-30T23:14:59.586Z"
+  },
+  "unjs-nitro": {
+    "name": "nitrojs/nitro",
+    "officialUrl": "https://github.com/unjs/nitro",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T23:21:55.316Z",
+    "lastVerified": "2026-10-30T23:21:55.316Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nitrojs-nitro",
+    "contentHash": "991ecc11f734d4f197fcc1f385eefa9dae27d7aa95678968e55e6acf75e6a701",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 9,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

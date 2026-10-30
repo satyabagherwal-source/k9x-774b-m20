@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/unjs-nitro-learnings.md`  
 > **Source**: github ([https://github.com/unjs/nitro](https://github.com/unjs/nitro))  
-> **Source Version**: `20a88507`  
+> **Source Version**: `f794c378`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T20:45:18.447Z  
+> **Timestamp**: 2026-10-30T23:21:55.937Z  
 > **Learning ID**: `learn-github-nitrojs-nitro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/unjs-nitro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/unjs/nitro](https://github.com/unjs/nitro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T20:45:16.878Z  
+> **Harvest Timestamp**: 2026-10-30T23:21:55.316Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Next Generation Server Toolkit. Create web servers with everything you need and deploy them wherever you prefer.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11316 stars
+- **Stars / Engagement**: 11329 stars
 
 ---
 
@@ -98,6 +98,57 @@ import { defineConfig } from "vite";
 import { nitro } from "nitro/vite";
 
 export default defineConfig({ plugins: [nitro()] });
+
+```
+
+### Core Architecture Module: `src/cli/commands/create/_utils.ts`
+```
+import { existsSync } from "node:fs";
+import { packageManagers } from "nypm";
+import type { PackageManagerName } from "nypm";
+import { relative } from "pathe";
+import { findNearestFile, findWorkspaceDir } from "pkg-types";
+
+export const pmNames = packageManagers.map((pm) => pm.name);
+
+export function displayPath(dir: string): string {
+  return relative(process.cwd(), dir) || ".";
+}
+
+/** Quote a path for copy-pasting into a shell (cmd and PowerShell on Windows, POSIX shells elsewhere). */
+export function shellQuote(path: string): string {
+  if (/^[\w./~@+-]+$/.test(path)) {
+    return path;
+  }
+  return process.platform === "win32" ? `"${path}"` : `'${path.replaceAll("'", `'\\''`)}'`;
+}
+
+/** Whether `dir` is inside a git repository or a monorepo. */
+export async function isInsideRepo(dir: string): Promise<boolean> {
+  const found = await Promise.all(
+    [
+      // `.git` is a file in worktrees and submodules
+      findNearestFile(".git", { startingFrom: dir, test: existsSync }),
+      findWorkspaceDir(dir, { tests: ["workspaceFile"] }),
+    ].map((p) =>
+      p.then(
+        () => true,
+        () => false
+      )
+    )
+  );
+  return found.some(Boolean);
+}
+
+export function detectPackageManager(): PackageManagerName | undefined {
+  const name = process.env.npm_config_user_agent?.split("/")[0] as PackageManagerName | undefined;
+  return name && pmNames.includes(name) ? name : undefined;
+}
+
+/** Whether `error` is a spawn error for a missing executable. */
+export function isNotFoundError(error: unknown): boolean {
+  return (error as NodeJS.ErrnoException)?.code === "ENOENT";
+}
 
 ```
 
@@ -398,6 +449,7 @@ export async function prerender(nitro: Nitro) {
 ```
 import { colors } from "consola/utils";
 import type { PrerenderRoute } from "nitro/types";
+import { routeToRegExp } from "rou3";
 import { parseURL, withoutBase } from "ufo";
 import { parse as parseHTML, walk } from "ultrahtml";
 
@@ -504,8 +556,15 @@ type IgnorePattern =
   | ((path: string) => undefined | null | boolean);
 export function matchesIgnorePattern(path: string, pattern: IgnorePattern) {
   if (typeof pattern === "string") {
-    // TODO: support rou3 patterns
-    return path.startsWith(pattern as string);
+    if (!PATTERN_MARKER_RE.test(pattern)) {
+      return path.startsWith(pattern);
+    }
+    let regexp = ignorePatternCache.get(pattern);
+    if (!regexp) {
+      regexp = routeToRegExp(pattern);
+      ignorePatternCache.set(pattern, regexp);
+    }
+    return regexp.test(path.split("?", 1)[0]!);
   }
 
   if (typeof pattern === "function") {
@@ -518,6 +577,10 @@ export function matchesIgnorePattern(path: string, pattern: IgnorePattern) {
 
   return false;
 }
+
+const PATTERN_MARKER_RE = /[*:]/;
+
+const ignorePatternCache = new Map<string, RegExp>();
 
 ```
 
@@ -550,39 +613,17 @@ export default [baseWorker] as const;
 
 ```
 
-### Core Architecture Module: `src/presets/_nitro/nitro-prerender.ts`
-```
-import { defineNitroPreset } from "../_utils/preset.ts";
-
-const nitroPrerender = defineNitroPreset(
-  {
-    entry: "./_nitro/runtime/nitro-prerenderer",
-    serveStatic: true,
-    output: {
-      serverDir: "{{ buildDir }}/prerender",
-    },
-    externals: { noTrace: true },
-  },
-  {
-    name: "nitro-prerender" as const,
-  }
-);
-
-export default [nitroPrerender] as const;
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4951** (2026-10-28): **rolldown: `require()` of builtins from bundled CommonJS fails on worker and edge presets**
+  *Symptoms*: Follow-up to #4949.  With the Rolldown builder and a non-node platform (Cloudflare, Deno, Netlify Edge), a `require()` of a builtin from bundled CommonJS is kept as a runtime call through Rolldown's `__require` helper, for example `__require("node:events")`. Deno has no global `require`, so the call throws when the module loads. On workerd without `nodejs_compat_v2`, `require()` returns the module namespace instead of the module itself. The Rollup builder hoists these requires to ESM imports, so it is not affected.  This was already the case before #4949, and it also applies to ids that are already prefixed (`require("node:path")`).  Possible fix: turn `require()` of external builtins into ESM imports on non-node platforms, either with Rolldown's `esmExternalRequirePlugin` or with a facade like `src/build/vite/_require-externals.ts`.  Once fixed, remove the `skipIf(ctx.isWorker && builder !== "rollup")` on the "requires builtins from bundled CommonJS" test in `test/tests.ts`, and run the `/cjs-builtins` fixture route on an edge runtime.  _Triaged with AI assistance._ 
+
 - **Issue #4938** (2026-10-27): **cloudflare: CommonJS dependencies fail in dev with the miniflare runner**
   *Symptoms*: With a Cloudflare preset, `vite dev` fails on CommonJS dependencies. The Node runner and production builds work.  ### Reproduction  ```ts // vite.config.ts export default defineConfig({ plugins: [nitro({ serverDir: "./server" })] })  // server/routes/limit.ts import promiseLimit from "promise-limit" export default async () => ({ ok: await promiseLimit(1)(() => Promise.resolve(42)) }) ```  Add a `wrangler.jsonc` with a `name` and a `compatibility_date`, run `NITRO_PRESET=cloudflare_module vite dev`, and open `/limit`:  ``` ReferenceError: module is not defined     at WorkerdModuleEvaluator.runInlinedModule (nitro/dist/runtime/internal/vite/dev-worker.mjs:20:11) ```  A route that imports `better-auth` fails the same way, with `exports is not defined`, in `@opentelemetry/semantic-conventions`.  Versions: `nitro 3.0.260903-beta`, `vite-plus 0.3.3` (Vite 8), `miniflare 4.20260730.0`.  ### Cause  With the miniflare runner, the `nitro` environment sets `resolve.noExternal: true`, so workerd runs every dependency as source. Vite does not pre-bundle dependencies for server environments by default, so nothing converts CommonJS.  [`@cloudflare/vite-plugin`](https://github.com/cloudflare/workers-sdk/tree/main/packages/vite-plugin-cloudflare) turns pre-bundling on for its Workers for this reason ([source](https://github.com/cloudflare/workers-sdk/blob/8d98a15a05fa1f4d27654168ed16df1ff4ff1173/packages/vite-plugin-cloudflare/src/cloudflare-environment.ts#L328-L342)). `wrangler dev` bundles 
-
-- **Issue #4907** (2026-10-23): **Routing virtual modules interpolate raw handler paths, breaking late-registered handlers on Windows**
-  *Symptoms*: The `#nitro/virtual/routing` and `#nitro/virtual/routing-meta` templates interpolate `h.handler` directly into string literals:  ```js `import ${h._importHash} from "${h.handler}";` `const ${h._importHash} = h3.defineLazyEventHandler(() => import("${h.handler}"));` `import ${h._importHash}Meta from "${h.handler}?meta";` ```  Handler paths are only normalized by `resolveNitroPath()` while options are resolved. A handler pushed to `nitro.options.handlers` afterwards (from a module or hook, followed by `nitro.routing.sync()`) keeps whatever path it was given. On Windows a `node:path` path such as `C:\app\.nitro\workflow\handler.mjs` ends up as `"C:\app\.nitro\workflow\handler.mjs"` in generated code. The backslashes are read as escape sequences, so the specifier is silently mangled or the module fails to parse (`\x`, `\u`).  Minimal shape:  ```js nitro.options.handlers.push({ route: "/hello", handler: join(dir, "hello.mjs") }); nitro.routing.sync(); ```  Works on POSIX and breaks on Windows. Emitting the specifier with `JSON.stringify()` after normalizing it (forward slashes, or a `file://` URL for drive-letter paths), or normalizing handler paths in `routing.sync()`, would make late-registered handlers behave like config-time ones.  eve works around this with a transform on both virtual ids that rewrites drive-letter specifiers to `file://` URLs ([`nitro-routing-import-specifier-plugin.ts`](https://github.com/vercel/eve/blob/d5b96012c55982d924950039fce7cffe8688ee1e/packages/eve
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -599,614 +640,388 @@ export default [nitroPrerender] as const;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `098ab727` (2026-10-26)
-**Commit Message**: perf(build): skip unchanged sourcemaps (#4925)
+### Incident Patch 1: `1a9a371c` (2026-10-28)
+**Commit Message**: docs(routing): clarify route rules and middleware are not a security boundary (#4954)
 
-**File**: `src/build/plugins/sourcemap.ts` (modified, +38/-6)
+**File**: `docs/1.docs/5.routing.md` (modified, +50/-6)
 ```diff
-@@ -1,8 +1,21 @@
- import type { ExistingRawSourceMap, Plugin } from "rollup";
-+import type { Nitro } from "nitro/types";
+@@ -437,6 +437,10 @@ export default defineHandler((event) => {
+ });
+ ```
  
- // Ids of virtual modules already namespaced by their own plugins
- const VIRTUAL_PREFIX_RE = /(?:^|\/)(virtual:.+)$/;
++::warning
++Middleware are not a security boundary. Global and route-scoped middleware are **implicit** guards: they protect the URLs they happen to match, not the handlers themselves. A path check like `startsWith('/auth')` also matches `/authors`, and any route added outside the pattern is silently left unprotected. Use them for cross-cutting concerns (logging, context, defense in depth), and enforce access control explicitly in the handler. See [Authentication](#authentication).
++::
++
+ ### Route-scoped middleware
+ 
+ You can register middleware for specific route patterns using the [`handlers`](#handlers-config) config with the `middleware` option and a specific `route`:
+@@ -475,7 +479,7 @@ See [`inlineDynamicImports`](/config/build#inlinedynamicimports) to bundle every
+ 
+ ## Route rules
+ 
+-Route rules let you attach behavior (redirects, proxying, caching, authentication, custom headers) to route patterns directly from your configuration, without writing handler code.
++Route rules let you attach behavior (redirects, proxying, caching, CORS, custom headers) to route patterns directly from your configuration, without writing handler code.
+ 
+ Each rule maps a route pattern (using [rou3](https://github.com/h3js/rou3) syntax) to a set of options, built on [h3 route rules](https://h3.dev/guide/rules). When the `cache` option is set, matching handlers are automatically wrapped with `defineCachedHandler`. See the [cache guide](/docs/cache) to learn more.
+ 
+@@ -500,6 +504,10 @@ export default defineConfig({
+ });
+ ```
+ 
++::warning
++Route rules are not a security boundary. Like global middleware, they are **implicit** guards: they apply to whatever request URLs match a pattern, not to the handlers they are meant to protect. A rule can be overridden by a more specific one, and a handler stays unprotected when it is reachable from a path the pattern does not match (a new route, a renamed file, a `proxy` target, a different `baseURL`). Some rules are also applied by the platform edge and others only by the server runtime. Enforce access control explicitly where the protected code runs. See [Authentication](#authentication).
++::
++
+ ::note
+ Netlify and Cloudflare `_headers` and `_redirects` only support static segments, `:name` params and a single `*` splat (as the last segment in `_redirects`). Rules with other patterns, such as `/num/:id(\d+)` or `/a/:id?`, are left out of them (with a build warning) and only the runtime applies them, which means static assets don't get their headers. A `redirect` rule that also matches the requests of a skipped one, such as `/num/**` next to `/num/:id(\d+)`, is left out of `_redirects` too, so that it cannot take precedence over it.
+ ::
+@@ -635,19 +643,55 @@ export default defineConfig({
+ 
+ ### Authentication
+ 
+-There is no `auth` route rule: authentication needs executable logic, so it belongs in [middleware](#middleware). Use h3's [`basicAuth`](https://h3.dev/utils/security#basicauthopts) middleware for a single route:
++There is no `auth` route rule. Route rules and middleware match request URLs, so they can only guard routes [implicitly](#route-rules). Instead, enforce access control **explicitly** in the code you want to protect, using composable h3 utilities such as [`requireBasicAuth`](https://h3.dev/utils/security#requirebasicauthevent-opts).
++
++Wrap the check in a small reusable utility, reading the credentials from environment variables rather than hardcoding them:
++
++```ts [utils/auth.ts]
++import type { H3Event } from "nitro";
++import { requireBasicAuth } from "nitro/h3";
++
++export async function requireAdmin(event: H3Event) {
++  await requireBasicAuth(event, {
++    username: process.env.ADMIN_USERNAME,
++    password: process.env.ADMIN_PASSWORD!,
++    realm: "Admin Area",
++  });
++  return event.context.basicAuth!.username;
++}
++```
++
++Then call it at the top of each handler that needs it. The request fails with `401` before any protected logic runs (or with `500` if `ADMIN_PASSWORD` is not set):
+ 
+ ```ts [routes/admin/index.ts]
+ import { defineHandler } from "nitro";
+-import { basicAuth } from "nitro/h3";
++import { requireAdmin } from "../../utils/auth.ts";
++
++export default defineHandler(async (event) => {
++  const username = await requireAdmin(event);
++  return `Hello, ${username}!`;
++});
++```
++
++The guard is visible next to the code it protects and keeps working wherever the handler is mounted or however it is reached. The same utility can be reused by any handler, or called only on the code paths that need it.
++
++To attach the guard declaratively, pass it to the handler's `middleware` option. Like the call above, it stays bound to the handler rather than to a URL pattern. Middleware should not return a value, so wrap the utility:
++
++```ts [routes/admin/settings.ts]
++import { defineHandler } from "nitro";
++import { requireAdmin } from "../../utils/auth.ts";
+ 
+ export default defineHandler({
+-  middl
+```
+
+---
+
+### Incident Patch 2: `02295c5e` (2026-10-29)
+**Commit Message**: fix(presets): skip empty route rule headers in platform configs (#4963)
+
+`cors` is applied at runtime, so a rule like `{ cors: true, headers: {} }`
+has empty headers, which Vercel rejects in config.json.
+
+Co-authored-by: Pooya Parsa <[REDACTED_EMAIL]>
+
+**File**: `docs/1.docs/5.routing.md` (modified, +6/-2)
+```diff
+@@ -574,8 +574,12 @@ export default defineConfig({
+ Handle CORS at runtime with the `cors` rule. `cors: true` applies permissive defaults (origin, methods, and allowed headers `*`): a simple request gets `access-control-allow-origin: *` and `access-control-expose-headers: *`, and an `OPTIONS` preflight is answered directly (`204`) with the matching `access-control-allow-*` headers.
+ 
+ > [!NOTE]
+-> CORS is applied by the running server (h3's [`handleCors`](https://h3.dev/utils/security#handlecorsevent-options)), and not from the static/CDN config. 
+-> On platforms that can serve prerendered/static assets straight from the edge, CORS headers are only added when the request reaches the server handler.
++> CORS is applied by the running server (h3's [`handleCors`](https://h3.dev/utils/security#handlecorsevent-options)), and not from the static/CDN config.
++> On platforms that serve public and prerendered assets straight from the CDN, those responses only get the platform's default headers (e.g. Vercel sends `access-control-allow-origin: *`, Netlify sends none). To set CORS headers there, also add them with `headers`, which are written to the platform config:
++>
++> ```ts
++> '/**': { cors: true, headers: { 'access-control-allow-origin': '*' } },
++> ```
+ 
+ Pass an object for finer control: an origin allowlist, `credentials`, `maxAge`, etc. (h3 `CorsOptions`). Combining `credentials: true` with a wildcard origin is invalid and throws at build time:
+ 
+```
+
+**File**: `docs/1.docs/99.migration.md` (modified, +7/-0)
+```diff
+@@ -201,6 +201,13 @@ Use a regular `.ts` file in your server directory and import it directly.
+ 
+ Route rule matching and handling moved to [h3-rules](https://github.com/h3js/h3-rules). The rule shapes for `redirect`, `proxy`, `cors`, `headers`, `cache`, and `swr` are now defined by h3-rules, while `isr`, `prerender`, and `static` remain Nitro-specific rules.
+ 
++`cors` is now handled at runtime by h3's [`handleCors`](https://h3.dev/utils/security#handlecorsevent-options) (including `OPTIONS` preflight requests) and no longer expands into static `headers`. On platforms that serve public and prerendered assets from the CDN, those responses now only get the platform's default headers (e.g. none on Netlify). To keep CORS headers there, set them explicitly:
++
++```diff
++- '/**': { cors: true },
+++ '/**': { cors: true, headers: { 'access-control-allow-origin': '*' } },
++```
++
+ The `NitroRouteConfig` and `NitroRouteRules` types are deprecated in favor of `RouteRuleConfig` and `NormalizedRouteRules`, re-exported from `nitro/types`:
+ 
+ ```diff
+```
+
+**File**: `src/presets/_utils/routes.ts` (modified, +10/-1)
+```diff
+@@ -1,4 +1,4 @@
+-import type { Nitro } from "nitro/types";
++import type { Nitro, NormalizedRouteRules } from "nitro/types";
+ import { addRoute, compareRoutes, createRouter, findOverlappingRoutes } from "rou3";
+ 
+ const CATCH_ALL_RE = /\*\*(?::\w+)?/g;
+@@ -133,6 +133,15 @@ export function routeToSplat(route: string): string {
+   return route.replace(CATCH_ALL_RE, "*");
+ }
  
 +/**
-+ * Whether `nitro:sourcemap` runs and removes `sourcesContent`, so the bundler can skip
-+ * generating it. Same conditions as the plugin's registration and its `minify` option.
++ * Whether a route rule sets any static `headers`. A rule can have empty
++ * `headers` (`cors` alone is applied at runtime), which platform configs
++ * reject (Vercel) or would write as an empty entry.
 + */
-+export function excludeSourcemapSources(nitro: Nitro): boolean {
-+  return (
-+    !!nitro.options.sourcemap &&
-+    !nitro.options.dev &&
-+    nitro.options.experimental.sourcemapMinify !== false
-+  );
++export function hasHeaders(routeRules: Pick<NormalizedRouteRules, "headers">): boolean {
++  return Object.keys(routeRules.headers || {}).length > 0;
 +}
 +
- export function sourcemap(opts: { virtualIds: Iterable<string>; minify: boolean }): Plugin {
-   const virtualIds = [...opts.virtualIds];
+ /**
+  * `$n` reference to the trailing `/**` capture of a rou3 `routeToRegExp` regex,
+  * which h3 interpolates for `**` in a `redirect` or `proxy` target.
+```
+
+**File**: `src/presets/cloudflare/utils.ts` (modified, +2/-2)
+```diff
+@@ -17,7 +17,7 @@ import {
+   withoutTrailingSlash,
+ } from "ufo";
+ import { unenvCfNodeCompat } from "./unenv/preset.ts";
+-import { routeToSplat, skipUnsupportedRoute, sortRoutes } from "../_utils/routes.ts";
++import { hasHeaders, routeToSplat, skipUnsupportedRoute, sortRoutes } from "../_utils/routes.ts";
+ import { extendEnv } from "../../build/env.ts";
  
-@@ -17,28 +30,47 @@ export function sourcemap(opts: { virtualIds: Iterable<string>; minify: boolean
+ // https://github.com/nitrojs/nitro/issues/4527
+@@ -120,7 +120,7 @@ export async function writeCFHeaders(nitro: Nitro, outdir: "public" | "output" |
  
-         // Parse sourcemap
-         const sourcemap: ExistingRawSourceMap = JSON.parse(asset.source);
-+        let changed = false;
+   for (const path of sortRoutes(Object.keys(nitro.options.routeRules))) {
+     const routeRules = nitro.options.routeRules[path];
+-    if (!routeRules.headers || skipUnsupportedRoute(nitro, { route: path, file: "_headers" })) {
++    if (!hasHeaders(routeRules) || skipUnsupportedRoute(nitro, { route: path, file: "_headers" })) {
+       continue;
+     }
+     const headers = [
+```
+
+**File**: `src/presets/edgeone/utils.ts` (modified, +2/-2)
+```diff
+@@ -12,7 +12,7 @@ import { join } from "pathe";
+ import { compareRoutes, routeToRegExp } from "rou3";
+ import { joinURL } from "ufo";
+ import { writeFile } from "../../utils/fs.ts";
+-import { catchAllRef, parseRouteKey, sortRoutes } from "../_utils/routes.ts";
++import { catchAllRef, hasHeaders, parseRouteKey, sortRoutes } from "../_utils/routes.ts";
  
-         // Virtual modules have no file on disk. Bundlers emit their ids as (relative)
-         // paths, making consumers warn about missing sources. Namespace them instead.
--        if (sourcemap.sources) {
--          sourcemap.sources = sourcemap.sources.map((source) =>
-+        const original = sourcemap.sources;
-+        if (original) {
-+          const sources = original.map((source) =>
-             source ? virtualSource(source, virtualIds) : source
-           );
-+          if (sources.some((source, i) => source !== original[i])) {
-+            sourcemap.sources = sources;
-+            changed = true;
-+          }
-         }
+ const NAMED_GROUP_RE = /\(\?<(?![=!])[^>]+>/g;
  
-         if (opts.minify) {
-           // Remove sourcesContent
--          delete sourcemap.sourcesContent;
-+          if ("sourcesContent" in sourcemap) {
-+            delete sourcemap.sourcesContent;
-+            changed = true;
-+          }
+@@ -54,7 +54,7 @@ export async function writeEdgeOneConfig(nitro: Nitro) {
+   config.routes.push(
+     // Header-only rules (least specific first, so more specific headers override on `continue`)
+     ...rules
+-      .filter(([_, routeRules]) => routeRules.headers && !routeRules.redirect)
++      .filter(([_, routeRules]) => hasHeaders(routeRules) && !routeRules.redirect)
+       .reverse()
+       .map(([{ path, methods }, routeRules]) => ({
+         src: routeToRE2(joinURL(baseURL, path)).source,
+```
+
+**File**: `src/presets/netlify/utils.ts` (modified, +2/-2)
+```diff
+@@ -3,7 +3,7 @@ import type { Nitro, PublicAssetDir } from "nitro/types";
+ import { dirname, join } from "pathe";
+ import { joinURL, withoutTrailingSlash } from "ufo";
+ import { escapeRegExp } from "../../utils/regex.ts";
+-import { routeToSplat, skipUnsupportedRoute, sortRoutes } from "../_utils/routes.ts";
++import { hasHeaders, routeToSplat, skipUnsupportedRoute, sortRoutes } from "../_utils/routes.ts";
  
-           // Remove x_google_ignoreList
--          delete sourcemap.x_google_ignoreList;
-+          if ("x_google_ignoreList" in sourcemap) {
-+            delete sourcemap.x_google_ignoreList;
-+            changed = true;
-+          }
+ export async function writeRedirects(nitro: Nitro) {
+   let contents = "";
+@@ -45,7 +45,7 @@ export async function writeHeaders(nitro: Nitro) {
  
--          if ((sourcemap.sources || []).every((s) => s?.includes("node_modules"))) {
-+          if (
-+            sourcemap.mappings !== "" &&
-+            (sourcemap.sources || []).every((s) => s?.includes("node_modules"))
-+          ) {
-             sourcemap.mappings = ""; // required key
-+            changed = true;
+   for (const path of sortRoutes(Object.keys(nitro.options.routeRules))) {
+     const routeRules = nitro.options.routeRules[path];
+-    if (!routeRules.headers || skipUnsupportedRoute(nitro, { route: path, file: "_headers" })) {
++    if (!hasHeaders(routeRules) || skipUnsupportedRoute(nitro, { route: path, file: "_headers" })) {
+       continue;
+     }
+     const headers = [
+```
+
+**File**: `src/presets/vercel/utils.ts` (modified, +4/-4)
+```diff
+@@ -22,7 +22,7 @@ import {
+   type RouterContext,
+ } from "rou3";
+ import { escapeRegExp } from "../../utils/regex.ts";
+-import { catchAllRef, parseRouteKey, sortRoutes } from "../_utils/routes.ts";
++import { catchAllRef, hasHeaders, parseRouteKey, sortRoutes } from "../_utils/routes.ts";
+ import { joinURL, withLeadingSlash, withoutLeadingSlash } from "ufo";
+ import type {
+   PrerenderFunctionConfig,
+@@ -264,7 +264,7 @@ function generateBuildConfig(nitro: Nitro, o11Routes?: ObservabilityRoute[]) {
+       ...rules
+         .filter(
+           ([path, routeRules]) =>
+-            routeRules.headers && !cdnRedirectPaths.has(path) && !cdnProxyPaths.has(path)
++            hasHeaders(routeRules) && !cdnRedirectPaths.has(path) && !cdnProxyPaths.has(path)
+         )
+         .reverse()
+         .map(([path, routeRules]) => {
+@@ -289,7 +289,7 @@ function generateBuildConfig(nitro: Nitro, o11Routes?: ObservabilityRoute[]) {
+             ...(methods && { methods }),
+             dest: (routeRules.proxy as ProxyRuleOptions).to.replaceAll("**", catchAllRef(src)),
+           };
+-          if (routeRules.headers) {
++          if (hasHeaders(routeRules)) {
+             route.headers = routeRules.headers;
            }
-         }
- 
--        asset.source = JSON.stringify(sourcemap);
-+        // Assigning `asset.source` hands the map back to the bundler, so leave unchanged maps alone
-+        if (changed) {
-+          asset.source = JSON.stringify(sourcemap);
-+        }
-       }
-     },
-   };
+           return [route];
+@@ -305,7 +305,7 @@ function generateBuildConfig(nitro: Nitro, o11Routes?: ObservabilityRoute[]) {
+               Location: redirect.to.replaceAll("**", catchAllRef(src)),
+             },
+           };
+-          if (routeRules.headers) {
++          if (hasHeaders(routeRules)) {
+             route = defu(route, { headers: routeRules.headers });
+           }
+           return [route];
 ```
 
-**File**: `src/build/rolldown/config.ts` (modified, +3/-0)
+**File**: `test/presets/vercel.test.ts` (modified, +20/-0)
 ```diff
-@@ -2,6 +2,7 @@ import type { Nitro, RolldownConfig } from "nitro/types";
- import type { OutputOptions, RolldownOptions, RolldownPlugin } from "rolldown";
- import { baseBuildConfig } from "../config.ts";
- import { baseBuildPlugins, withBuildPlugins } from "../plugins.ts";
-+import { excludeSourcemapSources } from "../plugins/sourcemap.ts";
- import { builtinModules } from "node:module";
- import { defu } from "defu";
- import { getChunkName, libChunksGroup } from "../chunks.ts";
-@@ -66,6 +67,8 @@ export const getRolldownConfig = async (nitro: Nitro): Promise<RolldownConfig> =
-       // https://github.com/rolldown/rolldown/issues/7235
-       minify: nitro.options.minify ? true : "dce-only",
-       sourcemap: nitro.options.sourcemap,
-+      // nitro:sourcemap removes `sourcesContent` from production maps, so don't generate it
-+      sourcemapExcludeSources: excludeSourcemapSources(nitro),
-       sourcemapIgnoreList(relativePath) {
-         return relativePath.includes("node_modules");
+@@ -51,6 +51,10 @@ describe("nitro:preset:vercel:web", async () => {
+         "/rules/isr-true/**": { isr: true },
+         "/rules/isr-query-empty/**": { isr: { allowQuery: [] } },
+         "/rules/isr-query-nopass/**": { isr: { allowQuery: ["q"], passQuery: false } },
++        // Vercel rejects routes with empty `headers`
++        "/rules/cors-only": { cors: true },
++        "/rules/cors-empty-headers/**": { cors: true, headers: {} },
++        "/rules/cdn-empty-headers/**": { proxy: "https://cdn.jsdelivr.net/**", headers: {} },
        },
+       vercel: {
+         queues: {
+@@ -190,6 +194,10 @@ describe("nitro:preset:vercel:web", async () => {
+                 "src": "^\\/rules\\/method-scoped\\/redirect\\/?$",
+                 "status": 307,
+               },
++              {
++                "dest": "https://cdn.jsdelivr.net/$1",
++                "src": "^\\/rules\\/cdn-empty-headers(?:\\/(?<_0>(?:[\\s\\S]*[^/])?\\/*?))??\\/?$",
++              },
+               {
+                 "headers": {
+                   "Location": "/base",
+@@ -606,6 +614,18 @@ describe("nitro:preset:vercel:web", async () => {
+         expect(manifest.hashes).toBeTypeOf("object");
+       });
+ 
++      it("should not write routes with empty headers", async () => {
++        const config = await fsp
++          .readFile(resolve(ctx.outDir, "config.json"), "utf8")
++          .then((r) => JSON.parse(r));
++        expect(
++          config.routes.filter(
++            (route: { headers?: object }) =>
++              route.headers && Object.keys(route.headers).length === 0
++          )
++        ).toEqual([]);
++      });
++
+       it("should not cache missing immutable public assets", async () => {
+         const config = await fsp
+           .readFile(resolve(ctx.outDir, "config.json"), "utf8")
 ```
 
-**File**: `src/build/vite/bundler.ts` (modified, +5/-0)
+---
+
+### Incident Patch 3: `3f1c8af0` (2026-10-29)
+**Commit Message**: fix(ci): clean release notes and use github usernames for contributors
+
+**File**: `.github/workflows/npm-publish.yml` (modified, +2/-3)
 ```diff
-@@ -2,6 +2,7 @@ import { defu } from "defu";
- import { baseBuildConfig, type BaseBuildConfig } from "../config.ts";
- import { getChunkName, libChunkName, libChunksGroup, NODE_MODULES_RE } from "../chunks.ts";
- import { baseBuildPlugins, withBuildPlugins } from "../plugins.ts";
-+import { excludeSourcemapSources } from "../plugins/sourcemap.ts";
- 
- import type { RolldownConfig, RollupConfig } from "nitro/types";
- import type { Plugin as RollupPlugin } from "rollup";
-@@ -45,6 +46,10 @@ export const getBundlerConfig = async (
-         },
-         output: {
-           minifyInternalExports: false,
-+          // nitro:sourcemap removes `sourcesContent` from production maps, so don't generate it.
-+          // `undefined` otherwise, so a user's `rolldownConfig.output.sourcemapExcludeSources`
-+          // still applies (defu gives this object priority)
-+          sourcemapExcludeSources: excludeSourcemapSources(nitro) || undefined,
-           codeSplitting: {
-             groups: [libChunksGroup()],
-           },
+@@ -48,6 +48,5 @@ jobs:
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+           TAG: ${{ github.ref_name }}
+         run: |
+-          gh release create "$TAG" \
+-            --notes "$(pnpm changelogen --from=$(git describe --tags --abbrev=0 "$TAG^"))" \
+-            --title "$TAG"
++          node scripts/release-notes.ts "$TAG" > release-notes.md
++          gh release create "$TAG" --notes-file release-notes.md --title "$TAG"
 ```
 
-**File**: `test/unit/sourcemap.test.ts` (modified, +70/-0)
+**File**: `scripts/release-notes.ts` (added, +44/-0)
 ```diff
-@@ -1,5 +1,13 @@
-+import { mkdtempSync } from "node:fs";
-+import { tmpdir } from "node:os";
-+import { join } from "pathe";
- import { describe, expect, it } from "vitest";
-+import type { NitroConfig } from "nitro/types";
-+import { createNitro } from "../../src/nitro.ts";
- import { sourcemap } from "../../src/build/plugins/sourcemap.ts";
-+import { getRolldownConfig } from "../../src/build/rolldown/config.ts";
-+import { getBundlerConfig } from "../../src/build/vite/bundler.ts";
-+import type { NitroPluginContext } from "../../src/build/vite/types.ts";
- 
- type BundleAsset = { type: "asset"; source: string };
- 
-@@ -152,4 +160,66 @@ describe("sourcemap", () => {
-     expect(results["index.mjs.map"].sourcesContent).toEqual(["export default 42;"]);
-     expect(results["index.mjs.map"].sources).toEqual(["virtual:#nitro/virtual/app"]);
-   });
+@@ -0,0 +1,44 @@
++#!/bin/env node
++import { execSync } from "node:child_process";
++import { generateMarkDown, getGitDiff, loadChangelogConfig, parseCommits } from "changelogen";
 +
-+  it("leaves unchanged sourcemaps alone", () => {
-+    const source = JSON.stringify({
-+      version: 3,
-+      sources: ["../../src/routes/index.ts"],
-+      mappings: "AAAA,CAAC",
-+    });
-+    let writes = 0;
-+    const asset = {
-+      type: "asset" as const,
-+      get source() {
-+        return source;
-+      },
-+      set source(_value: string) {
-+        writes++;
-+      },
-+    };
-+    runPlugin({ "_routes/index.mjs.map": asset }, { minify: true });
-+    runPlugin({ "_routes/index.mjs.map": asset }, { minify: false });
-+    expect(writes).toBe(0);
-+  });
-+});
++const to = process.argv[2];
++if (!to) {
++  console.error("Usage: node scripts/release-notes.ts <tag>");
++  process.exit(1);
++}
 +
-+describe("sourcemapExcludeSources", () => {
-+  const excludeSources = async (config: NitroConfig) => {
-+    const nitro = await createNitro({
-+      rootDir: mkdtempSync(join(tmpdir(), "nitro-sourcemap-")),
-+      compatibilityDate: "latest",
-+      ...config,
-+    });
-+    const rolldown = await getRolldownConfig(nitro);
-+    const { rolldownConfig } = await getBundlerConfig({
-+      nitro,
-+      _isRolldown: true,
-+    } as unknown as NitroPluginContext);
-+    return [
-+      (rolldown.output as { sourcemapExcludeSources?: boolean }).sourcemapExcludeSources,
-+      rolldownConfig!.output!.sourcemapExcludeSources,
-+    ];
-+  };
++const from = execSync(`git describe --tags --abbrev=0 "${to}^"`, { encoding: "utf8" }).trim();
 +
-+  it("leaves out sourcesContent when nitro:sourcemap would remove it", async () => {
-+    expect(await excludeSources({ sourcemap: true })).toEqual([true, true]);
-+  });
++const config = await loadChangelogConfig(process.cwd(), { from, to, noAuthors: true });
++const commits = parseCommits(await getGitDiff(from, to), config)
++  .map((c) => ({ ...c, type: c.type.toLowerCase() }))
++  .filter(
++    (c) => config.types[c.type] && !(c.type === "chore" && c.scope === "deps" && !c.isBreaking)
++  );
 +
-+  it("keeps sourcesContent otherwise", async () => {
-+    for (const config of [
-+      { sourcemap: false },
-+      { sourcemap: true, experimental: { sourcemapMinify: false } },
-+    ] satisfies NitroConfig[]) {
-+      expect((await excludeSources(config)).map(Boolean)).toEqual([false, false]);
++const markdown = (await generateMarkDown(commits, config)).replace(/^\s*## .*\n/, "").trim();
++
++const contributors = getContributors(commits.map((c) => c.shortHash));
++
++process.stdout.write(
++  [markdown, contributors.length > 0 && `### ❤️ Contributors\n\n${contributors.join("\n")}`]
++    .filter(Boolean)
++    .join("\n\n") + "\n"
++);
++
++function getContributors(hashes: string[]): string[] {
++  const out = execSync(
++    `gh api --paginate "repos/${config.repo!.repo}/compare/${from}...${to}?per_page=100" --jq '.commits[] | [.sha, .author.login // "", .author.type // "", .commit.author.name] | @tsv'`,
++    { encoding: "utf8" }
++  );
++  const contributors = new Set<string>();
++  for (const line of out.trim().split("\n")) {
++    const [sha, login, type, name] = line.split("\t");
++    if (!hashes.some((h) => sha.startsWith(h)) || type === "Bot" || name.includes("[bot]")) {
++      continue;
 +    }
-+  });
-+
-+  it("keeps an explicit value from user config", async () => {
-+    const config: NitroConfig = {
-+      sourcemap: true,
-+      experimental: { sourcemapMinify: false },
-+      rolldownConfig: { output: { sourcemapExcludeSources: true } },
-+    };
-+    expect(await excludeSources(config)).toEqual([true, true]);
-+  });
- });
-```
-
----
-
-### Incident Patch 2: `20a88507` (2026-10-27)
-**Commit Message**: perf(build): add a `code` hook filter to the replace plugin (#4946)
-
-**File**: `src/build/plugins.ts` (modified, +3/-13)
-```diff
-@@ -4,13 +4,13 @@ import type { BaseBuildConfig } from "./config.ts";
- import type { ExternalsTraceOptions } from "nf3";
- 
- import { virtualTemplates } from "./virtual/_all.ts";
--import replace from "@rollup/plugin-replace";
- import { unwasm } from "unwasm/plugin";
- import { routeMeta } from "./plugins/route-meta.ts";
- import { serverMain } from "./plugins/server-main.ts";
- import { virtual, virtualDeps } from "./plugins/virtual.ts";
- import { sourcemap } from "./plugins/sourcemap.ts";
--import { raw, RESOLVED_RE as rawModulesRE } from "./plugins/raw.ts";
-+import { raw } from "./plugins/raw.ts";
-+import { replace } from "./plugins/replace.ts";
- import { importAttributes } from "./plugins/import-attributes.ts";
- import { externals } from "./plugins/externals.ts";
- import { unenv } from "./plugins/unenv.ts";
-@@ -54,17 +54,7 @@ export async function baseBuildPlugins(nitro: Nitro, base: BaseBuildConfig) {
-   }
- 
-   // Replace
--  const replacePlugin = (replace as unknown as typeof replace.default)({
--    preventAssignment: true,
--    values: base.replacements,
--    // Raw modules hold file contents as string literals; replacing inside them
--    // corrupts the content (and can break the syntax with quoted values)
--    exclude: rawModulesRE,
--  });
--  // The plugin re-applies replacements on whole chunks, where raw module contents
--  // can no longer be excluded by id. All replaceable code goes through `transform`.
--  delete replacePlugin.renderChunk;
--  plugins.push(replacePlugin);
-+  plugins.push(replace(base.replacements));
- 
-   // Externals (require Node.js compatible resolution)
-   if (nitro.options.node && nitro.options.noExternals !== true) {
-```
-
-**File**: `src/build/plugins/replace.ts` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+import type { Plugin } from "rollup";
-+import _replace from "@rollup/plugin-replace";
-+import { escapeRegExp } from "../../utils/regex.ts";
-+import { RESOLVED_RE as rawModulesRE } from "./raw.ts";
-+
-+export function replace(values: Record<string, string | ((id: string) => string)>): Plugin {
-+  const plugin = (_replace as unknown as typeof _replace.default)({
-+    preventAssignment: true,
-+    values,
-+    // Raw modules hold file contents as string literals; replacing inside them
-+    // corrupts the content (and can break the syntax with quoted values)
-+    exclude: rawModulesRE,
-+  });
-+
-+  // The plugin re-applies replacements on whole chunks, where raw module contents
-+  // can no longer be excluded by id. All replaceable code goes through `transform`.
-+  delete plugin.renderChunk;
-+
-+  // Modules without any of the keys are left unchanged (skipped natively by Rolldown)
-+  const keys = Object.keys(values);
-+  if (keys.length > 0 && typeof plugin.transform === "function") {
-+    plugin.transform = {
-+      filter: { code: new RegExp(keys.map((key) => escapeRegExp(key)).join("|")) },
-+      handler: plugin.transform,
-+    };
++    contributors.add(login ? `- @${login}` : `- ${name}`);
 +  }
-+
-+  return plugin;
++  return [...contributors];
 +}
-```
-
-**File**: `test/unit/build-replace.test.ts` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
-+import { describe, expect, it } from "vitest";
-+import type { ObjectHook, Plugin, TransformPluginContext, TransformResult } from "rollup";
-+import { replace } from "../../src/build/plugins/replace.ts";
-+
-+type TransformHook = Extract<NonNullable<Plugin["transform"]>, { handler: unknown }>;
-+
-+const ctx = {} as TransformPluginContext;
-+
-+describe("replace plugin", () => {
-+  it("adds a `code` filter matching the escaped keys", () => {
-+    const plugin = replace({ "import.meta.dev": "false", "process.env.$KEY": '"value"' });
-+    const { filter } = plugin.transform as TransformHook;
-+    const code = filter!.code as RegExp;
-+    expect(code.test("if (import.meta.dev) {}")).toBe(true);
-+    expect(code.test("process.env.$KEY")).toBe(true);
-+    expect(code.test("import.meta_dev")).toBe(false);
-+    expect(code.test("process.env.KEY")).toBe(false);
-+    expect(code.test("export const value = 1;")).toBe(false);
-+  });
-+
-+  it("keeps replacing in modules matching the filter", async () => {
-+    const plugin = replace({ "import.meta.dev": "false" });
-+    const { handler } = plugin.transform as TransformHook;
-+    const result = (await handler.call(ctx, "if (import.meta.dev) {}", "/src/index.ts")) as Exclude<
-+      TransformResult,
-+      string
-+    >;
-+    expect(result?.code).toBe("if (false) {}");
-+  });
-+
-+  it("does not replace in raw modules", async () => {
-+    const plugin = replace({ "import.meta.dev": "false" });
-+    const { handler } = plugin.transform as TransformHook;
-+    const result = await handler.call(
-+      ctx,
-+      'export default "import.meta.dev"',
-+      "\0virtual:nitro:raw:/src/file.txt.js"
-+    );
-+    expect(result).toBeNull();
-+  });
-+
-+  it("does not add a filter without keys", () => {
-+    const plugin = replace({});
-+    expect(typeof (plugin.transform as ObjectHook<unknown>)).toBe("function");
-+  });
-+
-+  it("does not replace in chunks", () => {
-+    expect(replace({ "import.meta.dev": "false" }).renderChunk).toBeUndefined();
-+  });
-+});
-```
-
----
-
-### Incident Patch 3: `d252fdb8` (2026-10-27)
-**Commit Message**: fix(vite): externalize dependencies with the miniflare runner (#4941)
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -73,7 +73,7 @@
-   },
-   "dependencies": {
-     "crossws": "^0.4.16",
--    "env-runner": "^0.3.8",
-+    "env-runner": "^0.3.10",
-     "h3": "^2.0.8",
-     "ocache": "^0.3.1",
-     "rou3": "^1.0.0",
-```
-
-**File**: `pnpm-lock.yaml` (modified, +5/-5)
-```diff
-@@ -21,8 +21,8 @@ importers:
-         specifier: ^0.4.16
-         version: 0.4.16(srvx@1.0.8)
-       env-runner:
--        specifier: ^0.3.8
--        version: 0.3.8
-+        specifier: ^0.3.10
-+        version: 0.3.10
-       h3:
-         specifier: ^2.0.8
-         version: 2.0.8(crossws@0.4.16)(ocache@0.3.1)
-@@ -4467,8 +4467,8 @@ packages:
-     resolution: {integrity: sha512-TWrgLOFUQTH994YUyl1yT4uyavY5nNB5muff+RtWaqNVCAK408b5ZnnbNAUEWLTCpum9w6arT70i1XdQ4UeOPA==}
-     engines: {node: '>=0.12'}
- 
--  env-runner@0.3.8:
--    resolution: {integrity: sha512-WF/tEXA/LSE7na7k2T6STXw8aEOAt1tqxextaJH7RZnqZzqSrFVCyFKEU3r0dLgqgu55Kswo5TvkOLuGxz72VQ==}
-+  env-runner@0.3.10:
-+    resolution: {integrity: sha512-DOmiJsUH4gUIdLIvTZhO0UmXSPTM6pQbU7hdBt9rfHZQuUaXtGrGOXyL+zfCWuV972q1eF0wjiaVbCjhRM3WeQ==}
-     hasBin: true
- 
-   eol@0.9.1:
-@@ -11007,7 +11007,7 @@ snapshots:
- 
-   entities@7.0.1: {}
- 
--  env-runner@0.3.8:
-+  env-runner@0.3.10:
-     dependencies:
-       crossws: 0.4.16(srvx@1.0.8)
-       srvx: 1.0.8
-```
-
-**File**: `src/build/vite/dev.ts` (modified, +6/-24)
-```diff
-@@ -56,7 +56,7 @@ export async function createFetchableDevEnvironment(
-   config: ResolvedConfig,
-   devServer: DevServer,
-   entry: string,
--  opts?: { preventExternalize?: boolean; vite?: ViteImportOptions; onInit?: () => void }
-+  opts?: { workerd?: boolean; vite?: ViteImportOptions; onInit?: () => void }
- ): Promise<FetchableDevEnvironment> {
-   const transport = createViteHotChannel(devServer, name);
-   const context: DevEnvironmentContext = { hot: true, transport };
-@@ -78,7 +78,7 @@ interface FetchableDevEnvironmentConstructor {
-     context: DevEnvironmentContext,
-     devServer: DevServer,
-     entry: string,
--    opts?: { preventExternalize?: boolean; onInit?: () => void }
-+    opts?: { workerd?: boolean; onInit?: () => void }
-   ): FetchableDevEnvironment;
- }
- 
-@@ -108,7 +108,7 @@ function _defineFetchableDevEnvironment({
-     devServer: DevServer;
- 
-     #entry: string;
--    #preventExternalize: boolean;
-+    #workerd: boolean;
-     #onInit?: () => void;
- 
-     constructor(
-@@ -117,12 +117,12 @@ function _defineFetchableDevEnvironment({
-       context: DevEnvironmentContext,
-       devServer: DevServer,
-       entry: string,
--      opts?: { preventExternalize?: boolean; onInit?: () => void }
-+      opts?: { workerd?: boolean; onInit?: () => void }
-     ) {
-       super(name, config, context);
-       this.devServer = devServer;
-       this.#entry = entry;
--      this.#preventExternalize = opts?.preventExternalize ?? false;
-+      this.#workerd = opts?.workerd ?? false;
-       this.#onInit = opts?.onInit;
-     }
- 
-@@ -131,27 +131,9 @@ function _defineFetchableDevEnvironment({
-       importer?: string,
-       options?: FetchFunctionOptions
-     ): Promise<FetchResult> {
--      // workerd cannot handle CJS/Node modules loaded via import().
--      // Bare imports (like "vue") are normally externalized by Vite's fetchModule,
--      // resolved using mainFields: ["main"] which often picks CJS entries.
--      // We intercept bare imports, resolve them through the environment's plugin
--      // pipeline (which respects resolve.conditions and picks ESM), then route
--      // the resolved path through transformRequest for proper SSR processing.
--      if (this.#preventExternalize && WORKERD_BUILTIN_RE.test(id)) {
-+      if (this.#workerd && WORKERD_BUILTIN_RE.test(id)) {
-         return { externalize: id, type: "builtin" };
-       }
--      if (
--        this.#preventExternalize &&
--        !id.startsWith("file://") &&
--        importer &&
--        id[0] !== "." &&
--        id[0] !== "/"
--      ) {
--        const resolved = await this.pluginContainer.resolveId(id, importer);
--        if (resolved && !resolved.external) {
--          return super.fetchModule(resolved.id, importer, options);
--        }
--      }
-       return super.fetchModule(id, importer, options);
-     }
- 
-```
-
-**File**: `src/build/vite/env.ts` (modified, +24/-20)
-```diff
-@@ -33,20 +33,16 @@ export function createNitroEnvironment(ctx: NitroPluginContext): EnvironmentOpti
-     },
-     resolve: {
-       noExternal: ctx.nitro!.options.dev
--        ? isWorkerdRunner
--          ? true
--          : [
--              /^nitro(\/|$)/,
--              new RegExp(`^(${runtimeDependencies.join("|")})$`), // virtual resolutions in vite skip plugin hooks
--              OPTIONAL_RUNTIME_DEPS_RE, // resolved (and installed) on demand from the project
--              ...tsconfigPathsNoExternal(ctx.nitro!), // packages mapped by tsconfig `paths`
--              ...ctx.bundlerConfig!.base.noExternal,
--            ]
-+        ? [
-+            /^nitro(\/|$)/,
-+            new RegExp(`^(${runtimeDependencies.join("|")})$`), // virtual resolutions in vite skip plugin hooks
-+            OPTIONAL_RUNTIME_DEPS_RE, // resolved (and installed) on demand from the project
-+            ...tsconfigPathsNoExternal(ctx.nitro!), // packages mapped by tsconfig `paths`
-+            ...ctx.bundlerConfig!.base.noExternal,
-+          ]
-         : true, // production build is standalone
--      // workerd cannot handle CJS modules, so we must avoid the "node" export
--      // condition which often resolves to CJS entries.
--      conditions: isWorkerdRunner ? _workerdConditions(ctx) : _resolveConditions(ctx),
--      externalConditions: _resolveConditions(ctx).filter((c) => !/browser|wasm|module/.test(c)),
-+      conditions: _envConditions(ctx),
-+      externalConditions: _externalConditions(ctx),
-     },
-     define: {
-       // Workaround for tanstack-start (devtools)
-@@ -65,7 +61,7 @@ export function createNitroEnvironment(ctx: NitroPluginContext): EnvironmentOpti
-               await initEnvRunner(ctx),
-               entry,
-               {
--                preventExternalize: isWorkerdRunner,
-+                workerd: isWorkerdRunner,
-                 vite: viteImportOptions(ctx.nitro!),
-                 onInit: () => (ctx._viteEnvs ??= new Map()).set(envName, entry),
-               }
-@@ -99,9 +95,9 @@ export function createServiceEnvironment(
-       copyPublicDir: false,
-     },
-     resolve: {
--      ...(isDev ? { noExternal: isWorkerdRunner ? true : [/^nitro(\/|$)/] } : {}),
--      conditions: isWorkerdRunner ? _workerdConditions(ctx) : _resolveConditions(ctx),
--      externalConditions: _resolveConditions(ctx).filter((c) => !/browser|wasm|module/.test(c)),
-+      ...(isDev ? { noExternal: [/^nitro(\/|$)/] } : {}),
-+      conditions: _envConditions(ctx),
-+      externalConditions: _externalConditions(ctx),
-     },
-     dev: ctx._isVitest
-       ? undefined
-@@ -115,7 +111,7 @@ export function createServiceEnvironment(
-               await initEnvRunner(ctx),
-               entry,
-               {
--                preventExternalize: isWorkerdRunner,
-+                workerd: isWorkerdRunner,
-                 vite: viteImportOptions(ctx.nitro!),
-                 onInit: () => (ctx._viteEnvs ??= new Map()).set(envName, entry),
-               }
-@@ -250,6 +246,16 @@ function _resolveConditions(ctx: NitroPluginContext): string[] {
-     : exportConditions;
- }
- 
-+// Dependencies are not inlined in dev: they are imported by the runtime of the runner (workerd
-+// loads them, CommonJS included, through the module fallback service of env-runner).
-+function _envConditions(ctx: NitroPluginContext): string[] {
-+  return _isWorkerdRunner(ctx) ? _workerdConditions(ctx) : _resolveConditions(ctx);
-+}
-+
-+function _externalConditions(ctx: NitroPluginContext): string[] {
-+  return _envConditions(ctx).filter((c) => !/browser|wasm|module/.test(c));
-+}
-+
- function _workerdConditions(ctx: NitroPluginContext): string[] {
-   const exportConditions = ctx.nitro!.options.exportConditions!;
-   return [...new Set(["workerd", "worker", ...exportConditions.filter((c) => c !== "node")])];
-@@ -261,8 +267,6 @@ function _devRunner(ctx: NitroPluginContext): RunnerName {
-     "node-worker") as RunnerName;
- }
- 
--// workerd-based runners (miniflare) cannot handle CJS externals via import(),
--// so all dependencies must be processed through Vite's transform pipeline.
- export function _isWorkerdRunner(ctx: NitroPluginContext): boolean {
-   return _devRunner(ctx) === "miniflare";
- }
-```
-
-**File**: `test/fixture/cloudflare-dev/routes/cjs.ts` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+import { defineHandler } from "nitro";
-+import cjs from "@fixture/nitro-cjs";
-+
-+export default defineHandler(() => ({ value: cjs(), runtime: cjs.runtime }));
-```
-
-**File**: `test/fixture/node_modules/@fixture/nitro-cjs/default.js` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+module.exports = function cjs() {
-+  return 42;
-+};
-+module.exports.runtime = "default";
-```
-
-**File**: `test/fixture/node_modules/@fixture/nitro-cjs/index.d.ts` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+declare const cjs: { (): number; runtime: string };
-+export = cjs;
-```
-
-**File**: `test/fixture/node_modules/@fixture/nitro-cjs/index.js` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+const { format } = require("util");
-+const { value } = require("./value");
-+
-+module.exports = function cjs() {
-+  return Number(format("%d", value));
-+};
-+module.exports.runtime = "workerd";
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4946** (2026-10-27): perf(build): add a `code` hook filter to the replace plugin (@pi0x)
-- **PR #4941** (2026-10-27): fix(vite): externalize dependencies with the miniflare runner (@pi0x)
-- **PR #4940** (2026-10-27): test: run tests on bun runtime (@pi0x)
-- **PR #4937** (2026-10-27): chore(deps): update all non-major dependencies (@renovate[bot])
-- **PR #4934** (2026-10-27): feat: add `import.meta.envName` and `--envName` cli flag (@dgesteves)
-- **PR #4932** (2026-10-27): feat: emit files referenced with `new URL(..., import.meta.url)` (@pi0x)
+- **PR #4965** (2026-10-30): chore(deps): update pnpm to v11.28.9 (@renovate[bot])
+- **PR #4963** (2026-10-29): fix(presets): skip empty route rule headers in platform configs (@pi0x)
+- **PR #4961** (2026-10-29): feat(prerender): support rou3 patterns in `prerender.ignore` (@pi0x)
+- **PR #4960** (2026-10-29): refactor!: remove deprecated v3 beta aliases (@pi0x)
+- **PR #4959** (2026-10-29): fix: make server entry `fetch` handler optional (@pi0x)
+- **PR #4958** (2026-10-29): feat(cli): add `nitro fetch` command (@pi0x)
 
 ---
 
@@ -1226,67 +1041,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build): skip unchanged sourcemaps (#4925)
+## X. docs(routing): clarify route rules and middleware are not a security boundary (#
 
 **RULE**:
-When implementing operations in `src/build/plugins/sourcemap.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nitrojs/nitro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/1.docs/5.routing.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nitrojs/nitro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `098ab727`: build): skip unchanged sourcemaps (#4925). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a9a371c`: docs(routing): clarify route rules and middleware are not a security boundary (#4954). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/build/plugins/sourcemap.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/1.docs/5.routing.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import type { Nitro } from "nitro/types";
-/**
- * Whether `nitro:sourcemap` runs and removes `sourcesContent`, so the bundler can skip
- * generating it. Same conditions as the plugin's registration and its `minify` option.
- */
-export function excludeSourcemapSources(nitro: Nitro): boolean {
-  return (
-    !!nitro.options.sourcemap &&
-    !nitro.options.dev &&
-    nitro.options.experimental.sourcemapMinify !== false
-  );
-}
+::warning
+Middleware are not a security boundary. Global and route-scoped middleware are **implicit** guards: they protect the URLs they happen to match, not the handlers themselves. A path check like `startsWith('/auth')` also matches `/authors`, and any route added outside the pattern is silently left unprotected. Use them for cross-cutting concerns (logging, context, defense in depth), and enforce access control explicitly in the handler. See [Authentication](#authentication).
+::
 
-        let changed = false;
-        const original = sourcemap.sources;
-        if (original) {
-          const sources = original.map((source) =>
-          if (sources.some((source, i) => source !== original[i])) {
-            sourcemap.sources = sources;
-            changed = true;
-          }
-          if ("sourcesContent" in sourcemap) {
-            delete sourcemap.sourcesContent;
-            changed = true;
-          }
-          if ("x_google_ignoreList" in sourcemap) {
-            delete sourcemap.x_google_ignoreList;
-            changed = true;
-          }
-          if (
-            sourcemap.mappings !== "" &&
-            (sourcemap.sources || []).every((s) => s?.includes("node_modules"))
-          ) {
-            changed = true;
-        // Assigning `as
+Route rules let you attach behavior (redirects, proxying, caching, CORS, custom headers) to route patterns directly from your configuration, without writing handler code.
+::warning
+Route rules are not a security boundary. Like global middleware, they are **implicit** guards: they apply to whatever request URLs match a pattern, not to the handlers they are meant to protect. A rule can be overridden by a more specific one, and a handler stays unprotected when it is reachable from a path the pattern does not match (a new route, a renamed file, a `proxy` target, a different `baseURL`). Some rules are also applied by the platform edge and others only by the server runtime. Enforce access control explicitly 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        if (sourcemap.sources) {
-          sourcemap.sources = sourcemap.sources.map((source) =>
-          delete sourcemap.sourcesContent;
-          delete sourcemap.x_google_ignoreList;
-          if ((sourcemap.sources || []).every((s) => s?.includes("node_modules"))) {
-        asset.source = JSON.stringify(sourcemap);
+Route rules let you attach behavior (redirects, proxying, caching, authentication, custom headers) to route patterns directly from your configuration, without writing handler code.
+There is no `auth` route rule: authentication needs executable logic, so it belongs in [middleware](#middleware). Use h3's [`basicAuth`](https://h3.dev/utils/security#basicauthopts) middleware for a single route:
+import { basicAuth } from "nitro/h3";
+  middl
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `098ab727` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a9a371c` are properly handled with clean fallback behavior.

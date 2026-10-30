@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T23:15:07.587Z",
+  "last_updated": "2026-10-30T23:21:56.576Z",
   "total_verified_learnings": 1178,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -10570,8 +10570,8 @@
       "slug": "ducaale-xh",
       "platform": "github",
       "source_url": "https://github.com/ducaale/xh",
-      "source_version": "309b1359",
-      "content_hash": "dd4b014c5feb388029603192d2762b09704d45235dfc93e898ba92b19e403bcc",
+      "source_version": "dd424850",
+      "content_hash": "ca0eb72308150ae53f4533e36a059ea7caaca3dc7df11b5f6f4f9de5c9d67eb6",
       "dossier_path": "07_PROJECT_LEARNING/ducaale-xh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ducaale-xh-learnings.md",
       "promoted_rules": [
@@ -10584,6 +10584,11 @@
           "number": 4241,
           "title": "host typo in man page example",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5935,
+          "title": "Merge pull request #501 from sarankumar1325/fix/fish-completion-help-typo",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10591,7 +10596,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T10:36:19.925Z",
+      "verified_at": "2026-10-30T23:21:53.797Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73930,8 +73935,8 @@
       "slug": "unjs-nitro",
       "platform": "github",
       "source_url": "https://github.com/unjs/nitro",
-      "source_version": "20a88507",
-      "content_hash": "0163a5da843cf9123f78fb46003f7e297a14883005ec3934ea7ce2f89996d682",
+      "source_version": "f794c378",
+      "content_hash": "991ecc11f734d4f197fcc1f385eefa9dae27d7aa95678968e55e6acf75e6a701",
       "dossier_path": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "promoted_rules": [
@@ -73974,6 +73979,11 @@
           "number": 4996,
           "title": "build): skip unchanged sourcemaps (#4925)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5936,
+          "title": "docs(routing): clarify route rules and middleware are not a security boundary (#",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -73981,7 +73991,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:45:18.805Z",
+      "verified_at": "2026-10-30T23:21:56.557Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156850,6 +156860,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T23:15:07.570Z"
+    },
+    "rule-5935": {
+      "learning_id": "rule-5935",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5935,
+      "title": "Merge pull request #501 from sarankumar1325/fix/fish-completion-help-typo",
+      "source_url": "https://github.com/ducaale/xh",
+      "source_version": "dd424850",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:21:53.797Z"
+    },
+    "rule-5936": {
+      "learning_id": "rule-5936",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5936,
+      "title": "docs(routing): clarify route rules and middleware are not a security boundary (#",
+      "source_url": "https://github.com/unjs/nitro",
+      "source_version": "f794c378",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:21:56.557Z"
     }
   },
   "aliases": {

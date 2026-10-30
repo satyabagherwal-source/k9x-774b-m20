@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-8MEA",
-    "timestamp": "2026-10-28T17:05:52.738Z",
-    "repository": "kcl-lang/kcl",
-    "learningId": "learn-github-kcl-lang-kcl",
-    "contentHash": "138f18555d52529de696fffdaed0783e19a09dc0f01623ce787fec0ac6874b31",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-8SM1",
-    "timestamp": "2026-10-28T17:06:00.793Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "348ea3d4029a33e09ff2a4ce031faa4ef1fe842b71e38246880937d0afb796e0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-HDVQ",
     "timestamp": "2026-10-28T17:12:41.606Z",
     "repository": "google/gemma-4-26B-A4B-it",
@@ -7490,6 +7460,36 @@
     "repository": "react/react-native",
     "learningId": "learn-github-react-react-native",
     "contentHash": "748f72c2e393413d2d6e3f1ae3ad537257e5e4408f3299062e386c78d9624a8d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-JW13",
+    "timestamp": "2026-10-30T23:21:53.895Z",
+    "repository": "ducaale/xh",
+    "learningId": "learn-github-ducaale-xh",
+    "contentHash": "ca0eb72308150ae53f4533e36a059ea7caaca3dc7df11b5f6f4f9de5c9d67eb6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-JY5O",
+    "timestamp": "2026-10-30T23:21:56.652Z",
+    "repository": "nitrojs/nitro",
+    "learningId": "learn-github-nitrojs-nitro",
+    "contentHash": "991ecc11f734d4f197fcc1f385eefa9dae27d7aa95678968e55e6acf75e6a701",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T23:15:07.659Z",
-  "total_cycles_completed": 6331,
-  "total_learnings_persisted": 6331,
-  "total_rules_promoted": 5905,
+  "last_updated": "2026-10-30T23:21:56.661Z",
+  "total_cycles_completed": 6333,
+  "total_learnings_persisted": 6333,
+  "total_rules_promoted": 5907,
   "history": [
-    {
-      "timestamp": "2026-10-30T08:04:03.933Z",
-      "repository": "scrapy/scrapy",
-      "learningId": "learn-github-scrapy-scrapy",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T08:04:38.725Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T08:04:56.460Z",
       "repository": "duckdb/duckdb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T23:15:07.659Z",
       "repository": "react/react-native",
       "learningId": "learn-github-react-react-native",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T23:21:53.904Z",
+      "repository": "ducaale/xh",
+      "learningId": "learn-github-ducaale-xh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T23:21:56.661Z",
+      "repository": "nitrojs/nitro",
+      "learningId": "learn-github-nitrojs-nitro",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

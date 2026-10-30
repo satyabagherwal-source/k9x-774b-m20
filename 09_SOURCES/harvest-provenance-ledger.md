@@ -6363,3 +6363,5 @@ Every entry in this ledger must capture:
 | `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `43032b5a` | Multi-dimensional audit evidence | 2026-10-30T23:05:21.302Z |
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `4907d2dd` | Multi-dimensional audit evidence | 2026-10-30T23:15:03.248Z |
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `73e3aeca` | Multi-dimensional audit evidence | 2026-10-30T23:15:07.654Z |
+| `learn-github-ducaale-xh` | `https://github.com/ducaale/xh` | `dd424850` | Multi-dimensional audit evidence | 2026-10-30T23:21:53.899Z |
+| `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `f794c378` | Multi-dimensional audit evidence | 2026-10-30T23:21:56.655Z |

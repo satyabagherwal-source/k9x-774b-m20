@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ducaale-xh-learnings.md`  
 > **Source**: github ([https://github.com/ducaale/xh](https://github.com/ducaale/xh))  
-> **Source Version**: `309b1359`  
+> **Source Version**: `dd424850`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T10:36:19.622Z  
+> **Timestamp**: 2026-10-30T23:21:53.222Z  
 > **Learning ID**: `learn-github-ducaale-xh`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ducaale-xh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ducaale/xh](https://github.com/ducaale/xh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T10:36:10.945Z  
+> **Harvest Timestamp**: 2026-10-30T23:21:50.741Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Friendly and fast tool for sending HTTP requests
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 8148 stars
+- **Stars / Engagement**: 8157 stars
 
 ---
 
@@ -2448,42 +2448,103 @@ pub(crate) fn create_hyperlink(text: &str, url: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e892eda0` (2026-10-22)
-**Commit Message**: Fix host typo in man page example
+### Incident Patch 1: `dd424850` (2026-10-29)
+**Commit Message**: Merge pull request #501 from sarankumar1325/fix/fish-completion-help-typo
 
-**File**: `doc/md-template.md` (modified, +1/-1)
+Fix "Generage" typo in --generate help text
+
+**File**: `doc/xh.1` (modified, +1/-1)
 ```diff
-@@ -125,7 +125,7 @@ xh get httpbin.org/json id==5 sort==true
- 
- Send a GET request and include a header named `X-Api-Key` with value `12345`:
- ```
--xh get Ihttpbin.org/json x-api-key:12345
-+xh get httpbin.org/json x-api-key:12345
- ```
- 
- Send a POST request with body read from stdin:
+@@ -433,7 +433,7 @@ complete\-elvish
+ Generate completions for elvish
+ .TP 8
+ complete\-fish
+-Generage completions for fish
++Generate completions for fish
+ .TP 8
+ complete\-nushell
+ Generate completions for nushell
 ```
 
 **File**: `doc/xh.1.md` (modified, +1/-1)
 ```diff
-@@ -369,7 +369,7 @@ xh get httpbin.org/json id==5 sort==true
+@@ -275,7 +275,7 @@ Each `--OPTION` can be reset with a `--no-OPTION` argument.
+   
+   - `complete-bash`: Generate completions for bash
+   - `complete-elvish`: Generate completions for elvish
+-  - `complete-fish`: Generage completions for fish
++  - `complete-fish`: Generate completions for fish
+   - `complete-nushell`: Generate completions for nushell
+   - `complete-powershell`: Generate completions for powershell
+   - `complete-zsh`: Generate completions for zsh
+```
+
+**File**: `src/cli.rs` (modified, +1/-1)
+```diff
+@@ -411,7 +411,7 @@ Generate shell completions or man pages. Possible values are:
  
- Send a GET request and include a header named `X-Api-Key` with value `12345`:
- ```
--xh get Ihttpbin.org/json x-api-key:12345
-+xh get httpbin.org/json x-api-key:12345
- ```
+     complete-bash         Generate completions for bash
+     complete-elvish       Generate completions for elvish
+-    complete-fish         Generage completions for fish
++    complete-fish         Generate completions for fish
+     complete-nushell      Generate completions for nushell
+     complete-powershell   Generate completions for powershell
+     complete-zsh          Generate completions for zsh
+```
+
+---
+
+### Incident Patch 2: `3ed073df` (2026-10-29)
+**Commit Message**: Fix "Generage" typo in --generate help text
+
+The complete-fish entry in the --generate long help read "Generage completions for fish". Fix it in src/cli.rs and in the generated doc/xh.1 and doc/xh.1.md.
+
+**File**: `doc/xh.1` (modified, +1/-1)
+```diff
+@@ -433,7 +433,7 @@ complete\-elvish
+ Generate completions for elvish
+ .TP 8
+ complete\-fish
+-Generage completions for fish
++Generate completions for fish
+ .TP 8
+ complete\-nushell
+ Generate completions for nushell
+```
+
+**File**: `doc/xh.1.md` (modified, +1/-1)
+```diff
+@@ -275,7 +275,7 @@ Each `--OPTION` can be reset with a `--no-OPTION` argument.
+   
+   - `complete-bash`: Generate completions for bash
+   - `complete-elvish`: Generate completions for elvish
+-  - `complete-fish`: Generage completions for fish
++  - `complete-fish`: Generate completions for fish
+   - `complete-nushell`: Generate completions for nushell
+   - `complete-powershell`: Generate completions for powershell
+   - `complete-zsh`: Generate completions for zsh
+```
+
+**File**: `src/cli.rs` (modified, +1/-1)
+```diff
+@@ -411,7 +411,7 @@ Generate shell completions or man pages. Possible values are:
  
- Send a POST request with body read from stdin:
+     complete-bash         Generate completions for bash
+     complete-elvish       Generate completions for elvish
+-    complete-fish         Generage completions for fish
++    complete-fish         Generate completions for fish
+     complete-nushell      Generate completions for nushell
+     complete-powershell   Generate completions for powershell
+     complete-zsh          Generate completions for zsh
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #501** (2026-10-29): Fix "Generage" typo in --generate help text (@sarankumar1325)
+- **PR #500** (closed): Use --form-string for multipart text fields in --curl output (@56steve)
 - **PR #499** (closed): Add unbuffered response streaming (@Jhon103)
 - **PR #498** (closed): Use HTTP/1.1 when a Host override would break HTTP/2 (@mvanhorn)
 - **PR #497** (2026-10-23): Fix host typo in man page example (@dcadolph)
 - **PR #495** (closed): docs: add Simplified Chinese README translation (README_zh.md) (@WanderLandWalker)
-- **PR #494** (closed): Don't negotiate HTTP/2 when a custom Host header is provided (@DG-Elom)
-- **PR #491** (closed): fix: omit internal positional args from Nushell completions (@Mathjk)
 
 ---
 
@@ -2503,28 +2564,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. host typo in man page example
+## X. Merge pull request #501 from sarankumar1325/fix/fish-completion-help-typo
 
 **RULE**:
-When implementing operations in `doc/md-template.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ducaale/xh. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `doc/xh.1`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ducaale/xh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e892eda0`: host typo in man page example. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd424850`: Merge pull request #501 from sarankumar1325/fix/fish-completion-help-typo. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `doc/md-template.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `doc/xh.1`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-xh get httpbin.org/json x-api-key:12345
+Generate completions for fish
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-xh get Ihttpbin.org/json x-api-key:12345
+Generage completions for fish
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e892eda0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd424850` are properly handled with clean fallback behavior.

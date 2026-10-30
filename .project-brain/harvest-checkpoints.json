@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T23:15:07.662Z",
+  "last_updated": "2026-10-30T23:21:56.665Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3171,14 +3171,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nitrojs-nitro",
-      "content_hash": "0163a5da843cf9123f78fb46003f7e297a14883005ec3934ea7ce2f89996d682",
-      "verified_at": "2026-10-27T20:45:18.890Z",
+      "content_hash": "991ecc11f734d4f197fcc1f385eefa9dae27d7aa95678968e55e6acf75e6a701",
+      "verified_at": "2026-10-30T23:21:56.665Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T20:45:18.890Z"
+      "last_updated": "2026-10-30T23:21:56.665Z"
     },
     "h3js/h3": {
       "repository": "h3js/h3",
@@ -3711,14 +3711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ducaale-xh",
-      "content_hash": "dd4b014c5feb388029603192d2762b09704d45235dfc93e898ba92b19e403bcc",
-      "verified_at": "2026-10-25T10:36:20.000Z",
+      "content_hash": "ca0eb72308150ae53f4533e36a059ea7caaca3dc7df11b5f6f4f9de5c9d67eb6",
+      "verified_at": "2026-10-30T23:21:53.908Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T10:36:20.000Z"
+      "last_updated": "2026-10-30T23:21:53.908Z"
     },
     "NervJS/taro": {
       "repository": "NervJS/taro",
