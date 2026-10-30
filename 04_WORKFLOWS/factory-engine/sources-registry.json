@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T00:08:04.522Z",
-    "lastVerified": "2026-10-30T00:08:04.522Z",
+    "lastChecked": "2026-10-30T00:19:03.646Z",
+    "lastVerified": "2026-10-30T00:19:03.646Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -139,12 +139,12 @@
     "revisionIdentifier": "0941fb03"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-29T23:35:04.249Z",
-    "lastVerified": "2026-10-29T23:35:04.249Z",
+    "lastChecked": "2026-10-30T00:19:02.146Z",
+    "lastVerified": "2026-10-30T00:19:02.146Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -153,7 +153,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f9ac780a"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -1237,9 +1238,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-10-29T02:07:24.168Z",
+    "lastChecked": "2026-10-30T00:18:57.069Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-10-29T02:07:24.168Z"
+    "lastVerified": "2026-10-30T00:18:57.069Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2808,9 +2809,9 @@
   "orf-gping": {
     "name": "gping",
     "officialUrl": "https://github.com/orf/gping",
-    "lastChecked": "2026-10-28T10:17:43.568Z",
+    "lastChecked": "2026-10-30T00:18:47.074Z",
     "revisionIdentifier": "fad1ee3c",
-    "lastVerified": "2026-10-28T10:17:43.568Z"
+    "lastVerified": "2026-10-30T00:18:47.074Z"
   },
   "hf-psrben-visionhope": {
     "name": "PSRben/VisionHOPE",
@@ -4407,9 +4408,9 @@
   "amrdeveloper-gql": {
     "name": "GQL",
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
-    "lastChecked": "2026-10-28T14:36:03.265Z",
+    "lastChecked": "2026-10-30T00:18:59.543Z",
     "revisionIdentifier": "3a76cfee",
-    "lastVerified": "2026-10-28T14:36:03.265Z"
+    "lastVerified": "2026-10-30T00:18:59.543Z"
   },
   "smol-rs-smol": {
     "name": "smol",
@@ -4797,14 +4798,14 @@
     "officialUrl": "https://github.com/meshery/meshery",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T15:22:55.966Z",
-    "lastVerified": "2026-10-28T15:22:55.966Z",
+    "lastChecked": "2026-10-30T00:18:59.012Z",
+    "lastVerified": "2026-10-30T00:18:59.012Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meshery-meshery",
-    "contentHash": "850dec4bddce7b6cfed5b9697fd102bb314e88b1ec3222652c02941faf2fba85",
+    "contentHash": "48ec877ee8008ca008567c10afde96c298348bd18579e3304b6d6d4ba2e32ba9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8720,5 +8721,19 @@
     "lastChecked": "2026-10-30T00:07:53.688Z",
     "revisionIdentifier": "4fd07daa",
     "lastVerified": "2026-10-30T00:07:53.688Z"
+  },
+  "searchsolved-search-solved-public-seo": {
+    "name": "search-solved-public-seo",
+    "officialUrl": "https://github.com/searchsolved/search-solved-public-seo",
+    "lastChecked": "2026-10-30T00:18:49.579Z",
+    "revisionIdentifier": "f1108d97e7",
+    "lastVerified": "2026-10-30T00:18:49.579Z"
+  },
+  "exyte-popupview": {
+    "name": "PopupView",
+    "officialUrl": "https://github.com/exyte/PopupView",
+    "lastChecked": "2026-10-30T00:18:52.086Z",
+    "revisionIdentifier": "99695337",
+    "lastVerified": "2026-10-30T00:18:52.086Z"
   }
 }

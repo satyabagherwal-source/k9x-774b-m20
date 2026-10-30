@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "87db0f3b",
+    "sourceVersion": "125ba14d",
     "license": "Apache-2.0",
-    "contentHash": "850dec4bddce7b6cfed5b9697fd102bb314e88b1ec3222652c02941faf2fba85",
-    "lastHarvestedAt": "2026-10-28T15:22:56.232Z",
+    "contentHash": "48ec877ee8008ca008567c10afde96c298348bd18579e3304b6d6d4ba2e32ba9",
+    "lastHarvestedAt": "2026-10-30T00:19:01.090Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {

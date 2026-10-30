@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `87db0f3b`  
+> **Source Version**: `125ba14d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T15:22:55.970Z  
+> **Timestamp**: 2026-10-30T00:19:00.482Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T15:22:55.966Z  
+> **Harvest Timestamp**: 2026-10-30T00:18:59.012Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12072 stars
+- **Stars / Engagement**: 12081 stars
 
 ---
 
@@ -804,13 +804,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #22642** (2026-10-29): **[Bug]: Catalog table view overlaps the left filter sidebar**
+  *Symptoms*: ### Description In the MeshMap catalog, switching from grid view to table view causes the table to overlap the left filter sidebar.  The table extends into the sidebar's area instead of respecting the available space within the catalog modal, making the filters partially obscured and the interface difficult to use.  ### Steps to Reproduce 1. Open the [[Meshery Playground MeshMap editor](https://playground.meshery.io/extension/meshmap?mode=design)](https://playground.meshery.io/extension/meshmap?mode=design). 2. Click **Start with a Template** to open the catalog. 3. Switch to table view using the view toggle in the top-right area of the catalog. 4. Observe the table layout in relation to the left filter sidebar.  ### Expected Behavior The table should remain within the catalog's content area without overlapping the left filter sidebar. Both the table and sidebar should remain accessible and properly laid out.  ### Actual Behavior The table extends over the left filter sidebar, obscuring part of the sidebar and disrupting the catalog layout.  ### Environment - **Application:** Meshery Playground / MeshMap - **Browser:** Mozilla Firefox - **Operating System:** Ubuntu Linux  ### Additional Context The issue is observed when switching from grid view to table view. The grid view appears to maintain separation between the sidebar and the main content area.  ### I'd like to investigate and work on fixing this issue. Could you please assign it to me?  <img width="1825" height="1005" 
+
 - **Issue #22619** (2026-10-27): **[UI] Replace waitForTimeout in user preference e2e spec with a web-first assertion**
   *Symptoms*: **Notes for Reviewers**  - This PR fixes # (no issue; small e2e reliability cleanup)  `ui/tests/e2e/userpreference.spec.ts` was the only spec still using `page.waitForTimeout(2000)`: after clicking a preference switch it slept 2 s and then branched on the switch state. The switch updates on click and the test already awaits the matching POST and its 200 response, so this replaces the sleep and the if/else with a web-first assertion:  ```ts await expect(prefSwitch).toBeChecked({ checked: !wasChecked }); ```  Note: the old sleep implicitly also checked that the switch did not flip back within 2 s. I found no code that flips it back; happy to add an explicit check if you want that covered.  **Before / after** (Local provider, server built from source, static UI build, `--repeat-each=5`):  ``` before: 10 passed (+ setup), ~8.0 s per test after:  10 passed (+ setup), ~6.3 s per test ```  Changing the expectation to `checked: wasChecked` makes the test fail, so the assertion is not vacuous. `prettier --check` and `eslint` pass on the touched file. Not run: the `chromium-meshery-provider` project (needs a remote token) and the full suite.  AI assistance: I used Claude (an AI coding assistant) to help find and draft this change. I reviewed the change; the runs above were made in a sandbox with the assistant's help. The commit carries an `Assisted-by` trailer.  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificat
-
-- **Issue #22606** (2026-10-26): **chore: make CLAUDE.md a symlink to AGENTS.md**
-  *Symptoms*: ## Intent  Make CLAUDE.md a symlink to AGENTS.md  ## What Changed - Replaced the regular file `CLAUDE.md` with a symlink to `AGENTS.md` (git type change `T`), so Claude Code and other agent tools read a single shared instruction file. - No other files changed.  ## Risk Assessment  ✅ Low: The change only converts CLAUDE.md into a git symlink (mode 120000) to the existing, tracked AGENTS.md, which matches the stated intent.  ## Testing  I checked the symlink in the worktree and in a fresh extraction of HEAD. Git records CLAUDE.md as a symlink (mode 120000) targeting AGENTS.md, and reading CLAUDE.md returns the same bytes as AGENTS.md. The change has no runtime product surface and no UI, so there is no screenshot or other visual artifact.  - Live validation: ✅ go - 1 of 1 scenarios driven live against the product  | Scenario | Result | Live | Evidence | | --- | --- | --- | --- | | Read CLAUDE.md in a fresh checkout of HEAD: it is a symlink to AGENTS.md and returns identical content | ✅ pass | live | `git ls-files -s` shows mode 120000 for CLAUDE.md. `readlink` returns AGENTS.md. `cmp` of the two files in a temp extraction of HEAD reports identical. |  ## Pipeline  Updates from [git push no-mistakes](https://github.com/kunchenguid/no-mistakes)  <!-- no-mistakes-pipeline-attestation:v1 {"head_sha":"824c295b8a8a7c6336480582e37c08dc2af89800","steps":[{"step":"intent","status":"completed"},{"step":"rebase","status":"completed"},{"step":"review","status":"completed"},{"step":"test","s
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/22606?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- This is an auto-generated comment: failure by coderabbit.ai -->  > [!CAUTION] > ## Review failed >  > The pull request is closed.  <!-- end of auto-generated comment: failure by coderabb
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -827,407 +825,651 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `87db0f3b` (2026-10-28)
-**Commit Message**: latest discussion data files added
+### Incident Patch 1: `1ac48c18` (2026-10-28)
+**Commit Message**: Merge pull request #22570 from Ayush-AM/fix/issue-22445-notification-blob-leak
 
-Signed-off-by: Discussions bot <[REDACTED_EMAIL]>
+fix(ui): manage blob URL lifecycle and prevent memory leak in DataToF…
 
+**File**: `ui/components/layout/NotificationCenter/formatters/common.test.tsx` (modified, +35/-4)
+```diff
+@@ -1,5 +1,5 @@
+ import React from 'react';
+-import { render, screen } from '@testing-library/react';
++import { render, screen, cleanup } from '@testing-library/react';
+ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+ 
+ vi.mock('@sistent/sistent', () => ({
+@@ -57,21 +57,25 @@ describe('EmptyState', () => {
+ });
+ 
+ describe('DataToFileLink', () => {
+-  // jsdom does not implement URL.createObjectURL by default; stub it for these tests.
++  // jsdom does not implement URL.createObjectURL or URL.revokeObjectURL by default; stub them for these tests.
+   const originalCreateObjectURL = (global.URL as any).createObjectURL;
++  const originalRevokeObjectURL = (global.URL as any).revokeObjectURL;
+ 
+   beforeEach(() => {
+-    (global.URL as any).createObjectURL = vi.fn(() => 'blob:fake-url');
++    (global.URL as any).createObjectURL = vi.fn((file: File) => `blob:fake-url-${file.name}`);
++    (global.URL as any).revokeObjectURL = vi.fn();
+   });
+ 
+   afterEach(() => {
++    cleanup();
+     (global.URL as any).createObjectURL = originalCreateObjectURL;
++    (global.URL as any).revokeObjectURL = originalRevokeObjectURL;
+   });
+ 
+   it('creates a download link pointing to a generated blob URL', () => {
+     render(<DataToFileLink data="hello world" />);
+     const link = screen.getByRole('link', { name: /download trace/i });
+-    expect(link).toHaveAttribute('href', 'blob:fake-url');
++    expect(link).toHaveAttribute('href', 'blob:fake-url-trace.txt');
+     expect(link).toHaveAttribute('download', 'trace.txt');
+   });
+ 
+@@ -83,4 +87,31 @@ describe('DataToFileLink', () => {
+     expect(blobArg).toBeInstanceOf(File);
+     expect(blobArg.name).toBe('trace.txt');
+   });
++
++  it('revokes the blob URL on component unmount to prevent memory leaks', () => {
++    const { unmount } = render(<DataToFileLink data="trace info" />);
++    const revokeSpy = (global.URL as any).revokeObjectURL as ReturnType<typeof vi.fn>;
++
++    expect(revokeSpy).not.toHaveBeenCalled();
++
++    unmount();
++
++    expect(revokeSpy).toHaveBeenCalledTimes(1);
++    expect(revokeSpy).toHaveBeenCalledWith('blob:fake-url-trace.txt');
++  });
++
++  it('revokes previous blob URL and creates a new one when data prop updates', () => {
++    const { rerender } = render(<DataToFileLink data="first-trace" />);
++    const createSpy = (global.URL as any).createObjectURL as ReturnType<typeof vi.fn>;
++    const revokeSpy = (global.URL as any).revokeObjectURL as ReturnType<typeof vi.fn>;
++
++    expect(createSpy).toHaveBeenCalledTimes(1);
++    expect(revokeSpy).not.toHaveBeenCalled();
++
++    rerender(<DataToFileLink data="second-trace" />);
++
++    expect(revokeSpy).toHaveBeenCalledTimes(1);
++    expect(revokeSpy).toHaveBeenCalledWith('blob:fake-url-trace.txt');
++    expect(createSpy).toHaveBeenCalledTimes(2);
++  });
+ });
+```
 
+**File**: `ui/components/layout/NotificationCenter/formatters/common.tsx` (modified, +15/-5)
+```diff
+@@ -1,4 +1,4 @@
+-import React from 'react';
++import React, { useState, useEffect } from 'react';
+ import { LaunchIcon, Typography } from '@sistent/sistent';
+ import { TextWithLinks } from '../../../data-formatter';
+ 
+@@ -59,12 +59,22 @@ export const EmptyState = ({ event }: { event: { description?: string } }) => {
+ };
+ 
+ export const DataToFileLink = ({ data }: { data: unknown }) => {
+-  // convert the trace to a file
+-  const dataString = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+-  const file = new File([dataString], 'trace.txt', { type: 'text/plain' });
++  const [downloadUrl, setDownloadUrl] = useState<string>('');
++
++  useEffect(() => {
++    // convert the trace to a file
++    const dataString = typeof data === 'string' ? data : JSON.stringify(data ?? '', null, 2) || '';
++    const file = new File([dataString], 'trace.txt', { type: 'text/plain' });
++    const url = URL.createObjectURL(file);
++    setDownloadUrl(url);
++
++    return () => {
++      URL.revokeObjectURL(url);
++    };
++  }, [data]);
+ 
+   return (
+-    <TitleLink href={URL.createObjectURL(file)} download="trace.txt">
++    <TitleLink href={downloadUrl} download="trace.txt">
+       Download Trace
+     </TitleLink>
+   );
+```
 
 ---
 
-### Incident Patch 2: `cebee5df` (2026-10-27)
-**Commit Message**: Models generated and updated
+### Incident Patch 2: `dc687079` (2026-10-28)
+**Commit Message**: Merge branch 'master' into fix/issue-22445-notification-blob-leak
 
-Signed-off-by: l5io <[REDACTED_EMAIL]>
-
-**File**: `models/aws-cloudfront-controller/v1.10.0/v1.0.0/model.json` (modified, +3/-3)
+**File**: `AGENTS.md` (modified, +17/-0)
 ```diff
-@@ -26,12 +26,12 @@
-   "metadata": {
-     "capabilities": null,
-     "isAnnotation": false,
--    "primaryColor": "#ED7100",
-+    "primaryColor": "#8C4FFF",
-     "shape": "rectangle",
-     "styleOverrides": "",
--    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 64 64\" version=\"1.1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eIcon-Architecture/48/Arch_Amazon-CloudFront_48\u003c/title\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/48/Arch_Amazon-CloudFront_48\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/48/Networking-Content-Delivery\" fill=\"#8C4FFF\"\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"64\" height=\"64\"\u003e\u003c/rect\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M41.5,43.5 C40.397,43.5 39.5,42.603 39.5,41.5 C39.5,40.397 40.397,39.5 41.5,39.5 C42.603,39.5 43.5,40.397 43.5,41.5 C43.5,42.603 42.603,43.5 41.5,43.5 L41.5,43.5 Z M41.5,37.5 C39.294,37.5 37.5,39.294 37.5,41.5 C37.5,43.706 39.294,45.5 41.5,45.5 C43.706,45.5 45.5,43.706 45.5,41.5 C45.5,39.294 43.706,37.5 41.5,37.5 L41.5,37.5 Z M22.5,32.5 C21.397,32.5 20.5,31.603 20.5,30.5 C20.5,29.397 21.397,28.5 22.5,28.5 C23.603,28.5 24.5,29.397 24.5,30.5 C24.5,31.603 23.603,32.5 22.5,32.5 L22.5,32.5 Z M22.5,26.5 C20.294,26.5 18.5,28.294 18.5,30.5 C18.5,32.706 20.294,34.5 22.5,34.5 C24.706,34.5 26.5,32.706 26.5,30.5 C26.5,28.294 24.706,26.5 22.5,26.5 L22.5,26.5 Z M45.389,47.124 C45.168,46.607 44.936,46.094 44.685,45.591 L42.896,46.486 C43.17,47.035 43.42,47.599 43.656,48.165 C42.82,48.762 41.943,49.288 41.028,49.74 C41.384,48.865 41.694,47.975 41.974,47.012 L40.054,46.454 C39.564,48.134 38.985,49.581 38.184,51.133 C36.357,51.698 34.452,52 32.5,52 C29.465,52 26.567,51.314 23.871,49.976 C22.503,46.615 21.838,43.534 21.838,40.559 C21.838,39.267 22.063,38.196 22.322,36.956 C22.386,36.652 22.45,36.343 22.514,36.024 L20.551,35.638 C20.49,35.949 20.427,36.25 20.365,36.545 C20.094,37.838 19.838,39.06 19.838,40.559 C19.838,43.074 20.274,45.644 21.154,48.354 C16.072,44.724 13,38.854 13,32.5 C13,32.389 13.01,32.273 13.012,32.161 C14.642,31.799 16.123,31.614 17.854,31.571 L17.804,29.572 C16.169,29.612 14.694,29.779 13.163,30.084 C14.081,22.683 19.212,16.394 26.323,14.019 C27.873,14.818 29.02,15.524 30.135,16.37 L31.344,14.776 C30.646,14.248 29.934,13.771 29.146,13.299 C30.244,13.108 31.363,13 32.5,13 C35.032,13 37.532,13.494 39.849,14.439 C39.342,14.593 38.82,14.763 38.243,14.971 L38.923,16.852 C40.316,16.349 41.408,16.04 42.571,15.821 C48.399,19.341 52,25.667 52,32.5 C52,38.156 49.605,43.416 45.389,47.124 L45.389,47.124 Z M43.008,13.749 C39.826,11.95 36.192,11 32.5,11 C30.392,11 28.324,11.301 26.357,11.895 C17.723,14.464 11.568,22.23 11.045,31.196 C11.01,31.625 11,32.062 11,32.5 C11,40.444 15.352,47.707 22.354,51.455 C25.459,53.12 28.968,54 32.5,54 C34.892,54 37.229,53.61 39.437,52.843 C41.684,52.086 43.773,50.963 45.646,49.507 C50.955,45.399 54,39.2 54,32.5 C54,24.732 49.787,17.546 43.008,13.749 L43.008,13.749 Z M38.384,37.411 L37.003,38.858 C34.022,36.015 31.047,34.146 27.637,32.975 L28.287,31.083 C31.979,32.351 35.188,34.362 38.384,37.411 L38.384,37.411 Z M38.444,22.364 C41.282,26.692 42.88,31.444 43.193,36.488 L41.197,36.612 C40.905,31.919 39.417,27.495 36.772,23.46 L38.444,22.364 Z M26.451,26.797 L24.773,25.708 C26.316,23.332 27.639,21.758 29.336,20.278 L30.65,21.786 C29.103,23.135 27.886,24.587 26.451,26.797 L26.451,26.797 Z M34.5,16.5 C35.603,16.5 36.5,17.397 36.5,18.5 C36.5,19.603 35.603,20.5 34.5,20.5 C33.397,20.5 32.5,19.603 32.5,18.5 C32.5,17.397 33.397,16.5 34.5,16.5 L34.5,16.5 Z M34.5,22.5 C36.706,22.5 38.5,20.706 38.5,18.5 C38.5,16.294 36.706,14.5 34.5,14.5 C32.294,14.5 30.5,16.294 30.5,18.5 C30.5,20.706 32.294,22.5 34.5,22.5 L34.5,22.5 Z\" id=\"Amazon-CloudFront_Icon_48_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/svg\u003e",
-+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-CloudFront_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Networking-Content-Delivery\" fill=\"#8C4FFF\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28,26.4968343 C28,25.6694852 27.327,24.9962012 26.5,24.9962012 C25.673,24.9962012 25,25.
+@@ -474,6 +474,23 @@ touching any of them.
+ - Hooks in `.agents/hooks/`: `format-frontend.sh` (post-edit Prettier) and
+   `block-lockfiles.sh` (pre-edit lock-file guard).
+ 
++## Worktrees and landing a change
++
++- **Work in a treehouse worktree, never in the main clone.** Other agent sessions and the
++  no-mistakes pipeline share the main clone. Take a worktree with
++  `treehouse get --lease -b <branch>` (it prints the path; `--base <branch>` starts it from
++  another branch), work there, and release it with `treehouse return <path>` once the change
++  has merged. `treehouse status` lists the pool. Never make one with `git worktree add` or a
++  second clone.
++- **Land every change through no-mistakes, at most three runs per pull request.** Commit in
++  the worktree, then run `no-mistakes axi run --intent "<goal>"` (a clone without a
++  `no-mistakes` remote needs `no-mistakes init` once). `no-mistakes axi status` shows the step
++  and its findings, and `no-mistakes axi respond` answers a review gate. The pipeline reviews,
++  tests, pushes and opens the pull request. After the third run, open an issue for anything
++  still flagged and merge the pull request as it stands only if CI is green and it touches no
++  "Require Human Review" area; otherwise hand it to a human. A run that stopped on a usage limit
++  counts; one cancelled before it did anything does not.
++
+ ## Reusable Workflows Consumed by Other Repos
+ 
+ `.github/workflows/*.{yml,yaml}` here are called by repos across `meshery` and
 ```
 
-**File**: `models/aws-dynamodb-controller/v1.14.0/v1.0.0/components/Backup.json` (added, +208/-0)
+**File**: `CLAUDE.md` (removed, +0/-1)
 ```diff
-@@ -0,0 +1,208 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "components.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "displayName": "Backup",
-+  "description": "",
-+  "format": "JSON",
-+  "model": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "schemaVersion": "models.meshery.io/v1beta2",
-+    "version": "v1.0.0",
-+    "name": "aws-dynamodb-controller",
-+    "displayName": "AWS DynamoDB",
-+    "status": "enabled",
-+    "registrant": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "Github",
-+      "type": "registry",
-+      "subType": "",
-+      "kind": "github",
-+      "status": "discovered",
-+      "created_at": "0001-01-01T00:00:00Z",
-+      "updated_at": "0001-01-01T00:00:00Z",
-+      "deleted_at": null,
-+      "schemaVersion": ""
-+    },
-+    "connection_id": "00000000-0000-0000-0000-000000000000",
-+    "category": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "App Definition and Development"
-+    },
-+    "subCategory": "Database",
-+    "metadata": {
-+      "isAnnotation": false,
-+      "primaryColor": "#C925D1",
-+      "shape": "rectangle",
-+      "source_uri": "git://github.com/aws-controllers-k8s/dynamodb-controller/main/helm",
-+      "styleOverrides": "",
-+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-DynamoDB_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Database\" fill=\"#C925D1\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.0661851,31.0185863 L26.0661851,31.0175845 L26.0661851,28.1532509 C24.5397015,29.4606854 21.3722727,30.3222898 17.5279417,30.3222898 C13.6806504,30.3222898 10.5132216,29.4596835 8.98673795,28.1512471 L8.98673795,31.013577 L8.98772469,31.013577 C8.98772469,32.4252056 12.4945914,33.9981345 17.5279417,33.9981345 C22.5543848,33.9981345 26.0582912,32.4282112 26.0661851,31.0185863 L26.0661851,31.0185863 Z M26.0671719,22.8443654 L27.0539098,22.8383542 L27.0539098,22.8443654 C27.0539098,23.4685276 26.7421006,24.0506115 26.1480844,24.5856077 C26.8743235,25.238824 27.0539098,25.880018 27.0539098,26.3358668 C27.0539098,26.3388724 27.0529231,26.341878 27.0529231,26.3438817 L27.0529231,31.013577 L27.0539098,31.013577 C27.0539098,33.2858081 22.9589473,35 17.5279417,35 C12.1245646,35 8.04736342,33.3038416 8.00493369,31.0486423 C8.00493369,31.0396255 8,31.0326125 8,31.0235957 L8,26.3338631 C8,26.3308575 8.00197348,26.3288537 8.00197348,26.3258481 C8.00394695,25.872003 8.18452,25.2368203 8.90286522,24.5886133 C8.18649347,23.9384025 8.00493369,23.3052235 8.00098674,22.8553859 C8.00098674,22.8533822 8,22.8513784 8,22.8493747 L8,18.1596421 C8,18.1566365 8.00197348,18.1536309 8.00197348,18.1516272 C8.00394695,17.6967802 8.18550673,17.0615975 8.90385196,16.4143923 C8.18649347,15.7631797 8.00493369,15.1310026 8.00098674,14.6801631 C8.00098674,14.6781593 8,14.6761556 8,14.6751537 L8,9.98441926 C8,9.97940994 8.00296021,9.97640434 8.00296021,9.97139501 C8.02269497,7.70617702 12.1087768,6 17.5279417,6 C20.1358901,6 22.6422044,6.42980032 24.4015582,7.17719201 L24.0206774,8.10191391 C22.3777587,7.40261176 20.0105743,7.00186554 17.5279417,7.00186554 C12.4945914,7.00186554 8.98772469,8.57479444 8.98772469,9.98642299 C8.98772469,11.3990534 12.4945914,12.9719823 17.5279417,12.9719823 C17.666085,12.9729842 17.7963344,12.9719823 17.9305307,12.9659711 L17.970987,13.9668348 C17.8229763,13.9738479 17.6749656,13.9738479 17.5279417,13.9738479 C13.6806504,13.9738479 10.5132216,13.1112416 8.98673795,11.8018034 L8.98673795,14.6641332 L8.98772469,14.6641332 L8.98772469,14.6761556 C8.99265838,15.2211705 9.53043056,15.6960547 9.97939633,15.9976163 C11.3272804,16.8872729 13.7418281,17.4944034 16.4326625,17.6196366 L16.3862858,18.6205002 C13.6628891,18.4942652 11.27597,17.9081738 9.74060574,17.0115042 C9.35676468,17.3070545 8.98772469,17.7037933 8.98772469,18.1616458 C8.98772469,19.5732744 12.4945914,21.1462033 17.5279417,21.1462033 C18.0242708,21.1462033 18.5087592,21.1291716 18.9814067,21.0951081 L19.0534385,22.0939681 C18.5571093,22.1300352 18.0469658,22.1480688 17.5279417,22.1480688 C13.6806504,22.1480688 10.5132216,21.2864645 8.98673795,19.9770262 L8.98673795,22.8383542 L8.98772469,22.8383542 C8.99265838,23.3963933 9.52944382,23.8712776 9.97939633,24.1718372 C11.5196943,25.1897326 14.4128099,25.8229116 17.5279417,25.8229116 L17.7469975,25.8229116 L17.7469975,26.8247772 L17.5279417,26.8247772 C14.3624863,26.8247772 11.497986,26.2126373 9.74159248,25.1837214 C9.35775142,25.4792717 8.98772469,25.8770124 8.98772469,26.3358668 C8.98772469,
+@@ -1 +0,0 @@
+-@AGENTS.md
 ```
 
-**File**: `models/aws-dynamodb-controller/v1.14.0/v1.0.0/components/FieldExport.json` (added, +208/-0)
+**File**: `CLAUDE.md` (added, +1/-0)
 ```diff
-@@ -0,0 +1,208 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "components.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "displayName": "Field Export",
-+  "description": "",
-+  "format": "JSON",
-+  "model": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "schemaVersion": "models.meshery.io/v1beta2",
-+    "version": "v1.0.0",
-+    "name": "aws-dynamodb-controller",
-+    "displayName": "AWS DynamoDB",
-+    "status": "enabled",
-+    "registrant": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "Github",
-+      "type": "registry",
-+      "subType": "",
-+      "kind": "github",
-+      "status": "discovered",
-+      "created_at": "0001-01-01T00:00:00Z",
-+      "updated_at": "0001-01-01T00:00:00Z",
-+      "deleted_at": null,
-+      "schemaVersion": ""
-+    },
-+    "connection_id": "00000000-0000-0000-0000-000000000000",
-+    "category": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "App Definition and Development"
-+    },
-+    "subCategory": "Database",
-+    "metadata": {
-+      "isAnnotation": false,
-+      "primaryColor": "#C925D1",
-+      "shape": "rectangle",
-+      "source_uri": "git://github.com/aws-controllers-k8s/dynamodb-controller/main/helm",
-+      "styleOverrides": "",
-+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-DynamoDB_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Database\" fill=\"#C925D1\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.0661851,31.0185863 L26.0661851,31.0175845 L26.0661851,28.1532509 C24.5397015,29.4606854 21.3722727,30.3222898 17.5279417,30.3222898 C13.6806504,30.3222898 10.5132216,29.4596835 8.98673795,28.1512471 L8.98673795,31.013577 L8.98772469,31.013577 C8.98772469,32.4252056 12.4945914,33.9981345 17.5279417,33.9981345 C22.5543848,33.9981345 26.0582912,32.4282112 26.0661851,31.0185863 L26.0661851,31.0185863 Z M26.0671719,22.8443654 L27.0539098,22.8383542 L27.0539098,22.8443654 C27.0539098,23.4685276 26.7421006,24.0506115 26.1480844,24.5856077 C26.8743235,25.238824 27.0539098,25.880018 27.0539098,26.3358668 C27.0539098,26.3388724 27.0529231,26.341878 27.0529231,26.3438817 L27.0529231,31.013577 L27.0539098,31.013577 C27.0539098,33.2858081 22.9589473,35 17.5279417,35 C12.1245646,35 8.04736342,33.3038416 8.00493369,31.0486423 C8.00493369,31.0396255 8,31.0326125 8,31.0235957 L8,26.3338631 C8,26.3308575 8.00197348,26.3288537 8.00197348,26.3258481 C8.00394695,25.872003 8.18452,25.2368203 8.90286522,24.5886133 C8.18649347,23.9384025 8.00493369,23.3052235 8.00098674,22.8553859 C8.00098674,22.8533822 8,22.8513784 8,22.8493747 L8,18.1596421 C8,18.1566365 8.00197348,18.1536309 8.00197348,18.1516272 C8.00394695,17.6967802 8.18550673,17.0615975 8.90385196,16.4143923 C8.18649347,15.7631797 8.00493369,15.1310026 8.00098674,14.6801631 C8.00098674,14.6781593 8,14.6761556 8,14.6751537 L8,9.98441926 C8,9.97940994 8.00296021,9.97640434 8.00296021,9.97139501 C8.02269497,7.70617702 12.1087768,6 17.5279417,6 C20.1358901,6 22.6422044,6.42980032 24.4015582,7.17719201 L24.0206774,8.10191391 C22.3777587,7.40261176 20.0105743,7.00186554 17.5279417,7.00186554 C12.4945914,7.00186554 8.98772469,8.57479444 8.98772469,9.98642299 C8.98772469,11.3990534 12.4945914,12.9719823 17.5279417,12.9719823 C17.666085,12.9729842 17.7963344,12.9719823 17.9305307,12.9659711 L17.970987,13.9668348 C17.8229763,13.9738479 17.6749656,13.9738479 17.5279417,13.9738479 C13.6806504,13.9738479 10.5132216,13.1112416 8.98673795,11.8018034 L8.98673795,14.6641332 L8.98772469,14.6641332 L8.98772469,14.6761556 C8.99265838,15.2211705 9.53043056,15.6960547 9.97939633,15.9976163 C11.3272804,16.8872729 13.7418281,17.4944034 16.4326625,17.6196366 L16.3862858,18.6205002 C13.6628891,18.4942652 11.27597,17.9081738 9.74060574,17.0115042 C9.35676468,17.3070545 8.98772469,17.7037933 8.98772469,18.1616458 C8.98772469,19.5732744 12.4945914,21.1462033 17.5279417,21.1462033 C18.0242708,21.1462033 18.5087592,21.1291716 18.9814067,21.0951081 L19.0534385,22.0939681 C18.5571093,22.1300352 18.0469658,22.1480688 17.5279417,22.1480688 C13.6806504,22.1480688 10.5132216,21.2864645 8.98673795,19.9770262 L8.98673795,22.8383542 L8.98772469,22.8383542 C8.99265838,23.3963933 9.52944382,23.8712776 9.97939633,24.1718372 C11.5196943,25.1897326 14.4128099,25.8229116 17.5279417,25.8229116 L17.7469975,25.8229116 L17.7469975,26.8247772 L17.5279417,26.8247772 C14.3624863,26.8247772 11.497986,26.2126373 9.74159248,25.1837214 C9.35775142,25.4792717 8.98772469,25.8770124 8.98772469,26.3358668 C8.987
-```
-
-**File**: `models/aws-dynamodb-controller/v1.14.0/v1.0.0/components/GlobalTable.json` (added, +208/-0)
-```diff
-@@ -0,0 +1,208 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "components.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "displayName": "Global Table",
-+  "description": "",
-+  "format": "JSON",
-+  "model": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "schemaVersion": "models.meshery.io/v1beta2",
-+    "version": "v1.0.0",
-+    "name": "aws-dynamodb-controller",
-+    "displayName": "AWS DynamoDB",
-+    "status": "enabled",
-+    "registrant": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "Github",
-+      "type": "registry",
-+      "subType": "",
-+      "kind": "github",
-+      "status": "discovered",
-+      "created_at": "0001-01-01T00:00:00Z",
-+      "updated_at": "0001-01-01T00:00:00Z",
-+      "deleted_at": null,
-+      "schemaVersion": ""
-+    },
-+    "connection_id": "00000000-0000-0000-0000-000000000000",
-+    "category": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "App Definition and Development"
-+    },
-+    "subCategory": "Database",
-+    "metadata": {
-+      "isAnnotation": false,
-+      "primaryColor": "#C925D1",
-+      "shape": "rectangle",
-+      "source_uri": "git://github.com/aws-controllers-k8s/dynamodb-controller/main/helm",
-+      "styleOverrides": "",
-+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-DynamoDB_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Database\" fill=\"#C925D1\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.0661851,31.0185863 L26.0661851,31.0175845 L26.0661851,28.1532509 C24.5397015,29.4606854 21.3722727,30.3222898 17.5279417,30.3222898 C13.6806504,30.3222898 10.5132216,29.4596835 8.98673795,28.1512471 L8.98673795,31.013577 L8.98772469,31.013577 C8.98772469,32.4252056 12.4945914,33.9981345 17.5279417,33.9981345 C22.5543848,33.9981345 26.0582912,32.4282112 26.0661851,31.0185863 L26.0661851,31.0185863 Z M26.0671719,22.8443654 L27.0539098,22.8383542 L27.0539098,22.8443654 C27.0539098,23.4685276 26.7421006,24.0506115 26.1480844,24.5856077 C26.8743235,25.238824 27.0539098,25.880018 27.0539098,26.3358668 C27.0539098,26.3388724 27.0529231,26.341878 27.0529231,26.3438817 L27.0529231,31.013577 L27.0539098,31.013577 C27.0539098,33.2858081 22.9589473,35 17.5279417,35 C12.1245646,35 8.04736342,33.3038416 8.00493369,31.0486423 C8.00493369,31.0396255 8,31.0326125 8,31.0235957 L8,26.3338631 C8,26.3308575 8.00197348,26.3288537 8.00197348,26.3258481 C8.00394695,25.872003 8.18452,25.2368203 8.90286522,24.5886133 C8.18649347,23.9384025 8.00493369,23.3052235 8.00098674,22.8553859 C8.00098674,22.8533822 8,22.8513784 8,22.8493747 L8,18.1596421 C8,18.1566365 8.00197348,18.1536309 8.00197348,18.1516272 C8.00394695,17.6967802 8.18550673,17.0615975 8.90385196,16.4143923 C8.18649347,15.7631797 8.00493369,15.1310026 8.00098674,14.6801631 C8.00098674,14.6781593 8,14.6761556 8,14.6751537 L8,9.98441926 C8,9.97940994 8.00296021,9.97640434 8.00296021,9.97139501 C8.02269497,7.70617702 12.1087768,6 17.5279417,6 C20.1358901,6 22.6422044,6.42980032 24.4015582,7.17719201 L24.0206774,8.10191391 C22.3777587,7.40261176 20.0105743,7.00186554 17.5279417,7.00186554 C12.4945914,7.00186554 8.98772469,8.57479444 8.98772469,9.98642299 C8.98772469,11.3990534 12.4945914,12.9719823 17.5279417,12.9719823 C17.666085,12.9729842 17.7963344,12.9719823 17.9305307,12.9659711 L17.970987,13.9668348 C17.8229763,13.9738479 17.6749656,13.9738479 17.5279417,13.9738479 C13.6806504,13.9738479 10.5132216,13.1112416 8.98673795,11.8018034 L8.98673795,14.6641332 L8.98772469,14.6641332 L8.98772469,14.6761556 C8.99265838,15.2211705 9.53043056,15.6960547 9.97939633,15.9976163 C11.3272804,16.8872729 13.7418281,17.4944034 16.4326625,17.6196366 L16.3862858,18.6205002 C13.6628891,18.4942652 11.27597,17.9081738 9.74060574,17.0115042 C9.35676468,17.3070545 8.98772469,17.7037933 8.98772469,18.1616458 C8.98772469,19.5732744 12.4945914,21.1462033 17.5279417,21.1462033 C18.0242708,21.1462033 18.5087592,21.1291716 18.9814067,21.0951081 L19.0534385,22.0939681 C18.5571093,22.1300352 18.0469658,22.1480688 17.5279417,22.1480688 C13.6806504,22.1480688 10.5132216,21.2864645 8.98673795,19.9770262 L8.98673795,22.8383542 L8.98772469,22.8383542 C8.99265838,23.3963933 9.52944382,23.8712776 9.97939633,24.1718372 C11.5196943,25.1897326 14.4128099,25.8229116 17.5279417,25.8229116 L17.7469975,25.8229116 L17.7469975,26.8247772 L17.5279417,26.8247772 C14.3624863,26.8247772 11.497986,26.2126373 9.74159248,25.1837214 C9.35775142,25.4792717 8.98772469,25.8770124 8.98772469,26.3358668 C8.987
-```
-
-**File**: `models/aws-dynamodb-controller/v1.14.0/v1.0.0/components/IAMRoleSelector.json` (added, +207/-0)
-```diff
-@@ -0,0 +1,207 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "components.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "displayName": "IAM Role Selector",
-+  "description": "",
-+  "format": "JSON",
-+  "model": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "schemaVersion": "models.meshery.io/v1beta2",
-+    "version": "v1.0.0",
-+    "name": "aws-dynamodb-controller",
-+    "displayName": "AWS DynamoDB",
-+    "status": "enabled",
-+    "registrant": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "Github",
-+      "type": "registry",
-+      "subType": "",
-+      "kind": "github",
-+      "status": "discovered",
-+      "created_at": "0001-01-01T00:00:00Z",
-+      "updated_at": "0001-01-01T00:00:00Z",
-+      "deleted_at": null,
-+      "schemaVersion": ""
-+    },
-+    "connection_id": "00000000-0000-0000-0000-000000000000",
-+    "category": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "App Definition and Development"
-+    },
-+    "subCategory": "Database",
-+    "metadata": {
-+      "isAnnotation": false,
-+      "primaryColor": "#C925D1",
-+      "shape": "rectangle",
-+      "source_uri": "git://github.com/aws-controllers-k8s/dynamodb-controller/main/helm",
-+      "styleOverrides": "",
-+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-DynamoDB_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Database\" fill=\"#C925D1\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.0661851,31.0185863 L26.0661851,31.0175845 L26.0661851,28.1532509 C24.5397015,29.4606854 21.3722727,30.3222898 17.5279417,30.3222898 C13.6806504,30.3222898 10.5132216,29.4596835 8.98673795,28.1512471 L8.98673795,31.013577 L8.98772469,31.013577 C8.98772469,32.4252056 12.4945914,33.9981345 17.5279417,33.9981345 C22.5543848,33.9981345 26.0582912,32.4282112 26.0661851,31.0185863 L26.0661851,31.0185863 Z M26.0671719,22.8443654 L27.0539098,22.8383542 L27.0539098,22.8443654 C27.0539098,23.4685276 26.7421006,24.0506115 26.1480844,24.5856077 C26.8743235,25.238824 27.0539098,25.880018 27.0539098,26.3358668 C27.0539098,26.3388724 27.0529231,26.341878 27.0529231,26.3438817 L27.0529231,31.013577 L27.0539098,31.013577 C27.0539098,33.2858081 22.9589473,35 17.5279417,35 C12.1245646,35 8.04736342,33.3038416 8.00493369,31.0486423 C8.00493369,31.0396255 8,31.0326125 8,31.0235957 L8,26.3338631 C8,26.3308575 8.00197348,26.3288537 8.00197348,26.3258481 C8.00394695,25.872003 8.18452,25.2368203 8.90286522,24.5886133 C8.18649347,23.9384025 8.00493369,23.3052235 8.00098674,22.8553859 C8.00098674,22.8533822 8,22.8513784 8,22.8493747 L8,18.1596421 C8,18.1566365 8.00197348,18.1536309 8.00197348,18.1516272 C8.00394695,17.6967802 8.18550673,17.0615975 8.90385196,16.4143923 C8.18649347,15.7631797 8.00493369,15.1310026 8.00098674,14.6801631 C8.00098674,14.6781593 8,14.6761556 8,14.6751537 L8,9.98441926 C8,9.97940994 8.00296021,9.97640434 8.00296021,9.97139501 C8.02269497,7.70617702 12.1087768,6 17.5279417,6 C20.1358901,6 22.6422044,6.42980032 24.4015582,7.17719201 L24.0206774,8.10191391 C22.3777587,7.40261176 20.0105743,7.00186554 17.5279417,7.00186554 C12.4945914,7.00186554 8.98772469,8.57479444 8.98772469,9.98642299 C8.98772469,11.3990534 12.4945914,12.9719823 17.5279417,12.9719823 C17.666085,12.9729842 17.7963344,12.9719823 17.9305307,12.9659711 L17.970987,13.9668348 C17.8229763,13.9738479 17.6749656,13.9738479 17.5279417,13.9738479 C13.6806504,13.9738479 10.5132216,13.1112416 8.98673795,11.8018034 L8.98673795,14.6641332 L8.98772469,14.6641332 L8.98772469,14.6761556 C8.99265838,15.2211705 9.53043056,15.6960547 9.97939633,15.9976163 C11.3272804,16.8872729 13.7418281,17.4944034 16.4326625,17.6196366 L16.3862858,18.6205002 C13.6628891,18.4942652 11.27597,17.9081738 9.74060574,17.0115042 C9.35676468,17.3070545 8.98772469,17.7037933 8.98772469,18.1616458 C8.98772469,19.5732744 12.4945914,21.1462033 17.5279417,21.1462033 C18.0242708,21.1462033 18.5087592,21.1291716 18.9814067,21.0951081 L19.0534385,22.0939681 C18.5571093,22.1300352 18.0469658,22.1480688 17.5279417,22.1480688 C13.6806504,22.1480688 10.5132216,21.2864645 8.98673795,19.9770262 L8.98673795,22.8383542 L8.98772469,22.8383542 C8.99265838,23.3963933 9.52944382,23.8712776 9.97939633,24.1718372 C11.5196943,25.1897326 14.4128099,25.8229116 17.5279417,25.8229116 L17.7469975,25.8229116 L17.7469975,26.8247772 L17.5279417,26.8247772 C14.3624863,26.8247772 11.497986,26.2126373 9.74159248,25.1837214 C9.35775142,25.4792717 8.98772469,25.8770124 8.98772469,26.3358668 C
-```
-
-**File**: `models/aws-dynamodb-controller/v1.14.0/v1.0.0/components/Table.json` (added, +208/-0)
-```diff
-@@ -0,0 +1,208 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "components.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "displayName": "Table",
-+  "description": "",
-+  "format": "JSON",
-+  "model": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "schemaVersion": "models.meshery.io/v1beta2",
-+    "version": "v1.0.0",
-+    "name": "aws-dynamodb-controller",
-+    "displayName": "AWS DynamoDB",
-+    "status": "enabled",
-+    "registrant": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "Github",
-+      "type": "registry",
-+      "subType": "",
-+      "kind": "github",
-+      "status": "discovered",
-+      "created_at": "0001-01-01T00:00:00Z",
-+      "updated_at": "0001-01-01T00:00:00Z",
-+      "deleted_at": null,
-+      "schemaVersion": ""
-+    },
-+    "connection_id": "00000000-0000-0000-0000-000000000000",
-+    "category": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "App Definition and Development"
-+    },
-+    "subCategory": "Database",
-+    "metadata": {
-+      "isAnnotation": false,
-+      "primaryColor": "#C925D1",
-+      "shape": "rectangle",
-+      "source_uri": "git://github.com/aws-controllers-k8s/dynamodb-controller/main/helm",
-+      "styleOverrides": "",
-+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-DynamoDB_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Database\" fill=\"#C925D1\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.0661851,31.0185863 L26.0661851,31.0175845 L26.0661851,28.1532509 C24.5397015,29.4606854 21.3722727,30.3222898 17.5279417,30.3222898 C13.6806504,30.3222898 10.5132216,29.4596835 8.98673795,28.1512471 L8.98673795,31.013577 L8.98772469,31.013577 C8.98772469,32.4252056 12.4945914,33.9981345 17.5279417,33.9981345 C22.5543848,33.9981345 26.0582912,32.4282112 26.0661851,31.0185863 L26.0661851,31.0185863 Z M26.0671719,22.8443654 L27.0539098,22.8383542 L27.0539098,22.8443654 C27.0539098,23.4685276 26.7421006,24.0506115 26.1480844,24.5856077 C26.8743235,25.238824 27.0539098,25.880018 27.0539098,26.3358668 C27.0539098,26.3388724 27.0529231,26.341878 27.0529231,26.3438817 L27.0529231,31.013577 L27.0539098,31.013577 C27.0539098,33.2858081 22.9589473,35 17.5279417,35 C12.1245646,35 8.04736342,33.3038416 8.00493369,31.0486423 C8.00493369,31.0396255 8,31.0326125 8,31.0235957 L8,26.3338631 C8,26.3308575 8.00197348,26.3288537 8.00197348,26.3258481 C8.00394695,25.872003 8.18452,25.2368203 8.90286522,24.5886133 C8.18649347,23.9384025 8.00493369,23.3052235 8.00098674,22.8553859 C8.00098674,22.8533822 8,22.8513784 8,22.8493747 L8,18.1596421 C8,18.1566365 8.00197348,18.1536309 8.00197348,18.1516272 C8.00394695,17.6967802 8.18550673,17.0615975 8.90385196,16.4143923 C8.18649347,15.7631797 8.00493369,15.1310026 8.00098674,14.6801631 C8.00098674,14.6781593 8,14.6761556 8,14.6751537 L8,9.98441926 C8,9.97940994 8.00296021,9.97640434 8.00296021,9.97139501 C8.02269497,7.70617702 12.1087768,6 17.5279417,6 C20.1358901,6 22.6422044,6.42980032 24.4015582,7.17719201 L24.0206774,8.10191391 C22.3777587,7.40261176 20.0105743,7.00186554 17.5279417,7.00186554 C12.4945914,7.00186554 8.98772469,8.57479444 8.98772469,9.98642299 C8.98772469,11.3990534 12.4945914,12.9719823 17.5279417,12.9719823 C17.666085,12.9729842 17.7963344,12.9719823 17.9305307,12.9659711 L17.970987,13.9668348 C17.8229763,13.9738479 17.6749656,13.9738479 17.5279417,13.9738479 C13.6806504,13.9738479 10.5132216,13.1112416 8.98673795,11.8018034 L8.98673795,14.6641332 L8.98772469,14.6641332 L8.98772469,14.6761556 C8.99265838,15.2211705 9.53043056,15.6960547 9.97939633,15.9976163 C11.3272804,16.8872729 13.7418281,17.4944034 16.4326625,17.6196366 L16.3862858,18.6205002 C13.6628891,18.4942652 11.27597,17.9081738 9.74060574,17.0115042 C9.35676468,17.3070545 8.98772469,17.7037933 8.98772469,18.1616458 C8.98772469,19.5732744 12.4945914,21.1462033 17.5279417,21.1462033 C18.0242708,21.1462033 18.5087592,21.1291716 18.9814067,21.0951081 L19.0534385,22.0939681 C18.5571093,22.1300352 18.0469658,22.1480688 17.5279417,22.1480688 C13.6806504,22.1480688 10.5132216,21.2864645 8.98673795,19.9770262 L8.98673795,22.8383542 L8.98772469,22.8383542 C8.99265838,23.3963933 9.52944382,23.8712776 9.97939633,24.1718372 C11.5196943,25.1897326 14.4128099,25.8229116 17.5279417,25.8229116 L17.7469975,25.8229116 L17.7469975,26.8247772 L17.5279417,26.8247772 C14.3624863,26.8247772 11.497986,26.2126373 9.74159248,25.1837214 C9.35775142,25.4792717 8.98772469,25.8770124 8.98772469,26.3358668 C8.98772469,2
-```
-
-**File**: `models/aws-dynamodb-controller/v1.14.0/v1.0.0/model.json` (added, +45/-0)
-```diff
-@@ -0,0 +1,45 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "models.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "name": "aws-dynamodb-controller",
-+  "displayName": "AWS DynamoDB",
-+  "status": "enabled",
-+  "registrant": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "name": "Github",
-+    "type": "registry",
-+    "subType": "",
-+    "kind": "github",
-+    "status": "discovered",
-+    "created_at": "0001-01-01T00:00:00Z",
-+    "updated_at": "0001-01-01T00:00:00Z",
-+    "deleted_at": null,
-+    "schemaVersion": ""
-+  },
-+  "connection_id": "00000000-0000-0000-0000-000000000000",
-+  "category": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "name": "App Definition and Development"
-+  },
-+  "subCategory": "Database",
-+  "metadata": {
-+    "capabilities": null,
-+    "isAnnotation": false,
-+    "primaryColor": "#C925D1",
-+    "shape": "rectangle",
-+    "styleOverrides": "",
-+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-DynamoDB_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Database\" fill=\"#C925D1\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.0661851,31.0185863 L26.0661851,31.0175845 L26.0661851,28.1532509 C24.5397015,29.4606854 21.3722727,30.3222898 17.5279417,30.3222898 C13.6806504,30.3222898 10.5132216,29.4596835 8.98673795,28.1512471 L8.98673795,31.013577 L8.98772469,31.013577 C8.98772469,32.4252056 12.4945914,33.9981345 17.5279417,33.9981345 C22.5543848,33.9981345 26.0582912,32.4282112 26.0661851,31.0185863 L26.0661851,31.0185863 Z M26.0671719,22.8443654 L27.0539098,22.8383542 L27.0539098,22.8443654 C27.0539098,23.4685276 26.7421006,24.0506115 26.1480844,24.5856077 C26.8743235,25.238824 27.0539098,25.880018 27.0539098,26.3358668 C27.0539098,26.3388724 27.0529231,26.341878 27.0529231,26.3438817 L27.0529231,31.013577 L27.0539098,31.013577 C27.0539098,33.2858081 22.9589473,35 17.5279417,35 C12.1245646,35 8.04736342,33.3038416 8.00493369,31.0486423 C8.00493369,31.0396255 8,31.0326125 8,31.0235957 L8,26.3338631 C8,26.3308575 8.00197348,26.3288537 8.00197348,26.3258481 C8.00394695,25.872003 8.18452,25.2368203 8.90286522,24.5886133 C8.18649347,23.9384025 8.00493369,23.3052235 8.00098674,22.8553859 C8.00098674,22.8533822 8,22.8513784 8,22.8493747 L8,18.1596421 C8,18.1566365 8.00197348,18.1536309 8.00197348,18.1516272 C8.00394695,17.6967802 8.18550673,17.0615975 8.90385196,16.4143923 C8.18649347,15.7631797 8.00493369,15.1310026 8.00098674,14.6801631 C8.00098674,14.6781593 8,14.6761556 8,14.6751537 L8,9.98441926 C8,9.97940994 8.00296021,9.97640434 8.00296021,9.97139501 C8.02269497,7.70617702 12.1087768,6 17.5279417,6 C20.1358901,6 22.6422044,6.42980032 24.4015582,7.17719201 L24.0206774,8.10191391 C22.3777587,7.40261176 20.0105743,7.00186554 17.5279417,7.00186554 C12.4945914,7.00186554 8.98772469,8.57479444 8.98772469,9.98642299 C8.98772469,11.3990534 12.4945914,12.9719823 17.5279417,12.9719823 C17.666085,12.9729842 17.7963344,12.9719823 17.9305307,12.9659711 L17.970987,13.9668348 C17.8229763,13.9738479 17.6749656,13.9738479 17.5279417,13.9738479 C13.6806504,13.9738479 10.5132216,13.1112416 8.98673795,11.8018034 L8.98673795,14.6641332 L8.98772469,14.6641332 L8.98772469,14.6761556 C8.99265838,15.2211705 9.53043056,15.6960547 9.97939633,15.9976163 C11.3272804,16.8872729 13.7418281,17.4944034 16.4326625,17.6196366 L16.3862858,18.6205002 C13.6628891,18.4942652 11.27597,17.9081738 9.74060574,17.0115042 C9.35676468,17.3070545 8.98772469,17.7037933 8.98772469,18.1616458 C8.98772469,19.5732744 12.4945914,21.1462033 17.5279417,21.1462033 C18.0242708,21.1462033 18.5087592,21.1291716 18.9814067,21.0951081 L19.0534385,22.0939681 C18.5571093,22.1300352 18.0469658,22.1480688 17.5279417,22.1480688 C13.6806504,22.1480688 10.5132216,21.2864645 8.98673795,19.9770262 L8.98673795,22.8383542 L8.98772469,22.8383542 C8.99265838,23.3963933 9.52944382,23.8712776 9.97939633,24.1718372 C11.5196943,25.1897326 14.4128099,25.8229116 17.5279417,25.8229116 L17.7469975,25.8229116 L17.7469975,26.8247772 L17.5279417,26.8247772 C14.3624863,26.8247772 11.497986,26.2126373 9.74159248,25.1837214 C9.35775142,25.4792717 8.98772469,25.8770124 8.98772469,26.3358668 C8.98772469,27.7474953 12.4945914,29.3204242 17.5279417,29.3204242 C22.5524113,29.3204242 26.055331,27.7525047 26.0661851,26.341878 L26.0661851,26.3338631 L26.0661851,26.3328612 C26.0651984,25.8780142 25.6991186,25.4822773 25.317251,25.1877289 C25.0735268,25.3309956 24.8120412,25.4682512 24.5160198,25.5944863 L24.1341522,24.6717681 C24.4962851,24
-```
-
-**File**: `models/aws-dynamodb-controller/v1.14.0/v1.0.0/relationships/edge-binding-firewall-zqbml.json` (added, +112/-0)
-```diff
-@@ -0,0 +1,112 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "evaluationQuery": "",
-+  "kind": "edge",
-+  "metadata": {
-+    "description": "",
-+    "isAnnotation": false,
-+    "styles": {
-+      "primaryColor": "",
-+      "svgColor": "",
-+      "svgWhite": ""
-+    }
-+  },
-+  "model": {
-+    "displayName": "",
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "model": {
-+      "version": "v1.14.0"
-+    },
-+    "name": "aws-dynamodb-controller",
-+    "registrant": {
-+      "kind": ""
-+    },
-+    "version": ""
-+  },
-+  "schemaVersion": "relationships.meshery.io/v1beta2",
-+  "selectors": [
-+    {
-+      "allow": {
-+        "from": [
-+          {
-+            "id": null,
-+            "kind": "Table",
-+            "match": {},
-+            "match_strategy_matrix": null,
-+            "model": {
-+              "displayName": "",
-+              "id": "00000000-0000-0000-0000-000000000000",
-+              "model": {
-+                "version": ""
-+              },
-+              "name": "dynamodb-controller",
-+              "registrant": {
-+                "kind": "artifacthub"
-+              },
-+              "version": ""
-+            },
-+            "patch": {
-+              "mutatorRef": [
-+                [
-+                  "configuration",
-+                  "spec",
-+                  "streamSpecification"
-+                ],
-+                [
-+                  "configuration",
-+                  "spec",
-+                  "tableName"
-+                ]
-+              ],
-+              "patchStrategy": "replace"
-+            }
-+          }
-+        ],
-+        "to": [
-+          {
-+            "id": null,
-+            "kind": "Function",
-+            "match": {},
-+            "match_strategy_matrix": null,
-+            "model": {
-+              "displayName": "",
-+              "id": "00000000-0000-0000-0000-000000000000",
-+              "model": {
-+                "version": ""
-+              },
-+              "name": "lambda-controller",
-+              "registrant": {
-+                "kind": "artifacthub"
-+              },
-+              "version": ""
-+            },
-+            "patch": {
-+              "mutatedRef": [
-+                [
-+                  "configuration",
-+                  "status",
-+                  "ackResourceMetadata",
-+                  "arn"
-+                ],
-+                [
-+                  "configuration",
-+                  "spec",
-+                  "name"
-+                ]
-+              ],
-+              "patchStrategy": "replace"
-+            }
-+          }
-+        ]
-+      },
-+      "deny": {
-+        "from": [],
-+        "to": []
-+      }
-+    }
-+  ],
-+  "subType": "firewall",
-+  "status": "enabled",
-+  "type": "non-binding",
-+  "version": "v1.0.0"
-+}
+@@ -0,0 +1 @@
++AGENTS.md
 \ No newline at end of file
+```
+
+**File**: `docs/CONTRIBUTING-gitflow.md` (modified, +22/-0)
+```diff
+@@ -132,6 +132,28 @@ Now, it may be desirable to squash some of your smaller commits down into a smal
+ 
+ This will open up a text editor where you can specify which commits to squash.
+ <br><br>
++## <a name="markdown-export">LLM-friendly page output</a>
++
++Every documentation page is also published as Markdown at `<page-url>/index.md`,
++with the page title, description, and body content and no navigation, sidebar,
++footer, or styling. A **View as Markdown** link to it appears in the page's
++right-hand meta column (wide screens). The home page shows no link, but its Markdown is still
++published and listed in `llms.txt`. Hugo also generates
++[`/llms.txt`](https://llmstxt.org/) (an index of pages) and `/llms-full.txt`
++(full content of every page) at the site root for AI agents.
++
++The `llms.txt`, `llms-full.txt`, and home-page Markdown layouts are provided by
++the existing [Layer5 docs Hugo module](https://github.com/layer5io/docs), pinned
++in `go.mod`. Since `hugo.toml` sets `ignoreConfig = true` for that module and
++selects explicit mounts, it mounts `layouts/index.llms`, `layouts/index.llmsfull`,
++and `layouts/index.md` from the module and declares their output formats locally.
++
++To leave a path out of `llms.txt` and `llms-full.txt`, add it to `exclude` under
++`[params.llms]` in `hugo.toml`. To keep only the newest N pages of a section in `llms.txt`, add it to
++`[params.llms.limit_sections]`; Meshery releases under `/project/releases/` are
++capped at 5 this way. The limit is implemented by the Layer5 module's
++`layouts/index.llms` template.
++
+ <li><h3>References</h3></li>
+ <a href="https://git-scm.com/docs">Git Reference Docs</a>
+ <br>
+```
+
+**File**: `docs/content/en/extensions/extensions/helm-snapshot/index.md` (modified, +8/-8)
+```diff
+@@ -34,11 +34,11 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
+ 
+ <pre class="codeblock-pre">
+   <div class="codeblock">
+-     <div class="clipboardjs"> helm plugin install https://github.com/meshery-extensions/helm-snapshot </div>
++     <div class="clipboardjs"> helm plugin install https://github.com/meshery-extensions/helm-kanvas-snapshot </div>
+    </div>
+ </pre>
+ 
+-3. Verify the installation by running:
++2. Verify the installation by running:
+ 
+ 
+ <pre class="codeblock-pre">
+@@ -47,9 +47,9 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
+    </div>
+ </pre>
+ 
+-   You should see the snapshot listed as `helm-snapshot`.
++   You should see the snapshot listed as `helm-kanvas-snapshot`.
+ 
+-4. Set up the required environment variables (see the [Environment Variables](#environment-variables) section).
++No environment variables or tokens need to be set. The plugin installs a prebuilt release binary that already includes its Meshery Cloud configuration.
+ 
+ ### Usage
+ 
+@@ -58,21 +58,21 @@ Once the plugin is installed, you can generate a snapshot using either a package
+ 
+ <pre class="codeblock-pre">
+   <div class="codeblock">
+-     <div class="clipboardjs">helm snapshot --f &lt;chart-URI&gt; [--name &lt;snapshot-name&gt;] [--email &lt;email&gt;]</div>
++     <div class="clipboardjs">helm helm-kanvas-snapshot -f &lt;chart-URI&gt; [--name &lt;snapshot-name&gt;] [-e &lt;email&gt;]</div>
+    </div>
+ </pre>
+ 
+-- **`-f`**, **`--file`**: (required) path or URL to the Helm chart (required).
++- **`-f`**, **`--file`**: (required) path or URL to the Helm chart.
+ - **`--name`**: (optional) name for the snapshot. If not provided, a name will be auto-generated based on the chart name.
+ - **`-e`**, **`--email`**: (optional) email address to notify when snapshot is ready. If not provided, a link to the snapshot will be displayed in the terminal.
+ 
+ **Example**
+ 
+-To generate a snapshot for a Helm chart located at `https://meshery.io/charts/v0.8.0-meshery.tar.gz`, you can use:
++To generate a snapshot for a Helm chart located at `https://meshery.io/charts/meshery-v0.8.12.tgz`, you can use:
+ 
+ <pre class="codeblock-pre">
+   <div class="codeblock">
+-     <div class="clipboardjs">helm snapshot -f https://meshery.io/charts/v0.8.0-meshery.tar.gz --name meshery-chart</div>
++     <div class="clipboardjs">helm helm-kanvas-snapshot -f https://meshery.io/charts/meshery-v0.8.12.tgz --name meshery-chart</div>
+    </div>
+ </pre>
+ 
+```
+
+**File**: `docs/content/en/extensions/models/crossplane-provider-openstack/index.md` (modified, +5/-1)
+```diff
+@@ -381,7 +381,11 @@ components:
+   colorIcon: extensions/models/crossplane-provider-openstack/components/cluster-provider-config/icons/color/cluster-provider-config-color.svg
+   whiteIcon: extensions/models/crossplane-provider-openstack/components/cluster-provider-config/icons/white/cluster-provider-config-white.svg
+   description: 
+-components-count: 93
++- name: cluster-provider-config
++  colorIcon: extensions/models/crossplane-provider-openstack/components/cluster-provider-config/icons/color/cluster-provider-config-color.svg
++  whiteIcon: extensions/models/crossplane-provider-openstack/components/cluster-provider-config/icons/white/cluster-provider-config-white.svg
++  description: 
++components-count: 94
+ relationships: 
+ relationship-count: 0
+ featureList: [
+```
+
+**File**: `docs/data/openapi.yml` (modified, +342/-38)
+```diff
+@@ -23,6 +23,8 @@ tags:
+     description: APIs for configuring Meshery Operator, MeshSync, and Meshery Broker.
+   - name: Console_API_Console
+     description: Interactive terminal and log consoles against a connection's resources.
++  - name: Diagnostics_Diagnostics
++    description: Operations related to failure diagnostics
+   - name: Evaluation_Evaluation
+     description: Operations related to design evaluation
+   - name: Feature_Features
+@@ -65,8 +67,6 @@ tags:
+     description: Operations related to Meshery Academy content and curriculum
+   - name: BlowhornHealth_blowhornHealth
+     description: Operations related to Blowhorn health.
+-  - name: BlowhornProfile_blowhornProfiles
+-    description: Operations related to Blowhorn profiles.
+   - name: Claim_claims
+     description: Operations related to claims on resources.
+   - name: ContentItem_contentItems
+@@ -72388,7 +72388,10 @@ paths:
+ 
+ 
+         Every connection belongs to exactly one organization. The server assigns `organizationId` from the session
+-        (`X-Current-Orgid`, then the caller's selected organization) and does not accept it in the body.
++        (`X-Current-Orgid`, then the caller's selected organization) and does not accept it in the body. When the
++        session names none, the server may use the caller's only organization (Meshery Cloud: the only live organization
++        the caller belongs to, else the only one of those the caller owns); it must not guess between several, and
++        answers 400 instead.
+ 
+ 
+         Desktop registration uses this shared operation, but kind `desktop` is implemented by Cloud: a server that does
+@@ -74859,8 +74862,8 @@ paths:
+                 description: >-
+                   A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
+                   description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
+-                  `MeshkitError409`, `MeshkitError500` and `MeshkitError502` responses for an operation whose server
+-                  answers its refusals this way.
++                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
++                  operation whose server answers its refusals this way.
+                 required:
+                   - error
+                 additionalProperties: false
+@@ -74959,6 +74962,59 @@ paths:
+                         type: string
+                         description: Where the client can get an update, when the provider knows one.
+                         maxLength: 2048
++        '429':
++          description: >-
++            Too many requests - the caller exceeded the server's per-user request rate for this route family. Wait the
++            number of seconds in `Retry-After` before retrying.
++          headers:
++            Retry-After:
++              description: Number of seconds the caller must wait before retrying.
++              required: true
++              schema:
++                type: integer
++                minimum: 1
++          content:
++            application/json:
++              schema:
++                type: object
++                description: >-
++                  A MeshKit error answered as a JSON body. `error` is the sentence the caller is shown; MeshKit's long
++                  description is never serialized. Use the `MeshkitError400`, `MeshkitError403`, `MeshkitError404`,
++                  `MeshkitError409`, `MeshkitError429`, `MeshkitError500` and `MeshkitError502` responses for an
++                  operation whose server answers its refusals this way.
++                required:
++                  - error
++                additionalProperties: false
++                properties:
++                  error:
++                    type: string
++                    minLength: 1
++                    description: The sentence the caller is shown.
++                  code:
++                    type: string
++                    minLength: 1
++                    description: >-
++                      MeshKit error code, a component-scoped identifier allocated by the emitting service (e.g.
++                      `<component>-<number>`); it is not a stable part of this contract. Omitted for an error that is
++                      not a MeshKit error.
++                  severity:
++                    type: string
++                    description: MeshKit severity name. Omitted when MeshKit reports none.
++                    enum:
++                      - emergency
++                      - alert
++                      - critical
++                      - fatal
++                  probableCause:
++                    type: array
++                    description: MeshKit's probable causes of the error.
++                    items:
++                      type: string
++                  suggestedRemediation:
++                    type: array
++                    description: MeshKit's suggested remediations for the 
+```
+
+**File**: `docs/go.mod` (modified, +1/-1)
+```diff
+@@ -5,5 +5,5 @@ go 1.26.4
+ require (
+ 	github.com/google/docsy v0.15.0 // indirect
+ 	github.com/google/docsy/dependencies v0.7.2 // indirect
+-	github.com/layer5io/docs v0.0.0-20260901204535-b59d3b67363e // indirect
++	github.com/layer5io/docs v0.0.0-20261021153954-6106eb9d5444 // indirect
+ )
+```
+
+---
+
+### Incident Patch 3: `237693d4` (2026-10-28)
+**Commit Message**: Merge pull request #22349 from Ayush-AM/fix/issue-22303-adapter-selection
+
+[UI] Fix inert adapter selection and variable shadowing in MesheryPlayComponent
+
+**File**: `ui/components/MesheryPlayComponent.test.tsx` (added, +148/-0)
+```diff
+@@ -0,0 +1,148 @@
++import React from 'react';
++import { render, screen, fireEvent, act } from '@testing-library/react';
++import { beforeEach, describe, expect, it, vi } from 'vitest';
++import MesheryPlayComponent from './MesheryPlayComponent';
++
++const mockDispatch = vi.fn();
++let mockRouter: any = {
++  push: vi.fn(),
++  events: {
++    on: vi.fn(),
++    off: vi.fn(),
++  },
++  query: {},
++};
++
++let mockAdapters = [
++  { name: 'Istio', adapterLocation: 'meshery-istio:10000' },
++  { name: 'Linkerd', adapterLocation: 'meshery-linkerd:10001' },
++];
++
++let mockHasPermission = true;
++
++vi.mock('next/router', () => ({
++  useRouter: () => mockRouter,
++}));
++
++vi.mock('react-redux', () => ({
++  useDispatch: () => mockDispatch,
++  useSelector: (selector: any) =>
++    selector({
++      adapter: { meshAdapters: mockAdapters },
++    }),
++}));
++
++vi.mock('@sistent/sistent', async () => {
++  const actual: any = await vi.importActual('@sistent/sistent');
++  return {
++    ...actual,
++    useHasPermission: () => mockHasPermission,
++    NoSsr: ({ children }: any) => <>{children}</>,
++  };
++});
++
++vi.mock('./MesheryAdapterPlayComponent', () => ({
++  default: ({ adapter }: any) => (
++    <div data-testid="meshery-adapter-play">{adapter?.name || 'no-adapter'}</div>
++  ),
++}));
++
++vi.mock('./general/error-404/index', () => ({
++  default: () => <div data-testid="default-error">Permission Denied</div>,
++}));
++
++describe('MesheryPlayComponent', () => {
++  beforeEach(() => {
++    vi.clearAllMocks();
++    mockHasPermission = true;
++    mockAdapters = [
++      { name: 'Istio', adapterLocation: 'meshery-istio:10000' },
++      { name: 'Linkerd', adapterLocation: 'meshery-linkerd:10001' },
++    ];
++    mockRouter = {
++      push: vi.fn(),
++      events: {
++        on: vi.fn(),
++        off: vi.fn(),
++      },
++      query: {},
++    };
++  });
++
++  it('renders permission error when user does not have permission', () => {
++    mockHasPermission = false;
++    render(<MesheryPlayComponent />);
++    expect(screen.getByTestId('default-error')).toBeInTheDocument();
++  });
++
++  it('renders "Adapter Unavailable" state when no adapters are configured', () => {
++    mockAdapters = [];
++    render(<MesheryPlayComponent />);
++    expect(screen.getByText('Adapter Unavailable')).toBeInTheDocument();
++    expect(screen.getByText('Configure Settings')).toBeInTheDocument();
++
++    fireEvent.click(screen.getByText('Configure Settings'));
++    expect(mockRouter.push).toHaveBeenCalledWith('/settings?settingsCategory=Adapters');
++  });
++
++  it('renders adapter dropdown and adapter play component with default adapter', () => {
++    render(<MesheryPlayComponent />);
++    expect(screen.getByLabelText('Select Meshery Adapter')).toBeInTheDocument();
++    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Istio');
++  });
++
++  it('dispatches setAdapter and updates rendered UI when selecting a different adapter', () => {
++    const { container } = render(<MesheryPlayComponent />);
++
++    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Istio');
++
++    const input = container.querySelector('input[name="adapter_name"]') as HTMLInputElement;
++    expect(input).toBeInTheDocument();
++    fireEvent.change(input, { target: { value: 'meshery-linkerd:10001' } });
++
++    expect(mockDispatch).toHaveBeenCalledWith({
++      type: 'adapter/setAdapter',
++      payload: { selectedAdapter: 'Linkerd' },
++    });
++    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Linkerd');
++  });
++
++  it('renders individual adapter when adapter query param is set', () => {
++    mockRouter.query = { adapter: 'meshery-linkerd:10001' };
++    render(<MesheryPlayComponent />);
++
++    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Linkerd');
++    expect(screen.queryByLabelText('Select Meshery Adapter')).not.toBeInTheDocument();
++  });
++
++  it('falls back to default adapter dropdown view when adapter query param is unknown', () => {
++    mockRouter.query = { adapter: 'unknown-adapter:9999' };
++    render(<MesheryPlayComponent />);
++
++    expect(screen.getByLabelText('Select Meshery Adapter')).toBeInTheDocument();
++    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Istio');
++  });
++
++  it('resets to default adapter when routeChangeComplete introduces an unknown adapter query after selecting another adapter', () => {
++    const { container } = render(<MesheryPlayComponent />);
++
++    // Select Linkerd
++    const input = container.querySelector('input[name="adapter_name"]') as HTMLInputElement;
++    fireEvent.change(input, { target: { value: 'meshery-linkerd:10001' } });
++    expect(screen.getByTestId('meshery-adapter-play')).toHaveTextContent('Linkerd');
++
++    // Simulate route change with unknown adapter query
++    mockRouter.query = { adapter: 'unknown-adapter:9999' };
++    const routeChangeHandler = mockRouter.events.on.mock.calls.find(
++      (call: any) => call[0] === 'routeChangeComplete',
++    )?.
+```
+
+**File**: `ui/components/MesheryPlayComponent.tsx` (modified, +25/-29)
+```diff
+@@ -8,7 +8,6 @@ import {
+   Grid2,
+   Typography,
+   styled,
+-  useTheme,
+   gray,
+   charcoal,
+   NoSsr,
+@@ -38,14 +37,11 @@ const PlayRoot = styled('div')(({ theme }) => ({
+   marginBottom: theme.spacing(2),
+ }));
+ 
+-export const PaneSection = styled('div')(() => {
+-  const theme = useTheme();
+-  return {
+-    backgroundColor: theme.palette.mode === 'dark' ? gray[20] : charcoal[90],
+-    padding: theme.spacing(2.5),
+-    borderRadius: 4,
+-  };
+-});
++export const PaneSection = styled('div')(({ theme }) => ({
++  backgroundColor: theme.palette.mode === 'dark' ? gray[20] : charcoal[90],
++  padding: theme.spacing(2.5),
++  borderRadius: 4,
++}));
+ 
+ const AlreadyConfigured = styled('div')({
+   textAlign: 'center',
+@@ -79,8 +75,11 @@ const MesheryPlayComponent = () => {
+       );
+       if (selectedAdapter) {
+         setAdapterState(selectedAdapter);
++        return;
+       }
+-    } else if (meshAdapters.length > 0) {
++    }
++
++    if (meshAdapters && meshAdapters.length > 0) {
+       setAdapterState(meshAdapters[0]);
+     }
+   };
+@@ -91,7 +90,7 @@ const MesheryPlayComponent = () => {
+     return () => {
+       router.events.off('routeChangeComplete', handleRouteChange);
+     };
+-  }, [router.events]);
++  }, [router.events, meshAdapters]);
+ 
+   useEffect(() => {
+     if (meshAdapters?.length > 0) {
+@@ -116,34 +115,31 @@ const MesheryPlayComponent = () => {
+   const handleAdapterChange = () => {
+     return (event) => {
+       if (event.target.value !== '') {
+-        const selectedAdapter = meshAdapters.filter(
++        const selectedAdapter = meshAdapters.find(
+           ({ adapterLocation }) => adapterLocation === event.target.value,
+         );
+-        if (selectedAdapter && selectedAdapter.size === 1) {
+-          setAdapterState(selectedAdapter[0]);
+-          dispatch(setAdapter({ selectedAdapter: selectedAdapter[0].name }));
++        if (selectedAdapter) {
++          setAdapterState(selectedAdapter);
++          dispatch(setAdapter({ selectedAdapter: selectedAdapter.name }));
+         }
+       }
+     };
+   };
+ 
+   const renderIndividualAdapter = () => {
++    const queryParam = router?.query?.adapter;
++    if (!queryParam) return '';
+     let adapCount = 0;
+-    let adapter;
+-    meshAdapters.forEach((adap) => {
+-      if (adap.adapterLocation === adapter) {
+-        adapter = adap;
+-        meshAdapters.forEach((ad) => {
+-          if (ad.name == adap.name) adapCount += 1;
+-        });
+-      }
+-    });
+-    if (adapter) {
+-      const imageIcon = pickImage(adapter);
++    const targetAdapter = meshAdapters.find((adap) => adap.adapterLocation === queryParam);
++    if (targetAdapter) {
++      meshAdapters.forEach((ad) => {
++        if (ad.name === targetAdapter.name) adapCount += 1;
++      });
++      const imageIcon = pickImage(targetAdapter);
+       return (
+         <>
+           <MesheryAdapterPlayComponent
+-            adapter={adapter}
++            adapter={targetAdapter}
+             adapCount={adapCount}
+             adapter_icon={imageIcon}
+           />
+@@ -181,7 +177,7 @@ const MesheryPlayComponent = () => {
+     );
+   }
+ 
+-  if (adapter && adapter !== '') {
++  if (router?.query?.adapter) {
+     const indContent = renderIndividualAdapter();
+     if (indContent !== '') {
+       return indContent;
+@@ -226,7 +222,7 @@ const MesheryPlayComponent = () => {
+                 >
+                   {meshAdapters.map((ada) => (
+                     <MenuItem
+-                      key={`${ada.adapterLocation}_${new Date().getTime()}`}
++                      key={ada.adapterLocation}
+                       value={ada.adapterLocation}
+                       sx={{
+                         display: 'flex',
 ```
 
 #### Recent Merged Pull Requests:
@@ -1256,30 +1498,54 @@ Signed-off-by: l5io <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Models generated and updated
+## X. Merge pull request #22570 from Ayush-AM/fix/issue-22445-notification-blob-leak
 
 **RULE**:
-When implementing operations in `models/aws-cloudfront-controller/v1.10.0/v1.0.0/model.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ui/components/layout/NotificationCenter/formatters/common.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cebee5df`: Models generated and updated. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1ac48c18`: Merge pull request #22570 from Ayush-AM/fix/issue-22445-notification-blob-leak. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `models/aws-cloudfront-controller/v1.10.0/v1.0.0/model.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/components/layout/NotificationCenter/formatters/common.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "primaryColor": "#8C4FFF",
-    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-CloudFront_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Networking-Content-Delivery\" fill=\"#8C4FFF\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28,26.4968343 C28,25.6694852 27.327,24.9962012 26.5,24.9962012 C25.673,24.9962012 25,25.
+import { render, screen, cleanup } from '@testing-library/react';
+  // jsdom does not implement URL.createObjectURL or URL.revokeObjectURL by default; stub them for these tests.
+  const originalRevokeObjectURL = (global.URL as any).revokeObjectURL;
+    (global.URL as any).createObjectURL = vi.fn((file: File) => `blob:fake-url-${file.name}`);
+    (global.URL as any).revokeObjectURL = vi.fn();
+    cleanup();
+    (global.URL as any).revokeObjectURL = originalRevokeObjectURL;
+    expect(link).toHaveAttribute('href', 'blob:fake-url-trace.txt');
+
+  it('revokes the blob URL on component unmount to prevent memory leaks', () => {
+    const { unmount } = render(<DataToFileLink data="trace info" />);
+    const revokeSpy = (global.URL as any).revokeObjectURL as ReturnType<typeof vi.fn>;
+
+    expect(revokeSpy).not.toHaveBeenCalled();
+
+    unmount();
+
+    expect(revokeSpy).toHaveBeenCalledTimes(1);
+    expect(revokeSpy).toHaveBeenCalledWith('blob:fake-url-trace.txt');
+  });
+
+  it('revokes previous blob URL and creates a new one when data prop updates', () => {
+    const { rerender } = render(<DataToFileLink data="first-trace" />);
+    const createSpy = (global.URL as any).createObjectURL as Retu
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "primaryColor": "#ED7100",
-    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 64 64\" version=\"1.1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eIcon-Architecture/48/Arch_Amazon-CloudFront_48\u003c/title\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/48/Arch_Amazon-CloudFront_48\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/48/Networking-Content-Delivery\" fill=\"#8C4FFF\"\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"64\" height=\"64\"\u003e\u003c/rect\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M41.5,43.5 C40.397,43.5 39.5,42.603 39.5,41.5 C39.5,40.397 40.397,39.5 41.5,39.5 C42.603,39.5 43.5,40.397 43.5,41.5 C43.5,42.603 42.603,43.5 41.5,43.5 L41.5,43.5 Z M41.5,37.5 C39.294,37.5 37.5,39.294 37.5,41.5 C37.5,43.706 39.294,45.5 41.5,45.5 C43.706,45.5 45.5,
+import { render, screen } from '@testing-library/react';
+  // jsdom does not implement URL.createObjectURL by default; stub it for these tests.
+    (global.URL as any).createObjectURL = vi.fn(() => 'blob:fake-url');
+    expect(link).toHaveAttribute('href', 'blob:fake-url');
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cebee5df` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1ac48c18` are properly handled with clean fallback behavior.

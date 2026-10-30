@@ -6092,3 +6092,4 @@ Every entry in this ledger must capture:
 | `learn-github-encoredev-encore` | `https://github.com/encoredev/encore` | `7f38d5dd` | Multi-dimensional audit evidence | 2026-10-30T00:01:14.077Z |
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `dbf91d4b` | Multi-dimensional audit evidence | 2026-10-30T00:07:54.800Z |
 | `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `76a72bee` | Multi-dimensional audit evidence | 2026-10-30T00:08:01.978Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `125ba14d` | Multi-dimensional audit evidence | 2026-10-30T00:19:01.090Z |

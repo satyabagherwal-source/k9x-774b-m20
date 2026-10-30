@@ -6083,3 +6083,4 @@
 | `CYCLE-20261030-IMHL` | `2026-10-30T00:01:14.073Z` | `encoredev/encore` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5562, Rule 5563, Rule 5564` | Yes (`5590c56e...`) |
 | `CYCLE-20261030-R7OR` | `2026-10-30T00:07:54.795Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5565` | Yes (`5722a712...`) |
 | `CYCLE-20261030-RD87` | `2026-10-30T00:08:01.975Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2030` | Yes (`f74a8958...`) |
+| `CYCLE-20261030-5HSU` | `2026-10-30T00:19:01.086Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5566` | Yes (`48ec877e...`) |

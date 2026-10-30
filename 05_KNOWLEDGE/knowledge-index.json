@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T00:08:01.895Z",
+  "last_updated": "2026-10-30T00:19:01.013Z",
   "total_verified_learnings": 1169,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -37301,8 +37301,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "87db0f3b",
-      "content_hash": "850dec4bddce7b6cfed5b9697fd102bb314e88b1ec3222652c02941faf2fba85",
+      "source_version": "125ba14d",
+      "content_hash": "48ec877ee8008ca008567c10afde96c298348bd18579e3304b6d6d4ba2e32ba9",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -37350,6 +37350,11 @@
           "number": 5325,
           "title": "Models generated and updated",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5566,
+          "title": "Merge pull request #22570 from Ayush-AM/fix/issue-22445-notification-blob-leak",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -37357,7 +37362,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T15:22:56.186Z",
+      "verified_at": "2026-10-30T00:19:00.994Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149657,6 +149662,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T00:07:54.703Z"
+    },
+    "rule-5566": {
+      "learning_id": "rule-5566",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5566,
+      "title": "Merge pull request #22570 from Ayush-AM/fix/issue-22445-notification-blob-leak",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "125ba14d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T00:19:00.994Z"
     }
   },
   "aliases": {
