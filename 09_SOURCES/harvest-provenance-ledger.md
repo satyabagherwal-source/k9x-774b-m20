@@ -6132,3 +6132,4 @@ Every entry in this ledger must capture:
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `61a8fea1` | Multi-dimensional audit evidence | 2026-10-30T05:46:02.326Z |
 | `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `8a38b901` | Multi-dimensional audit evidence | 2026-10-30T05:46:10.668Z |
 | `learn-github-yshrsmz-buildkonfig` | `https://github.com/yshrsmz/BuildKonfig` | `73f8c406` | Multi-dimensional audit evidence | 2026-10-30T05:47:05.213Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `98d21e92` | Multi-dimensional audit evidence | 2026-10-30T05:54:02.447Z |

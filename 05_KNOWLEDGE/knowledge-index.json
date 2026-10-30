@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T05:47:05.148Z",
+  "last_updated": "2026-10-30T05:54:02.370Z",
   "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -56823,8 +56823,8 @@
       "slug": "ydb-platform-ydb",
       "platform": "github",
       "source_url": "https://github.com/ydb-platform/ydb",
-      "source_version": "2db7fac9",
-      "content_hash": "348ea3d4029a33e09ff2a4ce031faa4ef1fe842b71e38246880937d0afb796e0",
+      "source_version": "98d21e92",
+      "content_hash": "81fe04ed78cfcb2ab5de870a981014baf15994ec9d09f21088b9ea9f7c1ba4d2",
       "dossier_path": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md",
       "promoted_rules": [
@@ -56877,6 +56877,11 @@
           "number": 5351,
           "title": "Fixed test (#57256)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5620,
+          "title": "Add BlockStoreVolume tablet type to Hive UI (#57503)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56884,7 +56889,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T17:06:00.701Z",
+      "verified_at": "2026-10-30T05:54:02.350Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150772,6 +150777,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T05:47:05.132Z"
+    },
+    "rule-5620": {
+      "learning_id": "rule-5620",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5620,
+      "title": "Add BlockStoreVolume tablet type to Hive UI (#57503)",
+      "source_url": "https://github.com/ydb-platform/ydb",
+      "source_version": "98d21e92",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:54:02.350Z"
     }
   },
   "aliases": {

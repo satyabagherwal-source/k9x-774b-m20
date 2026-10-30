@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source**: github ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
-> **Source Version**: `2db7fac9`  
+> **Source Version**: `98d21e92`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T17:06:00.183Z  
+> **Timestamp**: 2026-10-30T05:54:01.833Z  
 > **Learning ID**: `learn-github-ydb-platform-ydb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T17:06:00.174Z  
+> **Harvest Timestamp**: 2026-10-30T05:54:00.772Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YDB is an open source Distributed SQL Database that combines high availability and scalability with strong consistency and ACID transactions
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4779 stars
+- **Stars / Engagement**: 4781 stars
 
 ---
 
@@ -2067,347 +2067,498 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d59a8f02` (2026-10-28)
-**Commit Message**: Fixed test (#57256)
+### Incident Patch 1: `8b28bd0d` (2026-10-29)
+**Commit Message**: Add BlockStoreVolume tablet type to Hive UI (#57503)
 
-**File**: `ydb/core/tx/columnshard/backup/import/ut/ut_import.cpp` (modified, +3/-0)
+**File**: `ydb/core/mind/hive/monitoring.cpp` (modified, +1/-0)
 ```diff
-@@ -596,6 +596,8 @@ Y_UNIT_TEST_SUITE(Restore) {
-         {
-             TTestBasicRuntime runtime;
-             TTester::Setup(runtime);
-+            // S3 uses real HTTP threads; allow replies to arrive before simulated timers exhaust the event limit.
-+            runtime.SetFastSimulatedTime(false);
-             auto csControllerGuard = NKikimr::NYDBTest::TControllers::RegisterCSControllerGuard<NOlap::TWaitCompactionController>();
-             auto planStep = PrepareTablet(runtime, tableId, schema, 2);
-             ui64 txId = 111;
-@@ -616,6 +618,7 @@ Y_UNIT_TEST_SUITE(Restore) {
-         {
-             TTestBasicRuntime runtime;
-             TTester::Setup(runtime);
-+            runtime.SetFastSimulatedTime(false);
-             auto csControllerGuard = NKikimr::NYDBTest::TControllers::RegisterCSControllerGuard<NOlap::TWaitCompactionController>();
-             Y_UNUSED(PrepareTablet(runtime, tableId, schema, 2));
-             ui64 txId = 111;
+@@ -1438,6 +1438,7 @@ class TTxMonEvent_Settings : public TTransactionBase<THive>, public TLoggedMonTr
+              TTabletTypes::BlobDepot,
+              TTabletTypes::ColumnShard,
+              TTabletTypes::FileStore,
++             TTabletTypes::BlockStoreVolume,
+         }) {
+             const TVector<i64>& allowedMetrics = Self->GetTabletTypeAllowedMetricIds(tabletType);
+             out << "<tr>"
 ```
 
 ---
 
-### Incident Patch 2: `3580c839` (2026-10-28)
-**Commit Message**: Row deletes statistics fix (#57062)
+### Incident Patch 2: `c09fe3cf` (2026-10-29)
+**Commit Message**: Fix tests (#57547)
 
-**File**: `ydb/core/protos/counters_columnshard.proto` (modified, +1/-0)
+**File**: `ydb/core/tx/replication/controller/schema_change_ut.cpp` (modified, +30/-15)
 ```diff
-@@ -143,6 +143,7 @@ enum ECumulativeCounters {
-     COUNTER_OPERATIONS_ROWS_WRITTEN = 85                    [(CounterOpts) = {Name: "OperationsRowsWritten"}];
-     COUNTER_OPERATIONS_BULK_ROWS_WRITTEN = 86               [(CounterOpts) = {Name: "OperationsBulkRowsWritten"}];
-     COUNTER_OPERATIONS_BULK_BYTES_WRITTEN = 87              [(CounterOpts) = {Name: "OperationsBulkBytesWritten"}];
-+    COUNTER_OPERATIONS_ROWS_DELETED = 88                    [(CounterOpts) = {Name: "OperationsRowsDeleted"}];
+@@ -2574,32 +2574,47 @@ Y_UNIT_TEST_SUITE(StreamRetry) {
+         const auto run = runtime.GrabEdgeEvent<TEvService::TEvRunWorker>(env.GetSender());
+         const auto worker = TWorkerId::Parse(run->Get()->Record.GetWorker());
+         AttachWorkers(env, info.ControllerId, {worker});
++
++        // Fail the current PAUSE operation, preserving its alterer's identity.
++        // A worker error after its normal stop would be an obsolete report.
++        bool destinationFailed = false;
++        auto observer = runtime.AddObserver([&](IEventHandle::TPtr& ev) {
++            if (destinationFailed || !ev->HasEvent()) {
++                return;
++            }
++            const auto* result = dynamic_cast<TEvPrivate::TEvAlterDstResult*>(ev->GetBase());
++            if (!result) {
++                return;
++            }
++
++            UNIT_ASSERT(result->IsSuccess());
++            UNIT_ASSERT_VALUES_EQUAL(result->ReplicationId, worker.ReplicationId());
++            UNIT_ASSERT_VALUES_EQUAL(result->TargetId, worker.TargetId());
++            ev.Reset(new IEventHandle(
++                ev->GetRecipientRewrite(),
++                ev->Sender,
++                new TEvPrivate::TEvAlterDstResult(
++                    result->ReplicationId,
++                    result->TargetId,
++                    NKikimrScheme::StatusSchemeError,
++                    "destination alter failed"),
++                0,
++                ev->Cookie));
++            destinationFailed = true;
++        });
+         UNIT_ASSERT(alter("STATE = \"PAUSED\"").IsSuccess());
+         SendWorkerStopped(env, info.ControllerId, worker);
+-        runtime.WaitFor(
+-            "ordinary PAUSE",
+-            [&] {
+-                return DescribeReplication(env, info)->Get()->Record.GetState().HasPaused();
+-            },
+-            TDuration::Seconds(30));
+-        // A late failed writer report is a destination error, even though this
+-        // replication originally bootstrapped with INITIAL_SCAN=false.
+-        auto error = MakeHolder<TEvService::TEvWorkerStatus>(
+-            worker,
+-            NKikimrReplication::TEvWorkerStatus::STATUS_STOPPED,
+-            NKikimrReplication::TEvWorkerStatus::REASON_ERROR,
+-            "writer failed");
+-        env.SendAsync(info.ControllerId, std::move(error));
+         runtime.WaitFor(
+             "destination error",
+             [&] {
+                 return DescribeReplication(env, info)->Get()->Record.GetState().HasError();
+             },
+             TDuration::Seconds(30));
++        UNIT_ASSERT(destinationFailed);
+         const auto assertError = [&] {
+             const auto state = DescribeReplication(env, info)->Get()->Record.GetState();
+             UNIT_ASSERT_C(state.HasError(), state.DebugString());
+-            UNIT_ASSERT_C(state.DebugString().Contains("writer failed"), state.DebugString());
++            UNIT_ASSERT_C(state.DebugString().Contains("destination alter failed"), state.DebugString());
+             AssertDestinationMode(
+                 env,
+                 "/Root/replica1",
+```
+
+**File**: `ydb/core/viewer/tests/canondata/result.json` (modified, +3/-0)
+```diff
+@@ -4,6 +4,9 @@
+             "status": "SUCCESS"
+         },
+         "describe_result": {
++            "availability_period": {
++                "unlimited": {}
++            },
+             "connection_params": {
+                 "connection_string": "text",
+                 "database": "/Root/dedicated_db",
+```
+
+**File**: `yql/essentials/sql/v1/translation/ut/sql_parsing_only_ut.cpp` (modified, +5/-5)
+```diff
+@@ -5901,8 +5901,8 @@ Y_UNIT_TEST(CreateAsyncReplicationParseSecretPathsCorrect) {
+ Y_UNIT_TEST(CreateAsyncReplicationAvailabilityPeriod) {
+     for (const auto& value : {"'UNLIMITED'", "'unlimited'", "Interval('PT0.000001S')", "Interval('PT10.001S')"}) {
+         const auto res = SqlToYql(TStringBuilder()
+-            << "USE plato; CREATE ASYNC REPLICATION MyReplication FOR table1 AS table2 "
+-            << "WITH (AVAILABILITY_PERIOD = " << value << ");");
++                                  << "USE plato; CREATE ASYNC REPLICATION MyReplication FOR table1 AS table2 "
++                                  << "WITH (AVAILABILITY_PERIOD = " << value << ");");
+         UNIT_ASSERT_C(res.IsOk(), Err2Str(res));
+         TVerifyLineFunc verifyLine = [](const TString& word, const TString& line) {
+             if (word == "Write") {
+@@ -5918,15 +5918,15 @@ Y_UNIT_TEST(CreateAsyncReplicationAvailabilityPeriod) {
+ Y_UNIT_TEST(CreateAsyncReplicationInvalidAvailabilityPeriod) {
+     for (const auto& value : {"'FOREVER'", "1", "TRUE", "NULL"}) {
+         const auto res = SqlToYql(TStringBuilder()
+-            << "USE plato; CREATE ASYNC REPLICATION MyReplication FOR table1 AS table2 "
+-            << "WITH (AVAILABILITY_PERIOD = " << value << ");");
++                                  << "USE plato; CREATE ASYNC REPLICATION MyReplication FOR table1 AS table2 "
++                                  << "WITH (AVAILABILITY_PERIOD = " << value << ");");
+         UNIT_ASSERT(!res.IsOk());
+     }
  }
  
- enum EPercentileCounters {
-```
-
-**File**: `ydb/core/tx/columnshard/columnshard__write.cpp` (modified, +3/-2)
-```diff
-@@ -100,10 +100,11 @@ void TColumnShard::Handle(NPrivateEvents::NWrite::TEvWritePortionResult::TPtr& e
-                 {"event", "data_write_finished"},
-                 {"writingId", i.GetWriteMeta().GetId()});
-             i.MutableWriteMeta().OnStage(NEvWrite::EWriteStage::SuccessWritingToLocalDB);
-+            const bool isDelete = i.GetWriteMeta().GetModificationType() == NEvWrite::EModificationType::Delete;
-             if (i.GetWriteMeta().IsBulk()) {
--                Counters.OnWritePutBulkBlobsSuccess(now - i.GetWriteMeta().GetWriteStartInstant(), i.GetRecordsCount());
-+                Counters.OnWritePutBulkBlobsSuccess(now - i.GetWriteMeta().GetWriteStartInstant(), i.GetRecordsCount(), isDelete);
-             } else {
--                Counters.OnWritePutBlobsSuccess(now - i.GetWriteMeta().GetWriteStartInstant(), i.GetRecordsCount());
-+                Counters.OnWritePutBlobsSuccess(now - i.GetWriteMeta().GetWriteStartInstant(), i.GetRecordsCount(), isDelete);
-             }
-             Counters.GetWritesMonitor()->OnFinishWrite(i.GetDataSize(), 1);
-         }
-```
-
-**File**: `ydb/core/tx/columnshard/columnshard_impl.h` (modified, +4/-0)
-```diff
-@@ -401,6 +401,10 @@ class TColumnShard: public TActor<TColumnShard>, public NTabletFlatExecutor::TTa
- public:
-     TAtomicCounter InitShardCounter;
- 
-+    const TTabletCountersHandle& GetTabletCounters() const {
-+        return *Counters.GetTabletCounters();
-+    }
-+
-     ui64 BuildEphemeralTxId() {
-         static TAtomicCounter Counter = 0;
-         static constexpr ui64 shift = (ui64)1 << 47;
-```
-
-**File**: `ydb/core/tx/columnshard/counters/counters_manager.h` (modified, +4/-4)
-```diff
-@@ -102,13 +102,13 @@ class TCountersManager {
-         ScanCounters.FillStats(tableStats);
-     }
- 
--    void OnWritePutBlobsSuccess(const TDuration d, const ui64 rowsWritten) const {
--        TabletCounters->OnWritePutBlobsSuccess(rowsWritten);
-+    void OnWritePutBlobsSuccess(const TDuration d, const ui64 rowsWritten, const bool isDelete) const {
-+        TabletCounters->OnWritePutBlobsSuccess(rowsWritten, isDelete);
-         CSCounters.OnWritePutBlobsSuccess(d);
-     }
- 
--    void OnWritePutBulkBlobsSuccess(const TDuration d, const ui64 rowsWritten) const {
--        TabletCounters->OnWritePutBulkBlobsSuccess(rowsWritten);
-+    void OnWritePutBulkBlobsSuccess(const TDuration d, const ui64 rowsWritten, const bool isDelete) const {
-+        TabletCounters->OnWritePutBulkBlobsSuccess(rowsWritten, isDelete);
-         CSCounters.OnWritePutBlobsSuccess(d);
-     }
- 
-```
-
-**File**: `ydb/core/tx/columnshard/counters/tablet_counters.h` (modified, +6/-5)
-```diff
-@@ -99,12 +99,12 @@ class TTabletCountersHandle {
-         IncCounter(NColumnShard::COUNTER_SPLIT_COMPACTION_BYTES_WRITTEN, bytesWritten);
-     }
- 
--    void OnWritePutBlobsSuccess(const ui64 rowsWritten) const {
--        IncCounter(NColumnShard::COUNTER_OPERATIONS_ROWS_WRITTEN, rowsWritten);
-+    void OnWritePutBlobsSuccess(const ui64 rowsWritten, const bool isDelete) const {
-+        IncCounter(isDelete ? COUNTER_OPERATIONS_ROWS_DELETED : COUNTER_OPERATIONS_ROWS_WRITTEN, rowsWritten);
-     }
- 
--    void OnWritePutBulkBlobsSuccess(const ui64 rowsWritten) const {
--        IncCounter(NColumnShard::COUNTER_OPERATIONS_BULK_ROWS_WRITTEN, rowsWritten);
-+    void OnWritePutBulkBlobsSuccess(const ui64 rowsWritten, const bool isDelete) const {
-+        IncCounter(isDelete ? COUNTER_OPERATIONS_ROWS_DELETED : COUNTER_OPERATIONS_BULK_ROWS_WRITTEN, rowsWritten);
-     }
- 
-     void OnDropPortionEvent(const ui64 rawBytes, const ui64 blobBytes, const ui64 rows) const {
-@@ -115,7 +115,8 @@ class TTabletCountersHandle {
- 
-     void FillStats(::NKikimrTableStats::TTableStats& output) const {
-         output.SetRowUpdates(GetValue(COUNTER_OPERATIONS_ROWS_WRITTEN) + GetValue(COUNTER_OPERATIONS_BULK_ROWS_WRITTEN));
--        output.SetRowDeletes(GetValue(COUNTER_ROWS_ERASED));
-+        // Physical portion cleanup also erases rows rewritten by compaction.
-+        output.SetRowDeletes(GetValue(COUNTER_OPERATIONS_ROWS_DELETED));
-         output.SetRowReads(0);   // all reads are range reads
-         output.SetRangeReadRows(GetValue(COUNTER_READ_INDEX_ROWS));
- 
-```
-
-**File**: `ydb/core/tx/columnshard/ut_rw/ut_columnshard_read_write.cpp` (modified, +30/-0)
-```diff
-@@ -2643,6 +2643,12 @@ Y_UNIT_TEST_SUITE(TColumnShardTestReadWrite) {
-         auto ydbSchema = table.Schema;
-         auto planStep = SetupSchema(runtime, sender, tableId);
- 
-+        const auto getTableStats = [&]() {
-+            NKikimrTableStats::TTableStats stats;
-+            csDefaultControllerGuard->GetTheOnlyShard()->GetTabletCounters().FillStats(stats);
-+            return stats;
-+        };
-+
-         constexpr ui32 numRows = 10;
-         std::pair<ui64, ui64> portion = { 10, 10 + numRows };
-         auto testData = MakeTestBlob(portion, ydbSchema);
-@@ -2721,8 +2727,13 @@ Y_UNIT_TEST_SUITE(TColumnShardTestReadWrite) {
-         {
-             TSet<ui64> txIds;
-             std::vector<ui64> writeIds;
-+            const auto statsBeforeDelete = getTableStats();
-+            UNIT_ASSERT_VALUES_EQUAL(statsBeforeDelete.GetRowDeletes(), 0);
-             UNIT_ASSERT(
-                 WriteData(runtime, sender, ++writeId, tableId, testData, ydbSchema, true, &writeIds, NEvWrite::EModificationType::Delete));
-+            // Count delete writes before commit, separately from updates.
-+            UNIT_ASSERT_VALUES_EQUAL(getTableStats().GetRowDeletes(), numRows);
-+            UNIT_ASSERT_VALUES_EQUAL(getTableStats().GetRowUpdates(), statsBeforeDelete.GetRowUpdates());
-             auto planStep = ProposeCommit(runtime, sender, ++txId, writeIds);
-             txIds.insert(txId);
-             PlanCommit(runtime, sender, planStep, txIds);
-@@ -2732,6 +2743,18 @@ Y_UNIT_TEST_SUITE(TColumnShardTestReadWrite) {
-             auto rb = reader.ReadAll();
-             UNIT_ASSERT(reader.IsCorrectlyFinished());
-             AFL_VERIFY(!rb || rb->num_rows() == 0)("count", rb->num_rows());
-+            UNIT_ASSERT_VALUES_EQUAL(getTableStats().GetRowDeletes(), numRows);
-+        }
-+        {
-+            // Erasing missing keys is still delete work, even if the transaction is later aborted.
-+            constexpr ui64 lockId = 2;
-+            std::vector<ui64> writeIds;
-+            UNIT_ASSERT(WriteData(
-+                runtime, sender, ++writeId, tableId, testData, ydbSchema, true, &writeIds, NEvWrite::EModificationType::Delete, lockId));
-+            UNIT_ASSERT_VALUES_EQUAL(getTableStats().GetRowDeletes(), 2 * numRows);
-+            TShardWriter writer(runtime, TTestTxConfig::TxTablet0, tableId, lockId);
-+            UNIT_ASSERT_VALUES_EQUAL(writer.Abort(), NKikimrDataEvents::TEvWriteResult::STATUS_COMPLETED);
-+            UNIT_ASSERT_VALUES_EQUAL(getTableStats().GetRowDeletes(), 2 * numRows);
-         }
-     }
- 
-@@ -3879,6 +3902,13 @@ Y_UNIT_TEST_SUITE(TColumnShardTestReadWrite) {
-         UNIT_ASSERT_GE(compactionsHappened, previousCompactionsHappened);
-         UNIT_ASSERT_GT(cleanupsHappened, previousCleanupsHappened);
-         UNIT_ASSERT_VALUES_EQUAL_C(oldPortions.size(), deletedPortions.size(), "All old portions must be deleted after read has finished");
-+
-+        // Compaction cleanup removes physical rows without deleting logical rows.
-+        const auto& counters = csDefaultControllerGuard->GetTheOnlyShard()->GetTabletCounters();
-+        UNIT_ASSERT_GT(counters.GetValue(COUNTER_ROWS_ERASED), 0);
-+        NKikimrTableStats::TTableStats stats;
-+        counters.FillStats(stats);
-+        UNIT_ASSERT_VALUES_EQUAL(stats.GetRowDeletes(), 0);
-     }
- 
-     void TestCleanupSnapshotPersistenceAfterReboot() {
+ Y_UNIT_TEST(CreateAsyncReplicationDuplicateAvailabilityPeriod) {
+     const auto res = SqlToYql("USE plato; CREATE ASYNC REPLICATION MyReplication FOR table1 AS table2 "
+-        "WITH (AVAILABILITY_PERIOD = 'UNLIMITED', availability_period = Interval('PT1S'));");
++                              "WITH (AVAILABILITY_PERIOD = 'UNLIMITED', availability_period = Interval('PT1S'));");
+     UNIT_ASSERT(!res.IsOk());
+     UNIT_ASSERT_STRING_CONTAINS(Err2Str(res), "Duplicate replication setting");
+ }
 ```
 
 ---
 
-### Incident Patch 3: `50c6d82e` (2026-10-28)
-**Commit Message**: compression backup has been fixed for cs (#57186)
+### Incident Patch 3: `2002856e` (2026-10-29)
+**Commit Message**: ci: merge ya build and test actions (#57505)
 
-**File**: `ydb/core/ydb_convert/table_description.cpp` (modified, +21/-0)
+**File**: `.github/actions/build_and_test_ya/action.yml` (modified, +876/-24)
 ```diff
-@@ -1192,6 +1192,27 @@ void FillColumnDescriptionImpl(TYdbProto& out, const NKikimrSchemeOp::TColumnTab
-             newColumn->set_family(column.GetColumnFamilyName());
-         }
+@@ -112,7 +112,9 @@ runs:
+         # Output the folder_prefix for use in subsequent steps
+         echo "folder_prefix=${FOLDER_PREFIX}" >> $GITHUB_ENV
  
-+        const auto& compression = column.GetSerializer().GetArrowCompression();
-+        if (compression.HasCodec()) {
-+            auto* newCompression = newColumn->mutable_compression();
-+            switch (compression.GetCodec()) {
-+                case NKikimrSchemeOp::ColumnCodecPlain:
-+                    newCompression->set_algorithm(Ydb::Table::ColumnCompression::ALGORITHM_OFF);
-+                    break;
-+                case NKikimrSchemeOp::ColumnCodecLZ4:
-+                    newCompression->set_algorithm(Ydb::Table::ColumnCompression::ALGORITHM_LZ4);
-+                    break;
-+                case NKikimrSchemeOp::ColumnCodecZSTD:
-+                    newCompression->set_algorithm(Ydb::Table::ColumnCompression::ALGORITHM_ZSTD);
-+                    break;
-+                default:
-+                    ythrow yexception() << "Unsupported column compression codec: " << static_cast<int>(compression.GetCodec());
-+            }
-+            if (compression.HasLevel()) {
-+                newCompression->set_compression_level(compression.GetLevel());
-+            }
-+        }
++    # Finalizers below must not run if this setup fails (the nested action was skipped).
+     - name: Prepare s3cmd
++      id: prepare_s3cmd
+       uses: ./.github/actions/s3cmd
+       with:
+         s3_bucket: ${{ fromJSON( inputs.vars ).AWS_BUCKET }}
+@@ -122,28 +124,878 @@ runs:
+         folder_prefix: ${{ env.folder_prefix }}
+         build_preset: ${{ inputs.build_preset }}
+ 
+-    - name: Run build and tests
++    - name: comment-build-start
++      if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
++      shell: bash
++      env:
++        BUILD_PRESET: ${{ inputs.build_preset }}
++        GITHUB_TOKEN: ${{ github.token }}
++      run: |
++        jobs_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs"
++        # tricky: we are searching job with name that contains build_preset
++        check_url=$(curl --retry 5 --retry-all-errors --retry-delay 10 --fail --show-error -s -H "Authorization: Bearer ${{github.token}}" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "$jobs_url" | jq --arg n "$BUILD_PRESET" -r '.jobs[] | select(.name | contains($n)) | .html_url')
 +
-         if (column.HasDataAccessorConstructor()) {
-             switch (column.GetDataAccessorConstructor().Implementation_case()) {
-                 case NKikimrArrowAccessorProto::TConstructor::ImplementationCase::kDictionary:
++        platform_name="$(echo "$(uname -s)-$(uname -p)" | tr '[:upper:]' '[:lower:]')-$BUILD_PRESET"
++        echo "Pre-commit [check]($check_url) **$platform_name** for $(git rev-parse HEAD) has started." | .github/scripts/tests/comment-pr.py --rewrite
++
++        curl --retry 5 --retry-all-errors --retry-delay 10 --fail --show-error -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{github.token}}" -H "X-GitHub-Api-Version: 2022-11-28" \
++          https://api.github.com/repos/${{github.repository}}/statuses/${{github.event.pull_request.head.sha}} \
++          -d '{"state":"pending","description":"The check has been started","context":"build_${{inputs.build_preset}}"}'
++
++        if [[ "${{inputs.run_tests}}" == "true" ]]; then
++          curl --retry 5 --retry-all-errors --retry-delay 10 --fail --show-error -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{github.token}}" -H "X-GitHub-Api-Version: 2022-11-28" \
++            https://api.github.com/repos/${{github.repository}}/statuses/${{github.event.pull_request.head.sha}} \
++            -d '{"state":"pending","description":"The check has been started","context":"test_${{inputs.build_preset}}"}'
++        fi
++
++    - name: Resolve analytics job name
++      shell: bash
++      env:
++        WORKFLOW_NAME: ${{ github.workflow }}
++        BUILD_PRESET: ${{ inputs.build_preset }}
++        EVENT_NAME: ${{ github.event_name }}
++        GITHUB_NUMERIC_JOB_ID: ${{ job.check_run_id }}
++        GITHUB_TOKEN: ${{ github.token }}
++      run: |
++        ANALYTICS_JOB_NAME=$(python3 .github/scripts/analytics/resolve_ci_job_name.py "$WORKFLOW_NAME" "$BUILD_PRESET" "$EVENT_NAME")
++        echo "ANALYTICS_JOB_NAME=$ANALYTICS_JOB_NAME" >> "$GITHUB_ENV"
++        echo "PR_NUMBER=${{ github.event.number || inputs.pull_number }}" >> "$GITHUB_ENV"
++        if [ -n "$GITHUB_NUMERIC_JOB_ID" ]; then
++          echo "GITHUB_NUMERIC_JOB_ID=$GITHUB_NUMERIC_JOB_ID" >> "$GITHUB_ENV"
++          job_name=$(curl --retry 5 --retry-all-errors --retry-delay 10 --fail -sS \
++            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
++            -H "Accept: application/vnd.github+json" \
++            -H "X-GitHub-Api-Version: 2022-11-28" \
++            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/jobs/${GITHUB_NUMERIC_JOB_ID}" \
++            | jq -r '.name // empty' || true)
++          if [ -n "$job_name" ]; then
++            echo "GITHUB_JOB_NAME=$job_name" >> "$GITHUB_ENV"
++          fi
++        else
++          echo "job.check_run_id is empty; analytics rows of this job will be dropped" >&2
++        fi
++
++    - name: Init
++      id: init
++      shell: bash
++      run: |
++        set -x
++
++        echo "$(pwd)/ydb/ci/scripts" >> $GITHUB_PATH
++
++        export TMP_DIR=$(pwd)/tmp
++        rm -rf $TMP_DIR
++        mkdir -p $TMP_DIR
++        echo "TMP_DIR=$TMP_DIR" >> $GITHUB_ENV
++
++        # The whole dir will be uploaded to s3 with public (=wild internet) ACL
++        export PUBLIC_DIR=$TMP_DIR/results
++        echo "PUBLIC_DIR=$PUBLIC_DIR" >> $GITHUB_ENV
++        export PUBLIC_DIR_URL=$S3_URL_PREFIX
++        echo "PUBLIC_DIR_URL=$PUBLIC_DIR_URL" >> $GITHUB_ENV
++        mkdir -p $PUBLIC_DIR
++
++        echo "LAST_BUILD_RESULTS_REPORT=$PUBLIC_DIR/last_report.json" >> $GITHUB_ENV
++        echo "SUMMARY_LINKS=$PUBLIC_DIR/summary_links.txt" >> $GITHUB_ENV
++        echo "BUILD_PRESET=${{ inputs.build_preset }}" >> $GITHUB_ENV
++        ANALYTICS_FILE=$TMP_DIR/analytics.jsonl
++        export ANALYTICS_FILE
++        echo "ANALYTICS_FILE=$ANALYTICS_FILE" >> $GITHUB_ENV
++        mkdir -p "$(dirname "$ANALYTICS_FILE")"
++    
 ```
 
-**File**: `ydb/core/ydb_convert/table_description_ut.cpp` (modified, +45/-0)
+**File**: `.github/actions/test_ya/action.yml` (removed, +0/-965)
 ```diff
-@@ -12,6 +12,8 @@
- 
- #include <util/string/strip.h>
- 
-+#include <optional>
-+
- namespace NKikimr {
- 
- Y_UNIT_TEST_SUITE(ConvertTableDescription) {
-@@ -193,6 +195,49 @@ Y_UNIT_TEST_SUITE(ConvertTableDescription) {
-         check(NKikimrKqp::TKqpAlterTableRequest{});
-     }
- 
-+    Y_UNIT_TEST(ColumnCompressionRoundTrip) {
-+        using TCompression = Ydb::Table::ColumnCompression;
-+        for (const auto algorithm : {TCompression::ALGORITHM_OFF, TCompression::ALGORITHM_LZ4, TCompression::ALGORITHM_ZSTD}) {
-+            for (const auto level : {std::optional<int>{}, std::optional<int>{0}, std::optional<int>{-5}, std::optional<int>{5}}) {
-+                if (level && algorithm != TCompression::ALGORITHM_ZSTD) {
-+                    continue;
-+                }
-+                Ydb::Table::CreateTableRequest original;
-+                auto* column = original.add_columns();
-+                column->set_name("value");
-+                column->mutable_type()->mutable_optional_type()->mutable_item()->set_type_id(Ydb::Type::UTF8);
-+                column->mutable_compression()->set_algorithm(algorithm);
-+                if (level) {
-+                    column->mutable_compression()->set_compression_level(*level);
-+                }
-+                auto* defaultColumn = original.add_columns();
-+                defaultColumn->set_name("default_compression");
-+                *defaultColumn->mutable_type() = column->type();
-+
-+                NKikimrSchemeOp::TColumnTableDescription internal;
-+                auto status = Ydb::StatusIds::SUCCESS;
-+                TString error;
-+                UNIT_ASSERT_C(FillColumnDescription(internal, original.columns(), status, error), error);
-+
-+                Ydb::Table::CreateTableRequest exported;
-+                FillColumnDescription(exported, internal);
-+                Ydb::Table::DescribeTableResult described;
-+                FillColumnDescription(described, internal);
-+                for (const auto* restored : {&exported.columns(), &described.columns()}) {
-+                    UNIT_ASSERT_VALUES_EQUAL(restored->size(), 2);
-+                    const auto& compression = restored->Get(0).compression();
-+                    UNIT_ASSERT(compression.has_algorithm());
-+                    UNIT_ASSERT_VALUES_EQUAL(static_cast<int>(compression.algorithm()), static_cast<int>(algorithm));
-+                    UNIT_ASSERT_VALUES_EQUAL(compression.has_compression_level(), level.has_value());
-+                    if (level) {
-+                        UNIT_ASSERT_VALUES_EQUAL(compression.compression_level(), *level);
-+                    }
-+                    UNIT_ASSERT(!restored->Get(1).has_compression());
-+                }
-+            }
-+        }
-+    }
-+
-     Y_UNIT_TEST(InternalColumnTableCompressionAndEncoding) {
-         TActorSystemStub actorSystem;
-         NKikimrKqp::TKqpAlterTableRequest request;
+@@ -1,965 +0,0 @@
+-name: Run build and tests (ya make)
+-description: Run test targets listed in repository root ya.make (to be created previously)
+-inputs:
+-  build_target:
+-    required: true
+-  build_preset:
+-    required: true
+-    default: "relwithdebinfo"
+-    description: "relwithdebinfo, release-asan, release-tsan"
+-  test_type:
+-    required: false
+-    type: string
+-    default: ""
+-    description: "run only specific test types (or all by default)"
+-  test_size:
+-    required: false
+-    default: "small,medium,large"
+-    description: "small or small-medium or all"
+-  test_threads:
+-    required: false
+-    default: "64"
+-    description: "Test threads count"
+-  link_threads:
+-    required: false
+-    default: "2"
+-    description: "link threads count"
+-  additional_ya_make_args:
+-    type: string
+-    default: ""
+-  increment:
+-    type: boolean
+-    required: true
+-    description: If true, compares build graphs between the current and previous commits to find a list of test suites to run. Otherwise, runs all tests.
+-  put_build_results_to_cache:
+-    required: false
+-    default: "true"
+-  bazel_remote_uri:
+-    required: false
+-    description: "bazel-remote endpoint"
+-  bazel_remote_username:
+-    required: false
+-    description: "bazel-remote username"
+-  bazel_remote_password:
+-    required: false
+-    description: "bazel-remote password"
+-  run_tests:
+-    type: boolean
+-    default: true
+-    description: "run tests"
+-  test_retry_count:
+-    type: string
+-    default: ""
+-    description: "how many times to retry failed tests"
+-  custom_branch_name:
+-    description: "Custom branch name required when workflow branch != checkout branch"
+-    type: string
+-    required: false
+-  add_vcs_info:
+-    type: boolean
+-    default: false
+-    description: "add ya make vars with git info"
+-  telegram_ydbot_token:
+-    type: string
+-    required: false
+-    description: "Telegram bot token"
+-  telegram_alert_logins:
+-    type: string
+-    required: false
+-    description: "Telegram alert logins"
+-  telegram_alert_chat:
+-    type: string
+-    required: false
+-    description: "Telegram alert chat"
+-  collect_coredumps:
+-    type: boolean
+-    default: true
+-    description: "Collect coredumps to a 100G loop volume at /coredumps (for ya test recovery)"
+-  pull_number:
+-    type: string
+-    required: false
+-    description: "Pull request number (for workflow_call events)"
+-
+-outputs:
+-  success:
+-    value: ${{ steps.build.outputs.status }}
+-    description: "build success"
+-
+-runs:
+-  using: "composite"
+-  steps:
+-    - name: comment-build-start
+-      if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
+-      shell: bash
+-      env:
+-        BUILD_PRESET: ${{ inputs.build_preset }}
+-        GITHUB_TOKEN: ${{ github.token }}
+-      run: |
+-        jobs_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs"
+-        # tricky: we are searching job with name that contains build_preset
+-        check_url=$(curl --retry 5 --retry-all-errors --retry-delay 10 --fail --show-error -s -H "Authorization: Bearer ${{github.token}}" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "$jobs_url" | jq --arg n "$BUILD_PRESET" -r '.jobs[] | select(.name | contains($n)) | .html_url')
+-
+-        platform_name="$(echo "$(uname -s)-$(uname -p)" | tr '[:upper:]' '[:lower:]')-$BUILD_PRESET"
+-        echo "Pre-commit [check]($check_url) **$platform_name** for $(git rev-parse HEAD) has started." | .github/scripts/tests/comment-pr.py --rewrite
+-
+-        curl --retry 5 --retry-all-errors --retry-delay 10 --fail --show-error -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{github.token}}" -H "X-GitHub-Api-Version: 2022-11-28" \
+-          https://api.github.com/repos/${{github.repository}}/statuses/${{github.event.pull_request.head.sha}} \
+-          -d '{"state":"pending","description":"The check has been started","context":"build_${{inputs.build_preset}}"}'
+-
+-        if [[ "${{inputs.run_tests}}" == "true" ]]; then
+-          curl --retry 5 --retry-all-errors --retry-delay 10 --fail --show-error -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{github.token}}" -H "X-GitHub-Api-Version: 2022-11-28" \
+-            https://api.github.com/repos/${{github.repository}}/statuses/${{github.event.pull_request.head.sha}} \
+-            -d '{"state":"pending","description":"The check has been started","context":"test_${{inputs.build_preset}}"}'
+-        fi
+-
+-    - name: Resolve analytics job name
+-      shell: bash
+-      env:
+-        WORKFLOW_NAME: ${{ github.workflow }}
+-        BUILD_PRESET: ${{ inputs.build_preset }}
+-        EVENT_NAME: ${{ github.event_name }}
+-        GITHUB_NUMERIC_JOB_ID: ${{ job.check_run_id }}
+-        GITHUB_TOKEN: ${{ github.token }}
+-      run: |
+-        ANALYTICS_JOB_NAME=$(python3 .github/scripts/analytics/resolve_ci_job_name.py "$WORKFLOW_
 ```
 
-**File**: `ydb/services/ydb/backup_ut/ydb_backup_ut.cpp` (modified, +32/-0)
+**File**: `.github/config/runners_footprints.yml` (modified, +1/-1)
 ```diff
-@@ -4686,6 +4686,38 @@ Y_UNIT_TEST_SUITE(BackupRestoreS3) {
-         );
-     }
+@@ -78,5 +78,5 @@ dashboard:
+   mem_min_chunk_gb: 24.0
+   cpu_saturation_pct: 90.0
+   near_budget_factor: 1.10
+-  # Matches ya make cgroup MemoryMax in test_ya action (95% of MemTotal).
++  # Matches ya make cgroup MemoryMax in build_and_test_ya action (95% of MemTotal).
+   ya_make_mem_fraction: 0.95
+```
+
+**File**: `.github/scripts/graph_compare.py` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ def main(ya_make_command: str, graph_path: str, context_path: str, base_commit:
  
-+    Y_UNIT_TEST(OlapColumnCompressionPreservedThroughExportImport) {
-+        TS3TestEnv testEnv;
-+        auto& session = testEnv.GetQuerySession();
-+        constexpr const char* table = "/Root/olap_column_compression_backup";
-+
-+        ExecuteQuery(session, std::format(R"(
-+            CREATE TABLE `{}` (
-+                pk Uint64 NOT NULL,
-+                plain Utf8 COMPRESSION(algorithm=off),
-+                lz4 Utf8 COMPRESSION(algorithm=lz4),
-+                zstd Utf8 COMPRESSION(algorithm=zstd,level=5),
-+                default_compression Utf8,
-+                PRIMARY KEY (pk)
-+            ) PARTITION BY HASH(pk) WITH (STORE = COLUMN, PARTITION_COUNT = 1);
-+        )", table), true);
-+        ExecuteQuery(session, std::format(R"(
-+            UPSERT INTO `{}` (pk, plain, lz4, zstd, default_compression) VALUES
-+                (1u, "first", "first", "first", "first"),
-+                (2u, NULL, "second", "second", NULL);
-+        )", table));
-+        const auto originalDdl = FetchShowCreateTableDdl(session, table);
-+        UNIT_ASSERT_STRING_CONTAINS(originalDdl, "COMPRESSION");
-+        const auto originalContent = GetTableContent(session, table, "pk");
-+
-+        CreateBackupLambda(testEnv.GetDriver(), testEnv.GetS3Port())();
-+        ExecuteQuery(session, std::format("DROP TABLE `{}`;", table), true);
-+        CreateRestoreLambda(testEnv.GetDriver(), testEnv.GetS3Port(), {"olap_column_compression_backup"})();
-+
-+        UNIT_ASSERT_STRINGS_EQUAL(FetchShowCreateTableDdl(session, table), originalDdl);
-+        CompareResults(GetTableContent(session, table, "pk"), originalContent);
-+    }
-+
-     Y_UNIT_TEST(OlapColumnEncodingsPreservedThroughS3BackupRestore) {
-         TS3TestEnv testEnv;
-         constexpr const char* table = "/Root/olap_col_encodings_backup";
+     workdir = os.getenv('workdir')
+     if not workdir:
+-        # Prefer job TMP_DIR (cleaned after test_ya) over system /tmp.
++        # Prefer job TMP_DIR (cleaned after build_and_test_ya) over system /tmp.
+         parent = os.getenv('TMP_DIR')
+         if parent:
+             workdir = tempfile.mkdtemp(prefix='graph_compare_', dir=parent)
+```
+
+**File**: `.github/scripts/utils/analytics/README.md` (modified, +1/-1)
+```diff
+@@ -20,7 +20,7 @@
+ ```mermaid
+ flowchart LR
+   subgraph inJob [Внутри job]
+-    bash["test_ya: analytics start / analytics end"] --> cli["ci_metrics.py"]
++    bash["build_and_test_ya: analytics start / analytics end"] --> cli["ci_metrics.py"]
+     evlog["ya_evlog_phases.py"] --> cli
+     cli --> jsonl[("JSONL на диске раннера")]
+     jsonl -->|"flush / send"| ydb
+```
+
+**File**: `.github/scripts/utils/analytics/github_actions/README.md` (modified, +6/-6)
+```diff
+@@ -19,7 +19,7 @@ GitHub API, сколько шли job и step.
+ **Номер job в GitHub** (колонка `github_job_id`, например `456`). Это
+ `${{ job.check_run_id }}` — GitHub отдаёт его в самом job. Нужен, чтобы
+ сджойнить фазу со строкой job, которую выгрузка пишет как `span_id = job-456`.
+-В `test_ya` это число копируется в `$GITHUB_NUMERIC_JOB_ID`. В своём workflow
++В `build_and_test_ya` это число копируется в `$GITHUB_NUMERIC_JOB_ID`. В своём workflow
+ выставьте то же: `GITHUB_NUMERIC_JOB_ID: ${{ job.check_run_id }}`.
+ 
+ **Номер попытки workflow** (колонка `run_attempt`). GitHub кладёт его сам в
+@@ -29,7 +29,7 @@ GitHub API, сколько шли job и step.
+ Нет любого из двух — строка не попадёт в таблицу, уйдёт в файл
+ `$ANALYTICS_FILE.skipped` рядом с JSONL. Сборка не упадёт.
+ 
+-JSONL не кладите в каталог, который `test_ya` выкладывает на публичный S3
++JSONL не кладите в каталог, который `build_and_test_ya` выкладывает на публичный S3
+ (`PUBLIC_DIR`) — иначе файл с метриками уедет в интернет.
+ 
+ ### Своё измерение в workflow
+@@ -92,7 +92,7 @@ WHERE run_id = 123 AND name = "compile";
+ | `github_job_id` | `$GITHUB_NUMERIC_JOB_ID` | `456` |
+ | `run_attempt` | `$GITHUB_RUN_ATTEMPT` | `1` |
+ | `workflow` | `$GITHUB_WORKFLOW` | `PR-check` |
+-| `job_name` | `$GITHUB_JOB_NAME` (`job.name` из GitHub API в `test_ya`), иначе `$GITHUB_JOB` | `Build and test relwithdebinfo` |
++| `job_name` | `$GITHUB_JOB_NAME` (`job.name` из GitHub API в `build_and_test_ya`), иначе `$GITHUB_JOB` | `Build and test relwithdebinfo` |
+ | `event_name` | `$GITHUB_EVENT_NAME` | `pull_request` |
+ | `branch` | `$BRANCH_NAME` / `$GITHUB_BASE_REF` / event | `main` |
+ | `commit` | `$ORIGINAL_HEAD` / `$GITHUB_SHA` | `abc…` |
+@@ -107,7 +107,7 @@ WHERE run_id = 123 AND name = "compile";
+ Строки живут год. У выгрузки из GitHub API `span_id` не случайный, а
+ `job-{id}`, `queue-{id}`, `step-{id}-{N}` — по нему фазу джойнят с job.
+ 
+-### Новая фаза в `test_ya`
++### Новая фаза в `build_and_test_ya`
+ 
+ 1. Имя в `YA_PHASE_NAMES` в [`taxonomy.py`](taxonomy.py).
+ 2. Строка в таблице фаз ниже (тот же `name`).
+@@ -142,7 +142,7 @@ analytics end my_new_phase --rc "$RC"
+ - Шаг завершается по любой причине, в том числе из‑за `set -e` — закрыть
+   незакрытые `start` с тем exit code, с которым вышел скрипт, и залить.
+ 
+-Это уже стоит в `test_ya`. В свой workflow скопируйте тот же каркас, если
++Это уже стоит в `build_and_test_ya`. В свой workflow скопируйте тот же каркас, если
+ там тоже `set -e`.
+ 
+ ```bash
+@@ -160,7 +160,7 @@ trap 'rc=$?; trap - EXIT; analytics send --rc "$rc"; exit $rc' EXIT
+ | `github_job` | `job` | выгрузка | сколько job выполнялся, от `started_at` до `completed_at` |
+ | `github_job` | `queue` | выгрузка | сколько job ждал раннера; `labels.queued_ms` то же число |
+ | `github_step` | имя шага | выгрузка | сколько шёл шаг GitHub Actions |
+-| `ya_phase` | см. ниже | `test_ya` | фазы внутри job |
++| `ya_phase` | см. ниже | `build_and_test_ya` | фазы внутри job |
+ 
+ | `name` | Что измеряет |
+ | --- | --- |
+```
+
+**File**: `.github/scripts/utils/analytics/github_actions/analytics.sh` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-# Sourced by test_ya steps. Must not fail the caller.
++# Sourced by build_and_test_ya steps. Must not fail the caller.
+ ANALYTICS_PY="${ANALYTICS_PY:-.github/scripts/utils/analytics/github_actions/ci_metrics.py}"
+ 
+ analytics() {
+```
+
+**File**: `.github/scripts/utils/analytics/github_actions/taxonomy.py` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@
+ # github_step names are the GitHub step names, so they cannot be enumerated.
+ DYNAMIC_NAME_SOURCES = ("github_step",)
+ 
+-# Written inside a job by test_ya.
++# Written inside a job by build_and_test_ya.
+ YA_PHASE_SOURCE = "ya_phase"
+ YA_PHASE_NAMES = (
+     "init",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #57261** (2026-10-28): ci: add 27-1-1 to nightly (@PavelEfarinov)
-- **PR #57256** (2026-10-28): Fixed test (@xyliganSereja)
-- **PR #57252** (2026-10-28): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #57236** (2026-10-28): Update muted_ya (relwithdebinfo) in main (@ydbot)
-- **PR #57235** (closed): [26-3][docs] Backport feature flag generator and documentation (#55307, #55293) (@sintjuri)
-- **PR #57234** (closed): [26-2][docs] Backport feature flag generator and documentation (#55307, #55293) (@sintjuri)
+- **PR #57570** (2026-10-30): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #57569** (2026-10-30): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #57566** (2026-10-30): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
+- **PR #57565** (2026-10-30): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
+- **PR #57564** (2026-10-30): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #57563** (2026-10-30): Sync branches 261030-0054: rightlib to main (@ydbot)
 
 ---
 
@@ -2427,23 +2578,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixed test (#57256)
+## X. Add BlockStoreVolume tablet type to Hive UI (#57503)
 
 **RULE**:
-When implementing operations in `ydb/core/tx/columnshard/backup/import/ut/ut_import.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/mind/hive/monitoring.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d59a8f02`: Fixed test (#57256). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8b28bd0d`: Add BlockStoreVolume tablet type to Hive UI (#57503). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/tx/columnshard/backup/import/ut/ut_import.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/mind/hive/monitoring.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            // S3 uses real HTTP threads; allow replies to arrive before simulated timers exhaust the event limit.
-            runtime.SetFastSimulatedTime(false);
-            runtime.SetFastSimulatedTime(false);
+             TTabletTypes::BlockStoreVolume,
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2453,4 +2602,4 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d59a8f02` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8b28bd0d` are properly handled with clean fallback behavior.
