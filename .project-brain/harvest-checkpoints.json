@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T04:41:52.813Z",
+  "last_updated": "2026-10-30T04:48:15.587Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "85cf1a39197ef429b8a974a7cec1366e4b526fcf357f4163e79596d4f57205ea",
-      "verified_at": "2026-10-28T16:05:27.598Z",
+      "content_hash": "ce12403ba94b91714818f008d497a2705291090a2c7f0a0f18425c21574409f3",
+      "verified_at": "2026-10-30T04:48:15.586Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T16:05:27.598Z"
+      "last_updated": "2026-10-30T04:48:15.586Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-15LK",
-    "timestamp": "2026-10-28T00:40:17.816Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "24e1a84c5d10bcff650ba43a197fa33735c5f97049392510833d8c356347dc93",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-9G89",
     "timestamp": "2026-10-28T00:46:44.841Z",
     "repository": "1jehuang/jcode",
@@ -7490,6 +7475,21 @@
     "repository": "apple/foundationdb",
     "learningId": "learn-github-apple-foundationdb",
     "contentHash": "4bcb0fafe291a9cf7f96db74f9019462bfddcd2d8eacbe9da820fc6eac94392d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-RQOP",
+    "timestamp": "2026-10-30T04:48:15.577Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "ce12403ba94b91714818f008d497a2705291090a2c7f0a0f18425c21574409f3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

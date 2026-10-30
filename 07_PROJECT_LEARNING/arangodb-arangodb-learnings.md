@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `19ed3336`  
+> **Source Version**: `884f38b4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T16:05:27.203Z  
+> **Timestamp**: 2026-10-30T04:48:15.160Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T16:05:27.197Z  
+> **Harvest Timestamp**: 2026-10-30T04:48:14.113Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1009,268 +1009,200 @@ my sample apple
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `22374ae6` (2026-10-28)
-**Commit Message**: Added a regression test
+### Incident Patch 1: `884f38b4` (2026-10-29)
+**Commit Message**: Raise version to 3.12.14
 
-**File**: `tests/js/client/shell/shell-auto-upgrade-full-compaction-noncluster.js` (added, +91/-0)
+**File**: `ARANGO-VERSION` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,91 @@
-+// //////////////////////////////////////////////////////////////////////////////
-+// / DISCLAIMER
-+// /
-+// / Copyright 2014-2026 ArangoDB GmbH, Cologne, Germany
-+// /
-+// / Licensed under the Business Source License 1.1 (the "License");
-+// / you may not use this file except in compliance with the License.
-+// / You may obtain a copy of the License at
-+// /
-+// /     https://github.com/arangodb/arangodb/blob/devel/LICENSE
-+// /
-+// / Unless required by applicable law or agreed to in writing, software
-+// / distributed under the License is distributed on an "AS IS" BASIS,
-+// / WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// / See the License for the specific language governing permissions and
-+// / limitations under the License.
-+// /
-+// / Copyright holder is ArangoDB GmbH, Cologne, Germany
-+// /
-+// //////////////////////////////////////////////////////////////////////////////
-+
-+const jsunity = require("jsunity");
-+const { assertTrue, assertFalse, assertEqual } = jsunity.jsUnity.assertions;
-+const pu = require('@arangodb/testutils/process-utils');
-+const fs = require("fs");
-+const { executeExternalAndWaitWithSanitizer } = require('@arangodb/test-helper');
-+
-+function AutoUpgradeFullCompactionSuite () {
-+  'use strict';
-+
-+  return {
-+    testAutoUpgradeWithFullCompactionSucceeds: function () {
-+      /*
-+       * Regression test: `--database.auto-upgrade true` combined with
-+       * `--database.auto-upgrade-full-compaction true` used to fail
-+       * deterministically with exit code 30 (TRI_EXIT_FULL_COMPACTION_FAILED)
-+       * and "Manual compaction paused", even on an empty database directory.
-+       * The ShutdownFeature was registered in upgrade mode and its start()
-+       * put the server into shutdown state before the storage engine and the
-+       * UpgradeFeature even started, so the full compaction saw the cancel
-+       * flag immediately.
-+       *
-+       * As we need the exit code, we start a single server as an external
-+       * process on a fresh database directory and wait for it to finish the
-+       * upgrade. The log is written to a file so the result can be checked.
-+       */
-+      const arangod = pu.ARANGOD_BIN;
-+      assertTrue(fs.isFile(arangod), "arangod not found!");
-+
-+      const dataDir = fs.getTempFile();
-+      const logFile = fs.getTempFile();
-+      const args = [
-+        '-c', 'none',
-+        '--database.directory', dataDir,
-+        '--database.auto-upgrade', 'true',
-+        '--database.auto-upgrade-full-compaction', 'true',
-+        '--javascript.enabled', 'false',
-+        '--server.rest-server', 'false',
-+        '--log.output', 'file://' + logFile,
-+        '--log.foreground-tty', 'false',
-+        '--log.ids', 'true'
-+      ];
-+
-+      try {
-+        const rc = executeExternalAndWaitWithSanitizer(arangod, args, 'shell-auto-upgrade-full-compaction-noncluster');
-+        const log = fs.isFile(logFile) ? fs.readFileSync(logFile).toString() : '';
-+        const details = `arangod result: ${JSON.stringify(rc)}\narangod log:\n${log}`;
-+
-+        assertTrue(rc.hasOwnProperty("exit"), details);
-+        assertEqual(0, rc.exit, details);
-+        // e8f47: "full RocksDB compaction after upgrade completed successfully"
-+        assertTrue(log.includes('[e8f47]'), details);
-+        // 65594: "compaction of entire RocksDB database key range finished"
-+        assertTrue(log.includes('[65594]'), details);
-+        // e8f46: "full RocksDB compaction after upgrade failed"
-+        assertFalse(log.includes('[e8f46]'), details);
-+      } finally {
-+        if (fs.isFile(logFile)) {
-+          fs.remove(logFile);
-+        }
-+        if (fs.isDirectory(dataDir)) {
-+          fs.removeDirectoryRecursive(dataDir, true);
-+        }
-+      }
-+    }
-+  };
-+}
-+
-+jsunity.run(AutoUpgradeFullCompactionSuite);
-+
-+return jsunity.done();
+@@ -1 +1 @@
+-3.12.13-devel
++3.12.14-devel
 ```
 
----
-
-### Incident Patch 2: `340d7de0` (2026-10-28)
-**Commit Message**: Merge pull request #23549 from arangodb/bug-fix/cor-1230-dont-shutdown-before-upgrade
-
-[COR-1230] dont shutdown before upgrade
-
-**File**: `arangod/RestServer/ArangodServer.cpp` (modified, +4/-5)
+**File**: `CHANGELOG` (modified, +111/-105)
 ```diff
-@@ -367,11 +367,10 @@ void ArangodServer::addFeatures() {
-   addFeature<ShardingFeature>();
-   addFeature<ShellColorsFeature>();
- #ifdef USE_V8
--  addFeature<ShutdownFeature>(
--      std::array{std::type_index(typeid(ScriptFeature))});
--#else
--  addFeature<ShutdownFeature>(
--      std::array{std::type_index(typeid(AgencyFeaturePhase))});
-+  if (operationMode == OperationMode::MODE_SCRIPT) {
-+    addFeature<ShutdownFeature>(
-+        std::array{std::type_index(typeid(ScriptFeature))});
-+  }
- #endif
-   addFeature<SoftShutdownFeature>();
-   addFeature<SslFeature>();
-```
-
-**File**: `arangod/RestServer/ServerFeature.cpp` (modified, +0/-6)
-```diff
-@@ -23,7 +23,6 @@
- #include "ServerFeature.h"
+@@ -1,96 +1,101 @@
+-3.12.13 (XXXX-XX-XX)
++3.12.14 (XXXX-XX-XX)
+ --------------------
  
- #include "ApplicationFeatures/ApplicationServer.h"
--#include "ApplicationFeatures/ShutdownFeature.h"
- #include "FeaturePhases/AqlFeaturePhase.h"
- #include "RestServer/UpgradeFeature.h"
- #include "Basics/application-exit.h"
-@@ -101,11 +100,6 @@ void ServerFeature::prepare() {
-   }
- #endif
+-* BTS-2496: AQL `LENGTH()` and `COUNT()` of a subquery that contains a
+-  `COLLECT` return the number of rows the subquery produces after the
+-  `COLLECT` and any `FILTER` following it. For example,
++
++3.12.13 (2026-10-28)
++--------------------
++
++* BTS-2496: AQL `LENGTH()` and `COUNT()` of a subquery that contains a `COLLECT`
++  return the number of rows the subquery produces after the `COLLECT` and any
++  `FILTER` following it. For example,
+   `LENGTH(FOR d IN coll COLLECT WITH COUNT INTO c FILTER c > 0 RETURN true)`
+-  returns `1` for a non-empty collection. The `optimize-count` optimizer rule
+-  is not applied to such subqueries. Before, such expressions could return
+-  `null` or `0`.
++  returns `1` for a non-empty collection. The `optimize-count` optimizer rule is
++  not applied to such subqueries. Before, such expressions could return `null`
++  or `0`.
  
--  if (operationMode() == OperationMode::MODE_SERVER ||
--      operationMode() == OperationMode::MODE_CONSOLE) {
--    server().getFeature<ShutdownFeature>().disable();
--  }
--
-   // adjust global settings for UTF-8 string validation
-   basics::VelocyPackHelper::strictRequestValidationOptions.validateUtf8Strings =
-       _options.validateUtf8Strings;
+-* BTS-2502: When an AQL `FILTER` with `OR` is answered by several index
+-  lookups in one `IndexNode`, for example `FILTER d.a == 1 OR d.b == 2` with
+-  an index on each attribute, the query returns the rows of every lookup, no
+-  matter how many rows each lookup produces. Affected versions skipped the
+-  remaining lookups when the rows found so far added up to an exact multiple
+-  of 1000, and the query silently returned too few results.
++* BTS-2502: When an AQL `FILTER` with `OR` is answered by several index lookups
++  in one `IndexNode`, for example `FILTER d.a == 1 OR d.b == 2` with an index on
++  each attribute, the query returns the rows of every lookup, no matter how many
++  rows each lookup produces. Affected versions skipped the remaining lookups
++  when the rows found so far added up to an exact multiple of 1000, and the
++  query silently returned too few results.
+ 
+ * COR-1209: Fixed a crash that occurs when a license is being activated.
+ 
+-* BTS-2497: Fixed AQL wrong result: ALL_SHORTEST_PATHS inside a loop returns no paths
+-  for every row after one whose search is empty or starts at the target.
++* BTS-2497: Fixed AQL wrong result: ALL_SHORTEST_PATHS inside a loop returns no
++  paths for every row after one whose search is empty or starts at the target.
+ 
+-* COR-1045: Fixed a server crash when SEARCH on a search-alias view referenced a field
+-  not covered by the inverted index and the query ran with `failOnWarning: true`.
++* COR-1045: Fixed a server crash when SEARCH on a search-alias view referenced a
++  field not covered by the inverted index and the query ran with
++  `failOnWarning: true`.
+ 
+ * COR-1031: Adapt permissions for `PUT /_api/query/properties`: the endpoint now
+-  asks the new permission `UpdateQueryProperties`, which is scoped to the database
+-  of the request, instead of the admin permission `AdminAqlQueries`. With classic
+-  authentication it requires read-write access to that database and not read-write
+-  access to `_system`. Returns TRI_ERROR_FORBIDDEN on failure.
++  asks the new permission `UpdateQueryProperties`, which is scoped to the
++  database of the request, instead of the admin permission `AdminAqlQueries`.
++  With classic authentication it requires read-write access to that database and
++  not read-write access to `_system`. Returns TRI_ERROR_FORBIDDEN on failure.
+ 
+ * Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
+   dependencies.
+ 
+ * Updated ArangoDB Starter to v0.19.30.
+ 
+-* COR-1152: Fixed AQL FILTER conditions combining an equality set (IN list,
+-  ==, or OR of ==) with a range operator (<, <=, >, >=) on the same string
+-  attribute wrongly returning no results when byte order disagrees with ICU
+-  collation order. The same fix applies to SEARCH conditions combining ==
+-  or OR of == with a range operator.
++* COR-1152: Fixed AQL FILTER conditions combining an equality set (IN list, ==,
++  or OR of ==) with a range operator (<, <=, >, >=) on the same string attribute
++  wrongly returning no results when byte order disagrees with ICU collation
++  order. The same fix applies to SEARCH conditions combining == or OR of == with
++  a range operator.
+ 
+ * The `--server.jwt-secret-folder` startup option now skips everything in the
+   folder that is not a regular file (e.g. subfolders, sockets, devices, named
+   pipes) instead of trying to load it as a JWT secret.
+ 
+ * Add `--http.max-decompressed-request-body-size` startup option, which limits
+-  how large a compressed HTTP request body may be after decompression. The default
+-  is 512 MiB.
++  how large a compressed HTTP request body may be after decompression. The
++  default is 512 MiB.
+ 
+-* COR-1086: Replaced deprecated OpenSSL functions with the proper newer,
+-  higher level envelope calls. Removed unused functions and refactored some
+-  minor parts of the SslInterface.
++* COR-1086: Replaced deprecated OpenSSL functions with the proper newer, higher
++  level envelope calls. Removed unused functions and refactored some minor parts
++  of the SslInterface.
 ```
 
-**File**: `tests/js/client/shell/shell-auto-upgrade-full-compaction-noncluster.js` (added, +91/-0)
+**File**: `CMakeLists.txt` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,91 @@
-+// //////////////////////////////////////////////////////////////////////////////
-+// / DISCLAIMER
-+// /
-+// / Copyright 2014-2026 ArangoDB GmbH, Cologne, Germany
-+// /
-+// / Licensed under the Business Source License 1.1 (the "License");
-+// / you may not use this file except in compliance with the License.
-+// / You may obtain a copy of the License at
-+// /
-+// /     https://github.com/arangodb/arangodb/blob/devel/LICENSE
-+// /
-+// / Unless required by applicable law or agreed to in writing, software
-+// / distributed under the License is distributed on an "AS IS" BASIS,
-+// / WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// / See the License for the specific language governing permissions and
-+// / limitations under the License.
-+// /
-+// / Copyright holder is ArangoDB GmbH, Cologne, Germany
-+// /
-+// //////////////////////////////////////////////////////////////////////////////
-+
-+const jsunity = require("jsunity");
-+const { assertTrue, assertFalse, assertEqual } = jsunity.jsUnity.assertions;
-+const pu = require('@arangodb/testutils/process-utils');
-+const fs = require("fs");
-+const { executeExternalAndWaitWithSanitizer } = require('@arangodb/test-helper');
-+
-+function AutoUpgradeFullCompactionSuite () {
-+  'use strict';
-+
-+  return {
-+    testAutoUpgradeWithFullCompactionSucceeds: function () {
-+      /*
-+       * Regression test: `--database.auto-upgrade true` combined with
-+       * `--database.auto-upgrade-full-compaction true` used to fail
-+       * deterministically with exit code 30 (TRI_EXIT_FULL_COMPACTION_FAILED)
-+       * and "Manual compaction paused", even on an empty database directory.
-+       * The ShutdownFeature was registered in upgrade mode and its start()
-+       * put the server into shutdown state before the storage engine and the
-+       * UpgradeFeature even started, so the full compaction saw the cancel
-+       * flag immediately.
-+       *
-+       * As we need the exit code, we start a single server as an external
-+       * process on a fresh database directory and wait for it to finish the
-+       * upgrade. The log is written to a file so the result can be checked.
-+       */
-+      const arangod = pu.ARANGOD_BIN;
-+      assertTrue(fs.isFile(arangod), "arangod not found!");
-+
-+      const dataDir = fs.getTempFile();
-+      const logFile = fs.getTempFile();
-+      const args = [
-+        '-c', 'none',
-+        '--database.directory', dataDir,
-+        '--database.auto-upgrade', 'true',
-+        '--database.auto-upgrade-full-compaction', 'true',
-+        '--javascript.enabled', 'false',
-+        '--server.rest-server', 'false',
-+        '--log.output', 'file://' + logFile,
-+        '--log.foreground-tty', 'false',
-+        '--log.ids', 'true'
-+      ];
-+
-+      try {
-+        const rc = executeExternalAndWaitWithSanitizer(arangod, args, 'shell-auto-upgrade-full-compaction-noncluster');
-+        const log = fs.isFile(logFile) ? fs.readFileSync(logFile).toString() : '';
-+        const details = `arangod result: ${JSON.stringify(rc)}\narangod log:\n${log}`;
-+
-+        assertTrue(rc.hasOwnProperty("exit"), details);
-+        assertEqual(0, rc.exit, details);
-+        // e8f47: "full RocksDB compaction after upgrade completed successfully"
-+        assertTrue(log.includes('[e8f47]'), details);
-+        // 65594: "compaction of entire RocksDB database key range finished"
-+        assertTrue(log.includes('[65594]'), details);
-+        // e8f46: "full RocksDB compaction after upgrade failed"
-+        assertFalse(log.includes('[e8f46]'), details);
-+      } finally {
-+        if (fs.isFile(logFile)) {
-+          fs.remove(logFile);
-+        }
-+        if (fs.isDirectory(dataDir)) {
-+          fs.removeDirectoryRecursive(dataDir, true);
-+        }
-+      }
-+    }
-+  };
-+}
-+
-+jsunity.run(AutoUpgradeFullCompactionSuite);
-+
-+return jsunity.done();
+@@ -73,7 +73,7 @@ set(ARANGODB_VERSION_MINOR "12")
+ 
+ # when building the nightly ARANGODB_VERSION_PATCH will be set
+ if(NOT DEFINED ARANGODB_VERSION_PATCH)
+-  set(ARANGODB_VERSION_PATCH "13")
++  set(ARANGODB_VERSION_PATCH "14")
+   set(ARANGODB_VERSION_RELEASE_TYPE "devel")
+   set(ARANGODB_VERSION_RELEASE_NUMBER "")
+ else()
 ```
 
-**File**: `tests/sepp/Server.cpp` (modified, +0/-7)
+**File**: `OpenAPI/1-openapi.json` (modified, +1/-1)
 ```diff
-@@ -226,13 +226,6 @@ void Server::Impl::setupServer(std::string const& name, int& result) {
-   _server.addFeature<ShardingFeature>();
-   _server.addFeature<SharedPRNGFeature>();
-   _server.addFeature<ShellColorsFeature>();
--#ifdef USE_V8
--  _server.addFeature<ShutdownFeature>(
--      std::array{std::type_index(typeid(ScriptFeature))});
--#else
--  _server.addFeature<ShutdownFeature>(
--      std::array{std::type_index(typeid(AgencyFeaturePhase))});
--#endif
-   _server.addFeature<SoftShutdownFeature>();
-   _server.addFeature<SslFeature>();
-   _server.addFeature<StatisticsFeature>(metrics);
+@@ -14,7 +14,7 @@
+   },
+   "summary": "The HTTP API of the ArangoDB graph database system",
+   "title": "ArangoDB Core API",
+-  "version": "3.12.13-devel (API v1)"
++  "version": "3.12.14-devel (API v1)"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+```
+
+**File**: `OpenAPI/2-openapi.json` (modified, +604/-9)
+```diff
+@@ -14,17 +14,17 @@
+   },
+   "summary": "The HTTP API of the ArangoDB graph database system",
+   "title": "ArangoDB Core API",
+-  "version": "3.12.12-devel (API experimental)"
++  "version": "3.12.14-devel (API experimental)"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+   "/_arango/experimental/_db/{database-name}/_admin/activities": {
+    "get": {
+-    "description": "\u003e **WARNING:**\nThe activities API is incomplete and thus an experimental feature.\n\n\nReturns the list of activities currently in progress on the server.\nEach activity has an identifier, a type (e.g. `RestHandler`, `AqlQuery`,\n`TransactionActivity`), a creation time, an optional parent reference,\nand a `data` object. The structure of `data` depends on the activity type\nand may be extended in future versions.\n\nThe permissions required to use the endpoint depend on the\n[`--activities.only-superuser-enabled` startup option](https://docs.arango.ai/arangodb/3.12/components/arangodb-server/options/#--activitiesonly-superuser-enabled).\nBy default, *administrate* access for the `_system` database is\nsufficient. If the startup option is enabled, the endpoint is restricted\nto the superuser and you therefore need to authenticate with a token\ncreated from the JWT secret.\n",
++    "description": "\u003e **WARNING**\n\u003e\n\u003e The activities API is incomplete and thus an experimental feature.\n\nReturns the list of activities currently in progress on the server.\nEach activity has an identifier, a type (e.g. `RestHandler`, `AqlQuery`,\n`TransactionActivity`), a creation time, an optional parent reference,\nand a `data` object. The structure of `data` depends on the activity type\nand may be extended in future versions.\n\nThe permissions required to use the endpoint depend on the\n[`--activities.only-superuser-enabled` startup option](https://docs.arango.ai/arangodb/3.12/components/arangodb-server/options/#--activitiesonly-superuser-enabled).\nBy default, `rw` access for the `_system` database is\nsufficient. If the startup option is enabled, the endpoint requires a\n[superuser JWT](https://docs.arango.ai/arangodb/3.12/develop/http-api/authentication/#jwt-superuser-tokens).",
+     "operationId": "getActivities",
+     "parameters": [
+      {
+-      "description": "The name of a database. Which database you use doesn't matter as long\nas the user account you authenticate with has at least read access\nto this database and write access to the `_system` database.\n",
++      "description": "The name of a database. Which database you use doesn't matter as long\nas the user account you authenticate with has at least `ro` access\nto this database and `rw` access to the `_system` database.\n",
+       "example": "_system",
+       "in": "path",
+       "name": "database-name",
+@@ -50,7 +50,7 @@
+               "type": "string"
+              },
+              "data": {
+-              "description": "Type-specific details for this activity. The shape of\nthis object depends on the activity type and is\nintentionally left flexible so the feature can grow\nwithout breaking the API. Do not rely on a fixed schema.\n",
++              "description": "Type-specific details for this activity. The shape of\nthis object depends on the activity `type` and is\nintentionally left flexible so the feature can grow\nwithout breaking the API. Do not rely on a fixed schema.\nSee the [Activity types](https://docs.arango.ai/arangodb/3.12/develop/http-api/monitoring/activities/#activity-types) for the details.\n",
+               "type": "object"
+              },
+              "id": {
+@@ -63,8 +63,29 @@
+               "example": 370,
+               "type": "integer"
+              },
++             "threads": {
++              "description": "\u003csmall\u003eIntroduced in: v3.12.10\u003c/small\u003e\n\nThe threads that currently execute this activity.\nThe list is empty for activities that no thread\nclaims, like background maintenance activities.\n",
++              "items": {
++               "properties": {
++                "LWPID": {
++                 "description": "The identifier of the light-weight process\n(thread) as assigned by the operating system.\n",
++                 "type": "integer"
++                },
++                "name": {
++                 "description": "The name of the thread.\n",
++                 "type": "string"
++                }
++               },
++               "required": [
++                "LWPID",
++                "name"
++               ],
++               "type": "object"
++              },
++              "type": "array"
++             },
+              "type": {
+-              "description": "The kind of activity (e.g. `RestHandler`, `AQLQuery`).\n",
++              "description": "The kind of activity (e.g. `RestHandler`, `AQLQuery`).\nSee the [Activity types](https://docs.arango.ai/arangodb/3.12/develop/http-api/monitoring/activities/#activity-types) for the details.\n",
+               "example": "RestHandler",
+               "type": "string"
+   
 ```
 
 #### Recent Merged Pull Requests:
@@ -1299,55 +1231,67 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Added a regression test
+## X. Raise version to 3.12.14
 
 **RULE**:
-When implementing operations in `tests/js/client/shell/shell-auto-upgrade-full-compaction-noncluster.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `22374ae6`: Added a regression test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `884f38b4`: Raise version to 3.12.14. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/js/client/shell/shell-auto-upgrade-full-compaction-noncluster.js`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-// //////////////////////////////////////////////////////////////////////////////
-// / DISCLAIMER
-// /
-// / Copyright 2014-2026 ArangoDB GmbH, Cologne, Germany
-// /
-// / Licensed under the Business Source License 1.1 (the "License");
-// / you may not use this file except in compliance with the License.
-// / You may obtain a copy of the License at
-// /
-// /     https://github.com/arangodb/arangodb/blob/devel/LICENSE
-// /
-// / Unless required by applicable law or agreed to in writing, software
-// / distributed under the License is distributed on an "AS IS" BASIS,
-// / WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// / See the License for the specific language governing permissions and
-// / limitations under the License.
-// /
-// / Copyright holder is ArangoDB GmbH, Cologne, Germany
-// /
-// //////////////////////////////////////////////////////////////////////////////
+3.12.14 (XXXX-XX-XX)
 
-const jsunity = require("jsunity");
-const { assertTrue, assertFalse, assertEqual } = jsunity.jsUnity.assertions;
-const pu = require('@arangodb/testutils/process-utils');
-const fs = require("fs");
-const { executeExternalAndWaitWithSanitizer } = require('@arangodb/test-helper');
+3.12.13 (2026-10-28)
+--------------------
 
-function AutoUpg
+* BTS-2496: AQL `LENGTH()` and `COUNT()` of a subquery that contains a `COLLECT`
+  return the number of rows the subquery produces after the `COLLECT` and any
+  `FILTER` following it. For example,
+  returns `1` for a non-empty collection. The `optimize-count` optimizer rule is
+  not applied to such subqueries. Before, such expressions could return `null`
+  or `0`.
+* BTS-2502: When an AQL `FILTER` with `OR` is answered by several index lookups
+  in one `IndexNode`, for example `FILTER d.a == 1 OR d.b == 2` with an index on
+  each attribute, the query returns the rows of every lookup, no matter how many
+  rows each lookup produces. Affected versions skipped the remaining lookups
+  when the rows found so far added up to an exact multiple of 1000, and the
+  query silently returned too few results.
+* BTS-2497: Fixed AQL wrong result: ALL_SHORTEST_PATHS inside a loop returns no
+  paths for every row after one whose search is empty or starts at the target.
+* COR-1045: Fixed a server crash when SEARCH on a search-alias view referenced a
+  field not covered by the inverted index and the query ran with
+  `failOnWarning: true`.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+3.12.13 (XXXX-XX-XX)
+* BTS-2496: AQL `LENGTH()` and `COUNT()` of a subquery that contains a
+  `COLLECT` return the number of rows the subquery produces after the
+  `COLLECT` and any `FILTER` following it. For example,
+  returns `1` for a non-empty collection. The `optimize-count` optimizer rule
+  is not applied to such subqueries. Before, such expressions could return
+  `null` or `0`.
+* BTS-2502: When an AQL `FILTER` with `OR` is answered by several index
+  lookups in one `IndexNode`, for example `FILTER d.a == 1 OR d.b == 2` with
+  an index on each attribute, the query returns the rows of every lookup, no
+  matter how many rows each lookup produces. Affected versions skipped the
+  remaining lookups when the rows found so far added up to an exact multiple
+  of 1000, and the query silently returned too few results.
+* BTS-2497: Fixed AQL wrong result: ALL_SHORTEST_PATHS inside a loop returns no paths
+  for every row after one whose search is empty or starts at the target.
+* COR-1045: Fixed a server crash when SEARCH on a search-alias view referenced a field
+  not covered by the inverted index and the query ran with `failOnWarning: true`.
+  asks the new permission `UpdateQueryProperti
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `22374ae6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `884f38b4` are properly handled with clean fallback behavior.

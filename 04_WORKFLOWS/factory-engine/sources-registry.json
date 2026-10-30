@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T04:41:55.354Z",
-    "lastVerified": "2026-10-30T04:41:55.354Z",
+    "lastChecked": "2026-10-30T04:48:18.129Z",
+    "lastVerified": "2026-10-30T04:48:18.129Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -105,12 +105,12 @@
     "lastVerified": "2026-10-28T19:24:28.885Z"
   },
   "gravitl-netmaker": {
-    "name": "gravitl/netmaker",
+    "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-29T17:03:37.185Z",
-    "lastVerified": "2026-10-29T17:03:37.185Z",
+    "lastChecked": "2026-10-30T04:48:05.298Z",
+    "lastVerified": "2026-10-30T04:48:05.298Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -119,7 +119,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0a8dba49"
   },
   "mintplex-labs-anything-llm": {
     "name": "anything-llm",
@@ -234,8 +235,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T04:15:29.543Z",
-    "lastVerified": "2026-10-30T04:15:29.543Z",
+    "lastChecked": "2026-10-30T04:48:10.328Z",
+    "lastVerified": "2026-10-30T04:48:10.328Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -3424,9 +3425,9 @@
   "fujiapple852-trippy": {
     "name": "trippy",
     "officialUrl": "https://github.com/fujiapple852/trippy",
-    "lastChecked": "2026-10-28T12:22:07.591Z",
+    "lastChecked": "2026-10-30T04:47:55.257Z",
     "revisionIdentifier": "54c8f399",
-    "lastVerified": "2026-10-28T12:22:07.591Z"
+    "lastVerified": "2026-10-30T04:47:55.257Z"
   },
   "hf-qwen-qwen3-0.6b": {
     "name": "Qwen/Qwen3-0.6B",
@@ -5214,14 +5215,14 @@
     "officialUrl": "https://github.com/arangodb/arangodb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-10-28T16:05:27.197Z",
-    "lastVerified": "2026-10-28T16:05:27.197Z",
+    "lastChecked": "2026-10-30T04:48:14.113Z",
+    "lastVerified": "2026-10-30T04:48:14.113Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "85cf1a39197ef429b8a974a7cec1366e4b526fcf357f4163e79596d4f57205ea",
+    "contentHash": "ce12403ba94b91714818f008d497a2705291090a2c7f0a0f18425c21574409f3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5610,9 +5611,9 @@
   "pytest-dev-pytest-testinfra": {
     "name": "pytest-testinfra",
     "officialUrl": "https://github.com/pytest-dev/pytest-testinfra",
-    "lastChecked": "2026-10-28T16:58:48.200Z",
+    "lastChecked": "2026-10-30T04:48:02.747Z",
     "revisionIdentifier": "04cccc39",
-    "lastVerified": "2026-10-28T16:58:48.200Z"
+    "lastVerified": "2026-10-30T04:48:02.747Z"
   },
   "greptimeteam-greptimedb": {
     "name": "GreptimeTeam/greptimedb",
@@ -9036,5 +9037,19 @@
     "lastChecked": "2026-10-30T04:41:38.246Z",
     "revisionIdentifier": "2ac6a06c",
     "lastVerified": "2026-10-30T04:41:38.246Z"
+  },
+  "raghav453-multilipi-hreflang-generator": {
+    "name": "multilipi-hreflang-generator",
+    "officialUrl": "https://github.com/raghav453/multilipi-hreflang-generator",
+    "lastChecked": "2026-10-30T04:47:57.702Z",
+    "revisionIdentifier": "ca4d146c",
+    "lastVerified": "2026-10-30T04:47:57.702Z"
+  },
+  "rickclephas-kmp-nativecoroutines": {
+    "name": "KMP-NativeCoroutines",
+    "officialUrl": "https://github.com/rickclephas/KMP-NativeCoroutines",
+    "lastChecked": "2026-10-30T04:48:00.284Z",
+    "revisionIdentifier": "54a45fbb",
+    "lastVerified": "2026-10-30T04:48:00.284Z"
   }
 }
