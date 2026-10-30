@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T15:25:41.526Z",
+  "last_updated": "2026-10-30T15:37:11.547Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -33190,8 +33190,8 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "95490f75",
-      "content_hash": "bff9588a8752a3b75d39f61476809d52d141d2920e809e941dbd0d289084ac1d",
+      "source_version": "d72e8d00",
+      "content_hash": "b91fade310094d7c168c7f90caeebc0d0de1e93d148fa833b0aa8ed100d56749",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
@@ -33241,7 +33241,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T07:34:44.453Z",
+      "verified_at": "2026-10-30T15:37:10.014Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54471,8 +54471,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "69734591",
-      "content_hash": "661d987d5eaa656d566787286ef160bf4fbc854cbfb86818925dc41fe552c9cd",
+      "source_version": "421026a6",
+      "content_hash": "438de66fab45cf0209a697502c4e92cab88f128d143c84640e866e67db809dfa",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -54545,6 +54545,11 @@
           "number": 5590,
           "title": "Close Couchbase clusters after verification and honor the context (#5489)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5789,
+          "title": "Recover from detector panics in the verification overlap worker (#5495)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54552,7 +54557,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T03:59:40.023Z",
+      "verified_at": "2026-10-30T15:37:11.524Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71260,8 +71265,8 @@
       "slug": "urllib3-urllib3",
       "platform": "github",
       "source_url": "https://github.com/urllib3/urllib3",
-      "source_version": "8883fd90",
-      "content_hash": "5b9d1f1da12d73671d7aa8b159c1f4807b419fe8f1a9b21ce57358d579eb7e57",
+      "source_version": "2aa7e9c3",
+      "content_hash": "77f7c673934638954d40c620c16e8b3ffd48187c0d098ca5b588d6694a2e6348",
       "dossier_path": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/urllib3-urllib3-learnings.md",
       "promoted_rules": [
@@ -71279,6 +71284,11 @@
           "number": 4809,
           "title": "Speed up parse_url() by ~28% for common ASCII hosts and plain paths (#5314)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5788,
+          "title": "Keep the stored key in RecentlyUsedContainer lookups (#5347)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -71286,7 +71296,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T13:35:09.458Z",
+      "verified_at": "2026-10-30T15:37:04.902Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153963,6 +153973,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T15:25:41.503Z"
+    },
+    "rule-5788": {
+      "learning_id": "rule-5788",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5788,
+      "title": "Keep the stored key in RecentlyUsedContainer lookups (#5347)",
+      "source_url": "https://github.com/urllib3/urllib3",
+      "source_version": "2aa7e9c3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T15:37:04.902Z"
+    },
+    "rule-5789": {
+      "learning_id": "rule-5789",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5789,
+      "title": "Recover from detector panics in the verification overlap worker (#5495)",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "421026a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T15:37:11.524Z"
     }
   },
   "aliases": {

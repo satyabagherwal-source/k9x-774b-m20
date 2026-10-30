@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "95490f75",
+    "sourceVersion": "d72e8d00",
     "license": "Apache-2.0",
-    "contentHash": "bff9588a8752a3b75d39f61476809d52d141d2920e809e941dbd0d289084ac1d",
-    "lastHarvestedAt": "2026-10-28T07:34:44.547Z",
+    "contentHash": "b91fade310094d7c168c7f90caeebc0d0de1e93d148fa833b0aa8ed100d56749",
+    "lastHarvestedAt": "2026-10-30T15:37:10.122Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "69734591",
+    "sourceVersion": "421026a6",
     "license": "AGPL-3.0",
-    "contentHash": "661d987d5eaa656d566787286ef160bf4fbc854cbfb86818925dc41fe552c9cd",
-    "lastHarvestedAt": "2026-10-30T03:59:40.125Z",
+    "contentHash": "438de66fab45cf0209a697502c4e92cab88f128d143c84640e866e67db809dfa",
+    "lastHarvestedAt": "2026-10-30T15:37:11.627Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -9633,10 +9633,10 @@
     "repository": "urllib3/urllib3",
     "platform": "github",
     "sourceUrl": "https://github.com/urllib3/urllib3",
-    "sourceVersion": "8883fd90",
+    "sourceVersion": "2aa7e9c3",
     "license": "MIT",
-    "contentHash": "5b9d1f1da12d73671d7aa8b159c1f4807b419fe8f1a9b21ce57358d579eb7e57",
-    "lastHarvestedAt": "2026-10-27T13:35:09.552Z",
+    "contentHash": "77f7c673934638954d40c620c16e8b3ffd48187c0d098ca5b588d6694a2e6348",
+    "lastHarvestedAt": "2026-10-30T15:37:05.032Z",
     "learningId": "learn-github-urllib3-urllib3"
   },
   "simibac-confettiswiftui": {

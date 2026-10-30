@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `69734591`  
+> **Source Version**: `421026a6`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T03:59:39.470Z  
+> **Timestamp**: 2026-10-30T15:37:10.932Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T03:59:38.404Z  
+> **Harvest Timestamp**: 2026-10-30T15:37:10.195Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28774 stars
+- **Stars / Engagement**: 28779 stars
 
 ---
 
@@ -1140,224 +1140,232 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `69734591` (2026-10-29)
-**Commit Message**: Close Couchbase clusters after verification and honor the context (#5489)
+### Incident Patch 1: `421026a6` (2026-10-30)
+**Commit Message**: Recover from detector panics in the verification overlap worker (#5495)
 
-verifyCouchBase never closed the gocb cluster it opened, so every
-verification left a client's background goroutines and sockets running
-for the life of the process. It also ignored the caller's context, so
-the engine's detector timeout could not stop the 5s ping, and serial
-verification of several candidates ran well past the deadline.
+A detector panic in FromData during verification overlap killed the
+worker goroutine. Once every overlap worker had died, scanning stalled
+with no error.
 
-Close the cluster on every return path, bind the ping to ctx, skip
-connecting once ctx has ended, and report ctx's error when an
-interrupted ping found no healthy endpoint so the result is marked
-indeterminate rather than unverified.
-
-Also fix the integration test's comparison, which panicked on an
-unexported detectors.Result field.
+The worker now recovers detector panics, logs them, counts the chunk as
+dropped, and keeps processing.
 
 Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
-**File**: `pkg/detectors/couchbase/couchbase.go` (modified, +24/-5)
+**File**: `pkg/engine/engine.go` (modified, +110/-94)
 ```diff
-@@ -78,7 +78,7 @@ func (s Scanner) FromData(ctx context.Context, verify bool, data []byte) (result
- 				}
- 
- 				if verify {
--					isVerified, verificationErr := verifyCouchBase(username, password, connString)
-+					isVerified, verificationErr := verifyCouchBase(ctx, username, password, connString)
- 					s1.Verified = isVerified
- 					s1.SetVerificationError(verificationErr)
- 					s1.SetPrimarySecretValue(connString)
-@@ -91,7 +91,13 @@ func (s Scanner) FromData(ctx context.Context, verify bool, data []byte) (result
- 	return results, nil
- }
- 
--func verifyCouchBase(username, password, connString string) (bool, error) {
-+// verifyCouchBase reports whether the credentials reach a healthy endpoint on the cluster.
-+//
-+// Every gocb.Cluster owns background goroutines and sockets until Close is called, so the
-+// cluster is closed on every return path; otherwise each verification leaks a client for the
-+// life of the process. The caller's ctx bounds the ping, which is where verification spends
-+// nearly all of its time, so the engine's detector timeout actually stops verification.
-+func verifyCouchBase(ctx context.Context, username, password, connString string) (bool, error) {
- 	options := gocb.ClusterOptions{
- 		Authenticator: gocb.PasswordAuthenticator{
- 			Username: username,
-@@ -106,17 +112,25 @@ func verifyCouchBase(username, password, connString string) (bool, error) {
- 		return false, err
- 	}
- 
--	// Initialize the Connection
-+	// gocb.Connect takes no context, so check ctx before building a client. FromData verifies
-+	// candidates serially, and once ctx ends there is no point connecting for the rest.
-+	if err := ctx.Err(); err != nil {
-+		return false, err
-+	}
-+
- 	cluster, err := gocb.Connect(connString, options)
- 	if err != nil {
- 		return false, err
- 	}
-+	defer func() { _ = cluster.Close(nil) }()
- 
--	// We'll ping the KV nodes in our cluster.
-+	// Ping the cluster's services. The ping ends at whichever comes first: its own timeout or
-+	// the caller's ctx. Either way gocb reports the outcome per endpoint rather than as an
-+	// error, so a ping cut short by ctx looks like a cluster with no healthy endpoint.
- 	pings, err := cluster.Ping(&gocb.PingOptions{
- 		Timeout: time.Second * 5,
-+		Context: ctx,
- 	})
--
- 	if err != nil {
- 		return false, err
- 	}
-@@ -129,6 +143,11 @@ func verifyCouchBase(username, password, connString string) (bool, error) {
- 		}
- 	}
- 
-+	// No healthy endpoint is only a determinate "unverified" if the ping ran to completion.
-+	// When ctx ended first, report its error so the result is marked indeterminate instead.
-+	if err := ctx.Err(); err != nil {
-+		return false, err
-+	}
- 	return false, nil
- }
- 
-```
-
-**File**: `pkg/detectors/couchbase/couchbase_integration_test.go` (modified, +2/-2)
-```diff
-@@ -99,8 +99,8 @@ func TestCouchbase_FromChunk(t *testing.T) {
- 					t.Fatalf("no raw secret present: \n %+v", got[i])
- 				}
- 			}
--			ignoreOpts := cmpopts.IgnoreFields(detectors.Result{}, "Raw", "verificationError", "primarySecret")
--			if diff := cmp.Diff(got, tt.want, ignoreOpts); diff != "" {
-+			ignoreOpts := cmpopts.IgnoreFields(detectors.Result{}, "Raw", "SecretParts")
-+			if diff := cmp.Diff(got, tt.want, ignoreOpts, cmpopts.IgnoreUnexported(detectors.Result{})); diff != "" {
- 				t.Errorf("Couchbase.FromData() %s diff: (-got +want)\n%s", tt.name, diff)
- 			}
- 		})
-```
-
-**File**: `pkg/detectors/couchbase/couchbase_test.go` (modified, +88/-0)
-```diff
-@@ -1,15 +1,103 @@
- package couchbase
- 
- import (
-+	"bytes"
- 	"context"
-+	"errors"
-+	"runtime/pprof"
-+	"strings"
- 	"testing"
-+	"time"
- 
- 	"github.com/google/go-cmp/cmp"
- 
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/engine/ahocorasick"
+@@ -45,6 +45,8 @@ var errOverlap = errors.New(
+ 		"You can override this behavior by using the --allow-verification-overlap flag",
  )
  
-+// unreachableConnString points gocb at a local port nothing listens on. gocb.Connect succeeds
-+// immediately (it bootstraps in the background) and pings never find a healthy endpoint, which
-+// exercises the full connect, ping, close lifecycle without network access or a real cluster.
-+const unreachableConnString = "couchbases://127.0.0.1:1"
++var errDetectorPanic = errors.New("detector panicked")
 +
-+// gocbGoroutines counts live goroutines whose stacks run through gocb or gocbcore. Each open
-+// gocb.Cluster keeps several of these alive until Close, so a nonzero count after verification
-+// returns means a client leaked.
-+func gocbGoroutines() int {
-+	var buf bytes.Buffer
-+	_ = pprof.Lookup("goroutine").WriteTo(&buf, 2)
-+	count := 0
-+	for _, stack := range strings.Split(buf.String(), "\n\n") {
-+		if strings.Contains(stack, "github.com/couchbase/gocb") {
-+			count++
+ // Metrics for the scan engine for external consumption.
+ type Metrics struct {
+ 	BytesScanned           uint64
+@@ -1075,119 +1077,133 @@ func likelyDuplicate(ctx context.Context, val chunkSecretKey, dupes map[chunkSec
+ func (e *Engine) verificationOverlapWorker(ctx context.Context) {
+ 	var wgDetect sync.WaitGroup
+ 
+-	// Reuse the same map and slice to avoid allocations.
++	for chunk := range e.verificationOverlapChunksChan {
++		e.processVerificationOverlapChunk(ctx, chunk, &wgDetect)
++	}
++
++	wgDetect.Wait()
++}
++
++func (e *Engine) processVerificationOverlapChunk(
++	ctx context.Context,
++	chunk verificationOverlapChunk,
++	wgDetect *sync.WaitGroup,
++) {
++	sourceTypeStr := chunk.chunk.SourceType.String()
++
++	defer chunk.verificationOverlapWgDoneFn()
++	defer common.RecoverWithHandler(ctx, func(error) {
++		chunksDropped.WithLabelValues("verification_overlap", "panic", sourceTypeStr).Inc()
++	})
++
+ 	const avgSecretsPerDetector = 8
+ 	detectorKeysWithResults := make(map[ahocorasick.DetectorKey]*ahocorasick.DetectorMatch, avgSecretsPerDetector)
+ 	chunkSecrets := make(map[chunkSecretKey]struct{}, avgSecretsPerDetector)
+ 
+-	for chunk := range e.verificationOverlapChunksChan {
+-		sourceTypeStr := chunk.chunk.SourceType.String()
+-		chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
+-		for _, detector := range chunk.detectors {
+-			isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
+-			detectorNameStr := detector.Key.Type().String()
+-
+-			// DO NOT VERIFY at this stage of the pipeline.
+-			matchedBytes := detector.Matches()
+-			for _, match := range matchedBytes {
+-				ctx, cancel := context.WithTimeout(ctx, time.Second*2)
+-				results, err := detector.FromData(ctx, false, match)
+-				cancel()
+-				if err != nil {
+-					ctx.Logger().Error(
+-						err, "error finding results in chunk during verification overlap",
+-						"detector", detectorNameStr,
+-					)
+-					chunksDropped.WithLabelValues("verification_overlap", "detector_error", sourceTypeStr).Inc()
++	chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
++	for _, detector := range chunk.detectors {
++		isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
++		detectorNameStr := detector.Key.Type().String()
++
++		// DO NOT VERIFY at this stage of the pipeline.
++		matchedBytes := detector.Matches()
++		for _, match := range matchedBytes {
++			ctx, cancel := context.WithTimeout(context.WithValue(ctx, "detector", detectorNameStr), time.Second*2)
++			results, err := fromDataWithoutVerifyRecoveringPanic(ctx, detector.Detector, match)
++			cancel()
++			if err != nil {
++				if !errors.Is(err, errDetectorPanic) {
++					ctx.Logger().Error(err, "error finding results in chunk during verification overlap")
+ 				}
++				chunksDropped.WithLabelValues("verification_overlap", "detector_error", sourceTypeStr).Inc()
++			}
+ 
+-				if len(results) == 0 {
+-					continue
+-				}
+-				if _, ok := detectorKeysWithResults[detector.Key]; !ok {
+-					detectorKeysWithResults[detector.Key] = detector
+-				}
++			if len(results) == 0 {
++				continue
++			}
++			if _, ok := detectorKeysWithResults[detector.Key]; !ok {
++				detectorKeysWithResults[detector.Key] = detector
++			}
+ 
+-				// If results filtration eliminates a rotated secret, then that rotation will never be reported. This
+-				// problem can theoretically occur for any scan, but we've only actually seen it in practice during
+-				// targeted scans. (The reason for this discrepancy is unclear.) The simplest fix is therefore to
+-				// disable filtration for targeted scans, but if you're here because this problem surfaced for a
+-				// non-targeted scan then we'll have to solve it correctly.
+-				if chunk.chunk.SecretID == 0 {
+-					results = e.filterResults(ctx, "verification_overlap", detector, results)
++			// If results filtration eliminates a rotated secret, then that rotation will never be reported. This
++			// problem can theoretically occur for any scan, but we've only actually seen it in practice during
++			// targeted scans. (The reason for this discrepancy is unclear.) The simplest fix is therefore to
++			// disable filtration for targeted scans, but if you're here because this problem surfaced for a
++			// non-targeted scan then we'll have to solve it correctly.
++			if chunk.chunk.SecretID == 0 {
++				results = e.filterResults(ctx, "verification_overlap", detector, results)
++			}
++
++			for _, res := range results {
++				var val []byte
++				if res.RawV2 != nil {
++					val = res.RawV2
++				} else {
++					val = res.Raw
+ 				}
+ 
+-				for _, res := range results {
+-					var val []byte
+-					if res.RawV2 != nil {
+-						val = res.RawV2
+-					} else {
+-						val = res.Raw
+-					}
++				// Use levenstein distance to determine if the secret is likely the same.
++				// Ex
+```
+
+**File**: `pkg/engine/engine_test.go` (modified, +65/-0)
+```diff
+@@ -1852,6 +1852,14 @@ func (p passthroughDetector) Keywords() []string                 { return p.keyw
+ func (p passthroughDetector) Type() detector_typepb.DetectorType { return p.detectorType }
+ func (p passthroughDetector) Description() string                { return "fake detector for testing" }
+ 
++// panicDetector panics on every FromData call, so tests can check that the verification overlap worker keeps running
++// and still releases chunk wait groups.
++type panicDetector struct{ passthroughDetector }
++
++func (panicDetector) FromData(aCtx.Context, bool, []byte) ([]detectors.Result, error) {
++	panic("panicDetector always panics")
++}
++
+ // fixedVerdictDetector reports the same verdict whether or not verification was requested, so tests can confirm the
+ // engine passes verdicts through untouched while recording whether verification was attempted.
+ type fixedVerdictDetector struct {
+@@ -2218,6 +2226,63 @@ func TestEngine_VerificationOverlapWorker_DetectableChunkHasCorrectVerifyFlag(t
+ 	})
+ }
+ 
++// TestEngine_VerificationOverlapWorker_SurvivesFromDataPanic checks that a detector panicking in FromData neither kills
++// the verification overlap worker nor leaves the sender's wait group unreleased, and that the other detectors on the
++// same chunk are still forwarded for verification.
++func TestEngine_VerificationOverlapWorker_SurvivesFromDataPanic(t *testing.T) {
++	ctx := context.Background()
++	data := []byte("keyword ;oahpow8heg;blaisd")
++
++	e := &Engine{
++		detectableChunksChan:          make(chan detectableChunk, 4),
++		results:                       make(chan detectors.ResultWithMetadata, 4),
++		retainFalsePositives:          true,
++		verificationOverlapChunksChan: make(chan verificationOverlapChunk, 2),
++	}
++
++	// Stand in for the detector workers: record what was forwarded and release the overlap worker's wgDetect so its
++	// final Wait returns.
++	forwarded := make(chan detector_typepb.DetectorType, 4)
++	go func() {
++		for c := range e.detectableChunksChan {
++			forwarded <- c.detector.Type()
++			c.wgDoneFn()
++		}
++		close(forwarded)
++	}()
++
++	// Queue two chunks so the test also shows the worker keeps going after the first panic.
++	ahcore := ahocorasick.NewAhoCorasickCore([]detectors.Detector{
++		panicDetector{passthroughDetector{detectorType: detector_typepb.DetectorType(-1), keywords: []string{"keyw"}}},
++		passthroughDetector{detectorType: detector_typepb.DetectorType(-2), keywords: []string{"keyword"}},
++	})
++	var chunksDone atomic.Int32
++	for range 2 {
++		matches := ahcore.FindDetectorMatches(data)
++		require.Len(t, matches, 2)
++		e.verificationOverlapChunksChan <- verificationOverlapChunk{
++			chunk:                       sources.Chunk{Data: data},
++			detectors:                   matches,
++			verificationOverlapWgDoneFn: func() { chunksDone.Add(1) },
 +		}
 +	}
-+	return count
++	close(e.verificationOverlapChunksChan)
++
++	e.verificationOverlapWorker(ctx)
++	close(e.detectableChunksChan)
++
++	var forwardedTypes []detector_typepb.DetectorType
++	for typ := range forwarded {
++		forwardedTypes = append(forwardedTypes, typ)
++	}
++
++	assert.EqualValues(t, 2, chunksDone.Load(), "every chunk must release its wait group")
++	assert.Equal(t,
++		[]detector_typepb.DetectorType{-2, -2}, forwardedTypes,
++		"the non-panicking detector should still be forwarded for both chunks",
++	)
 +}
 +
-+// requireNoGocbGoroutines waits briefly for Close to finish tearing down background goroutines,
-+// then fails if any gocb goroutines remain.
-+func requireNoGocbGoroutines(t *testing.T) {
-+	t.Helper()
-+	deadline := time.Now().Add(5 * time.Second)
-+	for gocbGoroutines() > 0 && time.Now().Before(deadline) {
-+		time.Sleep(50 * time.Millisecond)
-+	}
-+	if n := gocbGoroutines(); n > 0 {
-+		t.Fatalf("%d gocb goroutines still running; a cluster was not closed", n)
-+	}
-+}
-+
-+func TestVerifyCouchBase_ContextCancellationStopsVerificationAndClosesCluster(t *testing.T) {
-+	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
-+	defer cancel()
-+
-+	start := time.Now()
-+	verified, err := verifyCouchBase(ctx, "user", "Passw0rd!", unreachableConnString)
-+	elapsed := time.Since(start)
-+
-+	if verified {
-+		t.Errorf("expected unverified result against an unreachable cluster")
-+	}
-+	if !errors.Is(err, context.DeadlineExceeded) {
-+		t.Errorf("expected context.DeadlineExceeded, got %v", err)
-+	}
-+	// The ping's own timeout is 5s; finishing well under it shows ctx ended the ping.
-+	if elapsed > 2*time.Second {
-+		t.Errorf("verification took %s after ctx expired at 200ms", elapsed)
-+	}
-+	requireNoGocbGoroutines(t)
-+}
-+
-+func TestVerifyCouchBase_ClosesClusterWhenNoEndpointIsHealthy(t *testing.T) {
-+	verified, err := verifyCouchBase(context.Background(), "user", "Passw0rd!", unreachableConnString)
-+	if verified {
-+		t.Errorf("expected unverified result against an unreachable cluster")
-+	}
-+	if err != nil {
-+		t.Errorf("expected no error when ping completes without a healthy endpoint, got %v", err)
-+	}
-+	requireNoGocbGoroutines(t)
-+}
-+
-+func TestVerifyCouchBase_EndedContextSkipsConnecting(t *testing.T) {
-+	ctx, cancel := context.WithCancel(context.Background())
-+	cancel()
-+
-+	verified, err := verifyCouchBase(ctx, "user", "Passw0rd!", unreachableConnString)
-+	if verified {
-+		t.Errorf("expected unverified result when ctx has already ended")
-+	}
-+	if !errors.Is(err, context.Canceled) {
-+		t.Errorf("expected context.Canceled, got %v", err)
-+	}
-+	// Checked immediately rather than with requireNoGocbGoroutines: no client should ever have
-+	// been built, so there is nothing to wait for.
-+	if n := gocbGoroutines(); n > 0 {
-+		t.Errorf("%d gocb goroutines running; a client was built after ctx ended", n)
-+	}
-+}
-+
- func TestCouchBase_Pattern(t *testing.T) {
- 	d := Scanner{}
- 	ahoCorasickCore := ahocorasick.NewAhoCorasickCore([]detectors.Detector{d})
+ func TestEngine_IterativeDecoding(t *testing.T) {
+ 	t.Parallel()
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5495** (2026-10-30): [SCAN-317] Recover from detector panics in the verification overlap worker (@dipto-truffle)
 - **PR #5494** (2026-10-29): Clean up Docker source logging for per-source debug (@kashifkhan0771)
 - **PR #5489** (2026-10-29): Close Couchbase clusters after verification and honor the context (@unsmith)
 - **PR #5487** (closed): Ignore. Fat fingered  (@markcunninghamgit)
 - **PR #5481** (2026-10-27): Clean up S3 source logging for per-source debug (@kashifkhan0771)
 - **PR #5474** (2026-10-24): Fix 7z and rar panics in the archive handler and log recovered panic stacks (@dustin-decker)
-- **PR #5473** (2026-10-24): Keep GoReleaser temp files off the tmpfs /tmp in releases (@dustin-decker)
 
 ---
 
@@ -1377,50 +1385,87 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Close Couchbase clusters after verification and honor the context (#5489)
+## X. Recover from detector panics in the verification overlap worker (#5495)
 
 **RULE**:
-When implementing operations in `pkg/detectors/couchbase/couchbase.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/engine/engine.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `69734591`: Close Couchbase clusters after verification and honor the context (#5489). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `421026a6`: Recover from detector panics in the verification overlap worker (#5495). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/detectors/couchbase/couchbase.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/engine/engine.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-					isVerified, verificationErr := verifyCouchBase(ctx, username, password, connString)
-// verifyCouchBase reports whether the credentials reach a healthy endpoint on the cluster.
-//
-// Every gocb.Cluster owns background goroutines and sockets until Close is called, so the
-// cluster is closed on every return path; otherwise each verification leaks a client for the
-// life of the process. The caller's ctx bounds the ping, which is where verification spends
-// nearly all of its time, so the engine's detector timeout actually stops verification.
-func verifyCouchBase(ctx context.Context, username, password, connString string) (bool, error) {
-	// gocb.Connect takes no context, so check ctx before building a client. FromData verifies
-	// candidates serially, and once ctx ends there is no point connecting for the rest.
-	if err := ctx.Err(); err != nil {
-		return false, err
+var errDetectorPanic = errors.New("detector panicked")
+
+	for chunk := range e.verificationOverlapChunksChan {
+		e.processVerificationOverlapChunk(ctx, chunk, &wgDetect)
 	}
 
-	defer func() { _ = cluster.Close(nil) }()
-	// Ping the cluster's services. The ping ends at whichever comes first: its own timeout or
-	// the caller's ctx. Either way gocb reports the outcome per endpoint rather than as an
-	// error, so a ping cut short by ctx looks like a cluster with no healthy endpoint.
-		Cont
+	wgDetect.Wait()
+}
+
+func (e *Engine) processVerificationOverlapChunk(
+	ctx context.Context,
+	chunk verificationOverlapChunk,
+	wgDetect *sync.WaitGroup,
+) {
+	sourceTypeStr := chunk.chunk.SourceType.String()
+
+	defer chunk.verificationOverlapWgDoneFn()
+	defer common.RecoverWithHandler(ctx, func(error) {
+		chunksDropped.WithLabelValues("verification_overlap", "panic", sourceTypeStr).Inc()
+	})
+
+	chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
+	for _, detector := range chunk.detectors {
+		isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
+		detectorNameStr := detector.Key.Type().String()
+
+		// DO NOT VERIFY at this stage of the pipeline.
+		matchedBytes := detector.Matches()
+		for _, match := range matchedBytes {
+			ctx, cancel := context.WithTimeout(context.WithValue(ctx, "detector", detectorNameStr), time.Second*2)
+			results, err := fromDataWithoutVerifyRecoveringPanic(ctx, detector.Detector, match)
+			cancel()
+			if err != nil {
+				if !errors.Is(err, errDetectorPa
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-					isVerified, verificationErr := verifyCouchBase(username, password, connString)
-func verifyCouchBase(username, password, connString string) (bool, error) {
-	// Initialize the Connection
-	// We'll ping the KV nodes in our cluster.
+	// Reuse the same map and slice to avoid allocations.
+	for chunk := range e.verificationOverlapChunksChan {
+		sourceTypeStr := chunk.chunk.SourceType.String()
+		chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
+		for _, detector := range chunk.detectors {
+			isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
+			detectorNameStr := detector.Key.Type().String()
 
+			// DO NOT VERIFY at this stage of the pipeline.
+			matchedBytes := detector.Matches()
+			for _, match := range matchedBytes {
+				ctx, cancel := context.WithTimeout(ctx, time.Second*2)
+				results, err := detector.FromData(ctx, false, match)
+				cancel()
+				if err != nil {
+					ctx.Logger().Error(
+						err, "error finding results in chunk during verification overlap",
+						"detector", detectorNameStr,
+					)
+					chunksDropped.WithLabelValues("verification_overlap", "detector_error", sourceTypeStr).Inc()
+				if len(results) == 0 {
+					continue
+				}
+				if _, ok := detectorKeysWithResults[detector.Key]; !ok {
+					detectorKeysWithResults[detector.Key] = detector
+				}
+				// If results filtration eliminates a rotated secret, then that rotation will never be reported. Thi
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `69734591` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `421026a6` are properly handled with clean fallback behavior.

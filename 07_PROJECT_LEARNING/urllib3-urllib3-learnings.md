@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/urllib3-urllib3-learnings.md`  
 > **Source**: github ([https://github.com/urllib3/urllib3](https://github.com/urllib3/urllib3))  
-> **Source Version**: `8883fd90`  
+> **Source Version**: `2aa7e9c3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T13:35:09.087Z  
+> **Timestamp**: 2026-10-30T15:37:04.304Z  
 > **Learning ID**: `learn-github-urllib3-urllib3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/urllib3-urllib3-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/urllib3/urllib3](https://github.com/urllib3/urllib3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T13:35:08.583Z  
+> **Harvest Timestamp**: 2026-10-30T15:37:02.795Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: urllib3 is a user-friendly HTTP client library for Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4080 stars
+- **Stars / Engagement**: 4081 stars
 
 ---
 
@@ -1795,13 +1795,11 @@ class SSLTransport:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5333** (2026-10-23): **Avoid building with vulnerable version of brotli & brotlicffi**
-  *Symptoms*: Prevent CVE-2026-111497  Signed-off-by: Loganaden Velvindron <logan@cyberstorm.mu> 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for your submission, [but dependency ranges aren't for fixing vulnerabilities](https://sethmlarson.dev/library-version-specifiers-not-for-vulnerabilities).
+- **Issue #5347** (2026-10-29): **Keep the cached PoolKey when PoolManager looks up a pool**
+  *Symptoms*: <!--- Thanks for your contribution! ♥️  If this is your first PR to urllib3 please review the Contributing Guide: https://urllib3.readthedocs.io/en/latest/contributing.html  Adhering to the Contributing Guide means we can review, merge, and release your change faster! :) --->  Fixes #5346.  **TLDR:** A pool lookup no longer replaces the cached `PoolKey`. The key stays one long-lived object for the life of the pool.  ### Why it matters  `PoolManager` builds a new `PoolKey` for each request, and the lookup stores this new key in the cache. As a result, each request to a known host leaves a new GC-tracked tuple that young-generation collections must scan. Programs that call `gc.freeze()` after warm-up lose the freeze on each pool key after the next request.  ### Change  `RecentlyUsedContainer.__getitem__()` uses `move_to_end()` instead of `pop()` and a new insert. The eviction order does not change.  ### Evidence  `check_key.py` makes one request, freezes the GC, and makes a second request to the same host. It does not open a connection.  ```python import gc import urllib3  http = urllib3.PoolManager() http.connection_from_url("https://example.com/")  # no connection is opened gc.collect() gc.freeze() frozen_key = next(iter(http.pools._container))  http.connection_from_url("https://example.com/") key = next(iter(http.pools._container)) print("cached key is the frozen key:", key is frozen_key) print("cached key in GC generation 0:", any(o is key for o in gc.get_objects(generation
 
-- **Issue #5331** (2026-10-21): **docs: set the JSON content type in the orjson example**
-  *Symptoms*: The orjson example sends encoded JSON through `body` but does not set `Content-Type`. Unlike `json=`, this does not add an application/json header, so a server may not parse the body as JSON and return the result shown in the guide.  Add the header and explain why it is needed. The example also uses HTTPS, as required by the documentation guidelines. No runtime behaviour changes.  Validation: ran the old and updated examples against a local HTTP server. The old request had no Content-Type; the updated request sent application/json and returned the expected JSON. The full Sphinx HTML build passed with warnings treated as errors, and `git diff --check` passed. Pre-commit had no applicable hooks for the changed RST file.  I did not call the live httpbin endpoint or run the full test/platform matrix for this documentation-only change.
+- **Issue #5346** (2026-10-29): **PoolManager replaces the cached PoolKey on every request**
+  *Symptoms*: ### Subject  Each request through an existing pool replaces the cached `PoolKey` in `PoolManager.pools` with the new key of that request. `RecentlyUsedContainer.__getitem__()` uses `pop()` and a new insert under the key of the caller ([_collections.py#L93-L98](https://github.com/urllib3/urllib3/blob/2.8.0/src/urllib3/_collections.py#L93-L98)).  Why this is a problem: the cached key must live as long as the pool. Instead, each request puts a new GC-tracked tuple in the cache. The young GC generation then scans the key again after each request, and a program that calls `gc.freeze()` cannot keep the key frozen.  ### Environment  ``` OS macOS-26.7.1-arm64-arm-64bit Python 3.12.12 OpenSSL 3.5.4 30 Sep 2025 urllib3 2.8.0 ```  ### Steps to Reproduce  ```python import urllib3  pm = urllib3.PoolManager() pm.connection_from_url("http://example.com/")  # no connection is opened first_key = next(iter(pm.pools._container))  pm.connection_from_url("http://example.com/") print(next(iter(pm.pools._container)) is first_key) ```  ### Expected Behavior  `True`. The lookup keeps the cached key.  ### Actual Behavior  `False`. The lookup replaced the cached key.  ### Possible fix  `move_to_end()` keeps the eviction order and the cached key:  ```diff          with self.lock: -            item = self._container.pop(key) -            self._container[key] = item +            item = self._container[key] +            self._container.move_to_end(key)              return item ```  I can open a PR with a t
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1818,48 +1816,222 @@ class SSLTransport:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8883fd90` (2026-10-22)
-**Commit Message**: Speed up parse_url() by ~28% for common ASCII hosts and plain paths (#5314)
+### Incident Patch 1: `2aa7e9c3` (2026-10-29)
+**Commit Message**: Keep the stored key in RecentlyUsedContainer lookups (#5347)
 
-**File**: `changelog/5314.misc.rst` (added, +1/-0)
+__getitem__() used pop() and a new insert, so each lookup replaced the
+stored key with the key of the caller. PoolManager builds a new PoolKey
+for each request, so the cached key changed on every request. Use
+move_to_end() to keep the stored key and the same eviction order.
+
+Fixes https://github.com/urllib3/urllib3/issues/5346
+
+**File**: `changelog/5346.bugfix.rst` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Improved performance of ``parse_url()`` for URLs with an ASCII host and no dot segments in the path.
++Fixed ``PoolManager`` replacing its cached pool key with the key of each new request to the same host.
 ```
 
-**File**: `src/urllib3/util/url.py` (modified, +8/-0)
+**File**: `src/urllib3/_collections.py` (modified, +4/-3)
 ```diff
-@@ -321,6 +321,10 @@ def _encode_invalid_chars(
+@@ -91,10 +91,11 @@ def __init__(
+         self.lock = RLock()
  
+     def __getitem__(self, key: _KT) -> _VT:
+-        # Re-insert the item, moving it to the end of the eviction line.
++        # Move the item to the end of the eviction line. move_to_end() keeps
++        # the stored key instead of replacing it with the caller's key.
+         with self.lock:
+-            item = self._container.pop(key)
+-            self._container[key] = item
++            item = self._container[key]
++            self._container.move_to_end(key)
+             return item
  
- def _remove_path_dot_segments(path: str) -> str:
-+    # Fast path: without a '.' or '..' segment there is nothing to remove.
-+    if "/." not in path and not path.startswith("."):
-+        return path
+     def __setitem__(self, key: _KT, value: _VT) -> None:
+```
+
+**File**: `test/test_collections.py` (modified, +11/-0)
+```diff
+@@ -70,6 +70,17 @@ def test_access_ordering(self) -> None:
+ 
+         assert list(d._container.keys()) == new_order
+ 
++    def test_access_keeps_stored_key(self) -> None:
++        d: Container[tuple[str], int] = Container(5)
++        stored_key = ("foo",)
++        d[stored_key] = 1
 +
-     # See http://tools.ietf.org/html/rfc3986#section-5.2.4 for pseudo-code
-     segments = path.split("/")  # Turn the path into a list of segments
-     output = []  # Initialize the variable to use to store output
-@@ -390,6 +394,10 @@ def _normalize_host(host: str | None, scheme: str | None) -> str | None:
-                 else:
-                     return host.lower()
-             elif not _IPV4_RE.match(host):
-+                # Fast path: for an ASCII host without percent-encoding,
-+                # IDNA-encoding each label reduces to lower-casing it.
-+                if "%" not in host and host.isascii():
-+                    return host.lower()
-                 if "%" in host:
-                     address, separator, zone = host.partition("%")
-                     if ":" in address and host.isascii() and _IPV6_RE.match(address):
++        equal_key = ("".join(["f", "oo"]),)
++        assert equal_key == stored_key and equal_key is not stored_key
++        d[equal_key]
++
++        assert next(iter(d._container)) is stored_key
++
+     def test_delete(self) -> None:
+         d: Container[int, bool] = Container(5)
+ 
+```
+
+---
+
+### Incident Patch 2: `5feb9934` (2026-10-27)
+**Commit Message**: Tighten numeric validation of response framing (#5083)
+
+Co-authored-by: “rootvector2” <“[REDACTED_EMAIL]”>
+Co-authored-by: Illia Volochii <[REDACTED_EMAIL]>
+
+**File**: `changelog/5083.bugfix.rst` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Tightened numeric validation of response framing fields. ``Content-Length`` values such as ``1_000`` are now ignored when tracking response length, and chunk sizes such as ``0x5`` are now rejected when streaming chunked responses.
+```
+
+**File**: `src/urllib3/response.py` (modified, +18/-5)
+```diff
+@@ -4,6 +4,7 @@
+ import io
+ import json as _json
+ import logging
++import re
+ import socket
+ import sys
+ import typing
+@@ -53,6 +54,11 @@
+ # Read in 64 KiB chunks
+ _READ_CHUNK_SIZE = 2**16
+ 
++# RFC 9112: Content-Length = 1*DIGIT and chunk-size = 1*HEXDIG.
++# int() is more permissive, so we match against the grammar before calling it.
++_CONTENT_LENGTH_RE = re.compile(r"[0-9]+")
++_CHUNK_SIZE_RE = re.compile(rb"[0-9A-Fa-f]+")
++
+ # Maximum length of a chunk-size line (and the trailing CRLF line) when reading a
+ # chunked-transfer-encoded response. Matches ``http.client._MAXLINE`` so urllib3's
+ # streaming path bounds these reads exactly like the stdlib ``.read()`` path does,
+@@ -893,7 +899,14 @@ def _init_length(self, request_method: str | None) -> int | None:
+                 # (e.g. Content-Length: 42, 42). This line ensures the values
+                 # are all valid ints and that as long as the `set` length is 1,
+                 # all values are the same. Otherwise, the header is invalid.
+-                lengths = {int(val) for val in content_length.split(",")}
++                lengths = set()
++                for val in content_length.split(","):
++                    # Only optional whitespace may surround each value; reject
++                    # signs, underscores and unicode digits that int() accepts.
++                    val = val.strip()
++                    if not _CONTENT_LENGTH_RE.fullmatch(val):
++                        raise ValueError("invalid Content-Length")
++                    lengths.add(int(val))
+                 if len(lengths) > 1:
+                     raise InvalidHeader(
+                         "Content-Length contained multiple "
+@@ -902,9 +915,6 @@ def _init_length(self, request_method: str | None) -> int | None:
+                 length = lengths.pop()
+             except ValueError:
+                 length = None
+-            else:
+-                if length < 0:
+-                    length = None
+ 
+         else:  # if content_length is None
+             length = None
+@@ -1381,7 +1391,10 @@ def _update_chunk_length(self) -> None:
+             ) from None
+         line = line.split(b";", 1)[0]
+         try:
+-            self.chunk_left = int(line, 16)
++            chunk_size = line.rstrip()
++            if not _CHUNK_SIZE_RE.fullmatch(chunk_size):
++                raise ValueError("invalid chunk size")
++            self.chunk_left = int(chunk_size, 16)
+         except ValueError:
+             self.close()
+             if line:
+```
+
+**File**: `test/test_response.py` (modified, +49/-2)
+```diff
+@@ -1691,6 +1691,15 @@ def test_length_w_bad_header(self) -> None:
+         resp = HTTPResponse(fp, headers=garbage, preload_content=False)
+         assert resp.length_remaining is None
+ 
++    @pytest.mark.parametrize("value", ["1_000", "+5", "0x10", "0o10", "१२३"])
++    def test_length_w_non_rfc_header(self, value: str) -> None:
++        # int() accepts these forms but RFC 9112 section 6.3 only allows 1*DIGIT.
++        fp = BytesIO(b"12345")
++        resp = HTTPResponse(
++            fp, headers={"content-length": value}, preload_content=False
++        )
++        assert resp.length_remaining is None
++
+     def test_length_when_chunked(self) -> None:
+         # This is expressly forbidden in RFC 7230 sec 3.3.2
+         # We fall back to chunked in this case and try to
+@@ -1701,8 +1710,9 @@ def test_length_when_chunked(self) -> None:
+         resp = HTTPResponse(fp, headers=headers, preload_content=False)
+         assert resp.length_remaining is None
+ 
+-    def test_length_with_multiple_content_lengths(self) -> None:
+-        headers = {"content-length": "5, 5, 5"}
++    @pytest.mark.parametrize("value", ["5, 5, 5", " 5 , 5 , 5 ", "\t5\t,\t5\t, \t5 \t"])
++    def test_length_with_multiple_content_lengths(self, value: str) -> None:
++        headers = {"content-length": value}
+         garbage = {"content-length": "5, 42"}
+         fp = BytesIO(b"abcde")
+ 
+@@ -1904,6 +1914,43 @@ def test_invalid_chunk_length(self) -> None:
+         assert isinstance(orig_ex, InvalidChunkLength)
+         assert orig_ex.length == fp.BAD_LENGTH_LINE.encode()
+ 
++    @pytest.mark.parametrize("chunk_size", [b"-5", b"+5", b"0x5", b"1_f", b" 5"])
++    def test_non_rfc_chunk_length(self, chunk_size: bytes) -> None:
++        fp = BytesIO(chunk_size + b"\r\nHELLO\r\n0\r\n\r\n")
++        r = httplib.HTTPResponse(MockSock, method="GET")  # type: ignore[arg-type]
++        r.fp = fp  # type: ignore[assignment]
++        r.chunked = True
++        r.chunk_left = None
++        resp = HTTPResponse(
++            r, preload_content=False, headers={"transfer-encoding": "chunked"}
++        )
++        with pytest.raises(ProtocolError) as ctx:
++            next(resp.read_chunked())
++
++        orig_ex = ctx.value.args[1]
++        assert isinstance(orig_ex, InvalidChunkLength)
++        assert orig_ex.length == chunk_size + b"\r\n"
++        assert fp.closed
++        assert r.isclosed()
++        assert resp.closed
++
++    @pytest.mark.parametrize(
++        "chunk_size", [b"5 ", b"5\t", b"5;name=value", b"5 \t;name=value"]
++    )
++    def test_chunk_length_with_trailing_whitespace_or_extensions(
++        self, chunk_size: bytes
++    ) -> None:
++        fp = BytesIO(chunk_size + b"\r\nHELLO\r\n0\r\n\r\n")
++        r = httplib.HTTPResponse(MockSock, method="GET")  # type: ignore[arg-type]
++        r.fp = fp  # type: ignore[assignment]
++        resp = HTTPResponse(
++            r,
++            preload_content=False,
++            headers={"transfer-encoding": "chunked"},
++            original_response=r,
++        )
++        assert list(resp.read_chunked()) == [b"HELLO"]
++
+     def test_chunk_size_line_too_long(self) -> None:
+         # A malicious server can send a chunk-size line with no newline. urllib3's
+         # streaming path must reject it with a bounded read rather than buffering
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5347** (2026-10-29): Keep the cached PoolKey when PoolManager looks up a pool (@zek)
 - **PR #5333** (closed): Avoid building with vulnerable version of brotli & brotlicffi (@loganaden)
 - **PR #5331** (2026-10-21): docs: set the JSON content type in the orjson example (@Mohamedajab)
 - **PR #5330** (2026-10-21): Honor Retry-After on PoolManager redirects (@theluckystrike)
 - **PR #5329** (2026-10-21): Correct the HTTPHeaderDict.add combine example (@skyon0522-ai)
 - **PR #5328** (closed): Honor a zero Retry-After delay instead of applying backoff (@DGrutt)
-- **PR #5327** (2026-10-20): Pin Python to 3.14 in the downstream GHA workflow (@illia-v)
 
 ---
 
@@ -1879,21 +2051,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Speed up parse_url() by ~28% for common ASCII hosts and plain paths (#5314)
+## X. Keep the stored key in RecentlyUsedContainer lookups (#5347)
 
 **RULE**:
-When implementing operations in `changelog/5314.misc.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in urllib3/urllib3. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/5346.bugfix.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in urllib3/urllib3. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8883fd90`: Speed up parse_url() by ~28% for common ASCII hosts and plain paths (#5314). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2aa7e9c3`: Keep the stored key in RecentlyUsedContainer lookups (#5347). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/5314.misc.rst`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/5346.bugfix.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Improved performance of ``parse_url()`` for URLs with an ASCII host and no dot segments in the path.
+Fixed ``PoolManager`` replacing its cached pool key with the key of each new request to the same host.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1903,4 +2075,4 @@ Improved performance of ``parse_url()`` for URLs with an ASCII host and no dot s
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8883fd90` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2aa7e9c3` are properly handled with clean fallback behavior.

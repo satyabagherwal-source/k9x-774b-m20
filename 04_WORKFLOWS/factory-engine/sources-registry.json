@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T15:25:44.155Z",
-    "lastVerified": "2026-10-30T15:25:44.155Z",
+    "lastChecked": "2026-10-30T15:37:14.169Z",
+    "lastVerified": "2026-10-30T15:37:14.169Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -343,9 +343,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T14:40:29.883Z",
+    "lastChecked": "2026-10-30T15:37:10.592Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T14:40:29.883Z"
+    "lastVerified": "2026-10-30T15:37:10.592Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1630,9 +1630,9 @@
   "memvid-memvid": {
     "name": "memvid",
     "officialUrl": "https://github.com/memvid/memvid",
-    "lastChecked": "2026-10-28T22:45:48.224Z",
+    "lastChecked": "2026-10-30T15:37:08.000Z",
     "revisionIdentifier": "e6bd9f7b",
-    "lastVerified": "2026-10-28T22:45:48.224Z"
+    "lastVerified": "2026-10-30T15:37:08.000Z"
   },
   "falkordb-falkordb": {
     "name": "FalkorDB/FalkorDB",
@@ -1952,22 +1952,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflehog",
+    "name": "trufflesecurity/trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T08:01:57.150Z",
-    "lastVerified": "2026-10-30T08:01:57.150Z",
+    "lastChecked": "2026-10-30T15:37:10.195Z",
+    "lastVerified": "2026-10-30T15:37:10.195Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "661d987d5eaa656d566787286ef160bf4fbc854cbfb86818925dc41fe552c9cd",
+    "contentHash": "438de66fab45cf0209a697502c4e92cab88f128d143c84640e866e67db809dfa",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "69734591"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -2657,22 +2656,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "karmada-io-karmada": {
-    "name": "karmada",
+    "name": "karmada-io/karmada",
     "officialUrl": "https://github.com/karmada-io/karmada",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-28T23:52:10.761Z",
-    "lastVerified": "2026-10-28T23:52:10.761Z",
+    "lastChecked": "2026-10-30T15:37:08.962Z",
+    "lastVerified": "2026-10-30T15:37:08.962Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-karmada-io-karmada",
-    "contentHash": "bff9588a8752a3b75d39f61476809d52d141d2920e809e941dbd0d289084ac1d",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 1,
+    "contentHash": "b91fade310094d7c168c7f90caeebc0d0de1e93d148fa833b0aa8ed100d56749",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "95490f75"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "giancarloerra-socraticode": {
     "name": "SocratiCode",
@@ -6354,9 +6352,9 @@
   "sachaos-viddy": {
     "name": "viddy",
     "officialUrl": "https://github.com/sachaos/viddy",
-    "lastChecked": "2026-10-28T18:13:50.861Z",
+    "lastChecked": "2026-10-30T15:36:55.560Z",
     "revisionIdentifier": "b56efe08",
-    "lastVerified": "2026-10-28T18:13:50.861Z"
+    "lastVerified": "2026-10-30T15:36:55.560Z"
   },
   "hf-bingsu-adetailer": {
     "name": "Bingsu/adetailer",
@@ -10278,5 +10276,29 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "urllib3-urllib3": {
+    "name": "urllib3/urllib3",
+    "officialUrl": "https://github.com/urllib3/urllib3",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-30T15:37:02.795Z",
+    "lastVerified": "2026-10-30T15:37:02.795Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-urllib3-urllib3",
+    "contentHash": "77f7c673934638954d40c620c16e8b3ffd48187c0d098ca5b588d6694a2e6348",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ming1016-swiftpamphletapp": {
+    "name": "SwiftPamphletApp",
+    "officialUrl": "https://github.com/ming1016/SwiftPamphletApp",
+    "lastChecked": "2026-10-30T15:37:00.511Z",
+    "revisionIdentifier": "0d07d106",
+    "lastVerified": "2026-10-30T15:37:00.511Z"
   }
 }

@@ -6224,3 +6224,6 @@
 | `CYCLE-20261030-5VM8` | `2026-10-30T15:15:06.704Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5785` | Yes (`c1cb5062...`) |
 | `CYCLE-20261030-EYNN` | `2026-10-30T15:22:10.547Z` | `SeaQL/sea-orm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5786` | Yes (`8ec576a7...`) |
 | `CYCLE-20261030-JHIE` | `2026-10-30T15:25:41.606Z` | `superhighfives/pika` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5787` | Yes (`afa835e5...`) |
+| `CYCLE-20261030-Y4UC` | `2026-10-30T15:37:05.028Z` | `urllib3/urllib3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5788` | Yes (`77f7c673...`) |
+| `CYCLE-20261030-Y8RQ` | `2026-10-30T15:37:10.118Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md` | Yes (`b91fade3...`) |
+| `CYCLE-20261030-Y9XJ` | `2026-10-30T15:37:11.623Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5789` | Yes (`438de66f...`) |

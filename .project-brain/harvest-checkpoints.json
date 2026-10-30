@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T15:25:41.620Z",
+  "last_updated": "2026-10-30T15:37:11.637Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4341,14 +4341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "bff9588a8752a3b75d39f61476809d52d141d2920e809e941dbd0d289084ac1d",
-      "verified_at": "2026-10-28T07:34:44.555Z",
+      "content_hash": "b91fade310094d7c168c7f90caeebc0d0de1e93d148fa833b0aa8ed100d56749",
+      "verified_at": "2026-10-30T15:37:10.136Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T07:34:44.555Z"
+      "last_updated": "2026-10-30T15:37:10.136Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "661d987d5eaa656d566787286ef160bf4fbc854cbfb86818925dc41fe552c9cd",
-      "verified_at": "2026-10-30T03:59:40.133Z",
+      "content_hash": "438de66fab45cf0209a697502c4e92cab88f128d143c84640e866e67db809dfa",
+      "verified_at": "2026-10-30T15:37:11.636Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T03:59:40.133Z"
+      "last_updated": "2026-10-30T15:37:11.636Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -14496,14 +14496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-urllib3-urllib3",
-      "content_hash": "5b9d1f1da12d73671d7aa8b159c1f4807b419fe8f1a9b21ce57358d579eb7e57",
-      "verified_at": "2026-10-27T13:35:09.560Z",
+      "content_hash": "77f7c673934638954d40c620c16e8b3ffd48187c0d098ca5b588d6694a2e6348",
+      "verified_at": "2026-10-30T15:37:05.041Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T13:35:09.560Z"
+      "last_updated": "2026-10-30T15:37:05.041Z"
     },
     "simibac/ConfettiSwiftUI": {
       "repository": "simibac/ConfettiSwiftUI",

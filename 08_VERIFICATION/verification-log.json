@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-E47J",
-    "timestamp": "2026-10-28T07:22:17.167Z",
-    "repository": "1jehuang/jcode",
-    "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "7763c7900f7c37eed469c789d592e2475159302437737e56cd246b9fcd04455c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-FEFL",
-    "timestamp": "2026-10-28T07:23:17.073Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-    "contentHash": "a0497ef37b2f4a78dc1de2cc23b1fa368de508d1bc9a78d965e3f120f5eb3b85",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-GNBF",
-    "timestamp": "2026-10-28T07:24:15.243Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "fed3393918af7e6aabaae5c52bc0b6837b5b26a5d266dd5a47b60f8f55c78749",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-U4W0",
     "timestamp": "2026-10-28T07:34:44.544Z",
     "repository": "karmada-io/karmada",
@@ -7490,6 +7445,51 @@
     "repository": "superhighfives/pika",
     "learningId": "learn-github-superhighfives-pika",
     "contentHash": "afa835e5fb5f1c44852fcb8bd56687e973b3e3ba25d4d64a742758471df6dbd1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-Y4UC",
+    "timestamp": "2026-10-30T15:37:05.028Z",
+    "repository": "urllib3/urllib3",
+    "learningId": "learn-github-urllib3-urllib3",
+    "contentHash": "77f7c673934638954d40c620c16e8b3ffd48187c0d098ca5b588d6694a2e6348",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-Y8RQ",
+    "timestamp": "2026-10-30T15:37:10.118Z",
+    "repository": "karmada-io/karmada",
+    "learningId": "learn-github-karmada-io-karmada",
+    "contentHash": "b91fade310094d7c168c7f90caeebc0d0de1e93d148fa833b0aa8ed100d56749",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-Y9XJ",
+    "timestamp": "2026-10-30T15:37:11.623Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "438de66fab45cf0209a697502c4e92cab88f128d143c84640e866e67db809dfa",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
