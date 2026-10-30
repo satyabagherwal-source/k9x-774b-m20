@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T19:19:26.215Z",
+  "last_updated": "2026-10-30T19:29:33.962Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34238,8 +34238,8 @@
       "slug": "krakend-krakend-ce",
       "platform": "github",
       "source_url": "https://github.com/krakend/krakend-ce",
-      "source_version": "0ecf3bf0",
-      "content_hash": "03a0c4501ed7b531c7232c294f1866c038190787a5c562ab55c8fd38b1ffa355",
+      "source_version": "a1fcff90",
+      "content_hash": "34b41002de85351349299f42743474017bf1e4e1468047db997ff928670a4615",
       "dossier_path": "07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md",
       "promoted_rules": [
@@ -34252,6 +34252,11 @@
           "number": 3774,
           "title": "Merge pull request #1129 from krakend/dev-3.0.2",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5840,
+          "title": "Merge pull request #1132 from krakend/upgrade_gojose",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34259,7 +34264,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-23T05:50:29.742Z",
+      "verified_at": "2026-10-30T19:29:33.943Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155015,6 +155020,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T19:19:26.196Z"
+    },
+    "rule-5840": {
+      "learning_id": "rule-5840",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5840,
+      "title": "Merge pull request #1132 from krakend/upgrade_gojose",
+      "source_url": "https://github.com/krakend/krakend-ce",
+      "source_version": "a1fcff90",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T19:29:33.943Z"
     }
   },
   "aliases": {

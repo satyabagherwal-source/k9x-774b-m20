@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T19:19:28.851Z",
-    "lastVerified": "2026-10-30T19:19:28.851Z",
+    "lastChecked": "2026-10-30T19:29:36.593Z",
+    "lastVerified": "2026-10-30T19:29:36.593Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -139,12 +139,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T18:58:41.333Z",
-    "lastVerified": "2026-10-30T18:58:41.333Z",
+    "lastChecked": "2026-10-30T19:28:11.867Z",
+    "lastVerified": "2026-10-30T19:28:11.867Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -153,7 +153,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5b8effbb"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -1537,9 +1538,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-10-30T14:33:28.632Z",
+    "lastChecked": "2026-10-30T19:28:06.887Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-10-30T14:33:28.632Z"
+    "lastVerified": "2026-10-30T19:28:06.887Z"
   },
   "seaql-sea-orm": {
     "name": "SeaQL/sea-orm",
@@ -3119,9 +3120,9 @@
   "vearch-vearch": {
     "name": "vearch",
     "officialUrl": "https://github.com/vearch/vearch",
-    "lastChecked": "2026-10-29T10:59:05.582Z",
+    "lastChecked": "2026-10-30T19:28:09.416Z",
     "revisionIdentifier": "bae78b18",
-    "lastVerified": "2026-10-29T10:59:05.582Z"
+    "lastVerified": "2026-10-30T19:28:09.416Z"
   },
   "imsnif-bandwhich": {
     "name": "bandwhich",
@@ -3806,11 +3807,21 @@
     "lastVerified": "2026-10-28T13:03:32.825Z"
   },
   "krakend-krakend-ce": {
-    "name": "krakend-ce",
+    "name": "krakend/krakend-ce",
     "officialUrl": "https://github.com/krakend/krakend-ce",
-    "lastChecked": "2026-10-29T12:13:22.935Z",
-    "revisionIdentifier": "0ecf3bf0",
-    "lastVerified": "2026-10-29T12:13:22.935Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-30T19:28:10.060Z",
+    "lastVerified": "2026-10-30T19:28:10.060Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-krakend-krakend-ce",
+    "contentHash": "34b41002de85351349299f42743474017bf1e4e1468047db997ff928670a4615",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pixeltable-pixeltable": {
     "name": "pixeltable/pixeltable",
@@ -7407,9 +7418,9 @@
   "imsnif-diskonaut": {
     "name": "diskonaut",
     "officialUrl": "https://github.com/imsnif/diskonaut",
-    "lastChecked": "2026-10-28T21:04:16.882Z",
+    "lastChecked": "2026-10-30T19:27:56.854Z",
     "revisionIdentifier": "65cd8290",
-    "lastVerified": "2026-10-28T21:04:16.882Z"
+    "lastVerified": "2026-10-30T19:27:56.854Z"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
     "name": "Phocinae/Phocinae-Largha-150M-v1",
@@ -10781,5 +10792,19 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "parcel-bundler-parcel": {
+    "name": "parcel",
+    "officialUrl": "https://github.com/parcel-bundler/parcel",
+    "lastChecked": "2026-10-30T19:27:59.549Z",
+    "revisionIdentifier": "59484858",
+    "lastVerified": "2026-10-30T19:27:59.549Z"
+  },
+  "mikeroyal-apple-silicon-guide": {
+    "name": "Apple-Silicon-Guide",
+    "officialUrl": "https://github.com/mikeroyal/Apple-Silicon-Guide",
+    "lastChecked": "2026-10-30T19:28:01.873Z",
+    "revisionIdentifier": "7e58c7d7",
+    "lastVerified": "2026-10-30T19:28:01.873Z"
   }
 }

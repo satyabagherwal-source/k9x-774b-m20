@@ -6285,3 +6285,4 @@ Every entry in this ledger must capture:
 | `learn-github-rollup-rollup` | `https://github.com/rollup/rollup` | `1147f535` | Multi-dimensional audit evidence | 2026-10-30T19:12:25.944Z |
 | `learn-huggingface-liquidai-lfm3-1-7b-gguf` | `https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-30T19:19:15.888Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `2299d94b` | Multi-dimensional audit evidence | 2026-10-30T19:19:26.297Z |
+| `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `a1fcff90` | Multi-dimensional audit evidence | 2026-10-30T19:29:34.040Z |
