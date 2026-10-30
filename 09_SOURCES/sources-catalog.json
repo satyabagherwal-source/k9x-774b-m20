@@ -1923,10 +1923,10 @@
     "repository": "cypress-io/cypress",
     "platform": "github",
     "sourceUrl": "https://github.com/cypress-io/cypress",
-    "sourceVersion": "75df26c3",
+    "sourceVersion": "1ecfa9e5",
     "license": "MIT",
-    "contentHash": "0d32cc134e726f9923ddefa1078e62bdb3aec75bb109cbfc2d9618c1122bc806",
-    "lastHarvestedAt": "2026-10-27T18:59:41.442Z",
+    "contentHash": "268be6833be9f81c319613a81801e809f2934be4183942e51d99f91ec3d940f3",
+    "lastHarvestedAt": "2026-10-30T20:15:11.651Z",
     "learningId": "learn-github-cypress-io-cypress"
   },
   "syntax-tree-unist": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "e5bdd01c",
+    "sourceVersion": "14b7b0ef",
     "license": "NOASSERTION",
-    "contentHash": "7568108dc1b0ff55f538f5280ef423c2fcfb5a26b251ade2387ea9ed35fb3bd0",
-    "lastHarvestedAt": "2026-10-28T21:50:15.358Z",
+    "contentHash": "eb6f6465005a8f5895ada6e1edfe2e371a9461746f011d97c3a7a64d21647ff6",
+    "lastHarvestedAt": "2026-10-30T20:15:09.796Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {
@@ -10103,10 +10103,10 @@
     "repository": "TypeWhisper/typewhisper-mac",
     "platform": "github",
     "sourceUrl": "https://github.com/TypeWhisper/typewhisper-mac",
-    "sourceVersion": "c550994e",
+    "sourceVersion": "4620bb59",
     "license": "GPL-3.0",
-    "contentHash": "1a26414fc610c9e8c836424974a1d09d081eb56910374dc16640d71987f76f0b",
-    "lastHarvestedAt": "2026-10-27T10:57:56.705Z",
+    "contentHash": "7ee3947e46f2dfe6c6bd211cf629b749482ecff29e295bd2d8aecf96ee38405d",
+    "lastHarvestedAt": "2026-10-30T20:15:14.244Z",
     "learningId": "learn-github-typewhisper-typewhisper-mac"
   },
   "vitest-dev-vitest": {

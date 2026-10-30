@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T20:05:23.520Z",
-    "lastVerified": "2026-10-30T20:05:23.520Z",
+    "lastChecked": "2026-10-30T20:15:18.995Z",
+    "lastVerified": "2026-10-30T20:15:18.995Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -242,8 +242,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T19:35:56.829Z",
-    "lastVerified": "2026-10-30T19:35:56.829Z",
+    "lastChecked": "2026-10-30T20:15:18.985Z",
+    "lastVerified": "2026-10-30T20:15:18.985Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1946,12 +1946,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflesecurity/trufflehog",
+    "name": "trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T15:37:10.195Z",
-    "lastVerified": "2026-10-30T15:37:10.195Z",
+    "lastChecked": "2026-10-30T20:15:13.855Z",
+    "lastVerified": "2026-10-30T20:15:13.855Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -1960,7 +1960,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "421026a6"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -3403,9 +3404,9 @@
   "featureform-featureform": {
     "name": "featureform",
     "officialUrl": "https://github.com/featureform/featureform",
-    "lastChecked": "2026-10-29T12:08:48.265Z",
+    "lastChecked": "2026-10-30T20:15:16.392Z",
     "revisionIdentifier": "dc8b9fca",
-    "lastVerified": "2026-10-29T12:08:48.265Z"
+    "lastVerified": "2026-10-30T20:15:16.392Z"
   },
   "mfontanini-presenterm": {
     "name": "mfontanini/presenterm",
@@ -4112,9 +4113,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-10-29T16:48:12.413Z",
+    "lastChecked": "2026-10-30T20:15:11.348Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-10-29T16:48:12.413Z"
+    "lastVerified": "2026-10-30T20:15:11.348Z"
   },
   "helixdb-helix-db": {
     "name": "HelixDB/helix-db",
@@ -7633,14 +7634,14 @@
     "officialUrl": "https://github.com/zed-industries/zed",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T21:50:14.746Z",
-    "lastVerified": "2026-10-28T21:50:14.746Z",
+    "lastChecked": "2026-10-30T20:15:08.182Z",
+    "lastVerified": "2026-10-30T20:15:08.182Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "7568108dc1b0ff55f538f5280ef423c2fcfb5a26b251ade2387ea9ed35fb3bd0",
+    "contentHash": "eb6f6465005a8f5895ada6e1edfe2e371a9461746f011d97c3a7a64d21647ff6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 9,
+    "recentFixesCount": 20,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10920,5 +10921,39 @@
     "lastChecked": "2026-10-30T20:05:04.909Z",
     "revisionIdentifier": "3954a769",
     "lastVerified": "2026-10-30T20:05:04.909Z"
+  },
+  "cypress-io-cypress": {
+    "name": "cypress-io/cypress",
+    "officialUrl": "https://github.com/cypress-io/cypress",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T20:15:11.422Z",
+    "lastVerified": "2026-10-30T20:15:11.422Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-cypress-io-cypress",
+    "contentHash": "268be6833be9f81c319613a81801e809f2934be4183942e51d99f91ec3d940f3",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 16,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "typewhisper-typewhisper-mac": {
+    "name": "TypeWhisper/typewhisper-mac",
+    "officialUrl": "https://github.com/TypeWhisper/typewhisper-mac",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-30T20:15:13.668Z",
+    "lastVerified": "2026-10-30T20:15:13.668Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-typewhisper-typewhisper-mac",
+    "contentHash": "7ee3947e46f2dfe6c6bd211cf629b749482ecff29e295bd2d8aecf96ee38405d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

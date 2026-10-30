@@ -6292,3 +6292,6 @@
 | `CYCLE-20261030-J0X2` | `2026-10-30T20:05:16.262Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5855` | Yes (`c5ec86e0...`) |
 | `CYCLE-20261030-J49X` | `2026-10-30T20:05:20.613Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5856` | Yes (`dc9eb720...`) |
 | `CYCLE-20261030-J4K1` | `2026-10-30T20:05:20.977Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5857` | Yes (`54ababb5...`) |
+| `CYCLE-20261030-VQW1` | `2026-10-30T20:15:09.793Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5858` | Yes (`eb6f6465...`) |
+| `CYCLE-20261030-VSBK` | `2026-10-30T20:15:11.648Z` | `cypress-io/cypress` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md` | Yes (`268be683...`) |
+| `CYCLE-20261030-VUBL` | `2026-10-30T20:15:14.241Z` | `TypeWhisper/typewhisper-mac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5859` | Yes (`7ee3947e...`) |

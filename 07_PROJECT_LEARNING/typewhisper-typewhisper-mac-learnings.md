@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md`  
 > **Source**: github ([https://github.com/TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac))  
-> **Source Version**: `c550994e`  
+> **Source Version**: `4620bb59`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T10:57:56.302Z  
+> **Timestamp**: 2026-10-30T20:15:13.674Z  
 > **Learning ID**: `learn-github-typewhisper-typewhisper-mac`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TypeWhisper/typewhisper-mac](https://github.com/TypeWhisper/typewhisper-mac))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T10:57:55.879Z  
+> **Harvest Timestamp**: 2026-10-30T20:15:13.668Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local speech-to-text for macOS  on-device AI, fully private, optional cloud
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1882 stars
+- **Stars / Engagement**: 1891 stars
 
 ---
 
@@ -1969,11 +1969,13 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1732** (2026-10-26): **Dictation inserts text twice in Telegram and Safari when "Preserve clipboard content" is on**
-  *Symptoms*: ## Summary  With **Settings → Dictation → Clipboard → Preserve clipboard content** turned on, dictation inserts the text **twice** in Telegram and sometimes in Safari (ChatGPT and Claude web text fields). Turning the setting off fixes it in Telegram.  Reported on Discord.  ## Environment  - TypeWhisper `v1.8.0-daily.20261025` - macOS 15 Sequoia - Engine: Parakeet  ## Results so far  | Target | Preserve clipboard on | Preserve clipboard off | |---|---|---| | Telegram | Doubled, reproducible | Correct | | Safari, ChatGPT / Claude web fields | Doubled sometimes | Not confirmed yet |  Still open: which Telegram app (`ru.keepcoder.Telegram` or `org.telegram.desktop`) and whether Safari still doubles with the setting off.  ## Likely cause  Same mechanism as #1518 (cmux), in `TextInsertionService.insertText` at `v1.8.0`:  1. With `preserveClipboard` on, `insertText` first calls `insertTextAtAndVerifyChange`, which sets `kAXSelectedTextAttribute` on the focused element. 2. The method reads the focused text state right after the write, with no wait. If `AXValue` hasn't changed yet, or reads as `nil` after the write, it returns `false`. 3. `insertText` then falls back to clipboard + synthetic Cmd+V. If the app did apply the AX write but reports the change late, the text lands twice.  #1518 was fixed by adding cmux to `syntheticPastePreferredBundleIdentifiers`. That fixes one app at a time, and Electron/Qt apps and web editors can show the same late update.  ## Suggested fix  Don't fall
+- **Issue #1778** (2026-10-28): **Google Meet calls at meet.google.com/meet/<code> are not detected**
+  *Symptoms*: Follow-up to #1700: a Google Meet call in Chrome Beta is again not recorded automatically, because Google now serves the meeting at `https://meet.google.com/meet/<code>`.  **What happened** - 27.10, 23:31 MSK: TypeWhisper 1.8.1-rc1, macOS 27.0.1 (26A434), Apple M4, Chrome Beta. Ad-hoc meeting detection on, Google Meet enabled. - I joined a Meet call. The tab URL was `https://meet.google.com/meet/fpk-vsmc-dju` (AppleScript `URL of active tab`). - The Recorder did not start within 2 minutes. My own fallback script started it at 23:33:15. - The same evening a Teams call was picked up 7 s after joining, so ad-hoc detection itself works.  **Why** (main as of today) - `MeetingLinkParser.parseGoogleMeetLink` takes `parts[0]` as the meeting code and matches `^[a-z]{3}-[a-z]{4}-[a-z]{3}$`. - For `/meet/fpk-vsmc-dju`, `parts[0]` is `meet`. The link is rejected, so `meetingLinks(in:)` is empty and no browser activity is created. - Calendar-matched Meet calls are probably affected too: the event holds `meet.google.com/<code>`, but the open tab never parses.  **How common** Chrome Beta history (Default profile), Meet call URLs: | first seen | URL shape | |---|---| | 23.09, 16.10 | `meet.google.com/<code>?…&adhoc=1` | | 22.10 | both: `meet/ujf-urwz-eyi?pli=1`, then `ujf-urwz-eyi` | | 27.10 | only `meet/fpk-vsmc-dju`, `meet/rby-hohw-jss` (2 of 2 calls) |  **Side note, minor** The first tab query timed out: macOS checked the Automation permission from 23:31:14.368 to 16.994 (2.6 s), over the
 
-- **Issue #1714** (2026-10-23): **R2T2: built-in server offered on Intel Macs, where it can't be installed**
-  *Symptoms*: ## Problem  On Intel Macs, Confucius4-R2T2 shows up under **Integrations > Local > Transcription** next to the other local options, and its built-in server mode can be selected. Installing the built-in server then fails with `R2T2ManagedError.unsupportedArchitecture` ("The built-in server needs a Mac with Apple silicon."), because the audio.cpp runtime is only shipped as `macos-arm64-metal` (`R2T2ManagedServer.install` throws on non-arm64).  A user on an Intel iMac (macOS 15) reported this list of local transcription options while looking for a local engine. On Intel, R2T2 only works in the "own audio.cpp server" mode, but the UI doesn't make that clear.  ## Expected  - On Intel, don't offer the built-in server mode, or disable it with a clear note up front (before any download starts) that it needs Apple silicon. - Keep the plugin available on Intel for the own-server mode, so adding `supportedArchitectures: ["arm64"]` to the manifest is **not** the right fix. - Consider whether the marketplace/Integrations listing should tell Intel users that R2T2 needs an external audio.cpp server there.  ## References  - `TypeWhisperPluginSDK/Plugins/R2T2Plugin/manifest.json` (`locality: configurable`, no `supportedArchitectures`) - `TypeWhisperPluginSDK/Plugins/R2T2Plugin/R2T2ManagedServer.swift` (`install`, `#if arch(arm64)`) - Related: #547 (Intel-compatible local transcription backend) 
+- **Issue #1771** (2026-10-29): **Microsoft AI live preview uploads about 3x the audio of a dictation**
+  *Symptoms*: ### Platform  macOS · TypeWhisper 1.8.1-rc1 · Microsoft AI plugin, MAI-Transcribe-2, live preview on  ### Problem  The live preview re-uploads a growing chunk of audio (up to about 10 s) every ~3.5 s. A 29 s dictation sent 8 preview uploads (~2.3 MB) plus a 945 KB final upload, about 3× the audio. That is extra traffic and provider cost on every dictation, and it hurts most on a weak connection.  #1622 / #1624 fixed the same pattern for OpenAI Compatible Batch profiles only.  Drafted with help from Claude Code; sizes are from CFNetwork summaries in the unified log. 
+  **Post-Mortem & Fix Analysis**:
+  > Setup for tracing: macOS 27.0.1 (26A434), Apple M4, TypeWhisper 1.8.1-rc1 direct download, Microsoft AI plugin 1.0.1 at the time (now 1.0.2), dictation engine MAI-Transcribe-2. Times are MSK (UTC+3) on Oct 27; History and unified-log lines available if useful.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1990,296 +1992,481 @@ final class AppStoreICloudMirror: PremiumICloudBridging, @unchecked Sendable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `04083538` (2026-10-24)
-**Commit Message**: Fix the nightly CodeQL Swift build on Xcode 26.6 (#1720)
+### Incident Patch 1: `5a63c037` (2026-10-27)
+**Commit Message**: Parakeet 1.6.1: fix per-request model switches and pad Nemotron batch transcriptions (#1748)
 
-The GigaAM runtime read the feature length through an Optional.flatMap
-closure whose generic element type Xcode 27 infers but the Xcode 26.6
-compiler used by the CodeQL job does not. Unwrap the output first and
-name the element type explicitly.
+* Keep per-request Parakeet model switches from failing
 
-Pin the CodeQL actions and Python jobs to ubuntu-26.04 so they no longer
-emit the ubuntu-latest migration notice.
+The host switches models for a request with selectModel and transcribes as
+soon as the plugin reports the requested model as selected and configured.
+Two races broke this for the local API, the CLI's --model and workflows:
 
-**File**: `.github/workflows/codeql.yml` (modified, +2/-2)
+- selectModel set the new selection at once but unloaded the previous model
+  in a task. Meanwhile the previous model still counted as configured, so the
+  host transcribed without waiting and failed with "Cloud provider not
+  configured" once the task unloaded it. The previous model is now unloaded
+  synchronously, so the host waits for the new one.
+- A load that was already running, such as the host restoring the user's
+  model after the previous request, finished after the switch and replaced
+  the new selection, so the host failed with "The plugin restored a different
+  model". Selections, restores of a model and loads from the settings are now
+  numbered requests. A load for an older request, or a passive load while a
+  request is pending, of another model is dropped when it finishes, and a
+  dropped restore 
+
+**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/ParakeetPlugin.swift` (modified, +100/-14)
 ```diff
-@@ -37,11 +37,11 @@ jobs:
-         include:
-           - language: actions
-             build-mode: none
--            runner: ubuntu-latest
-+            runner: ubuntu-26.04
-             timeout-minutes: 10
-           - language: python
-             build-mode: none
--            runner: ubuntu-latest
-+            runner: ubuntu-26.04
-             timeout-minutes: 10
+@@ -158,6 +158,12 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
+     /// `_selectedModelId` and `selectedVersion` follow it while it lasts.
+     let transientSelection = PluginTransientModelSelection()
+     private var versionBeforeTransientSelection: ParakeetVersion?
++    /// The newest explicit model request: a selection, a restore of a model or a load from the
++    /// settings. A load for an older request, or a passive load while this one is pending, of
++    /// another model is dropped when it finishes: the host would otherwise see that model as
++    /// ready, with the newer selection, and fail the request it waits for.
++    private var latestModelRequest: (id: Int, modelId: String, isPending: Bool)?
++    private var modelRequestCount = 0
  
-     steps:
+     func requestPassiveModelRestore() {
+         passiveRestoreController.request { [weak self] in
+@@ -198,6 +204,7 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
+     func deactivate() {
+         transientSelection.end()
+         versionBeforeTransientSelection = nil
++        latestModelRequest = nil
+         passiveRestoreController.cancel()
+         modelPrewarm.cancel()
+         clearVocabularyBoostingState(resetModelState: true)
+@@ -285,18 +292,23 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
+         _selectedModelId = modelId
+         host?.setUserDefault(modelId, forKey: "selectedModel")
+         if version == selectedVersion && loadedModelId == modelId { return }
++        // Unload at once: while the previous model stayed loaded, the host saw the new
++        // selection as configured, transcribed without waiting for the load and failed
++        // once the previous model was gone.
++        if loadedModelId != nil, loadedModelId != modelId {
++            unloadModel(clearPersistence: false)
++        }
++        selectedVersion = version
++        host?.setUserDefault(version.rawValue, forKey: "selectedVersion")
++        let request = beginModelRequest(modelId)
+         Task {
+             // A transient selection that began meanwhile keeps its model in use.
+             guard transientSelection.revision == revision else {
++                endModelRequest(request)
+                 saveUserSelection(version)
+                 return
+             }
+-            unloadModel(clearPersistence: false)
+-            selectedVersion = version
+-            _selectedModelId = modelId
+-            host?.setUserDefault(modelId, forKey: "selectedModel")
+-            host?.setUserDefault(version.rawValue, forKey: "selectedVersion")
+-            await loadModel(requestedAt: revision)
++            await loadModel(version: version, requestedAt: revision, request: request)
+         }
+     }
+ 
+@@ -528,6 +540,10 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
+     /// Feeds the recording through a fresh Nemotron stream, in blocks so a long file
+     /// reports its progress and stops soon after cancellation. FluidAudio reports no token
+     /// confidence for Nemotron, so the short-clip confidence gate does not apply.
++    ///
++    /// The stream drops the first word and the last syllables of a tightly cut clip, so the
++    /// recording is surrounded by `nemotronBatchPaddingSamples` of silence on each side. Word
++    /// timings are moved back to the recording. Live sessions get no padding.
+     private func transcribeWithNemotron(
+         audio: AudioData,
+         streams: ParakeetNemotronStreamFactory,
+@@ -539,6 +555,8 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
+         let samples = audio.samples
+         let totalDuration = Double(samples.count) / 16_000
+         var reportsSourceProgress = Self.shouldObserveSourceProgress(sampleCount: samples.count)
++        let silence = [Float](repeating: 0, count: Self.nemotronBatchPaddingSamples)
++        try await stream.process(silence)
+         var offset = 0
+         while offset < samples.count {
+             try Task.checkCancellation()
+@@ -554,18 +572,40 @@ final class ParakeetPlugin: NSObject, DictionaryTermHintSourceProgressTranscript
+             }
+         }
+         try Task.checkCancellation()
+-        let result = Self.nemotronResult(from: try await stream.finish())
++        try await stream.process(silence)
++        try Task.checkCancellation()
++        let result = Self.nemotronResult(
++            from: try await stream.finish(),
++            leadingPadding: Double(Self.nemotronBatchPaddingSamples) / 16_000,
++            duration: totalDuration
++        )
+         _ = onProgress(result.text)
+         return result
+     }
+ 
+     /// 10 seconds of 16 kHz audio per Nemotron call during batch transcription.
+     private static let nemotronBlockSampleCount = 160_000
+ 
++    /// One second of 16 kHz silence before and after a batch transcription. In the ASR
++    /// benchmark it brought back the words at the edges of tightly cut clips an
 ```
 
-**File**: `TypeWhisperPluginSDK/Plugins/GigaAMPlugin/GigaAMRuntime.swift` (modified, +2/-1)
+**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/Tests/ParakeetNemotronStreamingTests.swift` (modified, +41/-5)
 ```diff
-@@ -66,7 +66,8 @@ final class GigaAMRuntime: @unchecked Sendable {
-             runOptions: nil
+@@ -350,7 +350,7 @@ final class ParakeetNemotronStreamingTests: XCTestCase {
          )
-         guard let features = outputs["features"],
--              let length: Int64 = try outputs["features_lens"].flatMap({ try GigaAMTensor.values($0) })?.first else {
-+              let lengthValue = outputs["features_lens"],
-+              let length = (try GigaAMTensor.values(lengthValue) as [Int64]).first else {
-             throw GigaAMRuntimeError.missingOutput("features")
+ 
+         let stream = try XCTUnwrap(streams.opened.first)
+-        XCTAssertEqual(stream.samples.map(\.count), [160_000, 160_000, 80_000])
++        XCTAssertEqual(stream.samples.map(\.count), [16_000, 160_000, 160_000, 80_000, 16_000], "One second of silence on each side")
+         XCTAssertEqual(stream.languagePrompt, "en-US")
+         XCTAssertTrue(stream.didFinish)
+         XCTAssertEqual(result.text, "Long recording.")
+@@ -363,6 +363,39 @@ final class ParakeetNemotronStreamingTests: XCTestCase {
+         XCTAssertNil(streams.opened[1].languagePrompt)
+     }
+ 
++    func testBatchTranscriptionPadsTheClipWithSilenceAndKeepsWordTimesInTheClip() async throws {
++        // Times as the stream reports them, including the leading second of silence.
++        let timings = [
++            TokenTiming(token: "\u{2581}Ich", tokenId: 1, startTime: 1.1, endTime: 1.3, confidence: 1),
++            TokenTiming(token: "\u{2581}muss", tokenId: 2, startTime: 1.4, endTime: 1.7, confidence: 1),
++            TokenTiming(token: "\u{2581}los.", tokenId: 3, startTime: 2.4, endTime: 2.9, confidence: 1),
++        ]
++        let streams = StreamRecorder(
++            output: ParakeetNemotronStreamOutput(text: "Ich muss los.", tokenTimings: timings, detectedLanguage: "de-DE"),
++            partials: []
++        )
++        let plugin = try await loadedNemotronPlugin(streams: streams)
++        defer { plugin.deactivate() }
++        let clip: [Float] = (0..<24_000).map { _ in 0.25 }
++        let audio = AudioData(samples: clip, wavData: Data(), duration: 1.5)
++
++        let collector = PluginWordTimingCollector()
++        let result = try await PluginWordTimings.$collector.withValue(collector) {
++            try await plugin.transcribe(audio: audio, language: "de", translate: false, prompt: nil)
++        }
++
++        let fed = try XCTUnwrap(streams.opened.first).samples.flatMap { $0 }
++        XCTAssertEqual(fed, [Float](repeating: 0, count: 16_000) + clip + [Float](repeating: 0, count: 16_000))
++        let words = collector.words
++        XCTAssertEqual(words.map(\.text), ["Ich", "muss", "los."])
++        for (word, expected) in zip(words, [(0.1, 0.3), (0.4, 0.7), (1.4, 1.5)]) {
++            XCTAssertEqual(word.start, expected.0, accuracy: 1e-9, word.text)
++            XCTAssertEqual(word.end, expected.1, accuracy: 1e-9, "\(word.text) ends within the clip")
++        }
++        XCTAssertEqual(result.segments.first?.start ?? -1, 0.1, accuracy: 1e-9)
++        XCTAssertEqual(result.segments.last?.end ?? -1, 1.5, accuracy: 1e-9)
++    }
++
+     func testBatchTranscriptionStopsWhenCancelled() async throws {
+         let streams = StreamRecorder(output: Self.output(text: "never", tag: nil), partials: [])
+         streams.processGate = BlockingGate()
+@@ -440,11 +473,14 @@ final class ParakeetNemotronStreamingTests: XCTestCase {
+             prompt: nil,
+             onProgress: { progress.append($0); return true }
+         )
+-        // 100 ms of audio per call, as the host appends while recording.
++        // 100 ms of audio per call, as the host appends while recording, with the silence
++        // the batch transcription adds around the recording.
++        let silence = [Float](repeating: 0, count: ParakeetPlugin.nemotronBatchPaddingSamples)
++        let recording = silence + samples + silence
+         var offset = 0
+-        while offset < samples.count {
+-            let end = min(offset + 1_600, samples.count)
+-            try await session.appendAudio(samples: Array(samples[offset..<end]))
++        while offset < recording.count {
++            let end = min(offset + 1_600, recording.count)
++            try await session.appendAudio(samples: Array(recording[offset..<end]))
+             offset = end
          }
-         return (features, length)
+         let live = try await session.finish()
+```
+
+**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/Tests/ParakeetPluginTests.swift` (modified, +126/-0)
+```diff
+@@ -850,6 +850,105 @@ final class ParakeetPluginTests: XCTestCase {
+         XCTAssertEqual(versions, [.v3])
+     }
+ 
++    /// The host switches models per request with `selectModel` and transcribes as soon as the
++    /// plugin reports the new selection as configured. The previous model must not count.
++    func testSelectingAnotherModelUnloadsTheLoadedOneImmediately() async throws {
++        let host = try PluginTestHostServices(
++            defaults: ["selectedModel": "parakeet-ultra", "selectedVersion": "ultra"],
++            shouldRestoreLoadedModelsPassively: false
++        )
++        let plugin = makePlugin()
++        let loaded = LoadedVersions()
++        plugin.asrModelLoadOverrideForTests = { version in await loaded.append(version) }
++        plugin.activate(host: host)
++        defer { plugin.deactivate() }
++        await plugin.loadModel()
++        XCTAssertEqual(plugin.loadedModelId, "parakeet-ultra")
++
++        plugin.selectModel("parakeet-tdt-0.6b-v3")
++
++        XCTAssertEqual(plugin.selectedModelId, "parakeet-tdt-0.6b-v3")
++        XCTAssertFalse(plugin.isConfigured)
++        XCTAssertNil(plugin.loadedModelId)
++        XCTAssertEqual(plugin.supportedLanguages, ParakeetVersion.v3.supportedLanguages)
++        XCTAssertEqual(host.userDefault(forKey: "selectedVersion") as? String, "v3")
++
++        for _ in 0..<200 where plugin.loadedModelId == nil {
++            try await Task.sleep(for: .milliseconds(10))
++        }
++        XCTAssertEqual(plugin.loadedModelId, "parakeet-tdt-0.6b-v3")
++        XCTAssertTrue(plugin.isConfigured)
++        let versions = await loaded.versions
++        XCTAssertEqual(versions, [.ultra, .v3])
++    }
++
++    /// A model that finishes loading after another was selected must not become the loaded
++    /// one: the host, waiting for the new model, would see the old one ready and fail.
++    func testLoadThatFinishesAfterAnotherModelWasSelectedIsDropped() async throws {
++        let host = try PluginTestHostServices(
++            defaults: ["selectedModel": "parakeet-ultra", "selectedVersion": "ultra"],
++            shouldRestoreLoadedModelsPassively: false
++        )
++        let plugin = makePlugin()
++        let loads = HeldLoads()
++        plugin.asrModelLoadOverrideForTests = { version in await loads.load(version) }
++        plugin.activate(host: host)
++        defer { plugin.deactivate() }
++        // The host restores Ultra, as after a request that used another model.
++        plugin.triggerRestoreModel(forModel: "parakeet-ultra" as NSString)
++        await loads.waitForLoads(1)
++
++        plugin.selectModel("parakeet-tdt-0.6b-v3")
++        await loads.releaseNext()
++        await loads.waitForLoads(2)
++
++        XCTAssertNil(plugin.loadedModelId, "Ultra finished loading after v3 was selected")
++        XCTAssertFalse(plugin.isConfigured)
++        XCTAssertEqual(plugin.selectedModelId, "parakeet-tdt-0.6b-v3")
++
++        await loads.releaseNext()
++        for _ in 0..<200 where plugin.loadedModelId == nil {
++            try await Task.sleep(for: .milliseconds(10))
++        }
++        XCTAssertEqual(plugin.loadedModelId, "parakeet-tdt-0.6b-v3")
++        XCTAssertEqual(plugin.selectedModelId, "parakeet-tdt-0.6b-v3")
++        XCTAssertEqual(host.userDefault(forKey: "loadedModel") as? String, "parakeet-tdt-0.6b-v3")
++        let versions = await loads.versions
++        XCTAssertEqual(versions, [.ultra, .v3])
++    }
++
++    func testLoadForAnOlderSelectionDoesNotReplaceTheNewestOne() async throws {
++        let host = try PluginTestHostServices(
++            defaults: ["selectedModel": "parakeet-ultra", "selectedVersion": "ultra"],
++            shouldRestoreLoadedModelsPassively: false
++        )
++        let plugin = makePlugin()
++        let loads = HeldLoads()
++        plugin.asrModelLoadOverrideForTests = { version in await loads.load(version) }
++        plugin.activate(host: host)
++        defer { plugin.deactivate() }
++        let ultraLoad = Task { await plugin.loadModel() }
++        await loads.waitForLoads(1)
++
++        plugin.selectModel("parakeet-tdt-0.6b-v3")
++        plugin.selectModel("parakeet-ultra")
++        await loads.releaseNext()
++        await ultraLoad.value
++        XCTAssertEqual(plugin.loadedModelId, "parakeet-ultra", "Ultra is the newest selection")
++
++        // The v3 selection's load still runs but must not install v3, so Ultra needs no reload.
++        for _ in 0..<20 {
++            await loads.releaseNext()
++            try await Task.sleep(for: .milliseconds(10))
++        }
++        await plugin.loadModel(version: .ultra)
++        XCTAssertEqual(plugin.loadedModelId, "parakeet-ultra")
++        XCTAssertEqual(plugin.selectedModelId, "parakeet-ultra")
++        XCTAssertEqual(host.userDefault(forKey: "loadedModel") as? String, "parakeet-ultra")
++        let versions = await loads.versions
++        XCTAssertEqual(versions, [.ultra, .v3])
++    }
++
+     // MARK: - Unknown tokens
+ 
+     func testUnknownTokensBecomeAmpersandsBetweenCapitalsAndAr
+```
+
+**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/manifest.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+     "id": "com.typewhisper.parakeet",
+     "name": "Parakeet",
+-    "version": "1.6.0",
++    "version": "1.6.1",
+     "minHostVersion": "1.8.0",
+     "sdkCompatibilityVersion": "v1",
+     "minOSVersion": "14.0",
+```
+
+**File**: `docs/release-notes/unreleased.md` (modified, +1/-0)
+```diff
+@@ -8,5 +8,6 @@
+ - Local LLM (MLX) 1.0.6: The model list recommends a model for this Mac based on its memory, describes each Gemma 4 model, and warns when a model needs more memory than the Mac has. On a fresh install the recommended model is preselected. Gemma 4 E4B (8-bit) is no longer experimental. Gemma 4 26B-A4B stays experimental because it does not load yet, and its load error no longer suggests deleting the downloaded model.
+ - Language Detection (new plugin): When you select several spoken languages and the engine accepts only one, such as Parakeet, WhisperKit, Qwen3 or Groq, the plugin detects which of them you speak instead of always using the first one. It runs on your Mac in about 15 ms per transcription, and the audio never leaves it. Install it from Discover plugins; the App Store edition includes it. Live previews still use the first selected language.
+ - Canary, Cohere Transcribe (Local) and Google Cloud STT 1.1.0: These engines cannot detect the spoken language themselves. With Auto-detect all languages and the Language Detection plugin enabled, the plugin now picks the language among theirs. Until now Canary and Cohere Transcribe stopped with an error, and Google Cloud STT used its default language code. When the plugin is unsure, or you speak a language the engine does not support, the engine behaves as before. Dictation settings explain this under Auto-detect all languages.
++- Parakeet 1.6.1: Using another Parakeet model for a single transcription, as the local API's `model`, the CLI's `--model` or a workflow with its own Parakeet model do, now waits for that model to load. Until now it failed with "Cloud provider not configured. Please set an API key." Nemotron 3.5 ASR Streaming no longer drops the first and last words of files and other recordings it transcribes after they end; live dictation stays as fast as before.
+ - Dictation: Dictating into GNU Emacs or a remote desktop client such as Parsec no longer ends with "No text field detected". These apps draw their own content and report only their window to Accessibility, so TypeWhisper cannot tell whether the text arrived and no longer warns there.
+ - Dictation: Dictating into a new message in Apple Mail no longer ends with "No text field detected" although the text arrived. The same applies to other editors where the whole web page is editable. Accessibility does not show their text changing, so TypeWhisper no longer takes that as a missed text field. Web pages without a text field still get the warning.
 ```
 
 ---
 
-### Incident Patch 2: `7ab2ac75` (2026-10-22)
-**Commit Message**: Render Mac App Store screenshots with TypeWhisper Studio (#1713)
+### Incident Patch 2: `6aa769c1` (2026-10-27)
+**Commit Message**: Skip the macOS build and test jobs for documentation-only pull requests (#1763)
 
-* Render Mac App Store screenshots with TypeWhisper Studio
+Release notes and other documentation never reach the app build or its
+tests, yet every such pull request waited for release-build, app-tests
+and appstore on the macOS runner. The changes job now also reports
+whether anything outside docs/ and root-level Markdown changed; those
+three jobs run only then, and CI ok accepts them as skipped for
+documentation-only pull requests.
 
-The Mac listing showed small windows on a plain gradient without any
-copy, while the iOS listing uses Studio's marketing stills. Capture the
-App Store edition without the window shadow and let Studio render the
-store images (headline, TypeWhisper backdrop, window shadow). The
-upload lane now checks that every locale has the expected opaque
-2880 x 1800 images instead of composing them itself.
-
-* Add screenshots for #1713
-
-* Show the new store screenshot at the top of the README
-
-* Keep the store screenshots with the other repository screenshots
-
-* Reject store images older than their captures
-
-**File**: `README.md` (modified, +4/-0)
+**File**: `.github/workflows/build.yml` (modified, +26/-1)
 ```diff
-@@ -9,6 +9,10 @@ on-device AI models or cloud APIs (Groq, OpenAI, xAI/Grok), then transform the
- result with reusable workflows. Your voice data stays on your Mac with local
- models - or use cloud APIs for faster processing.
+@@ -45,11 +45,14 @@ jobs:
+           ruby scripts/test_dependency_coverage.rb
  
-+<p align="center">
-+  <img src=".github/screenshots/app-store/01-indicator.png" width="800" alt="TypeWhisper settings window under the headline &quot;Dictate into any Mac app&quot;">
-+</p>
+   # Pull requests that leave the Plugin SDK package alone skip its macOS test job.
++  # Pull requests that only touch documentation (docs/ and Markdown files at the
++  # repository root) skip the macOS build and test jobs.
+   changes:
+     runs-on: ubuntu-latest
+     timeout-minutes: 5
+     outputs:
+       plugin_sdk: ${{ steps.diff.outputs.plugin_sdk }}
++      app: ${{ steps.diff.outputs.app }}
+     steps:
+       - name: Checkout
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -76,7 +79,22 @@ jobs:
+           fi
+           echo "plugin_sdk=$plugin_sdk" | tee -a "$GITHUB_OUTPUT"
+ 
++          app=true
++          if [ "$EVENT_NAME" = "pull_request" ]; then
++            # In glob magic, * does not cross directories, so only root-level Markdown counts.
++            status=0
++            git diff --quiet HEAD^1 HEAD -- . ':(exclude)docs/' ':(exclude,glob)*.md' || status=$?
++            case "$status" in
++              0) app=false ;;
++              1) ;;
++              *) echo "::error::git diff failed with exit code $status"; exit "$status" ;;
++            esac
++          fi
++          echo "app=$app" | tee -a "$GITHUB_OUTPUT"
 +
- TypeWhisper `1.7.0` is the current stable release for macOS. It adds iCloud sync
- for History and Inbox, a visual keyboard shortcut editor, Undo Last Dictation
- and Restore Raw Transcript, new indicator styles, expanded dictation recovery,
+   release-build:
++    needs: changes
++    if: needs.changes.outputs.app == 'true'
+     runs-on: xcode-27
+     steps:
+       - name: Checkout
+@@ -187,6 +205,8 @@ jobs:
+           retention-days: 14
+ 
+   app-tests:
++    needs: changes
++    if: needs.changes.outputs.app == 'true'
+     runs-on: xcode-27
+     steps:
+       - name: Checkout
+@@ -290,6 +310,8 @@ jobs:
+   # A Debug arm64 build keeps pull requests fast; the nightly TestFlight workflow
+   # builds the universal Release binary and audits it. See docs/appstore/README.md.
+   appstore:
++    needs: changes
++    if: needs.changes.outputs.app == 'true'
+     runs-on: xcode-27
+     timeout-minutes: 60
+     env:
+@@ -363,12 +385,15 @@ jobs:
+         env:
+           NEEDS: ${{ toJSON(needs) }}
+         run: |
+-          # plugin-sdk-tests may be skipped only when the changes job ruled it out.
++          # A job may be skipped only when the changes job ruled it out: plugin-sdk-tests when
++          # the Plugin SDK is unchanged, the macOS build and test jobs for documentation-only changes.
+           failed="$(jq -r '
+             (.changes.outputs.plugin_sdk == "false") as $sdk_unchanged
++            | (.changes.outputs.app == "false") as $docs_only
+             | to_entries[]
+             | select(.value.result != "success")
+             | select((.key == "plugin-sdk-tests" and .value.result == "skipped" and $sdk_unchanged) | not)
++            | select((.key as $k | ["release-build", "app-tests", "appstore"] | index($k)) and .value.result == "skipped" and $docs_only | not)
+             | "\(.key): \(.value.result)"' <<<"$NEEDS")"
+           if [ -n "$failed" ]; then
+             echo "::error::Not every CI job succeeded"
 ```
 
-**File**: `docs/appstore/README.md` (modified, +24/-5)
+---
+
+### Incident Patch 3: `d58debc0` (2026-10-27)
+**Commit Message**: Require TypeWhisper 1.8.1 for Parakeet 1.6.1 (#1759)
+
+* Require TypeWhisper 1.8.1 for Parakeet 1.6.1
+
+Parakeet 1.6 adopts LiveTranscriptionModelSupportProviding, which hosts
+before 1.8.1 do not export. The plugin release check against the 1.8.0
+host failed on the missing protocol descriptor, so the manifest has to
+declare the first host that provides it.
+
+* Name Parakeet in the host requirement note
+
+* Expect Parakeet to require TypeWhisper 1.8.1 in the manifest test
+
+**File**: `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/manifest.json` (modified, +1/-1)
 ```diff
-@@ -133,22 +133,41 @@ promotional text, URLs) and the App Review notes live in
- (`appstore_metadata_verify` only compares). Name, subtitle and privacy URL are
- shared with the iOS app and are maintained in the iOS repository.
- 
--Screenshots come from the App Store edition in screenshot mode:
-+Screenshots come from the App Store edition in screenshot mode and are rendered
-+into store images by TypeWhisper Studio, the private tool that also renders the
-+iOS and Google Play screenshots, so all listings share one look:
- 
- ```sh
- bundle exec fastlane mac appstore_screenshots languages:en-US,de-DE
-+# in the typewhisper-demo-studio checkout, once per locale:
-+npm run render:mac-stills -- --input <mac>/fastlane/screenshots/appstore/<locale> \
-+  --locale <locale> --headlines templates/mac-app-store-stills/typewhisper-mac.headlines.json \
-+  --output <mac>/fastlane/screenshots/appstore/store
- ASC_API_KEY_PATH=<key.json> bundle exec fastlane mac appstore_screenshots_upload version:<version>
- ```
- 
--The first lane writes raw window captures to `fastlane/screenshots/appstore/`.
--The second composes the states listed in `APPSTORE_STORE_SCREENSHOT_STATES`
--into 2880 x 1800 images with `scripts/appstore/compose_store_screenshots.swift`,
--replaces the desktop screenshots of en-US and de-DE and reads them back
-+The first lane writes raw window captures without the window shadow to
-+`fastlane/screenshots/appstore/<locale>/`. Studio places each capture under a
-+headline on the dark TypeWhisper backdrop and writes opaque 2880 x 1800 images
-+named `NN-<state>.png` to `fastlane/screenshots/appstore/store/<locale>/`. The
-+headlines and their order live in Studio and must match
-+`APPSTORE_STORE_SCREENSHOT_STATES`. The upload lane checks names, size and
-+opacity, replaces the desktop screenshots of en-US and de-DE and reads them back
- (`appstore_screenshots_verify` only compares). Apple accepts screenshot changes
- only before submission or after a rejection, not while waiting for review. French,
- Italian and Spanish show the en-US screenshots because the app is not localized
- into those languages.
- 
-+The en-US store images are also kept at 1600 x 1000 in
-+`.github/screenshots/app-store/`; the README header shows the first one.
-+Refresh them after a new render:
-+
-+```sh
-+for image in fastlane/screenshots/appstore/store/en-US/*.png; do
-+  sips -Z 1600 "$image" --out .github/screenshots/app-store/
-+done
-+```
-+
- ## Plugins
- 
- The marketplace lists the bundled plugins from
+@@ -2,7 +2,7 @@
+     "id": "com.typewhisper.parakeet",
+     "name": "Parakeet",
+     "version": "1.6.1",
+-    "minHostVersion": "1.8.0",
++    "minHostVersion": "1.8.1",
+     "sdkCompatibilityVersion": "v1",
+     "minOSVersion": "14.0",
+     "supportedArchitectures": [
 ```
 
-**File**: `fastlane/AppStoreFastfile` (modified, +28/-14)
+**File**: `TypeWhisperTests/PluginManifestValidationTests.swift` (modified, +1/-1)
 ```diff
-@@ -5,8 +5,8 @@ require "digest"
- # Captures the App Store edition (APPSTORE build of TypeWhisperAppStore.xcodeproj)
- # in screenshot mode, using the deterministic fixtures and window handling of
- # the regular screenshot lane. Raw window captures are written to
--# fastlane/screenshots/appstore/<language>/<state>.png and composed into store
--# images by scripts/appstore/compose_store_screenshots.swift.
-+# fastlane/screenshots/appstore/<language>/<state>.png. TypeWhisper Studio renders
-+# them into the store images in fastlane/screenshots/appstore/store/<language>/.
+@@ -155,7 +155,7 @@ final class PluginManifestValidationTests: XCTestCase {
+     func testSourceFootageProgressPluginsDeclareCapability() throws {
+         let manifestExpectations = [
+             ("TypeWhisperPluginSDK/Plugins/WhisperKitPlugin/manifest.json", "1.8.0"),
+-            ("TypeWhisperPluginSDK/Plugins/ParakeetPlugin/manifest.json", "1.8.0"),
++            ("TypeWhisperPluginSDK/Plugins/ParakeetPlugin/manifest.json", "1.8.1"),
+             ("TypeWhisperPluginSDK/Plugins/SonioxPlugin/manifest.json", "1.8.0"),
+         ]
  
- APPSTORE_SCREENSHOT_DERIVED_DATA = File.join(REPOSITORY_ROOT, "build", "appstore-screenshots")
- APPSTORE_SCREENSHOT_PRODUCT = "TypeWhisper App Store Dev"
-@@ -125,7 +125,8 @@ def capture_appstore_screenshot!(language, state, destination)
- 
-     begin
-       window_id = wait_for_screenshot_window!(ready_file, process_id, log_file)
--      sh("/usr/sbin/screencapture -x -l #{window_id} #{Shellwords.escape(destination)}", log: false)
-+      # -o leaves out the window shadow; the store stills draw their own.
-+      sh("/usr/sbin/screencapture -x -o -l #{window_id} #{Shellwords.escape(destination)}", log: false)
-       unless File.file?(destination) && File.size(destination) > 100_000
-         UI.user_error!("Screenshot capture did not produce a valid PNG: #{destination}")
-       end
-@@ -284,17 +285,30 @@ def verify_mac_store_metadata!(version)
-   UI.success("Verified macOS #{version.version_string} store text in #{APPSTORE_STORE_LOCALES.count} locales and the review notes")
- end
- 
--def compose_mac_store_screenshots!
--  script = File.join(REPOSITORY_ROOT, "scripts", "appstore", "compose_store_screenshots.swift")
-+# Store images are rendered from the raw captures by TypeWhisper Studio
-+# (`npm run render:mac-stills`), which adds the headline and backdrop shared with
-+# the iOS and Android listings. Check that every locale has exactly the expected
-+# opaque 2880 x 1800 images before anything in App Store Connect is replaced.
-+def validate_mac_store_screenshots!
-   APPSTORE_STORE_SCREENSHOT_LOCALES.each do |locale|
-     directory = File.join(APPSTORE_COMPOSED_SCREENSHOT_OUTPUT, locale)
--    FileUtils.rm_rf(directory)
--    FileUtils.mkdir_p(directory)
--    APPSTORE_STORE_SCREENSHOT_STATES.each_with_index do |state, index|
--      raw = File.join(APPSTORE_SCREENSHOT_OUTPUT, locale, "#{state}.png")
--      UI.user_error!("Missing raw capture #{raw}; run mac appstore_screenshots first") unless File.file?(raw)
--      composed = File.join(directory, format("%02d-%s.png", index + 1, state))
--      sh(Shellwords.join(["swift", script, raw, composed]), log: false)
-+    expected = APPSTORE_STORE_SCREENSHOT_STATES.each_with_index.map { |state, index| format("%02d-%s.png", index + 1, state) }
-+    actual = composed_mac_store_screenshots(locale).map { |path| File.basename(path) }
-+    unless actual == expected
-+      UI.user_error!("#{directory} must contain #{expected.join(', ')} rendered by TypeWhisper Studio; found #{actual.empty? ? 'nothing' : actual.join(', ')}")
-+    end
-+    composed_mac_store_screenshots(locale).each do |path|
-+      # A capture rerun without a new Studio render would otherwise upload the old images.
-+      raw = File.join(APPSTORE_SCREENSHOT_OUTPUT, locale, File.basename(path).sub(/\A\d{2}-/, ""))
-+      if File.file?(raw) && File.mtime(raw) > File.mtime(path)
-+        UI.user_error!("#{path} is older than its capture #{raw}; render the store images again with TypeWhisper Studio")
-+      end
-+      properties = sh(Shellwords.join(["/usr/bin/sips", "-g", "pixelWidth", "-g", "pixelHeight", "-g", "hasAlpha", path]), log: false)
-+      width = properties[/pixelWidth: (\d+)/, 1].to_i
-+      height = properties[/pixelHeight: (\d+)/, 1].to_i
-+      has_alpha = properties[/hasAlpha: (\w+)/, 1]
-+      UI.user_error!("#{path} is #{width} x #{height}; expected 2880 x 1800") unless width == 2880 && height == 1800
-+      UI.user_error!("#{path} has an alpha channel; App Store screenshots must be opaque") unless has_alpha == "no"
-     end
-   end
- end
-@@ -390,11 +404,11 @@ platform :mac do
-     end
-   end
- 
--  desc "Compose the raw captures into 2880x1800 store images, replace the macOS screenshots and verify them (version:<version>)"
-+  desc "Replace the macOS screenshots with the rendered store images and verify them (version:<version>)"
-   lane :appstore_screenshots_upload do |options|
-     version_string = options[:version].to_s
-     UI.user_error!("Pass version:<version>") if version_string.empty?
--    compose_mac_store_screenshots!
-+    validate_mac_store_screenshots!
-     appstore_api_key!
-     upload_mac_store_screenshots!(
-       editable_mac_store_version!(version_string, states: APPSTORE_SCREENSHOT_EDITABLE_VERSION_STATES)
 ```
 
-**File**: `scripts/appstore/compose_store_screenshots.swift` (removed, +0/-68)
+**File**: `docs/release-notes/unreleased.md` (modified, +1/-1)
 ```diff
-@@ -1,68 +0,0 @@
--#!/usr/bin/env swift
--// Composes raw window captures from `fastlane mac appstore_screenshots` into
--// Mac App Store screenshots: 2880 x 1800 pixels (16:10), opaque, with the
--// window centered on a plain gradient.
--//
--// Usage: compose_store_screenshots.swift <input.png> <output.png>
--
--import AppKit
--import CoreGraphics
--import Foundation
--import ImageIO
--import UniformTypeIdentifiers
--
--let canvasWidth = 2880
--let canvasHeight = 1800
--// Space between the window (including its shadow) and the image edge.
--let margin = 90.0
--
--func fail(_ message: String) -> Never {
--    FileHandle.standardError.write(Data("compose_store_screenshots: \(message)\n".utf8))
--    exit(1)
--}
--
--let arguments = CommandLine.arguments
--guard arguments.count == 3 else { fail("usage: compose_store_screenshots.swift <input.png> <output.png>") }
--let inputURL = URL(fileURLWithPath: arguments[1])
--let outputURL = URL(fileURLWithPath: arguments[2])
--
--guard let source = CGImageSourceCreateWithURL(inputURL as CFURL, nil),
--      let window = CGImageSourceCreateImageAtIndex(source, 0, nil) else {
--    fail("cannot read \(inputURL.path)")
--}
--
--guard let context = CGContext(
--    data: nil,
--    width: canvasWidth,
--    height: canvasHeight,
--    bitsPerComponent: 8,
--    bytesPerRow: 0,
--    space: CGColorSpace(name: CGColorSpace.sRGB)!,
--    bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue
--) else {
--    fail("cannot create canvas")
--}
--
--let top = CGColor(srgbRed: 0.16, green: 0.30, blue: 0.62, alpha: 1)
--let bottom = CGColor(srgbRed: 0.05, green: 0.09, blue: 0.20, alpha: 1)
--let gradient = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB), colors: [top, bottom] as CFArray, locations: [0, 1])!
--context.drawLinearGradient(
--    gradient,
--    start: CGPoint(x: 0, y: Double(canvasHeight)),
--    end: CGPoint(x: 0, y: 0),
--    options: []
--)
--
--let available = CGSize(width: Double(canvasWidth) - 2 * margin, height: Double(canvasHeight) - 2 * margin)
--let scale = min(available.width / Double(window.width), available.height / Double(window.height), 1)
--let size = CGSize(width: Double(window.width) * scale, height: Double(window.height) * scale)
--let origin = CGPoint(x: (Double(canvasWidth) - size.width) / 2, y: (Double(canvasHeight) - size.height) / 2)
--context.interpolationQuality = .high
--context.draw(window, in: CGRect(origin: origin, size: size))
--
--guard let image = context.makeImage(),
--      let destination = CGImageDestinationCreateWithURL(outputURL as CFURL, UTType.png.identifier as CFString, 1, nil) else {
--    fail("cannot create \(outputURL.path)")
--}
--CGImageDestinationAddImage(destination, image, nil)
--guard CGImageDestinationFinalize(destination) else { fail("cannot write \(outputURL.path)") }
+@@ -9,7 +9,7 @@
+ - Language Detection (new plugin): When you select several spoken languages and the engine accepts only one, such as Parakeet, WhisperKit, Qwen3 or Groq, the plugin detects which of them you speak instead of always using the first one. It runs on your Mac in about 15 ms per transcription, and the audio never leaves it. Install it from Discover plugins; the App Store edition includes it. Live previews still use the first selected language.
+ - Canary, Cohere Transcribe (Local) and Google Cloud STT 1.1.0: These engines cannot detect the spoken language themselves. With Auto-detect all languages and the Language Detection plugin enabled, the plugin now picks the language among theirs. Until now Canary and Cohere Transcribe stopped with an error, and Google Cloud STT used its default language code. Dictation settings explain this under Auto-detect all languages.
+ - Canary and Cohere Transcribe (Local): With Auto-detect all languages, these engines no longer stop with an error when nothing picks the language, for example when the Language Detection plugin is unsure on a short dictation, is not enabled, or hears a language the engine does not support. They now use the first of your preferred languages in System Settings > General > Language & Region that they support, and only stop with the error when they support none of them. Google Cloud STT 1.1.1 keeps using its default language code in these cases.
+-- Parakeet 1.6.1: Using another Parakeet model for a single transcription, as the local API's `model`, the CLI's `--model` or a workflow with its own Parakeet model do, now waits for that model to load. Until now it failed with "Cloud provider not configured. Please set an API key." Nemotron 3.5 ASR Streaming no longer drops the first and last words of files and other recordings it transcribes after they end; live dictation stays as fast as before.
++- Parakeet 1.6.1: Using another Parakeet model for a single transcription, as the local API's `model`, the CLI's `--model` or a workflow with its own Parakeet model do, now waits for that model to load. Until now it failed with "Cloud provider not configured. Please set an API key." Nemotron 3.5 ASR Streaming no longer drops the first and last words of files and other recordings it transcribes after they end; live dictation stays as fast as before. Parakeet 1.6.1 requires TypeWhisper 1.8.1 or later.
+ - Dictation: Dictating into GNU Emacs or a remote desktop client such as Parsec no longer ends with "No text field detected". These apps draw their own content and report only their window to Accessibility, so TypeWhisper cannot tell whether the text arrived and no longer warns there.
+ - Dictation: Dictating into a new message in Apple Mail no longer ends with "No text field detected" although the text arrived. The same applies to other editors where the whole web page is editable. Accessibility does not show their text changing, so TypeWhisper no longer takes that as a missed text field. Web pages without a text field still get the warning.
+ - Granite Speech 1.0.16: Translation now works while dictionary terms are active. Until now Granite received the terms as its whole instruction and transcribed instead of translating. The terms are now passed as keywords after the transcribe or translate instruction, as the model expects.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1746** (2026-10-26): Add release notes for 1.8.1 RC1 (@SeoFood)
-- **PR #1745** (2026-10-26): Add Language Detection to the unreleased release notes (@SeoFood)
-- **PR #1744** (2026-10-26): Let Language Detection pick the language for engines without automatic detection (@SeoFood)
-- **PR #1742** (2026-10-26): Keep an MCP action's connection when the server save invalidates late (@SeoFood)
-- **PR #1741** (2026-10-26): Add a Language Detection plugin that picks the spoken language among the selected ones (@SeoFood)
-- **PR #1739** (2026-10-26): Keep Parakeet Vocabulary Boosting from replacing ordinary words (@SeoFood)
+- **PR #1800** (2026-10-29): Give the stalled live session in the early-stop test enough time on slow runners (@SeoFood)
+- **PR #1799** (2026-10-29): Keep the update highlights in front of Settings with a single Continue button (@SeoFood)
+- **PR #1798** (2026-10-29): Start the 1.8.2 development line (@SeoFood)
+- **PR #1797** (2026-10-29): Import your own Parakeet models converted to Core ML (@SeoFood)
+- **PR #1796** (2026-10-29): Do not report a missed text field when a terminal has not echoed the paste yet (@SeoFood)
+- **PR #1794** (closed): Stop showing a missed text field warning when dictating into kitty (@SeoFood)
 
 ---
 
@@ -2299,30 +2486,53 @@ upload lane now checks that every locale has the expected opaque
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. the nightly CodeQL Swift build on Xcode 26.6 (#1720)
+## X. Parakeet 1.6.1: fix per-request model switches and pad Nemotron batch transcript
 
 **RULE**:
-When implementing operations in `.github/workflows/codeql.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/ParakeetPlugin.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TypeWhisper/typewhisper-mac. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `04083538`: the nightly CodeQL Swift build on Xcode 26.6 (#1720). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5a63c037`: Parakeet 1.6.1: fix per-request model switches and pad Nemotron batch transcriptions (#1748). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/codeql.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `TypeWhisperPluginSDK/Plugins/ParakeetPlugin/ParakeetPlugin.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-            runner: ubuntu-26.04
-            runner: ubuntu-26.04
+    /// The newest explicit model request: a selection, a restore of a model or a load from the
+    /// settings. A load for an older request, or a passive load while this one is pending, of
+    /// another model is dropped when it finishes: the host would otherwise see that model as
+    /// ready, with the newer selection, and fail the request it waits for.
+    private var latestModelRequest: (id: Int, modelId: String, isPending: Bool)?
+    private var modelRequestCount = 0
+        latestModelRequest = nil
+        // Unload at once: while the previous model stayed loaded, the host saw the new
+        // selection as configured, transcribed without waiting for the load and failed
+        // once the previous model was gone.
+        if loadedModelId != nil, loadedModelId != modelId {
+            unloadModel(clearPersistence: false)
+        }
+        selectedVersion = version
+        host?.setUserDefault(version.rawValue, forKey: "selectedVersion")
+        let request = beginModelRequest(modelId)
+                endModelRequest(request)
+            await loadModel(version: version, requestedAt: revision, request: request)
+    ///
+    /// The stream drops the first word and the last s
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-            runner: ubuntu-latest
-            runner: ubuntu-latest
+            unloadModel(clearPersistence: false)
+            selectedVersion = version
+            _selectedModelId = modelId
+            host?.setUserDefault(modelId, forKey: "selectedModel")
+            host?.setUserDefault(version.rawValue, forKey: "selectedVersion")
+            await loadModel(requestedAt: revision)
+        let result = Self.nemotronResult(from: try await stream.finish())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `04083538` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5a63c037` are properly handled with clean fallback behavior.

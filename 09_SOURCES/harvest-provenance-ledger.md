@@ -6301,3 +6301,6 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `df57ae6d` | Multi-dimensional audit evidence | 2026-10-30T20:05:16.265Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `91dfab21` | Multi-dimensional audit evidence | 2026-10-30T20:05:20.616Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `a7767075` | Multi-dimensional audit evidence | 2026-10-30T20:05:20.983Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `14b7b0ef` | Multi-dimensional audit evidence | 2026-10-30T20:15:09.796Z |
+| `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `1ecfa9e5` | Multi-dimensional audit evidence | 2026-10-30T20:15:11.651Z |
+| `learn-github-typewhisper-typewhisper-mac` | `https://github.com/TypeWhisper/typewhisper-mac` | `4620bb59` | Multi-dimensional audit evidence | 2026-10-30T20:15:14.244Z |

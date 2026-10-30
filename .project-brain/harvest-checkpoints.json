@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T20:05:20.991Z",
+  "last_updated": "2026-10-30T20:15:14.253Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3021,14 +3021,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cypress-io-cypress",
-      "content_hash": "0d32cc134e726f9923ddefa1078e62bdb3aec75bb109cbfc2d9618c1122bc806",
-      "verified_at": "2026-10-27T18:59:41.451Z",
+      "content_hash": "268be6833be9f81c319613a81801e809f2934be4183942e51d99f91ec3d940f3",
+      "verified_at": "2026-10-30T20:15:11.660Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T18:59:41.451Z"
+      "last_updated": "2026-10-30T20:15:11.660Z"
     },
     "syntax-tree/unist": {
       "repository": "syntax-tree/unist",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "7568108dc1b0ff55f538f5280ef423c2fcfb5a26b251ade2387ea9ed35fb3bd0",
-      "verified_at": "2026-10-28T21:50:15.366Z",
+      "content_hash": "eb6f6465005a8f5895ada6e1edfe2e371a9461746f011d97c3a7a64d21647ff6",
+      "verified_at": "2026-10-30T20:15:09.803Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T21:50:15.366Z"
+      "last_updated": "2026-10-30T20:15:09.803Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",
@@ -15201,14 +15201,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typewhisper-typewhisper-mac",
-      "content_hash": "1a26414fc610c9e8c836424974a1d09d081eb56910374dc16640d71987f76f0b",
-      "verified_at": "2026-10-27T10:57:56.713Z",
+      "content_hash": "7ee3947e46f2dfe6c6bd211cf629b749482ecff29e295bd2d8aecf96ee38405d",
+      "verified_at": "2026-10-30T20:15:14.252Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T10:57:56.713Z"
+      "last_updated": "2026-10-30T20:15:14.252Z"
     },
     "vitest-dev/vitest": {
       "repository": "vitest-dev/vitest",

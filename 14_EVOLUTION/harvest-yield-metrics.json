@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T20:05:20.987Z",
-  "total_cycles_completed": 6269,
-  "total_learnings_persisted": 6269,
-  "total_rules_promoted": 5828,
+  "last_updated": "2026-10-30T20:15:14.249Z",
+  "total_cycles_completed": 6272,
+  "total_learnings_persisted": 6272,
+  "total_rules_promoted": 5830,
   "history": [
-    {
-      "timestamp": "2026-10-30T03:37:04.353Z",
-      "repository": "yuezhiai/jonex",
-      "learningId": "learn-github-yuezhiai-jonex",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T03:37:09.547Z",
-      "repository": "thebaselab/codeapp",
-      "learningId": "learn-github-thebaselab-codeapp",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T03:48:36.716Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T03:49:00.705Z",
       "repository": "sqlpage/SQLPage",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-10-30T20:05:20.987Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T20:15:09.800Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T20:15:11.657Z",
+      "repository": "cypress-io/cypress",
+      "learningId": "learn-github-cypress-io-cypress",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T20:15:14.249Z",
+      "repository": "TypeWhisper/typewhisper-mac",
+      "learningId": "learn-github-typewhisper-typewhisper-mac",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

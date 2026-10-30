@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T19:19:15.899Z",
+  "last_updated": "2026-10-30T20:15:11.656Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3401,6 +3401,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-liquidai-lfm3-1-7b-gguf"
+    },
+    {
+      "id": "CD-VSBS",
+      "directive_title": "docs: Clarify security update policy (#35197)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "cypress-io/cypress",
+      "source_commit": "1ecfa9e5",
+      "date_staged": "2026-10-30",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-cypress-io-cypress"
     }
   ]
 }

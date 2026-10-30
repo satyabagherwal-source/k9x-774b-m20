@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-5ISX",
-    "timestamp": "2026-10-28T14:15:30.417Z",
-    "repository": "bee-san/Ciphey",
-    "learningId": "learn-github-bee-san-ciphey",
-    "contentHash": "d1b6ab04537f084a7a2e7ca9843ef54e3d3ab8d6231e21311d65050a0905694e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-ECXB",
-    "timestamp": "2026-10-28T14:22:22.703Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-    "contentHash": "8719c035e0723d9d5b260e409efa564999d30c17f41bc90e9d4a31d80ec58de5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-EFS0",
-    "timestamp": "2026-10-28T14:22:26.400Z",
-    "repository": "embassy-rs/embassy",
-    "learningId": "learn-github-embassy-rs-embassy",
-    "contentHash": "8610554569eb3a8ae8c0c9ac51e546c42e8da2d2f48402dd457df97c6d154a7f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-EJRK",
     "timestamp": "2026-10-28T14:22:31.568Z",
     "repository": "ZSeven-W/openpencil",
@@ -7490,6 +7445,51 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
     "contentHash": "54ababb59a494807269abf25fbffecc3f044110386ddbc6709a33a5f1abd2ce0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-VQW1",
+    "timestamp": "2026-10-30T20:15:09.793Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "eb6f6465005a8f5895ada6e1edfe2e371a9461746f011d97c3a7a64d21647ff6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-VSBK",
+    "timestamp": "2026-10-30T20:15:11.648Z",
+    "repository": "cypress-io/cypress",
+    "learningId": "learn-github-cypress-io-cypress",
+    "contentHash": "268be6833be9f81c319613a81801e809f2934be4183942e51d99f91ec3d940f3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-VUBL",
+    "timestamp": "2026-10-30T20:15:14.241Z",
+    "repository": "TypeWhisper/typewhisper-mac",
+    "learningId": "learn-github-typewhisper-typewhisper-mac",
+    "contentHash": "7ee3947e46f2dfe6c6bd211cf629b749482ecff29e295bd2d8aecf96ee38405d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

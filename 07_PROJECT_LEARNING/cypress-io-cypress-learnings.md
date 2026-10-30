@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md`  
 > **Source**: github ([https://github.com/cypress-io/cypress](https://github.com/cypress-io/cypress))  
-> **Source Version**: `75df26c3`  
+> **Source Version**: `1ecfa9e5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T18:59:41.007Z  
+> **Timestamp**: 2026-10-30T20:15:11.429Z  
 > **Learning ID**: `learn-github-cypress-io-cypress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cypress-io-cypress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cypress-io/cypress](https://github.com/cypress-io/cypress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T18:59:40.718Z  
+> **Harvest Timestamp**: 2026-10-30T20:15:11.422Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, easy and reliable testing for anything that runs in a browser.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 51015 stars
+- **Stars / Engagement**: 51017 stars
 
 ---
 
@@ -981,11 +981,11 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #35178** (2026-10-27): **chore: migrate @packages/telemetry to the shared ESLint flat config**
-  *Symptoms*: - Closes N/A. This is one slice of the ESLint 9 flat-config migration tracked by the checklist in `guides/eslint-migration.md`.  ### Additional details  This moves `@packages/telemetry` onto `@packages/eslint-config` (ESLint 9). Until now the package had no `lint` script, so CI never linted it. The PR has three commits, and the last two can be dropped if you'd rather keep this PR to the migration alone.  **1. Migration (`385cf8d`)** - Adds `eslint.config.ts`, which spreads `baseConfig` and then `jsonConfig` and sets `tsconfigRootDir`. The only local override ignores `browser/`, rollup's build output, which the shared ignores don't cover. `scaffold-config` and `socket` do the same. - `package.json` gets the `lint` script, the `lint-staged` key and the `@packages/eslint-config`, `eslint` and `jiti` devDependencies. `jsonConfig` reordered its top-level keys, which is expected. The package is added to the root `lint:fix` scope and ticked off in the guide. - There were no `.eslintrc*` or `.eslintignore` files to delete or port, nested ones included. - Autofixes cover spacing, padding lines, `import type` and `prefer-const`. - **`ban-ts-comment` (62):** the two `@ts-ignore`s are now `@ts-expect-error`, and every directive is written `// @ts-expect-error - <reason>`, naming the compiler error it actually suppresses. One in `test/browser.spec.ts` no longer suppressed anything, so it's deleted. `check-ts` only covers `src/`, so I ran `tsc` over the whole package to find unused directi
+- **Issue #35200** (2026-10-29): **dependency: upgrade systeminformation to 5.33.18**
+  *Symptoms*: - Closes https://github.com/cypress-io/cypress/issues/35196  ### Additional details  Security scans flag `systeminformation` versions below 5.33.16 for [SNYK-JS-SYSTEMINFORMATION-21771271](https://security.snyk.io/vuln/SNYK-JS-SYSTEMINFORMATION-21771271) (CVE-2026-116576). Cypress already declared a caret range, so a fresh install could pick up a fixed version. But the floor still allowed vulnerable versions, and the monorepo lockfile pinned 5.33.1, which is what the binary ships.  **What changed**  - **Version floor:** `cli`, `@packages/server`, `@packages/electron` and `system-tests` now require `systeminformation@^5.33.16`. - **Root lockfile:** `yarn.lock` resolves it to 5.33.18. A dev-only copy that `@percy/monitoring` pulled in is deduped, so there's a single copy and `yarn check-lockfile` passes. - **Changelog:** there's an entry under **Dependency Updates** for 16.2.2. - **System-test fixture lockfiles:** I regenerated the lockfiles for the `config-with-custom-file-js`, `runner-e2e-specs-new-sourcemap-root` and `sourcemaps` fixtures with the system-test dep installer (`UPDATE_LOCK_FILE`). This is most of the diff, so here's why:   - **Why they were stale:** these fixtures depend on `cypress` through `file:../../../cli/build`, and their lockfiles still described the dependency tree of Cypress 15.10/15.12. That included `systeminformation@^5.31.1`.   - **Why nothing caught it:** Yarn v1 re-reads a `file:` dependency's `package.json` on every install, and `--frozen-lockfi
 
-- **Issue #35177** (2026-10-27): **chore: fix @ts- comments in driver test code for ban-ts-comment**
-  *Symptoms*: - Closes N/A. This is one slice of the ESLint 9 flat-config migration ([guide](https://github.com/cypress-io/cypress/blob/develop/guides/eslint-migration.md)).  ### Additional details  This is prep work for moving `@packages/driver` to `@packages/eslint-config`. It doesn't migrate driver yet. It clears the 151 `@typescript-eslint/ban-ts-comment` errors in driver test code (97 under `cypress/e2e`, 54 under `test/unit`) so the migration can focus on the config. The 78 in `src` are out of scope here.  **Suppressions** - Every `@ts-ignore` is now a `@ts-expect-error`, and every directive has a `- <reason>`, as [`guides/typescript.md`](https://github.com/cypress-io/cypress/blob/develop/guides/typescript.md) describes. Each reason names the error `tsc` reports when the directive is removed. - I deleted directives that suppressed nothing. - In `test/unit`, typing the mocks properly removed about 30 per-call directives:   - `vi.mocked()` for mocked module functions   - a typed `vi.importActual<typeof import(...)>()`   - the automation and config mocks typed once in `beforeEach`  **Things this surfaced, worth a look** - **The "delayed navigation" cy.origin suite registered no tests.** It passed two config objects to `describe()`, so the mocha override used the second object as the suite callback, and the old `@ts-ignore` hid this. I merged the two objects and set the timeout to 4s, because the fixture waits 1.5s before navigating. All four tests pass locally in Electron. This PR is th
+- **Issue #35199** (2026-10-29): **chore: route pull/N/head pipelines to the contributor workflow**
+  *Symptoms*: <!-- Thanks for contributing! PLEASE... - Before writing any code, confirm an open issue exists for this work and that you have commented on it to indicate your intent. See: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#pull-requests - Read our contributing guidelines: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md  - Read our Code Review Checklist on coding standards and what needs to be done before a PR can be merged: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#Code-Review-Checklist - Mark this PR as "Draft" if it is not ready for review. - Make sure you set the correct base branch based on what packages you're changing: https://github.com/cypress-io/cypress/blob/develop/CONTRIBUTING.md#branches -->  - Closes N/A <!-- link to the issue here, if there is one -->  ### Additional details <!-- Examples: - Why was this change necessary? - What is affected by this change? - Any implementation details to explain? -->  When a maintainer triggers CI for a fork PR through the API, the pipeline's branch is `pull/N/head`. The contributor filters in `pull-request.yml` only match `pull/N`. CircleCI branch filters must match the whole branch name, so `^pull\/[0-9]+` never matched `pull/N/head`.  As a result, those pipelines ran the internal PR jobs (`node_modules_install`, `internal-pr-build`) and never waited on `approve-contributor-pr`. You can see this on the run for #35053 (`pull/35053/head`).  This PR accepts an optional
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1002,910 +1002,593 @@ export const pinnedBlock = (view: PinnedView): string[] => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0a5e2aa2` (2026-10-27)
-**Commit Message**: chore: fix @ts- comments in driver test code for ban-ts-comment (#35177)
+### Incident Patch 1: `e678cc7c` (2026-10-30)
+**Commit Message**: docs: Clarify security update policy (#35197)
 
-* chore: replace @ts-ignore and describe @ts-expect-error in driver cypress/e2e specs
-
-Prepares packages/driver/cypress for @typescript-eslint/ban-ts-comment
-ahead of the flat-config migration. Each @ts-ignore becomes a
-@ts-expect-error, every directive gets a `- <reason>`, and directives
-that suppressed nothing are removed.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01WUv8r4tuSpusABNDhGvnZa
-
-* chore: describe @ts-expect-error directives in driver unit tests
-
-Prepares packages/driver/test for @typescript-eslint/ban-ts-comment
-ahead of the flat-config migration. Every directive gets a
-`- <reason>`, and directives that suppressed nothing are removed.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01WUv8r4tuSpusABNDhGvnZa
-
-* chore: register the driver 'delayed navigation' cy.origin tests
-
-The suite passed its config as two objects, so the mocha override took
-the second object as the suite callback and registered no tests. Merge
-them into one config object and drop the @ts-expect-error that hid it,
-along wi
-
-**File**: `CLAUDE.md` (modified, +1/-0)
+**File**: `SECURITY.md` (modified, +12/-0)
 ```diff
-@@ -45,6 +45,7 @@
- - Packaged-binary integration tests (`system-tests/test-binary`) need Docker and a built binary, so they do not run in the sandbox. When they are needed, provide the exact commands and ask the user to run them.
- - System tests under `system-tests/test` do run in cloud containers once the monorepo is built. Run them yourself rather than handing them off; see [Running system tests](./AGENTS.md#running-system-tests).
- - Keep follow-up work from the same task, such as review fixes and related instruction updates, on that task's branch. Create a separate branch only when the user asks for one.
-+- After committing a merge of `develop`, run `git diff --name-only origin/develop` and check that every file listed is in the PR's scope. The pre-commit hook runs `eslint --fix` on every staged file, merged-in ones included, and `package-json/order-properties` reorders keys in `package.json` files that `develop` committed unsorted. Restore any such file with `git checkout origin/develop -- <file>` and commit with `--no-verify`.
- - Before committing or pushing, `yarn check-ts`, `yarn lint`, `yarn health-check` (knip), and relevant unit tests must pass locally. CI currently does not block expensive e2e jobs when these fail.
+@@ -37,3 +37,15 @@ Opening or running a project in Cypress runs its config file, and every plugin t
+ ### Know what you take on when you redirect the install
  
- @AGENTS.md
-```
-
-**File**: `packages/driver/cypress/e2e/commands/net_stubbing/helpers.ts` (modified, +0/-1)
-```diff
-@@ -1,6 +1,5 @@
- export const testFail = (cb, expectedDocsUrl = 'https://on.cypress.io/intercept') => {
-   cy.on('fail', (err) => {
--    // @ts-ignore
-     const docsUrl = Array.isArray(err.docsUrl) ? err.docsUrl[0] : err.docsUrl
- 
-     expect(docsUrl).to.eq(expectedDocsUrl)
-```
-
-**File**: `packages/driver/cypress/e2e/commands/net_stubbing/intercept.cy.ts` (modified, +11/-17)
-```diff
-@@ -182,11 +182,10 @@ describe('network stubbing', { retries: 15 }, function () {
-         const url = uniqueRoute('/foo')
- 
-         const handler = (req) => {
--          // @ts-ignore
-           const routeId = _.findKey(state('routes'), { handler })
-           const route = state('routes')[routeId!]
- 
--          // @ts-ignore
-+          // @ts-expect-error - `routeId` is not part of the expected event literal
-           expectedEvent.routeId = routeId
-           expect(this.emit).to.be.calledWith('backend:request', 'net', 'route:added', expectedEvent)
- 
-@@ -225,11 +224,10 @@ describe('network stubbing', { retries: 15 }, function () {
-         const regexUrl = new RegExp(`^${url}.*`)
- 
-         const handler = (req) => {
--          // @ts-ignore
-           const routeId = _.findKey(state('routes'), { handler })
-           const route = state('routes')[routeId!]
- 
--          // @ts-ignore
-+          // @ts-expect-error - `routeId` is not part of the expected event literal
-           expectedEvent.routeId = routeId
-           expect(this.emit).to.be.calledWith('backend:request', 'net', 'route:added', expectedEvent)
- 
-@@ -743,7 +741,6 @@ describe('network stubbing', { retries: 15 }, function () {
-         this.logs = []
- 
-         cy.on('log:added', (attrs, log) => {
--          // @ts-ignore
-           if (log.get('name') !== 'intercept') {
-             return
-           }
-@@ -760,9 +757,8 @@ describe('network stubbing', { retries: 15 }, function () {
-           done()
-         })
- 
--        // @ts-ignore: should fail
-         cy.intercept({
--          // @ts-ignore
-+          // @ts-expect-error - deliberately passes an object as the url
-           url: {},
-         })
-       })
-@@ -784,7 +780,7 @@ describe('network stubbing', { retries: 15 }, function () {
-           done()
-         })
- 
--        // @ts-ignore - should fail
-+        // @ts-expect-error - deliberately calls cy.intercept() without arguments
-         cy.intercept()
-       })
- 
-@@ -797,7 +793,7 @@ describe('network stubbing', { retries: 15 }, function () {
-           done()
-         })
- 
--        // @ts-ignore - should fail
-+        // @ts-expect-error - deliberately repeats `url` in the RouteMatcher
-         cy.intercept(url, { url }, () => {})
-       })
- 
-@@ -823,7 +819,7 @@ describe('network stubbing', { retries: 15 }, function () {
-             done()
-           })
- 
--          // @ts-ignore
-+          // @ts-expect-error - deliberately passes both a static response and a handler
-           cy.intercept(url, { forceNetworkError: true }, () => {})
-         })
- 
-@@ -835,7 +831,7 @@ describe('network stubbing', { retries: 15 }, function () {
-             done()
-           })
- 
--          // @ts-ignore
-+          // @ts-expect-error - deliberately passes a fourth argument after the static response
-           cy.intercept(url, { middleware: true }, { forceNetworkError: true }, () => {})
-         })
- 
-@@ -847,7 +843,7 @@ describe('network stubbing', { retries: 15 }, function () {
-             done()
-           })
- 
--          // @ts-ignore
-+          // @ts-expect-error - deliberately passes a fourth argument after the static response
-           cy.intercept('POST', url, { forceNetworkError: true }, () => {})
-         })
-       })
-@@ -875,12 +871,11 @@ describe('network stubbing', { retries: 15 }, function () {
-             done()
-           })
- 
--          // @ts-ignore this is invalid on purpose
-           cy.intercept({
-             headers: {
-               good: 'string',
-               fine: /regexp/,
--              // @ts-ignore
-+              // @ts-expect-error - deliberately passes a number as a header matcher
-               wrong: 3,
-             },
-           })
-@@ -893,7 +888,7 @@ describe('network stubbing', { retries: 15 }, function () {
-             done()
-           })
- 
--          // @ts-ignore
-+          // @ts-expect-error - deliberately passes an unknown RouteMatcher property
-           cy.intercept({ wrong: true })
-         })
- 
-@@ -938,7 +933,7 @@ describe('network stubbing', { retries: 15 }, function () {
-               done()
-             })
- 
--            // @ts-ignore - this should error
-+            // @ts-expect-error - deliberately passes an invalid handler
-             cy.intercept('/', handler)
-           })
-         })
-@@ -980,7 +975,6 @@ describe('network stubbing', { retries: 15 }, function () {
-               done()
-             })
- 
--            // @ts-ignore - this should error
-             cy.intercept('/', handler)
-           })
-         })
-```
-
-**File**: `packages/driver/cypress/e2e/commands/net_stubbing/intercepting_request.cy.ts` (modified, +3/-3)
-```diff
-@@ -581,7 +581,7 @@ describe('network stubbing', { retries: 15 }, function () {
-               })
-             }).as('first')
-             .intercept(`${url}*`, (req) => {
--              // @ts-ignore
-+              // @ts-expect-error - `eventName` is a string, not one of the request event names
-               req.on(eventName, (res) => {
-                 res.headers['content-type'] = 'application/json'
-                 res.send({
-@@ -612,7 +612,7 @@ describe('network stubbing', { retries: 15 }, function () {
-           })
- 
-           cy.intercept(url, function (req) {
--            // @ts-ignore
-+            // @ts-expect-error - deliberately passes an unknown event name
-             req.on('totally-bad', _.noop)
-           }).visit(url)
-         })
-@@ -626,7 +626,7 @@ describe('network stubbing', { retries: 15 }, function () {
-           })
- 
-           cy.intercept(url, function (req) {
--            // @ts-ignore
-+            // @ts-expect-error - deliberately passes a non-function handler
-             req.on('before:response', false)
-           }).visit(url)
-         })
-```
-
-**File**: `packages/driver/cypress/e2e/commands/sessions/manager.cy.ts` (modified, +0/-1)
-```diff
-@@ -5,7 +5,6 @@ describe('src/cy/commands/sessions/manager.ts', () => {
-   let CypressInstance
- 
-   beforeEach(function () {
--    // @ts-ignore
-     CypressInstance = new $Cypress()
-   })
- 
-```
-
-**File**: `packages/driver/cypress/e2e/commands/sessions/origins.cy.ts` (modified, +0/-1)
-```diff
-@@ -6,7 +6,6 @@ describe('src/cy/commands/sessions/origins', () => {
-   let baseUrl
- 
-   beforeEach(function () {
--    // @ts-ignore
-     CypressInstance = new $Cypress()
-     baseUrl = Cypress.config('baseUrl')
-   })
-```
-
-**File**: `packages/driver/cypress/e2e/commands/storage.cy.ts` (modified, +1/-1)
-```diff
-@@ -470,7 +470,7 @@ describe('src/cy/commands/storage', () => {
-           done()
-         })
- 
--        // @ts-expect-error
-+        // @ts-expect-error - deliberately passes a number as the key
-         cy.clearLocalStorage(1)
-       })
-     })
-```
-
-**File**: `packages/driver/cypress/e2e/cy/actionability.cy.ts` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--// @ts-ignore
-+// @ts-expect-error - spec is a script, so `$` redeclares the global jQuery and `_` clashes with the lodash namespace
- const { $, _ } = Cypress
- 
- describe('src/cy/actionability', () => {
+ By default, installing the `cypress` package downloads the Cypress binary over HTTPS from an official Cypress host. Setting `CYPRESS_INSTALL_BINARY`, `CYPRESS_DOWNLOAD_MIRROR` or `CYPRESS_DOWNLOAD_PATH_TEMPLATE` makes you responsible for where the binary comes from: use HTTPS and a host you trust, and make sure whatever serves the binary is as protected as the rest of your build infrastructure. These values can also come from npm configuration, such as a project's `.npmrc`, and from a project's own `package.json`, so check for them when you adopt an unfamiliar repository.
++
++## Security Updates
++
++Patches for security vulnerabilities primarily focus on the latest major version.
++
++High and Critical CVSS security fixes in code authored and maintained by Cypress are backported to the previous major version for up to 12 months after the current major version is released. The decision to backport is made based on severity assessment and the feasibility of implementing the patch in those versions.
++
++Updates for vulnerabilities in third-party dependencies, such as Electron, Chromium, Node.js, or npm packages, are not backported.
++
++* Latest major version: All security vulnerabilities in Cypress authored and maintained code
++* Previous major version: High or Critical CVSS scores in Cypress authored and maintained code (Up to 12 months after the current major’s release, subject to feasibility)
++* Older versions: Not supported (Users should upgrade to a supported version)
 ```
 
 ---
 
-### Incident Patch 2: `be712929` (2026-10-26)
-**Commit Message**: fix: accept a DOM element or a jQuery object in Cypress.dom helpers (#35155)
+### Incident Patch 2: `1ecfa9e5` (2026-10-30)
+**Commit Message**: fix: name the missing library or Xvfb problem in start-up errors (#35116)
 
-* fix: accept a DOM element or a jQuery object in Cypress.dom helpers
+* misc: name the missing library or Xvfb problem in start-up errors
 
-isFocused(), isScrollable(), isFocusable(), isDescendent(),
-getReasonIsHidden(), isTextLike(), isSelector(), getWindowByElement() and
-the three getFirst*Parent() helpers were typed to accept a DOM element or a
-jQuery object, but each handled only one of the two: the other form threw
-a TypeError or returned a wrong answer. isScrollable() also threw for a
-window wrapped in jQuery.
+When the Cypress app failed to start because a system library was missing,
+the error showed the dynamic linker output but did not say which package
+to install, and every Xvfb failure was reported as a missing Xvfb.
 
-Each now converts its argument once with the existing isJquery/wrap
-helpers. A jQuery object passed to a helper that needs jQuery is used
-as-is, keeping the .selector property Cypress uses in error messages.
-Cypress's own callers already pass the form each helper expected, so they
-are unaffected. isTextLike() now returns a plain boolean; no caller
-relied on its type guard.
+The error now lists each library the app could not load, with the apt
+package that provides the common ones and an apt-file search command for
+the rest. A missing Xvfb shows install commands for common distributions
+and the DISPLAY alternative. An Xvfb that is installed but could not
+start, because its display is in use, it timed out or it could not be run,
+has its own message with the common causes and the original error.
 
-The declarations and JSDoc for these methods now describe what they
-accept and return: getWindowByElement() returns a Window and accepts a
-document or window, and the getFirst*Parent() helpers return
-JQuery | null.
+Jira: AW-187
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* chore: add the changelog entry for #35116
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix: stop suggesting Xvfb install commands for unsupported distributions
+
+RHEL and CentOS are not officially supported by Cypress, so the missing-Xvfb message no longer lists a dnf command for them. It now gives the Debian and Ubuntu command o
 
 **File**: `cli/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -25,6 +25,7 @@
- - Fixed an issue where several `cypress run` processes sharing a project folder could save a screenshot under the same file name, so one silently overwrote the other and both runs reported the same file. Each screenshot now gets its own file, numbered ` (1)`, ` (2)`, and so on, as it already did within a single run. The same applies to videos when [`trashAssetsBeforeRuns`](https://on.cypress.io/configuration#Folders--Files) is `false`. Screenshots taken with the [`overwrite`](https://on.cypress.io/screenshot) option, and videos when `trashAssetsBeforeRuns` is `true`, still replace the existing file. Fixed in [#34928](https://github.com/cypress-io/cypress/pull/34928).
- - Requests to an origin that serves only HTTP/2 now fail immediately at the TLS handshake instead of returning a misleading `403: Forbidden` or hanging until they time out. Cypress advertised no protocol over ALPN when opening a TLS connection, leaving such an origin nothing to negotiate against; it now advertises `http/1.1`. Origins that serve both protocols are unaffected. Where such an origin previously answered with a `403`, [`cy.request()`](https://on.cypress.io/request) with `failOnStatusCode: false` yielded a response object and now reports a network error instead. Fixed in [#34951](https://github.com/cypress-io/cypress/pull/34951).
- - Fixed an issue where `cypress run` could stop printing output and never finish when a test was retried after one of its hooks timed out on the previous attempt. Fixed in [#34997](https://github.com/cypress-io/cypress/pull/34997).
-+- These [`Cypress.dom`](https://on.cypress.io/dom) methods now accept either a DOM element or a jQuery object, as their types already said: `isFocused()`, `isScrollable()`, `isFocusable()`, `isDescendent()`, `getReasonIsHidden()`, `isTextLike()`, `isSelector()`, `getWindowByElement()`, `getFirstScrollableParent()`, `getFirstStickyPositionParent()`, and `getFirstFixedOrStickyPositionParent()`. Previously, passing the other form threw a `TypeError` or returned a wrong result, such as `isFocused()` returning `false` for a focused element. Fixed in [#35155](https://github.com/cypress-io/cypress/pull/35155).
+@@ -10,6 +10,7 @@
+ **Bugfixes:**
  
- **Misc:**
- 
+ - Fixed an issue where [`cy.intercept()`](https://on.cypress.io/intercept) silently ignored a header matcher when the same header name appeared more than once with different casing, such as `Content-Type` and `content-type`. Only the last matcher was applied. `cy.intercept()` now throws an error that names the duplicated header. Fixes [#34975](https://github.com/cypress-io/cypress/issues/34975).
++- The error shown when Cypress cannot start on Linux because of a missing system library now lists each library and the package that provides it, and a missing or failing Xvfb now shows install commands or the likely causes. Addressed in [#35116](https://github.com/cypress-io/cypress/pull/35116).
+ - Fixed an issue where `cypress tap` commands could delete the record of a running `cypress open` session, and report that no session was running, when run from a process that cannot see the session's process ID, such as a different PID namespace in a container or sandbox. The record is now kept while the session responds. Fixed in [#35103](https://github.com/cypress-io/cypress/pull/35103).
+ - `cypress open` now prints configuration errors and warnings, including the stack trace of a config file that fails to load, to the terminal. Previously they only appeared in the Cypress window, so a script or AI agent running `cypress open` saw nothing while it waited. Fixed in [#35104](https://github.com/cypress-io/cypress/pull/35104).
+ - `cypress open --project <path> --e2e --browser <browser>` run by an AI coding agent now launches the browser without waiting for the welcome screen to be dismissed in the Cypress window. Set `CYPRESS_AGENT_MODE=1` to force this behavior for an agent Cypress does not detect, or `CYPRESS_AGENT_MODE=0` to turn it off. Fixed in [#35105](https://github.com/cypress-io/cypress/pull/35105).
 ```
 
-**File**: `cli/types/cypress.d.ts` (modified, +60/-6)
+**File**: `cli/lib/errors.ts` (modified, +89/-6)
 ```diff
-@@ -653,15 +653,29 @@ declare namespace Cypress {
-       isHidden(element: JQuery | HTMLElement, methodName?: string, options?: object): boolean
-       /**
-        * Returns a boolean indicating whether an element can receive focus.
-+       * Accepts a DOM element or a jQuery object. For a jQuery object with
-+       * more than one element, returns `true` if any of them can receive focus.
-        */
-       isFocusable(element: JQuery | HTMLElement): boolean
-+      /**
-+       * Returns a boolean indicating whether an element accepts typed text: a
-+       * `<textarea>`, a contenteditable element, or an `<input>` whose `type` is
-+       * `text`, `password`, `email`, `number`, `date`, `week`, `month`, `time`,
-+       * `datetime`, `datetime-local`, `search`, `url`, or `tel`.
-+       * Accepts a DOM element or a jQuery object. For a jQuery object, checks its
-+       * first element.
-+       */
-       isTextLike(element: JQuery | HTMLElement): boolean
-       /**
--       * Returns a boolean indicating whether an element is scrollable.
-+       * Returns a boolean indicating whether an element or the window is scrollable.
-+       * Accepts the window, a DOM element, or a jQuery object. For a jQuery object,
-+       * checks its first element.
-        */
-       isScrollable(element: Window | JQuery | HTMLElement): boolean
-       /**
-        * Returns a boolean indicating whether an element currently has focus.
-+       * Accepts a DOM element or a jQuery object. For a jQuery object, checks
-+       * its first element.
-        */
-       isFocused(element: JQuery | HTMLElement): boolean
-       /**
-@@ -672,9 +686,16 @@ declare namespace Cypress {
-        * Returns a boolean indicating whether an element is attached to the DOM.
-        */
-       isAttached(element: JQuery | HTMLElement | Window | Document): boolean
-+      /**
-+       * Returns a boolean indicating whether an element matches a jQuery selector.
-+       * For a jQuery object with more than one element, returns `true` if any of
-+       * them match. Accepts a DOM element or a jQuery object.
-+       */
-       isSelector(element: JQuery | HTMLElement, selector: JQuery.Selector): boolean
-       /**
--       * Returns a boolean indicating whether an element is a descendent of another element.
-+       * Returns a boolean indicating whether `element2` is `element1` or is
-+       * inside it. Each argument can be a DOM element or a jQuery object.
-+       * For a jQuery object, checks its first element.
-        */
-       isDescendent(element1: JQuery | HTMLElement, element2: JQuery | HTMLElement): boolean
-       /**
-@@ -729,11 +750,44 @@ declare namespace Cypress {
-        */
-       getContainsSelector(text: string, filter?: string, options?: CaseMatchable): JQuery.Selector
-       getFirstDeepestElement(elements: HTMLElement[], index?: number): HTMLElement
--      getWindowByElement(element: JQuery | HTMLElement): JQuery | HTMLElement
-+      /**
-+       * Returns the window that contains an element or a document, or the window
-+       * itself when passed a window. Accepts any of these, or a jQuery object
-+       * holding one. For a jQuery object, uses its first element.
-+       */
-+      getWindowByElement(element: JQuery<HTMLElement | Document | Window> | HTMLElement | Document | Window): Window
-+      /**
-+       * Returns a sentence explaining why an element is not visible.
-+       * Accepts a DOM element or a jQuery object.
-+       */
-       getReasonIsHidden(element: JQuery | HTMLElement, options?: object): string
--      getFirstScrollableParent(element: JQuery | HTMLElement): JQuery | HTMLElement
--      getFirstFixedOrStickyPositionParent(element: JQuery | HTMLElement): JQuery | HTMLElement
--      getFirstStickyPositionParent(element: JQuery | HTMLElement): JQuery | HTMLElement
-+      /**
-+       * Returns the closest ancestor of an element that can scroll, as a jQuery
-+       * object, or `null` if there is none. The element itself is not checked.
-+       * It walks out of shadow roots to their hosts and can return `<html>`.
-+       * Returns `null` right away for `<html>`, `<body>`, or the document.
-+       * Accepts a DOM element or a jQuery object. For a jQuery object, starts
-+       * from its first element.
-+       */
-+      getFirstScrollableParent(element: JQuery | HTMLElement): JQuery | null
-+      /**
-+       * Returns the element, or its closest ancestor, whose CSS `position` is
-+       * `fixed` or `sticky`, as a jQuery object, or `null` if there is none.
-+       * It walks out of shadow roots to their hosts. Returns `null` right away for
-+       * `<html>`, `<body>`, or the document.
-+       * Accepts a DOM element or a jQuery object. For a jQuery object, starts
-+       * from its first element.
-+       */
-+      getFirstFixedOrStickyPositionParent(element: JQuery | HTMLElement): JQuery | null
-+      /**
-+       * Returns the element, or its closest ancestor, whose CSS `position` is
-+       * `sticky`, as a jQuery object, or `null` if there is no
+@@ -125,7 +125,11 @@ const nonZeroExitCodeXvfb = {
+ const missingXvfb = {
+   description: 'Your system is missing the dependency: Xvfb',
+   solution: stripIndent`
+-    Install Xvfb and run Cypress again.
++    Install Xvfb and run Cypress again. On Debian and Ubuntu:
++
++    ${chalk.cyan('apt-get install -y xvfb')}
++
++    Or run Cypress on a display that already exists by setting the DISPLAY environment variable.
+ 
+     Read our documentation on dependencies for more information:
+ 
+@@ -135,6 +139,23 @@ const missingXvfb = {
+     `,
+ }
+ 
++const xvfbFailedToStart = (timeoutSeconds: number) => {
++  return {
++    description: 'Xvfb is installed but could not start.',
++    solution: stripIndent`
++      Cypress could not start Xvfb, the virtual display it uses on Linux when DISPLAY is not set.
++
++      Common causes:
++
++      - The display number is already in use, for example by an Xvfb left running from an earlier run. Stop that Xvfb, or set the XVFB_DISPLAY_NUM environment variable to a free number.
++      - Xvfb did not create its display within ${timeoutSeconds} seconds.
++      - The Xvfb binary cannot be run by the user running Cypress, or that user cannot write to /tmp.
++
++      Run Cypress again with DEBUG=cypress:xvfb to see what Xvfb printed.
++      `,
++  }
++}
++
+ const smokeTestFailure = (smokeTestCommand: string, timedOut: boolean): any => {
+   return {
+     description: `Cypress verification ${timedOut ? 'timed out' : 'failed'}.`,
+@@ -169,14 +190,75 @@ const invalidSmokeTestDisplayError = {
+   },
+ }
+ 
++// Where each library the dynamic linker names comes from on Debian and Ubuntu
++const APT_PACKAGES: Record<string, string> = {
++  'libnss3.so': 'libnss3',
++  'libgtk-3.so.0': 'libgtk-3-0',
++  'libgbm.so.1': 'libgbm1',
++  // The package was renamed in Debian 13 and Ubuntu 24.04, so the line falls back to the old name
++  'libasound.so.2': 'libasound2t64 || apt-get install -y libasound2',
++  'libXss.so.1': 'libxss1',
++  'libXtst.so.6': 'libxtst6',
++  'libX11-xcb.so.1': 'libx11-xcb1',
++  'libxkbcommon.so.0': 'libxkbcommon0',
++  'libatk-1.0.so.0': 'libatk1.0-0',
++  'libatk-bridge-2.0.so.0': 'libatk-bridge2.0-0',
++  'libcups.so.2': 'libcups2',
++  'libdrm.so.2': 'libdrm2',
++  'libnspr4.so': 'libnspr4',
++  'libXcomposite.so.1': 'libxcomposite1',
++  'libXdamage.so.1': 'libxdamage1',
++  'libXrandr.so.2': 'libxrandr2',
++  'libcairo.so.2': 'libcairo2',
++  'libpango-1.0.so.0': 'libpango-1.0-0',
++}
++
++export const parseMissingLibraries = (output: string = ''): string[] => {
++  const libraries = Array.from(output.matchAll(/error while loading shared libraries: ([^:\s]+):/g), (match) => match[1])
++
++  return _.uniq(libraries)
++}
++
++const missingLibrariesSolution = (libraries: string[]): string => {
++  const known = libraries.filter((library) => APT_PACKAGES[library])
++  const unknown = libraries.filter((library) => !APT_PACKAGES[library])
++
++  const lines = [
++    `Cypress could not start because the system ${libraries.length === 1 ? 'library' : 'libraries'} below could not be loaded:`,
++    '',
++    ...libraries.map((library) => `  ${library}`),
++  ]
++
++  if (known.length) {
++    lines.push('', 'On Debian and Ubuntu, install the packages that provide them:', '', ...known.map((library) => `  apt-get install -y ${APT_PACKAGES[library]}`))
++  }
++
++  if (unknown.length) {
++    lines.push('', 'Find the package that provides each of these with apt-file, or your distribution\'s equivalent:', '', ...unknown.map((library) => `  apt-file search ${library}`))
++  }
++
++  lines.push('', `More about the required dependencies: ${chalk.blue(requiredDependenciesUrl)}`)
++
++  return lines.join('\n')
++}
++
+ const missingDependency = {
+   description: 'Cypress failed to start.',
+-  // this message is too Linux specific
+-  solution: stripIndent`
+-    This may be due to a missing library or dependency. ${chalk.blue(requiredDependenciesUrl)}
++  // A function is given the error output, and when it is, it is responsible for printing it
++  solution: (msg?: string) => {
++    const libraries = parseMissingLibraries(msg)
+ 
+-    Please refer to the error below for more details.
+-  `,
++    // this message is too Linux specific
++    const advice = libraries.length ? missingLibrariesSolution(libraries) : stripIndent`
++      This may be due to a missing library or dependency. ${chalk.blue(requiredDependenciesUrl)}
++    `
++
++    if (!msg) {
++      return advice
++    }
++
++    return [advice, '', 'Please refer to the error below for more details.', '', hr, '', msg].join('\n')
++  },
+ }
+ 
+ const invalidCacheDirectory = {
+@@ -395,6 +477,7 @@ export const errors = {
+   unknownError,
+   nonZeroExitCodeXvfb,
+   missingXvfb,
++  xvfbFailedToStart,
+   missingApp,
+   notInstalledCI,
+   missingDependency,
 ```
 
-**File**: `cli/types/tests/cypress-tests.ts` (modified, +20/-4)
+**File**: `cli/lib/exec/xvfb.ts` (modified, +5/-2)
 ```diff
-@@ -922,13 +922,22 @@ namespace CypressDomTests {
-   Cypress.dom.isVisible(el) // $ExpectType boolean
-   Cypress.dom.isHidden(el) // $ExpectType boolean
-   Cypress.dom.isFocusable(el) // $ExpectType boolean
-+  Cypress.dom.isFocusable(jel) // $ExpectType boolean
-   Cypress.dom.isTextLike(el) // $ExpectType boolean
-+  Cypress.dom.isTextLike(jel) // $ExpectType boolean
-   Cypress.dom.isScrollable(el) // $ExpectType boolean
-+  Cypress.dom.isScrollable(jel) // $ExpectType boolean
-+  Cypress.dom.isScrollable(window) // $ExpectType boolean
-   Cypress.dom.isFocused(el) // $ExpectType boolean
-+  Cypress.dom.isFocused(jel) // $ExpectType boolean
-   Cypress.dom.isDetached(el) // $ExpectType boolean
-   Cypress.dom.isAttached(el) // $ExpectType boolean
-   Cypress.dom.isSelector(el, 'foo') // $ExpectType boolean
-+  Cypress.dom.isSelector(jel, 'foo') // $ExpectType boolean
-   Cypress.dom.isDescendent(el, el) // $ExpectType boolean
-+  Cypress.dom.isDescendent(jel, jel) // $ExpectType boolean
-+  Cypress.dom.isDescendent(el, jel) // $ExpectType boolean
-+  Cypress.dom.isDescendent(jel, el) // $ExpectType boolean
-   Cypress.dom.isElement(obj) // $ExpectType boolean
-   Cypress.dom.isDocument(obj) // $ExpectType boolean
-   Cypress.dom.isWindow(obj) // $ExpectType boolean
-@@ -943,11 +952,18 @@ namespace CypressDomTests {
-   Cypress.dom.getContainsSelector('foo', 'bar') // $ExpectType string
-   Cypress.dom.getContainsSelector('foo', 'bar', { matchCase: true }) // $ExpectType string
-   Cypress.dom.getFirstDeepestElement([el], 1) // $ExpectType HTMLElement
--  Cypress.dom.getWindowByElement(el) // $ExpectType HTMLElement | JQuery<HTMLElement>
-+  Cypress.dom.getWindowByElement(el) // $ExpectType Window
-+  Cypress.dom.getWindowByElement(jel) // $ExpectType Window
-+  Cypress.dom.getWindowByElement(doc) // $ExpectType Window
-+  Cypress.dom.getWindowByElement(window) // $ExpectType Window
-   Cypress.dom.getReasonIsHidden(el) // $ExpectType string
--  Cypress.dom.getFirstScrollableParent(el) // $ExpectType HTMLElement | JQuery<HTMLElement>
--  Cypress.dom.getFirstFixedOrStickyPositionParent(el) // $ExpectType HTMLElement | JQuery<HTMLElement>
--  Cypress.dom.getFirstStickyPositionParent(el) // $ExpectType HTMLElement | JQuery<HTMLElement>
-+  Cypress.dom.getReasonIsHidden(jel) // $ExpectType string
-+  Cypress.dom.getFirstScrollableParent(el) // $ExpectType JQuery<HTMLElement> | null
-+  Cypress.dom.getFirstScrollableParent(jel) // $ExpectType JQuery<HTMLElement> | null
-+  Cypress.dom.getFirstFixedOrStickyPositionParent(el) // $ExpectType JQuery<HTMLElement> | null
-+  Cypress.dom.getFirstFixedOrStickyPositionParent(jel) // $ExpectType JQuery<HTMLElement> | null
-+  Cypress.dom.getFirstStickyPositionParent(el) // $ExpectType JQuery<HTMLElement> | null
-+  Cypress.dom.getFirstStickyPositionParent(jel) // $ExpectType JQuery<HTMLElement> | null
-   Cypress.dom.getCoordsByPosition(1, 2) // $ExpectType number
-   Cypress.dom.getElementPositioning(el) // $ExpectType ElementPositioning
-   Cypress.dom.getElementAtPointFromViewport(doc, 1, 2) // $ExpectType Element | null
-```
-
-**File**: `packages/driver/cypress/e2e/dom/elements.cy.ts` (modified, +175/-0)
-```diff
-@@ -256,18 +256,193 @@ describe('src/dom/elements', () => {
-       })
-     })
+@@ -16,9 +16,11 @@ const debugXvfb: any = Debug('cypress:xvfb')
  
-+    it('returns true for a focused element passed as a DOM element or a jQuery object', () => {
-+      cy.get('input:first').focus().then(($el) => {
-+        expect(Cypress.dom.isFocused($el[0])).to.be.true
-+        expect(Cypress.dom.isFocused($el)).to.be.true
-+      })
-+    })
-+
-+    it('returns false for an unfocused element passed as a DOM element or a jQuery object', () => {
-+      cy.get('input:first').then(($el) => {
-+        expect(Cypress.dom.isFocused($el[0])).to.be.false
-+        expect(Cypress.dom.isFocused($el)).to.be.false
-+      })
-+    })
-+
-+    it('returns false for an empty jQuery object', () => {
-+      expect(Cypress.dom.isFocused($())).to.be.false
-+    })
-+
-     describe('in the shadow dom', () => {
-       it('returns true if the element is the active element of the shadow root', () => {
-         cy.visit('/fixtures/shadow-dom.html')
-         cy
-         .get('#shadow-element-1')
-         .find('input', { includeShadowDom: true }).focus().then(($el) => {
-           expect(isFocused($el[0])).to.be.true
-+          expect(Cypress.dom.isFocused($el)).to.be.true
-         })
-       })
-     })
-   })
+ debug.Debug = debugXvfb.Debug = Debug
  
-+  context('.isFocusable', () => {
-+    beforeEach(() => {
-+      cy.visit('/fixtures/active-elements.html')
-+    })
++const XVFB_START_TIMEOUT_SECONDS = 30
 +
-+    it('returns true for a focusable element passed as a DOM element or a jQuery object', () => {
-+      cy.get('input:first').then(($el) => {
-+        expect(Cypress.dom.isFocusable($el[0])).to.be.true
-+        expect(Cypress.dom.isFocusable($el)).to.be.true
-+      })
-+    })
-+
-+    it('returns false for a non-focusable element passed as a DOM element or a jQuery object', () => {
-+      cy.$$('body').append('<div id="not-focusable">not focusable</div>')
-+      cy.get('#not-focusable').then(($el) => {
-+        expect(Cypress.dom.isFocusable($el[0])).to.be.false
-+        expect(Cypress.dom.isFocusable($el)).to.be.false
-+      })
-+    })
-+  })
-+
-+  context('.isTextLike', () => {
-+    beforeEach(() => {
-+      cy.visit('/fixtures/dom.html')
-+      cy.get('body').then(($body) => {
-+        $body.append('<input id="text-like-email" type="email"><button id="text-like-button">button</button>')
-+      })
-+    })
-+
-+    it('returns true for a text-like element passed as a DOM element or a jQuery object', () => {
-+      cy.get('#text-like-email').then(($el) => {
-+        expect(Cypress.dom.isTextLike($el[0])).to.be.true
-+        expect(Cypress.dom.isTextLike($el)).to.be.true
-+      })
-+    })
-+
-+    it('returns false for an element that is not text-like, passed as a DOM element or a jQuery object', () => {
-+      cy.get('#text-like-button').then(($el) => {
-+        expect(Cypress.dom.isTextLike($el[0])).to.be.false
-+        expect(Cypress.dom.isTextLike($el)).to.be.false
-+      })
-+    })
-+  })
-+
-+  context('.isSelector', () => {
-+    beforeEach(() => {
-+      cy.visit('/fixtures/dom.html')
-+    })
-+
-+    it('matches a selector for a DOM element or a jQuery object', () => {
-+      cy.get('input:first').then(($el) => {
-+        expect(Cypress.dom.isSelector($el[0], 'input')).to.be.true
-+        expect(Cypress.dom.isSelector($el, 'input')).to.be.true
-+        expect(Cypress.dom.isSelector($el[0], 'button')).to.be.false
-+        expect(Cypress.dom.isSelector($el, 'button')).to.be.false
-+      })
-+    })
-+  })
-+
-+  context('.getWindowByElement', () => {
-+    beforeEach(() => {
-+      cy.visit('/fixtures/dom.html')
-+    })
-+
-+    it('returns the window for a DOM element, a document, a window, or a jQuery object holding one', () => {
-+      cy.window().then((win) => {
-+        const doc = win.document
-+        const el = doc.body
-+
-+        expect(Cypress.dom.getWindowByElement(el)).to.equal(win)
-+        expect(Cypress.dom.getWindowByElement($(el))).to.equal(win)
-+        expect(Cypress.dom.getWindowByElement(doc)).to.equal(win)
-+        expect(Cypress.dom.getWindowByElement($(doc))).to.equal(win)
-+        expect(Cypress.dom.getWindowByElement(win)).to.equal(win)
-+        expect(Cypress.dom.getWindowByElement($(win))).to.equal(win)
-+      })
-+    })
-+  })
-+
-+  context('.getFirst*Parent', () => {
-+    beforeEach(() => {
-+      cy.visit('/fixtures/dom.html')
-+      cy.get('body').then(($body) => {
-+        $body.append(`\
-+<div id="parent-scroll" style="height: 50px; overflow: auto;">
-+  <div id="parent-sticky" style="position: sticky; top: 0;"><span id="parent-inner">inner</span></div>
-+  <div style="height: 500px;"></div>
-+</div>`)
-+      })
-+    })
-+
-+    it('finds the scrollable ancestor of a DOM element or a jQuery object', () => {
-+      cy.get('#parent-inner').then(($el) => {
-+        expect(Cypress.dom.getFirstScrollableParent($el[0])!.attr('id')).to.eq('parent-scroll')
-+        expect(Cypress.dom.getFirstScrollableParent($el)!.attr('id')).to.eq('parent-scroll')
-+      })
-+    })
-+
-+    it('finds the sticky ancestor of a DOM element or a jQuery object', () => {
-+      cy.get('#parent-inner').then(($el) => {
-
-```
-
-**File**: `packages/driver/cypress/e2e/dom/visibility.cy.ts` (modified, +50/-0)
-```diff
-@@ -111,6 +111,14 @@ describe('src/cypress/dom/visibility', {
-           expect(fn()).to.be.true
-         })
- 
-+        it('returns true for a scrollable window passed directly or wrapped in jQuery', function () {
-+          this.add('<div style="height: 1000px; width: 10px;" />')
-+          const win = cy.state('window')
-+
-+          expect(dom.isScrollable(win)).to.be.true
-+          expect(dom.isScrollable($(win))).to.be.true
-+        })
-+
-         it('returns false if window and body < window height', () => {
-           cy.$$('body').html('<div>foo</div>')
- 
-@@ -217,6 +225,39 @@ describe('src/cypress/dom/visibility', {
- 
-           expect(fn()).to.be.true
-         })
-+
-+        it('returns true for a scrollable element passed as a DOM element or a jQuery object', function () {
-+          const $scrollable = this.add(`\
-+<div style="height: 100px; width: 100px; overflow: auto;">
-+  <div style="height: 150px;">Vertical Scroll</div>
-+</div>\
-+`)
-+
-+          expect(dom.isScrollable($scrollable[0])).to.be.true
-+          expect(dom.isScrollable($scrollable)).to.be.true
-+        })
-+
-+        it('returns false for a non-scrollable element passed as a DOM element or a jQuery object', function () {
-+          const $noScroll = this.add(`\
-+<div style="height: 100px; overflow: auto;">
-+  <div>No Scroll</div>
-+</div>\
-+`)
-+
-+          expect(dom.isScrollable($noScroll[0])).to.be.false
-+          expect(dom.isScrollable($noScroll)).to.be.false
-+        })
-+
-+        it('checks a <select> passed as a DOM element itself, not its first option', function () {
-+          const $select = this.add(`\
-+<select size="2" style="height: 30px; overflow: auto;">
-+  <option>one</option><option>two</option><option>three</option><option>four</option>
-+</select>\
-+`)
-+
-+          expect(dom.isScrollable($select)).to.be.true
-+          expect(dom.isScrollable($select[0])).to.be.true
-+        })
-       })
- 
-       describe('visibility scenarios', () => {
-@@ -423,6 +464,7 @@ describe('src/cypress/dom/visibility', {
-   context('#getReasonIsHidden (legacy)', { visibilityStrategy: 'legacy' }, () => {
-     const reasonIs = ($el: JQuery, str: string) => {
-       expect(dom.getReasonIsHidden($el)).to.eq(str)
-+      expect(dom.getReasonIsHidden($el[0])).to.eq(str)
+ const xvfbOptions: any = {
+   displayNum: process.env.XVFB_DISPLAY_NUM,
+-  timeout: 30000, // milliseconds
++  timeout: XVFB_START_TIMEOUT_SECONDS * 1000,
+   // need to explicitly define screen otherwise electron will crash
+   // https://github.com/cypress-io/cypress/issues/6184
+   xvfb_args: ['-screen', '0', '1280x1024x24'],
+@@ -212,7 +214,8 @@ export async function start ({ detached = false }: { detached?: boolean } = {}):
+       throw e
      }
  
-     describe('basic css / box model', () => {
-@@ -588,6 +630,14 @@ describe('src/cypress/dom/visibility', {
-       })
-     })
+-    const raiseErrorFn = throwFormErrorText(errors.missingXvfb)
++    // Only a binary that is not there is a missing dependency
++    const raiseErrorFn = throwFormErrorText(e.code === 'ENOENT' ? errors.missingXvfb : errors.xvfbFailedToStart(XVFB_START_TIMEOUT_SECONDS))
  
-+    it('returns the same reason for a DOM element as for a jQuery object', () => {
-+      prepareFixtureSection('display-property')
-+      cy.get('[cy-section="display-property"] .testCase[cy-expect="hidden"]:first').then(($el) => {
-+        expect(dom.getReasonIsHidden($el[0])).to.eq(dom.getReasonIsHidden($el))
-+        expect(dom.getReasonIsHidden($el[0])).to.contain('`display: none`')
-+      })
+     await raiseErrorFn(e)
+   }
+```
+
+**File**: `cli/test/lib/__snapshots__/errors.spec.ts.snap` (modified, +6/-1)
+```diff
+@@ -37,7 +37,11 @@ Cypress Version: 1.2.3"
+ exports[`errors > .errors.formErrorText > returns fully formed text message 1`] = `
+ "Your system is missing the dependency: Xvfb
+ 
+-Install Xvfb and run Cypress again.
++Install Xvfb and run Cypress again. On Debian and Ubuntu:
++
++apt-get install -y xvfb
++
++Or run Cypress on a display that already exists by setting the DISPLAY environment variable.
+ 
+ Read our documentation on dependencies for more information:
+ 
+@@ -95,5 +99,6 @@ exports[`errors > individual > has the following errors 1`] = `
+   "unexpected",
+   "unknownError",
+   "versionMismatch",
++  "xvfbFailedToStart",
+ ]
+ `;
+```
+
+**File**: `cli/test/lib/errors.spec.ts` (modified, +76/-1)
+```diff
+@@ -4,7 +4,7 @@ import path from 'path'
+ import type { Systeminformation } from 'systeminformation'
+ import si from 'systeminformation'
+ import util from '../../lib/util'
+-import { errors, getError, formErrorText } from '../../lib/errors'
++import { errors, getError, formErrorText, parseMissingLibraries } from '../../lib/errors'
+ 
+ vi.mock('os', async (importActual) => {
+   const actual = await importActual()
+@@ -81,6 +81,81 @@ describe('errors', function () {
+     })
+   })
+ 
++  describe('.parseMissingLibraries', () => {
++    it('finds each library the dynamic linker could not load, once', () => {
++      const output = [
++        '/root/.cache/Cypress/Cypress: error while loading shared libraries: libnss3.so: cannot open shared object file: No such file or directory',
++        '/root/.cache/Cypress/Cypress: error while loading shared libraries: libgbm.so.1: cannot open shared object file: No such file or directory',
++        '/root/.cache/Cypress/Cypress: error while loading shared libraries: libnss3.so: cannot open shared object file: No such file or directory',
++      ].join('\n')
++
++      expect(parseMissingLibraries(output)).toEqual(['libnss3.so', 'libgbm.so.1'])
 +    })
 +
-     it('passes opacityProperty: true to checkVisibility by default', () => {
-       cy.get('h1').then(($el) => {
-         const spy = cy.spy($el[0], 'checkVisibility')
++    it('finds none in other output', () => {
++      expect(parseMissingLibraries('Missing X server or $DISPLAY')).toEqual([])
++      expect(parseMissingLibraries()).toEqual([])
++    })
++  })
++
++  describe('.errors.missingDependency', () => {
++    const textFor = (stderr: string) => formErrorText(errors.missingDependency, stderr)
++
++    it('names a known library and the package that provides it', async () => {
++      const text = await textFor('error while loading shared libraries: libgtk-3.so.0: cannot open shared object file')
++
++      expect(text).toContain('libgtk-3.so.0')
++      expect(text).toContain('apt-get install -y libgtk-3-0')
++    })
++
++    it.each([
++      ['libXtst.so.6', 'libxtst6'],
++      ['libatk-bridge-2.0.so.0', 'libatk-bridge2.0-0'],
++      ['libcups.so.2', 'libcups2'],
++      ['libnspr4.so', 'libnspr4'],
++    ])('knows the package for %s', async (library, apt) => {
++      const text = await textFor(`error while loading shared libraries: ${library}: cannot open shared object file`)
++
++      expect(text).toContain(`apt-get install -y ${apt}`)
++    })
++
++    it('prints an install line a shell can run for libasound', async () => {
++      const text = await textFor('error while loading shared libraries: libasound.so.2: cannot open shared object file')
++      const line = text.split('\n').find((l) => l.includes('apt-get install'))
++
++      expect(line).toContain('libasound2t64')
++      expect(line).not.toMatch(/[()]/)
++    })
++
++    it('points to apt-file for a library it has no package for', async () => {
++      const text = await textFor('error while loading shared libraries: libweird.so.9: cannot open shared object file')
++
++      expect(text).toContain('apt-file search libweird.so.9')
++      expect(text).not.toContain('apt-get install')
++    })
++
++    it('keeps the original output and the platform details', async () => {
++      const text = await textFor('error while loading shared libraries: libnss3.so: cannot open shared object file')
++
++      expect(text).toContain('cannot open shared object file')
++      expect(text).toContain('Platform:')
++    })
++
++    it('leaves out the error section when there was no output to show', async () => {
++      const text = await formErrorText(errors.missingDependency)
++
++      expect(text).toContain('This may be due to a missing library or dependency.')
++      expect(text).not.toContain('Please refer to the error below')
++    })
++
++    it('gives the general advice when the output names no library', async () => {
++      const text = await textFor('an error about dependencies')
++
++      expect(text).toContain('This may be due to a missing library or dependency.')
++      expect(text).toContain('an error about dependencies')
++    })
++  })
++
+   describe('.errors.formErrorText', function () {
+     it('returns fully formed text message', async () => {
+       const { missingXvfb } = errors
 ```
 
-**File**: `packages/driver/src/dom/elements/complexElements.ts` (modified, +23/-14)
+**File**: `cli/test/lib/exec/xvfb.spec.ts` (modified, +34/-0)
 ```diff
-@@ -9,7 +9,7 @@ import { findParent, getParent, isUndefinedOrHTMLBodyDoc } from './find'
- import { isInput, isTextarea, textLikeInputTypes } from './elementHelpers'
- import { getNativeProp } from './nativeProps'
- import { isWithinShadowRoot } from './shadow'
--import type { HTMLElementCanSetSelectionRange, HTMLTextLikeElement } from './types'
-+import type { HTMLElementCanSetSelectionRange } from './types'
- import { isSelector } from './utils'
- import Debug from 'debug'
+@@ -53,6 +53,40 @@ describe('lib/exec/xvfb', function () {
+       await expect(xvfb.start()).rejects.toThrow(message)
+     })
  
-@@ -64,7 +64,8 @@ export const isButtonLike = (el: HTMLElement) => {
-   ])
- }
- 
--export const isTextLike = function (el: HTMLElement): el is HTMLTextLikeElement {
-+export const isTextLike = function (elOrJquery: HTMLElement | JQuery<HTMLElement>): boolean {
-+  const el = $jquery.isJquery(elOrJquery) ? elOrJquery[0] : elOrJquery
-   const $el = $jquery.wrap(el)
-   const sel = (selector) => {
-     return isSelector($el, selector)
-@@ -93,7 +94,9 @@ export const isTextLike = function (el: HTMLElement): el is HTMLTextLikeElement
-  * Focusable checks and getters
-  */
- 
--export const isFocused = (el) => {
-+export const isFocused = (elOrJquery) => {
-+  const el = $jquery.isJquery(elOrJquery) ? elOrJquery[0] : elOrJquery
++    it('tells a missing Xvfb apart, with install commands', async () => {
++      const e: any = new Error('spawn Xvfb ENOENT')
 +
-   try {
-     let doc
- 
-@@ -118,7 +121,9 @@ export const isFocused = (el) => {
- /**
-  * The element can be activeElement, receive focus events, and also receive keyboard events
-  */
--export const isFocusable = ($el: JQuery<HTMLElement>) => {
-+export const isFocusable = (elOrJquery: HTMLElement | JQuery<HTMLElement>) => {
-+  const $el = $jquery.isJquery(elOrJquery) ? elOrJquery : $jquery.wrap(elOrJquery)
++      e.code = 'ENOENT'
 +
-   return (
-     _.some(focusableSelectors, (sel) => $el.is(sel)) ||
-      isDesignModeDocumentElement($el.get(0))
-@@ -243,7 +248,7 @@ const isScrollOrAuto = (prop) => {
-   return prop === 'scroll' || prop === 'auto'
- }
- 
--export const isScrollable = ($el) => {
-+export const isScrollable = (subject) => {
-   const checkDocumentElement = (win, documentElement) => {
-     // Check if body height is higher than window height
-     if (win.innerHeight < documentElement.scrollHeight) {
-@@ -263,16 +268,14 @@ export const isScrollable = ($el) => {
-     return false
-   }
- 
-+  const el = $jquery.isJquery(subject) ? subject[0] : subject
++      vi.spyOn(_xvfb.prototype, 'start').mockImplementation((cb) => {
++        cb(e)
++      })
 +
-   // if we're the window, we want to get the document's
-   // element and check its size against the actual window
--  if ($window.isWindow($el)) {
--    const win = $el
--
--    return checkDocumentElement(win, win.document.documentElement)
-+  if ($window.isWindow(el)) {
-+    return checkDocumentElement(el, el.document.documentElement)
-   }
- 
--  const el = $el[0]
--
-   // window.getComputedStyle(el) will error if el is undefined
-   if (!el) {
-     return false
-@@ -316,7 +319,9 @@ export const isScrollable = ($el) => {
- /**
-  * Getters where DOM state like focus, styling, and actionability affect the return value
-  */
--export const getFirstFixedOrStickyPositionParent = ($el): JQuery<any> | null => {
-+export const getFirstFixedOrStickyPositionParent = (elOrJquery): JQuery<any> | null => {
-+  const $el = $jquery.isJquery(elOrJquery) ? elOrJquery : $jquery.wrap(elOrJquery)
++      await expect(xvfb.start()).rejects.toThrow(expect.objectContaining({
++        message: expect.stringContaining('apt-get install -y xvfb'),
++        known: true,
++      }))
++    })
 +
-   if (isUndefinedOrHTMLBodyDoc($el)) {
-     return null
-   }
-@@ -338,7 +343,9 @@ export const getFirstFixedOrStickyPositionParent = ($el): JQuery<any> | null =>
-   })
- }
- 
--export const getFirstStickyPositionParent = ($el) => {
-+export const getFirstStickyPositionParent = (elOrJquery): JQuery<any> | null => {
-+  const $el = $jquery.isJquery(elOrJquery) ? elOrJquery : $jquery.wrap(elOrJquery)
++    it.each([
++      ['did not start in time', Object.assign(new Error('Could not start Xvfb.'), { timedOut: true })],
++      ['is already in use', new Error('Display :99 is already in use and there is a lock file /tmp/.X99-lock.')],
++      ['cannot be run', Object.assign(new Error('spawn Xvfb EACCES'), { code: 'EACCES' })],
++    ])('tells an Xvfb that %s apart from a missing one, keeping the original message', async (_name, e) => {
++      vi.spyOn(_xvfb.prototype, 'start').mockImplementation((cb) => {
++        cb(e)
++      })
 +
-   if (isUndefinedOrHTMLBodyDoc($el)) {
-     return null
-   }
-@@ -360,7 +367,9 @@ export const getFirstStickyPositionParent = ($el) => {
-   })
- }
- 
--export const getFirstScrollableParent = ($el) => {
-+export const getFirstScrollableParent = (elOrJquery): JQuery<any> | null => {
-+  const $el = $jquery.isJquery(elOrJquery) ? elOrJquery : $jquery.wrap(elOrJquery)
++      const failure = await xvfb.start().catch((err) => err)
 +
-   if (isUndefinedOrHTMLBodyDoc($el)) {
-     return null
-   }
++      expect(failure.message).toContain('Xvfb is installed but could not start.')
++      expect(failure.message).toContain('XVFB_DISPLAY_NUM')
++      expect(failure.message).toContain(`within ${xvfb._xvfbOptions.timeout / 1000} seconds`)
++      expect(failure.message).toContain(e.message)
++      expect(failure.message).not.toContain('missing the dependency')
++      expect(failure.known).toBe(true)
++    })
++
+     it('fails when xvfb exited with non zero exit code', async () => {
+       const e: any = new Error('something bad happened')
+ 
 ```
 
-**File**: `packages/driver/src/dom/elements/find.ts` (modified, +9/-6)
+**File**: `cli/test/lib/tasks/verify.spec.ts` (modified, +20/-0)
 ```diff
-@@ -185,23 +185,26 @@ export const isChild = ($el: JQuery<HTMLElement>, $maybeChild: JQuery<HTMLElemen
-   return children.index($maybeChild) >= 0
- }
+@@ -559,6 +559,26 @@ describe('lib/tasks/verify', () => {
+       expect(plain(output)).toContain('Opening Cypress...')
+     })
  
--export const isDescendent = ($el1: JQuery<HTMLElement>, $el2?: JQuery<HTMLElement>) => {
--  if (!$el2) {
-+export const isDescendent = (elOrJquery1: HTMLElement | JQuery<HTMLElement>, elOrJquery2?: HTMLElement | JQuery<HTMLElement>) => {
-+  if (!elOrJquery2) {
-     return false
-   }
- 
-+  const el1 = $jquery.isJquery(elOrJquery1) ? elOrJquery1.get(0) : elOrJquery1
-+  const el2 = $jquery.isJquery(elOrJquery2) ? elOrJquery2.get(0) : elOrJquery2
++    it('names the system libraries the app could not load, with the packages that provide them', async () => {
++      const output = createStdoutCapture()
++      const stderr = [
++        'error while loading shared libraries: libnss3.so: cannot open shared object file: No such file or directory',
++        'error while loading shared libraries: libweird.so.9: cannot open shared object file: No such file or directory',
++      ].join('\n')
 +
-   // if they are equal, consider them a descendent
--  if ($el1.get(0) === $el2.get(0)) {
-+  if (el1 === el2) {
-     return true
-   }
- 
-   // walk up the tree until we find a parent which
-   // equals the descendent, if ever
--  return findParent($el2.get(0), (node) => {
--    if (node === $el1.get(0)) {
-+  return findParent(el2, (node) => {
-+    if (node === el1) {
-       return node
-     }
--  }) === $el1.get(0)
-+  }) === el1
- }
- 
- // mostly useful when traversing up parent nodes and wanting to
-```
-
-**File**: `packages/driver/src/dom/elements/utils.ts` (modified, +3/-1)
-```diff
-@@ -24,7 +24,9 @@ export const isSame = function ($el1, $el2) {
-   return el1 && el2 && _.isEqual(el1, el2)
- }
- 
--export const isSelector = ($el: JQuery<HTMLElement>, selector) => {
-+export const isSelector = (elOrJquery: HTMLElement | JQuery<HTMLElement>, selector) => {
-+  const $el = $jquery.isJquery(elOrJquery) ? elOrJquery : $jquery.wrap(elOrJquery)
++      vi.mocked(util.exec).mockRejectedValue({ code: 127, stderr })
 +
-   return $el.is(selector)
- }
++      await start({ force: true }).catch((err) => logger.error(err))
++
++      const out = plain(output)
++
++      expect(out).toContain('Cypress failed to start')
++      expect(out).toContain('apt-get install -y libnss3')
++      expect(out).toContain('apt-file search libweird.so.9')
++      // the original output is still shown
++      expect(out).toContain('cannot open shared object file')
++    })
++
+     it('clears verified version from state if verification fails', async () => {
+       const output = createStdoutCapture()
  
 ```
 
 ---
 
-### Incident Patch 3: `72b7d270` (2026-10-25)
-**Commit Message**: fix: reject invalid falsy request encodings (#35122)
+### Incident Patch 3: `0cfde0ec` (2026-10-30)
+**Commit Message**: fix: recover from a missing X server when launching Cypress on Linux (#35114)
 
-* fix: reject invalid falsy request encodings
+* fix: recover from a missing X server when launching Cypress on Linux
 
-* Update cli/CHANGELOG.md
+When DISPLAY is set but nothing listens on it, newer Electron prints
+"Missing X server or $DISPLAY". The CLI only recognized the older Gtk
+message, so it did not start its own Xvfb and retry, and the smoke test
+reported a generic failure. Both messages are now recognized.
+
+Jira: AW-180
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* chore: add the changelog entry for #35114
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* Update CHANGELOG.md
 
 ---------
 
-Co-authored-by: Jennifer Shehane <[REDACTED_EMAIL]>
-Co-authored-by: Jennifer Shehane <[REDACTED_EMAIL]>
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 **File**: `cli/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -7,6 +7,7 @@
+@@ -19,6 +19,7 @@
+ - Fixed an issue where `cypress open` did not open the app window when the `ELECTRON_RUN_AS_NODE` environment variable was set, as in some AI agent environments. `cypress open` now ignores the variable and prints a warning, while `cypress run` still honors it. Fixed in [#35111](https://github.com/cypress-io/cypress/pull/35111).
+ - Fixed an issue where the Cypress app started with `cypress open --detached` could stop working or exit shortly after the command returned, particularly on Linux where Cypress starts its own virtual display. The app's output is now written to files in the system temp directory, and the command prints where those files are. Because the virtual display now keeps running with the app, `cypress open --detached` no longer uses the display set by `XVFB_DISPLAY_NUM`, and prints a warning when it is set. Fixed in [#35112](https://github.com/cypress-io/cypress/pull/35112).
+ - Fixed an issue where installing the Cypress binary could hang or fail outright when the connection was reset or the download server returned a temporary error. The download is now retried up to 3 times with an increasing delay before the install fails. Fixed in [#35115](https://github.com/cypress-io/cypress/pull/35115).
++- Fixed an issue where `cypress open` and `cypress run` on Linux failed to start with a "Missing X server or $DISPLAY" error when `DISPLAY` pointed to an X server that was not running. Cypress now starts its own Xvfb and retries. Fixed in [#35114](https://github.com/cypress-io/cypress/pull/35114).
  
- **Bugfixes:**
+ **Dependency Updates:**
  
-+- [`cy.request()`](https://on.cypress.io/request) now fails with an invalid encoding error when passed `encoding: false`, `0`, or an empty string, instead of crashing Cypress with `TypeError [ERR_UNKNOWN_ENCODING]: Unknown encoding: false`. Fixes [#24192](https://github.com/cypress-io/cypress/issues/24192).
- - Fixed a regression in [16.0.0](#16-0-0) where, in Chrome, Chromium, and Edge, a spec hung forever at its first [`cy.visit()`](https://on.cypress.io/visit) to another origin when its bundled file was larger than about 75 MB, which a spec can reach by importing tens of megabytes of generated code. [`pageLoadTimeout`](https://on.cypress.io/configuration#Timeouts) never fired, so `cypress run` had to be killed. Setting [`forceHttp1`](https://on.cypress.io/configuration) to `true` is no longer needed to avoid it. Fixes [#34794](https://github.com/cypress-io/cypress/issues/34794).
- - Fixed an issue where `cypress open` with both a `--browser` and a testing type flag launched the browser twice the first time Cypress showed its major-version welcome screen — on first open after upgrading, or after clearing app data. Fixes [#34868](https://github.com/cypress-io/cypress/issues/34868).
- - Fixed an issue where [`.scrollTo()`](https://on.cypress.io/scrollto) and [`.scrollIntoView()`](https://on.cypress.io/scrollintoview) stopped short of the end of a scrollable element with always-visible scrollbars. Positions such as `bottom`, `right`, `bottomRight`, and `'100%'` landed short by the width of the scrollbar, and `center` or `'50%'` landed off-center by half of it. Fixed in [#34948](https://github.com/cypress-io/cypress/pull/34948).
 ```
 
-**File**: `packages/driver/cypress/e2e/commands/request.cy.ts` (modified, +17/-0)
+**File**: `cli/lib/util.ts` (modified, +3/-1)
 ```diff
-@@ -1163,6 +1163,23 @@ describe('src/cy/commands/request', () => {
-         })
+@@ -44,7 +44,9 @@ const getFileSize = async (filename: string): Promise<any> => {
+   return size
+ }
+ 
+-const isBrokenGtkDisplayRe = /Gtk: cannot open display/
++// When DISPLAY is set but nothing is listening on it, Electron prints either the Gtk
++// message or the X server one, depending on its version.
++const isBrokenGtkDisplayRe = /Gtk: cannot open display|Missing X server or \$DISPLAY/
+ 
+ const stringify = (val: any): string => {
+   return _.isObject(val) ? JSON.stringify(val) : val
+```
+
+**File**: `cli/test/lib/exec/spawn.spec.ts` (modified, +30/-0)
+```diff
+@@ -587,6 +587,36 @@ describe('lib/exec/spawn', function () {
+         // second code should be 0 after successfully running with Xvfb
+         expect(code).toEqual(0)
        })
- 
-+      // https://github.com/cypress-io/cypress/issues/24192
-+      for (const encoding of [false, 0, '']) {
-+        it(`rejects invalid falsy encoding ${JSON.stringify(encoding)}`, function (done) {
-+          cy.on('fail', (err) => {
-+            expect(err.message).to.include('`cy.request()` was called with invalid encoding:')
-+            expect(err.docsUrl).to.eq('https://on.cypress.io/request')
-+            done()
-+          })
 +
-+          // @ts-expect-error - intentionally passing an invalid encoding
-+          cy.request({
-+            url: 'http://localhost:1234/foo',
-+            encoding,
-+          })
++      it('retries with xvfb if electron reports a missing X server', async () => {
++        // mock display missing
++        spawnedProcess.stderr.on.mockImplementation((event, callback) => {
++          if (event === 'data') {
++            callback('[some noise here] Missing X server or $DISPLAY')
++          }
 +        })
-+      }
 +
-       it('throws when encoding is not valid', function (done) {
-         cy.on('fail', (err) => {
-           const { lastLog } = this
++        vi.mocked(os.platform).mockReturnValue('linux')
++
++        const startPromise = start('--foo')
++
++        await vi.waitFor(() => expect(spawnedProcess.on).toHaveBeenCalledWith('close', expect.any(Function)))
++        // mock display error due to missing display
++        spawnedProcess.emit('close', 1)
++
++        // mock the process actually starting up after xfvb is started
++        await flushPromises()
++
++        spawnedProcess.emit('close', 0)
++
++        const code = await startPromise
++
++        expect(xvfb.start).toHaveBeenCalledOnce()
++        expect(xvfb.stop).toHaveBeenCalledOnce()
++        expect(cp.spawn).toHaveBeenCalledTimes(2)
++        // second code should be 0 after successfully running with Xvfb
++        expect(code).toEqual(0)
++      })
+     })
+ 
+     it('rejects with error from spawn', async () => {
 ```
 
-**File**: `packages/driver/src/cy/commands/request.ts` (modified, +1/-1)
+**File**: `cli/test/lib/tasks/verify.spec.ts` (modified, +39/-0)
 ```diff
-@@ -201,7 +201,7 @@ export default (Commands, Cypress, cy, state, config) => {
-         })
-       }
+@@ -676,6 +676,45 @@ describe('lib/tasks/verify', () => {
+       ))
+     })
  
--      if (options.encoding) {
-+      if (options.encoding !== null) {
-         if (!_.isString(options.encoding) || !Buffer.isEncoding(options.encoding)) {
-           $errUtils.throwErrByPath('request.encoding_invalid', {
-             args: {
++    it('retries with our Xvfb on Linux when the X server is missing', async () => {
++      // initially we think the user has everything set
++      vi.mocked(xvfb.isNeeded).mockReturnValue(false)
++      vi.mocked(util.isPossibleLinuxWithIncorrectDisplay).mockReturnValue(true)
++      // @ts-expect-error - mock args
++      vi.mocked(util.exec).mockImplementationOnce((...args: any) => {
++        const firstSpawnError: any = new Error('')
++
++        // this message contains Electron error shown if X11 is incorrect
++        // like in the case of DISPLAY=987
++        firstSpawnError.stderr = stripIndent`
++            [some noise here] Missing X server or $DISPLAY
++              and maybe a few other lines here with weird indent
++          `
++
++        firstSpawnError.stdout = ''
++
++        // the second time the binary returns expected ping
++        // @ts-expect-error - mock args
++        vi.mocked(util.exec).mockImplementationOnce((...args: any) => {
++          if (args[0] === executablePath) {
++            return Promise.resolve({
++              stdout: '222',
++            })
++          }
++        })
++
++        return Promise.reject(firstSpawnError)
++      })
++
++      await start()
++
++      expect(util.exec).toHaveBeenCalledTimes(2)
++      // user should have been warned
++      expect(loggerWarnSpy).toHaveBeenCalledWith(expect.stringContaining(
++        'This is likely due to a misconfigured DISPLAY environment variable.',
++      ))
++    })
++
+     it('fails on both retries with our Xvfb on Linux', async () => {
+       // initially we think the user has everything set
+       vi.mocked(xvfb.isNeeded).mockReturnValue(false)
+```
+
+**File**: `cli/test/lib/util.spec.ts` (modified, +8/-0)
+```diff
+@@ -21,6 +21,14 @@ describe('util', () => {
+     })
+   })
+ 
++  describe('.isBrokenGtkDisplay with a missing X server', () => {
++    it('detects the Electron missing X server message', () => {
++      const text = '[1234:0101/000000.000000:ERROR:ozone_platform_x11.cc(245)] Missing X server or $DISPLAY'
++
++      expect(util.isBrokenGtkDisplay(text)).toEqual(true)
++    })
++  })
++
+   describe('.getGitHubIssueUrl', () => {
+     it('returns url for issue number', () => {
+       const url = util.getGitHubIssueUrl(4034)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #35178** (2026-10-27): chore: migrate @packages/telemetry to the shared ESLint flat config (@jennifer-shehane)
-- **PR #35177** (2026-10-27): chore: fix @ts- comments in driver test code for ban-ts-comment (@jennifer-shehane)
-- **PR #35176** (2026-10-27): chore: give driver src @ts-expect-error directives a reason (@jennifer-shehane)
-- **PR #35175** (2026-10-27): chore(packages/runner): migrate to @packages/eslint-config (@jennifer-shehane)
-- **PR #35174** (2026-10-27): chore: migrate @packages/example to the shared ESLint flat config (@jennifer-shehane)
-- **PR #35173** (2026-10-27): chore: migrate net-stubbing, network, network-tools and socket to @packages/eslint-config (@jennifer-shehane)
+- **PR #35200** (2026-10-29): dependency: upgrade systeminformation to 5.33.18 (@jennifer-shehane)
+- **PR #35199** (closed): chore: route pull/N/head pipelines to the contributor workflow (@cacieprins)
+- **PR #35197** (2026-10-30): docs: Clarify security update policy (@baus)
+- **PR #35194** (2026-10-29): chore: update host for the Launchpad GraphQL server (@mschile)
+- **PR #35193** (2026-10-29): chore: check Origin and Host on Cypress server sockets and GraphQL endpoints (@mschile)
+- **PR #35192** (2026-10-29): chore: stop re-passing percy-enabled to the continued pipeline (@jennifer-shehane)
 
 ---
 
@@ -1925,21 +1608,32 @@ Co-authored-by: Jennifer Shehane <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix @ts- comments in driver test code for ban-ts-comment (#35177)
+## X. docs: Clarify security update policy (#35197)
 
 **RULE**:
-When implementing operations in `CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cypress-io/cypress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cypress-io/cypress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0a5e2aa2`: fix @ts- comments in driver test code for ban-ts-comment (#35177). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e678cc7c`: docs: Clarify security update policy (#35197). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CLAUDE.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- After committing a merge of `develop`, run `git diff --name-only origin/develop` and check that every file listed is in the PR's scope. The pre-commit hook runs `eslint --fix` on every staged file, merged-in ones included, and `package-json/order-properties` reorders keys in `package.json` files that `develop` committed unsorted. Restore any such file with `git checkout origin/develop -- <file>` and commit with `--no-verify`.
+
+## Security Updates
+
+Patches for security vulnerabilities primarily focus on the latest major version.
+
+High and Critical CVSS security fixes in code authored and maintained by Cypress are backported to the previous major version for up to 12 months after the current major version is released. The decision to backport is made based on severity assessment and the feasibility of implementing the patch in those versions.
+
+Updates for vulnerabilities in third-party dependencies, such as Electron, Chromium, Node.js, or npm packages, are not backported.
+
+* Latest major version: All security vulnerabilities in Cypress authored and maintained code
+* Previous major version: High or Critical CVSS scores in Cypress authored and maintained code (Up to 12 months after the current major’s release, subject to feasibility)
+* Older versions: Not supported (Users should upgrade to a supported version)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1949,4 +1643,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0a5e2aa2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e678cc7c` are properly handled with clean fallback behavior.

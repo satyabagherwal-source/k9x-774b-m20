@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T20:05:20.912Z",
+  "last_updated": "2026-10-30T20:15:14.179Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -55241,8 +55241,8 @@
       "slug": "typewhisper-typewhisper-mac",
       "platform": "github",
       "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
-      "source_version": "c550994e",
-      "content_hash": "1a26414fc610c9e8c836424974a1d09d081eb56910374dc16640d71987f76f0b",
+      "source_version": "4620bb59",
+      "content_hash": "7ee3947e46f2dfe6c6bd211cf629b749482ecff29e295bd2d8aecf96ee38405d",
       "dossier_path": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typewhisper-typewhisper-mac-learnings.md",
       "promoted_rules": [
@@ -55260,6 +55260,11 @@
           "number": 4695,
           "title": "the nightly CodeQL Swift build on Xcode 26.6 (#1720)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5859,
+          "title": "Parakeet 1.6.1: fix per-request model switches and pad Nemotron batch transcript",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -55267,7 +55272,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T10:57:56.629Z",
+      "verified_at": "2026-10-30T20:15:14.162Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58410,8 +58415,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "e5bdd01c",
-      "content_hash": "7568108dc1b0ff55f538f5280ef423c2fcfb5a26b251ade2387ea9ed35fb3bd0",
+      "source_version": "14b7b0ef",
+      "content_hash": "eb6f6465005a8f5895ada6e1edfe2e371a9461746f011d97c3a7a64d21647ff6",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -58464,6 +58469,11 @@
           "number": 5415,
           "title": "agent_ui: Fix crash when expanding an ACP subagent card (#66251)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5858,
+          "title": "gpui_macos: Fix animations running at 30 fps on M5 Macs (#65472)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58471,7 +58481,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T21:50:15.266Z",
+      "verified_at": "2026-10-30T20:15:09.711Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72739,8 +72749,8 @@
       "slug": "cypress-io-cypress",
       "platform": "github",
       "source_url": "https://github.com/cypress-io/cypress",
-      "source_version": "75df26c3",
-      "content_hash": "0d32cc134e726f9923ddefa1078e62bdb3aec75bb109cbfc2d9618c1122bc806",
+      "source_version": "1ecfa9e5",
+      "content_hash": "268be6833be9f81c319613a81801e809f2934be4183942e51d99f91ec3d940f3",
       "dossier_path": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
       "promoted_rules": [
@@ -72780,7 +72790,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:59:41.368Z",
+      "verified_at": "2026-10-30T20:15:11.542Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155357,6 +155367,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T20:05:20.889Z"
+    },
+    "rule-5858": {
+      "learning_id": "rule-5858",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5858,
+      "title": "gpui_macos: Fix animations running at 30 fps on M5 Macs (#65472)",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "14b7b0ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:15:09.711Z"
+    },
+    "rule-5859": {
+      "learning_id": "rule-5859",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5859,
+      "title": "Parakeet 1.6.1: fix per-request model switches and pad Nemotron batch transcript",
+      "source_url": "https://github.com/TypeWhisper/typewhisper-mac",
+      "source_version": "4620bb59",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:15:14.162Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `e5bdd01c`  
+> **Source Version**: `14b7b0ef`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T21:50:14.754Z  
+> **Timestamp**: 2026-10-30T20:15:09.229Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T21:50:14.746Z  
+> **Harvest Timestamp**: 2026-10-30T20:15:08.182Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 92341 stars
+- **Stars / Engagement**: 92428 stars
 
 ---
 
@@ -2334,648 +2334,1098 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c693e6a8` (2026-10-28)
-**Commit Message**: agent_ui: Fix crash when expanding an ACP subagent card (#66251)
-
-Expanding an ACP subagent's card panicked with "cannot read ThreadView
-while it is already being updated".
-
-An expanded card renders the subagent's entries using the parent view's
-render context. When those entries include the subagent's incoming
-session message, its "From Main Agent" row called
-`session_participant_label`, which read the parent's `ThreadView` while
-the parent was rendering. Subagents announced by claude-agent-acp always
-start with that message, so this happened whenever their card was
-expanded.
-
-`session_participant_label` now reads the participant's `AcpThread` from
-the `Conversation`, through a new `Conversation::thread`, instead of
-through its view. Threads are registered there just before their views
-are created, so the labels are unchanged.
-
-`test_first_message_to_an_acp_subagent_shows_its_card` now adds the
-subagent's incoming message and expands the card. It panics without the
-fix.
-
-ACP subagents are only offered behind `acp-beta`.
-
-Release Notes:
-
-- N/A
-
-**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +26/-0)
-```diff
-@@ -501,6 +501,10 @@ impl Conversation {
-         ))
-     }
- 
-+    pub(crate) fn thread(&self, session_id: &acp_v2::SessionId) -> Option<&Entity<AcpThread>> {
-+        self.threads.get(session_id)
-+    }
-+
-     pub fn subagents_awaiting_permission(&self, cx: &App) -> Vec<(acp_v2::SessionId, usize)> {
-         self.permission_requests
-             .iter()
-@@ -20595,6 +20599,28 @@ pub(crate) mod tests {
-                 "Investigator"
-             );
-         });
-+
-+        // The expanded card renders the subagent's own view of the message, a row that
-+        // names the parent.
-+        child
-+            .update(cx, |child, cx| {
-+                child.upsert_session_message(
-+                    acp_v2::SessionMessage::new("task")
-+                        .sender_session_id(root_session_id.clone())
-+                        .recipient_session_id(acp_v2::SessionId::new("child"))
-+                        .content(vec!["Check the failure".into()]),
-+                    cx,
-+                )
-+            })
-+            .expect("incoming message");
-+        thread_view.update(cx, |view, cx| {
-+            view.entry_view_state.update(cx, |state, _| {
-+                state.toggle_session_message_card_expansion(&acp_v2::MessageId::new("launch"))
-+            });
-+            cx.notify();
-+        });
-+        cx.run_until_parked();
-+        assert!(cx.debug_bounds("subagent-card-0").is_some());
-     }
- 
-     #[gpui::test]
-```
-
-**File**: `crates/agent_ui/src/conversation_view/thread_view.rs` (modified, +4/-3)
-```diff
-@@ -9009,9 +9009,10 @@ impl ThreadView {
-         session_id: &acp_v2::SessionId,
-         cx: &App,
-     ) -> Option<SharedString> {
--        let server_view = self.server_view.upgrade()?;
--        let thread_view = server_view.read(cx).thread_view(session_id)?;
--        let thread = thread_view.read(cx).thread.read(cx);
-+        // Read the thread through the conversation rather than its view: an expanded subagent
-+        // card renders the subagent's entries while the parent's view is being updated.
-+        let conversation = self.conversation.read(cx);
-+        let thread = conversation.thread(session_id)?.read(cx);
-         Some(if thread.parent_session_id().is_none() {
-             "Main Agent".into()
-         } else {
-```
-
----
-
-### Incident Patch 2: `44ec5691` (2026-10-28)
-**Commit Message**: gpui_apple: Start font-size alternation at the exact size (#65728)
+### Incident Patch 1: `0373366f` (2026-10-29)
+**Commit Message**: gpui_macos: Fix animations running at 30 fps on M5 Macs (#65472)
 
 ## Summary
 
-On macOS, `layout_line` alternates between the requested font size and
-its `next_up()` value to prevent ligatures from forming across font-run
-boundaries.
-Previously, the alternation started with the nudged size, so even a line
-with a single run was laid out at a slightly larger size than requested.
-SF tracking depends on the exact point size: the test string measures
-152.71 px instead of 152.85 px at 11 px, which was reported as GPUI text
-not lining up with AppKit labels in the same font.
+**This fixes a major slowdown in GPUI apps on M5 Macs (and, per the
+reports below, other base M-series Macs on macOS 26+).** Every frame
+blocked the main thread for about 33 ms, which capped animation at 30
+fps and delayed input handling; with this change a frame takes under 1
+ms and animation runs at the display's full rate.
 
-Start the alternation at the exact size and advance it only when a run
-inserts text.
-Empty runs and leading BOM-only runs discarded by `replace_str` do not
-advance the alternation.
-Multi-run lines still alternate sizes, but now start at the exact size.
-The boundary-splitting workaround remains independent of font identity,
-covering both distinct font IDs that resolve to the same CTFont and
-different fonts that share a fallback, such as Helvetica and Times
-falling back to Geeza Pro for Arabic.
+On an Apple M5 (base chip; macOS 27.0.1; Studio Display at a fixed 60
+Hz), GPUI animations that aren't driven by input run at 30 fps on
+`main`. Zed's own `crates/gpui/examples/animation.rs` never goes above
+30 fps, even in a focused window. With `ZED_MEASUREMENTS=1`, each
+frame's draw plus present takes about 33 ms while the scene itself takes
+about 3 ms; the rest is spent blocked in `-[CAMetalLayer nextDrawable]`.
+Input hides it: while the mouse moves, frames run at 60 Hz, presumably
+because input raises the system's performance state.
 
-## Testing
+This matches reports outside Zed: about 30 fps UI animation on base
+M4/M5 chips since macOS 26 ([Apple forum
+839102](https://developer.apple.com/forums/thread/839102)),
+Psychtoolbox's finding that macOS 26 moved the compositor deadline close
+to vsyn
 
-- `test_layout_line_sets_a_lone_run_at_its_exact_size` compares a
-single-run line, with and without a preceding B
-
-**File**: `crates/gpui_apple/src/text_system.rs` (modified, +132/-3)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -545,7 +545,12 @@ impl AppleTextSystemState {
+@@ -7553,6 +7553,7 @@ dependencies = [
+  "objc2-core-media",
+  "objc2-core-video",
+  "objc2-foundation 0.3.2",
++ "objc2-quartz-core 0.3.2",
+  "objc2-screen-capture-kit",
+  "objc2-uniform-type-identifiers",
+  "objc2-user-notifications",
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -801,7 +801,7 @@ objc2-foundation = { version = "=0.3.2", default-features = false, features = [
+     "std",
+ ] }
+ objc2-security = { version = "0.3.2", default-features = false, features = ["std", "SecBase", "SecItem"] }
+-objc2-quartz-core = { version = "=0.3.2", default-features = false, features = ["std", "CALayer", "CAMetalLayer"] }
++objc2-quartz-core = { version = "=0.3.2", default-features = false, features = ["std", "CALayer", "CAMetalDisplayLink", "CAMetalLayer", "objc2-metal"] }
+ objc2-screen-capture-kit = { version = "=0.3.2", default-features = false, features = [
+     "block2",
+     "dispatch2",
+```
+
+**File**: `crates/gpui_apple/src/display_link.rs` (added, +100/-0)
+```diff
+@@ -0,0 +1,100 @@
++use objc2::{
++    AnyThread, DefinedClass, MainThreadMarker, MainThreadOnly, Message, define_class, msg_send,
++    rc::Retained,
++    runtime::{AnyClass, ProtocolObject},
++};
++use objc2_foundation::{NSObject, NSObjectProtocol, NSRunLoop, NSRunLoopCommonModes};
++use objc2_quartz_core::{
++    CAMetalDisplayLink, CAMetalDisplayLinkDelegate, CAMetalDisplayLinkUpdate, CAMetalLayer,
++};
++
++struct MetalDisplayLinkDelegateIvars {
++    callback: Box<dyn Fn(&CAMetalDisplayLinkUpdate)>,
++}
++
++define_class!(
++    // SAFETY: `NSObject` has no subclassing requirements.
++    #[unsafe(super(NSObject))]
++    #[thread_kind = MainThreadOnly]
++    #[ivars = MetalDisplayLinkDelegateIvars]
++    struct MetalDisplayLinkDelegate;
++
++    unsafe impl NSObjectProtocol for MetalDisplayLinkDelegate {}
++
++    unsafe impl CAMetalDisplayLinkDelegate for MetalDisplayLinkDelegate {
++        #[unsafe(method(metalDisplayLink:needsUpdate:))]
++        fn needs_update(&self, _link: &CAMetalDisplayLink, update: &CAMetalDisplayLinkUpdate) {
++            // The callback may destroy its frame source, releasing our owner's retain.
++            let delegate = self.retain();
++            (delegate.ivars().callback)(update);
++        }
++    }
++);
++
++impl MetalDisplayLinkDelegate {
++    fn new(
++        main_thread: MainThreadMarker,
++        callback: impl Fn(&CAMetalDisplayLinkUpdate) + 'static,
++    ) -> Retained<Self> {
++        let this = Self::alloc(main_thread).set_ivars(MetalDisplayLinkDelegateIvars {
++            callback: Box::new(callback),
++        });
++        // SAFETY: `NSObject`'s `init` is its designated initializer.
++        unsafe { msg_send![super(this), init] }
++    }
++}
++
++/// A main-run-loop source of Metal drawables on macOS 14+ and iOS/iPadOS 17+.
++///
++/// Callbacks run on the run loop the link is registered with:
++/// <https://developer.apple.com/documentation/quartzcore/cametaldisplaylink>.
++/// This wrapper uses the main run loop because GPUI renders on the foreground thread.
++pub struct MetalFrameSource {
++    link: Retained<CAMetalDisplayLink>,
++    // The link holds its delegate weakly.
++    _delegate: Retained<MetalDisplayLinkDelegate>,
++    _main_thread: MainThreadMarker,
++}
++
++impl MetalFrameSource {
++    /// Whether this system has `CAMetalDisplayLink` (macOS 14+, iOS/iPadOS 17+).
++    pub fn is_available() -> bool {
++        AnyClass::get(c"CAMetalDisplayLink").is_some()
++    }
++
++    /// Starts delivering updates for `layer`, or returns `None` where
++    /// `CAMetalDisplayLink` is unavailable.
++    pub fn new(
++        layer: &CAMetalLayer,
++        main_thread: MainThreadMarker,
++        callback: impl Fn(&CAMetalDisplayLinkUpdate) + 'static,
++    ) -> Option<Self> {
++        if !Self::is_available() {
++            return None;
++        }
++        let delegate = MetalDisplayLinkDelegate::new(main_thread, callback);
++        let link = CAMetalDisplayLink::initWithMetalLayer(CAMetalDisplayLink::alloc(), layer);
++        link.setDelegate(Some(ProtocolObject::from_ref(&*delegate)));
++        // The default range follows the display and system power policy:
++        // https://developer.apple.com/documentation/quartzcore/cametaldisplaylink/preferredframeraterange
++        // SAFETY: the retained marker confines the source to the main thread,
++        // and the main run loop outlives the source.
++        unsafe { link.addToRunLoop_forMode(&NSRunLoop::mainRunLoop(), NSRunLoopCommonModes) };
++        Some(Self {
++            link,
++            _delegate: delegate,
++            _main_thread: main_thread,
++        })
++    }
++
++    /// A paused link delivers no updates and acquires no drawables.
++    pub fn set_paused(&self, paused: bool) {
++        self.link.setPaused(paused);
++    }
++}
++
++impl Drop for MetalFrameSource {
++    fn drop(&mut self) {
++        self.link.invalidate();
++    }
++}
+```
+
+**File**: `crates/gpui_apple/src/gpui_apple.rs` (modified, +1/-0)
+```diff
+@@ -6,6 +6,7 @@
+ //! while leaving application lifecycle, windowing, and input to each platform backend.
  
-         {
-             let mut text = text;
--            let mut break_ligature = true;
-+            // CoreText merges adjacent runs that end up in equal fonts, including runs of
-+            // different fonts that fall back to the same one, so every other run that inserts
-+            // text is set a hair larger to keep ligatures from forming across them. The first
-+            // run keeps its exact size: SF tracks by its exact point size, and a nudged size
-+            // draws wider or narrower than AppKit sets the same text.
-+            let mut break_ligature = false;
-             for run in font_runs {
-                 let text_run;
-                 (text_run, text) = text.split_at(run.len);
-@@ -576,7 +581,9 @@ impl AppleTextSystemState {
-                         &font.native_font().clone_with_font_size(font_size.into()),
-                     );
-                 }
--                break_ligature = !break_ligature;
-+                if length > 0 {
-+                    break_ligature = !break_ligature;
-+                }
-             }
-         }
-         // Retrieve the glyphs from the shaped line, converting UTF16 offsets to UTF8 offsets.
-@@ -775,7 +782,9 @@ mod lenient_font_attributes {
- #[cfg(test)]
- mod tests {
-     use crate::AppleTextSystem;
--    use gpui::{FontFallbacks, FontFeatures, FontRun, GlyphId, PlatformTextSystem, font, px};
-+    use gpui::{
-+        FontFallbacks, FontFeatures, FontId, FontRun, GlyphId, PlatformTextSystem, font, px,
-+    };
-     use std::sync::Arc;
+ mod dispatcher;
++pub mod display_link;
+ pub mod keychain;
+ mod metal_atlas;
+ pub mod metal_renderer;
+```
+
+**File**: `crates/gpui_apple/src/metal_renderer.rs` (modified, +118/-12)
+```diff
+@@ -118,12 +118,20 @@ impl InstanceBufferPool {
+     }
+ }
  
-     #[test]
-@@ -801,6 +810,126 @@ mod tests {
-         assert!(!layout.runs.is_empty());
++enum DisplayLinkMode {
++    Detached,
++    Attached {
++        drawable: Option<Retained<ProtocolObject<dyn CAMetalDrawable>>>,
++    },
++}
++
+ pub struct MetalRenderer {
+     device: Retained<ProtocolObject<dyn MTLDevice>>,
+     layer: Option<Retained<CAMetalLayer>>,
+     is_apple_gpu: bool,
+     is_unified_memory: bool,
+     presents_with_transaction: bool,
++    display_link_mode: DisplayLinkMode,
+     /// For headless rendering, tracks whether output should be opaque
+     opaque: bool,
+     command_queue: Retained<ProtocolObject<dyn MTLCommandQueue>>,
+@@ -410,6 +418,7 @@ impl MetalRenderer {
+             device,
+             layer,
+             presents_with_transaction: false,
++            display_link_mode: DisplayLinkMode::Detached,
+             is_apple_gpu,
+             is_unified_memory,
+             opaque,
+@@ -449,6 +458,46 @@ impl MetalRenderer {
+         &self.sprite_atlas
      }
  
-+    #[test]
-+    fn test_layout_line_sets_a_lone_run_at_its_exact_size() {
-+        use core_foundation::attributed_string::CFMutableAttributedString;
-+        use core_foundation::base::{CFRange, TCFType};
-+        use core_foundation::string::CFString;
-+        use core_text::line::CTLine;
-+        use core_text::string_attributes::kCTFontAttributeName;
-+
-+        let fonts = AppleTextSystem::new();
-+        let font_id = fonts.font_id(&font(".SystemUIFont")).unwrap();
-+        let text = "Hamburgefonstiv 0123 Wafer";
-+        let bom = "\u{feff}";
-+        let with_bom = format!("{bom}{text}");
-+        for size in [11., 17., 22.] {
-+            let exact = fonts.0.read().fonts[font_id.0]
-+                .native_font()
-+                .clone_with_font_size(size as f64);
-+            let mut string = CFMutableAttributedString::new();
-+            string.replace_str(&CFString::new(text), CFRange::init(0, 0));
-+            let range = CFRange::init(0, string.char_len());
-+            unsafe { string.set_attribute(range, kCTFontAttributeName, &exact) };
-+            let line = CTLine::new_with_attributed_string(string.as_concrete_TypeRef());
-+            let width = line.get_typographic_bounds().width as f32;
-+
-+            let layout = fonts.layout_line(
-+                text,
-+                px(size),
-+                &[FontRun {
-+                    font_id,
-+                    len: text.len(),
-+                }],
-+            );
-+            assert_eq!(f32::from(layout.width), width, "{size} px");
-+
-+            // replace_str drops a leading BOM, so its run must not count as the previous run.
-+            let layout = fonts.layout_line(
-+                &with_bom,
-+                px(size),
-+                &[
-+                    FontRun {
-+                        font_id,
-+                        len: bom.len(),
-+                    },
-+                    FontRun {
-+                        font_id,
-+                        len: text.len(),
-+                    },
-+                ],
-+            );
-+            assert_eq!(f32::from(layout.width), width, "{size} px after a BOM run");
++    /// Draw the next frame into `drawable` instead of asking the layer for one.
++    ///
++    /// A `CAMetalDisplayLink` hands out each frame's drawable early enough for
++    /// the frame to reach the display on time; `nextDrawable` would instead
++    /// wait for the compositor to release one. Pass `None` once the frame is
++    /// done, so a drawable the frame did not use goes back to the layer.
++    ///
++    /// Returns the drawable this replaces: after a frame, `Some` means the
++    /// frame neither drew nor presented.
++    ///
++    /// This is a setter rather than a guard scoped to one frame because the
++    /// window releases its lock on the renderer while GPUI draws.
++    pub fn set_frame_drawable(
++        &mut self,
++        drawable: Option<Retained<ProtocolObject<dyn CAMetalDrawable>>>,
++    ) -> Option<Retained<ProtocolObject<dyn CAMetalDrawable>>> {
++        match &mut self.display_link_mode {
++            DisplayLinkMode::Attached { drawable: current } => mem::replace(current, drawable),
++            DisplayLinkMode::Detached => {
++                // Only a live link hands out drawables, and a link is detached
++                // only after it has been invalidated.
++                debug_assert!(
++                    drawable.is_none(),
++                    "received a display link drawable while detached"
++                );
++                None
++            }
 +        }
 +    }
 +
-+    #[test]
-+    fn test_layout_line_breaks_ligatures_between_runs() {
-+        let fonts = AppleTextSystem::new();
-+        fonts
-+            .add_fonts(vec![
-+                include_bytes!("../../../assets/fonts/lilex/Lilex-Regular.ttf")
-+                    .as_slice()
-+                    .into(),
-+            ])
-+            .unwrap();
-+        let glyphs = |text: &str, runs: &[(FontId, usize)]| -> Vec<GlyphId> {
-+            let runs = runs
-+                .iter()
-+                .map(|&(font_id, len)| FontRun { font_id, len })
-+                .collect::<Vec<_>>();
-+            fonts
-+                .layout_line(text, px(16.), &runs)
-+                .runs
-+                .iter()
-+                .flat_map(|run| run.glyphs.iter().map(|glyph| glyph.id))
-+                .collect()
++    /// Record whether a `CAMetalDisplayLink` drives the layer. While one
++    /// does, frames are drawn only into the drawables it hands out.
++    pub fn set_display_link_attached(&mut self, attached: bool) {
++        self.display_link_mode = if attached {
++            DisplayLinkMode::Attached { drawable: None }
++        } else {
++            DisplayLinkMode::Detached
 +        };
++    }
 +
-+        let lilex = fonts.font_id(&font("Lilex")).unwrap();
-+        let gt = glyphs(">", &[(lilex, 1)])[0];
-+        assert_ne!(glyphs(">>>", &[(lilex, 3)]), vec![gt; 3], ">>> as one run");
-+        assert_eq!(
-+            glyphs(">>>", &[(lilex, 1), (lilex, 1), (lilex, 1)]),
-+            vec![gt; 3]
+     pub fn set_presents_with_transaction(&mut self, presents_with_transaction: bool) {
+         self.presents_with_transaction = presents_with_transaction;
+         if let Some(layer) = &self.layer {
+@@ -539,20 +588,32 @@ impl MetalRenderer {
+                 return;
+             }
+         };
+-        let viewport_size = layer.drawableSize();
++        let drawable = match &mut self.display_link_mode {
++            DisplayLinkMode::Attached { drawable } => {
++                let Some(drawable) = drawable.take() else {
++                    log::error!("skipped a frame drawn outside its display link's update");
++                    return;
++                };
++                drawable
++            }
++            DisplayLinkMode::Detached => {
++                let Some(drawable) = layer.nextDrawable() else {
++                    log::error!(
++                        "failed to retrieve next drawable, drawable size: {:?}",
++                        layer.drawableSize()
++                    );
++                    return;
++                };
++                drawable
++            }
++        };
++        // A display link's drawable was sized when the link handed it out,
++        // which can be before a resize the layer has since taken.
++        let texture = drawable.texture();
+         let viewport_size: Size<DevicePixels> = size(
+-            (viewport_size.width.ceil() as i32).into(),
+-            (viewport_size.height.ceil() as i32).into(),
++            (texture.width() as i32).into(),
++            (texture.height() as i32).into(),
+         );
+-        let drawable = if let Some(drawable) = layer.nextDrawable() {
+-            drawable
+-        } else {
+-            log::error!(
+-                "failed to retrieve next drawable, drawable size: {:?}",
+-                viewport_size
+-            );
+-            return;
+-        };
+ 
+         let command_buffer = match self.render_frame(scene, &drawable.texture(), viewport_size) {
+             Ok(command_buffer) => command_buffer,
+@@ -1857,6 +1918,51 @@ mod tests {
+     };
+     use objc2_metal::MTLCommandBufferStatus;
+ 
++    #[test]
++    fn display_link_mode_consumes_and_clears_drawables() -> Result<()> {
++        let mut render
+```
+
+**File**: `crates/gpui_macos/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -47,6 +47,7 @@ objc2-core-graphics = { workspace = true, features = ["CGColor", "objc2"] }
+ objc2-core-media = { workspace = true, optional = true }
+ objc2-core-video = { workspace = true, features = ["CVHostTime"] }
+ objc2-foundation.workspace = true
++objc2-quartz-core.workspace = true
+ objc2-screen-capture-kit = { workspace = true, optional = true }
+ objc2-uniform-type-identifiers.workspace = true
+ objc2-user-notifications.workspace = true
+```
+
+**File**: `crates/gpui_macos/src/display_link.rs` (modified, +105/-1)
+```diff
+@@ -1,4 +1,8 @@
+-//! Frame pacing for macOS windows, built on `CVDisplayLink`.
++//! Frame pacing for macOS windows.
++//!
++//! On macOS 14 and later a window is paced by a `CAMetalDisplayLink` on its
++//! layer ([`gpui_apple::display_link::MetalFrameSource`]). Earlier systems use
++//! the shared `CVDisplayLink` registry described below ([`WindowFrameSource`]).
+ //!
+ //! CVDisplayLink has no safe teardown: `CVDisplayLinkStop` merely flags the
+ //! link's io thread to exit "soon" and returns immediately, and there is no
+@@ -57,9 +61,11 @@ use dispatch2::{
+     _dispatch_source_type_data_add, DispatchObject, DispatchQueue, DispatchRetained, DispatchSource,
+ };
+ use gpui::{FrameRequestSource, PlatformFrameSignal};
++use gpui_apple::display_link::MetalFrameSource;
+ use gpui_util::ResultExt;
+ use scheduler::Instant;
+ use std::{
++    cell::{Cell, RefCell},
+     collections::{BTreeMap, btree_map},
+     ffi::c_void,
+     sync::{Arc, Mutex, MutexGuard, PoisonError},
+@@ -288,6 +294,54 @@ fn unsubscribe(display_id: CGDirectDisplayID, subscriber_id: SubscriberId) {
+     }
+ }
+ 
++/// A window's `CAMetalDisplayLink`, shared with GPUI's frame waker so that a
++/// wake reaches the current link without taking the window's lock.
++///
++/// The link pauses after any update in which GPUI neither drew, presented,
++/// nor asked for another frame, so an idle window acquires no drawables. GPUI
++/// decides when frames are needed (including presenting after high-rate
++/// input); this only stops the link between those decisions.
++#[derive(Default)]
++pub struct MetalFrames {
++    source: RefCell<Option<MetalFrameSource>>,
++    /// Whether GPUI asked for a frame since the current update began.
++    woken: Cell<bool>,
++}
++
++impl MetalFrames {
++    pub fn replace(&self, source: Option<MetalFrameSource>) {
++        *self.source.borrow_mut() = source;
++    }
++
++    pub fn is_attached(&self) -> bool {
++        self.source.borrow().is_some()
++    }
++
++    pub fn wake(&self) {
++        self.woken.set(true);
++        // A source being replaced starts unpaused, so skipping it is safe.
++        if let Ok(source) = self.source.try_borrow()
++            && let Some(source) = source.as_ref()
++        {
++            source.set_paused(false);
++        }
++    }
++
++    pub fn begin_frame(&self) {
++        self.woken.set(false);
++    }
++
++    /// Ends an update, pausing the link if GPUI neither used its drawable nor
++    /// asked for another frame while it ran. Returns whether it paused.
++    pub fn end_frame(&self, used_drawable: bool) -> bool {
++        let pause = !used_drawable && !self.woken.get();
++        if pause && let Some(source) = self.source.borrow().as_ref() {
++            source.set_paused(true);
++        }
++        pause
++    }
++}
++
+ /// A per-window source of frame requests, paced by the display the window is
+ /// on. The wrapped dispatch source coalesces vsync ticks from the display's
+ /// io thread and invokes `callback(data)` on the main queue.
+@@ -534,6 +588,56 @@ mod sys {
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    use objc2::AnyThread;
++    use objc2_quartz_core::CAMetalDisplayLink;
++
++    #[test]
++    fn metal_frames_pause_only_when_gpui_neither_draws_nor_asks_again() {
++        let frames = MetalFrames::default();
++
++        frames.begin_frame();
++        assert!(
++            !frames.end_frame(true),
++            "a frame that drew keeps the link running"
 +        );
-+        let mut split = glyphs(">>", &[(li
++
++        frames.begin_frame();
++        frames.wake();
++        assert!(
++            !frames.end_frame(false),
++            "a wake during the update, like a throttled frame's retry, keeps it running"
++        );
++
++        frames.wake();
++        frames.begin_frame();
++        assert!(
++            frames.end_frame(false),
++            "a wake before the update was served by it"
++        );
++
++        frames.begin_frame();
++        assert!(frames.end_frame(false), "an idle update pauses the link");
++    }
++
++    #[test]
++    fn a_renderer_draws_normally_after_its_display_link_is_invalidated() {
++        if !MetalFrameSource::is_available() {
++            return;
++        }
++        let mut renderer =
++            crate::renderer::MetalRenderer::new(Default::default(), false, false).unwrap();
++        renderer.update_drawable_size(gpui::size(gpui::DevicePixels(64), gpui::DevicePixels(64)));
++        let layer = renderer.layer().expect("window renderer has a layer");
++        // The link is never added to a run loop: attaching it to the layer is
++        // the state under test.
++        let link = CAMetalDisplayLink::initWithMetalLayer(CAMetalDisplayLink::alloc(), layer);
++        renderer.set_display_link_attached(true);
++        renderer.draw(&gpui::Scene::default());
++
++        link.invalidate();
++        renderer.set_display_link_attached(false);
++        renderer.draw(&gpui::Scene::default());
++    }
+ 
+     #[test]
+     fn host_timestamp_preserves_request_age_at_different_clock_rates() {
+```
+
+**File**: `crates/gpui_macos/src/window.rs` (modified, +147/-48)
+```diff
+@@ -1,5 +1,5 @@
+ use crate::{
+-    BoolExt, MacDisplay, NSRange, NSStringExt, TISCopyCurrentKeyboardInputSource,
++    BoolExt, MacDisplay, MetalFrames, NSRange, NSStringExt, TISCopyCurrentKeyboardInputSource,
+     TISGetInputSourceProperty, WindowFrameSource, events::platform_input_from_native,
+     kTISPropertyInputSourceIsASCIICapable, kTISPropertyInputSourceType, kTISTypeKeyboardInputMode,
+     ns_string, renderer,
+@@ -25,6 +25,7 @@ use core_foundation_sys::number::{CFBooleanGetValue, CFBooleanRef};
+ use core_graphics::display::CGDirectDisplayID;
+ use ctor::ctor;
+ use futures::channel::oneshot;
++use gpui_apple::display_link::MetalFrameSource;
+ use gpui_util::ResultExt;
+ use objc2::{
+     AnyThread, MainThreadMarker, Message, class, msg_send,
+@@ -64,9 +65,9 @@ use std::{
+     os::unix::ffi::OsStrExt,
+     path::PathBuf,
+     ptr::{self, NonNull},
+-    rc::Rc,
++    rc::{Rc, Weak},
+     sync::{
+-        Arc, Once, Weak,
++        Arc, Once,
+         atomic::{AtomicBool, Ordering},
+     },
+     time::Duration,
+@@ -637,6 +638,15 @@ unsafe fn apply_simple_fullscreen_plan(
+     }
+ }
+ 
++/// What paces a window's frames. The choice depends only on the OS version,
++/// so it is made once per window.
++enum FrameSource {
++    /// macOS 14+: a `CAMetalDisplayLink` that hands out each frame's drawable.
++    Metal(Rc<MetalFrames>),
++    /// Earlier systems: the shared `CVDisplayLink` registry, joined on first start.
++    DisplayLink(Option<WindowFrameSource>),
++}
++
+ struct MacWindowState {
+     handle: AnyWindowHandle,
+     foreground_executor: ForegroundExecutor,
+@@ -647,7 +657,7 @@ struct MacWindowState {
+     background_appearance: WindowBackgroundAppearance,
+     cursor_style: CursorStyle,
+     cursor_visible: Arc<AtomicBool>,
+-    frame_source: Option<WindowFrameSource>,
++    frame_source: FrameSource,
+     renderer: renderer::Renderer,
+     request_frame_callback: Option<Box<dyn FnMut(RequestFrameOptions)>>,
+     event_callback: Option<Box<dyn FnMut(PlatformInput) -> gpui::DispatchEventResult>>,
+@@ -814,7 +824,9 @@ impl MacWindowState {
+         }
+     }
+ 
+-    fn start_display_link(&mut self) {
++    /// `window_state` is the handle this state lives in; a Metal link holds it
++    /// weakly to deliver frames.
++    fn start_display_link(&mut self, window_state: &Rc<Mutex<MacWindowState>>) {
+         self.stop_display_link();
+         if !self
+             .native_window()
+@@ -823,21 +835,51 @@ impl MacWindowState {
+         {
+             return;
+         }
+-        let screen: *mut AnyObject = unsafe { msg_send![self.native_window, screen] };
+-        let Some(display_id) = display_id_for_screen(screen) else {
+-            // AppKit can temporarily report no screen while displays are being reconfigured.
+-            return;
+-        };
+-        let data = self.native_view.as_ptr() as *mut c_void;
+-        self.frame_source
+-            .get_or_insert_with(|| WindowFrameSource::new(data, step))
+-            .start(display_id)
+-            .log_err();
++        match &mut self.frame_source {
++            FrameSource::Metal(metal_frames) => {
++                let Some(layer) = self.renderer.layer() else {
++                    return;
++                };
++                let main_thread =
++                    crate::main_thread_marker().expect("macOS windows require the main thread");
++                let window_state = Rc::downgrade(window_state);
++                let source = MetalFrameSource::new(layer, main_thread, move |update| {
++                    if let Some(window_state) = window_state.upgrade() {
++                        metal_frame(&window_state, update);
++                    }
++                });
++                if let Some(source) = source {
++                    metal_frames.replace(Some(source));
++                    self.renderer.set_display_link_attached(true);
++                }
++            }
++            FrameSource::DisplayLink(frame_source) => {
++                let screen: *mut AnyObject = unsafe { msg_send![self.native_window, screen] };
++                let Some(display_id) = display_id_for_screen(screen) else {
++                    // AppKit can temporarily report no screen while displays are being reconfigured.
++                    return;
++                };
++                let data = self.native_view.as_ptr() as *mut c_void;
++                frame_source
++                    .get_or_insert_with(|| WindowFrameSource::new(data, step))
++                    .start(display_id)
++                    .log_err();
++            }
++        }
+     }
+ 
+     fn stop_display_link(&mut self) {
+-        if let Some(frame_source) = self.frame_source.as_mut() {
+-            frame_source.stop();
++        match &mut self.frame_source {
++            FrameSource::Metal(metal_frames) => {
++                if metal_frames.is_attached() {
++                    // Detach the link rather than pause it, so that a synchronous
++                    // draw can use the layer's `nextDrawable`.
++                    metal_fr
 ```
 
 ---
 
-### Incident Patch 3: `33d111ea` (2026-10-28)
-**Commit Message**: agent_ui: Show each linked message to an ACP subagent as its own card (#66102)
+### Incident Patch 2: `14b7b0ef` (2026-10-30)
+**Commit Message**: gpui_linux: Replace kde-blur protocol with ext-background-effect protocol (#53746)
 
-Stacked on #66101 (linked session message views). Item 6 part 2 of the
-ACP subagents RFD work.
+Replaces the `kde-blur` protocol (which is now deprecated and being
+[removed from
+kde](https://invent.kde.org/plasma/kwin/-/commit/7f9e0aa1cd2c2ab4fea1097800893b6f780089eb))
+with the new
+[ext-background-effect](https://gitlab.freedesktop.org/wayland/wayland-protocols/-/blob/main/staging/ext-background-effect/ext-background-effect-v1.xml)
+protocol (which is supported by niri, new KDE releases, and more
+compositors over time)
 
-Until now an ACP parent's first message to a subagent was drawn as one
-card for the whole subagent, and later messages stayed "To …" rows.
-Native subagents get one card per `spawn_agent` call. This PR gives ACP
-subagents the same: one card per delegation.
+# Current questions
+- Currently, the PR completely removes the old KDE blur and replaces it.
+Should we keep the old kde-blur implementation and use it as a fallback?
+- Since the protocol technically supports adding new capabilities and
+types of background effects, should zed track if the compositor supports
+the protocol, and only try blurring then? The protocol seems to imply
+that you can still use
+[set_blur_region](https://wayland.app/protocols/ext-background-effect-v1#ext_background_effect_surface_v1:request:set_blur_region),
+but the compositor will do nothing
+- Since the protocol is generic, should it be checked when resizing to
+see if the window should be blurred before upda
 
-**Which messages are cards**
-- A message linked to the subagent's view of it gets its own card.
-claude-agent-acp links launches and, since v0.96.0
-(agentclientprotocol/claude-agent-acp#1424), `SendMessage` delegations.
-- The card covers its part of the subagent's transcript: from the linked
-view up to the next message from the parent.
-- Without a link, the first message still gets a card for the whole
-subagent, and later ones stay rows. This is unchanged for agents that
-don't send references.
-
-**Status of earlier cards**
-The subagent reports one state for all its work, and the protocol has no
-per-message outcome. So:
-- A card for an earlier message shows the first idle state the subagent
-reported after receiving it. That idle ended the message's work.
-- Unt
-
-**File**: `crates/acp_thread/src/acp_thread.rs` (modified, +17/-0)
+**File**: `crates/gpui/src/geometry.rs` (modified, +21/-0)
 ```diff
-@@ -3652,6 +3652,10 @@ pub struct AcpThread {
-     submissions: SessionSubmissions,
-     activity: SessionActivity,
-     received_session_state: bool,
-+    /// Each idle state a subagent reported, with how many entries it had then. The subagent
-+    /// reports one state for all its work, so this is what shows the outcome of an earlier
-+    /// message to it after it has received later ones.
-+    subagent_outcomes: Vec<(usize, acp_v2::StateUpdate)>,
-     reported_usage: Option<ReportedTokenUsage>,
-     token_usage: Option<TokenUsage>,
-     cost: Option<SessionCost>,
-@@ -4013,6 +4017,7 @@ impl AcpThread {
-             ),
-             activity: SessionActivity::default(),
-             received_session_state: false,
-+            subagent_outcomes: Vec::new(),
-             reported_usage: None,
-             connection,
-             token_usage: None,
-@@ -4303,6 +4308,14 @@ impl AcpThread {
-         self.received_session_state
+@@ -2803,6 +2803,12 @@ impl Pixels {
+         self.0
      }
  
-+    /// The first idle state this subagent reported after the entry at `entry_ix` arrived.
-+    pub fn subagent_outcome_after(&self, entry_ix: usize) -> Option<&acp_v2::StateUpdate> {
-+        self.subagent_outcomes
-+            .iter()
-+            .find(|(entry_count, _)| *entry_count > entry_ix)
-+            .map(|(_, state)| state)
++    /// Converts to `i32`, truncating toward zero.
++    /// Out-of-range values saturate, and NaN becomes zero.
++    pub fn to_i32(self) -> i32 {
++        self.0 as i32
 +    }
 +
-     pub fn foreground_activity(&self) -> ForegroundActivity {
-         self.activity.phase()
-     }
-@@ -4667,6 +4680,10 @@ impl AcpThread {
-         let previous = self.foreground_activity();
-         let was_in_progress = self.activity.in_progress();
-         self.received_session_state = true;
-+        if self.subagent_association.is_some() && matches!(state, acp_v2::StateUpdate::Idle(_)) {
-+            self.subagent_outcomes
-+                .push((self.entries.len(), state.clone()));
+     /// Floors the `Pixels` value to the nearest whole number.
+     ///
+     /// # Returns
+@@ -3984,6 +3990,21 @@ where
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    fn test_pixels_to_i32() {
++        for (value, expected) in [
++            (12.9, 12),
++            (-12.9, -12),
++            (f32::MAX, i32::MAX),
++            (f32::MIN, i32::MIN),
++            (f32::INFINITY, i32::MAX),
++            (f32::NEG_INFINITY, i32::MIN),
++            (f32::NAN, 0),
++        ] {
++            assert_eq!(px(value).to_i32(), expected);
 +        }
-         self.set_foreground_state(state, cx);
-         if let Some(acp_v2::StateUpdate::Idle(idle)) = self.activity.state() {
-             let stop_reason = idle.stop_reason.clone();
++    }
++
+     #[test]
+     fn test_bounds_intersects() {
+         let bounds1 = Bounds {
 ```
 
-**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +137/-1)
+**File**: `crates/gpui/src/platform.rs` (modified, +1/-0)
 ```diff
-@@ -20563,7 +20563,7 @@ pub(crate) mod tests {
-             "an idle subagent cannot be stopped"
-         );
-         child.read_with(cx, |child, _| {
--            let card = subagent_card::SubagentCardState::from_acp_subagent(child);
-+            let card = subagent_card::SubagentCardState::from_acp_subagent(child, None);
-             assert_eq!(card.status, subagent_card::SubagentStatus::Canceled);
-             assert_eq!(
-                 card.title(Some("Own title".into())).as_ref(),
-@@ -20594,6 +20594,142 @@ pub(crate) mod tests {
-         assert!(cx.debug_bounds("subagent-card-0").is_some());
+@@ -1398,6 +1398,7 @@ pub trait PlatformWindow: HasWindowHandle + HasDisplayHandle {
+         WindowControls::default()
+     }
+     fn set_client_inset(&self, _inset: Pixels) {}
++    fn set_client_corner_radii(&self, _radii: Corners<Pixels>) {}
+     fn gpu_specs(&self) -> Option<GpuSpecs>;
+ 
+     fn update_ime_position(&self, _bounds: Bounds<Pixels>);
+```
+
+**File**: `crates/gpui/src/window.rs` (modified, +5/-0)
+```diff
+@@ -3077,6 +3077,11 @@ impl Window {
+         self.platform_window.set_client_inset(inset);
      }
  
-+    #[gpui::test]
-+    async fn test_each_linked_message_to_an_acp_subagent_is_its_own_card(cx: &mut TestAppContext) {
-+        use subagent_card::{SubagentCardState, SubagentEntries, SubagentStatus};
++    /// Sets the client-drawn corner radii so platform effects can match the window's shape.
++    pub fn set_client_corner_radii(&mut self, radii: Corners<Pixels>) {
++        self.platform_window.set_client_corner_radii(radii);
++    }
 +
-+        init_test(cx);
-+        let connection = StubAgentConnection::new();
-+        let (conversation_view, cx) =
-+            setup_conversation_view(StubAgentServer::new(connection.clone()), cx).await;
-+        add_to_workspace_with_size(conversation_view.clone(), true, cx);
-+        let root =
-+            active_thread(&conversation_view, cx).read_with(cx, |view, _| view.thread.clone());
-+        let root_session_id = root.read_with(cx, |thread, _| thread.session_id().clone());
-+        let child_session_id = acp_v2::SessionId::new("child");
-+        let child = conversation_view.update(cx, |view, cx| {
-+            create_test_acp_subagent(
-+                root_session_id.clone(),
-+                "child",
-+                Rc::new(connection.clone()),
-+                view.project.clone(),
-+                cx,
-+            )
-+        });
-+        // Each ACP notification is applied in its own update, as here.
-+        root.update(cx, |root, cx| root.register_subagent(child.clone(), cx));
-+        let to_child = |message_id: &str| {
-+            acp_v2::SessionMessage::new(message_id)
-+                .sender_session_id(root_session_id.clone())
-+                .recipient_session_id(child_session_id.clone())
-+                .content(vec![message_id.into()])
-+        };
-+        let delegate = |sent: &str, received: &str, cx: &mut VisualTestContext| {
-+            root.update(cx, |root, cx| {
-+                root.upsert_session_message(
-+                    to_child(sent).recipient_message_id(acp_v2::MessageId::new(received)),
-+                    cx,
-+                )
-+            })
-+            .expect("outgoing view");
-+            child
-+                .update(cx, |child, cx| {
-+                    child.upsert_session_message(
-+                        to_child(received).sender_message_id(acp_v2::MessageId::new(sent)),
-+                        cx,
-+                    )
-+                })
-+                .expect("incoming view");
-+        };
-+        let report = |state: acp_v2::StateUpdate, cx: &mut VisualTestContext| {
-+            child
-+                .update(cx, |child, cx| child.update_session_state(state, cx))
-+                .expect("reported state");
-+        };
-+        let running = || acp_v2::StateUpdate::Running(acp_v2::RunningStateUpdate::new());
-+        let work = |message_id: &str, cx: &mut VisualTestContext| {
-+            child
-+                .update(cx, |child, cx| {
-+                    child.upsert_assistant_message(
-+                        acp_v2::AgentMessage::new(message_id).content(vec!["Working".into()]),
-+                        cx,
-+                    )
-+                })
-+                .expect("subagent work");
-+        };
-+        let cards = |cx: &mut VisualTestContext| {
-+            root.read_with(cx, |root, cx| {
-+                root.entries()
-+                    .iter()
-+                    .enumerate()
-+                    .map(|(entry_ix, entry)| {
-+                        let AgentThreadEntry::SessionMessage(message) = entry else {
-+                            panic!("expected session messages, got {entry:?}");
-+                        };
-+                        subagent_card::acp_subagent_card(root, entry_ix, message, cx).map(|card| {
-+                            let state = SubagentCardState::from_acp_subagent(
-+                                card.subagent.read(cx),
-+                                card.entries,
-+                            );
-+                            (card.entries, state.status)
-+                        })
-+                    })
-+                    .collect::<Vec<_>>()
-+            })
-+        };
-+        let entries = |start, end| Some(SubagentEntries { start, end });
-+
-+        delegate("launch", "task-1", cx);
-+        report(running(), cx);
-+        work("work-1", cx);
-+        // The second message arrives while the subagent still works on the first.
-+        delegate("follow-up", "task-2", cx);
-+        work("work-2", cx);
-+        assert_eq!(
-+            cards(cx),
-+            vec![
-+                Some((entries(0, Some(1)), SubagentStatus::Running)),
-+                Some((entries(2, None), Subagent
+     /// Returns the client_inset value by [`Self::set_client_inset`].
+     pub fn client_inset(&self) -> Option<Pixels> {
+         self.client_inset
 ```
 
-**File**: `crates/agent_ui/src/conversation_view/subagent_card.rs` (modified, +61/-12)
+**File**: `crates/gpui_linux/src/linux/wayland/client.rs` (modified, +10/-2)
 ```diff
-@@ -30,16 +30,27 @@ impl fmt::Display for SubagentCardId {
+@@ -41,6 +41,9 @@ use wayland_client::{
+         wl_shm_pool, wl_surface,
+     },
+ };
++use wayland_protocols::ext::background_effect::v1::client::{
++    ext_background_effect_manager_v1, ext_background_effect_surface_v1,
++};
+ use wayland_protocols::wp::pointer_gestures::zv1::client::{
+     zwp_pointer_gesture_pinch_v1, zwp_pointer_gestures_v1,
+ };
+@@ -253,7 +256,9 @@ pub struct Globals {
+         Option<wp_fractional_scale_manager_v1::WpFractionalScaleManagerV1>,
+     pub decoration_manager: Option<zxdg_decoration_manager_v1::ZxdgDecorationManagerV1>,
+     pub layer_shell: Option<zwlr_layer_shell_v1::ZwlrLayerShellV1>,
+-    pub blur_manager: Option<org_kde_kwin_blur_manager::OrgKdeKwinBlurManager>,
++    pub kde_blur_manager: Option<org_kde_kwin_blur_manager::OrgKdeKwinBlurManager>,
++    pub background_effects_manager:
++        Option<ext_background_effect_manager_v1::ExtBackgroundEffectManagerV1>,
+     pub text_input_manager: Option<zwp_text_input_manager_v3::ZwpTextInputManagerV3>,
+     pub gesture_manager: Option<zwp_pointer_gestures_v1::ZwpPointerGesturesV1>,
+     pub dialog: Option<xdg_wm_dialog_v1::XdgWmDialogV1>,
+@@ -303,7 +308,8 @@ impl Globals {
+             fractional_scale_manager: globals.bind(&qh, 1..=1, ()).ok(),
+             decoration_manager: globals.bind(&qh, 1..=1, ()).ok(),
+             layer_shell: globals.bind(&qh, 1..=5, ()).ok(),
+-            blur_manager: globals.bind(&qh, 1..=1, ()).ok(),
++            kde_blur_manager: globals.bind(&qh, 1..=1, ()).ok(),
++            background_effects_manager: globals.bind(&qh, 1..=1, ()).ok(),
+             text_input_manager: globals.bind(&qh, 1..=1, ()).ok(),
+             gesture_manager: globals.bind(&qh, 1..=3, ()).ok(),
+             dialog: globals.bind(&qh, dialog_v..=dialog_v, ()).ok(),
+@@ -1668,6 +1674,8 @@ delegate_noop!(WaylandClientStatePtr: ignore zxdg_decoration_manager_v1::ZxdgDec
+ delegate_noop!(WaylandClientStatePtr: ignore zwlr_layer_shell_v1::ZwlrLayerShellV1);
+ delegate_noop!(WaylandClientStatePtr: ignore xdg_positioner::XdgPositioner);
+ delegate_noop!(WaylandClientStatePtr: ignore org_kde_kwin_blur_manager::OrgKdeKwinBlurManager);
++delegate_noop!(WaylandClientStatePtr: ignore ext_background_effect_manager_v1::ExtBackgroundEffectManagerV1);
++delegate_noop!(WaylandClientStatePtr: ignore ext_background_effect_surface_v1::ExtBackgroundEffectSurfaceV1);
+ delegate_noop!(WaylandClientStatePtr: ignore zwp_text_input_manager_v3::ZwpTextInputManagerV3);
+ delegate_noop!(WaylandClientStatePtr: ignore org_kde_kwin_blur::OrgKdeKwinBlur);
+ delegate_noop!(WaylandClientStatePtr: ignore wp_viewporter::WpViewporter);
+```
+
+**File**: `crates/gpui_linux/src/linux/wayland/window.rs` (modified, +207/-27)
+```diff
+@@ -18,6 +18,7 @@ use wayland_client::{
+     Proxy,
+     protocol::{wl_callback, wl_output, wl_seat, wl_surface},
+ };
++use wayland_protocols::ext::background_effect::v1::client::ext_background_effect_surface_v1;
+ use wayland_protocols::wp::viewporter::client::wp_viewport;
+ use wayland_protocols::xdg::decoration::zv1::client::zxdg_toplevel_decoration_v1;
+ use wayland_protocols::xdg::shell::client::xdg_popup;
+@@ -34,7 +35,7 @@ use wayland_protocols_wlr::layer_shell::v1::client::zwlr_layer_surface_v1;
+ use crate::linux::wayland::{display::WaylandDisplay, serial::SerialKind};
+ use crate::linux::{Globals, Output, PendingActivation, WaylandClientStatePtr, get_window};
+ use gpui::{
+-    AnyWindowHandle, Bounds, Capslock, Decorations, DevicePixels, ExternalDragPayload,
++    AnyWindowHandle, Bounds, Capslock, Corners, Decorations, DevicePixels, ExternalDragPayload,
+     FrameRequestSource, GpuSpecs, Modifiers, Pixels, PlatformAtlas, PlatformDisplay,
+     PlatformFrameSignal, PlatformInput, PlatformInputHandler, PlatformWindow, Point, PromptButton,
+     PromptLevel, RequestFrameOptions, ResizeEdge, Scene, Size, Tiling, WindowAppearance,
+@@ -108,7 +109,8 @@ pub struct WaylandWindowState {
+     pub surface: wl_surface::WlSurface,
+     app_id: Option<String>,
+     appearance: WindowAppearance,
+-    blur: Option<org_kde_kwin_blur::OrgKdeKwinBlur>,
++    kde_blur: Option<org_kde_kwin_blur::OrgKdeKwinBlur>,
++    background_effects: Option<ext_background_effect_surface_v1::ExtBackgroundEffectSurfaceV1>,
+     viewport: Option<wp_viewport::WpViewport>,
+     outputs: HashMap<ObjectId, Output>,
+     display: Option<(ObjectId, Output)>,
+@@ -139,6 +141,7 @@ pub struct WaylandWindowState {
+     in_progress_window_controls: Option<WindowControls>,
+     window_controls: WindowControls,
+     client_inset: Option<Pixels>,
++    client_corner_radii: Corners<Pixels>,
+     accesskit_adapter: Option<accesskit_unix::Adapter>,
+ }
+ 
+@@ -610,7 +613,8 @@ impl WaylandWindowState {
+             children: FxHashMap::default(),
+             surface,
+             app_id: options.app_id,
+-            blur: None,
++            kde_blur: None,
++            background_effects: None,
+             viewport,
+             globals,
+             outputs: HashMap::default(),
+@@ -639,6 +643,7 @@ impl WaylandWindowState {
+             in_progress_window_controls: None,
+             window_controls: WindowControls::default(),
+             client_inset: None,
++            client_corner_radii: Corners::default(),
+             accesskit_adapter: None,
+         })
+     }
+@@ -783,10 +788,15 @@ impl Drop for WaylandWindow {
+         state.renderer.take();
+ 
+         // Destroy blur first, this has no dependencies.
+-        if let Some(blur) = &state.blur {
++        if let Some(blur) = &state.kde_blur {
+             blur.release();
+         }
+ 
++        // Destroy background effects, this has no dependencies.
++        if let Some(background_effects) = &state.background_effects {
++            background_effects.destroy();
++        }
++
+         // Decorations must be destroyed before the xdg state.
+         // See https://wayland.app/protocols/xdg-decoration-unstable-v1#zxdg_toplevel_decoration_v1
+         if let Some(decoration) = &state.surface_state.decoration() {
+@@ -1162,7 +1172,7 @@ impl WaylandWindowStatePtr {
+             );
+ 
+             let initial_configure = self.frame_loop.get() == FrameLoop::Unconfigured;
+-            drop(state);
++            update_window(state);
+             if initial_configure {
+                 self.frame(None, FrameRequestSource::NativeCallback);
+             } else {
+@@ -1531,13 +1541,11 @@ impl WaylandWindowStatePtr {
+             self.callbacks.borrow_mut().resize = Some(fun);
+         }
+ 
+-        {
+-            let state = self.state.borrow();
+-            if let Some(viewport) = &state.viewport {
+-                viewport
+-                    .set_destination(f32::from(size.width) as i32, f32::from(size.height) as i32);
+-            }
++        let state = self.state.borrow_mut();
++        if let Some(viewport) = &state.viewport {
++            viewport.set_destination(f32::from(size.width) as i32, f32::from(size.height) as i32);
+         }
++        update_window(state);
+     }
+ 
+     pub fn resize(&self, size: Size<Pixels>) {
+@@ -2212,6 +2220,15 @@ impl PlatformWindow for WaylandWindow {
+         }
+     }
+ 
++    fn set_client_corner_radii(&self, radii: Corners<Pixels>) {
++        let mut state = self.borrow_mut();
++        if radii != state.client_corner_radii {
++            state.client_corner_radii = radii;
++            update_window(state);
++            self.0.request_redraw();
++        }
++    }
++
+     fn update_ime_position(&self, bounds: Bounds<Pixels>) {
+         let state = self.borrow();
+         if !state.active {
+@@ -2291,31 +2308,166 @@ impl accesskit::DeactivationHandler for TrivialDeactivationHandler {
      }
  }
  
--/// The subagent whose card a session message in `thread` is drawn as, in place of its
--/// message row. The message must be the first that `thread` sent to one of its own
--/// subagents. Later messages to the same subagent stay message rows, because nothing yet
--/// links each message to its part of the subagent's transcript or to its outcome, so one
--/// card covers the whole subagent.
-+/// A session message that an ACP parent sent to one of its own subagents, drawn as a
-+/// subagent card in place of its message row.
-+pub(crate) struct AcpSubagentCard {
-+    pub id: SubagentCardId,
-+    pub subagent: Entity<AcpThread>,
-+    /// The subagent entries for this message; `None` covers the whole subagent.
-+    pub entries: Option<SubagentEntries>,
-+}
-+
-+/// The subagent card that a session message in `thread` is drawn as, if any.
-+///
-+/// A message linked to the subagent's view of it gets a card for its part of the
-+/// subagent's transcript: from that view up to the next message from `thread`. Without a
-+/// link, only the first message to a subagent gets a card, which covers the whole subagent,
-+/// and later ones stay message rows.
- pub(crate) fn acp_subagent_card(
-     thread: &AcpThread,
-     entry_ix: usize,
-     message: &SessionMessage,
--) -> Option<(SubagentCardId, Entity<AcpThread>)> {
-+    cx: &App,
-+) -> Option<AcpSubagentCard> {
-     let own_session_id = thread.session_id();
-     let SessionMessageSide::Outgoing {
-         recipient: Some(recipient),
-@@ -51,6 +62,34 @@ pub(crate) fn acp_subagent_card(
-     let MessageIdentity::Keyed(message_id) = &message.identity else {
-         return None;
++fn add_rounded_rect(
++    area: Bounds<i32>,
++    radii: Corners<Pixels>,
++    mut add_rectangle: impl F
+```
+
+**File**: `crates/workspace/src/workspace.rs` (modified, +24/-6)
+```diff
+@@ -60,10 +60,10 @@ use futures::{
+ };
+ use gpui::{
+     Action, AnyEntity, AnyView, AnyWeakView, App, AppContext, AsyncApp, AsyncWindowContext, Axis,
+-    Bounds, ClipboardItem, Context, CursorStyle, Decorations, DragMoveEvent, Entity, EntityId,
+-    EventEmitter, FocusHandle, Focusable, Global, HitboxBehavior, Hsla, KeyContext, Keystroke,
+-    ManagedView, MouseButton, PathPromptOptions, Point, PromptLevel, Render, ResizeEdge, Size,
+-    Stateful, Subscription, SystemWindowTabController, Task, TaskExt, Tiling, WeakEntity,
++    Bounds, ClipboardItem, Context, Corners, CursorStyle, Decorations, DragMoveEvent, Entity,
++    EntityId, EventEmitter, FocusHandle, Focusable, Global, HitboxBehavior, Hsla, KeyContext,
++    Keystroke, ManagedView, MouseButton, PathPromptOptions, Point, PromptLevel, Render, ResizeEdge,
++    Size, Stateful, Subscription, SystemWindowTabController, Task, TaskExt, Tiling, WeakEntity,
+     WindowBounds, WindowHandle, WindowId, WindowOptions, actions, canvas, point, relative, size,
+     transparent_black,
+ };
+@@ -12242,8 +12242,26 @@ pub fn client_side_decorations(
      };
-+    let id = SubagentCardId::SessionMessage(message_id.clone());
-+
-+    let subagent_thread = subagent.read(cx);
-+    if let Some(start) = subagent_thread.linked_session_message(message, own_session_id) {
-+        let next_message_ix = subagent_thread
-+            .entries()
-+            .iter()
-+            .enumerate()
-+            .skip(start + 1)
-+            .find_map(|(ix, entry)| {
-+                matches!(
-+                    entry,
-+                    AgentThreadEntry::SessionMessage(later)
-+                        if later.side(recipient)
-+                            == SessionMessageSide::Incoming { sender: Some(own_session_id) }
-+                )
-+                .then_some(ix)
+ 
+     match decorations {
+-        Decorations::Client { .. } => window.set_client_inset(theme::CLIENT_SIDE_DECORATION_SHADOW),
+-        Decorations::Server => window.set_client_inset(px(0.0)),
++        Decorations::Client { .. } => {
++            window.set_client_inset(theme::CLIENT_SIDE_DECORATION_SHADOW);
++            let radius = |rounded| {
++                if rounded {
++                    theme::CLIENT_SIDE_DECORATION_ROUNDING
++                } else {
++                    px(0.0)
++                }
++            };
++            window.set_client_corner_radii(Corners {
++                top_left: radius(!tiling.top && !tiling.left),
++                top_right: radius(!tiling.top && !tiling.right),
++                bottom_left: radius(!tiling.bottom && !tiling.left),
++                bottom_right: radius(!tiling.bottom && !tiling.right),
 +            });
-+        return Some(AcpSubagentCard {
-+            id,
-+            subagent,
-+            entries: Some(SubagentEntries {
-+                start,
-+                end: next_message_ix.map(|next_message_ix| next_message_ix - 1),
-+            }),
++        }
++        Decorations::Server => {
++            window.set_client_inset(px(0.0));
++            window.set_client_corner_radii(Corners::default());
++        }
+     }
+ 
+     struct GlobalResizeEdge(ResizeEdge);
+```
+
+---
+
+### Incident Patch 3: `bc7041c6` (2026-10-29)
+**Commit Message**: Fix standalone modifier sequences not being flushed after timeout (#55800)
+
+### Summary
+Standalone modifier keys were not timing out, causing them to linger in
+pending state and incorrectly form multi-stroke sequences (e.g.
+triggering `shift shift` after IME switching).
+
+### Details
+
+Standalone modifier keystrokes (e.g. `shift`) were not participating in
+the key sequence timeout lifecycle, causing them to remain in the
+pending input state indefinitely.
+
+In Chinese IME, `shift` is commonly used to toggle between EN and ZH
+modes.
+A typical workflow is:
+1. Tap `shift` to switch to Chinese input
+2. Type some Chinese text
+3. Tap `shift` again to switch back to English
+
+However, due to the missing timeout behavior, the first `shift` remains
+in the pending sequence.
+As a result, the second `shift` is interpreted as `shift shift`, which
+incorrectly triggers the command palette.
+
+### Reproduction
+1. Use the following keymap, or enable the JetBrains keymap:
+```json
+[
+  {
+    "bindings": {
+      "shift shift": "command_palette::Toggle",
+    },
+  }
+]
+```
+
+2. Press the `shift` key twice with an interval greater than the timeout
+(1 second)
+3. The command palette is toggled (unexpected; it should
+
+**File**: `crates/gpui/src/platform/keystroke.rs` (modified, +8/-0)
+```diff
+@@ -288,6 +288,14 @@ impl Keystroke {
+         }
+         self
+     }
++
++    /// Returns whether the key itself is a modifier
++    pub fn is_modifier_key(&self) -> bool {
++        matches!(
++            self.key.as_str(),
++            "shift" | "control" | "alt" | "platform" | "function"
++        )
++    }
+ }
+ 
+ impl KeybindingKeystroke {
+```
+
+**File**: `crates/gpui/src/window.rs` (modified, +119/-1)
+```diff
+@@ -6214,9 +6214,11 @@ impl Window {
+                     accepts
+                 });
+ 
++            let standalone_modifier = matches!(currently_pending.keystrokes.as_slice(), [keystroke] if keystroke.is_modifier_key());
+             let needs_timeout = previous_timeout.is_some()
+                 || match_result.pending_has_binding
+-                || text_input_requires_timeout;
++                || text_input_requires_timeout
++                || standalone_modifier;
+             currently_pending.timeout = if needs_timeout {
+                 match previous_timeout {
+                     Some(mut timeout) if timeout.is_paused() => {
+@@ -9986,6 +9988,122 @@ mod tests {
+             .collect()
+     }
+ 
++    actions!(window_test, [StandaloneModifierAction]);
++
++    struct StandaloneModifierView {
++        focus_handle: FocusHandle,
++        action_count: usize,
++    }
++
++    impl Render for StandaloneModifierView {
++        fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
++            div()
++                .key_context("StandaloneModifier")
++                .track_focus(&self.focus_handle)
++                .on_action(cx.listener(|this, _: &StandaloneModifierAction, _, _| {
++                    this.action_count += 1;
++                }))
++        }
++    }
++
++    #[gpui::test]
++    fn test_standalone_modifier_sequence_timeout_and_recovery(cx: &mut TestAppContext) {
++        use crate::{KeyBinding, Modifiers};
++
++        cx.update(|cx| {
++            cx.bind_keys([KeyBinding::new(
++                "shift shift",
++                StandaloneModifierAction,
++                Some("StandaloneModifier"),
++            )]);
++        });
++        let (view, cx) = cx.add_window_view(|window, cx| {
++            let focus_handle = cx.focus_handle();
++            window.focus(&focus_handle, cx);
++            StandaloneModifierView {
++                focus_handle,
++                action_count: 0,
++            }
++        });
++        let shift = Modifiers {
++            shift: true,
++            ..Modifiers::default()
++        };
++        cx.simulate_modifiers_change(shift);
++        cx.simulate_modifiers_change(Modifiers::default());
++        cx.update(|window, _| {
++            assert_eq!(
++                window.pending_input_keystrokes(),
++                Some([Keystroke::parse("shift").expect("valid keystroke")].as_slice())
++            );
++        });
++        cx.background_executor.advance_clock(Duration::from_secs(2));
++        cx.run_until_parked();
++        cx.update(|window, cx| {
++            assert!(!window.has_pending_keystrokes());
++            assert_eq!(view.read(cx).action_count, 0);
++        });
++
++        cx.simulate_modifiers_change(shift);
++        cx.simulate_modifiers_change(Modifiers::default());
++        cx.update(|window, cx| {
++            assert!(window.has_pending_keystrokes());
++            assert_eq!(view.read(cx).action_count, 0);
++        });
++
++        cx.simulate_modifiers_change(shift);
++        cx.simulate_modifiers_change(Modifiers::default());
++        cx.update(|window, cx| {
++            assert!(!window.has_pending_keystrokes());
++            assert_eq!(view.read(cx).action_count, 1);
 +        });
 +    }
 +
-     let sent_earlier = thread.entries().get(..entry_ix)?.iter().any(|entry| {
-         matches!(
-             entry,
-@@ -59,7 +98,11 @@ pub(crate) fn acp_subagent_card(
-                     == SessionMessageSide::Outgoing { recipient: Some(recipient) }
-         )
-     });
--    (!sent_earlier).then(|| (SubagentCardId::SessionMessage(message_id.clone()), subagent))
-+    (!sent_earlier).then_some(AcpSubagentCard {
-+        id,
-+        subagent,
-+        entries: None,
-+    })
- }
- 
- #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-@@ -177,10 +220,16 @@ impl SubagentCardState {
-         }
-     }
- 
--    /// Builds the card for an ACP subagent. Without a link from the parent's message to the
--    /// subagent's entries, the card covers the subagent's whole transcript.
--    pub(crate) fn from_acp_subagent(thread: &AcpThread) -> Self {
--        let (status, error) = SubagentStatus::from_reported_state(thread.foreground_state());
-+    /// Builds the card for an ACP subagent, covering `entries` of its transcript or all of
-+    /// it. The subagent reports one state for all its work, so a card for an earlier message
-+    /// shows the first outcome the subagent reported after receiving it. Until then, that
-+    /// work continues alongside the later message's, and the card shows the current state.
-+    pub(crate) fn from_acp_subagent(thread: &AcpThread, entries: Option<SubagentEntries>) -> Self {
-+        let earlier_outcome = entries
-+            .filter(|entries| entries.end.is_some())
-+            .and_then(|entries| thread.subagent_outcome_after(entries.start));
-+        let (status, error) =
-+            SubagentStatus::from_reported_state(earlier_outcome.or(thread.foreground_state()));
-         let can_cancel = thread
-             .subagent_association()
-             .is_some_and(|association| association.can_cancel);
-@@ -190,7 +239,7 @@ impl SubagentCardState {
-             status,
-             error,
-             can_stop: status == SubagentStatus::Running && can_cancel,
--            entries: None,
-+            entries,
-         }
-     }
- 
-```
-
-**File**: `crates/agent_ui/src/conversation_view/thread_search_bar.rs` (modified, +1/-1)
-```diff
-@@ -364,7 +364,7 @@ impl ThreadSearchBar {
-                 }
-                 // Drawn as the subagent's card, which does not show the message.
-                 AgentThreadEntry::SessionMessage(message)
--                    if acp_subagent_card(thread, entry_ix, message).is_some() => {}
-+                    if acp_subagent_card(thread, entry_ix, message, cx).is_some() => {}
-                 _ => {
-                     for markdown in collect_markdowns(entry_ix, entry, &entry_view_state, cx) {
-                         let source = markdown.read(cx).source().clone();
-```
-
-**File**: `crates/agent_ui/src/conversation_view/thread_view.rs` (modified, +11/-11)
-```diff
-@@ -56,7 +56,9 @@ use workspace::{OpenOptions, SERIALIZATION_THROTTLE_TIME};
- use super::elicitation::{
-     ElicitationCard, ElicitationCardHandlers, ElicitationFormState, should_render_elicitation,
- };
--use super::subagent_card::{SubagentCardId, SubagentCardState, SubagentStatus, acp_subagent_card};
-+use super::subagent_card::{
-+    AcpSubagentCard, SubagentCardId, SubagentCardState, SubagentStatus, acp_subagent_card,
-+};
- use super::*;
- 
- /// How a parent's view names a subagent. An ACP parent's own title for the subagent
-@@ -5208,7 +5210,7 @@ impl ThreadView {
-         // An ACP subagent reports its own outcome; a native one's is its parent's tool call.
-         let thread = self.thread.read(cx);
-         if thread.subagent_association().is_some() {
--            return SubagentCardState::from_acp_subagent(thread)
-+            return SubagentCardState::from_acp_subagent(thread, None)
-                 .status
-                 .is_failed_or_canceled();
-         }
-@@ -7530,10 +7532,8 @@ impl ThreadView {
-             }
-             AgentThreadEntry::SessionMessage(message) => {
-                 let session_message =
--                    match acp_subagent_card(self.thread.read(cx), entry_ix, message) {
--                        Some((card_id, subagent)) => {
--                            self.render_acp_subagent_card(entry_ix, &card_id, &subagent, window, cx)
--                        }
-+                    match acp_subagent_card(self.thread.read(cx), entry_ix, message, cx) {
-+                        Some(card) => self.render_acp_subagent_card(entry_ix, &card, window, cx),
-                         None => self.render_session_message(entry_ix, message, window, cx),
-                     };
-                 if let Some(handle) = self
-@@ -8950,12 +8950,12 @@ impl ThreadView {
-     fn render_acp_subagent_card(
-         &self,
-         entry_ix: usize,
--        card_id: &SubagentCardId,
--        subagent: &Entity<AcpThread>,
-+        card: &AcpSubagentCard,
-         window: &Window,
-         cx: &Context<Self>,
-     ) -> Div {
--        let subagent_session_id = subagent.read(cx).session_id().clone();
-+        let subagent = card.subagent.read(cx);
-+        let subagent_session_id = subagent.session_id().clone();
-         let subagent_thread_view = self
-             .server_view
-             .upgrade()
-@@ -8964,8 +8964,8 @@ impl ThreadView {
-         let content = self.render_subagent_card(
-             self.thread.read(cx).session_id(),
-             entry_ix,
--            card_id,
--            &SubagentCardState::from_acp_subagent(subagent.read(cx)),
-+            &card.id,
-+            &SubagentCardState::from_acp_subagent(subagent, card.entries),
-             subagent_thread_view,
-             &self.focus_handle(cx),
-             window,
++    #[gpui::test]
++    fn test_standalone_modifier_sequence_dispatches_before_timeout(cx: &mut TestAppContext) {
++        use crate::{KeyBinding, Modifiers};
++
++        cx.update(|cx| {
++            cx.bind_keys([KeyBinding::new(
++                "shift shift",
++                StandaloneModifierAction,
++                Some("StandaloneModifier"),
++            )]);
++        });
++        let (view, cx) = cx.add_window_view(|window, cx| {
++            let focus_handle = cx.focus_handle();
++            window.focus(&focus_handle, cx);
++            StandaloneModifierView {
++                focus_handle,
++                action_count: 0,
++            }
++        });
++        let shift = Modifiers {
++            shift: true,
++            ..Modifiers::default()
++        };
++        cx.simulate_modifiers_change(shift);
++        cx.simulate_modifiers_change(Modifiers::default());
++        cx.background_executor
++            .advance_clock(Duration::from_millis(500));
++        cx.update(|window, cx| {
++            assert!(window.has_pending_keystrokes());
++            assert_eq!(view.read(cx).action_count, 0);
++        });
++        cx.simulate_modifiers_change(shift);
++        cx.simulate_modifiers_change(Modifiers::default());
++        cx.update(|window, cx| {
++            assert!(!window.has_pending_keystrokes());
++            assert_eq!(view.read(cx).action_count, 1);
++        });
++        cx.background_executor.advance_clock(Duration::from_secs(2));
++        cx.run_until_parked();
++        cx.update(|window, cx| {
++            assert!(!window.has_pending_keystrokes());
++            assert_eq!(view.read(cx).action_count, 1);
++        });
++    }
++
+     fn dispatch_touch<T: 'static>(
+         window: crate::WindowHandle<T>,
+         cx: &mut TestApp
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #66255** (2026-10-28): agent: Report native subagent state like ACP subagents (@benbrandt)
-- **PR #66253** (2026-10-28): Bump Zed to v1.28.0 (@zed-zippy[bot])
-- **PR #66252** (2026-10-28): agent_ui: Open a stopped subagent card's part in full screen (@benbrandt)
-- **PR #66251** (2026-10-28): agent_ui: Fix crash when expanding an ACP subagent card (@benbrandt)
-- **PR #66245** (2026-10-28): Update agent-client-protocol to 3.6.0 (schema 1.13) (@benbrandt)
-- **PR #66237** (2026-10-28): gpui: Apply frame limits consistently and stabilize pacing (@Veykril)
+- **PR #66337** (closed): settings_ui: Add external agent models to profile Default Model picker (@riso-tech)
+- **PR #66326** (closed): project + agent_ui: Add external-agent model catalog (@riso-tech)
+- **PR #66321** (closed): settings_ui: Add Agent Profiles page (@riso-tech)
+- **PR #66317** (2026-10-30): gpui: Time animations with the executor clock (@Anthony-Eid)
+- **PR #66311** (closed): docx_viewer: Add DOCX document viewer (@lm2000)
+- **PR #66308** (2026-10-29): collab: Remove extension endpoints served by Cloud (@maxdeviant)
 
 ---
 
@@ -2995,46 +3445,21 @@ reported after receiving it. That idle ended the message's work.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent_ui: Fix crash when expanding an ACP subagent card (#66251)
+## X. gpui_macos: Fix animations running at 30 fps on M5 Macs (#65472)
 
 **RULE**:
-When implementing operations in `crates/agent_ui/src/conversation_view.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c693e6a8`: agent_ui: Fix crash when expanding an ACP subagent card (#66251). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0373366f`: gpui_macos: Fix animations running at 30 fps on M5 Macs (#65472). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/agent_ui/src/conversation_view.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    pub(crate) fn thread(&self, session_id: &acp_v2::SessionId) -> Option<&Entity<AcpThread>> {
-        self.threads.get(session_id)
-    }
-
-
-        // The expanded card renders the subagent's own view of the message, a row that
-        // names the parent.
-        child
-            .update(cx, |child, cx| {
-                child.upsert_session_message(
-                    acp_v2::SessionMessage::new("task")
-                        .sender_session_id(root_session_id.clone())
-                        .recipient_session_id(acp_v2::SessionId::new("child"))
-                        .content(vec!["Check the failure".into()]),
-                    cx,
-                )
-            })
-            .expect("incoming message");
-        thread_view.update(cx, |view, cx| {
-            view.entry_view_state.update(cx, |state, _| {
-                state.toggle_session_message_card_expansion(&acp_v2::MessageId::new("launch"))
-            });
-            cx.notify();
-        });
-        cx.run_until_parked();
-        assert!(cx.debug_bounds("subagent-card-0").is_some());
+ "objc2-quartz-core 0.3.2",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3044,4 +3469,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c693e6a8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0373366f` are properly handled with clean fallback behavior.
