@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T13:28:46.730Z",
-  "total_cycles_completed": 6176,
-  "total_learnings_persisted": 6176,
-  "total_rules_promoted": 5734,
+  "last_updated": "2026-10-30T13:37:43.968Z",
+  "total_cycles_completed": 6180,
+  "total_learnings_persisted": 6180,
+  "total_rules_promoted": 5738,
   "history": [
-    {
-      "timestamp": "2026-10-29T00:16:03.236Z",
-      "repository": "iii-hq/iii",
-      "learningId": "learn-github-iii-hq-iii",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T00:22:50.532Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-Base",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T00:22:52.079Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T00:23:00.231Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T00:29:42.237Z",
       "repository": "max-sixty/worktrunk",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-30T13:28:46.730Z",
       "repository": "topoteretes/cognee",
       "learningId": "learn-github-topoteretes-cognee",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T13:37:36.150Z",
+      "repository": "higress-group/higress",
+      "learningId": "learn-github-higress-group-higress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T13:37:39.840Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T13:37:42.505Z",
+      "repository": "NirDiamant/RAG_Techniques",
+      "learningId": "learn-github-nirdiamant-rag_techniques",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T13:37:43.968Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

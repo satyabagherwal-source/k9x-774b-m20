@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T13:28:46.671Z",
+  "last_updated": "2026-10-30T13:37:43.880Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4760,8 +4760,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "fe517486",
-      "content_hash": "0743f4e6d3665750acd7398eee962491d3899857b6213a86ef0d2fa1ed661593",
+      "source_version": "15bc0611",
+      "content_hash": "95173f3ede33a2d7f7d7d7117242f7e6ee98ec17c75a033533ea7e205bdcb3cb",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4869,6 +4869,11 @@
           "number": 5592,
           "title": "memory): weighted RRF channel fusion with sweep and real-query validation (#332)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5768,
+          "title": "gateway): WSL2 autostart and crash supervision without systemd (#333)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4876,7 +4881,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T03:59:44.841Z",
+      "verified_at": "2026-10-30T13:37:43.860Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -13283,8 +13288,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "a59cd61f",
-      "content_hash": "7a58c5023db894bb4c5eed2b11f509ca37e9647d1470d4fc4a2272b643ff6368",
+      "source_version": "76d7ef16",
+      "content_hash": "a375a812a0a069ea53055d0af301b02953a05b6805b3aef6ec2ef8211200fe19",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -13427,6 +13432,11 @@
           "number": 5627,
           "title": "deps): bump rustls-webpki to 0.103.16 and move gateway image off Debian 11 (#603",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5766,
+          "title": "transport): contain panics in the QUIC socket adapter without aborting the node",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13434,7 +13444,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:23:28.830Z",
+      "verified_at": "2026-10-30T13:37:39.706Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -30492,8 +30502,8 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "bde990b4",
-      "content_hash": "8b0e97e55a4e468785d7e5978c9e6dbeaa8e998e931182be8c8a3d9f7346d69e",
+      "source_version": "b9b06661",
+      "content_hash": "789cb42c670414453e4cdc7049d9fabfd79d5d8f4ba80cc8701d877655e3c7d7",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
@@ -30511,6 +30521,11 @@
           "number": 5430,
           "title": "mcp-server): optionally preserve upstream discovery instructions (#5263)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5765,
+          "title": "mcp-server): unify Modern and Legacy business compatibility (#5282)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -30518,7 +30533,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:26:41.314Z",
+      "verified_at": "2026-10-30T13:37:36.040Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41118,8 +41133,8 @@
       "slug": "nirdiamant-rag_techniques",
       "platform": "github",
       "source_url": "https://github.com/NirDiamant/RAG_Techniques",
-      "source_version": "9e2e9930",
-      "content_hash": "c52b5ca789d38a267d71b70a77ece3ae56d8e069a5ce5ea1471913f6b0f3559f",
+      "source_version": "4eacd2fa",
+      "content_hash": "3896a9b482418fc433f120bae366160bedbba047dc229b3e6561e758f5f063cd",
       "dossier_path": "07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md",
       "promoted_rules": [
@@ -41142,6 +41157,11 @@
           "number": 4853,
           "title": "Banner: AI Agents Made Simple reached #1 in three Kindle categories",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5767,
+          "title": "Add a follow-the-author-on-Amazon line to the book footer",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41149,7 +41169,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:33:25.937Z",
+      "verified_at": "2026-10-30T13:37:42.400Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153526,6 +153546,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T13:28:46.659Z"
+    },
+    "rule-5765": {
+      "learning_id": "rule-5765",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5765,
+      "title": "mcp-server): unify Modern and Legacy business compatibility (#5282)",
+      "source_url": "https://github.com/higress-group/higress",
+      "source_version": "b9b06661",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:37:36.040Z"
+    },
+    "rule-5766": {
+      "learning_id": "rule-5766",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5766,
+      "title": "transport): contain panics in the QUIC socket adapter without aborting the node",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "76d7ef16",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:37:39.706Z"
+    },
+    "rule-5767": {
+      "learning_id": "rule-5767",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5767,
+      "title": "Add a follow-the-author-on-Amazon line to the book footer",
+      "source_url": "https://github.com/NirDiamant/RAG_Techniques",
+      "source_version": "4eacd2fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:37:42.400Z"
+    },
+    "rule-5768": {
+      "learning_id": "rule-5768",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5768,
+      "title": "gateway): WSL2 autostart and crash supervision without systemd (#333)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "15bc0611",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:37:43.860Z"
     }
   },
   "aliases": {

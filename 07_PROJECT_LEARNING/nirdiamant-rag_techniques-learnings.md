@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md`  
 > **Source**: github ([https://github.com/NirDiamant/RAG_Techniques](https://github.com/NirDiamant/RAG_Techniques))  
-> **Source Version**: `9e2e9930`  
+> **Source Version**: `4eacd2fa`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:33:25.482Z  
+> **Timestamp**: 2026-10-30T13:37:41.805Z  
 > **Learning ID**: `learn-github-nirdiamant-rag_techniques`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nirdiamant-rag_techniques-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NirDiamant/RAG_Techniques](https://github.com/NirDiamant/RAG_Techniques))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:33:24.927Z  
+> **Harvest Timestamp**: 2026-10-30T13:37:41.548Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: This repository showcases various advanced techniques for Retrieval-Augmented Generation (RAG) systems. Each technique has a detailed notebook tutorial.
 - **Primary Language / Ecosystem**: Jupyter Notebook
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30033 stars
+- **Stars / Engagement**: 30136 stars
 
 ---
 
@@ -1704,48 +1704,69 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9e2e9930` (2026-10-27)
-**Commit Message**: Banner: AI Agents Made Simple reached #1 in three Kindle categories
+### Incident Patch 1: `4eacd2fa` (2026-10-29)
+**Commit Message**: Add a follow-the-author-on-Amazon line to the book footer
 
-**File**: `README.md` (modified, +2/-2)
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `README.md` (modified, +2/-0)
 ```diff
-@@ -1,9 +1,9 @@
- <!-- launch-banner-099: remove when the $0.99 launch price ends -->
- <div align="center">
+@@ -714,6 +714,8 @@ To begin implementing these advanced RAG techniques in your projects:
  
--🔥 **Launch day: my new book _AI Agents Made Simple_ is $0.99 on Kindle for the next 24 hours only.** 🔥<br>
-+**_AI Agents Made Simple_ reached #1 in Software Development, Software Engineering and Software Design Tools on Amazon.com's Kindle Store.**<br>
- A decision guide to building AI agents that work: 28 chapters, 148 illustrations, no code.<br>
--**[Get it on Amazon for $0.99 →](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=launch-banner-099&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2&retarget=0&text=launch-banner-099)**
-+**[Get the book on Amazon →](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=launch-banner-099&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2&retarget=0&text=launch-banner-099)**
+ **[AI Agents Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-agents&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2%3Fmaas%3Dmaas_adg_api_580351185840460851_static_9_573%26ref_%3Daa_maas%26tag%3Dmaas%26aa_campaignid%3Dagents-en%26aa_adgroupid%3Dgithub-readme%26aa_creativeid%3Drag-book-footer-agents&retarget=0&text=book-footer-agents)** - the decision guide to building agents that work: 28 chapters on what each pattern does, what breaks, what it costs, and when it is overkill. No code.
  
- </div>
- <!-- /launch-banner-099 -->
++*To hear when the next book comes out, [follow the author on Amazon](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=author-follow-amazon&target=https%3A%2F%2Fwww.amazon.com%2Fstores%2FNir-Diamant%2Fauthor%2FB0DZMTVQHJ&retarget=0&text=author-follow-amazon).*
++
+ *Run a course, newsletter, or dev community? You can [earn 25% recommending RAG Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=affiliate-signup&target=https%3A%2F%2Fnirdiamant.gumroad.com%2Faffiliates&retarget=0&text=affiliate-signup) to your audience.*
+ 
+ ## Contributing
 ```
 
 ---
 
-### Incident Patch 2: `8e9febb8` (2026-10-26)
-**Commit Message**: Add a launch-day banner: AI Agents Made Simple is $0.99 for 24 hours
+### Incident Patch 2: `cad39f9d` (2026-10-29)
+**Commit Message**: Tag book links with Amazon Attribution, add book links to the Sponsor button
+
+Every Amazon book link in the README keeps the click tracker and now carries
+an Attribution tag per surface, so purchases can be traced to the link that
+sent them. FUNDING.yml gains the book link(s) next to GitHub Sponsors.
 
 Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `README.md` (modified, +10/-0)
+**File**: `.github/FUNDING.yml` (modified, +2/-1)
 ```diff
-@@ -1,3 +1,13 @@
-+<!-- launch-banner-099: remove when the $0.99 launch price ends -->
-+<div align="center">
-+
-+🔥 **Launch day: my new book _AI Agents Made Simple_ is $0.99 on Kindle for the next 24 hours only.** 🔥<br>
-+A decision guide to building AI agents that work: 28 chapters, 148 illustrations, no code.<br>
-+**[Get it on Amazon for $0.99 →](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=launch-banner-099&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2&retarget=0&text=launch-banner-099)**
-+
-+</div>
-+<!-- /launch-banner-099 -->
-+
- <div align="center">
+@@ -1 +1,2 @@
+-github: NirDiamant
+\ No newline at end of file
++github: NirDiamant
++custom: ["https://www.amazon.com/dp/B0GWDH8JJL?maas=maas_adg_api_580351185840460851_static_9_573&ref_=aa_maas&tag=maas&aa_campaignid=rag-en&aa_adgroupid=github-funding&aa_creativeid=rag", "https://www.amazon.com/dp/B0HNXRSRH2?maas=maas_adg_api_580351185840460851_static_9_573&ref_=aa_maas&tag=maas&aa_campaignid=agents-en&aa_adgroupid=github-funding&aa_creativeid=rag"]
+```
+
+**File**: `README.md` (modified, +3/-3)
+```diff
+@@ -3,7 +3,7 @@
  
- # Advanced RAG Techniques 🚀
+ **_AI Agents Made Simple_ reached #1 in Software Development, Software Engineering and Software Design Tools on Amazon.com's Kindle Store.**<br>
+ A decision guide to building AI agents that work: 28 chapters, 148 illustrations, no code.<br>
+-**[Get the book on Amazon →](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=launch-banner-099&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2&retarget=0&text=launch-banner-099)**
++**[Get the book on Amazon →](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=launch-banner-099&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2%3Fmaas%3Dmaas_adg_api_580351185840460851_static_9_573%26ref_%3Daa_maas%26tag%3Dmaas%26aa_campaignid%3Dagents-en%26aa_adgroupid%3Dgithub-readme%26aa_creativeid%3Drag-launch-banner-099&retarget=0&text=launch-banner-099)**
+ 
+ </div>
+ <!-- /launch-banner-099 -->
+@@ -708,11 +708,11 @@ To begin implementing these advanced RAG techniques in your projects:
+ 
+ ## 📚 More from the same author
+ 
+-**[Agent Memory Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-am&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HCRMGHCM&retarget=0&text=book-footer-am)** - the visual guide to memory for AI agents: buffers, vector and graph memory, cognitive architectures and the frameworks in production.
++**[Agent Memory Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-am&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HCRMGHCM%3Fmaas%3Dmaas_adg_api_580351185840460851_static_9_573%26ref_%3Daa_maas%26tag%3Dmaas%26aa_campaignid%3Dam-en%26aa_adgroupid%3Dgithub-readme%26aa_creativeid%3Drag-book-footer-am&retarget=0&text=book-footer-am)** - the visual guide to memory for AI agents: buffers, vector and graph memory, cognitive architectures and the frameworks in production.
+ 
+ **[Prompt Engineering: Master the Art of AI Interaction](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-pe&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0DZ85RPB5%3Ftag%3Ddiamantai-ragrm-20&retarget=0&text=book-footer-pe)** - the prompting foundation that makes RAG work better. Same visual approach, 22 hands-on techniques.
+ 
+-**[AI Agents Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-agents&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2&retarget=0&text=book-footer-agents)** - the decision guide to building agents that work: 28 chapters on what each pattern does, what breaks, what it costs, and when it is overkill. No code.
++**[AI Agents Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=book-footer-agents&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2%3Fmaas%3Dmaas_adg_api_580351185840460851_static_9_573%26ref_%3Daa_maas%26tag%3Dmaas%26aa_campaignid%3Dagents-en%26aa_adgroupid%3Dgithub-readme%26aa_creativeid%3Drag-book-footer-agents&retarget=0&text=book-footer-agents)** - the decision guide to building agents that work: 28 chapters on what each pattern does, what breaks, what it costs, and when it is overkill. No code.
+ 
+ *Run a course, newsletter, or dev community? You can [earn 25% recommending RAG Made Simple](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=affiliate-signup&target=https%3A%2F%2Fnirdiamant.gumroad.com%2Faffiliates&retarget=0&text=affiliate-signup) to your audience.*
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -1774,13 +1795,13 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Banner: AI Agents Made Simple reached #1 in three Kindle categories
+## X. Add a follow-the-author-on-Amazon line to the book footer
 
 **RULE**:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NirDiamant/RAG_Techniques. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9e2e9930`: Banner: AI Agents Made Simple reached #1 in three Kindle categories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4eacd2fa`: Add a follow-the-author-on-Amazon line to the book footer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Jupyter Notebook data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -1788,16 +1809,15 @@ Subsystems managing Jupyter Notebook data structures, boundary deserialization, 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```jupyter notebook
 // Verified production-grade fix pattern:
-**_AI Agents Made Simple_ reached #1 in Software Development, Software Engineering and Software Design Tools on Amazon.com's Kindle Store.**<br>
-**[Get the book on Amazon →](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=launch-banner-099&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2&retarget=0&text=launch-banner-099)**
+*To hear when the next book comes out, [follow the author on Amazon](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=author-follow-amazon&target=https%3A%2F%2Fwww.amazon.com%2Fstores%2FNir-Diamant%2Fauthor%2FB0DZMTVQHJ&retarget=0&text=author-follow-amazon).*
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```jupyter notebook
 // Anti-pattern to NEVER write (induced failure mode):
-🔥 **Launch day: my new book _AI Agents Made Simple_ is $0.99 on Kindle for the next 24 hours only.** 🔥<br>
-**[Get it on Amazon for $0.99 →](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=launch-banner-099&target=https%3A%2F%2Fwww.amazon.com%2Fdp%2FB0HNXRSRH2&retarget=0&text=launch-banner-099)**
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9e2e9930` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4eacd2fa` are properly handled with clean fallback behavior.

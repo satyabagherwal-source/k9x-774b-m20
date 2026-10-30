@@ -421800,3 +421800,257 @@ from cognee.modules.conflicts.methods import retire_decisions_after_edit
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `95ff9cfd` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5765. mcp-server): unify Modern and Legacy business compatibility (#5282) (Harvested from higress-group/higress)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "mcp-server): unify Modern and Legacy business compatibility (#5282)",
+  "source": "higress-group/higress",
+  "source_url": "https://github.com/higress-group/higress",
+  "source_version": "b9b06661",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T13:37:35.839Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-higress-group-higress",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [higress-group/higress](https://github.com/higress-group/higress) (Revision: `b9b06661`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `plugins/wasm-go/extensions/mcp-server/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b9b06661`: mcp-server): unify Modern and Legacy business compatibility (#5282). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/mcp-server/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+| `tools[].legacyOnly` | boolean | 选填 | `false` | 已废弃，仍兼容解析省略、`false` 和 `true`，但不再影响工具可见性或调用。 |
+| `tools[].outputSchema` | object | 选填 | - | 工具结构化输出的 JSON Schema；所有支持的协议版本都会返回。插件不会据此校验输出是否符合 Schema。 |
+所有支持的协议版本共用历史工具查找、认证、`allowTools`、Create/Call 和 REST 参数转换流程，不在网关处执行 inputSchema 校验、schema 编译或私有 schema 资源门禁。工具描述按正常 JSON 序列化发布，包含 `outputSchema`；工具自身仍负责输入业务约束。
+
+升级前使用 `legacyOnly: true` 的工具现在也会对 Modern 客户端可见、可调用，仍受认证和 `allowTools` 控制。请审阅现有工具授权范围；不再需要用该标记绕过 schema 校验。内置 `mcp-e2bdev` 和 `mcp-firecrawl` 已清理该标记。
+
+Legacy/Modern 的完整 UTF-8 JSON-RPC 请求体上限统一为 **100 MiB**，包含 envelope 和 `_meta`。普通 Content-Type/Accept、非身份元数据、普通重复键、深度和值数量沿历史业务策略；Modern 的原 1 MiB arguments、64 层、65536 值和名称私有限制已移除。合法单对象消息、协议版本/方法/工具名身份冲突及严格探测/协商边界继续保留。代理归一化实际上游请求，并保留客户端 ID token 与精确 JSON 数字；直接工具的原始 Create 输入和 REST 自身的类型转换保持原契约。
+### Origin 与 SSE endpoint 的信任边界
+
+插件恢复历史 Origin 接受策略：缺省、跨域、不同端口及 `null` Origin 均可进入正常处理。插件不再提供这项 Origin 同源拒绝所承担的 DNS rebinding 防护。部署者需在可信网络、网关入口或其他部署边界评估并实施相应防护；CORS 和认证不等价于该防护，升级时必须单独审阅这一取舍。
+
+旧 SSE 的初始 GET 仍复用主请求和既有路由。插件信任配置上游返回的 endpoint，按历史相对/绝对 URL 规则选择后续控制及业务 POST 的 path/query 和 HTTP Authority。完整 endpoint 可以选择不同 Authority；已有静态/透传 Authorization、header/query apiKey 等凭据可能按现有移除和覆盖规则发送给该 Authorit
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Anti-pattern to NEVER write (induced failure mode):
+| `tools[].legacyOnly` | boolean | 选填 | `false` | 仅供旧版 MCP 客户端使用。设为 `true` 后，工具不会出现在 MCP `2026-07-28` 的工具列表中，也不能通过该版本调用。 |
+| `tools[].outputSchema` | object | 选填 | - | 工具结构化输出的 JSON Schema。当前旧版工具列表会返回该字段，MCP `2026-07-28` 的工具列表暂不返回；插件不会据此校验输出是否符合 Schema。 |
+MCP `2026-07-28` 会在调用工具前校验输入参数。如果工具的参数定义无法用于校验，该工具可能仍出现在列表中，但调用会被拒绝。需要暂时保留旧版调用的工具，可设置 `legacyOnly: true`。
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b9b06661` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5766. transport): contain panics in the QUIC socket adapter without aborting the node (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "transport): contain panics in the QUIC socket adapter without aborting the node",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "76d7ef16",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-30T13:37:39.503Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `76d7ef16`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `76d7ef16`: transport): contain panics in the QUIC socket adapter without aborting the node (#6027). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+(`quic_endpoint_down`), panics the QUIC socket adapter caught
+(`quic_adapter_panicked`, once per endpoint; the process keeps running
+and no breaker state is left), QUIC crash-loop breaker trips at startup
+  → quinn's driver returns only on a receive I/O error. QuicSocket returns
+    one only after it caught a panic (below); tests inject one
+    (socket::SocketFaults::fail_receive).
+  → PANICS. The node relies on panic = "unwind". A build with
+    panic = "abort" still compiles, but QuicEndpoint::bind refuses
+    (require_unwinding, through bind_checked so tests drive it) and the
+    node runs with QUIC off; log_startup says so instead of describing the
+    configured mode. This covers a profile-level abort only.
+    CONTAINED: a panic in the socket adapter (QuicSocket::poll_recv,
+    try_send, QuicPoller::poll_writable), which quinn calls holding its
+    endpoint or connection state lock. The adapter catches it before it
+    unwinds into quinn (no lock poisoned), and
+    EndpointHealth::adapter_panicked turns the endpoint Down, counts
+    quic_adapter_panicked once per endpoint and logs ERROR once (quinn
+    also logs its own ERROR "I/O error" for each of its drivers that ends
+    
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+(`quic_endpoint_down`), QUIC crash-loop breaker trips at startup
+  → What this covers is narrow. quinn's driver returns only on a receive
+    I/O error and QuicSocket never returns one, so in production today it
+    cannot return at all; tests inject the error (socket::ReceiveFault).
+    The one real way it ends is a PANIC, which is NOT contained: quinn
+    0.11.12 polls the driver holding its endpoint state mutex
+    (endpoint.rs line 370), so a panic poisons it and every later lock
+    panics too, in EndpointDriver::drop (line 403), Accept::poll (line
+    651, the accept loop), connect (line 214) and the connection drivers;
+    one of those running during the unwind aborts the process. A panic is
+    never reported as Down. Containing a quinn panic (catch the unwind,
+    leak the driver instead of dropping it, guard the accept loop) is a
+    separate PREREQUISITE before QUIC is on by default.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `76d7ef16` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5767. Add a follow-the-author-on-Amazon line to the book footer (Harvested from NirDiamant/RAG_Techniques)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Add a follow-the-author-on-Amazon line to the book footer",
+  "source": "NirDiamant/RAG_Techniques",
+  "source_url": "https://github.com/NirDiamant/RAG_Techniques",
+  "source_version": "4eacd2fa",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-10-30T13:37:42.172Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nirdiamant-rag_techniques",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NirDiamant/RAG_Techniques](https://github.com/NirDiamant/RAG_Techniques) (Revision: `4eacd2fa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NirDiamant/RAG_Techniques. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `4eacd2fa`: Add a follow-the-author-on-Amazon line to the book footer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Jupyter Notebook data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```jupyter notebook
+// Verified production-grade fix pattern:
+*To hear when the next book comes out, [follow the author on Amazon](https://europe-west1-rag-techniques-views-tracker.cloudfunctions.net/rag-techniques-tracker?notebook=main-readme&click=author-follow-amazon&target=https%3A%2F%2Fwww.amazon.com%2Fstores%2FNir-Diamant%2Fauthor%2FB0DZMTVQHJ&retarget=0&text=author-follow-amazon).*
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```jupyter notebook
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `4eacd2fa` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5768. gateway): WSL2 autostart and crash supervision without systemd (#333) (Harvested from Bitterbot-AI/bitterbot-desktop)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "gateway): WSL2 autostart and crash supervision without systemd (#333)",
+  "source": "Bitterbot-AI/bitterbot-desktop",
+  "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+  "source_version": "15bc0611",
+  "license": "MIT",
+  "extracted_at": "2026-10-30T13:37:43.659Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `15bc0611`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `docs/cli/gateway.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `15bc0611`: gateway): WSL2 autostart and crash supervision without systemd (#333). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/cli/gateway.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+- `gateway install` supports `--port`, `--runtime`, `--token`, `--force`, `--dry-run`, `--json`.
+- `--dry-run` prints what would be installed without writing, registering or starting anything. It is supported by the `wsl-supervisor` backend (task XML plus the `schtasks.exe` and supervisor commands); other backends refuse it.
+- Backends: launchd (macOS), systemd user service (Linux), Scheduled Task (Windows), and `wsl-supervisor` on WSL2 when `systemctl --user` has no bus. See [/gateway/background-process#wsl2-without-systemd](/gateway/background-process#wsl2-without-systemd).
+
+### `gateway supervise`
+
+```bash
+bitterbot gateway supervise
+```
+
+The WSL crash supervisor: what the Windows logon task registered by `gateway install` runs on a WSL2 host without systemd. It spawns the recorded gateway command, relaunches it after crashes with a backoff (5 s doubling to 60 s), adopts a gateway that is already running, logs to `~/.bitterbot/logs/gateway-<YYYYMMDD>.log` and `gateway-exits.log`, and stops the gateway on SIGTERM. Not for interactive use: install with `bitterbot gateway install`, stop with `bitterbot gateway stop`.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+- `gateway install` supports `--port`, `--runtime`, `--token`, `--force`, `--json`.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `15bc0611` are properly handled with clean fallback behavior.

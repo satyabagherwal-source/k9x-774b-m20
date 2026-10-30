@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `fe517486`  
+> **Source Version**: `15bc0611`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T03:59:44.277Z  
+> **Timestamp**: 2026-10-30T13:37:43.297Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T03:59:43.678Z  
+> **Harvest Timestamp**: 2026-10-30T13:37:43.012Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,1394 +1799,294 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe517486` (2026-10-30)
-**Commit Message**: feat(memory): weighted RRF channel fusion with sweep and real-query validation (#332)
+### Incident Patch 1: `15bc0611` (2026-10-30)
+**Commit Message**: feat(gateway): WSL2 autostart and crash supervision without systemd (#333)
 
-Hybrid memory search fused its vector, keyword and graph channels with
-unweighted reciprocal rank fusion (1 / (60 + rank) per channel). On one
-node's real memory the fused list lost to its own keyword channel. This
-adds per-channel RRF weights and a configurable RRF constant, measures
-them, and sets the default from that measurement.
+The live node runs in WSL2 with init as PID 1: no systemd user bus, so
+`bitterbot gateway install` failed with "systemctl --user unavailable"
+and nothing relaunched the gateway after a Windows reboot or a crash
+(down unnoticed twice in three days: 2026-10-27 lock handoff, 2026-10-29
+Windows Update reboot).
 
-Weighted RRF:
-- rrfFuse accepts a weight per list (contribution weight / (k + rank));
-  weight 0 removes a channel's contribution without changing candidate
-  retrieval, and an id found only by silenced channels is dropped.
-- mergeHybridResultsRRF takes weights and k; the manager reads them from
-  agents.defaults.memorySearch.query.hybrid.rrfWeights {vector, keyword,
-  graph} and hybrid.rrfK (types, zod, labels, help, defaults registry).
-  Negative or non-finite values fall back to the default with a warning.
-- 1/1/1 at k 60 reproduces the previous ordering exactly (tested).
+A fourth GatewayService backend, `wsl-supervisor`, is selected on Linux
+when the process runs in WSL and a one-shot `systemctl --user status`
+probe fails; systemd is kept whenever the bus works, and non-WSL Linux
+without systemd keeps the systemd backend and its hints.
 
-Measurement (docs/research/fusion-weights-2026-10-29.md):
-- benchmarks/live-recall/fusion-sweep.mts: capture once, re-fuse offline
-  through the production rrfFuse over 72 settings, select on t
+- `bitterbot gateway supervise` (what the autostart runs): spawns the
+  recorded launcher with the recorded arguments, cwd and environment;
+  child stdout/stderr to ~/.bitterbot/logs/gateway-<YYYYMMDD>.log (new
+  file per day, newest 14 kept); one line per exit to gateway-exits.log
+  (ISO time, pid, exit code or signal, uptime, decision); single-instance
+  lock with stale detection; stale orchestrator socket removed only when
+  nothing holds it; SIGTERM/SIGINT forward a graceful stop and never
+  relaunch.
+- Relaunch policy as pure functio
 
-**File**: `benchmarks/live-recall/README.md` (modified, +70/-6)
+**File**: `docs/cli/gateway.md` (modified, +11/-1)
 ```diff
-@@ -83,12 +83,26 @@ code paths can be judged on what the agent actually asks:
-    `~/.bitterbot/event-journal.sqlite` (stream `tool`, phase `start`). Private
-    output under `~/.bitterbot`, never committed; a manifest with counts and the
-    file hash is.
--2. `replay-judge.mts` searches a copy of the snapshot once per setting
--   (here `postFusionBoostScale` 1, 0.1, 0), pools the top-k passages across
--   settings, and asks a small model ONCE per (query, passage) pair whether the
--   passage answers the query. The same verdicts score every setting, so the
--   comparison is fair even where the judge is not. Output: hit@k (any relevant
--   passage in the top k), precision@k, relevant@1, MRR; hashes and ranks only.
-+2. `replay-judge.mts` searches a copy of the snapshot once per setting,
-+   pools the top-k passages across settings, and asks a small model ONCE per
-+   (query, passage) pair whether the passage answers the query. The same
-+   verdicts score every setting, so the comparison is fair even where the
-+   judge is not. Output: hit@k (any relevant passage in the top k),
-+   precision@k, relevant@1, MRR; hashes and ranks only.
-+
-+   A setting is `boost=<postFusionBoostScale>;rrf=<vector>,<keyword>,<graph>[;k=<rrfK>]`,
-+   passed as `--settings "boost=0.1;rrf=1,1,1" "boost=0.1;rrf=0.25,1,1" ...`
-+   (`--scales 1,0.1,0` is the older spelling for boost scales alone). The first
-+   setting is the baseline. Every search runs with the wall clock frozen at
-+   `--now` and hormonal modulation off, so a setting's list depends on the
-+   code and the snapshot only; the recency boost keeps its production default.
-+   `--rejudge N` asks the judge again about N random pooled pairs to estimate
-+   its flip rate; the output then carries, per setting against the baseline,
-+   the paired delta in hit@k and MRR, a paired bootstrap over queries
-+   (sampling noise), the sd of the delta when every pooled verdict flips at
-+   that rate (judge noise), and a `nonInferior` flag (both deltas at least
-+   minus twice the judge-noise sd). `--verdict-cache` checkpoints verdicts
-+   (hashes and booleans) so a run that loses the network resumes for free.
+@@ -159,8 +159,18 @@ bitterbot gateway uninstall
  
- Results, 2026-10-27: 68 distinct real queries (May to October 2026, median 36
- characters), k = 5, judge `claude-haiku-4-5`, 398 pairs judged. Only 33 of the
-@@ -109,6 +123,56 @@ queries, which are short and keyword-shaped and sit closer to the keyword
- channel's strengths, and 0 is not distinguishable from 0.1 on this sample. The
- default stays at 0.1.
+ Notes:
  
-+Results, 2026-10-29 (`results/replay-journal-fusion-weights-2026-10-29.json`):
-+the same 68 queries against a fresh snapshot (3,952 chunks), k = 5, clock
-+frozen, hormonal modulation off, `postFusionBoostScale` 0.1 throughout, RRF
-+channel weights varied (vector, keyword, graph). 329 pairs judged by
-+`claude-haiku-4-5` ($0.06); 36 of 68 queries had any relevant passage under
-+any setting. Re-judging 80 random pairs flipped 3 (3.75 percent).
+-- `gateway install` supports `--port`, `--runtime`, `--token`, `--force`, `--json`.
++- `gateway install` supports `--port`, `--runtime`, `--token`, `--force`, `--dry-run`, `--json`.
++- `--dry-run` prints what would be installed without writing, registering or starting anything. It is supported by the `wsl-supervisor` backend (task XML plus the `schtasks.exe` and supervisor commands); other backends refuse it.
+ - Lifecycle commands accept `--json` for scripting.
++- Backends: launchd (macOS), systemd user service (Linux), Scheduled Task (Windows), and `wsl-supervisor` on WSL2 when `systemctl --user` has no bus. See [/gateway/background-process#wsl2-without-systemd](/gateway/background-process#wsl2-without-systemd).
 +
-+| RRF weights (vector, keyword, graph) | hit@5 | precision@5 | relevant@1 | MRR   | delta hit@5 vs 1,1,1 | delta MRR vs 1,1,1 | judge-noise margin (hit@5 / MRR) |
-+| ------------------------------------ | ----- | ----------- | ---------- | ----- | -------------------- | ------------------ | -------------------------------- |
-+| 1, 1, 1 (unweighted, default)        | 47.1% | 33.5%       | 36.8%      | 0.400 |                      |                    |                                  |
-+| 0.5, 1, 1                            | 45.6% | 33.5%       | 36.8%      | 0.398 | -1.5 pt              | -0.003             | 3.5 pt / 0.017                   |
-+| 0.25, 1, 1                           | 47.1% | 32.6%       | 36.8%      | 0.402 | 0.0 pt               | +0.002             | 4.7 pt / 0.026                   |
-+| 0.1, 1, 1                            | 48.5% | 32.6%       | 35.3%      | 0.394 | +1.5 pt              | -0.006             | 5.1 pt / 0.030                   |
++### `gateway supervise`
 +
-+The margin is twice the sd of the paired delta when every pooled verdict flips
-+independently at the observed 3.75 percent rate; all three keyword-heavier
-+settings are non-inferior to 1/1/1 under it, and none is better (paired
-+bootstrap over queries spans zero for every contrast). The large gain the
-+generated questions showed does not appear on real queries, which are short
-+and keyword-shaped and already sit where both channels agree. The default
-+stays 1/1/1: with no measured real-query benefit there is nothing to pay the
-+comparability cost for. 0.25 and 0.1 are available as configuration. Full
-+tables and the decision: `docs/research/fusion-weights-2026-10-29.md`.
++```bash
++bitterbot gateway supervise
++```
 +
-+## Fusion-weight sweep (generated questions, partitioned)
-+
-+`fusion-sweep.mts` asks how the fused list should combine its channels. It
-+runs one deep search per question (fused top 200 with every channel's own rank
-+on each result) from a frozen fork of the snapshot, then re-fuses offline
-+through the production `rrfFuse` over a grid of RRF channel we
-```
-
-**File**: `benchmarks/live-recall/fusion-sweep.mts` (added, +489/-0)
-```diff
-@@ -0,0 +1,489 @@
-+/**
-+ * Fusion-weight sweep on the PLAN-59 Phase 1 partition.
-+ *
-+ * Captures one deep fused search per question from a frozen fork of a store
-+ * snapshot (the fused top N with every channel's own rank on each result),
-+ * then re-fuses offline with weighted RRF over a grid of channel weights and
-+ * RRF constants, through the production `rrfFuse`. Selection happens on the
-+ * development split only, confirmation on qualification (family-paired
-+ * bootstrap), and the final split stays sealed behind the Phase 1 partition
-+ * gate (`--final --freeze <sha256>` of a protocol file marked frozen).
-+ *
-+ * The capture holds chunk ids and file paths of private memory, so it is
-+ * written only under `~/.bitterbot/benchmarks/live-recall/` with mode 0600
-+ * and is never committed. The result file holds weights, hashes and numbers.
-+ *
-+ *   node --import tsx benchmarks/live-recall/fusion-sweep.mts \
-+ *     --snapshot <copy.sqlite> --questions ~/.bitterbot/benchmarks/live-recall/plan59-questions-<date>.jsonl \
-+ *     --capture ~/.bitterbot/benchmarks/live-recall/plan59-fusion-capture-<date>.json \
-+ *     --out benchmarks/live-recall/results/fusion-sweep-<date>.json [--max 200] [--now <epoch ms>]
-+ *
-+ * The capture is reused when it exists, so the grid can be changed and the
-+ * sweep re-run without another round of searches. Captures take about ten
-+ * seconds per question at 1,000 candidates per channel on a small box; a
-+ * partial capture is checkpointed every ten questions and resumed.
-+ */
-+import {
-+  chmodSync,
-+  existsSync,
-+  mkdirSync,
-+  mkdtempSync,
-+  readFileSync,
-+  writeFileSync,
-+} from "node:fs";
-+import { tmpdir } from "node:os";
-+import { dirname, join } from "node:path";
-+import { DatabaseSync } from "node:sqlite";
-+import { parseArgs } from "node:util";
-+import { resolveApiKeyForProvider } from "../../src/agents/model-auth.js";
-+import { loadConfig } from "../../src/config/io.js";
-+import { rrfFuse } from "../../src/memory/rrf.js";
-+import type { MemorySearchResult } from "../../src/memory/types.js";
-+import {
-+  gitCommit,
-+  isPrivateBenchmarkPath,
-+  loadQuestions,
-+  type Question,
-+  refuseUnderBitterbotHome,
-+  sha256,
-+  sha256File,
-+} from "../plan59-phase1/common.js";
-+import {
-+  EmbeddingMemo,
-+  makeIdResolver,
-+  openFrozenStore,
-+  parentMap,
-+} from "../plan59-phase1/harness.js";
-+import {
-+  assertFinalAllowed,
-+  type FinalGate,
-+  type Partition,
-+  questionsIn,
-+  type Split,
-+} from "../plan59-phase1/partition.js";
-+import { type Channel, CHANNELS, type RankedResult, rankOf } from "../plan59-phase1/scoring.js";
-+
-+const { values: args } = parseArgs({
-+  options: {
-+    snapshot: { type: "string" },
-+    questions: { type: "string" },
-+    capture: { type: "string" },
-+    out: { type: "string" },
-+    max: { type: "string", default: "200" },
-+    now: { type: "string" },
-+    work: { type: "string" },
-+    final: { type: "boolean", default: false },
-+    freeze: { type: "string" },
-+    protocol: { type: "string" },
-+  },
-+  strict: true,
-+});
-+if (!args.snapshot || !args.questions || !args.capture || !args.out) {
-+  throw new Error(
-+    "usage: --snapshot <sqlite> --questions <jsonl> --capture <private json> --out <result json> [--max 200] [--now ms]",
-+  );
-+}
-+if (!isPrivateBenchmarkPath(args.capture)) {
-+  throw new Error(
-+    `the capture holds private paths; --capture must be under ~/.bitterbot/benchmarks/live-recall/ (got ${args.capture})`,
-+  );
-+}
-+refuseUnderBitterbotHome(args.out, "a sweep result");
-+const MAX = Math.max(1, Math.floor(Number(args.max)));
-+
-+// ---- questions and partition ----------------------------------------------
-+
-+type CapturedResult = {
-+  id: string | null;
-+  path: string;
-+  startLine: number;
-+  endLine: number;
-+  fusedRank: number;
-+  ch: Partial<Record<Channel, number>>;
-+};
-+type Capture = { chunkId: string; path: string; split: Split; results: CapturedResult[] };
-+type CaptureFile = {
-+  snapshotSha256?: string;
-+  questionsSha256: string;
-+  frozenNow: number;
-+  maxResults: number;
-+  gitCommit: string | null;
-+  captures: Capture[];
-+};
-+
-+const { questions, raw } = loadQuestions(args.questions);
-+const qSha = sha256(raw);
-+const partition = JSON.parse(readFileSync(`${args.questions}.partition.json`, "utf8")) as Partition;
-+let finalGate: FinalGate | undefined;
-+if (args.final) {
-+  finalGate = assertFinalAllowed({
-+    final: true,
-+    freeze: args.freeze,
-+    protocolPath: args.protocol ?? join(dirname(args.out), "fusion-sweep.protocol.md"),
-+  });
-+}
-+const splits: Split[] = finalGate
-+  ? ["development", "qualification", "final"]
-+  : ["development", "qualification"];
-+const bySplit = new Map<Split, Question[]>(
-+  splits.map((s) => [
-+    s,
-+    questionsIn(s, questions, partition, { questionsSha256: qSha, finalGate }),
-+  ]),
-+);
-+const splitOf = new Map<string, Split>();
-+for (const [s, qs] of bySplit) {
-+  for (const q of qs) {
-+    splitOf.set(q.chunkId, s);
-+  }
-+}
-+const all = splits.fl
-```
-
-**File**: `benchmarks/live-recall/replay-judge.mts` (modified, +478/-66)
-```diff
-@@ -1,50 +1,138 @@
- /**
-- * Replay real agent queries against a store snapshot under several
-- * post-fusion boost scales and judge relevance with a small model.
-+ * Replay real agent queries against a store snapshot under several search
-+ * settings and judge relevance with a small model.
-  *
-  * The held-out set (run.mts) has exact ground truth but synthetic questions.
-  * Real queries from the journal (extract-journal-queries.mts) have no ground
-  * truth, so a judge model marks each (query, passage) pair relevant or not,
-  * ONCE, and the same verdicts score every setting. Settings differ only in the
-  * code path under test, so the comparison is fair even if the judge is not
-- * perfect. Output holds metrics and ids only.
-+ * perfect. Output holds metrics, hashes and ranks only.
-+ *
-+ * A setting is a post-fusion boost scale, an RRF weight triple
-+ * (vector,keyword,graph) and optionally an RRF constant:
-  *
-  *   node --import tsx benchmarks/live-recall/replay-judge.mts \
-  *     --snapshot ~/snap.sqlite --queries ~/.bitterbot/benchmarks/live-recall/journal-queries.jsonl \
-- *     --scales 1,0.1,0 --out benchmarks/live-recall/results/replay-<date>.json [--k 5] [--judge claude-haiku-4-5]
-+ *     --settings "boost=0.1;rrf=1,1,1" "boost=0.1;rrf=0.25,1,1" "boost=0.1;rrf=0.1,1,1" \
-+ *     --out benchmarks/live-recall/results/replay-<date>.json [--k 5] [--judge claude-haiku-4-5] \
-+ *     [--now <epoch ms>] [--rejudge 60] [--verdict-cache <json>]
-+ *
-+ * `--scales 1,0.1,0` is the older spelling of `--settings "boost=1;rrf=1,1,1" ...`.
-+ * The first setting is the baseline the others are compared with. The wall
-+ * clock is frozen at `--now` for every search (default: the start of the run)
-+ * and hormonal modulation is off, so a setting's result list is a function of
-+ * the code and the snapshot alone; the recency boost keeps its production
-+ * default. `--rejudge N` asks the judge a second time about N randomly chosen
-+ * pooled pairs to estimate its flip rate, which sets the non-inferiority
-+ * margin (see `judgeNoise` and `contrasts` in the output).
-  */
- import { execSync } from "node:child_process";
- import { createHash } from "node:crypto";
--import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-+import {
-+  chmodSync,
-+  copyFileSync,
-+  existsSync,
-+  mkdirSync,
-+  mkdtempSync,
-+  readFileSync,
-+  rmSync,
-+  writeFileSync,
-+} from "node:fs";
- import { tmpdir } from "node:os";
- import { dirname, join } from "node:path";
- import { parseArgs } from "node:util";
- import { resolveApiKeyForProvider } from "../../src/agents/model-auth.js";
- import type { BitterbotConfig } from "../../src/config/config.js";
- import { loadConfig } from "../../src/config/io.js";
-+import type { EmbeddingProvider } from "../../src/memory/embeddings.js";
-+import type { HybridRrfWeights } from "../../src/memory/hybrid.js";
- import { MemoryIndexManager } from "../../src/memory/manager.js";
- import type { MemorySearchResult } from "../../src/memory/types.js";
-+import { seededRandom } from "../plan59-phase1/common.js";
++The WSL crash supervisor: what the Windows logon task registered by `gateway install` runs on a WSL2 host without systemd. It spawns the recorded gateway command, relaunches it after crashes with a backoff (5 s doubling to 60 s), adopts a gateway that is already running, logs to `~/.bitterbot/logs/gateway-<YYYYMMDD>.log` and `gateway-exits.log`, and stops the gateway on SIGTERM. Not for interactive use: install with `bitterbot gateway install`, stop with `bitterbot gateway stop`.
  
--const { values: args } = parseArgs({
-+const { values: args, positionals } = parseArgs({
-+  allowPositionals: true,
-   options: {
-     snapshot: { type: "string" },
-     queries: { type: "string" },
-     out: { type: "string" },
--    scales: { type: "string", default: "1,0.1,0" },
-+    scales: { type: "string" },
-+    settings: { type: "string", multiple: true },
-     k: { type: "string", default: "5" },
-     judge: { type: "string", default: "claude-haiku-4-5" },
-+    now: { type: "string" },
-+    rejudge: { type: "string", default: "0" },
-+    "verdict-cache": { type: "string" },
-   },
-   strict: true,
- });
- if (!args.snapshot || !args.queries || !args.out) {
-   throw new Error(
--    "usage: --snapshot <sqlite> --queries <jsonl> --out <json> [--scales 1,0.1,0] [--k 5]",
-+    'usage: --snapshot <sqlite> --queries <jsonl> --out <json> [--settings "boost=0.1;rrf=1,1,1" ...] [--scales 1,0.1,0] [--k 5]',
-   );
- }
- const K = Number(args.k);
--const scales = args.scales.split(",").map((s) => Number(s.trim()));
- const sha = (s: string | Buffer) => createHash("sha256").update(s).digest("hex");
+ ### `gateway switch`
  
-+// ---- settings ---------------------------------------------------------------
-+
-+type Setting = {
-+  label: string;
-+  boost: number;
-+  rrf: HybridRrfWeights;
-+  rrfK: number;
-+};
-+
-+/** Parse `boost=0.1;rrf=0.25,1,1;k=60` (every part optional; defaults 0.1 / 1,1,1 / 60). */
-+function parseSetting(spec: string): Setting {
-+  const setting: Setting = {
-+    label: spec.trim(),
-+    boost: 0.1,
-+    rrf: { vector: 1, keyword: 1, graph: 1 },
-+    rrfK: 60,
-+  };
-+  for (const part of spec.split(";")) {
-+    const [key, value] = part.split("=").map((s) => s.trim());
-+    if (!key) {
-+      continue;
-+    }
-+    if (key === "boost") {
-+      setting.boost = Number(value);
-+    } else if (key === "rrf") {
-+      const [v, k, g] = (value ?? "").split(",").map((s) => Number(s.trim()));
-+ 
 ```
 
-**File**: `benchmarks/live-recall/results/fusion-sweep-2026-10-29.json` (added, +445/-0)
+**File**: `docs/gateway/background-process.md` (modified, +47/-0)
 ```diff
-@@ -0,0 +1,445 @@
-+{
-+  "ranAt": "2026-10-30T00:57:21.498Z",
-+  "gitCommit": "f9ac780a+dirty",
-+  "snapshotSha256": "03be448df9d4e5570d47d36d68b8bd433a9cfb4e59fc464ed67d861cd0828990",
-+  "questionsSha256": "bc36b6b0bc60999aa060a5d1b92e4f66669c8bd63564b65feab563857c308d32",
-+  "frozenNow": 1793317267487,
-+  "maxResults": 200,
-+  "fusion": "src/memory/rrf.ts rrfFuse, weight / (k + rank), ties by live fused rank",
-+  "caveat": "channel lists are the per-channel ranks of the chunks inside the live fused top-200; gold chunks outside that list are unrecoverable here",
-+  "goldAbsentFromCapture": {
-+    "development": 40,
-+    "qualification": 18
-+  },
-+  "development": {
-+    "n": 212,
-+    "liveFused": {
-+      "n": 212,
-+      "mrr": 0.2547,
-+      "r1": 0.1604,
-+      "r5": 0.3491,
-+      "cov10": 0.467
-+    },
-+    "currentUnweightedRrf60": {
-+      "n": 212,
-+      "mrr": 0.2689,
-+      "r1": 0.1745,
-+      "r5": 0.3726,
-+      "cov10": 0.4811
-+    },
-+    "keywordOnly": {
-+      "n": 212,
-+      "mrr": 0.4174,
-+      "r1": 0.316,
-+      "r5": 0.5519,
-+      "cov10": 0.6509
-+    },
-+    "best": {
-+      "w": {
-+        "v": 0.1,
-+        "k": 1,
-+        "g": 0,
-+        "rrfK": 60
-+      },
-+      "n": 212,
-+      "mrr": 0.4227,
-+      "r1": 0.3208,
-+      "r5": 0.5613,
-+      "cov10": 0.6509
-+    },
-+    "top10": [
-+      {
-+        "w": {
-+          "v": 0.1,
-+          "k": 1,
-+          "g": 0,
-+          "rrfK": 60
-+        },
-+        "n": 212,
-+        "mrr": 0.4227,
-+        "r1": 0.3208,
-+        "r5": 0.5613,
-+        "cov10": 0.6509
-+      },
-+      {
-+        "w": {
-+          "v": 0.1,
-+          "k": 1,
-+          "g": 0.5,
-+          "rrfK": 60
-+        },
-+        "n": 212,
-+        "mrr": 0.4227,
-+        "r1": 0.3208,
-+        "r5": 0.5613,
-+        "cov10": 0.6509
-+      },
-+      {
-+        "w": {
-+          "v": 0.1,
-+          "k": 1,
-+          "g": 1,
-+          "rrfK": 60
-+        },
-+        "n": 212,
-+        "mrr": 0.4227,
-+        "r1": 0.3208,
-+        "r5": 0.5613,
-+        "cov10": 0.6509
-+      },
-+      {
-+        "w": {
-+          "v": 0.25,
-+          "k": 1,
-+          "g": 0,
-+          "rrfK": 15
-+        },
-+        "n": 212,
-+        "mrr": 0.4188,
-+        "r1": 0.316,
-+        "r5": 0.5377,
-+        "cov10": 0.6415
-+      },
-+      {
-+        "w": {
-+          "v": 0.25,
-+          "k": 1,
-+          "g": 0.5,
-+          "rrfK": 15
-+        },
-+        "n": 212,
-+        "mrr": 0.4188,
-+        "r1": 0.316,
-+        "r5": 0.5377,
-+        "cov10": 0.6415
-+      },
-+      {
-+        "w": {
-+          "v": 0.25,
-+          "k": 1,
-+          "g": 1,
-+          "rrfK": 15
-+        },
-+        "n": 212,
-+        "mrr": 0.4188,
-+        "r1": 0.316,
-+        "r5": 0.5377,
-+        "cov10": 0.6415
-+      },
-+      {
-+        "w": {
-+          "v": 0.1,
-+          "k": 1,
-+          "g": 0,
-+          "rrfK": 5
-+        },
-+        "n": 212,
-+        "mrr": 0.4179,
-+        "r1": 0.316,
-+        "r5": 0.5519,
-+        "cov10": 0.6509
-+      },
-+      {
-+        "w": {
-+          "v": 0.1,
-+          "k": 1,
-+          "g": 0.5,
-+          "rrfK": 5
-+        },
-+        "n": 212,
-+        "mrr": 0.4179,
-+        "r1": 0.316,
-+        "r5": 0.5519,
-+        "cov10": 0.6509
-+      },
-+      {
-+        "w": {
-+          "v": 0.1,
-+          "k": 1,
-+          "g": 1,
-+          "rrfK": 5
-+        },
-+        "n": 212,
-+        "mrr": 0.4179,
-+        "r1": 0.316,
-+        "r5": 0.5519,
-+        "cov10": 0.6509
-+      },
-+      {
-+        "w": {
-+          "v": 0,
-+          "k": 1,
-+          "g": 0,
-+          "rrfK": 5
-+        },
-+        "n": 212,
-+        "mrr": 0.4174,
-+        "r1": 0.316,
-+        "r5": 0.5519,
-+        "cov10": 0.6509
-+      }
-+    ],
-+    "worst3": [
-+      {
-+        "w": {
-+          "v": 1,
-+          "k": 1,
-+          "g": 0,
-+          "rrfK": 60
-+        },
-+        "n": 212,
-+        "mrr": 0.2689,
-+        "r1": 0.1745,
-+        "r5": 0.3726,
-+        "cov10": 0.4811
-+      },
-+      {
-+        "w": {
-+          "v": 1,
-+          "k": 1,
-+          "g": 0.5,
-+          "rrfK": 60
-+        },
-+        "n": 212,
-+        "mrr": 0.2689,
-+        "r1": 0.1745,
-+        "r5": 0.3726,
-+        "cov10": 0.4811
-+      },
-+      {
-+        "w": {
-+          "v": 1,
-+          "k": 1,
-+          "g": 1,
-+          "rrfK": 60
-+        },
-+        "n": 212,
-+        "mrr": 0.2689,
-+        "r1": 0.1745,
-+        "r5": 0.3726,
-+        "cov10": 0.4811
-+      }
-+    ]
-+  },
-+  "qualification": {
-+    "n": 106,
-+    "liveFused": {
-+      "n": 106,
-+      "mrr": 0.2379,
-+      "r1": 0.1415,
-+      "r5": 0.3302,
-+      "cov10": 0.4434
-+    },
-+    "currentUnweightedRrf60": {
-+      "n": 106,
-+      "mrr": 0.246,
-+      "r1": 0.1415,
-+      "r5": 0.3491,
-+      "cov10": 0.4434
-+    },
-+    "keywordOnly": {
-+      "n": 106,
-+      "mrr": 0.4052,
-+      "r1": 0.2642,
-+      "r5": 0.5943,
-+      "cov10": 0.6887
-+    },
-+    "best": {
-+      "w": {
-+        "v"
-```
-
-**File**: `benchmarks/live-recall/results/replay-journal-fusion-weights-2026-10-29.json` (added, +1578/-0)
-```diff
-@@ -0,0 +1,1578 @@
-+{
-+  "git_commit": "f9ac780a+dirty",
-+  "snapshotSha256": "03be448df9d4e5570d47d36d68b8bd433a9cfb4e59fc464ed67d861cd0828990",
-+  "queriesSha256": "f3075b7c9129fe562d04d79893176583d4256dc70acbd65f65eddc60fa0406a2",
-+  "judge": "claude-haiku-4-5",
-+  "judgePromptSha256": "56d6dc5281a15b16bb9790e296c942a2e9c2629ea264bbf939a8b9956f726f79",
-+  "k": 5,
-+  "n": 68,
-+  "frozenNow": 1793317267487,
-+  "determinism": "clock frozen at frozenNow, hormonal modulation off, recency boost at its default",
-+  "embeddingCalls": 68,
-+  "pairsJudged": 329,
-+  "pairsFromCache": 92,
-+  "judgeUsage": {
-+    "calls": 317,
-+    "inputTokens": 50343,
-+    "outputTokens": 1508,
-+    "costUsd": 0.0579
-+  },
-+  "judgeNoise": {
-+    "rejudged": 80,
-+    "flips": 3,
-+    "flipRate": 0.0375,
-+    "flipRateUsed": 0.0375,
-+    "rule": "margin = 2 x sd of the paired delta when every pooled verdict flips independently with flipRateUsed (the larger of the observed rate and 3/n)"
-+  },
-+  "anyRelevantQueries": 36,
-+  "elapsed_seconds": 349.1,
-+  "summary": {
-+    "boost=0.1;rrf=1,1,1": {
-+      "n": 68,
-+      "hitAtK": 0.471,
-+      "precisionAtK": 0.335,
-+      "mrr": 0.4,
-+      "relevantAt1": 0.368,
-+      "setting": {
-+        "boost": 0.1,
-+        "rrf": {
-+          "vector": 1,
-+          "keyword": 1,
-+          "graph": 1
-+        },
-+        "rrfK": 60
-+      }
-+    },
-+    "boost=0.1;rrf=0.5,1,1": {
-+      "n": 68,
-+      "hitAtK": 0.456,
-+      "precisionAtK": 0.335,
-+      "mrr": 0.398,
-+      "relevantAt1": 0.368,
-+      "setting": {
-+        "boost": 0.1,
-+        "rrf": {
-+          "vector": 0.5,
-+          "keyword": 1,
-+          "graph": 1
-+        },
-+        "rrfK": 60
-+      }
-+    },
-+    "boost=0.1;rrf=0.25,1,1": {
-+      "n": 68,
-+      "hitAtK": 0.471,
-+      "precisionAtK": 0.326,
-+      "mrr": 0.402,
-+      "relevantAt1": 0.368,
-+      "setting": {
-+        "boost": 0.1,
-+        "rrf": {
-+          "vector": 0.25,
-+          "keyword": 1,
-+          "graph": 1
-+        },
-+        "rrfK": 60
-+      }
-+    },
-+    "boost=0.1;rrf=0.1,1,1": {
-+      "n": 68,
-+      "hitAtK": 0.485,
-+      "precisionAtK": 0.326,
-+      "mrr": 0.394,
-+      "relevantAt1": 0.353,
-+      "setting": {
-+        "boost": 0.1,
-+        "rrf": {
-+          "vector": 0.1,
-+          "keyword": 1,
-+          "graph": 1
-+        },
-+        "rrfK": 60
-+      }
-+    }
-+  },
-+  "contrasts": [
-+    {
-+      "setting": "boost=0.1;rrf=0.5,1,1",
-+      "baseline": "boost=0.1;rrf=1,1,1",
-+      "deltaHitAtK": -0.0147,
-+      "deltaMrr": -0.0029,
-+      "queriesUp": 2,
-+      "queriesDown": 4,
-+      "queryBootstrap": {
-+        "deltaHitAtK": [-0.0588, 0.0294],
-+        "deltaMrr": [-0.0304, 0.0245]
-+      },
-+      "judgeNoiseSd": {
-+        "deltaHitAtK": 0.0174,
-+        "deltaMrr": 0.0083
-+      },
-+      "nonInferior": true
-+    },
-+    {
-+      "setting": "boost=0.1;rrf=0.25,1,1",
-+      "baseline": "boost=0.1;rrf=1,1,1",
-+      "deltaHitAtK": 0,
-+      "deltaMrr": 0.0017,
-+      "queriesUp": 5,
-+      "queriesDown": 4,
-+      "queryBootstrap": {
-+        "deltaHitAtK": [-0.0735, 0.0735],
-+        "deltaMrr": [-0.0311, 0.0319]
-+      },
-+      "judgeNoiseSd": {
-+        "deltaHitAtK": 0.0234,
-+        "deltaMrr": 0.0132
-+      },
-+      "nonInferior": true
-+    },
-+    {
-+      "setting": "boost=0.1;rrf=0.1,1,1",
-+      "baseline": "boost=0.1;rrf=1,1,1",
-+      "deltaHitAtK": 0.0147,
-+      "deltaMrr": -0.0061,
-+      "queriesUp": 6,
-+      "queriesDown": 5,
-+      "queryBootstrap": {
-+        "deltaHitAtK": [-0.0588, 0.0882],
-+        "deltaMrr": [-0.0475, 0.0326]
-+      },
-+      "judgeNoiseSd": {
-+        "deltaHitAtK": 0.0257,
-+        "deltaMrr": 0.0151
-+      },
-+      "nonInferior": true
-+    }
-+  ],
-+  "per_query": [
-+    {
-+      "q": "c4b4aafcd5d3",
-+      "results": {
-+        "boost=0.1;rrf=1,1,1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "boost=0.1;rrf=0.5,1,1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "boost=0.1;rrf=0.25,1,1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "boost=0.1;rrf=0.1,1,1": {
-+          "ranks": [],
-+          "relevant": 0
-+        }
-+      }
-+    },
-+    {
-+      "q": "c3e3a474a0e8",
-+      "results": {
-+        "boost=0.1;rrf=1,1,1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "boost=0.1;rrf=0.5,1,1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "boost=0.1;rrf=0.25,1,1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "boost=0.1;rrf=0.1,1,1": {
-+          "ranks": [],
-+          "relevant": 0
-+        }
-+      }
-+    },
-+    {
-+      "q": "ec7da990967b",
-+      "results": {
-+        "boost=0.1;rrf=1,1,1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "boost=0.1;rrf=0.5,1,1": {
-+          "ranks": [],
-+          "relevant": 0
-+        },
-+        "boost=0.1;rrf=0.25,1,1": {
-+          "ranks": [],
-+
-```
-
-**File**: `docs/docs.json` (modified, +1/-1)
-```diff
-@@ -739,7 +739,7 @@
-               },
-               {
-                 "group": "Research",
--                "pages": ["research/plan59-phase1-pilot"]
-+                "pages": ["research/plan59-phase1-pilot", "research/fusion-weights-2026-10-29"]
-               }
-             ]
-           },
-```
-
-**File**: `docs/memory/curiosity-and-search.md` (modified, +3/-1)
-```diff
-@@ -232,7 +232,9 @@ flowchart TB
-     H --> K[Return results]
+@@ -3,6 +3,7 @@ summary: "Background exec execution and process management"
+ read_when:
+   - Adding or modifying background exec behavior
+   - Debugging long-running exec tasks
++  - Running the gateway on WSL2 without systemd (autostart, crash supervision)
+ title: "Background Exec and Process Tool"
+ ---
+ 
+@@ -94,3 +95,49 @@ Send stdin:
+ ```json
+ { "tool": "process", "action": "write", "sessionId": "<id>", "data": "y\n" }
  ```
- 
--**Hybrid merging** uses reciprocal rank fusion by default (`mergeStrategy: "rrf"`); the configurable weights (0.7 vector + 0.3 text) apply only with `mergeStrategy: "weighted"`. BM25 ranks are converted to [0,1] scores via `bm25RankToScore()`. A PLAN-18 graph-reader channel joins the fusion as a third ranked list when the knowledge graph is populated.
-+**Hybrid merging** uses reciprocal rank fusion by default (`mergeStrategy: "rrf"`); the legacy `vectorWeight` / `textWeight` pair (0.7 + 0.3) applies only with `mergeStrategy: "weighted"`. BM25 ranks are converted to [0,1] scores via `bm25RankToScore()`. A PLAN-18 graph-reader channel joins the fusion as a third ranked list when the knowledge graph is populated.
 +
-+**RRF channel weights.** Under RRF each channel contributes `weight / (k + rank)` for every result it ranked, with `query.hybrid.rrfWeights: { vector, keyword, graph }` and `query.hybrid.rrfK` (default 60). The default is 1/1/1, plain unweighted RRF; a weight of 0 silences a channel without changing what it retrieves (a result found only by a silenced channel is dropped). Negative or non-finite values fall back to the default with a warning. On one node's real memory the keyword channel carries the fused list (names, paths and identifiers): a 2026-10-29 sweep on 318 generated questions found vector 0.1 / keyword 1 best by a wide margin, but on the agent's 68 real, shorter queries no keyword-heavier setting was better than 1/1/1 (vector 0.25: MRR 0.402 against 0.400, hit@5 identical), so the generated-question gain did not transfer and the default was kept. Vector 0.25 and 0.1 are non-inferior on real queries and available as configuration; a LongMemEval-S retrieval check at 0.25 is the precondition for any future default change. Measurement and decision rule: [the fusion-weights research page](../research/fusion-weights-2026-10-29.md).
- 
- **Keyword query shape.** `buildFtsQuery()` OR-joins the query's terms for the FTS5 `MATCH`, dropping a short shared stopword list when the query has three or more tokens (a one- or two-word lookup keeps every word) and capping at 16 distinct terms. bm25 then ranks chunks by how many of the terms they contain and how rare those terms are, so a chunk holding every term still sorts first. Until 2026-10-27 the terms were AND-joined: a chunk had to contain every token, which held for terse lookups and for no conversational question, and the per-channel diagnostics showed the keyword channel contributing nothing to natural-language queries on the live store or the LongMemEval baseline. The `fusion` field still reports `rrf` in that case, so look at `channels.keyword` presence, not `fusion`, to tell whether the keyword channel took part.
++## WSL2 without systemd
++
++A WSL2 distro whose PID 1 is `init` (not systemd) has no user bus: `systemctl --user` fails with `Failed to connect to bus`, and the systemd backend cannot install anything. On such a host `bitterbot gateway install` selects the `wsl-supervisor` backend instead (Linux keeps systemd whenever the user bus works; non-WSL Linux without systemd keeps the systemd backend and its hints). Nothing it installs is root-owned, so it needs no sudo and no `/etc/wsl.conf` change.
++
++```bash
++bitterbot gateway install            # record, logon task, supervisor started now
++bitterbot gateway install --dry-run  # print the task XML and the commands only
++bitterbot gateway status             # supervisor pid, gateway pid, port, task, last exits
++bitterbot gateway stop               # stops the supervisor, which stops the gateway
++bitterbot gateway restart            # stop + start the supervisor
++bitterbot gateway uninstall          # removes the task, the lock and the record
++```
++
++### What gets installed
++
++- `~/.bitterbot/run/gateway-supervisor.json`: the recorded command (program arguments, working directory, environment), what `bitterbot gateway status` shows as the service command.
++- A Windows scheduled task named `Bitterbot Gateway (WSL <distro>)` for the current Windows user (logon trigger). Its action is `C:\Windows\System32\wsl.exe -d <distro> -u <linux user> -- <launcher> gateway supervise`, where the launcher is `~/.bitterbot/app/current/bin/bitterbot` on a release install. It is registered through `schtasks.exe /Create /XML` from a UTF-16 file written to the Windows temp dir and deleted afterwards, because only the XML form can set `ExecutionTimeLimit` to `PT0S` (the `/SC ONLOGON` flags leave the default 72 hour limit, which would kill the supervisor after three days). The task also sets `MultipleInstancesPolicy` IgnoreNew, `StartWhenAvailable` true and `DisallowStartIfOnBatteries` false.
++- The supervisor process, started detached right away. It adopts a gateway that is already running (see below), so the install does not restart the gateway.
++
++If Windows interop (`schtasks.exe`, `wsl.exe` under `/mnt/c/Windows/System32`) is not reachable, the install still writes the record and starts the supervisor, and says plainly that no boot trigger was registered and how to enable interop. The supervisor then runs until the next Windows reboot; `bitterbot gateway start` brings it back.
++
++The task runs `wsl.exe` in the interactive session, so a console window belongs to the supervisor after logon. Closing that window kills the supervisor and the gateway; use `bitterbot gateway stop` instead.
++
++### `bitterbot gateway supervise`
++
++This is what the task runs; you do not type it. The supervisor:
++
++- Spawns the recorded command (the launcher is re-resolved from `BITTERBOT_INSTALL_ROOT` when the recorded path is gone, falling back to this Node and the CLI entry), with the recorded working directory and environment.
++- Writes the gateway's stdout and stderr to `~/.bitterbot/logs/gateway-<YYYYMMDD>.log` (a new file per calendar day, the newest 14 kept) and one line per gateway exit to `~/.bitterbot/logs/gateway-exits.log`: ISO time, pid, exit code or signal, uptime in seconds, and the relaunch decision.
++- Holds a single-instance lock at `~/.bitterbot/run/gateway-supervisor.lock` (pid inside; a lock whose owner is dead is taken over) and writes `gateway-supervisor.pid` next to it.
++- Removes a leftover `/tmp/bitterbot-orchestrator.sock` before each spawn, only when no process answers on it.
++
++### Relaunch policy
++
++- Any non-zero exit or signal: relaunch after a backoff of 5 s that doubles per consecutive failure and caps at 60 s. Ten minutes of healthy uptime reset the backoff.
++- Exit code 0 is an intentional stop or a SIGUSR1 full-process restart (the old gateway spawns the new one detached, hands it the lock and exits 0 while the child keeps running). The supervisor does not relaunch on exit 0. It waits 20 s, then checks the gateway lock and the port: a gateway holding the lock or answering on the port is the restart child, and the supervisor adopts it. Nothing running after the grace means a stop nobody asked the supervisor for, so it relaunches once and logs why. A second exit 0 that again leaves nothing running (before the ten-minute reset) means the gateway is being stopped on purpose; the supervisor logs that and exits.
++- SIGTERM or SIGINT to the supervisor (what `bitterbot gateway stop` sends) forwards a graceful stop to the gateway, waits for it (SIGKILL afte
+```
+
+**File**: `docs/gateway/doctor.md` (modified, +2/-1)
+```diff
+@@ -88,7 +88,8 @@ cat ~/.bitterbot/bitterbot.json
+ - Gateway port collision diagnostics (default `19001`).
+ - Security warnings for open DM policies.
+ - Gateway auth warnings when no `gateway.auth.token` is set (local mode; offers token generation).
+-- systemd linger check on Linux.
++- systemd linger check on Linux (systemd backend only).
++- WSL2 without systemd: reports an unsupervised gateway (no `wsl-supervisor` installed) as a finding, fix `bitterbot gateway install`.
+ - Source install checks (pnpm workspace mismatch, missing UI assets, missing tsx binary).
+ - Writes updated config + wizard metadata.
  
 ```
 
-**File**: `docs/research/fusion-weights-2026-10-29.md` (added, +231/-0)
+**File**: `docs/gateway/index.md` (modified, +12/-0)
 ```diff
-@@ -0,0 +1,231 @@
-+---
-+title: "Weighted RRF channel fusion: sweep and real-query validation"
-+description: "Hybrid memory search fused its vector, keyword and graph channels with unweighted RRF. A partitioned sweep on generated questions and a judge-scored replay of the agent's real queries measured whether down-weighting the vector channel helps, and set the default."
-+---
+@@ -149,6 +149,18 @@ sudo loginctl enable-linger <user>
+ 
+   </Tab>
+ 
++  <Tab title="WSL2 without systemd">
 +
-+This is a retrieval diagnostic and a default decision, not a curiosity
-+component and not externally preregistered. It ran on 2026-10-29 against a
-+sealed `VACUUM INTO` copy of one node's memory store; the live store was never
-+written. Selection used the development split of the PLAN-59 Phase 1 partition
-+only, confirmation the qualification split, and the final split was never read.
++When `systemctl --user` reports `Failed to connect to bus`, `bitterbot gateway install` selects the `wsl-supervisor` backend: a Windows logon task (`Bitterbot Gateway (WSL <distro>)`) starts `bitterbot gateway supervise`, which relaunches the gateway after crashes and adopts one that is already running. No root, no `/etc/wsl.conf` change. See [/gateway/background-process#wsl2-without-systemd](/gateway/background-process#wsl2-without-systemd).
 +
-+Tools: `benchmarks/live-recall/fusion-sweep.mts` (capture once, re-fuse
-+offline through the production `rrfFuse`, select on development, confirm on
-+qualification) and `benchmarks/live-recall/replay-judge.mts` (real queries,
-+judge-scored, every setting scored on the same verdicts). Result files:
-+`benchmarks/live-recall/results/fusion-sweep-2026-10-29.json` and
-+`benchmarks/live-recall/results/replay-journal-fusion-weights-2026-10-29.json`
-+(weights, hashes, ranks and numbers only). Method notes:
-+`benchmarks/live-recall/README.md`.
++```bash
++bitterbot gateway install --dry-run
++bitterbot gateway install
++bitterbot gateway status
++```
 +
-+## What was found on main
++  </Tab>
 +
-+`src/memory/rrf.ts` fused the channels with plain reciprocal rank fusion,
-+`1 / (60 + rank)` per channel, unweighted. The `vectorWeight` and `textWeight`
-+keys under `query.hybrid` apply only to the legacy `mergeStrategy: "weighted"`
-+path. The PLAN-59 Phase 1 pilot's development baseline had already shown the
-+fused list losing to its own keyword channel on this store (fused MRR 0.254
-+against keyword-alone 0.421); this work asks whether channel weights recover
-+the gap and whether the agent's real queries agree.
-+
-+## Provenance
-+
-+| item                | value                                                                                                                                                            |
-+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-+| commit under test   | `f9ac780a` (main, PLAN-59 Phase 1 harness merged) plus this change                                                                                               |
-+| snapshot            | `VACUUM INTO` copy of the live store, read-only source, 3,952 chunks, 368 MB                                                                                     |
-+| snapshot SHA-256    | `03be448df9d4e5570d47d36d68b8bd433a9cfb4e59fc464ed67d861cd0828990`                                                                                               |
-+| frozen clock        | 2026-10-29T23:41:07Z (capture time) for both the sweep and the replay                                                                                            |
-+| generated questions | 449, `claude-haiku-4-5`, seed 59; file SHA-256 `bc36b6b0bc60999aa060a5d1b92e4f66669c8bd63564b65feab563857c308d32`                                                |
-+| partition           | seed 59, by family (chunk path): 212 development / 106 qualification / 131 final (never read)                                                                    |
-+| capture             | one search per development and qualification question, fused top 200 with per-channel ranks, `maxResults` 200, recency off, hormonal off                         |
-+| real queries        | 68 distinct `memory_search` queries from the event journal, May to October 2026; file SHA-256 `f3075b7c9129fe562d04d79893176583d4256dc70acbd65f65eddc60fa0406a2` |
-+| judge               | `claude-haiku-4-5`, one YES/NO verdict per (query, passage) pair, shared across settings                                                                         |
-+| embedding model     | `text-embedding-3-small`                                                                                                                                         |
-+
-+The question, partition and capture files paraphrase or name private memory
-+and live under `~/.bitterbot/benchmarks/live-recall/` with mode 0600; they are
-+not in the repository.
-+
-+## Sweep on generated questions
-+
-+Weighted RRF scores a result as the sum over channels of
-+`weight / (k + rank)`. The grid was vector weight 0, 0.1, 0.25, 0.5, 0.75, 1
-+against keyword weight 1, graph weight 0, 0.5, 1, and k 5, 15, 30, 60: 72
-+settings, re-fused offline from one capture per question. "Live fused" is the
-+list the search actually returned (unweighted RRF followed by the bounded
-+post-fusion boosts); "unweighted RRF" is the same ranks re-fused at 1/1/1
-+without the boosts, so the gap between those two rows is what the boosts cost.
-+
-+### Development split (212 questions, 158 families): selection
-+
-+| setting                                   | MRR  
+   <Tab title="Linux (system service)">
+ 
+ Use a system unit for multi-user/always-on hosts.
 ```
 
----
-
-### Incident Patch 2: `b6c09df1` (2026-10-30)
-**Commit Message**: feat(memory): shadow surfacing trial eligibility and assignment (PLAN-59 Phase 2) (#331)
-
-Phase 2 measures whether proactively surfacing autonomously learned
-information is useful to the owner. Before any live trial can withhold
-anything, eligibility and assignment run in shadow: every eligible
-surfacing opportunity is logged, assigned to an arm by a randomised
-block design, and delivered exactly as today. Nothing the owner sees
-changes in this PR; the live withhold condition is a separate exposure
-decision and PR, so the mode enum is `off | shadow` only.
-
-- Config `memory.curiosity.evidence.surfacingTrial` (mode default
-  `shadow`, blockMinutes 240, carryOverDays 7, optional seed), Zod entry
-  next to CuriosityEvidenceSchema, resolver with the evidence-config
-  fallback style. `evidence.mode: off` wins: the trial then writes nothing.
-- `src/memory/surfacing-trial.ts`: block id = floor(now / blockMinutes);
-  arm per (kind, block) from HMAC-SHA256(seed, kind, blockId), balanced
-  and independent across blocks; seed derived from the node's evidence
-  digest key when none is configured. Carry-over reuses the arm of an
-  assignment of the same (kind, ref_id) inside the window. Every
-  
-
-**File**: `docs/gateway/configuration-reference.md` (modified, +7/-0)
+**File**: `docs/gateway/troubleshooting.md` (modified, +20/-0)
 ```diff
-@@ -1957,6 +1957,12 @@ The memory subsystems (`memory.dream`, `memory.consolidation`, `memory.curiosity
-         mode: "shadow", // "off" | "observe" | "shadow" (default "shadow")
-         retentionDays: 90, // prune rows older than this on the consolidation tick
-         topK: 10, // retrieval rows kept per search
-+        surfacingTrial: {
-+          mode: "shadow", // "off" | "shadow" (default "shadow")
-+          blockMinutes: 240, // length of one randomisation block
-+          carryOverDays: 7, // an item assigned within this window keeps its arm
-+          seed: "optional", // absent: derived from this node's evidence digest key
-+        },
-       },
-     },
-   },
-@@ -1965,6 +1971,7 @@ The memory subsystems (`memory.dream`, `memory.consolidation`, `memory.curiosity
+@@ -201,6 +201,26 @@ Related:
+ - [/gateway/configuration](/gateway/configuration)
+ - [/gateway/doctor](/gateway/doctor)
  
- - `off`: nothing is written. `observe`: retrieval hits and surfacing events. `shadow`: also dream-engine decision traces.
- - Observation changes no behaviour in any mode. Query text is never stored; queries and session keys appear only as node-keyed digests. See [Evidence telemetry](/memory/evidence-telemetry).
-+- `surfacingTrial` (PLAN-59 Phase 2, shadow stage): logs every proactive surfacing opportunity as `eligible` and assigns it `surface` or `withhold` by a randomised block design, then delivers exactly as before. `shadow` changes nothing the owner sees; `off` restores the Phase 0 rows. A `live` mode does not exist yet; the withhold condition is a separate decision and PR. Writes nothing when `evidence.mode` is `off`. See [Surfacing trial](/memory/evidence-telemetry#surfacing-trial-shadow-stage).
- 
- ## Browser
- 
-```
-
-**File**: `docs/memory/curiosity-and-search.md` (modified, +1/-1)
-```diff
-@@ -112,7 +112,7 @@ Maximum active targets: 10 (configurable). Expired targets are cleaned up during
- 
- Budget: `maxPerDay` (10) questions per UTC day, +2 when dopamine > 0.65, −2 when cortisol > 0.65 (cortisol also raises the confidence floor by 0.1). Pause state lives in `memory_meta`.
- 
--Use ledger (`src/memory/curiosity-use.ts`): memory search and proactive recall call `recordCuriosityUse` for any self-learned chunk they return; `curiosityRoiByRegion` feeds step 1. Evidence layer (`memory.curiosity.evidence`, default `shadow`): every owner search writes its top-K chunk ids under a keyed query digest, every voiced finding, proactive-recall fact and dream brief writes a `delivered` row, and a dismiss labels it `explicit`; see [Evidence telemetry](/memory/evidence-telemetry). RPCs: `curiosity.status`, `curiosity.list`, `curiosity.pause`, `curiosity.resume`, `curiosity.dismiss`, `curiosity.ask`, `curiosity.runNow`; the same from the terminal as [`bitterbot curiosity`](/cli/curiosity).
-+Use ledger (`src/memory/curiosity-use.ts`): memory search and proactive recall call `recordCuriosityUse` for any self-learned chunk they return; `curiosityRoiByRegion` feeds step 1. Evidence layer (`memory.curiosity.evidence`, default `shadow`): every owner search writes its top-K chunk ids under a keyed query digest, every voiced finding, proactive-recall fact and dream brief writes a `delivered` row, and a dismiss labels it `explicit`; since PLAN-59 Phase 2 the shadow surfacing trial (`evidence.surfacingTrial`, default `shadow`) logs each of those as `eligible` and `assigned` to a randomised-block arm first, without changing what is delivered; see [Evidence telemetry](/memory/evidence-telemetry). RPCs: `curiosity.status`, `curiosity.list`, `curiosity.pause`, `curiosity.resume`, `curiosity.dismiss`, `curiosity.ask`, `curiosity.runNow`; the same from the terminal as [`bitterbot curiosity`](/cli/curiosity).
- 
- Private names come from the knowledge graph's `person`, `organization` and `project` entities. A "person" that is not a name ("here", "commands", a peer id) is filed as a `concept` at write time (`looksLikePersonName`) and migration v75 reclassified existing rows, so the filter blocks people, not ordinary words.
- 
-```
-
-**File**: `docs/memory/evidence-telemetry.md` (modified, +90/-25)
-```diff
-@@ -2,7 +2,7 @@
- 
- An observational layer under the curiosity and dream system. It records what retrieval surfaced, what the agent proactively surfaced to the owner and what came of it, and (in shadow mode) what a "GCCRF as diagnostic only" routing would have decided in the dream engine next to what the legacy routing actually decided. It changes no behaviour in any mode: retrieval order, dream seeds, dream mode choice, hormone events and target closure are exactly what they were before it existed. Later phases read these tables; this phase only writes them.
- 
--Code: `src/memory/evidence-telemetry.ts` (writer), migration v79 in `src/memory/migrations.ts`, call sites in `src/memory/manager.ts` and `src/memory/dream-engine.ts`.
-+Code: `src/memory/evidence-telemetry.ts` (writer), `src/memory/surfacing-trial.ts` (PLAN-59 Phase 2 shadow assignment), migrations v79 and v80 in `src/memory/migrations.ts`, call sites in `src/memory/manager.ts` and `src/memory/dream-engine.ts`.
- 
- ## Modes and defaults
- 
-@@ -55,20 +55,21 @@ Indexes: `created_at`; `(chunk_id, created_at)`; `query_id`.
- 
- What the agent put in front of the owner, and separately what the owner did about it.
- 
--| column             | meaning                                                                                                   |
--| ------------------ | --------------------------------------------------------------------------------------------------------- |
--| `event_id`         | idempotency key (`INSERT OR IGNORE`), for example `cf:<finding id>:<hour bucket>`                         |
--| `kind`             | `curiosity_finding`, `proactive_recall`, `dream_brief`, `dream_digest`, `curiosity_target`                |
--| `ref_id`           | the surfaced item (finding id, chunk id, brief id, notification key)                                      |
--| `arm`              | `legacy` in Phase 0; later phases add arms                                                                |
--| `opportunity_id`   | the curiosity target a finding answered, so a dismiss by target id finds the delivery                     |
--| `session_digest`   | digest of the conversation the item was surfaced in, when known                                           |
--| `stage`            | `eligible`, `assigned`, `delivered`, `visible`, `responded`                                               |
--| `outcome`          | `useful`, `corrected`, `dismissed`, `answered`, `engaged_weak`, `unknown`; NULL until something labels it |
--| `label_provenance` | `explicit` (the owner acted), `inferred`, `unknown`                                                       |
--| `cost_usd`         | cost attributed to producing the item, when known                                                         |
--| `created_at`       | when the stage was reached                                                                                |
--| `outcome_at`       | when the outcome was labelled                                                                             |
-+| column             | meaning                                                                                                                                                                                             |
-+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-+| `event_id`         | idempotency key (`INSERT OR IGNORE`), for example `cf:<finding id>:<hour bucket>`                                                                                                                   |
-+| `kind`             | `curiosity_finding`, `proactive_recall`, `dream_brief`, `dream_digest`, `curiosity_target`                                                                                                          |
-+| `ref_id`           | the surfaced item (finding id, chunk id, brief id, notification key)                                                                                                                                |
-+| `arm`              | `legacy` (Phase 0 rows, or the trial off), `unassigned` (an `eligible` row, before the draw), `surface` or `withhold` (assigned by the surfacing trial)                                             |
-+| `opportunity_id`   | shared id of one opportunity across its `eligible`, `assigned` and `delivered` rows: the curiosity target a finding answered (so a dismiss by target id finds the delivery), the event id otherwise |
-+| `session_digest`   | digest of the conversation the item was surfaced in, when known                                                                                                                                     |
-+| `stage`            | `eligible`, `assigned`, `delivered`, `visible`, `responded`                                                                                                               
-```
-
-**File**: `src/config/config.curiosity-evidence.test.ts` (modified, +48/-3)
-```diff
-@@ -1,15 +1,15 @@
- /**
-  * PLAN-59 Phase 0: `memory.curiosity.evidence` in the config schema.
-  *
-- * The typed branch accepts the three keys and rejects a bad mode or an unknown
-- * key. Inside the full config the curiosity block sits in a union with
-+ * The typed branch accepts the three keys (and, since PLAN-59 Phase 2, the
-+ * `surfacingTrial` block) and rejects a bad mode or an unknown key. Inside the full config the curiosity block sits in a union with
-  * `z.unknown()` (acceptance of `memory` was never narrowed), so a bad mode there
-  * still validates and is handled by `resolveEvidenceConfig` at the read site.
-  */
- 
- import { describe, expect, it } from "vitest";
- import { validateConfigObject } from "./validation.js";
--import { CuriosityEvidenceSchema } from "./zod-schema.js";
-+import { CuriosityEvidenceSchema, CuriositySurfacingTrialSchema } from "./zod-schema.js";
- 
- describe("memory.curiosity.evidence (PLAN-59 Phase 0)", () => {
-   it("accepts the three keys in a full config", () => {
-@@ -42,6 +42,51 @@ describe("memory.curiosity.evidence (PLAN-59 Phase 0)", () => {
-     expect(CuriosityEvidenceSchema.safeParse({ modes: "off" }).success).toBe(false);
-   });
- 
-+  it("accepts the Phase 2 surfacingTrial block and rejects a live mode or an unknown key", () => {
-+    const res = validateConfigObject({
-+      memory: {
-+        curiosity: {
-+          evidence: {
-+            mode: "shadow",
-+            surfacingTrial: { mode: "shadow", blockMinutes: 240, carryOverDays: 7, seed: "node-a" },
-+          },
-+        },
-+      },
-+    });
-+    expect(res.ok).toBe(true);
-+    if (res.ok) {
-+      const curiosity = (res.config.memory as { curiosity?: { evidence?: unknown } }).curiosity;
-+      expect(curiosity?.evidence).toEqual({
-+        mode: "shadow",
-+        surfacingTrial: { mode: "shadow", blockMinutes: 240, carryOverDays: 7, seed: "node-a" },
-+      });
-+    }
-+    for (const mode of ["off", "shadow"]) {
-+      expect(CuriositySurfacingTrialSchema.safeParse({ mode }).success).toBe(true);
-+    }
-+    expect(CuriositySurfacingTrialSchema.safeParse({}).success).toBe(true);
-+    // the withhold condition is a separate exposure decision and PR
-+    expect(CuriositySurfacingTrialSchema.safeParse({ mode: "live" }).success).toBe(false);
-+    expect(CuriositySurfacingTrialSchema.safeParse({ blockMinutes: 0 }).success).toBe(false);
-+    expect(CuriositySurfacingTrialSchema.safeParse({ carryOverDays: -1 }).success).toBe(false);
-+    expect(CuriositySurfacingTrialSchema.safeParse({ seed: "" }).success).toBe(false);
-+    expect(CuriositySurfacingTrialSchema.safeParse({ blocks: 3 }).success).toBe(false);
-+    expect(CuriosityEvidenceSchema.safeParse({ surfacingTrial: { mode: "shadow" } }).success).toBe(
-+      true,
-+    );
-+    expect(CuriosityEvidenceSchema.safeParse({ surfacingTrial: { mode: "live" } }).success).toBe(
-+      false,
-+    );
-+  });
++## Gateway did not come back after a Windows reboot (WSL2)
 +
-+  it("a bad surfacingTrial mode in the full config falls to the unknown branch like the evidence mode", () => {
-+    expect(
-+      validateConfigObject({
-+        memory: { curiosity: { evidence: { surfacingTrial: { mode: "live" } } } },
-+      }).ok,
-+    ).toBe(true);
-+  });
++Use this when the gateway runs inside WSL2 and was down after Windows restarted or after a crash.
 +
-   it("a bad mode in the full config falls to the unknown branch and is left to the read site", () => {
-     // Documented behaviour of MemorySchema: the curiosity union's fallback is z.unknown().
-     const res = validateConfigObject({ memory: { curiosity: { evidence: { mode: "shadwo" } } } });
++```bash
++bitterbot gateway status
++bitterbot doctor
++systemctl --user status
++```
++
++Look for:
++
++- `Failed to connect to bus` from `systemctl --user`: the distro has no systemd user bus, so a systemd unit cannot restart the gateway. `bitterbot gateway status` then shows the `wsl-supervisor` backend.
++- `Service: wsl-supervisor (not installed)`: nothing restarts the gateway. Fix: `bitterbot gateway install` (registers a Windows logon task and starts the supervisor; it adopts a gateway that is already running). `bitterbot gateway install --dry-run` prints the task XML and the commands first.
++- `Logon task: not registered` with the supervisor installed: Windows interop was not reachable at install time. Enable interop in `/etc/wsl.conf` and rerun `bitterbot gateway install --force`, or start the supervisor by hand after a reboot with `bitterbot gateway start`.
++- `Supervisor: not running` with the task registered: the task starts at the Windows user's logon, not at boot; log on, or run the task from Task Scheduler. Closing the task's console window kills the supervisor; use `bitterbot gateway stop`.
++- Repeated lines in `~/.bitterbot/logs/gateway-exits.log` with the same exit code: the gateway crashes at start. Read `~/.bitterbot/logs/gateway-<YYYYMMDD>.log` for the cause; the supervisor backs off up to 60 s between attempts.
++
++See [/gateway/background-process#wsl2-without-systemd](/gateway/background-process#wsl2-without-systemd) for what the supervisor installs and its relaunch policy.
++
+ ## Channel connected messages not flowing
+ 
+ If channel state is connected but message flow is dead, focus on policy, permissions, and channel specific delivery rules.
 ```
 
-**File**: `src/config/zod-schema.ts` (modified, +15/-0)
+**File**: `src/cli/daemon-cli/install.ts` (modified, +38/-2)
 ```diff
-@@ -34,11 +34,26 @@ const NodeHostSchema = z
-  * is `z.unknown()`, so a bad mode there degrades to the unknown branch and the
-  * code-read site (`resolveEvidenceConfig`) falls back to the default.
-  */
-+/**
-+ * PLAN-59 Phase 2: `memory.curiosity.evidence.surfacingTrial`. Same arrangement
-+ * as the evidence block: the typed branch feeds the form; the read site
-+ * (`resolveSurfacingTrialConfig`) does its own coercion.
-+ */
-+export const CuriositySurfacingTrialSchema = z
-+  .object({
-+    mode: z.enum(["off", "shadow"]).optional(),
-+    blockMinutes: z.number().positive().optional(),
-+    carryOverDays: z.number().positive().optional(),
-+    seed: z.string().min(1).optional(),
-+  })
-+  .strict();
-+
- export const CuriosityEvidenceSchema = z
-   .object({
-     mode: z.enum(["off", "observe", "shadow"]).optional(),
-     retentionDays: z.number().positive().optional(),
-     topK: z.number().int().positive().optional(),
-+    surfacingTrial: CuriositySurfacingTrialSchema.optional(),
-   })
-   .strict();
- 
-```
-
-**File**: `src/memory/curiosity-types.ts` (modified, +31/-0)
-```diff
-@@ -106,6 +106,32 @@ export type CuriosityWeights = {
-  */
- export type CuriosityEvidenceMode = "off" | "observe" | "shadow";
- 
-+/**
-+ * PLAN-59 Phase 2 surfacing trial modes. `off` writes delivered rows with the
-+ * `legacy` arm as Phase 0 did; `shadow` logs eligibility and a randomised-block
-+ * arm for every proactive surfacing opportunity and delivers exactly as before.
-+ * A `live` mode (withholding) is a separate exposure decision and PR.
-+ */
-+export type CuriositySurfacingTrialMode = "off" | "shadow";
-+
-+export type CuriositySurfacingTrialConfig = {
-+  /** Default: "shadow" (observation only; nothing the owner sees changes). */
-+  mode?: CuriositySurfacingTrialMode;
-+  /** Length of one randomisation block in minutes. Default: 240. */
-+  blockMinutes?: number;
-+  /**
-+   * An item (same kind and ref id) assigned within this many days keeps its
-+   * arm instead of drawing again. Default: 7.
-+   */
-+  carryOverDays?: number;
-+  /**
-+   * Trial seed for the arm draw. Absent, it is derived from the node's own
-+   * evidence digest key, so assignment is deterministic per node and cannot
-+   * be reconstructed from the logged rows.
-+   */
-+  seed?: string;
-+};
-+
- export type CuriosityEvidenceConfig = {
-   /**
-    * Default: "shadow" (every tier of evidence, so the GCCRF retirement decision
-@@ -116,6 +142,11 @@ export type CuriosityEvidenceConfig = {
-   retentionDays?: number;
-   /** At most this many retrieval rows per search. Default: 10. */
-   topK?: number;
-+  /**
-+   * PLAN-59 Phase 2: shadow eligibility and assignment for proactive surfacing.
-+   * Writes nothing when `mode` (the evidence layer) is `off`.
-+   */
-+  surfacingTrial?: CuriositySurfacingTrialConfig;
- };
- 
- export type CuriosityConfig = {
-```
-
-**File**: `src/memory/evidence-telemetry.test.ts` (modified, +75/-0)
-```diff
-@@ -285,6 +285,81 @@ describe("EvidenceTelemetry", () => {
-     ).toBeNull();
-   });
- 
-+  it("stores stage details as canonical JSON and a guarded label never overwrites or creates a row", () => {
-+    const db = openDb();
-+    const t = new EvidenceTelemetry(db, { mode: "observe" }, quiet);
-+    t.recordSurfacing({
-+      eventId: "assigned:pr:c1:1",
-+      kind: "proactive_recall",
-+      refId: "c1",
-+      arm: "withhold",
-+      stage: "assigned",
-+      details: { carryOver: false, blockId: 7 },
-+      now: 1000,
-+    });
-+    t.recordSurfacing({
-+      eventId: "pr:c1:1",
-+      kind: "proactive_recall",
-+      refId: "c1",
-+      arm: "withhold",
-+      stage: "delivered",
-+      now: 1000,
-+    });
-+    expect(
-+      (
-+        db
-+          .prepare(`SELECT details_json FROM surfacing_events WHERE event_id = 'assigned:pr:c1:1'`)
-+          .get() as { details_json: string }
-+      ).details_json,
-+    ).toBe('{"blockId":7,"carryOver":false}');
-+    expect(
-+      (
-+        db
-+          .prepare(`SELECT details_json FROM surfacing_events WHERE event_id = 'pr:c1:1'`)
-+          .get() as {
-+          details_json: string | null;
-+        }
-+      ).details_json,
-+    ).toBeNull();
-+    // guarded label on an unlabelled row: applied
-+    expect(
-+      t.recordSurfacingOutcome({
-+        eventId: "pr:c1:1",
-+        outcome: "explicit_retrieval",
-+        provenance: "shadow_crossover",
-+        onlyIfUnlabelled: true,
-+        now: 2000,
-+      }),
-+    ).toBe(true);
-+    // the owner's explicit label replaces it (ungarded), and the guarded marker then leaves it alone
-+    t.recordSurfacingOutcome({ eventId: "pr:c1:1", outcome: "dismissed", provenance: "explicit" });
-+    expect(
-+      t.recordSurfacingOutcome({
-+        eventId: "pr:c1:1",
-+        outcome: "explicit_retrieval",
-+        provenance: "shadow_crossover",
-+        onlyIfUnlabelled: true,
-+      }),
-+    ).toBe(false);
-+    expect(
-+      db
-+        .prepare(
-+          `SELECT outcome, label_provenance FROM surfacing_events WHERE event_id = 'pr:c1:1'`,
-+        )
-+        .get(),
-+    ).toEqual({ outcome: "dismissed", label_provenance: "explicit" });
-+    // guarded with no matching row: no responded row is created
-+    expect(
-+      t.recordSurfacingOutcome({
-+        refId: "nothing-here",
-+        outcome: "explicit_retrieval",
-+        provenance: "shadow_crossover",
-+        onlyIfUnlabelled: true,
-+      }),
-+    ).toBe(false);
-+    expect(count(db, "surfacing_events")).toBe(2);
-+  });
-+
-   it("decision traces are shadow-only and diverged compares canonical forms (or the decision key)", () => {
-     const db = openDb();
-     const observe = new EvidenceTelemetry(db, { mode: "observe" }, quiet);
-```
-
-**File**: `src/memory/evidence-telemetry.ts` (modified, +48/-7)
-```diff
-@@ -115,8 +115,19 @@ export type SurfacingOutcome =
-   | "dismissed"
-   | "answered"
-   | "engaged_weak"
-+  /**
-+   * PLAN-59 Phase 2: the owner retrieved the item through an explicit memory
-+   * search. In the shadow stage this is a baseline rate, not a crossover from
-+   * a withheld condition (nothing is withheld in shadow).
-+   */
-+  | "explicit_retrieval"
-+  | "unknown";
-+export type LabelProvenance =
-+  | "explicit"
-+  | "inferred"
-+  /** PLAN-59 Phase 2: set by the shadow crossover marker, never by the owner. */
-+  | "shadow_crossover"
-   | "unknown";
--export type LabelProvenance = "explicit" | "inferred" | "unknown";
- 
- export type RecordSurfacingInput = {
-   /** Idempotency key: the same event id is written once (INSERT OR IGNORE). */
-@@ -128,6 +139,12 @@ export type RecordSurfacingInput = {
-   sessionKey?: string;
-   stage: SurfacingStage;
-   costUsd?: number;
-+  /**
-+   * PLAN-59 Phase 2: small JSON payload for the stage (the surfacing trial
-+   * stores the randomisation block id and the carry-over flag on `assigned`
-+   * rows). Never content, never a query.
-+   */
-+  details?: Record<string, unknown>;
-   now?: number;
- };
- 
-@@ -138,6 +155,12 @@ export type RecordSurfacingOutcomeInput = {
-   provenance: LabelProvenance;
-   /** Kind for the `responded` row created when no delivered row matches. */
-   kind?: string;
-+  /**
-+   * PLAN-59 Phase 2: leave a row alone when it already carries an outcome, so
-+   * an inferred marker never overwrites what the owner said. Also skips the
-+   * `responded` fallback row.
-+   */
-+  onlyIfUnlabelled?: boolean;
-   now?: number;
- };
- 
-@@ -234,6 +257,16 @@ export class EvidenceTelemetry {
-     return { ...this.cfg };
+@@ -50,14 +50,19 @@ export async function runDaemonInstall(opts: DaemonInstallOptions) {
    }
  
-+  /**
-+   * The live connection, or null when the tables are missing. For the
-+   * surfacing trial's own lookups (carry-over, crossover, counts): it reads
-+   * through this accessor on every call, so a rebind after a database swap is
-+   * picked up without the trial holding a handle of its own.
-+   */
-+  connection(): DatabaseSync | null {
-+    return this.available ? this.db : null;
+   const service = resolveGatewayService();
++  const dryRun = Boolean(opts.dryRun);
++  if (dryRun && !service.supportsDryRun) {
++    fail(`--dry-run is not supported by the ${service.label} backend.`);
++    return;
++  }
+   let loaded = false;
+   try {
+     loaded = await service.isLoaded({ env: process.env });
+   } catch (err) {
+     fail(`Gateway service check failed: ${String(err)}`);
+     return;
+   }
+-  if (loaded) {
++  if (loaded && !dryRun) {
+     if (!opts.force) {
+       emit({
+         ok: true,
+@@ -87,7 +92,15 @@ export async function runDaemonInstall(opts: DaemonInstallOptions) {
+   let token: string | undefined =
+     opts.token || cfg.gateway?.auth?.token || process.env.BITTERBOT_GATEWAY_TOKEN;
+ 
+-  if (!token && needsToken) {
++  if (!token && needsToken && dryRun) {
++    const msg = "Dry run: a gateway token would be generated and saved to config.";
++    if (json) {
++      warnings.push(msg);
++    } else {
++      defaultRuntime.log(msg);
++    }
++    token = "<generated-at-install>";
++  } else if (!token && needsToken) {
+     token = randomToken();
+     const warnMsg = "No gateway token found. Auto-generated one and saving to config.";
+     if (json) {
+@@ -155,6 +168,29 @@ export async function runDaemonInstall(opts: DaemonInstallOptions) {
+     config: cfg,
+   });
+ 
++  if (dryRun) {
++    try {
++      await service.install({
++        env: process.env,
++        stdout,
++        programArguments,
++        workingDirectory,
++        environment,
++        dryRun: true,
++      });
++    } catch (err) {
++      fail(`Gateway install dry run failed: ${String(err)}`);
++      return;
++    }
++    emit({
++      ok: true,
++      result: "dry-run",
++      message: "Nothing was installed.",
++      service: buildDaemonServiceSnapshot(service, loaded),
++    });
++    return;
 +  }
 +
-   /** True when rows can be written at all (mode not off, tables present). */
-   isEnabled(): boolean {
-     return this.available && this.cfg.mode !== "off";
-@@ -318,8 +351,9 @@ export class EvidenceTelemetry {
-     try {
-       const stmt = this.db.prepare(
-         `INSERT OR IGNORE INTO surfacing_events
--           (event_id, kind, ref_id, arm, opportunity_id, session_digest, stage, cost_usd, created_at)
--         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-+           (event_id, kind, ref_id, arm, opportunity_id, session_digest, stage, cost_usd,
-+            details_json, created_at)
-+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-       );
-       let inserted = 0;
-       this.inTransaction(() => {
-@@ -333,6 +367,7 @@ export class EvidenceTelemetry {
-             this.sessionDigest(e.sessionKey),
-             e.stage,
-             typeof e.costUsd === "number" && Number.isFinite(e.costUsd) ? e.costUsd : null,
-+            e.details ? canonicalJson(e.details) : null,
-             e.now ?? Date.now(),
-           );
-           inserted += Number(res.changes);
-@@ -361,24 +396,30 @@ export class EvidenceTelemetry {
-       const now = input.now ?? Date.now();
-       const target = input.eventId
-         ? (this.db
--            .prepare(`SELECT id FROM surfacing_events WHERE event_id = ? LIMIT 1`)
--            .get(input.eventId) as { id: number } | undefined)
-+            .prepare(`SELECT id, outcome FROM surfacing_events WHERE event_id = ? LIMIT 1`)
-+            .get(input.eventId) as { id: number; outcome: string | null } | undefined)
-         : (this.db
-             .prepare(
--              `SELECT id FROM surfacing_events
-+              `SELECT id, outcome FROM surfacing_events
-                 WHERE (ref_id = ? OR opportunity_id = ?)
-                 ORDER BY CASE WHEN stage = 'delivered' THEN 0 ELSE 1 END, created_at DESC, id DESC
-                 LIMIT 1`,
-             )
--            .get(input.refId!, input.refId!) as { id: number } | undefined);
-+            .get(input.refId!, input.refId!) as { id: number; outcome: string | null } | undefined);
-       if (target) {
-+        if (input.onlyIfUnlabelled && target.outcome !== null) {
-+          return false;
-+        }
-         this.db
-           .prepare(
-             `UPDATE surfacing_events SET outcome = ?, label_provenance = ?, outcome_at = ? WHERE id = ?`,
-           )
-           .run(input.outcome, input.provenance, now, target.id);
-         return true;
-       }
-+      if (input.onlyIfUnlabelled) {
-+        return false;
+   await installDaemonServiceAndEmit({
+     serviceNoun: "Gateway",
+     service,
+```
+
+**File**: `src/cli/daemon-cli/register-service-commands.ts` (modified, +5/-0)
+```diff
+@@ -37,6 +37,11 @@ export function addGatewayServiceCommands(parent: Command, opts?: { statusDescri
+     .option("--runtime <runtime>", "Daemon runtime (node|bun). Default: node")
+     .option("--token <token>", "Gateway token (token auth)")
+     .option("--force", "Reinstall/overwrite if already installed", false)
++    .option(
++      "--dry-run",
++      "Print what would be installed (WSL supervisor: task XML + commands) without changing anything",
++      false,
++    )
+     .option("--json", "Output JSON", false)
+     .action(async (cmdOpts) => {
+       await runDaemonInstall(cmdOpts);
+```
+
+**File**: `src/cli/daemon-cli/shared.ts` (modified, +5/-0)
+```diff
+@@ -5,6 +5,8 @@ import {
+ } from "../../daemon/constants.js";
+ import { resolveGatewayLogPaths } from "../../daemon/launchd.js";
+ import { formatRuntimeStatus } from "../../daemon/runtime-format.js";
++import { resolveGatewayService } from "../../daemon/service.js";
++import { WSL_SUPERVISOR_LABEL } from "../../daemon/wsl-supervisor.js";
+ import { pickPrimaryLanIPv4 } from "../../gateway/net.js";
+ import { getResolvedLoggerSettings } from "../../logging.js";
+ import { colorize, isRich, theme } from "../../terminal/theme.js";
+@@ -158,6 +160,9 @@ export function renderGatewayServiceStartHints(env: NodeJS.ProcessEnv = process.
+       return [...base, `launchctl bootstrap gui/$UID ~/Library/LaunchAgents/${label}.plist`];
+     }
+     case "linux": {
++      if (resolveGatewayService().label === WSL_SUPERVISOR_LABEL) {
++        return base;
 +      }
-       const ref = input.refId ?? input.eventId!;
-       this.db
-         .prepare(
+       const unit = resolveGatewaySystemdServiceName(profile);
+       return [...base, `systemctl --user start ${unit}.service`];
+     }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #333** (2026-10-30): feat(gateway): WSL2 autostart and crash supervision without systemd (@VGIL77)
 - **PR #332** (2026-10-30): feat(memory): weighted RRF channel fusion with sweep and real-query validation (@VGIL77)
 - **PR #331** (2026-10-30): feat(memory): shadow surfacing trial eligibility and assignment (PLAN-59 Phase 2) (@VGIL77)
 - **PR #329** (2026-10-29): feat(memory): PLAN-59 Phase 1 pilot harness (forked consolidation arms) (@VGIL77)
 - **PR #328** (2026-10-29): feat(memory): default evidence telemetry to shadow mode (@VGIL77)
 - **PR #322** (2026-10-29): feat(memory): evidence telemetry and shadow decision traces (PLAN-59 Phase 0) (@VGIL77)
-- **PR #321** (2026-10-28): fix(memory): GCCRF and curiosity-target defects (@VGIL77)
 
 ---
 
@@ -3206,50 +2106,38 @@ decision and PR, so the mode enum is `off | shadow` only.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory): weighted RRF channel fusion with sweep and real-query validation (#332)
+## X. gateway): WSL2 autostart and crash supervision without systemd (#333)
 
 **RULE**:
-When implementing operations in `benchmarks/live-recall/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/cli/gateway.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fe517486`: memory): weighted RRF channel fusion with sweep and real-query validation (#332). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `15bc0611`: gateway): WSL2 autostart and crash supervision without systemd (#333). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `benchmarks/live-recall/README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/cli/gateway.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-2. `replay-judge.mts` searches a copy of the snapshot once per setting,
-   pools the top-k passages across settings, and asks a small model ONCE per
-   (query, passage) pair whether the passage answers the query. The same
-   verdicts score every setting, so the comparison is fair even where the
-   judge is not. Output: hit@k (any relevant passage in the top k),
-   precision@k, relevant@1, MRR; hashes and ranks only.
+- `gateway install` supports `--port`, `--runtime`, `--token`, `--force`, `--dry-run`, `--json`.
+- `--dry-run` prints what would be installed without writing, registering or starting anything. It is supported by the `wsl-supervisor` backend (task XML plus the `schtasks.exe` and supervisor commands); other backends refuse it.
+- Backends: launchd (macOS), systemd user service (Linux), Scheduled Task (Windows), and `wsl-supervisor` on WSL2 when `systemctl --user` has no bus. See [/gateway/background-process#wsl2-without-systemd](/gateway/background-process#wsl2-without-systemd).
 
-   A setting is `boost=<postFusionBoostScale>;rrf=<vector>,<keyword>,<graph>[;k=<rrfK>]`,
-   passed as `--settings "boost=0.1;rrf=1,1,1" "boost=0.1;rrf=0.25,1,1" ...`
-   (`--scales 1,0.1,0` is the older spelling for boost scales alone). The first
-   setting is the baseline. Every search runs with the wall clock frozen at
-   `--now` and hormonal modulation off, so a setting's list depends on the
-   code and the snapshot only; the recency boost keeps its production default.
-   `--rejudge N` asks the judge again about N random pooled pairs to estimate
-   its flip rate; the output then carries, per setting against the baseline,
-   the paired delta in hit@k and MRR, a paired bootstrap over queries
-   (sampling noise), the sd of the delta when every pooled verdict flips at
- 
+### `gateway supervise`
+
+```bash
+bitterbot gateway supervise
+```
+
+The WSL crash supervisor: what the Windows logon task registered by `gateway install` runs on a WSL2 host without systemd. It spawns the recorded gateway command, relaunches it after crashes with a backoff (5 s doubling to 60 s), adopts a gateway that is already running, logs to `~/.bitterbot/logs/gateway-<YYYYMMDD>.log` and `gateway-exits.log`, and stops the gateway on SIGTERM. Not for interactive use: install with `bitterbot gateway install`, stop with `bitterbot gateway stop`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-2. `replay-judge.mts` searches a copy of the snapshot once per setting
-   (here `postFusionBoostScale` 1, 0.1, 0), pools the top-k passages across
-   settings, and asks a small model ONCE per (query, passage) pair whether the
-   passage answers the query. The same verdicts score every setting, so the
-   comparison is fair even where the judge is not. Output: hit@k (any relevant
-   passage in the top k), precision@k, relevant@1, MRR; hashes and ranks only.
+- `gateway install` supports `--port`, `--runtime`, `--token`, `--force`, `--json`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fe517486` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `15bc0611` are properly handled with clean fallback behavior.

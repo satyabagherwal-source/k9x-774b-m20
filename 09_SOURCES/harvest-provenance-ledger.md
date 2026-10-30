@@ -6208,3 +6208,7 @@ Every entry in this ledger must capture:
 | `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `e95146ff` | Multi-dimensional audit evidence | 2026-10-30T13:28:35.613Z |
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `c1cfdbd3` | Multi-dimensional audit evidence | 2026-10-30T13:28:41.795Z |
 | `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `525b1d11` | Multi-dimensional audit evidence | 2026-10-30T13:28:46.726Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `b9b06661` | Multi-dimensional audit evidence | 2026-10-30T13:37:36.144Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `76d7ef16` | Multi-dimensional audit evidence | 2026-10-30T13:37:39.835Z |
+| `learn-github-nirdiamant-rag_techniques` | `https://github.com/NirDiamant/RAG_Techniques` | `4eacd2fa` | Multi-dimensional audit evidence | 2026-10-30T13:37:42.500Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `15bc0611` | Multi-dimensional audit evidence | 2026-10-30T13:37:43.962Z |
