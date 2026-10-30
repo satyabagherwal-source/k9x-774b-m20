@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T21:06:26.211Z",
-  "total_cycles_completed": 6287,
-  "total_learnings_persisted": 6287,
-  "total_rules_promoted": 5848,
+  "last_updated": "2026-10-30T21:13:08.703Z",
+  "total_cycles_completed": 6289,
+  "total_learnings_persisted": 6289,
+  "total_rules_promoted": 5850,
   "history": [
-    {
-      "timestamp": "2026-10-30T05:01:23.904Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T05:12:24.126Z",
-      "repository": "citusdata/citus",
-      "learningId": "learn-github-citusdata-citus",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T05:19:39.598Z",
       "repository": "StarRocks/starrocks",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T21:06:26.211Z",
       "repository": "pola-rs/polars",
       "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T21:13:04.508Z",
+      "repository": "apache/arrow",
+      "learningId": "learn-github-apache-arrow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T21:13:08.703Z",
+      "repository": "wcandillon/react-native-skia",
+      "learningId": "learn-github-wcandillon-react-native-skia",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

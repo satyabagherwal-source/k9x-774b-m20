@@ -6310,3 +6310,5 @@
 | `CYCLE-20261030-GQW4` | `2026-10-30T20:59:29.188Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5875` | Yes (`f9b56a9b...`) |
 | `CYCLE-20261030-PMFC` | `2026-10-30T21:06:23.304Z` | `sweetpad-dev/sweetpad` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5876` | Yes (`cf3a7556...`) |
 | `CYCLE-20261030-PONU` | `2026-10-30T21:06:26.202Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5877` | Yes (`f648c2a9...`) |
+| `CYCLE-20261030-Y7ZO` | `2026-10-30T21:13:04.500Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5878` | Yes (`406eefe3...`) |
+| `CYCLE-20261030-YB88` | `2026-10-30T21:13:08.696Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5879` | Yes (`85eedc7d...`) |

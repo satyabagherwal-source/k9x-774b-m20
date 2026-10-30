@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T21:06:26.124Z",
+  "last_updated": "2026-10-30T21:13:08.633Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2232,8 +2232,8 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "16ebf1a4",
-      "content_hash": "1922c1b72749667a2b67e022d3d85a44c1f182dbf7aa1d65eb025a02be66f319",
+      "source_version": "a95f92de",
+      "content_hash": "406eefe3a12abe3ac07b8e856f207751de9f5762645ace46a56b833511ac3fd0",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
@@ -2266,6 +2266,11 @@
           "number": 4940,
           "title": "GH-47417: [C++] Fix JSON parser losing nulls in a null-typed list (#51108)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5878,
+          "title": "GH-54936: [C++] Ensure reading an invalid map array from IPC doesn't crash (#549",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2273,7 +2278,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:39:30.562Z",
+      "verified_at": "2026-10-30T21:13:04.415Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56766,13 +56771,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "shopify-react-native-skia",
+      "slug": "wcandillon-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/Shopify/react-native-skia",
-      "source_version": "8e30d2ee",
-      "content_hash": "881ab398fbf0ab727661534579e38efa81e9c3de1ac178d77815b2db3fa96be7",
-      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "3184116c",
+      "content_hash": "85eedc7def2054974e5baac468e211057ecfbdc18f0b11d2a9de32cdcb753cd7",
+      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": 2002,
@@ -56813,6 +56818,11 @@
           "number": 5285,
           "title": "🤖): use one Vulkan pipeline cache per device (#4341)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5879,
+          "title": "🗿): log a canvas's failure to begin a frame instead of dropping it (#4317)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56820,7 +56830,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T12:57:06.459Z",
+      "verified_at": "2026-10-30T21:13:08.617Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155738,6 +155748,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T21:06:26.105Z"
+    },
+    "rule-5878": {
+      "learning_id": "rule-5878",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5878,
+      "title": "GH-54936: [C++] Ensure reading an invalid map array from IPC doesn't crash (#549",
+      "source_url": "https://github.com/apache/arrow",
+      "source_version": "a95f92de",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:13:04.415Z"
+    },
+    "rule-5879": {
+      "learning_id": "rule-5879",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5879,
+      "title": "🗿): log a canvas's failure to begin a frame instead of dropping it (#4317)",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "3184116c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:13:08.617Z"
     }
   },
   "aliases": {

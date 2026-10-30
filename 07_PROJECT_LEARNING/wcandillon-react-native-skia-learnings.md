@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md`  
 > **Source**: github ([https://github.com/wcandillon/react-native-skia](https://github.com/wcandillon/react-native-skia))  
-> **Source Version**: `39d14f72`  
+> **Source Version**: `3184116c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:49:33.300Z  
+> **Timestamp**: 2026-10-30T21:13:08.122Z  
 > **Learning ID**: `learn-github-wcandillon-react-native-skia`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wcandillon/react-native-skia](https://github.com/wcandillon/react-native-skia))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:49:32.272Z  
+> **Harvest Timestamp**: 2026-10-30T21:13:07.514Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-performance React Native Graphics using Skia
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8754 stars
+- **Stars / Engagement**: 8762 stars
 
 ---
 
@@ -1254,6 +1254,8 @@ private:
 
 #pragma once
 
+#include <cstdarg>
+#include <cstdio>
 #include <jsi/jsi.h>
 #include <string>
 
@@ -1294,7 +1296,7 @@ public:
     va_list args;
     va_start(args, fmt);
 
-    static char buffer[512];
+    char buffer[512];
     vsnprintf(buffer, sizeof(buffer), fmt, args);
 #if defined(ANDROID) || defined(__ANDROID__)
     __android_log_write(ANDROID_LOG_INFO, "RNSkia", buffer);
@@ -1515,793 +1517,347 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cce3cf0f` (2026-10-23)
-**Commit Message**: fix(🤖): present Android canvases off the main thread (#4318)
+### Incident Patch 1: `4d50b934` (2026-10-29)
+**Commit Message**: fix(🗿): log a canvas's failure to begin a frame instead of dropping it (#4317)
 
-* fix(🤖): present a SurfaceView canvas off the main thread
+* fix(🗿): log a canvas's failure to begin a frame instead of dropping it
 
-Presenting a frame of a SurfaceView canvas (inserting its recordings,
-the GPU submit, the swapchain present) ran on the main thread, on a
-Choreographer tick: on a Pixel 8 about 4.7 ms per frame at 120 Hz, 370
-to 760 ms/s of the main thread for one animating canvas. Recording
-already runs off the main thread (the render thread pool for <Canvas>,
-the caller's runtime for a Graphite view); presenting was the remaining
-main-thread cost, and it held up everything else the main thread does.
+The producer dropped every exception beginning a recording threw as if the
+view had no size yet or the device had no GPU. Neither is a failure: a view
+without a size asks for a frame once it has one, and Skia.gpu says why there
+is no GPU. So no frame begins without a GPU, the target's
+tryBeginRecording() returns no canvas while the view has no size (JS's
+beginRecording() still throws for it), and a recording that cannot begin
+otherwise (one already open, no Graphite recorder or deferred canvas) is
+logged like a failed replay or snap, where the canvas drew no new frame and
+nothing said why. beginFrame (RNSkFrameStart.h) decides what a job does
+with each way beginning ends, cpp-tests/FrameStartTest.cpp checks it on the
+host, and a GraphiteView e2e case pins the error JS gets.
 
-A SurfaceView canvas now presents on a present thread shared by every
-such canvas in the process (presents serialize on the GPU context
-anyway), a looper thread with a Choreographer of its own for the vsync,
-where the view's FrameScheduler lives. A TextureView canvas keeps
-presenting on the main thread, behind the draw its window has pending.
-RNSkView takes the thread from the platform view (setPresentThread);
-without one, as on Apple platforms, tasks keep going to the main thread.
+* refactor(🗿): begin the frame in produce() and keep beginRecording's name
 
-The window surface keeps the main thread (attach, resize, detach) and
-the present thread apart wi
+produce() begins the frame itself, without RNSkFrameStart.h and its host
+test: no frame without a GPU, none while the view has no size, and any
+other failure to begin is logged. try
 
-**File**: `apps/docs/docs/canvas/graphite.md` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@ A recording is immutable: you can submit the same one again later without record
- 
- ## Threading model
- 
--Recording happens on the thread that calls `beginRecording()`, presenting on the main thread: on the display link (`CADisplayLink` on iOS, the `Choreographer` for an Android `SurfaceView`), or, for an Android `TextureView`, once its window has drawn the previous frame.
-+Recording happens on the thread that calls `beginRecording()`. Presenting happens on the display link on iOS (`CADisplayLink`, on the main thread), and on a present thread of its own on Android, so that the main thread pays nothing for a frame: on the vsync of that thread's `Choreographer` for a `SurfaceView`, once its window has drawn the previous frame for a `TextureView`.
- The context can be captured into a worklet, so a frame loop can run on the Reanimated UI runtime, at the display's rate, without touching the JS thread:
- 
- ```tsx
-```
-
-**File**: `apps/example/src/Tests/Screens/Resize.tsx` (added, +43/-0)
-```diff
-@@ -0,0 +1,43 @@
-+import React, { useEffect, useState } from "react";
-+import { View } from "react-native";
-+import { Canvas, Fill, Rect } from "react-native-skia";
-+
-+const SMALL = 60;
-+const LARGE = 120;
-+const STEP = 6;
-+
-+// A canvas that grows (or shrinks) a few points per frame from one size to
-+// another once mounted, so that its presents race its resizes, and settles.
-+// Red, with a 20 point green square at its origin: a stale frame stretched to
-+// the new size would show a larger (or smaller) square, so the square tells
-+// that the frame shown was recorded for the size the canvas settled at. Cyan
-+// wherever the canvas does not reach.
-+const ResizingCanvas = ({ from, to }: { from: number; to: number }) => {
-+  const [size, setSize] = useState(from);
-+  useEffect(() => {
-+    let current = from;
-+    let frame = 0;
-+    const step = () => {
-+      current =
-+        from < to ? Math.min(current + STEP, to) : Math.max(current - STEP, to);
-+      setSize(current);
-+      if (current !== to) {
-+        frame = requestAnimationFrame(step);
-+      }
-+    };
-+    frame = requestAnimationFrame(step);
-+    return () => cancelAnimationFrame(frame);
-+  }, [from, to]);
-+  return (
-+    <View style={{ width: LARGE, height: LARGE, backgroundColor: "cyan" }}>
-+      <Canvas style={{ width: size, height: size }}>
-+        <Fill color="red" />
-+        <Rect x={0} y={0} width={20} height={20} color="lime" />
-+      </Canvas>
-+    </View>
-+  );
-+};
-+
-+export const ResizeGrow = () => <ResizingCanvas from={SMALL} to={LARGE} />;
-+
-+export const ResizeShrink = () => <ResizingCanvas from={LARGE} to={SMALL} />;
-```
-
-**File**: `apps/example/src/Tests/Screens/index.ts` (modified, +3/-0)
-```diff
-@@ -3,6 +3,7 @@ import type { FC } from "react";
- import { GraphiteView, GraphiteViewTransform } from "./GraphiteView";
- import { IsOnMainThread } from "./IsOnMainThread";
- import { OnLayout } from "./OnLayout";
-+import { ResizeGrow, ResizeShrink } from "./Resize";
- import { SharedImage } from "./SharedImage";
- import { SharedValueReads } from "./SharedValueReads";
- 
-@@ -11,6 +12,8 @@ export const Screens: Record<string, FC> = {
-   GraphiteViewTransform,
-   IsOnMainThread,
-   OnLayout,
-+  ResizeGrow,
-+  ResizeShrink,
-   SharedImage,
-   SharedValueReads,
- };
-```
-
-**File**: `packages/skia/android/cpp/jni/JniLoad.cpp` (modified, +8/-0)
+**File**: `packages/skia/cpp/api/JsiSkGraphiteContext.h` (modified, +4/-0)
 ```diff
 @@ -1,6 +1,7 @@
- #include "JniPlatformContext.h"
- #include "JniSkiaManager.h"
- #include "JniSkiaView.h"
-+#include <fbjni/NativeRunnable.h>
- #include <fbjni/fbjni.h>
- #include <jni.h>
- 
-@@ -9,5 +10,12 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
-     RNSkia::JniSkiaManager::registerNatives();
-     RNSkia::JniSkiaView::registerNatives();
-     RNSkia::JniPlatformContext::registerNatives();
-+    // A view posts to the thread it presents on through a NativeRunnable (see
-+    // JniSkiaView), from the render thread pool among others. A thread the
-+    // JVM did not create has only the system class loader, which does not
-+    // know the app's classes, so the lookup fails there. Making one here,
-+    // with the app's loader in use, resolves every class on that path once;
-+    // fbjni keeps them.
-+    facebook::jni::JNativeRunnable::newObjectCxxArgs([] {});
-   });
- }
-```
-
-**File**: `packages/skia/android/cpp/jni/include/JniSkiaView.h` (modified, +71/-20)
-```diff
-@@ -1,9 +1,12 @@
  #pragma once
  
-+#include <functional>
  #include <memory>
-+#include <utility>
++#include <stdexcept>
+ #include <utility>
  
- #include <android/native_window.h>
- #include <android/native_window_jni.h>
-+#include <fbjni/NativeRunnable.h>
- #include <fbjni/fbjni.h>
- #include <jni.h>
+ #include <jsi/jsi.h>
+@@ -37,6 +38,9 @@ class JsiSkGraphiteContext
  
-@@ -18,7 +21,9 @@ namespace jni = facebook::jni;
- /**
-  * The JNI side of SkiaView: owns the native view and the window surface it
-  * presents into, and relays the surface callbacks of the backing SurfaceView
-- * or TextureView, whose ANativeWindow it acquires for the surface.
-+ * or TextureView, whose ANativeWindow it acquires for the surface. The
-+ * surface callbacks come on the main thread; the view presents on the present
-+ * thread of the Java side (see SkiaView.runOnPresentThread).
-  */
- class JniSkiaView : public jni::HybridClass<JniSkiaView> {
- public:
-@@ -53,27 +58,32 @@ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
-   std::shared_ptr<RNSkManager> getSkiaManager() { return _manager.lock(); }
- 
- protected:
-+  // Main thread. Attaching the window asks the view for a frame on the
-+  // present thread.
-   void surfaceAvailable(jobject surface, int width, int height, bool isSurface,
-                         bool highBitDepth) {
-     attachWindow(surface, width, height, isSurface, highBitDepth);
--    _view->redraw();
-   }
- 
-+  // Main thread. The new size is painted on the present thread, which the
-+  // surface asks for a frame once it is reconfigured.
-   void surfaceSizeChanged(jobject surface, int width, int height,
-                           bool isSurface, bool highBitDepth) {
-     // Setting width/height to zero is nothing we need to care about when
-     // it comes to invalidating the surface.
--    if (width != 0 || height != 0) {
--      if (_surface->isAttached()) {
--        _surface->resize(width, height);
--      } else {
--        attachWindow(surface, width, height, isSurface, highBitDepth);
--      }
-+    if (width == 0 && height == 0) {
-+      return;
+   std::shared_ptr<JsiSkCanvas> beginRecording() {
+     auto *canvas = getObject()->beginRecording();
++    if (canvas == nullptr) {
++      throw std::runtime_error("SkiaGraphiteView: the view has no size yet.");
 +    }
-+    if (_surface->isAttached()) {
-+      _surface->resize(width, height);
-+    } else {
-+      attachWindow(surface, width, height, isSurface, highBitDepth);
+     auto jsiCanvas = std::make_shared<JsiSkCanvas>(getContext(), canvas);
+     _canvas = jsiCanvas;
+     return jsiCanvas;
+```
+
+**File**: `packages/skia/cpp/rnskia/RNSkGraphiteProducer.cpp` (modified, +10/-8)
+```diff
+@@ -220,14 +220,16 @@ void RNSkGraphiteProducer::produce() {
+   std::shared_ptr<RNSkGraphiteRecording> recording;
+   if (target && (recorder || picture)) {
+     SkCanvas *canvas = nullptr;
+-    try {
+-      // On the recorder of this pool thread: a view holds no recorder of
+-      // its own (see RNSkGraphiteTarget::beginRecording).
+-      canvas = target->beginRecording(
+-          DawnContext::getInstance().getThreadRecorder());
+-    } catch (const std::exception &) {
+-      // No surface and no layout yet: the view asks for a frame once it
+-      // has a size. Or no GPU at all.
++    // Without a GPU nothing records, and Skia.gpu says why.
++    if (auto *context = DawnContext::tryGetInstance()) {
++      try {
++        // On the recorder of this pool thread: a view holds no recorder of
++        // its own (see RNSkGraphiteTarget::beginRecording).
++        canvas = target->beginRecording(context->getThreadRecorder());
++      } catch (const std::exception &e) {
++        RNSkLogger::logToConsole("Canvas: beginning the frame failed: %s",
++                                 e.what());
++      }
      }
--    // Paint the new size right away rather than on the next scheduled redraw.
--    _view->redraw();
-   }
- 
-+  // Main thread, before the platform destroys the window: waits for the
-+  // present in flight, if any, then lets go of the window (see
-+  // RNSkWindowSurface::detach).
-   void surfaceDestroyed() { _surface->detach(); }
- 
-   /**
-@@ -116,9 +126,11 @@ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
-     manager->unregisterSkiaView(_view->getNativeId());
-   }
- 
--  // Choreographer tick: presents the queued recordings, returns whether more
--  // are already waiting.
--  bool presentFrame() { return _view->presentFrame(); }
-+  // The Java view's frame scheduler, on the thread the view presents on:
-+  // presents the queued recordings, says whether a frame went to the window
-+  // and whether more are waiting (see RNSkView::presentFrame). The Java view
-+  // keeps this object alive for the call (see SkiaView.dropInstance).
-+  int presentFrame() { return _view->presentFrame(); }
- 
+     if (canvas != nullptr) {
+       try {
+```
+
+**File**: `packages/skia/cpp/rnskia/RNSkGraphiteTarget.h` (modified, +7/-6)
+```diff
+@@ -177,8 +177,9 @@ class RNSkGraphiteTarget {
+    and the recorders of a few threads serve every view, with their caches
+    and atlases. finishRecording() snaps it, on the same thread, before the
+    thread records anything else (a recorder takes one deferred canvas at a
+-   time). The canvas is deleted by finishRecording(). Throws while a
+-   recording is already open, or while the view has no size.
++   time). The canvas is deleted by finishRecording(). Returns nullptr while
++   the view has no size. Throws while a recording is already open, or when
++   no deferred canvas can be made.
+    */
+   SkCanvas *beginRecording(const DawnContext::RecorderRef &recorder) {
+     auto target = resolveTargetInfo();
+@@ -192,7 +193,7 @@ class RNSkGraphiteTarget {
+    once the GPU device it was made for is lost: for JS, which records across
+    calls (SkiaViewApi.makeGraphiteContext) and may open a recording on
+    another target before finishing this one. Throws while a recording is
+-   already open, while the view has no size, or when no recorder can be made.
++   already open, or when no recorder or deferred canvas can be made.
+    */
+   SkCanvas *beginRecording() {
+     auto target = resolveTargetInfo();
+@@ -330,8 +331,8 @@ class RNSkGraphiteTarget {
  private:
-   friend HybridBase;
-@@ -129,20 +141,56 @@ class JniSkiaView : public jni::HybridClass<JniSkiaView> {
-     auto context = skiaManager->cthis()->getPlatformContext();
-     _surface = std::make_shared<RNSkWindowSurface>();
-     _view = std::make_shared<RNSkView>(context, _surface);
--    // A submitted recording arms the Java view's frame callback. Weak: the
--    // Java view owns this object through its hybrid data.
--    jni::weak_ref<jhybridobject> weakJava = jni::make_weak(jThis);
--    _view->setFrameScheduler([weakJava]() {
--      auto javaPart = weakJava.lockLocal();
-+    // Tasks for the present thread go through the Java view, which owns the
-+    // thread. Weak: the Java view owns this object through its hybrid data;
-+    // a task for a view that is gone is dropped. Called from any thread, the
-+    // render thread pool's included, hence the thread scope.
-+    auto javaView = std::make_shared<JavaView>(jThis);
-+    _view->setPresentThread([javaView](std::function<void()> task) {
-+      jni::ThreadScope threadScope;
-+      auto javaPart = javaView->weak->lockLocal();
-+      if (!javaPart) {
-+        return;
-+      }
-+      static const auto method =
-+          javaPart->getClass()
-+              ->getMethod<void(jni::alias_ref<jni::JRunnable::javaobject>)>(
-+                  "runOnPresentThread");
-+      method(javaPart, jni::JNativeRunnable::newObjectCxxArgs(std::move(task)));
-+    });
-+    // A submitted recording arms the Java view's frame callback, on the
-+    // present thread (or presents on the spot, for a window resized since
-+    // the frame it shows: see FrameScheduler.requestFrame).
-+    _view->setFrameScheduler([javaView](bool forResizedWindow) {
-+      auto javaPart = javaView->weak->lockLocal();
-       if (!javaPart) {
-         return;
-       }
-       static const auto method =
--          ja
-```
-
-**File**: `packages/skia/android/src/main/java/com/reactnative/skia/FrameScheduler.java` (modified, +78/-46)
-```diff
-@@ -3,46 +3,77 @@
- import androidx.annotation.Nullable;
- 
- /**
-- * Decides when a SkiaView presents the recordings queued for it: a SurfaceView
-- * on the next vsync, a TextureView behind the draw its window has pending, so
-- * that the window has taken the previous frame by then. Keeps at most one
-- * frame callback and one posted present outstanding. Main thread.
-+ * Decides when a SkiaView presents the recordings queued for it. A SurfaceView
-+ * presents on the next vsync, when the compositor takes its buffer. A
-+ * TextureView shows a frame when its window draws, which takes the latest
-+ * frame presented and lets the others go: it presents one frame at a time,
-+ * the next once the window drew the previous one (see onFrameConsumed), so
-+ * that every draw gets a new frame and no frame is made for nothing; a frame
-+ * for a window resized since the one it shows goes on the spot in either case
-+ * (see requestFrame). Keeps at most one frame callback outstanding. Lives on
-+ * the present thread, whose Choreographer gives the vsync.
-  */
- final class FrameScheduler {
-+    /** Host.presentFrame: a frame went to the window. */
-+    static final int PRESENTED = 1;
-+    /** Host.presentFrame: recordings are left, more queued or declined (no drawable). */
-+    static final int MORE_QUEUED = 2;
-+
-     /** What the scheduler asks of the view. */
-     interface Host {
-         /** Calls onFrame() on the next Choreographer frame. */
-         void postFrameCallback();
- 
--        /** Calls onPosted() from the main looper, behind any draw the window has pending. */
--        void postBehindPendingDraw();
--
--        /** Presents the queued recordings, returning whether any are left. */
--        boolean presentFrame();
-+        /** Presents the queued recordings: PRESENTED and MORE_QUEUED, as they apply. */
-+        int presentFrame();
+   /**
+    Opens a recording on `recorder`, made for `generation`; `owner` keeps the
+-   recorder alive when it is the target's own. Called with the state lock
+-   held.
++   recorder alive when it is the target's own. Returns nullptr while the view
++   has no size. Called with the state lock held.
+    */
+   SkCanvas *openRecordingLocked(skgpu::graphite::Recorder *recorder,
+                                 uint64_t generation,
+@@ -342,7 +343,7 @@ class RNSkGraphiteTarget {
+                                "call finishRecording() first.");
      }
- 
-     private final Host mHost;
-     private boolean mFrameCallbackPosted = false;
--    private boolean mPresentPosted = false;
-+    // TextureView: the window has a frame it has not drawn yet, and a request
-+    // arrived while it had.
-+    private boolean mFrameInWindow = false;
-+    private boolean mRequested = false;
- 
-     FrameScheduler(Host host) {
-         mHost = host;
+     if (target.width <= 0 || target.height <= 0) {
+-      throw std::runtime_error("SkiaGraphiteView: the view has no size yet.");
++      return nullptr;
      }
+     auto imageInfo = SkImageInfo::Make(
+         target.width, target.height, target.colorType, kPremul_SkAlphaType,
+```
+
+**File**: `packages/skia/cpp/utils/RNSkLog.h` (modified, +3/-1)
+```diff
+@@ -4,6 +4,8 @@
  
-     /** A recording was submitted. Without a backing view there is no surface to present on yet. */
-     void requestFrame(@Nullable BackingViewKind kind) {
-+        requestFrame(kind, false);
-+    }
-+
-+    /**
-+     * A recording was submitted. With forResizedWindow, the window was resized since
-+     * the frame it shows was made, so it shows that frame stretched to its size, and
-+     * the recording is for its size: it is presented on the spot, ahead of the vsync
-+     * or the draw it would otherwise wait for (a TextureView's window takes it in
-+     * place of the frame it has not drawn yet), so that a window resized on every
-+     * frame is drawn at the right size on every frame.
-+     */
-+    void requestFrame(@Nullable BackingViewKind kind, boolean forResizedWindow) {
-         if (kind == null) {
-             return;
-         }
--        // A frame callback still outstanding (a retry, see presentOrRetry) presents
-+        if (forResizedWindow) {
-+            present(kind);
-+            return;
-+        }
-+        // A frame callback still outstanding (a retry, see present) presents
-         // the new recording along with the leftovers on that vsync.
-         if (mFrameCallbackPosted) {
-             return;
-         }
--        if (presentsOnVsync(kind)) {
--            postFrameCallback();
--        } else {
--            postBehindPendingDraw();
-+        switch (kind) {
-+            case SURFACE_VIEW -> postFrameCallback();
-+            case TEXTURE_VIEW -> {
-+                if (mFrameInWindow) {
-+                    mRequested = true;
-+                } else {
-+                    present(kind);
-+                }
-+            }
-         }
+ #pragma once
+ 
++#include <cstdarg>
++#include <cstdio>
+ #include <jsi/jsi.h>
+ #include <string>
+ 
+@@ -44,7 +46,7 @@ class RNSkLogger {
+     va_list args;
+     va_start(args, fmt);
+ 
+-    static char buffer[512];
++    char buffer[512];
+     vsnprintf(buffer, sizeof(buffer), fmt, args);
+ #if defined(ANDROID) || defined(__ANDROID__)
+     __android_log_write(ANDROID_LOG_INFO, "RNSkia", buffer);
+```
+
+**File**: `packages/skia/src/renderer/__tests__/e2e/GraphiteView.spec.tsx` (modified, +30/-0)
+```diff
+@@ -26,6 +26,36 @@ describe("SkiaGraphiteView", () => {
      }
- 
-@@ -52,38 +83,46 @@ void onFrame(@Nullable BackingViewKind kind) {
-         if (kind == null) {
-             return;
-         }
--        if (presentsOnVsync(kind)) {
--            presentOrRetry();
--        } else {
--            postBehindPendingDraw();
--        }
-+        present(kind);
-     }
- 
--    /** The message posted with Host.postBehindPendingDraw(). */
--    void onPosted() {
--        mPresentPosted = false;
--        presentOrRetry();
-+    /**
-+     * The TextureView drew the frame it was given (or a later one, presented for a
-+     * resized window): the recording waiting for that, if any, goes to it now.
-+     */
-+    void onFrameConsumed(@Nullable BackingViewKind kind) {
-+        mFrameInWindow = false;
-+        if (kind == null || !mRequested) {
-+            return;
-+        }
-+        present(kind);
-     }
- 
--    /** The view left its window, and the host removed both callbacks. */
-+    /** The view left its window, or the window lost its surface: the host removed the callbacks. */
-     void cancel() {
-         mFrameCallbackPosted 
-```
-
-**File**: `packages/skia/android/src/main/java/com/reactnative/skia/PresentThread.java` (added, +39/-0)
-```diff
-@@ -0,0 +1,39 @@
-+package com.reactnative.skia;
-+
-+import android.os.Handler;
-+import android.os.HandlerThread;
-+import android.os.Process;
-+
-+/**
-+ * The thread every canvas presents on: one for the process, started on first
-+ * use and never stopped. Presenting a frame (replaying its recordings on the
-+ * GPU and handing the buffer to the compositor, or to the window for a
-+ * TextureView) costs a few milliseconds of CPU on a Vulkan window, which this
-+ * thread takes off the main thread; one thread serves every canvas, as
-+ * presents serialize on the GPU context anyway. It is a looper thread, so
-+ * that each canvas's FrameScheduler runs on it as it would on the main
-+ * thread, with the Choreographer of this thread for its vsync (see
-+ * SkiaView for how a TextureView's present still waits for its window's
-+ * pending draw).
-+ */
-+final class PresentThread {
-+    private static final Object sLock = new Object();
-+    private static Handler sHandler;
-+
-+    private PresentThread() {
-+    }
-+
-+    /** The handler of the thread, started on first use. Any thread. */
-+    static Handler handler() {
-+        synchronized (sLock) {
-+            if (sHandler == null) {
-+                // The priority of the UI toolkit's own render thread.
-+                HandlerThread thread = new HandlerThread("RNSkia Present",
-+                        Process.THREAD_PRIORITY_DISPLAY);
-+                thread.start();
-+                sHandler = new Handler(thread.getLooper());
-+            }
-+            return sHandler;
-+        }
-+    }
-+}
-```
-
-**File**: `packages/skia/android/src/main/java/com/reactnative/skia/SkiaTextureView.java` (modified, +1/-0)
-```diff
-@@ -43,5 +43,6 @@ public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surfaceTexture)
- 
-     @Override
-     public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surface) {
-+        mApi.onSurfaceTextureUpdated();
-     }
- }
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 2: `bde7f1f3` (2026-10-26)
-**Commit Message**: fix(🐛): don't crash Skottie on layers and shapes without a name (#4333)
-
-Lottie files whose nodes have no "nm" (e.g. every Jitter.video export)
-crash Skia.Skottie.Make on iOS/Android.
-
-Skottie forwards the node name to the PropertyObserver, falling back to
-the parent's name and finally nullptr when nothing in the chain is
-named. CustomPropertyManager::acceptKey passed that pointer to
-SkStrStartsWith (which SkASSERTs on null in debug Skia builds) and then,
-with the default "" prefix, to std::string(name), which aborts on null
-(SIGABRT in libc++'s basic_string(const char*)). onEnterNode/
-onLeavingNode in the same file already guard null; this adds the same
-guard to acceptKey so unnamed nodes are skipped like a prefix mismatch.
-
-Adds an e2e case with a minimal unnamed-layer animation (null parent
-layer + shape layer, empty transforms, no "nm" anywhere). On the iOS
-simulator it crashes the example app without the guard and passes with
-it.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `packages/skia/cpp/api/third_party/SkottieUtils.cpp` (modified, +3/-1)
-```diff
-@@ -126,7 +126,9 @@ CustomPropertyManager::~CustomPropertyManager() {
- 
- std::string CustomPropertyManager::acceptKey(const char *name,
-                                              const char *suffix) const {
--  if (!SkStrStartsWith(name, fPrefix.c_str())) {
-+  // Unnamed Lottie nodes (no "nm") arrive as nullptr; skip them like a
-+  // prefix mismatch instead of passing null to SkStrStartsWith/std::string.
-+  if (name == nullptr || !SkStrStartsWith(name, fPrefix.c_str())) {
-     return std::string();
-   }
- 
-```
-
-**File**: `packages/skia/src/renderer/__tests__/e2e/Skottie.spec.tsx` (modified, +30/-0)
-```diff
-@@ -12,6 +12,7 @@ const onboardingJSON = require("./setup/skottie/onboarding.json");
- const basicSlotsJSON = require("./setup/skottie/basic_slots.json");
- const fingerprintJSON = require("./setup/skottie/fingerprint.json");
- const textLayerJSON = require("./setup/skottie/text-layer.json");
-+const unnamedLayersJSON = require("./setup/skottie/unnamed-layers.json");
- 
- describe("Skottie", () => {
-   it("Should render Skottie component with lego animation", async () => {
-@@ -464,4 +465,33 @@ describe("Skottie", () => {
-       checkImage(image, docPath("skottie/text-prop.png"));
-     }
-   });
-+  it("loads layers and shapes without a name (nm)", async () => {
-+    // Lottie exporters such as Jitter omit "nm" everywhere; the property
-+    // observer used to receive a null node name and crash on native.
-+    const result = await surface.eval(
-+      (Skia, ctx) => {
-+        const animation = Skia.Skottie.Make(ctx.unnamedLayers);
-+        const sur = Skia.Surface.MakeOffscreen(100, 100);
-+        if (!sur) {
-+          throw new Error("Failed to create surface");
-+        }
-+        animation.seekFrame(0);
-+        animation.render(sur.getCanvas());
-+        sur.flush();
-+        return {
-+          size: animation.size(),
-+          fps: Math.round(animation.fps()),
-+          colorProps: animation.getColorProps().length,
-+          image: sur.makeImageSnapshot().encodeToBase64(),
-+        };
-+      },
-+      {
-+        unnamedLayers: JSON.stringify(unnamedLayersJSON),
-+      }
-+    );
-+    expect(result.size).toEqual({ width: 100, height: 100 });
-+    expect(result.fps).toEqual(30);
-+    expect(result.colorProps).toEqual(0);
-+    expect(result.image).toBeDefined();
-+  });
- });
-```
-
-**File**: `packages/skia/src/renderer/__tests__/e2e/setup/skottie/unnamed-layers.json` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"v":"5.7.4","fr":30,"ip":0,"op":30,"w":100,"h":100,"assets":[],"layers":[{"ind":1,"ty":3,"ks":{},"ip":0,"op":30,"st":0},{"ind":2,"ty":4,"parent":1,"ks":{},"ip":0,"op":30,"st":0,"shapes":[{"ty":"rc","p":{"a":0,"k":[50,50]},"s":{"a":0,"k":[60,60]},"r":{"a":0,"k":0}},{"ty":"fl","c":{"a":0,"k":[1,0,0,1]},"o":{"a":0,"k":100}}]}]}
-```
-
----
-
-### Incident Patch 3: `bbd1b685` (2026-10-24)
-**Commit Message**: fix(🏞️): stop repeating the namespace in factory method names (#4323)
-
-Factory methods no longer repeat the name of the namespace they live in,
-matching Skia.Surface.MakeFromGPUTexture or Skia.SVG.MakeFromString.
-
-- Skia.Image.MakeImageFromEncoded -> Skia.Image.MakeFromEncoded
-- Skia.Image.MakeImageFromGPUTexture -> Skia.Image.MakeFromGPUTexture
-- Skia.Image.MakeImageFromNativeBuffer -> Skia.Image.MakeFromNativeBuffer
-- Skia.Image.MakeRasterImage -> Skia.Image.MakeRaster
-- Skia.AnimatedImage.MakeAnimatedImageFromEncoded -> Skia.AnimatedImage.MakeFromEncoded
-- Skia.Picture.MakePicture -> Skia.Picture.Make
-- Skia.Typeface.MakeFreeTypeFaceFromData -> Skia.Typeface.MakeFromData
-- Skia.ColorFilter.MakeLumaColorFilter -> Skia.ColorFilter.MakeLuma
-
-**File**: `apps/docs/docs/getting-started/migration.md` (modified, +17/-4)
-```diff
-@@ -157,10 +157,10 @@ The following APIs were removed in favor of it:
- | `Skia.NativeBuffer.MakeFromImage()` | Export the image as a WebGPU texture with `Skia.Image.MakeGPUTextureFromImage()`. See [exporting an image](/docs/webgpu#exporting-an-image). |
- | `Skia.NativeBuffer.MakeTestBuffer()` | React Native WebGPU's `createTestVideoFrame()`. |
- | `Skia.NativeBuffer.Release()` | `NativeVideoFrame.release()`: React Native WebGPU owns the buffers it hands out. |
--| `Skia.Image.MakeImageFromNativeTextureUnstable()` | `Skia.Image.MakeImageFromGPUTexture(texture)`, which takes a WebGPU texture. See [WebGPU](/docs/webgpu). |
-+| `Skia.Image.MakeImageFromNativeTextureUnstable()` | `Skia.Image.MakeFromGPUTexture(texture)`, which takes a WebGPU texture. See [WebGPU](/docs/webgpu). |
- | `image.getNativeTextureUnstable()` and `surface.getNativeTextureUnstable()` | `Skia.Image.MakeGPUTextureFromImage()` and `Skia.Surface.MakeFromGPUTexture()`: textures are shared as WebGPU textures. |
--| `makeImageFromView()` and `Skia.Image.MakeImageFromViewTag()` | React Native WebGPU's `queue.drawElementImageToTexture()` draws the view into a texture, which `Skia.Image.MakeImageFromGPUTexture()` wraps. The snapshot is a GPU image, and on iOS and Android 13+ it never leaves the GPU. See [view snapshots](/docs/webgpu#view-snapshots). |
--| `Skia.Image.MakeImageFromNativeBuffer(pointer)` on native platforms | React Native WebGPU's `copyExternalImageToTexture()` renders the frame into a texture, which `Skia.Image.MakeImageFromGPUTexture()` wraps. See [native buffers](/docs/webgpu#native-buffers). The method remains on Web, where it takes a `CanvasImageSource`. |
-+| `makeImageFromView()` and `Skia.Image.MakeImageFromViewTag()` | React Native WebGPU's `queue.drawElementImageToTexture()` draws the view into a texture, which `Skia.Image.MakeFromGPUTexture()` wraps. The snapshot is a GPU image, and on iOS and Android 13+ it never leaves the GPU. See [view snapshots](/docs/webgpu#view-snapshots). |
-+| `Skia.Image.MakeImageFromNativeBuffer(pointer)` on native platforms | React Native WebGPU's `copyExternalImageToTexture()` renders the frame into a texture, which `Skia.Image.MakeFromGPUTexture()` wraps. See [native buffers](/docs/webgpu#native-buffers). The method remains on Web as `Skia.Image.MakeFromNativeBuffer()`, where it takes a `CanvasImageSource`. |
- | `ref.current.makeImageSnapshotAsync()` on a `Canvas` | `makeImageSnapshot()`: with Graphite the snapshot is taken on the calling thread and returns a GPU image. To encode it or read its pixels without blocking, read it back with `image.makeRasterImage()`. See [snapshots](/docs/canvas/overview#getting-a-canvas-snapshot). |
- | `useCanvasSize()` returning `{ ref, size }` | It returns `{ size, onLayout }` and no longer takes a ref: pass `onLayout` to the canvas instead of `ref`, and `size` follows every layout change instead of being measured once. Keep `useCanvasRef()` for the ref: its `size` property reads the layout synchronously. See [canvas size](/docs/canvas/overview#canvas-size). |
- 
-@@ -183,9 +183,22 @@ A few methods were renamed so that the name says whether the result lives on the
- | Renamed | New name |
- |:--|:--|
- | `Skia.Surface.Make(width, height)` | `Skia.Surface.MakeRaster(width, height)`: a CPU surface. |
--| `Skia.Image.MakeImage(info, data, bytesPerRow)` | `Skia.Image.MakeRasterImage(info, data, bytesPerRow)`: a CPU image. |
-+| `Skia.Image.MakeImage(info, data, bytesPerRow)` | `Skia.Image.MakeRaster(info, data, bytesPerRow)`: a CPU image. |
- | `image.makeNonTextureImage()` | `image.makeRasterImageSync()`: the synchronous counterpart of `image.makeRasterImage()`, for worklets. It now throws when the readback fails instead of returning `null`. |
- 
-+Factory methods no longer repeat the name of their namespace: `Skia.Image.MakeImageFromEncoded()` is now `Skia.Image.MakeFromEncoded()`, in line with `Skia.Surface.MakeFromGPUTexture()` or `Skia.SVG.MakeFromString()`.
-+
-+| Renamed | New name |
-+|:--|:--|
-+| `Skia.Image.MakeImageFromEncoded()` | `Skia.Image.MakeFromEncoded()` |
-+| `Skia.Image.MakeImageFromGPUTexture()` | `Skia.Image.MakeFromGPUTexture()` |
-+| `Skia.Image.MakeImageFromNativeBuffer()` (Web only) | `Skia.Image.MakeFromNativeBuffer()` |
-+| `Skia.Image.MakeRasterImage()` | `Skia.Image.MakeRaster()` |
-+| `Skia.AnimatedImage.MakeAnimatedImageFromEncoded()` | `Skia.AnimatedImage.MakeFromEncoded()` |
-+| `Skia.Picture.MakePicture()` | `Skia.Picture.Make()` |
-+| `Skia.Typeface.MakeFreeTypeFaceFromData()` | `Skia.Typeface.MakeFromData()` |
-+| `Skia.ColorFilter.MakeLumaColorFilter()` | `Skia.ColorFilter.MakeLuma()` |
-+
- ## What is new
- 
- ### Rendering off the JS and UI threads
-```
-
-**File**: `apps/docs/docs/image.md` (modified, +10/-10)
-```diff
-@@ -29,21 +29,21 @@ The image is also decoded before the hook returns it, off the JS thread: the can
- The hook also provides an optional error handler as a second parameter, called when the image cannot be loaded or decoded (the hook then returns null).
- `loadImage(source)` does the same outside of React: it returns a promise that rejects on failure.
- 
--### MakeImageFromEncoded
-+### MakeFromEncoded
- 
--You can also create image instances manually using `MakeImageFromEncoded`.
-+You can also create image instances manually using `MakeFromEncoded`.
- 
- ```tsx twoslash
- import { Skia } from "react-native-skia";
- 
- // A sample base64-encoded pixel
- const data = Skia.Data.fromBase64("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==");
--const image = Skia.Image.MakeImageFromEncoded(data);
-+const image = Skia.Image.MakeFromEncoded(data);
- ```
- 
--### MakeRasterImage
-+### MakeRaster
- 
--`MakeRasterImage` creates a CPU image from pixel data in the given format. The pixels are copied; see [GPU and CPU images](#gpu-and-cpu-images) for what that means when drawing it.
-+`MakeRaster` creates a CPU image from pixel data in the given format. The pixels are copied; see [GPU and CPU images](#gpu-and-cpu-images) for what that means when drawing it.
- 
- ```tsx twoslash
- import { Skia, AlphaType, ColorType } from "react-native-skia";
-@@ -57,7 +57,7 @@ for (let x = 0; x < 256; x++) {
-   }
- }
- const data = Skia.Data.fromBytes(pixels);
--const img = Skia.Image.MakeRasterImage(
-+const img = Skia.Image.MakeRaster(
-   {
-     width: 256,
-     height: 256,
-@@ -75,14 +75,14 @@ const img = Skia.Image.MakeRasterImage(
- 
- An image lives either on the CPU, as pixels in memory, or on the GPU, as a texture. Where it lives decides what is cheap.
- 
--The API names follow this split. "Raster" means CPU: `Skia.Surface.MakeRaster()`, `Skia.Image.MakeRasterImage()`, `image.makeRasterImage()`. "Texture" means GPU: `image.makeTextureImage()`. "GPUTexture" is a WebGPU texture shared with [React Native WebGPU](/docs/webgpu): `Skia.Image.MakeImageFromGPUTexture()`, `Skia.Surface.MakeFromGPUTexture()`.
-+The API names follow this split. "Raster" means CPU: `Skia.Surface.MakeRaster()`, `Skia.Image.MakeRaster()`, `image.makeRasterImage()`. "Texture" means GPU: `image.makeTextureImage()`. "GPUTexture" is a WebGPU texture shared with [React Native WebGPU](/docs/webgpu): `Skia.Image.MakeFromGPUTexture()`, `Skia.Surface.MakeFromGPUTexture()`.
- A surface follows the same split: `Skia.Surface.MakeRaster()` draws on the CPU and its snapshots are CPU images, `Skia.Surface.MakeOffscreen()` draws on the GPU and its snapshots are GPU images.
- 
- | Image | Lives | Drawing it | Reading its pixels |
- | :-- | :-- | :-- | :-- |
--| `useImage()`, `Skia.Image.MakeRasterImage()`, `makeRasterImage()` | CPU | Uploaded on the first frame that draws it, then cached | Immediate |
--| `surface.makeImageSnapshot()`, `surface.asImage()`, `makeTextureImage()`, `Skia.Image.MakeImageFromGPUTexture()` | GPU | No copy, from any canvas and any thread | Waits for the GPU |
--| `Skia.Image.MakeImageFromEncoded()` | Encoded bytes | Decoded and uploaded on the first frame that draws it, then cached | Decodes |
-+| `useImage()`, `Skia.Image.MakeRaster()`, `makeRasterImage()` | CPU | Uploaded on the first frame that draws it, then cached | Immediate |
-+| `surface.makeImageSnapshot()`, `surface.asImage()`, `makeTextureImage()`, `Skia.Image.MakeFromGPUTexture()` | GPU | No copy, from any canvas and any thread | Waits for the GPU |
-+| `Skia.Image.MakeFromEncoded()` | Encoded bytes | Decoded and uploaded on the first frame that draws it, then cached | Decodes |
- 
- The textures of the CPU images the canvases draw are kept in one cache, shared by every canvas: 128 MB at most, least recently drawn out first, and a texture not drawn for ten seconds is released. An image drawn by several canvases is uploaded once and held once, whichever canvas draws it first and however many draw it on the same frame. The upload happens on the frame that first draws the image, on the thread rendering that frame: to pay it earlier, upload the image with `makeTextureImage()`.
- 
-```
-
-**File**: `apps/docs/docs/pictures.md` (modified, +1/-1)
-```diff
-@@ -146,7 +146,7 @@ export const PictureExample = () => {
- 
-   // Create a copy from serialized data
-   const copyOfPicture = useMemo(
--    () => (serialized ? Skia.Picture.MakePicture(serialized) : null),
-+    () => (serialized ? Skia.Picture.Make(serialized) : null),
-     [serialized]
    );
  
++  // A canvas waits for its size before it records; JS, which asks for the
++  // recording itself, is told why it cannot have one yet.
++  itRunsE2eOnly(
++    "tells JS that a view without a size cannot record",
++    async () => {
++      const outcome = await surface.eval(() => {
++        // An id no view takes: theirs count up from 1000, one per mount.
++        const nativeId = 2 ** 31;
++        const { SkiaViewApi } = globalThis;
++        const context = SkiaViewApi.makeGraphiteContext(
++          nativeId,
++          0,
++          0,
++          false,
++          false
++        );
++        try {
++          context.beginRecording();
++          context.finishRecording();
++          return "recorded";
++        } catch (e) {
++          return (e as Error).message;
++        } finally {
++          SkiaViewApi.destroyGraphiteContext(nativeId);
++        }
++      });
++      expect(outcome).toContain("SkiaGraphiteView: the view has no size yet.");
++    }
++  );
++
+   // StrictMode runs the view's unmount cleanup once right after mount and
+   // keeps the context the first effect run made. A native view registering
+   // after that cleanup binds the target that context holds, not a new one:
 ```
 
-**File**: `apps/docs/docs/shapes/atlas.md` (modified, +1/-1)
-```diff
-@@ -191,7 +191,7 @@ Because Skia and WebGPU share the same GPU device in v3, you can draw the sprite
- 
- 1. Export the atlas image as a WebGPU texture with `Skia.Image.MakeGPUTextureFromImage()` (see [exporting an image](/docs/webgpu#exporting-an-image)).
- 2. Store the per-sprite data (transform, source rectangle, color) in a vertex buffer with a per-instance step mode and draw all sprites with a single `drawIndexed(6, spriteCount)` call, sampling the atlas texture in the fragment shader.
--3. Render into a texture created with the `TEXTURE_BINDING` usage, wrap it with `Skia.Image.MakeImageFromGPUTexture()`, and draw it with the [`Image`](/docs/images) component (see [from WebGPU to Skia](/docs/webgpu#from-webgpu-to-skia)).
-+3. Render into a texture created with the `TEXTURE_BINDING` usage, wrap it with `Skia.Image.MakeFromGPUTexture()`, and draw it with the [`Image`](/docs/images) component (see [from WebGPU to Skia](/docs/webgpu#from-webgpu-to-skia)).
- 
- This is what Ganesh did internally in v2, and it scales to a very large number of sprites.
- It is only available on native platforms; on the Web, Skia runs on WebGL through CanvasKit, where `drawAtlas` is batched as it was in v2.
-```
+---
 
-**File**: `apps/docs/docs/snapshot-views.md` (modified, +1/-1)
-```diff
-@@ -7,6 +7,6 @@ displayed_sidebar: tutorialSidebar
- ---
- 
- `makeImageFromView()` was removed in React Native Skia v3.
--View snapshots are taken by [React Native WebGPU](https://wcandillon.github.io/react-native-webgpu/api/draw-element-image-to-texture), which draws any React Native view into a texture with `queue.drawElementImageToTexture()`; `Skia.Image.MakeImageFromGPUTexture()` then wraps that texture into a Skia image, without any copy.
-+View snapshots are taken by [React Native WebGPU](https://wcandillon.github.io/react-native-webgpu/api/draw-element-image-to-texture), which draws any React Native view into a texture with `queue.drawElementImageToTexture()`; `Skia.Image.MakeFromGPUTexture()` then wraps that texture into a Skia image, without any copy.
- 
- See [View snapshots](/docs/webgpu#view-snapshots) for a complete example, and the [migration guide](/docs/getting-started/migration#4-replace-the-removed-apis) for the other APIs that moved to React Native WebGPU.
-```
+### Incident Patch 2: `d4a36ca4` (2026-10-29)
+**Commit Message**: fix(📱): probe the GPU on first use rather than on a thread of its own (#4366)
 
-**File**: `apps/docs/docs/text/text.md` (modified, +1/-1)
-```diff
-@@ -184,7 +184,7 @@ const fontMgr = Skia.FontMgr.System();
- // The custom font manager is available via Skia.TypefaceFontProvider.Make()
- const customFontMgr = Skia.TypefaceFontProvider.Make();
- // typeface needs to be loaded via Skia.Data and instanciated via
--// Skia.Typeface.MakeFreeTypeFaceFromData()
-+// Skia.Typeface.MakeFromData()
- // customFontMgr.registerTypeface(customTypeFace, "Roboto");
- 
- // Matching a font
-```
+* fix(📱): probe the GPU on first use rather than on a thread of its own
 
-**File**: `apps/docs/docs/webgpu.md` (modified, +12/-12)
-```diff
-@@ -175,7 +175,7 @@ The interop surface is small:
- | API | Direction | Description |
- |:--|:--|:--|
- | `Skia.getNativeDevice()` | | Pointer to Skia's device, for `importDevice()` |
--| `Skia.Image.MakeImageFromGPUTexture(texture)` | WebGPU to Skia | Wraps a `GPUTexture` into an `SkImage`, without copy |
-+| `Skia.Image.MakeFromGPUTexture(texture)` | WebGPU to Skia | Wraps a `GPUTexture` into an `SkImage`, without copy |
- | `Skia.Surface.MakeFromGPUTexture(texture)` | Skia to WebGPU | Creates an `SkSurface` that draws into a `GPUTexture`, without copy |
- | `Skia.Image.MakeGPUTextureFromImage(image)` | Skia to WebGPU | Draws an `SkImage` into a new texture, for `adoptTexture()` |
- 
-@@ -186,7 +186,7 @@ A raw `WGPUTexture` pointer (a `BigInt`) is accepted wherever a texture is, for
- 
- ## From WebGPU to Skia
- 
--`Skia.Image.MakeImageFromGPUTexture()` wraps a WebGPU texture into an `SkImage`.
-+`Skia.Image.MakeFromGPUTexture()` wraps a WebGPU texture into an `SkImage`.
- The image references the texture, so wrapping it is free.
- The texture must be created on the shared device with the `TEXTURE_BINDING` usage.
- 
-@@ -263,7 +263,7 @@ export const TriangleInSkia = () => {
-     device.queue.submit([encoder.finish()]);
- 
-     // 4. Wrap the texture into an SkImage, without any copy
--    image.value = Skia.Image.MakeImageFromGPUTexture(texture);
-+    image.value = Skia.Image.MakeFromGPUTexture(texture);
- 
-     return () => {
-       // Drop the image before the texture it samples
-@@ -298,7 +298,7 @@ The new object is what makes the canvas redraw:
- const render = () => {
-   // ...encode and submit the WebGPU commands for this frame
-   const previous = image.value;
--  image.value = Skia.Image.MakeImageFromGPUTexture(texture);
-+  image.value = Skia.Image.MakeFromGPUTexture(texture);
-   previous?.dispose();
-   frame = requestAnimationFrame(render);
- };
-@@ -367,7 +367,7 @@ const toTexture = (image: SkImage): GPUTexture =>
- 
- Camera and video frames live in native buffers: an `IOSurface` (usually wrapped in a `CVPixelBuffer`) on Apple platforms, an `AHardwareBuffer` on Android.
- Skia does not import them. React Native WebGPU owns these buffers: it decodes videos into them, wraps the buffers that other libraries produce, ties their lifetime to a [`NativeVideoFrame`](https://wcandillon.github.io/react-native-webgpu/api/video-player#nativevideoframe) object, and renders a frame into a texture of the shared device with [`queue.copyExternalImageToTexture()`](https://wcandillon.github.io/react-native-webgpu/api/gpu-device-extensions#copyexternalimagetotexture-with-a-native-frame), converting YUV to RGB and applying the rotation of the video or the camera on the GPU.
--`Skia.Image.MakeImageFromGPUTexture()` then wraps that texture, like any [WebGPU texture](#from-webgpu-to-skia).
-+`Skia.Image.MakeFromGPUTexture()` then wraps that texture, like any [WebGPU texture](#from-webgpu-to-skia).
- There is one path on both platforms, whatever the format of the frame. It needs React Native WebGPU 0.11.1 or above.
- 
- ### Playing a video
-@@ -422,7 +422,7 @@ export const Video = ({ url }: { url: string }) => {
-         frame.release();
-         // A new image is what makes the canvas redraw
-         const previous = image.value;
--        image.value = Skia.Image.MakeImageFromGPUTexture(texture);
-+        image.value = Skia.Image.MakeFromGPUTexture(texture);
-         previous?.dispose();
-       }
-       raf = requestAnimationFrame(render);
-@@ -469,11 +469,11 @@ Pass the frame's orientation as `rotation` and `mirrored`, and release the frame
- - **Reuse the texture.** Create a new one only when the frame size changes, and dispose the images that sample it before destroying it.
- - **Any runtime.** Like every GPU-backed image, the result can be created on one runtime and drawn by any canvas or worklet runtime.
- 
--On the Web, where Skia runs on CanvasKit, `Skia.Image.MakeImageFromNativeBuffer()` creates an image from a `CanvasImageSource` instead: a `<video>` element, an `ImageBitmap`, or a canvas.
-+On the Web, where Skia runs on CanvasKit, `Skia.Image.MakeFromNativeBuffer()` creates an image from a `CanvasImageSource` instead: a `<video>` element, an `ImageBitmap`, or a canvas.
- 
- ## View snapshots
- 
--A snapshot of a React Native view follows the same path as a video frame: React Native WebGPU rasterizes the view into a texture of the shared device with [`queue.drawElementImageToTexture()`](https://wcandillon.github.io/react-native-webgpu/api/draw-element-image-to-texture), and `Skia.Image.MakeImageFromGPUTexture()` wraps that texture into an image.
-+A snapshot of a React Native view follows the same path as a video frame: React Native WebGPU rasterizes the view into a texture of the shared device with [`queue.drawElementImageToTexture()`](https://wcandillon.github.io/react-native-webgpu/api/draw-element-image-to-texture), and `Skia.Image.MakeFromGPUTexture()` wraps that texture into an image.
- Skia has no view snapshot API of its own: `makeImageFromView()`
-```
+DawnContext::probe() is a function-local static: it already runs once and
+serialises concurrent first callers. The detached thread started by
+RNSkManager only moved the probe earlier, during JS startup, at the cost
+of constructing the context on a thread the library has no other use for.
 
-**File**: `apps/example/src/Examples/API/Data.tsx` (modified, +1/-1)
+The context is now created by whichever caller needs it first (a view's
+window, a GPU call, or reading Skia.gpu, which NativeSetup does once JS is
+idle). A device without a GPU still gets the error logged once and
+reported through Skia.gpu, and tryGetInstance() still returns null on the
+Java and Objective-C paths, so nothing crashes.
+
+* feat(🖼️): asynchronous readbacks
+
+Graphite reads pixels back asynchronously, and the JS API now says so:
+encodeToBytes(), encodeToBase64() and readPixels() on SkImage, and
+readPixels() on SkCanvas, return promises, like makeRasterImage(). The
+pixels are read back from the GPU without blocking the calling thread,
+an encoded image is decoded and the encoding runs on the worker thread.
+makeRasterImageSync() is gone:
+
+**File**: `packages/skia/cpp/rnskia/RNDawnContext.h` (modified, +3/-20)
 ```diff
-@@ -11,7 +11,7 @@ for (let x = 0; x < 256 * 4; x++) {
+@@ -69,9 +69,9 @@ class DawnContext {
+   /**
+    The GPU Skia renders with, or why there is none: a device without a
+    Vulkan 1.1 driver on Android, a driver short of the WebGPU core
+-   requirements, a device creation failure. Probed once per process, the
+-   first time the context is asked for (RNSkManager does so when the module
+-   is installed), and reported to JS as Skia.gpu.
++   requirements, a device creation failure. Probed once per process, on
++   whichever thread asks for the context first (a view's window, a GPU call,
++   Skia.gpu), and reported to JS as Skia.gpu.
+    */
+   struct GpuInfo {
+     bool available = false;
+@@ -137,23 +137,6 @@ class DawnContext {
+     return info;
    }
+ 
+-  /**
+-   Starts the probe on a thread of its own, so that installing the module
+-   does not wait for the GPU (drivers load, a device and a Graphite context
+-   are created). Whoever needs the context first (a view's window, a GPU
+-   call, Skia.gpu) waits for the probe to finish instead.
+-   */
+-  static void probeInBackground() {
+-    std::thread([]() {
+-#if defined(__APPLE__)
+-      pthread_setname_np("RNSkia GPU Probe");
+-#elif defined(__ANDROID__)
+-      pthread_setname_np(pthread_self(), "RNSkia GPU Probe");
+-#endif
+-      probe();
+-    }).detach();
+-  }
+-
+   // Generations ---------------------------------------------------------------
+ 
+   /**
+```
+
+**File**: `packages/skia/cpp/rnskia/RNSkManager.cpp` (modified, +0/-6)
+```diff
+@@ -25,12 +25,6 @@ RNSkManager::RNSkManager(
+     : _jsRuntime(jsRuntime), _platformContext(platformContext),
+       _jsCallInvoker(jsCallInvoker),
+       _viewApi(std::make_shared<RNSkJsiViewApi>(platformContext)) {
+-  // The GPU is probed now, once, rather than by whichever view or image call
+-  // comes first: a device without one (no Vulkan 1.1 on Android) is logged
+-  // and reported to JS as Skia.gpu, instead of failing in different places
+-  // depending on what the app does first. On a thread of its own: the
+-  // module installs during JS startup, which does not wait for the GPU.
+-  DawnContext::probeInBackground();
+   // A lost GPU device is replaced by a new one (see DawnContext), on which
+   // the windows hold nothing yet: every view records its content again for
+   // it. The redraw waits for the main thread, and for the window to be able
+```
+
+**File**: `packages/skia/src/skia/NativeSetup.ts` (modified, +2/-2)
+```diff
+@@ -24,8 +24,8 @@ if (Platform.OS !== "web" && global.SkiaApi == null) {
+   // No GPU (no Vulkan 1.1 on Android, for instance): the module is installed
+   // and the app runs, but every canvas stays blank and the GPU APIs throw.
+   // Said once, with the reason, rather than left to the first blank screen.
+-  // Once the JS thread is idle, after startup: the GPU is probed on a native
+-  // thread of its own, and reading Skia.gpu waits for it. (globalThis:
++  // Once the JS thread is idle, after startup: reading Skia.gpu probes the
++  // GPU if nothing did yet, which startup should not wait for. (globalThis:
+   // `global.SkiaApi` is narrowed to null by the check above, install() having
+   // set it behind the compiler's back; optional, for a test stubbing
+   // install().)
+```
+
+**File**: `packages/skia/src/skia/types/Skia.ts` (modified, +2/-2)
+```diff
+@@ -48,8 +48,8 @@ export interface SkGpuLostInfo {
  }
- const data = Skia.Data.fromBytes(pixels);
--const img = Skia.Image.MakeRasterImage(
-+const img = Skia.Image.MakeRaster(
-   {
-     width: 256,
-     height: 256,
+ 
+ /**
+- * The GPU Skia renders with, probed once when the module is installed (on
+- * a native thread; the first read waits for the probe). On Android Skia
++ * The GPU Skia renders with, probed once, the first time something needs
++ * it (a canvas, a GPU call, or reading this property). On Android Skia
+  * renders with Vulkan (1.1 or later), on iOS with Metal. When the device has
+  * none, `isAvailable` is false and `error` says why: every `Canvas` stays
+  * blank, CPU work (paths, decoding, encoding, raster images) still runs, and
+```
+
+---
+
+### Incident Patch 3: `ccc90416` (2026-10-27)
+**Commit Message**: fix(🤖): use one Vulkan pipeline cache per device (#4341)
+
+Enable Dawn's vulkan_monolithic_pipeline_cache toggle on Android, as Chrome
+does for every Vulkan device. Without it Dawn creates a VkPipelineCache for
+each pipeline it compiles, serializes it for a blob cache this device does
+not have, and destroys it, on each of its worker threads at once. That
+destructor is where the Imagination PowerVR driver (MediaTek mt6855)
+segfaults while Graphite compiles its pipelines (#4340). With one cache the
+only vkDestroyPipelineCache runs at device teardown, and pipelines that
+share binaries compile faster.
+
+**File**: `packages/skia/cpp/rnskia/RNDawnUtils.h` (modified, +12/-0)
+```diff
+@@ -334,6 +334,18 @@ requestDevice(dawn::native::Adapter &nativeAdapter,
+       // Robustness only adds bounds checks to shader buffer and texture
+       // accesses; Chrome ships WebGPU with it on.
+       "disable_robustness",
++#endif
++#if defined(__ANDROID__)
++      // One VkPipelineCache per device, as Chrome configures Dawn on every
++      // Vulkan device. Without it Dawn creates a VkPipelineCache for each
++      // pipeline it compiles, serializes it (for a blob cache this device
++      // does not have) and destroys it, on each of its worker threads at
++      // once: that destructor is where the Imagination PowerVR driver
++      // (MediaTek mt6855) segfaults while Graphite compiles its pipelines
++      // (#4340). With one cache the only vkDestroyPipelineCache runs at
++      // device teardown, and pipelines that share binaries compile faster.
++      // PerformIdleTasks is not needed: nothing persists the cache.
++      "vulkan_monolithic_pipeline_cache",
+ #endif
+   };
+ #if defined(NDEBUG)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4336** (2026-10-26): chore(deps): bump anthropics/claude-code-action from 1.0.252 to 1.0.261 (@dependabot[bot])
-- **PR #4335** (2026-10-26): chore(deps): bump actions/setup-python from 7.0.0 to 7.1.0 (@dependabot[bot])
-- **PR #4334** (2026-10-26): chore(deps): bump ip-address from 10.7.2 to 10.7.5 (@dependabot[bot])
-- **PR #4333** (2026-10-26): fix(🐛): don't crash Skottie on layers and shapes without a name (@ImCitizen13)
-- **PR #4332** (2026-10-26): chore(deps): bump undici from 8.11.2 to 8.12.3 (@dependabot[bot])
-- **PR #4331** (2026-10-26): chore(deps): bump fast-uri from 3.1.8 to 3.1.9 (@dependabot[bot])
+- **PR #4372** (2026-10-30): chore(🐙): run android tests on main  (@wcandillon)
+- **PR #4368** (2026-10-30): feat(🖼️): asynchronous readbacks (@wcandillon)
+- **PR #4367** (2026-10-29): feat(🎨): bring back the colorSpace prop of the Canvas (@wcandillon)
+- **PR #4366** (2026-10-29): fix(📱): probe the GPU on first use rather than on a thread of its own (@wcandillon)
+- **PR #4365** (2026-10-29): fix(🍏): round the canvas size to the pixel grid instead of truncating it (2.x) (@ArnaudDerosin)
+- **PR #4363** (closed): fix(🤖): create the GPU device on a thread that never exits (@YevheniiKotyrlo)
 
 ---
 
@@ -2321,28 +1877,31 @@ matching Skia.Surface.MakeFromGPUTexture or Skia.SVG.MakeFromString.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🤖): present Android canvases off the main thread (#4318)
+## X. 🗿): log a canvas's failure to begin a frame instead of dropping it (#4317)
 
 **RULE**:
-When implementing operations in `apps/docs/docs/canvas/graphite.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/skia/cpp/api/JsiSkGraphiteContext.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cce3cf0f`: 🤖): present Android canvases off the main thread (#4318). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4d50b934`: 🗿): log a canvas's failure to begin a frame instead of dropping it (#4317). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/docs/docs/canvas/graphite.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/skia/cpp/api/JsiSkGraphiteContext.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-Recording happens on the thread that calls `beginRecording()`. Presenting happens on the display link on iOS (`CADisplayLink`, on the main thread), and on a present thread of its own on Android, so that the main thread pays nothing for a frame: on the vsync of that thread's `Choreographer` for a `SurfaceView`, once its window has drawn the previous frame for a `TextureView`.
+#include <stdexcept>
+    if (canvas == nullptr) {
+      throw std::runtime_error("SkiaGraphiteView: the view has no size yet.");
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-Recording happens on the thread that calls `beginRecording()`, presenting on the main thread: on the display link (`CADisplayLink` on iOS, the `Choreographer` for an Android `SurfaceView`), or, for an Android `TextureView`, once its window has drawn the previous frame.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cce3cf0f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4d50b934` are properly handled with clean fallback behavior.

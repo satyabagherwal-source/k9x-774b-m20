@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "16ebf1a4",
+    "sourceVersion": "a95f92de",
     "license": "Apache-2.0",
-    "contentHash": "1922c1b72749667a2b67e022d3d85a44c1f182dbf7aa1d65eb025a02be66f319",
-    "lastHarvestedAt": "2026-10-28T22:39:30.670Z",
+    "contentHash": "406eefe3a12abe3ac07b8e856f207751de9f5762645ace46a56b833511ac3fd0",
+    "lastHarvestedAt": "2026-10-30T21:13:04.503Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {
@@ -10193,10 +10193,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/wcandillon/react-native-skia",
-    "sourceVersion": "39d14f72",
+    "sourceVersion": "3184116c",
     "license": "MIT",
-    "contentHash": "df447fe43e6dc29f03f13354a28bef3ee5c52371b6c4798f8e336bc94f118fa4",
-    "lastHarvestedAt": "2026-10-27T11:49:33.534Z",
+    "contentHash": "85eedc7def2054974e5baac468e211057ecfbdc18f0b11d2a9de32cdcb753cd7",
+    "lastHarvestedAt": "2026-10-30T21:13:08.699Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "testing-library-dom-testing-library": {

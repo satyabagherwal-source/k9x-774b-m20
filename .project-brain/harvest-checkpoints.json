@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T21:06:26.215Z",
+  "last_updated": "2026-10-30T21:13:08.707Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7251,14 +7251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "881ab398fbf0ab727661534579e38efa81e9c3de1ac178d77815b2db3fa96be7",
-      "verified_at": "2026-10-28T12:57:06.560Z",
+      "content_hash": "85eedc7def2054974e5baac468e211057ecfbdc18f0b11d2a9de32cdcb753cd7",
+      "verified_at": "2026-10-30T21:13:08.706Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T12:57:06.560Z"
+      "last_updated": "2026-10-30T21:13:08.706Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",
@@ -11436,14 +11436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "1922c1b72749667a2b67e022d3d85a44c1f182dbf7aa1d65eb025a02be66f319",
-      "verified_at": "2026-10-28T22:39:30.676Z",
+      "content_hash": "406eefe3a12abe3ac07b8e856f207751de9f5762645ace46a56b833511ac3fd0",
+      "verified_at": "2026-10-30T21:13:04.511Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:39:30.676Z"
+      "last_updated": "2026-10-30T21:13:04.511Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",

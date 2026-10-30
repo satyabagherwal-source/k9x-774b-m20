@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-MFKZ",
-    "timestamp": "2026-10-28T14:56:39.011Z",
-    "repository": "aws/aws-cdk",
-    "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "76982cdb5dccee116f72b90bdc98fbc3af9e28be7fbe37f3c688bd15ff2ae5c2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-MKA8",
-    "timestamp": "2026-10-28T14:56:45.104Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "5fcf496a90878e15b7a690c1c48327da5f5c132c6824baa1235f32e151f0658f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-V0KJ",
     "timestamp": "2026-10-28T15:03:19.459Z",
     "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -7490,6 +7460,36 @@
     "repository": "pola-rs/polars",
     "learningId": "learn-github-pola-rs-polars",
     "contentHash": "f648c2a9c4d820451af43bc75f61667ef0a2e8ea4498dcdb95d8987fed81bfd8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-Y7ZO",
+    "timestamp": "2026-10-30T21:13:04.500Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "406eefe3a12abe3ac07b8e856f207751de9f5762645ace46a56b833511ac3fd0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-YB88",
+    "timestamp": "2026-10-30T21:13:08.696Z",
+    "repository": "wcandillon/react-native-skia",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "85eedc7def2054974e5baac468e211057ecfbdc18f0b11d2a9de32cdcb753cd7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

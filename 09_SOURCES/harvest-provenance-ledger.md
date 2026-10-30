@@ -6319,3 +6319,5 @@ Every entry in this ledger must capture:
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `e9bb7b3d` | Multi-dimensional audit evidence | 2026-10-30T20:59:29.192Z |
 | `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `e0e559ee` | Multi-dimensional audit evidence | 2026-10-30T21:06:23.307Z |
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `ee5f3e7b` | Multi-dimensional audit evidence | 2026-10-30T21:06:26.205Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `a95f92de` | Multi-dimensional audit evidence | 2026-10-30T21:13:04.503Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `3184116c` | Multi-dimensional audit evidence | 2026-10-30T21:13:08.699Z |
