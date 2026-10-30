@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T21:13:08.707Z",
+  "last_updated": "2026-10-30T21:19:36.976Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "34b31a2aec3dc3cd9db599c6cd81fcf703a0fc5a2b6ecd2a596ea883ad2187fa",
-      "verified_at": "2026-10-30T17:06:08.855Z",
+      "content_hash": "313d7976d81e4ba6821593cf00272f260dc73b65d23be437c098ec2df005b738",
+      "verified_at": "2026-10-30T21:19:31.444Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T17:06:08.855Z"
+      "last_updated": "2026-10-30T21:19:31.444Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "28ef208e0e72cbe93efd1873d27d89092bc40b87c1dfb8a8a02bebc47e308064",
-      "verified_at": "2026-10-30T20:47:44.831Z",
+      "content_hash": "b3d3e6adddea708bd5a2b3512c43f4e6c15fbd10ae1a88f297582f75750b78c8",
+      "verified_at": "2026-10-30T21:19:36.975Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T20:47:44.831Z"
+      "last_updated": "2026-10-30T21:19:36.975Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "e95c12fa64aab6b555cb40a3bf4266574eff017f7495a43fefa52dbbeff21722",
-      "verified_at": "2026-10-29T22:26:08.273Z",
+      "content_hash": "54b45c8536f4cf36da45a433abdbbf6ec956b893f4c57b1b44de4836dcd1ea4c",
+      "verified_at": "2026-10-30T21:19:29.588Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T22:26:08.273Z"
+      "last_updated": "2026-10-30T21:19:29.588Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",
@@ -15366,14 +15366,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-avajs-ava",
-      "content_hash": "5c8a012a644372fa5e4e3a4566d77b9a4160eef2d9b93ed17ff1fdb72136d52e",
-      "verified_at": "2026-10-27T17:56:51.335Z",
+      "content_hash": "3daaf96fb8e7461efb8473afba1c6e07224a95563e1318ff5106f1ce1b21c7bd",
+      "verified_at": "2026-10-30T21:19:26.691Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T17:56:51.335Z"
+      "last_updated": "2026-10-30T21:19:26.691Z"
     },
     "mochajs/mocha": {
       "repository": "mochajs/mocha",
@@ -17181,14 +17181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meta-folly",
-      "content_hash": "bf94f8eaae2a0793584929119d488296d28d72e74fafc34a18a2c9d5cd6156dc",
-      "verified_at": "2026-10-28T22:45:43.275Z",
+      "content_hash": "c989cc34c2eb1faa8036804327f348d54463b0cf413b3e8e23ff728492216bf4",
+      "verified_at": "2026-10-30T21:19:25.370Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:45:43.275Z"
+      "last_updated": "2026-10-30T21:19:25.370Z"
     },
     "LiquidAI/LFM3-Omni-2B": {
       "repository": "LiquidAI/LFM3-Omni-2B",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `32b95e96`  
+> **Source Version**: `ed4483d2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T22:45:42.872Z  
+> **Timestamp**: 2026-10-30T21:19:25.187Z  
 > **Learning ID**: `learn-github-meta-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T22:45:42.619Z  
+> **Harvest Timestamp**: 2026-10-30T21:19:23.543Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30552 stars
+- **Stars / Engagement**: 30554 stars
 
 ---
 
@@ -2368,241 +2368,254 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `995db944` (2026-10-28)
-**Commit Message**: Fix distributed_mutex_interference_size_test build with GCC < 12
+### Incident Patch 1: `f9c12446` (2026-10-30)
+**Commit Message**: Fix `folly::gflags::SetCommandLineOption` without gflags
 
 Summary:
-`DistributedMutexInterferenceSizeTest.cpp` (added in D127710426) emulates a standard library that provides `std::hardware_destructive_interference_size` by defining `__cpp_lib_hardware_interference_size` before including folly. `folly/lang/Align.h` then takes the branch that disables `-Winterference-size`, which GCC < 12 does not know, so the build fails under `mode/opt-gcc` (fbcode GCC 11.2) with `-Werror=pragmas`.
+Without gflags, calling `folly::gflags::SetCommandLineOption` fails to link with `undefined reference to folly::gflags::SetCommandLineOption[abi:cxx11](char const*, char const*)`. `portability/GFlags.h` declares the fallback, but its definition in `GFlags.cpp` is compiled only for `runtime:fbcode`, where gflags is always on. So it is missing from the builds that need it: CMake builds without gflags (the generated target has no sources) and mobile Buck builds.
 
-Only emulate on clang or GCC >= 12. On older GCC the test still runs as a plain `lock()`/`lock_combine()` stress test.
+Fix it by defining the fallback inline in `GFlags.h`, next to the `FlagSaver` fallback, and removing it from `GFlags.cpp`. `GFlags.cpp` stays in place, since release-branch deps lists name it. The same change goes to `xplat/folly`.
 
-Reviewed By: YifanYuan3
+Reviewed By: joshkehn
 
-Differential Revision: D127844061
+Differential Revision: D128447154
 
-fbshipit-source-id: bc703d87cacc63337d13692ac64f4adeb33ff99d
+fbshipit-source-id: 4e4fdb3a8d77865e93cd1b5fdce25c116d31596d
 
-**File**: `folly/synchronization/test/DistributedMutexInterferenceSizeTest.cpp` (modified, +4/-1)
+**File**: `folly/portability/GFlags.cpp` (modified, +0/-16)
 ```diff
-@@ -29,7 +29,10 @@
- #include <cstddef>
- #include <new>
+@@ -15,19 +15,3 @@
+  */
  
--#if !defined(__cpp_lib_hardware_interference_size)
-+// GCC < 12 does not know -Winterference-size, which Align.h disables when the
-+// standard library provides the constant
-+#if !defined(__cpp_lib_hardware_interference_size) && \
-+    (defined(__clang__) || __GNUC__ >= 12)
- #define __cpp_lib_hardware_interference_size 201703L
- namespace std {
- inline constexpr std::size_t hardware_destructive_interference_size = 64;
+ #include <folly/portability/GFlags.h>
+-
+-namespace folly {
+-
+-#if !(FOLLY_HAVE_LIBGFLAGS && __has_include(<gflags/gflags.h>))
+-
+-namespace gflags {
+-
+-std::string SetCommandLineOption(const char* name, const char* value) {
+-  return "";
+-}
+-
+-} // namespace gflags
+-
+-#endif
+-
+-} // namespace folly
+```
+
+**File**: `folly/portability/GFlags.h` (modified, +4/-1)
+```diff
+@@ -129,7 +129,10 @@ namespace gflags {
+ 
+ struct FlagSaver {};
+ 
+-std::string SetCommandLineOption(const char* name, const char* value);
++inline std::string SetCommandLineOption(
++    const char* /* name */, const char* /* value */) {
++  return "";
++}
+ 
+ } // namespace gflags
+ 
 ```
 
 ---
 
-### Incident Patch 2: `1f39ef69` (2026-10-28)
-**Commit Message**: Preserve F14 fallback variants throughout CI builds
+### Incident Patch 2: `d9b5d352` (2026-10-29)
+**Commit Message**: Fix the getdeps build and tests after the llvm 19 bump
 
 Summary:
-Forward `preprocessor_flags` through the xplat test wrapper so the F14 fallback and concurrent-map no-SIMD variants retain their intended configuration. Apply `FOLLY_F14_FORCE_FALLBACK` to each fallback variant's entire CI dependency graph: test-only flags otherwise give `ThreadEntrySet` incompatible F14 layouts and can deadlock the no-SIMD map tests under TSAN.
+`oss-glean-linux-getdeps` has failed on every run since D125027819 switched Glean's getdeps dependencies from `llvm`/`clang` (`llvm15-devel`/`clang15-devel`) to `llvm19`/`clang19`. The shared `clang19` manifest only installs the distribution's default `clang` rpm, so `libclang-cpp.so` for clang 19 is missing and `glean-clang` fails at cabal configure with `Missing (or bad) C library: clang-cpp`. Each failure comes after a full ~30 minute Glean build and is retried as `TRANSIENT_USER_ERROR`, so affected diffs wait over an hour for a red signal.
 
-Keep existing schedules and architecture coverage when mapping the CI configurations, and preserve the stress-test sanitizer exclusions.
+This diff adds `clang19-devel` to the `llvm19` manifest, which only Glean uses, and omits the 5 open-source clang tests whose goldens (from `platform010-clang-19`) record a global variable as a definition while upstream clang 19.1.7 does not. Internal Buck tests still run them.
 
-Reviewed By: DanielC314
+This is the same change as D127506150, rebased past D127580677 so the HLint signal that kept D127506150 red passes. See D127506150 for the full analysis and the alternatives considered.
 
-Differential Revision: D127879404
+___
 
-fbshipit-source-id: 0135a67b0603eedec2394222739acb301025428a
+landed-with-radar-review
 
-**File**: `folly/concurrency/test/BUCK` (modified, +14/-1)
+Differential Revision: D128315822
+
+fbshipit-source-id: d11b9301b33e0c3a728def5943f8efc
+
+**File**: `build/fbcode_builder/manifests/llvm19` (modified, +5/-0)
 ```diff
-@@ -18,6 +18,18 @@ _TSAN_INCOMPATIBLE_LABELS = ci.labels(
-     ),
+@@ -1,5 +1,10 @@
+ [manifest]
+ name = llvm19
+ 
++# clang19-devel puts libclang-cpp.so and the clang headers under
++# /usr/lib64/llvm19, next to llvm19-devel. glean-clang finds both through
++# llvm-config-19. The `clang` rpm in the clang19 manifest is the
++# distribution's default clang and does not provide clang 19 libraries.
+ [rpms]
+ llvm19-devel
++clang19-devel
+```
+
+---
+
+### Incident Patch 3: `3a610e4f` (2026-10-29)
+**Commit Message**: Build folly/cli ProgramOptions only when Boost.ProgramOptions is found
+
+Summary:
+folly requires compiled Boost.ProgramOptions in both its own build and `folly-config.cmake`, but only `folly/cli/ProgramOptions.h` and `NestedCommandLineApp.h` use it, and no OSS consumer includes them.
+
+Look up `program_options` as an optional Boost component. `FOLLY_BUILD_CLI_PROGRAM_OPTIONS` is on when `Boost::program_options` exists and gflags was found, the same condition the `folly/cli` directory already has, and it decides all three: whether the `folly_cli_program_options` target is built, whether its two headers are installed, and whether `folly-config.cmake` asks consumers for the component. With both present, nothing changes. The target is wrapped through a new `CONDITIONAL_TARGETS` entry in `generate_cmake.py`, which generalizes the Windows-only table for `subprocess`. When folly fetches Boost itself, it no longer builds Boost.ProgramOptions unless the parent project asks for it in `BOOST_INCLUDE_LIBRARIES`.
+
+___
+
+landed-with-radar-review
+
+Differential Revision: D128446773
+
+fbshipit-source-id: 19d4bbb221707146f693b56f310928d579b719a9
+
+**File**: `CMake/folly-config.cmake.in` (modified, +1/-1)
+```diff
+@@ -62,7 +62,7 @@ set(Boost_USE_STATIC_LIBS "@FOLLY_BOOST_LINK_STATIC@")
+ find_package(Boost 1.69.0 REQUIRED
+   COMPONENTS
+     context
+-    program_options
++    @FOLLY_BOOST_PROGRAM_OPTIONS@
+     regex
+     thread
  )
- 
-+_F14_FALLBACK_CI_CONFIG = ci.map(
-+    ci.buckconfig("cxx.extra_cxxflags", "-DFOLLY_F14_FORCE_FALLBACK=1"),
-+)
-+_F14_FALLBACK_CI_LABELS = ci.labels(_F14_FALLBACK_CI_CONFIG)
-+_TSAN_INCOMPATIBLE_F14_FALLBACK_CI_LABELS = ci.labels(
-+    ci.remove(
-+        ci.linux(ci.mode("fbcode//mode/dev-tsan")),
-+        ci.linux(ci.mode("fbcode//mode/opt-tsan")),
-+    ),
-+    _F14_FALLBACK_CI_CONFIG,
-+)
-+
- fb_dirsync_cpp_binary(
-     name = "cache_locality_benchmark",
-     srcs = ["CacheLocalityBenchmark.cpp"],
-@@ -154,7 +166,7 @@ fb_dirsync_cpp_unittest(
-         tpx_labels.serialize,
-         "slow",
-     ]
--    + _TSAN_INCOMPATIBLE_LABELS,
-+    + _TSAN_INCOMPATIBLE_F14_FALLBACK_CI_LABELS,
-     preprocessor_flags = ["-DFOLLY_F14_FORCE_FALLBACK=1"],
-     supports_static_listing = False,
-     deps = [
-@@ -169,6 +181,7 @@ fb_dirsync_cpp_unittest(
- fb_dirsync_cpp_unittest(
-     name = "concurrent_hash_map_test_no_simd",
-     srcs = ["ConcurrentHashMapTest.cpp"],
-+    labels = _F14_FALLBACK_CI_LABELS,
-     preprocessor_flags = ["-DFOLLY_F14_FORCE_FALLBACK=1"],
-     supports_static_listing = False,
-     deps = [
 ```
 
-**File**: `folly/container/test/BUCK` (modified, +7/-0)
+**File**: `CMake/folly-deps.cmake` (modified, +15/-2)
 ```diff
-@@ -9,6 +9,7 @@ load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_benchmark.bzl", "fb_dir
- load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_binary.bzl", "fb_dirsync_cpp_binary")
- load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_library.bzl", "fb_dirsync_cpp_library")
- load("@fbsource//tools/build_defs/dirsync:fb_dirsync_cpp_unittest.bzl", "fb_dirsync_cpp_unittest")
-+load("@fbsource//tools/target_determinator/macros:ci.bzl", "ci")
- load(
-     "../../defs.bzl",
-     "FBANDROID_CXXFLAGS",
-@@ -17,6 +18,10 @@ load(
+@@ -57,13 +57,15 @@ set(Boost_USE_STATIC_LIBS "${FOLLY_BOOST_LINK_STATIC}")
+ # link them globally. Targets that need specific Boost libraries should
+ # add them to their EXTERNAL_DEPS (e.g., Boost::regex, Boost::context).
+ # Boost::thread is needed by Windows pthread compatibility layer.
+-set(FOLLY_BOOST_COMPONENTS context program_options regex)
++set(FOLLY_BOOST_COMPONENTS context regex)
+ if (WIN32)
+   list(APPEND FOLLY_BOOST_COMPONENTS thread)
+ endif ()
  
- oncall("fbcode_entropy_wardens_folly")
+ # CMake 4 dropped FindBoost, so this config-only probe warns without QUIET.
+-find_package(Boost 1.69.0 QUIET COMPONENTS ${FOLLY_BOOST_COMPONENTS})
++# folly/cli's ProgramOptions is built only if Boost.ProgramOptions is found.
++find_package(Boost 1.69.0 QUIET COMPONENTS ${FOLLY_BOOST_COMPONENTS}
++             OPTIONAL_COMPONENTS program_options)
+ if (NOT Boost_FOUND)
+   set(BOOST_ENABLE_CMAKE ON)
+   # A parent project that builds folly can ask for more of Boost's libraries
+@@ -624,6 +626,17 @@ if (FOLLY_LIBRARY_SANITIZE_ADDRESS)
+   endif ()
+ endif ()
  
-+_F14_FALLBACK_CI_LABELS = ci.labels(
-+    ci.map(ci.buckconfig("cxx.extra_cxxflags", "-DFOLLY_F14_FORCE_FALLBACK=1")),
-+)
++# folly/cli's ProgramOptions needs gflags and Boost.ProgramOptions. The library,
++# its installed headers and the components folly-config.cmake asks for all
++# follow this.
++if (TARGET Boost::program_options AND (LIBGFLAGS_FOUND OR gflags_FOUND))
++  set(FOLLY_BUILD_CLI_PROGRAM_OPTIONS ON)
++  set(FOLLY_BOOST_PROGRAM_OPTIONS program_options)
++else ()
++  set(FOLLY_BUILD_CLI_PROGRAM_OPTIONS OFF)
++  set(FOLLY_BOOST_PROGRAM_OPTIONS "")
++endif ()
 +
- fb_dirsync_cpp_unittest(
-     name = "dynamic_ring_queue_test",
-     srcs = ["DynamicRingQueueTest.cpp"],
-@@ -602,6 +607,7 @@ fb_dirsync_cpp_unittest(
-     srcs = [
-         "F14MapTest.cpp",
-     ],
-+    labels = _F14_FALLBACK_CI_LABELS,
-     preprocessor_flags = ["-DFOLLY_F14_FORCE_FALLBACK=1"],
-     deps = [
-         "fbsource//third-party/glog:glog",
-@@ -655,6 +661,7 @@ fb_dirsync_cpp_unittest(
-     srcs = [
-         "F14SetTest.cpp",
-     ],
-+    labels = _F14_FALLBACK_CI_LABELS,
-     preprocessor_flags = ["-DFOLLY_F14_FORCE_FALLBACK=1"],
-     deps = [
-         "fbsource//third-party/glog:glog",
+ add_library(folly_deps INTERFACE)
+ 
+ if (folly_openssl_external_project)
 ```
 
-**File**: `folly/defs.bzl` (modified, +3/-0)
+**File**: `CMakeLists.txt` (modified, +4/-0)
 ```diff
-@@ -266,6 +266,7 @@ def folly_xplat_cxx_test(name, srcs, raw_headers = [], headers = [], deps = [],
-     labels = kwargs.get("labels", None)
-     modifiers = kwargs.get("modifiers", None)
-     compiler_flags = kwargs.get("compiler_flags", None)
-+    preprocessor_flags = kwargs.get("preprocessor_flags", None)
-     linker_flags = kwargs.get("linker_flags", None)
-     link_style = kwargs.get("link_style", None)
- 
-@@ -280,6 +281,8 @@ def folly_xplat_cxx_test(name, srcs, raw_headers = [], headers = [], deps = [],
-         extra_kwargs["modifiers"] = modifiers
-     if compiler_flags != None:
-         extra_kwargs["compiler_flags"] = compiler_flags
-+    if preprocessor_flags != None:
-+        extra_kwargs["preprocessor_flags"] = preprocessor_flags
-     extra_kwargs["linker_flags"] = (linker_flags if linker_flags != None else []) + select({
-         "DEFAULT": [],
-         "ovr_config//compiler:cl-windows": ["/INCLUDE:main"],
+@@ -243,6 +243,10 @@ remove_matches_from_lists(
+   "^${FOLLY_DIR_REGEX_ESCAPED}/rust/"
+   "^${FOLLY_DIR_REGEX_ESCAPED}/ext/buck2/"
+ )
++if (NOT FOLLY_BUILD_CLI_PROGRAM_OPTIONS)
++  list(REMOVE_ITEM hfiles ${FOLLY_DIR}/cli/NestedCommandLineApp.h
++       ${FOLLY_DIR}/cli/ProgramOptions.h)
++endif ()
+ # Add test utility headers that are part of public API
+ list(
+   APPEND
 ```
 
----
-
-### Incident Patch 3: `37fe0c3e` (2026-10-28)
-**Commit Message**: FBPythonBinary: let a Python executable change between zipapp, pex and dir in one build tree
-
-Summary:
-A build tree that built an FB-style Python executable as one type can't rebuild it as another. Before a `TYPE dir` build, `add_fb_python_executable()` clears the output with `cmake -E remove_directory`, which leaves a zipapp file in place, so `make_fbpy_archive.py`'s rename of the new directory onto it fails. The other way, `os.replace()` can't put a zipapp where a directory is. And going back to a type the tree built before, neither Make nor Ninja reruns the step at all: the leftover output is newer than every input, and Ninja's log already has that command for that path. D125301407 makes eden's `edenfsctl.real` a directory when thrift-python is found, so an eden build tree hits these when it's rebuilt with thrift-python after a build without it, and when it builds a commit from before D125301407.
-
-`make_fbpy_archive.py` now removes whatever an earlier build left at the output path, a file, a symlink or a directory, right before it moves the new output there, for every type, which replaces the `remove_directory`. And each executable's build step depends on a `<target>.py_type` fi
-
-**File**: `build/fbcode_builder/CMake/FBPythonBinary.cmake` (modified, +7/-4)
+**File**: `folly/cli/CMakeLists.txt` (modified, +34/-31)
 ```diff
-@@ -160,17 +160,19 @@ function(add_fb_python_executable TARGET)
-       set(zipapp_output_file "${zipapp_output}/__main__.py")
-       # Update output_file to match zipapp_output_file for dir type
-       set(output_file "${zipapp_output_file}")
--      list(APPEND
--        extra_cmd_params
--        COMMAND "${CMAKE_COMMAND}" -E remove_directory "${zipapp_output}"
--      )
-     endif()
-   endif()
- 
-   if(DEFINED ARG_MAIN_MODULE)
-     list(APPEND make_py_args "--main" "${ARG_MAIN_MODULE}")
-   endif()
- 
-+  # Rebuild when the type changes. Otherwise an output that an earlier build
-+  # made with another type looks up to date: a directory where a zipapp is
-+  # expected, for example.
-+  set(type_file "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}.py_type")
-+  file(GENERATE OUTPUT "${type_file}" CONTENT "${ARG_TYPE}")
-+
-   add_custom_command(
-     OUTPUT "${zipapp_output_file}"
-     ${extra_cmd_params}
-@@ -182,6 +184,7 @@ function(add_fb_python_executable TARGET)
-       ${source_files}
-       "${TARGET}.main_lib.py_sources_built"
-       "${FB_MAKE_PYTHON_ARCHIVE}"
-+      "${type_file}"
+@@ -27,36 +27,39 @@ if (LIBGFLAGS_FOUND OR gflags_FOUND)
+     EXPORTED_DEPS folly_lang_cstring_view
    )
  
-   if(WIN32)
-```
-
-**File**: `build/fbcode_builder/CMake/make_fbpy_archive.py` (modified, +13/-0)
-```diff
-@@ -124,6 +124,15 @@ def install_file(info):
-             pass
+-  folly_add_library(
+-    NAME program_options
+-    SRCS
+-      NestedCommandLineApp.cpp
+-      ProgramOptions.cpp
+-    HEADERS
+-      NestedCommandLineApp.h
+-      ProgramOptions.h
+-    DEPS
+-      ${GLOG_LIBRARIES}
+-      Boost::headers
+-      fmt::fmt
+-      folly_conv
+-      folly_file_util
+-      folly_format
+-      folly_io_fs_util
+-      folly_portability
+-    EXPORTED_DEPS
+-      Boost::program_options
+-      folly_c_portability
+-      folly_optional
+-      folly_portability_gflags
+-      folly_string
+-  )
+-  set_property(
+-    GLOBAL
+-    APPEND
+-    PROPERTY
+-      FOLLY_MONOLITHIC_EXTERNAL_DEPS
+-      Boost::program_options
+-  )
++  # program_options requires gflags and Boost.ProgramOptions
++  if (FOLLY_BUILD_CLI_PROGRAM_OPTIONS)
++    folly_add_library(
++      NAME program_options
++      SRCS
++        NestedCommandLineApp.cpp
++        ProgramOptions.cpp
++      HEADERS
++        NestedCommandLineApp.h
++        ProgramOptions.h
++      DEPS
++        ${GLOG_LIBRARIES}
++        Boost::headers
++        fmt::fmt
++        folly_conv
++        folly_file_util
++        folly_format
++        folly_io_fs_util
++        folly_portability
++      EXPORTED_DEPS
++        Boost::program_options
++        folly_c_portability
++        folly_optional
++        folly_portability_gflags
++        folly_string
++    )
++    set_property(
++      GLOBAL
++      APPEND
++      PROPERTY
++        FOLLY_MONOLITHIC_EXTERNAL_DEPS
++        Boost::program_options
++    )
++  endif ()
  
- 
-+def remove_output(path):
-+    """Remove an earlier build's output, which is a directory if that build
-+    used a different --type."""
-+    if os.path.isdir(path) and not os.path.islink(path):
-+        shutil.rmtree(path)
-+    elif os.path.lexists(path):
-+        os.unlink(path)
-+
-+
- def build_pex(args, path_map):
-     """Create a self executing python binary using the PEX tool
- 
-@@ -151,6 +160,7 @@ def build_pex(args, path_map):
-             + ["-e", args.main]
-         )
- 
-+        remove_output(args.output)
-         os.replace(tmp_output, args.output)
- 
- 
-@@ -171,6 +181,7 @@ def build_zipapp(args, path_map):
-         zipapp.create_archive(
-             inst_dir, target=tmp_output, interpreter=args.python, main=args.main
-         )
-+        remove_output(args.output)
-         os.replace(tmp_output, args.output)
- 
- 
-@@ -208,6 +219,8 @@ def build_install_dir(args, path_map):
-         inst_dir = os.path.join(tmpdir, "tree")
-         populate_install_tree(inst_dir, path_map)
-         create_main_module(args, inst_dir, path_map)
-+        os.utime(os.path.join(inst_dir, "__main__.py"), None)
-+        remove_output(args.output)
-         os.rename(inst_dir, args.output)
- 
- 
+ endif () # LIBGFLAGS_FOUND OR gflags_FOUND
 ```
 
 #### Recent Merged Pull Requests:
@@ -2625,37 +2638,3 @@ A build tree that built an FB-style Python executable as one type can't rebuild 
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. distributed_mutex_interference_size_test build with GCC < 12
-
-**RULE**:
-When implementing operations in `folly/synchronization/test/DistributedMutexInterferenceSizeTest.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `995db944`: distributed_mutex_interference_size_test build with GCC < 12. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/synchronization/test/DistributedMutexInterferenceSizeTest.cpp`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```c++
-// Verified production-grade fix pattern:
-// GCC < 12 does not know -Winterference-size, which Align.h disables when the
-// standard library provides the constant
-#if !defined(__cpp_lib_hardware_interference_size) && \
-    (defined(__clang__) || __GNUC__ >= 12)
-```
-
-**NEGATIVE CONSTRAINT**:
-```c++
-// Anti-pattern to NEVER write (induced failure mode):
-#if !defined(__cpp_lib_hardware_interference_size)
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `995db944` are properly handled with clean fallback behavior.

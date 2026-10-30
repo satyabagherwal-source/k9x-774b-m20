@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T21:13:08.633Z",
+  "last_updated": "2026-10-30T21:19:36.920Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4835,8 +4835,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "cfe57b43",
-      "content_hash": "28ef208e0e72cbe93efd1873d27d89092bc40b87c1dfb8a8a02bebc47e308064",
+      "source_version": "1f4828f8",
+      "content_hash": "b3d3e6adddea708bd5a2b3512c43f4e6c15fbd10ae1a88f297582f75750b78c8",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4969,6 +4969,11 @@
           "number": 5866,
           "title": "deps-dev): bump the lint-format group (oxfmt 0.74.0, oxlint 1.90.0, oxlint-tsgol",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5883,
+          "title": "deps): bump the npm-minor-patch group across 1 directory with 19 updates (#339)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4976,7 +4981,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:47:44.723Z",
+      "verified_at": "2026-10-30T21:19:36.908Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -16197,8 +16202,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "becd2816",
-      "content_hash": "e95c12fa64aab6b555cb40a3bf4266574eff017f7495a43fefa52dbbeff21722",
+      "source_version": "d40e1b2d",
+      "content_hash": "54b45c8536f4cf36da45a433abdbbf6ec956b893f4c57b1b44de4836dcd1ea4c",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -16251,6 +16256,11 @@
           "number": 5543,
           "title": "Address reported security vulnerabilities in dependencies. (#39462)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5881,
+          "title": "stacks: Fix \"missing required provider\" error when component state requires a pr",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16258,7 +16268,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T22:26:08.171Z",
+      "verified_at": "2026-10-30T21:19:29.520Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -38294,8 +38304,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "6d2a138b",
-      "content_hash": "d854cbc78d9d0b81395c36f1fe0ed06984b95aee9523a403e15eb87891b7f013",
+      "source_version": "d1d0ccea",
+      "content_hash": "313d7976d81e4ba6821593cf00272f260dc73b65d23be437c098ec2df005b738",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -38403,6 +38413,11 @@
           "number": 5605,
           "title": "agent-rag-governance): audit a denied collection with the query's hash (#4475)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5882,
+          "title": "examples): india cert-in and sebi policies deny every evaluation (#4480)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38410,7 +38425,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T05:01:23.801Z",
+      "verified_at": "2026-10-30T21:19:31.374Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73142,14 +73157,19 @@
       "slug": "avajs-ava",
       "platform": "github",
       "source_url": "https://github.com/avajs/ava",
-      "source_version": "95297b66",
-      "content_hash": "5c8a012a644372fa5e4e3a4566d77b9a4160eef2d9b93ed17ff1fdb72136d52e",
+      "source_version": "8640039a",
+      "content_hash": "3daaf96fb8e7461efb8473afba1c6e07224a95563e1318ff5106f1ce1b21c7bd",
       "dossier_path": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/avajs-ava-learnings.md",
       "promoted_rules": [
         {
           "number": 3028,
           "title": "Full ESM internals; bias away from CJS; require @ava/typescript@7",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5880,
+          "title": "Report timeouts without crashing the TAP reporter",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -73158,7 +73178,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T17:56:51.216Z",
+      "verified_at": "2026-10-30T21:19:26.617Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -148972,8 +148992,8 @@
       "slug": "facebook-folly",
       "platform": "github",
       "source_url": "https://github.com/facebook/folly",
-      "source_version": "32b95e96",
-      "content_hash": "bf94f8eaae2a0793584929119d488296d28d72e74fafc34a18a2c9d5cd6156dc",
+      "source_version": "ed4483d2",
+      "content_hash": "c989cc34c2eb1faa8036804327f348d54463b0cf413b3e8e23ff728492216bf4",
       "dossier_path": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/facebook-folly-learnings.md",
       "promoted_rules": [
@@ -148988,7 +149008,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:45:43.213Z",
+      "verified_at": "2026-10-30T21:19:25.293Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155776,6 +155796,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T21:13:08.617Z"
+    },
+    "rule-5880": {
+      "learning_id": "rule-5880",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5880,
+      "title": "Report timeouts without crashing the TAP reporter",
+      "source_url": "https://github.com/avajs/ava",
+      "source_version": "8640039a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:19:26.617Z"
+    },
+    "rule-5881": {
+      "learning_id": "rule-5881",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5881,
+      "title": "stacks: Fix \"missing required provider\" error when component state requires a pr",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "d40e1b2d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:19:29.520Z"
+    },
+    "rule-5882": {
+      "learning_id": "rule-5882",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5882,
+      "title": "examples): india cert-in and sebi policies deny every evaluation (#4480)",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "d1d0ccea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:19:31.374Z"
+    },
+    "rule-5883": {
+      "learning_id": "rule-5883",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5883,
+      "title": "deps): bump the npm-minor-patch group across 1 directory with 19 updates (#339)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "1f4828f8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:19:36.908Z"
     }
   },
   "aliases": {

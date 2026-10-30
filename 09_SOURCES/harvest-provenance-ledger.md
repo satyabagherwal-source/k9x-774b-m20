@@ -6321,3 +6321,8 @@ Every entry in this ledger must capture:
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `ee5f3e7b` | Multi-dimensional audit evidence | 2026-10-30T21:06:26.205Z |
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `a95f92de` | Multi-dimensional audit evidence | 2026-10-30T21:13:04.503Z |
 | `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `3184116c` | Multi-dimensional audit evidence | 2026-10-30T21:13:08.699Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `ed4483d2` | Multi-dimensional audit evidence | 2026-10-30T21:19:25.359Z |
+| `learn-github-avajs-ava` | `https://github.com/avajs/ava` | `8640039a` | Multi-dimensional audit evidence | 2026-10-30T21:19:26.685Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `d40e1b2d` | Multi-dimensional audit evidence | 2026-10-30T21:19:29.582Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `d1d0ccea` | Multi-dimensional audit evidence | 2026-10-30T21:19:31.438Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `1f4828f8` | Multi-dimensional audit evidence | 2026-10-30T21:19:36.969Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/avajs-ava-learnings.md`  
 > **Source**: github ([https://github.com/avajs/ava](https://github.com/avajs/ava))  
-> **Source Version**: `95297b66`  
+> **Source Version**: `8640039a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T17:56:51.075Z  
+> **Timestamp**: 2026-10-30T21:19:26.223Z  
 > **Learning ID**: `learn-github-avajs-ava`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/avajs-ava-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/avajs/ava](https://github.com/avajs/ava))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T17:56:49.888Z  
+> **Harvest Timestamp**: 2026-10-30T21:19:25.077Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Node.js test runner that lets you develop with confidence 🚀
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 20824 stars
+- **Stars / Engagement**: 20826 stars
 
 ---
 
@@ -1275,56 +1275,401 @@ export function set(newOptions) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `95297b66` (2026-10-23)
-**Commit Message**: v8.1.2
+### Incident Patch 1: `8293ce3d` (2026-10-27)
+**Commit Message**: Report timeouts without crashing the TAP reporter
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `lib/reporters/tap.js` (modified, +3/-1)
 ```diff
-@@ -1,6 +1,6 @@
- {
- 	"name": "ava",
--	"version": "8.1.1",
-+	"version": "8.1.2",
- 	"description": "Node.js test runner that lets you develop with confidence.",
- 	"license": "MIT",
- 	"repository": {
+@@ -6,6 +6,8 @@ import indentString from 'indent-string';
+ import plur from 'plur';
+ import * as supertap from 'supertap';
+ 
++import serializeError from '../serialize-error.js';
++
+ import prefixTitle from './prefix-title.js';
+ 
+ function dumpError({
+@@ -153,7 +155,7 @@ export default class TapReporter {
+ 
+ 		for (const [testFile, tests] of evt.pendingTests) {
+ 			for (const title of tests) {
+-				this.writeTest({testFile, title, err: error}, {passed: false, todo: false, skip: false});
++				this.writeTest({testFile, title, err: serializeError(error)}, {passed: false, todo: false, skip: false});
+ 			}
+ 		}
+ 	}
+```
+
+**File**: `test-tap/reporters/tap.js` (modified, +1/-0)
+```diff
+@@ -51,4 +51,5 @@ test(async t => {
+ 	t.test('tap reporter - second failFast run', run('failFast2'));
+ 	t.test('tap reporter - only run', run('only'));
+ 	t.test('tap reporter - edge cases', run('edgeCases'));
++	t.test('tap reporter - timeout', run('timeoutInSingleFile'));
+ });
+```
+
+**File**: `test-tap/reporters/tap.timeoutinsinglefile.v22.log` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++TAP version 13
++---tty-stream-chunk-separator
++ok 1 - passes
++---tty-stream-chunk-separator
++ok 2 - passes two
++---tty-stream-chunk-separator
++not ok 3 - slow
++  ---
++    name: Error
++    message: Exited because no new tests completed within the last 2500ms of inactivity
++    at: 'TapReporter.writeTimeout (/lib/reporters/tap.js)'
++  ...
++---tty-stream-chunk-separator
++not ok 4 - slow two
++  ---
++    name: Error
++    message: Exited because no new tests completed within the last 2500ms of inactivity
++    at: 'TapReporter.writeTimeout (/lib/reporters/tap.js)'
++  ...
++---tty-stream-chunk-separator
++
++1..4
++# tests 4
++# pass 2
++# fail 2
++
++---tty-stream-chunk-separator
+```
+
+**File**: `test-tap/reporters/tap.timeoutinsinglefile.v24.log` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++TAP version 13
++---tty-stream-chunk-separator
++ok 1 - passes
++---tty-stream-chunk-separator
++ok 2 - passes two
++---tty-stream-chunk-separator
++not ok 3 - slow
++  ---
++    name: Error
++    message: Exited because no new tests completed within the last 2500ms of inactivity
++    at: 'TapReporter.writeTimeout (/lib/reporters/tap.js)'
++  ...
++---tty-stream-chunk-separator
++not ok 4 - slow two
++  ---
++    name: Error
++    message: Exited because no new tests completed within the last 2500ms of inactivity
++    at: 'TapReporter.writeTimeout (/lib/reporters/tap.js)'
++  ...
++---tty-stream-chunk-separator
++
++1..4
++# tests 4
++# pass 2
++# fail 2
++
++---tty-stream-chunk-separator
+```
+
+**File**: `test-tap/reporters/tap.timeoutinsinglefile.v26.log` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++TAP version 13
++---tty-stream-chunk-separator
++ok 1 - passes
++---tty-stream-chunk-separator
++ok 2 - passes two
++---tty-stream-chunk-separator
++not ok 3 - slow
++  ---
++    name: Error
++    message: Exited because no new tests completed within the last 2500ms of inactivity
++    at: 'TapReporter.writeTimeout (/lib/reporters/tap.js)'
++  ...
++---tty-stream-chunk-separator
++not ok 4 - slow two
++  ---
++    name: Error
++    message: Exited because no new tests completed within the last 2500ms of inactivity
++    at: 'TapReporter.writeTimeout (/lib/reporters/tap.js)'
++  ...
++---tty-stream-chunk-separator
++
++1..4
++# tests 4
++# pass 2
++# fail 2
++
++---tty-stream-chunk-separator
 ```
 
 ---
 
-### Incident Patch 2: `1259f84a` (2026-10-23)
-**Commit Message**: Switch back to long-hand form for the package.json repository field (#3502)
+### Incident Patch 2: `9d3cd5d6` (2026-10-27)
+**Commit Message**: Fix TAP reporter assertion locations (#3485)
 
-pnpm doesn't expand it when publishing; npm does with a warning. Long-hand seems to be recommended.
-
-This fixes compatibility with the CIGTM project.
-
-**File**: `package.json` (modified, +4/-1)
+**File**: `lib/reporters/tap.js` (modified, +8/-1)
 ```diff
-@@ -3,7 +3,10 @@
- 	"version": "8.1.1",
- 	"description": "Node.js test runner that lets you develop with confidence.",
- 	"license": "MIT",
--	"repository": "github:avajs/ava",
-+	"repository": {
-+		"type": "git",
-+		"url": "git+https://github.com/avajs/ava.git"
-+	},
- 	"homepage": "https://avajs.dev",
- 	"type": "module",
- 	"exports": {
+@@ -17,6 +17,7 @@ function dumpError({
+ 	name,
+ 	originalError, // A structured clone, so some details are missing.
+ 	stack,
++	source,
+ 	type,
+ }, sanitizeStackOutput) {
+ 	if (type === 'unknown') {
+@@ -47,7 +48,13 @@ function dumpError({
+ 		}
+ 	}
+ 
+-	originalError.stack = sanitizeStackOutput?.(stack || originalError.stack) ?? (stack || originalError.stack);
++	const errorStack = stack || originalError.stack;
++	// Supertap uses only the first frame. Prefer the test source found during
++	// serialization for AVA assertions; retain the stack for other errors.
++	const tapStack = type === 'ava' && source
++		? `${errorStack.split('\n', 1)[0]}\n    at ${source.file}:${source.line}`
++		: errorStack;
++	originalError.stack = sanitizeStackOutput?.(tapStack) ?? tapStack;
+ 
+ 	return originalError;
+ }
 ```
 
-**File**: `xo.config.js` (modified, +1/-0)
+**File**: `test-tap/reporters/tap.failfast.v22.log` (modified, +1/-1)
 ```diff
-@@ -86,6 +86,7 @@ const xoConfig = [
- 	{
- 		files: 'package.json',
- 		rules: {
-+			'package-json/prefer-shorthand': 'off',
- 			'package-json/prefer-side-effects-field': 'off',
- 			'package-json/require-types-in-exports': 'off',
- 			'package-json/require-default-condition': 'off',
+@@ -5,7 +5,7 @@ not ok 1 - a › fails
+     name: AssertionError
+     assertion: t.fail()
+     message: Test failed via `t.fail()`
+-    at: 'ExecutionContext.fail (/lib/assert.js)'
++    at: '/test-tap/fixture/report/failfast/a.js:3'
+   ...
+ ---tty-stream-chunk-separator
+ 
+```
+
+**File**: `test-tap/reporters/tap.failfast.v24.log` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ not ok 1 - a › fails
+     name: AssertionError
+     assertion: t.fail()
+     message: Test failed via `t.fail()`
+-    at: 'ExecutionContext.fail (/lib/assert.js)'
++    at: '/test-tap/fixture/report/failfast/a.js:3'
+   ...
+ ---tty-stream-chunk-separator
+ 
+```
+
+**File**: `test-tap/reporters/tap.failfast.v26.log` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ not ok 1 - a › fails
+     name: AssertionError
+     assertion: t.fail()
+     message: Test failed via `t.fail()`
+-    at: 'ExecutionContext.fail (/lib/assert.js)'
++    at: '/test-tap/fixture/report/failfast/a.js:3'
+   ...
+ ---tty-stream-chunk-separator
+ 
+```
+
+**File**: `test-tap/reporters/tap.failfast2.v22.log` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ not ok 1 - a › fails
+     name: AssertionError
+     assertion: t.fail()
+     message: Test failed via `t.fail()`
+-    at: 'ExecutionContext.fail (/lib/assert.js)'
++    at: '/test-tap/fixture/report/failfast2/a.js:3'
+   ...
+ ---tty-stream-chunk-separator
+ 
+```
+
+**File**: `test-tap/reporters/tap.failfast2.v24.log` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ not ok 1 - a › fails
+     name: AssertionError
+     assertion: t.fail()
+     message: Test failed via `t.fail()`
+-    at: 'ExecutionContext.fail (/lib/assert.js)'
++    at: '/test-tap/fixture/report/failfast2/a.js:3'
+   ...
+ ---tty-stream-chunk-separator
+ 
+```
+
+**File**: `test-tap/reporters/tap.failfast2.v26.log` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ not ok 1 - a › fails
+     name: AssertionError
+     assertion: t.fail()
+     message: Test failed via `t.fail()`
+-    at: 'ExecutionContext.fail (/lib/assert.js)'
++    at: '/test-tap/fixture/report/failfast2/a.js:3'
+   ...
+ ---tty-stream-chunk-separator
+ 
+```
+
+**File**: `test-tap/reporters/tap.regular.v22.log` (modified, +11/-13)
+```diff
+@@ -30,7 +30,7 @@ not ok 3 - nested-objects › format with max depth 4
+         +   },
+           }
+     message: ''
+-    at: 'ExecutionContext.deepEqual (/lib/assert.js)'
++    at: '/test-tap/fixture/report/regular/nested-objects.js:29'
+   ...
+ ---tty-stream-chunk-separator
+ not ok 4 - nested-objects › format like with max depth 4
+@@ -48,7 +48,7 @@ not ok 4 - nested-objects › format like with max depth 4
+             },
+           }
+     message: ''
+-    at: 'ExecutionContext.like (/lib/assert.js)'
++    at: '/test-tap/fixture/report/regular/nested-objects.js:55'
+   ...
+ ---tty-stream-chunk-separator
+ # output-in-hook › before hook
+@@ -72,7 +72,7 @@ not ok 6 - output-in-hook › failing test
+     name: AssertionError
+     assertion: t.fail()
+     message: Test failed via `t.fail()`
+-    at: 'ExecutionContext.fail (/lib/assert.js)'
++    at: '/test-tap/fixture/report/regular/output-in-hook.js:34'
+   ...
+ ---tty-stream-chunk-separator
+ # output-in-hook › afterEach hook for passing test
+@@ -102,7 +102,7 @@ not ok 10 - test › fails
+     name: AssertionError
+     assertion: t.fail()
+     message: Test failed via `t.fail()`
+-    at: 'ExecutionContext.fail (/lib/assert.js)'
++    at: '/test-tap/fixture/report/regular/test.js:9'
+   ...
+ ---tty-stream-chunk-separator
+ ok 11 - test › known failure
+@@ -123,7 +123,7 @@ not ok 13 - test › logs
+     name: AssertionError
+     assertion: t.fail()
+     message: Test failed via `t.fail()`
+-    at: 'ExecutionContext.fail (/lib/assert.js)'
++    at: '/test-tap/fixture/report/regular/test.js:18'
+   ...
+ ---tty-stream-chunk-separator
+ not ok 14 - test › formatted
+@@ -135,7 +135,7 @@ not ok 14 - test › formatted
+         - 'foo'
+         + 'bar'
+     message: ''
+-    at: 'ExecutionContext.deepEqual (/lib/assert.js)'
++    at: '/test-tap/fixture/report/regular/test.js:22'
+   ...
+ ---tty-stream-chunk-separator
+ not ok 15 - test › implementation throws non-error
+@@ -158,7 +158,7 @@ not ok 16 - traces-in-t-throws › throws
+         }
+       'Expected instance of:': 'Function TypeError {}'
+     message: ''
+-    at: 'throwError (/test-tap/fixture/report/regular/traces-in-t-throws.js:4:8)'
++    at: '/test-tap/fixture/report/regular/traces-in-t-throws.js:12'
+   ...
+ ---tty-stream-chunk-separator
+ not ok 17 - traces-in-t-throws › notThrows
+@@ -171,7 +171,7 @@ not ok 17 - traces-in-t-throws › notThrows
+           message: 'uh-oh',
+         }
+     message: ''
+-    at: 'throwError (/test-tap/fixture/report/regular/traces-in-t-throws.js:4:8)'
++    at: '/test-tap/fixture/report/regular/traces-in-t-throws.js:16'
+   ...
+ ---tty-stream-chunk-separator
+ not ok 18 - traces-in-t-throws › notThrowsAsync
+@@ -184,7 +184,7 @@ not ok 18 - traces-in-t-throws › notThrowsAsync
+           message: 'uh-oh',
+         }
+     message: ''
+-    at: 'throwError (/test-tap/fixture/report/regular/traces-in-t-throws.js:4:8)'
++    at: '/test-tap/fixture/report/regular/traces-in-t-throws.js:20'
+   ...
+ ---tty-stream-chunk-separator
+ not ok 19 - traces-in-t-throws › throwsAsync
+@@ -197,7 +197,7 @@ not ok 19 - traces-in-t-throws › throwsAsync
+           message: 'uh-oh',
+         }
+     message: ''
+-    at: 'throwError (/test-tap/fixture/report/regular/traces-in-t-throws.js:4:8)'
++    at: '/test-tap/fixture/report/regular/traces-in-t-throws.js:24'
+   ...
+ ---tty-stream-chunk-separator
+ not ok 20 - traces-in-t-throws › throwsAsync different error
+@@ -211,9 +211,7 @@ not ok 20 - traces-in-t-throws › throwsAsync different error
+         }
+       'Expected instance of:': 'Function TypeError {}'
+     message: ''
+-    at: >-
+-      returnRejectedPromise
+-      (/test-tap/fixture/report/regular/traces-in-t-throws.js:8:24)
++    at: '/test-tap/fixture/report/regular/traces-in-t-throws.js:28'
+   ...
+ ---tty-stream-chunk-separator
+ ok 21 - uncaught-exception › passes
+```
+
+---
+
+### Incident Patch 3: `a967e2fd` (2026-10-27)
+**Commit Message**: Fix typos in source code and comments (#3465)
+
+- Fix `asssertion` → `assertion` in lib/assert.js (triple 's' meant the AssertionError constructor received the wrong property key, leaving `.assertion` undefined on snapshot comparison errors)
+- Fix `isues` → `issues` in test/watch-mode/helpers/watch.js comment
+- Fix `Mimick` → `Mimic` in test-tap/helper/report.js comment
+
+Co-authored-by: maxtaran2010 <[REDACTED_EMAIL]>
+Co-authored-by: Claude Sonnet 4.6 <[REDACTED_EMAIL]>
+
+**File**: `lib/assert.js` (modified, +1/-1)
+```diff
+@@ -702,7 +702,7 @@ export class Assertions {
+ 				}
+ 
+ 				throw fail(new AssertionError(message ?? 'Could not compare snapshot', {
+-					asssertion: 't.snapshot()',
++					assertion: 't.snapshot()',
+ 					improperUsage,
+ 				}));
+ 			}
+```
+
+**File**: `test-tap/helper/report.js` (modified, +1/-1)
+```diff
+@@ -112,7 +112,7 @@ const run = async (type, reporter, {match = [], filter} = {}) => {
+ 		});
+ 	}
+ 
+-	// Mimick watch mode
++	// Mimic watch mode
+ 	return api.run({files, filter, runtimeOptions: {countPreviousFailures: () => 0, firstRun: true}}).then(() => {
+ 		reporter.endRun();
+ 		return api.run({files, filter, runtimeOptions: {countPreviousFailures: () => 2, firstRun: false}});
+```
+
+**File**: `test/watch-mode/helpers/watch.js` (modified, +1/-1)
+```diff
+@@ -129,7 +129,7 @@ export const withFixture = fixture => async (t, task) => {
+ 						// Sending the `abort-watcher` message should suffice, but on Linux
+ 						// the recursive watch handle does not close properly. See
+ 						// <https://github.com/nodejs/node/issues/48437> but there seem to be
+-						// other isues.
++						// other issues.
+ 						setTimeout(() => {
+ 							process?.nodeChildProcess.kill('SIGKILL');
+ 						}, 1000).unref();
 ```
 
 #### Recent Merged Pull Requests:
@@ -1333,7 +1678,7 @@ This fixes compatibility with the CIGTM project.
 - **PR #3497** (2026-10-18): Update release process docs to account for staged publishing (@novemberborn)
 - **PR #3496** (2026-10-15): Update tooling, dependencies, formatting and CI workflows (@novemberborn)
 - **PR #3493** (closed): fix: upgrade tar to 7.5.19 (CVE-2026-59873) (@anupamme)
-- **PR #3477** (closed): Improve invalid worker argument reporting (@wangxpych)
+- **PR #3487** (closed): fix: use path.relative for robust cross-platform path normalization (#3484) (@PINYOPATTANAWASANPORN)
 
 ---
 
@@ -1353,28 +1698,30 @@ This fixes compatibility with the CIGTM project.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in package.json
+## X. Report timeouts without crashing the TAP reporter
 
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in avajs/ava. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lib/reporters/tap.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in avajs/ava. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `95297b66`: v8.1.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8293ce3d`: Report timeouts without crashing the TAP reporter. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/reporters/tap.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-	"version": "8.1.2",
+import serializeError from '../serialize-error.js';
+
+				this.writeTest({testFile, title, err: serializeError(error)}, {passed: false, todo: false, skip: false});
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-	"version": "8.1.1",
+				this.writeTest({testFile, title, err: error}, {passed: false, todo: false, skip: false});
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `95297b66` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8293ce3d` are properly handled with clean fallback behavior.

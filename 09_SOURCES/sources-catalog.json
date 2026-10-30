@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "95cd5f20",
+    "sourceVersion": "d1d0ccea",
     "license": "MIT",
-    "contentHash": "34b31a2aec3dc3cd9db599c6cd81fcf703a0fc5a2b6ecd2a596ea883ad2187fa",
-    "lastHarvestedAt": "2026-10-30T17:06:08.847Z",
+    "contentHash": "313d7976d81e4ba6821593cf00272f260dc73b65d23be437c098ec2df005b738",
+    "lastHarvestedAt": "2026-10-30T21:19:31.438Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "cfe57b43",
+    "sourceVersion": "1f4828f8",
     "license": "MIT",
-    "contentHash": "28ef208e0e72cbe93efd1873d27d89092bc40b87c1dfb8a8a02bebc47e308064",
-    "lastHarvestedAt": "2026-10-30T20:47:44.822Z",
+    "contentHash": "b3d3e6adddea708bd5a2b3512c43f4e6c15fbd10ae1a88f297582f75750b78c8",
+    "lastHarvestedAt": "2026-10-30T21:19:36.969Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "becd2816",
+    "sourceVersion": "d40e1b2d",
     "license": "NOASSERTION",
-    "contentHash": "e95c12fa64aab6b555cb40a3bf4266574eff017f7495a43fefa52dbbeff21722",
-    "lastHarvestedAt": "2026-10-29T22:26:08.264Z",
+    "contentHash": "54b45c8536f4cf36da45a433abdbbf6ec956b893f4c57b1b44de4836dcd1ea4c",
+    "lastHarvestedAt": "2026-10-30T21:19:29.582Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {
@@ -7663,10 +7663,10 @@
     "repository": "meta/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "32b95e96",
+    "sourceVersion": "ed4483d2",
     "license": "Apache-2.0",
-    "contentHash": "bf94f8eaae2a0793584929119d488296d28d72e74fafc34a18a2c9d5cd6156dc",
-    "lastHarvestedAt": "2026-10-28T22:45:43.269Z",
+    "contentHash": "c989cc34c2eb1faa8036804327f348d54463b0cf413b3e8e23ff728492216bf4",
+    "lastHarvestedAt": "2026-10-30T21:19:25.359Z",
     "learningId": "learn-github-meta-folly"
   },
   "kotlin-kmp-production-sample": {
@@ -10223,10 +10223,10 @@
     "repository": "avajs/ava",
     "platform": "github",
     "sourceUrl": "https://github.com/avajs/ava",
-    "sourceVersion": "95297b66",
+    "sourceVersion": "8640039a",
     "license": "MIT",
-    "contentHash": "5c8a012a644372fa5e4e3a4566d77b9a4160eef2d9b93ed17ff1fdb72136d52e",
-    "lastHarvestedAt": "2026-10-27T17:56:51.320Z",
+    "contentHash": "3daaf96fb8e7461efb8473afba1c6e07224a95563e1318ff5106f1ce1b21c7bd",
+    "lastHarvestedAt": "2026-10-30T21:19:26.685Z",
     "learningId": "learn-github-avajs-ava"
   },
   "maxrave-dev-kotlin-footguns": {

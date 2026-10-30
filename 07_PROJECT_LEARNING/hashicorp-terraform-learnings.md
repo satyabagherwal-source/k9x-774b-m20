@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source**: github ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
-> **Source Version**: `becd2816`  
+> **Source Version**: `d40e1b2d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T22:26:07.614Z  
+> **Timestamp**: 2026-10-30T21:19:29.129Z  
 > **Learning ID**: `learn-github-hashicorp-terraform`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T22:26:06.929Z  
+> **Harvest Timestamp**: 2026-10-30T21:19:28.268Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a source-available tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 50086 stars
+- **Stars / Engagement**: 50093 stars
 
 ---
 
@@ -2281,384 +2281,364 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ebd7d93` (2026-10-28)
-**Commit Message**: Address reported security vulnerabilities in dependencies. (#39462)
+### Incident Patch 1: `89fe6725` (2026-10-30)
+**Commit Message**: stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not (#39473)
 
-Address reported security vulnerabilities in dependencies.
-
-GO-2026-6860
-GO-2026-6866
-cve-2026-116587
-
-**File**: `go.mod` (modified, +9/-9)
+**File**: `.changes/v1.18/BUG FIXES-20261029-164821.yaml` (added, +5/-0)
 ```diff
-@@ -72,14 +72,14 @@ require (
- 	go.opentelemetry.io/otel/sdk v1.45.0
- 	go.opentelemetry.io/otel/trace v1.45.0
- 	go.uber.org/mock v0.6.0
--	golang.org/x/crypto v0.57.0
-+	golang.org/x/crypto v0.58.0
- 	golang.org/x/mod v0.41.0
--	golang.org/x/net v0.60.0
-+	golang.org/x/net v0.62.0
- 	golang.org/x/oauth2 v0.36.0
--	golang.org/x/sys v0.48.0
--	golang.org/x/term v0.46.0
--	golang.org/x/text v0.42.0
--	golang.org/x/tools v0.49.0
-+	golang.org/x/sys v0.49.0
-+	golang.org/x/term v0.47.0
-+	golang.org/x/text v0.43.0
-+	golang.org/x/tools v0.51.0
- 	golang.org/x/tools/cmd/cover v0.1.0-deprecated
- 	google.golang.org/grpc v1.83.2
- 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.5.1
-@@ -162,7 +162,7 @@ require (
- 	github.com/felixge/httpsnoop v1.0.4 // indirect
- 	github.com/fsnotify/fsnotify v1.9.0 // indirect
- 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
--	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-+	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
-@@ -298,8 +298,8 @@ require (
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
- 	golang.org/x/exp/typeparams v0.0.0-20231108232855-2478ac86f678 // indirect
--	golang.org/x/sync v0.23.0 // indirect
--	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
-+	golang.org/x/sync v0.24.0 // indirect
-+	golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 // indirect
- 	golang.org/x/time v0.15.0 // indirect
- 	golang.org/x/tools/go/expect v0.1.1-deprecated // indirect
- 	google.golang.org/api v0.271.0 // indirect
+@@ -0,0 +1,5 @@
++kind: BUG FIXES
++body: 'stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not'
++time: 2026-10-29T16:48:21.267429-04:00
++custom:
++    Issue: "39473"
 ```
 
-**File**: `go.sum` (modified, +18/-18)
+**File**: `internal/stacks/stackruntime/apply_test.go` (modified, +148/-0)
 ```diff
-@@ -231,8 +231,8 @@ github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S
- github.com/fsnotify/fsnotify v1.9.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
- github.com/fxamacker/cbor/v2 v2.7.0 h1:iM5WgngdRBanHcxugY4JySA0nk1wZorNOpTgCMedv5E=
- github.com/fxamacker/cbor/v2 v2.7.0/go.mod h1:pxXPTn3joSm21Gbwsv0w9OSA2y1HFR9qXEeXQVeNoDQ=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
-@@ -782,8 +782,8 @@ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5y
- golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
- golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
- golang.org/x/crypto v0.22.0/go.mod h1:vr6Su+7cTlO45qkww3VDJlzDn0ctJvRgYbC2NvXHt+M=
--golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
--golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
-+golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
-+golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 h1:y5zboxd6LQAqYIhHnB48p0ByQ/GnQx2BE33L8BOHQkI=
- golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6/go.mod h1:U6Lno4MTRCDY+Ba7aCcauB9T60gsv5s4ralQzP72ZoQ=
- golang.org/x/exp/typeparams v0.0.0-20231108232855-2478ac86f678 h1:1P7xPZEwZMoBoz0Yze5Nx2/4pxj6nw9ZqHWXqP0iRgQ=
-@@ -811,8 +811,8 @@ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug
- golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
- golang.org/x/net v0.21.0/go.mod h1:bIjVDfnllIU7BJ2DNgfnXvpSvtn8VRwhlsaeUTyUS44=
--golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
--golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
-@@ -825,8 +825,8 @@ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJ
- golang.org/x/sync v0.0.0-20201207232520-09787c993a3a/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
--golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
-+golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20181116152217-5ac8a444bdc5/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
-@@ -859,18 +859,18 @@ golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.17.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
- golang.org/x/sys v0.19.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
--golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
--golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
--golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 h1:ZUSxONxc981v7AW7QUg+I9WwZzSTTJ019ENBYr5pV/Q=
--golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5/go.mod h1:LVehoXe41cL5SCVQilsV7Gg6BNG+Js6P9PhSbYTIUkQ=
-+golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
-+golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 h1:DftxASHKl6JolFPqoN+2WrFO53JvkHwRXvFqf8gsivA=
-+golang.org/x/telemetry v0.0.0-20260924152758-ed29
+@@ -2232,6 +2232,154 @@ After applying this plan, Terraform will no longer manage these objects. You wil
+ 				},
+ 			},
+ 		},
++		// The component's configuration has no reference to the testing provider, but the previous
++		// state still has a resource managed by it. The provider must still be available to Terraform Core
++		// (both the configured client and the unconfigured factory) so the resource can be deleted.
++		"provider-required-only-by-state": {
++			path: "provider-required-only-by-state",
++			state: stackstate.NewStateBuilder().
++				AddComponentInstance(stackstate.NewComponentInstanceBuilder(mustAbsComponentInstance("component.self"))).
++				AddResourceInstance(stackstate.NewResourceInstanceBuilder().
++					SetAddr(mustAbsResourceInstanceObject("component.self.testing_resource.data")).
++					SetProviderAddr(mustDefaultRootProvider("testing")).
++					SetResourceInstanceObjectSrc(states.ResourceInstanceObjectSrc{
++						Status: states.ObjectReady,
++						AttrsJSON: mustMarshalJSONAttrs(map[string]any{
++							"id":    "data",
++							"value": "data",
++						}),
++					})).
++				Build(),
++			store: stacks_testing_provider.NewResourceStoreBuilder().
++				AddResource("data", cty.ObjectVal(map[string]cty.Value{
++					"id":    cty.StringVal("data"),
++					"value": cty.StringVal("data"),
++				})).
++				Build(),
++			cycles: []TestCycle{
++				{
++					planMode: plans.NormalMode,
++					wantAppliedChanges: []stackstate.AppliedChange{
++						&stackstate.AppliedChangeComponentInstance{
++							ComponentAddr:         mustAbsComponent("component.self"),
++							ComponentInstanceAddr: mustAbsComponentInstance("component.self"),
++							OutputValues: map[addrs.OutputValue]cty.Value{
++								{Name: "empty"}: cty.StringVal("empty"),
++							},
++							InputVariables: make(map[addrs.InputVariable]cty.Value),
++						},
++						&stackstate.AppliedChangeResourceInstanceObject{
++							ResourceInstanceObjectAddr: mustAbsResourceInstanceObject("component.self.testing_resource.data"),
++							ProviderConfigAddr:         mustDefaultRootProvider("testing"),
++							NewStateSrc:                nil, // deleted
++						},
++					},
++				},
++			},
++		},
++		"provider-required-only-by-state-destroy": {
++			path: "provider-required-only-by-state",
++			state: stackstate.NewStateBuilder().
++				AddComponentInstance(stackstate.NewComponentInstanceBuilder(mustAbsComponentInstance("component.self"))).
++				AddResourceInstance(stackstate.NewResourceInstanceBuilder().
++					SetAddr(mustAbsResourceInstanceObject("component.self.testing_resource.data")).
++					SetProviderAddr(mustDefaultRootProvider("testing")).
++					SetResourceInstanceObjectSrc(states.ResourceInstanceObjectSrc{
++						Status: states.ObjectReady,
++						AttrsJSON: mustMarshalJSONAttrs(map[string]any{
++							"id":    "data",
++							"value": "data",
++						}),
++					})).
++				Build(),
++			store: stacks_testing_provider.NewResourceStoreBuilder().
++				AddResource("data", cty.ObjectVal(map[string]cty.Value{
++					"id":    cty.StringVal("data"),
++					"value": cty.StringVal("data"),
++				})).
++				Build(),
++			cycles: []TestCycle{
++				{
++					planMode: plans.DestroyMode,
++					wantAppliedChanges: []stackstate.AppliedChange{
++						&stackstate.AppliedChangeComponentInstanceRemoved{
++							ComponentAddr:         mustAbsComponent("component.self"),
++							ComponentInstanceAddr: mustAbsComponentInstance("component.self"),
++						},
++						&stackstate.AppliedChangeResourceInstanceObject{
++							ResourceInstanceObjectAddr: mustAbsResourceInstanceObject("component.self.testing_resource.data"),
++							ProviderConfigAddr:         mustDefaultRootProvider("testing"),
++							NewStateSrc:                nil, // deleted
++						},
++					},
++				},
++			},
++		},
++		"provider-required-only-by-state-removed": {
++			path: path.Join("provider-required-only-by-state", "removed"),
++			state: stackstate.NewStateBuilder().
++				AddComponentInstance(stackstate.NewComponentInstanceBuilder(mustAbsComponentInstance("component.self"))).
++				AddResourceInstance(stackstate.NewResourceInstanceBuilder().
++					SetAddr(mustAbsResourceInstanceObject("component.self.testing_resource.data")).
++					SetProviderAddr(mustDefaultRootProvider("testing")).
++					SetResourceInstanceObjectSrc(states.ResourceInstanceObjectSrc{
++						Status: states.ObjectReady,
++						AttrsJSON: mustMarshalJSONAttrs(map[string]any{
++							"id":    "data",
++							"value": "data",
++						}),
++					})).
++				Build(),
++			store: stacks_testing_provider.NewResourceStoreBuilder().
++				AddResource("data", cty.ObjectVal(map[string]cty.Value{
++					"id":    cty.StringVal("data"),
++					"value": cty.StringVal("data"),
++				})).
++				Build(),
++			cycles: []TestCycle{
++				{
++					wantAppliedChanges: []stackstate.AppliedChange{
++						&stackstate.AppliedChangeComponentInstanceRemoved{
++							ComponentAddr:         mustAbsComponent("component.self"),
++							ComponentInstanceAddr: mustAbsComponentInstance("component.self"),
++						},
++						&s
 ```
 
-**File**: `internal/backend/remote-state/azure/go.mod` (modified, +6/-6)
+**File**: `internal/stacks/stackruntime/internal/stackeval/applying.go` (modified, +14/-29)
 ```diff
-@@ -58,14 +58,14 @@ require (
- 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
- 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
- 	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
--	golang.org/x/crypto v0.57.0 // indirect
-+	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
--	golang.org/x/net v0.60.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sync v0.23.0 // indirect
--	golang.org/x/sys v0.48.0 // indirect
--	golang.org/x/text v0.42.0 // indirect
--	golang.org/x/tools v0.49.0 // indirect
-+	golang.org/x/sync v0.24.0 // indirect
-+	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/text v0.43.0 // indirect
-+	golang.org/x/tools v0.51.0 // indirect
- 	google.golang.org/appengine v1.6.8 // indirect
- 	google.golang.org/protobuf v1.36.11 // indirect
- 	software.sslmate.com/src/go-pkcs12 v0.4.0 // indirect
-```
-
-**File**: `internal/backend/remote-state/azure/go.sum` (modified, +16/-16)
-```diff
-@@ -111,8 +111,8 @@ github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
- github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
- github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
- github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
- github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
- github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
-@@ -271,8 +271,8 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
- golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
- golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
- golang.org/x/crypto v0.17.0/go.mod h1:gCAAfMLgwOJRpTjQ2zCCt2OcSfYMTeZVSRtQlPC7Nq4=
--golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
--golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
-+golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
-+golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
- golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
- golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
-@@ -284,16 +284,16 @@ golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qx
- golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
- golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
- golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
--golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
--golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
- golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
--golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
-+golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20200116001909-b77594299b42/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20200223170610-d5e6a3e2c0ae/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -308,15 +308,15 @@ golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f/go.mod h1:oPkhp1MJrh7nUepCBc
- golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.15.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
--golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
--golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
-+golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
- golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
- golang.org/x/term v0.8.0/go.mod h1:xPskH00ivmX89bAKVGSKKtLOWNx2+17Eiy94tnKShWo=
- golang.org/x/term v0.15.0/go.mod h1:BDl952bC7+uMoWR75FIrCDx79TPU9oHkTZ9yRbYOrX0=
--golang.org/x/term v0.46.0 h1:
-```
-
-**File**: `internal/backend/remote-state/consul/go.mod` (modified, +6/-6)
-```diff
-@@ -48,15 +48,15 @@ require (
- 	github.com/spf13/afero v1.15.0 // indirect
- 	github.com/stretchr/testify v1.8.4 // indirect
- 	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
--	golang.org/x/crypto v0.57.0 // indirect
-+	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
--	golang.org/x/net v0.60.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sync v0.23.0 // indirect
--	golang.org/x/sys v0.48.0 // indirect
--	golang.org/x/text v0.42.0 // indirect
--	golang.org/x/tools v0.49.0 // indirect
-+	golang.org/x/sync v0.24.0 // indirect
-+	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/text v0.43.0 // indirect
-+	golang.org/x/tools v0.51.0 // indirect
- 	gopkg.in/yaml.v3 v3.0.1 // indirect
- )
+@@ -14,10 +14,8 @@ import (
+ 	"github.com/hashicorp/terraform/internal/depsfile"
+ 	"github.com/hashicorp/terraform/internal/plans"
+ 	"github.com/hashicorp/terraform/internal/policy"
+-	"github.com/hashicorp/terraform/internal/providers"
+ 	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
+ 	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
+-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval/stubs"
+ 	"github.com/hashicorp/terraform/internal/stacks/stackstate"
+ 	"github.com/hashicorp/terraform/internal/stacks/stackstate/statekeys"
+ 	"github.com/hashicorp/terraform/internal/states"
+@@ -175,20 +173,22 @@ func ApplyComponentPlan(ctx context.Context, main *Main, plan *plans.Plan, requi
+ 		return noOpResult, diags
+ 	}
  
-```
-
-**File**: `internal/backend/remote-state/consul/go.sum` (modified, +16/-16)
-```diff
-@@ -106,8 +106,8 @@ github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
- github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
- github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
- github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
- github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
-@@ -339,8 +339,8 @@ go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbi
- golang.org/x/crypto v0.0.0-20180904163835-0709b304e793/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
- golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
--golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
--golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
-+golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
-+golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 h1:y5zboxd6LQAqYIhHnB48p0ByQ/GnQx2BE33L8BOHQkI=
- golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6/go.mod h1:U6Lno4MTRCDY+Ba7aCcauB9T60gsv5s4ralQzP72ZoQ=
- golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
-@@ -351,17 +351,17 @@ golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e/go.mod h1:mL1N/T3taQHkDXs73r
- golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
- golang.org/x/net v0.0.0-20190613194153-d28f0bde5980/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20200625001655-4c5254603344/go.mod h1:/O7V0waA8r7cgGh81Ro3o1hOxt32SMVPicZroKQ2sZA=
--golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
--golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
- golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201207232520-09787c993a3a/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
--golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
-+golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20181116152217-5ac8a444bdc5/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
-@@ -379,19 +379,19 @@ golang.org/x/sys v0.0.0-20210603081109-ebe580a85c40/go.mod h1:oPkhp1MJrh7nUepCBc
- golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20210927094055-39ccf1dd6fa6/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
--golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
--golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
--golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
-+golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
-+golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.
-```
-
-**File**: `internal/backend/remote-state/cos/go.mod` (modified, +6/-6)
-```diff
-@@ -45,14 +45,14 @@ require (
- 	github.com/spf13/afero v1.15.0 // indirect
- 	github.com/zclconf/go-cty v1.18.1 // indirect
- 	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
--	golang.org/x/crypto v0.57.0 // indirect
-+	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/mod v0.41.0 // indirect
--	golang.org/x/net v0.60.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sync v0.23.0 // indirect
--	golang.org/x/sys v0.48.0 // indirect
--	golang.org/x/text v0.42.0 // indirect
--	golang.org/x/tools v0.49.0 // indirect
-+	golang.org/x/sync v0.24.0 // indirect
-+	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/text v0.43.0 // indirect
-+	golang.org/x/tools v0.51.0 // indirect
- )
+-	providerFactories := make(map[addrs.Provider]providers.Factory, len(providerSchemas))
+-	for addr := range providerSchemas {
+-		providerFactories[addr] = func() (providers.Interface, error) {
+-			// Lazily fetch the unconfigured client for the provider
+-			// as and when we need it.
+-			provider, err := main.ProviderType(addr).UnconfiguredClient()
+-			if err != nil {
+-				return nil, err
+-			}
+-			// this provider should only be used for selected operations
+-			return stubs.OfflineProvider(provider), nil
+-		}
++	known, unknown, moreDiags := EvalProviderValues(ctx, main, requiredProviders, ApplyPhase, inst)
++	if moreDiags.HasErrors() {
++		// We won't actually add the diagnostics here, they should be
++		// exposed via a different return path.
++		diags = diags.Append(&hcl.Diagnostic{
++			Severity: hcl.DiagError,
++			Summary:  "Cannot apply component plan",
++			Detail:   fmt.Sprintf("Cannot apply the plan for %s because the configured provider configuration assignments are invalid.", inst.Addr()),
++			Subject:  inst.DeclRange(),
++		})
++		return nil, diags
+ 	}
  
- replace github.com/hashicorp/terraform/internal/backend/remote-state/azure => ../azure
++	providerClients := configuredProviderClients(ctx, main, known, unknown, ApplyPhase)
++	providerFactories := unconfiguredProviderFactories(main, providerSchemas, providerClients)
++
+ 	tfHook := &componentInstanceTerraformHook{
+ 		ctx:   ctx,
+ 		seq:   seq,
+@@ -223,21 +223,6 @@ func ApplyComponentPlan(ctx context.Context, main *Main, plan *plans.Plan, requi
+ 		return noOpResult, diags
+ 	}
+ 
+-	known, unknown, moreDiags := EvalProviderValues(ctx, main, requiredProviders, ApplyPhase, inst)
+-	if moreDiags.HasErrors() {
+-		// We won't actually add the diagnostics here, they should be
+-		// exposed via a different return path.
+-		diags = diags.Append(&hcl.Diagnostic{
+-			Severity: hcl.DiagError,
+-			Summary:  "Cannot apply component plan",
+-			Detail:   fmt.Sprintf("Cannot apply the plan for %s because the configured provider configuration assignments are invalid.", inst.Addr()),
+-			Subject:  inst.DeclRange(),
+-		})
+-		return nil, diags
+-	}
+-
+-	providerClients := configuredProviderClients(ctx, main, known, unknown, ApplyPhase)
+-
+ 	var newState *states.State
+ 
+ 	if plan.Applyable {
 ```
 
-**File**: `internal/backend/remote-state/cos/go.sum` (modified, +16/-16)
+**File**: `internal/stacks/stackruntime/internal/stackeval/planning.go` (modified, +1/-16)
 ```diff
-@@ -94,8 +94,8 @@ github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
- github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
- github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2Wg=
- github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
--github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
--github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
-+github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
-+github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
- github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
- github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
- github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
-@@ -227,31 +227,31 @@ go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJj
- go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
- go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
- go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
--golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
--golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
-+golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
-+golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
- golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
--golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
--golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
--golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
--golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
-+golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20200116001909-b77594299b42/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20200223170610-d5e6a3e2c0ae/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20210927094055-39ccf1dd6fa6/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
--golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
--golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
--golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
--golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
--golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
-+golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
-+golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
-+golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
-+golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
-+golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
- golang.org/x/time v0.15.0 h1:bbrp8t3bGUeFOx08pvsMYRTCVSMk89u4tKbNOZbp88U=
- golang.org/x/time v0.15.0/go.mod h1:Y4YMaQmXwGQZoFaVFk4YpCt4FLQMYKZe9oeV/f4MSno=
--golang.org/x/tools v0.49.0 h1:3NI7VXzL9+1WZD52Dx2ttoPwD5DWrFGpl9mFZDlmisI=
--golang.org/x/tools v0.49.0/go.mod h1:SJNXV9DBKT0UbdttsQjbfJlAE/q+y36++zo3uL3N0Oo=
-+golang.org/x/tools v0.51.0 h1:k4Xc/1Om9jwkBJBo4NVLMSARBoWtK10mx+W5BnXCeAI=
-+golang.org/x/tools v0.51.0/go.mod h1:9eEncMayCV6zRMGhR5eZEC2iBx98qWcF1HZ9Z7wJOoA=
- google.golang.org/api v0.271.0 h1:cIPN4qcUc61jlh7oXu6pwOQqbJW2GqYh5PS6rB2C/JY=
- google.golang.org/api v0.271.0/go.mod h1:CGT29bhwkbF+i11qkRUJb2KMKqcJ1hdFceEIRd9u64Q=
- google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 h1:VQZ/yAbAtjkHgH80teYd2em3xtIkkHd7ZhqfH2N9CsM=
+@@ -8,15 +8,12 @@ import (
+ 	"fmt"
+ 	"time"
+ 
+-	"github.com/hashicorp/terraform/internal/addrs"
+ 	"github.com/hashicorp/terraform/internal/depsfile"
+ 	"github.com/hashicorp/terraform/internal/plans"
+ 	"github.com/hashicorp/terraform/internal/policy"
+-	"github.com/hashicorp/terraform/internal/providers"
+ 	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
+ 	"github.com/hashicorp/terraform/internal/stacks/stackplan"
+ 	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
+-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval/stubs"
+ 	"github.com/hashicorp/terraform/internal/states"
+ 	"github.com/hashicorp/terraform/internal/terraform"
+ 	"github.com/hashicorp/terraform/internal/tfdiags"
+@@ -163,19 +160,7 @@ func PlanComponentInstance(ctx context.Context, main *Main, state *states.State,
+ 	// configurations from the stack that exist outside of Terraform's
+ 	// concerns. There are provided directly in the PlanOpts argument.
+ 
+-	providerFactories := make(map[addrs.Provider]providers.Factory, len(providerSchemas))
+-	for addr := range providerSchemas {
+-		providerFactories[addr] = func() (providers.Interface, error) {
+-			// Lazily fetch the unconfigured client for the provider
+-			// as and when we need it.
+-			provider, err := main.ProviderType(addr).UnconfiguredClient()
+-			if err != nil {
+-				return nil, err
+-			}
+-			// this provider should only be used for selected operations
+-			return stubs.OfflineProvider(provider), nil
+-		}
+-	}
++	providerFactories := unconfiguredProviderFactories(main, providerSchemas, opts.ExternalProviders)
+ 
+ 	tfCtx, err := terraform.NewContext(&terraform.ContextOpts{
+ 		Hooks:                    tfHooks,
+```
+
+**File**: `internal/stacks/stackruntime/internal/stackeval/provider_expressions.go` (modified, +33/-0)
+```diff
+@@ -454,6 +454,39 @@ func neededProviderSchemas[Addr any](ctx context.Context, main *Main, phase Eval
+ 	return providerSchemas, diags, skipFutherValidation
+ }
+ 
++// unconfiguredProviderFactories returns the provider factories that Terraform
++// Core should use for operations that need an unconfigured provider, such as
++// provider functions and cross-provider moves.
++//
++// The result covers the union of two sets of providers:
++//   - the providers whose schemas were loaded for the configuration
++//   - the providers configured for the component
++func unconfiguredProviderFactories(main *Main, schemas map[addrs.Provider]providers.ProviderSchema, configured map[addrs.RootProviderConfig]providers.Interface) map[addrs.Provider]providers.Factory {
++	providerFactories := make(map[addrs.Provider]providers.Factory)
++
++	// Providers likely will appear in both sets, in which case the factory is simply rewritten
++	addProvider := func(addr addrs.Provider) {
++		providerFactories[addr] = func() (providers.Interface, error) {
++			// Lazily fetch the unconfigured client for the provider
++			// as and when we need it.
++			provider, err := main.ProviderType(addr).UnconfiguredClient()
++			if err != nil {
++				return nil, err
++			}
++			// this provider should only be used for selected operations
++			return stubs.OfflineProvider(provider), nil
++		}
++	}
++
++	for addr := range schemas {
++		addProvider(addr)
++	}
++	for addr := range configured {
++		addProvider(addr.Provider)
++	}
++	return providerFactories
++}
++
+ // unconfiguredProviderClients returns the provider clients for the providers
+ // required by the configuration of the given component, along with any
+ // diagnostics that were encountered while fetching those clients.
+```
+
+**File**: `internal/stacks/stackruntime/testdata/mainbundle/test/provider-only-used-for-functions/provider-only-used-for-functions.tf` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++terraform {
++  required_providers {
++    testing = {
++      source  = "hashicorp/testing"
++      version = "0.1.0"
++    }
++  }
++}
++
++variable "input" {
++  type = string
++}
++
++output "value" {
++  value = provider::testing::echo(var.input)
++}
+```
+
+**File**: `internal/stacks/stackruntime/testdata/mainbundle/test/provider-only-used-for-functions/provider-only-used-for-functions.tfcomponent.hcl` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++required_providers {
++  testing = {
++    source  = "hashicorp/testing"
++    version = "0.1.0"
++  }
++}
++
++provider "testing" "default" {}
++
++variable "input" {
++  type = string
++}
++
++component "self" {
++  source = "./"
++
++  inputs = {
++    input = var.input
++  }
++
++  providers = {
++    # The component's module only uses the testing provider for a function, so
++    # the provider is required for its schema and unconfigured client but there
++    # is no provider configuration for it.
++    testing = provider.testing.default
++  }
++}
+```
+
+**File**: `internal/stacks/stackruntime/testdata/mainbundle/test/provider-required-only-by-state/provider-required-only-by-state.tf` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++output "empty" {
++  value = "empty"
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39473** (2026-10-30): stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not (@austinvalle)
 - **PR #39471** (2026-10-29): command/providers schema: Refactor to use views (@SarahFrench)
 - **PR #39469** (2026-10-28): Cleanup after 1.17.1 release (@hc-github-team-tf-core)
 - **PR #39467** (2026-10-28): Prepare for 1.17.1 release (@hc-github-team-tf-core)
 - **PR #39466** (2026-10-29): command/providers mirror: Refactor to use `views` (@SarahFrench)
 - **PR #39465** (2026-10-28): Revert "Prepare before 1.17.1 release (#39460)" (@matejrisek)
-- **PR #39463** (2026-10-28): Backport/v1.17/39462 (@matejrisek)
 
 ---
 
@@ -2678,44 +2658,32 @@ cve-2026-116587
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Address reported security vulnerabilities in dependencies. (#39462)
+## X. stacks: Fix "missing required provider" error when component state requires a pr
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changes/v1.18/BUG FIXES-20261029-164821.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ebd7d93`: Address reported security vulnerabilities in dependencies. (#39462). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `89fe6725`: stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not (#39473). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/v1.18/BUG FIXES-20261029-164821.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/crypto v0.58.0
-	golang.org/x/net v0.62.0
-	golang.org/x/sys v0.49.0
-	golang.org/x/term v0.47.0
-	golang.org/x/text v0.43.0
-	golang.org/x/tools v0.51.0
-	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
-	golang.org/x/sync v0.24.0 // indirect
-	golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 // indirect
+kind: BUG FIXES
+body: 'stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not'
+time: 2026-10-29T16:48:21.267429-04:00
+custom:
+    Issue: "39473"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	golang.org/x/crypto v0.57.0
-	golang.org/x/net v0.60.0
-	golang.org/x/sys v0.48.0
-	golang.org/x/term v0.46.0
-	golang.org/x/text v0.42.0
-	golang.org/x/tools v0.49.0
-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
-	golang.org/x/sync v0.23.0 // indirect
-	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ebd7d93` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `89fe6725` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `95cd5f20`  
+> **Source Version**: `d1d0ccea`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T17:06:08.164Z  
+> **Timestamp**: 2026-10-30T21:19:31.012Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T17:06:03.142Z  
+> **Harvest Timestamp**: 2026-10-30T21:19:30.907Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6496 stars
+- **Stars / Engagement**: 6498 stars
 
 ---
 
@@ -405,202 +405,310 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `95cd5f20` (2026-10-30)
-**Commit Message**: fix(agent-sre): keep a rollout step's analysis criteria in the AgentRollout CRD (#4476)
+### Incident Patch 1: `d1d0ccea` (2026-10-30)
+**Commit Message**: fix(examples): india cert-in and sebi policies deny every evaluation (#4480)
 
-The AgentRollout CRD schema (generate_crd_manifest() and the Helm chart)
-did not declare steps[].analysis, so the API server pruned it from every
-applied rollout and Reconciler built steps without analysis criteria.
-Declare analysis as a list of metric/threshold/comparator and test that
-the Helm chart schema matches the generated one.
+* fix(examples): stop certin and sebi india policies denying every evaluation
 
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Three rules in the India regulatory example pack tested a parameter with a
+negated comparison instead of binding it. A negated comparison against a
+missing path is true, so each fired whenever the parameter was absent.
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+Since these bundles were bound to runtime intervention points that is not an
+unusual input. acs-result.rego sets params to {} on the output interception,
+and on the input interception when the body is not an object, and maps params
+to the tool call's arguments at pre_tool_call. normalize turns any single
+denial into a deny decision, so certin-2022-directions and sebi-governance
+returned deny on every evaluation, including for benign content.
+
+A rule that fires on an absent field also cannot be contained: it adds a
+denial to every evaluation of its policy, so no other rule in that policy
+could be exercised in isolation.
+
+certin-2022-directions.rego already contained the correct idiom four lines
+above one of the affected rules: the 180-day retention rule binds the value
+and is therefore undefined when the field is
+
+**File**: `.cspell-repo-terms.txt` (modified, +1/-0)
 ```diff
-@@ -53,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`agent-sre` chaos blackout windows reject times they cannot read.** `BlackoutWindow` accepted any string for `start` and `end`, and `contains` returned `False` when a bound did not parse, so a window written as `9pm`-`11pm`, `21:00`-`24:00` or `21:00:00`-`23:00:00` never blocked anything and chaos ran during it. Both bounds must now be `HH:MM` times on the 24-hour clock, and anything else raises a validation error when the window is created, including from `load_schedules`.
- - **`agent-runtime` `DockerDeployer.logs` returns what the agent writes to stderr.** Containers are started without a TTY, so `docker logs` replays the agent's stderr on its own stderr, and `logs` returned only the captured stdout. An agent that logs through Python's `logging` (stderr by default) got an empty or partial result. `logs` now merges the two streams in the order Docker writes them. `KubernetesDeployer.logs` was not affected, since `kubectl logs` prints both streams on stdout.
- - **`agent-rag-governance` audits a denied collection with the query's hash.** `RAGGovernor` wrote the `denied` audit entry for a blocked collection with the hash of an empty string, so every denied attempt carried the same `query_hash` and could not be tied to what the agent searched for. The `rate_limited` entry was fixed the same way earlier. The `denied` entry now hashes the actual query (salted by `AGENT_RAG_AUDIT_SALT` when set), for LangChain and LlamaIndex wrappers alike.
-+- **`agent-sre` `AgentRollout` CRD keeps a step's analysis criteria.** The CRD schema, in both `k8s.generate_crd_manifest()` and the Helm chart, declared a step's `name`, `weight`, `durationSeconds` and `manualGate` but not `analysis`, although `RolloutSpec.to_dict()` writes it and `k8s.Reconciler` reads it. The API server prunes fields a structural schema does not declare, so every step of an applied `AgentRollout` lost its analysis criteria, and `analyze_step` passed it without checking a metric. The schema now declares `analysis` as a list of `metric`, `threshold` and `comparator` (`gte`, `lte` or `eq`, default `gte`).
- 
- ### Added
- - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
+@@ -1166,6 +1166,7 @@ usize
+ utcfromtimestamp
+ utcnow
+ uvicorn
++vapt
+ venv
+ venvs
+ vite
 ```
 
-**File**: `agent-governance-python/agent-sre/deployments/helm/README.md` (modified, +4/-0)
+**File**: `examples/policies/india-regulatory/README.md` (modified, +17/-0)
 ```diff
-@@ -52,6 +52,10 @@ spec:
-     - name: canary-5
-       weight: 0.05
-       durationSeconds: 3600
-+      analysis:
-+        - metric: task_success_rate
-+          threshold: 0.99
-+          comparator: gte
-     - name: canary-50
-       weight: 0.50
-       durationSeconds: 7200
+@@ -28,6 +28,23 @@ output; they do not observe the underlying system action, so they are detection
+ examples pack, not compliance controls. Treat them as a starting point, pair them with real
+ action-level enforcement, and run your own compliance assessment.
+ 
++## Parameter-based rules need the host to supply the parameters
++
++Several rules decide on a declared parameter rather than on the action name or the output
++text: `log_storage_region` and `ntp_synced` (CERT-In), `storage_region`, `data_class` and
++`kyc_completed` (RBI), `consent_logged` and `encrypted` (DPDP), `aadhaar_masked` (Aadhaar),
++and `human_accountable`, `log_storage_region` and `vapt_completed` (SEBI). Those keys reach
++a policy only if the host puts them into the tool call arguments at `pre_tool_call`, or into
++`input.body.params` at the input interception. Nothing in this repository sets any of them,
++so in a default deployment those rules are inert and the pack decides on action names and
++output text alone.
++
++One name collides and is worth knowing about. `agent-mesh` carries a `data_class` field on
++its TRACE trust records, documented as the highest-sensitivity data class processed in a
++session and defaulting to `internal`. That is a different field from the RBI rule's
++`input.params.data_class`, which expects one of `payment_data`, `transaction_data` or
++`card_data`. Feeding the first into the second would be accepted and would never match.
++
+ ## Not covered (known gaps)
+ Material obligations the pack does not represent yet, listed so the example is honest about its scope:
+ - DPDP: s.5 notice; s.9 children's data (verifiable parental consent, no behavioural monitoring of minors); ss.11-14 Data Principal rights.
 ```
 
-**File**: `agent-governance-python/agent-sre/deployments/helm/agent-sre/templates/crd.yaml` (modified, +14/-0)
+**File**: `examples/policies/india-regulatory/rego/certin-2022-directions.rego` (modified, +10/-1)
 ```diff
-@@ -70,6 +70,20 @@ spec:
-                       durationSeconds:
-                         type: integer
-                         minimum: 0
-+                      analysis:
-+                        type: array
-+                        items:
-+                          type: object
-+                          required: [metric, threshold]
-+                          properties:
-+                            metric:
-+                              type: string
-+                            threshold:
-+                              type: number
-+                            comparator:
-+                              type: string
-+                              enum: [gte, lte, eq]
-+                              default: gte
-                       manualGate:
-                         type: boolean
-                         default: false
+@@ -1,5 +1,5 @@
+ # agt-policies-india - CERT-In Directions 2022 (Rego reference)
+-# Enforcing authority: CERT-In, MeitY. Status: binding (IT Act s.70B). NOT loaded at runtime. RE2.
++# Enforcing authority: CERT-In, MeitY. Status: binding (IT Act s.70B). RE2.
+ #
+ # Input schema:
+ #   { "action": "store_logs_offshore",
+@@ -12,6 +12,13 @@ import rego.v1
+ 
+ _output_text := v if { is_string(input.output); v := input.output } else := ""
+ 
++# Actions that place or configure ICT log storage, and actions that change clock
++# synchronisation. Both sets use the verbs this pack's policy document already
++# declared, so a host using different names must extend them.
++log_storage_actions := {"disable_logging", "store_logs_offshore", "set_log_retention_below_180"}
++
++clock_sync_actions := {"disable_ntp", "set_external_untrusted_ntp"}
++
+ # Direction (ii): 6-hour reporting - cannot suppress/delay
+ deny contains msg if {
+ 	regex.match(`(?i)(don'?t\s+(report|notify)|skip\s+(the\s+)?(cert.?in\s+)?report|suppress\s+(the\s+)?(incident|breach)|delay\s+(the\s+)?(incident|breach)\s+report)`, _output_text)
+@@ -25,13 +32,15 @@ deny contains msg if {
+ }
+ 
+ deny contains msg if {
++	input.action in log_storage_actions
+ 	not input.params.log_storage_region == "IN"
+ 	region := object.get(input.params, "log_storage_region", "unset")
+ 	msg := sprintf("CERT-In 2022 Directions (iv): logs must be retained within India, configured region: '%v'", [region])
+ }
+ 
+ # Direction (i): NTP clock sync - escalate if not synced
+ escalate contains msg if {
++	input.action in clock_sync_actions
+ 	not input.params.ntp_synced == true
+ 	msg := "CERT-In 2022 Directions (i): synchronise ICT system clocks to NIC/NPL NTP servers or traceable sources"
+ }
 ```
 
-**File**: `agent-governance-python/agent-sre/src/agent_sre/k8s/__init__.py` (modified, +16/-0)
+**File**: `examples/policies/india-regulatory/rego/certin-2022-directions_test.rego` (added, +76/-0)
 ```diff
-@@ -140,6 +140,22 @@ def _openapi_schema() -> dict[str, Any]:
-                                 "name": {"type": "string"},
-                                 "weight": {"type": "number", "minimum": 0, "maximum": 1},
-                                 "durationSeconds": {"type": "integer", "minimum": 0},
-+                                "analysis": {
-+                                    "type": "array",
-+                                    "items": {
-+                                        "type": "object",
-+                                        "required": ["metric", "threshold"],
-+                                        "properties": {
-+                                            "metric": {"type": "string"},
-+                                            "threshold": {"type": "number"},
-+                                            "comparator": {
-+                                                "type": "string",
-+                                                "enum": ["gte", "lte", "eq"],
-+                                                "default": "gte",
-+                                            },
-+                                        },
-+                                    },
-+                                },
-                                 "manualGate": {"type": "boolean", "default": False},
-                             },
-                         },
+@@ -0,0 +1,76 @@
++# agt-policies-india - CERT-In Directions 2022 (OPA tests)
++package agt_policies_india.certin_test
++
++import data.agt_policies_india.certin
++import rego.v1
++
++# An action unrelated to logging or clocks, carrying no parameters at all. This is
++# also the shape the result adapters produce: acs-result.rego sets params to {} on
++# the output interception and maps params to the tool call's arguments at
++# pre_tool_call, so an unguarded parameter rule denies every evaluation.
++unrelated := {"action": "read_file", "params": {}}
++
++test_no_denial_for_an_unrelated_action_carrying_no_parameters if {
++	denials := certin.deny with input as unrelated
++	count(denials) == 0
++}
++
++# Direction (iv), in-India log storage. A declared logging action with no region
++# must still deny, which is why the object.get default is kept.
++test_log_region_denies_a_logging_action_with_no_declared_region if {
++	denials := certin.deny with input as {"action": "store_logs_offshore", "params": {}}
++	count(denials) == 1
++}
++
++test_log_region_silent_when_region_is_india if {
++	denials := certin.deny with input as {"action": "store_logs_offshore", "params": {"log_storage_region": "IN"}}
++	count(denials) == 0
++}
++
++test_log_region_denies_when_region_is_offshore if {
++	denials := certin.deny with input as {"action": "store_logs_offshore", "params": {"log_storage_region": "SG"}}
++	count(denials) == 1
++}
++
++# Direction (iv), 180-day retention. Isolated on a non-logging action so the
++# region rule cannot contribute a second denial to this assertion.
++test_only_the_retention_rule_fires_for_short_retention if {
++	denials := certin.deny with input as {"action": "set_log_retention", "params": {"log_retention_days": 90}}
++	count(denials) == 1
++}
++
++# Direction (i), NTP clock synchronisation.
++test_ntp_silent_for_an_unrelated_action if {
++	escalations := certin.escalate with input as unrelated
++	count(escalations) == 0
++}
++
++test_ntp_escalates_a_clock_action_with_no_declared_sync_state if {
++	escalations := certin.escalate with input as {"action": "disable_ntp", "params": {}}
++	count(escalations) == 1
++}
++
++test_ntp_silent_when_synced if {
++	escalations := certin.escalate with input as {"action": "set_external_untrusted_ntp", "params": {"ntp_synced": true}}
++	count(escalations) == 0
++}
++
++test_ntp_escalates_when_explicitly_not_synced if {
++	escalations := certin.escalate with input as {"action": "set_external_untrusted_ntp", "params": {"ntp_synced": false}}
++	count(escalations) == 1
++}
++
++test_unrelated_action_allows if {
++	certin.decision == "allow" with input as unrelated
++}
++
++# The paths the runtime actually uses, through the shipped result adapter.
++test_benign_output_allowed_through_the_adapter if {
++	result := certin.acs_output_result with input as {"snapshot": {"output": {"content": "Here is the quarterly summary you asked for."}}}
++	result.decision == "allow"
++}
++
++test_benign_tool_call_allowed_through_the_adapter if {
++	result := certin.acs_pre_tool_call_result with input as {"snapshot": {"tool_call": {"name": "read_file", "args": {"path": "/tmp/report.csv"}}}}
++	result.decision == "allow"
++}
 ```
 
-**File**: `agent-governance-python/agent-sre/tests/test_k8s.py` (modified, +68/-0)
+**File**: `examples/policies/india-regulatory/rego/rbi-data-localization_test.rego` (added, +22/-0)
 ```diff
-@@ -4,7 +4,11 @@
+@@ -0,0 +1,22 @@
++# agt-policies-india - RBI payment data localization (OPA tests)
++# This rule was already guarded on the subject-matter field. The tests pin that
++# behaviour, since it is the pattern the other packs' region rules now follow.
++package agt_policies_india.rbi_test
++
++import data.agt_policies_india.rbi
++import rego.v1
++
++test_region_silent_when_data_class_absent if {
++	denials := rbi.deny with input as {"action": "read_file", "params": {}}
++	count(denials) == 0
++}
++
++test_region_denies_payment_data_with_no_declared_region if {
++	denials := rbi.deny with input as {"action": "store_data", "params": {"data_class": "card_data"}}
++	count(denials) == 1
++}
++
++test_region_silent_for_payment_data_stored_in_india if {
++	denials := rbi.deny with input as {"action": "store_data", "params": {"data_class": "card_data", "storage_region": "IN"}}
++	count(denials) == 0
++}
+```
+
+**File**: `examples/policies/india-regulatory/rego/sebi-governance.rego` (modified, +6/-1)
+```diff
+@@ -1,5 +1,5 @@
+ # agt-policies-india - SEBI CSCRF 2024 + AI/ML Responsibility Amendment Feb 2025 (Rego reference)
+-# Enforcing authority: SEBI. Status: CSCRF + Feb-2025 binding; June-2025 guidelines draft. NOT loaded at runtime. RE2.
++# Enforcing authority: SEBI. Status: CSCRF + Feb-2025 binding; June-2025 guidelines draft. RE2.
+ #
+ # Input schema:
+ #   { "action": "disable_audit_log",
+@@ -15,6 +15,10 @@ _output_text := v if { is_string(input.output); v := input.output } else := ""
+ ai_action_targets := {"place_order", "advise_investor", "execute_trade", "manage_portfolio"}
+ log_tamper_actions := {"disable_audit_log", "delete_audit_log", "make_log_mutable", "store_audit_log_offshore"}
  
- from __future__ import annotations
++# Actions that place or configure audit log storage, kept disjoint from
++# log_tamper_actions above so one action never produces two denials.
++log_storage_actions := {"configure_audit_log", "store_audit_log"}
++
+ # Feb 2025 amendment: RE solely responsible for AI/ML output; cannot disclaim
+ deny contains msg if {
+ 	input.action in ai_action_targets
+@@ -34,6 +38,7 @@ deny contains msg if {
+ }
  
-+from pathlib import Path
-+from typing import Any
+ deny contains msg if {
++	input.action in log_storage_actions
+ 	not input.params.log_storage_region == "IN"
+ 	region := object.get(input.params, "log_storage_region", "unset")
+ 	msg := sprintf("SEBI CSCRF 2024: audit logs must be retained within India, configured region: '%v'", [region])
+```
+
+**File**: `examples/policies/india-regulatory/rego/sebi-governance_test.rego` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++# agt-policies-india - SEBI CSCRF 2024 (OPA tests)
++package agt_policies_india.sebi_test
 +
- import pytest
-+import yaml
- 
- from agent_sre.k8s import (
-     CRD_GROUP,
-@@ -19,6 +23,22 @@
-     generate_crd_manifest,
- )
- 
-+HELM_CRD = Path(__file__).resolve().parents[1] / "deployments/helm/agent-sre/templates/crd.yaml"
++import data.agt_policies_india.sebi
++import rego.v1
 +
++unrelated := {"action": "read_file", "params": {}}
 +
-+def _prune(value: Any, schema: dict[str, Any]) -> Any:
-+    """Drop the fields a structural CRD schema does not declare, as the API server does."""
-+    if isinstance(value, dict) and "properties" in schema:
-+        return {
-+            k: _prune(v, schema["properties"][k])
-+            for k, v in value.items()
-+            if k in schema["properties"]
-+        }
-+    if isinstance(value, list) and "items" in schema:
-+        return [_prune(v, schema["items"]) for v in value]
-+    return value
++test_no_denial_for_an_unrelated_action_carrying_no_parameters if {
++	denials := sebi.deny with input as unrelated
++	count(denials) == 0
++}
 +
++# A declared audit-log storage action with no region must still deny.
++test_log_region_denies_a_storage_action_with_no_declared_region if {
++	denials := sebi.deny with input as {"action": "store_audit_log", "params": {}}
++	count(denials) == 1
++}
 +
- # ---------------------------------------------------------------------------
- # CRD manifest
- # ---------------------------------------------------------------------------
-@@ -47,6 +67,26 @@ def test_crd_has_schema(self):
-         assert "candidate" in spec_props
-         assert "steps" in spec_props
- 
-+    def test_crd_keeps_step_analysis_criteria(self):
-+        crd = generate_crd_manifest()
-+        schema = crd["spec"]["versions"][0]["schema"]["openAPIV3Schema"]
-+        step = schema["properties"]["spec"]["properties"]["steps"]["items"]
-+        criterion = step["properties"]["analysis"]["items"]
-+        assert set(criterion["properties"]) == {"metric", "threshold", "comparator"}
-+        assert criterion["properties"]["comparator"]["enum"] == ["gte", "lte", "eq"]
++test_log_region_silent_when_region_is_india if {
++	denials := sebi.deny with input as {"action": "store_audit_log", "params": {"log_storage_region": "IN"}}
++	count(denials) == 0
++}
 +
-+    def test_helm_chart_crd_schema_matches_generated_schema(self):
-+        text = "\n".join(
-+            line for line in HELM_CRD.read_text(encoding="utf-8").splitlines()
-+            if not line.lstrip().startswith("{{")
-+        )
-+        chart = yaml.safe_load(text)
-+        generated = generate_crd_manifest()
-+        assert (
-+            chart["spec"]["versions"][0]["schema"]
-+            == generated["spec"]["versions"][0]["schema"]
-+        )
++test_log_region_denies_when_region_is_offshore if {
++	denials := sebi.deny with input as {"action": "configure_audit_log", "params": {"log_storage_region": "SG"}}
++	count(denials) == 1
++}
 +
-     def test_crd_has_subresources(self):
-         crd = generate_crd_manifest()
-         assert "status" in crd["spec"]["versions"][0]["subresources"]
-@@ -385,3 +425,31 @@ def test_gitops_rollout_spec_round_trips_through_reconciler(self):
-         # A healthy success rate must not trip the "lt 0.9" condition.
-         assert rollout.check_rollback({"success_rate": 0.99}) is False
-         assert rollout.check_rollback({"success_rate": 0.5}) is True
++# log_storage_actions and log_tamper_actions are disjoint, so a tamper action
++# produces exactly one denial rather than two.
++test_tamper_action_produces_exactly_one_denial if {
++	denials := sebi.deny with input as {"action": "store_audit_log_offshore", "params": {}}
++	count(denials) == 1
++}
 +
-+    def test_gitops_step_analysis_survives_crd_pruning(self):
-+        from agent_sre.delivery.gitops import AgentRef, RolloutSpec
-+        from agent_sre.delivery.rollout import AnalysisCriterion, RolloutStep
++test_unrelated_action_allows if {
++	sebi.decision == "allow" with input as unrelated
++}
 +
-+        spec = RolloutSpec(
-+            name="gitops",
-+            candidate=AgentRef(name="agent", version="v2"),
-+            steps=[
-+                RolloutStep(
-+                    weight=0.1,
-+                    analysis=[AnalysisCriterion("latency_ms", 500.0, comparator="lte")],
-+                ),
-+                RolloutStep(weight=1.0),
-+            ],
-+        )
-+        schema = generate_crd_manifest()["spec"]["versions"][0]["schema"]["openAPIV3Schema"]
-+        stored = _prune(spec.to_dict(), schema)
++test_benign_output_allowed_through_the_adapter if {
++	result := sebi.acs_output_result with input as {"snapshot": {"output": {"content": "Here is the quarterly summary you asked for."}}}
++	result.decision == "allow"
++}
 +
-+        r = Reconciler()
-+        r.reconcile("gitops", "default", stored["spec"])
-+        rollout = r.get_rollout("gitops", "default")
-+        assert rollout is not None
-+        criteria = rollout.steps[0].analysis
-+        assert [(c.metric, c.threshold, c.comparator) for c in criteria] == [
-+            ("latency_ms", 500.0, "lte"),
-+        ]
-+        assert rollout.analyze_step({"latency_ms": 900.0}) is False
++test_benign_tool_call_allowed_through_the_adapter if {
++	result := sebi.acs_pre_tool_call_result with input as {"snapshot": {"tool_call": {"name": "read_file", "args": {"path": "/tmp/report.csv"}}}}
++	result.decision == "allow"
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4480** (2026-10-30): fix(examples): india cert-in and sebi policies deny every evaluation (@Mayur021)
 - **PR #4476** (2026-10-30): fix(agent-sre): keep a rollout step's analysis criteria in the AgentRollout CRD (@ShivamSharma43)
 - **PR #4475** (2026-10-29): fix(agent-rag-governance): audit a denied collection with the query's hash (@ShivamSharma43)
 - **PR #4474** (2026-10-29): fix(agent-runtime): include the agent's stderr in DockerDeployer.logs (@ShivamSharma43)
 - **PR #4473** (2026-10-29): fix(agent-sre): reject chaos blackout times that cannot be read (@ShivamSharma43)
 - **PR #4471** (closed): chore: consolidate Functions editor configuration (@erin1sanders)
-- **PR #4470** (2026-10-28): fix(agent-sre): stop blue-green validation at its timeout (@ShivamSharma43)
 
 ---
 
@@ -620,21 +728,21 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent-sre): keep a rollout step's analysis criteria in the AgentRollout CRD (#44
+## X. examples): india cert-in and sebi policies deny every evaluation (#4480)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cspell-repo-terms.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `95cd5f20`: agent-sre): keep a rollout step's analysis criteria in the AgentRollout CRD (#4476). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d1d0ccea`: examples): india cert-in and sebi policies deny every evaluation (#4480). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cspell-repo-terms.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **`agent-sre` `AgentRollout` CRD keeps a step's analysis criteria.** The CRD schema, in both `k8s.generate_crd_manifest()` and the Helm chart, declared a step's `name`, `weight`, `durationSeconds` and `manualGate` but not `analysis`, although `RolloutSpec.to_dict()` writes it and `k8s.Reconciler` reads it. The API server prunes fields a structural schema does not declare, so every step of an applied `AgentRollout` lost its analysis criteria, and `analyze_step` passed it without checking a metric. The schema now declares `analysis` as a list of `metric`, `threshold` and `comparator` (`gte`, `lte` or `eq`, default `gte`).
+vapt
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -644,4 +752,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `95cd5f20` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d1d0ccea` are properly handled with clean fallback behavior.

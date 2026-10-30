@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `cfe57b43`  
+> **Source Version**: `1f4828f8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T20:47:44.167Z  
+> **Timestamp**: 2026-10-30T21:19:36.540Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T20:47:43.443Z  
+> **Harvest Timestamp**: 2026-10-30T21:19:36.535Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,189 +1799,48 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cfe57b43` (2026-10-30)
-**Commit Message**: chore(deps-dev): bump the lint-format group (oxfmt 0.74.0, oxlint 1.90.0, oxlint-tsgolint 7.0.2005) (#335)
+### Incident Patch 1: `1f4828f8` (2026-10-30)
+**Commit Message**: chore(deps): bump the npm-minor-patch group across 1 directory with 19 updates (#339)
 
-* chore(deps-dev): bump the lint-format group (oxfmt 0.74.0, oxlint 1.90.0, oxlint-tsgolint 7.0.2005)
+Bumps the npm-minor-patch group with 19 updates in the / directory:
 
-Rebuilt on current main. Dependabot's lockfile regeneration had moved
-@x402/svm onto @solana/kit 2.3.0, which breaks the esbuild bundle
-(@solana-program/token 0.9.0 imports sequentialInstructionPlan, absent in
-2.3.0); this lockfile keeps main's 5.5.1 resolution and changes only the
-three lint-format packages. The two markdown files oxfmt 0.74 flags are
-reformatted.
+| Package | From | To |
+| --- | --- | --- |
+| [@aws-sdk/client-bedrock](https://github.com/aws/aws-sdk-js-v3/tree/HEAD/clients/client-bedrock) | `3.1152.0` | `3.1158.0` |
+| [@coinbase/cdp-sdk](https://github.com/coinbase/cdp-sdk) | `1.59.0` | `1.60.0` |
+| [@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk) | `1.32.1` | `1.32.2` |
+| [@opentelemetry/api](https://github.com/open-telemetry/opentelemetry-js) | `1.9.1` | `1.10.0` |
+| [@opentelemetry/exporter-trace-otlp-http](https://github.com/open-telemetry/opentelemetry-js) | `0.223.0` | `0.300.0` |
+| [@opentelemetry/sdk-node](https://github.com/open-telemetry/opentelemetry-js) | `0.223.0` | `0.300.0` |
+| [discord-api-types](https://github.com/discordjs/discord-api-types) | `0.38.56` | `0.38.57` |
+| [imapflow](https://github.com/postalsys/imapflow) | `2.5.2` | `2.9.1` |
+| [linkedom](https://github.com/WebReflection/linkedom) | `0.18.13` | `0.18.14` |
+| [mailparser](https://github.com/nodemailer/mailparser) | `3.9.40` | `3.12.4` |
+| [node-edge-tts](htt
 
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-* chore(deps-dev): take Dependabot's lockfile for oxfmt 0.74 minus its @solana/kit re-resolution
-
-A fresh pnpm re-resolution moves @coinbase/cdp-sdk's @x402/svm peer onto the
-@solana/kit 2.3.0 instance that @coinbase/agentkit pins, which breaks the
-esbuild bundle. This lockfile is Dependabot's with those six hunks reverted
-to main; oxlint stays at the 1.89.0 Dependabot proposed (1.90 adds a
-type-aware enum rule that flags 21 existing lines).
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
-
-**File**: `deploy/bootnode/README.md` (modified, +1/-1)
+**File**: `package.json` (modified, +2/-2)
 ```diff
-@@ -240,7 +240,7 @@ The source of truth for the orchestrator version is `orchestrator/Cargo.toml`:
- ```toml
- [package]
- name = "bitterbot-orchestrator"
--version = "0.1.1"   # ← bump this
-+version = "0.1.1" # ← bump this
- ```
- 
- No second manifest, no duplicate `VERSION` file. The postinstall script reads `Cargo.toml` directly with a regex, and the CI workflow derives the tag from the pushed ref.
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -240,7 +240,7 @@
-     "esbuild": "^0.28.2",
-     "lit": "^3.3.3",
-     "ollama": "^0.6.4",
--    "oxfmt": "0.72.0",
-+    "oxfmt": "0.74.0",
-     "oxlint": "^1.87.0",
-     "oxlint-tsgolint": "^7.0.2003",
-     "rolldown": "1.2.13",
-```
-
-**File**: `pnpm-lock.yaml` (modified, +212/-200)
-```diff
-@@ -267,14 +267,14 @@ importers:
-         specifier: ^0.6.4
-         version: 0.6.4
-       oxfmt:
--        specifier: 0.72.0
--        version: 0.72.0
-+        specifier: 0.74.0
-+        version: 0.74.0
-       oxlint:
-         specifier: ^1.87.0
--        version: 1.87.0(oxlint-tsgolint@7.0.2004)
-+        version: 1.89.0(oxlint-tsgolint@7.0.2005)
-       oxlint-tsgolint:
-         specifier: ^7.0.2003
--        version: 7.0.2004
-+        version: 7.0.2005
-       rolldown:
-         specifier: 1.2.13
-         version: 1.2.13
-@@ -1898,12 +1898,12 @@ packages:
-     resolution: {integrity: sha512-q7ZaUCJkEU5BeOdE7fBx1XWRd2T5Ady65nxq4brMf5L4cE1VV/ACq5w9Z5b/IVJs8CwSSIwc30nlthH0gFo4Ig==}
-     engines: {node: '>= 10'}
- 
--  '@napi-rs/wasm-runtime@1.2.5':
--    resolution: {integrity: sha512-HshSvXzmBxNzqejd3k/KemgQ3hdREUYFRRrgxOZ+gPljDIsO2SDZrVZMd4Z/HsxudQbE62OVyVFE8z9BCurfjA==}
-+  '@napi-rs/wasm-runtime@1.2.6':
-+    resolution: {integrity: sha512-mRyDmEw9/fCDXCGfL1sbgIw/GUK0PVxRW4YwgPN61F3LQ+fSyoBFarJVzgGyhF6kRzEQZ0FejDqm4WLXSeqQmw==}
-     engines: {node: ^20.19.0 || ^22.13.0 || >=23.5.0}
-     peerDependencies:
--      '@emnapi/core': ^1.7.1 || ^2.0.0-alpha.4
--      '@emnapi/runtime': ^1.7.1 || ^2.0.0-alpha.4
-+      '@emnapi/core': ^1.7.1 || 2.0.0-beta.2
-+      '@emnapi/runtime': ^1.7.1 || 2.0.0-beta.2
- 
-   '@noble/ciphers@1.2.1':
-     resolution: {integrity: sha512-rONPWMC7PeExE077uLE4oqWrZ1IvAfz3oH9LibVAcVCopJiA9R62uavnbEzdkVmJYI6M6Zgkbeb07+tWjlq2XA==}
-@@ -2279,6 +2279,7 @@ packages:
-   '@opentelemetry/propagator-jaeger@2.12.0':
-     resolution: {integrity: sha512-Kz2Vz+NILW7S1WtN4rV1wr76fMtT/RRWvAMFBc91uTIi2dDMXxrfBKNe2KH7yaCfFp1X0xfAuabzuFczvoPB6A==}
-     engines: {node: ^18.19.0 || >=20.6.0}
-+    deprecated: Package no longer supported. See https://github.com/open-telemetry/opentelemetry-js/pull/7077
-     peerDependencies:
-       '@opentelemetry/api': '>=1.0.0 <1.10.0'
- 
-@@ -2309,12 +2310,14 @@ packages:
-   '@opentelemetry/sdk-trace-base@2.12.0':
-     resolution: {integrity: sha512-JOERgZCxRM06FEJ5kEWxlSRChah6MmXDx3KwCruqEv/iEyLkTokCSemf2y1w8oIHtfrr8EVTpzebq/31vn2Cpg==}
-     engines: {node: ^18.19.0 || >=20.6.0}
-+    deprecated: Use @opentelemetry/sdk-trace package
-     peerDependencies:
-       '@opentelemetry/api': '>=1.3.0 <1.10.0'
- 
-   '@opentelemetry/sdk-trace-node@2.12.0':
-     resolution: {integrity: sha512-9DufH1IlmQMoKAfot5y/FhTP1RnmhLb5K6eKmJO/bvzPjYwPAazoiAUbTZFdPbqxOXN0FEbhZx/e6SB1Og4jmg==}
-     engines: {node: ^18.19.0 || >=20.6.0}
-+    deprecated: Use @opentelemetry/sdk-trace package
-     peerDependencies:
-       '@opentelemetry/api': '>=1.0.0 <1.10.0'
- 
-@@ -2337,276 +2340,276 @@ packages:
-   '@oxc-project/types@0.153.0':
-     resolution: {integrity: sha512-jSNrRIyvPVLL5E1z/tS5zLAprosGz/FuI1PWwEOz59j3E4TTTzSpqKb/RDGqJhhW0QHYISGXxq582wGx6T11Tw==}
- 
--  '@oxfmt/binding-android-arm-eabi@0.72.0':
--    resolution: {integrity: sha512-u4U1uaDOVBuorGNC/07NLm48nECHOiJJka002YGML16Md2DRvf38RGBt01lH60EOGvNlFVmbLoksQedNBoZHKw==}
-+  '@oxfmt/binding-android-arm-eabi@0.74.0':
-+    resolution: {integrity: sha512-xxQwrf5EPI5zxvuCTW8r6tzCTjPQ+h6+HqJ0iRKRy2zS1yBllt/xLVjoIyUc+FnR7g0a5g1SZv2yyDYhTItLbA==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [arm]
-     os: [android]
- 
--  '@oxfmt/binding-android-arm64@0.72.0':
--    resolution: {integrity: sha512-GCnM+Ae2mWOKC+92y3FOb6eZJeVnBAVz82e3lITUUg+kxukYKzBNAvJ/hhHIfa2A0md55SYYhdWPddSSy3KPVA==}
-+  '@oxfmt/binding-android-arm64@0.74.0':
-+    resolution: {integrity: sha512-FJW3sATVvrWbV64al8xofCPZj4500Z/1W0ad7Tg1rcCUyh0EMbuSrsf3jsZS7CEbwQ5fQ0mRhmkc129GFgofSQ==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [arm64]
-     os: [android]
- 
--  '@oxfmt/binding-darwin-arm64@0.72.0':
--    resolution: {integrity: sha512-LjQ8tlevdtwraFlWC6AnQ1Forzde0clRmnsP3QmK+ydSElDt/J+5Jc+m+//Ly1G97aP7WCNUw110QMIUw2K7xA==}
-+  '@oxfmt/binding-darwin-arm64@0.74.0':
-+    resolution: {integrity: sha512-TfmNKBD30dGyMu9GCLiaw2rt/z7fms9LS+5cKcNOyWst0QgAs8oZs6wPxMbVaaDVE0/PCdCosgWM1vbu6f5NUg==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [arm64]
-     os: [darwin]
- 
--  '@oxfmt/binding-darwin-x64@0.72.0':
--    resolution: {integrity: sha512-+ZbcxhB1C34RQR5IldSyY6Z/yalJIxHXhP36PGE4sEq0f/lgL5jCLmOKoDeVm8dqd9gFGDsd1bNWHSGCAwdSkw==}
-+  '@oxfmt/binding-darwin-x64@0.74.0':
-+    resolution: {integrity: sha512-5Usf8+DfC4Q3o/MD8FkN47GrI6y0KbhQ4KhZ2HGzMZcXjcW1AeldwbUn51aKih+1TVuJFF9qkNm6X1nzm6NYng==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [x64]
-     os: [darwin]
- 
--  '@oxfmt/binding-freebsd-x64@0.72.0':
--    resolution: {integrity: sha512-yGPhA8sePEBFV9iGcprhyOk3Bz3fZshswMH3DpYIPZFLT1DG5LjiZ0j6AJQpSueaL6bUK0av1K+5+fe+ldy5EQ==}
-+  '@oxfmt/binding-freebsd-x64@0.74.0':
-+    resolution: {integrity: sha512-eL+1O3gykw1XihbZh2MRAciQvU2988LByrnjhyo/dmNG74X4oZ7XzigRoWPRFLfJCp8hzRkp/LbEhwe7uuT2eA==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     cpu: [x64]
-     os: [freebsd]
- 
--  '@oxfmt/binding-linux-arm-gnueabihf@0.72.0':
--    resolution: {integrity: sha512-/g5axuqFMcAtoQrFLR5EJEMDjR5Ea4Guzpd
-```
-
-**File**: `skills/himalaya/SKILL.md` (modified, +1/-1)
-```diff
-@@ -59,7 +59,7 @@ backend.port = 993
- backend.encryption.type = "tls"
- backend.login = "you@example.com"
- backend.auth.type = "password"
--backend.auth.cmd = "pass show email/imap"  # or use keyring
-+backend.auth.cmd = "pass show email/imap" # or use keyring
- 
- message.send.backend.type = "smtp"
- message.send.backend.host = "smtp.example.com"
+@@ -174,9 +174,9 @@
+     "@modelcontextprotocol/sdk": "^1.32.1",
+     "@mozilla/readability": "^0.6.0",
+     "@opentelemetry/api": "^1.9.1",
+-    "@opentelemetry/exporter-trace-otlp-http": "^0.223.0",
++    "@opentelemetry/exporter-trace-otlp-http": "^0.300.0",
+     "@opentelemetry/resources": "^2.11.0",
+-    "@opentelemetry/sdk-node": "^0.223.0",
++    "@opentelemetry/sdk-node": "^0.300.0",
+     "@opentelemetry/semantic-conventions": "^1.43.0",
+     "@sinclair/typebox": "0.34.52",
+     "@slack/bolt": "^4.6.0",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #339** (2026-10-30): chore(deps): bump the npm-minor-patch group across 1 directory with 19 updates (@dependabot[bot])
 - **PR #336** (2026-10-30): fix(orchestrator): reconcile Cargo.lock after the ed25519-dalek and sha2 bumps (@VGIL77)
 - **PR #335** (2026-10-30): chore(deps-dev): bump the lint-format group (oxfmt 0.74.0, oxlint 1.90.0, oxlint-tsgolint 7.0.2005) (@VGIL77)
 - **PR #334** (2026-10-30): docs: reboot recovery fix, WSL2 autostart note, LongMemEval in benchmarks index (@VGIL77)
 - **PR #333** (2026-10-30): feat(gateway): WSL2 autostart and crash supervision without systemd (@VGIL77)
 - **PR #332** (2026-10-30): feat(memory): weighted RRF channel fusion with sweep and real-query validation (@VGIL77)
-- **PR #331** (2026-10-30): feat(memory): shadow surfacing trial eligibility and assignment (PLAN-59 Phase 2) (@VGIL77)
 
 ---
 
@@ -2001,28 +1860,30 @@ Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps-dev): bump the lint-format group (oxfmt 0.74.0, oxlint 1.90.0, oxlint-tsgol
+## X. deps): bump the npm-minor-patch group across 1 directory with 19 updates (#339)
 
 **RULE**:
-When implementing operations in `deploy/bootnode/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cfe57b43`: deps-dev): bump the lint-format group (oxfmt 0.74.0, oxlint 1.90.0, oxlint-tsgolint 7.0.2005) (#335). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1f4828f8`: deps): bump the npm-minor-patch group across 1 directory with 19 updates (#339). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `deploy/bootnode/README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-version = "0.1.1" # ← bump this
+    "@opentelemetry/exporter-trace-otlp-http": "^0.300.0",
+    "@opentelemetry/sdk-node": "^0.300.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.1.1"   # ← bump this
+    "@opentelemetry/exporter-trace-otlp-http": "^0.223.0",
+    "@opentelemetry/sdk-node": "^0.223.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cfe57b43` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1f4828f8` are properly handled with clean fallback behavior.
