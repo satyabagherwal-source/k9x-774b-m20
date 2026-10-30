@@ -6097,3 +6097,4 @@ Every entry in this ledger must capture:
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `57677801` | Multi-dimensional audit evidence | 2026-10-30T00:25:52.967Z |
 | `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `b5f80988` | Multi-dimensional audit evidence | 2026-10-30T00:27:04.701Z |
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `4b4d8cd5` | Multi-dimensional audit evidence | 2026-10-30T00:33:13.966Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `3e76856b` | Multi-dimensional audit evidence | 2026-10-30T00:40:04.360Z |

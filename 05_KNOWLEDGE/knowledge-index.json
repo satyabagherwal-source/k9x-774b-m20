@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T00:33:13.919Z",
+  "last_updated": "2026-10-30T00:40:04.275Z",
   "total_verified_learnings": 1169,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14221,8 +14221,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "6b3bd71c",
-      "content_hash": "f62b40e5fec047611c54ae36ad4198260d0e009a91de7f75688c1230a2c9db04",
+      "source_version": "3e76856b",
+      "content_hash": "e3fb7162431fa253be18959e029d7fbc007f312cf304b246db6dc56c47cf9da8",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -14260,6 +14260,11 @@
           "number": 4898,
           "title": "build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14699)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5570,
+          "title": "build(deps-ui-dev): bump sass-loader (#14701)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14267,7 +14272,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T16:31:38.451Z",
+      "verified_at": "2026-10-30T00:40:04.256Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -149733,6 +149738,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T00:33:13.907Z"
+    },
+    "rule-5570": {
+      "learning_id": "rule-5570",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5570,
+      "title": "build(deps-ui-dev): bump sass-loader (#14701)",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "3e76856b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T00:40:04.256Z"
     }
   },
   "aliases": {

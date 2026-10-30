@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "6b3bd71c",
+    "sourceVersion": "3e76856b",
     "license": "Apache-2.0",
-    "contentHash": "f62b40e5fec047611c54ae36ad4198260d0e009a91de7f75688c1230a2c9db04",
-    "lastHarvestedAt": "2026-10-27T16:31:38.529Z",
+    "contentHash": "e3fb7162431fa253be18959e029d7fbc007f312cf304b246db6dc56c47cf9da8",
+    "lastHarvestedAt": "2026-10-30T00:40:04.360Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {

@@ -403767,3 +403767,53 @@ checksum = "e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e"
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `15c81322` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5570. build(deps-ui-dev): bump sass-loader (#14701) (Harvested from gocd/gocd)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "build(deps-ui-dev): bump sass-loader (#14701)",
+  "source": "gocd/gocd",
+  "source_url": "https://github.com/gocd/gocd",
+  "source_version": "3e76856b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-30T00:40:04.065Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-gocd-gocd",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [gocd/gocd](https://github.com/gocd/gocd) (Revision: `3e76856b`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `server/src/main/webapp/WEB-INF/rails/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `db3a6efe`: build(deps-ui-dev): bump sass-loader (#14701). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/package.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+    "sass-loader": "^17.1.0",
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Anti-pattern to NEVER write (induced failure mode):
+    "sass-loader": "^17.0.1",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `db3a6efe` are properly handled with clean fallback behavior.

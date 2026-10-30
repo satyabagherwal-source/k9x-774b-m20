@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261027-KPC5",
-    "timestamp": "2026-10-27T23:59:30.629Z",
-    "repository": "apple/foundationdb",
-    "learningId": "learn-github-apple-foundationdb",
-    "contentHash": "f2938dfb7266ca12b65fccf7339bb15b096374d163e4914b5dab0351382efc0a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-SVBO",
     "timestamp": "2026-10-28T00:05:51.636Z",
     "repository": "flox/flox",
@@ -7490,6 +7475,21 @@
     "repository": "GitoxideLabs/gitoxide",
     "learningId": "learn-github-gitoxidelabs-gitoxide",
     "contentHash": "07236104327b0ee6b04a34e358835c73b48864a2eb6dd0c3e9e3f9d9081c337f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-WKJO",
+    "timestamp": "2026-10-30T00:40:04.356Z",
+    "repository": "gocd/gocd",
+    "learningId": "learn-github-gocd-gocd",
+    "contentHash": "e3fb7162431fa253be18959e029d7fbc007f312cf304b246db6dc56c47cf9da8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
