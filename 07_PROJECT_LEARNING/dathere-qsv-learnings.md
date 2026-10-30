@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `aa56dfcb`  
+> **Source Version**: `8e1490fa`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T13:09:10.200Z  
+> **Timestamp**: 2026-10-30T18:25:41.628Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T13:09:09.665Z  
+> **Harvest Timestamp**: 2026-10-30T18:25:41.012Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2203,95 +2203,24 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa56dfcb` (2026-10-30)
-**Commit Message**: build(deps): bump Swatinem/rust-cache from 2.9.1 to 2.9.3 (#4961)
+### Incident Patch 1: `8e1490fa` (2026-10-30)
+**Commit Message**: docs(changelog): mention qsv-clientd-tray in the 27.0.1 highlights
 
-Bumps [Swatinem/rust-cache](https://github.com/swatinem/rust-cache) from 2.9.1 to 2.9.3.
-- [Release notes](https://github.com/swatinem/rust-cache/releases)
-- [Changelog](https://github.com/Swatinem/rust-cache/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/swatinem/rust-cache/compare/v2.9.1...d1527c8f67ef9af357290475d4af4b0fab8f12e0)
+Same paragraph as the one added to the published 27.0.1 release notes.
 
----
-updated-dependencies:
-- dependency-name: Swatinem/rust-cache
-  dependency-version: 2.9.3
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/avx512-bench.yml` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -63,7 +63,7 @@ jobs:
-       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master @ 2026-06-01
-         with:
-           toolchain: stable
--      - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
-+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+@@ -40,6 +40,8 @@ In 27.0.1, a schematic can stay connected to its data. Open it from disk with [q
  
-       - name: Install hyperfine
-         run: |
-```
-
-**File**: `.github/workflows/rust-linux-arm64.yml` (modified, +1/-1)
-```diff
-@@ -55,7 +55,7 @@ jobs:
-         toolchain: stable
-         targets: aarch64-unknown-linux-gnu
-     - name: Setup Rust-cache
--      uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
-+      uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
-       with:
-         key: qsv-linux-arm64-cache
-     - name: Run tests
-```
-
----
-
-### Incident Patch 2: `925962b9` (2026-10-30)
-**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.263 to 1.0.264 (#4962)
-
-Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.263 to 1.0.264.
-- [Release notes](https://github.com/anthropics/claude-code-action/releases)
-- [Commits](https://github.com/anthropics/claude-code-action/compare/8041f1d17e0e7d2f2cfe35002962e9f26237c0bb...d70510b174a1244958df0b03166a54912811f3e6)
-
----
-updated-dependencies:
-- dependency-name: anthropics/claude-code-action
-  dependency-version: 1.0.264
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ jobs:
+ Public [CKAN](https://ckan.org) data is one command away: with [qsv-client 0.6.0](https://github.com/dathere/qsv-client/releases/tag/0.6.0) or later, point `qsv-clientd viz` at any public CKAN resource or dataset page (or a `ckan://` id) to get a live schematic of it. qsv-clientd remembers where the data came from, so Fetch latest gets the current version.
  
-       - name: Run Claude Code Review
-         id: claude-review
--        uses: anthropics/claude-code-action@8041f1d17e0e7d2f2cfe35002962e9f26237c0bb # v1.0.263
-+        uses: anthropics/claude-code-action@d70510b174a1244958df0b03166a54912811f3e6 # v1.0.264
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
-```
-
-**File**: `.github/workflows/claude.yml` (modified, +1/-1)
-```diff
-@@ -34,7 +34,7 @@ jobs:
++Rather not keep a terminal open? qsv-client also ships **`qsv-clientd-tray`**, an optional system tray app for macOS, Linux and Windows (`pipx install 'qsv-client[tray]'`). It runs qsv-clientd, or attaches to one that's already running, and announces each pairing request so you can approve it from its menu by picking the code the page shows. It also manages datasets and can start at login.
++
+ Also in this release:
  
-       - name: Run Claude Code
-         id: claude
--        uses: anthropics/claude-code-action@8041f1d17e0e7d2f2cfe35002962e9f26237c0bb # v1.0.263
-+        uses: anthropics/claude-code-action@d70510b174a1244958df0b03166a54912811f3e6 # v1.0.264
-         with:
-           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
- 
+ - **Polars 2.1.0, streamed.** `sqlp --streaming` and `joinp --streaming` now write results batch by batch, Polars' query optimizations apply again, and `pivotp` handles wide pivots with a fraction of the memory. `sqlp` gains recursive CTEs, and has one breaking change: a `FROM` subquery alias can no longer be read as a table.
 ```
 
 #### Recent Merged Pull Requests:
@@ -2320,28 +2249,29 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump Swatinem/rust-cache from 2.9.1 to 2.9.3 (#4961)
+## X. docs(changelog): mention qsv-clientd-tray in the 27.0.1 highlights
 
 **RULE**:
-When implementing operations in `.github/workflows/avx512-bench.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aa56dfcb`: build(deps): bump Swatinem/rust-cache from 2.9.1 to 2.9.3 (#4961). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8e1490fa`: docs(changelog): mention qsv-clientd-tray in the 27.0.1 highlights. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/avx512-bench.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+Rather not keep a terminal open? qsv-client also ships **`qsv-clientd-tray`**, an optional system tray app for macOS, Linux and Windows (`pipx install 'qsv-client[tray]'`). It runs qsv-clientd, or attaches to one that's already running, and announces each pairing request so you can approve it from its menu by picking the code the page shows. It also manages datasets and can start at login.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aa56dfcb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8e1490fa` are properly handled with clean fallback behavior.

@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "aa56dfcb",
+    "sourceVersion": "8e1490fa",
     "license": "NOASSERTION",
-    "contentHash": "6c4790eb39e05e75ee926022019ae2fc1450715a5f87a4f66b07fcb6c94d77cf",
-    "lastHarvestedAt": "2026-10-30T13:09:10.864Z",
+    "contentHash": "42dad306398d544dc60be5d926dc714fbc50a1451ef0aafc93f59f2211712a5e",
+    "lastHarvestedAt": "2026-10-30T18:25:42.285Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "6e94e407",
+    "sourceVersion": "9067b20c",
     "license": "MIT",
-    "contentHash": "b620877f84f6e09744bfb4274b6e38b3fb1b2c815dd02c2d3cc7285d3cae08f4",
-    "lastHarvestedAt": "2026-10-28T20:08:39.448Z",
+    "contentHash": "6d1a6b3d33f754dd36c4d254eae3ef6bdb150aa9ec41dac7fa0b1e57b1f6c83f",
+    "lastHarvestedAt": "2026-10-30T18:25:28.441Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {
@@ -9933,10 +9933,10 @@
     "repository": "google/closure-compiler",
     "platform": "github",
     "sourceUrl": "https://github.com/google/closure-compiler",
-    "sourceVersion": "a2a176a5",
+    "sourceVersion": "7a8ed58c",
     "license": "Apache-2.0",
-    "contentHash": "84409828d433f47a93a0537a0d0d5b43b7ffb58a20bd21d890b234da5066ba63",
-    "lastHarvestedAt": "2026-10-27T15:18:53.272Z",
+    "contentHash": "401679b9af3b6f6a719476779521aec7c6c78dec8099280410ba29146b3a72d5",
+    "lastHarvestedAt": "2026-10-30T18:25:30.380Z",
     "learningId": "learn-github-google-closure-compiler"
   },
   "shpigford-chops": {

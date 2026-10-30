@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source**: github ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
-> **Source Version**: `6e94e407`  
+> **Source Version**: `9067b20c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T20:08:38.738Z  
+> **Timestamp**: 2026-10-30T18:25:27.769Z  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T20:08:38.580Z  
+> **Harvest Timestamp**: 2026-10-30T18:25:26.505Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4318 stars
+- **Stars / Engagement**: 4356 stars
 
 ---
 
@@ -1532,209 +1532,560 @@ impl Tree {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6e94e407` (2026-10-28)
-**Commit Message**: add flag to remove chrome (#217)
+### Incident Patch 1: `2c175622` (2026-10-29)
+**Commit Message**: Implmenet markdown rendering on .md files (#218)
 
-**File**: `browser/src/session/layout.ts` (modified, +9/-5)
+* implmenet markdown rendering on .md files
+
+* sec
+
+* comments
+
+**File**: `browser/package.json` (modified, +15/-3)
 ```diff
-@@ -91,11 +91,14 @@ export function computeLayout(
-   scale: number,
-   devtools: DevtoolsPlacement | null,
-   recordBar = 0,
-+  bare = false,
- ): SessionLayout {
--  const toolbarHeight = Math.min(info.height - info.cellHeight, Math.round(info.basePx * 2.1));
--  const pad = Math.round(info.basePx * 0.45);
--  const padLeft = Math.round(info.basePx * 0.2);
--  const padBottom = Math.round(info.basePx * 0.2);
-+  const toolbarHeight = bare
-+    ? 0
-+    : Math.min(info.height - info.cellHeight, Math.round(info.basePx * 2.1));
-+  const pad = bare ? 0 : Math.round(info.basePx * 0.45);
-+  const padLeft = bare ? 0 : Math.round(info.basePx * 0.2);
-+  const padBottom = bare ? 0 : Math.round(info.basePx * 0.2);
-   const chrome: ChromeLayout = {
-     width: info.width,
-     height: info.height,
-@@ -110,7 +113,8 @@ export function computeLayout(
-     },
-     devtools: null,
-     rem: info.basePx,
--    frame: Math.max(1, Math.round(scale)),
-+    frame: bare ? 0 : Math.max(1, Math.round(scale)),
-+    radius: bare ? 0 : Math.max(2, info.basePx * 0.55 - 1),
-   };
-   const gap = Math.max(2, Math.round(info.basePx * 0.25));
-   const split = splitForDevtools(chrome.page, devtools, gap);
+@@ -12,14 +12,26 @@
+   },
+   "dependencies": {
+     "@zenbu-labs/pixel": "workspace:*",
+-    "micromark": "^4.0.2",
+-    "micromark-extension-gfm": "^3.0.0",
+-    "shared": "workspace:*",
++    "pele": "1.12.0",
+     "react": "^18.3.1",
+     "react-grab": "0.2.0",
++    "rehype-highlight": "7.0.2",
++    "rehype-katex": "7.0.1",
++    "rehype-raw": "7.0.0",
++    "rehype-sanitize": "6.0.0",
++    "rehype-slug": "6.0.0",
++    "rehype-stringify": "10.0.1",
++    "remark-frontmatter": "5.0.0",
++    "remark-gfm": "4.0.1",
++    "remark-math": "6.0.0",
++    "remark-parse": "11.0.0",
++    "remark-rehype": "11.1.2",
++    "shared": "workspace:*",
++    "unified": "11.0.5",
+     "zod": "^4.4.3"
+   },
+   "devDependencies": {
++    "@types/hast": "3.0.5",
+     "@types/node": "^22.0.0",
+     "@types/react": "^18.3.0",
+     "typescript": "^5.5.0"
 ```
 
-**File**: `browser/src/session/session.tsx` (modified, +1/-0)
+**File**: `browser/src/pages/markdown.ts` (modified, +233/-15)
 ```diff
-@@ -1609,6 +1609,7 @@ class Session {
-       this.root.displayScale,
-       reviewing ? null : placement,
-       reviewing ? recordBarHeight(info) : 0,
-+      this.ctx.env.TERMINAL_BROWSER_NO_CHROME === "1",
-     );
-     this.layout = result.chrome;
-     this.surfaceLayout = result.surface;
+@@ -1,34 +1,252 @@
++import type { Element, ElementContent, Root } from "hast";
++import type { Options as SanitizeSchema } from "rehype-sanitize" with { "resolution-mode": "import" };
++
+ import type { Theme } from "../ui/theme";
+ import { escape, pageColors } from "./scheme";
+ 
+-// forcing esm
+-const parser = Promise.all([import("micromark"), import("micromark-extension-gfm")]).then(
+-  ([{ micromark }, { gfm, gfmHtml }]) =>
+-    (source: string) => micromark(source, { extensions: [gfm()], htmlExtensions: [gfmHtml()] }),
+-);
++export const MARKDOWN_CSP = [
++  "default-src 'none'",
++  "script-src 'none'",
++  "style-src 'unsafe-inline'",
++  "img-src 'self' https: http: data:",
++  "media-src 'self' https: http: data:",
++  "font-src 'self' data:",
++  "frame-src 'none'",
++  "object-src 'none'",
++  "form-action 'none'",
++  "base-uri 'none'",
++].join("; ");
++
++const VIDEO = /\.(?:mp4|m4v|webm|mov|ogv)$/i;
++const AUDIO = /\.(?:mp3|m4a|wav|ogg|oga|flac|aac)$/i;
++const ALERT = /^\[!(note|tip|important|warning|caution)\]\s*/i;
++// fixme: placeholder copy
++const ALERT_TITLES: Record<string, string> = {
++  note: "Note",
++  tip: "Tip",
++  important: "Important",
++  warning: "Warning",
++  caution: "Caution",
++};
++const BODY_FONT = `-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
++const MONO_FONT = `ui-monospace, SFMono-Regular, Menlo, monospace`;
++
++const SVG_TAGS = [
++  "svg", "g", "defs", "symbol", "use", "title", "desc",
++  "path", "rect", "circle", "ellipse", "line", "polyline", "polygon",
++  "text", "tspan", "textPath", "marker", "pattern", "clipPath", "mask",
++  "linearGradient", "radialGradient", "stop", "image",
++];
++
++const SVG_ATTRIBUTES = [
++  "className", "id", "viewBox", "preserveAspectRatio", "xmlns", "width", "height", "transform",
++  "x", "y", "x1", "y1", "x2", "y2", "cx", "cy", "r", "rx", "ry", "dx", "dy", "d", "points",
++  "fill", "fillOpacity", "fillRule", "clipRule", "stroke", "strokeWidth", "strokeOpacity",
++  "strokeLinecap", "strokeLinejoin", "strokeDasharray", "strokeDashoffset", "strokeMiterlimit",
++  "opacity", "clipPath", "mask", "markerStart", "markerMid", "markerEnd",
++  "markerWidth", "markerHeight", "refX", "refY", "orient", "markerUnits",
++  "fontFamily", "fontSize", "fontWeight", "fontStyle", "textAnchor", "dominantBaseline", "letterSpacing",
++  "offset", "stopColor", "stopOpacity", "gradientUnits", "gradientTransform", "spreadMethod", "fx", "fy",
++  "patternUnits", "patternTransform", "patternContentUnits", "clipPathUnits", "maskUnits", "maskContentUnits",
++  "href", "xLinkHref", "visibility", "display", "vectorEffect", "pathLength",
++];
++
++const pipeline = buildPipeline();
++
++// look into me: why can't we import esm packages (this is why we are forcing through dynamic import)
++async function buildPipeline() {
++  const { unified } = await import("unified");
++  const { default: remarkParse } = await import("remark-parse");
++  const { default: remarkFrontmatter } = await import("remark-frontmatter");
++  const { default: remarkGfm } = await import("remark-gfm");
++  const { default: remarkMath } = await import("remark-math");
++  const { default: remarkRehype } = await import("remark-rehype");
++  const { default: rehypeRaw } = await import("rehype-raw");
++  const { default: rehypeSanitize, defaultSchema } = await import("rehype-sanitize");
++  const { default: rehypeSlug } = await import("rehype-slug");
++  const { default: rehypeKatex } = await import("rehype-katex");
++  const { default: rehypeHighlight } = await import("rehype-highlight");
++  const { default: rehypeStringify } = await import("rehype-stringify");
++  const pele = await import("pele");
++
++  const base = defaultSchema.attributes ?? {};
++  const schema: SanitizeSchema = {
++    ...defaultSchema,
++    // the page cannot run scripts, so nothing can be confused by ids that
++    // collide with globals; keeping them intact makes #anchors work
++    clobber: [],
++    strip: ["script", "style", "template", "noscript"],
++    tagNames: [
++      ...(defaultSchema.tagNames ?? []),
++      "video", "audio", "source", "track", "picture", "figure", "figcaption",
++      "mark", "abbr", "u", "small", "center",
++      ...SVG_TAGS,
++    ],
++    attributes: {
++      ...base,
++      "*": [...(base["*"] ?? []), "className"],
++      a: [...(base.a ?? []), "target"],
++      code: [["className", /^language-./, "math-inline", "math-display"]],
++      img: [...(base.img ?? []), "loading"],
++      video: ["src", "poster", "controls", "loop", "muted", "autoPlay", "playsInline", "preload"],
++      audio: ["src", "controls", "loop", "muted", "preload"],
++      source: ["src", "srcSet", "type", "media", "sizes"],
++      track: ["src", "kind", "srcLang", "label", "default"],
++      ...Object.fromEntries(SVG_TAGS.map((tag) => [tag, SVG_ATTRIBUTES])),
++    },
++    protocols: {
++      ...defaultSchema.protocols,
++      src: ["http", "https", "data"],
++      poster: ["http", "https", "data"],
++      xLinkHref: ["http", "https"],
++    },
++  };
++
++  
 ```
 
-**File**: `browser/src/ui/chrome.tsx` (modified, +5/-5)
+**File**: `browser/src/pages/scheme.ts` (modified, +56/-20)
 ```diff
-@@ -179,7 +179,7 @@ export function Chrome({
-               width: layout.page.width + layout.frame * 2,
-               height: Math.round(layout.rem * 2),
-               flexShrink: 0,
--              cornerRadius: Math.max(2, layout.rem * 0.55 - 1) + layout.frame,
-+              cornerRadius: layout.radius + layout.frame,
-               border: {
-                 width: Math.max(2, Math.round(layout.rem * 0.12)),
-                 color: theme.accent,
-@@ -418,7 +418,7 @@ function AgentGlow({
-     Math.max(12, Math.round(layout.rem * 1.6)),
-     Math.floor(Math.min(page.width, page.height) / 2),
-   );
--  const base = seamRadius(Math.max(2, layout.rem * 0.55 - 1), dock, "page");
-+  const base = seamRadius(layout.radius, dock, "page");
-   const r =
-     typeof base === "number"
-       ? { topLeft: base, topRight: base, bottomRight: base, bottomLeft: base }
-@@ -510,10 +510,10 @@ function BrowserTabContents({
- }) {
-   const dock = layout.devtools?.dock ?? null;
-   const frame = layout.frame;
--  const pageRadius = Math.max(2, layout.rem * 0.55 - 1);
-+  const pageRadius = layout.radius;
-   return (
-     <>
--      {!coveredByReview && (
-+      {!coveredByReview && frame > 0 && (
-         <Box
-           style={{
-             position: "absolute",
-@@ -581,7 +581,7 @@ function DevtoolsPane({
- }) {
-   const rect = layout.devtools!;
-   const frame = layout.frame;
--  const pageRadius = Math.max(2, layout.rem * 0.55 - 1);
-+  const pageRadius = layout.radius;
-   const horizontal = rect.dock === "bottom";
-   const grab = Math.max(8, Math.round(layout.rem * 0.5));
-   const divider = horizontal
-```
-
-**File**: `browser/src/ui/markup-canvas.tsx` (modified, +2/-2)
-```diff
-@@ -95,7 +95,7 @@ export function MarkupCanvas({
-           inset: { top: view.frame.y, left: view.frame.x },
-           width: Math.max(1, view.frame.width),
-           height: Math.max(1, view.frame.height),
--          cornerRadius: Math.max(2, layout.rem * 0.55 - 1),
-+          cornerRadius: layout.radius,
-         }}
-       />
-       <Box
-@@ -104,7 +104,7 @@ export function MarkupCanvas({
-           inset: { top: view.frame.y - layout.frame, left: view.frame.x - layout.frame },
-           width: Math.max(1, view.frame.width) + layout.frame * 2,
-           height: Math.max(1, view.frame.height) + layout.frame * 2,
--          cornerRadius: Math.max(2, layout.rem * 0.55 - 1) + layout.frame,
-+          cornerRadius: layout.radius + layout.frame,
-           border: { width: layout.frame, color: theme.fieldBorder },
-         }}
-       />
-```
-
-**File**: `browser/src/ui/types.ts` (modified, +1/-0)
-```diff
-@@ -194,6 +194,7 @@ export interface ChromeLayout {
-   } | null;
-   rem: number;
-   frame: number;
-+  radius: number;
+@@ -1,18 +1,17 @@
+ import fs from "node:fs";
+ import path from "node:path";
++import { Readable } from "node:stream";
+ 
+ import { protocol } from "electron";
+ 
+-import { renderMarkdown } from "./markdown";
++import { MARKDOWN_CSP, renderMarkdown } from "./markdown";
+ import { renderStartPage } from "./start";
+ import type { Theme } from "../ui/theme";
++import { DOC_SCHEME } from "../url";
+ 
+ 
+ 
+ export const SCHEME = "terminal-browser";
+-// local file previews get their own scheme without fetch/CORS, so a page opened
+-// from disk can run its scripts but cannot read other local files
+-export const DOC_SCHEME = "terminal-browser-file";
+ export const START_URL = `${SCHEME}://start`;
+ export const HOME_URL = "https://terminal-browser.com";
+ 
+@@ -36,6 +35,21 @@ const CONTENT_TYPES: Record<string, string> = {
+   ".jpeg": "image/jpeg",
+   ".gif": "image/gif",
+   ".webp": "image/webp",
++  ".avif": "image/avif",
++  ".ico": "image/x-icon",
++  ".mp4": "video/mp4",
++  ".m4v": "video/mp4",
++  ".webm": "video/webm",
++  ".mov": "video/quicktime",
++  ".ogv": "video/ogg",
++  ".mp3": "audio/mpeg",
++  ".m4a": "audio/mp4",
++  ".aac": "audio/aac",
++  ".wav": "audio/wav",
++  ".ogg": "audio/ogg",
++  ".oga": "audio/ogg",
++  ".flac": "audio/flac",
++  ".vtt": "text/vtt; charset=utf-8",
+   ".woff2": "font/woff2",
+   ".woff": "font/woff",
+   ".txt": "text/plain; charset=utf-8",
+@@ -45,7 +59,7 @@ const CONTENT_TYPES: Record<string, string> = {
+ export function registerScheme() {
+   protocol.registerSchemesAsPrivileged([
+     { scheme: SCHEME, privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } },
+-    { scheme: DOC_SCHEME, privileges: { standard: true, secure: true } },
++    { scheme: DOC_SCHEME, privileges: { standard: true, secure: true, stream: true } },
+   ]);
  }
  
- export interface TabView {
+@@ -57,36 +71,52 @@ export function servePages(context: () => PageContext) {
+   });
+   protocol.handle(DOC_SCHEME, async (request) => {
+     const url = new URL(request.url);
+-    return serveDocument(decodeURIComponent(url.pathname), context().theme);
++    return serveDocument(decodeURIComponent(url.pathname), request.headers.get("range"), context().theme);
+   });
+ }
+ 
+-export function documentUrl(file: string): string {
+-  return `${DOC_SCHEME}://file${file.split(path.sep).map(encodeURIComponent).join("/")}`;
+-}
+-
+-// a previewed file may embed remote frames but not other local files, so it
+-// cannot reach a same-origin local document to read its DOM
+-const DOC_CSP = "frame-src https: http: data:; object-src 'none'";
++const DOC_CSP =
++  "sandbox allow-scripts allow-forms allow-popups allow-modals allow-downloads; frame-src https: http: data:; object-src 'none'";
+ 
+-async function serveDocument(file: string, theme: Theme | null): Promise<Response> {
++async function serveDocument(file: string, range: string | null, theme: Theme | null): Promise<Response> {
+   try {
+     const stat = await fs.promises.stat(file);
+     if (!stat.isFile()) return new Response("", { status: 404 });
+-    const body = await fs.promises.readFile(file);
+     const extension = path.extname(file).toLowerCase();
+-    const headers: Record<string, string> = { "content-security-policy": DOC_CSP };
+     if (extension === ".md" || extension === ".markdown") {
+-      headers["content-type"] = "text/html; charset=utf-8";
+-      return new Response(await renderMarkdown(body.toString("utf8"), path.basename(file), theme), { headers });
++      const source = await fs.promises.readFile(file, "utf8");
++      return new Response(await renderMarkdown(source, path.basename(file), theme), {
++        headers: { "content-type": "text/html; charset=utf-8", "content-security-policy": MARKDOWN_CSP },
++      });
++    }
++    const headers: Record<string, string> = {
++      "content-security-policy": DOC_CSP,
++      "content-type": CONTENT_TYPES[extension] ?? "application/octet-stream",
++      "accept-ranges": "bytes",
++    };
++    const bytes = range ? byteRange(range, stat.size) : null;
++    if (bytes === "unsatisfiable") {
++      return new Response(null, { status: 416, headers: { ...headers, "content-range": `bytes */${stat.size}` } });
+     }
+-    headers["content-type"] = CONTENT_TYPES[extension] ?? "application/octet-stream";
+-    return new Response(body, { headers });
++    const [start, end] = bytes ?? [0, stat.size - 1];
++    if (bytes) headers["content-range"] = `bytes ${start}-${end}/${stat.size}`;
++    headers["content-length"] = String(Math.max(0, end - start + 1));
++    const body = stat.size === 0 ? null : (Readable.toWeb(fs.createReadStream(file, { start, end })) as ReadableStream);
++    return new Response(body, { status: bytes ? 206 : 200, headers });
+   } catch {
+     return new Response("", { status: 404 });
+   }
+ }
+ 
++function byteRange(header: string, size: number): [number, number] | "unsatisfiable" | null {
++  const match = /^bytes=(\d*)-(\d*)$/.exec(header.trim());
++  if (!match || (!match[1] && !match[2])) return null;
++  if (match[1] && match[2] && Number(matc
 ```
 
----
-
-### Incident Patch 2: `6c226676` (2026-10-28)
-**Commit Message**: Stop registering the browser font by path (#213)
-
-The font API now names fonts by family, and registerFont takes a
-{ family, src } object and returns nothing. The old call passed a path
-and awaited a font id. The engine rejected that request without
-replying, so the await never resolved. The session stalled before
-opening its first tab and the screen stayed blank.
-
-The engine's built-in monospace font is the same JetBrains Mono file,
-so the browser no longer needs to register it.
-
-**File**: `browser/src/session/session.tsx` (modified, +0/-3)
+**File**: `browser/src/pages/start.ts` (modified, +2/-1)
 ```diff
-@@ -211,7 +211,6 @@ class Session {
+@@ -7,7 +7,8 @@ import { promisify } from "node:util";
+ import { z } from "zod";
  
-   private layout: ChromeLayout | null = null;
-   private surfaceLayout: SurfaceLayout | null = null;
--  private fontId = 0;
+ import type { Theme } from "../ui/theme";
+-import { documentUrl, escape, html, json, pageColors } from "./scheme";
++import { documentUrl } from "../url";
++import { escape, html, json, pageColors } from "./scheme";
+ import type { PageContext } from "./scheme";
  
-   private shuttingDown = false;
-   private devtoolsDockSide: DevtoolsDock = "bottom";
-@@ -358,7 +357,6 @@ class Session {
-       onQuit: () => this.shutdown(),
-       onExit: (code) => this.ctx.onClose(code),
-     });
--    this.fontId = await this.root.registerFont(bundledFontPath());
-     this.settings.setNoSuper(!this.root.info.kittyKeyboard);
-     this.applyRenderSettings();
-     this.settings.watch();
-@@ -539,7 +537,6 @@ class Session {
-         actions={this.actions}
-         layout={this.layout}
-         colors={this.root.info.colors}
--        font={this.fontId}
-         findOpen={this.findOpen}
-         tabs={this.tabs.view()}
-         newTab={
+ 
 ```
 
-**File**: `browser/src/ui/chrome.tsx` (modified, +0/-3)
+**File**: `browser/src/session/session.tsx` (modified, +1/-1)
 ```diff
-@@ -42,7 +42,6 @@ export function Chrome({
-   actions,
-   layout,
-   colors,
--  font,
-   findOpen,
-   palette,
-   tabs,
-@@ -67,7 +66,6 @@ export function Chrome({
-   actions: ChromeActions;
-   layout: ChromeLayout;
-   colors: EngineInfo["colors"];
--  font: number;
-   findOpen: boolean;
-   palette: PaletteView | null;
-   tabs: TabRow[];
-@@ -101,7 +99,6 @@ export function Chrome({
-         background: theme.bg,
-         color: theme.fg,
-         fontSize: layout.rem,
--        font,
-       }}
-     >
-       {layout.toolbarHeight > 0 &&
+@@ -481,7 +481,7 @@ class Session {
+       proxy: this.socksPort ? `socks5://127.0.0.1:${this.socksPort}` : null,
+       preload: this.browserPreload,
+       clipboardRead: this.sessionFlags.clipboardRead,
+-      transparent: this.sessionFlags.transparent || this.settings.get("window.transparent") === "on",
++      transparent: tab.transparent || this.sessionFlags.transparent || this.settings.get("window.transparent") === "on",
+     }));
+   }
+ 
+```
+
+**File**: `browser/src/session/tabs.ts` (modified, +8/-2)
+```diff
+@@ -4,13 +4,13 @@ import { initialWebViewState } from "@zenbu-labs/pixel";
+ import type { OpenWindowDecision, WebViewHandle, WebViewState } from "@zenbu-labs/pixel";
+ 
+ import type { TabRow } from "../ui/types";
+-import { displayUrl } from "../url";
+-import { DOC_SCHEME } from "../pages/scheme";
++import { DOC_SCHEME, displayUrl, isMarkdownDocument } from "../url";
+ 
+ export interface Tab {
+   readonly id: number;
+   readonly url: string;
+   readonly ref: RefObject<WebViewHandle>;
++  readonly transparent: boolean;
+   state: WebViewState;
+   targetId: string | null;
+   agentControlAt: number | null;
+@@ -73,10 +73,16 @@ export class TabManager {
+   }
+ 
+   create(url: string, activate = true): Tab {
++    const first = this.seq === 1;
+     const tab: Tab = {
+       id: this.seq++,
+       url,
+       ref: createRef<WebViewHandle>(),
++      // we apply transparency on the tab only if the webview was created with the initial url being a ".md", and
++      // intentionally don't detect if a new .md tab was loaded because it would force us to destroy the webview and
++      // recreate it to apply transparency. The most clever implementation simply rebuilds browser state when this
++      // happens, but it's a little complex and this case is much less often than initially spawning on .md for our users
++      transparent: first && isMarkdownDocument(url),
+       state: initialWebViewState(url),
+       targetId: null,
+       agentControlAt: null,
+```
+
+**File**: `browser/src/url.ts` (modified, +20/-1)
+```diff
+@@ -3,6 +3,14 @@ import os from "node:os";
+ import path from "node:path";
+ import { fileURLToPath, pathToFileURL } from "node:url";
+ 
++// local files are served through this scheme so markdown can be rendered and
++// html previews can be sandboxed
++export const DOC_SCHEME = "terminal-browser-file";
++
++export function documentUrl(file: string): string {
++  return `${DOC_SCHEME}://file${file.split(path.sep).map(encodeURIComponent).join("/")}`;
++}
++
+ function localFile(input: string, cwd?: string): string | null {
+   const expanded =
+     input === "~" || input.startsWith("~/") ? path.join(os.homedir(), input.slice(1)) : input;
+@@ -36,10 +44,15 @@ export function normalizeUrl(value: string, cwd: string | undefined, search: Sea
+   if (!input) return "about:blank";
+   if (HAS_AUTHORITY.test(input) || SCHEMES_WITHOUT_HOST.test(input)) {
+     try {
+-      return new URL(input).toString();
++      const url = new URL(input);
++      if (url.protocol === "file:" && MARKDOWN.test(url.pathname)) {
++        return `${documentUrl(fileURLToPath(url))}${url.search}${url.hash}`;
++      }
++      return url.toString();
+     } catch {}
+   }
+   const file = localFile(input, cwd);
++  if (file && MARKDOWN.test(file)) return documentUrl(file);
+   if (file) return pathToFileURL(file).toString();
+   if (/^[\w.-]+(?::\d+)?(?:\/.*)?$/.test(input)) {
+     const host = input.split(/[:/]/)[0].toLowerCase();
+@@ -49,12 +62,14 @@ export function normalizeUrl(value: string, cwd: string | undefined, search: Sea
+   return search(input);
+ }
+ 
++const MARKDOWN = /\.(?:md|markdown)$/i;
+ const HAS_AUTHORITY = /^[a-z][a-z0-9+.-]*:\/\//i;
+ const SCHEMES_WITHOUT_HOST = /^(?:data|mailto|tel|about|blob|chrome|view-source):/i;
+ 
+ export function displayUrl(url: string): string {
+   if (!url) return "about:blank";
+   if (url.startsWith("file://")) return homeRelative(url);
++  if (url.startsWith(`${DOC_SCHEME}://`)) return homeRelative(`file://${url.slice(`${DOC_SCHEME}://file`.length)}`);
+   return url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+ }
+ 
+@@ -69,6 +84,10 @@ function homeRelative(url: string): string {
+   }
+ }
+ 
++export function isMarkdownDocument(url: string): boolean {
++  return url.startsWith(`${DOC_SCHEME}://`) && MARKDOWN.test(url.split(/[?#]/)[0]);
++}
++
+ export function urlHost(url: string): string {
+   try {
+     return new URL(url).host;
+```
+
+**File**: `pnpm-lock.yaml` (modified, +813/-6)
+```diff
+@@ -4,6 +4,9 @@ settings:
+   autoInstallPeers: true
+   excludeLinksFromLockfile: false
+ 
++overrides:
++  katex: 0.18.11
++
+ importers:
+ 
+   .:
+@@ -20,25 +23,61 @@ importers:
+       '@zenbu-labs/pixel':
+         specifier: workspace:*
+         version: link:../pixel/packages/pixel
+-      micromark:
+-        specifier: ^4.0.2
+-        version: 4.0.2
+-      micromark-extension-gfm:
+-        specifier: ^3.0.0
+-        version: 3.0.0
++      pele:
++        specifier: 1.12.0
++        version: 1.12.0
+       react:
+         specifier: ^18.3.1
+         version: 18.3.1
+       react-grab:
+         specifier: 0.2.0
+         version: 0.2.0(react@18.3.1)
++      rehype-highlight:
++        specifier: 7.0.2
++        version: 7.0.2
++      rehype-katex:
++        specifier: 7.0.1
++        version: 7.0.1
++      rehype-raw:
++        specifier: 7.0.0
++        version: 7.0.0
++      rehype-sanitize:
++        specifier: 6.0.0
++        version: 6.0.0
++      rehype-slug:
++        specifier: 6.0.0
++        version: 6.0.0
++      rehype-stringify:
++        specifier: 10.0.1
++        version: 10.0.1
++      remark-frontmatter:
++        specifier: 5.0.0
++        version: 5.0.0
++      remark-gfm:
++        specifier: 4.0.1
++        version: 4.0.1
++      remark-math:
++        specifier: 6.0.0
++        version: 6.0.0
++      remark-parse:
++        specifier: 11.0.0
++        version: 11.0.0
++      remark-rehype:
++        specifier: 11.1.2
++        version: 11.1.2
+       shared:
+         specifier: workspace:*
+         version: link:../shared
++      unified:
++        specifier: 11.0.5
++        version: 11.0.5
+       zod:
+         specifier: ^4.4.3
+         version: 4.4.3
+     devDependencies:
++      '@types/hast':
++        specifier: 3.0.5
++        version: 3.0.5
+       '@types/node':
+         specifier: ^22.0.0
+         version: 22.20.1
+@@ -818,6 +857,15 @@ packages:
+   '@types/debug@4.1.13':
+     resolution: {integrity: sha512-KSVgmQmzMwPlmtljOomayoR89W4FynCAi3E8PPs7vmDVPe84hT+vGPKkJfThkmXs0x0jAaa9U8uW8bbfyS2fWw==}
+ 
++  '@types/hast@3.0.5':
++    resolution: {integrity: sha512-rp/ezSWaD1m44dPKICGhiskI13nVr7qTloFwDa/IYkhhf5nzwP+zIQcIJh3WIFSBOy/H1PzB40jPjMDksN4F+g==}
++
++  '@types/katex@0.16.8':
++    resolution: {integrity: sha512-trgaNyfU+Xh2Tc+ABIb44a5AYUpicB3uwirOioeOkNPPbmgRNtcWyDeeFRzjPZENO9Vq8gvVqfhaaXWLlevVwg==}
++
++  '@types/mdast@4.0.4':
++    resolution: {integrity: sha512-kGaNbPh1k7AFzgpud/gMdvIm5xuECykRR+JnWKQno9TAXVa6WIVCGTPvYGekIDL4uwCZQSYbUxNBSb1aUo79oA==}
++
+   '@types/ms@2.1.0':
+     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
+ 
+@@ -835,6 +883,12 @@ packages:
+   '@types/react@18.3.31':
+     resolution: {integrity: sha512-vfEqpXTvwT91yhmwdfouStN2hSKwTvyRs8qpLfADyrq/kxDw0hZM7Wk9Ug1FELj8hIby+S/+kQCSRFF32nv2Qw==}
+ 
++  '@types/unist@3.0.3':
++    resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
++
++  '@ungap/structured-clone@1.4.0':
++    resolution: {integrity: sha512-1mEZtMKPM09vDmQt5y7YvmN2+DFTP7Tg0EWXdic8/C6VRnpb33e4ghisCIE3WZjsE2N8mf+QV1Zqh7ZFYLWInQ==}
++
+   '@xmldom/xmldom@0.9.12':
+     resolution: {integrity: sha512-5AXjrcMClTryPe9LgZrygpB1lj7s0S9E0+W+AHaVKAVyHanafK86iPSvG5xHVSp/jC+VH1UXu0TAEmY279xH7A==}
+     engines: {node: '>=14.6'}
+@@ -847,6 +901,9 @@ packages:
+     resolution: {integrity: sha512-WpDfL7NO6j7tH88IDBNVdUJxDh9nmCteAVW9dsep846XdwF4naCBK+/tGLX3KJgcpgMRXCFlTM2hKGoK9FsdrQ==}
+     engines: {node: '>=12'}
+ 
++  bail@2.0.2:
++    resolution: {integrity: sha512-0xO6mYd7JB2YesxDKplafRpsiOzPt9V02ddPCLbY1xYGPOX24NTyN50qnUxgCPcSoYMhKpAuBTjQoRZCAkUDRw==}
++
+   base64-js@1.5.1:
+     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
+ 
+@@ -871,10 +928,19 @@ packages:
+   buffer@5.7.1:
+     resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
+ 
++  ccount@2.0.1:
++    resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
++
+   chalk@5.6.2:
+     resolution: {integrity: sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA==}
+     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
+ 
++  character-entities-html4@2.1.0:
++    resolution: {integrity: sha512-1v7fgQRj6hnSwFpq1Eu0ynr/CDEw0rXo2B61qXrLNdHZmPKgb7fqS1a2JwF0rISo9q77jDI8VMEHoApn8qDoZA==}
++
++  character-entities-legacy@3.0.0:
++    resolution: {integrity: sha512-RpPp0asT/6ufRm//AJVwpViZbGM/MkjQFxJccQRHmISF/22NBtsHqAWmL+/pmkPWoIUJdWyeVleTl1wydHATVQ==}
++
+   character-entities@2.0.2:
+     resolution: {integrity: sha512-shx7oQ0Awen/BRIdkjkvz54PnEEI/EjwXDSIZp86/KKdbafHh1Df/RYGBhn4hbe2+uKC9FnT5UCEdyPz3ai9hQ==}
+ 
+@@ -889,10 +955,17 @@ packages:
+     resolution: {integrity: sha512-bXfOC4QcT1tKXGorxL3wbJm6XJPDqEnij2gQ2m7ESQuE+/z9YFIWnl/5RpTiKWbMq3EVKR4fRLJGn6DVfu0mpw==}
+     engines: {node: '>=18.20'}
+ 
++  comma-separated-
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #223** (2026-10-30): Fix Continue with Google doing nothing (disable FedCM) (@RobPruzan)
+- **PR #218** (2026-10-29): Implmenet markdown rendering on .md files (@RobPruzan)
 - **PR #217** (2026-10-28): Add flag to remove chrome (@RobPruzan)
 - **PR #213** (2026-10-28): Stop registering the browser font by path (@Userfrom1995)
 - **PR #211** (2026-10-27): fix events not passing through iframes, add permission dialogue (@RobPruzan)
 - **PR #210** (2026-10-26): Fix input focus (@RobPruzan)
-- **PR #209** (2026-10-26): Add custom cursor API (@RobPruzan)
-- **PR #208** (2026-10-26): Add font fallbacks (@RobPruzan)
 
 ---
 
@@ -1754,40 +2105,44 @@ so the browser no longer needs to register it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add flag to remove chrome (#217)
+## X. Implmenet markdown rendering on .md files (#218)
 
 **RULE**:
-When implementing operations in `browser/src/session/layout.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `browser/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6e94e407`: add flag to remove chrome (#217). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2c175622`: Implmenet markdown rendering on .md files (#218). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `browser/src/session/layout.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `browser/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  bare = false,
-  const toolbarHeight = bare
-    ? 0
-    : Math.min(info.height - info.cellHeight, Math.round(info.basePx * 2.1));
-  const pad = bare ? 0 : Math.round(info.basePx * 0.45);
-  const padLeft = bare ? 0 : Math.round(info.basePx * 0.2);
-  const padBottom = bare ? 0 : Math.round(info.basePx * 0.2);
-    frame: bare ? 0 : Math.max(1, Math.round(scale)),
-    radius: bare ? 0 : Math.max(2, info.basePx * 0.55 - 1),
+    "pele": "1.12.0",
+    "rehype-highlight": "7.0.2",
+    "rehype-katex": "7.0.1",
+    "rehype-raw": "7.0.0",
+    "rehype-sanitize": "6.0.0",
+    "rehype-slug": "6.0.0",
+    "rehype-stringify": "10.0.1",
+    "remark-frontmatter": "5.0.0",
+    "remark-gfm": "4.0.1",
+    "remark-math": "6.0.0",
+    "remark-parse": "11.0.0",
+    "remark-rehype": "11.1.2",
+    "shared": "workspace:*",
+    "unified": "11.0.5",
+    "@types/hast": "3.0.5",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  const toolbarHeight = Math.min(info.height - info.cellHeight, Math.round(info.basePx * 2.1));
-  const pad = Math.round(info.basePx * 0.45);
-  const padLeft = Math.round(info.basePx * 0.2);
-  const padBottom = Math.round(info.basePx * 0.2);
-    frame: Math.max(1, Math.round(scale)),
+    "micromark": "^4.0.2",
+    "micromark-extension-gfm": "^3.0.0",
+    "shared": "workspace:*",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6e94e407` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2c175622` are properly handled with clean fallback behavior.

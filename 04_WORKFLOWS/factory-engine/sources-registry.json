@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T18:18:39.810Z",
-    "lastVerified": "2026-10-30T18:18:39.810Z",
+    "lastChecked": "2026-10-30T18:25:44.839Z",
+    "lastVerified": "2026-10-30T18:25:44.839Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -239,22 +239,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T17:51:40.858Z",
-    "lastVerified": "2026-10-30T17:51:40.858Z",
+    "lastChecked": "2026-10-30T18:25:41.012Z",
+    "lastVerified": "2026-10-30T18:25:41.012Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "6c4790eb39e05e75ee926022019ae2fc1450715a5f87a4f66b07fcb6c94d77cf",
+    "contentHash": "42dad306398d544dc60be5d926dc714fbc50a1451ef0aafc93f59f2211712a5e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "aa56dfcb"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1012,9 +1011,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-10-30T13:22:18.597Z",
+    "lastChecked": "2026-10-30T18:25:32.092Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-10-30T13:22:18.597Z"
+    "lastVerified": "2026-10-30T18:25:32.092Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -2736,9 +2735,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-10-29T01:17:56.125Z",
+    "lastChecked": "2026-10-30T18:25:34.508Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-10-29T01:17:56.125Z"
+    "lastVerified": "2026-10-30T18:25:34.508Z"
   },
   "asciinema-asciinema": {
     "name": "asciinema",
@@ -7124,14 +7123,14 @@
     "officialUrl": "https://github.com/zenbu-labs/terminal-browser",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T20:08:38.580Z",
-    "lastVerified": "2026-10-28T20:08:38.580Z",
+    "lastChecked": "2026-10-30T18:25:26.505Z",
+    "lastVerified": "2026-10-30T18:25:26.505Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zenbu-labs-terminal-browser",
-    "contentHash": "b620877f84f6e09744bfb4274b6e38b3fb1b2c815dd02c2d3cc7285d3cae08f4",
+    "contentHash": "6d1a6b3d33f754dd36c4d254eae3ef6bdb150aa9ec41dac7fa0b1e57b1f6c83f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8513,12 +8512,12 @@
     "lastVerified": "2026-10-29T10:58:58.043Z"
   },
   "fabio-rovai-open-ontologies": {
-    "name": "fabio-rovai/open-ontologies",
+    "name": "open-ontologies",
     "officialUrl": "https://github.com/fabio-rovai/open-ontologies",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T10:58:57.460Z",
-    "lastVerified": "2026-10-29T10:58:57.460Z",
+    "lastChecked": "2026-10-30T18:25:29.502Z",
+    "lastVerified": "2026-10-30T18:25:29.502Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fabio-rovai-open-ontologies",
@@ -8527,7 +8526,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "2ecb50c2"
   },
   "serpapi-google-search-results-nodejs": {
     "name": "google-search-results-nodejs",
@@ -10587,5 +10587,29 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "google-closure-compiler": {
+    "name": "google/closure-compiler",
+    "officialUrl": "https://github.com/google/closure-compiler",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-30T18:25:28.839Z",
+    "lastVerified": "2026-10-30T18:25:28.839Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-google-closure-compiler",
+    "contentHash": "401679b9af3b6f6a719476779521aec7c6c78dec8099280410ba29146b3a72d5",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mikelikesdesign-swiftui-experiments": {
+    "name": "SwiftUI-experiments",
+    "officialUrl": "https://github.com/mikelikesdesign/SwiftUI-experiments",
+    "lastChecked": "2026-10-30T18:25:26.956Z",
+    "revisionIdentifier": "b75268ca",
+    "lastVerified": "2026-10-30T18:25:26.956Z"
   }
 }

@@ -6268,3 +6268,6 @@ Every entry in this ledger must capture:
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `f876742c` | Multi-dimensional audit evidence | 2026-10-30T18:07:13.345Z |
 | `learn-github-wzh4869-appports` | `https://github.com/wzh4869/AppPorts` | `920a38ca` | Multi-dimensional audit evidence | 2026-10-30T18:13:39.110Z |
 | `learn-github-scrapinghub-dateparser` | `https://github.com/scrapinghub/dateparser` | `b1a87f9f` | Multi-dimensional audit evidence | 2026-10-30T18:18:37.261Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `9067b20c` | Multi-dimensional audit evidence | 2026-10-30T18:25:28.441Z |
+| `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `7a8ed58c` | Multi-dimensional audit evidence | 2026-10-30T18:25:30.380Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8e1490fa` | Multi-dimensional audit evidence | 2026-10-30T18:25:42.285Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T18:18:37.206Z",
+  "last_updated": "2026-10-30T18:25:42.206Z",
   "total_verified_learnings": 1176,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8772,8 +8772,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "aa56dfcb",
-      "content_hash": "6c4790eb39e05e75ee926022019ae2fc1450715a5f87a4f66b07fcb6c94d77cf",
+      "source_version": "8e1490fa",
+      "content_hash": "42dad306398d544dc60be5d926dc714fbc50a1451ef0aafc93f59f2211712a5e",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -9076,6 +9076,11 @@
           "number": 5750,
           "title": "build(deps): bump Swatinem/rust-cache from 2.9.1 to 2.9.3 (#4961)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5827,
+          "title": "docs(changelog): mention qsv-clientd-tray in the 27.0.1 highlights",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9083,7 +9088,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:09:10.768Z",
+      "verified_at": "2026-10-30T18:25:42.187Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58405,8 +58410,8 @@
       "slug": "zenbu-labs-terminal-browser",
       "platform": "github",
       "source_url": "https://github.com/zenbu-labs/terminal-browser",
-      "source_version": "6e94e407",
-      "content_hash": "b620877f84f6e09744bfb4274b6e38b3fb1b2c815dd02c2d3cc7285d3cae08f4",
+      "source_version": "9067b20c",
+      "content_hash": "6d1a6b3d33f754dd36c4d254eae3ef6bdb150aa9ec41dac7fa0b1e57b1f6c83f",
       "dossier_path": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md",
       "promoted_rules": [
@@ -58439,6 +58444,11 @@
           "number": 5388,
           "title": "add flag to remove chrome (#217)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5825,
+          "title": "Implmenet markdown rendering on .md files (#218)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58446,7 +58456,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T20:08:39.314Z",
+      "verified_at": "2026-10-30T18:25:28.339Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71990,8 +72000,8 @@
       "slug": "google-closure-compiler",
       "platform": "github",
       "source_url": "https://github.com/google/closure-compiler",
-      "source_version": "a2a176a5",
-      "content_hash": "84409828d433f47a93a0537a0d0d5b43b7ffb58a20bd21d890b234da5066ba63",
+      "source_version": "7a8ed58c",
+      "content_hash": "401679b9af3b6f6a719476779521aec7c6c78dec8099280410ba29146b3a72d5",
       "dossier_path": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
       "promoted_rules": [
@@ -72009,6 +72019,11 @@
           "number": 4880,
           "title": "Pin current behavior of private-element lowering bugs.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5826,
+          "title": "Fixed a crash when a property logical assignment (e.g. `o.p ??= v`) appears in t",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72016,7 +72031,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T15:18:53.195Z",
+      "verified_at": "2026-10-30T18:25:30.281Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154703,6 +154718,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T18:18:37.194Z"
+    },
+    "rule-5825": {
+      "learning_id": "rule-5825",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5825,
+      "title": "Implmenet markdown rendering on .md files (#218)",
+      "source_url": "https://github.com/zenbu-labs/terminal-browser",
+      "source_version": "9067b20c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T18:25:28.339Z"
+    },
+    "rule-5826": {
+      "learning_id": "rule-5826",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5826,
+      "title": "Fixed a crash when a property logical assignment (e.g. `o.p ??= v`) appears in t",
+      "source_url": "https://github.com/google/closure-compiler",
+      "source_version": "7a8ed58c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T18:25:30.281Z"
+    },
+    "rule-5827": {
+      "learning_id": "rule-5827",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5827,
+      "title": "docs(changelog): mention qsv-clientd-tray in the 27.0.1 highlights",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "8e1490fa",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T18:25:42.187Z"
     }
   },
   "aliases": {

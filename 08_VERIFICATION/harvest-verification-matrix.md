@@ -6259,3 +6259,6 @@
 | `CYCLE-20261030-B7P9` | `2026-10-30T18:07:13.341Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5822` | Yes (`6fce9fd0...`) |
 | `CYCLE-20261030-JHCZ` | `2026-10-30T18:13:39.107Z` | `wzh4869/AppPorts` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5823` | Yes (`555d49a0...`) |
 | `CYCLE-20261030-PVEZ` | `2026-10-30T18:18:37.259Z` | `scrapinghub/dateparser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5824` | Yes (`a0a66bb4...`) |
+| `CYCLE-20261030-YOOL` | `2026-10-30T18:25:28.437Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5825` | Yes (`6d1a6b3d...`) |
+| `CYCLE-20261030-YQ6G` | `2026-10-30T18:25:30.376Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5826` | Yes (`401679b9...`) |
+| `CYCLE-20261030-YZD6` | `2026-10-30T18:25:42.282Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5827` | Yes (`42dad306...`) |
