@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-55MI",
-    "timestamp": "2026-10-28T10:03:16.794Z",
-    "repository": "xerj-org/xerj",
-    "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "d7c4faa87db4867788c77a391bb09022f2a842fc5d8ec120c8ec9ab41020ff38",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-9GJO",
-    "timestamp": "2026-10-28T10:06:37.572Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "6e1a1a1b546d1d9454ac4b20609bc0451215b2f71c8b99d48a9c2e5963e51a04",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-QOEO",
     "timestamp": "2026-10-28T10:20:00.912Z",
     "repository": "PSRben/VisionHOPE",
@@ -7490,6 +7460,36 @@
     "repository": "mobile-next/mobile-mcp",
     "learningId": "learn-github-mobile-next-mobile-mcp",
     "contentHash": "c3d803148d7d6a448648038c8109a2ed0d99d36323071a820e809433dcef71c1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-U9D3",
+    "timestamp": "2026-10-30T16:30:03.495Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "5248660f00db245b41c977031c08902af0eb77dfe47ac5c45e8bbd4d7d4b6f60",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-XQRI",
+    "timestamp": "2026-10-30T16:32:46.014Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "e1d403365c53f181ab8e4eec63b14b35828ed9d1fcbbbeb7d0966dd2245fcefb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

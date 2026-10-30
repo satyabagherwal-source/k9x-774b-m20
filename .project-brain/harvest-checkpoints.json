@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T16:22:35.424Z",
+  "last_updated": "2026-10-30T16:32:46.027Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "5ceb7cca1bfa79a95aebb25ec1055d5d2680ef584d6572b6e67a6c9542e016eb",
-      "verified_at": "2026-10-29T00:23:00.234Z",
+      "content_hash": "e1d403365c53f181ab8e4eec63b14b35828ed9d1fcbbbeb7d0966dd2245fcefb",
+      "verified_at": "2026-10-30T16:32:46.026Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T00:23:00.234Z"
+      "last_updated": "2026-10-30T16:32:46.026Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "4fbc6f7d791cba5b646d24136267690ed92ba8250c0caa93bfb70fcd80933744",
-      "verified_at": "2026-10-28T23:18:58.447Z",
+      "content_hash": "5248660f00db245b41c977031c08902af0eb77dfe47ac5c45e8bbd4d7d4b6f60",
+      "verified_at": "2026-10-30T16:30:03.508Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T23:18:58.447Z"
+      "last_updated": "2026-10-30T16:30:03.508Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",

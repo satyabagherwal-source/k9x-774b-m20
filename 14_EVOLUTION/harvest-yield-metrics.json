@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T16:22:35.420Z",
-  "total_cycles_completed": 6213,
-  "total_learnings_persisted": 6213,
-  "total_rules_promoted": 5768,
+  "last_updated": "2026-10-30T16:32:46.023Z",
+  "total_cycles_completed": 6215,
+  "total_learnings_persisted": 6215,
+  "total_rules_promoted": 5770,
   "history": [
-    {
-      "timestamp": "2026-10-29T12:13:33.989Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T12:16:50.151Z",
-      "repository": "unhappychoice/gitlogue",
-      "learningId": "learn-github-unhappychoice-gitlogue",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T12:19:43.268Z",
       "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T16:22:35.420Z",
       "repository": "mobile-next/mobile-mcp",
       "learningId": "learn-github-mobile-next-mobile-mcp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T16:30:03.504Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T16:32:46.023Z",
+      "repository": "beclab/Olares",
+      "learningId": "learn-github-beclab-olares",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "3a1a0fb1",
+    "sourceVersion": "f58f1935",
     "license": "AGPL-3.0",
-    "contentHash": "5ceb7cca1bfa79a95aebb25ec1055d5d2680ef584d6572b6e67a6c9542e016eb",
-    "lastHarvestedAt": "2026-10-29T00:23:00.226Z",
+    "contentHash": "e1d403365c53f181ab8e4eec63b14b35828ed9d1fcbbbeb7d0966dd2245fcefb",
+    "lastHarvestedAt": "2026-10-30T16:32:46.018Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "741cb9ad",
+    "sourceVersion": "45e00d4d",
     "license": "Apache-2.0",
-    "contentHash": "4fbc6f7d791cba5b646d24136267690ed92ba8250c0caa93bfb70fcd80933744",
-    "lastHarvestedAt": "2026-10-28T23:18:58.439Z",
+    "contentHash": "5248660f00db245b41c977031c08902af0eb77dfe47ac5c45e8bbd4d7d4b6f60",
+    "lastHarvestedAt": "2026-10-30T16:30:03.499Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {

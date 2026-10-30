@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T16:22:35.330Z",
+  "last_updated": "2026-10-30T16:32:45.937Z",
   "total_verified_learnings": 1175,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4299,8 +4299,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "3a1a0fb1",
-      "content_hash": "5ceb7cca1bfa79a95aebb25ec1055d5d2680ef584d6572b6e67a6c9542e016eb",
+      "source_version": "f58f1935",
+      "content_hash": "e1d403365c53f181ab8e4eec63b14b35828ed9d1fcbbbeb7d0966dd2245fcefb",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -4378,6 +4378,11 @@
           "number": 5472,
           "title": "docs: add bilingual Immich NAS upload storage guide (#4312)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5800,
+          "title": "docs: retire outdated protocol development guides (#4346)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4385,7 +4390,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T00:23:00.132Z",
+      "verified_at": "2026-10-30T16:32:45.918Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -34957,8 +34962,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "741cb9ad",
-      "content_hash": "4fbc6f7d791cba5b646d24136267690ed92ba8250c0caa93bfb70fcd80933744",
+      "source_version": "45e00d4d",
+      "content_hash": "5248660f00db245b41c977031c08902af0eb77dfe47ac5c45e8bbd4d7d4b6f60",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -35011,6 +35016,11 @@
           "number": 5452,
           "title": "docs: add guide for using LanceDB in VS Code extensions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5799,
+          "title": "python): pin an available pylance wheel on macOS",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -35018,7 +35028,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T23:18:58.312Z",
+      "verified_at": "2026-10-30T16:30:03.402Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154200,6 +154210,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T16:22:35.310Z"
+    },
+    "rule-5799": {
+      "learning_id": "rule-5799",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5799,
+      "title": "python): pin an available pylance wheel on macOS",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "45e00d4d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T16:30:03.402Z"
+    },
+    "rule-5800": {
+      "learning_id": "rule-5800",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5800,
+      "title": "docs: retire outdated protocol development guides (#4346)",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "f58f1935",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T16:32:45.918Z"
     }
   },
   "aliases": {

@@ -6245,3 +6245,5 @@ Every entry in this ledger must capture:
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `0be3cd1c` | Multi-dimensional audit evidence | 2026-10-30T16:00:43.854Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `e29d9471` | Multi-dimensional audit evidence | 2026-10-30T16:00:45.482Z |
 | `learn-github-mobile-next-mobile-mcp` | `https://github.com/mobile-next/mobile-mcp` | `5ca473ff` | Multi-dimensional audit evidence | 2026-10-30T16:22:35.414Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `45e00d4d` | Multi-dimensional audit evidence | 2026-10-30T16:30:03.499Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `f58f1935` | Multi-dimensional audit evidence | 2026-10-30T16:32:46.018Z |

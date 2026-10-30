@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source**: github ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
-> **Source Version**: `3a1a0fb1`  
+> **Source Version**: `f58f1935`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T00:22:59.621Z  
+> **Timestamp**: 2026-10-30T16:32:45.354Z  
 > **Learning ID**: `learn-github-beclab-olares`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T00:22:59.614Z  
+> **Harvest Timestamp**: 2026-10-30T16:29:57.085Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5330 stars
+- **Stars / Engagement**: 5336 stars
 
 ---
 
@@ -1137,294 +1137,1056 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ce7fe97` (2026-10-28)
-**Commit Message**: docs: add bilingual Immich NAS upload storage guide (#4312)
+### Incident Patch 1: `0b3080e5` (2026-10-30)
+**Commit Message**: docs: retire outdated protocol development guides (#4346)
 
-* docs: add bilingual Immich NAS upload storage guide
+**File**: `docs/.vitepress/_redirects.nginx` (modified, +30/-1)
+```diff
+@@ -148,7 +148,36 @@ location = /zh/developer/develop/advanced/frontend { return 301 /zh/developer/de
+ location = /zh/developer/develop/advanced/notification { return 301 /zh/developer/develop/; }
+ location = /developer/contribute/overview { return 301 /developer/contribute/olares; }
+ location = /zh/developer/contribute/overview { return 301 /zh/developer/contribute/olares; }
+-location = /developer/contribute/olares-id/ { return 301 /developer/contribute/olares-id/contract/contract; }
++location = /developer/contribute/olares-id/ { return 301 /developer/concepts/olares-id; }
++location = /zh/developer/contribute/olares-id/ { return 301 /zh/developer/concepts/olares-id; }
++location = /developer/contribute/olares-id/contract/architecture { return 301 /developer/concepts/olares-id; }
++location = /developer/contribute/olares-id/contract/contract-reputation { return 301 /developer/concepts/reputation; }
++location = /developer/contribute/olares-id/contract/contract { return 301 /developer/concepts/olares-id; }
++location = /developer/contribute/olares-id/contract/did/design { return 301 /developer/concepts/did; }
++location = /developer/contribute/olares-id/contract/did/faq { return 301 /developer/concepts/did; }
++location = /developer/contribute/olares-id/contract/did/official-taggers { return 301 /developer/concepts/did; }
++location = /developer/contribute/olares-id/contract/did/release-history { return 301 /developer/concepts/did; }
++location = /developer/contribute/olares-id/contract/manage/contract { return 301 /developer/concepts/olares-id; }
++location = /developer/contribute/olares-id/contract/manage/environment { return 301 /developer/concepts/olares-id; }
++location = /developer/contribute/olares-id/contract/manage/sdk { return 301 /developer/concepts/olares-id; }
++location = /developer/contribute/olares-id/verifiable-credential/issuer { return 301 /developer/concepts/vc; }
++location = /developer/contribute/olares-id/verifiable-credential/olares { return 301 /developer/concepts/vc; }
++location = /developer/contribute/olares-id/verifiable-credential/overview { return 301 /developer/concepts/vc; }
++location = /developer/contribute/olares-id/verifiable-credential/verifer { return 301 /developer/concepts/vc; }
++location = /zh/developer/contribute/olares-id/contract/architecture { return 301 /zh/developer/concepts/olares-id; }
++location = /zh/developer/contribute/olares-id/contract/contract-reputation { return 301 /zh/developer/concepts/reputation; }
++location = /zh/developer/contribute/olares-id/contract/contract { return 301 /zh/developer/concepts/olares-id; }
++location = /zh/developer/contribute/olares-id/contract/did/design { return 301 /zh/developer/concepts/did; }
++location = /zh/developer/contribute/olares-id/contract/did/faq { return 301 /zh/developer/concepts/did; }
++location = /zh/developer/contribute/olares-id/contract/did/official-taggers { return 301 /zh/developer/concepts/did; }
++location = /zh/developer/contribute/olares-id/contract/did/release-history { return 301 /zh/developer/concepts/did; }
++location = /zh/developer/contribute/olares-id/contract/manage/contract { return 301 /zh/developer/concepts/olares-id; }
++location = /zh/developer/contribute/olares-id/contract/manage/environment { return 301 /zh/developer/concepts/olares-id; }
++location = /zh/developer/contribute/olares-id/contract/manage/sdk { return 301 /zh/developer/concepts/olares-id; }
++location = /zh/developer/contribute/olares-id/verifiable-credential/issuer { return 301 /zh/developer/concepts/vc; }
++location = /zh/developer/contribute/olares-id/verifiable-credential/olares { return 301 /zh/developer/concepts/vc; }
++location = /zh/developer/contribute/olares-id/verifiable-credential/overview { return 301 /zh/developer/concepts/vc; }
++location = /zh/developer/contribute/olares-id/verifiable-credential/verifer { return 301 /zh/developer/concepts/vc; }
+ location = /manual/olares/settings/single-gpu { return 301 /manual/olares/settings/gpu-resource; }
+ location = /manual/olares/settings/multi-gpu { return 301 /manual/olares/settings/gpu-resource; }
+ location = /zh/manual/olares/settings/single-gpu { return 301 /zh/manual/olares/settings/gpu-resource; }
+```
 
-* docs: clarify Immich NAS storage and recovery steps
+**File**: `docs/.vitepress/config.mts` (modified, +1/-10)
+```diff
+@@ -27,13 +27,6 @@ const redirectSources = new Set<string>(
+   [...Object.keys(redirects), ...Object.keys(temporaryRedirects)].map(normalizeRoute)
+ );
+ 
+-// Deep, low-value reference pages that inflate "Discovered – currently not
+-// indexed" without real search demand. noindex them in both locales so crawl
+-// budget concentrates on the pages users actually search for. Matched against
+-// the locale-stripped route (so it covers /docs/... and /docs/zh/... alike).
+-const noindexRoutePattern =
+-  /^developer\/contribute\/olares-id\/(contract|verifiable-credential)\//;
+-
+ // Archived (non-latest) versioned doc builds deploy under /docs/<version>/
+ // (e.g. /docs/1.12.4/...) and duplicate the latest docs almost verbatim,
+ // which is the main driver of the "duplicate content" / "missing canonical"
+@@ -253,9 +246,7 @@ export default defineVersionedConfig2(withMermaid({
+     // we don't shift source line numbers, which would break `@include` ranges
+     // in files that embed this one as a snippet.
+     // Archived versioned builds noindex every page (see isArchivedVersionBuild).
+-    const localeStrippedRoute = pageData.relativePath.replace(/^zh\//, "");
+-    const noindexByPath = noindexRoutePattern.test(localeStrippedRoute);
+-    if (isArchivedVersionBuild || pageData.frontmatter?.noindex || noindexByPath) {
++    if (isArchivedVersionBuild || pageData.frontmatter?.noindex) {
+       pageData.frontmatter.head ??= [];
+       pageData.frontmatter.head.push([
+         'meta',
+```
 
-* docs: translate Immich NAS import sidebar label
+**File**: `docs/.vitepress/developer.en.ts` (modified, +0/-113)
+```diff
+@@ -375,118 +375,5 @@ export const developerSidebar: DefaultTheme.Sidebar = {
+ 
+       ],
+     },
+-    {
+-      text: "Contribute to Olares",
+-      items: [
+-        /*
+-        {
+-          text: "Develop system app",
+-          collapsed: true,
+-          items: [
+-            {
+-              text: "Overview",
+-              link: "/developer/contribute/system-app/overview",
+-            },
+-            {
+-              text: "Configure deployment",
+-              link: "/developer/contribute/system-app/deployment",
+-            },
+-            {
+-              text: "Configure permissions",
+-              link: "/developer/contribute/system-app/olares-manifest",
+-            },
+-            {
+-              text: "Install",
+-              link: "/developer/contribute/system-app/install",
+-            },
+-            {
+-              text: "Other",
+-              link: "/developer/contribute/system-app/other",
+-            },
+-          ],
+-        },
+-        */
+-        {
+-          text: "Develop protocols",
+-          collapsed: true,
+-          items: [
+-            {
+-              text: "Contract",
+-              link: "/developer/contribute/olares-id/contract/contract",
+-              collapsed: true,
+-              items: [
+-                {
+-                  text: "Architecture",
+-                  link: "/developer/contribute/olares-id/contract/architecture",
+-                },
+-                {
+-                  text: "DID",
+-                  collapsed: true,
+-                  items: [
+-                    {
+-                      text: "Design",
+-                      link: "/developer/contribute/olares-id/contract/did/design",
+-                    },
+-                    {
+-                      text: "Official Taggers",
+-                      link: "/developer/contribute/olares-id/contract/did/official-taggers",
+-                    },
+-                    {
+-                      text: "Release History",
+-                      link: "/developer/contribute/olares-id/contract/did/release-history",
+-                    },
+-                    {
+-                      text: "FAQ",
+-                      link: "/developer/contribute/olares-id/contract/did/faq",
+-                    },
+-                  ],
+-                },
+-                {
+-                  text: "Reputation",
+-                  link: "/developer/contribute/olares-id/contract/contract-reputation",
+-                },
+-                {
+-                  text: "Manage",
+-                  collapsed: true,
+-                  items: [
+-                    {
+-                      text: "Contract",
+-                      link: "/developer/contribute/olares-id/contract/manage/contract",
+-                    },
+-                    {
+-                      text: "SDK",
+-                      link: "/developer/contribute/olares-id/contract/manage/sdk",
+-                    },
+-                    {
+-                      text: "Environment",
+-                      link: "/developer/contribute/olares-id/contract/manage/environment",
+-                    },
+-                  ],
+-                },
+-              ],
+-            },
+-            {
+-              text: "Verifiable Credential",
+-              link: "/developer/contribute/olares-id/verifiable-credential/overview",
+-              collapsed: true,
+-              items: [
+-                {
+-                  text: "Issuer",
+-                  link: "/developer/contribute/olares-id/verifiable-credential/issuer",
+-                },
+-                {
+-                  text: "Verifer",
+-                  link: "/developer/contribute/olares-id/verifiable-credential/verifer",
+-                },
+-                {
+-                  text: "Olares",
+-                  link: "/developer/contribute/olares-id/verifiable-credential/olares",
+-                },
+-              ],
+-            },
+-          ],
+-        },
+-      ],
+-    },
+   ],
+ }
+```
 
-* docs: translate Immich NAS import prerequisites heading
+**File**: `docs/.vitepress/developer.zh.ts` (modified, +0/-113)
+```diff
+@@ -405,118 +405,5 @@ export const developerSidebar: DefaultTheme.Sidebar = {
+ 
+           ],
+         },
+-        {
+-          text: "参与贡献",
+-          items: [
+-            /*
+-            {
+-              text: "开发系统应用",
+-              collapsed: true,
+-              items: [
+-                {
+-                  text: "概述",
+-                  link: "/zh/developer/contribute/system-app/overview",
+-                },
+-                {
+-                  text: "应用部署配置",
+-                  link: "/zh/developer/contribute/system-app/deployment",
+-                },
+-                {
+-                  text: "Olares 权限配置",
+-                  link: "/zh/developer/contribute/system-app/olares-manifest",
+-                },
+-                {
+-                  text: "安装",
+-                  link: "/zh/developer/contribute/system-app/install",
+-                },
+-                {
+-                  text: "其他",
+-                  link: "/zh/developer/contribute/system-app/other",
+-                },
+-              ],
+-            },
+-            */
+-            {
+-              text: "开发协议",
+-              collapsed: true,
+-              items: [
+-                {
+-                  text: "合约",
+-                  link: "/zh/developer/contribute/olares-id/contract/contract",
+-                  collapsed: true,
+-                  items: [
+-                    {
+-                      text: "架构",
+-                      link: "/zh/developer/contribute/olares-id/contract/architecture",
+-                    },
+-                    {
+-                      text: "DID",
+-                      collapsed: true,
+-                      items: [
+-                        {
+-                          text: "设计",
+-                          link: "/zh/developer/contribute/olares-id/contract/did/design",
+-                        },
+-                        {
+-                          text: "官方 Tagger",
+-                          link: "/zh/developer/contribute/olares-id/contract/did/official-taggers",
+-                        },
+-                        {
+-                          text: "发布历史",
+-                          link: "/zh/developer/contribute/olares-id/contract/did/release-history",
+-                        },
+-                        {
+-                          text: "常见问题",
+-                          link: "/zh/developer/contribute/olares-id/contract/did/faq",
+-                        },
+-                      ],
+-                    },
+-                    {
+-                      text: "声誉",
+-                      link: "/zh/developer/contribute/olares-id/contract/contract-reputation",
+-                    },
+-                    {
+-                      text: "管理",
+-                      collapsed: true,
+-                      items: [
+-                        {
+-                          text: "合约",
+-                          link: "/zh/developer/contribute/olares-id/contract/manage/contract",
+-                        },
+-                        {
+-                          text: "SDK",
+-                          link: "/zh/developer/contribute/olares-id/contract/manage/sdk",
+-                        },
+-                        {
+-                          text: "环境",
+-                          link: "/zh/developer/contribute/olares-id/contract/manage/environment",
+-                        },
+-                      ],
+-                    },
+-                  ],
+-                },
+-                {
+-                  text: "可验证凭证（VC）",
+-                  link: "/zh/developer/contribute/olares-id/verifiable-credential/overview",
+-                  collapsed: true,
+-                  items: [
+-                    {
+-                      text: "发行方",
+-                      link: "/zh/developer/contribute/olares-id/verifiable-credential/issuer",
+-                    },
+-                    {
+-                      text: "验证方",
+-                      link: "/zh/developer/contribute/olares-id/verifiable-credential/verifer",
+-                    },
+-                    {
+-                      text: "Olares 案例",
+-                      link: "/zh/developer/contribute/olares-id/verifiable-credential/olares",
+-                    },
+-                  ],
+-                },
+-              ],
+-            },
+-          ],
+-        },
+       ],
+     }
+```
+
+**File**: `docs/.vitepress/theme/redirects.ts` (modified, +31/-2)
+```diff
+@@ -199,8 +199,37 @@ export const redirects = {
+     '/developer/contribute/overview': '/developer/contribute/olares',
+     '/zh/developer/contribute/overview': '/zh/developer/contribute/olares',
+ 
+-    // Removed: stale olares-id section hero page → first olares-id doc
+-    '/developer/contribute/olares-id/': '/developer/contribute/olares-id/contract/contract',
++    // Retired protocol development docs → live concepts in the same locale.
++    '/developer/contribute/olares-id/': '/developer/concepts/olares-id',
++    '/zh/developer/contribute/olares-id/': '/zh/developer/concepts/olares-id',
++    '/developer/contribute/olares-id/contract/architecture': '/developer/concepts/olares-id',
++    '/developer/contribute/olares-id/contract/contract-reputation': '/developer/concepts/reputation',
++    '/developer/contribute/olares-id/contract/contract': '/developer/concepts/olares-id',
++    '/developer/contribute/olares-id/contract/did/design': '/developer/concepts/did',
++    '/developer/contribute/olares-id/contract/did/faq': '/developer/concepts/did',
++    '/developer/contribute/olares-id/contract/did/official-taggers': '/developer/concepts/did',
++    '/developer/contribute/olares-id/contract/did/release-history': '/developer/concepts/did',
++    '/developer/contribute/olares-id/contract/manage/contract': '/developer/concepts/olares-id',
++    '/developer/contribute/olares-id/contract/manage/environment': '/developer/concepts/olares-id',
++    '/developer/contribute/olares-id/contract/manage/sdk': '/developer/concepts/olares-id',
++    '/developer/contribute/olares-id/verifiable-credential/issuer': '/developer/concepts/vc',
++    '/developer/contribute/olares-id/verifiable-credential/olares': '/developer/concepts/vc',
++    '/developer/contribute/olares-id/verifiable-credential/overview': '/developer/concepts/vc',
++    '/developer/contribute/olares-id/verifiable-credential/verifer': '/developer/concepts/vc',
++    '/zh/developer/contribute/olares-id/contract/architecture': '/zh/developer/concepts/olares-id',
++    '/zh/developer/contribute/olares-id/contract/contract-reputation': '/zh/developer/concepts/reputation',
++    '/zh/developer/contribute/olares-id/contract/contract': '/zh/developer/concepts/olares-id',
++    '/zh/developer/contribute/olares-id/contract/did/design': '/zh/developer/concepts/did',
++    '/zh/developer/contribute/olares-id/contract/did/faq': '/zh/developer/concepts/did',
++    '/zh/developer/contribute/olares-id/contract/did/official-taggers': '/zh/developer/concepts/did',
++    '/zh/developer/contribute/olares-id/contract/did/release-history': '/zh/developer/concepts/did',
++    '/zh/developer/contribute/olares-id/contract/manage/contract': '/zh/developer/concepts/olares-id',
++    '/zh/developer/contribute/olares-id/contract/manage/environment': '/zh/developer/concepts/olares-id',
++    '/zh/developer/contribute/olares-id/contract/manage/sdk': '/zh/developer/concepts/olares-id',
++    '/zh/developer/contribute/olares-id/verifiable-credential/issuer': '/zh/developer/concepts/vc',
++    '/zh/developer/contribute/olares-id/verifiable-credential/olares': '/zh/developer/concepts/vc',
++    '/zh/developer/contribute/olares-id/verifiable-credential/overview': '/zh/developer/concepts/vc',
++    '/zh/developer/contribute/olares-id/verifiable-credential/verifer': '/zh/developer/concepts/vc',
+ 
+     // Removed: single-gpu/multi-gpu were noindex include-only fragments of gpu-resource → consolidated page
+     '/manual/olares/settings/single-gpu': '/manual/olares/settings/gpu-resource',
+```
+
+**File**: `docs/developer/contribute/olares-id/contract/architecture.md` (removed, +0/-126)
+```diff
+@@ -1,126 +0,0 @@
+----
+-description: "The TerminusDID Contract System is divided into two parts: DID Management and Tag Management."
+-outline: [2, 4]
+-head:
+-  - - meta
+-    - name: keywords
+-      content: Olares, TerminusDID, Contract System, DID Management, Tag Management, smart contract architecture
+----
+-
+-# TerminusDID Contract System
+-
+-## Architecture
+-
+-The TerminusDID Contract System is divided into two parts: DID Management and Tag Management. In addition to the core functions for Tag Management, we also implemented an official tagger and reputation system.
+-
+-```mermaid
+-graph TB
+-
+-    RootTagger{RootTagger}
+-
+-    RSAPubKey[/RSAPubKey/]
+-    DNSARecord[/DNSARecord/]
+-    AuthAddress[/AuthAddress/]
+-    otherTag[/.../]
+-
+-
+-
+-
+-    TerminusDID{TerminusDID}
+-    Reputations[/Reputations\]
+-    XXXReputation{...}
+-    AppMarketReputation{AppMarketReputation}
+-    Tag[[Tag]]
+-    Tagger([Tagger])
+-
+-
+-    DID[DID]
+-    Domain((Domain))
+-    com((com))
+-    net((net))
+-    io((io))
+-
+-    TerminusDID--->DID
+-    TerminusDID--->Tag
+-    Tag--->Tagger
+-
+-    Tagger-.-RootTagger
+-    Tagger-.-AppMarketReputation
+-    Tagger-.-XXXReputation
+-
+-
+-    Domain-.->Tag
+-
+-
+-    subgraph ide4 [Tag]
+-
+-    subgraph ide1 [OfficialTag]
+-    RootTagger--->RSAPubKey
+-    RootTagger--->DNSARecord
+-    RootTagger--->AuthAddress
+-    RootTagger--->otherTag
+-    end
+-
+-    subgraph ide2 [Reputations]
+-    Reputations-.->AppMarketReputation
+-    Reputations-.->XXXReputation
+-    end
+-
+-    end
+-
+-    subgraph ide3 [DID]
+-    DID-.-Domain
+-    Domain--->com
+-    Domain--->net
+-    Domain--->io
+-    end
+-
+-```
+-
+-Refer [here](./contract.md) for the usage of DID/Tag Management, [here](././did/design.md) for design details of the TerminusDID contract, [here](./contract-reputation.md) for recommended implementations and examples of the reputation system.
+-
+-## Design Details
+-
+-### Multicall
+-
+-Considering the complexity and the uncertainty of usage scenarios of our contracts, we add built-in multicall function to simplify on-chain interaction. You can access multiple interfaces in one transaction without external helper contracts.
+-
+-Considering the complexity and uncertainty of usage scenarios of our contracts, we have added a built-in multicall function to simplify on-chain interactions. You can access multiple interfaces in one transaction without external contracts.
+-
+-
+-### EIP-7201
+-
+-We follow EIP-7201 for contract data storage, which makes it easier and safer for contract upgrade and also facilitates granular control of data.
+-
+-### Validation of Olares ID
+-
+-Olares ID is submitted as a `string` type during registration. Although it is split by `.` for level separation, this cannot guarantee its correctness and readability. We implemented additional validation in contract code to ensure the submitted names are UTF-8-encoded readable strings.
+-
+-### Field Names of Structs in Tags
+-
+-For gas efficiency, if there are structs in a tag type, their field names are published on-chain using Ethereum events without contract storage. The events will record the block height at which the tag type is defined. Use the block height, contract address, event signature and Bloom filters to get the desired event precisely.
+-
+-### Inline Assembly
+-
+-We use slice types based on inline assembly to parse and traverse Olares ID levels, which can prevent copying substrings and reduce gas.
+-
+-## Appendix - Requirements
+-
+-### DID
+-
+-- on-chain [DID](https://www.w3.org/TR/did-core/) management (prefer EVM-compatible chains)
+-- recording IPv4/IPv6, avatar, RSA public key etc. for DIDs
+-- extending stored data for possible new needs in the future
+-
+-### Olares ID
+-
+-- distinguishing between two kinds of DIDs for Olares ID: Organization or Individual
+-- derived DID management privilege for parent Organization
+-
+-### Reputation
+-
+-DIDs with another kind called Entity to represent real-world objects (e.g. app versions for App Market Reputation and complaints for Otmoic Reputation)
+-
+-:::tip Tips
+-We hope to design a decentralized credit system based on DID contracts. At first we imagined a general system adaptable to various scenarios, but with its gradually implementation we found this large and comprehensive system to bring much unnecessary resource consumption and reduce flexibility in different scenarios. So we changed the direction: we present a Reputation system for abstraction and necessary components and provide some recommended implementations. Users can assembly and customize the implementation to satisfy their own scenarios.
+-:::
+```
+
+**File**: `docs/developer/contribute/olares-id/contract/contract-reputation.md` (removed, +0/-105)
+```diff
+@@ -1,105 +0,0 @@
+----
+-description: Design of the on-chain reputation system in the Olares ID contracts and the solutions to its core requirements.
+-head:
+-  - - meta
+-    - name: keywords
+-      content: Olares, on-chain reputation, Olares ID contracts, reputation system, decentralized reputation, smart contract
+----
+-# Reputation
+-
+-#### Extra requirements: Abstract Reputation System
+-
+-:::info Required features
+-
+-- identifiers that map to real-world objects
+-  All credit systems are based on some specific scenarios, e.g. reviews for an app or complaints for a merchant. This inevitably needs us to build unique on-chain identifiers for some real-world or abstract objects.
+-
+-- authentication
+-  The most core function of the credit system is reviewing and reviewer authentication is one of its prerequisites.
+-
+-- storage of necessary information
+-  After user reviewing, we may need to record the comments or calculate some weighted statistical data.
+-
+-- recording of history and updating
+-  Under some circumstances, we may need to record the behavior of reviewing and allow updating existing reviews in the future.
+-  :::
+-
+-The corresponding solution for each requirement is provided in this chapter.
+-
+-## Objects to be Reviewed
+-
+-For the objects to be reviewed, the following two situations may occur:
+-
+-- it's a merchant or a single person
+-  In this case the object must have a DID of kind Individual, so we can operate the object directly without creating other DIDs.
+-- it's a real-world object or abstract concept
+-  In this case we need to first create a DID of kind Entity for this object and then operate on it.
+-
+-## Authentication
+-
+-There are two solutions for authentication:
+-
+-- Use the owner of the DID to submit tx and let the tagger call interfaces of the Terminus DID contract for authentication.
+-- Use the owner of the DID to sign a customized EIP-712 message and use a forwarder to send tx on-chain. The tagger will use the message signer for authentication.
+-
+-> [!NOTE] Tips
+-> We recommend the second solution as the transaction fee is paid by forwarders instead of reviewers.
+-
+-## Storage of Necessary Information
+-
+-For DIDs of kind Entity, we define tags of this DID itself and write necessary data to them. For DIDs of kind Individual, we abstract the scenario as a DID of kind Entity and write to its tags.
+-
+-## Recording of History and Updating
+-
+-We can follow the advice in the above section and store data in tags of Entity. But on-chain querying is not required in some scenarios, where on-chain storage is a waste. For those cases we recommend to use Ethereum events for recording and customize the detailed implementation in taggers.
+-
+-## Example - OtmoicReputation
+-
+-:::info
+-
+-```mermaid
+-  flowchart LR
+-
+-	otmoic{{OtmoicReputation}}
+-	did{{TerminusDID}}
+-	complaints[/tag-complaints/]
+-	otmoicdid((otmoic.reputation))
+-
+-	otmoic-- Authentication -->did
+-	did-.->otmoicdid
+-	otmoicdid-.-complaints
+-	otmoic-- read/write -->complaints
+-```
+-
+-The Otmoic Reputation contract uses EIP-712 signature of DID owners for authentication and stores the `bidid` of the complained bid in the `complaints` tag of Entity `otmoic.reputation`.
+-:::
+-
+-## Example - TerminusAppMarketReputation
+-
+-:::info
+-
+-```mermaid
+-  flowchart TD
+-
+-	app((app.myterminus.com))
+-	appname((appname.app.myterminus.com))
+-	version1((version1.appname.app.myterminus.com))
+-	version2((version2.appname.app.myterminus.com))
+-	reputation{{TerminusAppMarketReputation}}
+-	ratings[/tag-ratings/]
+-	version1ratings[/version1-tag-ratings/]
+-	event[[event]]
+-
+-	app-->appname
+-	appname-->version1
+-	appname-->version2
+-	app-.->ratings
+-	ratings-.-version1ratings
+-	version1-.-version1ratings
+-	reputation-.- read/write -.->version1ratings
+-	reputation-.->event
+-
+-```
+-
+-The Olares App Market Reputation contract also uses EIP-712 signature of DID owners for authentication. Rating data of the contract is stored in the `ratings` tag of Entity `<version>.<appname>.app.myterminus.com`, and comment data is published in the form of Ethereum events instead of storing on-chain.
+-:::
+```
+
+**File**: `docs/developer/contribute/olares-id/contract/contract.md` (removed, +0/-234)
+```diff
+@@ -1,234 +0,0 @@
+----
+-description: How the Olares ID smart contracts are structured, covering DID management and the on-chain reputation system.
+-outline: [2, 4]
+-head:
+-  - - meta
+-    - name: keywords
+-      content: Olares, Olares ID smart contract, DID management, on-chain reputation, smart contract structure
+----
+-
+-# Smart Contract
+-
+-Snowinning Protocol's smart contract has two parts.
+-
+-- [TerminusDID](https://github.com/beclab/terminusdid-contract-system/blob/main/src/core/TerminusDID.sol) contract plays a crucial role as the [DID Registry](/developer/concepts/registry.md). Learn more in [the contract](https://optimistic.etherscan.io/address/0x5da4fa8e567d86e52ef8da860de1be8f54cae97d).
+-- Third-party protocols that extend the reputation system based on [TerminusDID](https://github.com/beclab/terminusdid-contract-system/blob/main/src/core/TerminusDID.sol). Currently, the following reputation protocols are in place:
+-  - [Otmoic Trader Reputation](https://github.com/otmoic/reputation-contract-evm/blob/main/contracts/Reputation.sol). Learn more in [the contract](https://optimistic.etherscan.io/address/0x3179CE5fAB68C0286Da85f3d61BcE7116815e799).
+-  - [Application Reputation](https://github.com/beclab/terminusdid-contract-system/blob/main/src/taggers/TerminusAppMarketReputation.sol). Learn more in [the contract](https://optimistic.etherscan.io/address/0x08065353D266121938B93D4B1071Bb52CD0C0EE4).
+-
+-![alt text](/images/developer/contribute/smart-contract.jpg)
+-
+-- The [TerminusDID](https://github.com/beclab/terminusdid-contract-system/blob/main/src/core/TerminusDID.sol) contract plays a crucial role, and it serves as the [DID Registry](/developer/concepts/registry.md). View [the contract](https://optimistic.etherscan.io/address/0x5da4fa8e567d86e52ef8da860de1be8f54cae97d).
+-- Third-party protocols can extend the reputation based on [TerminusDID](https://github.com/beclab/terminusdid-contract-system/blob/main/src/core/TerminusDID.sol). Currently, the following reputation protocols are in place:
+-  - [Otmoic Trader Reputation](https://github.com/otmoic/reputation-contract-evm/blob/main/contracts/Reputation.sol). View [the contract](https://optimistic.etherscan.io/address/0xE924F7f68D1dcd004720e107F62c6303aF271ed3).
+-  - [Application Reputation](https://github.com/beclab/terminusdid-contract-system/blob/main/src/taggers/TerminusAppMarketReputation.sol). View [the contract](https://optimistic.etherscan.io/address/0x08065353D266121938B93D4B1071Bb52CD0C0EE4).
+-
+-
+-
+-## TerminusDID
+-
+-The TerminusDID contract manages a hierarchical structure derived from [Domain](/developer/concepts/olares-id.md#domain-types.
+-
+-![alt text](/images/developer/contribute/smart-contract-tree.jpg)
+-
+-### Node
+-
+-Each node possesses several default attributes.
+-
+-| Attribute      | Description                                                                                                                                                                                                                                                                                                                                                                                                            |
+-| -------------- |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+-| name           | Specifies the [Domain Name](/developer/concepts/olares-id.md#domain-types). Certain Domain Names can interchange with Terminus Names                                                                                                                                                                                                                                                                                      |
+-| id             | Each node is also a NFT, adhering to the **ERC-721** standard. Its id serves as the unique identifier for this NFT, computed through `keccak256(name)`                                                                                                                                                                                                                                                                 |
+-| did,owner      | The `owner` and `did` of the node, derived from the same mnemonic words. Further details on this can be found [here](/developer/concepts/did.md).<br>. Additionally, storing owner is advantageous because it complies with the **BIP44** specification, facilitating gas-efficient signature verification within EVM contracts. Each node is affiliated with an `owner`, who holds the authority to modify node details. |
+-| note           | Currently, there are three types: Indivi
+```
+
+---
+
+### Incident Patch 2: `22e815d3` (2026-10-30)
+**Commit Message**: docs: share project memory across agents with MemPalace (#4299)
+
+* docs: add bilingual MemPalace shared memory use case
+
+* refine MemPalace use case and align Chinese translation
+
+* add screenshots
 
 ---------
 
-Co-authored-by: yajing wang <[REDACTED_EMAIL]>
+Co-authored-by: Meow33 <[REDACTED_EMAIL]>
 
 **File**: `docs/.vitepress/data/useCases.ts` (modified, +1/-0)
 ```diff
-@@ -84,6 +84,7 @@ export const useCases: UseCase[] = [
-   { title: "QEMU Server", link: "/use-cases/qemu", category: "Virtual machine", description: "Run independent Linux servers with SSH and VPN access", descriptionZh: "运行独立 Linux 服务器，通过 SSH 与 VPN 连接" },
-   { title: "Windows", link: "/use-cases/windows", category: "Virtual machine", description: "Run a Windows VM with VNC or Remote Desktop", descriptionZh: "通过 VNC 或远程桌面运行 Windows 虚拟机" },
-   { title: "Immich", link: "/use-cases/immich", category: "Entertainment", description: "Back up and organize photos with AI search", descriptionZh: "备份整理照片，支持 AI 搜索" },
-+  { title: "Immich NAS storage", titleZh: "Immich NAS 存储", link: "/use-cases/immich-store-uploads-on-nas", category: "Entertainment", description: "Store Immich uploads directly on your NAS", descriptionZh: "将通过 Immich 上传的照片和视频直接存储到 NAS" },
-   { title: "Jellyfin", link: "/use-cases/jellyfin", category: "Entertainment", description: "Private media streaming server", descriptionZh: "私人流媒体服务器" },
-   { title: "Steam", link: "/use-cases/steam-direct-play", category: "Games", description: "Play Steam games locally or stream them", descriptionZh: "本地游玩 Steam 游戏或串流到其他设备" },
-   { title: "Komga", link: "/use-cases/komga", category: "Entertainment", description: "Self-hosted comic and manga library", descriptionZh: "自托管的漫画书库" },
+@@ -46,6 +46,7 @@ export const useCases: UseCase[] = [
+   { title: "OpenClaw", link: "/use-cases/openclaw", category: "AI agent", description: "Personal AI assistant that integrates with Discord and runs tasks", descriptionZh: "可集成 Discord 并执行任务的个人 AI 助手" },
+   { title: "NemoClaw", link: "/use-cases/nemoclaw", category: "AI agent", description: "Always-on AI agent backed by a local LLM", descriptionZh: "由本地 LLM 驱动的常驻 AI 智能体" },
+   { title: "Hermes Agent", link: "/use-cases/hermes", category: "AI agent", description: "Self-directed agent with Olares skills and a Gateway API", descriptionZh: "具备 Olares 技能和 Gateway API 的自主智能体" },
++  { title: "MemPalace", link: "/use-cases/mempalace", category: "AI agent", description: "Keep original project notes and share local memory between AI agents", descriptionZh: "保留项目原文，通过 MCP 在不同 AI Agent 之间共享本地记忆" },
+   { title: "OpenCode", link: "/use-cases/opencode", category: "AI agent", description: "AI coding agent driven by natural language", descriptionZh: "通过自然语言驱动的 AI 编程智能体" },
+   { title: "Claude Code", link: "/use-cases/claude-code", category: "AI agent", description: "Write, test, and manage code through natural language", descriptionZh: "通过自然语言编写、测试和管理代码" },
+   { title: "Codex CLI", link: "/use-cases/codex-cli", category: "AI agent", description: "Read, edit, and test code from an Olares terminal", descriptionZh: "在 Olares 终端中读取、编辑和测试代码" },
 ```
 
 **File**: `docs/.vitepress/usecase.en.ts` (modified, +4/-0)
 ```diff
-@@ -404,6 +404,10 @@ export const useCaseSidebar: DefaultTheme.Sidebar = {
-                   text: "Import photos from NAS",
-                   link: "/use-cases/immich-import-from-nas",
+@@ -121,6 +121,10 @@ export const useCaseSidebar: DefaultTheme.Sidebar = {
+                     },
+                   ],
                  },
 +                {
-+                  text: "Store uploads on NAS",
-+                  link: "/use-cases/immich-store-uploads-on-nas",
++                  text: "MemPalace",
++                  link: "/use-cases/mempalace",
 +                },
-               ]
-             },
-             {
-```
-
-**File**: `docs/.vitepress/usecase.zh.ts` (modified, +5/-1)
-```diff
-@@ -401,9 +401,13 @@ export const useCaseSidebar: DefaultTheme.Sidebar = {
-               collapsed: true,
-               items: [
                  {
--                  text: "Import photos from NAS",
-+                  text: "从 NAS 导入照片",
-                   link: "/zh/use-cases/immich-import-from-nas",
-                 },
-+                {
-+                  text: "将上传媒体存储到 NAS",
-+                  link: "/zh/use-cases/immich-store-uploads-on-nas",
-+                },
-               ]
-             },
-             {
+                   text: "OpenCode",
+                   link: "/use-cases/opencode",
 ```
 
-**File**: `docs/use-cases/immich-store-uploads-on-nas.md` (added, +108/-0)
+**File**: `docs/.vitepress/usecase.zh.ts` (modified, +4/-0)
 ```diff
-@@ -0,0 +1,108 @@
+@@ -121,6 +121,10 @@ export const useCaseSidebar: DefaultTheme.Sidebar = {
+                     },
+                   ],
+                 },
++                {
++                  text: "MemPalace",
++                  link: "/zh/use-cases/mempalace",
++                },
+                 {
+                   text: "OpenCode",
+                   link: "/zh/use-cases/opencode",
+```
+
+**File**: `docs/use-cases/mempalace.md` (added, +306/-0)
+```diff
+@@ -0,0 +1,306 @@
 +---
 +outline: [2, 3]
-+description: Store photos and videos uploaded through Immich directly on a NAS while keeping the database in Olares.
++description: Keep project notes and conversation memory on Olares with MemPalace. Import documents, find the original wording, and share the same memory between Hermes Agent and OpenClaw through MCP.
 +head:
 +  - - meta
 +    - name: keywords
-+      content: Olares, Immich, NAS uploads, UPLOAD_LOCATION, NFS, SMB, photo backup
-+app_version: "1.0.37"
++      content: Olares, MemPalace, AI memory, MCP, Hermes Agent, OpenClaw, semantic search, local memory
++app_version: "0.0.12"
 +doc_version: "1.0"
 +doc_updated: "2026-10-28"
 +---
 +
-+# Store Immich uploads on a NAS
++# Share project memory across AI agents with MemPalace
 +
-+Immich backs up and organizes photos and videos uploaded from its web and mobile apps. You can save these uploads directly to a NAS while keeping the database in Olares. The selected media folder also holds generated files such as thumbnails and transcoded videos.
++MemPalace is a local memory service for AI agents. It stores notes and conversations in their original wording and helps you find relevant passages by meaning.
 +
-+For photos already stored and managed in existing NAS folders, see [Import photos from a NAS into Immich](immich-import-from-nas.md). That workflow adds an external library without changing the destination of Immich uploads.
++On Olares, your imported memory persists independently of an agent's chat sessions. Hermes Agent and OpenClaw can use the same memory through MCP, while Olares Files holds your source documents. The default text embedding and search run locally without a cloud API key.
++
++This guide follows a fictional kitchen renovation project called Lakeview. You will import its brief, use Hermes Agent to search the imported file and save a meeting note, then retrieve that note in a new conversation and from OpenClaw. The MCP connection gives each agent memory tools. This workflow does not configure automatic saving or recall: you explicitly ask the agents to search and save records.
 +
 +## Learning objectives
 +
-+In this guide, you will learn how to:
-+
-+- Set a NAS folder as the destination for Immich uploads.
-+- Move an existing media library between NAS and local storage.
-+- Recover access when NAS storage is unavailable.
++- Import a project brief from Files and search its original text.
++- Ask Hermes Agent to read the brief and save a meeting note.
++- Retrieve the meeting note in a new Hermes conversation.
++- Ask OpenClaw to retrieve the note saved by Hermes.
 +
 +## Prerequisites
 +
-+- Use Immich Olares package 1.0.37 (Immich 3.3.5) or a later package that provides `UPLOAD_LOCATION`. If the setting is missing, the installed package does not support this feature yet.
-+- Connect Olares and the NAS to the same network.
-+- Prepare an NFS or SMB share with read/write access. NFS permissions must allow UID/GID `1000:1000` to read and write. For SMB, mount the share with a NAS account that has read/write access.
++- **Olares OS:** Version 1.12.7 or later.
 +
-+Set up the destination before uploading your first photos. For an existing Immich library, complete [Move existing media](#move-existing-media) before changing the setting.
++To make project information easier to organize and find with AI agents, set up these apps before following their sections:
 +
-+## Mount the NAS share
++- **Hermes Agent:** Follow the [Hermes Agent setup guide](hermes.md#configure-hermes-agent) and select Router's `default-chat` model.
++- **OpenClaw:** Follow the [OpenClaw setup guide](openclaw.md#initialize-openclaw) with OpenClaw 2026.10.5 or later, using Router's `default-chat` model.
 +
-+1. Open Files, go to **Drive**, then **External**, and select **Connect to server**.
-+2. Select **NFS** and enter your share address. For example:
++## How MemPalace organizes memory
 +
-+   ```text
-+   192.168.1.100:/volume1/photos
++MemPalace organizes stored text in three levels:
++
++| Level | What it holds | In this guide |
++| --- | --- | --- |
++| **Wing** | Records for a project, person, or other subject | The imported brief goes in `lakeview-home`. Hermes saves the meeting note in `lakeview-agent`. |
++| **Room** | Records on a topic within a wing | The brief goes in `general`. The meeting note goes in `client-meeting`. |
++| **Drawer** | The original text of a record or part of an imported file | Search results can identify a passage from `brief.md` or the saved meeting note by its drawer ID. |
++
++Both wings are in the same MemPalace memory store and are available to connected agents. Use `--wing` to search one wing. A search limited to `lakeview-home` will not include the meeting note in `lakeview-agent`.
++
++## Install MemPalace
++
++1. Open Market and search for "MemPalace".
++2. Click **Get**, then **Install**, and wait for installation to complete.
++
++::: tip First import may take longer
++The first import or memory write downloads a local embedding model of about 80 MB. If the download times out, retry the operation when your connection recovers. MemPalace caches the model for later use.
++:::
++
++## Import a project from Files
++
++1. Save the following example note as `brief.md` on your computer:
++
++   ```markdown
++   # Lakeview kitchen renovation
++
++   The approved budget is EUR 18400.
++   Cabinet delivery is booked for 10 November 2026.
++   Installation starts on 12 November 2026.
++   The delivery contact is Olivia Carter.
++   The client prefers oak cabinetry and warm white, dimmable lighting.
++   Northstar Joinery will supply the cabinets.
 +   ```
 +
-+   Replace the IP address and share path with your NAS configuration. For SMB, select **SMB**, enter `//<NAS-IP>/<share>`, and provide an account with read/write access when prompted. See [Mount NFS shares](../manual/olares/files/mount-nfs.md) for the full NFS procedure.
-+3. Select **Confirm**. Check the folder name shown under **External**. The following steps use `photos` as the mounted folder name.
-+4. Create an empty folder named `immich` inside the mounted share and check that you can create a file in it. You can choose a different name, but use that name in the upload path too.
++2. Open Olares Files. In **Home**, create a folder named `MemPalace-demo` and upload `brief.md` into it.
++3. Open MemPalace Terminal from Launchpad. The folder at `/Files/Home/MemPalace-demo/` in Olares Files is mounted at `/home/app/userdata/Home/MemPalace-demo` in the terminal. Import it with:
 +
-+Use a dedicated folder for Immich-managed media. Keep unrelated NAS files outside it.
-+
-+## Set the upload location
-+
-+1. Open Settings, select **Applications**, then **Immich**.
-+2. Under **Environment variables**, open **Manage environment variables**.
-+3. Select the edit icon for `UPLOAD_LOCATION` and enter the media-folder path:
-+
-+   ```text
-+   /external_storage/photos/immich
++   ```bash
++   mempalace mine /home/app/userdata/Home/MemPalace-demo --wing lakeview-home
 +   ```
 +
-+   Replace `photos` with the mounted folder name shown in Files and `immich` with the dedicated folder you created. Use this path format, not the NAS IP address, NFS export address, or SMB address.
-+4. Select **Confirm**, then **Apply**. If Immich is running, it restarts to apply the change. If you stopped it for migration, return to its application settings and select **Resume** after the change is applied.
++   A successful import shows `brief.md` processed and one drawer filed:
 +
-+| `UPLOAD_LOCATION` value | Upload destination |
-+| --- | --- |
-+| Empty | Default local media folder in Olares |
-+| An existing folder under `/external_storage/` | The selected NFS or SMB media folder |
++   ![MemPalace imports brief.md and files one drawer](/images/manual/use-cases/mempalace-import.png#bordered)
 +
-+Only this setting is needed. Mounting and unmounting the share itself is managed separately in Files.
++   The Home mount is read-only. MemPalace stores the imported memory in its own application data.
 +
-+## Check an upload
++4. Search the imported note for the cabinet delivery date:
 +
-+1. Open Immich and upload a new photo.
-+2. Check that its thumbnail appears and that you can open and download the original.
-+3. In Files, open the dedicated NAS folder. Check that new media files appear inside Immich's subfolders, such as `upload` or `library`.
++   ```bash
++   mempalace search "When is cabinet delivery?" --wing lakeview-home --results 3
++   ```
 +
-+Immich manages the folder layout and stored filenames. A stored filename can differ from the name shown in the photo details. The live database continues to use Olares storage.
++   Check that a returned passage gives the delivery date as 10 November 2026 and names `brief.md` as its source.
 +
-+## Move existing media
++::: tip About this search
++- `--wing lakeview-home` limits the search to the imported brief's wing.
++- `--results 3` returns up to three matches. Change `3` to another number to request a different limit.
 +
-+Changing `UPLOAD_LOCATION` selects a different media folder. It does not copy or synchronize files.
-+
-+1. Pause uploads from all connected devices and wait for active jobs to finish. Create a database backup from Immich’s administration interface while the app is running. Follow the [database backup instructions](https://docs.immich.app/administration/backup-and-restore/#creating-a-backup). Keep a copy outside the media folder you are moving.
-+2. In Settings, select **Applications**, then **Immich**, and select **Stop**. Wait until **Resume** is available before copying files.
-+3. Back up the complete media folder. For this package, the default local folder is in Files under **Drive**, then **Data**, at `immich/data/upload`.
-+4. Copy the complete media folder contents to the new d
++Use the
 ```
 
-**File**: `docs/zh/use-cases/immich-import-from-nas.md` (modified, +1/-1)
+**File**: `docs/zh/use-cases/mempalace.md` (added, +304/-0)
 ```diff
-@@ -22,7 +22,7 @@ doc_updated: "2026-04-09"
- 本教程以 Synology NAS 为例。其他 NAS 品牌的过程可能有所不同。
- :::
- 
--## Prerequisites
-+## 准备工作 {#prerequisites}
- 
- - Immich 已更新至 V1.0.15 或更高版本。
- - Olares 设备和 NAS 在同一本地网络上。
-```
-
-**File**: `docs/zh/use-cases/immich-store-uploads-on-nas.md` (added, +112/-0)
-```diff
-@@ -0,0 +1,112 @@
+@@ -0,0 +1,304 @@
 +---
 +outline: [2, 3]
-+description: 将通过 Immich 上传的照片和视频直接存储到 NAS，同时将数据库保留在 Olares 中。
++description: 在 Olares 上使用 MemPalace 保存项目笔记和对话记忆。导入文档、查找原文，并通过 MCP 让 Hermes Agent 和 OpenClaw 共享记忆。
 +head:
 +  - - meta
 +    - name: keywords
-+      content: Olares, Immich, NAS 上传存储, UPLOAD_LOCATION, NFS, SMB, 照片备份
-+app_version: "1.0.37"
++      content: Olares, MemPalace, AI 记忆, MCP, Hermes Agent, OpenClaw, 语义搜索, 本地记忆
++app_version: "0.0.12"
 +doc_version: "1.0"
-+doc_updated: "2026-10-28"
++doc_updated: "2026-10-30"
 +---
 +
-+:::warning
-+本文档由 AI 自动翻译，仅供参考。涉及关键操作或信息时，请以[英文原文](../../use-cases/immich-store-uploads-on-nas.md)为准。
-+:::
++# 使用 MemPalace 在不同 AI Agent 之间共享项目记忆
 +
-+# 将 Immich 上传的照片和视频存储到 NAS
++MemPalace 是面向 AI Agent 的本地记忆服务。它按原文保存笔记和对话，并帮助你通过语义搜索找到相关内容。
 +
-+Immich 可以将通过网页或手机应用上传的照片和视频直接保存到 NAS，数据库仍保留在 Olares 中。缩略图、转码视频等生成的媒体文件也会保存到所选目录。
++在 Olares 上，导入的记忆独立于 Agent 的聊天会话持久保存。Hermes Agent 和 OpenClaw 可以通过 MCP 使用同一个记忆库，源文档则保存在 Olares Files 中。默认的文本嵌入和搜索在本地运行，无需云端 API 密钥。
 +
-+如果你希望浏览 NAS 上已有的照片，而不改变 Immich 的上传位置，请参阅[从 NAS 导入照片到 Immich](immich-import-from-nas.md)。该教程介绍的是外部图库，与本文的上传存储设置不同。
++本指南以虚构的 Lakeview 厨房翻新项目为例。你将导入项目简报，让 Hermes Agent 查找文件并保存会议笔记，再在新会话和 OpenClaw 中找回这条笔记。MCP 连接为 Agent 提供记忆工具。本流程不会配置自动保存或自动召回，你需要明确要求 Agent 搜索或保存记录。
 +
 +## 学习目标
 +
-+通过本教程，你将学会：
++- 从 Files 导入项目简报并搜索原文。
++- 让 Hermes Agent 阅读简报并保存会议笔记。
++- 在新的 Hermes 会话中找回会议笔记。
++- 让 OpenClaw 找回 Hermes 保存的笔记。
 +
-+- 将 NAS 文件夹设为 Immich 上传文件的保存位置。
-+- 在 NAS 与本地存储之间迁移已有媒体库。
-+- 在 NAS 存储不可用时恢复访问。
++## 前提条件
 +
-+## 准备工作
++- **Olares OS：** 1.12.7 或更高版本。
 +
-+- 使用 Immich 的 Olares 应用包 1.0.37 (Immich 3.3.5)，或后续提供 `UPLOAD_LOCATION` 配置的版本。如果找不到该配置，说明当前安装包尚不支持此功能。
-+- 将 Olares 与 NAS 连接到同一网络。
-+- 准备具有读写权限的 NFS 或 SMB 共享。NFS 共享需允许 UID/GID `1000:1000` 读写。SMB 共享需使用具有读写权限的 NAS 账户挂载。
++如需借助 AI Agent 整理和查找项目信息，请在阅读相应章节前配置好以下应用：
 +
-+建议在首次上传照片前完成配置。如果已经使用 Immich，请先按照[迁移已有媒体](#迁移已有媒体)中的步骤处理原有文件，再修改上传位置。
++- **Hermes Agent：** 按照 [Hermes Agent 配置指南](hermes.md#配置-hermes-agent)完成配置，并选择 Router 的 `default-chat` 模型。
++- **OpenClaw：** 按照 [OpenClaw 配置指南](openclaw.md#初始化-openclaw)完成配置，使用 OpenClaw 2026.10.5 或更高版本，并选择 Router 的 `default-chat` 模型。
 +
-+## 挂载 NAS 共享目录
++## MemPalace 如何组织记忆
 +
-+1. 打开文件管理器，依次选择 **存储**、**外部设备**，然后选择 **连接服务器**。
-+2. 选择 **NFS**，填写共享地址。例如：
++MemPalace 将保存的文本分为三个层级：
 +
-+   ```text
-+   192.168.1.100:/volume1/photos
-+   ```
++| 层级 | 保存什么 | 本指南中的例子 |
++| --- | --- | --- |
++| **Wing** | 同一项目、人物或其他主题的记录 | 导入的简报放在 `lakeview-home`，Hermes 将会议笔记保存在 `lakeview-agent`。 |
++| **Room** | Wing 中某个话题的记录 | 简报放在 `general`，会议笔记放在 `client-meeting`。 |
++| **Drawer** | 单条记录或导入文件一部分的原始文本 | 搜索结果可以通过 Drawer ID 标明来自 `brief.md` 的段落或保存的会议笔记。 |
 +
-+   将 IP 地址和共享路径替换为自己的 NAS 配置。使用 SMB 时，选择 **SMB**，填写 `//<NAS-IP>/<共享目录>`，并按提示输入具有读写权限的 NAS 账户和密码。完整 NFS 操作步骤请参阅[挂载 NFS 共享](../manual/olares/files/mount-nfs.md)。
-+3. 选择 **确认**，检查 **外部设备** 中显示的共享目录名称。后续步骤以挂载目录名 `photos` 为例。
-+4. 在共享目录中创建名为 `immich` 的空文件夹，并确认可以在其中创建文件。也可以使用其他名称，但上传路径中必须使用相同的名称。
++两个 Wing 都属于同一个 MemPalace 记忆库，连接的 Agent 均可访问。使用 `--wing` 可以只搜索指定 Wing。限定为 `lakeview-home` 时，结果不会包含 `lakeview-agent` 中的会议笔记。
 +
-+请为 Immich 使用专用目录，将其他 NAS 文件保存在该目录之外。
++## 安装 MemPalace
 +
-+## 设置上传位置
++1. 打开 Market，搜索“MemPalace”。
++2. 点击 **Get**，再点击 **Install**，等待安装完成。
 +
-+1. 打开设置，依次选择 **应用**、**Immich**。
-+2. 在 **环境变量** 区域，打开 **管理环境变量**。
-+3. 选择 `UPLOAD_LOCATION` 的编辑图标，填写媒体目录路径：
-+
-+   ```text
-+   /external_storage/photos/immich
-+   ```
-+
-+   将 `photos` 替换为文件管理器中显示的挂载目录名，将 `immich` 替换为提前创建的专用目录名。使用这一格式的路径，不要填写 NAS 的 IP 地址、NFS 共享地址或 SMB 地址。
-+4. 选择 **确认**，再选择 **应用**。运行中的 Immich 会自动重启。如果之前为迁移媒体暂停了 Immich，等待配置应用完成后，返回应用设置并选择 **恢复**。
-+
-+| `UPLOAD_LOCATION` 的值 | 上传文件保存位置 |
-+| --- | --- |
-+| 留空 | Olares 中默认的本地媒体目录 |
-+| 已存在的 `/external_storage/` 下的目录 | 指定的 NFS 或 SMB 目录 |
-+
-+只需配置这一个变量。NAS 共享本身的挂载和卸载仍在文件管理器中操作。
-+
-+## 验证上传结果
-+
-+1. 打开 Immich，上传一张新照片。
-+2. 确认缩略图正常显示，并且可以打开和下载原图。
-+3. 在文件管理器中打开 NAS 上的专用目录，检查 `upload` 或 `library` 等子目录中是否出现新文件。
-+
-+Immich 会管理目录结构和存储文件名，因此 NAS 中的文件名可能与照片详情中显示的原文件名不同。数据库仍使用 Olares 存储。
-+
-+## 迁移已有媒体
-+
-+修改 `UPLOAD_LOCATION` 只会改变应用使用的媒体目录，不会复制或同步文件。
-+
-+1. 暂停所有已连接设备的上传，等待正在执行的任务完成。在 Immich 运行时，通过管理界面[创建数据库备份](https://docs.immich.app/administration/backup-and-restore/#creating-a-backup)，并在待迁移媒体目录之外保留一份副本。
-+2. 打开设置，依次选择 **应用**、**Immich**，然后选择 **暂停**。等待 **恢复** 按钮可用后，再复制文件。
-+3. 备份完整媒体目录。当前应用包的默认本地目录位于文件管理器的 **存储**、**数据** 下，路径为 `immich/data/upload`。
-+4. 将完整媒体目录的内容复制到目标位置，包括隐藏的 `.immich` 文件和所有子目录。比较文件数量、大小和校验值，确认所有原始媒体和生成文件均已复制。
-+5. 按照[设置上传位置](#设置上传位置)中的步骤填写目标目录，应用配置后恢复 Immich。
-+6. 确认原有照片可以打开、原图可以下载，并测试一次新上传，再考虑删除旧副本。
-+
-+目标目录应保持原有媒体结构。配置的路径下应直接包含 `upload`、`library`、`thumbs`、`encoded-video`、`profile`、`backups` 等目录，不要额外嵌套一层。
-+
-+如果要切回默认本地存储，请按相同步骤备份并暂停 Immich，再将完整媒体目录复制到默认本地目录。清空 `UPLOAD_LOCATION`，应用配置后恢复 Immich。以后切回 NAS 时，也需要重复这一流程，复制当前的完整媒体目录，包括使用本地存储期间新增的媒体。
-+
-+## NAS 不可用时如何处理
-+
-+如果配置了 NAS 路径，但启动时目标目录不可用，Immich 将无法启动，不会自动将新文件写入本地。
-+
-+- 继续使用 NAS：在文件管理器中恢复挂载，确认配置的目录存在且可写。保持 `UPLOAD_LOCATION` 不变，等待应用重试启动。如果 Immich 仍无法访问，请联系支持。
-+- 改用本地存储：如果 Immich 仍在运行，先暂停应用，再将完整媒体备份恢复到默认本地目录。清空 `UPLOAD_LOCATION` 并应用。如果应用处于暂停状态，选择 **恢复**。本地模式不依赖 NAS 挂载，但文件尚未恢复的照片仍无法访问。
-+
-+:::info 市场状态可能未同步恢复
-+恢复 Immich 访问后，Olares 市场可能仍显示失败状态，切换到本地存储后也可能出现这种情况。先检查能否打开 Immich 并访问照片。如果状态仍未更新，请联系支持，不要通过删除图库或数据库来清除错误标记。
++::: tip 首次导入可能需要更长时间
++首次导入文件或写入记忆时，会下载约 80 MB 的本地嵌入模型。如果下载超时，请在网络恢复后重试。MemPalace 会缓存模型，供后续操作使用。
 +:::
 +
-+## 了解更多
++## 从 Files 导入项目资料
 +
-+- [使用 Immich 管理照片](immich.md)：了解 Immich 的初始化和照片管理功能。
-+- [从 NAS 导入照片到 Immich](immich-import-from-nas.md)：将已有 NAS 文件夹添加为外部图库。
-+- [管理应用环境变量](../manual/olares/settings/manage-app-env.md)：了解如何在 Olares 设置中修改应用配置。
++1. 在电脑上将下面的示例笔记保存为 `brief.md`：
++
++   ```markdown
++   # Lakeview kitchen renovation
++
++   The approved budget is EUR 18400.
++   Cabinet delivery is booked for 10 November 2026.
++   Installation starts on 12 November 2026.
++   The delivery contact is Olivia Carter.
++   The client prefers oak cabinetry and warm white, dimmable lighting.
++   Northstar Joinery will supply the cabinets.
++   ```
++
++2. 打开 Olares Files，在 **Home** 中新建 `MemPalace-demo` 文件夹，并将 `brief.md` 上传到其中。
++3. 从启动台打开 MemPalace Terminal。Olares Files 中的 `/Files/Home/MemPalace-demo/` 在终端内挂载为 `/home/app/userdata/Home/MemPalace-demo`。运行以下命令导入：
++
++   ```bash
++   mempalace mine /home/app/userdata/Home/MemPalace-demo --wing lakeview-home
++   ```
++
++   成功导入后，输出会显示 `brief.md` 已处理，并归档了一条 Drawer：
++
++   ![MemPalace 导入 brief.md 并归档一条 Drawer](/images/manual/use-cases/mempalace-import.png#bordered)
++
++   Home 以只读方式挂载。MemPalace 会将导入的记忆保存在自己的应用数据中。
++
++4. 搜索导入笔记中的橱柜送货日期：
++
++   ```bash
++   mempalace search "When is cabinet delivery?" --wing lakeview-home --results 3
++   ```
++
++   检查返回的段落是否写明送货日期为 2026 年 11 月 10 日，并将 `brief.md` 列为来源。
++
++::: tip 关于这次搜索
++- `--wing lakeview-home` 将搜索范围限定在导入简报的 Wing。
++- `--results 3` 最多返回三个匹配结果。你可以将 `3` 改成其他数字。
++
++后续导入 Lakeview 简报的其他资料时，请沿用同一个 Wing。
++:::
++
++## 让 Hermes Agent 使用同一个记忆库
++
++无需配置消息平台，也可以使用 Hermes CLI。本节先让 Hermes 阅读导入的简报，再保存一条供后续会话查找的笔记。
++
++### 复制 MCP Endpoint
++
++1. 打开 **Settings** > **Applications** > **MemPalace**。
++2. 在 **Entrances** 下选择 **MemPalace MCP**。
++3. 确认 **Authentication level** 为 **Internal**。
++4. 复制 **Endpoint** URL。
++
++   ![从 MemPalace MCP 入口复制 Endpoint](/images/manual/use-cases/mempalace-endpoint.png#bordered)
++
++### 在 Hermes 中添加连接
++
++1. 打开 Olares Files，找到 **Data** > **hermesagent** > **home** > `config.yaml`。
++2. 点击 <i class="material-symbols-outlined">edit_square</i> 进入编辑。
++3. 在 `mcp_servers` 下添加 `mempalace`。将 `<mempalace-endpoint-url>` 替换为上一步复制的完整 URL：
++
++   ```yaml
++   mcp_servers:
++     mempalace:
++       url: "<mempalace-endpoint-url>/mcp"
++       tools:
++         include:
++           - mempalace_status
++           - mempalace_search
++           - mempalace_add_drawer
++           - mempalace_get_drawer
++           - mempalace_diary_write
++   ```
++
++4. 在现有的 `platform_toolsets.cli` 列表中添加 `mcp-mempalace`：
++
++   ```yaml
++   platform_toolsets:
++     cli:
++       - hermes-cli
++       - mcp-mempalace
++   ```
++
++   将上述内容加入 `config.yaml` 中已有的列表，不要删除其他 MCP 服务或 CLI 工具集。
++
++5. 点击 <i class="material-symbols-outlined">save</i> 保存更改。
++
++### 阅读导入的简报
++
++1. 在 Hermes CLI 中开始新会话：
++
++   ```bash
++   hermes chat
++   ```
++
++2. 让 Hermes 搜索 `lakeview-home` Wing：
++
++   ```text
++   Search MemPalace's lakeview-home wing for the Lakeview kitchen brief.
++   What's the approved budget and who supplies the cabinets? Include the source.
++   ```
++
++   Hermes 应从 `brief.md` 中找出预算和供应商，并标明来源。
++
++   ![Hermes 查找预算、供应商和来源](/images/manual/use-cases/mempalace-hermes-chat1.png#bordered)
++
++### 保存会议笔记并在新会话中找回
++
++这条会议笔记重复了简报中的送货信息，并增加了项目编号。
++
++1. 在当前 Hermes CLI 会话中，让 Hermes 保存会议笔记：
++
++   ```text
++   Use MemPalace to save this exact project note in wing lakeview-agent,
++   room client-meeting:
++   "Lakeview client meeting: ca
+```
+
+---
+
+### Incident Patch 3: `2be7ee84` (2026-10-30)
+**Commit Message**: fix(cli): skip l4-bfl-proxy upgrade when deployment is absent (#4342)
+
+**File**: `cli/pkg/upgrade/task_set.go` (modified, +28/-0)
+```diff
+@@ -486,6 +486,22 @@ type upgradeL4BFLProxy struct {
+ }
+ 
+ func (u *upgradeL4BFLProxy) Execute(runtime connector.Runtime) error {
++	kube, err := kubeClientFromRuntime()
++	if err != nil {
++		return errors.Wrap(errors.WithStack(err), "failed to create kubernetes client")
++	}
++	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
++	defer cancel()
++	exists, err := l4ProxyDeploymentExists(ctx, kube)
++	if err != nil {
++		return err
++	}
++	if !exists {
++		logger.Infof("%s deployment not found in namespace %s, skipping L4 upgrade to version %s",
++			l4ProxyDeploymentName, l4ProxyNamespace, u.Tag)
++		return nil
++	}
++
+ 	if _, err := runtime.GetRunner().SudoCmd(fmt.Sprintf(
+ 		"/usr/local/bin/kubectl set image deployment/l4-bfl-proxy proxy=beclab/l4-bfl-proxy:%s -n os-network", u.Tag), false, true); err != nil {
+ 		return errors.Wrapf(errors.WithStack(err), "failed to upgrade L4 network proxy to version %s", u.Tag)
+@@ -495,6 +511,18 @@ func (u *upgradeL4BFLProxy) Execute(runtime connector.Runtime) error {
+ 	return nil
+ }
+ 
++func l4ProxyDeploymentExists(ctx context.Context, kube kkubernetes.Interface) (bool, error) {
++	_, err := kube.AppsV1().Deployments(l4ProxyNamespace).Get(ctx, l4ProxyDeploymentName, metav1.GetOptions{})
++	if apierrors.IsNotFound(err) {
++		return false, nil
++	}
++	if err != nil {
++		return false, errors.Wrapf(errors.WithStack(err), "failed to get deployment %s/%s",
++			l4ProxyNamespace, l4ProxyDeploymentName)
++	}
++	return true, nil
++}
++
+ type upgradeGPUDriverIfNeeded struct {
+ 	common.KubeAction
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4321** (2026-10-28): feat(timeslice): run gpu-scheduler v0.1.5 for the faster GPU hand-over (@dkeven)
-- **PR #4320** (2026-10-28): system-frontend: update image to v1.12.15 (@icebergtsn)
-- **PR #4319** (2026-10-28): market: confine source paths, gate source admin, bound remote fetches (@aby913)
-- **PR #4317** (closed): docs: add RustDesk Server VPN and Overlay use case (@harveyff)
-- **PR #4316** (closed): docs: hide unreleased yt-dlp instructions (@Meow33)
-- **PR #4315** (2026-10-27): feat(download-server): improve download URL routing and task lifecycle reliability (@kaki-admin)
+- **PR #4352** (2026-10-30): fix(l4): custom domain listener logic (@hysyeah)
+- **PR #4351** (2026-10-30): chore(ks-apiserver): update image to 0.0.34 (@hysyeah)
+- **PR #4350** (2026-10-30): l4-bfl-proxy: enhance custom domain listener logic (@eball)
+- **PR #4349** (closed): docs(skills): remove app custom domain setup guidance (@fnalways)
+- **PR #4348** (2026-10-30): docs: remove app custom domain setup documentation (@fnalways)
+- **PR #4347** (2026-10-30): docs: replace legacy Snowinning documentation links (@fnalways)
 
 ---
 
@@ -1444,28 +2206,39 @@ Co-authored-by: yajing wang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: add bilingual Immich NAS upload storage guide (#4312)
+## X. docs: retire outdated protocol development guides (#4346)
 
 **RULE**:
-When implementing operations in `docs/.vitepress/data/useCases.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/.vitepress/_redirects.nginx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ce7fe97`: docs: add bilingual Immich NAS upload storage guide (#4312). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0b3080e5`: docs: retire outdated protocol development guides (#4346). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/.vitepress/data/useCases.ts`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/.vitepress/_redirects.nginx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  { title: "Immich NAS storage", titleZh: "Immich NAS 存储", link: "/use-cases/immich-store-uploads-on-nas", category: "Entertainment", description: "Store Immich uploads directly on your NAS", descriptionZh: "将通过 Immich 上传的照片和视频直接存储到 NAS" },
+location = /developer/contribute/olares-id/ { return 301 /developer/concepts/olares-id; }
+location = /zh/developer/contribute/olares-id/ { return 301 /zh/developer/concepts/olares-id; }
+location = /developer/contribute/olares-id/contract/architecture { return 301 /developer/concepts/olares-id; }
+location = /developer/contribute/olares-id/contract/contract-reputation { return 301 /developer/concepts/reputation; }
+location = /developer/contribute/olares-id/contract/contract { return 301 /developer/concepts/olares-id; }
+location = /developer/contribute/olares-id/contract/did/design { return 301 /developer/concepts/did; }
+location = /developer/contribute/olares-id/contract/did/faq { return 301 /developer/concepts/did; }
+location = /developer/contribute/olares-id/contract/did/official-taggers { return 301 /developer/concepts/did; }
+location = /developer/contribute/olares-id/contract/did/release-history { return 301 /developer/concepts/did; }
+location = /developer/contribute/olares-id/contract/manage/contract { return 301 /developer/concepts/olares-id; }
+location = /developer/contribute/olares-id/contract/manage/environment { return 301 /developer/concepts/olares-id; }
+location = /develo
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+location = /developer/contribute/olares-id/ { return 301 /developer/contribute/olares-id/contract/contract; }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ce7fe97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0b3080e5` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `741cb9ad`  
+> **Source Version**: `45e00d4d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T23:18:57.780Z  
+> **Timestamp**: 2026-10-30T16:30:02.856Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T23:18:57.621Z  
+> **Harvest Timestamp**: 2026-10-30T16:30:01.371Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11800 stars
+- **Stars / Engagement**: 11819 stars
 
 ---
 
@@ -714,7 +714,7 @@ import math
 import os
 import pathlib
 import warnings
-from datetime import date, datetime
+from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from functools import singledispatch
 from typing import Tuple, Union, Optional, Any, List
@@ -1025,8 +1025,7 @@ def _query_vector_dim(query: Optional[Any]) -> Optional[int]:
             return len(first) if first is not None else None
         return len(query)
     if isinstance(query, (list, tuple)) and query:
-        first = query[0]
-
+        
 ```
 
 ### Core Architecture Module: `python/src/util.rs`
@@ -1209,11 +1208,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4729** (2026-10-28): **fix(python): expose function source digests**
-  *Symptoms*: Function descriptions include `source_digest`, but both the Rust response model and Python `FunctionVersion` discarded it. Clients therefore could not compare a catalog entry with `udf_def.registration_request.artifact.digest`.  Preserve the digest through Rust serialization and expose it on Python `FunctionVersion`, with a documented Rust accessor. Missing or null digests decode as `None`, keeping older responses compatible. Regression tests cover serialization, immutability, registration jobs, get, and synchronous/asynchronous list responses while keeping the image digest independent.  Validation: - Confirmed that the original Python model silently discarded a server-provided source digest. - Rebuilt the Python extension in the uv-managed environment; both focused Function test files passed (106 tests). - Focused Rust Function model tests passed (10 tests). - Full workspace `cargo check --quiet --features remote --tests --examples` and `cargo clippy --quiet --features remote --tests --examples` passed. - Rust formatting and Ruff checks/formatting for changed Python files passed. - Repository-wide Ruff reports 138 existing violations in unchanged docs/CI files.  Fixes #4723  <!-- lance-gatekeeper-fix:v1 agent=c145f25136f7b908217e04bde8a2548b generation=1 --> 
+- **Issue #4755** (2026-10-30): **fix(python): pin an available pylance wheel on macOS**
+  *Symptoms*: ## Problem  The Python test extra pins `pylance==15.0.0b7` for every platform. On macOS, pip cannot resolve that pin: the configured `lance-format` index publishes b7 wheels for Linux and Windows but not macOS, while public PyPI returns HTTP 404 for the version and the `lancedb` index contains no 15.x release. The macOS Python dependency installation consequently cannot resolve the pin.  ## Change  - Keep the exact `pylance==15.0.0b7` test pin on non-macOS platforms. - Use `pylance==15.0.0b4` on macOS. This is the newest release in this range with a macOS wheel (`cp310-abi3-macosx_11_0_arm64`). - Refresh `python/uv.lock` for the platform-specific resolutions.  The production Rust/Lance inputs are unchanged: `Cargo.lock` is byte-identical to `main` and remains on Lance `15.0.0-beta.7`. No tests, assertions, coverage, or CI checks are removed or weakened.  ## Validation  - Confirmed the wheel identity from the configured index and matched its published SHA-256 to `uv.lock`; wheel metadata reports `Name: pylance`, `Version: 15.0.0b4`. - Verified the b4 APIs used by the Python tests (`blob_field`, `blob_array`, `BlobType`, `Blob`, `dataset`, `write_dataset`, `FFILanceTableProvider`, and `DirectoryNamespace`). The Python test suite does not reference the b7-only `mark_sstables_as_compacted`, `mem_wal_dir_id`, `mem_wal_index_details`, `clustering_id`, `LanceFragment`, `IndexSegment`, `UpdateConfig`, or `max_source_fragments` changes. - Verified scalar read/write interoperability in
 
-- **Issue #4728** (2026-10-28): **fix(python): restore blob extensions in table schemas**
-  *Symptoms*: Reading a Blob v2 table in a fresh process could return its storage struct if neither `blob()` nor pylance had registered the extension. Both local and remote schema reads were affected, so `field.type` could depend on import order.  Restore metadata-only blob fields on every table schema read through the existing BlobType resolver and Arrow's schema deserializer. Preserve nested fields, nullability, custom metadata, and both supported storage layouts. The fallback deserializer now honors the stored shape too.  Fresh-process regressions cover local and remote tables, sync/async reads, and operation with and without pylance. The four native cases failed before removing the native-table guard. Existing merge-insert tests now require the restored extension type while continuing to verify updated and inserted blob contents.  Validation:  - All 12 fresh-process local/remote schema regression cases pass. - `uv run --extra tests pytest python/tests/test_table.py python/tests/test_blob.py python/tests/test_namespace.py python/tests/test_util.py -q -m 'not slow and not s3_test'`: 835 passed, 11 skipped. - Python package Ruff lint and formatting checks pass. - Repository-wide `ruff check .` reports 48 pre-existing diagnostics in unchanged `docs/web-tests` files.  Fixes #4719  <!-- lance-gatekeeper-fix:v1 agent=67c656bb5889e698efce5f2fd9d58ea7 generation=1 --> 
+- **Issue #4734** (2026-10-29): **fix(python): add a Blob V2 array construction helper**
+  *Symptoms*: Fixes #4733  PyArrow expects Blob V2 storage structs when constructing a record batch and cannot infer the extension array from raw bytes. LanceDB already converts binary values during ingestion, but batch writers had no supported array constructor.  Add `lancedb.schema.blob_array(payloads)` for iterables of inline bytes and nulls, using the same extension type resolver as `blob()`. The helper preserves empty blobs and null blobs and works with both pylance's type and LanceDB's fallback. Document the descriptor fields, exclusive inline/external representations, batch construction, and existing binary conversion in synchronous and asynchronous `create_table` / `add` APIs.  Validation: - Reproduced the reported `ArrowTypeError` on the original code; both new regression cases fail against the original schema module. - 256 focused blob tests and schema doctests passed; one optional PyAV test skipped. - Both new regression cases also passed with PyArrow 25, with and without pylance imports. - Python package Ruff checks and formatting passed. - MkDocs build passed, with an existing unrelated `SecretReference` cross-reference warning. Repository-wide Ruff reports 48 existing errors in `docs/web-tests`.  <!-- lance-gatekeeper-fix:v1 agent=20d1a296d76ff5eb914c0848428a747a generation=1 --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1230,1492 +1229,541 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `84fc4819` (2026-10-28)
-**Commit Message**: docs: add guide for using LanceDB in VS Code extensions
+### Incident Patch 1: `a39a3180` (2026-10-30)
+**Commit Message**: fix(python): pin an available pylance wheel on macOS
 
-Closes #1849
+## Problem
 
-This was lancedb/docs#371. After lancedb/docs#355 moved the open-source pages, their navigation and the snippet tests into this repository's `docs/web` and `docs/web-tests`, that PR could no longer merge there, so I've moved the same change here.
+The Python test extra pins `pylance==15.0.0b7` for every platform. On macOS, pip cannot resolve that pin: the configured `lance-format` index publishes b7 wheels for Linux and Windows but not macOS, while public PyPI returns HTTP 404 for the version and the `lancedb` index contains no 15.x release. The macOS Python dependency installation consequently cannot resolve the pin.
 
-## Why
+## Change
 
-#1849 asks for an example of LanceDB in a VS Code extension, because people kept running into problems there (#927, #1713). An earlier attempt, #3682, added a README link. @prrao87 asked for something else instead: a quick guide on the docs site, under **Integrations › AI Platforms & Frameworks**, showing how to use LanceDB in an extension and what results look like. The author of #3682 agreed and closed it. This PR is that guide.
+- Keep the exact `pylance==15.0.0b7` test pin on non-macOS platforms.
+- Use `pylance==15.0.0b4` on macOS. This is the newest release in this range with a macOS wheel (`cp310-abi3-macosx_11_0_arm64`).
+- Refresh `python/uv.lock` for the platform-specific resolutions.
 
-## What it adds
+The production Rust/Lance inputs are unchanged: `Cargo.lock` is byte-identical to `main` and remains on Lance `15.0.0-beta.7`. No tests, assertions, coverage, or CI checks are removed or weakened.
 
-- **`docs/web/integrations/ai/vscode.mdx`**: a new page, also added to `docs/web/docs.json`. It builds a small extension with two commands. One indexes the workspace's Markdown into a LanceDB table using the built-in `huggingface` embedding function, so no API key is needed. The other searches it by meaning. The page covers the parts that are specific to VS Code:
-  - storing the table under `context.storageUri` inste
+## Validation
 
-**File**: `docs/web-tests/ts/vscode_extension.ts` (added, +117/-0)
+- Confirmed the wheel identity from the configured index and matched its published SHA-256 to `uv.lock`; wheel metadata reports `Name: pylance`, `Version: 15.0.0b4`.
+- Verified the b4 APIs used by the Python tests (`blob_field`, `blob_array`, `BlobType`, `Blob`, `
+
+**File**: `python/pyproject.toml` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,117 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// SPDX-FileCopyrightText: Copyright The LanceDB Authors
-+
-+// The `src/extension.ts` of the sample extension in the VS Code integration guide.
-+// It needs the VS Code extension host, so jest doesn't run it: the LanceDB code it
-+// calls is tested in vscode_search.test.ts, and the extension itself was tested
-+// with @vscode/test-cli.
-+
-+// --8<-- [start:vscode_extension]
-+import * as vscode from "vscode";
-+import {
-+  type Chunk,
-+  chunkMarkdown,
-+  indexChunks,
-+  openDatabase,
-+  searchChunks,
-+} from "./search";
-+
-+export async function activate(context: vscode.ExtensionContext) {
-+  // One index per workspace. `storageUri` is undefined when no folder is open.
-+  const storage = context.storageUri ?? context.globalStorageUri;
-+
-+  // Transformers.js downloads the embedding model on first use. Keep it in
-+  // global storage so every workspace shares one copy and it survives
-+  // extension updates. Use `import()`: LanceDB loads the ES module build, and
-+  // `require()` would return a separate copy whose settings LanceDB never sees.
-+  const { env } = await import("@huggingface/transformers");
-+  env.cacheDir = vscode.Uri.joinPath(context.globalStorageUri, "models").fsPath;
-+
-+  context.subscriptions.push(
-+    vscode.commands.registerCommand("lancedbSearch.index", async () => {
-+      const files = await vscode.workspace.findFiles(
-+        "**/*.md",
-+        "**/node_modules/**",
-+      );
-+      const chunks: Chunk[] = [];
-+      for (const file of files) {
-+        const bytes = await vscode.workspace.fs.readFile(file);
-+        // Store the file's URI, not a path relative to its folder: in a
-+        // multi-root workspace `findFiles` searches every folder, and only the
-+        // URI says which one a result came from.
-+        chunks.push(
-+          ...chunkMarkdown(file.toString(), new TextDecoder().decode(bytes)),
-+        );
-+      }
-+      if (chunks.length === 0) {
-+        vscode.window.showWarningMessage("No Markdown files to index.");
-+        return 0;
-+      }
-+
-+      await vscode.window.withProgress(
-+        {
-+          location: vscode.ProgressLocation.Notification,
-+          title: `Indexing ${files.length} Markdown files`,
-+        },
-+        async () => {
-+          await vscode.workspace.fs.createDirectory(storage);
-+          await indexChunks(await openDatabase(storage.fsPath), chunks);
-+        },
-+      );
-+      vscode.window.showInformationMessage(
-+        `Indexed ${chunks.length} paragraphs from ${files.length} files.`,
-+      );
-+      return chunks.length;
-+    }),
-+
-+    // Called with a query (for example from a test or another extension), the
-+    // command returns the matching rows instead of showing a picker.
-+    vscode.commands.registerCommand(
-+      "lancedbSearch.search",
-+      async (query?: string) => {
-+        const text =
-+          query ??
-+          (await vscode.window.showInputBox({
-+            prompt: "Search Markdown by meaning",
-+          }));
-+        if (!text) {
-+          return [];
-+        }
-+        const results = await searchChunks(
-+          await openDatabase(storage.fsPath),
-+          text,
-+        );
-+        if (query !== undefined) {
-+          return results;
-+        }
-+
-+        const picked = await vscode.window.showQuickPick(
-+          results.map((row) => {
-+            const uri = vscode.Uri.parse(row.path);
-+            return {
-+              label: `${vscode.workspace.asRelativePath(uri)}:${row.line + 1}`,
-+              description: `distance ${row._distance.toFixed(3)}`,
-+              detail: row.text,
-+              uri,
-+              line: row.line,
-+            };
-+          }),
-+          { placeHolder: text, matchOnDetail: true },
-+        );
-+        if (picked) {
-+          const editor = await vscode.window.showTextDocument(picked.uri);
-+          const start = new vscode.Position(picked.line, 0);
-+          editor.selection = new vscode.Selection(start, start);
-+          editor.revealRange(
-+            new vscode.Range(start, start),
-+            vscode.TextEditorRevealType.InCenter,
-+          );
-+        }
-+        return results;
-+      },
-+    ),
-+  );
-+}
-+
-+export function deactivate() {}
-+// --8<-- [end:vscode_extension]
+@@ -64,7 +64,9 @@ tests = [
+     "polars>=0.19, <=1.32.3",
+     "pyarrow<25",
+     "pyarrow-stubs>=16.0",
+-    "pylance==15.0.0b7",
++    # pylance 15.0.0b5+ has not published macOS wheels.
++    "pylance==15.0.0b7; sys_platform != 'darwin'",
++    "pylance==15.0.0b4; sys_platform == 'darwin'",
+     "requests>=2.31.0",
+     "datafusion>=54,<55",
+     "opentelemetry-sdk>=1.30.0",
 ```
 
-**File**: `docs/web-tests/ts/vscode_search.test.ts` (added, +67/-0)
+**File**: `python/uv.lock` (modified, +107/-39)
 ```diff
-@@ -0,0 +1,67 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// SPDX-FileCopyrightText: Copyright The LanceDB Authors
-+import { expect, test } from "@jest/globals";
-+import { withTempDirectory } from "./util.ts";
-+import {
-+  chunkMarkdown,
-+  indexChunks,
-+  openDatabase,
-+  searchChunks,
-+} from "./vscode_search.ts";
-+
-+// The same files make up the sample workspace used in the docs page.
-+const workspace: Record<string, string> = {
-+  "README.md":
-+    "# Acme CLI\n\nAcme CLI syncs your local notes to the Acme cloud.\n\nInstall it with `npm install -g acme-cli`, then run `acme login`.\n",
-+  "docs/auth.md":
-+    "# Authentication\n\nAcme uses personal access tokens. Create one under Settings > Tokens.\n\nIf a token leaks, revoke it on the Tokens page and generate a replacement.\nRevoked tokens stop working immediately.\n",
-+  "docs/sync.md":
-+    "# Syncing\n\nRun `acme sync` to upload changed notes. Only files modified since the last sync are sent.\n\nConflicts are resolved by keeping both copies and adding `.conflict` to the older one.\n",
-+  "docs/config.md":
-+    "# Configuration\n\nSettings live in `~/.acme/config.toml`.\n\nSet `sync.interval` to control how often background sync runs, in minutes.\n",
-+  "docs/troubleshooting.md":
-+    "# Troubleshooting\n\nIf `acme sync` hangs, check that your proxy allows connections to api.acme.dev on port 443.\n\nRun `acme doctor` to print diagnostics you can attach to a bug report.\n",
-+  "CONTRIBUTING.md":
-+    "# Contributing\n\nRun `npm test` before opening a pull request. New commands need a page in docs/.\n",
-+};
-+
-+test("chunkMarkdown splits paragraphs and records their start line", () => {
-+  expect(chunkMarkdown("docs/auth.md", workspace["docs/auth.md"])).toEqual([
-+    { path: "docs/auth.md", line: 0, text: "# Authentication" },
-+    {
-+      path: "docs/auth.md",
-+      line: 2,
-+      text: "Acme uses personal access tokens. Create one under Settings > Tokens.",
-+    },
-+    {
-+      path: "docs/auth.md",
-+      line: 4,
-+      text: "If a token leaks, revoke it on the Tokens page and generate a replacement.\nRevoked tokens stop working immediately.",
-+    },
-+  ]);
-+});
-+
-+test("index workspace Markdown and search it by meaning", async () => {
-+  await withTempDirectory(async (storageDir) => {
-+    const chunks = Object.entries(workspace).flatMap(([filePath, content]) =>
-+      chunkMarkdown(filePath, content),
-+    );
-+    await indexChunks(await openDatabase(storageDir), chunks);
-+
-+    // Each command in the extension opens its own connection, so search
-+    // through a fresh one to check the table is usable after a reload.
-+    const db = await openDatabase(storageDir);
-+    const leaked = await searchChunks(
-+      db,
-+      "my credentials were exposed, what should I do?",
-+    );
-+    expect(leaked[0].path).toBe("docs/auth.md");
-+    expect(leaked[0].line).toBe(4);
-+
-+    const firewall = await searchChunks(
-+      db,
-+      "uploads are stuck behind the company firewall",
-+    );
-+    expect(firewall[0].path).toBe("docs/troubleshooting.md");
-+  });
-+}, 100_000);
-```
-
-**File**: `docs/web-tests/ts/vscode_search.ts` (added, +77/-0)
-```diff
-@@ -0,0 +1,77 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// SPDX-FileCopyrightText: Copyright The LanceDB Authors
-+
-+// --8<-- [start:vscode_imports]
-+import * as path from "node:path";
-+import * as lancedb from "@lancedb/lancedb";
-+import "@lancedb/lancedb/embedding/transformers";
-+import { Int32, Utf8 } from "apache-arrow";
-+// --8<-- [end:vscode_imports]
-+
-+// --8<-- [start:vscode_chunk]
-+export type Chunk = { path: string; line: number; text: string };
-+
-+// Split a Markdown file into paragraphs, keeping the line each one starts on
-+// so a search result can jump straight to it.
-+export function chunkMarkdown(filePath: string, content: string): Chunk[] {
-+  const lines = content.split(/\r?\n/);
-+  const chunks: Chunk[] = [];
-+  let start = 0;
-+  for (let i = 0; i <= lines.length; i++) {
-+    if (i === lines.length || lines[i].trim() === "") {
-+      const text = lines.slice(start, i).join("\n").trim();
-+      if (text) {
-+        chunks.push({ path: filePath, line: start, text });
-+      }
-+      start = i + 1;
-+    }
-+  }
-+  return chunks;
-+}
-+// --8<-- [end:vscode_chunk]
-+
-+// --8<-- [start:vscode_connect]
-+// Pass an absolute directory, such as `context.storageUri.fsPath`. A relative
-+// path resolves against the extension host's working directory, which is not
-+// your workspace and may be read-only (on macOS it is usually `/`).
-+export async function openDatabase(storageDir: string) {
-+  return lancedb.connect(path.join(storageDir, "lancedb"));
-+}
-+// --8<-- [end:vscode_connect]
-+
-+// --8<-- [start:vscode_index]
-+export async function indexChunks(db: lancedb.Connection, chunks: Chunk[]) {
-+  // Runs all-MiniLM-L6-v2 locally through Transformers.js: no API key needed.
-+  const embedder = (await lancedb.embedding
-+    .getRegistry()
-+    .get("huggingface")
-+    ?.create()) as lancedb.embedding.EmbeddingFunction;
-+
-+  const schema = lancedb.embedding.LanceSchema({
-+    path: new Utf8(),
-+    line: new Int32(),
-+    text: embedder.sourceField(new Utf8()),
-+    vector: embedder.vectorField(),
-+  });
-+
-+  // LanceDB fills in the `vector` column from `text` as the rows are written.
-+  return db.createTable("chunks", chunks, { schema, mode: "overwrite" });
-+}
-+// --8<-- [end:vscode_index]
-+
-+// --8<-- [start:vscode_search]
-+export async function searchChunks(
-+  db: lancedb.Connection,
-+  query: string,
-+  limit = 5,
-+) {
-+  // The table stores its embedding function in its metadata, so a text query
-+  // is embedded with the same model that embedded the rows.
-+  const table = await db.openTable("chunks");
-+  return table
-+    .search(query)
-+    .select(["path", "line", "text", "_distance"])
-+    .limit(limit)
-+    .toArray();
-+}
-+// --8<-- [end:vscode_search]
-```
-
-**File**: `docs/web/docs.json` (modified, +2/-1)
-```diff
-@@ -490,7 +490,8 @@
-               "integrations/ai/genkit",
-               "integrations/ai/kiln",
-               "integrations/ai/prompttools",
--              "integrations/ai/synthetic-data-kit"
-+              "integrations/ai/synthetic-data-kit",
-+              "integrations/ai/vscode"
-             ]
-           }
-         ]
-```
-
-**File**: `docs/web/integrations/ai/vscode.mdx` (added, +297/-0)
-```diff
-@@ -0,0 +1,297 @@
-+---
-+title: "VS Code extensions"
-+sidebarTitle: "VS Code"
-+description: "Embed LanceDB in a VS Code extension to search a workspace by meaning, with no server, and bundle and package its native binaries correctly."
-+keywords: ["vscode", "visual studio code", "extension", "electron", "esbuild", "vsix", "semantic search"]
-+---
-+
-+import {
-+  TsVscodeChunk,
-+  TsVscodeConnect,
-+  TsVscodeImports,
-+  TsVscodeIndex,
-+  TsVscodeSearch,
-+} from '/snippets/vscode_search.mdx';
-+import { TsVscodeExtension } from '/snippets/vscode_extension.mdx';
-+
-+A VS Code extension runs in the *extension host*, a Node.js process, so LanceDB's TypeScript SDK
-+(`@lancedb/lancedb`) runs inside it like any other npm package. There's no database server to
-+start: the extension opens a table on local disk and queries it in-process. That makes LanceDB
-+a good fit for features such as semantic search over a workspace, retrieval for an AI assistant,
-+or a cache of embeddings that survives restarts.
-+
-+The extension host differs from a plain Node.js script in three ways that trip people up:
-+
-+- **Where you can write.** Relative paths resolve against the extension host's working
-+  directory, not the workspace, and that directory may be read-only.
-+- **Bundling.** The default extension template bundles everything with esbuild, which can't
-+  bundle LanceDB's native `.node` binary.
-+- **Packaging.** LanceDB installs a native binary for the current platform only, so a VSIX
-+  built on one OS doesn't run on another.
-+
-+This guide builds a small extension that handles all three. It indexes the Markdown files in a
-+workspace and searches them by meaning, using a local embedding model, so no API key is needed.
-+
-+<Info>
-+**What you'll build**
-+
-+- **LanceDB: Index Markdown in Workspace** splits every `*.md` file into paragraphs and stores
-+  them in a LanceDB table, with embeddings from `Xenova/all-MiniLM-L6-v2` run locally through
-+  Transformers.js.
-+- **LanceDB: Search Markdown** embeds your query, shows the five closest paragraphs, and opens
-+  the one you pick.
-+</Info>
-+
-+## Create the extension {#create-the-extension}
-+
-+<Steps>
-+<Step title="Scaffold a TypeScript extension">
-+Use the official generator. Choose **New Extension (TypeScript)** and **esbuild** as the bundler.
-+
-+```bash
-+npx --package yo --package generator-code -- yo code
-+```
-+</Step>
-+
-+<Step title="Install LanceDB">
-+```bash
-+npm install @lancedb/lancedb apache-arrow@18.1.0
-+```
-+
-+Your code imports Arrow types directly, so add `apache-arrow` as a dependency, pinned inside
-+LanceDB's peer dependency range (`>=15.0.0 <=18.1.0`). If the project already depends on a
-+newer `apache-arrow`, installing LanceDB fails with `ERESOLVE`.
-+
-+LanceDB also needs `@types/node` 22 or later. The generator's template already uses a recent
-+version; an old one causes `Cannot find module 'node:stream'` errors.
-+
-+You don't need to install `@huggingface/transformers` yourself. LanceDB pins it as an optional
-+dependency, and installing a different version gives your code a copy that LanceDB doesn't use.
-+</Step>
-+
-+<Step title="Skip type checking of dependencies">
-+The type declarations of `apache-arrow` and the ONNX runtime used by Transformers.js refer to
-+browser types such as `ReadableStreamReadResult` and `HTMLCanvasElement`. The template's
-+`tsconfig.json` doesn't include the DOM library, so `tsc` reports errors inside `node_modules`.
-+Turn on `skipLibCheck`:
-+
-+```json tsconfig.json icon="brackets-curly"
-+{
-+  "compilerOptions": {
-+    "skipLibCheck": true
-+  }
-+}
-+```
-+</Step>
-+</Steps>
-+
-+## Store the database in extension storage {#store-the-database-in-extension-storage}
-+
-+Give LanceDB an absolute path inside the storage VS Code reserves for your extension:
-+
-+- `context.storageUri`: a folder for the current workspace. It's `undefined` when no folder is
-+  open. Use it for anything derived from the workspace, such as this index.
-+- `context.globalStorageUri`: a folder shared by all workspaces. Use it for things like
-+  downloaded models.
-+
-+Neither folder is guaranteed to exist, so create it before connecting. Both live outside the
-+user's project, so the index never shows up in their files or in version control.
-+
-+Don't pass a relative path such as `lancedb.connect("data")`. It resolves against the extension
-+host's working directory, which isn't the workspace and may be read-only: this causes the
-+`Read-only file system (os error 30)` error on macOS.
-+
-+Put the LanceDB code in its own module, `src/search.ts`:
-+
-+<CodeBlock filename="src/search.ts" language="TypeScript" icon="square-js">
-+  {TsVscodeImports}
-+</CodeBlock>
-+
-+<CodeBlock filename="src/search.ts" language="TypeScript" icon="square-js">
-+  {TsVscodeConnect}
-+</CodeBlock>
-+
-+## Index and search {#index-and-search}
-+
-+Split each file into paragraphs, and keep the line each one starts on so a result can open the
-+file at the right place:
-+
-+<CodeBlock filename="src/search.ts" language="TypeScript" ico
-```
-
-**File**: `docs/web/snippets/vscode_extension.mdx` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+{/* Auto-generated by scripts/mdx_snippets_gen.py. Do not edit manually. */}
-+
-+export const TsVscodeExtension = "import * as vscode from \"vscode\";\nimport {\n  type Chunk,\n  chunkMarkdown,\n  indexChunks,\n  openDatabase,\n  searchChunks,\n} from \"./search\";\n\nexport async function activate(context: vscode.ExtensionContext) {\n  // One index per workspace. `storageUri` is undefined when no folder is open.\n  const storage = context.storageUri ?? context.globalStorageUri;\n\n  // Transformers.js downloads the embedding model on first use. Keep it in\n  // global storage so every workspace shares one copy and it survives\n  // extension updates. Use `import()`: LanceDB loads the ES module build, and\n  // `require()` would return a separate copy whose settings LanceDB never sees.\n  const { env } = await import(\"@huggingface/transformers\");\n  env.cacheDir = vscode.Uri.joinPath(context.globalStorageUri, \"models\").fsPath;\n\n  context.subscriptions.push(\n    vscode.commands.registerCommand(\"lancedbSearch.index\", async () => {\n      const files = await vscode.workspace.findFiles(\n        \"**/*.md\",\n        \"**/node_modules/**\",\n      );\n      const chunks: Chunk[] = [];\n      for (const file of files) {\n        const bytes = await vscode.workspace.fs.readFile(file);\n        // Store the file's URI, not a path relative to its folder: in a\n        // multi-root workspace `findFiles` searches every folder, and only the\n        // URI says which one a result came from.\n        chunks.push(\n          ...chunkMarkdown(file.toString(), new TextDecoder().decode(bytes)),\n        );\n      }\n      if (chunks.length === 0) {\n        vscode.window.showWarningMessage(\"No Markdown files to index.\");\n        return 0;\n      }\n\n      await vscode.window.withProgress(\n        {\n          location: vscode.ProgressLocation.Notification,\n          title: `Indexing ${files.length} Markdown files`,\n        },\n        async () => {\n          await vscode.workspace.fs.createDirectory(storage);\n          await indexChunks(await openDatabase(storage.fsPath), chunks);\n        },\n      );\n      vscode.window.showInformationMessage(\n        `Indexed ${chunks.length} paragraphs from ${files.length} files.`,\n      );\n      return chunks.length;\n    }),\n\n    // Called with a query (for example from a test or another extension), the\n    // command returns the matching rows instead of showing a picker.\n    vscode.commands.registerCommand(\n      \"lancedbSearch.search\",\n      async (query?: string) => {\n        const text =\n          query ??\n          (await vscode.window.showInputBox({\n            prompt: \"Search Markdown by meaning\",\n          }));\n        if (!text) {\n          return [];\n        }\n        const results = await searchChunks(\n          await openDatabase(storage.fsPath),\n          text,\n        );\n        if (query !== undefined) {\n          return results;\n        }\n\n        const picked = await vscode.window.showQuickPick(\n          results.map((row) => {\n            const uri = vscode.Uri.parse(row.path);\n            return {\n              label: `${vscode.workspace.asRelativePath(uri)}:${row.line + 1}`,\n              description: `distance ${row._distance.toFixed(3)}`,\n              detail: row.text,\n              uri,\n              line: row.line,\n            };\n          }),\n          { placeHolder: text, matchOnDetail: true },\n        );\n        if (picked) {\n          const editor = await vscode.window.showTextDocument(picked.uri);\n          const start = new vscode.Position(picked.line, 0);\n          editor.selection = new vscode.Selection(start, start);\n          editor.revealRange(\n            new vscode.Range(start, start),\n            vscode.TextEditorRevealType.InCenter,\n          );\n        }\n        return results;\n      },\n    ),\n  );\n}\n\nexport function deactivate() {}\n";
-+
-```
-
-**File**: `docs/web/snippets/vscode_search.mdx` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+{/* Auto-generated by scripts/mdx_snippets_gen.py. Do not edit manually. */}
-+
-+export const TsVscodeChunk = "export type Chunk = { path: string; line: number; text: string };\n\n// Split a Markdown file into paragraphs, keeping the line each one starts on\n// so a search result can jump straight to it.\nexport function chunkMarkdown(filePath: string, content: string): Chunk[] {\n  const lines = content.split(/\\r?\\n/);\n  const chunks: Chunk[] = [];\n  let start = 0;\n  for (let i = 0; i <= lines.length; i++) {\n    if (i === lines.length || lines[i].trim() === \"\") {\n      const text = lines.slice(start, i).join(\"\\n\").trim();\n      if (text) {\n        chunks.push({ path: filePath, line: start, text });\n      }\n      start = i + 1;\n    }\n  }\n  return chunks;\n}\n";
-+
-+export const TsVscodeConnect = "// Pass an absolute directory, such as `context.storageUri.fsPath`. A relative\n// path resolves against the extension host's working directory, which is not\n// your workspace and may be read-only (on macOS it is usually `/`).\nexport async function openDatabase(storageDir: string) {\n  return lancedb.connect(path.join(storageDir, \"lancedb\"));\n}\n";
-+
-+export const TsVscodeImports = "import * as path from \"node:path\";\nimport * as lancedb from \"@lancedb/lancedb\";\nimport \"@lancedb/lancedb/embedding/transformers\";\nimport { Int32, Utf8 } from \"apache-arrow\";\n";
-+
-+export const TsVscodeIndex = "export async function indexChunks(db: lancedb.Connection, chunks: Chunk[]) {\n  // Runs all-MiniLM-L6-v2 locally through Transformers.js: no API key needed.\n  const embedder = (await lancedb.embedding\n    .getRegistry()\n    .get(\"huggingface\")\n    ?.create()) as lancedb.embedding.EmbeddingFunction;\n\n  const schema = lancedb.embedding.LanceSchema({\n    path: new Utf8(),\n    line: new Int32(),\n    text: embedder.sourceField(new Utf8()),\n    vector: embedder.vectorField(),\n  });\n\n  // LanceDB fills in the `vector` column from `text` as the rows are written.\n  return db.createTable(\"chunks\", chunks, { schema, mode: \"overwrite\" });\n}\n";
-+
-+export const TsVscodeSearch = "export async function searchChunks(\n  db: lancedb.Connection,\n  query: string,\n  limit = 5,\n) {\n  // The table stores its embedding function in its metadata, so a text query\n  // is embedded with the same model that embedded the rows.\n  const table = await db.openTable(\"chunks\");\n  return table\n    .search(query)\n    .select([\"path\", \"line\", \"text\", \"_distance\"])\n    .limit(limit)\n    .toArray();\n}\n";
-+
+@@ -4,10 +4,14 @@ requires-python = ">=3.10"
+ resolution-markers = [
+     "python_full_version >= '3.14' and sys_platform == 'win32'",
+     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
+-    "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+-    "python_full_version >= '3.12' and python_full_version < '3.14'",
+-    "python_full_version == '3.11.*'",
+-    "python_full_version < '3.11'",
++    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
++    "python_full_version >= '3.14' and sys_platform == 'darwin'",
++    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform != 'darwin'",
++    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform == 'darwin'",
++    "python_full_version == '3.11.*' and sys_platform != 'darwin'",
++    "python_full_version == '3.11.*' and sys_platform == 'darwin'",
++    "python_full_version < '3.11' and sys_platform != 'darwin'",
++    "python_full_version < '3.11' and sys_platform == 'darwin'",
+ ]
+ 
+ [[package]]
+@@ -1437,7 +1441,8 @@ name = "ibm-watsonx-ai"
+ version = "1.3.42"
+ source = { registry = "https://pypi.org/simple" }
+ resolution-markers = [
+-    "python_full_version < '3.11'",
++    "python_full_version < '3.11' and sys_platform != 'darwin'",
++    "python_full_version < '3.11' and sys_platform == 'darwin'",
+ ]
+ dependencies = [
+     { name = "cachetools" },
+@@ -1463,9 +1468,12 @@ source = { registry = "https://pypi.org/simple" }
+ resolution-markers = [
+     "python_full_version >= '3.14' and sys_platform == 'win32'",
+     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
+-    "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+-    "python_full_version >= '3.12' and python_full_version < '3.14'",
+-    "python_full_version == '3.11.*'",
++    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
++    "python_full_version >= '3.14' and sys_platform == 'darwin'",
++    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform != 'darwin'",
++    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform == 'darwin'",
++    "python_full_version == '3.11.*' and sys_platform != 'darwin'",
++    "python_full_version == '3.11.*' and sys_platform == 'darwin'",
+ ]
+ dependencies = [
+     { name = "cachetools" },
+@@ -1551,7 +1559,8 @@ name = "ipython"
+ version = "8.39.0"
+ source = { registry = "https://pypi.org/simple" }
+ resolution-markers = [
+-    "python_full_version < '3.11'",
++    "python_full_version < '3.11' and sys_platform != 'darwin'",
++    "python_full_version < '3.11' and sys_platform == 'darwin'",
+ ]
+ dependencies = [
+     { name = "colorama", marker = "sys_platform == 'win32'" },
+@@ -1578,9 +1587,12 @@ source = { registry = "https://pypi.org/simple" }
+ resolution-markers = [
+     "python_full_version >= '3.14' and sys_platform == 'win32'",
+     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
+-    "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+-    "python_full_version >= '3.12' and python_full_version < '3.14'",
+-    "python_full_version == '3.11.*'",
++    "python_full_version >= '3.14' and sys_platform != 'darwin' and sys_platform != 'emscripten' and sys_platform != 'win32'",
++    "python_full_version >= '3.14' and sys_platform == 'darwin'",
++    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform != 'darwin'",
++    "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform == 'darwin'",
++    "python_full_version == '3.11.*' and sys_platform != 'darwin'",
++    "python_full_version == '3.11.*' and sys_platform == 'darwin'",
+ ]
+ dependencies = [
+     { name = "colorama", marker = "sys_platform == 'win32'" },
+@@ -1936,7 +1948,8 @@ otel = [
+     { name = "opentelemetry-api" },
+ ]
+ pylance = [
+-    { name = "pylance" },
++    { name = "pylance", version = "15.0.0b4", source = { registry = "https://pypi.fury.io/lance-format/" }, marker = "sys_platform == 'darwin'" },
++    { name = "pylance", version = "15.0.0b7", source = { registry = "https://pypi.fury.io/lance-format/" }, marker = "sys_platform != 'darwin'" },
+ ]
+ siglip = [
+     { name = "pillow" },
+@@ -1956,7 +1969,8 @@ tests = [
+     { name = "polars" },
+     { name = "pyarrow" },
+     { name = "pyarrow-stubs" },
+-    { name = "pylance" },
++    { name = "pylance", version = "15.0.0b4", source = { registry = "https://pypi.fury.io/lance-format/" }, marker = "sys_platform == 'darwin'" },
++    { name = "pylance", version = "15.0.0b7", source = { registry = "https://pypi.fury.io/lance-format/" }, marker = "sys_platform != 'darwin'" },
+     { name = "pytest" },
+     { name = "pytest-asyncio" },
+     { name = "pytest-mock" },
+@@ -2006,8 +2020,9 @@ requires-dist = [
+     
 ```
 
 ---
 
-### Incident Patch 2: `12d86ea2` (2026-10-28)
-**Commit Message**: feat(nodejs): add col() expression builder for camelCase column names
+### Incident Patch 2: `f74a7d38` (2026-10-30)
+**Commit Message**: test(rust): detect indexed delete compilation regressions
 
 ## Summary
 
-Fixes #3211 by exposing the shared Rust/DataFusion expression builder through Node bindings. Case-sensitive references such as `col("firstName")` can be composed and passed to `where()`, while SQL strings remain supported.
+- Compare equal-size 1,000-value deletes confined to one BTree page and spread across many pages.
+- Use an isolated current-thread allocation counter instead of a wall-clock threshold.
+- Warm index pages first so the assertion detects repeated predicate materialization rather than I/O.
 
-The expression-object representation follows [the design requested on #3290](https://github.com/lancedb/lancedb/pull/3290#discussion_r3632371998). That earlier PR remains open; no claim is made that the issue was unclaimed or that maintainers have selected this implementation.
+## Root cause
 
-## Review corrections
+Lance previously rebuilt a large `IN` predicate for every BTree page, making indexed
+lookups scale as `O(pages x values)`. The pinned Lance revision compiles the predicate
+once and reuses it across pages. The regression guard observes the allocation scaling
+caused by that invariant directly.
 
-- Construct the named native struct correctly and parse casts through `arrow_schema::DataType`.
-- Preserve numeric values: use Int64 only for JavaScript safe integers; retain Float64 otherwise. Explicit `litInt` rejects unsupported numbers with a documented `RangeError`.
-- Correct test syntax/API calls and align SQL assertions with the shared dialect, including reserved and case-sensitive names.
-- Use typed, isolated temporary test tables with cleanup, and cover an actual large-number filter threshold.
-- Document the public methods and commit generated API documentation.
+Fixes #2085
 
-Synced with 
-
-**File**: `docs/src/js/classes/AutoQuery.md` (modified, +9/-4)
+**File**: `rust/lancedb/tests/indexed_delete_test.rs` (added, +152/-0)
 ```diff
-@@ -469,29 +469,34 @@ where(predicate): this
- 
- A filter statement to be applied to this query.
- 
--The filter should be supplied as an SQL query string.  For example:
-+The filter may be an SQL query string or an expression built with `col`,
-+which preserves case-sensitive column names. For example:
- 
- #### Parameters
- 
--* **predicate**: `string`
-+* **predicate**: `string` \| [`Expr`](Expr.md)
- 
- #### Returns
- 
- `this`
- 
--#### Example
-+#### Examples
- 
- ```ts
- x > 10
- y > 0 AND y < 100
- x > 5 OR y = 'test'
-+```
-+
-+```ts
-+table.query().where(col("firstName").eq("Alice"));
-+```
- 
- Filtering performance can often be improved by creating a scalar index
- on the filter column(s).
- 
- Calling this multiple times combines the filters with a logical AND rather
- than replacing the previous filter.
--```
- 
- #### Inherited from
- 
-```
-
-**File**: `docs/src/js/classes/Expr.md` (added, +365/-0)
-```diff
-@@ -0,0 +1,365 @@
-+[**@lancedb/lancedb**](../README.md) • **Docs**
-+
-+***
-+
-+[@lancedb/lancedb](../globals.md) / Expr
-+
-+# Class: Expr
-+
-+A SQL expression backed by the shared LanceDB expression builder.
-+
-+## Example
-+
-+```ts
-+table.query().where(col("firstName").eq("Alice")).toArray();
-+```
-+
-+## Constructors
-+
-+### new Expr()
-+
-+```ts
-+new Expr(inner): Expr
-+```
-+
-+#### Parameters
-+
-+* **inner**: `Expr`
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+## Properties
-+
-+### inner
-+
-+```ts
-+inner: Expr;
-+```
-+
-+## Methods
-+
-+### add()
-+
-+```ts
-+add(other): Expr
-+```
-+
-+Add a value.
-+
-+#### Parameters
-+
-+* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### and()
-+
-+```ts
-+and(other): Expr
-+```
-+
-+Combine two predicates with AND.
-+
-+#### Parameters
-+
-+* **other**: [`Expr`](Expr.md)
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### cast()
-+
-+```ts
-+cast(dataType): Expr
-+```
-+
-+Cast to an Arrow data type, such as "Int64".
-+
-+#### Parameters
-+
-+* **dataType**: `string`
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### contains()
-+
-+```ts
-+contains(substr): Expr
-+```
-+
-+Test whether a string contains a substring.
-+
-+#### Parameters
-+
-+* **substr**: [`ExprLike`](../type-aliases/ExprLike.md)
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### div()
-+
-+```ts
-+div(other): Expr
-+```
-+
-+Divide by a value.
-+
-+#### Parameters
-+
-+* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### eq()
-+
-+```ts
-+eq(other): Expr
-+```
-+
-+Compare for equality.
-+
-+#### Parameters
-+
-+* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### gt()
-+
-+```ts
-+gt(other): Expr
-+```
-+
-+Compare for greater than.
-+
-+#### Parameters
-+
-+* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### gte()
-+
-+```ts
-+gte(other): Expr
-+```
-+
-+Compare for greater than or equal to.
-+
-+#### Parameters
-+
-+* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### isIn()
-+
-+```ts
-+isIn(values): Expr
-+```
-+
-+Test membership in a list of values.
-+
-+#### Parameters
-+
-+* **values**: [`ExprLike`](../type-aliases/ExprLike.md)[]
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### lower()
-+
-+```ts
-+lower(): Expr
-+```
-+
-+Convert a string to lowercase.
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### lt()
-+
-+```ts
-+lt(other): Expr
-+```
-+
-+Compare for less than.
-+
-+#### Parameters
-+
-+* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### lte()
-+
-+```ts
-+lte(other): Expr
-+```
-+
-+Compare for less than or equal to.
-+
-+#### Parameters
-+
-+* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### mul()
-+
-+```ts
-+mul(other): Expr
-+```
-+
-+Multiply by a value.
-+
-+#### Parameters
-+
-+* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### ne()
-+
-+```ts
-+ne(other): Expr
-+```
-+
-+Compare for inequality.
-+
-+#### Parameters
-+
-+* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### not()
-+
-+```ts
-+not(): Expr
-+```
-+
-+Negate this predicate.
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### or()
-+
-+```ts
-+or(other): Expr
-+```
-+
-+Combine two predicates with OR.
-+
-+#### Parameters
-+
-+* **other**: [`Expr`](Expr.md)
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### sub()
-+
-+```ts
-+sub(other): Expr
-+```
-+
-+Subtract a value.
-+
-+#### Parameters
-+
-+* **other**: [`ExprLike`](../type-aliases/ExprLike.md)
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-+
-+***
-+
-+### toSql()
-+
-+```ts
-+toSql(): string
-+```
-+
-+Serialize with the LanceDB SQL dialect, preserving column case.
-+
-+#### Returns
-+
-+`string`
-+
-+***
-+
-+### upper()
-+
-+```ts
-+upper(): Expr
-+```
-+
-+Convert a string to uppercase.
-+
-+#### Returns
-+
-+[`Expr`](Expr.md)
-```
-
-**File**: `docs/src/js/classes/Query.md` (modified, +9/-4)
-```diff
-@@ -543,29 +543,34 @@ where(predicate): this
- 
- A filter statement to be applied to this query.
- 
--The filter should be supplied as an SQL query string.  For example:
-+The filter may be an SQL query string or an expression built with `col`,
-+which preserves case-sensitive column names. For example:
- 
- #### Parameters
- 
--* **predicate**: `string`
-+* **predicate**: `string` \| [`Expr`](Expr.md)
- 
- #### Returns
- 
- `this`
- 
--#### Example
-+#### Examples
- 
- ```ts
- x > 10
- y > 0 AND y < 100
- x > 5 OR y = 'test'
-+```
-+
-+```ts
-+table.query().where(col("firstName").eq("Alice"));
-+```
- 
- Filtering performance can often be improved by creating a scalar index
- on the filter column(s).
- 
- Calling this multiple times combines the filters with a logical AND rather
- than replacing the previous filter.
--```
- 
- #### Inherited from
- 
-```
-
-**File**: `docs/src/js/classes/VectorQuery.md` (modified, +9/-4)
-```diff
-@@ -825,29 +825,34 @@ where(predicate): this
- 
- A filter statement to be applied to this query.
- 
--The filter should be supplied as an SQL query string.  For example:
-+The filter may be an SQL query string or an expression built with `col`,
-+which preserves case-sensitive column names. For example:
- 
- #### Parameters
- 
--* **predicate**: `string`
-+* **predicate**: `string` \| [`Expr`](Expr.md)
- 
- #### Returns
- 
- `this`
- 
--#### Example
-+#### Examples
- 
- ```ts
- x > 10
- y > 0 AND y < 100
- x > 5 OR y = 'test'
-+```
-+
-+```ts
-+table.query().where(col("firstName").eq("Alice"));
-+```
- 
- Filtering performance can often be improved by creating a scalar index
- on the filter column(s).
- 
- Calling this multiple times combines the filters with a logical AND rather
- than replacing the previous filter.
--```
- 
- #### Inherited from
- 
-```
-
-**File**: `docs/src/js/functions/col.md` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+[**@lancedb/lancedb**](../README.md) • **Docs**
-+
-+***
-+
-+[@lancedb/lancedb](../globals.md) / col
-+
-+# Function: col()
-+
-+```ts
-+function col(name): Expr
-+```
-+
-+Reference a column by its exact, case-sensitive name.
-+
-+## Parameters
-+
-+* **name**: `string`
-+
-+## Returns
-+
-+[`Expr`](../classes/Expr.md)
-```
-
-**File**: `docs/src/js/functions/func.md` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+[**@lancedb/lancedb**](../README.md) • **Docs**
-+
-+***
-+
-+[@lancedb/lancedb](../globals.md) / func
-+
-+# Function: func()
-+
-+```ts
-+function func(name, ...args): Expr
-+```
-+
-+Call a registered SQL function, such as `func("lower", col("firstName"))`.
-+
-+## Parameters
-+
-+* **name**: `string`
-+
-+* ...**args**: [`ExprLike`](../type-aliases/ExprLike.md)[]
-+
-+## Returns
-+
-+[`Expr`](../classes/Expr.md)
-```
-
-**File**: `docs/src/js/functions/lit.md` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+[**@lancedb/lancedb**](../README.md) • **Docs**
-+
-+***
-+
-+[@lancedb/lancedb](../globals.md) / lit
-+
-+# Function: lit()
-+
-+```ts
-+function lit(value): Expr
-+```
-+
-+Create a string or numeric literal. Unsafe integers are represented as Float64.
-+
-+## Parameters
-+
-+* **value**: `string` \| `number`
-+
-+## Returns
-+
-+[`Expr`](../classes/Expr.md)
-```
-
-**File**: `docs/src/js/functions/litBool.md` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+[**@lancedb/lancedb**](../README.md) • **Docs**
-+
-+***
-+
-+[@lancedb/lancedb](../globals.md) / litBool
-+
-+# Function: litBool()
-+
-+```ts
-+function litBool(value): Expr
-+```
-+
-+Create a boolean literal.
-+
-+## Parameters
-+
-+* **value**: `boolean`
-+
-+## Returns
-+
-+[`Expr`](../classes/Expr.md)
+@@ -0,0 +1,152 @@
++// SPDX-License-Identifier: Apache-2.0
++// SPDX-FileCopyrightText: Copyright The LanceDB Authors
++
++use std::{
++    alloc::{GlobalAlloc, Layout, System},
++    cell::Cell,
++    future::Future,
++    sync::Arc,
++};
++
++use arrow_array::{RecordBatch, StringArray};
++use arrow_schema::{DataType, Field, Schema};
++use futures::TryStreamExt;
++use lancedb::{
++    Table, connect,
++    index::Index,
++    query::{ExecutableQuery, QueryBase},
++};
++
++struct ThreadCountingAllocator;
++
++thread_local! {
++    static COUNT_ALLOCATIONS: Cell<bool> = const { Cell::new(false) };
++    static ALLOCATED_BYTES: Cell<usize> = const { Cell::new(0) };
++}
++
++unsafe impl GlobalAlloc for ThreadCountingAllocator {
++    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
++        let ptr = unsafe { System.alloc(layout) };
++        if !ptr.is_null() {
++            record_allocation(layout.size());
++        }
++        ptr
++    }
++
++    unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
++        let ptr = unsafe { System.alloc_zeroed(layout) };
++        if !ptr.is_null() {
++            record_allocation(layout.size());
++        }
++        ptr
++    }
++
++    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
++        unsafe { System.dealloc(ptr, layout) };
++    }
++
++    unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, new_size: usize) -> *mut u8 {
++        let new_ptr = unsafe { System.realloc(ptr, layout, new_size) };
++        if !new_ptr.is_null() {
++            record_allocation(new_size);
++        }
++        new_ptr
++    }
++}
++
++#[global_allocator]
++static ALLOCATOR: ThreadCountingAllocator = ThreadCountingAllocator;
++
++const ROW_COUNT: usize = 262_144;
++const VALUE_COUNT: usize = 1_000;
++
++fn record_allocation(bytes: usize) {
++    COUNT_ALLOCATIONS.with(|enabled| {
++        if enabled.get() {
++            ALLOCATED_BYTES.with(|allocated| allocated.set(allocated.get() + bytes));
++        }
++    });
++}
++
++async fn measure_allocated_bytes<F: Future>(future: F) -> (F::Output, usize) {
++    ALLOCATED_BYTES.with(|allocated| allocated.set(0));
++    COUNT_ALLOCATIONS.with(|enabled| enabled.set(true));
++    let output = future.await;
++    COUNT_ALLOCATIONS.with(|enabled| enabled.set(false));
++    let allocated = ALLOCATED_BYTES.with(Cell::get);
++    (output, allocated)
++}
++
++fn in_predicate(ids: impl Iterator<Item = usize>) -> String {
++    let values = ids
++        .map(|id| format!("'id_{id:06}'"))
++        .collect::<Vec<_>>()
++        .join(",");
++    format!("id IN ({values})")
++}
++
++async fn create_indexed_table(name: &str) -> Table {
++    let conn = connect("memory://").execute().await.unwrap();
++    let schema = Arc::new(Schema::new(vec![Field::new("id", DataType::Utf8, false)]));
++    let ids = StringArray::from_iter_values((0..ROW_COUNT).map(|id| format!("id_{id:06}")));
++    let batch = RecordBatch::try_new(schema, vec![Arc::new(ids)]).unwrap();
++    let table = conn.create_table(name, batch).execute().await.unwrap();
++    table
++        .create_index(&["id"], Index::BTree(Default::default()))
++        .execute()
++        .await
++        .unwrap();
++    table
++}
++
++async fn warm_index(table: &Table, predicate: &str) {
++    table
++        .query()
++        .only_if(predicate)
++        .execute()
++        .await
++        .unwrap()
++        .try_collect::<Vec<_>>()
++        .await
++        .unwrap();
++}
++
++#[tokio::test(flavor = "current_thread")]
++async fn large_in_delete_compiles_predicate_once() {
++    let clustered = in_predicate(0..VALUE_COUNT);
++    let spread = in_predicate((0..VALUE_COUNT).map(|id| id * (ROW_COUNT / VALUE_COUNT)));
++    let clustered_table = create_indexed_table("clustered_ids").await;
++    let spread_table = create_indexed_table("spread_ids").await;
++
++    let plan = spread_table
++        .query()
++        .only_if(&spread)
++        .explain_plan(false)
++        .await
++        .unwrap();
++    assert!(plan.contains("ScalarIndexQuery"), "unexpected plan: {plan}");
++
++    // Remove page-loading noise from the allocation comparison. Predicate
++    // compilation is deliberately not cached, so each delete still compiles it.
++    warm_index(&clustered_table, &spread).await;
++    warm_index(&spread_table, &spread).await;
++
++    let (clustered_result, clustered_bytes) =
++        measure_allocated_bytes(clustered_table.delete(&clustered)).await;
++    let (spread_result, spread_bytes) = measure_allocated_bytes(spread_table.delete(&spread)).await;
++
++    assert_eq!(
++        clustered_result.unwrap().num_deleted_rows,
++        VALUE_COUNT as u64
++    );
++    assert_eq!(spread_result.unwrap().num_deleted_rows, VALUE_COUNT as u64);
++
++    // Both predicates contain the same number and size of values. Spreading them
++    // across BTree pages may add modest page-processing overhead, but it must not
++    // rematerialize all values per page. This ratio fails by a wide margin if
++    // Lance's compile-once path is moved back inside the per-page loop.
++    assert!(
++        spread_bytes * 2 < c
 ```
 
 ---
 
-### Incident Patch 3: `741cb9ad` (2026-10-28)
-**Commit Message**: fix(python): implement remote namespace and table existence checks (#4725)
+### Incident Patch 3: `ca343a5c` (2026-10-30)
+**Commit Message**: docs: fix table, accuracy and structure problems found in the pre-launch review (#4745)
 
-Remote Python connections inherited the unsupported-operation stubs for
-`namespace_exists` and `table_exists`, so both raised
-`NotImplementedError` even when namespace and table operations worked.
+## Summary
 
-Add the missing remote overrides, async methods, and PyO3 bindings using
-the existing namespace describe and table open paths. Only an explicit
-not-found result returns `False`; permission, transport, and server
-errors propagate. This preserves authentication, dynamic headers,
-retries, and nested namespace handling, and rechecks cached tables
-before reporting that they exist.
+Fixes the problems a page-by-page review of the docs found before
+launch, after checking each one against the current source and, where
+noted, the code. The matching fixes for the dataset and Geneva pages,
+which live in `lancedb/docs`, are in lancedb/docs#402.
 
-The async namespace helper also recognizes native `NamespaceNotFound`
-errors so missing local namespaces return `False`. The table and
-namespace guides document Python remote support and distinguish it from
-the unsupported `exists` routes used by direct REST namespace clients.
+**Tables**
+- `integrations/embedding/cohere`: each input-type description was split
+across two table rows and wrapped in literal quotes
+(`"`search_document`"`). Now one row per type.
+- `integrations/embedding/gemini`: removes the same stray quotes from
+the task-type table.
+- `integrations/ai/langchain`: the MMR search table's `kwargs` row was
+missing a cell, so its description sat under Type.
+- Six reranker pages (answerdotai, cohere, colbert, jina, openai,
+voyageai): closes the backtick before `_relevance_score`.
+- `indexing/vector-index`: finishes a cell cut off at "with scalar".
+- `sql/dql/dedupe`: labels the empty header cell in the resolution
+table.
 
-Validation:
-- All 40 focused regression cases pass, covering successful and missing
-lookups, local and remote namespaces, dynamic headers, permission/server
-errors, invalid table identifiers, and cached tables that disappear.
-- The original inherited stubs reproduce 
+**Corrections**
+- `curation/sampling`: sampling works in LanceDB Embedded through the
+Python SDK, so the page is available in both, with the SQL sections
+marked Enterprise.
 
-**File**: `docs/web/management/namespace.mdx` (modified, +5/-2)
+
+**File**: `docs/src/js/classes/Index.md` (modified, +1/-1)
 ```diff
-@@ -243,8 +243,11 @@ let db = lancedb::connect_namespace("rest", properties)
+@@ -252,7 +252,7 @@ static labelList(): Index
+ Create a label list index.
+ 
+ LabelList index is a scalar index that can be used on `List<T>` columns to
+-support queries with `array_contains_all` and `array_contains_any`
++support queries with `array_has_all` and `array_has_any`
+ using an underlying bitmap index.
+ 
+ #### Returns
+```
+
+**File**: `docs/web/basics/agentic-skills.mdx` (modified, +3/-3)
+```diff
+@@ -84,8 +84,8 @@ found and what each target supports.
+ 
+ ### Get started with the LanceDB agent plugin {#get-started-with-the-lancedb-agent-plugin}
+ 
+-This tutorial uses the Camelot dataset from the [quickstart](/quickstart), with
+-a portrait added for each character. Each LanceDB row contains validated
++This tutorial uses a small Camelot dataset of characters from Arthurian legend,
++with a portrait for each character. Each LanceDB row contains validated
+ metadata and raw JPEG bytes. Text, images, and any embeddings you add later
+ remain in the same table.
+ 
+@@ -166,7 +166,7 @@ embedded retrieval library. A simple prompt like this should work:
+ Use the lancedb plugin to ingest the dataset in `data/` into a LanceDB
+ Embedded table.
+ 
+-# If using enterprise
++# If using LanceDB Enterprise
+ Use the lancedb plugin to ingest the dataset in `data/` into a LanceDB
+ Enterprise table using the connection information in `.env`.
  ```
- </CodeGroup>
- [LanceDB Enterprise](/enterprise) operates a REST namespace server on top of the Lance format, so any REST client that can speak the REST namespace API
--contract can be used to interact with it. It does not serve the contract's `exists` routes, so checks such as `namespace_exists`
--fail against it. For authentication examples in LanceDB Enterprise, visit
-+contract can be used to interact with it. It does not serve the contract's `exists` routes,
-+so existence checks made through a direct REST namespace client fail against it.
-+Python remote connections created with `lancedb.connect("db://...")` or
-+`lancedb.connect_async("db://...")` support `namespace_exists` and `table_exists`
-+through the existing describe routes instead. For authentication examples in LanceDB Enterprise, visit
- the [Namespaces in SDKs](#namespaces-in-lancedb-enterprise) page. 
- 
- ## Best practices {#best-practices}
 ```
 
-**File**: `docs/web/management/table.mdx` (modified, +15/-8)
+**File**: `docs/web/curation/sampling.mdx` (modified, +14/-3)
 ```diff
-@@ -214,14 +214,21 @@ await db.tableNames();
- Each accepts `namespace_path` to act inside a [namespace](/management/namespace)
- rather than at the database root.
+@@ -5,7 +5,7 @@ description: "Choose a sample for exploration or evaluation and preserve the sel
+ icon: dice
+ keywords: ["sampling", "tablesample", "subset", "eval set", "reproducible", "shuffle"]
+ availability:
+-  embedded: unavailable
++  embedded: available
+   enterprise: available
+ ---
  
--To find out whether a table exists, open it and handle the error, or look for
--its name in a listing. A missing table raises `ValueError` on a local directory
--or a deployment, and `lance_namespace.TableNotFoundError` on a connection from
--`connect_namespace`. A listing returns one page of names at a time, so check
--every page. Python's `table_exists` is no substitute: a local directory or a
--deployment raises `NotImplementedError` for it, and on a connection from
--`connect_namespace("dir", ...)` or `connect_namespace("rest", ...)` it fails with
--an `AttributeError`. TypeScript has no `tableExists`.
-+For Python remote connections created with `lancedb.connect("db://...")`, use
-+`db.table_exists(["documents"])` to check whether a table exists. For an async
-+remote connection, use `await db.table_exists(["documents"])`. Include namespace
-+segments before the table name, for example `["analytics", "documents"]`. These
-+checks return `False` when the table is missing and propagate other errors,
-+including permission errors.
+@@ -15,11 +15,14 @@ Sampling selects records from a larger table. Use it to explore unfamiliar
+ data, run a smaller experiment, or prepare an evaluation dataset. Enterprise
+ SQL provides `TABLESAMPLE` for selecting a percentage or number of rows.
+ 
+-This page covers Enterprise SQL sampling and a complete
+-[Python SDK example](#training) that runs locally.
++Sampling works in LanceDB Embedded and LanceDB Enterprise through the
++[Python SDK](#training). SQL sampling, the sections marked Enterprise below, needs
++LanceDB Enterprise.
+ 
+ ## Example data {#example-data}
+ 
++<Badge color="red">Enterprise</Badge>
 +
-+Local synchronous directory connections still raise `NotImplementedError` for
-+`table_exists`. On a connection from `connect_namespace("dir", ...)` or
-+`connect_namespace("rest", ...)`, it fails with an `AttributeError`. For these
-+connections, open the table and handle the error, or look for its name in a
-+listing. A missing table raises `ValueError` on a local directory and
-+`lance_namespace.TableNotFoundError` on a connection from `connect_namespace`.
-+A listing returns one page of names at a time, so check every page. TypeScript
-+has no `tableExists`.
+ Connect with an [Enterprise SQL client](/basics/sql). The examples use a small
+ document table and a separate label table. Expand the setup below to create them.
  
- ## Rename and clone tables {#rename-clone}
+@@ -58,6 +61,8 @@ has no label. These cases let you check the effect of each operation.
  
+ ## Basic sampling {#quick}
+ 
++<Badge color="red">Enterprise</Badge>
++
+ A percentage selects a fraction of the source; `ROWS` requests a row count:
+ 
+ ```sql
+@@ -75,6 +80,8 @@ change a production table's write configuration just to try an example.
+ 
+ ## Sampling methods {#methods}
+ 
++<Badge color="red">Enterprise</Badge>
++
+ Choose a method according to how records should be selected:
+ 
+ | Method | Selection | When to use it |
+@@ -97,6 +104,8 @@ represent rare groups; check that the resulting sample covers the groups you nee
+ 
+ ## Repeatable samples {#fixed}
+ 
++<Badge color="red">Enterprise</Badge>
++
+ A seed requests a repeatable draw:
+ 
+ ```sql
+@@ -121,6 +130,8 @@ training or evaluation.
+ 
+ ## Sampling with joins {#joins}
+ 
++<Badge color="red">Enterprise</Badge>
++
+ Sampling both input tables independently changes which pairs can match.
+ For a one-to-one match, independent 10% row samples retain a given pair with
+ about 1% probability, not 10%.
 ```
 
-**File**: `python/python/lancedb/_lancedb.pyi` (modified, +2/-0)
+**File**: `docs/web/curation/windowing.mdx` (modified, +1/-1)
 ```diff
-@@ -137,6 +137,8 @@ class Connection(object):
-         self,
-         namespace_path: List[str],
-     ) -> DescribeNamespaceResponse: ...
-+    async def namespace_exists(self, namespace_id: List[str]) -> bool: ...
-+    async def table_exists(self, table_id: List[str]) -> bool: ...
-     def list_tables(
-         self,
-         namespace_path: Optional[List[str]] = None,
+@@ -1,6 +1,6 @@
+ ---
+ title: "Ranking and deduplication"
+-sidebarTitle: "Windowing"
++sidebarTitle: "Rank and Deduplicate"
+ description: "Choose records with explicit ranking rules and deterministic tie handling."
+ icon: chart-simple
+ keywords: ["window", "deduplication", "row_number", "rank", "train test split", "per class"]
 ```
 
-**File**: `python/python/lancedb/db.py` (modified, +43/-0)
+**File**: `docs/web/deployment/storage.mdx` (modified, +1/-1)
 ```diff
-@@ -2436,6 +2436,49 @@ async def describe_namespace(
-         result = await self._inner.describe_namespace(namespace_path)
-         return DescribeNamespaceResponse(**result)
+@@ -76,7 +76,7 @@ Use local disk only when you need extremely low latency and are comfortable owni
  
-+    async def namespace_exists(self, namespace_id: List[str]) -> bool:
-+        """Check if a namespace exists.
-+
-+        Parameters
-+        ----------
-+        namespace_id: List[str]
-+            The namespace identifier to check. An empty list represents root.
-+
-+        Returns
-+        -------
-+        bool
-+            True if the namespace exists, False if it is not found.
-+            Other errors, including permission errors, are propagated.
-+
-+        Examples
-+        --------
-+        >>> async def check_namespace(conn):
-+        ...     return await conn.namespace_exists(["analytics"])
-+        """
-+        return await self._inner.namespace_exists(namespace_id)
-+
-+    async def table_exists(self, table_id: List[str]) -> bool:
-+        """Check if a table exists.
-+
-+        Parameters
-+        ----------
-+        table_id: List[str]
-+            The full identifier, including namespace segments and table name.
-+            Must contain at least the table name.
-+
-+        Returns
-+        -------
-+        bool
-+            True if the table exists, False if it is not found.
-+            Other errors, including permission errors, are propagated.
-+
-+        Examples
-+        --------
-+        >>> async def check_table(conn):
-+        ...     return await conn.table_exists(["analytics", "events"])
-+        """
-+        return await self._inner.table_exists(table_id)
-+
-     def list_tables(
-         self,
-         namespace_path: Optional[List[str]] = None,
+ ### File-format choices that interact with the backend {#file-format-choices}
+ 
+-A few `storage_options` keys shape new tables in ways that depend on the backend you picked above. They are documented in full on [below](#new-table-configuration); the architecture-level summary is:
++A few `storage_options` keys shape new tables in ways that depend on the backend you picked above. They are documented in full [below](#new-table-configuration); the architecture-level summary is:
+ 
+ - `new_table_enable_v2_manifest_paths` matters most on object stores, where opening a table with many versions is dominated by listing cost. Leave it off for backward compatibility with clients older than LanceDB 0.10.0.
+ - `new_table_enable_stable_row_ids` keeps row IDs stable across compaction, delete, and merge. The choice is independent of the backend but affects any system that joins on row ID.
 ```
 
-**File**: `python/python/lancedb/remote/db.py` (modified, +30/-0)
+**File**: `docs/web/feature-engineering/add-computed-column.mdx` (modified, +7/-7)
 ```diff
-@@ -390,6 +390,36 @@ def describe_namespace(
-         """
-         return LOOP.run(self._conn.describe_namespace(namespace_path=namespace_path))
+@@ -71,21 +71,21 @@ including that you can travel back to before the column existed.
+ `computed` and `transforms` cannot be combined in one call. Reach for `computed` when the table is
+ large enough that you would rather control when the work happens.
  
-+    @override
-+    def namespace_exists(self, namespace_id: List[str]) -> bool:
-+        """Check if a namespace exists.
-+
-+        ``namespace_id`` contains the namespace segments; an empty list represents
-+        root. Returns False only if the namespace is not found. Other errors,
-+        including permission errors, are propagated.
-+
-+        Examples
-+        --------
-+        >>> def check_namespace(conn):
-+        ...     return conn.namespace_exists(["analytics"])
-+        """
-+        return LOOP.run(self._conn.namespace_exists(namespace_id))
-+
-+    @override
-+    def table_exists(self, table_id: List[str]) -> bool:
-+        """Check if a table exists.
-+
-+        ``table_id`` contains the namespace segments followed by the table name.
-+        Returns False only if the table is not found. Other errors, including
-+        permission errors, are propagated.
-+
-+        Examples
-+        --------
-+        >>> def check_table(conn):
-+        ...     return conn.table_exists(["analytics", "events"])
-+        """
-+        return LOOP.run(self._conn.table_exists(table_id))
-+
-     @override
-     def list_tables(
-         self,
+-Pass `auto_refresh_enabled` and `auto_refresh_interval_seconds` alongside
+-`computed` to have the server keep the column refreshed instead of calling
+-[`refresh_column`](/feature-engineering/refresh-column) yourself:
++Automatic refresh is on by default for each computed column, and takes effect
++when your Enterprise deployment enables its refresh scheduler. Until then, and in
++LanceDB Embedded, which never refreshes on a schedule, call
++[`refresh_column`](/feature-engineering/refresh-column) yourself. Pass
++`auto_refresh_enabled=False` to opt a column out, or
++`auto_refresh_interval_seconds` to set how often it refreshes:
+ 
+ ```python
+ table.add_columns(
+     computed={"doubled": "x * 2"},
+-    auto_refresh_enabled=True,
+     auto_refresh_interval_seconds=300,
+ )
+ ```
+ 
+-A local table stores these settings but does not act on them -- automatic
+-scheduling runs on LanceDB Cloud or Enterprise. See
+-[Automatic refresh](/feature-engineering/refresh-column#automatic) for the
++See [Automatic refresh](/feature-engineering/refresh-column#automatic) for the
+ full behavior, including how to change the setting later.
+ 
+ An eager `transforms` call looks like this, starting from a small product
 ```
 
-**File**: `python/python/tests/test_db.py` (modified, +18/-0)
+**File**: `docs/web/feature-engineering/index.mdx` (modified, +3/-2)
 ```diff
-@@ -1149,6 +1149,24 @@ def test_local_namespace_operations(tmp_path):
-     assert db.list_namespaces().namespaces == []
+@@ -133,8 +133,9 @@ result.rows_assigned
+ A backfill over a large table can therefore be started, left, and checked on
+ from a different process: the connection does not have to stay open.
  
+-Enterprise manages the compute for the refresh. You still control when to
+-submit it; declaring a computed column does not schedule recurring refreshes.
++Enterprise manages the compute for the refresh. Declaring a computed column
++doesn't refresh it on a schedule unless your deployment enables automatic
++refresh; see [Automatic refresh](/feature-engineering/refresh-column#automatic).
+ {/* Draft for the Functions release: That is also why a function must declare the environment it needs. */}
  
-+@pytest.mark.asyncio
-+async def test_local_async_namespace_exists(tmp_path):
-+    db = await lancedb.connect_async(tmp_path)
-+    await db.create_namespace(["existing"])
-+    await db.create_namespace(["existing", "nested"])
-+
-+    assert await db.namespace_exists([]) is True
-+    assert await db.namespace_exists(["existing"]) is True
-+    assert await db.namespace_exists(["existing", "nested"]) is True
-+    assert await db.namespace_exists(["missing"]) is False
-+    assert await db.namespace_exists(["existing", "missing"]) is False
-+    assert await db.namespace_exists(["missing", "nested"]) is False
-+
-+    await db.drop_namespace(["existing", "nested"])
-+    assert await db.namespace_exists(["existing", "nested"]) is False
-+    assert await db.namespace_exists(["existing"]) is True
-+
-+
- def test_local_sync_namespace_uses_rust_without_python_client(tmp_path, monkeypatch):
-     """Sync local namespace operations should avoid the Python namespace client."""
-     db = lancedb.connect(tmp_path)
+ ## Recovering from a failure {#failures}
 ```
 
-**File**: `python/python/tests/test_remote_db.py` (modified, +97/-1)
+**File**: `docs/web/index.mdx` (modified, +1/-1)
 ```diff
-@@ -54,7 +54,7 @@ def test_connect_rejects_invalid_cloud_dns_hostname(db_name):
- 
- 
- @contextlib.contextmanager
--def mock_lancedb_connection(handler):
-+def mock_lancedb_connection(handler, **client_config):
-     with http.server.HTTPServer(
-         ("localhost", 0), make_mock_http_handler(handler)
-     ) as server:
-@@ -71,6 +71,7 @@ def mock_lancedb_connection(handler):
-                 "timeout_config": {
-                     "connect_timeout": 1,
-                 },
-+                **client_config,
-             },
-         )
- 
-@@ -110,6 +111,101 @@ async def mock_lancedb_connection_async(handler, **client_config):
-             handle.join()
- 
- 
-+@pytest.fixture
-+def existence_handler(method, identifier, status):
-+    def handler(request):
-+        resource = "namespace" if method == "namespace_exists" else "table"
-+        resource_id = "$".join(identifier) or "$"
-+        suffix = "/" if resource == "table" else ""
-+        assert request.command == "POST"
-+        assert request.path == f"/v1/{resource}/{resource_id}/describe{suffix}"
-+        assert request.headers["x-api-key"] == "fake"
-+        assert request.headers["X-Exists-Test"] == "present"
-+        request.send_response(status)
-+        request.send_header("Content-Type", "application/json")
-+        request.end_headers()
-+        request.wfile.write(b"{}" if status == 200 else b"lookup failed")
-+
-+    return handler
-+
-+
-+@pytest.mark.parametrize(
-+    "method,identifier",
-+    [
-+        ("namespace_exists", []),
-+        ("namespace_exists", ["ns"]),
-+        ("namespace_exists", ["parent", "ns"]),
-+        ("table_exists", ["table"]),
-+        ("table_exists", ["parent", "ns", "table"]),
-+    ],
-+)
-+@pytest.mark.parametrize("status", [200, 404, 403, 507])
-+def test_remote_exists(method, identifier, status, existence_handler):
-+    from lancedb.remote.header import StaticHeaderProvider
-+
-+    provider = StaticHeaderProvider({"X-Exists-Test": "present"})
-+    with mock_lancedb_connection(existence_handler, header_provider=provider) as db:
-+        if status in (200, 404):
-+            assert getattr(db, method)(identifier) is (status == 200)
-+        else:
-+            with pytest.raises(HttpError) as exc_info:
-+                getattr(db, method)(identifier)
-+            assert exc_info.value.status_code == status
-+
-+
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize(
-+    "method,identifier",
-+    [
-+        ("namespace_exists", []),
-+        ("namespace_exists", ["parent", "ns"]),
-+        ("table_exists", ["table"]),
-+        ("table_exists", ["parent", "ns", "table"]),
-+    ],
-+)
-+@pytest.mark.parametrize("status", [200, 404, 403, 507])
-+async def test_async_remote_exists(method, identifier, status, existence_handler):
-+    from lancedb.remote.header import StaticHeaderProvider
-+
-+    provider = StaticHeaderProvider({"X-Exists-Test": "present"})
-+    async with mock_lancedb_connection_async(
-+        existence_handler, header_provider=provider
-+    ) as db:
-+        if status in (200, 404):
-+            assert await getattr(db, method)(identifier) is (status == 200)
-+        else:
-+            with pytest.raises(HttpError) as exc_info:
-+                await getattr(db, method)(identifier)
-+            assert exc_info.value.status_code == status
-+
-+
-+@pytest.mark.parametrize("table_id", [[], ["invalid/name"]])
-+def test_remote_table_exists_rejects_invalid_identifier(table_id):
-+    requests = []
-+    with mock_lancedb_connection(lambda request: requests.append(request.path)) as db:
-+        with pytest.raises(ValueError):
-+            db.table_exists(table_id)
-+    assert requests == []
-+
-+
-+def test_remote_table_exists_rechecks_cached_table():
-+    requests = []
-+
-+    def handler(request):
-+        requests.append(request.path)
-+        request.send_response(200 if len(requests) == 1 else 404)
-+        request.send_header("Content-Type", "application/json")
-+        request.end_headers()
-+        request.wfile.write(b"{}")
-+
-+    with mock_lancedb_connection(handler) as db:
-+        table_id = ["ns", "table"]
-+        assert db.table_exists(table_id) is True
-+        assert db.table_exists(table_id) is False
-+        assert table_id == ["ns", "table"]
-+    assert requests == ["/v1/table/ns$table/describe/"] * 2
-+
-+
- def paginated_table_listing_handler(request):
-     url = urlparse(request.path)
-     assert url.path in {
-```
-
-**File**: `python/src/connection.rs` (modified, +47/-0)
-```diff
-@@ -711,6 +711,53 @@ impl Connection {
-         })
-     }
- 
-+    pub fn namespace_exists(
-+        self_: PyRef<'_, Self>,
-+        namespace_id: Vec<String>,
-+    ) -> PyResult<Bound<'_, PyAny>> {
-+        let inner = self_.get_inner()?.clone();
-+        future_into_py(self_.py(), async move {
-+            let request = lance_namespace::models::DescribeNamespaceRequest {
-+                id: Some(namespace_id),
-+                ..Default::default()
-+            };
-+            match inner.describe_namespace(request).await {
-+                Ok(_) => Ok(true),
-+                Err(lancedb::Error::Http {
-+                    status_code: Some(status),
-+                    ..
-+                }) if status.as_u16() == 404 => Ok(false),
-+                Err(lancedb::Error::Lance {
-+                    source: lance_core::Error::Namespace { ref source, .. },
-+                }) if matches!(
-+                    source.downcast_ref::<lance_namespace::NamespaceError>(),
-+                    Some(lance_namespace::NamespaceError::NamespaceNotFound { .. })
-+                ) =>
-+                {
-+                    Ok(false)
-+                }
-+                Err(err) => Err(err).infer_error(),
-+            }
-+        })
-+    }
-+
-+    pub fn table_exists(
-+        self_: PyRef<'_, Self>,
-+        mut table_id: Vec<String>,
-+    ) -> PyResult<Bound<'_, PyAny>> {
-+        let inner = self_.get_inner()?.clone();
-+        let name = table_id
-+            .pop()
-+            .ok_or_else(|| PyValueError::new_err("table_id must include a table name"))?;
-+        future_into_py(self_.py(), async move {
-+            match inner.open_table(name).namespace(table_id).execute().await {
-+                Ok(_) => Ok(true),
-+                Err(lancedb::Error::TableNotFound { .. }) => Ok(false),
-+                Err(err) => Err(err).infer_error(),
-+            }
-+        })
-+    }
-+
-     #[pyo3(signature = (namespace_path=None, page_token=None, limit=None))]
-     pub fn list_tables(
-         &self,
+@@ -133,7 +133,7 @@ To set up LanceDB Enterprise in your organization, [reach out to us](https://www
+ |  | [Scalar indexes](/indexing/scalar-index) | ✅ | ✅ |
+ | **SQL and curation** | [SQL (Arrow Flight SQL)](/basics/sql) | ❌ | ✅ |
+ |  | [Aggregation and profiling](/curation/aggregate) | ❌ | ✅ |
+-|  | [Sampling](/curation/sampling) | ❌ | ✅ |
++|  | [Sampling](/curation/sampling) | ✅ | ✅ |
+ |  | [Joins](/curation/join) | ❌ | ✅ |
+ |  | [Ranking and deduplication](/curation/windowing) | ❌ | ✅ |
+ |  | [Near-duplicate detection](/curation/dedupe) | ❌ | ✅ |
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4729** (2026-10-28): fix(python): expose function source digests (@lancedb-gatefixer[bot])
-- **PR #4728** (2026-10-28): fix(python): restore blob extensions in table schemas (@lancedb-gatefixer[bot])
-- **PR #4726** (2026-10-28): fix(python): bind packaged BlobReader annotations to the worker type (@lancedb-gatefixer[bot])
-- **PR #4725** (2026-10-28): fix(python): implement remote namespace and table existence checks (@lancedb-gatefixer[bot])
-- **PR #4724** (2026-10-28): fix(python): reject invalid punctuation in UDF names (@lancedb-gatefixer[bot])
-- **PR #4713** (2026-10-28): docs: adopt Embedded/Distributed terminology across docs and SDKs (@wjones127)
+- **PR #4766** (2026-10-30): test(python): use a threaded mock server for remote tests (@Xuanwo)
+- **PR #4755** (2026-10-30): fix(python): pin an available pylance wheel on macOS (@Xuanwo)
+- **PR #4746** (2026-10-29): chore: update lance dependency to v15.0.0-beta.7 (@lancedb-robot)
+- **PR #4745** (2026-10-30): docs: fix table, accuracy and structure problems found in the pre-launch review (@brendanclement)
+- **PR #4743** (2026-10-29): docs: list features in the landing page comparison table (@brendanclement)
+- **PR #4742** (2026-10-29): chore: update lance dependency to v15.0.0-beta.6 (@lancedb-robot)
 
 ---
 
@@ -2735,55 +1783,30 @@ errors, invalid table identifiers, and cached tables that disappear.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: add guide for using LanceDB in VS Code extensions
+## X. python): pin an available pylance wheel on macOS
 
 **RULE**:
-When implementing operations in `docs/web-tests/ts/vscode_extension.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `python/pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `84fc4819`: docs: add guide for using LanceDB in VS Code extensions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a39a3180`: python): pin an available pylance wheel on macOS. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/web-tests/ts/vscode_extension.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/pyproject.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-// SPDX-License-Identifier: Apache-2.0
-// SPDX-FileCopyrightText: Copyright The LanceDB Authors
-
-// The `src/extension.ts` of the sample extension in the VS Code integration guide.
-// It needs the VS Code extension host, so jest doesn't run it: the LanceDB code it
-// calls is tested in vscode_search.test.ts, and the extension itself was tested
-// with @vscode/test-cli.
-
-// --8<-- [start:vscode_extension]
-import * as vscode from "vscode";
-import {
-  type Chunk,
-  chunkMarkdown,
-  indexChunks,
-  openDatabase,
-  searchChunks,
-} from "./search";
-
-export async function activate(context: vscode.ExtensionContext) {
-  // One index per workspace. `storageUri` is undefined when no folder is open.
-  const storage = context.storageUri ?? context.globalStorageUri;
-
-  // Transformers.js downloads the embedding model on first use. Keep it in
-  // global storage so every workspace shares one copy and it survives
-  // extension updates. Use `import()`: LanceDB loads the ES module build, and
-  // `require()` would return a separate copy whose settings LanceDB never sees.
-  const { env } = await import("@huggingface/transformers");
-  env.cacheDir = vscode.Uri.joinPath(context.globalStorageUri, "model
+    # pylance 15.0.0b5+ has not published macOS wheels.
+    "pylance==15.0.0b7; sys_platform != 'darwin'",
+    "pylance==15.0.0b4; sys_platform == 'darwin'",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "pylance==15.0.0b7",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `84fc4819` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a39a3180` are properly handled with clean fallback behavior.
