@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T14:11:52.086Z",
+  "last_updated": "2026-10-30T14:18:42.408Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -7119,8 +7119,8 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "c48f5120",
-      "content_hash": "6e3aff28460fecb2f860688a5733a5d6b4afea23bcb9e7e85061b6e8dc632128",
+      "source_version": "7eadd80c",
+      "content_hash": "cb949fe26751e375f4643d998505aff14c9dece93ab6c08317956a95eee57ad4",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
@@ -7178,6 +7178,11 @@
           "number": 5417,
           "title": "Async IDC: rust outbox macro (#6376)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5773,
+          "title": "ts-sdk: stop Prettify from rewriting Uuid and branded primitives (#5971)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7185,7 +7190,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T21:56:44.909Z",
+      "verified_at": "2026-10-30T14:18:42.384Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153678,6 +153683,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T14:11:52.074Z"
+    },
+    "rule-5773": {
+      "learning_id": "rule-5773",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5773,
+      "title": "ts-sdk: stop Prettify from rewriting Uuid and branded primitives (#5971)",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "7eadd80c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T14:18:42.384Z"
     }
   },
   "aliases": {

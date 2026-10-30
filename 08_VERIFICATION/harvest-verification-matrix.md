@@ -6209,3 +6209,4 @@
 | `CYCLE-20261030-FA7Q` | `2026-10-30T13:58:26.678Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5770` | Yes (`150082aa...`) |
 | `CYCLE-20261030-WJGI` | `2026-10-30T14:11:51.810Z` | `syntax-tree/hast-util-to-html` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5771` | Yes (`1c9d6a5e...`) |
 | `CYCLE-20261030-WJPJ` | `2026-10-30T14:11:52.135Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5772` | Yes (`f282cf05...`) |
+| `CYCLE-20261030-5CBT` | `2026-10-30T14:18:42.473Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5773` | Yes (`cb949fe2...`) |

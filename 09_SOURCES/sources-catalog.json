@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "c48f5120",
+    "sourceVersion": "7eadd80c",
     "license": "NOASSERTION",
-    "contentHash": "6e3aff28460fecb2f860688a5733a5d6b4afea23bcb9e7e85061b6e8dc632128",
-    "lastHarvestedAt": "2026-10-28T21:56:44.969Z",
+    "contentHash": "cb949fe26751e375f4643d998505aff14c9dece93ab6c08317956a95eee57ad4",
+    "lastHarvestedAt": "2026-10-30T14:18:42.477Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {

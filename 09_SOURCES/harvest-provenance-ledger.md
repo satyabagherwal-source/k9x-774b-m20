@@ -6218,3 +6218,4 @@ Every entry in this ledger must capture:
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `146f7699` | Multi-dimensional audit evidence | 2026-10-30T13:58:26.682Z |
 | `learn-github-syntax-tree-hast-util-to-html` | `https://github.com/syntax-tree/hast-util-to-html` | `9c689126` | Multi-dimensional audit evidence | 2026-10-30T14:11:51.817Z |
 | `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `b1a36daf` | Multi-dimensional audit evidence | 2026-10-30T14:11:52.138Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `7eadd80c` | Multi-dimensional audit evidence | 2026-10-30T14:18:42.477Z |

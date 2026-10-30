@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `c48f5120`  
+> **Source Version**: `7eadd80c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T21:56:44.569Z  
+> **Timestamp**: 2026-10-30T14:18:41.896Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T21:56:44.564Z  
+> **Harvest Timestamp**: 2026-10-30T14:18:40.840Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25399 stars
+- **Stars / Engagement**: 25446 stars
 
 ---
 
@@ -347,20 +347,31 @@ import type { Identity } from './identity';
 import type { ScheduleAt } from './schedule_at';
 import type { TimeDuration } from './time_duration';
 import type { Timestamp } from './timestamp';
+import type { Uuid } from './uuid';
 
 type DoNotPrettify =
   | Identity
   | ConnectionId
   | Timestamp
   | TimeDuration
-  | ScheduleAt;
+  | ScheduleAt
+  | Uuid;
+
+type Primitive = string | number | boolean | bigint | symbol | null | undefined;
 
 /**
  * Utility to make TS show cleaner types by flattening intersections.
+ *
+ * Primitives pass through unchanged. A branded primitive (`string & Brand`)
+ * is an object type, but mapping it yields a structural record of `String`'s
+ * members that no longer satisfies `string`. The outer `object` check keeps a
+ * generic `Prettify<T>` spreadable.
  */
-export type Prettify<T> = T extends DoNotPrettify
-  ? T
-  : { [K in keyof T]: T[K] } & {};
+export type Prettify<T> = T extends object
+  ? T extends DoNotPrettify | Primitive
+    ? T
+    : { [K in keyof T]: T[K] } & {}
+  : T;
 
 /**
  * Helper function to sets a field in an object
@@ -810,1684 +821,337 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c48f5120` (2026-10-28)
-**Commit Message**: Async IDC: rust outbox macro (#6376)
+### Incident Patch 1: `57642268` (2026-10-29)
+**Commit Message**: ts-sdk: stop Prettify from rewriting Uuid and branded primitives (#5971)
 
 # Description of Changes
 
-Macro side changes taken out from:
-https://github.com/clockworklabs/SpacetimeDB/pull/6001.
-Based on https://github.com/clockworklabs/SpacetimeDB/pull/6375
+`Prettify` maps every type it is given, and two cases come out wrong:
 
-Adds Rust outbox declarations for intermodule reducer calls using
-generated receiver bindings.
+- `Uuid` is missing from `DoNotPrettify`, so a `t.uuid()` column infers
+as a structural record of `Uuid`'s members instead of `Uuid`.
+- `Prettify<string & Brand>` becomes a record of `String`'s members that
+is no longer assignable to `string`.
 
-It can be reviewed through commits:
+This adds `Uuid` to `DoNotPrettify` and passes primitives, branded or
+not, through unchanged. The primitive check sits inside a `T extends
+object` branch so a generic `Prettify<T>` stays spreadable, which
+`sdk-test-ts` relies on.
 
-- Add outbox macros and runtime registration as described in the
-proposal.
-- Map outbox columns to receiver parameters using `#[param(name =
-...)]`, with compile-time type checking.
-- Make outbox tables insert-only by removing update and delete APIs.
-- Accept receiver dependencies in publish configuration.
-- Add end-to-end smoke tests covering generation, publishing, delivery,
-callbacks, receiver updates, and two dependencies with identical type
-names.
+# API and ABI breaking changes
 
-## API and ABI breaking changes
+None (types only)
 
-Additive module API. Update and delete APIs are unavailable on outbox
-tables.
+# Rollback safety impact
 
-No host ABI changes.
+n/a
 
-## Rollback safety impact
+# Expected complexity level and risk
 
-N/A.
+1
 
-## Expected complexity level and risk
+# Testing
 
-3.
+- [x] `src/lib/type_util.test-d.ts`: branded primitives, every wrapper
+class, object flattening and a generic spread.
+- [x] `tsc` over every `modules/*-ts` test module.
 
-## Proposal drift
+Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
 
-The `outbox!` convenience macro is not implemented yet.
-
-Source-based local reducer references and self-referential outboxes are
-handled in a separate PR.
-
-## T
-
-**File**: `crates/bindings-macro/src/lib.rs` (modified, +8/-1)
+**File**: `crates/bindings-typescript/src/lib/type_util.test-d.ts` (added, +64/-0)
 ```diff
-@@ -159,6 +159,10 @@ mod sym {
-     symbol!(repr);
-     symbol!(sats);
-     symbol!(scheduled);
-+    symbol!(outbox);
-+    symbol!(on_result);
-+    symbol!(param);
-+    symbol!(target);
-     symbol!(unique);
-     symbol!(update);
-     symbol!(default);
-@@ -229,7 +233,10 @@ fn derive_table_helper_attr() -> Attribute {
- ///
- /// Provides helper attributes for `#[spacetimedb::table]`, so that we don't get unknown attribute errors.
- #[doc(hidden)]
--#[proc_macro_derive(__TableHelper, attributes(sats, unique, auto_inc, primary_key, index, default))]
-+#[proc_macro_derive(
-+    __TableHelper,
-+    attributes(sats, unique, auto_inc, primary_key, target, index, default, param)
-+)]
- pub fn table_helper(input: StdTokenStream) -> StdTokenStream {
-     schema_type(input)
- }
-```
-
-**File**: `crates/bindings-macro/src/reducer.rs` (modified, +22/-0)
-```diff
-@@ -10,6 +10,7 @@ use syn::{FnArg, Ident, ItemFn, LitStr, PatType};
- pub(crate) struct ReducerArgs {
-     name: Option<LitStr>,
-     lifecycle: Option<LifecycleReducer>,
-+    on_result: Option<syn::Path>,
- }
- 
- enum LifecycleReducer {
-@@ -51,6 +52,12 @@ impl ReducerArgs {
-                     check_duplicate(&args.name, &meta)?;
-                     args.name = Some(meta.value()?.parse()?);
-                 }
-+                sym::on_result => {
-+                    check_duplicate(&args.on_result, &meta)?;
-+                    let content;
-+                    syn::parenthesized!(content in meta.input);
-+                    args.on_result = Some(content.parse()?);
-+                }
-             });
-             Ok(())
-         })
-@@ -101,6 +108,19 @@ pub(crate) fn reducer_impl(args: ReducerArgs, original_function: &ItemFn) -> syn
-     assert_only_lifetime_generics(original_function, "reducers")?;
- 
-     let lifecycle = args.lifecycle.iter().filter_map(|lc| lc.to_lifecycle_value());
-+    let on_result_outbox = args.on_result.as_ref().map(|path| {
-+        let accessor = &path.segments.last().unwrap().ident;
-+        quote!(
-+            const ON_RESULT_OUTBOX: Option<&'static str> =
-+                Some(spacetimedb::rt::on_result_outbox(#path::#accessor));
-+        )
-+    });
-+    let on_result_typecheck = args.on_result.as_ref().map(|path| {
-+        let accessor = &path.segments.last().unwrap().ident;
-+        quote! {
-+            spacetimedb::rt::on_result_typecheck(#func_name, #path::#accessor);
-+        }
-+    });
- 
-     let typed_args = extract_typed_args(original_function)?;
- 
-@@ -156,6 +176,7 @@ pub(crate) fn reducer_impl(args: ReducerArgs, original_function: &ItemFn) -> syn
-                 #(let _ = <#first_arg_ty as spacetimedb::rt::ReducerContextArg>::_ITEM;)*
-                 #(let _ = <#rest_arg_tys as spacetimedb::rt::ReducerArg>::_ITEM;)*
-                 #(let _ = <#ret_ty as spacetimedb::rt::IntoReducerResult>::into_result;)*
-+                #on_result_typecheck
-             }
-         };
-         impl #func_name {
-@@ -170,6 +191,7 @@ pub(crate) fn reducer_impl(args: ReducerArgs, original_function: &ItemFn) -> syn
-             type FnKind = spacetimedb::rt::FnKindReducer;
-             const NAME: &'static str = #reducer_name;
-             #(const LIFECYCLE: Option<spacetimedb::rt::LifecycleReducer> = Some(#lifecycle);)*
-+            #on_result_outbox
-             const ARG_NAMES: &'static [Option<&'static str>] = &[#(#opt_arg_names),*];
-             const INVOKE: Self::Invoke = #func_name::invoke;
-         }
-```
-
-**File**: `crates/bindings-macro/src/table.rs` (modified, +262/-18)
-```diff
-@@ -19,6 +19,7 @@ pub(crate) struct TableArgs {
-     access: Option<TableAccess>,
-     name: Option<LitStr>,
-     scheduled: Option<ScheduledArg>,
-+    outbox: Option<OutboxArg>,
-     accessor: Ident,
-     indices: Vec<IndexArg>,
-     event: Option<Span>,
-@@ -47,6 +48,10 @@ struct ScheduledArg {
-     at: Option<Ident>,
- }
- 
-+struct OutboxArg {
-+    receiver_reducer: Path,
-+}
+@@ -0,0 +1,64 @@
++import type { ConnectionId } from './connection_id';
++import type { Identity } from './identity';
++import type { Prettify } from './type_util';
++import type { TimeDuration } from './time_duration';
++import type { Timestamp } from './timestamp';
++import type { Uuid } from './uuid';
 +
- struct IndexArg {
-     accessor: Ident,
-     canonical_name: Option<LitStr>,
-@@ -78,6 +83,7 @@ impl TableArgs {
-     pub(crate) fn parse(input: TokenStream, struct_ident: &Ident) -> syn::Result<Self> {
-         let mut access = None;
-         let mut scheduled = None;
-+        let mut outbox = None;
-         let mut accessor = None;
-         let mut name: Option<LitStr> = None;
-         let mut indices = Vec::new();
-@@ -145,6 +151,10 @@ If you're migrating from SpacetimeDB 1.*, replace `name = {sym}` with `accessor
-                     check_duplicate(&scheduled, &meta)?;
-                     scheduled = Some(ScheduledArg::parse_meta(meta)?);
-                 }
-+                sym::outbox => {
-+                    check_duplicate(&outbox, &meta)?;
-+                    outbox = Some(OutboxArg::parse_meta(meta)?);
-+                }
-                 sym::event => {
-                     check_duplicate(&event, &meta)?;
-                     event = Some(meta.path.span());
-@@ -184,6 +194,7 @@ If you're migrating from SpacetimeDB 1.*, replace `name = {name_str_value:?}` wi
-         Ok(TableArgs {
-             access,
-             scheduled,
-+            outbox,
-             accessor,
-             indices,
-             name,
-@@ -192,6 +203,22 @@ If you're migrating from SpacetimeDB 1.*, replace `name = {name_str_value:?}` wi
-     }
- }
- 
-+impl OutboxArg {
-+    fn parse_meta(meta: ParseNestedMeta) -> syn::Result<Self> {
-+        let mut receiver_reducer = None;
++declare const brand: unique symbol;
 +
-+        meta.parse_nested_meta(|meta| {
-+            check_duplicate_msg(&receiver_reducer, &meta, "can only specify one outbox receiver reducer")?;
-+            receiver_reducer = Some(meta.path);
-+            Ok(())
-+        })?;
++/**
++ * A branded primitive: an intersection of a primitive with a marker object.
++ * `Prettify` must leave it alone — mapping it produces a structural record of
++ * `String`'s members that no longer satisfies `string`.
++ */
++type UserId = string & { readonly [brand]: 'UserId' };
 +
-+        let receiver_reducer = receiver_reducer
-+            .ok_or_else(|| meta.error("must specify outbox receiver reducer: outbox(receiver::reducer)"))?;
-+        Ok(Self { receiver_reducer })
-+    }
-+}
++declare const userId: Prettify<UserId>;
++// eslint-disable-next-line @typescript-eslint/no-unused-vars
++const _brandedIsStillAString: string = userId;
++// eslint-disable-next-line @typescript-eslint/no-unused-vars
++const _brandedKeepsItsBrand: UserId = userId;
 +
- impl ScheduledArg {
-     fn parse_meta(meta: ParseNestedMeta) -> syn::Result<Self> {
-         let span = meta.path.span();
-@@ -563,15 +590,22 @@ impl ValidatedIndex<'_> {
-         row_type_ident: &Ident,
-         tbl_type_ident: &Ident,
-         flavor: AccessorType,
-+        backend: TokenStream,
-     ) -> TokenStream {
-         if self.is_unique {
--            self.unique_accessor(row_type_ident, tbl_type_ident, flavor)
-+            self.unique_accessor(row_type_ident, tbl_type_ident, flavor, backend)
-         } else {
--            self.non_unique_accessor(vis, row_type_ident, tbl_type_ident, flavor)
-+            self.non_unique_accessor(vis, row_type_ident, tbl_type_ident, flavor, backend)
-         }
-     }
- 
--    fn unique_accessor(&self, row_type_ident: &Ident, tbl_type_ident: &Ident, flavor: AccessorType) -> TokenStream {
-+    fn unique_accessor(
-+        &self,
-+        row_type_ident: &Ident,
-+        tbl_type_ident: &Ident,
-+        flavor: AccessorType,
-+        backend: TokenStream,
-+    ) -> TokenStream {
-         let col = self.kind.one_col().unwrap();
-         let index_ident = self.accessor_name;
-         let vis = col.vis;
-@@ -589,7 +623,7 @@ impl ValidatedIndex<'_> {
-         quote! {
-             #[doc = #doc]
-             #vis fn #column_ident(&self) -> #unique_ty<#tbl_token, #col_ty, __indices::#index_ident> {
--                #unique_ty::__new(self.__backend.clone())
-+                #unique_ty::__new(#backend)
-             }
-         }
-     }
-@@ -600,6 +634,7 @@ impl ValidatedIndex<'_> {
-         row_type_ident: &Ident,
-         tbl_type_ident: &Ident,
-         flavor: AccessorType,
-+        backend: TokenStream,
-     ) -> TokenStream {
-         let index_ident = self.accessor_name;
-         let cols = self.kind.columns();
-@@ -630,7 +665,7 @@ impl ValidatedIndex<'_> {
-         quote! {
-             #[doc = #doc]
-             #vis fn #index_ident(&self) -> #handle_ty<#tbl_token, (#(#col_tys,)*), __indices::#index_ident> {
--                #handle_ty::__new(self.__backend.clone())
-+                #handle_ty::__new(#backend)
-             }
-         }
-     }
-@@ -740,6 +775,7 @@ struct Column<'a> {
-     vis: &'a syn::Visibility,
-     ident: &'a syn::Ident,
-     ty: &'a syn::Type,
-+    param_name: String,
-     default_value: Option<syn::Expr>,
- }
- 
-@@ -769,8 +805,10 @@ enum ColumnAttr {
-     Unique(Span),
-     AutoInc(Span),
-     PrimaryKey(Span),
-+    Target(Span),
-     Index(IndexArg),
-     Default(syn::Expr, Span),
-+    ParamName(Ident),
- }
- 
- impl ColumnAttr {
-@@ -790,6 +828,11 @@ impl ColumnAttr {
-         } else if ident == sym::primary_key {
-             attr.meta.require_path_only()?;
-             Some(ColumnAttr::Primary
-```
-
-**File**: `crates/bindings/src/rt.rs` (modified, +59/-6)
-```diff
-@@ -170,6 +170,9 @@ pub trait FnInfo: ExplicitNames {
-     /// Currently only views use this metadata.
-     const VIEW_PRIMARY_KEY_COLUMNS: &'static [&'static str] = &[];
- 
-+    /// The source name of the outbox table whose results this reducer handles.
-+    const ON_RESULT_OUTBOX: Option<&'static str> = None;
++// Plain primitives round-trip unchanged.
++declare const str: Prettify<string>;
++// eslint-disable-next-line @typescript-eslint/no-unused-vars
++const _str: string = str;
++declare const num: Prettify<number>;
++// eslint-disable-next-line @typescript-eslint/no-unused-vars
++const _num: number = num;
++declare const big: Prettify<bigint>;
++// eslint-disable-next-line @typescript-eslint/no-unused-vars
++const _big: bigint = big;
 +
-     /// The function to invoke.
-     const INVOKE: Self::Invoke;
- 
-@@ -518,6 +521,25 @@ where
-     core::mem::forget(_x);
- }
- 
-+/// Resolve an outbox accessor to its registered table source name.
-+pub const fn on_result_outbox<T, Tbl>(_table: fn(&crate::Local) -> T) -> &'static str
-+where
-+    T: core::ops::Deref<Target = crate::table::OutboxTable<Tbl>>,
-+    Tbl: crate::Table,
-+{
-+    Tbl::TABLE_NAME
-+}
++// Every SATS wrapper class is passed through as the class, not as a
++// structural record of its members.
++declare const identity: Prettify<Identity>;
++// eslint-disable-next-line @typescript-eslint/no-unused-vars
++const _identity: Identity = identity;
++declare const connectionId: Prettify<ConnectionId>;
++// eslint-disable-next-line @typescript-eslint/no-unused-vars
++const _connectionId: ConnectionId = connectionId;
++declare const timestamp: Prettify<Timestamp>;
++// eslint-disable-next-line @typescript-eslint/no-unused-vars
++const _timestamp: Timestamp = timestamp;
++declare const timeDuration: Prettify<TimeDuration>;
++// eslint-disable-next-line @typescript-eslint/no-unused-vars
++const _timeDuration: TimeDuration = timeDuration;
++declare const uuid: Prettify<Uuid>;
++// eslint-disable-next-line @typescript-eslint/no-unused-vars
++const _uuid: Uuid = uuid;
 +
-+/// Assert that an `on_result` reducer accepts the outbox row and delivery result.
-+pub fn on_result_typecheck<T, Tbl, F, Ret>(_f: F, _table: fn(&crate::Local) -> T)
-+where
-+    T: core::ops::Deref<Target = crate::table::OutboxTable<Tbl>>,
-+    Tbl: crate::Table,
-+    F: Fn(&ReducerContext, Tbl::Row, Result<(), String>) -> Ret,
-+    Ret: IntoReducerResult,
-+{
-+}
++// Object types are still flattened.
++type Intersected = { a: string } & { b: number };
++declare const flattened: Prettify<Intersected>;
++// eslint-disable-next-line @typescript-eslint/no-unused-vars
++const _flattened: { a: string; b: number } = flattened;
 +
- /// Tacit marker argument to [`ExportFunctionForScheduledTable`] for reducers.
- pub struct FnKindReducer {
-     _never: Infallible,
-@@ -596,6 +618,9 @@ impl<T: SpacetimeType> TableColumn for T {}
- /// Assert that the primary_key column of a scheduled table is a u64.
- pub const fn assert_scheduled_table_primary_key<T: ScheduledTablePrimaryKey>() {}
- 
-+/// Assert that the primary_key column of an outbox table is a u64.
-+pub const fn assert_outbox_table_primary_key<T: OutboxTablePrimaryKey>() {}
-+
- mod sealed {
-     pub trait Sealed {}
- }
-@@ -607,6 +632,13 @@ pub trait ScheduledTablePrimaryKey: sealed::Sealed {}
- impl sealed::Sealed for u64 {}
- impl ScheduledTablePrimaryKey for u64 {}
- 
-+#[diagnostic::on_unimplemented(
-+    message = "outbox table primary key must be a `u64`",
-+    label = "should be `u64`, not `{Self}`"
-+)]
-+pub trait OutboxTablePrimaryKey: sealed::Sealed {}
-+impl OutboxTablePrimaryKey for u64 {}
-+
- /// Used in the last type parameter of `Reducer` to indicate that the
- /// context argument *should* be passed to the reducer logic.
- pub struct ContextArg;
-@@ -825,6 +857,18 @@ pub fn register_table<T: Table>() {
- 
-         table.finish();
- 
-+        if let Some(outbox) = T::OUTBOX {
-+            module.inner.add_outbox(
-+                T::TABLE_NAME,
-+                outbox.remote_reducer_name,
-+                outbox.target_column,
-+                outbox.arg_columns.iter().copied().map(Into::into),
-+                None::<&str>,
-+                spacetimedb_lib::Hash::from_hex(outbox.signature_hash)
-+                    .expect("generated outbox signature hash must be valid hex"),
-+            );
-+        }
-+
-         module.inner.add_explicit_names(T::explicit_names());
-     })
- }
-@@ -852,6 +896,9 @@ pub fn register_reducer<'a, A: Args<'a>, I: FnInfo<Invoke = ReducerFn>>(_: impl
-         } else {
-             module.inner.add_reducer(I::NAME, params);
-         }
-+        if let Some(outbox_table) = I::ON_RESULT_OUTBOX {
-+            module.on_result_reducers.push((outbox_table, I::NAME));
-+        }
-         module.reducers.push(I::INVOKE);
- 
-         module.inner.add_explicit_names(I::explicit_names());
-@@ -1133,6 +1180,7 @@ pub struct ModuleBuilder {
-     views: Vec<ViewFn>,
-     /// The anonymous views of the module.
-     views_anon: Vec<AnonymousFn>,
-+    on_result_reducers: Vec<(&'static str, &'static str)>,
- }
- 
- // Not actually a mutex; because WASM is single-threaded this basically just turns into a refcell.
-@@ -1162,11 +1210,20 @@ static ANONYMOUS_VIEWS: OnceLock<Vec<AnonymousFn>> = OnceLock::new();
- #[cfg(feature = "test-utils")]
- #[doc(hidden)]
- pub fn module_def_for_tests() -> RawModuleDef {
-+    RawModuleDef::V10(describe_module().inner.finish())
-+}
-+
-+fn describe_module() -> ModuleBuilder {
-     let mut module = ModuleBuilder::default();
-     for describer in &mut *DESCRIBERS.lock().unwrap() {
-         describer(&mut module)
-     }
--    RawModuleDef::V10(module.inner.finish())
-+
-+    // Tables and reducers can register in either order, so link callbacks last.
-+    for (outbox_table, reducer) in module.on_result_reducers.drain(..) {
-+        module.inner.set_outbox_on_result(outbox_table, reducer);
-+    }
-+    module
- }
- 
- /// Called by the host when the module is initialized
-@@ -1186,11 +1243,7 @@ pub fn module_def_for_tests() -> RawModuleDef {
- /// After initialization, the module cannot alter the schema.
- #[unsafe(no_mangle)]
- extern "C" fn __describe_module__(description: BytesSink) {
--    // Collect the `module`.
--    let mut module = ModuleBuilder::default();
--    for describer in &mut *DESCRIBERS.lock().unwrap() {
--        describer(&mut module)
--    }
-+    let module = describe_module();
- 
-     // Serialize the module to bsatn.
-     let module_def = module.inner.finish();
-```
-
-**File**: `crates/bindings/src/table.rs` (modified, +53/-2)
-```diff
-@@ -319,8 +319,8 @@ impl TableHandleBackend {
- }
- 
- /// Implemented for every `TableHandle` struct generated by the [`table`](macro@crate::table) macro.
--/// Contains methods that are present for every table, regardless of what unique constraints
--/// and indexes are present.
-+/// Provides common table operations, regardless of what unique constraints and indexes
-+/// are present.
- ///
- /// To get a `TableHandle`
- // TODO: should we rename this `TableHandle`? Documenting this, I think that's much clearer.
-@@ -463,6 +463,48 @@ pub trait Table: TableInternal + ExplicitNames {
-     fn integrate_generated_columns(row: &mut Self::Row, generated_cols: &[u8]);
- }
- 
-+/// An insert-only table handle used by outboxes.
-+///
-+/// Shares ordinary table insertion and iteration without exposing deletion or updates.
-+/// Outbox index accessors likewise return read-only index handles.
-+pub struct OutboxTable<T: Table> {
-+    table: T,
-+}
-+
-+impl<T: Table> OutboxTable<T> {
-+    #[doc(hidden)]
-+    pub fn __new(table: T) -> Self {
-+        Self { table }
-+    }
-+
-+    #[doc(hidden)]
-+    pub fn __backend(&self) -> &TableHandleBackend {
-+        self.table.__backend()
-+    }
-+
-+    /// Returns the number of pending rows.
-+    pub fn count(&self) -> u64 {
-+        self.table.count()
-+    }
-+
-+    /// Iterates over pending rows.
-+    pub fn iter(&self) -> impl Iterator<Item = T::Row> {
-+        self.table.iter()
-+    }
-+
-+    /// Inserts a row, returning it with generated column values.
-+    #[track_caller]
-+    pub fn insert(&self, row: T::Row) -> T::Row {
-+        self.table.insert(row)
-+    }
-+
-+    /// Inserts a row, returning any constraint violation.
-+    #[track_caller]
-+    pub fn try_insert(&self, row: T::Row) -> Result<T::Row, TryInsertError<T>> {
-+        self.table.try_insert(row)
-+    }
-+}
-+
- #[doc(hidden)]
- #[inline]
- pub fn count<Tbl: Table>() -> u64 {
-@@ -478,6 +520,7 @@ pub trait TableInternal: Sized {
-     const PRIMARY_KEY: Option<u16> = None;
-     const SEQUENCES: &'static [u16];
-     const SCHEDULE: Option<ScheduleDesc<'static>> = None;
-+    const OUTBOX: Option<OutboxDesc<'static>> = None;
-     const IS_EVENT: bool = false;
- 
-     /// Returns the ID of this table.
-@@ -504,6 +547,14 @@ pub enum IndexAlgo<'a> {
-     Direct { column: u16 },
- }
- 
-+pub struct OutboxDesc<'a> {
-+    pub remote_reducer_name: &'a str,
-+    /// Outbox column positions in remote reducer parameter order.
-+    pub arg_columns: &'a [u16],
-+    pub target_column: u16,
-+    pub signature_hash: &'a str,
-+}
-+
- pub struct ScheduleDesc<'a> {
-     pub reducer_or_procedure_name: &'a str,
-     pub scheduled_at_column: u16,
-```
-
-**File**: `crates/bindings/tests/fixtures/idc_receiver/lib.rs` (added, +127/-0)
-```diff
-@@ -0,0 +1,127 @@
-+// THIS FILE IS AUTOMATICALLY GENERATED BY SPACETIMEDB. EDITS TO THIS FILE
-+// WILL NOT BE SAVED. MODIFY TABLES IN YOUR MODULE SOURCE CODE INSTEAD.
-+
-+#![allow(unused, clippy::all)]
-+
-+use spacetimedb::spacetimedb_lib as __lib;
-+
-+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-+pub struct Identity(pub spacetimedb::Identity);
-+
-+impl spacetimedb::SpacetimeType for Identity {
-+    fn make_type<S: spacetimedb::spacetimedb_lib::sats::typespace::TypespaceBuilder>(
-+        typespace: &mut S,
-+    ) -> spacetimedb::spacetimedb_lib::AlgebraicType {
-+        <spacetimedb::Identity as spacetimedb::SpacetimeType>::make_type(typespace)
-+    }
-+}
-+
-+impl spacetimedb::Serialize for Identity {
-+    fn serialize<S: spacetimedb::spacetimedb_lib::ser::Serializer>(
-+        &self,
-+        serializer: S,
-+    ) -> ::core::result::Result<S::Ok, S::Error> {
-+        <spacetimedb::Identity as spacetimedb::Serialize>::serialize(&self.0, serializer)
-+    }
-+}
-+
-+impl<'de> spacetimedb::Deserialize<'de> for Identity {
-+    fn deserialize<D: spacetimedb::spacetimedb_lib::de::Deserializer<'de>>(
-+        deserializer: D,
-+    ) -> ::core::result::Result<Self, D::Error> {
-+        <spacetimedb::Identity as spacetimedb::Deserialize>::deserialize(deserializer).map(Self)
-+    }
-+}
-+
-+#[derive(__lib::ser::Serialize, __lib::de::Deserialize, Clone, PartialEq, Debug)]
-+#[sats(crate = __lib)]
-+pub struct ReceivePingArgs {
-+    pub body: ::std::string::String,
-+}
-+
-+#[doc(hidden)]
-+macro_rules! __spacetimedb_typecheck_outbox_receive_ping_body_reject_duplicate {
-+    ($module:ident;) => {};
-+    ($module:ident; ($index:literal, $field:ident : $ty:ty as body), $($rest:tt)*) => {
-+        compile_error!(concat!(
-+            "outbox has multiple columns matching remote reducer parameter `",
-+            stringify!(body),
-+            "`"
-+        ));
-+    };
-+    ($module:ident; ($index:literal, $field:ident : $ty:ty as $other:ident), $($rest:tt)*) => {
-+        $module::__spacetimedb_typecheck_outbox_receive_ping_body_reject_duplicate!($module; $($rest)*);
-+    };
-+}
-+
-+#[doc(hidden)]
-+pub(crate) use __spacetimedb_typecheck_outbox_receive_ping_body_reject_duplicate;
-+
-+#[doc(hidden)]
-+macro_rules! __spacetimedb_typecheck_outbox_receive_ping_body {
-+    ($module:ident;) => {{
-+        compile_error!(concat!(
-+            "outbox has no column matching remote reducer parameter `",
-+            stringify!(body),
-+            "`"
-+        ));
-+        0u16
-+    }};
-+    ($module:ident; ($index:literal, $field:ident : $ty:ty as body), $($rest:tt)*) => {{
-+        let _ = |x: $ty| { let _: ::std::string::String = x; };
-+        $module::__spacetimedb_typecheck_outbox_receive_ping_body_reject_duplicate!($module; $($rest)*);
-+        $index
-+    }};
-+    ($module:ident; ($index:literal, $field:ident : $ty:ty as $other:ident), $($rest:tt)*) => {
-+        $module::__spacetimedb_typecheck_outbox_receive_ping_body!($module; $($rest)*)
-+    };
-+}
-+
-+#[doc(hidden)]
-+pub(crate) use __spacetimedb_typecheck_outbox_receive_ping_body;
-+
-+#[doc(hidden)]
-+macro_rules! __spacetimedb_typecheck_outbox_receive_ping {
-+    ($module:path, { $($columns:tt)* }) => {{
-+        #[allow(unused_imports)]
-+        use $module as __outbox_receiver;
-+        &[__outbox_receiver::__spacetimedb_typecheck_outbox_receive_ping_body!(__outbox_receiver; $($columns)*)]
-+    }};
-+}
-+
-+#[doc(hidden)]
-+pub(crate) use __spacetimedb_typecheck_outbox_receive_ping;
-+
-+#[allow(non_camel_case_types)]
-+pub struct receive_ping;
-+
-+impl spacetimedb::rt::RemoteReducer for receive_ping {
-+    const NAME: &'static str = "wire_ping";
-+    const SIGNATURE_HASH: &'static str = "386957a94632958d5ae8343e258f3a6f9dce9d7dafc46831050894baa7a4e4e1";
-+    type Args = ReceivePingArgs;
-+}
-+
-+#[derive(__lib::ser::Serialize, __lib::de::Deserialize, Clone, PartialEq, Debug)]
-+#[sats(crate = __lib)]
-+pub struct NoopArgs {}
-+
-+#[doc(hidden)]
-+macro_rules! __spacetimedb_typecheck_outbox_noop {
-+    ($module:path, { $($columns:tt)* }) => {{
-+        #[allow(unused_imports)]
-+        use $module as __outbox_receiver;
-+        &[]
-+    }};
-+}
-+
-+#[doc(hidden)]
-+pub(crate) use __spacetimedb_typecheck_outbox_noop;
-+
-+#[allow(non_camel_case_types)]
-+pub struct noop;
-+
-+impl spacetimedb::rt::RemoteReducer for noop {
-+    const NAME: &'static str = "noop";
-+    const SIGNATURE_HASH: &'static str = "bc436888fd947d2bfd49ed6bddad31f0245c34fd42c85f9360fa0b477aa957fc";
-+    type Args = NoopArgs;
++// A generic row stays spreadable, as reducer args are in `sdk-test-ts`.
++// eslint-disable-next-line @typescript-eslint/no-unused-vars
++function _spreadGenericRow<Row extends Record<string, unknown>>(
++  row: Prettify<{ [K in keyof Row]: Row[K] }>
++) {
++  return { ...row };
 +}
 ```
 
-**File**: `crates/bindings/tests/pass/outbox_arg_columns.rs` (added, +142/-0)
+**File**: `crates/bindings-typescript/src/lib/type_util.ts` (modified, +15/-4)
 ```diff
-@@ -0,0 +1,142 @@
-+#[path = "../fixtures/idc_receiver/lib.rs"]
-+mod receiver;
-+
-+mod remote_bindings {
-+    pub(crate) use crate::receiver;
-+}
-+
-+#[spacetimedb::table(
-+    accessor = outbound_ping,
-+    name = "WireOutbox",
-+    outbox(crate::remote_bindings::receiver::receive_ping),
-+    index(accessor = by_audit, btree(columns = [audit])),
-+    index(accessor = by_audit_hash, hash(columns = [audit])),
-+)]
-+pub struct OutboundPing {
-+    #[primary_key]
-+    #[auto_inc]
-+    id: u64,
-+    audit: String,
-+    #[param(name = body)]
-+    payload: String,
-+    #[target]
-+    destination: receiver::Identity,
-+}
-+
-+mod outboxes {
-+    use super::receiver;
-+
-+    #[spacetimedb::table(accessor = plain_ping, outbox(self::receiver::receive_ping))]
-+    pub struct PlainPing {
-+        #[primary_key]
-+        #[auto_inc]
-+        id: u64,
-+        #[target]
-+        target: receiver::Identity,
-+        body: String,
-+    }
-+}
-+
-+#[spacetimedb::table(accessor = empty_ping, outbox(receiver::noop))]
-+pub struct EmptyPing {
-+    #[primary_key]
-+    #[auto_inc]
-+    id: u64,
-+    #[target]
-+    target: receiver::Identity,
-+}
-+
-+#[spacetimedb::reducer(on_result(self::outbound_ping))]
-+pub fn on_ping_result(_: &spacetimedb::ReducerContext, _: OutboundPing, _: Result<(), String>) {}
-+
-+mod callbacks {
-+    #[spacetimedb::reducer(name = "WireCallback", on_result(super::outboxes::plain_ping))]
-+    pub fn on_plain_result(_: &spacetimedb::ReducerContext, _: super::outboxes::PlainPing, _: Result<(), String>) {}
-+}
-+
-+fn main() {
-+    use spacetimedb::rt::FnInfo;
-+    use spacetimedb::table::TableInternal;
-+
-+    assert_eq!(on_ping_result::ON_RESULT_OUTBOX, Some("outbound_ping"));
-+    assert_eq!(callbacks::on_plain_result::ON_RESULT_OUTBOX, Some("plain_ping"));
-+    assert_eq!(outbound_ping__TableHandle::OUTBOX.unwrap().arg_columns, &[2]);
-+    assert_eq!(outbound_ping__TableHandle::OUTBOX.unwrap().target_column, 3);
-+    assert_eq!(outboxes::plain_ping__TableHandle::OUTBOX.unwrap().arg_columns, &[2]);
-+    assert!(empty_ping__TableHandle::OUTBOX.unwrap().arg_columns.is_empty());
-+    assert_eq!(
-+        outboxes::plain_ping__TableHandle::OUTBOX.unwrap().remote_reducer_name,
-+        "wire_ping"
-+    );
-+}
-+
-+// Outbox tables retain inserts and reads, including primary-key lookups.
-+fn read_and_insert(ctx: &spacetimedb::ReducerContext, row: OutboundPing) {
-+    let table = ctx.db.outbound_ping();
-+    let row = table.insert(row);
-+    let _ = table.id().find(row.id);
-+    let _ = table.by_audit().filter("audit");
-+    let _ = table.by_audit_hash().filter("audit");
-+    let _ = table.try_insert(row);
-+    let _ = table.count();
-+    let _ = table.iter();
-+}
-+
-+// Existing Table bounds, associated-type paths, and UFCS calls remain sufficient.
-+fn mutate_generic<T: spacetimedb::Table>(table: &T, row: <T as spacetimedb::Table>::Row) {
-+    let row = spacetimedb::Table::insert(table, row);
-+    table.delete(row);
-+    table.clear();
-+}
-+
-+fn mutate_generic_index<T, C>(column: &spacetimedb::UniqueColumn<T, C::ColType, C>, row: T::Row)
-+where
-+    T: spacetimedb::Table,
-+    C: spacetimedb::table::Index + spacetimedb::table::Column<Table = T> + spacetimedb::table::PrimaryKey,
-+{
-+    let row = column.update(row);
-+    #[cfg(feature = "unstable")]
-+    let row = column.insert_or_update(row);
-+    #[cfg(feature = "unstable")]
-+    let row = column.try_insert_or_update(row).unwrap();
-+    column.delete(C::get_field(&row));
-+}
-+
-+fn mutate_generic_indexes<T, R, P>(
-+    ranged: &spacetimedb::RangedIndex<T, (String,), R>,
-+    pointed: &spacetimedb::PointIndex<T, (String,), P>,
-+) where
-+    T: spacetimedb::Table,
-+    R: spacetimedb::table::IndexIsRanged,
-+    P: spacetimedb::table::IndexIsPointed,
-+{
-+    ranged.delete("value");
-+    pointed.delete("value");
-+}
-+
-+#[spacetimedb::table(
-+    accessor = ordinary,
-+    index(accessor = by_value, btree(columns = [value])),
-+    index(accessor = by_value_hash, hash(columns = [value])),
-+)]
-+pub struct Ordinary {
-+    #[primary_key]
-+    id: u64,
-+    value: String,
-+}
-+
-+// Ordinary tables retain all update and delete APIs.
-+fn mutate_ordinary(ctx: &spacetimedb::ReducerContext, row: Ordinary) {
-+    use spacetimedb::Table;
-+    let table = ctx.db.ordinary();
-+    let row = table.id().update(row);
-+    #[cfg(feature = "unstable")]
-+    let row = table.id().insert_or_update(row);
-+    #[cfg(feature = "unstable")]
-+    let row = table.id().try_insert_or_update(row).unwrap();
-+    table.delete(row);
-+    table.id().delete(1);
-+    table.by_value().delete("value");
-+    table.by_value_hash().delete("value");
-+    table.clear();
-+}
-```
-
-**File**: `crates/bindings/tests/test_utils.rs` (modified, +41/-0)
-```diff
-@@ -2,6 +2,9 @@ use spacetimedb::spacetimedb_lib::RawModuleDef;
- use spacetimedb::test_utils::{TestAuth, TestQueryError};
- use spacetimedb::{reducer, table, AnonymousViewContext, Query, ReducerContext, Table, Timestamp, ViewContext};
+@@ -3,20 +3,31 @@ import type { Identity } from './identity';
+ import type { ScheduleAt } from './schedule_at';
+ import type { TimeDuration } from './time_duration';
+ import type { Timestamp } from './timestamp';
++import type { Uuid } from './uuid';
  
-+#[path = "fixtures/idc_receiver/lib.rs"]
-+mod receiver;
+ type DoNotPrettify =
+   | Identity
+   | ConnectionId
+   | Timestamp
+   | TimeDuration
+-  | ScheduleAt;
++  | ScheduleAt
++  | Uuid;
 +
- #[table(accessor = test_utils_user, public)]
- #[derive(Debug, PartialEq, Eq)]
- pub struct TestUtilsUser {
-@@ -24,6 +27,21 @@ pub fn add_test_utils_user(_ctx: &ReducerContext, id: u64, name: String) {
-     let _ = (id, name);
- }
++type Primitive = string | number | boolean | bigint | symbol | null | undefined;
  
-+#[table(accessor = test_utils_outbox, outbox(receiver::receive_ping))]
-+pub struct TestUtilsOutbox {
-+    #[primary_key]
-+    #[auto_inc]
-+    id: u64,
-+    audit: String,
-+    #[param(name = body)]
-+    payload: String,
-+    #[target]
-+    destination: receiver::Identity,
-+}
-+
-+#[reducer(on_result(test_utils_outbox))]
-+pub fn on_test_utils_outbox_result(_ctx: &ReducerContext, _row: TestUtilsOutbox, _result: Result<(), String>) {}
-+
- fn query_test_utils_users_by_name(from: spacetimedb::QueryBuilder, name: &str) -> impl Query<TestUtilsUser> {
-     from.test_utils_user()
-         .r#where(|user| user.name.eq(name.to_owned()))
-@@ -45,6 +63,7 @@ fn module_def_includes_native_test_registrations() {
-     let mut table_names = spacetimedb::test_utils::all_table_names();
-     table_names.sort_unstable();
-     assert!(table_names.contains(&"test_utils_user"));
-+    assert!(table_names.contains(&"test_utils_outbox"));
+ /**
+  * Utility to make TS show cleaner types by flattening intersections.
++ *
++ * Primitives pass through unchanged. A branded primitive (`string & Brand`)
++ * is an object type, but mapping it yields a structural record of `String`'s
++ * members that no longer satisfies `string`. The outer `object` check keeps a
++ * generic `Prettify<T>` spreadable.
+  */
+-export type Prettify<T> = T extends DoNotPrettify
+-  ? T
+-  : { [K in keyof T]: T[K] } & {};
++export type Prettify<T> = T extends object
++  ? T extends DoNotPrettify | Primitive
++    ? T
++    : { [K in keyof T]: T[K] } & {}
++  : T;
  
-     let RawModuleDef::V10(module) = spacetimedb::test_utils::module_def() else {
-         panic!("test utils should return a v10 raw module def");
-@@ -57,11 +76,33 @@ fn module_def_includes_native_test_registrations() {
-     assert!(tables
-         .iter()
-         .any(|table| table.source_name.as_ref() == "test_utils_event"));
-+    assert!(tables
-+        .iter()
-+        .any(|table| table.source_name.as_ref() == "test_utils_outbox"));
- 
-     let reducers = module.reducers().expect("reducers section should be present");
-     assert!(reducers
-         .iter()
-         .any(|reducer| reducer.source_name.as_ref() == "add_test_utils_user"));
-+    assert!(reducers
-+        .iter()
-+        .any(|reducer| reducer.source_name.as_ref() == "on_test_utils_outbox_result"));
-+
-+    let outboxes = module.outboxes().expect("outboxes section should be present");
-+    assert_eq!(outboxes.len(), 1);
-+    let outbox = &outboxes[0];
-+    assert_eq!(outbox.table_name.as_ref(), "test_utils_outbox");
-+    assert_eq!(outbox.remote_reducer.as_ref(), "wire_ping");
-+    assert_eq!(outbox.target_column, 3.into());
-+    assert_eq!(outbox.arg_columns, vec![2.into()]);
-+    assert_eq!(
-+        outbox.signature_hash,
-+        spacetimedb::spacetimedb_lib::Hash::from_hex(
-+            <receiver::receive_ping as spacetimedb::rt::RemoteReducer>::SIGNATURE_HASH
-+        )
-+        .unwrap()
-+    );
-+    assert_eq!(outbox.on_result_reducer.as_deref(), Some("on_test_utils_outbox_result"));
- }
- 
- #[test]
+ /**
+  * Helper function to sets a field in an object
 ```
 
 ---
 
-### Incident Patch 2: `ef85c541` (2026-10-28)
-**Commit Message**: Async IDC: rust receiver bindings (#6375)
+### Incident Patch 2: `69e9ded8` (2026-10-29)
+**Commit Message**: cache-warm - Fix target dir clearing and finish windows side (#6110)
 
-## Description of Changes
-Taken receiver side out from:
-https://github.com/clockworklabs/SpacetimeDB/pull/6001.
-Based on https://github.com/clockworklabs/SpacetimeDB/pull/6364
+# Summary
+Fix target dir clearing for the semantics expected by the new rust
+toolchain. Also make it opt-in for the off chance that somebody runs
+this locally.
 
-Adds Rust receiver bindings for intermodule reducer calls.
+And completed the windows cache warming.
 
-It can be reviewed through commits:
-
-- Do callback validation
-- Generate Rust receiver types, reducer metadata, and parameter-checking
-helpers, reusing client codegen where possible.
-- Wire receiver-binding generation into the CLI.
-- Namespace registered receiver types by dependency name to avoid
-collisions.
-- Add CLI smoke tests that generate bindings for two dependencies and
-compile a sender using both.
-
-## API and ABI breaking changes
-NA
-
-## Rollback safety impact
-
-N/A.
-
-## Expected complexity level and risk
-
-3.
-
-## Testing
-
-- Added tests.
+# Rollback safety impact
+n/a
 
 ---------
 
-Signed-off-by: Shubham Mishra <[REDACTED_EMAIL]>
-Co-authored-by: joshua-spacetime <[REDACTED_EMAIL]>
+Co-authored-by: Zeke Foppa <[REDACTED_EMAIL]>
 
-**File**: `crates/bindings/src/rt.rs` (modified, +19/-0)
+**File**: `tools/ci/commands/cache-warm/src/main.rs` (modified, +77/-74)
 ```diff
-@@ -180,6 +180,25 @@ pub trait FnInfo: ExplicitNames {
+@@ -6,29 +6,33 @@ use duct::{cmd, Expression};
+ use std::env;
+ use std::ffi::OsString;
+ use std::fs;
+-use std::path::{Path, PathBuf};
++use std::path::{Component, Path, PathBuf};
+ use std::time::Instant;
+ use tempfile::tempdir;
+ 
+ #[derive(Parser)]
+ #[command(about = "Warms the Rust caches used by CI runner images")]
+-struct Args {}
++struct Args {
++    /// Clear CARGO_TARGET_DIR between population families and before seeding it.
++    #[arg(long)]
++    clear_target_dir: bool,
++}
+ 
+ struct WarmRunner {
+-    pass: &'static str,
++    pass: String,
+     failures: Vec<String>,
+ }
+ 
+ impl WarmRunner {
+     fn new() -> Self {
+         Self {
+-            pass: "setup",
++            pass: "setup".to_owned(),
+             failures: Vec::new(),
+         }
+     }
+ 
+-    fn set_pass(&mut self, pass: &'static str) {
+-        self.pass = pass;
++    fn set_pass(&mut self, pass: impl Into<String>) {
++        self.pass = pass.into();
+     }
+ 
+     fn required<F>(&mut self, description: &str, action: F)
+@@ -68,53 +72,48 @@ where
+ {
+     let command = cmd("cargo", args);
+     if cfg!(target_os = "windows") {
+-        command
+-            .env("CARGO_TARGET_DIR", "C:/actions-runner/_work/target")
+-            .env("OPENSSL_RUST_USE_NASM", "1")
+-            .env("RUST_BACKTRACE", "full")
++        command.env("OPENSSL_RUST_USE_NASM", "1").env("RUST_BACKTRACE", "full")
+     } else {
+         command
      }
  }
  
-+/// Metadata for a reducer handle generated from a remote module schema.
-+///
-+/// Unlike FnInfo, this does not describe a locally exported callable and
-+/// therefore has no invocation function. It is used by module-side macros to
-+/// typecheck calls into another database.
-+pub trait RemoteReducer {
-+    /// The reducer name in the remote module schema.
-+    const NAME: &'static str;
-+
-+    /// Hash of the reducer signature as seen by the generated receiver bindings.
-+    const SIGNATURE_HASH: &'static str;
-+
-+    /// Reducer argument product, excluding the reducer context.
-+    ///
-+    /// Fields preserve the remote reducer's parameter product order, matching the
-+    /// signature hash and positional BSATN arguments.
-+    type Args;
-+}
-+
- pub trait Procedure<'de, A: Args<'de>, Ret: IntoProcedureResult> {
-     fn invoke(&self, ctx: &mut ProcedureContext, args: A) -> Ret;
- }
-```
-
-**File**: `crates/cli/src/subcommands/generate.rs` (modified, +104/-37)
-```diff
-@@ -6,8 +6,8 @@ use clap::Arg;
- use clap::ArgAction::{Set, SetTrue};
- use fs_err as fs;
- use spacetimedb_codegen::{
--    generate, private_table_names, CodegenOptions, CodegenVisibility, Csharp, ImportExtension, Lang, OutputFile, Rust,
--    TypeScript, UnrealCpp, AUTO_GENERATED_PREFIX,
-+    generate, generate_receiver_bindings, private_table_names, CodegenOptions, CodegenVisibility, Csharp,
-+    ImportExtension, Lang, OutputFile, ReceiverLanguage, Rust, TypeScript, UnrealCpp, AUTO_GENERATED_PREFIX,
- };
- use spacetimedb_lib::de::serde::DeserializeWrapper;
- use spacetimedb_lib::RawModuleDef;
-@@ -192,9 +192,18 @@ pub(super) fn dependency_generate_entries(
-         .and_then(|v| v.as_str())
-         .ok_or_else(|| anyhow::anyhow!("database dependencies require the sender to define `module-path`"))?;
- 
-+    let mut names = BTreeSet::new();
-     dependencies
-         .iter()
--        .map(|dependency| dependency_generate_entry(dependency, sender_module_path, all_targets))
-+        .map(|dependency| {
-+            if let Some(name) = dependency.get("name").and_then(|name| name.as_str()) {
-+                anyhow::ensure!(
-+                    names.insert(name),
-+                    "duplicate dependency name {name:?} in module {sender_module_path:?}"
-+                );
-+            }
-+            dependency_generate_entry(dependency, sender_module_path, all_targets)
-+        })
-         .collect()
- }
- 
-@@ -210,6 +219,12 @@ fn get_module_source(fields: &HashMap<String, serde_json::Value>) -> Option<(&st
-         .find_map(|key| fields.get(key).cloned().map(|value| (key, value)))
+-fn expected_target_dir() -> Result<PathBuf> {
+-    if cfg!(target_os = "windows") {
+-        return Ok(PathBuf::from(r"C:\actions-runner\_work\target"));
+-    }
+-    let home = env::var_os("HOME").context("HOME is not set")?;
+-    Ok(PathBuf::from(home).join("actions-runner/_work/target"))
+-}
+-
+ fn checked_target_dir() -> Result<PathBuf> {
++    let target =
++        PathBuf::from(env::var_os("CARGO_TARGET_DIR").context("--clear-target-dir requires CARGO_TARGET_DIR")?);
+     ensure!(
+-        cfg!(any(target_os = "linux", target_os = "windows")),
+-        "cache warming is supported only on Linux and Windows"
++        target.is_absolute()
++            && target.file_name().is_some()
++            && !target
++                .components()
++                .any(|component| matches!(component, Component::ParentDir)),
++        "CARGO_TARGET_DIR must be an absolute, non-root path without '..'"
++    );
++    let resolved = if target.exists() {
++        target.canonicalize()?
++    } else {
++        target
++            .parent()
++            .context("target has no parent")?
++            .canonicalize()?
++            .join(target.file_name().unwrap())
++    };
++    ensure!(
++        !env::current_dir()?.canonicalize()?.starts_with(&resolved),
++        "refusing to clear a target directory containing the repository"
+     );
+-    let expected = expected_target_dir()?;
+-    if cfg!(target_os = "windows") {
+-        ensure!(
+-            !env::current_exe()?.starts_with(&expected),
+-            "run cache warming without CARGO_TARGET_DIR set"
+-        );
+-        return Ok(expected);
+-    }
+-    let target = env::var_os("CARGO_TARGET_DIR")
+-        .map(PathBuf::from)
+-        .context("CARGO_TARGET_DIR is not set")?;
+     ensure!(
+-        target == expected,
+-        "refusing to reset unexpected Cargo target {}; expected {}",
+-        target.display(),
+-        expected.display()
++        !env::current_exe()?.canonicalize()?.starts_with(&resolved),
++        "run cache-warm from a separate Cargo --target-dir when clearing CARGO_TARGET_DIR"
+     );
+-    Ok(target)
++    Ok(resolved)
  }
  
-+/// Reject paths and other invalid identifiers before resolving sources or writing files.
-+fn validate_dependency_name(name: &str) -> anyhow::Result<()> {
-+    spacetimedb_schema::identifier::validate_identifier(name)
-+        .with_context(|| format!("invalid dependency name {name:?}"))
-+}
-+
- fn dependency_generate_entry(
-     dependency: &serde_json::Value,
-     sender_module_path: &str,
-@@ -222,6 +237,7 @@ fn dependency_generate_entry(
-         .get("name")
-         .and_then(|v| v.as_str())
-         .ok_or_else(|| anyhow::anyhow!("dependency entries require `name`"))?;
-+    validate_dependency_name(name)?;
- 
-     let (source_key, source_value, build_options, dotnet_version) = if let Some(path) = dependency.get("module-path") {
-         (
-@@ -453,6 +469,9 @@ fn prepare_generate_run_configs<'a>(
-         let js_file = command_config.get_resolved_path("js_file", config_dir)?;
-         let sender_module_path = command_config.get_resolved_path("sender_module_path", config_dir)?;
-         let dependency_name = command_config.get_one::<String>("dependency_name")?;
-+        if let Some(name) = &dependency_name {
-+            validate_dependency_name(name)?;
-+        }
-         let requested_lang = command_config.get_one::<Language>("language")?;
-         let namespace = command_config
-             .get_one::<String>("namespace")?
-@@ -647,28 +666,54 @@ pub fn build_generate_entry(
-     entry
- }
- 
--fn generate_receiver_bindings(_module: &ModuleDef, run: &GenerateRunConfig) -> anyhow::Result<Vec<OutputFile>> {
--    // Each implementation receives the receiver schema and resolved sender options,
--    // including the dependency name and output directory, for its output layout.
--    match run.lang {
--        Language::Rust => {
--            // TODO(idc-rust): Generate Rust receiver types and reducer handles, including dependency modules.
--            anyhow::bail!("Rust receiver binding generation is not implemented yet")
--        }
--        Language::TypeScript => {
--            // TODO(idc-typescript): Generate TypeScript receiver types, reducer handles, and dependency exports.
--            anyhow::bail!("TypeScript receiver binding generation is not implemented yet")
--        }
--        Language::Csharp => {
--            // TODO(idc-csharp): Generate C# receiver types and reducer handles in the configured namespace.
--            anyhow::bail!("C# receiver binding generation is not implemented yet")
--        }
--        Language::Cpp => {
--            // TODO(idc-cpp): Generate C++ receiver types and reducer handles with the required headers.
--            anyhow::bail!("C++ receiver binding generation is not implemented yet")
--        }
--        Language::UnrealCpp => anyhow::bail!("Unreal C++ is a client binding target"),
-+fn generate_dependency_module_files(files: Vec<OutputFile>, dependency_name: &str) -> Vec<OutputFile> {
-+    files
-+        .into_iter()
-+        .map(|OutputFile { filename, code }| {
-+            let filename = if filename == "lib.rs" {
-+                format!("{dependency_name}/mod.rs")
-+            } else {
-+                format!("{dependency_name}/{filename}")
-+            };
-+            OutputFile { filename, code }
-+        })
-+        .collect()
-+}
-+
-+fn write_remote_bindings_mod(out_dir: &Path, dependency_name: &str) -> anyhow::Result<()> {
-+    fs::create_dir_all(out_dir)?;
-+    let path = out_dir.join("mod
-```
-
-**File**: `crates/codegen/src/lib.rs` (modified, +33/-0)
-```diff
-@@ -30,6 +30,39 @@ impl Default for CodegenOptions {
+ fn reset_cargo_target(target: &Path) -> Result<()> {
+     if target.exists() {
+         fs::remove_dir_all(target).with_context(|| format!("failed to remove {}", target.display()))?;
      }
+-    fs::create_dir_all(target).with_context(|| format!("failed to create {}", target.display()))?;
++    // Cargo must create the directory itself so it writes CACHEDIR.TAG.
+     Ok(())
  }
  
-+/// Target language and language-specific options for receiver bindings.
-+pub enum ReceiverLanguage<'a> {
-+    Rust,
-+    TypeScript,
-+    Csharp { namespace: &'a str },
-+    Cpp,
-+}
-+
-+/// Generate receiver binding files without reading or writing the filesystem.
-+/// `dependency_name` scopes generated type names across receiver dependencies.
-+/// Use `None` for standalone bindings.
-+pub fn generate_receiver_bindings(
-+    module: &ModuleDef,
-+    lang: ReceiverLanguage<'_>,
-+    dependency_name: Option<&str>,
-+) -> anyhow::Result<Vec<OutputFile>> {
-+    match lang {
-+        ReceiverLanguage::Rust => Ok(rust::generate_rust_module_bindings(module, dependency_name)),
-+        ReceiverLanguage::TypeScript => {
-+            // TODO(idc-typescript): Generate TypeScript receiver types, reducer handles, and dependency exports.
-+            anyhow::bail!("TypeScript receiver binding generation is not implemented yet")
-+        }
-+        ReceiverLanguage::Csharp { .. } => {
-+            // TODO(idc-csharp): Generate C# receiver types and reducer handles in the configured namespace.
-+            anyhow::bail!("C# receiver binding generation is not implemented yet")
-+        }
-+        ReceiverLanguage::Cpp => {
-+            // TODO(idc-cpp): Generate C++ receiver types and reducer handles with the required headers.
-+            anyhow::bail!("C++ receiver binding generation is not implemented yet")
-+        }
-+    }
-+}
-+
- pub fn generate(module: &ModuleDef, lang: &dyn Lang, options: &CodegenOptions) -> Vec<OutputFile> {
-     itertools::chain!(
-         util::iter_tables(module, options.visibility).map(|tbl| lang.generate_table_file(module, tbl)),
-```
-
-**File**: `crates/codegen/src/rust.rs` (modified, +488/-50)
-```diff
-@@ -27,6 +27,20 @@ const INDENT: &str = "    ";
- 
- pub struct Rust;
- 
-+pub(super) fn generate_rust_module_bindings(module: &ModuleDef, dependency_name: Option<&str>) -> Vec<OutputFile> {
-+    // TODO: Generate IDC bindings for submodules. Only root types and reducers are emitted for now.
-+    let type_refs = module_binding_reducer_type_refs(module);
-+    itertools::chain!(
-+        iter_module_binding_types(module, &type_refs).map(|typ| generate_module_binding_type_file(
-+            module,
-+            typ,
-+            dependency_name
-+        )),
-+        [generate_module_bindings_root_file(module, &type_refs)],
-+    )
-+    .collect()
-+}
-+
- impl Lang for Rust {
-     fn generate_type_files(&self, module: &ModuleDef, typ: &TypeDef) -> Vec<OutputFile> {
-         let type_name = collect_case(Case::Pascal, typ.accessor_name.name_segments());
-@@ -41,7 +55,7 @@ impl Lang for Rust {
-             AlgebraicTypeDef::Product(product) => {
-                 gen_and_print_imports(module, out, &product.elements, &[typ.ty]);
-                 out.newline();
--                define_struct_for_product(module, out, &type_name, &product.elements, "pub");
-+                define_struct_for_product(module, out, &type_name, &product.elements, "pub", TypeContext::Client);
-             }
-             AlgebraicTypeDef::Sum(sum) => {
-                 gen_and_print_imports(module, out, &sum.variants, &[typ.ty]);
-@@ -513,6 +527,7 @@ pub(super) fn parse_table_update(
-             &args_type,
-             &reducer.params_for_generate.elements,
-             "pub(super)",
-+            TypeContext::Client,
-         );
- 
-         out.newline();
-@@ -645,6 +660,7 @@ impl {func_name} for super::RemoteReducers {{
-             &procedure.params_for_generate.elements,
-             // non-pub visibility.
-             "",
-+            TypeContext::Client,
-         );
- 
-         out.newline();
-@@ -709,7 +725,7 @@ impl {func_name} for super::RemoteProcedures {{
-         out.newline();
- 
-         // Declare `pub mod` for each of the files generated.
--        print_module_decls(module, options.visibility, out);
-+        print_module_decls(iter_module_names(module, options.visibility), out);
- 
-         out.newline();
- 
-@@ -981,53 +997,92 @@ fn implement_query_view_call_accessor(
-     )
+@@ -179,6 +178,26 @@ fn warm_windows_runtime_builds(runner: &mut WarmRunner) {
+     });
  }
  
-+#[derive(Clone, Copy)]
-+enum TypeContext {
-+    Client,
-+    Receiver,
-+    OutboxMacro,
++fn warm_windows_package_build(runner: &mut WarmRunner) {
++    runner.required(
++        "Build release CLI, standalone and updater for x86_64-pc-windows-msvc",
++        || {
++            run(cargo([
++                "build",
++                "--release",
++                "--target",
++                "x86_64-pc-windows-msvc",
++                "-p",
++                "spacetimedb-cli",
++                "-p",
++                "spacetimedb-standalone",
++                "-p",
++                "spacetimedb-update",
++            ]))
++        },
++    );
 +}
 +
- pub fn write_type<W: Write>(module: &ModuleDef, out: &mut W, ty: &AlgebraicTypeUse) -> fmt::Result {
-+    write_type_in_context(module, out, ty, TypeContext::Client)
-+}
-+
-+fn write_type_in_context<W: Write>(
-+    module: &ModuleDef,
-+    out: &mut W,
-+    ty: &AlgebraicTypeUse,
-+    context: TypeContext,
-+) -> fmt::Result {
-+    let (sdk_path, sats_path, identity_type, type_prefix) = match context {
-+        TypeContext::Client => ("__sdk", "__sats", "__sdk::Identity", ""),
-+        TypeContext::Receiver => ("::spacetimedb", "::spacetimedb::sats", "Identity", ""),
-+        TypeContext::OutboxMacro => ("::spacetimedb", "::spacetimedb::sats", "$module::Identity", "$module::"),
-+    };
-+    // Receiver-defined types can shadow builtins inside the bindings, and macros
-+    // resolve types in the caller's scope. Preserve the established client spelling.
-+    let qualify_builtins = match context {
-+        TypeContext::Client => false,
-+        TypeContext::Receiver | TypeContext::OutboxMacro => true,
-+    };
-+    let write_builtin = |out: &mut W, path: &str, name: &str| -> fmt::Result {
-+        if qualify_builtins {
-+            write!(out, "{path}::")?;
-+        }
-+        write!(out, "{name}")
-+    };
-     match ty {
-         AlgebraicTypeUse::Unit => write!(out, "()")?,
--        AlgebraicTypeUse::Never => write!(out, "std::convert::Infallible")?,
--        AlgebraicTypeUse::Identity => write!(out, "__sdk::Identity")?,
--        AlgebraicTypeUse::ConnectionId => write!(out, "__sdk::ConnectionId")?,
--        AlgebraicTypeUse::Timestamp => write!(out, "__sdk::Timestamp")?,
--        AlgebraicTypeUse::TimeDuration => write!(out, "__sdk::TimeDuration")?,
--        AlgebraicTypeUse::Uuid => write!(out, "__sdk::Uuid")?,
--        AlgebraicTypeUse::ScheduleAt => write!(out, "__sdk::ScheduleAt")?,
-+        AlgebraicTypeUse::Never => {
-+            let root = if qualify_builtins { "::core" } else { "std" };
-+            write!(out, "{root}::convert::Infallible")?;
-+        }
-+        AlgebraicTypeUse::Identity => write!(out, "{identity_type}")?,
-+        AlgebraicTypeUse::ConnectionId => write!(out, "{sdk_path}::ConnectionId")?,
-+        AlgebraicTypeUse::Timestamp => write!(out, "{sdk_path}::Timestamp")?,
-+        AlgebraicTypeUse::TimeDuration => write!(out, "{sdk_path}::TimeDuration")?,
-+        AlgebraicTypeUse::Uuid => write!(out, "{sdk_path}::Uuid")?,
-+        AlgebraicTypeUse::ScheduleAt => write!(out, "{sdk_path}::ScheduleAt")?,
-         AlgebraicTypeUse::Option(inner_ty) => {
--            write!(out, "Option::<")?;
--            write_type(module, out, inner_ty)?;
-+            w
-```
-
-**File**: `crates/codegen/tests/codegen.rs` (modified, +115/-1)
-```diff
-@@ -1,4 +1,6 @@
--use spacetimedb_codegen::{generate, CodegenOptions, Csharp, ImportExtension, Rust, TypeScript};
-+use spacetimedb_codegen::{
-+    generate, generate_receiver_bindings, CodegenOptions, Csharp, ImportExtension, ReceiverLanguage, Rust, TypeScript,
-+};
- use spacetimedb_data_structures::map::HashMap;
- use spacetimedb_schema::def::ModuleDef;
- use spacetimedb_testing::modules::{CompilationMode, CompiledModule};
-@@ -45,6 +47,118 @@ declare_tests! {
-     test_codegen_rust => Rust,
- }
+ fn warm_test_builds(runner: &mut WarmRunner) {
+     runner.required("Compile primary test workspace", || {
+         run(cargo([
+@@ -458,6 +477,7 @@ const FAMILIES: &[(&str, WarmFamily)] = &[
+ const WINDOWS_FAMILIES: &[(&str, WarmFamily)] = &[
+     ("runtime builds", warm_windows_runtime_builds),
+     ("smoketest archive", warm_windows_smoketests),
++    ("package build", warm_windows_package_build),
+ ];
  
-+#[test]
-+fn test_codegen_rust_module_bindings() {
-+    let module = compiled_module();
-+    let outfiles = generate_receiver_bindings(module, ReceiverLanguage::Rust, None)
-+        .unwrap()
-+        .into_iter()
-+        .map(|f| (f.filename, f.code))
-+        .collect::<HashMap<_, _>>();
-+
-+    assert!(!outfiles.contains_key("repeating_test_arg_type.rs"));
-+    assert!(!outfiles.contains_key("nonrepeating_test_arg_type.rs"));
-+    assert!(outfiles.contains_key("test_a_type.rs"));
-+    assert!(outfiles.contains_key("namespace_test_f_type.rs"));
-+    assert!(!outfiles.contains_key("baz_type.rs"));
-+    assert!(!outfiles.contains_key("foobar_type.rs"));
-+    assert!(!outfiles.keys().any(|filename| filename.ends_with("_reducer.rs")));
-+    assert!(!outfiles.keys().any(|filename| filename.ends_with("_procedure.rs")));
-+
-+    let root = outfiles
-+        .get("lib.rs")
-+        .expect("rust module bindings should emit a root lib.rs");
-+
-+    assert!(root.contains("pub use test_a_type::TestA;"));
-+    assert!(!root.contains("pub mod baz_type;"));
-+
-+    assert!(root.contains("pub struct Identity(pub spacetimedb::Identity);"));
-+    assert!(root.contains("pub struct add;"));
-+    assert!(root.contains("impl spacetimedb::rt::RemoteReducer for add"));
-+    assert!(root.contains("const NAME: &'static str = \"add\";"));
-+    assert!(!root.contains("ARG_NAMES"));
-+    assert!(root.contains("__spacetimedb_typecheck_outbox_add_name"));
-+    let reducer = module
-+        .reducers()
-+        .find(|reducer| reducer.name.as_ref() == "add")
-+        .unwrap();
-+    let expected_hash = spacetimedb_schema::def::reducer_signature_hash(
-+        &reducer.params(),
-+        &reducer.ok_return_type,
-+        &reducer.err_return_type,
-+        module.typespace(),
-+    );
-+    assert!(root.contains(&format!(
-+        "const SIGNATURE_HASH: &'static str = \"{}\";",
-+        expected_hash.to_hex()
-+    )));
-+    assert!(!root.contains("pub struct init;"));
-+    assert!(!root.contains("pub struct client_connected;"));
-+    assert!(!root.contains("pub struct repeating_test;"));
-+    assert!(!root.contains("pub struct nonrepeating_test;"));
-+    assert!(!root.contains("sleep_one_second"));
-+    assert!(!root.contains("RemoteProcedures"));
-+    assert!(!root.contains("DbConnection"));
-+
-+    insta::assert_snapshot!(root);
-+}
-+
-+#[test]
-+fn rust_receiver_types_are_scoped_by_dependency_name() {
-+    let module = compiled_module();
-+    let generate = |name| {
-+        generate_receiver_bindings(module, ReceiverLanguage::Rust, Some(name))
-+            .unwrap()
-+            .into_iter()
-+            .map(|file| (file.filename, file.code))
-+            .collect::<HashMap<_, _>>()
-+    };
-+    let game_world = generate("game_world");
-+    let auth = generate("auth");
-+    let type_file = "test_a_type.rs";
-+    assert!(game_world[type_file].contains("#[sats(name = \"game_world.TestA\")]"));
-+    assert!(auth[type_file].contains("#[sats(name = \"auth.TestA\")]"));
-+}
-+
-+#[test]
-+fn test_codegen_rust_module_bindings_include_nested_reducer_types() {
-+    use spacetimedb_lib::db::raw_def::v10::RawModuleDefV10Builder;
-+    use spacetimedb_lib::{AlgebraicType, ProductType};
-+
-+    let mut builder = RawModuleDefV10Builder::new();
-+    let state_ref = builder
-+        .build_table_with_new_type("EmpireState", ProductType::from([("id", AlgebraicType::U64)]), true)
-+        .finish();
-+    builder
-+        .build_table_with_new_type("Unrelated", ProductType::from([("id", AlgebraicType::U64)]), true)
-+        .finish();
-+    let op_ref = builder.add_algebraic_type(
-+        [],
-+        "EmpireStateOp",
-+        AlgebraicType::sum([("Update", AlgebraicType::option(AlgebraicType::Ref(state_ref)))]),
-+        false,
-+    );
-+    builder.add_reducer(
-+        "receive",
-+        ProductType::from([("ops", AlgebraicType::array(AlgebraicType::Ref(op_ref)))]),
-+    );
-+    let module: ModuleDef = builder.finish().try_into().unwrap();
-+    let files = generate_receiver_bindings(&module, ReceiverLanguage::Rust, None)
-+        .unwrap()
-+        .into_iter()
-+        .map(|file| (file.filename, file.code))
-+        .collect::<HashMap<_, _>>();
-+
-+    assert!(files.contains_key("empire_state_op_type.rs"));
-+    assert!(files.contains_key("empire_state_type.rs"));
-+    assert!(!files.contains_key("unrelated_type.rs"));
-+    assert!(files["lib.rs"].contains("pub mod empire_state_op_type;"));
-+    assert!(files["lib.rs"].contains("pub mod empire_state_type;"));
-+    assert!(f
-```
-
-**File**: `crates/codegen/tests/outbox_builtin_shadowing.rs` (added, +170/-0)
-```diff
-@@ -0,0 +1,170 @@
-+use spacetimedb_codegen::{generate_receiver_bindings, ReceiverLanguage};
-+use spacetimedb_lib::db::raw_def::v10::RawModuleDefV10Builder;
-+use spacetimedb_lib::{AlgebraicType, ProductType};
-+use spacetimedb_schema::def::ModuleDef;
-+use std::collections::BTreeMap;
-+use std::process::Command;
-+
-+// Keep the snapshot focused on public types and reducer argument associations.
-+// The generated macro bodies are exercised by compiling the complete bindings.
-+fn type_declarations(code: &str) -> String {
-+    let mut in_item = false;
-+    code.lines()
-+        .filter(|line| {
-+            if line.starts_with("pub use ")
-+                || line.starts_with("pub struct ")
-+                || line.starts_with("impl spacetimedb::rt::RemoteReducer for ")
-+            {
-+                in_item = line.ends_with('{');
-+                true
-+            } else if in_item {
-+                if line.trim() == "}" {
-+                    in_item = false;
-+                }
-+                true
-+            } else {
-+                false
-+            }
-+        })
-+        .collect::<Vec<_>>()
-+        .join("\n")
-+}
-+
-+#[test]
-+fn receiver_bindings_and_outbox_macros_preserve_builtin_and_custom_types() {
-+    let mut builder = RawModuleDefV10Builder::new();
-+    // Receiver-defined names can collide with both builtins and the synthetic
-+    // argument product generated for `receive`.
-+    let custom_string = builder.add_algebraic_type(
-+        [],
-+        "String",
-+        AlgebraicType::product([("value", AlgebraicType::U64)]),
-+        false,
-+    );
-+    let custom_receive_args = builder.add_algebraic_type(
-+        [],
-+        "ReceiveArgs",
-+        AlgebraicType::product([
-+            ("builtin", AlgebraicType::String),
-+            ("custom", AlgebraicType::Ref(custom_string)),
-+        ]),
-+        false,
-+    );
-+    builder.add_reducer(
-+        "receive",
-+        ProductType::from([
-+            ("text", AlgebraicType::String),
-+            ("values", AlgebraicType::array(AlgebraicType::U64)),
-+            ("maybe", AlgebraicType::option(AlgebraicType::String)),
-+            (
-+                "outcome",
-+                AlgebraicType::result(AlgebraicType::unit(), AlgebraicType::String),
-+            ),
-+            ("number", AlgebraicType::U64),
-+            ("timestamp", AlgebraicType::timestamp()),
-+            ("identity", AlgebraicType::identity()),
-+            ("custom_string", AlgebraicType::Ref(custom_string)),
-+            ("custom_args", AlgebraicType::Ref(custom_receive_args)),
-+        ]),
-+    );
-+    builder.add_reducer("noop", ProductType::unit());
-+    let module: ModuleDef = builder.finish().try_into().unwrap();
-+    let files = generate_receiver_bindings(&module, ReceiverLanguage::Rust, None).unwrap();
-+    let declarations = files
-+        .iter()
-+        .map(|file| (file.filename.as_str(), type_declarations(&file.code)))
-+        .collect::<BTreeMap<_, _>>();
-+    insta::assert_toml_snapshot!("receiver_type_declarations", declarations);
-+    let project = tempfile::tempdir().unwrap();
-+    let receiver_dir = project.path().join("src/receiver");
-+    std::fs::create_dir_all(&receiver_dir).unwrap();
-+    for file in files {
-+        let name = if file.filename == "lib.rs" {
-+            "mod.rs"
-+        } else {
-+            &file.filename
-+        };
-+        std::fs::write(receiver_dir.join(name), file.code).unwrap();
-+    }
-+    let repo = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-+        .join("../..")
-+        .canonicalize()
-+        .unwrap();
-+    let bindings_path = serde_json::to_string(&repo.join("crates/bindings")).unwrap();
-+    std::fs::write(
-+        project.path().join("Cargo.toml"),
-+        format!(
-+            r#"[package]
-+name = "outbox-builtin-shadowing"
-+version = "0.0.0"
-+edition = "2024"
-+
-+[workspace]
-+
-+[dependencies]
-+spacetimedb = {{ path = {bindings_path} }}
-+"#
-+        ),
-+    )
-+    .unwrap();
-+
-+    let shadows = r#"
-+    struct String;
-+    struct Vec<T>(::core::marker::PhantomData<T>);
-+    struct Option<T>(::core::marker::PhantomData<T>);
-+    struct Result<T, E>(::core::marker::PhantomData<(T, E)>);
-+    type u64 = ();
-+    mod core {}
-+    mod std {}
-+    mod spacetimedb {}
-+"#;
-+    // First compile the complete generated bindings in an ordinary sender, then
-+    // expand the same receiver macro with builtin names shadowed at its call site.
-+    for (scope, shadowing) in [("unshadowed", ""), ("shadowed", shadows)] {
-+        let source = format!(
-+            r#"
-+#![allow(dead_code, non_camel_case_types, unused_imports)]
-+mod receiver;
-+mod caller {{
-+    {shadowing}
-+    fn check() {{
-+        let _ = crate::receiver::__spacetimedb_typecheck_outbox_receive!(crate::receiver, {{
-+            (0, text: ::std::string::String as text),
-+            (1, values: ::std::vec::Vec<::core::primitive::u64> as values),
-+            (2, maybe: ::core::option::Option<::std::string::String> as maybe),
-+            (3, outcome: :
-```
-
-**File**: `crates/codegen/tests/snapshots/codegen__codegen_rust_module_bindings.snap` (added, +990/-0)
-```diff
-@@ -0,0 +1,990 @@
-+---
-+source: crates/codegen/tests/codegen.rs
-+expression: root
-+---
-+// THIS FILE IS AUTOMATICALLY GENERATED BY SPACETIMEDB. EDITS TO THIS FILE
-+// WILL NOT BE SAVED. MODIFY TABLES IN YOUR MODULE SOURCE CODE INSTEAD.
-+
-+#![allow(unused, clippy::all)]
-+
-+use spacetimedb::spacetimedb_lib as __lib;
-+
-+pub mod test_a_type;
-+pub mod test_b_type;
-+pub mod namespace_test_c_type;
-+pub mod namespace_test_f_type;
-+
-+pub use test_a_type::TestA;
-+pub use test_b_type::TestB;
-+pub use namespace_test_c_type::NamespaceTestC;
-+pub use namespace_test_f_type::NamespaceTestF;
-+
-+
-+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-+pub struct Identity(pub spacetimedb::Identity);
-+
-+impl spacetimedb::SpacetimeType for Identity {
-+    fn make_type<S: spacetimedb::spacetimedb_lib::sats::typespace::TypespaceBuilder>(
-+        typespace: &mut S,
-+    ) -> spacetimedb::spacetimedb_lib::AlgebraicType {
-+        <spacetimedb::Identity as spacetimedb::SpacetimeType>::make_type(typespace)
-+    }
-+}
-+
-+impl spacetimedb::Serialize for Identity {
-+    fn serialize<S: spacetimedb::spacetimedb_lib::ser::Serializer>(
-+        &self,
-+        serializer: S,
-+    ) -> ::core::result::Result<S::Ok, S::Error> {
-+        <spacetimedb::Identity as spacetimedb::Serialize>::serialize(&self.0, serializer)
-+    }
-+}
-+
-+impl<'de> spacetimedb::Deserialize<'de> for Identity {
-+    fn deserialize<D: spacetimedb::spacetimedb_lib::de::Deserializer<'de>>(
-+        deserializer: D,
-+    ) -> ::core::result::Result<Self, D::Error> {
-+        <spacetimedb::Identity as spacetimedb::Deserialize>::deserialize(deserializer).map(Self)
-+    }
-+}
-+
-+
-+#[derive(__lib::ser::Serialize, __lib::de::Deserialize, Clone, PartialEq, Debug)]
-+#[sats(crate = __lib)]
-+pub struct AddArgs {
-+    pub name: ::std::string::String,
-+    pub age: ::core::primitive::u8,
-+}
-+
-+
-+#[doc(hidden)]
-+macro_rules! __spacetimedb_typecheck_outbox_add_name_reject_duplicate {
-+    ($module:ident;) => {};
-+    ($module:ident; ($index:literal, $field:ident : $ty:ty as name), $($rest:tt)*) => {
-+        compile_error!(concat!(
-+            "outbox has multiple columns matching remote reducer parameter `",
-+            stringify!(name),
-+            "`"
-+        ));
-+    };
-+    ($module:ident; ($index:literal, $field:ident : $ty:ty as $other:ident), $($rest:tt)*) => {
-+        $module::__spacetimedb_typecheck_outbox_add_name_reject_duplicate!($module; $($rest)*);
-+    };
-+}
-+
-+#[doc(hidden)]
-+pub(crate) use __spacetimedb_typecheck_outbox_add_name_reject_duplicate;
-+
-+#[doc(hidden)]
-+macro_rules! __spacetimedb_typecheck_outbox_add_name {
-+    ($module:ident;) => {{
-+        compile_error!(concat!(
-+            "outbox has no column matching remote reducer parameter `",
-+            stringify!(name),
-+            "`"
-+        ));
-+        0u16
-+    }};
-+    ($module:ident; ($index:literal, $field:ident : $ty:ty as name), $($rest:tt)*) => {{
-+        let _ = |x: $ty| { let _: ::std::string::String = x; };
-+        $module::__spacetimedb_typecheck_outbox_add_name_reject_duplicate!($module; $($rest)*);
-+        $index
-+    }};
-+    ($module:ident; ($index:literal, $field:ident : $ty:ty as $other:ident), $($rest:tt)*) => {
-+        $module::__spacetimedb_typecheck_outbox_add_name!($module; $($rest)*)
-+    };
-+}
-+
-+#[doc(hidden)]
-+pub(crate) use __spacetimedb_typecheck_outbox_add_name;
-+
-+
-+#[doc(hidden)]
-+macro_rules! __spacetimedb_typecheck_outbox_add_age_reject_duplicate {
-+    ($module:ident;) => {};
-+    ($module:ident; ($index:literal, $field:ident : $ty:ty as age), $($rest:tt)*) => {
-+        compile_error!(concat!(
-+            "outbox has multiple columns matching remote reducer parameter `",
-+            stringify!(age),
-+            "`"
-+        ));
-+    };
-+    ($module:ident; ($index:literal, $field:ident : $ty:ty as $other:ident), $($rest:tt)*) => {
-+        $module::__spacetimedb_typecheck_outbox_add_age_reject_duplicate!($module; $($rest)*);
-+    };
-+}
-+
-+#[doc(hidden)]
-+pub(crate) use __spacetimedb_typecheck_outbox_add_age_reject_duplicate;
-+
-+#[doc(hidden)]
-+macro_rules! __spacetimedb_typecheck_outbox_add_age {
-+    ($module:ident;) => {{
-+        compile_error!(concat!(
-+            "outbox has no column matching remote reducer parameter `",
-+            stringify!(age),
-+            "`"
-+        ));
-+        0u16
-+    }};
-+    ($module:ident; ($index:literal, $field:ident : $ty:ty as age), $($rest:tt)*) => {{
-+        let _ = |x: $ty| { let _: ::core::primitive::u8 = x; };
-+        $module::__spacetimedb_typecheck_outbox_add_age_reject_duplicate!($module; $($rest)*);
-+        $index
-+    }};
-+    ($module:ident; ($index:literal, $field:ident : $ty:ty as $other:ident), $($rest:tt)*) => {
-+        $module::__spacetimedb_typecheck_outbox_add_age!($module; $($rest)*)
-+    };
-+}
-+
-+#[doc(hidden)]
-+pub(crate) use __spacetimedb_typecheck_outbox_add_age;
-+
-+
-+#[doc(hidden)]
-+macro_rules! __spacetimedb_typecheck_outbox_add {
-+    ($module:path, { $($columns:tt)* }
-```
-
-**File**: `crates/codegen/tests/snapshots/outbox_builtin_shadowing__receiver_type_declarations.snap` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+---
-+source: crates/codegen/tests/outbox_builtin_shadowing.rs
-+expression: declarations
-+---
-+"lib.rs" = '''
-+pub use receive_args_type::ReceiveArgs;
-+pub use string_type::String;
-+pub struct Identity(pub spacetimedb::Identity);
-+pub struct ReceiveArgs_ {
-+    pub text: ::std::string::String,
-+    pub values: ::std::vec::Vec::<::core::primitive::u64>,
-+    pub maybe: ::core::option::Option::<::std::string::String>,
-+    pub outcome: ::core::result::Result::<(), ::std::string::String>,
-+    pub number: ::core::primitive::u64,
-+    pub timestamp: ::spacetimedb::Timestamp,
-+    pub identity: Identity,
-+    pub custom_string: String,
-+    pub custom_args: ReceiveArgs,
-+}
-+pub struct receive;
-+impl spacetimedb::rt::RemoteReducer for receive {
-+    const NAME: &'static str = "receive";
-+    const SIGNATURE_HASH: &'static str = "c0cb30752579ca4f11c7255a77df5f9294ed3ecdf3df710a4c41d086fb9b5ebc";
-+    type Args = ReceiveArgs_;
-+}
-+pub struct NoopArgs {
-+    }
-+pub struct noop;
-+impl spacetimedb::rt::RemoteReducer for noop {
-+    const NAME: &'static str = "noop";
-+    const SIGNATURE_HASH: &'static str = "bc436888fd947d2bfd49ed6bddad31f0245c34fd42c85f9360fa0b477aa957fc";
-+    type Args = NoopArgs;
-+}'''
-+"receive_args_type.rs" = '''
-+pub struct ReceiveArgs {
-+    pub builtin: ::std::string::String,
-+    pub custom: String,
-+}'''
-+"string_type.rs" = '''
-+pub struct String {
-+    pub value: ::core::primitive::u64,
-+}'''
+ fn families() -> &'static [(&'static s
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6422** (2026-10-30): Redirect renamed docs slugs and mark the 1.12.0 docs unmaintained (@cloutiertyler)
+- **PR #6414** (closed): Scope IDC receiver types where the dependency is attached (@cloutiertyler)
+- **PR #6413** (closed): Rename LookupValue to UnbrandedIdentity in the TypeScript SDK (@cloutiertyler)
+- **PR #6411** (2026-10-28): Tidy async IDC's TypeScript surface after the #6327 review (@cloutiertyler)
 - **PR #6400** (2026-10-27): Add a SpacetimeDB Standalone architecture diagram to docs/DEVELOP.md (@cloutiertyler)
 - **PR #6378** (2026-10-26): Version bump 2.14.0 (@rekhoff)
-- **PR #6376** (2026-10-28): Async IDC: rust outbox macro (@Shubham8287)
-- **PR #6375** (2026-10-28): Async IDC: rust receiver bindings (@Shubham8287)
-- **PR #6364** (2026-10-27): Async IDC: Preserve V10 names and type IDC outbox signature hashes (@Shubham8287)
-- **PR #6362** (2026-10-24): docs: document IDC receiver bindings and CLI configuration (@clockwork-labs-bot)
 
 ---
 
@@ -2507,35 +1171,58 @@ Co-authored-by: joshua-spacetime <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Async IDC: rust outbox macro (#6376)
+## X. ts-sdk: stop Prettify from rewriting Uuid and branded primitives (#5971)
 
 **RULE**:
-When implementing operations in `crates/bindings-macro/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/bindings-typescript/src/lib/type_util.test-d.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c48f5120`: Async IDC: rust outbox macro (#6376). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `57642268`: ts-sdk: stop Prettify from rewriting Uuid and branded primitives (#5971). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bindings-macro/src/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bindings-typescript/src/lib/type_util.test-d.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    symbol!(outbox);
-    symbol!(on_result);
-    symbol!(param);
-    symbol!(target);
-#[proc_macro_derive(
-    __TableHelper,
-    attributes(sats, unique, auto_inc, primary_key, target, index, default, param)
-)]
+import type { ConnectionId } from './connection_id';
+import type { Identity } from './identity';
+import type { Prettify } from './type_util';
+import type { TimeDuration } from './time_duration';
+import type { Timestamp } from './timestamp';
+import type { Uuid } from './uuid';
+
+declare const brand: unique symbol;
+
+/**
+ * A branded primitive: an intersection of a primitive with a marker object.
+ * `Prettify` must leave it alone — mapping it produces a structural record of
+ * `String`'s members that no longer satisfies `string`.
+ */
+type UserId = string & { readonly [brand]: 'UserId' };
+
+declare const userId: Prettify<UserId>;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _brandedIsStillAString: string = userId;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _brandedKeepsItsBrand: UserId = userId;
+
+// Plain primitives round-trip unchanged.
+declare const str: Prettify<string>;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _str: string = str;
+declare const num: Prettify<number>;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _num: number = num;
+declare const big: Prettify<bigint>;
+// eslint-disable-nex
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-#[proc_macro_derive(__TableHelper, attributes(sats, unique, auto_inc, primary_key, index, default))]
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c48f5120` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `57642268` are properly handled with clean fallback behavior.

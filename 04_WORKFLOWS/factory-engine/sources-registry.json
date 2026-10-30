@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T14:11:54.679Z",
-    "lastVerified": "2026-10-30T14:11:54.679Z",
+    "lastChecked": "2026-10-30T14:18:45.014Z",
+    "lastVerified": "2026-10-30T14:18:45.014Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -140,12 +140,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T13:37:43.012Z",
-    "lastVerified": "2026-10-30T13:37:43.012Z",
+    "lastChecked": "2026-10-30T14:18:37.197Z",
+    "lastVerified": "2026-10-30T14:18:37.197Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -154,7 +154,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "15bc0611"
   },
   "sxyazi-yazi": {
     "name": "sxyazi/yazi",
@@ -1178,14 +1179,14 @@
     "officialUrl": "https://github.com/clockworklabs/SpacetimeDB",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T21:56:44.564Z",
-    "lastVerified": "2026-10-28T21:56:44.564Z",
+    "lastChecked": "2026-10-30T14:18:40.840Z",
+    "lastVerified": "2026-10-30T14:18:40.840Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "6e3aff28460fecb2f860688a5733a5d6b4afea23bcb9e7e85061b6e8dc632128",
+    "contentHash": "cb949fe26751e375f4643d998505aff14c9dece93ab6c08317956a95eee57ad4",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1468,9 +1469,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-10-30T06:50:04.806Z",
+    "lastChecked": "2026-10-30T14:18:32.256Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-10-30T06:50:04.806Z"
+    "lastVerified": "2026-10-30T14:18:32.256Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2259,9 +2260,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-10-28T22:52:15.177Z",
+    "lastChecked": "2026-10-30T14:18:29.686Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-10-28T22:52:15.177Z"
+    "lastVerified": "2026-10-30T14:18:29.686Z"
   },
   "paradedb-paradedb": {
     "name": "paradedb/paradedb",
@@ -5975,9 +5976,9 @@
   "graphprotocol-graph-node": {
     "name": "graph-node",
     "officialUrl": "https://github.com/graphprotocol/graph-node",
-    "lastChecked": "2026-10-28T17:28:02.012Z",
+    "lastChecked": "2026-10-30T14:18:22.370Z",
     "revisionIdentifier": "cc31bc78",
-    "lastVerified": "2026-10-28T17:28:02.012Z"
+    "lastVerified": "2026-10-30T14:18:22.370Z"
   },
   "hf-argmaxinc-whisperkit-coreml": {
     "name": "argmaxinc/whisperkit-coreml",
@@ -10105,5 +10106,19 @@
     "lastChecked": "2026-10-30T14:11:42.380Z",
     "revisionIdentifier": "772133d9",
     "lastVerified": "2026-10-30T14:11:42.380Z"
+  },
+  "remarkjs-remark": {
+    "name": "remark",
+    "officialUrl": "https://github.com/remarkjs/remark",
+    "lastChecked": "2026-10-30T14:18:24.695Z",
+    "revisionIdentifier": "1146b3a2",
+    "lastVerified": "2026-10-30T14:18:24.695Z"
+  },
+  "paololeonardi-waterfallgrid": {
+    "name": "WaterfallGrid",
+    "officialUrl": "https://github.com/paololeonardi/WaterfallGrid",
+    "lastChecked": "2026-10-30T14:18:27.154Z",
+    "revisionIdentifier": "c7c08652",
+    "lastVerified": "2026-10-30T14:18:27.154Z"
   }
 }

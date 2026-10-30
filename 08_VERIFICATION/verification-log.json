@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-DV68",
-    "timestamp": "2026-10-28T05:58:06.608Z",
-    "repository": "chaos-mesh/chaos-mesh",
-    "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "0cc37038a91d7f1f951d8ef29e58de33a8afd800ad2d11d88fcd016cc29a7e0e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-G71H",
     "timestamp": "2026-10-28T05:59:55.301Z",
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "kubeedge/kubeedge",
     "learningId": "learn-github-kubeedge-kubeedge",
     "contentHash": "f282cf052e310405a42fab6159ffb0e41c9ac79e36b07d3c6bdaa6534657d80e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-5CBT",
+    "timestamp": "2026-10-30T14:18:42.473Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "cb949fe26751e375f4643d998505aff14c9dece93ab6c08317956a95eee57ad4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
