@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T19:29:33.962Z",
+  "last_updated": "2026-10-30T19:35:57.561Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -58169,8 +58169,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "bc50afb4",
-      "content_hash": "60255047acfbdc57b76daa53ac29d3665ae9ebd7a943678af96407b064f039d0",
+      "source_version": "68dbde41",
+      "content_hash": "1ae424e8c203d5f170ec97d6bc148551fa6641638c846a5cf41b37f22d45abf4",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -58248,6 +58248,11 @@
           "number": 5571,
           "title": "gpu): fix cmux metadata (#4116)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5842,
+          "title": "add some missing dependency tracking in dependabot (#4125)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58255,7 +58260,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T14:40:30.321Z",
+      "verified_at": "2026-10-30T19:35:57.550Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72462,8 +72467,8 @@
       "slug": "tanstack-query",
       "platform": "github",
       "source_url": "https://github.com/TanStack/query",
-      "source_version": "2941a23d",
-      "content_hash": "1e792e2edc8ec1d94718f62820dd82545e151b79b62f6c4d5f44f6ee6bf99190",
+      "source_version": "979695d0",
+      "content_hash": "8f82e3069b037701e60c7644e0849731e6f7f2a0cac16626510ddb92f2061032",
       "dossier_path": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "promoted_rules": [
@@ -72481,6 +72486,11 @@
           "number": 4897,
           "title": "query-persist-client-core): catch errors when persisting in 'persistQueryClientS",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5841,
+          "title": "examples): remove horizontal overflow in 'shadow-dom' and make character selecti",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72488,7 +72498,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T16:31:33.710Z",
+      "verified_at": "2026-10-30T19:35:50.758Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155034,6 +155044,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T19:29:33.943Z"
+    },
+    "rule-5841": {
+      "learning_id": "rule-5841",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5841,
+      "title": "examples): remove horizontal overflow in 'shadow-dom' and make character selecti",
+      "source_url": "https://github.com/TanStack/query",
+      "source_version": "979695d0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T19:35:50.758Z"
+    },
+    "rule-5842": {
+      "learning_id": "rule-5842",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5842,
+      "title": "add some missing dependency tracking in dependabot (#4125)",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "68dbde41",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T19:35:57.550Z"
     }
   },
   "aliases": {

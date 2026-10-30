@@ -6277,3 +6277,5 @@
 | `CYCLE-20261030-VUZW` | `2026-10-30T19:19:15.884Z` | `LiquidAI/LFM3-1.7B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md` | Yes (`597e75a3...`) |
 | `CYCLE-20261030-W311` | `2026-10-30T19:19:26.293Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5839` | Yes (`195442d2...`) |
 | `CYCLE-20261030-93YT` | `2026-10-30T19:29:34.037Z` | `krakend/krakend-ce` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5840` | Yes (`34b41002...`) |
+| `CYCLE-20261030-H6P4` | `2026-10-30T19:35:50.824Z` | `TanStack/query` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5841` | Yes (`8f82e306...`) |
+| `CYCLE-20261030-HBYD` | `2026-10-30T19:35:57.637Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5842` | Yes (`1ae424e8...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T19:29:34.050Z",
+  "last_updated": "2026-10-30T19:35:57.648Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "60255047acfbdc57b76daa53ac29d3665ae9ebd7a943678af96407b064f039d0",
-      "verified_at": "2026-10-30T14:40:30.450Z",
+      "content_hash": "1ae424e8c203d5f170ec97d6bc148551fa6641638c846a5cf41b37f22d45abf4",
+      "verified_at": "2026-10-30T19:35:57.648Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T14:40:30.450Z"
+      "last_updated": "2026-10-30T19:35:57.648Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -15126,14 +15126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tanstack-query",
-      "content_hash": "1e792e2edc8ec1d94718f62820dd82545e151b79b62f6c4d5f44f6ee6bf99190",
-      "verified_at": "2026-10-27T16:31:33.795Z",
+      "content_hash": "8f82e3069b037701e60c7644e0849731e6f7f2a0cac16626510ddb92f2061032",
+      "verified_at": "2026-10-30T19:35:50.833Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T16:31:33.795Z"
+      "last_updated": "2026-10-30T19:35:50.833Z"
     },
     "apple/sample-food-truck": {
       "repository": "apple/sample-food-truck",

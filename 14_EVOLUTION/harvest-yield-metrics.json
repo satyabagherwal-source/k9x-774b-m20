@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T19:29:34.046Z",
-  "total_cycles_completed": 6254,
-  "total_learnings_persisted": 6254,
-  "total_rules_promoted": 5811,
+  "last_updated": "2026-10-30T19:35:57.643Z",
+  "total_cycles_completed": 6256,
+  "total_learnings_persisted": 6256,
+  "total_rules_promoted": 5813,
   "history": [
-    {
-      "timestamp": "2026-10-29T23:41:37.799Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T23:59:03.524Z",
-      "repository": "jellyfin/Swiftfin",
-      "learningId": "learn-github-jellyfin-swiftfin",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T00:01:13.672Z",
       "repository": "freenet/freenet-core",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T19:29:34.046Z",
       "repository": "krakend/krakend-ce",
       "learningId": "learn-github-krakend-krakend-ce",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T19:35:50.830Z",
+      "repository": "TanStack/query",
+      "learningId": "learn-github-tanstack-query",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T19:35:57.643Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

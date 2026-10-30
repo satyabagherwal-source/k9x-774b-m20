@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "bc50afb4",
+    "sourceVersion": "68dbde41",
     "license": "NOASSERTION",
-    "contentHash": "60255047acfbdc57b76daa53ac29d3665ae9ebd7a943678af96407b064f039d0",
-    "lastHarvestedAt": "2026-10-30T14:40:30.437Z",
+    "contentHash": "1ae424e8c203d5f170ec97d6bc148551fa6641638c846a5cf41b37f22d45abf4",
+    "lastHarvestedAt": "2026-10-30T19:35:57.639Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -10053,10 +10053,10 @@
     "repository": "TanStack/query",
     "platform": "github",
     "sourceUrl": "https://github.com/TanStack/query",
-    "sourceVersion": "2941a23d",
+    "sourceVersion": "979695d0",
     "license": "MIT",
-    "contentHash": "1e792e2edc8ec1d94718f62820dd82545e151b79b62f6c4d5f44f6ee6bf99190",
-    "lastHarvestedAt": "2026-10-27T16:31:33.786Z",
+    "contentHash": "8f82e3069b037701e60c7644e0849731e6f7f2a0cac16626510ddb92f2061032",
+    "lastHarvestedAt": "2026-10-30T19:35:50.827Z",
     "learningId": "learn-github-tanstack-query"
   },
   "apple-sample-food-truck": {

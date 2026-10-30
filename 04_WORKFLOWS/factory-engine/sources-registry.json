@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T19:29:36.593Z",
-    "lastVerified": "2026-10-30T19:29:36.593Z",
+    "lastChecked": "2026-10-30T19:36:00.170Z",
+    "lastVerified": "2026-10-30T19:36:00.170Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -243,8 +243,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T19:05:41.200Z",
-    "lastVerified": "2026-10-30T19:05:41.200Z",
+    "lastChecked": "2026-10-30T19:35:56.829Z",
+    "lastVerified": "2026-10-30T19:35:56.829Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1612,13 +1612,13 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T14:40:29.832Z",
-    "lastVerified": "2026-10-30T14:40:29.832Z",
+    "lastChecked": "2026-10-30T19:35:56.214Z",
+    "lastVerified": "2026-10-30T19:35:56.214Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "60255047acfbdc57b76daa53ac29d3665ae9ebd7a943678af96407b064f039d0",
-    "promotedRulesCount": 0,
+    "contentHash": "1ae424e8c203d5f170ec97d6bc148551fa6641638c846a5cf41b37f22d45abf4",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -3175,9 +3175,9 @@
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
     "officialUrl": "https://github.com/vasu-devs/JustHireMe",
-    "lastChecked": "2026-10-29T11:29:10.258Z",
+    "lastChecked": "2026-10-30T19:35:54.264Z",
     "revisionIdentifier": "accdcdb5",
-    "lastVerified": "2026-10-29T11:29:10.258Z"
+    "lastVerified": "2026-10-30T19:35:54.264Z"
   },
   "ekzhang-bore": {
     "name": "bore",
@@ -3894,9 +3894,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-10-29T12:19:40.357Z",
+    "lastChecked": "2026-10-30T19:35:49.301Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-10-29T12:19:40.357Z"
+    "lastVerified": "2026-10-30T19:35:49.301Z"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwavelabs/risingwave",
@@ -7459,9 +7459,9 @@
   "veirt-weathr": {
     "name": "weathr",
     "officialUrl": "https://github.com/Veirt/weathr",
-    "lastChecked": "2026-10-28T21:11:11.023Z",
+    "lastChecked": "2026-10-30T19:35:41.717Z",
     "revisionIdentifier": "7d403a0c",
-    "lastVerified": "2026-10-28T21:11:11.023Z"
+    "lastVerified": "2026-10-30T19:35:41.717Z"
   },
   "hf-microsoft-frognano-4b-2609": {
     "name": "microsoft/FrogNano-4B-2609",
@@ -10806,5 +10806,29 @@
     "lastChecked": "2026-10-30T19:28:01.873Z",
     "revisionIdentifier": "7e58c7d7",
     "lastVerified": "2026-10-30T19:28:01.873Z"
+  },
+  "tanstack-query": {
+    "name": "TanStack/query",
+    "officialUrl": "https://github.com/TanStack/query",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-30T19:35:48.876Z",
+    "lastVerified": "2026-10-30T19:35:48.876Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-tanstack-query",
+    "contentHash": "8f82e3069b037701e60c7644e0849731e6f7f2a0cac16626510ddb92f2061032",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 14,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rafsoh-dimeapp": {
+    "name": "dimeApp",
+    "officialUrl": "https://github.com/rafsoh/dimeApp",
+    "lastChecked": "2026-10-30T19:35:46.699Z",
+    "revisionIdentifier": "0463cb8c",
+    "lastVerified": "2026-10-30T19:35:46.699Z"
   }
 }
