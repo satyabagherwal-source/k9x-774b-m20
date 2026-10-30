@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-1C6I",
-    "timestamp": "2026-10-28T17:28:12.522Z",
-    "repository": "argmaxinc/whisperkit-coreml",
-    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-    "contentHash": "fa4256a2bc6d88730e453b5c3e4b87a20f1c2fa29a538bc68b51c3ec071193c3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-1FDR",
     "timestamp": "2026-10-28T17:28:16.671Z",
     "repository": "bee-san/Ciphey",
@@ -7490,6 +7475,21 @@
     "repository": "slatedb/slatedb",
     "learningId": "learn-github-slatedb-slatedb",
     "contentHash": "3f1656d8940776a2c6587f13effa8976594ebb822b5b09d58e3c12f631713cd9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-0X51",
+    "timestamp": "2026-10-30T23:35:08.485Z",
+    "repository": "sharkdp/bat",
+    "learningId": "learn-github-sharkdp-bat",
+    "contentHash": "0dc9c2c2420efb66816fcb80c4771b338676c4127c7409dc46a9edbf7adb411d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

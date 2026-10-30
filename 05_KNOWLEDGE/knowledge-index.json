@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T23:28:46.885Z",
+  "last_updated": "2026-10-30T23:35:08.436Z",
   "total_verified_learnings": 1178,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -49419,8 +49419,8 @@
       "slug": "sharkdp-bat",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/bat",
-      "source_version": "fe901f50",
-      "content_hash": "85c5eabc7aa3953b01f680db1f71aad330c5bef73dd718aafd6c48f24eb65a07",
+      "source_version": "8f5727ea",
+      "content_hash": "0dc9c2c2420efb66816fcb80c4771b338676c4127c7409dc46a9edbf7adb411d",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "promoted_rules": [
@@ -49438,6 +49438,11 @@
           "number": 5482,
           "title": "docs: link the i686 runner fix in changelog",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5939,
+          "title": "Merge pull request #4068 from ump45nose/diag-list-bat-config-dir",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49445,7 +49450,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T01:24:41.750Z",
+      "verified_at": "2026-10-30T23:35:08.424Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156926,6 +156931,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T23:28:46.864Z"
+    },
+    "rule-5939": {
+      "learning_id": "rule-5939",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5939,
+      "title": "Merge pull request #4068 from ump45nose/diag-list-bat-config-dir",
+      "source_url": "https://github.com/sharkdp/bat",
+      "source_version": "8f5727ea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T23:35:08.424Z"
     }
   },
   "aliases": {

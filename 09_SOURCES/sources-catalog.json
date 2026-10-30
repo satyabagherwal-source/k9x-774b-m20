@@ -2483,10 +2483,10 @@
     "repository": "sharkdp/bat",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/bat",
-    "sourceVersion": "fe901f50",
+    "sourceVersion": "8f5727ea",
     "license": "Apache-2.0",
-    "contentHash": "85c5eabc7aa3953b01f680db1f71aad330c5bef73dd718aafd6c48f24eb65a07",
-    "lastHarvestedAt": "2026-10-29T01:24:41.853Z",
+    "contentHash": "0dc9c2c2420efb66816fcb80c4771b338676c4127c7409dc46a9edbf7adb411d",
+    "lastHarvestedAt": "2026-10-30T23:35:08.488Z",
     "learningId": "learn-github-sharkdp-bat"
   },
   "karakeep-app-karakeep": {
