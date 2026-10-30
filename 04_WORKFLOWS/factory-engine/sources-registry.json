@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T22:41:04.016Z",
-    "lastVerified": "2026-10-30T22:41:04.016Z",
+    "lastChecked": "2026-10-30T22:50:06.087Z",
+    "lastVerified": "2026-10-30T22:50:06.087Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -341,9 +341,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T22:20:25.059Z",
+    "lastChecked": "2026-10-30T22:50:02.462Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T22:20:25.059Z"
+    "lastVerified": "2026-10-30T22:50:02.462Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -438,9 +438,9 @@
   "tabbyml-tabby": {
     "name": "tabby",
     "officialUrl": "https://github.com/TabbyML/tabby",
-    "lastChecked": "2026-10-29T00:09:04.934Z",
+    "lastChecked": "2026-10-30T22:49:47.496Z",
     "revisionIdentifier": "21b29048",
-    "lastVerified": "2026-10-29T00:09:04.934Z"
+    "lastVerified": "2026-10-30T22:49:47.496Z"
   },
   "hf-cross-encoder-ms-marco-minilm-l6-v2": {
     "name": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -1171,14 +1171,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T18:39:42.204Z",
-    "lastVerified": "2026-10-30T18:39:42.204Z",
+    "lastChecked": "2026-10-30T22:50:01.206Z",
+    "lastVerified": "2026-10-30T22:50:01.206Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "a6ecc87b80eb24378c3ea944e65df961bd01dea11f28f8f9b09b8e95d8b65784",
+    "contentHash": "0dbc7d12fd6234784a2c0c1cfc33ff208ef0203a5ba25a78f05dd0e7fc7191c8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4405,9 +4405,9 @@
   "qovery-replibyte": {
     "name": "Replibyte",
     "officialUrl": "https://github.com/Qovery/Replibyte",
-    "lastChecked": "2026-10-29T23:34:57.170Z",
+    "lastChecked": "2026-10-30T22:49:59.971Z",
     "revisionIdentifier": "5504db91",
-    "lastVerified": "2026-10-29T23:34:57.170Z"
+    "lastVerified": "2026-10-30T22:49:59.971Z"
   },
   "grpc-grpc-rust": {
     "name": "grpc/grpc-rust",
@@ -5175,9 +5175,9 @@
   "orange-cyberdefense-goad": {
     "name": "GOAD",
     "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
-    "lastChecked": "2026-10-30T00:33:14.646Z",
+    "lastChecked": "2026-10-30T22:49:54.950Z",
     "revisionIdentifier": "74af01eb",
-    "lastVerified": "2026-10-30T00:33:14.646Z"
+    "lastVerified": "2026-10-30T22:49:54.950Z"
   },
   "cockroachdb-cockroach": {
     "name": "cockroach",
@@ -11393,5 +11393,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tiangolo-fastapi": {
+    "name": "fastapi",
+    "officialUrl": "https://github.com/tiangolo/fastapi",
+    "lastChecked": "2026-10-30T22:49:49.991Z",
+    "revisionIdentifier": "79cab5be",
+    "lastVerified": "2026-10-30T22:49:49.991Z"
+  },
+  "margelo-react-native-blur": {
+    "name": "react-native-blur",
+    "officialUrl": "https://github.com/margelo/react-native-blur",
+    "lastChecked": "2026-10-30T22:49:52.472Z",
+    "revisionIdentifier": "7edfaa0f",
+    "lastVerified": "2026-10-30T22:49:52.472Z"
   }
 }

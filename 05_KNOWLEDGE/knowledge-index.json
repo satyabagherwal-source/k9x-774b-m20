@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T22:41:01.418Z",
+  "last_updated": "2026-10-30T22:50:03.466Z",
   "total_verified_learnings": 1178,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13483,8 +13483,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "63233bc4",
-      "content_hash": "a6ecc87b80eb24378c3ea944e65df961bd01dea11f28f8f9b09b8e95d8b65784",
+      "source_version": "50ae5918",
+      "content_hash": "0dbc7d12fd6234784a2c0c1cfc33ff208ef0203a5ba25a78f05dd0e7fc7191c8",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -13637,6 +13637,11 @@
           "number": 5832,
           "title": "transport): add QUIC control frames, bounded sends and stream-slot reservation (",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5928,
+          "title": "transport): add the QUIC upgrade state machine as pure logic (#6058)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13644,7 +13649,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:39:43.647Z",
+      "verified_at": "2026-10-30T22:50:03.444Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156717,6 +156722,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T22:41:01.406Z"
+    },
+    "rule-5928": {
+      "learning_id": "rule-5928",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5928,
+      "title": "transport): add the QUIC upgrade state machine as pure logic (#6058)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "50ae5918",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:50:03.444Z"
     }
   },
   "aliases": {

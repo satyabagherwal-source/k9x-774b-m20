@@ -6356,3 +6356,4 @@ Every entry in this ledger must capture:
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `1fd4bee8` | Multi-dimensional audit evidence | 2026-10-30T22:34:34.275Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `66a52434` | Multi-dimensional audit evidence | 2026-10-30T22:34:42.342Z |
 | `learn-github-makecindy-cindy` | `https://github.com/makecindy/cindy` | `a9030276` | Multi-dimensional audit evidence | 2026-10-30T22:41:01.474Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `50ae5918` | Multi-dimensional audit evidence | 2026-10-30T22:50:03.547Z |

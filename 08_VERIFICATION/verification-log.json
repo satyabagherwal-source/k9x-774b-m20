@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-I37H",
-    "timestamp": "2026-10-28T16:45:14.813Z",
-    "repository": "FacebookAI/xlm-roberta-base",
-    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-    "contentHash": "75d099df89bf2b9b757235feac407fccc25971128f1ff13a85b75efdcaad3f65",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-QS7Y",
     "timestamp": "2026-10-28T16:52:00.478Z",
     "repository": "openai-community/gpt2",
@@ -7490,6 +7475,21 @@
     "repository": "makecindy/cindy",
     "learningId": "learn-github-makecindy-cindy",
     "contentHash": "d289841d161fd825ac18ce126a1abd145e191ac9ed0d66e5b9e58cc2155183a5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-EXZR",
+    "timestamp": "2026-10-30T22:50:03.543Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "0dbc7d12fd6234784a2c0c1cfc33ff208ef0203a5ba25a78f05dd0e7fc7191c8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

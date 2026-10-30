@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T22:41:01.478Z",
-  "total_cycles_completed": 6324,
-  "total_learnings_persisted": 6324,
-  "total_rules_promoted": 5898,
+  "last_updated": "2026-10-30T22:50:03.552Z",
+  "total_cycles_completed": 6325,
+  "total_learnings_persisted": 6325,
+  "total_rules_promoted": 5899,
   "history": [
-    {
-      "timestamp": "2026-10-30T07:18:41.339Z",
-      "repository": "lucky-media/astro-seo",
-      "learningId": "learn-github-lucky-media-astro-seo",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T07:32:41.555Z",
       "repository": "nginx/kubernetes-ingress",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-30T22:41:01.478Z",
       "repository": "makecindy/cindy",
       "learningId": "learn-github-makecindy-cindy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T22:50:03.552Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
