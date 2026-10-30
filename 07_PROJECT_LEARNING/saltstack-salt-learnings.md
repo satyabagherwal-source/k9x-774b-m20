@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source**: github ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
-> **Source Version**: `7ee1f136`  
+> **Source Version**: `b78fd91b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T23:28:38.781Z  
+> **Timestamp**: 2026-10-30T21:53:03.838Z  
 > **Learning ID**: `learn-github-saltstack-salt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T23:28:37.183Z  
+> **Harvest Timestamp**: 2026-10-30T21:53:02.984Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Software to automate the management and configuration of infrastructure and applications at scale.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 15727 stars
+- **Stars / Engagement**: 15728 stars
 
 ---
 
@@ -1955,13 +1955,13 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #70598** (2026-10-30): **[Bug]: nox docs-html/docs-man fail: requirements/base.in and zeromq.in do not exist**
+  *Symptoms*: ### What happened?  `python -m nox -e 'docs-html(compress=False, clean=False)'` fails during the pip install step:  ``` ERROR: Could not open requirements file: [Errno 2] No such file or directory: 'requirements/base.in' nox > Session docs-html(compress=False, clean=False) failed. ```  The `docs-html` and `docs-man` sessions in `noxfile.py` reference `requirements/base.in` and `requirements/zeromq.in`, but the repository only contains `requirements/base.txt` and `requirements/zeromq.txt`.  Expected: the sessions install the existing requirements files and build the docs.  ### Environment  - Branch: master (522f75a) - OS: macOS (arm64), Python 3.14, nox 2026.10.20 - Type of Salt install: pip (git) 
+
 - **Issue #70590** (2026-10-28): **[Bug]: ResourceWarning emitted after calling destroy() on MasterMinion**
   *Symptoms*: ### What happened?  `MasterMinion.__del__` [checks](https://github.com/saltstack/salt/blob/3008.x/salt/minion.py#L1746) whether the object leaked by comparing certain attributes with `None`. However, in [`destroy`](https://github.com/saltstack/salt/blob/3008.x/salt/minion.py#L1662), `{}` is assigned to object instead of `None`. So, this is always `False` and false-positive warnings are appearing in the logs.  ### Type of salt install  pip (pypi)  ### Major version  3008.x  ### What supported OS are you seeing the problem on? Can select multiple. (If bug appears on an unsupported OS, please open a GitHub Discussion instead)  ubuntu-24.04  ### salt --versions-report output  ```shell Salt Version:           Salt: 3008.3-1   Python Version:         Python: 3.14.7 (main, Sep 30 2026, 03:35:11) [GCC 11.2.0]   Dependency Versions:           cffi: 2.0.0       cherrypy: 18.10.0   cryptography: 50.0.1       dateutil: 2.9.0.post0      docker-py: Not Installed          gitdb: 4.0.12      gitpython: 3.2.0         Jinja2: 3.1.6        libgit2: Not Installed   looseversion: 1.3.0       M2Crypto: Not Installed           Mako: Not Installed        msgpack: 1.2.1   msgpack-pure: Not Installed   mysql-python: Not Installed      packaging: 24.0      pycparser: 3.00       pycrypto: Not Installed   pycryptodome: 3.23.0         pygit2: Not Installed   python-gnupg: 0.5.6         PyYAML: 6.0.3          PyZMQ: 27.1.0         relenv: 0.22.27          smmap: 5.0.2        timelib: 0.3.0        Tornado: 
   **Post-Mortem & Fix Analysis**:
   > Sorry, already fixed in fd30146e77
-
-- **Issue #70561** (2026-10-28): **[Bug]: Master cluster peers leak sockets**
-  *Symptoms*: ### What happened?  In [`salt/cluster/consensus/peer.py`](https://github.com/saltstack/salt/blob/3008.x/salt/cluster/consensus/peer.py#L100), the publishers are meant to be reused. However it happens only when the connect succeeds. In case of exception, the publisher is not closed. If one peer is temporarily down, a connection leaks on each election attempt. Fixes for #70175 partially improved this by adding a garbage collector, but (a) it now floods the logs with warnings and (b) it's still better not to allow leaks in the first place.  Also [`pusher` in `salt/channel/server.py`](https://github.com/saltstack/salt/blob/3008.x/salt/channel/server.py#L3256) has three callers: - [`_send_state_sync_chunks`](https://github.com/saltstack/salt/blob/3008.x/salt/channel/server.py#L26080) - [cluster/peer/join in `_publish_daemon`](https://github.com/saltstack/salt/blob/3008.x/salt/channel/server.py#L3844) - [cluster/peer/discover in  `_publish_daemon`](https://github.com/saltstack/salt/blob/3008.x/salt/channel/server.py#L3976),  neither of which closes the corresponding publisher and its socket.  ### Type of salt install  pip (pypi)  ### Major version  3008.x  ### What supported OS are you seeing the problem on? Can select multiple. (If bug appears on an unsupported OS, please open a GitHub Discussion instead)  ubuntu-24.04  ### salt --versions-report output  ```shell Salt Version:           Salt: 3008.3-1   Python Version:         Python: 3.14.7 (main, Sep 30 2026, 03:35:11) [GCC 11.2
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1978,299 +1978,151 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `02b2fa06` (2026-10-28)
-**Commit Message**: #Issue63469 Update documentation to include performance impact warnings and workaround (#63610)
+### Incident Patch 1: `03d0bc2e` (2026-10-30)
+**Commit Message**: fix: correct 'occured'/'recieve' typos in log messages (#68943)
 
-* #Issue63469 update Docs
+* fix: correct 'occured'/'recieve' typos in log messages
 
-* #63610 Suggested changes
-
-* Fix warning wording and rST formatting in salt-key.rst
-
-- Replace broken English and duplicated 'degradation' phrase in all 4
-  warning blocks with accurate, idiomatic text
-- Fix markdown link syntax to rST hyperlink syntax so Sphinx renders
-  clickable links
-- Add blank line before each .. warning:: directive so Sphinx parses
-  the admonition correctly
-- Tailor each warning to its specific operation: reject vs reject-all,
-  delete vs delete-all (per twangboy review 2025-04-02)
-- Wrap long lines in intro_scale.rst to fit within 80 characters
-
-Fixes #63469
-
-* Add changelog entry for PR #63610
+* Add changelog and apply black formatting to salt/crypt.py
 
 ---------
 
-Co-authored-by: Daniel A. Wozniak <[REDACTED_EMAIL]>
+Co-authored-by: MukundaKatta <[REDACTED_EMAIL]>
 Co-authored-by: Daniel A. Wozniak <[REDACTED_EMAIL]>
 
-**File**: `changelog/63610.changed.md` (added, +1/-0)
+**File**: `changelog/68943.fixed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Add performance impact warnings to ``salt-key`` documentation for reject and delete operations that trigger AES key regeneration and mass minion re-authentication.
++Fixed typos in log messages: "occured" → "occurred" and "recieve" → "receive" in salt/crypt.py, salt/cli/daemons.py, salt/metaproxy/deltaproxy.py, salt/minion.py, and salt/transport/zeromq.py.
 ```
 
-**File**: `doc/ref/cli/salt-key.rst` (modified, +30/-0)
+**File**: `salt/cli/daemons.py` (modified, +1/-1)
 ```diff
-@@ -105,10 +105,25 @@ Actions
-     Reject the specified public key (use --include-all to match accepted keys
-     in addition to pending keys). Globs are supported.
+@@ -333,7 +333,7 @@ def prepare(self):
+             self.minion = salt.minion.MinionManager(self.config)
+         except Exception:  # pylint: disable=broad-except
+             log.error(
+-                "An error occured while setting up the minion manager", exc_info=True
++                "An error occurred while setting up the minion manager", exc_info=True
+             )
+             self.shutdown(1)
  
-+    .. warning::
-+        Rejecting a minion key causes the Salt master to generate a new AES key,
-+        which triggers all connected minions to re-authenticate simultaneously.
-+        This may degrade Salt master performance. See the
-+        `performance guide <https://docs.saltproject.io/en/latest/topics/tutorials/intro_scale.html#too-many-minions-re-authing>`_
-+        for details on performance impacts and possible workarounds.
-+
- .. option:: -R, --reject-all
- 
-     Rejects all pending keys.
- 
-+    .. warning::
-+        Rejecting many minion keys simultaneously causes the Salt master to
-+        generate a new AES key for each rejection, which triggers all connected
-+        minions to re-authenticate. This may degrade Salt master performance.
-+        See the
-+        `performance guide <https://docs.saltproject.io/en/latest/topics/tutorials/intro_scale.html#too-many-minions-re-authing>`_
-+        for details on performance impacts and possible workarounds.
-+
- .. option:: --include-all
- 
-     Include non-pending keys when accepting/rejecting.
-@@ -125,10 +140,25 @@ Actions
- 
-     Delete the specified key. Globs are supported.
- 
-+    .. warning::
-+        Deleting a minion key causes the Salt master to generate a new AES key,
-+        which triggers all connected minions to re-authenticate simultaneously.
-+        This may degrade Salt master performance. See the
-+        `performance guide <https://docs.saltproject.io/en/latest/topics/tutorials/intro_scale.html#too-many-minions-re-authing>`_
-+        for details on performance impacts and possible workarounds.
-+
- .. option:: -D, --delete-all
- 
-     Delete all keys.
- 
-+    .. warning::
-+        Deleting many minion keys simultaneously causes the Salt master to
-+        generate a new AES key for each deletion, which triggers all connected
-+        minions to re-authenticate. This may degrade Salt master performance.
-+        See the
-+        `performance guide <https://docs.saltproject.io/en/latest/topics/tutorials/intro_scale.html#too-many-minions-re-authing>`_
-+        for details on performance impacts and possible workarounds.
-+
- .. option:: -f FINGER, --finger=FINGER
- 
-     Print the specified key's fingerprint.
 ```
 
-**File**: `doc/topics/tutorials/intro_scale.rst` (modified, +5/-4)
+**File**: `salt/crypt.py` (modified, +3/-1)
 ```diff
-@@ -76,10 +76,11 @@ and parameters are frequently changed in the Salt Master's configuration
- file(s).
+@@ -1649,7 +1649,9 @@ def decrypt_aes(self, payload, master_pub=True):
+                 try:
+                     mkey = PublicKey.from_file(m_path)
+                 except Exception:  # pylint: disable=broad-except
+-                    log.exception("Something unexpected occured loading master pub-key")
++                    log.exception(
++                        "Something unexpected occurred loading master pub-key"
++                    )
+                     return "", ""
+                 digest = hashlib.sha256(key_str).hexdigest()
+                 digest = salt.utils.stringutils.to_bytes(digest)
+```
+
+**File**: `salt/metaproxy/deltaproxy.py` (modified, +2/-2)
+```diff
+@@ -390,7 +390,7 @@ async def post_master_init(self, master):
+                 )
+             except Exception as exc:  # pylint: disable=broad-except
+                 log.info(
+-                    "An exception occured during initialization for %s, skipping: %s",
++                    "An exception occurred during initialization for %s, skipping: %s",
+                     _id,
+                     exc,
+                 )
+@@ -539,7 +539,7 @@ async def subproxy_post_master_init(minion_id, uid, opts, main_proxy, main_utils
+         proxy_init_fn(proxyopts)
+     except Exception as exc:  # pylint: disable=broad-except
+         log.error(
+-            "An exception occured during the initialization of minion %s: %s",
++            "An exception occurred during the initialization of minion %s: %s",
+             minion_id,
+             exc,
+             exc_info=True,
+```
+
+**File**: `salt/minion.py` (modified, +1/-1)
+```diff
+@@ -2366,7 +2366,7 @@ async def _send_req_async(self, load, timeout):
+                     break
+                 await asyncio.sleep(0.3)
+             else:
+-                raise SaltReqTimeoutError("Did not recieve return event")
++                raise SaltReqTimeoutError("Did not receive return event")
+             log.trace("Reply from main %s", request_id)
+             return ret["ret"]
  
- The Salt Master generates a new AES key to encrypt its publications at certain
--events such as a Master restart or the removal of a Minion key.  If you are
--encountering this problem of too many minions re-authing against the Master,
--you will need to recalibrate your setup to reduce the rate of events like a
--Master restart or Minion key removal (``salt-key -d``).
-+events, such as a Master restart or the removal/rejection of a Minion key. If
-+you are encountering a problem where too many minions are re-authorizing
-+against the Master, you need to recalibrate your setup. Try reducing the rate
-+of re-authorizing events, such as a Master restart, Minion key removal
-+(``salt-key -d``) or Minion key rejection (``salt-key -r``).
+```
+
+**File**: `salt/transport/zeromq.py` (modified, +1/-1)
+```diff
+@@ -380,7 +380,7 @@ async def recv(self, timeout=None):
+             events = await self._socket.poll(timeout=int(timeout * 1000))
+             if events:
+                 return await self._socket.recv()
+-            log.trace("PublishClient recieve timedout: %s", timeout)
++            log.trace("PublishClient receive timedout: %s", timeout)
+         else:
+             return await self._socket.recv()
  
- When the Master generates a new AES key, the minions aren't notified of this
- but will discover it on the next pub job they receive. When the Minion
 ```
 
 ---
 
-### Incident Patch 2: `f900218a` (2026-10-28)
-**Commit Message**: [master] fix ephemeral interface addition (#64584)
+### Incident Patch 2: `b78fd91b` (2026-10-30)
+**Commit Message**: Fix nox docs sessions requirements file names (#70600)
 
-* fix ephemeral interface addition
+The docs-html and docs-man sessions installed requirements/base.in and
+requirements/zeromq.in, which do not exist, so the sessions failed with
+"Could not open requirements file". Use requirements/base.txt and
+requirements/zeromq.txt instead.
 
-* Add changelog and test for ephemeral interface KeyError fix
+Fixes #70598
 
-Add changelog fragment 64584.fixed.md and unit test
-test_ephemeral_interface_no_keyerror() covering the case where a network
-interface appears after LAST_STATS initialization, verifying no KeyError
-is raised and the new interface fires a beacon event.
-
----------
-
-Co-authored-by: Daniel A. Wozniak <[REDACTED_EMAIL]>
-
-**File**: `changelog/64584.fixed.md` (added, +1/-0)
+**File**: `changelog/70598.fixed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Fix ``KeyError`` in the ``network_settings`` beacon when a new network interface appears after beacon initialization.
++Fixed the `docs-html` and `docs-man` nox sessions failing because `requirements/base.in` and `requirements/zeromq.in` do not exist.
 ```
 
-**File**: `salt/beacons/network_settings.py` (modified, +2/-0)
+**File**: `noxfile.py` (modified, +4/-4)
 ```diff
-@@ -221,6 +221,8 @@ def beacon(config):
-     log.debug("interfaces %s", interfaces)
-     for interface in interfaces:
-         _send_event = False
-+        if interface not in LAST_STATS:
-+            LAST_STATS[interface] = set()
-         _diff_stats = _stats[interface] - LAST_STATS[interface]
-         _ret_diff = {}
-         interface_config = _config["interfaces"][interface]
-```
-
-**File**: `tests/pytests/unit/beacons/test_network_settings.py` (modified, +46/-0)
-```diff
-@@ -151,6 +151,52 @@ def test_wildcard_interface():
-         assert ret == _expected
- 
- 
-+def test_ephemeral_interface_no_keyerror():
-+    """
-+    Beacon must not raise KeyError when a new interface appears between calls.
-+
-+    LAST_STATS is seeded from the first beacon() call. If an interface comes
-+    up afterwards (ephemeral bridge, WireGuard tunnel, hotplug NIC), it will
-+    be present in _stats but absent from LAST_STATS. Without the guard added
-+    in #64584 the set-difference ``_stats[iface] - LAST_STATS[iface]`` raises
-+    a KeyError.
-+    """
-+    config = [{"interfaces": {"eth*": {"promiscuity": None}}}]
-+
-+    # First call: only eth0 exists.
-+    INITIAL_STATS = network_settings._copy_interfaces_info(
-+        {"eth0": {"family": "0", "promiscuity": "0", "group": "0"}}
-+    )
-+    # Second call: eth1 has appeared (ephemeral addition).
-+    AFTER_STATS = network_settings._copy_interfaces_info(
-+        {
-+            "eth0": {"family": "0", "promiscuity": "0", "group": "0"},
-+            "eth1": {"family": "0", "promiscuity": "0", "group": "0"},
-+        }
-+    )
-+
-+    ret = network_settings.validate(config)
-+    assert ret == (True, "Valid beacon configuration")
-+
-+    with patch.object(network_settings, "LAST_STATS", {}), patch.object(
-+        network_settings, "IP", MockIPClass
-+    ), patch(
-+        "salt.beacons.network_settings._copy_interfaces_info",
-+        MagicMock(side_effect=[INITIAL_STATS, AFTER_STATS]),
-+    ):
-+        # First call seeds LAST_STATS with eth0 only; no events expected.
-+        ret = network_settings.beacon(config)
-+        assert ret == []
-+
-+        # Second call: eth1 is new — must not raise KeyError; eth1 fires an
-+        # event because all of its attrs are "new" relative to the empty seed.
-+        ret = network_settings.beacon(config)
-+        assert isinstance(ret, list)
-+        assert not any(isinstance(item, Exception) for item in ret)
-+        tags = [item["tag"] for item in ret]
-+        assert "eth1" in tags
-+
-+
- @pytest.mark.skipif(HAS_IPDB is False, reason="pyroute2.IPDB not available, skipping")
- def test_interface_dict_fields_old():
-     with IPDB() as ipdb:
-```
-
----
-
-### Incident Patch 3: `5837d334` (2026-10-29)
-**Commit Message**: Merge pull request #70586 from dwoz/dwoz/fix/46336-enable-legacy-startup-events-default-false-master
-
-Flip enable_legacy_startup_events default to False
-
-**File**: `changelog/46336.changed.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Changed the default of `enable_legacy_startup_events` from `True` to `False`. The legacy `minion_start` / `syndic_start` events are no longer emitted by default; the namespaced `salt/minion/<minion_id>/start` and `salt/syndic/<minion_id>/start` events continue to fire. Set `enable_legacy_startup_events: True` in the minion config to restore the legacy events.
-```
-
-**File**: `doc/ref/configuration/minion.rst` (modified, +9/-6)
-```diff
-@@ -237,20 +237,23 @@ minion event bus. The value is expressed in bytes.
- 
- .. versionadded:: 2019.2.0
- 
--Default: ``True``
-+.. versionchanged:: 3009.0
-+
-+    Default changed from ``True`` to ``False``.
-+
-+Default: ``False``
- 
- When a minion starts up it sends a notification on the event bus with a tag
- that looks like this: ``salt/minion/<minion_id>/start``. For historical reasons
- the minion also sends a similar event with an event tag like this:
- ``minion_start``. This duplication can cause a lot of clutter on the event bus
--when there are many minions. Set ``enable_legacy_startup_events: False`` in the
--minion config to ensure only the ``salt/minion/<minion_id>/start`` events are
--sent. Beginning with the ``3001`` Salt release this option will default to
--``False``.
-+when there are many minions. Set ``enable_legacy_startup_events: True`` in the
-+minion config to restore the legacy ``minion_start`` events in addition to the
-+``salt/minion/<minion_id>/start`` events.
- 
- .. code-block:: yaml
- 
--    enable_legacy_startup_events: True
-+    enable_legacy_startup_events: False
- 
- .. conf_minion:: master_failback
- 
-```
-
-**File**: `salt/config/__init__.py` (modified, +1/-1)
-```diff
-@@ -1366,7 +1366,7 @@ def _gather_buffer_space():
-         "log_rotate_max_bytes": 0,
-         "log_rotate_backup_count": 0,
-         "max_event_size": 1048576,
--        "enable_legacy_startup_events": True,
-+        "enable_legacy_startup_events": False,
-         "test": False,
-         "ext_job_cache": "",
-         "cython_enable": False,
-```
-
-**File**: `salt/minion.py` (modified, +2/-2)
-```diff
-@@ -4145,7 +4145,7 @@ async def _fire_master_minion_start(self):
-             include_grains = True
-         # Send an event to the master that the minion is live
-         if self.opts["enable_legacy_startup_events"]:
--            # Old style event. Defaults to False in 3001 release.
-+            # Old style event. Default flipped to False in 3009.0 release.
-             await self._fire_master_main(
-                 "Minion {} started at {}".format(self.opts["id"], time.asctime()),
-                 "minion_start",
-@@ -5872,7 +5872,7 @@ async def _send_req_async(self, load, timeout):
-     def fire_master_syndic_start(self):
-         # Send an event to the master that the minion is live
-         if self.opts["enable_legacy_startup_events"]:
--            # Old style event. Defaults to false in 3001 release.
-+            # Old style event. Default flipped to False in 3009.0 release.
-             self._fire_master(
-                 "Syndic {} started at {}".format(self.opts["id"], time.asctime()),
-                 "syndic_start",
+@@ -1756,8 +1756,8 @@ def docs_html(session, compress, clean):
+         linux_requirements_file = os.path.join(
+             "requirements", "static", "ci", _get_pydir(session), "linux.lock"
+         )
+-        base_requirements_file = os.path.join("requirements", "base.in")
+-        zeromq_requirements_file = os.path.join("requirements", "zeromq.in")
++        base_requirements_file = os.path.join("requirements", "base.txt")
++        zeromq_requirements_file = os.path.join("requirements", "zeromq.txt")
+         docs_requirements_file = os.path.join(
+             "requirements", "static", "ci", _get_pydir(session), "docs.lock"
+         )
+@@ -1794,8 +1794,8 @@ def docs_man(session, compress, update, clean):
+         linux_requirements_file = os.path.join(
+             "requirements", "static", "ci", _get_pydir(session), "linux.lock"
+         )
+-        base_requirements_file = os.path.join("requirements", "base.in")
+-        zeromq_requirements_file = os.path.join("requirements", "zeromq.in")
++        base_requirements_file = os.path.join("requirements", "base.txt")
++        zeromq_requirements_file = os.path.join("requirements", "zeromq.txt")
+         docs_requirements_file = os.path.join(
+             "requirements", "static", "ci", _get_pydir(session), "docs.lock"
+         )
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #70600** (2026-10-30): Fix nox docs sessions requirements file names (@sudipto674)
 - **PR #70597** (2026-10-29): Wait for SSH banner in test_ssh_setup to kill kex_exchange_identification race (@dwoz)
 - **PR #70596** (2026-10-29): Stabilize minion blackout scenario tests (@dwoz)
 - **PR #70595** (2026-10-29): Re-enable ssh tests skipped for old Python compat (#66545) (@dwoz)
 - **PR #70594** (2026-10-29): Re-enable tests/pytests/functional/utils/test_process.py (#66551) (@dwoz)
 - **PR #70593** (closed): Propose the synchronous boundary for the asyncio migration (@charzl)
-- **PR #70591** (closed): Recover the event stream after missing peer key exchange (@nsychev)
 
 ---
 
@@ -2290,21 +2142,21 @@ Flip enable_legacy_startup_events default to False
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. #Issue63469 Update documentation to include performance impact warnings and work
+## X. correct 'occured'/'recieve' typos in log messages (#68943)
 
 **RULE**:
-When implementing operations in `changelog/63610.changed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/68943.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `02b2fa06`: #Issue63469 Update documentation to include performance impact warnings and workaround (#63610). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `03d0bc2e`: correct 'occured'/'recieve' typos in log messages (#68943). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/63610.changed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/68943.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Add performance impact warnings to ``salt-key`` documentation for reject and delete operations that trigger AES key regeneration and mass minion re-authentication.
+Fixed typos in log messages: "occured" → "occurred" and "recieve" → "receive" in salt/crypt.py, salt/cli/daemons.py, salt/metaproxy/deltaproxy.py, salt/minion.py, and salt/transport/zeromq.py.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2314,4 +2166,4 @@ Add performance impact warnings to ``salt-key`` documentation for reject and del
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `02b2fa06` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `03d0bc2e` are properly handled with clean fallback behavior.

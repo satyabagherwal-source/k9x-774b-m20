@@ -1703,10 +1703,10 @@
     "repository": "tw93/Pake",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Pake",
-    "sourceVersion": "3816c112",
+    "sourceVersion": "9b54b543",
     "license": "GPL-3.0",
-    "contentHash": "8e7b6a943ffc339682b666b3930abc9084ed5ea1874a2fd9ad2443d3b89b6b66",
-    "lastHarvestedAt": "2026-10-28T23:05:19.139Z",
+    "contentHash": "3cb07140d99d444c5d74a83e6e333ec8e44c02d2e21a42453fd3d1c45a6ba5c8",
+    "lastHarvestedAt": "2026-10-30T21:55:42.026Z",
     "learningId": "learn-github-tw93-pake"
   },
   "hf-datalab-to-indra-ocr": {
@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "7ee1f136",
+    "sourceVersion": "b78fd91b",
     "license": "Apache-2.0",
-    "contentHash": "2ac01539a60836dae1901fa8e27e6b13e6fd17d9751b0097fee9e9e024697a53",
-    "lastHarvestedAt": "2026-10-29T23:28:39.416Z",
+    "contentHash": "ddb16c5671bfc910e3eaf25cdb2e7bd258c6ec111a444b80c6baaf22a578b225",
+    "lastHarvestedAt": "2026-10-30T21:53:04.514Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {
@@ -8443,10 +8443,10 @@
     "repository": "electron/electron",
     "platform": "github",
     "sourceUrl": "https://github.com/electron/electron",
-    "sourceVersion": "0240841b",
+    "sourceVersion": "8c8f8165",
     "license": "MIT",
-    "contentHash": "7dbadf051c921ead22df6deb193d813fbd3511039d615fb3cb64594d2a6a61e1",
-    "lastHarvestedAt": "2026-10-25T22:00:42.014Z",
+    "contentHash": "1ecda6003c472b79564e8ade8d3d85336024165e2ab7dfb79f4586a33a94a518",
+    "lastHarvestedAt": "2026-10-30T21:55:55.265Z",
     "learningId": "learn-github-electron-electron"
   },
   "hf-mistralai-timestral-209m": {
@@ -10283,10 +10283,10 @@
     "repository": "faker-js/faker",
     "platform": "github",
     "sourceUrl": "https://github.com/faker-js/faker",
-    "sourceVersion": "d9d77552",
+    "sourceVersion": "e1f9a84a",
     "license": "NOASSERTION",
-    "contentHash": "5d96986e7945be8df24e1087a9308318533bf88ace8fca3b13e5df1a2dab3255",
-    "lastHarvestedAt": "2026-10-27T18:17:23.855Z",
+    "contentHash": "f777c3db089bf17aebf6809c64b9b3ad4bf61f7d5933db2d9ab3928c4f428131",
+    "lastHarvestedAt": "2026-10-30T21:55:49.001Z",
     "learningId": "learn-github-faker-js-faker"
   },
   "storybookjs-storybook": {

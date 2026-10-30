@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-JRMO",
-    "timestamp": "2026-10-28T15:50:33.888Z",
-    "repository": "ntex-rs/ntex",
-    "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "021d85b8deb9795c788f9abdcfbe41efe7011e78ce405aa8463f6d11795ad1e0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-JWJZ",
-    "timestamp": "2026-10-28T15:50:40.271Z",
-    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-    "contentHash": "adbd11d3a7f2766b779648e849740d2a8e8a5ea407aa9fba6799f23fe76157eb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-K072",
-    "timestamp": "2026-10-28T15:50:44.990Z",
-    "repository": "rqlite/rqlite",
-    "learningId": "learn-github-rqlite-rqlite",
-    "contentHash": "382dce74826b2f3e80e50e89df3419d05e87eb871642355d04fb193e15d201f3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-TOBV",
-    "timestamp": "2026-10-28T15:58:16.171Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-    "contentHash": "b5eb6b6b17792b0544d55e540c312aaaffd5b118ed92ba49f3a6d7a63f67ddbd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-TQ36",
     "timestamp": "2026-10-28T15:58:18.450Z",
     "repository": "Xudong-Huang/may",
@@ -7492,6 +7432,66 @@
     "contentHash": "4501b065de175e3857aa6afd1c9d335f3101f364fe6a8fa7558e36eb54a16740",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-DNUM",
+    "timestamp": "2026-10-30T21:53:04.510Z",
+    "repository": "saltstack/salt",
+    "learningId": "learn-github-saltstack-salt",
+    "contentHash": "ddb16c5671bfc910e3eaf25cdb2e7bd258c6ec111a444b80c6baaf22a578b225",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-H1DY",
+    "timestamp": "2026-10-30T21:55:42.022Z",
+    "repository": "tw93/Pake",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "3cb07140d99d444c5d74a83e6e333ec8e44c02d2e21a42453fd3d1c45a6ba5c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-H6RP",
+    "timestamp": "2026-10-30T21:55:48.997Z",
+    "repository": "faker-js/faker",
+    "learningId": "learn-github-faker-js-faker",
+    "contentHash": "f777c3db089bf17aebf6809c64b9b3ad4bf61f7d5933db2d9ab3928c4f428131",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-HBLP",
+    "timestamp": "2026-10-30T21:55:55.261Z",
+    "repository": "electron/electron",
+    "learningId": "learn-github-electron-electron",
+    "contentHash": "1ecda6003c472b79564e8ade8d3d85336024165e2ab7dfb79f4586a33a94a518",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
