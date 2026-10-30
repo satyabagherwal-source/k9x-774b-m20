@@ -2403,10 +2403,10 @@
     "repository": "kubeedge/kubeedge",
     "platform": "github",
     "sourceUrl": "https://github.com/kubeedge/kubeedge",
-    "sourceVersion": "1e5b0d26",
+    "sourceVersion": "b1a36daf",
     "license": "Apache-2.0",
-    "contentHash": "e6109a1398d9f83b95ea43c450e72b07732bec453231374918b9761bbb4d09ae",
-    "lastHarvestedAt": "2026-10-27T12:07:50.126Z",
+    "contentHash": "f282cf052e310405a42fab6159ffb0e41c9ac79e36b07d3c6bdaa6534657d80e",
+    "lastHarvestedAt": "2026-10-30T14:11:52.138Z",
     "learningId": "learn-github-kubeedge-kubeedge"
   },
   "giancarloerra-socraticode": {
@@ -9493,10 +9493,10 @@
     "repository": "syntax-tree/hast-util-to-html",
     "platform": "github",
     "sourceUrl": "https://github.com/syntax-tree/hast-util-to-html",
-    "sourceVersion": "d115f5be",
+    "sourceVersion": "9c689126",
     "license": "MIT",
-    "contentHash": "d94b39619ca6b66dca697bff3f8d181586b25eedf6e2980e22baf47dcf611fb5",
-    "lastHarvestedAt": "2026-10-19T23:34:38.160Z",
+    "contentHash": "1c9d6a5ed3ff1abb772b3ea73d27358c953bab3a1e64ccd5d5249005f644506e",
+    "lastHarvestedAt": "2026-10-30T14:11:51.817Z",
     "learningId": "learn-github-syntax-tree-hast-util-to-html"
   },
   "stikdebug-stikdebug": {

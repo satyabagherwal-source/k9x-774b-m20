@@ -6207,3 +6207,5 @@
 | `CYCLE-20261030-ZSU9` | `2026-10-30T13:46:24.321Z` | `hmlongco/Factory` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hmlongco-factory-learnings.md` | Yes (`810f1508...`) |
 | `CYCLE-20261030-ZYTG` | `2026-10-30T13:46:32.068Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md` | Yes (`71160355...`) |
 | `CYCLE-20261030-FA7Q` | `2026-10-30T13:58:26.678Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5770` | Yes (`150082aa...`) |
+| `CYCLE-20261030-WJGI` | `2026-10-30T14:11:51.810Z` | `syntax-tree/hast-util-to-html` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5771` | Yes (`1c9d6a5e...`) |
+| `CYCLE-20261030-WJPJ` | `2026-10-30T14:11:52.135Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5772` | Yes (`f282cf05...`) |

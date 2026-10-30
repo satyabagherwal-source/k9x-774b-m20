@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T13:58:26.601Z",
+  "last_updated": "2026-10-30T14:11:52.086Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34367,8 +34367,8 @@
       "slug": "kubeedge-kubeedge",
       "platform": "github",
       "source_url": "https://github.com/kubeedge/kubeedge",
-      "source_version": "1e5b0d26",
-      "content_hash": "e6109a1398d9f83b95ea43c450e72b07732bec453231374918b9761bbb4d09ae",
+      "source_version": "b1a36daf",
+      "content_hash": "f282cf052e310405a42fab6159ffb0e41c9ac79e36b07d3c6bdaa6534657d80e",
       "dossier_path": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md",
       "promoted_rules": [
@@ -34391,6 +34391,11 @@
           "number": 4732,
           "title": "Merge pull request #7379 from EncHawk/master",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5772,
+          "title": "hack: tolerate a missing docker group in build_with_container.sh",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34398,7 +34403,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:07:50.076Z",
+      "verified_at": "2026-10-30T14:11:52.074Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70904,8 +70909,8 @@
       "slug": "syntax-tree-hast-util-to-html",
       "platform": "github",
       "source_url": "https://github.com/syntax-tree/hast-util-to-html",
-      "source_version": "d115f5be",
-      "content_hash": "d94b39619ca6b66dca697bff3f8d181586b25eedf6e2980e22baf47dcf611fb5",
+      "source_version": "9c689126",
+      "content_hash": "1c9d6a5ed3ff1abb772b3ea73d27358c953bab3a1e64ccd5d5249005f644506e",
       "dossier_path": "07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/syntax-tree-hast-util-to-html-learnings.md",
       "promoted_rules": [
@@ -70913,6 +70918,11 @@
           "number": 2889,
           "title": "Change to require Node.js 16",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5771,
+          "title": "HTML in SVG for `desc`, `foreignObject`, `title`",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -70920,7 +70930,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-19T23:34:38.107Z",
+      "verified_at": "2026-10-30T14:11:51.742Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153640,6 +153650,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T13:58:26.581Z"
+    },
+    "rule-5771": {
+      "learning_id": "rule-5771",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5771,
+      "title": "HTML in SVG for `desc`, `foreignObject`, `title`",
+      "source_url": "https://github.com/syntax-tree/hast-util-to-html",
+      "source_version": "9c689126",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T14:11:51.742Z"
+    },
+    "rule-5772": {
+      "learning_id": "rule-5772",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5772,
+      "title": "hack: tolerate a missing docker group in build_with_container.sh",
+      "source_url": "https://github.com/kubeedge/kubeedge",
+      "source_version": "b1a36daf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T14:11:52.074Z"
     }
   },
   "aliases": {

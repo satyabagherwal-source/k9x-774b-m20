@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T13:58:26.693Z",
+  "last_updated": "2026-10-30T14:11:52.145Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3741,14 +3741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubeedge-kubeedge",
-      "content_hash": "e6109a1398d9f83b95ea43c450e72b07732bec453231374918b9761bbb4d09ae",
-      "verified_at": "2026-10-27T12:07:50.132Z",
+      "content_hash": "f282cf052e310405a42fab6159ffb0e41c9ac79e36b07d3c6bdaa6534657d80e",
+      "verified_at": "2026-10-30T14:11:52.144Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T12:07:50.132Z"
+      "last_updated": "2026-10-30T14:11:52.144Z"
     },
     "giancarloerra/SocratiCode": {
       "repository": "giancarloerra/SocratiCode",
@@ -14286,14 +14286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-syntax-tree-hast-util-to-html",
-      "content_hash": "d94b39619ca6b66dca697bff3f8d181586b25eedf6e2980e22baf47dcf611fb5",
-      "verified_at": "2026-10-19T23:34:38.167Z",
+      "content_hash": "1c9d6a5ed3ff1abb772b3ea73d27358c953bab3a1e64ccd5d5249005f644506e",
+      "verified_at": "2026-10-30T14:11:51.824Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-19T23:34:38.167Z"
+      "last_updated": "2026-10-30T14:11:51.824Z"
     },
     "StikDebug/StikDebug": {
       "repository": "StikDebug/StikDebug",

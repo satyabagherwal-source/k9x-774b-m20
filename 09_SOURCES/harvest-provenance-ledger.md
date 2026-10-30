@@ -6216,3 +6216,5 @@ Every entry in this ledger must capture:
 | `learn-github-hmlongco-factory` | `https://github.com/hmlongco/Factory` | `3799543a` | Multi-dimensional audit evidence | 2026-10-30T13:46:24.325Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `0a6bfa1a` | Multi-dimensional audit evidence | 2026-10-30T13:46:32.072Z |
 | `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `146f7699` | Multi-dimensional audit evidence | 2026-10-30T13:58:26.682Z |
+| `learn-github-syntax-tree-hast-util-to-html` | `https://github.com/syntax-tree/hast-util-to-html` | `9c689126` | Multi-dimensional audit evidence | 2026-10-30T14:11:51.817Z |
+| `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `b1a36daf` | Multi-dimensional audit evidence | 2026-10-30T14:11:52.138Z |

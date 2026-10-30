@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-TOEA",
-    "timestamp": "2026-10-28T05:42:24.706Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "c5cdbbc31d6ea30155cfb8a31726eb0b9f0086e0b7e4b76241314fb6c75346dd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-1KE3",
-    "timestamp": "2026-10-28T05:48:32.763Z",
-    "repository": "HemmingwayAI/Hemmingway-1",
-    "learningId": "learn-huggingface-altworld-hemmingway-1",
-    "contentHash": "caf758cf8fe02bf866fda1a7bdedd5c3ecf42211e851c05c4b5c80586aabeeeb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-DV68",
     "timestamp": "2026-10-28T05:58:06.608Z",
     "repository": "chaos-mesh/chaos-mesh",
@@ -7490,6 +7460,36 @@
     "repository": "chaos-mesh/chaos-mesh",
     "learningId": "learn-github-chaos-mesh-chaos-mesh",
     "contentHash": "150082aa00bfa46567c3fbbaa7518cfb59b72677365dd60397fa5729a975cb7d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-WJGI",
+    "timestamp": "2026-10-30T14:11:51.810Z",
+    "repository": "syntax-tree/hast-util-to-html",
+    "learningId": "learn-github-syntax-tree-hast-util-to-html",
+    "contentHash": "1c9d6a5ed3ff1abb772b3ea73d27358c953bab3a1e64ccd5d5249005f644506e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-WJPJ",
+    "timestamp": "2026-10-30T14:11:52.135Z",
+    "repository": "kubeedge/kubeedge",
+    "learningId": "learn-github-kubeedge-kubeedge",
+    "contentHash": "f282cf052e310405a42fab6159ffb0e41c9ac79e36b07d3c6bdaa6534657d80e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

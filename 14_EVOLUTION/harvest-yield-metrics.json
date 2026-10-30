@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T13:58:26.688Z",
-  "total_cycles_completed": 6184,
-  "total_learnings_persisted": 6184,
-  "total_rules_promoted": 5740,
+  "last_updated": "2026-10-30T14:11:52.142Z",
+  "total_cycles_completed": 6186,
+  "total_learnings_persisted": 6186,
+  "total_rules_promoted": 5742,
   "history": [
-    {
-      "timestamp": "2026-10-29T00:41:38.062Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T01:08:58.449Z",
-      "repository": "momenbasel/PureMac",
-      "learningId": "learn-github-momenbasel-puremac",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T01:09:04.949Z",
       "repository": "datalab-to/indra-ocr",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T13:58:26.688Z",
       "repository": "chaos-mesh/chaos-mesh",
       "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T14:11:51.821Z",
+      "repository": "syntax-tree/hast-util-to-html",
+      "learningId": "learn-github-syntax-tree-hast-util-to-html",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T14:11:52.142Z",
+      "repository": "kubeedge/kubeedge",
+      "learningId": "learn-github-kubeedge-kubeedge",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

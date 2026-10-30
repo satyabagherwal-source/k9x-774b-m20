@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source**: github ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
-> **Source Version**: `1e5b0d26`  
+> **Source Version**: `b1a36daf`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:07:49.854Z  
+> **Timestamp**: 2026-10-30T14:11:51.693Z  
 > **Learning ID**: `learn-github-kubeedge-kubeedge`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubeedge-kubeedge-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubeedge/kubeedge](https://github.com/kubeedge/kubeedge))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:07:49.497Z  
+> **Harvest Timestamp**: 2026-10-30T14:11:51.333Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kubernetes Native Edge Computing Framework (project under CNCF)
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7617 stars
+- **Stars / Engagement**: 7620 stars
 
 ---
 
@@ -1233,371 +1233,72 @@ func RuleContains(rulePath, rule2Path string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1e5b0d26` (2026-10-27)
-**Commit Message**: Merge pull request #7379 from EncHawk/master
+### Incident Patch 1: `ce567751` (2026-10-23)
+**Commit Message**: hack: tolerate a missing docker group in build_with_container.sh
 
-metamanager : support for arrayList of objects for watch events creation
+On macOS /etc/group has no docker entry, because Docker Desktop does not
+create one. The docker group lookup used a bare grep, which exits 1 when
+the entry is absent. The script runs under errexit and pipefail, so it
+exited there without printing anything or invoking docker.
 
-**File**: `edge/pkg/metamanager/metaserver/kubernetes/storage/sqlite/imitator/imitator.go` (modified, +23/-7)
+Let the lookup fail quietly and pass the host UID alone when no group ID
+was found, so the build still runs as the invoking user and the files it
+writes into the bind mount keep that ownership. Behaviour is unchanged
+where the docker group exists.
+
+Signed-off-by: tarone-saloni <[REDACTED_EMAIL]>
+
+**File**: `hack/make-rules/build_with_container.sh` (modified, +7/-2)
 ```diff
-@@ -11,6 +11,7 @@ import (
+@@ -23,11 +23,16 @@ set -o pipefail
+ KUBEEDGE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
+ MOUNTPATH="${MOUNTPATH:-/kubeedge}"
+ KUBEEDGE_BUILD_IMAGE=${KUBEEDGE_BUILD_IMAGE:-"kubeedge/build-tools:1.25.14-ke1"}
+-DOCKER_GID="${DOCKER_GID:-$(grep '^docker:' /etc/group | cut -f3 -d:)}"
++DOCKER_GID="${DOCKER_GID:-$(grep '^docker:' /etc/group 2>/dev/null | cut -f3 -d: || true)}"
+ CONTAINER_RUN_OPTIONS="${CONTAINER_RUN_OPTIONS:--it}"
  
- 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
- 	"k8s.io/apimachinery/pkg/runtime"
-+	kjson "k8s.io/apimachinery/pkg/util/json"
- 	"k8s.io/apimachinery/pkg/watch"
- 	"k8s.io/apiserver/pkg/storage"
- 	"k8s.io/klog/v2"
-@@ -228,15 +229,14 @@ func (s *imitator) Event(msg *model.Message) []watch.Event {
- 		klog.V(4).Infof("skip status or node-lease messages")
- 		return []watch.Event{}
- 	}
--	var bytes []byte
-+	var data []byte
- 	var err error
--	var body = msg.GetContent()
- 	// convert body to bytes
--	switch body := body.(type) {
-+	switch body := msg.GetContent().(type) {
- 	case []byte:
--		bytes = body
-+		data = body
- 	default:
--		bytes, err = json.Marshal(body)
-+		data, err = json.Marshal(body)
- 		if err != nil {
- 			klog.Errorf("failed to marshal msg content, err: %+v", err)
- 			return ret
-@@ -251,9 +251,25 @@ func (s *imitator) Event(msg *model.Message) []watch.Event {
- 	case model.DeleteOperation:
- 		op = watch.Deleted
- 	}
--	//TODO: support array List like []obj
-+	if trimmed := bytes.TrimSpace(data); len(trimmed) > 0 && trimmed[0] == '[' {
-+		var items []map[string]interface{}
-+		if err := kjson.Unmarshal(trimmed, &items); err != nil {
-+			klog.Errorf("failed to unmarshal message content to unstructured array: %+v", err)
-+			return ret
-+		}
-+		for _, item := range items {
-+			if item == nil {
-+				klog.Error("failed to unmarshal message content to unstructured array: null item")
-+				return ret
-+			}
-+		}
-+		for i := range items {
-+			ret = append(ret, watch.Event{Type: op, Object: &unstructured.Unstructured{Object: items[i]}})
-+		}
-+		return ret
-+	}
- 	obj := new(unstructured.Unstructured)
--	err = runtime.DecodeInto(s.codec, bytes, obj)
-+	err = runtime.DecodeInto(s.codec, data, obj)
- 	if err != nil {
- 		klog.Errorf("failed to unmarshal message content to unstructured obj: %+v", err)
- 		return ret
-```
-
-**File**: `edge/pkg/metamanager/metaserver/kubernetes/storage/sqlite/imitator/imitator_test.go` (added, +120/-0)
-```diff
-@@ -0,0 +1,120 @@
-+/*
-+Copyright 2026 The KubeEdge Authors.
++CONTAINER_USER="${UID}"
++if [[ -n "${DOCKER_GID}" ]]; then
++    CONTAINER_USER="${UID}:${DOCKER_GID}"
++fi
 +
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package imitator
-+
-+import (
-+	"reflect"
-+	"testing"
-+
-+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-+	"k8s.io/apimachinery/pkg/watch"
-+
-+	"github.com/kubeedge/beehive/pkg/core/model"
-+)
-+
-+func TestEventListFormats(t *testing.T) {
-+	const first = `{"apiVersion":"v1","kind":"Pod","metadata":{"name":"first"}}`
-+	const second = `{"apiVersion":"v1","kind":"Pod","metadata":{"name":"second"}}`
-+	const bare = `{"metadata":{"name":"bare"}}`
-+	tests := []struct {
-+		name     string
-+		content  interface{}
-+		expected []string
-+	}{
-+		{"object", []byte(first), []string{"first"}},
-+		{"object list", []byte(`{"apiVersion":"v1","kind":"PodList","items":[` + first + `,` + second + `]}`), []string{"first", "second"}},
-+		{"object list body", map[string]interface{}{
-+			"apiVersion": "v1", "kind": "PodList",
-+			"items": []map[string]interface{}{
-+				{"kind": "Pod", "metadata": map[string]interface{}{"name": "first"}},
-+				{"kind": "Pod", "metadata": map[string]interface{}{"name": "second"}},
-+			},
-+		}, []string{"first", "second"}},
-+		{"object list item without kind", []byte(`{"apiVersion":"v1","kind":"PodList","items":[` + bare + `]}`), []string{"bare"}},
-+		{"array bytes", []byte(" \n[" + first + "," + second + "]"), []string{"first", "second"}},
-+		{"array item without kind", []byte(`[` + bare + `]`), []string{"bare"}},
-+		{"array body", []map[string]interface{}{
-+			{"apiVersion": "v1", "kind": "Pod", "metadata": map[string]interface{}{"name": "first"}},
-+			{"apiVersion": "v1", "kind": "Pod", "metadata": map[string]interface{}{"name": "second"}},
-+		}, []string{"first", "second"}},
-+		{"empty array", []byte(`[]`), nil},
-+		{"invalid array item", []byte(`[` + first + `,42]`), nil},
-+		{"null array item", []byte(`[` + first + `,null]`), nil},
-+	}
-+
-+	s := newV2Client().(*imitator)
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			msg := &model.Message{
-+				Router:  model.MessageRoute{Operation: model.InsertOperation, Resource: "default/pod"},
-+				Content: tt.content,
-+			}
-+			var names []string
-+			for _, event := range s.Event(msg) {
-+				if event.Type != watch.Added {
-+					t.Errorf("event type = %q, want %q", event.Type, watch.Added)
-+				}
-+				obj, ok := event.Object.(*unstructured.Unstructured)
-+				if !ok {
-+					t.Fatalf("event object type = %T, want *unstructured.Unstructured", event.Object)
-+				}
-+				names = append(names, obj.GetName())
-+			}
-+			if !reflect.DeepEqual(names, tt.expected) {
-+				t.Errorf("event names = %v, expected %v", names, tt.expected)
-+			}
-+		})
-+	}
-+}
-+
-+func TestEventPreservesLargeInteger(t *testing.T) {
-+	const value int64 = 9007199254740993 //2^53 + 1
-+	const item = `{"apiVersion":"v1","kind":"Pod","metadata":{"name":"first"},"spec":{"large":9007199254740993}}`
-+	tests := []struct {
-+		name    string
-+		content interface{}
-+	}{
-+		{"object list", []byte(`{"apiVersion":"v1","kind":"PodList","items":[` + item + `]}`)},
-+		{"array bytes", []byte(`[` + item + `]`)},
-+		{"array body", []map[string]interface{}{{
-+			"apiVersion": "v1", "kind": "Pod", "metadata": map[string]interface{}{"name": "first"},
-+			"spec": map[string]interface{}{"large": value},
-+		}}},
-+	}
-+
-+	s := newV2Client().(*imitator)
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			msg := &model.Message{
-+				Router:  model.MessageRoute{Operation: model.InsertOperation, Resource: "default/pod"},
-+				Content: tt.content,
-+			}
-+			events := s.Event(msg)
-+			if len(events) != 1 {
-+				t.Fatalf("got %d events, want 1", len(events))
-+			}
-+			obj, ok := events[0].Object.(*unstructured.Unstructured)
-+			if !ok {
-+				t.Fatalf("event object type = %T, want *unstructured.Unstructured", events[0].Object)
-+			}
-+			got, found, err := unstructured.NestedInt64(obj.Object, "spec", "large")
-+			if err != nil || !found || got != value {
-+				t.Errorf("spec.large = %d (found %t, error %v), want int64 %d", got, found, err, value)
-+			}
-+		})
-+	}
-+}
+ echo "start building inside container"
+-docker run --rm ${CONTAINER_RUN_OPTIONS} -u "${UID}:${DOCKER_GID}" \
++docker run --rm ${CONTAINER_RUN_OPTIONS} -u "${CONTAINER_USER}" \
+     --init \
+     --sig-proxy=true \
+     -e XDG_CACHE_HOME=/tmp/.cache \
 ```
 
 ---
 
-### Incident Patch 2: `fabd37b8` (2026-10-27)
-**Commit Message**: Merge pull request #7386 from adity1raut/test/metaserver-unhold-upgrade-handler
+### Incident Patch 2: `b1a36daf` (2026-10-29)
+**Commit Message**: Merge pull request #7312 from tarone-saloni/fix/build-container-docker-gid
 
-metaserver: add unit tests for the unhold-upgrade handlers
+hack: tolerate a missing docker group in build_with_container.sh
 
-**File**: `edge/pkg/metamanager/metaserver/handlerfactory/extend_unhold_upgrade_test.go` (added, +274/-0)
+**File**: `hack/make-rules/build_with_container.sh` (modified, +7/-2)
 ```diff
-@@ -0,0 +1,274 @@
-+/*
-+Copyright 2026 The KubeEdge Authors.
+@@ -23,11 +23,16 @@ set -o pipefail
+ KUBEEDGE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
+ MOUNTPATH="${MOUNTPATH:-/kubeedge}"
+ KUBEEDGE_BUILD_IMAGE=${KUBEEDGE_BUILD_IMAGE:-"kubeedge/build-tools:1.25.14-ke1"}
+-DOCKER_GID="${DOCKER_GID:-$(grep '^docker:' /etc/group | cut -f3 -d:)}"
++DOCKER_GID="${DOCKER_GID:-$(grep '^docker:' /etc/group 2>/dev/null | cut -f3 -d: || true)}"
+ CONTAINER_RUN_OPTIONS="${CONTAINER_RUN_OPTIONS:--it}"
+ 
++CONTAINER_USER="${UID}"
++if [[ -n "${DOCKER_GID}" ]]; then
++    CONTAINER_USER="${UID}:${DOCKER_GID}"
++fi
 +
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package handlerfactory
-+
-+import (
-+	"errors"
-+	"net/http"
-+	"net/http/httptest"
-+	"strings"
-+	"testing"
-+
-+	"github.com/agiledragon/gomonkey/v2"
-+	"github.com/stretchr/testify/assert"
-+	v1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/fields"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/client-go/kubernetes"
-+	"k8s.io/client-go/kubernetes/fake"
-+	clienttesting "k8s.io/client-go/testing"
-+
-+	beehiveContext "github.com/kubeedge/beehive/pkg/core/context"
-+	"github.com/kubeedge/beehive/pkg/core/model"
-+	"github.com/kubeedge/kubeedge/edge/pkg/common/modules"
-+	"github.com/kubeedge/kubeedge/keadm/cmd/keadm/app/cmd/util/metaclient"
-+)
-+
-+const (
-+	testNodeName = "edge-node"
-+	heldPodKey   = "default/held-pod"
-+)
-+
-+func TestUnholdUpgrade(t *testing.T) {
-+	cases := []struct {
-+		name     string
-+		body     string
-+		pods     []runtime.Object
-+		cliErr   error
-+		wantCode int
-+		wantBody string
-+		wantSent []string
-+	}{
-+		{
-+			name:     "body is not namespace/name",
-+			body:     "held-pod",
-+			wantCode: http.StatusBadRequest,
-+			wantBody: "invalid format, expected <namespace>/<name>",
-+		},
-+		{
-+			name:     "failed to init kube client",
-+			body:     heldPodKey,
-+			cliErr:   errors.New("test error"),
-+			wantCode: http.StatusInternalServerError,
-+			wantBody: "cannot init kube client: test error",
-+		},
-+		{
-+			name:     "pod not found",
-+			body:     heldPodKey,
-+			wantCode: http.StatusNotFound,
-+			wantBody: "pod not found",
-+		},
-+		{
-+			name:     "pod is not held",
-+			body:     "default/pod",
-+			pods:     []runtime.Object{newUnholdTestPod("default", "pod", testNodeName, "", v1.PodPending)},
-+			wantCode: http.StatusBadRequest,
-+			wantBody: "pod is not marked with hold-upgrade annotation",
-+		},
-+		{
-+			name:     "hold-upgrade annotation is not true",
-+			body:     "default/pod",
-+			pods:     []runtime.Object{newUnholdTestPod("default", "pod", testNodeName, "false", v1.PodPending)},
-+			wantCode: http.StatusBadRequest,
-+			wantBody: "pod is not marked with hold-upgrade annotation",
-+		},
-+		{
-+			name:     "pod is not pending",
-+			body:     heldPodKey,
-+			pods:     []runtime.Object{newUnholdTestPod("default", "held-pod", testNodeName, "true", v1.PodRunning)},
-+			wantCode: http.StatusBadRequest,
-+			wantBody: "pod is not in pending phase",
-+		},
-+		{
-+			name:     "unhold held pod",
-+			body:     "kube-system/held-pod",
-+			pods:     []runtime.Object{newUnholdTestPod("kube-system", "held-pod", testNodeName, "true", v1.PodPending)},
-+			wantCode: http.StatusOK,
-+			wantSent: []string{"kube-system/pod/held-pod"},
-+		},
-+	}
-+
-+	for _, c := range cases {
-+		t.Run(c.name, func(t *testing.T) {
-+			sent := patchUnholdUpgrade(t, fake.NewSimpleClientset(c.pods...), c.cliErr)
-+
-+			w := serveUnholdUpgrade(NewFactory().UnholdUpgrade(), c.body)
-+			assert.Equal(t, c.wantCode, w.Code)
-+			assert.Contains(t, w.Body.String(), c.wantBody)
-+			assert.Equal(t, c.wantSent, *sent)
-+		})
-+	}
-+
-+	t.Run("body is too large", func(t *testing.T) {
-+		sent := patchUnholdUpgrade(t, fake.NewSimpleClientset(), nil)
-+
-+		w := serveUnholdUpgrade(NewFactory().UnholdUpgrade(), strings.Repeat("a", 3*1024*1024+1))
-+		assert.Equal(t, http.StatusInternalServerError, w.Code)
-+		assert.Contains(t, w.Body.String(), "too large")
-+		assert.Empty(t, *sent)
-+	})
-+}
-+
-+func TestUnholdUpgradeNode(t *testing.T) {
-+	node := &v1.Node{ObjectMeta: metav1.ObjectMeta{Name: testNodeName}}
-+
-+	cases := []struct {
-+		name     string
-+		body     string
-+		objs     []runtime.Object
-+		cliErr   error
-+		wantCode int
-+		wantBody string
-+		wantSent []string
-+	}{
-+		{
-+			name:     "node name is empty",
-+			body:     " \n",
-+			wantCode: http.StatusBadRequest,
-+			wantBody: "node name required in body",
-+		},
-+		{
-+			name:     "failed to init kube client",
-+			body:     testNodeName,
-+			cliErr:   errors.New("test error"),
-+			wantCode: http.StatusInternalServerError,
-+			wantBody: "cannot init kube client: test error",
-+		},
-+		{
-+			name:     "node not found",
-+			body:     "other-node",
-+			objs:     []runtime.Object{node},
-+			wantCode: http.StatusNotFound,
-+			wantBody: "node not found",
-+		},
-+		{
-+			name:     "no held pods on the node",
-+			body:     testNodeName,
-+			objs:     []runtime.Object{node, newUnholdTestPod("default", "pod", testNodeName, "", v1.PodPending)},
-+			wantCode: http.StatusOK,
-+		},
-+
+ echo "start building inside container"
+-docker run --rm ${CONTAINER_RUN_OPTIONS} -u "${UID}:${DOCKER_GID}" \
++docker run --rm ${CONTAINER_RUN_OPTIONS} -u "${CONTAINER_USER}" \
+     --init \
+     --sig-proxy=true \
+     -e XDG_CACHE_HOME=/tmp/.cache \
 ```
 
 #### Recent Merged Pull Requests:
@@ -1626,56 +1327,35 @@ metaserver: add unit tests for the unhold-upgrade handlers
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7379 from EncHawk/master
+## X. hack: tolerate a missing docker group in build_with_container.sh
 
 **RULE**:
-When implementing operations in `edge/pkg/metamanager/metaserver/kubernetes/storage/sqlite/imitator/imitator.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `hack/make-rules/build_with_container.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubeedge/kubeedge. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1e5b0d26`: Merge pull request #7379 from EncHawk/master. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce567751`: hack: tolerate a missing docker group in build_with_container.sh. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `edge/pkg/metamanager/metaserver/kubernetes/storage/sqlite/imitator/imitator.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `hack/make-rules/build_with_container.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	kjson "k8s.io/apimachinery/pkg/util/json"
-	var data []byte
-	switch body := msg.GetContent().(type) {
-		data = body
-		data, err = json.Marshal(body)
-	if trimmed := bytes.TrimSpace(data); len(trimmed) > 0 && trimmed[0] == '[' {
-		var items []map[string]interface{}
-		if err := kjson.Unmarshal(trimmed, &items); err != nil {
-			klog.Errorf("failed to unmarshal message content to unstructured array: %+v", err)
-			return ret
-		}
-		for _, item := range items {
-			if item == nil {
-				klog.Error("failed to unmarshal message content to unstructured array: null item")
-				return ret
-			}
-		}
-		for i := range items {
-			ret = append(ret, watch.Event{Type: op, Object: &unstructured.Unstructured{Object: items[i]}})
-		}
-		return ret
-	}
-	err = runtime.DecodeInto(s.codec, data, obj)
+DOCKER_GID="${DOCKER_GID:-$(grep '^docker:' /etc/group 2>/dev/null | cut -f3 -d: || true)}"
+CONTAINER_USER="${UID}"
+if [[ -n "${DOCKER_GID}" ]]; then
+    CONTAINER_USER="${UID}:${DOCKER_GID}"
+fi
+
+docker run --rm ${CONTAINER_RUN_OPTIONS} -u "${CONTAINER_USER}" \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	var bytes []byte
-	var body = msg.GetContent()
-	switch body := body.(type) {
-		bytes = body
-		bytes, err = json.Marshal(body)
-	//TODO: support array List like []obj
-	err = runtime.DecodeInto(s.codec, bytes, obj)
+DOCKER_GID="${DOCKER_GID:-$(grep '^docker:' /etc/group | cut -f3 -d:)}"
+docker run --rm ${CONTAINER_RUN_OPTIONS} -u "${UID}:${DOCKER_GID}" \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1e5b0d26` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce567751` are properly handled with clean fallback behavior.

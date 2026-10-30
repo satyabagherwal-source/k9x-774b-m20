@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T13:58:29.239Z",
-    "lastVerified": "2026-10-30T13:58:29.239Z",
+    "lastChecked": "2026-10-30T14:11:54.679Z",
+    "lastVerified": "2026-10-30T14:11:54.679Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -413,8 +413,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T13:28:42.671Z",
-    "lastVerified": "2026-10-30T13:28:42.671Z",
+    "lastChecked": "2026-10-30T14:11:52.462Z",
+    "lastVerified": "2026-10-30T14:11:52.462Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1094,9 +1094,9 @@
   "chroma-core-chroma": {
     "name": "chroma",
     "officialUrl": "https://github.com/chroma-core/chroma",
-    "lastChecked": "2026-10-28T21:50:21.338Z",
+    "lastChecked": "2026-10-30T14:11:50.253Z",
     "revisionIdentifier": "52ce8448",
-    "lastVerified": "2026-10-28T21:50:21.338Z"
+    "lastVerified": "2026-10-30T14:11:50.253Z"
   },
   "sharkdp-bat": {
     "name": "sharkdp/bat",
@@ -1406,9 +1406,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-10-30T06:43:18.496Z",
+    "lastChecked": "2026-10-30T14:11:47.628Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-10-30T06:43:18.496Z"
+    "lastVerified": "2026-10-30T14:11:47.628Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -2164,11 +2164,21 @@
     "lastVerified": "2026-10-28T06:11:40.943Z"
   },
   "kubeedge-kubeedge": {
-    "name": "kubeedge",
+    "name": "kubeedge/kubeedge",
     "officialUrl": "https://github.com/kubeedge/kubeedge",
-    "lastChecked": "2026-10-28T22:45:43.332Z",
-    "revisionIdentifier": "1e5b0d26",
-    "lastVerified": "2026-10-28T22:45:43.332Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-30T14:11:51.333Z",
+    "lastVerified": "2026-10-30T14:11:51.333Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-kubeedge-kubeedge",
+    "contentHash": "f282cf052e310405a42fab6159ffb0e41c9ac79e36b07d3c6bdaa6534657d80e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "aleo-labs-protocol-snarkos": {
     "name": "snarkOS",
@@ -5920,9 +5930,9 @@
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
     "officialUrl": "https://github.com/SilasMarvin/lsp-ai",
-    "lastChecked": "2026-10-28T17:20:33.144Z",
+    "lastChecked": "2026-10-30T14:11:37.383Z",
     "revisionIdentifier": "1e910a8c",
-    "lastVerified": "2026-10-28T17:20:33.144Z"
+    "lastVerified": "2026-10-30T14:11:37.383Z"
   },
   "hf-intfloat-multilingual-e5-small": {
     "name": "intfloat/multilingual-e5-small",
@@ -10071,5 +10081,29 @@
     "lastChecked": "2026-10-30T13:53:15.047Z",
     "revisionIdentifier": "3e300721",
     "lastVerified": "2026-10-30T13:53:15.047Z"
+  },
+  "syntax-tree-hast-util-to-html": {
+    "name": "syntax-tree/hast-util-to-html",
+    "officialUrl": "https://github.com/syntax-tree/hast-util-to-html",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-30T14:11:50.426Z",
+    "lastVerified": "2026-10-30T14:11:50.426Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-syntax-tree-hast-util-to-html",
+    "contentHash": "1c9d6a5ed3ff1abb772b3ea73d27358c953bab3a1e64ccd5d5249005f644506e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sindresorhus-keyboardshortcuts": {
+    "name": "KeyboardShortcuts",
+    "officialUrl": "https://github.com/sindresorhus/KeyboardShortcuts",
+    "lastChecked": "2026-10-30T14:11:42.380Z",
+    "revisionIdentifier": "772133d9",
+    "lastVerified": "2026-10-30T14:11:42.380Z"
   }
 }
