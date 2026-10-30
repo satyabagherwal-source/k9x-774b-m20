@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T05:01:23.904Z",
-  "total_cycles_completed": 6088,
-  "total_learnings_persisted": 6088,
-  "total_rules_promoted": 5575,
+  "last_updated": "2026-10-30T05:12:24.126Z",
+  "total_cycles_completed": 6089,
+  "total_learnings_persisted": 6089,
+  "total_rules_promoted": 5577,
   "history": [
-    {
-      "timestamp": "2026-10-28T20:01:26.253Z",
-      "repository": "LiquidAI/d1-3B",
-      "learningId": "learn-huggingface-liquidai-d1-3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T20:01:42.189Z",
       "repository": "volcengine/OpenViking",
@@ -1403,6 +1396,13 @@
       "repository": "microsoft/agent-governance-toolkit",
       "learningId": "learn-github-microsoft-agent-governance-toolkit",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T05:12:24.126Z",
+      "repository": "citusdata/citus",
+      "learningId": "learn-github-citusdata-citus",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

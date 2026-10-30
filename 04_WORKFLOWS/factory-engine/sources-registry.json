@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T05:01:26.452Z",
-    "lastVerified": "2026-10-30T05:01:26.452Z",
+    "lastChecked": "2026-10-30T05:12:26.668Z",
+    "lastVerified": "2026-10-30T05:12:26.668Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T04:41:48.254Z",
-    "lastVerified": "2026-10-30T04:41:48.254Z",
+    "lastChecked": "2026-10-30T05:09:58.781Z",
+    "lastVerified": "2026-10-30T05:09:58.781Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -388,9 +388,9 @@
   "openziti-zrok": {
     "name": "zrok",
     "officialUrl": "https://github.com/openziti/zrok",
-    "lastChecked": "2026-10-29T17:35:35.822Z",
+    "lastChecked": "2026-10-30T05:09:53.825Z",
     "revisionIdentifier": "09ed814e",
-    "lastVerified": "2026-10-29T17:35:35.822Z"
+    "lastVerified": "2026-10-30T05:09:53.825Z"
   },
   "run-llama-llama_index": {
     "name": "llama_index",
@@ -3560,9 +3560,9 @@
   "timvisee-ffsend": {
     "name": "ffsend",
     "officialUrl": "https://github.com/timvisee/ffsend",
-    "lastChecked": "2026-10-28T12:56:54.021Z",
+    "lastChecked": "2026-10-30T05:09:43.802Z",
     "revisionIdentifier": "85aae2f3",
-    "lastVerified": "2026-10-28T12:56:54.021Z"
+    "lastVerified": "2026-10-30T05:09:43.802Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -5406,11 +5406,21 @@
     "lastVerified": "2026-10-30T04:15:22.010Z"
   },
   "citusdata-citus": {
-    "name": "citus",
+    "name": "citusdata/citus",
     "officialUrl": "https://github.com/citusdata/citus",
-    "lastChecked": "2026-10-28T16:27:24.170Z",
-    "revisionIdentifier": "1aba449a",
-    "lastVerified": "2026-10-28T16:27:24.170Z"
+    "sourceType": "github",
+    "technology": "C",
+    "lastChecked": "2026-10-30T05:09:59.707Z",
+    "lastVerified": "2026-10-30T05:09:59.707Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-citusdata-citus",
+    "contentHash": "e170651cd360fce81f852d71875aaabc31c3803f3f3ab46448a3acaadc2c887b",
+    "promotedRulesCount": 2,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "dicklesworthstone-destructive_command_guard": {
     "name": "Dicklesworthstone/destructive_command_guard",
@@ -5786,9 +5796,9 @@
   "someengineering-fixinventory": {
     "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
-    "lastChecked": "2026-10-28T17:20:40.843Z",
+    "lastChecked": "2026-10-30T05:09:51.397Z",
     "revisionIdentifier": "21183338",
-    "lastVerified": "2026-10-28T17:20:40.843Z"
+    "lastVerified": "2026-10-30T05:09:51.397Z"
   },
   "olric-data-olric": {
     "name": "olric",
@@ -9079,5 +9089,19 @@
     "lastChecked": "2026-10-30T05:01:14.072Z",
     "revisionIdentifier": "c7ba0b05",
     "lastVerified": "2026-10-30T05:01:14.072Z"
+  },
+  "crawlcove-crawlcove-robots-txt-tester": {
+    "name": "crawlcove-robots-txt-tester",
+    "officialUrl": "https://github.com/CrawlCove/crawlcove-robots-txt-tester",
+    "lastChecked": "2026-10-30T05:09:46.289Z",
+    "revisionIdentifier": "0d91d23a",
+    "lastVerified": "2026-10-30T05:09:46.289Z"
+  },
+  "shifthackz-stable-diffusion-kmp": {
+    "name": "Stable-Diffusion-KMP",
+    "officialUrl": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+    "lastChecked": "2026-10-30T05:09:48.832Z",
+    "revisionIdentifier": "4b060c7e",
+    "lastVerified": "2026-10-30T05:09:48.832Z"
   }
 }

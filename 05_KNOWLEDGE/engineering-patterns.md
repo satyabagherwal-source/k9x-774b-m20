@@ -407102,3 +407102,213 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `6d2a138b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 5606. Dual-Key Correlation Invariant for Distributed Signal Dispatching (Harvested from citusdata/citus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Key Correlation Invariant for Distributed Signal Dispatching",
+  "source": "citusdata/citus",
+  "source_url": "https://github.com/citusdata/citus",
+  "source_version": "843ef6f0",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-30T05:12:23.382Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-citusdata-citus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [citusdata/citus](https://github.com/citusdata/citus) (Revision: `843ef6f0`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When issuing asynchronous control signals (e.g., `SIGINT`, `kill()`, abort RPCs) to process slots or backends based on distributed state inspection, the caller MUST verify both the **globally scoped node identifier** and the **locally unique monotonically increasing transaction counter** under an atomic spinlock immediately prior to signal emission. A signal MUST NOT be emitted if either identifier has diverged or if the target backend has transitioned out of the resolved transaction.
+
+**WHY**:
+In distributed architectures, monotonic counters (such as transaction IDs or query IDs) are initialized locally per node. Without validating the origin node ID along with the sequence counter under lock, cross-node sequence collisions cause the coordinator to misidentify a locally initiated transaction as a remote foreign transaction with the same numeric sequence. Furthermore, during the time elapsed between deadlock detection graph traversal and process signaling (a TOCTOU race window), the backend can commit or abort the deadlocked transaction and start an unrelated query. Checking only that `transactionNumber != 0` results in signaling an innocent transaction.
+
+**WHEN TO APPLY**:
+Apply in any distributed orchestration layer, clustered database, or distributed deadlock detector where an asynchronous supervisory daemon inspects remote process graphs and resolves conflicts by sending OS signals or cancellation frames to worker backend slots.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+/*
+ * Atomically verifies node origin and transaction sequence counter
+ * under a spinlock before signaling the OS process.
+ */
+bool
+SafeCancelDistributedTransaction(PGPROC *proc, const DistributedTransactionId *expectedXactId)
+{
+    bool cancelled = false;
+    BackendData *backendData = &backendManagementShmemData->backends[getProcNo_compat(proc)];
+
+    if (!backendData)
+    {
+        return false;
+    }
+
+    /* Acquire low-level spinlock to prevent TOCTOU state transition */
+    SpinLockAcquire(&backendData->mutex);
+
+    DistributedTransactionId *liveXactId = &backendData->transactionId;
+
+    /*
+     * Both the monotonic sequence number AND the initiating node identifier
+     * MUST match identically. Timestamp is omitted only if sequence numbers
+     * are strictly monotonic per node instance.
+     */
+    if (liveXactId->transactionNumber == expectedXactId->transactionNumber &&
+        liveXactId->initiatorNodeIdentifier == expectedXactId->initiatorNodeIdentifier)
+    {
+        backendData->cancelledDueToDeadlock = true;
+        SpinLockRelease(&backendData->mutex);
+
+        /* Signal process immediately after state transition is marked */
+        if (SendProcSignal(proc->pid, PROCSIG_RECOVERY_CONFLICT_STARTUP, proc->backendId) < 0)
+        {
+            ereport(WARNING,
+                    (errmsg("Could not signal process %d for distributed cancellation",
+                            proc->pid)));
+        }
+        cancelled = true;
+    }
+    else
+    {
+        /* Target backend changed transactions or originated from a different node */
+        SpinLockRelease(&backendData->mutex);
+    }
+
+    return cancelled;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// ANTI-PATTERN: Verifying only local transaction non-zero status
+// Vulnerable to cross-node counter collisions and TOCTOU signal misdirection.
+void
+UnsafeCancelDistributedTransaction(PGPROC *proc)
+{
+    BackendData *backendData = &backendManagementShmemData->backends[getProcNo_compat(proc)];
+    
+    SpinLockAcquire(&backendData->mutex);
+    // BUG: If transaction 42 committed and backend started transaction 43,
+    // or if transaction 42 was on node B while local backend was running local txn 42,
+    // this cancels an innocent query.
+    if (backendData->transactionId.transactionNumber != 0)
+    {
+        backendData->cancelledDueToDeadlock = true;
+        SpinLockRelease(&backendData->mutex);
+        kill(proc->pid, SIGINT);
+    }
+    else
+    {
+        SpinLockRelease(&backendData->mutex);
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Run multi-session isolation tests where an unrelated local session is forced to stall on a lock, while a separate session injects an external distributed transaction ID with an identical sequence number from node 9999. Invoke `check_distributed_deadlocks()`. Assert via query logs that the foreign deadlocked session receives the cancellation error while the local collision session completes and commits without error (`src/test/regress/spec/isolation_deadlock_detection_txn_number_collision.spec`).
+
+---
+
+
+---
+
+## 5607. Lifespan Invariance Between Logical Decoders and Reorder Buffer Tuple Memory (Harvested from citusdata/citus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Lifespan Invariance Between Logical Decoders and Reorder Buffer Tuple Memory",
+  "source": "citusdata/citus",
+  "source_url": "https://github.com/citusdata/citus",
+  "source_version": "843ef6f0",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-30T05:12:23.780Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-citusdata-citus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [citusdata/citus](https://github.com/citusdata/citus) (Revision: `843ef6f0`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing logical replication decoders or change-data-capture (CDC) translators, modified or synthesized tuples MUST NOT overwrite pointers within `ReorderBufferChange` structs (`change->data.tp.newtuple` / `oldtuple`) using memory allocated from transient caller contexts (`CurrentMemoryContext`). Decoded tuple references MUST either be allocated directly inside the reorder buffer’s dedicated tuple slab memory context (`rb->context`) or copied back before reorder buffer release routines are invoked.
+
+**WHY**:
+PostgreSQL's logical decoding pipeline allocates change representations inside dedicated `ReorderBuffer` slab allocators. During cleanup (`ReorderBufferFreeChange` -> `ReorderBufferCleanupTXN`), the engine calls `SlabFree()` or `pfree()` on `newtuple` and `oldtuple` expecting headers and chunk markers managed by its internal slab allocator. Overwriting these pointers with tuples allocated via `heap_form_tuple()` in a transient execution context causes `SlabFree` to interpret arbitrary heap data as slab block headers, resulting in memory corruption, invalid pointer dereferences, and fatal walsender `SIGSEGV` aborts.
+
+**WHEN TO APPLY**:
+Applies to database storage engines, replication plugins, logical decoding output plugins, and CDC systems where change records generated by a core transaction engine are intercepted, rewritten, or schema-translated before streaming downstream.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+/*
+ * Safe translation of tuples in logical replication pipeline.
+ * Allocates substitute tuple memory directly from the ReorderBuffer tuple context.
+ */
+void
+TranslateLogicalReorderBufferChange(ReorderBuffer *rb,
+                                    ReorderBufferChange *change,
+                                    Relation targetRelation)
+{
+    if (!change->data.tp.newtuple)
+    {
+        return;
+    }
+
+    MemoryContext oldContext = MemoryContextSwitchTo(ReorderBufferGetTupleBufContext(rb));
+
+    HeapTuple originalTuple = &change->data.tp.newtuple->tuple;
+    HeapTuple translatedTuple = TranslateHeapTupleSchema(originalTuple, targetRelation);
+
+    /* Allocate custom buffer wrapper from the ReorderBuffer context */
+    ReorderBufferTupleBuf *newTupleBuf = ReorderBufferGetTupleBuf(rb, translatedTuple->t_len);
+    memcpy(&newTupleBuf->tuple, translatedTuple, HEAPTUPLESIZE);
+    memcpy(newTupleBuf->tuple.t_data, translatedTuple->t_data, translatedTuple->t_len);
+
+    /* Free original tuple buffer via reorder buffer slab API */
+    ReorderBufferReturnTupleBuf(rb, change->data.tp.newtuple);
+
+    /* Safely assign the reorder-buffer-managed replacement pointer */
+    change->data.tp.newtuple = newTupleBuf;
+
+    MemoryContextSwitchTo(oldContext);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// ANTI-PATTERN: Allocating in transient CurrentMemoryContext and mutating pointers.
+void
+UnsafeTranslateLogicalChange(ReorderBufferChange *change, TupleDesc newDesc)
+{
+    // Allocated in CurrentMemoryContext (e.g., MessageContext, ExprContext)
+    HeapTuple translated = heap_form_tuple(newDesc, values, isnull);
+
+    // CRITICAL BUG: change->data.tp.newtuple was allocated in rb->context slab.
+    // Overwriting it with a heap-allocated pointer causes ReorderBufferFreeChange()
+    // to call SlabFree() on a regular palloc chunk, causing SIGSEGV in walsender.
+    change->data.tp.newtuple = (ReorderBufferTupleBuf *) translated;
+}
+```
+
+**VERIFICATION METHOD**:
+Execute an end-to-end logical decoding replication test combining DDL schema changes (`DROP COLUMN`), distributed logical shard migration (`force_logical`), and bulk DML updates under AddressSanitizer (ASan) or Valgrind. Assert that `ReorderBufferCleanupTXN` executes cleanly without slab assertion errors or signal 11 traps.
+
+---

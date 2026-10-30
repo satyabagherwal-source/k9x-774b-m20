@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T05:01:23.820Z",
+  "last_updated": "2026-10-30T05:12:24.042Z",
   "total_verified_learnings": 1171,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6752,8 +6752,8 @@
       "slug": "citusdata-citus",
       "platform": "github",
       "source_url": "https://github.com/citusdata/citus",
-      "source_version": "1aba449a",
-      "content_hash": "44febd64ea276959021e77783164933f18ead2a8a23da88d7c5c400495189a37",
+      "source_version": "843ef6f0",
+      "content_hash": "e170651cd360fce81f852d71875aaabc31c3803f3f3ab46448a3acaadc2c887b",
       "dossier_path": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/citusdata-citus-learnings.md",
       "promoted_rules": [
@@ -6781,6 +6781,16 @@
           "number": 5074,
           "title": "Add 'force_logical_auto_identity' shard transfer mode for non-blocking moves of",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5606,
+          "title": "Dual-Key Correlation Invariant for Distributed Signal Dispatching",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5607,
+          "title": "Lifespan Invariance Between Logical Decoders and Reorder Buffer Tuple Memory",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6788,7 +6798,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T00:26:28.744Z",
+      "verified_at": "2026-10-30T05:12:24.022Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150478,6 +150488,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T05:01:23.801Z"
+    },
+    "rule-5606": {
+      "learning_id": "rule-5606",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5606,
+      "title": "Dual-Key Correlation Invariant for Distributed Signal Dispatching",
+      "source_url": "https://github.com/citusdata/citus",
+      "source_version": "843ef6f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:12:24.022Z"
+    },
+    "rule-5607": {
+      "learning_id": "rule-5607",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5607,
+      "title": "Lifespan Invariance Between Logical Decoders and Reorder Buffer Tuple Memory",
+      "source_url": "https://github.com/citusdata/citus",
+      "source_version": "843ef6f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:12:24.022Z"
     }
   },
   "aliases": {

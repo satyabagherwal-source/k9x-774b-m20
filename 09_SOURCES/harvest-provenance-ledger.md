@@ -6120,3 +6120,4 @@ Every entry in this ledger must capture:
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `971eca90` | Multi-dimensional audit evidence | 2026-10-30T04:54:32.615Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `eb21c0d1` | Multi-dimensional audit evidence | 2026-10-30T04:54:38.184Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `6d2a138b` | Multi-dimensional audit evidence | 2026-10-30T05:01:23.899Z |
+| `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `843ef6f0` | Multi-dimensional audit evidence | 2026-10-30T05:12:24.120Z |

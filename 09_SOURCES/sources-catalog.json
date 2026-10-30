@@ -5173,10 +5173,10 @@
     "repository": "citusdata/citus",
     "platform": "github",
     "sourceUrl": "https://github.com/citusdata/citus",
-    "sourceVersion": "1aba449a",
+    "sourceVersion": "843ef6f0",
     "license": "AGPL-3.0",
-    "contentHash": "44febd64ea276959021e77783164933f18ead2a8a23da88d7c5c400495189a37",
-    "lastHarvestedAt": "2026-10-28T00:26:28.821Z",
+    "contentHash": "e170651cd360fce81f852d71875aaabc31c3803f3f3ab46448a3acaadc2c887b",
+    "lastHarvestedAt": "2026-10-30T05:12:24.120Z",
     "learningId": "learn-github-citusdata-citus"
   },
   "reshaped-ui-reshaped": {
