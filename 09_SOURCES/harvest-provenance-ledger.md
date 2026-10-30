@@ -6252,3 +6252,5 @@ Every entry in this ledger must capture:
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `36cee33a` | Multi-dimensional audit evidence | 2026-10-30T16:44:33.512Z |
 | `learn-github-jhspetersson-fselect` | `https://github.com/jhspetersson/fselect` | `2b101ea5` | Multi-dimensional audit evidence | 2026-10-30T16:51:23.164Z |
 | `learn-github-rdflib-pyshacl` | `https://github.com/RDFLib/pySHACL` | `df57bd43` | Multi-dimensional audit evidence | 2026-10-30T16:51:25.182Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `95cd5f20` | Multi-dimensional audit evidence | 2026-10-30T17:06:08.847Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `1bb45751` | Multi-dimensional audit evidence | 2026-10-30T17:06:08.867Z |

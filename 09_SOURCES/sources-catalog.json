@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "6d2a138b",
+    "sourceVersion": "95cd5f20",
     "license": "MIT",
-    "contentHash": "d854cbc78d9d0b81395c36f1fe0ed06984b95aee9523a403e15eb87891b7f013",
-    "lastHarvestedAt": "2026-10-30T05:01:23.899Z",
+    "contentHash": "34b31a2aec3dc3cd9db599c6cd81fcf703a0fc5a2b6ecd2a596ea883ad2187fa",
+    "lastHarvestedAt": "2026-10-30T17:06:08.847Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "48758c8c",
+    "sourceVersion": "1bb45751",
     "license": "Apache-2.0",
-    "contentHash": "c62adbdc40bb0c456af30f5c75b3c4f9f75c457acec00cf11e4974581d55dde1",
-    "lastHarvestedAt": "2026-10-28T23:52:22.242Z",
+    "contentHash": "7f5bcbcc7b37bc949a1c2967e2cae6def93849f49bb011159c8493c29023fdb9",
+    "lastHarvestedAt": "2026-10-30T17:06:08.867Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {

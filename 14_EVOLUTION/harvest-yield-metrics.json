@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T16:51:25.188Z",
-  "total_cycles_completed": 6220,
-  "total_learnings_persisted": 6220,
-  "total_rules_promoted": 5774,
+  "last_updated": "2026-10-30T17:06:08.872Z",
+  "total_cycles_completed": 6222,
+  "total_learnings_persisted": 6222,
+  "total_rules_promoted": 5776,
   "history": [
-    {
-      "timestamp": "2026-10-29T16:36:36.738Z",
-      "repository": "liketrek/TREK",
-      "learningId": "learn-github-liketrek-trek",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-29T16:36:46.089Z",
-      "repository": "vinceglb/FileKit",
-      "learningId": "learn-github-vinceglb-filekit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T16:36:47.144Z",
       "repository": "mistralai/Mistral-Large-4-1T-A52B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T16:51:25.188Z",
       "repository": "RDFLib/pySHACL",
       "learningId": "learn-github-rdflib-pyshacl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T17:06:08.852Z",
+      "repository": "microsoft/agent-governance-toolkit",
+      "learningId": "learn-github-microsoft-agent-governance-toolkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T17:06:08.872Z",
+      "repository": "databendlabs/databend",
+      "learningId": "learn-github-databendlabs-databend",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

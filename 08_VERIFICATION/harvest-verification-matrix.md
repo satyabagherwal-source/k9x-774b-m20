@@ -6243,3 +6243,5 @@
 | `CYCLE-20261030-CWO5` | `2026-10-30T16:44:33.509Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5803` | Yes (`de785172...`) |
 | `CYCLE-20261030-LORD` | `2026-10-30T16:51:23.161Z` | `jhspetersson/fselect` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/jhspetersson-fselect-learnings.md` | Yes (`164a2436...`) |
 | `CYCLE-20261030-LQBF` | `2026-10-30T16:51:25.179Z` | `RDFLib/pySHACL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5804` | Yes (`7cc0215c...`) |
+| `CYCLE-20261030-4O5O` | `2026-10-30T17:06:08.844Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5805` | Yes (`34b31a2a...`) |
+| `CYCLE-20261030-4O68` | `2026-10-30T17:06:08.864Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5806` | Yes (`7f5bcbcc...`) |

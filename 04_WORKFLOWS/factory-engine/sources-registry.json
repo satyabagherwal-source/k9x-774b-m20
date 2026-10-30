@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T16:51:31.508Z",
-    "lastVerified": "2026-10-30T16:51:31.508Z",
+    "lastChecked": "2026-10-30T17:06:11.416Z",
+    "lastVerified": "2026-10-30T17:06:11.416Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -243,8 +243,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T16:12:45.878Z",
-    "lastVerified": "2026-10-30T16:12:45.878Z",
+    "lastChecked": "2026-10-30T17:06:03.582Z",
+    "lastVerified": "2026-10-30T17:06:03.582Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -315,22 +315,21 @@
     "lastVerified": "2026-10-30T07:15:36.562Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "agent-governance-toolkit",
+    "name": "microsoft/agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-30T10:07:44.096Z",
-    "lastVerified": "2026-10-30T10:07:44.096Z",
+    "lastChecked": "2026-10-30T17:06:03.142Z",
+    "lastVerified": "2026-10-30T17:06:03.142Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "d854cbc78d9d0b81395c36f1fe0ed06984b95aee9523a403e15eb87891b7f013",
+    "contentHash": "34b31a2aec3dc3cd9db599c6cd81fcf703a0fc5a2b6ecd2a596ea883ad2187fa",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6d2a138b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -2208,14 +2207,14 @@
     "officialUrl": "https://github.com/databendlabs/databend",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T23:52:21.712Z",
-    "lastVerified": "2026-10-28T23:52:21.712Z",
+    "lastChecked": "2026-10-30T17:06:07.297Z",
+    "lastVerified": "2026-10-30T17:06:07.297Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "c62adbdc40bb0c456af30f5c75b3c4f9f75c457acec00cf11e4974581d55dde1",
+    "contentHash": "7f5bcbcc7b37bc949a1c2967e2cae6def93849f49bb011159c8493c29023fdb9",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3050,9 +3049,9 @@
   "cdk-team-cdk": {
     "name": "CDK",
     "officialUrl": "https://github.com/cdk-team/CDK",
-    "lastChecked": "2026-10-29T01:08:57.228Z",
+    "lastChecked": "2026-10-30T17:05:55.847Z",
     "revisionIdentifier": "69da22ad",
-    "lastVerified": "2026-10-29T01:08:57.228Z"
+    "lastVerified": "2026-10-30T17:05:55.847Z"
   },
   "lioensky-vcptoolbox": {
     "name": "lioensky/VCPToolBox",
@@ -6770,9 +6769,9 @@
   "crate-ci-typos": {
     "name": "typos",
     "officialUrl": "https://github.com/crate-ci/typos",
-    "lastChecked": "2026-10-28T19:17:05.865Z",
+    "lastChecked": "2026-10-30T17:05:48.473Z",
     "revisionIdentifier": "7f9d0819",
-    "lastVerified": "2026-10-28T19:17:05.865Z"
+    "lastVerified": "2026-10-30T17:05:48.473Z"
   },
   "hf-autotrust-jev-27b-vl": {
     "name": "autotrust/JEV-27B-VL",
@@ -10429,5 +10428,19 @@
     "lastChecked": "2026-10-30T16:51:21.525Z",
     "revisionIdentifier": "76a1c179",
     "lastVerified": "2026-10-30T16:51:21.525Z"
+  },
+  "jsonld-java-jsonld-java": {
+    "name": "jsonld-java",
+    "officialUrl": "https://github.com/jsonld-java/jsonld-java",
+    "lastChecked": "2026-10-30T17:05:50.908Z",
+    "revisionIdentifier": "4a7305f2",
+    "lastVerified": "2026-10-30T17:05:50.908Z"
+  },
+  "iplug2-iplug2": {
+    "name": "iPlug2",
+    "officialUrl": "https://github.com/iPlug2/iPlug2",
+    "lastChecked": "2026-10-30T17:05:53.441Z",
+    "revisionIdentifier": "d82b2e99",
+    "lastVerified": "2026-10-30T17:05:53.441Z"
   }
 }

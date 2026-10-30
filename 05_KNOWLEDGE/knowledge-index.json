@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T16:51:25.101Z",
+  "last_updated": "2026-10-30T17:06:08.790Z",
   "total_verified_learnings": 1175,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8534,8 +8534,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "48758c8c",
-      "content_hash": "c62adbdc40bb0c456af30f5c75b3c4f9f75c457acec00cf11e4974581d55dde1",
+      "source_version": "1bb45751",
+      "content_hash": "7f5bcbcc7b37bc949a1c2967e2cae6def93849f49bb011159c8493c29023fdb9",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -8578,6 +8578,11 @@
           "number": 5462,
           "title": "query): preserve year-one timestamp boundaries and text round trips (#20853)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5806,
+          "title": "query): dedup in-flight cascades group tasks (#20883)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8585,7 +8590,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T23:52:22.162Z",
+      "verified_at": "2026-10-30T17:06:08.772Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -154314,6 +154319,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T16:51:25.082Z"
+    },
+    "rule-5806": {
+      "learning_id": "rule-5806",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5806,
+      "title": "query): dedup in-flight cascades group tasks (#20883)",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "1bb45751",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T17:06:08.772Z"
     }
   },
   "aliases": {
