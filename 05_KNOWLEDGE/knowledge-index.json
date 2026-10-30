@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T05:32:00.437Z",
-  "total_verified_learnings": 1171,
+  "last_updated": "2026-10-30T05:39:29.395Z",
+  "total_verified_learnings": 1172,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -32577,8 +32577,8 @@
       "slug": "juicedata-juicefs",
       "platform": "github",
       "source_url": "https://github.com/juicedata/juicefs",
-      "source_version": "a04b8808",
-      "content_hash": "bfac360530447367b3a288db7deeb6cc7513e9bcab50b92c8efb29378a366d1a",
+      "source_version": "5916ff02",
+      "content_hash": "6c4e9dfc5144a3c6b112e2bd181ac3a5ae65ea49feaf5d76e06f319297ffb5e2",
       "dossier_path": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
       "promoted_rules": [
@@ -32621,6 +32621,11 @@
           "number": 5355,
           "title": "warmup: reuse in-flight full-block downloads (#7748)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5613,
+          "title": "cmd/sync: support Neon Object Storage and add its setup docs (#7638)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -32628,7 +32633,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T17:42:52.181Z",
+      "verified_at": "2026-10-30T05:39:23.460Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44669,8 +44674,8 @@
       "slug": "prof18-feed-flow",
       "platform": "github",
       "source_url": "https://github.com/prof18/feed-flow",
-      "source_version": "478079e6",
-      "content_hash": "f5717861eb2627527ec3f695c9a33030a8c950d4e212ccdee83773800619b246",
+      "source_version": "744cf88f",
+      "content_hash": "1695e7860d91d9fa31b3c5edf5dd3170d423978b0c45991f5cbf7e5ae9247963",
       "dossier_path": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prof18-feed-flow-learnings.md",
       "promoted_rules": [
@@ -44683,6 +44688,11 @@
           "number": 4494,
           "title": "Add iOS website verification and enable recovery in release builds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5612,
+          "title": "Show and save the real error when the desktop app crashes during startup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44690,7 +44700,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T23:53:32.461Z",
+      "verified_at": "2026-10-30T05:39:20.702Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57115,8 +57125,8 @@
       "slug": "yugabyte-yugabyte-db",
       "platform": "github",
       "source_url": "https://github.com/yugabyte/yugabyte-db",
-      "source_version": "c9f96027",
-      "content_hash": "7244fd647d0a43374b011fa131c991e74da390d9ee7ce0ed7252449afba44769",
+      "source_version": "b286efd7",
+      "content_hash": "801df97a169325087389ccbbe499594f3ca778ea7cf72d4caafe31fc3cac3dd2",
       "dossier_path": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
       "promoted_rules": [
@@ -57176,7 +57186,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T16:52:05.170Z",
+      "verified_at": "2026-10-30T05:39:29.369Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -150573,6 +150583,81 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T05:32:00.419Z"
+    },
+    "learn-github-reason-machines-reason-network": {
+      "learning_id": "learn-github-reason-machines-reason-network",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "reason-machines/reason-network",
+      "repository": "reason-machines/reason-network",
+      "slug": "reason-machines-reason-network",
+      "platform": "github",
+      "source_url": "https://github.com/reason-machines/reason-network",
+      "source_version": "58727119",
+      "content_hash": "0f2c7e21f3f8728dd00bf9b17ca7d00f5b253155df2a06dec81c5f894f13021d",
+      "dossier_path": "07_PROJECT_LEARNING/reason-machines-reason-network-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/reason-machines-reason-network-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 5611,
+          "title": "Hermes bridge: no panic on a racing ack, setup gives up on a hung hermes --versi",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-30T05:39:12.211Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-5611": {
+      "learning_id": "rule-5611",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5611,
+      "title": "Hermes bridge: no panic on a racing ack, setup gives up on a hung hermes --versi",
+      "source_url": "https://github.com/reason-machines/reason-network",
+      "source_version": "58727119",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:39:12.211Z"
+    },
+    "rule-5612": {
+      "learning_id": "rule-5612",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5612,
+      "title": "Show and save the real error when the desktop app crashes during startup",
+      "source_url": "https://github.com/prof18/feed-flow",
+      "source_version": "744cf88f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:39:20.702Z"
+    },
+    "rule-5613": {
+      "learning_id": "rule-5613",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5613,
+      "title": "cmd/sync: support Neon Object Storage and add its setup docs (#7638)",
+      "source_url": "https://github.com/juicedata/juicefs",
+      "source_version": "5916ff02",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T05:39:23.460Z"
     }
   },
   "aliases": {

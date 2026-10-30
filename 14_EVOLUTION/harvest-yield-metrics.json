@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T05:32:00.519Z",
-  "total_cycles_completed": 6092,
-  "total_learnings_persisted": 6092,
-  "total_rules_promoted": 5580,
+  "last_updated": "2026-10-30T05:39:29.504Z",
+  "total_cycles_completed": 6096,
+  "total_learnings_persisted": 6096,
+  "total_rules_promoted": 5583,
   "history": [
-    {
-      "timestamp": "2026-10-28T20:08:46.311Z",
-      "repository": "projectcontour/contour",
-      "learningId": "learn-github-projectcontour-contour",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T20:08:48.994Z",
-      "repository": "Cactus-Compute/whistle",
-      "learningId": "learn-huggingface-cactus-compute-whistle",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T20:15:40.091Z",
-      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T20:15:51.281Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T20:15:54.191Z",
       "repository": "meilisearch/meilisearch",
@@ -1403,6 +1375,34 @@
       "repository": "argoproj/argo-workflows",
       "learningId": "learn-github-argoproj-argo-workflows",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T05:39:12.316Z",
+      "repository": "reason-machines/reason-network",
+      "learningId": "learn-github-reason-machines-reason-network",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T05:39:20.808Z",
+      "repository": "prof18/feed-flow",
+      "learningId": "learn-github-prof18-feed-flow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T05:39:23.567Z",
+      "repository": "juicedata/juicefs",
+      "learningId": "learn-github-juicedata-juicefs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T05:39:29.504Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

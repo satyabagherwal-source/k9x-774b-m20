@@ -4706,3 +4706,7 @@ https://huggingface.co/LiconStudio/Minimax-H3-VBVR
 # --- Automatically Discovered by AI Scout Engine [2026-10-30T03:34:50.942Z] ---
 # [AI-AGENTS] yuezhiai/jonex (1059 score) - All-in-One Multimodal Parsing Engine + Ontology-Powered, LLM Wiki-Driven AI-Read
 https://github.com/yuezhiai/jonex
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-30T05:39:05.670Z] ---
+# [AI-AGENTS] reason-machines/reason-network (1001 score) - Reason Network: your team's coding agents, talking to each other. The engine beh
+https://github.com/reason-machines/reason-network

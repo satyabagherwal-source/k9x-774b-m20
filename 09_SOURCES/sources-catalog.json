@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "c9f96027",
+    "sourceVersion": "b286efd7",
     "license": "NOASSERTION",
-    "contentHash": "7244fd647d0a43374b011fa131c991e74da390d9ee7ce0ed7252449afba44769",
-    "lastHarvestedAt": "2026-10-28T16:52:05.264Z",
+    "contentHash": "801df97a169325087389ccbbe499594f3ca778ea7cf72d4caafe31fc3cac3dd2",
+    "lastHarvestedAt": "2026-10-30T05:39:29.496Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "a04b8808",
+    "sourceVersion": "5916ff02",
     "license": "Apache-2.0",
-    "contentHash": "bfac360530447367b3a288db7deeb6cc7513e9bcab50b92c8efb29378a366d1a",
-    "lastHarvestedAt": "2026-10-28T17:42:52.277Z",
+    "contentHash": "6c4e9dfc5144a3c6b112e2bd181ac3a5ae65ea49feaf5d76e06f319297ffb5e2",
+    "lastHarvestedAt": "2026-10-30T05:39:23.562Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {
@@ -8663,10 +8663,10 @@
     "repository": "prof18/feed-flow",
     "platform": "github",
     "sourceUrl": "https://github.com/prof18/feed-flow",
-    "sourceVersion": "478079e6",
+    "sourceVersion": "744cf88f",
     "license": "Apache-2.0",
-    "contentHash": "f5717861eb2627527ec3f695c9a33030a8c950d4e212ccdee83773800619b246",
-    "lastHarvestedAt": "2026-10-25T23:53:32.521Z",
+    "contentHash": "1695e7860d91d9fa31b3c5edf5dd3170d423978b0c45991f5cbf7e5ae9247963",
+    "lastHarvestedAt": "2026-10-30T05:39:20.802Z",
     "learningId": "learn-github-prof18-feed-flow"
   },
   "michaelbull-kotlin-result": {
@@ -11538,5 +11538,15 @@
     "contentHash": "be89b16c379c66021e0f32f75dfa6eb38e96e42ac2121593546d7f6c2fbd4c04",
     "lastHarvestedAt": "2026-10-30T03:37:04.347Z",
     "learningId": "learn-github-yuezhiai-jonex"
+  },
+  "reason-machines-reason-network": {
+    "repository": "reason-machines/reason-network",
+    "platform": "github",
+    "sourceUrl": "https://github.com/reason-machines/reason-network",
+    "sourceVersion": "58727119",
+    "license": "Apache-2.0",
+    "contentHash": "0f2c7e21f3f8728dd00bf9b17ca7d00f5b253155df2a06dec81c5f894f13021d",
+    "lastHarvestedAt": "2026-10-30T05:39:12.310Z",
+    "learningId": "learn-github-reason-machines-reason-network"
   }
 }

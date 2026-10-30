@@ -6115,3 +6115,7 @@
 | `CYCLE-20261030-W4EE` | `2026-10-30T05:19:39.590Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5608` | Yes (`1815c077...`) |
 | `CYCLE-20261030-BZS6` | `2026-10-30T05:32:00.102Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5609` | Yes (`4a6ccc79...`) |
 | `CYCLE-20261030-C03J` | `2026-10-30T05:32:00.511Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5610` | Yes (`61da933d...`) |
+| `CYCLE-20261030-L99U` | `2026-10-30T05:39:12.306Z` | `reason-machines/reason-network` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5611` | Yes (`0f2c7e21...`) |
+| `CYCLE-20261030-LFTQ` | `2026-10-30T05:39:20.798Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5612` | Yes (`1695e786...`) |
+| `CYCLE-20261030-LHYE` | `2026-10-30T05:39:23.558Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5613` | Yes (`6c4e9dfc...`) |
+| `CYCLE-20261030-LMJ9` | `2026-10-30T05:39:29.493Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md` | Yes (`801df97a...`) |

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-QPXA",
-    "timestamp": "2026-10-28T01:00:10.558Z",
-    "repository": "arkivanov/Decompose",
-    "learningId": "learn-github-arkivanov-decompose",
-    "contentHash": "4d6f82f869d5ee5ca9c049c72107c6ef1cbad437714576c1606ab0dd9c4702a5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-QSLG",
-    "timestamp": "2026-10-28T01:00:14.020Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-    "contentHash": "56c38c0b9b2761541b0dbecc2a6bb45c2dcbdb8da987c924c15b761210448cc9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-QXYX",
-    "timestamp": "2026-10-28T01:00:20.985Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "4865a7ee73a7334ce323ac13aeae3d9064a9f93747797661423aee049758c8c5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-ZD6G",
-    "timestamp": "2026-10-28T01:06:53.944Z",
-    "repository": "Bingsu/adetailer",
-    "learningId": "learn-huggingface-bingsu-adetailer",
-    "contentHash": "ae2bdeb5f7f1db5485ef3fd87819b6e5480f616518cdc167c61efcffad382c59",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-ZDSD",
     "timestamp": "2026-10-28T01:06:54.733Z",
     "repository": "asciinema/asciinema",
@@ -7492,6 +7432,66 @@
     "contentHash": "61da933d785b7d7d537eb8004215924cef5c7c8b08151f35d043e0e9de30d5b2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-L99U",
+    "timestamp": "2026-10-30T05:39:12.306Z",
+    "repository": "reason-machines/reason-network",
+    "learningId": "learn-github-reason-machines-reason-network",
+    "contentHash": "0f2c7e21f3f8728dd00bf9b17ca7d00f5b253155df2a06dec81c5f894f13021d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-LFTQ",
+    "timestamp": "2026-10-30T05:39:20.798Z",
+    "repository": "prof18/feed-flow",
+    "learningId": "learn-github-prof18-feed-flow",
+    "contentHash": "1695e7860d91d9fa31b3c5edf5dd3170d423978b0c45991f5cbf7e5ae9247963",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-LHYE",
+    "timestamp": "2026-10-30T05:39:23.558Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "6c4e9dfc5144a3c6b112e2bd181ac3a5ae65ea49feaf5d76e06f319297ffb5e2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-LMJ9",
+    "timestamp": "2026-10-30T05:39:29.493Z",
+    "repository": "yugabyte/yugabyte-db",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "801df97a169325087389ccbbe499594f3ca778ea7cf72d4caafe31fc3cac3dd2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

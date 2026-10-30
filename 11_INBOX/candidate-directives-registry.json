@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T00:25:48.197Z",
+  "last_updated": "2026-10-30T05:39:29.502Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3291,6 +3291,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-bridgecrewio-checkov"
+    },
+    {
+      "id": "CD-LMJI",
+      "directive_title": "[#35781] DocDB: Replace WAL segments of idle tablets with a quiescent marker (#3",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "yugabyte/yugabyte-db",
+      "source_commit": "b286efd7",
+      "date_staged": "2026-10-30",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-yugabyte-yugabyte-db"
     }
   ]
 }

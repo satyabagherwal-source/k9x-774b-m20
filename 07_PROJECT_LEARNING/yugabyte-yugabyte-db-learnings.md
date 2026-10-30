@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `c9f96027`  
+> **Source Version**: `b286efd7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T16:52:04.749Z  
+> **Timestamp**: 2026-10-30T05:39:29.238Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T16:52:04.526Z  
+> **Harvest Timestamp**: 2026-10-30T05:39:28.454Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10636 stars
+- **Stars / Engagement**: 10637 stars
 
 ---
 
@@ -2250,11 +2250,14 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #36079** (2026-10-28): **[BACKPORT 2026.1][#35634] YSQL: import rejection of generated columns in COPY FROM WHERE**
-  *Symptoms*: ## Summary  Backport of yugabyte/yugabyte-db#36004 (master commit 520b08880d73242ecb62638e5ab03105935d6ce1) to `2026.1`.  Import two upstream PostgreSQL REL_15_STABLE commits ([8278737bfd0](https://github.com/postgres/postgres/commit/8278737bfd0a37b68121a42a0b0a6775488adb48) and [07e833e3cff](https://github.com/postgres/postgres/commit/07e833e3cff3da136980c7a4e30e965f825ae83c)) so that `COPY ... FROM ... WHERE` rejects conditions that reference a generated column.  Before this change, `COPY t(a) FROM stdin WHERE b > 2`, with `b` a stored generated column, loads 0 rows with no error, and `WHERE b IS NULL` loads every row: the WHERE clause is evaluated before `ExecComputeStoredGenerated()` fills in `b`, so the filter always sees NULL. Both now fail with "generated columns are not supported in COPY FROM WHERE conditions".  yugabyte/postgres side: yugabyte/postgres#42 (approved). The `src/postgres` pin in `src/lint/upstream_repositories.csv` moves to its last commit:  - 8278737bfd0a37b68121a42a0b0a6775488adb48 (upstream, in 15.15) -> 9ee82b98745852e724d297cb590c61470412de1b (yb-pg15) - 07e833e3cff3da136980c7a4e30e965f825ae83c (upstream) -> d4536bc26783a7739cb55bb2487a35ee949fcbed (yb-pg15, the new pin)  Both applied without conflicts.  `2026.1` and master both pin the yugabyte/postgres `yb-pg15` branch, and `2026.1`'s current pin 3c76b78a8ffa7cbbf38686f17ac7bc2aeecb7bab is the parent of the two imports there, so `2026.1` moves to the same pin as master and needs no separate yugab
+- **Issue #36315** (2026-10-30): **[#36232] DocDB: Keep log_stop_retaining_min_disk_mb in KB**
+  *Symptoms*: ## Summary https://github.com/yugabyte/yugabyte-db/commit/a4eb718254006acf3d39aa5df2580c59371195b1 switched `log_stop_retaining_min_disk_mb` from KB to MB. This does not account for users who already have the value set which would have their value of `log_stop_retaining_min_disk_mb` become 1024 times bigger.  ## Fix Fixes #36232  This reverts the flag to KB and updates the help text and stable docs. In `CDCServiceTestMinSpace`, the simulated free space is now one byte below the threshold, so it stays above the WAL segment pre-allocation size.  ## Upgrade/Rollback safety - **From a stable release (2024.2 to 2026.1):** no change; those releases read the flag as KB. - **From a 2.31.0.x build containing a4eb7182540:** explicitly set values become 1024x smaller (N MB becomes N KB), so space-based WAL GC triggers later. Multiply explicit settings by 1024 when upgrading. Rolling back to such a build reverses this. - **Mixed-version clusters:** each node reads its own flag, and no wire format or persisted state changes.  ## Test plan ``` ./yb_build.sh debug --cxx-test cdc_service-int-test --gtest_filter CDCServiceTestMinSpace.TestLogRetentionByOpId_MinSpace ./yb_build.sh debug --cxx-test xcluster-test --gtest_filter XClusterTest.TestPrematureLogGC ```
 
-- **Issue #36059** (2026-10-28): **[DocDB][PgVector] Rollback to 2025.2.0–2025.2.5 fails when a vector index was created after the upgrade, before finalize**
-  *Symptoms*: Jira Link: [DB-25240](https://yugabyte.atlassian.net/browse/DB-25240) ### Description  After upgrading from 2025.2.5.2 and before finalizing, a ybhnsw (vector) index is created. Rolling back to 2025.2.5.2 then leaves that table's tablets unable to open on every tserver that has rolled back:  `Tablet failed to bootstrap: Not found (yb/util/env_posix.cc:274): /mnt/d0/yb-data/tserver/data/rocksdb/table-<id>/tablet-<id>.vi-<oid>/vectorindex_1.usearch: No such file or directory`  The index was written by the new build as `vectorindex_1.yb_hnsw`; the rolled-back tserver looks for `vectorindex_1.usearch`. The other replicas cannot remote-bootstrap the failed one (`Unable to begin remote bootstrap on peer ... NOT_FOUND`).  YBA then stops the rollback before the next tserver, because taking it down would leave the table without quorum: `CheckNodesAreSafeToTakeDown ... Taking down the requested node(s) is unsafe because 3 tablet(s) would not have enough replicas for quorum.` The universe is left in RollbackFailed, with the masters and two tservers on the new build and one tserver on 2025.2.5.2, and a new upgrade request is refused ("Software version is already ...").  The table stays readable from the two replicas on the new build. Indexes created before the upgrade are not affected. The problem does not happen without a vector index.  Related: #36056 (a vector index created during the rolling upgrade itself).  ### Priority: high  Rollback before finalize is the safe way back from an 
+- **Issue #36274** (2026-10-30): **[PLAT-23451] YBA: Merge audit additional details atomically in parallel prechecks**
+  *Symptoms*: ## Summary  A software upgrade with `runOnlyPrechecks: true` puts all its prechecks into one `AllPreflightChecks` subtask group, so they run in parallel. `CheckUpgrade` (adds `finalizeRequired`, `ysqlMajorVersionUpgrade`) and `PGUpgradeTServerCheck` (adds the `pg_upgrade --check` output: `checks`, `title`, `overallStatus`) each read the task's audit additional details, added their fields and saved the whole object back. When they overlapped, whichever saved last dropped the other's fields, so callers reading the precheck result from the audit could find no PG upgrade checks.  This change: - adds `AuditService.mergeAdditionalDetails(taskUUID, fields)`, which reads, merges and saves the details under one lock (`AuditService` is a singleton); `updateAdditionalDetails` is now synchronized as well - uses it in `CheckUpgrade` and `PGUpgradeTServerCheck` instead of their own copy-and-save  ## Upgrade/Rollback safety  No schema, API or persisted format changes; the audit details keep the same fields.  ## Test plan  - New `AuditTest` cases: merge keeps existing fields, 8 parallel merges keep all fields, merge without an audit row is a no-op. - `sbt "testOnly com.yugabyte.yw.models.AuditTest com.yugabyte.yw.commissioner.tasks.subtasks.check.CheckUpgradeTest com.yugabyte.yw.commissioner.tasks.subtasks.check.PGUpgradeTServerCheckTest"`: 32 passed.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+  **Post-Mortem & Fix Analysis**:
+  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=36274) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=36274) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/yugabyte/yugabyte-db?pullRequest=36274) it.</sub>
+  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/36274) <!-- Reviewable:end --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2271,337 +2274,1037 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7d6468da` (2026-10-28)
-**Commit Message**: [#35462] DocDB: Fix RemoveTabletServerTest.MayStillHoldLease by waiting for a post-blacklist balancer run in drain (#35463)
+### Incident Patch 1: `c4bda916` (2026-10-30)
+**Commit Message**: [#35781] DocDB: Replace WAL segments of idle tablets with a quiescent marker (#35782)
 
 ## Summary
 
-`MasterClusterTest::DrainTabletServer` returned as soon as the master
-showed no replicas on the blacklisted tserver, but a cluster balancer
-run that read the old blacklist could already have queued an
-`AsyncAddServerTask` toward it (here for a `pg_advisory_locks` tablet).
-That task outlives the run and never re-checks the blacklist, so the add
-could land after the drain returned. Remove then failed with "is hosting
-tablet" before it reached the lease check the test exercises. The helper
-now waits for a balancer run that started after the blacklist change to
-end with `ClusterBalancerActivityInfo::IsIdle()`, meaning no balancer
-tasks are pending, before it accepts the drained state. It looks up the
-leader master on every poll so leadership changes during the drain don't
-stall the wait.
+The main goal of this change is to let a tablet that receives no
+operations for a while bootstrap without reading or writing its WAL
+(#35781).
+Today every restart of such a tablet replays the tail of its last
+segment, because retryable requests are flushed only at rollover, and
+also either scans the unclosed last segment or creates and fsyncs a new
+one.
+In `many_tablets_bootstrap-itest`, 2000 tablets with 33 MB of flushed
+WAL each read 27 GB per restart, which takes 55 s with a cold page
+cache.
 
----
-_Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed
-the failure logs, wrote the change, and verified it locally._
+An idle tablet now flushes all storages and replaces its WAL segments
+with a small `quiescent_marker` file (`QuiescentMarkerPB`).
+The marker states that every op up to its op id L is durable in all
+storages, and carries what bootstrap would otherwise take from the
+replaced segments: L, its hybrid time and restart-safe time, the
+monotonic counter and the next segment number.
+The file is a PB container; since #35791 its header embeds only the
+`QuiescentMarkerPB` and `OpIdPB` descriptors, so it is under 1 KB.
+The design is in `architecture/design/docdb-quiescent-tablets.md`.
 
-## Test plan
+Entering the mode (`
 
-./yb_build.sh tsan --clang21 --cxx-test master_cluster_test
---gtest-filter RemoveTabletServerTest.MayStillHoldLeas
-
-**File**: `src/yb/master/master_cluster_test.cc` (modified, +27/-1)
+**File**: `architecture/design/docdb-quiescent-tablets.md` (added, +162/-0)
 ```diff
-@@ -21,6 +21,7 @@
- 
- #include "yb/master/catalog_entity_info.h"
- #include "yb/master/catalog_manager.h"
-+#include "yb/master/cluster_balance.h"
- #include "yb/master/master_cluster_client.h"
- #include "yb/master/master_error.h"
- #include "yb/master/mini_master.h"
-@@ -403,11 +404,36 @@ Status MasterClusterTest::DrainTabletServer(
-   auto& hp = tserver_it->registration().common().broadcast_addresses(0);
-   RETURN_NOT_OK(client.BlacklistHost(HostPortPB(hp)));
- 
-+  // A balancer run that read the old blacklist may have queued an add to this ts, and that task
-+  // outlives the run. Only trust the checks below once a run that started after the blacklist
-+  // change has ended with no balancer tasks pending.
-+  auto latest_balancer_activity = [this]() -> Result<ClusterBalancerActivityInfo> {
-+    auto* leader = VERIFY_RESULT(cluster_->GetLeaderMiniMaster());
-+    return leader->catalog_manager_impl().cluster_balancer()->GetLatestActivityInfo();
-+  };
-+  const auto blacklist_time = MonoTime::Now();
-+  RETURN_NOT_OK(WaitFor(
-+      [&latest_balancer_activity, blacklist_time]() -> Result<bool> {
-+        return VERIFY_RESULT(latest_balancer_activity()).run_end_time_ > blacklist_time;
-+      },
-+      timeout, "Cluster balancer run after blacklist change"));
-+  const auto fresh_run_start = MonoTime::Now();
+@@ -0,0 +1,162 @@
++# Quiescent tablets
 +
-   // Now wait for the cluster balancer to move all tablets off the tserver.
-   auto ts_proxy = VERIFY_RESULT(CreateTabletServerServiceProxy(uuid));
-   std::string message;
-   return WaitFor(
--      [this, &ts_proxy, &message, &uuid, &client]() -> Result<bool> {
-+      [this, &ts_proxy, &message, &uuid, &client, &latest_balancer_activity,
-+       fresh_run_start]() -> Result<bool> {
-+        auto activity = VERIFY_RESULT(latest_balancer_activity());
-+        if (activity.run_end_time_ <= fresh_run_start) {
-+          message = "waiting for a cluster balancer run that saw the blacklist";
-+          return false;
-+        }
-+        if (!activity.IsIdle()) {
-+          message = "waiting for the cluster balancer to have no pending tasks";
-+          return false;
-+        }
-         auto resp = VERIFY_RESULT(ListTabletsForTabletServer(ts_proxy));
-         for (const auto& entry : resp.entries()) {
-           if (entry.state() != tablet::RaftGroupStatePB::SHUTDOWN) {
++Status: in development.
++
++## Motivation
++
++A tablet that receives no operations for a while should bootstrap without reading or writing its WAL, and should keep no WAL on disk. Today every restart of such a tablet, graceful or not, reads and fsyncs WAL files even though all of its data is flushed.
++
++With everything flushed, bootstrap still:
++
++- Replays from `min(flushed op id, retryable requests op id)`. `TabletBootstrapStatePB` is flushed only from `pre_log_rollover_callback`, so replay starts near the beginning of the last segment (`SkipFlushedEntries`). In `many_tablets_bootstrap-itest`, 1000 tablets with 0.85 MB of flushed WAL each read 851 MB per restart.
++- After a graceful restart, the last segment is closed, so `FinishBootstrap` creates a new segment, which costs a file fsync and a WAL directory fsync.
++- After a non-graceful restart, the last segment has no footer, so `Log::ReuseAsActiveSegment` reads it in full to find its end and rebuild its footer and log index.
++
++When nothing needs replay, the WAL provides only: the last and committed op id, orphaned replicates, retryable requests, the hybrid clock (`UpdateClock` per entry), the monotonic counter (`UpdateMonotonicCounter`) and the restart-safe time of the last entry. All of this fits in a small file.
++
++Switching into and out of this mode is expected to be rare. Its cost is paid at the switch, not at every restart.
++
++## Design: the marker replaces a log prefix
++
++A quiescent tablet replaces its WAL segments with a small file, the quiescent marker. It is like the last included index and term of a Raft snapshot, where the flushed storages play the role of the snapshot.
++
++The marker states: every op with index up to L is durable in every storage, and segments that hold ops up to L may be absent. Storages here are the regular DB, the intents DB, vector indexes, the superblock, consensus metadata and the retryable requests.
++
++- **Used together with the segments.** The log is the marker followed by the segments that hold ops after L. Bootstrap starts from the marker's values and replays the segments on top, so each value is the max of the two. Segments whose max index is at most L are leftovers and are deleted when the log opens.
++- **Valid after leaving the mode.** New appends only add ops after L, so the marker stays true. Nothing deletes it on the first append. GC may later delete segments after L as usual, and the marker is then only a lower bound.
++- **Rewritten on re-entry.** Entering the mode again overwrites it with a larger L.
++- **Removed with the WAL directory.** Tablet delete, tombstone and the remote bootstrap destination replace the directory and the marker with it.
++
++The tablet is quiescent when the marker exists and there are no segments (`TabletPeer::IsQuiescent`). The first append after that starts a new segment at L+1.
++
++```mermaid
++stateDiagram-v2
++    Active --> Entering: idle for quiescent_tablet_idle_sec
++    Entering --> Active: give up
++    Entering --> Quiescent: marker written, segments up to L deleted
++    Quiescent --> Active: first append starts a segment at L+1
++```
++
++A restart in the quiescent state reads no WAL. Any append returns the tablet to active without touching the marker.
++
++## Marker contents and location
++
++`QuiescentMarkerPB` (`log.proto`) holds what bootstrap would otherwise take from the WAL, plus a guard.
++
++| Field | Used for |
++| --- | --- |
++| `tablet_id` | Rejecting a marker that came with another tablet's files |
++| `op_id` (L) | `last_id` and `last_committed_id` in `ConsensusBootstrapInfo`; lookup of the op preceding the first append |
++| `hybrid_time` of L | `clock->Update`, `MvccManager::SetLastReplicated` |
++| `monotonic_counter` | `Tablet::UpdateMonotonicCounter`; the counter exists only in replicate messages |
++| `entry_time` of the batch with L | `RetryableRequests::Clock().Adjust` |
++| `last_segment_sequence_number` | Numbering of the next segment |
++
++The file is `quiescent_marker` in the WAL directory, next to the bootstrap state file, so it shares the directory's lifecycle. `IsLogFileName` does not match it, so `LogReader` skips it. It is a PB container: `pb_util::WritePBContainerToPath` writes it to a temp file, fsyncs it, renames it and fsyncs the directory. The container header embeds only the descriptors of the types the message reaches (#35791), here `QuiescentMarkerPB` and `OpIdPB`, so the file stays under 1 KB, and `yb-pbc-dump` can print it.
++
++## Entering the mode
++
++A replica enters the mode after nothing was appended to its log for `quiescent_tablet_idle_sec` (default 600). `TSTabletManager` keeps a priority queue of tablets ordered by when each could enter the mode: its last append time plus the idle period. A background task wakes for the earliest one, and at least once a minute, or once per idle period if that is shorter, to pick up new tablets and `quiescent_tablet_idle_sec` raised from 0. It starts only after the tserver 
 ```
 
----
-
-### Incident Patch 2: `ca5d0234` (2026-10-28)
-**Commit Message**: [#35479] YSQL: Fix master deadlock in PgDdlAtomicitySnapshotTest.SnapshotTest by fencing before restore submit (#35480)
-
-## Summary
-
-`CatalogManager::PrepareRestore` ran during raft apply of the
-`RESTORE_SYS_CATALOG` op and called `IncrementPitrCount()`, which waits
-for the exclusive `pitr_count_lock_`. Meanwhile, an in-flight sys
-catalog write (for example a DDL rollback task) held that lock shared
-while waiting for its own raft apply, which was queued behind the
-restore op, so the master deadlocked until the `SyncWrite` timeout.
-
-The fix moves the fence to before submit. `SubmitRestore` calls
-`FenceSysCatalogForRestore(restoration_id)`, which records the
-restoration id, sets `restoring_sys_catalog_` and drains in-flight
-writes. On apply, `PrepareRestore(restoration_id)` finds the op's own
-id, removes it and skips the wait. It keeps the old waiting path only
-for ops this node did not fence for. After the op completes or fails to
-submit, `SubmitRestore` calls
-`UnfenceSysCatalogForRestore(restoration_id)`. If the op never applied
-on this node (for example it was rejected asynchronously for a stale
-term), this drops the fence. `restoring_sys_catalog_` is cleared on
-unfence, restore f
-
-**File**: `src/yb/master/catalog_manager.cc` (modified, +1/-1)
+**File**: `src/yb/consensus/consensus.proto` (modified, +3/-0)
 ```diff
-@@ -14592,7 +14592,7 @@ void CatalogManager::SysCatalogLoaded(SysCatalogLoadingState&& state) {
+@@ -357,6 +357,9 @@ message ConsensusRequestPB {
  
-   SchedulePostTabletCreationTasksForPendingTables(state.epoch);
-   EnqueuePendingBackfillsAfterLoad();
--  restoring_sys_catalog_ = false;
-+  ClearRestoringSysCatalogIfNotFenced();
- 
-   if (FLAGS_enable_ysql) {
-     // Initialize the catalog version cache.
-```
-
-**File**: `src/yb/master/catalog_manager.h` (modified, +16/-1)
-```diff
-@@ -1862,7 +1862,15 @@ class CatalogManager : public CatalogManagerIf, public SnapshotCoordinatorContex
- 
-   void SetCDCServiceEnabled();
- 
--  void PrepareRestore() override;
-+  void PrepareRestore(const TxnSnapshotRestorationId& restoration_id) override;
+   // If enabled, a trace will be collected for this RPC and returned in the response.
+   optional bool trace_requested = 12;
 +
-+  // Fails in-flight sys catalog work and rejects new RPCs ahead of the RESTORE_SYS_CATALOG op for
-+  // restoration_id. Must be called before the op is submitted, not on apply.
-+  void FenceSysCatalogForRestore(const TxnSnapshotRestorationId& restoration_id);
-+
-+  // Drops the fence for restoration_id unless its op was applied on this node.
-+  // Must be called once the op has completed or failed to submit.
-+  void UnfenceSysCatalogForRestore(const TxnSnapshotRestorationId& restoration_id);
- 
-   void RunXReplBgTasks(const LeaderEpoch& epoch);
- 
-@@ -2762,6 +2770,13 @@ class CatalogManager : public CatalogManagerIf, public SnapshotCoordinatorContex
-   // that require this lock will fail.
-   std::atomic_bool restoring_sys_catalog_ = false;
- 
-+  // Restorations fenced by FenceSysCatalogForRestore whose op has not been applied yet.
-+  // restoring_sys_catalog_ is only cleared while this is empty.
-+  std::mutex restore_fence_mutex_;
-+  std::vector<TxnSnapshotRestorationId> fenced_restorations_ GUARDED_BY(restore_fence_mutex_);
-+
-+  void ClearRestoringSysCatalogIfNotFenced() EXCLUDES(restore_fence_mutex_);
-+
-   // Lock used to fence operations and leader elections. All logical operations
-   // (i.e. create table, alter table, etc.) should acquire this lock for
-   // reading. Following an election where this master is elected leader, it
-```
-
-**File**: `src/yb/master/catalog_manager_ext.cc` (modified, +60/-11)
-```diff
-@@ -10,6 +10,7 @@
- // or implied.  See the License for the specific language governing permissions and limitations
- // under the License.
- 
-+#include <algorithm>
- #include <memory>
- #include <optional>
- #include <queue>
-@@ -3314,7 +3315,7 @@ Status CatalogManager::RestoreSysCatalog(
-   if (!s.ok() && leader_mode) {
-     LOG_WITH_PREFIX_AND_FUNC(INFO)
-         << "PITR: Accepting RPCs to the master leader because of restoration failure: " << s;
--    restoring_sys_catalog_ = false;
-+    ClearRestoringSysCatalogIfNotFenced();
-   }
-   // As RestoreSysCatalog is synchronous on Master it should be ok to set the completion
-   // status in case of validation failures so that it gets propagated back to the client before
-@@ -3863,14 +3864,18 @@ Result<size_t> CatalogManager::GetNumLiveTServersForActiveCluster() {
-   return ts_descs.size();
++  // The last op replicated to all peers tracked by the leader.
++  optional OpIdPB all_replicated_op_id = 13;
  }
  
--// This function is used to fence other work in the catalog manager which modifies tables or tablets
--// with PITR restores. It is called during the apply of the RESTORE_SYS_CATALOG raft op.
-+// These functions fence other work in the catalog manager which modifies tables or tablets with
-+// PITR restores. The leader that submits a RESTORE_SYS_CATALOG op fences in
-+// FenceSysCatalogForRestore before submitting it. PrepareRestore, called during the apply of the
-+// op, only fences if this node did not fence for that op (e.g. it was submitted in an earlier
-+// term). Fencing during apply can deadlock: IncrementPitrCount waits for in-flight sys catalog
-+// writes, whose raft ops may be queued behind the restore op.
- //
--// Ideally this function would use the leader lock to wait for all async tasks and rpc handlers
-+// Ideally the fence would use the leader lock to wait for all async tasks and rpc handlers
- // accessing catalog entities to return, but this is not possible:
--//  *  exclusively acquiring the CatalogManager::leader_mutex_ here introduces a lock inversion with
--//     ReplicaState::update_lock_.
--//  *  waiting to acquire the leader mutex here can add unbounded delay to a raft op apply,
-+//  *  exclusively acquiring the CatalogManager::leader_mutex_ during apply introduces a lock
-+//     inversion with ReplicaState::update_lock_.
-+//  *  waiting to acquire the leader mutex during apply can add unbounded delay to a raft op apply,
- //     preventing raft heartbeats.
- //
- // Much existing code in the catalog manager acquires the locks in this order:
-@@ -3880,17 +3885,61 @@ Result<size_t> CatalogManager::GetNumLiveTServersForActiveCluster() {
- // work (1) and preventing any new work until the sys catalog is reloaded (2).
- //   (1) Any logical unit of work in the catalog manager should grab a LeaderEpoch when it begins.
- //     The sys catalog mutation API for tables and tablets checks LeaderEpoch::pitr_count. If the
--//     catalog work began before PrepareRestore was called and tried to write after PrepareRestore
--//     was called, then the work's cached pitr_count will not match the sys catalog's pitr_count and
--//     the write will fail.
-+//     catalog work began before the fence and tried to write after it, then the work's cached
-+//     pitr_count will not match the sys catalog's pitr_count and the write will fail.
- //   (2) ScopedLeaderSharedLock checks restoring_sys_catalog_ and fails if it is set, so any new
- //     tasks will fail.
--void CatalogManager::PrepareRestore() {
-+void CatalogManager::PrepareRestore(const TxnSnapshotRestorationId& restoration_id) {
-+  restoring_sys_catalog_ = true;
-+  {
-+    std::lock_guard lock(restore_fence_mutex_);
-+    auto it = std::find(fenced_restorations_.begin(), fenced_restorations_.end(), restoration_id);
-+    if (it != fenced_restorations_.end()) {
-+      fenced_restorations_.erase(it);
-+      return;
+ message ConsensusResponsePB {
+```
+
+**File**: `src/yb/consensus/consensus_queue.cc` (modified, +13/-2)
+```diff
+@@ -78,6 +78,7 @@ using namespace yb::size_literals;
+ DECLARE_uint64(rpc_max_message_size);
+ 
+ DECLARE_uint64(consensus_max_batch_size_bytes);
++DECLARE_bool(enable_quiescent_tablets);
+ DECLARE_int32(raft_heartbeat_interval_ms);
+ DECLARE_double(leader_failure_max_missed_heartbeat_periods);
+ 
+@@ -579,6 +580,9 @@ Status PeerMessageQueue::RequestForPeer(const string& uuid,
+     }
+ 
+     request->set_caller_term(queue_state_.current_term);
++    if (FLAGS_enable_quiescent_tablets) {
++      queue_state_.all_replicated_op_id.ToPB(request->mutable_all_replicated_op_id());
 +    }
-+  }
-   LOG_WITH_PREFIX(INFO) << "Disabling concurrent RPCs since restoration is ongoing";
-+  sys_catalog_->IncrementPitrCount();
+     unreachable_time =
+         MonoTime::Now().GetDeltaSince(peer->last_successful_communication_time);
+     if (member_type) *member_type = peer->member_type;
+@@ -1139,6 +1143,7 @@ Result<const PeerMessageQueue::TrackedPeer*> PeerMessageQueue::FindClosestPeerFo
+   LocalityLevel best_locality_level =
+       TablespaceParser::GetLocalityLevel(src_cloud_info, local_peer_pb_.cloud_info());
+   PeerMessageQueue::TrackedPeer* rbs_source = local_peer_;
++  const auto min_anchorable_index = VERIFY_RESULT(log_cache_.min_anchorable_index());
+   for (auto it = peers_map_.begin(); it != peers_map_.end(); it++) {
+     // don't consider locality of remote_tracked_peer with itself
+     if (!it->second->cloud_info.has_value() || remote_tracked_peer == it->second ||
+@@ -1147,14 +1152,15 @@ Result<const PeerMessageQueue::TrackedPeer*> PeerMessageQueue::FindClosestPeerFo
+     }
+ 
+     // Consider only those followers as rbs source which are in the same term as the leader
+-    // and have last_received_opid >= leader log's min available index.
++    // and have last_received_opid >= leader log's min anchorable index, since the source anchors
++    // the leader's log at its last op.
+     // TODO: Add a gflag that sets the max allowed difference between the leader's last
+     // logged opid and that of the rbs source. Reject peer as an rbs source if
+     // leader->last_received.index - remote_peer->last_received.index > flag_value
+     OpId remote_last_received_opid = it->second->last_received;
+     if (it->second->member_type != PeerMemberType::VOTER ||
+         remote_last_received_opid.term != queue_state_.current_term ||
+-        remote_last_received_opid.index < VERIFY_RESULT(log_cache_.earliest_op_index()) ||
++        remote_last_received_opid.index < min_anchorable_index ||
+         !it->second->is_last_exchange_successful) {
+       continue;
+     }
+@@ -1760,6 +1766,11 @@ OpId PeerMessageQueue::TEST_GetAllReplicatedIndex() const {
+   return queue_state_.all_replicated_op_id;
+ }
+ 
++OpId PeerMessageQueue::GetAllReplicatedOpId() const {
++  LockGuard lock(queue_lock_);
++  return queue_state_.mode == Mode::LEADER ? queue_state_.all_replicated_op_id : OpId::Min();
 +}
 +
-+void CatalogManager::FenceSysCatalogForRestore(const TxnSnapshotRestorationId& restoration_id) {
-+  LOG_WITH_PREFIX(INFO) << "Disabling concurrent RPCs before submitting sys catalog restore "
-+                        << restoration_id;
-+  {
-+    std::lock_guard lock(restore_fence_mutex_);
-+    fenced_restorations_.push_back(restoration_id);
-+  }
-   restoring_sys_catalog_ = true;
-+  // Called without restore_fence_mutex_: this waits for writes whose ops may be queued behind
-+  // another restore op, whose apply takes the mutex in PrepareRestore.
-+  // The bump is not undone if the op is never applied. In-flight work then fails with Aborted as
-+  // if a restore had happened, and new work picks up the new count.
-   sys_catalog_->IncrementPitrCount();
- }
- 
-+void CatalogManager::UnfenceSysCatalogForRestore(const TxnSnapshotRestorationId& restoration_id) {
-+  {
-+    std::lock_guard lock(restore_fence_mutex_);
-+    auto it = std::find(fenced_restorations_.begin(), fenced_restorations_.end(), restoration_id);
-+    if (it == fenced_restorations_.end()) {
-+      // Consumed by PrepareRestore:
+ OpId PeerMessageQueue::GetAllAppliedOpId() const {
+   LockGuard lock(queue_lock_);
+   return queue_state_.all_applied_op_id;
 ```
 
-**File**: `src/yb/master/master_snapshot_coordinator.cc` (modified, +9/-4)
+**File**: `src/yb/consensus/consensus_queue.h` (modified, +3/-0)
 ```diff
-@@ -625,7 +625,7 @@ class MasterSnapshotCoordinator::Impl {
-     }
-     // Disable concurrent RPCs to the master leader for the duration of sys catalog restore.
-     if (leader_term >= 0) {
--      context_.PrepareRestore();
-+      context_.PrepareRestore(restoration->restoration_id);
-     }
-     auto tablet = VERIFY_RESULT(operation.tablet_safe());
-     LOG_SLOW_EXECUTION(INFO, 1000, "Restore sys catalog took") {
-@@ -1882,9 +1882,14 @@ class MasterSnapshotCoordinator::Impl {
-     operation->set_completion_callback(
-         tablet::MakeWeakSynchronizerOperationCompletionCallback(synchronizer));
+@@ -366,6 +366,9 @@ class PeerMessageQueue {
  
--    RETURN_NOT_OK(context_.Submit(std::move(operation), leader_term));
--
--    return synchronizer->Wait();
-+    cm_->FenceSysCatalogForRestore(restoration_id);
-+    auto status = context_.Submit(std::move(operation), leader_term);
-+    if (status.ok()) {
-+      // Rejections such as a stale term are reported here, not by Submit.
-+      status = synchronizer->Wait();
+   OpId TEST_GetCommittedIndex() const;
+ 
++  // Returns the last op replicated to all tracked peers, or OpId::Min() if not in leader mode.
++  OpId GetAllReplicatedOpId() const;
++
+   OpId GetAllAppliedOpId() const;
+ 
+   // Returns the current majority replicated OpId, for tests.
+```
+
+**File**: `src/yb/consensus/log-test.cc` (modified, +202/-0)
+```diff
+@@ -587,6 +587,39 @@ TEST_F(LogTest, WalStateAfterTailReplacedByEarlierTerm) {
+   ASSERT_OK(log_->Close());
+ }
+ 
++// Entries replayed from closed segments become durable before the first append starts a segment,
++// otherwise memtable flushes of them would wait for a WAL fsync.
++TEST_F(LogTest, WalStateOfReplayedEntriesWithoutActiveSegment) {
++  options_.durable_wal_write = false;
++  options_.interval_durable_wal_write = MonoDelta::FromSeconds(3600);
++  options_.bytes_durable_wal_write_mb = 1024;
++  BuildLog();
++  auto op_id = MakeOpId(1, 1);
++  ASSERT_OK(AppendNoOps(&op_id, 10));
++  ASSERT_OK(log_->Close());
++
++  BuildLog(/* byte_limit = */ -1, CreateNewSegment::kFalse);
++  log_->DisableSync();
++  SegmentSequence segments;
++  ASSERT_OK(ASSERT_RESULT(log_->GetLogReader())->GetSegmentsSnapshot(&segments));
++  for (const auto& segment : segments) {
++    auto read_result = segment->ReadEntries();
++    ASSERT_OK(read_result.status);
++    for (size_t i = 0; i != read_result.entries.size(); ++i) {
++      ASSERT_OK(log_->Append(
++          read_result.entries[i], read_result.entry_metadata[i], SkipWalWrite::kTrue));
 +    }
-+    cm_->UnfenceSysCatalogForRestore(restoration_id);
++  }
++  ASSERT_OK(log_->EnsureSegmentInitialized());
++  ASSERT_OK(log_->ReEnableSyncIfRequired());
++  const OpId last_op_id(1, 10);
++  ASSERT_EQ(log_->GetLatestEntryOpId(), last_op_id);
++  ASSERT_OK(WaitFor(
++      [this, &last_op_id] { return log_->WalState(last_op_id) == WalEntryState::kDurable; },
++      10s, "Replayed entries durable"));
++  ASSERT_OK(log_->Close());
++}
++
+ // Regression test for part of KUDU-735:
+ // if a log is not preallocated, we should properly track its on-disk size as we append to
+ // it.
+@@ -2462,4 +2495,173 @@ TEST_F(LogTest, YB_RELEASE_ONLY_TEST(TestSegmentAllocationFailureAndRecovery)) {
+   ASSERT_OK(log_->Close());
+ }
+ 
++// Reopening a log with a closed last segment starts no segment until the first append.
++TEST_F(LogTest, LazySegmentAllocation) {
++  BuildLog();
++  auto op_id = MakeOpId(1, 1);
++  ASSERT_OK(AppendNoOps(&op_id, 3));
++  ASSERT_OK(log_->Close());
++  CheckRightNumberOfSegmentFiles(1);
++
++  BuildLog(/* byte_limit = */ -1, CreateNewSegment::kFalse);
++  ASSERT_OK(log_->EnsureSegmentInitialized());
++  ASSERT_EQ(log_->TEST_ActiveSegment(), nullptr);
++  ASSERT_EQ(log_->num_segments(), 1);
++
++  ASSERT_OK(AppendNoOp(&op_id));
++  ASSERT_NE(log_->TEST_ActiveSegment(), nullptr);
++  ASSERT_EQ(log_->num_segments(), 2);
++  ASSERT_EQ(log_->GetLatestEntryOpId(), OpId(1, 4));
++  // The index of the segment before the new one is loaded lazily.
++  ASSERT_EQ(ASSERT_RESULT(log_->LookupOpId(1)), OpId(1, 1));
++  ASSERT_OK(log_->Close());
++  CheckRightNumberOfSegmentFiles(2);
++}
++
++// Replaces all segments with a marker, reopens the log and continues it after the marker.
++TEST_F(LogTest, QuiescentMarker) {
++  options_.segment_size_bytes = std::numeric_limits<size_t>::max();
++  BuildLog();
++  auto op_id = MakeOpId(1, 1);
++  ASSERT_OK(AppendNoOps(&op_id, 5));
++  ASSERT_OK(RollLog());
++  ASSERT_OK(AppendNoOps(&op_id, 5));
++  const OpId last_op_id(1, 10);
++  ASSERT_EQ(log_->num_segments(), 2);
++  ASSERT_EQ(ASSERT_RESULT(log_->MinAnchorableIndex()), 1);
++
++  QuiescentMarkerPB marker;
++  ASSERT_TRUE(log_->CloseActiveSegment(OpId(1, 9), &marker).IsTryAgain());
++  ASSERT_NE(log_->TEST_ActiveSegment(), nullptr);
++
++  ASSERT_OK(log_->CloseActiveSegment(last_op_id, &marker));
++  ASSERT_EQ(log_->TEST_ActiveSegment(), nullptr);
++  ASSERT_EQ(OpId::FromPB(marker.op_id()), last_op_id);
++  ASSERT_EQ(marker.tablet_id(), kTestTablet);
++  ASSERT_NE(marker.hybrid_time(), 0);
++  marker.set_monotonic_counter(42);
++  ASSERT_OK(log_->WriteQuiescentMarker(marker));
++  // Every bootstrap reads it.
++  ASSERT_LT(ASSERT_RESULT(env_->GetFileSize(Log::QuiescentMarkerPath(tablet_wal_path_))), 1_KB);
++  ASSERT_EQ(ASSERT_RESULT(log_->DeleteSegmentsCoveredByQuiescentMarker()), 2);
++  ASSERT_EQ(log_->num_segments(), 0);
++  CheckRightNumberOfSegmentFiles(0);
++  ASSERT_EQ(ASSERT_RESULT(log_->LookupOpId(last_op_id.index)), last_op_id);
++  ASSERT_NOK(log_->LookupOpId(last_op_id.index - 1));
++  ASSERT_EQ(log_->GetMinReplicateIndex(), last_op_id.index + 1);
++  // A peer at L can be sent the ops after it.
++  ASSERT_EQ(ASSERT_RESULT(log_->MinAnchorableIndex()), last_op_id.index);
++  int num_gced = 0;
++  ASSERT_OK(log_->TEST_GC(last_op_id.index, &num_gced));
++  ASSERT_EQ(num_gced, 0);
++  ASSERT_OK(log_->Close());
++  // Remote bootstrap may recreate the WAL dir of a closed log.
++  ASSERT_TRUE(log_->WriteQuiescentMarker(marker).IsIllegalState());
++
++  BuildLog(/* byte_limit = */ -1, CreateNewSegment::kFalse);
++  ASSERT_OK(log_->EnsureSegmentInitialized());
++  ASSERT_EQ(log_->num_segments(), 0);
++  ASSERT_EQ(log_->GetLatestEntryOpId(), last_op_id);
++  auto loaded_marker = log_->quiescent_marker();
++  ASSERT_TRUE(loaded_marker);
++  ASSERT_EQ(loaded_marker->monotonic_counter(), 42);
++  ASSERT_EQ(ASSERT_RESULT(log_->LookupOpId(last_op_id.index)), last_op_id);
++  ASSERT_EQ(log_->GetMinReplicateIndex(), last_op_id.index + 1);
++ 
+```
+
+**File**: `src/yb/consensus/log.cc` (modified, +340/-48)
+```diff
+@@ -97,12 +97,16 @@ using namespace std::placeholders;
+ 
+ METRIC_DECLARE_gauge_int64(log_wal_sync_overdue_ms);
+ 
++DEFINE_RUNTIME_AUTO_bool(enable_quiescent_tablets, kLocalPersisted, false, true,
++    "Replace WAL segments of an idle tablet with a quiescent marker, so its bootstrap reads no "
++    "WAL. Binaries without this feature cannot bootstrap such a tablet.");
++
+ // Log retention configuration.
+ // -----------------------------
+ DEFINE_RUNTIME_int32(log_min_segments_to_retain, 2,
+     "The minimum number of past log segments to keep at all times,"
+     " regardless of what is required for durability. "
+-    "Must be at least 1.");
++    "Must be at least 1. A tablet in the quiescent mode (enable_quiescent_tablets) keeps none.");
+ TAG_FLAG(log_min_segments_to_retain, advanced);
+ 
+ DEFINE_RUNTIME_int32(log_min_seconds_to_retain, 900,
+@@ -112,7 +116,9 @@ DEFINE_RUNTIME_int32(log_min_seconds_to_retain, 900,
+     "set long enough such that a tablet server which has temporarily failed can be "
+     "restarted within the given time period. If a server is down for longer than this "
+     "amount of time, it is possible that its tablets will be re-replicated on other "
+-    "machines. This value should match follower_unavailable_considered_failed_sec.");
++    "machines. This value should match follower_unavailable_considered_failed_sec. "
++    "A tablet in the quiescent mode (enable_quiescent_tablets) keeps no segments; it enters "
++    "the mode only when every peer has its last op.");
+ TAG_FLAG(log_min_seconds_to_retain, advanced);
+ 
+ // Flag to enable background log sync. When enabled, we DON'T wait for performing fsync until
+@@ -255,6 +261,11 @@ DEFINE_RUNTIME_AUTO_bool(store_last_wal_op_log_ht, kLocalPersisted, false, true,
+ static std::string kSegmentPlaceholderFilePrefix = ".tmp.newsegment";
+ static std::string kSegmentPlaceholderFileTemplate = kSegmentPlaceholderFilePrefix + "XXXXXX";
+ 
++// Must not match IsLogFileName.
++static constexpr auto kQuiescentMarkerFileName = "quiescent_marker";
++// WritePBContainerToPath writes the marker to such a temp file and renames it.
++static constexpr auto kQuiescentMarkerTempFilePrefix = "quiescent_marker.tmp.";
++
+ namespace yb::log {
+ 
+ using env_util::OpenFileForRandom;
+@@ -271,7 +282,8 @@ bool IsRolloverMarkerType(LogEntryTypePB type) {
+ 
+ bool IsMarkerType(LogEntryTypePB type) {
+   return IsRolloverMarkerType(type) ||
+-         type == LogEntryTypePB::FLUSH_MARKER;
++         type == LogEntryTypePB::FLUSH_MARKER ||
++         type == LogEntryTypePB::CLOSE_SEGMENT_MARKER;
+ }
+ 
+ Status FsyncFile(Env* env, const std::string& path) {
+@@ -404,6 +416,10 @@ class Log::LogEntryBatch {
+   // Segment sequence number for this entry batch.
+   int64_t active_segment_sequence_number_;
+ 
++  // Arguments of CLOSE_SEGMENT_MARKER.
++  OpId expected_last_op_id_;
++  QuiescentMarkerPB* quiescent_marker_ = nullptr;
++
+   enum LogEntryState {
+     kEntryInitialized,
+     kEntryReserved,
+@@ -766,12 +782,22 @@ int64_t Log::WalSyncOverdueMs() const {
+ Status Log::Init() {
+   std::lock_guard write_lock(state_lock_);
+   CHECK_EQ(kLogInitialized, log_state_);
++  const auto wal_dir_files = VERIFY_RESULT(get_env()->GetChildren(wal_dir_, ExcludeDots::kTrue));
++  RETURN_NOT_OK(LoadQuiescentMarker(wal_dir_files));
+   // Init the index
+   log_index_ = VERIFY_RESULT(LogIndex::NewLogIndex(wal_dir_));
+   // Reader for previous segments.
+   reader_ = VERIFY_RESULT(LogReader::Open(
+       get_env(), log_index_, log_prefix_, wal_dir_, table_metric_entity_.get(),
+-      tablet_metric_entity_.get(), read_wal_mem_tracker_));
++      tablet_metric_entity_.get(), read_wal_mem_tracker_, &wal_dir_files));
++
++  // Segments covered by the marker remain when entering the mode crashed, or gave up after writing
++  // the marker. The wal size metric still counts them only after an in-process reopen: otherwise it
++  // is zero and loaded from the remaining segments below.
++  SegmentSequence leftover_segments;
++  RETURN_NOT_OK(TrimSegmentsCoveredByQuiescentMarkerUnlocked(&leftover_segments));
++  RETURN_NOT_OK(DeleteSegmentFiles(
++      leftover_segments, /* update_metrics= */ metrics_ && metrics_->wal_size->value() != 0));
+ 
+   // The case where we are continuing an existing log.  We must pick up where the previous WAL left
+   // off in terms of sequence numbers.
+@@ -812,7 +838,7 @@ Status Log::Init() {
+   }
+ 
+   if (create_new_segment_at_start_) {
+-    RETURN_NOT_OK(EnsureSegmentInitializedUnlocked());
++    RETURN_NOT_OK(EnsureSegmentInitializedUnlocked(CreateNewSegment::kTrue));
+   }
+   return Status::OK();
+ }
+@@ -858,6 +884,84 @@ Status Log::CloseCurrentSegment() {
+   return status;
+ }
+ 
++Status Log::StartActiveSegment() {
++  if (allocation_state() == SegmentAllocationState::kAllocationNotStarted) {
++    RETURN_NOT_OK(AsyncAllocateSegment());
++  }
++  auto status = allocation_status_.Get();
++  if (!status.ok()) {
++    allocation_state_.store(
++        SegmentAllocationState::kAllocationNotStarted, std::memory_order_releas
+```
+
+**File**: `src/yb/consensus/log.h` (modified, +87/-5)
+```diff
+@@ -265,6 +265,13 @@ class Log : public RefCountedThreadSafe<Log> {
+ 
+   int64_t GetMinReplicateIndex() const;
+ 
++  // Returns the index of the earliest op in the log.
++  Result<int64_t> EarliestOpIndex() const EXCLUDES(state_lock_);
++
++  // Returns the lowest index at which a log anchor can be registered: a peer whose last op has
++  // this index can be sent the following ops. It is L for a quiescent log, whose ops start at L+1.
++  Result<int64_t> MinAnchorableIndex() const EXCLUDES(state_lock_);
++
+   // Runs the garbage collector on the set of previous segments. Segments that only refer to in-mem
+   // state that has been flushed are candidates for garbage collection.
+   //
+@@ -321,11 +328,13 @@ class Log : public RefCountedThreadSafe<Log> {
+   Result<bool>  ReuseAsActiveSegment(
+       const scoped_refptr<ReadableLogSegment>& recover_segment) EXCLUDES(active_segment_mutex_);
+ 
+-  // For a log created with CreateNewSegment::kFalse, this is used to finish log initialization by
+-  // either allocating a new segment or reused left in-progress segment that doesn't have footer.
+-  Status EnsureSegmentInitialized();
++  // For a log created with CreateNewSegment::kFalse, this is used to finish log initialization.
++  // Reuses the left in-progress segment that doesn't have footer. Otherwise the next segment is
++  // allocated by the first append.
++  Status EnsureSegmentInitialized() EXCLUDES(state_lock_);
+ 
+-  Status EnsureSegmentInitializedUnlocked() REQUIRES(state_lock_);
++  Status EnsureSegmentInitializedUnlocked(CreateNewSegment create_new_segment)
++      REQUIRES(state_lock_);
+ 
+   // Returns the total size of the current segments, in bytes.
+   // Returns 0 if the log is shut down.
+@@ -410,7 +419,48 @@ class Log : public RefCountedThreadSafe<Log> {
+   // If max_included_op_id is specified - only part of the log up to and including
+   // max_included_op_id is copied.
+   // Flushes necessary files and uses hard links where it is safe.
+-  Status CopyTo(const std::string& dest_wal_dir, OpId max_included_op_id = OpId());
++  // The quiescent marker, if any, is copied with dest_tablet_id.
++  Status CopyTo(
++      const std::string& dest_wal_dir, OpId max_included_op_id = OpId(),
++      const std::string& dest_tablet_id = std::string());
++
++  // Closes the active segment without starting a new one, if the last appended op is
++  // expected_last_op_id. Runs on the appender thread. Fills marker with the values of that op,
++  // except monotonic_counter.
++  // Returns TryAgain if another op was appended.
++  Status CloseActiveSegment(const OpId& expected_last_op_id, QuiescentMarkerPB* marker);
++
++  // Durably writes the quiescent marker to the WAL dir and makes it the marker of this log.
++  Status WriteQuiescentMarker(const QuiescentMarkerPB& marker) EXCLUDES(state_lock_);
++
++  // Deletes segments that contain only ops covered by the marker. Returns the number of deleted
++  // segments.
++  Result<size_t> DeleteSegmentsCoveredByQuiescentMarker() EXCLUDES(state_lock_);
++
++  // Returns true if the segment is closed and the marker covers all its ops. Covered segments
++  // form a prefix of the log.
++  static bool SegmentCoveredByQuiescentMarker(
++      const ReadableLogSegment& segment, const QuiescentMarkerPB& marker);
++
++  // Returns when a REPLICATE message was last appended, or when the log was opened.
++  CoarseTimePoint last_append_time() const {
++    return last_append_time_.load(std::memory_order_acquire);
++  }
++
++  // Returns the op id of the quiescent marker, or an empty op id if the log has no marker.
++  OpId quiescent_marker_op_id() const;
++
++  std::optional<QuiescentMarkerPB> quiescent_marker() const EXCLUDES(state_lock_);
++
++  // Looks up the op id for the given index in the log reader or the quiescent marker.
++  Result<OpId> LookupOpId(int64_t op_index) const EXCLUDES(state_lock_);
++
++  static std::string QuiescentMarkerPath(const std::string& wal_dir);
++
++  static Result<QuiescentMarkerPB> ReadQuiescentMarkerFile(Env* env, const std::string& wal_dir);
++
++  static Status WriteQuiescentMarkerFile(
++      Env* env, const std::string& wal_dir, const QuiescentMarkerPB& marker);
+ 
+   // Waits until all entries flushed, then resets last appended, synced and durable op ids to op_id.
+   Status ResetLastSyncedEntryOpId(const OpId& op_id);
+@@ -494,6 +544,27 @@ class Log : public RefCountedThreadSafe<Log> {
+   // Writes the footer and closes the current segment.
+   Status CloseCurrentSegment() EXCLUDES(active_segment_mutex_);
+ 
++  // Starts a new active segment, when there is none.
++  Status StartActiveSegment() EXCLUDES(active_segment_mutex_);
++
++  // Waits for the segment allocation in progress, if any, and drops the allocated segment.
++  Status DropAllocatedSegment();
++
++  Status DoCloseActiveSegment(const OpId& expected_last_op_id, QuiescentMarkerPB* marker)
++      EXCLUDES(state_lock_, active_segment_mutex_);
++
++  // Loads the quiescent marker from the WAL dir, if there is one, and continues the log after it.
++  // 
+```
+
+**File**: `src/yb/consensus/log.proto` (modified, +18/-0)
+```diff
+@@ -58,6 +58,8 @@ enum LogEntryTypePB {
+   // Async roll over active log segment, and halve the cur_max_segment_size of the next segment
+   // if it's greater than initial_max_segment_size.
+   ASYNC_ROLLOVER_AT_FLUSH_MARKER = 1000;
++  // Close active log segment without starting a new one, if the last appended op is as expected.
++  CLOSE_SEGMENT_MARKER = 1001;
+ };
+ 
+ // An entry in the WAL/state machine log.
+@@ -95,6 +97,22 @@ message LogSegmentHeaderPB {
+   optional uint32 DEPRECATED_schema_version = 8;
+ }
+ 
++// Quiescent marker, stored in a file next to the WAL segments. Every op up to op_id is durable in
++// all tablet storages, so segments that contain only such ops may be absent.
++// The remaining fields carry what tablet bootstrap would otherwise take from those segments.
++message QuiescentMarkerPB {
++  optional bytes tablet_id = 1;
++  optional OpIdPB op_id = 2;
++  // Hybrid time of the op at op_id.
++  optional fixed64 hybrid_time = 3;
++  // Max monotonic counter of ops up to op_id.
++  optional int64 monotonic_counter = 4;
++  // Restart-safe time of the batch that contains the op at op_id.
++  optional uint64 entry_time = 5;
++  // Sequence number of the last segment that existed when the marker was written.
++  optional int64 last_segment_sequence_number = 6;
++}
++
+ // A header for a log index block that are stored inside WAL segment file.
+ message LogIndexBlockHeaderPB {
+   required int64 start_op_index = 1;
+```
+
+---
+
+### Incident Patch 2: `5c9c8cb1` (2026-10-30)
+**Commit Message**: [DB-25162] DocDB: Require TLS when RPC client certificates are required (#36001)
+
+## Summary
+
+With `use_node_to_node_encryption=true` and
+`node_to_node_encryption_use_client_certificates=true`, a server still
+accepted plaintext RPC connections whenever `allow_insecure_connections`
+was `true`, which is its default. A plaintext connection carries no
+client certificate, so requiring client certificates had no effect
+unless operators also knew to set `allow_insecure_connections=false`.
+
+**Change**
+- With `use_node_to_node_encryption=true`,
+`node_to_node_encryption_use_client_certificates=true` now requires
+`allow_insecure_connections=false`. Delayed gflag validators on all
+three flags (`secure.cc`, `secure_stream.cc`) reject the combination, so
+the process refuses to start (and `set_flag` refuses to create the
+combination at runtime) instead of silently accepting plaintext. Without
+node-to-node encryption the client certificate flag has no effect, so
+the rule isn't enforced.
+- `allow_insecure_connections` is retagged from UNKNOWN to NON_RUNTIME.
+No behavior change: `set_flag` already needed `force` for it, which
+YBA's TlsToggle passes.
+- New server metrics: `rpc_inbound_tls_handshakes_
+
+**File**: `src/yb/rpc/CMakeLists.txt` (modified, +2/-0)
+```diff
+@@ -179,6 +179,8 @@ ADD_YB_TEST(periodic-test)
+ ADD_YB_TEST(reactor-test)
+ ADD_YB_TEST(rpc-bench RUN_SERIAL true)
+ ADD_YB_TEST(rpc-test)
++# TestRpcClientCertificates uses the generated test certificates.
++add_dependencies(rpc-test generate_test_certs)
+ ADD_YB_TEST(rpc_retrier-test)
+ ADD_YB_TEST(rpc_stub-test RUN_SERIAL true)
+ ADD_YB_TEST(scheduler-test)
+```
+
+**File**: `src/yb/rpc/refined_stream.cc` (modified, +5/-2)
+```diff
+@@ -228,8 +228,11 @@ Status RefinedStream::StartHandshake() {
+ 
+ Result<size_t> RefinedStream::Handshake() {
+   auto handshake_status = refiner_->Handshake();
+-  LOG_IF_WITH_PREFIX(INFO, !handshake_status.ok()) << "Handshake failed: " << handshake_status;
+-  RETURN_NOT_OK(handshake_status);
++  if (!handshake_status.ok()) {
++    // A client retrying against a server that rejects it fails once per retry.
++    YB_LOG_WITH_PREFIX_EVERY_N_SECS(INFO, 10) << "Handshake failed: " << handshake_status;
++    return handshake_status;
++  }
+ 
+   if (state_ == RefinedStreamState::kEnabled) {
+     return Read();
+```
+
+**File**: `src/yb/rpc/rpc-test.cc` (modified, +135/-0)
+```diff
+@@ -61,6 +61,7 @@
+ #include "yb/util/format.h"
+ #include "yb/util/logging_test_util.h"
+ #include "yb/util/net/net_util.h"
++#include "yb/util/path_util.h"
+ #include "yb/util/result.h"
+ #include "yb/util/status_format.h"
+ #include "yb/util/status_log.h"
+@@ -76,11 +77,14 @@ METRIC_DECLARE_event_stats(rpc_incoming_queue_time);
+ METRIC_DECLARE_counter(tcp_bytes_sent);
+ METRIC_DECLARE_counter(tcp_bytes_received);
+ METRIC_DECLARE_counter(rpcs_timed_out_early_in_queue);
++METRIC_DECLARE_counter(rpc_inbound_tls_handshakes_rejected);
++METRIC_DECLARE_counter(rpc_inbound_insecure_connections_rejected);
+ 
+ DEFINE_NON_RUNTIME_int32(rpc_test_connection_keepalive_num_iterations, 1,
+   "Number of iterations in TestRpc.TestConnectionKeepalive");
+ 
+ DECLARE_bool(TEST_pause_calculator_echo_request);
++DECLARE_bool(allow_insecure_connections);
+ DECLARE_bool(binary_call_parser_reject_on_mem_tracker_hard_limit);
+ DECLARE_bool(enable_rpc_keepalive);
+ DECLARE_int32(num_connections_to_server);
+@@ -91,6 +95,7 @@ DECLARE_string(vmodule);
+ DECLARE_uint64(rpc_connection_timeout_ms);
+ DECLARE_uint64(rpc_read_buffer_size);
+ DECLARE_uint64(rpc_max_message_size);
++DECLARE_bool(verify_server_endpoint);
+ 
+ using namespace std::chrono_literals;
+ using std::string;
+@@ -1435,6 +1440,136 @@ TEST_F(TestRpcSecure, CantAllocateReadBuffer) {
+   RunSecureTest(&TestCantAllocateReadBuffer, SetupServerForTestCantAllocateReadBuffer());
+ }
+ 
++// Uses the certificates from build-support/generate_test_certificates.sh. The server always
++// presents node.127.0.0.2 from the given directory; endpoint checks are off because the test
++// server listens on 127.0.0.1.
++class TestRpcClientCertificates : public RpcTestBase {
++ public:
++  void SetUp() override {
++    RpcTestBase::SetUp();
++    ANNOTATE_UNPROTECTED_WRITE(FLAGS_verify_server_endpoint) = false;
++  }
++
++ protected:
++  static constexpr auto kClientNode = "127.0.0.4";
++
++  // Trusts the CAs in ca_file, and presents node.<node> from cert_dir unless node is empty.
++  Result<std::unique_ptr<SecureContext>> CreateContextFromFiles(
++      RequireClientCertificate require_client_certificate, const std::string& ca_file,
++      const std::string& cert_dir, const std::string& node, const std::string& required_uid = {}) {
++    auto context = std::make_unique<SecureContext>(
++        require_client_certificate, UseClientCertificate(!node.empty()), required_uid);
++    if (node.empty()) {
++      RETURN_NOT_OK(context->AddCertificateAuthorityFile(ca_file));
++      return context;
++    }
++    faststring cert, key;
++    RETURN_NOT_OK(ReadFileToString(
++        Env::Default(), JoinPathSegments(cert_dir, Format("node.$0.crt", node)), &cert));
++    RETURN_NOT_OK(ReadFileToString(
++        Env::Default(), JoinPathSegments(cert_dir, Format("node.$0.key", node)), &key));
++    RETURN_NOT_OK(context->UseCertificates(ca_file, cert, key));
++    return context;
++  }
++
++  Result<std::unique_ptr<SecureContext>> CreateContext(
++      RequireClientCertificate require_client_certificate, const std::string& sub_dir,
++      const std::string& node, const std::string& required_uid = {}) {
++    auto dir = sub_dir.empty() ? GetCertsDir() : JoinPathSegments(GetCertsDir(), sub_dir);
++    return CreateContextFromFiles(
++        require_client_certificate, JoinPathSegments(dir, "ca.crt"), dir, node, required_uid);
++  }
++
++  // Replaces any running server. Contexts are kept until the fixture is destroyed, after the
++  // servers using them.
++  Status StartServer(const std::string& sub_dir = "", const std::string& required_uid = {}) {
++    server_contexts_.push_back(VERIFY_RESULT(CreateContext(
++        RequireClientCertificate::kTrue, sub_dir, "127.0.0.2", required_uid)));
++    StartTestServerWithGeneratedCode(
++        CreateSecureMessenger(
++            "TestServer", server_contexts_.back().get(), kDefaultServerMessengerOptions),
++        &server_hostport_);
++    return Status::OK();
++  }
++
++  std::unique_ptr<Messenger> CreateSecureMessenger(
++      const std::string& name, const SecureContext* context,
++      const MessengerOptions& options = kDefaultClientMessengerOptions) {
++    auto builder = CreateMessengerBuilder(name, options);
++    builder.SetListenProtocol(SecureStreamProtocol());
++    builder.SetUncompressedProtocol(SecureStreamProtocol());
++    builder.AddStreamFactory(
++        SecureStreamProtocol(),
++        SecureStreamFactory(TcpStream::Factory(), MemTracker::GetRootTracker(), context));
++    return EXPECT_RESULT(builder.Build());
++  }
++
++  // Calls the server from a client using client_context, or plaintext if it is null.
++  Status CallServer(const SecureContext* client_context) {
++    auto client_messenger = rpc::CreateAutoShutdownMessengerHolder(
++        client_context ? CreateSecureMessenger("Client", client_context)
++                       : CreateMessenger("Client"));
++    ProxyCache proxy_cache(client_messenger.get());
++    CalculatorServiceProxy proxy(&proxy_cache, server_hostport_);
++
++    RpcController controller;
++    co
+```
+
+**File**: `src/yb/rpc/secure.cc` (modified, +23/-2)
+```diff
+@@ -19,6 +19,7 @@
+ #include "yb/rpc/tcp_stream.h"
+ 
+ #include "yb/util/env.h"
++#include "yb/util/flag_validators.h"
+ #include "yb/util/format.h"
+ #include "yb/util/net/net_util.h"
+ #include "yb/util/path_util.h"
+@@ -28,14 +29,34 @@
+ 
+ using std::string;
+ 
++DECLARE_bool(allow_insecure_connections);
++
+ DEFINE_NON_RUNTIME_bool(use_node_to_node_encryption, false, "Use node to node encryption.");
+ 
+ DEFINE_NON_RUNTIME_bool(node_to_node_encryption_use_client_certificates, false,
+     "Should client certificates be sent and verified for encrypted node to node "
+-    "communication.");
++    "communication. Requires allow_insecure_connections=false when "
++    "use_node_to_node_encryption is set.");
++
++// Client certificates only take effect with node to node encryption, so the rule is not enforced
++// without it.
++DEFINE_validator(use_node_to_node_encryption,
++    FLAG_DELAYED_COND_VALIDATOR(
++        !_value || !FINAL_FLAG_VALUE(node_to_node_encryption_use_client_certificates) ||
++            !FINAL_FLAG_VALUE(allow_insecure_connections),
++        "node_to_node_encryption_use_client_certificates requires "
++        "allow_insecure_connections=false"));
++
++DEFINE_validator(node_to_node_encryption_use_client_certificates,
++    FLAG_DELAYED_COND_VALIDATOR(
++        !_value || !FINAL_FLAG_VALUE(use_node_to_node_encryption) ||
++            !FINAL_FLAG_VALUE(allow_insecure_connections),
++        "Requires allow_insecure_connections=false when use_node_to_node_encryption is set"));
+ 
+ DEFINE_NON_RUNTIME_string(node_to_node_encryption_required_uid, "",
+-    "Allow only certificates with specified uid. Empty to allow any.");
++    "Allow only certificates with specified uid. Empty to allow any. The uid is matched against "
++    "the certificate's common name, UID attribute or otherName subject alternative name. It is "
++    "checked on server to server connections too, so every node certificate must carry it.");
+ 
+ DEFINE_NON_RUNTIME_string(certs_dir, "",
+     "Directory that contains certificate authority, private key and certificates for "
+```
+
+**File**: `src/yb/rpc/secure_stream.cc` (modified, +50/-5)
+```diff
+@@ -31,7 +31,9 @@
+ 
+ #include "yb/util/enums.h"
+ #include "yb/util/errno.h"
++#include "yb/util/flag_validators.h"
+ #include "yb/util/logging.h"
++#include "yb/util/metrics.h"
+ #include "yb/util/scope_exit.h"
+ #include "yb/util/shared_lock.h"
+ #include "yb/util/status_format.h"
+@@ -45,8 +47,9 @@
+ 
+ using namespace std::literals;
+ 
+-DEFINE_UNKNOWN_bool(allow_insecure_connections, true,
+-    "Whether we should allow insecure connections.");
++DEFINE_NON_RUNTIME_bool(allow_insecure_connections, true,
++    "Whether we should allow insecure connections. Must be false when "
++    "use_node_to_node_encryption and node_to_node_encryption_use_client_certificates are set.");
+ DEFINE_UNKNOWN_bool(dump_certificate_entries, false, "Whether we should dump certificate entries.");
+ DEFINE_UNKNOWN_bool(verify_client_endpoint, false, "Whether client endpoint should be verified.");
+ DEFINE_UNKNOWN_bool(verify_server_endpoint, true, "Whether server endpoint should be verified.");
+@@ -62,6 +65,31 @@ DEFINE_UNKNOWN_string(cipher_list, "",
+ DEFINE_UNKNOWN_string(ciphersuites, "",
+               "Define the available TLSv1.3 ciphersuites.");
+ 
++DECLARE_bool(node_to_node_encryption_use_client_certificates);
++DECLARE_bool(use_node_to_node_encryption);
++
++// A plaintext connection carries no client certificate, so accepting one would make the client
++// certificate requirement meaningless.
++DEFINE_validator(allow_insecure_connections,
++    FLAG_DELAYED_COND_VALIDATOR(
++        !_value || !FINAL_FLAG_VALUE(use_node_to_node_encryption) ||
++            !FINAL_FLAG_VALUE(node_to_node_encryption_use_client_certificates),
++        "Must be false when use_node_to_node_encryption and "
++        "node_to_node_encryption_use_client_certificates are set"));
++
++METRIC_DEFINE_counter(server, rpc_inbound_tls_handshakes_rejected,
++                      "Inbound TLS Handshakes Rejected",
++                      yb::MetricUnit::kConnections,
++                      "Number of inbound RPC connections whose TLS handshake failed, for example "
++                      "because the client certificate was missing, untrusted or had the wrong "
++                      "UID.");
++
++METRIC_DEFINE_counter(server, rpc_inbound_insecure_connections_rejected,
++                      "Inbound Insecure Connections Rejected",
++                      yb::MetricUnit::kConnections,
++                      "Number of inbound RPC connections rejected because they did not start a TLS "
++                      "handshake.");
++
+ #define YB_RPC_SSL_TYPE(name) \
+   struct BOOST_PP_CAT(name, Free) { \
+     void operator()(name* value) const { \
+@@ -738,7 +766,8 @@ Status SecureContext::TEST_GenerateKeys(int bits, const std::string& common_name
+ class SecureRefiner : public StreamRefiner {
+  public:
+   SecureRefiner(const SecureContext& context, const StreamCreateData& data)
+-    : secure_context_(*context.impl_), remote_hostname_(data.remote_hostname) {
++    : secure_context_(*context.impl_), remote_hostname_(data.remote_hostname),
++      metric_entity_(data.metric_entity) {
+   }
+ 
+  private:
+@@ -747,6 +776,7 @@ class SecureRefiner : public StreamRefiner {
+   }
+ 
+   Status Handshake() ON_REACTOR_THREAD override;
++  Status DoHandshake() ON_REACTOR_THREAD;
+   Status Init();
+ 
+   Status Send(OutboundDataPtr data) ON_REACTOR_THREAD override;
+@@ -782,6 +812,7 @@ class SecureRefiner : public StreamRefiner {
+ 
+   const SecureContext::Impl& secure_context_;
+   const std::string remote_hostname_;
++  const scoped_refptr<MetricEntity> metric_entity_;
+   RefinedStream* stream_ = nullptr;
+   std::vector<std::string> certificate_entries_;
+ 
+@@ -849,8 +880,14 @@ Status SecureRefiner::ProcessHeader() {
+   }
+ 
+   if (!FLAGS_allow_insecure_connections) {
+-    return STATUS_FORMAT(NetworkError, "Insecure connection header: $0",
+-                         Slice(bytes, 2).ToDebugHexString());
++    if (metric_entity_) {
++      METRIC_rpc_inbound_insecure_connections_rejected.Instantiate(metric_entity_)->Increment();
++    }
++    auto status = STATUS_FORMAT(
++        NetworkError, "Insecure connection header: $0, address: $1",
++        Slice(bytes, 2).ToDebugHexString(), stream_->Remote().address());
++    YB_LOG_WITH_PREFIX_EVERY_N_SECS(INFO, 10) << "Rejected connection: " << status;
 +    return status;
    }
  
-   void DeleteSnapshotAborted(
-```
-
-**File**: `src/yb/master/snapshot_coordinator_context.h` (modified, +1/-1)
-```diff
-@@ -75,7 +75,7 @@ class SnapshotCoordinatorContext {
+   return Established(RefinedStreamState::kDisabled);
+@@ -914,6 +951,14 @@ void SecureRefiner::DecryptReceived() {
+ }
  
-   virtual Status Submit(std::unique_ptr<tablet::Operation> operation, int64_t leader_term) = 0;
+ Status SecureRefiner::Handshake() {
++  auto status = DoHandshake();
++  if (!status.ok() && stream_->local_side() == LocalSide::kServer && metric_entity_) {
++    METRIC_rpc_inbound_tls_handshakes_rejected.Instantiate(metric_entity_)->Increment();
++  }
++  return status;
++}
++
++Status SecureRefiner::DoHandshake() {
+   RETURN_NOT_OK(Init());
  
--  virtual void PrepareRestore() = 0;
-+  virtual void PrepareRestore(const TxnSnapshotRestorationId& restoration_id) = 0;
- 
-   virtual rpc::Scheduler& Scheduler() = 0;
- 
+   DecryptReceived();
 ```
 
 ---
 
-### Incident Patch 3: `769f74bc` (2026-10-28)
-**Commit Message**: [#35908] YSQL: Fix memory leak in Connection Manager cancel path
+### Incident Patch 3: `0281fab9` (2026-10-29)
+**Commit Message**: [#35726] yugabyted: Fix the daemon crash seconds after start on macOS 26 and later (#35728)
 
-Summary:
-Each cancel request that Connection Manager forwards to a backend leaked memory in Odyssey, about 8.7 KB per cancel: the io readahead buffer (8 KB by default) and cond vars allocated by `od_backend_connect_to()`, and the `yb_vars_session` var array from `od_server_init()`. Workloads that cancel often (statement timeouts, drivers that send CancelRequest) grow Odyssey's memory without bound.
+## Summary
 
-`od_cancel()` built its `od_server_t` on the stack, so `is_allocated` was 0 and `od_server_free()` skipped freeing its members. `od_cancel()` now gets its server from `od_server_allocate()`, the same way every other server is created, and `od_server_free()` frees it fully. After this change every `od_server_t` is allocated on the heap; no server lives on the stack anymore.
+A background `yugabyted start` forked twice and let the grandchild carry
+on as the daemon in the forked copy of the launcher, without exec. A
+process that has forked without exec runs on its parent's library state,
+which system libraries need not support, and on macOS 26 and later the
+daemon's first host-name lookup crashed it (#35726). The daemon died
+seconds after start and left yb-master, yb-tserver and postgres running
+unsupervised, so `yugabyted stop` and `yugabyted status` acted on a dead
+pidfile.
 
-This is the `cancel.c` part of upstream Odyssey commit daac7d53 ("Eleminate server IO leak on Cancel request", yandex/odyssey#527), cherry-picked with an added NULL check. The rest of that commit removes the `is_allocated` flag, which is always 1 now that every server is on the heap. Removing it will be part of a separate change, to keep this one small
+The grandchild now execs the same command line with the same
+interpreter, so the daemon starts as a new process. The exec is
+unconditional: it is correct on every platform, and a platform check
+would save only the daemon's second pass over the command line. The
+launcher waits for the daemon's startup report on a pipe instead of a
+`multiprocessing.Queue`, which cannot cross the exec. The daemon
+inherits the pipe's write end and finds the write end's descriptor
+number in `YUGABYTED_DAEMON_STATUS_FD`, an environment variable set only
+for the daemon.
 
-**File**: `src/odyssey/sources/cancel.c` (modified, +8/-6)
+Side effects:
+
+- The daemon par
+
+**File**: `bin/yugabyted` (modified, +110/-19)
 ```diff
-@@ -15,11 +15,13 @@ int od_cancel(od_global_t *global, od_rule_storage_t *storage, kiwi_key_t *key,
- 	od_instance_t *instance = global->instance;
- 	od_log(&instance->logger, "cancel", NULL, NULL, "cancel for %s%.*s",
- 	       server_id->id_prefix, sizeof(server_id->id), server_id->id);
--	od_server_t server;
--	od_server_init(&server, 0);
--	server.global = global;
--	od_backend_connect_cancel(&server, storage, key);
--	od_backend_close_connection(&server);
--	od_backend_close(&server);
-+	od_server_t *server = od_server_allocate(0);
-+	if (server == NULL) {
-+		return -1;
-+	}
-+	server->global = global;
-+	od_backend_connect_cancel(server, storage, key);
-+	od_backend_close_connection(server);
-+	od_backend_close(server);
- 	return 0;
- }
+@@ -6,11 +6,12 @@ import atexit
+ from dataclasses import dataclass
+ import json
+ import logging
+-import multiprocessing
+ import os
+ import re
+ import resource
++import select
+ import shutil
++import struct
+ import subprocess
+ import sys
+ import time
+@@ -30,14 +31,12 @@ from threading import Thread, Event
+ # Version-dependent imports
+ PY_VERSION = sys.version_info[0]
+ if PY_VERSION < 3:
+-    import Queue as queue
+     from urllib2 import Request, urlopen, URLError, HTTPError
+     from urllib import urlencode
+     from random import SystemRandom
+     _sysrand = SystemRandom()
+     PASSWORD_GENNERATOR = _sysrand.choice
+ else:
+-    import queue
+     from urllib.request import Request, urlopen
+     from urllib.error import URLError, HTTPError
+     from urllib.parse import urlencode, urlparse
+@@ -71,13 +70,17 @@ OS_NAME = OS_DETAILS[0]
+ 
+ # Script constants.
+ SCRIPT_NAME = os.path.basename(__file__)
++SCRIPT_PATH = os.path.abspath(__file__)
+ YUGABYTE_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+ YUGABYTE_JENKINS_BUILD_DIR = os.getenv("BUILD_ROOT",
+                                        os.path.dirname(
+                                            os.path.dirname(os.path.realpath(__file__))))
+ TRUE_CHOICES = ["true", "True", "t", "T", "yes", "Yes", "y", "Y", "1"]
+ FALSE_CHOICES = ["false", "False", "f", "F", "no", "No", "n", "N", "0"]
+ BOOL_CHOICES = TRUE_CHOICES + FALSE_CHOICES
++# Set for the daemon by ControlScript.daemonize(): the descriptor of the write end of the
++# DaemonStatusPipe through which the daemon reports to the process that launched it.
++DAEMON_STATUS_FD_ENV = "YUGABYTED_DAEMON_STATUS_FD"
+ FAULT_TOLERANCE_CHOICES = ["zone", "region", "cloud"]
+ START_FAULT_TOLERANCE_CHOICES = ["none", "zone", "region", "cloud"]
+ SLACK_LINK = "https://www.yugabyte.com/slack"
+@@ -777,13 +780,18 @@ class ControlScript(object):
+             Output.print_out("{} is already running!".format(SCRIPT_NAME))
+             sys.exit(1)
+ 
+-        Output.print_and_log("Starting {}...".format(SCRIPT_NAME))
++        if self.script.daemon_status.in_daemon:
++            # This process is the daemon that daemonize() exec()ed.  The paths that validation
++            # makes absolute have been resolved in the launcher's directory, so the daemon can
++            # leave that directory now.
++            os.chdir(YUGABYTE_DIR)
++            Output.log("Daemon process begins execution.")
++        else:
++            Output.print_and_log("Starting {}...".format(SCRIPT_NAME))
+         self.set_env_vars()
+ 
+-        if self.configs.temp_data.get("background"):
+-            # In daemon mode, self.daemonize() forks. The child process then executes
+-            # normal control flow. The parent process waits for the child process until
+-            # a status message can be printed to the terminal and then exits within daemonize.
++        if self.configs.temp_data.get("background") and not self.script.daemon_status.in_daemon:
++            # Runs this command again as the daemon, waits for its status and exits.
+             self.daemonize()
+         self.script.write_pid(os.getpid())
+ 
+@@ -3781,7 +3789,7 @@ class ControlScript(object):
+             Output.log("Received signal: {}".format(signum), logging.DEBUG)
+         Output.print_and_log("Shutting down...")
+         Output.console_access = False
+-        self.script.daemon_success.put(-1)
++        self.script.daemon_status.report(-1)
+ 
+         # Shutdown all callhome threads gracefully
+         self.shutdown_callhome_thread(timeout=5)
+@@ -4173,7 +4181,7 @@ class ControlScript(object):
+                 if self.configs.temp_data.get("background"):
+                     # Let original process know daemon was successful so it can exit.
+                     # This is to display the initial status message.
+-                    self.script.daemon_success.put(1)
++                    self.script.daemon_status.report(1)
+                     # Ignore any console output as important information will be logged.
+                     with open('/dev/null', 'r+') as dev_null:
+                         Output.console_access = False
+@@ -4436,7 +4444,7 @@ class ControlScript(object):
+                 if self.configs.temp_data.get("background"):
+                     # Let original process know daemon was successful so it can exit.
+                     # This is to display the initial status message.
+-                    self.script.daemon_success.put(1)
++                    self.script.daemon_status.report(1)
+                     # Ignore any console output as important information will be logged.
+                     with open('/dev/null', 'r+') as dev_null:
+                         Output.console_access = False
+@@ -5004,6 +5012,12 @@ class ControlScript(object):
+ 
+     # Pushes yugabyted script to background as a daemon. The process is not tied to a shell, but
+     # it will not survive between machine restarts.
++    #
++    # The grandchild exec()s this command again rather than carrying on as a 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #36079** (closed): [BACKPORT 2026.1][#35634] YSQL: import rejection of generated columns in COPY FROM WHERE (@teyenc)
-- **PR #36035** (2026-10-28): [PLAT-23307] YBA: Validate user tags in v2 universe forms (@haikarthikssk)
-- **PR #36016** (2026-10-28): [2026.1][#35771] DocDB: Fix 2026.1 build: move ShutdownWaitsForChunkSave to VectorLSMHnswlibTest (@hari90)
-- **PR #36004** (2026-10-28): [#35634] YSQL: import rejection of generated columns in COPY FROM WHERE (@teyenc)
-- **PR #35971** (closed): [#35968] ClaudeCode: Make GitHub PRs the default and Phorge opt-in in agent skills (@siddiqueirshad)
-- **PR #35963** (2026-10-28): [#20955,#34090,#35083] YSQL: revert making the planner aggregate-pushdown aware (@jasonyb)
+- **PR #36315** (2026-10-30): [#36232] DocDB: Keep log_stop_retaining_min_disk_mb in KB (@vivian-dai)
+- **PR #36274** (2026-10-30): [PLAT-23451] YBA: Merge audit additional details atomically in parallel prechecks (@artem-mindrov)
+- **PR #36270** (2026-10-29): [BACKPORT 2026.1][PLAT-23339] YBA: Honor --root-ca in yba universe create (#35909) (@Deepti-yb)
+- **PR #36242** (2026-10-29): [PLAT-23226] YBA: Fix RollbackResizeNodeTest compile after buildTaskStatus gained rollbackBlockedTargets (@vipul-yb)
+- **PR #36183** (2026-10-30): [#36173] YSQL: move embedded merge pathkey cut into the stream key loop (@jasonyb)
+- **PR #36179** (2026-10-30): [BACKPORT 2025.2][#36012] YSQL: reset yb_distinct_nkeys after the colocated merge cut (#36021) (@jasonyb)
 
 ---
 
@@ -2621,48 +3324,42 @@ This is the `cancel.c` part of upstream Odyssey commit daac7d53 ("Eleminate serv
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#35462] DocDB: Fix RemoveTabletServerTest.MayStillHoldLease by waiting for a po
+## X. [#35781] DocDB: Replace WAL segments of idle tablets with a quiescent marker (#3
 
 **RULE**:
-When implementing operations in `src/yb/master/master_cluster_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `architecture/design/docdb-quiescent-tablets.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7d6468da`: [#35462] DocDB: Fix RemoveTabletServerTest.MayStillHoldLease by waiting for a post-blacklist balancer run in drain (#35463). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c4bda916`: [#35781] DocDB: Replace WAL segments of idle tablets with a quiescent marker (#35782). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/yb/master/master_cluster_test.cc`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `architecture/design/docdb-quiescent-tablets.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-#include "yb/master/cluster_balance.h"
-  // A balancer run that read the old blacklist may have queued an add to this ts, and that task
-  // outlives the run. Only trust the checks below once a run that started after the blacklist
-  // change has ended with no balancer tasks pending.
-  auto latest_balancer_activity = [this]() -> Result<ClusterBalancerActivityInfo> {
-    auto* leader = VERIFY_RESULT(cluster_->GetLeaderMiniMaster());
-    return leader->catalog_manager_impl().cluster_balancer()->GetLatestActivityInfo();
-  };
-  const auto blacklist_time = MonoTime::Now();
-  RETURN_NOT_OK(WaitFor(
-      [&latest_balancer_activity, blacklist_time]() -> Result<bool> {
-        return VERIFY_RESULT(latest_balancer_activity()).run_end_time_ > blacklist_time;
-      },
-      timeout, "Cluster balancer run after blacklist change"));
-  const auto fresh_run_start = MonoTime::Now();
+# Quiescent tablets
 
-      [this, &ts_proxy, &message, &uuid, &client, &latest_balancer_activity,
-       fresh_run_start]() -> Result<bool> {
-        auto activity = VERIFY_RESULT(latest_balancer_activity());
-        if (activity.run_end_time_ <= fresh_run_start) {
-          message = "waiting for a cluster balancer run that saw the black
+Status: in development.
+
+## Motivation
+
+A tablet that receives no operations for a while should bootstrap without reading or writing its WAL, and should keep no WAL on disk. Today every restart of such a tablet, graceful or not, reads and fsyncs WAL files even though all of its data is flushed.
+
+With everything flushed, bootstrap still:
+
+- Replays from `min(flushed op id, retryable requests op id)`. `TabletBootstrapStatePB` is flushed only from `pre_log_rollover_callback`, so replay starts near the beginning of the last segment (`SkipFlushedEntries`). In `many_tablets_bootstrap-itest`, 1000 tablets with 0.85 MB of flushed WAL each read 851 MB per restart.
+- After a graceful restart, the last segment is closed, so `FinishBootstrap` creates a new segment, which costs a file fsync and a WAL directory fsync.
+- After a non-graceful restart, the last segment has no footer, so `Log::ReuseAsActiveSegment` reads it in full to find its end and rebuild its footer and log index.
+
+When nothing needs replay, the WAL provides only: the last and committed op id, orphaned replicates, retryable requests, the hybrid clock (`UpdateClock` per entry), the monotonic counter (`UpdateM
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-      [this, &ts_proxy, &message, &uuid, &client]() -> Result<bool> {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7d6468da` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c4bda916` are properly handled with clean fallback behavior.

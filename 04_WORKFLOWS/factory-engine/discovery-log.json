@@ -19822,5 +19822,20 @@
     "qualityScore": 1059,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-30T03:31:10.458Z"
+  },
+  {
+    "name": "reason-network",
+    "fullName": "reason-machines/reason-network",
+    "url": "https://github.com/reason-machines/reason-network",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Reason Network: your team's coding agents, talking to each other. The engine behind `reason network`.",
+    "stars": 1324,
+    "forks": 116,
+    "openIssues": 27,
+    "language": "Rust",
+    "qualityScore": 1001,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-30T05:35:49.834Z"
   }
 ]
