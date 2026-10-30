@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `f5f3bd80`  
+> **Source Version**: `c14e4456`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:22:25.146Z  
+> **Timestamp**: 2026-10-30T20:52:38.001Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:22:24.798Z  
+> **Harvest Timestamp**: 2026-10-30T20:47:36.195Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2067 stars
+- **Stars / Engagement**: 2072 stars
 
 ---
 
@@ -743,163 +743,206 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f5f3bd80` (2026-10-26)
-**Commit Message**: fix(soot): stop managers before dropping them (#1393)
+### Incident Patch 1: `c14e4456` (2026-10-30)
+**Commit Message**: feat(deps): bump the etcd group with 2 updates (#1394)
 
-**File**: `controllers/soot/manager.go` (modified, +13/-8)
+Bumps the etcd group with 2 updates: [go.etcd.io/etcd/api/v3](https://github.com/etcd-io/etcd) and [go.etcd.io/etcd/client/v3](https://github.com/etcd-io/etcd).
+
+
+Updates `go.etcd.io/etcd/api/v3` from 3.7.2 to 3.7.3
+- [Release notes](https://github.com/etcd-io/etcd/releases)
+- [Commits](https://github.com/etcd-io/etcd/compare/v3.7.2...v3.7.3)
+
+Updates `go.etcd.io/etcd/client/v3` from 3.7.2 to 3.7.3
+- [Release notes](https://github.com/etcd-io/etcd/releases)
+- [Commits](https://github.com/etcd-io/etcd/compare/v3.7.2...v3.7.3)
+
+---
+updated-dependencies:
+- dependency-name: go.etcd.io/etcd/api/v3
+  dependency-version: 3.7.3
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: etcd
+- dependency-name: go.etcd.io/etcd/client/v3
+  dependency-version: 3.7.3
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: etcd
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +12/-12)
 ```diff
-@@ -98,11 +98,16 @@ func (m *Manager) cleanup(ctx context.Context, req reconcile.Request, tenantCont
- 		}()
- 	}
- 
--	tcpName := req.NamespacedName.String()
-+	m.stop(ctx, req.NamespacedName.String())
- 
-+	return nil
-+}
-+
-+// stop cancels the soot manager before removing it: once out of the map, nothing could stop it.
-+func (m *Manager) stop(ctx context.Context, tcpName string) {
- 	v, ok := m.sootMap[tcpName]
- 	if !ok {
--		return nil
-+		return
- 	}
- 
- 	v.cancelFn()
-@@ -126,8 +131,6 @@ func (m *Manager) cleanup(ctx context.Context, req reconcile.Request, tenantCont
- 	}
- 
- 	delete(m.sootMap, tcpName)
--
--	return nil
- }
- 
- func (m *Manager) retryTenantControlPlaneAnnotations(ctx context.Context, request reconcile.Request, modifierFn func(annotations map[string]string)) error {
-@@ -178,7 +181,7 @@ func (m *Manager) Reconcile(ctx context.Context, request reconcile.Request) (res
- 	if ok {
- 		switch {
- 		case tcp.Annotations != nil && tcp.Annotations[sootManagerAnnotation] == sootManagerFailedAnnotation:
--			delete(m.sootMap, request.String())
-+			m.stop(ctx, request.String())
- 
- 			return reconcile.Result{}, m.retryTenantControlPlaneAnnotations(ctx, request, func(annotations map[string]string) {
- 				delete(annotations, sootManagerAnnotation)
-@@ -384,15 +387,17 @@ func (m *Manager) Reconcile(ctx context.Context, request reconcile.Request) (res
- 	completedCh := make(chan struct{})
- 	// Starting the manager
- 	go func() {
--		if err = mgr.Start(tcpCtx); err != nil {
--			logger.Error(err, "unable to start soot manager")
-+		startErr := mgr.Start(tcpCtx)
-+		// A soot manager stopped on purpose can fail while shutting down: it must not flag the next one as failed
-+		if startErr != nil && tcpCtx.Err() == nil {
-+			logger.Error(startErr, "unable to start soot manager")
- 			// The sootManagerAnnotation is used to propagate the error between reconciliations with its state:
- 			// this is required to avoid mutex and prevent concurrent read/write on the soot map
- 			annotationErr := m.retryTenantControlPlaneAnnotations(ctx, request, func(annotations map[string]string) {
- 				annotations[sootManagerAnnotation] = sootManagerFailedAnnotation
- 			})
- 			if annotationErr != nil {
--				logger.Error(err, "unable to update TenantControlPlane for soot failed annotation")
-+				logger.Error(annotationErr, "unable to update TenantControlPlane for soot failed annotation")
- 			}
- 			// When the manager cannot start we're enqueuing back the request to take advantage of the backoff factor
- 			// of the queue: this is a goroutine and cannot return an error since the manager is running on its own,
+@@ -24,8 +24,8 @@ require (
+ 	github.com/spf13/viper v1.21.0
+ 	github.com/stretchr/testify v1.12.1
+ 	github.com/testcontainers/testcontainers-go v0.44.0
+-	go.etcd.io/etcd/api/v3 v3.7.2
+-	go.etcd.io/etcd/client/v3 v3.7.2
++	go.etcd.io/etcd/api/v3 v3.7.3
++	go.etcd.io/etcd/client/v3 v3.7.3
+ 	go.uber.org/automaxprocs v1.6.0
+ 	gomodules.xyz/jsonpatch/v2 v2.5.0
+ 	k8s.io/api v0.37.0
+@@ -155,7 +155,7 @@ require (
+ 	github.com/x448/float16 v0.8.4 // indirect
+ 	github.com/xlab/treeprint v1.2.0 // indirect
+ 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
+-	go.etcd.io/etcd/client/pkg/v3 v3.7.2 // indirect
++	go.etcd.io/etcd/client/pkg/v3 v3.7.3 // indirect
+ 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
+ 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.68.0 // indirect
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
+@@ -170,19 +170,19 @@ require (
+ 	go.uber.org/zap v1.27.1 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+-	golang.org/x/crypto v0.57.0 // indirect
++	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.59.0 // indirect
++	golang.org/x/net v0.61.0 // indirect
+ 	golang.org/x/oauth2 v0.37.0 // indirect
+-	golang.org/x/sync v0.23.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/term v0.46.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
++	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/term v0.47.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.15.0 // indirect
+-	golang.org/x/tools v0.49.0 // indirect
+-	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
++	golang.org/x/tools v0.51.0 // indirect
++	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
++	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	google.golang.org/grpc v1.83.2 // indirect
+ 	google.golang.org/protobuf v1.36.12 // indirect
+ 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
 ```
 
-**File**: `controllers/soot/manager_test.go` (added, +80/-0)
+**File**: `go.sum` (modified, +24/-24)
 ```diff
-@@ -0,0 +1,80 @@
-+// Copyright 2022 Clastix Labs
-+// SPDX-License-Identifier: Apache-2.0
-+
-+package soot
-+
-+import (
-+	"context"
-+	"testing"
-+
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/types"
-+	"k8s.io/utils/ptr"
-+	"sigs.k8s.io/controller-runtime/pkg/client"
-+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-+
-+	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
-+	"github.com/clastix/kamaji/controllers/finalizers"
-+)
-+
-+func TestReconcileFailedAnnotationStopsSootManager(t *testing.T) {
-+	t.Parallel()
-+
-+	scheme := runtime.NewScheme()
-+	if err := kamajiv1alpha1.AddToScheme(scheme); err != nil {
-+		t.Fatalf("failed adding kamaji scheme: %v", err)
-+	}
-+
-+	tcp := &kamajiv1alpha1.TenantControlPlane{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:        "tenant",
-+			Namespace:   "default",
-+			Annotations: map[string]string{sootManagerAnnotation: sootManagerFailedAnnotation},
-+			Finalizers:  []string{finalizers.SootFinalizer},
-+		},
-+	}
-+	tcp.Status.Kubernetes.Version.Status = ptr.To(kamajiv1alpha1.VersionReady)
-+
-+	cl := fake.NewClientBuilder().WithScheme(scheme).WithObjects(tcp).Build()
-+
-+	request := reconcile.Request{NamespacedName: types.NamespacedName{Namespace: tcp.Namespace, Name: tcp.Name}}
-+	completedCh := make(chan struct{})
-+	cancelled := false
-+
-+	m := &Manager{
-+		AdminClient: cl,
-+		sootMap: sootMap{
-+			request.String(): {
-+				cancelFn: func() {
-+					cancelled = true
-+
-+					close(completedCh)
-+				},
-+				completedCh: completedCh,
-+			},
-+		},
-+	}
-+
-+	if _, err := m.Reconcile(context.Background(), request); err != nil {
-+		t.Fatalf("Reconcile() error = %v", err)
-+	}
-+
-+	if !cancelled {
-+		t.Fatal("the soot manager was removed without being cancelled")
-+	}
-+
-+	if _, ok := m.sootMap[request.String()]; ok {
-+		t.Fatal("the soot manager is still in the soot map")
-+	}
-+
-+	var got kamajiv1alpha1.TenantControlPlane
-+	if err := cl.Get(context.Background(), client.ObjectKeyFromObject(tcp), &got); err != nil {
-+		t.Fatalf("failed getting the TenantControlPlane: %v", err)
-+	}
-+
-+	if _, ok := got.Annotations[sootManagerAnnotation]; ok {
-+		t.Fatal("the failed annotation was not removed")
-+	}
-+}
+@@ -370,12 +370,12 @@ github.com/yusufpapurcu/wmi v1.2.4 h1:zFUKzehAFReQwLys1b/iSMl+JQGSCSjtVqQn9bBrPo
+ github.com/yusufpapurcu/wmi v1.2.4/go.mod h1:SBZ9tNy3G9/m5Oi98Zks0QjeHVDvuK0qfxQmPyzfmi0=
+ go.etcd.io/bbolt v1.5.0 h1:S7GAl7Fxv12yohbwFfIbQCGDWbQbtDGPET4P/bD4lxU=
+ go.etcd.io/bbolt v1.5.0/go.mod h1:mkltfYE5aUHQxUct9N9V+Kp7aSjFqjgrhcXIS70Lrdk=
+-go.etcd.io/etcd/api/v3 v3.7.2 h1:xgt/6el1LsPWWYNLkhMAK4tZm6dF+1sCqDecpE5gdbk=
+-go.etcd.io/etcd/api/v3 v3.7.2/go.mod h1:RoRCBRt9BfBff1pIGZLUVMiz7wu3bY+b2qLysGu1HY4=
+-go.etcd.io/etcd/client/pkg/v3 v3.7.2 h1:SVtlR7tiSVAYOQ4nWPIyFXb4RMgEcnzeAG9RQ8MoNDU=
+-go.etcd.io/etcd/client/pkg/v3 v3.7.2/go.mod h1:HsSux/B3ahgyw/D5+d4YbZqicOi0mEbuxm6lIUdjAoI=
+-go.etcd.io/etcd/client/v3 v3.7.2 h1:Z66GqDQDI7zPDfVSsIBqGSK4mJYLtv8ESwXa4mPf+wY=
+-go.etcd.io/etcd/client/v3 v3.7.2/go.mod h1:x03t1qMs4tGZirCDJlMuzPBJdQffXJImIyEjLhNBCsY=
++go.etcd.io/etcd/api/v3 v3.7.3 h1:2tumepXe+wi7Wab64uUO71K7ISQyUWLGC1DJbbc59sY=
++go.etcd.io/etcd/api/v3 v3.7.3/go.mod h1:HOR9Qn4gb/1/hVAmYprmlLpvTe6ZgfgNS9Z/+Ty65po=
++go.etcd.io/etcd/client/pkg/v3 v3.7.3 h1:5zMwNu3ycrzCeA5NwOfQbxFRhqq974chq1DrYMua4QI=
++go.etcd.io/etcd/client/pkg/v3 v3.7.3/go.mod h1:/OhzqYrF0U7d1NOk55VMyUQGbYD1WoIe4bJwxb47wOk=
++go.etcd.io/etcd/client/v3 v3.7.3 h1:UrXcetgkuSEocaBlQlulQRJlXLEnUAHuBRbHh0lue1Q=
++go.etcd.io/etcd/client/v3 v3.7.3/go.mod h1:DcPxpqcpV8WIaRi/2waPCx0/Uq8rQUweDJaDYZk1gEE=
+ go.etcd.io/etcd/pkg/v3 v3.7.0 h1:aUBHGzXnYL2m3AlZfKp0ZhHQLVZIKfu9QsIlYdr+mxc=
+ go.etcd.io/etcd/pkg/v3 v3.7.0/go.mod h1:fDQYyc8rOC1Yl4EZLh0O1OjHzwJW7jAly80+BpD1M9o=
+ go.etcd.io/etcd/server/v3 v3.7.0 h1:ScdUdN8ljuimp0lZaNq0otLMrHcFSFT+dQyT1j7JSFo=
+@@ -419,8 +419,8 @@ go.yaml.in/yaml/v3 v3.0.5 h1:N6y/pJk8buWs9NY5ERU2HSMfm+IuD/OtfdAnq6kESPw=
+ go.yaml.in/yaml/v3 v3.0.5/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
+ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
+ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
++golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
+ golang.org/x/mod v0.4.2/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
+@@ -429,14 +429,14 @@ golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
+ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+ golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod h1:p54w0d4576C0XHj96bSt6lcn1PtDYWL6XObtHCRCNQM=
+-golang.org/x/net v0.59.0 h1:5zfYln+w5XCxwrnMMJPufRgNoXEaGxl0wo5GqPXyues=
+-golang.org/x/net v0.59.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
++golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+ golang.org/x/sys v0.0.0-20190916202348-b4ddaad3f8a3/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+@@ -447,33 +447,33 @@ golang.org/x/sys v0.0.0-20210510120138-977fb7262007/go.mod h1:oPkhp1MJrh7nUepCBc
+ golang.org/x/sys v0.0.0-20210616094352-59db8d763f22/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+ golang.org/x/sys v0.27.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x
+```
+
+---
+
+### Incident Patch 2: `fa2e5fa4` (2026-10-30)
+**Commit Message**: feat(deps): bump github.com/nats-io/nats.go from 1.54.0 to 1.55.0 (#1395)
+
+Bumps [github.com/nats-io/nats.go](https://github.com/nats-io/nats.go) from 1.54.0 to 1.55.0.
+- [Release notes](https://github.com/nats-io/nats.go/releases)
+- [Commits](https://github.com/nats-io/nats.go/compare/v1.54.0...v1.55.0)
+
+---
+updated-dependencies:
+- dependency-name: github.com/nats-io/nats.go
+  dependency-version: 1.55.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@ require (
+ 	github.com/json-iterator/go v1.1.12
+ 	github.com/juju/mutex/v2 v2.0.0
+ 	github.com/moby/moby/api v1.56.1
+-	github.com/nats-io/nats.go v1.54.0
++	github.com/nats-io/nats.go v1.55.0
+ 	github.com/onsi/ginkgo/v2 v2.33.1
+ 	github.com/onsi/gomega v1.44.0
+ 	github.com/prometheus/client_golang v1.25.0
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -255,8 +255,8 @@ github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 h1:n6/
+ github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00/go.mod h1:Pm3mSP3c5uWn86xMLZ5Sa7JB9GsEZySvHYXCTK4E9q4=
+ github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=
+ github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
+-github.com/nats-io/nats.go v1.54.0 h1:vsXoOxjHp/GmPUN+EcI7uOf/uB+iAP+kEsAFNQN0yzA=
+-github.com/nats-io/nats.go v1.54.0/go.mod h1:y+DZoD1oBOYfZTU681eTUiUjI0vbqYGixNVFHcjHJ0k=
++github.com/nats-io/nats.go v1.55.0 h1:Ng8QKHdvdHIWoaiq0+d/aH1BWkxvcJxWJ0Y/9BPKx3M=
++github.com/nats-io/nats.go v1.55.0/go.mod h1:y+DZoD1oBOYfZTU681eTUiUjI0vbqYGixNVFHcjHJ0k=
+ github.com/nats-io/nkeys v0.4.16 h1:rd5oAuLOb8mnAycB0xleuEBNS1pVVnN0fv/FF34Eypg=
+ github.com/nats-io/nkeys v0.4.16/go.mod h1:llLgWoI0o4z/Q57q2R1kHfmocyhGV6VG/U18Glg1Afs=
+ github.com/nats-io/nuid v1.0.1 h1:5iA8DT8V7q8WK2EScv2padNa/rTESc1KdnPw4TC2paw=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1399** (closed): fix(kubeadm): use advertiseAddress for kubeadm's LocalAPIEndpoint (@Kellen275)
+- **PR #1395** (2026-10-30): feat(deps): bump github.com/nats-io/nats.go from 1.54.0 to 1.55.0 (@dependabot[bot])
+- **PR #1394** (2026-10-30): feat(deps): bump the etcd group with 2 updates (@dependabot[bot])
 - **PR #1393** (2026-10-26): fix(soot): stop managers before dropping them (@serhiimazurok)
 - **PR #1392** (2026-10-23): fix(tcp): refresh endpoint after address changes (@spicysharkco)
 - **PR #1390** (2026-10-23): fix(datastore): keep MySQL TLS config off the global driver registry (@somaz94)
-- **PR #1389** (2026-10-23): fix(tcp): clear removed DataStore overrides (@spicysharkco)
-- **PR #1387** (2026-10-22): fix(e2e): wait for freeze webhook enforcement before asserting writes (@Sphinxgaia)
-- **PR #1386** (2026-10-22): feat: headless control plane service support (@Sphinxgaia)
 
 ---
 
@@ -919,47 +962,50 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. soot): stop managers before dropping them (#1393)
+## X. deps): bump the etcd group with 2 updates (#1394)
 
 **RULE**:
-When implementing operations in `controllers/soot/manager.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f5f3bd80`: soot): stop managers before dropping them (#1393). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c14e4456`: deps): bump the etcd group with 2 updates (#1394). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `controllers/soot/manager.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	m.stop(ctx, req.NamespacedName.String())
-	return nil
-}
-
-// stop cancels the soot manager before removing it: once out of the map, nothing could stop it.
-func (m *Manager) stop(ctx context.Context, tcpName string) {
-		return
-			m.stop(ctx, request.String())
-		startErr := mgr.Start(tcpCtx)
-		// A soot manager stopped on purpose can fail while shutting down: it must not flag the next one as failed
-		if startErr != nil && tcpCtx.Err() == nil {
-			logger.Error(startErr, "unable to start soot manager")
-				logger.Error(annotationErr, "unable to update TenantControlPlane for soot failed annotation")
+	go.etcd.io/etcd/api/v3 v3.7.3
+	go.etcd.io/etcd/client/v3 v3.7.3
+	go.etcd.io/etcd/client/pkg/v3 v3.7.3 // indirect
+	golang.org/x/crypto v0.58.0 // indirect
+	golang.org/x/net v0.61.0 // indirect
+	golang.org/x/sync v0.24.0 // indirect
+	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/term v0.47.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
+	golang.org/x/tools v0.51.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	tcpName := req.NamespacedName.String()
-		return nil
-
-	return nil
-			delete(m.sootMap, request.String())
-		if err = mgr.Start(tcpCtx); err != nil {
-			logger.Error(err, "unable to start soot manager")
-				logger.Error(err, "unable to update TenantControlPlane for soot failed annotation")
+	go.etcd.io/etcd/api/v3 v3.7.2
+	go.etcd.io/etcd/client/v3 v3.7.2
+	go.etcd.io/etcd/client/pkg/v3 v3.7.2 // indirect
+	golang.org/x/crypto v0.57.0 // indirect
+	golang.org/x/net v0.59.0 // indirect
+	golang.org/x/sync v0.23.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/term v0.46.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
+	golang.org/x/tools v0.49.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f5f3bd80` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c14e4456` are properly handled with clean fallback behavior.

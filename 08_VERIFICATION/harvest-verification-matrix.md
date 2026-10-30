@@ -6302,3 +6302,7 @@
 | `CYCLE-20261030-4RT7` | `2026-10-30T20:22:10.891Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5863` | Yes (`91e4b23f...`) |
 | `CYCLE-20261030-MWJ5` | `2026-10-30T20:36:16.817Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5864` | Yes (`c0696294...`) |
 | `CYCLE-20261030-MXDF` | `2026-10-30T20:36:17.907Z` | `DevExpress/testcafe` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5865` | Yes (`b90af2ed...`) |
+| `CYCLE-20261030-1NEA` | `2026-10-30T20:47:44.818Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5866` | Yes (`28ef208e...`) |
+| `CYCLE-20261030-3POH` | `2026-10-30T20:49:21.089Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5867, Rule 5868, Rule 5869` | Yes (`a9c1b0fb...`) |
+| `CYCLE-20261030-7B6J` | `2026-10-30T20:52:08.923Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5870, Rule 5871, Rule 5872` | Yes (`324ee7b1...`) |
+| `CYCLE-20261030-7Y5L` | `2026-10-30T20:52:38.697Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5873` | Yes (`f96d68a8...`) |

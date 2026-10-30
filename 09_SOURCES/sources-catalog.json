@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "22c4a97a",
+    "sourceVersion": "e8618dbc",
     "license": "Apache-2.0",
-    "contentHash": "2231007cc11ac40e5d2aaebfffda9a27e1058ecf8defd66a8cb4651c6813ca06",
-    "lastHarvestedAt": "2026-10-30T04:35:01.143Z",
+    "contentHash": "324ee7b14f8c8b4a67dcb36c614c94a48c08c9b9aa2e74dee3f0d6424a255dbe",
+    "lastHarvestedAt": "2026-10-30T20:52:08.927Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "a7767075",
+    "sourceVersion": "cfe57b43",
     "license": "MIT",
-    "contentHash": "54ababb59a494807269abf25fbffecc3f044110386ddbc6709a33a5f1abd2ce0",
-    "lastHarvestedAt": "2026-10-30T20:05:20.983Z",
+    "contentHash": "28ef208e0e72cbe93efd1873d27d89092bc40b87c1dfb8a8a02bebc47e308064",
+    "lastHarvestedAt": "2026-10-30T20:47:44.822Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "f5f3bd80",
+    "sourceVersion": "c14e4456",
     "license": "Apache-2.0",
-    "contentHash": "8a019d9679ed6b9c08837491fe9df1f1faac16b4c0ab3d5d0e8bf0e4e11a843b",
-    "lastHarvestedAt": "2026-10-27T14:22:25.490Z",
+    "contentHash": "f96d68a8b5990cce6dace8fa31bda3221bd1a6c276148578ac72b3047b524d23",
+    "lastHarvestedAt": "2026-10-30T20:52:38.701Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "73b53109",
+    "sourceVersion": "f7607a3d",
     "license": "NOASSERTION",
-    "contentHash": "46b7ae9e84429e1d96881225ee4c2cd79336db5202373a86827d91297bc58956",
-    "lastHarvestedAt": "2026-10-28T22:14:01.336Z",
+    "contentHash": "a9c1b0fb2b0937446af449d8fa0a8e7168ded809e47b4c55e16d2e5856dfa9eb",
+    "lastHarvestedAt": "2026-10-30T20:49:21.092Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {

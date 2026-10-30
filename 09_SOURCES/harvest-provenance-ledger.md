@@ -6311,3 +6311,7 @@ Every entry in this ledger must capture:
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `c187ec5c` | Multi-dimensional audit evidence | 2026-10-30T20:22:10.895Z |
 | `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `6470b5e4` | Multi-dimensional audit evidence | 2026-10-30T20:36:16.821Z |
 | `learn-github-devexpress-testcafe` | `https://github.com/DevExpress/testcafe` | `7245edc4` | Multi-dimensional audit evidence | 2026-10-30T20:36:17.910Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `cfe57b43` | Multi-dimensional audit evidence | 2026-10-30T20:47:44.822Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `f7607a3d` | Multi-dimensional audit evidence | 2026-10-30T20:49:21.092Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `e8618dbc` | Multi-dimensional audit evidence | 2026-10-30T20:52:08.927Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `c14e4456` | Multi-dimensional audit evidence | 2026-10-30T20:52:38.701Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T20:36:17.832Z",
+  "last_updated": "2026-10-30T20:52:38.618Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4825,8 +4825,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "a7767075",
-      "content_hash": "54ababb59a494807269abf25fbffecc3f044110386ddbc6709a33a5f1abd2ce0",
+      "source_version": "cfe57b43",
+      "content_hash": "28ef208e0e72cbe93efd1873d27d89092bc40b87c1dfb8a8a02bebc47e308064",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -4954,6 +4954,11 @@
           "number": 5857,
           "title": "orchestrator): reconcile Cargo.lock after the ed25519-dalek and sha2 bumps (#336",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5866,
+          "title": "deps-dev): bump the lint-format group (oxfmt 0.74.0, oxlint 1.90.0, oxlint-tsgol",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -4961,7 +4966,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:05:20.889Z",
+      "verified_at": "2026-10-30T20:47:44.723Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -6960,8 +6965,8 @@
       "slug": "clastix-kamaji",
       "platform": "github",
       "source_url": "https://github.com/clastix/kamaji",
-      "source_version": "f5f3bd80",
-      "content_hash": "8a019d9679ed6b9c08837491fe9df1f1faac16b4c0ab3d5d0e8bf0e4e11a843b",
+      "source_version": "c14e4456",
+      "content_hash": "f96d68a8b5990cce6dace8fa31bda3221bd1a6c276148578ac72b3047b524d23",
       "dossier_path": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
       "promoted_rules": [
@@ -6994,6 +6999,11 @@
           "number": 4843,
           "title": "soot): stop managers before dropping them (#1393)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5873,
+          "title": "deps): bump the etcd group with 2 updates (#1394)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7001,7 +7011,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:22:25.428Z",
+      "verified_at": "2026-10-30T20:52:38.598Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43901,8 +43911,8 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "73b53109",
-      "content_hash": "46b7ae9e84429e1d96881225ee4c2cd79336db5202373a86827d91297bc58956",
+      "source_version": "f7607a3d",
+      "content_hash": "a9c1b0fb2b0937446af449d8fa0a8e7168ded809e47b4c55e16d2e5856dfa9eb",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
@@ -43935,6 +43945,21 @@
           "number": 4511,
           "title": "console.groupCollapsed: start a group, as console.group does (#46505)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5867,
+          "title": "Event Loop Monotonic Deadline Clamping Under Signal Interruption",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5868,
+          "title": "Lifetimes Over Unsafe Pointer Laundering in Bump Allocators",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5869,
+          "title": "Register Mutation Invariant in Linear Instruction Disassembly Scanners",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43942,7 +43967,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:14:01.253Z",
+      "verified_at": "2026-10-30T20:49:20.991Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -67421,13 +67446,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
       "source_version": "e8618dbc",
-      "content_hash": "9b05e7410c8d68c9ac4a9db0e2f581464ce191382c2279b8f727b9f91ba2d272",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "content_hash": "324ee7b14f8c8b4a67dcb36c614c94a48c08c9b9aa2e74dee3f0d6424a255dbe",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -67498,6 +67523,21 @@
           "number": 5558,
           "title": "Merge pull request #4588 from aleo-labs-protocol/fix/block-sync-dropped-requests",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5870,
+          "title": "Dual-Criterion Request Timeout Invalidation in Asynchronous P2P Meshes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5871,
+          "title": "Monotonicity Enforcement in Distributed Garbage Collection Markers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5872,
+          "title": "Bootstrap Consensus Optimism Invariant (Zero-State Sync Default)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -67505,7 +67545,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T18:32:38.373Z",
+      "verified_at": "2026-10-30T20:52:08.824Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155509,6 +155549,118 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T20:36:17.813Z"
+    },
+    "rule-5866": {
+      "learning_id": "rule-5866",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5866,
+      "title": "deps-dev): bump the lint-format group (oxfmt 0.74.0, oxlint 1.90.0, oxlint-tsgol",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "cfe57b43",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:47:44.723Z"
+    },
+    "rule-5867": {
+      "learning_id": "rule-5867",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5867,
+      "title": "Event Loop Monotonic Deadline Clamping Under Signal Interruption",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "f7607a3d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:49:20.991Z"
+    },
+    "rule-5868": {
+      "learning_id": "rule-5868",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5868,
+      "title": "Lifetimes Over Unsafe Pointer Laundering in Bump Allocators",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "f7607a3d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:49:20.991Z"
+    },
+    "rule-5869": {
+      "learning_id": "rule-5869",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5869,
+      "title": "Register Mutation Invariant in Linear Instruction Disassembly Scanners",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "f7607a3d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:49:20.991Z"
+    },
+    "rule-5870": {
+      "learning_id": "rule-5870",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5870,
+      "title": "Dual-Criterion Request Timeout Invalidation in Asynchronous P2P Meshes",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "e8618dbc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:52:08.824Z"
+    },
+    "rule-5871": {
+      "learning_id": "rule-5871",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5871,
+      "title": "Monotonicity Enforcement in Distributed Garbage Collection Markers",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "e8618dbc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:52:08.824Z"
+    },
+    "rule-5872": {
+      "learning_id": "rule-5872",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5872,
+      "title": "Bootstrap Consensus Optimism Invariant (Zero-State Sync Default)",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "e8618dbc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:52:08.824Z"
+    },
+    "rule-5873": {
+      "learning_id": "rule-5873",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5873,
+      "title": "deps): bump the etcd group with 2 updates (#1394)",
+      "source_url": "https://github.com/clastix/kamaji",
+      "source_version": "c14e4456",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T20:52:38.598Z"
     }
   },
   "aliases": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T20:36:17.920Z",
+  "last_updated": "2026-10-30T20:52:38.711Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "9b05e7410c8d68c9ac4a9db0e2f581464ce191382c2279b8f727b9f91ba2d272",
-      "verified_at": "2026-10-30T18:32:38.489Z",
+      "content_hash": "324ee7b14f8c8b4a67dcb36c614c94a48c08c9b9aa2e74dee3f0d6424a255dbe",
+      "verified_at": "2026-10-30T20:52:08.936Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T18:32:38.489Z"
+      "last_updated": "2026-10-30T20:52:08.936Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "54ababb59a494807269abf25fbffecc3f044110386ddbc6709a33a5f1abd2ce0",
-      "verified_at": "2026-10-30T20:05:20.990Z",
+      "content_hash": "28ef208e0e72cbe93efd1873d27d89092bc40b87c1dfb8a8a02bebc47e308064",
+      "verified_at": "2026-10-30T20:47:44.831Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T20:05:20.990Z"
+      "last_updated": "2026-10-30T20:47:44.831Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -6291,14 +6291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clastix-kamaji",
-      "content_hash": "8a019d9679ed6b9c08837491fe9df1f1faac16b4c0ab3d5d0e8bf0e4e11a843b",
-      "verified_at": "2026-10-27T14:22:25.497Z",
+      "content_hash": "f96d68a8b5990cce6dace8fa31bda3221bd1a6c276148578ac72b3047b524d23",
+      "verified_at": "2026-10-30T20:52:38.710Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:22:25.497Z"
+      "last_updated": "2026-10-30T20:52:38.710Z"
     },
     "gluesql/gluesql": {
       "repository": "gluesql/gluesql",
@@ -11601,14 +11601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "46b7ae9e84429e1d96881225ee4c2cd79336db5202373a86827d91297bc58956",
-      "verified_at": "2026-10-28T22:14:01.341Z",
+      "content_hash": "a9c1b0fb2b0937446af449d8fa0a8e7168ded809e47b4c55e16d2e5856dfa9eb",
+      "verified_at": "2026-10-30T20:49:21.102Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:14:01.341Z"
+      "last_updated": "2026-10-30T20:49:21.102Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",
