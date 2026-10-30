@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T13:46:31.978Z",
+  "last_updated": "2026-10-30T13:58:26.601Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6173,8 +6173,8 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "632225ea",
-      "content_hash": "020f7c2eeae254a2b9e9c2ae592a1425cea775a1d03847d103f30699a4d799ea",
+      "source_version": "146f7699",
+      "content_hash": "150082aa00bfa46567c3fbbaa7518cfb59b72677365dd60397fa5729a975cb7d",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
@@ -6222,6 +6222,11 @@
           "number": 5436,
           "title": "timechaos): restore ARM64 time injection (#5179)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5770,
+          "title": "selector): skip terminated pods by default (#5150)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6229,7 +6234,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:39:38.850Z",
+      "verified_at": "2026-10-30T13:58:26.581Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153621,6 +153626,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T13:46:21.370Z"
+    },
+    "rule-5770": {
+      "learning_id": "rule-5770",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5770,
+      "title": "selector): skip terminated pods by default (#5150)",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "146f7699",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T13:58:26.581Z"
     }
   },
   "aliases": {

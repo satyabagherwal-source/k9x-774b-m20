@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T13:46:32.083Z",
-  "total_cycles_completed": 6183,
-  "total_learnings_persisted": 6183,
-  "total_rules_promoted": 5739,
+  "last_updated": "2026-10-30T13:58:26.688Z",
+  "total_cycles_completed": 6184,
+  "total_learnings_persisted": 6184,
+  "total_rules_promoted": 5740,
   "history": [
-    {
-      "timestamp": "2026-10-29T00:41:23.072Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-29T00:41:38.062Z",
       "repository": "Ontos-AI/knowhere",
@@ -1403,6 +1396,13 @@
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T13:58:26.688Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

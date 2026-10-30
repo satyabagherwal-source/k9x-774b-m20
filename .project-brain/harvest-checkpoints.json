@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T13:46:32.087Z",
+  "last_updated": "2026-10-30T13:58:26.693Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "020f7c2eeae254a2b9e9c2ae592a1425cea775a1d03847d103f30699a4d799ea",
-      "verified_at": "2026-10-28T22:39:38.931Z",
+      "content_hash": "150082aa00bfa46567c3fbbaa7518cfb59b72677365dd60397fa5729a975cb7d",
+      "verified_at": "2026-10-30T13:58:26.692Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:39:38.931Z"
+      "last_updated": "2026-10-30T13:58:26.692Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",

@@ -6215,3 +6215,4 @@ Every entry in this ledger must capture:
 | `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `fee69d96` | Multi-dimensional audit evidence | 2026-10-30T13:46:21.473Z |
 | `learn-github-hmlongco-factory` | `https://github.com/hmlongco/Factory` | `3799543a` | Multi-dimensional audit evidence | 2026-10-30T13:46:24.325Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `0a6bfa1a` | Multi-dimensional audit evidence | 2026-10-30T13:46:32.072Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `146f7699` | Multi-dimensional audit evidence | 2026-10-30T13:58:26.682Z |

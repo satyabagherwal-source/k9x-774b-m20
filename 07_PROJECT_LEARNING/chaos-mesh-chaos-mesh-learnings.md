@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source**: github ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
-> **Source Version**: `632225ea`  
+> **Source Version**: `146f7699`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T22:39:38.348Z  
+> **Timestamp**: 2026-10-30T13:58:26.000Z  
 > **Learning ID**: `learn-github-chaos-mesh-chaos-mesh`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T22:39:38.342Z  
+> **Harvest Timestamp**: 2026-10-30T13:53:23.645Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Chaos Engineering Platform for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7956 stars
+- **Stars / Engagement**: 7961 stars
 
 ---
 
@@ -917,13 +917,13 @@ func init() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5180** (2026-10-28): **refactor(build): simplify Python helpers and use Buildx consistently**
-  *Symptoms*: ## What problem does this PR solve?  Cached image builds can omit the requested target platform, and generated container commands lose argument boundaries for paths containing spaces. The build helpers also retain duplicate logic and obsolete CI compatibility paths.  ## What's changed and how does it work?  - Use Buildx with `--load` and an explicit target platform for image builds, including cached builds. - Centralize image settings and architecture detection in `common.py`, and remove unused wrappers and `--no-check`. - Quote generated container commands with `shlex.join`.  Image builds now require Docker Buildx.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [ ] I have updated the `CHANGELOG.md` - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [x] **Breaking backward compatibility**  ## DCO  The commit includes a DCO sign-off. 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5180?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 32.46%. Comparing base ([`97928e5`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/97928e5d9bd5fb082f29e4b7e290839c32b86b0f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`18cf4c0`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/18cf4c04a213f7b96bc7ab71f6effd5b58aa317d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##           master    #5180      +/-   #
+- **Issue #5186** (2026-10-29): **ci(e2e): align release-2.8 Kubernetes versions**
+  *Symptoms*: ## What problem does this PR solve?  Reduce repeated E2E work on release-2.8 and align its Kubernetes test versions with master.  ## What's changed and how does it work?  - Run the existing E2E suites on Kubernetes 1.35 and 1.37. - Upgrade Minikube to 1.39.0 and omit Kubernetes patch versions so Minikube selects them from its bundled version table. - Use containerd for the test clusters and configure the Chaos Daemon runtime and socket to match.  ## Related changes  - [x] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs), covered by [chaos-mesh/website#475](https://github.com/chaos-mesh/website/pull/475) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.7 - [ ] release-2.6  ## Checklist  ### CHANGELOG  - [ ] I have updated the `CHANGELOG.md` - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  All commits include a Signed-off-by trailer. 
 
-- **Issue #5179** (2026-10-28): **fix(timechaos): restore ARM64 time injection**
-  *Symptoms*: ## What problem does this PR solve?  TimeChaos must shift and restore application clocks on ARM64 without crashing the target. Release builds omit the required compiler option because the target platform is not passed into the build container.  Fixes #5139.  ## What's changed and how does it work?  - Always pass the resolved target platform into the build container so ARM64 fake clock objects use `-mcmodel=tiny`. - Preserve injection errors when ptrace detach succeeds. - Run the time injection tests on both AMD64 and ARM64, and cover error reporting.  Validated with `go test -count=1 ./pkg/time` on Linux ARM64. In minikube, a static Go application and an Alpine Python application both shifted forward by 60 minutes and recovered with no container restarts.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [x] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [x] I have updated the `CHANGELOG.md` - [ ] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [x] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  All commits include a Signed-off-by trailer. 
+- **Issue #5185** (2026-10-29): **chore(hack): remove obsolete scripts and fix image loading**
+  *Symptoms*: ## What problem does this PR solve?  The hack directory contains obsolete E2E entry points and a duplicate Swagger generation script. The PR image download script also passes the repository and run ID as one argument and imports image archives with the wrong command.  ## What's changed and how does it work?  - Remove `e2e.sh`, `run-e2e.sh`, `prepare-e2e.sh`, and `generate_swagger_spec.sh`. CI already runs E2E tests directly, and `make swagger_spec` generates the Swagger spec. - Pass the repository and run ID as separate arguments in `download-image.sh`. - Load the image archives with `docker image load` to match the workflow's `docker image save` output.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [ ] I have updated the `CHANGELOG.md` - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  The commit includes a Signed-off-by trailer. 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5185?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 32.64%. Comparing base ([`65d6dc0`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/65d6dc0cb4d9a2668bf2a610ba57d5aa1ad1a304?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`2ace5b2`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/2ace5b22c97dc4c1aca8c6420e9c63e22d76065b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 1 commits behind head on master.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff    
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -940,430 +940,138 @@ func init() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `97928e5d` (2026-10-28)
-**Commit Message**: fix(timechaos): restore ARM64 time injection (#5179)
+### Incident Patch 1: `7549178e` (2026-10-29)
+**Commit Message**: fix(selector): skip terminated pods by default (#5150)
 
+Co-authored-by: Yue Yang <[REDACTED_EMAIL]>
+Signed-off-by: Srinivas Chippagiri <[REDACTED_EMAIL]>
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -69,6 +69,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- 
- ### Fixed
- 
-+- Fix TimeChaos crashes on ARM64 and preserve injection errors.
- - Fix JVMChaos preparation failures in containers that use Rust coreutils [#5161](https://github.com/chaos-mesh/chaos-mesh/pull/5161)
+@@ -75,6 +75,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
  - Fix StressChaos injection failures when inactive cgroup v1 controller directories are present. [#4407](https://github.com/chaos-mesh/chaos-mesh/pull/4407)
+ - Honor reconciliation cancellation in PhysicalMachineChaos requests to chaosd. [#5095](https://github.com/chaos-mesh/chaos-mesh/pull/5095)
  - Fix `RemoteCluster` readiness to reflect successful setup, reconciliation failures, and deletion [#5157](https://github.com/chaos-mesh/chaos-mesh/pull/5157)
++- Skip Succeeded and Failed pods when `podPhaseSelectors` is unset [#5150](https://github.com/chaos-mesh/chaos-mesh/pull/5150)
+ - Reject PhysicalMachineChaos injection when `spec.uid` is empty and point users to the mutating webhook configuration [#5148](https://github.com/chaos-mesh/chaos-mesh/pull/5148)
+ - Preserve `spec.uid` when importing PhysicalMachineChaos YAML into the Dashboard and submitting the form [#5149](https://github.com/chaos-mesh/chaos-mesh/pull/5149)
+ - Treat physical machine process signals without recovery as one-shot actions to prevent repeated injection and blocked deletion [#5143](https://github.com/chaos-mesh/chaos-mesh/pull/5143)
 ```
 
-**File**: `build/get_env_shell.py` (modified, +1/-2)
+**File**: `pkg/selector/pod/phase_selector.go` (modified, +10/-0)
 ```diff
-@@ -86,8 +86,7 @@ def main():
-     # as it's not supported on some docker build environment.
-     if target_platform.from_env:
-         cmd += ["--platform", f"linux/{target_platform.platform}"]
--    else:
--        cmd += ["--env", f"TARGET_PLATFORM={target_platform.platform}"]
-+    cmd += ["--env", f"TARGET_PLATFORM={target_platform.platform}"]
+@@ -33,6 +33,11 @@ const phaseSelectorName = "phase"
+ type phaseSelector struct {
+ 	reqIncl []labels.Requirement
+ 	reqExcl []labels.Requirement
++
++	// skipTerminated is set when no phase requirement is configured. Pods that
++	// have already terminated (Succeeded or Failed) have no running containers
++	// to inject faults into, so they are not selected by default.
++	skipTerminated bool
+ }
  
-     # For testing on arm64.
-     # See https://etcd.io/docs/v3.5/op-guide/supported-platform/#unsupported-platforms.
+ var _ generic.Selector = &phaseSelector{}
+@@ -48,6 +53,9 @@ func (s *phaseSelector) ListFunc(_ client.Reader) generic.ListFunc {
+ func (s *phaseSelector) Match(obj client.Object) bool {
+ 	included := len(s.reqIncl) == 0
+ 	pod := obj.(*v1.Pod)
++	if s.skipTerminated && (pod.Status.Phase == v1.PodSucceeded || pod.Status.Phase == v1.PodFailed) {
++		return false
++	}
+ 	selector := labels.Set{string(pod.Status.Phase): ""}
+ 
+ 	// include pod if one including requirement matches
+@@ -95,5 +103,7 @@ func newPhaseSelector(spec v1alpha1.PodSelectorSpec) (generic.Selector, error) {
+ 	return &phaseSelector{
+ 		reqIncl: reqIncl,
+ 		reqExcl: reqExcl,
++
++		skipTerminated: len(reqs) == 0,
+ 	}, nil
+ }
 ```
 
-**File**: `pkg/time/fake_image_linux.go` (modified, +5/-3)
+**File**: `pkg/selector/pod/phase_selector_test.go` (modified, +24/-0)
 ```diff
-@@ -71,9 +71,11 @@ func (it *FakeImage) AttachToProcess(pid int, variables map[string]uint64) (err
- 		return errors.Wrapf(err, "ptrace on target process, pid: %d", pid)
+@@ -41,6 +41,9 @@ func TestPhaseSelectorMatch(t *testing.T) {
+ 	failedSelector, err := newPhaseSelector(v1alpha1.PodSelectorSpec{PodPhaseSelectors: []string{string(v1.PodFailed)}})
+ 	g.Expect(err).ShouldNot(HaveOccurred())
+ 
++	succeededSelector, err := newPhaseSelector(v1alpha1.PodSelectorSpec{PodPhaseSelectors: []string{string(v1.PodSucceeded)}})
++	g.Expect(err).ShouldNot(HaveOccurred())
++
+ 	unknownSelector, err := newPhaseSelector(v1alpha1.PodSelectorSpec{PodPhaseSelectors: []string{string(v1.PodUnknown)}})
+ 	g.Expect(err).ShouldNot(HaveOccurred())
+ 
+@@ -49,6 +52,7 @@ func TestPhaseSelectorMatch(t *testing.T) {
+ 		testutils.NewPod(testutils.PodArg{Name: "p2", Status: v1.PodRunning}),
+ 		testutils.NewPod(testutils.PodArg{Name: "p3", Status: v1.PodPending}),
+ 		testutils.NewPod(testutils.PodArg{Name: "p4", Status: v1.PodFailed}),
++		testutils.NewPod(testutils.PodArg{Name: "p5", Status: v1.PodSucceeded}),
  	}
- 	defer func() {
--		err = program.Detach()
--		if err != nil {
--			it.logger.Error(err, "fail to detach program", "pid", program.Pid())
-+		if detachErr := program.Detach(); detachErr != nil {
-+			it.logger.Error(detachErr, "fail to detach program", "pid", program.Pid())
-+			if err == nil {
-+				err = detachErr
-+			}
- 		}
- 	}()
  
-```
-
-**File**: `pkg/time/time_skew_linux_test.go` (renamed, +11/-0)
-```diff
-@@ -56,6 +56,8 @@ var _ = Describe("ModifyTime", func() {
- 
- 		t, err = timer.StartTimer()
- 		Expect(err).ShouldNot(HaveOccurred())
-+		_, err = t.GetTime()
-+		Expect(err).ShouldNot(HaveOccurred())
- 	})
- 
- 	AfterEach(func() {
-@@ -64,6 +66,15 @@ var _ = Describe("ModifyTime", func() {
- 	})
- 
- 	Context("Modify Time", func() {
-+		It("should return injection errors after detaching successfully", func() {
-+			image := NewFakeImage("__chaos_mesh_missing_vdso_symbol", []byte{0}, nil, logger)
-+			err := image.AttachToProcess(t.Pid(), nil)
-+			Expect(err).To(MatchError(ContainSubstring("find origin __chaos_mesh_missing_vdso_symbol in vdso")))
-+
-+			_, err = t.GetTime()
-+			Expect(err).ShouldNot(HaveOccurred())
-+		})
-+
- 		It("should move forward successfully", func() {
- 
- 			Expect(t).NotTo(BeNil())
+ 	tcs := []struct {
+@@ -72,6 +76,26 @@ func TestPhaseSelectorMatch(t *testing.T) {
+ 			pod:      pods[0],
+ 			selector: emptySelector,
+ 			match:    true,
++		}, {
++			name:     "empty filter skips failed pod",
++			pod:      pods[3],
++			selector: emptySelector,
++			match:    false,
++		}, {
++			name:     "empty filter skips succeeded pod",
++			pod:      pods[4],
++			selector: emptySelector,
++			match:    false,
++		}, {
++			name:     "empty filter keeps pending pod",
++			pod:      pods[2],
++			selector: emptySelector,
++			match:    true,
++		}, {
++			name:     "filter succeeded",
++			pod:      pods[4],
++			selector: succeededSelector,
++			match:    true,
+ 		}, {
+ 			name:     "filter running and pending",
+ 			pod:      pods[0],
 ```
 
 ---
 
-### Incident Patch 2: `632225ea` (2026-10-28)
-**Commit Message**: refactor(build): simplify Python helpers and use Buildx consistently (#5180)
+### Incident Patch 2: `24c8a932` (2026-10-29)
+**Commit Message**: chore(hack): remove obsolete scripts and fix image loading (#5185)
 
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-**File**: `build/build_image.py` (modified, +20/-95)
+**File**: `hack/download-image.sh` (modified, +2/-2)
 ```diff
-@@ -19,133 +19,58 @@
- configuration
- """
+@@ -54,7 +54,7 @@ function download_image() {
  
--import os
- import argparse
--import subprocess
-+import os
- import pathlib
-+import subprocess
+     for IMAGE in "chaos-mesh" "chaos-daemon" "chaos-dashboard"
+     do
+-        docker image import .cache/$IMAGE.tar ghcr.io/chaos-mesh/$IMAGE:latest &>/dev/null
++        docker image load --input ".cache/$IMAGE.tar" &>/dev/null
+         echo "Image ghcr.io/chaos-mesh/$IMAGE:latest loaded"
+     done
+ }
+@@ -104,4 +104,4 @@ while [[ $# -gt 0 ]]; do
+     esac
+ done
  
--import utils
- import common
- 
- 
--def get_image_env(name, env):
--    """
--    get environment variable related with an image according to the priority:
--    1. IMAGE_<name>_<env>
--    2. IMAGE_<env>
--
--    the image name will be automatically converted to the unserscore_uppsercase
--    format, for example, "chaos-mesh" will be converted to "CHAOS_MESH"
--    """
--    default_env = os.getenv("IMAGE_" + env)
--    env_mid_name = utils.underscore_uppercase(name)
--
--    env = os.getenv(f"IMAGE_{env_mid_name}_{env}", default_env)
--    if env == "":
--        env = default_env
--    return env
--
--
--def get_image_tag(name):
--    """
--    get the tag of the image
--    """
--    return get_image_env(name, "TAG")
--
--
--def get_image_build(name):
--    """
--    get whether this image should be built
--    """
--    return get_image_env(name, "BUILD")
--
--
--def get_image_full_name(name):
--    """
--    get the full tag of an image
--    """
--    tag = get_image_tag(name)
--    return f"ghcr.io/chaos-mesh/{name}:{tag}"
--
--
--def pass_env_to_build_arg(cmd, arg_name):
--    """
--    pass the environment variable to the build arguments
--    """
--    if os.getenv(arg_name) is not None:
--        cmd += ["--build-arg", f"{arg_name}={os.getenv(arg_name)}"]
--
--
- def main():
--    """
--    entrypoint of this script
--    """
-     cmd_parser = argparse.ArgumentParser(
-         description='Helper script to build Chaos Mesh image.')
-     cmd_parser.add_argument(
-         'name',
-         metavar="NAME",
--        type=str,
--        nargs=1,
-         help="the name of image")
-     cmd_parser.add_argument(
-         'path',
-         metavar="PATH",
--        type=str,
--        nargs=1,
-         help="the path of the Dockerfile build directory")
- 
-     args = cmd_parser.parse_args()
--    name = args.name[0]
--    image_full_name = get_image_full_name(name)
-+    name = args.name
-+    image_full_name = common.get_image_full_name(name)
-+
-+    if common.get_image_env(name, "BUILD") == "1":
-+        target_platform = common.get_target_platform()
-+        cmd = ["docker", "buildx", "build", "--load"]
- 
--    env = os.environ.copy()
--    cmd = []
--    if get_image_build(name) == "1":
-         if os.getenv("DOCKER_CACHE") == "1":
--            env.update({"DOCKER_BUILDKIT": "1",
--                   "DOCKER_CLI_EXPERIMENTAL": "enabled"})
-             cache_dir = os.path.join(
-                 os.getenv("DOCKER_CACHE_DIR", f"{os.getcwd()}/.cache/"),
--                f"image-{name}"
--                )
-+                f"image-{name}",
-+            )
-             pathlib.Path(cache_dir).mkdir(parents=True, exist_ok=True)
--            cmd = [
--                "docker",
--                "buildx",
--                "build",
--                "--load",
--                "--cache-to",
--                f"type=local,dest={cache_dir}"]
-+            cmd += ["--cache-to", f"type=local,dest={cache_dir}"]
-             if os.getenv("DISABLE_CACHE_FROM") != "1":
-                 cmd += ["--cache-from", f"type=local,src={cache_dir}"]
--        else:
--            if os.getenv("TARGET_PLATFORM") is not None:
--                env.update({"DOCKER_BUILDKIT": "1"})
--                cmd = [
--                    "docker",
--                    "buildx",
--                    "build",
--                    "--load",
--                    "--platform",
--                    f"linux/{os.getenv('TARGET_PLATFORM')}"]
--            else:
--                # This branch is split to avoid to use `buildx`, as `buildx` is
--                # not supported on some CI environment
--                env.update({"DOCKER_BUILDKIT": "1"})
--                cmd = ["docker", "build"]
- 
--        for env_key in common.export_env_variables:
--            pass_env_to_build_arg(cmd, env_key)
-+        cmd += ["--platform", f"linux/{target_platform}"]
-+
-+        for env_key in common.EXPORT_ENV_VARIABLES:
-+            value = os.getenv(env_key)
-+            if value is not None:
-+                cmd += ["--build-arg", f"{env_key}={value}"]
- 
--        target_platform = utils.get_target_platform()
--        cmd += ["--build-arg", f"TARGET_PLATFORM={target_platform.platform}"]
--        cmd += ["-t", image_full_name, args.path[0]]
-+        cmd += ["--build-arg", f"TARGET_PLATFORM={target_platform}"]
-+        cmd += ["-t", image_full_name, args.path]
-     else:
-         cmd = ["docker", "pull", image_full_name]
- 
-     print(" ".join(cmd))
--    subprocess.run(cmd, env=env, check=True)
-+    subprocess.run(cmd, check=True)
- 
- 
- if __name__ == '__main__':
+-download_image "$GITHUB_REPOSITORY $GITHUB_ACTION_ID"
++download_image "$GITHUB_REPOSITORY" "$GITHUB_ACTION_ID"
 ```
 
-**File**: `build/common.py` (modified, +36/-5)
+**File**: `hack/e2e.sh` (removed, +0/-338)
 ```diff
-@@ -13,16 +13,47 @@
- # limitations under the License.
- #
- 
--"""
--varaibles used commonly in multiple scripts
--"""
-+import os
-+import sys
- 
--export_env_variables = [
-+
-+EXPORT_ENV_VARIABLES = (
-     "HTTP_PROXY",
-     "HTTPS_PROXY",
-     "GOPROXY",
-     "UI",
-     "LDFLAGS",
-     "CRATES_MIRROR",
-     "GO_BUILD_CACHE",
--]
-+)
-+
-+HOST_PLATFORM_ALIASES = {
-+    "x86_64": "amd64",
-+    "amd64": "amd64",
-+    "arm64": "arm64",
-+    "aarch64": "arm64",
-+}
-+
-+
-+def get_image_env(name, env):
-+    """Prefer a nonempty IMAGE_<NAME>_<ENV> over IMAGE_<ENV>."""
-+    default_env = os.getenv("IMAGE_" + env)
-+    env_mid_name = name.replace('-', '_').upper()
-+    return os.getenv(f"IMAGE_{env_mid_name}_{env}", default_env) or default_env
-+
-+
-+def get_image_full_name(name):
-+    tag = get_image_env(name, "TAG")
-+    return f"ghcr.io/chaos-mesh/{name}:{tag}"
-+
-+
-+def get_target_platform():
-+    target = os.getenv("TARGET_PLATFORM")
-+    if target:
-+        return target
-+
-+    platform = HOST_PLATFORM_ALIASES.get(os.uname().machine)
-+    if platform:
-+        return platform
-+
-+    sys.exit("Please run this script on amd64 or arm64 machines.")
-```
-
-**File**: `build/get_env_shell.py` (modified, +22/-47)
-```diff
-@@ -21,56 +21,32 @@
- 
- import argparse
- import os
--import sys
- import pathlib
-+import shlex
- 
--import build_image
- import common
--import utils
--
--
--def pass_env_to_docker_arg(cmd, arg_name):
--    """
--    pass environment variable to the docker run command
--    """
--    if os.getenv(arg_name) is not None and os.getenv(arg_name) != "":
--        cmd += ["-e", f"{arg_name}"]
- 
- 
- def main():
--    """
--    entrypoint of this script
--    """
-     cmd_parser = argparse.ArgumentParser(
-         description='Helper script to run make in docker env.')
-     cmd_parser.add_argument(
-         '--interactive',
-         action='store_true',
--        dest='interactive',
-         help='Run in interactive mode')
--    cmd_parser.set_defaults(interactive=False)
--
--    cmd_parser.add_argument(
--        '--no-check',
--        action='store_false',
--        dest='check',
--        help='Check the return value and exit')
--    cmd_parser.set_defaults(check=True)
- 
-     cmd_parser.add_argument(
-         'env_name',
-         metavar="ENV_NAME",
--        type=str,
--        nargs=1,
-         help="the name of environment image")
- 
-     args = cmd_parser.parse_args()
- 
-     if os.path.exists("/.dockerenv"):
-         print("bash")
--        sys.exit(0)
-+        return
- 
--    env_image_full_name = build_image.get_image_full_name(args.env_name[0])
-+    env_image_full_name = common.get_image_full_name(args.env_name)
- 
-     cmd = ["docker", "run", "--rm", "--privileged"]
-     if args.interactive:
-@@ -81,36 +57,35 @@ def main():
-     # HACK: if you have permission issues when using Docker Desktop for Mac, you can try removing this line to see if it works.
-     cmd += ["--user", f"{os.getuid()}:{os.getgid()}"]
- 
--    target_platform = utils.get_target_platform()
--    # If the environment variable is not set, don't pass `--platform` argument,
--    # as it's not supported on some docker build environment.
--    if target_platform.from_env:
--        cmd += ["--platform", f"linux/{target_platform.platform}"]
--    cmd += ["--env", f"TARGET_PLATFORM={target_platform.platform}"]
-+    target_platform = common.get_target_platform()
-+    cmd += ["--platform", f"linux/{target_platform}"]
-+    cmd += ["--env", f"TARGET_PLATFORM={target_platform}"]
- 
-     # For testing on arm64.
-     # See https://etcd.io/docs/v3.5/op-guide/supported-platform/#unsupported-platforms.
--    if target_platform.platform == "arm64":
-+    if target_platform == "arm64":
-         cmd += ["--env", "ETCD_UNSUPPORTED_ARCH=arm64"]
- 
--    if os.getenv("GO_BUILD_CACHE") is not None and os.getenv(
--            "GO_BUILD_CACHE") != "":
--        tmp_go_dir = f"{os.getenv('GO_BUILD_CACHE')}/chaos-mesh-gopath"
--        tmp_go_build_dir = f"{os.getenv('GO_BUILD_CACHE')}/chaos-mesh-gobuild"
--
--        pathlib.Path(tmp_go_dir).mkdir(parents=True, exist_ok=True)
--        pathlib.Path(tmp_go_build_dir).mkdir(parents=True, exist_ok=True)
--        cmd += ["--volume", f"{tmp_go_dir}:/tmp/go"]
--        cmd += ["--volume", f"{tmp_go_build_dir}:/tmp/go-build"]
--
--    for env_key in common.export_env_variables:
--        pass_env_to_docker_arg(cmd, env_key)
-+    go_build_cache = os.getenv("GO_BUILD_CACHE")
-+    if go_build_cache:
-+        for directory, mount in (
-+            ("chaos-mesh-gopath", "/tmp/go"),
-+            ("chaos-mesh-gobuild", "/tmp/go-build"),
-+        ):
-+            cache_dir = f"{go_build_cache}/{directory}"
-+            pathlib.Path(cache_dir).mkdir(parents=True, exist_ok=True)
-+            cmd += ["--volume", f"{cache_dir}:{mount}"]
-+
-+    for env_key in common.EXPORT_ENV_VARIABLES:
-+        value = os.getenv(env_key)
-+        if value:
-+            cmd += ["-e", env_key]
- 
-     cmd += ["--workdir", cwd]
-     cmd += [env_image_full_name]
-     cmd += ["/bin/bash"]
- 
--    print(" ".join(cmd))
-+    print(shlex.join(cmd))
- 
- 
- if __name__ == '__main__':
-```
-
-**File**: `build/utils.py` (removed, +0/-55)
-```diff
-@@ -1,55 +0,0 @@
+@@ -1,338 +0,0 @@
+-#!/usr/bin/env bash
 -# Copyright 2021 Chaos Mesh Authors.
 -#
 -# Licensed under the Apache License, Version 2.0 (the "License");
@@ -1379,81 +1087,543 @@ Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 -# limitations under the License.
 -#
 -
--"""
--functions used in multiple scripts
--"""
+-#
+-# E2E entrypoint script.
+-#
 -
--import os
--import sys
--from collections import namedtuple
+-set -o errexit
+-set -o nounset
+-set -o pipefail
+-
+-ROOT=$(unset CDPATH && cd $(dirname "${BASH_SOURCE[0]}")/.. && pwd)
+-cd "$ROOT"
+-
+-source "${ROOT}/hack/lib.sh"
+-
+-function usage() {
+-    cat <<'EOF'
+-This script is entrypoint to run e2e tests.
+-Usage: hack/e2e.sh [-h] -- [extra test args]
+-    -h      show this message and exit
+-Environments:
+-    PROVIDER                    Kubernetes provider, e.g. kind, gke, eks, defaults: kind
+-    IMAGE_REGISTRY              image docker registry
+-    IMAGE_TAG                   image tag
+-    SKIP_BUILD                  skip building binaries
+-    SKIP_IMAGE_BUILD            skip build and push images
+-    SKIP_UP                     skip starting the cluster
+-    SKIP_DOWN                   skip shutting down the cluster
+-    KUBE_VERSION                the version of Kubernetes to test against
+-    KUBE_WORKERS                the number of worker nodes (excludes master nodes), defaults: 3
+-    DOCKER_IO_MIRROR            configure mirror for docker.io
+-    GCR_IO_MIRROR               configure mirror for gcr.io
+-    QUAY_IO_MIRROR              configure mirror for quay.io
+-    KIND_DATA_HOSTPATH          (for kind) the host path of data directory for kind cluster, defaults: none
+-    GINKGO_NODES                ginkgo nodes to run specs, defaults: 1
+-    GINKGO_PARALLEL             if set to `y`, will run specs in parallel, the number of nodes will be the number of cpus
+-    GINKGO_NO_COLOR             if set to `y`, suppress color output in default reporter
+-Examples:
+-0) view help
+-    ./hack/e2e.sh -h
+-1) run all specs
+-    ./hack/e2e.sh
+-    GINKGO_NODES=8 ./hack/e2e.sh # in parallel
+-2) limit specs to run
+-    ./hack/e2e.sh -- --ginkgo.focus='Basic'
+-    ./hack/e2e.sh -- --ginkgo.focus='Backup\sand\srestore'
+-    See https://onsi.github.io/ginkgo/ for more ginkgo options.
+-3) reuse the cluster and don't tear down it after the testing
+-    SKIP_UP=y SKIP_DOWN=y ./hack/e2e.sh -- <e2e args>
+-4) use registry mirrors
+-    DOCKER_IO_MIRROR=https://dockerhub.azk8s.cn QUAY_IO_MIRROR=https://quay.azk8s.cn GCR_IO_MIRROR=https://gcr.azk8s.cn ./hack/e2e.sh -- <e2e args>
+-EOF
+-
+-}
+-
+-while getopts "h?" opt; do
+-    case "$opt" in
+-    h|\?)
+-        usage
+-        exit 0
+-        ;;
+-    esac
+-done
+-
+-if [ "${1:-}" == "--" ]; then
+-    shift
+-fi
+-
+-hack::ensure_kind
+-echo "ensured kind"
+-hack::ensure_kubectl
+-echo "ensured kubectl"
+-hack::ensure_kubebuilder
+-echo "ensured kubebuilder"
+-hack::ensure_kustomize
+-echo "ensured kustomize"
+-hack::ensure_kubetest2
+-echo "ensured kubetest2"
+-
+-PROVIDER=${PROVIDER:-kind}
+-IMAGE_REGISTRY=${IMAGE_REGISTRY:-ghcr.io}
+-IMAGE_TAG=${IMAGE_TAG:-latest}
+-CLUSTER=${CLUSTER:-chaos-mesh}
+-KUBECONFIG=${KUBECONFIG:-~/.kube/config}
+-SKIP_BUILD=${SKIP_BUILD:-}
+-SKIP_IMAGE_BUILD=${SKIP_IMAGE_BUILD:-}
+-SKIP_UP=${SKIP_UP:-}
+-SKIP_DOWN=${SKIP_DOWN:-}
+-SKIP_DUMP=${SKIP_DUMP:-}
+-SKIP_TEST=${SKIP_TEST:-}
+-KIND_DATA_HOSTPATH=${KIND_DATA_HOSTPATH:-none}
+-KUBE_VERSION=${KUBE_VERSION:-v1.20.7}
+-KUBE_WORKERS=${KUBE_WORKERS:-3}
+-DOCKER_IO_MIRROR=${DOCKER_IO_MIRROR:-}
+-GCR_IO_MIRROR=${GCR_IO_MIRROR:-}
+-QUAY_IO_MIRROR=${QUAY_IO_MIRROR:-}
+-RUNNER_SUITE_NAME=${RUNNER_SUITE_NAME:-}
+-ARTIFACTS=${ARTIFACTS:-}
+-
+-echo "PROVIDER: $PROVIDER"
+-echo "IMAGE_REGISTRY: $IMAGE_REGISTRY"
+-echo "IMAGE_TAG: $IMAGE_TAG"
+-echo "CLUSTER: $CLUSTER"
+-echo "KUBECONFIG: $KUBECONFIG"
+-echo "SKIP_BUILD: $SKIP_BUILD"
+-echo "SKIP_IMAGE_BUILD: $SKIP_IMAGE_BUILD"
+-echo "SKIP_UP: $SKIP_UP"
+-echo "SKIP_DOWN: $SKIP_DOWN"
+-echo "SKIP_DUMP: $SKIP_DUMP"
+-echo "KIND_DATA_HOSTPATH: $KIND_DATA_HOSTPATH"
+-echo "KUBE_VERSION: $KUBE_VERSION"
+-echo "DOCKER_IO_MIRROR: $DOCKER_IO_MIRROR"
+-echo "GCR_IO_MIRROR: $GCR_IO_MIRROR"
+-echo "QUAY_IO_MIRROR: $QUAY_IO_MIRROR"
+-echo "ARTIFACTS: $ARTIFACTS"
+-echo "KUBE_WORKERS: $KUBE_WORKERS"
+-
+-# https://github.com/kubernetes-sigs/kind/releases/tag/v0.11.1
+-declare -A kind_node_images
+-kind_node_images["v1.11.10"]="kindest/node:v1.11.10@sha256:74c8740710649a3abb169e7f348312deff88fc97d74cfb874c5095ab3866bb42"
+-kind_node_images["v1.12.10"]="kindest/node:v1.12.10@sha256:faeb82453af2f9373447bb63f50bae02b8020968e0889c7fa308e19b348916cb"
+-kind_node_images["v1.13.12"]="kindest/node:v1.13.12@sha256:214476f1514e47fe3f6f54d0f9e24cfb1e4cda449529791286c7161b7f9c08e7"
+-# the following node images support amd64 and arm64
+-
+```
+
+**File**: `hack/generate_swagger_spec.sh` (removed, +0/-35)
+```diff
+@@ -1,35 +0,0 @@
+-#!/usr/bin/env bash
+-# Copyright 2021 Chaos Mesh Authors.
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-# http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#
+-
+-# This script call swag converts Go annotations to Swagger Documentation.
+-#
+-# See https://github.com/golang/go/wiki/Modules#how-can-i-track-tool-dependencies-for-a-module
+-
+-set -euo pipefail
+-
+-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+-PROJECT_DIR="$(dirname "$DIR")"
+-
+-cd $PROJECT_DIR
+-
+-export GOBIN=$PROJECT_DIR/bin
+-export PATH=$GOBIN:$PATH
+-
+-echo "+ Install swaggo/swag"
+-go install github.com/swaggo/swag/cmd/swag@v1.16.6
+-
+-echo "+ Generate swagger spec"
+-swag init -g cmd/chaos-dashboard/main.go --output pkg/dashboard/swaggerdocs --pd
+```
+
+**File**: `hack/prepare-e2e.sh` (removed, +0/-36)
+```diff
+@@ -1,36 +0,0 @@
+-#!/usr/bin/env bash
+-# Copyright 2021 Chaos Mesh Authors.
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-# http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#
+-
+-#
+-# This script runs before all e2e jobs to prepare shared files.
+-# This is optional. We only use it in CI to speed up our e2e process.
+-#
+-
+-set -o errexit
+-set -o nounset
+-set -o pipefail
+-
+-ROOT=$(unset CDPATH && cd $(dirname "${BASH_SOURCE[0]}")/.. && pwd)
+-cd $ROOT
+-
+-source "${ROOT}/hack/lib.sh"
+-
+-hack::ensure_kind
+-hack::ensure_kubectl
+-hack::ensure_helm
+-hack::ensure_kubebuilder
+-hack::ensure_kustomize
+-hack::ensure_kubetest2
+\ No newline at end of file
+```
+
+**File**: `hack/run-e2e.sh` (removed, +0/-182)
+```diff
+@@ -1,182 +0,0 @@
+-#!/usr/bin/env bash
+-# Copyright 2021 Chaos Mesh Authors.
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-# http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#
+-
+-set -o errexit
+-set -o nounset
+-set -o pipefail
+-
+-ROOT=$(unset CDPATH && cd $(dirname "${BASH_SOURCE[0]}")/.. && pwd)
+-cd $ROOT
+-
+-source $ROOT/hack/lib.sh
+-
+-hack::ensure_kubectl
+-hack::ensure_helm
+-hack::ensure_kind
 -
 -
--def underscore_uppercase(name):
--    """
--    convert the given name to the underscore_uppercase format
--    """
--    return name.replace('-', '_').upper()
+-PROVIDER=${PROVIDER:-}
+-CLUSTER=${CLUSTER:-}
+-IMAGE_TAG=${IMAGE_TAG:-}
+-E2E_IMAGE=${E2E_IMAGE:-ghcr.io/chaos-mesh/chaos-mesh-e2e:latest}
+-KUBECONFIG=${KUBECONFIG:-$HOME/.kube/config}
+-KUBECONTEXT=${KUBECONTEXT:-kind-chaos-mesh}
+-REPORT_DIR=${REPORT_DIR:-}
+-REPORT_PREFIX=${REPORT_PREFIX:-}
+-GINKGO_NODES=${GINKGO_NODES:-}
+-GINKGO_PARALLEL=${GINKGO_PARALLEL:-n} # set to 'y' to run tests in parallel
+-# If 'y', Ginkgo's reporter will not print out in color when tests are run
+-# in parallel
+-GINKGO_NO_COLOR=${GINKGO_NO_COLOR:-n}
+-GINKGO_STREAM=${GINKGO_STREAM:-y}
+-SKIP_GINKGO=${SKIP_GINKGO:-}
+-# We don't finalizers namespace on failure by default for easier debugging in local development.
+-# TODO support this feature
+-DELETE_NAMESPACE_ON_FAILURE=${DELETE_NAMESPACE_ON_FAILURE:-false}
+-IMAGE_REGISTRY=${IMAGE_REGISTRY:-ghcr.io}
+-
+-if [ -z "$KUBECONFIG" ]; then
+-    echo "error: KUBECONFIG is required"
+-    exit 1
+-fi
+-
+-echo "PROVIDER: $PROVIDER"
+-echo "CLUSTER: $CLUSTER"
+-echo "IMAGE_TAG: $IMAGE_TAG"
+-echo "E2E_IMAGE: $E2E_IMAGE"
+-echo "KUBECONFIG: $KUBECONFIG"
+-echo "KUBECONTEXT: $KUBECONTEXT"
+-echo "REPORT_DIR: $REPORT_DIR"
+-echo "REPORT_PREFIX: $REPORT_PREFIX"
+-echo "DELETE_NAMESPACE_ON_FAILURE: $DELETE_NAMESPACE_ON_FAILURE"
+-echo "IMAGE_REGISTRY: $IMAGE_REGISTRY"
+-
+-function e2e::image_load() {
+-    local images=(
+-        chaos-mesh/chaos-mesh
+-        chaos-mesh/chaos-daemon
+-        chaos-mesh/e2e-helper
+-    )
+-    if [ "$PROVIDER" == "kind" ]; then
+-        local nodes=$($KIND_BIN get nodes --name $CLUSTER | grep -v 'control-plane$')
+-        echo $nodes
+-        echo "info: load images" "${images[@]}"
+-        for image in ${images[@]}; do
+-            $KIND_BIN load docker-image --name $CLUSTER ${IMAGE_REGISTRY}/$image:$IMAGE_TAG --nodes $(hack::join ',' ${nodes[@]})
+-        done
+-
+-        # bypassing docker pull rate limit inner the kind container: kindest/node has no credentials
+-        # we suppose that you could pull this image on your host docker
+-        echo "info: load images ghcr.io/chaos-mesh/chaos-coredns:v0.3.0, nginx:latest and gcr.io/google-containers/pause:latest"
+-        docker pull ghcr.io/chaos-mesh/chaos-coredns:v0.3.0
+-        docker pull nginx:latest
+-        docker pull gcr.io/google-containers/pause:latest
+-        $KIND_BIN load docker-image --name "$CLUSTER" ghcr.io/chaos-mesh/chaos-coredns:v0.3.0 --nodes "$(hack::join ',' ${nodes[@]})"
+-        $KIND_BIN load docker-image --name "$CLUSTER" nginx:latest --nodes "$(hack::join ',' ${nodes[@]})"
+-        $KIND_BIN load docker-image --name "$CLUSTER" gcr.io/google-containers/pause:latest --nodes "$(hack::join ',' ${nodes[@]})"
+-    fi
+-}
 -
 -
--def get_target_platform():
--    """
--    get the target platform according to the `TARGET_PLATFORM` variable or the
--    `uname` syscall
--    """
--    Platform = namedtuple('Platform', ['platform', 'from_env'])
+-function e2e::get_kube_version() {
+-    $KUBECTL_BIN --context $KUBECONTEXT version --short | awk '/Server Version:/ {print $3}'
+-}
 -
--    if os.getenv("TARGET_PLATFORM") is not None and os.getenv("TARGET_PLATFORM") != "":
--        return Platform(os.getenv("TARGET_PLATFORM"), True)
+-if [ -z "$KUBECONTEXT" ]; then
+-    echo "info: KUBECONTEXT is not set, current context is used"
+-    KUBECONTEXT=$($KUBECTL_BIN config current-context 2>/dev/null) || true
+-    if [ -z "$KUBECONTEXT" ]; then
+-        echo "error: current context cannot be detected"
+-        exit 1
+-    fi
+-    echo "info: current kubeconfig context is '$KUBECONTEXT'"
+-fi
 -
--    machine = os.uname().machine
--    if machine == "x86_64":
--        return Platform("amd64", False)
+-e2e::image_load
+-echo "info: image loaded"
 -
--    if machine == "amd64":
--        return Platform("amd64", False)
+-if [ -n "$SKIP_GINKGO" ]; then
+-    echo "info: skipping ginkgo"
+-    exit 0
+-fi
 -
--    if machine == "arm64":
--        return Platform("arm64", False)
+-echo "info: start to run e2e process"
 -
--    if machine == "aarch64":
--        return Platform("arm64", False)
+-ginkgo_args=()
 -
--    sys.exit("Please run this script on amd64 or arm64 machines.")
+-if [[ -n "${GINKGO_NODES:-}" ]]; then
+-    ginkgo_args+=("--nodes=${GINKGO_NODES}")
+-elif [[ ${GINKGO_PARALLEL} =~ ^[yY]$ ]]; then
+-    ginkgo_args+=("-p")
+-fi
+-
+-if [[ "${GINKGO_NO_COLOR}" == "y" ]]; then
+-    ginkgo_args+=("--noColor")
+-fi
+-
+-if [[ "${GINKGO_STREAM}" == "y" ]]; then
+-    ginkgo_args+=("--stream")
+-fi
+-
+-e2e_args=(
+-    /usr/local/bin/ginkgo
+-    ${ginkgo_args[@]:-}
+-    /usr/local/bin/e2e.test
+-    --
+-    --manager-image-registry="${IMAGE_REGISTRY}"
+-    --manager-image="chaos-mesh/chaos-mesh"
+-    --manager-image-tag="${IMAGE_TAG}"
+-    --daemon-image-registry="${IMAGE_REGISTRY}"
+-    --daemon-image="chaos-mesh/chaos-daemon"
+-    --daemon-image-tag="${IMAGE_TAG}"
+-    --e2e-image="${IMAGE_REGISTRY}/chaos-mesh/e2e-helper:${IMAGE_TAG}"
+-    --install-chaos-
 ```
 
 ---
 
-### Incident Patch 3: `6d39c9a4` (2026-10-28)
-**Commit Message**: docs(agents): document PR description guidelines (#5178)
+### Incident Patch 3: `c8d2dc02` (2026-10-29)
+**Commit Message**: fix(deps): update vulnerable dependencies and exclude e2e scans (#5182)
 
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-**File**: `CLAUDE.md` (modified, +10/-0)
+**File**: `.github/workflows/osv-scanner-pr.yml` (modified, +5/-0)
 ```diff
-@@ -158,4 +158,14 @@ Keep API validation/defaulting in `api/v1alpha1/`, orchestration and status tran
- - **Helm values/chart:** regenerate `helm/chaos-mesh/values.schema.json` with `make helm-values-schema` and run relevant `pkg/helm/...` tests.
- - **Generated build inventory:** change `cmd/generate-makefile/`, run `make generate-makefile`, and inspect all three generated Makefiles.
- 
-+## Pull requests
-+
-+Keep PR descriptions focused on the problem solved, final changes, and brief necessary validation. Add technical details only when needed to explain complex changes. Omit debug information, investigation history, temporary checks, and local paths.
-+
-+Prepare the PR description as follows:
-+
-+1. Read `.github/pull_request_template.md` and use its structure for the PR description. Follow the TIP instructions to write each section and replace its TIP block with that content.
-+2. Check the template's task boxes according to the actual changes and validation performed.
-+3. Remove the entire opening `> [!IMPORTANT]` block and its contributor instructions from the PR description. Keep the template file unchanged.
-+
- If creating commits, use `git commit --signoff` for DCO compliance. Do not create commits unless the task explicitly asks for them.
+@@ -24,3 +24,8 @@ permissions:
+ jobs:
+   scan-pr:
+     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@v2.6.0"
++    with:
++      scan-args: |-
++        -r
++        --experimental-exclude=e2e-test
++        ./
+```
+
+**File**: `.github/workflows/osv-scanner-scheduled.yml` (modified, +5/-0)
+```diff
+@@ -20,3 +20,8 @@ permissions:
+ jobs:
+   scan-scheduled:
+     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.6.0"
++    with:
++      scan-args: |-
++        -r
++        --experimental-exclude=e2e-test
++        ./
+```
+
+**File**: `api/go.mod` (modified, +6/-6)
+```diff
+@@ -62,14 +62,14 @@ require (
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.4 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/sync v0.23.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/term v0.46.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
++	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/term v0.47.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.15.0 // indirect
+-	golang.org/x/tools v0.49.0 // indirect
++	golang.org/x/tools v0.51.0 // indirect
+ 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
+ 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af // indirect
+ 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
+```
+
+**File**: `api/go.sum` (modified, +12/-12)
+```diff
+@@ -165,22 +165,22 @@ go.yaml.in/yaml/v3 v3.0.4 h1:tfq32ie2Jv2UxXFdLJdh3jXuOzWiL1fo0bu/FbuKpbc=
+ go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
+ golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
+ golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+-golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
+-golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
+-golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
+-golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
++golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
++golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
++golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
+ golang.org/x/time v0.15.0 h1:bbrp8t3bGUeFOx08pvsMYRTCVSMk89u4tKbNOZbp88U=
+ golang.org/x/time v0.15.0/go.mod h1:Y4YMaQmXwGQZoFaVFk4YpCt4FLQMYKZe9oeV/f4MSno=
+-golang.org/x/tools v0.49.0 h1:3NI7VXzL9+1WZD52Dx2ttoPwD5DWrFGpl9mFZDlmisI=
+-golang.org/x/tools v0.49.0/go.mod h1:SJNXV9DBKT0UbdttsQjbfJlAE/q+y36++zo3uL3N0Oo=
++golang.org/x/tools v0.51.0 h1:k4Xc/1Om9jwkBJBo4NVLMSARBoWtK10mx+W5BnXCeAI=
++golang.org/x/tools v0.51.0/go.mod h1:9eEncMayCV6zRMGhR5eZEC2iBx98qWcF1HZ9Z7wJOoA=
+ gomodules.xyz/jsonpatch/v2 v2.4.0 h1:Ci3iUJyx9UeRx7CeFN8ARgGbkESwJK+KB9lLcWxY/Zw=
+ gomodules.xyz/jsonpatch/v2 v2.4.0/go.mod h1:AH3dM2RI6uoBZxn3LVrfvJ3E0/9dG4cSrbuBJT4moAY=
+ google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af h1:+5/Sw3GsDNlEmu7TfklWKPdQ0Ykja5VEmq2i817+jbI=
+```
+
+**File**: `e2e-test/go.mod` (modified, +1/-1)
+```diff
+@@ -119,7 +119,7 @@ require (
+ 	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.61.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.37.0 // indirect
+ 	golang.org/x/sync v0.24.0 // indirect
+ 	golang.org/x/sys v0.49.0 // indirect
+```
+
+**File**: `e2e-test/go.sum` (modified, +2/-2)
+```diff
+@@ -291,8 +291,8 @@ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJk
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
+ golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
+ golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+-golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
+-golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+ golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
+```
+
+**File**: `go.mod` (modified, +2/-2)
+```diff
+@@ -165,7 +165,7 @@ require (
+ 	github.com/glebarez/go-sqlite v1.22.0 // indirect
+ 	github.com/go-errors/errors v1.5.1 // indirect
+ 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/go-ole/go-ole v1.3.0 // indirect
+ 	github.com/go-openapi/jsonpointer v1.0.2 // indirect
+@@ -286,7 +286,7 @@ require (
+ 	golang.org/x/arch v0.19.0 // indirect
+ 	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.61.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/term v0.47.0 // indirect
+ 	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.16.0 // indirect
+```
+
+**File**: `go.sum` (modified, +4/-4)
+```diff
+@@ -287,8 +287,8 @@ github.com/go-errors/errors v1.5.1 h1:ZwEMSLRCapFLflTpT7NKaAc7ukJ8ZPEjzlxt8rPN8b
+ github.com/go-errors/errors v1.5.1/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
+ github.com/go-gorp/gorp/v3 v3.1.0 h1:ItKF/Vbuj31dmV4jxA1qblpSwkl9g1typ24xoe70IGs=
+ github.com/go-gorp/gorp/v3 v3.1.0/go.mod h1:dLEjIyyRNiXvNZ8PSmzpt1GsWAUK8kjVhEpjH8TixEw=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+ github.com/go-logfmt/logfmt v0.4.0/go.mod h1:3RMwSq7FuexP4Kalkev3ejPJsZTpXXBr9+V4qmtdjCk=
+ github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
+@@ -890,8 +890,8 @@ golang.org/x/net v0.22.0/go.mod h1:JKghWKKOSdJwpW2GEx0Ja7fmaKnMsbu+MWVZTokSYmg=
+ golang.org/x/net v0.24.0/go.mod h1:2Q7sJY5mzlzWjKtYUEXSlBWCdyaioyXzRB2RtU8KVE8=
+ golang.org/x/net v0.25.0/go.mod h1:JkAGAh7GEvH74S6FOH42FLoXpXbE/aqXSrIQjXgsiwM=
+ golang.org/x/net v0.26.0/go.mod h1:5YKkiSynbBIh3p6iOc/vibscux0x38BZDkn8sCUPxHE=
+-golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
+-golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5180** (2026-10-28): refactor(build): simplify Python helpers and use Buildx consistently (@g1eny0ung)
-- **PR #5179** (2026-10-28): fix(timechaos): restore ARM64 time injection (@g1eny0ung)
-- **PR #5178** (2026-10-28): docs(agents): document PR description guidelines (@g1eny0ung)
-- **PR #5177** (2026-10-28): fix(kernel): pin bpfki to restore image builds (@g1eny0ung)
-- **PR #5176** (2026-10-28): chore: refresh community metadata and remove unused OWNERS files (@g1eny0ung)
-- **PR #5174** (2026-10-28): chore(release): prepare v2.8.7 (@g1eny0ung)
+- **PR #5186** (2026-10-29): ci(e2e): align release-2.8 Kubernetes versions (@g1eny0ung)
+- **PR #5185** (2026-10-29): chore(hack): remove obsolete scripts and fix image loading (@g1eny0ung)
+- **PR #5184** (2026-10-29): ci(e2e): test Kubernetes 1.35 and 1.37 (@g1eny0ung)
+- **PR #5183** (2026-10-29): chore(deps): simplify Kubernetes module replacements (@g1eny0ung)
+- **PR #5182** (2026-10-29): fix(deps): update vulnerable dependencies and exclude e2e scans (@g1eny0ung)
+- **PR #5181** (2026-10-29): fix(ci): correct SBOM namespaces and release job conditions (@g1eny0ung)
 
 ---
 
@@ -1473,13 +1643,13 @@ Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. timechaos): restore ARM64 time injection (#5179)
+## X. selector): skip terminated pods by default (#5150)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `97928e5d`: timechaos): restore ARM64 time injection (#5179). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7549178e`: selector): skip terminated pods by default (#5150). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1487,7 +1657,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Fix TimeChaos crashes on ARM64 and preserve injection errors.
+- Skip Succeeded and Failed pods when `podPhaseSelectors` is unset [#5150](https://github.com/chaos-mesh/chaos-mesh/pull/5150)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1497,4 +1667,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `97928e5d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7549178e` are properly handled with clean fallback behavior.
