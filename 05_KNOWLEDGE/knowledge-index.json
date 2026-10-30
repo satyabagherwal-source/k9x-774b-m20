@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T14:45:11.250Z",
+  "last_updated": "2026-10-30T15:08:26.096Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -14765,8 +14765,8 @@
       "slug": "goodrain-rainbond",
       "platform": "github",
       "source_url": "https://github.com/goodrain/rainbond",
-      "source_version": "8d5895f1",
-      "content_hash": "374ac5e281d9c38f943c90efa88a7a9261738ed962e7dbaaa90d653092adb09e",
+      "source_version": "7e2467b9",
+      "content_hash": "beb2939ea99c6c717460d98968af8ffdb03ce0e73d8f6e62a7d805f2a92f95e9",
       "dossier_path": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
       "promoted_rules": [
@@ -14784,6 +14784,11 @@
           "number": 4751,
           "title": "preserve config group bindings before component creation (#2733)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5780,
+          "title": "record v6.10.2-release in upgrade feed",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14791,7 +14796,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T12:30:16.130Z",
+      "verified_at": "2026-10-30T15:08:21.090Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -52013,8 +52018,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "fa36c67d",
-      "content_hash": "ec3e92cbe4553450c73ae6141ef41d535a97107e761e1aed0c40dd5c60e8d14d",
+      "source_version": "9e248553",
+      "content_hash": "772aebdd1b79f5c06c0fc6dd9a02eca265e1b0a3bbb69783b4662553c05ea929",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -52077,6 +52082,11 @@
           "number": 5431,
           "title": "redis): fetch full page on first load more when overflow buffer holds partial it",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5782,
+          "title": "updates): name the dialog that blocks installation (#13907)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -52084,7 +52094,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:26:48.308Z",
+      "verified_at": "2026-10-30T15:08:26.076Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71091,8 +71101,8 @@
       "slug": "nodejs-undici",
       "platform": "github",
       "source_url": "https://github.com/nodejs/undici",
-      "source_version": "1f452240",
-      "content_hash": "128d4224b2517c48095591f8c5336138acc9a330c70acc0fc7deb7f36fac7632",
+      "source_version": "1b7b18e5",
+      "content_hash": "872f1206bdb9b0d12cadbd62ae1dc5b1fc036b6c8044c84b487b2750c7777308",
       "dossier_path": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nodejs-undici-learnings.md",
       "promoted_rules": [
@@ -71105,6 +71115,11 @@
           "number": 3723,
           "title": "http2): keep persistent error sink on released streams (#5983)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5781,
+          "title": "fetch): avoid eager reads from async iterable bodies (#5990)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -71112,7 +71127,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-22T20:30:17.095Z",
+      "verified_at": "2026-10-30T15:08:21.842Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153811,6 +153826,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T14:45:11.231Z"
+    },
+    "rule-5780": {
+      "learning_id": "rule-5780",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5780,
+      "title": "record v6.10.2-release in upgrade feed",
+      "source_url": "https://github.com/goodrain/rainbond",
+      "source_version": "7e2467b9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T15:08:21.090Z"
+    },
+    "rule-5781": {
+      "learning_id": "rule-5781",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5781,
+      "title": "fetch): avoid eager reads from async iterable bodies (#5990)",
+      "source_url": "https://github.com/nodejs/undici",
+      "source_version": "1b7b18e5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T15:08:21.842Z"
+    },
+    "rule-5782": {
+      "learning_id": "rule-5782",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5782,
+      "title": "updates): name the dialog that blocks installation (#13907)",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "9e248553",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T15:08:26.076Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goodrain-rainbond-learnings.md`  
 > **Source**: github ([https://github.com/goodrain/rainbond](https://github.com/goodrain/rainbond))  
-> **Source Version**: `8d5895f1`  
+> **Source Version**: `7e2467b9`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T12:30:15.789Z  
+> **Timestamp**: 2026-10-30T15:08:20.509Z  
 > **Learning ID**: `learn-github-goodrain-rainbond`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goodrain-rainbond-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goodrain/rainbond](https://github.com/goodrain/rainbond))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T12:30:14.414Z  
+> **Harvest Timestamp**: 2026-10-30T15:08:20.019Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Rainbond is an open-source container platform that requires no Kubernetes expertise. Its core capabilities are 100% open source.  It abstracts away infrastructure complexity and provides a unified way to deploy and manage business applications, AI-generated projects, open-source AI software, and large language model services. AI helps teams deploy 
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6280 stars
+- **Stars / Engagement**: 6287 stars
 
 ---
 
@@ -1237,930 +1237,483 @@ func NewBadRequest(msg string) Coder {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cd811e47` (2026-10-27)
-**Commit Message**: fix: preserve config group bindings before component creation (#2733)
+### Incident Patch 1: `7e2467b9` (2026-10-30)
+**Commit Message**: chore: record v6.10.2-release in upgrade feed
 
-Signed-off-by: 张启航 <[REDACTED_EMAIL]>
+**File**: `hack/release/upgrade-versions.json` (modified, +16/-0)
+```diff
+@@ -1,4 +1,20 @@
+ [
++  {
++    "version": "v6.10.2-release",
++    "detail": {
++      "update_time": "2026-10-30",
++      "html_url": "https://github.com/goodrain/rainbond/releases/tag/v6.10.2-release",
++      "tag_name": "v6.10.2-release",
++      "body": "For update details, reference: https://github.com/goodrain/rainbond/releases/tag/v6.10.2-release."
++    },
++    "images": {
++      "rbd-api": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-api:v6.10.2-release",
++      "rbd-app-ui": "registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond:v6.10.2-release",
++      "rbd-chaos": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-chaos:v6.10.2-release",
++      "rbd-mq": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-mq:v6.10.2-release",
++      "rbd-worker": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-worker:v6.10.2-release"
++    }
++  },
+   {
+     "version": "v6.10.1-release",
+     "detail": {
+```
+
+---
+
+### Incident Patch 2: `b455a384` (2026-10-30)
+**Commit Message**: V6.10.2 dev (#2736)
+
+* fix: default blank source build types to git
+
+* fix: bound worker health checks and cancel MQ dequeues
+
+* feat: configure build pod resources from chaos environment
+
+---------
+
 Co-authored-by: 张启航 <[REDACTED_EMAIL]>
 
-**File**: `api/handler/application_config_group.go` (modified, +25/-16)
+**File**: `builder/exector/build_from_sourcecode_run.go` (modified, +5/-1)
 ```diff
-@@ -28,14 +28,8 @@ func (a *ApplicationAction) AddConfigGroup(appID string, req *model.ApplicationC
- 		}
- 	}()
- 	// Create application configGroup-services
--	for _, s := range services {
--		serviceConfigGroup := dbmodel.ConfigGroupService{
--			AppID:           appID,
--			ConfigGroupName: req.ConfigGroupName,
--			ServiceID:       s.ServiceID,
--			ServiceAlias:    s.ServiceAlias,
--		}
--		if err := db.GetManager().AppConfigGroupServiceDaoTransactions(tx).AddModel(&serviceConfigGroup); err != nil {
-+	for _, serviceConfigGroup := range configGroupServiceBindings(appID, req.ConfigGroupName, req.ServiceIDs, services) {
-+		if err := db.GetManager().AppConfigGroupServiceDaoTransactions(tx).AddModel(serviceConfigGroup); err != nil {
- 			if err == bcode.ErrConfigGroupServiceExist {
- 				logrus.Warningf("config group \"%s\" under this service \"%s\" already exists.", serviceConfigGroup.ConfigGroupName, serviceConfigGroup.ServiceID)
- 				continue
-@@ -132,14 +126,8 @@ func (a *ApplicationAction) UpdateConfigGroup(appID, configGroupName string, req
- 		tx.Rollback()
- 		return nil, err
- 	}
--	for _, s := range services {
--		serviceConfigGroup := dbmodel.ConfigGroupService{
--			AppID:           appID,
--			ConfigGroupName: configGroupName,
--			ServiceID:       s.ServiceID,
--			ServiceAlias:    s.ServiceAlias,
--		}
--		if err := db.GetManager().AppConfigGroupServiceDaoTransactions(tx).AddModel(&serviceConfigGroup); err != nil {
-+	for _, serviceConfigGroup := range configGroupServiceBindings(appID, configGroupName, req.ServiceIDs, services) {
-+		if err := db.GetManager().AppConfigGroupServiceDaoTransactions(tx).AddModel(serviceConfigGroup); err != nil {
- 			if err == bcode.ErrConfigGroupServiceExist {
- 				logrus.Debugf("config group \"%s\" under this service \"%s\" already exists.", serviceConfigGroup.ConfigGroupName, serviceConfigGroup.ServiceID)
- 				continue
-@@ -357,3 +345,24 @@ func (a *ApplicationAction) SyncAppConfigGroups(app *dbmodel.Application, appCon
- 		return db.GetManager().AppConfigGroupItemDaoTransactions(tx).CreateOrUpdateConfigGroupItemsInBatch(cgitems)
- 	})
- }
-+
-+// configGroupServiceBindings preserves selected components that have not reached
-+// the region yet. Their IDs are already assigned by the console during creation.
-+func configGroupServiceBindings(appID, groupName string, serviceIDs []string, services []*dbmodel.TenantServices) []*dbmodel.ConfigGroupService {
-+	aliases := make(map[string]string, len(services))
-+	for _, service := range services {
-+		aliases[service.ServiceID] = service.ServiceAlias
+@@ -107,8 +107,12 @@ type Commit struct {
+ func NewSouceCodeBuildItem(in []byte) *SourceCodeBuildItem {
+ 	eventID := gjson.GetBytes(in, "event_id").String()
+ 	logger := event.GetManager().GetLogger(eventID)
++	serverType := strings.TrimSpace(strings.Replace(gjson.GetBytes(in, "server_type").String(), " ", "", -1))
++	if serverType == "" {
++		serverType = "git"
 +	}
-+	seen := make(map[string]bool, len(serviceIDs))
-+	var bindings []*dbmodel.ConfigGroupService
-+	for _, id := range serviceIDs {
-+		if id == "" || seen[id] {
-+			continue
-+		}
-+		seen[id] = true
-+		bindings = append(bindings, &dbmodel.ConfigGroupService{
-+			AppID: appID, ConfigGroupName: groupName, ServiceID: id, ServiceAlias: aliases[id],
-+		})
-+	}
-+	return bindings
-+}
+ 	csi := sources.CodeSourceInfo{
+-		ServerType:     strings.Replace(gjson.GetBytes(in, "server_type").String(), " ", "", -1),
++		ServerType:     serverType,
+ 		RepositoryURL:  gjson.GetBytes(in, "repo_url").String(),
+ 		Branch:         gjson.GetBytes(in, "branch").String(),
+ 		User:           gjson.GetBytes(in, "user").String(),
 ```
 
-**File**: `api/handler/application_config_group_test.go` (added, +162/-0)
+**File**: `builder/exector/source_server_type_test.go` (added, +57/-0)
 ```diff
-@@ -0,0 +1,162 @@
-+package handler
+@@ -0,0 +1,57 @@
++package exector
 +
 +import (
-+	"path/filepath"
++	"encoding/json"
 +	"testing"
 +
-+	apimodel "github.com/goodrain/rainbond/api/model"
-+	"github.com/goodrain/rainbond/db"
-+	"github.com/goodrain/rainbond/db/dao"
-+	dbmodel "github.com/goodrain/rainbond/db/model"
-+	mysqldao "github.com/goodrain/rainbond/db/mysql/dao"
-+	"github.com/goodrain/rainbond/worker/appm/conversion"
-+	v1 "github.com/goodrain/rainbond/worker/appm/types/v1"
-+	"github.com/jinzhu/gorm"
-+	_ "github.com/jinzhu/gorm/dialects/sqlite"
-+	corev1 "k8s.io/api/core/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"github.com/goodrain/rainbond/event"
 +)
 +
-+type configGroupBindingTestManager struct {
-+	db.Manager
-+	database *gorm.DB
-+}
++// capability_id: rainbond.builder.source-type-compatibility
++func TestNewSourceBuildServerType(t *testing.T) {
++	previousManager := event.GetManager()
++	event.NewTestManager(&testEventManager{})
++	t.Cleanup(func() { event.NewTestManager(previousManager) })
 +
-+func (m configGroupBindingTestManager) Begin() *gorm.DB { return m.database.Begin() }
-+func (m configGroupBindingTestManager) TenantServiceDao() dao.TenantServiceDao {
-+	return &mysqldao.TenantServicesDaoImpl{DB: m.database}
-+}
-+func (m configGroupBindingTestManager) AppConfigGroupDao() dao.AppConfigGroupDao {
-+	return m.AppConfigGroupDaoTransactions(m.database)
-+}
-+func (m configGroupBindingTestManager) AppConfigGroupDaoTransactions(tx *gorm.DB) dao.AppConfigGroupDao {
-+	return &mysqldao.AppConfigGroupDaoImpl{DB: tx}
-+}
-+func (m configGroupBindingTestManager) AppConfigGroupServiceDao() dao.AppConfigGroupServiceDao {
-+	return m.AppConfigGroupServiceDaoTransactions(m.database)
-+}
-+func (m configGroupBindingTestManager) AppConfigGroupServiceDaoTransactions(tx *gorm.DB) dao.AppConfigGroupServiceDao {
-+	return &mysqldao.AppConfigGroupServiceDaoImpl{DB: tx}
-+}
-+func (m configGroupBindingTestManager) AppConfigGroupItemDao() dao.AppConfigGroupItemDao {
-+	return m.AppConfigGroupItemDaoTransactions(m.database)
-+}
-+func (m configGroupBindingTestManager) AppConfigGroupItemDaoTransactions(tx *gorm.DB) dao.AppConfigGroupItemDao {
-+	return &mysqldao.AppConfigGroupItemDaoImpl{DB: tx}
-+}
-+
-+// capability_id: rainbond.app-config-group.pending-component-bindings
-+func TestConfigGroupRetainsPendingComponentBindings(t *testing.T) {
-+	for _, operation := range []string{"create", "update"} {
-+		for _, existing := range []bool{false, true} {
-+			name := operation + "/pending-only"
-+			if existing {
-+				name = operation + "/mixed"
-+			}
-+			t.Run(name, func(t *testing.T) {
-+				database, err := gorm.Open("sqlite3", filepath.Join(t.TempDir(), "groups.db"))
-+				if err != nil {
-+					t.Fatal(err)
-+				}
-+				t.Cleanup(func() { database.Close() })
-+				database.LogMode(false)
-+				if err := database.AutoMigrate(&dbmodel.TenantServices{}, &dbmodel.ApplicationConfigGroup{}, &dbmodel.ConfigGroupService{}, &dbmodel.ConfigGroupItem{}).Error; err != nil {
-+					t.Fatal(err)
-+				}
-+				manager := configGroupBindingTestManager{database: database}
-+				old := db.GetManager()
-+				db.SetTestManager(manager)
-+				t.Cleanup(func() { db.SetTestManager(old) })
-+				ids := []string{"pending", ""}
-+				if existing {
-+					if err := database.Create(&dbmodel.TenantServices{ServiceID: "ready", ServiceAlias: "gr-ready", AppID: "app"}).Error; err != nil {
-+						t.Fatal(err)
-+					}
-+					ids = append(ids, "ready", "pending")
-+				}
-+				items := []apimodel.ConfigItem{{ItemKey: "APP_NAME", ItemValue: "${_SERVICE_NAME}"}}
-+				action := &ApplicationAction{}
-+				var response *apimodel.ApplicationConfigGroupResp
-+				if operation == "create" {
-+					response, err = action.AddConfigGroup("app", &apimodel.ApplicationConfigGroup{ConfigGroupName: "java", Enable: true, DeployType: "env", ServiceIDs: ids, ConfigItems: items})
-+				} else {
-+					if err := database.Create(&dbmodel.ApplicationConfigGroup{AppID: "app", ConfigGroupName: "java", Enable: true, DeployType: "env"}).Error; err != nil {
-+						t.Fatal(err)
-+					}
-+					if err := database.Create(&dbmodel.ConfigGroupService{AppID: "app", ConfigGroupName: "java", ServiceID: "removed"}).Error; err != nil {
-+						t.Fatal(err)
-+					}
-+					response, err = action.UpdateConfigGroup("app", "java", &apimodel.UpdateAppConfigGroupReq{Enable: true, ServiceIDs: ids, ConfigItems: items})
-+				}
-+				if err != nil {
-+					t.Fatal(err)
-+				}
-+				got := map[string]string{}
-+				for _, binding := range response.Services {
-+					if _, duplicate := got[binding.ServiceID]; duplicate {
-+						t.Fatalf("duplicate binding for %s", binding.ServiceID)
-+					}
-+					got[binding.ServiceID] = binding.ServiceAlias
-+				}
-+				if _, ok := got["pending"]; !ok {
-+					t.Fatalf("%s discarded component before creation: %v", operation, got)
-+				}
-+				wantCount := 1
-+				if existing {
-+					wantCount++
-+					if got["ready"] != "gr-ready" {
-+						t.Fatal("existing component alias lost")
-+					}
-+				}
-+				if len(got) != wantCount {
-+					t.Fatalf("unexpected bindings: %v", got)
-+				}
-+				// Completing component creation must make the saved group discoverable,
-+				// without requiring the user to save the configuration group again.
-+				if err := database.Create(&dbmodel.TenantServices{ServiceID: "pending", ServiceAlias: "gr-pending", AppID: "app"}).Error; err != nil {
-+					t.Fa
-```
-
-**File**: `test-manifest.json` (modified, +19/-0)
-```diff
-@@ -272,6 +272,25 @@
-       "test_type": "regression",
-       "status": "active"
-     },
-+    {
-+      "id": "rainbond.app-config-group.pending-component-bindings",
-+      "title": "Preserve configuration bindings before component creation",
-+      "title_zh": "Preserve configuration bindings before component creation",
-+      "interface_type": "handler_method",
-+      "interface": "api/handler.ApplicationAction.AddConfigGroup/UpdateConfigGroup",
-+      "code_paths": [
-+        "api/handler/application_config_group.go",
-+        "worker/appm/conversion/configgroup.go"
-+      ],
-+      "tests": [
-+        {
-+          "path": "api/handler/application_config_group_test.go",
-+          "selector": "TestConfigGroupRetainsPendingComponentBindings"
-+        }
-+      ],
-+      "test_type": "regression",
-+      "status": "active"
-+    },
-     {
-       "id": "rainbond.app-config-group.unbind-components",
-       "title": "Remove component bindings from app config group",
-```
-
-**File**: `test-manifest.md` (modified, +11/-0)
-```diff
-@@ -19,6 +19,7 @@
- | rainbond.app-config-group.item-create | 创建应用配置项 | active | regression | db/mysql/dao.AppConfigGroupItemDaoImpl.AddModel | db/mysql/dao/application_config_group_test.go::TestAppConfigGroupItemDaoAddModel |
- | rainbond.app-config-group.item-delete | 删除应用配置项 | active | regression | db/mysql/dao.AppConfigGroupItemDaoImpl.DeleteConfigGroupItem | db/mysql/dao/application_config_group_test.go::TestDeleteConfigGroupItem |
- | rainbond.app-config-group.item-update | 更新应用配置项 | active | regression | db/mysql/dao.AppConfigGroupItemDaoImpl.UpdateModel | db/mysql/dao/application_config_group_test.go::TestAppConfigGroupItemDaoUpdateModel |
-+| rainbond.app-config-group.pending-component-bindings | Preserve configuration bindings before component creation | active | regression | api/handler.ApplicationAction.AddConfigGroup/UpdateConfigGroup | api/handler/application_config_group_test.go::TestConfigGroupRetainsPendingComponentBindings |
- | rainbond.app-config-group.unbind-components | 移除应用配置组组件绑定 | active | regression | db/mysql/dao.AppConfigGroupServiceDaoImpl.DeleteConfigGroupService | db/mysql/dao/application_config_group_test.go::TestDeleteConfigGroupService |
- | rainbond.app-import.package-name-normalize | 从 Linux 文件名还原导入镜像包名 | active | regression | builder/exector.buildFromLinuxFileName | builder/exector/import_app_test.go::TestBuildFromLinuxFileName |
- | rainbond.app-import.propagate-image-push-error | Return imported image push errors during app import | active | regression | builder/exector.ensureImportedImagesPushed | builder/exector/import_app_test.go::TestEnsureImportedImagesPushedReturnsPushError |
-@@ -814,6 +815,16 @@
- - 代码路径: `db/mysql/dao/application_config_group.go`
- - 测试路径: `db/mysql/dao/application_config_group_test.go::TestAppConfigGroupItemDaoUpdateModel`
- 
-+### Preserve configuration bindings before component creation
-+
-+- Capability ID: `rainbond.app-config-group.pending-component-bindings`
-+- 状态: `active`
-+- 测试类型: `regression`
-+- 接口类型: `handler_method`
-+- 业务入口: `api/handler.ApplicationAction.AddConfigGroup/UpdateConfigGroup`
-+- 代码路径: `api/handler/application_config_group.go`, `worker/appm/conversion/configgroup.go`
-+- 测试路径: `api/handler/application_config_group_test.go::TestConfigGroupRetainsPendingComponentBindings`
-+
- ### 移除应用配置组组件绑定
- 
- - Capability ID: `rainbond.app-config-group.unbind-components`
-```
-
-**File**: `worker/appm/conversion/configgroup.go` (modified, +6/-0)
-```diff
-@@ -2,6 +2,7 @@ package conversion
- 
- import (
- 	"fmt"
-+
- 	"github.com/goodrain/rainbond/db"
- 	v1 "github.com/goodrain/rainbond/worker/appm/types/v1"
- 	"github.com/sirupsen/logrus"
-@@ -19,6 +20,11 @@ func TenantServiceConfigGroup(as *v1.AppService, dbm db.Manager) error {
- 
- 	var secrets []*corev1.Secret
- 	for _, group := range groups {
-+		// A binding may precede component creation. Only materialize it once
-+		// the component actually belongs to the configuration group's app.
-+		if group.AppID != as.AppID {
-+			continue
-+		}
- 		cg := createConfigGroup(as, as.GetNamespace(), group.AppID, group.ConfigGroupName)
- 		secret, err := cg.secretForConfigGroup()
- 		if err != nil {
-```
-
----
-
-### Incident Patch 2: `ee0e246e` (2026-10-27)
-**Commit Message**: fix: isolate CNB source package build workspaces (#2732)
-
-Signed-off-by: 张启航 <[REDACTED_EMAIL]>
-
-**File**: `builder/build/cnb/build.go` (modified, +14/-0)
-```diff
-@@ -8,6 +8,7 @@ import (
- 
- 	"github.com/goodrain/rainbond/builder/build"
- 	jobc "github.com/goodrain/rainbond/builder/job"
-+	"github.com/goodrain/rainbond/builder/parser"
- 	"github.com/goodrain/rainbond/builder/sources"
- 	"github.com/goodrain/rainbond/util"
- 	"github.com/sirupsen/logrus"
-@@ -55,6 +56,19 @@ func NewBuilder() (build.Build, error) {
- func (b *Builder) Build(re *build.Request) (*build.Response, error) {
- 	re.Logger.Info("Starting CNB build", map[string]string{"step": "builder-exector"})
- 
-+	if re.ServerType == "pkg" {
-+		workspace, cleanup, err := parser.PreparePackageBuildWorkspace(re.SourceDir, re.Commit.Message)
-+		if err != nil {
-+			re.Logger.Error(err.Error(), map[string]string{"step": "build-code", "status": "failure"})
-+			return nil, err
-+		}
-+		defer cleanup()
-+		request := *re
-+		request.SourceDir = workspace
-+		re = &request
-+		re.Logger.Info("Prepared source package build input", map[string]string{"step": "build-code"})
++	cases := []struct {
++		name    string
++		present bool
++		value   interface{}
++		want    string
++	}{
++		{name: "missing", want: "git"},
++		{name: "null", present: true, value: nil, want: "git"},
++		{name: "empty", present: true, value: "", want: "git"},
++		{name: "spaces", present: true, value: "   ", want: "git"},
++		{name: "whitespace", present: true, value: " \t\n ", want: "git"},
++		{name: "git", present: true, value: "git", want: "git"},
++		{name: "spaced git", present: true, value: " g it ", want: "git"},
++		{name: "svn", present: true, value: "svn", want: "svn"},
++		{name: "oss", present: true, value: "oss", want: "oss"},
++		{name: "pkg", present: true, value: "pkg", want: "pkg"},
++		{name: "other explicit type", present: true, value: "custom", want: "custom"},
 +	}
 +
- 	if err := applyVersionPolicy(re); err != nil {
- 		re.Logger.Error(err.Error(), map[string]string{"step": "build-code", "status": "failure"})
- 		return nil, err
++	for _, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			payload := map[string]interface{}{
++				"event_id": "source-type-test",
++				"repo_url": "https://example.com/demo.git",
++				"lang":     "NodeJSStatic",
++				"envs":     "{}",
++			}
++			if tc.present {
++				payload["server_type"] = tc.value
++			}
++			input, err := json.Marshal(payload)
++			if err != nil {
++				t.Fatalf("marshal build task: %v", err)
++			}
++
++			item := NewSouceCodeBuildItem(input)
++			if got := item.CodeSouceInfo.ServerType; got != tc.want {
++				t.Fatalf("expected source type %q, got %q", tc.want, got)
++			}
++		})
++	}
++}
 ```
 
-**File**: `builder/build/cnb/package_workspace_test.go` (added, +295/-0)
+**File**: `builder/job/job.go` (modified, +5/-1)
 ```diff
-@@ -0,0 +1,295 @@
-+package cnb
+@@ -158,12 +158,16 @@ func (c *controller) GetServiceJobs(serviceID string) ([]*corev1.Pod, error) {
+ func (c *controller) ExecJob(ctx context.Context, job *corev1.Pod, logger io.Writer, result *channels.RingChannel) error {
+ 	// one job, one job container channel
+ 	jobContainerCh := make(chan struct{}, 1)
+-	c.jobContainerStatus.Store(job.Name, jobContainerCh)
+ 	if j, _ := c.GetJob(job.Name); j != nil {
++		c.jobContainerStatus.Store(job.Name, jobContainerCh)
+ 		go c.getLogger(ctx, job.Name, logger, result, jobContainerCh)
+ 		c.subJobStatus.Store(job.Name, result)
+ 		return nil
+ 	}
++	if err := applyBuildPodResources(job); err != nil {
++		return fmt.Errorf("configure build pod resources: %w", err)
++	}
++	c.jobContainerStatus.Store(job.Name, jobContainerCh)
+ 	_, err := c.KubeClient.CoreV1().Pods(c.namespace).Create(ctx, job, metav1.CreateOptions{})
+ 	if err != nil {
+ 		return err
+```
+
+**File**: `builder/job/resources.go` (added, +51/-0)
+```diff
+@@ -0,0 +1,51 @@
++package job
 +
 +import (
-+	"archive/zip"
-+	"bytes"
++	"fmt"
++	"os"
++	"strings"
++
++	corev1 "k8s.io/api/core/v1"
++	"k8s.io/apimachinery/pkg/api/resource"
++)
++
++func applyBuildPodResources(pod *corev1.Pod) error {
++	resources := corev1.ResourceList{}
++	for _, setting := range []struct {
++		env  string
++		name corev1.ResourceName
++	}{
++		{env: "BUILD_POD_CPU", name: corev1.ResourceCPU},
++		{env: "BUILD_POD_MEMORY", name: corev1.ResourceMemory},
++	} {
++		value := strings.TrimSpace(os.Getenv(setting.env))
++		if value == "" {
++			continue
++		}
++		quantity, err := resource.ParseQuantity(value)
++		if err != nil || quantity.Sign() <= 0 {
++			return fmt.Errorf("%s must be a positive Kubernetes resource quantity", setting.env)
++		}
++		if setting.name == corev1.ResourceCPU && !quantity.RoundUp(resource.Milli) {
++			return fmt.Errorf("%s must use whole millicores (for example, 500m or 2)", setting.env)
++		}
++		resources[setting.name] = quantity
++	}
++	if len(resources) == 0 {
++		return nil
++	}
++	for i := range pod.Spec.Containers {
++		requirements := &pod.Spec.Containers[i].Resources
++		if requirements.Requests == nil {
++			requirements.Requests = corev1.ResourceList{}
++		}
++		if requirements.Limits == nil {
++			requirements.Limits = corev1.ResourceList{}
++		}
++		for name, quantity := range resources {
++			requirements.Requests[name] = quantity.DeepCopy()
++			requirements.Limits[name] = quantity.DeepCopy()
++		}
++	}
++	return nil
++}
+```
+
+**File**: `builder/job/resources_test.go` (added, +181/-0)
+```diff
+@@ -0,0 +1,181 @@
++package job
++
++import (
 +	"context"
 +	"errors"
-+	"fmt"
-+	"io"
-+	"os"
-+	"path/filepath"
++	"reflect"
 +	"strings"
 +	"testing"
++	"time"
 +
 +	"github.com/eapache/channels"
-+	"github.com/goodrain/rainbond/builder/build"
-+	"github.com/goodrain/rainbond/builder/parser/code"
-+	"github.com/goodrain/rainbond/db"
-+	dbdao "github.com/goodrain/rainbond/db/dao"
-+	dbmodel "github.com/goodrain/rainbond/db/model"
-+	"github.com/goodrain/rainbond/event"
 +	corev1 "k8s.io/api/core/v1"
++	"k8s.io/apimachinery/pkg/api/resource"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/client-go/informers"
++	"k8s.io/client-go/kubernetes/fake"
++	k8stesting "k8s.io/client-go/testing"
 +)
 +
-+type packageWorkspaceTestManager struct {
-+	db.Manager
-+}
-+
-+func (m packageWorkspaceTestManager) TenantServiceDao() dbdao.TenantServiceDao {
-+	return packageWorkspaceTestServices{}
-+}
-+
-+type packageWorkspaceTestServices struct {
-+	dbdao.TenantServiceDao
-+}
-+
-+func (packageWorkspaceTestServices) GetServiceByID(string) (*dbmodel.TenantServices, error) {
-+	return nil, errors.New("fixture has no database component")
-+}
-+
-+func usePackageWorkspaceTestDB(t *testing.T) {
-+	t.Helper()
-+	previous := db.GetManager()
-+	db.SetTestManager(packageWorkspaceTestManager{})
-+	t.Cleanup(func() { db.SetTestManager(previous) })
-+}
-+
-+func writeCNBSourceArchive(t *testing.T, dir string, files map[string]string) string {
-+	t.Helper()
-+	name := "source.zip"
-+	file, err := os.Create(filepath.Join(dir, name))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	writer := zip.NewWriter(file)
-+	for name, content := range files {
-+		header := &zip.FileHeader{Name: name, Method: zip.Deflate}
-+		header.SetMode(0644)
-+		entry, err := writer.CreateHeader(header)
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		if _, err := io.WriteString(entry, content); err != nil {
-+			t.Fatal(err)
-+		}
-+	}
-+	if err := writer.Close(); err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := file.Close(); err != nil {
-+		t.Fatal(err)
-+	}
-+	return name
-+}
-+
-+// capability_id: rainbond.cnb.package-workspace-isolation
-+func TestCNBPackageBuildUsesPristineWorkspace(t *testing.T) {
-+	usePackageWorkspaceTestDB(t)
++// capability_id: rainbond.builder.build-pod-resources
++func TestApplyBuildPodResourcesFromEnv(t *testing.T) {
 +	for _, tc := range []struct {
 +		name     string
-+		locked   bool
-+		vendored bool
-+		fail     bool
++		cpu      string
++		memory   string
++		existing bool
 +	}{
-+		{name: "unlocked repeated build"},
-+		{name: "archive lock is preserved", locked: true},
-+		{name: "archive modules are preserved", vendored: true},
-+		{name: "failed builds also release workspace", fail: true},
++		{name: "unset"},
++		{name: "whitespace", cpu: " \t", memory: " "},
++		{name: "cpu cores", cpu: "2"},
++		{name: "cpu millicores", cpu: "500m"},
++		{name: "memory Gi", memory: "4Gi"},
++		{name: "memory Mi", memory: "512Mi"},
++		{name: "both", cpu: "2", memory: "4Gi"},
++		{name: "trim whitespace", cpu: " 250m ", memory: " 1Gi\t"},
++		{name: "preserve existing", existing: true},
++		{name: "override cpu only", cpu: "1500m", existing: true},
++		{name: "override memory only", memory: "2Gi", existing: true},
 +	} {
 +		t.Run(tc.name, func(t *testing.T) {
-+			source := newNodeDir(t)
-+			files := map[string]string{
-+				"package.json": `{"name":"package-demo","version":"1.0.0"}`,
-+				"src/main.js":  "console.log('from archive');",
-+			}
-+			if tc.locked {
-+				files["package-lock.json"] = `{"lockfileVersion":3,"name":"package-demo"}`
-+			}
-+			if tc.vendored {
-+				files["node_modules/from-archive.txt"] = "user supplied dependency"
-+			}
-+			name := writeCNBSourceArchive(t, source, files)
-+			archiveBefore, err := os.ReadFile(filepath.Join(source, name))
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			// Reproduce the retained directory from the previous CNB job.
-+			if err := os.WriteFile(filepath.Join(source, "package-lock.json"), []byte("generated lock"), 0644); err != nil {
-+				t.Fatal(err)
-+			}
-+			if err := os.Symlink(filepath.Join(t.TempDir(), "missing-layer", "node_modules"), filepath.Join(source, "node_modules")); err != nil {
-+				t.Fatal(err)
-+			}
-+			if err := os.Mkdir(filepath.Join(source, "dist"), 0755); err != nil {
-+				t.Fatal(err)
-+			}
-+			if err := os.WriteFile(filepath.Join(source, "dist", "stale.txt"), []byte("old output"), 0644); err != nil {
-+				t.Fatal(err)
-+			}
-+
-+			var workspaces []string
-+			ctrl := &mockJobCtrl{execJobFn: func(ctx context.Context, pod *corev1.Pod, output io.Writer, result *channels.RingChannel) error {
-+				workspace := ""
-+				for _, volume := range pod.Spec.Volumes {
-+					if volume.Name == "workspace" && volume.HostPath != nil {
-+						workspace = strings.TrimPrefix(volume.HostPath.Path, "/opt/rainbond")
++			t.Setenv("BUILD_POD_CPU", tc.cpu)
++			t.Setenv("BUILD_POD_MEMORY", tc.memory)
++			pod := &corev1.Pod{Spec: corev1.PodSpec{Containers: []corev1.Container{{Name: "build"}, {Name: "another-build-container"}}}}
++			if tc.existing {
++				for i := range pod.Spec.Containers {
++					pod.Spec.Containers[i].Resources = corev1.ResourceRequirements{
++						Requests: corev1.ResourceList{corev1.ResourceCPU: resource.MustParse("100m"), corev1.ResourceMemory: resource.MustParse("128Mi")},
++						Limits:   corev1.ResourceList{corev1.ResourceCPU: resource.MustParse("1"), corev1.ResourceMemory: resource.MustParse("256Mi"), "example.com/gpu": resource.MustParse("1")},
 +					}
 +				}
-+				if workspace == "" {
-+					return fmt.Errorf("workspace mount missing")
-+				}
-+				workspaces = append(workspaces, workspace)
-+				if workspace == source {
-+					t.Error("CNB job reused the retained package directory")
-+				}
-+				for name, want := range files {
-+					got, err := os.ReadFile(filepath.Join(workspace, name))
-+					if err != nil || string(got) != want {
-+						t.Errorf("archive file %s = %q, %v; want %q", name, got, err, want)
++			}
++			want := pod.DeepCopy()
++			for i := range want.Spec.Containers {
++				for name, value := range map[corev1.ResourceName]string{corev1.ResourceCPU: tc.cpu, corev1.ResourceMemory: tc.memory} {
++					if strings.TrimSpace(value) == "" {
++						continue
 +					}
-+				}
-+				for _, name := range []string{"dist/stale.txt", "node_modules/generated.txt"} {
-+					if _, err := os.Lstat(filepath.Join(workspace, name)); !os.IsNotExist(err) {
-+						t.Errorf("previous build output %s leaked into new job: %v", name, err)
++					r := &want.Spec.Containers[i].Resources
++					if r.Requests == nil {
++						r.Requests = corev1.ResourceList{}
 +					}
-+				}
-+				if !tc.locked {
-+					if _, err := os.Lstat(filepath.Join(workspace, "package-lock.json")); !os.IsNotExist(err) {
-+						t.Errorf("generated lock leaked into unlocked build: %v", err)
++					if r.Limits == nil {
++						r.Limits = corev1.ResourceList{}
 +					}
-+					for _, arg := range pod.Spec.Containers[0].Args {
-+						if strings.HasPrefix(arg, "-cache-image=") && !tc.vendored {
-+							t.Errorf("generated files changed the cache policy: %s", arg)
-+						}
-+			
-```
-
-**File**: `builder/parser/package_workspace.go` (added, +59/-0)
-```diff
-@@ -0,0 +1,59 @@
-+package parser
-+
-+import (
-+	"fmt"
-+	"os"
-+	"path/filepath"
-+	"strings"
-+
-+	"github.com/goodrain/rainbond/util"
-+	"github.com/sirupsen/logrus"
-+)
-+
-+// PreparePackageBuildWorkspace extracts the selected uploaded archive into a
-+// per-build directory. The caller must release it after the build has finished.
-+// Standalone JAR/WAR inputs retain their existing handling.
-+func PreparePackageBuildWorkspace(sourceDir, archiveName string) (string, func(), error) {
-+	if strings.TrimSpace(sourceDir) == "" {
-+		return "", nil, fmt.Errorf("invalid package source directory")
-+	}
-+	if strings.TrimSpace(archiveName) == "" || strings.ContainsAny(archiveName, "/\\") || filepath.Base(archiveName) != archiveName {
-+		return "", nil, fmt.Errorf("invalid package archive name")
-+	}
-+	archivePath := filepath.Join(sourceDir, archiveName)
-+	info, err := os.Lstat(archivePath)
-+	if err != nil {
-+		return "", nil, fmt.Errorf("read uploaded package: %w", err)
-+	}
-+	if !info.Mode().IsRegular() {
-+		return "", nil, fmt.Errorf("uploaded package is not a regular file")
-+	}
-+	ext, archived := packageArchiveExt(archiveName)
-+	if !archived {
-+		switch strings.ToLower(filepath.Ext(archiveName)) {
-+		case ".jar", ".war":
-+			return sourceDir, func() {}, nil
-+		default:
-+			return "", nil, fmt.Errorf("unsupported source package format")
-+		}
-+	}
-+	workspace, err := os.MkdirTemp(filepath.Dir(sourceDir), ".cnb-package-")
-+	if err != nil {
-+		return "", nil, fmt.Errorf("create package build workspace: %w", err)
-+	}
-+	cleanup := func() {
-+		if err := os.RemoveAll(workspace); err != nil {
-+			logrus.Warnf("remove package build workspace failed: %v", err)
-+		}
-+	}
-+	if ext == ".zip" {
-+		err = util.Unzip(archivePath, workspace)
-+	} else {
-+		err = util.UnTar(archivePath, workspace, ext != ".tar")
-+	}
-+	if err != nil {
-+		cleanup()
-+		return "", nil, fmt.Errorf("extract uploaded package: %w", err)
-+	}
-+	return workspace, cleanup, nil
-+}
-```
-
-**File**: `builder/parser/package_workspace_test.go` (added, +230/-0)
-```diff
-@@ -0,0 +1,230 @@
-+package parser
-+
-+import (
-+	"archive/tar"
-+	"archive/zip"
-+	"bytes"
-+	"compress/gzip"
-+	"io"
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"testing"
-+)
-+
-+func writePackageWorkspaceArchive(t *testing.T, filename, prefix string, contents map[string]string) {
-+	t.Helper()
-+	file, err := os.Create(filename)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if strings.HasSuffix(strings.ToLower(filename), ".zip") {
-+		writer := zip.NewWriter(file)
-+		for name, content := range contents {
-+			header := &zip.FileHeader{Name: prefix + name, Method: zip.Deflate}
-+			header.SetMode(0644)
-+			entry, err := writer.CreateHeader(header)
-+			if err != nil {
++					r.Requests[name] = resource.MustParse(strings.TrimSpace(value))
++					r.Limits[name] = resource.MustParse(strings.TrimSpace(value))
++				}
++			}
++			if err := applyBuildPodResources(pod); err != nil {
 +				t.Fatal(err)
 +			}
-+			if _, err := io.WriteString(entry, content); err != nil {
-+				t.Fatal(err)
++			if !reflect.DeepEqual(pod, want) {
++				t.Fatalf("pod resources = %#v, want %#v", pod.Spec.Containers, want.Spec.Containers)
 +			}
-+		}
-+		if err := writer.Close(); err != nil {
-+			t.Fatal(err)
-+		}
-+	} else {
-+		var output io.Writer = file
-+		var compressed *gzip.Writer
-+		if !strings.HasSuffix(filename, ".tar") {
-+			compressed = gzip.NewWriter(file)
-+			output = compressed
-+		}
-+		writer := tar.NewWriter(output)
-+		for name, content := range contents {
-+			if err := writer.WriteHeader(&tar.Header{Name: prefix + name, Mode: 0644, Size: int64(len(content))}); err != nil {
-+				t.Fatal(err)
-+			}
-+			if _, err := io.WriteString(writer, content); err != nil {
-+				t.Fatal(err)
-+			}
-+		}
-+		if err := writer.Close(); err != nil {
-+			t.Fatal(err)
-+		}
-+		if compressed != nil {
-+			if err := compressed.Close(); err != nil {
-+				t.Fatal(err)
-+			}
-+		}
-+	}
-+	if err := file.Close(); err != nil {
-+		t.Fatal(err)
++		})
 +	}
 +}
 +
-+// capability_id: rainbond.cnb.package-workspace-isolation
-+func TestPreparePackageBuildWorkspace(t *testing.T) {
++// capability_id: rainbond.builder.build-pod-resources
++func TestApplyBuildPodResourcesRejectsInvalidConfig(t *testing.T) {
 +	for _, tc := range []struct {
-+		name   string
-+		ext    string
-+		prefix string
++		name, cpu, memory, env string
 +	}{
-+		{name: "zip", ext: ".zip"},
-+		{name: "uppercase zip", ext: ".ZIP"},
-+		{name: "zip with common root", ext: ".zip", prefix: "project/"},
-+		{name: "tar", ext: ".tar"},
-+		{name: "tar gz", ext: ".tar.gz"},
-+		{name: "tgz", ext: ".tgz"},
-+		{name: "gz", ext: ".gz"},
++		{name: "invalid cpu", cpu: "invalid", env: "BUILD_POD_CPU"},
++		{name: "zero cpu", cpu: "0", env: "BUILD_POD_CPU"},
++		{name: "negative cpu", cpu: "-1", env: "BUILD_POD_CPU"},
++		{name: "sub millicore cpu", cpu: "0.1m", env: "BUILD_POD_CPU"},
++		{name: "invalid memory", memory: "invalid", env: "BUILD_POD_MEMORY"},
++		{name: "zero memory", memory: "0Mi", env: "BUILD_POD_MEMORY"},
++		{name: "negative memory", memory: "-1Gi", env: "BUILD_POD_MEMORY"},
++		{name: "atomic validation", cpu: "2", memory: "invalid", env: "BUILD_POD_MEMORY"},
 +	} {
 +		t.Run(tc.name, func(t *testing.T) {
-+			source := t.TempDir()
-+			name := "uploaded" + tc.ext
-+			contents := map[string]string{
-+				"package.json":                 `{"name":"original"}`,
-+				"package-lock.json":            `{"lockfileVersion":3}`,
-+				"node_modules/from-upload.txt": "user supplied",
-+				".npmrc":                       "registry=https://registry.npmmirror.com",
-+				"frontend/package.json":        `{"name":"nested-project"}`,
++			t.Setenv("BUILD_POD_CPU", tc.cpu)
++			t.Setenv("BUILD_POD_MEMORY", tc.memory)
++			pod := &corev1.Pod{Spec: corev1.PodSpec{Containers: []corev1.Container{{Name: "build"}}}}
++			before := pod.DeepCopy()
++			err := applyBuildPodResources(pod)
++			if err == nil || !strings.Contains(err.Error(), tc.env) {
++				t.Fatalf("error = %v, want error naming %s", err, tc.env)
 +			}
-+			writePackageWorkspaceArchive(t, filepath.Join(source, name), tc.prefix, contents)
-+			before, err := os.ReadFile(filepath.Join(source, name))
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			if err := os.WriteFile(filepath.Join(source, "generated.zip"), []byte("not the selected archive"), 0644); err != nil {
-+				t.Fatal(err)
-+			}
-+			first, releaseFirst, err := PreparePackageBuildWorkspace(source, name)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			defer releaseFirst()
-+			if first == source || filepath.Dir(first) != filepath.Dir(source) {
-+				t.Fatalf("unexpected isolated workspace: %s", first)
-+			}
-+			for name, want := range contents {
-+				got, err := os.ReadFile(filepath.Join(first, name))
-+				if err != nil || string(got) != want {
-+					t.Errorf("archive content %s = %q, %v; want %q", name, got, err, want)
-+				}
-+			}
-+			if err := os.WriteFile(filepath.Join(first, "generated.txt"), []byte("first build"), 0644); err != nil {
-+				t.Fatal(err)
-+			}
-+			second, releaseSecond, err := PreparePackageBuildWorkspace(source, name)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			defer releaseSecond()
-+			if second == first {
-+				t.Fatal("parallel/repeated builds share a workspace")
-+			}
-+			if _, err := os.Stat(filepath.Join(second, "generated.txt")); !os.IsNotExist(err) {
-+				t.Fatalf("other build output was copied: %v", err)
-+			}
-+			releaseFirst()
-+			releaseFirst()
-+			if _, err := os.Stat(first); !os.IsNotExist(err) {
-+				t.Fatalf("cleanup did not remove its workspace: %v", err)
-+			}
-+			if _, err := os.Stat(second); err != nil {
-+				t.Fatalf("cleanup removed a different build workspace: %v", err)
-+			}
-+			after, err := os.ReadFile(filepath.Join(source, name))
-+			if err != nil || !bytes.Equal(before, after) {
-+				t.Fatalf("uploaded archive changed: %v", err)
-+			}
-+		})
-+	}
-+	for _, ext := range []string{".jar", ".war"} {
-+		t.Run("standalone "+ext, func(t *testing.T) {
-+			source := t.TempDir()
-+			name := "application" + ext
-+			if err := os.WriteFile(filepath.Join(source, name), []byte("artifact"), 0644); err != nil {
-+				t.Fatal(err)
-+			}
-+			dir, cleanup, err := PreparePackageBuildWorkspace(source, name)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			cleanup()
-+			if dir != source {
-+				t.Fatalf("standalone artifact source changed: %s", dir)
-+			}
-+			if _, err := os.Stat(filepath.Join(source, name)); err != nil {
-+				t.Fatalf("standalone artifact was removed: %v", err)
++			if !reflect.DeepEqual(pod, before) {
++				t.Fatal("invalid configuration partially mutated the pod")
 +			}
 +		})
 +	}
 +}
 +
-+// capability_id: rainbond.cnb
++// capability_id: rainbond.builder.build-pod-resources
++func TestExecJobAppliesResourcesBeforeCreate(t *testing.T) {
++	for _, invalid := range []bool{false, true} {
++		name := "configured"
++		if invalid {
++			name = "invalid"
++		}
++		t.Run(name, func(t *testing.T) {
++			t.Setenv("BUILD_POD_CPU", "2")
++			t.Setenv("BUILD_POD_MEMORY", "4Gi")
++			if invalid {
++				t.Setenv("BUILD_POD_MEMORY", "invalid")
++			}
++			client := fake.NewSimpleClientset()
++			factory := informers.NewSharedInformerFactory(client, 0)
++			c := &controller{KubeClient: client, namespace: "rbd-system", jobInformer: factory.Core().V1().Pods()}
++			pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "build", Namespace: c.namespace}, Spec: corev1.PodSpec{Containers: []corev1.Container{{Name: "build"}}}}
++			createErr := errors.New("creation intercepted")
++			var submitted *corev1.Pod
++			client.PrependReactor("create", "pods", func(action k8stesting.Action) (bool, runtime.Object, error) {
++				submitted = action.(k8stest
 ```
 
-**File**: `test-manifest.json` (modified, +32/-0)
+**File**: `docs/chaos-build-resources.md` (added, +36/-0)
 ```diff
-@@ -4076,6 +4076,38 @@
-       "test_type": "regression",
-       "status": "active"
-     },
-+    {
-+      "id": "rainbond.cnb.package-workspace-isolation",
-+      "title": "Isolate each CNB source package build from retained generated files",
-+      "title_zh": "\u9694\u79bb\u6e90\u7801\u5305 CNB \u6784\u5efa\u5de5\u4f5c\u76ee\u5f55\u5e76\u4fdd\u7559\u539f\u59cb\u4e0a\u4f20\u5185\u5bb9",
-+      "interface_type": "workflow",
-+      "interface": "builder/build/cnb.Builder.Build",
-+      "code_paths": [
-+        "builder/build/cnb/build.go",
-+        "builder/parser/package_workspace.go",
-+        "util/comman.go"
-+      ],
-+      "tests": [
-+        {
-+          "path": "builder/build/cnb/package_workspace_test.go",
-+          "selector": "TestCNBPackageBuildUsesPristineWorkspace"
-+        },
-+        {
-+          "path": "builder/build/cnb/package_workspace_test.go",
-+          "selector": "TestCNBNonPackageBuildKeepsSourceDirectory"
-+        },
-+        {
-+          "path": "builder/parser/package_workspace_test.go",
-+          "selector": "TestPreparePackageBuildWorkspace"
-+        },
-+        {
-+          "path": "builder/parser/package_workspace_test.go",
-+          "selector": "TestPreparePackageBuildWorkspaceRejectsInvalidInput"
-+        }
-+      ],
-+      "test_type": "regression",
-+      "status": "active"
-+    },
-     {
-       "id": "rainbond.cnb.phase-timing",
-       "title": "Report observed CNB lifecycle phase durations without changing build output",
-```
-
-**File**: `test-manifest.md` (modified, +11/-0)
-```diff
-@@ -212,6 +212,7 @@
- | rainbond.cnb.offline-mode | 解析离线模式下的 CNB 镜像行为 | active | regression | builder/build/cnb offline mode helpers | builder/build/cnb/cnb_test.go::TestIsOfflineMode<br>builder/build/cnb/cnb_test.go::TestGetCNBBuilderImageOffline<br>builder/build/cnb/cnb_test.go::TestGetCNBRunImageOffline |
- | rainbond.cnb.order-toml | 写入自定义 CNB order 定义 | active | regression | builder/build/cnb.Builder.writeCustomOrder | builder/build/cnb/cnb_test.go::TestWriteCustomOrder |
- | rainbond.cnb.order-write-failure | CNB order 文件写入失败时返回空标记 | active | regression | builder/build/cnb.Builder.writeCustomOrder | builder/build/cnb/cnb_test.go::TestWriteCustomOrderFailure |
-+| rainbond.cnb.package-workspace-isolation | 隔离源码包 CNB 构建工作目录并保留原始上传内容 | active | regression | builder/build/cnb.Builder.Build | builder/build/cnb/package_workspace_test.go::TestCNBPackageBuildUsesPristineWorkspace<br>builder/build/cnb/package_workspace_test.go::TestCNBNonPackageBuildKeepsSourceDirectory<br>builder/parser/package_workspace_test.go::TestPreparePackageBuildWorkspace<br>builder/parser/package_workspace_test.go::TestPreparePackageBuildWorkspaceRejectsInvalidInput |
- | rainbond.cnb.phase-timing | Report observed CNB lifecycle phase durations without changing build output | active | regression | builder/build/cnb.Builder.runCNBBuildJob | builder/build/cnb/phase_logger_test.go::TestCNBPhaseTiming<br>builder/build/cnb/phase_logger_test.go::TestCNBPhaseTimingHandlesFragmentedLogs<br>builder/build/cnb/phase_logger_test.go::TestCNBPhaseTimingPreservesWriterErrors<br>builder/build/cnb/phase_logger_test.go::TestCNBPhaseTimingSerializesConcurrentWrites<br>builder/build/cnb/phase_logger_test.go::TestCNBJobEmitsFinalPhaseTiming |
- | rainbond.cnb.platform-annotations | 根据构建环境生成 CNB 平台注解 | active | regression | builder/build/cnb.Builder.buildPlatformAnnotations | builder/build/cnb/cnb_test.go::TestBuildPlatformAnnotations |
- | rainbond.cnb.platform-volume | 根据注解创建 CNB 平台卷 | active | regression | builder/build/cnb.Builder.createPlatformVolume | builder/build/cnb/cnb_test.go::TestCreatePlatformVolume<br>builder/build/cnb/cnb_test.go::TestCreatePlatformVolumeEmpty<br>builder/build/cnb/cnb_test.go::TestCreatePlatformVolumeNonCNBKeys |
-@@ -2743,6 +2744,16 @@
- - 代码路径: `builder/build/cnb/order.go`
- - 测试路径: `builder/build/cnb/cnb_test.go::TestWriteCustomOrderFailure`
- 
-+### 隔离源码包 CNB 构建工作目录并保留原始上传内容
+@@ -0,0 +1,36 @@
++# 构建 Pod 的 CPU 和内存配置
 +
-+- Capability ID: `rainbond.cnb.package-workspace-isolation`
-+- 状态: `active`
-+- 测试类型: `regression`
-+- 接口类型: `workflow`
-+- 业务入口: `builder/build/cnb.Builder.Build`
-+- 代码路径: `builder/build/cnb/build.go`, `builder/parser/package_workspace.go`, `util/comman.go`
-+- 测试路径: `builder/build/cnb/package_workspace_test.go::TestCNBPackageBuildUsesPristineWorkspace`, `builder/build/cnb/package_workspace_test.go::TestCNBNonPackageBuildKeepsSourceDirectory`, `builder/parser/package_workspace_test.go::TestPreparePackageBuildWorkspace`, `builder/parser/package_workspace_test.go::TestPreparePackageBuildWorkspaceRejectsInvalidInput`
++在 `rbd-chaos` 的容器环境变量中配置以下两个可选参数：
 +
- ### Report observed CNB lifecycle phase durations without changing build output
++| 环境变量 | 示例 | 作用 |
++|---|---|---|
++| `BUILD_POD_CPU` | `2` 或 `500m` | 为新建构建容器设置相同的 CPU request 和 limit |
++| `BUILD_POD_MEMORY` | `4Gi` 或 `512Mi` | 为新建构建容器设置相同的内存 request 和 limit |
++
++例如，在管理 `rbd-chaos` 的工作负载或 Rainbond 组件配置中添加：
++
++```yaml
++env:
++  - name: BUILD_POD_CPU
++    value: "2"
++  - name: BUILD_POD_MEMORY
++    value: "4Gi"
++```
++
++更新全部 `rbd-chaos` 实例并重启使环境变量生效后，后续新建构建 Pod 中的普通容器将具有：
++
++```yaml
++resources:
++  requests:
++    cpu: "2"
++    memory: "4Gi"
++  limits:
++    cpu: "2"
++    memory: "4Gi"
++```
++
++配置覆盖统一构建控制器创建的源码、Dockerfile、CNB 和镜像打包等构建 Pod。它控制独立构建容器的资源，不改变 `rbd-chaos` 自身或业务运行容器的资源配置，也不修改已有构建 Pod。
++
++两个变量可以单独设置。未设置或仅含空白的项保留原有行为，其他资源项及 init container 保持原样。配置必须是正数，采用 Kubernetes 资源数量格式；CPU 精度不能小于 `1m`。值非法时，该构建返回包含变量名的配置错误，拒绝创建 Pod，不会静默退回到无限制运行。
++
++这里的数值仅为配置格式示例。应根据构建峰值、节点余量及并发量选择实际额度。request 与 limit 相同意味着调度时按完整额度申请资源；不足时构建 Pod 可能 Pending，超过内存上限时构建可能因 OOM 失败。
+```
+
+**File**: `mq/api/mq/mq.go` (modified, +5/-8)
+```diff
+@@ -19,13 +19,14 @@
+ package mq
  
- - Capability ID: `rainbond.cnb.phase-timing`
-```
-
-**File**: `util/comman.go` (modified, +1/-0)
-```diff
-@@ -545,6 +545,7 @@ func Unzip(archive, target string) error {
- 	if err != nil {
- 		return fmt.Errorf("error opening archive: %v", err)
- 	}
-+	defer reader.Close()
- 	if err := os.MkdirAll(target, 0755); err != nil {
- 		return err
- 	}
-```
-
----
-
-### Incident Patch 3: `910b7efc` (2026-10-27)
-**Commit Message**: fix: recognize colored CNB lifecycle phase logs (#2731)
-
-Signed-off-by: 张启航 <[REDACTED_EMAIL]>
-
-**File**: `builder/build/cnb/phase_logger.go` (modified, +6/-1)
-```diff
-@@ -4,6 +4,7 @@ import (
- 	"bytes"
- 	"fmt"
- 	"io"
-+	"regexp"
- 	"strconv"
+ import (
+-	"github.com/goodrain/rainbond/config/configs"
+-	"github.com/goodrain/rainbond/config/configs/rbdcomponent"
+-	"github.com/goodrain/rainbond/mq/client"
+ 	"os"
  	"strings"
  	"sync"
-@@ -12,6 +13,8 @@ import (
- 	"github.com/goodrain/rainbond/event"
- )
  
-+var cnbANSISequence = regexp.MustCompile(`\x1b\[[0-?]*[ -/]*[@-~]`)
++	"github.com/goodrain/rainbond/config/configs"
++	"github.com/goodrain/rainbond/config/configs/rbdcomponent"
++	"github.com/goodrain/rainbond/mq/client"
 +
- // cnbPhaseWriter preserves build output and reports observed lifecycle phase
- // durations. The final phase includes the wait for job and log completion;
- // parallel app/cache export is reported as one EXPORTING phase.
-@@ -54,7 +57,9 @@ func (w *cnbPhaseWriter) Write(data []byte) (int, error) {
+ 	"golang.org/x/net/context"
  
- func (w *cnbPhaseWriter) observeLine(line string) {
- 	var phase string
--	switch strings.TrimSpace(line) {
-+	// Lifecycle colors phase markers even in captured logs. Normalize only the
-+	// detection text; the original output, including its colors, is preserved.
-+	switch strings.TrimSpace(cnbANSISequence.ReplaceAllString(line, "")) {
- 	case "===> ANALYZING":
- 		phase = "ANALYZING"
- 	case "===> DETECTING":
+ 	"github.com/sirupsen/logrus"
+@@ -123,11 +124,7 @@ func (e *etcdQueue) Enqueue(ctx context.Context, topic, value string) error {
+ 
+ func (e *etcdQueue) Dequeue(ctx context.Context, topic string) (string, error) {
+ 	DequeueNumber++
+-	res, ok := e.client.Get(e.queueKey(topic))
+-	if !ok {
+-		return "", context.DeadlineExceeded
+-	}
+-	return res, nil
++	return e.client.Get(ctx, e.queueKey(topic))
+ }
+ 
+ func (e *etcdQueue) MessageQueueSize(topic string) int64 {
 ```
 
-**File**: `builder/build/cnb/phase_logger_test.go` (modified, +45/-32)
+**File**: `mq/api/mq/store.go` (modified, +17/-11)
 ```diff
-@@ -33,38 +33,51 @@ func readCNBMessages(t *testing.T, logs chan []byte) []map[string]string {
+@@ -1,6 +1,7 @@
+ package mq
  
- // capability_id: rainbond.cnb.phase-timing
- func TestCNBPhaseTiming(t *testing.T) {
--	logs := make(chan []byte, 20)
--	var output bytes.Buffer
--	writer := newCNBPhaseWriter(&output, event.NewLogger("test", logs))
--	now := time.Unix(0, 0)
--	writer.now = func() time.Time { return now }
--	var input strings.Builder
--	phases := []string{"ANALYZING", "DETECTING", "RESTORING", "BUILDING", "EXPORTING"}
--	for i, phase := range phases {
--		line := "===> " + phase + "\r\n"
--		input.WriteString(line)
--		if _, err := writer.Write([]byte(line)); err != nil {
--			t.Fatal(err)
+ import (
++	"context"
+ 	"sync"
+ 	"time"
+ )
+@@ -31,16 +32,18 @@ func (kv *KeyValueStore) Put(key, value string) {
+ }
+ 
+ // Get 根据键获取第一个值并删除该键值对中的第一个值
+-func (kv *KeyValueStore) Get(key string) (string, bool) {
+-	deadline := time.Now().Add(5 * time.Second)
+-
++func (kv *KeyValueStore) Get(ctx context.Context, key string) (string, error) {
++	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
++	defer cancel()
++	ticker := time.NewTicker(100 * time.Millisecond)
++	defer ticker.Stop()
+ 	for {
+-		// 检查是否超时
+-		if time.Now().After(deadline) {
+-			return "", false
 -		}
--		now = now.Add(time.Duration(i+1) * time.Second)
--	}
--	writer.finish()
--	writer.finish()
--	if output.String() != input.String() {
--		t.Fatalf("original logs changed: %q", output.String())
--	}
--	entries := readCNBMessages(t, logs)
--	if len(entries) != len(phases) {
--		t.Fatalf("got %d timing records, want %d: %v", len(entries), len(phases), entries)
--	}
--	for i, entry := range entries {
--		want := time.Duration(i+1) * time.Second
--		if entry["step"] != "build-timing" || entry["phase"] != phases[i] || !strings.Contains(entry["message"], want.String()) {
--			t.Errorf("unexpected timing entry: %v", entry)
--		}
--		if strings.Contains(entry["message"], "success") {
--			t.Errorf("elapsed time must not imply build success: %v", entry)
--		}
-+	for _, style := range []struct {
-+		name   string
-+		prefix string
-+		suffix string
-+	}{
-+		{name: "plain"},
-+		{name: "lifecycle cyan", prefix: "\x1b[36m", suffix: "\x1b[0m"},
-+		{name: "bold cyan", prefix: "\x1b[1;36m", suffix: "\x1b[0m"},
-+		{name: "true color", prefix: "\x1b[38:2:0:200:200m", suffix: "\x1b[m"},
-+	} {
-+		t.Run(style.name, func(t *testing.T) {
-+			logs := make(chan []byte, 20)
-+			var output bytes.Buffer
-+			writer := newCNBPhaseWriter(&output, event.NewLogger("test", logs))
-+			now := time.Unix(0, 0)
-+			writer.now = func() time.Time { return now }
-+			var input strings.Builder
-+			phases := []string{"ANALYZING", "DETECTING", "RESTORING", "BUILDING", "EXPORTING"}
-+			for i, phase := range phases {
-+				line := style.prefix + "===> " + phase + style.suffix + "\r\n"
-+				input.WriteString(line)
-+				if _, err := writer.Write([]byte(line)); err != nil {
-+					t.Fatal(err)
-+				}
-+				now = now.Add(time.Duration(i+1) * time.Second)
-+			}
-+			writer.finish()
-+			writer.finish()
-+			if output.String() != input.String() {
-+				t.Fatalf("original logs changed: %q", output.String())
-+			}
-+			entries := readCNBMessages(t, logs)
-+			if len(entries) != len(phases) {
-+				t.Fatalf("got %d timing records, want %d: %v", len(entries), len(phases), entries)
-+			}
-+			for i, entry := range entries {
-+				want := time.Duration(i+1) * time.Second
-+				if entry["step"] != "build-timing" || entry["phase"] != phases[i] || !strings.Contains(entry["message"], want.String()) {
-+					t.Errorf("unexpected timing entry: %v", entry)
-+				}
-+				if strings.Contains(entry["message"], "success") {
-+					t.Errorf("elapsed time must not imply build success: %v", entry)
-+				}
-+			}
-+		})
+-
+ 		kv.mu.Lock()
++		// Recheck cancellation while holding the lock before removing a message.
++		if err := ctx.Err(); err != nil {
++			kv.mu.Unlock()
++			return "", err
++		}
+ 		values, ok := kv.data[key]
+ 		if ok && len(values) > 0 {
+ 			// 获取第一个值并从切片中删除
+@@ -51,12 +54,15 @@ func (kv *KeyValueStore) Get(key string) (string, bool) {
+ 				kv.data[key] = values[1:]
+ 			}
+ 			kv.mu.Unlock()
+-			return firstValue, true
++			return firstValue, nil
+ 		}
+ 		kv.mu.Unlock()
+ 
+-		// 短暂休眠后重试，避免忙等待
+-		time.Sleep(100 * time.Millisecond)
++		select {
++		case <-ctx.Done():
++			return "", ctx.Err()
++		case <-ticker.C:
++		}
  	}
  }
  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2736** (2026-10-30): V6.10.2 dev (@ZhangSetSail)
+- **PR #2735** (2026-10-29): V6.10.1 dev (@ZhangSetSail)
+- **PR #2734** (2026-10-29): ci(release): split the docs PR out of publish and publish roi after a release (@yangkaa)
 - **PR #2733** (2026-10-27): fix: preserve config group bindings before component creation (@ZhangSetSail)
 - **PR #2732** (2026-10-27): fix: isolate CNB source package build workspaces (@ZhangSetSail)
 - **PR #2731** (2026-10-27): fix: recognize colored CNB lifecycle phase logs (@ZhangSetSail)
-- **PR #2730** (2026-10-27): fix(release): download E2E job logs with curl in the gate (@yangkaa)
-- **PR #2729** (2026-10-27): fix: isolate config group variable rendering per component (@ZhangSetSail)
-- **PR #2728** (2026-10-26): V6.9.12 dev (@ZhangSetSail)
 
 ---
 
@@ -2180,63 +1733,43 @@ Signed-off-by: 张启航 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. preserve config group bindings before component creation (#2733)
+## X. record v6.10.2-release in upgrade feed
 
 **RULE**:
-When implementing operations in `api/handler/application_config_group.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `hack/release/upgrade-versions.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cd811e47`: preserve config group bindings before component creation (#2733). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7e2467b9`: record v6.10.2-release in upgrade feed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/handler/application_config_group.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `hack/release/upgrade-versions.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	for _, serviceConfigGroup := range configGroupServiceBindings(appID, req.ConfigGroupName, req.ServiceIDs, services) {
-		if err := db.GetManager().AppConfigGroupServiceDaoTransactions(tx).AddModel(serviceConfigGroup); err != nil {
-	for _, serviceConfigGroup := range configGroupServiceBindings(appID, configGroupName, req.ServiceIDs, services) {
-		if err := db.GetManager().AppConfigGroupServiceDaoTransactions(tx).AddModel(serviceConfigGroup); err != nil {
-
-// configGroupServiceBindings preserves selected components that have not reached
-// the region yet. Their IDs are already assigned by the console during creation.
-func configGroupServiceBindings(appID, groupName string, serviceIDs []string, services []*dbmodel.TenantServices) []*dbmodel.ConfigGroupService {
-	aliases := make(map[string]string, len(services))
-	for _, service := range services {
-		aliases[service.ServiceID] = service.ServiceAlias
-	}
-	seen := make(map[string]bool, len(serviceIDs))
-	var bindings []*dbmodel.ConfigGroupService
-	for _, id := range serviceIDs {
-		if id == "" || seen[id] {
-			continue
-		}
-		seen[id] = true
-		bindings = append(bindings, &dbmodel.ConfigGroupService{
-			AppID: appID, ConfigGroupName: groupName
+  {
+    "version": "v6.10.2-release",
+    "detail": {
+      "update_time": "2026-10-30",
+      "html_url": "https://github.com/goodrain/rainbond/releases/tag/v6.10.2-release",
+      "tag_name": "v6.10.2-release",
+      "body": "For update details, reference: https://github.com/goodrain/rainbond/releases/tag/v6.10.2-release."
+    },
+    "images": {
+      "rbd-api": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-api:v6.10.2-release",
+      "rbd-app-ui": "registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond:v6.10.2-release",
+      "rbd-chaos": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-chaos:v6.10.2-release",
+      "rbd-mq": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-mq:v6.10.2-release",
+      "rbd-worker": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-worker:v6.10.2-release"
+    }
+  },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	for _, s := range services {
-		serviceConfigGroup := dbmodel.ConfigGroupService{
-			AppID:           appID,
-			ConfigGroupName: req.ConfigGroupName,
-			ServiceID:       s.ServiceID,
-			ServiceAlias:    s.ServiceAlias,
-		}
-		if err := db.GetManager().AppConfigGroupServiceDaoTransactions(tx).AddModel(&serviceConfigGroup); err != nil {
-	for _, s := range services {
-		serviceConfigGroup := dbmodel.ConfigGroupService{
-			AppID:           appID,
-			ConfigGroupName: configGroupName,
-			ServiceID:       s.ServiceID,
-			ServiceAlias:    s.ServiceAlias,
-		}
-		if err := db.GetManager().AppConfigGroupServiceDaoTransactions(tx).AddModel(&serviceConfigGroup); err != nil {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cd811e47` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7e2467b9` are properly handled with clean fallback behavior.

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T14:45:13.885Z",
-    "lastVerified": "2026-10-30T14:45:13.885Z",
+    "lastChecked": "2026-10-30T15:08:28.732Z",
+    "lastVerified": "2026-10-30T15:08:28.732Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -414,8 +414,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T14:11:52.462Z",
-    "lastVerified": "2026-10-30T14:11:52.462Z",
+    "lastChecked": "2026-10-30T15:08:22.637Z",
+    "lastVerified": "2026-10-30T15:08:22.637Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1416,14 +1416,14 @@
     "officialUrl": "https://github.com/t8y2/dbx",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T22:26:47.961Z",
-    "lastVerified": "2026-10-28T22:26:47.961Z",
+    "lastChecked": "2026-10-30T15:08:25.237Z",
+    "lastVerified": "2026-10-30T15:08:25.237Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "ec3e92cbe4553450c73ae6141ef41d535a97107e761e1aed0c40dd5c60e8d14d",
+    "contentHash": "772aebdd1b79f5c06c0fc6dd9a02eca265e1b0a3bbb69783b4662553c05ea929",
     "promotedRulesCount": 1,
-    "recentFixesCount": 19,
+    "recentFixesCount": 24,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1686,9 +1686,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-10-30T07:15:39.125Z",
+    "lastChecked": "2026-10-30T15:08:17.634Z",
     "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-10-30T07:15:39.125Z"
+    "lastVerified": "2026-10-30T15:08:17.634Z"
   },
   "alibaba-zvec": {
     "name": "zvec",
@@ -2452,11 +2452,21 @@
     "lastVerified": "2026-10-28T06:42:01.943Z"
   },
   "goodrain-rainbond": {
-    "name": "rainbond",
+    "name": "goodrain/rainbond",
     "officialUrl": "https://github.com/goodrain/rainbond",
-    "lastChecked": "2026-10-28T23:18:46.896Z",
-    "revisionIdentifier": "8d5895f1",
-    "lastVerified": "2026-10-28T23:18:46.896Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-30T15:08:20.019Z",
+    "lastVerified": "2026-10-30T15:08:20.019Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-goodrain-rainbond",
+    "contentHash": "beb2939ea99c6c717460d98968af8ffdb03ce0e73d8f6e62a7d805f2a92f95e9",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "caviraoss-longmemory": {
     "name": "LongMemory",
@@ -6160,9 +6170,9 @@
   "dalance-procs": {
     "name": "procs",
     "officialUrl": "https://github.com/dalance/procs",
-    "lastChecked": "2026-10-28T17:49:33.098Z",
+    "lastChecked": "2026-10-30T15:08:07.673Z",
     "revisionIdentifier": "c41ae259",
-    "lastVerified": "2026-10-28T17:49:33.098Z"
+    "lastVerified": "2026-10-30T15:08:07.673Z"
   },
   "hf-baai-bge-base-en-v1.5": {
     "name": "BAAI/bge-base-en-v1.5",
@@ -10177,5 +10187,29 @@
     "lastChecked": "2026-10-30T14:40:19.782Z",
     "revisionIdentifier": "4d5e732c",
     "lastVerified": "2026-10-30T14:40:19.782Z"
+  },
+  "nodejs-undici": {
+    "name": "nodejs/undici",
+    "officialUrl": "https://github.com/nodejs/undici",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-30T15:08:14.906Z",
+    "lastVerified": "2026-10-30T15:08:14.906Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nodejs-undici",
+    "contentHash": "872f1206bdb9b0d12cadbd62ae1dc5b1fc036b6c8044c84b487b2750c7777308",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "blackjacx-wwdc": {
+    "name": "WWDC",
+    "officialUrl": "https://github.com/Blackjacx/WWDC",
+    "lastChecked": "2026-10-30T15:08:12.592Z",
+    "revisionIdentifier": "4973be7a",
+    "lastVerified": "2026-10-30T15:08:12.592Z"
   }
 }

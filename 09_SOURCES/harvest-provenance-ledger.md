@@ -6225,3 +6225,6 @@ Every entry in this ledger must capture:
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `36314d40` | Multi-dimensional audit evidence | 2026-10-30T14:40:27.808Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `bc50afb4` | Multi-dimensional audit evidence | 2026-10-30T14:40:30.437Z |
 | `learn-github-alexpasmantier-television` | `https://github.com/alexpasmantier/television` | `48eeeef3` | Multi-dimensional audit evidence | 2026-10-30T14:45:11.328Z |
+| `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `7e2467b9` | Multi-dimensional audit evidence | 2026-10-30T15:08:21.191Z |
+| `learn-github-nodejs-undici` | `https://github.com/nodejs/undici` | `1b7b18e5` | Multi-dimensional audit evidence | 2026-10-30T15:08:21.939Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `9e248553` | Multi-dimensional audit evidence | 2026-10-30T15:08:26.179Z |
