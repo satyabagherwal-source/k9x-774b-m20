@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `b0b86fd3`  
+> **Source Version**: `c7d88ddc`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T00:16:02.597Z  
+> **Timestamp**: 2026-10-30T22:56:31.674Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T00:16:02.589Z  
+> **Harvest Timestamp**: 2026-10-30T22:56:29.080Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Effortlessly compose, extend, and observe every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18872 stars
+- **Stars / Engagement**: 18877 stars
 
 ---
 
@@ -1734,6 +1734,161 @@ mod tests {
         let mut port = Scripted(VecDeque
 ```
 
+### Core Architecture Module: `crates/iii-sandbox-contract/src/worker.rs`
+```
+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
+// contributor license agreements. Licensed under the Elastic License 2.0.
+
+//! Request and response types of the `<adapter>::worker::*` operations. Only Compose calls
+//! them, to run a worker's VM container through the adapter.
+
+use crate::channel::StreamChannelRef;
+use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
+
+/// Where the worker's code comes from.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum WorkerSource {
+    Bundle {
+        /// Manifest name, not the container key.
+        package: String,
+        /// The bundle in Compose's package cache.
+        host_path: String,
+    },
+    /// Local sources always sync into the VM.
+    Local {
+        host_path: String,
+        run_override: Option<String>,
+    },
+}
+
+/// Idempotent image and base-layer pull; long-running.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerPrepareRequest {
+    /// Per-project token.
+    pub auth: String,
+    pub source: WorkerSource,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerPrepareResponse {}
+
+/// Boots the VM. The adapter reads resources from the worker's manifest.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerStartRequest {
+    /// Per-project token.
+    pub auth: String,
+    /// Hash of the compose state dir and container key; the same key gets the same persistent upper.
+    pub state_key: String,
+    /// Container key; becomes `III_WORKER_NAME`.
+    pub worker_name: String,
+    pub source: WorkerSource,
+    /// Complete guest env. Never on the `__vm-boot` argv: the adapter writes it
+    /// to `__vm-boot`'s stdin, which sends it to the guest init over the
+    /// `iii.env` virtio-console port, not the kernel cmdline (only a build
+    /// without an embedded init still uses the cmdline).
+    pub env: BTreeMap<String, String>,
+    /// The engine's URL as seen from the host.
+    pub engine_url: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerStartResponse {
+    /// Opaque; stable per `state_key`.
+    pub vm_id: String,
+    /// Increments on every boot of this `vm_id`.
+    pub instance: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerStatusRequest {
+    pub auth: String,
+    pub vm_id: String,
+    pub instance: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum State {
+    Preparing,
+    Running,
+    Exited,
+    Stopped,
+    Unknown,
+}
+
+/// Reply of `worker::status` and `worker::stop`.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerStatus {
+    pub vm_id: String,
+    pub instance: u64,
+    pub state: State,
+    pub exit_code: Option<i32>,
+    /// The signal that ended the VM, if one did.
+    pub signal: Option<i32>,
+    pub started_at_ms: u64,
+    pub ended_at_ms: Option<u64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerLogsRequest {
+    pub auth: String,
+    pub vm_id: String,
+    /// `LogRecord.cursor` of the last record the caller has; reading resumes right after it.
+    /// Opaque to Compose. A cursor past the end of the log (after a rotation) reads from the start.
+    pub cursor: Option<u64>,
+    /// Keep the channel open while the instance runs.
+    pub follow: bool,
+    /// Writer end of a channel Compose created; one `LogRecord` JSON per text frame.
+    pub channel: StreamChannelRef,
+}
+
+/// Returned once the log pump starts; the records travel over the channel.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerLogsResponse {}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum LogStream {
+    Stdout,
+    Stderr,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct LogRecord {
+    pub stream: LogStream,
+    pub line: String,
+    pub ts_ms: u64,
+    /// Resume point: pass it as `WorkerLogsRequest.cursor` to continue after this record.
+    pub cursor: u64,
+}
+
+/// Idempotent; `grace_ms: 0` kills. Replies with the final `WorkerStatus`.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerStopRequest {
+    pub auth: String,
+    pub vm_id: String,
+    /// Names the boot to stop, so a stale stop cannot hit a newer one.
+    pub instance: u64,
+    pub grace_ms: u64,
+}
+
+/// Refused while the VM is running.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerDestroyRequest {
+    pub auth: String,
+    pub state_key: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerDestroyResponse {
+    pub destroyed: bool,
+}
+
+```
+
 ### Core Architecture Module: `crates/iii-worker/examples/dump_worker_env.rs`
 ```
 //! Quick demo: dumps the env hashmap that `iii worker start <name>`
@@ -2081,317 +2236,6 @@ pub enum Commands {
     Ge
 ```
 
-### Core Architecture Module: `crates/iii-worker/src/cli/binary_download.rs`
-```
-// Copyright Motia LLC and/or licensed to Motia LLC under one or more
-// contributor license agreements. Licensed under the Elastic License 2.0;
-// you may not use this file except in compliance with the Elastic License 2.0.
-// This software is patent protected. We welcome discussions - reach out at team@iii.dev
-// See LICENSE and PATENTS files for details.
-
-//! Binary worker download, checksum verification, and installation.
-
-use super::registry::validate_worker_name;
-use sha2::{Digest, Sha256};
-use std::io::Read as _;
-use std::path::PathBuf;
-use std::sync::{
-    LazyLock,
-    atomic::{AtomicU64, Ordering},
-};
-
-/// Maximum allowed download size: 512 MB.
-const MAX_DOWNLOAD_BYTES: u64 = 512 * 1024 * 1024;
-const MAX_REDIRECTS: usize = 10;
-static TEMP_COUNTER: AtomicU64 = AtomicU64::new(0);
-
-static NO_REDIRECT_HTTP_CLIENT: LazyLock<reqwest::Client> = LazyLock::new(|| {
-    reqwest::Client::builder()
-        .timeout(std::time::Duration::from_secs(120))
-        .redirect(reqwest::redirect::Policy::none())
-        .build()
-        .expect("Failed to create no-redirect HTTP client")
-});
-
-/// Returns the directory where binary workers are installed: `~/.iii/workers/`.
-pub fn binary_workers_dir() -> PathBuf {
-    dirs::home_dir()
-        .unwrap_or_else(|| PathBuf::from("."))
-        .join(".iii")
-        .join("workers")
-}
-
-/// Returns the path where a named binary worker is installed: `~/.iii/workers/{name}`.
-pub fn binary_worker_path(name: &str) -> PathBuf {
-    binary_workers_dir().join(name)
-}
-
-/// Returns the compile-time target triple for the current platform.
-pub fn current_target() -> &'static str {
-    #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
-    return "aarch64-apple-darwin";
-
-    #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
-    return "x86_64-apple-darwin";
-
-    #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
-    return "x86_64-unknown-linux-gnu";
-
-    #[cfg(all(target_os = "linux", target_arch = "aarch64"))]
-    return "aarch64-unknown-linux-gnu";
-
-    #[cfg(all(target_os = "windows", target_arch = "x86_64"))]
-    return "x86_64-pc-windows-msvc";
-
-    #[cfg(all(target_os = "windows", target_arch = "aarch64"))]
-    return "aarch64-pc-windows-msvc";
-
-    #[cfg(not(any(
-        all(target_os = "macos", target_arch = "aarch64"),
-        all(target_os = "macos", target_arch = "x86_64"),
-        all(target_os = "linux", target_arch = "x86_64"),
-        all(target_os = "linux", target_arch = "aarch64"),
-        all(target_os = "windows", target_arch = "x86_64"),
-        all(target_os = "windows", target_arch = "aarch64"),
-    )))]
-    return "unknown";
-}
-
-/// Returns the platform-appropriate archive extension.
-pub fn archive_extension(target: &str) -> &'static str {
-    if target.contains("windows") {
-        "zip"
-    } else {
-        "tar.gz"
-    }
-}
-
-/// Extracts a named binary from a tar.gz archive.
-///
-/// Looks for an entry whose filename matches `binary_name` (ignoring directory prefixes).
-pub fn extract_binary_from_targz(
-    binary_name: &str,
-    archive_bytes: &[u8],
-) -> Result<Vec<u8>, String> {
-    let decoder = flate2::read::GzDecoder::new(archive_bytes);
-    let mut archive = tar::Archive::new(decoder);
-
-    for entry in archive
-        .entries()
-        .map_err(|e| format!("Failed to read tar archive: {}", e))?
-    {
-        let mut entry = entry.map_err(|e| format!("Failed to read tar entry: {}", e))?;
-        let path = entry
-            .path()
-            .map_err(|e| format!("Failed to read entry path: {}", e))?;
-
-        let file_name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
-        if file_name == binary_name {
-            let mut buf = Vec::new();
-            entry
-                .read_to_end(&mut buf)
-                .map_err(|e| format!("Failed to read binary from archive: {}", e))?;
-            return Ok(buf);
-        }
-    }
-
-    Err(format!("Binary '{}' not found in archive", binary_name))
-}
-
-/// Verifies SHA256 checksum of `data` against the provided checksum content.
-///
-/// The checksum content may be in the format `"<hex>  <filename>"` (as produced by
-/// `sha256sum`) or simply `"<hex>"`. Returns `Ok(())` on success, or an error
-/// string describing the mismatch.
-pub fn verify_sha256(data: &[u8], checksum_content: &str) -> Result<(), String> {
-    let trimmed = checksum_content.trim();
-    if trimmed.is_empty() {
-        return Err("Checksum file is empty".to_string());
-    }
-
-    // Extract the hex portion — the first whitespace-separated token.
-    let expected_hex = trimmed
-        .split_whitespace()
-        .next()
-        .ok_or_else(|| "Checksum file has no content".to_string())?;
-
-    let mut hasher = Sha256::new();
-    hasher.update(data);
-    let actual_hex = format!("{:x}", hasher.finalize());
-
-    if actual_hex == expected_hex {
-        Ok(())
-    } else {
-        Err(format!(
-            "SHA256 mismatch: expected {}, got {}",
-            expected_hex, actual_hex
-        ))
-    }
-}
-
-pub fn validate_locked_artifact_url(url: &str) -> Result<(), String> {
-    let parsed =
-        reqwest::Url::parse(url).map_err(|e| format!("invalid artifact URL `{url}`: {e}"))?;
-    let host = parsed
-        .host_str()
-        .ok_or_else(|| format!("artifact URL `{url}` has no host"))?;
-
-    #[cfg(debug_assertions)]
-    if matches!(parsed.scheme(), "http" | "https") && is_loopback_host(host) {
-        return Ok(());
-    }
-
-    if parsed.scheme() != "https" {
-        return Err(format!(
-            "artifact URL `{url}` is not trusted: locked worker artifacts must use HTTPS registry URLs"
-        ));
-    }
-
-    if is_private_or_loopback_host(host) {
-        return Err(format!(
-            "artifact URL `{url}` is not trusted: private and loopback hosts are not allowed in iii.lock"
-        ));
-    }
-
-    Ok(())
-}
-
-#[cfg(debug_assertions)]
-fn is_loopback_host(host: &str) -> bool {
-    host == "localhost"
-        || host
-            .parse::<std::net::IpAddr>()
-            .map(|ip| ip.is_loopback())
-            .unwrap_or(false)
-}
-
-fn is_private_or_loopback_host(host: &str) -> bool {
-    let Ok(ip) = host.parse::<std::net::IpAddr>() else {
-        return false;
-    };
-    match ip {
-        std::net::IpAddr::V4(ip) => {
-            ip.is_loopback()
-                || ip.is_private()
-                || ip.is_link_local()
-                || ip.is_broadcast()
-                || ip.is_documentation()
-                || ip.octets()[0] == 0
-        }
-        std::net::IpAddr::V6(ip) => {
-            ip.is_loopback()
-                || ip.is_unspecified()
-                || ip.segments()[0] & 0xfe00 == 0xfc00
-                || ip.segments()[0] & 0xffc0 == 0xfe80
-        }
-    }
-}
-
-async fn download_archive_bytes(
-    url: &str,
-    validate_final_url: Option<&(dyn Fn(&str) -> Result<(), String> + Send + Sync)>,
-) -> Result<Vec<u8>, String> {
-    let resp = match validate_final_url {
-        Some(validator) => download_archive_bytes_with_validated_redirects(url, validator).await?,
-        None => super::registry::HTTP_CLIENT
-            .get(url)
-            .send()
-            .await
-            .map_err(|e| format!("Failed to download binary: {}", e))?,
-    };
-
-    if !resp.status().is_success() {
-        return Err(format!(
-            "Binary download failed with HTTP {}",
-            resp.status()
-        ));
-    }
-
-    if let Some(content_length) = resp.content_length()
-        && content_length > MAX_DOWNLOAD_BYTES
-    {
-        return Err(format!(
-            "Binary download too large ({:.1} MB, max {:.1} MB)",
-            content_length as f64 / 1_048_576.0,
-            MAX_DOWNLOAD_BYTES as f64 / 1_048_576.0,
-        ));
-    }
-
-    let binary_data = resp
-        .bytes()
-        .await
-        .map_err(|e| format!("Failed to read binary data: {}", e))?;
-
-    if binary_data.len() as u64 > MAX_DOWNLOAD_BYTES {
-        return Err(format!(
-            "Downloaded data exceeds maximum size ({:.1} MB)",
-            binary_data.len() as f64 / 1_048_576.0,
-        ));
-    }
-
-    Ok(binary_data.to_vec())
-}
-
-async fn download_archive_bytes_with_validated_redirects(
-    url: &str,
-    validator: &(dyn Fn(&str) -> Result<(), String> + Send + Sync),
-) -> Result<reqwest::Response, String> {
-    let mut current_url =
-        reqwest::Url::parse(url).map_err(|e| format!("invalid artifact URL `{url}`: {e}"))?;
-
-    for redirects_followed in 0..=MAX_REDIRECTS {
-        let resp = NO_REDIRECT_HTTP_CLIENT
-            .get(current_url.clone())
-            .send()
-            .await
-            .map_err(|e| format!("Failed to download binary: {}", e))?;
-
-        if !resp.status().is_redirection() {
-            return Ok(resp);
-        }
-
-        if redirects_followed == MAX_REDIRECTS {
-            return Err(format!(
-                "Binary download exceeded {MAX_REDIRECTS} redirects"
-            ));
-        }
-
-        let location = resp
-            .headers()
-            .get(reqwest::header::LOCATION)
-            .ok_or_else(|| {
-                format!(
-                    "Binary download redirect from `{}` did not include a Location header",
-                    current_url
-                )
-            })?
-            .to_str()
-            .map_err(|e| format!("Binary download redirect has invalid Location header: {e}"))?;
-        let next_url = current_url.join(location).map_err(|e| {
-            format!(
-                "Binary download redirect from `{}` has invalid Location `{}`: {}",
-                current_url, location, e
-            )
-        })?;
-
-        validator(next_url.as_str()).map_err(|e| {
-            format!("artifact download for `{url}` was redirected to an untrusted URL: {e}")
-        })?;
-        current_url = next_url;
-    }
-
-    unreachable!("redirect loop always returns or errors");
-}
-
-pub async fn download_locked_binary_archive(
-    worker_name: &str,
-    target: &str,
-    binary_info: &super::registry::BinaryInfo,
-) -> Result<Vec<u8>, String> {
-    validate_worker_name(worker_name)?;
-    validate_locked_artifac
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2419,221 +2263,47 @@ pub async fn download_locked_binary_archive(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b0b86fd3` (2026-10-28)
-**Commit Message**: fix(compose): skip executable integrity marker when selecting worker binary (#2424)
+### Incident Patch 1: `78512c64` (2026-10-29)
+**Commit Message**: fix(docker): connect the Compose engine to Redis (#2422)
 
-Co-authored-by: iii harness (codex/gpt-6-astra) <[REDACTED_EMAIL]>
-
-**File**: `crates/iii-compose/src/registry.rs` (modified, +48/-0)
+**File**: `engine/config.yaml` (modified, +2/-2)
 ```diff
-@@ -1350,6 +1350,11 @@ fn installed_binary(install_dir: &Path) -> Option<PathBuf> {
-         entries.sort_by_key(|entry| entry.file_name());
+@@ -7,11 +7,11 @@ workers:
+   - name: iii-stream
+     config:
+       port: ${STREAM_PORT:3112}
+-      host: 127.0.0.1
++      host: ${STREAM_HOST:127.0.0.1}
+       adapter:
+         name: redis
+         config:
+-          redis_url: redis://localhost:6379
++          redis_url: ${REDIS_URL:redis://localhost:6379}
  
-         for entry in &entries {
-+            // Inherited ACLs can make the integrity marker executable, but it
-+            // is cache metadata, never the worker program.
-+            if entry.file_name() == INTEGRITY_FILE {
-+                continue;
-+            }
-             let path = entry.path();
-             if path.is_file() && is_executable(&path) {
-                 return Some(path);
-@@ -2068,6 +2073,49 @@ mod tests {
-         assert_eq!(installed_binary(tmp.path()), Some(binary));
-     }
- 
-+    #[cfg(unix)]
-+    #[test]
-+    fn executable_integrity_marker_does_not_hide_worker_binary() {
-+        use std::os::unix::fs::PermissionsExt;
-+
-+        for layout in ["", "bin"] {
-+            let tmp = tempfile::tempdir().unwrap();
-+            let binary_dir = tmp.path().join(layout);
-+            std::fs::create_dir_all(&binary_dir).unwrap();
-+            let binary = binary_dir.join("state");
-+            std::fs::write(&binary, "#!/bin/sh\nexit 0\n").unwrap();
-+            std::fs::set_permissions(&binary, std::fs::Permissions::from_mode(0o755)).unwrap();
-+            let cancel = crate::shutdown::BlockingCancellation::default();
-+            let digest = "a".repeat(64);
-+            write_integrity_marker(tmp.path(), &digest, &cancel).unwrap();
-+
-+            // Simulate inherited execute permission without requiring ZFS.
-+            let marker = tmp.path().join(INTEGRITY_FILE);
-+            std::fs::set_permissions(&marker, std::fs::Permissions::from_mode(0o770)).unwrap();
-+
-+            assert!(cache_matches(tmp.path(), &digest, &cancel).unwrap());
-+            assert_eq!(
-+                installed_binary(tmp.path()),
-+                Some(binary),
-+                "layout={layout:?}"
-+            );
-+        }
-+    }
-+
-+    #[cfg(unix)]
-+    #[test]
-+    fn executable_integrity_marker_alone_is_not_a_worker_binary() {
-+        use std::os::unix::fs::PermissionsExt;
-+
-+        let tmp = tempfile::tempdir().unwrap();
-+        let cancel = crate::shutdown::BlockingCancellation::default();
-+        write_integrity_marker(tmp.path(), &"a".repeat(64), &cancel).unwrap();
-+        let marker = tmp.path().join(INTEGRITY_FILE);
-+        std::fs::set_permissions(&marker, std::fs::Permissions::from_mode(0o770)).unwrap();
-+
-+        assert_eq!(installed_binary(tmp.path()), None);
-+    }
-+
-     #[test]
-     fn an_empty_install_directory_has_no_binary() {
-         let tmp = tempfile::tempdir().unwrap();
+   - name: configuration
+     config:
 ```
 
-**File**: `crates/iii-worker/src/cli/firmware/download.rs` (modified, +25/-11)
+**File**: `engine/docker-compose.yml` (modified, +2/-0)
 ```diff
-@@ -348,18 +348,32 @@ mod tests {
-     }
- 
-     #[tokio::test]
--    async fn test_ensure_libkrunfw_errors_when_not_embedded_and_not_installed() {
--        let result = ensure_libkrunfw().await;
--        if super::super::libkrunfw_bytes::LIBKRUNFW_BYTES.is_empty() {
--            if resolve_libkrunfw_dir().is_none() {
--                // Without embedded bytes and no local install, the function attempts
--                // a download which will fail in test environments (no matching release).
--                // It should error with either a download failure or a connection error.
--                assert!(
--                    result.is_err(),
--                    "should error when not embedded and not installed"
--                );
-+    async fn test_ensure_libkrunfw_uses_local_firmware_override() {
-+        let _home = crate::cli::test_support::lock_home();
-+        let tmp = tempfile::tempdir().unwrap();
-+        let firmware = tmp.path().join(libkrunfw_filename());
-+        std::fs::write(&firmware, b"test firmware").unwrap();
-+
-+        struct RestoreFirmwarePath(Option<std::ffi::OsString>);
-+        impl Drop for RestoreFirmwarePath {
-+            fn drop(&mut self) {
-+                // SAFETY: the shared environment lock is held until restoration.
-+                unsafe {
-+                    match &self.0 {
-+                        Some(value) => std::env::set_var("III_LIBKRUNFW_PATH", value),
-+                        None => std::env::remove_var("III_LIBKRUNFW_PATH"),
-+                    }
-+                }
-             }
-         }
-+        let _restore = RestoreFirmwarePath(std::env::var_os("III_LIBKRUNFW_PATH"));
-+        // SAFETY: this test holds the shared lock for environment readers/writers.
-+        unsafe { std::env::set_var("III_LIBKRUNFW_PATH", &firmware) };
-+
-+        // A missing local install can legitimately download a published release.
-+        // Use a local fixture instead of depending on GitHub or the user's cache.
-+        let resolved = ensure_libkrunfw().await.unwrap();
-+        assert_eq!(resolved, tmp.path());
-+        assert_eq!(std::fs::read(firmware).unwrap(), b"test firmware");
-     }
- }
-```
-
----
-
-### Incident Patch 2: `f7fd6b4c` (2026-10-28)
-**Commit Message**: test(go-sdk): fix synchronization race in telemetry reconnect test (#2429)
-
-Co-authored-by: iii harness (codex/gpt-6-astra) <[REDACTED_EMAIL]>
-
-**File**: `sdk/packages/go/iii/internal/telemetry/connection_test.go` (modified, +28/-28)
-```diff
-@@ -309,49 +309,49 @@ func TestConnectionShutdownClosesSocket(t *testing.T) {
- // The connection reconnects after the engine drops it.
- func TestConnectionReconnects(t *testing.T) {
- 	silence(t)
--	var mu sync.Mutex
--	var conns []*websocket.Conn
-+	accepted := make(chan *websocket.Conn, 2)
- 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
- 		conn, err := websocket.Accept(w, r, nil)
- 		if err != nil {
- 			return
- 		}
--		mu.Lock()
--		conns = append(conns, conn)
--		mu.Unlock()
-+		accepted <- conn
- 		_, _, _ = conn.Read(context.Background())
- 	}))
- 	defer srv.Close()
- 	c := NewConnection("ws"+strings.TrimPrefix(srv.URL, "http"), nil, fastReconnect(-1))
- 	defer func() { _ = c.Shutdown(context.Background()) }()
--	connected := 0
-+	connected := make(chan struct{}, 1)
- 	c.OnConnected(func() {
--		mu.Lock()
--		connected++
--		mu.Unlock()
-+		select {
-+		case connected <- struct{}{}:
-+		default:
-+		}
- 	})
--	waitState(t, c, StateConnected)
--	mu.Lock()
--	_ = conns[0].CloseNow()
--	mu.Unlock()
--	deadline := time.Now().Add(5 * time.Second)
--	for {
--		mu.Lock()
--		n := len(conns)
--		mu.Unlock()
--		if n == 2 && c.State() == StateConnected {
--			break
-+
-+	waitConnected := func() *websocket.Conn {
-+		t.Helper()
-+		timer := time.NewTimer(5 * time.Second)
-+		defer timer.Stop()
-+		var conn *websocket.Conn
-+		// Client-side StateConnected does not mean the server handler has
-+		// published its socket yet. Synchronize with both sides explicitly.
-+		select {
-+		case conn = <-accepted:
-+		case <-timer.C:
-+			t.Fatal("timed out waiting for the server to accept a connection")
- 		}
--		if time.Now().After(deadline) {
--			t.Fatalf("no reconnection: %d connections, state %v", n, c.State())
-+		select {
-+		case <-connected:
-+		case <-timer.C:
-+			t.Fatal("timed out waiting for OnConnected")
- 		}
--		time.Sleep(time.Millisecond)
--	}
--	mu.Lock()
--	defer mu.Unlock()
--	if connected < 1 {
--		t.Errorf("OnConnected ran %d times", connected)
-+		return conn
- 	}
-+
-+	first := waitConnected()
-+	_ = first.CloseNow()
-+	_ = waitConnected()
- }
- 
- // engineRefusal is the text frame the engine's /otel handler sends before closing a
+@@ -13,6 +13,8 @@ services:
+     environment:
+       - RUST_LOG=info
+       - III_EXECUTION_CONTEXT=docker
++      - REDIS_URL=redis://redis:6379
++      - STREAM_HOST=0.0.0.0
+     depends_on:
+       redis:
+         condition: service_healthy
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2436** (2026-10-30): ci(install-sh): run the macOS integration job on macos-15 (MOT-5599) (@andersonleal)
+- **PR #2435** (2026-10-30): feat(website): haunted iii logo in the header and footer for Halloween (@arihantcodes)
 - **PR #2429** (2026-10-28): test(go-sdk): fix synchronization race in telemetry reconnect test (@guibeira)
 - **PR #2427** (2026-10-28): feat(website): Contributors section on the landing page (@arihantcodes)
 - **PR #2426** (closed): feat(website): Contributors section on the landing page (@arihantcodes)
 - **PR #2424** (2026-10-28): fix(compose): skip executable integrity marker when selecting worker binary (@guibeira)
-- **PR #2419** (2026-10-27): fix(website): name Motia LLC as the legal entity in site metadata (@arihantcodes)
-- **PR #2418** (2026-10-27): fix(website): replace the wrong iii logo everywhere it is drawn (@arihantcodes)
 
 ---
 
@@ -2653,51 +2323,30 @@ Co-authored-by: iii harness (codex/gpt-6-astra) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. compose): skip executable integrity marker when selecting worker binary (#2424)
+## X. docker): connect the Compose engine to Redis (#2422)
 
 **RULE**:
-When implementing operations in `crates/iii-compose/src/registry.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `engine/config.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b0b86fd3`: compose): skip executable integrity marker when selecting worker binary (#2424). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `78512c64`: docker): connect the Compose engine to Redis (#2422). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/iii-compose/src/registry.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/config.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // Inherited ACLs can make the integrity marker executable, but it
-            // is cache metadata, never the worker program.
-            if entry.file_name() == INTEGRITY_FILE {
-                continue;
-            }
-    #[cfg(unix)]
-    #[test]
-    fn executable_integrity_marker_does_not_hide_worker_binary() {
-        use std::os::unix::fs::PermissionsExt;
-
-        for layout in ["", "bin"] {
-            let tmp = tempfile::tempdir().unwrap();
-            let binary_dir = tmp.path().join(layout);
-            std::fs::create_dir_all(&binary_dir).unwrap();
-            let binary = binary_dir.join("state");
-            std::fs::write(&binary, "#!/bin/sh\nexit 0\n").unwrap();
-            std::fs::set_permissions(&binary, std::fs::Permissions::from_mode(0o755)).unwrap();
-            let cancel = crate::shutdown::BlockingCancellation::default();
-            let digest = "a".repeat(64);
-            write_integrity_marker(tmp.path(), &digest, &cancel).unwrap();
-
-            // Simulate inherited execute permission without requiring ZFS.
-            let marker = tmp.path().join(INTEGRITY_FILE);
-            std::fs::set_permissions(&marker, std::fs::Permissions::from_mode(0o7
+      host: ${STREAM_HOST:127.0.0.1}
+          redis_url: ${REDIS_URL:redis://localhost:6379}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      host: 127.0.0.1
+          redis_url: redis://localhost:6379
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b0b86fd3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `78512c64` are properly handled with clean fallback behavior.

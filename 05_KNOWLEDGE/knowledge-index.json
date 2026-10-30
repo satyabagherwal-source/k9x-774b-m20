@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T22:50:03.466Z",
+  "last_updated": "2026-10-30T22:56:32.558Z",
   "total_verified_learnings": 1178,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -31430,8 +31430,8 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "b0b86fd3",
-      "content_hash": "92a5cf3f6a2572cfa82090d1d82deb8728c7448ceeef06375e4b2d840f06ec3e",
+      "source_version": "c7d88ddc",
+      "content_hash": "c58468e146fd936a10eba11e3947e2a7fc6d2817ba86d6499c22e5b5a366f720",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
@@ -31479,6 +31479,11 @@
           "number": 5470,
           "title": "compose): skip executable integrity marker when selecting worker binary (#2424)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5929,
+          "title": "docker): connect the Compose engine to Redis (#2422)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -31486,7 +31491,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T00:16:03.137Z",
+      "verified_at": "2026-10-30T22:56:32.193Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73819,8 +73824,8 @@
       "slug": "pallets-flask",
       "platform": "github",
       "source_url": "https://github.com/pallets/flask",
-      "source_version": "d086db85",
-      "content_hash": "1d83358b78a1d8f1f3eac09bbe0005b5c0bd72c6e16b34e4e0d738f59f06cc67",
+      "source_version": "49943b5a",
+      "content_hash": "1339d2f0b236d4e6ce883839260787420ea0ca89478c4d1b422fc21dec36d69c",
       "dossier_path": "07_PROJECT_LEARNING/pallets-flask-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pallets-flask-learnings.md",
       "promoted_rules": [
@@ -73833,6 +73838,11 @@
           "number": 1668,
           "title": "Multi-Tier Configuration Precedence via Explicit Trinary Nullability",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5930,
+          "title": "example typo",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -73840,7 +73850,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-18T07:39:22.020Z",
+      "verified_at": "2026-10-30T22:56:32.542Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156736,6 +156746,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T22:50:03.444Z"
+    },
+    "rule-5929": {
+      "learning_id": "rule-5929",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5929,
+      "title": "docker): connect the Compose engine to Redis (#2422)",
+      "source_url": "https://github.com/iii-hq/iii",
+      "source_version": "c7d88ddc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:56:32.193Z"
+    },
+    "rule-5930": {
+      "learning_id": "rule-5930",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5930,
+      "title": "example typo",
+      "source_url": "https://github.com/pallets/flask",
+      "source_version": "49943b5a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T22:56:32.542Z"
     }
   },
   "aliases": {

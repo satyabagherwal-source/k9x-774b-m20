@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-QS7Y",
-    "timestamp": "2026-10-28T16:52:00.478Z",
-    "repository": "openai-community/gpt2",
-    "learningId": "learn-huggingface-openai-community-gpt2",
-    "contentHash": "b00c64df90d7c4392946c76847eefb3a4f2a26fe58a6f5646e3dc42285b7e580",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-QVWT",
-    "timestamp": "2026-10-28T16:52:05.261Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "7244fd647d0a43374b011fa131c991e74da390d9ee7ce0ed7252449afba44769",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-ZFMN",
     "timestamp": "2026-10-28T16:58:44.063Z",
     "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -7490,6 +7460,36 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "0dbc7d12fd6234784a2c0c1cfc33ff208ef0203a5ba25a78f05dd0e7fc7191c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-N9XU",
+    "timestamp": "2026-10-30T22:56:32.274Z",
+    "repository": "iii-hq/iii",
+    "learningId": "learn-github-iii-hq-iii",
+    "contentHash": "c58468e146fd936a10eba11e3947e2a7fc6d2817ba86d6499c22e5b5a366f720",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-NA7G",
+    "timestamp": "2026-10-30T22:56:32.620Z",
+    "repository": "pallets/flask",
+    "learningId": "learn-github-pallets-flask",
+    "contentHash": "1339d2f0b236d4e6ce883839260787420ea0ca89478c4d1b422fc21dec36d69c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

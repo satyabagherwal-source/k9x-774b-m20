@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T22:50:06.087Z",
-    "lastVerified": "2026-10-30T22:50:06.087Z",
+    "lastChecked": "2026-10-30T22:56:39.783Z",
+    "lastVerified": "2026-10-30T22:56:39.783Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -422,8 +422,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T22:27:33.389Z",
-    "lastVerified": "2026-10-30T22:27:33.389Z",
+    "lastChecked": "2026-10-30T22:56:39.774Z",
+    "lastVerified": "2026-10-30T22:56:39.774Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -606,14 +606,14 @@
     "officialUrl": "https://github.com/iii-hq/iii",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-29T00:16:02.589Z",
-    "lastVerified": "2026-10-29T00:16:02.589Z",
+    "lastChecked": "2026-10-30T22:56:29.080Z",
+    "lastVerified": "2026-10-30T22:56:29.080Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "92a5cf3f6a2572cfa82090d1d82deb8728c7448ceeef06375e4b2d840f06ec3e",
+    "contentHash": "c58468e146fd936a10eba11e3947e2a7fc6d2817ba86d6499c22e5b5a366f720",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1263,8 +1263,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T18:58:31.717Z",
-    "lastVerified": "2026-10-30T18:58:31.717Z",
+    "lastChecked": "2026-10-30T22:56:34.831Z",
+    "lastVerified": "2026-10-30T22:56:34.831Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -4460,9 +4460,9 @@
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
     "officialUrl": "https://github.com/skyzh/mini-lsm",
-    "lastChecked": "2026-10-29T23:41:33.862Z",
+    "lastChecked": "2026-10-30T22:56:37.240Z",
     "revisionIdentifier": "2f7ce315",
-    "lastVerified": "2026-10-29T23:41:33.862Z"
+    "lastVerified": "2026-10-30T22:56:37.240Z"
   },
   "embassy-rs-embassy": {
     "name": "embassy-rs/embassy",
@@ -5211,12 +5211,12 @@
     "lastVerified": "2026-10-28T15:43:10.921Z"
   },
   "gocd-gocd": {
-    "name": "gocd/gocd",
+    "name": "gocd",
     "officialUrl": "https://github.com/gocd/gocd",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-30T00:40:02.409Z",
-    "lastVerified": "2026-10-30T00:40:02.409Z",
+    "lastChecked": "2026-10-30T22:56:32.422Z",
+    "lastVerified": "2026-10-30T22:56:32.422Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gocd-gocd",
@@ -5225,7 +5225,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3e76856b"
   },
   "hf-openbmb-minicpm-ocr-1.0": {
     "name": "openbmb/MiniCPM-OCR-1.0",
@@ -11407,5 +11408,29 @@
     "lastChecked": "2026-10-30T22:49:52.472Z",
     "revisionIdentifier": "7edfaa0f",
     "lastVerified": "2026-10-30T22:49:52.472Z"
+  },
+  "pallets-flask": {
+    "name": "pallets/flask",
+    "officialUrl": "https://github.com/pallets/flask",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-30T22:56:31.521Z",
+    "lastVerified": "2026-10-30T22:56:31.521Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-pallets-flask",
+    "contentHash": "1339d2f0b236d4e6ce883839260787420ea0ca89478c4d1b422fc21dec36d69c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xotahal-react-native-material-ui": {
+    "name": "react-native-material-ui",
+    "officialUrl": "https://github.com/xotahal/react-native-material-ui",
+    "lastChecked": "2026-10-30T22:56:29.760Z",
+    "revisionIdentifier": "254006ae",
+    "lastVerified": "2026-10-30T22:56:29.760Z"
   }
 }

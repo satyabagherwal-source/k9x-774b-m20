@@ -1993,10 +1993,10 @@
     "repository": "pallets/flask",
     "platform": "github",
     "sourceUrl": "https://github.com/pallets/flask",
-    "sourceVersion": "d086db85",
+    "sourceVersion": "49943b5a",
     "license": "BSD-3-Clause",
-    "contentHash": "1d83358b78a1d8f1f3eac09bbe0005b5c0bd72c6e16b34e4e0d738f59f06cc67",
-    "lastHarvestedAt": "2026-10-18T07:39:22.055Z",
+    "contentHash": "1339d2f0b236d4e6ce883839260787420ea0ca89478c4d1b422fc21dec36d69c",
+    "lastHarvestedAt": "2026-10-30T22:56:32.623Z",
     "learningId": "learn-github-pallets-flask"
   },
   "fastify-fastify": {
@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "b0b86fd3",
+    "sourceVersion": "c7d88ddc",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "92a5cf3f6a2572cfa82090d1d82deb8728c7448ceeef06375e4b2d840f06ec3e",
-    "lastHarvestedAt": "2026-10-29T00:16:03.231Z",
+    "contentHash": "c58468e146fd936a10eba11e3947e2a7fc6d2817ba86d6499c22e5b5a366f720",
+    "lastHarvestedAt": "2026-10-30T22:56:32.277Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
