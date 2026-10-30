@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T19:35:57.561Z",
+  "last_updated": "2026-10-30T19:47:42.177Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -766,8 +766,8 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "7d4fd1fa",
-      "content_hash": "f17a3e9665287b5f295a5a50d3fdd3b6d690551b94e9b191107cff170458a012",
+      "source_version": "9fe15519",
+      "content_hash": "16fc755f3b81d233756d21a59db147707359660ef21b2388081e3cf393d663f9",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
@@ -790,6 +790,11 @@
           "number": 4854,
           "title": "control-plane): return 503 for transient storage errors during DID resolution (#",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5845,
+          "title": "python): URL-encode memory subscription filters (#1137)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -797,7 +802,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T14:36:39.074Z",
+      "verified_at": "2026-10-30T19:42:46.006Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -7541,13 +7546,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "a998f06c",
-      "content_hash": "edee7dd8b0db065770e88498259b996a817a303d13b52440921daed728fb07bc",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "b92540d8",
+      "content_hash": "cfedc6d9f729ce7a7409caf41731783b593248ed90bc740c73dd5b7d58bc39cb",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 1747,
@@ -7633,6 +7638,11 @@
           "number": 5407,
           "title": "tui): vendored terminal kit on design tokens 2.3.0 (Accent role)",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 5846,
+          "title": "runtime): compare a prompt with its metadata envelope stripped from either end",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7640,7 +7650,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T01:49:54.988Z",
+      "verified_at": "2026-10-30T19:47:42.158Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33596,8 +33606,8 @@
       "slug": "keyboardkit-keyboardkit",
       "platform": "github",
       "source_url": "https://github.com/KeyboardKit/KeyboardKit",
-      "source_version": "b9cb190e",
-      "content_hash": "861c2cf3b0515048eae0f06cb8711107710cabe16f2c719b22cf5fb3b747fe2f",
+      "source_version": "c799e2cb",
+      "content_hash": "9d37fe6c689172b216a32fd2091fdaefd4f9b328489b3deeeae2cfa1164f7a37",
       "dossier_path": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md",
       "promoted_rules": [
@@ -33610,6 +33620,11 @@
           "number": 4679,
           "title": "Update package to 11.1.3",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5844,
+          "title": "Update package to 11.1.5",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -33617,7 +33632,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T10:26:43.763Z",
+      "verified_at": "2026-10-30T19:42:44.236Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -72515,8 +72530,8 @@
       "slug": "preactjs-preact",
       "platform": "github",
       "source_url": "https://github.com/preactjs/preact",
-      "source_version": "66b6e565",
-      "content_hash": "1bd0dbbe398fd103a86b4e4d47e21509b17ec1ae904bb85cf10dffff2ec66053",
+      "source_version": "4e5c63cc",
+      "content_hash": "81a3c7ce43f7dd03c41e64764871fec1018fce6d1f60a53a2d609d5d04e40696",
       "dossier_path": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/preactjs-preact-learnings.md",
       "promoted_rules": [
@@ -72544,6 +72559,11 @@
           "number": 4902,
           "title": "avoid String coercion when diffing symbol-marked VNodes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5843,
+          "title": "types): add declarative shadow DOM attributes to <template>",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -72551,7 +72571,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T16:38:22.507Z",
+      "verified_at": "2026-10-30T19:42:41.810Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155072,6 +155092,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T19:35:57.550Z"
+    },
+    "rule-5843": {
+      "learning_id": "rule-5843",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5843,
+      "title": "types): add declarative shadow DOM attributes to <template>",
+      "source_url": "https://github.com/preactjs/preact",
+      "source_version": "4e5c63cc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T19:42:41.810Z"
+    },
+    "rule-5844": {
+      "learning_id": "rule-5844",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5844,
+      "title": "Update package to 11.1.5",
+      "source_url": "https://github.com/KeyboardKit/KeyboardKit",
+      "source_version": "c799e2cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T19:42:44.236Z"
+    },
+    "rule-5845": {
+      "learning_id": "rule-5845",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5845,
+      "title": "python): URL-encode memory subscription filters (#1137)",
+      "source_url": "https://github.com/Agent-Field/agentfield",
+      "source_version": "9fe15519",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T19:42:46.006Z"
+    },
+    "rule-5846": {
+      "learning_id": "rule-5846",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5846,
+      "title": "runtime): compare a prompt with its metadata envelope stripped from either end",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "b92540d8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T19:47:42.158Z"
     }
   },
   "aliases": {

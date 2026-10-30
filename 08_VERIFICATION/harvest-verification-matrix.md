@@ -6279,3 +6279,7 @@
 | `CYCLE-20261030-93YT` | `2026-10-30T19:29:34.037Z` | `krakend/krakend-ce` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5840` | Yes (`34b41002...`) |
 | `CYCLE-20261030-H6P4` | `2026-10-30T19:35:50.824Z` | `TanStack/query` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5841` | Yes (`8f82e306...`) |
 | `CYCLE-20261030-HBYD` | `2026-10-30T19:35:57.637Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5842` | Yes (`1ae424e8...`) |
+| `CYCLE-20261030-PZW0` | `2026-10-30T19:42:41.904Z` | `preactjs/preact` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5843` | Yes (`81a3c7ce...`) |
+| `CYCLE-20261030-Q1S5` | `2026-10-30T19:42:44.357Z` | `KeyboardKit/KeyboardKit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5844` | Yes (`9d37fe6c...`) |
+| `CYCLE-20261030-Q34L` | `2026-10-30T19:42:46.101Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5845` | Yes (`16fc755f...`) |
+| `CYCLE-20261030-WFN0` | `2026-10-30T19:47:42.252Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5846` | Yes (`cfedc6d9...`) |

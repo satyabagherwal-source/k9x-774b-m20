@@ -6288,3 +6288,7 @@ Every entry in this ledger must capture:
 | `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `a1fcff90` | Multi-dimensional audit evidence | 2026-10-30T19:29:34.040Z |
 | `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `979695d0` | Multi-dimensional audit evidence | 2026-10-30T19:35:50.827Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `68dbde41` | Multi-dimensional audit evidence | 2026-10-30T19:35:57.639Z |
+| `learn-github-preactjs-preact` | `https://github.com/preactjs/preact` | `4e5c63cc` | Multi-dimensional audit evidence | 2026-10-30T19:42:41.907Z |
+| `learn-github-keyboardkit-keyboardkit` | `https://github.com/KeyboardKit/KeyboardKit` | `c799e2cb` | Multi-dimensional audit evidence | 2026-10-30T19:42:44.360Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `9fe15519` | Multi-dimensional audit evidence | 2026-10-30T19:42:46.104Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `b92540d8` | Multi-dimensional audit evidence | 2026-10-30T19:47:42.256Z |

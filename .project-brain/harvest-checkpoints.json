@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T19:35:57.648Z",
+  "last_updated": "2026-10-30T19:47:42.265Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "edee7dd8b0db065770e88498259b996a817a303d13b52440921daed728fb07bc",
-      "verified_at": "2026-10-29T01:49:55.119Z",
+      "content_hash": "cfedc6d9f729ce7a7409caf41731783b593248ed90bc740c73dd5b7d58bc39cb",
+      "verified_at": "2026-10-30T19:47:42.264Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T01:49:55.119Z"
+      "last_updated": "2026-10-30T19:47:42.264Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -6591,14 +6591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-field-agentfield",
-      "content_hash": "f17a3e9665287b5f295a5a50d3fdd3b6d690551b94e9b191107cff170458a012",
-      "verified_at": "2026-10-27T14:36:39.143Z",
+      "content_hash": "16fc755f3b81d233756d21a59db147707359660ef21b2388081e3cf393d663f9",
+      "verified_at": "2026-10-30T19:42:46.113Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T14:36:39.143Z"
+      "last_updated": "2026-10-30T19:42:46.113Z"
     },
     "typedb/typedb": {
       "repository": "typedb/typedb",
@@ -15051,14 +15051,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keyboardkit-keyboardkit",
-      "content_hash": "861c2cf3b0515048eae0f06cb8711107710cabe16f2c719b22cf5fb3b747fe2f",
-      "verified_at": "2026-10-27T10:26:43.843Z",
+      "content_hash": "9d37fe6c689172b216a32fd2091fdaefd4f9b328489b3deeeae2cfa1164f7a37",
+      "verified_at": "2026-10-30T19:42:44.369Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T10:26:43.843Z"
+      "last_updated": "2026-10-30T19:42:44.369Z"
     },
     "evanw/esbuild": {
       "repository": "evanw/esbuild",
@@ -15156,14 +15156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-preactjs-preact",
-      "content_hash": "1bd0dbbe398fd103a86b4e4d47e21509b17ec1ae904bb85cf10dffff2ec66053",
-      "verified_at": "2026-10-27T16:38:22.588Z",
+      "content_hash": "81a3c7ce43f7dd03c41e64764871fec1018fce6d1f60a53a2d609d5d04e40696",
+      "verified_at": "2026-10-30T19:42:41.916Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T16:38:22.588Z"
+      "last_updated": "2026-10-30T19:42:41.916Z"
     },
     "alyssaxuu/later": {
       "repository": "alyssaxuu/later",

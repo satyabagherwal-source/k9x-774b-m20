@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
-> **Source Version**: `7d4fd1fa`  
+> **Source Version**: `9fe15519`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T14:36:38.780Z  
+> **Timestamp**: 2026-10-30T19:42:45.439Z  
 > **Learning ID**: `learn-github-agent-field-agentfield`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T14:36:38.773Z  
+> **Harvest Timestamp**: 2026-10-30T19:42:45.432Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2624 stars
+- **Stars / Engagement**: 2634 stars
 
 ---
 
@@ -1418,1072 +1418,543 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7306a0eb` (2026-10-27)
-**Commit Message**: fix(control-plane): return 503 for transient storage errors during DID resolution (#1087) (#1124)
+### Incident Patch 1: `fe6f9cb9` (2026-10-30)
+**Commit Message**: fix(python): URL-encode memory subscription filters (#1137)
 
-ResolveDID collapsed any GetDIDDocument error into a notFound resolution
-result with a nil error, so a genuine missing DID and a transient DB
-failure were indistinguishable. Both flowed through VerifyDIDOwnership
-and the DID auth middleware as a 401. Since #1081 the Go SDK treats 401
-as non-retryable, so a momentary storage blip now drops the status
-callback instead of being retried away.
+* fix(python): encode memory event subscription query parameters
 
-- storage: add ErrDIDDocumentNotFound sentinel and wrap sql.ErrNoRows
-  with it in GetDIDDocument (message is unchanged, so no string-match
-  breakage).
-- services: ResolveDID maps to notFound only for ErrDIDDocumentNotFound;
-  any other storage error propagates wrapped in a new retryable
-  ErrDIDResolutionUnavailable sentinel. IsDIDRevoked uses errors.Is
-  against the same sentinel instead of brittle string matching.
-- middleware: return 503 (did_resolution_unavailable) when verification
-  fails with ErrDIDResolutionUnavailable, otherwise keep the existing
-  401.
+* test(control-plane): drain MCP jobs before replacing shared state
 
-Genuine not-found, revoked, invalid-document and signature-verification
-failures still return 401; only transient storage errors become 
+* fix(build): format Go packages without recursive overlap
 
-**File**: `control-plane/internal/server/middleware/did_auth.go` (modified, +10/-0)
+* chore: move validation fixes to focused pull requests
+
+**File**: `sdk/python/agentfield/memory_events.py` (modified, +6/-5)
 ```diff
-@@ -6,6 +6,7 @@ import (
- 	"crypto/sha256"
- 	"encoding/base64"
- 	"encoding/hex"
-+	"errors"
- 	"fmt"
- 	"io"
- 	"net/http"
-@@ -15,6 +16,7 @@ import (
- 	"time"
+@@ -4,6 +4,7 @@
+ from datetime import datetime
+ from functools import wraps
+ from typing import Any, Callable, Dict, List, Optional, Union
++from urllib.parse import urlencode
  
- 	"github.com/Agent-Field/agentfield/control-plane/internal/logger"
-+	"github.com/Agent-Field/agentfield/control-plane/internal/services"
- 	"github.com/gin-gonic/gin"
- )
+ import websockets
  
-@@ -281,6 +283,14 @@ func DIDAuthMiddleware(didService DIDWebServiceInterface, config DIDAuthConfig)
- 		)
+@@ -152,16 +153,16 @@ async def connect(
+                 ws_url = f"{self.base_url}/api/v1/memory/events/ws"
  
- 		if err != nil {
-+			if errors.Is(err, services.ErrDIDResolutionUnavailable) {
-+				logger.Logger.Warn().Err(err).Str("caller_did", callerDID).Msg("DID resolution temporarily unavailable")
-+				c.AbortWithStatusJSON(http.StatusServiceUnavailable, gin.H{
-+					"error":   "did_resolution_unavailable",
-+					"message": "DID resolution is temporarily unavailable, retry shortly",
-+				})
-+				return
-+			}
- 			logger.Logger.Warn().Err(err).Str("caller_did", callerDID).Msg("DID signature verification error")
- 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
- 				"error":   "verification_error",
+                 # Add query parameters for server-side filtering
+-                query_params = []
++                query_params = {}
+                 if patterns:
+-                    query_params.append(f"patterns={','.join(patterns)}")
++                    query_params["patterns"] = ",".join(patterns)
+                 if scope:
+-                    query_params.append(f"scope={scope}")
++                    query_params["scope"] = scope
+                 if scope_id:
+-                    query_params.append(f"scope_id={scope_id}")
++                    query_params["scope_id"] = scope_id
+ 
+                 if query_params:
+-                    ws_url += "?" + "&".join(query_params)
++                    ws_url += "?" + urlencode(query_params)
+ 
+                 self.websocket = await asyncio.wait_for(
+                     websockets.connect(ws_url, **{_HEADERS_KWARG: headers}),
 ```
 
-**File**: `control-plane/internal/server/middleware/did_auth_test.go` (modified, +24/-0)
+**File**: `sdk/python/tests/test_memory_events.py` (modified, +32/-10)
 ```diff
-@@ -13,6 +13,7 @@ import (
- 	"testing"
- 	"time"
+@@ -1,6 +1,7 @@
+ import asyncio
+ import json
+ from types import SimpleNamespace
++from urllib.parse import parse_qs, urlsplit
  
-+	"github.com/Agent-Field/agentfield/control-plane/internal/services"
- 	"github.com/gin-gonic/gin"
- 	"github.com/stretchr/testify/assert"
- )
-@@ -202,6 +203,29 @@ func TestDIDAuth_VerificationError(t *testing.T) {
- 	assert.Contains(t, w.Body.String(), "verification_error")
- }
+ import websockets
  
-+func TestDIDAuth_TransientResolutionError(t *testing.T) {
-+	resetReplayCache()
-+	svc := &mockDIDService{
-+		verifyFunc: func(_ context.Context, _ string, _ []byte, _ []byte) (bool, error) {
-+			// A transient storage failure during resolution surfaces as the
-+			// retryable sentinel rather than a plain verification failure.
-+			return false, fmt.Errorf("failed to resolve DID: %w", services.ErrDIDResolutionUnavailable)
-+		},
-+	}
-+	router := newDIDAuthRouter(svc, DIDAuthConfig{Enabled: true})
-+
-+	req := httptest.NewRequest(http.MethodPost, "/execute/agent.func", strings.NewReader("{}"))
-+	req.Header.Set("X-Caller-DID", "did:web:example.com:agents:test")
-+	req.Header.Set("X-DID-Signature", uniqueSig())
-+	req.Header.Set("X-DID-Timestamp", fmt.Sprintf("%d", time.Now().Unix()))
-+	w := httptest.NewRecorder()
-+	router.ServeHTTP(w, req)
-+
-+	// Transient storage errors must be retryable, not reported as auth failure.
-+	assert.Equal(t, http.StatusServiceUnavailable, w.Code)
-+	assert.Contains(t, w.Body.String(), "did_resolution_unavailable")
-+}
-+
- func TestDIDAuth_InvalidSignature(t *testing.T) {
- 	resetReplayCache()
- 	svc := &mockDIDService{
-```
-
-**File**: `control-plane/internal/services/did_web_service.go` (modified, +22/-9)
-```diff
-@@ -5,14 +5,22 @@ import (
- 	"crypto/ed25519"
- 	"encoding/base64"
- 	"encoding/json"
-+	"errors"
- 	"fmt"
- 	"strings"
- 	"time"
- 
- 	"github.com/Agent-Field/agentfield/control-plane/internal/logger"
-+	"github.com/Agent-Field/agentfield/control-plane/internal/storage"
- 	"github.com/Agent-Field/agentfield/control-plane/pkg/types"
- )
- 
-+// ErrDIDResolutionUnavailable indicates a DID could not be resolved because of
-+// a transient storage failure rather than a genuine missing or revoked record.
-+// Callers (e.g. the DID auth middleware) should treat it as retryable and
-+// return a 503 instead of a 401.
-+var ErrDIDResolutionUnavailable = errors.New("DID resolution temporarily unavailable")
-+
- // DIDWebService handles did:web generation, storage, and resolution.
- type DIDWebService struct {
- 	domain     string
-@@ -129,11 +137,17 @@ func (s *DIDWebService) ResolveDID(ctx context.Context, did string) (*types.DIDR
- 	// Get the DID document record
- 	record, err := s.storage.GetDIDDocument(ctx, did)
- 	if err != nil {
--		return &types.DIDResolutionResult{
--			DIDResolutionMetadata: types.DIDResolutionMetadata{
--				Error: "notFound",
--			},
--		}, nil
-+		// A genuine missing record resolves to "notFound"; any other storage
-+		// failure is transient and must propagate so callers can retry rather
-+		// than mistake a DB blip for an unknown DID.
-+		if errors.Is(err, storage.ErrDIDDocumentNotFound) {
-+			return &types.DIDResolutionResult{
-+				DIDResolutionMetadata: types.DIDResolutionMetadata{
-+					Error: "notFound",
-+				},
-+			}, nil
-+		}
-+		return nil, fmt.Errorf("%w: %w", ErrDIDResolutionUnavailable, err)
- 	}
- 
- 	// Check if revoked
-@@ -195,10 +209,9 @@ func (s *DIDWebService) RevokeDID(ctx context.Context, did string) error {
- func (s *DIDWebService) IsDIDRevoked(ctx context.Context, did string) bool {
- 	record, err := s.storage.GetDIDDocument(ctx, did)
- 	if err != nil {
--		// Check if this is a "not found" error vs a real storage failure.
--		// Not found means the DID was never registered — treat as not revoked.
--		// Any other error (DB timeout, connection failure) — fail closed.
--		if strings.Contains(err.Error(), "not found") || strings.Contains(err.Error(), "no rows") {
-+		// Not found means the DID was never registered - treat as not revoked.
-+		// Any other error (DB timeout, connection failure) - fail closed.
-+		if errors.Is(err, storage.ErrDIDDocumentNotFound) {
- 			return false
- 		}
- 		logger.Logger.Warn().Err(err).Str("did", did).Msg("Storage error checking DID revocation, failing closed")
-```
-
-**File**: `control-plane/internal/services/did_web_service_additional_test.go` (modified, +15/-3)
-```diff
-@@ -7,9 +7,11 @@ import (
- 	"encoding/base64"
- 	"encoding/json"
- 	"errors"
-+	"fmt"
- 	"testing"
- 	"time"
- 
-+	storagepkg "github.com/Agent-Field/agentfield/control-plane/internal/storage"
- 	"github.com/Agent-Field/agentfield/control-plane/pkg/types"
- 	"github.com/stretchr/testify/require"
- )
-@@ -73,7 +75,7 @@ func TestDIDWebServiceDocumentLifecycleAndResolution(t *testing.T) {
- 		require.Equal(t, "example.com", service.GetDomain())
- 	})
- 
--	t.Run("storage failures and malformed payloads return DID resolution metadata", func(t *testing.T) {
-+	t.Run("genuine missing, revoked and malformed records map to resolution metadata; transient errors propagate", func(t *testing.T) {
- 		now := time.Now().UTC()
- 		service := NewDIDWebService("example.com", nil, &didWebStorageWithErrors{
- 			didWebStorageStub: didWebStorageStub{
-@@ -95,7 +97,10 @@ func TestDIDWebServiceDocumentLifecycleAndResolution(t *testing.T) {
- 					},
- 				},
- 				errByDID: map[string]error{
--					"did:web:example.com:agents:missing": errors.New("not found"),
-+					// A genuine missing record surfaces the storage not-found sentinel.
-+					"did:web:example.com:agents:missing": fmt.Errorf("%w: did:web:example.com:agents:missing", storagepkg.ErrDIDDocumentNotFound),
-+					// A transient failure is a different, non-sentinel error.
-+					"did:web:example.com:agents:flaky": errors.New("connection reset by peer"),
- 				},
- 			},
- 		})
-@@ -104,6 +109,13 @@ func TestDIDWebServiceDocumentLifecycleAndResolution(t *testing.T) {
- 		require.NoError(t, err)
- 		require.Equal(t, "notFound", missing.DIDResolutionMetadata.Error)
- 
-+		// Transient storage errors must not be masked as notFound; they propagate
-+		// as a retryable resolution error so the middleware can answer 503.
-+		flaky, err := service.ResolveDID(context.Background(), "did:web:example.com:agents:flaky")
-+		require.Error(t, err)
-+		require.Nil(t, flaky)
-+		require.ErrorIs(t, err, ErrDIDResolutionUnavailable)
-+
- 		revoked, err := service.ResolveDID(context.Background(), "did:web:example.com:agents:revoked")
- 		require.NoError(t, err)
- 		require.Equal(t, "deactivated", revoked.DIDResolutionMetadata.Error)
-@@ -184,7 +196,7 @@ func TestDIDWebServiceGetOrCreateAndRevocationPaths(t *testing.T) {
- 					},
- 				},
- 				errByDID: map[string]error{
--					"did:web:example.com:agents:missing": errors.New("not found"),
-+					"did:web:example.com:agents:missing": fmt.Errorf("%w: did:web:example.com:agents:missing", storagepkg.ErrDIDDocumentNotFound),
- 					"did:web:example.com:agents:error":   errors.New("database unavailable"),
- 				},
- 			},
-```
-
-**File**: `control-plane/internal/services/did_web_service_test.go` (modified, +4/-3)
-```diff
-@@ -5,9 +5,10 @@ package services
- 
- import (
- 	"context"
--	"errors"
-+	"fmt"
- 	"testing"
- 
-+	"github.com/Agent-Field/agentfield/control-plane/internal/storage"
- 	"github.com/Agent-Field/agentfield/control-plane/pkg/types"
- 	"github.com/stretchr/testify/require"
- )
-@@ -32,7 +33,7 @@ func (s *didWebStorageStub) GetDIDDocument(_ context.Context, did string) (*type
- 	if record, ok := s.docsByDID[did]; ok {
- 		return record, nil
- 	}
--	return nil, errors.New("not found")
-+	return nil, fmt.Errorf("%w: %s", storage.ErrDIDDocumentNotFound, did)
- }
- 
- func (s *didWebStorageStub) GetDIDDocumentByAgentID(_ context.Context, agentID string) (*types.DIDDocumentRecord, error) {
-@@ -41,7 +42,7 @@ func (s *didWebStorageStub) GetDIDDocumentByAgentID(_ context.Context, agentID s
- 			return record, nil
- 		}
- 	}
--	return nil, errors.New("not found")
-+	return nil, fmt.Errorf("%w: %s", storage.ErrDIDDocumentNotFound, agentID)
- }
- 
- func (s *didWebStorageStub) RevokeDIDDocument(_ context.Context, _ string) error {
-```
-
-**File**: `control-plane/internal/storage/local_did.go` (modified, +5/-0)
-```diff
-@@ -24,6 +24,11 @@ var ErrDIDAllocationConflict = errors.New("DID allocation conflict")
- // ErrDIDNodeAlreadyRegistered means another active identity owns the node or component name.
- var ErrDIDNodeAlreadyRegistered = errors.New("DID node or component already registered")
- 
-+// ErrDIDDocumentNotFound means no DID document exists for the requested DID.
-+// It lets callers distinguish a genuine missing record from a transient
-+// storage failure, so a momentary DB error is not reported as "not found".
-+var ErrDIDDocumentNotFound = errors.New("DID document not found")
-+
- const didPostgresLockTimeout = "15s"
- 
- func isSQLiteContention(err error) bool {
-```
-
-**File**: `control-plane/internal/storage/local_events.go` (modified, +1/-1)
-```diff
-@@ -743,7 +743,7 @@ func (ls *LocalStorage) GetDIDDocument(ctx context.Context, did string) (*types.
- 	)
- 	if err != nil {
- 		if err == sql.ErrNoRows {
--			return nil, fmt.Errorf("DID document not found: %s", did)
-+			return nil, fmt.Errorf("%w: %s", ErrDIDDocumentNotFound, did)
- 		}
- 		return nil, fmt.Errorf("failed to get DID document: %w", err)
- 	}
-```
-
----
-
-### Incident Patch 2: `d26f52da` (2026-10-27)
-**Commit Message**: fix(sdk): log the CodeAF missing-key warning once, and count the harness config's env (#1132)
-
-Agent construction and call-time refusal now share one warning per process in the Python, Go and TypeScript SDKs, and the construction check reads the same effective environment the harness calls use (the process environment overlaid with the harness config's env map). This removes the double warning for keyless agents, the false warning when the key is only in the config's env, and the missed warning when that env blanks a process key. Refusals and keyed calls are unchanged.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `control-plane/internal/skillkit/skill_data/agentfield/references/primitives-snapshot.md` (modified, +5/-3)
-```diff
-@@ -200,9 +200,11 @@ Harness provider 'codeaf' needs a model key and none is configured. Set OPENROUT
- The check honors per-call environment overrides, compatible `OPENAI_API_KEY`
- credentials (an `sk-or-` key or a custom base URL), saved profile `api_key` or
- `model_sources`, and connected-provider credential files. Unreadable/malformed
--profiles permit execution conservatively. Refusal warns once per process; an
--Agent with an explicit harness config resolving to CodeAF also warns once at
--construction without failing. Legacy aforge pins are unchanged.
-+profiles permit execution conservatively. The warning is logged once per process —
-+at construction for an Agent with a CodeAF harness config and no key (counting
-+the config's `env`), otherwise at the first refused call. Construction never
-+fails; every refused call still fails with the not-configured error. Legacy
-+aforge pins are unchanged.
- 
- **Harness availability gate** — DO NOT use unless ALL true:
- 
-```
-
-**File**: `docs/harness-providers.md` (modified, +4/-3)
-```diff
-@@ -57,9 +57,10 @@ Harness provider 'codeaf' needs a model key and none is configured. Set OPENROUT
- The error remains catchable as the SDK's unavailable-provider error (Python and
- TypeScript expose `HarnessProviderNotConfigured`; Go uses
- `ProviderUnavailableError` with `NotConfigured: true`). It identifies `codeaf`
--and lists `OPENROUTER_API_KEY` as missing. Refused calls log a warning once per
--process. An Agent with an explicit harness config resolving to CodeAF also warns
--once at construction; construction continues normally.
-+and lists `OPENROUTER_API_KEY` as missing. The warning is logged once per process —
-+at construction for an Agent with a CodeAF harness config and no key (counting
-+the config's `env`), otherwise at the first refused call. Construction continues
-+normally; every refused call still fails with the not-configured error.
- 
- The check uses the effective child environment, including per-call `env`
- overrides and the SDK's default `CODEAF_HOME`. It accepts `OPENROUTER_API_KEY`,
-```
-
-**File**: `sdk/codeaf-auth-contract.json` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- {
--  "contract": "Shared CodeAF model-key preflight contract for the Python, Go and TypeScript SDKs. K1: with no credential CodeAF could use, a CodeAF harness call fails with the not-configured error before resolving, downloading or launching CodeAF. K2: the first refusal in a process logs the warning once. K3: with a credential the call is unchanged. K4: the check mirrors CodeAF's key ladder against the effective child environment (the cases below). K5: legacy aforge pins are unchanged. K6: an Agent whose harness config resolves to CodeAF warns once at construction when no credential is visible. K7: all three SDKs share these strings and cases. Paths in cases are replaced with isolated temporary directories; a null file means an unreadable entry.",
-+  "contract": "Shared CodeAF model-key preflight contract for the Python, Go and TypeScript SDKs. K1: with no credential CodeAF could use, a CodeAF harness call fails with the not-configured error before resolving, downloading or launching CodeAF. K2: a process logs the warning at most once in total — at Agent construction or at the first refusal, whichever comes first; every refused call still fails with the not-configured error. K3: with a credential the call is unchanged. K4: the check mirrors CodeAF's key ladder against the effective child environment (the cases below). K5: legacy aforge pins are unchanged. K6: an Agent whose harness config resolves to CodeAF warns at construction when the effective environment its harness calls will use (the process environment overlaid with the config's env map) has no credential; construction never fails. K7: all three SDKs share these strings and cases. Paths in cases are replaced with isolated temporary directories; a null file means an unreadable entry.",
-   "refusal": "Harness provider 'codeaf' needs a model key and none is configured. Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER.",
-   "warning": "CodeAF is the harness provider and no model key is configured, so harness calls will fail. Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER.",
-   "cases": [
-```
-
-**File**: `sdk/go/agent/harness.go` (modified, +2/-5)
-```diff
-@@ -2,20 +2,17 @@ package agent
- 
- import (
- 	"context"
--	"sync"
- 
- 	"github.com/Agent-Field/agentfield/sdk/go/harness"
- )
- 
--var codeAFConfigWarning sync.Once
--
- func warnCodeAFConfiguration(cfg Config) {
- 	if cfg.HarnessConfig == nil {
- 		return
- 	}
- 	provider, _ := harness.BuildProvider(cfg.HarnessConfig.Provider, cfg.HarnessConfig.BinPath)
--	if _, ok := provider.(*harness.CodeAFProvider); ok && !harness.CodeAFHasCredentials(harness.Options{}) {
--		codeAFConfigWarning.Do(func() { cfg.Logger.Print("WARNING " + harness.CodeAFMissingKeyWarning) })
-+	if _, ok := provider.(*harness.CodeAFProvider); ok && !harness.CodeAFHasCredentials(harness.Options{Env: cfg.HarnessConfig.Env}) {
-+		harness.WarnCodeAFMissingKeyOnce(func(message string) { cfg.Logger.Print("WARNING " + message) })
- 	}
- }
- 
-```
-
-**File**: `sdk/go/agent/harness_auth_test.go` (modified, +200/-18)
-```diff
-@@ -2,25 +2,93 @@ package agent
- 
- import (
- 	"bytes"
-+	"context"
- 	"encoding/json"
-+	"errors"
-+	"fmt"
- 	"log"
-+	"net/http"
- 	"os"
-+	"os/exec"
- 	"path/filepath"
-+	"regexp"
- 	"strings"
--	"sync"
- 	"testing"
- 
-+	"github.com/Agent-Field/agentfield/sdk/go/harness"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/require"
- )
- 
--func TestCodeAFK6ConstructionWarning(t *testing.T) {
-+type codeAFAgentAuthContract struct {
-+	Warning string `json:"warning"`
-+	Refusal string `json:"refusal"`
-+	Cases   []struct {
-+		Name    string             `json:"name"`
-+		Allow   bool               `json:"allow"`
-+		Env     map[string]string  `json:"env"`
-+		Overlay map[string]string  `json:"overlay"`
-+		Files   map[string]*string `json:"files"`
-+	} `json:"cases"`
-+}
-+
-+func readCodeAFAgentAuthContract(t *testing.T) codeAFAgentAuthContract {
-+	t.Helper()
- 	data, err := os.ReadFile("../../codeaf-auth-contract.json")
- 	require.NoError(t, err)
--	var contract struct {
--		Warning string `json:"warning"`
--	}
-+	var contract codeAFAgentAuthContract
- 	require.NoError(t, json.Unmarshal(data, &contract))
-+	return contract
-+}
-+
-+// A fresh process gives each Agent test an unspent harness warning budget
-+// without exporting a production API solely to reset sync.Once in tests.
-+func runCodeAFAuthInFreshProcess(t *testing.T) bool {
-+	t.Helper()
-+	if os.Getenv("AGENTFIELD_TEST_CODEAF_AUTH_PROCESS") == t.Name() {
-+		return false
-+	}
-+	command := exec.Command(os.Args[0], "-test.run=^"+regexp.QuoteMeta(t.Name())+"$", "-test.count=1")
-+	command.Env = append(os.Environ(), "AGENTFIELD_TEST_CODEAF_AUTH_PROCESS="+t.Name())
-+	output, err := command.CombinedOutput()
-+	require.NoError(t, err, "%s", output)
-+	return true
-+}
-+
-+type codeAFAgentNoDownload struct{ t *testing.T }
-+
-+func (transport codeAFAgentNoDownload) RoundTrip(*http.Request) (*http.Response, error) {
-+	transport.t.Error("download attempted")
-+	return nil, errors.New("downloads forbidden by CodeAF auth tests")
-+}
-+
-+func isolateCodeAFAgentAuth(t *testing.T) (string, *bytes.Buffer) {
-+	t.Helper()
-+	for _, entry := range os.Environ() {
-+		key, _, _ := strings.Cut(entry, "=")
-+		if strings.HasPrefix(key, "CODEAF_") || strings.HasPrefix(key, "AFORGE_") || strings.HasPrefix(key, "AGENTFIELD_") || key == "OPENROUTER_API_KEY" || key == "OPENAI_API_KEY" {
-+			t.Setenv(key, "")
-+			require.NoError(t, os.Unsetenv(key))
-+		}
-+	}
-+	directory := t.TempDir()
-+	t.Setenv("HOME", filepath.Join(directory, "home"))
-+	t.Setenv("PATH", directory)
-+	t.Setenv("AGENTFIELD_HOME", filepath.Join(directory, "agentfield"))
-+	t.Setenv("CODEAF_TELEMETRY", "off")
-+	var output bytes.Buffer
-+	previousWriter, previousTransport := log.Writer(), http.DefaultTransport
-+	log.SetOutput(&output)
-+	http.DefaultTransport = codeAFAgentNoDownload{t}
-+	t.Cleanup(func() {
-+		log.SetOutput(previousWriter)
-+		http.DefaultTransport = previousTransport
-+	})
-+	return directory, &output
-+}
-+
-+func TestCodeAFK6ConstructionWarning(t *testing.T) {
-+	contract := readCodeAFAgentAuthContract(t)
- 	for _, tc := range []struct {
- 		name, provider, envProvider, key string
- 		configured, legacy, warn         bool
-@@ -36,25 +104,16 @@ func TestCodeAFK6ConstructionWarning(t *testing.T) {
- 		{name: "env-other", envProvider: "claude-code", configured: true},
- 	} {
- 		t.Run(tc.name, func(t *testing.T) {
--			for _, entry := range os.Environ() {
--				key, _, _ := strings.Cut(entry, "=")
--				if strings.HasPrefix(key, "CODEAF_") || strings.HasPrefix(key, "AFORGE_") || strings.HasPrefix(key, "AGENTFIELD_") || key == "OPENROUTER_API_KEY" || key == "OPENAI_API_KEY" {
--					t.Setenv(key, "")
--					require.NoError(t, os.Unsetenv(key))
--				}
-+			if runCodeAFAuthInFreshProcess(t) {
-+				return
- 			}
--			directory := t.TempDir()
--			t.Setenv("HOME", filepath.Join(directory, "home"))
--			t.Setenv("AGENTFIELD_HOME", filepath.Join(directory, "agentfield"))
--			t.Setenv("CODEAF_TELEMETRY", "off")
-+			_, output := isolateCodeAFAgentAuth(t)
- 			t.Setenv("OPENROUTER_API_KEY", tc.key)
- 			t.Setenv("AGENTFIELD_HARNESS_PROVIDER", tc.envProvider)
- 			if tc.legacy {
- 				t.Setenv("AFORGE_BIN", "/fake/legacy")
- 			}
--			codeAFConfigWarning = sync.Once{}
--			var output bytes.Buffer
--			cfg := Config{NodeID: "auth-test", Version: "1", Logger: log.New(&output, "", 0)}
-+			cfg := Config{NodeID: "auth-test", Version: "1", Logger: log.New(output, "", 0)}
- 			if tc.configured {
- 				cfg.HarnessConfig = &HarnessConfig{Provider: tc.provider}
- 			}
-@@ -70,3 +129,126 @@ func TestCodeAFK6ConstructionWarning(t *testing.T) {
- 		})
- 	}
- }
-+
-+func codeAFAgentFakeBinary(t *testing.T, directory string) (string, string) {
-+	t.Helper()
-+	binary, marker := filepath.Join(directory, "fake-codeaf"), filepath.Join(directory, "ran")
-+	require.NoError(t, os.WriteFile(binary, []byte(fmt.Sprintf("#!/bin/sh\n/bin/cat >/dev/null\nprintf ran > '%s'\nprintf '%%s\\n' '{\"ok\":true,\"stop\":\"done\",\"answer\":\"answer\"}'\n", marker)), 0o755))
-+	return binary, marker
-+}
-+
-+func TestCodeAFW1SharedP
-```
-
-**File**: `sdk/go/harness/codeaf.go` (modified, +7/-1)
-```diff
-@@ -34,6 +34,12 @@ var (
- 	codeAFMissingKeyOnce sync.Once
- )
- 
-+// WarnCodeAFMissingKeyOnce shares one process-wide warning budget between Agent
-+// construction and refused calls, using the caller's warning logger.
-+func WarnCodeAFMissingKeyOnce(warn func(string)) {
-+	codeAFMissingKeyOnce.Do(func() { warn(CodeAFMissingKeyWarning) })
-+}
-+
- // CodeAFProvider invokes CodeAF's canonical headless exec or do protocol.
- // Binary discovery and managed installation happen lazily on first execution.
- // When CodeAF is unavailable it can delegate to the unchanged legacy adapter.
-@@ -274,7 +280,7 @@ func (p *CodeAFProvider) Execute(ctx context.Context, prompt string, options Opt
- 		override = options.BinPath
- 	}
- 	if !CodeAFHasCredentials(options) {
--		codeAFMissingKeyOnce.Do(func() { log.Print("WARNING " + CodeAFMissingKeyWarning) })
-+		WarnCodeAFMissingKeyOnce(func(message string) { log.Print("WARNING " + message) })
- 		binary := firstNonEmpty(override, os.Getenv("CODEAF_BIN"), "codeaf")
- 		return nil, &ProviderUnavailableError{
- 			Provider: ProviderCodeAF, Binary: binary, InstallCommand: providerSpecs[ProviderCodeAF].InstallCommand,
-```
-
-**File**: `sdk/go/harness/codeaf_auth_test.go` (modified, +4/-3)
-```diff
-@@ -82,11 +82,12 @@ func assertAuthRefusal(t *testing.T, err error, contract authContract) {
- 	assert.ErrorIs(t, err, ErrProviderUnavailable)
- 	assert.Equal(t, contract.Refusal, err.Error())
- 	assert.Equal(t, ProviderCodeAF, unavailable.Provider)
-+	assert.True(t, unavailable.NotConfigured)
- 	assert.Equal(t, []string{"OPENROUTER_API_KEY"}, unavailable.MissingAuthEnv)
- 	assert.Equal(t, "af codeaf ensure", unavailable.InstallCommand)
- }
- 
--func TestCodeAFK1K3K4K7SharedKeyLadder(t *testing.T) {
-+func TestCodeAFW4K1K3K4K7SharedKeyLadder(t *testing.T) {
- 	contract := readAuthContract(t)
- 	for _, tc := range contract.Cases {
- 		t.Run(tc.Name, func(t *testing.T) {
-@@ -135,7 +136,7 @@ func TestCodeAFK1K3K4K7SharedKeyLadder(t *testing.T) {
- 	}
- }
- 
--func TestCodeAFK1K2BeforeResolution(t *testing.T) {
-+func TestCodeAFW2K1K2BeforeResolution(t *testing.T) {
- 	contract := readAuthContract(t)
- 	for _, provider := range []string{"", "codeaf", "aforge"} {
- 		for _, pin := range []string{"automatic", "env", "option"} {
-@@ -157,7 +158,7 @@ func TestCodeAFK1K2BeforeResolution(t *testing.T) {
- 				if pin == "option" {
- 					opts.BinPath = binary
- 				}
--				for call := 0; call < 2; call++ {
-+				for call := 0; call < 3; call++ {
- 					_, err := p.Execute(context.Background(), "task", opts)
- 					assertAuthRefusal(t, err, contract)
- 				}
-```
-
-**File**: `sdk/python/agentfield/harness/providers/codeaf.py` (modified, +15/-11)
-```diff
-@@ -44,8 +44,14 @@
-     "Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another "
-     "harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER."
- )
--_missing_key_logged = False
--_construction_warning_logged = False
-+_missing_key_warned = False
-+
-+
-+def _warn_missing_key_once() -> None:
-+    global _missing_key_warned
-+    if not _missing_key_warned:
-+        _missing_key_warned = True
-+        logger.warning(CODEAF_MISSING_KEY_WARNING)
+@@ -161,7 +162,18 @@ async def get(self, url, params=None, headers=None, timeout=None):
  
  
- def _max_concurrent() -> int:
-@@ -223,7 +229,6 @@ def warn_codeaf_configuration(config: HarnessConfig) -> None:
- def _warn_codeaf_configuration(config: HarnessConfig) -> None:
-     from agentfield.harness.providers._factory import resolve_execution_provider
- 
--    global _construction_warning_logged
-     provider = resolve_execution_provider(config)
-     if provider not in {"codeaf", "aforge"}:
-         return
-@@ -232,10 +237,12 @@ def _warn_codeaf_configuration(config: HarnessConfig) -> None:
-         or os.environ.get("AFORGE_BIN", "").strip()
-     ):
-         return
--    environment = {**os.environ, **_child_environment({}, None)}
--    if not _has_model_key(environment) and not _construction_warning_logged:
--        _construction_warning_logged = True
--        logger.warning(CODEAF_MISSING_KEY_WARNING)
-+    environment = {
-+        **os.environ,
-+        **_child_environment({"env": dict(config.env or {})}, None),
-+    }
-+    if not _has_model_key(environment):
-+        _warn_missing_key_once()
- 
- 
- class CodeafProvider:
-@@ -273,7 +280,6 @@ async def _resolve_automatic(cls) -> tuple[str | None, str, str | None]:
-             cls._resolution_task = None
- 
-     async def execute(self, prompt: str, options: dict[str, object]) -> RawResult:
--        global _missing_key_logged
-         started = time.monotonic()
-         timeout = int(os.environ.get("AGENTFIELD_HARNESS_TIMEOUT_SECONDS", "1800"))
-         deadline = started + timeout
-@@ -283,9 +289,7 @@ async def execute(self, prompt: str, options: dict[str, object]) -> RawResult:
-             return await AforgeProvider(legacy_pin).execute(prompt, options)
-         environment = {**os.environ, **_child_environment(options, None)}
-         if not _has_model_key(environment):
--            if not _missing_key_logged:
--                _missing_key_logged = True
--                logger.warning(CODEAF_MISSING_KEY_WARNING)
-+            _warn_missing_key_once()
-             raise HarnessProviderNotConfigured(
-                 binary=self._bin or os.environ.get("CODEAF_BIN") or "codeaf"
-             )
-```
-
----
-
-### Incident Patch 3: `27bc3a13` (2026-10-26)
-**Commit Message**: fix(sdk): fail fast with a clear message when the CodeAF harness has no model key (#1130)
-
-When CodeAF (the default harness provider) has no model key it could use, the Python, Go and TypeScript SDKs now refuse the call before resolving, downloading or launching CodeAF, with a message that names OPENROUTER_API_KEY and how to pick another provider (HarnessProviderNotConfigured / ProviderUnavailableError{NotConfigured}), and warn once per process and at Agent construction. The check mirrors CodeAF's own key ladder and lets the call through whenever it cannot be sure. Keyless launches no longer reach CodeAF, so they stop being counted as failed CodeAF sessions.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `control-plane/internal/skillkit/skill_data/agentfield/references/primitives-snapshot.md` (modified, +15/-0)
-```diff
-@@ -189,6 +189,21 @@ caller leaves the shared download running. Doctor checks unpinned `aforge`
- against CodeAF read-only, including its version, then falls back to legacy
- aforge; a pin checks only the pinned binary.
- 
-+CodeAF harness calls fail fast before binary resolution, download or launch when
-+no model credential is visible, including with an explicit binary. The SDK's
-+unavailable-provider error carries this exact message:
-+
-+```text
-+Harness provider 'codeaf' needs a model key and none is configured. Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER.
-+```
-+
-+The check honors per-call environment overrides, compatible `OPENAI_API_KEY`
-+credentials (an `sk-or-` key or a custom base URL), saved profile `api_key` or
-+`model_sources`, and connected-provider credential files. Unreadable/malformed
-+profiles permit execution conservatively. Refusal warns once per process; an
-+Agent with an explicit harness config resolving to CodeAF also warns once at
-+construction without failing. Legacy aforge pins are unchanged.
-+
- **Harness availability gate** — DO NOT use unless ALL true:
- 
- 1. `af doctor` reports `recommendation.harness_usable: true` AND lists the chosen provider.
-```
-
-**File**: `docs/ENVIRONMENT_VARIABLES.md` (modified, +11/-0)
-```diff
-@@ -22,6 +22,17 @@ CLI/skill/package installs, node launch and Desktop provision it best-effort.
- The Python-agent, Go-agent and cloud control-plane images ship CodeAF at
- `/usr/local/bin/codeaf`, failing their build if download or verification fails.
- 
-+SDK harness calls with no model credential fail before binary resolution,
-+download or launch, with this message:
-+
-+```text
-+Harness provider 'codeaf' needs a model key and none is configured. Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER.
-+```
-+
-+The check honors the effective child environment and saved/connected profile
-+credentials. See the [credential contract](harness-providers.md#default-codeaf)
-+for the key ladder and once-per-process warnings.
-+
- - `AGENTFIELD_HARNESS_PROVIDER`: Explicit SDK provider config wins over this
-   variable; blank values are ignored; the built-in default is `codeaf`.
- - `AGENTFIELD_CODEAF_BASE_URL`: Full release directory override, version included;
-```
-
-**File**: `docs/harness-providers.md` (modified, +28/-0)
-```diff
-@@ -47,6 +47,34 @@ result, err := agent.Harness(ctx, task, schema, &dest, harness.Options{Cwd: repo
- const result = await app.harness(task, { schema });
- ```
- 
-+Without a model credential, Python, Go and TypeScript harness calls fail before
-+resolving, downloading or launching CodeAF, including with an explicit binary:
-+
-+```text
-+Harness provider 'codeaf' needs a model key and none is configured. Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER.
-+```
-+
-+The error remains catchable as the SDK's unavailable-provider error (Python and
-+TypeScript expose `HarnessProviderNotConfigured`; Go uses
-+`ProviderUnavailableError` with `NotConfigured: true`). It identifies `codeaf`
-+and lists `OPENROUTER_API_KEY` as missing. Refused calls log a warning once per
-+process. An Agent with an explicit harness config resolving to CodeAF also warns
-+once at construction; construction continues normally.
-+
-+The check uses the effective child environment, including per-call `env`
-+overrides and the SDK's default `CODEAF_HOME`. It accepts `OPENROUTER_API_KEY`,
-+an `OPENAI_API_KEY` starting with `sk-or-`, or another `OPENAI_API_KEY` with a
-+custom `CODEAF_BASE_URL` (falling back to `AFORGE_BASE_URL`). Ordinary OpenAI keys
-+are not accepted for the OpenRouter host. Whitespace-only values are empty.
-+The profile directory is the first non-empty `CODEAF_PROFILE_DIR`,
-+`AFORGE_PROFILE_DIR`, child `CODEAF_HOME`, or `AFORGE_HOME`; when none is set, or
-+one is whitespace only, the call is allowed and CodeAF decides.
-+A saved `api_key` or non-empty `model_sources` array/object in its `config.json`
-+also permits execution. Unreadable or malformed profile configs and existing
-+`credentials.json` or `codex.json` permit execution conservatively, so connected
-+providers and sign-ins can supply their credentials. Legacy aforge pins keep
-+their existing behavior.
-+
- The default model is `~deepseek/deepseek-v4-flash-latest`. Pass `model=` to change
- it; the SDK strips one leading `openrouter/` before invoking CodeAF.
- 
-```
-
-**File**: `sdk/codeaf-auth-contract.json` (added, +423/-0)
-```diff
-@@ -0,0 +1,423 @@
-+{
-+  "contract": "Shared CodeAF model-key preflight contract for the Python, Go and TypeScript SDKs. K1: with no credential CodeAF could use, a CodeAF harness call fails with the not-configured error before resolving, downloading or launching CodeAF. K2: the first refusal in a process logs the warning once. K3: with a credential the call is unchanged. K4: the check mirrors CodeAF's key ladder against the effective child environment (the cases below). K5: legacy aforge pins are unchanged. K6: an Agent whose harness config resolves to CodeAF warns once at construction when no credential is visible. K7: all three SDKs share these strings and cases. Paths in cases are replaced with isolated temporary directories; a null file means an unreadable entry.",
-+  "refusal": "Harness provider 'codeaf' needs a model key and none is configured. Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER.",
-+  "warning": "CodeAF is the harness provider and no model key is configured, so harness calls will fail. Set OPENROUTER_API_KEY (https://openrouter.ai/keys), or choose another harness provider with the provider option or AGENTFIELD_HARNESS_PROVIDER.",
-+  "cases": [
-+    {
-+      "name": "no-key",
-+      "allow": false,
-+      "env": {},
-+      "overlay": {},
-+      "files": {}
-+    },
-+    {
-+      "name": "process-key",
-+      "allow": true,
-+      "env": {
-+        "OPENROUTER_API_KEY": " process-key "
-+      },
-+      "overlay": {},
-+      "files": {}
-+    },
-+    {
-+      "name": "overlay-key",
-+      "allow": true,
-+      "env": {},
-+      "overlay": {
-+        "OPENROUTER_API_KEY": " overlay-key "
-+      },
-+      "files": {}
-+    },
-+    {
-+      "name": "whitespace-key",
-+      "allow": false,
-+      "env": {
-+        "OPENROUTER_API_KEY": " \t\n"
-+      },
-+      "overlay": {},
-+      "files": {}
-+    },
-+    {
-+      "name": "overlay-clears-key",
-+      "allow": false,
-+      "env": {
-+        "OPENROUTER_API_KEY": "process-key"
-+      },
-+      "overlay": {
-+        "OPENROUTER_API_KEY": ""
-+      },
-+      "files": {}
-+    },
-+    {
-+      "name": "openai-router-key",
-+      "allow": true,
-+      "env": {
-+        "OPENAI_API_KEY": " sk-or-v1-x "
-+      },
-+      "overlay": {},
-+      "files": {}
-+    },
-+    {
-+      "name": "openai-custom-endpoint",
-+      "allow": true,
-+      "env": {
-+        "OPENAI_API_KEY": "sk-proj-x",
-+        "CODEAF_BASE_URL": "http://127.0.0.1:11434/v1"
-+      },
-+      "overlay": {},
-+      "files": {}
-+    },
-+    {
-+      "name": "openai-legacy-endpoint",
-+      "allow": true,
-+      "env": {
-+        "OPENAI_API_KEY": "sk-proj-x",
-+        "AFORGE_BASE_URL": "http://127.0.0.1:11434/v1"
-+      },
-+      "overlay": {},
-+      "files": {}
-+    },
-+    {
-+      "name": "openai-empty-base-fallback",
-+      "allow": true,
-+      "env": {
-+        "OPENAI_API_KEY": "sk-proj-x",
-+        "CODEAF_BASE_URL": "",
-+        "AFORGE_BASE_URL": "localhost:11434/v1"
-+      },
-+      "overlay": {},
-+      "files": {}
-+    },
-+    {
-+      "name": "openai-whitespace-base-fallback",
-+      "allow": true,
-+      "env": {
-+        "OPENAI_API_KEY": "sk-proj-x",
-+        "CODEAF_BASE_URL": " \t",
-+        "AFORGE_BASE_URL": "localhost:11434/v1"
-+      },
-+      "overlay": {},
-+      "files": {}
-+    },
-+    {
-+      "name": "openai-without-base",
-+      "allow": false,
-+      "env": {
-+        "OPENAI_API_KEY": "sk-proj-x"
-+      },
-+      "overlay": {},
-+      "files": {}
-+    },
-+    {
-+      "name": "openai-router-base",
-+      "allow": false,
-+      "env": {
-+        "OPENAI_API_KEY": "sk-proj-x",
-+        "CODEAF_BASE_URL": "https://openrouter.ai/api/v1"
-+      },
-+      "overlay": {},
-+      "files": {}
-+    },
-+    {
-+      "name": "openai-router-normalized-host",
-+      "allow": false,
-+      "env": {
-+        "OPENAI_API_KEY": "sk-proj-x",
-+        "CODEAF_BASE_URL": "WWW.OpenRouter.AI.:443/other"
-+      },
-+      "overlay": {},
-+      "files": {}
-+    },
-+    {
-+      "name": "base-precedence",
-+      "allow": false,
-+      "env": {
-+        "OPENAI_API_KEY": "sk-proj-x",
-+        "CODEAF_BASE_URL": "//openrouter.ai/v1",
-+        "AFORGE_BASE_URL": "localhost:11434"
-+      },
-+      "overlay": {},
-+      "files": {}
-+    },
-+    {
-+      "name": "unparseable-custom-base",
-+      "allow": true,
-+      "env": {
-+        "OPENAI_API_KEY": "sk-proj-x",
-+        "CODEAF_BASE_URL": "http://[broken"
-+      },
-+      "overlay": {},
-+      "files": {}
-+    },
-+    {
-+      "name": "empty-openai-custom-base",
-+      "allow": false,
-+      "env": {
-+        "OPENAI_API_KEY": " \t",
-+        "CODEAF_BASE_URL": "localhost:11434"
-+      },
-+      "overlay": {},
-+      "files": {}
-+    },
-+    {
-+      "name": "profile-api-key",
-+      "allow": true,
-+      "env": {},
-+      "overlay": {},
-+      "files": {
-+        "$STATE/config.json": "{\"api_key\":\" saved-key \"}"
-+      }
-+    },
-+    {
-+    
-```
-
-**File**: `sdk/go/agent/agent.go` (modified, +1/-0)
-```diff
-@@ -622,6 +622,7 @@ func New(cfg Config) (*Agent, error) {
- 	if cfg.Logger == nil {
- 		cfg.Logger = log.New(os.Stdout, "[agent] ", log.LstdFlags)
- 	}
-+	warnCodeAFConfiguration(cfg)
- 
- 	if cfg.CallTimeout <= 0 {
- 		cfg.CallTimeout = 15 * time.Second
-```
-
-**File**: `sdk/go/agent/harness.go` (modified, +13/-0)
-```diff
-@@ -2,10 +2,23 @@ package agent
- 
- import (
- 	"context"
-+	"sync"
- 
- 	"github.com/Agent-Field/agentfield/sdk/go/harness"
- )
- 
-+var codeAFConfigWarning sync.Once
-+
-+func warnCodeAFConfiguration(cfg Config) {
-+	if cfg.HarnessConfig == nil {
-+		return
-+	}
-+	provider, _ := harness.BuildProvider(cfg.HarnessConfig.Provider, cfg.HarnessConfig.BinPath)
-+	if _, ok := provider.(*harness.CodeAFProvider); ok && !harness.CodeAFHasCredentials(harness.Options{}) {
-+		codeAFConfigWarning.Do(func() { cfg.Logger.Print("WARNING " + harness.CodeAFMissingKeyWarning) })
-+	}
-+}
-+
- // harness.go integrates the harness package with the Agent struct,
- // providing lazy initialization and a convenience Harness() method.
- // HarnessConfig configures the default harness runner for the agent.
-```
-
-**File**: `sdk/go/agent/harness_auth_test.go` (added, +72/-0)
-```diff
-@@ -0,0 +1,72 @@
-+package agent
-+
-+import (
-+	"bytes"
-+	"encoding/json"
-+	"log"
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"sync"
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
+ @pytest.mark.asyncio
+-async def test_memory_event_client_connect_builds_ws_url(monkeypatch):
++@pytest.mark.parametrize(
++    ("patterns", "scope", "scope_id"),
++    [
++        (["cart.*", "order.*"], "session", "abc"),
++        (["user+plan.*"], "actor", "alice+trial@example.com"),
++        (["cart&total.*", "issue#*"], "session", "team&env=prod#1"),
++        (["user preferences.*", "用户.*"], "workflow", "会话 + 1"),
++    ],
 +)
++async def test_memory_event_client_connect_builds_ws_url(
++    monkeypatch, patterns, scope, scope_id
++):
+     ctx = SimpleNamespace(to_headers=lambda: {"Authorization": "token"})
+     client = MemoryEventClient("http://agentfield", ctx)
+ 
+@@ -174,7 +186,9 @@ def __init__(self):
+ 
+     async def fake_connect(url, **kwargs):
+         record["url"] = url
+-        record["headers"] = kwargs.get("additional_headers") or kwargs.get("extra_headers")
++        record["headers"] = kwargs.get("additional_headers") or kwargs.get(
++            "extra_headers"
++        )
+         return DummyWebSocket()
+ 
+     async def fake_listen(self):
+@@ -183,15 +197,19 @@ async def fake_listen(self):
+     monkeypatch.setattr("agentfield.memory_events.websockets.connect", fake_connect)
+     monkeypatch.setattr(MemoryEventClient, "_listen", fake_listen, raising=False)
+ 
+-    await client.connect(
+-        patterns=["cart.*", "order.*"], scope="session", scope_id="abc"
+-    )
++    await client.connect(patterns=patterns, scope=scope, scope_id=scope_id)
+     await asyncio.sleep(0)
+ 
+-    assert record["url"].startswith("ws://agentfield")
+-    assert "patterns=cart.*,order.*" in record["url"]
+-    assert "scope=session" in record["url"]
+-    assert "scope_id=abc" in record["url"]
++    parsed_url = urlsplit(record["url"])
++    assert parsed_url.scheme == "ws"
++    assert parsed_url.netloc == "agentfield"
++    assert parsed_url.path == "/api/v1/memory/events/ws"
++    assert parsed_url.fragment == ""
++    assert parse_qs(parsed_url.query) == {
++        "patterns": [",".join(patterns)],
++        "scope": [scope],
++        "scope_id": [scope_id],
++    }
+     assert record["headers"] == {"Authorization": "token"}
+     assert listener_called.get("run") is True
+ 
+@@ -225,6 +243,7 @@ def __init__(self):
+ 
+     async def fake_connect(url, **kwargs):
+         called_with.update(kwargs)
++        called_with["url"] = url
+         return DummyWebSocket()
+ 
+     monkeypatch.setattr("agentfield.memory_events.websockets.connect", fake_connect)
+@@ -235,6 +254,7 @@ async def fake_connect(url, **kwargs):
+ 
+     assert _HEADERS_KWARG in called_with
+     assert called_with[_HEADERS_KWARG] == {"Authorization": "token"}
++    assert called_with["url"] == "ws://agentfield/api/v1/memory/events/ws"
+ 
+ 
+ @pytest.mark.asyncio
+@@ -260,7 +280,9 @@ async def fake_reconnect(self):
+     # Give the background task a chance to start
+     await asyncio.sleep(0.05)
+ 
+-    assert reconnect_started.is_set(), "reconnect should have been started in background"
++    assert reconnect_started.is_set(), (
++        "reconnect should have been started in background"
++    )
+     assert not client.is_listening
+ 
+ 
+```
+
+---
+
+### Incident Patch 2: `db7d3dea` (2026-10-30)
+**Commit Message**: fix(sdk/python): honor numeric Retry-After minimum waits (#1129)
+
+* fix(sdk/python): honor numeric Retry-After waits
+
+* style(sdk/python): normalize config field wrapping
+
+* fix(sdk/python): cap honoured Retry-After waits at five minutes
+
+Treating every finite Retry-After as a minimum let a provider
+suspend each retry indefinitely: a 86400s hint made the default
+five retries sleep five days, with no outer deadline on direct
+Agent.ai calls. Honour hints up to max(rate_limit_max_delay, 300s)
+and clamp anything larger to that ceiling, so jitter still never
+retries before the (capped) cooldown.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Abir Abbas <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `sdk/python/agentfield/rate_limiter.py` (modified, +12/-5)
+```diff
+@@ -1,12 +1,16 @@
+ import asyncio
+ import hashlib
++import math
+ import os
+ import random
+ import time
+ from typing import Any, Optional
+ from agentfield.logger import log_debug
+ 
+ 
++_MAX_RETRY_AFTER_SECONDS = 300.0
 +
-+func TestCodeAFK6ConstructionWarning(t *testing.T) {
-+	data, err := os.ReadFile("../../codeaf-auth-contract.json")
-+	require.NoError(t, err)
-+	var contract struct {
-+		Warning string `json:"warning"`
++
+ class RateLimitError(Exception):
+     """Custom exception for rate limit errors"""
+ 
+@@ -138,9 +142,12 @@ def _calculate_backoff_delay(
+         Returns:
+             float: Delay in seconds
+         """
+-        # Use server-suggested delay if available and reasonable
+-        if retry_after and retry_after <= self.max_delay:
+-            base_delay = retry_after
++        # Honour server cooldowns up to the ceiling, even above the local
++        # exponential-backoff cap. Invalid hints use the normal backoff.
++        minimum_delay = 0.0
++        if retry_after is not None and math.isfinite(retry_after) and retry_after > 0:
++            base_delay = min(retry_after, max(self.max_delay, _MAX_RETRY_AFTER_SECONDS))
++            minimum_delay = base_delay
+         else:
+             # Exponential backoff: base_delay * (2 ^ attempt)
+             base_delay = min(self.base_delay * (2**attempt), self.max_delay)
+@@ -154,8 +161,8 @@ def _calculate_backoff_delay(
+         jitter_range = base_delay * self.jitter_factor
+         jitter = rng.uniform(-jitter_range, jitter_range)
+ 
+-        # Ensure minimum delay and apply jitter
+-        delay = max(0.1, base_delay + jitter)
++        # Negative jitter must not end the server's cooldown early.
++        delay = max(0.1, minimum_delay, base_delay + jitter)
+ 
+         log_debug(
+             f"Rate limit backoff: attempt={attempt}, base_delay={base_delay:.2f}s, jitter={jitter:.2f}s, total_delay={delay:.2f}s"
+```
+
+**File**: `sdk/python/agentfield/types.py` (modified, +7/-4)
+```diff
+@@ -349,10 +349,10 @@ class HarnessConfig(BaseModel):
+     pi_bin: str = Field(default="pi", description="Path to Pi binary.")
+     omp_bin: str = Field(default="omp", description="Path to OMP binary.")
+     aforge_bin: str = Field(default="aforge", description="Path to aforge binary.")
+-    codeaf_bin: Optional[str] = Field(default=None, description="Path to CodeAF binary.")
+-    grok_bin: str = Field(
+-        default="grok", description="Path to Grok Build CLI binary."
++    codeaf_bin: Optional[str] = Field(
++        default=None, description="Path to CodeAF binary."
+     )
++    grok_bin: str = Field(default="grok", description="Path to Grok Build CLI binary.")
+     schema_mode: str = Field(
+         default="single",
+         description=(
+@@ -483,7 +483,10 @@ def image_model(self) -> str:
+     )
+     rate_limit_max_delay: float = Field(
+         default=30.0,
+-        description="Maximum delay for rate limit backoff in seconds.",
++        description=(
++            "Maximum base exponential backoff delay in seconds. A valid Retry-After "
++            "can require a longer wait, up to 5 minutes or this value if larger."
++        ),
+     )
+     rate_limit_jitter_factor: float = Field(
+         default=0.25,
+```
+
+**File**: `sdk/python/tests/test_rate_limiter_core.py` (modified, +92/-0)
+```diff
+@@ -65,6 +65,98 @@ async def flaky_call():
+     assert attempts["sleeps"][0] == pytest.approx(0.2)
+ 
+ 
++@pytest.mark.unit
++@pytest.mark.asyncio
++@pytest.mark.parametrize("retry_after", [10.0, 60.0])
++async def test_execute_with_retry_respects_server_wait(monkeypatch, retry_after):
++    limiter = StatelessRateLimiter(max_retries=1, max_delay=30.0, jitter_factor=0.25)
++    elapsed = 0.0
++    attempts = []
++
++    async def fake_sleep(delay):
++        nonlocal elapsed
++        elapsed += delay
++
++    async def rate_limited_call():
++        attempts.append(elapsed)
++        if len(attempts) == 1:
++            raise DummyHTTPError(retry_after=retry_after)
++        return "ok"
++
++    monkeypatch.setattr("agentfield.rate_limiter.asyncio.sleep", fake_sleep)
++    # Exercise the earliest retry the configured jitter can produce.
++    monkeypatch.setattr(random.Random, "uniform", lambda self, low, high: low)
++
++    assert await limiter.execute_with_retry(rate_limited_call) == "ok"
++    assert len(attempts) == 2
++    assert attempts[1] >= retry_after
++
++
++@pytest.mark.unit
++@pytest.mark.asyncio
++@pytest.mark.parametrize(
++    "max_delay, retry_after, jitter_end, expected_wait",
++    [
++        (30.0, 3600.0, "low", 300.0),
++        (30.0, 3600.0, "high", 375.0),
++        (600.0, 500.0, "low", 500.0),
++        (600.0, 3600.0, "low", 600.0),
++    ],
++)
++async def test_execute_with_retry_bounds_server_wait(
++    monkeypatch, max_delay, retry_after, jitter_end, expected_wait
++):
++    limiter = StatelessRateLimiter(
++        max_retries=1, max_delay=max_delay, jitter_factor=0.25
++    )
++    attempts = 0
++    sleeps = []
++
++    async def fake_sleep(delay):
++        sleeps.append(delay)
++
++    async def rate_limited_call():
++        nonlocal attempts
++        attempts += 1
++        if attempts == 1:
++            raise DummyHTTPError(retry_after=retry_after)
++        return "ok"
++
++    monkeypatch.setattr("agentfield.rate_limiter.asyncio.sleep", fake_sleep)
++    monkeypatch.setattr(
++        random.Random,
++        "uniform",
++        lambda self, low, high: low if jitter_end == "low" else high,
++    )
++
++    assert await limiter.execute_with_retry(rate_limited_call) == "ok"
++    assert sleeps == [pytest.approx(expected_wait)]
++
++
++@pytest.mark.unit
++@pytest.mark.asyncio
++@pytest.mark.parametrize("retry_after", [-1.0, float("nan"), float("inf")])
++async def test_execute_with_retry_ignores_invalid_server_wait(monkeypatch, retry_after):
++    limiter = StatelessRateLimiter(max_retries=1, base_delay=0.5, jitter_factor=0.0)
++    attempts = 0
++    sleeps = []
++
++    async def fake_sleep(delay):
++        sleeps.append(delay)
++
++    async def rate_limited_call():
++        nonlocal attempts
++        attempts += 1
++        if attempts == 1:
++            raise DummyHTTPError(retry_after=retry_after)
++        return "ok"
++
++    monkeypatch.setattr("agentfield.rate_limiter.asyncio.sleep", fake_sleep)
++
++    assert await limiter.execute_with_retry(rate_limited_call) == "ok"
++    assert sleeps == [0.5]
++
++
+ @pytest.mark.unit
+ @pytest.mark.asyncio
+ async def test_execute_with_retry_gives_up(monkeypatch):
+```
+
+---
+
+### Incident Patch 3: `72a32885` (2026-10-30)
+**Commit Message**: fix(sdk/go): request usage on streamed completions from OpenAI endpoints (#1134)
+
+* fix(sdk/go): request usage on streamed completions from OpenAI endpoints
+
+StreamComplete never sent stream_options.include_usage, so against OpenAI
+(and Azure OpenAI) the final chunk carried no usage and streamed calls
+reported no token counts, even though StreamChunk.Usage documents that
+field. Send include_usage on streaming requests to the endpoints that
+already get the max_completion_tokens rewrite (OpenAI, Azure OpenAI,
+OpenRouter); self-hosted servers keep the plain body.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* docs(sdk/go): guard the AIStream example against the usage-only final chunk
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `sdk/go/agent/agent.go` (modified, +3/-1)
+```diff
+@@ -2780,7 +2780,9 @@ func agentToolNameToInvocationTarget(name string) string {
+ //
+ //	chunks, errs := agent.AIStream(ctx, "Tell me a story")
+ //	for chunk := range chunks {
+-//	    fmt.Print(chunk.Choices[0].Delta.Content)
++//	    if len(chunk.Choices) > 0 {
++//	        fmt.Print(chunk.Choices[0].Delta.Content)
++//	    }
+ //	}
+ //	if err := <-errs; err != nil {
+ //	    log.Fatal(err)
+```
+
+**File**: `sdk/go/ai/model_params.go` (modified, +9/-0)
+```diff
+@@ -99,6 +99,15 @@ func (c *Client) marshalRequest(req *Request) ([]byte, error) {
+ 		req.Usage = &RequestUsage{Include: true}
+ 	}
+ 
++	// OpenAI (and Azure OpenAI, OpenRouter) only report token usage on a
++	// stream when the request opts in with stream_options.include_usage.
++	// Self-hosted OpenAI-compatible servers may reject or drop the field, so
++	// it is limited to the same endpoints as the max_completion_tokens
++	// rewrite. Requests that already set StreamOptions are left alone.
++	if req.Stream && req.StreamOptions == nil && isVouchedRewriteEndpoint(c.config.BaseURL) {
++		req.StreamOptions = &StreamOptions{IncludeUsage: true}
 +	}
-+	require.NoError(t, json.Unmarshal(data, &contract))
-+	for _, tc := range []struct {
-+		name, provider, envProvider, key string
-+		configured, legacy, warn         bool
-+	}{
-+		{name: "default", configured: true, warn: true},
-+		{name: "explicit", provider: "codeaf", configured: true, warn: true},
-+		{name: "alias", provider: "aforge", configured: true, warn: true},
-+		{name: "key", provider: "codeaf", key: "key", configured: true},
-+		{name: "other", provider: "claude-code", configured: true},
-+		{name: "no-config"},
-+		{name: "legacy", provider: "aforge", configured: true, legacy: true},
-+		{name: "env-codeaf", envProvider: "codeaf", configured: true, warn: true},
-+		{name: "env-other", envProvider: "claude-code", configured: true},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			for _, entry := range os.Environ() {
-+				key, _, _ := strings.Cut(entry, "=")
-+				if strings.HasPrefix(key, "CODEAF_") || strings.HasPrefix(key, "AFORGE_") || strings.HasPrefix(key, "AGENTFIELD_") || key == "OPENROUTER_API_KEY" || key == "OPENAI_API_KEY" {
-+					t.Setenv(key, "")
-+					require.NoError(t, os.Unsetenv(key))
-+				}
-+			}
-+			directory := t.TempDir()
-+			t.Setenv("HOME", filepath.Join(directory, "home"))
-+			t.Setenv("AGENTFIELD_HOME", filepath.Join(directory, "agentfield"))
-+			t.Setenv("CODEAF_TELEMETRY", "off")
-+			t.Setenv("OPENROUTER_API_KEY", tc.key)
-+			t.Setenv("AGENTFIELD_HARNESS_PROVIDER", tc.envProvider)
-+			if tc.legacy {
-+				t.Setenv("AFORGE_BIN", "/fake/legacy")
-+			}
-+			codeAFConfigWarning = sync.Once{}
-+			var output bytes.Buffer
-+			cfg := Config{NodeID: "auth-test", Version: "1", Logger: log.New(&output, "", 0)}
-+			if tc.configured {
-+				cfg.HarnessConfig = &HarnessConfig{Provider: tc.provider}
-+			}
-+			for i := 0; i < 2; i++ {
-+				_, err := New(cfg)
-+				require.NoError(t, err)
-+			}
-+			expected := 0
-+			if tc.warn {
-+				expected = 1
-+			}
-+			assert.Equal(t, expected, strings.Count(output.String(), contract.Warning))
-+		})
++
+ 	model := req.Model
+ 	if model == "" {
+ 		model = c.config.Model
+```
+
+**File**: `sdk/go/ai/model_params_test.go` (modified, +94/-0)
+```diff
+@@ -607,3 +607,97 @@ func TestComplete_WireBody_UnknownHostKeepsMaxTokens(t *testing.T) {
+ 		t.Errorf("expected max_tokens=654, got %v", val)
+ 	}
+ }
++
++func TestStreamComplete_WireBody_VouchedEndpointRequestsUsage(t *testing.T) {
++	// OpenAI only reports token usage on a stream when the request carries
++	// stream_options.include_usage; without it the final chunk has no usage.
++	cfg := &Config{
++		APIKey:  "test-key",
++		BaseURL: "https://api.openai.com/v1",
++		Model:   "gpt-5",
++	}
++
++	client, err := NewClient(cfg)
++	if err != nil {
++		t.Fatalf("NewClient error: %v", err)
++	}
++	rt := &recordingTransport{}
++	client.httpClient.Transport = rt
++
++	chunks, errs := client.StreamComplete(context.Background(), "hello")
++	for range chunks {
++	}
++	<-errs
++
++	var raw map[string]interface{}
++	if err := json.Unmarshal(rt.body, &raw); err != nil {
++		t.Fatalf("unmarshal captured body: %v", err)
++	}
++
++	opts, ok := raw["stream_options"].(map[string]interface{})
++	if !ok {
++		t.Fatalf("expected stream_options in the wire body for api.openai.com, got %s", rt.body)
++	}
++	if opts["include_usage"] != true {
++		t.Errorf("expected stream_options.include_usage=true, got %v", opts["include_usage"])
++	}
++}
++
++func TestStreamComplete_WireBody_UnknownHostOmitsStreamOptions(t *testing.T) {
++	// Self-hosted OpenAI-compatible servers (Ollama, LM Studio, llama.cpp)
++	// may reject or ignore unknown fields: they keep the plain stream body.
++	var captured []byte
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		b, err := io.ReadAll(r.Body)
++		if err != nil {
++			http.Error(w, err.Error(), http.StatusInternalServerError)
++			return
++		}
++		captured = b
++		w.Header().Set("Content-Type", "text/event-stream")
++		_, _ = io.WriteString(w, "data: [DONE]\n\n")
++	}))
++	defer server.Close()
++
++	client, err := NewClient(&Config{APIKey: "test-key", BaseURL: server.URL, Model: "llama3"})
++	if err != nil {
++		t.Fatalf("NewClient error: %v", err)
++	}
++
++	chunks, errs := client.StreamComplete(context.Background(), "hello")
++	for range chunks {
++	}
++	if err := <-errs; err != nil {
++		t.Fatalf("StreamComplete error: %v", err)
++	}
++
++	var raw map[string]interface{}
++	if err := json.Unmarshal(captured, &raw); err != nil {
++		t.Fatalf("unmarshal captured body: %v", err)
++	}
++	if _, ok := raw["stream_options"]; ok {
++		t.Errorf("expected no stream_options for a self-hosted endpoint, got %s", captured)
++	}
++}
++
++func TestComplete_WireBody_NoStreamOptions(t *testing.T) {
++	// stream_options is only valid on a streaming request.
++	cfg := &Config{APIKey: "test-key", BaseURL: "https://api.openai.com/v1", Model: "gpt-5"}
++	client, err := NewClient(cfg)
++	if err != nil {
++		t.Fatalf("NewClient error: %v", err)
++	}
++	rt := &recordingTransport{}
++	client.httpClient.Transport = rt
++
++	if _, err := client.Complete(context.Background(), "hello"); err != nil {
++		t.Fatalf("Complete error: %v", err)
++	}
++	var raw map[string]interface{}
++	if err := json.Unmarshal(rt.body, &raw); err != nil {
++		t.Fatalf("unmarshal captured body: %v", err)
++	}
++	if _, ok := raw["stream_options"]; ok {
++		t.Errorf("expected no stream_options on a non-streaming request, got %s", rt.body)
 +	}
 +}
 ```
 
-**File**: `sdk/go/agent/harness_test.go` (modified, +6/-0)
+**File**: `sdk/go/ai/request.go` (modified, +10/-0)
 ```diff
-@@ -115,6 +115,9 @@ func TestHarnessRunner_ConcurrentAccess(t *testing.T) {
+@@ -46,6 +46,16 @@ type Request struct {
+ 	// object carry the native cost of the call; the client sets it
+ 	// automatically for OpenRouter requests.
+ 	Usage *RequestUsage `json:"usage,omitempty"`
++
++	// StreamOptions carries streaming-only options. The client sets
++	// include_usage for streaming requests to endpoints known to accept it
++	// (see isVouchedRewriteEndpoint), so the final chunk reports token usage.
++	StreamOptions *StreamOptions `json:"stream_options,omitempty"`
++}
++
++// StreamOptions is the request-body stream_options object (OpenAI shape).
++type StreamOptions struct {
++	IncludeUsage bool `json:"include_usage"`
  }
  
- func TestHarness_ErrorWithoutProvider(t *testing.T) {
-+	t.Setenv("OPENROUTER_API_KEY", "test-codeaf-key")
-+	t.Setenv("HOME", t.TempDir())
-+	t.Setenv("AGENTFIELD_HOME", t.TempDir())
- 	// With no provider configured, Harness() defaults to codeaf and reaches
- 	// provider execution. A missing binary may fail, but provider resolution does not.
- 	t.Setenv(harness.ProviderEnvVar, "")
-@@ -211,6 +214,9 @@ func TestHarnessDoctor_UnknownProviderIsAnError(t *testing.T) {
- }
- 
- func TestHarnessDefaultCodeAFRecordsUsage(t *testing.T) {
-+	t.Setenv("OPENROUTER_API_KEY", "test-codeaf-key")
-+	t.Setenv("HOME", t.TempDir())
-+	t.Setenv("AFORGE_BIN", "")
- 	t.Setenv(harness.ProviderEnvVar, "")
- 	t.Setenv("AGENTFIELD_HOME", t.TempDir())
- 	path := filepath.Join(t.TempDir(), "codeaf")
+ // RequestUsage is the request-body usage accounting opt-in (OpenRouter shape).
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1132** (2026-10-27): fix(sdk): log the CodeAF missing-key warning once, and count the harness config's env (@AbirAbbas)
-- **PR #1131** (2026-10-27): chore(deps): bump certifi from 2026.2.25 to 2026.10.18 in /sdk/python in the uv group across 1 directory (@dependabot[bot])
-- **PR #1130** (2026-10-26): fix(sdk): fail fast with a clear message when the CodeAF harness has no model key (@AbirAbbas)
-- **PR #1128** (2026-10-24): Make CodeAF the default harness, installed automatically with AgentField (@AbirAbbas)
-- **PR #1127** (2026-10-26): chore(deps): bump the uv group across 1 directory with 3 updates (@dependabot[bot])
-- **PR #1126** (2026-10-26): fix(sdk/typescript): stop retrying permanent status callbacks (@ShryukGrandhi)
+- **PR #1141** (2026-10-30): fix(build): format Go packages without recursive overlap (@remote-controlled-man)
+- **PR #1140** (2026-10-30): test(control-plane): drain accepted MCP work between tests (@remote-controlled-man)
+- **PR #1138** (2026-10-30): chore(deps): bump msgpack from 1.2.1 to 1.2.3 in /sdk/python in the uv group across 1 directory (@dependabot[bot])
+- **PR #1137** (2026-10-30): fix(python): URL-encode memory subscription filters (@remote-controlled-man)
+- **PR #1136** (2026-10-29): fix(python): match memory subscription keys literally (@remote-controlled-man)
+- **PR #1135** (2026-10-29): docs(readme): announce CodeAF with its DeepSWE benchmark (@oktaygoktas)
 
 ---
 
@@ -2503,37 +1974,37 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. control-plane): return 503 for transient storage errors during DID resolution (#
+## X. python): URL-encode memory subscription filters (#1137)
 
 **RULE**:
-When implementing operations in `control-plane/internal/server/middleware/did_auth.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/python/agentfield/memory_events.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7306a0eb`: control-plane): return 503 for transient storage errors during DID resolution (#1087) (#1124). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fe6f9cb9`: python): URL-encode memory subscription filters (#1137). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `control-plane/internal/server/middleware/did_auth.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/python/agentfield/memory_events.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"errors"
-	"github.com/Agent-Field/agentfield/control-plane/internal/services"
-			if errors.Is(err, services.ErrDIDResolutionUnavailable) {
-				logger.Logger.Warn().Err(err).Str("caller_did", callerDID).Msg("DID resolution temporarily unavailable")
-				c.AbortWithStatusJSON(http.StatusServiceUnavailable, gin.H{
-					"error":   "did_resolution_unavailable",
-					"message": "DID resolution is temporarily unavailable, retry shortly",
-				})
-				return
-			}
+from urllib.parse import urlencode
+                query_params = {}
+                    query_params["patterns"] = ",".join(patterns)
+                    query_params["scope"] = scope
+                    query_params["scope_id"] = scope_id
+                    ws_url += "?" + urlencode(query_params)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                query_params = []
+                    query_params.append(f"patterns={','.join(patterns)}")
+                    query_params.append(f"scope={scope}")
+                    query_params.append(f"scope_id={scope_id}")
+                    ws_url += "?" + "&".join(query_params)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7306a0eb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fe6f9cb9` are properly handled with clean fallback behavior.

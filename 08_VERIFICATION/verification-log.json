@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-0EQ8",
-    "timestamp": "2026-10-28T13:43:32.240Z",
-    "repository": "MiniMaxAI/MiniMax-H3",
-    "learningId": "learn-huggingface-minimaxai-minimax-h3",
-    "contentHash": "8ba6f3359b9624b0e98cde1b25a89a760ceb99a20a6e7a6ef5eef5895704c8d7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-0GKV",
-    "timestamp": "2026-10-28T13:43:34.639Z",
-    "repository": "kucherenko/jscpd",
-    "learningId": "learn-github-kucherenko-jscpd",
-    "contentHash": "60269540fd80e2cea64ddbe079ac02a58a46da28f89fddd3890d6a5c16768549",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-0N93",
-    "timestamp": "2026-10-28T13:43:43.287Z",
-    "repository": "zarf-dev/zarf",
-    "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "1cbbb380e3a3fd1dabf7c08626a95fc79da906b6b28342f2fbe0a695ab6581bf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-0O44",
-    "timestamp": "2026-10-28T13:43:44.404Z",
-    "repository": "nolabs-ai/nono",
-    "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "b32a4b83d89b0bc7e79b63ec6b18d4969d5dc0bafc7ee6feac0eeac76f996353",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-8LBF",
     "timestamp": "2026-10-28T13:49:54.027Z",
     "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -7490,6 +7430,66 @@
     "repository": "zama-ai/tfhe-rs",
     "learningId": "learn-github-zama-ai-tfhe-rs",
     "contentHash": "1ae424e8c203d5f170ec97d6bc148551fa6641638c846a5cf41b37f22d45abf4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-PZW0",
+    "timestamp": "2026-10-30T19:42:41.904Z",
+    "repository": "preactjs/preact",
+    "learningId": "learn-github-preactjs-preact",
+    "contentHash": "81a3c7ce43f7dd03c41e64764871fec1018fce6d1f60a53a2d609d5d04e40696",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-Q1S5",
+    "timestamp": "2026-10-30T19:42:44.357Z",
+    "repository": "KeyboardKit/KeyboardKit",
+    "learningId": "learn-github-keyboardkit-keyboardkit",
+    "contentHash": "9d37fe6c689172b216a32fd2091fdaefd4f9b328489b3deeeae2cfa1164f7a37",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-Q34L",
+    "timestamp": "2026-10-30T19:42:46.101Z",
+    "repository": "Agent-Field/agentfield",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "16fc755f3b81d233756d21a59db147707359660ef21b2388081e3cf393d663f9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-WFN0",
+    "timestamp": "2026-10-30T19:47:42.252Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "cfedc6d9f729ce7a7409caf41731783b593248ed90bc740c73dd5b7d58bc39cb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

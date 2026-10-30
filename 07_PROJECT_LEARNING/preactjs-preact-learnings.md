@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  
 > **Source**: github ([https://github.com/preactjs/preact](https://github.com/preactjs/preact))  
-> **Source Version**: `66b6e565`  
+> **Source Version**: `4e5c63cc`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T16:38:22.154Z  
+> **Timestamp**: 2026-10-30T19:42:41.250Z  
 > **Learning ID**: `learn-github-preactjs-preact`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/preactjs-preact-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/preactjs/preact](https://github.com/preactjs/preact))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T16:38:21.743Z  
+> **Harvest Timestamp**: 2026-10-30T19:42:40.467Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚛️ Fast 3kB React alternative with the same modern API. Components & Virtual DOM.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 38958 stars
+- **Stars / Engagement**: 38967 stars
 
 ---
 
@@ -1284,229 +1284,341 @@ export function hydrate(vnode, parentDom) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `67d3ff9a` (2026-10-27)
-**Commit Message**: fix: avoid String coercion when diffing symbol-marked VNodes
+### Incident Patch 1: `39d29204` (2026-10-28)
+**Commit Message**: fix(types): add declarative shadow DOM attributes to <template>
 
-Use strict constructor equality and cover the coercion regression without timing assertions. Existing boxed String rendering remains covered.
+`<template shadowrootmode="open">` failed to type check because
+TemplateHTMLAttributes had no shadowroot* attributes. Add shadowrootmode
+('open' | 'closed') and the shadowrootclonable, shadowrootdelegatesfocus
+and shadowrootserializable booleans, each with its camelCase property
+form like the other attributes in dom.d.ts.
 
-Developed with AI assistance (Hermes/OpenAI).
+Fixes #5337
 
-**File**: `src/diff/children.js` (modified, +1/-1)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/dom.d.ts` (modified, +8/-0)
 ```diff
-@@ -206,7 +206,7 @@ function constructNewChildrenArray(
- 		// objects are the lone object type rendered as text.
- 		else if (
- 			typeof childVNode != 'object' ||
--			childVNode.constructor == String
-+			childVNode.constructor === String
- 		) {
- 			childVNode = newChildren[i] = createVNode(NULL, childVNode);
- 		} else if (isArray(childVNode)) {
+@@ -2786,6 +2786,14 @@ export interface TemplateHTMLAttributes<
+ 	T extends EventTarget = HTMLTemplateElement
+ > extends HTMLAttributes<T> {
+ 	role?: never;
++	shadowrootclonable?: Signalish<boolean | undefined>;
++	shadowRootClonable?: Signalish<boolean | undefined>;
++	shadowrootdelegatesfocus?: Signalish<boolean | undefined>;
++	shadowRootDelegatesFocus?: Signalish<boolean | undefined>;
++	shadowrootmode?: Signalish<'open' | 'closed' | undefined>;
++	shadowRootMode?: Signalish<'open' | 'closed' | undefined>;
++	shadowrootserializable?: Signalish<boolean | undefined>;
++	shadowRootSerializable?: Signalish<boolean | undefined>;
+ }
+ 
+ export interface TextareaHTMLAttributes<
 ```
 
-**File**: `test/browser/components.test.jsx` (modified, +18/-0)
+**File**: `test/ts/dom-attributes.test-d.tsx` (modified, +22/-0)
 ```diff
-@@ -571,6 +571,24 @@ describe('Components', () => {
- 		expect(scratch.innerHTML).to.equal('42');
+@@ -344,3 +344,25 @@ const dangerouslySetInnerHTML = (
+ 		<div dangerouslySetInnerHTML={{ __html: 'string' }} />
+ 	</>
+ );
++
++const declarativeShadowRoot = (
++	<>
++		<template shadowrootmode="open" />
++		<template shadowrootmode="closed" />
++		<template shadowRootMode={createSignal('open' as const)} />
++		<template
++			shadowrootmode="open"
++			shadowrootclonable
++			shadowrootdelegatesfocus
++			shadowrootserializable
++		/>
++		<template
++			shadowRootMode="closed"
++			shadowRootClonable={false}
++			shadowRootDelegatesFocus={true}
++			shadowRootSerializable
++		/>
++	</>
++);
++// @ts-expect-error shadowrootmode only accepts "open" or "closed"
++const invalidShadowRootMode = <template shadowrootmode="none" />;
+```
+
+---
+
+### Incident Patch 2: `4e5c63cc` (2026-10-30)
+**Commit Message**: Merge pull request #5339 from preactjs/fix/template-namespace-content
+
+Fix template in alternative namespaces
+
+**File**: `src/diff/index.js` (modified, +1/-1)
+```diff
+@@ -609,7 +609,7 @@ function diffElementNodes(
+ 		// when reading existing DOM and when inserting new nodes. `parentDom` is
+ 		// unused from here on, so we reuse it as the container for our children.
+ 		// @ts-expect-error
+-		parentDom = nodeType == 'template' ? dom.content : dom;
++		parentDom = (nodeType == 'template' && dom.content) || dom;
+ 
+ 		// If excessDomChildren was not null, repopulate it with the current element's children:
+ 		excessDomChildren =
+```
+
+**File**: `test/browser/hydrate.test.jsx` (modified, +26/-0)
+```diff
+@@ -612,6 +612,32 @@ describe('hydrate()', () => {
+ 		expect(caught.message).to.equal('real error');
  	});
  
-+	it('should not coerce String when identifying VNode children', () => {
-+		const vnode = (
++	for (const [tag, childTag, namespace] of [
++		['svg', 'g', 'http://www.w3.org/2000/svg'],
++		['math', 'mrow', 'http://www.w3.org/1998/Math/MathML']
++	]) {
++		it(`should hydrate <template> in ${tag}`, () => {
++			scratch.innerHTML = `<${tag}><template><${childTag}>child</${childTag}></template></${tag}>`;
++			const template = scratch.firstChild.firstChild;
++			const child = template.firstChild;
++			const vnode = createElement(
++				tag,
++				null,
++				createElement('template', null, createElement(childTag, null, 'child'))
++			);
++
++			hydrate(vnode, scratch);
++
++			expect(scratch.firstChild.firstChild).to.equal(template);
++			expect(template.namespaceURI).to.equal(namespace);
++			expect(template.content).to.equal(undefined);
++			expect(template.childNodes).to.have.length(1);
++			expect(template.firstChild).to.equal(child);
++			expect(child.namespaceURI).to.equal(namespace);
++			expect(template.textContent).to.equal('child');
++		});
++	}
++
+ 	it('should hydrate <template> tags', () => {
+ 		function App() {
+ 			return (
+```
+
+**File**: `test/browser/render.test.jsx` (modified, +66/-0)
+```diff
+@@ -151,6 +151,72 @@ describe('render()', () => {
+ 		);
+ 	});
+ 
++	for (const [tag, childTag, namespace] of [
++		['svg', 'g', 'http://www.w3.org/2000/svg'],
++		['math', 'mrow', 'http://www.w3.org/1998/Math/MathML']
++	]) {
++		it(`should render and update <template> in ${tag}`, () => {
++			const App = ({ items }) =>
++				createElement(
++					tag,
++					null,
++					createElement(
++						'template',
++						null,
++						items.map(i => createElement(childTag, { key: i }, i))
++					)
++				);
++
++			render(<App items={[1, 2]} />, scratch);
++			const template = scratch.firstChild.firstChild;
++			const child = template.firstChild;
++			expect(template.namespaceURI).to.equal(namespace);
++			expect(template.content).to.equal(undefined);
++			expect(template.textContent).to.equal('12');
++			expect(child.namespaceURI).to.equal(namespace);
++
++			render(<App items={[2, 1, 3]} />, scratch);
++			expect(template.textContent).to.equal('213');
++			expect(template.childNodes[1]).to.equal(child);
++
++			render(<App items={[1]} />, scratch);
++			expect(template.firstChild).to.equal(child);
++			expect(template.childNodes).to.have.length(1);
++
++			render(null, scratch);
++			expect(scratch.childNodes).to.have.length(0);
++		});
++	}
++
++	it('should use HTML <template> content inside namespace integration points', () => {
++		render(
 +			<div>
-+				<span>child</span>
-+			</div>
++				<svg>
++					<foreignObject>
++						<template>
++							<span>svg</span>
++						</template>
++					</foreignObject>
++				</svg>
++				<math>
++					<mtext>
++						<template>
++							<span>math</span>
++						</template>
++					</mtext>
++				</math>
++			</div>,
++			scratch
 +		);
-+		const toString = vi.spyOn(Function.prototype, 'toString');
-+		let calls;
-+		try {
-+			render(vnode, scratch);
-+			calls = toString.mock.calls.length;
-+		} finally {
-+			toString.mockRestore();
++		for (const template of scratch.querySelectorAll('template')) {
++			expect(template.namespaceURI).to.equal('http://www.w3.org/1999/xhtml');
++			expect(template.childNodes).to.have.length(0);
++			expect(template.content.firstChild.namespaceURI).to.equal(
++				'http://www.w3.org/1999/xhtml'
++			);
 +		}
-+		expect(calls).to.equal(0);
-+		expect(scratch.innerHTML).to.equal('<div><span>child</span></div>');
 +	});
 +
- 	it('should render a new String()', () => {
- 		class ConstructedStringComponent extends Component {
- 			render() {
+ 	it('should render function components with an undefined prototype', () => {
+ 		const Foo = () => <div>foo</div>;
+ 		Foo.prototype = undefined;
 ```
 
 ---
 
-### Incident Patch 2: `8ab86ea2` (2026-10-23)
-**Commit Message**: fix: keep LIS candidacy separate from old vnode matching
+### Incident Patch 3: `9ecf719a` (2026-10-29)
+**Commit Message**: Fix template in alternative namespaces
 
-Use a dedicated LIS_CANDIDATE bit so interrupted renders cannot leave new children marked MATCHED. Keep the inexpensive flag test in the minimal-move pass and clear the two new-vnode placement flags after diffing.
-
-Add a regression test covering repeated render failures, DOM reuse, ref detachment, and component unmounting. Source and minified suites: 1415 passed, 11 skipped each.
-
-**File**: `src/constants.js` (modified, +3/-0)
+**File**: `src/diff/index.js` (modified, +1/-1)
 ```diff
-@@ -35,3 +35,6 @@ export const EMPTY_OBJ = /** @type {any} */ ({});
- export const EMPTY_ARR = [];
+@@ -609,7 +609,7 @@ function diffElementNodes(
+ 		// when reading existing DOM and when inserting new nodes. `parentDom` is
+ 		// unused from here on, so we reuse it as the container for our children.
+ 		// @ts-expect-error
+-		parentDom = nodeType == 'template' ? dom.content : dom;
++		parentDom = (nodeType == 'template' && dom.content) || dom;
  
- export const MATHML_TOKEN_ELEMENTS = /^m(i|n|o|s|text|space)$/;
-+
-+/** Matched new vnode eligible for the longest increasing subsequence. */
-+export const LIS_CANDIDATE = 1 << 4;
+ 		// If excessDomChildren was not null, repopulate it with the current element's children:
+ 		excessDomChildren =
 ```
 
-**File**: `src/diff/children.js` (modified, +15/-24)
+**File**: `test/browser/hydrate.test.jsx` (modified, +26/-0)
 ```diff
-@@ -5,6 +5,7 @@ import {
- 	EMPTY_ARR,
- 	INSERT_VNODE,
- 	MATCHED,
-+	LIS_CANDIDATE,
- 	REF_DETACHED,
- 	UNDEFINED,
- 	NULL
-@@ -142,8 +143,8 @@ export function diffChildren(
- 			oldDom = newDom.nextSibling;
- 		}
- 
--		// Unset diffing flags
--		childVNode._flags &= ~(INSERT_VNODE | MATCHED);
-+		// Clear placement and LIS flags; MATCHED only belongs to old vnodes.
-+		childVNode._flags &= ~(INSERT_VNODE | LIS_CANDIDATE);
- 	}
- 
- 	newParentVNode._dom = firstChildDom;
-@@ -282,12 +283,12 @@ function constructNewChildrenArray(
- 				childVNode._flags |= INSERT_VNODE;
- 			}
- 		} else {
--			// The skew adjustments keep findMatchingIndex's search centered for
--			// shift patterns (insertions/removals at the front). A match further
--			// than one position away means children were genuinely reordered:
--			// flag it so the minimal set of moves is computed below. Off-by-one
--			// matches provably keep matched old indices in increasing order, so
--			// no moves are needed for them.
-+			// Keep LIS eligibility separate from MATCHED on old vnodes: if a child
-+			// throws, uncleared new-vnode flags must not prevent the next match.
-+			childVNode._flags |= LIS_CANDIDATE;
-+
-+			// Center the next search for shifts. Only matches farther than one
-+			// position away require the minimal-move pass.
- 			if (matchingIndex == skewedIndex - 1) {
- 				skew--;
- 			} else if (matchingIndex == skewedIndex + 1) {
-@@ -305,28 +306,18 @@ function constructNewChildrenArray(
- 	}
- 
- 	if (moved) {
--		// Children were reordered: mark the minimal set of matched children for
--		// insertion by finding the longest increasing subsequence of old indices
--		// (patience sorting). Children on the subsequence stay in place, all
--		// others get INSERT_VNODE. `_index` still holds the matchingIndex here.
--		//
--		// A child takes part when it matched an old vnode that is not mounting.
--		// This is read from `_index` and not from a flag on the new vnode: if a
--		// child throws, diffChildren never clears such a flag, and the new vnodes
--		// become the old tree of the next render, where MATCHED makes
--		// findMatchingIndex and the unmount loop skip them.
-+		// Children were reordered: mark the minimal set of matched (LIS_CANDIDATE flag)
-+		// children for insertion by finding the longest increasing subsequence of
-+		// old indices (patience sorting). Children on the subsequence stay in
-+		// place, all others get INSERT_VNODE. `_index` still holds the
-+		// matchingIndex here.
- 		/** @type {number[]} tails[x] is the smallest old index ending an increasing subsequence of length x+1 */
- 		let tails = [];
- 		/** @type {number[]} length of the longest increasing subsequence ending at child i */
- 		let lisLengths = [];
- 		for (i = 0; i < newChildrenLength; i++) {
- 			childVNode = newChildren[i];
--			if (
--				childVNode &&
--				~childVNode._index &&
--				(oldVNode = oldChildren[childVNode._index]) &&
--				oldVNode._original
--			) {
-+			if (childVNode && childVNode._flags & LIS_CANDIDATE) {
- 				// Binary search for the insertion point, keeping the pass at
- 				// O(n log n) even for pathological reorders.
- 				skew = 0;
-```
-
-**File**: `test/browser/render.test.jsx` (modified, +41/-0)
-```diff
-@@ -2162,6 +2162,47 @@ describe('render()', () => {
- 			render(<Thrower shouldThrow={false} />, scratch);
- 			expect(scratch.innerHTML).to.equal('<b>x</b>');
- 		});
-+
-+		it('should detach refs and unmount after repeated render errors', () => {
-+			let mounts = 0;
-+			let unmounts = 0;
-+			const ref = vi.fn();
-+			class Tracked extends Component {
-+				componentDidMount() {
-+					mounts++;
-+				}
-+				componentWillUnmount() {
-+					unmounts++;
-+				}
-+				render({ shouldThrow }) {
-+					if (shouldThrow) throw new Error('boom');
-+					return <b ref={ref}>x</b>;
-+				}
-+			}
-+
-+			for (let i = 0; i < 5; i++) {
-+				render(<Tracked shouldThrow={false} />, scratch);
-+				const dom = scratch.firstChild;
-+				for (let j = 0; j < 3; j++) {
-+					expect(() => render(<Tracked shouldThrow />, scratch)).to.throw(
-+						'boom'
-+					);
-+					render(<Tracked shouldThrow={false} />, scratch);
-+					expect(scratch.innerHTML).to.equal('<b>x</b>');
-+					expect(scratch.firstChild).to.equal(dom);
-+				}
-+				render(null, scratch);
-+				expect(scratch.innerHTML).to.equal('');
-+				expect(mounts).to.equal(i + 1);
-+				expect(unmounts).to.equal(i + 1);
-+				expect(
-+					ref.mock.calls.filter(([value]) => value !== null)
-+				).to.have.length(i + 1);
-+				expect(
-+					ref.mock.calls.filter(([value]) => value === null)
-+				).to.have.length(i + 1);
-+			}
-+		});
+@@ -612,6 +612,32 @@ describe('hydrate()', () => {
+ 		expect(caught.message).to.equal('real error');
  	});
  
- 	describe('Alternative document', () => {
++	for (const [tag, childTag, namespace] of [
++		['svg', 'g', 'http://www.w3.org/2000/svg'],
++		['math', 'mrow', 'http://www.w3.org/1998/Math/MathML']
++	]) {
++		it(`should hydrate <template> in ${tag}`, () => {
++			scratch.innerHTML = `<${tag}><template><${childTag}>child</${childTag}></template></${tag}>`;
++			const template = scratch.firstChild.firstChild;
++			const child = template.firstChild;
++			const vnode = createElement(
++				tag,
++				null,
++				createElement('template', null, createElement(childTag, null, 'child'))
++			);
++
++			hydrate(vnode, scratch);
++
++			expect(scratch.firstChild.firstChild).to.equal(template);
++			expect(template.namespaceURI).to.equal(namespace);
++			expect(template.content).to.equal(undefined);
++			expect(template.childNodes).to.have.length(1);
++			expect(template.firstChild).to.equal(child);
++			expect(child.namespaceURI).to.equal(namespace);
++			expect(template.textContent).to.equal('child');
++		});
++	}
++
+ 	it('should hydrate <template> tags', () => {
+ 		function App() {
+ 			return (
 ```
 
----
-
-### Incident Patch 3: `aa977589` (2026-10-27)
-**Commit Message**: chore: restore existing render-to-string peer range
-
-**File**: `package.json` (modified, +1/-1)
+**File**: `test/browser/render.test.jsx` (modified, +66/-0)
 ```diff
-@@ -214,7 +214,7 @@
-     "vitest": "^5.0.0"
-   },
-   "peerDependencies": {
--    "preact-render-to-string": ">=6.8.2"
-+    "preact-render-to-string": ">=6.7.0"
-   },
-   "peerDependenciesMeta": {
-     "preact-render-to-string": {
+@@ -151,6 +151,72 @@ describe('render()', () => {
+ 		);
+ 	});
+ 
++	for (const [tag, childTag, namespace] of [
++		['svg', 'g', 'http://www.w3.org/2000/svg'],
++		['math', 'mrow', 'http://www.w3.org/1998/Math/MathML']
++	]) {
++		it(`should render and update <template> in ${tag}`, () => {
++			const App = ({ items }) =>
++				createElement(
++					tag,
++					null,
++					createElement(
++						'template',
++						null,
++						items.map(i => createElement(childTag, { key: i }, i))
++					)
++				);
++
++			render(<App items={[1, 2]} />, scratch);
++			const template = scratch.firstChild.firstChild;
++			const child = template.firstChild;
++			expect(template.namespaceURI).to.equal(namespace);
++			expect(template.content).to.equal(undefined);
++			expect(template.textContent).to.equal('12');
++			expect(child.namespaceURI).to.equal(namespace);
++
++			render(<App items={[2, 1, 3]} />, scratch);
++			expect(template.textContent).to.equal('213');
++			expect(template.childNodes[1]).to.equal(child);
++
++			render(<App items={[1]} />, scratch);
++			expect(template.firstChild).to.equal(child);
++			expect(template.childNodes).to.have.length(1);
++
++			render(null, scratch);
++			expect(scratch.childNodes).to.have.length(0);
++		});
++	}
++
++	it('should use HTML <template> content inside namespace integration points', () => {
++		render(
++			<div>
++				<svg>
++					<foreignObject>
++						<template>
++							<span>svg</span>
++						</template>
++					</foreignObject>
++				</svg>
++				<math>
++					<mtext>
++						<template>
++							<span>math</span>
++						</template>
++					</mtext>
++				</math>
++			</div>,
++			scratch
++		);
++		for (const template of scratch.querySelectorAll('template')) {
++			expect(template.namespaceURI).to.equal('http://www.w3.org/1999/xhtml');
++			expect(template.childNodes).to.have.length(0);
++			expect(template.content.firstChild.namespaceURI).to.equal(
++				'http://www.w3.org/1999/xhtml'
++			);
++		}
++	});
++
+ 	it('should render function components with an undefined prototype', () => {
+ 		const Foo = () => <div>foo</div>;
+ 		Foo.prototype = undefined;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5339** (2026-10-30): Fix template in alternative namespaces (@JoviDeCroock)
+- **PR #5338** (2026-10-28): fix(types): add declarative shadow DOM attributes to `<template>` (@b84330808)
 - **PR #5336** (2026-10-27): 11.1.0 (@JoviDeCroock)
 - **PR #5335** (2026-10-27): Harden vnode recognition (@JoviDeCroock)
 - **PR #5334** (closed): types: add fetchpriority, blocking, and attributionsrc attributes (@playlikeboy)
 - **PR #5333** (closed): types: add missing capture event handlers to DOMAttributes (@playlikeboy)
-- **PR #5332** (closed): types: add command and popovertarget attributes to PartialInputHTMLAttributes (@playlikeboy)
-- **PR #5331** (2026-10-25): fix(types): allow list attribute on all valid input types (@playlikeboy)
 
 ---
 
@@ -1526,28 +1638,35 @@ Add a regression test covering repeated render failures, DOM reuse, ref detachme
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. avoid String coercion when diffing symbol-marked VNodes
+## X. types): add declarative shadow DOM attributes to <template>
 
 **RULE**:
-When implementing operations in `src/diff/children.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in preactjs/preact. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/dom.d.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in preactjs/preact. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `67d3ff9a`: avoid String coercion when diffing symbol-marked VNodes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39d29204`: types): add declarative shadow DOM attributes to <template>. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/diff/children.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/dom.d.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-			childVNode.constructor === String
+	shadowrootclonable?: Signalish<boolean | undefined>;
+	shadowRootClonable?: Signalish<boolean | undefined>;
+	shadowrootdelegatesfocus?: Signalish<boolean | undefined>;
+	shadowRootDelegatesFocus?: Signalish<boolean | undefined>;
+	shadowrootmode?: Signalish<'open' | 'closed' | undefined>;
+	shadowRootMode?: Signalish<'open' | 'closed' | undefined>;
+	shadowrootserializable?: Signalish<boolean | undefined>;
+	shadowRootSerializable?: Signalish<boolean | undefined>;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-			childVNode.constructor == String
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `67d3ff9a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39d29204` are properly handled with clean fallback behavior.

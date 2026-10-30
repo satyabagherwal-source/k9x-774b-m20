@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T19:36:00.170Z",
-    "lastVerified": "2026-10-30T19:36:00.170Z",
+    "lastChecked": "2026-10-30T19:47:44.807Z",
+    "lastVerified": "2026-10-30T19:47:44.807Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -341,9 +341,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T19:12:31.104Z",
+    "lastChecked": "2026-10-30T19:42:48.167Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T19:12:31.104Z"
+    "lastVerified": "2026-10-30T19:42:48.167Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1693,9 +1693,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-10-30T15:08:17.634Z",
+    "lastChecked": "2026-10-30T19:42:43.274Z",
     "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-10-30T15:08:17.634Z"
+    "lastVerified": "2026-10-30T19:42:43.274Z"
   },
   "alibaba-zvec": {
     "name": "alibaba/zvec",
@@ -3230,9 +3230,9 @@
   "tensorchord-pgvecto.rs": {
     "name": "pgvecto.rs",
     "officialUrl": "https://github.com/tensorchord/pgvecto.rs",
-    "lastChecked": "2026-10-29T11:43:55.577Z",
+    "lastChecked": "2026-10-30T19:42:45.697Z",
     "revisionIdentifier": "2b290b34",
-    "lastVerified": "2026-10-29T11:43:55.577Z"
+    "lastVerified": "2026-10-30T19:42:45.697Z"
   },
   "sigoden-aichat": {
     "name": "aichat",
@@ -3957,11 +3957,21 @@
     "lastVerified": "2026-10-28T13:16:36.994Z"
   },
   "agent-field-agentfield": {
-    "name": "agentfield",
+    "name": "Agent-Field/agentfield",
     "officialUrl": "https://github.com/Agent-Field/agentfield",
-    "lastChecked": "2026-10-29T12:26:02.081Z",
-    "revisionIdentifier": "7d4fd1fa",
-    "lastVerified": "2026-10-29T12:26:02.081Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-30T19:42:45.432Z",
+    "lastVerified": "2026-10-30T19:42:45.432Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "16fc755f3b81d233756d21a59db147707359660ef21b2388081e3cf393d663f9",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "spacejam-sled": {
     "name": "sled",
@@ -7502,14 +7512,14 @@
     "officialUrl": "https://github.com/codewhale-hq/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T21:29:52.673Z",
-    "lastVerified": "2026-10-28T21:29:52.673Z",
+    "lastChecked": "2026-10-30T19:42:38.341Z",
+    "lastVerified": "2026-10-30T19:42:38.341Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "56f8e0f9f7d5f134fd538eb7fc3729eefe3ce401f0014998cf5d1d64e7e70f34",
+    "contentHash": "cfedc6d9f729ce7a7409caf41731783b593248ed90bc740c73dd5b7d58bc39cb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 12,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -10830,5 +10840,39 @@
     "lastChecked": "2026-10-30T19:35:46.699Z",
     "revisionIdentifier": "0463cb8c",
     "lastVerified": "2026-10-30T19:35:46.699Z"
+  },
+  "preactjs-preact": {
+    "name": "preactjs/preact",
+    "officialUrl": "https://github.com/preactjs/preact",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-30T19:42:40.467Z",
+    "lastVerified": "2026-10-30T19:42:40.467Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-preactjs-preact",
+    "contentHash": "81a3c7ce43f7dd03c41e64764871fec1018fce6d1f60a53a2d609d5d04e40696",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "keyboardkit-keyboardkit": {
+    "name": "KeyboardKit/KeyboardKit",
+    "officialUrl": "https://github.com/KeyboardKit/KeyboardKit",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-30T19:42:43.661Z",
+    "lastVerified": "2026-10-30T19:42:43.661Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-keyboardkit-keyboardkit",
+    "contentHash": "9d37fe6c689172b216a32fd2091fdaefd4f9b328489b3deeeae2cfa1164f7a37",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

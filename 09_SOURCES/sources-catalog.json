@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "7d4fd1fa",
+    "sourceVersion": "9fe15519",
     "license": "Apache-2.0",
-    "contentHash": "f17a3e9665287b5f295a5a50d3fdd3b6d690551b94e9b191107cff170458a012",
-    "lastHarvestedAt": "2026-10-27T14:36:39.135Z",
+    "contentHash": "16fc755f3b81d233756d21a59db147707359660ef21b2388081e3cf393d663f9",
+    "lastHarvestedAt": "2026-10-30T19:42:46.104Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "687a38c6",
+    "sourceVersion": "b92540d8",
     "license": "MIT",
-    "contentHash": "56f8e0f9f7d5f134fd538eb7fc3729eefe3ce401f0014998cf5d1d64e7e70f34",
-    "lastHarvestedAt": "2026-10-28T21:29:53.519Z",
+    "contentHash": "cfedc6d9f729ce7a7409caf41731783b593248ed90bc740c73dd5b7d58bc39cb",
+    "lastHarvestedAt": "2026-10-30T19:47:42.256Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {
@@ -10003,10 +10003,10 @@
     "repository": "KeyboardKit/KeyboardKit",
     "platform": "github",
     "sourceUrl": "https://github.com/KeyboardKit/KeyboardKit",
-    "sourceVersion": "b9cb190e",
+    "sourceVersion": "c799e2cb",
     "license": "NOASSERTION",
-    "contentHash": "861c2cf3b0515048eae0f06cb8711107710cabe16f2c719b22cf5fb3b747fe2f",
-    "lastHarvestedAt": "2026-10-27T10:26:43.835Z",
+    "contentHash": "9d37fe6c689172b216a32fd2091fdaefd4f9b328489b3deeeae2cfa1164f7a37",
+    "lastHarvestedAt": "2026-10-30T19:42:44.360Z",
     "learningId": "learn-github-keyboardkit-keyboardkit"
   },
   "evanw-esbuild": {
@@ -10073,10 +10073,10 @@
     "repository": "preactjs/preact",
     "platform": "github",
     "sourceUrl": "https://github.com/preactjs/preact",
-    "sourceVersion": "66b6e565",
+    "sourceVersion": "4e5c63cc",
     "license": "MIT",
-    "contentHash": "1bd0dbbe398fd103a86b4e4d47e21509b17ec1ae904bb85cf10dffff2ec66053",
-    "lastHarvestedAt": "2026-10-27T16:38:22.580Z",
+    "contentHash": "81a3c7ce43f7dd03c41e64764871fec1018fce6d1f60a53a2d609d5d04e40696",
+    "lastHarvestedAt": "2026-10-30T19:42:41.907Z",
     "learningId": "learn-github-preactjs-preact"
   },
   "alyssaxuu-later": {
