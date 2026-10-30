@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T21:34:22.165Z",
-  "total_cycles_completed": 6300,
-  "total_learnings_persisted": 6300,
-  "total_rules_promoted": 5864,
+  "last_updated": "2026-10-30T21:46:13.806Z",
+  "total_cycles_completed": 6304,
+  "total_learnings_persisted": 6304,
+  "total_rules_promoted": 5868,
   "history": [
-    {
-      "timestamp": "2026-10-30T05:54:02.455Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T06:01:56.406Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T06:10:21.275Z",
-      "repository": "JuulLabs/kable",
-      "learningId": "learn-github-juullabs-kable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T06:16:33.043Z",
-      "repository": "kucherenko/jscpd",
-      "learningId": "learn-github-kucherenko-jscpd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T06:16:38.739Z",
       "repository": "linkerd/linkerd2",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-10-30T21:34:22.165Z",
       "repository": "software-mansion/react-native-screens",
       "learningId": "learn-github-software-mansion-react-native-screens",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T21:41:17.024Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T21:41:19.990Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T21:42:14.725Z",
+      "repository": "dubzzz/fast-check",
+      "learningId": "learn-github-dubzzz-fast-check",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T21:46:13.806Z",
+      "repository": "tauri-apps/tauri",
+      "learningId": "learn-github-tauri-apps-tauri",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

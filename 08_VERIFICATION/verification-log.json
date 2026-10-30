@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-1Q0N",
-    "timestamp": "2026-10-28T15:36:31.991Z",
-    "repository": "FermionResearch/Phonon-2",
-    "learningId": "learn-huggingface-fermionresearch-phonon-2",
-    "contentHash": "1f041628c908c5bd32fe6d3fd470b4fedd8279adf067695ff6dff61d6a25585f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-A86G",
-    "timestamp": "2026-10-28T15:43:08.776Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-    "contentHash": "9a3eab5b6e4fb482d6768f054272e74939c555ef21134bc1faf31f67e2d07dad",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-ACIG",
-    "timestamp": "2026-10-28T15:43:14.392Z",
-    "repository": "openbmb/MiniCPM-OCR-1.0",
-    "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-    "contentHash": "74e0b70fe85623c2bb9d54f67644bc2969faad3f1102825226a089b087d9b705",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-ALE7",
-    "timestamp": "2026-10-28T15:43:25.903Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "59289a7f64515d0b6b5e836af1749143d89a0d3662716aa1070fe692f1cf27b2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-JRMO",
     "timestamp": "2026-10-28T15:50:33.888Z",
     "repository": "ntex-rs/ntex",
@@ -7490,6 +7430,66 @@
     "repository": "software-mansion/react-native-screens",
     "learningId": "learn-github-software-mansion-react-native-screens",
     "contentHash": "155a1050654fbdbc9d143f3643e24f37eb331359d06863b76ff24ba3999b1149",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-YHXZ",
+    "timestamp": "2026-10-30T21:41:17.015Z",
+    "repository": "pulumi/pulumi",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "bc897b870ad4ea0e3d3ef55238daadffd41ae7182667acd7b635a4a8716e7997",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-YK8D",
+    "timestamp": "2026-10-30T21:41:19.981Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "1512d836a72b4f177916acd6bc419ee9c847478063ea56b6c3a4ff6a0f38e781",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-ZQGR",
+    "timestamp": "2026-10-30T21:42:14.715Z",
+    "repository": "dubzzz/fast-check",
+    "learningId": "learn-github-dubzzz-fast-check",
+    "contentHash": "d9ec2cd2146ecdae7448532f294702d27a52946d9969b0a6627eed4e9fbd249a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-4UXW",
+    "timestamp": "2026-10-30T21:46:13.796Z",
+    "repository": "tauri-apps/tauri",
+    "learningId": "learn-github-tauri-apps-tauri",
+    "contentHash": "4501b065de175e3857aa6afd1c9d335f3101f364fe6a8fa7558e36eb54a16740",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

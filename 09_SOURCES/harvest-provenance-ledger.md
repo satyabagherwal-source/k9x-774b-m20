@@ -6332,3 +6332,7 @@ Every entry in this ledger must capture:
 | `learn-github-mochajs-mocha` | `https://github.com/mochajs/mocha` | `5b5afa7b` | Multi-dimensional audit evidence | 2026-10-30T21:32:49.758Z |
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `02c67d98` | Multi-dimensional audit evidence | 2026-10-30T21:33:51.476Z |
 | `learn-github-software-mansion-react-native-screens` | `https://github.com/software-mansion/react-native-screens` | `ec16f25b` | Multi-dimensional audit evidence | 2026-10-30T21:34:22.160Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `c94a5f2c` | Multi-dimensional audit evidence | 2026-10-30T21:41:17.019Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `d8c0731a` | Multi-dimensional audit evidence | 2026-10-30T21:41:19.985Z |
+| `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `58ad0125` | Multi-dimensional audit evidence | 2026-10-30T21:42:14.719Z |
+| `learn-github-tauri-apps-tauri` | `https://github.com/tauri-apps/tauri` | `548a3692` | Multi-dimensional audit evidence | 2026-10-30T21:46:13.800Z |

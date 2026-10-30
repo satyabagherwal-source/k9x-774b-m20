@@ -6323,3 +6323,7 @@
 | `CYCLE-20261030-NMJF` | `2026-10-30T21:32:49.755Z` | `mochajs/mocha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5887, Rule 5888, Rule 5889` | Yes (`d92fbe8d...`) |
 | `CYCLE-20261030-OY5T` | `2026-10-30T21:33:51.473Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5890, Rule 5891, Rule 5892` | Yes (`eb092257...`) |
 | `CYCLE-20261030-PLU5` | `2026-10-30T21:34:22.157Z` | `software-mansion/react-native-screens` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5893` | Yes (`155a1050...`) |
+| `CYCLE-20261030-YHXZ` | `2026-10-30T21:41:17.015Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5894` | Yes (`bc897b87...`) |
+| `CYCLE-20261030-YK8D` | `2026-10-30T21:41:19.981Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5895` | Yes (`1512d836...`) |
+| `CYCLE-20261030-ZQGR` | `2026-10-30T21:42:14.715Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5896` | Yes (`d9ec2cd2...`) |
+| `CYCLE-20261030-4UXW` | `2026-10-30T21:46:13.796Z` | `tauri-apps/tauri` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5897` | Yes (`4501b065...`) |

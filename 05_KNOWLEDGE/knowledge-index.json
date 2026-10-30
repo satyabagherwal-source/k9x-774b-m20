@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T21:34:22.095Z",
+  "last_updated": "2026-10-30T21:46:13.717Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45898,8 +45898,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "20664124",
-      "content_hash": "6261def5365527f71f48f854716dee9862be4bbbf92d0f819fcf4dc3550bf165",
+      "source_version": "c94a5f2c",
+      "content_hash": "bc897b870ad4ea0e3d3ef55238daadffd41ae7182667acd7b635a4a8716e7997",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -45967,6 +45967,11 @@
           "number": 5549,
           "title": "Report a diagnostic instead of panicking for PCL blocks with no labels (#25445)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5894,
+          "title": "Return the engine's in-memory snapshot from Backend.Import (#25448)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45974,7 +45979,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T23:09:34.702Z",
+      "verified_at": "2026-10-30T21:41:16.914Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47635,8 +47640,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "8197b045",
-      "content_hash": "a789a2bca8d1587335dfa6016cb271ea0b0edfc6c7f45490602fc2dc9896ca6a",
+      "source_version": "d8c0731a",
+      "content_hash": "1512d836a72b4f177916acd6bc419ee9c847478063ea56b6c3a4ff6a0f38e781",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -47689,6 +47694,11 @@
           "number": 5534,
           "title": "iceberg): honor commit checkpoint interval for v3 jobs (#27616)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5895,
+          "title": "frontend): reject iceberg pk-index sink with auto schema change (#27729)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47696,7 +47706,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T17:23:45.454Z",
+      "verified_at": "2026-10-30T21:41:19.884Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -53133,8 +53143,8 @@
       "slug": "tauri-apps-tauri",
       "platform": "github",
       "source_url": "https://github.com/tauri-apps/tauri",
-      "source_version": "1fc6d9c8",
-      "content_hash": "570d1c8c5df1574ce90b6527f03aae518b9ab687e55f2419fa2121d93241f58e",
+      "source_version": "548a3692",
+      "content_hash": "4501b065de175e3857aa6afd1c9d335f3101f364fe6a8fa7558e36eb54a16740",
       "dossier_path": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tauri-apps-tauri-learnings.md",
       "promoted_rules": [
@@ -53152,6 +53162,11 @@
           "number": 4470,
           "title": "bundler): keep NSIS and WiX out of System32 when bundling as SYSTEM (#16060)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5897,
+          "title": "docs(tauri-build): keep Common Control v6 dependency in app_manifest example (#1",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -53159,7 +53174,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T22:13:56.851Z",
+      "verified_at": "2026-10-30T21:46:13.697Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -73284,8 +73299,8 @@
       "slug": "dubzzz-fast-check",
       "platform": "github",
       "source_url": "https://github.com/dubzzz/fast-check",
-      "source_version": "0207dd29",
-      "content_hash": "3bc1e3826c12ea2299a45493a1540d55ac0f12d20ace051363c2c754277b4771",
+      "source_version": "58ad0125",
+      "content_hash": "d9ec2cd2146ecdae7448532f294702d27a52946d9969b0a6627eed4e9fbd249a",
       "dossier_path": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "promoted_rules": [
@@ -73304,6 +73319,11 @@
           "number": 4936,
           "title": "🐛 Fix equal-values caching for lazy and asynchronous values (#7477)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5896,
+          "title": "👷 Preserve setup-node runtime in tests and benchmarks (#7514)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -73311,7 +73331,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T18:10:10.944Z",
+      "verified_at": "2026-10-30T21:42:14.617Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -156043,6 +156063,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T21:34:22.079Z"
+    },
+    "rule-5894": {
+      "learning_id": "rule-5894",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5894,
+      "title": "Return the engine's in-memory snapshot from Backend.Import (#25448)",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "c94a5f2c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:41:16.914Z"
+    },
+    "rule-5895": {
+      "learning_id": "rule-5895",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5895,
+      "title": "frontend): reject iceberg pk-index sink with auto schema change (#27729)",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "d8c0731a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:41:19.884Z"
+    },
+    "rule-5896": {
+      "learning_id": "rule-5896",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5896,
+      "title": "👷 Preserve setup-node runtime in tests and benchmarks (#7514)",
+      "source_url": "https://github.com/dubzzz/fast-check",
+      "source_version": "58ad0125",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:42:14.617Z"
+    },
+    "rule-5897": {
+      "learning_id": "rule-5897",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5897,
+      "title": "docs(tauri-build): keep Common Control v6 dependency in app_manifest example (#1",
+      "source_url": "https://github.com/tauri-apps/tauri",
+      "source_version": "548a3692",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:46:13.697Z"
     }
   },
   "aliases": {

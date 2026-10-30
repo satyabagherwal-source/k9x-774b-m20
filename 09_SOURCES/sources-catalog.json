@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "8197b045",
+    "sourceVersion": "d8c0731a",
     "license": "Apache-2.0",
-    "contentHash": "a789a2bca8d1587335dfa6016cb271ea0b0edfc6c7f45490602fc2dc9896ca6a",
-    "lastHarvestedAt": "2026-10-29T17:23:45.549Z",
+    "contentHash": "1512d836a72b4f177916acd6bc419ee9c847478063ea56b6c3a4ff6a0f38e781",
+    "lastHarvestedAt": "2026-10-30T21:41:19.985Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "20664124",
+    "sourceVersion": "c94a5f2c",
     "license": "Apache-2.0",
-    "contentHash": "6261def5365527f71f48f854716dee9862be4bbbf92d0f819fcf4dc3550bf165",
-    "lastHarvestedAt": "2026-10-29T23:09:34.796Z",
+    "contentHash": "bc897b870ad4ea0e3d3ef55238daadffd41ae7182667acd7b635a4a8716e7997",
+    "lastHarvestedAt": "2026-10-30T21:41:17.019Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -8483,10 +8483,10 @@
     "repository": "tauri-apps/tauri",
     "platform": "github",
     "sourceUrl": "https://github.com/tauri-apps/tauri",
-    "sourceVersion": "1fc6d9c8",
+    "sourceVersion": "548a3692",
     "license": "Apache-2.0",
-    "contentHash": "570d1c8c5df1574ce90b6527f03aae518b9ab687e55f2419fa2121d93241f58e",
-    "lastHarvestedAt": "2026-10-25T22:13:56.925Z",
+    "contentHash": "4501b065de175e3857aa6afd1c9d335f3101f364fe6a8fa7558e36eb54a16740",
+    "lastHarvestedAt": "2026-10-30T21:46:13.800Z",
     "learningId": "learn-github-tauri-apps-tauri"
   },
   "oliviertassinari-react-swipeable-views": {
@@ -10263,10 +10263,10 @@
     "repository": "dubzzz/fast-check",
     "platform": "github",
     "sourceUrl": "https://github.com/dubzzz/fast-check",
-    "sourceVersion": "0207dd29",
+    "sourceVersion": "58ad0125",
     "license": "MIT",
-    "contentHash": "3bc1e3826c12ea2299a45493a1540d55ac0f12d20ace051363c2c754277b4771",
-    "lastHarvestedAt": "2026-10-27T18:10:11.015Z",
+    "contentHash": "d9ec2cd2146ecdae7448532f294702d27a52946d9969b0a6627eed4e9fbd249a",
+    "lastHarvestedAt": "2026-10-30T21:42:14.719Z",
     "learningId": "learn-github-dubzzz-fast-check"
   },
   "react-react-native": {

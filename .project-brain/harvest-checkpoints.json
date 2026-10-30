@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T21:34:22.168Z",
+  "last_updated": "2026-10-30T21:46:13.810Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "a789a2bca8d1587335dfa6016cb271ea0b0edfc6c7f45490602fc2dc9896ca6a",
-      "verified_at": "2026-10-29T17:23:45.558Z",
+      "content_hash": "1512d836a72b4f177916acd6bc419ee9c847478063ea56b6c3a4ff6a0f38e781",
+      "verified_at": "2026-10-30T21:41:19.994Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T17:23:45.558Z"
+      "last_updated": "2026-10-30T21:41:19.994Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "6261def5365527f71f48f854716dee9862be4bbbf92d0f819fcf4dc3550bf165",
-      "verified_at": "2026-10-29T23:09:34.807Z",
+      "content_hash": "bc897b870ad4ea0e3d3ef55238daadffd41ae7182667acd7b635a4a8716e7997",
+      "verified_at": "2026-10-30T21:41:17.028Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T23:09:34.807Z"
+      "last_updated": "2026-10-30T21:41:17.028Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -12771,14 +12771,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tauri-apps-tauri",
-      "content_hash": "570d1c8c5df1574ce90b6527f03aae518b9ab687e55f2419fa2121d93241f58e",
-      "verified_at": "2026-10-25T22:13:56.933Z",
+      "content_hash": "4501b065de175e3857aa6afd1c9d335f3101f364fe6a8fa7558e36eb54a16740",
+      "verified_at": "2026-10-30T21:46:13.809Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T22:13:56.933Z"
+      "last_updated": "2026-10-30T21:46:13.809Z"
     },
     "oliviertassinari/react-swipeable-views": {
       "repository": "oliviertassinari/react-swipeable-views",
@@ -15411,14 +15411,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dubzzz-fast-check",
-      "content_hash": "3bc1e3826c12ea2299a45493a1540d55ac0f12d20ace051363c2c754277b4771",
-      "verified_at": "2026-10-27T18:10:11.024Z",
+      "content_hash": "d9ec2cd2146ecdae7448532f294702d27a52946d9969b0a6627eed4e9fbd249a",
+      "verified_at": "2026-10-30T21:42:14.728Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T18:10:11.024Z"
+      "last_updated": "2026-10-30T21:42:14.728Z"
     },
     "react/react-native": {
       "repository": "react/react-native",

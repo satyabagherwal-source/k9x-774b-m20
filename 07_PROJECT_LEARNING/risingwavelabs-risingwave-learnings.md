@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `8197b045`  
+> **Source Version**: `d8c0731a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T17:23:44.930Z  
+> **Timestamp**: 2026-10-30T21:41:19.316Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T17:23:44.527Z  
+> **Harvest Timestamp**: 2026-10-30T21:41:19.020Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9393 stars
+- **Stars / Engagement**: 9395 stars
 
 ---
 
@@ -1077,811 +1077,322 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d6da6fc` (2026-10-29)
-**Commit Message**: fix(iceberg): honor commit checkpoint interval for v3 jobs (#27616)
+### Incident Patch 1: `a9122f14` (2026-10-30)
+**Commit Message**: fix(frontend): reject iceberg pk-index sink with auto schema change (#27729)
 
-**File**: `e2e_test/iceberg/README.md` (modified, +7/-1)
+**File**: `e2e_test/iceberg/test_case/pure_slt/iceberg_v2_with_pk_index.slt` (modified, +12/-0)
 ```diff
-@@ -78,12 +78,18 @@ scheduling and maintenance options, including activation without new writes.
- It also reattaches a table with existing snapshots and verifies that reconciliation
- finishes without new ingestion after the independent job becomes ready.
- Alter the table, not its internal sink. Online changes to `commit_checkpoint_interval`
--and `compaction.write_parquet_*` are currently rejected for PK-index sinks because
-+update the Meta-side checkpoint pacing while preserving pending epochs.
-+`compaction.write_parquet_*` changes are still rejected for PK-index sinks because
- their running writers do not reload these options.
- The ordinary-sink knobs `compaction.max_snapshots_num` and
- `compaction.delete_files_count_threshold` are also rejected by this ALTER path;
- PK-index compaction uses `compaction.delete_ratio_percent` for delete selection.
+@@ -133,6 +133,18 @@ with(
+ statement ok
+ insert into t_v2_storage values(1, 'alice'), (2, 'bob');
  
-+PK-index jobs now honor their configured commit interval, including after recovery.
-+Existing sinks with the frontend default of 60 therefore change from committing every
-+checkpoint to every 60 checkpoints after upgrade. Set `commit_checkpoint_interval = 1`
-+to retain the previous commit frequency.
++statement error Iceberg sink with `enable_pk_index='true'` does not support `auto\.schema\.change='true'`
++create sink pk_index_auto_schema_change from t_v2_storage with (
++    connector = 'iceberg',
++    connection = storage_catalog_conn,
++    database.name = 'public',
++    table.name = 'pk_index_auto_schema_change',
++    type = 'upsert',
++    create_table_if_not_exists = 'true',
++    enable_pk_index = 'true',
++    auto.schema.change = 'true'
++);
 +
- These tests only need MinIO and the connector libs. Start with fresh RiseDev data,
- as the profile uses an in-memory meta store:
- 
-```
-
-**File**: `e2e_test/iceberg/pk_index_compaction_round.slt` (modified, +6/-2)
-```diff
-@@ -50,10 +50,14 @@ CREATE TABLE pk_compaction_round(id INT, part INT, v INT, PRIMARY KEY (part, id)
- statement error use ALTER TABLE
- ALTER SINK __iceberg_sink_pk_compaction_round CONNECTOR WITH (enable_compaction = 'true');
- 
--# Options that require rebuilding the running writer must fail before catalog changes.
--statement error not supported for Iceberg sinks with PK index
-+# Commit intervals are updated in Meta without rebuilding the writer.
-+statement ok
- ALTER TABLE pk_compaction_round CONNECTOR WITH (commit_checkpoint_interval = '2');
- 
-+statement ok
-+ALTER TABLE pk_compaction_round CONNECTOR WITH (commit_checkpoint_interval = '1');
-+
-+# Options that require rebuilding the running writer must fail before catalog changes.
- statement error not supported for Iceberg sinks with PK index
- ALTER TABLE pk_compaction_round CONNECTOR WITH (compaction.write_parquet_compression = 'snappy');
- 
-```
-
-**File**: `e2e_test/iceberg/test_case/pure_slt/iceberg_v2_with_pk_index.slt` (modified, +18/-7)
-```diff
-@@ -34,6 +34,15 @@ insert into t_v2 values(1, 'alice', 100), (2, 'bob', 200), (3, 'charlie', 300);
  statement ok
  flush;
  
-+# Wait for the initial Iceberg commit so later changes produce position deletes.
-+query I retry 6 backoff 1s
-+select sum(record_count) from rw_iceberg_files
-+where schema_name = 'public'
-+  and source_name = '__iceberg_source_t_v2'
-+  and content = 'Data';
-+----
-+3
-+
- statement ok
- update t_v2 set v1 = 150 where id = 1;
- 
-@@ -63,7 +72,7 @@ where schema_name = 'public'
- ----
- t
- 
--query ??? rowsort retry 3 backoff 1s
-+query ??? rowsort retry 6 backoff 1s
- select * from t_v2;
- ----
- 1 alice 150
-@@ -76,6 +85,13 @@ delete from t_v2 where id = 1;
- statement ok
- FLUSH;
- 
-+# FLUSH does not wait for the three-checkpoint Iceberg commit interval.
-+# Wait for the delete to be visible before checking the absence of equality deletes.
-+query ??? rowsort retry 6 backoff 1s
-+select * from t_v2;
-+----
-+3 charlie 300
-+
- query ?? retry 6 backoff 1s
- select count(*) = 0 from rw_iceberg_files
- where schema_name = 'public'
-@@ -84,11 +100,6 @@ where schema_name = 'public'
- ----
- t
- 
--query ??? rowsort retry 3 backoff 1s
--select * from t_v2;
------
--3 charlie 300
--
- statement ok
- DROP TABLE t_v2;
- 
-@@ -125,7 +136,7 @@ insert into t_v2_storage values(1, 'alice'), (2, 'bob');
- statement ok
- flush;
- 
--query ??? rowsort retry 3 backoff 1s
-+query ??? rowsort retry 6 backoff 1s
- select * from t_v2_storage;
- ----
- 1 alice
 ```
 
-**File**: `e2e_test/iceberg/test_case/pure_slt/iceberg_v3/derive_pk.slt` (modified, +6/-0)
+**File**: `src/frontend/src/optimizer/mod.rs` (modified, +9/-0)
 ```diff
-@@ -30,6 +30,7 @@ WITH (
-     create_table_if_not_exists = 'true',
-     write_mode = 'merge-on-read',
-     format_version = '3',
-+    commit_checkpoint_interval = '1000000',
-     enable_pk_index = 'true'
- );
- 
-@@ -62,6 +63,10 @@ CREATE SOURCE iceberg_derive_pk_source WITH (
-     s3.secret.key = 'hummockadmin'
- );
- 
-+# Lowering the sink's interval must release pending writes without recovery.
-+statement ok
-+ALTER SINK s_v3_derive_pk CONNECTOR WITH (commit_checkpoint_interval = '1');
+@@ -1266,6 +1266,15 @@ impl LogicalPlanRoot {
+             && properties
+                 .get(ENABLE_PK_INDEX)
+                 .is_some_and(|value| value.eq_ignore_ascii_case("true"));
 +
- # Both orders for user 1 must be preserved. The iceberg pk is derived from the
- # upstream stream key (user_id, order_id), so rows sharing user_id are not overwritten.
- query ????? rowsort retry 11 backoff 1s
-@@ -151,6 +156,7 @@ WITH (
-     create_table_if_not_exists = 'true',
-     write_mode = 'merge-on-read',
-     format_version = '3',
-+    commit_checkpoint_interval = '1',
-     enable_pk_index = 'true'
- );
- 
-```
-
-**File**: `e2e_test/iceberg/test_case/pure_slt/iceberg_v3/sink_no_partition.slt` (modified, +16/-9)
-```diff
-@@ -25,6 +25,7 @@ WITH (
-     create_table_if_not_exists = 'true',
-     write_mode = 'merge-on-read',
-     format_version = '3',
-+    commit_checkpoint_interval = '1',
-     enable_pk_index = 'true'
- );
- 
-@@ -41,15 +42,6 @@ INSERT INTO t_v3_no_partition_pk_index VALUES
- statement ok
- FLUSH;
- 
--statement ok
--DELETE FROM t_v3_no_partition_pk_index WHERE v1 IN (2, 8);
--
--statement ok
--INSERT INTO t_v3_no_partition_pk_index VALUES (1, 1, 50, '1-50', '2022-03-11'), (1, 13, 130, '13-130', '2022-03-13');
--
--statement ok
--FLUSH;
--
- statement ok
- CREATE SOURCE iceberg_no_partition_v3_pk_index_source WITH (
-     connector = 'iceberg',
-@@ -64,6 +56,21 @@ CREATE SOURCE iceberg_no_partition_v3_pk_index_source WITH (
-     s3.secret.key = 'hummockadmin'
- );
- 
-+# Commit the initial rows before deleting so the test exercises deletion vectors.
-+query I retry 11 backoff 1s
-+select count(*) from iceberg_no_partition_v3_pk_index_source;
-+----
-+7
++        if is_iceberg_v3 && auto_refresh_schema_from_table.is_some() {
++            return Err(ErrorCode::InvalidInputSyntax(
++                "Iceberg sink with `enable_pk_index='true'` does not support `auto.schema.change='true'`."
++                    .to_owned(),
++            )
++            .into());
++        }
 +
-+statement ok
-+DELETE FROM t_v3_no_partition_pk_index WHERE v1 IN (2, 8);
-+
-+statement ok
-+INSERT INTO t_v3_no_partition_pk_index VALUES (1, 1, 50, '1-50', '2022-03-11'), (1, 13, 130, '13-130', '2022-03-13');
-+
-+statement ok
-+FLUSH;
-+
- query ????? rowsort retry 11 backoff 1s
- select * from iceberg_no_partition_v3_pk_index_source;
- ----
-```
-
-**File**: `e2e_test/iceberg/test_case/pure_slt/iceberg_v3/sink_range_partition.slt` (modified, +16/-9)
-```diff
-@@ -26,6 +26,7 @@ WITH (
-     partition_by = 'day(v4)',
-     write_mode = 'merge-on-read',
-     format_version = '3',
-+    commit_checkpoint_interval = '1',
-     enable_pk_index = 'true'
- );
- 
-@@ -42,15 +43,6 @@ INSERT INTO t_v3_range_partition_pk_index VALUES
- statement ok
- FLUSH;
- 
--statement ok
--DELETE FROM t_v3_range_partition_pk_index WHERE v1 IN (2, 8);
--
--statement ok
--INSERT INTO t_v3_range_partition_pk_index VALUES (1, 1, 50, '1-50', '2022-03-11'), (1, 13, 130, '13-130', '2022-03-23');
--
--statement ok
--FLUSH;
--
- statement ok
- CREATE SOURCE iceberg_range_partition_v3_pk_index_source WITH (
-     connector = 'iceberg',
-@@ -65,6 +57,21 @@ CREATE SOURCE iceberg_range_partition_v3_pk_index_source WITH (
-     s3.secret.key = 'hummockadmin'
- );
- 
-+# Commit the initial rows before deleting so the test exercises deletion vectors.
-+query I retry 11 backoff 1s
-+select count(*) from iceberg_range_partition_v3_pk_index_source;
-+----
-+7
-+
-+statement ok
-+DELETE FROM t_v3_range_partition_pk_index WHERE v1 IN (2, 8);
-+
-+statement ok
-+INSERT INTO t_v3_range_partition_pk_index VALUES (1, 1, 50, '1-50', '2022-03-11'), (1, 13, 130, '13-130', '2022-03-23');
-+
-+statement ok
-+FLUSH;
-+
- query ????? rowsort retry 11 backoff 1s
- select * from iceberg_range_partition_v3_pk_index_source;
- ----
-```
-
-**File**: `e2e_test/iceberg/test_case/pure_slt/iceberg_v3/sink_sparse_partition.slt` (modified, +16/-9)
-```diff
-@@ -26,6 +26,7 @@ WITH (
-     partition_by = 'v1,v2,truncate(2,v3)',
-     write_mode = 'merge-on-read',
-     format_version = '3',
-+    commit_checkpoint_interval = '1',
-     enable_pk_index = 'true'
- );
- 
-@@ -42,15 +43,6 @@ INSERT INTO t_v3_partition_pk_index VALUES
- statement ok
- FLUSH;
- 
--statement ok
--DELETE FROM t_v3_partition_pk_index WHERE v1 IN (2, 8);
--
--statement ok
--INSERT INTO t_v3_partition_pk_index VALUES (1, 1, 50, '1-50', '2022-03-11'), (1, 13, 130, '13-130', '2022-03-13');
--
--statement ok
--FLUSH;
--
- statement ok
- CREATE SOURCE iceberg_partition_v3_pk_index_source WITH (
-     connector = 'iceberg',
-@@ -65,6 +57,21 @@ CREATE SOURCE iceberg_partition_v3_pk_index_source WITH (
-     s3.secret.key = 'hummockadmin'
- );
- 
-+# Commit the initial rows before deleting so the test exercises deletion vectors.
-+query I retry 11 backoff 1s
-+select count(*) from iceberg_partition_v3_pk_index_source;
-+----
-+7
-+
-+statement ok
-+DELETE FROM t_v3_partition_pk_index WHERE v1 IN (2, 8);
-+
-+statement ok
-+INSERT INTO t_v3_partition_pk_index VALUES (1, 1, 50, '1-50', '2022-03-11'), (1, 13, 130, '13-130', '2022-03-13');
-+
-+statement ok
-+FLUSH;
-+
- query ????? rowsort retry 11 backoff 1s
- select * from iceberg_partition_v3_pk_index_source;
- ----
-```
-
-**File**: `e2e_test/iceberg/test_case/pure_slt/iceberg_v3/with_pk_index.slt` (modified, +24/-9)
-```diff
-@@ -34,6 +34,15 @@ insert into t_v3 values(1, 'alice', 100), (2, 'bob', 200), (3, 'charlie', 300);
- statement ok
- flush;
- 
-+# Wait for the initial Iceberg commit so later changes produce deletion vectors.
-+query I retry 6 backoff 1s
-+select sum(record_count) from rw_iceberg_files
-+where schema_name = 'public'
-+  and source_name = '__iceberg_source_t_v3'
-+  and content = 'Data';
-+----
-+3
-+
- statement ok
- update t_v3 set v1 = 150 where id = 1;
- 
-@@ -59,19 +68,26 @@ where schema_name = 'public'
- ----
- t
- 
--query ??? rowsort retry 3 backoff 1s
-+query ??? rowsort retry 6 backoff 1s
- select * from t_v3;
- ----
- 1 alice 150
- 3 charlie 300
- 
--# generate eq deletes to test the reader of mixed delete files in v3
-+# Another delete across a new checkpoint should still only use deletion vectors.
- statement ok
- delete from t_v3 where id = 1;
- 
- statement ok
- FLUSH;
- 
-+# FLUSH does not wait for the three-checkpoint Iceberg commit interval.
-+# Wait for the delete to be visible before checking the absence of equality deletes.
-+query ??? rowsort retry 6 backoff 1s
-+select * from t_v3;
-+----
-+3 charlie 300
-+
- query ?? retry 6 backoff 1s
- select count(*) > 0 from rw_iceberg_files
- where schema_name = 'public'
-@@ -80,11 +96,6 @@ where schema_name = 'public'
- ----
- f
- 
--query ??? rowsort retry 3 backoff 1s
--select * from t_v3;
------
--3 charlie 300
--
- # ---- Compaction havn't been supported for v3 ----
- # # This compaction won't clean up puffin files, but only generate new data files.
- # statement ok
-@@ -140,7 +151,7 @@ set iceberg_engine_connection = 'public.storage_catalog_conn';
- statement ok
- create table t_v3_storage(id int primary key, name varchar)
- with(
--    commit_checkpoint_interval = 2,
-+    commit_checkpoint_interval = 1000000,
-     format_version = 3,
-     enable_pk_index = 'true'
- ) engine = iceberg;
-@@ -151,7 +162,11 @@ insert into t_v3_storage values(1, 'alice'), (2, 'bob');
- statement ok
- flush;
- 
--query ??? rowsort retry 3 backoff 1s
-+# Lowering the interval must release pending writes without recovery.
-+statement ok
-+ALTER TABLE t_v3_storage CONNECTOR WITH (commit_checkpoint_interval = '1');
-+
-+query ??? rowsort retry 6 backoff 1s
- select * from t_v3_storage;
- ----
- 1 alice
+         let backfill_type = if is_iceberg_v3 {
+             if without_snapshot || since_timestamp {
+                 return Err(ErrorCode::InvalidInputSyntax(
 ```
 
 ---
 
-### Incident Patch 2: `3cb1a41a` (2026-10-28)
-**Commit Message**: fix(connector): parse kinesis reader retry intervals from strings (#27686)
+### Incident Patch 2: `7761fd84` (2026-10-30)
+**Commit Message**: fix(meta): reject pending inputs in manual L0 compaction (#27738)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: Xiaochong(Eddy) Wei <[REDACTED_EMAIL]>
-
-**File**: `src/connector/src/source/kinesis/mod.rs` (modified, +8/-0)
+**File**: `src/meta/src/hummock/compaction/picker/manual_compaction_picker.rs` (modified, +8/-0)
 ```diff
-@@ -69,12 +69,14 @@ pub struct KinesisReaderConfig {
-         rename = "kinesis.reader.eof_retry_interval_ms",
-         default = "kinesis_reader_default_eof_retry_interval_ms"
-     )]
-+    #[serde_as(as = "DisplayFromStr")]
-     pub eof_retry_interval_ms: u64,
- 
-     #[serde(
-         rename = "kinesis.reader.error_retry_interval_ms",
-         default = "kinesis_reader_default_error_retry_interval_ms"
-     )]
-+    #[serde_as(as = "DisplayFromStr")]
-     pub error_retry_interval_ms: u64,
+@@ -82,12 +82,16 @@ impl ManualCompactionPicker {
+             }
+         };
+         // Construct input.
++        // The interval may include sublevels that did not match the option filter.
+         for level in l0
+             .sub_levels
+             .iter()
+             .skip(start_idx as usize)
+             .take((end_idx - start_idx + 1) as usize)
+         {
++            if level_handlers[0].is_level_pending_compact(level) {
++                return None;
++            }
+             input_levels.push(InputLevel {
+                 level_idx: 0,
+                 level_type: level.level_type,
+@@ -136,6 +140,10 @@ impl ManualCompactionPicker {
+         }
+         // Construct input.
+         for idx in 0..=max_sub_level_idx {
++            // The prefix may include sublevels that did not match the option filter.
++            if level_handlers[0].is_level_pending_compact(&l0.sub_levels[idx]) {
++                return None;
++            }
+             for table in &l0.sub_levels[idx].table_infos {
+                 info.update(&table.key_range);
+             }
+```
+
+**File**: `src/meta/src/hummock/manager/tests.rs` (modified, +140/-0)
+```diff
+@@ -1307,6 +1307,146 @@ async fn test_invalid_sst_id() {
+         .unwrap();
  }
  
-@@ -152,6 +154,8 @@ mod test {
-         };
- 
-         assert_eq!(kinesis_props.common.sdk_connect_timeout_ms, 10000);
-+        assert_eq!(kinesis_props.reader_config.eof_retry_interval_ms, 1000);
-+        assert_eq!(kinesis_props.reader_config.error_retry_interval_ms, 200);
- 
-         let with_options = btreemap! {
-             "connector".to_owned() => "kinesis".to_owned(),
-@@ -162,6 +166,8 @@ mod test {
-             "aws.credentials.access_key_id".to_owned() => "access_key".to_owned(),
-             "aws.credentials.secret_access_key".to_owned() => "secret_key".to_owned(),
-             "kinesis.sdk.connect_timeout_ms".to_owned() => "20000".to_owned(),
-+            "kinesis.reader.eof_retry_interval_ms".to_owned() => "5000".to_owned(),
-+            "kinesis.reader.error_retry_interval_ms".to_owned() => "1000".to_owned(),
-         };
-         let connector_props = ConnectorProperties::extract(
-             WithOptionsSecResolved::without_secrets(with_options),
-@@ -173,5 +179,7 @@ mod test {
-         };
- 
-         assert_eq!(kinesis_props.common.sdk_connect_timeout_ms, 20000);
-+        assert_eq!(kinesis_props.reader_config.eof_retry_interval_ms, 5000);
-+        assert_eq!(kinesis_props.reader_config.error_retry_interval_ms, 1000);
-     }
- }
++#[tokio::test]
++async fn test_manual_l0_compaction_rejects_pending_middle_sublevel() {
++    let (_, hummock_manager, _, worker_id) = setup_compute_env(80).await;
++    let hummock_meta_client: Arc<dyn HummockMetaClient> = Arc::new(MockHummockMetaClient::new(
++        hummock_manager.clone(),
++        worker_id as _,
++    ));
++    let compaction_group_id = StaticCompactionGroupId::StateDefault;
++    register_table_ids_to_compaction_group(&hummock_manager, &[1, 2, 3], compaction_group_id).await;
++    let sst_ids = get_sst_ids(&hummock_manager, 3).await;
++    for (index, &sst_id) in sst_ids.iter().enumerate() {
++        let table_id = TableId::new(index as u32 + 1);
++        let epoch = test_epoch(index as u64 + 1);
++        let sst = SstableInfoInner {
++            object_id: sst_id.into(),
++            sst_id: sst_id.into(),
++            key_range: KeyRange::new(
++                FullKey::new(table_id, gen_key_from_str(VirtualNode::ZERO, "a"), epoch)
++                    .encode()
++                    .into(),
++                FullKey::new(table_id, gen_key_from_str(VirtualNode::ZERO, "z"), epoch)
++                    .encode()
++                    .into(),
++            ),
++            table_ids: vec![table_id],
++            file_size: 128,
++            sst_size: 128,
++            uncompressed_file_size: 128,
++            total_key_count: 1,
++            min_epoch: epoch,
++            max_epoch: epoch,
++            ..Default::default()
++        }
++        .into();
++        hummock_meta_client
++            .commit_epoch(
++                epoch,
++                SyncResult {
++                    uncommitted_ssts: to_local_sstable_info(&[sst]),
++                    ..Default::default()
++                },
++            )
++            .await
++            .unwrap();
++    }
++
++    let version = hummock_manager.get_current_version().await;
++    let sub_levels = &version
++        .get_compaction_group_levels(compaction_group_id)
++        .l0
++        .sub_levels;
++    assert_eq!(sub_levels.len(), 3);
++    let middle_task = hummock_manager
++        .manual_get_compact_task(
++            compaction_group_id,
++            ManualCompactionOption {
++                level: 0,
++                sst_ids: vec![sst_ids[1].into()],
++                exclusive: false,
++                ..Default::default()
++            },
++        )
++        .await
++        .unwrap()
++        .unwrap();
++    assert_eq!(middle_task.target_sub_level_id, sub_levels[1].sub_level_id);
++
++    // Both requests expand their input to include the unhinted, pending middle sublevel.
++    let options = [
++        ManualCompactionOption {
++            level: 0,
++            sst_ids: vec![sst_ids[0].into(), sst_ids[2].into()],
++            exclusive: false,
++            ..Default::default()
++        },
++        ManualCompactionOption {
++            level: 0,
++            internal_table_id: HashSet::from([3.into()]),
++            exclusive: false,
++            ..Default::default()
++        },
++    ];
++    for option in &options {
++        let task = hummock_manager
++            .manual_get_compact_task(compaction_group_id, option.clone())
++            .await
++            .unwrap();
++        assert!(
++            task.is_none(),
++            "selected the pending middle sublevel: {task:?}"
++        );
++    }
++    {
++        let compaction = hummock_manager.compaction.read().await;
++        assert_eq!(compaction.compact_task_assignment.len(), 1);
++        let pending = compaction.compaction_statuses[&compaction_group_id].level_handlers[0]
++            .compacting_files();
++        assert_eq!(pending.len(), 1);
++        assert_eq!(
++            pending[&HummockSstableId::from(sst_ids[1])],
++            middle_task.task_id
++        );
++    }
++
++    assert!(
++        hummock_manager
++            .cancel_compact_task(middle_task.task_id, TaskStatus::ManualCanceled)
++            .await
++            .unwrap()
++    );
++    for option in options {
++        let to_l0 = !option.sst_ids.is_empty();
++        let task = hummock_manager
++            .manual_get_compact_task(compaction_group_id, option)
++            .await
++            .unwrap()
++            .unwrap();
++        assert_eq!(task.target_level == 0, to_l0);
++        // Once the reservation is released, keep the complete consecutive input interval.
++        assert_eq!(
++            task.read_input_ssts().map(|sst| sst.sst_id).collect_vec(),
++            sst_ids
++                .iter()
++                .rev()
++                .copied()
++                .map(HummockSstableId::from)
++                .collect_vec()
++        );
++        if task.target_level == 0 {
++            assert_eq!(task.target_sub_level_id, sub_levels[0].sub_level_id);
++        }
++        assert!(
++            hummock_manager
++                .cancel_compact_task(task.task_id, TaskStatus::ManualCanceled)
++                .await
++                .unwrap()
++        );
++  
 ```
 
 ---
 
-### Incident Patch 3: `0ff82f14` (2026-10-28)
-**Commit Message**: fix(cdc): keep table names unsanitized in Debezium topic names (#27671)
+### Incident Patch 3: `1286f38a` (2026-10-30)
+**Commit Message**: fix(optimizer): infer exactly one row for simple aggregation (#27717)
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `e2e_test/source_inline/cdc/mysql/mysql_sanitized_table_name.slt` (added, +94/-0)
+**File**: `e2e_test/batch/aggregate/empty_input.slt.part` (added, +28/-0)
 ```diff
-@@ -0,0 +1,94 @@
-+control substitution on
+@@ -0,0 +1,28 @@
++# A simple aggregation yields exactly one row even when its input is provably empty,
++# including when the outer query prunes the aggregate result. See #27666.
 +
-+statement ok
-+drop source if exists s_mysql_sanitized_name cascade;
-+
-+system ok
-+mysql --default-character-set=utf8mb4 <<'EOF'
-+DROP USER IF EXISTS 'sanitized_name_cdc'@'%';
-+DROP DATABASE IF EXISTS mysql_sanitized_name;
-+CREATE DATABASE mysql_sanitized_name;
-+CREATE USER 'sanitized_name_cdc'@'%' IDENTIFIED BY 'sanitized_name_cdc_pwd';
-+GRANT SELECT, RELOAD, SHOW DATABASES, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'sanitized_name_cdc'@'%';
-+USE mysql_sanitized_name;
-+CREATE TABLE `t_1` (id INT PRIMARY KEY, v VARCHAR(20));
-+CREATE TABLE `t$1` (id INT PRIMARY KEY, v VARCHAR(20));
-+CREATE TABLE `t#1` (id INT PRIMARY KEY, v VARCHAR(20));
-+CREATE TABLE `t中1` (id INT PRIMARY KEY, v VARCHAR(20));
-+INSERT INTO `t_1` VALUES (10, 'snapshot');
-+INSERT INTO `t$1` VALUES (20, 'snapshot');
-+INSERT INTO `t#1` VALUES (30, 'snapshot');
-+INSERT INTO `t中1` VALUES (40, 'snapshot');
-+EOF
-+
-+statement ok
-+create source s_mysql_sanitized_name with (
-+  ${RISEDEV_MYSQL_WITH_OPTIONS_COMMON},
-+  username = 'sanitized_name_cdc',
-+  password = 'sanitized_name_cdc_pwd',
-+  database.name = 'mysql_sanitized_name'
-+);
-+
-+control substitution off
-+
-+statement ok
-+create table rw_underscore (id int primary key, v varchar)
-+from s_mysql_sanitized_name table 'mysql_sanitized_name.t_1';
-+
-+statement ok
-+create table rw_dollar (id int primary key, v varchar)
-+from s_mysql_sanitized_name table 'mysql_sanitized_name.t$1';
-+
-+statement ok
-+create table rw_hash (id int primary key, v varchar)
-+from s_mysql_sanitized_name table 'mysql_sanitized_name.t#1';
-+
-+statement ok
-+create table rw_non_ascii (id int primary key, v varchar)
-+from s_mysql_sanitized_name table 'mysql_sanitized_name.t中1';
-+
-+query TIT retry 10 backoff 1s
-+select 'underscore', * from rw_underscore
-+union all select 'dollar', * from rw_dollar
-+union all select 'hash', * from rw_hash
-+union all select 'non_ascii', * from rw_non_ascii
-+order by 2;
++query I
++SELECT NULL::INT AS col_0 FROM (SELECT SUM(DISTINCT INT '822') AS s WHERE false) AS q;
 +----
-+underscore 10 snapshot
-+dollar 20 snapshot
-+hash 30 snapshot
-+non_ascii 40 snapshot
++NULL
 +
-+system ok
-+mysql --default-character-set=utf8mb4 <<'EOF'
-+USE mysql_sanitized_name;
-+INSERT INTO `t$1` VALUES (21, 'stream');
-+INSERT INTO `t#1` VALUES (31, 'stream');
-+INSERT INTO `t中1` VALUES (41, 'stream');
-+INSERT INTO `t_1` VALUES (11, 'stream');
-+EOF
-+
-+query TIT retry 10 backoff 1s
-+select 'underscore', * from rw_underscore
-+union all select 'dollar', * from rw_dollar
-+union all select 'hash', * from rw_hash
-+union all select 'non_ascii', * from rw_non_ascii
-+order by 2;
++query I
++SELECT 1 FROM (SELECT SUM(INT '822') AS s WHERE false) AS q;
 +----
-+underscore 10 snapshot
-+underscore 11 stream
-+dollar 20 snapshot
-+dollar 21 stream
-+hash 30 snapshot
-+hash 31 stream
-+non_ascii 40 snapshot
-+non_ascii 41 stream
++1
 +
 +statement ok
-+drop source s_mysql_sanitized_name cascade;
++CREATE TABLE empty_input_t (v INT);
 +
-+system ok
-+mysql -e "
-+    DROP DATABASE IF EXISTS mysql_sanitized_name;
-+    DROP USER IF EXISTS 'sanitized_name_cdc'@'%';
-+"
++query I
++SELECT 1 FROM (SELECT SUM(v) AS s FROM empty_input_t WHERE false) AS q;
++----
++1
++
++query I
++SELECT 1 FROM (SELECT COUNT(*) AS c FROM empty_input_t) AS q;
++----
++1
++
++statement ok
++DROP TABLE empty_input_t;
 ```
 
-**File**: `e2e_test/source_inline/cdc/postgres/postgres_sanitized_table_name.slt` (added, +107/-0)
+**File**: `src/frontend/planner_test/tests/testdata/output/dynamic_filter.yaml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,107 @@
-+statement ok
-+drop source if exists pg_sanitized_name_source cascade;
-+
-+system ok
-+PGDATABASE=${PGDATABASE:-postgres} psql -q <<'EOF'
-+SELECT pg_terminate_backend(active_pid) FROM pg_replication_slots
-+WHERE slot_name = 'sanitized_name_slot' AND active_pid IS NOT NULL;
-+SELECT pg_sleep(1);
-+SELECT pg_drop_replication_slot(slot_name) FROM pg_replication_slots WHERE slot_name = 'sanitized_name_slot';
-+DROP PUBLICATION IF EXISTS sanitized_name_pub;
-+DROP SCHEMA IF EXISTS sanitized_name CASCADE;
-+CREATE SCHEMA sanitized_name;
-+CREATE TABLE sanitized_name."t_1" (id INT PRIMARY KEY, v VARCHAR);
-+CREATE TABLE sanitized_name."t$1" (id INT PRIMARY KEY, v VARCHAR);
-+CREATE TABLE sanitized_name."t#1" (id INT PRIMARY KEY, v VARCHAR);
-+CREATE TABLE sanitized_name."t中1" (id INT PRIMARY KEY, v VARCHAR);
-+INSERT INTO sanitized_name."t_1" VALUES (10, 'snapshot');
-+INSERT INTO sanitized_name."t$1" VALUES (20, 'snapshot');
-+INSERT INTO sanitized_name."t#1" VALUES (30, 'snapshot');
-+INSERT INTO sanitized_name."t中1" VALUES (40, 'snapshot');
-+EOF
-+
-+control substitution on
-+
-+statement ok
-+create source pg_sanitized_name_source with (
-+    connector = 'postgres-cdc',
-+    hostname = '${PGHOST:localhost}',
-+    port = '${PGPORT:5432}',
-+    username = '${PGUSER:$USER}',
-+    password = '${PGPASSWORD:}',
-+    database.name = '${PGDATABASE:postgres}',
-+    schema.name = 'sanitized_name',
-+    publication.name = 'sanitized_name_pub',
-+    slot.name = 'sanitized_name_slot'
-+);
-+
-+control substitution off
-+
-+statement ok
-+create table rw_underscore (id int primary key, v varchar)
-+from pg_sanitized_name_source table 'sanitized_name.t_1';
-+
-+statement ok
-+create table rw_dollar (id int primary key, v varchar)
-+from pg_sanitized_name_source table 'sanitized_name.t$1';
-+
-+statement ok
-+create table rw_hash (id int primary key, v varchar)
-+from pg_sanitized_name_source table 'sanitized_name.t#1';
-+
-+statement ok
-+create table rw_non_ascii (id int primary key, v varchar)
-+from pg_sanitized_name_source table 'sanitized_name.t中1';
-+
-+query TIT retry 30 backoff 1s
-+select 'underscore', * from rw_underscore
-+union all select 'dollar', * from rw_dollar
-+union all select 'hash', * from rw_hash
-+union all select 'non_ascii', * from rw_non_ascii
-+order by 2;
-+----
-+underscore 10 snapshot
-+dollar 20 snapshot
-+hash 30 snapshot
-+non_ascii 40 snapshot
-+
-+system ok
-+PGDATABASE=${PGDATABASE:-postgres} psql -q <<'EOF'
-+INSERT INTO sanitized_name."t$1" VALUES (21, 'stream');
-+INSERT INTO sanitized_name."t#1" VALUES (31, 'stream');
-+INSERT INTO sanitized_name."t中1" VALUES (41, 'stream');
-+INSERT INTO sanitized_name."t_1" VALUES (11, 'stream');
-+EOF
-+
-+# `non_ascii 41 stream` is missing because Debezium 3.2.4 decodes pgoutput relation names byte by byte
-+# instead of as UTF-8, so `t中1` arrives garbled and matches no table. Add the row back once Debezium
-+# includes https://github.com/debezium/dbz/issues/2710.
-+query TIT retry 30 backoff 1s
-+select 'underscore', * from rw_underscore
-+union all select 'dollar', * from rw_dollar
-+union all select 'hash', * from rw_hash
-+union all select 'non_ascii', * from rw_non_ascii
-+order by 2;
-+----
-+underscore 10 snapshot
-+underscore 11 stream
-+dollar 20 snapshot
-+dollar 21 stream
-+hash 30 snapshot
-+hash 31 stream
-+non_ascii 40 snapshot
-+
-+statement ok
-+drop source pg_sanitized_name_source cascade;
-+
-+sleep 2s
-+
-+system ok
-+PGDATABASE=${PGDATABASE:-postgres} psql -q <<'EOF'
-+SELECT pg_terminate_backend(active_pid) FROM pg_replication_slots
-+WHERE slot_name = 'sanitized_name_slot' AND active_pid IS NOT NULL;
-+SELECT pg_sleep(1);
-+SELECT pg_drop_replication_slot(slot_name) FROM pg_replication_slots WHERE slot_name = 'sanitized_name_slot';
-+DROP PUBLICATION IF EXISTS sanitized_name_pub;
-+DROP SCHEMA IF EXISTS sanitized_name CASCADE;
-+EOF
+@@ -77,7 +77,7 @@
+   optimized_logical_plan_for_stream: |-
+     LogicalJoin { type: Inner, on: (t1.v1 > max_v2.max), output: [t1.v1] }
+     ├─LogicalScan { table: t1, columns: [t1.v1] }
+-    └─LogicalScan { table: max_v2, columns: [max_v2.max], cardinality: 0..=1 }
++    └─LogicalScan { table: max_v2, columns: [max_v2.max], cardinality: 1..=1 }
+   stream_plan: |-
+     StreamMaterialize { columns: [v1, t1._row_id(hidden)], stream_key: [t1._row_id], pk_columns: [t1._row_id], pk_conflict: NoCheck }
+     └─StreamDynamicFilter { predicate: (t1.v1 > max_v2.max), output: [t1.v1, t1._row_id] }
 ```
 
-**File**: `e2e_test/source_inline/cdc/sql_server/sql_server_sanitized_table_name.slt.serial` (added, +72/-0)
+**File**: `src/frontend/planner_test/tests/testdata/output/functional_dependency.yaml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,72 @@
-+control substitution on
-+
-+system ok
-+sqlcmd -C -d master -Q "IF DB_ID('sanitized_name_db') IS NOT NULL BEGIN ALTER DATABASE sanitized_name_db SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE sanitized_name_db; END; CREATE DATABASE sanitized_name_db;" -b
-+
-+system ok
-+sqlcmd -C -d sanitized_name_db -i e2e_test/source_inline/cdc/sql_server/sql_server_sanitized_table_name_prepare.sql -b
-+
-+statement ok
-+create source mssql_sanitized_name_source with (
-+    connector = 'sqlserver-cdc',
-+    hostname = '${SQLCMDSERVER:sqlserver-server}',
-+    port = '${SQLCMDPORT:1433}',
-+    username = '${SQLCMDUSER:SA}',
-+    password = '${SQLCMDPASSWORD}',
-+    database.name = 'sanitized_name_db',
-+);
-+
-+control substitution off
-+
-+statement ok
-+create table rw_underscore (id int primary key, v varchar)
-+from mssql_sanitized_name_source table 'sanitized_name_db.dbo.t_1';
-+
-+statement ok
-+create table rw_dollar (id int primary key, v varchar)
-+from mssql_sanitized_name_source table 'sanitized_name_db.dbo.t$1';
-+
-+statement ok
-+create table rw_hash (id int primary key, v varchar)
-+from mssql_sanitized_name_source table 'sanitized_name_db.dbo.t#1';
-+
-+statement ok
-+create table rw_non_ascii (id int primary key, v varchar)
-+from mssql_sanitized_name_source table 'sanitized_name_db.dbo.t中1';
-+
-+query TIT retry 30 backoff 1s
-+select 'underscore', * from rw_underscore
-+union all select 'dollar', * from rw_dollar
-+union all select 'hash', * from rw_hash
-+union all select 'non_ascii', * from rw_non_ascii
-+order by 2;
-+----
-+underscore 10 snapshot
-+dollar 20 snapshot
-+hash 30 snapshot
-+non_ascii 40 snapshot
-+
-+system ok
-+sqlcmd -C -d sanitized_name_db -i e2e_test/source_inline/cdc/sql_server/sql_server_sanitized_table_name_insert.sql -b
-+
-+query TIT retry 60 backoff 1s
-+select 'underscore', * from rw_underscore
-+union all select 'dollar', * from rw_dollar
-+union all select 'hash', * from rw_hash
-+union all select 'non_ascii', * from rw_non_ascii
-+order by 2;
-+----
-+underscore 10 snapshot
-+underscore 11 stream
-+dollar 20 snapshot
-+dollar 21 stream
-+hash 30 snapshot
-+hash 31 stream
-+non_ascii 40 snapshot
-+non_ascii 41 stream
-+
-+statement ok
-+drop source mssql_sanitized_name_source cascade;
-+
-+system ok
-+sqlcmd -C -d master -Q "IF DB_ID('sanitized_name_db') IS NOT NULL BEGIN ALTER DATABASE sanitized_name_db SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE sanitized_name_db; END;" -b
+@@ -48,7 +48,7 @@
+     select cnt from v order by cnt;
+   logical_plan: |-
+     LogicalProject { exprs: [v.cnt] }
+-    └─LogicalScan { table: v, columns: [v.cnt, v._rw_timestamp], cardinality: 0..=1 }
++    └─LogicalScan { table: v, columns: [v.cnt, v._rw_timestamp], cardinality: 1..=1 }
+   batch_plan: |-
+     BatchExchange { order: [v.cnt ASC], dist: Single }
+     └─BatchSort { order: [v.cnt ASC] }
 ```
 
-**File**: `e2e_test/source_inline/cdc/sql_server/sql_server_sanitized_table_name_insert.sql` (added, +6/-0)
+**File**: `src/frontend/src/optimizer/plan_visitor/cardinality_visitor.rs` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,6 @@
-+SET NOCOUNT ON;
-+
-+INSERT INTO [t$1] VALUES (21, 'stream');
-+INSERT INTO [t#1] VALUES (31, 'stream');
-+INSERT INTO [t中1] VALUES (41, 'stream');
-+INSERT INTO [t_1] VALUES (11, 'stream');
-```
-
-**File**: `e2e_test/source_inline/cdc/sql_server/sql_server_sanitized_table_name_prepare.sql` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+SET NOCOUNT ON;
-+
-+EXEC sys.sp_cdc_enable_db;
-+
-+CREATE TABLE [t_1] (id INT PRIMARY KEY, v VARCHAR(20));
-+CREATE TABLE [t$1] (id INT PRIMARY KEY, v VARCHAR(20));
-+CREATE TABLE [t#1] (id INT PRIMARY KEY, v VARCHAR(20));
-+CREATE TABLE [t中1] (id INT PRIMARY KEY, v VARCHAR(20));
-+
-+EXEC sys.sp_cdc_enable_table @source_schema = 'dbo', @source_name = N't_1', @role_name = NULL;
-+EXEC sys.sp_cdc_enable_table @source_schema = 'dbo', @source_name = N't$1', @role_name = NULL;
-+EXEC sys.sp_cdc_enable_table @source_schema = 'dbo', @source_name = N't#1', @role_name = NULL;
-+EXEC sys.sp_cdc_enable_table @source_schema = 'dbo', @source_name = N't中1', @role_name = NULL;
-+
-+INSERT INTO [t_1] VALUES (10, 'snapshot');
-+INSERT INTO [t$1] VALUES (20, 'snapshot');
-+INSERT INTO [t#1] VALUES (30, 'snapshot');
-+INSERT INTO [t中1] VALUES (40, 'snapshot');
-```
-
-**File**: `java/connector-node/risingwave-connector-service/src/main/resources/mysql.properties` (modified, +3/-0)
-```diff
-@@ -17,6 +17,9 @@ schema.history.internal.store.only.captured.databases.ddl=true
- schema.history.internal=com.risingwave.connector.cdc.debezium.internal.OpendalSchemaHistory
- snapshot.mode.custom.name=no_data_recovery
+@@ -88,7 +88,8 @@ impl LogicalPlanVisitor for CardinalityVisitor {
+         let input = self.visit(plan.input());
  
-+# keep table names unsanitized in topic names, which route change events to tables
-+topic.naming.strategy=com.risingwave.connector.cdc.debezium.internal.RisingWaveTopicNamingStrategy
-+
- # default to disable schema change events
- include.schema.changes=${auto.schema.change:-false}
- database.server.id=${server.id}
-```
-
-**File**: `java/connector-node/risingwave-connector-service/src/main/resources/oracle.properties` (modified, +2/-0)
-```diff
-@@ -21,6 +21,8 @@ schema.history.internal.store.only.captured.tables.ddl=true
- schema.history.internal.store.only.captured.databases.ddl=true
- # default to disable schema change events
- include.schema.changes=${debezium.include.schema.changes:-false}
-+# keep table names unsanitized in topic names, which route change events to tables
-+topic.naming.strategy=com.risingwave.connector.cdc.debezium.internal.RisingWaveSchemaTopicNamingStrategy
- # In sharing CDC source mode, table filtering is removed by DbzConnectorConfig.
- name=${hostname}:${port}:${database.name}.${database.pdb.name}.${schema.name}.${table.name:-RW_CDC_Sharing}
- provide.transaction.metadata=${transactional:-false}
-```
-
-**File**: `java/connector-node/risingwave-connector-service/src/main/resources/postgres.properties` (modified, +2/-0)
-```diff
-@@ -13,6 +13,8 @@ database.dbname=${database.name}
- database.sslmode=${ssl.mode:-prefer}
- table.include.list=${schema.name}.${table.name}
- include.schema.changes=${auto.schema.change:-false}
-+# keep table names unsanitized in topic names, which route change events to tables
-+topic.naming.strategy=com.risingwave.connector.cdc.debezium.internal.RisingWaveSchemaTopicNamingStrategy
- # The name of the PostgreSQL replication slot
- slot.name=${slot.name}
- # default plugin name is 'pgoutput'
+         if plan.group_key().is_empty() {
+-            input.min(1)
++            // A simple agg always yields exactly one row, even over an empty input.
++            1.into()
+         } else {
+             input.min(1..)
+         }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27716** (2026-10-29): fix(sqlparser): correctly parse escaped double-quoted identifiers (#25601) (@cyliu0)
-- **PR #27715** (2026-10-29): fix(ci): bump cargo-dylint to 6.3.0 for the clippy branch rename (#27703) (@cyliu0)
-- **PR #27703** (2026-10-28): fix(ci): bump cargo-dylint to 6.3.0 for the clippy branch rename (@anlowee)
-- **PR #27702** (2026-10-29): refactor(meta): drop pk-index compaction position-delete coalescing (@silver-ymz)
-- **PR #27698** (2026-10-28): fix(meta): do not serialize secret store private key in MetaOpts (#27586) (@risingwave-ci)
-- **PR #27697** (2026-10-28): fix(meta): do not serialize secret store private key in MetaOpts (#27586) (@risingwave-ci)
+- **PR #27738** (2026-10-30): fix(meta): reject pending inputs in manual L0 compaction (@Li0k)
+- **PR #27737** (closed): cherry-pick fix(frontend): reject iceberg pk-index sink with auto schema change (#27729) to branch release-3.0 (@howenyap)
+- **PR #27736** (closed): cherry-pick fix(frontend): reject iceberg pk-index sink with auto schema change (#27729) to branch release-3.1 (@howenyap)
+- **PR #27733** (closed): perf(meta): simplify Hummock TTL and task-status queries (@Li0k)
+- **PR #27729** (2026-10-30): fix(frontend): reject iceberg pk-index sink with auto schema change (@howenyap)
+- **PR #27725** (2026-10-30): refactor(cdc): move CDC source DDL validation into CdcSourceDdlValidator (@anlowee)
 
 ---
 
@@ -1901,34 +1412,39 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iceberg): honor commit checkpoint interval for v3 jobs (#27616)
+## X. frontend): reject iceberg pk-index sink with auto schema change (#27729)
 
 **RULE**:
-When implementing operations in `e2e_test/iceberg/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e_test/iceberg/test_case/pure_slt/iceberg_v2_with_pk_index.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d6da6fc`: iceberg): honor commit checkpoint interval for v3 jobs (#27616). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a9122f14`: frontend): reject iceberg pk-index sink with auto schema change (#27729). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/iceberg/README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/iceberg/test_case/pure_slt/iceberg_v2_with_pk_index.slt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-update the Meta-side checkpoint pacing while preserving pending epochs.
-`compaction.write_parquet_*` changes are still rejected for PK-index sinks because
-PK-index jobs now honor their configured commit interval, including after recovery.
-Existing sinks with the frontend default of 60 therefore change from committing every
-checkpoint to every 60 checkpoints after upgrade. Set `commit_checkpoint_interval = 1`
-to retain the previous commit frequency.
+statement error Iceberg sink with `enable_pk_index='true'` does not support `auto\.schema\.change='true'`
+create sink pk_index_auto_schema_change from t_v2_storage with (
+    connector = 'iceberg',
+    connection = storage_catalog_conn,
+    database.name = 'public',
+    table.name = 'pk_index_auto_schema_change',
+    type = 'upsert',
+    create_table_if_not_exists = 'true',
+    enable_pk_index = 'true',
+    auto.schema.change = 'true'
+);
 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-and `compaction.write_parquet_*` are currently rejected for PK-index sinks because
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d6da6fc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a9122f14` are properly handled with clean fallback behavior.

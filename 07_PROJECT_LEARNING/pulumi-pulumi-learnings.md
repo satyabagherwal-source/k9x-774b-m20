@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source**: github ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
-> **Source Version**: `20664124`  
+> **Source Version**: `c94a5f2c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-29T23:09:34.163Z  
+> **Timestamp**: 2026-10-30T21:41:16.336Z  
 > **Learning ID**: `learn-github-pulumi-pulumi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-29T23:09:33.063Z  
+> **Harvest Timestamp**: 2026-10-30T21:41:15.103Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25831 stars
+- **Stars / Engagement**: 25837 stars
 
 ---
 
@@ -1721,460 +1721,522 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b16a699d` (2026-10-29)
-**Commit Message**: Report a diagnostic instead of panicking for PCL blocks with no labels (#25445)
+### Incident Patch 1: `d3e67f27` (2026-10-30)
+**Commit Message**: Return the engine's in-memory snapshot from Backend.Import (#25448)
 
-Fixes #25424
+Fixes https://github.com/pulumi/pulumi/issues/8836
 
-`labelsErrorf` read `block.LabelRanges[0]` unconditionally. When a
-label-count diagnostic is reported for a block that has no labels, it
-panics with `index out of range [0] with length 0` and never returns the
-diagnostic. On master this still happens through the binder, e.g.
-`resource { }` / `read { }` ("must have exactly two labels"), `config {
-}` and `component { }`. The nameless `package { }` path from the issue
-no longer goes through this helper on master, but the helper itself
-still has the bug.
+`pulumi import --preview-only` emitted the preview but silently dropped
+the generated resource code. The codegen path read persisted state via
+`ExportStackDeployment`, which doesn't contain the imported resources
+during a dry-run, so `generateImportedDefinitions` always returned no
+valid imports.
 
-This change: when the block has no labels, `labelsErrorf` now reports
-the diagnostic against the block's definition range (`block.DefRange()`,
-i.e. the block header). Blocks that do have labels behave as before.
+Thread the engine's final in-memory snapshot out through
+`Backend.Import` / `backend.ImportStack` and use it for codegen
+directly, dropping the extra export round-trip even on real imports. To
+make this work for dry-run, `previewActions` now drives the
+`SnapshotManager` (populated via a `DiscardPersister` for
+preview/dry-run) so the snapshot reflects what the run would have
+produced.
 
-- `pkg/codegen/pcl/diagnostics.go`: fall back to `DefRange()` when
-`LabelRanges` is empty
-- `pkg/codegen/pcl/diagnostics_test.go`: unit tests for both the
-labelled case (range unchanged) and the unlabelled case (no panic,
-diagnostic on the header)
--
-`changelog/pending/20261029--pcl--labels-diagnostic-without-labels.yaml`
+Also preserve the resource's `ImportID` on the imported state during
+preview (ImportStep.Apply still clears it on real imports). This lets
+the generated code include the `import:` resource option so a subsequent
+`pulumi up` on an empty stack would re-adopt the resource rather than
+create a new one.
 
-### Test output
-
-Without the fix:
-
-```
-$ go test ./codegen/pc
-
-**File**: `changelog/pending/20261029--pcl--labels-diagnostic-without-labels.yaml` (added, +4/-0)
+**File**: `changelog/pending/20261029--cli--import-preview-only-generates-code.yaml` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
-+component: pcl
-+kind: fix
-+body: Report a diagnostic instead of panicking when a block that requires labels has none
++component: cli
++kind: improvement
++body: Make `pulumi import --preview-only` emit the generated resource code
 +time: 2026-10-29T00:00:00Z
 ```
 
-**File**: `pkg/codegen/pcl/diagnostics.go` (modified, +6/-0)
+**File**: `pkg/backend/apply.go` (modified, +60/-9)
 ```diff
-@@ -37,6 +37,12 @@ func diagf(severity hcl.DiagnosticSeverity, subject hcl.Range, f string, args ..
+@@ -42,8 +42,14 @@ type ApplierOptions struct {
  }
  
- func labelsErrorf(block *hclsyntax.Block, f string, args ...any) *hcl.Diagnostic {
-+	if len(block.LabelRanges) == 0 {
-+		// A block with no labels (e.g. `config { ... }`) has no label range to point at, so report the
-+		// diagnostic against the block header instead.
-+		return errorf(block.DefRange(), f, args...)
+ // Applier applies the changes specified by this update operation against the target stack.
++//
++// The returned snapshot is the final in-memory snapshot produced by the engine. It is populated
++// even on dry-runs (preview and preview-only operations), where it reflects what the snapshot
++// would have been had the run been applied. Callers may use it, for example, to drive import
++// codegen without re-reading persisted state. The snapshot may be nil if the operation failed
++// before any snapshot could be constructed.
+ type Applier func(ctx context.Context, kind apitype.UpdateKind, stack Stack, op UpdateOperation,
+-	opts ApplierOptions, events chan<- engine.Event) (*deploy.Plan, sdkDisplay.ResourceChanges, error)
++	opts ApplierOptions, events chan<- engine.Event) (*deploy.Plan, sdkDisplay.ResourceChanges, *deploy.Snapshot, error)
+ 
+ // Explainer provides a contract for explaining changes that will be made to the stack.
+ // For Pulumi Cloud, this is a Neo explainer.
+@@ -89,7 +95,7 @@ const (
+ 
+ func PreviewThenPrompt(ctx context.Context, kind apitype.UpdateKind, stack Stack,
+ 	op UpdateOperation, apply Applier, explainer Explainer,
+-) (*deploy.Plan, sdkDisplay.ResourceChanges, error) {
++) (*deploy.Plan, sdkDisplay.ResourceChanges, *deploy.Snapshot, error) {
+ 	// create a channel to hear about the update events from the engine. this will be used so that
+ 	// we can build up the diff display in case the user asks to see the details of the diff
+ 
+@@ -118,10 +124,10 @@ func PreviewThenPrompt(ctx context.Context, kind apitype.UpdateKind, stack Stack
+ 		ShowLink: true,
+ 	}
+ 
+-	plan, changes, err := apply(ctx, kind, stack, op, opts, eventsChannel)
++	plan, changes, snap, err := apply(ctx, kind, stack, op, opts, eventsChannel)
+ 	if err != nil {
+ 		close(eventsChannel)
+-		return plan, changes, err
++		return plan, changes, snap, err
+ 	}
+ 
+ 	if op.Opts.Display.ShowDiff {
+@@ -138,7 +144,7 @@ func PreviewThenPrompt(ctx context.Context, kind apitype.UpdateKind, stack Stack
+ 		if !op.Opts.Engine.Strict {
+ 			plan = nil
+ 		}
+-		return plan, changes, nil
++		return plan, changes, snap, nil
+ 	}
+ 
+ 	stats := computeUpdateStats(events)
+@@ -167,7 +173,7 @@ func PreviewThenPrompt(ctx context.Context, kind apitype.UpdateKind, stack Stack
+ 	// Otherwise, ensure the user wants to proceed.
+ 	plan, err = confirmBeforeUpdating(ctx, kind, stack.Ref(), op, events, plan, explainer)
+ 	close(eventsChannel)
+-	return plan, changes, err
++	return plan, changes, snap, err
+ }
+ 
+ func printDiff(events []engine.Event, displayOpts display.Options) error {
+@@ -281,7 +287,52 @@ func Preview(ctx context.Context, stack Stack, op UpdateOperation, apply Applier
+ 		DryRun:   true,
+ 		ShowLink: true,
+ 	}
+-	return apply(ctx, apitype.PreviewUpdate, stack, op, opts, events)
++	plan, changes, _, err := apply(ctx, apitype.PreviewUpdate, stack, op, opts, events)
++	return plan, changes, err
++}
++
++// PreviewThenPromptThenExecuteImport is a variant of PreviewThenPromptThenExecute for resource
++// imports. It returns the final in-memory snapshot alongside the resource changes so callers (e.g.
++// `pulumi import`) can drive codegen without re-reading persisted state.
++func PreviewThenPromptThenExecuteImport(ctx context.Context, stack Stack,
++	op UpdateOperation, apply Applier, explainer Explainer,
++) (sdkDisplay.ResourceChanges, *deploy.Snapshot, error) {
++	kind := apitype.UpdateKind(apitype.ResourceImportUpdate)
++	// Preview the operation to the user and ask them if they want to proceed.
++	if !op.Opts.SkipPreview {
++		var originalPlan *deploy.Plan
++		if op.Opts.Engine.Plan != nil {
++			originalPlan = op.Opts.Engine.Plan.Clone()
++		}
++
++		plan, changes, snap, err := PreviewThenPrompt(ctx, kind, stack, op, apply, explainer)
++		if err != nil {
++			return changes, snap, err
++		}
++
++		if originalPlan != nil {
++			op.Opts.Engine.Plan = originalPlan
++		} else if plan != nil {
++			op.Opts.Engine.Plan = plan
++		} else {
++			op.Opts.Engine.Plan = nil
++		}
 +	}
 +
- 	startRange := block.LabelRanges[0]
- 
- 	diagRange := hcl.Range{
-```
-
-**File**: `pkg/codegen/pcl/diagnostics_test.go` (added, +65/-0)
-```diff
-@@ -0,0 +1,65 @@
-+// Copyright 2026, Pulumi Corporation.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
++	opts := ApplierOptions{
++		DryRun:   false,
++		ShowLink: true,
++	}
++	op.Opts.Engine.GeneratePlan = false
 +
-+package pcl
-+
-+import (
-+	"testing"
-+
-+	"github.com/hashicorp/hcl/v2"
-+	"github.com/hashicorp/hcl/v2/hclsyntax"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func parseSingleBlock(t *testing.T, source string) *hclsyntax.Block {
-+	t.Helper()
-+
-+	file, diags := hclsyntax.ParseConfig([]byte(source), "program.pp", hcl.InitialPos)
-+	require.False(t, diags.HasErrors(), diags.Error())
-+	body, ok := file.Body.(*hclsyntax.Body)
-+	require.True(t, ok)
-+	require.Len(t, body.Blocks, 1)
-+	return body.Blocks[0]
-+}
-+
-+func TestLabelsErrorfWithLabels(t *testing.T) {
-+	t.Parallel()
-+
-+	block := parseSingleBlock(t, "resource a b c {\n}\n")
-+
-+	diag := labelsErrorf(block, "resource variables must have exactly two labels")
-+	require.NotNil(t, diag.Subject)
-+	assert.Equal(t, "resource variables must have exactly two labels", diag.Summary)
-+	assert.Equal(t, block.LabelRanges[0].Start, diag.Subject.Start)
-+	assert.Equal(t, block.LabelRanges[2].End, diag.Subject.End)
-+}
-+
-+// Regression test for https://github.com/pulumi/pulumi/issues/25424: a block with no labels used to make
-+// labelsErrorf panic with "index out of range [0] with length 0".
-+func TestLabelsErrorfWithoutLabels(t *testing.T) {
-+	t.Parallel()
-+
-+	block := parseSingleBlock(t, "config {\n}\n")
-+	require.Empty(t, block.LabelRanges)
-+
-+	var diag *hcl.Diagnostic
-+	require.NotPanics(t, func() {
-+		diag = labelsErrorf(block, "config variables must have exactly one or two labels")
++	var changes sdkDisplay.ResourceChanges
++	var snap *deploy.Snapshot
++	err := RunCollectingDiff(op.Opts.Display, nil, func(ev chan<- engine.Event) error {
++		var res error
++		_, changes, snap, res = apply(ctx, kind, stack, op, opts, ev)
++		return res
 +	})
-+	require.NotNil(t, diag.Subject)
-+	assert.Equal(t, hcl.DiagError, diag.Severity)
-+	assert.Equal(t, "config variables must have exactly one or two labels", diag.Summary)
-+	assert.Equal(t, block.DefRange(), *diag.Subject)
-+}
-```
-
----
-
-### Incident Patch 2: `874c77a7` (2026-10-28)
-**Commit Message**: Update module golang.org/x/net to v0.62.0 [SECURITY] (#25431)
-
-This PR contains the following updates:
-
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-| [golang.org/x/net](https://pkg.go.dev/golang.org/x/net) | [`v0.60.0` →
-`v0.62.0`](https://cs.opensource.google/go/x/net/+/refs/tags/v0.60.0...refs/tags/v0.62.0)
-|
-![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2fnet/v0.62.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/golang.org%2fx%2fnet/v0.60.0/v0.62.0?slim=true)
-|
-| [golang.org/x/net](https://pkg.go.dev/golang.org/x/net) | [`v0.61.0` →
-`v0.62.0`](https://cs.opensource.google/go/x/net/+/refs/tags/v0.61.0...refs/tags/v0.62.0)
-|
-![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2fnet/v0.62.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/golang.org%2fx%2fnet/v0.61.0/v0.62.0?slim=true)
-|
-
----
-
-> [!WARNING]
-> Some dependencies could not be looked up. Check the [Dependency
-Dashboard](../issues/21045) for more information.
-
----
-
-### Avoid quadratic complexity when coa
-
-**File**: `pkg/go.mod` (modified, +1/-1)
-```diff
-@@ -37,7 +37,7 @@ require (
- 	gocloud.dev v0.46.1-0.20260810195832-b5401c07b5f1
- 	gocloud.dev/secrets/hashivault v0.46.0
- 	golang.org/x/crypto v0.58.0 // indirect
--	golang.org/x/net v0.61.0
-+	golang.org/x/net v0.62.0
- 	golang.org/x/oauth2 v0.36.0
- 	golang.org/x/sync v0.24.0
- 	google.golang.org/api v0.290.0
-```
-
-**File**: `pkg/go.sum` (modified, +2/-2)
-```diff
-@@ -691,8 +691,8 @@ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwY
- golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
- golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
- golang.org/x/net v0.0.0-20221002022538-bcab6841153b/go.mod h1:YDH+HFinaLZZlnHAfSS6ZXJJ9M9t4Dl22yv3iI2vPwk=
--golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
--golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
-```
-
-**File**: `sdk/go.mod` (modified, +5/-5)
-```diff
-@@ -25,10 +25,10 @@ require (
- 	github.com/texttheater/golang-levenshtein v1.0.1
- 	github.com/uber/jaeger-client-go v2.30.0+incompatible
- 	go.opentelemetry.io/otel/bridge/opentracing v1.45.0
--	golang.org/x/crypto v0.57.0
-+	golang.org/x/crypto v0.58.0
- 	golang.org/x/mod v0.40.0 // indirect
--	golang.org/x/net v0.60.0
--	golang.org/x/sys v0.48.0
-+	golang.org/x/net v0.62.0
-+	golang.org/x/sys v0.49.0
- 	google.golang.org/grpc v1.83.2
- 	gopkg.in/yaml.v2 v2.4.0
- 	gopkg.in/yaml.v3 v3.0.1
-@@ -70,7 +70,7 @@ require (
- 	go.opentelemetry.io/otel/trace v1.45.0
- 	go.opentelemetry.io/proto/otlp v1.11.0
- 	golang.org/x/sync v0.23.0
--	golang.org/x/term v0.46.0
-+	golang.org/x/term v0.47.0
- 	lukechampine.com/frand v1.4.2
- )
++	return changes, snap, err
+ }
  
-@@ -144,7 +144,7 @@ require (
- 	github.com/spf13/pflag v1.0.10 // indirect
- 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
--	golang.org/x/text v0.42.0
-+	golang.org/x/text v0.43.0
- 	google.golang.org/protobuf v1.36.11
- 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7
- )
+ func PreviewThenPromptThenExecute(ctx context.Context, kind apitype.UpdateKind, stack Stack,
+@@ -298,7 +349,7 @@ func PreviewThenPromptThenExecute(ctx context.Context, kind apitype.UpdateKind,
+ 			originalPlan = op.Opts.Engine.Plan.Clone()
+ 		}
+ 
+-		plan, changes, err := PreviewThenPrompt(ctx, kind, stack, op, apply, explainer)
++		plan, changes, _, err := PreviewThenPrompt(ctx, kind, stack, op, apply, explainer)
+ 		if err != nil || kind == apitype.PreviewUpdate {
+ 			return changes, err
+ 		}
+@@ -327,7 +378,7 @@ func PreviewThenPromptThenExecute(ctx context.Context, kind apity
 ```
 
-**File**: `sdk/go.sum` (modified, +8/-8)
+**File**: `pkg/backend/backend.go` (modified, +5/-2)
 ```diff
-@@ -327,8 +327,8 @@ golang.org/x/crypto v0.50.0/go.mod h1:3muZ7vA7PBCE6xgPX7nkzzjiUq87kRItoJQM1Yo8S+
- golang.org/x/crypto v0.51.0/go.mod h1:8AdwkbraGNABw2kOX6YFPs3WM22XqI4EXEd8g+x7Oc8=
- golang.org/x/crypto v0.53.0/go.mod h1:DNLU434OwVakk9PzuwV8w62mAJpRJL3vsgcfp4Qnsio=
- golang.org/x/crypto v0.54.0/go.mod h1:KWL8ny2AZdGR2cWmzeHrp2azQPGogOv+HeQaVEXC2dk=
--golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
--golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
-+golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
-+golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/exp v0.0.0-20180321215751-8460e604b9de/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20180807140117-3d87b88a115f/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190125153040-c74c464bbbf2/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
-@@ -391,8 +391,8 @@ golang.org/x/net v0.54.0/go.mod h1:Sj4oj8jK6XmHpBZU/zWHw3BV3abl4Kvi+Ut7cQcY+cQ=
- golang.org/x/net v0.55.0/go.mod h1:L5U2KuzuOe1lY7Z+aWVIKK6qEeJXnXV9yzGA+WCHJww=
- golang.org/x/net v0.56.0/go.mod h1:D3Ku6r+V6JROoZK144D2XfMHFcMq/0zSfLelVTCFKec=
- golang.org/x/net v0.57.0/go.mod h1:KpXc8iv+r3XplLAG/f7Jsf9RPszJzdR0f58q9vGOuEU=
--golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
--golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
-@@ -442,8 +442,8 @@ golang.org/x/sys v0.44.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
- golang.org/x/sys v0.45.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
- golang.org/x/sys v0.46.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
- golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
--golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
--golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
-+golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/telemetry v0.0.0-20240521205824-bda55230c457/go.mod h1:pRgIJT+bRLFKnoM1ldnzKoxTIn14Yxz928LQRYYgIN0=
- golang.org/x/telemetry v0.0.0-20250710130107-8d8967aff50b/go.mod h1:4ZwOYna0/zsOKwuR5X/m0QFOJpSZvAxFfkQT+Erd9D4=
- golang.org/x/telemetry v0.0.0-20250807160809-1a19826ec488/go.mod h1:fGb/2+tgXXjhjHsTNdVEEMZNWA0quBnfrO+AfoDSAKw=
-@@ -477,8 +477,8 @@ golang.org/x/term v0.42.0/go.mod h1:Dq/D+snpsbazcBG5+F9Q1n2rXV8Ma+71xEjTRufARgY=
- golang.org/x/term v0.43.0/go.mod h1:lrhlHNdQJHO+1qVYiHfFKVuVioJIheAc3fBSMFYEIsk=
- golang.org/x/term v0.44.0/go.mod h1:7ze4MdzUzLXpSAoFP1H0bOI9aXDqveSvatT5vKcFh2Y=
- golang.org/x/term v0.45.0/go.mod h1:9aqxs0blBcrm/n0L9QW0aRVD+ktan8ssZromtqJC43w=
--golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
--golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
-+golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
-+golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
- golang.org/x/text v0.41.0 h1:vz/seA0lnX87Othu2f/0L24RcgrXD9/YFTSuGjj3rH8=
- golang.org/x/text v0.41.0/go.mod h1:jvf1O8ajNzZqhSrQBPbutR/EB83Cc0CFrezNQIwbb5M=
- golang.org/x/tools v0.0.0-20180525024113-a5b4c53f6e8b/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+@@ -213,9 +213,12 @@ type Backend interface {
+ 	// Update updates the target stack with the current workspace's contents (config and code).
+ 	Update(ctx context.Context, stack Stack, op UpdateOperation, events chan<- engine.Event,
+ 	) (sdkDisplay.ResourceChanges, error)
+-	// Import imports resources into a stack.
++	// Import imports resources into a stack. In addition to the resource changes it also returns
++	// the final in-memory snapshot produced by the engine so callers can drive post-import work
++	// (e.g. codegen for `pulumi import`) without re-reading persisted state. The snapshot is
++	// populated even on dry-run / preview-only imports.
+ 	Import(ctx context.Context, stack Stack, op UpdateOperation,
+-		imports []deploy.Import) (sdkDisplay.ResourceChanges, error)
++		imports []deploy.Import) (sdkDisplay.ResourceChanges, *deploy.Snapshot, error)
+ 	// Refresh refreshes the stack's state from the cloud provider.
+ 	Refresh(ctx context.Context, stack Stack, op UpdateOperation) (sdkDisplay.ResourceChanges, error)
+ 	// Destroy destroys all of this stack's resources.
 ```
 
-**File**: `sdk/go/auto/test/errors/compilation_error/go/go.mod` (modified, +7/-7)
+**File**: `pkg/backend/diy/backend.go` (modified, +38/-34)
 ```diff
-@@ -98,15 +98,15 @@ require (
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	golang.org/x/crypto v0.57.0 // indirect
-+	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
- 	golang.org/x/mod v0.41.0 // indirect
--	golang.org/x/net v0.60.0 // indirect
--	golang.org/x/sync v0.23.0 // indirect
--	golang.org/x/sys v0.48.0 // indirect
--	golang.org/x/term v0.46.0 // indirect
--	golang.org/x/text v0.42.0 // indirect
--	golang.org/x/tools v0.49.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
-+	golang.org/x/sync v0.24.0 // indirect
-+	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/term v0.47.0 // indirect
-+	golang.org/x/text v0.43.0 // indirect
-+	golang.org/x/tools v0.51.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/grpc v1.83.2 // indirect
+@@ -1227,7 +1227,7 @@ func (b *diyBackend) Update(ctx context.Context, stack backend.Stack,
+ 
+ func (b *diyBackend) Import(ctx context.Context, stack backend.Stack,
+ 	op backend.UpdateOperation, imports []deploy.Import,
+-) (sdkDisplay.ResourceChanges, error) {
++) (sdkDisplay.ResourceChanges, *deploy.Snapshot, error) {
+ 	op.Imports = imports
+ 
+ 	if op.Opts.PreviewOnly {
+@@ -1238,18 +1238,18 @@ func (b *diyBackend) Import(ctx context.Context, stack backend.Stack,
+ 		}
+ 
+ 		op.Opts.Engine.GeneratePlan = false
+-		_, changes, err := b.apply(
++		_, changes, snap, err := b.apply(
+ 			ctx, apitype.ResourceImportUpdate, stack, op, opts, nil /*events*/)
+-		return changes, err
++		return changes, snap, err
+ 	}
+ 
+ 	err := b.Lock(ctx, stack.Ref())
+ 	if err != nil {
+-		return nil, err
++		return nil, nil, err
+ 	}
+ 	defer b.Unlock(ctx, stack.Ref())
+ 
+-	return backend.PreviewThenPromptThenExecute(ctx, apitype.ResourceImportUpdate, stack, op, b.apply, nil, nil)
++	return backend.PreviewThenPromptThenExecuteImport(ctx, stack, op, b.apply, nil)
+ }
+ 
+ func (b *diyBackend) Refresh(ctx context.Context, stack backend.Stack,
+@@ -1263,7 +1263,7 @@ func (b *diyBackend) Refresh(ctx context.Context, stack backend.Stack,
+ 		}
+ 
+ 		op.Opts.Engine.GeneratePlan = false
+-		_, changes, err := b.apply(
++		_, changes, _, err := b.apply(
+ 			ctx, apitype.RefreshUpdate, stack, op, opts, nil /*events*/)
+ 		return changes, err
+ 	}
+@@ -1288,7 +1288,7 @@ func (b *diyBackend) Destroy(ctx context.Context, stack backend.Stack,
+ 		}
+ 
+ 		op.Opts.Engine.GeneratePlan = false
+-		_, changes, err := b.apply(
++		_, changes, _, err := b.apply(
+ 			ctx, apitype.DestroyUpdate, stack, op, opts, nil /*events*/)
+ 		return changes, err
+ 	}
+@@ -1307,21 +1307,21 @@ func (b *diyBackend) apply(
+ 	ctx context.Context, kind apitype.UpdateKind, stack backend.Stack,
+ 	op backend.UpdateOperation, opts backend.ApplierOptions,
+ 	events chan<- engine.Event,
+-) (*deploy.Plan, sdkDisplay.ResourceChanges, error) {
++) (*deploy.Plan, sdkDisplay.ResourceChanges, *deploy.Snapshot, error) {
+ 	resetKeepRunning := nosleep.KeepRunning()
+ 	defer resetKeepRunning()
+ 	stackRef := stack.Ref()
+ 	diyStackRef, err := b.getReference(stackRef)
+ 	if err != nil {
+-		return nil, nil, err
++		return nil, nil, nil, err
+ 	}
+ 
+ 	if err := backend.CurrentProjectContradictsWorkspace(b.currentProject.Load(), stackRef); err != nil {
+-		return nil, nil, err
++		return nil, nil, nil, err
+ 	}
+ 
+ 	if op.CoherenceWindow != "" {
+-		return nil, nil, errors.New("coherence windows are only supported by the Pulumi Cloud backend")
++		return nil, nil, nil, errors.New("coherence windows are only supported by the Pulumi Cloud backend")
+ 	}
+ 
+ 	actionLabel := backend.ActionLabel(kind, opts.DryRun)
+@@ -1342,7 +1342,7 @@ func (b *diyBackend) apply(
+ 	// Start the update.
+ 	update, err := b.newUpdate(ctx, op.SecretsProvider, diyStackRef, op)
+ 	if err != nil {
+-		return nil, nil, err
++		return nil, nil, nil, err
+ 	}
+ 
+ 	// Spawn a display loop to show events on the CLI.
+@@ -1379,14 +1379,17 @@ func (b *diyBackend) apply(
+ 			StateMigrations: true,
+ 		},
+ 	}
+-	// Create the management machinery.
+-	// We only need a snapshot manager if we're doing an update.
+-	var manager *backend.SnapshotManager
+-	if kind != apitype.PreviewUpdate && !opts.DryRun {
+-		persister := b.newSnapshotPersister(ctx, diyStackRef)
+-		manager = backend.NewSnapshotManager(persister, op.SecretsManager, update.Target.Snapshot, nil)
+-		engineCtx.SnapshotManager = manager
++	// Create the snapshot manager. We always install one (even for preview and dry-run) so that
++	// the engine mutates an in-memory snapshot we can return to callers. For dry-run operations
++	// we substitute a discarding persister so nothing is written to disk.
++	var persister backend.SnapshotPersister
++	if kind == apitype.PreviewUpdate || opts.DryRun {
++		persister = backend.DiscardPersister{}
++	} else {
++		persister = b.newSnapshotPersister(ctx, diyStackRef)
+ 	}
++	manager := backend.NewSnapshotManager(persister, op.SecretsManager, update.Target.Snapshot, nil)
++	engineCtx.SnapshotManager = manager
+ 
+ 	if op.Opts.Engine.HostFactory == nil {
+ 		op.Opts.Engine.HostFactory = backend.DefaultHostFactory(b.GetReadOnlyCloudRegistry())
+@@ -1427,17 +1430,18 @@ func (b *diyBackend) apply(
+ 	<-displayDone
+ 	scope.Close() // Don't take any cancellations anymore, we're shutting down.
+ 	close(engineEvents)
+-	if manager != nil {
+-		err = manager.Close()
+-		// If the snapshot manager failed to close, we should return that error.
+-		// Even though all the parts of the operation have potentially succeeded, a
+-		// snapshotting failure is likely to rear its head on the next
+-		// operation/invocation (e.g. an invalid snapshot that fails integrity
+-		// checks, or a failure to write that means the snapshot is incomplete).
+-		// Reporting now should make debugging and reporting easier.
+-		if err != nil {
+-			return plan, changes, fmt.Errorf("writing snapshot: %w", err)
+-		}
++	// Capture the final in-memory snapshot b
 ```
 
-**File**: `sdk/go/auto/test/errors/compilation_error/go/go.sum` (modified, +14/-14)
+**File**: `pkg/backend/httpstate/backend.go` (modified, +41/-18)
 ```diff
-@@ -266,8 +266,8 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
- golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
- golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
--golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
--golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
-+golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
-+golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
- golang.org/x/lint v0.0.0-20200302205851-738671d3881b/go.mod h1:3xt1FjdF8hUf6vQPIChWIBhFzV8gjjsPE/fR3IyQdNY=
-@@ -282,13 +282,13 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
- golang.org/x/net v0.0.0-20200421231249-e086a090c8fd/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
- golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
- golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
--golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
--golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
--golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
-+golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -302,24 +302,24 @@ golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7w
- golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
--golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
-+golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
--golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
--golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
-+golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
-+golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
- golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
--golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
--golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
-+golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
-+golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
- golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
- golang.org/x/tools v0.0.0-20181030221726-6c7e314b6563/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
- golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
- golang.org/x/tools v0.0.0-20200130002326-2f3ba24bd6e7/go.mod h1:TB2adYChydJhpapKDTa4BR/hXlZSLoq2Wpct/0txZ28=
- golang.org/x/tools v0.0.0-20200619180055-7c47624df98f/go.mod h1:Ek
+@@ -1660,7 +1660,7 @@ func (b *cloudBackend) Explain(
+ 
+ func (b *cloudBackend) Import(ctx context.Context, stack backend.Stack,
+ 	op backend.UpdateOperation, imports []deploy.Import,
+-) (sdkDisplay.ResourceChanges, error) {
++) (sdkDisplay.ResourceChanges, *deploy.Snapshot, error) {
+ 	op.Imports = imports
+ 
+ 	if op.Opts.PreviewOnly {
+@@ -1671,12 +1671,12 @@ func (b *cloudBackend) Import(ctx context.Context, stack backend.Stack,
+ 		}
+ 
+ 		op.Opts.Engine.GeneratePlan = false
+-		_, changes, err := b.apply(
++		_, changes, snap, err := b.apply(
+ 			ctx, apitype.ResourceImportUpdate, stack, op, opts, nil /*events*/)
+-		return changes, err
++		return changes, snap, err
+ 	}
+ 
+-	return backend.PreviewThenPromptThenExecute(ctx, apitype.ResourceImportUpdate, stack, op, b.apply, b, nil)
++	return backend.PreviewThenPromptThenExecuteImport(ctx, stack, op, b.apply, b)
+ }
+ 
+ func (b *cloudBackend) Refresh(ctx context.Context, stack backend.Stack,
+@@ -1690,7 +1690,7 @@ func (b *cloudBackend) Refresh(ctx context.Context, stack backend.Stack,
+ 		}
+ 
+ 		op.Opts.Engine.GeneratePlan = false
+-		_, changes, err := b.apply(
++		_, changes, _, err := b.apply(
+ 			ctx, apitype.RefreshUpdate, stack, op, opts, nil /*events*/)
+ 		return changes, err
+ 	}
+@@ -1708,7 +1708,7 @@ func (b *cloudBackend) Destroy(ctx context.Context, stack backend.Stack,
+ 		}
+ 
+ 		op.Opts.Engine.GeneratePlan = false
+-		_, changes, err := b.apply(
++		_, changes, _, err := b.apply(
+ 			ctx, apitype.DestroyUpdate, stack, op, opts, nil /*events*/)
+ 		return changes, err
+ 	}
+@@ -2011,13 +2011,13 @@ func (b *cloudBackend) apply(
+ 	ctx context.Context, kind apitype.UpdateKind, stack backend.Stack,
+ 	op backend.UpdateOperation, opts backend.ApplierOptions,
+ 	events chan<- engine.Event,
+-) (*deploy.Plan, sdkDisplay.ResourceChanges, error) {
++) (*deploy.Plan, sdkDisplay.ResourceChanges, *deploy.Snapshot, error) {
+ 	resetKeepRunning := nosleep.KeepRunning()
+ 	defer resetKeepRunning()
+ 
+ 	err := backend.CurrentProjectContradictsWorkspace(b.currentProject, stack.Ref())
+ 	if err != nil {
+-		return nil, nil, err
++		return nil, nil, nil, err
+ 	}
+ 
+ 	actionLabel := backend.ActionLabel(kind, opts.DryRun)
+@@ -2038,7 +2038,7 @@ func (b *cloudBackend) apply(
+ 	// Create an update object to persist results.
+ 	update, updateMeta, err := b.createAndStartUpdate(ctx, kind, stack, &op, opts.DryRun)
+ 	if err != nil {
+-		return nil, nil, err
++		return nil, nil, nil, err
+ 	}
+ 	// BeginUpdate cached the pre-update deployment/tags for the engine's initial reads; it is
+ 	// stale once this update mutates state, so drop it when apply returns. Otherwise a later
+@@ -2149,7 +2149,7 @@ func (b *cloudBackend) runEngineAction(
+ 	op backend.UpdateOperation, update client.UpdateIdentifier, token, permalink string,
+ 	updateStartedEvent engine.Event,
+ 	callerEventsOpt chan<- engine.Event, dryRun bool, journalVersion int64,
+-) (*deploy.Plan, sdkDisplay.ResourceChanges, error) {
++) (*deploy.Plan, sdkDisplay.ResourceChanges, *deploy.Snapshot, error) {
+ 	contract.Assertf(token != "", "persisted actions require a token")
+ 
+ 	// Send synchronously before anything can fail, so the caller always gets it and the send
+@@ -2160,7 +2160,7 @@ func (b *cloudBackend) runEngineAction(
+ 
+ 	u, tokenSource, err := b.newUpdate(ctx, stackRef, op, update, token)
+ 	if err != nil {
+-		return nil, nil, err
++		return nil, nil, nil, err
+ 	}
+ 
+ 	var outputsRecorder *stackOutputsRecorder
+@@ -2222,31 +2222,48 @@ func (b *cloudBackend) runEngineAction(
+ 			journalManager, err := engine.NewJournalSnapshotManagerWithVersion(
+ 				snapshotJournaler, u.Target.Snapshot, op.SecretsManager, journalVersion)
+ 			if err != nil {
+-				return nil, nil, err
++				return nil, nil, nil, err
+ 			}
++			// Attach a sidecar legacy SnapshotManager with a DiscardPersister so we can return the
++			// final in-memory snapshot to callers (e.g. `pulumi import` for codegen). All real
++			// persistence happens via the journaler; the sidecar only tracks state in memory.
++			snapshotManager = backend.NewSnapshotManager(
++				backend.DiscardPersister{}, op.SecretsManager, u.Target.Snapshot, nil)
+ 			combinedManager = &engine.CombinedManager{
+-				Managers: []engine.SnapshotManager{journalManager},
++				Managers:          []engine.SnapshotManager{journalManager, snapshotManager},
++				CollectErrorsOnly: []bool{false, true},
+ 			}
+ 		} else {
+ 			persister := b.newSnapshotPersister(ctx, update, tokenSource)
+ 			snapshotJournaler, err = backend.NewSnapshotJournaler(
+ 				ctx, journalPersister, op.SecretsManager, backend_secrets.DefaultProvider, u.Target.Snapshot)
+ 			if err != nil {
+-				return nil, nil, err
++				return nil, nil, nil, err
+ 			}
+ 			// The shadow journal is local-only (it validates snapshots against the legacy snapshot manager),
+ 			// so it always supports the latest journal version.
+ 			journalManager, err := engine.NewJournalSnapshotManagerWithVersion(
+ 				snapshotJournaler, u.Target.Snapshot, op.SecretsManager, apitype.LatestJournalVersion)
+ 			if 
 ```
 
-**File**: `sdk/go/auto/test/errors/conflict_error/go.mod` (modified, +7/-7)
+**File**: `pkg/backend/httpstate/backend_test.go` (modified, +4/-4)
 ```diff
-@@ -98,15 +98,15 @@ require (
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	golang.org/x/crypto v0.57.0 // indirect
-+	golang.org/x/crypto v0.58.0 // indirect
- 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
- 	golang.org/x/mod v0.41.0 // indirect
--	golang.org/x/net v0.60.0 // indirect
--	golang.org/x/sync v0.23.0 // indirect
--	golang.org/x/sys v0.48.0 // indirect
--	golang.org/x/term v0.46.0 // indirect
--	golang.org/x/text v0.42.0 // indirect
--	golang.org/x/tools v0.49.0 // indirect
-+	golang.org/x/net v0.62.0 // indirect
-+	golang.org/x/sync v0.24.0 // indirect
-+	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/term v0.47.0 // indirect
-+	golang.org/x/text v0.43.0 // indirect
-+	golang.org/x/tools v0.51.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/grpc v1.83.2 // indirect
+@@ -1392,7 +1392,7 @@ func TestRunEngineActionPropagatesSnapshotJournalerError(t *testing.T) {
+ 
+ 	var runErr error
+ 	require.NotPanics(t, func() {
+-		_, _, runErr = fx.backend.runEngineAction(
++		_, _, _, runErr = fx.backend.runEngineAction(
+ 			t.Context(), apitype.UpdateUpdate, fx.stackRef, fx.op, fx.update,
+ 			"lease-token", "", updateStartedEvent, callerEvents, false, 0,
+ 		)
+@@ -1423,7 +1423,7 @@ func TestRunEngineActionDeliversUpdateStartedEventWhenNewUpdateFails(t *testing.
+ 
+ 	var runErr error
+ 	require.NotPanics(t, func() {
+-		_, _, runErr = fx.backend.runEngineAction(
++		_, _, _, runErr = fx.backend.runEngineAction(
+ 			t.Context(), apitype.UpdateUpdate, fx.stackRef, fx.op, fx.update,
+ 			"lease-token", "", updateStartedEvent, callerEvents, false, 0,
+ 		)
+@@ -1491,7 +1491,7 @@ func TestRunEngineActionPropagatesJournalManagerError(t *testing.T) {
+ 
+ 			var runErr error
+ 			require.NotPanics(t, func() {
+-				_, _, runErr = fx.backend.runEngineAction(
++				_, _, _, runErr = fx.backend.runEngineAction(
+ 					t.Context(), apitype.UpdateUpdate, fx.stackRef, fx.op, fx.update,
+ 					"lease-token", "", engine.NewEvent(engine.UpdateStartedEventPayload{}), nil, false, tc.journalVersion,
+ 				)
+@@ -1603,7 +1603,7 @@ func TestRunEngineActionCoherenceWindow(t *testing.T) {
+ 				readingIDs <- seen
+ 			}()
+ 
+-			_, _, err := fx.backend.runEngineAction(
++			_, _, _, err := fx.backend.runEngineAction(
+ 				t.Context(), apitype.DestroyUpdate, fx.stackRef, fx.op, fx.update,
+ 				"lease-token", "", engine.NewEvent(engine.UpdateStartedEventPayload{UpdateID: "update-id"}),
+ 				events, true /* dryRun */, 0,
 ```
 
-**File**: `sdk/go/auto/test/errors/conflict_error/go.sum` (modified, +14/-14)
+**File**: `pkg/backend/mock.go` (modified, +2/-2)
 ```diff
-@@ -266,8 +266,8 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
- golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
- golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
--golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
--golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
-+golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
-+golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
- golang.org/x/lint v0.0.0-20200302205851-738671d3881b/go.mod h1:3xt1FjdF8hUf6vQPIChWIBhFzV8gjjsPE/fR3IyQdNY=
-@@ -282,13 +282,13 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
- golang.org/x/net v0.0.0-20200421231249-e086a090c8fd/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
- golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
- golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
--golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
--golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
-+golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
-+golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
--golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
-+golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -302,24 +302,24 @@ golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod h1:h1NjWce9XRLGQEsW7w
- golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
--golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
-+golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
--golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
--golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
-+golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
-+golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
- golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
--golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
--golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
-+golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
-+golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
- golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
- golang.org/x/tools v0.0.0-20181030221726-6c7e314b6563/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
- golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
- golang.org/x/tools v0.0.0-20200130002326-2f3ba24bd6e7/go.mod h1:TB2adYChydJhpapKDTa4BR/hXlZSLoq2Wpct/0txZ28=
- golang.org/x/tools v0.0.0-20200619180055-7c47624df98f/go.mod h1:Ek
+@@ -88,7 +88,7 @@ type MockBackend struct {
+ 	UpdateF func(context.Context, Stack,
+ 		UpdateOperation) (sdkDisplay.ResourceChanges, error)
+ 	ImportF func(context.Context, Stack,
+-		UpdateOperation, []deploy.Import) (sdkDisplay.ResourceChanges, error)
++		UpdateOperation, []deploy.Import) (sdkDisplay.ResourceChanges, *deploy.Snapshot, error)
+ 	RefreshF func(context.Context, Stack,
+ 		UpdateOperation) (sdkDisplay.ResourceChanges, error)
+ 	DestroyF func(context.Context, Stack,
+@@ -321,7 +321,7 @@ func (be *MockBackend) Update(ctx context.Context, stack Stack,
+ 
+ func (be *MockBackend) Import(ctx context.Context, stack Stack,
+ 	op UpdateOperation, imports []deploy.Import,
+-) (sdkDisplay.ResourceChanges, error) {
++) (sdkDisplay.ResourceChanges, *deploy.Snapshot, error) {
+ 	if be.ImportF != nil {
+ 		return be.ImportF(ctx, stack, op, imports)
+ 	}
+```
+
+**File**: `pkg/backend/snapshot.go` (modified, +9/-0)
+```diff
+@@ -57,6 +57,15 @@ type SnapshotPersister interface {
+ 	Save(deployment apitype.TypedDeployment) error
+ }
+ 
++// DiscardPersister is a SnapshotPersister that drops all writes. It's used for dry-run operations
++// (preview, preview-only import) where we want a SnapshotManager to build the final in-memory
++// snapshot for consumers like import codegen, but must not persist anything.
++type DiscardPersister struct{}
++
++func (DiscardPersister) Save(apitype.TypedDeployment) error { return nil }
++
++var _ SnapshotPersister = DiscardPersister{}
++
+ // SnapshotManager is an implementation of engine.SnapshotManager that inspects steps and performs
+ // mutations on the global snapshot object serially. This implementation maintains two bits of state: the "base"
+ // snapshot, which is completely immutable and represents the state of the world prior to the application
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #25475** (2026-10-30): Handshake once with conformance providers loaded from a path (@iwahbe)
+- **PR #25472** (2026-10-30): Stop folding per-property deps into Dependencies after transforms (@Frassle)
+- **PR #25470** (2026-10-30): Use property.Map at the importer-side of State.Inputs/Outputs (@Frassle)
 - **PR #25456** (closed): Show the dedicated CLI command for an operation in pulumi api (@danbiwer)
 - **PR #25450** (2026-10-29): Bind PCL `hideDiffs` against resource inputs and outputs (@iwahbe)
-- **PR #25445** (2026-10-29): Report a diagnostic instead of panicking for PCL blocks with no labels (@sarankumar1325)
-- **PR #25444** (2026-10-29): Restrict @opentelemetry/api to 1.9.x in the Node.js SDK (@eon-pulumi-agent[bot])
-- **PR #25443** (2026-10-29): Only retrieve environment change requests in `pulumi env change-requests` (@seanyeh)
-- **PR #25440** (2026-10-29): Changelog and go.mod updates for v3.273.0 (@pulumi-bot)
+- **PR #25448** (2026-10-30): Return the engine's in-memory snapshot from Backend.Import (@Frassle)
 
 ---
 
@@ -2194,23 +2256,23 @@ Dashboard](../issues/21045) for more information.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Report a diagnostic instead of panicking for PCL blocks with no labels (#25445)
+## X. Return the engine's in-memory snapshot from Backend.Import (#25448)
 
 **RULE**:
-When implementing operations in `changelog/pending/20261029--pcl--labels-diagnostic-without-labels.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/pending/20261029--cli--import-preview-only-generates-code.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b16a699d`: Report a diagnostic instead of panicking for PCL blocks with no labels (#25445). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d3e67f27`: Return the engine's in-memory snapshot from Backend.Import (#25448). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20261029--pcl--labels-diagnostic-without-labels.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/pending/20261029--cli--import-preview-only-generates-code.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-component: pcl
-kind: fix
-body: Report a diagnostic instead of panicking when a block that requires labels has none
+component: cli
+kind: improvement
+body: Make `pulumi import --preview-only` emit the generated resource code
 time: 2026-10-29T00:00:00Z
 ```
 
@@ -2221,4 +2283,4 @@ time: 2026-10-29T00:00:00Z
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b16a699d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d3e67f27` are properly handled with clean fallback behavior.
