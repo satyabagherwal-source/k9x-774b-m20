@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T10:42:07.206Z",
+  "last_updated": "2026-10-30T10:56:34.449Z",
   "total_verified_learnings": 1174,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8687,8 +8687,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "c0e32115",
-      "content_hash": "4cde4727500ffa8ec734b3d993d88b44a3745f394e007746ca30ca76172c02bc",
+      "source_version": "d2240721",
+      "content_hash": "033ab191b0d22d1adc8e8c48f1f90dbbd45510cbc42aa4dd68b63dd40f3a5ad6",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -8971,6 +8971,21 @@
           "number": 5519,
           "title": "bench: move benchmarks.sh to hyperfine 2.0, record peak memory, quarantine suspe",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5739,
+          "title": "Rejection-State Settlement Tracking in Asynchronous Resource Queues",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5740,
+          "title": "Disambiguation of Empty Selection from Universal Wildcards in Domain Selectors",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5741,
+          "title": "Absolute Target Derivation for Decompressed Ephemeral Inputs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8978,7 +8993,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T16:48:25.977Z",
+      "verified_at": "2026-10-30T10:56:34.430Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -14537,8 +14552,8 @@
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "d822d80c",
-      "content_hash": "fa5c40bc66d8251cb59a7b2cfdf9c5cf6d71b951f73d80fa76819c7ffbb6def6",
+      "source_version": "58d7d2f9",
+      "content_hash": "3281b4347405e2e6b7909904897864cd1ca1fd7918540c691a9a00a24d76fa1f",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "promoted_rules": [
@@ -14581,6 +14596,21 @@
           "number": 4435,
           "title": "deps): bump docker/setup-buildx-action from 4.3.0 to 4.4.1 (#23976)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5736,
+          "title": "Sentinel Error Unwrapping Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5737,
+          "title": "Atomic Cache-Miss Singleflight Distributed Quota Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5738,
+          "title": "POSIX Pre-Flight Secure File System Privilege Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14588,7 +14618,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T10:54:23.251Z",
+      "verified_at": "2026-10-30T10:56:08.169Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -152975,6 +153005,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T10:42:07.187Z"
+    },
+    "rule-5736": {
+      "learning_id": "rule-5736",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5736,
+      "title": "Sentinel Error Unwrapping Invariant",
+      "source_url": "https://github.com/goharbor/harbor",
+      "source_version": "58d7d2f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:56:08.169Z"
+    },
+    "rule-5737": {
+      "learning_id": "rule-5737",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5737,
+      "title": "Atomic Cache-Miss Singleflight Distributed Quota Invariant",
+      "source_url": "https://github.com/goharbor/harbor",
+      "source_version": "58d7d2f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:56:08.169Z"
+    },
+    "rule-5738": {
+      "learning_id": "rule-5738",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5738,
+      "title": "POSIX Pre-Flight Secure File System Privilege Invariant",
+      "source_url": "https://github.com/goharbor/harbor",
+      "source_version": "58d7d2f9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:56:08.169Z"
+    },
+    "rule-5739": {
+      "learning_id": "rule-5739",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5739,
+      "title": "Rejection-State Settlement Tracking in Asynchronous Resource Queues",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "d2240721",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:56:34.430Z"
+    },
+    "rule-5740": {
+      "learning_id": "rule-5740",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5740,
+      "title": "Disambiguation of Empty Selection from Universal Wildcards in Domain Selectors",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "d2240721",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:56:34.430Z"
+    },
+    "rule-5741": {
+      "learning_id": "rule-5741",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5741,
+      "title": "Absolute Target Derivation for Decompressed Ephemeral Inputs",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "d2240721",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T10:56:34.430Z"
     }
   },
   "aliases": {

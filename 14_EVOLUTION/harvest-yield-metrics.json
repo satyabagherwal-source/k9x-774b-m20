@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T10:42:07.295Z",
-  "total_cycles_completed": 6157,
-  "total_learnings_persisted": 6157,
-  "total_rules_promoted": 5705,
+  "last_updated": "2026-10-30T10:56:34.537Z",
+  "total_cycles_completed": 6159,
+  "total_learnings_persisted": 6159,
+  "total_rules_promoted": 5711,
   "history": [
-    {
-      "timestamp": "2026-10-28T22:59:06.588Z",
-      "repository": "authzed/spicedb",
-      "learningId": "learn-github-authzed-spicedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-28T22:59:11.461Z",
-      "repository": "langchain4j/langchain4j",
-      "learningId": "learn-github-langchain4j-langchain4j",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-28T23:05:17.816Z",
       "repository": "vllm-sr/d3",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T10:42:07.295Z",
       "repository": "LiquidAI/LFM3-Audio-2B",
       "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T10:56:08.276Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T10:56:34.537Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

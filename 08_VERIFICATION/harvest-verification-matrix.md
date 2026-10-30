@@ -6180,3 +6180,5 @@
 | `CYCLE-20261030-DCBC` | `2026-10-30T10:40:58.776Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5731` | Yes (`0fc1be6f...`) |
 | `CYCLE-20261030-DDXA` | `2026-10-30T10:41:00.862Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5732` | Yes (`52fc2ef9...`) |
 | `CYCLE-20261030-ET6E` | `2026-10-30T10:42:07.286Z` | `LiquidAI/LFM3-Audio-2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5733, Rule 5734, Rule 5735` | Yes (`9c92f608...`) |
+| `CYCLE-20261030-WU2Y` | `2026-10-30T10:56:08.266Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5736, Rule 5737, Rule 5738` | Yes (`3281b434...`) |
+| `CYCLE-20261030-XECF` | `2026-10-30T10:56:34.527Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5739, Rule 5740, Rule 5741` | Yes (`033ab191...`) |

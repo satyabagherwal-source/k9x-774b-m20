@@ -6189,3 +6189,5 @@ Every entry in this ledger must capture:
 | `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `1f40f8ba` | Multi-dimensional audit evidence | 2026-10-30T10:40:58.780Z |
 | `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `3a8f3f35` | Multi-dimensional audit evidence | 2026-10-30T10:41:00.866Z |
 | `learn-huggingface-liquidai-lfm3-audio-2b` | `https://huggingface.co/LiquidAI/LFM3-Audio-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-30T10:42:07.290Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `58d7d2f9` | Multi-dimensional audit evidence | 2026-10-30T10:56:08.270Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `d2240721` | Multi-dimensional audit evidence | 2026-10-30T10:56:34.531Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source**: github ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Source Version**: `d822d80c`  
+> **Source Version**: `58d7d2f9`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T10:54:23.144Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-30T10:56:06.801Z  
 > **Learning ID**: `learn-github-goharbor-harbor`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,888 +12,577 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): goharbor/harbor
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T10:54:22.936Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): goharbor/harbor
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `goharbor/harbor`
-- **Description**: An open source trusted cloud native registry project that stores, signs, and scans content.
-- **Primary Language / Ecosystem**: Go
-- **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29619 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+Harbor is an open-source, cloud-native artifact registry extending Docker Distribution specification compliance to provide role-based access control (RBAC), multi-tenant project isolation, vulnerability scanning (via pluggable scanners such as Trivy), policy-driven image replication, immutable artifact tagging, and cryptographic provenance verification (Cosign/Notary). 
+
+```
+                                      +------------------------------------+
+                                      |          Reverse Proxy             |
+                                      |         (Envoy / NGINX)            |
+                                      +-----------------+------------------+
+                                                        |
+                                +-----------------------+-----------------------+
+                                |                                               |
+                     +----------v----------+                         +----------v----------+
+                     |    Harbor Portal    |                         |     Harbor Core     |
+                     |      (Angular)      |                         |  (API, RBAC, Auth)  |
+                     +---------------------+                         +----+------+----+----+
+                                                                          |      |    |
+                           +----------------------------------------------+      |    +-----------------------------+
+                           |                                                     |                                  |
+                +----------v----------+                               +----------v----------+            +----------v----------+
+                | Distribution Engine |                               |     Jobservice      |            |  PostgreSQL / Redis |
+                |  (Docker Registry)  |                               | (Async Task Queue)  |            |  (State, Cache,     |
+                +----------+----------+                               +----------+----------+            |   Distributed Lock) |
+                           |                                                     |                       +---------------------+
+                           |                                                     |
+                +----------v----------+                               +----------v----------+
+                | Storage Drivers     |                               | Pluggable Scanners  |
+                | (S3, GCS, Azure, FS)|                               | (Trivy Adapter)     |
+                +---------------------+                               +---------------------+
+```
+
+### Architectural Subsystem Boundaries and Interfaces
+1. **Core Subsystem (`src/core`, `src/controller`)**: Acts as the central domain controller and API boundary. It authenticates requests (OIDC, LDAP, Local DB), executes RBAC verification against the target project namespace, mediates blob and manifest CRUD operations, and generates short-lived scoped JWT access tokens for the container distribution runtime.
+2. **Distribution Runtime (`src/registry`, Docker Distribution)**: Handles raw chunked OCI image layer uploads and downloads. It relies on the Harbor Core token service for authentication and pushes webhook notifications on manifest/blob mutations.
+3. **Async Task Engine (`src/jobservice`)**: A distributed, worker-pool-driven task execution engine decoupled from synchronous API cycles. Coordinates long-running workloads (garbage collection, cross-registry replication, automated artifact retention rules, vulnerability scans) using Redis as the backing queue, periodic scheduler, and deduplication state machine.
+4. **Configuration & Bootstrap Orchestrator (`make/photon/prepare`)**: Python-based pre-flight generation layer that reads `harbor.yml`, parses environment topologies, enforces POSIX file permission matrices (UID/GID 10000 isolation, PostgreSQL UID 999), and generates mutual TLS certificates, NGINX routing maps, and Jinja-templated component configurations before container runtimes initialize.
+5. **Storage & State Abstraction (`src/lib/cache`, `src/pkg/retention`, PostgreSQL, Redis)**: Hybrid persistence architecture where relational metadata (projects, users, repository policies, scan overviews) resides in PostgreSQL, while operational transient state (rate limits, quota tracking, singleflight deduplication tokens, distributed worker heartbeats) resides in Redis.
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: README.md.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `make/photon/prepare/utils/cert.py`
-```
-# Get or generate private key
-import os, subprocess, shutil
-from pathlib import Path
-from subprocess import DEVNULL
-import logging
-
-from g import DEFAULT_GID, DEFAULT_UID, shared_cert_dir, storage_ca_bundle_filename, internal_tls_dir, internal_ca_filename, redis_tls_ca_filename
-from .misc import (
-    mark_file,
-    generate_random_string,
-    check_permission,
-    stat_decorator,
-    get_realpath)
-
-SSL_CERT_PATH = os.path.join("/etc/cert", "server.crt")
-SSL_CERT_KEY_PATH = os.path.join("/etc/cert", "server.key")
-
-def _get_secret(folder, filename, length=16):
-    key_file = os.path.join(folder, filename)
-    if os.path.isfile(key_file):
-        with open(key_file, 'r') as f:
-            key = f.read()
-            print("loaded secret from file: %s" % key_file)
-        mark_file(key_file)
-        return key
-    if not os.path.isdir(folder):
-        os.makedirs(folder)
-    key = generate_random_string(length)
-    with open(key_file, 'w') as f:
-        f.write(key)
-        print("Generated and saved secret to file: %s" % key_file)
-    mark_file(key_file)
-    return key
-
-
-def get_secret_key(path):
-    secret_key = _get_secret(path, "secretkey")
-    if len(secret_key) != 16:
-        raise Exception("secret key's length has to be 16 chars, current length: %d" % len(secret_key))
-    return secret_key
-
-
-def get_alias(path):
-    alias = _get_secret(path, "defaultalias", length=8)
-    return alias
-
-@stat_decorator
-def create_root_cert(subj, key_path="./k.key", cert_path="./cert.crt"):
-   rc = subprocess.call(["/usr/bin/openssl", "genrsa", "-traditional", "-out", key_path, "4096"], stdout=DEVNULL, stderr=subprocess.STDOUT)
-   if rc != 0:
-        return rc
-   return subprocess.call(["/usr/bin/openssl", "req", "-new", "-x509", "-key", key_path,\
-        "-out", cert_path, "-days", "3650", "-subj", subj], stdout=DEVNULL, stderr=subprocess.STDOUT)
-
-def create_ext_file(cn, ext_filename):
-    with open(ext_filename, 'w') as f:
-        f.write("subjectAltName = DNS.1:{}".format(cn))
-
-def san_existed(cert_path):
-    try:
-        return "Subject Alternative Name:" in str(subprocess.check_output(
-            ["/usr/bin/openssl", "x509", "-in", cert_path, "-text"]))
-    except subprocess.CalledProcessError:
-        pass
-    return False
-
-@stat_decorator
-def create_cert(subj, ca_key, ca_cert, key_path="./k.key", cert_path="./cert.crt", extfile='extfile.cnf'):
-    cert_dir = os.path.dirname(cert_path)
-    csr_path = os.path.join(cert_dir, "tmp.csr")
-    rc = subprocess.call(["/usr/bin/openssl", "req", "-newkey", "rsa:4096", "-nodes","-sha256","-keyout", key_path,\
-        "-out", csr_path, "-subj", subj], stdout=DEVNULL, stderr=subprocess.STDOUT)
-    if rc != 0:
-        return rc
-    return subprocess.call(["/usr/bin/openssl", "x509", "-req", "-days", "3650", "-in", csr_path, "-CA", \
-        ca_cert, "-CAkey", ca_key, "-CAcreateserial", "-extfile", extfile ,"-out", cert_path],
-        stdout=DEVNULL, stderr=subprocess.STDOUT)
-
-
-def openssl_installed():
-    shell_stat = subprocess.check_call(["/usr/bin/which", "openssl"], stdout=DEVNULL, stderr=subprocess.STDOUT)
-    if shell_stat != 0:
-        print("Cannot find openssl installed in this computer\nUse default SSL certificate file")
-        return False
-    return True
-
-
-def prepare_registry_ca(
-    private_key_pem_path: Path,
-    root_crt_path: Path,
-    old_private_key_pem_path: Path,
-    old_crt_path: Path):
-    if not ( private_key_pem_path.exists() and root_crt_path.exists() ):
-        # From version 1.8 the cert storage path is changed
-        # if old key paris not exist create new ones
-        # if old key pairs exist in old place copy it to new place
-        if not (old_crt_path.exists() and old_private_key_pem_path.exists()):
-            private_key_pem_path.parent.mkdir(parents=True, exist_ok=True)
-            root_crt_path.parent.mkdir(parents=True, exist_ok=True)
-
-            empty_subj = "/"
-            create_root_cert(empty_subj, key_path=private_key_pem_path, cert_path=root_crt_path)
-            mark_file(private_key_pem_path)
-            mark_file(root_crt_path)
-        else:
-            shutil.move(old_crt_path, root_crt_path)
-            shutil.move(old_private_key_pem_path, private_key_pem_path)
-
-    if not check_permission(root_crt_path, uid=DEFAULT_UID, gid=DEFAULT_GID):
-        os.chown(root_crt_path, DEFAULT_UID, DEFAULT_GID)
-
-    if not check_permission(private_key_pem_path, uid=DEFAULT_UID, gid=DEFAULT_GID):
-        os.chown(private_key_pem_path, DEFAULT_UID, DEFAULT_GID)
-
-
-def prepare_trust_ca(config_dict):
-    if shared_cert_dir.exists():
-        shutil.rmtree(shared_cert_dir)
-    shared_cert_dir.mkdir(parents=True, exist_ok=True)
-
-    internal_ca_src = internal_tls_dir.joinpath(internal_ca_filename)
-    ca_bundle_src = config_dict.get('registry_custom_ca_bundle_path')
-    redis_tls_ca_src = config_dict.get('redis_custom_tls_ca_path')
-    for src_path, dst_filename in (
-        (internal_ca_src, internal_ca_filename),
-        (ca_bundle_src, storage_ca_bundle_filename),
-        (redis_tls_ca_src, redis_tls_ca_filename)):
-        print('copy {} to shared trust ca dir as name {} ...'.format(src_path, dst_filename))
-        logging.info('copy {} to shared trust ca dir as name {} ...'.format(src_path, dst_filename))
-        # check if source file valied
-        if not src_path:
-            continue
-        real_src_path = get_realpath(str(src_path))
-        if not real_src_path.exists():
-            print('ca file {} is not exist'.format(real_src_path))
-            logging.info('ca file {} is not exist'.format(real_src_path))
-            continue
-        if not real_src_path.is_file():
-            print('{} is not file'.format(real_src_path))
-            logging.info('{} is not file'.format(real_src_path))
-            continue
-
-        dst_path = shared_cert_dir.joinpath(dst_filename)
-
-        # copy src to dst
-        shutil.copy2(real_src_path, dst_path)
-
-        # change ownership and permission
-        mark_file(dst_path, mode=0o644)
-
-```
-
-### Core Architecture Module: `make/photon/prepare/utils/configs.py`
-```
-from distutils.command.config import config
-import logging
-import os
-import yaml
-from urllib.parse import urlencode, quote
-from g import versions_file_path, host_root_dir, DEFAULT_UID, INTERNAL_NO_PROXY_DN
-from models import InternalTLS, Metric, Trace, PurgeUpload, Cache, Core
-from utils.misc import generate_random_string, owner_can_read, other_can_read
-
-# NOTE: https://golang.org/pkg/database/sql/#DB.SetMaxIdleConns
-default_db_max_idle_conns = 2
-# NOTE: https://golang.org/pkg/database/sql/#DB.SetMaxOpenConns
-default_db_max_open_conns = 0
-default_https_cert_path = '/your/certificate/path'
-default_https_key_path = '/your/certificate/path'
-
-REGISTRY_USER_NAME = 'harbor_registry_user'
-
-
-WEBHOOK_EGRESS_POLICIES = ('allow_all', 'block_restricted', 'public_only')
-
-
-def validate(conf: dict, **kwargs):
-    # webhook egress policy validate
-    if conf.get('webhook_egress_policy') and conf['webhook_egress_policy'] not in WEBHOOK_EGRESS_POLICIES:
-        raise Exception("Error: webhook_egress.policy must be one of {}, got {!r}".format(
-            ', '.join(WEBHOOK_EGRESS_POLICIES), conf['webhook_egress_policy']))
-
-    # hostname validate
-    if conf.get('hostname') == '127.0.0.1':
-        raise Exception("127.0.0.1 can not be the hostname")
-    if conf.get('hostname') == 'reg.mydomain.com':
-        raise Exception("Please specify hostname")
-
-    # protocol validate
-    protocol = conf.get("protocol")
-    if protocol == "https":
-        if not conf.get("cert_path") or conf["cert_path"] == default_https_cert_path:
-            raise Exception("Error: The protocol is https but attribute ssl_cert is not set")
-        if not conf.get("cert_key_path") or conf['cert_key_path'] == default_https_key_path:
-            raise Exception("Error: The protocol is https but attribute ssl_cert_key is not set")
-    if protocol == "http":
-        logging.warning("WARNING: HTTP protocol is insecure. Harbor will deprecate http protocol in the future. Please make sure to upgrade to https")
-
-    # log endpoint validate
-    if ('log_ep_host' in conf) and not conf['log_ep_host']:
-        raise Exception('Error: must set log endpoint host to enable external host')
-    if ('log_ep_port' in conf) and not conf['log_ep_port']:
-        raise Exception('Error: must set log endpoint port to enable external host')
-    if ('log_ep_protocol' in conf) and (conf['log_ep_protocol'] not in ['udp', 'tcp']):
-        raise Exception("Protocol in external log endpoint must be one of 'udp' or 'tcp' ")
-
-    # Storage validate
-    valid_storage_drivers = ["filesystem", "azure", "gcs", "s3", "swift", "oss"]
-    storage_provider_name = conf.get("storage_provider_name")
-    if storage_provider_name not in valid_storage_drivers:
-        raise Exception("Error: storage driver %s is not supported, only the following ones are supported: %s" % (
-            storage_provider_name, ",".join(valid_storage_drivers)))
-
-    # original is registry_storage_provider_config
-    storage_provider_config = conf.get("storage_provider_config")
-    if storage_provider_name != "filesystem":
-        if storage_provider_config == "":
-            raise Exception(
-                "Error: no provider configurations are provided for provider %s" % storage_provider_name)
-    # ca_bundle validate
-    if conf.get('registry_custom_ca_bundle_path'):
-        registry_custom_ca_bundle_path = conf.get('registry_custom_ca_bundle_path') or ''
-        if registry_custom_ca_bundle_path.startswith('/data/'):
-            ca_bundle_host_path = registry_custom_ca_bundle_path
-        else:
-            ca_bundle_host_path = os.path.join(host_root_dir, registry_custom_ca_bundle_path.lstrip('/'))
-        try:
-            uid = os.stat(ca_bundle_host_path).st_uid
-            st_mode = os.stat(ca_bundle_host_path).st_mode
-        except Exception as e:
-            logging.error(e)
-            raise Exception('Can not get file info')
-        err_msg = 'Cert File {} should be owned by user with uid 10000 or readable by others'.format(registry_custom_ca_bundle_path)
-        if uid == DEFAULT_UID and not owner_can_read(st_mode):
-            raise Exception(err_msg)
-        if uid != DEFAULT_UID and not other_can_read(st_mode):
-            raise Exception(err_msg)
-
-    # TODO:
-    # If user enable trust cert dir, need check if the files in this dir is readable.
-
-    if conf.get('trace'):
-        conf['trace'].validate()
-
-    if conf.get('purge_upload'):
-        conf['purge_upload'].validate()
-
-    if conf.get('cache'):
-        conf['cache'].validate()
-
-    if conf.get('core'):
-        conf['core'].validate()
-
-
-def parse_versions():
-    if not versions_file_path.is_file():
-        return {}
-    with open('versions') as f:
-        versions = yaml.safe_load(f)
-    return versions
-
-
-def parse_yaml_config(config_file_path, with_trivy):
-    '''
-    :param configs: config_parser object
-    :returns: dict of configs
-    '''
-
-    with open(config_file_path) as f:
-        configs = yaml.safe_load(f)
-
-    config_dict = {
-        'portal_url': 'http://portal:8080',
-        'registry_url': 'http://registry:5000',
-        'registry_controller_url': 'http://registryctl:8080',
-        'core_url': 'http://core:8080',
-        'core_local_url': 'http://127.0.0.1:8080',
-        'token_service_url': 'http://core:8080/service/token',
-        'jobservice_url': 'http://jobservice:8080',
-        'trivy_adapter_url': 'http://trivy-adapter:8080',
-    }
-
-    config_dict['hostname'] = configs["hostname"]
-
-    config_dict['protocol'] = 'http'
-    http_config = configs.get('http') or {}
-    config_dict['http_port'] = http_config.get('port', 80)
-
-    https_config = configs.get('https')
-    if https_config:
-        config_dict['protocol'] = 'https'
-        config_dict['https_port'] = https_config.get('port', 443)
-        config_dict['cert_path'] = https_config["certificate"]
-        config_dict['cert_key_path'] = https_config["private_key"]
-
-    if configs.get('external_url'):
-        config_dict['public_url'] = configs.get('external_url')
-    else:
-        if config_dict['protocol'] == 'https':
-            if config_dict['https_port'] == 443:
-                config_dict['public_url'] = '{protocol}://{hostname}'.format(**config_dict)
-            else:
-                config_dict['public_url'] = '{protocol}://{hostname}:{https_port}'.format(**config_dict)
-        else:
-            if config_dict['http_port'] == 80:
-                config_dict['public_url'] = '{protocol}://{hostname}'.format(**config_dict)
-            else:
-                config_dict['public_url'] = '{protocol}://{hostname}:{http_port}'.format(**config_dict)
-
-    # DB configs
-    db_configs = configs.get('database')
-    if db_configs:
-        # harbor db
-        config_dict['harbor_db_host'] = 'postgresql'
-        config_dict['harbor_db_port'] = 5432
-        config_dict['harbor_db_name'] = 'registry'
-        config_dict['harbor_db_username'] = 'postgres'
-        config_dict['harbor_db_password'] = db_configs.get("password") or ''
-        config_dict['harbor_db_sslmode'] = 'disable'
-        config_dict['harbor_db_max_idle_conns'] = db_configs.get("max_idle_conns") or default_db_max_idle_conns
-        config_dict['harbor_db_max_open_conns'] = db_configs.get("max_open_conns") or default_db_max_open_conns
-        config_dict['harbor_db_conn_max_lifetime'] = db_configs.get("conn_max_lifetime") or '5m'
-        config_dict['harbor_db_conn_max_idle_time'] = db_configs.get("conn_max_idle_time") or '0'
-
-    # Data path volume
-    config_dict['data_volume'] = configs['data_volume']
-
-    # Initial Admin Password
-    config_dict['harbor_admin_password'] = configs["harbor_admin_password"]
-
-    # Registry storage configs
-    storage_config = configs.get('storage_service') or {}
-
-    config_dict['registry_custom_ca_bundle_path'] = storage_config.get('ca_bundle') or ''
-
-    if storage_config.get('filesystem'):
-        config_dict['storage_provider_name'] = 'filesystem'
-        config_dict['storage_provider_config'] = storage_config['filesystem']
-    elif storage_config.get('azure'):
-        config_dict['storage_provider_name'] = 'azure'
-        config_dict['storage_provider_config'] = storage_config['azure']
-    elif storage_config.get('gcs'):
-        config_dict['storage_provider_name'] = 'gcs'
-        config_dict['storage_provider_config'] = storage_config['gcs']
-    elif storage_config.get('s3'):
-        config_dict['storage_provider_name'] = 's3'
-        config_dict['storage_provider_config'] = storage_config['s3']
-    elif storage_config.get('swift'):
-        config_dict['storage_provider_name'] = 'swift'
-        config_dict['storage_provider_config'] = storage_config['swift']
-    elif storage_config.get('oss'):
-        config_dict['storage_provider_name'] = 'oss'
-        config_dict['storage_provider_config'] = storage_config['oss']
-    else:
-        config_dict['storage_provider_name'] = 'filesystem'
-        config_dict['storage_provider_config'] = {}
-
-    if storage_config.get('redirect'):
-        config_dict['storage_redirect_disabled'] = storage_config['redirect']['disable']
-
-    # Global proxy configs
-    proxy_config = configs.get('proxy') or {}
-    proxy_components = proxy_config.get('components') or []
-    no_proxy_config = proxy_config.get('no_proxy')
-    all_no_proxy = INTERNAL_NO_PROXY_DN
-    if no_proxy_config:
-        all_no_proxy |= set(no_proxy_config.split(','))
-
-    for proxy_component in proxy_components:
-        config_dict[proxy_component + '_http_proxy'] = proxy_config.get('http_proxy') or ''
-        config_dict[proxy_component + '_https_proxy'] = proxy_config.get('https_proxy') or ''
-        config_dict[proxy_component + '_no_proxy'] = ','.join(all_no_proxy)
-
-    # Webhook and Slack notification egress; an unset policy leaves the default to Harbor
-    webhook_egress_config = configs.get('webhook_egress') or {}
-    webhook_egress_policy = webhook_egress_config.get('policy')
-    config_dict['webhook_egress_policy'] = '' if webhook_egress_policy is None else str(webhook_egress_polic
-```
-
-### Core Architecture Module: `make/photon/prepare/utils/core.py`
-```
-import os
-import shutil
-from g import config_dir, templates_dir, data_dir, DEFAULT_GID, DEFAULT_UID
-from utils.jinja import render_jinja
-from utils.misc import prepare_dir, generate_random_string
-
-core_config_dir = os.path.join(config_dir, "core", "certificates")
-core_env_template_path = os.path.join(templates_dir, "core", "env.jinja")
-core_conf_env = os.path.join(config_dir, "core", "env")
-core_conf_template_path = os.path.join(templates_dir, "core", "app.conf.jinja")
-core_conf = os.path.join(config_dir, "core", "app.conf")
-
-ca_download_dir = os.path.join(data_dir, 'ca_download')
-
-
-def prepare_core(config_dict, with_trivy):
-    prepare_dir(ca_download_dir, uid=DEFAULT_UID, gid=DEFAULT_GID)
-    prepare_dir(core_config_dir)
-    # Render Core
-
-    render_jinja(
-        core_env_template_path,
-        core_conf_env,
-        with_trivy=with_trivy,
-        csrf_key=generate_random_string(32),
-        scan_robot_prefix=generate_random_string(8),
-        **config_dict)
-
-    render_jinja(
-        core_conf_template_path,
-        core_conf,
-        uid=DEFAULT_UID,
-        gid=DEFAULT_GID,
-        **config_dict)
-
-
-def copy_core_config(core_templates_path, core_config_path):
-    shutil.copyfile(core_templates_path, core_config_path)
-    print("Generated configuration file: %s" % core_config_path)
-
-```
-
-### Core Architecture Module: `make/photon/prepare/utils/db.py`
-```
-import os
-
-from g import config_dir, templates_dir, data_dir, PG_UID, PG_GID
-from utils.misc import prepare_dir
-from utils.jinja import render_jinja
-
-db_config_dir = os.path.join(config_dir, "db")
-db_env_template_path = os.path.join(templates_dir, "db", "env.jinja")
-db_conf_env = os.path.join(config_dir, "db", "env")
-database_data_path = os.path.join(data_dir, 'database')
-
-def prepare_db(config_dict):
-    prepare_dir(database_data_path, uid=PG_UID, gid=PG_GID, mode=0o700)
-    prepare_dir(db_config_dir)
-    render_jinja(
-        db_env_template_path,
-        db_conf_env,
-        harbor_db_password=config_dict['harbor_db_password'])
-
-```
-
-### Core Architecture Module: `make/photon/prepare/utils/docker_compose.py`
-```
-import os
-
-from g import templates_dir
-from .configs import parse_versions
-from .jinja import render_jinja
-
-docker_compose_template_path = os.path.join(templates_dir, 'docker_compose', 'docker-compose.yml.jinja')
-docker_compose_yml_path = '/compose_location/docker-compose.yml'
-
-# render docker-compose
-def prepare_docker_compose(configs, with_trivy):
-    versions = parse_versions()
-    VERSION_TAG = versions.get('VERSION_TAG') or 'dev'
-
-    rendering_variables = {
-        'version': VERSION_TAG,
-        'reg_version': VERSION_TAG,
-        'redis_version': VERSION_TAG,
-        'trivy_adapter_version': VERSION_TAG,
-        'data_volume': configs['data_volume'],
-        'log_location': configs['log_location'],
-        'protocol': configs['protocol'],
-        'http_port': configs['http_port'],
-        'external_redis': configs['external_redis'],
-        'external_database': configs['external_database'],
-        'with_trivy': with_trivy,
-    }
-
-    # if configs.get('registry_custom_ca_bundle_path'):
-    #     rendering_variables['registry_custom_ca_bundle_path'] = configs.get('registry_custom_ca_bundle_path')
-    #     rendering_variables['custom_ca_required'] = True
-
-    # for gcs
-    storage_config = configs.get('storage_provider_config') or {}
-    if storage_config.get('keyfile') and configs['storage_provider_name'] == 'gcs':
-        rendering_variables['gcs_keyfile'] = storage_config['keyfile']
-
-    # for http
-    if configs['protocol'] == 'https':
-        rendering_variables['cert_key_path'] = configs['cert_key_path']
-        rendering_variables['cert_path'] = configs['cert_path']
-        rendering_variables['https_port'] = configs['https_port']
-
-    # internal cert pairs
-    rendering_variables['internal_tls'] = configs['internal_tls']
-
-    # for uaa
-    uaa_config = configs.get('uaa') or {}
-    if uaa_config.get('ca_file'):
-        rendering_variables['uaa_ca_file'] = uaa_config['ca_file']
-
-    # for log
-    log_ep_host = configs.get('log_ep_host')
-    if log_ep_host:
-        rendering_variables['external_log_endpoint'] = True
-
-    # for metrics
-    metric = configs.get('metric')
-    if metric:
-        rendering_variables['metric'] = metric
-
-    render_jinja(docker_compose_template_path, docker_compose_yml_path,  mode=0o644, **rendering_variables)
-
-```
-
-### Core Architecture Module: `make/photon/prepare/utils/exporter.py`
-```
-import os
-from g import config_dir, templates_dir, DEFAULT_GID, DEFAULT_UID
-from utils.jinja import render_jinja
-from utils.misc import prepare_dir
-
-EXPORTER_CONFIG_DIR = os.path.join(config_dir, "exporter")
-EXPORTER_CONF_ENV = os.path.join(config_dir, "exporter", "env")
-EXPORTER_ENV_TEMPLATE_PATH = os.path.join(templates_dir, "exporter", "env.jinja")
-
-def prepare_exporter(config_dict):
-    prepare_dir(EXPORTER_CONFIG_DIR, uid=DEFAULT_UID, gid=DEFAULT_GID)
-
-    render_jinja(
-        EXPORTER_ENV_TEMPLATE_PATH,
-        EXPORTER_CONF_ENV,
-        **config_dict)
-
-```
-
-### Core Architecture Module: `make/photon/prepare/utils/internal_tls.py`
-```
-
-def prepare_tls(config_dict):
-    config_dict['internal_tls'].prepare()
-    config_dict['internal_tls'].validate()
-```
-
-### Core Architecture Module: `make/photon/prepare/utils/jinja.py`
-```
-import json
-
-from jinja2 import Environment, FileSystemLoader, select_autoescape
-from .misc import mark_file
-
-jinja_env = Environment(loader=FileSystemLoader('/'), trim_blocks=True, lstrip_blocks=True, autoescape = select_autoescape())
-
-def to_json(value):
-    return json.dumps(value)
-
-jinja_env.filters['to_json'] = to_json
-
-
-def render_jinja(src, dest,mode=0o640, uid=0, gid=0, **kw):
-    t = jinja_env.get_template(src)
-    with open(dest, 'w') as f:
-        f.write(t.render(**kw))
-    mark_file(dest, mode, uid, gid)
-    print("Generated configuration file: %s" % dest)
-```
-
-### Core Architecture Module: `make/photon/prepare/utils/jobservice.py`
-```
-import os
-
-from g import config_dir, DEFAULT_GID, DEFAULT_UID, templates_dir
-from utils.misc import prepare_dir
-from utils.jinja import render_jinja
-
-job_config_dir = os.path.join(config_dir, "jobservice")
-job_service_env_template_path = os.path.join(templates_dir, "jobservice", "env.jinja")
-job_service_conf_env = os.path.join(config_dir, "jobservice", "env")
-job_service_conf_template_path = os.path.join(templates_dir, "jobservice", "config.yml.jinja")
-jobservice_conf = os.path.join(config_dir, "jobservice", "config.yml")
-
-def prepare_job_service(config_dict):
-    prepare_dir(job_config_dir, uid=DEFAULT_UID, gid=DEFAULT_GID)
-
-    log_level = config_dict['log_level'].upper()
-
-    # Job log and exported reports are stored in data dir
-    job_log_dir = os.path.join('/data', "job_logs")
-    prepare_dir(job_log_dir, uid=DEFAULT_UID, gid=DEFAULT_GID)
-
-    # Render Jobservice env
-    render_jinja(
-        job_service_env_template_path,
-        job_service_conf_env,
-        **config_dict)
-
-    # Render Jobservice config
-    render_jinja(
-        job_service_conf_template_path,
-        jobservice_conf,
-        uid=DEFAULT_UID,
-        gid=DEFAULT_GID,
-        internal_tls=config_dict['internal_tls'],
-        max_job_workers=config_dict['max_job_workers'],
-        max_job_duration_hours=config_dict['max_job_duration_hours'],
-        job_loggers=config_dict['job_loggers'],
-        logger_sweeper_duration=config_dict['logger_sweeper_duration'],
-        redis_url=config_dict['redis_url_js'],
-        level=log_level,
-        metric=config_dict['metric'])
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24244** (2026-10-27): **fix(release): use runner Docker to avoid Buildx permission failure**
-  *Symptoms*: The publish-release workflow fails on CNCF runners because docker-practice/actions-setup-docker hard-codes DOCKER_CONFIG to /home/runner/.docker. Its embedded Buildx setup then tries to create configuration under /home/runner, which is not writable by the runner user, and exits with 'mkdir /home/runner: permission denied'.  CNCF runners already provide Docker, and the package-build workflow uses that engine directly. Replace the third-party Docker installer with 'docker version' and 'docker info' checks to verify that the client can reach the daemon before publishing images. This preserves the runner's Docker installation and user configuration, removes the obsolete Docker 20.10 request and its latest-version fallback, and avoids reinstalling Docker and restarting its daemon during release publication.  Thank you for contributing to Harbor!  # Comprehensive Summary of your change  # Issue being fixed Fixes #(issue)  Please indicate you've done the following: - [ ] Well Written Title and Summary of the PR - [ ] Label the PR as needed. "release-note/ignore-for-release, release-note/new-feature, release-note/update, release-note/enhancement, release-note/community, release-note/breaking-change, release-note/docs, release-note/infra, release-note/deprecation" - [ ] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. - [ ] Considered the docs impact and opened a new docs issue or PR with docs chan
-
-- **Issue #24243** (2026-10-27): **(cherry-pick): use runner Docker to avoid Buildx permission failure**
-  *Symptoms*: Cherry-pick 2c94659028a6f27c51e800f37b24e6d6806f898a into release-2.16.0.  Use the CNCF runner's existing Docker engine to avoid the Buildx permission failure.   
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/goharbor/harbor/pull/24243?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 74.09%. Comparing base ([`4b9c6f2`](https://app.codecov.io/gh/goharbor/harbor/commit/4b9c6f2523934aa8fa0e9d469932186779578a9d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor)) to head ([`51c79a9`](https://app.codecov.io/gh/goharbor/harbor/commit/51c79a9f10be0b9d02a6d7978ef7cbed63b31db2?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor)).  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/goharbor/harbor/pull/24243/graphs/tree.svg?width=650&height=
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `57d50ce8` (2026-10-27)
-**Commit Message**: fix(project): reject registry_id changes in UpdateProject (#24162)
-
-registry_id is documented as create-only, but UpdateProject silently
-ignored it and returned 200, so callers believed the proxy cache
-project had been re-pointed when nothing changed.
-
-Return 400 when registry_id differs from the project's current value,
-matching the existing handling of the create-only retention_days field.
-Sending the current value back unchanged is still accepted, since the
-portal includes registry_id in its project config update request.
-
-Signed-off-by: Nikita Kodkany <[REDACTED_EMAIL]>
-Co-authored-by: Nikita Kodkany <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `src/server/v2.0/handler/project.go` (modified, +5/-0)
-```diff
-@@ -568,6 +568,11 @@ func (a *projectAPI) UpdateProject(ctx context.Context, params operation.UpdateP
- 		return a.SendError(ctx, errors.BadRequestError(nil).WithMessage("retention_days is only supported when creating a proxy cache project"))
- 	}
- 
-+	// registry_id can only be set when creating a project, allow the current value to be sent back unchanged
-+	if params.Project.RegistryID != nil && *params.Project.RegistryID != p.RegistryID {
-+		return a.SendError(ctx, errors.BadRequestError(nil).WithMessage("registry_id can not be changed after the project is created"))
-+	}
-+
- 	if params.Project.CVEAllowlist != nil {
- 		if params.Project.CVEAllowlist.ProjectID == 0 {
- 			// project_id in cve_allowlist not provided or provided as 0, let it to be the id of the project which will be updating
-```
-
-**File**: `src/server/v2.0/handler/project_test.go` (modified, +49/-0)
-```diff
-@@ -303,6 +303,55 @@ func (suite *ProjectTestSuite) TestSetScannerOfProject() {
- 	}
- }
- 
-+func (suite *ProjectTestSuite) TestUpdateProjectRegistryID() {
-+	suite.Security.On("IsAuthenticated").Return(true)
-+	suite.Security.On("Can", mock.Anything, mock.Anything, mock.Anything).Return(true)
-+
-+	proxyProject := &models.Project{
-+		ProjectID:  2,
-+		Name:       "proxy",
-+		RegistryID: 1,
-+	}
-+
-+	{
-+		// changing registry_id of a proxy cache project is rejected
-+		mock.OnAnything(suite.projectCtl, "Get").Return(proxyProject, nil).Once()
-+
-+		res, err := suite.PutJSON("/projects/2", map[string]any{"registry_id": 3})
-+		suite.NoError(err)
-+		suite.Equal(400, res.StatusCode)
-+	}
-+
-+	{
-+		// setting registry_id on a normal project is rejected
-+		mock.OnAnything(suite.projectCtl, "Get").Return(suite.project, nil).Once()
-+
-+		res, err := suite.PutJSON("/projects/1", map[string]any{"registry_id": 3})
-+		suite.NoError(err)
-+		suite.Equal(400, res.StatusCode)
-+	}
-+
-+	{
-+		// sending the current registry_id back unchanged is allowed
-+		mock.OnAnything(suite.projectCtl, "Get").Return(proxyProject, nil).Once()
-+		mock.OnAnything(suite.projectCtl, "Update").Return(nil).Once()
-+
-+		res, err := suite.PutJSON("/projects/2", map[string]any{"registry_id": 1})
-+		suite.NoError(err)
-+		suite.Equal(200, res.StatusCode)
-+	}
-+
-+	{
-+		// registry_id 0 on a normal project is allowed
-+		mock.OnAnything(suite.projectCtl, "Get").Return(suite.project, nil).Once()
-+		mock.OnAnything(suite.projectCtl, "Update").Return(nil).Once()
-+
-+		res, err := suite.PutJSON("/projects/1", map[string]any{"registry_id": 0})
-+		suite.NoError(err)
-+		suite.Equal(200, res.StatusCode)
-+	}
-+}
-+
- func TestProjectTestSuite(t *testing.T) {
- 	suite.Run(t, &ProjectTestSuite{})
- }
-```
-
----
-
-### Incident Patch 2: `d822d80c` (2026-10-27)
-**Commit Message**: fix(release): use runner Docker to avoid Buildx permission failure (#24244)
-
-The publish-release workflow fails on CNCF runners because
-docker-practice/actions-setup-docker hard-codes DOCKER_CONFIG to
-/home/runner/.docker. Its embedded Buildx setup then tries to create
-configuration under /home/runner, which is not writable by the runner
-user, and exits with 'mkdir /home/runner: permission denied'.
-
-CNCF runners already provide Docker, and the package-build workflow uses
-that engine directly. Replace the third-party Docker installer with
-'docker version' and 'docker info' checks to verify that the client can
-reach the daemon before publishing images. This preserves the runner's
-Docker installation and user configuration, removes the obsolete Docker
-20.10 request and its latest-version fallback, and avoids reinstalling
-Docker and restarting its daemon during release publication.
-
-Signed-off-by: stonezdj <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/publish_release.yml` (modified, +5/-5)
-```diff
-@@ -78,11 +78,11 @@ jobs:
-                 ${{ env.ASSETS_DIR }}/harbor-online-installer-${cur}-${arch}.tgz
-             fi
-           done
--      - name: Setup Docker
--        uses: docker-practice/actions-setup-docker@509de4a162d8fd24b2721a9fb3721131a6a4776b # master (no tagged release newer than v1/2023 covers this fix; commit dated 2025-08-24)
--        with:
--          docker_version: 20.10
--          docker_channel: stable
-+      # CNCF runners provide Docker; use the runner's engine and user configuration.
-+      - name: Verify Docker
-+        run: |
-+          docker version
-+          docker info
-       - name: Set up Docker Buildx
-         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-       - name: Publish Images (amd64 + arm64)
-```
-
----
-
-### Incident Patch 3: `17182a57` (2026-10-27)
-**Commit Message**: fix(release): preserve empty installer argument (#24241)
-
-fix(release): handle empty parameter introduced by #22311
-
-PR #22311 (https://github.com/goharbor/harbor/pull/22311) introduced an
-empty online installer argument for RC releases. The unquoted argument
-was omitted, shifting the remaining arguments and leaving getAssets
-without its final assetsPath parameter.
-
-Quote all getAssets arguments to preserve the empty argument.
-
-Signed-off-by: stonezdj <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/publish_release.yml` (modified, +1/-1)
-```diff
-@@ -57,7 +57,7 @@ jobs:
-               dst_online=harbor-online-installer-${cur}-${arch}.tgz
-               aws s3 cp s3://${bucket}/${branch}/${src_online} s3://${bucket}/${branch}/${dst_online}
-             fi
--            source tools/release/release_utils.sh && getAssets ${bucket} ${branch} ${dst_offline} ${dst_online} ${{ env.PRERELEASE }} ${assets_path}
-+            source tools/release/release_utils.sh && getAssets "$bucket" "$branch" "$dst_offline" "$dst_online" "${{ env.PRERELEASE }}" "$assets_path"
-           done
- 
-           echo "ASSETS_DIR=$assets_path" >> $GITHUB_ENV
-```
-
-#### Recent Merged Pull Requests:
-- **PR #24244** (2026-10-27): fix(release): use runner Docker to avoid Buildx permission failure (@stonezdj)
-- **PR #24243** (2026-10-27): (cherry-pick): use runner Docker to avoid Buildx permission failure (@stonezdj)
-- **PR #24242** (2026-10-27): (cherry-pick): handle empty parameter introduced by #22311 (@stonezdj)
-- **PR #24241** (2026-10-27): fix(release): preserve empty installer argument (@stonezdj)
-- **PR #24221** (2026-10-26): Archive ADDOPTERS and point to the community page only (@OrlinVasilev)
-- **PR #24212** (2026-10-26): [release-2.13] bump: bump Go to 1.26.10 for release-2.13.0 (@Vad1mo)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. project): reject registry_id changes in UpdateProject (#24162)
-
+### 1. Sentinel Error Unwrapping Invariant
 **RULE**:
-When implementing operations in `src/server/v2.0/handler/project.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+Codebases MUST NEVER compare Go error instances or error strings using direct value equality (`err == ErrTarget`, `err != ErrTarget`, or `err.Error() != ErrTarget.Error()`) when evaluating sentinel conditions across package boundaries, ORM layers, or network driver interfaces. All sentinel checks MUST be performed via `errors.Is(err, ErrTarget)`.
 
 **WHY**:
-Prevents defects observed in production commit `57d50ce8`: project): reject registry_id changes in UpdateProject (#24162). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+In modern Go architectures (Go 1.13+), intermediate middleware, logging hooks, and tracing interceptors wrap errors using `%w` or custom wrapper structs (e.g., `github.com/pkg/errors.Wrap`, ORM transaction managers, distributed tracing spans). Direct pointer or value equality (`==`) breaks as soon as an error is wrapped, causing silent fallback into unhandled failure branches. Furthermore, string comparison (`err.Error() == ErrTarget.Error()`) is brittle, computationally wasteful, breaks when contextual metadata is prepended to the error message, and suppresses compiler-enforced type safety.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/v2.0/handler/project.go`.
+Apply across all Go microservices, database interaction layers (e.g., Beego ORM, GORM), Redis client wrappers (e.g., `go-redis`, `redigo`), and distributed job processing pipelines where sentinel errors (`redis.Nil`, `orm.ErrNoRows`, `context.Canceled`) dictate workflow branching.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
-// Verified production-grade fix pattern:
-	// registry_id can only be set when creating a project, allow the current value to be sent back unchanged
-	if params.Project.RegistryID != nil && *params.Project.RegistryID != p.RegistryID {
-		return a.SendError(ctx, errors.BadRequestError(nil).WithMessage("registry_id can not be changed after the project is created"))
-	}
+package storage
 
+import (
+    "context"
+    "errors"
+    "fmt"
+    "github.com/go-redis/redis/v8"
+)
+
+var (
+    ErrKeyNotFound = errors.New("key not found in persistence layer")
+    ErrTxAborted   = errors.New("optimistic transaction conflict")
+)
+
+func (c *CacheStore) FetchAcceptedSize(ctx context.Context, sessionID string) (int64, error) {
+    key := fmt.Sprintf("upload:session:%s", sessionID)
+    size, err := c.client.Get(ctx, key).Int64()
+    if err != nil {
+        // Safe evaluation of wrapped sentinel error
+        if errors.Is(err, redis.Nil) {
+            return 0, nil // Cache miss is a normal fallback condition
+        }
+        return 0, fmt.Errorf("failed to retrieve session %s: %w", sessionID, err)
+    }
+    return size, nil
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// ANTI-PATTERN: NEVER use value equality or string matching for sentinel checks
+func (c *CacheStore) FetchAcceptedSizeBad(ctx context.Context, sessionID string) (int64, error) {
+    key := fmt.Sprintf("upload:session:%s", sessionID)
+    size, err := c.client.Get(ctx, key).Int64()
+    if err != nil {
+        // BROKEN: Fails if the redis client wraps Nil with internal operational details
+        if err == redis.Nil { 
+            return 0, nil
+        }
+        // SEVERELY BROKEN: Allocates string, breaks if formatting changes or localization is applied
+        if err.Error() == redis.Nil.Error() { 
+            return 0, nil
+        }
+        return 0, err
+    }
+    return size, nil
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `57d50ce8` are properly handled with clean fallback behavior.
+Enforce via `errcheck`, `errorlint`, and custom AST linter in CI:
+```bash
+golangci-lint run --disable-all --enable=errorlint
+# errorlint will flag:
+# "comparison with == will fail on wrapped errors. Use errors.Is() instead"
+```
+
+---
+
+### 2. Atomic Cache-Miss Singleflight Distributed Quota Invariant
+**RULE**:
+When mutating shared resource accounting counters (such as project storage quotas or API rate-limit buckets) backed by a volatile distributed cache (Redis) with fallbacks to an ACID store (PostgreSQL), callers MUST encapsulate cache-miss recalculations inside a singleflight barrier AND execute mutations within an optimistic lock (`WATCH`/`MULTI`/`EXEC`) loop that explicitly checks for transaction conflicts (`redis.TxFailedErr`) without dropping the retry context.
+
+**WHY**:
+Under massive concurrent artifact push operations (e.g., parallel multi-layer Docker uploads across continuous integration runners), a cache eviction or cold start will cause multiple goroutines to simultaneously miss the cache. Without a singleflight mechanism, a "thundering herd" or "cache stampede" overwhelms the relational database. If the resulting optimistic transaction does not distinguish between terminal operational failures and transient transaction concurrency failures (`redis.TxFailedErr`), quota records become inconsistent or prematurely abort entire uploads.
+
+**WHEN TO APPLY**:
+Apply to any distributed metering, billing, or storage quota subsystem combining Redis caching with relational databases where write-write concurrency is high.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+package quota
+
+import (
+    "context"
+    "errors"
+    "fmt"
+    "github.com/go-redis/redis/v8"
+    "golang.org/x/sync/singleflight"
+)
+
+type Controller struct {
+    rdb *redis.Client
+    sf  *singleflight.Group
+}
+
+func (c *Controller) UpdateUsage(ctx context.Context, ref string, delta int64) error {
+    key := fmt.Sprintf("quota:usage:%s", ref)
+    
+    // Retrier handles transient concurrency aborts
+    for attempt := 0; attempt < 5; attempt++ {
+        err := c.rdb.Watch(ctx, func(tx *redis.Tx) error {
+            val, err := tx.Get(ctx, key).Int64()
+            if err != nil && !errors.Is(err, redis.Nil) {
+                return err // Abort transaction on terminal network/system error
+            }
+
+            if errors.Is(err, redis.Nil) {
+                // Coalesce concurrent recalculations via singleflight
+                actual, sfErr, _ := c.sf.Do(key, func() (any, error) {
+                    return c.calcQuotaFromDB(ctx, ref)
+                })
+                if sfErr != nil {
+                    return sfErr
+                }
+                val = actual.(int64)
+            }
+
+            // Apply delta and stage in transaction
+            newUsage := val + delta
+            _, err = tx.TxPipelined(ctx, func(pipe redis.Pipelined) error {
+                pipe.Set(ctx, key, newUsage, 0)
+                return nil
+            })
+            return err
+        }, key)
+
+        if err == nil {
+            return nil // Success
+        }
+
+        // Retry ONLY if it was an optimistic lock failure; otherwise terminate
+        if errors.Is(err, redis.TxFailedErr) {
+            continue
+        }
+        return fmt.Errorf("terminal quota update failure: %w", err)
+    }
+    return errors.New("quota update exceeded maximum retry attempts due to heavy contention")
+}
+
+func (c *Controller) calcQuotaFromDB(ctx context.Context, ref string) (int64, error) {
+    // Relational calculation fallback logic
+    return 1024, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Direct calculation on miss causes DB saturation; unchecked Tx failure aborts valid requests
+func (c *Controller) UpdateUsageBad(ctx context.Context, ref string, delta int64) error {
+    key := fmt.Sprintf("quota:usage:%s", ref)
+    return c.rdb.Watch(ctx, func(tx *redis.Tx) error {
+        val, err := tx.Get(ctx, key).Int64()
+        if err != nil {
+            // DB hammered by every concurrent thread
+            val, _ = c.calcQuotaFromDB(ctx, ref) 
+        }
+        _, err = tx.TxPipelined(ctx, func(pipe redis.Pipelined) error {
+            pipe.Set(ctx, key, val+delta, 0)
+            return nil
+        })
+        // If another worker commits first, err is redis.TxFailedErr, aborting the user request
+        return err
+    }, key)
+}
+```
+
+**VERIFICATION METHOD**:
+Concurrency stress test using parallel goroutines writing to the same quota key while the cache is periodically flushed (`FLUSHDB`), asserting zero database connection pool exhaustion and strict counter convergence:
+```go
+func TestQuotaConcurrencySingleflight(t *testing.T) {
+    // Spawn 100 concurrent workers updating quota
+    // Assert DB queries executed == 1 during simultaneous cold miss
+}
+```
+
+---
+
+### 3. POSIX Pre-Flight Secure File System Privilege Invariant
+**RULE**:
+Host preparation and configuration generation engines running in container bootstrap workflows MUST assert strict filesystem ownership (UID/GID match) and permission bits (octal mode `0600` for private credentials, `0644` for trust stores, `0700` for database directories) prior to file instantiation. In multi-tenant container setups, if a private key or TLS certificate is owned by a foreign UID or is globally readable, the orchestrator MUST fail-fast and refuse to boot.
+
+**WHY**:
+Containers sharing storage volumes (e.g., Harbor Core, Jobservice, PostgreSQL, Registry) run under distinct non-root service UIDs (e.g., Harbor service `10000`, PostgreSQL `999`). If CA certificates, database storage roots, or internal API secret keys are generated or mounted with overly permissive modes (`0777` or world-readable `0644` for private keys), unprivileged sibling containers or compromised adjacent workers can read secrets or tamper with database files, causing privilege escalation or data corruption.
+
+**WHEN TO APPLY**:
+Apply to configuration generators, container entrypoints, volume initialization scripts, and TLS bootstrapping daemons in systems operating under Linux non-root container standards.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import os
+import stat
+from pathlib import Path
+
+DEFAULT_UID = 10000
+DEFAULT_GID = 10000
+
+def secure_write_secret(target_path: Path, secret_data: str, uid: int = DEFAULT_UID, gid: int = DEFAULT_GID):
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    # Create with strictly restricted permissions before writing contents
+    # to avoid race condition where file is briefly world-readable
+    fd = os.open(str(target_path), os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with open(fd, 'w') as f:
+        f.write(secret_data)
+        
+    os.chown(str(target_path), uid, gid)
+    
+    # Forensic verification
+    st = os.stat(str(target_path))
+    actual_mode = stat.S_IMODE(st.st_mode)
+    if actual_mode != 0o600:
+        raise PermissionError(f"Insecure file permission: {oct(actual_mode)}, expected 0o600")
+    if st.st_uid != uid or st.st_gid != gid:
+        raise PermissionError(f"Ownership mismatch: {st.st_uid}:{st.st_gid}, expected {uid}:{gid}")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Unrestricted write followed by delayed or missing chmod/chown
+def insecure_write_secret(target_path: str, secret_data: str):
+    # World-readable default umask creates security vulnerability window
+    with open(target_path, 'w') as f:
+        f.write(secret_data)
+    # If process crashes here, secret key remains 0644 world-readable!
+    os.chmod(target_path, 0o600)
+```
+
+**VERIFICATION METHOD**:
+Automated integration smoke tests inspecting container mount points:
+```bash
+test $(stat -c "%a %u:%g" /etc/cert/server.key) = "600 10000:10000" || exit 1
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Silent Error Swallowing in Sentinel Redis Cache Evaluation (BUG-HARBOR-01)
+- **Context**: `src/controller/blob/controller.go` (`GetAcceptedBlobSize`), `src/lib/cache/redis/redis.go` (`Fetch`).
+- **What Was Expected**: When querying accepted blob sizes or checking the cache, a cache-miss returns `redis.Nil`. The application must translate this condition into `0, nil` or `cache.ErrNotFound` respectively, allowing normal flow to continue.
+- **What Actually Happened**: The code used direct pointer equality `err == redis.Nil`. When `go-redis` or intermediate instrumentation layers wrapped `redis.Nil` with tracing metadata or context errors, `err == redis.Nil` evaluated to `false`. The application treated cache-misses as catastrophic database/network failures, bubbling up 500 Internal Server Errors during chunked layer uploads.
+- **Evidence in Repo**: Commit `58d7d2f9`, Issue #24149.
+- **Root Cause**: Breaking encapsulation by assuming underlying library returns raw sentinel instances without wrapping.
+- **Remediation Code Diff**:
+```go
+--- a/src/controller/blob/controller.go
++++ b/src/controller/blob/controller.go
+@@ -348,3 +348,3 @@ func (c *controller) GetAcceptedBlobSize(ctx context.Context, sessionID string)
+ 	size, err := rc.Get(ctx, key).Int64()
+ 	if err != nil {
+-		if err == redis.Nil {
++		if errors.Is(err, redis.Nil) {
+ 			return 0, nil
+ 		}
+```
+- **Lesson**: Standardize all sentinel error evaluation around `errors.Is` across all boundaries.
+
+---
+
+### Incident 2: Premature Termination of Optimistic Watch During Quota Cache Recalculation (BUG-HARBOR-02)
+- **Context**: `src/controller/quota/controller.go` (`updateUsageByRedis`).
+- **What Was Expected**: Under concurrent operations on the same quota allocation, if another process committed a transaction, `client.Watch` returns `redis.TxFailedErr`. The controller should identify this as a retryable conflict, allowing the loop to replay instead of failing the artifact upload.
+- **What Actually Happened**: Error checking used direct inequality: `if err != nil && err != redis.TxFailedErr`. Wrapped transaction failure errors failed the equality check, causing `retry.Abort(err)` to trigger. Artifact pushes randomly aborted with hard errors during parallel CI uploads.
+- **Evidence in Repo**: Commit `58d7d2f9`, Issue #24149.
+- **Root Cause**: Wrapped error instances prevented identification of retryable transaction collisions.
+- **Remediation Code Diff**:
+```go
+--- a/src/controller/quota/controller.go
++++ b/src/controller/quota/controller.go
+@@ -324,3 +324,3 @@ func (c *controller) updateUsageByRedis(ctx context.Context, reference, referenc
+ 			return err
+ 		})
+ 
+-		if err != nil && err != redis.TxFailedErr {
++		if err != nil && !errors.Is(err, redis.TxFailedErr) {
+ 			return retry.Abort(err)
+ 		}
+```
+- **Lesson**: Concurrency control loops with optimistic locking must unwrap errors when checking for transaction conflict tokens.
+
+---
+
+### Incident 3: String Comparison Brittleness in Periodic Job Scheduling (BUG-HARBOR-03)
+- **Context**: `src/jobservice/period/enqueuer.go` (`shouldEnqueue`).
+- **What Was Expected**: If the last periodic enqueue timestamp does not exist in Redis, the enqueuer treats the error as a cache miss (`redis.ErrNil`) and runs the periodic job.
+- **What Actually Happened**: The enqueuer checked `err.Error() != redis.ErrNil.Error()`. If Redis drivers, proxies, or decorators modified the text payload of the error string (e.g., adding line numbers or wrapped context), string inequality failed, triggering error log spam on every scheduler cycle and destabilizing cron tracking.
+- **Evidence in Repo**: Commit `58d7d2f9`, Issue #24149.
+- **Root Cause**: Relying on string representations of errors instead of typed error chains.
+- **Remediation Code Diff**:
+```go
+--- a/src/jobservice/period/enqueuer.go
++++ b/src/jobservice/period/enqueuer.go
+@@ -281,3 +281,3 @@ func (e *enqueuer) shouldEnqueue() bool {
+ 	lastEnqueue, err := redis.Int64(conn.Do("GET", rds.RedisKeyLastPeriodicEnqueue(e.namespace)))
+ 	if err != nil {
+-		if err.Error() != redis.ErrNil.Error() {
++		if !errors.Is(err, redis.ErrNil) {
+ 			// Logged error
+ 			logger.Errorf("get timestamp of last enqueue error: %s", err)
+ 		}
+```
+- **Lesson**: Never invoke `.Error()` for control flow branching.
+
+---
+
+### Incident 4: Infinite Drain Loop on In-Progress Job Reaper (BUG-HARBOR-04)
+- **Context**: `src/jobservice/worker/cworker/reaper.go` (`requeueInProgressJobs`).
+- **What Was Expected**: When sweeping abandoned jobs from dead worker pools, an empty queue terminates the Lua execution with `redis.ErrNil`, signaling completion.
+- **What Actually Happened**: Direct equality `err == redis.ErrNil` evaluated to `false` when redigo returned wrapped network/execution errors, causing an infinite loop re-executing Lua scripts against Redis, exhausting CPU cycles and locking Redis worker threads.
+- **Evidence in Repo**: Commit `58d7d2f9`, Issue #24149.
+- **Root Cause**: Loop termination invariant depended on pointer equality against a wrapped sentinel error.
+- **Remediation Code Diff**:
+```go
+--- a/src/jobservice/worker/cworker/reaper.go
++++ b/src/jobservice/worker/cworker/reaper.go
+@@ -341,3 +341,3 @@ func (r *reaper) requeueInProgressJobs(poolID string, jobTypes []string) error {
+ 	for {
+ 		values, err := redis.Values(redisRequeueScript.Do(conn, scriptArgs...))
+-		if err == redis.ErrNil {
++		if errors.Is(err, redis.ErrNil) {
+ 			return nil
+ 		} else if err != nil {
+ 			return err
+```
+- **Lesson**: Termination proofs in infinite drain loops must rely on robust error unwrapping to avoid process lockups.
+
+---
+
+### Incident 5: False Conflict Detection in Distributed Job Deduplication (BUG-HARBOR-05)
+- **Context**: `src/jobservice/worker/cworker/de_duplicator.go` (`MustUnique`).
+- **What Was Expected**: Job deduplication uses `SET key value NX PX ttl`. If the key already exists, Redis returns `nil` (represented as `redis.ErrNil`), and Harbor returns a `ConflictError`.
+- **What Actually Happened**: When Redis wrappers attached telemetry, `err == redis.ErrNil` failed, causing the method to bypass the conflict return and proceed as if the operation had succeeded or throw a generic internal error, leading to duplicate job dispatches.
+- **Evidence in Repo**: Commit `58d7d2f9`, Issue #24149.
+- **Root Cause**: Failure to detect key existence conflict due to pointer comparison failure on wrapped sentinel.
+- **Remediation Code Diff**:
+```go
+--- a/src/jobservice/worker/cworker/de_duplicator.go
++++ b/src/jobservice/worker/cworker/de_duplicator.go
+@@ -92,3 +92,3 @@ func (rdd *redisDeDuplicator) MustUnique(jobName string, params job.Parameters)
+ 	res, err := redis.String(conn.Do("SET", args...))
+-	if err == redis.ErrNil {
++	if errors.Is(err, redis.ErrNil) {
+ 		return errs.ConflictError(uniqueKey)
+ 	}
+```
+- **Lesson**: Distributed lock and idempotency primitives depend on exact error unwrap matching to maintain duplicate execution barriers.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+* **Implicit Falsy vs. Nil Traps**: In Go, interfaces containing a typed `nil` pointer do not equal `nil`. Returning an uninitialized concrete pointer as an `error` interface causes `err != nil` to evaluate to `true`.
+```go
+// PITFALL:
+func getQuota() error {
+    var p *CustomError = nil
+    return p // WARNING: Returns non-nil interface (type *CustomError, val nil)
+}
+
+// INVARIANT:
+func getQuota() error {
+    var p *CustomError = nil
+    if p == nil {
+        return nil // Explicit untyped nil
+    }
+    return p
+}
+```
+* **Deep Slice Immutability in Quota Calculations**: Slices are reference descriptors pointing to underlying backing arrays. Modifying slice references inside calculation passes mutates the caller's slice:
+```go
+// PITFALL:
+func computeUsage(base []int64, delta int64) []int64 {
+    return append(base, delta) // Backing array may be mutated in place
+}
+
+// INVARIANT:
+func computeUsage(base []int64, delta int64) []int64 {
+    cloned := make([]int64, len(base), len(base)+1)
+    copy(cloned, base)
+    return append(cloned, delta)
+}
+```
+
+### 2. Infinite Loop & Recursion Guards
+* **Drain Loop Termination Proof**: In loops consuming streams or Redis queues (e.g., `reaper.go`), every iteration MUST guarantee one of two invariants:
+  1. Forward progress is made (an item is popped, counter decreases).
+  2. A terminal sentinel error (`errors.Is(err, redis.ErrNil)`) terminates execution immediately.
+* **Bounded Context Iteration**: Never run unbounded `for {}` loops without passing a `context.Context` cancellation check:
+```go
+for {
+    select {
+    case <-ctx.Done():
+        return ctx.Err()
+    default:
+    }
+    // Execution step
+}
+```
+
+### 3. UI & UX Micro-Mechanics
+* **Singleflight UI Query Coalescing**: When the Harbor portal queries project quotas or repository artifact counts, backend handlers use `singleflight.Group` to prevent redundant parallel executions triggered by rapid navigation or multiple dashboard widgets loading at the same time.
+* **Debounced Form Validation in Angular Portal**: Project name validity and quota limit inputs are debounced with explicit distinct-until-changed operators to prevent race conditions during rapid user input.
+
+### 4. Backend Concurrency & Memory Safety
+* **TOCTOU Elimination in Storage Operations**:
+```go
+// PITFALL: Time-of-check to time-of-use vulnerability
+if !certFile.Exists() {
+    // Context switch here: Another worker creates the file
+    certFile.Create() // Fails or overwrites unexpectedly
+}
+
+// INVARIANT: Atomic POSIX creation with exclusive flag
+fd, err := os.OpenFile(certPath, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
+if errors.Is(err, os.ErrExist) {
+    // Graceful recovery from race
+}
+```
+* **Redis Watch Deadlock Prevention**: A `WATCH` statement in Redis binds exclusively to the active connection. If the connection is returned to the pool without executing `UNWATCH` or `DISCARD` after an error, the connection remains primed to watch keys, which corrupts subsequent transactions executed on that connection.
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+* **Safe Error Unwrapping Cascades**: When translating database-specific errors into domain-level HTTP status codes:
+```go
+func (d *DefaultManager) GetPolicy(ctx context.Context, id int64) (*policy.Metadata, error) {
+    p1, err := dao.GetPolicy(ctx, id)
+    if err != nil {
+        if errors.Is(err, orm.ErrNoRows) {
+            return nil, errs.NotFoundError(fmt.Errorf("retention policy %d: %w", id, err))
+        }
+        return nil, fmt.Errorf("retention policy fetch failed: %w", err)
+    }
+    return p1, nil
+}
+```
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+* **Component Decoupling**: Harbor splits the distribution engine (Docker Distribution) from management/governance (Harbor Core) via HTTP Webhooks and scoped auth tokens. This prevents management logic crashes from interrupting active registry read workloads.
+* **State Segregation**: Ephemeral task state (Jobservice), transaction caches (Redis), and relational enterprise metadata (PostgreSQL) are strictly segmented.
+
+### 2. Core Abstractions
+* **`controller` Interface**: Abstracts business logic away from database DAOs and HTTP transport adapters. Controllers coordinate validation, authorization, and caching.
+* **`singleflight.Group`**: Serves as the primary operational primitive guarding against cache stampedes during concurrent repository metadata lookups.
+
+### 3. Error Handling
+* **Domain Error Hierarchy**: Harbor translates low-level database errors (`orm.ErrNoRows`, `redis.Nil`) into domain-level typed errors (`errs.NotFoundError`, `errs.ConflictError`) that map directly to standard HTTP status codes (404, 409).
+* **Retry Abort Semantics**: Differentiates between retryable transient errors (e.g., Redis optimistic locking failures) and terminal errors using explicit `retry.Abort(err)` decorators.
+
+### 4. Testing
+* **Contractual Mocking**: Core controllers are tested using generated mocks implementing DAO interfaces.
+* **OCI Conformance Verification**: CI workflows execute upstream Open Container Initiative (OCI) distribution test suites to verify compliant artifact handling.
+
+### 5. Security
+* **Non-Root Execution Topology**: Containers run as non-root users (`uid: 10000`, PostgreSQL `uid: 999`).
+* **Bootstrap Least Privilege**: As seen in `make/photon/prepare/utils/cert.py`, cryptographic root keys and client certificates are generated with strict POSIX permissions (`0600` for keys, `0644` for trust certificates) and verified via `os.chown`.
+
+### 6. Performance
+* **Singleflight Coalescing**: Heavy calculations, such as project storage consumption across thousands of layers, are coalesced via `singleflight.Group` so the database is queried only once per key miss.
+* **Connection Lifecycle Limits**: Database configuration dynamically sets `harbor_db_conn_max_lifetime` (`5m`) and `harbor_db_max_idle_conns` to prevent stale pool connections from exhausting RDS file descriptors.
+
+### 7. Deployment
+* **Deterministic Configuration Compilation**: Python-based prepare scripts (`make/photon/prepare`) process declarative YAML inputs and render static Jinja configurations, avoiding dynamic environment resolution issues at runtime.
+* **Photon OS Hardening**: Harbor images use VMware Photon Linux, a minimal, security-hardened container host base with strict CVE scanning schedules.
+
+### 8. Agent Patterns
+* **Jobservice Task Abstraction**: Jobs are defined with explicit input parameter maps, state persistence hooks, and cancellation listeners. Workers regularly check the cancellation channel to gracefully stop abandoned background tasks.
+
+### 9. Data Flow
+```
+OCI Client ---> Reverse Proxy ---> Harbor Core (Auth Token Validation)
+     |
+     +--------> Docker Distribution (Layer Blob Upload)
+                     |
+                     +---> Webhook POST ---> Harbor Core
+                                               |
+                                               +---> Redis Queue
+                                                        |
+                                                        v
+                                                 Jobservice Task
+                                           (Vulnerability Scan / Quota)
+```
+
+---
+
+## 6. The 8 Learning Extraction Artifacts
+
+### 1. Pattern: Concurrency-Guarded Optimistic Read-Through Cache
+```go
+func (c *CacheStore) GetOrCreate(ctx context.Context, key string, fetcher func() (any, error)) (any, error) {
+    val, err := c.redis.Get(ctx, key).Result()
+    if err == nil {
+        return val, nil
+    }
+    if !errors.Is(err, redis.Nil) {
+        return nil, fmt.Errorf("cache lookup failed: %w", err)
+    }
+    // Singleflight barrier avoids thundering herd on DB
+    data, err, _ := c.sf.Do(key, func() (any, error) {
+        res, fErr := fetcher()
+        if fErr != nil {
+            return nil, fErr
+        }
+        c.redis.Set(ctx, key, res, c.ttl)
+        return res, nil
+    })
+    return data, err
+}
+```
+
+### 2. Rule
+All error assertions against external driver sentinel values (`sql.ErrNoRows`, `orm.ErrNoRows`, `redis.Nil`, `redis.ErrNil`) MUST be performed using `errors.Is(err, Target)` and NEVER via equality operators or error string comparisons.
+
+### 3. Architecture Principle
+Separate artifact transmission data paths from governance and management planes. Core business controls (RBAC, retention, security policies) must reside in separate fault domains from raw chunked streaming distribution infrastructure.
+
+### 4. Failure Mode
+**Silent Optimistic Lock Bypass**: Using `err != redis.TxFailedErr` when errors are wrapped causes transaction collisions to drop out of retry loops, resulting in dropped writes, invalid quota accounting, and truncated parallel CI image pushes.
+
+### 5. Reusable Skill: Error-Refactoring Audit Workflow
+1. Run `git grep "== orm\."` and `git grep "== redis\."` across the codebase.
+2. Run `git

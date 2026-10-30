@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-AU11",
-    "timestamp": "2026-10-28T04:03:46.693Z",
-    "repository": "mattermost/mattermost",
-    "learningId": "learn-github-mattermost-mattermost",
-    "contentHash": "00790357f4ab07e951990a96b13e06e3ec032aeedc81dabdc168b19c48d43f72",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-J2MA",
-    "timestamp": "2026-10-28T04:10:11.074Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-    "contentHash": "729119fec601a54b415c11f8aafb0d941cb326455f647b9720c14b4886a0b6e7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-XU7K",
     "timestamp": "2026-10-28T04:21:40.016Z",
     "repository": "XingChen-AGI/TeleOCR",
@@ -7490,6 +7460,36 @@
     "repository": "LiquidAI/LFM3-Audio-2B",
     "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
     "contentHash": "9c92f6081c12c259d0e873d358be1ea55eb19b2fca7df7f3690f21c8cd7f3b4c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-WU2Y",
+    "timestamp": "2026-10-30T10:56:08.266Z",
+    "repository": "goharbor/harbor",
+    "learningId": "learn-github-goharbor-harbor",
+    "contentHash": "3281b4347405e2e6b7909904897864cd1ca1fd7918540c691a9a00a24d76fa1f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-XECF",
+    "timestamp": "2026-10-30T10:56:34.527Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "033ab191b0d22d1adc8e8c48f1f90dbbd45510cbc42aa4dd68b63dd40f3a5ad6",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

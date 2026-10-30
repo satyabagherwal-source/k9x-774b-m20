@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T10:42:09.848Z",
-    "lastVerified": "2026-10-30T10:42:09.848Z",
+    "lastChecked": "2026-10-30T10:56:37.092Z",
+    "lastVerified": "2026-10-30T10:56:37.092Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -240,22 +240,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T09:44:35.697Z",
-    "lastVerified": "2026-10-30T09:44:35.697Z",
+    "lastChecked": "2026-10-30T10:54:17.218Z",
+    "lastVerified": "2026-10-30T10:54:17.218Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "4cde4727500ffa8ec734b3d993d88b44a3745f394e007746ca30ca76172c02bc",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "contentHash": "033ab191b0d22d1adc8e8c48f1f90dbbd45510cbc42aa4dd68b63dd40f3a5ad6",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c0e32115"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -336,9 +335,9 @@
   "pathwaycom-llm-app": {
     "name": "llm-app",
     "officialUrl": "https://github.com/pathwaycom/llm-app",
-    "lastChecked": "2026-10-28T20:22:19.616Z",
+    "lastChecked": "2026-10-30T10:54:09.875Z",
     "revisionIdentifier": "e2a7a09b",
-    "lastVerified": "2026-10-28T20:22:19.616Z"
+    "lastVerified": "2026-10-30T10:54:09.875Z"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -561,8 +560,8 @@
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-30T05:31:58.300Z",
-    "lastVerified": "2026-10-30T05:31:58.300Z",
+    "lastChecked": "2026-10-30T10:54:07.386Z",
+    "lastVerified": "2026-10-30T10:54:07.386Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
@@ -1356,11 +1355,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "goharbor-harbor": {
-    "name": "harbor",
+    "name": "goharbor/harbor",
     "officialUrl": "https://github.com/goharbor/harbor",
-    "lastChecked": "2026-10-28T21:29:55.705Z",
-    "revisionIdentifier": "d822d80c",
-    "lastVerified": "2026-10-28T21:29:55.705Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-30T10:54:09.150Z",
+    "lastVerified": "2026-10-30T10:54:09.150Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-goharbor-harbor",
+    "contentHash": "3281b4347405e2e6b7909904897864cd1ca1fd7918540c691a9a00a24d76fa1f",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "build-trust-ockam": {
     "name": "ockam",
@@ -5266,9 +5275,9 @@
   "gotham-rs-gotham": {
     "name": "gotham",
     "officialUrl": "https://github.com/gotham-rs/gotham",
-    "lastChecked": "2026-10-28T16:05:06.321Z",
+    "lastChecked": "2026-10-30T10:53:57.451Z",
     "revisionIdentifier": "53fe844b",
-    "lastVerified": "2026-10-28T16:05:06.321Z"
+    "lastVerified": "2026-10-30T10:53:57.451Z"
   },
   "hf-naiveai-naive-n0.5-flash": {
     "name": "NaiveAI/Naive-N0.5-Flash",
@@ -9797,5 +9806,19 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "buriy-python-readability": {
+    "name": "python-readability",
+    "officialUrl": "https://github.com/buriy/python-readability",
+    "lastChecked": "2026-10-30T10:53:59.881Z",
+    "revisionIdentifier": "3e7a8321",
+    "lastVerified": "2026-10-30T10:53:59.881Z"
+  },
+  "yannickl-dynamiccolor": {
+    "name": "DynamicColor",
+    "officialUrl": "https://github.com/yannickl/DynamicColor",
+    "lastChecked": "2026-10-30T10:54:02.394Z",
+    "revisionIdentifier": "cf7c6eed",
+    "lastVerified": "2026-10-30T10:54:02.394Z"
   }
 }
