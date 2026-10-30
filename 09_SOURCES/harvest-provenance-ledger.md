@@ -6317,3 +6317,5 @@ Every entry in this ledger must capture:
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `c14e4456` | Multi-dimensional audit evidence | 2026-10-30T20:52:38.701Z |
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `6d74dc11` | Multi-dimensional audit evidence | 2026-10-30T20:59:20.209Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `e9bb7b3d` | Multi-dimensional audit evidence | 2026-10-30T20:59:29.192Z |
+| `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `e0e559ee` | Multi-dimensional audit evidence | 2026-10-30T21:06:23.307Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `ee5f3e7b` | Multi-dimensional audit evidence | 2026-10-30T21:06:26.205Z |

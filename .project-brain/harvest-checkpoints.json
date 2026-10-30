@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-30T20:59:29.202Z",
+  "last_updated": "2026-10-30T21:06:26.215Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "e2c3f193a867d19c563884da11d5b015b49a5386caec6a449a9f38909317b7be",
-      "verified_at": "2026-10-28T22:32:55.561Z",
+      "content_hash": "f648c2a9c4d820451af43bc75f61667ef0a2e8ea4498dcdb95d8987fed81bfd8",
+      "verified_at": "2026-10-30T21:06:26.214Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:32:55.561Z"
+      "last_updated": "2026-10-30T21:06:26.214Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",
@@ -15321,14 +15321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sweetpad-dev-sweetpad",
-      "content_hash": "45d954c99dd240b85016009b7f395a07bb14d6fdc79c8348d09723ee6001ebca",
-      "verified_at": "2026-10-27T11:34:09.648Z",
+      "content_hash": "cf3a7556cc3d45c0608119c8b270dbea523da7aeb8290dddae94f72705834f7f",
+      "verified_at": "2026-10-30T21:06:23.316Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T11:34:09.648Z"
+      "last_updated": "2026-10-30T21:06:23.316Z"
     },
     "testing-library/dom-testing-library": {
       "repository": "testing-library/dom-testing-library",

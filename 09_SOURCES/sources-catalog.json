@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "936c03be",
+    "sourceVersion": "ee5f3e7b",
     "license": "MIT",
-    "contentHash": "e2c3f193a867d19c563884da11d5b015b49a5386caec6a449a9f38909317b7be",
-    "lastHarvestedAt": "2026-10-28T22:32:55.555Z",
+    "contentHash": "f648c2a9c4d820451af43bc75f61667ef0a2e8ea4498dcdb95d8987fed81bfd8",
+    "lastHarvestedAt": "2026-10-30T21:06:26.205Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {
@@ -10183,10 +10183,10 @@
     "repository": "sweetpad-dev/sweetpad",
     "platform": "github",
     "sourceUrl": "https://github.com/sweetpad-dev/sweetpad",
-    "sourceVersion": "d633af8a",
+    "sourceVersion": "e0e559ee",
     "license": "MIT",
-    "contentHash": "45d954c99dd240b85016009b7f395a07bb14d6fdc79c8348d09723ee6001ebca",
-    "lastHarvestedAt": "2026-10-27T11:34:09.638Z",
+    "contentHash": "cf3a7556cc3d45c0608119c8b270dbea523da7aeb8290dddae94f72705834f7f",
+    "lastHarvestedAt": "2026-10-30T21:06:23.307Z",
     "learningId": "learn-github-sweetpad-dev-sweetpad"
   },
   "wcandillon-react-native-skia": {

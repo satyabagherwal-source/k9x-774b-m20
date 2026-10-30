@@ -6308,3 +6308,5 @@
 | `CYCLE-20261030-7Y5L` | `2026-10-30T20:52:38.697Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5873` | Yes (`f96d68a8...`) |
 | `CYCLE-20261030-GJYM` | `2026-10-30T20:59:20.206Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5874` | Yes (`63f4f402...`) |
 | `CYCLE-20261030-GQW4` | `2026-10-30T20:59:29.188Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5875` | Yes (`f9b56a9b...`) |
+| `CYCLE-20261030-PMFC` | `2026-10-30T21:06:23.304Z` | `sweetpad-dev/sweetpad` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5876` | Yes (`cf3a7556...`) |
+| `CYCLE-20261030-PONU` | `2026-10-30T21:06:26.202Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 5877` | Yes (`f648c2a9...`) |

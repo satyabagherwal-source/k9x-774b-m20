@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-30T20:59:29.198Z",
-  "total_cycles_completed": 6285,
-  "total_learnings_persisted": 6285,
-  "total_rules_promoted": 5846,
+  "last_updated": "2026-10-30T21:06:26.211Z",
+  "total_cycles_completed": 6287,
+  "total_learnings_persisted": 6287,
+  "total_rules_promoted": 5848,
   "history": [
-    {
-      "timestamp": "2026-10-30T04:54:32.620Z",
-      "repository": "kcl-lang/kcl",
-      "learningId": "learn-github-kcl-lang-kcl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T04:54:38.187Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T05:01:23.904Z",
       "repository": "microsoft/agent-governance-toolkit",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-30T20:59:29.198Z",
       "repository": "rustls/rustls",
       "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T21:06:23.313Z",
+      "repository": "sweetpad-dev/sweetpad",
+      "learningId": "learn-github-sweetpad-dev-sweetpad",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-30T21:06:26.211Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

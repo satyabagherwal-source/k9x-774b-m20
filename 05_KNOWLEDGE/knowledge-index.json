@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-30T20:59:29.113Z",
+  "last_updated": "2026-10-30T21:06:26.124Z",
   "total_verified_learnings": 1177,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -45162,8 +45162,8 @@
       "slug": "pola-rs-polars",
       "platform": "github",
       "source_url": "https://github.com/pola-rs/polars",
-      "source_version": "936c03be",
-      "content_hash": "e2c3f193a867d19c563884da11d5b015b49a5386caec6a449a9f38909317b7be",
+      "source_version": "ee5f3e7b",
+      "content_hash": "f648c2a9c4d820451af43bc75f61667ef0a2e8ea4498dcdb95d8987fed81bfd8",
       "dossier_path": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
       "promoted_rules": [
@@ -45216,6 +45216,11 @@
           "number": 5432,
           "title": "Ensure allocator drift is flushed at thread exit (#30383)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 5877,
+          "title": "Fix segfaults and leaked references with Object values in group contexts (#30458",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -45223,7 +45228,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:32:55.499Z",
+      "verified_at": "2026-10-30T21:06:26.105Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -51998,17 +52003,23 @@
       "slug": "sweetpad-dev-sweetpad",
       "platform": "github",
       "source_url": "https://github.com/sweetpad-dev/sweetpad",
-      "source_version": "d633af8a",
-      "content_hash": "45d954c99dd240b85016009b7f395a07bb14d6fdc79c8348d09723ee6001ebca",
+      "source_version": "e0e559ee",
+      "content_hash": "cf3a7556cc3d45c0608119c8b270dbea523da7aeb8290dddae94f72705834f7f",
       "dossier_path": "07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 5876,
+          "title": "Resolve scheme targets by ID so a renamed target still builds (#344)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:34:09.542Z",
+      "verified_at": "2026-10-30T21:06:23.209Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -155699,6 +155710,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-30T20:59:29.094Z"
+    },
+    "rule-5876": {
+      "learning_id": "rule-5876",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5876,
+      "title": "Resolve scheme targets by ID so a renamed target still builds (#344)",
+      "source_url": "https://github.com/sweetpad-dev/sweetpad",
+      "source_version": "e0e559ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:06:23.209Z"
+    },
+    "rule-5877": {
+      "learning_id": "rule-5877",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 5877,
+      "title": "Fix segfaults and leaked references with Object values in group contexts (#30458",
+      "source_url": "https://github.com/pola-rs/polars",
+      "source_version": "ee5f3e7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-30T21:06:26.105Z"
     }
   },
   "aliases": {

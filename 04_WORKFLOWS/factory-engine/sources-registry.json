@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-30T20:59:31.747Z",
-    "lastVerified": "2026-10-30T20:59:31.747Z",
+    "lastChecked": "2026-10-30T21:06:28.757Z",
+    "lastVerified": "2026-10-30T21:06:28.757Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -104,12 +104,12 @@
     "lastVerified": "2026-10-30T06:56:50.648Z"
   },
   "gravitl-netmaker": {
-    "name": "gravitl/netmaker",
+    "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-30T16:39:41.392Z",
-    "lastVerified": "2026-10-30T16:39:41.392Z",
+    "lastChecked": "2026-10-30T21:06:21.361Z",
+    "lastVerified": "2026-10-30T21:06:21.361Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -118,7 +118,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ee6c2133"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -339,9 +340,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-30T20:22:08.209Z",
+    "lastChecked": "2026-10-30T21:06:26.214Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-30T20:22:08.209Z"
+    "lastVerified": "2026-10-30T21:06:26.214Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -3669,9 +3670,9 @@
   "llphant-llphant": {
     "name": "LLPhant",
     "officialUrl": "https://github.com/LLPhant/LLPhant",
-    "lastChecked": "2026-10-29T16:36:46.045Z",
+    "lastChecked": "2026-10-30T21:06:23.811Z",
     "revisionIdentifier": "6305ae46",
-    "lastVerified": "2026-10-29T16:36:46.045Z"
+    "lastVerified": "2026-10-30T21:06:23.811Z"
   },
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
@@ -4438,9 +4439,9 @@
   "vinceanalytics-vince": {
     "name": "vince",
     "officialUrl": "https://github.com/vinceanalytics/vince",
-    "lastChecked": "2026-10-29T22:07:00.238Z",
+    "lastChecked": "2026-10-30T21:06:18.746Z",
     "revisionIdentifier": "fc06f7a2",
-    "lastVerified": "2026-10-29T22:07:00.238Z"
+    "lastVerified": "2026-10-30T21:06:18.746Z"
   },
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
@@ -7848,14 +7849,14 @@
     "officialUrl": "https://github.com/pola-rs/polars",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-28T22:32:55.019Z",
-    "lastVerified": "2026-10-28T22:32:55.019Z",
+    "lastChecked": "2026-10-30T21:06:16.509Z",
+    "lastVerified": "2026-10-30T21:06:16.509Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "e2c3f193a867d19c563884da11d5b015b49a5386caec6a449a9f38909317b7be",
+    "contentHash": "f648c2a9c4d820451af43bc75f61667ef0a2e8ea4498dcdb95d8987fed81bfd8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 14,
+    "recentFixesCount": 16,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -11040,5 +11041,29 @@
     "lastChecked": "2026-10-30T20:59:18.899Z",
     "revisionIdentifier": "64bce8db",
     "lastVerified": "2026-10-30T20:59:18.899Z"
+  },
+  "testing-library-dom-testing-library": {
+    "name": "dom-testing-library",
+    "officialUrl": "https://github.com/testing-library/dom-testing-library",
+    "lastChecked": "2026-10-30T21:06:13.787Z",
+    "revisionIdentifier": "6049cc0b",
+    "lastVerified": "2026-10-30T21:06:13.787Z"
+  },
+  "sweetpad-dev-sweetpad": {
+    "name": "sweetpad-dev/sweetpad",
+    "officialUrl": "https://github.com/sweetpad-dev/sweetpad",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-30T21:06:21.432Z",
+    "lastVerified": "2026-10-30T21:06:21.432Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-sweetpad-dev-sweetpad",
+    "contentHash": "cf3a7556cc3d45c0608119c8b270dbea523da7aeb8290dddae94f72705834f7f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

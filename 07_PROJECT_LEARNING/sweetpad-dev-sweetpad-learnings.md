@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
 > **Source**: github ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
-> **Source Version**: `d633af8a`  
+> **Source Version**: `e0e559ee`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:34:09.443Z  
+> **Timestamp**: 2026-10-30T21:06:22.638Z  
 > **Learning ID**: `learn-github-sweetpad-dev-sweetpad`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sweetpad-dev-sweetpad-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sweetpad-dev/sweetpad](https://github.com/sweetpad-dev/sweetpad))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:34:08.290Z  
+> **Harvest Timestamp**: 2026-10-30T21:06:21.432Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1615,533 +1615,295 @@ pub fn find_named<'a>(sims: &'a [Simulator], spec: &DestinationSpec) -> Option<&
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4123e4a3` (2026-10-24)
-**Commit Message**: Build each scheme with its own configuration and remember picks per scheme (#342)
+### Incident Patch 1: `6337f46e` (2026-10-27)
+**Commit Message**: Resolve scheme targets by ID so a renamed target still builds (#344)
 
-The extension saved one configuration for the whole workspace, so the first pick applied to every scheme. A scheme now defaults to the configuration its .xcscheme sets, picks are kept per project and scheme, and the old workspace-wide pick is no longer read.
+A scheme saved before its target was renamed still has the old BlueprintName, and Xcode resolves the buildable by its BlueprintIdentifier instead. sweetpad matched by name only, so 'run' failed with "no target matched scheme" after xcodebuild had built the app. sweetpad now rebinds each buildable to the target its ID names when it parses a scheme.
 
-**File**: `sweetpad-vscode/CHANGELOG.md` (modified, +4/-0)
+**File**: `sweetpad-core/tests/build_settings.rs` (modified, +37/-0)
 ```diff
-@@ -2,6 +2,10 @@
- 
- New features, improvements and bug fixes for SweetPad are documented in this file.
- 
-+## [0.2.20]
-+
-+- Fix every scheme building with the first configuration picked ([#342](https://github.com/sweetpad-dev/sweetpad/issues/342), thanks [@bartlomiejswierad-vodeno](https://github.com/bartlomiejswierad-vodeno))
-+
- ## [0.2.19] - 2026-10-10
- 
- - Debug through `sweetpad dap` when the SweetPad CLI is installed ([#340](https://github.com/sweetpad-dev/sweetpad/issues/340), thanks [@amgdev9](https://github.com/amgdev9))
-```
-
-**File**: `sweetpad-vscode/native/src/lib.rs` (modified, +19/-0)
-```diff
-@@ -331,6 +331,25 @@ pub fn configurations(path: String) -> napi::Result<Vec<String>> {
-     }
+@@ -753,6 +753,43 @@ fn workspace_level_scheme_resolves() {
+     assert_eq!(s.get("TARGET_NAME").map(String::as_str), Some("Scratch"));
  }
  
-+/// The project's `defaultConfigurationName` (the "Use … for command-line
-+/// builds" choice, `Release` in Xcode's templates) for a `.xcodeproj`, or the
-+/// first member project that declares one for a `.xcworkspace`. `null` when
-+/// none does.
-+#[napi]
-+pub fn default_configuration(path: String) -> napi::Result<Option<String>> {
-+    let p = Path::new(&path);
-+    if is_workspace(p) {
-+        let ws = workspace::open(p).map_err(to_napi_err)?;
-+        Ok(ws
-+            .project_refs
-+            .iter()
-+            .filter_map(|project_path| project::open(project_path).ok())
-+            .find_map(|proj| proj.default_configuration))
-+    } else {
-+        Ok(project::open(p).map_err(to_napi_err)?.default_configuration)
++#[test]
++fn workspace_user_scheme_naming_a_renamed_target_resolves() {
++    // Regression for issue #344: a private workspace scheme saved before its
++    // target was renamed still calls it `OldName`. xcodebuild resolves the
++    // buildable by its BlueprintIdentifier and builds `Scratch`, so the
++    // resolver must too rather than fail with "no target matched scheme".
++    let (root, _proj) = scratch_copy("ws-stale-name");
++    let ws = root.join("Test.xcworkspace");
++    std::fs::create_dir_all(&ws).unwrap();
++    std::fs::write(
++        ws.join("contents.xcworkspacedata"),
++        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workspace version=\"1.0\">\n  <FileRef location=\"group:Scratch.xcodeproj\"/>\n</Workspace>\n",
++    )
++    .unwrap();
++    let dir = ws.join(format!(
++        "xcuserdata/{}.xcuserdatad/xcschemes",
++        visible_user()
++    ));
++    std::fs::create_dir_all(&dir).unwrap();
++    std::fs::write(
++        dir.join("Private.xcscheme"),
++        SCRATCH_SCHEME_XML.replace("BlueprintName=\"Scratch\"", "BlueprintName=\"OldName\""),
++    )
++    .unwrap();
++
++    let opts = BuildSettingsOptions {
++        workspace: Some(ws),
++        scheme: Some("Private".to_string()),
++        configuration: "Debug".to_string(),
++        sdk: "macosx".to_string(),
++        arch: "arm64".to_string(),
++        ..Default::default()
++    };
++    let s = resolve_one(opts);
++    assert_eq!(s.get("TARGET_NAME").map(String::as_str), Some("Scratch"));
++}
++
+ /// A workspace whose single member project is nested two directories below it
+ /// (`<root>/Modules/App/Scratch.xcodeproj`) — the layout that defeats
+ /// `find_derived_data_container`'s parent/grandparent search. Named `Apps`,
+```
+
+**File**: `sweetpad-lib/src/project.rs` (modified, +53/-11)
+```diff
+@@ -205,6 +205,34 @@ pub fn open(xcodeproj_path: &Path) -> Result<Project, Error> {
+     Document::parse(xcodeproj_path)?.open(xcodeproj_path)
+ }
+ 
++/// The current name of the project's target whose object ID is `id`, the
++/// `BlueprintIdentifier` a scheme names it by. `None` when the project declares
++/// no such target or can't be read. Reads only the target list, so the
++/// scheme listing [`open`] builds can call it without recursing.
++#[must_use]
++pub fn target_name(xcodeproj_path: &Path, id: &str) -> Option<String> {
++    match Document::parse(xcodeproj_path).ok()? {
++        Document::Pbxproj(value) => {
++            let (objects, project_obj) = project_root(&value).ok()?;
++            let declared = project_obj
++                .get("targets")
++                .and_then(Value::as_array)?
++                .iter()
++                .any(|t| t.as_str() == Some(id));
++            if !declared {
++                return None;
++            }
++            objects
++                .get(id)?
++                .get("name")
++                .and_then(Value::as_str)
++                .map(str::to_string)
++        }
++        Document::Xcproj(value) => crate::project_xcproj::target_name(&value, id),
++        Document::Pif(_) => None,
 +    }
 +}
 +
- /// Options for a `buildSettings` resolution — mirrors
- /// `xcodebuild -showBuildSettings`. Either `project` or `workspace` is required;
- /// either `scheme` or `target` selects what to resolve.
-```
-
-**File**: `sweetpad-vscode/src/build/commands.ts` (modified, +23/-17)
-```diff
-@@ -3,15 +3,16 @@ import path from "node:path";
- import * as vscode from "vscode";
+ /// Like [`open`] but driven by an already-parsed pbxproj value. Use this when
+ /// the caller has cached the pbxproj parse for reuse across multiple queries
+ /// (e.g. [`crate::build_context::BuildContext`]).
+@@ -4601,17 +4629,15 @@ pub fn scheme_for_target(xcodeproj_path: &Path, target: &str) -> Option<String>
  
- import { getBuildServerProvider } from "../bsp/commands";
--import { showConfigurationPicker, showYesNoQuestion } from "../common/askers";
--import { type XcodeScheme, getBuildConfigurations, getIsXBSInstalled, getSchemes } from "../common/cli/scripts";
-+import { askConfigurationForScheme, showYesNoQuestion } from "../common/askers";
-+import { type XcodeScheme, getIsXBSInstalled, getSchemeConfiguration, getSchemes } from "../common/cli/scripts";
- import type { AppDeps } from "../common/commands";
- import { getWorkspaceConfig, updateWorkspaceConfig } from "../common/config";
- import { ExecBaseError, ExtensionError } from "../common/errors";
- import { exec } from "../common/exec";
- import { getWorkspaceRelativePath, isFileExists, removeDirectory } from "../common/files";
--import { showInputBox, showQuickPick } from "../common/quick-pick";
-+import { showQuickPick } from "../common/quick-pick";
- import { runTask } from "../common/tasks/run";
-+import { getPickedConfiguration } from "./configuration";
- import type { BuildTreeItem } from "./tree";
- import {
-   askSchemeForBuild,
-@@ -379,34 +380,39 @@ export async function selectConfigurationForBuildCommand(deps: AppDeps): Promise
-     workspaceContext: deps.workspaceContext,
-     buildManager: deps.buildManager,
-   });
-+  const scheme = await askSchemeForBuild(deps.progressStatusBar, deps.buildManager, {
-+    title: "Select scheme to pick a configuration for",
-+    xcworkspace: xcworkspace,
-+  });
- 
-   deps.progressStatusBar.updateText("Searching for configurations");
--  const configurations = await getBuildConfigurations({
-+  const answer = await askConfigurationForScheme({
-     xcworkspace: xcworkspace,
-+    scheme: scheme,
-+    schemeDefault: getSchemeConfiguration({ xcworkspace: xcworkspace, scheme: scheme, action: "launch" }),
-+    current:
-+      getWorkspaceConfig("build.configuration") ??
-+      getPickedConfiguration({ workspaceState: deps.workspaceState, scope: "build", xcworkspace, scheme }),
-   });
--
--  let selected: string | undefined;
--  if (configurations.length === 0) {
--    selected = await showInputBox({
--      title: "No configurations found. Please enter configuration name manually",
--    });
--  } else {
--    selected = await showConfigurationPicker(configurations);
-+  if (!answer) {
-+    vscode.window.showErrorMessage("Configuration was not selected");
-+    return;
-   }
- 
--  if (!selected) {
--    vscode.window.showErrorMessage("Configuration was not selected");
-+  // The scheme's own configuration is what applies without a pick, so going back to it drops the pick.
-+  if (answer.configuration === undefined) {
-+    deps.buildManager.setConfigurationForBuild({ xcworkspace, scheme, configuration: undefined });
-     return;
-   }
- 
-   const saveAnswer = await showYesNoQuestion({
-     title: "Do you want to update configuration in the workspace settings (.vscode/settings.json)?",
-   });
-   if (saveAnswer) {
--    await updateWorkspaceConfig("build.configuration", selected);
--    deps.buildManager.setDefaultConfigurationForBuild(undefined);
-+    await updateWorkspaceConfig("build.configuration", answer.configuration);
-+    deps.buildManager.setConfigurationForBuild({ xcworkspace, scheme, configuration: undefined });
-   } else {
--    deps.buildManager.setDefaultConfigurationForBuild(selected);
-+    deps.buildManager.setConfigurationForBuild({ xcworkspace, scheme, configuration: answer.configuration });
-   }
+ /// The blueprint (target) names a scheme's `BuildAction` builds.
+ fn scheme_build_action_targets(scheme_path: &Path) -> Vec<String> {
+-    let Ok(root) = crate::xcscheme::parse_file(scheme_path) else {
+-        return Vec::new();
+-    };
+-    let Some(build_action) = root.child("BuildAction") else {
+-        return Vec::new();
+-    };
+-    build_action
+-        .descendants_named("BuildableReference")
+-        .iter()
+-        .filter_map(|e| e.attr("BlueprintName").map(String::from))
+-        .collect()
++    crate::scheme::parse_file(scheme_path)
++        .map(|scheme| {
++            scheme
++                .build_entries
++                .into_iter()
++                .map(|e| e.buildable.blueprint_name)
++                .collect()
++        })
++        .unwrap_or_default()
  }
  
+ #[cfg(test)]
+@@ -6092,6 +6118,22 @@ mod tests {
+     /// hash to different DerivedData folders if the trailing slash survived.
+     /// `absolutize` normalizes both spellings, keeping the folder stable
+     /// regardless of how the caller spelled the container path.
++    #[test]
++    fn target_name_looks_a_target_up_by_its_object_id() {
++        let pbxproj =
++            fixtures_root().join("_synthetic-xcconfigs/xcode-26.5.0/project/Scratch.xcodeproj");
++        assert_eq!(
++            target_name(&pbxproj, "14A71A1C6762522AADB33EF1").as_deref(),
++            Some("Scratch")
++        );
++        assert_eq!(target_name(&pbxproj, "000000000000000000000000"), None);
++        let xcproj = fixtures_root().join("_xcproj/NetNewsWire.xcodeproj");
++        assert_eq!(
++            target_name(&xcproj, "840D617B2029031C009BC708").as_deref(),
++            Some("NetNewsWire-iOS")
++        );
++    }
++
+     #[test]
+     fn trailing_slash_does_not_change_the_derived_data_hash() {
+         let with = absolutize(Path::new("/root/Foo.xcodeproj/"));
 ```
 
-**File**: `sweetpad-vscode/src/build/configuration.spec.ts` (added, +178/-0)
+**File**: `sweetpad-lib/src/project_xcproj.rs` (modified, +12/-0)
 ```diff
-@@ -0,0 +1,178 @@
-+import type { Mock } from "vitest";
-+
-+import { getSchemeConfiguration } from "../common/cli/scripts";
-+import { getWorkspaceConfig } from "../common/config";
-+import type { WorkspaceStateService } from "../common/workspace-state";
-+import { getPickedConfiguration, resolveConfiguration, setPickedConfiguration } from "./configuration";
-+
-+vi.mock("../common/config", () => ({ getWorkspaceConfig: vi.fn() }));
-+vi.mock("../common/cli/scripts", () => ({ getSchemeConfiguration: vi.fn() }));
-+
-+const mockSetting = getWorkspaceConfig as Mock;
-+const mockSchemeConfiguration = getSchemeConfiguration as Mock;
-+
-+function memoryState(initial: Record<string, unknown> = {}): WorkspaceStateService {
-+  const values = new Map(Object.entries(initial));
-+  return {
-+    get: (key: string) => values.get(key),
-+    update: (key: string, value: unknown) => {
-+      if (value === undefined) {
-+        values.delete(key);
-+      } else {
-+        values.set(key, value);
-+      }
-+    },
-+    rawKeys: () => [...values.keys()],
-+  } as unknown as WorkspaceStateService;
+@@ -109,6 +109,18 @@ fn extract_targets(value: &Value, configurations: &[String]) -> Vec<Target> {
+         .collect()
+ }
+ 
++/// The name of the target whose `id` is `id`; see [`crate::project::target_name`].
++pub(crate) fn target_name(value: &Value, id: &str) -> Option<String> {
++    value
++        .get("targets")
++        .and_then(Value::as_array)?
++        .iter()
++        .find(|target| target.get("id").and_then(Value::as_str) == Some(id))?
++        .get("name")
++        .and_then(Value::as_str)
++        .map(str::to_string)
 +}
 +
-+const APP = "/work/App.xcworkspace";
-+const OTHER = "/work/Other.xcodeproj";
-+
-+describe("resolveConfiguration", () => {
-+  beforeEach(() => {
-+    vi.resetAllMocks();
-+  });
-+
-+  // #342: each scheme builds with the configuration its own .xcscheme names, so switching from
-+  // "App TEST" to "App UAT" switches the configuration with it.
-+  it("uses each scheme's own launch configuration when nothing is picked", () => {
-+    const state = memoryState();
-+    mockSchemeConfiguration.mockImplementation(({ scheme }) => (scheme === "App UAT" ? "UAT" : "TEST-Debug"));
-+
-+    expect(resolveConfiguration({ workspaceState: state, scope: "build", xcworkspace: APP, scheme: "App UAT" })).toBe(
-+      "UAT",
-+    );
-+    expect(resolveConfiguration({ workspaceState: state, scope: "build", xcworkspace: APP, scheme: "App TEST" })).toBe(
-+      "TEST-Debug",
-+    );
-+    expect(mockSchemeConfiguration).toHaveBeenCalledWith({ xcworkspace: APP, scheme: "App UAT", action: "launch" });
-+  });
-+
-+  it("reads the scheme's test action for testing", () => {
-+    mockSchemeConfiguration.mockReturnValue("TEST-Debug");
-+
-+    expect(
-+      resolveConfiguration({ workspaceState: memoryState(), scope: "testing", xcworkspace: APP, scheme: "App" }),
-+    ).toBe("TEST-Debug");
-+    expect(mockSchemeConfiguration).toHaveBeenCalledWith({ xcworkspace: APP, scheme: "App", action: "test" });
-+  });
-+
-+  it("prefers a pick for the scheme over the scheme's own configuration", () => {
-+    const state = memoryState();
-+    mockSchemeConfiguration.mockReturnValue("UAT");
-+    setPickedConfiguration({
-+      workspaceState: state,
-+      scope: "build",
-+      xcworkspace: APP,
-+      scheme: "App UAT",
-+      configuration: "Release",
-+    });
-+
-+    expect(resolveConfiguration({ workspaceState: state, scope: "build", xcworkspace: APP, scheme: "App UAT" })).toBe(
-+      "Release",
-+    );
-+  });
-+
-+  it("lets the workspace setting override every scheme", () => {
-+    const state = memoryState();
-+    mockSetting.mockImplementation((key: string) => (key === "build.configuration" ? "Staging" : undefined));
-+    setPickedConfiguration({
-+      workspaceState: state,
-+      scope: "build",
-+      xcworkspace: APP,
-+      scheme: "App",
-+      configuration: "Release",
-+    });
-+
-+    expect(resolveConfiguration({ workspaceState: state, scope: "build", xcworkspace: APP, scheme: "App" })).toBe(
-+      "Staging",
-+    );
-+    expect(
-+      resolveConfiguration({ workspaceState: state, scope: "build", xcworkspace: undefined, scheme: undefined }),
-+    ).toBe("Staging");
-+  });
-+
-+  it("answers nothing without a scheme, leaving the caller its fallback", () => {
-+    expect(
-+      resolveConfiguration({ workspaceState: memoryState(), scope: "build", xcworkspace: APP, scheme: undefined }),
-+    ).toBeUndefined();
-+    expect(mockSchemeConfiguration).not.toHaveBeenCalled();
-+  });
-+
-+  // The single workspace-wide pick older versions stored is the value that pinned every scheme to
-+  // one configuration, so it is not read at all.
-+  it("ignores the workspace-wide pick older versions stored", () => {
-+    const state = memoryState({ "build.xcodeConfiguration": "TEST-Debug" });
-+    mockSchemeConfiguration.mockReturnValue("UAT");
-+
-+    expect(resolveConfiguration({ workspaceState: state, scope: "build", xcworkspace: APP, scheme: "App UAT" })).toBe(
-+      "UAT",
-+    );
-+  });
-+});
-+
-+describe("setPickedConfiguration", () => {
-+  it("keeps picks apart for same-named schemes of different projects", () => {
-+    const state = memoryState();
-+    setPickedConfiguration({
-+      workspaceState: state,
-+      scope: "build",
-+      xcworkspace: APP,
-+      scheme: "App",
-+      configuration: "UAT",
-+    });
-+    setPickedConfiguration({
-+      workspaceState: state,
-+      scope: "build",
-+      xcworkspace: OTHER,
-+      scheme: "App",
-+      configuration: "Beta",
-+    });
-+
-+    expect(getPi
+ /// The `isa` the pbxproj would have used, so downstream rules that match on it
+ /// keep working whichever format the project is in.
+ fn isa_for(target: &Value) -> &'static str {
 ```
 
-**File**: `sweetpad-vscode/src/build/configuration.ts` (added, +83/-0)
+**File**: `sweetpad-lib/src/scheme.rs` (modified, +150/-11)
 ```diff
-@@ -0,0 +1,83 @@
-+import { getSchemeConfiguration } from "../common/cli/scripts";
-+import { getWorkspaceConfig } from "../common/config";
-+import type { WorkspaceStateService } from "../common/workspace-state";
-+
-+/** Build and run read one set of configuration picks, tests another, as with schemes. */
-+export type ConfigurationScope = "build" | "testing";
-+
-+const PICKS_KEY = {
-+  build: "build.xcodeConfigurationByScheme",
-+  testing: "testing.xcodeConfigurationByScheme",
-+} as const;
-+
-+const SETTING_KEY = {
-+  build: "build.configuration",
-+  testing: "testing.configuration",
-+} as const;
-+
-+const SCHEME_ACTION = {
-+  build: "launch",
-+  testing: "test",
-+} as const;
-+
-+type SchemeKey = {
-+  workspaceState: WorkspaceStateService;
-+  scope: ConfigurationScope;
-+  xcworkspace: string;
-+  scheme: string;
-+};
-+
-+/**
-+ * The configuration picked for one scheme of one project. Picks are keyed by both because a folder
-+ * can hold several projects with a same-named scheme whose configurations differ.
-+ */
-+export function getPickedConfiguration(options: SchemeKey): string | undefined {
-+  return options.workspaceState.get(PICKS_KEY[options.scope])?.[options.xcworkspace]?.[options.scheme];
+@@ -234,10 +234,72 @@ impl From<xcscheme::Error> for Error {
+     }
+ }
+ 
+-/// Parse an `.xcscheme` file into a typed [`Scheme`].
++/// Parse an `.xcscheme` file into a typed [`Scheme`], each buildable naming
++/// the target its `BlueprintIdentifier` points at today ([`rebind`]).
+ pub fn parse_file(path: &Path) -> Result<Scheme, Error> {
+     let root = xcscheme::parse_file(path)?;
+-    from_element(&root)
++    let mut scheme = from_element(&root)?;
++    if let Some(base) = reference_base(path) {
++        let testables = scheme
++            .test_action
++            .iter_mut()
++            .flat_map(|t| t.testables.iter_mut().map(|t| &mut t.buildable));
++        for reference in scheme
++            .build_entries
++            .iter_mut()
++            .map(|e| &mut e.buildable)
++            .chain(testables)
++            .chain(scheme.launch_target.as_mut())
++            .chain(scheme.launch_macro_expansion.as_mut())
++        {
++            rebind(reference, base);
++        }
++    }
++    Ok(scheme)
 +}
 +
-+/** Record a pick for one scheme, or drop it with `undefined` so the scheme's own configuration applies. */
-+export function setPickedConfiguration(options: SchemeKey & { configuration: string | undefined }): void {
-+  const key = PICKS_KEY[options.scope];
-+  const picks = { ...options.workspaceState.get(key) };
-+  const forWorkspace = { ...picks[options.xcworkspace] };
-+  if (options.configuration === undefined) {
-+    delete forWorkspace[options.scheme];
-+  } else {
-+    forWorkspace[options.scheme] = options.configuration;
-+  }
-+  if (Object.keys(forWorkspace).length === 0) {
-+    delete picks[options.xcworkspace];
-+  } else {
-+    picks[options.xcworkspace] = forWorkspace;
-+  }
-+  options.workspaceState.update(key, Object.keys(picks).length === 0 ? undefined : picks);
++/// The directory a scheme file's `container:` references resolve against:
++/// the one holding the `.xcodeproj` / `.xcworkspace` whose `xcshareddata` or
++/// `xcuserdata` the file sits in.
++fn reference_base(scheme_file: &Path) -> Option<&Path> {
++    scheme_file
++        .ancestors()
++        .find(|dir| {
++            matches!(
++                dir.file_name().and_then(OsStr::to_str),
++                Some("xcshareddata" | "xcuserdata")
++            )
++        })?
++        .parent()?
++        .parent()
 +}
 +
-+/**
-+ * The configuration a build of `scheme` uses without asking: the workspace setting, then the pick for
-+ * that scheme, then the scheme's own (`LaunchAction` for builds, `TestAction` for tests). Undefined
-+ * leaves the caller to its fallback (a picker, or Debug where nobody can be asked).
-+ */
-+export function resolveConfiguration(options: {
-+  workspaceState: WorkspaceStateService;
-+  scope: ConfigurationScope;
-+  xcworkspace: string | undefined;
-+  scheme: string | undefined;
-+}): string | undefined {
-+  const fromSetting = getWorkspaceConfig(SETTING_KEY[options.scope]);
-+  if (fromSetting) {
-+    return fromSetting;
-+  }
-+  if (!options.xcworkspace || !options.scheme) {
-+    return undefined;
-+  }
-+  const key = { ...options, xcworkspace: options.xcworkspace, scheme: options.scheme };
-+  return (
-+    getPickedConfiguration(key) ??
-+    getSchemeConfiguration({
-+      xcworkspace: options.xcworkspace,
-+      scheme: options.scheme,
-+      action: SCHEME_ACTION[options.scope],
-+    })
-+  );
++/// The `.xcodeproj` a buildable's `ReferencedContainer` names, resolved
++/// against `base` ([`reference_base`]). `None` for a package's bare
++/// `container:`, which names no project.
++fn referenced_project(base: &Path, reference: &BuildableRef) -> Option<PathBuf> {
++    match reference.container.split_once(':') {
++        Some(("container", "")) => None,
++        Some(("container", rel)) => Some(crate::project::absolutize(&base.join(rel))),
++        Some(("absolute", abs)) => Some(crate::project::absolutize(Path::new(abs))),
++        _ => None,
++    }
 +}
-```
-
-**File**: `sweetpad-vscode/src/build/manager.ts` (modified, +48/-14)
-```diff
-@@ -38,6 +38,7 @@ import { MacOSLogSidecar, Pymd3Sidecar, SimulatorLogSidecar } from "../run/sidec
- import type { SimulatorDestination } from "../simulators/types";
- import { getSimulatorByUdid } from "../simulators/utils";
- import type { ProgressStatusBar } from "../system/status-bar";
-+import { resolveConfiguration, setPickedConfiguration } from "./configuration";
- import { BUILD_TASK_PROBLEM_MATCHERS } from "./constants";
- import type { DiagnosticsManager } from "./diagnostics";
- import type { ParsedDiagnostic } from "./diagnostics-parser";
-@@ -54,6 +55,7 @@ import {
-   ensureAppPathExists,
-   generateBuildServerConfigOnBuild,
-   activateCurrentXcodeWorkspacePath,
-+  getCurrentXcodeWorkspacePath,
-   notifyXBSMissing,
-   getSchemeLaunchSettings,
-   getSwiftPMDirectory,
-@@ -74,6 +76,8 @@ export type BuildSessionCommand = "build" | "run" | "launch" | "test" | "clean"
- 
- export type BuildSessionStarted = {
-   scheme: string;
-+  /** Null for commands that build nothing (resolving dependencies). */
-+  configuration: string | null;
-   command: BuildSessionCommand;
- };
- 
-@@ -256,21 +260,40 @@ export class BuildManager {
-     this.emitter.emit("defaultSchemeForTestingUpdated", scheme);
-   }
- 
-+  /**
-+   * The configuration a build of the selected scheme in the current project uses, without asking.
-+   * See `resolveConfiguration` for the order; undefined when nothing answers yet.
-+   */
-   getDefaultConfigurationForBuild(): string | undefined {
--    return this.workspaceState.get("build.xcodeConfiguration");
-+    return this.getConfigurationForBuild({
-+      xcworkspace: getCurrentXcodeWorkspacePath(this.workspaceState),
-+      scheme: this.getDefaultSchemeForBuild(),
-+    });
-   }
- 
--  getDefaultConfigurationForTesting(): string | undefined {
--    return this.workspaceState.get("testing.xcodeConfiguration");
-+  getConfigurationForBuild(options: {
-+    xcworkspace: string | undefined;
-+    scheme: string | undefined;
-+  }): string | undefined {
-+    return resolveConfiguration({ workspaceState: this.workspaceState, scope: "build", ...options });
-   }
- 
--  setDefaultConfigurationForBuild(configuration: string | undefined): void {
--    this.workspaceState.update("build.xcodeConfiguration", configuration);
--    this.emitter.emit("defaultConfigurationForBuildUpdated", configuration);
-+  getConfigurationForTesting(options: { xcworkspace: string; scheme: string }): string | undefined {
-+    return resolveConfiguration({ workspaceState: this.workspaceState, scope: "testing", ...options });
-   }
- 
--  setDefaultConfigurationForTesting(configuration: string | undefined): void {
--    this.workspaceState.update("testing.xcodeConfiguration", configuration);
-+  /** Pick a configuration for one scheme, or drop the pick with `undefined` to use the scheme's own. */
-+  setConfigurationForBuild(options: { xcworkspace: string; scheme: string; configuration: string | undefined }): void {
-+    setPickedConfiguration({ workspaceState: this.workspaceState, scope: "build", ...options });
-+    this.emitter.emit("defaultConfigurationForBuildUpdated", this.getDefaultConfigurationForBuild());
-+  }
 +
-+  setConfigurationForTesting(options: {
-+    xcworkspace: string;
-+    scheme: string;
-+    configuration: string | undefined;
-+  }): void {
-+    setPickedConfiguration({ workspaceState: this.workspaceState, scope: "testing", ...options });
-   }
++/// Point `reference` at the target its `BlueprintIdentifier` names in its
++/// project, the way Xcode resolves it. The `BlueprintName` beside it is the
++/// target's name when the scheme was last saved, so a target renamed since
++/// still builds from a scheme that names it the old way (issue #344). A
++/// reference whose ID names no target keeps the name it has.
++fn rebind(reference: &mut BuildableRef, base: &Path) {
++    if reference.blueprint_identifier.is_empty() {
++        return;
++    }
++    if let Some(name) = referenced_project(base, reference)
++        .and_then(|project| crate::project::target_name(&project, &reference.blueprint_identifier))
++    {
++        reference.blueprint_name = name;
++    }
+ }
  
-   /**
-@@ -365,13 +388,18 @@ export class BuildManager {
-   async runSchemeTask(options: {
-     name: string;
-     scheme: string;
-+    configuration: string | null;
-     workspaceRoot: string;
-     command: BuildSessionCommand;
-     callback: (terminal: TaskTerminal) => Promise<void>;
-   }): Promise<void> {
-     this.cancellingSchemes.delete(options.scheme);
-     this.startSchemeBuild(options.scheme);
--    this.emitter.emit("buildSessionStarted", { scheme: options.scheme, command: options.command });
-+    this.emitter.emit("buildSessionStarted", {
-+      scheme: options.scheme,
-+      configuration: options.configuration,
-+      command: options.command,
-+    });
-     let status: BuildSessionEnded["status"] = "succeeded";
-     try {
-       await runTask(this.execution, {
-@@ -421,7 +449,7 @@ export class BuildManager {
-     });
- 
-     this.progress.updateText("Searching for configuration");
--    const configuration = await askConfiguration(this.progress, this, { xcworkspace: xcworkspace });
-+    const configuration = await askConfiguration(this.progress, this, { xcworkspace: xcworkspace, scheme: scheme });
- 
-     this.progress.updateText("Searching for destination");
-     const destination = await askDestinationToRunOn(this.progress, this.destinations, {
-@@ -439,6 +467,7 @@ export class BuildManager {
-     await this.runSchemeTask({
-       name: "Build",
-       scheme: scheme,
-+      configuration: configuration,
-       workspaceRoot: workspaceRoot,
-       command: "build",
-       callback: async (terminal) => {
-@@ -482,7 +511,7 @@ export class BuildManager {
-       }));
- 
-     this.progress.updateText
-```
-
-**File**: `sweetpad-vscode/src/build/provider.ts` (modified, +5/-0)
-```diff
-@@ -177,6 +177,7 @@ class ActionDispatcher {
-       definition.configuration ??
-       (await askConfiguration(this.deps.progressStatusBar, this.deps.buildManager, {
-         xcworkspace: xcworkspace,
-+        scheme: scheme,
-       }));
- 
-     const destination = await this.getDestination({
-@@ -299,6 +300,7 @@ class ActionDispatcher {
-       definition.configuration ??
-       (await askConfiguration(this.deps.progressStatusBar, this.deps.buildManager, {
-         xcworkspace: xcworkspace,
-+        scheme: scheme,
-       }));
- 
-     const destination = await this.getDestination({
-@@ -364,6 +366,7 @@ class ActionDispatcher {
-       definition.configuration ??
-       (await askConfiguration(this.deps.progressStatusBar, this.deps.buildManager, {
-         xcworkspace: xcworkspace,
-+        scheme: scheme,
-       }));
- 
-     const destination = await this.getDestination({
-@@ -460,6 +463,7 @@ class ActionDispatcher {
-       definition.configuration ??
-       (await askConfiguration(this.deps.progressStatusBar, this.deps.buildManager, {
-         xcworkspace: xcworkspace,
-+        scheme: scheme,
-       }));
- 
-     const destination = await this.getDestination({
-@@ -511,6 +515,7 @@ class ActionDispatcher {
-       definition.configuration ??
-       (await askConfiguration(this.deps.progressStatusBar, this.deps.buildManager, {
-         xcworkspace: xcworkspace,
-+        scheme: scheme,
-       }));
- 
-     const destination = await this.getDestination({
-```
-
-**File**: `sweetpad-vscode/src/build/utils.spec.ts` (modified, +1/-0)
-```diff
-@@ -49,6 +49,7 @@ vi.mock("../common/cli/scripts", () => ({
-   findSchemeFile: vi.fn(),
-   getBuildSettingsList: vi.fn(),
-   getXcodeBuildCommand: vi.fn(() => "xcodebuild"),
-+  getSchemeConfiguration: vi.fn(),
-   SWEETPAD_CLI_MISSING_MESSAGE: "cli missing",
- }));
- 
+ /// The login user whose `xcuserdata` Xcode would consult: the account's
+@@ -396,11 +458,12 @@ impl SchemeReferences {
+     #[must_use]
+     pub fn of(container: &Path) -> Self {
+         let base = container.parent().unwrap_or(Path::new(""));
+-        let project_of = |reference: &BuildableRef| match reference.container.split_once(':') {
+-            Some(("container", "")) => None,
+-            Some(("container", rel)) => Some(crate::project::absolutize(&base.join(rel))),
+-            Some(("absolute", abs)) => Some(crate::project::absolutize(Path::new(abs))),
+-            _ => None,
++        let project_of = |mut reference: BuildableRef| {
++            rebind(&mut reference, base);
++            (
++                referenced_project(base, &reference),
++                reference.blueprint_name,
++            )
+         };
+         let mut out = Self::default();
+         for name in container_schemes(container) {
+@@ -419,8 +482,7 @@ impl SchemeReferences {
+                     .and_then(|r| r.child("BuildableReference"))
+                     .and_then(parse_buildable)
+                 {
+-                    out.runs
+-                        .push((project_of(&reference), reference.blueprint_name.clone()));
++                    out.runs.push(project_of(reference));
+                 }
+             }
+             let entries = root
+@@ -432,8 +494,7 @@ impl SchemeReferences {
+             {
+                 if let Some(reference) = entry.child("BuildableReference").and_then(parse_buildable)
+                 {
+-                    out.builds
+-                        .push((project_of(&reference), reference.blueprint_name.clone()));
++                    out.builds.push(project_of(reference));
+                 }
+             }
+         }
+@@ -1542,4 +1603,82 @@ mod tests {
+         let elsewhere = dir.parent().unwrap().join("Other.xcodeproj");
+         assert!(!references.cover(Some(&elsewhere), "App", true));
+     }
++
++    /// A scheme saved while the Scratch fixture's target was still called
++    /// `OldName`, plus an entry whose ID names no target.
++    const STALE_NAME_SCHEME: &str = r#"<?xml version="1.0" encoding="UTF-8"?>
++<Scheme version
 ```
 
 #### Recent Merged Pull Requests:
@@ -2170,24 +1932,49 @@ The extension saved one configuration for the whole workspace, so the first pick
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build each scheme with its own configuration and remember picks per scheme (#342
+## X. Resolve scheme targets by ID so a renamed target still builds (#344)
 
 **RULE**:
-When implementing operations in `sweetpad-vscode/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sweetpad-core/tests/build_settings.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sweetpad-dev/sweetpad. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4123e4a3`: Build each scheme with its own configuration and remember picks per scheme (#342). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6337f46e`: Resolve scheme targets by ID so a renamed target still builds (#344). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sweetpad-vscode/CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sweetpad-core/tests/build_settings.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [0.2.20]
+#[test]
+fn workspace_user_scheme_naming_a_renamed_target_resolves() {
+    // Regression for issue #344: a private workspace scheme saved before its
+    // target was renamed still calls it `OldName`. xcodebuild resolves the
+    // buildable by its BlueprintIdentifier and builds `Scratch`, so the
+    // resolver must too rather than fail with "no target matched scheme".
+    let (root, _proj) = scratch_copy("ws-stale-name");
+    let ws = root.join("Test.xcworkspace");
+    std::fs::create_dir_all(&ws).unwrap();
+    std::fs::write(
+        ws.join("contents.xcworkspacedata"),
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workspace version=\"1.0\">\n  <FileRef location=\"group:Scratch.xcodeproj\"/>\n</Workspace>\n",
+    )
+    .unwrap();
+    let dir = ws.join(format!(
+        "xcuserdata/{}.xcuserdatad/xcschemes",
+        visible_user()
+    ));
+    std::fs::create_dir_all(&dir).unwrap();
+    std::fs::write(
+        dir.join("Private.xcscheme"),
+        SCRATCH_SCHEME_XML.replace("BlueprintName=\"Scratch\"", "BlueprintName=\"OldName\""),
+    )
+    .unwrap();
 
-- Fix every scheme building with the first configuration picked ([#342](https://github.com/sweetpad-dev/sweetpad/issues/342), thanks [@bartlomiejswierad-vodeno](https://github.com/bartlomiejswierad-vodeno))
-
+    let opts = BuildSettingsOptions {
+        workspace: Some(ws),
+        scheme: Some("Private".to_string()),
+        con
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2197,4 +1984,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4123e4a3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6337f46e` are properly handled with clean fallback behavior.

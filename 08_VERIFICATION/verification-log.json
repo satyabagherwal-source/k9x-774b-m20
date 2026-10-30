@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261028-M8RQ",
-    "timestamp": "2026-10-28T14:56:30.182Z",
-    "repository": "salvo-rs/salvo",
-    "learningId": "learn-github-salvo-rs-salvo",
-    "contentHash": "6c3c733e127c8b20f4a85ce8d2ad793caf3a931fc3cac3761c0539dfece77e15",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261028-MCPK",
-    "timestamp": "2026-10-28T14:56:35.288Z",
-    "repository": "react/metro",
-    "learningId": "learn-github-react-metro",
-    "contentHash": "3eaf25f249348ab9cf74f11a33a78611d0832aeb0adbc823e72e64eb92abe416",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261028-MFKZ",
     "timestamp": "2026-10-28T14:56:39.011Z",
     "repository": "aws/aws-cdk",
@@ -7490,6 +7460,36 @@
     "repository": "rustls/rustls",
     "learningId": "learn-github-rustls-rustls",
     "contentHash": "f9b56a9b6bd5094f606e8687fd216fa392f1b4d94b9101f999a19981544126cd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-PMFC",
+    "timestamp": "2026-10-30T21:06:23.304Z",
+    "repository": "sweetpad-dev/sweetpad",
+    "learningId": "learn-github-sweetpad-dev-sweetpad",
+    "contentHash": "cf3a7556cc3d45c0608119c8b270dbea523da7aeb8290dddae94f72705834f7f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261030-PONU",
+    "timestamp": "2026-10-30T21:06:26.202Z",
+    "repository": "pola-rs/polars",
+    "learningId": "learn-github-pola-rs-polars",
+    "contentHash": "f648c2a9c4d820451af43bc75f61667ef0a2e8ea4498dcdb95d8987fed81bfd8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

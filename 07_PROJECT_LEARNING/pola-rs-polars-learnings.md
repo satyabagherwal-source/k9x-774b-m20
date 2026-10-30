@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `936c03be`  
+> **Source Version**: `ee5f3e7b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T22:32:55.158Z  
+> **Timestamp**: 2026-10-30T21:06:25.517Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T22:32:55.019Z  
+> **Harvest Timestamp**: 2026-10-30T21:06:16.509Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40226 stars
+- **Stars / Engagement**: 40236 stars
 
 ---
 
@@ -1668,11 +1668,14 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30360** (2026-10-28): **Sliced len() over a concat of string-only scans decodes a row group per input since 2.1.0**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import asyncio import resource import sys import tempfile from pathlib import Path  import polars as pl   def union(directory: Path) -> pl.LazyFrame:     files = sorted(directory.glob("part-*.parquet"))     schema = pl.read_parquet_schema(files[0])     return pl.concat(         [             pl.scan_parquet(f)             .with_columns(pl.col(n).cast(t) for n, t in schema.items())             .select(list(schema))             for f in files         ],         how="vertical_relaxed",     )   async def measure(directory: Path) -> None:     """Child: collect and print this process's peak RSS in MiB."""     result = await union(directory).head(1).select(pl.len()).collect_async()     assert result.item() == 1     peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss     print(peak / 2**20 if sys.platform == "darwin" else peak / 2**10)   async def main() -> None:     directory = Path(tempfile.mkdtemp())     cell = "x" * (1024 * 1024)  # 1 MiB per cell, distinct so dictionary encoding can't shrink it     for k in range(3):         pl.DataFrame(             {"document": [cell + str(i) for i in range(64)], "path": ["p"] * 64}         ).write_parquet(directory / f"part-{k}.parquet", compression="uncompressed")      print(union(directory).head(1).select(pl.len()
+- **Issue #30447** (2026-10-30): **scan_delta returns deleted rows from partitions whose path is percent-encoded**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import tempfile import polars as pl from delta import configure_spark_with_delta_pip from pyspark.sql import SparkSession  spark = configure_spark_with_delta_pip(     SparkSession.builder.master("local[1]")     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")     .config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog") ).getOrCreate()  for k in ["a b", "ab"]:     p = tempfile.mkdtemp()     spark.sql(f"CREATE TABLE delta.`{p}` (id BIGINT, k STRING) USING DELTA PARTITIONED BY (k) "               "TBLPROPERTIES ('delta.enableDeletionVectors' = 'true')")     spark.sql(f"INSERT INTO delta.`{p}` VALUES (1, '{k}'), (2, '{k}')")     spark.sql(f"DELETE FROM delta.`{p}` WHERE id = 2")     print(repr(k), pl.scan_delta(p).collect()["id"].to_list())  # 'a b' [1, 2], should be [1] # 'ab' [1] # Spark, duckdb's delta_scan and deltalake's QueryBuilder return [1] for both ```  ### Log output  ```shell  ```  ### Issue description  Currently, `_extract_delta_deletion_vectors` joins the scan paths from `file_uris()` to `deletion_vectors()["filepath"]` by string, but the first is decoded (`k=a b/part-...`) and the second keeps the log's encoding (`k=a%20b/part-...`), so those files get no deletion vector. Partition
+  **Post-Mortem & Fix Analysis**:
+  > (Drafted with an AI assistant, reviewed by me.)  I reproduced this with your exact Spark steps (pyspark 4.0.1, delta-spark 4.0.0) on polars 2.1.0 / deltalake 1.6.6, and also tried a few more partition values. In every case the two deltalake APIs disagree on the encoding:  ``` space   file_uris()               : ['.../tables/space/k=a b/part-00000-....snappy.parquet']   deletion_vectors filepath : ['file:///.../tables/space/k=a%20b/part-00000-....snappy.parquet'] percent   file_uris()               : ['.../tables/percent/k=50%25/part-00000-....snappy.parquet']   deletion_vectors filepath : ['file:///.../tables/percent/k=50%2525/part-00000-....snappy.parquet'] ```  So `filepath` is one URI-encoding level above `file_uris()`. A small fix in `_extract_delta_deletion_vectors` is to percent-decode `filepath` before the join:  ```diff --- a/py-polars/src/polars/io/delta/_dataset.py +++ b/py-polars/src/polars/io/delta/_dataset.py @@ -4,6 +4,7 @@  from dataclasses import dataclass  from functoo
+  > Triage notes  A local Spark table with three rows `id = 1, 2, 3` and partition `k = "a b"`. `DELETE ... WHERE id = 2` stored the deletion as a deletion vector, so the expected result is `[1, 3]`.  `scan_delta` looks up each file's deletion vector by matching its scan path from `file_uris()` against `deletion_vectors()["filepath"]` as strings:  | | | |---|---| | scan path (`file_uris()`) | `<root>/k=a b/part-00000-bfac6324….parquet` | | deletion vector path | `<root>/k=a%20b/part-00000-bfac6324….parquet` | | match? | **no** | | `scan_delta` result | **`[1, 2, 3]`**, the deleted row comes back |  For local tables, deltalake decodes `file_uris()` below the table root, while the deletion vector path keeps the log's percent-encoding.  Found and generated with AI 
 
-- **Issue #30358** (2026-10-28): **`to_pandas()` deadlocks with `map_elements` across threads**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import faulthandler import os import threading import time import warnings  os.environ.setdefault("POLARS_MAX_THREADS", "2")  # two pool threads make the hang likely  import polars as pl  warnings.filterwarnings("ignore", category=pl.exceptions.PolarsInefficientMapWarning)  # On a hang, print every thread's Python stack and exit. faulthandler.dump_traceback_later(30, exit=True)  # The String column makes to_pandas() convert the columns on the rayon pool. df = pl.DataFrame({"a": range(10_000), "s": [str(i) for i in range(10_000)]}) df.to_pandas()  # import pandas and pyarrow before the threads start  stop = threading.Event()   def to_pandas_worker() -> None:     while not stop.is_set():         df.to_pandas()   def map_elements_worker() -> None:     while not stop.is_set():         df.with_columns(             b=pl.col("a").map_elements(lambda x: x + 1, return_dtype=pl.Int64),             c=pl.col("a").map_elements(lambda x: x * 2, return_dtype=pl.Int64),         )   threads = [     threading.Thread(target=to_pandas_worker),     threading.Thread(target=map_elements_worker), ] for t in threads:     t.start() time.sleep(10) stop.set() for t in threads:     t.join() faulthandler.cancel_dump_traceback_later() print("finished without deadlock") ```   ### Log ou
+- **Issue #30432** (2026-10-30): **`sort` and `n_unique` wrong after a `rolling` `slice` with a per-window offset**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"t": range(5), "v": range(1, 6)}).sort("v") v = df.rolling("t", period="3i").agg(     pl.col("v").slice(pl.col("t").last() % 2, 1).first() )["v"]  print(v.to_list())         # [1, 2, 1, 3, 3] print(v.sort().to_list())  # [1, 2, 1, 3, 3], expected [1, 1, 2, 3, 3] print(v.n_unique())        # 4, expected 3 ```  ### Issue description  The result is not sorted but keeps the sorted flag of `v`, so `sort`, `n_unique` and `unique` on it are wrong. With a constant offset, e.g. `slice(1, 1)`, the result is correct.  ### Expected behavior  `v.sort().to_list() == [1, 1, 2, 3, 3]` and `v.n_unique() == 3`.  ### Installed versions  Reproduces on 2.1.0 and main.  Found and generated with AI 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1689,200 +1692,574 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `16d0b711` (2026-10-28)
-**Commit Message**: fix: Ensure allocator drift is flushed at thread exit (#30383)
+### Incident Patch 1: `3e90bfa0` (2026-10-30)
+**Commit Message**: fix: Fix segfaults and leaked references with Object values in group contexts (#30458)
 
-**File**: `crates/polars-ooc/src/global_alloc.rs` (modified, +30/-10)
+**File**: `crates/polars-core/src/chunked_array/list/iterator.rs` (modified, +20/-1)
 ```diff
-@@ -24,12 +24,29 @@ pub(crate) fn add_test_usage(bytes: i64) {
-     GLOBAL_ALLOC_SIZE.fetch_add(bytes as u64, Ordering::Relaxed);
+@@ -14,7 +14,7 @@ pub struct AmortizedListIter<'a, I: Iterator<Item = Option<ArrayBox>>> {
+     inner: NonNull<ArrayRef>,
+     lifetime: PhantomData<&'a ArrayRef>,
+     iter: I,
+-    // used only if feature="dtype-struct"
++    // used only if feature="dtype-struct" or feature="object"
+     #[allow(dead_code)]
+     inner_dtype: DataType,
  }
- 
-+/// The initial drift of a thread. It makes the first allocation of a thread
-+/// flush, which registers the flush at thread exit. We use two thread-local
-+/// variables because thread-locals with destructors can be slower to access.
-+const UNREGISTERED_DRIFT: i64 = i64::MIN / 2;
-+
- thread_local! {
-     static LOCAL_ALLOC_DRIFT: Cell<i64> = const {
--        Cell::new(0)
-+        Cell::new(UNREGISTERED_DRIFT)
-+    };
-+    static FLUSH_AT_EXIT: FlushAtExit = const {
-+        FlushAtExit(Cell::new(false))
-     };
- }
- 
-+// Contains a bool to check for first registry.
-+struct FlushAtExit(Cell<bool>);
-+
-+impl Drop for FlushAtExit {
-+    fn drop(&mut self) {
-+        flush_local_drift();
-+    }
-+}
-+
- #[inline(always)]
- fn update_alloc_size(bytes: i64) {
-     LOCAL_ALLOC_DRIFT.with(|drift| {
-@@ -45,16 +62,19 @@ fn update_alloc_size(bytes: i64) {
- #[cold]
- #[inline(never)]
- pub(crate) fn flush_local_drift() {
--    LOCAL_ALLOC_DRIFT.with(|drift| {
--        let drift_bytes = drift.get();
--        let old = GLOBAL_ALLOC_SIZE.fetch_add(drift_bytes as u64, Ordering::AcqRel);
--        drift.set(0);
-+    let mut drift_bytes = LOCAL_ALLOC_DRIFT.with(|drift| drift.replace(0));
-+    let first_flush = FLUSH_AT_EXIT
-+        .try_with(|registered| !registered.0.replace(true))
-+        .unwrap_or(false);
-+    if first_flush {
-+        drift_bytes = drift_bytes.wrapping_sub(UNREGISTERED_DRIFT);
-+    }
- 
--        let total = old.wrapping_add(drift_bytes as u64);
--        if total <= i64::MAX as u64 && total > polars_config::get_oomkill_threshold_bytes() {
--            oomkill();
--        }
--    })
-+    let old = GLOBAL_ALLOC_SIZE.fetch_add(drift_bytes as u64, Ordering::AcqRel);
-+    let total = old.wrapping_add(drift_bytes as u64);
-+    if total <= i64::MAX as u64 && total > polars_config::get_oomkill_threshold_bytes() {
-+        oomkill();
-+    }
- }
- 
- #[cold]
-```
-
----
-
-### Incident Patch 2: `fd4ddde7` (2026-10-28)
-**Commit Message**: fix(python): Prevent `to_pandas()` deadlock with `map_elements` on another thread (#30361)
-
-**File**: `crates/polars-python/src/dataframe/export.rs` (modified, +5/-1)
-```diff
-@@ -141,8 +141,12 @@ impl PyDataFrame {
-             false,
-         );
- 
-+        let rbs = py.enter_polars_ok(|| {
-+            df.iter_chunks(CompatLevel::oldest(), true)
-+                .collect::<Vec<_>>()
-+        })?;
-         let mut replaced_schema = None;
--        df.iter_chunks(CompatLevel::oldest(), true)
-+        rbs.into_iter()
-             .map(|rb| {
-                 let length = rb.len();
-                 let (schema, mut arrays) = rb.into_schema_and_arrays();
-```
-
-**File**: `py-polars/tests/unit/interop/test_to_pandas.py` (modified, +22/-0)
-```diff
-@@ -230,3 +230,25 @@ def to_pandas() -> None:
-     with ThreadPoolExecutor(10) as e:
-         fs = [e.submit(to_pandas) for _ in range(100)]
-         [f.result(timeout=10) for f in fs]
-+
-+
-+@pytest.mark.filterwarnings("ignore::polars.exceptions.PolarsInefficientMapWarning")
-+def test_to_pandas_no_deadlock_with_concurrent_map_elements_30358() -> None:
-+    from concurrent.futures import ThreadPoolExecutor
-+
-+    df = pl.DataFrame({"a": range(10), "s": [str(i) for i in range(10)]})
-+    chunked = pl.concat([df] * (2 * pl.thread_pool_size()), rechunk=False)
-+
-+    def to_pandas() -> None:
-+        for _ in range(400):
-+            df.to_pandas()
-+
-+    def map_elements() -> None:
-+        for _ in range(400):
-+            chunked.with_columns(
-+                pl.col("a").map_elements(lambda x: x + 1, return_dtype=pl.Int64)
-+            )
-+
-+    with ThreadPoolExecutor(2) as e:
-+        fs = [e.submit(to_pandas), e.submit(map_elements)]
-+        [f.result(timeout=10) for f in fs]
-```
-
----
-
-### Incident Patch 3: `3e0ffc49` (2026-10-28)
-**Commit Message**: fix: Don't panic when zipping an empty frame without columns with broadcasts (#30344)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/polars-stream/src/nodes/zip.rs` (modified, +9/-3)
-```diff
-@@ -109,8 +109,11 @@ impl InputHead {
-     }
- 
-     async fn consume_broadcast(&mut self) -> DataFrame {
--        assert!(self.is_broadcast == Some(true) && self.total_len == 1);
--        let out = self.morsels.pop_front().unwrap().into_df().await;
-+        assert!(self.is_broadcast == Some(true) && self.total_len <= 1);
-+        let out = match self.morsels.pop_front() {
-+            Some(morsel) => morsel.into_df().await,
-+            None => DataFrame::empty(),
-+        };
-         self.clear();
-         out
-     }
-@@ -374,7 +377,10 @@ impl ComputeNode for ZipNode {
-                 for input_head in &mut self.input_heads {
-                     out.push(input_head.consume_broadcast().await);
+@@ -64,6 +64,25 @@ impl<I: Iterator<Item = Option<ArrayBox>>> Iterator for AmortizedListIter<'_, I>
+                         return AmortSeries::new(self.series_container.clone());
+                     }
                  }
--                let out_df = concat_df_horizontal(&out, false, true, false)?;
-+                // An empty input without columns also counts as a broadcast. Whether the others
-+                // broadcast to its length of zero is up to the zip behavior, as in memory.
-+                let unit_length_as_scalar = matches!(self.zip_behavior, ZipBehavior::Broadcast);
-+                let out_df = concat_df_horizontal(&out, false, false, unit_length_as_scalar)?;
-                 out.clear();
- 
-                 let morsel = Morsel::new_unregistered(out_df, self.out_seq, source_token.clone());
++                #[cfg(feature = "object")]
++                // lists hold object values in an extension array, which only converts to the
++                // series' object array through `from_chunks_and_dtype_unchecked`; as for structs,
++                // `self.inner` is not used once the container is replaced
++                if matches!(self.inner_dtype, DataType::Object(_)) {
++                    // SAFETY:
++                    // dtype is known
++                    unsafe {
++                        let s = Series::from_chunks_and_dtype_unchecked(
++                            self.series_container.name().clone(),
++                            vec![array_ref],
++                            &self.inner_dtype,
++                        );
++                        let inner = Rc::make_mut(&mut self.series_container);
++                        *inner = s;
++
++                        return AmortSeries::new(self.series_container.clone());
++                    }
++                }
+                 // The series is cloned, we make a new container.
+                 if Arc::strong_count(&self.series_container.0) > 1
+                     || Rc::strong_count(&self.series_container) > 1
 ```
 
-**File**: `py-polars/tests/unit/functions/test_concat.py` (modified, +6/-0)
+**File**: `crates/polars-core/src/chunked_array/object/extension/mod.rs` (modified, +13/-10)
 ```diff
-@@ -614,3 +614,9 @@ def test_concat_horizontal_strict_pruned_input_before_cache(
-     q = pl.concat([inner, shared.select("b")], how="horizontal_extend")
+@@ -84,22 +84,25 @@ pub(crate) fn create_extension<I: Iterator<Item = Option<T>> + TrustedLen, T: Si
+     for opt_t in iter.into_iter() {
+         match opt_t {
+             Some(t) => {
+-                unsafe {
+-                    buf.extend_from_slice(any_as_u8_slice(&t));
+-                    // SAFETY: we allocated upfront
+-                    validity.push_unchecked(true)
+-                }
++                unsafe { buf.extend_from_slice(any_as_u8_slice(&t)) };
++                validity.push(true);
+                 mem::forget(t);
+             },
+             None => {
+-                unsafe {
+-                    buf.extend_from_slice(any_as_u8_slice(&T::default()));
+-                    // SAFETY: we allocated upfront
+-                    validity.push_unchecked(false)
+-                }
++                // The drop function frees this copy, so the original must not be dropped too.
++                let t = T::default();
++                unsafe { buf.extend_from_slice(any_as_u8_slice(&t)) };
++                validity.push(false);
++                mem::forget(t);
+             },
+         }
+     }
++    // The drop function frees exactly `n_t_vals` values.
++    assert_eq!(
++        validity.len(),
++        n_t_vals,
++        "object iterator did not yield its declared length"
++    );
  
-     assert_frame_equal(q.collect(), pl.DataFrame({"a": [1], "b": [2]}))
-+
-+
-+@pytest.mark.parametrize("how", ["horizontal", "horizontal_extend"])
-+def test_concat_horizontal_empty_frame_without_columns(how: ConcatMethod) -> None:
-+    lf = pl.concat([pl.LazyFrame(height=0), pl.LazyFrame(height=1)], how=how)
-+    assert lf.select(pl.len()).collect().item() == 1
+     // We slice the buffer because we want to ignore the padding bytes from here
+     // they can be forgotten.
 ```
 
-**File**: `py-polars/tests/unit/sql/test_subqueries.py` (modified, +8/-0)
+**File**: `crates/polars-core/src/frame/group_by/aggregations/agg_list.rs` (modified, +6/-4)
 ```diff
-@@ -1341,3 +1341,11 @@ def test_scalar_subquery_as_aggregate_parameter(
-         expected=expected,
-         engines=["in-memory", "streaming"],
+@@ -220,7 +220,8 @@ impl<T: PolarsObject> AggList for ObjectChunked<T> {
+         let mut length_so_far = 0i64;
+         offsets.push(length_so_far);
+ 
+-        //  we know that iterators length
++        // The values of every group: `num_elements`, which differs from `self.len()` for groups
++        // that skip or repeat values.
+         let iter = {
+             groups
+                 .iter()
+@@ -248,10 +249,11 @@ impl<T: PolarsObject> AggList for ObjectChunked<T> {
+                     // we know that offsets has allocated enough slots
+                     offsets.push_unchecked(length_so_far);
+ 
+-                    let arr = group_vals.downcast_iter().next().unwrap().clone();
+-                    arr.into_iter_cloned()
++                    // A slice can span several chunks.
++                    let arrs = group_vals.downcast_iter().cloned().collect::<Vec<_>>();
++                    arrs.into_iter().flat_map(|arr| arr.into_iter_cloned())
+                 })
+-                .trust_my_length(self.len())
++                .trust_my_length(groups.num_elements())
+         };
+ 
+         let mut pe = create_extension(iter);
+```
+
+**File**: `py-polars/tests/unit/datatypes/test_object.py` (modified, +91/-0)
+```diff
+@@ -1,7 +1,9 @@
+ from __future__ import annotations
+ 
+ import io
++import sys
+ from pathlib import Path
++from typing import TYPE_CHECKING
+ from uuid import uuid4
+ 
+ import numpy as np
+@@ -11,6 +13,9 @@
+ from polars.exceptions import ComputeError
+ from polars.testing import assert_series_equal
+ 
++if TYPE_CHECKING:
++    from polars._typing import EngineType
++
+ 
+ def test_series_init_instantiated_object() -> None:
+     s = pl.Series([object(), object()], dtype=pl.Object())
+@@ -309,3 +314,89 @@ def test_implode_object_raises() -> None:
+ 
+     with pytest.raises(pl.exceptions.InvalidOperationError, match="nested objects"):
+         df.select(pl.col("obj").implode())
++
++
++@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
++def test_object_groups_skipping_values(engine: EngineType) -> None:
++    # Groups that skip values gather only those, not as many as the column holds.
++    lf = pl.LazyFrame(
++        {
++            "g": [0, 1, 0, 1, 0, 1],
++            "x": [1, -2, 3, 4, -5, 6],
++            "v": pl.Series(["a", "b", None, "d", "e", None], dtype=pl.Object),
++        }
++    )
++    v, x = pl.col.v, pl.col.x
++    out = (
++        lf.group_by("g", maintain_order=True)
++        .agg(filter=v.filter(x > 0).shift(1).last(), head=v.head(2).shift(1).last())
++        .collect(engine=engine)
++    )
++    assert out["filter"].to_list() == ["a", "d"]
++    assert out["head"].to_list() == ["a", "b"]
++
++    out = lf.select(v.filter(x > 0).shift(1).len().over("g")).collect(engine=engine)
++    assert out["v"].to_list() == [2] * 6
++
++
++@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
++def test_object_group_slice_spanning_chunks(engine: EngineType) -> None:
++    a = pl.DataFrame(
++        {"g": [0, 0, 0], "v": pl.Series(["a", None, "c"], dtype=pl.Object)}
++    )
++    b = pl.DataFrame(
++        {"g": [0, 1, 1], "v": pl.Series(["d", "e", None], dtype=pl.Object)}
++    )
++    df = pl.concat([a, b], rechunk=False).with_columns(pl.col.g.set_sorted())
++    out = df.lazy().select(pl.col.v.shift(1).over("g")).collect(engine=engine)
++    assert out["v"].to_list() == [None, "a", None, "c", None, "e"]
++
++
++def test_object_overlapping_windows_references() -> None:
++    # Windows repeat values: every gathered value must be released again.
++    objs = [object() for _ in range(100)]
++    before = [sys.getrefcount(o) for o in objs]
++    df = pl.DataFrame({"t": range(100), "v": pl.Series(objs, dtype=pl.Object)})
++    out = df.rolling("t", period="10i").agg(pl.col.v.gather([0]).first())
++    assert out["v"].to_list() == [objs[max(0, i - 9)] for i in range(100)]
++    del out, df
++    after = [sys.getrefcount(o) for o in objs]
++    assert after == before
++
++
++@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
++@pytest.mark.parametrize("sorted_keys", [False, True])
++def test_object_gather_in_groups(engine: EngineType, sorted_keys: bool) -> None:
++    # Each group's values reach `gather` as an object series, also after the first.
++    g = [0, 0, 0, 1, 1, 1] if sorted_keys else [0, 1, 0, 1, 0, 1]
++    df = pl.DataFrame(
++        {"g": g, "v": pl.Series(["a", None, "c", "d", "e", "f"], dtype=pl.Object)}
++    )
++    if sorted_keys:
++        df = df.with_columns(pl.col.g.set_sorted())
++    v = pl.col.v.gather([1, 0])
++    out = (
++        df.lazy()
++        .group_by("g", maintain_order=True)
++        .agg(first=v.first(), last=v.last())
++        .collect(engine=engine)
++    )
++    if sorted_keys:
++        assert out["first"].to_list() == [None, "e"]
++        assert out["last"].to_list() == ["a", "d"]
++    else:
++        assert out["first"].to_list() == ["c", "d"]
++        assert out["last"].to_list() == ["a", None]
++
++
++def test_object_null_slots_release_none_once() -> None:
++    # Each null slot of an object list is released once; visible before Python 3.12,
++    # where `None` is not immortal and a double release takes references from it.
++    df = pl.DataFrame(
++        {"g": [0, 1] * 500, "v": pl.Series([None] * 1000, dtype=pl.Object)}
++    )
++    before = sys.getrefcount(None)
++    out = df.lazy().select(pl.col.v.shift(1).over("g")).collect()
++    del out
++    after = sys.getrefcount(None)
++    assert after - before > -100
+```
+
+---
+
+### Incident Patch 2: `22c1bb73` (2026-10-30)
+**Commit Message**: fix: Clear the sorted flag of aggregated literals with empty groups (#30461)
+
+**File**: `crates/polars-core/src/frame/column/mod.rs` (modified, +8/-1)
+```diff
+@@ -18,6 +18,8 @@ use self::series::SeriesColumn;
+ use crate::chunked_array::cast::CastOptions;
+ use crate::chunked_array::flags::StatisticsFlags;
+ use crate::datatypes::ReshapeDimension;
++#[cfg(feature = "algorithm_group_by")]
++use crate::frame::group_by::aggregations::nulls_at_one_end;
+ use crate::prelude::*;
+ use crate::series::{BitRepr, IsSorted};
+ use crate::utils::Container;
+@@ -790,7 +792,12 @@ impl Column {
+ 
+                 // Use dtype-aware validity updates so Struct fields see the nulls.
+                 let s = scalar_col.take_materialized_series().rechunk();
+-                s.with_validity(validity.into_opt_validity()).into_column()
++                let mut out = s.with_validity(validity.into_opt_validity());
++                // The values are equal, so the result is sorted only if its nulls are at one end.
++                if !nulls_at_one_end(&out) {
++                    out.set_sorted_flag(IsSorted::Not);
++                }
++                out.into_column()
+             },
+         }
+     }
+```
+
+**File**: `crates/polars-core/src/frame/group_by/aggregations/dispatch.rs` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@ use crate::prelude::row_encode::encode_rows_unordered;
+ const N_UNIQUE_SORT_FALLBACK_THRESHOLD: usize = 16384;
+ 
+ /// Whether the nulls of `s`, if any, are all at its start or all at its end.
+-fn nulls_at_one_end(s: &Series) -> bool {
++pub(crate) fn nulls_at_one_end(s: &Series) -> bool {
+     let null_count = s.null_count();
+     if null_count == 0 {
+         return true;
+```
+
+**File**: `crates/polars-core/src/frame/group_by/aggregations/mod.rs` (modified, +1/-0)
+```diff
+@@ -8,6 +8,7 @@ mod string;
+ use std::borrow::Cow;
+ 
+ pub use agg_list::*;
++pub(crate) use dispatch::nulls_at_one_end;
+ use num_traits::pow::Pow;
+ use num_traits::{Bounded, Float, Num, NumCast, ToPrimitive, Zero};
+ use polars_arrow::bitmap::{Bitmap, MutableBitmap};
+```
+
+**File**: `py-polars/tests/unit/operations/test_group_by.py` (modified, +48/-0)
+```diff
+@@ -3770,3 +3770,51 @@ def s(e: pl.Expr) -> pl.Expr:
+         .agg(pl.col(list(exprs(over=True))))
      )
+     assert_frame_equal(out.collect(engine=engine), expected.collect(engine=engine))
 +
 +
-+def test_scalar_subquery_from_table_without_columns() -> None:
-+    empty = pl.LazyFrame({"x": [1]}).filter(False).select([])
-+    other = pl.LazyFrame({"y": [10, 20]})
-+    with pl.SQLContext(t1=empty, t2=other) as ctx:
-+        result = ctx.execute("SELECT (SELECT max(y) FROM t2) AS m FROM t1").collect()
-+    assert_frame_equal(result, pl.DataFrame(schema={"m": pl.Int64}))
++@pytest.mark.parametrize(
++    "agg",
++    [
++        Expr.first,
++        Expr.last,
++        lambda e: e.first(ignore_nulls=True),
++        lambda e: e.last(ignore_nulls=True),
++        Expr.min,
++        Expr.max,
++        Expr.mean,
++        Expr.median,
++        Expr.bitwise_and,
++        Expr.bitwise_or,
++    ],
++)
++@pytest.mark.parametrize(
++    ("keep", "is_sorted"),
++    [
++        ([True, False, True, False], False),
++        ([False, True, True, False], False),
++        ([True, True, False, False], True),
++        ([False, False, True, True], True),
++    ],
++)
++def test_group_by_literal_agg_empty_groups_sorted_flag_30326(
++    agg: Callable[[Expr], Expr], keep: list[bool], is_sorted: bool
++) -> None:
++    df = pl.DataFrame({"g": [1, 2, 3, 4], "keep": keep}).with_columns(v=pl.lit(5))
++    v = df.group_by("g", maintain_order=True).agg(agg(pl.col("v").filter("keep")))["v"]
++
++    assert v.to_list() == [5 if k else None for k in keep]
++    assert v.flags["SORTED_ASC"] == is_sorted
++    assert v.max() == 5
++    assert v.n_unique() == 2
++    assert v.unique().sort().to_list() == [None, 5]
++
++
++def test_group_by_literal_agg_empty_groups_categorical_30326() -> None:
++    df = pl.DataFrame({"g": [1, 2, 3, 4], "keep": [True, False, True, False]})
++    df = df.with_columns(v=pl.lit("x", dtype=pl.Categorical))
++    out = df.group_by("g", maintain_order=True).agg(pl.col("v").filter("keep").first())
++    v = out["v"]
++
++    # The sorted flag sits on the physical, which `flags` does not show.
++    assert v.n_unique() == 2
++    assert v.unique().len() == 2
+```
+
+---
+
+### Incident Patch 3: `0260c775` (2026-10-30)
+**Commit Message**: fix(python): Correct `scalar // Series` and `DataFrame` floordiv (#30452)
+
+**File**: `crates/polars-core/src/frame/arithmetic.rs` (modified, +2/-1)
+```diff
+@@ -107,7 +107,8 @@ impl Rem<&Series> for DataFrame {
+ }
+ 
+ impl DataFrame {
+-    fn binary_aligned(
++    /// Applies `f` to positionally aligned column pairs, cast to their supertype.
++    pub fn binary_aligned(
+         &self,
+         other: &DataFrame,
+         f: &(dyn Fn(&Series, &Series) -> PolarsResult<Series> + Sync + Send),
+```
+
+**File**: `crates/polars-python/src/dataframe/general.rs` (modified, +8/-0)
+```diff
+@@ -87,6 +87,14 @@ impl PyDataFrame {
+         py.enter_polars_df(|| &*self.df.read() / &*s.df.read())
+     }
+ 
++    pub fn floordiv_df(&self, py: Python<'_>, s: &Self) -> PyResult<Self> {
++        py.enter_polars_df(|| {
++            self.df
++                .read()
++                .binary_aligned(&s.df.read(), &polars_ops::prelude::floor_div_series)
++        })
++    }
++
+     pub fn rem_df(&self, py: Python<'_>, s: &Self) -> PyResult<Self> {
+         py.enter_polars_df(|| &*self.df.read() % &*s.df.read())
+     }
+```
+
+**File**: `py-polars/src/polars/_plr.pyi` (modified, +1/-0)
+```diff
+@@ -598,6 +598,7 @@ class PyDataFrame:
+     def sub_df(self, s: PyDataFrame) -> PyDataFrame: ...
+     def mul_df(self, s: PyDataFrame) -> PyDataFrame: ...
+     def div_df(self, s: PyDataFrame) -> PyDataFrame: ...
++    def floordiv_df(self, s: PyDataFrame) -> PyDataFrame: ...
+     def rem_df(self, s: PyDataFrame) -> PyDataFrame: ...
+     def sample_n(
+         self,
+```
+
+**File**: `py-polars/src/polars/dataframe/frame.py` (modified, +13/-20)
+```diff
+@@ -1132,26 +1132,19 @@ def _div(self, other: Any, *, floordiv: bool) -> DataFrame:
+             s = _prepare_other_arg(other, length=self.height)
+             other = DataFrame([s.alias(f"n{i}") for i in range(self.width)])
+ 
+-        orig_dtypes = other.dtypes
+-        # TODO: Dispatch to a native floordiv
+-        other = self._cast_all_from_to(other, INTEGER_DTYPES, Float64)
+-        df = self._from_pydf(self._df.div_df(other._df))
+-
+-        df = (
+-            df
+-            if not floordiv
+-            else df.with_columns([s.floor() for s in df if s.dtype.is_float()])
+-        )
+-        if floordiv:
+-            int_casts = [
+-                col(column).cast(tp)
+-                for i, (column, tp) in enumerate(self.schema.items())
+-                if tp.is_integer()
+-                and (orig_dtypes[i].is_integer() or orig_dtypes[i] == Null)
+-            ]
+-            if int_casts:
+-                return df.with_columns(int_casts)
+-        return df
++        if not floordiv:
++            other = self._cast_all_from_to(other, INTEGER_DTYPES, Float64)
++            return self._from_pydf(self._df.div_df(other._df))
++
++        df = self._from_pydf(self._df.floordiv_df(other._df))
++        int_casts = [
++            col(column).cast(tp)
++            for (column, tp), other_tp in zip(
++                self.schema.items(), other.dtypes, strict=False
++            )
++            if tp.is_integer() and (other_tp.is_integer() or other_tp == Null)
++        ]
++        return df.with_columns(int_casts) if int_casts else df
+ 
+     def _cast_all_from_to(
+         self, df: DataFrame, from_: frozenset[PolarsDataType], to: PolarsDataType
+```
+
+**File**: `py-polars/src/polars/series/series.py` (modified, +8/-2)
+```diff
+@@ -1264,13 +1264,19 @@ def __rtruediv__(self, other: Any) -> Series:
+             other = float(other)
+         if self.dtype != String:
+             self = self.cast(Float64)
+-        return self.__rfloordiv__(other)
++        return self._arithmetic(other, "div", "div_<>_rhs")
+ 
+     def __rfloordiv__(self, other: Any) -> Series:
+         if self.dtype.is_temporal():
+             msg = "first cast to integer before dividing datelike dtypes"
+             raise TypeError(msg)
+-        return self._arithmetic(other, "div", "div_<>_rhs")
++        if isinstance(other, Series):
++            return other // self
++        return (
++            self.to_frame()
++            .select_seq((F.lit(other) // F.col(self.name)).alias(self.name))
++            .to_series()
++        )
+ 
+     def __rmul__(self, other: Any) -> Series:
+         if self.dtype.is_temporal() and not isinstance(self.dtype, Duration):
+```
+
+**File**: `py-polars/tests/unit/operations/arithmetic/test_arithmetic.py` (modified, +57/-1)
+```diff
+@@ -1,11 +1,13 @@
+ from __future__ import annotations
+ 
++import math
+ import operator
+ import re
+ from collections import OrderedDict
+ from datetime import date, datetime, timedelta
+ from decimal import Decimal
+ from decimal import Decimal as PyDecimal
++from fractions import Fraction
+ from typing import TYPE_CHECKING, Any
+ 
+ import numpy as np
+@@ -244,6 +246,30 @@ def test_floor_division_float_int_consistency() -> None:
+     )
+ 
+ 
++@pytest.mark.parametrize(
++    ("lhs", "values", "dtype"),
++    [
++        (-7, [2, -2, 3, -3], pl.Int64),
++        (7, [2, -2, 3, -3], pl.Int8),
++        (-7, [2, -2, 3, -3], pl.Int128),
++        (-7, [2, 3], pl.UInt8),
++        (-7.5, [2.0, -2.0, 0.5, -4.0], pl.Float64),
++        (7, [2.0, -2.0], pl.Float32),
++        (PyDecimal("-7.25"), [PyDecimal("2"), PyDecimal("-0.5")], pl.Decimal(10, 2)),
++    ],
++)
++def test_series_rfloordiv(lhs: Any, values: list[Any], dtype: PolarsDataType) -> None:
++    s = pl.Series("s", values, dtype=dtype)
++    out = lhs // s
++    assert out.name == "s"
++    assert out.dtype == s.to_frame().select(lhs // pl.col("s")).to_series().dtype
++    expected = [math.floor(Fraction(lhs) / Fraction(v)) for v in values]
++    assert [Fraction(v) for v in out.to_list()] == expected
++
++    # true division is unaffected
++    assert (lhs / s).to_list() == pytest.approx([float(lhs) / float(v) for v in values])
++
++
+ def test_truncdiv_int() -> None:
+     lf = pl.LazyFrame(
+         {
+@@ -626,6 +652,32 @@ def test_df_series_division() -> None:
+     }
+ 
+ 
++def test_df_floordiv() -> None:
++    big = 2**62 + 1
++    df = pl.DataFrame(
++        {
++            "i": [big, -big],
++            "i8": [7, -7],
++            "f": [7.5, -7.5],
++            "d": [PyDecimal("7.5"), PyDecimal("-7.5")],
++        },
++        schema={"i": pl.Int64, "i8": pl.Int8, "f": pl.Float32, "d": pl.Decimal(10, 2)},
++    )
++    expected = {
++        "i": [big // 3, -big // 3],
++        "i8": [2, -3],
++        "f": [2.0, -3.0],
++        "d": [PyDecimal("2"), PyDecimal("-3")],
++    }
++    by_scalar = df // 3
++    by_frame = df // pl.DataFrame({k: [3, 3] for k in "abcd"})
++    for out in (by_scalar, by_frame):
++        assert out.to_dict(as_series=False) == expected
++        assert out.schema["i"] == pl.Int64
++        assert out.schema["i8"] == pl.Int8
++        assert out.schema["d"].is_decimal()
++
++
+ @pytest.mark.parametrize(
+     "s", [pl.Series([1, 2], dtype=Int64), pl.Series([1, 2], dtype=Float64)]
+ )
+@@ -648,15 +700,19 @@ def test_arithmetic_series(s: pl.Series) -> None:
+ 
+     # integer division
+     assert_series_equal(1 / a, pl.Series([1.0, 0.5]))
+-    expected = pl.Series([1, 0]) if s.dtype == Int64 else pl.Series([1.0, 0.5])
++    expected = pl.Series([1, 0]) if s.dtype == Int64 else pl.Series([1.0, 0.0])
+     assert_series_equal(1 // a, expected)
++
+     # modulo
+     assert ((1 % a) == [0, 1]).sum() == 2
+     assert ((a % 1) == [0, 0]).sum() == 2
++
+     # negate
+     assert (-a == [-1, -2]).sum() == 2
++
+     # unary plus
+     assert (+a == a).all()
++
+     # wrong dtypes in rhs operands
+     assert ((1.0 - a) == [0.0, -1.0]).sum() == 2
+     assert ((1.0 / a) == [1.0, 0.5]).sum() == 2
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30401** (2026-10-28): feat: Compare SQL join keys of different numeric types in a common type (@ritchie46)
-- **PR #30383** (2026-10-28): fix: Ensure allocator drift is flushed at thread exit (@orlp)
-- **PR #30382** (2026-10-28): feat: Support subqueries over the inner relations in the WHERE of SQL correlated subqueries (@ritchie46)
-- **PR #30379** (2026-10-28): perf: Add fixed-size row encoding layouts (@orlp)
-- **PR #30378** (2026-10-28): feat: Support any condition on outer columns in SQL correlated subqueries (@ritchie46)
-- **PR #30376** (2026-10-28): perf: Lower `int_range(0, pl.len())` of any wide integer dtype to a row index in streaming (@dancsi)
+- **PR #30467** (2026-10-30): feat: Support SQL derived tables that read the relations joined before them (LATERAL) (@ritchie46)
+- **PR #30466** (2026-10-30): feat: Support correlated SQL EXISTS with HAVING or with outer-only subquery conditions (@ritchie46)
+- **PR #30464** (2026-10-30): fix: Coerce SQL temporal strings, set operation columns, and untyped join keys to a common type (@ritchie46)
+- **PR #30463** (2026-10-30): feat: Support SQL `INSERT INTO` and `INSERT OVERWRITE` on attached Iceberg catalog tables (@kdn36)
+- **PR #30461** (2026-10-30): fix: Clear the sorted flag of aggregated literals with empty groups (@kdn36)
+- **PR #30459** (2026-10-30): feat: Support LIMIT and outer ORDER BY keys in correlated SQL subqueries (@ritchie46)
 
 ---
 
@@ -1902,66 +2279,47 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Ensure allocator drift is flushed at thread exit (#30383)
+## X. Fix segfaults and leaked references with Object values in group contexts (#30458
 
 **RULE**:
-When implementing operations in `crates/polars-ooc/src/global_alloc.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-core/src/chunked_array/list/iterator.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `16d0b711`: Ensure allocator drift is flushed at thread exit (#30383). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3e90bfa0`: Fix segfaults and leaked references with Object values in group contexts (#30458). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-ooc/src/global_alloc.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-core/src/chunked_array/list/iterator.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// The initial drift of a thread. It makes the first allocation of a thread
-/// flush, which registers the flush at thread exit. We use two thread-local
-/// variables because thread-locals with destructors can be slower to access.
-const UNREGISTERED_DRIFT: i64 = i64::MIN / 2;
+    // used only if feature="dtype-struct" or feature="object"
+                #[cfg(feature = "object")]
+                // lists hold object values in an extension array, which only converts to the
+                // series' object array through `from_chunks_and_dtype_unchecked`; as for structs,
+                // `self.inner` is not used once the container is replaced
+                if matches!(self.inner_dtype, DataType::Object(_)) {
+                    // SAFETY:
+                    // dtype is known
+                    unsafe {
+                        let s = Series::from_chunks_and_dtype_unchecked(
+                            self.series_container.name().clone(),
+                            vec![array_ref],
+                            &self.inner_dtype,
+                        );
+                        let inner = Rc::make_mut(&mut self.series_container);
+                        *inner = s;
 
-        Cell::new(UNREGISTERED_DRIFT)
-    };
-    static FLUSH_AT_EXIT: FlushAtExit = const {
-        FlushAtExit(Cell::new(false))
-// Contains a bool to check for first registry.
-struct FlushAtExit(Cell<bool>);
-
-impl Drop for FlushAtExit {
-    fn drop(&mut self) {
-        flush_local_drift();
-    }
-}
-
-    let mut drift_bytes = LOCAL_ALLOC_DRIFT.with(|drift| drift.replace(0));
-    let first_flush = FLUSH_AT_EXIT
-        .try_with(|registered| !registered.0.replace(true))
-        .unwrap_or(false);
-    if first_flush {
-        drift_bytes = drift_bytes.wrapping_sub(UNREGISTERED_DRIFT);
-    }
-    let old = GLOBAL_ALLOC_SIZE.fetch_add(drift_bytes as u64, Ordering::AcqRel);
-    let total = old.wrapping_add(drift_bytes as u64);
-    if total <= i64::MAX as u64 && total > polars_config::get_oomkill_threshold_bytes() {
-        oomkill();
-    }
+                        return AmortSeries::new(self.series_container.clone());
+                    }
+                }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        Cell::new(0)
-    LOCAL_ALLOC_DRIFT.with(|drift| {
-        let drift_bytes = drift.get();
-        let old = GLOBAL_ALLOC_SIZE.fetch_add(drift_bytes as u64, Ordering::AcqRel);
-        drift.set(0);
-        let total = old.wrapping_add(drift_bytes as u64);
-        if total <= i64::MAX as u64 && total > polars_config::get_oomkill_threshold_bytes() {
-            oomkill();
-        }
-    })
+    // used only if feature="dtype-struct"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `16d0b711` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3e90bfa0` are properly handled with clean fallback behavior.
