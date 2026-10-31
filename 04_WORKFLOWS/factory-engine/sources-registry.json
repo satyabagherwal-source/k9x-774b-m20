@@ -38,8 +38,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-10-31T02:44:20.834Z",
-    "lastVerified": "2026-10-31T02:44:20.834Z",
+    "lastChecked": "2026-10-31T02:56:02.211Z",
+    "lastVerified": "2026-10-31T02:56:02.211Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -143,8 +143,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T02:21:28.505Z",
-    "lastVerified": "2026-10-31T02:21:28.505Z",
+    "lastChecked": "2026-10-31T02:51:11.119Z",
+    "lastVerified": "2026-10-31T02:51:11.119Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -311,9 +311,9 @@
   "actions-actions-runner-controller": {
     "name": "actions-runner-controller",
     "officialUrl": "https://github.com/actions/actions-runner-controller",
-    "lastChecked": "2026-10-30T07:15:36.562Z",
+    "lastChecked": "2026-10-31T02:51:03.640Z",
     "revisionIdentifier": "89f34c4f",
-    "lastVerified": "2026-10-30T07:15:36.562Z"
+    "lastVerified": "2026-10-31T02:51:03.640Z"
   },
   "microsoft-agent-governance-toolkit": {
     "name": "agent-governance-toolkit",
@@ -1460,9 +1460,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-10-30T23:15:07.074Z",
+    "lastChecked": "2026-10-31T02:51:06.259Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-10-30T23:15:07.074Z"
+    "lastVerified": "2026-10-31T02:51:06.259Z"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -2423,14 +2423,14 @@
     "officialUrl": "https://github.com/openreplay/openreplay",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-28T06:24:49.423Z",
-    "lastVerified": "2026-10-28T06:24:49.423Z",
+    "lastChecked": "2026-10-31T02:51:09.105Z",
+    "lastVerified": "2026-10-31T02:51:09.105Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openreplay-openreplay",
-    "contentHash": "71088bd7da1528c071e75fb166fde849e44317db9a0b880b6d373165eff295d4",
+    "contentHash": "2f101d7297399209120003c632c6c08dd75309646ac54d1c25258478ebe31076",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2943,9 +2943,9 @@
   "xampprocky-tokei": {
     "name": "tokei",
     "officialUrl": "https://github.com/XAMPPRocky/tokei",
-    "lastChecked": "2026-10-29T23:56:55.169Z",
+    "lastChecked": "2026-10-31T02:50:56.094Z",
     "revisionIdentifier": "c14f7447",
-    "lastVerified": "2026-10-29T23:56:55.169Z"
+    "lastVerified": "2026-10-31T02:50:56.094Z"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
     "name": "Alissonerdx/BFS-Best-Face-Swap",
@@ -6315,9 +6315,9 @@
   "apache-incubator-pegasus": {
     "name": "incubator-pegasus",
     "officialUrl": "https://github.com/apache/incubator-pegasus",
-    "lastChecked": "2026-10-30T06:29:46.218Z",
+    "lastChecked": "2026-10-31T02:51:08.659Z",
     "revisionIdentifier": "75015467",
-    "lastVerified": "2026-10-30T06:29:46.218Z"
+    "lastVerified": "2026-10-31T02:51:08.659Z"
   },
   "dalance-procs": {
     "name": "procs",
@@ -11982,6 +11982,23 @@
     "learningId": "learn-huggingface-comfy-org-fibo-2-0",
     "contentHash": "c0b6ab4f0d2e8c3deed016bea94795661c87ccf74e8bde417cb6f5551d6aa353",
     "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-krafton-raon-1-mini-preview": {
+    "name": "KRAFTON/Raon-1-mini-preview",
+    "officialUrl": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-31T02:50:58.718Z",
+    "lastVerified": "2026-10-31T02:50:58.718Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
+    "contentHash": "dea0804edca749a39e0478ac3e47e8ae5d3a2895b9dd814b222880eb893be758",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

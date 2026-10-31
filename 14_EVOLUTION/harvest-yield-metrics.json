@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T02:44:18.282Z",
-  "total_cycles_completed": 6411,
-  "total_learnings_persisted": 6411,
-  "total_rules_promoted": 6006,
+  "last_updated": "2026-10-31T02:55:59.658Z",
+  "total_cycles_completed": 6413,
+  "total_learnings_persisted": 6413,
+  "total_rules_promoted": 6010,
   "history": [
-    {
-      "timestamp": "2026-10-30T16:00:45.485Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-30T16:22:35.420Z",
-      "repository": "mobile-next/mobile-mcp",
-      "learningId": "learn-github-mobile-next-mobile-mcp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-30T16:30:03.504Z",
       "repository": "lancedb/lancedb",
@@ -1403,6 +1389,20 @@
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T02:51:10.312Z",
+      "repository": "openreplay/openreplay",
+      "learningId": "learn-github-openreplay-openreplay",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T02:55:59.658Z",
+      "repository": "KRAFTON/Raon-1-mini-preview",
+      "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

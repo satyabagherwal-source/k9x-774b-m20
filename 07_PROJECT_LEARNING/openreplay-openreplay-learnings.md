@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source**: github ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
-> **Source Version**: `2be0a4f8`  
+> **Source Version**: `9f1dcebf`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T06:24:49.428Z  
+> **Timestamp**: 2026-10-31T02:51:09.622Z  
 > **Learning ID**: `learn-github-openreplay-openreplay`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T06:24:49.423Z  
+> **Harvest Timestamp**: 2026-10-31T02:51:09.105Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Session replay, cobrowsing and product analytics you can self-host. Best for reproducing issues and iterating on your product.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13057 stars
+- **Stars / Engagement**: 13082 stars
 
 ---
 
@@ -923,7 +923,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_supported_audience():
-    return [users.AUDIENCE, spot.AUDIENCE]
+    return [users.AUDIENCE, spot.AUDIENCE, "mcp:OpenReplay"]
 
 
 def is_spot_token(token: str) -> bool:
@@ -938,16 +938,35 @@ def is_spot_token(token: str) -> bool:
         raise
 
 
+def is_mcp_token(token: str) -> bool:
+    try:
+        if len(token) < 5 or "." not in token:
+            return False
+        decoded_token = jwt.decode(token, options={"verify_signature": False, "verify_exp": False})
+        audience = decoded_token.get("aud")
+        return audience == "mcp:OpenReplay"
+    except jwt.InvalidTokenError:
+        logger.error(f"Invalid token for is_spot_token: {sanitize(token, max_length=16)}...")
+        raise
+
+
 def jwt_authorizer(scheme: str, token: str, leeway=0) -> dict | None:
     if scheme.lower() != "bearer" or len(token) < 5 or "." not in token:
         return None
     if not token or token.count(".") != 2:
         logger.debug("! JWT Malformed token")
         return None
+    key = config("JWT_SECRET")
+    algorithm = config("JWT_ALGORITHM")
+    if is_spot_token(token):
+        key = config("JWT_SPOT_SECRET")
+    elif is_mcp_token(token):
+        key = config("JWT_MCP_SECRET")
+        algorithm = config("JWT_MCP_ALGORITHM")
     try:
         payload = jwt.decode(jwt=token,
-                             key=config("JWT_SECRET") if not is_spot_token(token) else config("JWT_SPOT_SECRET"),
-                             algorithms=config("JWT_ALGORITHM"),
+                             key=key,
+                             algorithms=algorithm,
                              audience=get_supported_audience(),
                              leeway=leeway)
     except jwt.ExpiredSignatureError:
@@ -1036,11 +1055,11 @@ def api_key_authorizer(token):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5005** (2026-10-15): **Co-browsing Metadata autocomplete returns no values although manually entered filters work**
-  *Symptoms*: **Describe the issue**  On a self-hosted OpenReplay v1.28.0 installation, Metadata filter suggestions on the Co-browsing page can be empty even when connected sessions contain matching metadata. Suggestions work on the recorded Sessions page.  The problem affects discovering/selecting values: entering a known `tenant_id` manually and applying the filter successfully returns matching live sessions. The behavior is not universal: `user_name` suggestions worked during a later browser test, but after removing that filter and selecting `tenant_id`, its suggestions remained empty. An earlier recording also showed empty autocomplete responses for the `user_name` slot.  **Steps to reproduce the issue**  The following sequence was observed on the affected installation:  1. Have sessions connected to Assist with `user_name` and `tenant_id` metadata. 2. Open Co-browsing, add a Metadata filter for `user_name`, and select a suggested    value. In the later test, this displayed matching sessions successfully. 3. Remove the filter and add a Metadata filter for `tenant_id`. 4. Open the value selector. No values are suggested; typing a search also returns    no suggestions. 5. Enter a known tenant identifier manually and apply the filter. Matching    Co-browsing sessions are returned. 6. Compare with recorded Sessions, where Metadata values are suggested normally.  The affected project maps `user_name` to slot 5 and `tenant_id` to slot 7. Actual tenant identifiers and user names are omitted f
+- **Issue #5096** (2026-10-30): **Network panel crashes with React #300 when opening requests after scrolling**
+  *Symptoms*: ### Describe the bug  The session player can become blank when opening a Network request after scrolling to the end of a long Fetch/XHR list. Filtering can trigger the same error:  ``` Minified React error #300 Rendered fewer hooks than expected. ```  ### Steps to reproduce  1. Open a recorded web session with a long list of network requests (reproduced with approximately 1,200 Fetch/XHR entries). 2. Open Network and select Fetch/XHR. 3. Scroll the request table to the bottom. 4. Open a request near the end of the list. 5. The player becomes blank. Filtering the list can also reproduce it.  ### Expected behavior  The request details should open and the player should remain usable.  ### OpenReplay version  Self-hosted frontend v1.28.5. The same offending code and compiled cache branch remain in frontend v1.28.6 and in main at 2008f30172a65eabc40b11ab0482b43072e60a08.  ### Additional context  `NetworkPanelComp.tsx` uses `useTranslation()` inside ordinary `renderStatus` / `renderDuration` callbacks. `TimeTable/RowColumns` calls `render(row)` directly. React Compiler can skip the memoized `columns.map(...)` on a subsequent render, changing the hook count.  Using `i18n.t` in those two callbacks, as `renderSize` already does, fixes the reproduced crash while retaining the parent's language-change subscription. A minimal fix and regression tests are ready. 
 
-- **Issue #4993** (2026-10-09): **Installer: OVERRIDE_FILE merge breaks the vars.yaml anchor and splits the minio credentials**
-  *Symptoms*: **Describe the issue**  `scripts/helmcharts/vars.yaml` holds the object-store credentials in two places: `minio.global.minio.accessKey/secretKey` (server side, lines 69 to 70 on `main`) and `global.s3.accessKey/secretKey` (client side, lines 158 to 159). The template ties them with a YAML anchor (`&accessKey` / `*accessKey`), so a plain `openreplay -i` keeps them equal.  The documented `OVERRIDE_FILE` path in `scripts/helmcharts/openreplay-cli` (`install()`, line 378) merges the override with  ``` yq '(load("new_vars.yaml") | .. | select(tag != "!!map" and tag != "!!seq")) as $i ireduce(.; setpath($i | path; $i))' old_vars.yaml ```  which replaces the aliased leaf under `global.s3` with a literal. `init.sh` then runs `templater` (after the merge, cli line 383) and renders the still-templated `minio.global.minio.*` with new random values. The two pairs silently diverge, the `minio` secret in `db` no longer matches `or-secrets` in `app`, and `databases-migrate` fails in its `minio` container with:  ``` mc: <ERROR> ... The Access Key Id you provided does not exist in our records. ```  The only guard today is the comment at lines 155 to 157 asking the operator to keep the two blocks in sync.  **Steps to reproduce the issue**  1. Fresh box, no `/var/lib/openreplay/vars.yaml`. 2. Override file that pins only the client side:    ```yaml    global:      s3:        accessKey: "pinnedaccesskey00001"        secretKey: "pinnedsecretkey000000001"    ``` 3. `OVERRIDE_FILE=/root/override.ya
+- **Issue #5062** (2026-10-28): **Lazy-loaded images are replayed without src/srcset; with WordPress sizes="auto" they take 3000px and blank out sliders**
+  *Symptoms*: **Describe the issue** The tracker sends an image's `src`/`srcset` only after the image has finished loading: `sendImgAttrs` in `tracker/tracker/src/main/modules/img.ts` returns early on `if (!img.complete)`, and the generic attribute path skips `src`/`srcset`. So every `loading="lazy"` image the user never scrolled to is replayed with no `src` and no `srcset`.  On WordPress sites this doesn't just leave those images blank, it breaks the layout in the player. WordPress adds `sizes="auto, …"` to lazy images and prints `img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }`, and Chrome applies `contain: size` to `sizes=auto` images. While the `img` has its `src` this is harmless (even before it loads), but an `img` with no `src`/`srcset` takes the 3000px placeholder size.  Real case: a WooCommerce product page with a horizontal photo slider (a flex row of square slides; photos 2–9 are lazy). The user saw the slider normally and swiped through four photos. In the replay, photos 5–9 have no `src`, each slide is laid out 3000×3000, the row stretches to 3000px and the first photo is centred about 1300px down, so the visible frame stays empty the whole time the page is shown. Microsoft Clarity's recording of the same visit shows the slider correctly.  **Steps to reproduce the issue** 1. Record a session on a page like this (a minimal version of the gallery): ~~~html <style>img:is([sizes="auto" i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1057,218 +1076,293 @@ def api_key_authorizer(token):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2be0a4f8` (2026-10-27)
-**Commit Message**: Updated patch build from main f8f61615f52b99aedc689358e99e8f4f16a760d1 (#5071)
+### Incident Patch 1: `d10fa567` (2026-10-29)
+**Commit Message**: fix(chalice): changed MCP auth
 
-* Increment api chart version to v1.28.9
-
-* Increment assets chart version to v1.28.4
-
-* Increment canvases chart version to v1.28.2
-
-* Increment db chart version to v1.28.3
-
-* Increment ender chart version to v1.28.2
-
-* Increment http chart version to v1.28.3
-
-* Increment images chart version to v1.28.2
-
-* Increment sink chart version to v1.28.2
-
-* Increment spot chart version to v1.28.2
-
-* Increment storage chart version to v1.28.2
-
----------
-
-Co-authored-by: GitHub Action <[REDACTED_EMAIL]>
-
-**File**: `scripts/helmcharts/openreplay/charts/api/Chart.yaml` (modified, +1/-1)
+**File**: `api/chalicelib/core/authorizers.py` (modified, +1/-1)
 ```diff
-@@ -18,4 +18,4 @@ version: 0.1.1
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.8"
-+AppVersion: "v1.28.9"
-```
-
-**File**: `scripts/helmcharts/openreplay/charts/assets/Chart.yaml` (modified, +1/-1)
-```diff
-@@ -18,4 +18,4 @@ version: 0.1.1
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.3"
-+AppVersion: "v1.28.4"
-```
-
-**File**: `scripts/helmcharts/openreplay/charts/canvases/Chart.yaml` (modified, +1/-1)
-```diff
-@@ -18,4 +18,4 @@ version: 0.1.1
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.1"
-+AppVersion: "v1.28.2"
-```
-
-**File**: `scripts/helmcharts/openreplay/charts/db/Chart.yaml` (modified, +1/-1)
-```diff
-@@ -18,4 +18,4 @@ version: 0.1.1
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.2"
-+AppVersion: "v1.28.3"
-```
-
-**File**: `scripts/helmcharts/openreplay/charts/ender/Chart.yaml` (modified, +1/-1)
-```diff
-@@ -18,4 +18,4 @@ version: 0.1.1
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.1"
-+AppVersion: "v1.28.2"
-```
-
-**File**: `scripts/helmcharts/openreplay/charts/http/Chart.yaml` (modified, +1/-1)
-```diff
-@@ -18,4 +18,4 @@ version: 0.1.1
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.2"
-+AppVersion: "v1.28.3"
-```
-
-**File**: `scripts/helmcharts/openreplay/charts/images/Chart.yaml` (modified, +1/-1)
-```diff
-@@ -18,4 +18,4 @@ version: 0.1.1
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.1"
-+AppVersion: "v1.28.2"
-```
-
-**File**: `scripts/helmcharts/openreplay/charts/sink/Chart.yaml` (modified, +1/-1)
-```diff
-@@ -18,4 +18,4 @@ version: 0.1.1
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.1"
-+AppVersion: "v1.28.2"
+@@ -12,7 +12,7 @@
+ 
+ 
+ def get_supported_audience():
+-    return [users.AUDIENCE, spot.AUDIENCE]
++    return [users.AUDIENCE, spot.AUDIENCE, "mcp:OpenReplay"]
+ 
+ 
+ def is_spot_token(token: str) -> bool:
 ```
 
 ---
 
-### Incident Patch 2: `f8f61615` (2026-10-27)
-**Commit Message**: fix(backend): bump golang.org/x/net to v0.60.0, pin patched base images (#5070)
+### Incident Patch 2: `6f96ebf1` (2026-10-29)
+**Commit Message**: fix(chalice): changed MCP auth
 
-**File**: `backend/Dockerfile` (modified, +3/-3)
+**File**: `api/chalicelib/core/authorizers.py` (modified, +21/-2)
 ```diff
-@@ -1,5 +1,5 @@
- # syntax=docker/dockerfile:1
--FROM golang:1.26-alpine AS build
-+FROM golang:1.26.10-alpine AS build
- RUN apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community git openssh openssl-dev pkgconf gcc g++ make libc-dev bash librdkafka-dev cyrus-sasl cyrus-sasl-gssapiv2 krb5;
- WORKDIR /root
+@@ -27,16 +27,35 @@ def is_spot_token(token: str) -> bool:
+         raise
  
-@@ -20,13 +20,13 @@ RUN --mount=type=cache,target=/go/pkg/mod \
-   --mount=type=cache,target=/root/.cache/go-build \
-   CGO_ENABLED=1 GOOS=linux GOARCH=$ARCH go build -o service -tags dynamic openreplay/backend/cmd/$SERVICE_NAME
  
--FROM alpine AS entrypoint
-+FROM alpine:3.24.3 AS entrypoint
- ARG GIT_SHA
- ARG GSSAPI=false
- LABEL GIT_SHA=$GIT_SHA
- LABEL GSSAPI=$GSSAPI
- 
--RUN apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community ca-certificates librdkafka-dev cyrus-sasl cyrus-sasl-gssapiv2 krb5
-+RUN apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community ca-certificates librdkafka-dev cyrus-sasl cyrus-sasl-gssapiv2 krb5 "brotli-libs>=1.2.1-r0" "libcurl>=8.23.0-r0"
- RUN adduser -u 1001 openreplay -D
- 
- ARG SERVICE_NAME
++def is_mcp_token(token: str) -> bool:
++    try:
++        if len(token) < 5 or "." not in token:
++            return False
++        decoded_token = jwt.decode(token, options={"verify_signature": False, "verify_exp": False})
++        audience = decoded_token.get("aud")
++        return audience == "mcp:OpenReplay"
++    except jwt.InvalidTokenError:
++        logger.error(f"Invalid token for is_spot_token: {sanitize(token, max_length=16)}...")
++        raise
++
++
+ def jwt_authorizer(scheme: str, token: str, leeway=0) -> dict | None:
+     if scheme.lower() != "bearer" or len(token) < 5 or "." not in token:
+         return None
+     if not token or token.count(".") != 2:
+         logger.debug("! JWT Malformed token")
+         return None
++    key = config("JWT_SECRET")
++    algorithm = config("JWT_ALGORITHM")
++    if is_spot_token(token):
++        key = config("JWT_SPOT_SECRET")
++    elif is_mcp_token(token):
++        key = config("JWT_MCP_SECRET")
++        algorithm = config("JWT_MCP_ALGORITHM")
+     try:
+         payload = jwt.decode(jwt=token,
+-                             key=config("JWT_SECRET") if not is_spot_token(token) else config("JWT_SPOT_SECRET"),
+-                             algorithms=config("JWT_ALGORITHM"),
++                             key=key,
++                             algorithms=algorithm,
+                              audience=get_supported_audience(),
+                              leeway=leeway)
+     except jwt.ExpiredSignatureError:
 ```
 
-**File**: `backend/go.mod` (modified, +5/-5)
+---
+
+### Incident Patch 3: `ada14b94` (2026-10-28)
+**Commit Message**: fix(tracker): flush pending messages in forceFlushBatch, add flushInterval (#5082)
+
+Data the worker has buffered but not yet uploaded is lost when a page is
+fully unloaded (same-URL navigation, reload, or any page that does not
+enter the bfcache): the dedicated worker is terminated before its
+`closing` upload completes. With the 30 s auto-send interval that can be
+up to 30 s of clicks, DOM changes and custom events.
+
+- forceFlushBatch() now hands messages still waiting for the next commit
+  to the worker before flushing, so `event(); forceFlushBatch()` includes
+  the event. Previously the flush ran before the event reached the worker.
+- New `flushInterval` option (ms) for the worker's auto-send interval.
+  Defaults to the current 30 s; invalid values fall back to it.
+
+**File**: `tracker/tracker/src/common/interaction.ts` (modified, +3/-0)
 ```diff
-@@ -35,7 +35,7 @@ require (
- 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
- 	github.com/ua-parser/uap-go v0.0.0-20260529044130-17c35e68e58c
- 	go.uber.org/zap v1.28.0
--	golang.org/x/net v0.58.0
-+	golang.org/x/net v0.60.0
- 	gopkg.in/yaml.v3 v3.0.1
- )
+@@ -5,6 +5,9 @@ export type DataType = 'player' | 'assets' | 'devtools' | 'analytics' | 'visual'
+ export interface Options {
+   connAttemptCount?: number
+   connAttemptGap?: number
++  /** How often (ms) the worker uploads what it has buffered. Defaults to 30 000. Anything
++   *  still buffered is lost if the page is unloaded without entering the bfcache. */
++  flushInterval?: number
+ }
  
-@@ -75,10 +75,10 @@ require (
- 	go.opentelemetry.io/otel/trace v1.46.0 // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	golang.org/x/crypto v0.55.0 // indirect
-+	golang.org/x/crypto v0.57.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sync v0.22.0 // indirect
--	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/text v0.41.0 // indirect
-+	golang.org/x/sync v0.23.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/text v0.42.0 // indirect
- 	google.golang.org/protobuf v1.36.12 // indirect
- )
+ type Start = {
 ```
 
-**File**: `backend/go.sum` (modified, +10/-0)
+**File**: `tracker/tracker/src/main/app/index.ts` (modified, +14/-0)
 ```diff
-@@ -219,23 +219,33 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
- golang.org/x/crypto v0.0.0-20200115085410-6d4e4cb37c7d/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
- golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
- golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
-+golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
-+golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
- golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
- golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
- golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
- golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
- golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
-+golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
-+golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
- golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
-+golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
-+golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.41.0 h1:vz/seA0lnX87Othu2f/0L24RcgrXD9/YFTSuGjj3rH8=
- golang.org/x/text v0.41.0/go.mod h1:jvf1O8ajNzZqhSrQBPbutR/EB83Cc0CFrezNQIwbb5M=
-+golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
-+golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
- google.golang.org/protobuf v1.36.12 h1:pJOKDDOyeXErUroCihFAd5LQuwXBSpVnKGrj5o/fwxc=
- google.golang.org/protobuf v1.36.12/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
- gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+@@ -1817,6 +1817,7 @@ export default class App {
+       url: document.URL,
+       connAttemptCount: this.options.connAttemptCount,
+       connAttemptGap: this.options.connAttemptGap,
++      flushInterval: this.options.flushInterval,
+       tabId: this.session.getTabId(),
+       localDebug: this.options.__local_debug,
+     })
+@@ -1929,6 +1930,7 @@ export default class App {
+       url: document.URL,
+       connAttemptCount: this.options.connAttemptCount,
+       connAttemptGap: this.options.connAttemptGap,
++      flushInterval: this.options.flushInterval,
+       tabId: this.session.getTabId(),
+       localDebug: this.options.__local_debug,
+     })
+@@ -2251,6 +2253,18 @@ export default class App {
+   }
+ 
+   forceFlushBatch() {
++    // Hand over messages still waiting for the next commit first, so that
++    // event(); forceFlushBatch() includes the event.
++    if (
++      this.activityState === ActivityState.Active &&
++      !this.socketMode &&
++      !this.insideIframe &&
++      this.messages.length
++    ) {
++      this.messages.unshift(Timestamp(this.timestamp()), TabData(this.session.getTabId()))
++      this.postToWorker(this.messages)
++      this.messages.length = 0
++    }
+     this.worker?.postMessage('forceFlushBatch')
+   }
+ 
+```
+
+**File**: `tracker/tracker/src/tests/flush.test.ts` (added, +127/-0)
+```diff
+@@ -0,0 +1,127 @@
++// @ts-nocheck
++import { describe, expect, test, jest, beforeAll, afterAll, beforeEach } from '@jest/globals'
++import Tracker, { Options } from '../main/index.js'
++import { Type as MType } from '../common/messages.gen.js'
++
++jest.mock('@openreplay/network-proxy', () => ({
++  default: jest.fn(() => 'mocked network-proxy content'),
++}))
++// src/common may also hold the compiled ESM build, which the worker test can't require.
++jest.mock('../common/messages.gen', () => jest.requireActual('../common/messages.gen.ts'))
++
++// App's ActivityState enum is not exported.
++const ACTIVE = 2
++const COLD_START = 3
++
++const options = {
++  projectKey: 'test-project-key',
++  ingestPoint: 'test-ingest-point',
++  respectDoNotTrack: false,
++  network: {},
++  mouse: {},
++  __DISABLE_SECURE_MODE: true,
++}
++
++describe('forceFlushBatch', () => {
++  let app: any
++
++  beforeAll(() => {
++    Object.defineProperty(window, 'performance', {
++      value: { timing: {}, now: jest.fn(() => 1000) },
++      configurable: true,
++    })
++    Object.defineProperty(window, 'Worker', {
++      value: jest.fn(() => 'mocked worker content'),
++      configurable: true,
++    })
++    globalThis.IntersectionObserver = jest.fn(() => ({
++      observe: jest.fn(),
++      unobserve: jest.fn(),
++      disconnect: jest.fn(),
++    }))
++    app = new Tracker(options as unknown as Options).app
++  })
++
++  afterAll(() => {
++    delete window.performance
++    delete window.Worker
++    delete globalThis.IntersectionObserver
++  })
++
++  // The app clears its message array after posting, so keep a copy of what was sent.
++  let posted: any[]
++
++  beforeEach(() => {
++    posted = []
++    app.worker = {
++      postMessage: jest.fn((data) => posted.push(Array.isArray(data) ? [...data] : data)),
++    }
++    app.activityState = ACTIVE
++    app.messages.length = 0
++  })
++
++  test('hands pending messages to the worker before flushing', () => {
++    app.send([MType.CustomEvent, 'checkout_submitted', '{}'])
++    app.forceFlushBatch()
++
++    expect(posted).toHaveLength(2)
++    expect(posted[0].map((message) => message[0])).toEqual([
++      MType.Timestamp,
++      MType.TabData,
++      MType.CustomEvent,
++    ])
++    expect(posted[1]).toBe('forceFlushBatch')
++    expect(app.messages).toHaveLength(0)
++  })
++
++  test('only flushes when nothing is pending', () => {
++    app.forceFlushBatch()
++    expect(posted).toEqual(['forceFlushBatch'])
++  })
++
++  test('does not hand over messages before the tracker is active', () => {
++    app.activityState = COLD_START
++    app.messages.push([MType.CustomEvent, 'early', '{}'])
++    app.forceFlushBatch()
++    expect(posted).toEqual(['forceFlushBatch'])
++    expect(app.messages).toHaveLength(1)
++  })
++})
++
++describe('worker flushInterval', () => {
++  const start = (extra = {}) => ({
++    type: 'start',
++    ingestPoint: 'test-ingest-point',
++    pageNo: 0,
++    timestamp: 0,
++    url: 'https://example.com/',
++    tabId: 'tab',
++    ...extra,
++  })
++
++  const intervalFor = (extra) => {
++    // The worker keeps its interval in module state, so load a fresh copy each time.
++    jest.isolateModules(() => {
++      require('../webworker/index')
++    })
++    const setIntervalSpy = jest.spyOn(globalThis, 'setInterval')
++    self.onmessage({ data: start(extra) })
++    const delay = setIntervalSpy.mock.calls[0]?.[1]
++    clearInterval(setIntervalSpy.mock.results[0]?.value)
++    setIntervalSpy.mockRestore()
++    return delay
++  }
++
++  test('defaults to 30 seconds', () => {
++    expect(intervalFor({})).toBe(30 * 1000)
++  })
++
++  test('uses the configured interval', () => {
++    expect(intervalFor({ flushInterval: 1000 })).toBe(1000)
++  })
++
++  test('ignores invalid intervals', () => {
++    expect(intervalFor({ flushInterval: 0 })).toBe(30 * 1000)
++    expect(intervalFor({ flushInterval: -5 })).toBe(30 * 1000)
++  })
++})
+```
+
+**File**: `tracker/tracker/src/webworker/index.ts` (modified, +3/-1)
+```diff
+@@ -189,7 +189,9 @@ self.onmessage = ({ data }: { data: ToWorkerData }): any => {
+     detectors = new Detectors((msg) => writer?.writeMessage(msg), data.localDebug ?? false)
+     detectorsTimestamp = 0
+     if (sendIntervalID === null) {
+-      sendIntervalID = setInterval(finalize, AUTO_SEND_INTERVAL)
++      const flushInterval =
++        data.flushInterval && data.flushInterval > 0 ? data.flushInterval : AUTO_SEND_INTERVAL
++      sendIntervalID = setInterval(finalize, flushInterval)
+     }
+     return (workerStatus = WorkerStatus.Active)
+   }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5071** (2026-10-27): Updated patch build from main f8f61615f52b99aedc689358e99e8f4f16a760d1 (@estradino)
-- **PR #5070** (2026-10-27): fix(backend): bump golang.org/x/net to v0.60.0, pin patched base images (@zavorotynskiy)
-- **PR #5069** (2026-10-27): new chart tasks (@rjshrjndrn)
-- **PR #5068** (2026-10-27): Updated patch build from main 2da25621bfed6999affa1c8fdde4fb7413395c27 (@estradino)
-- **PR #5066** (2026-10-27): feat(api): prefs api (@shekarsiri)
-- **PR #5065** (closed): Updated patch build from main 2da25621bfed6999affa1c8fdde4fb7413395c27 (@estradino)
+- **PR #5104** (2026-10-30): or 3943 security fat image for anthropic oss scanner (@rjshrjndrn)
+- **PR #5102** (2026-10-30): fix(backend): escape @ in PG password before parsing connection URL (@zavorotynskiy)
+- **PR #5101** (2026-10-30): fix(tracker): mask attributes and selected text of masked content (@josh08h)
+- **PR #5100** (closed): fix(tracker): mask attributes and selected text of masked content (@josh08h)
+- **PR #5098** (2026-10-30): Updated patch build from main 7aad334aa8536f14e81e24888ec83eb376d4a80e (@estradino)
+- **PR #5097** (2026-10-30): keep Network cell renderers hook-free (@i-chirkov)
 
 ---
 
@@ -1288,28 +1382,28 @@ Co-authored-by: GitHub Action <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Updated patch build from main f8f61615f52b99aedc689358e99e8f4f16a760d1 (#5071)
+## X. chalice): changed MCP auth
 
 **RULE**:
-When implementing operations in `scripts/helmcharts/openreplay/charts/api/Chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/chalicelib/core/authorizers.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2be0a4f8`: Updated patch build from main f8f61615f52b99aedc689358e99e8f4f16a760d1 (#5071). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d10fa567`: chalice): changed MCP auth. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/helmcharts/openreplay/charts/api/Chart.yaml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/chalicelib/core/authorizers.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-AppVersion: "v1.28.9"
+    return [users.AUDIENCE, spot.AUDIENCE, "mcp:OpenReplay"]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-AppVersion: "v1.28.8"
+    return [users.AUDIENCE, spot.AUDIENCE]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2be0a4f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d10fa567` are properly handled with clean fallback behavior.

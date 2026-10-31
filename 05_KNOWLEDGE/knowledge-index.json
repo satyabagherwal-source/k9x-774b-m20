@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T02:44:18.198Z",
+  "last_updated": "2026-10-31T02:55:59.569Z",
   "total_verified_learnings": 1180,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -43612,8 +43612,8 @@
       "slug": "openreplay-openreplay",
       "platform": "github",
       "source_url": "https://github.com/openreplay/openreplay",
-      "source_version": "2be0a4f8",
-      "content_hash": "71088bd7da1528c071e75fb166fde849e44317db9a0b880b6d373165eff295d4",
+      "source_version": "9f1dcebf",
+      "content_hash": "2f101d7297399209120003c632c6c08dd75309646ac54d1c25258478ebe31076",
       "dossier_path": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "promoted_rules": [
@@ -43651,6 +43651,11 @@
           "number": 5208,
           "title": "Updated patch build from main f8f61615f52b99aedc689358e99e8f4f16a760d1 (#5071)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6029,
+          "title": "chalice): changed MCP auth",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43658,7 +43663,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T06:24:49.755Z",
+      "verified_at": "2026-10-31T02:51:10.207Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -125508,7 +125513,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
       "source_version": "hf-krafton-raon-1-mini-preview",
-      "content_hash": "59bb7a1d2ba1a35d82c4f86b4c0dee778bb00049fdde7d4bd59809d8e61cad73",
+      "content_hash": "dea0804edca749a39e0478ac3e47e8ae5d3a2895b9dd814b222880eb893be758",
       "dossier_path": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
       "promoted_rules": [
@@ -125526,6 +125531,21 @@
           "number": 4994,
           "title": "MXFP8 Quantization Ignored Layers Pattern",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6030,
+          "title": "Clamped Sigmoid Decoupled Gate Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6031,
+          "title": "Multi-Head Latent Attention (MLA) Subspace Preservation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6032,
+          "title": "Asymmetric Hybrid-Layer Precision-Isolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -125533,7 +125553,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T20:38:35.264Z",
+      "verified_at": "2026-10-31T02:55:59.549Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -158703,6 +158723,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T02:44:18.178Z"
+    },
+    "rule-6029": {
+      "learning_id": "rule-6029",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6029,
+      "title": "chalice): changed MCP auth",
+      "source_url": "https://github.com/openreplay/openreplay",
+      "source_version": "9f1dcebf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:51:10.207Z"
+    },
+    "rule-6030": {
+      "learning_id": "rule-6030",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6030,
+      "title": "Clamped Sigmoid Decoupled Gate Invariant",
+      "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
+      "source_version": "hf-krafton-raon-1-mini-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:55:59.549Z"
+    },
+    "rule-6031": {
+      "learning_id": "rule-6031",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6031,
+      "title": "Multi-Head Latent Attention (MLA) Subspace Preservation Invariant",
+      "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
+      "source_version": "hf-krafton-raon-1-mini-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:55:59.549Z"
+    },
+    "rule-6032": {
+      "learning_id": "rule-6032",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6032,
+      "title": "Asymmetric Hybrid-Layer Precision-Isolation Invariant",
+      "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
+      "source_version": "hf-krafton-raon-1-mini-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T02:55:59.549Z"
     }
   },
   "aliases": {

@@ -6443,3 +6443,5 @@ Every entry in this ledger must capture:
 | `learn-github-bitnami-sealed-secrets` | `https://github.com/bitnami/sealed-secrets` | `53625dfe` | Multi-dimensional audit evidence | 2026-10-31T02:44:11.466Z |
 | `learn-huggingface-comfy-org-fibo-2-0` | `https://huggingface.co/Comfy-Org/Fibo-2.0` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-31T02:44:15.000Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `a88390c6` | Multi-dimensional audit evidence | 2026-10-31T02:44:18.277Z |
+| `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `9f1dcebf` | Multi-dimensional audit evidence | 2026-10-31T02:51:10.307Z |
+| `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-10-31T02:55:59.653Z |

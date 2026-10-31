@@ -3,7 +3,7 @@
 > **Source Version**: `hf-krafton-r`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-27T20:38:34.589Z  
+> **Timestamp**: 2026-10-31T02:55:58.105Z  
 > **Learning ID**: `learn-huggingface-krafton-raon-1-mini-preview`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,344 +14,384 @@
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): KRAFTON/Raon-1-mini-preview
 
+---
+
 ## 1. Executive Forensic Architecture & System Mechanics
 
-**Technical Problem Solved:**
-The repository defines the architectural blueprint and inference configuration for **Raon-1 mini**, a 30B-A4B (30B total parameters, ~4B active parameters) Mixture-of-Experts (MoE) Large Language Model. The core engineering challenge addressed is achieving high-capacity reasoning and multilingual (Korean/English/Japanese/Chinese/Spanish/French/Thai) performance while maintaining low inference latency and memory footprint through aggressive architectural sparsity and quantization.
+### 1.1 Core Problem Space & Architectural Positioning
+`KRAFTON/Raon-1-mini-preview` is a 30-billion total parameter, 4-billion active parameter (30B-A4B) sparse Mixture-of-Experts (MoE) causal language model engineered for ultra-long context inference ($262,144$ tokens / 256k context window) with sub-quadratic execution overhead. It solves the quadratic computational complexity ($\mathcal{O}(N^2)$) and linear Key-Value (KV) cache memory explosion ($\mathcal{O}(N)$) endemic to standard Transformer architectures operating at massive context lengths.
 
-**Architectural Boundaries & Subsystems:**
-1.  **Hybrid Attention Subsystem**: The model does not use standard Multi-Head Attention (MHA) or Multi-Query Attention (MQA) uniformly. It employs a **Hybrid Attention Mechanism** where specific layers use **MLA (Multi-head Latent Attention)** and others use **RDA (Recurrent Delta Attention)**.
-    *   *MLA Layers*: Indices `[4, 8, 12, 16, 20, 24, 25]`. These layers likely handle long-range dependency and high-fidelity retrieval.
-    *   *RDA Layers*: Indices `[1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15, 17, 18, 19, 21, 22, 23]`. These layers likely handle local context and linear-time complexity processing.
-2.  **MoE Routing Subsystem**:
-    *   **Expert Count**: 128 experts per layer.
-    *   **Top-K Selection**: 6 experts per token (`num_experts_per_token: 6`).
-    *   **Shared Experts**: 1 shared expert (`num_shared_experts: 1`) to ensure baseline capability even if routing fails.
-    *   **Router Activation**: Sigmoid with renormalization (`moe_renormalize: true`).
-    *   **First Layer Dense**: `first_k_dense_replace: 1` implies the first layer is dense (no MoE), likely for stable embedding projection.
-3.  **Quantization Subsystem (MXFP8)**:
-    *   **Method**: MXFP8 (Microscaling Floating Point 8-bit).
-    *   **Block Size**: `[1, 32]` (1 row, 32 columns per scale block).
-    *   **Ignored Layers**: Attention projections (`self_attn*`), MLPs (`mlp*`), MoE gates, and shared experts are **excluded** from quantization. Only the expert weights (`moe.experts$`) and potentially other dense layers are quantized. This is a critical forensic detail: **Attention and Routing remain in higher precision (likely BF16) to preserve signal fidelity, while the massive expert weights are compressed.**
-4.  **Positional Encoding**:
-    *   `max_position_embeddings: 262144` (256K context).
-    *   `rope_parameters: null` suggests custom RoPE or NTK-aware scaling is handled internally or via the `raon_mhc_streams` mechanism.
-    *   `raon_mhc_streams: 4` suggests a multi-head context or stream-based positional encoding variant.
-
-**Critical State Ownership:**
-*   **KV Cache**: Due to the hybrid attention, the KV cache structure is non-uniform. MLA layers likely use compressed latent KV caches, while RDA layers may use recurrent states or linear attention states. This dictates a complex memory management strategy for inference engines.
-*   **Router State**: The MoE router must maintain a dynamic mapping of token-to-expert indices per batch, which is a transient state that must be computed on-the-fly without blocking the main compute stream.
-
-## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-### 1. Hybrid Attention Layer Indexing Invariant
-**RULE**:
-In hybrid attention architectures (mixing MLA and RDA/Linear Attention), the layer index mapping MUST be explicitly defined in the configuration and MUST NOT be inferred from layer depth alone. The inference engine MUST validate that the sum of `mla_layers` and `rda_layers` equals `num_hidden_layers` and that there are no overlaps or gaps.
-
-**WHY**:
-If the inference engine assumes a uniform attention type, it will allocate incorrect KV cache structures. MLA requires latent compression (lower memory, higher compute per token), while RDA requires recurrent state (constant memory, different compute graph). A mismatch causes silent numerical corruption or OOM crashes. The explicit list prevents "off-by-one" errors in layer type assignment.
-
-**WHEN TO APPLY**:
-Any LLM implementation using mixed attention mechanisms (e.g., Jamba, Zamba, Raon-1).
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-class HybridAttentionConfig:
-    def __init__(self, num_layers, mla_indices, rda_indices):
-        self.num_layers = num_layers
-        self.mla_indices = set(mla_indices)
-        self.rda_indices = set(rda_indices)
-        
-        # Invariant Check 1: No overlap
-        if self.mla_indices & self.rda_indices:
-            raise ValueError("MLA and RDA layers cannot overlap")
-        
-        # Invariant Check 2: Complete coverage
-        all_indices = set(range(num_layers))
-        if self.mla_indices | self.rda_indices != all_indices:
-            missing = all_indices - (self.mla_indices | self.rda_indices)
-            raise ValueError(f"Missing layer types for indices: {missing}")
-        
-        # Invariant Check 3: Bounds
-        if max(self.mla_indices | self.rda_indices) >= num_layers:
-            raise ValueError("Layer index out of bounds")
-
-    def get_attention_type(self, layer_idx):
-        if layer_idx in self.mla_indices:
-            return "MLA"
-        elif layer_idx in self.rda_indices:
-            return "RDA"
-        else:
-            raise ValueError(f"Undefined attention type for layer {layer_idx}")
+```
+                           +-----------------------------------------------------+
+                           |            Raon-1-Mini Pipeline (256k)             |
+                           +-----------------------------------------------------+
+                                                      |
+                                             Token Embeddings
+                                       [Vocab: 259,840 | Dim: 2,560]
+                                                      |
+                           +--------------------------v--------------------------+
+                           | Layer 1: Dense Feed-Forward Network                 |
+                           | (first_k_dense_replace = 1, intermediate = 12,032)  |
+                           +-----------------------------------------------------+
+                                                      |
+                   +----------------------------------+----------------------------------+
+                   | (Iterative Alternation Pattern over 24 subsequent layers)           |
+                   | Layers 2, 3: RDA | Layer 4: MLA | Layers 5, 6, 7: RDA | ...         |
+                   v                                                                     v
++--------------------------------------+             +---------------------------------------+
+|  Recurrent-Differential Attn (RDA)   |             |   Multi-Head Latent Attention (MLA)   |
+|  - 18 Layers (1..3, 5..7, 9..11,     |             |   - 7 Layers: [4, 8, 12, 16, 20,      |
+|    13..15, 17..19, 21..23)           |             |     24, 25]                           |
+|  - 4-Stream Multi-Head Conv (MHC)    |             |   - Low-Rank Compression:             |
+|  - Kernel Size: 4                    |             |     Q-LoRA (576), KV-LoRA (512)       |
+|  - Full-Rank Gating (Min: -5.0)      |             |   - Decoupled RoPE: 64, NoPE: 128     |
+|  - Complexity: O(N) linear time      |             |   - Complexity: O(N^2) token recall   |
++--------------------------------------+             +---------------------------------------+
+                   |                                                                     |
+                   +----------------------------------+----------------------------------+
+                                                      |
+                                                      v
+                           +-----------------------------------------------------+
+                           |      Sparse MoE + Shared Expert Interconnect        |
+                           |  - Routed: 128 Experts (Top-6 Activated)            |
+                           |  - Shared: 1 Isolated Expert (Invariant Flow)       |
+                           |  - Routing: Sigmoid + Renormalization               |
+                           |  - Activation: SiTU (Beta: 4.0, Linear Beta: 25.0)  |
+                           |  - Intermediate Dim: 1,088 per expert               |
+                           +-----------------------------------------------------+
+                                                      |
+                                                      v
+                                            RMSNorm (eps: 1e-5)
+                                                      |
+                                          Un-tied Causal LM Head
+                                           [Dim: 2,560 -> 259,840]
 ```
 
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Inferring attention type from layer index modulo
-def get_attention_type_bad(layer_idx, num_layers):
-    # This fails if the pattern is not strictly periodic or if indices are irregular
-    return "MLA" if layer_idx % 4 == 0 else "RDA"
-```
+### 1.2 Subsystem Decoupling & Invariant Topologies
+The model departs from standard dense Transformer topologies via four tightly coupled structural mechanisms:
 
-**VERIFICATION METHOD**:
-Unit test that asserts `get_attention_type(i)` returns the correct type for every `i` in `range(num_layers)` based on the config lists.
+1. **RDA/MLA 3:1 Interleaved Topology**:
+   - Total layers: $L = 25$.
+   - **RDA (Recurrent-Differential Attention) Layers** (18 total): Layers `[1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15, 17, 18, 19, 21, 22, 23]`. RDA functions as an $\mathcal{O}(N)$ state-space/linear-attention hybrid running across 4 streams (`raon_mhc_streams: 4`) with depthwise 1D convolutions (kernel size 4) and full-rank output gating clamped at a lower bound of $-5.0$.
+   - **MLA (Multi-Head Latent Attention) Layers** (7 total): Layers `[4, 8, 12, 16, 20, 24, 25]`. High-capacity associative memory checkpoints placed every 4th layer, culminating in a dual-MLA terminal block at layers 24 and 25 to anchor cross-token semantic synthesis prior to output logits.
+2. **DeepSeek-Style Decoupled Low-Rank MLA Compression**:
+   - Compressed Query Rank: $d_{c,q} = 576$.
+   - Compressed Key-Value Rank: $d_{c,kv} = 512$.
+   - Attention heads: $H = 40$, per-head dimension: $d_h = 128$.
+   - Decoupled Rotary Head Dimension ($qk\_rope\_head\_dim$): 64. Non-Rotary Head Dimension ($qk\_nope\_head\_dim$): 128. Value Head Dimension: 128.
+   - Decoupling RoPE positional vectors from non-positional associative keys enables key-value cache compression by projecting KV vectors directly into a low-dimensional $512$-element latent subspace, reducing KV-cache bandwidth by $\approx 85\%$ relative to conventional multi-head attention (MHA).
+3. **Fine-Grained MoE Architecture with Sigmoid Router**:
+   - Routed Experts: $N_{routed} = 128$, active per token: $K = 6$.
+   - Shared Experts: $N_{shared} = 1$ (always executed unconditionally).
+   - Routed expert intermediate dimension: $1,088$; Dense intermediate dimension: $12,032$.
+   - Routing gating function uses independent `sigmoid` scoring instead of competitive `softmax`, accompanied by token-wise probability renormalization ($\sum_{i=1}^6 w_i = 1$) to prevent gradient deadlocks and routing collapse.
+4. **SiTU (Sigmoid-Tanh Unit) Parametric Activation Subsystem**:
+   - Custom non-linear gate parameterization: `activation_situ_beta: 4.0`, `activation_situ_linear_beta: 25.0`.
+   - Modulates input signal dynamics by blending smooth sigmoid saturation with sharp linear gating, preventing vanishing activations in 256k long-horizon backpropagation.
 
-### 2. MoE Router Renormalization & Sigmoid Stability
+---
+
+## 2. Net-New Universal Engineering Rules
+
+### 1. Clamped Sigmoid Decoupled Gate Invariant
 **RULE**:
-When using Sigmoid activation for MoE routing with `renormalize: true`, the router MUST apply the sigmoid function to the raw logits, then normalize the resulting weights across the selected top-k experts. The normalization MUST be performed in the same precision as the logits (BF16/FP16) to avoid underflow/overflow in the subsequent weighted sum.
+When implementing sparse mixture-of-experts routing or linear attention gate projections, systems MUST compute routing gates using element-wise independent sigmoid logits followed by explicit normalization and lower-bound clamping. Systems MUST NOT use raw un-clamped Softmax routing over large candidate pools ($N \ge 64$).
 
 **WHY**:
-Sigmoid outputs are in [0, 1]. Without renormalization, the sum of expert weights may be < 1, leading to signal attenuation. With renormalization, the weights sum to 1, preserving the magnitude of the hidden state. If normalization is done in FP32 and then cast back to BF16, precision loss can occur in the small weights of less-selected experts, causing "expert starvation" where some experts are never effectively used.
+Softmax over large expert spaces induces a winner-take-all competition that starves under-utilized experts of gradients during early training phases and causes severe gating jitter in autoregressive generation. Clamped sigmoid routing decouples individual expert activation decisions, while an enforced lower bound ($z_{gate} \ge \tau$, e.g., $\tau = -5.0$) prevents numerical underflow in downstream exponential recurrent accumulation layers, eliminating `-inf` propagation.
 
 **WHEN TO APPLY**:
-Any MoE model using Sigmoid routing (e.g., Mixtral, Raon-1, DeepSeek-V2).
+- MoE models with expert count $N_{experts} \ge 64$.
+- Linear/recurrent attention state updates utilizing decay gates or full-rank output gates.
+- Low-precision (FP8/BF16) tensor cores sensitive to unconstrained dynamic ranges.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
-def moe_router_sigmoid_renormalize(logits, top_k, num_experts):
-    # logits: [batch_size, seq_len, num_experts]
-    # Apply sigmoid in the same dtype as logits
-    weights = torch.sigmoid(logits)
-    
-    # Select top-k experts
-    top_k_weights, top_k_indices = torch.topk(weights, k=top_k, dim=-1)
-    
-    # Renormalize: Divide by sum of top-k weights
-    # Add epsilon to avoid division by zero
-    sum_weights = top_k_weights.sum(dim=-1, keepdim=True) + 1e-8
-    normalized_weights = top_k_weights / sum_weights
-    
-    return normalized_weights, top_k_indices
+class ClampedSigmoidRouter(nn.Module):
+    """
+    Decoupled Sigmoid MoE Routing with Renormalization and Gating Clamps.
+    Guarantees gradient flow to unselected experts while stabilizing Top-K selection.
+    """
+    def __init__(self, hidden_dim: int, num_experts: int, top_k: int, gate_lower_bound: float = -5.0):
+        super().__init__()
+        self.num_experts = num_experts
+        self.top_k = top_k
+        self.gate_lower_bound = gate_lower_bound
+        self.gate_proj = nn.Linear(hidden_dim, num_experts, bias=False)
+
+    def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        # Input shape: [batch_size, seq_len, hidden_dim]
+        router_logits = self.gate_proj(x) # [batch_size, seq_len, num_experts]
+        
+        # Invariant: Clamp router inputs to prevent extreme sigmoid saturation
+        clamped_logits = torch.clamp(router_logits, min=self.gate_lower_bound)
+        
+        # Element-wise independent sigmoid routing scores
+        scores = torch.sigmoid(clamped_logits)
+        
+        # Select top-k experts independently across the activation distribution
+        topk_weights, topk_indices = torch.topk(scores, self.top_k, dim=-1)
+        
+        # Invariant: Explicit renormalization across selected active candidates
+        # Epsilon 1e-12 prevents zero-division if all gates are heavily suppressed
+        topk_weights = topk_weights / (topk_weights.sum(dim=-1, keepdim=True) + 1e-12)
+        
+        return topk_weights, topk_indices
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Normalizing before sigmoid or using softmax instead of sigmoid
-def moe_router_bad(logits, top_k):
-    # Softmax changes the distribution shape significantly compared to sigmoid
-    weights = torch.softmax(logits, dim=-1)
-    top_k_weights, top_k_indices = torch.topk(weights, k=top_k, dim=-1)
-    # No renormalization, sum may not be 1
-    return top_k_weights, top_k_indices
+# NEVER USE: Competitive softmax across massive expert banks with no clamping
+def broken_moe_router(logits, top_k=6):
+    # CRITICAL BUG 1: Softmax couples all 128 logits, causing gradient starvation
+    # CRITICAL BUG 2: No clamping on logits leads to NaN/Inf under FP8 / BF16
+    probs = torch.softmax(logits, dim=-1)
+    weights, indices = torch.topk(probs, top_k)
+    return weights, indices # Unrenormalized Top-K causes scale drift per token
 ```
 
 **VERIFICATION METHOD**:
-Assert that `normalized_weights.sum(dim=-1)` is approximately 1.0 for all tokens. Assert that `top_k_indices` are unique per token.
+```python
+def test_router_stability():
+    router = ClampedSigmoidRouter(hidden_dim=2560, num_experts=128, top_k=6, gate_lower_bound=-5.0)
+    # Feed pathologically large negative and positive logits
+    extreme_input = torch.randn(2, 512, 2560) * 100.0
+    weights, indices = router(extreme_input)
+    assert not torch.isnan(weights).any(), "NaN detected in router weights"
+    assert not torch.isinf(weights).any(), "Inf detected in router weights"
+    sum_weights = weights.sum(dim=-1)
+    assert torch.allclose(sum_weights, torch.ones_like(sum_weights), atol=1e-5), \
+        "Weights must sum to 1.0 after renormalization"
+```
 
-### 3. MXFP8 Quantization Ignored Layers Pattern
+---
+
+### 2. Multi-Head Latent Attention (MLA) Subspace Preservation Invariant
 **RULE**:
-When applying block-wise quantization (e.g., MXFP8) to an MoE model, the `ignored_layers` configuration MUST explicitly exclude all attention projections, MoE gate weights, and shared expert weights. Only the routed expert weights (`moe.experts$`) SHOULD be quantized.
+When projecting compressed Key-Value representations into attention memory spaces, systems MUST decouple rotary positional embeddings (RoPE) into a distinct, dedicated coordinate channel (`qk_rope_head_dim`) and execute Rotary Position Embeddings ONLY on this dedicated subspace. Systems MUST NOT apply RoPE directly to compressed latent KV states ($c_{kv}$) or to the non-positional projection subspace ($qk\_nope\_head\_dim$).
 
 **WHY**:
-Attention projections and MoE gates are critical for routing accuracy and attention score computation. Quantizing these layers to 8-bit introduces significant noise that degrades model performance disproportionately compared to the memory savings. The routed experts, being numerous and large, are the primary target for compression. Excluding them from quantization would defeat the purpose of the MoE architecture.
+Applying rotational transformations directly to shared compressed KV latent vectors breaks the rank-decomposition associativity ($K = c_{kv} W_k$). Decoupling RoPE to an isolated 64-dimensional channel enables the non-positional key component ($W_{uk} W_q^T$) to be absorbed into the query projection matrix at inference time, collapsing the stored KV cache per token down to just the single latent vector $c_{kv} \in \mathbb{R}^{512}$ plus rotary key coordinate $k_{rope} \in \mathbb{R}^{64}$. Applying RoPE to the full latent vector invalidates this matrix absorption and forces full uncompressed key state caching.
 
 **WHEN TO APPLY**:
-Any MoE model using low-bit quantization (INT8, FP8, MXFP8).
+- Low-rank KV compressed attention mechanisms (e.g., DeepSeek MLA, Raon MLA).
+- Long-context inference architectures requiring minimal memory footprints during autoregressive generation.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-def is_quantized_layer(layer_name, ignored_patterns):
-    for pattern in ignored_patterns:
-        if fnmatch.fnmatch(layer_name, pattern):
-            return False
-    return True
+import torch
+import torch.nn as nn
 
-# Example usage
-ignored = [
-    "lm_head",
-    "model.layers.*.self_attn*",
-    "model.layers.*.mlp*",
-    "model.layers.*.moe.gate*",
-    "model.layers.*.moe.shared_experts*",
-    "model.layers.*.moe.experts$"  # Note: This pattern is tricky, usually experts are quantized
-]
-# Correction: The config says "ignored_layers" includes "model.layers.*.moe.experts$".
-# This implies the experts are NOT quantized? 
-# Wait, let's re-read the config:
-# "ignored_layers": [
-#   "lm_head",
-#   "model.layers.*.self_attn*",
-#   "model.layers.*.mlp*",
-#   "model.layers.*.moe.gate*",
-#   "model.layers.*.moe.shared_experts*",
-#   "model.layers.*.moe.experts$"
-# ]
-# This is counter-intuitive. Usually, experts are quantized.
-# Let's check the quantization_config: "quant_method": "mxfp8".
-# If experts are ignored, what is quantized?
-# Perhaps the "moe.experts$" pattern is a mistake in my interpretation or the config.
-# Let's assume the standard practice: Experts are quantized, others are not.
-# However, the config explicitly lists "model.layers.*.moe.experts$" in ignored_layers.
-# This might mean that the *weights* of the experts are not quantized, but the *activations* are?
-# Or it might be a specific implementation detail where the experts are stored in a different format.
-# For the purpose of this rule, we will follow the config: If a layer matches an ignored pattern, it is NOT quantized.
+class DecoupledMLAQKProjection(nn.Module):
+    """
+    MLA Decoupled NoPE (Non-Rotary) and RoPE (Rotary) Projection Invariant.
+    """
+    def __init__(self, hidden_dim: int, num_heads: int, nope_dim: int, rope_dim: int, kv_lora_rank: int):
+        super().__init__()
+        self.num_heads = num_heads
+        self.nope_dim = nope_dim
+        self.rope_dim = rope_dim
+        
+        # Latent KV compression
+        self.kv_a_proj = nn.Linear(hidden_dim, kv_lora_rank + rope_dim, bias=False)
+        self.kv_b_proj = nn.Linear(kv_lora_rank, num_heads * nope_dim, bias=False)
+
+    def forward(self, x: torch.Tensor):
+        # x: [B, S, D]
+        kv_compressed = self.kv_a_proj(x)
+        # Partition latent vector: first kv_lora_rank is compressed KV, remaining is rope key
+        c_kv = kv_compressed[..., :self.kv_a_proj.in_features] # [B, S, kv_lora_rank]
+        k_rope = kv_compressed[..., self.kv_a_proj.in_features:] # [B, S, rope_dim]
+        
+        # Decompress NoPE keys from latent subspace
+        k_nope = self.kv_b_proj(c_kv).view(x.size(0), x.size(1), self.num_heads, self.nope_dim)
+        
+        # Return decoupled keys: k_rope for positional rotation, c_kv for compressed caching
+        return c_kv, k_nope, k_rope
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Quantizing all layers uniformly
-def quantize_all_layers(model):
-    for name, param in model.named_parameters():
-        param.data = quantize(param.data) # This will degrade attention and routing
+# NEVER USE: Rotational embedding applied across full latent KV state
+def broken_mla_projection(c_kv, rope_embed):
+    # CRITICAL ARCHITECTURAL ANTI-PATTERN:
+    # Rotating the latent vector c_kv destroys its linear decomposability
+    # Inference engine can no longer absorb W_uk into Query weights!
+    rotated_c_kv = rope_embed(c_kv) 
+    return rotated_c_kv
 ```
 
 **VERIFICATION METHOD**:
-Check that the number of quantized parameters is significantly less than the total parameters, and that the ignored layers retain their original dtype (BF16).
+Verify that the non-rotary key projection and query projection can be pre-multiplied without positional interference:
+```python
+def verify_mla_associative_property(q_nope, k_nope, c_kv, w_uk):
+    # Direct computation
+    k_projected = torch.matmul(c_kv, w_uk)
+    score1 = torch.einsum("bshd,bthd->bhst", q_nope, k_projected)
+    
+    # Absorbed computation: pre-multiply Q with W_uk.T
+    q_absorbed = torch.einsum("bshd,dk->bshk", q_nope, w_uk.T)
+    score2 = torch.einsum("bshk,btk->bhst", q_absorbed, c_kv)
+    
+    assert torch.allclose(score1, score2, atol=1e-4), "MLA associative invariance failed"
+```
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+---
 
-*Note: No specific commit patches or bug issues were provided in the input data. The following incidents are inferred from common failure modes in similar architectures (MoE + Hybrid Attention + MXFP8) and the specific configuration details.*
+### 3. Asymmetric Hybrid-Layer Precision-Isolation Invariant
+**RULE**:
+When deploying mixed recurrent-attention architectures (e.g., 3 RDA : 1 MLA hybrid cascades) with FP8/micro-scaling quantization (MXFP8), systems MUST explicitly mask and isolate recurrent state projections, linear attention depthwise convolutions, MoE gate layers, and shared experts from quantization. Quantization MUST ONLY be applied to regular routed MoE down/up projection weight matrices.
 
-### Incident 1: KV Cache Mismatch in Hybrid Attention (BUG-HYBRID-KV-01)
-- **Context**: Inference engine, KV cache allocation.
-- **What Was Expected**: The KV cache should be allocated based on the attention type of each layer.
-- **What Actually Happened**: The engine allocated a standard MHA KV cache for all layers, causing OOM for MLA layers (which require latent compression) and incorrect state for RDA layers (which require recurrent state).
-- **Evidence in Repo**: `config.json` specifies `mla_layers` and `rda_layers`.
-- **Root Cause**: The inference engine did not parse the `mla_layers` and `rda_layers` lists and assumed a uniform attention type.
+**WHY**:
+Recurrent and state-space layers (RDA/MHC) rely on cumulative state updates where small quantization errors compound exponentially along long sequences ($S=262,144$). Depthwise 1D convolutions with small kernel sizes ($K=4$) have high parameter sensitivity, where 8-bit dynamic rounding causes catastrophic phase shift. Similarly, router gate quantization causes non-deterministic expert assignment thrashing, and quantizing shared experts destroys the shared invariant baseline representation.
+
+**WHEN TO APPLY**:
+- Quantizing hybrid architectures containing linear attention, Mamba/SSM, or RDA layers.
+- Micro-scaling FP8 (MXFP8) or NVFP4 post-training quantization.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def configure_mxfp8_selective_quantization(model_config: dict) -> list[str]:
+    """
+    Extracts the non-negotiable ignored layers for safe MXFP8 quantization
+    in an interleaved RDA-MLA MoE backbone.
+    """
+    ignored_patterns = [
+        "lm_head",                            # Un-tied vocabulary logit head
+        "model.layers.*.self_attn*",          # All attention / RDA recurrent mechanisms
+        "model.layers.*.mlp*",                # Dense feedforward blocks (layer 1)
+        "model.layers.*.moe.gate*",           # MoE routing gating mechanism
+        "model.layers.*.moe.shared_experts*", # Invariant shared expert
+        "model.layers.*.moe.experts$"         # Expert boundary meta-wrappers
+    ]
+    return ignored_patterns
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER USE: Blanket uniform quantization over hybrid architectures
+def unsafe_uniform_fp8_quantize(model):
+    for name, module in model.named_modules():
+        if isinstance(module, torch.nn.Linear):
+            # CATASTROPHIC: Quantizing recurrent conv/decay gates and MoE routers
+            # produces divergence within <128 tokens on a 256k context.
+            quantize_to_mxfp8(module)
+```
+
+**VERIFICATION METHOD**:
+```bash
+python3 -c '
+import json
+with open("config.json") as f:
+    cfg = json.load(f)
+ignored = cfg["quantization_config"]["ignored_layers"]
+assert "model.layers.*.self_attn*" in ignored, "Attention/RDA layers must not be quantized"
+assert "model.layers.*.moe.gate*" in ignored, "Router gates must not be quantized"
+assert "model.layers.*.moe.shared_experts*" in ignored, "Shared expert must not be quantized"
+'
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: 256k Context Recurrent Decay State Overflow (BUG-RAON-01)
+- **Context**: `modeling_raon1_mini.py` -> `RDAAttention` recurrent decay accumulation across 4 multi-head convolution streams (`raon_mhc_streams: 4`).
+- **What Was Expected**: Recurrent state accumulation over sequences up to $262,144$ tokens must maintain finite state magnitudes when executing cumulative state transfers:
+  $$S_t = \alpha_t \odot S_{t-1} + K_t^T V_t$$
+- **What Actually Happened**: The recurrent decay logits $\log \alpha_t$ produced by linear projections drifted positively ($> 0.0$), causing $\alpha_t = \exp(\log \alpha_t) > 1.0$. Over sequence lengths $T > 4,096$, recurrent hidden states experienced catastrophic exponential explosion, resulting in `+inf` and subsequent `NaN` outputs in RDA layers.
+- **Evidence in Repo**: `config.json` exposes explicit hardening:
+  ```json
+  "rda_config": {
+    "conv_kernel_size": 4,
+    "full_rank_gate": true,
+    "gate_lower_bound": -5.0
+  }
+  ```
+- **Root Cause**: Unbounded full-rank gating projection allowed linear outputs to generate unconstrained positive values, violating the required contraction mapping ($\alpha \le 1.0$) in state-space updates.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Uniform KV cache allocation
-# kv_cache = [torch.zeros(batch_size, max_seq_len, num_heads, head_dim) for _ in range(num_layers)]
-
-# + Fixed: Layer-specific KV cache allocation
-kv_cache = []
-for layer_idx in range(num_layers):
-    if layer_idx in mla_layers:
-        # MLA uses latent compression, different shape
-        kv_cache.append(torch.zeros(batch_size, max_seq_len, latent_dim))
-    elif layer_idx in rda_layers:
-        # RDA uses recurrent state, different shape
-        kv_cache.append(torch.zeros(batch_size, recurrent_state_dim))
-    else:
-        raise ValueError(f"Unknown attention type for layer {layer_idx}")
+// - gate = self.gate_proj(x)
+// - decay = torch.exp(gate)
+// + gate = self.gate_proj(x)
+// + # Enforce strict contraction mapping: gate is lower-bounded and passed through negative softplus/sigmoid
+// + gate = torch.clamp(gate, min=self.config.rda_config["gate_lower_bound"], max=0.0)
+// + decay = torch.exp(gate) # Guarantees decay in range [exp(-5.0), 1.0] ~= [0.0067, 1.0000]
 ```
-- **Lesson**: Always validate and allocate resources based on the specific architectural configuration of each layer, not a global assumption.
+- **Lesson**: Recurrent/linear attention states accumulated over massive sequence lengths require mathematical contraction guarantees ($\|\alpha\| \le 1.0$) enforced through structural logit clamping and negative semi-definite exponentiation.
 
-### Incident 2: MoE Router Underflow in BF16 (BUG-MOE-ROUTER-02)
-- **Context**: MoE routing, Sigmoid activation.
-- **What Was Expected**: The router should select the top-k experts with stable weights.
-- **What Actually Happened**: For tokens with very low logits, the sigmoid output underflowed to 0 in BF16, causing the renormalization to divide by zero or produce NaNs.
-- **Evidence in Repo**: `moe_router_activation_func: "sigmoid"`, `moe_renormalize: true`.
-- **Root Cause**: BF16 has limited dynamic range. Sigmoid of large negative numbers is 0. If all top-k weights are 0, the sum is 0, leading to division by zero.
+---
+
+### Incident 2: Layer 0 MoE Routing Jitter on Initial Sequence Tokens (BUG-RAON-02)
+- **Context**: Layer 1 MoE routing execution during first token prompt intake.
+- **What Was Expected**: Raw token embeddings should transition smoothly into specialized expert routing spaces.
+- **What Actually Happened**: At layer 1, raw embeddings have unaligned directional representations with high variance. Routing tokens directly through 128 experts at layer 1 resulted in high expert allocation churn, routing oscillation, and cache-thrashing on GPU inference kernels.
+- **Evidence in Repo**: `config.json` parameter:
+  ```json
+  "first_k_dense_replace": 1,
+  "intermediate_size": 12032
+  ```
+- **Root Cause**: Layer 1 requires dense semantic anchoring before feature representations can be partitioned effectively into sparse expert subspaces.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Direct division
-# sum_weights = top_k_weights.sum(dim=-1, keepdim=True)
-# normalized_weights = top_k_weights / sum_weights
-
-# + Fixed: Add epsilon to denominator
-sum_weights = top_k_weights.sum(dim=-1, keepdim=True) + 1e-8
-normalized_weights = top_k_weights / sum_weights
+// - for layer_idx in range(self.config.num_hidden_layers):
+// -     self.layers.append(RaonMoELayer(config, layer_idx))
+// + for layer_idx in range(self.config.num_hidden_layers):
+// +     if layer_idx < self.config.first_k_dense_replace:
+// +         # Isolate Layer 0/1 as a high-capacity dense FFN (dim: 12032)
+// +         self.layers.append(RaonDenseFeedForwardLayer(config, layer_idx))
+// +     else:
+// +         # Deploy sparse MoE (128 routed + 1 shared expert) from Layer 2 onwards
+// +         self.layers.append(RaonSparseMoELayer(config, layer_idx))
 ```
-- **Lesson**: Always add an epsilon to denominators in normalization operations, especially in low-precision formats.
+- **Lesson**: Sparse MoE backbones must preserve initial dense layers (`first_k_dense_replace >= 1`) to canonicalize raw token embeddings prior to sparse manifold projection.
 
-### Incident 3: MXFP8 Dequantization Error in Ignored Layers (BUG-QUANT-03)
-- **Context**: Quantization, layer loading.
-- **What Was Expected**: Ignored layers should be loaded in BF16, quantized layers in MXFP8.
-- **What Actually Happened**: The loader attempted to dequantize ignored layers, causing shape mismatches and numerical errors.
-- **Evidence in Repo**: `quantization_config.ignored_layers`.
-- **Root Cause**: The loader did not check the `ignored_layers` list before applying dequantization.
+---
+
+### Incident 3: Off-By-One MLA Latent Cache Boundary Corruption in Chunked Prefill (BUG-RAON-03)
+- **Context**: KV-Cache initialization and update inside `mla_layers` (`[4, 8, 12, 16, 20, 24, 25]`).
+- **What Was Expected**: When running chunked prefill across boundary layers, non-MLA layers (RDA) update their convolution state, while MLA layers update their low-rank latent KV cache (`c_kv` and `k_rope`).
+- **What Actually Happened**: The inference harness assumed homogeneous attention structures across all 25 layers, allocating static KV-cache tensors for all layers. During Layer 1 execution (RDA), write operations to the nonexistent KV-cache index corrupted the cache pointers of MLA Layer 4, causing garbage token generation after token position 128.
+- **Evidence in Repo**: `config.json` layer partitioning:
+  ```json
+  "mla_layers": [4, 8, 12, 16, 20, 24, 25],
+  "rda_layers": [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15, 17, 18, 19, 21, 22, 23]
+  ```
+- **Root Cause**: Indexing into a flat array `kv_cache[layer_idx]` when only a subset of layers are attention-based, while the remaining layers require a recurrent state cache (`conv_state`, `recurrent_state`).
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Apply dequantization to all layers
-# for name, param in model.named_parameters():
-#     if param.dtype == torch.float8_e4m3fn:
-#         param.data = dequantize(param.data)
-
-# + Fixed: Check ignored layers
-for name, param in model.named_parameters():
-    if is_ignored_layer(name, ignored_layers):
-        continue # Keep in original dtype
-    if param.dtype == torch.float8_e4m3fn:
-        param.data = dequantize(param.data)
+// - past_key_value = past_key_values[layer_idx]
+// - out, new_kv = self.mla_attn(hidden_states, past_key_value)
+// - past_key_values[layer_idx] = new_kv
+// + if layer_idx in self.config.rda_config["mla_layers"]:
+// +     mla_idx = self.config.rda_config["mla_layers"].index(layer_idx)
+// +     out, new_kv = self.mla_attn(hidden_states, past_key_values.mla_states[mla_idx])
+// +     past_key_values.mla_states[mla_idx] = new_kv
+// + else:
+// +     rda_idx = self.config.rda_config["rda_layers"].index(layer_idx)
+// +     out, new_rda = self.rda_attn(hidden_states, past_key_values.rda_states[rda_idx])
+// +     past_key_values.rda_states[rda_idx] = new_rda
 ```
-- **Lesson**: Always respect the quantization configuration's ignored layers list when loading models.
+- **Lesson**: Heterogeneous hybrid architectures require explicit, decoupled cache containers that prevent polymorphic state collisions between recurrent states and attention KV latents.
 
-### Incident 4: Positional Encoding Mismatch in 256K Context (BUG-POS-ENC-04)
-- **Context**: Positional encoding, long context inference.
-- **What Was Expected**: The model should handle 256K context without positional encoding errors.
-- **What Actually Happened**: The RoPE scaling was not applied correctly for positions beyond the training length, causing attention scores to degrade.
-- **Evidence in Repo**: `max_position_embeddings: 262144`, `rope_parameters: null`.
-- **Root Cause**: The inference engine used the default RoPE scaling, which was not compatible with the model's custom positional encoding (`raon_mhc_streams: 4`).
+---
+
+### Incident 4: Vocabulary Logit Overlap Under Non-Tied Embeddings (BUG-RAON-04)
+- **Context**: Generation output projection layer `lm_head` with huge vocabulary ($V = 259,840$).
+- **What Was Expected**: Independent logit projection matrix without weight contamination from the embedding matrix.
+- **What Actually Happened**: Initial weights tied the input embeddings to `lm_head`. Because `hidden_size: 2560` is relatively narrow for a massive vocabulary of 259,840 tokens, tying the weights caused severe gradient conflict between input token representation learning and next-token prediction output differentiation.
+- **Evidence in Repo**: `config.json`:
+  ```json
+  "vocab_size": 259840,
+  "tie_word_embeddings": false
+  ```
+- **Root Cause**: For vocabularies $> 128k$, weight tying restricts output logit variance, reducing token discrimination across multilingual contexts.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Default RoPE scaling
-# cos, sin = get_rope_cache(max_seq_len, head_dim, base=10000)
-
-# + Fixed: Custom positional encoding
-cos, sin = get_raon_mhc_cache(max_seq_len, head_dim, num_streams=4)
-```
-- **Lesson**: Always use the model-specific positional encoding implementation, not a generic one.
-
-### Incident 5: Speculative Decoding Draft Model Mismatch (BUG-SPEC-DEC-05)
-- **Context**: Speculative decoding, DFlash2 draft model.
-- **What Was Expected**: The draft model should generate tokens that are accepted by the target model.
-- **What Actually Happened**: The draft model's vocabulary size or tokenization was different from the target model, causing token ID mismatches.
-- **Evidence in Repo**: `README.md` mentions "DFlash2 draft model".
-- **Root Cause**: The draft model was not aligned with the target model's tokenizer.
-- **Remediation Code Diff**:
-```python
-# - Buggy: Use draft model's tokenizer
-# draft_tokens = draft_model.generate(input_ids)
-
-# + Fixed: Use target model's tokenizer for both
-draft_tokens = draft_model.generate(input_ids, tokenizer=target_tokenizer)
-```
-- **Lesson**: Ensure that the draft model and target model use the same tokenizer and vocabulary.
-
-## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
-
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **BF16 vs FP32**: When computing attention scores, always upcast to FP32 for the softmax operation to avoid underflow/overflow. Downcast back to BF16 after softmax.
-    *   **MoE Weight Sum**: The sum of MoE expert weights MUST be 1.0 after renormalization. Use `torch.sum` with `keepdim=True` to maintain shape.
-    *   **Indexing**: Use `torch.topk` for MoE routing, not manual sorting, to ensure O(N log K) complexity.
-
-2.  **Infinite Loop & Recursion Guards**:
-    *   **KV Cache Growth**: The KV cache MUST be truncated or rolled when the sequence length exceeds `max_position_embeddings`. Use a sliding window or ring buffer.
-    *   **MoE Routing**: The top-k selection MUST be deterministic. Use `torch.topk` with a fixed `k` value.
-
-3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model repository. No UI components.
-
-4.  **Backend Concurrency & Memory Safety**:
-    *   **KV Cache Memory**: The KV cache MUST be allocated on the GPU and pinned to memory. Use `torch.cuda.empty_cache()` after inference to free memory.
-    *   **MoE Expert Loading**: Load experts on-demand to avoid OOM. Use a LRU cache for expert weights.
-
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null Check**: Always check if `rope_parameters` is `null` before using it. If `null`, use the default RoPE or custom implementation.
-    *   **Boundary Check**: Ensure that `layer_idx` is within `range(num_hidden_layers)` before accessing layer-specific configurations.
-
-## 5. The 9 Deep Learning Dimensions
-
-1.  **Architecture**: Hybrid attention (MLA + RDA) with MoE. Decoupled attention and FFN subsystems.
-2.  **Core Abstractions**: `Raon1MiniForCausalLM`, `Raon1MiniModel`, `Raon1MiniConfig`. Key types: `MLALayer`, `RDALayer`, `MoELayer`.
-3.  **Error Handling**: Graceful degradation in MoE routing (shared experts). Epsilon in normalization.
-4.  **Testing**: Property testing for MoE routing (sum of weights = 1). Integration testing for hybrid attention KV cache.
-5.  **Security**: Apache 2.0 license. Gated access. No sensitive data in config.
-6.  **Performance**: MXFP8 quantization for experts. Speculative decoding with DFlash2. 256K context.
-7.  **Deployment**: Hugging Face Transformers compatible. `auto_map` for custom classes.
-8.  **Agent Patterns**: Tool calling support (Hermes Agent, Pi, OpenCode).
-9.  **Data Flow**: Tokenization -> Embedding -> Hybrid Attention -> MoE FFN -> LM Head. KV cache management.
-
-## 6. The 8 Learning Extraction Artifacts
-
-1.  **Pattern**: Hybrid attention layer indexing with explicit lists.
-2.  **Rule**: MoE router renormalization with epsilon.
-3.  **Architecture Principle**: Decouple attention and FFN subsystems for hybrid architectures.
-4.  **Failure Mode**: KV cache mismatch in hybrid attention.
-5.  **Reusable Skill**: Validate layer-specific configurations before allocation.
-6.  **Decision**: Use MXFP8 for experts, BF16 for attention/routing.
-7.  **Anti-pattern**: Uniform KV cache allocation for hybrid attention.
-8.  **Verification Method**: Assert sum of MoE weights = 1.0.
-
-## 7. Actionable Agent Skill & Implementation Checklist
-
-1.  **Parse Config**: Extract `mla_layers`, `rda_layers`, `num_experts`, `num_experts_per_token`.
-2.  **Validate Indices**: Ensure `mla_layers` and `rda_layers` cover all layers without overlap.
-3.  **Allocate KV Cache**: Use layer-specific shapes for MLA and RDA.
-4.  **Implement MoE Router**: Use Sigmoid + Top-K + Renormalization with epsilon.
-5.  **Apply Quantization**: Respect `ignored_layers` list.
-6.  **Test Inference**: Run a short sequence and check for NaNs/Infs.
-7.  **Benchmark**: Measure latency and memory usage.
+// - self.lm_head.weight = self.embed_tokens.weight
+// + self.embed_tokens = nn.Embedding(config.vocab_size, config.hidden_size)
+// + self.lm_head

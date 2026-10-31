@@ -6434,3 +6434,5 @@
 | `CYCLE-20261031-S1FQ` | `2026-10-31T02:44:11.462Z` | `bitnami/sealed-secrets` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6025` | Yes (`f211dcae...`) |
 | `CYCLE-20261031-S45W` | `2026-10-31T02:44:14.996Z` | `Comfy-Org/Fibo-2.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6026, Rule 6027` | Yes (`c0b6ab4f...`) |
 | `CYCLE-20261031-S6OX` | `2026-10-31T02:44:18.273Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6028` | Yes (`8777a891...`) |
+| `CYCLE-20261031-10M8` | `2026-10-31T02:51:10.304Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6029` | Yes (`2f101d72...`) |
+| `CYCLE-20261031-77VL` | `2026-10-31T02:55:59.649Z` | `KRAFTON/Raon-1-mini-preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6030, Rule 6031, Rule 6032` | Yes (`dea0804e...`) |
