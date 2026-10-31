@@ -6696,3 +6696,5 @@
 | `CYCLE-20261031-F4YS` | `2026-10-31T19:49:55.300Z` | `MariaDB/server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6299` | Yes (`ec44d353...`) |
 | `CYCLE-20261031-F5LW` | `2026-10-31T19:49:56.132Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6300` | Yes (`f660edd9...`) |
 | `CYCLE-20261031-HT2K` | `2026-10-31T19:51:59.852Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6301, Rule 6302` | Yes (`d6d05c4b...`) |
+| `CYCLE-20261031-XEAZ` | `2026-10-31T20:04:07.212Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6303, Rule 6304, Rule 6305` | Yes (`33b5fb22...`) |
+| `CYCLE-20261031-YJRS` | `2026-10-31T20:05:00.952Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6306, Rule 6307` | Yes (`383ac24c...`) |

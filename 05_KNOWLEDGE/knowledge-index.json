@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T19:51:59.726Z",
+  "last_updated": "2026-10-31T20:05:00.773Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -18860,7 +18860,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
       "source_version": "hf-baai-bge-large-en-v1.5",
-      "content_hash": "3d16d06e5aa4e19c094c04b50083061b66d46079089c9e470ca7921682c2da7e",
+      "content_hash": "33b5fb22e3dbafa1bd652913e0906dac8b735935b9e1a0c2a477b64b522c8701",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -18918,6 +18918,21 @@
           "number": 5096,
           "title": "The Batch Inference Determinism Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6303,
+          "title": "Vector Hypersphere L2-Normalization and Numerical Stability Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6304,
+          "title": "Asymmetric Query-Corpus Prefix Separation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6305,
+          "title": "Absolute Context Window Token Truncation and Attention Mask Guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18937,7 +18952,7 @@
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv40zfsc",
         "learn-huggingface-hf-baai-bge-large-en-v1-5-mv4exusx"
       ],
-      "verified_at": "2026-10-28T18:34:31.643Z",
+      "verified_at": "2026-10-31T20:04:07.114Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -57501,8 +57516,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "a64d2d98",
-      "content_hash": "7e53a503d5c1fda9681e48cbd823d79ba413a5e065ad2e77bddbb787e6eba504",
+      "source_version": "44bcb956",
+      "content_hash": "383ac24c0c004a836e1227bf48264c8a63961f9a79714cff45f9eecc234dda69",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -57565,6 +57580,16 @@
           "number": 6045,
           "title": "Invert struct field indexes in the memory index",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6306,
+          "title": "Guard-Bit Polarity and Termination Sentinel Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6307,
+          "title": "Relative Headroom Allocation for Process Priority Testing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -57572,7 +57597,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T03:26:17.273Z",
+      "verified_at": "2026-10-31T20:05:00.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -164084,6 +164109,76 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T19:51:59.697Z"
+    },
+    "rule-6303": {
+      "learning_id": "rule-6303",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6303,
+      "title": "Vector Hypersphere L2-Normalization and Numerical Stability Guard",
+      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "source_version": "hf-baai-bge-large-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:04:07.114Z"
+    },
+    "rule-6304": {
+      "learning_id": "rule-6304",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6304,
+      "title": "Asymmetric Query-Corpus Prefix Separation Invariant",
+      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "source_version": "hf-baai-bge-large-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:04:07.114Z"
+    },
+    "rule-6305": {
+      "learning_id": "rule-6305",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6305,
+      "title": "Absolute Context Window Token Truncation and Attention Mask Guard",
+      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "source_version": "hf-baai-bge-large-en-v1.5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:04:07.114Z"
+    },
+    "rule-6306": {
+      "learning_id": "rule-6306",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6306,
+      "title": "Guard-Bit Polarity and Termination Sentinel Alignment",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "44bcb956",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:05:00.756Z"
+    },
+    "rule-6307": {
+      "learning_id": "rule-6307",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6307,
+      "title": "Relative Headroom Allocation for Process Priority Testing",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "44bcb956",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T20:05:00.756Z"
     }
   },
   "aliases": {

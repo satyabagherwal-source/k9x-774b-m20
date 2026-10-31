@@ -55,8 +55,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceVersion": "hf-baai-bge-large-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "3d16d06e5aa4e19c094c04b50083061b66d46079089c9e470ca7921682c2da7e",
-    "lastHarvestedAt": "2026-10-28T18:34:31.735Z",
+    "contentHash": "33b5fb22e3dbafa1bd652913e0906dac8b735935b9e1a0c2a477b64b522c8701",
+    "lastHarvestedAt": "2026-10-31T20:04:07.215Z",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5"
   },
   "hf-zai-org-glm-5.3": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "a64d2d98",
+    "sourceVersion": "44bcb956",
     "license": "Apache-2.0",
-    "contentHash": "7e53a503d5c1fda9681e48cbd823d79ba413a5e065ad2e77bddbb787e6eba504",
-    "lastHarvestedAt": "2026-10-31T03:26:17.373Z",
+    "contentHash": "383ac24c0c004a836e1227bf48264c8a63961f9a79714cff45f9eecc234dda69",
+    "lastHarvestedAt": "2026-10-31T20:05:00.955Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {

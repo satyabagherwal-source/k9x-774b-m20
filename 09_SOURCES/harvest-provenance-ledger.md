@@ -6705,3 +6705,5 @@ Every entry in this ledger must capture:
 | `learn-github-mariadb-server` | `https://github.com/MariaDB/server` | `4641beb5` | Multi-dimensional audit evidence | 2026-10-31T19:49:55.304Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `2476fc1b` | Multi-dimensional audit evidence | 2026-10-31T19:49:56.138Z |
 | `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-31T19:51:59.856Z |
+| `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-31T20:04:07.215Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `44bcb956` | Multi-dimensional audit evidence | 2026-10-31T20:05:00.955Z |

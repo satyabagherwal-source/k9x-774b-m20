@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-CVPT",
-    "timestamp": "2026-10-30T13:28:34.961Z",
-    "repository": "cheeriojs/dom-serializer",
-    "learningId": "learn-github-cheeriojs-dom-serializer",
-    "contentHash": "5c97d29f737b3c72bd7419b9dbf40c0d4323f5d9b6a801295ae360effef3b12d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-CW7U",
-    "timestamp": "2026-10-30T13:28:35.610Z",
-    "repository": "yvgude/lean-ctx",
-    "learningId": "learn-github-yvgude-lean-ctx",
-    "contentHash": "4553b8663ead54737ecff38c4309251932d26657ac9615b8a70747f976ea9638",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-D0ZK",
     "timestamp": "2026-10-30T13:28:41.792Z",
     "repository": "moby/buildkit",
@@ -7490,6 +7460,36 @@
     "repository": "lilylilith/QI_2.1_AnyAngle",
     "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
     "contentHash": "d6d05c4b644b9b9294e7725c93243c2c14e2119e259587945fe4dbe2070c2125",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-XEAZ",
+    "timestamp": "2026-10-31T20:04:07.212Z",
+    "repository": "BAAI/bge-large-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+    "contentHash": "33b5fb22e3dbafa1bd652913e0906dac8b735935b9e1a0c2a477b64b522c8701",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-YJRS",
+    "timestamp": "2026-10-31T20:05:00.952Z",
+    "repository": "vespa-engine/vespa",
+    "learningId": "learn-github-vespa-engine-vespa",
+    "contentHash": "383ac24c0c004a836e1227bf48264c8a63961f9a79714cff45f9eecc234dda69",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {
