@@ -6595,3 +6595,5 @@
 | `CYCLE-20261031-Q36N` | `2026-10-31T13:54:31.199Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6216` | Yes (`9e7d06fc...`) |
 | `CYCLE-20261031-YPFG` | `2026-10-31T14:01:13.276Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md` | Yes (`453fbfed...`) |
 | `CYCLE-20261031-YUI1` | `2026-10-31T14:01:19.849Z` | `AtomicChat/LFM3-1.7B-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6217, Rule 6218` | Yes (`0c1d83e8...`) |
+| `CYCLE-20261031-7LVM` | `2026-10-31T14:08:08.578Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`fb8d5f2d...`) |
+| `CYCLE-20261031-7QOD` | `2026-10-31T14:08:14.797Z` | `apollographql/apollo-kotlin` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md` | Yes (`56b2f637...`) |

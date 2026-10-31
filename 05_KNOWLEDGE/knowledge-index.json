@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T14:01:19.771Z",
+  "last_updated": "2026-10-31T14:08:14.687Z",
   "total_verified_learnings": 1184,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -2514,8 +2514,8 @@
       "slug": "apollographql-apollo-kotlin",
       "platform": "github",
       "source_url": "https://github.com/apollographql/apollo-kotlin",
-      "source_version": "6c78aafe",
-      "content_hash": "a4a7294e609f5f660a4f7187e647a16526be77d2a684bdfc64e1bbada1adfa5e",
+      "source_version": "c4701d11",
+      "content_hash": "56b2f637a9d482399bcba6e55d9832ec70b3b06e6138bacc45b341157c65bb85",
       "dossier_path": "07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apollographql-apollo-kotlin-learnings.md",
       "promoted_rules": [
@@ -2545,7 +2545,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T11:59:50.974Z",
+      "verified_at": "2026-10-31T14:08:14.660Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -26151,7 +26151,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
       "source_version": "hf-minimaxai-minimax-h3",
-      "content_hash": "8ba6f3359b9624b0e98cde1b25a89a760ceb99a20a6e7a6ef5eef5895704c8d7",
+      "content_hash": "fb8d5f2db5ae9d0d8e0f37e5899474d05f4bd25bfdb4c353a37f74fa0d9f811d",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
       "promoted_rules": [
@@ -26184,7 +26184,7 @@
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4afpk5",
         "learn-huggingface-hf-minimaxai-minimax-h3-mv4nsqyu"
       ],
-      "verified_at": "2026-10-28T13:43:32.161Z",
+      "verified_at": "2026-10-31T14:08:08.472Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

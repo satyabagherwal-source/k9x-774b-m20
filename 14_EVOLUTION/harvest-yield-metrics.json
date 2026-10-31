@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T14:01:19.858Z",
-  "total_cycles_completed": 6572,
-  "total_learnings_persisted": 6572,
+  "last_updated": "2026-10-31T14:08:14.808Z",
+  "total_cycles_completed": 6574,
+  "total_learnings_persisted": 6574,
   "total_rules_promoted": 6215,
   "history": [
-    {
-      "timestamp": "2026-10-31T01:21:22.325Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T01:21:27.092Z",
-      "repository": "zulip/zulip",
-      "learningId": "learn-github-zulip-zulip",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T01:21:28.854Z",
       "repository": "rook/rook",
@@ -1403,6 +1389,20 @@
       "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
       "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:08:08.594Z",
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "learningId": "learn-huggingface-minimaxai-minimax-h3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:08:14.808Z",
+      "repository": "apollographql/apollo-kotlin",
+      "learningId": "learn-github-apollographql-apollo-kotlin",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
