@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-U82X",
-    "timestamp": "2026-10-30T05:46:10.665Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "7efe5b99e08f1e695a6366a8bbdcd4af1d490638879868cf2a4cdd2c26192990",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-VE62",
-    "timestamp": "2026-10-30T05:47:05.210Z",
-    "repository": "yshrsmz/BuildKonfig",
-    "learningId": "learn-github-yshrsmz-buildkonfig",
-    "contentHash": "affa0eed135cc972052ef4340eae536a782c4025b8b6d40438b47edcefc8e073",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-4C3V",
-    "timestamp": "2026-10-30T05:54:02.443Z",
-    "repository": "ydb-platform/ydb",
-    "learningId": "learn-github-ydb-platform-ydb",
-    "contentHash": "81fe04ed78cfcb2ab5de870a981014baf15994ec9d09f21088b9ea9f7c1ba4d2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-EHT9",
     "timestamp": "2026-10-30T06:01:56.397Z",
     "repository": "open-policy-agent/opa",
@@ -7492,6 +7447,51 @@
     "contentHash": "c76a9e4d43f855a0a3eb1107b3cf285332a7cc194fd7646fe6db5e019e996d5f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-U79Y",
+    "timestamp": "2026-10-31T15:49:41.590Z",
+    "repository": "oxc-project/oxc",
+    "learningId": "learn-github-oxc-project-oxc",
+    "contentHash": "bcc0902878f196571685c3a8d18cd801eb5a699bc5a24a3af69fcb609fcedbde",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-UA9L",
+    "timestamp": "2026-10-31T15:49:45.465Z",
+    "repository": "NativeScript/NativeScript",
+    "learningId": "learn-github-nativescript-nativescript",
+    "contentHash": "55284daef66132dbb7606097335cf5011af8e66e49eaa1a5f7765cc17bd1e6ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261031-UCUE",
+    "timestamp": "2026-10-31T15:49:48.806Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+    "contentHash": "18c0ca147ee2632a1acbf0d3028958797d033eeb1e649376d05dd2f6acd8029e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

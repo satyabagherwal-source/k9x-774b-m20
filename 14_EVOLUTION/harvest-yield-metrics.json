@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T15:42:53.845Z",
-  "total_cycles_completed": 6599,
-  "total_learnings_persisted": 6599,
-  "total_rules_promoted": 6233,
+  "last_updated": "2026-10-31T15:49:48.816Z",
+  "total_cycles_completed": 6602,
+  "total_learnings_persisted": 6602,
+  "total_rules_promoted": 6238,
   "history": [
-    {
-      "timestamp": "2026-10-31T02:14:28.164Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T02:14:33.766Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T02:21:18.433Z",
-      "repository": "unsloth/flint-GGUF",
-      "learningId": "learn-huggingface-unsloth-flint-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T02:21:20.020Z",
       "repository": "1jehuang/jcode",
@@ -1403,6 +1382,27 @@
       "repository": "slatedb/slatedb",
       "learningId": "learn-github-slatedb-slatedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:49:41.599Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:49:45.474Z",
+      "repository": "NativeScript/NativeScript",
+      "learningId": "learn-github-nativescript-nativescript",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:49:48.816Z",
+      "repository": "meta-llama/Llama-2-7b",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

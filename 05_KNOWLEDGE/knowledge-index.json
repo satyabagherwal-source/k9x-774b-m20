@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T15:42:53.786Z",
+  "last_updated": "2026-10-31T15:49:48.724Z",
   "total_verified_learnings": 1184,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -25271,10 +25271,15 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
       "source_version": "hf-meta-llama-llama-2-7b",
-      "content_hash": "005d0f91a462d10cfd1750d120206f17c57693665e171eb2607a91ff13ba39ae",
+      "content_hash": "18c0ca147ee2632a1acbf0d3028958797d033eeb1e649376d05dd2f6acd8029e",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
       "promoted_rules": [
+        {
+          "number": 633,
+          "title": "Tokenizer Special Token Consistency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 1137,
           "title": "The Weight-Config Shape Invariant",
@@ -25319,6 +25324,16 @@
           "number": 1599,
           "title": "Autoregressive Causal Attention Mask Lower-Triangular Guarantee",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6238,
+          "title": "Immutable Artifact Integrity & Schema Versioning",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6239,
+          "title": "Deterministic Inference for Reproducibility",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -25337,7 +25352,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-mv3fuh18",
         "learn-huggingface-hf-meta-llama-llama-2-7b-mv4blmsc"
       ],
-      "verified_at": "2026-10-28T15:09:41.139Z",
+      "verified_at": "2026-10-31T15:49:48.704Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -41327,8 +41342,8 @@
       "slug": "nativescript-nativescript",
       "platform": "github",
       "source_url": "https://github.com/NativeScript/NativeScript",
-      "source_version": "c72e04d7",
-      "content_hash": "237791fe1dc9525cf9ebb5df14ef1433d39c92338a0f08a488e592033deeb7b7",
+      "source_version": "49c79f42",
+      "content_hash": "55284daef66132dbb7606097335cf5011af8e66e49eaa1a5f7765cc17bd1e6ea",
       "dossier_path": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
       "promoted_rules": [
@@ -41346,6 +41361,11 @@
           "number": 5401,
           "title": "android): create prompt and login inputs from the dialog context (#11582)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6237,
+          "title": "core): css var() fallbacks, order-independent custom properties, and no crash on",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41353,7 +41373,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T20:44:28.900Z",
+      "verified_at": "2026-10-31T15:49:45.362Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -44926,8 +44946,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "bb947dc1",
-      "content_hash": "c2d52c4683f5017446d47529cb2a1df91b5f0238a8deb54372adc88377e43b2f",
+      "source_version": "d14dbd1e",
+      "content_hash": "bcc0902878f196571685c3a8d18cd801eb5a699bc5a24a3af69fcb609fcedbde",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -44975,6 +44995,11 @@
           "number": 5853,
           "title": "track_memory_allocs): add allocation tracking for linter rules (#28470)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6236,
+          "title": "linter/unicorn/no-invalid-fetch-options): avoid treating unknown methods as GET",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -44982,7 +45007,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:05:08.575Z",
+      "verified_at": "2026-10-31T15:49:41.487Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -78374,15 +78399,15 @@
       "learning_id": "rule-633",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 633,
-      "title": "Tokenizer Special Token Consistency Rule (Harvested from Altworld/Hemmingway-1)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Tokenizer Special Token Consistency",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
+      "source_version": "hf-meta-llama-llama-2-7b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.812Z"
+      "verified_at": "2026-10-31T15:49:48.704Z"
     },
     "rule-634": {
       "learning_id": "rule-634",
@@ -162764,6 +162789,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T15:42:53.774Z"
+    },
+    "rule-6236": {
+      "learning_id": "rule-6236",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6236,
+      "title": "linter/unicorn/no-invalid-fetch-options): avoid treating unknown methods as GET",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "d14dbd1e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T15:49:41.487Z"
+    },
+    "rule-6237": {
+      "learning_id": "rule-6237",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6237,
+      "title": "core): css var() fallbacks, order-independent custom properties, and no crash on",
+      "source_url": "https://github.com/NativeScript/NativeScript",
+      "source_version": "49c79f42",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T15:49:45.362Z"
+    },
+    "rule-6238": {
+      "learning_id": "rule-6238",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6238,
+      "title": "Immutable Artifact Integrity & Schema Versioning",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
+      "source_version": "hf-meta-llama-llama-2-7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T15:49:48.704Z"
+    },
+    "rule-6239": {
+      "learning_id": "rule-6239",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6239,
+      "title": "Deterministic Inference for Reproducibility",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
+      "source_version": "hf-meta-llama-llama-2-7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-10-31T15:49:48.704Z"
     }
   },
   "aliases": {

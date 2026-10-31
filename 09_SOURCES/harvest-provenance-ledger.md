@@ -6631,3 +6631,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-31T15:42:40.873Z |
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `c3dc5575` | Multi-dimensional audit evidence | 2026-10-31T15:42:43.269Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `0c22c032` | Multi-dimensional audit evidence | 2026-10-31T15:42:53.841Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `d14dbd1e` | Multi-dimensional audit evidence | 2026-10-31T15:49:41.594Z |
+| `learn-github-nativescript-nativescript` | `https://github.com/NativeScript/NativeScript` | `49c79f42` | Multi-dimensional audit evidence | 2026-10-31T15:49:45.469Z |
+| `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-31T15:49:48.810Z |

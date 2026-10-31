@@ -975,8 +975,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b",
     "sourceVersion": "hf-meta-llama-llama-2-7b",
     "license": "Open-Source",
-    "contentHash": "005d0f91a462d10cfd1750d120206f17c57693665e171eb2607a91ff13ba39ae",
-    "lastHarvestedAt": "2026-10-28T15:09:41.228Z",
+    "contentHash": "18c0ca147ee2632a1acbf0d3028958797d033eeb1e649376d05dd2f6acd8029e",
+    "lastHarvestedAt": "2026-10-31T15:49:48.810Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
@@ -7453,10 +7453,10 @@
     "repository": "NativeScript/NativeScript",
     "platform": "github",
     "sourceUrl": "https://github.com/NativeScript/NativeScript",
-    "sourceVersion": "c72e04d7",
+    "sourceVersion": "49c79f42",
     "license": "MIT",
-    "contentHash": "237791fe1dc9525cf9ebb5df14ef1433d39c92338a0f08a488e592033deeb7b7",
-    "lastHarvestedAt": "2026-10-28T20:44:28.982Z",
+    "contentHash": "55284daef66132dbb7606097335cf5011af8e66e49eaa1a5f7765cc17bd1e6ea",
+    "lastHarvestedAt": "2026-10-31T15:49:45.469Z",
     "learningId": "learn-github-nativescript-nativescript"
   },
   "oramasearch-orama": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "bb947dc1",
+    "sourceVersion": "d14dbd1e",
     "license": "MIT",
-    "contentHash": "c2d52c4683f5017446d47529cb2a1df91b5f0238a8deb54372adc88377e43b2f",
-    "lastHarvestedAt": "2026-10-30T20:05:08.676Z",
+    "contentHash": "bcc0902878f196571685c3a8d18cd801eb5a699bc5a24a3af69fcb609fcedbde",
+    "lastHarvestedAt": "2026-10-31T15:49:41.594Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-31T15:42:53.848Z",
+  "last_updated": "2026-10-31T15:49:48.821Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1280,14 +1280,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b",
-      "content_hash": "005d0f91a462d10cfd1750d120206f17c57693665e171eb2607a91ff13ba39ae",
-      "verified_at": "2026-10-28T15:09:41.233Z",
+      "content_hash": "18c0ca147ee2632a1acbf0d3028958797d033eeb1e649376d05dd2f6acd8029e",
+      "verified_at": "2026-10-31T15:49:48.820Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T15:09:41.233Z"
+      "last_updated": "2026-10-31T15:49:48.820Z"
     },
     "mistralai/Mixtral-8x7B-Instruct-v0.1": {
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -11226,14 +11226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nativescript-nativescript",
-      "content_hash": "237791fe1dc9525cf9ebb5df14ef1433d39c92338a0f08a488e592033deeb7b7",
-      "verified_at": "2026-10-28T20:44:28.990Z",
+      "content_hash": "55284daef66132dbb7606097335cf5011af8e66e49eaa1a5f7765cc17bd1e6ea",
+      "verified_at": "2026-10-31T15:49:45.478Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T20:44:28.990Z"
+      "last_updated": "2026-10-31T15:49:45.478Z"
     },
     "oramasearch/orama": {
       "repository": "oramasearch/orama",
@@ -11631,14 +11631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oxc-project-oxc",
-      "content_hash": "c2d52c4683f5017446d47529cb2a1df91b5f0238a8deb54372adc88377e43b2f",
-      "verified_at": "2026-10-30T20:05:08.684Z",
+      "content_hash": "bcc0902878f196571685c3a8d18cd801eb5a699bc5a24a3af69fcb609fcedbde",
+      "verified_at": "2026-10-31T15:49:41.603Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T20:05:08.684Z"
+      "last_updated": "2026-10-31T15:49:41.603Z"
     },
     "pointfreeco/swift-composable-architecture": {
       "repository": "pointfreeco/swift-composable-architecture",
